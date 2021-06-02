@@ -188,7 +188,7 @@
 
     <!-- associated projects dependencies -->
     <geoapi.version>4.0-M16</geoapi.version>
-    <sis.version>2.0-M0077</sis.version>
+    <sis.version>2.0-M0078</sis.version>
     <sis.build.helper.version>0.8</sis.build.helper.version>
     <sis.non-free.version>1.0</sis.non-free.version>
 

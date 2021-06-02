@@ -12,7 +12,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
-import org.apache.sis.coverage.grid.Evaluator;
+import org.apache.sis.coverage.grid.GridEvaluator;
 import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.referencing.operation.builder.LocalizationGridBuilder;
 import org.apache.sis.storage.DataStoreException;
@@ -174,7 +174,7 @@ abstract class VelocityComponent {
         /**
          * The data.
          */
-        private final Evaluator coverage;
+        private final GridEvaluator coverage;
 
         /**
          * Temporary object for evaluating velocity component.
