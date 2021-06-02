@@ -303,13 +303,13 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
      * @param name
      */
     @Override
-    public void setName(final String name) {
+    public void setName(final Identifier name) {
         if (this.name == null) {
             this.name = new ArrayList<>();
         }
         this.name.clear();
         if (name != null) {
-            this.name.add(0, new DefaultIdentifier(name));
+            this.name.add(0, name);
         }
     }
 

@@ -83,7 +83,7 @@ public class NetcdfObservationReader implements ObservationReader {
     public Collection<String> getPhenomenonNames() throws DataStoreException {
         final Set<String> phenomenons = new HashSet<>();
         for (Field field : analyze.phenfields) {
-            phenomenons.add(field.label);
+            phenomenons.add(field.id);
         }
         return phenomenons;
     }
@@ -138,7 +138,7 @@ public class NetcdfObservationReader implements ObservationReader {
     @Override
     public boolean existPhenomenon(final String phenomenonName) throws DataStoreException {
         for (Field field : analyze.phenfields) {
-            if (field.label.equals(phenomenonName)) {
+            if (field.id.equals(phenomenonName)) {
                 return true;
             }
         }

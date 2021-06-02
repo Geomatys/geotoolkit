@@ -68,6 +68,10 @@ public class DefinitionBaseType extends AbstractGMLType {
         super(id, name, description, null);
     }
 
+    public DefinitionBaseType(final DefinitionBaseType def)  {
+        super(def);
+    }
+
     @Override
     public String toString() {
         return super.toString();

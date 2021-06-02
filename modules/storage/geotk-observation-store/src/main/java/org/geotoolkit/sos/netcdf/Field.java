@@ -14,7 +14,6 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-
 package org.geotoolkit.sos.netcdf;
 
 import java.io.Serializable;
@@ -25,70 +24,75 @@ import java.util.Objects;
  * @author Guilhem Legal (Geomatys)
  */
 public class Field implements Serializable {
-        public String label;
-        public String unit;
-        public Number fillValue;
-        public Type type;
-        public int dimension;
-        public String dimensionLabel;
-        public String description;
-        public boolean mainVariableFirst = true;
 
-        public Field(final String label, final Type type, final int dimension, final String dimensionLabel) {
-            this.label          = label;
-            this.type           = type;
-            this.dimensionLabel = dimensionLabel;
-        }
+    public String id;
+    public String label;
+    public String unit;
+    public Number fillValue;
+    public Type type;
+    public int dimension;
+    public String dimensionLabel;
+    public String description;
+    public boolean mainVariableFirst = true;
 
-        public Field(final String label, int dimension, final String dimensionLabel, final String description) {
-            this.label          = label;
-            this.dimension      = dimension;
-            this.dimensionLabel = dimensionLabel;
-            this.description    = description;
-        }
-
-        public Field(final String label, final Type type, final int dimension, final String dimensionLabel, final Number fillValue, final String unit) {
-            this.label          = label;
-            this.type           = type;
-            this.dimensionLabel = dimensionLabel;
-            this.dimension      = dimension;
-            this.fillValue      = fillValue;
-            this.unit           = unit;
-        }
-
-        @Override
-        public String toString() {
-            String dimLabel = "";
-            if (dimension > 0) {
-                dimLabel = "=> " + dimensionLabel;
-            }
-            String typeName;
-            if (type == null) {
-                typeName = "NULL TYPE";
-            } else {
-                typeName = type.name();
-            }
-            return label + " : " + typeName + '(' + dimension + dimLabel + ')';
-        }
-
-        @Override
-        public boolean equals(final Object obj) {
-            if (obj == this) {
-                return true;
-            }
-            if (obj instanceof Field) {
-                final Field that = (Field) obj;
-                return Objects.equals(this.label, that.label) &&
-                       Objects.equals(this.type,  that.type);
-            }
-            return false;
-        }
-
-        @Override
-        public int hashCode() {
-            int hash = 5;
-            hash = 29 * hash + (this.label != null ? this.label.hashCode() : 0);
-            hash = 29 * hash + (this.type != null ? this.type.hashCode() : 0);
-            return hash;
-        }
+    public Field(final String id, final String label, final Type type, final int dimension, final String dimensionLabel) {
+        this.id = id;
+        this.label = label;
+        this.type = type;
+        this.dimensionLabel = dimensionLabel;
     }
+
+    public Field(final String id, final String label, int dimension, final String dimensionLabel, final String description) {
+        this.id = id;
+        this.label = label;
+        this.dimension = dimension;
+        this.dimensionLabel = dimensionLabel;
+        this.description = description;
+    }
+
+    public Field(final String id, final String label, final Type type, final int dimension, final String dimensionLabel, final Number fillValue, final String unit) {
+        this.id = id;
+        this.label = label;
+        this.type = type;
+        this.dimensionLabel = dimensionLabel;
+        this.dimension = dimension;
+        this.fillValue = fillValue;
+        this.unit = unit;
+    }
+
+    @Override
+    public String toString() {
+        String dimLabel = "";
+        if (dimension > 0) {
+            dimLabel = "=> " + dimensionLabel;
+        }
+        String typeName;
+        if (type == null) {
+            typeName = "NULL TYPE";
+        } else {
+            typeName = type.name();
+        }
+        return label + " : " + typeName + '(' + dimension + dimLabel + ')';
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof Field) {
+            final Field that = (Field) obj;
+            return Objects.equals(this.label, that.label)
+                && Objects.equals(this.type,  that.type);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 29 * hash + (this.label != null ? this.label.hashCode() : 0);
+        hash = 29 * hash + (this.type != null ? this.type.hashCode() : 0);
+        return hash;
+    }
+}

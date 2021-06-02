@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.xlink.xml.v100.ActuateType;
 import org.geotoolkit.xlink.xml.v100.ShowType;
@@ -90,12 +91,23 @@ public class OMProcessPropertyType implements org.geotoolkit.observation.xml.Pro
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private ActuateType actuate;
 
+    @XmlTransient
+    private String name;
+    @XmlTransient
+    private String description;
+
     public OMProcessPropertyType() {
 
     }
 
     public OMProcessPropertyType(final String href) {
         this.href = href;
+    }
+
+    public OMProcessPropertyType(final String href, final String name, final String description) {
+        this.href = href;
+        this.name = name;
+        this.description = description;
     }
 
     /**
@@ -335,6 +347,36 @@ public class OMProcessPropertyType implements org.geotoolkit.observation.xml.Pro
         this.actuate = value;
     }
 
+    /**
+     * @return the name
+     */
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * @param name the name to set
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * @return the description
+     */
+    @Override
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * @param description the description to set
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     @Override
     public String toString() {
         final StringBuilder s = new StringBuilder("[OMProcessPropertyType]");
@@ -359,8 +401,14 @@ public class OMProcessPropertyType implements org.geotoolkit.observation.xml.Pro
         if(title != null) {
             s.append("title=").append(title).append('\n');
         }
-        if(title != null) {
+        if(type != null) {
             s.append("type=").append(type).append('\n');
+        }
+        if(name != null) {
+            s.append("name=").append(name).append('\n');
+        }
+        if(description != null) {
+            s.append("description=").append(description).append('\n');
         }
         return s.toString();
     }
@@ -373,7 +421,7 @@ public class OMProcessPropertyType implements org.geotoolkit.observation.xml.Pro
         if (object instanceof OMProcessPropertyType) {
             final OMProcessPropertyType that = (OMProcessPropertyType) object;
 
-            return Objects.equals(this.any,                that.any)      &&
+            return Objects.equals(this.any,                that.any)              &&
                    Objects.equals(this.actuate,            that.actuate)          &&
                    Objects.equals(this.arcrole,            that.arcrole)          &&
                    Objects.equals(this.type,               that.type)             &&
@@ -381,7 +429,9 @@ public class OMProcessPropertyType implements org.geotoolkit.observation.xml.Pro
                    Objects.equals(this.remoteSchema,       that.remoteSchema)     &&
                    Objects.equals(this.show,               that.show)             &&
                    Objects.equals(this.role,               that.role)             &&
-                   Objects.equals(this.title,              that.title);
+                   Objects.equals(this.title,              that.title)            &&
+                   Objects.equals(this.name, that.name)                           &&
+                   Objects.equals(this.description, that.description);
         }
         return false;
     }
@@ -398,6 +448,8 @@ public class OMProcessPropertyType implements org.geotoolkit.observation.xml.Pro
         hash = 47 * hash + (this.show != null ? this.show.hashCode() : 0);
         hash = 47 * hash + (this.title != null ? this.title.hashCode() : 0);
         hash = 47 * hash + (this.type != null ? this.type.hashCode() : 0);
+        hash = 47 * hash + (this.name != null ? this.name.hashCode() : 0);
+        hash = 47 * hash + (this.description != null ? this.description.hashCode() : 0);
         return hash;
     }
 }

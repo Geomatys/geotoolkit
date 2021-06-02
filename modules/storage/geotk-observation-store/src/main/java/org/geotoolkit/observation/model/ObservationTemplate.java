@@ -19,6 +19,7 @@ package org.geotoolkit.observation.model;
 import java.util.List;
 import org.geotoolkit.swe.xml.PhenomenonProperty;
 import org.opengis.observation.Observation;
+import org.geotoolkit.observation.xml.Process;
 
 /**
  *
@@ -26,12 +27,12 @@ import org.opengis.observation.Observation;
  */
 public class ObservationTemplate {
 
-    private String procedure;
+    private Process procedure;
     private List<PhenomenonProperty> observedProperties;
     private String featureOfInterest;
     private Observation observation;
 
-    public ObservationTemplate(String procedure, List<PhenomenonProperty> observedProperties, String featureOfInterest, Observation observation) {
+    public ObservationTemplate(Process procedure, List<PhenomenonProperty> observedProperties, String featureOfInterest, Observation observation) {
         this.featureOfInterest = featureOfInterest;
         this.observedProperties = observedProperties;
         this.observation = observation;
@@ -41,14 +42,14 @@ public class ObservationTemplate {
     /**
      * @return the procedure
      */
-    public String getProcedure() {
+    public Process getProcedure() {
         return procedure;
     }
 
     /**
      * @param procedure the procedure to set
      */
-    public void setProcedure(String procedure) {
+    public void setProcedure(Process procedure) {
         this.procedure = procedure;
     }
 
@@ -60,7 +61,7 @@ public class ObservationTemplate {
     }
 
     /**
-     * @param observableProperty the observableProperty to set
+     * @param observedProperties the observableProperty to set
      */
     public void setObservedProperty(List<PhenomenonProperty> observedProperties) {
         this.observedProperties = observedProperties;

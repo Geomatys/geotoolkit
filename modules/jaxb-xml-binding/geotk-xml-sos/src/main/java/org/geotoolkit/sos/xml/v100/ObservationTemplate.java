@@ -26,10 +26,12 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.observation.xml.v100.MeasurementType;
 import org.geotoolkit.observation.xml.v100.ObservationType;
 import org.geotoolkit.observation.xml.v100.ProcessType;
 import org.geotoolkit.swe.xml.PhenomenonProperty;
+import org.opengis.observation.Process;
 
 
 /**
@@ -87,9 +89,9 @@ public class ObservationTemplate implements org.geotoolkit.swes.xml.ObservationT
     }
 
     @Override
-    public String getProcedure() {
-        if (observation != null && observation.getProcedure() instanceof ProcessType) {
-            return ((ProcessType)observation.getProcedure()).getHref();
+    public Process getProcedure() {
+        if (observation != null) {
+            return observation.getProcedure();
         }
         return null;
     }
@@ -108,12 +110,15 @@ public class ObservationTemplate implements org.geotoolkit.swes.xml.ObservationT
     }
 
     @Override
-    public void setProcedure(final String id) {
-        if (id != null) {
-            final ProcessType p = new ProcessType(id);
-            if (observation != null) {
-                observation.setProcedure(p);
+    public void setProcedure(final Process id) {
+        if (id !=  null && observation != null) {
+            ProcessType proc;
+            if (id instanceof ProcessType) {
+                proc = (ProcessType) id;
+            } else {
+                proc = new ProcessType((org.geotoolkit.observation.xml.Process) id);
             }
+            observation.setProcedure(proc);
         }
     }
 
@@ -121,7 +126,7 @@ public class ObservationTemplate implements org.geotoolkit.swes.xml.ObservationT
     public void setName(final String name) {
         if (name != null) {
             if (observation != null) {
-                observation.setName(name);
+                observation.setName(new DefaultIdentifier(name));
             }
         }
     }

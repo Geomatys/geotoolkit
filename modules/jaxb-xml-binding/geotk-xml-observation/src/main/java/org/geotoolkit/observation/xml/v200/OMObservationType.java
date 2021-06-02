@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.gml.xml.v321.AbstractFeatureType;
@@ -42,6 +43,7 @@ import org.geotoolkit.observation.xml.AbstractObservation;
 import org.geotoolkit.sampling.xml.v200.SFSamplingFeatureType;
 import org.geotoolkit.swe.xml.v200.DataArrayPropertyType;
 import org.apache.sis.util.ComparisonMode;
+import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.gml.xml.v321.TimeInstantType;
 import org.geotoolkit.gml.xml.v321.TimePositionType;
 import org.geotoolkit.swe.xml.AnyScalar;
@@ -127,25 +129,31 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
     @XmlElement(required = true)
     private Object result;
 
+    @XmlTransient
+    private Phenomenon hiddenObservedProperty;
+
 
     public OMObservationType() {
     }
 
     public OMObservationType(final String id, final String name, final String type, final AbstractTimeObjectType phenomenonTime,
-            final String procedure, final String observedProperty, final FeaturePropertyType foi, final Object result) {
+            final String procedure, final String observedProperty, final Phenomenon hiddenObservedProperty, final FeaturePropertyType foi, final Object result) {
+        this(id, name, type, phenomenonTime, new OMProcessPropertyType(procedure), observedProperty, hiddenObservedProperty, foi, result);
+    }
+
+    public OMObservationType(final String id, final String name, final String type, final AbstractTimeObjectType phenomenonTime,
+            final OMProcessPropertyType procedure, final String observedProperty, final Phenomenon hiddenObservedProperty, final FeaturePropertyType foi, final Object result) {
         super(id, name, null);
         this.type = new ReferenceType(type);
         this.phenomenonTime = new TimeObjectPropertyType(phenomenonTime);
         this.resultTime     = new TimeInstantPropertyType();
-
-        if (procedure != null) {
-            this.procedure      = new OMProcessPropertyType(procedure);
-        }
+        this.procedure      = procedure;
         if (observedProperty != null) {
             this.observedProperty    = new ReferenceType(observedProperty);
         }
         this.featureOfInterest   = foi;
         this.result = result;
+        this.hiddenObservedProperty = hiddenObservedProperty;
     }
 
     /**
@@ -177,6 +185,7 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
         } else {
             this.result = observation.result;
         }
+        this.hiddenObservedProperty = observation.hiddenObservedProperty;
     }
 
     @Override
@@ -437,16 +446,18 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
 
     @Override
     public Phenomenon getObservedProperty() {
-        if (observedProperty != null) {
+        if (hiddenObservedProperty != null) {
+            return hiddenObservedProperty;
+        } else if (observedProperty != null) {
             if (result instanceof DataArrayProperty) {
                 final List<String> fields = getFieldsFromResult((DataArrayProperty) result);
                 final List<InternalPhenomenon> phenomenons = new ArrayList<>();
                 for (String field : fields) {
-                    phenomenons.add(new InternalPhenomenon(null, field, null));
+                    phenomenons.add(new InternalPhenomenon(field, field, field, null));
                 }
-                return new InternalCompositePhenomenon(null, observedProperty.getHref(), null, phenomenons);
+                return new InternalCompositePhenomenon(observedProperty.getHref(), observedProperty.getHref(), observedProperty.getHref(), null, phenomenons);
             }
-            return new InternalPhenomenon(null, observedProperty.getHref(), null);
+            return new InternalPhenomenon(observedProperty.getHref(), observedProperty.getHref(), null, null);
         }
         return null;
     }
@@ -691,17 +702,21 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
 
         private final String name;
 
+        private final String definition;
+
         private final String description;
 
         public InternalPhenomenon() {
             this.id = null;
             this.name = null;
             this.description = null;
+            this.definition = null;
         }
 
-        public InternalPhenomenon(final String id, final String name, final String description) {
+        public InternalPhenomenon(final String id, final String name, final String definition, final String description) {
             this.id = id;
             this.name = name;
+            this.definition = definition;
             this.description = description;
         }
 
@@ -712,7 +727,17 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
 
         @Override
         public Identifier getName() {
-            return new DefaultIdentifier(name);
+            if (definition != null) {
+                DefaultIdentifier result = new DefaultIdentifier(definition);
+                if (name != null) {
+                    result.setDescription(new SimpleInternationalString(name));
+                }
+                return result;
+            }
+            if (name != null) {
+                return new DefaultIdentifier(name);
+            }
+            return null;
         }
 
         @Override
@@ -759,6 +784,8 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
 
         private final String name;
 
+        private final String definition;
+
         private final String description;
 
         private final List<InternalPhenomenon> phenomenons;
@@ -768,13 +795,15 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
             this.name = null;
             this.phenomenons = new ArrayList<>();
             this.description = null;
+            this.definition = null;
         }
 
-        public InternalCompositePhenomenon(final String id, final String name, final String description, List<InternalPhenomenon> phenomenons) {
+        public InternalCompositePhenomenon(final String id, final String name, final String definition, final String description, List<InternalPhenomenon> phenomenons) {
             this.id = id;
             this.name = name;
             this.phenomenons = phenomenons;
             this.description = description;
+            this.definition  = definition;
         }
 
         @Override
@@ -784,7 +813,17 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
 
         @Override
         public Identifier getName() {
-            return new DefaultIdentifier(name);
+            if (definition != null) {
+                DefaultIdentifier result = new DefaultIdentifier(definition);
+                if (name != null) {
+                    result.setDescription(new SimpleInternationalString(name));
+                }
+                return result;
+            }
+            if (name != null) {
+                return new DefaultIdentifier(name);
+            }
+            return null;
         }
 
         @Override

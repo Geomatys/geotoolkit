@@ -150,7 +150,7 @@ public class AbstractSWEIdentifiableType extends AbstractSWEType {
         this.description = value;
     }
 
-    public void setName(final String name) {
+    public void setName(final Identifier name) {
         //do nothing
     }
 

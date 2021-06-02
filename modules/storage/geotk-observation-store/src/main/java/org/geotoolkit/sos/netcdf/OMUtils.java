@@ -50,6 +50,7 @@ import static org.geotoolkit.swe.xml.v200.TextEncodingType.DEFAULT_ENCODING;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.observation.CompositePhenomenon;
 import org.opengis.temporal.TemporalGeometricPrimitive;
+import org.opengis.observation.Process;
 
 /**
  *
@@ -126,8 +127,8 @@ public class OMUtils {
         fields.add(PRESSION_FIELD.get(version));
         for (Field phenomenon : phenomenons) {
             final UomProperty uom = SOSXmlFactory.buildUomProperty(version, phenomenon.unit, null);
-            final Quantity cat = SOSXmlFactory.buildQuantity(version, phenomenon.label, uom, null);
-            fields.add(SOSXmlFactory.buildAnyScalar(version, null, phenomenon.label, cat));
+            final Quantity cat = SOSXmlFactory.buildQuantity(version, phenomenon.id, uom, null);
+            fields.add(SOSXmlFactory.buildAnyScalar(version, null, phenomenon.id, cat));
         }
         return SOSXmlFactory.buildSimpleDatarecord(version, null, null, null, true, fields);
     }
@@ -137,8 +138,8 @@ public class OMUtils {
         fields.add(TIME_FIELD.get(version));
         for (Field phenomenon : phenomenons) {
             final UomProperty uom = SOSXmlFactory.buildUomProperty(version, phenomenon.unit, null);
-            final Quantity cat = SOSXmlFactory.buildQuantity(version, phenomenon.label, uom, null);
-            fields.add(SOSXmlFactory.buildAnyScalar(version, null, phenomenon.label, cat));
+            final Quantity cat = SOSXmlFactory.buildQuantity(version, phenomenon.id, uom, null);
+            fields.add(SOSXmlFactory.buildAnyScalar(version, null, phenomenon.id, cat));
         }
         return SOSXmlFactory.buildSimpleDatarecord(version, null, null, null, true, fields);
     }
@@ -150,8 +151,8 @@ public class OMUtils {
         fields.add(LONGITUDE_FIELD.get(version));
         for (Field phenomenon : phenomenons) {
             final UomProperty uom = SOSXmlFactory.buildUomProperty(version, phenomenon.unit, null);
-            final Quantity cat = SOSXmlFactory.buildQuantity(version, phenomenon.label, uom, null);
-            fields.add(SOSXmlFactory.buildAnyScalar(version, null, phenomenon.label, cat));
+            final Quantity cat = SOSXmlFactory.buildQuantity(version, phenomenon.id, uom, null);
+            fields.add(SOSXmlFactory.buildAnyScalar(version, null, phenomenon.id, cat));
         }
         return SOSXmlFactory.buildSimpleDatarecord(version, null, null, null, true, fields);
     }
@@ -165,13 +166,17 @@ public class OMUtils {
     }
 
     public static Phenomenon getPhenomenon(final String version, final List<Field> phenomenons, final String phenomenonIdBase, final Set<org.opengis.observation.Phenomenon> existingPhens) {
+        return getPhenomenon(version, null, phenomenons, phenomenonIdBase, existingPhens);
+    }
+
+    public static Phenomenon getPhenomenon(final String version, String name, final List<Field> phenomenons, final String phenomenonIdBase, final Set<org.opengis.observation.Phenomenon> existingPhens) {
         final Phenomenon phenomenon;
         if (phenomenons.size() == 1) {
-            phenomenon = SOSXmlFactory.buildPhenomenon(version, phenomenons.get(0).label, phenomenons.get(0).label, phenomenons.get(0).description);
+            phenomenon = SOSXmlFactory.buildPhenomenon(version, phenomenons.get(0).id, phenomenons.get(0).label, phenomenons.get(0).id, phenomenons.get(0).description);
         } else {
             final Set<PhenomenonType> types = new LinkedHashSet<>();
             for (Field phen : phenomenons) {
-                types.add(new PhenomenonType(phen.label, phen.label));
+                types.add(new PhenomenonType(phen.id, phen.label, phen.id, phen.description));
             }
 
             // look for an already existing (composite) phenomenon to use instead of creating a new one
@@ -185,8 +190,11 @@ public class OMUtils {
             }
 
             final String compositeId = "composite" + UUID.randomUUID().toString();
-            final String compositeName = phenomenonIdBase + compositeId;
-            phenomenon = new CompositePhenomenonType(compositeId, compositeName, null, null, types);
+            final String definition = phenomenonIdBase + compositeId;
+            if (name == null) {
+                name = definition;
+            }
+            phenomenon = new CompositePhenomenonType(compositeId, name, definition, null, null, types);
         }
         return phenomenon;
     }
@@ -219,8 +227,12 @@ public class OMUtils {
         return sp;
     }
 
+    public static Process buildProcess(final String procedureId) {
+        return SOSXmlFactory.buildProcess("2.0.0", procedureId);
+    }
+
     public static AbstractObservation buildObservation(final String obsid, final SamplingFeature sf,
-            final Phenomenon phenomenon, final String procedure, final int count , final AbstractDataRecord datarecord, final MeasureStringBuilder sb, final TemporalGeometricPrimitive time) {
+            final Phenomenon phenomenon, final Process procedure, final int count , final AbstractDataRecord datarecord, final MeasureStringBuilder sb, final TemporalGeometricPrimitive time) {
 
         final DataArrayProperty result = SOSXmlFactory.buildDataArrayProperty("2.0.0", "array-1", count, "SimpleDataArray", datarecord, DEFAULT_ENCODING, sb.getString(), null);
         final FeatureProperty foi = SOSXmlFactory.buildFeatureProperty("2.0.0", sf);
@@ -236,7 +248,7 @@ public class OMUtils {
     }
 
     public static AbstractObservation buildObservation(final String obsid, final SamplingFeature sf,
-            final Phenomenon phenomenon, final String procedure, final int count , final AbstractDataRecord datarecord, final List<Object> dataValues, final TemporalGeometricPrimitive time) {
+            final Phenomenon phenomenon, final Process procedure, final int count , final AbstractDataRecord datarecord, final List<Object> dataValues, final TemporalGeometricPrimitive time) {
 
         final DataArrayProperty result = SOSXmlFactory.buildDataArrayProperty("2.0.0", "array-1", count, "SimpleDataArray", datarecord, DEFAULT_ENCODING, null, dataValues);
         final FeatureProperty foi = SOSXmlFactory.buildFeatureProperty("2.0.0", sf);

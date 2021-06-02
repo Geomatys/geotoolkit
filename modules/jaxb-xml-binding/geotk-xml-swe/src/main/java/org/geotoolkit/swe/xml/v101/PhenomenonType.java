@@ -21,12 +21,16 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
+import javax.xml.bind.annotation.XmlTransient;
 
 // Constellation dependencies
 import javax.xml.bind.annotation.XmlType;
+import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.gml.xml.v311.DefinitionType;
 import org.apache.sis.util.ComparisonMode;
+import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.swe.xml.Phenomenon;
+import org.opengis.metadata.Identifier;
 
 
 /**
@@ -47,6 +51,8 @@ public class PhenomenonType extends DefinitionType implements Phenomenon {
      */
     private static final long serialVersionUID = 5140595674231914861L;
 
+    @XmlTransient
+    private String definition;
 
     /**
      * Empty constructor used by JAXB.
@@ -61,7 +67,6 @@ public class PhenomenonType extends DefinitionType implements Phenomenon {
      */
     public PhenomenonType(final String id, final String name) {
         super(id, name, null);
-
     }
 
     /**
@@ -71,10 +76,46 @@ public class PhenomenonType extends DefinitionType implements Phenomenon {
      *
      * @param id L'identifiant de ce phenomene.
      * @param name Le nom du phénomène.
+     * @param definition URN de definition de ce phénomène.
      * @param description La description de ce phénomène, ou {@code null}.
      */
-    public PhenomenonType(final String id, final String name, final String description ) {
+    public PhenomenonType(final String id, final String name, final String definition, final String description ) {
         super(id, name, description);
+        this.definition = definition;
+    }
+
+    public PhenomenonType(final PhenomenonType phen) {
+        super(phen);
+        this.definition = phen.definition;
+    }
+
+    @Override
+    public Identifier getName() {
+        if (definition != null) {
+            DefaultIdentifier result = new DefaultIdentifier(definition);
+            if (name != null) {
+                result.setDescription(new SimpleInternationalString(name));
+            }
+            return result;
+        }
+        if (name != null) {
+            return new DefaultIdentifier(name);
+        }
+        return null;
+    }
+
+    @Override
+    public void setName(final Identifier name) {
+        if (name != null) {
+            if (name.getDescription() != null) {
+                this.name       = name.getDescription().toString();
+                this.definition = name.getCode();
+            } else {
+                this.name = name.getCode();
+            }
+        } else {
+            this.name = null;
+        }
     }
 
     /**

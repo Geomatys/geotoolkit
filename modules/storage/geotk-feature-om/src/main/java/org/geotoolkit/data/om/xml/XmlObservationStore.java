@@ -51,7 +51,8 @@ import org.geotoolkit.storage.feature.GenericNameIndex;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.observation.AbstractObservationStore;
 import org.geotoolkit.observation.ObservationReader;
-import org.geotoolkit.observation.xml.*;
+import org.geotoolkit.observation.xml.AbstractObservation;
+import org.geotoolkit.observation.xml.Process;
 import org.geotoolkit.sos.netcdf.ExtractionResult;
 import org.geotoolkit.sos.netcdf.ExtractionResult.ProcedureTree;
 import org.geotoolkit.sos.xml.SOSMarshallerPool;
@@ -184,7 +185,8 @@ public class XmlObservationStore extends AbstractObservationStore implements Agg
             final ObservationCollection collection = (ObservationCollection)obj;
             for (Observation obs : collection.getMember()) {
                 final AbstractObservation o = (AbstractObservation)obs;
-                final ProcedureTree procedure = new ProcedureTree(o.getProcedure().getHref(), "timeseries", "Component");
+                final Process proc          =  o.getProcedure();
+                final ProcedureTree procedure = new ProcedureTree(proc.getHref(), proc.getName(), proc.getDescription(), "timeseries", "Component");
                 if (sensorIds == null || sensorIds.contains(procedure.id)) {
                     if (!result.procedures.contains(procedure)) {
                         result.procedures.add(procedure);
@@ -208,7 +210,8 @@ public class XmlObservationStore extends AbstractObservationStore implements Agg
 
         } else if (obj instanceof AbstractObservation) {
             final AbstractObservation obs = (AbstractObservation)obj;
-            final ProcedureTree procedure = new ProcedureTree(obs.getProcedure().getHref(), "timeseries", "Component");
+            final Process proc            =  obs.getProcedure();
+            final ProcedureTree procedure = new ProcedureTree(proc.getHref(), proc.getName(), proc.getDescription(), "timeseries", "Component");
             if (sensorIds == null || sensorIds.contains(procedure.id)) {
                 result.observations .add(obs);
                 final PhenomenonProperty phenProp = obs.getPropertyObservedProperty();
@@ -231,7 +234,8 @@ public class XmlObservationStore extends AbstractObservationStore implements Agg
             final ObservationCollection collection = (ObservationCollection)obj;
             for (Observation obs : collection.getMember()) {
                 final AbstractObservation o = (AbstractObservation)obs;
-                final ProcedureTree procedure = new ProcedureTree(o.getProcedure().getHref(), "Component", "timeseries");
+                final Process proc          =  o.getProcedure();
+                final ProcedureTree procedure = new ProcedureTree(proc.getHref(), proc.getName(), proc.getDescription(), "Component", "timeseries");
 
                 if (!result.contains(procedure)) {
                     result.add(procedure);
@@ -248,7 +252,8 @@ public class XmlObservationStore extends AbstractObservationStore implements Agg
 
         } else if (obj instanceof AbstractObservation) {
             final AbstractObservation obs = (AbstractObservation)obj;
-            final ProcedureTree procedure = new ProcedureTree(obs.getProcedure().getHref(), "Component", "timeseries");
+            final Process proc            =  obs.getProcedure();
+            final ProcedureTree procedure = new ProcedureTree(proc.getHref(), proc.getName(), proc.getDescription(), "Component", "timeseries");
 
             final PhenomenonProperty phenProp = obs.getPropertyObservedProperty();
             procedure.fields.addAll(XmlObservationUtils.getPhenomenonsFields(phenProp));

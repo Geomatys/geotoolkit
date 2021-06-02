@@ -81,6 +81,11 @@ public class DefinitionType extends DefinitionBaseType {
         super(id, name, description);
     }
 
+    public DefinitionType(final DefinitionType def)  {
+        super(def);
+        this.remarks = def.remarks;
+    }
+
     /**
      * Gets the value of the remarks property.
      */

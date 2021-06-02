@@ -20,8 +20,6 @@ package org.geotoolkit.sos.netcdf;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -34,6 +32,7 @@ import java.util.logging.Logger;
 import org.apache.sis.measure.Longitude;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.gml.xml.AbstractGeometry;
+import org.geotoolkit.observation.xml.Process;
 import org.geotoolkit.sampling.xml.SamplingFeature;
 import org.geotoolkit.sos.MeasureStringBuilder;
 import org.geotoolkit.sos.netcdf.ExtractionResult.ProcedureTree;
@@ -58,8 +57,6 @@ import ucar.nc2.Variable;
 public class NetCDFExtractor {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.sos.netcdf");
-
-    private static final DateFormat FORMATTER = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
     public static ExtractionResult getObservationFromNetCDF(final Path netCDFFile, final String procedureID) throws NetCDFParsingException {
         final NCFieldAnalyze analyze = analyzeResult(netCDFFile, null);
@@ -156,7 +153,7 @@ public class NetCDFExtractor {
                     final int dimension = variable.getDimensions().size();
                     final String dimensionLabel = getDimensionString(variable);
                     final String description = variable.getDescription();
-                    final Field currentField = new Field(name, dimension, dimensionLabel, description);
+                    final Field currentField = new Field(name, name, dimension, dimensionLabel, description);
                     all.add(currentField);
                     analyze.vars.put(name, variable);
 
@@ -219,7 +216,7 @@ public class NetCDFExtractor {
             if (analyze.mainField == null) {
                 for (Field field : all) {
                     // try to find a time field
-                    if ((analyze.featureType == TIMESERIES || analyze.featureType == TRAJECTORY || analyze.featureType == GRID) && field.label.toLowerCase().contains("time")) {
+                    if ((analyze.featureType == TIMESERIES || analyze.featureType == TRAJECTORY || analyze.featureType == GRID) && field.id.toLowerCase().contains("time")) {
                         analyze.mainField = field;
                         analyze.phenfields.remove(field);
                         break;
@@ -249,7 +246,7 @@ public class NetCDFExtractor {
                 if (analyze.featureType != TRAJECTORY && analyze.separatorField == null) {
                     for (Field phenField : analyze.phenfields) {
                         if (phenField.dimension > 1) {
-                            final String separatorDim = phenField.dimensionLabel.replace(analyze.mainField.label, "").trim();
+                            final String separatorDim = phenField.dimensionLabel.replace(analyze.mainField.id, "").trim();
                             final Dimension dim = file.findDimension(separatorDim);
                             if (dim != null) {
                                 analyze.dimensionSeparator = separatorDim;
@@ -334,7 +331,7 @@ public class NetCDFExtractor {
                 lonArray        = analyze.getArrayFromField(analyze.lonField);
             }
 
-            final Variable timeVar  = analyze.vars.get(analyze.mainField.label);
+            final Variable timeVar  = analyze.vars.get(analyze.mainField.id);
             final String timeUnits  = analyze.mainField.unit;
             final Array timeArray   = analyze.file.readArrays(Arrays.asList(timeVar)).get(0);
             final boolean constantT = analyze.mainField.dimension == 1;
@@ -350,7 +347,8 @@ public class NetCDFExtractor {
 
             if (single) {
                 if (acceptedSensorID == null || acceptedSensorID.contains(procedureID)) {
-                    final ProcedureTree compo = new ProcedureTree(procedureID, "Component", "timeseries");
+                    final Process proc =  (Process) OMUtils.buildProcess(procedureID);
+                    final ProcedureTree compo = new ProcedureTree(proc.getHref(), proc.getName(), proc.getDescription(), "Component", "timeseries");
                     results.procedures.add(compo);
 
                     final MeasureStringBuilder sb = new MeasureStringBuilder();
@@ -382,7 +380,7 @@ public class NetCDFExtractor {
                         sb.appendDate(millis);
 
                         for (Field field : analyze.phenfields) {
-                            final Array phenArray = phenArrays.get(field.label);
+                            final Array phenArray = phenArrays.get(field.id);
                             final Double value    = getDoubleValue(phenArray, i, field.fillValue);
                             sb.appendValue(value);
                         }
@@ -391,7 +389,7 @@ public class NetCDFExtractor {
                     results.observations.add(OMUtils.buildObservation(identifier,                    // id
                                                                       sp,                            // foi
                                                                       phenomenon,                    // phenomenon
-                                                                      procedureID,                   // procedure
+                                                                      proc,                          // procedure
                                                                       count,                         // result
                                                                       datarecord,                    // result
                                                                       sb,                            // result
@@ -401,7 +399,8 @@ public class NetCDFExtractor {
                 }
 
             } else {
-                final ProcedureTree system = new ProcedureTree(procedureID, "System", "timeseries");
+                final Process proc =  (Process) OMUtils.buildProcess(procedureID);
+                final ProcedureTree system = new ProcedureTree(proc.getHref(), proc.getName(), proc.getDescription(), "System", "timeseries");
                 results.procedures.add(system);
                 for (int j = 0; j < separators.size(); j++) {
 
@@ -410,7 +409,8 @@ public class NetCDFExtractor {
                     final int count               = getGoodTimeDimension(timeVar, analyze.dimensionSeparator).getLength();
                     final GeoSpatialBound gb      = new GeoSpatialBound();
                     final String currentProcID    = procedureID + '-' + identifier;
-                    final ProcedureTree compo     = new ProcedureTree(currentProcID, "Component", "timeseries");
+                    final Process currentProc     =  (Process) OMUtils.buildProcess(currentProcID);
+                    final ProcedureTree compo     = new ProcedureTree(currentProc.getHref(), currentProc.getName(), currentProc.getDescription(), "Component", "timeseries");
 
                     if (acceptedSensorID == null || acceptedSensorID.contains(currentProcID)) {
 
@@ -437,7 +437,7 @@ public class NetCDFExtractor {
                             gb.addDate(millis);
                             sb.appendDate(millis);
                             for (Field field : analyze.phenfields) {
-                                final Array phenArray   = phenArrays.get(field.label);
+                                final Array phenArray   = phenArrays.get(field.id);
                                 final boolean mainFirst = field.mainVariableFirst;
                                 final Double value      = getDoubleValue(mainFirst, phenArray, i, j, field.fillValue);
                                 sb.appendValue(value);
@@ -453,7 +453,7 @@ public class NetCDFExtractor {
                         results.observations.add(OMUtils.buildObservation(obsid,                         // id
                                                                           sp,                            // foi
                                                                           phenomenon,                    // phenomenon
-                                                                          currentProcID,                 // procedure
+                                                                          currentProc,                   // procedure
                                                                           count,                         // result
                                                                           datarecord,                    // result
                                                                           sb,                            // result
@@ -491,7 +491,7 @@ public class NetCDFExtractor {
                 lonArray        = analyze.getArrayFromField(analyze.lonField);
             }
 
-            final Variable timeVar  = analyze.vars.get(analyze.mainField.label);
+            final Variable timeVar  = analyze.vars.get(analyze.mainField.id);
             final String timeUnits  = analyze.mainField.unit;
             final Array timeArray   = analyze.file.readArrays(Arrays.asList(timeVar)).get(0);
             final boolean constantT = analyze.mainField.dimension == 1;
@@ -501,7 +501,8 @@ public class NetCDFExtractor {
 
             if (single) {
                 if (acceptedSensorID == null || acceptedSensorID.contains(procedureID)) {
-                    final ProcedureTree compo = new ProcedureTree(procedureID, "Component", "timeseries", fields);
+                    final Process proc =  (Process) OMUtils.buildProcess(procedureID);
+                    final ProcedureTree compo = new ProcedureTree(proc.getHref(), proc.getName(), proc.getHref(), "Component", "timeseries", fields);
                     results.add(compo);
 
                     final int count               = timeVar.getDimension(0).getLength();
@@ -527,7 +528,8 @@ public class NetCDFExtractor {
                 }
 
             } else {
-                final ProcedureTree system = new ProcedureTree(procedureID, "System", "timeseries", fields);
+                final Process proc =  (Process) OMUtils.buildProcess(procedureID);
+                final ProcedureTree system = new ProcedureTree(proc.getHref(), proc.getName(), proc.getHref(), "System", "timeseries", fields);
                 results.add(system);
                 for (int j = 0; j < separators.size(); j++) {
 
@@ -535,7 +537,8 @@ public class NetCDFExtractor {
                     final int count               = getGoodTimeDimension(timeVar, analyze.dimensionSeparator).getLength();
                     final GeoSpatialBound gb      = new GeoSpatialBound();
                     final String currentProcID    = procedureID + '-' + identifier;
-                    final ProcedureTree compo     = new ProcedureTree(currentProcID, "Component", "timeseries", fields);
+                    final Process currentProc     =  (Process) OMUtils.buildProcess(currentProcID);
+                    final ProcedureTree compo     = new ProcedureTree(currentProc.getHref(), currentProc.getName(), currentProc.getDescription(), "Component", "timeseries", fields);
 
                     if (acceptedSensorID == null || acceptedSensorID.contains(currentProcID)) {
 
@@ -597,7 +600,7 @@ public class NetCDFExtractor {
                 timeArray        = analyze.getArrayFromField(analyze.timeField);
             }
 
-            final Variable zVar     = analyze.vars.get(analyze.mainField.label);
+            final Variable zVar     = analyze.vars.get(analyze.mainField.id);
             final Array zArray      = analyze.file.readArrays(Arrays.asList(zVar)).get(0);
             final boolean constantZ = analyze.mainField.dimension == 1;
             final boolean Zfirst    = analyze.mainField.mainVariableFirst;
@@ -610,8 +613,9 @@ public class NetCDFExtractor {
             results.phenomenons.add(phenomenon);
 
             if (single) {
-                final ProcedureTree compo = new ProcedureTree(procedureID, "profile", "Component");
                 if (acceptedSensorID == null || acceptedSensorID.contains(procedureID)) {
+                    final Process proc =  (Process) OMUtils.buildProcess(procedureID);
+                    final ProcedureTree compo = new ProcedureTree(proc.getHref(), proc.getName(), proc.getDescription(), "profile", "Component");
                     results.procedures.add(compo);
 
                     final MeasureStringBuilder sb = new MeasureStringBuilder();
@@ -648,7 +652,7 @@ public class NetCDFExtractor {
                         sb.appendValue(zLevel);
 
                         for (Field field : analyze.phenfields) {
-                            final Array phenArray = phenArrays.get(field.label);
+                            final Array phenArray = phenArrays.get(field.id);
                             final double value    = getDoubleValue(phenArray, zIndex, field.fillValue);
                             sb.appendValue(value);
                         }
@@ -657,7 +661,7 @@ public class NetCDFExtractor {
                     results.observations.add(OMUtils.buildObservation(identifier,                    // id
                                                                       sp,                            // foi
                                                                       phenomenon,                    // phenomenon
-                                                                      procedureID,                   // procedure
+                                                                      proc,                          // procedure
                                                                       count,                         // result
                                                                       datarecord,                    // result
                                                                       sb,                            // result
@@ -667,7 +671,8 @@ public class NetCDFExtractor {
                 }
 
             } else {
-                final ProcedureTree system = new ProcedureTree(procedureID, "profile", "System");
+                final Process proc =  (Process) OMUtils.buildProcess(procedureID);
+                final ProcedureTree system = new ProcedureTree(proc.getHref(), proc.getName(), proc.getDescription(), "profile", "System");
                 results.procedures.add(system);
 
                 for (int profileIndex = 0; profileIndex < separators.size(); profileIndex++) {
@@ -676,7 +681,8 @@ public class NetCDFExtractor {
                     final int count            = zVar.getDimension(0).getLength();
                     final GeoSpatialBound gb   = new GeoSpatialBound();
                     final String currentProcID = procedureID + '-' + identifier;
-                    final ProcedureTree compo  = new ProcedureTree(currentProcID, "profile", "Component");
+                    final Process currentProc  =  (Process) OMUtils.buildProcess(currentProcID);
+                    final ProcedureTree compo  = new ProcedureTree(currentProc.getHref(), currentProc.getName(), currentProc.getDescription(), "profile", "Component");
 
                     if (acceptedSensorID == null || acceptedSensorID.contains(currentProcID)) {
                         //read geometry (assume point)
@@ -709,7 +715,7 @@ public class NetCDFExtractor {
                             sb.appendValue(zLevel);
 
                             for (Field field : analyze.phenfields) {
-                                final Array phenArray   = phenArrays.get(field.label);
+                                final Array phenArray   = phenArrays.get(field.id);
                                 final boolean mainFirst = field.mainVariableFirst;
                                 final double value      = getDoubleValue(mainFirst, phenArray, zIndex, profileIndex, field.fillValue);
                                 sb.appendValue(value);
@@ -723,7 +729,7 @@ public class NetCDFExtractor {
                         results.observations.add(OMUtils.buildObservation(obsid,                         // id
                                                                           sp,                            // foi
                                                                           phenomenon,                    // phenomenon
-                                                                          currentProcID,                 // procedure
+                                                                          currentProc,                   // procedure
                                                                           count,                         // result
                                                                           datarecord,                    // result
                                                                           sb,                            // result
@@ -769,8 +775,9 @@ public class NetCDFExtractor {
             final Set<String> fields = analyze.getPhenomenonArrayMap().keySet();
 
             if (single) {
-                final ProcedureTree compo = new ProcedureTree(procedureID, "Component", "profile", fields);
                 if (acceptedSensorID == null || acceptedSensorID.contains(procedureID)) {
+                    final Process proc =  (Process) OMUtils.buildProcess(procedureID);
+                    final ProcedureTree compo = new ProcedureTree(proc.getHref(), proc.getName(), proc.getDescription(), "Component", "profile", fields);
                     results.add(compo);
 
                     final GeoSpatialBound gb      = new GeoSpatialBound();
@@ -793,7 +800,8 @@ public class NetCDFExtractor {
                 }
 
             } else {
-                final ProcedureTree system = new ProcedureTree(procedureID, "System", "profile", fields);
+                final Process proc =  (Process) OMUtils.buildProcess(procedureID);
+                final ProcedureTree system = new ProcedureTree(proc.getHref(), proc.getName(), proc.getDescription(), "System", "profile", fields);
                 results.add(system);
 
                 for (int profileIndex = 0; profileIndex < separators.size(); profileIndex++) {
@@ -801,7 +809,8 @@ public class NetCDFExtractor {
                     final String identifier    = separators.get(profileIndex);
                     final GeoSpatialBound gb   = new GeoSpatialBound();
                     final String currentProcID = procedureID + '-' + identifier;
-                    final ProcedureTree compo  = new ProcedureTree(currentProcID, "Component", "profile", fields);
+                    final Process currentProc  =  (Process) OMUtils.buildProcess(currentProcID);
+                    final ProcedureTree compo  = new ProcedureTree(currentProc.getHref(), currentProc.getName(), currentProc.getDescription(), "Component", "profile", fields);
 
                     if (acceptedSensorID == null || acceptedSensorID.contains(currentProcID)) {
                         if (analyze.hasSpatial()) {
@@ -852,7 +861,7 @@ public class NetCDFExtractor {
                 lonArray        = analyze.getArrayFromField(analyze.lonField);
             }
 
-            final Variable timeVar  = analyze.vars.get(analyze.mainField.label);
+            final Variable timeVar  = analyze.vars.get(analyze.mainField.id);
             final String timeUnits  = analyze.mainField.unit;
             final Array timeArray   = analyze.file.readArrays(Arrays.asList(timeVar)).get(0);
             final boolean constantT = analyze.mainField.dimension == 1;
@@ -867,8 +876,9 @@ public class NetCDFExtractor {
             results.phenomenons.add(phenomenon);
 
             if (single) {
-                final ProcedureTree compo = new ProcedureTree(procedureID, "trajectory", "Component");
                 if (acceptedSensorID == null || acceptedSensorID.contains(procedureID)) {
+                    final Process proc =  (Process) OMUtils.buildProcess(procedureID);
+                    final ProcedureTree compo = new ProcedureTree(proc.getHref(), proc.getName(), proc.getDescription(), "trajectory", "Component");
                     results.procedures.add(compo);
 
                     final MeasureStringBuilder sb = new MeasureStringBuilder();
@@ -904,7 +914,7 @@ public class NetCDFExtractor {
                         }
 
                         for (Field field : analyze.phenfields) {
-                            final Array phenArray = phenArrays.get(field.label);
+                            final Array phenArray = phenArrays.get(field.id);
                             final Double value    = getDoubleValue(phenArray, i, field.fillValue);
                             sb.appendValue(value);
                         }
@@ -918,7 +928,7 @@ public class NetCDFExtractor {
                     results.observations.add(OMUtils.buildObservation("obs-" + identifier,           // id
                                                                       sp,                            // foi
                                                                       phenomenon,                    // phenomenon
-                                                                      procedureID,                   // procedure
+                                                                      proc,                          // procedure
                                                                       count,                         // result
                                                                       datarecord,                    // result
                                                                       sb,                            // result
@@ -928,7 +938,8 @@ public class NetCDFExtractor {
                 }
 
             } else {
-                final ProcedureTree system = new ProcedureTree(procedureID, "trajectory", "System");
+                final Process proc =  (Process) OMUtils.buildProcess(procedureID);
+                final ProcedureTree system = new ProcedureTree(proc.getHref(), proc.getName(), proc.getDescription(), "trajectory", "System");
                 results.procedures.add(system);
 
                 for (int j = 0; j < separators.size(); j++) {
@@ -938,7 +949,8 @@ public class NetCDFExtractor {
                     int count                     = timeVar.getDimension(0).getLength();
                     final GeoSpatialBound gb      = new GeoSpatialBound();
                     final String currentProcID    = procedureID + '-' + identifier;
-                    final ProcedureTree compo     = new ProcedureTree(currentProcID, "trajectory", "Component");
+                    final Process currentProc      =  (Process) OMUtils.buildProcess(currentProcID);
+                    final ProcedureTree compo     = new ProcedureTree(currentProc.getHref(), currentProc.getName(), currentProc.getDescription(), "trajectory", "Component");
 
                     if (acceptedSensorID == null || acceptedSensorID.contains(currentProcID)) {
                         final List<DirectPosition> positions = new ArrayList<>();
@@ -968,7 +980,7 @@ public class NetCDFExtractor {
                             }
 
                             for (Field field : analyze.phenfields) {
-                                final Array phenArray   = phenArrays.get(field.label);
+                                final Array phenArray   = phenArrays.get(field.id);
                                 final boolean mainFirst = field.mainVariableFirst;
                                 final Double value      = getDoubleValue(mainFirst, phenArray, i, j, field.fillValue);
                                 sb.appendValue(value);
@@ -987,7 +999,7 @@ public class NetCDFExtractor {
                         results.observations.add(OMUtils.buildObservation(obsid,                         // id
                                                                           sp,                            // foi
                                                                           phenomenon,                    // phenomenon
-                                                                          currentProcID,                 // procedure
+                                                                          currentProc,                   // procedure
                                                                           count,                         // result
                                                                           datarecord,                    // result
                                                                           sb,                            // result
@@ -1025,7 +1037,7 @@ public class NetCDFExtractor {
                 lonArray        = analyze.getArrayFromField(analyze.lonField);
             }
 
-            final Variable timeVar  = analyze.vars.get(analyze.mainField.label);
+            final Variable timeVar  = analyze.vars.get(analyze.mainField.id);
             final String timeUnits  = analyze.mainField.unit;
             final Array timeArray   = analyze.file.readArrays(Arrays.asList(timeVar)).get(0);
             final boolean constantT = analyze.mainField.dimension == 1;
@@ -1034,8 +1046,9 @@ public class NetCDFExtractor {
             final Set<String> fields = analyze.getPhenomenonArrayMap().keySet();
 
             if (single) {
-                final ProcedureTree compo = new ProcedureTree(procedureID, "Component", "trajectory", fields);
                 if (acceptedSensorID == null || acceptedSensorID.contains(procedureID)) {
+                    final Process proc =  (Process) OMUtils.buildProcess(procedureID);
+                    final ProcedureTree compo = new ProcedureTree(proc.getHref(), proc.getName(), proc.getDescription(), "Component", "trajectory", fields);
                     results.add(compo);
 
                     final int count               = timeVar.getDimension(0).getLength();
@@ -1061,7 +1074,8 @@ public class NetCDFExtractor {
                 }
 
             } else {
-                final ProcedureTree system = new ProcedureTree(procedureID, "System", "trajectory", fields);
+                final Process proc =  (Process) OMUtils.buildProcess(procedureID);
+                final ProcedureTree system = new ProcedureTree(proc.getHref(), proc.getName(), proc.getDescription(), "System", "trajectory", fields);
                 results.add(system);
 
                 for (int j = 0; j < separators.size(); j++) {
@@ -1070,7 +1084,8 @@ public class NetCDFExtractor {
                     int count                     = timeVar.getDimension(0).getLength();
                     final GeoSpatialBound gb      = new GeoSpatialBound();
                     final String currentProcID    = procedureID + '-' + identifier;
-                    final ProcedureTree compo     = new ProcedureTree(currentProcID, "Component", "trajectory", fields);
+                    final Process currentProc      =  (Process) OMUtils.buildProcess(currentProcID);
+                    final ProcedureTree compo     = new ProcedureTree(currentProc.getHref(), currentProc.getName(), currentProc.getDescription(), "Component", "trajectory", fields);
 
                     if (acceptedSensorID == null || acceptedSensorID.contains(currentProcID)) {
 
@@ -1106,8 +1121,9 @@ public class NetCDFExtractor {
 
     private static ExtractionResult parseDataBlockGrid(final NCFieldAnalyze analyze, final String procedureID, final List<String> acceptedSensorID, Set<org.opengis.observation.Phenomenon> phenomenons) throws NetCDFParsingException {
         final ExtractionResult results = new ExtractionResult();
-        final ProcedureTree compo = new ProcedureTree(procedureID, "grid", "Component");
         if (acceptedSensorID == null || acceptedSensorID.contains(procedureID)) {
+            final Process proc =  (Process) OMUtils.buildProcess(procedureID);
+            final ProcedureTree compo = new ProcedureTree(proc.getHref(), proc.getName(), proc.getDescription(), "grid", "Component");
             results.procedures.add(compo);
 
             if (analyze.mainField == null) {
@@ -1118,12 +1134,12 @@ public class NetCDFExtractor {
 
             try {
 
-                final Variable latVar = analyze.vars.get(analyze.latField.label);
-                final Variable lonVar = analyze.vars.get(analyze.lonField.label);
+                final Variable latVar = analyze.vars.get(analyze.latField.id);
+                final Variable lonVar = analyze.vars.get(analyze.lonField.id);
                 final Array latArray  = analyze.file.readArrays(Arrays.asList(latVar)).get(0);
                 final Array lonArray  = analyze.file.readArrays(Arrays.asList(lonVar)).get(0);
 
-                final Variable timeVar  = analyze.vars.get(analyze.mainField.label);
+                final Variable timeVar  = analyze.vars.get(analyze.mainField.id);
                 final String timeUnits  = analyze.mainField.unit;
                 final Array timeArray   = analyze.file.readArrays(Arrays.asList(timeVar)).get(0);
 
@@ -1166,7 +1182,7 @@ public class NetCDFExtractor {
                             sb.appendDate(millis);
 
                             for (Field field : analyze.phenfields) {
-                                final Array phenArray   = phenArrays.get(field.label);
+                                final Array phenArray   = phenArrays.get(field.id);
                                 final Double value      = getDoubleValue(phenArray, i, latIndex, lonIndex, field.fillValue);
                                 sb.appendValue(value);
                             }
@@ -1176,7 +1192,7 @@ public class NetCDFExtractor {
                         results.observations.add(OMUtils.buildObservation(identifier,                    // id
                                                                           sp,                            // foi
                                                                           phenomenon,                    // phenomenon
-                                                                          procedureID,                   // procedure
+                                                                          proc,                          // procedure
                                                                           count,                         // result
                                                                           datarecord,                    // result
                                                                           sb,                            // result
@@ -1199,8 +1215,9 @@ public class NetCDFExtractor {
 
     private static List<ProcedureTree> getProcedureGrid(final NCFieldAnalyze analyze, final String procedureID, final List<String> acceptedSensorID) throws NetCDFParsingException {
         final List<ProcedureTree> results = new ArrayList<>();
-        final ProcedureTree compo = new ProcedureTree(procedureID, "grid", "Component");
         if (acceptedSensorID == null || acceptedSensorID.contains(procedureID)) {
+            final Process proc =  (Process) OMUtils.buildProcess(procedureID);
+            final ProcedureTree compo = new ProcedureTree(proc.getHref(), proc.getName(), proc.getDescription(), "grid", "Component");
             results.add(compo);
 
             if (analyze.mainField == null) {
@@ -1215,12 +1232,12 @@ public class NetCDFExtractor {
                     return results;
                 }
 
-                final Variable latVar = analyze.vars.get(analyze.latField.label);
-                final Variable lonVar = analyze.vars.get(analyze.lonField.label);
+                final Variable latVar = analyze.vars.get(analyze.latField.id);
+                final Variable lonVar = analyze.vars.get(analyze.lonField.id);
                 final Array latArray  = analyze.file.readArrays(Arrays.asList(latVar)).get(0);
                 final Array lonArray  = analyze.file.readArrays(Arrays.asList(lonVar)).get(0);
 
-                final Variable timeVar  = analyze.vars.get(analyze.mainField.label);
+                final Variable timeVar  = analyze.vars.get(analyze.mainField.id);
                 final String timeUnits  = analyze.mainField.unit;
                 final Array timeArray   = analyze.file.readArrays(Arrays.asList(timeVar)).get(0);
 
@@ -1266,7 +1283,7 @@ public class NetCDFExtractor {
     private static List<String> parseSeparatorValues(final NCFieldAnalyze analyze) throws IOException {
         final List<String> separators = new ArrayList<>();
         if (analyze.separatorField != null) {
-            final Variable separatorVar = analyze.vars.get(analyze.separatorField.label);
+            final Variable separatorVar = analyze.vars.get(analyze.separatorField.id);
             final Array array = analyze.getArrayFromField(analyze.separatorField);
             if (array instanceof ArrayChar.D2) {
                 final ArrayChar.D2 separatorArray = (ArrayChar.D2) array;

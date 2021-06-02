@@ -19,16 +19,16 @@ package org.geotoolkit.swes.xml;
 import java.util.List;
 import org.geotoolkit.swe.xml.PhenomenonProperty;
 import org.opengis.observation.Observation;
-
+import org.opengis.observation.Process;
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
 public interface ObservationTemplate {
 
-    String getProcedure();
+    Process getProcedure();
 
-    void setProcedure(final String process);
+    void setProcedure(final Process process);
 
     void setName(final String name);
 

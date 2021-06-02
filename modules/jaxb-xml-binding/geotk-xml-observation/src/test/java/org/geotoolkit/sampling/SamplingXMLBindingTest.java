@@ -186,6 +186,7 @@ public class SamplingXMLBindingTest extends org.geotoolkit.test.TestBase {
         final SamplingPointType expResult = new SamplingPointType("samplingID-007", "urn:sampling:test:007", "a sampling Test", new FeaturePropertyType(""), location);
 
         assertEquals(expResult.getPosition(), result.getPosition());
+        assertEquals(expResult.getName(), result.getName());
         assertEquals(expResult, result);
 
          xml =             "<gml:FeatureCollection xmlns:sampling=\"http://www.opengis.net/sampling/1.0\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:gml=\"http://www.opengis.net/gml\">" + '\n' +
