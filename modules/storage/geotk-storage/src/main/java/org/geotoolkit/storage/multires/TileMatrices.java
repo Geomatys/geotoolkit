@@ -535,6 +535,29 @@ public final class TileMatrices extends Static {
         return depth;
     }
 
+    /**
+     * Create tile grid geometry, with it's extent relative to the tile matrix corner.
+     *
+     * @param tileMatrix
+     * @param location
+     * @return
+     */
+    public static GridGeometry getAbsoluteTileGridGeometry2D(TileMatrix tileMatrix, Point location) {
+        final SingleCRS crs2d = CRS.getHorizontalComponent(tileMatrix.getUpperLeftCorner().getCoordinateReferenceSystem());
+        final Dimension tileSize = tileMatrix.getTileSize();
+        final AffineTransform2D matrixGridToCrs = getTileGridToCRS2D(tileMatrix, new Point(0,0), PixelInCell.CELL_CENTER);
+        final long[] low = new long[]{
+            (long) location.x * tileSize.width,
+            (long) location.y * tileSize.height,
+        };
+        final long[] high = new long[]{
+            low[0] + tileSize.width,
+            low[1] + tileSize.height
+        };
+        final GridExtent tileExtent = new GridExtent(null, low, high, false);
+        return new GridGeometry(tileExtent, PixelInCell.CELL_CENTER, matrixGridToCrs, crs2d);
+    }
+
     public static GridGeometry getTileGridGeometry2D(TileMatrix tileMatrix, Point location) {
         final SingleCRS crs2d = CRS.getHorizontalComponent(tileMatrix.getUpperLeftCorner().getCoordinateReferenceSystem());
         final Dimension tileSize = tileMatrix.getTileSize();
