@@ -211,8 +211,14 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         final InterpolationCase interpolation = InterpolationCase.BILINEAR;
 
         final GridGeometry refGG = ref.getGridGeometry();
-        // directly derive data geometry to short any further operation if requested area does not intersect data.
-        final GridGeometry baseGG = refGG.derive().subgrid(canvasGrid).build();
+        final GridGeometry baseGG;
+        // Subgrid currently does not work for incomplete grid geometry. this will probably be fixed in a future version of SIS
+        if (!refGG.isDefined(GridGeometry.EXTENT)) {
+            baseGG = refGG;
+        } else {
+            // directly derive data geometry to short any further operation if requested area does not intersect data.
+            baseGG = refGG.derive().subgrid(canvasGrid).build();
+        }
         final GridGeometry slice = extractSlice(baseGG, canvasGrid, computeMargin2D(interpolation), true);
 
         GridCoverage coverage = ref.read(slice, (sourceBands == null || sourceBands.length < 1)? null : sourceBands);
