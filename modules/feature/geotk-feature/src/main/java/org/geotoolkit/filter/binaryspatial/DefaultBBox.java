@@ -66,7 +66,6 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<PropertyName,Defa
     protected transient PreparedGeometry boundingGeometry;
     protected final org.locationtech.jts.geom.Envelope boundingEnv;
     protected final CoordinateReferenceSystem crs;
-    protected final int srid;
 
     public DefaultBBox(final PropertyName property, final DefaultLiteral<BoundingBox> bbox) {
         super(nonNullPropertyName(property),bbox);
@@ -75,11 +74,9 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<PropertyName,Defa
         final CoordinateReferenceSystem crsFilter = bbox.getValue().getCoordinateReferenceSystem();
         if(crsFilter != null){
             this.crs = crsFilter;
-            this.srid = SRIDGenerator.toSRID(crs, Version.V1);
         }else{
             // In CQL if crs is not specified, it is EPSG:4326
             this.crs = CommonCRS.WGS84.normalizedGeographic();
-            this.srid = 4326;
         }
     }
 

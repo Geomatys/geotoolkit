@@ -111,7 +111,11 @@ public class CoverageToVectorProcess extends AbstractProcess {
 
         final RenderedImage image = coverage.render(null);
         final RectIter iter = RectIterFactory.create(image, null);
-        final MathTransform gridToCRS = coverage.getGridGeometry().getGridToCRS(PixelInCell.CELL_CENTER);
+        /*
+         This algorithm create polygons which follow the contour of each pixel.
+         The 0,0 coordinate will match the pixel corner.
+        */
+        final MathTransform gridToCRS = coverage.getGridGeometry().getGridToCRS(PixelInCell.CELL_CORNER);
         final Point gridPosition = new Point(0, 0);
 
         buffers = new Boundary[2][image.getWidth()];

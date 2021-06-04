@@ -19,6 +19,7 @@ package org.geotoolkit.observation.xml;
 import java.util.Date;
 import org.geotoolkit.gml.xml.FeatureProperty;
 import org.geotoolkit.swe.xml.PhenomenonProperty;
+import org.opengis.metadata.Identifier;
 import org.opengis.observation.Observation;
 import org.opengis.temporal.Period;
 import org.opengis.temporal.TemporalGeometricPrimitive;
@@ -36,7 +37,7 @@ public interface AbstractObservation extends Observation {
 
     void setId(final String id);
 
-    void setName(final String name);
+    void setName(final Identifier name);
 
     void setProcedure(final String procedureID);
 

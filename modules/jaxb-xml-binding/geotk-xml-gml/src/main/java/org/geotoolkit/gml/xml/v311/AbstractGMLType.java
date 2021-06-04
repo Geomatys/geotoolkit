@@ -24,6 +24,7 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlTransient;
@@ -94,7 +95,8 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
     //protected List<MetaDataPropertyType> metaDataProperty;
     private String description;
     private ReferenceType descriptionReference;
-    private String name;
+    @XmlTransient
+    protected String name;
     @XmlAttribute(namespace = "http://www.opengis.net/gml", required = true)
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
@@ -186,6 +188,7 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
      *
      */
     @Override
+    @XmlElement
     public Identifier getName() {
         if (name != null) {
             return new DefaultIdentifier(name);
@@ -197,8 +200,12 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
      *
      */
     @Override
-    public void setName(final String name) {
-        this.name = name;
+    public void setName(final Identifier name) {
+        if (name != null) {
+            this.name = name.getCode();
+        } else {
+            this.name = null;
+        }
     }
 
     /**

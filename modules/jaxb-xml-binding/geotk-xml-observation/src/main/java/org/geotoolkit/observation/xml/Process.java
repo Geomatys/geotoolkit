@@ -23,4 +23,8 @@ package org.geotoolkit.observation.xml;
 public interface Process extends org.opengis.observation.Process {
 
     String getHref();
+
+    String getName();
+
+    String getDescription();
 }

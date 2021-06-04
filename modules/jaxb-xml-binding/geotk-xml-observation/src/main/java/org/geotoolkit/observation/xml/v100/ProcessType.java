@@ -20,6 +20,7 @@ import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.internal.sql.Entry;
 import org.geotoolkit.observation.xml.Process;
@@ -44,6 +45,11 @@ public class ProcessType implements Process, Entry {
     @XmlAttribute(required= true, namespace = "http://www.w3.org/1999/xlink")
     private String href;
 
+    @XmlTransient
+    private String name;
+    @XmlTransient
+    private String description;
+
     /**
      * Constructeur vide utilisé par JAXB.
      */
@@ -52,11 +58,24 @@ public class ProcessType implements Process, Entry {
     /**
      * Construit une nouvelle procédure du nom spécifié.
      *
-     * @param name Le nom de la procédure.
+     * @param href Le nom de la procédure.
      */
-    public ProcessType(final String name) {
-        this.href = name;
+    public ProcessType(final String href) {
+        this.href = href;
+    }
 
+    public ProcessType(final String href, final String name, final String description) {
+        this.href = href;
+        this.name = name;
+        this.description = description;
+    }
+
+    public ProcessType(final Process proc) {
+        if (proc != null) {
+            this.href = proc.getHref();
+            this.name = proc.getName();
+            this.description = proc.getDescription();
+        }
     }
 
     /**
@@ -70,13 +89,36 @@ public class ProcessType implements Process, Entry {
     /**
      * Retourne la reference du capteur.
      */
+    @Override
     public String getName() {
-        return href;
+        return name;
     }
 
     @Override
     public String getIdentifier() {
         return href;
+    }
+
+    /**
+     * @param name the name to set
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * @return the description
+     */
+    @Override
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * @param description the description to set
+     */
+    public void setDescription(String description) {
+        this.description = description;
     }
 
      /**
@@ -89,7 +131,9 @@ public class ProcessType implements Process, Entry {
         }
         if (object instanceof ProcessType) {
             final ProcessType that = (ProcessType) object;
-            return Objects.equals(this.href, that.href);
+            return Objects.equals(this.href, that.href) &&
+                   Objects.equals(this.name, that.name) &&
+                   Objects.equals(this.description, that.description);
         }
         return false;
     }
@@ -98,6 +142,8 @@ public class ProcessType implements Process, Entry {
     public int hashCode() {
         int hash = 7;
         hash = 47 * hash + (this.href != null ? this.href.hashCode() : 0);
+        hash = 47 * hash + (this.name != null ? this.name.hashCode() : 0);
+        hash = 47 * hash + (this.description != null ? this.description.hashCode() : 0);
         return hash;
     }
      /**
@@ -105,6 +151,17 @@ public class ProcessType implements Process, Entry {
      */
     @Override
     public String toString() {
-        return  " href=" + this.getHref();
+        final StringBuilder s = new StringBuilder("[ProcessType]");
+        if (href != null) {
+            s.append("href=").append(href).append('\n');
+        }
+
+        if (name != null) {
+            s.append("name=").append(name).append('\n');
+        }
+        if (description != null) {
+            s.append("description=").append(description).append('\n');
+        }
+        return s.toString();
     }
 }

@@ -236,7 +236,7 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
         final TileMatrix[] mosaics = pyramid.getTileMatrices().toArray(new TileMatrix[0]);
         Arrays.sort(mosaics, (TileMatrix o1, TileMatrix o2) -> Double.compare(o1.getScale(), o2.getScale()));
 
-        final long total = countTiles(pyramid, env, resolutions);
+        final long total = TileMatrices.countTiles(pyramid, env, resolutions);
         final double totalAsDouble = total;
         final AtomicLong al = new AtomicLong();
         final Supplier<Float> progress = () -> (float) (al.get() / totalAsDouble *100.0);

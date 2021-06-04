@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 import java.util.function.LongFunction;
-import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.LongStream;
@@ -111,7 +110,7 @@ public abstract class AbstractTileGenerator implements TileGenerator {
             }
         }
 
-        final long total = countTiles(pyramid, env, resolutions);
+        final long total = TileMatrices.countTiles(pyramid, env, resolutions);
         final AtomicLong al = new AtomicLong();
 
         //generate mosaic in resolution order
@@ -220,28 +219,6 @@ public abstract class AbstractTileGenerator implements TileGenerator {
 //            }
 //        }
 //    }
-
-    protected long countTiles(TileMatrixSet pyramid, Envelope env, NumberRange resolutions) throws DataStoreException {
-
-        long count = 0;
-        for (TileMatrix mosaic : pyramid.getTileMatrices()) {
-            final TileMatrix m = mosaic;
-            if (resolutions == null || resolutions.containsAny(mosaic.getScale())) {
-                if (env == null) {
-                    count += ((long) m.getGridSize().width) * ((long) m.getGridSize().height);
-                } else {
-                    final Rectangle rect;
-                    try {
-                        rect = TileMatrices.getTilesInEnvelope(m, env);
-                    } catch (NoSuchDataException ex) {
-                        continue;
-                    }
-                    count += ((long) rect.width) * ((long) rect.height);
-                }
-            }
-        }
-        return count;
-    }
 
     protected abstract boolean isEmpty(Tile tile) throws DataStoreException;
 

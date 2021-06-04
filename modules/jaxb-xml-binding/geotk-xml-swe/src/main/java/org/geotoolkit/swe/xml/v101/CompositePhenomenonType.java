@@ -56,13 +56,22 @@ public class CompositePhenomenonType extends CompoundPhenomenonType implements C
     /**
      * Build a new composite phenomenon.
      */
-    public CompositePhenomenonType(final String id, final String name, final String description,
+    public CompositePhenomenonType(final String id, final String name, final String definition, final String description,
             final PhenomenonType base, final Collection<PhenomenonType> component) {
-        super(id, name, description, component.size());
+        super(id, name, definition, description, component.size());
         this.base = base;
         this.component = new ArrayList<>();
         for (PhenomenonType pheno: component) {
             this.component.add(new PhenomenonPropertyType(pheno));
+        }
+    }
+
+    public CompositePhenomenonType(final CompositePhenomenonType compo) {
+        super(compo);
+        this.base = new PhenomenonType(base);
+        this.component = new ArrayList<>();
+        for (PhenomenonType pheno: compo.getComponent()) {
+            this.component.add(new PhenomenonPropertyType(new PhenomenonType(pheno)));
         }
     }
 
@@ -116,12 +125,6 @@ public class CompositePhenomenonType extends CompoundPhenomenonType implements C
             component = new ArrayList<>();
         }
         return component;
-    }
-
-    public void update(final String id, final String name, final int Dimension) {
-        this.setId(id);
-        this.setName(name);
-        this.setDimension(Dimension);
     }
 
     /**

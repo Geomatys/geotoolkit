@@ -1,0 +1,14 @@
+# TODO: use mvn release:prepare or any tool wanted to freeze versions on tag, then push the tag.
+# WARNING: before adding a job that push, we have to verify that mvn release is well-done. Specifically, we have to
+# handle buildset/pom.xml update.
+
+deploy:
+  stage: release
+  needs:
+    - build
+  # TODO: remove manual activation once release pipeline is fully migrated from Jenkins to Gitlab
+  when: manual
+  only:
+    - tags
+  script:
+    - mvn package source:jar javadoc:jar deploy -DaltDeploymentRepository=$DEPLOY_SERVER

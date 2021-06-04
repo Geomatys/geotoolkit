@@ -72,11 +72,16 @@ public abstract class CompoundPhenomenonType extends PhenomenonType {
     /**
      * Build a new Compound phenomenon.
      */
-    public CompoundPhenomenonType(final String id, final String name, final String description,
+    public CompoundPhenomenonType(final String id, final String name, final String definition, final String description,
             final int dimension) {
-        super(id, name, description);
+        super(id, name, definition, description);
         this.dimension = dimension;
 
+    }
+
+    public CompoundPhenomenonType(final CompoundPhenomenonType compo) {
+        super(compo);
+        this.dimension = compo.dimension;
     }
 
     /**

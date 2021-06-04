@@ -535,6 +535,29 @@ public final class TileMatrices extends Static {
         return depth;
     }
 
+    /**
+     * Create tile grid geometry, with it's extent relative to the tile matrix corner.
+     *
+     * @param tileMatrix
+     * @param location
+     * @return
+     */
+    public static GridGeometry getAbsoluteTileGridGeometry2D(TileMatrix tileMatrix, Point location) {
+        final SingleCRS crs2d = CRS.getHorizontalComponent(tileMatrix.getUpperLeftCorner().getCoordinateReferenceSystem());
+        final Dimension tileSize = tileMatrix.getTileSize();
+        final AffineTransform2D matrixGridToCrs = getTileGridToCRS2D(tileMatrix, new Point(0,0), PixelInCell.CELL_CENTER);
+        final long[] low = new long[]{
+            (long) location.x * tileSize.width,
+            (long) location.y * tileSize.height,
+        };
+        final long[] high = new long[]{
+            low[0] + tileSize.width,
+            low[1] + tileSize.height
+        };
+        final GridExtent tileExtent = new GridExtent(null, low, high, false);
+        return new GridGeometry(tileExtent, PixelInCell.CELL_CENTER, matrixGridToCrs, crs2d);
+    }
+
     public static GridGeometry getTileGridGeometry2D(TileMatrix tileMatrix, Point location) {
         final SingleCRS crs2d = CRS.getHorizontalComponent(tileMatrix.getUpperLeftCorner().getCoordinateReferenceSystem());
         final Dimension tileSize = tileMatrix.getTileSize();
@@ -573,4 +596,33 @@ public final class TileMatrices extends Static {
         return new GridGeometry(tileExtent, PixelInCell.CELL_CENTER, tileGridToCrs, crs);
     }
 
+    /**
+     * Count the number of tiles in TileMatrixSet.
+     *
+     * @param pyramid
+     * @param env searched envelope, can be null
+     * @param resolutions, searched resolutions, can be null
+     * @return number of tiles.
+     * @throws DataStoreException
+     */
+    public static long countTiles(TileMatrixSet pyramid, Envelope env, NumberRange resolutions) throws DataStoreException {
+
+        long count = 0;
+        for (TileMatrix mosaic : pyramid.getTileMatrices()) {
+            if (resolutions == null || resolutions.containsAny(mosaic.getScale())) {
+                if (env == null) {
+                    count += ((long) mosaic.getGridSize().width) * ((long) mosaic.getGridSize().height);
+                } else {
+                    final Rectangle rect;
+                    try {
+                        rect = TileMatrices.getTilesInEnvelope(mosaic, env);
+                    } catch (NoSuchDataException ex) {
+                        continue;
+                    }
+                    count += ((long) rect.width) * ((long) rect.height);
+                }
+            }
+        }
+        return count;
+    }
 }

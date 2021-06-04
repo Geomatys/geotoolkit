@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.processing.vector.convexhull;
 
+import org.geotoolkit.geometry.jts.JTS;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import java.util.Collections;
@@ -87,7 +88,12 @@ public class ConvexHullProcess extends AbstractProcess {
                 }
             }
         }
-        convexHull.setSRID(SRIDGenerator.toSRID(crs, SRIDGenerator.Version.V1));
+
+        if (crs != null) {
+            JTS.setCRS(convexHull, crs);
+        } else {
+            fireWarningOccurred("Referencing output geometry", Float.NaN, new IllegalStateException("No coordinate reference system available. Output geometry will not have any CRS attached"));
+        }
         return convexHull;
     }
 }

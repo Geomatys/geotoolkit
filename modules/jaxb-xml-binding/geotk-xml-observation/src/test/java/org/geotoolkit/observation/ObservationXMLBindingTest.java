@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.observation;
 
-import java.io.IOException;
 import org.geotoolkit.observation.xml.v100.ObservationType;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -27,7 +26,6 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import javax.xml.parsers.ParserConfigurationException;
 import org.geotoolkit.gml.xml.v311.DirectPositionType;
 import org.geotoolkit.gml.xml.v311.FeaturePropertyType;
 import org.geotoolkit.gml.xml.v311.PointType;
@@ -49,7 +47,6 @@ import org.geotoolkit.swe.xml.v101.TextBlockType;
 import javax.xml.bind.JAXBContext;
 import org.apache.sis.xml.MarshallerPool;
 import org.junit.*;
-import org.xml.sax.SAXException;
 
 import static org.apache.sis.test.MetadataAssert.*;
 
@@ -93,7 +90,7 @@ public class ObservationXMLBindingTest extends org.geotoolkit.test.TestBase {
      * @throws java.lang.Exception
      */
     @Test
-    public void marshallingTest() throws JAXBException, IOException, ParserConfigurationException, SAXException {
+    public void marshallingTest() throws Exception {
 
         DirectPositionType pos = new DirectPositionType("urn:ogc:crs:espg:4326", 2, Arrays.asList(3.2, 6.5));
         PointType location     = new PointType("point-ID", pos);
@@ -103,7 +100,7 @@ public class ObservationXMLBindingTest extends org.geotoolkit.test.TestBase {
         TimePeriodType samplingTime      = new TimePeriodType("t1", "2007-01-01", "2008-09-09");
 
         TextBlockType encoding            = new TextBlockType("encoding-001", ",", "@@", ".");
-        List<AnyScalarPropertyType> fields = new ArrayList<AnyScalarPropertyType>();
+        List<AnyScalarPropertyType> fields = new ArrayList<>();
         AnyScalarPropertyType field        = new AnyScalarPropertyType("text-field-001", new Text("urn:something", "some value"));
         fields.add(field);
         SimpleDataRecordType record       = new SimpleDataRecordType(fields);
@@ -252,7 +249,7 @@ public class ObservationXMLBindingTest extends org.geotoolkit.test.TestBase {
      * @throws java.lang.Exception
      */
     @Test
-    public void UnmarshalingTest() throws JAXBException {
+    public void UnmarshalingTest() throws Exception {
 
         /*
          * Test Unmarshalling observation
@@ -327,7 +324,7 @@ public class ObservationXMLBindingTest extends org.geotoolkit.test.TestBase {
         TimePeriodType samplingTime = new TimePeriodType(null, "2007-01-01", "2008-09-09");
 
         TextBlockType encoding            = new TextBlockType("encoding-001", ",", "@@", ".");
-        List<AnyScalarPropertyType> fields = new ArrayList<AnyScalarPropertyType>();
+        List<AnyScalarPropertyType> fields = new ArrayList<>();
         AnyScalarPropertyType field        = new AnyScalarPropertyType("text-field-001", new Text("urn:something", "some value"));
         fields.add(field);
         SimpleDataRecordType record       = new SimpleDataRecordType(fields);
