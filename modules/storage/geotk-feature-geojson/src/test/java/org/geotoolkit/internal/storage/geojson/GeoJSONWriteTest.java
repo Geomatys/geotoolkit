@@ -38,6 +38,7 @@ import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.storage.geojson.GeoJSONProvider;
 import org.geotoolkit.storage.geojson.GeoJSONStore;
 import org.geotoolkit.storage.geojson.GeoJSONStreamWriter;
+import org.geotoolkit.feature.xml.Link;
 import static org.junit.Assert.*;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -308,6 +309,49 @@ public class GeoJSONWriteTest extends TestCase {
                 "{\"type\":\"Feature\",\"id\":0,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-105.0162,39.5742]},\"properties\":{\"type\":\"feat1\"}}\n" +
                 ",{\"type\":\"Feature\",\"id\":1,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-105.0162,39.5742]},\"properties\":{\"type\":\"feat2\"}}\n" +
                 "]}";
+
+        assertEquals(expected, outputJSON);
+    }
+
+    @Test
+    public void writeCollectionsTest() throws Exception {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        FeatureType validFeatureType = buildGeometryFeatureType("simpleFT", Point.class);
+
+        Point pt = (Point)WKT_READER.read(PROPERTIES.getProperty("point"));
+
+        try (GeoJSONStreamWriter fw = new GeoJSONStreamWriter(baos, validFeatureType, 4)) {
+            Link l = new Link("http://test.com", null, null, null, null, null);
+            List<Link> links = new ArrayList<>(); 
+            links.add(l);
+            fw.writeCollection(links, 10, 5);
+            
+            Feature feature = fw.next();
+            feature.setPropertyValue("type","feat1");
+            feature.setPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString(), pt);
+            fw.write();
+
+            feature = fw.next();
+            feature.setPropertyValue("type","feat2");
+            feature.setPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString(), pt);
+            fw.write();
+
+        }
+        
+
+        String outputJSON = baos.toString("UTF-8");
+        assertNotNull(outputJSON);
+        assertFalse(outputJSON.isEmpty());
+
+        String expected =   "{\n" +
+                            "\"type\":\"FeatureCollection\"\n" +
+                            ",\"numberMatched\":10\n" +
+                            ",\"numberReturned\":5\n" +
+                            ",\"links\":[{\"href\":\"http://test.com\"}]\n" +
+                            ",\"features\":[\n" +
+                            "{\"type\":\"Feature\",\"id\":0,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-105.0162,39.5742]},\"properties\":{\"type\":\"feat1\"}}\n" +
+                            ",{\"type\":\"Feature\",\"id\":1,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-105.0162,39.5742]},\"properties\":{\"type\":\"feat2\"}}\n" +
+                            "]}";
 
         assertEquals(expected, outputJSON);
     }

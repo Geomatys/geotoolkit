@@ -19,8 +19,12 @@ package org.geotoolkit.display2d.container;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
+import org.apache.sis.internal.map.ExceptionPresentation;
 import org.apache.sis.internal.map.Presentation;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.presentation.Grid2DPresentation;
@@ -36,6 +40,8 @@ import org.opengis.referencing.operation.TransformException;
  * @author Johann Sorel (Geomatys)
  */
 public class J2DPainter {
+
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.display2d.container");
 
     public boolean paint(RenderingContext2D renderingContext, Stream<Presentation> presentations, boolean labelsOnTop) throws PortrayalException {
 
@@ -83,6 +89,8 @@ public class J2DPainter {
                 paint(renderingContext, p);
             }
         }
+
+        logIfError(presentation);
     }
 
     public boolean hit(RenderingContext2D renderingContext, final SearchAreaJ2D search, Presentation presentation) {
@@ -100,7 +108,18 @@ public class J2DPainter {
             }
             return false;
         }
+
+        logIfError(presentation);
         return false;
     }
 
+    private static void logIfError(Presentation presentation) {
+        if (presentation instanceof ExceptionPresentation) {
+            ExceptionPresentation exP = (ExceptionPresentation) presentation;
+            Exception ex = exP.getException();
+            if (ex != null) {
+                LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+    }
 }

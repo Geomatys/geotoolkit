@@ -32,6 +32,7 @@ public final class WFSMarshallerPool {
         try {
             INSTANCE = new MarshallerPool(JAXBContext.newInstance(
                       "org.geotoolkit.wfs.xml.v110:"
+                    + "org.geotoolkit.feature.xml:"
                     + "org.geotoolkit.wfs.xml.v200:"
                     + "org.geotoolkit.gml.xml.v311:"
                     + "org.geotoolkit.gml.xml.v321:"

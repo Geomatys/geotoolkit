@@ -36,6 +36,7 @@ import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.Operation;
+import org.geotoolkit.feature.xml.Link;
 
 /**
  * @author Quentin Boileau (Geomatys)
@@ -193,10 +194,19 @@ public final class GeoJSONStreamWriter implements Iterator<Feature>, AutoCloseab
         if (edited == null || edited.equals(lastWritten)) {
             return;
         }
-
         lastWritten = edited;
         try {
             writer.writeFeature(edited);
+            writer.flush();
+        } catch (IOException | IllegalArgumentException e) {
+            throw new BackingStoreException(e.getMessage(), e);
+        }
+    }
+
+    public void writeCollection(List<Link> links, Integer nbMatched, Integer nbReturned) throws BackingStoreException {
+        try {
+            writer.writeNumber(nbMatched, nbReturned);
+            writer.writeLinks(links);
             writer.flush();
         } catch (IOException | IllegalArgumentException e) {
             throw new BackingStoreException(e.getMessage(), e);

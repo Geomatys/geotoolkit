@@ -974,6 +974,13 @@
         <enabled>false</enabled>
       </snapshots>
     </repository>
+    <!-- this repository is retrieved transitively with the wrong protocol, 
+    as maven does not follow redirection we declare it here-->
+    <repository>
+      <id>jaspersoft</id>
+      <name>jaspersoft repository</name>
+      <url>https://jaspersoft.jfrog.io/jaspersoft/third-party-ce-artifacts</url>
+    </repository>
   </repositories>
 
   <pluginRepositories>

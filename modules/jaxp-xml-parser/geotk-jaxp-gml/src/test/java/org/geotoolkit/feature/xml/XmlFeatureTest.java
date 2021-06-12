@@ -583,6 +583,19 @@ public class XmlFeatureTest extends org.geotoolkit.test.TestBase {
         assertEquals(featureComplex, result);
     }
 
+    @Test
+    public void testWriteSimpleFeatureSetCollection() throws JAXBException, IOException, XMLStreamException,
+            DataStoreException, ParserConfigurationException, SAXException{
+        final StringWriter temp = new StringWriter();
+        final XmlFeatureWriter writer = new JAXPStreamFeatureWriter("3.2.1", null, null);
+        final FeatureSetCollection collection = new FeatureSetCollection(collectionSimple, null, 3, 3);
+        writer.write(collection, temp);
+        writer.dispose();
+
+        String s = temp.toString();
+        DomCompare.compare(IOUtilities.toString(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/FeatureSetCollectionSimple.xml")), s);
+    }
+
     protected static String getStringResponse(URLConnection conec) throws UnsupportedEncodingException, IOException {
         final StringWriter sw     = new StringWriter();
         final BufferedReader in   = new BufferedReader(new InputStreamReader(conec.getInputStream(), "UTF-8"));
