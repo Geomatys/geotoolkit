@@ -40,6 +40,7 @@ import javax.measure.quantity.Length;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelope2D;
+import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.internal.referencing.provider.Affine;
@@ -363,7 +364,35 @@ public class RenderingContext2D implements RenderingContext{
         wraps = null;
         try {
             //test if wrap is possible
-            final DirectPosition[] wrapPoints = ReferencingUtilities.findWrapAround(objectiveCRS2D);
+            DirectPosition[] wrapPoints = ReferencingUtilities.findWrapAround(objectiveCRS2D);
+
+//            /*
+//            Check if current envelope is within the wrap range
+//            if so disable wrapping.
+//            */
+//            if (wrapPoints != null) {
+//
+//                //east-west wrapaound axis index, this is the none zero axis
+//                final int horizontalIdx = (wrapPoints[0].getOrdinate(1) != 0 || wrapPoints[1].getOrdinate(1) != 0) ? 1 : 0;
+//                final double wrapMin = wrapPoints[0].getOrdinate(horizontalIdx);
+//                final double wrapMax = wrapPoints[1].getOrdinate(horizontalIdx);
+//
+//                final Envelope envelope = gridGeometry2d.getEnvelope();
+//                final double[] lower = envelope.getLowerCorner().getCoordinate();
+//                final double[] upper = envelope.getUpperCorner().getCoordinate();
+//
+//                if (lower[horizontalIdx] > upper[horizontalIdx]) {
+//                    //crossing anti-meridian, reversed envelope
+//                } else if (
+//                        (lower[horizontalIdx] < wrapMin && upper[horizontalIdx] > wrapMin) ||
+//                        (lower[horizontalIdx] < wrapMax && upper[horizontalIdx] > wrapMax)
+//                        ) {
+//                    //crossing anti-meridian by extension, can happen when envelope are build by hand
+//                } else {
+//                    //not crossing
+//                    wrapPoints = null;
+//                }
+//            }
 
             if(wrapPoints != null){
                 //search the multiples transformations
@@ -457,13 +486,14 @@ public class RenderingContext2D implements RenderingContext{
                 }
 
                 //build the wrap rectangle
+                //Envelope domainOfValidity = CRS.getDomainOfValidity(objectiveCRS2D);
                 final GeneralEnvelope env = new GeneralEnvelope(objectiveCRS2D);
                 env.add(wrapPoints[0]);
                 env.add(wrapPoints[1]);
                 if(env.getSpan(0) == 0){
                     final double min = canvasObjectiveBBox2D.getMinimum(0);
                     final double max = canvasObjectiveBBox2D.getMaximum(0);
-                    env.setRange(0, min, max);
+                    env.setRange(0, -Double.MAX_VALUE, Double.MAX_VALUE);
                     wraps.wrapDecLine = GF.createLineString(new Coordinate[]{
                         new Coordinate(min, env.getMinimum(1)),
                         new Coordinate(max, env.getMinimum(1))});
@@ -473,7 +503,7 @@ public class RenderingContext2D implements RenderingContext{
                 }else{
                     final double min = canvasObjectiveBBox2D.getMinimum(1);
                     final double max = canvasObjectiveBBox2D.getMaximum(1);
-                    env.setRange(1, min, max);
+                    env.setRange(1, -Double.MAX_VALUE, Double.MAX_VALUE);
                     wraps.wrapDecLine = GF.createLineString(new Coordinate[]{
                         new Coordinate(env.getMinimum(0), min),
                         new Coordinate(env.getMinimum(0), max)});
