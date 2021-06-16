@@ -707,6 +707,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
                         builder.addQualitative(c.getName(), c.getSampleRange());
                     }
                 }
+                builder.setName(baseDim.getName());
                 builder.setBackground(null, Double.NaN);
                 baseDim = builder.build();
                 noData = baseDim.getNoDataValues();
