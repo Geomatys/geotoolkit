@@ -194,20 +194,18 @@ public class ProjectedGeometry  {
             objBase.setUserData(objCrs);
 
 
-            if(context.wraps != null){
+            if (context.wraps != null) {
 
                 org.locationtech.jts.geom.Envelope objBounds = objBase.getEnvelopeInternal();
                 final double dx = context.wraps.wrapPoints[1].getOrdinate(0) - context.wraps.wrapPoints[0].getOrdinate(0);
                 final double dy = context.wraps.wrapPoints[1].getOrdinate(1) - context.wraps.wrapPoints[0].getOrdinate(1);
-
                 // fix the geometry if some points wrap around the meridian
                 // we expect the warp points to be axis aligned, TODO handle other cases
-                if(dx!=0 && dy!=0){
+                if (dx != 0 && dy != 0) {
                     throw new TransformException("Coordinate Reference System, wrap around points are not axis aligned.");
                 }
-
-                if( (dx>0 && (objBounds.getWidth() > (dx/2.0))) ||
-                    (dy>0 && (objBounds.getHeight() > (dy/2.0)))){
+                if ( (dx>0 && (objBounds.getWidth() > (dx/2.0))) ||
+                    (dy>0 && (objBounds.getHeight() > (dy/2.0)))) {
                     // this is a possible wrap around geometry
                     final double[] wrapTranslate = new double[]{dx,dy};
                     final CoordinateSequenceWrapTransformer cstrs = new CoordinateSequenceWrapTransformer(wrapTranslate);
@@ -216,51 +214,59 @@ public class ProjectedGeometry  {
                     objBounds = objBase.getEnvelopeInternal();
                 }
 
-                //check if the geometry overlaps the meridian
-                int nbIncRep = context.wraps.wrapIncNb;
-                int nbDecRep = context.wraps.wrapDecNb;
-                org.locationtech.jts.geom.Geometry objBoundsGeom = JTS.toGeometry(objBounds);
+                //bypass wrap when possible
+                if (context.wraps.wrapDecNb == 0 && context.wraps.wrapIncNb == 0 && context.wraps.wrapArea.getEnvelopeInternal().contains(objBounds)) {
+                    //geometry is valid with no modifications or repetition
+                    objectiveGeometryJTS = new org.locationtech.jts.geom.Geometry[1];
+                    objectiveGeometryJTS[0] = objBase;
+                } else {
 
-                // geometry cross the far east meridian, geometry is like :
-                // POLYGON(-179,10,  181,10,  181,-10,  179,-10)
-                if(objBoundsGeom.intersects(context.wraps.wrapIncLine)){
-                    //duplicate geometry on the other warp line
-                    nbDecRep++;
-                }
-                // geometry cross the far west meridian, geometry is like :
-                // POLYGON(-179,10, -181,10, -181,-10,  -179,-10)
-                else if(objBoundsGeom.intersects(context.wraps.wrapDecLine)){
-                    //duplicate geometry on the other warp line
-                    nbIncRep++;
-                }
+                    //check if the geometry overlaps the meridian
+                    int nbIncRep = context.wraps.wrapIncNb;
+                    int nbDecRep = context.wraps.wrapDecNb;
+                    org.locationtech.jts.geom.Geometry objBoundsGeom = JTS.toGeometry(objBounds);
 
-                objectiveGeometryJTS = new org.locationtech.jts.geom.Geometry[nbIncRep+nbDecRep+1];
-                int n = 0;
-                for (int i = 0; i < nbIncRep; i++) {
-                    //check that the futur geometry will intersect the visible area
-                    final org.locationtech.jts.geom.Envelope candidate = JTS.transform(objBounds, context.wraps.wrapIncObj[i]);
-                    if (candidate.intersects(context.objectiveJTSEnvelope)) {
-                        org.locationtech.jts.geom.Geometry trsGeom = JTS.transform(objBase, context.wraps.wrapIncObj[i]);
-                        trsGeom.setUserData(objCrs);
-                        objectiveGeometryJTS[n++] = trsGeom;
+                    // geometry cross the far east meridian, geometry is like :
+                    // POLYGON(-179,10,  181,10,  181,-10,  179,-10)
+                    if(objBoundsGeom.intersects(context.wraps.wrapIncLine)){
+                        //duplicate geometry on the other warp line
+                        nbDecRep++;
                     }
-                }
-                if (objBounds.intersects(context.objectiveJTSEnvelope)) {
-                    objBase.setUserData(objCrs);
-                    objectiveGeometryJTS[n++] = objBase;
-                }
-                for (int i = 0; i < nbDecRep; i++) {
-                    //check that the futur geometry will intersect the visible area
-                    final org.locationtech.jts.geom.Envelope candidate = JTS.transform(objBounds, context.wraps.wrapDecObj[i]);
-                    if (candidate.intersects(context.objectiveJTSEnvelope)) {
-                        org.locationtech.jts.geom.Geometry trsGeom = JTS.transform(objBase, context.wraps.wrapDecObj[i]);
-                        trsGeom.setUserData(objCrs);
-                        objectiveGeometryJTS[n++] = trsGeom;
+                    // geometry cross the far west meridian, geometry is like :
+                    // POLYGON(-179,10, -181,10, -181,-10,  -179,-10)
+                    else if(objBoundsGeom.intersects(context.wraps.wrapDecLine)){
+                        //duplicate geometry on the other warp line
+                        nbIncRep++;
                     }
-                }
-                if (n != objectiveGeometryJTS.length) {
-                    //some of the wrapped geometries do not intersect the visible area
-                    objectiveGeometryJTS = Arrays.copyOf(objectiveGeometryJTS, n);
+
+                    objectiveGeometryJTS = new org.locationtech.jts.geom.Geometry[nbIncRep+nbDecRep+1];
+                    int n = 0;
+                    for (int i = 0; i < nbIncRep; i++) {
+                        //check that the futur geometry will intersect the visible area
+                        final org.locationtech.jts.geom.Envelope candidate = JTS.transform(objBounds, context.wraps.wrapIncObj[i]);
+                        if (candidate.intersects(context.objectiveJTSEnvelope)) {
+                            org.locationtech.jts.geom.Geometry trsGeom = JTS.transform(objBase, context.wraps.wrapIncObj[i]);
+                            trsGeom.setUserData(objCrs);
+                            objectiveGeometryJTS[n++] = trsGeom;
+                        }
+                    }
+                    if (objBounds.intersects(context.objectiveJTSEnvelope)) {
+                        objBase.setUserData(objCrs);
+                        objectiveGeometryJTS[n++] = objBase;
+                    }
+                    for (int i = 0; i < nbDecRep; i++) {
+                        //check that the futur geometry will intersect the visible area
+                        final org.locationtech.jts.geom.Envelope candidate = JTS.transform(objBounds, context.wraps.wrapDecObj[i]);
+                        if (candidate.intersects(context.objectiveJTSEnvelope)) {
+                            org.locationtech.jts.geom.Geometry trsGeom = JTS.transform(objBase, context.wraps.wrapDecObj[i]);
+                            trsGeom.setUserData(objCrs);
+                            objectiveGeometryJTS[n++] = trsGeom;
+                        }
+                    }
+                    if (n != objectiveGeometryJTS.length) {
+                        //some of the wrapped geometries do not intersect the visible area
+                        objectiveGeometryJTS = Arrays.copyOf(objectiveGeometryJTS, n);
+                    }
                 }
 
 
