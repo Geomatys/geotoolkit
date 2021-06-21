@@ -26,7 +26,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
@@ -37,6 +40,7 @@ import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.internal.storage.AbstractFeatureSet;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
@@ -50,10 +54,12 @@ import org.geotoolkit.geometry.jts.coordinatesequence.LiteCoordinateSequence;
 import org.geotoolkit.internal.feature.TypeConventions;
 import org.geotoolkit.storage.AbstractResource;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
+import org.locationtech.jts.geom.CoordinateSequence;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jts.geom.impl.PackedCoordinateSequence;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureAssociation;
@@ -112,6 +118,36 @@ public class GridCoverageFeatureSet extends AbstractResource implements FeatureS
         }
         feature.setProperty(coverageRecords(gcr, role));
         return Stream.of(feature);
+    }
+
+    /**
+     * FeatureSet of all coverage voxels.
+     */
+    public FeatureSet voxels(final GridGeometry grid) throws DataStoreException {
+        final FeatureType type = getType();
+        final FeatureAssociationRole role = (FeatureAssociationRole) type.getProperty(TypeConventions.RANGE_ELEMENTS_PROPERTY.toString());
+        role.getValueType();
+
+        return new AbstractFeatureSet(null) {
+            @Override
+            public FeatureType getType() throws DataStoreException {
+                return role.getValueType();
+            }
+
+            @Override
+            public Stream<Feature> features(boolean bln) throws DataStoreException {
+                final GridCoverage cov;
+                try {
+                    cov = gcr.read(grid);
+                } catch (DataStoreException ex) {
+                    throw new FeatureStoreRuntimeException(ex.getMessage(), ex);
+                }
+                final Iterator<Feature> ite = create(role.getValueType(), cov);
+                final Spliterator<Feature> split = Spliterators.spliteratorUnknownSize(ite, Spliterator.ORDERED);
+                return StreamSupport.stream(split,false);
+            }
+
+        };
     }
 
     public static FeatureType createCoverageType(GridCoverage coverage) throws DataStoreException {
@@ -384,25 +420,25 @@ public class GridCoverageFeatureSet extends AbstractResource implements FeatureS
         private final RenderedImage colorImg;
         private final ColorModel colorModel;
         private final PixelIterator coloredPixelIterator;
-        private final MathTransform gridToCrs2D;
+        private final MathTransform imageToCrs;
         private final CoordinateReferenceSystem crs;
-        private final CoordinateReferenceSystem crs2D;
+        private final int crsDim;
         private final Envelope envelope;
-        private boolean iteNext;
         private Feature next = null;
 
         private GridCoverage2DRecordIterator(FeatureType recordType, GridCoverage coverage) {
             this.recordType = recordType;
             this.coverage = coverage.forConvertedValues(true);
-            this.geophysicPixelIterator = new PixelIterator.Builder().create(this.coverage.forConvertedValues(true).render(null));
+            final RenderedImage samplesImage = this.coverage.forConvertedValues(true).render(null);
+            this.geophysicPixelIterator = new PixelIterator.Builder().create(samplesImage);
             this.colorImg = this.coverage.forConvertedValues(false).render(null);
             this.colorModel = colorImg.getColorModel();
             this.coloredPixelIterator = new PixelIterator.Builder().create(colorImg);
             final GridGeometry gridGeometry = this.coverage.getGridGeometry();
-            this.gridToCrs2D = gridGeometry.getGridToCRS(PixelInCell.CELL_CENTER);
             this.envelope = gridGeometry.getEnvelope();
             this.crs = gridGeometry.getCoordinateReferenceSystem();
-            this.crs2D = CRS.getHorizontalComponent(crs);
+            this.crsDim = crs.getCoordinateSystem().getDimension();
+            this.imageToCrs = org.geotoolkit.internal.coverage.CoverageUtilities.getImageToCRS(gridGeometry, null, samplesImage, PixelInCell.CELL_CENTER);
 
             //list properties
             final List<String> properties = new ArrayList<>();
@@ -464,13 +500,22 @@ public class GridCoverageFeatureSet extends AbstractResource implements FeatureS
                     x-0.5, y+0.5,
                     x-0.5, y-0.5
                 };
+                final Polygon geom;
                 try {
-                    gridToCrs2D.transform(poly, 0, poly, 0, 5);
+                    if (crsDim == 2) {
+                        imageToCrs.transform(poly, 0, poly, 0, 5);
+                        geom = GF.createPolygon(new LiteCoordinateSequence(poly));
+                    } else {
+                        //preserve all dimensions
+                        final double[] crsPoly = new double[crsDim*5];
+                        imageToCrs.transform(poly, 0, crsPoly, 0, 5);
+                        CoordinateSequence lcs = new PackedCoordinateSequence.Double(crsPoly, crsDim, 0);
+                        geom = GF.createPolygon(lcs);
+                    }
                 } catch (TransformException ex) {
-                    ex.printStackTrace();
+                    throw new FeatureStoreRuntimeException(ex.getMessage(), ex);
                 }
-                final Polygon geom = GF.createPolygon(new LiteCoordinateSequence(poly));
-                JTS.setCRS(geom, crs2D);
+                JTS.setCRS(geom, crs);
 
                 next.setPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString(), geom);
                 //read sample values
