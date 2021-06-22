@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
 
@@ -29,6 +30,7 @@ import org.apache.sis.storage.DataStoreException;
  */
 public class GeneralAssets extends AbstractResource implements Assets {
 
+    private final AtomicInteger IDINC = new AtomicInteger();
     private final List<Data> datas = new ArrayList<>();
 
     public GeneralAssets(NamedIdentifier identifier) {
@@ -41,8 +43,11 @@ public class GeneralAssets extends AbstractResource implements Assets {
     }
 
     @Override
-    public void addData(Data data) throws DataStoreException {
+    public String addData(Data data) throws DataStoreException {
+        final String newId = "" + IDINC.incrementAndGet();
+        data = new ImmutableAssetData(newId, data.getMimeType(), data.load(null));
         this.datas.add(data);
+        return newId;
     }
 
     @Override

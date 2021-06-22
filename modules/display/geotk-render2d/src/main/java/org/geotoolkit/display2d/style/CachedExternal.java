@@ -48,7 +48,7 @@ public class CachedExternal extends Cache<ExternalGraphic>{
     private BufferedImage cachedImage = null;
     private boolean isSVG = false;
 
-    private CachedExternal(final ExternalGraphic external){
+    public CachedExternal(final ExternalGraphic external){
         super(external);
     }
 

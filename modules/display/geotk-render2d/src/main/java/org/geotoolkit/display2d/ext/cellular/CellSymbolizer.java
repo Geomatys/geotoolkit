@@ -149,6 +149,10 @@ public class CellSymbolizer extends SymbolizerType implements ExtensionSymbolize
         return rule;
     }
 
+    public void setRule(Rule rule) {
+        this.rule = rule;
+    }
+
     public RuleType getRuleType() {
         return ruleType;
     }

@@ -19,6 +19,7 @@ package org.geotoolkit.storage;
 import java.util.Collection;
 import java.util.Set;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.NoSuchDataException;
 import org.apache.sis.storage.Resource;
 
 /**
@@ -33,6 +34,12 @@ import org.apache.sis.storage.Resource;
 public interface Assets extends Resource {
 
     /**
+     * Property defined on objects which should be handled as stored assets.
+     * Such objects are used multiple times in their context.
+     */
+    public static final String ASSET_FLAG = "asset";
+
+    /**
      * Get collection of available datas.
      *
      * @return collection, not null, can be empty.
@@ -41,12 +48,28 @@ public interface Assets extends Resource {
     Collection<Data> getDatas() throws DataStoreException;
 
     /**
+     * Find a resource.
+     * @param identifier
+     * @return data never null
+     * @throws DataStoreException if an error occured or data do not exist
+     */
+    default Data findData(final String identifier) throws DataStoreException {
+        for (Data data : getDatas()) {
+            if (identifier.equals(data.getIdentifier())) {
+                return data;
+            }
+        }
+        throw new NoSuchDataException();
+    }
+
+    /**
      * Store a new data.
      *
      * @param data
+     * @return identifier in this Assets
      * @throws org.apache.sis.storage.DataStoreException
      */
-    void addData(Data data) throws DataStoreException;
+    String addData(Data data) throws DataStoreException;
 
     /**
      * Remove an existing data.
@@ -57,6 +80,13 @@ public interface Assets extends Resource {
     void removeData(Data data) throws DataStoreException;
 
     public interface Data {
+
+        /**
+         * The data identifier.
+         *
+         * @return identifier of the data in it's parent, not null.
+         */
+        String getIdentifier();
 
         /**
          * The data natural mime-type.
