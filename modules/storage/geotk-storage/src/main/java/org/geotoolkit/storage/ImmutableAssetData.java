@@ -26,12 +26,19 @@ import org.apache.sis.storage.DataStoreException;
  */
 public class ImmutableAssetData implements Assets.Data {
 
+    private final String identifier;
     private final String mimeType;
     private final Object instance;
 
-    public ImmutableAssetData(String mimeType, Object instance) {
+    public ImmutableAssetData(String identifier, String mimeType, Object instance) {
+        this.identifier = identifier;
         this.mimeType = mimeType;
         this.instance = instance;
+    }
+
+    @Override
+    public String getIdentifier() {
+        return identifier;
     }
 
     @Override
@@ -46,10 +53,14 @@ public class ImmutableAssetData implements Assets.Data {
 
     @Override
     public <T> T load(Class<T> expectedType) throws DataStoreException {
-        if (expectedType != null && !expectedType.isInstance(instance)) {
-            throw new DataStoreException("Data object can not be mapped to type "+expectedType);
+        if (expectedType != null) {
+            if (!expectedType.isInstance(instance)) {
+                throw new DataStoreException("Data object can not be mapped to type "+expectedType);
+            } else {
+                return expectedType.cast(instance);
+            }
         }
-        return expectedType.cast(instance);
+        return (T) instance;
     }
 
 }

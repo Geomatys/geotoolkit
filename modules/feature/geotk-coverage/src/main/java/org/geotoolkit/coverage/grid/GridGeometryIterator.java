@@ -12,8 +12,6 @@ import org.apache.sis.util.ArgumentChecks;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.SingleCRS;
 
-import static org.opengis.referencing.datum.PixelInCell.CELL_CENTER;
-
 /**
  * Try to generate subsets of a grid. The aim is to create slices over specified
  * dimension, to move along an axis and retrieve all its possible values.
@@ -84,7 +82,7 @@ public class GridGeometryIterator implements Iterator<GridGeometry> {
     public GridGeometry next() {
         if (hasNext()) {
             final GridExtent nextExtent = gridIterator.next();
-            return new GridGeometry(nextExtent, CELL_CENTER, source.getGridToCRS(CELL_CENTER), source.getCoordinateReferenceSystem());
+            return source.derive().resize(nextExtent).build();
         }
 
         throw new NoSuchElementException("No more slice to iterate over");

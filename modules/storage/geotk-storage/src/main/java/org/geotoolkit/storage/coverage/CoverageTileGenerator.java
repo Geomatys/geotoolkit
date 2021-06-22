@@ -39,11 +39,14 @@ import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverageProcessor;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridOrientation;
 import org.apache.sis.coverage.grid.IllegalGridGeometryException;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.image.ImageProcessor;
 import org.apache.sis.image.Interpolation;
 import org.apache.sis.measure.NumberRange;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
@@ -412,20 +415,38 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
      */
     private static RenderedImage createBaseRendering(final GridCoverageResource resource) throws DataStoreException {
         final GridGeometry gg = resource.getGridGeometry();
-        final GridExtent extent = gg.getExtent();
-        final long[] lower = extent.getLow().getCoordinateValues();
-        final long[] upper = extent.getHigh().getCoordinateValues();
 
-        for (int i = 0 ; i < 2 ; i++) {
-            upper[i] = Math.min(upper[i], lower[i] + 7);
-        }
+        final long[] lower;
+        final long[] upper;
+        if (gg.isDefined(GridGeometry.EXTENT)) {
+            final GridExtent extent = gg.getExtent();
+            lower = extent.getLow().getCoordinateValues();
+            upper = extent.getHigh().getCoordinateValues();
 
-        for (int i = 2 ; i < extent.getDimension() ; i++) {
-            upper[i] = lower[i];
+            for (int i = 0 ; i < 2 ; i++) {
+                upper[i] = Math.min(upper[i], lower[i] + 7);
+            }
+
+            for (int i = 2 ; i < extent.getDimension() ; i++) {
+                upper[i] = lower[i];
+            }
+        } else {
+            int dim = 2;
+            if (gg.isDefined(GridGeometry.CRS)) {
+                dim = gg.getCoordinateReferenceSystem().getCoordinateSystem().getDimension();
+            }
+            lower = new long[dim];
+            upper = new long[dim];
         }
 
         final GridExtent newExtent = new GridExtent(null, lower, upper, true);
-        final GridGeometry newGg = gg.derive().subgrid(new GridGeometry(newExtent, PixelInCell.CELL_CENTER, gg.getGridToCRS(PixelInCell.CELL_CENTER), gg.getCoordinateReferenceSystem())).build();
+        final GridGeometry newGg;
+        if (gg.isDefined(GridGeometry.CRS) && gg.isDefined(GridGeometry.GRID_TO_CRS)) {
+            newGg = gg.derive().subgrid(new GridGeometry(newExtent, PixelInCell.CELL_CENTER, gg.getGridToCRS(PixelInCell.CELL_CENTER), gg.getCoordinateReferenceSystem())).build();
+        } else {
+            final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
+            newGg = new GridGeometry(newExtent, CRS.getDomainOfValidity(crs), GridOrientation.REFLECTION_Y);
+        }
         return resource.read(newGg).render(null);
     }
 }

@@ -35,6 +35,7 @@ import org.apache.sis.image.PixelIterator;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.operation.matrix.Matrices;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
@@ -49,6 +50,7 @@ import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
+import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.opengis.util.InternationalString;
@@ -364,4 +366,45 @@ public final class CoverageUtilities extends Static {
         }
         throw new RuntimeException("Sample "+value+" not found.");
     }
+
+    /**
+     * Get or create transform for 2D image to coverage ND CRS.
+     *
+     * @param gridGeometry original coverage grid geometry
+     * @param readExtent request extent at reading time
+     * @param image read image
+     * @return Image to CRS transform, from image pixel coordinate 2D to Coverage ND CRS.
+     */
+    public static MathTransform getImageToCRS(GridGeometry gridGeometry, GridExtent readExtent, RenderedImage image, PixelInCell pixelInCell) {
+        if (readExtent == null) {
+            readExtent = gridGeometry.getExtent();
+        }
+        // grid geometry to CRS transform
+        final MathTransform gridToCRS = gridGeometry.getGridToCRS(pixelInCell);
+
+        // grid extent corner transform
+        final int srcDim = 2;
+        final int tgtDim = readExtent.getDimension();
+
+        // numcol = 3, we want a 2D image pixel coordinates as input
+        final Matrix m = Matrices.createZero(tgtDim + 1, srcDim + 1);
+
+        // set translation to grid extent corner
+        for (int j = 0; j < tgtDim; j++) {
+           m.setElement(j, srcDim, readExtent.getLow(j));
+        }
+
+        // last line scale, 1 in the last column to have an affine-like transform
+        m.setElement(tgtDim, srcDim, 1);
+
+        // set scale to 1 for horizontal part which correspond to the image X,Y
+        // other lines will result in constant values
+        final int[] s = readExtent.getSubspaceDimensions(srcDim);
+        for (int i = 0; i < s.length; i++) {
+            m.setElement(s[i], i, 1);
+        }
+
+        return MathTransforms.concatenate(MathTransforms.linear(m), gridToCRS);
+    }
+
 }

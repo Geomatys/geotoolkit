@@ -206,9 +206,9 @@ public final class PatternSymbolizer extends SymbolizerType implements Extension
         final StringBuilder sb = new StringBuilder("Pattern symbolizer \n");
 
         for(Map.Entry<Expression,List<Symbolizer>> entry : thredholds.entrySet()){
-            System.out.println(" - " + entry.getKey());
+            sb.append(" - " + entry.getKey());
             for(Symbolizer s : entry.getValue()){
-                System.out.println(" - - " + s);
+                sb.append(" - - " + s);
             }
         }
 
