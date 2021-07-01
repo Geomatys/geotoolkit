@@ -38,7 +38,7 @@ import org.opengis.filter.identity.Identifier;
  */
 public class DefaultId extends AbstractFilter implements Id,Serializable{
 
-    private static final String XPATH_ID = AttributeConvention.IDENTIFIER_PROPERTY.toString();
+    private static final String XPATH_ID = AttributeConvention.IDENTIFIER;
 
     private final DualKeyMap keys = new DualKeyMap();
 

@@ -78,7 +78,7 @@ final class GeoJSONFileWriter extends GeoJSONReader {
             //create empty feature
             edited = featureType.newInstance();
             if (hasIdentifier) {
-                edited.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), idConverter.apply(currentFeatureIdx++));
+                edited.setPropertyValue(AttributeConvention.IDENTIFIER, idConverter.apply(currentFeatureIdx++));
             }
         }
         return edited;

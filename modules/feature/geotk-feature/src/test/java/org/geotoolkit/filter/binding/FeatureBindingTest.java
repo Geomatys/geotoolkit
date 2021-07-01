@@ -71,19 +71,19 @@ public class FeatureBindingTest extends org.geotoolkit.test.TestBase {
         Binding accessor = Bindings.getBinding(Feature.class, "testGeometry");
         assertNotNull(accessor);
         Object att = accessor.get(FEATURE_1, "testGeometry", Geometry.class);
-        assertEquals(FEATURE_1.getPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString()), att);
+        assertEquals(FEATURE_1.getPropertyValue(AttributeConvention.GEOMETRY), att);
 
 
         //test a simple attribut------------------------------------------------
         accessor = Bindings.getBinding(Feature.class, "//testGeometry");
         assertNotNull(accessor);
         att = (Geometry) accessor.get(FEATURE_1, "//testGeometry", Geometry.class);
-        assertEquals(FEATURE_1.getPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString()), att);
+        assertEquals(FEATURE_1.getPropertyValue(AttributeConvention.GEOMETRY), att);
 
         //test id---------------------------------------------------------------
-        accessor = Bindings.getBinding(Feature.class, AttributeConvention.IDENTIFIER_PROPERTY.toString());
+        accessor = Bindings.getBinding(Feature.class, AttributeConvention.IDENTIFIER);
         assertNotNull(accessor);
-        Object id = accessor.get(FEATURE_1, AttributeConvention.IDENTIFIER_PROPERTY.toString(), null);
+        Object id = accessor.get(FEATURE_1, AttributeConvention.IDENTIFIER, null);
         assertEquals(FeatureExt.getId(FEATURE_1).getID(), id);
 
         //test xpath index------------------------------------------------------
@@ -250,9 +250,9 @@ public class FeatureBindingTest extends org.geotoolkit.test.TestBase {
         assertNotNull(accessor);
         Property prop = FEATURE_1.getProperty("testGeometry");
         Object att = accessor.get(prop, ".", Geometry.class);
-        assertEquals(FEATURE_1.getPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString()), att);
+        assertEquals(FEATURE_1.getPropertyValue(AttributeConvention.GEOMETRY), att);
 
         att = accessor.get(prop, ".", Property.class);
-        assertEquals(FEATURE_1.getProperty(AttributeConvention.GEOMETRY_PROPERTY.toString()), att);
+        assertEquals(FEATURE_1.getProperty(AttributeConvention.GEOMETRY), att);
     }
 }

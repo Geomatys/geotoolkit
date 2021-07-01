@@ -57,7 +57,7 @@ public class JDBCAddDelta extends AddDelta{
             if(createdIds != null && !createdIds.isEmpty()){
                 while(ite.hasNext()){
                     final Feature f = ite.next();
-                    final String id = (String) f.getPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString());
+                    final String id = (String) f.getPropertyValue(AttributeConvention.IDENTIFIER);
                     updates.put(id, createdIds.get(i).getID());
                     i++;
                 }

@@ -400,7 +400,7 @@ public class GMLSparseStore extends DataStore implements WritableFeatureSet, Res
             }else{
                 //append mode
                 currentFeature = type.newInstance();
-                currentFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), FeatureExt.createDefaultFeatureId());
+                currentFeature.setPropertyValue(AttributeConvention.IDENTIFIER, FeatureExt.createDefaultFeatureId());
                 currentFile = null;
                 return currentFeature;
             }

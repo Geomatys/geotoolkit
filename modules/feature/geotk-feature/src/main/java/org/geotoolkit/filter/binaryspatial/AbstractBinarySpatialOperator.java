@@ -254,7 +254,7 @@ public abstract class AbstractBinarySpatialOperator<E extends Expression,F exten
     private static Object findFirstGeometry(Feature ca){
         //search for a default geometry
         try{
-            return ca.getPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString());
+            return ca.getPropertyValue(AttributeConvention.GEOMETRY);
         }catch(PropertyNotFoundException ex){}
 
         //search normal properties

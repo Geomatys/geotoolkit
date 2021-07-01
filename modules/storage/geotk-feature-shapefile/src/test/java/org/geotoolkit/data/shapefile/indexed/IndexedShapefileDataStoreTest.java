@@ -350,7 +350,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         // assertEquals("Number of Features loaded", 3, count); // JAR WRONG
 
         FeatureType schema = firstFeature(features).getType();
-        assertNotNull(schema.getProperty(AttributeConvention.GEOMETRY_PROPERTY.toString()));
+        assertNotNull(schema.getProperty(AttributeConvention.GEOMETRY));
         assertEquals("Number of Attributes", 256, schema.getProperties(true).size());
         assertEquals("Value of statename is wrong", firstFeature(features)
                 .getPropertyValue("STATE_NAME"), "Illinois");

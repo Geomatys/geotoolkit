@@ -290,7 +290,7 @@ public final class FeatureTypeExt extends Static {
     public static boolean isPartOfPrimaryKey(FeatureType type, String propertyName) {
         PropertyType property;
         try{
-            property = type.getProperty(AttributeConvention.IDENTIFIER_PROPERTY.toString());
+            property = type.getProperty(AttributeConvention.IDENTIFIER);
         } catch(PropertyNotFoundException ex) {
             //no identifier property
             return false;

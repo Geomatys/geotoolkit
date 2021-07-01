@@ -96,7 +96,7 @@ public class GeoJSONWriteTest extends TestCase {
 
         final Point expectedPoint = GF.createPoint(new Coordinate(-105.01621, 39.57422));
         final Feature feature = store.getType().newInstance();
-        feature.setPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString(), expectedPoint);
+        feature.setPropertyValue(AttributeConvention.GEOMETRY, expectedPoint);
         feature.setPropertyValue("type","simple");
         store.add(Arrays.asList(feature).iterator());
 
@@ -108,7 +108,7 @@ public class GeoJSONWriteTest extends TestCase {
             assertTrue(reader.hasNext());
             final Feature f = reader.next();
             assertEquals("simple", f.getPropertyValue("type"));
-            assertEquals(expectedPoint, f.getPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString()));
+            assertEquals(expectedPoint, f.getPropertyValue(AttributeConvention.GEOMETRY));
         }
 
         Files.deleteIfExists(file);
@@ -139,37 +139,37 @@ public class GeoJSONWriteTest extends TestCase {
 
         Feature feature = store.getType().newInstance();
         feature.setPropertyValue("type","Point");
-        feature.setPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString(), pt);
+        feature.setPropertyValue(AttributeConvention.GEOMETRY, pt);
         store.add(Arrays.asList(feature).iterator());
 
         feature = store.getType().newInstance();
         feature.setPropertyValue("type","MultiPoint");
-        feature.setPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString(), mpt);
+        feature.setPropertyValue(AttributeConvention.GEOMETRY, mpt);
         store.add(Arrays.asList(feature).iterator());
 
         feature = store.getType().newInstance();
         feature.setPropertyValue("type","LineString");
-        feature.setPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString(), line);
+        feature.setPropertyValue(AttributeConvention.GEOMETRY, line);
         store.add(Arrays.asList(feature).iterator());
 
         feature = store.getType().newInstance();
         feature.setPropertyValue("type","MultiLineString");
-        feature.setPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString(), mline);
+        feature.setPropertyValue(AttributeConvention.GEOMETRY, mline);
         store.add(Arrays.asList(feature).iterator());
 
         feature = store.getType().newInstance();
         feature.setPropertyValue("type","Polygon");
-        feature.setPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString(), poly);
+        feature.setPropertyValue(AttributeConvention.GEOMETRY, poly);
         store.add(Arrays.asList(feature).iterator());
 
         feature = store.getType().newInstance();
         feature.setPropertyValue("type","MultiPolygon");
-        feature.setPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString(), mpoly);
+        feature.setPropertyValue(AttributeConvention.GEOMETRY, mpoly);
         store.add(Arrays.asList(feature).iterator());
 
         feature = store.getType().newInstance();
         feature.setPropertyValue("type","GeometryCollection");
-        feature.setPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString(), coll);
+        feature.setPropertyValue(AttributeConvention.GEOMETRY, coll);
         store.add(Arrays.asList(feature).iterator());
 
         assertTrue(Files.exists(file));
@@ -181,7 +181,7 @@ public class GeoJSONWriteTest extends TestCase {
             while (ite.hasNext()) {
                 Feature f = ite.next();
                 //System.out.println(f);
-                Geometry geom = (Geometry)f.getPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString());
+                Geometry geom = (Geometry)f.getPropertyValue(AttributeConvention.GEOMETRY);
 
                 if (geom instanceof Point) {
                     assertTrue(pt.equalsExact(geom, 0.0000001));
@@ -289,12 +289,12 @@ public class GeoJSONWriteTest extends TestCase {
         try (GeoJSONStreamWriter fw = new GeoJSONStreamWriter(baos, validFeatureType, 4)) {
             Feature feature = fw.next();
             feature.setPropertyValue("type","feat1");
-            feature.setPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString(), pt);
+            feature.setPropertyValue(AttributeConvention.GEOMETRY, pt);
             fw.write();
 
             feature = fw.next();
             feature.setPropertyValue("type","feat2");
-            feature.setPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString(), pt);
+            feature.setPropertyValue(AttributeConvention.GEOMETRY, pt);
             fw.write();
 
         }
@@ -328,12 +328,12 @@ public class GeoJSONWriteTest extends TestCase {
             
             Feature feature = fw.next();
             feature.setPropertyValue("type","feat1");
-            feature.setPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString(), pt);
+            feature.setPropertyValue(AttributeConvention.GEOMETRY, pt);
             fw.write();
 
             feature = fw.next();
             feature.setPropertyValue("type","feat2");
-            feature.setPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString(), pt);
+            feature.setPropertyValue(AttributeConvention.GEOMETRY, pt);
             fw.write();
 
         }
@@ -365,9 +365,9 @@ public class GeoJSONWriteTest extends TestCase {
         final String outputJSON;
         try (final ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             Feature feature = validFeatureType.newInstance();
-            feature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), 0);
+            feature.setPropertyValue(AttributeConvention.IDENTIFIER, 0);
             feature.setPropertyValue("type","feat1");
-            feature.setPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString(), pt);
+            feature.setPropertyValue(AttributeConvention.GEOMETRY, pt);
             GeoJSONStreamWriter.writeSingleFeature(baos, feature, JsonEncoding.UTF8, 4, false);
 
             outputJSON = baos.toString("UTF-8");
@@ -419,12 +419,12 @@ public class GeoJSONWriteTest extends TestCase {
         try (GeoJSONStreamWriter fw = new GeoJSONStreamWriter(baos, validFeatureType, 4)) {
             Feature feature = fw.next();
             feature.setPropertyValue("array",array1);
-            feature.setPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString(), pt);
+            feature.setPropertyValue(AttributeConvention.GEOMETRY, pt);
             fw.write();
 
             feature = fw.next();
             feature.setPropertyValue("array",array2);
-            feature.setPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString(), pt);
+            feature.setPropertyValue(AttributeConvention.GEOMETRY, pt);
             fw.write();
 
         }
@@ -470,7 +470,7 @@ public class GeoJSONWriteTest extends TestCase {
 
         final Point expectedPoint = GF.createPoint(new Coordinate(-105.01621, 39.57422));
         final Feature feature = store.getType().newInstance();
-        feature.setPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString(), expectedPoint);
+        feature.setPropertyValue(AttributeConvention.GEOMETRY, expectedPoint);
         feature.setPropertyValue("type","simple");
         store.add(Arrays.asList(feature).iterator());
 
@@ -482,7 +482,7 @@ public class GeoJSONWriteTest extends TestCase {
             assertTrue(reader.hasNext());
             final Feature f = reader.next();
             assertEquals("simple", f.getPropertyValue("type"));
-            assertEquals(expectedPoint, f.getPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString()));
+            assertEquals(expectedPoint, f.getPropertyValue(AttributeConvention.GEOMETRY));
         }
 
         Files.deleteIfExists(file);

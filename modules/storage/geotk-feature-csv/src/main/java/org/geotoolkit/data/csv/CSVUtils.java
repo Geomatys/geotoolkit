@@ -59,7 +59,7 @@ public class CSVUtils extends Static {
 
     static Feature defaultFeature(final FeatureType type, final String id){
         final Feature feature = type.newInstance();
-        feature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), id);
+        feature.setPropertyValue(AttributeConvention.IDENTIFIER, id);
         return feature;
     }
 

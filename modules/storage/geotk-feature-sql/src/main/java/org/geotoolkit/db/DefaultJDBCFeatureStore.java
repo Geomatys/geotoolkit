@@ -978,7 +978,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
             Object fid = insertFlat(flat, flat.getType(), cx);
             // we pass the fid to the root
             if (flat.getType().getName().equals(feature.getType().getName())) {
-                feature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), fid);
+                feature.setPropertyValue(AttributeConvention.IDENTIFIER, fid);
             }
         }
     }

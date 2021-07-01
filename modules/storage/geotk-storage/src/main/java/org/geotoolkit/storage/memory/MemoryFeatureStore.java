@@ -326,7 +326,7 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
             Object candidateId = null;
             if(grp instanceof GroupWithId){
                 final GroupWithId grpwid = (GroupWithId) grp;
-                candidateId = f.getPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString());
+                candidateId = f.getPropertyValue(AttributeConvention.IDENTIFIER);
                 if(candidateId == null || "".equals(candidateId)){
                     //feature does not have an id, create one
                     candidateId = grpwid.generateId();
@@ -344,7 +344,7 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
                         candidateId = grpwid.generateId();
                     }
                 }
-                f.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), candidateId);
+                f.setPropertyValue(AttributeConvention.IDENTIFIER, candidateId);
                 addedIds.add(FF.featureId(String.valueOf(candidateId)));
             }
 
@@ -507,7 +507,7 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
 
             final QueryBuilder qb = new QueryBuilder(groupName);
             qb.setFilter(filter);
-            qb.setProperties(new String[]{AttributeConvention.IDENTIFIER_PROPERTY.toString()}); //no properties, only ids
+            qb.setProperties(new String[]{AttributeConvention.IDENTIFIER}); //no properties, only ids
             final FeatureReader reader = getFeatureReader(qb.buildQuery());
             try{
                 while(reader.hasNext()){
@@ -584,7 +584,7 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
 
     private static boolean hasIdentifier(FeatureType type) {
         try{
-            type.getProperty(AttributeConvention.IDENTIFIER_PROPERTY.toString());
+            type.getProperty(AttributeConvention.IDENTIFIER);
             return true;
         }catch(PropertyNotFoundException ex){
             return false;

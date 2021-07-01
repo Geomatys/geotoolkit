@@ -299,7 +299,7 @@ public class MIFManager {
                         geomBuilder.addRole(AttributeRole.DEFAULT_GEOMETRY);
                     }
                 } else {
-                    ftb.addProperty(ft.getProperty(AttributeConvention.GEOMETRY_PROPERTY.toString()));
+                    ftb.addProperty(ft.getProperty(AttributeConvention.GEOMETRY));
                 }
                 mifBaseType = ftb.build();
             }

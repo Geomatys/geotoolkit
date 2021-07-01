@@ -52,7 +52,7 @@ import org.opengis.util.GenericName;
 public final class QueryBuilder {
 
     private static final String[] ONLY_ID_PROPERTIES = new String[]{
-        AttributeConvention.IDENTIFIER_PROPERTY.toString()
+        AttributeConvention.IDENTIFIER
     };
 
     private String typeName = null;

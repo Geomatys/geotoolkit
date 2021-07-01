@@ -119,7 +119,7 @@ public class DifferenceGeometryTest extends AbstractProcessTest {
                     new Coordinate(6.0, 4.0),
                     new Coordinate(6.0, 3.0)
                 });
-        myFeature1.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-01");
+        myFeature1.setPropertyValue(AttributeConvention.IDENTIFIER, "id-01");
         myFeature1.setPropertyValue("name", "Building1");
         myFeature1.setPropertyValue("height", 12);
         myFeature1.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
@@ -134,7 +134,7 @@ public class DifferenceGeometryTest extends AbstractProcessTest {
                     new Coordinate(8.0, 7.0),
                     new Coordinate(8.0, 4.0)
                 });
-        myFeature2.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-02");
+        myFeature2.setPropertyValue(AttributeConvention.IDENTIFIER, "id-02");
         myFeature2.setPropertyValue("name", "Building2");
         myFeature2.setPropertyValue("height", 12);
         myFeature2.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
@@ -149,7 +149,7 @@ public class DifferenceGeometryTest extends AbstractProcessTest {
                     new Coordinate(6.0, 1.0),
                     new Coordinate(6.0, -2.0)
                 });
-        myFeature3.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-03");
+        myFeature3.setPropertyValue(AttributeConvention.IDENTIFIER, "id-03");
         myFeature3.setPropertyValue("name", "Building3");
         myFeature3.setPropertyValue("height", 12);
         myFeature3.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
@@ -164,7 +164,7 @@ public class DifferenceGeometryTest extends AbstractProcessTest {
                     new Coordinate(0.0, 9.0),
                     new Coordinate(0.0, 6.0)
                 });
-        myFeature4.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-04");
+        myFeature4.setPropertyValue(AttributeConvention.IDENTIFIER, "id-04");
         myFeature4.setPropertyValue("name", "Building4");
         myFeature4.setPropertyValue("height", 12);
         myFeature4.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
@@ -179,7 +179,7 @@ public class DifferenceGeometryTest extends AbstractProcessTest {
                     new Coordinate(-4.0, 3.0),
                     new Coordinate(-4.0, 1.0)
                 });
-        myFeature5.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-05");
+        myFeature5.setPropertyValue(AttributeConvention.IDENTIFIER, "id-05");
         myFeature5.setPropertyValue("name", "Building5");
         myFeature5.setPropertyValue("height", 12);
         myFeature5.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
@@ -222,7 +222,7 @@ public class DifferenceGeometryTest extends AbstractProcessTest {
                     new Coordinate(10.0, 6.0),
                     new Coordinate(8.0, 6.0)
                 });
-        myFeature2.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-02");
+        myFeature2.setPropertyValue(AttributeConvention.IDENTIFIER, "id-02");
         myFeature2.setPropertyValue("name", "Building2");
         myFeature2.setPropertyValue("height", 12);
         myFeature2.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
@@ -238,7 +238,7 @@ public class DifferenceGeometryTest extends AbstractProcessTest {
                     new Coordinate(6.0, 1.0),
                     new Coordinate(10.0, 1.0)
                 });
-        myFeature3.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-03");
+        myFeature3.setPropertyValue(AttributeConvention.IDENTIFIER, "id-03");
         myFeature3.setPropertyValue("name", "Building3");
         myFeature3.setPropertyValue("height", 12);
         myFeature3.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
@@ -253,7 +253,7 @@ public class DifferenceGeometryTest extends AbstractProcessTest {
                     new Coordinate(3.0, 9.0),
                     new Coordinate(3.0, 6.0)
                 });
-        myFeature4.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-04");
+        myFeature4.setPropertyValue(AttributeConvention.IDENTIFIER, "id-04");
         myFeature4.setPropertyValue("name", "Building4");
         myFeature4.setPropertyValue("height", 12);
         myFeature4.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
@@ -268,7 +268,7 @@ public class DifferenceGeometryTest extends AbstractProcessTest {
                     new Coordinate(-4.0, 3.0),
                     new Coordinate(-4.0, 1.0)
                 });
-        myFeature5.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-05");
+        myFeature5.setPropertyValue(AttributeConvention.IDENTIFIER, "id-05");
         myFeature5.setPropertyValue("name", "Building5");
         myFeature5.setPropertyValue("height", 12);
         myFeature5.setPropertyValue("position", geometryFactory.createPolygon(ring, null));

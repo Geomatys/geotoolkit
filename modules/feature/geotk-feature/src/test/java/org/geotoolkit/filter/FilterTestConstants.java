@@ -85,7 +85,7 @@ public class FilterTestConstants {
 
         // Builds the test candidate
         final Map<String,Object> candidate = new HashMap<>();
-        candidate.put(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "testFeatureType.1");
+        candidate.put(AttributeConvention.IDENTIFIER, "testFeatureType.1");
         candidate.put("testGeometry", RIGHT_GEOMETRY);
         candidate.put("testBoolean", Boolean.TRUE);
         candidate.put("testCharacter", 't');
@@ -132,7 +132,7 @@ public class FilterTestConstants {
         // Builds the test feature
         FEATURE_TYPE_1 = ft;
         FEATURE_1 = ft.newInstance();
-        FEATURE_1.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "testFeatureType.1");
+        FEATURE_1.setPropertyValue(AttributeConvention.IDENTIFIER, "testFeatureType.1");
         FEATURE_1.setPropertyValue("testGeometry", RIGHT_GEOMETRY);
         FEATURE_1.setPropertyValue("testBoolean", Boolean.TRUE);
         FEATURE_1.setPropertyValue("testCharacter", 't');
@@ -190,7 +190,7 @@ public class FilterTestConstants {
 
 
         CX_FEATURE = CX_FEATURE_TYPE.newInstance();
-        CX_FEATURE.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id");
+        CX_FEATURE.setPropertyValue(AttributeConvention.IDENTIFIER, "id");
         CX_FEATURE.setPropertyValue("http://test.com:attString",Arrays.asList("toto1","toto2"));
         CX_FEATURE.setPropertyValue("http://test2.com:attString","toto3");
         CX_FEATURE.setPropertyValue("http://test.com:attCpx",Arrays.asList(ce1,ce2));

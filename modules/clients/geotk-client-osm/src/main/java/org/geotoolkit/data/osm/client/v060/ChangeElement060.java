@@ -48,8 +48,8 @@ public class ChangeElement060 extends AbstractChangeElement{
 
         switch(type){
             case CREATE : sb.append("/create");break;
-            case UPDATE : sb.append('/').append(element.getPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString()));break;
-            case DELETE : sb.append('/').append(element.getPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString()));break;
+            case UPDATE : sb.append('/').append(element.getPropertyValue(AttributeConvention.IDENTIFIER));break;
+            case DELETE : sb.append('/').append(element.getPropertyValue(AttributeConvention.IDENTIFIER));break;
         }
 
         return sb.toString();

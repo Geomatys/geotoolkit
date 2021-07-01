@@ -78,7 +78,7 @@ public class RegroupProcess extends AbstractProcess {
 
         //if keepedGeometry is null we use the default Geometry
         if (geometryName == null) {
-            geometryName = AttributeConvention.GEOMETRY_PROPERTY.toString();
+            geometryName = AttributeConvention.GEOMETRY;
         }
 
         PropertyType property = oldFeatureType.getProperty(geometryName);
@@ -122,7 +122,7 @@ public class RegroupProcess extends AbstractProcess {
             while (featureIter.hasNext()) {
                 final Feature feature = featureIter.next();
                 if (geometryName == null) {
-                    geometryName = AttributeConvention.GEOMETRY_PROPERTY.toString();
+                    geometryName = AttributeConvention.GEOMETRY;
                 }
                 for (final PropertyType property : feature.getType().getProperties(true)) {
                     //if property is a geometry
@@ -142,12 +142,12 @@ public class RegroupProcess extends AbstractProcess {
         //In case
         if (regroupAttribute == null && attributeValue == null) {
             resultFeature = newFeatureType.newInstance();
-            resultFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "groupedGeometryFeature");
+            resultFeature.setPropertyValue(AttributeConvention.IDENTIFIER, "groupedGeometryFeature");
             resultFeature.setPropertyValue(geometryName, regroupGeometry);
         } else {
             //result feature
             resultFeature = newFeatureType.newInstance();
-            resultFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), regroupAttribute + "-" + attributeValue);
+            resultFeature.setPropertyValue(AttributeConvention.IDENTIFIER, regroupAttribute + "-" + attributeValue);
             resultFeature.setPropertyValue(regroupAttribute, attributeValue);
             resultFeature.setPropertyValue(geometryName, regroupGeometry);
         }

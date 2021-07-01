@@ -196,7 +196,7 @@ final class GeoJSONWriter implements Closeable, Flushable {
          * more details, see https://tools.ietf.org/html/rfc7946#section-3.2
          */
         try {
-            final Object idValue = feature.getPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString());
+            final Object idValue = feature.getPropertyValue(AttributeConvention.IDENTIFIER);
             // TODO : search for a property named id or identifier ?
             if (idValue != null) {
                 writeAttribute(ID, idValue, true);

@@ -109,7 +109,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
     public Collection<String> visit( final Add expression, final Object data ) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
-        else names = new HashSet<String>();
+        else names = new HashSet<>();
         expression.getExpression1().accept(this, names);
         expression.getExpression2().accept(this, names);
         return names;
@@ -123,7 +123,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
     public Collection<String> visit( final Divide expression, final Object data ) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
-        else names = new HashSet<String>();
+        else names = new HashSet<>();
         expression.getExpression1().accept(this, names);
         expression.getExpression2().accept(this, names);
         return names;
@@ -137,7 +137,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
     public Collection<String> visit( final Function expression, final Object data ) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
-        else names = new HashSet<String>();
+        else names = new HashSet<>();
 
         if( expression.getParameters() != null ){
             for( Expression parameter : expression.getParameters() ){
@@ -165,7 +165,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
     public Collection<String> visit( final Multiply expression, final Object data ) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
-        else names = new HashSet<String>();
+        else names = new HashSet<>();
         expression.getExpression1().accept(this, names);
         expression.getExpression2().accept(this, names);
         return names;
@@ -179,7 +179,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
     public Collection<String> visit( final PropertyName expression, final Object data ) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
-        else names = new HashSet<String>();
+        else names = new HashSet<>();
         String propName = expression.getPropertyName();
         if(!propName.trim().isEmpty()){
             names.add(propName);
@@ -195,7 +195,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
     public Collection<String> visit( final Subtract expression, final Object data ) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
-        else names = new HashSet<String>();
+        else names = new HashSet<>();
         expression.getExpression1().accept(this, names);
         expression.getExpression2().accept(this, names);
         return names;
@@ -239,7 +239,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
     public Object visit(final And filter, final Object data) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
-        else names = new HashSet<String>();
+        else names = new HashSet<>();
         for(Filter child : filter.getChildren()){
             child.accept(this, names);
         }
@@ -254,8 +254,8 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
     public Object visit(final Id filter, final Object data) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
-        else names = new HashSet<String>();
-        names.add(AttributeConvention.IDENTIFIER_PROPERTY.toString());
+        else names = new HashSet<>();
+        names.add(AttributeConvention.IDENTIFIER);
         return names;
     }
 
@@ -267,7 +267,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
     public Object visit(final Not filter, final Object data) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
-        else names = new HashSet<String>();
+        else names = new HashSet<>();
         Filter child = filter.getFilter();
         if(child != null) child.accept(this, names);
         return names;
@@ -281,7 +281,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
     public Object visit(final Or filter, final Object data) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
-        else names = new HashSet<String>();
+        else names = new HashSet<>();
         for(Filter child : filter.getChildren()){
             child.accept(this, names);
         }
@@ -296,7 +296,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
     public Object visit(final PropertyIsBetween filter, final Object data) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
-        else names = new HashSet<String>();
+        else names = new HashSet<>();
         filter.getExpression().accept(this, names);
         filter.getLowerBoundary().accept(this, names);
         filter.getUpperBoundary().accept(this, names);
@@ -311,7 +311,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
     public Object visit(final PropertyIsEqualTo filter, final Object data) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
-        else names = new HashSet<String>();
+        else names = new HashSet<>();
         filter.getExpression1().accept(this, names);
         filter.getExpression2().accept(this, names);
         return names;
@@ -325,7 +325,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
     public Object visit(final PropertyIsNotEqualTo filter, final Object data) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
-        else names = new HashSet<String>();
+        else names = new HashSet<>();
         filter.getExpression1().accept(this, names);
         filter.getExpression2().accept(this, names);
         return names;
@@ -339,7 +339,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
     public Object visit(final PropertyIsGreaterThan filter, final Object data) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
-        else names = new HashSet<String>();
+        else names = new HashSet<>();
         filter.getExpression1().accept(this, names);
         filter.getExpression2().accept(this, names);
         return names;
@@ -353,7 +353,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
     public Object visit(final PropertyIsGreaterThanOrEqualTo filter, final Object data) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
-        else names = new HashSet<String>();
+        else names = new HashSet<>();
         filter.getExpression1().accept(this, names);
         filter.getExpression2().accept(this, names);
         return names;
@@ -367,7 +367,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
     public Object visit(final PropertyIsLessThan filter, final Object data) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
-        else names = new HashSet<String>();
+        else names = new HashSet<>();
         filter.getExpression1().accept(this, names);
         filter.getExpression2().accept(this, names);
         return names;
@@ -381,7 +381,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
     public Object visit(final PropertyIsLessThanOrEqualTo filter, final Object data) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
-        else names = new HashSet<String>();
+        else names = new HashSet<>();
         filter.getExpression1().accept(this, names);
         filter.getExpression2().accept(this, names);
         return names;
@@ -395,7 +395,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
     public Object visit(final PropertyIsLike filter, final Object data) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
-        else names = new HashSet<String>();
+        else names = new HashSet<>();
         filter.getExpression().accept(this, names);
         return names;
     }
@@ -408,7 +408,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
     public Object visit(final PropertyIsNull filter, final Object data) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
-        else names = new HashSet<String>();
+        else names = new HashSet<>();
         filter.getExpression().accept(this, names);
         return names;
     }
@@ -417,7 +417,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
     public Object visit(final PropertyIsNil filter, final Object data) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
-        else names = new HashSet<String>();
+        else names = new HashSet<>();
         filter.getExpression().accept(this, names);
         return names;
     }
@@ -430,7 +430,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
     public Object visit(final BBOX filter, final Object data) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
-        else names = new HashSet<String>();
+        else names = new HashSet<>();
         filter.getExpression1().accept(this, names);
         filter.getExpression2().accept(this, names);
         return names;
@@ -444,7 +444,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
     public Object visit(final Beyond filter, final Object data) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
-        else names = new HashSet<String>();
+        else names = new HashSet<>();
         filter.getExpression1().accept(this, names);
         filter.getExpression2().accept(this, names);
         return names;
@@ -458,7 +458,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
     public Object visit(final Contains filter, final Object data) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
-        else names = new HashSet<String>();
+        else names = new HashSet<>();
         filter.getExpression1().accept(this, names);
         filter.getExpression2().accept(this, names);
         return names;
@@ -472,7 +472,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
     public Object visit(final Crosses filter, final Object data) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
-        else names = new HashSet<String>();
+        else names = new HashSet<>();
         filter.getExpression1().accept(this, names);
         filter.getExpression2().accept(this, names);
         return names;
@@ -486,7 +486,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
     public Object visit(final Disjoint filter, final Object data) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
-        else names = new HashSet<String>();
+        else names = new HashSet<>();
         filter.getExpression1().accept(this, names);
         filter.getExpression2().accept(this, names);
         return names;
@@ -500,7 +500,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
     public Object visit(final DWithin filter, final Object data) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
-        else names = new HashSet<String>();
+        else names = new HashSet<>();
         filter.getExpression1().accept(this, names);
         filter.getExpression2().accept(this, names);
         return names;
@@ -514,7 +514,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
     public Object visit(final Equals filter, final Object data) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
-        else names = new HashSet<String>();
+        else names = new HashSet<>();
         filter.getExpression1().accept(this, names);
         filter.getExpression2().accept(this, names);
         return names;
@@ -528,7 +528,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
     public Object visit(final Intersects filter, final Object data) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
-        else names = new HashSet<String>();
+        else names = new HashSet<>();
         filter.getExpression1().accept(this, names);
         filter.getExpression2().accept(this, names);
         return names;
@@ -542,7 +542,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
     public Object visit(final Overlaps filter, final Object data) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
-        else names = new HashSet<String>();
+        else names = new HashSet<>();
         filter.getExpression1().accept(this, names);
         filter.getExpression2().accept(this, names);
         return names;
@@ -556,7 +556,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
     public Object visit(final Touches filter, final Object data) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
-        else names = new HashSet<String>();
+        else names = new HashSet<>();
         filter.getExpression1().accept(this, names);
         filter.getExpression2().accept(this, names);
         return names;
@@ -570,7 +570,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
     public Object visit(final Within filter, final Object data) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
-        else names = new HashSet<String>();
+        else names = new HashSet<>();
         filter.getExpression1().accept(this, names);
         filter.getExpression2().accept(this, names);
         return names;
@@ -580,7 +580,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
     public Object visit(After filter, Object data) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
-        else names = new HashSet<String>();
+        else names = new HashSet<>();
         filter.getExpression1().accept(this, names);
         filter.getExpression2().accept(this, names);
         return names;
@@ -590,7 +590,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
     public Object visit(AnyInteracts filter, Object data) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
-        else names = new HashSet<String>();
+        else names = new HashSet<>();
         filter.getExpression1().accept(this, names);
         filter.getExpression2().accept(this, names);
         return names;
@@ -600,7 +600,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
     public Object visit(Before filter, Object data) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
-        else names = new HashSet<String>();
+        else names = new HashSet<>();
         filter.getExpression1().accept(this, names);
         filter.getExpression2().accept(this, names);
         return names;
@@ -610,7 +610,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
     public Object visit(Begins filter, Object data) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
-        else names = new HashSet<String>();
+        else names = new HashSet<>();
         filter.getExpression1().accept(this, names);
         filter.getExpression2().accept(this, names);
         return names;
@@ -620,7 +620,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
     public Object visit(BegunBy filter, Object data) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
-        else names = new HashSet<String>();
+        else names = new HashSet<>();
         filter.getExpression1().accept(this, names);
         filter.getExpression2().accept(this, names);
         return names;
@@ -630,7 +630,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
     public Object visit(During filter, Object data) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
-        else names = new HashSet<String>();
+        else names = new HashSet<>();
         filter.getExpression1().accept(this, names);
         filter.getExpression2().accept(this, names);
         return names;
@@ -640,7 +640,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
     public Object visit(EndedBy filter, Object data) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
-        else names = new HashSet<String>();
+        else names = new HashSet<>();
         filter.getExpression1().accept(this, names);
         filter.getExpression2().accept(this, names);
         return names;
@@ -650,7 +650,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
     public Object visit(Ends filter, Object data) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
-        else names = new HashSet<String>();
+        else names = new HashSet<>();
         filter.getExpression1().accept(this, names);
         filter.getExpression2().accept(this, names);
         return names;
@@ -660,7 +660,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
     public Object visit(Meets filter, Object data) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
-        else names = new HashSet<String>();
+        else names = new HashSet<>();
         filter.getExpression1().accept(this, names);
         filter.getExpression2().accept(this, names);
         return names;
@@ -670,7 +670,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
     public Object visit(MetBy filter, Object data) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
-        else names = new HashSet<String>();
+        else names = new HashSet<>();
         filter.getExpression1().accept(this, names);
         filter.getExpression2().accept(this, names);
         return names;
@@ -680,7 +680,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
     public Object visit(OverlappedBy filter, Object data) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
-        else names = new HashSet<String>();
+        else names = new HashSet<>();
         filter.getExpression1().accept(this, names);
         filter.getExpression2().accept(this, names);
         return names;
@@ -690,7 +690,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
     public Object visit(TContains filter, Object data) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
-        else names = new HashSet<String>();
+        else names = new HashSet<>();
         filter.getExpression1().accept(this, names);
         filter.getExpression2().accept(this, names);
         return names;
@@ -700,7 +700,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
     public Object visit(TEquals filter, Object data) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
-        else names = new HashSet<String>();
+        else names = new HashSet<>();
         filter.getExpression1().accept(this, names);
         filter.getExpression2().accept(this, names);
         return names;
@@ -710,7 +710,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
     public Object visit(TOverlaps filter, Object data) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
-        else names = new HashSet<String>();
+        else names = new HashSet<>();
         filter.getExpression1().accept(this, names);
         filter.getExpression2().accept(this, names);
         return names;

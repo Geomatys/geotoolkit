@@ -180,7 +180,7 @@ public final class GeoJSONStreamWriter implements Iterator<Feature>, AutoCloseab
     public Feature next() throws BackingStoreException {
         edited = featureType.newInstance();
         if (hasIdentifier) {
-            edited.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), idConverter.apply(currentFeatureIdx++));
+            edited.setPropertyValue(AttributeConvention.IDENTIFIER, idConverter.apply(currentFeatureIdx++));
         }
         return edited;
     }
