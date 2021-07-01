@@ -73,7 +73,7 @@ public class ConvexHullProcess extends AbstractProcess {
 
                 //in the first pass, if the geometry attribute name is null, we use the default geometry attribute name
                 if (geometryName == null) {
-                    geometryName = AttributeConvention.GEOMETRY_PROPERTY.toString();
+                    geometryName = AttributeConvention.GEOMETRY;
                 }
                 for (PropertyType property : feature.getType().getProperties(true)) {
                     if (AttributeConvention.isGeometryAttribute(property)) {

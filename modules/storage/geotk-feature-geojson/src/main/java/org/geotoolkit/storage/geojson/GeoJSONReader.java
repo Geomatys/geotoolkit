@@ -195,7 +195,7 @@ class GeoJSONReader implements Iterator<Feature>, AutoCloseable {
             if (id == null) {
                 id = currentFeatureIdx;
             }
-            feature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), idConverter.apply(id));
+            feature.setPropertyValue(AttributeConvention.IDENTIFIER, idConverter.apply(id));
         }
         feature.setPropertyValue(geometryName, geom);
 

@@ -249,7 +249,7 @@ public class KmlFeatureUtilities {
 
         final FeatureType sft = ftb.build();
         final Feature simpleFeature = sft.newInstance();
-        simpleFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "feature" + idgeom);
+        simpleFeature.setPropertyValue(AttributeConvention.IDENTIFIER, "feature" + idgeom);
 
         //add geometry
         simpleFeature.setPropertyValue("geometry", finalGeom);
@@ -421,7 +421,7 @@ public class KmlFeatureUtilities {
         //Transform geometry
         final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
         final Feature placemark = kmlFactory.createPlacemark();
-        final String geoColumn = AttributeConvention.GEOMETRY_PROPERTY.toString();
+        final String geoColumn = AttributeConvention.GEOMETRY;
         final AbstractGeometry ag = buildKMLGeometry((Geometry) noKmlFeature.getPropertyValue(geoColumn));
         placemark.setPropertyValue(KmlConstants.TAG_GEOMETRY, ag);
 

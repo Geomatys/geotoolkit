@@ -140,7 +140,7 @@ class IndexedShapefileFeatureWriter extends ShapefileFeatureWriter{
             throw new FeatureStoreRuntimeException(ex);
         }
         //ensure the user did not modify the id between next() and write() calls
-        currentFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), currentFid);
+        currentFeature.setPropertyValue(AttributeConvention.IDENTIFIER, currentFid);
         super.write();
     }
 

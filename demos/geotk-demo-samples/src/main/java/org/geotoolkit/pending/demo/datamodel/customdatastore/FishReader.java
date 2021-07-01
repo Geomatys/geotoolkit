@@ -53,7 +53,7 @@ public class FishReader implements Iterator<Feature> {
         }
         if (scanner.hasNextLine()) {
             current = type.newInstance();
-            current.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), Integer.toString(inc++));
+            current.setPropertyValue(AttributeConvention.IDENTIFIER, Integer.toString(inc++));
             final String line = scanner.nextLine();
             final String[] parts = line.split("/");
 

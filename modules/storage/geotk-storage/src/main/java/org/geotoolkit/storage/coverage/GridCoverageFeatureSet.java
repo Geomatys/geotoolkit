@@ -113,7 +113,7 @@ public class GridCoverageFeatureSet extends AbstractResource implements FeatureS
             if (geom != null) {
                 geom = JTSMapping.convertType(geom, MultiPolygon.class);
                 JTS.setCRS(geom, gridGeom.getCoordinateReferenceSystem());
-                feature.setPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString(), geom);
+                feature.setPropertyValue(AttributeConvention.GEOMETRY, geom);
             }
         }
         feature.setProperty(coverageRecords(gcr, role));
@@ -517,7 +517,7 @@ public class GridCoverageFeatureSet extends AbstractResource implements FeatureS
                 }
                 JTS.setCRS(geom, crs);
 
-                next.setPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString(), geom);
+                next.setPropertyValue(AttributeConvention.GEOMETRY, geom);
                 //read sample values
                 for (int i=0;i<properties.length;i++) {
                     next.setPropertyValue(properties[i], geophysicPixelIterator.getSampleDouble(i));

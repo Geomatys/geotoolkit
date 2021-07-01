@@ -70,7 +70,7 @@ public class UnionFeatureCollection extends WrapFeatureCollection {
          */
         CoordinateReferenceSystem geometryCRS;
         if (inputGeomName == null) {
-            final PropertyType property = inputFC.getType().getProperty(AttributeConvention.GEOMETRY_PROPERTY.toString());
+            final PropertyType property = inputFC.getType().getProperty(AttributeConvention.GEOMETRY);
             this.inputGeomName = property.getName().toString();
             geometryCRS = FeatureExt.getCRS(property);
         } else {
@@ -80,7 +80,7 @@ public class UnionFeatureCollection extends WrapFeatureCollection {
         }
 
         if (unionGeomName == null) {
-            this.unionGeomName = AttributeConvention.GEOMETRY_PROPERTY.toString();
+            this.unionGeomName = AttributeConvention.GEOMETRY;
         } else {
             this.unionGeomName = unionGeomName;
         }

@@ -142,7 +142,7 @@ public class MergeTest extends AbstractProcessTest {
                     new Coordinate(4.0, 3.0),
                     new Coordinate(3.0, 3.0)
                 });
-        myFeature1.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-01");
+        myFeature1.setPropertyValue(AttributeConvention.IDENTIFIER, "id-01");
         myFeature1.setPropertyValue("name", "feature1");
         myFeature1.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         myFeature1.setPropertyValue("geom2", geometryFactory.createPoint(new Coordinate(3.5, 3.5)));
@@ -164,7 +164,7 @@ public class MergeTest extends AbstractProcessTest {
                     new Coordinate(4.0, 7.0),
                     new Coordinate(5.5, 6.5)
                 });
-        myFeature2.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-02");
+        myFeature2.setPropertyValue(AttributeConvention.IDENTIFIER, "id-02");
         myFeature2.setPropertyValue("name", "feature2");
         myFeature2.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         myFeature2.setPropertyValue("geom2", multPt);
@@ -184,7 +184,7 @@ public class MergeTest extends AbstractProcessTest {
                     new Coordinate(7.0, 0.0),
                     new Coordinate(9.0, 3.0)
                 });
-        myFeature3.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-03");
+        myFeature3.setPropertyValue(AttributeConvention.IDENTIFIER, "id-03");
         myFeature3.setPropertyValue("name", "feature3");
         myFeature3.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         myFeature3.setPropertyValue("geom2", line);
@@ -214,7 +214,7 @@ public class MergeTest extends AbstractProcessTest {
                     new Coordinate(3.0, 6.0), //intersection with a point
                     new Coordinate(3.5, 3.5) //intersection with a polygon
                 });
-        myFeature1.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-11");
+        myFeature1.setPropertyValue(AttributeConvention.IDENTIFIER, "id-11");
         myFeature1.setPropertyValue("name", "feature11");
         myFeature1.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         myFeature1.setPropertyValue("geom2", multPt);
@@ -234,7 +234,7 @@ public class MergeTest extends AbstractProcessTest {
                     new Coordinate(8.0, 4.5),
                     new Coordinate(11.0, 4.5)
                 });
-        myFeature2.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-12");
+        myFeature2.setPropertyValue(AttributeConvention.IDENTIFIER, "id-12");
         myFeature2.setPropertyValue("name", "feature12");
         myFeature2.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         myFeature2.setPropertyValue("geom2", line);
@@ -249,7 +249,7 @@ public class MergeTest extends AbstractProcessTest {
                     new Coordinate(10.0, 0.0),
                     new Coordinate(0.0, 0.0)
                 });
-        myFeature3.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-13");
+        myFeature3.setPropertyValue(AttributeConvention.IDENTIFIER, "id-13");
         myFeature3.setPropertyValue("name", "feature13");
         myFeature3.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         myFeature3.setPropertyValue("geom2", null);
@@ -280,7 +280,7 @@ public class MergeTest extends AbstractProcessTest {
                     new Coordinate(3.0, 6.0), //intersection with a point
                     new Coordinate(3.5, 3.5) //intersection with a polygon
                 });
-        myFeature1.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-21");
+        myFeature1.setPropertyValue(AttributeConvention.IDENTIFIER, "id-21");
         myFeature1.setPropertyValue("name", 21);
         myFeature1.setPropertyValue("color", "grey");
         myFeature1.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
@@ -301,7 +301,7 @@ public class MergeTest extends AbstractProcessTest {
                     new Coordinate(8.0, 4.5),
                     new Coordinate(11.0, 4.5)
                 });
-        myFeature2.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-22");
+        myFeature2.setPropertyValue(AttributeConvention.IDENTIFIER, "id-22");
         myFeature2.setPropertyValue("name", 22);
         myFeature2.setPropertyValue("color", "red");
         myFeature2.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
@@ -317,7 +317,7 @@ public class MergeTest extends AbstractProcessTest {
                     new Coordinate(10.0, 0.0),
                     new Coordinate(0.0, 0.0)
                 });
-        myFeature3.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-23");
+        myFeature3.setPropertyValue(AttributeConvention.IDENTIFIER, "id-23");
         myFeature3.setPropertyValue("name", 23);
         myFeature3.setPropertyValue("color", "blue");
         myFeature3.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
@@ -343,7 +343,7 @@ public class MergeTest extends AbstractProcessTest {
                     new Coordinate(2.0, 4.0),
                     new Coordinate(1.0, 4.0)
                 });
-        myFeature1.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-31");
+        myFeature1.setPropertyValue(AttributeConvention.IDENTIFIER, "id-31");
         myFeature1.setPropertyValue("height", 31);
         myFeature1.setPropertyValue("color", "grey");
         myFeature1.setPropertyValue("geom4", geometryFactory.createPolygon(ring, null));
@@ -358,7 +358,7 @@ public class MergeTest extends AbstractProcessTest {
                     new Coordinate(7.0, 2.0),
                     new Coordinate(4.0, 2.0)
                 });
-        myFeature2.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-32");
+        myFeature2.setPropertyValue(AttributeConvention.IDENTIFIER, "id-32");
         myFeature2.setPropertyValue("height", 32);
         myFeature2.setPropertyValue("color", "red");
         myFeature2.setPropertyValue("geom4", geometryFactory.createPolygon(ring, null));
@@ -373,7 +373,7 @@ public class MergeTest extends AbstractProcessTest {
                     new Coordinate(10.0, 0.0),
                     new Coordinate(0.0, 0.0)
                 });
-        myFeature3.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-33");
+        myFeature3.setPropertyValue(AttributeConvention.IDENTIFIER, "id-33");
         myFeature3.setPropertyValue("height", 33);
         myFeature3.setPropertyValue("color", "blue");
         myFeature3.setPropertyValue("geom4", geometryFactory.createPolygon(ring, null));
@@ -399,7 +399,7 @@ public class MergeTest extends AbstractProcessTest {
                     new Coordinate(4.0, 3.0),
                     new Coordinate(3.0, 3.0)
                 });
-        myFeature1.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-01");
+        myFeature1.setPropertyValue(AttributeConvention.IDENTIFIER, "id-01");
         myFeature1.setPropertyValue("name", "feature1");
         myFeature1.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         myFeature1.setPropertyValue("geom2", geometryFactory.createPoint(new Coordinate(3.5, 3.5)));
@@ -421,7 +421,7 @@ public class MergeTest extends AbstractProcessTest {
                     new Coordinate(4.0, 7.0),
                     new Coordinate(5.5, 6.5)
                 });
-        myFeature2.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-02");
+        myFeature2.setPropertyValue(AttributeConvention.IDENTIFIER, "id-02");
         myFeature2.setPropertyValue("name", "feature2");
         myFeature2.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         myFeature2.setPropertyValue("geom2", multPt);
@@ -441,7 +441,7 @@ public class MergeTest extends AbstractProcessTest {
                     new Coordinate(7.0, 0.0),
                     new Coordinate(9.0, 3.0)
                 });
-        myFeature3.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-03");
+        myFeature3.setPropertyValue(AttributeConvention.IDENTIFIER, "id-03");
         myFeature3.setPropertyValue("name", "feature3");
         myFeature3.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         myFeature3.setPropertyValue("geom2", line);
@@ -463,7 +463,7 @@ public class MergeTest extends AbstractProcessTest {
                     new Coordinate(3.0, 6.0),
                     new Coordinate(3.5, 3.5)
                 });
-        myFeature1.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-11");
+        myFeature1.setPropertyValue(AttributeConvention.IDENTIFIER, "id-11");
         myFeature1.setPropertyValue("name", "feature11");
         myFeature1.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         myFeature1.setPropertyValue("geom2", multPt);
@@ -483,7 +483,7 @@ public class MergeTest extends AbstractProcessTest {
                     new Coordinate(8.0, 4.5),
                     new Coordinate(11.0, 4.5)
                 });
-        myFeature2.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-12");
+        myFeature2.setPropertyValue(AttributeConvention.IDENTIFIER, "id-12");
         myFeature2.setPropertyValue("name", "feature12");
         myFeature2.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         myFeature2.setPropertyValue("geom2", line);
@@ -498,7 +498,7 @@ public class MergeTest extends AbstractProcessTest {
                     new Coordinate(10.0, 0.0),
                     new Coordinate(0.0, 0.0)
                 });
-        myFeature3.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-13");
+        myFeature3.setPropertyValue(AttributeConvention.IDENTIFIER, "id-13");
         myFeature3.setPropertyValue("name", "feature13");
         myFeature3.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         myFeature3.setPropertyValue("geom2", null);
@@ -513,7 +513,7 @@ public class MergeTest extends AbstractProcessTest {
                     new Coordinate(2.0, 4.0),
                     new Coordinate(1.0, 4.0)
                 });
-        myFeature1.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-21");
+        myFeature1.setPropertyValue(AttributeConvention.IDENTIFIER, "id-21");
         myFeature1.setPropertyValue("name", "21");
         myFeature1.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         myFeature1.setPropertyValue("geom2", null);
@@ -528,7 +528,7 @@ public class MergeTest extends AbstractProcessTest {
                     new Coordinate(7.0, 2.0),
                     new Coordinate(4.0, 2.0)
                 });
-        myFeature2.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-22");
+        myFeature2.setPropertyValue(AttributeConvention.IDENTIFIER, "id-22");
         myFeature2.setPropertyValue("name", "22");
         myFeature2.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         myFeature2.setPropertyValue("geom2", null);
@@ -543,7 +543,7 @@ public class MergeTest extends AbstractProcessTest {
                     new Coordinate(10.0, 0.0),
                     new Coordinate(0.0, 0.0)
                 });
-        myFeature3.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-23");
+        myFeature3.setPropertyValue(AttributeConvention.IDENTIFIER, "id-23");
         myFeature3.setPropertyValue("name", "23");
         myFeature3.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         myFeature3.setPropertyValue("geom2", null);
@@ -551,21 +551,21 @@ public class MergeTest extends AbstractProcessTest {
         ////////////////////////////////////////////////////////////////////// 4th FeatureCollection
 
         myFeature1 = type.newInstance();
-        myFeature1.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-31");
+        myFeature1.setPropertyValue(AttributeConvention.IDENTIFIER, "id-31");
         myFeature1.setPropertyValue("name", null);
         myFeature1.setPropertyValue("geom1", null);
         myFeature1.setPropertyValue("geom2", null);
         featureList.add(myFeature1);
 
         myFeature2 = type.newInstance();
-        myFeature2.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-32");
+        myFeature2.setPropertyValue(AttributeConvention.IDENTIFIER, "id-32");
         myFeature2.setPropertyValue("name", null);
         myFeature2.setPropertyValue("geom1", null);
         myFeature2.setPropertyValue("geom2", null);
         featureList.add(myFeature2);
 
         myFeature3 = type.newInstance();
-        myFeature3.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-33");
+        myFeature3.setPropertyValue(AttributeConvention.IDENTIFIER, "id-33");
         myFeature3.setPropertyValue("name", null);
         myFeature3.setPropertyValue("geom1", null);
         myFeature3.setPropertyValue("geom2", null);

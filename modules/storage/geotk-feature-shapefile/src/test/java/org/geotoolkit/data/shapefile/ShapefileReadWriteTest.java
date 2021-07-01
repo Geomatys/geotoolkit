@@ -111,7 +111,7 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
 
         final Feature f = type.newInstance();
         f.setPropertyValue("mock", "This is a test.");
-        f.setPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString(), sourcePoint);
+        f.setPropertyValue(AttributeConvention.GEOMETRY, sourcePoint);
 
         final FeatureCollection reprojected = FeatureStoreUtilities.collection(f)
                 .subset(QueryBuilder.reprojected(type.getName().toString(), CRS.forCode("EPSG:2154")));

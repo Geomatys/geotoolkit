@@ -175,49 +175,49 @@ public class SpatialJoinTest extends AbstractProcessTest {
         final FeatureCollection featureList = FeatureStoreUtilities.collection("Target", type);
 
         final Feature feature1 = type.newInstance();
-        feature1.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-1");
+        feature1.setPropertyValue(AttributeConvention.IDENTIFIER, "id-1");
         feature1.setPropertyValue("name","Human1");
         feature1.setPropertyValue("age",20);
         feature1.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(3, 2)));
         featureList.add(feature1);
 
         final Feature feature2 = type.newInstance();
-        feature2.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-2");
+        feature2.setPropertyValue(AttributeConvention.IDENTIFIER, "id-2");
         feature2.setPropertyValue("name","Human2");
         feature2.setPropertyValue("age",10);
         feature2.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(3, 5)));
         featureList.add(feature2);
 
         final Feature feature3 = type.newInstance();
-        feature3.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-3");
+        feature3.setPropertyValue(AttributeConvention.IDENTIFIER, "id-3");
         feature3.setPropertyValue("name","Human3");
         feature3.setPropertyValue("age",35);
         feature3.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(6, 6)));
         featureList.add(feature3);
 
         final Feature feature4 = type.newInstance();
-        feature4.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-4");
+        feature4.setPropertyValue(AttributeConvention.IDENTIFIER, "id-4");
         feature4.setPropertyValue("name","Human4");
         feature4.setPropertyValue("age",40);
         feature4.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(6, 2)));
         featureList.add(feature4);
 
         final Feature feature5 = type.newInstance();
-        feature5.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-5");
+        feature5.setPropertyValue(AttributeConvention.IDENTIFIER, "id-5");
         feature5.setPropertyValue("name","Human5");
         feature5.setPropertyValue("age",23);
         feature5.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(7, 4)));
         featureList.add(feature5);
 
         final Feature feature6 = type.newInstance();
-        feature6.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-6");
+        feature6.setPropertyValue(AttributeConvention.IDENTIFIER, "id-6");
         feature6.setPropertyValue("name","Human6");
         feature6.setPropertyValue("age",32);
         feature6.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(9, 4)));
         featureList.add(feature6);
 
         final Feature feature7 = type.newInstance();
-        feature7.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-7");
+        feature7.setPropertyValue(AttributeConvention.IDENTIFIER, "id-7");
         feature7.setPropertyValue("name","Human7");
         feature7.setPropertyValue("age",28);
         feature7.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(9, 1)));
@@ -233,49 +233,49 @@ public class SpatialJoinTest extends AbstractProcessTest {
         final FeatureCollection featureList = FeatureStoreUtilities.collection("source", type);
 
         final Feature feature1 = type.newInstance();
-        feature1.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-11");
+        feature1.setPropertyValue(AttributeConvention.IDENTIFIER, "id-11");
         feature1.setPropertyValue("type","Tree1");
         feature1.setPropertyValue("age",220);
         feature1.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(2, 1)));
         featureList.add(feature1);
 
         final Feature feature2 = type.newInstance();
-        feature2.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-12");
+        feature2.setPropertyValue(AttributeConvention.IDENTIFIER, "id-12");
         feature2.setPropertyValue("type","Tree2");
         feature2.setPropertyValue("age",100);
         feature2.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(3, 6)));
         featureList.add(feature2);
 
         final Feature feature3 = type.newInstance();
-        feature3.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-13");
+        feature3.setPropertyValue(AttributeConvention.IDENTIFIER, "id-13");
         feature3.setPropertyValue("type","Tree3");
         feature3.setPropertyValue("age",5);
         feature3.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(5, 5)));
         featureList.add(feature3);
 
         final Feature feature4 = type.newInstance();
-        feature4.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-14");
+        feature4.setPropertyValue(AttributeConvention.IDENTIFIER, "id-14");
         feature4.setPropertyValue("type","Tree4");
         feature4.setPropertyValue("age",40);
         feature4.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(6, 2)));
         featureList.add(feature4);
 
         final Feature feature5 = type.newInstance();
-        feature5.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-15");
+        feature5.setPropertyValue(AttributeConvention.IDENTIFIER, "id-15");
         feature5.setPropertyValue("type","Tree5");
         feature5.setPropertyValue("age",57);
         feature5.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(9, 5)));
         featureList.add(feature5);
 
         final Feature feature6 = type.newInstance();
-        feature6.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-16");
+        feature6.setPropertyValue(AttributeConvention.IDENTIFIER, "id-16");
         feature6.setPropertyValue("type","Tree6");
         feature6.setPropertyValue("age",68);
         feature6.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(9, 3)));
         featureList.add(feature6);
 
         final Feature feature7 = type.newInstance();
-        feature7.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-17");
+        feature7.setPropertyValue(AttributeConvention.IDENTIFIER, "id-17");
         feature7.setPropertyValue("type","Tree7");
         feature7.setPropertyValue("age",94);
         feature7.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(11, 2)));
@@ -291,7 +291,7 @@ public class SpatialJoinTest extends AbstractProcessTest {
         final FeatureCollection featureList = FeatureStoreUtilities.collection("target", type);
 
         final Feature feature1 = type.newInstance();
-        feature1.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-01");
+        feature1.setPropertyValue(AttributeConvention.IDENTIFIER, "id-01");
         feature1.setPropertyValue("name","Field");
         feature1.setPropertyValue("age",1);
 
@@ -316,7 +316,7 @@ public class SpatialJoinTest extends AbstractProcessTest {
         final FeatureCollection featureList = FeatureStoreUtilities.collection("target", type);
 
         final Feature feature1 = type.newInstance();
-        feature1.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-01");
+        feature1.setPropertyValue(AttributeConvention.IDENTIFIER, "id-01");
         feature1.setPropertyValue("name","Field");
         feature1.setPropertyValue("age",1);
 
@@ -340,7 +340,7 @@ public class SpatialJoinTest extends AbstractProcessTest {
         final FeatureCollection featureList = FeatureStoreUtilities.collection("source", type);
 
         final Feature feature1 = type.newInstance();
-        feature1.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-11");
+        feature1.setPropertyValue(AttributeConvention.IDENTIFIER, "id-11");
         feature1.setPropertyValue("type","something1");
         feature1.setPropertyValue("age",1);
         LinearRing ring = geometryFactory.createLinearRing(new Coordinate[]{
@@ -354,7 +354,7 @@ public class SpatialJoinTest extends AbstractProcessTest {
         featureList.add(feature1);
 
         final Feature feature2 = type.newInstance();
-        feature2.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-12");
+        feature2.setPropertyValue(AttributeConvention.IDENTIFIER, "id-12");
         feature2.setPropertyValue("type","something2");
         feature2.setPropertyValue("age",2);
         ring = geometryFactory.createLinearRing(new Coordinate[]{
@@ -368,7 +368,7 @@ public class SpatialJoinTest extends AbstractProcessTest {
         featureList.add(feature2);
 
         final Feature feature3 = type.newInstance();
-        feature3.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-13");
+        feature3.setPropertyValue(AttributeConvention.IDENTIFIER, "id-13");
         feature3.setPropertyValue("type","something3");
         feature3.setPropertyValue("age",3);
         ring = geometryFactory.createLinearRing(new Coordinate[]{
@@ -382,7 +382,7 @@ public class SpatialJoinTest extends AbstractProcessTest {
         featureList.add(feature3);
 
         final Feature feature4 = type.newInstance();
-        feature4.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-14");
+        feature4.setPropertyValue(AttributeConvention.IDENTIFIER, "id-14");
         feature4.setPropertyValue("type","something4");
         feature4.setPropertyValue("age",4);
         ring = geometryFactory.createLinearRing(new Coordinate[]{
@@ -404,7 +404,7 @@ public class SpatialJoinTest extends AbstractProcessTest {
         final FeatureCollection featureList = FeatureStoreUtilities.collection("SJ_Type1_SJ_Type2", type);
 
         final Feature feature1 = type.newInstance();
-        feature1.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-1_id-11");
+        feature1.setPropertyValue(AttributeConvention.IDENTIFIER, "id-1_id-11");
         feature1.setPropertyValue("name","Human1");
         feature1.setPropertyValue("age",20);
         feature1.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(3, 2)));
@@ -413,7 +413,7 @@ public class SpatialJoinTest extends AbstractProcessTest {
         featureList.add(feature1);
 
         final Feature feature2 = type.newInstance();
-        feature2.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-2_id-12");
+        feature2.setPropertyValue(AttributeConvention.IDENTIFIER, "id-2_id-12");
         feature2.setPropertyValue("name","Human2");
         feature2.setPropertyValue("age",10);
         feature2.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(3, 5)));
@@ -422,7 +422,7 @@ public class SpatialJoinTest extends AbstractProcessTest {
         featureList.add(feature2);
 
         final Feature feature3 = type.newInstance();
-        feature3.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-3_id-13");
+        feature3.setPropertyValue(AttributeConvention.IDENTIFIER, "id-3_id-13");
         feature3.setPropertyValue("name","Human3");
         feature3.setPropertyValue("age",35);
         feature3.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(6, 6)));
@@ -431,7 +431,7 @@ public class SpatialJoinTest extends AbstractProcessTest {
         featureList.add(feature3);
 
         final Feature feature4 = type.newInstance();
-        feature4.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-4_id-14");
+        feature4.setPropertyValue(AttributeConvention.IDENTIFIER, "id-4_id-14");
         feature4.setPropertyValue("name","Human4");
         feature4.setPropertyValue("age",40);
         feature4.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(6, 2)));
@@ -440,7 +440,7 @@ public class SpatialJoinTest extends AbstractProcessTest {
         featureList.add(feature4);
 
         final Feature feature5 = type.newInstance();
-        feature5.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-5_id-13");
+        feature5.setPropertyValue(AttributeConvention.IDENTIFIER, "id-5_id-13");
         feature5.setPropertyValue("name","Human5");
         feature5.setPropertyValue("age",23);
         feature5.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(7, 4)));
@@ -449,7 +449,7 @@ public class SpatialJoinTest extends AbstractProcessTest {
         featureList.add(feature5);
 
         final Feature feature6 = type.newInstance();
-        feature6.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-6_id-16");
+        feature6.setPropertyValue(AttributeConvention.IDENTIFIER, "id-6_id-16");
         feature6.setPropertyValue("name","Human6");
         feature6.setPropertyValue("age",32);
         feature6.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(9, 4)));
@@ -458,7 +458,7 @@ public class SpatialJoinTest extends AbstractProcessTest {
         featureList.add(feature6);
 
         final Feature feature7 = type.newInstance();
-        feature7.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-7_id-16");
+        feature7.setPropertyValue(AttributeConvention.IDENTIFIER, "id-7_id-16");
         feature7.setPropertyValue("name","Human7");
         feature7.setPropertyValue("age",28);
         feature7.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(9, 1)));
@@ -476,7 +476,7 @@ public class SpatialJoinTest extends AbstractProcessTest {
         final FeatureCollection featureList = FeatureStoreUtilities.collection("SJ_Type1_SJ_Type2", type);
 
         final Feature feature1 = type.newInstance();
-        feature1.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-01_id-12");
+        feature1.setPropertyValue(AttributeConvention.IDENTIFIER, "id-01_id-12");
         feature1.setPropertyValue("name","Field");
         feature1.setPropertyValue("age",1);
 
@@ -503,7 +503,7 @@ public class SpatialJoinTest extends AbstractProcessTest {
         final FeatureCollection featureList = FeatureStoreUtilities.collection("SJ_Type1_SJ_Type2", type);
 
         final Feature feature1 = type.newInstance();
-        feature1.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-01");
+        feature1.setPropertyValue(AttributeConvention.IDENTIFIER, "id-01");
         feature1.setPropertyValue("name","Field");
         feature1.setPropertyValue("age",1);
 

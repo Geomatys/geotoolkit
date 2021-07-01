@@ -100,7 +100,7 @@ public class FeatureFilterSpatialTest extends org.geotoolkit.test.TestBase {
          *                            AggregateGeoFeature 1                                          *
          *********************************************************************************************/
         final Feature aggregateGeoFeature1 = aggregateGeoFeatureType.newInstance();
-        aggregateGeoFeature1.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "f005");
+        aggregateGeoFeature1.setPropertyValue(AttributeConvention.IDENTIFIER, "f005");
         aggregateGeoFeature1.setPropertyValue(description.toString(), "description-f005");
         aggregateGeoFeature1.setPropertyValue(name.toString(), "name-f005");
         GeometryFactory factory = new GeometryFactory();

@@ -198,7 +198,7 @@ public class CoverageToFeaturesProcess extends AbstractProcess {
         }
         //create the Feature
         Feature myfeature = type.newInstance();
-        myfeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-" + x + "-" + y);
+        myfeature.setPropertyValue(AttributeConvention.IDENTIFIER, "id-" + x + "-" + y);
         myfeature.setPropertyValue("cellgeom", geomFac.createPolygon(geomFac.createLinearRing(coord), null));
         myfeature.setPropertyValue("position", geomFac.createPoint(new Coordinate(pt2[0], pt2[1])));
         myfeature.setPropertyValue("orientation", posPix.name());

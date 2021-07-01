@@ -230,7 +230,7 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
             for (int c = 0; c < nbCol; c++) {
 
                 final Feature feature = cellType.newInstance();
-                feature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "cell-n");
+                feature.setPropertyValue(AttributeConvention.IDENTIFIER, "cell-n");
 
                 values[0] = contours[r][c].getCentroid();
                 JTS.setCRS( ((Geometry)values[0]), crs);

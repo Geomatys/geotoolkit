@@ -45,7 +45,7 @@ public class FIDFixVisitor extends DuplicatingFilterVisitor{
         }
 
         if(exp1 instanceof PropertyName && exp2 instanceof Literal
-                && ((PropertyName)exp1).getPropertyName().trim().equalsIgnoreCase(AttributeConvention.IDENTIFIER_PROPERTY.toString())) {
+                && ((PropertyName)exp1).getPropertyName().trim().equalsIgnoreCase(AttributeConvention.IDENTIFIER)) {
             //it's an id filter
             final Id idfilter = ff.id(Collections.singleton(ff.featureId( String.valueOf( ((Literal)exp2).getValue()))));
             return visit(idfilter,extraData);

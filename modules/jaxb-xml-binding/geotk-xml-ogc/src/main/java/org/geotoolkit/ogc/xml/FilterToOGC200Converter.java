@@ -303,7 +303,7 @@ public class FilterToOGC200Converter implements FilterToOGCConverter<FilterType>
 
             return ogc_factory.createBBOX(bbtype);
         } else if (filter instanceof Id) {
-            final PropertyName n = FF.property(AttributeConvention.IDENTIFIER_PROPERTY.toString());
+            final PropertyName n = FF.property(AttributeConvention.IDENTIFIER);
             Id idFilter = (Id) filter;
             final Set<Identifier> identifiers = idFilter.getIdentifiers();
             if (identifiers.isEmpty()) {

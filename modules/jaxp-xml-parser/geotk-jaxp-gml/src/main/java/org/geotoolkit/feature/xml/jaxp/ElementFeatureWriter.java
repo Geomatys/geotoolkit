@@ -231,7 +231,7 @@ public class ElementFeatureWriter {
             rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:gml", "http://www.opengis.net/gml");
         }
         final Attr idAttr = document.createAttributeNS(GML, "id");
-        idAttr.setValue(feature.getPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString()).toString());
+        idAttr.setValue(feature.getPropertyValue(AttributeConvention.IDENTIFIER).toString());
         idAttr.setPrefix("gml");
         rootElement.setAttributeNodeNS(idAttr);
 

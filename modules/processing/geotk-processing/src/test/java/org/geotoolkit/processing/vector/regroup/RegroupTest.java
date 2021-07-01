@@ -152,7 +152,7 @@ public class RegroupTest extends AbstractProcessTest {
                     new Coordinate(4.0, 3.0),
                     new Coordinate(3.0, 3.0)
                 });
-        myFeature1.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-01");
+        myFeature1.setPropertyValue(AttributeConvention.IDENTIFIER, "id-01");
         myFeature1.setPropertyValue("color", "grey");
         myFeature1.setPropertyValue("height", 9);
         myFeature1.setPropertyValue("type", "church");
@@ -176,7 +176,7 @@ public class RegroupTest extends AbstractProcessTest {
                     new Coordinate(4.0, 7.0),
                     new Coordinate(5.5, 6.5)
                 });
-        myFeature2.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-02");
+        myFeature2.setPropertyValue(AttributeConvention.IDENTIFIER, "id-02");
         myFeature2.setPropertyValue("color", "blue");
         myFeature2.setPropertyValue("height", 3);
         myFeature2.setPropertyValue("type", "office");
@@ -198,7 +198,7 @@ public class RegroupTest extends AbstractProcessTest {
                     new Coordinate(7.0, 0.0),
                     new Coordinate(9.0, 3.0)
                 });
-        myFeature3.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-03");
+        myFeature3.setPropertyValue(AttributeConvention.IDENTIFIER, "id-03");
         myFeature3.setPropertyValue("color", "black");
         myFeature3.setPropertyValue("height", 2);
         myFeature3.setPropertyValue("type", "office");
@@ -215,7 +215,7 @@ public class RegroupTest extends AbstractProcessTest {
                     new Coordinate(3.0, 2.0),
                     new Coordinate(2.0, 2.0)
                 });
-        myFeature4.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-04");
+        myFeature4.setPropertyValue(AttributeConvention.IDENTIFIER, "id-04");
         myFeature4.setPropertyValue("color", "yellow");
         myFeature4.setPropertyValue("height", 2);
         myFeature4.setPropertyValue("type", "post office");
@@ -237,7 +237,7 @@ public class RegroupTest extends AbstractProcessTest {
                     new Coordinate(8.0, 0.0),
                     new Coordinate(5.0, 3.0)
                 });
-        myFeature5.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-05");
+        myFeature5.setPropertyValue(AttributeConvention.IDENTIFIER, "id-05");
         myFeature5.setPropertyValue("color", "yellow");
         myFeature5.setPropertyValue("height", 9);
         myFeature5.setPropertyValue("type", "office");
@@ -261,7 +261,7 @@ public class RegroupTest extends AbstractProcessTest {
                     new Coordinate(10.0, 2.0),
                     new Coordinate(8.0, 0.0)
                 });
-        myFeature6.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-06");
+        myFeature6.setPropertyValue(AttributeConvention.IDENTIFIER, "id-06");
         myFeature6.setPropertyValue("color", "black");
         myFeature6.setPropertyValue("height", 2);
         myFeature6.setPropertyValue("type", "church");
@@ -288,7 +288,7 @@ public class RegroupTest extends AbstractProcessTest {
                     new Coordinate(6.0, 6.0),
                     new Coordinate(5.0, 6.0)
                 });
-        myFeature1.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "height-3");
+        myFeature1.setPropertyValue(AttributeConvention.IDENTIFIER, "height-3");
         myFeature1.setPropertyValue("height", 3);
         myFeature1.setPropertyValue("geom1", GF.createPolygon(ring, null));
         featureList.add(myFeature1);
@@ -312,7 +312,7 @@ public class RegroupTest extends AbstractProcessTest {
                 });
         Polygon poly1 = GF.createPolygon(ring1, null);
         Polygon poly2 = GF.createPolygon(ring2, null);
-        myFeature2.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "height-9");
+        myFeature2.setPropertyValue(AttributeConvention.IDENTIFIER, "height-9");
         myFeature2.setPropertyValue("height", 9);
         myFeature2.setPropertyValue("geom1", GF.createMultiPolygon(new Polygon[]{poly1, poly2}));
         featureList.add(myFeature2);
@@ -345,7 +345,7 @@ public class RegroupTest extends AbstractProcessTest {
         poly1 = GF.createPolygon(ring, null);
         poly2 = GF.createPolygon(ring1, null);
         Polygon poly3 = GF.createPolygon(ring2, null);
-        myFeature3.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "height-2");
+        myFeature3.setPropertyValue(AttributeConvention.IDENTIFIER, "height-2");
         myFeature3.setPropertyValue("height", 2);
         myFeature3.setPropertyValue("geom1", GF.createMultiPolygon(new Polygon[]{poly1, poly2, poly3}));
         featureList.add(myFeature3);
@@ -383,7 +383,7 @@ public class RegroupTest extends AbstractProcessTest {
                     new Coordinate(9.0, 3.0)
                 });
         GeometryCollection collec = GF.createGeometryCollection(new Geometry[]{line1, multPt, line3});
-        myFeature1.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "type-office");
+        myFeature1.setPropertyValue(AttributeConvention.IDENTIFIER, "type-office");
         myFeature1.setPropertyValue("type", "office");
         myFeature1.setPropertyValue("geom2", collec);
         featureList.add(myFeature1);
@@ -398,13 +398,13 @@ public class RegroupTest extends AbstractProcessTest {
                     new Coordinate(8.0, 0.0)
                 });
         Polygon poly = GF.createPolygon(ring, null);
-        myFeature2.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "type-church");
+        myFeature2.setPropertyValue(AttributeConvention.IDENTIFIER, "type-church");
         myFeature2.setPropertyValue("type", "church");
         myFeature2.setPropertyValue("geom2", GF.createGeometryCollection(new Geometry[]{poly, pt1}));
         featureList.add(myFeature2);
 
         Feature myFeature3 = type.newInstance();
-        myFeature3.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "type-post office");
+        myFeature3.setPropertyValue(AttributeConvention.IDENTIFIER, "type-post office");
         myFeature3.setPropertyValue("type", "post office");
         myFeature3.setPropertyValue("geom2", GF.createPoint(new Coordinate(10, 5)));
         featureList.add(myFeature3);

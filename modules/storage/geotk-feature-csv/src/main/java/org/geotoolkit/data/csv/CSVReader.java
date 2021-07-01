@@ -75,7 +75,7 @@ class CSVReader implements Iterator<Feature>, AutoCloseable {
 
         // Check if there's identifiers to report.
         try {
-            featureType.getProperty(AttributeConvention.IDENTIFIER_PROPERTY.toString());
+            featureType.getProperty(AttributeConvention.IDENTIFIER);
             withId = true;
         } catch (PropertyNotFoundException e) {
             //do nothing

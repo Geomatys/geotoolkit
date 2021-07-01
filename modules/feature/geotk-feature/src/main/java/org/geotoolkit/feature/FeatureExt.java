@@ -99,6 +99,16 @@ public final class FeatureExt extends Static {
     public static final String SEPARATOR = String.valueOf(DefaultNameSpace.DEFAULT_SEPARATOR);
 
     /**
+     * TODO remove when AttributeConvention.CRS will exist
+     */
+    public static final String CRS = "sis:crs";
+
+    /**
+     * TODO remove when AttributeConvention.MAXIMAL_LENGTH will exist
+     */
+    public static final String MAXIMAL_LENGTH = "sis:maximalLength";
+
+    /**
      * Convention name of the feature symbolizers.
      * Some features may have self defined symbology, this is the case of kml,dwg,...
      */
@@ -160,11 +170,11 @@ public final class FeatureExt extends Static {
      * @return FeatureId
      */
     public static FeatureId getId(Feature feature) {
-        return DefaultFactories.forBuildin(FilterFactory.class).featureId(String.valueOf(feature.getPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString())));
+        return DefaultFactories.forBuildin(FilterFactory.class).featureId(String.valueOf(feature.getPropertyValue(AttributeConvention.IDENTIFIER)));
     }
 
     public static void setId(Feature feature, FeatureId id) {
-        feature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), id.getID());
+        feature.setPropertyValue(AttributeConvention.IDENTIFIER, id.getID());
     }
 
     /**
@@ -256,7 +266,7 @@ public final class FeatureExt extends Static {
      * @return CoordinateReferenceSystem or null
      */
     public static CoordinateReferenceSystem getCRS(PropertyType type){
-        return getCharacteristicValue(type, AttributeConvention.CRS_CHARACTERISTIC.toString(), null);
+        return getCharacteristicValue(type, CRS, null);
     }
 
     /**
@@ -289,7 +299,7 @@ public final class FeatureExt extends Static {
      * @return Length or null
      */
     public static Integer getLengthCharacteristic(AttributeType type){
-        final AttributeType at = (AttributeType) type.characteristics().get(AttributeConvention.MAXIMAL_LENGTH_CHARACTERISTIC.toString());
+        final AttributeType at = (AttributeType) type.characteristics().get(MAXIMAL_LENGTH);
         if(at!=null){
             return (Integer) at.getDefaultValue();
         }
@@ -519,7 +529,7 @@ public final class FeatureExt extends Static {
     public static PropertyType getDefaultGeometry(final FeatureType type) throws PropertyNotFoundException, IllegalStateException {
         PropertyType geometry;
         try {
-            geometry = type.getProperty(AttributeConvention.GEOMETRY_PROPERTY.toString());
+            geometry = type.getProperty(AttributeConvention.GEOMETRY);
         } catch (PropertyNotFoundException e) {
             try {
                 geometry = searchForGeometry(type);
@@ -574,7 +584,7 @@ public final class FeatureExt extends Static {
         PropertyType geomType = null;
         Object geometry;
         try{
-            geometry = input.getPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString());
+            geometry = input.getPropertyValue(AttributeConvention.GEOMETRY);
         } catch(PropertyNotFoundException ex) {
             try {
                 geomType = FeatureExt.getDefaultGeometry(input.getType());
@@ -591,7 +601,7 @@ public final class FeatureExt extends Static {
             CoordinateReferenceSystem crs = Geometries.wrap(geometry).get().getCoordinateReferenceSystem();
             if (crs == null) {
                 if (geomType == null) {
-                    crs = getCRS(input.getType().getProperty(AttributeConvention.GEOMETRY_PROPERTY.toString()));
+                    crs = getCRS(input.getType().getProperty(AttributeConvention.GEOMETRY));
                 } else {
                     crs = getCRS(geomType);
                 }

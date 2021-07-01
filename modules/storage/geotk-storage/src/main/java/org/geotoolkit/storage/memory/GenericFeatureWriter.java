@@ -161,7 +161,7 @@ public class GenericFeatureWriter implements FeatureWriter {
                 try {
                     final List<FeatureId> res = store.addFeatures(typeName.toString(), Collections.singleton(modified));
                     if (!res.isEmpty()) {
-                        modified.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), res.get(0).getID());
+                        modified.setPropertyValue(AttributeConvention.IDENTIFIER, res.get(0).getID());
                     }
                 } catch (DataStoreException ex) {
                     throw new FeatureStoreRuntimeException(ex);

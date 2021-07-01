@@ -97,43 +97,43 @@ public class NearestTest extends AbstractProcessTest {
         final FeatureCollection featureList = FeatureStoreUtilities.collection("nearest", type);
 
         final Feature feature1 = type.newInstance();
-        feature1.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(),"id-1");
+        feature1.setPropertyValue(AttributeConvention.IDENTIFIER,"id-1");
         feature1.setPropertyValue("name","feature1");
         feature1.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(2, 2)));
         featureList.add(feature1);
 
         final Feature feature2 = type.newInstance();
-        feature2.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(),"id-2");
+        feature2.setPropertyValue(AttributeConvention.IDENTIFIER,"id-2");
         feature2.setPropertyValue("name","feature2");
         feature2.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(3, 1)));
         featureList.add(feature2);
 
         final Feature feature3 = type.newInstance();
-        feature3.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(),"id-3");
+        feature3.setPropertyValue(AttributeConvention.IDENTIFIER,"id-3");
         feature3.setPropertyValue("name","feature3");
         feature3.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(3, 4)));
         featureList.add(feature3);
 
         final Feature feature4 = type.newInstance();
-        feature4.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(),"id-4");
+        feature4.setPropertyValue(AttributeConvention.IDENTIFIER,"id-4");
         feature4.setPropertyValue("name","feature4");
         feature4.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(5, 4)));
         featureList.add(feature4);
 
         final Feature feature5 = type.newInstance();
-        feature5.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(),"id-5");
+        feature5.setPropertyValue(AttributeConvention.IDENTIFIER,"id-5");
         feature5.setPropertyValue("name","feature5");
         feature5.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(6, 2)));
         featureList.add(feature5);
 
         final Feature feature6 = type.newInstance();
-        feature6.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(),"id-6");
+        feature6.setPropertyValue(AttributeConvention.IDENTIFIER,"id-6");
         feature6.setPropertyValue("name","feature6");
         feature6.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(6, 1)));
         featureList.add(feature6);
 
         final Feature feature7 = type.newInstance();
-        feature7.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(),"id-7");
+        feature7.setPropertyValue(AttributeConvention.IDENTIFIER,"id-7");
         feature7.setPropertyValue("name","feature7");
         feature7.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(7, 3)));
         featureList.add(feature7);
@@ -148,13 +148,13 @@ public class NearestTest extends AbstractProcessTest {
         final FeatureCollection featureList = FeatureStoreUtilities.collection("IntersectTest", type);
 
         final Feature feature4 = type.newInstance();
-        feature4.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(),"id-4");
+        feature4.setPropertyValue(AttributeConvention.IDENTIFIER,"id-4");
         feature4.setPropertyValue("name","feature4");
         feature4.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(5, 4)));
         featureList.add(feature4);
 
         final Feature feature5 = type.newInstance();
-        feature5.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(),"id-5");
+        feature5.setPropertyValue(AttributeConvention.IDENTIFIER,"id-5");
         feature5.setPropertyValue("name","feature5");
         feature5.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(6, 2)));
         featureList.add(feature5);
