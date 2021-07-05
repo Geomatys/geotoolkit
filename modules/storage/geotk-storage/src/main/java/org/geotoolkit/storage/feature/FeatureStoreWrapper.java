@@ -43,7 +43,7 @@ public class FeatureStoreWrapper extends AbstractFeatureStore implements Feature
 
     @Override
     public FeatureReader getFeatureReader(Query query) throws DataStoreException {
-        return FeatureStreams.asReader(featureSet.subset(query).features(false).iterator(), featureSet.getType());
+        return FeatureStreams.asReader(featureSet);
     }
 
 }

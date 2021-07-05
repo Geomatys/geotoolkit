@@ -51,18 +51,18 @@ public final class ReferenceToFeatureConverter extends AbstractReferenceInputCon
     @Override
     public Feature convert(Reference source, final Map<String, Object> params) throws UnconvertibleObjectException {
         final FeatureCollection data = ReferenceToFeatureCollectionConverter.getInstance().convert(source, params);
-        final FeatureIterator it = data.iterator();
-        final Feature result;
-        if (it.hasNext()) {
-            result = it.next();
-        } else {
-            result = null;
-        }
+        try (final FeatureIterator it = data.iterator()) {
+            final Feature result;
+            if (it.hasNext()) {
+                result = it.next();
+            } else {
+                result = null;
+            }
 
-        if (it.hasNext()) {
-            throw new UnconvertibleObjectException("A single feature was expected from datasource, but we've got at least two.");
+            if (it.hasNext()) {
+                throw new UnconvertibleObjectException("A single feature was expected from datasource, but we've got at least two.");
+            }
+            return result;
         }
-
-        return result;
     }
 }

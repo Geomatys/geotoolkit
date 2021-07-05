@@ -28,6 +28,8 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
+
+import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.storage.feature.query.SortByComparator;
@@ -35,6 +37,7 @@ import org.geotoolkit.storage.feature.session.Session;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureSetMapper;
 import org.geotoolkit.feature.ReprojectMapper;
+import org.geotoolkit.storage.memory.WrapFeatureIterator;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -399,6 +402,19 @@ public final class FeatureStreams {
     }
 
     /**
+     * Map given stream of features as a {@link FeatureIterator feature iterator}.
+     *
+     * @param features Must not be null.
+     * @return An iterator that serves input stream elements. its {@link FeatureIterator#close() closing} operation will
+     * implicitely close the input stream.
+     */
+    public static FeatureIterator asIterator(final Stream<Feature> features) {
+        final WrapFeatureIterator it = new WrapFeatureIterator(features.iterator()) {};
+        it.onClose(features::close);
+        return it;
+    }
+
+    /**
      * Wrap an Iterator as a FeatureReader.
      *
      * @param reader source reader
@@ -407,6 +423,42 @@ public final class FeatureStreams {
      */
     public static FeatureReader asReader(final Iterator<? extends Feature> reader, final FeatureType type){
         return GenericWrapFeatureIterator.wrapToReader(reader,type);
+    }
+
+    /**
+     * Provide a {@link FeatureReader reader} that decorate given dataset. It means that a stream is immediately opened
+     * on given dataset. Its lifecycle will be delegated to the returned reader.
+     *
+     * @param dataset The {@link FeatureSet} to expose as a {@link FeatureReader}. Must <em>not</em> be null.
+     * @return A reader that decorate a data stream opened on input dataset.
+     * @throws DataStoreException If querying dataset {@link FeatureSet#getType() data type} or acquiring its
+     * {@link FeatureSet#features(boolean) data stream} fails, the error is propagated.
+     */
+    public static FeatureReader asReader(final FeatureSet dataset) throws DataStoreException {
+        final FeatureType datatype = dataset.getType();
+        final Stream<Feature> stream = dataset.features(false);
+        return asReader(stream, datatype);
+    }
+
+    /**
+     * Decorate a given data stream.
+     *
+     * @param stream The stream to expose as a feature reader. Its {@link Stream#close()} operation will be called by
+     *               the reader {@link FeatureReader#close()} function.
+     * @param datatype type of the features from the stream (they must at least inherit from it). Must not be null.
+     */
+    public static FeatureReader asReader(final Stream<Feature> stream, final FeatureType datatype) {
+        try {
+            return asReader(asIterator(stream), datatype);
+        } catch (RuntimeException e) {
+            try {
+                stream.close();
+            } catch (Exception bis) {
+                e.addSuppressed(bis);
+            }
+
+            throw e;
+        }
     }
 
     /**
