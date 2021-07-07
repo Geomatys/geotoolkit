@@ -25,7 +25,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.Spliterator;
@@ -58,7 +57,6 @@ import org.geotoolkit.sos.netcdf.ExtractionResult.ProcedureTree;
 import org.geotoolkit.sos.xml.SOSMarshallerPool;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.swe.xml.PhenomenonProperty;
-import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.metadata.Metadata;
@@ -138,40 +136,6 @@ public class XmlObservationStore extends AbstractObservationStore implements Agg
     ////////////////////////////////////////////////////////////////////////////
     // OBSERVATION STORE ///////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
-
-    @Override
-    public Set<GenericName> getProcedureNames() {
-        final Set<GenericName> names = new HashSet<>();
-        final Object obj = readFile();
-        if (obj instanceof ObservationCollection) {
-            final ObservationCollection collection = (ObservationCollection)obj;
-            for (Observation obs : collection.getMember()) {
-                final org.geotoolkit.observation.xml.Process process = (org.geotoolkit.observation.xml.Process) obs.getProcedure();
-                names.add(NamesExt.create(process.getHref()));
-            }
-
-        } else if (obj instanceof Observation) {
-            final Observation obs = (Observation)obj;
-            final org.geotoolkit.observation.xml.Process process = (org.geotoolkit.observation.xml.Process) obs.getProcedure();
-            names.add(NamesExt.create(process.getHref()));
-        }
-        return names;
-    }
-
-    @Override
-    public ExtractionResult getResults() throws DataStoreException {
-        return getResults(null, null, new HashSet<>() ,new HashSet<>());
-    }
-
-    @Override
-    public ExtractionResult getResults(final String affectedSensorId, final List<String> sensorIDs) throws DataStoreException {
-        return getResults(affectedSensorId, sensorIDs, new HashSet<>() ,new HashSet<>());
-    }
-
-    @Override
-    public ExtractionResult getResults(final List<String> sensorIDs) throws DataStoreException {
-        return getResults(null, sensorIDs, new HashSet<>() ,new HashSet<>());
-    }
 
     @Override
     public ExtractionResult getResults(String affectedSensorID, List<String> sensorIds, Set<Phenomenon> phenomenons, final Set<org.opengis.observation.sampling.SamplingFeature> samplingFeatures) throws DataStoreException {
@@ -281,26 +245,6 @@ public class XmlObservationStore extends AbstractObservationStore implements Agg
     @Override
     public void close() throws DataStoreException {
         // do nothing
-    }
-
-    @Override
-    public Set<String> getPhenomenonNames() {
-        final Set<String> phenomenons = new HashSet<>();
-        final Object obj = readFile();
-        if (obj instanceof ObservationCollection) {
-            final ObservationCollection collection = (ObservationCollection)obj;
-            for (Observation obs : collection.getMember()) {
-                final AbstractObservation o = (AbstractObservation)obs;
-                final PhenomenonProperty phenProp = o.getPropertyObservedProperty();
-                phenomenons.addAll(XmlObservationUtils.getPhenomenonsFields(phenProp));
-            }
-
-        } else if (obj instanceof AbstractObservation) {
-            final AbstractObservation obs = (AbstractObservation)obj;
-            final PhenomenonProperty phenProp = obs.getPropertyObservedProperty();
-            phenomenons.addAll(XmlObservationUtils.getPhenomenonsFields(phenProp));
-        }
-        return phenomenons;
     }
 
     @Override
