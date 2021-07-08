@@ -155,7 +155,14 @@ public class GenericQueryFeatureIterator {
                 final FeatureReader ite = (FeatureReader) col.iterator();
                 try {
                     return wrap(ite, query);
-                } catch (DataStoreException ex) {
+                } catch (DataStoreException | RuntimeException ex) {
+                    try {
+                        ite.close();
+                    } catch (Exception bis) {
+                        ex.addSuppressed(bis);
+                    }
+
+                    if (ex instanceof RuntimeException) throw (RuntimeException) ex;
                     throw new FeatureStoreRuntimeException(ex);
                 }
             }

@@ -174,8 +174,7 @@ public class GMLStore extends DataStore implements WritableFeatureSet, ResourceO
                 final JAXPStreamFeatureReader reader = new JAXPStreamFeatureReader();
                 reader.getProperties().put(JAXPStreamFeatureReader.LONGITUDE_FIRST, longitudeFirst);
                 reader.getProperties().put(JAXPStreamFeatureReader.READ_EMBEDDED_FEATURE_TYPE, true);
-                try {
-                    FeatureReader ite = reader.readAsStream(file);
+                try (FeatureReader ite = reader.readAsStream(file)) {
                     catalog = reader.getFeatureTypes();
                     rootType = ite.getFeatureType();
                 } catch (IOException | XMLStreamException ex) {

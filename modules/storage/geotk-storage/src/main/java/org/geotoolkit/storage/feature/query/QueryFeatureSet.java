@@ -107,7 +107,16 @@ public final class QueryFeatureSet implements FeatureSet {
     @Override
     public Stream<Feature> features(boolean parallel) throws DataStoreException {
         final Stream<Feature> stream = base.features(parallel);
-        return FeatureStreams.subset(stream, base.getType(), query);
+        try {
+            return FeatureStreams.subset(stream, base.getType(), query);
+        } catch (DataStoreException | RuntimeException e) {
+            try {
+                stream.close();
+            } catch (Exception bis) {
+                e.addSuppressed(bis);
+            }
+            throw e;
+        }
     }
 
     /**

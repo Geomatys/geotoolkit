@@ -150,7 +150,9 @@ public class SpatialJoinProcess extends AbstractProcess {
                     return null;
                 }
 
-                featureOutArray = new ArrayList<>(featureOut.features(false).collect(Collectors.toList()));
+                try (final Stream<Feature> outputFeatures = featureOut.features(false)) {
+                    featureOutArray = new ArrayList<>(outputFeatures.collect(Collectors.toList()));
+                }
 
                 if (method) {   //intersect method
 
