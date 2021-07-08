@@ -90,7 +90,7 @@ public class JTSTest extends org.geotoolkit.test.TestBase {
                 });
 
         final Polygon poly = GF.createPolygon(ring, null);
-        final Geometry returnedGeom = JTS.ensureWinding(poly, false, false);
+        final Geometry returnedGeom = JTS.ensureWinding(poly, false);
         assertTrue(Orientation.isCCW(returnedGeom.getCoordinates()));
 
     }
@@ -110,45 +110,9 @@ public class JTSTest extends org.geotoolkit.test.TestBase {
 
         final Polygon poly = GF.createPolygon(ring, null);
 
-        final Geometry returnedGeom = JTS.ensureWinding(poly, true, false);
+        final Geometry returnedGeom = JTS.ensureWinding(poly, true);
 
         assertFalse(Orientation.isCCW(returnedGeom.getCoordinates()));
-
-    }
-
-     @Test
-    public void testCCW3D(){
-
-        //empty user data test
-        final LinearRing ring = GF.createLinearRing(new Coordinate[]{
-            new Coordinate(10, 0, 0),
-            new Coordinate(10, 0, 10),
-            new Coordinate(0, 10, 10),
-            new Coordinate(0, 10, 0),
-            new Coordinate(10, 0, 0)
-                });
-
-        final Polygon poly = GF.createPolygon(ring, null);
-        final Geometry returnedGeom = JTS.ensureWinding(poly, false, true);
-        assertTrue(JTS.isCCW3D(returnedGeom.getCoordinates()));
-
-    }
-
-    @Test
-    public void testCW3D(){
-
-        //empty user data test
-        final LinearRing ring = GF.createLinearRing(new Coordinate[]{
-            new Coordinate(10, 0, 0),
-            new Coordinate(0, 10, 0),
-            new Coordinate(0, 10, 10),
-            new Coordinate(10, 0, 10),
-            new Coordinate(10, 0, 0)
-                });
-
-        final Polygon poly = GF.createPolygon(ring, null);
-        final Geometry returnedGeom = JTS.ensureWinding(poly, true, true);
-        assertFalse(JTS.isCCW3D(returnedGeom.getCoordinates()));
 
     }
 
