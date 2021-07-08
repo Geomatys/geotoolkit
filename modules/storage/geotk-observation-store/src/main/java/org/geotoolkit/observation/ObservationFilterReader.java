@@ -171,6 +171,13 @@ public interface ObservationFilterReader {
     Set<String> filterOffering() throws DataStoreException;
 
     /**
+     * Execute the current query and return the matching count.
+     * @return
+     * @throws org.apache.sis.storage.DataStoreException
+     */
+    long getCount() throws DataStoreException;
+    
+    /**
      * Return informations about the implementation class.
      */
     String getInfos();
