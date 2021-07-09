@@ -16,29 +16,30 @@
  */
 package org.geotoolkit.observation;
 
-import java.net.URI;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.gml.xml.AbstractFeature;
-import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.gml.xml.BoundingShape;
 import org.geotoolkit.gml.xml.Envelope;
 import static org.geotoolkit.ows.xml.OWSExceptionCode.INVALID_PARAMETER_VALUE;
 import static org.geotoolkit.ows.xml.OWSExceptionCode.MISSING_PARAMETER_VALUE;
-import org.geotoolkit.sml.xml.AbstractDerivableComponent;
 import org.geotoolkit.sml.xml.AbstractIdentification;
 import org.geotoolkit.sml.xml.AbstractIdentifier;
 import org.geotoolkit.sml.xml.AbstractProcess;
 import org.geotoolkit.sml.xml.AbstractSensorML;
 import org.geotoolkit.sos.xml.SOSXmlFactory;
 import org.geotoolkit.temporal.object.ISODateParser;
+import org.opengis.observation.CompositePhenomenon;
 import org.opengis.observation.Observation;
+import org.opengis.observation.Phenomenon;
 
 /**
  * Utility methods for SOS / Sensor.
@@ -174,5 +175,87 @@ public class Utils {
         env.setSrsDimension(2);
         env.setAxisLabels(Arrays.asList("Y X"));
         return env;
+    }
+
+    public static Date dateFromTS(Timestamp t) {
+        if (t != null) {
+            return new Date(t.getTime());
+        }
+        return null;
+    }
+
+    public static String getVersionFromHints(Map<String, String> hints) {
+        if (hints != null && hints.containsKey("version")) {
+            return hints.get("version");
+        }
+        return "2.0.0";
+    }
+
+    public static boolean getBooleanHint(Map<String, String> hints, String key, boolean defaultValue) {
+        if (hints != null && hints.containsKey(key)) {
+            return Boolean.parseBoolean(hints.get(key));
+        }
+        return defaultValue;
+    }
+
+    public static Integer getIntegerHint(Map<String, String> hints, String key, Integer fallback) {
+        if (hints != null && hints.containsKey(key)) {
+            return Integer.parseInt(hints.get(key));
+        }
+        return fallback;
+    }
+
+    public static Long getLongHint(Map<String, String> hints, String key) {
+        if (hints != null && hints.containsKey(key)) {
+            return Long.parseLong(hints.get(key));
+        }
+        return null;
+    }
+
+    /**
+     * Return true if a composite phenomenon is a subset of another composite.
+     * meaning that every of its component is present in the second.
+     *
+     * @param composite
+     * @param fullComposite
+     * @return
+     */
+    public static boolean isACompositeSubSet(CompositePhenomenon composite, CompositePhenomenon fullComposite) {
+        for (Phenomenon component : composite.getComponent()) {
+            if (!fullComposite.getComponent().contains(component)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static CompositePhenomenon getOverlappingComposite(List<CompositePhenomenon> composites) throws DataStoreException {
+        a:for (CompositePhenomenon composite : composites) {
+            String compoId = getId(composite);
+            for (CompositePhenomenon sub : composites) {
+                if (!getId(sub).equals(compoId) && !isACompositeSubSet(sub, composite)) {
+                    continue a;
+                }
+            }
+            return composite;
+        }
+        throw new DataStoreException("No composite has all other as subset");
+    }
+
+    public static String getId(Phenomenon phen) {
+        if (phen instanceof org.geotoolkit.swe.xml.Phenomenon) {
+            return ((org.geotoolkit.swe.xml.Phenomenon)phen).getId();
+        }
+        throw new IllegalArgumentException("Unable to get an id from the phenomenon");
+    }
+
+    public static boolean hasComponent(Phenomenon phen, CompositePhenomenon composite) {
+        String phenId = getId(phen);
+        for (Phenomenon component : composite.getComponent()) {
+            if (phenId.equals(getId(component))) {
+                return true;
+            }
+        }
+        return false;
     }
 }
