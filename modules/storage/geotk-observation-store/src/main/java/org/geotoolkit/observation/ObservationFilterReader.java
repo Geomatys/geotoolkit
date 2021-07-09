@@ -142,33 +142,33 @@ public interface ObservationFilterReader {
     /**
      * Execute the current query and return a list of observation result.
      */
-    List<ObservationResult> filterResult() throws DataStoreException;
+    List<ObservationResult> filterResult(Map<String, String> hints) throws DataStoreException;
 
     /**
      * Execute the current query and return a list of observation ID.
      */
-    Set<String> filterObservation() throws DataStoreException;
+    Set<String> filterObservation(Map<String, String> hints) throws DataStoreException;
 
 
     /**
      * Execute the current query and return a list of FOI ID.
      */
-    Set<String> filterFeatureOfInterest() throws DataStoreException;
+    Set<String> filterFeatureOfInterest(Map<String, String> hints) throws DataStoreException;
 
     /**
      * Execute the current query and return a list of ObservedProperty ID.
      */
-    Set<String> filterPhenomenon() throws DataStoreException;
+    Set<String> filterPhenomenon(Map<String, String> hints) throws DataStoreException;
 
     /**
      * Execute the current query and return a list of procedure ID.
      */
-    Set<String> filterProcedure() throws DataStoreException;
+    Set<String> filterProcedure(Map<String, String> hints) throws DataStoreException;
 
     /**
      * Execute the current query and return a list of offering ID.
      */
-    Set<String> filterOffering() throws DataStoreException;
+    Set<String> filterOffering(Map<String, String> hints) throws DataStoreException;
 
     /**
      * Execute the current query and return the matching count.
