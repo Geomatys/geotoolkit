@@ -198,7 +198,7 @@ public class HGTStore extends DataStore implements GridCoverageResource, Resourc
             try (final ChannelImageInputStream imageStream = new ChannelImageInputStream(
                     null, Files.newByteChannel(fileInput), ByteBuffer.allocateDirect(8192), false)) {
 
-                final HyperRectangleReader reader = new HyperRectangleReader(Numbers.SHORT, imageStream, 0);
+                final HyperRectangleReader reader = new HyperRectangleReader(Numbers.SHORT, imageStream);
                 allData = (short[]) reader.read(new Region(
                         new long[]{extent.getSize(0),extent.getSize(1)},
                         new long[]{areaLower[0], areaLower[1]},

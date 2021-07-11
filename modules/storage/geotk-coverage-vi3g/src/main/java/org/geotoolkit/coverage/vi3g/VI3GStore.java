@@ -256,7 +256,7 @@ public class VI3GStore extends DataStore implements GridCoverageResource, Resour
                     null, Files.newByteChannel(fileInput), ByteBuffer.allocateDirect(8192), false)) {
                 imageStream.setByteOrder(ByteOrder.BIG_ENDIAN);
 
-                final HyperRectangleReader reader = new HyperRectangleReader(Numbers.SHORT, imageStream, 0);
+                final HyperRectangleReader reader = new HyperRectangleReader(Numbers.SHORT, imageStream);
                 allData = (short[]) reader.read(new Region(
                         new long[]{extent.getSize(0),extent.getSize(1)},
                         new long[]{areaLower[0], areaLower[1]},
