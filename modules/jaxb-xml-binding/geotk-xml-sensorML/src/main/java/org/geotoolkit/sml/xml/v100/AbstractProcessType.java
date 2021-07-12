@@ -93,6 +93,17 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
 
     }
 
+    public AbstractProcessType(Identification ident, Classification classif) {
+        if (ident != null) {
+            this.identification = new ArrayList<>();
+            this.identification.add(ident);
+        }
+        if (classif != null) {
+            this.classification = new ArrayList<>();
+            this.classification.add(classif);
+        }
+    }
+
     public AbstractProcessType(final AbstractProcess pr) {
         super(pr);
         if (pr != null) {

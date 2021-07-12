@@ -94,6 +94,10 @@ public abstract class AbstractDerivableComponentType extends AbstractProcessType
 
     }
 
+    public AbstractDerivableComponentType(Identification ident, Classification classif) {
+        super(ident, classif);
+    }
+
     public AbstractDerivableComponentType(final AbstractDerivableComponent ad) {
         super(ad);
         if (ad != null) {

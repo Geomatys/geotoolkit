@@ -54,6 +54,10 @@ public class ComponentType extends AbstractComponentType implements Component {
 
     }
 
+    public ComponentType(Identification ident, Classification classif) {
+        super(ident, classif);
+    }
+
     public ComponentType(final Component cp) {
         super(cp);
         if (cp != null && cp.getMethod() != null) {

@@ -17,7 +17,9 @@
 package org.geotoolkit.sml.xml;
 
 
+import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.geotoolkit.sml.xml.v100.AbstractProcessType;
 import org.geotoolkit.sml.xml.v100.Capabilities;
@@ -45,30 +47,93 @@ import org.geotoolkit.swe.xml.SimpleDataRecord;
  * @author Guilhem Legal (Geomatys)
  * @module
  */
-public class SmlFactory {
+public class SmlXMLFactory {
 
-    /**
-     * The current SensorML version of the factory.
-     */
-    private String version;
+    public static AbstractSensorML createAbstractSensorML(final String version, final Component compo) {
 
-    /**
-     * build a new factory to build SensorML object from the specified version.
-     *
-     * @param version The sensorML version.
-     */
-    public SmlFactory(final String version) {
-        this.version = version;
+        if ("1.0.0".equals(version)) {
+            if (compo != null && !(compo instanceof org.geotoolkit.sml.xml.v100.ComponentType)) {
+                throw new IllegalArgumentException("Unexpected SML version for component object.");
+            }
+            return new org.geotoolkit.sml.xml.v100.SensorML(version, Arrays.asList( new org.geotoolkit.sml.xml.v100.Member((org.geotoolkit.sml.xml.v100.ComponentType)compo)));
+
+        } else if ("1.0.1".equals(version)) {
+            if (compo != null && !(compo instanceof org.geotoolkit.sml.xml.v101.ComponentType)) {
+                throw new IllegalArgumentException("Unexpected SML version for component object.");
+            }
+            return new org.geotoolkit.sml.xml.v101.SensorML(version, Arrays.asList( new org.geotoolkit.sml.xml.v101.SensorML.Member((org.geotoolkit.sml.xml.v101.ComponentType)compo)));
+        } else {
+            throw new IllegalArgumentException("Unexpected SML version:" + version);
+        }
+    }
+
+    public static Component createComponent(final String version, final AbstractIdentification ident, final AbstractClassification classif) {
+
+        if ("1.0.0".equals(version)) {
+            if (ident != null && !(ident instanceof org.geotoolkit.sml.xml.v100.Identification)) {
+                throw new IllegalArgumentException("Unexpected SML version for identification object.");
+            }
+            if (classif != null && !(classif instanceof org.geotoolkit.sml.xml.v100.Classification)) {
+                throw new IllegalArgumentException("Unexpected SML version for classification object.");
+            }
+            return new org.geotoolkit.sml.xml.v100.ComponentType((org.geotoolkit.sml.xml.v100.Identification)ident,
+                                                                 (org.geotoolkit.sml.xml.v100.Classification)classif);
+
+        } else if ("1.0.1".equals(version)) {
+            if (ident != null && !(ident instanceof org.geotoolkit.sml.xml.v101.Identification)) {
+                throw new IllegalArgumentException("Unexpected SML version for component object.");
+            }
+            if (classif != null && !(classif instanceof org.geotoolkit.sml.xml.v101.Classification)) {
+                throw new IllegalArgumentException("Unexpected SML version for classification object.");
+            }
+            return new org.geotoolkit.sml.xml.v101.ComponentType((org.geotoolkit.sml.xml.v101.Identification)ident,
+                                                                 (org.geotoolkit.sml.xml.v101.Classification)classif);
+        } else {
+            throw new IllegalArgumentException("Unexpected SML version:" + version);
+        }
+    }
+
+    public static AbstractIdentification createIdentification(final String version, final String id) {
+
+        if ("1.0.0".equals(version)) {
+            org.geotoolkit.sml.xml.v100.Identifier ident = new org.geotoolkit.sml.xml.v100.Identifier("uniqueID", new org.geotoolkit.sml.xml.v100.Term((String)null,id, "urn:ogc:def:identifierType:OGC:uniqueID"));
+            org.geotoolkit.sml.xml.v100.IdentifierList identifierList = new org.geotoolkit.sml.xml.v100.IdentifierList(null, Arrays.asList(ident));
+            return new org.geotoolkit.sml.xml.v100.Identification(identifierList);
+
+        } else if ("1.0.1".equals(version)) {
+           org.geotoolkit.sml.xml.v101.Identifier ident = new org.geotoolkit.sml.xml.v101.Identifier("uniqueID", new org.geotoolkit.sml.xml.v101.Term((String)null, id, "urn:ogc:def:identifierType:OGC:uniqueID"));
+           org.geotoolkit.sml.xml.v101.IdentifierList identifierList = new org.geotoolkit.sml.xml.v101.IdentifierList(null, Arrays.asList(ident));
+            return new org.geotoolkit.sml.xml.v101.Identification(identifierList);
+        } else {
+            throw new IllegalArgumentException("Unexpected SML version:" + version);
+        }
+    }
+
+    public static AbstractClassification createClassification(final String version, final String classifierName, final String value, final String definition) {
+
+        if ("1.0.0".equals(version)) {
+            org.geotoolkit.sml.xml.v100.Classifier ident = new org.geotoolkit.sml.xml.v100.Classifier(classifierName, new org.geotoolkit.sml.xml.v100.Term((String)null, value, definition));
+            org.geotoolkit.sml.xml.v100.ClassifierList identifierList = new org.geotoolkit.sml.xml.v100.ClassifierList(null, Arrays.asList(ident));
+            return new org.geotoolkit.sml.xml.v100.Classification(identifierList);
+
+        } else if ("1.0.1".equals(version)) {
+           org.geotoolkit.sml.xml.v101.Classifier ident = new org.geotoolkit.sml.xml.v101.Classifier(classifierName, new org.geotoolkit.sml.xml.v101.Term((String)null, value, definition));
+           org.geotoolkit.sml.xml.v101.ClassifierList identifierList = new org.geotoolkit.sml.xml.v101.ClassifierList(null, Arrays.asList(ident));
+            return new org.geotoolkit.sml.xml.v101.Classification(identifierList);
+        } else {
+            throw new IllegalArgumentException("Unexpected SML version:" + version);
+        }
     }
 
     /**
-     * Build a IoComponent in the factory version.
+     * Build a IoComponent in the specified version.
      *
+     * @param version
      * @param name
      * @param quantity
      * @return
      */
-    public IoComponent createIoComponent(final String name, final Quantity quantity) {
+    public static IoComponent createIoComponent(final String version, final String name, final Quantity quantity) {
 
         if ("1.0.0".equals(version)) {
             if (quantity != null && !(quantity instanceof org.geotoolkit.swe.xml.v100.QuantityType)) {
@@ -89,13 +154,11 @@ public class SmlFactory {
     }
 
     /**
-     * Build a IoComponent in the factory version.
+     * Build a IoComponent in the specified version.
      *
-     * @param name
-     * @param quantity
      * @return
      */
-    public IoComponent createIoComponent(final String name, final SimpleDataRecord record) {
+    public static IoComponent createIoComponent(final String version, final String name, final SimpleDataRecord record) {
 
         if ("1.0.0".equals(version)) {
             if (record != null && !(record instanceof org.geotoolkit.swe.xml.v100.SimpleDataRecordType)) {
@@ -116,13 +179,11 @@ public class SmlFactory {
     }
 
     /**
-     * Build a Inputs in the factory version.
+     * Build a Inputs in the specified version.
      *
-     * @param name
-     * @param quantity
      * @return
      */
-    public AbstractInputs createInputs(final List<? extends IoComponent> inputList) {
+    public static AbstractInputs createInputs(final String version, final List<? extends IoComponent> inputList) {
 
         if ("1.0.0".equals(version)) {
             if (inputList == null) {
@@ -141,13 +202,13 @@ public class SmlFactory {
     }
 
     /**
-     * Build a Inputs in the factory version.
+     * Build a Inputs in the specified version.
      *
      * @param name
      * @param quantity
      * @return
      */
-    public AbstractOutputs createOutputs(final List<? extends IoComponent> outputList) {
+    public static AbstractOutputs createOutputs(final String version, final List<? extends IoComponent> outputList) {
 
         if ("1.0.0".equals(version)) {
             if (outputList == null) {
@@ -166,13 +227,13 @@ public class SmlFactory {
     }
 
     /**
-     * Build a Inputs in the factory version.
+     * Build a Inputs in the specified version.
      *
      * @param name
      * @param quantity
      * @return
      */
-    public AbstractPosition createPosition(final String name, final Position position) {
+    public static AbstractPosition createPosition(final String version, final String name, final Position position) {
 
         if ("1.0.0".equals(version)) {
             if (position != null && !(position instanceof org.geotoolkit.swe.xml.v100.PositionType)) {
@@ -191,13 +252,13 @@ public class SmlFactory {
     }
 
     /**
-     * Build a Inputs in the factory version.
+     * Build a Inputs in the specified version.
      *
      * @param name
      * @param quantity
      * @return
      */
-    public AbstractPositions createPositions(final String id , final List<? extends AbstractPosition> positions) {
+    public static AbstractPositions createPositions(final String version, final String id , final List<? extends AbstractPosition> positions) {
 
         if ("1.0.0".equals(version)) {
             return new org.geotoolkit.sml.xml.v100.Positions(id, (List<org.geotoolkit.sml.xml.v100.Position>) positions);
@@ -211,10 +272,10 @@ public class SmlFactory {
     }
 
     /**
-     * Build a ValidTime in the factory version.
+     * Build a ValidTime in the specified version.
      *
      */
-    public AbstractValidTime createValidTime(final String begin, final String end) {
+    public static AbstractValidTime createValidTime(final String version, final String begin, final String end) {
 
         if ("1.0.0".equals(version)) {
             return new org.geotoolkit.sml.xml.v100.ValidTime(begin, end);
@@ -228,10 +289,10 @@ public class SmlFactory {
     }
 
     /**
-     * Build a ValidTime in the factory version.
+     * Build a ValidTime in the specified version.
      *
      */
-    public ComponentProperty createComponentProperty(final String href) {
+    public static ComponentProperty createComponentProperty(final String version, final String href) {
 
         if ("1.0.0".equals(version)) {
             return new org.geotoolkit.sml.xml.v100.ComponentPropertyType(href);
@@ -245,13 +306,13 @@ public class SmlFactory {
     }
 
     /**
-     * Build a Inputs in the factory version.
+     * Build a Inputs in the specified version.
      *
      * @param name
      * @param quantity
      * @return
      */
-    public AbstractComponents createComponents(final List<? extends ComponentProperty> components) {
+    public static AbstractComponents createComponents(final String version, final List<? extends ComponentProperty> components) {
 
         if ("1.0.0".equals(version)) {
             return new org.geotoolkit.sml.xml.v100.Components((List<org.geotoolkit.sml.xml.v100.ComponentPropertyType>) components);
