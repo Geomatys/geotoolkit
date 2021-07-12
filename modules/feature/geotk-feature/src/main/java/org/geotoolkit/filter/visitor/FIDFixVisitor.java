@@ -17,14 +17,14 @@
 package org.geotoolkit.filter.visitor;
 
 import java.util.function.Function;
-import org.opengis.filter.ResourceId;
-import org.opengis.filter.Expression;
-import org.opengis.filter.Literal;
-import org.opengis.filter.ValueReference;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.opengis.filter.ComparisonOperator;
 import org.opengis.filter.ComparisonOperatorName;
+import org.opengis.filter.Expression;
 import org.opengis.filter.Filter;
+import org.opengis.filter.Literal;
+import org.opengis.filter.ResourceId;
+import org.opengis.filter.ValueReference;
 
 /**
  * Used to clean PropertyEqualsTo on identifiers.
@@ -44,12 +44,12 @@ public class FIDFixVisitor extends DuplicatingFilterVisitor {
             // check if it's an id filter
             Expression<Object,?> exp1 = filter.getExpressions().get(0);
             Expression<Object,?> exp2 = filter.getExpressions().get(1);
-            if(exp2 instanceof ValueReference<Object,?>) {
+            if (exp2 instanceof ValueReference) {
                 final Expression<Object,?> exp = exp1;
                 exp1 = exp2;
                 exp2 = exp;
             }
-            if (exp1 instanceof ValueReference<Object,?> && exp2 instanceof Literal<Object,?>
+            if (exp1 instanceof ValueReference && exp2 instanceof Literal
                     && ((ValueReference<Object,?>) exp1).getXPath().trim().equalsIgnoreCase(AttributeConvention.IDENTIFIER_PROPERTY.toString()))
             {
                 // it's an id filter
