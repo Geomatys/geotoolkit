@@ -17,6 +17,7 @@
 
 package org.geotoolkit.data.om.xml;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -31,7 +32,12 @@ import static org.geotoolkit.data.om.xml.XmlObservationUtils.RESPONSE_FORMAT_V10
 import static org.geotoolkit.data.om.xml.XmlObservationUtils.RESPONSE_FORMAT_V200;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.gml.xml.FeatureProperty;
+import org.geotoolkit.observation.OMEntity;
 import org.geotoolkit.observation.ObservationReader;
+import static org.geotoolkit.observation.ObservationReader.ENTITY_TYPE;
+import static org.geotoolkit.observation.ObservationReader.IDENTIFIER;
+import static org.geotoolkit.observation.ObservationReader.SENSOR_TYPE;
+import static org.geotoolkit.observation.ObservationReader.SOS_VERSION;
 
 import org.geotoolkit.observation.xml.*;
 import org.geotoolkit.observation.xml.Process;
@@ -58,8 +64,28 @@ public class XmlObservationReader implements ObservationReader {
         this.xmlObjects = xmlObjects;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Collection<String> getProcedureNames() throws DataStoreException {
+    public Collection<String> getEntityNames(final Map<String, Object> hints) throws DataStoreException {
+        OMEntity entityType = (OMEntity) hints.get(ENTITY_TYPE);
+        String sensorType   = (String) hints.get(SENSOR_TYPE);
+        String version      = (String) hints.get(SOS_VERSION);
+        switch (entityType) {
+            case FEATURE_OF_INTEREST: return getFeatureOfInterestNames();
+            case OBSERVED_PROPERTY:   return getPhenomenonNames();
+            case PROCEDURE:           return getProcedureNames(sensorType);
+            case LOCATION:            throw new DataStoreException("not implemented yet.");
+            case OFFERING:            throw new DataStoreException("offerings are not handled in XML observation reader.");
+            case OBSERVATION:         throw new DataStoreException("not implemented yet.");
+            case RESULT:              throw new DataStoreException("not implemented yet.");
+            default: throw new DataStoreException("unexpected entity type:" + entityType);
+        }
+    }
+
+    private Collection<String> getProcedureNames(String sensorType) throws DataStoreException {
+        // no filter yet
         final Set<String> names = new HashSet<>();
         for (Object xmlObject : xmlObjects) {
             if (xmlObject instanceof ObservationCollection) {
@@ -78,14 +104,7 @@ public class XmlObservationReader implements ObservationReader {
         return names;
     }
 
-     @Override
-    public Collection<String> getProcedureNames(String sensorType) throws DataStoreException {
-        // no filter yet
-        return getProcedureNames();
-    }
-
-    @Override
-    public Collection<String> getPhenomenonNames() throws DataStoreException {
+    private Collection<String> getPhenomenonNames() throws DataStoreException {
         final Set<String> phenomenons = new HashSet<>();
         for (Object xmlObject : xmlObjects) {
             if (xmlObject instanceof ObservationCollection) {
@@ -105,19 +124,52 @@ public class XmlObservationReader implements ObservationReader {
         return phenomenons;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Phenomenon getPhenomenon(String identifier, String version) throws DataStoreException {
+    public boolean existEntity(final Map<String, Object> hints) throws DataStoreException {
+        OMEntity entityType = (OMEntity) hints.get(ENTITY_TYPE);
+        if (entityType == null) {
+            throw new DataStoreException("Missing entity type parameter");
+        }
+        String identifier   = (String) hints.get(IDENTIFIER);
+        String sensorType   = (String) hints.get(SENSOR_TYPE);
+        String version      = (String) hints.get(SOS_VERSION);
+        switch (entityType) {
+            case FEATURE_OF_INTEREST: return getFeatureOfInterestNames().contains(identifier);
+            case OBSERVED_PROPERTY:   return getPhenomenonNames().contains(identifier);
+            case PROCEDURE:           return getProcedureNames(null).contains(identifier);
+            case LOCATION:            throw new DataStoreException("not implemented yet.");
+            case OFFERING:            throw new DataStoreException("offerings are not handled in XML observation reader.");
+            case OBSERVATION:         throw new DataStoreException("not implemented yet.");
+            case RESULT:              throw new DataStoreException("not implemented yet.");
+            default: throw new DataStoreException("unexpected entity type:" + entityType);
+        }
+    }
+
+    @Override
+    public Collection<Phenomenon> getPhenomenons(final Map<String, Object> hints) throws DataStoreException {
+        final Set<Phenomenon> phenomenons = new HashSet<>();
+        String version       = (String) hints.get(SOS_VERSION);
+        Object identifierVal = hints.get(IDENTIFIER);
+        List<String> identifiers = new ArrayList<>();
+        if (identifierVal instanceof Collection) {
+            identifiers.addAll((Collection<? extends String>) identifierVal);
+        } else if (identifierVal instanceof String) {
+            identifiers.add((String) identifierVal);
+        }
         for (Object xmlObject : xmlObjects) {
             if (xmlObject instanceof ObservationCollection) {
                 final ObservationCollection collection = (ObservationCollection)xmlObject;
                 for (Observation obs : collection.getMember()) {
                     final AbstractObservation o = (AbstractObservation)obs;
                     final PhenomenonProperty phenProp = o.getPropertyObservedProperty();
-                    Phenomenon ph = XmlObservationUtils.getPhenomenons(phenProp);
+                    final Phenomenon ph = XmlObservationUtils.getPhenomenons(phenProp);
                     if (ph instanceof org.geotoolkit.swe.xml.Phenomenon) {
                         org.geotoolkit.swe.xml.Phenomenon phe = (org.geotoolkit.swe.xml.Phenomenon) ph;
-                        if (identifier.equals(phe.getName().getCode())) {
-                            return ph;
+                        if (identifiers.isEmpty() || identifiers.contains(phe.getName().getCode())) {
+                            phenomenons.add(ph);
                         }
                     }
                 }
@@ -125,85 +177,12 @@ public class XmlObservationReader implements ObservationReader {
             } else if (xmlObject instanceof AbstractObservation) {
                 final AbstractObservation obs = (AbstractObservation)xmlObject;
                 final PhenomenonProperty phenProp = obs.getPropertyObservedProperty();
-                Phenomenon ph = XmlObservationUtils.getPhenomenons(phenProp);
+                final Phenomenon ph = XmlObservationUtils.getPhenomenons(phenProp);
                 if (ph instanceof org.geotoolkit.swe.xml.Phenomenon) {
                     org.geotoolkit.swe.xml.Phenomenon phe = (org.geotoolkit.swe.xml.Phenomenon) ph;
-                    if (identifier.equals(phe.getName().getCode())) {
-                        return ph;
+                    if (identifiers.isEmpty() || identifiers.contains(phe.getName().getCode())) {
+                        phenomenons.add(ph);
                     }
-                }
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public Collection<Phenomenon> getPhenomenons(final String version) throws DataStoreException {
-        final Set<Phenomenon> phenomenons = new HashSet<>();
-        for (Object xmlObject : xmlObjects) {
-            if (xmlObject instanceof ObservationCollection) {
-                final ObservationCollection collection = (ObservationCollection)xmlObject;
-                for (Observation obs : collection.getMember()) {
-                    final AbstractObservation o = (AbstractObservation)obs;
-                    final PhenomenonProperty phenProp = o.getPropertyObservedProperty();
-                    phenomenons.add(XmlObservationUtils.getPhenomenons(phenProp));
-                }
-
-            } else if (xmlObject instanceof AbstractObservation) {
-                final AbstractObservation obs = (AbstractObservation)xmlObject;
-                final PhenomenonProperty phenProp = obs.getPropertyObservedProperty();
-                phenomenons.add(XmlObservationUtils.getPhenomenons(phenProp));
-            }
-        }
-        return phenomenons;
-    }
-
-    @Override
-    public Collection<String> getProceduresForPhenomenon(final String observedProperty) throws DataStoreException {
-        final Set<String> procedures = new HashSet<>();
-        for (Object xmlObject : xmlObjects) {
-            if (xmlObject instanceof ObservationCollection) {
-                final ObservationCollection collection = (ObservationCollection)xmlObject;
-                for (Observation obs : collection.getMember()) {
-                    final AbstractObservation o = (AbstractObservation)obs;
-                    final PhenomenonProperty phenProp = o.getPropertyObservedProperty();
-                    final List<String> phen = XmlObservationUtils.getPhenomenonsFields(phenProp);
-                    if (phen.contains(observedProperty)) {
-                        procedures.add(o.getProcedure().getHref());
-                    }
-                }
-
-            } else if (xmlObject instanceof AbstractObservation) {
-                final AbstractObservation obs = (AbstractObservation)xmlObject;
-                final PhenomenonProperty phenProp = obs.getPropertyObservedProperty();
-                final List<String> phen = XmlObservationUtils.getPhenomenonsFields(phenProp);
-                if (phen.contains(observedProperty)) {
-                    procedures.add(obs.getProcedure().getHref());
-                }
-            }
-        }
-        return procedures;
-    }
-
-    @Override
-    public Collection<String> getPhenomenonsForProcedure(final String sensorID) throws DataStoreException {
-        final Set<String> phenomenons = new HashSet<>();
-        for (Object xmlObject : xmlObjects) {
-            if (xmlObject instanceof ObservationCollection) {
-                final ObservationCollection collection = (ObservationCollection)xmlObject;
-                for (Observation obs : collection.getMember()) {
-                    final AbstractObservation o = (AbstractObservation)obs;
-                    if (o.getProcedure().getHref().equals(sensorID)) {
-                        final PhenomenonProperty phenProp = o.getPropertyObservedProperty();
-                        phenomenons.addAll(XmlObservationUtils.getPhenomenonsFields(phenProp));
-                    }
-                }
-
-            } else if (xmlObject instanceof AbstractObservation) {
-                final AbstractObservation obs = (AbstractObservation)xmlObject;
-                if (obs.getProcedure().getHref().equals(sensorID)) {
-                    final PhenomenonProperty phenProp = obs.getPropertyObservedProperty();
-                    phenomenons.addAll(XmlObservationUtils.getPhenomenonsFields(phenProp));
                 }
             }
         }
@@ -233,13 +212,7 @@ public class XmlObservationReader implements ObservationReader {
         return result.spatialBound.getTimeObject("2.0.0");
     }
 
-    @Override
-    public boolean existPhenomenon(final String phenomenonName) throws DataStoreException {
-        return getPhenomenonNames().contains(phenomenonName);
-    }
-
-    @Override
-    public Collection<String> getFeatureOfInterestNames() throws DataStoreException {
+    private Collection<String> getFeatureOfInterestNames() throws DataStoreException {
         final Set<String> featureOfInterest = new HashSet<>();
         for (Object xmlObject : xmlObjects) {
             if (xmlObject instanceof ObservationCollection) {
@@ -347,11 +320,6 @@ public class XmlObservationReader implements ObservationReader {
     }
 
     @Override
-    public boolean existProcedure(final String href) throws DataStoreException {
-        return getProcedureNames().contains(href);
-    }
-
-    @Override
     public org.opengis.observation.Process getProcess(String identifier, String version) throws DataStoreException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
@@ -402,38 +370,13 @@ public class XmlObservationReader implements ObservationReader {
         // do nothing
     }
 
-    @Override
-    public Collection<String> getOfferingNames(final String version) throws DataStoreException {
-        throw new DataStoreException("offerings are not handled in XML observation reader.");
-    }
-
-    @Override
-    public ObservationOffering getObservationOffering(final String offeringName, final String version) throws DataStoreException {
-        throw new DataStoreException("offerings are not handled in XML observation reader.");
-    }
-
-    @Override
-    public List<ObservationOffering> getObservationOfferings(final List<String> offeringNames, final String version) throws DataStoreException {
-        throw new DataStoreException("offerings are not handled in XML observation reader.");
-    }
-
-    @Override
-    public List<ObservationOffering> getObservationOfferings(final String version) throws DataStoreException {
+   @Override
+    public List<ObservationOffering> getObservationOfferings(final Map<String, Object> hints) throws DataStoreException {
         throw new DataStoreException("offerings are not handled in XML observation reader.");
     }
 
     @Override
     public Observation getTemplateForProcedure(final String procedure, final String version) throws DataStoreException {
         throw new DataStoreException("Not supported yet in this implementation.");
-    }
-
-    @Override
-    public Collection<String> getOfferingNames(String version, String sensorType) throws DataStoreException {
-        throw new DataStoreException("offerings are not handled in XML observation reader.");
-    }
-
-    @Override
-    public List<ObservationOffering> getObservationOfferings(String version, String sensorType) throws DataStoreException {
-        throw new DataStoreException("offerings are not handled in XML observation reader.");
     }
 }

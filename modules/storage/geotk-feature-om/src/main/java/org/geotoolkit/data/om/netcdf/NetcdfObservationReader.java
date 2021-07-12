@@ -33,6 +33,10 @@ import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.observation.ObservationReader;
 import org.geotoolkit.observation.xml.AbstractObservation;
 import static org.geotoolkit.data.om.xml.XmlObservationUtils.*;
+import org.geotoolkit.observation.OMEntity;
+import static org.geotoolkit.observation.ObservationReader.ENTITY_TYPE;
+import static org.geotoolkit.observation.ObservationReader.SENSOR_TYPE;
+import static org.geotoolkit.observation.ObservationReader.SOS_VERSION;
 import org.geotoolkit.sos.netcdf.ExtractionResult;
 import org.geotoolkit.sos.netcdf.Field;
 import org.geotoolkit.sos.netcdf.NCFieldAnalyze;
@@ -62,25 +66,37 @@ public class NetcdfObservationReader implements ObservationReader {
         this.dataFile = dataFile;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Collection<String> getProcedureNames() throws DataStoreException {
+    public Collection<String> getEntityNames(final Map<String, Object> hints) throws DataStoreException {
+        OMEntity entityType = (OMEntity) hints.get(ENTITY_TYPE);
+        String sensorType   = (String) hints.get(SENSOR_TYPE);
+        String version      = (String) hints.get(SOS_VERSION);
+        switch (entityType) {
+            case FEATURE_OF_INTEREST: return getFeatureOfInterestNames();
+            case OBSERVED_PROPERTY:   return getPhenomenonNames();
+            case PROCEDURE:           return getProcedureNames(sensorType);
+            case LOCATION:            throw new DataStoreException("not implemented yet.");
+            case OFFERING:            throw new DataStoreException("offerings are not handled in File observation reader.");
+            case OBSERVATION:         throw new DataStoreException("not implemented yet.");
+            case RESULT:              throw new DataStoreException("not implemented yet.");
+            default: throw new DataStoreException("unexpected entity type:" + entityType);
+        }
+    }
+
+    private Collection<String> getProcedureNames(String sensorType) throws DataStoreException {
         final Set<String> names = new HashSet<>();
         names.add(getProcedureID());
         return names;
-    }
-
-    @Override
-    public Collection<String> getProcedureNames(String sensorType) throws DataStoreException {
-        // no filter yet
-        return getProcedureNames();
     }
 
     private String getProcedureID() {
         return IOUtilities.filenameWithoutExtension(dataFile);
     }
 
-    @Override
-    public Collection<String> getPhenomenonNames() throws DataStoreException {
+    private Collection<String> getPhenomenonNames() throws DataStoreException {
         final Set<String> phenomenons = new HashSet<>();
         for (Field field : analyze.phenfields) {
             phenomenons.add(field.id);
@@ -88,13 +104,30 @@ public class NetcdfObservationReader implements ObservationReader {
         return phenomenons;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Collection<Phenomenon> getPhenomenons(final String version) throws DataStoreException {
-        throw new UnsupportedOperationException("Not supported yet in netcdf implementation.");
+    public boolean existEntity(final Map<String, Object> hints) throws DataStoreException {
+        OMEntity entityType = (OMEntity) hints.get(ENTITY_TYPE);
+        if (entityType == null) {
+            throw new DataStoreException("Missing entity type parameter");
+        }
+        String identifier   = (String) hints.get(IDENTIFIER);
+        switch (entityType) {
+            case FEATURE_OF_INTEREST: return getFeatureOfInterestNames().contains(identifier);
+            case OBSERVED_PROPERTY:   return existPhenomenon(identifier);
+            case PROCEDURE:           return existProcedure(identifier);
+            case LOCATION:            throw new DataStoreException("not implemented yet.");
+            case OFFERING:            throw new DataStoreException("offerings are not handled in File observation reader.");
+            case OBSERVATION:         throw new DataStoreException("not implemented yet.");
+            case RESULT:              throw new DataStoreException("not implemented yet.");
+            default: throw new DataStoreException("unexpected entity type:" + entityType);
+        }
     }
 
     @Override
-    public Phenomenon getPhenomenon(String identifier, String version) throws DataStoreException {
+    public Collection<Phenomenon> getPhenomenons(final Map<String, Object> hints) throws DataStoreException {
         throw new UnsupportedOperationException("Not supported yet in netcdf implementation.");
     }
 
@@ -104,22 +137,6 @@ public class NetcdfObservationReader implements ObservationReader {
             return SOSXmlFactory.buildProcess(version, identifier);
         }
         return null;
-    }
-
-    @Override
-    public Collection<String> getProceduresForPhenomenon(final String observedProperty) throws DataStoreException {
-        if (existPhenomenon(observedProperty)) {
-            return Arrays.asList(getProcedureID());
-        }
-        return new ArrayList<>();
-    }
-
-    @Override
-    public Collection<String> getPhenomenonsForProcedure(final String sensorID) throws DataStoreException {
-        if (sensorID.equals(getProcedureID())) {
-            return getPhenomenonNames();
-        }
-        return new ArrayList<>();
     }
 
     @Override
@@ -135,8 +152,7 @@ public class NetcdfObservationReader implements ObservationReader {
         }
     }
 
-    @Override
-    public boolean existPhenomenon(final String phenomenonName) throws DataStoreException {
+    private boolean existPhenomenon(final String phenomenonName) throws DataStoreException {
         for (Field field : analyze.phenfields) {
             if (field.id.equals(phenomenonName)) {
                 return true;
@@ -145,8 +161,7 @@ public class NetcdfObservationReader implements ObservationReader {
         return false;
     }
 
-    @Override
-    public Collection<String> getFeatureOfInterestNames() throws DataStoreException {
+    private Collection<String> getFeatureOfInterestNames() throws DataStoreException {
         try {
             final ExtractionResult result = NetCDFExtractor.getObservationFromNetCDF(analyze, getProcedureID(), null, new HashSet<>());
             return result.featureOfInterestNames;
@@ -208,8 +223,7 @@ public class NetcdfObservationReader implements ObservationReader {
         throw new DataStoreException("Not supported yet in this this implementation.");
     }
 
-    @Override
-    public boolean existProcedure(final String href) throws DataStoreException {
+    private boolean existProcedure(final String href) throws DataStoreException {
         return href.equals(getProcedureID());
     }
 
@@ -259,39 +273,13 @@ public class NetcdfObservationReader implements ObservationReader {
         //do nothing
     }
 
-
     @Override
-    public Collection<String> getOfferingNames(final String version) throws DataStoreException {
-        throw new DataStoreException("offerings are not handled in File observation reader.");
-    }
-
-    @Override
-    public ObservationOffering getObservationOffering(final String offeringName, final String version) throws DataStoreException {
-        throw new DataStoreException("offerings are not handled in File observation reader.");
-    }
-
-    @Override
-    public List<ObservationOffering> getObservationOfferings(final List<String> offeringNames, final String version) throws DataStoreException {
-        throw new DataStoreException("offerings are not handled in File observation reader.");
-    }
-
-    @Override
-    public List<ObservationOffering> getObservationOfferings(final String version) throws DataStoreException {
+    public List<ObservationOffering> getObservationOfferings(final Map<String, Object> hints) throws DataStoreException {
         throw new DataStoreException("offerings are not handled in File observation reader.");
     }
 
     @Override
     public Observation getTemplateForProcedure(final String procedure, final String version) throws DataStoreException {
         throw new DataStoreException("Not supported yet in this this implementation.");
-    }
-
-    @Override
-    public Collection<String> getOfferingNames(String version, String sensorType) throws DataStoreException {
-        throw new DataStoreException("offerings are not handled in File observation reader.");
-    }
-
-    @Override
-    public List<ObservationOffering> getObservationOfferings(String version, String sensorType) throws DataStoreException {
-        throw new DataStoreException("offerings are not handled in File observation reader.");
     }
 }

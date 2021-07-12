@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.observation;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -29,6 +30,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.logging.Logging;
 import static org.geotoolkit.observation.AbstractObservationStoreFactory.*;
+import static org.geotoolkit.observation.ObservationReader.ENTITY_TYPE;
 import org.geotoolkit.sos.netcdf.ExtractionResult;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.parameter.ParameterDescriptor;
@@ -101,7 +103,7 @@ public abstract class AbstractObservationStore extends DataStore implements Obse
     public Set<GenericName> getProcedureNames() {
         final Set<GenericName> names = new HashSet<>();
         try {
-            for (String process : getReader().getProcedureNames()) {
+            for (String process : getReader().getEntityNames(Collections.singletonMap(ENTITY_TYPE, OMEntity.OBSERVED_PROPERTY))) {
                 names.add(NamesExt.create(process));
             }
         } catch (DataStoreException ex) {
@@ -113,7 +115,7 @@ public abstract class AbstractObservationStore extends DataStore implements Obse
     @Override
     public Set<String> getPhenomenonNames() {
         try {
-            return new HashSet(getReader().getPhenomenonNames());
+            return new HashSet(getReader().getEntityNames(Collections.singletonMap(ENTITY_TYPE, OMEntity.OBSERVED_PROPERTY)));
         } catch (DataStoreException ex) {
             LOGGER.log(Level.WARNING, "Error while retrieving phenomenons", ex);
         }
