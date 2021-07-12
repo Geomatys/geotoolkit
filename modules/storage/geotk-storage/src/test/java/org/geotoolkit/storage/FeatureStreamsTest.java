@@ -123,7 +123,7 @@ public class FeatureStreamsTest extends org.geotoolkit.test.TestBase {
 
         id1 = 0;
         sf1 = originalType.newInstance();
-        sf1.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), id1);
+        sf1.setPropertyValue(AttributeConvention.IDENTIFIER, id1);
         sf1.setPropertyValue("att_geom", GF.createPoint(new Coordinate(3, 0)));
         sf1.setPropertyValue("att_string", "bbb");
         sf1.setPropertyValue("att_double", 3d);
@@ -131,7 +131,7 @@ public class FeatureStreamsTest extends org.geotoolkit.test.TestBase {
 
         id2 = 1;
         sf2 = originalType.newInstance();
-        sf2.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), id2);
+        sf2.setPropertyValue(AttributeConvention.IDENTIFIER, id2);
         sf2.setPropertyValue("att_geom", GF.createPoint(new Coordinate(1, 0)));
         sf2.setPropertyValue("att_string", "ccc");
         sf2.setPropertyValue("att_double", 1d);
@@ -139,7 +139,7 @@ public class FeatureStreamsTest extends org.geotoolkit.test.TestBase {
 
         id3 = 2;
         sf3 = originalType.newInstance();
-        sf3.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), id3);
+        sf3.setPropertyValue(AttributeConvention.IDENTIFIER, id3);
         sf3.setPropertyValue("att_geom", GF.createPoint(new Coordinate(2, 0)));
         sf3.setPropertyValue("att_string", "aaa");
         sf3.setPropertyValue("att_double", 2d);
@@ -155,13 +155,13 @@ public class FeatureStreamsTest extends org.geotoolkit.test.TestBase {
         collectionComplex = FeatureStoreUtilities.collection("cid", ct);
 
         final Feature f1 = ct.newInstance();
-        f1.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), COMPLEX_ID_1);
+        f1.setPropertyValue(AttributeConvention.IDENTIFIER, COMPLEX_ID_1);
         f1.setPropertyValue("att_string","aaaa");
         f1.setPropertyValue("att_double",12.0);
         collectionComplex.add(f1);
 
         final Feature f2 = ct.newInstance();
-        f2.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), COMPLEX_ID_2);
+        f2.setPropertyValue(AttributeConvention.IDENTIFIER, COMPLEX_ID_2);
         f2.setPropertyValue("att_string","bbbb");
         f2.setPropertyValue("att_double",7.0);
         collectionComplex.add(f2);
@@ -255,7 +255,7 @@ public class FeatureStreamsTest extends org.geotoolkit.test.TestBase {
         while(ite.hasNext()){
 
             f = ite.next();
-            final Object id = f.getPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString());
+            final Object id = f.getPropertyValue(AttributeConvention.IDENTIFIER);
 
             if(id1.equals(id)){
                 mask |= 1<<0;
@@ -285,7 +285,7 @@ public class FeatureStreamsTest extends org.geotoolkit.test.TestBase {
         assertEquals(1, FeatureStoreUtilities.calculateCount(ite));
         ite = FeatureStreams.filter(collection.iterator(), FF.equal(FF.literal("aaa"), FF.property("att_string")));
 
-        assertEquals(id3, ite.next().getPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString()));
+        assertEquals(id3, ite.next().getPropertyValue(AttributeConvention.IDENTIFIER));
         try{
             ite.next();
             fail("Should have raise a no such element exception.");
@@ -316,7 +316,7 @@ public class FeatureStreamsTest extends org.geotoolkit.test.TestBase {
         assertEquals(2, FeatureStoreUtilities.calculateCount(ite));
 
         ite = FeatureStreams.limit(collection.iterator(), 1);
-        assertEquals(id1, ite.next().getPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString()));
+        assertEquals(id1, ite.next().getPropertyValue(AttributeConvention.IDENTIFIER));
         try{
             ite.next();
             fail("Should have raise a no such element exception.");
@@ -361,7 +361,7 @@ public class FeatureStreamsTest extends org.geotoolkit.test.TestBase {
         ite = FeatureStreams.update(collection.iterator(), filter, values);
         while(ite.hasNext()){
             Feature f = ite.next();
-            if (f.getPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString()).equals(id3)) {
+            if (f.getPropertyValue(AttributeConvention.IDENTIFIER).equals(id3)) {
                 assertTrue(f.getProperty("att_string").getValue().equals("toto"));
             }else{
                 assertFalse(f.getProperty("att_string").getValue().equals("toto"));
@@ -409,7 +409,7 @@ public class FeatureStreamsTest extends org.geotoolkit.test.TestBase {
         Feature f;
         while(retyped.hasNext()){
             f = retyped.next();
-            final Object id = f.getPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString());
+            final Object id = f.getPropertyValue(AttributeConvention.IDENTIFIER);
 
             assertEquals(4, f.getType().getProperties(true).size());
             assertEquals(targetCRS,JTS.findCoordinateReferenceSystem((Geometry)f.getProperty("att_geom").getValue()));
@@ -486,7 +486,7 @@ public class FeatureStreamsTest extends org.geotoolkit.test.TestBase {
 
         assertTrue(retyped.hasNext());
 
-        LineString decimated = (LineString) retyped.next().getPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString());
+        LineString decimated = (LineString) retyped.next().getPropertyValue(AttributeConvention.GEOMETRY);
 
         assertFalse(retyped.hasNext());
         retyped.close();
@@ -502,7 +502,7 @@ public class FeatureStreamsTest extends org.geotoolkit.test.TestBase {
         reader = collection.getSession().getFeatureStore().getFeatureReader(query);
         assertTrue(reader.hasNext());
 
-        LineString notDecimated = (LineString) reader.next().getPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString());
+        LineString notDecimated = (LineString) reader.next().getPropertyValue(AttributeConvention.GEOMETRY);
         assertEquals(6, notDecimated.getNumPoints());
         assertFalse(reader.hasNext());
         reader.close();
@@ -517,7 +517,7 @@ public class FeatureStreamsTest extends org.geotoolkit.test.TestBase {
 
         assertTrue(retyped.hasNext());
 
-        decimated = (LineString) retyped.next().getPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString());
+        decimated = (LineString) retyped.next().getPropertyValue(AttributeConvention.GEOMETRY);
 
         assertFalse(retyped.hasNext());
         retyped.close();
@@ -533,7 +533,7 @@ public class FeatureStreamsTest extends org.geotoolkit.test.TestBase {
         reader = collection.getSession().getFeatureStore().getFeatureReader(query);
         assertTrue(reader.hasNext());
 
-        notDecimated = (LineString) reader.next().getPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString());
+        notDecimated = (LineString) reader.next().getPropertyValue(AttributeConvention.GEOMETRY);
         assertEquals(6, notDecimated.getNumPoints());
         assertFalse(reader.hasNext());
         reader.close();
@@ -543,7 +543,7 @@ public class FeatureStreamsTest extends org.geotoolkit.test.TestBase {
     public void testRetypeFeatureIterator() throws DataStoreException{
 
         final FeatureCollection collection = buildSimpleFeatureCollection();
-        final ViewMapper reducedType = new ViewMapper(collection.getType(), AttributeConvention.IDENTIFIER_PROPERTY.toString(),"att_double");
+        final ViewMapper reducedType = new ViewMapper(collection.getType(), AttributeConvention.IDENTIFIER,"att_double");
         final QueryBuilder qb = new QueryBuilder();
         qb.setTypeName(collection.getType().getName());
         final Query query = qb.buildQuery();
@@ -556,7 +556,7 @@ public class FeatureStreamsTest extends org.geotoolkit.test.TestBase {
         Feature f;
         while(retyped.hasNext()){
             f = retyped.next();
-            final Object id = f.getPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString());
+            final Object id = f.getPropertyValue(AttributeConvention.IDENTIFIER);
 
             assertEquals(2, f.getType().getProperties(true).size());
 
@@ -602,9 +602,9 @@ public class FeatureStreamsTest extends org.geotoolkit.test.TestBase {
 
 
         ite = FeatureStreams.sort(collection.iterator(), sorts);
-        assertEquals(id3, ite.next().getPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString()));
-        assertEquals(id1, ite.next().getPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString()));
-        assertEquals(id2, ite.next().getPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString()));
+        assertEquals(id3, ite.next().getPropertyValue(AttributeConvention.IDENTIFIER));
+        assertEquals(id1, ite.next().getPropertyValue(AttributeConvention.IDENTIFIER));
+        assertEquals(id2, ite.next().getPropertyValue(AttributeConvention.IDENTIFIER));
 
         try{
             ite.next();
@@ -640,8 +640,8 @@ public class FeatureStreamsTest extends org.geotoolkit.test.TestBase {
         assertEquals(2, FeatureStoreUtilities.calculateCount(ite));
 
         ite = FeatureStreams.sort(collectionComplex.iterator(), sorts);
-        assertEquals(COMPLEX_ID_2, ite.next().getPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString()));
-        assertEquals(COMPLEX_ID_1, ite.next().getPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString()));
+        assertEquals(COMPLEX_ID_2, ite.next().getPropertyValue(AttributeConvention.IDENTIFIER));
+        assertEquals(COMPLEX_ID_1, ite.next().getPropertyValue(AttributeConvention.IDENTIFIER));
 
         try{
             ite.next();
@@ -659,8 +659,8 @@ public class FeatureStreamsTest extends org.geotoolkit.test.TestBase {
         assertEquals(2, FeatureStoreUtilities.calculateCount(ite));
 
         ite = FeatureStreams.sort(collectionComplex.iterator(), sorts);
-        assertEquals(COMPLEX_ID_1, ite.next().getPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString()));
-        assertEquals(COMPLEX_ID_2, ite.next().getPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString()));
+        assertEquals(COMPLEX_ID_1, ite.next().getPropertyValue(AttributeConvention.IDENTIFIER));
+        assertEquals(COMPLEX_ID_2, ite.next().getPropertyValue(AttributeConvention.IDENTIFIER));
 
         try{
             ite.next();
@@ -678,8 +678,8 @@ public class FeatureStreamsTest extends org.geotoolkit.test.TestBase {
         assertEquals(2, FeatureStoreUtilities.calculateCount(ite));
 
         ite = FeatureStreams.sort(collectionComplex.iterator(), sorts);
-        assertEquals(COMPLEX_ID_2, ite.next().getPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString()));
-        assertEquals(COMPLEX_ID_1, ite.next().getPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString()));
+        assertEquals(COMPLEX_ID_2, ite.next().getPropertyValue(AttributeConvention.IDENTIFIER));
+        assertEquals(COMPLEX_ID_1, ite.next().getPropertyValue(AttributeConvention.IDENTIFIER));
 
         try{
             ite.next();

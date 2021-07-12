@@ -133,7 +133,7 @@ public class UnionProcess extends AbstractProcess {
                 if (resultFeature != null) {
                     isIntersected = true;
                     resultFeatureList.add(resultFeature);
-                    Geometry intersectGeom =  (Geometry) resultFeature.getPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString());
+                    Geometry intersectGeom =  (Geometry) resultFeature.getPropertyValue(AttributeConvention.GEOMETRY);
                     remainingGeometry = remainingGeometry.difference(intersectGeom);
                 }
             }
@@ -219,7 +219,7 @@ public class UnionProcess extends AbstractProcess {
         final Geometry intersectGeometry = VectorProcessUtils.intersectionFeatureToFeature(inputFeature, unionFeature, inputGeomName, unionGeomName);
         if (!intersectGeometry.isEmpty()) {
             final Feature resultFeature = newFeatureType.newInstance();
-            resultFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), featureID);
+            resultFeature.setPropertyValue(AttributeConvention.IDENTIFIER, featureID);
 
             //copy none Geometry attributes
             for (final PropertyType unionProperty : unionFeature.getType().getProperties(true)) {

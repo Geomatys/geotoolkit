@@ -131,7 +131,7 @@ public class UnionTest extends AbstractProcessTest {
                     new Coordinate(6.0, 5.0),
                     new Coordinate(3.0, 5.0)
                 });
-        myFeature1.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-01");
+        myFeature1.setPropertyValue(AttributeConvention.IDENTIFIER, "id-01");
         myFeature1.setPropertyValue("name", "feature1");
         myFeature1.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         featureList.add(myFeature1);
@@ -145,7 +145,7 @@ public class UnionTest extends AbstractProcessTest {
                     new Coordinate(8.0, 5.0),
                     new Coordinate(6.0, 5.0)
                 });
-        myFeature2.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-02");
+        myFeature2.setPropertyValue(AttributeConvention.IDENTIFIER, "id-02");
         myFeature2.setPropertyValue("name", "feature2");
         myFeature2.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         featureList.add(myFeature2);
@@ -159,7 +159,7 @@ public class UnionTest extends AbstractProcessTest {
                     new Coordinate(8.0, 2.0),
                     new Coordinate(6.0, 2.0)
                 });
-        myFeature3.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-03");
+        myFeature3.setPropertyValue(AttributeConvention.IDENTIFIER, "id-03");
         myFeature3.setPropertyValue("name", "feature3");
         myFeature3.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         //sfb.set("geom2", line);
@@ -174,7 +174,7 @@ public class UnionTest extends AbstractProcessTest {
                     new Coordinate(3.0, 3.0),
                     new Coordinate(2.0, 3.0)
                 });
-        myFeature4.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-04");
+        myFeature4.setPropertyValue(AttributeConvention.IDENTIFIER, "id-04");
         myFeature4.setPropertyValue("name", "feature4");
         myFeature4.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         featureList.add(myFeature4);
@@ -198,7 +198,7 @@ public class UnionTest extends AbstractProcessTest {
                     new Coordinate(7.0, 4.0),
                     new Coordinate(4.0, 4.0)
                 });
-        myFeature1.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-11");
+        myFeature1.setPropertyValue(AttributeConvention.IDENTIFIER, "id-11");
         myFeature1.setPropertyValue("name", "feature11");
         myFeature1.setPropertyValue("color", "red");
         myFeature1.setPropertyValue("geom3", geometryFactory.createPolygon(ring, null));
@@ -214,7 +214,7 @@ public class UnionTest extends AbstractProcessTest {
                     new Coordinate(9.0, 4.0),
                     new Coordinate(7.0, 4.0)
                 });
-        myFeature2.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-12");
+        myFeature2.setPropertyValue(AttributeConvention.IDENTIFIER, "id-12");
         myFeature2.setPropertyValue("name", "feature12");
         myFeature2.setPropertyValue("color", "blue");
         myFeature2.setPropertyValue("geom3", geometryFactory.createPolygon(ring, null));
@@ -230,7 +230,7 @@ public class UnionTest extends AbstractProcessTest {
                     new Coordinate(9.0, 2.0),
                     new Coordinate(6.0, 2.0)
                 });
-        myFeature3.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-13");
+        myFeature3.setPropertyValue(AttributeConvention.IDENTIFIER, "id-13");
         myFeature3.setPropertyValue("name", "feature13");
         myFeature3.setPropertyValue("color", "grey");
         myFeature3.setPropertyValue("geom3", geometryFactory.createPolygon(ring, null));
@@ -246,7 +246,7 @@ public class UnionTest extends AbstractProcessTest {
                     new Coordinate(5.0, 2.0),
                     new Coordinate(4.0, 2.0)
                 });
-        myFeature4.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-14");
+        myFeature4.setPropertyValue(AttributeConvention.IDENTIFIER, "id-14");
         myFeature4.setPropertyValue("name", "feature14");
         myFeature4.setPropertyValue("color", "grey");
         myFeature4.setPropertyValue("geom3", geometryFactory.createPolygon(ring, null));
@@ -262,7 +262,7 @@ public class UnionTest extends AbstractProcessTest {
                     new Coordinate(3.0, 5.0),
                     new Coordinate(2.0, 5.0)
                 });
-        myFeature5.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-15");
+        myFeature5.setPropertyValue(AttributeConvention.IDENTIFIER, "id-15");
         myFeature5.setPropertyValue("name", "feature15");
         myFeature5.setPropertyValue("color", "grey");
         myFeature5.setPropertyValue("geom3", geometryFactory.createPolygon(ring, null));
@@ -288,7 +288,7 @@ public class UnionTest extends AbstractProcessTest {
                     new Coordinate(4, 5),
                     new Coordinate(4, 7)
                 });
-        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-01-id-11");
+        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER, "id-01-id-11");
         myFeature.setPropertyValue("name", "feature1");
         myFeature.setPropertyValue("color", "red");
         myFeature.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
@@ -301,7 +301,7 @@ public class UnionTest extends AbstractProcessTest {
                     new Coordinate(3, 5),
                     new Coordinate(3, 6)
                 });
-        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-01-id-15");
+        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER, "id-01-id-15");
         myFeature.setPropertyValue("name", "feature1");
         myFeature.setPropertyValue("color", "grey");
         myFeature.setPropertyValue("geom1", str);
@@ -318,7 +318,7 @@ public class UnionTest extends AbstractProcessTest {
                     new Coordinate(4, 5),
                     new Coordinate(3, 5)
                 });
-        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-01");
+        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER, "id-01");
         myFeature.setPropertyValue("name", "feature1");
         myFeature.setPropertyValue("color", null);
         myFeature.setPropertyValue("att", null);
@@ -334,7 +334,7 @@ public class UnionTest extends AbstractProcessTest {
                     new Coordinate(7, 4),
                     new Coordinate(7, 5)
                 });
-        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-03-id-12");
+        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER, "id-03-id-12");
         myFeature.setPropertyValue("name", "feature3");
         myFeature.setPropertyValue("color", "blue");
         myFeature.setPropertyValue("att", 20);
@@ -350,7 +350,7 @@ public class UnionTest extends AbstractProcessTest {
                     new Coordinate(7, 4),
                     new Coordinate(6, 4)
                 });
-        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-03-id-11");
+        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER, "id-03-id-11");
         myFeature.setPropertyValue("name", "feature3");
         myFeature.setPropertyValue("color", "red");
         myFeature.setPropertyValue("att", 20);
@@ -366,7 +366,7 @@ public class UnionTest extends AbstractProcessTest {
                     new Coordinate(8, 2),
                     new Coordinate(6, 2)
                 });
-        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-03-id-13");
+        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER, "id-03-id-13");
         myFeature.setPropertyValue("name", "feature3");
         myFeature.setPropertyValue("color", "grey");
         myFeature.setPropertyValue("att", 10);
@@ -382,7 +382,7 @@ public class UnionTest extends AbstractProcessTest {
                     new Coordinate(7, 5),
                     new Coordinate(7, 7)
                 });
-        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-02-id-12");
+        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER, "id-02-id-12");
         myFeature.setPropertyValue("name", "feature2");
         myFeature.setPropertyValue("color", "blue");
         myFeature.setPropertyValue("att", 20);
@@ -398,7 +398,7 @@ public class UnionTest extends AbstractProcessTest {
                     new Coordinate(7, 5),
                     new Coordinate(6, 5)
                 });
-        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-02-id-11");
+        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER, "id-02-id-11");
         myFeature.setPropertyValue("name", "feature2");
         myFeature.setPropertyValue("color", "red");
         myFeature.setPropertyValue("att", 20);
@@ -414,7 +414,7 @@ public class UnionTest extends AbstractProcessTest {
                     new Coordinate(3, 3),
                     new Coordinate(2, 3)
                 });
-        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-04");
+        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER, "id-04");
         myFeature.setPropertyValue("name", "feature4");
         myFeature.setPropertyValue("color", null);
         myFeature.setPropertyValue("att", null);
@@ -434,7 +434,7 @@ public class UnionTest extends AbstractProcessTest {
                     new Coordinate(8, 4),
                     new Coordinate(8, 5)
                 });
-        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-12");
+        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER, "id-12");
         myFeature.setPropertyValue("name", "feature12");
         myFeature.setPropertyValue("color", "blue");
         myFeature.setPropertyValue("att", 20);
@@ -450,7 +450,7 @@ public class UnionTest extends AbstractProcessTest {
                     new Coordinate(8, 2),
                     new Coordinate(8, 4)
                 });
-        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-13");
+        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER, "id-13");
         myFeature.setPropertyValue("name", "feature13");
         myFeature.setPropertyValue("color", "grey");
         myFeature.setPropertyValue("att", 10);
@@ -466,7 +466,7 @@ public class UnionTest extends AbstractProcessTest {
                     new Coordinate(5, 2),
                     new Coordinate(4, 2)
                 });
-        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-14");
+        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER, "id-14");
         myFeature.setPropertyValue("name", "feature14");
         myFeature.setPropertyValue("color", "grey");
         myFeature.setPropertyValue("att", 12);
@@ -493,7 +493,7 @@ public class UnionTest extends AbstractProcessTest {
                 });
         Polygon poly1 = geometryFactory.createPolygon(ring, null);
         Polygon poly2 = geometryFactory.createPolygon(ring2, null);
-        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-11");
+        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER, "id-11");
         myFeature.setPropertyValue("name", "feature11");
         myFeature.setPropertyValue("color", "red");
         myFeature.setPropertyValue("att", 20);
@@ -509,7 +509,7 @@ public class UnionTest extends AbstractProcessTest {
                     new Coordinate(3.0, 5.0),
                     new Coordinate(2.0, 5.0)
                 });
-        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-15");
+        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER, "id-15");
         myFeature.setPropertyValue("name", "feature15");
         myFeature.setPropertyValue("color", "grey");
         myFeature.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));

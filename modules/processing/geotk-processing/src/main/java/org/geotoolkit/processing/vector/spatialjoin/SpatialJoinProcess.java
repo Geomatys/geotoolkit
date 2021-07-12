@@ -150,7 +150,9 @@ public class SpatialJoinProcess extends AbstractProcess {
                     return null;
                 }
 
-                featureOutArray = new ArrayList<>(featureOut.features(false).collect(Collectors.toList()));
+                try (final Stream<Feature> outputFeatures = featureOut.features(false)) {
+                    featureOutArray = new ArrayList<>(outputFeatures.collect(Collectors.toList()));
+                }
 
                 if (method) {   //intersect method
 
@@ -186,7 +188,7 @@ public class SpatialJoinProcess extends AbstractProcess {
      */
     static Feature copyAttributes(final Feature target, final Feature source, final FeatureType concatType) {
         final Feature resultFeature = concatType.newInstance();
-        resultFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(),
+        resultFeature.setPropertyValue(AttributeConvention.IDENTIFIER,
                 FeatureExt.getId(target).getIdentifier() + "_" + FeatureExt.getId(source).getIdentifier());
 
         //copy target Feature

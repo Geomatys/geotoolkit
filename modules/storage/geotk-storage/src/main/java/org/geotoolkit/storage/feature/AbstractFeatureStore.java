@@ -17,6 +17,7 @@
 
 package org.geotoolkit.storage.feature;
 
+import java.util.stream.Stream;
 import org.geotoolkit.storage.event.FeatureStoreContentEvent;
 import org.geotoolkit.storage.event.FeatureStoreManagementEvent;
 import java.util.ArrayList;
@@ -280,8 +281,9 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
         if (!(query instanceof org.geotoolkit.storage.feature.query.Query))  throw new UnsupportedQueryException();
 
         org.geotoolkit.storage.feature.query.Query gquery = (org.geotoolkit.storage.feature.query.Query) query;
-        final FeatureReader reader = getFeatureReader(gquery);
-        return FeatureStoreUtilities.calculateCount(reader);
+        try (final FeatureReader reader = getFeatureReader(gquery)) {
+            return FeatureStoreUtilities.calculateCount(reader);
+        }
     }
 
     /**
@@ -331,8 +333,9 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
             return null;
         }
 
-        final FeatureReader reader = getFeatureReader(gquery);
-        return FeatureStoreUtilities.calculateEnvelope(reader);
+        try (final FeatureReader reader = getFeatureReader(gquery)) {
+            return FeatureStoreUtilities.calculateEnvelope(reader);
+        }
     }
 
     @Override
@@ -361,7 +364,10 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
             FeatureType type = fs.getType();
             createFeatureType(type);
             final String name = type.getName().tip().toString();
-            final List<Feature> features = fs.features(false).collect(Collectors.toList());
+            final List<Feature> features;
+            try (Stream<Feature> inputFeatures = fs.features(false)) {
+                features = inputFeatures.collect(Collectors.toList());
+            }
             addFeatures(name, features);
             return findResource(name);
         } else if (resource instanceof DefiningFeatureSet) {

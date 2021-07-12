@@ -111,7 +111,7 @@ public final class VectorProcessUtils extends Static {
 
         //if keepedGeometry is null we use the default Geometry
         if (keepedGeometry == null) {
-            keepedGeometry = AttributeConvention.GEOMETRY_PROPERTY.toString();
+            keepedGeometry = AttributeConvention.GEOMETRY;
         }
 
         PropertyType property = oldFeatureType.getProperty(keepedGeometry);
@@ -355,7 +355,7 @@ public final class VectorProcessUtils extends Static {
 
         //if the wanted feature geometry is null, we use the default geometry
         if (geometryName == null) {
-            geometryName = AttributeConvention.GEOMETRY_PROPERTY.toString();
+            geometryName = AttributeConvention.GEOMETRY;
         }
 
         //create the new FeatureType with only one geometry property
@@ -446,7 +446,7 @@ public final class VectorProcessUtils extends Static {
 
                     //create the result Feature
                     final Feature resultFeature = newType.newInstance();
-                    resultFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(),
+                    resultFeature.setPropertyValue(AttributeConvention.IDENTIFIER,
                             FeatureExt.getId(inputFeature).getIdentifier() + "<->" + FeatureExt.getId(outFeature).getIdentifier());
 
                     for (PropertyType property : inputFeature.getType().getProperties(true)) {

@@ -269,7 +269,7 @@ public class FilterToOGC200Converter implements FilterToOGCConverter<FilterType>
             final BBOXType bbtype = new BBOXType(property, minx, miny, maxx, maxy, srs);
             return ogc_factory.createBBOX(bbtype);
         } else if (filter instanceof ResourceId) {
-            final ValueReference n = FF.property(AttributeConvention.IDENTIFIER_PROPERTY.toString());
+            final ValueReference n = FF.property(AttributeConvention.IDENTIFIER);
             ResourceId idFilter = (ResourceId) filter;
             final String id = idFilter.getIdentifier();
             final ResourceIdType rId = ogc_factory.createResourceIdType();

@@ -141,7 +141,7 @@ public class ShapefileFeatureWriter implements FeatureWriter {
 
         this.featureType = featureReader.getFeatureType();
         try {
-            this.featureType.getProperty(AttributeConvention.IDENTIFIER_PROPERTY.toString());
+            this.featureType.getProperty(AttributeConvention.IDENTIFIER);
         } catch(PropertyNotFoundException ex) {
             throw new DataStoreException("Missing identifier property in feature type");
         }
@@ -412,7 +412,7 @@ public class ShapefileFeatureWriter implements FeatureWriter {
             final String featureID = getFeatureType().getName().tip() + "." + (records+1);
             originalFeature = null;
             currentFeature = getFeatureType().newInstance();
-            currentFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), featureID);
+            currentFeature.setPropertyValue(AttributeConvention.IDENTIFIER, featureID);
             return currentFeature;
         } catch (IllegalArgumentException iae) {
             throw new FeatureStoreRuntimeException("Error creating empty Feature", iae);

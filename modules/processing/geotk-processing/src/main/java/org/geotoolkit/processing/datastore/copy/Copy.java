@@ -249,7 +249,7 @@ public class Copy extends AbstractProcess {
             setExpressionHandler(FunctionNames.ValueReference, (e) -> {
                 final ValueReference expression = (ValueReference) e;
                 if ("*".equals(expression.getXPath())) {
-                    return new DefaultPropertyName(type.getProperty(AttributeConvention.GEOMETRY_PROPERTY.toString()).getName().toString());
+                    return new DefaultPropertyName(type.getProperty(AttributeConvention.GEOMETRY).getName().toString());
                 }
                 return super.visit(expression);
             });

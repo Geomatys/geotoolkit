@@ -205,7 +205,7 @@ public abstract class AbstractReadingTests {
         {
             //check only id query
             final SimpleQuery query = new SimpleQuery();
-            query.setColumns(new SimpleQuery.Column(FF.property(AttributeConvention.IDENTIFIER_PROPERTY.toString())));
+            query.setColumns(new SimpleQuery.Column(FF.property(AttributeConvention.IDENTIFIER)));
             FeatureSet subset = featureSet.subset(query);
             FeatureType limited = subset.getType();
             assertNotNull(limited);

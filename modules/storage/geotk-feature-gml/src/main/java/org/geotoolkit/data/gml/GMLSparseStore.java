@@ -173,15 +173,17 @@ public class GMLSparseStore extends DataStore implements WritableFeatureSet, Res
                             // get first gml file only
                             if (gmlPaths.hasNext()) {
                                 final Path gmlPath = gmlPaths.next();
-                                FeatureReader ite = reader.readAsStream(file);
-                                catalog = reader.getFeatureTypes();
-                                featureType = ite.getFeatureType();
+                                try (FeatureReader ite = reader.readAsStream(gmlPath)) {
+                                    catalog = reader.getFeatureTypes();
+                                    featureType = ite.getFeatureType();
+                                }
                             }
                         }
                     } else {
-                        FeatureReader ite = reader.readAsStream(file);
-                        catalog = reader.getFeatureTypes();
-                        featureType = ite.getFeatureType();
+                        try (FeatureReader ite = reader.readAsStream(file)) {
+                            catalog = reader.getFeatureTypes();
+                            featureType = ite.getFeatureType();
+                        }
                     }
 
                 } catch (IOException | XMLStreamException ex) {
@@ -400,7 +402,7 @@ public class GMLSparseStore extends DataStore implements WritableFeatureSet, Res
             }else{
                 //append mode
                 currentFeature = type.newInstance();
-                currentFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), FeatureExt.createDefaultFeatureId());
+                currentFeature.setPropertyValue(AttributeConvention.IDENTIFIER, FeatureExt.createDefaultFeatureId());
                 currentFile = null;
                 return currentFeature;
             }

@@ -240,7 +240,7 @@ public class DbaseFileStore extends DataStore implements FeatureSet, ResourceOnF
                 final Object[] array = row.readAll(null);
 
                 current = featureType.newInstance();
-                current.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), ""+inc++);
+                current.setPropertyValue(AttributeConvention.IDENTIFIER, ""+inc++);
 
                 for(int i=0;i<array.length;i++){
                     current.setPropertyValue(attNames[i], array[i]);

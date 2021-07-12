@@ -99,7 +99,7 @@ class XmlFeatureReader implements FeatureReader {
         if (foi instanceof SamplingFeature) {
             final SamplingFeature feature = (SamplingFeature) foi;
             final Feature f = type.newInstance();
-            f.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), feature.getId());
+            f.setPropertyValue(AttributeConvention.IDENTIFIER, feature.getId());
 
             final org.opengis.geometry.Geometry isoGeom = feature.getGeometry();
             try {

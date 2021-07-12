@@ -16,10 +16,13 @@
  */
 package org.geotoolkit.wps.converters.inputs.references;
 
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.storage.feature.FeatureCollection;
-import org.geotoolkit.storage.feature.FeatureIterator;
 import org.geotoolkit.wps.xml.v200.Reference;
 import org.opengis.feature.Feature;
 
@@ -50,19 +53,15 @@ public final class ReferenceToFeatureConverter extends AbstractReferenceInputCon
 
     @Override
     public Feature convert(Reference source, final Map<String, Object> params) throws UnconvertibleObjectException {
-        final FeatureCollection data = ReferenceToFeatureCollectionConverter.getInstance().convert(source, params);
-        final FeatureIterator it = data.iterator();
-        final Feature result;
-        if (it.hasNext()) {
-            result = it.next();
-        } else {
-            result = null;
+        final FeatureSet data = ReferenceToFeatureSetConverter.getInstance().convert(source, params);
+        try (final Stream<Feature> stream = data.features(false)) {
+            final List<Feature> features = stream.limit(2)
+                    .collect(Collectors.toList());
+            if (features.isEmpty()) return null;
+            else if (features.size() == 1) return features.get(0);
+            else throw new UnconvertibleObjectException("A single feature was expected from datasource, but we've got at least two.");
+        } catch (DataStoreException e) {
+            throw new UnconvertibleObjectException("Cannot open stream of source data", e);
         }
-
-        if (it.hasNext()) {
-            throw new UnconvertibleObjectException("A single feature was expected from datasource, but we've got at least two.");
-        }
-
-        return result;
     }
 }

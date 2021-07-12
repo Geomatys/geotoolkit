@@ -21,7 +21,6 @@ import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
-import org.opengis.feature.PropertyNotFoundException;
 import static org.geotoolkit.filter.binding.AttributeBinding.stripPrefix;
 
 /**
@@ -58,11 +57,7 @@ public class ComplexAttributeBinding extends AbstractBinding<Feature>{
         if (!xpath.isEmpty() && xpath.charAt(0) == '{') {
             xpath = NamesExt.valueOf(xpath).toString();
         }
-        try{
-            return (T) candidate.getPropertyValue(xpath);
-        }catch(PropertyNotFoundException ex){
-            return null;
-        }
+        return (T) candidate.getValueOrFallback(xpath, null);
     }
 
     @Override

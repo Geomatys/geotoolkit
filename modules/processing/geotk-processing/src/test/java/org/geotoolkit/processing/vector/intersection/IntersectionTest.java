@@ -117,7 +117,7 @@ public class IntersectionTest extends AbstractProcessTest {
                     new Coordinate(4.0, 3.0),
                     new Coordinate(3.0, 3.0)
                 });
-        myFeature1.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-01");
+        myFeature1.setPropertyValue(AttributeConvention.IDENTIFIER, "id-01");
         myFeature1.setPropertyValue("name", "feature1");
         myFeature1.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         myFeature1.setPropertyValue("geom2", geometryFactory.createPoint(new Coordinate(3.5, 3.5)));
@@ -139,7 +139,7 @@ public class IntersectionTest extends AbstractProcessTest {
                     new Coordinate(4.0, 7.0),
                     new Coordinate(5.5, 6.5)
                 });
-        myFeature2.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-02");
+        myFeature2.setPropertyValue(AttributeConvention.IDENTIFIER, "id-02");
         myFeature2.setPropertyValue("name", "feature2");
         myFeature2.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         myFeature2.setPropertyValue("geom2", multPt);
@@ -159,7 +159,7 @@ public class IntersectionTest extends AbstractProcessTest {
                     new Coordinate(7.0, 0.0),
                     new Coordinate(9.0, 3.0)
                 });
-        myFeature3.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-03");
+        myFeature3.setPropertyValue(AttributeConvention.IDENTIFIER, "id-03");
         myFeature3.setPropertyValue("name", "feature3");
         myFeature3.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         myFeature3.setPropertyValue("geom2", line);
@@ -190,7 +190,7 @@ public class IntersectionTest extends AbstractProcessTest {
                     new Coordinate(3.0, 6.0), //intersection with a point
                     new Coordinate(3.5, 3.5) //intersection with a polygon
                 });
-        myFeature1.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-11");
+        myFeature1.setPropertyValue(AttributeConvention.IDENTIFIER, "id-11");
         myFeature1.setPropertyValue("name", "feature11");
         myFeature1.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         myFeature1.setPropertyValue("geom2", multPt);
@@ -210,7 +210,7 @@ public class IntersectionTest extends AbstractProcessTest {
                     new Coordinate(8.0, 4.5),
                     new Coordinate(11.0, 4.5)
                 });
-        myFeature2.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-12");
+        myFeature2.setPropertyValue(AttributeConvention.IDENTIFIER, "id-12");
         myFeature2.setPropertyValue("name", "feature12");
         myFeature2.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         myFeature2.setPropertyValue("geom2", line);
@@ -225,7 +225,7 @@ public class IntersectionTest extends AbstractProcessTest {
                     new Coordinate(10.0, 0.0),
                     new Coordinate(0.0, 0.0)
                 });
-        myFeature3.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-13");
+        myFeature3.setPropertyValue(AttributeConvention.IDENTIFIER, "id-13");
         myFeature3.setPropertyValue("name", "feature13");
         myFeature3.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         myFeature3.setPropertyValue("geom2", null);
@@ -248,7 +248,7 @@ public class IntersectionTest extends AbstractProcessTest {
                     new Coordinate(4.0, 4.0),
                     new Coordinate(4.0, 3.0)
                 });
-        myFeature1.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-01<->id-12");
+        myFeature1.setPropertyValue(AttributeConvention.IDENTIFIER, "id-01<->id-12");
         myFeature1.setPropertyValue("name", "feature1");
         myFeature1.setPropertyValue("geom1", line);
         featureList.add(myFeature1);
@@ -262,13 +262,13 @@ public class IntersectionTest extends AbstractProcessTest {
                     new Coordinate(4.0, 3.0),
                     new Coordinate(3.0, 3.0)
                 });
-        myFeature2.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-01<->id-13");
+        myFeature2.setPropertyValue(AttributeConvention.IDENTIFIER, "id-01<->id-13");
         myFeature2.setPropertyValue("name", "feature1");
         myFeature2.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         featureList.add(myFeature2);
 
         Feature myFeature3 = type.newInstance();
-        myFeature3.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-01<->id-11");
+        myFeature3.setPropertyValue(AttributeConvention.IDENTIFIER, "id-01<->id-11");
         myFeature3.setPropertyValue("name", "feature1");
         myFeature3.setPropertyValue("geom1", geometryFactory.createPoint(new Coordinate(3.5, 3.5)));
         featureList.add(myFeature3);
@@ -283,7 +283,7 @@ public class IntersectionTest extends AbstractProcessTest {
                     new Coordinate(10.0, 4.0),
                     new Coordinate(9.0, 4.0)
                 });
-        myFeature4.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-03<->id-13");
+        myFeature4.setPropertyValue(AttributeConvention.IDENTIFIER, "id-03<->id-13");
         myFeature4.setPropertyValue("name", "feature3");
         myFeature4.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         featureList.add(myFeature4);
@@ -294,7 +294,7 @@ public class IntersectionTest extends AbstractProcessTest {
                     new Coordinate(9.0, 4.5),
                     new Coordinate(11.0, 4.5)
                 });
-        myFeature5.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-03<->id-12");
+        myFeature5.setPropertyValue(AttributeConvention.IDENTIFIER, "id-03<->id-12");
         myFeature5.setPropertyValue("name", "feature3");
         myFeature5.setPropertyValue("geom1", line);
         featureList.add(myFeature5);
@@ -308,7 +308,7 @@ public class IntersectionTest extends AbstractProcessTest {
                     new Coordinate(6.0, 6.0),
                     new Coordinate(5.0, 6.0)
                 });
-        myFeature6.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-02<->id-13");
+        myFeature6.setPropertyValue(AttributeConvention.IDENTIFIER, "id-02<->id-13");
         myFeature6.setPropertyValue("name", "feature2");
         myFeature6.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         featureList.add(myFeature6);

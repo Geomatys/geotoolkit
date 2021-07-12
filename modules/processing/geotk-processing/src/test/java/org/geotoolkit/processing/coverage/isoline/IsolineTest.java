@@ -201,7 +201,7 @@ public class IsolineTest extends org.geotoolkit.test.TestBase {
         assertEquals(1, FeatureStoreUtilities.getCount(col, true).longValue());
 
         org.opengis.feature.Feature candidate = col.features(false).iterator().next();
-        Geometry geom = (Geometry) candidate.getPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString());
+        Geometry geom = (Geometry) candidate.getPropertyValue(AttributeConvention.GEOMETRY);
         assertTrue(geom instanceof LineString);
         LineString line = (LineString) geom;
         assertEquals("LINESTRING (1.5 2.7515672842277548, 1.6830860462828303 2.916666666666667, 2.5 3.5590333533118175, 3.5 3.765209494383988, 4.5 3.8283104640195758, 4.771314100938448 4.083333333333334, 4.5 4.484307738208203, 3.5 5.01232266160712, 2.5 5.131933362127943, 1.5039371438387097 5.25)", line.toText());

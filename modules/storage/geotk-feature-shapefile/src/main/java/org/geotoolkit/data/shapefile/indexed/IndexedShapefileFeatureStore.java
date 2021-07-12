@@ -189,7 +189,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
 
 
         //find the properties we will read and return --------------------------
-        final AttributeType idAttribute = (AttributeType) baseType.getProperty(AttributeConvention.IDENTIFIER_PROPERTY.toString());
+        final AttributeType idAttribute = (AttributeType) baseType.getProperty(AttributeConvention.IDENTIFIER);
         Set<AttributeType> readProperties;
         Set<PropertyType> returnedProperties;
 

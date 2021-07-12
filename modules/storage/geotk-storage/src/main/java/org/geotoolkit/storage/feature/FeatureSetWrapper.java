@@ -124,9 +124,7 @@ public class FeatureSetWrapper  extends AbstractCollection<Feature> implements F
         } catch (DataStoreException ex) {
             throw new FeatureStoreRuntimeException(ex);
         }
-        final WrapFeatureIterator it = new WrapFeatureIterator(features.iterator()) {};
-        it.onClose(features::close);
-        return it;
+        return FeatureStreams.asIterator(features);
     }
 
     @Override

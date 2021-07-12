@@ -163,7 +163,7 @@ public final class GeoJSONUtils extends Static {
     public static PropertyType getDefaultGeometry(final FeatureType type) throws PropertyNotFoundException, IllegalStateException {
         PropertyType geometry;
         try {
-            geometry = type.getProperty(AttributeConvention.GEOMETRY_PROPERTY.toString());
+            geometry = type.getProperty(AttributeConvention.GEOMETRY);
         } catch (PropertyNotFoundException e) {
             try {
                 geometry = searchForGeometry(type);
@@ -217,7 +217,7 @@ public final class GeoJSONUtils extends Static {
     public static Optional<Object> getDefaultGeometryValue(Feature input) throws PropertyNotFoundException, IllegalStateException {
         Object geometry;
         try {
-            geometry = input.getPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString());
+            geometry = input.getPropertyValue(AttributeConvention.GEOMETRY);
         } catch (PropertyNotFoundException ex) {
             try {
                 final PropertyType geomType = getDefaultGeometry(input.getType());
@@ -293,7 +293,7 @@ public final class GeoJSONUtils extends Static {
     public static boolean isPartOfPrimaryKey(FeatureType type, String propertyName) {
         PropertyType property;
         try {
-            property = type.getProperty(AttributeConvention.IDENTIFIER_PROPERTY.toString());
+            property = type.getProperty(AttributeConvention.IDENTIFIER);
         } catch (PropertyNotFoundException ex) {
             //no identifier property
             return false;
@@ -539,7 +539,7 @@ public final class GeoJSONUtils extends Static {
      * {@link AttributeConvention#IDENTIFIER_PROPERTY} is present in the input.
      */
     public static Optional<Class> getIdentifierType(final FeatureType toSearchIn) throws PropertyNotFoundException {
-        final PropertyType idProperty = toSearchIn.getProperty(AttributeConvention.IDENTIFIER_PROPERTY.toString());
+        final PropertyType idProperty = toSearchIn.getProperty(AttributeConvention.IDENTIFIER);
         return castOrUnwrap(idProperty).map(AttributeType::getValueClass);
     }
 

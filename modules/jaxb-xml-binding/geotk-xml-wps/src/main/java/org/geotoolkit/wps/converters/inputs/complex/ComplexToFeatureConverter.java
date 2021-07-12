@@ -56,15 +56,10 @@ public final class ComplexToFeatureConverter extends AbstractComplexInputConvert
      */
     @Override
     public Feature convert(final Data source, final Map<String, Object> params) throws UnconvertibleObjectException {
-        try (final Stream<FeatureSet> stream = AbstractComplexInputConverter.readFeatureArrays(source)) {
-            final Iterator<Feature> it = stream
-                    .flatMap(fc -> {
-                        try {
-                            return fc.features(false);
-                        } catch (DataStoreException ex) {
-                            throw new UnconvertibleObjectException("Cannot read features from source complex data.", ex);
-                        }
-                    }).iterator();
+        try (final Stream<Feature> stream = AbstractComplexInputConverter.readFeatureArrays(source)
+                        .flatMap(ComplexToFeatureConverter::openUnchecked)) {
+
+            final Iterator<Feature> it = stream.iterator();
 
             final Feature result;
             if (it.hasNext()) {
@@ -78,6 +73,14 @@ public final class ComplexToFeatureConverter extends AbstractComplexInputConvert
             }
 
             return result;
+        }
+    }
+
+    private static Stream<Feature> openUnchecked(final FeatureSet dataset) {
+        try {
+            return dataset.features(false);
+        } catch (DataStoreException ex) {
+            throw new UnconvertibleObjectException("Cannot read features from source complex data.", ex);
         }
     }
 }

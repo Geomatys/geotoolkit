@@ -352,7 +352,7 @@ public class FilterToOGC110Converter implements FilterToOGCConverter<FilterType>
             //so here we make a small tric to change an id filter in a serie of propertyequal filter
             //this is not really legal but we dont have the choice here
             //we should propose an evolution of ogc filter do consider id filter as a comparison filter
-            final ValueReference n = FF.property(AttributeConvention.IDENTIFIER_PROPERTY.toString());
+            final ValueReference n = FF.property(AttributeConvention.IDENTIFIER);
             String ident = ((ResourceId) filter).getIdentifier();
             return visit(FF.equal(n, FF.literal(ident)));
         } else if (filter instanceof SpatialOperator) {

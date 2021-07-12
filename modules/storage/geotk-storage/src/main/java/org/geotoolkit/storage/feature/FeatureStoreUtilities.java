@@ -168,7 +168,7 @@ public class FeatureStoreUtilities {
         boolean withId = false;
         // Check if there's identifiers to report.
         try {
-            writer.getFeatureType().getProperty(AttributeConvention.IDENTIFIER_PROPERTY.toString());
+            writer.getFeatureType().getProperty(AttributeConvention.IDENTIFIER);
             withId = true;
         } catch (PropertyNotFoundException e) {
             LOGGER.log(Level.FINE, "No identifier available at copy", e);
@@ -221,7 +221,7 @@ public class FeatureStoreUtilities {
         boolean withId = false;
         // Check if there's identifiers to report.
         try {
-            writer.getFeatureType().getProperty(AttributeConvention.IDENTIFIER_PROPERTY.toString());
+            writer.getFeatureType().getProperty(AttributeConvention.IDENTIFIER);
             withId = true;
         } catch (PropertyNotFoundException e) {
             LOGGER.log(Level.FINE, "No identifier available at copy", e);
@@ -476,7 +476,7 @@ public class FeatureStoreUtilities {
         final PropertyType geomDesc = baseType.getProperty(geomPropName.toString());
         boolean setDefaultGeometryRole = false;
         try {
-            IdentifiedType defaultGeometry = baseType.getProperty(AttributeConvention.GEOMETRY_PROPERTY.toString());
+            IdentifiedType defaultGeometry = baseType.getProperty(AttributeConvention.GEOMETRY);
             setDefaultGeometryRole = defaultGeometry.equals(geomDesc);
             while (setDefaultGeometryRole == false && defaultGeometry instanceof Operation) {
                 defaultGeometry = ((Operation)defaultGeometry).getResult();

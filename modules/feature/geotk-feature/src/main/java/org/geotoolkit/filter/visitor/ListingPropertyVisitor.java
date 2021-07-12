@@ -47,7 +47,7 @@ public class ListingPropertyVisitor extends Visitor<Object,Collection<String>> {
             }
         });
         setFilterHandler(AbstractVisitor.RESOURCEID_NAME, (f, names) -> {
-            names.add(AttributeConvention.IDENTIFIER_PROPERTY.toString());
+            names.add(AttributeConvention.IDENTIFIER);
         });
         setFilterHandler(ComparisonOperatorName.valueOf(FunctionNames.PROPERTY_IS_BETWEEN), (f, names) -> {
             final BetweenComparisonOperator<Object> filter = (BetweenComparisonOperator<Object>) f;

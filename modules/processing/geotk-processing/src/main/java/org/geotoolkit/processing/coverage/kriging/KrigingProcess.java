@@ -201,7 +201,7 @@ public class KrigingProcess extends AbstractProcess {
             final double value = palier[i];
 
             final Feature f = type.newInstance();
-            f.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), String.valueOf(inc++));
+            f.setPropertyValue(AttributeConvention.IDENTIFIER, String.valueOf(inc++));
             f.setPropertyValue("geometry", geometry);
             f.setPropertyValue("value", value);
             col.add(f);

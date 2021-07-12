@@ -102,7 +102,7 @@ public class ShapefileFeatureReader implements FeatureReader {
         }
 
         try {
-            schema.getProperty(AttributeConvention.IDENTIFIER_PROPERTY.toString());
+            schema.getProperty(AttributeConvention.IDENTIFIER);
             generateId = true;
         } catch (PropertyNotFoundException ex){}
 
@@ -160,7 +160,7 @@ public class ShapefileFeatureReader implements FeatureReader {
         final Feature feature = schema.newInstance();
         final String fid = fidReader.next();
         if(generateId){
-            feature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), fid);
+            feature.setPropertyValue(AttributeConvention.IDENTIFIER, fid);
         }
         try {
             attributeReader.read(buffer);

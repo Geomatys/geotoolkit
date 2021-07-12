@@ -107,7 +107,7 @@ public class MaxLimitTest extends AbstractProcessTest {
                     new Coordinate(4, 5),
                     new Coordinate(4, 7)
                 });
-        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-01 U id-11");
+        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER, "id-01 U id-11");
         myFeature.setPropertyValue("name", "feature1");
         myFeature.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         featureList.add(myFeature);
@@ -121,7 +121,7 @@ public class MaxLimitTest extends AbstractProcessTest {
                     new Coordinate(4, 5),
                     new Coordinate(3, 5)
                 });
-        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-01");
+        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER, "id-01");
         myFeature.setPropertyValue("name", "feature1");
         myFeature.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         featureList.add(myFeature);
@@ -135,7 +135,7 @@ public class MaxLimitTest extends AbstractProcessTest {
                     new Coordinate(7, 4),
                     new Coordinate(7, 5)
                 });
-        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-03 U id-12");
+        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER, "id-03 U id-12");
         myFeature.setPropertyValue("name", "feature3");
         myFeature.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         featureList.add(myFeature);
@@ -149,7 +149,7 @@ public class MaxLimitTest extends AbstractProcessTest {
                     new Coordinate(7, 4),
                     new Coordinate(6, 4)
                 });
-        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-03 U id-11");
+        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER, "id-03 U id-11");
         myFeature.setPropertyValue("name", "feature3");
         myFeature.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         featureList.add(myFeature);
@@ -163,7 +163,7 @@ public class MaxLimitTest extends AbstractProcessTest {
                     new Coordinate(8, 2),
                     new Coordinate(6, 2)
                 });
-        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-03 U id-13");
+        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER, "id-03 U id-13");
         myFeature.setPropertyValue("name", "feature3");
         myFeature.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         featureList.add(myFeature);
@@ -177,7 +177,7 @@ public class MaxLimitTest extends AbstractProcessTest {
                     new Coordinate(7, 5),
                     new Coordinate(7, 7)
                 });
-        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-02 U id-12");
+        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER, "id-02 U id-12");
         myFeature.setPropertyValue("name", "feature2");
         myFeature.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         featureList.add(myFeature);
@@ -191,7 +191,7 @@ public class MaxLimitTest extends AbstractProcessTest {
                     new Coordinate(7, 5),
                     new Coordinate(6, 5)
                 });
-        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-02 U id-11");
+        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER, "id-02 U id-11");
         myFeature.setPropertyValue("name", "feature2");
         myFeature.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         featureList.add(myFeature);
@@ -205,7 +205,7 @@ public class MaxLimitTest extends AbstractProcessTest {
                     new Coordinate(3, 3),
                     new Coordinate(2, 3)
                 });
-        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-04");
+        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER, "id-04");
         myFeature.setPropertyValue("name", "feature4");
         myFeature.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         featureList.add(myFeature);
@@ -222,7 +222,7 @@ public class MaxLimitTest extends AbstractProcessTest {
                     new Coordinate(8, 7),
                     new Coordinate(7, 7)
                 });
-        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-12");
+        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER, "id-12");
         myFeature.setPropertyValue("name", "feature12");
         myFeature.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         featureList.add(myFeature);
@@ -236,7 +236,7 @@ public class MaxLimitTest extends AbstractProcessTest {
                     new Coordinate(8, 2),
                     new Coordinate(8, 4)
                 });
-        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-13");
+        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER, "id-13");
         myFeature.setPropertyValue("name", "feature13");
         myFeature.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         featureList.add(myFeature);
@@ -250,7 +250,7 @@ public class MaxLimitTest extends AbstractProcessTest {
                     new Coordinate(5, 2),
                     new Coordinate(4, 2)
                 });
-        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-14");
+        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER, "id-14");
         myFeature.setPropertyValue("name", "feature14");
         myFeature.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         featureList.add(myFeature);
@@ -275,7 +275,7 @@ public class MaxLimitTest extends AbstractProcessTest {
                 });
         Polygon poly1 = geometryFactory.createPolygon(ring, null);
         Polygon poly2 = geometryFactory.createPolygon(ring2, null);
-        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-11");
+        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER, "id-11");
         myFeature.setPropertyValue("name", "feature11");
         myFeature.setPropertyValue("geom1", geometryFactory.createMultiPolygon(new Polygon[]{poly1, poly2}));
         featureList.add(myFeature);

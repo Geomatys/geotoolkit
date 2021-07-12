@@ -50,7 +50,7 @@ public class FIDFixVisitor extends DuplicatingFilterVisitor {
                 exp2 = exp;
             }
             if (exp1 instanceof ValueReference && exp2 instanceof Literal
-                    && ((ValueReference<Object,?>) exp1).getXPath().trim().equalsIgnoreCase(AttributeConvention.IDENTIFIER_PROPERTY.toString()))
+                    && ((ValueReference<Object,?>) exp1).getXPath().trim().equalsIgnoreCase(AttributeConvention.IDENTIFIER))
             {
                 // it's an id filter
                 final ResourceId<Object> idfilter = ff.resourceId(String.valueOf(((Literal<Object,?>) exp2).getValue()));

@@ -313,7 +313,7 @@ public class XmlTestData {
         calendar2.set(Calendar.MILLISECOND, 52);
 
         simpleFeatureFull = simpleTypeFull.newInstance();
-        simpleFeatureFull.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-156");
+        simpleFeatureFull.setPropertyValue(AttributeConvention.IDENTIFIER, "id-156");
         simpleFeatureFull.setPropertyValue("ID", 36);
         simpleFeatureFull.setPropertyValue("attString", "stringValue");
         simpleFeatureFull.setPropertyValue("attShort", (short)12);
@@ -334,17 +334,17 @@ public class XmlTestData {
         simpleFeatureFull.setPropertyValue("geomAnyGeometry", pt);
 
         simpleFeature1 = simpleTypeBasic.newInstance();
-        simpleFeature1.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(),"id89");
+        simpleFeature1.setPropertyValue(AttributeConvention.IDENTIFIER,"id89");
         simpleFeature1.setPropertyValue("attString","some text with words.");
         simpleFeature1.setPropertyValue("attDouble",56.14d);
 
         simpleFeature2 = simpleTypeBasic.newInstance();
-        simpleFeature2.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(),"id36");
+        simpleFeature2.setPropertyValue(AttributeConvention.IDENTIFIER,"id36");
         simpleFeature2.setPropertyValue("attString","some words assembled in a text.");
         simpleFeature2.setPropertyValue("attDouble",39.45d);
 
         simpleFeature3 = simpleTypeBasic.newInstance();
-        simpleFeature3.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(),"id412");
+        simpleFeature3.setPropertyValue(AttributeConvention.IDENTIFIER,"id412");
         simpleFeature3.setPropertyValue("attString","a text composed of words.");
         simpleFeature3.setPropertyValue("attDouble",12.31d);
 
@@ -353,17 +353,17 @@ public class XmlTestData {
                 simpleTypeBasic, Arrays.asList(simpleFeature3, simpleFeature2, simpleFeature1));
 
         Feature s1 = simpleTypeBasic2.newInstance();
-        s1.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(),"id90");
+        s1.setPropertyValue(AttributeConvention.IDENTIFIER,"id90");
         s1.setPropertyValue("attString2","some text with words.");
         s1.setPropertyValue("attDouble2",56.14d);
 
         Feature s2 = simpleTypeBasic2.newInstance();
-        s2.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(),"id37");
+        s2.setPropertyValue(AttributeConvention.IDENTIFIER,"id37");
         s2.setPropertyValue("attString2","some words assembled in a text.");
         s2.setPropertyValue("attDouble2",39.45d);
 
         Feature s3 = simpleTypeBasic2.newInstance();
-        s3.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(),"id413");
+        s3.setPropertyValue(AttributeConvention.IDENTIFIER,"id413");
         s3.setPropertyValue("attString2","a text composed of words.");
         s3.setPropertyValue("attDouble2",12.31d);
 
@@ -371,7 +371,7 @@ public class XmlTestData {
                 simpleTypeBasic2, Arrays.asList(s3, s2, s1));
 
         featureComplex = complexType.newInstance();
-        featureComplex.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-0");
+        featureComplex.setPropertyValue(AttributeConvention.IDENTIFIER, "id-0");
         featureComplex.setPropertyValue("insuranceNumber",new Integer(345678345));
         featureComplex.setPropertyValue("lastName","Smith");
         featureComplex.setPropertyValue("firstName","John");
@@ -414,7 +414,7 @@ public class XmlTestData {
 
         //feature with attributes
         featureWithAttributes = typeWithAtts.newInstance();
-        featureWithAttributes.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-156");
+        featureWithAttributes.setPropertyValue(AttributeConvention.IDENTIFIER, "id-156");
         featureWithAttributes.setPropertyValue("ID", 36);
         featureWithAttributes.setPropertyValue("eleString", "stringValue");
         featureWithAttributes.setPropertyValue("eleInteger", 23);
@@ -431,13 +431,13 @@ public class XmlTestData {
         final Feature propQuantity = qtType.newInstance();
         propQuantity.setPropertyValue("scale",3.14);
         featureWithObject = typeWithObject.newInstance();
-        featureWithObject.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-156");
+        featureWithObject.setPropertyValue(AttributeConvention.IDENTIFIER, "id-156");
         featureWithObject.setPropertyValue("value", propQuantity);
 
 
         //feature with gml identifier property
         featureEmpty = typeEmpty2.newInstance();
-        featureEmpty.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-156");
+        featureEmpty.setPropertyValue(AttributeConvention.IDENTIFIER, "id-156");
         final AttributeType charType = (AttributeType) ((AttributeType)typeEmpty2.getProperty("http://www.opengis.net/gml/3.2:identifier")).characteristics().get("http://www.opengis.net/gml/3.2:@codeBase");
         final Attribute charac = charType.newInstance();
         charac.setValue("something");
@@ -446,7 +446,7 @@ public class XmlTestData {
 
         //feature with a nil complex property
         featureNil = typeWithNil.newInstance();
-        featureNil.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-156");
+        featureNil.setPropertyValue(AttributeConvention.IDENTIFIER, "id-156");
         final Feature propnil = subRecordType.newInstance();
         propnil.setPropertyValue("@nil", true);
         propnil.setPropertyValue("@nilReason", "unknown");

@@ -32,7 +32,7 @@ public class FIDFixVisitorTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void testReplacement1(){
-        Filter filter = FF.equal(FF.property(AttributeConvention.IDENTIFIER_PROPERTY.toString()), FF.literal("river.1"));
+        Filter filter = FF.equal(FF.property(AttributeConvention.IDENTIFIER), FF.literal("river.1"));
 
         filter = (Filter) FIDFixVisitor.INSTANCE.visit(filter);
 
@@ -47,7 +47,7 @@ public class FIDFixVisitorTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testReplacement2(){
         Filter filter = FF.equal(FF.literal("river.1"),
-                FF.property(AttributeConvention.IDENTIFIER_PROPERTY.toString()));
+                FF.property(AttributeConvention.IDENTIFIER));
 
         filter = (Filter) FIDFixVisitor.INSTANCE.visit(filter);
 

@@ -225,7 +225,7 @@ public class MIFCollectionBuilder extends MIFGeometryBuilder {
             if (o instanceof Geometry) {
                 geoms.add((Geometry) o);
             } else if (o instanceof Feature) {
-                final Object geom = ((Feature) o).getPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString());
+                final Object geom = ((Feature) o).getPropertyValue(AttributeConvention.GEOMETRY);
                 if (geom instanceof Geometry) {
                     geoms.add((Geometry) geom);
                 } else if (geom != null) {

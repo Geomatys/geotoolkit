@@ -87,7 +87,7 @@ class NetcdfFeatureReader implements FeatureReader {
                     firstCRS = false;
                 }
                 final Feature f = type.newInstance();
-                f.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), feature.getId());
+                f.setPropertyValue(AttributeConvention.IDENTIFIER, feature.getId());
                 f.setPropertyValue(OMFeatureTypes.ATT_DESC.toString(), feature.getDescription());
                 f.setPropertyValue(OMFeatureTypes.ATT_NAME.toString(), feature.getName());
                 f.setPropertyValue(OMFeatureTypes.ATT_POSITION.toString(),geom);
