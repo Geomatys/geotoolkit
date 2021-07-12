@@ -219,7 +219,7 @@
     <quartz.version>2.3.1</quartz.version>
     <rxtx.version>2.2pre2</rxtx.version>
     <slf4j.version>1.7.22</slf4j.version> <!-- Version used by edu.ucar dependency. -->
-    <snakeyaml.version>1.24</snakeyaml.version> <!-- keep version aligned with jackson -->
+    <snakeyaml.version>1.26</snakeyaml.version> <!-- keep version aligned with jackson -->
     <woodstox.version>6.0.0</woodstox.version>
     <xmlgraphics.version>2.3</xmlgraphics.version>
 
