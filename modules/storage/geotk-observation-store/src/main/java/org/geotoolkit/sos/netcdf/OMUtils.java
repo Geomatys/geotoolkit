@@ -244,7 +244,8 @@ public class OMUtils {
                                              phenomenon,    // phenomenon
                                              procedure,     // procedure
                                              result,        // result
-                                             time);
+                                             time,
+                                             null);
     }
 
     public static AbstractObservation buildObservation(final String obsid, final SamplingFeature sf,
@@ -260,6 +261,7 @@ public class OMUtils {
                                              phenomenon,    // phenomenon
                                              procedure,     // procedure
                                              result,        // result
-                                             time);
+                                             time,
+                                             null);
     }
 }

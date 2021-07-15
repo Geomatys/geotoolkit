@@ -76,7 +76,7 @@ public class BoundingShapeType implements BoundingShape {
     }
 
     public BoundingShapeType(final String nul) {
-        this._null = new ArrayList<String>();
+        this._null = new ArrayList<>();
         this._null.add(nul);
     }
 
@@ -91,10 +91,10 @@ public class BoundingShapeType implements BoundingShape {
                 }
             }
            if (that.getNull() != null) {
-               this._null = new ArrayList<String>(that.getNull());
+               this._null = new ArrayList<>(that.getNull());
            }
            if (that.getNilReason() != null) {
-               this.nilReason = new ArrayList<String>(that.getNilReason());
+               this.nilReason = new ArrayList<>(that.getNilReason());
            }
         }
     }
@@ -107,10 +107,21 @@ public class BoundingShapeType implements BoundingShape {
             this.envelope = factory.createEnvelope(envelope);
         }
         if (envelope == null) {
-            this._null = new ArrayList<String>();
+            this._null = new ArrayList<>();
             this._null.add("not_bounded");
         }
 
+    }
+
+    public BoundingShapeType(final org.opengis.geometry.Envelope envelope) {
+        if (envelope == null) {
+            this._null = new ArrayList<>();
+            this._null.add("not_bounded");
+        } else {
+            final ObjectFactory factory = new ObjectFactory();
+            final EnvelopeType gmlEnv = new EnvelopeType(envelope);
+            this.envelope = factory.createEnvelope(gmlEnv);
+        }
     }
 
     @Override
@@ -174,7 +185,7 @@ public class BoundingShapeType implements BoundingShape {
     @Override
     public List<String> getNilReason() {
         if (nilReason == null) {
-            nilReason = new ArrayList<String>();
+            nilReason = new ArrayList<>();
         }
         return this.nilReason;
     }

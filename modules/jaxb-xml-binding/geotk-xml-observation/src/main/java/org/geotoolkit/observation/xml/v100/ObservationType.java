@@ -55,6 +55,7 @@ import org.geotoolkit.sampling.xml.v100.SamplingCurveType;
 import org.geotoolkit.sampling.xml.v100.SamplingSolidType;
 import org.geotoolkit.sampling.xml.v100.SamplingSurfaceType;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.gml.xml.BoundingShape;
 import org.geotoolkit.swe.xml.v101.CompositePhenomenonType;
 import org.opengis.metadata.Identifier;
 import org.opengis.temporal.Period;
@@ -572,6 +573,14 @@ public class ObservationType implements Entry, AbstractObservation {
         return definition;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public BoundingShape getBoundedBy() {
+        return null;
+    }
+    
     /**
      * Return true if the observation match the specified template.
      * @param abstractTemplate
