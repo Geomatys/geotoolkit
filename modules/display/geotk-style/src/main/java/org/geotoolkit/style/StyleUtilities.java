@@ -17,6 +17,7 @@
 
 package org.geotoolkit.style;
 
+import java.util.Optional;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
 import org.geotoolkit.gui.swing.tree.MutableTreeNode;
@@ -32,19 +33,7 @@ import org.opengis.filter.Expression;
 import org.opengis.sld.Layer;
 import org.opengis.sld.StyledLayerDescriptor;
 import org.opengis.sld.UserLayer;
-import org.opengis.style.FeatureTypeStyle;
-import org.opengis.style.Fill;
-import org.opengis.style.Graphic;
-import org.opengis.style.LineSymbolizer;
-import org.opengis.style.PointSymbolizer;
-import org.opengis.style.PolygonSymbolizer;
-import org.opengis.style.RasterSymbolizer;
-import org.opengis.style.Rule;
-import org.opengis.style.Stroke;
-import org.opengis.style.Style;
-import org.opengis.style.StyleFactory;
-import org.opengis.style.Symbolizer;
-import org.opengis.style.TextSymbolizer;
+import org.opengis.style.*;
 
 /**
  * Convenient methods to transform a style in tree.
@@ -59,6 +48,18 @@ public final class StyleUtilities extends Static {
     private static final MutableSLDFactory SLDF = new DefaultSLDFactory();
 
     private StyleUtilities(){}
+
+    /**
+     * Workaround to replace code doing: <pre>wellKnownNameExpr.toString()</pre>
+     * @param mark the mark to extract well known name for.
+     * @return
+     */
+    public static Optional<String> extractWellKnownName(final Mark mark) {
+        if (mark == null) return Optional.empty();
+        final Expression<?, ?> wkn = mark.getWellKnownName();
+        if (wkn == null) return Optional.empty();
+        return Optional.of(wkn.toValueType(String.class).apply(null));
+    }
 
     public static MutableStyledLayerDescriptor copy(final StyledLayerDescriptor sld){
         ArgumentChecks.ensureNonNull("sld", sld);

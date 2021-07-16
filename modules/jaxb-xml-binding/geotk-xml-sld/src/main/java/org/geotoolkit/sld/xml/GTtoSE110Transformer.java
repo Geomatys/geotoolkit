@@ -85,6 +85,7 @@ import org.geotoolkit.se.xml.vext.ColorItemType;
 import org.geotoolkit.se.xml.vext.JenksType;
 import org.geotoolkit.se.xml.vext.RangeType;
 import org.geotoolkit.se.xml.vext.RecolorType;
+import org.geotoolkit.style.StyleUtilities;
 import org.geotoolkit.style.function.Categorize;
 import org.geotoolkit.style.function.ColorItem;
 import org.geotoolkit.style.function.Interpolate;
@@ -800,7 +801,9 @@ public class GTtoSE110Transformer extends FilterToOGC110Converter implements Sty
             }
 
         } else {
-            mt.setWellKnownName(mark.getWellKnownName().toString());
+            StyleUtilities
+                    .extractWellKnownName(mark)
+                    .ifPresent(mt::setWellKnownName);
         }
 
         return mt;

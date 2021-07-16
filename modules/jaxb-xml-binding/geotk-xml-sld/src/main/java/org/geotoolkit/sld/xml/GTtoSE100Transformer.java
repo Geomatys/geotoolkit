@@ -27,6 +27,7 @@ import org.geotoolkit.ogc.xml.v100.PropertyNameType;
 import org.geotoolkit.sld.xml.v100.CssParameter;
 import org.geotoolkit.sld.xml.v100.ParameterValueType;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.style.StyleUtilities;
 import org.opengis.filter.Expression;
 import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.style.AnchorPoint;
@@ -567,7 +568,9 @@ public class GTtoSE100Transformer extends FilterToOGC100Converter implements Sty
         final org.geotoolkit.sld.xml.v100.Mark mt = sld_factory_v100.createMark();
         mt.setFill( visit(mark.getFill(),null) );
         mt.setStroke( visit(mark.getStroke(),null) );
-        mt.setWellKnownName(mark.getWellKnownName().toString());
+        StyleUtilities
+                .extractWellKnownName(mark)
+                .ifPresent(mt::setWellKnownName);
 
         return mt;
     }
