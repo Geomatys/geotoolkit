@@ -55,6 +55,7 @@ import org.geotoolkit.sampling.xml.v100.SamplingCurveType;
 import org.geotoolkit.sampling.xml.v100.SamplingSolidType;
 import org.geotoolkit.sampling.xml.v100.SamplingSurfaceType;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.gml.xml.BoundingShape;
 import org.geotoolkit.swe.xml.v101.CompositePhenomenonType;
 import org.opengis.metadata.Identifier;
@@ -579,6 +580,11 @@ public class ObservationType implements Entry, AbstractObservation {
     @Override
     public BoundingShape getBoundedBy() {
         return null;
+    }
+
+    @Override
+    public void extendBoundingShape(AbstractGeometry newGeom) {
+        // not bounds in this version
     }
     
     /**

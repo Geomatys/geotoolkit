@@ -18,6 +18,7 @@ package org.geotoolkit.observation.xml;
 
 import java.util.Date;
 import java.util.List;
+import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.gml.xml.BoundingShape;
 import org.geotoolkit.gml.xml.FeatureProperty;
 import org.geotoolkit.gml.xml.LocationProperty;
@@ -53,6 +54,8 @@ public interface AbstractObservation extends Observation {
     void setSamplingTimePeriod(final Period period);
 
     void extendSamplingTime(final Date newEndBound);
+
+    void extendBoundingShape(final AbstractGeometry newGeom);
 
     boolean matchTemplate(final Observation template);
 

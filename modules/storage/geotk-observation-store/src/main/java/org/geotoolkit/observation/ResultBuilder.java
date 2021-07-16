@@ -90,6 +90,30 @@ public class ResultBuilder {
         }
     }
 
+    public void appendNumber(Number value) {
+        if (value != null) {
+            emptyLine = false;
+        }
+        if (value instanceof Double) {
+            appendDouble((Double) value);
+        } else if (value instanceof Float) {
+            appendFloat((Float) value);
+        } else if (value instanceof Integer) {
+            appendInteger((Integer) value);
+        } else if (value == null) {
+            switch (getMode()) {
+                case DATA_ARRAY:
+                    currentArrayLine.add(null);
+                    break;
+                case CSV:
+                    currentLine.append(encoding.getTokenSeparator());
+                    break;
+            }
+        } else {
+            throw new IllegalArgumentException("Unexpected number type:" + value.getClass().getSimpleName());
+        }
+    }
+
     public void appendDouble(Double d) {
         if (!d.isNaN()) {
             emptyLine = false;
@@ -101,6 +125,40 @@ public class ResultBuilder {
             case CSV:
                 if (!d.isNaN()) {
                     currentLine.append(Double.toString(d));
+                }
+                currentLine.append(encoding.getTokenSeparator());
+                break;
+        }
+    }
+
+    public void appendFloat(Float d) {
+        if (!d.isNaN()) {
+            emptyLine = false;
+        }
+        switch (getMode()) {
+            case DATA_ARRAY:
+                currentArrayLine.add(d);
+                break;
+            case CSV:
+                if (!d.isNaN()) {
+                    currentLine.append(Double.toString(d));
+                }
+                currentLine.append(encoding.getTokenSeparator());
+                break;
+        }
+    }
+
+    public void appendInteger(Integer d) {
+        if (d != null) {
+            emptyLine = false;
+        }
+        switch (getMode()) {
+            case DATA_ARRAY:
+                currentArrayLine.add(d);
+                break;
+            case CSV:
+                if (d != null) {
+                    currentLine.append(Integer.toString(d));
                 }
                 currentLine.append(encoding.getTokenSeparator());
                 break;
