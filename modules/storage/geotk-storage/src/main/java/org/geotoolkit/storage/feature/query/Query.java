@@ -22,7 +22,7 @@ import java.util.Date;
 import java.util.List;
 import javax.measure.Quantity;
 import javax.measure.quantity.Length;
-import org.apache.sis.internal.storage.query.SimpleQuery;
+import org.apache.sis.internal.storage.query.FeatureQuery;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.factory.Hints;
@@ -55,10 +55,10 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Chris Holmes
  * @version $Id$
  * @module
- * @deprecated use SIS SimpleQuery
+ * @deprecated use SIS FeatureQuery
  */
 @Deprecated
-public final class Query extends SimpleQuery {
+public final class Query extends FeatureQuery {
 
     /**
      * Default GeotoolKit language used for querying databases.
@@ -109,7 +109,7 @@ public final class Query extends SimpleQuery {
             throw new NullArgumentException("Query filter can not be null, did you mean Filter.include()?");
         }
 
-        setFilter(filter);
+        setSelection(filter);
         setOffset(startIndex);
         setLimit(MaxFeature);
         setSortBy(sort);
@@ -117,13 +117,12 @@ public final class Query extends SimpleQuery {
 
         if (attributs != null && attributs.length > 0) {
             final FilterFactory ff = FilterUtilities.FF;
-            final List<Column> columns = new ArrayList<>();
+            final List<NamedExpression> columns = new ArrayList<>();
             for (String att : attributs) {
-                columns.add(new Column(ff.property(att)));
+                columns.add(new NamedExpression(ff.property(att)));
             }
-            setColumns(columns.toArray(new Column[0]));
+            setProjection(columns.toArray(new NamedExpression[0]));
         }
-
         this.typeName = typeName;
         this.crs = crs;
         this.resolution = resolution;
@@ -134,7 +133,6 @@ public final class Query extends SimpleQuery {
         } else {
             this.hints = hints;
         }
-
     }
 
     /**
@@ -143,7 +141,7 @@ public final class Query extends SimpleQuery {
      */
     Query(final Query query) {
         this(query.getTypeName(),
-             query.getFilter(),
+             query.getSelection(),
              query.getPropertyNames(),
              query.getSortBy(),
              query.getCoordinateSystemReproject(),
@@ -215,7 +213,7 @@ public final class Query extends SimpleQuery {
      *       Query.FIDS.equals( filter ) would meet this need?
      */
     public String[] getPropertyNames() {
-        List<Column> columns = getColumns();
+        List<NamedExpression> columns = getProjection();
         if (columns == null) return null;
         final String[] names = new String[columns.size()];
         for (int i=0;i<names.length;i++) {
@@ -236,7 +234,7 @@ public final class Query extends SimpleQuery {
      *         the returned FeatureCollection.
      */
     public boolean retrieveAllProperties() {
-        return getColumns() == null;
+        return getProjection() == null;
     }
 
     /**

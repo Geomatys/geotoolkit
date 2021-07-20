@@ -33,7 +33,7 @@ import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.feature.AttributeConvention;
-import org.apache.sis.internal.storage.query.SimpleQuery;
+import org.apache.sis.internal.storage.query.FeatureQuery;
 import org.apache.sis.measure.Quantities;
 import org.apache.sis.measure.Units;
 import org.apache.sis.portrayal.MapLayer;
@@ -216,8 +216,8 @@ public final class RenderingRoutines {
         //concatenate geographic filter with data filter if there is one
         if (layer != null) {
             Query query = layer.getQuery();
-            if (query instanceof SimpleQuery) {
-                filter = FILTER_FACTORY.and(filter, (Filter) ((SimpleQuery) query).getFilter());
+            if (query instanceof FeatureQuery) {
+                filter = FILTER_FACTORY.and(filter, (Filter) ((FeatureQuery) query).getSelection());
             }
         }
 
@@ -389,7 +389,7 @@ public final class RenderingRoutines {
      * Creates an optimal query to send to the datastore, knowing which properties are knowned and
      * the appropriate bounding box to filter.
      */
-    public static SimpleQuery prepareQuery(final RenderingContext2D renderingContext,
+    public static FeatureQuery prepareQuery(final RenderingContext2D renderingContext,
             final MapLayer layer, double symbolsMargin) throws PortrayalException{
 
         final FeatureSet fs = (FeatureSet) layer.getData();
@@ -431,8 +431,8 @@ public final class RenderingRoutines {
 
         //concatenate geographic filter with data filter if there is one
         Query query = layer.getQuery();
-        if (query instanceof SimpleQuery) {
-            filter = FILTER_FACTORY.and(filter, (Filter) ((SimpleQuery) query).getFilter());
+        if (query instanceof FeatureQuery) {
+            filter = FILTER_FACTORY.and(filter, (Filter) ((FeatureQuery) query).getSelection());
         }
 
         //optimize the filter---------------------------------------------------

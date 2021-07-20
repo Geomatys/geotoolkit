@@ -34,7 +34,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.storage.ResourceOnFileSystem;
-import org.apache.sis.internal.storage.query.SimpleQuery;
+import org.apache.sis.internal.storage.query.FeatureQuery;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
@@ -215,8 +215,8 @@ public class GMLSparseStore extends DataStore implements WritableFeatureSet, Res
 
     @Override
     public FeatureSet subset(Query query) throws UnsupportedQueryException, DataStoreException {
-        if (query instanceof SimpleQuery) {
-            return ((SimpleQuery) query).execute(this);
+        if (query instanceof FeatureQuery) {
+            return ((FeatureQuery) query).execute(this);
         }
         return WritableFeatureSet.super.subset(query);
     }

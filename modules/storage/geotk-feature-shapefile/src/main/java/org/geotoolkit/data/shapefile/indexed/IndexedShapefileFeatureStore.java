@@ -181,7 +181,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
         final String[]      queryPropertyNames = gquery.getPropertyNames();
         final Hints         queryHints = gquery.getHints();
         final double[]      queryRes = gquery.getResolution();
-        Filter              queryFilter = gquery.getFilter();
+        Filter              queryFilter = gquery.getSelection();
 
         //check if we must read the 3d values
         final CoordinateReferenceSystem reproject = gquery.getCoordinateSystemReproject();
@@ -541,7 +541,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
             final FeatureReader reader = createFeatureReader(attReader, schema, null);
             FeatureWriter writer = new IndexedShapefileFeatureWriter(
                     schema.getName().tip().toString(), shpFiles, attReader, reader, this, dbfCharset);
-            return FeatureStreams.filter(writer, gquery.getFilter());
+            return FeatureStreams.filter(writer, gquery.getSelection());
         } catch (IOException ex) {
             throw new DataStoreException(ex);
         }
@@ -554,7 +554,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
 
         final org.geotoolkit.storage.feature.query.Query gquery = (org.geotoolkit.storage.feature.query.Query) query;
 
-        final Filter filter = gquery.getFilter();
+        final Filter filter = gquery.getSelection();
         if (filter == Filter.include() || QueryUtilities.queryAll(gquery) ) {
             //use the generic envelope calculation
             return super.getEnvelope(gquery);

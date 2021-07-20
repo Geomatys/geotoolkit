@@ -54,7 +54,7 @@ import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.internal.map.ExceptionPresentation;
 import org.apache.sis.internal.map.Presentation;
-import org.apache.sis.internal.storage.query.SimpleQuery;
+import org.apache.sis.internal.storage.query.FeatureQuery;
 import org.apache.sis.portrayal.MapLayer;
 import org.apache.sis.portrayal.MapLayers;
 import org.apache.sis.referencing.CRS;
@@ -469,8 +469,8 @@ public class RasterSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer
 
         Map<String,Double> values = null;
         final Query query = coverageMapLayer.getQuery();
-        if (query instanceof SimpleQuery) {
-            SimpleQuery sq = (SimpleQuery) query;
+        if (query instanceof FeatureQuery) {
+            FeatureQuery sq = (FeatureQuery) query;
             // visit the filter to extract all values
             final DefaultFilterVisitor fv = new DefaultFilterVisitor() {
                 {
@@ -483,7 +483,7 @@ public class RasterSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer
                     });
                 }
             };
-            final Filter filter = sq.getFilter();
+            final Filter filter = sq.getSelection();
             values = new HashMap<>();
             fv.visit(filter, values);
         }

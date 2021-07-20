@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.stream.Stream;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.internal.feature.AttributeConvention;
-import org.apache.sis.internal.storage.query.SimpleQuery;
+import org.apache.sis.internal.storage.query.FeatureQuery;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.Resource;
@@ -98,8 +98,8 @@ public class FeatureSetTileGenerator extends AbstractTileGenerator {
 
         final Polygon tileBound = JTS.toGeometry(tileEnv);
 
-        final SimpleQuery query = QueryBuilder.reproject(source.getType(), tileCrs);
-        query.setFilter(filter);
+        final FeatureQuery query = QueryBuilder.reproject(source.getType(), tileCrs);
+        query.setSelection(filter);
 
         final FeatureSet subset = source.subset(query);
         final double scale = mosaic.getScale();

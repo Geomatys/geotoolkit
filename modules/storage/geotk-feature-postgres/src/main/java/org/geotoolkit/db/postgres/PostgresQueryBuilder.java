@@ -72,7 +72,7 @@ public class PostgresQueryBuilder extends SQLQueryBuilder{
         dialect.encodeSchemaAndTableName(sql, databaseSchema, versionControl.getHSTableName());
 
         // filtering and version/time filter
-        Filter filter = query.getFilter();
+        Filter filter = query.getSelection();
         final FilterFactory ff = store.getFilterFactory();
         Filter tempFilter =
             ff.and(

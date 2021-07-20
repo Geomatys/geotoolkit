@@ -19,7 +19,7 @@ package org.geotoolkit.processing.vector.intersect;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.sis.internal.feature.AttributeConvention;
-import org.apache.sis.internal.storage.query.SimpleQuery;
+import org.apache.sis.internal.storage.query.FeatureQuery;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.process.ProcessException;
@@ -59,8 +59,8 @@ public class IntersectProcess extends AbstractProcess {
             final Geometry interGeom          = inputParameters.getValue(IntersectDescriptor.GEOMETRY_IN);
 
             Filter filter = createFilter(inputFeatureList.getType(), interGeom);
-            final SimpleQuery query = new SimpleQuery();
-            query.setFilter(filter);
+            final FeatureQuery query = new FeatureQuery();
+            query.setSelection(filter);
             final FeatureSet resultFeatureList = inputFeatureList.subset(query);
 
             outputParameters.getOrCreate(VectorDescriptor.FEATURESET_OUT).setValue(resultFeatureList);

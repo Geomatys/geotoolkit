@@ -20,7 +20,7 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Stream;
 import org.apache.sis.internal.storage.AbstractFeatureSet;
-import org.apache.sis.internal.storage.query.SimpleQuery;
+import org.apache.sis.internal.storage.query.FeatureQuery;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.Query;
@@ -75,8 +75,8 @@ public class ProgressiveFeatureSetResource<T extends FeatureSet & MultiResolutio
 
     @Override
     public FeatureSet subset(Query query) throws UnsupportedQueryException, DataStoreException {
-        if (query instanceof SimpleQuery) {
-            return new SubSet((SimpleQuery) query);
+        if (query instanceof FeatureQuery) {
+            return new SubSet((FeatureQuery) query);
         } else {
             throw new UnsupportedQueryException();
         }
@@ -89,9 +89,9 @@ public class ProgressiveFeatureSetResource<T extends FeatureSet & MultiResolutio
 
     private final class SubSet extends AbstractFeatureSet {
 
-        private final SimpleQuery query;
+        private final FeatureQuery query;
 
-        private SubSet(SimpleQuery query) {
+        private SubSet(FeatureQuery query) {
             super(null);
             this.query = query;
         }
@@ -115,7 +115,5 @@ public class ProgressiveFeatureSetResource<T extends FeatureSet & MultiResolutio
         public Stream<Feature> features(boolean parallel) throws DataStoreException {
             return new TileMatrixSetFeatureReader(ProgressiveFeatureSetResource.this, getType()).features(this.query, parallel);
         }
-
     }
-
 }

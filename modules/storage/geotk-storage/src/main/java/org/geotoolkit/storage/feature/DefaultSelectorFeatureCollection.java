@@ -230,7 +230,7 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection{
     public void clear() {
         if(isWritable()){
             try {
-                getSession().removeFeatures(query.getTypeName(), query.getFilter());
+                getSession().removeFeatures(query.getTypeName(), query.getSelection());
             } catch (DataStoreException ex) {
                 throw new FeatureStoreRuntimeException(ex);
             }
@@ -245,9 +245,9 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection{
     @Override
     public void update(final Filter filter, final Map<String,?> values) throws DataStoreException {
         if (filter == Filter.include()) {
-            getSession().updateFeatures(query.getTypeName(),query.getFilter(),values);
+            getSession().updateFeatures(query.getTypeName(), query.getSelection(), values);
         }else{
-            getSession().updateFeatures(query.getTypeName(), FilterUtilities.FF.and((Filter) query.getFilter(), filter),values);
+            getSession().updateFeatures(query.getTypeName(), FilterUtilities.FF.and((Filter) query.getSelection(), filter),values);
         }
     }
 
@@ -257,9 +257,9 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection{
     @Override
     public void remove(final Filter filter) throws DataStoreException {
         if (filter == Filter.include()) {
-            getSession().removeFeatures(query.getTypeName(),query.getFilter());
+            getSession().removeFeatures(query.getTypeName(),query.getSelection());
         }else{
-            getSession().removeFeatures(query.getTypeName(), FilterUtilities.FF.and((Filter) query.getFilter(), filter));
+            getSession().removeFeatures(query.getTypeName(), FilterUtilities.FF.and((Filter) query.getSelection(), filter));
         }
     }
 }

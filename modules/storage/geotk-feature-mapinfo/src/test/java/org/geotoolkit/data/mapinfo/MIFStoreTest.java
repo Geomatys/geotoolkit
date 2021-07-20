@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.internal.storage.query.SimpleQuery;
+import org.apache.sis.internal.storage.query.FeatureQuery;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
@@ -151,7 +151,7 @@ public class MIFStoreTest extends org.geotoolkit.test.TestBase {
 
             resource.add(Arrays.asList(feature1, feature2).iterator());
 
-            checkFeatures(expectedFeatures, resource, new SimpleQuery());
+            checkFeatures(expectedFeatures, resource, new FeatureQuery());
         }
     }
 
@@ -207,7 +207,7 @@ public class MIFStoreTest extends org.geotoolkit.test.TestBase {
 
             resource.add(expectedFeatures.iterator());
 
-            checkFeatures(expectedFeatures, resource, new SimpleQuery());
+            checkFeatures(expectedFeatures, resource, new FeatureQuery());
         }
     }
 
@@ -254,11 +254,11 @@ public class MIFStoreTest extends org.geotoolkit.test.TestBase {
             resource.add(expectedFeatures.iterator());
 
             // filter output
-            final SimpleQuery query = new SimpleQuery();
+            final FeatureQuery query = new FeatureQuery();
             final String[] filteredProps = new String[]{"stringProp", "integerProp"};
-            query.setColumns(
-                    new SimpleQuery.Column(FF.property("stringProp")),
-                    new SimpleQuery.Column(FF.property("integerProp")));
+            query.setProjection(
+                    new FeatureQuery.NamedExpression(FF.property("stringProp")),
+                    new FeatureQuery.NamedExpression(FF.property("integerProp")));
             ftb.getProperty("doubleProp").remove();
             ftb.getProperty("geometryProp").remove();
 
@@ -277,7 +277,7 @@ public class MIFStoreTest extends org.geotoolkit.test.TestBase {
         }
     }
 
-    private static void checkFeatures(final List<Feature> expected, final FeatureSet source, final SimpleQuery readQuery) throws DataStoreException {
+    private static void checkFeatures(final List<Feature> expected, final FeatureSet source, final FeatureQuery readQuery) throws DataStoreException {
 
         FeatureSet subset = source.subset(readQuery);
         int number = 0;

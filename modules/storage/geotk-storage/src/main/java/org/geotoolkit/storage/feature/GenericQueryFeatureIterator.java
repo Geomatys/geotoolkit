@@ -44,7 +44,7 @@ public class GenericQueryFeatureIterator {
 
         final long start = remainingParameters.getOffset();
         final long max = remainingParameters.getLimit();
-        final Filter filter = remainingParameters.getFilter();
+        final Filter filter = remainingParameters.getSelection();
         final String[] properties = remainingParameters.getPropertyNames();
         final SortProperty[] sorts = remainingParameters.getSortBy();
         final double[] resampling = remainingParameters.getResolution();

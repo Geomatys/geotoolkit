@@ -23,7 +23,7 @@ import java.util.List;
 import javax.measure.Quantity;
 import javax.measure.quantity.Length;
 import org.apache.sis.internal.feature.AttributeConvention;
-import org.apache.sis.internal.storage.query.SimpleQuery;
+import org.apache.sis.internal.storage.query.FeatureQuery;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.filter.FilterUtilities;
 import org.locationtech.jts.geom.Geometry;
@@ -46,7 +46,7 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  * @module
- * @deprecated use SIS SimpleQuery
+ * @deprecated use SIS FeatureQuery
  */
 @Deprecated
 public final class QueryBuilder {
@@ -95,7 +95,7 @@ public final class QueryBuilder {
     public void copy(final Query query){
         this.crs = query.getCoordinateSystemReproject();
         this.resolution = (query.getResolution()==null)?null:query.getResolution().clone();
-        this.filter = query.getFilter();
+        this.filter = query.getSelection();
         this.hints = query.getHints();
         this.maxFeatures = query.getLimit();
         this.properties = query.getPropertyNames();
@@ -284,12 +284,12 @@ public final class QueryBuilder {
     /**
      * Create a simple query with columns which transform all geometric types to the given crs.
      */
-    public static SimpleQuery reproject(FeatureType type, final CoordinateReferenceSystem crs) {
+    public static FeatureQuery reproject(FeatureType type, final CoordinateReferenceSystem crs) {
         final FilterFactory ff = FilterUtilities.FF;
         final Literal crsLiteral = ff.literal(crs);
 
-        final SimpleQuery query = new SimpleQuery();
-        final List<SimpleQuery.Column> columns = new ArrayList<>();
+        final FeatureQuery query = new FeatureQuery();
+        final List<FeatureQuery.NamedExpression> columns = new ArrayList<>();
 
         for (PropertyType pt : type.getProperties(true)) {
             final GenericName name = pt.getName();
@@ -306,9 +306,9 @@ public final class QueryBuilder {
                     property = ff.function("ST_Transform", property, crsLiteral);
                 }
             }
-            columns.add(new SimpleQuery.Column(property, name));
+            columns.add(new FeatureQuery.NamedExpression(property, name));
         }
-        query.setColumns(columns.toArray(new SimpleQuery.Column[0]));
+        query.setProjection(columns.toArray(new FeatureQuery.NamedExpression[0]));
         return query;
     }
 }
