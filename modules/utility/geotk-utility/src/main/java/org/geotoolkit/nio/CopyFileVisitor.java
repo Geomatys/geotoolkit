@@ -49,10 +49,19 @@ public class CopyFileVisitor extends SimpleFileVisitor<Path> {
                                              final BasicFileAttributes attrs) throws IOException {
         if (sourcePath == null) {
             sourcePath = dir;
-            Files.createDirectories(targetPath);
+            // we check if target path is a directory because if it is a symbolic link to another directory
+            // createDirectories will launch an exception
+            if (!Files.isDirectory(targetPath)) {
+                Files.createDirectories(targetPath);
+            }
         } else {
             final Path relativize = sourcePath.relativize(dir);
-            Files.createDirectories(targetPath.resolve(relativize.toString()));
+            final Path p = targetPath.resolve(relativize.toString());
+            // we check if target path is a directory because if it is a symbolic link to another directory
+            // createDirectories will launch an exception
+            if (!Files.isDirectory(p)) {
+                Files.createDirectories(p);
+            }
         }
         return FileVisitResult.CONTINUE;
     }
