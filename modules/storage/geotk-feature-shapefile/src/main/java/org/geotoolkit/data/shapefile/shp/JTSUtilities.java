@@ -85,10 +85,10 @@ public final class JTSUtilities {
             }
         } else if (type.isPolygonType()) {
             if (geom instanceof Polygon ) {
-                final Polygon p = JTS.ensureWinding((Polygon) geom, true, false);
+                final Polygon p = JTS.ensureWinding((Polygon) geom, true);
                 retVal = FACTORY.createMultiPolygon(new Polygon[] { p });
             } else if (geom instanceof MultiPolygon) {
-                retVal = JTS.ensureWinding((MultiPolygon) geom, true, false);
+                retVal = JTS.ensureWinding((MultiPolygon) geom, true);
             } else {
                 retVal = FACTORY.createMultiPolygon(null);
             }
