@@ -556,7 +556,7 @@ public class RasterSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer
             rasterPresentation.forGrid(renderingContext);
 
             return Stream.concat(Stream.of(rasterPresentation), outline(layer, dataImage.getGridGeometry()));
-        } catch (NoSuchDataException e) {
+        } catch (NoSuchDataException | DisjointExtentException e) {
             LOGGER.log(Level.FINE,"Disjoint exception: "+e.getMessage(),e);
         } catch (Exception e) {
             LOGGER.log(Level.WARNING,"Portrayal exception: "+e.getMessage(),e);
