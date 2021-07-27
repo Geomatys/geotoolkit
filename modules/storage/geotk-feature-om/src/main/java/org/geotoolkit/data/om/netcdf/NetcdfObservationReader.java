@@ -79,6 +79,7 @@ public class NetcdfObservationReader implements ObservationReader {
             case OBSERVED_PROPERTY:   return getPhenomenonNames();
             case PROCEDURE:           return getProcedureNames(sensorType);
             case LOCATION:            throw new DataStoreException("not implemented yet.");
+            case HISTORICAL_LOCATION: throw new DataStoreException("not implemented yet.");
             case OFFERING:            throw new DataStoreException("offerings are not handled in File observation reader.");
             case OBSERVATION:         throw new DataStoreException("not implemented yet.");
             case RESULT:              throw new DataStoreException("not implemented yet.");
@@ -119,6 +120,7 @@ public class NetcdfObservationReader implements ObservationReader {
             case OBSERVED_PROPERTY:   return existPhenomenon(identifier);
             case PROCEDURE:           return existProcedure(identifier);
             case LOCATION:            throw new DataStoreException("not implemented yet.");
+            case HISTORICAL_LOCATION: throw new DataStoreException("not implemented yet.");
             case OFFERING:            throw new DataStoreException("offerings are not handled in File observation reader.");
             case OBSERVATION:         throw new DataStoreException("not implemented yet.");
             case RESULT:              throw new DataStoreException("not implemented yet.");

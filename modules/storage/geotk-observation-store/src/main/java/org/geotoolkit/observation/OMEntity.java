@@ -26,6 +26,7 @@ public enum OMEntity {
     OBSERVED_PROPERTY("observedProperty"),
     PROCEDURE("procedure"),
     LOCATION("location"),
+    HISTORICAL_LOCATION("historicalLocation"),
     OFFERING("offering"),
     OBSERVATION("observation"),
     RESULT("result");

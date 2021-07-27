@@ -76,6 +76,12 @@ public interface ObservationFilterReader {
     void initFilterGetLocations() throws DataStoreException;
 
     /**
+     * Initialize the query for extracting procedure hstorical locations request.
+     * @throws org.apache.sis.storage.DataStoreException
+     */
+    void initFilterGetHistoricalLocations() throws DataStoreException;
+
+    /**
      * Initialize the query for extracting procedure locations request.
      */
     void initFilterGetProcedureTimes() throws DataStoreException;
@@ -237,7 +243,16 @@ public interface ObservationFilterReader {
      *
      * @param hints extraction hints like the O&M version for the xml object returned.
      */
-    Map<String, Map<Date, Geometry>> getSensorLocations(final Map<String,String> hints) throws DataStoreException;
+    Map<String, Geometry> getSensorLocations(final Map<String,String> hints) throws DataStoreException;
+
+    /**
+     *
+     * @param hints extraction hints like the O&M version for the xml object returned.
+     *
+     * @return
+     * @throws DataStoreException
+     */
+    Map<String, Map<Date, Geometry>> getSensorHistoricalLocations(final Map<String,String> hints) throws DataStoreException;
 
     /**
      *
