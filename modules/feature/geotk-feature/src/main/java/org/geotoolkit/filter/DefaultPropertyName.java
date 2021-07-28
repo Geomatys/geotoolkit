@@ -31,6 +31,7 @@ import static org.geotoolkit.filter.AbstractExpression.createName;
 import org.geotoolkit.filter.binding.Binding;
 import org.geotoolkit.filter.binding.Bindings;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
+import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.IdentifiedType;
 import org.opengis.feature.Operation;
@@ -53,10 +54,12 @@ public class DefaultPropertyName extends AbstractExpression implements ValueRefe
      * Stores the last accessor returned.
      */
     private Binding lastAccessor;
+    private final boolean isSimple;
 
     public DefaultPropertyName(final String property) {
         ensureNonNull("property name", property);
         this.property = property;
+        isSimple = (property == null || property.isEmpty() || !(property.contains("/") || property.startsWith("*")));
     }
 
     @Override
@@ -82,6 +85,9 @@ public class DefaultPropertyName extends AbstractExpression implements ValueRefe
      */
     @Override
     public Object apply(final Object candidate) {
+        if (isSimple && candidate instanceof Feature) {
+            return ((Feature) candidate).getValueOrFallback(property, null);
+        }
 
         final Class cs;
         if(candidate == null){
