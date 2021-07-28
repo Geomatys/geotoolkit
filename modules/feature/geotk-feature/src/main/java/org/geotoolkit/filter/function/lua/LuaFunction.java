@@ -22,11 +22,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.filter.DefaultPropertyName;
 import org.geotoolkit.filter.function.AbstractFunction;
+import org.luaj.vm2.script.LuaScriptEngine;
 import org.opengis.filter.Expression;
 import org.opengis.filter.ValueReference;
 
@@ -116,8 +116,7 @@ public class LuaFunction extends AbstractFunction {
     @Override
     public Object apply(final Object feature) {
 
-        ScriptEngineManager mgr = new ScriptEngineManager();
-        ScriptEngine e = mgr.getEngineByName("luaj");
+        ScriptEngine e = new LuaScriptEngine();
 
         for(int i=1,n=parameters.size(); i<n; i++){
             final ValueReference property = (ValueReference) parameters.get(i);
