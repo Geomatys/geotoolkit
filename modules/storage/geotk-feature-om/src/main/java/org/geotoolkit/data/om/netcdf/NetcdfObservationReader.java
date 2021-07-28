@@ -189,17 +189,6 @@ public class NetcdfObservationReader implements ObservationReader {
     }
 
     @Override
-    public Collection<SamplingFeature> getFeatureOfInterestForProcedure(String sensorID, String version) throws DataStoreException {
-        final List<SamplingFeature> results = new ArrayList<>();
-        if (sensorID.equals(getProcedureID())) {
-            for (String foiName : getFeatureOfInterestNames()) {
-                results.add(getFeatureOfInterest(foiName, version));
-            }
-        }
-        return results;
-    }
-
-    @Override
     public TemporalPrimitive getFeatureOfInterestTime(String samplingFeatureName, String version) throws DataStoreException {
         throw new DataStoreException("Not supported yet in this this implementation.");
     }

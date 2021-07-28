@@ -128,18 +128,6 @@ public interface ObservationReader {
     SamplingFeature getFeatureOfInterest(final String samplingFeatureName, final String version) throws DataStoreException;
 
     /**
-     * Return a List of sampling feature for the specified procedure.
-     *
-     * @param sensorID The identifier of the procedure.
-     * @param version SOS version of the request.
-     *
-     * @return the corresponding feature Of interest.
-     * @throws org.apache.sis.storage.DataStoreException
-     */
-    Collection<SamplingFeature> getFeatureOfInterestForProcedure(final String sensorID, final String version) throws DataStoreException;
-
-
-    /**
      * Return a sampling feature for the specified sampling feature.
      *
      * @param samplingFeatureName

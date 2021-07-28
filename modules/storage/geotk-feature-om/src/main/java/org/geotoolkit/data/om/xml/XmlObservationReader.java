@@ -235,35 +235,6 @@ public class XmlObservationReader implements ObservationReader {
     }
 
     @Override
-    public Collection<SamplingFeature> getFeatureOfInterestForProcedure(String sensorID, String version) throws DataStoreException {
-        final Set<SamplingFeature> featureOfInterest = new HashSet<>();
-        for (Object xmlObject : xmlObjects) {
-            if (xmlObject instanceof ObservationCollection) {
-                final ObservationCollection collection = (ObservationCollection)xmlObject;
-                for (Observation obs : collection.getMember()) {
-                    final AbstractObservation o = (AbstractObservation)obs;
-                    if (o.getProcedure().getHref().equals(sensorID)) {
-                        final FeatureProperty foiProp = o.getPropertyFeatureOfInterest();
-                        if (foiProp != null && foiProp.getAbstractFeature() != null) {
-                            featureOfInterest.add((SamplingFeature) foiProp.getAbstractFeature());
-                        }
-                    }
-                }
-
-            } else if (xmlObject instanceof AbstractObservation) {
-                final AbstractObservation obs = (AbstractObservation)xmlObject;
-                if (obs.getProcedure().getHref().equals(sensorID)) {
-                    final FeatureProperty foiProp = obs.getPropertyFeatureOfInterest();
-                    if (foiProp != null && foiProp.getAbstractFeature() != null) {
-                        featureOfInterest.add((SamplingFeature) foiProp.getAbstractFeature());
-                    }
-                }
-            }
-        }
-        return featureOfInterest;
-    }
-
-    @Override
     public SamplingFeature getFeatureOfInterest(final String samplingFeatureName, final String version) throws DataStoreException {
         for (Object xmlObject : xmlObjects) {
             if (xmlObject instanceof ObservationCollection) {

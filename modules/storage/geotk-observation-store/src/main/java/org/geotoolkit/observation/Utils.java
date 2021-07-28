@@ -184,30 +184,70 @@ public class Utils {
         return null;
     }
 
-    public static String getVersionFromHints(Map<String, String> hints) {
+    public static String getVersionFromHints(Map<String, Object> hints) {
         if (hints != null && hints.containsKey("version")) {
-            return hints.get("version");
+            Object value = hints.get("version");
+            if (value instanceof String) {
+                return(String) value;
+            } else {
+                throw new IllegalArgumentException("unexpected type for hints param version");
+            }
         }
         return "2.0.0";
     }
 
-    public static boolean getBooleanHint(Map<String, String> hints, String key, boolean defaultValue) {
+    public static boolean getBooleanHint(Map<String, Object> hints, String key, boolean defaultValue) {
         if (hints != null && hints.containsKey(key)) {
-            return Boolean.parseBoolean(hints.get(key));
+            Object value = hints.get(key);
+            if (value instanceof Boolean) {
+                return (boolean) value;
+            } else if (value instanceof String) {
+                return Boolean.parseBoolean((String) value);
+            } else {
+                throw new IllegalArgumentException("unexpected type for hints param:" + key);
+            }
         }
         return defaultValue;
     }
 
-    public static Integer getIntegerHint(Map<String, String> hints, String key, Integer fallback) {
+    public static Integer getIntegerHint(Map<String, Object> hints, String key, Integer fallback) {
         if (hints != null && hints.containsKey(key)) {
-            return Integer.parseInt(hints.get(key));
+            Object value = hints.get(key);
+            if (value instanceof Integer) {
+                return (Integer) value;
+            } else if (value instanceof String) {
+                return Integer.parseInt((String) value);
+            } else {
+                throw new IllegalArgumentException("unexpected type for hints param:" + key);
+            }
         }
         return fallback;
     }
 
-    public static Long getLongHint(Map<String, String> hints, String key) {
+    public static Long getLongHint(Map<String, Object> hints, String key) {
         if (hints != null && hints.containsKey(key)) {
-            return Long.parseLong(hints.get(key));
+            Object value = hints.get(key);
+            if (value instanceof Long) {
+                return (Long) value;
+            } else if (value instanceof String) {
+                return Long.parseLong((String) value);
+            } else {
+                throw new IllegalArgumentException("unexpected type for hints param:" + key);
+            }
+        }
+        return null;
+    }
+
+    public static OMEntity getObjectTypeHint(Map<String, Object> hints, String key) {
+        if (hints != null && hints.containsKey(key)) {
+            Object value = hints.get(key);
+            if (value instanceof OMEntity) {
+                return (OMEntity) value;
+            } else if (value instanceof String) {
+                return OMEntity.fromName((String) value);
+            } else {
+                throw new IllegalArgumentException("unexpected type for hints param:" + key);
+            }
         }
         return null;
     }
