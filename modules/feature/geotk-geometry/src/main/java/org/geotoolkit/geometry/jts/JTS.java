@@ -1139,9 +1139,13 @@ public final class JTS {
                     if (coords == null) {
                         throw new IllegalArgumentException("Invalid path iterator, CLOSE without previous MOVETO.");
                     } else {
+                        isRing = true;
                         if (!coords.isEmpty()) {
-                            coords.add(coords.get(0).copy());
-                            isRing = true;
+                            if (!coords.get(0).equals2D(coords.get(coords.size()-1))) {
+                                //close operation is sometimes called after duplicating the first point.
+                                //dont duplicate it again
+                                coords.add(coords.get(0).copy());
+                            }
                         }
                         ite.next();
                         break loop;
