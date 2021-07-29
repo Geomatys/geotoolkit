@@ -17,6 +17,7 @@
 
 package org.geotoolkit.sos.xml;
 
+import java.util.Date;
 import java.util.List;
 import javax.xml.namespace.QName;
 import org.geotoolkit.gml.xml.Envelope;
@@ -56,4 +57,8 @@ public interface ObservationOffering {
     List<String> getResponseFormat();
 
     List<ResponseModeType> getResponseMode();
+
+    void addFeatureOfInterest(String foi);
+
+    void updateEndTime(final Date newEndBound);
 }

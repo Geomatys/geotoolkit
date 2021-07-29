@@ -523,6 +523,8 @@ public class ObservationType implements Entry, AbstractObservation {
                     final TimePeriodType period = new TimePeriodType(instant.getId(), instant.getTimePosition().getDate(), newEndBound);
                     samplingTime.setTimeGeometricPrimitive(period);
                 }
+            } else if (samplingTime == null) {
+                samplingTime = new TimeGeometricPrimitivePropertyType(new TimeInstantType(new TimePositionType(newEndBound)));
             }
         }
     }
@@ -586,7 +588,7 @@ public class ObservationType implements Entry, AbstractObservation {
     public void extendBoundingShape(AbstractGeometry newGeom) {
         // not bounds in this version
     }
-    
+
     /**
      * Return true if the observation match the specified template.
      * @param abstractTemplate

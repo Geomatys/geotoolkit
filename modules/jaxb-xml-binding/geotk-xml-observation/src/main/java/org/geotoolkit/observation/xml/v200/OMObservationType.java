@@ -144,7 +144,7 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
     }
 
     public OMObservationType(final String id, final String name, final String type, final AbstractTimeObjectType phenomenonTime,
-            final OMProcessPropertyType procedure, final String observedProperty, final Phenomenon hiddenObservedProperty, 
+            final OMProcessPropertyType procedure, final String observedProperty, final Phenomenon hiddenObservedProperty,
             final FeaturePropertyType foi, final Object result, final BoundingShapeType shape) {
         super(id, name, null, null, shape);
         this.type = new ReferenceType(type);
@@ -323,6 +323,8 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
                     final TimePeriodType period = new TimePeriodType(instant.getId(), instant.getTimePosition().getDate(), newEndBound);
                     phenomenonTime.setTimeObject(period);
                 }
+            } else if (phenomenonTime == null) {
+                phenomenonTime = new TimeObjectPropertyType(new TimeInstantType(new TimePositionType(newEndBound)));
             }
         }
     }

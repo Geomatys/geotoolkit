@@ -19,6 +19,7 @@ package org.geotoolkit.sos.xml.v200;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -31,6 +32,7 @@ import javax.xml.namespace.QName;
 import org.geotoolkit.gml.xml.v321.EnvelopeType;
 import org.geotoolkit.gml.xml.v321.EnvelopeWithTimePeriodType;
 import org.geotoolkit.gml.xml.v321.TimePeriodType;
+import org.geotoolkit.gml.xml.v321.TimePositionType;
 import org.geotoolkit.sos.xml.ObservationOffering;
 import org.geotoolkit.sos.xml.ResponseModeType;
 import org.geotoolkit.swes.xml.v200.AbstractOfferingType;
@@ -166,6 +168,17 @@ public class ObservationOfferingType extends AbstractOfferingType implements Obs
             return phenomenonTime.timePeriod;
         }
         return null;
+    }
+
+    @Override
+    public void updateEndTime(final Date newEndBound) {
+        if (newEndBound != null) {
+            if (phenomenonTime != null && phenomenonTime.timePeriod != null) {
+                phenomenonTime.timePeriod.setEndPosition(new TimePositionType(newEndBound));
+            }  else if (phenomenonTime == null) {
+                phenomenonTime = new PhenomenonTime(new TimePeriodType(new TimePositionType(newEndBound)));
+            }
+        }
     }
 
     /**
