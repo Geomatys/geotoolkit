@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.display2d.style.renderer;
 
+import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
@@ -24,6 +25,7 @@ import java.awt.image.DataBuffer;
 import java.awt.image.IndexColorModel;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
+import java.awt.image.WritableRaster;
 import java.awt.image.WritableRenderedImage;
 import java.awt.image.renderable.ParameterBlock;
 import java.io.IOException;
@@ -52,6 +54,7 @@ import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
+import org.apache.sis.internal.coverage.j2d.TiledImage;
 import org.apache.sis.internal.map.ExceptionPresentation;
 import org.apache.sis.internal.map.Presentation;
 import org.apache.sis.internal.storage.query.FeatureQuery;
@@ -79,7 +82,6 @@ import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.interpolation.Interpolation;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.Rescaler;
-import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.metadata.MetadataUtilities;
@@ -94,10 +96,10 @@ import org.opengis.coverage.CannotEvaluateException;
 import org.opengis.coverage.grid.SequenceType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
-import org.opengis.filter.Filter;
 import org.opengis.filter.BinaryComparisonOperator;
 import org.opengis.filter.ComparisonOperatorName;
 import org.opengis.filter.Expression;
+import org.opengis.filter.Filter;
 import org.opengis.filter.Literal;
 import org.opengis.filter.ValueReference;
 import org.opengis.geometry.Envelope;
@@ -554,7 +556,7 @@ public class RasterSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer
             rasterPresentation.forGrid(renderingContext);
 
             return Stream.concat(Stream.of(rasterPresentation), outline(layer, dataImage.getGridGeometry()));
-        } catch (NoSuchDataException e) {
+        } catch (NoSuchDataException | DisjointExtentException e) {
             LOGGER.log(Level.FINE,"Disjoint exception: "+e.getMessage(),e);
         } catch (Exception e) {
             LOGGER.log(Level.WARNING,"Portrayal exception: "+e.getMessage(),e);
@@ -828,7 +830,6 @@ public class RasterSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer
     private static class ForcedAlpha extends GridCoverage {
 
         private final GridCoverage source;
-        private BufferedImage entireAlpha;
 
         protected ForcedAlpha(final GridCoverage source) {
             super(source.getGridGeometry(), addAlphaDimension(source.getSampleDimensions()));
@@ -842,29 +843,17 @@ public class RasterSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer
 
         @Override
         public RenderedImage render(GridExtent sliceExtent) throws CannotEvaluateException {
-            synchronized (this) {
-                if (entireAlpha != null) {
-                    if (sliceExtent == null) {
-                        return entireAlpha;
-                    }
-
-                    return CoverageUtilities.subgrid(entireAlpha, sliceExtent);
-                }
-
-                if (sliceExtent == null) {
-                    entireAlpha = addAlpha(source.render(null));
-                    return entireAlpha;
-                }
-            }
-
             return addAlpha(source.render(sliceExtent));
         }
 
-        private BufferedImage addAlpha(final RenderedImage img) {
+        private RenderedImage addAlpha(final RenderedImage img) {
             // TODO: find a more optimized way.
             final BufferedImage buffer = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
-            buffer.createGraphics().drawRenderedImage(img, new AffineTransform());
-            return buffer;
+            final Graphics2D g = buffer.createGraphics();
+            g.drawRenderedImage(img, new AffineTransform(1,0,0,1,-img.getMinX(), -img.getMinY()));
+            g.dispose();
+            final WritableRaster r = buffer.getRaster().createWritableTranslatedChild(img.getMinX(), img.getMinY());
+            return new TiledImage(null, buffer.getColorModel(), img.getWidth(), img.getHeight(), img.getMinX(), img.getMinY(), r);
         }
     }
 }

@@ -33,7 +33,6 @@ import java.util.function.Predicate;
 import java.util.logging.Level;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.GeneralDirectPosition;
-import org.apache.sis.internal.system.Loggers;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.GeodeticCalculator;
@@ -49,7 +48,6 @@ import org.geotoolkit.geometry.jts.awt.JTSGeometryJ2D;
 import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
 import org.geotoolkit.geometry.jts.transform.CoordinateSequenceTransformer;
 import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
-import org.geotoolkit.geometry.math.Vector3d;
 import org.geotoolkit.resources.Errors;
 import org.locationtech.jts.algorithm.Orientation;
 import org.locationtech.jts.geom.Coordinate;
@@ -907,12 +905,11 @@ public final class JTS {
      *
      * @param g The Geometry to make CW.
      * @param clockwise true for exterior ring clockwise, false for counter-clockwise
-     * @param threeD use 3d clockwise computation
      * @return The "nice" Polygon.
      */
-    public static <T extends Geometry> T ensureWinding(final T g, boolean clockwise, boolean threeD) {
+    public static <T extends Geometry> T ensureWinding(final T g, boolean clockwise) {
 
-        Predicate<CoordinateSequence> evaluator = threeD ? JTS::isCCW3D : Orientation::isCCW;
+        Predicate<CoordinateSequence> evaluator = Orientation::isCCW;
         if (clockwise) evaluator = evaluator.negate();
 
         if (g instanceof MultiPolygon || g instanceof Polygon) {
@@ -966,39 +963,6 @@ public final class JTS {
 
         } else {
             return g;
-        }
-    }
-
-    /**
-     * Test if a ring is counter clockwise oriended or not in 3D.
-     *
-     * @param ring The ring to test.
-     * @return true if ring is CCW, false if ring is CW.
-     */
-    static boolean isCCW3D(CoordinateSequence ring) {
-        return isCCW3D(ring.toCoordinateArray());
-    }
-
-    /**
-     * Test if a ring is counter clockwise oriended or not in 3D.
-     *
-     * @param ring The ring to test.
-     * @return true if ring is CCW, false if ring is CW.
-     */
-    static boolean isCCW3D(Coordinate[] ring) {
-        final int nbCoords = ring.length - 1;
-        double buff = 0.0;
-        for (int i = 1; i < nbCoords; i++) {
-            final Vector3d v1 = new Vector3d((ring[i].x - ring[i - 1].x), (ring[i].y - ring[i - 1].y), (ring[i].z - ring[i - 1].z));
-            final Vector3d v2 = new Vector3d((ring[i + 1].x - ring[i].x), (ring[i + 1].y - ring[i].y), (ring[i + 1].z - ring[i].z));
-            final Vector3d c = (Vector3d) v1.cross(v2);
-            c.normalize();
-            buff += (c.x + c.y + c.z);
-        }
-        if (buff > 0.0) {
-            return true;
-        } else {
-            return false;
         }
     }
 
@@ -1175,9 +1139,13 @@ public final class JTS {
                     if (coords == null) {
                         throw new IllegalArgumentException("Invalid path iterator, CLOSE without previous MOVETO.");
                     } else {
+                        isRing = true;
                         if (!coords.isEmpty()) {
-                            coords.add(coords.get(0).copy());
-                            isRing = true;
+                            if (!coords.get(0).equals2D(coords.get(coords.size()-1))) {
+                                //close operation is sometimes called after duplicating the first point.
+                                //dont duplicate it again
+                                coords.add(coords.get(0).copy());
+                            }
                         }
                         ite.next();
                         break loop;

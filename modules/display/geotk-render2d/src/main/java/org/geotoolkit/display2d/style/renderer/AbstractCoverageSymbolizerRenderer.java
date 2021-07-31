@@ -40,6 +40,7 @@ import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
+import org.apache.sis.portrayal.MapLayer;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.matrix.MatrixSIS;
@@ -62,7 +63,6 @@ import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.ResampleBorderComportement;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
-import org.apache.sis.portrayal.MapLayer;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.coverage.resample.ResampleDescriptor;
 import org.geotoolkit.processing.coverage.resample.ResampleProcess;
@@ -211,14 +211,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         final InterpolationCase interpolation = InterpolationCase.BILINEAR;
 
         final GridGeometry refGG = ref.getGridGeometry();
-        final GridGeometry baseGG;
-        // Subgrid currently does not work for incomplete grid geometry. this will probably be fixed in a future version of SIS
-        if (!refGG.isDefined(GridGeometry.EXTENT)) {
-            baseGG = refGG;
-        } else {
-            // directly derive data geometry to short any further operation if requested area does not intersect data.
-            baseGG = refGG.derive().subgrid(canvasGrid).build();
-        }
+        final GridGeometry baseGG = trySubGrid(refGG, canvasGrid);
         final GridGeometry slice = extractSlice(baseGG, canvasGrid, computeMargin2D(interpolation), true);
 
         GridCoverage coverage = ref.read(slice, (sourceBands == null || sourceBands.length < 1)? null : sourceBands);
@@ -230,6 +223,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
             //pick the first slice
             coverage = ((GridCoverageStack) coverage).coverageAtIndex(0);
         }
+
 
         //at this point, we want a single slice in 2D
         //we remove all other dimension to simplify any following operation
@@ -642,5 +636,42 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         }
 
         return view;
+    }
+
+    /**
+     * Try to subset dataset geometry to the area of interest. It allow to short any unnecessary operation
+     * as soon as possible in case there's no intersection between the two.
+     * For now, the subgrid method have some limitations, so this "optimisation" is not applied on following cases:
+     * <ul>
+     *     <li>When the grid geometry to derive is incomplete.</li>
+     *     <li>When region of interest dimension does not match base one.</li>
+     *     <li>When both geometry CRS are incompatible.</li>
+     * </ul>
+     *
+     * The above limitations are expected to be solved in future versions of Apache SIS. For now, we simply catch and
+     * log any exception that is potentially mitigated in rendering code. The only fail-first case is when we detect
+     * that both geometries do not intersect.
+     *
+     * @param toDerive The original geometry (of the dataset) to subgrid upon rendering area.
+     * @param roi Region Of Interest: The area we want to focus on for the rendering.
+     * @return If no error has been raised, The result of {@link GridDerivation#subgrid(GridGeometry) geometry subgrid}.
+     * Otherwise, the input {@param toDerive} is returned.
+     * @throws DisjointExtentException If given geometries do not intersect.
+     */
+    private static GridGeometry trySubGrid(final GridGeometry toDerive, final GridGeometry roi) throws DisjointExtentException {
+        try {
+            return toDerive.derive()
+                    .rounding(GridRoundingMode.ENCLOSING)
+                    .subgrid(roi)
+                    .build();
+        } catch (DisjointExtentException e) {
+            throw e; // Expected: If queried area does not intersect dataset, we let this propagate to short rendering
+        } catch (Exception e) {
+            LOGGER.log(Level.FINE, e, () -> String.format(
+                    "Subgrid has failed and will be ignored.%nBase:%n%s%nRegion of interest:%n%s",
+                    toDerive, roi));
+        }
+
+        return toDerive;
     }
 }
