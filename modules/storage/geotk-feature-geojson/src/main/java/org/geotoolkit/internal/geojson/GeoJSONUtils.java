@@ -33,6 +33,7 @@ import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
 import java.text.ParseException;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -483,6 +484,8 @@ public final class GeoJSONUtils extends Static {
             writer.writeBoolean((Boolean) value);
         } else if (String.class.isAssignableFrom(binding)) {
             writer.writeString(String.valueOf(value));
+        } else if (Date.class.isAssignableFrom(binding)) {
+            writer.writeString(((Date)value).toInstant().toString());
         } else {
             //fallback
             writer.writeString(String.valueOf(value));
