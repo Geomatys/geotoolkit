@@ -126,7 +126,7 @@ public class LuaFunction extends AbstractFunction {
         try {
             return e.eval(lua);
         } catch (ScriptException ex) {
-            Logging.getLogger("org.geotoolkit.filter.function.lua").log(Level.WARNING, null, ex);
+            Logging.getLogger("org.geotoolkit.filter.function.lua").log(Level.WARNING, ex.getMessage());
         }
         return "";
     }

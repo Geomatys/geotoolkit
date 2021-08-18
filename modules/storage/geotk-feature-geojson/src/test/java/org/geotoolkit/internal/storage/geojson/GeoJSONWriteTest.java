@@ -98,6 +98,7 @@ public class GeoJSONWriteTest extends TestCase {
         final Feature feature = store.getType().newInstance();
         feature.setPropertyValue(AttributeConvention.GEOMETRY, expectedPoint);
         feature.setPropertyValue("type","simple");
+        feature.setPropertyValue("time",new Date(0));
         store.add(Arrays.asList(feature).iterator());
 
         assertTrue(Files.exists(file));
@@ -289,11 +290,13 @@ public class GeoJSONWriteTest extends TestCase {
         try (GeoJSONStreamWriter fw = new GeoJSONStreamWriter(baos, validFeatureType, 4)) {
             Feature feature = fw.next();
             feature.setPropertyValue("type","feat1");
+            feature.setPropertyValue("time",new Date(0));
             feature.setPropertyValue(AttributeConvention.GEOMETRY, pt);
             fw.write();
 
             feature = fw.next();
             feature.setPropertyValue("type","feat2");
+            feature.setPropertyValue("time",new Date(1));
             feature.setPropertyValue(AttributeConvention.GEOMETRY, pt);
             fw.write();
 
@@ -306,8 +309,8 @@ public class GeoJSONWriteTest extends TestCase {
         String expected = "{\n" +
                 "\"type\":\"FeatureCollection\"\n" +
                 ",\"features\":[\n" +
-                "{\"type\":\"Feature\",\"id\":0,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-105.0162,39.5742]},\"properties\":{\"type\":\"feat1\"}}\n" +
-                ",{\"type\":\"Feature\",\"id\":1,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-105.0162,39.5742]},\"properties\":{\"type\":\"feat2\"}}\n" +
+                "{\"type\":\"Feature\",\"id\":0,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-105.0162,39.5742]},\"properties\":{\"type\":\"feat1\",\"time\":\"1970-01-01T00:00:00Z\"}}\n" +
+                ",{\"type\":\"Feature\",\"id\":1,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-105.0162,39.5742]},\"properties\":{\"type\":\"feat2\",\"time\":\"1970-01-01T00:00:00.001Z\"}}\n" +
                 "]}";
 
         assertEquals(expected, outputJSON);
@@ -328,11 +331,13 @@ public class GeoJSONWriteTest extends TestCase {
             
             Feature feature = fw.next();
             feature.setPropertyValue("type","feat1");
+            feature.setPropertyValue("time",new Date(0));
             feature.setPropertyValue(AttributeConvention.GEOMETRY, pt);
             fw.write();
 
             feature = fw.next();
             feature.setPropertyValue("type","feat2");
+            feature.setPropertyValue("time",new Date(1));
             feature.setPropertyValue(AttributeConvention.GEOMETRY, pt);
             fw.write();
 
@@ -349,8 +354,8 @@ public class GeoJSONWriteTest extends TestCase {
                             ",\"numberReturned\":5\n" +
                             ",\"links\":[{\"href\":\"http://test.com\"}]\n" +
                             ",\"features\":[\n" +
-                            "{\"type\":\"Feature\",\"id\":0,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-105.0162,39.5742]},\"properties\":{\"type\":\"feat1\"}}\n" +
-                            ",{\"type\":\"Feature\",\"id\":1,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-105.0162,39.5742]},\"properties\":{\"type\":\"feat2\"}}\n" +
+                            "{\"type\":\"Feature\",\"id\":0,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-105.0162,39.5742]},\"properties\":{\"type\":\"feat1\",\"time\":\"1970-01-01T00:00:00Z\"}}\n" +
+                            ",{\"type\":\"Feature\",\"id\":1,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-105.0162,39.5742]},\"properties\":{\"type\":\"feat2\",\"time\":\"1970-01-01T00:00:00.001Z\"}}\n" +
                             "]}";
 
         assertEquals(expected, outputJSON);
@@ -367,6 +372,7 @@ public class GeoJSONWriteTest extends TestCase {
             Feature feature = validFeatureType.newInstance();
             feature.setPropertyValue(AttributeConvention.IDENTIFIER, 0);
             feature.setPropertyValue("type","feat1");
+            feature.setPropertyValue("time",new Date(0));
             feature.setPropertyValue(AttributeConvention.GEOMETRY, pt);
             GeoJSONStreamWriter.writeSingleFeature(baos, feature, JsonEncoding.UTF8, 4, false);
 
@@ -378,7 +384,7 @@ public class GeoJSONWriteTest extends TestCase {
 
         String expected = "{\"type\":\"Feature\",\"id\":0," +
                 "\"geometry\":{\"type\":\"Point\",\"coordinates\":[-105.0162,39.5742]}," +
-                "\"properties\":{\"type\":\"feat1\"}}";
+                "\"properties\":{\"type\":\"feat1\",\"time\":\"1970-01-01T00:00:00Z\"}}";
         assertEquals(expected, outputJSON);
     }
 
@@ -493,6 +499,7 @@ public class GeoJSONWriteTest extends TestCase {
         ftb.setName(name);
         ftb.addAttribute(Integer.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
         ftb.addAttribute(String.class).setName("type");
+        ftb.addAttribute(Date.class).setName("time");
         ftb.addAttribute(geomClass).setName("geometry").setCRS(CommonCRS.WGS84.normalizedGeographic()).addRole(AttributeRole.DEFAULT_GEOMETRY);
         return ftb.build();
     }

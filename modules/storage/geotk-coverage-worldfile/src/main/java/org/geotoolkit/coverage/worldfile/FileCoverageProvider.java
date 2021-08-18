@@ -20,6 +20,7 @@ import java.io.EOFException;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.FileSystemNotFoundException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -284,8 +285,14 @@ public class FileCoverageProvider extends DataStoreProvider {
                     support = conn.useAs(type, spi::canDecodeInput);
                     // A single valid result should be enough
                     break;
-                } catch (IllegalArgumentException | UnsupportedStorageException ex) {
+                } catch (IllegalArgumentException | UnsupportedStorageException | FileSystemNotFoundException ex) {
                     WarningProducer.LOGGER.log(Level.FINER, "image reader support test failed", ex);
+                } catch (IOException ex) {
+                    if (ex.getCause() instanceof FileSystemNotFoundException) {
+                        WarningProducer.LOGGER.log(Level.FINER, "image reader support test failed", ex);
+                    } else {
+                        throw ex;
+                    }
                 }
             }
         }

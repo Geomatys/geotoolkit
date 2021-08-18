@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.geometry.jts;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryCollection;
@@ -248,7 +250,13 @@ public final class JTSMapping {
     }
 
     private static MultiLineString convertToMultiLineString(final Polygon pt) {
-        return convertToMultiLineString(GF.createLineString(pt.getCoordinates()));
+        final int nbHoles = pt.getNumInteriorRing();
+        final List<LineString> strings = new ArrayList<>(nbHoles+1);
+        strings.add(pt.getExteriorRing());
+        for (int i = 0; i < nbHoles; i++) {
+            strings.add(pt.getInteriorRingN(i));
+        }
+        return GF.createMultiLineString(strings.toArray(new LineString[nbHoles+1]));
     }
 
     private static MultiLineString convertToMultiLineString(final MultiPolygon pt) {
