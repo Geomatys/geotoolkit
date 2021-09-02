@@ -16,11 +16,14 @@
  */
 package org.geotoolkit.observation;
 
+import org.geotoolkit.observation.model.ResultMode;
+import org.geotoolkit.observation.model.Field;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import org.geotoolkit.observation.model.FieldType;
 import org.geotoolkit.swe.xml.TextBlock;
 
 /**
@@ -111,6 +114,23 @@ public class ResultBuilder {
             }
         } else {
             throw new IllegalArgumentException("Unexpected number type:" + value.getClass().getSimpleName());
+        }
+    }
+
+    public void appendBoolean(Boolean d) {
+        if (d != null) {
+            emptyLine = false;
+        }
+        switch (getMode()) {
+            case DATA_ARRAY:
+                currentArrayLine.add(d);
+                break;
+            case CSV:
+                if (d != null) {
+                    currentLine.append(Boolean.toString(d));
+                }
+                currentLine.append(encoding.getTokenSeparator());
+                break;
         }
     }
 
@@ -240,10 +260,10 @@ public class ResultBuilder {
             case CSV:
                 for (Field pheno : fields) {
                     // hack for the current graph in cstl you only work when the main field is named "time"
-                    if (csvHack && "Time".equals(pheno.fieldType)) {
+                    if (csvHack && FieldType.TIME.equals(pheno.type)) {
                         values.append("time").append(encoding.getTokenSeparator());
                     } else {
-                        values.append(pheno.fieldDesc).append(encoding.getTokenSeparator());
+                        values.append(pheno.description).append(encoding.getTokenSeparator());
                     }
                 }
                 values.setCharAt(values.length() - 1, '\n');

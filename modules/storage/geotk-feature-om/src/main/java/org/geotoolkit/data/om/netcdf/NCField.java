@@ -14,51 +14,45 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.sos.netcdf;
+package org.geotoolkit.data.om.netcdf;
 
 import java.io.Serializable;
 import java.util.Objects;
+import org.geotoolkit.observation.model.Field;
+import org.geotoolkit.observation.model.FieldType;
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class Field implements Serializable {
+public class NCField extends Field implements Serializable {
 
-    public String id;
-    public String label;
-    public String unit;
-    public Number fillValue;
-    public Type type;
-    public int dimension;
-    public String dimensionLabel;
-    public String description;
+    public final Number fillValue;
+    public final Type dataType;
+    public final int dimension;
+    public final String dimensionLabel;
     public boolean mainVariableFirst = true;
 
-    public Field(final String id, final String label, final Type type, final int dimension, final String dimensionLabel) {
-        this.id = id;
-        this.label = label;
-        this.type = type;
-        this.dimensionLabel = dimensionLabel;
-    }
-
-    public Field(final String id, final String label, int dimension, final String dimensionLabel, final String description) {
-        this.id = id;
-        this.label = label;
-        this.dimension = dimension;
-        this.dimensionLabel = dimensionLabel;
-        this.description = description;
-    }
-
-    public Field(final String id, final String label, final Type type, final int dimension, final String dimensionLabel, final Number fillValue, final String unit) {
-        this.id = id;
-        this.label = label;
-        this.type = type;
+    public NCField(final String id, final String label, final Type dataType, final int dimension, final String dimensionLabel, final Number fillValue, final String unit) {
+        super(-1, getTypeFromDataType(dataType), id, label, null, unit);
+        this.dataType = dataType;
         this.dimensionLabel = dimensionLabel;
         this.dimension = dimension;
         this.fillValue = fillValue;
-        this.unit = unit;
     }
+
+    private static FieldType getTypeFromDataType(Type dataType) {
+        switch (dataType) {
+            case BOOLEAN: return FieldType.BOOLEAN;
+            case DATE : return FieldType.TIME;
+            case DOUBLE:
+            case INT: return FieldType.QUANTITY;
+            case STRING: return FieldType.TEXT;
+            case UNSUPPORTED:
+            default: return null;
+        }
+    }
+
 
     @Override
     public String toString() {
@@ -67,10 +61,10 @@ public class Field implements Serializable {
             dimLabel = "=> " + dimensionLabel;
         }
         String typeName;
-        if (type == null) {
+        if (dataType == null) {
             typeName = "NULL TYPE";
         } else {
-            typeName = type.name();
+            typeName = dataType.name();
         }
         return label + " : " + typeName + '(' + dimension + dimLabel + ')';
     }
@@ -80,8 +74,8 @@ public class Field implements Serializable {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof Field) {
-            final Field that = (Field) obj;
+        if (obj instanceof NCField) {
+            final NCField that = (NCField) obj;
             return Objects.equals(this.label, that.label)
                 && Objects.equals(this.type,  that.type);
         }

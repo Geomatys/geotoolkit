@@ -47,7 +47,7 @@ public interface ObservationReader {
 
     /**
      * Return the list of entity identifiers.
-     * 
+     *
      * The hints can contains various filter such as :
      * - SOS version of the request (key: version)
      * - object entity (key: entityType)

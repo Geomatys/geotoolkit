@@ -15,7 +15,7 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.sos.netcdf;
+package org.geotoolkit.observation.model;
 
 /**
  *

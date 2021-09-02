@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2021, Geomatys
+ *    (C) 2014, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,35 +14,28 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.observation;
 
-import org.opengis.observation.Phenomenon;
+package org.geotoolkit.data.om.netcdf;
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class FieldPhenomenon {
+public class NetCDFParsingException extends Exception {
 
-    private final int index;
-    private final Phenomenon phenomenon;
-    private final Field field;
-
-    public FieldPhenomenon(int i, Phenomenon phenomenon, Field field) {
-        this.index = i;
-        this.field = field;
-        this.phenomenon = phenomenon;
+    public NetCDFParsingException() {
+        super();
     }
 
-    public int getIndex() {
-        return index;
+    public NetCDFParsingException(final String message) {
+        super(message);
     }
 
-    public Phenomenon getPhenomenon() {
-        return phenomenon;
+    public NetCDFParsingException(final Throwable cause) {
+        super(cause);
     }
 
-    public Field getField() {
-        return field;
+    public NetCDFParsingException(final String message, final Throwable cause) {
+        super(message, cause);
     }
 }

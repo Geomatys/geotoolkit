@@ -17,7 +17,6 @@
 package org.geotoolkit.data.om.netcdf;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -33,15 +32,11 @@ import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.observation.ObservationReader;
 import org.geotoolkit.observation.xml.AbstractObservation;
 import static org.geotoolkit.data.om.xml.XmlObservationUtils.*;
-import org.geotoolkit.observation.OMEntity;
+import org.geotoolkit.observation.model.OMEntity;
 import static org.geotoolkit.observation.ObservationReader.ENTITY_TYPE;
 import static org.geotoolkit.observation.ObservationReader.SENSOR_TYPE;
 import static org.geotoolkit.observation.ObservationReader.SOS_VERSION;
-import org.geotoolkit.sos.netcdf.ExtractionResult;
-import org.geotoolkit.sos.netcdf.Field;
-import org.geotoolkit.sos.netcdf.NCFieldAnalyze;
-import org.geotoolkit.sos.netcdf.NetCDFExtractor;
-import org.geotoolkit.sos.netcdf.NetCDFParsingException;
+import org.geotoolkit.observation.model.ExtractionResult;
 import org.geotoolkit.sos.xml.ObservationOffering;
 import org.geotoolkit.sos.xml.ResponseModeType;
 import org.geotoolkit.sos.xml.SOSXmlFactory;
@@ -99,8 +94,8 @@ public class NetcdfObservationReader implements ObservationReader {
 
     private Collection<String> getPhenomenonNames() throws DataStoreException {
         final Set<String> phenomenons = new HashSet<>();
-        for (Field field : analyze.phenfields) {
-            phenomenons.add(field.id);
+        for (NCField field : analyze.phenfields) {
+            phenomenons.add(field.name);
         }
         return phenomenons;
     }
@@ -155,8 +150,8 @@ public class NetcdfObservationReader implements ObservationReader {
     }
 
     private boolean existPhenomenon(final String phenomenonName) throws DataStoreException {
-        for (Field field : analyze.phenfields) {
-            if (field.id.equals(phenomenonName)) {
+        for (NCField field : analyze.phenfields) {
+            if (field.name.equals(phenomenonName)) {
                 return true;
             }
         }

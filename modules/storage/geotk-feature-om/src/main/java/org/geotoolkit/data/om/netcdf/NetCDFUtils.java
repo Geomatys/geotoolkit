@@ -15,7 +15,7 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.sos.netcdf;
+package org.geotoolkit.data.om.netcdf;
 
 import java.util.List;
 import ucar.ma2.Array;

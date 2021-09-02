@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.observation;
 
+import org.geotoolkit.observation.model.ExtractionResult;
+import org.geotoolkit.observation.model.OMEntity;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -31,7 +33,6 @@ import org.apache.sis.storage.Resource;
 import org.apache.sis.util.logging.Logging;
 import static org.geotoolkit.observation.AbstractObservationStoreFactory.*;
 import static org.geotoolkit.observation.ObservationReader.ENTITY_TYPE;
-import org.geotoolkit.sos.netcdf.ExtractionResult;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterNotFoundException;
@@ -83,8 +84,9 @@ public abstract class AbstractObservationStore extends DataStore implements Obse
     }
 
     /**
-     * Utility method to extract a a parameter value (if its present) and put it in a Map.
-     * 
+     * Utility method to extract a a parameter value (if its present) and put it
+     * in a Map.
+     *
      * @param params Configuration parameters.
      * @param param The param descriptor to look for.
      * @param properties The trget map where to put the value.

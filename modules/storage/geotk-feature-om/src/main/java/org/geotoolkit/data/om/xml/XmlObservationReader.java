@@ -32,7 +32,7 @@ import static org.geotoolkit.data.om.xml.XmlObservationUtils.RESPONSE_FORMAT_V10
 import static org.geotoolkit.data.om.xml.XmlObservationUtils.RESPONSE_FORMAT_V200;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.gml.xml.FeatureProperty;
-import org.geotoolkit.observation.OMEntity;
+import org.geotoolkit.observation.model.OMEntity;
 import org.geotoolkit.observation.ObservationReader;
 import static org.geotoolkit.observation.ObservationReader.ENTITY_TYPE;
 import static org.geotoolkit.observation.ObservationReader.IDENTIFIER;
@@ -41,7 +41,7 @@ import static org.geotoolkit.observation.ObservationReader.SOS_VERSION;
 
 import org.geotoolkit.observation.xml.*;
 import org.geotoolkit.observation.xml.Process;
-import org.geotoolkit.sos.netcdf.ExtractionResult;
+import org.geotoolkit.observation.model.ExtractionResult;
 import org.geotoolkit.sos.xml.ObservationOffering;
 import org.geotoolkit.sos.xml.ResponseModeType;
 import org.geotoolkit.swe.xml.PhenomenonProperty;

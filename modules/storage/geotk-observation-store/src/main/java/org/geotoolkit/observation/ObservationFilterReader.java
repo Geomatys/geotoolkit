@@ -17,6 +17,7 @@
 
 package org.geotoolkit.observation;
 
+import org.geotoolkit.observation.model.OMEntity;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -114,7 +115,7 @@ public interface ObservationFilterReader {
      * @throws org.apache.sis.storage.DataStoreException
      */
     long getCount() throws DataStoreException;
-    
+
     /**
      * Return informations about the implementation class.
      */
