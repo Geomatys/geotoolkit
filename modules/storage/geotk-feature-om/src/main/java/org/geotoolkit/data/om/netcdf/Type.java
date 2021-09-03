@@ -15,27 +15,18 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.sos.netcdf;
+package org.geotoolkit.data.om.netcdf;
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class NetCDFParsingException extends Exception {
+public enum Type {
 
-    public NetCDFParsingException() {
-        super();
-    }
-
-    public NetCDFParsingException(final String message) {
-        super(message);
-    }
-
-    public NetCDFParsingException(final Throwable cause) {
-        super(cause);
-    }
-
-    public NetCDFParsingException(final String message, final Throwable cause) {
-        super(message, cause);
-    }
+    DOUBLE,
+    STRING,
+    DATE,
+    BOOLEAN,
+    INT,
+    UNSUPPORTED;
 }

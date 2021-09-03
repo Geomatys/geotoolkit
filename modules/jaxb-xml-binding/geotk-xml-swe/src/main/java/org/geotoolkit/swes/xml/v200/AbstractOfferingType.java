@@ -163,6 +163,14 @@ public abstract class AbstractOfferingType extends AbstractSWESType {
         return this.relatedFeature;
     }
 
+    public void addFeatureOfInterest(String foi) {
+        if (relatedFeature == null) {
+            relatedFeature = new ArrayList<>();
+        }
+        relatedFeature.add(new RelatedFeature(foi));
+    }
+
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder(super.toString());

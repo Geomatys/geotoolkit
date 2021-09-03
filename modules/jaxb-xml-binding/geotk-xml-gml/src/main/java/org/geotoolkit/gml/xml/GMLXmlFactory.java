@@ -111,13 +111,13 @@ public class GMLXmlFactory {
 
     public static AbstractGeometricAggregate buildMultiLineString(final String version, final List<LineString> lines, final String srsName) {
         if ("3.2.1".equals(version)) {
-            final List<org.geotoolkit.gml.xml.v321.CurvePropertyType> lineList = new ArrayList<org.geotoolkit.gml.xml.v321.CurvePropertyType>();
+            final List<org.geotoolkit.gml.xml.v321.CurvePropertyType> lineList = new ArrayList<>();
             for (LineString ls : lines) {
                 lineList.add(new org.geotoolkit.gml.xml.v321.CurvePropertyType((org.geotoolkit.gml.xml.v321.LineStringType)ls));
             }
             return new org.geotoolkit.gml.xml.v321.MultiCurveType(srsName, lineList);
         } else if ("3.1.1".equals(version)) {
-            final List<org.geotoolkit.gml.xml.v311.LineStringPropertyType> lineList = new ArrayList<org.geotoolkit.gml.xml.v311.LineStringPropertyType>();
+            final List<org.geotoolkit.gml.xml.v311.LineStringPropertyType> lineList = new ArrayList<>();
             for (LineString ls : lines) {
                 lineList.add(new org.geotoolkit.gml.xml.v311.LineStringPropertyType((org.geotoolkit.gml.xml.v311.LineStringType)ls));
             }
@@ -129,13 +129,13 @@ public class GMLXmlFactory {
 
     public static AbstractGeometricAggregate buildMultiPolygon(final String version, final List<Polygon> polygons, final String srsName) {
         if ("3.2.1".equals(version)) {
-            final List<org.geotoolkit.gml.xml.v321.SurfacePropertyType> polyList = new ArrayList<org.geotoolkit.gml.xml.v321.SurfacePropertyType>();
+            final List<org.geotoolkit.gml.xml.v321.SurfacePropertyType> polyList = new ArrayList<>();
             for (Polygon p : polygons) {
                 polyList.add(new org.geotoolkit.gml.xml.v321.SurfacePropertyType((org.geotoolkit.gml.xml.v321.PolygonType) p));
             }
             return new org.geotoolkit.gml.xml.v321.MultiSurfaceType(srsName, polyList);
         } else if ("3.1.1".equals(version)) {
-            final List<org.geotoolkit.gml.xml.v311.PolygonPropertyType> polyList = new ArrayList<org.geotoolkit.gml.xml.v311.PolygonPropertyType>();
+            final List<org.geotoolkit.gml.xml.v311.PolygonPropertyType> polyList = new ArrayList<>();
             for (Polygon p : polygons) {
                 polyList.add(new org.geotoolkit.gml.xml.v311.PolygonPropertyType((org.geotoolkit.gml.xml.v311.PolygonType)p));
             }
@@ -217,6 +217,26 @@ public class GMLXmlFactory {
             final org.geotoolkit.gml.xml.v311.DirectPositionType lowerCorner = new org.geotoolkit.gml.xml.v311.DirectPositionType(minx, miny);
             final org.geotoolkit.gml.xml.v311.DirectPositionType upperCorner = new org.geotoolkit.gml.xml.v311.DirectPositionType(maxx, maxy);
             return new org.geotoolkit.gml.xml.v311.EnvelopeType(id, lowerCorner, upperCorner, srs);
+        } else {
+            throw new IllegalArgumentException("unexpected gml version number:" + version);
+        }
+    }
+
+    public static Envelope buildEnvelope(final String version, final org.opengis.geometry.Envelope envelope) {
+        if ("3.2.1".equals(version)) {
+            return new org.geotoolkit.gml.xml.v321.EnvelopeType(envelope);
+        } else if ("3.1.1".equals(version)) {
+            return new org.geotoolkit.gml.xml.v311.EnvelopeType(envelope);
+        } else {
+            throw new IllegalArgumentException("unexpected gml version number:" + version);
+        }
+    }
+
+    public static BoundingShape buildBoundingShape(final String version, final org.opengis.geometry.Envelope envelope) {
+        if ("3.2.1".equals(version)) {
+            return new org.geotoolkit.gml.xml.v321.BoundingShapeType(envelope);
+        } else if ("3.1.1".equals(version)) {
+            return new org.geotoolkit.gml.xml.v311.BoundingShapeType(envelope);
         } else {
             throw new IllegalArgumentException("unexpected gml version number:" + version);
         }
@@ -413,7 +433,7 @@ public class GMLXmlFactory {
     public static FeatureCollection createFeatureCollection(final String version, final String id, final String name, final String description,
             final List<FeatureProperty> features) {
         if ("3.2.1".equals(version)) {
-            final List<org.geotoolkit.gml.xml.v321.FeaturePropertyType> features321 = new ArrayList<org.geotoolkit.gml.xml.v321.FeaturePropertyType>();
+            final List<org.geotoolkit.gml.xml.v321.FeaturePropertyType> features321 = new ArrayList<>();
             if (features != null) {
                 for (FeatureProperty fp : features) {
                     if (fp != null && !(fp instanceof org.geotoolkit.gml.xml.v321.FeaturePropertyType)) {
@@ -425,7 +445,7 @@ public class GMLXmlFactory {
             }
             return new org.geotoolkit.gml.xml.v321.FeatureCollectionType(id, name, description, features321);
         } else if ("3.1.1".equals(version)) {
-            final List<org.geotoolkit.gml.xml.v311.FeaturePropertyType> features311 = new ArrayList<org.geotoolkit.gml.xml.v311.FeaturePropertyType>();
+            final List<org.geotoolkit.gml.xml.v311.FeaturePropertyType> features311 = new ArrayList<>();
             if (features != null) {
                 for (FeatureProperty fp : features) {
                     if (fp != null && !(fp instanceof org.geotoolkit.gml.xml.v311.FeaturePropertyType)) {

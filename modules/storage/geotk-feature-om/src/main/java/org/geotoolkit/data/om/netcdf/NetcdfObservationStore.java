@@ -46,11 +46,7 @@ import org.geotoolkit.observation.ObservationFilterReader;
 import org.geotoolkit.observation.ObservationReader;
 import org.geotoolkit.observation.ObservationStore;
 import org.geotoolkit.observation.ObservationWriter;
-import org.geotoolkit.sos.netcdf.ExtractionResult;
-import org.geotoolkit.sos.netcdf.Field;
-import org.geotoolkit.sos.netcdf.NCFieldAnalyze;
-import org.geotoolkit.sos.netcdf.NetCDFExtractor;
-import org.geotoolkit.sos.netcdf.NetCDFParsingException;
+import org.geotoolkit.observation.model.ExtractionResult;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.Feature;
@@ -176,8 +172,8 @@ public class NetcdfObservationStore extends DataStore implements Aggregate, Reso
     @Override
     public Set<String> getPhenomenonNames() {
         final Set<String> phenomenons = new HashSet<>();
-        for (Field field : analyze.phenfields) {
-            phenomenons.add(field.id);
+        for (NCField field : analyze.phenfields) {
+            phenomenons.add(field.name);
         }
         return phenomenons;
     }

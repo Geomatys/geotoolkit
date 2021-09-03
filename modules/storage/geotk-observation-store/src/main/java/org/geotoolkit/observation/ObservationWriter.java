@@ -17,12 +17,12 @@
 
 package org.geotoolkit.observation;
 
+import org.geotoolkit.observation.model.ExtractionResult;
 import java.util.List;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.sos.xml.ObservationOffering;
 import org.geotoolkit.observation.model.ObservationTemplate;
-import org.geotoolkit.sos.netcdf.ExtractionResult;
 import org.opengis.observation.Observation;
 import org.opengis.observation.Phenomenon;
 

@@ -95,61 +95,71 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
 
     }
 
+    public AbstractProcessType(Identification ident, Classification classif) {
+        if (ident != null) {
+            this.identification = new ArrayList<>();
+            this.identification.add(ident);
+        }
+        if (classif != null) {
+            this.classification = new ArrayList<>();
+            this.classification.add(classif);
+        }
+    }
+
     public AbstractProcessType(final AbstractProcess pr) {
         super(pr);
         if (pr != null) {
 
             //capabilities
-            this.capabilities = new ArrayList<Capabilities>();
+            this.capabilities = new ArrayList<>();
             for (AbstractCapabilities oldCapa : pr.getCapabilities()) {
                 this.capabilities.add(new Capabilities(oldCapa));
             }
 
             // characteristics
-            this.characteristics = new ArrayList<Characteristics>();
+            this.characteristics = new ArrayList<>();
             for (AbstractCharacteristics oldChar : pr.getCharacteristics()) {
                 this.characteristics.add(new Characteristics(oldChar));
             }
 
             // Classification
-            this.classification = new ArrayList<Classification>();
+            this.classification = new ArrayList<>();
             for (AbstractClassification oldClass : pr.getClassification()) {
                 this.classification.add(new Classification(oldClass));
             }
 
             // Contact
-            this.contact = new ArrayList<Contact>();
+            this.contact = new ArrayList<>();
             for (AbstractContact oldContact : pr.getContact()) {
                 this.contact.add(new Contact(oldContact));
             }
 
             // Contact
-            this.documentation = new ArrayList<Documentation>();
+            this.documentation = new ArrayList<>();
             for (AbstractDocumentation oldDoc : pr.getDocumentation()) {
                 this.documentation.add(new Documentation(oldDoc));
             }
 
             // History
-            this.history = new ArrayList<History>();
+            this.history = new ArrayList<>();
             for (AbstractHistory oldhist : pr.getHistory()) {
                 this.history.add(new History(oldhist));
             }
 
             // Identification
-            this.identification = new ArrayList<Identification>();
+            this.identification = new ArrayList<>();
             for (AbstractIdentification oldIdent : pr.getIdentification()) {
                 this.identification.add(new Identification(oldIdent));
             }
 
-
             // keywords
-            this.keywords = new ArrayList<Keywords>();
+            this.keywords = new ArrayList<>();
             for (AbstractKeywords oldKeyw : pr.getKeywords()) {
                 this.keywords.add(new Keywords(oldKeyw));
             }
 
             // legal constraint
-            this.legalConstraint = new ArrayList<LegalConstraint>();
+            this.legalConstraint = new ArrayList<>();
             for (AbstractLegalConstraint oldcons : pr.getLegalConstraint()) {
                 this.legalConstraint.add(new LegalConstraint(oldcons));
             }
@@ -173,7 +183,7 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
     @Override
     public List<Keywords> getKeywords() {
         if (keywords == null) {
-            keywords = new ArrayList<Keywords>();
+            keywords = new ArrayList<>();
         }
         return this.keywords;
     }
@@ -193,7 +203,7 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
     public void setKeywords(final Keywords keywords) {
         if (keywords != null) {
             if (this.keywords == null) {
-                this.keywords = new ArrayList<Keywords>();
+                this.keywords = new ArrayList<>();
             }
             this.keywords.add(keywords);
         }
@@ -206,7 +216,7 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
     @Override
     public List<Identification> getIdentification() {
         if (identification == null) {
-            identification = new ArrayList<Identification>();
+            identification = new ArrayList<>();
         }
         return this.identification;
     }
@@ -226,7 +236,7 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
     public void setIdentification(final Identification identification) {
         if (identification != null) {
             if (this.identification == null) {
-                this.identification = new ArrayList<Identification>();
+                this.identification = new ArrayList<>();
             }
             this.identification.add(identification);
         }
@@ -238,7 +248,7 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
      */
     public List<Classification> getClassification() {
         if (classification == null) {
-            classification = new ArrayList<Classification>();
+            classification = new ArrayList<>();
         }
         return this.classification;
     }
@@ -258,7 +268,7 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
     public void setClassification(final Classification classification) {
         if (classification != null) {
             if (this.classification == null) {
-                this.classification = new ArrayList<Classification>();
+                this.classification = new ArrayList<>();
             }
             this.classification.add(classification);
         }
@@ -305,7 +315,7 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
      */
     public List<LegalConstraint> getLegalConstraint() {
         if (legalConstraint == null) {
-            legalConstraint = new ArrayList<LegalConstraint>();
+            legalConstraint = new ArrayList<>();
         }
         return this.legalConstraint;
     }
@@ -317,7 +327,7 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
     public void setLegalConstraint(final LegalConstraint legalConstraint) {
         if (legalConstraint != null) {
             if (this.legalConstraint == null) {
-                this.legalConstraint = new ArrayList<LegalConstraint>();
+                this.legalConstraint = new ArrayList<>();
             }
             this.legalConstraint.add(legalConstraint);
         }
@@ -338,7 +348,7 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
      */
     public List<Characteristics> getCharacteristics() {
         if (characteristics == null) {
-            characteristics = new ArrayList<Characteristics>();
+            characteristics = new ArrayList<>();
         }
         return this.characteristics;
     }
@@ -358,7 +368,7 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
     public void setCharacteristics(final Characteristics characteristics) {
         if (characteristics != null) {
             if (this.characteristics == null) {
-                this.characteristics = new ArrayList<Characteristics>();
+                this.characteristics = new ArrayList<>();
             }
             this.characteristics.add(characteristics);
         }
@@ -401,7 +411,7 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
     public void SetContact(final Contact contact) {
         if (contact != null) {
             if (this.contact == null) {
-                this.contact = new ArrayList<Contact>();
+                this.contact = new ArrayList<>();
             }
             this.contact.add(contact);
         }
@@ -421,7 +431,7 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
      */
     public List<Documentation> getDocumentation() {
         if (documentation == null) {
-            documentation = new ArrayList<Documentation>();
+            documentation = new ArrayList<>();
         }
         return this.documentation;
     }
@@ -433,7 +443,7 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
     public void setDocumention(final Documentation documentation) {
         if (documentation != null) {
             if (this.documentation == null) {
-                this.documentation = new ArrayList<Documentation>();
+                this.documentation = new ArrayList<>();
             }
             this.documentation.add(documentation);
         }
@@ -453,7 +463,7 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
      */
     public List<History> getHistory() {
         if (history == null) {
-            history = new ArrayList<History>();
+            history = new ArrayList<>();
         }
         return this.history;
     }
@@ -471,7 +481,7 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
     public void setHistory(final History history) {
         if (history != null) {
             if (this.history == null) {
-                this.history = new ArrayList<History>();
+                this.history = new ArrayList<>();
             }
             this.history.add(history);
         }

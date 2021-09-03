@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.sos.netcdf;
+package org.geotoolkit.data.om.netcdf;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import org.geotoolkit.observation.model.FeatureType;
 import ucar.ma2.Array;
 import ucar.nc2.NetcdfFile;
 import ucar.nc2.Variable;
@@ -36,22 +37,22 @@ import ucar.nc2.Variable;
 public class NCFieldAnalyze {
 
         public String title                     = null;
-        public Field mainField                  = null;
-        public Field separatorField             = null;
+        public NCField mainField                  = null;
+        public NCField separatorField             = null;
         public String dimensionSeparator        = null;
-        public Field latField                   = null;
-        public Field lonField                   = null;
-        public Field timeField                  = null;
+        public NCField latField                   = null;
+        public NCField lonField                   = null;
+        public NCField timeField                  = null;
         public NetcdfFile file                  = null;
-        public final List<Field> phenfields     = new ArrayList<>();
+        public final List<NCField> phenfields     = new ArrayList<>();
         public FeatureType featureType          = null;
-        public final List<Field> skippedFields  = new ArrayList<>();
+        public final List<NCField> skippedFields  = new ArrayList<>();
         public final Map<String, Variable> vars = new HashMap<>();
 
         public String getYLabel() {
             final StringBuilder result = new StringBuilder();
-            for (Field field : phenfields) {
-                result.append(field.id).append(",");
+            for (NCField field : phenfields) {
+                result.append(field.name).append(",");
             }
             if (result.length() != 0) {
                 result.deleteCharAt(result.length() - 1);
@@ -74,8 +75,8 @@ public class NCFieldAnalyze {
             return timeField != null;
         }
 
-        public Set<Field> getAllFields() {
-            final Set<Field> results = new HashSet<>(phenfields);
+        public Set<NCField> getAllFields() {
+            final Set<NCField> results = new HashSet<>(phenfields);
             results.addAll(skippedFields);
             if (mainField != null){
                 results.add(mainField);
@@ -92,16 +93,16 @@ public class NCFieldAnalyze {
             return results;
         }
 
-        public Array getArrayFromField(final Field field) throws IOException {
-            final Variable var = vars.get(field.id);
+        public Array getArrayFromField(final NCField field) throws IOException {
+            final Variable var = vars.get(field.name);
             return file.readArrays(Arrays.asList(var)).get(0);
         }
 
         public Map<String, Array> getPhenomenonArrayMap() throws IOException {
             final Map<String, Array> phenArrays = new HashMap<>();
-            for (Field field : phenfields) {
+            for (NCField field : phenfields) {
                 final Array phenArray  = getArrayFromField(field);
-                phenArrays.put(field.id, phenArray);
+                phenArrays.put(field.name, phenArray);
             }
             return phenArrays;
         }

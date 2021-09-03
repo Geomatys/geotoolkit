@@ -34,11 +34,13 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public abstract class AbstractObservationStoreFactory extends DataStoreProvider  {
 
+    private static final ParameterBuilder BUILDER = new ParameterBuilder();
+
     /**
      * Identifier, Mandatory.
      * Subclasses should redeclared this parameter with a different default value.
      */
-    public static final ParameterDescriptor<String> IDENTIFIER = new ParameterBuilder()
+    public static final ParameterDescriptor<String> IDENTIFIER = BUILDER
             .addName("identifier")
             .addName(Bundle.formatInternational(Bundle.Keys.paramIdentifierAlias))
             .setRemarks(Bundle.formatInternational(Bundle.Keys.paramIdentifierRemarks))
@@ -49,10 +51,54 @@ public abstract class AbstractObservationStoreFactory extends DataStoreProvider 
      * Namespace, Optional.
      * Default namespace used for feature type.
      */
-    public static final ParameterDescriptor<String> NAMESPACE = new ParameterBuilder()
+    public static final ParameterDescriptor<String> NAMESPACE = BUILDER
             .addName("namespace")
             .addName(Bundle.formatInternational(Bundle.Keys.paramNamespaceAlias))
             .setRemarks(Bundle.formatInternational(Bundle.Keys.paramNamespaceRemarks))
+            .setRequired(false)
+            .create(String.class, null);
+
+    /**
+     * Phenomenon identifier prefix, Optional.
+     * Default prefix to add to phenomeon identifiers.
+     */
+    public static final String PHENOMENON_ID_BASE_NAME = "phenomenon-id-base";
+    public static final ParameterDescriptor<String> PHENOMENON_ID_BASE = BUILDER
+            .addName(PHENOMENON_ID_BASE_NAME)
+            .setRemarks(PHENOMENON_ID_BASE_NAME)
+            .setRequired(false)
+            .create(String.class, null);
+
+    /**
+     * Observation template identifier prefix, Optional.
+     * Default prefix to add to observation template identifiers.
+     */
+    public static final String OBSERVATION_TEMPLATE_ID_BASE_NAME = "observation-template-id-base";
+    public static final ParameterDescriptor<String> OBSERVATION_TEMPLATE_ID_BASE = BUILDER
+            .addName(OBSERVATION_TEMPLATE_ID_BASE_NAME)
+            .setRemarks(OBSERVATION_TEMPLATE_ID_BASE_NAME)
+            .setRequired(false)
+            .create(String.class, null);
+
+    /**
+     * Observation identifier prefix, Optional.
+     * Default prefix to add to observation identifiers.
+     */
+    public static final String OBSERVATION_ID_BASE_NAME = "observation-id-base";
+    public static final ParameterDescriptor<String> OBSERVATION_ID_BASE = BUILDER
+            .addName(OBSERVATION_ID_BASE_NAME)
+            .setRemarks(OBSERVATION_ID_BASE_NAME)
+            .setRequired(false)
+            .create(String.class, null);
+
+    /**
+     * Sensor identifier prefix, Optional.
+     * Default prefix to add to sensor identifiers.
+     */
+    public static final String SENSOR_ID_BASE_NAME = "sensor-id-base";
+    public static final ParameterDescriptor<String> SENSOR_ID_BASE = BUILDER
+            .addName(SENSOR_ID_BASE_NAME)
+            .setRemarks(SENSOR_ID_BASE_NAME)
             .setRequired(false)
             .create(String.class, null);
 

@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.sos.netcdf;
+package org.geotoolkit.observation.model;
 
 import java.util.ArrayList;
 import java.util.Collection;

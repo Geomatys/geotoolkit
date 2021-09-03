@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.sos.netcdf;
 
+import org.geotoolkit.observation.OMUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -23,6 +24,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import org.geotoolkit.observation.model.Field;
+import org.geotoolkit.observation.model.FieldType;
 import org.geotoolkit.swe.xml.Phenomenon;
 import org.geotoolkit.swe.xml.v101.CompositePhenomenonType;
 import org.geotoolkit.swe.xml.v101.PhenomenonType;
@@ -38,14 +41,14 @@ public class OMUtilsTest {
     @Test
     public void getPhenomenonTest() throws Exception {
 
-        Field PRES = new Field("PRES", "PRES", Type.DOUBLE, 1, "pres");
-        Field PSAL = new Field("PSAL", "PSAL", Type.DOUBLE, 1, "psal");
-        Field TEMP = new Field("TEMP","TEMP", Type.DOUBLE, 1, "temp");
+        Field PRES = new Field(1, FieldType.QUANTITY, "PRES", "Pression",    "urn:ogc:def:phenomenon:GEOM:pres", "Pa");
+        Field PSAL = new Field(2, FieldType.QUANTITY, "PSAL", "Salinity",    "urn:ogc:def:phenomenon:GEOM:psal", "mg/l");
+        Field TEMP = new Field(3, FieldType.QUANTITY, "TEMP", "Temperature", "urn:ogc:def:phenomenon:GEOM:TEMP", "°c");
 
         List<Field> phenomenons = Arrays.asList(PRES, PSAL, TEMP);
         final Set<PhenomenonType> components = new LinkedHashSet<>();
         for (Field phen : phenomenons) {
-            components.add(new PhenomenonType(phen.id, phen.label, phen.id, phen.description));
+            components.add(new PhenomenonType(phen.name, phen.label, phen.name, phen.description));
         }
         String phenomenonIdBase = "urn:ogc:phenomenon:";
         final String compositeId = "composite" + UUID.randomUUID().toString();

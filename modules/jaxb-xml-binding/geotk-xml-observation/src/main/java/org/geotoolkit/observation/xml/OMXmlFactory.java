@@ -19,6 +19,7 @@ package org.geotoolkit.observation.xml;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.geotoolkit.gml.xml.BoundingShape;
 import org.geotoolkit.gml.xml.FeatureProperty;
 import org.geotoolkit.gml.xml.GMLXmlFactory;
 import org.geotoolkit.swe.xml.AbstractDataValueProperty;
@@ -398,7 +399,7 @@ public class OMXmlFactory {
     }
 
     public static AbstractObservation buildObservation(final String version, final String id, final String name, final String definition, final FeatureProperty sampledFeature, final org.opengis.observation.Phenomenon phen,
-            final org.opengis.observation.Process procedure, final Object result, final TemporalGeometricPrimitive time) {
+            final org.opengis.observation.Process procedure, final Object result, final TemporalGeometricPrimitive time, BoundingShape bound) {
         if ("1.0.0".equals(version)) {
             if (sampledFeature != null && !(sampledFeature instanceof org.geotoolkit.gml.xml.v311.FeaturePropertyType)) {
                 throw new IllegalArgumentException("unexpected object version for sampled feature element");
@@ -441,6 +442,9 @@ public class OMXmlFactory {
             if (procedure != null && !(procedure instanceof org.geotoolkit.observation.xml.v200.OMProcessPropertyType)) {
                 throw new IllegalArgumentException("unexpected object version for time element");
             }
+            if (bound != null && !(bound instanceof org.geotoolkit.gml.xml.v321.BoundingShapeType)) {
+                throw new IllegalArgumentException("unexpected object version for bound element");
+            }
             return new org.geotoolkit.observation.xml.v200.OMObservationType(id,
                                                                              name,
                                                                              "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_ComplexObservation",
@@ -449,14 +453,15 @@ public class OMXmlFactory {
                                                                              observedProperty,
                                                                              phen,
                                                                              (org.geotoolkit.gml.xml.v321.FeaturePropertyType)sampledFeature,
-                                                                             result);
+                                                                             result,
+                                                                             (org.geotoolkit.gml.xml.v321.BoundingShapeType)bound);
         } else {
             throw new IllegalArgumentException("unexpected sos version number:" + version);
         }
     }
 
     public static AbstractObservation buildMeasurement(final String version, final String id, final String name, final String definition, final FeatureProperty sampledFeature, final org.opengis.observation.Phenomenon phen,
-            final org.opengis.observation.Process procedure, final Object result, final TemporalGeometricPrimitive time) {
+            final org.opengis.observation.Process procedure, final Object result, final TemporalGeometricPrimitive time, BoundingShape bound) {
         if ("1.0.0".equals(version)) {
             if (sampledFeature != null && !(sampledFeature instanceof org.geotoolkit.gml.xml.v311.FeaturePropertyType)) {
                 throw new IllegalArgumentException("unexpected object version for sampled feature element");
@@ -517,7 +522,8 @@ public class OMXmlFactory {
                                                                             observedProperty,
                                                                             phen,
                                                                             (org.geotoolkit.gml.xml.v321.FeaturePropertyType)sampledFeature,
-                                                                            result);
+                                                                            result,
+                                                                            (org.geotoolkit.gml.xml.v321.BoundingShapeType)bound);
         } else {
             throw new IllegalArgumentException("unexpected sos version number:" + version);
         }

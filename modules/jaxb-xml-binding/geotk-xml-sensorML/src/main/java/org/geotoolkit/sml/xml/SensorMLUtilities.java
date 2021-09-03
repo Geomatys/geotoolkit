@@ -155,4 +155,26 @@ public class SensorMLUtilities {
         return null;
     }
 
+    public static String getOMType(final AbstractSensorML sensor) {
+        if (sensor != null && sensor.getMember().size() > 0) {
+            final AbstractProcess process = sensor.getMember().get(0).getRealProcess();
+            return getOMType(process);
+        }
+        return null;
+    }
+
+    public static String getOMType(final AbstractProcess process) {
+        final List<? extends AbstractClassification> classifs = process.getClassification();
+
+        for (AbstractClassification classif : classifs) {
+            if (classif.getClassifierList()!= null) {
+                for (AbstractClassifier classifier: classif.getClassifierList().getClassifier()) {
+                    if ("data-type".equals(classifier.getName()) && classifier.getTerm() != null) {
+                        return classifier.getTerm().getValue();
+                    }
+                }
+            }
+        }
+        return null;
+    }
 }

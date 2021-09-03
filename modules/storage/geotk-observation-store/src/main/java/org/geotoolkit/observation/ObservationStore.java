@@ -16,13 +16,13 @@
  */
 package org.geotoolkit.observation;
 
+import org.geotoolkit.observation.model.ExtractionResult;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
-import org.geotoolkit.sos.netcdf.ExtractionResult;
-import org.geotoolkit.sos.netcdf.ExtractionResult.ProcedureTree;
+import org.geotoolkit.observation.model.ExtractionResult.ProcedureTree;
 import org.opengis.metadata.Metadata;
 import org.opengis.observation.Phenomenon;
 import org.opengis.observation.sampling.SamplingFeature;
