@@ -246,6 +246,10 @@ public final class TileMatrixSetBuilder {
         final long[] high = new long[envelope.getDimension()];
         for (int i = 0; i < high.length; i++) {
             high[i] = (long) Math.ceil(envelope.getSpan(i) / resolution);
+            if (high[i] == 0) {
+                //slice, we need at least one value
+                high[i] = 1;
+            }
         }
 
         final GridExtent extent = new GridExtent(null, null, high, false);

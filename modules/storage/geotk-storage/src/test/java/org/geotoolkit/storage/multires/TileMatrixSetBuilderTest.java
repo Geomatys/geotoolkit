@@ -20,7 +20,10 @@ import java.awt.Dimension;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.DirectPosition2D;
+import org.apache.sis.geometry.GeneralDirectPosition;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
@@ -28,6 +31,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.util.FactoryException;
 
 /**
  * Test TileMatrixSetBuilder class.
@@ -269,4 +273,40 @@ public class TileMatrixSetBuilderTest {
         Assert.assertEquals(new Dimension(29, 15), m2.getGridSize());
         Assert.assertEquals(new Dimension(15, 8), m3.getGridSize());
     }
+
+    @Test
+    public void testCreate2DwithTime() throws FactoryException {
+
+        final CoordinateReferenceSystem crs = CRS.compound(CommonCRS.WGS84.normalizedGeographic(), CommonCRS.Temporal.JAVA.crs());
+        final GeneralEnvelope bbox = new GeneralEnvelope(crs);
+        bbox.setRange(0, 1, 10);
+        bbox.setRange(1, 40, 50);
+        bbox.setRange(2, 1000, 1000);
+
+        final TileMatrixSetBuilder tmsBuilder = new TileMatrixSetBuilder();
+        tmsBuilder.setTileSize(new Dimension(30, 30));
+        tmsBuilder.setIteration(TileMatrixSetBuilder.Iteration.BOTTOM_TO_TOP);
+        tmsBuilder.setDomain(bbox, 1);
+
+        DefiningTileMatrixSet pyramid = tmsBuilder.build();
+
+        final GeneralDirectPosition upperleft = new GeneralDirectPosition(crs);
+        upperleft.setOrdinate(0, 1);
+        upperleft.setOrdinate(1, 50);
+        upperleft.setOrdinate(2, 1000);
+
+        Assert.assertEquals(crs, pyramid.getCoordinateReferenceSystem());
+        Assert.assertEquals(1, pyramid.getTileMatrices().size());
+
+        final double[] scales = pyramid.getScales();
+        Assert.assertEquals(1, scales.length);
+        Assert.assertEquals(1, scales[0], DELTA);
+
+        final TileMatrix m1 = pyramid.getTileMatrices(scales[0]).iterator().next();
+
+        Assert.assertEquals(upperleft, m1.getUpperLeftCorner());
+        Assert.assertEquals(new Dimension(30, 30), m1.getTileSize());
+        Assert.assertEquals(new Dimension(1, 1), m1.getGridSize());
+    }
+
 }
