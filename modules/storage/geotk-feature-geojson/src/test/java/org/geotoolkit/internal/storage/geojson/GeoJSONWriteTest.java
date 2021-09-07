@@ -26,7 +26,7 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Stream;
 import org.apache.sis.coverage.grid.GridCoverage;
-import org.apache.sis.feature.FeatureComparator;
+import org.apache.sis.test.feature.FeatureComparator;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
@@ -325,10 +325,10 @@ public class GeoJSONWriteTest extends TestCase {
 
         try (GeoJSONStreamWriter fw = new GeoJSONStreamWriter(baos, validFeatureType, 4)) {
             Link l = new Link("http://test.com", null, null, null, null, null);
-            List<Link> links = new ArrayList<>(); 
+            List<Link> links = new ArrayList<>();
             links.add(l);
             fw.writeCollection(links, 10, 5);
-            
+
             Feature feature = fw.next();
             feature.setPropertyValue("type","feat1");
             feature.setPropertyValue("time",new Date(0));
@@ -342,7 +342,7 @@ public class GeoJSONWriteTest extends TestCase {
             fw.write();
 
         }
-        
+
 
         String outputJSON = baos.toString("UTF-8");
         assertNotNull(outputJSON);

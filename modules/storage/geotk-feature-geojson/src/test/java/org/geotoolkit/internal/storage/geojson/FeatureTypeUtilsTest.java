@@ -19,7 +19,7 @@ package org.geotoolkit.internal.storage.geojson;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Date;
-import org.apache.sis.feature.FeatureComparator;
+import org.apache.sis.test.feature.FeatureComparator;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
