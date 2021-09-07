@@ -28,8 +28,11 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.gml.xml.AbstractFeature;
 import org.apache.sis.util.ComparisonMode;
+import org.geotoolkit.gml.xml.AbstractGeometry;
+import org.geotoolkit.gml.xml.Point;
 
 
 /**
@@ -114,11 +117,7 @@ public abstract class AbstractFeatureType extends AbstractGMLType implements Abs
     public AbstractFeatureType(final String id, final String name, final String description, final ReferenceType descriptionReference,
             final BoundingShapeType boundedBy) {
         super(id, name, description, descriptionReference);
-        if (boundedBy == null) {
-            this.boundedBy = new BoundingShapeType("not_bounded");
-        } else {
-            this.boundedBy = boundedBy;
-        }
+        this.boundedBy = boundedBy;
     }
 
     /**
@@ -144,6 +143,28 @@ public abstract class AbstractFeatureType extends AbstractGMLType implements Abs
      */
     public void setBoundedBy(BoundingShapeType value) {
         this.boundedBy = value;
+    }
+
+    public void extendBoundingShape(AbstractGeometry newGeom) {
+        if (newGeom == null) {
+            return;
+        }
+        // for now, only point are handled
+        if (newGeom instanceof Point) {
+            Point pt = (Point) newGeom;
+            if (boundedBy != null && boundedBy.getEnvelope() != null) {
+                final GeneralEnvelope gEnv = new GeneralEnvelope(boundedBy.getEnvelope());
+                gEnv.add(pt.getPos());
+                boundedBy = new BoundingShapeType(gEnv);
+            } else {
+                final GeneralEnvelope gEnv = new GeneralEnvelope(pt.getCoordinateReferenceSystem(true));
+                gEnv.setRange(0, pt.getPos().getOrdinate(1),  pt.getPos().getOrdinate(1));
+                gEnv.setRange(1, pt.getPos().getOrdinate(0),  pt.getPos().getOrdinate(0));
+                boundedBy = new BoundingShapeType(gEnv);
+            }
+        } else {
+            throw new UnsupportedOperationException("extendBoundingShape is only supported for Point");
+        }
     }
 
     /**

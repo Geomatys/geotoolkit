@@ -55,6 +55,8 @@ import org.geotoolkit.sampling.xml.v100.SamplingCurveType;
 import org.geotoolkit.sampling.xml.v100.SamplingSolidType;
 import org.geotoolkit.sampling.xml.v100.SamplingSurfaceType;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.gml.xml.AbstractGeometry;
+import org.geotoolkit.gml.xml.BoundingShape;
 import org.geotoolkit.swe.xml.v101.CompositePhenomenonType;
 import org.opengis.metadata.Identifier;
 import org.opengis.temporal.Period;
@@ -521,6 +523,8 @@ public class ObservationType implements Entry, AbstractObservation {
                     final TimePeriodType period = new TimePeriodType(instant.getId(), instant.getTimePosition().getDate(), newEndBound);
                     samplingTime.setTimeGeometricPrimitive(period);
                 }
+            } else if (samplingTime == null) {
+                samplingTime = new TimeGeometricPrimitivePropertyType(new TimeInstantType(new TimePositionType(newEndBound)));
             }
         }
     }
@@ -570,6 +574,19 @@ public class ObservationType implements Entry, AbstractObservation {
     @Override
     public String getDefinition() {
         return definition;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public BoundingShape getBoundedBy() {
+        return null;
+    }
+
+    @Override
+    public void extendBoundingShape(AbstractGeometry newGeom) {
+        // not bounds in this version
     }
 
     /**

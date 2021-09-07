@@ -40,102 +40,64 @@ import org.opengis.temporal.TemporalPrimitive;
  */
 public interface ObservationReader {
 
-    /**
-     * Return the list of offering names.
-     *
-     * @param version SOS version of the request
-     * @return A list of offering name.
-     * @throws org.apache.sis.storage.DataStoreException
-     */
-    Collection<String> getOfferingNames(final String version) throws DataStoreException;
+    public static final String ENTITY_TYPE = "entityType";
+    public static final String SENSOR_TYPE = "sensorType";
+    public static final String SOS_VERSION = "version";
+    public static final String IDENTIFIER = "id";
 
     /**
-     * Return the list of offering names filtering on the procedure type.
+     * Return the list of entity identifiers.
      *
-     * @param version SOS version of the request
-     * @param sensorType A filter on the type of sensor or @{code null}
+     * The hints can contains various filter such as :
+     * - SOS version of the request (key: version)
+     * - object entity (key: entityType)
+     * - sensor type: (key: sensorType)
      *
-     * @return A list of offering name.
+     * @param hints a map of filters.
+     * @return A list of entity identifiers.
      * @throws org.apache.sis.storage.DataStoreException
      */
-    Collection<String> getOfferingNames(final String version, final String sensorType) throws DataStoreException;
+    Collection<String> getEntityNames(final Map<String, Object> hints) throws DataStoreException;
 
     /**
-     * Return The offering with the specified name.
+     * Return {@code true} if the specified entity identifier exist.
      *
-     * @param offeringName The identifier of the offering
-     * @param version SOS version of the request
+      * The hints can contains various filter such as :
+     * - object entity (key: entityType)
+     * - identifier: (key: id)
+     *
+     * @param hints a map of filters.
      * @return
      * @throws org.apache.sis.storage.DataStoreException
      */
-    ObservationOffering getObservationOffering(final String offeringName, final String version) throws DataStoreException;
+    boolean existEntity(final Map<String, Object> hints) throws DataStoreException;
 
     /**
      * Return The offerings for the specified names.
      *
-     * @param offeringNames The identifiers of the offerings
-     * @param version SOS version of the request
-     * @return
-     * @throws org.apache.sis.storage.DataStoreException
-     */
-    List<ObservationOffering> getObservationOfferings(final List<String> offeringNames, final String version) throws DataStoreException;
-
-    /**
-     * Return a list of all the offerings.
+     * The hints can contains various filter such as :
+     * - SOS version of the request (key: version)
+     * - sensor type: (key: sensorType)
+     * - one ore many offering identifiers: (key: id)
      *
-     * @param version SOS version of the request
+     * @param hints a map of filters.
      * @return
      * @throws org.apache.sis.storage.DataStoreException
      */
-    List<ObservationOffering> getObservationOfferings(final String version) throws DataStoreException;
-
-    /**
-     * Return a list of all the offerings filtering on the procedure type.
-     *
-     * @param version SOS version of the request
-     * @param sensorType A filter on the type of sensor or @{code null}
-     * @return
-     * @throws org.apache.sis.storage.DataStoreException
-     */
-    List<ObservationOffering> getObservationOfferings(final String version, final String sensorType) throws DataStoreException;
-
-    /**
-     * Return a list of the sensor identifiers.
-     * @return
-     * @throws org.apache.sis.storage.DataStoreException
-     */
-    Collection<String> getProcedureNames() throws DataStoreException;
-
-    /**
-     * Return a list of the sensor identifiers.
-     * @param sensorType A filter on the type of sensor or @{code null}
-     *
-     * @return
-     * @throws org.apache.sis.storage.DataStoreException
-     */
-    Collection<String> getProcedureNames(final String sensorType) throws DataStoreException;
-
-    /**
-     * Return a list of the phenomenon identifiers.
-     * @return
-     * @throws org.apache.sis.storage.DataStoreException
-     */
-    Collection<String> getPhenomenonNames() throws DataStoreException;
+    List<ObservationOffering> getObservationOfferings(final Map<String, Object> hints) throws DataStoreException;
 
     /**
      * Return a list of the phenomenon.
+     *
+     * * The hints can contains various filter such as :
+     * - SOS version of the request (key: version)
+     * - one ore many offering identifiers: (key: id)
+     *
+     * @param hints a map of filters.
      * @return
      * @throws org.apache.sis.storage.DataStoreException
      */
-    Collection<Phenomenon> getPhenomenons(final String version) throws DataStoreException;
-
-    /**
-     * Return a  phenomenon.
-     * @return
-     * @throws org.apache.sis.storage.DataStoreException
-     */
-    Phenomenon getPhenomenon(final String identifier, final String version) throws DataStoreException;
-
+    Collection<Phenomenon> getPhenomenons(final Map<String, Object> hints) throws DataStoreException;
 
     /**
      * Return a process.
@@ -143,26 +105,6 @@ public interface ObservationReader {
      * @throws org.apache.sis.storage.DataStoreException
      */
     Process getProcess(final String identifier, final String version) throws DataStoreException;
-
-    /**
-     * Return a list of the sensor identifiers measuring the specified phenomenon.
-     *
-     * @param observedProperty an observed phenomenon.
-     * @return
-     * @throws org.apache.sis.storage.DataStoreException
-     */
-    @Deprecated
-    Collection<String> getProceduresForPhenomenon(final String observedProperty) throws DataStoreException;
-
-    /**
-     * Return a list of the observedProperties identifiers measured by the specified procedure.
-     *
-     * @param sensorID an procedure identifier.
-     * @return
-     * @throws org.apache.sis.storage.DataStoreException
-     */
-    @Deprecated
-    Collection<String> getPhenomenonsForProcedure(final String sensorID) throws DataStoreException;
 
     /**
      * Return a the temporal bounds for the specified procedure.
@@ -175,22 +117,6 @@ public interface ObservationReader {
     TemporalGeometricPrimitive getTimeForProcedure(final String version, final String sensorID) throws DataStoreException;
 
     /**
-     *
-     * @param phenomenonName
-     * @return
-     * @throws org.apache.sis.storage.DataStoreException
-     */
-    boolean existPhenomenon(final String phenomenonName) throws DataStoreException;
-
-    /**
-     * Return a list of sampling feature identifiers.
-     *
-     * @return A list of sampling feature identifiers.
-     * @throws org.apache.sis.storage.DataStoreException
-     */
-    Collection<String> getFeatureOfInterestNames() throws DataStoreException;
-
-    /**
      * Return a sampling feature for the specified sampling feature.
      *
      * @param samplingFeatureName The identifier of the feature of interest.
@@ -200,18 +126,6 @@ public interface ObservationReader {
      * @throws org.apache.sis.storage.DataStoreException
      */
     SamplingFeature getFeatureOfInterest(final String samplingFeatureName, final String version) throws DataStoreException;
-
-    /**
-     * Return a sampling feature for the specified sampling feature.
-     *
-     * @param samplingFeatureName The identifier of the feature of interest.
-     * @param version SOS version of the request.
-     *
-     * @return the corresponding feature Of interest.
-     * @throws org.apache.sis.storage.DataStoreException
-     */
-    Collection<SamplingFeature> getFeatureOfInterestForProcedure(final String sensorID, final String version) throws DataStoreException;
-
 
     /**
      * Return a sampling feature for the specified sampling feature.
@@ -256,14 +170,6 @@ public interface ObservationReader {
      * @throws org.apache.sis.storage.DataStoreException
      */
     Object getResult(final String identifier, final QName resultModel, final String version) throws DataStoreException;
-
-    /**
-     * Return a reference from the specified identifier
-     * @param href
-     * @return
-     * @throws org.apache.sis.storage.DataStoreException
-     */
-    boolean existProcedure(final String href) throws DataStoreException;
 
     /**
      * Create a new identifier for an observation.

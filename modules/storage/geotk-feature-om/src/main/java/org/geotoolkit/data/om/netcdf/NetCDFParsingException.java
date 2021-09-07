@@ -15,16 +15,27 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.sos.netcdf;
+package org.geotoolkit.data.om.netcdf;
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
-public enum FeatureType {
+public class NetCDFParsingException extends Exception {
 
-    PROFILE,
-    TIMESERIES,
-    TRAJECTORY,
-    GRID
+    public NetCDFParsingException() {
+        super();
+    }
+
+    public NetCDFParsingException(final String message) {
+        super(message);
+    }
+
+    public NetCDFParsingException(final Throwable cause) {
+        super(cause);
+    }
+
+    public NetCDFParsingException(final String message, final Throwable cause) {
+        super(message, cause);
+    }
 }

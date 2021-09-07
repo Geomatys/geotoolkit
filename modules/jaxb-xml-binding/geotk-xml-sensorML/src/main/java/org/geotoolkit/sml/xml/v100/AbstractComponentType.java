@@ -65,6 +65,10 @@ public abstract class AbstractComponentType extends AbstractDerivableComponentTy
 
     }
 
+    public AbstractComponentType(Identification ident, Classification classif) {
+        super(ident, classif);
+    }
+
     public AbstractComponentType(final AbstractComponent ac) {
         super(ac);
         if (ac != null) {

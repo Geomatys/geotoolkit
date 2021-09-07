@@ -17,14 +17,13 @@
 
 package org.geotoolkit.observation;
 
+import org.geotoolkit.observation.model.OMEntity;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import javax.xml.namespace.QName;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.gml.xml.Envelope;
-import org.geotoolkit.sos.xml.ResponseModeType;
 import org.opengis.filter.BinaryComparisonOperator;
 import org.opengis.filter.TemporalOperator;
 import org.opengis.geometry.Geometry;
@@ -39,46 +38,7 @@ import org.opengis.observation.Process;
  */
 public interface ObservationFilterReader {
 
-    /**
-     * Initialize the query for a full observation request.
-     */
-    void initFilterObservation(final ResponseModeType requestMode, final QName resultModel, final Map<String,String> hints) throws DataStoreException;
-
-    /**
-     * Initialize the query for an extraction restricted to the results request.
-     */
-    void initFilterGetResult(final String procedure, final QName resultModel, final Map<String,String> hints) throws DataStoreException;
-
-    /**
-     * Initialize the query for extracting feature of interest request.
-     */
-    void initFilterGetFeatureOfInterest() throws DataStoreException;
-
-    /**
-     * Initialize the query for extracting phenomenon request.
-     */
-    void initFilterGetPhenomenon() throws DataStoreException;
-
-    /**
-     * Initialize the query for extracting procedure request.
-     * @throws org.apache.sis.storage.DataStoreException
-     */
-    void initFilterGetSensor() throws DataStoreException;
-
-    /**
-     * Initialize the query for extracting offering request.
-     */
-    void initFilterOffering() throws DataStoreException;
-
-    /**
-     * Initialize the query for extracting procedure locations request.
-     */
-    void initFilterGetLocations() throws DataStoreException;
-
-    /**
-     * Initialize the query for extracting procedure locations request.
-     */
-    void initFilterGetProcedureTimes() throws DataStoreException;
+    void init(OMEntity objectType, final Map<String,Object> hints) throws DataStoreException;
 
     /**
      * Add some procedure filter to the request.
@@ -142,33 +102,19 @@ public interface ObservationFilterReader {
     /**
      * Execute the current query and return a list of observation result.
      */
-    List<ObservationResult> filterResult() throws DataStoreException;
+    List<ObservationResult> filterResult(Map<String, Object> hints) throws DataStoreException;
 
     /**
-     * Execute the current query and return a list of observation ID.
+     * Execute the current query and return a list of entity identifiers.
      */
-    Set<String> filterObservation() throws DataStoreException;
-
-
-    /**
-     * Execute the current query and return a list of FOI ID.
-     */
-    Set<String> filterFeatureOfInterest() throws DataStoreException;
+    Set<String> getIdentifiers(Map<String, Object> hints) throws DataStoreException;
 
     /**
-     * Execute the current query and return a list of ObservedProperty ID.
+     * Execute the current query and return the matching count.
+     * @return
+     * @throws org.apache.sis.storage.DataStoreException
      */
-    Set<String> filterPhenomenon() throws DataStoreException;
-
-    /**
-     * Execute the current query and return a list of procedure ID.
-     */
-    Set<String> filterProcedure() throws DataStoreException;
-
-    /**
-     * Execute the current query and return a list of offering ID.
-     */
-    Set<String> filterOffering() throws DataStoreException;
+    long getCount() throws DataStoreException;
 
     /**
      * Return informations about the implementation class.
@@ -192,67 +138,61 @@ public interface ObservationFilterReader {
 
     void destroy();
 
-    /**
-     * Return a list of Observation templates matching the builded filter.
-     *
-     * @param hints extraction hints like the O&M version for the xml object returned.
-     * @return A list of Observation templates matching the builded filter.
-     */
-    List<Observation> getObservationTemplates(final Map<String,String> hints) throws DataStoreException;
-
      /**
      * Return a list of Observation matching the builded filter.
      *
      * @param hints extraction hints like the O&M version for the xml object returned.
      * @return A list of Observation matching the builded filter.
      */
-    List<Observation> getObservations(final Map<String,String> hints) throws DataStoreException;
+    List<Observation> getObservations(final Map<String,Object> hints) throws DataStoreException;
 
     /**
      *
      * @param hints extraction hints like the O&M version for the xml object returned.
      */
-    List<SamplingFeature> getFeatureOfInterests(final Map<String,String> hints) throws DataStoreException;
+    List<SamplingFeature> getFeatureOfInterests(final Map<String,Object> hints) throws DataStoreException;
 
     /**
      *
      * @param hints extraction hints like the O&M version for the xml object returned.
      */
-    List<Phenomenon> getPhenomenons(final Map<String,String> hints) throws DataStoreException;
+    List<Phenomenon> getPhenomenons(final Map<String,Object> hints) throws DataStoreException;
 
     /**
      *
      * @param hints extraction hints like the O&M version for the xml object returned.
      */
-    List<Process> getProcesses(final Map<String,String> hints) throws DataStoreException;
+    List<Process> getProcesses(final Map<String,Object> hints) throws DataStoreException;
 
     /**
      *
      * @param hints extraction hints like the O&M version for the xml object returned.
      */
-    Map<String, Map<Date, Geometry>> getSensorLocations(final Map<String,String> hints) throws DataStoreException;
+    Map<String, Geometry> getSensorLocations(final Map<String,Object> hints) throws DataStoreException;
+
+    /**
+     *
+     * @param hints extraction hints like the O&M version for the xml object returned.
+     *
+     * @return
+     * @throws DataStoreException
+     */
+    Map<String, Map<Date, Geometry>> getSensorHistoricalLocations(final Map<String,Object> hints) throws DataStoreException;
 
     /**
      *
      * @param hints extraction hints like the O&M version for the xml object returned.
      */
-    Map<String, List<Date>> getSensorTimes(final Map<String,String> hints) throws DataStoreException;
+    Map<String, List<Date>> getSensorTimes(final Map<String,Object> hints) throws DataStoreException;
 
     /**
-     * Return an encoded block of data in a string. The datas are the results of
-     * the matching observations.
+     * Return direct observations results.
+     * Object type depends on the response Mode, response formats, etc/
      *
      * @param hints hints like decimation size, algorithm etc.
      * @return An encoded block of data in a string.
      */
-    Object getResults(final Map<String, String> hints) throws DataStoreException;
-
-    /**
-     * Return an encoded block of data in a string.
-     * The datas are the results of the matching observations.
-     * The datas are usually encoded as CSV (comma separated value) format.
-     */
-    Object getOutOfBandResults() throws DataStoreException;
+    Object getResults(final Map<String, Object> hints) throws DataStoreException;
 
     /**
      * MIME type of the data that will be returned as the result of a GetObservation request.

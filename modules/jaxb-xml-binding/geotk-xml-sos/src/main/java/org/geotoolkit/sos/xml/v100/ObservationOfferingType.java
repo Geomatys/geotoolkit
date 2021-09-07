@@ -17,6 +17,7 @@
 package org.geotoolkit.sos.xml.v100;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -39,6 +40,9 @@ import org.geotoolkit.swe.xml.v101.PhenomenonType;
 import org.geotoolkit.swe.xml.v101.PhenomenonPropertyType;
 import org.geotoolkit.swe.xml.v101.TimeGeometricPrimitivePropertyType;
 import org.apache.sis.util.ComparisonMode;
+import org.geotoolkit.gml.xml.v311.TimeInstantType;
+import org.geotoolkit.gml.xml.v311.TimePeriodType;
+import org.geotoolkit.gml.xml.v311.TimePositionType;
 
 
 /**
@@ -202,6 +206,23 @@ public class ObservationOfferingType extends AbstractFeatureType implements Obse
         }
     }
 
+    @Override
+    public void updateEndTime(final Date newEndBound) {
+        if (newEndBound != null) {
+            if (time != null && time.getTimeGeometricPrimitive() instanceof TimePeriodType) {
+                ((TimePeriodType)time.getTimeGeometricPrimitive()).setEndPosition(new TimePositionType(newEndBound));
+            } else if (time != null && time.getTimeGeometricPrimitive() instanceof TimeInstantType) {
+                final TimeInstantType instant = (TimeInstantType) time.getTimeGeometricPrimitive();
+                if (!newEndBound.equals(instant.getTimePosition().getValue())) {
+                    final TimePeriodType period = new TimePeriodType(instant.getId(), instant.getTimePosition().getDate(), newEndBound);
+                    time.setTimeGeometricPrimitive(period);
+                }
+            } else if (time == null) {
+                time = new TimeGeometricPrimitivePropertyType(new TimeInstantType(new TimePositionType(newEndBound)));
+            }
+        }
+    }
+
     /**
      *  Return an unmodifiable list of the procedures
      */
@@ -297,6 +318,14 @@ public class ObservationOfferingType extends AbstractFeatureType implements Obse
             result.add(ref.getHref());
         }
         return result;
+    }
+
+    @Override
+    public void addFeatureOfInterest(String foi) {
+        if (featureOfInterest == null) {
+            featureOfInterest = new ArrayList<>();
+        }
+        featureOfInterest.add(new ReferenceType(null, foi));
     }
 
     /**

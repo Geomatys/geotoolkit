@@ -85,10 +85,10 @@ public class BoundingShapeType implements BoundingShape {
                 }
             }
            if (that.getNull() != null) {
-               this._null = new ArrayList<String>(that.getNull());
+               this._null = new ArrayList<>(that.getNull());
            }
            if (that.getNilReason() != null) {
-               this.nilReason = new ArrayList<String>(that.getNilReason());
+               this.nilReason = new ArrayList<>(that.getNilReason());
            }
         }
     }
@@ -96,14 +96,23 @@ public class BoundingShapeType implements BoundingShape {
     public BoundingShapeType(final EnvelopeType envelope) {
         this.envelope = envelope;
         if (envelope == null) {
-            this._null = new ArrayList<String>();
+            this._null = new ArrayList<>();
             this._null.add("not_bounded");
         }
 
     }
 
+    public BoundingShapeType(final org.opengis.geometry.Envelope envelope) {
+        if (envelope == null) {
+            this._null = new ArrayList<>();
+            this._null.add("not_bounded");
+        } else {
+            this.envelope = new EnvelopeType(envelope);
+        }
+    }
+
     public BoundingShapeType(final String nul) {
-        this._null = new ArrayList<String>();
+        this._null = new ArrayList<>();
         this._null.add(nul);
     }
 
@@ -133,7 +142,7 @@ public class BoundingShapeType implements BoundingShape {
     @Override
     public List<String> getNull() {
         if (_null == null) {
-            _null = new ArrayList<String>();
+            _null = new ArrayList<>();
         }
         return this._null;
     }
