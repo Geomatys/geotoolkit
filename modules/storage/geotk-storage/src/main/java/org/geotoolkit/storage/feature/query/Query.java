@@ -143,7 +143,7 @@ public final class Query extends FeatureQuery {
         this(query.getTypeName(),
              query.getSelection(),
              query.getPropertyNames(),
-             query.getSortBy(),
+             QueryUtilities.getSortProperties(query.getSortBy()),
              query.getCoordinateSystemReproject(),
              query.getOffset(),
              query.getLimit(),

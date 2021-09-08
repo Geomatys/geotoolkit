@@ -99,7 +99,7 @@ public final class QueryBuilder {
         this.hints = query.getHints();
         this.maxFeatures = query.getLimit();
         this.properties = query.getPropertyNames();
-        this.sortBy = query.getSortBy();
+        this.sortBy = QueryUtilities.getSortProperties(query.getSortBy());
         this.startIndex = query.getOffset();
         this.typeName = query.getTypeName();
         this.version = query.getVersionDate();

@@ -49,6 +49,7 @@ import org.geotoolkit.feature.ViewMapper;
 import org.geotoolkit.geometry.jts.transform.GeometryScaleTransformer;
 import org.geotoolkit.storage.event.StorageListener;
 import org.geotoolkit.storage.event.StorageListener.Weak;
+import org.geotoolkit.storage.feature.query.QueryUtilities;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.util.collection.CloseableIterator;
 import org.opengis.feature.AttributeType;
@@ -227,7 +228,7 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
         final long max = remainingParameters.getLimit();
         final Filter filter = remainingParameters.getSelection();
         final String[] properties = remainingParameters.getPropertyNames();
-        final SortProperty[] sorts = remainingParameters.getSortBy();
+        final SortProperty[] sorts = QueryUtilities.getSortProperties(remainingParameters.getSortBy());
         final double[] resampling = remainingParameters.getResolution();
         final CoordinateReferenceSystem crs = remainingParameters.getCoordinateSystemReproject();
         final Hints hints = remainingParameters.getHints();

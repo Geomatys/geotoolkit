@@ -30,6 +30,7 @@ import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.filter.FilterUtilities;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
+import org.opengis.filter.SortBy;
 import org.opengis.filter.SortProperty;
 
 /**
@@ -58,10 +59,6 @@ public class QueryUtilities {
      * as if it was a sub query result.
      * For example if the original query has a start index of 10 and the
      * sub-query a start index of 5, the resulting startIndex will be 15.
-     *
-     * @param original
-     * @param second
-     * @return sub query
      */
     public static FeatureQuery subQuery(final FeatureQuery original, final FeatureQuery second) {
         ArgumentChecks.ensureNonNull("original", original);
@@ -108,12 +105,12 @@ public class QueryUtilities {
 
         //ordering -------------------------------------------------------------
         final List<SortProperty> sorts = new ArrayList<>();
-        SortProperty[] sts = original.getSortBy();
+        SortProperty[] sts = getSortProperties(original.getSortBy());
         if (sts != null) {
             sorts.addAll(Arrays.asList(sts));
         }
 
-        sts = second.getSortBy();
+        sts = getSortProperties(second.getSortBy());
         if (sts != null) {
             sorts.addAll(Arrays.asList(sts));
         }
@@ -138,10 +135,6 @@ public class QueryUtilities {
      * For example if the original query has a start index of 10 and the
      * sub-query a start index of 5, the resulting startIndex will be 15.
      * The type name of the first query will override the one of the second.
-     *
-     * @param original
-     * @param second
-     * @return sub query
      */
     public static Query subQuery(final Query original, final Query second){
         if ( original==null || second==null ) {
@@ -192,12 +185,12 @@ public class QueryUtilities {
 
         //ordering -------------------------------------------------------------
         final List<SortProperty> sorts = new ArrayList<SortProperty>();
-        SortProperty[] sts = original.getSortBy();
+        SortProperty[] sts = getSortProperties(original.getSortBy());
         if(sts != null){
             sorts.addAll(Arrays.asList(sts));
         }
 
-        sts = second.getSortBy();
+        sts = getSortProperties(second.getSortBy());
         if(sts != null){
             sorts.addAll(Arrays.asList(sts));
         }
@@ -389,7 +382,6 @@ public class QueryUtilities {
             return atts1;
         }
 
-
         final List atts = new LinkedList();
 
         final List lst1 = UnmodifiableArrayList.wrap(atts1);
@@ -405,5 +397,11 @@ public class QueryUtilities {
         return propNames;
     }
 
-
+    public static <R> SortProperty<R>[] getSortProperties(final SortBy<R> sortBy) {
+        if (sortBy == null) {
+            return new SortProperty[0];
+        }
+        List<? extends SortProperty<R>> p = sortBy.getSortProperties();
+        return p.toArray(new SortProperty[p.size()]);
+    }
 }

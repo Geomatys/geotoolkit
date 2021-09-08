@@ -307,7 +307,7 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
                 if(AttributeConvention.isGeometryAttribute(desc)){
                     names.add(desc.getName().toString());
                 } else if (gquery.getSortBy() != null) {
-                    for (SortProperty sortBy : gquery.getSortBy()) {
+                    for (SortProperty sortBy : gquery.getSortBy().getSortProperties()) {
                         final String propName = sortBy.getValueReference().getXPath();
                         if (desc.getName().toString().equals(propName) ||
                             desc.getName().tip().toString().equals(propName)) {

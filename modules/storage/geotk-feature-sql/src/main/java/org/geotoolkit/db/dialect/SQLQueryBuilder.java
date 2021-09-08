@@ -37,6 +37,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.feature.FeatureTypeExt;
 import org.geotoolkit.filter.visitor.FIDFixVisitor;
+import org.geotoolkit.storage.feature.query.QueryUtilities;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
@@ -101,7 +102,7 @@ public class SQLQueryBuilder {
         }
 
         // sorting
-        encodeSortBy(featureType, query.getSortBy(), key, sql);
+        encodeSortBy(featureType, QueryUtilities.getSortProperties(query.getSortBy()), key, sql);
 
         // finally encode limit/offset, if necessary
         dialect.encodeLimitOffset(sql, query.getLimit() == -1 ? null : (int) query.getLimit(), (int) query.getOffset());

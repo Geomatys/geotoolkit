@@ -274,7 +274,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
         qb.setFilter(queryFilter);
         qb.setHints(queryHints);
         qb.setCRS(gquery.getCoordinateSystemReproject());
-        qb.setSortBy(gquery.getSortBy());
+        qb.setSortBy(QueryUtilities.getSortProperties(gquery.getSortBy()));
         qb.setOffset(gquery.getOffset());
         qb.setLimit(gquery.getLimit());
         return FeatureStreams.subset(reader, qb.buildQuery());

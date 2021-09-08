@@ -91,9 +91,6 @@ public class QueryTest {
             //ok
         }
 
-
-
-
         //all-------------------------------------------------------------------
         query = QueryBuilder.all(name);
         assertEquals(query.getTypeName(), name.toString());
@@ -102,7 +99,7 @@ public class QueryTest {
         assertEquals(query.getSelection(), Filter.include());
         assertEquals(query.getLimit(), -1);
         assertArrayEquals(query.getPropertyNames(), null);
-        assertArrayEquals(query.getSortBy(), new SortProperty[0]);
+        assertArrayEquals(QueryUtilities.getSortProperties(query.getSortBy()), new SortProperty[0]);
         assertEquals(query.getOffset(), 0);
 
         //only ids--------------------------------------------------------------
@@ -114,7 +111,7 @@ public class QueryTest {
         assertEquals(query.getLimit(), -1);
         assertNotNull(query.getPropertyNames()); //must be an empty array, not null
         assertTrue(query.getPropertyNames().length == 1); //must have only one value
-        assertArrayEquals(query.getSortBy(), new SortProperty[0]);
+        assertArrayEquals(QueryUtilities.getSortProperties(query.getSortBy()), new SortProperty[0]);
         assertEquals(query.getOffset(), 0);
 
         //only filter-----------------------------------------------------------
@@ -125,7 +122,7 @@ public class QueryTest {
         assertEquals(query.getSelection(), Filter.exclude());
         assertEquals(query.getLimit(), -1);
         assertArrayEquals(query.getPropertyNames(), null);
-        assertArrayEquals(query.getSortBy(), new SortProperty[0]);
+        assertArrayEquals(QueryUtilities.getSortProperties(query.getSortBy()), new SortProperty[0]);
         assertEquals(query.getOffset(), 0);
 
         //only sort by----------------------------------------------------------
@@ -137,8 +134,8 @@ public class QueryTest {
         assertEquals(query.getLimit(), -1);
         assertArrayEquals(query.getPropertyNames(), null);
         assertNotNull(query.getSortBy());
-        assertTrue(query.getSortBy().length == 1);
-        assertEquals(query.getSortBy()[0], FF.sort(FF.property("att1"), SortOrder.DESCENDING));
+        assertTrue(QueryUtilities.getSortProperties(query.getSortBy()).length == 1);
+        assertEquals(QueryUtilities.getSortProperties(query.getSortBy())[0], FF.sort(FF.property("att1"), SortOrder.DESCENDING));
         assertEquals(query.getOffset(), 0);
 
     }
@@ -180,7 +177,7 @@ public class QueryTest {
         assertEquals(query.getLimit(), 10l);
         assertEquals(query.getPropertyNames()[0], "att1");
         assertEquals(query.getPropertyNames()[1], "att2");
-        assertEquals(query.getSortBy()[0], FF.sort(FF.property("att1"), SortOrder.DESCENDING));
+        assertEquals(QueryUtilities.getSortProperties(query.getSortBy())[0], FF.sort(FF.property("att1"), SortOrder.DESCENDING));
         assertEquals(query.getOffset(), 5);
 
         query2 = query;
@@ -196,7 +193,7 @@ public class QueryTest {
         assertEquals(query.getSelection(), Filter.include());
         assertEquals(query.getLimit(), -1);
         assertArrayEquals(query.getPropertyNames(), null);
-        assertArrayEquals(query.getSortBy(), new SortProperty[0]);
+        assertArrayEquals(QueryUtilities.getSortProperties(query.getSortBy()), new SortProperty[0]);
         assertEquals(query.getOffset(), 0);
 
         //test copy-------------------------------------------------------------
@@ -211,7 +208,7 @@ public class QueryTest {
         assertEquals(query.getLimit(), 10l);
         assertEquals(query.getPropertyNames()[0], "att1");
         assertEquals(query.getPropertyNames()[1], "att2");
-        assertEquals(query.getSortBy()[0], FF.sort(FF.property("att1"), SortOrder.DESCENDING));
+        assertEquals(QueryUtilities.getSortProperties(query.getSortBy())[0], FF.sort(FF.property("att1"), SortOrder.DESCENDING));
         assertEquals(query.getOffset(), 5);
 
         //test constructor with query-------------------------------------------
@@ -226,7 +223,7 @@ public class QueryTest {
         assertEquals(query.getLimit(), 10l);
         assertEquals(query.getPropertyNames()[0], "att1");
         assertEquals(query.getPropertyNames()[1], "att2");
-        assertEquals(query.getSortBy()[0], FF.sort(FF.property("att1"), SortOrder.DESCENDING));
+        assertEquals(QueryUtilities.getSortProperties(query.getSortBy())[0], FF.sort(FF.property("att1"), SortOrder.DESCENDING));
         assertEquals(query.getOffset(), 5);
 
         //test constructor with name--------------------------------------------
@@ -239,9 +236,8 @@ public class QueryTest {
         assertEquals(query.getSelection(), Filter.include());
         assertEquals(query.getLimit(), -1);
         assertArrayEquals(query.getPropertyNames(), null);
-        assertArrayEquals(query.getSortBy(), new SortProperty[0]);
+        assertArrayEquals(QueryUtilities.getSortProperties(query.getSortBy()), new SortProperty[0]);
         assertEquals(query.getOffset(), 0);
-
     }
 
     @Test

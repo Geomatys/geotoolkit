@@ -26,6 +26,7 @@ import org.geotoolkit.feature.ReprojectMapper;
 import org.geotoolkit.feature.TransformMapper;
 import org.geotoolkit.feature.ViewMapper;
 import org.geotoolkit.geometry.jts.transform.GeometryScaleTransformer;
+import org.geotoolkit.storage.feature.query.QueryUtilities;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.MismatchedFeatureException;
@@ -46,7 +47,7 @@ public class GenericQueryFeatureIterator {
         final long max = remainingParameters.getLimit();
         final Filter filter = remainingParameters.getSelection();
         final String[] properties = remainingParameters.getPropertyNames();
-        final SortProperty[] sorts = remainingParameters.getSortBy();
+        final SortProperty[] sorts = QueryUtilities.getSortProperties(remainingParameters.getSortBy());
         final double[] resampling = remainingParameters.getResolution();
         final CoordinateReferenceSystem crs = remainingParameters.getCoordinateSystemReproject();
         final Hints hints = remainingParameters.getHints();
