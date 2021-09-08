@@ -318,7 +318,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements Resou
         final String[]      queryPropertyNames = gquery.getPropertyNames();
         final Hints         queryHints = gquery.getHints();
         final double[]      queryRes = gquery.getResolution();
-        Filter              queryFilter = gquery.getFilter();
+        Filter              queryFilter = gquery.getSelection();
 
         final String typeName = baseType.getName().tip().toString();
 
@@ -362,7 +362,8 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements Resou
             featureReader = FeatureStreams.emptyReader(schema);
         }
         try {
-            return FeatureStreams.filter(new ShapefileFeatureWriter(this,type.getName().tip().toString(), shpFiles, attReader, featureReader, dbfCharset),gquery.getFilter());
+            return FeatureStreams.filter(new ShapefileFeatureWriter(this,type.getName().tip().toString(),
+                    shpFiles, attReader, featureReader, dbfCharset),gquery.getSelection());
         } catch (Exception ex) {
             try {
                 featureReader.close();

@@ -93,7 +93,7 @@ public class SQLQueryBuilder {
         dialect.encodeSchemaAndTableName(sql, databaseSchema, featureType.getName().tip().toString());
 
         // filtering
-        final Filter filter = query.getFilter();
+        final Filter filter = query.getSelection();
         if (!Filter.include().equals(filter)) {
             //encode filter
             sql.append(" WHERE ");

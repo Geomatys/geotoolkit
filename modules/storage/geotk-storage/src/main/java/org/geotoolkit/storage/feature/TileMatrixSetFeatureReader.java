@@ -31,7 +31,7 @@ import javax.measure.Unit;
 import javax.measure.quantity.Length;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.internal.storage.AbstractFeatureSet;
-import org.apache.sis.internal.storage.query.SimpleQuery;
+import org.apache.sis.internal.storage.query.FeatureQuery;
 import org.apache.sis.measure.Quantities;
 import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CRS;
@@ -73,7 +73,7 @@ public class TileMatrixSetFeatureReader {
         this.type = type;
     }
 
-    public Stream<Feature> features(SimpleQuery query, boolean bln) throws DataStoreException {
+    public Stream<Feature> features(FeatureQuery query, boolean bln) throws DataStoreException {
 
         final List<TileMatrixSet> pyramids = TileMatrices.getTileMatrixSets(resource);
         if (pyramids.isEmpty()) {
@@ -112,7 +112,7 @@ public class TileMatrixSetFeatureReader {
                 throw new DataStoreException(ex.getMessage(), ex);
             }
 
-            Filter filter = query.getFilter();
+            Filter filter = query.getSelection();
             if (filter != null) {
                 JTSEnvelope2D e = new JTSEnvelope2D(pyramid.getCoordinateReferenceSystem());
                 e = (JTSEnvelope2D) ExtractBoundsFilterVisitor.bbox(filter, e);

@@ -438,7 +438,7 @@ public class WFSFeatureSet implements WritableFeatureSet {
 
             type = FeatureTypeExt.createSubType(type, propertyNames);
 
-            final Filter filter = gquery.getFilter();
+            final Filter filter = gquery.getSelection();
             if (filter == null) {
                 request.setFilter(Filter.include());
             } else {

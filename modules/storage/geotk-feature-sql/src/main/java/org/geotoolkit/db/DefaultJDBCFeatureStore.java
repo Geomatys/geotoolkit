@@ -320,7 +320,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
 
 
         //replace any PropertyEqualsTo in true ID filters
-        Filter baseFilter = query.getFilter();
+        Filter baseFilter = query.getSelection();
         baseFilter = (Filter) FIDFixVisitor.INSTANCE.visit(baseFilter);
 
         //split the filter between what can be send and must be handle by code
@@ -506,7 +506,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
 
         final org.geotoolkit.storage.feature.query.Query gquery = (org.geotoolkit.storage.feature.query.Query) query;
         typeCheck(gquery.getTypeName());
-        final Filter filter = gquery.getFilter();
+        final Filter filter = gquery.getSelection();
         final Hints hints = gquery.getHints();
         try {
             if (Filter.exclude().equals(filter)) {

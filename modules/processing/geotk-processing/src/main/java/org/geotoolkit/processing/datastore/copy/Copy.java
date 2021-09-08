@@ -187,8 +187,8 @@ public class Copy extends AbstractProcess {
         FeatureType type = sourceSS.getFeatureStore().getFeatureType(name.toString());
 
         //Change * to featureType default geometry name
-        if (query != null && query.getFilter() != null) {
-            final Filter newFilter = (Filter) new BBOXFilterVisitor(type).visit((Filter) query.getFilter());
+        if (query != null && query.getSelection() != null) {
+            final Filter newFilter = (Filter) new BBOXFilterVisitor(type).visit((Filter) query.getSelection());
             final QueryBuilder builder = new QueryBuilder(query);
             builder.setFilter(newFilter);
             query = builder.buildQuery();

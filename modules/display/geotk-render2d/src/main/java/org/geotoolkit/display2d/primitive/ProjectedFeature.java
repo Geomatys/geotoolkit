@@ -18,7 +18,7 @@ package org.geotoolkit.display2d.primitive;
 
 import java.util.logging.Level;
 import java.util.stream.Stream;
-import org.apache.sis.internal.storage.query.SimpleQuery;
+import org.apache.sis.internal.storage.query.FeatureQuery;
 import org.apache.sis.portrayal.MapLayer;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
@@ -144,8 +144,8 @@ public class ProjectedFeature extends DefaultProjectedObject<Feature> {
         if (fml != null && fml.getData() instanceof FeatureSet) {
             Feature feature;
 
-            final SimpleQuery query = new SimpleQuery();
-            query.setFilter(id);
+            final FeatureQuery query = new FeatureQuery();
+            query.setSelection(id);
             final FeatureSet collection = ((FeatureSet) fml.getData()).subset(query);
             try (Stream<Feature> features = collection.features(false)) {
                 feature = features.findAny().orElse(null);

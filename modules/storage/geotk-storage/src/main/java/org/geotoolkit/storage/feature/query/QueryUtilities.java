@@ -23,7 +23,7 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.measure.Quantity;
 import javax.measure.quantity.Length;
-import org.apache.sis.internal.storage.query.SimpleQuery;
+import org.apache.sis.internal.storage.query.FeatureQuery;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.NullArgumentException;
@@ -47,7 +47,7 @@ public class QueryUtilities {
         return     query.retrieveAllProperties()
                 && query.getCoordinateSystemReproject() == null
                 && query.getCoordinateSystemReproject() == null
-                && query.getFilter() == Filter.include()
+                && query.getSelection() == Filter.include()
                 && query.getLimit() == -1
                 && query.getSortBy() == null
                 && query.getOffset() == 0;
@@ -63,11 +63,11 @@ public class QueryUtilities {
      * @param second
      * @return sub query
      */
-    public static SimpleQuery subQuery(final SimpleQuery original, final SimpleQuery second) {
+    public static FeatureQuery subQuery(final FeatureQuery original, final FeatureQuery second) {
         ArgumentChecks.ensureNonNull("original", original);
         ArgumentChecks.ensureNonNull("second", second);
 
-        final SimpleQuery qb = new SimpleQuery();
+        final FeatureQuery qb = new FeatureQuery();
 
         //use the more restrictive max features field---------------------------
         long max = original.getLimit();
@@ -81,26 +81,26 @@ public class QueryUtilities {
         qb.setLimit(max);
 
         //join attributes names-------------------------------------------------
-        final List<SimpleQuery.Column> columnsOrig = original.getColumns();
-        final List<SimpleQuery.Column> columnsSecond = original.getColumns();
+        final List<FeatureQuery.NamedExpression> columnsOrig = original.getProjection();
+        final List<FeatureQuery.NamedExpression> columnsSecond = original.getProjection();
         if (columnsOrig == null) {
             if (columnsSecond != null) {
-                qb.setColumns(columnsSecond.toArray(new SimpleQuery.Column[0]));
+                qb.setProjection(columnsSecond.toArray(new FeatureQuery.NamedExpression[0]));
             }
         } else {
             throw new UnsupportedOperationException();
         }
 
         //join filters----------------------------------------------------------
-        Filter filter = original.getFilter();
-        Filter filter2 = second.getFilter();
+        Filter filter = original.getSelection();
+        Filter filter2 = second.getSelection();
 
         if ( filter.equals(Filter.include()) ){
             filter = filter2;
         } else if ( !filter2.equals(Filter.include()) ){
             filter = FF.and(filter, filter2);
         }
-        qb.setFilter(filter);
+        qb.setSelection(filter);
 
         //group start index ----------------------------------------------------
         long start = original.getOffset() + second.getOffset();
@@ -176,8 +176,8 @@ public class QueryUtilities {
         }
 
         //join filters----------------------------------------------------------
-        Filter filter = original.getFilter();
-        Filter filter2 = second.getFilter();
+        Filter filter = original.getSelection();
+        Filter filter2 = second.getSelection();
 
         if ( filter.equals(Filter.include()) ){
             filter = filter2;
@@ -300,8 +300,8 @@ public class QueryUtilities {
                 secondQuery.getPropertyNames());
 
         //join filters
-        Filter filter = firstQuery.getFilter();
-        Filter filter2 = secondQuery.getFilter();
+        Filter filter = firstQuery.getSelection();
+        Filter filter2 = secondQuery.getSelection();
 
         if ((filter == null) || filter.equals(Filter.include())) {
             filter = filter2;

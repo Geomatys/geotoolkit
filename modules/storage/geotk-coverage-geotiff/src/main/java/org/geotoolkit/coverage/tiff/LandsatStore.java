@@ -22,7 +22,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -83,7 +82,7 @@ public class LandsatStore extends org.apache.sis.storage.earthobservation.Landsa
     }
 
     @Override
-    public Collection<org.apache.sis.storage.Resource> components() throws DataStoreException {
+    public List components() throws DataStoreException {
         return Collections.unmodifiableList(resources);
     }
 

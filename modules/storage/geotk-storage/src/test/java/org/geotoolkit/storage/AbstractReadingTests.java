@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 import org.apache.sis.internal.feature.AttributeConvention;
-import org.apache.sis.internal.storage.query.SimpleQuery;
+import org.apache.sis.internal.storage.query.FeatureQuery;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.IllegalNameException;
@@ -204,8 +204,8 @@ public abstract class AbstractReadingTests {
 
         {
             //check only id query
-            final SimpleQuery query = new SimpleQuery();
-            query.setColumns(new SimpleQuery.Column(FF.property(AttributeConvention.IDENTIFIER)));
+            final FeatureQuery query = new FeatureQuery();
+            query.setProjection(new FeatureQuery.NamedExpression(FF.property(AttributeConvention.IDENTIFIER)));
             FeatureSet subset = featureSet.subset(query);
             FeatureType limited = subset.getType();
             assertNotNull(limited);
@@ -222,8 +222,8 @@ public abstract class AbstractReadingTests {
             for (final PropertyType desc : properties) {
                 if (desc instanceof Operation) continue;
 
-                final SimpleQuery sq = new SimpleQuery();
-                sq.setColumns(new SimpleQuery.Column(FF.property(desc.getName().tip().toString())));
+                final FeatureQuery sq = new FeatureQuery();
+                sq.setProjection(new FeatureQuery.NamedExpression(FF.property(desc.getName().tip().toString())));
 
                 subset = featureSet.subset(sq);
                 limited = subset.getType();
@@ -260,7 +260,7 @@ public abstract class AbstractReadingTests {
                 continue;
             }
 
-            final SimpleQuery query = new SimpleQuery();
+            final FeatureQuery query = new FeatureQuery();
             query.setSortBy(FF.sort(FF.property(desc.getName().tip().toString()), SortOrder.ASCENDING));
             FeatureSet subset = featureSet.subset(query);
 
@@ -327,7 +327,7 @@ public abstract class AbstractReadingTests {
                 }
             }
             //skip the first element
-            final SimpleQuery query = new SimpleQuery();
+            final FeatureQuery query = new FeatureQuery();
             query.setOffset(1);
 
             try (Stream<Feature> stream = featureSet.subset(query).features(false)) {
@@ -343,7 +343,7 @@ public abstract class AbstractReadingTests {
 
         //max ------------------------------------------------------------------
         if(candidate.size > 1){
-            final SimpleQuery query = new SimpleQuery();
+            final FeatureQuery query = new FeatureQuery();
             query.setLimit(1);
 
             int i = 0;
@@ -378,14 +378,14 @@ public abstract class AbstractReadingTests {
         }
 
         Set<ResourceId> remaining = new HashSet<>(ids);
-        final SimpleQuery query = new SimpleQuery();
+        final FeatureQuery query = new FeatureQuery();
         final Filter f;
         switch (ids.size()) {
             case 0: f = Filter.exclude(); break;
             case 1: f = ids.iterator().next(); break;
             default: f = FF.or(ids); break;
         }
-        query.setFilter(f);
+        query.setSelection(f);
         try (Stream<Feature> stream = featureSet.subset(query).features(false)) {
             final Iterator<Feature> ite = stream.iterator();
             while (ite.hasNext()) {

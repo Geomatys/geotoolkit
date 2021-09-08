@@ -6,7 +6,7 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
-import org.apache.sis.internal.storage.query.SimpleQuery;
+import org.apache.sis.internal.storage.query.FeatureQuery;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
@@ -41,12 +41,12 @@ public class FeatureStoreReadingDemo {
 
 
             //advanced querying -------------------------------------------------------------------
-            final SimpleQuery qb = new SimpleQuery();
-            qb.setColumns(
-                    new SimpleQuery.Column(FF.function("ST_Transform", FF.property("the_geom"), FF.literal("EPSG:3395")) ),
-                    new SimpleQuery.Column(FF.property("LONG_NAME")),
-                    new SimpleQuery.Column(FF.property("SQKM")));
-            qb.setFilter(FF.equal(FF.property("CURR_TYPE"), FF.literal("Norwegian Krone")));
+            final FeatureQuery qb = new FeatureQuery();
+            qb.setProjection(
+                    new FeatureQuery.NamedExpression(FF.function("ST_Transform", FF.property("the_geom"), FF.literal("EPSG:3395")) ),
+                    new FeatureQuery.NamedExpression(FF.property("LONG_NAME")),
+                    new FeatureQuery.NamedExpression(FF.property("SQKM")));
+            qb.setSelection(FF.equal(FF.property("CURR_TYPE"), FF.literal("Norwegian Krone")));
 
             FeatureSet collection = fs.subset(qb);
             System.out.println(collection.getType());

@@ -188,7 +188,7 @@
 
     <!-- associated projects dependencies -->
     <geoapi.version>4.0-M17</geoapi.version>
-    <sis.version>2.0-M0079</sis.version>
+    <sis.version>2.0-M0080</sis.version>
     <sis.build.helper.version>0.8</sis.build.helper.version>
     <sis.non-free.version>1.0</sis.non-free.version>
 
@@ -974,7 +974,7 @@
         <enabled>false</enabled>
       </snapshots>
     </repository>
-    <!-- this repository is retrieved transitively with the wrong protocol, 
+    <!-- this repository is retrieved transitively with the wrong protocol,
     as maven does not follow redirection we declare it here-->
     <repository>
       <id>jaspersoft</id>
