@@ -23,7 +23,7 @@ import java.util.List;
 import javax.measure.Quantity;
 import javax.measure.quantity.Length;
 import org.apache.sis.internal.feature.AttributeConvention;
-import org.apache.sis.internal.storage.query.FeatureQuery;
+import org.apache.sis.storage.FeatureQuery;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.filter.FilterUtilities;
 import org.locationtech.jts.geom.Geometry;
@@ -96,8 +96,9 @@ public final class QueryBuilder {
         this.crs = query.getCoordinateSystemReproject();
         this.resolution = (query.getResolution()==null)?null:query.getResolution().clone();
         this.filter = query.getSelection();
+        if (filter == null) filter = Filter.include();
         this.hints = query.getHints();
-        this.maxFeatures = query.getLimit();
+        this.maxFeatures = query.getLimit().orElse(-1);
         this.properties = query.getPropertyNames();
         this.sortBy = QueryUtilities.getSortProperties(query.getSortBy());
         this.startIndex = query.getOffset();
@@ -119,6 +120,7 @@ public final class QueryBuilder {
     }
 
     public Filter getFilter() {
+        if (filter == null) filter = Filter.include();
         return filter;
     }
 

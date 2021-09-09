@@ -44,8 +44,9 @@ public class GenericQueryFeatureIterator {
     public static FeatureReader wrap(FeatureReader reader, final Query remainingParameters) throws DataStoreException{
 
         final long start = remainingParameters.getOffset();
-        final long max = remainingParameters.getLimit();
-        final Filter filter = remainingParameters.getSelection();
+        final long max = remainingParameters.getLimit().orElse(-1);
+        Filter filter = remainingParameters.getSelection();
+        if (filter == null) filter = Filter.include();
         final String[] properties = remainingParameters.getPropertyNames();
         final SortProperty[] sorts = QueryUtilities.getSortProperties(remainingParameters.getSortBy());
         final double[] resampling = remainingParameters.getResolution();

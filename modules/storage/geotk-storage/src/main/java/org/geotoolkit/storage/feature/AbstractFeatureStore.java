@@ -580,7 +580,8 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
         if (!(query instanceof org.geotoolkit.storage.feature.query.Query))  throw new UnsupportedQueryException();
 
         final org.geotoolkit.storage.feature.query.Query gquery = (org.geotoolkit.storage.feature.query.Query) query;
-        final Filter filter = gquery.getSelection();
+        Filter filter = gquery.getSelection();
+        if (filter == null) filter = Filter.include();
         final String groupName = gquery.getTypeName();
         if (Filter.exclude().equals(filter) ) {
             return GenericFeatureWriter.wrapAppend(this, groupName);

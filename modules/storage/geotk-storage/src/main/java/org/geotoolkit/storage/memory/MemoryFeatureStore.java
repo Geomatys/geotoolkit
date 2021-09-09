@@ -530,7 +530,8 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
         }
 
         //we can handle id filter
-        final Filter filter = gquery.getSelection();
+        Filter filter = gquery.getSelection();
+        if (filter == null) filter = Filter.include();
         final QueryBuilder remaining = new QueryBuilder(gquery);
 
         final Iterator<? extends Feature> ite;

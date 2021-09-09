@@ -226,11 +226,17 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection{
         return false;
     }
 
+    private Filter getSelection() {
+        Filter filter = query.getSelection();
+        if (filter == null) filter = Filter.include();
+        return filter;
+    }
+
     @Override
     public void clear() {
         if(isWritable()){
             try {
-                getSession().removeFeatures(query.getTypeName(), query.getSelection());
+                getSession().removeFeatures(query.getTypeName(), getSelection());
             } catch (DataStoreException ex) {
                 throw new FeatureStoreRuntimeException(ex);
             }
@@ -245,9 +251,9 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection{
     @Override
     public void update(final Filter filter, final Map<String,?> values) throws DataStoreException {
         if (filter == Filter.include()) {
-            getSession().updateFeatures(query.getTypeName(), query.getSelection(), values);
+            getSession().updateFeatures(query.getTypeName(), getSelection(), values);
         }else{
-            getSession().updateFeatures(query.getTypeName(), FilterUtilities.FF.and((Filter) query.getSelection(), filter),values);
+            getSession().updateFeatures(query.getTypeName(), FilterUtilities.FF.and(getSelection(), filter),values);
         }
     }
 
@@ -257,9 +263,9 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection{
     @Override
     public void remove(final Filter filter) throws DataStoreException {
         if (filter == Filter.include()) {
-            getSession().removeFeatures(query.getTypeName(),query.getSelection());
+            getSession().removeFeatures(query.getTypeName(), getSelection());
         }else{
-            getSession().removeFeatures(query.getTypeName(), FilterUtilities.FF.and((Filter) query.getSelection(), filter));
+            getSession().removeFeatures(query.getTypeName(), FilterUtilities.FF.and(getSelection(), filter));
         }
     }
 }

@@ -96,7 +96,7 @@ public class PostgresQueryBuilder extends SQLQueryBuilder{
         encodeSortBy(featureType, QueryUtilities.getSortProperties(query.getSortBy()), key, sql);
 
         // finally encode limit/offset, if necessary
-        dialect.encodeLimitOffset(sql, query.getLimit() == -1 ? null : (int) query.getLimit(), (int) query.getOffset());
+        dialect.encodeLimitOffset(sql, !query.getLimit().isPresent() ? null : (int) query.getLimit().getAsLong(), (int) query.getOffset());
 
         return sql.toString();
     }

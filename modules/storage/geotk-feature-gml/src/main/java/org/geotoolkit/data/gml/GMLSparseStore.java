@@ -34,7 +34,6 @@ import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.storage.ResourceOnFileSystem;
-import org.apache.sis.internal.storage.query.FeatureQuery;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
@@ -43,10 +42,7 @@ import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
-import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.IllegalNameException;
-import org.apache.sis.storage.Query;
-import org.apache.sis.storage.UnsupportedQueryException;
 import org.apache.sis.storage.WritableFeatureSet;
 import org.geotoolkit.storage.feature.FeatureReader;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
@@ -211,14 +207,6 @@ public class GMLSparseStore extends DataStore implements WritableFeatureSet, Res
     public FeatureType getFeatureType(String name) throws DataStoreException, IllegalNameException {
         getType(); //force loading catalogue
         return catalog.get(null, name);
-    }
-
-    @Override
-    public FeatureSet subset(Query query) throws UnsupportedQueryException, DataStoreException {
-        if (query instanceof FeatureQuery) {
-            return ((FeatureQuery) query).execute(this);
-        }
-        return WritableFeatureSet.super.subset(query);
     }
 
     @Override

@@ -23,7 +23,7 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.measure.Quantity;
 import javax.measure.quantity.Length;
-import org.apache.sis.internal.storage.query.FeatureQuery;
+import org.apache.sis.storage.FeatureQuery;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.NullArgumentException;
@@ -48,8 +48,8 @@ public class QueryUtilities {
         return     query.retrieveAllProperties()
                 && query.getCoordinateSystemReproject() == null
                 && query.getCoordinateSystemReproject() == null
-                && query.getSelection() == Filter.include()
-                && query.getLimit() == -1
+                && (query.getSelection() == null || query.getSelection() == Filter.include())
+                && !query.getLimit().isPresent()
                 && query.getSortBy() == null
                 && query.getOffset() == 0;
     }
@@ -67,22 +67,22 @@ public class QueryUtilities {
         final FeatureQuery qb = new FeatureQuery();
 
         //use the more restrictive max features field---------------------------
-        long max = original.getLimit();
-        if (second.getLimit() != -1) {
+        long max = original.getLimit().orElse(-1);
+        if (second.getLimit().isPresent()) {
             if (max == -1) {
-                max = second.getLimit();
+                max = second.getLimit().getAsLong();
             } else {
-                max = Math.min(max, second.getLimit());
+                max = Math.min(max, second.getLimit().getAsLong());
             }
         }
         qb.setLimit(max);
 
         //join attributes names-------------------------------------------------
-        final List<FeatureQuery.NamedExpression> columnsOrig = original.getProjection();
-        final List<FeatureQuery.NamedExpression> columnsSecond = original.getProjection();
+        final FeatureQuery.NamedExpression[] columnsOrig = original.getProjection();
+        final FeatureQuery.NamedExpression[] columnsSecond = original.getProjection();
         if (columnsOrig == null) {
             if (columnsSecond != null) {
-                qb.setProjection(columnsSecond.toArray(new FeatureQuery.NamedExpression[0]));
+                qb.setProjection(columnsSecond);
             }
         } else {
             throw new UnsupportedOperationException();
@@ -91,6 +91,8 @@ public class QueryUtilities {
         //join filters----------------------------------------------------------
         Filter filter = original.getSelection();
         Filter filter2 = second.getSelection();
+        if (filter == null) filter = Filter.include();
+        if (filter2 == null) filter2 = Filter.include();
 
         if ( filter.equals(Filter.include()) ){
             filter = filter2;
@@ -145,12 +147,12 @@ public class QueryUtilities {
         qb.setTypeName(original.getTypeName());
 
         //use the more restrictive max features field---------------------------
-        long max = original.getLimit();
-        if (second.getLimit() != -1) {
+        long max = original.getLimit().orElse(-1);
+        if (second.getLimit().isPresent()) {
             if(max == -1){
-                max = second.getLimit();
+                max = second.getLimit().getAsLong();
             }else{
-                max = Math.min(max, second.getLimit());
+                max = Math.min(max, second.getLimit().getAsLong());
             }
         }
         qb.setLimit(max);
@@ -171,6 +173,8 @@ public class QueryUtilities {
         //join filters----------------------------------------------------------
         Filter filter = original.getSelection();
         Filter filter2 = second.getSelection();
+        if (filter == null) filter = Filter.include();
+        if (filter2 == null) filter2 = Filter.include();
 
         if ( filter.equals(Filter.include()) ){
             filter = filter2;
@@ -285,8 +289,8 @@ public class QueryUtilities {
 
         //none of the queries equals Query.ALL, mix them
         //use the more restrictive max features field
-        final long maxFeatures = Math.min(firstQuery.getLimit(),
-                secondQuery.getLimit());
+        final long maxFeatures = Math.min(firstQuery.getLimit().orElse(-1),
+                secondQuery.getLimit().orElse(-1));
 
         //join attributes names
         final String[] propNames = joinAttributes(firstQuery.getPropertyNames(),
