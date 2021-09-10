@@ -90,7 +90,7 @@ public class IsolineSymbolizerRenderer  extends AbstractCoverageSymbolizerRender
                 double[] intervales = symbol.getSteps();
 
                 final CoverageQuery query = new CoverageQuery();
-                query.setDomain(renderingContext.getGridGeometry());
+                query.setSelection(renderingContext.getGridGeometry());
                 query.setSourceDomainExpansion(2);
                 final GridCoverageResource res = coverageReference.subset(query);
 
