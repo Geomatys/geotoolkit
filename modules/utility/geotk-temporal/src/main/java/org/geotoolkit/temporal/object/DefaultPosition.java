@@ -26,7 +26,7 @@
 //import javax.xml.bind.annotation.XmlRootElement;
 //import javax.xml.bind.annotation.XmlType;
 //import javax.xml.bind.annotation.XmlValue;
-//import org.apache.sis.util.iso.SimpleInternationalString;
+//import org.apache.sis.util.SimpleInternationalString;
 //import org.opengis.temporal.CalendarDate;
 //import org.opengis.temporal.DateAndTime;
 //import org.opengis.temporal.JulianDate;

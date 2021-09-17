@@ -44,7 +44,7 @@ import org.apache.sis.metadata.MetadataStandard;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.util.Utilities;
-import org.apache.sis.util.iso.SimpleInternationalString;
+import org.apache.sis.util.SimpleInternationalString;
 import org.apache.sis.xml.IdentifierMap;
 import org.apache.sis.xml.IdentifierSpace;
 import org.opengis.metadata.Identifier;

@@ -37,7 +37,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import org.apache.sis.internal.xml.LegacyNamespaces;
-import org.apache.sis.util.iso.DefaultInternationalString;
+import org.apache.sis.util.DefaultInternationalString;
 
 import org.geotoolkit.inspire.xml.vs.ExtendedCapabilitiesType;
 import org.geotoolkit.inspire.xml.vs.LanguagesType;
@@ -55,7 +55,7 @@ import org.apache.sis.metadata.iso.quality.DefaultConformanceResult;
 import org.apache.sis.util.iso.DefaultNameFactory;
 import org.geotoolkit.service.ServiceType;
 import org.geotoolkit.temporal.object.DefaultPeriod;
-import org.apache.sis.util.iso.SimpleInternationalString;
+import org.apache.sis.util.SimpleInternationalString;
 import org.geotoolkit.wms.xml.v111.BoundingBox;
 import org.geotoolkit.wms.xml.v130.Capability;
 import org.geotoolkit.wmsc.xml.v111.TileSet;

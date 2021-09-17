@@ -36,7 +36,7 @@ import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.process.ProcessingRegistry;
 import org.geotoolkit.processing.chain.model.Chain;
 import org.geotoolkit.processing.chain.model.Parameter;
-import org.apache.sis.util.iso.SimpleInternationalString;
+import org.apache.sis.util.SimpleInternationalString;
 import org.geotoolkit.processing.chain.model.ParameterFormat;
 import org.geotoolkit.processing.chain.model.StringList;
 import org.geotoolkit.processing.chain.model.StringMap;

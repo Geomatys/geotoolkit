@@ -20,7 +20,7 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.MissingResourceException;
 import org.opengis.util.InternationalString;
-import org.apache.sis.util.iso.ResourceInternationalString;
+import org.apache.sis.util.ResourceInternationalString;
 import org.apache.sis.util.resources.IndexedResourceBundle;
 
 
@@ -245,7 +245,7 @@ public final class Bundle extends IndexedResourceBundle {
      *       {@code toString(Locale)} is invoked.
      */
     public static InternationalString formatInternational(final short key, final Object arg) {
-        return new org.apache.sis.util.iso.SimpleInternationalString(format(key, arg));
+        return new org.apache.sis.util.SimpleInternationalString(format(key, arg));
     }
 
     /**
@@ -261,7 +261,7 @@ public final class Bundle extends IndexedResourceBundle {
      *       {@code toString(Locale)} is invoked.
      */
     public static InternationalString formatInternational(final short key, final Object... args) {
-        return new org.apache.sis.util.iso.SimpleInternationalString(format(key, args));
+        return new org.apache.sis.util.SimpleInternationalString(format(key, args));
     }
 
     /**

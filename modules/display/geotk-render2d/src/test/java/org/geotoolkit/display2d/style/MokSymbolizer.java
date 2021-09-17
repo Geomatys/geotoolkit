@@ -22,7 +22,7 @@ import java.util.Map;
 import org.geotoolkit.style.AbstractSymbolizer;
 import org.geotoolkit.style.DefaultDescription;
 import org.apache.sis.measure.Units;
-import org.apache.sis.util.iso.SimpleInternationalString;
+import org.apache.sis.util.SimpleInternationalString;
 import org.opengis.filter.Expression;
 import org.opengis.style.ExtensionSymbolizer;
 import org.opengis.style.StyleVisitor;

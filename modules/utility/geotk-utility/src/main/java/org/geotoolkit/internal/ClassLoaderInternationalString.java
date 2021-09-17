@@ -18,7 +18,7 @@ package org.geotoolkit.internal;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
-import org.apache.sis.util.iso.ResourceInternationalString;
+import org.apache.sis.util.ResourceInternationalString;
 
 /**
  * Subclass of ResourceInternationalString with a configurable ClassLoader.

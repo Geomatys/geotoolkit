@@ -25,7 +25,7 @@ import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.test.TestCase;
-import org.apache.sis.util.iso.SimpleInternationalString;
+import org.apache.sis.util.SimpleInternationalString;
 import org.geotoolkit.internal.geojson.FeatureTypeUtils;
 import org.geotoolkit.internal.geojson.GeoJSONUtils;
 import static org.junit.Assert.*;

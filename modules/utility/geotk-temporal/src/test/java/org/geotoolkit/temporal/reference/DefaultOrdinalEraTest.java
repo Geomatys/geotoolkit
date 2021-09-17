@@ -20,7 +20,7 @@ package org.geotoolkit.temporal.reference;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
-import org.apache.sis.util.iso.SimpleInternationalString;
+import org.apache.sis.util.SimpleInternationalString;
 import org.geotoolkit.temporal.factory.DefaultTemporalFactory;
 import org.junit.After;
 import org.junit.Before;

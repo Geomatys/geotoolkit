@@ -20,7 +20,7 @@ package org.geotoolkit.temporal.object;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import org.apache.sis.util.iso.SimpleInternationalString;
+import org.apache.sis.util.SimpleInternationalString;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.NullArgumentException;
