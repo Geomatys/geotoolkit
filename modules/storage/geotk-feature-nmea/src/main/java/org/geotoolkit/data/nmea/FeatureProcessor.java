@@ -1,3 +1,19 @@
+/*
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2013-2021, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
 package org.geotoolkit.data.nmea;
 
 import java.time.LocalDate;
@@ -14,6 +30,7 @@ import net.sf.marineapi.nmea.parser.UnsupportedSentenceException;
 import net.sf.marineapi.nmea.sentence.DateSentence;
 import net.sf.marineapi.nmea.sentence.DepthSentence;
 import net.sf.marineapi.nmea.sentence.GGASentence;
+import net.sf.marineapi.nmea.sentence.HeadingSentence;
 import net.sf.marineapi.nmea.sentence.PositionSentence;
 import net.sf.marineapi.nmea.sentence.RMCSentence;
 import net.sf.marineapi.nmea.sentence.Sentence;
@@ -22,14 +39,7 @@ import net.sf.marineapi.nmea.sentence.TimeSentence;
 import net.sf.marineapi.nmea.util.Date;
 import net.sf.marineapi.nmea.util.Position;
 import net.sf.marineapi.nmea.util.Time;
-import static org.geotoolkit.data.nmea.NMEAStore.ALT_NAME;
-import static org.geotoolkit.data.nmea.NMEAStore.DATE_NAME;
-import static org.geotoolkit.data.nmea.NMEAStore.DEPTH_NAME;
-import static org.geotoolkit.data.nmea.NMEAStore.GEOM_NAME;
-import static org.geotoolkit.data.nmea.NMEAStore.LOGGER;
-import static org.geotoolkit.data.nmea.NMEAStore.NMEA_TYPE;
-import static org.geotoolkit.data.nmea.NMEAStore.SPEED_NAME;
-import static org.geotoolkit.data.nmea.NMEAStore.TIME_NAME;
+import static org.geotoolkit.data.nmea.NMEAStore.*;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
@@ -200,10 +210,12 @@ class FeatureProcessor {
         private static final int DATE = 5;
         private static final int TIME = 6;
         private static final int ZONE = 7;
+        private static final int HEADING = 8;
 
-        private static final int ENCODED_SIZE = 8;
+        private static final int ENCODED_SIZE = 9;
 
         final boolean isSpatialOrTemporalUpdate;
+        final boolean isTrueNorth;
 
         private final double[] encodedInfo;
 
@@ -211,6 +223,7 @@ class FeatureProcessor {
             encodedInfo = new double[ENCODED_SIZE];
             Arrays.fill(encodedInfo, Double.NaN);
             isSpatialOrTemporalUpdate = false;
+            isTrueNorth = false;
         }
 
         private GlobalPositioningState(final GlobalPositioningState source, final Sentence newInfo) {
@@ -268,6 +281,13 @@ class FeatureProcessor {
                     value[ZONE] = offset;
                 }
             }
+            if (newInfo instanceof HeadingSentence) {
+                HeadingSentence heading = (HeadingSentence) newInfo;
+                value[HEADING] = heading.getHeading();
+                isTrueNorth = heading.isTrue();
+            } else {
+                isTrueNorth = source.isTrueNorth;
+            }
 
             encodedInfo = value;
             isSpatialOrTemporalUpdate = spaceTimeUpdate;
@@ -308,13 +328,17 @@ class FeatureProcessor {
 
         Feature toFeature() {
             final Feature f = NMEA_TYPE.newInstance();
-            getLocation().ifPresent(l -> f.setPropertyValue(GEOM_NAME.toString(), l));
-            getDate().ifPresent(d -> f.setPropertyValue(DATE_NAME.toString(), d));
-            getTime().ifPresent(t -> f.setPropertyValue(TIME_NAME.toString(), t));
+            getLocation().ifPresent(l -> f.setPropertyValue(RAW_GEOM_NAME, l));
+            getDate().ifPresent(d -> f.setPropertyValue(RAW_DATE_NAME, d));
+            getTime().ifPresent(t -> f.setPropertyValue(RAW_TIME_NAME, t));
 
-            if (Double.isFinite(encodedInfo[ALT])) f.setPropertyValue(ALT_NAME.toString(), encodedInfo[ALT]);
-            if (Double.isFinite(encodedInfo[SPEED])) f.setPropertyValue(SPEED_NAME.toString(), encodedInfo[SPEED]);
-            if (Double.isFinite(encodedInfo[DEPTH])) f.setPropertyValue(DEPTH_NAME.toString(), encodedInfo[DEPTH]);
+            if (Double.isFinite(encodedInfo[ALT])) f.setPropertyValue(RAW_ALT_NAME, encodedInfo[ALT]);
+            if (Double.isFinite(encodedInfo[SPEED])) f.setPropertyValue(RAW_SPEED_NAME, encodedInfo[SPEED]);
+            if (Double.isFinite(encodedInfo[DEPTH])) f.setPropertyValue(RAW_DEPTH_NAME, encodedInfo[DEPTH]);
+            if (Double.isFinite(encodedInfo[HEADING])) {
+                f.setPropertyValue(RAW_HEADING_NAME, encodedInfo[HEADING]);
+                f.setPropertyValue(RAW_IS_TRUE_NORTH_NAME, isTrueNorth);
+            }
 
             return f;
         }
