@@ -25,6 +25,7 @@ import org.geotoolkit.data.nmea.Discovery;
 import org.geotoolkit.data.nmea.FlowableFeatureSet;
 
 import reactor.core.Disposable;
+import reactor.core.publisher.Flux;
 
 /**
  * Connect and activate a GPS on COM/USB port first.
@@ -40,13 +41,13 @@ public class NMEASerialPortReaderDemo {
 
     public static void main(String[] args) throws Exception {
         // This component allows for serial port scan
-        final Discovery serial = Discovery.serial();
+        final Discovery<?> serial = Discovery.serial();
 
         // On trigger, a scan of serial ports will be started. A dataset can be returned for each found port emiting nmea messages.
         final Disposable subscriber = serial.discover()
                 // For demo/simplicity, we just keep the first encountered communication channel
                 .next()
-                .flatMapMany(FlowableFeatureSet::flow)
+                .flatMapMany(dataset -> Flux.using(() -> dataset, FlowableFeatureSet::flow, FlowableFeatureSet::close))
                 .subscribe(
                         // On port acquisition, we can define what to do with received messages. Here, just log them.
                         feature -> LOGGER.info(String.format("Next message:%n%s", feature)),

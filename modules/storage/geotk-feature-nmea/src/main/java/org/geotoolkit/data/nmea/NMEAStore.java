@@ -18,12 +18,10 @@ package org.geotoolkit.data.nmea;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.OffsetTime;
 import java.util.Optional;
@@ -74,13 +72,32 @@ public class NMEAStore extends DataStore implements FeatureSet, ResourceOnFileSy
 
     static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data.nmea");
 
-    public final static GenericName TYPE_NAME  = NamesExt.create(null, "NMEA POINT");
-    public final static GenericName GEOM_NAME  = NamesExt.create(null, "Location");
-    public final static GenericName ALT_NAME   = NamesExt.create(null, "Altitude");
-    public final static GenericName DEPTH_NAME = NamesExt.create(null, "Sea-depth");
-    public final static GenericName DATE_NAME  = NamesExt.create(null, "Date");
-    public final static GenericName TIME_NAME  = NamesExt.create(null, "Time");
-    public final static GenericName SPEED_NAME = NamesExt.create(null, "Speed");
+    // INTERNAL USE OPTIMISATION: avoid calling synchronized "toString" method on local names.
+    public final static String RAW_TYPE_NAME  = "NMEA POINT";
+    public final static String RAW_GEOM_NAME  = "Location";
+    public final static String RAW_ALT_NAME   = "Altitude";
+    public final static String RAW_DEPTH_NAME = "Sea-depth";
+    public final static String RAW_DATE_NAME  = "Date";
+    public final static String RAW_TIME_NAME  = "Time";
+    public final static String RAW_SPEED_NAME = "Speed";
+    public final static String RAW_HEADING_NAME = "Heading";
+    public final static String RAW_IS_TRUE_NORTH_NAME = "IsTrueNorth";
+
+    public final static GenericName TYPE_NAME  = NamesExt.create(null, RAW_TYPE_NAME);
+    public final static GenericName GEOM_NAME  = NamesExt.create(null, RAW_GEOM_NAME);
+    public final static GenericName ALT_NAME   = NamesExt.create(null, RAW_ALT_NAME);
+    public final static GenericName DEPTH_NAME = NamesExt.create(null, RAW_DEPTH_NAME);
+    public final static GenericName DATE_NAME  = NamesExt.create(null, RAW_DATE_NAME);
+    public final static GenericName TIME_NAME  = NamesExt.create(null, RAW_TIME_NAME);
+    public final static GenericName SPEED_NAME = NamesExt.create(null, RAW_SPEED_NAME);
+    /**
+     * Heading attribute, in degree, origin North and direction clockwise.
+     */
+    public final static GenericName HEADING_NAME = NamesExt.create(null, RAW_HEADING_NAME);
+    /**
+     * True if {@link #HEADING_NAME heading attribute} origin is true north, false if it is magnetic north.
+     */
+    public final static GenericName IS_TRUE_NORTH_NAME = NamesExt.create(null, RAW_IS_TRUE_NORTH_NAME);
 
     /**
      * Feature type to use for nmea data encapsulation. Only a subset of available signals are transcripted for now:
@@ -101,8 +118,13 @@ public class NMEAStore extends DataStore implements FeatureSet, ResourceOnFileSy
         builder.addAttribute(Double.class).setName(DEPTH_NAME);
         builder.addAttribute(LocalDate.class).setName(DATE_NAME);
         builder.addAttribute(OffsetTime.class).setName(TIME_NAME);
-        final Unit knots = Units.NAUTICAL_MILE.divide(Units.HOUR);
+        final Unit<?> knots = Units.NAUTICAL_MILE.divide(Units.HOUR);
         builder.addAttribute(Double.class).setName(SPEED_NAME).addCharacteristic(Unit.class).setName("unit").setDefaultValue(knots);
+        builder.addAttribute(Double.class).setName(HEADING_NAME)
+                .setDescription("Heading angle in degrees, from 0 to 360. North origin, clowckwise.")
+                .addCharacteristic(Unit.class).setName("unit").setDefaultValue(Units.DEGREE);
+        builder.addAttribute(Boolean.class).setName(IS_TRUE_NORTH_NAME)
+                .setDescription("True if heading origin represents True North, False if it is magnetic north.");
         NMEA_TYPE = builder.build();
     }
 
@@ -157,31 +179,27 @@ public class NMEAStore extends DataStore implements FeatureSet, ResourceOnFileSy
     }
 
     @Override
-    public Stream<Feature> features(boolean bln) throws DataStoreException {
-        try {
-            final BufferedReader fileReader = Files.newBufferedReader(file);
-            final Stream<Feature> stream = StreamSupport.stream(new FileSpliterator(fileReader), false);
-            stream.onClose(() -> {
-                try {
-                    fileReader.close();
-                } catch (IOException e) {
-                    LOGGER.log(Level.WARNING, "Cannot free file handle", e);
-                }
-            });
-            return stream;
-        } catch (IOException ex) {
-            throw new DataStoreException(ex.getLocalizedMessage(), ex);
-        }
-    }
-
-    private InputStream openConnection() throws IOException {
-        final URI source = parameters.parameter(NMEAProvider.PATH.getName().getCode()).valueFile();
-        final Path tmpFile = Paths.get(source);
-        return Files.newInputStream(tmpFile);
+    public Stream<Feature> features(boolean bln) {
+        return Stream.of(file)
+                .flatMap(file -> {
+                    try {
+                        final BufferedReader fileReader = Files.newBufferedReader(file);
+                        return Stream.of(fileReader).onClose(() -> {
+                            try {
+                                fileReader.close();
+                            } catch (IOException e) {
+                                LOGGER.log(Level.WARNING, "Cannot free file handle", e);
+                            }
+                        });
+                    } catch (IOException e) {
+                        throw new UncheckedIOException(e);
+                    }
+                })
+                .flatMap(reader -> StreamSupport.stream(new FileSpliterator(reader), false));
     }
 
     @Override
-    public Path[] getComponentFiles() throws DataStoreException {
+    public Path[] getComponentFiles() {
         return new Path[]{file};
     }
 
