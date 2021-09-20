@@ -216,13 +216,15 @@ public final class GeoJSONUtils extends Static {
      * @throws IllegalStateException If we've found more than one geometry.
      */
     public static Optional<Object> getDefaultGeometryValue(Feature input) throws PropertyNotFoundException, IllegalStateException {
-        Object geometry;
+        Object geometry = null;
         try {
             geometry = input.getPropertyValue(AttributeConvention.GEOMETRY);
         } catch (PropertyNotFoundException ex) {
             try {
                 final PropertyType geomType = getDefaultGeometry(input.getType());
                 geometry = input.getPropertyValue(geomType.getName().toString());
+            } catch (PropertyNotFoundException exx) {
+                // No geometric property
             } catch (RuntimeException e) {
                 e.addSuppressed(ex);
                 throw e;
