@@ -7,7 +7,7 @@ import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.sis.internal.system.OS;
+import org.geotoolkit.internal.io.OS;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
