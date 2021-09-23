@@ -33,10 +33,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -107,7 +103,7 @@ public class ZipUtilitiesTest extends org.geotoolkit.test.TestBase {
 
         ZipUtilities.unzip(archive.toPath(), extract.toPath(), CHECKSUM);
 
-        final List<String> files = new ArrayList<String>();
+        final List<String> files = new ArrayList<>();
         for (String file : extract.list()) {
             files.add(file);
         }
@@ -203,19 +199,36 @@ public class ZipUtilitiesTest extends org.geotoolkit.test.TestBase {
     @Test
     public void nioTest() throws IOException {
 
-        Path file1 = Files.createTempFile(null, "_geotk1");
-        Path dir1 = Files.createTempDirectory(null);
-        Path dir2 = Files.createTempDirectory(null);
-        Path file2 = Files.createTempFile(dir1, null, "_geotk2");
-        Path file3 = Files.createTempFile(dir2, null, "_geotk3");
+        Path tempDir = Files.createTempDirectory("nioTest");
+
+        Path file1 = tempDir.resolve("geotk1.txt");
+        Files.createFile(file1);
+
+        Path dir1 = tempDir.resolve("sub_dir1");
+        Files.createDirectory(dir1);
+        Path dir2 = tempDir.resolve("sub_dir2");
+        Files.createDirectory(dir2);
+
+        Path file2 = dir1.resolve("geotk2.txt");
+        Files.createFile(file2);
+        Path file3 = dir2.resolve("geotk3.txt");
+        Files.createFile(file3);
+
         Path archive = Files.createTempFile("archive", ".zip");
 
-        Path targetDir = Files.createTempDirectory(null);
+        Path targetDir = Files.createTempDirectory("target");
 
         ZipUtilities.zipNIO(archive, file1, dir1, dir2);
         ZipUtilities.unzipNIO(archive, targetDir, true);
 
         List<String> zipContent = listContent(archive);
+        assertEquals(5, zipContent.size());
+        assertTrue(zipContent.contains("sub_dir1/"));
+        assertTrue(zipContent.contains("sub_dir2/"));
+        assertTrue(zipContent.contains("geotk1.txt"));
+        assertTrue(zipContent.contains("sub_dir1/geotk2.txt"));
+        assertTrue(zipContent.contains("sub_dir2/geotk3.txt"));
+
     }
 
     /**
