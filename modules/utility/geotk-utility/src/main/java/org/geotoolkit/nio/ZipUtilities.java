@@ -65,7 +65,8 @@ public class ZipUtilities extends Static {
                     Files.copy(nResouce, dest, StandardCopyOption.REPLACE_EXISTING);
 
                 } else {
-                    Files.walkFileTree(nResouce, new CopyFileVisitor(zipRoot, StandardCopyOption.REPLACE_EXISTING));
+                    final Path Dest = zipRoot.resolve(nResouce.getFileName().toString());
+                    Files.walkFileTree(nResouce, new CopyFileVisitor(Dest, StandardCopyOption.REPLACE_EXISTING));
                 }
             }
         }
