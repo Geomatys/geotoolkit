@@ -34,6 +34,7 @@ import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.AxisDirections;
 import org.apache.sis.internal.storage.AbstractGridResource;
@@ -181,6 +182,9 @@ public final class FileCoverageResource extends AbstractGridResource implements 
                  */
                 Envelope envelope = domain.getEnvelope();
                 int startDim = 0;
+                if (!domain.isDefined(org.apache.sis.coverage.grid.GridGeometry.EXTENT)) {
+                    domain = new GridGeometry(PixelInCell.CELL_CENTER, getGridGeometry().getGridToCRS(PixelInCell.CELL_CENTER), envelope, GridRoundingMode.ENCLOSING);
+                }
                 GeneralEnvelope modified = null;
                 final GridExtent extent = domain.getExtent();
                 for (final SingleCRS part : CRS.getSingleComponents(envelope.getCoordinateReferenceSystem())) {
