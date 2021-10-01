@@ -26,6 +26,9 @@ import java.awt.image.WritableRaster;
 import javax.media.jai.RasterFactory;
 import java.io.IOException;
 
+import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridCoverageBuilder;
+import org.opengis.geometry.Envelope;
 import org.opengis.metadata.content.TransferFunctionType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -103,17 +106,15 @@ public strictfp enum SampleCoverage {
             return raster;
         }
 
-        @Override final GridCoverage2D load() {
+        @Override final GridCoverage load() {
             final Color[] colors = new Color[] {
                 Color.BLUE, Color.CYAN, Color.WHITE, Color.YELLOW, Color.RED
             };
 
             final GridCoverageBuilder gcb = new GridCoverageBuilder();
-            gcb.setName("Float coverage");
             gcb.setValues(raster());
-            gcb.setEnvelope( new Envelope2D(this.crs, this.bounds));
-            gcb.setRanges(null, null, null, colors);
-            return gcb.getGridCoverage2D();
+            gcb.setDomain( new Envelope2D(this.crs, this.bounds));
+            return gcb.build();
         }
     };
 
@@ -190,18 +191,17 @@ public strictfp enum SampleCoverage {
      * @return The sample coverage.
      * @throws IOException If the image can not be read.
      */
-    GridCoverage2D load() throws IOException {
+    GridCoverage load() throws IOException {
         final RenderedImage image = this.image.load();
         final GeneralEnvelope envelope = new GeneralEnvelope(
                 new double[] {bounds.getMinX(), bounds.getMinY()},
                 new double[] {bounds.getMaxX(), bounds.getMaxY()});
         envelope.setCoordinateReferenceSystem(crs);
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setName(this.image.filename);
         gcb.setValues(image);
-        gcb.setEnvelope(envelope);
+        gcb.setDomain(envelope);
         gcb.setRanges(bands);
-        return gcb.getGridCoverage2D();
+        return gcb.build();
     }
 
     /**
@@ -212,9 +212,10 @@ public strictfp enum SampleCoverage {
      *
      * @since 3.20
      */
-    void verifyGridGeometry(final GridCoverage2D coverage, final double eps) {
-        assertSame(crs, coverage.getCoordinateReferenceSystem2D());
-        assertArrayEquals(new double[] {bounds.getMinX(), bounds.getMinY()}, coverage.getEnvelope2D().getLowerCorner().getCoordinate(), eps);
-        assertArrayEquals(new double[] {bounds.getMaxX(), bounds.getMaxY()}, coverage.getEnvelope2D().getUpperCorner().getCoordinate(), eps);
+    void verifyGridGeometry(final GridCoverage coverage, final double eps) {
+        assertSame(crs, coverage.getCoordinateReferenceSystem());
+        final Envelope envelope = coverage.getGridGeometry().getEnvelope();
+        assertArrayEquals(new double[] {bounds.getMinX(), bounds.getMinY()}, envelope.getLowerCorner().getCoordinate(), eps);
+        assertArrayEquals(new double[] {bounds.getMaxX(), bounds.getMaxY()}, envelope.getUpperCorner().getCoordinate(), eps);
     }
 }

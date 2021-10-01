@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.coverage.grid;
 
-import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
@@ -26,9 +25,10 @@ import java.io.IOException;
 import java.util.Random;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import static org.apache.sis.measure.Units.*;
 import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.test.Assert;
 import org.geotoolkit.test.image.ImageTestBase;
 import static org.junit.Assert.*;
@@ -36,7 +36,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 
 /**
- * Base class for grid coverage tests. This class provides a {@link GridCoverage2D} field,
+ * Base class for grid coverage tests. This class provides a {@link GridCoverage} field,
  * and some convenience methods working on it.
  *
  * @author Martin Desruisseaux (IRD)
@@ -54,7 +54,7 @@ public abstract strictfp class GridCoverageTestBase extends ImageTestBase {
      * The coverage to be tested. An instance can be obtained by
      * {@link #loadSampleCoverage(SampleCoverage)} or {@link #createRandomCoverage()}.
      */
-    protected GridCoverage2D coverage;
+    protected GridCoverage coverage;
 
     /**
      * Creates a new test suite for the given class.
@@ -81,7 +81,7 @@ public abstract strictfp class GridCoverageTestBase extends ImageTestBase {
 
     /**
      * Creates a grid coverage filled with random values. The coordinate
-     * reference system default to {@link DefaultGeographicCRS#WGS84}.
+     * reference system default to {@link CommonCRS#defaultGeographic()}.
      */
     protected final void createRandomCoverage() {
         createRandomCoverage(CommonCRS.WGS84.normalizedGeographic());
@@ -106,7 +106,7 @@ public abstract strictfp class GridCoverageTestBase extends ImageTestBase {
          * (longitude,latitude) coordinates, pixels of 0.25 degrees and a lower
          * left corner at 10°W 30°N.
          */
-        final GridCoverage2D  coverage;  // The final grid coverage.
+        final GridCoverage  coverage;  // The final grid coverage.
         final BufferedImage   image;     // The GridCoverage's data.
         final WritableRaster  raster;    // The image's data as a raster.
         final Rectangle2D     bounds;    // The GridCoverage's envelope.
@@ -134,37 +134,20 @@ public abstract strictfp class GridCoverageTestBase extends ImageTestBase {
             final double min = 10 * i;
             envelope.setRange(i, min, min + 5);
         }
-        final GridCoverageBuilder gcb = new GridCoverageBuilder(null);
-        gcb.setName("Test");
+        final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setValues(image);
-        gcb.setEnvelope(envelope);
         gcb.setRanges(band);
-        coverage = gcb.getGridCoverage2D();
+        gcb.setDomain(envelope);
+        coverage = gcb.build();
         /*
          * Grid coverage construction finished.  Now test it.  First we test the creation of a
          * "geophysics" view. This test make sure that the 'view(type)' method does not create
          * more grid coverages than needed.
          */
-        assertSame(coverage.getRenderedImage(), coverage.getRenderableImage(0,1).createDefaultRendering());
-        assertSame(image.getTile(0,0), coverage.getRenderedImage().getTile(0,0));
+        final RenderedImage rendering = coverage.render(null);
+        assertSame(image.getTile(0,0), rendering.getTile(0,0));
         assertFalse(coverage.getSampleDimensions().get(0).getTransferFunction().get().isIdentity());
-        /*
-         * Compares data.
-         */
-        final int bandN = 0; // Band to test.
-        double[] bufferCov = null;
-        final double left  = bounds.getMinX() + (0.5*PIXEL_SIZE); // Includes translation to center
-        final double upper = bounds.getMaxY() - (0.5*PIXEL_SIZE); // Includes translation to center
-        final Point2D.Double point = new Point2D.Double();        // Will maps to pixel center.
-        for (int j=raster.getHeight(); --j>=0;) {
-            for (int i=raster.getWidth(); --i>=0;) {
-                point.x = left  + PIXEL_SIZE*i;
-                point.y = upper - PIXEL_SIZE*j;
-                double r = raster.getSampleDouble(i,j,bandN);
-                bufferCov = coverage.evaluate(point, bufferCov);
-                assertEquals(r, bufferCov[bandN], SAMPLE_TOLERANCE);
-            }
-        }
+
         this.coverage = coverage;
     }
 
@@ -175,8 +158,10 @@ public abstract strictfp class GridCoverageTestBase extends ImageTestBase {
      * @param actual   The coverage containing the actual pixel values.
      */
     public static void assertRasterEquals(final GridCoverage expected, final GridCoverage actual) {
-        Assert.assertRasterEquals(expected.getRenderableImage(0,1).createDefaultRendering(),
-                             actual.getRenderableImage(0,1).createDefaultRendering());
+        assertNotNull("Expected coverage", expected);
+        assertNotNull("Actual coverage", actual);
+        Assert.assertRasterEquals(expected.render(null),
+                             actual.render(null));
     }
 
     /**
@@ -189,7 +174,7 @@ public abstract strictfp class GridCoverageTestBase extends ImageTestBase {
         if (!viewEnabled) {
             return;
         }
-        final RenderedImage image = coverage.getRenderableImage(0,1).createDefaultRendering();
+        final RenderedImage image = coverage.render(null);
         try {
             Class.forName("org.geotoolkit.gui.swing.image.OperationTreeBrowser")
                  .getMethod("show", new Class<?>[] {RenderedImage.class})
