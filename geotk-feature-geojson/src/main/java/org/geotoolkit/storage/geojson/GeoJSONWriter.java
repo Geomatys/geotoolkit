@@ -327,7 +327,7 @@ final class GeoJSONWriter implements Closeable, Flushable {
      */
     private void writeProperty(String name, Object value, boolean writeFieldName) throws IOException, IllegalArgumentException {
         if (value instanceof Feature) {
-            writeProperties((Feature) value, name, writeFieldName);
+            writeFeature((Feature) value, true);
         } else {
             writeAttribute(name, value, writeFieldName);
         }

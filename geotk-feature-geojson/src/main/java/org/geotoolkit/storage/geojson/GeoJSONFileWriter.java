@@ -56,7 +56,8 @@ final class GeoJSONFileWriter extends GeoJSONReader {
             writer = new GeoJSONWriter(tmpFile, GeoJSONParser.getFactory(jsonFile), jsonEncoding, doubleAccuracy, false);
 
             //start write feature collection.
-            writer.writeStartFeatureCollection(crs, null);
+            final FTypeInformation fti = ftInfos.get(featureType);
+            writer.writeStartFeatureCollection(fti.crs, null);
             writer.flush();
         } catch (IOException ex) {
             throw new DataStoreException(ex.getMessage(), ex);
@@ -77,8 +78,9 @@ final class GeoJSONFileWriter extends GeoJSONReader {
             //we reach append mode
             //create empty feature
             edited = featureType.newInstance();
-            if (hasIdentifier) {
-                edited.setPropertyValue(AttributeConvention.IDENTIFIER, idConverter.apply(currentFeatureIdx++));
+            final FTypeInformation fti = ftInfos.get(featureType);
+            if (fti.hasIdentifier) {
+                edited.setPropertyValue(AttributeConvention.IDENTIFIER, fti.idConverter.apply(currentFeatureIdx++));
             }
         }
         return edited;

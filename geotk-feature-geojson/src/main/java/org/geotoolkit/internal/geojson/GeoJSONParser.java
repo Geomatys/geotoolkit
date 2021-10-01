@@ -118,7 +118,7 @@ public final class GeoJSONParser {
 
             JsonToken startToken = p.nextToken();
             assert (startToken == JsonToken.START_OBJECT) : "Input File is not a JSON file " + jsonFile.toAbsolutePath().toString();
-            return parseGeoJSONObject(p, lazy, jsonFile);
+            return parseGeoJSONObject(p, lazy, jsonFile, false);
         }
     }
 
@@ -147,7 +147,7 @@ public final class GeoJSONParser {
      * @throws IOException
      */
     public static GeoJSONObject parseGeoJSONObject(JsonParser p) throws IOException {
-        return parseGeoJSONObject(p, Boolean.FALSE, null);
+        return parseGeoJSONObject(p, Boolean.FALSE, null, false);
     }
 
     /**
@@ -159,8 +159,10 @@ public final class GeoJSONParser {
      * @return GeoJSONObject (FeatureCollection, Feature or a Geometry)
      * @throws IOException
      */
-    private static GeoJSONObject parseGeoJSONObject(JsonParser p, Boolean lazy, Path source) throws IOException {
-        assert (p.getCurrentToken() == JsonToken.START_OBJECT);
+    private static GeoJSONObject parseGeoJSONObject(JsonParser p, Boolean lazy, Path source, boolean readAlreadyStarted) throws IOException {
+        if (!readAlreadyStarted) {
+            assert (p.getCurrentToken() == JsonToken.START_OBJECT);
+        }
 
         GeoJSONObject object = new GeoJSONObject();
         while (p.nextToken() != JsonToken.END_OBJECT) {
@@ -286,6 +288,38 @@ public final class GeoJSONParser {
         return map;
     }
 
+    private static Object parseMapOrFeature(JsonParser p) throws IOException {
+        Map<String, Object> map = new HashMap<>();
+        final JsonToken currentToken = p.getCurrentToken();
+        if (currentToken == JsonToken.VALUE_NULL) {
+            return map;
+        }
+
+        if (currentToken != JsonToken.START_OBJECT) {
+            LOGGER.log(Level.WARNING, "Expect START_OBJECT token but got " + currentToken + " for " + p.getCurrentName());
+            return map;
+        }
+
+        assert (currentToken == JsonToken.START_OBJECT);
+
+        boolean firstToken = true;
+        while (p.nextToken() != JsonToken.END_OBJECT) {
+            String key = p.getCurrentName();
+            JsonToken next = p.nextToken();
+            Object value = getValue(next, p);
+
+            // read a GeoJSON feature
+            if (firstToken && key.equals("type") && value instanceof String && value.equals("Feature")) {
+                return parseGeoJSONObject(p, false, null, true);
+
+            // read simple object into a map
+            } else {
+                map.put(key, value);
+            }
+        }
+        return map;
+    }
+
     /**
      * Parse a List of Objects. JsonParser location MUST be on a START_ARRAY
      * token.
@@ -381,7 +415,8 @@ public final class GeoJSONParser {
         } else if (token == JsonToken.START_ARRAY) {
             return parseArray2(p);
         } else if (token == JsonToken.START_OBJECT) {
-            return parseMap(p);
+            // can be either an object od a feature
+            return parseMapOrFeature(p);
         } else {
             throw new UnsupportedOperationException("Unsupported JSON token : " + token + ", value : " + p.getText());
         }
@@ -423,7 +458,7 @@ public final class GeoJSONParser {
         // messages is array, loop until token equal to "]"
         while (p.nextToken() != JsonToken.END_ARRAY) {
 
-            GeoJSONObject obj = parseGeoJSONObject(p, false, null);
+            GeoJSONObject obj = parseGeoJSONObject(p, false, null, false);
             if (obj instanceof GeoJSONFeature) {
                 coll.getFeatures().add((GeoJSONFeature) obj);
             } else {
