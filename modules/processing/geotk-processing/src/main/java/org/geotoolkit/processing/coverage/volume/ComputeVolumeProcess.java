@@ -35,7 +35,6 @@ import org.apache.sis.referencing.GeodeticCalculator;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.image.interpolation.Interpolation;
 import org.geotoolkit.image.interpolation.InterpolationCase;
@@ -62,10 +61,10 @@ import org.opengis.referencing.operation.TransformException;
  * Process which compute volume from DEM (Digital Elevation Model) got
  * by {@link ComputeVolumeDescriptor#IN_GRIDCOVERAGE_READER GridCoverageResource}, on area defined by
  * a {@link ComputeVolumeDescriptor#IN_JTSGEOMETRY Geometry} and
- * between 2 elevation value define by {@link ComputeVolumeDescriptor#GEOMETRY_ALTITUDE geometry altitude}
+ * between 2 elevation value define by {@link ComputeVolumeDescriptor#IN_GEOMETRY_ALTITUDE geometry altitude}
  * and {@link ComputeVolumeDescriptor#IN_MAX_ALTITUDE_CEILING maximum ceiling}.<br/><br/>
  *
- * Note : {@link ComputeVolumeDescriptor#GEOMETRY_ALTITUDE geometry altitude} may be lesser than
+ * Note : {@link ComputeVolumeDescriptor#IN_GEOMETRY_ALTITUDE geometry altitude} may be lesser than
  * {@link ComputeVolumeDescriptor#IN_MAX_ALTITUDE_CEILING maximum ceiling}, to compute lock volume for example.
  *
  * @author Remi Marechal (Geomatys).
@@ -178,13 +177,14 @@ public class ComputeVolumeProcess extends AbstractProcess {
                 throw new ProcessException("you should stipulate MathTransform1D from sampleDimension to geophysic.", this, null);
             }
 
-            final GridGeometry2D gg2d = GridGeometry2D.castOrCopy(dem.getGridGeometry());
+            final GridGeometry gg2d = dem.getGridGeometry();
 
             InterpolationCase interpolationChoice;
             //-- adapt interpolation in function of grid extend
-            final GridExtent gridEnv2D = gg2d.getExtent2D();
-            final long gWidth = gridEnv2D.getSize(0);
-            final long gHeight = gridEnv2D.getSize(1);
+            final GridExtent gridEnv2D = gg2d.getExtent();
+            final int[] subSpace = gridEnv2D.getSubspaceDimensions(2);
+            final long gWidth = gridEnv2D.getSize(subSpace[0]);
+            final long gHeight = gridEnv2D.getSize(subSpace[1]);
 
             if (gWidth < 1 || gHeight < 1) {
                 outputParameters.getOrCreate(ComputeVolumeDescriptor.OUT_VOLUME_RESULT).setValue(0);
@@ -213,10 +213,12 @@ public class ComputeVolumeProcess extends AbstractProcess {
                 if (destCS instanceof CartesianCS) {
 
                     //-- resolution
-                    double[] resolution = null;
+                    final double[] resolution;
                     try {
                         resolution = gg2d.getResolution(false);
-                    } catch (IncompleteGridGeometryException ex){}
+                    } catch (IncompleteGridGeometryException ex) {
+                        throw new ProcessException("Cannot estimate resolution", this, ex);
+                    }
 
                     final int dimDestCS                  = destCS.getDimension();
                     final int destDim                    = destCS.getDimension();
@@ -337,7 +339,7 @@ public class ComputeVolumeProcess extends AbstractProcess {
          *
          * @param pixelWidth pixel fraction value which is the deplacement in x and y grid axis direction.
          * @param unitConverters table of {@link UnitConverter} for each axis from CRS.
-         * @param resolution resolution from {@link GridGeometry2D#getResolution() }.
+         * @param resolution resolution from {@link GridGeometry#getResolution(boolean)}.
          */
         CartesianStepPixelAreaCalculator(final double pixelWidth, final UnitConverter[] unitConverters, final double[] resolution) {
             super(pixelWidth);
@@ -393,8 +395,6 @@ public class ComputeVolumeProcess extends AbstractProcess {
          * Create a calculator to cartesian space.
          *
          * @param pixelWidth pixel fraction value which is the deplacement in x and y grid axis direction.
-         * @param unitConverters table of {@link UnitConverter} for each axis from CRS.
-         * @param resolution resolution from {@link GridGeometry2D#getResolution() }.
          */
         GeographicStepPixelAreaCalculator(final double pixelWidth, final CoordinateReferenceSystem crs, final MathTransform gridToCrs) throws IncommensurableException {
             super(pixelWidth);
