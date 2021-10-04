@@ -18,9 +18,9 @@
 package org.geotoolkit.coverage.io;
 
 import javax.imageio.IIOParam;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.opengis.referencing.operation.MathTransform2D;
 
 
@@ -53,7 +53,7 @@ final strictfp class ImageCoverageReaderInspector extends ImageCoverageReader {
      * Delegates to the default implementation and stores the result.
      */
     @Override
-    protected MathTransform2D geodeticToPixelCoordinates(final GridGeometry2D gridGeometry,
+    protected MathTransform2D geodeticToPixelCoordinates(final GridGeometry gridGeometry,
             final GridCoverageStoreParam geodeticParam, final IIOParam pixelParam,
             final boolean isNetcdfHack) // TODO: DEPRECATED: to be removed in Apache SIS.
             throws DataStoreException

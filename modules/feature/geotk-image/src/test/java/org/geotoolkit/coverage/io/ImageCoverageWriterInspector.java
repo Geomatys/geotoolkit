@@ -25,18 +25,16 @@ import java.awt.geom.AffineTransform;
 import javax.imageio.metadata.IIOMetadata;
 import org.apache.sis.coverage.grid.GridCoverage;
 
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.opengis.coverage.grid.RectifiedGrid;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform2D;
 
-import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.image.io.ImageMetadataException;
 import org.geotoolkit.image.io.metadata.MetadataHelper;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.io.GridCoverageStoreParam;
-import org.geotoolkit.coverage.io.ImageCoverageWriter;
 
 import static org.geotoolkit.test.Assert.*;
 import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
@@ -109,7 +107,7 @@ final strictfp class ImageCoverageWriterInspector extends ImageCoverageWriter {
      * Delegates to the default implementation and stores the result.
      */
     @Override
-    protected MathTransform2D geodeticToPixelCoordinates(final GridGeometry2D gridGeometry,
+    protected MathTransform2D geodeticToPixelCoordinates(final GridGeometry gridGeometry,
             final GridCoverageStoreParam geodeticParam, final IIOParam pixelParam,
             final boolean isNetcdfHack) // TODO: DEPRECATED: to be removed in Apache SIS.
             throws DataStoreException
