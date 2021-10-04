@@ -52,7 +52,7 @@ public class TileMatricesTest {
         final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
         final GridExtent extent = new GridExtent(1024, 512);
         final AffineTransform2D gridToCrs = new AffineTransform2D(1, 0, 0, -1, -50, 40);
-        final GridGeometry gg = new GridGeometry(extent, PixelInCell.CELL_CORNER, gridToCrs, crs);
+        final GridGeometry gg = new GridGeometry(extent, PixelInCell.CELL_CENTER, gridToCrs, crs);
 
         final DefiningTileMatrixSet pyramid = TileMatrices.createTemplate(gg, new Dimension(256, 256));
         Assert.assertEquals(crs, pyramid.getCoordinateReferenceSystem());
