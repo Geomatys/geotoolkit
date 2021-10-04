@@ -27,14 +27,15 @@ import javax.media.jai.WarpGrid;
 import javax.media.jai.WarpAffine;
 import javax.media.jai.operator.WarpDescriptor;
 
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.internal.coverage.j2d.ImageUtilities;
 import org.opengis.metadata.spatial.PixelOrientation;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.Matrix;
 
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.display.shape.DoubleDimension2D;
 import org.apache.sis.referencing.operation.matrix.Matrix2;
 import org.geotoolkit.resources.Errors;
@@ -62,7 +63,7 @@ import static org.apache.sis.util.ArgumentChecks.ensurePositive;
  *   <li>Offset all output coordinates by -0.5 in order to compensate for the input offset.</li>
  * </ul>
  * <p>
- * This semantic implies that the {@linkplain GridGeometry#getGridToCRS() grid to CRS} transforms
+ * This semantic implies that the {@linkplain GridGeometry#getGridToCRS(PixelInCell)  grid to CRS} transforms
  * were computed using {@link PixelOrientation#UPPER_LEFT}, as in Java2D usage.
  *
  * @author Martin Desruisseaux (Geomatys)
@@ -161,7 +162,7 @@ public class WarpFactory {
     /**
      * Creates an image warp applicable to the whole domain of validity of the given transform.
      *
-     * @param  name The image or {@linkplain GridCoverage2D coverage} name, or {@code null}.
+     * @param  name The image or {@linkplain GridCoverage coverage} name, or {@code null}.
      * @param  transform The transform to returns as an image warp.
      * @return The warp for the given transform.
      */
@@ -183,7 +184,7 @@ public class WarpFactory {
      * create more efficient warps than the {@linkplain #create(CharSequence, MathTransform2D)
      * unbounded method}.
      *
-     * @param  name The image or {@linkplain GridCoverage2D coverage} name, or {@code null}.
+     * @param  name The image or {@linkplain GridCoverage coverage} name, or {@code null}.
      * @param  transform The transform to returns as an image warp.
      * @param  domain The domain of validity in source coordinates.
      * @return The warp for the given transform.

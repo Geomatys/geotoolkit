@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.coverage;
 
+import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -25,13 +27,12 @@ import org.apache.sis.coverage.grid.PixelTranslation;
 import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.Utilities;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.operation.matrix.Matrices;
 import static org.junit.Assert.*;
 import org.junit.Test;
+import org.opengis.metadata.spatial.DimensionNameType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
@@ -165,22 +166,22 @@ public class GridCoverageStackTest extends org.geotoolkit.test.TestBase {
     private static GridCoverageStack createSubStack3D(int width, int height, double t, CoordinateReferenceSystem crs)
             throws IOException, TransformException, FactoryException{
 
-        final GridCoverage2D slice0 = createSlice4D(width, height, 10, t, crs);
-        final GridCoverage2D slice1 = createSlice4D(width, height, 20, t, crs);
-        final GridCoverage2D slice2 = createSlice4D(width, height, 50, t, crs);
+        final GridCoverage slice0 = createSlice4D(width, height, 10, t, crs);
+        final GridCoverage slice1 = createSlice4D(width, height, 20, t, crs);
+        final GridCoverage slice2 = createSlice4D(width, height, 50, t, crs);
         return new GridCoverageStack(null, Arrays.asList(slice0,slice1,slice2), 2);
     }
 
     private static GridCoverageStack createCube3D(int width, int height, CoordinateReferenceSystem crs)
             throws IOException, TransformException, FactoryException{
 
-        final GridCoverage2D slice0 = createSlice3D(width, height, 10, crs);
-        final GridCoverage2D slice1 = createSlice3D(width, height, 20, crs);
-        final GridCoverage2D slice2 = createSlice3D(width, height, 50, crs);
+        final GridCoverage slice0 = createSlice3D(width, height, 10, crs);
+        final GridCoverage slice1 = createSlice3D(width, height, 20, crs);
+        final GridCoverage slice2 = createSlice3D(width, height, 50, crs);
         return new GridCoverageStack(null, Arrays.asList(slice0,slice1,slice2), 2);
     }
 
-    private static GridCoverage2D createSlice3D(int width, int height, double z, CoordinateReferenceSystem crs) throws FactoryException{
+    private static GridCoverage createSlice3D(int width, int height, double z, CoordinateReferenceSystem crs) throws FactoryException{
         final BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 
         final Matrix matrix = Matrices.createIdentity(4);
@@ -190,16 +191,15 @@ public class GridCoverageStackTest extends org.geotoolkit.test.TestBase {
         final MathTransform gridtoCrs = mf.createAffineTransform(matrix);
 
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setName("slice");
-        gcb.setPixelAnchor(PixelInCell.CELL_CORNER);
-        gcb.setCoordinateReferenceSystem(crs);
-        gcb.setGridToCRS(gridtoCrs);
+        final GridExtent extent = new GridExtent(width, height)
+                .insert(2, DimensionNameType.VERTICAL, 0, 0, true);
+        gcb.setDomain(new GridGeometry(extent, PixelInCell.CELL_CORNER, gridtoCrs, crs));
         gcb.setValues(image);
 
-        return gcb.getGridCoverage2D();
+        return gcb.build();
     }
 
-    private static GridCoverage2D createSlice4D(int width, int height, double z, double t, CoordinateReferenceSystem crs) throws FactoryException{
+    private static GridCoverage createSlice4D(int width, int height, double z, double t, CoordinateReferenceSystem crs) throws FactoryException{
         final BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 
         final Matrix matrix = Matrices.createIdentity(5);
@@ -210,12 +210,12 @@ public class GridCoverageStackTest extends org.geotoolkit.test.TestBase {
         final MathTransform gridtoCrs = mf.createAffineTransform(matrix);
 
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setName("slice");
-        gcb.setPixelAnchor(PixelInCell.CELL_CORNER);
-        gcb.setCoordinateReferenceSystem(crs);
-        gcb.setGridToCRS(gridtoCrs);
+        final GridExtent extent = new GridExtent(width, height)
+                .insert(2, DimensionNameType.VERTICAL, 0, 0, true)
+                .insert(3, DimensionNameType.TIME, 0, 0, true);
+        gcb.setDomain(new GridGeometry(extent, PixelInCell.CELL_CORNER, gridtoCrs, crs));
         gcb.setValues(image);
 
-        return gcb.getGridCoverage2D();
+        return gcb.build();
     }
 }

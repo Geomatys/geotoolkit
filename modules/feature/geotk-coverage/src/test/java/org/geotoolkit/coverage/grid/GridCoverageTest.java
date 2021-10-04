@@ -17,25 +17,29 @@
  */
 package org.geotoolkit.coverage.grid;
 
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.junit.*;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 
 
 /**
- * Tests the {@link GridCoverage2D} implementation.
+ * Tests the {@link GridCoverage} implementation.
  *
  * @author Martin Desruisseaux (IRD)
  * @version 3.00
  *
  * @since 2.1
+ *
+ * @deprecated Not used anymore in this project, to be replaced by Apache SIS test utilities.
  */
+@Deprecated
 public final strictfp class GridCoverageTest extends GridCoverageTestBase {
     /**
      * Creates a new test suite.
      */
     public GridCoverageTest() {
-        super(GridCoverage2D.class);
+        super(GridCoverage.class);
     }
 
     /**
@@ -45,7 +49,6 @@ public final strictfp class GridCoverageTest extends GridCoverageTestBase {
     public void testRandomCoverage() {
         createRandomCoverage();
         assertRasterEquals(coverage, coverage); // Actually a test of assertEqualRasters(...).
-        assertSame(coverage.getRenderedImage(), coverage.getRenderableImage(0,1).createDefaultRendering());
         assertFalse(coverage.getSampleDimensions().get(0).getTransferFunction().get().isIdentity());
     }
 }

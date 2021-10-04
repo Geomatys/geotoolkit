@@ -21,6 +21,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.geometry.Envelope2D;
 import org.geotoolkit.referencing.crs.PredefinedCRS;
 import org.junit.*;
@@ -107,7 +108,7 @@ public final strictfp class GridCoverageBuilderTest extends GridCoverageTestBase
         final GridCoverageBuilder builder = new GridCoverageBuilder();
         builder.setGridCoverage(coverage);
         builder.setCoordinateReferenceSystem(PredefinedCRS.CARTESIAN_2D);
-        final GridCoverage2D newGC = builder.getGridCoverage2D();
+        final GridCoverage newGC = builder.build();
         assertNotSame("Expected a new grid coverage.", coverage, newGC);
         assertSame(PredefinedCRS.CARTESIAN_2D, newGC.getCoordinateReferenceSystem());
         assertEquals(coverage.getGridGeometry().getGridToCRS(PixelInCell.CELL_CENTER),

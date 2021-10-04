@@ -38,7 +38,6 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.matrix.Matrices;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.referencing.OutOfDomainOfValidityException;
@@ -73,7 +72,7 @@ public final class CoverageUtilities extends Static {
 
     /**
      * Retrieves a best guess for the sample value to use for background,
-     * inspecting the categories of the provided {@link GridCoverage2D}.
+     * inspecting the categories of the provided {@link GridCoverage}.
      *
      * @param coverage to use for guessing background values.
      * @return an array of double values to use as a background.

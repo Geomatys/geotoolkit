@@ -41,7 +41,7 @@ public final strictfp class FloatRasterTest extends GridCoverageTestBase {
      * Creates a new test suite.
      */
     public FloatRasterTest() {
-        super(GridCoverage2D.class);
+        super(org.apache.sis.coverage.grid.GridCoverage.class);
     }
 
     /**
