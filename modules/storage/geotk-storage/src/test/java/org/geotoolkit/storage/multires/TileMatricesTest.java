@@ -30,11 +30,11 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.NoSuchDataException;
 import org.geotoolkit.coverage.grid.EstimatedGridGeometry;
-import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.junit.Assert;
 import org.junit.Test;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
@@ -52,7 +52,7 @@ public class TileMatricesTest {
         final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
         final GridExtent extent = new GridExtent(1024, 512);
         final AffineTransform2D gridToCrs = new AffineTransform2D(1, 0, 0, -1, -50, 40);
-        final GridGeometry gg = new GridGeometry2D(extent, gridToCrs, crs);
+        final GridGeometry gg = new GridGeometry(extent, PixelInCell.CELL_CORNER, gridToCrs, crs);
 
         final DefiningTileMatrixSet pyramid = TileMatrices.createTemplate(gg, new Dimension(256, 256));
         Assert.assertEquals(crs, pyramid.getCoordinateReferenceSystem());
