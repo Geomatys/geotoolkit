@@ -31,13 +31,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.IIOParam;
 
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.opengis.geometry.Envelope;
-import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.cs.EllipsoidalCS;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.CoordinateOperation;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
@@ -63,7 +64,6 @@ import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.logging.PerformanceLevel;
 
-import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.display.shape.XRectangle2D;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.internal.referencing.CRSUtilities;
@@ -150,7 +150,7 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
      * exactly as requested). However subclasses can change the value of this field, for example
      * if they want to implement a stricter coverage reader.
      *
-     * @see #geodeticToPixelCoordinates(GridGeometry2D, GridCoverageStoreParam, IIOParam)
+     * @see #geodeticToPixelCoordinates(GridGeometry, GridCoverageStoreParam, IIOParam, boolean)
      *
      * @since 3.14
      */
@@ -414,11 +414,14 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
      *
      * @since 3.14
      */
-    MathTransform2D geodeticToPixelCoordinates(final GridGeometry2D gridGeometry,
+    MathTransform2D geodeticToPixelCoordinates(final GridGeometry gridGeometry,
             final GridCoverageStoreParam geodeticParam, final IIOParam pixelParam,
             final boolean isNetcdfHack) // TODO: DEPRECATED: to be removed in Apache SIS.
             throws DataStoreException
     {
+        if (!gridGeometry.isDefined(GridGeometry.CRS)) {
+            throw new DataStoreException("Cannot define longitude shifting strategy: no CRS available");
+        }
         final boolean needsLongitudeShift = needsLongitudeShift(
                 gridGeometry.getCoordinateReferenceSystem().getCoordinateSystem());
         final MathTransform2D destToExtractedGrid;
@@ -434,7 +437,7 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
         } catch (DataStoreException e) {
             throw e;
         } catch (Exception e) { // There is many different exceptions thrown by the above.
-            throw new CoverageStoreException(formatErrorMessage(e), e);
+            throw new DataStoreException(formatErrorMessage(e), e);
         }
         return destToExtractedGrid;
     }
@@ -484,7 +487,7 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
      * @throws CoverageStoreException If the region to read is empty.
      */
     private MathTransform2D geodeticToPixelCoordinates(
-            final GridGeometry2D            gridGeometry,
+            final GridGeometry            gridGeometry,
             final GeneralEnvelope           envelope,
             final double[]                  resolution,
             final CoordinateReferenceSystem requestCRS,
@@ -492,8 +495,10 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
             final boolean                   isNetcdfHack) // TODO: DEPRECATED: to be removed in Apache SIS.
             throws TransformException, FactoryException, DataStoreException
     {
-        final GridExtent      gridExtent = gridGeometry.getExtent2D();
-        final MathTransform2D gridToCRS  = gridGeometry.getGridToCRS2D(PixelOrientation.UPPER_LEFT);
+        final GridExtent      gridExtent = gridGeometry.getExtent();
+        final int[] subSpace = gridExtent.getSubspaceDimensions(2);
+        final GridGeometry gridGeom2d = gridGeometry.reduce(subSpace);
+        final MathTransform2D gridToCRS  = (MathTransform2D) gridGeom2d.getGridToCRS(PixelInCell.CELL_CORNER);
         final MathTransform2D crsToGrid  = gridToCRS.inverse();
         /*
          * Get the full coverage envelope in the coverage CRS. The returned shape is likely
@@ -506,11 +511,12 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
          * than the Envelopes.transform(MathTransform, ...) method, in order to handle the cases
          * where the requested region is over a geographic pole.
          */
+        final GridExtent gridExtent2d = gridExtent.reduce(subSpace);
         final Rectangle rect = new Rectangle(
-                (int) gridExtent.getLow(0),
-                (int) gridExtent.getLow(1),
-                (int) gridExtent.getSize(0),
-                (int) gridExtent.getSize(1));
+                Math.toIntExact(gridExtent2d.getLow(0)),
+                Math.toIntExact(gridExtent2d.getLow(1)),
+                Math.toIntExact(gridExtent2d.getSize(0)),
+                Math.toIntExact(gridExtent2d.getSize(1)));
         Shape shapeToRead = gridToCRS.createTransformedShape(rect); // Will be clipped later.
         Rectangle2D geodeticBounds = (shapeToRead instanceof Rectangle2D) ?
                 (Rectangle2D) shapeToRead : shapeToRead.getBounds2D();
@@ -522,7 +528,7 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
          */
         Envelope envelopeInDataCRS = envelope;
         MathTransform requestToDataCRS = null;
-        final CoordinateReferenceSystem dataCRS = gridGeometry.getCoordinateReferenceSystem2D();
+        final CoordinateReferenceSystem dataCRS = gridGeom2d.getCoordinateReferenceSystem();
         if (requestCRS != null && dataCRS != null && !Utilities.equalsIgnoreMetadata(requestCRS, dataCRS)) {
             final CoordinateOperation op = createOperation(requestCRS, dataCRS);
             requestToDataCRS = op.getMathTransform();
@@ -686,7 +692,7 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
             requestEnvelope = validEnvelope;
         } else {
             // Ensure that the user-supplied envelope defines a CRS,
-            // since we will need it for creating a GridGeometry2D.
+            // since we will need it for creating a GridGeometry.
             CoordinateReferenceSystem crs = requestCRS;
             if (crs == null) {
                 if (envelope.getDimension() == 2) {
@@ -820,7 +826,7 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
      * the coverage as requested, and consequently need more informations.
      * <p>
      * An additional reason for avoiding to implement this method in readers case is that the
-     * {@link GridGeometry2D} creation may fail if the given math transform is non-invertible,
+     * {@link GridGeometry} creation may fail if the given math transform is non-invertible,
      * for example because the matrix is not square. It would cause a useless failure for read
      * operations.
      */

@@ -31,7 +31,6 @@ import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
-import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PixelIterator;
@@ -44,7 +43,6 @@ import org.apache.sis.referencing.operation.matrix.Matrix3;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import static org.apache.sis.referencing.operation.transform.MathTransforms.concatenate;
-import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.geometry.GeometricUtilities;
 import org.geotoolkit.geometry.GeometricUtilities.WrapResolution;
 import org.geotoolkit.geometry.jts.JTS;
@@ -55,7 +53,7 @@ import org.geotoolkit.processing.AbstractProcess;
 import static org.geotoolkit.processing.coverage.compose.ComposeDescriptor.*;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.locationtech.jts.geom.Geometry;
-import org.opengis.metadata.spatial.PixelOrientation;
+import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -76,11 +74,11 @@ public class Compose extends AbstractProcess {
         super(ComposeDescriptor.INSTANCE, input);
     }
 
-    public Compose(List<Entry<GridCoverage,Geometry[]>> layers, GridGeometry2D gridGeom) {
+    public Compose(List<Entry<GridCoverage,Geometry[]>> layers, GridGeometry gridGeom) {
         this(asParameters(layers,gridGeom));
     }
 
-    private static ParameterValueGroup asParameters(List<Entry<GridCoverage,Geometry[]>> layers, GridGeometry2D gridGeom){
+    private static ParameterValueGroup asParameters(List<Entry<GridCoverage,Geometry[]>> layers, GridGeometry gridGeom){
         final Parameters params = Parameters.castOrWrap(INPUT.createValue());
 
         final Parameters firstLayer = Parameters.castOrWrap(params.groups(LAYER_PARAM.getName().getCode()).get(0));
@@ -144,7 +142,7 @@ public class Compose extends AbstractProcess {
         }
 
         //compute output grid
-        GridGeometry2D outGridGeom = (GridGeometry2D) inputParameters.getValue(GRID_PARAM);
+        GridGeometry outGridGeom = inputParameters.getValue(GRID_PARAM);
         if(outGridGeom == null) {
             try {
                 outGridGeom = getOutputGridGeometry(inGridCoverages);
@@ -152,7 +150,7 @@ public class Compose extends AbstractProcess {
                 throw new ProcessException(ex.getMessage(), this, ex);
             }
         }
-        final CoordinateReferenceSystem outCrs = outGridGeom.getCoordinateReferenceSystem2D();
+        final CoordinateReferenceSystem outCrs = outGridGeom.getCoordinateReferenceSystem();
         final AffineTransform2D outGridToCrs = (AffineTransform2D) outGridGeom.getGridToCRS(PixelInCell.CELL_CORNER);
         final AffineTransform2D outCrsToGrid;
         try {
@@ -167,9 +165,9 @@ public class Compose extends AbstractProcess {
         final WritableRaster[] clips = new WritableRaster[nbCoverage];
 
         for (int i = 0; i < nbCoverage; i++) {
-            final GridGeometry2D g2d = GridGeometry2D.castOrCopy(inGridCoverages[i].getGridGeometry());
+            final GridGeometry g2d = inGridCoverages[i].getGridGeometry();
             final BufferedImage image = new BufferedImage(outWidth, outHeight, BufferedImage.TYPE_BYTE_BINARY);
-            final CoordinateReferenceSystem coverageCrs = g2d.getCoordinateReferenceSystem2D();
+            final CoordinateReferenceSystem coverageCrs = g2d.getCoordinateReferenceSystem();
             try {
                 MathTransform covCrstoOutCrs = CRS.findOperation(coverageCrs, outCrs, null).getMathTransform();
 
@@ -211,10 +209,10 @@ public class Compose extends AbstractProcess {
         final Rectangle outRect = new Rectangle(0, 0, outWidth, outHeight);
         for (int i = 0; i < nbCoverage; i++) {
             try {
-                final GridGeometry2D g2d = GridGeometry2D.castOrCopy(inGridCoverages[i].getGridGeometry());
-                final CoordinateReferenceSystem sourceCrs = g2d.getCoordinateReferenceSystem2D();
+                final GridGeometry g2d = inGridCoverages[i].getGridGeometry();
+                final CoordinateReferenceSystem sourceCrs = g2d.getCoordinateReferenceSystem();
                 final MathTransform outCrsToSourceCrs = CRS.findOperation(outCrs, sourceCrs, null).getMathTransform();
-                final MathTransform sourceCrsToGrid = g2d.getGridToCRS2D().inverse();
+                final MathTransform sourceCrsToGrid = g2d.getGridToCRS(PixelInCell.CELL_CENTER).inverse();
 
                 final MathTransform tmpTr = concatenate(
                         outGridToCrs,
@@ -268,11 +266,11 @@ public class Compose extends AbstractProcess {
     }
 
 
-    private static GridGeometry2D getOutputGridGeometry(GridCoverage[] coverages) throws TransformException {
+    private static GridGeometry getOutputGridGeometry(GridCoverage[] coverages) throws TransformException {
 
         //select the first coverage CRS as output crs
         //todo : use a better algorithm to find best crs
-        final GeneralEnvelope envelope = new GeneralEnvelope(GridGeometry2D.castOrCopy(coverages[0].getGridGeometry()).getEnvelope2D());
+        final GeneralEnvelope envelope = new GeneralEnvelope(coverages[0].getGridGeometry().getEnvelope());
         final CoordinateReferenceSystem crs = envelope.getCoordinateReferenceSystem();
 
         //compute most accurate resolution for this crs
@@ -285,7 +283,7 @@ public class Compose extends AbstractProcess {
                 res = gridGeometry.getResolution(true);
             } catch (IncompleteGridGeometryException ex) {
             }
-            final Envelope2D covEnv = GridGeometry2D.castOrCopy(gridGeometry).getEnvelope2D();
+            final Envelope covEnv = gridGeometry.getEnvelope();
 
             final double[] cdtRes = ReferencingUtilities.convertResolution(covEnv, res, crs);
             resolution[0] = Math.min(resolution[0], cdtRes[0]);
@@ -306,6 +304,6 @@ public class Compose extends AbstractProcess {
         final LinearTransform gridToGeo = MathTransforms.linear(matrix);
 
         final GridExtent extent = new GridExtent(outWidth, outHeight);
-        return new GridGeometry2D(extent, PixelOrientation.UPPER_LEFT, gridToGeo, crs);
+        return new GridGeometry(extent, PixelInCell.CELL_CORNER, gridToGeo, crs);
     }
 }

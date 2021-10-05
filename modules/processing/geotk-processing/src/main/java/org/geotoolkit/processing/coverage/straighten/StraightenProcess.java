@@ -18,17 +18,16 @@ package org.geotoolkit.processing.coverage.straighten;
 
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.parameter.Parameters;
-import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.processing.coverage.resample.ResampleProcess;
-import org.opengis.geometry.Envelope;
-import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 
@@ -80,11 +79,10 @@ public class StraightenProcess extends AbstractProcess {
         final GridCoverage candidate = inputParameters.getValue(StraightenDescriptor.COVERAGE_IN);
 
         //resample coverage, we want it to be 'straight', no rotation or different axe scale.
-        final GridGeometry2D gridgeom = GridGeometry2D.castOrCopy(candidate.getGridGeometry());
-        final CoordinateReferenceSystem crs = gridgeom.getCoordinateReferenceSystem2D();
-        final GridExtent gridenv = gridgeom.getExtent2D();
-        final MathTransform gridToCRS = gridgeom.getGridToCRS2D(PixelOrientation.UPPER_LEFT);
-        final Envelope outEnv = gridgeom.getEnvelope2D();
+        final GridGeometry gridgeom = candidate.getGridGeometry();
+        final CoordinateReferenceSystem crs = gridgeom.getCoordinateReferenceSystem();
+        final GridExtent gridenv = gridgeom.getExtent();
+        final MathTransform gridToCRS = gridgeom.getGridToCRS(PixelInCell.CELL_CORNER);
 
         try{
             final double[] coords = new double[2 * 5];
@@ -115,7 +113,7 @@ public class StraightenProcess extends AbstractProcess {
 
             final AffineTransform2D outGridToCRS = new AffineTransform2D(scale, 0, 0, -scale, minX, maxY);
             final GridExtent gridEnv = new GridExtent((long)(spanX/scale), (long)(spanY/scale));
-            final GridGeometry2D outgridGeom = new GridGeometry2D(gridEnv, PixelOrientation.UPPER_LEFT, outGridToCRS, crs);
+            final GridGeometry outgridGeom = new GridGeometry(gridEnv, PixelInCell.CELL_CORNER, outGridToCRS, crs);
             final GridCoverage outCoverage = new ResampleProcess(candidate, outgridGeom.getCoordinateReferenceSystem(), outgridGeom, InterpolationCase.NEIGHBOR, null).executeNow();
             outputParameters.getOrCreate(StraightenDescriptor.COVERAGE_OUT).setValue(outCoverage);
         }catch(TransformException ex){

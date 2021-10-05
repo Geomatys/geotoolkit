@@ -26,7 +26,6 @@ import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.junit.Assert;
 import org.junit.Test;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -48,7 +47,7 @@ public class TileMatrixSetBuilderTest {
         final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
         final GridExtent extent = new GridExtent(1000, 512);
         final AffineTransform2D gridToCrs = new AffineTransform2D(1, 0, 0, -1, -50, 40);
-        final GridGeometry gg = new GridGeometry2D(extent, PixelInCell.CELL_CORNER, gridToCrs, crs);
+        final GridGeometry gg = new GridGeometry(extent, PixelInCell.CELL_CORNER, gridToCrs, crs);
 
         final DefiningTileMatrixSet pyramid = new TileMatrixSetBuilder()
                 .setDomain(gg)
@@ -92,7 +91,7 @@ public class TileMatrixSetBuilderTest {
         final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
         final GridExtent extent = new GridExtent(360, 180);
         final AffineTransform2D gridToCrs = new AffineTransform2D(1, 0, 0, -1, -180, 90);
-        final GridGeometry gg = new GridGeometry2D(extent, PixelInCell.CELL_CORNER, gridToCrs, crs);
+        final GridGeometry gg = new GridGeometry(extent, PixelInCell.CELL_CORNER, gridToCrs, crs);
 
         final DefiningTileMatrixSet pyramid = new TileMatrixSetBuilder()
                 .setDomain(gg)
@@ -126,7 +125,7 @@ public class TileMatrixSetBuilderTest {
         final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
         final GridExtent extent = new GridExtent(360, 180);
         final AffineTransform2D gridToCrs = new AffineTransform2D(1, 0, 0, -1, -180, 90);
-        final GridGeometry gg = new GridGeometry2D(extent, PixelInCell.CELL_CORNER, gridToCrs, crs);
+        final GridGeometry gg = new GridGeometry(extent, PixelInCell.CELL_CORNER, gridToCrs, crs);
 
         final DefiningTileMatrixSet pyramid = new TileMatrixSetBuilder()
                 .setDomain(gg)
@@ -166,7 +165,7 @@ public class TileMatrixSetBuilderTest {
         final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
         final GridExtent extent = new GridExtent(360, 180);
         final AffineTransform2D gridToCrs = new AffineTransform2D(1, 0, 0, -1, -180, 90);
-        final GridGeometry gridGeometry = new GridGeometry2D(extent, PixelInCell.CELL_CORNER, gridToCrs, crs);
+        final GridGeometry gridGeometry = new GridGeometry(extent, PixelInCell.CELL_CORNER, gridToCrs, crs);
 
         { //here the only tile matrix has a more accurate resolution the the data, lastexact iteration must not add any tile matrix
             final DefiningTileMatrixSet pyramid = new TileMatrixSetBuilder()
@@ -233,7 +232,7 @@ public class TileMatrixSetBuilderTest {
         final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
         final GridExtent extent = new GridExtent(360, 180);
         final AffineTransform2D gridToCrs = new AffineTransform2D(1, 0, 0, -1, -180, 90);
-        final GridGeometry gg = new GridGeometry2D(extent, PixelInCell.CELL_CORNER, gridToCrs, crs);
+        final GridGeometry gg = new GridGeometry(extent, PixelInCell.CELL_CORNER, gridToCrs, crs);
 
         final DefiningTileMatrixSet pyramid = new TileMatrixSetBuilder()
                 .setDomain(gg)

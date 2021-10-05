@@ -56,8 +56,6 @@ import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.coverage.grid.GridGeometry2D;
-import org.geotoolkit.image.io.MultidimensionalImageStore;
 import static org.geotoolkit.image.io.MultidimensionalImageStore.X_DIMENSION;
 import static org.geotoolkit.image.io.MultidimensionalImageStore.Y_DIMENSION;
 import org.geotoolkit.image.io.XImageIO;
@@ -89,7 +87,7 @@ import org.opengis.util.InternationalString;
  * coordinates</cite> (for example the region to read) to <cite>pixel coordinates</cite>
  * before to pass them to the wrapped {@code ImageWriter}, and conversely: from pixel
  * coordinates to geodetic coordinates. The later conversion is called "<cite>grid to CRS</cite>"
- * and is determined from the {@link GridGeometry2D} provided by the {@link GridCoverage}.
+ * and is determined from the {@link GridGeometry} provided by the {@link GridCoverage}.
  *
  * {@section Closing the output stream}
  * An {@linkplain ImageOutputStream Image Output Stream} may be created automatically from various
@@ -482,7 +480,7 @@ public class ImageCoverageWriter extends GridCoverageStore {
      * method performs the following steps:
      * <p>
      * <ul>
-     *   <li>Get the coverage {@link RenderedImage} and {@linkplain GridGeometry2D}.</li>
+     *   <li>Get the coverage {@link RenderedImage} and {@linkplain GridGeometry}.</li>
      *   <li>Create an initially empty block of image parameters by
      *       invoking the {@link #createImageWriteParam(RenderedImage)} method.</li>
      *   <li>Convert the given {@linkplain GridCoverageWriteParam geodetic parameters} to
@@ -550,10 +548,7 @@ public class ImageCoverageWriter extends GridCoverageStore {
          * provided in the GridCoverageWriteParam. In order to get the ImageWriteParam, we
          * need the ImageWriter, which need the RenderedImage, which need the GridGeometry.
          */
-        GridGeometry2D gridGeometry = GridGeometry2D.castOrCopy(coverage.getGridGeometry());
-        if (gridGeometry.gridDimensionX != 0 || gridGeometry.gridDimensionY != 1) {
-            throw new CoverageStoreException("Expecting dimensions X and Y at index 0 and 1 .");
-        }
+        GridGeometry gridGeometry = coverage.getGridGeometry().reduce(0, 1);
 
         RenderedImage image = coverage.render(null);
         while (image instanceof RenderedImageAdapter) {
@@ -739,22 +734,10 @@ public class ImageCoverageWriter extends GridCoverageStore {
                 res = param.getResolution();
             }
             if (crs == null && gridGeometry.isDefined(GridGeometry.CRS)) {
-                if (imageWriter instanceof MultidimensionalImageStore
-                 || isNetcdfHack
-                 || isTiffHack) {
-                    crs = gridGeometry.getCoordinateReferenceSystem();
-                } else {
-                    crs = gridGeometry.getCoordinateReferenceSystem2D();
-                }
+                crs = gridGeometry.getCoordinateReferenceSystem();
             }
             if (env == null && gridGeometry.isDefined(GridGeometry.ENVELOPE)) {
-                if (imageWriter instanceof MultidimensionalImageStore
-                 || isNetcdfHack
-                 || isTiffHack) {
-                    env = gridGeometry.getEnvelope();
-                } else {
-                    env = gridGeometry.getEnvelope2D();
-                }
+                env = gridGeometry.getEnvelope();
             }
             if (crs != null) {
                 final ReferencingBuilder builder = new ReferencingBuilder(imageMetadata);

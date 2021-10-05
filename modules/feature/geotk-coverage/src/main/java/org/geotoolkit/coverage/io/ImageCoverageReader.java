@@ -48,6 +48,7 @@ import javax.measure.IncommensurableException;
 import javax.measure.Quantity;
 import javax.measure.Unit;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverage2D;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
@@ -72,7 +73,6 @@ import org.apache.sis.util.iso.Names;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.resources.Vocabulary;
 import org.geotoolkit.coverage.SampleDimensionUtils;
-import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.GridGeometryIterator;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.image.io.DimensionSlice;
@@ -235,7 +235,7 @@ public class ImageCoverageReader extends GridCoverageStore {
     /**
      * The value returned by {@link #getGridGeometry(int)}, computed when first needed.
      */
-    private transient Map<Integer,GridGeometry2D> gridGeometries;
+    private transient Map<Integer,GridGeometry> gridGeometries;
 
     /**
      * The value returned by {@link #getSampleDimensions(int)}, computed when first needed. By
@@ -664,9 +664,9 @@ public class ImageCoverageReader extends GridCoverageStore {
      * @see ImageReader#getWidth(int)
      * @see ImageReader#getHeight(int)
      */
-    public GridGeometry2D getGridGeometry() throws DataStoreException {
+    public GridGeometry getGridGeometry() throws DataStoreException {
         final int index = 0;
-        GridGeometry2D gridGeometry = getCached(gridGeometries, index);
+        GridGeometry gridGeometry = getCached(gridGeometries, index);
         if (gridGeometry == null) {
             final ImageReader imageReader = this.imageReader; // Protect from changes.
             if (imageReader == null) {
@@ -732,8 +732,9 @@ public class ImageCoverageReader extends GridCoverageStore {
             upper[X_DIMENSION] = width;
             upper[Y_DIMENSION] = height;
             final GridExtent gridExtent = new GridExtent(null, lower, upper, false);
-            gridGeometry = new GridGeometry2D(gridExtent, pointInPixel, gridToCRS, crs);
-            Map.Entry<Map<Integer,GridGeometry2D>,GridGeometry2D> entry = setCached(gridGeometry, gridGeometries, index);
+            final PixelInCell pixelInCell = pointInPixel == PixelOrientation.CENTER ? PixelInCell.CELL_CENTER : PixelInCell.CELL_CORNER;
+            gridGeometry = new GridGeometry(gridExtent, pixelInCell, gridToCRS, crs);
+            Map.Entry<Map<Integer,GridGeometry>,GridGeometry> entry = setCached(gridGeometry, gridGeometries, index);
             gridGeometries = entry.getKey();
             gridGeometry = entry.getValue();
         }
@@ -1342,7 +1343,16 @@ public class ImageCoverageReader extends GridCoverageStore {
         if (imageReader == null) {
             throw new IllegalStateException(formatErrorMessage(Errors.Keys.NoImageInput));
         }
-        GridGeometry2D gridGeometry = getGridGeometry();
+        GridGeometry gridGeometry = getGridGeometry();
+        final int gridDimensionX, gridDimensionY;
+        if (gridGeometry.getDimension() == 2) {
+            gridDimensionX = 0;
+            gridDimensionY = 1;
+        } else if (gridGeometry.isDefined(GridGeometry.EXTENT)) {
+            final int[] subSpace = gridGeometry.getExtent().getSubspaceDimensions(2);
+            gridDimensionX = subSpace[0];
+            gridDimensionY = subSpace[1];
+        } else throw new DataStoreException("Cannot determine X and Y axis of the coverage");
         checkAbortState();
         final ImageReadParam imageParam;
         try {
@@ -1460,7 +1470,7 @@ public class ImageCoverageReader extends GridCoverageStore {
                                 gridExtent = null;
                             }
                             for (int i=0; i<gridDim; i++) {
-                                if (i != gridGeometry.gridDimensionX && i != gridGeometry.gridDimensionY) {
+                                if (i != gridDimensionX && i != gridDimensionY) {
                                     final double sliceIndex = indices[i];
                                     if (!Double.isNaN(sliceIndex)) {
                                         final DimensionSlice slice = sp.newDimensionSlice();
@@ -1517,8 +1527,8 @@ public class ImageCoverageReader extends GridCoverageStore {
             change.scale(imageParam.getSourceXSubsampling(), imageParam.getSourceYSubsampling());
             final int xmin = image.getMinX();
             final int ymin = image.getMinY();
-            final int xi = gridGeometry.gridDimensionX;
-            final int yi = gridGeometry.gridDimensionY;
+            final int xi = gridDimensionX;
+            final int yi = gridDimensionY;
             final MathTransform gridToCRS = gridGeometry.getGridToCRS(PixelInCell.CELL_CORNER);
             MathTransform newGridToCRS = gridToCRS;
             if (!change.isIdentity()) {
@@ -1547,7 +1557,7 @@ public class ImageCoverageReader extends GridCoverageStore {
             }
             final GridExtent newGridRange = new GridExtent(null, low, high, true);
             if (newGridToCRS != gridToCRS || !newGridRange.equals(gridExtent)) {
-                gridGeometry = new GridGeometry2D(newGridRange, PixelInCell.CELL_CORNER,
+                gridGeometry = new GridGeometry(newGridRange, PixelInCell.CELL_CORNER,
                         newGridToCRS, gridGeometry.getCoordinateReferenceSystem());
             }
         }
