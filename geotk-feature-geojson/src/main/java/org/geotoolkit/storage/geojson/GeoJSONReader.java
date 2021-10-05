@@ -286,6 +286,15 @@ class GeoJSONReader implements Iterator<Feature>, AutoCloseable {
                 } else if (value instanceof GeoJSONFeature) {
                     final Feature subComplexAttribute = toFeature((GeoJSONFeature)value, assoType);
                     feature.setPropertyValue(attName, subComplexAttribute);
+                } else if (value instanceof GeoJSONFeatureCollection) {
+                    GeoJSONFeatureCollection collection = (GeoJSONFeatureCollection) value;
+                    final List<Feature> subFeatures = new ArrayList<>();
+                    for (GeoJSONFeature subFeature : collection.getFeatures()) {
+                        subFeatures.add(toFeature(subFeature, assoType));
+                    }
+                    feature.setPropertyValue(attName, subFeatures);
+                 } else {
+                    LOGGER.warning("Unexpected attribute value type:" + value.getClass());
                 }
 
             } else if (type instanceof AttributeType) {

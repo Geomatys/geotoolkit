@@ -57,7 +57,7 @@ final class GeoJSONFileWriter extends GeoJSONReader {
 
             //start write feature collection.
             final FTypeInformation fti = ftInfos.get(featureType);
-            writer.writeStartFeatureCollection(fti.crs, null);
+            writer.writeStartFeatureCollection(fti.crs, null, null, null, null);
             writer.flush();
         } catch (IOException ex) {
             throw new DataStoreException(ex.getMessage(), ex);

@@ -288,7 +288,7 @@ public final class GeoJSONParser {
         return map;
     }
 
-    private static Object parseMapOrFeature(JsonParser p) throws IOException {
+    private static Object parseComplexObject(JsonParser p) throws IOException {
         Map<String, Object> map = new HashMap<>();
         final JsonToken currentToken = p.getCurrentToken();
         if (currentToken == JsonToken.VALUE_NULL) {
@@ -308,8 +308,8 @@ public final class GeoJSONParser {
             JsonToken next = p.nextToken();
             Object value = getValue(next, p);
 
-            // read a GeoJSON feature
-            if (firstToken && key.equals("type") && value instanceof String && value.equals("Feature")) {
+            // read a GeoJSON feature / featureCollection
+            if (firstToken && key.equals("type") && value instanceof String && value.equals("Feature") || value.equals("FeatureCollection")) {
                 return parseGeoJSONObject(p, false, null, true);
 
             // read simple object into a map
@@ -415,8 +415,8 @@ public final class GeoJSONParser {
         } else if (token == JsonToken.START_ARRAY) {
             return parseArray2(p);
         } else if (token == JsonToken.START_OBJECT) {
-            // can be either an object od a feature
-            return parseMapOrFeature(p);
+            // can be either an object or a feature/feature collection
+            return parseComplexObject(p);
         } else {
             throw new UnsupportedOperationException("Unsupported JSON token : " + token + ", value : " + p.getText());
         }

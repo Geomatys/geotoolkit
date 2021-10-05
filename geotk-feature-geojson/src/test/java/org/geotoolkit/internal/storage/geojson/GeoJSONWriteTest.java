@@ -17,6 +17,9 @@
 package org.geotoolkit.internal.storage.geojson;
 
 import com.fasterxml.jackson.core.JsonEncoding;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.*;
 import java.lang.reflect.Array;
 import java.net.URI;
@@ -313,6 +316,7 @@ public class GeoJSONWriteTest extends TestCase {
                 ",{\"type\":\"Feature\",\"id\":1,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-105.0162,39.5742]},\"properties\":{\"type\":\"feat2\",\"time\":\"1970-01-01T00:00:00.001Z\"}}\n" +
                 "]}";
 
+        compareJSON(expected, outputJSON);
         assertEquals(expected, outputJSON);
     }
 
@@ -322,12 +326,13 @@ public class GeoJSONWriteTest extends TestCase {
         FeatureType validFeatureType = buildGeometryFeatureType("simpleFT", Point.class);
 
         Point pt = (Point)WKT_READER.read(PROPERTIES.getProperty("point"));
+        Link l = new Link("http://test.com", null, null, null, null, null);
+        List<Link> links = new ArrayList<>();
+        links.add(l);
 
-        try (GeoJSONStreamWriter fw = new GeoJSONStreamWriter(baos, validFeatureType, 4)) {
-            Link l = new Link("http://test.com", null, null, null, null, null);
-            List<Link> links = new ArrayList<>(); 
-            links.add(l);
-            fw.writeCollection(links, 10, 5);
+        try (GeoJSONStreamWriter fw = new GeoJSONStreamWriter(baos, validFeatureType, links, 10, 5, JsonEncoding.UTF8, 4, false)) {
+           
+            fw.writeCollection();
             
             Feature feature = fw.next();
             feature.setPropertyValue("type","feat1");
@@ -358,6 +363,7 @@ public class GeoJSONWriteTest extends TestCase {
                             ",{\"type\":\"Feature\",\"id\":1,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-105.0162,39.5742]},\"properties\":{\"type\":\"feat2\",\"time\":\"1970-01-01T00:00:00.001Z\"}}\n" +
                             "]}";
 
+        compareJSON(expected, outputJSON);
         assertEquals(expected, outputJSON);
     }
 
@@ -384,7 +390,7 @@ public class GeoJSONWriteTest extends TestCase {
 
         String expected = "{\"type\":\"Feature\",\"id\":0," +
                 "\"geometry\":{\"type\":\"Point\",\"coordinates\":[-105.0162,39.5742]}," +
-                "\"properties\":{\"type\":\"feat1\",\"time\":\"1970-01-01T00:00:00Z\"}}";
+                "\"properties\":{\"type\":\"feat1\",\"time\":\"1970-01-01T00:00:00Z\"}}\n";
         assertEquals(expected, outputJSON);
     }
 
@@ -445,7 +451,7 @@ public class GeoJSONWriteTest extends TestCase {
                 "{\"type\":\"Feature\",\"id\":\"0\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-105.0162,39.5742]},\"properties\":{\"array\":[[0.0,1.0,2.0,3.0,4.0],[1.0,2.0,3.0,4.0,5.0],[2.0,3.0,4.0,5.0,6.0],[3.0,4.0,5.0,6.0,7.0],[4.0,5.0,6.0,7.0,8.0]]}}\n" +
                 ",{\"type\":\"Feature\",\"id\":\"1\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-105.0162,39.5742]},\"properties\":{\"array\":[[0.0,-1.0,-2.0,-3.0,-4.0],[1.0,0.0,-1.0,-2.0,-3.0],[2.0,1.0,0.0,-1.0,-2.0],[3.0,2.0,1.0,0.0,-1.0],[4.0,3.0,2.0,1.0,0.0]]}}\n" +
                 "]}";
-        assertEquals(expected, outputJSON);
+        compareJSON(expected, outputJSON);
     }
 
     @Test
@@ -673,6 +679,15 @@ public class GeoJSONWriteTest extends TestCase {
 
         //could not copy
         return candidate;
+    }
+
+    private static void compareJSON(String expected, String result) throws JsonProcessingException {
+        JSONComparator comparator = new JSONComparator();
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode expectedNode = mapper.readTree(expected);
+        JsonNode resultNode = mapper.readTree(result);
+
+        assertTrue(expectedNode.equals(comparator, resultNode));
     }
 
 }

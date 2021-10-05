@@ -83,7 +83,13 @@ public final class GeoJSONStreamWriter implements Iterator<Feature>, AutoCloseab
         this(outputStream, featureType, encoding, doubleAccuracy, false);
     }
 
+
     public GeoJSONStreamWriter(OutputStream outputStream, FeatureType featureType, final JsonEncoding encoding, final int doubleAccuracy, boolean prettyPrint)
+            throws DataStoreException {
+        this(outputStream, featureType, null, null, null, encoding, doubleAccuracy, prettyPrint);
+    }
+
+    public GeoJSONStreamWriter(OutputStream outputStream, FeatureType featureType, List<Link> links, Integer nbMatched, Integer nbReturned, final JsonEncoding encoding, final int doubleAccuracy, boolean prettyPrint)
             throws DataStoreException {
 
         //remove any operation attribute
@@ -131,7 +137,7 @@ public final class GeoJSONStreamWriter implements Iterator<Feature>, AutoCloseab
         try {
             writer = new GeoJSONWriter(outputStream, GeoJSONParser.JSON_FACTORY, encoding, doubleAccuracy, prettyPrint);
             //start write feature collection.
-            writer.writeStartFeatureCollection(GeoJSONUtils.getCRS(featureType), null);
+            writer.writeStartFeatureCollection(GeoJSONUtils.getCRS(featureType), null, links, nbMatched, nbReturned);
             writer.flush();
         } catch (IOException ex) {
             throw new DataStoreException(ex.getMessage(), ex);
@@ -151,7 +157,7 @@ public final class GeoJSONStreamWriter implements Iterator<Feature>, AutoCloseab
             final int doubleAccuracy, boolean prettyPrint) throws IOException {
 
         try (GeoJSONWriter writer = new GeoJSONWriter(outputStream, GeoJSONParser.JSON_FACTORY, encoding, doubleAccuracy, prettyPrint)) {
-            writer.writeSingleFeature(feature);
+            writer.writeFeature(feature);
         }
     }
 
@@ -203,10 +209,9 @@ public final class GeoJSONStreamWriter implements Iterator<Feature>, AutoCloseab
         }
     }
 
-    public void writeCollection(List<Link> links, Integer nbMatched, Integer nbReturned) throws BackingStoreException {
+    public void writeCollection() throws BackingStoreException {
         try {
-            writer.writeNumber(nbMatched, nbReturned);
-            writer.writeLinks(links);
+
             writer.flush();
         } catch (IOException | IllegalArgumentException e) {
             throw new BackingStoreException(e.getMessage(), e);
