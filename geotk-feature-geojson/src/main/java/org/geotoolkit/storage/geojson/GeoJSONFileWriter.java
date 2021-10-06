@@ -21,6 +21,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.concurrent.locks.ReadWriteLock;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.storage.DataStoreException;
@@ -98,7 +101,7 @@ final class GeoJSONFileWriter extends GeoJSONReader {
 
         lastWritten = edited;
         try {
-            writer.writeFeature(edited);
+            writer.writeFeature(edited, Collections.newSetFromMap(new IdentityHashMap<>()));
             writer.flush();
         } catch (IOException | IllegalArgumentException e) {
             throw new BackingStoreException(e.getMessage(), e);

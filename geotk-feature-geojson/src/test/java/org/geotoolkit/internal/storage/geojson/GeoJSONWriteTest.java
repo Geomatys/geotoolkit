@@ -44,6 +44,7 @@ import org.geotoolkit.storage.geojson.GeoJSONStore;
 import org.geotoolkit.storage.geojson.GeoJSONStreamWriter;
 import org.geotoolkit.feature.xml.Link;
 import org.geotoolkit.nio.IOUtilities;
+import org.geotoolkit.util.NamesExt;
 import static org.junit.Assert.*;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -389,6 +390,38 @@ public class GeoJSONWriteTest extends TestCase {
     }
 
     @Test
+    public void writeStreamLoopTest() throws Exception {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        FeatureType validFeatureType = buildLoopFeatureType("loopFT");
+
+
+        try (GeoJSONStreamWriter fw = new GeoJSONStreamWriter(baos, validFeatureType, 4)) {
+            Feature feature = fw.next();
+            feature.setPropertyValue("longProp",100l);
+            feature.setPropertyValue("stringProp","Some String");
+            feature.setPropertyValue("integerProp",15);
+            feature.setPropertyValue("booleanProp",true);
+
+            final FeatureType level1Type = ((FeatureAssociationRole)feature.getType().getProperty("level1")).getValueType();
+
+            final Feature level11 = level1Type.newInstance();
+            level11.setPropertyValue("longProp2",4444444l);
+            level11.setPropertyValue("loop",feature);
+
+            feature.setPropertyValue("level1",level11);
+            fw.write();
+        }
+
+        String outputJSON = baos.toString("UTF-8");
+        assertNotNull(outputJSON);
+        assertFalse(outputJSON.isEmpty());
+
+        String expectedJSON = IOUtilities.toString(GeoJSONWriteTest.class.getResourceAsStream("/org/apache/sis/internal/storage/geojson/loopFeature.json"), Charset.forName("UTF-8"));
+
+        compareJSON(expectedJSON, outputJSON);
+    }
+
+    @Test
     public void writeCollectionsTest() throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         FeatureType validFeatureType = buildGeometryFeatureType("simpleFT", Point.class);
@@ -619,12 +652,29 @@ public class GeoJSONWriteTest extends TestCase {
 
     private FeatureType buildComplexFeatureType2(String name) {
         FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-
-        ftb = new FeatureTypeBuilder();
         ftb.setName("level1");
         ftb.addAttribute(Long.class).setName("longProp2");
         ftb.addAttribute(Point.class).setName("geometry").setCRS(CommonCRS.WGS84.normalizedGeographic()).addRole(AttributeRole.DEFAULT_GEOMETRY);
         ftb.addAttribute(Point.class).setName("geometry2").setCRS(CommonCRS.WGS84.normalizedGeographic());
+        final FeatureType level1 = ftb.build();
+
+        ftb = new FeatureTypeBuilder();
+        ftb.setName(name);
+        ftb.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
+        ftb.addAttribute(Long.class).setName("longProp");
+        ftb.addAttribute(String.class).setName("stringProp");
+        ftb.addAttribute(Integer.class).setName("integerProp");
+        ftb.addAttribute(Boolean.class).setName("booleanProp");
+        ftb.addAssociation(level1).setName("level1").setMinimumOccurs(0).setMaximumOccurs(1);
+        ftb.setDescription(new SimpleInternationalString("Description"));
+        return ftb.build();
+    }
+
+    private FeatureType buildLoopFeatureType(String name) {
+        FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+        ftb.setName("level1");
+        ftb.addAttribute(Long.class).setName("longProp2");
+        ftb.addAssociation(NamesExt.create(name)).setName("loop").setMinimumOccurs(0).setMaximumOccurs(1);
         final FeatureType level1 = ftb.build();
 
         ftb = new FeatureTypeBuilder();

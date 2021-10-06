@@ -27,10 +27,13 @@ import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
 import java.text.NumberFormat;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 import org.apache.sis.feature.Features;
@@ -155,7 +158,7 @@ final class GeoJSONWriter implements Closeable, Flushable {
         // TODO bbox
         writeStartFeatureCollection(crs, null, null, null, null);
         for (Feature feat : features) {
-            writeFeature(feat);
+            writeFeature(feat, Collections.newSetFromMap(new IdentityHashMap<>()));
         }
         writeEndFeatureCollection();
     }
@@ -167,8 +170,8 @@ final class GeoJSONWriter implements Closeable, Flushable {
      * @throws IOException
      * @throws IllegalArgumentException
      */
-    void writeFeature(Feature feature) throws IOException, IllegalArgumentException {
-
+    void writeFeature(Feature feature, Set<Feature> alreadyWritten) throws IOException, IllegalArgumentException {
+        alreadyWritten.add(feature);
         writer.writeStartObject();
         writer.writeStringField(TYPE, FEATURE);
         /* As defined in GeoJSON spec, identifier is an optional attribute. For
@@ -203,7 +206,7 @@ final class GeoJSONWriter implements Closeable, Flushable {
         }
 
         //write properties
-        writeProperties(feature, PROPERTIES, true);
+        writeProperties(feature, PROPERTIES, true, alreadyWritten);
         writer.writeEndObject();
         writeNewLine();
     }
@@ -243,7 +246,7 @@ final class GeoJSONWriter implements Closeable, Flushable {
      * @throws IOException
      * @throws IllegalArgumentException
      */
-    private void writeProperties(Feature edited, String fieldName, boolean writeFieldName)
+    private void writeProperties(Feature edited, String fieldName, boolean writeFieldName, Set<Feature> alreadyWritten)
             throws IOException, IllegalArgumentException {
         if (writeFieldName) {
             writer.writeObjectFieldStart(fieldName);
@@ -268,11 +271,11 @@ final class GeoJSONWriter implements Closeable, Flushable {
                 if (attType.getMaximumOccurs() > 1) {
                     writer.writeArrayFieldStart(name);
                     for (Object v : (Collection) value) {
-                        writeProperty(name, v, false);
+                        writeProperty(name, v, false, alreadyWritten);
                     }
                     writer.writeEndArray();
                 } else {
-                    writeProperty(name, value, true);
+                    writeProperty(name, value, true, alreadyWritten);
                 }
             } else if (propType instanceof FeatureAssociationRole) {
                 final FeatureAssociationRole asso = (FeatureAssociationRole) propType;
@@ -280,11 +283,11 @@ final class GeoJSONWriter implements Closeable, Flushable {
                     writer.writeFieldName(name);
                     writeFeatureCollection((List<Feature>) value, asso.getValueType());
                 } else {
-                    writeProperty(name, value, true);
+                    writeProperty(name, value, true, alreadyWritten);
                 }
 
             } else if (propType instanceof Operation) {
-                writeProperty(name, value, true);
+                writeProperty(name, value, true, alreadyWritten);
             }
         }
 
@@ -298,10 +301,14 @@ final class GeoJSONWriter implements Closeable, Flushable {
      * @param writeFieldName
      * @throws IOException
      */
-    private void writeProperty(String name, Object value, boolean writeFieldName) throws IOException, IllegalArgumentException {
+    private void writeProperty(String name, Object value, boolean writeFieldName, Set<Feature> alreadyWritten) throws IOException, IllegalArgumentException {
         if (value instanceof Feature) {
-            writer.writeFieldName(name);
-            writeFeature((Feature) value);
+            Feature feat = (Feature)value;
+            // avoid infinite loop
+            if (!alreadyWritten.contains(feat)) {
+                writer.writeFieldName(name);
+                writeFeature(feat, alreadyWritten);
+            }
         } else {
             writeAttribute(name, value, writeFieldName);
         }

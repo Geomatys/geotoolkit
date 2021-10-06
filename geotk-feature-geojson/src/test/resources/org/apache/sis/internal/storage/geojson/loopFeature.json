@@ -1,0 +1,21 @@
+{
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "id": "0",
+            "properties": {
+                "longProp": 100,
+                "stringProp": "Some String",
+                "integerProp": 15,
+                "booleanProp": true,
+                "level1": {
+                    "type": "Feature",
+                    "properties": {
+                        "longProp2": 4444444
+                    }
+                }
+            }
+        }
+    ]
+}

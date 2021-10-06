@@ -19,6 +19,8 @@ package org.geotoolkit.storage.geojson;
 import com.fasterxml.jackson.core.JsonEncoding;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Collections;
+import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
@@ -158,7 +160,7 @@ public final class GeoJSONStreamWriter implements Iterator<Feature>, AutoCloseab
             final int doubleAccuracy, boolean prettyPrint) throws IOException {
 
         try (GeoJSONWriter writer = new GeoJSONWriter(outputStream, GeoJSONParser.JSON_FACTORY, encoding, doubleAccuracy, prettyPrint)) {
-            writer.writeFeature(feature);
+            writer.writeFeature(feature, Collections.newSetFromMap(new IdentityHashMap<>()));
         }
     }
 
@@ -203,7 +205,7 @@ public final class GeoJSONStreamWriter implements Iterator<Feature>, AutoCloseab
         }
         lastWritten = edited;
         try {
-            writer.writeFeature(edited);
+            writer.writeFeature(edited, Collections.newSetFromMap(new IdentityHashMap<>()));
             writer.flush();
         } catch (IOException | IllegalArgumentException e) {
             throw new BackingStoreException(e.getMessage(), e);
