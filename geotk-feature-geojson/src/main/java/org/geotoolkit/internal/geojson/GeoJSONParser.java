@@ -160,11 +160,25 @@ public final class GeoJSONParser {
      * @throws IOException
      */
     private static GeoJSONObject parseGeoJSONObject(JsonParser p, Boolean lazy, Path source, boolean readAlreadyStarted) throws IOException {
+        return parseGeoJSONObject(p, lazy, source, true, null);
+    }
+
+    /**
+     * Parse a GeoJSONObject (FeatureCollection, Feature or a Geometry)
+     * JsonParser location MUST be on a START_OBJECT token.
+     *
+     * @param p parser jackson parser with current token on a START_OBJECT.
+     * @param lazy lazy mode flag
+     * @return GeoJSONObject (FeatureCollection, Feature or a Geometry)
+     * @throws IOException
+     */
+    private static GeoJSONObject parseGeoJSONObject(JsonParser p, Boolean lazy, Path source, boolean readAlreadyStarted, GeoJSONObject object) throws IOException {
         if (!readAlreadyStarted) {
             assert (p.getCurrentToken() == JsonToken.START_OBJECT);
         }
-
-        GeoJSONObject object = new GeoJSONObject();
+        if (object == null) {
+            object = new GeoJSONObject();
+        }
         while (p.nextToken() != JsonToken.END_OBJECT) {
             String fieldname = p.getCurrentName();
 
@@ -309,8 +323,13 @@ public final class GeoJSONParser {
             Object value = getValue(next, p);
 
             // read a GeoJSON feature / featureCollection
-            if (firstToken && key.equals("type") && value instanceof String && value.equals("Feature") || value.equals("FeatureCollection")) {
+            if (firstToken && key.equals("type") && value instanceof String && (FEATURE.equals(value) || FEATURE_COLLECTION.equals(value))) {
                 return parseGeoJSONObject(p, false, null, true);
+
+            // read a secondary geometric attribute
+            } else if (firstToken && key.equals("type") && value instanceof String && GEOMETRY_TYPES.contains((String) value)) {
+                GeoJSONObject geom = getOrCreateFromType(null, (String) value);
+                return parseGeoJSONObject(p, false, null, true, geom);
 
             // read simple object into a map
             } else {

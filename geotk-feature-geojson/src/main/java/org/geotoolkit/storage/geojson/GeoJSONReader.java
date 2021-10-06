@@ -36,12 +36,14 @@ import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.internal.geojson.GeoJSONParser;
 import org.geotoolkit.internal.geojson.GeoJSONUtils;
 import org.geotoolkit.internal.geojson.binding.GeoJSONFeature;
 import org.geotoolkit.internal.geojson.binding.GeoJSONFeatureCollection;
 import org.geotoolkit.internal.geojson.binding.GeoJSONGeometry;
 import org.geotoolkit.internal.geojson.binding.GeoJSONObject;
+import static org.geotoolkit.storage.geojson.GeoJSONConstants.TYPE;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.Attribute;
 import org.opengis.feature.AttributeType;
@@ -103,8 +105,8 @@ class GeoJSONReader implements Iterator<Feature>, AutoCloseable {
             CoordinateReferenceSystem crs = null;
             String geometryName = null;
             try {
-                final PropertyType defaultGeometry = GeoJSONUtils.getDefaultGeometry(featureType);
-                crs = GeoJSONUtils.getCRS(defaultGeometry);
+                final PropertyType defaultGeometry = FeatureExt.getDefaultGeometry(featureType);
+                crs = FeatureExt.getCRS(defaultGeometry);
                 geometryName = defaultGeometry.getName().toString();
             } catch (PropertyNotFoundException ex) {
                 // not mandatory to have a geometric property
@@ -314,7 +316,9 @@ class GeoJSONReader implements Iterator<Feature>, AutoCloseable {
 
         Object convertValue = null;
         try {
-            if (value != null) {
+            if (value instanceof GeoJSONGeometry) {
+                convertValue = GeoJSONGeometry.toJTS((GeoJSONGeometry)value, null);
+            } else if (value != null) {
                 final AttributeType<?> propertyType = prop.getType();
                 final Class binding = propertyType.getValueClass();
 

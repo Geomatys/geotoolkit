@@ -1,0 +1,28 @@
+{
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "properties": {
+                "longProp": 100,
+                "stringProp": "Some String",
+                "integerProp": 15,
+                "booleanProp": true,
+                "level1": {
+                    "type": "Feature",
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [-105.01621, 39.57422]
+                    },
+                    "properties": {
+                        "longProp2": 4444444,
+                        "geometry2": {
+                            "type": "Point",
+                            "coordinates": [-105.01621, 39.57422]
+                        }
+                    }
+                }
+            }
+        }
+    ]
+}

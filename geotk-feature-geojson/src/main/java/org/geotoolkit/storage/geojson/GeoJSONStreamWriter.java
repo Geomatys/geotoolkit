@@ -30,6 +30,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureNaming;
 import org.apache.sis.storage.IllegalNameException;
 import org.apache.sis.util.collection.BackingStoreException;
+import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.internal.geojson.GeoJSONParser;
 import org.geotoolkit.internal.geojson.GeoJSONUtils;
 import org.locationtech.jts.geom.Geometry;
@@ -137,7 +138,7 @@ public final class GeoJSONStreamWriter implements Iterator<Feature>, AutoCloseab
         try {
             writer = new GeoJSONWriter(outputStream, GeoJSONParser.JSON_FACTORY, encoding, doubleAccuracy, prettyPrint);
             //start write feature collection.
-            writer.writeStartFeatureCollection(GeoJSONUtils.getCRS(featureType), null, links, nbMatched, nbReturned);
+            writer.writeStartFeatureCollection(FeatureExt.getCRS(featureType), null, links, nbMatched, nbReturned);
             writer.flush();
         } catch (IOException ex) {
             throw new DataStoreException(ex.getMessage(), ex);

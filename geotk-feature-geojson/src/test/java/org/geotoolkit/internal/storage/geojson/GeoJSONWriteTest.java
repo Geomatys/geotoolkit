@@ -24,6 +24,7 @@ import java.io.*;
 import java.lang.reflect.Array;
 import java.net.URI;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -42,6 +43,7 @@ import org.geotoolkit.storage.geojson.GeoJSONProvider;
 import org.geotoolkit.storage.geojson.GeoJSONStore;
 import org.geotoolkit.storage.geojson.GeoJSONStreamWriter;
 import org.geotoolkit.feature.xml.Link;
+import org.geotoolkit.nio.IOUtilities;
 import static org.junit.Assert.*;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -240,10 +242,13 @@ public class GeoJSONWriteTest extends TestCase {
 
         final Feature level211 = level2Type.newInstance();
         level211.setPropertyValue("level2prop","text");
+        level211.setPropertyValue("level2geomprop",pt);
         final Feature level212 = level2Type.newInstance();
         level212.setPropertyValue("level2prop","text2");
+        level212.setPropertyValue("level2geomprop",pt);
         final Feature level213 = level2Type.newInstance();
         level213.setPropertyValue("level2prop","text3");
+        level213.setPropertyValue("level2geomprop",pt);
 
         level11.setPropertyValue("level2", Arrays.asList(level211,level212,level213));
 
@@ -266,9 +271,7 @@ public class GeoJSONWriteTest extends TestCase {
         expected = copy(feature);
         store.add(Arrays.asList(feature).iterator());
 
-
         assertTrue(Files.exists(file));
-
         assertEquals(1, store.features(false).count());
 
         try (Stream<Feature> stream = store.features(false)) {
@@ -280,6 +283,71 @@ public class GeoJSONWriteTest extends TestCase {
                 comparator.compare();
             }
         }
+
+        String outputJSON = IOUtilities.toString(file);
+        assertNotNull(outputJSON);
+        assertFalse(outputJSON.isEmpty());
+
+        String expectedJSON = IOUtilities.toString(GeoJSONWriteTest.class.getResourceAsStream("/org/apache/sis/internal/storage/geojson/complexFeature.json"), Charset.forName("UTF-8"));
+        compareJSON(expectedJSON, outputJSON);
+        Files.deleteIfExists(file);
+    }
+
+    @Test
+    public void writeComplexFeaturesTest2() throws Exception {
+        Path file = Files.createTempFile("complex2", ".json");
+
+        WritableFeatureSet store = new GeoJSONStore(new GeoJSONProvider(), file, 7);
+        assertNotNull(store);
+
+        String typeName = file.getFileName().toString().replace(".json", "");
+
+        FeatureType complexFT = buildComplexFeatureType2(typeName);
+
+        store.updateType(complexFT);
+        assertNotNull(store.getType());
+        assertTrue(Files.exists(file));
+
+        Point pt = (Point)WKT_READER.read(PROPERTIES.getProperty("point"));
+        Feature expected = null;
+        Feature feature = store.getType().newInstance();
+        feature.setPropertyValue("longProp",100l);
+        feature.setPropertyValue("stringProp","Some String");
+        feature.setPropertyValue("integerProp",15);
+        feature.setPropertyValue("booleanProp",true);
+
+        final FeatureType level1Type = ((FeatureAssociationRole)feature.getType().getProperty("level1")).getValueType();
+
+        final Feature level11 = level1Type.newInstance();
+        level11.setPropertyValue("longProp2",4444444l);
+        level11.setPropertyValue("geometry",pt);
+        level11.setPropertyValue("geometry2",pt);
+
+        feature.setPropertyValue("level1",level11);
+
+        expected = copy(feature);
+        store.add(Arrays.asList(feature).iterator());
+
+        assertTrue(Files.exists(file));
+        assertEquals(1, store.features(false).count());
+
+        try (Stream<Feature> stream = store.features(false)) {
+            Iterator<Feature> ite = stream.iterator();
+            while (ite.hasNext()) {
+                Feature candidate = ite.next();
+                FeatureComparator comparator = new FeatureComparator(expected, candidate);
+                comparator.ignoredProperties.add(AttributeConvention.IDENTIFIER);
+                comparator.compare();
+            }
+        }
+
+        String outputJSON = IOUtilities.toString(file);
+        assertNotNull(outputJSON);
+        assertFalse(outputJSON.isEmpty());
+
+
+        String expectedJSON = IOUtilities.toString(GeoJSONWriteTest.class.getResourceAsStream("/org/apache/sis/internal/storage/geojson/complexFeature2.json"), Charset.forName("UTF-8"));
+        compareJSON(expectedJSON, outputJSON);
         Files.deleteIfExists(file);
     }
 
@@ -527,6 +595,7 @@ public class GeoJSONWriteTest extends TestCase {
 
         ftb.setName("level2");
         ftb.addAttribute(String.class).setName("level2prop");
+        ftb.addAttribute(Point.class).setName("level2geomprop").setCRS(CommonCRS.WGS84.normalizedGeographic()).addRole(AttributeRole.DEFAULT_GEOMETRY);;
         final FeatureType level2 = ftb.build();
 
         ftb = new FeatureTypeBuilder();
@@ -544,6 +613,28 @@ public class GeoJSONWriteTest extends TestCase {
         ftb.addAttribute(Boolean.class).setName("booleanProp");
         ftb.addAssociation(level1).setName("level1").setMinimumOccurs(1).setMaximumOccurs(3);
         ftb.addAttribute(Point.class).setName("geometry").setCRS(CommonCRS.WGS84.normalizedGeographic()).addRole(AttributeRole.DEFAULT_GEOMETRY);
+        ftb.setDescription(new SimpleInternationalString("Description"));
+        return ftb.build();
+    }
+
+    private FeatureType buildComplexFeatureType2(String name) {
+        FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+
+        ftb = new FeatureTypeBuilder();
+        ftb.setName("level1");
+        ftb.addAttribute(Long.class).setName("longProp2");
+        ftb.addAttribute(Point.class).setName("geometry").setCRS(CommonCRS.WGS84.normalizedGeographic()).addRole(AttributeRole.DEFAULT_GEOMETRY);
+        ftb.addAttribute(Point.class).setName("geometry2").setCRS(CommonCRS.WGS84.normalizedGeographic());
+        final FeatureType level1 = ftb.build();
+
+        ftb = new FeatureTypeBuilder();
+        ftb.setName(name);
+        ftb.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
+        ftb.addAttribute(Long.class).setName("longProp");
+        ftb.addAttribute(String.class).setName("stringProp");
+        ftb.addAttribute(Integer.class).setName("integerProp");
+        ftb.addAttribute(Boolean.class).setName("booleanProp");
+        ftb.addAssociation(level1).setName("level1").setMinimumOccurs(0).setMaximumOccurs(1);
         ftb.setDescription(new SimpleInternationalString("Description"));
         return ftb.build();
     }

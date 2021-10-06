@@ -29,12 +29,15 @@ import java.text.NumberFormat;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
+import org.apache.sis.feature.Features;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.Utilities;
+import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.internal.geojson.GeoJSONParser;
 import org.geotoolkit.internal.geojson.GeoJSONUtils;
 import org.geotoolkit.internal.geojson.binding.GeoJSONGeometry;
@@ -148,7 +151,7 @@ final class GeoJSONWriter implements Closeable, Flushable {
     }
 
     void writeFeatureCollection(List<Feature> features, FeatureType fType) throws IOException, IllegalArgumentException {
-        final CoordinateReferenceSystem crs = GeoJSONUtils.getCRS(fType);
+        final CoordinateReferenceSystem crs = FeatureExt.getCRS(fType);
         // TODO bbox
         writeStartFeatureCollection(crs, null, null, null, null);
         for (Feature feat : features) {
@@ -182,7 +185,7 @@ final class GeoJSONWriter implements Closeable, Flushable {
         }
 
         //write CRS
-        final CoordinateReferenceSystem crs = GeoJSONUtils.getCRS(feature.getType());
+        final CoordinateReferenceSystem crs = FeatureExt.getCRS(feature.getType());
         if (crs != null && !Utilities.equalsApproximately(crs, CommonCRS.defaultGeographic())) {
             if (!writeCRS(crs)) {
                 throw new IOException("Cannot determine a valid URN for " + crs.getName());
@@ -190,7 +193,7 @@ final class GeoJSONWriter implements Closeable, Flushable {
         }
 
         //write geometry
-        final Optional<Geometry> geom = GeoJSONUtils.getDefaultGeometryValue(feature)
+        final Optional<Geometry> geom = FeatureExt.getDefaultGeometryValueSafe(feature)
                 .filter(Geometry.class::isInstance)
                 .map(Geometry.class::cast);
 
@@ -249,12 +252,14 @@ final class GeoJSONWriter implements Closeable, Flushable {
         }
 
         FeatureType type = edited.getType();
+        PropertyType defGeom = FeatureExt.getDefaultGeometrySafe(type).flatMap(Features::toAttribute).orElse(null);
+
         Collection<? extends PropertyType> descriptors = type.getProperties(true).stream()
                 .filter(GeoJSONUtils.IS_NOT_CONVENTION)
+                .filter(it -> !Objects.equals(defGeom, it))
                 .collect(Collectors.toList());
         for (PropertyType propType : descriptors) {
-            if (AttributeConvention.contains(propType.getName())) continue;
-            if (AttributeConvention.isGeometryAttribute(propType)) continue;
+
             final String name = propType.getName().tip().toString();
             final Object value = edited.getPropertyValue(propType.getName().toString());
 
@@ -295,6 +300,7 @@ final class GeoJSONWriter implements Closeable, Flushable {
      */
     private void writeProperty(String name, Object value, boolean writeFieldName) throws IOException, IllegalArgumentException {
         if (value instanceof Feature) {
+            writer.writeFieldName(name);
             writeFeature((Feature) value);
         } else {
             writeAttribute(name, value, writeFieldName);
@@ -313,7 +319,11 @@ final class GeoJSONWriter implements Closeable, Flushable {
         if (writeFieldName) {
             writer.writeFieldName(name);
         }
-        GeoJSONUtils.writeValue(value, writer);
+        if (value instanceof Geometry) {
+            writeGeoJSONGeometry(GeoJSONGeometry.toGeoJSONGeometry((Geometry) value));
+        } else {
+            GeoJSONUtils.writeValue(value, writer);
+        }
     }
 
     /**
