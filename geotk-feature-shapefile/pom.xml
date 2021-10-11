@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- =======================================================================
+        User Prototype Configuration File
+     ======================================================================= -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.geotoolkit</groupId>
+        <artifactId>geotoolkit</artifactId>
+        <version>5.0-SNAPSHOT</version>
+    </parent>
+
+
+  <!-- =========================================================== -->
+  <!--     Module Description                                      -->
+  <!-- =========================================================== -->
+    <artifactId>geotk-feature-shapefile</artifactId>
+    <packaging>jar</packaging>
+    <name>DataStore Shapefile</name>
+    <description>FeatureStore shapefile</description>
+    <licenses>
+        <license>
+            <name>Lesser General Public License (LGPL)</name>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+  <!-- =========================================================== -->
+  <!--     Developers and Contributors                             -->
+  <!-- =========================================================== -->
+    <developers>
+        <developer>
+            <name>Martin Desruisseaux</name>
+            <id>desruisseaux</id>
+            <email>desruisseaux@users.sourceforge.net</email>
+            <organization>Geomatys</organization>
+            <organizationUrl>http://www.geomatys.fr/</organizationUrl>
+            <timezone>+1</timezone>
+            <roles>
+                <role>Java Developer</role>
+                <role>Module Maintainer</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Johann Sorel</name>
+            <id>jsorel</id>
+            <email>johann.sorel@geomatys.fr</email>
+            <organization>Geomatys</organization>
+            <organizationUrl>http://www.geomatys.fr/</organizationUrl>
+            <timezone>+1</timezone>
+            <roles>
+                <role>Java Developer</role>
+            </roles>
+        </developer>
+    </developers>
+
+
+  <!-- =========================================================== -->
+  <!--     Dependencies                                            -->
+  <!-- =========================================================== -->
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.sis.storage</groupId>
+            <artifactId>sis-shapefile</artifactId>
+            <version>${sis.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotoolkit</groupId>
+            <artifactId>geotk-feature-dbf</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotoolkit</groupId>
+            <artifactId>geotk-index</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.sis.core</groupId>
+            <artifactId>sis-utility</artifactId>
+            <version>${sis.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.geotoolkit</groupId>
+            <artifactId>geotk-utility</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <includes>
+                        <include>ShapefileTestSuite</include>
+                    </includes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
