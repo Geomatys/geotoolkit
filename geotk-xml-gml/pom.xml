@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Configuration of "geotk-xml-gml" module from GeotoolKit project.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.geotoolkit</groupId>
+    <artifactId>geotoolkit</artifactId>
+    <version>5.0-SNAPSHOT</version>
+  </parent>
+
+
+
+  <!--
+    Module description.
+  -->
+  <artifactId>geotk-xml-gml</artifactId>
+  <packaging>jar</packaging>
+  <name>Bindings OGC - GML : Geometry Markup Language</name>
+  <description>
+    XML bindings for the various versions of the OGC standard Geographic Markup
+    Language (GML) schemas.
+  </description>
+
+
+
+  <!--
+    Developers and contributors.
+  -->
+  <developers>
+    <developer>
+      <id>glegal</id>
+      <name>Guilhem Legal</name>
+      <email>guilhem.legal@geomatys.fr</email>
+      <organization>Geomatys</organization>
+      <organizationUrl>http://www.geomatys.fr/</organizationUrl>
+      <roles>
+        <role>Developer</role>
+      </roles>
+      <timezone>+1</timezone>
+    </developer>
+    <developer>
+      <id>desruisseaux</id>
+      <name>Martin Desruisseaux</name>
+      <email>desruisseaux@users.sourceforge.net</email>
+      <organization>Geomatys</organization>
+      <organizationUrl>http://www.geomatys.fr/</organizationUrl>
+      <roles>
+        <role>Developer</role>
+      </roles>
+      <timezone>+1</timezone>
+    </developer>
+  </developers>
+
+
+
+  <!--
+    Required dependencies for building. These dependencies will be included
+    in the JARs' list that maven will put in the directory "target/binaries".
+  -->
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.sis.core</groupId>
+      <artifactId>sis-utility</artifactId>
+      <version>${sis.version}</version>
+    </dependency>
+    <!-- for GML Temporal factory -->
+    <dependency>
+        <groupId>org.geotoolkit</groupId>
+        <artifactId>geotk-temporal</artifactId>
+        <version>${project.version}</version>
+    </dependency>
+    <!-- for utils -->
+    <dependency>
+        <groupId>org.locationtech.jts</groupId>
+        <artifactId>jts-core</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.geotoolkit</groupId>
+        <artifactId>geotk-geometry</artifactId>
+        <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.sis.non-free</groupId>
+      <artifactId>sis-embedded-data</artifactId>
+      <version>${sis.non-free.version}</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.sis.core</groupId>
+        <artifactId>sis-utility</artifactId>
+        <version>${sis.version}</version>
+        <type>test-jar</type>
+        <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.sis.core</groupId>
+        <artifactId>sis-metadata</artifactId>
+        <version>${sis.version}</version>
+        <type>test-jar</type>
+        <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>org.geotoolkit</groupId>
+        <artifactId>geotk-utility</artifactId>
+        <version>${project.version}</version>
+        <type>test-jar</type>
+        <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.derby</groupId>
+        <artifactId>derby</artifactId>
+        <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+</project>

@@ -563,6 +563,22 @@
       <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.opengis</groupId>
+      <artifactId>geoapi-conformance</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <!-- Force database drivers in tests for all modules -->
+    <dependency>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derby</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
 
@@ -641,6 +657,35 @@
 
 
     <plugins>
+
+      <!-- Compile properties files into resources UTF files. -->
+      <plugin>
+        <groupId>org.apache.sis.core</groupId>
+        <artifactId>sis-build-helper</artifactId>
+        <version>${sis.version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>compile-resources</goal>
+              <goal>collect-jars</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <systemProperties>
+            <property>
+              <name>derby.stream.error.file</name>
+              <value>${project.build.directory}/derby.log</value>
+            </property>
+          </systemProperties>
+        </configuration>
+      </plugin>
+
       <!-- JDK requirement for building (not necessarily for running) -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -1023,9 +1068,122 @@
            Modules for the build in approximate dependency order
        =========================================================== -->
   <modules>
-    <module>modules</module>
-    <module>demos</module>
+    <module>geotk-utility</module>
+    <module>geotk-temporal</module>
+    <module>geotk-maven-report</module>
+    <module>geotk-logging-commons</module>
+    <module>geotk-logging-log4j</module>
+    <module>geotk-utility-jdbc</module>
+    <module>geotk-analytics</module>
+
+    <module>geotk-geometry</module>
+    <module>geotk-jtswrapper</module>
+    <module>geotk-feature</module>
+    <module>geotk-image</module>
+    <module>geotk-coverage</module>
+
+    <module>geotk-index</module>
+    <module>geotk-spatial-lucene</module>
+
+    <module>geotk-processing-core</module>
+    <module>geotk-processing</module>
+        
+    <module>geotk-style</module>
+    <module>geotk-svg-batik</module>
+    <module>geotk-svg-salamander</module>
+    <module>geotk-render</module>
+    <module>geotk-render2d</module>
+    <module>geotk-jasperreport</module>
+    
+    <module>geotk-jaxp-core</module>
+    <module>geotk-jaxp-gml</module>
+    <module>geotk-jaxp-xsd</module>
+    <module>geotk-jaxp-atom</module>
+    <module>geotk-jaxp-xal</module>
+
+    <module>geotk-xml-xsd</module>
+    <module>geotk-xml-feature-catalogue</module>
+    <!--module>geotk-xml-metadata-imagery</module-->
+    <module>geotk-xml-gml</module>
+    <module>geotk-xml-citygml</module>
+    <module>geotk-xml-kml</module>
+    <module>geotk-xml-dif</module>
+    <module>geotk-xml-csw</module>
+    <module>geotk-xml-observation</module>
+    <module>geotk-xml-owc</module>
+    <module>geotk-xml-ows</module>
+    <module>geotk-xml-sensorML</module>
+    <module>geotk-xml-ogc</module>
+    <module>geotk-xml-ols</module>
+    <module>geotk-xml-opensearch</module>
+    <module>geotk-xml-se</module>
+    <module>geotk-xml-sld</module>
+    <module>geotk-xml-sos</module>
+    <module>geotk-xml-swe</module>
+    <module>geotk-xml-tms</module>
+    <module>geotk-xml-wcs</module>
+    <module>geotk-xml-wfs</module>
+    <module>geotk-xml-wmc</module>
+    <module>geotk-xml-wms</module>
+    <module>geotk-xml-wmts</module>
+    <module>geotk-xml-wps</module>
+    <module>geotk-xml-ebrim</module>
+    <module>geotk-xml-xacml</module>
+    <module>geotk-xml-skos</module>
+    <module>geotk-xml-mathml</module>
+    <module>geotk-xml-providers</module>
+    <module>geotk-xml-thw</module>
+    <module>geotk-xml-sts</module>
+    
+    <module>geotk-storage</module>
+    <module>geotk-feature-dbf</module>
+    <module>geotk-feature-csv</module>
+    <module>geotk-feature-gml</module>
+    <module>geotk-feature-kml</module>
+    <module>geotk-feature-shapefile</module>
+    <module>geotk-feature-om</module>
+    <module>geotk-feature-osm</module>
+    <module>geotk-feature-geojson</module>
+    <module>geotk-feature-sql</module>
+    <module>geotk-feature-postgres</module>
+    <module>geotk-feature-mysql</module>
+    <module>geotk-feature-mapinfo</module>
+    <module>geotk-feature-nmea</module>
+    <module>geotk-feature-oracle</module>
+    <module>geotk-coverage-worldfile</module>
+    <module>geotk-coverage-bil</module>
+    <module>geotk-coverage-geotiff</module>
+    <module>geotk-coverage-imagery</module>
+    <!-- Obsolete module, still contains interesting things, salvage what we can before removing it -->
+    <!--module>geotk-coverage-postgresql</module-->
+    <module>geotk-coverage-xml</module>
+    <module>geotk-coverage-sql</module>
+    <module>geotk-coverage-wkb</module>
+    <module>geotk-coverage-hgt</module>
+    <module>geotk-coverage-vi3g</module>
+    <module>geotk-observation-store</module>
+    <module>geotk-metadata-store</module>
+    
+    <module>geotk-client-store</module>
+    <module>geotk-client-csw</module>
+    <module>geotk-client-osm</module>
+    <module>geotk-client-osmtms</module>
+    <module>geotk-client-sos</module>
+    <module>geotk-client-wcs</module>
+    <module>geotk-client-wfs</module>
+    <module>geotk-client-wms</module>
+    <module>geotk-client-ncwms</module>
+    <module>geotk-client-wmts</module>
+    <module>geotk-client-wps</module>
+        
+    <module>geotk-mapfile</module>
+        
     <module>benchmark</module>
+
+    <module>geotk-demo-referencing-javadb</module>
+    <module>geotk-demo-referencing-wkt</module>
+    <module>geotk-demo-samples</module>
+
     <module>buildset</module>
   </modules>
 </project>
