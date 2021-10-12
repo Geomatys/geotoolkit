@@ -26,23 +26,22 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.storage.multires.DefiningTileMatrixSet;
-import org.geotoolkit.storage.multires.MultiResolutionModel;
-import org.geotoolkit.storage.multires.MultiResolutionResource;
-import org.geotoolkit.storage.multires.TileMatrices;
 import org.geotoolkit.storage.multires.TileFormat;
-import org.opengis.util.GenericName;
+import org.geotoolkit.storage.multires.TileMatrices;
 import org.geotoolkit.storage.multires.TileMatrixSet;
+import org.geotoolkit.storage.multires.TiledResource;
+import org.opengis.util.GenericName;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public class DefiningMultiResolutionResource extends DefiningCoverageResource implements MultiResolutionResource {
+public class DefiningTiledGridCoverageResource extends DefiningGridCoverageResource implements TiledResource {
 
-    public final Map<String,MultiResolutionModel> models = new HashMap<>();
+    public final Map<String,TileMatrixSet> models = new HashMap<>();
     private TileFormat tileFormat;
 
-    public DefiningMultiResolutionResource(GenericName identifier) {
+    public DefiningTiledGridCoverageResource(GenericName identifier) {
         super(identifier);
     }
 
@@ -66,33 +65,28 @@ public class DefiningMultiResolutionResource extends DefiningCoverageResource im
     }
 
     @Override
-    public Collection<? extends MultiResolutionModel> getModels() throws DataStoreException {
+    public Collection<TileMatrixSet> getTileMatrixSets() throws DataStoreException {
         return Collections.unmodifiableCollection(models.values());
     }
 
     @Override
-    public MultiResolutionModel createModel(MultiResolutionModel template) throws DataStoreException {
-        if (template instanceof TileMatrixSet) {
-            TileMatrixSet p = (TileMatrixSet) template;
-            String id = p.getIdentifier();
-            if (id == null) {
-                //create a unique id
-                id = UUID.randomUUID().toString();
-            } else if (models.containsKey(id)) {
-                //change id to avoid overriding an existing pyramid
-                id = UUID.randomUUID().toString();
-            }
-            DefiningTileMatrixSet cp = new DefiningTileMatrixSet(id, p.getFormat(), p.getCoordinateReferenceSystem(), new ArrayList<>());
-            TileMatrices.copyStructure(p, cp);
-            models.put(id, cp);
-            return cp;
-        } else {
-            throw new DataStoreException("Unsupported model "+ template);
+    public TileMatrixSet createTileMatrixSet(TileMatrixSet template) throws DataStoreException {
+        String id = template.getIdentifier();
+        if (id == null) {
+            //create a unique id
+            id = UUID.randomUUID().toString();
+        } else if (models.containsKey(id)) {
+            //change id to avoid overriding an existing pyramid
+            id = UUID.randomUUID().toString();
         }
+        DefiningTileMatrixSet cp = new DefiningTileMatrixSet(id, template.getFormat(), template.getCoordinateReferenceSystem(), new ArrayList<>());
+        TileMatrices.copyStructure(template, cp);
+        models.put(id, cp);
+        return cp;
     }
 
     @Override
-    public void removeModel(String identifier) throws DataStoreException {
+    public void removeTileMatrixSet(String identifier) throws DataStoreException {
         models.remove(identifier);
     }
 

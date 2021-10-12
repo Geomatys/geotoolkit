@@ -41,7 +41,6 @@ import org.geotoolkit.storage.coverage.finder.CoverageFinder;
 import org.geotoolkit.storage.coverage.finder.StrictlyCoverageFinder;
 import org.geotoolkit.storage.multires.DefiningTileMatrix;
 import org.geotoolkit.storage.multires.DefiningTileMatrixSet;
-import org.geotoolkit.storage.multires.MultiResolutionResource;
 import org.geotoolkit.storage.multires.TileMatrices;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
@@ -57,6 +56,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.geotoolkit.storage.multires.TileMatrixSet;
 import org.geotoolkit.storage.multires.TileMatrix;
+import org.geotoolkit.storage.multires.TiledResource;
 
 
 /**
@@ -81,7 +81,7 @@ public final class CoverageUtilities {
      * TODO: Is it really OK ? If we search a Lambert pyramid, and we've only got polar ones...
      * @deprecated use {@link org.geotoolkit.coverage.finder.StrictlyCoverageFinder#findPyramid(PyramidSet, org.opengis.referencing.crs.CoordinateReferenceSystem)}
      */
-    public static TileMatrixSet findPyramid(final MultiResolutionResource set, final CoordinateReferenceSystem crs) throws FactoryException, DataStoreException {
+    public static TileMatrixSet findPyramid(final TiledResource set, final CoordinateReferenceSystem crs) throws FactoryException, DataStoreException {
         CoverageFinder finder = new StrictlyCoverageFinder();
         return finder.findPyramid(set, crs);
     }
@@ -201,12 +201,12 @@ public final class CoverageUtilities {
      * @throws DataStoreException If a problem occurs at pyramid access.
      * @throws IOException If a problem occurs at image reading/writing.
      */
-    public static void copyPyramidReference(MultiResolutionResource sourceRef, MultiResolutionResource targetRef) throws DataStoreException, IOException {
+    public static void copyPyramidReference(TiledResource sourceRef, TiledResource targetRef) throws DataStoreException, IOException {
         final Collection<? extends TileMatrixSet> pyramids = TileMatrices.getTileMatrixSets(sourceRef);
 
         // Create pyramids
         for (TileMatrixSet sP : pyramids) {
-            final TileMatrixSet tP = (TileMatrixSet) targetRef.createModel(new DefiningTileMatrixSet(sP.getCoordinateReferenceSystem()));
+            final TileMatrixSet tP = (TileMatrixSet) targetRef.createTileMatrixSet(new DefiningTileMatrixSet(sP.getCoordinateReferenceSystem()));
 
             //create mosaics
             for (TileMatrix sM : sP.getTileMatrices()) {
@@ -267,7 +267,7 @@ public final class CoverageUtilities {
     /**
      * Get or create a pyramid and it's mosaic for the given envelope and scales.
      */
-    public static TileMatrixSet getOrCreatePyramid(MultiResolutionResource container,
+    public static TileMatrixSet getOrCreatePyramid(TiledResource container,
             Envelope envelope, Dimension tileSize, double[] scales) throws DataStoreException
     {
         // Find if we already have a pyramid in the given CRS
@@ -281,7 +281,7 @@ public final class CoverageUtilities {
         }
         if (pyramid == null) {
             // We didn't find a pyramid, create one
-            pyramid = (TileMatrixSet) container.createModel(new DefiningTileMatrixSet(crs));
+            pyramid = (TileMatrixSet) container.createTileMatrixSet(new DefiningTileMatrixSet(crs));
         }
 
         // Those parameters can change if another mosaic already exist

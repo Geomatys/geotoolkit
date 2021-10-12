@@ -55,12 +55,12 @@ import org.opengis.util.GenericName;
  */
 public class GeneralProgressiveResource extends AbstractResource implements ProgressiveResource, IProgressiveCoverageResource {
 
-    protected final MultiResolutionResource base;
+    protected final TiledResource base;
     private GenericName identifier;
     private final Map<String,ProgressiveTileMatrixSet> cachePyramids = new HashMap<>();
     protected TileGenerator generator;
 
-    public GeneralProgressiveResource(MultiResolutionResource base, TileGenerator generator) {
+    public GeneralProgressiveResource(TiledResource base, TileGenerator generator) {
         super(null);
         this.base = base;
         this.generator = generator;
@@ -92,8 +92,8 @@ public class GeneralProgressiveResource extends AbstractResource implements Prog
      * {@inheritDoc }.
      */
     @Override
-    public Collection<TileMatrixSet> getModels() throws DataStoreException {
-        final Collection<TileMatrixSet> parentPyramids = (Collection<TileMatrixSet>) base.getModels();
+    public Collection<TileMatrixSet> getTileMatrixSets() throws DataStoreException {
+        final Collection<TileMatrixSet> parentPyramids = (Collection<TileMatrixSet>) base.getTileMatrixSets();
 
         final List<TileMatrixSet> pyramids;
         synchronized (cachePyramids) {
@@ -121,19 +121,19 @@ public class GeneralProgressiveResource extends AbstractResource implements Prog
      * {@inheritDoc }.
      */
     @Override
-    public MultiResolutionModel createModel(MultiResolutionModel template) throws DataStoreException {
+    public TileMatrixSet createTileMatrixSet(TileMatrixSet template) throws DataStoreException {
         synchronized (cachePyramids) {
-            final MultiResolutionModel newParentPyramid = base.createModel(template);
-            final ProgressiveTileMatrixSet cached = new ProgressiveTileMatrixSet((TileMatrixSet) newParentPyramid);
+            final TileMatrixSet newParentPyramid = base.createTileMatrixSet(template);
+            final ProgressiveTileMatrixSet cached = new ProgressiveTileMatrixSet(newParentPyramid);
             cachePyramids.put(cached.getIdentifier(), cached);
             return cached;
         }
     }
 
     @Override
-    public void removeModel(String identifier) throws DataStoreException {
+    public void removeTileMatrixSet(String identifier) throws DataStoreException {
         synchronized (cachePyramids) {
-            base.removeModel(identifier);
+            base.removeTileMatrixSet(identifier);
             cachePyramids.remove(identifier);
         }
     }

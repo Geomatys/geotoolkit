@@ -37,7 +37,7 @@ import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.sld.xml.Specification;
 import org.geotoolkit.sld.xml.StyleXmlIO;
-import org.geotoolkit.storage.memory.InMemoryPyramidResource;
+import org.geotoolkit.storage.memory.InMemoryTiledGridCoverageResource;
 import org.geotoolkit.storage.multires.TileMatrices;
 import org.geotoolkit.style.MutableStyle;
 import org.junit.Assert;
@@ -64,8 +64,8 @@ public class TileDebugTest extends org.geotoolkit.test.TestBase {
         final MutableStyle style = GO2Utilities.STYLE_FACTORY.style(gs);
 
 
-        final InMemoryPyramidResource resource = new InMemoryPyramidResource(Names.createLocalName(null, null, "test"));
-        resource.createModel(TileMatrices.createWorldWGS84Template(12));
+        final InMemoryTiledGridCoverageResource resource = new InMemoryTiledGridCoverageResource(Names.createLocalName(null, null, "test"));
+        resource.createTileMatrixSet(TileMatrices.createWorldWGS84Template(12));
 
 
         final MapLayer layer = MapBuilder.createCoverageLayer(resource);

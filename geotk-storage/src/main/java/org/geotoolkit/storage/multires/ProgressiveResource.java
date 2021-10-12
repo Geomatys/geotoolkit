@@ -25,7 +25,7 @@ import org.opengis.geometry.Envelope;
  *
  * @author Johann Sorel (Geomatys)
  */
-public interface ProgressiveResource extends MultiResolutionResource {
+public interface ProgressiveResource extends TiledResource {
 
     void setGenerator(TileGenerator generator) throws DataStoreException;
 

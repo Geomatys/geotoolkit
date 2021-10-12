@@ -43,7 +43,6 @@ import org.apache.sis.util.Utilities;
 import org.geotoolkit.geometry.HyperCubeIterator;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.storage.coverage.*;
-import org.geotoolkit.storage.multires.MultiResolutionResource;
 import org.geotoolkit.storage.multires.TileMatrices;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
@@ -54,6 +53,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.geotoolkit.storage.multires.TileMatrixSet;
 import org.geotoolkit.storage.multires.TileMatrix;
+import org.geotoolkit.storage.multires.TiledResource;
 
 /**
  * TODO : This should be part of the CoverageWriter interface.
@@ -184,7 +184,7 @@ public class FillCoverage {
      * @param evaluator
      * @param outRef
      */
-    public static void fill(MultiResolutionResource outRef, SampleEvaluator evaluator)
+    public static void fill(TiledResource outRef, SampleEvaluator evaluator)
             throws DataStoreException, TransformException, FactoryException {
 
 //        final ColorModel cm = outRef.getColorModel();

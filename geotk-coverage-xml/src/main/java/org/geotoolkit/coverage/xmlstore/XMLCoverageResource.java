@@ -62,11 +62,10 @@ import org.geotoolkit.image.internal.PlanarConfiguration;
 import org.geotoolkit.image.internal.SampleType;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.coverage.TileMatrixSetCoverageReader;
-import org.geotoolkit.storage.multires.MultiResolutionModel;
-import org.geotoolkit.storage.multires.MultiResolutionResource;
 import org.geotoolkit.storage.multires.TileMatrices;
-import org.opengis.util.GenericName;
 import org.geotoolkit.storage.multires.TileMatrixSet;
+import org.geotoolkit.storage.multires.TiledResource;
+import org.opengis.util.GenericName;
 
 /**
  * XML implementation of {@link PyramidalCoverageReference}.
@@ -76,7 +75,7 @@ import org.geotoolkit.storage.multires.TileMatrixSet;
  * @module
  */
 @XmlRootElement(name="CoverageReference")
-public class XMLCoverageResource extends AbstractGridResource implements MultiResolutionResource, StoreResource, WritableGridCoverageResource {
+public class XMLCoverageResource extends AbstractGridResource implements TiledResource, StoreResource, WritableGridCoverageResource {
 
     /**
      * Changes :
@@ -302,7 +301,7 @@ public class XMLCoverageResource extends AbstractGridResource implements MultiRe
     }
 
     @Override
-    public Collection<TileMatrixSet> getModels() throws DataStoreException {
+    public Collection<TileMatrixSet> getTileMatrixSets() throws DataStoreException {
         return set.getPyramids();
     }
 
@@ -718,21 +717,16 @@ public class XMLCoverageResource extends AbstractGridResource implements MultiRe
     }
 
     @Override
-    public MultiResolutionModel createModel(MultiResolutionModel template) throws DataStoreException {
-        if (template instanceof TileMatrixSet) {
-            final TileMatrixSet base = (TileMatrixSet) template;
-            final XMLPyramidSet set = getPyramidSet();
-            final TileMatrixSet pyramid = set.createPyramid(getIdentifier().get().tip().toString(), base.getCoordinateReferenceSystem());
-            save();
-            TileMatrices.copyStructure(base, pyramid);
-            return pyramid;
-        } else {
-            throw new DataStoreException("Unsupported template : "+template);
-        }
+    public TileMatrixSet createTileMatrixSet(TileMatrixSet template) throws DataStoreException {
+        final XMLPyramidSet set = getPyramidSet();
+        final TileMatrixSet pyramid = set.createPyramid(getIdentifier().get().tip().toString(), template.getCoordinateReferenceSystem());
+        save();
+        TileMatrices.copyStructure(template, pyramid);
+        return pyramid;
     }
 
     @Override
-    public void removeModel(String identifier) throws DataStoreException {
+    public void removeTileMatrixSet(String identifier) throws DataStoreException {
         throw new DataStoreException("Not supported yet.");
     }
 

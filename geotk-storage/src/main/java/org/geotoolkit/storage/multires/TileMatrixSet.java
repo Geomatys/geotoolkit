@@ -37,7 +37,20 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  *
  * @author Johann Sorel (Geomatys)
  */
-public interface TileMatrixSet extends MultiResolutionModel {
+public interface TileMatrixSet {
+
+    /**
+     * @return unique id.
+     */
+    String getIdentifier();
+
+    /**
+     * Returns the mime type of tiles used in the model.
+     * All tiles use the same format.
+     *
+     * @return time format.
+     */
+    String getFormat();
 
     /**
      * @return the crs used for all tiles in the pyramid.

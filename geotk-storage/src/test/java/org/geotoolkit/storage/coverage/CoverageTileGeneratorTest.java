@@ -36,7 +36,7 @@ import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
-import org.geotoolkit.storage.memory.InMemoryPyramidResource;
+import org.geotoolkit.storage.memory.InMemoryTiledGridCoverageResource;
 import org.geotoolkit.storage.multires.TileMatrices;
 import org.geotoolkit.storage.multires.TileMatrix;
 import org.geotoolkit.storage.multires.TileMatrixSet;
@@ -79,8 +79,8 @@ public class CoverageTileGeneratorTest {
         generator.setCoverageIsHomogeneous(false);
 
 
-        final InMemoryPyramidResource ipr = new InMemoryPyramidResource(Names.createLocalName(null, null, "test"));
-        final TileMatrixSet tileMatrixSet = (TileMatrixSet) ipr.createModel(TileMatrices.createWorldWGS84Template(4));
+        final InMemoryTiledGridCoverageResource ipr = new InMemoryTiledGridCoverageResource(Names.createLocalName(null, null, "test"));
+        final TileMatrixSet tileMatrixSet = (TileMatrixSet) ipr.createTileMatrixSet(TileMatrices.createWorldWGS84Template(4));
 
         generator.generate(tileMatrixSet, null, null, null);
 
@@ -117,8 +117,8 @@ public class CoverageTileGeneratorTest {
         generateEnvelope.setRange(0, 0, 45);
         generateEnvelope.setRange(1, 0, 30);
 
-        final InMemoryPyramidResource ipr = new InMemoryPyramidResource(Names.createLocalName(null, null, "test"));
-        final TileMatrixSet tileMatrixSet = (TileMatrixSet) ipr.createModel(TileMatrices.createWorldWGS84Template(4));
+        final InMemoryTiledGridCoverageResource ipr = new InMemoryTiledGridCoverageResource(Names.createLocalName(null, null, "test"));
+        final TileMatrixSet tileMatrixSet = (TileMatrixSet) ipr.createTileMatrixSet(TileMatrices.createWorldWGS84Template(4));
 
         generator.generate(tileMatrixSet, generateEnvelope, null, null);
 
@@ -156,8 +156,8 @@ public class CoverageTileGeneratorTest {
         generateEnvelope.setRange(0, 0, 45);
         generateEnvelope.setRange(1, 0, 30);
 
-        final InMemoryPyramidResource ipr = new InMemoryPyramidResource(Names.createLocalName(null, null, "test"));
-        final TileMatrixSet tileMatrixSet = (TileMatrixSet) ipr.createModel(TileMatrices.createWorldWGS84Template(1));
+        final InMemoryTiledGridCoverageResource ipr = new InMemoryTiledGridCoverageResource(Names.createLocalName(null, null, "test"));
+        final TileMatrixSet tileMatrixSet = (TileMatrixSet) ipr.createTileMatrixSet(TileMatrices.createWorldWGS84Template(1));
 
         generator.generate(tileMatrixSet, generateEnvelope, null, null);
 

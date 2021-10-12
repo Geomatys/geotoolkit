@@ -54,9 +54,10 @@ import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.storage.coverage.finder.CoverageFinder;
 import org.geotoolkit.storage.coverage.finder.DefaultCoverageFinder;
 import org.geotoolkit.storage.multires.GeneralProgressiveResource;
-import org.geotoolkit.storage.multires.MultiResolutionModel;
-import org.geotoolkit.storage.multires.MultiResolutionResource;
 import org.geotoolkit.storage.multires.TileMatrices;
+import org.geotoolkit.storage.multires.TileMatrix;
+import org.geotoolkit.storage.multires.TileMatrixSet;
+import org.geotoolkit.storage.multires.TiledResource;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
@@ -66,8 +67,6 @@ import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
-import org.geotoolkit.storage.multires.TileMatrixSet;
-import org.geotoolkit.storage.multires.TileMatrix;
 
 /**
  * GridCoverage reader on top of a Pyramidal object.
@@ -76,7 +75,7 @@ import org.geotoolkit.storage.multires.TileMatrix;
  * @param <T>
  * @module
  */
-public class TileMatrixSetCoverageReader <T extends MultiResolutionResource & org.apache.sis.storage.GridCoverageResource> {
+public class TileMatrixSetCoverageReader <T extends TiledResource & org.apache.sis.storage.GridCoverageResource> {
 
     private final T ref;
 
@@ -87,16 +86,14 @@ public class TileMatrixSetCoverageReader <T extends MultiResolutionResource & or
     }
 
     public GridGeometry getGridGeometry() throws DataStoreException, CancellationException {
-        final Collection<? extends MultiResolutionModel> models = ref.getModels();
+        final Collection<? extends TileMatrixSet> models = ref.getTileMatrixSets();
 
         //search for a pyramid
         //-- we use the first pyramid as default
         org.geotoolkit.storage.multires.TileMatrixSet pyramid = null;
-        for (MultiResolutionModel model : models) {
-            if (model instanceof org.geotoolkit.storage.multires.TileMatrixSet) {
-                pyramid = (org.geotoolkit.storage.multires.TileMatrixSet) model;
-                break;
-            }
+        for (TileMatrixSet model : models) {
+            pyramid = model;
+            break;
         }
 
         return getGridGeometry(pyramid);
@@ -440,7 +437,7 @@ public class TileMatrixSetCoverageReader <T extends MultiResolutionResource & or
      * @param mrr, not null
      * @param domain, not null
      */
-    public static Entry<Envelope,List<TileMatrix>> intersect(MultiResolutionResource mrr, GridGeometry domain) throws DataStoreException {
+    public static Entry<Envelope,List<TileMatrix>> intersect(TiledResource mrr, GridGeometry domain) throws DataStoreException {
         ArgumentChecks.ensureNonNull("mrr", mrr);
         ArgumentChecks.ensureNonNull("domain", domain);
 

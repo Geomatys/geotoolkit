@@ -37,11 +37,10 @@ import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.grid.GridGeometryIterator;
 import org.geotoolkit.image.BufferedImages;
-import org.geotoolkit.storage.memory.InMemoryPyramidResource;
+import org.geotoolkit.storage.memory.InMemoryTiledGridCoverageResource;
 import org.geotoolkit.storage.memory.InMemoryStore;
 import org.geotoolkit.storage.multires.DefiningTileMatrix;
 import org.geotoolkit.storage.multires.DefiningTileMatrixSet;
-import org.geotoolkit.storage.multires.MultiResolutionResource;
 import org.geotoolkit.util.NamesExt;
 import org.junit.Assert;
 import org.junit.Test;
@@ -50,6 +49,7 @@ import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.geotoolkit.storage.multires.TileMatrixSet;
 import org.geotoolkit.storage.multires.TileMatrix;
+import org.geotoolkit.storage.multires.TiledResource;
 
 
 /**
@@ -79,7 +79,7 @@ public class PyramidReaderTest extends org.geotoolkit.test.TestBase {
         final int width = 28;
         final int height = 13;
 
-        final InMemoryPyramidResource ref1 = (InMemoryPyramidResource) store.add(new DefiningMultiResolutionResource(NamesExt.create("test1")));
+        final InMemoryTiledGridCoverageResource ref1 = (InMemoryTiledGridCoverageResource) store.add(new DefiningTiledGridCoverageResource(NamesExt.create("test1")));
         ref1.setSampleDimensions(Collections.singletonList(new SampleDimension.Builder().setName(0).build()));
         create4DPyramid(ref1, crs, width, height, new double[][]{
             {-5,-9,  12},
@@ -177,7 +177,7 @@ public class PyramidReaderTest extends org.geotoolkit.test.TestBase {
     private static void create4DPyramid(GridCoverageResource ref, CoordinateReferenceSystem crs,
             int width, int height, double[][] geovalues) throws DataStoreException{
 
-        final TileMatrixSet pyramid = (TileMatrixSet) ((MultiResolutionResource) ref).createModel(new DefiningTileMatrixSet(crs));
+        final TileMatrixSet pyramid = (TileMatrixSet) ((TiledResource) ref).createTileMatrixSet(new DefiningTileMatrixSet(crs));
 
         final Dimension gridSize = new Dimension(4, 3);
         final Dimension tilePixelSize = new Dimension(width, height);

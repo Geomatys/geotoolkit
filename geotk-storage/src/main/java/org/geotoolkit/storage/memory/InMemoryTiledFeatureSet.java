@@ -36,28 +36,27 @@ import org.geotoolkit.storage.feature.TileMatrixSetFeatureReader;
 import org.geotoolkit.storage.multires.AbstractTileMatrix;
 import org.geotoolkit.storage.multires.AbstractTileMatrixSet;
 import org.geotoolkit.storage.multires.DeferredTile;
-import org.geotoolkit.storage.multires.MultiResolutionModel;
-import org.geotoolkit.storage.multires.MultiResolutionResource;
-import org.geotoolkit.storage.multires.TileMatrices;
 import org.geotoolkit.storage.multires.Tile;
 import org.geotoolkit.storage.multires.TileFormat;
+import org.geotoolkit.storage.multires.TileMatrices;
+import org.geotoolkit.storage.multires.TileMatrix;
+import org.geotoolkit.storage.multires.TileMatrixSet;
+import org.geotoolkit.storage.multires.TiledResource;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.geotoolkit.storage.multires.TileMatrixSet;
-import org.geotoolkit.storage.multires.TileMatrix;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public class InMemoryFeatureSetMultiResolution extends AbstractFeatureSet implements MultiResolutionResource {
+public class InMemoryTiledFeatureSet extends AbstractFeatureSet implements TiledResource {
 
-    private final Map<String,MultiResolutionModel> models = new HashMap<>();
+    private final Map<String,TileMatrixSet> models = new HashMap<>();
     private final FeatureType type;
 
-    public InMemoryFeatureSetMultiResolution(FeatureType type) {
+    public InMemoryTiledFeatureSet(FeatureType type) {
         super(null);
         this.type = type;
     }
@@ -73,34 +72,29 @@ public class InMemoryFeatureSetMultiResolution extends AbstractFeatureSet implem
     }
 
     @Override
-    public Collection<? extends MultiResolutionModel> getModels() throws DataStoreException {
+    public Collection<TileMatrixSet> getTileMatrixSets() throws DataStoreException {
         return Collections.unmodifiableCollection(models.values());
     }
 
     @Override
-    public MultiResolutionModel createModel(MultiResolutionModel template) throws DataStoreException {
-        if (template instanceof TileMatrixSet) {
-            TileMatrixSet p = (TileMatrixSet) template;
-            String id = p.getIdentifier();
-            if (id == null) {
-                //create a unique id
-                id = UUID.randomUUID().toString();
-            } else if (models.containsKey(id)) {
-                //change id to avoid overriding an existing pyramid
-                id = UUID.randomUUID().toString();
-            }
-
-            final InMemoryTileMatrixSet py = new InMemoryTileMatrixSet(id, p.getCoordinateReferenceSystem());
-            TileMatrices.copyStructure(p, py);
-            models.put(id, py);
-            return py;
-        } else {
-            throw new DataStoreException("Unsupported model " + template);
+    public TileMatrixSet createTileMatrixSet(TileMatrixSet template) throws DataStoreException {
+        String id = template.getIdentifier();
+        if (id == null) {
+            //create a unique id
+            id = UUID.randomUUID().toString();
+        } else if (models.containsKey(id)) {
+            //change id to avoid overriding an existing pyramid
+            id = UUID.randomUUID().toString();
         }
+
+        final InMemoryTileMatrixSet py = new InMemoryTileMatrixSet(id, template.getCoordinateReferenceSystem());
+        TileMatrices.copyStructure(template, py);
+        models.put(id, py);
+        return py;
     }
 
     @Override
-    public void removeModel(String identifier) throws DataStoreException {
+    public void removeTileMatrixSet(String identifier) throws DataStoreException {
         ArgumentChecks.ensureNonNull("identifier", identifier);
         models.remove(identifier);
     }

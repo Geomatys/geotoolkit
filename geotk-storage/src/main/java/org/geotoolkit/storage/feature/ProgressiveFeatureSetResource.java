@@ -26,21 +26,20 @@ import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.Query;
 import org.apache.sis.storage.UnsupportedQueryException;
 import org.geotoolkit.storage.multires.GeneralProgressiveResource;
-import org.geotoolkit.storage.multires.MultiResolutionModel;
-import org.geotoolkit.storage.multires.MultiResolutionResource;
 import org.geotoolkit.storage.multires.TileGenerator;
+import org.geotoolkit.storage.multires.TileMatrixSet;
+import org.geotoolkit.storage.multires.TiledResource;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.geometry.Envelope;
 import org.opengis.util.GenericName;
-import org.geotoolkit.storage.multires.TileMatrixSet;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public class ProgressiveFeatureSetResource<T extends FeatureSet & MultiResolutionResource>
-        extends GeneralProgressiveResource implements FeatureSet, MultiResolutionResource {
+public class ProgressiveFeatureSetResource<T extends FeatureSet & TiledResource>
+        extends GeneralProgressiveResource implements FeatureSet, TiledResource {
 
     private T base = null;
 
@@ -51,21 +50,18 @@ public class ProgressiveFeatureSetResource<T extends FeatureSet & MultiResolutio
 
     @Override
     public Optional<Envelope> getEnvelope() throws DataStoreException {
-        final Collection<? extends MultiResolutionModel> models = base.getModels();
+        final Collection<? extends TileMatrixSet> models = base.getTileMatrixSets();
         //search for a pyramid
         //-- we use the first pyramid as default
-        for (MultiResolutionModel model : models) {
-            if (model instanceof org.geotoolkit.storage.multires.TileMatrixSet) {
-                org.geotoolkit.storage.multires.TileMatrixSet pyramid = (org.geotoolkit.storage.multires.TileMatrixSet) model;
-                return Optional.ofNullable(pyramid.getEnvelope());
-            }
+        for (TileMatrixSet model : models) {
+            return Optional.ofNullable(model.getEnvelope());
         }
         return Optional.empty();
     }
 
     @Override
-    public Collection<TileMatrixSet> getModels() throws DataStoreException {
-        return (Collection<TileMatrixSet>) super.getModels();
+    public Collection<TileMatrixSet> getTileMatrixSets() throws DataStoreException {
+        return (Collection<TileMatrixSet>) super.getTileMatrixSets();
     }
 
     @Override

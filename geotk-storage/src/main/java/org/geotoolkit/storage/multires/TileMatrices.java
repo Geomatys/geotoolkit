@@ -64,7 +64,7 @@ public final class TileMatrices extends Static {
 
     private TileMatrices(){}
 
-    public static Envelope getEnvelope(MultiResolutionResource resource) throws DataStoreException {
+    public static Envelope getEnvelope(TiledResource resource) throws DataStoreException {
         for(TileMatrixSet pyramid : getTileMatrixSets(resource)){
             //we consider the first pyramid to be in the main data crs
             return pyramid.getEnvelope();
@@ -72,16 +72,16 @@ public final class TileMatrices extends Static {
         return null;
     }
 
-    public static TileMatrixSet getTileMatrixSet(MultiResolutionResource resource, String pyramidId) throws DataStoreException {
-        for (MultiResolutionModel p : resource.getModels()) {
-            if (p instanceof TileMatrixSet && p.getIdentifier().equals(pyramidId)) {
-                return (TileMatrixSet) p;
+    public static TileMatrixSet getTileMatrixSet(TiledResource resource, String tilematrixsetId) throws DataStoreException {
+        for (TileMatrixSet p : resource.getTileMatrixSets()) {
+            if (p.getIdentifier().equals(tilematrixsetId)) {
+                return p;
             }
         }
         return null;
     }
 
-    public static TileMatrix getTileMatrix(MultiResolutionResource model, String pyramidId, String tileMatrixId) throws DataStoreException {
+    public static TileMatrix getTileMatrix(TiledResource model, String pyramidId, String tileMatrixId) throws DataStoreException {
         final TileMatrixSet p = getTileMatrixSet(model, pyramidId);
         if (p == null) {
             return null;
@@ -162,10 +162,10 @@ public final class TileMatrices extends Static {
         }
     }
 
-    public static List<TileMatrixSet> getTileMatrixSets(MultiResolutionResource resource) throws DataStoreException {
+    public static List<TileMatrixSet> getTileMatrixSets(TiledResource resource) throws DataStoreException {
         final List<TileMatrixSet> pyramids = new ArrayList<>();
-        for (MultiResolutionModel model : resource.getModels()) {
-            if (model instanceof TileMatrixSet) pyramids.add((TileMatrixSet) model);
+        for (TileMatrixSet model : resource.getTileMatrixSets()) {
+            pyramids.add(model);
         }
         return pyramids;
     }
