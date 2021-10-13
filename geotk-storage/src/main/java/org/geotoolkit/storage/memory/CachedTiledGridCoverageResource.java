@@ -60,15 +60,14 @@ import org.geotoolkit.storage.event.ModelEvent;
 import org.geotoolkit.storage.event.StorageListener;
 import org.geotoolkit.storage.multires.AbstractTileMatrix;
 import org.geotoolkit.storage.multires.AbstractTileMatrixSet;
-import org.geotoolkit.storage.multires.MultiResolutionModel;
-import org.geotoolkit.storage.multires.MultiResolutionResource;
 import org.geotoolkit.storage.multires.Tile;
+import org.geotoolkit.storage.multires.TileMatrix;
+import org.geotoolkit.storage.multires.TileMatrixSet;
+import org.geotoolkit.storage.multires.TiledResource;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.GenericName;
-import org.geotoolkit.storage.multires.TileMatrixSet;
-import org.geotoolkit.storage.multires.TileMatrix;
 
 /**
  * This resource acts as an in memory cache for pyramid tiles.
@@ -78,7 +77,7 @@ import org.geotoolkit.storage.multires.TileMatrix;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class CachePyramidResource <T extends MultiResolutionResource & org.apache.sis.storage.GridCoverageResource> extends AbstractGridResource implements MultiResolutionResource, GridCoverageResource {
+public class CachedTiledGridCoverageResource <T extends TiledResource & org.apache.sis.storage.GridCoverageResource> extends AbstractGridResource implements TiledResource, GridCoverageResource {
 
     private static final BlockingQueue IMAGEQUEUE = new PriorityBlockingQueue(Runtime.getRuntime().availableProcessors()*200);
     private static final ThreadPoolExecutor EXEC;
@@ -108,7 +107,7 @@ public class CachePyramidResource <T extends MultiResolutionResource & org.apach
         public void eventOccured(StoreEvent event) {
             cacheMap.clear();
             tiles.clear();
-            fire(new ModelEvent(CachePyramidResource.this), StoreEvent.class);
+            fire(new ModelEvent(CachedTiledGridCoverageResource.this), StoreEvent.class);
         }
     };
     private final StorageListener.Weak weakListener = new StorageListener.Weak(eventListener);
@@ -128,7 +127,7 @@ public class CachePyramidResource <T extends MultiResolutionResource & org.apach
      * @param costLimit        the maximum cost of tiles to keep by strong reference.
      * @param soft             if {@code true}, use {@link SoftReference} instead of {@link WeakReference}.
      */
-    public CachePyramidResource(T parent, int initialCapacity, final long costLimit, final boolean soft) {
+    public CachedTiledGridCoverageResource(T parent, int initialCapacity, final long costLimit, final boolean soft) {
         this(parent, initialCapacity, costLimit, soft, false);
     }
 
@@ -149,7 +148,7 @@ public class CachePyramidResource <T extends MultiResolutionResource & org.apach
      * @param noblocking       if {@code true}, only cached tiles are returned right away,
      *  if the tile is not available, loading starts and it will be available later.
      */
-    public CachePyramidResource(T parent, int initialCapacity, final long costLimit, final boolean soft, boolean noblocking) {
+    public CachedTiledGridCoverageResource(T parent, int initialCapacity, final long costLimit, final boolean soft, boolean noblocking) {
         super(null);
         this.parent = parent;
         this.tiles = new Cache<String, CacheTile>(initialCapacity, costLimit, soft);
@@ -175,8 +174,8 @@ public class CachePyramidResource <T extends MultiResolutionResource & org.apach
      * {@inheritDoc }.
      */
     @Override
-    public Collection<TileMatrixSet> getModels() throws DataStoreException {
-        final Collection<TileMatrixSet> parentPyramids = (Collection<TileMatrixSet>) parent.getModels();
+    public Collection<TileMatrixSet> getTileMatrixSets() throws DataStoreException {
+        final Collection<TileMatrixSet> parentPyramids = (Collection<TileMatrixSet>) parent.getTileMatrixSets();
 
         final List<TileMatrixSet> pyramids;
         synchronized (cacheMap) {
@@ -217,19 +216,19 @@ public class CachePyramidResource <T extends MultiResolutionResource & org.apach
      * {@inheritDoc }.
      */
     @Override
-    public MultiResolutionModel createModel(MultiResolutionModel template) throws DataStoreException {
+    public TileMatrixSet createTileMatrixSet(TileMatrixSet template) throws DataStoreException {
         synchronized (cacheMap) {
-            final MultiResolutionModel newParentPyramid = parent.createModel(template);
-            final CacheTileMatrixSet cached = new CacheTileMatrixSet((TileMatrixSet) newParentPyramid);
+            final TileMatrixSet newParentPyramid = parent.createTileMatrixSet(template);
+            final CacheTileMatrixSet cached = new CacheTileMatrixSet(newParentPyramid);
             cacheMap.put(cached.getIdentifier(), cached);
             return cached;
         }
     }
 
     @Override
-    public void removeModel(String identifier) throws DataStoreException {
+    public void removeTileMatrixSet(String identifier) throws DataStoreException {
         synchronized (cacheMap) {
-            parent.removeModel(identifier);
+            parent.removeTileMatrixSet(identifier);
             cacheMap.remove(identifier);
         }
     }

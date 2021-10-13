@@ -55,7 +55,7 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class DefiningCoverageResource extends AbstractGridResource implements org.apache.sis.storage.GridCoverageResource {
+public class DefiningGridCoverageResource extends AbstractGridResource implements org.apache.sis.storage.GridCoverageResource {
 
     private final GenericName name;
     private GridGeometry gridGeometry;
@@ -65,7 +65,7 @@ public class DefiningCoverageResource extends AbstractGridResource implements or
      *
      * @param name mandatory new resource name
      */
-    public DefiningCoverageResource(String name) {
+    public DefiningGridCoverageResource(String name) {
         this(NamesExt.valueOf(name));
     }
 
@@ -73,7 +73,7 @@ public class DefiningCoverageResource extends AbstractGridResource implements or
      *
      * @param name mandatory new resource name
      */
-    public DefiningCoverageResource(GenericName name) {
+    public DefiningGridCoverageResource(GenericName name) {
         super(null);
         ArgumentChecks.ensureNonNull("name", name);
         this.name = name;

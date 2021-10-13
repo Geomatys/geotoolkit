@@ -45,7 +45,6 @@ import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.storage.coverage.mosaic.AggregatedCoverageResource;
-import org.geotoolkit.storage.multires.MultiResolutionResource;
 import org.geotoolkit.storage.multires.TileMatrices;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
@@ -57,6 +56,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.geotoolkit.storage.multires.TileMatrixSet;
 import org.geotoolkit.storage.multires.TileMatrix;
+import org.geotoolkit.storage.multires.TiledResource;
 
 
 /**
@@ -64,7 +64,7 @@ import org.geotoolkit.storage.multires.TileMatrix;
  * @author Cédric Briançon (Geomatys)
  * @author Rémi Maréchal (Geomatys)
  */
-public class TileMatrixSetCoverageWriter <T extends MultiResolutionResource & org.apache.sis.storage.GridCoverageResource> {
+public class TileMatrixSetCoverageWriter <T extends TiledResource & org.apache.sis.storage.GridCoverageResource> {
 
     private final T reference;
 
@@ -133,7 +133,7 @@ public class TileMatrixSetCoverageWriter <T extends MultiResolutionResource & or
         stream.parallel().forEach(Runnable::run);
     }
 
-    private static class Ite<T extends MultiResolutionResource & org.apache.sis.storage.GridCoverageResource> implements Iterator<Runnable> {
+    private static class Ite<T extends TiledResource & org.apache.sis.storage.GridCoverageResource> implements Iterator<Runnable> {
 
         private final GridCoverage sourceCoverage;
         private final Envelope requestedEnvelope;
@@ -323,7 +323,7 @@ public class TileMatrixSetCoverageWriter <T extends MultiResolutionResource & or
 
     }
 
-    private static class TileUpdater <T extends MultiResolutionResource & org.apache.sis.storage.GridCoverageResource> implements Runnable{
+    private static class TileUpdater <T extends TiledResource & org.apache.sis.storage.GridCoverageResource> implements Runnable{
 
         private final TileMatrix mosaic;
         private final int idx;

@@ -45,7 +45,6 @@ import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.storage.multires.DeferredTile;
-import org.geotoolkit.storage.multires.MultiResolutionResource;
 import org.geotoolkit.storage.multires.Tile;
 import org.geotoolkit.storage.multires.TileMatrices;
 import org.geotoolkit.storage.multires.TileMatrix;
@@ -57,6 +56,7 @@ import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+import org.geotoolkit.storage.multires.TiledResource;
 
 /**
  * A utility class which is capable of reading features from a pyramid.
@@ -65,10 +65,10 @@ import org.opengis.util.FactoryException;
  */
 public class TileMatrixSetFeatureReader {
 
-    private final MultiResolutionResource resource;
+    private final TiledResource resource;
     private final FeatureType type;
 
-    public TileMatrixSetFeatureReader(MultiResolutionResource resource, FeatureType type) {
+    public TileMatrixSetFeatureReader(TiledResource resource, FeatureType type) {
         this.resource = resource;
         this.type = type;
     }

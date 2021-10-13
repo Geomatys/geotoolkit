@@ -30,7 +30,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
-import org.geotoolkit.storage.multires.MultiResolutionResource;
 import org.geotoolkit.storage.multires.TileMatrices;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
@@ -40,6 +39,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.geotoolkit.storage.multires.TileMatrixSet;
 import org.geotoolkit.storage.multires.TileMatrix;
+import org.geotoolkit.storage.multires.TiledResource;
 
 /**
  * Define {@link TileMatrixSet} and {@link GridMosaic} search rules.
@@ -138,7 +138,7 @@ public abstract class CoverageFinder {
      * @param crs searched crs
      * @return Pyramid, never null except if the pyramid set is empty
      */
-    public final TileMatrixSet findPyramid(final MultiResolutionResource set, final CoordinateReferenceSystem crs) throws FactoryException, DataStoreException {
+    public final TileMatrixSet findPyramid(final TiledResource set, final CoordinateReferenceSystem crs) throws FactoryException, DataStoreException {
         final List<TileMatrixSet> pyramids = TileMatrices.getTileMatrixSets(set);
         if (pyramids.isEmpty()) {
             return null;

@@ -28,14 +28,13 @@ import org.apache.sis.internal.storage.StoreResource;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.event.StoreEvent;
-import org.geotoolkit.storage.multires.MultiResolutionModel;
-import org.geotoolkit.storage.multires.MultiResolutionResource;
 import org.geotoolkit.storage.coverage.TileMatrixSetCoverageReader;
 import org.geotoolkit.storage.event.ModelEvent;
+import org.geotoolkit.storage.multires.TileMatrixSet;
+import org.geotoolkit.storage.multires.TiledResource;
 import org.geotoolkit.wmts.model.WMTSTileMatrixSets;
 import org.geotoolkit.wmts.xml.v100.LayerType;
 import org.opengis.util.GenericName;
-import org.geotoolkit.storage.multires.TileMatrixSet;
 
 /**
  * WMTS Coverage Reference.
@@ -43,7 +42,7 @@ import org.geotoolkit.storage.multires.TileMatrixSet;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public final class WMTSResource extends AbstractGridResource implements MultiResolutionResource, StoreResource {
+public final class WMTSResource extends AbstractGridResource implements TiledResource, StoreResource {
 
     private final WebMapTileClient server;
     private final GenericName name;
@@ -77,17 +76,17 @@ public final class WMTSResource extends AbstractGridResource implements MultiRes
     }
 
     @Override
-    public Collection<TileMatrixSet> getModels() {
+    public Collection<TileMatrixSet> getTileMatrixSets() {
         return getPyramidSet().getTileMatrixSets();
     }
 
     @Override
-    public MultiResolutionModel createModel(MultiResolutionModel template) throws DataStoreException {
+    public TileMatrixSet createTileMatrixSet(TileMatrixSet template) throws DataStoreException {
         throw new DataStoreException("Not supported.");
     }
 
     @Override
-    public void removeModel(String identifier) throws DataStoreException {
+    public void removeTileMatrixSet(String identifier) throws DataStoreException {
         throw new DataStoreException("Not supported.");
     }
 

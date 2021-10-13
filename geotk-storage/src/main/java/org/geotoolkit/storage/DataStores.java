@@ -48,11 +48,10 @@ import org.apache.sis.util.Classes;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.DataStores.ResourceWalker.VisitOption;
-import org.geotoolkit.storage.multires.MultiResolutionModel;
-import org.geotoolkit.storage.multires.MultiResolutionResource;
 import org.geotoolkit.storage.multires.ProgressiveResource;
 import org.geotoolkit.storage.multires.TileFormat;
 import org.geotoolkit.storage.multires.TileMatrixSet;
+import org.geotoolkit.storage.multires.TiledResource;
 import org.geotoolkit.util.StringUtilities;
 import org.opengis.feature.FeatureType;
 import org.opengis.parameter.InvalidParameterValueException;
@@ -442,8 +441,8 @@ public final class DataStores extends Static {
             }
         }
 
-        if (rs instanceof MultiResolutionResource) {
-            final MultiResolutionResource cdt = (MultiResolutionResource) rs;
+        if (rs instanceof TiledResource) {
+            final TiledResource cdt = (TiledResource) rs;
             final TileFormat tileFormat = cdt.getTileFormat();
 
             final Map<String,Object> map = new LinkedHashMap<>();
@@ -458,15 +457,10 @@ public final class DataStores extends Static {
             }
 
             try {
-                final Collection<? extends MultiResolutionModel> models = cdt.getModels();
+                final Collection<? extends TileMatrixSet> models = cdt.getTileMatrixSets();
                 final List<String> mms = new ArrayList<>();
-                for (MultiResolutionModel mrm : models) {
-                    if (mrm instanceof TileMatrixSet) {
-                        mms.add(mrm.toString());
-                    } else {
-                        //todo : do a better print ?
-                        mms.add(mrm.toString());
-                    }
+                for (TileMatrixSet mrm : models) {
+                    mms.add(mrm.toString());
                 }
                 map.put("models", StringUtilities.toStringTree("", mms));
             } catch (DataStoreException ex) {

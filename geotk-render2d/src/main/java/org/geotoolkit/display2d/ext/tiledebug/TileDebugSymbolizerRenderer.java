@@ -50,7 +50,6 @@ import org.geotoolkit.geometry.GeometricUtilities;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.awt.JTSGeometryJ2D;
 import org.geotoolkit.storage.coverage.TileMatrixSetCoverageReader;
-import org.geotoolkit.storage.multires.MultiResolutionResource;
 import org.geotoolkit.storage.multires.TileMatrices;
 import org.geotoolkit.storage.multires.TileMatrix;
 import org.locationtech.jts.geom.Geometry;
@@ -58,6 +57,7 @@ import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+import org.geotoolkit.storage.multires.TiledResource;
 
 /**
  * Renderer for Tile debug symbolizer.
@@ -73,11 +73,11 @@ public final class TileDebugSymbolizerRenderer extends AbstractCoverageSymbolize
     @Override
     public Stream<Presentation> presentations(MapLayer layer, Resource resource) {
 
-        if (!(resource instanceof MultiResolutionResource)) {
+        if (!(resource instanceof TiledResource)) {
             return Stream.empty();
         }
 
-        final MultiResolutionResource mrm = (MultiResolutionResource) resource;
+        final TiledResource mrm = (TiledResource) resource;
         final List<Presentation> presentations = new ArrayList<>();
 
         final Graphics2D graphics = renderingContext.getGraphics();

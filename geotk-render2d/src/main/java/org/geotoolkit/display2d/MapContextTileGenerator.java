@@ -64,7 +64,7 @@ import org.geotoolkit.process.ProcessListener;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.storage.coverage.DefaultImageTile;
 import org.geotoolkit.storage.coverage.ImageTile;
-import org.geotoolkit.storage.memory.InMemoryPyramidResource;
+import org.geotoolkit.storage.memory.InMemoryTiledGridCoverageResource;
 import org.geotoolkit.storage.multires.AbstractTileGenerator;
 import org.geotoolkit.storage.multires.DefaultTileMatrixSet;
 import org.geotoolkit.storage.multires.Tile;
@@ -352,9 +352,9 @@ public class MapContextTileGenerator extends AbstractTileGenerator {
                     //modify context
                     final DefaultTileMatrixSet pm = new DefaultTileMatrixSet(pyramid.getCoordinateReferenceSystem());
                     pm.getMosaicsInternal().add(mosaic);
-                    final InMemoryPyramidResource r = new InMemoryPyramidResource(NamesExt.create("test"));
+                    final InMemoryTiledGridCoverageResource r = new InMemoryTiledGridCoverageResource(NamesExt.create("test"));
                     r.setSampleDimensions(sampleDimensions);
-                    r.getModels().add(pm);
+                    r.getTileMatrixSets().add(pm);
 
                     final MapLayers mc = MapBuilder.createContext();
                     mc.getComponents().add(MapBuilder.createLayer(r));

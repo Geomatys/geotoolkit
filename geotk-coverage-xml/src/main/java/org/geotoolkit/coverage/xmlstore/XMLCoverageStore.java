@@ -41,7 +41,7 @@ import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.WritableAggregate;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
-import org.geotoolkit.storage.coverage.DefiningCoverageResource;
+import org.geotoolkit.storage.coverage.DefiningGridCoverageResource;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.GenericName;
@@ -154,10 +154,10 @@ public class XMLCoverageStore extends AbstractCoverageStore implements WritableA
 
     @Override
     public GridCoverageResource add(org.apache.sis.storage.Resource resource) throws DataStoreException {
-        if (!(resource instanceof DefiningCoverageResource)) {
+        if (!(resource instanceof DefiningGridCoverageResource)) {
             throw new DataStoreException("Unsupported resource "+resource);
         }
-        final DefiningCoverageResource cr = (DefiningCoverageResource) resource;
+        final DefiningGridCoverageResource cr = (DefiningGridCoverageResource) resource;
         final GenericName name = cr.getName();
 
         return create(name, null, null);

@@ -36,7 +36,7 @@ import org.junit.Test;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class CachePyramidResourceTest {
+public class CachedTiledGridCoverageResourceTest {
 
     /**
      * Test cache pyramid updates it's structure and clear it's cache on parent update.
@@ -44,9 +44,9 @@ public class CachePyramidResourceTest {
     @Test
     public void testUpdate() throws DataStoreException {
 
-        final InMemoryPyramidResource parent = new InMemoryPyramidResource(Names.createLocalName(null, null, "test"));
+        final InMemoryTiledGridCoverageResource parent = new InMemoryTiledGridCoverageResource(Names.createLocalName(null, null, "test"));
 
-        final CachePyramidResource r = new CachePyramidResource(parent, 30, 60, true);
+        final CachedTiledGridCoverageResource r = new CachedTiledGridCoverageResource(parent, 30, 60, true);
         final List<StoreEvent> events = new ArrayList<>();
         r.addListener(StoreEvent.class, new StoreListener<StoreEvent>() {
             @Override
@@ -56,7 +56,7 @@ public class CachePyramidResourceTest {
         });
 
         //change parent structure
-        final TileMatrixSet tileMatrixSet = (TileMatrixSet) parent.createModel(TileMatrices.createWorldWGS84Template(1));
+        final TileMatrixSet tileMatrixSet = (TileMatrixSet) parent.createTileMatrixSet(TileMatrices.createWorldWGS84Template(1));
         Assert.assertEquals(1, events.size());
         events.clear();
 
@@ -81,22 +81,22 @@ public class CachePyramidResourceTest {
     @Test
     public void testBlockingCache() throws DataStoreException {
 
-        final MockPyramidResource parent = new MockPyramidResource(Names.createLocalName(null, null, "test"));
-        final TileMatrixSet tileMatrixSet = (TileMatrixSet) parent.createModel(TileMatrices.createWorldWGS84Template(0));
+        final MockTiledGridCoverageResource parent = new MockTiledGridCoverageResource(Names.createLocalName(null, null, "test"));
+        final TileMatrixSet tileMatrixSet = (TileMatrixSet) parent.createTileMatrixSet(TileMatrices.createWorldWGS84Template(0));
         final TileMatrix tileMatrix = tileMatrixSet.getTileMatrices().iterator().next();
         final ImageTile it0 = new DefaultImageTile(new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB), 0, 0);
         final ImageTile it1 = new DefaultImageTile(new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB), 1, 0);
         tileMatrix.writeTiles(Stream.of(it0, it1), null);
         Assert.assertEquals(4, parent.localEvents.size());
-        Assert.assertEquals(MockPyramidResource.EventType.TILE_MATRIX_SET_CREATED, parent.localEvents.get(0).type);
-        Assert.assertEquals(MockPyramidResource.EventType.TILE_MATRIX_CREATED, parent.localEvents.get(1).type);
-        Assert.assertEquals(MockPyramidResource.EventType.TILE_SET, parent.localEvents.get(2).type);
-        Assert.assertEquals(MockPyramidResource.EventType.TILE_SET, parent.localEvents.get(3).type);
+        Assert.assertEquals(MockTiledGridCoverageResource.EventType.TILE_MATRIX_SET_CREATED, parent.localEvents.get(0).type);
+        Assert.assertEquals(MockTiledGridCoverageResource.EventType.TILE_MATRIX_CREATED, parent.localEvents.get(1).type);
+        Assert.assertEquals(MockTiledGridCoverageResource.EventType.TILE_SET, parent.localEvents.get(2).type);
+        Assert.assertEquals(MockTiledGridCoverageResource.EventType.TILE_SET, parent.localEvents.get(3).type);
         parent.localEvents.clear();
 
-        final CachePyramidResource r = new CachePyramidResource(parent, 30, 60, true);
+        final CachedTiledGridCoverageResource r = new CachedTiledGridCoverageResource(parent, 30, 60, true);
 
-        final TileMatrixSet cacheTms = (TileMatrixSet) r.getModels().iterator().next();
+        final TileMatrixSet cacheTms = (TileMatrixSet) r.getTileMatrixSets().iterator().next();
         final TileMatrix cacheTm = cacheTms.getTileMatrices().iterator().next();
 
         //get tile a first time, should be grabbed from the main resource
@@ -123,23 +123,23 @@ public class CachePyramidResourceTest {
     @Test
     public void testNoBlockingCache() throws DataStoreException, InterruptedException {
 
-        final MockPyramidResource parent = new MockPyramidResource(Names.createLocalName(null, null, "test"));
-        final TileMatrixSet tileMatrixSet = (TileMatrixSet) parent.createModel(TileMatrices.createWorldWGS84Template(0));
+        final MockTiledGridCoverageResource parent = new MockTiledGridCoverageResource(Names.createLocalName(null, null, "test"));
+        final TileMatrixSet tileMatrixSet = (TileMatrixSet) parent.createTileMatrixSet(TileMatrices.createWorldWGS84Template(0));
         final TileMatrix tileMatrix = tileMatrixSet.getTileMatrices().iterator().next();
         final ImageTile it0 = new DefaultImageTile(new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB), 0, 0);
         final ImageTile it1 = new DefaultImageTile(new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB), 1, 0);
         tileMatrix.writeTiles(Stream.of(it0, it1), null);
         Assert.assertEquals(4, parent.localEvents.size());
-        Assert.assertEquals(MockPyramidResource.EventType.TILE_MATRIX_SET_CREATED, parent.localEvents.get(0).type);
-        Assert.assertEquals(MockPyramidResource.EventType.TILE_MATRIX_CREATED, parent.localEvents.get(1).type);
-        Assert.assertEquals(MockPyramidResource.EventType.TILE_SET, parent.localEvents.get(2).type);
-        Assert.assertEquals(MockPyramidResource.EventType.TILE_SET, parent.localEvents.get(3).type);
+        Assert.assertEquals(MockTiledGridCoverageResource.EventType.TILE_MATRIX_SET_CREATED, parent.localEvents.get(0).type);
+        Assert.assertEquals(MockTiledGridCoverageResource.EventType.TILE_MATRIX_CREATED, parent.localEvents.get(1).type);
+        Assert.assertEquals(MockTiledGridCoverageResource.EventType.TILE_SET, parent.localEvents.get(2).type);
+        Assert.assertEquals(MockTiledGridCoverageResource.EventType.TILE_SET, parent.localEvents.get(3).type);
         parent.localEvents.clear();
 
 
-        final CachePyramidResource r = new CachePyramidResource(parent, 30, 60, true, true);
+        final CachedTiledGridCoverageResource r = new CachedTiledGridCoverageResource(parent, 30, 60, true, true);
 
-        final TileMatrixSet cacheTms = (TileMatrixSet) r.getModels().iterator().next();
+        final TileMatrixSet cacheTms = (TileMatrixSet) r.getTileMatrixSets().iterator().next();
         final TileMatrix cacheTm = cacheTms.getTileMatrices().iterator().next();
 
         //get tile a first time, should put in a queue to returned later

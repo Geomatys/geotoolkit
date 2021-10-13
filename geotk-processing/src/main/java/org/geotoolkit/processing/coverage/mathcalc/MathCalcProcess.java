@@ -28,7 +28,6 @@ import org.apache.sis.util.Utilities;
 import org.geotoolkit.cql.CQL;
 import org.geotoolkit.filter.FilterFactory2;
 import org.geotoolkit.filter.FilterUtilities;
-import org.geotoolkit.storage.multires.MultiResolutionResource;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
 import org.opengis.filter.Expression;
@@ -36,6 +35,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+import org.geotoolkit.storage.multires.TiledResource;
 
 /**
  *
@@ -93,8 +93,8 @@ public class MathCalcProcess extends AbstractProcess {
 
         final FillCoverage filler = new FillCoverage();
         try {
-            if(outRef instanceof MultiResolutionResource){
-                filler.fill((MultiResolutionResource)outRef, evaluator);
+            if(outRef instanceof TiledResource){
+                filler.fill((TiledResource)outRef, evaluator);
             }else{
                 filler.fill(outRef, evaluator, null);
             }
