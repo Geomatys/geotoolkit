@@ -313,7 +313,7 @@ public final class TileMatrices extends Static {
         final GridExtent intersection;
         try {
             wantedEnv = Envelopes.transform(wantedEnv, pixelMatrixGridGeom.getCoordinateReferenceSystem());
-            final GridGeometry gridMatrixGridGeom = pixelMatrixGridGeom.derive().subsample(tileMatrix.getTileSize().width, tileMatrix.getTileSize().height).build();
+            final GridGeometry gridMatrixGridGeom = pixelMatrixGridGeom.derive().subgrid((GridExtent) null, tileMatrix.getTileSize().width, tileMatrix.getTileSize().height).build();
             intersection = gridMatrixGridGeom.derive()
                     .rounding(GridRoundingMode.ENCLOSING)
                     .subgrid(wantedEnv)

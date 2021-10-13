@@ -82,7 +82,7 @@ public class GridGeometryIterator implements Iterator<GridGeometry> {
     public GridGeometry next() {
         if (hasNext()) {
             final GridExtent nextExtent = gridIterator.next();
-            return source.derive().resize(nextExtent).build();
+            return source.derive().subgrid(nextExtent).build();
         }
 
         throw new NoSuchElementException("No more slice to iterate over");

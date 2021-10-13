@@ -41,6 +41,7 @@ import org.apache.sis.coverage.grid.GridCoverage2D;
 import org.apache.sis.coverage.grid.GridCoverageProcessor;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridOrientation;
 import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
 import org.apache.sis.geometry.Envelopes;
@@ -504,7 +505,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
                     components.put(source.resource, gridGeometry);
                 } catch (Exception ex) {
                     if (neverfail) {
-                        this.cachedGridGeometry = new GridGeometry(new GridExtent(1, 1), null);
+                        this.cachedGridGeometry = new GridGeometry(new GridExtent(1, 1), null, GridOrientation.HOMOTHETY);
                         LOGGER.log(Level.INFO, "Failed to extract grid geometry crs or envelope from resource " + resourceName(source.resource) + " : " + ex.getMessage());
                         source.inMetaError = true;
                     } else {
@@ -516,7 +517,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
 
         if (components.isEmpty()) {
             //no data yet
-            this.cachedGridGeometry = new GridGeometry(new GridExtent(1, 1), null);
+            this.cachedGridGeometry = new GridGeometry(new GridExtent(1, 1), null, GridOrientation.HOMOTHETY);
             return;
         } else if (components.size() == 1) {
             //copy exact definition
@@ -599,11 +600,11 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
             cachedGridGeometry = sharedGrid;
         } else if (env.isAllNaN()) {
             //could not extract any usefull information from datas
-            this.cachedGridGeometry = new GridGeometry(new GridExtent(1, 1), null);
+            this.cachedGridGeometry = new GridGeometry(new GridExtent(1, 1), null, GridOrientation.HOMOTHETY);
         } else if (estimatedResolution != null) {
             cachedGridGeometry = new EstimatedGridGeometry(env, estimatedResolution);
         } else {
-            cachedGridGeometry = new GridGeometry(null, env);
+            cachedGridGeometry = new GridGeometry(null, env, GridOrientation.HOMOTHETY);
         }
     }
 

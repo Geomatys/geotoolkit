@@ -43,6 +43,7 @@ import org.apache.sis.coverage.grid.GridCoverage2D;
 import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridOrientation;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.Envelope2D;
@@ -224,7 +225,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
     public void testGridGeometryPreserved() throws PortrayalException, FactoryException {
 
         final SceneDef sceneDef = new SceneDef();
-        final GridGeometry gridGeometry = new GridGeometry(new GridExtent(360, 180), CRS.getDomainOfValidity(CommonCRS.WGS84.normalizedGeographic()));
+        final GridGeometry gridGeometry = new GridGeometry(new GridExtent(360, 180), CRS.getDomainOfValidity(CommonCRS.WGS84.normalizedGeographic()), GridOrientation.HOMOTHETY);
         final CanvasDef canvasDef = new CanvasDef(gridGeometry);
         final J2DCanvas canvas = new J2DCanvasBuffered(CommonCRS.WGS84.geographic(), new Dimension(10, 10));
         DefaultPortrayalService.prepareCanvas(canvas, canvasDef, sceneDef);
@@ -402,7 +403,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
             final Graphics2D g = img.createGraphics();
             g.setColor(Color.RED);
             g.fill(new Rectangle(0, 0, 360, 180));
-            final GridGeometry grid = new GridGeometry(new GridExtent(360, 180), covenv);
+            final GridGeometry grid = new GridGeometry(new GridExtent(360, 180), covenv, GridOrientation.HOMOTHETY);
             final List<SampleDimension> bands = new ArrayList<>();
             bands.add(new SampleDimension.Builder().setName("r").build());
             bands.add(new SampleDimension.Builder().setName("g").build());

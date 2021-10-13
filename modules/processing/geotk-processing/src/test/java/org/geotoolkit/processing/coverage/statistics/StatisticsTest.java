@@ -37,6 +37,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.NoSuchIdentifierException;
 
 import static java.lang.Float.NaN;
+import org.apache.sis.coverage.grid.GridOrientation;
 
 /**
  * @author bgarcia (Geomatys)
@@ -53,7 +54,7 @@ public class StatisticsTest extends org.geotoolkit.test.TestBase {
         env.setRange(1, 0, 4);
 
         GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setDomain(new GridGeometry(new GridExtent(3, 4), env));
+        gcb.setDomain(new GridGeometry(new GridExtent(3, 4), env, GridOrientation.HOMOTHETY));
         gcb.setValues(BufferedImages.toDataBuffer1D(new float[][]{
                 {NaN,100,100},
                 {100,NaN,100},

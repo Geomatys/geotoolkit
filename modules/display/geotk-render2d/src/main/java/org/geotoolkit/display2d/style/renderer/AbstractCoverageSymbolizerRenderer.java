@@ -398,7 +398,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
                     margin[0] = (int) Math.ceil(margin[0] * (est[0] / resolution[0]));
                     margin[1] = (int) Math.ceil(margin[1] * (est[1] / resolution[1]));
                 }
-                areaOfInterest = areaOfInterest.derive().margin(margin).resize(null).build();
+                areaOfInterest = areaOfInterest.derive().margin(margin).build();
                 // Force rebuilding envelope. Not sure it is really needed however.
                 areaOfInterest = new GridGeometry(
                         areaOfInterest.getExtent(),

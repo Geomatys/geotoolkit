@@ -43,6 +43,7 @@ import javax.measure.Unit;
 import javax.measure.quantity.Length;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridOrientation;
 import org.apache.sis.coverage.grid.PixelTranslation;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralDirectPosition;
@@ -218,7 +219,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
             sep.addTargetDimensions(orderedAxes);
             final MathTransform gridToCRS2D = sep.separate();
             //we are expecting axis index to be preserved from grid to crs
-            final GridExtent extent = source.getExtent().reduce(sep.getSourceDimensions());
+            final GridExtent extent = source.getExtent().reduceDimension(sep.getSourceDimensions());
 
             return Optional.of(new GridGeometry(extent, PixelInCell.CELL_CENTER, gridToCRS2D, crs2d));
         }
@@ -264,7 +265,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
         high[idx+1] = oldhigh[oldidx+1];
         final GridExtent extent = new GridExtent(null, low, high, true);
 
-        GridGeometry gridGeometry = new GridGeometry(extent, env);
+        GridGeometry gridGeometry = new GridGeometry(extent, env, GridOrientation.HOMOTHETY);
         if (proportion) {
             gridGeometry = preserverRatio(gridGeometry);
         }
@@ -297,7 +298,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
                 double median = env.getMedian(idx+1);
                 env.setRange(idx+1, median - halfSpan, median + halfSpan);
             }
-            gridGeometry = new GridGeometry(extent, env);
+            gridGeometry = new GridGeometry(extent, env, GridOrientation.HOMOTHETY);
         }
         return gridGeometry;
     }
@@ -348,7 +349,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
         final int idx = getHorizontalIndex(crs);
 
         //we are expecting axis index to be preserved from grid to crs
-        final GridExtent extent = gridGeometry.getExtent().reduce(idx, idx+1);
+        final GridExtent extent = gridGeometry.getExtent().reduceDimension(idx, idx+1);
 
         final Rectangle2D.Double bounds = new Rectangle2D.Double();
         bounds.x = extent.getLow(0);
@@ -439,7 +440,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
         envelope.setRange(ordinate, min, max);
 
         final GridExtent extent = gridGeometry.getExtent();
-        final GridGeometry newgrid = new GridGeometry(extent, envelope);
+        final GridGeometry newgrid = new GridGeometry(extent, envelope, GridOrientation.HOMOTHETY);
         setGridGeometry(newgrid);
     }
 

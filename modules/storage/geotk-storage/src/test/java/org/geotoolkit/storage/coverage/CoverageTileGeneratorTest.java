@@ -28,6 +28,7 @@ import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.coverage.grid.GridCoverageProcessor;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridOrientation;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.Interpolation;
 import org.apache.sis.referencing.CommonCRS;
@@ -68,7 +69,7 @@ public class CoverageTileGeneratorTest {
         final GeneralEnvelope dataEnvelope = new GeneralEnvelope(crs);
         dataEnvelope.setRange(0, 0, 180);
         dataEnvelope.setRange(1, 0, 90);
-        final GridGeometry gridGeom = new GridGeometry(new GridExtent(180, 90), dataEnvelope);
+        final GridGeometry gridGeom = new GridGeometry(new GridExtent(180, 90), dataEnvelope, GridOrientation.HOMOTHETY);
 
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setValues(image);
@@ -103,7 +104,7 @@ public class CoverageTileGeneratorTest {
         final GeneralEnvelope dataEnvelope = new GeneralEnvelope(crs);
         dataEnvelope.setRange(0, -180, 180);
         dataEnvelope.setRange(1, -90, 90);
-        final GridGeometry gridGeom = new GridGeometry(new GridExtent(360, 180), dataEnvelope);
+        final GridGeometry gridGeom = new GridGeometry(new GridExtent(360, 180), dataEnvelope, GridOrientation.HOMOTHETY);
 
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setValues(image);
@@ -142,7 +143,7 @@ public class CoverageTileGeneratorTest {
         final GeneralEnvelope dataEnvelope = new GeneralEnvelope(crs);
         dataEnvelope.setRange(0, -180, 180);
         dataEnvelope.setRange(1, -90, 90);
-        final GridGeometry gridGeom = new GridGeometry(new GridExtent(360, 180), dataEnvelope);
+        final GridGeometry gridGeom = new GridGeometry(new GridExtent(360, 180), dataEnvelope, GridOrientation.HOMOTHETY);
 
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setValues(image);

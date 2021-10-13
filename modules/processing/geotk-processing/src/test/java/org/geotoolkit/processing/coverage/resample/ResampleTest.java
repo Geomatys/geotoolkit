@@ -26,6 +26,7 @@ import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridOrientation;
 import org.apache.sis.coverage.grid.PixelTranslation;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
@@ -84,7 +85,7 @@ public class ResampleTest extends AbstractProcessTest {
         env.setRange(1, -80, +80);
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setValues(BufferedImages.toDataBuffer1D(matrix), null);
-        gcb.setDomain(new GridGeometry(new GridExtent(4, 4), env));
+        gcb.setDomain(new GridGeometry(new GridExtent(4, 4), env, GridOrientation.HOMOTHETY));
         gcb.setRanges(new SampleDimension.Builder().setName(0).build());
         final GridCoverage coverage = gcb.build();
 

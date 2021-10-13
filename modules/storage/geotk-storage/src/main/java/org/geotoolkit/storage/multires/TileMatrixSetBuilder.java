@@ -23,6 +23,7 @@ import java.util.Map.Entry;
 import java.util.UUID;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridOrientation;
 import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.referencing.CRS;
@@ -77,7 +78,7 @@ public final class TileMatrixSetBuilder {
     }
 
     private Dimension tileSize = new Dimension(256, 256);
-    private GridGeometry gridGeometry = new GridGeometry(null, CRS.getDomainOfValidity(CommonCRS.WGS84.normalizedGeographic()));
+    private GridGeometry gridGeometry = new GridGeometry(null, CRS.getDomainOfValidity(CommonCRS.WGS84.normalizedGeographic()), GridOrientation.HOMOTHETY);
     private boolean isSlice = true;
     private double scaleFactor = 2.0;
     private Iteration iteration = Iteration.TOP_TO_BOTTOM_EXTRAPOLATE;
@@ -185,7 +186,7 @@ public final class TileMatrixSetBuilder {
                 }
 
                 final GridExtent extent = new GridExtent(null, low, high, true);
-                gridGeom = new GridGeometry(extent, envelope);
+                gridGeom = new GridGeometry(extent, envelope, GridOrientation.HOMOTHETY);
             } else {
                 throw new IllegalArgumentException("Grid geometry extent and resolution are undefined.");
             }
@@ -226,7 +227,7 @@ public final class TileMatrixSetBuilder {
                     }
 
                     final GridExtent extent = new GridExtent(null, low, high, true);
-                    return setDomain(new GridGeometry(extent, envelope), crs);
+                    return setDomain(new GridGeometry(extent, envelope, GridOrientation.HOMOTHETY), crs);
                 } else {
                     throw new IllegalArgumentException("Grid geometry extent and resolution are undefined.");
                 }
@@ -253,7 +254,7 @@ public final class TileMatrixSetBuilder {
         }
 
         final GridExtent extent = new GridExtent(null, null, high, false);
-        final GridGeometry gridGeom = new GridGeometry(extent, envelope);
+        final GridGeometry gridGeom = new GridGeometry(extent, envelope, GridOrientation.HOMOTHETY);
         return setDomain(gridGeom);
     }
 

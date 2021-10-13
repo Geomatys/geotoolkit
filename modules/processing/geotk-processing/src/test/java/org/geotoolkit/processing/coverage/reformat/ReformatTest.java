@@ -26,6 +26,7 @@ import java.awt.image.SampleModel;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridOrientation;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.process.Process;
@@ -67,7 +68,7 @@ public class ReformatTest extends org.geotoolkit.test.TestBase {
         gcb.setValues(inputImage);
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setEnvelope(0,0,500,30);
-        gcb.setDomain(new GridGeometry(null, env));
+        gcb.setDomain(new GridGeometry(null, env, GridOrientation.HOMOTHETY));
         final GridCoverage inCoverage = gcb.build();
 
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME, ReformatDescriptor.NAME);

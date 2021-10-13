@@ -170,7 +170,7 @@ final class GridGeometryEntry extends Entry {
         spatialGeometry      = new GridGeometry(new GridExtent(names, null, upper, false), CELL_ORIGIN, gridToCRS, crs);
         spatioTemporalCRS    = crsFactory.createCompoundCRS(properties(crs, "time"), crs, database.temporalCRS);
         GridExtent extent = spatialGeometry.getExtent();
-        spatioTemporalExtent = extent.insert(extent.getDimension(), DimensionNameType.TIME, 0, (temporalAxis != null) ? temporalAxis.count : 1, false);
+        spatioTemporalExtent = extent.insertDimension(extent.getDimension(), DimensionNameType.TIME, 0, (temporalAxis != null) ? temporalAxis.count : 1, false);
         this.approximate     = approximate;
         this.temporalAxis    = temporalAxis;
     }
@@ -256,7 +256,7 @@ final class GridGeometryEntry extends Entry {
         MathTransform gridToCRS = spatialGeometry.getGridToCRS(CELL_ORIGIN);
         gridToCRS = MathTransforms.compound(gridToCRS, tr);
         GridExtent extent = spatialGeometry.getExtent();
-        extent = extent.insert(extent.getDimension(), DimensionNameType.TIME, 0, timestamps.length, false);
+        extent = extent.insertDimension(extent.getDimension(), DimensionNameType.TIME, 0, timestamps.length, false);
         return new GridGeometry(extent, CELL_ORIGIN, gridToCRS, spatioTemporalCRS);
     }
 }

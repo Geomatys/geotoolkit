@@ -29,6 +29,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.measure.Unit;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridOrientation;
 import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
@@ -360,7 +361,7 @@ public final class WMSUtilities {
                     layerGrid = new EstimatedGridGeometry(layerEnvelope, resnd);
 
                 } catch (IncompleteGridGeometryException ex) {
-                    layerGrid = new GridGeometry(null, layerEnvelope);
+                    layerGrid = new GridGeometry(null, layerEnvelope, GridOrientation.HOMOTHETY);
                 }
             }
         }

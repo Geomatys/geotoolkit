@@ -190,7 +190,7 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
     final boolean isLoggable() {
         Level level = logLevel;
         if (level == null) {
-            level = PerformanceLevel.SLOWEST;
+            level = PerformanceLevel.SLOWER;
         }
         return LOGGER.isLoggable(level);
     }
@@ -234,7 +234,7 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
     @Override
     public Level getLogLevel() {
         final Level level = logLevel;
-        return (level != null) ? level : PerformanceLevel.PERFORMANCE;
+        return (level != null) ? level : Level.FINE;
     }
 
     /**
