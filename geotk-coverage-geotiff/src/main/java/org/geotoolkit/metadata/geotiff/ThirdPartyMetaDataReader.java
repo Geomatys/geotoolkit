@@ -408,8 +408,11 @@ public strictfp class ThirdPartyMetaDataReader {
              * GEOPHISIC means exist at least, one of, scale, offset or noData values.
              */
             if (!categories.isEmpty()) {
-                final SampleDimension dim = new SampleDimension(Names.createLocalName(null, null, String.valueOf(b)), null, categories);
+                final Double noDataValue = noDatas == null || noDatas.isEmpty() ? null : noDatas.first();
+                final SampleDimension dim = new SampleDimension(Names.createLocalName(null, null, String.valueOf(b)), noDataValue, categories);
                 accessor.setDimension(dim, Locale.ENGLISH);
+            } else if (!noDatas.isEmpty()) {
+                accessor.setDimension(new SampleDimension.Builder().setBackground("no-data", noDatas.first()).build(), Locale.ENGLISH);
             }
         }
     }

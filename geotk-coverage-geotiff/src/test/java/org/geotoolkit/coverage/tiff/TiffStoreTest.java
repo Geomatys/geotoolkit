@@ -16,9 +16,16 @@
  */
 package org.geotoolkit.coverage.tiff;
 
+import java.awt.image.RenderedImage;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridCoverageProcessor;
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridOrientation;
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.image.ImageProcessor;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
@@ -26,6 +33,7 @@ import org.apache.sis.storage.StorageConnector;
 import org.geotoolkit.nio.IOUtilities;
 import org.junit.Assert;
 import org.junit.Test;
+import org.opengis.geometry.Envelope;
 
 /**
  *
@@ -61,6 +69,37 @@ public class TiffStoreTest {
             GridCoverage gc = gcr.read(null, 0);
             
             Assert.assertNotNull(gc);
+        }
+    }
+
+    /**
+     * Ensure no error arise from resamplin/prefetching when using a Geotiff as source image. The problem has been
+     * spotted on an image similar to the one used in the test, where SIS fails with the following error:
+     *
+     * <pre>TransformException: No category for value NaN #0.</pre>
+     */
+    @Test
+    public void testBackgroundValue() throws Exception {
+        final Path file = IOUtilities.getResourceAsPath("org/geotoolkit/image/io/test-data/nan_255.tif");
+        try (TiffStore store = new TiffStore(file)) {
+            GridCoverageProcessor processor = new GridCoverageProcessor();
+            final GridGeometry baseGeom = store.getGridGeometry();
+            final Envelope baseEnv = baseGeom.getEnvelope();
+            final GeneralEnvelope resampleEnvelope = new GeneralEnvelope(baseGeom.getEnvelope());
+            resampleEnvelope.setRange(0,
+                    baseEnv.getMinimum(0) - baseEnv.getSpan(0) / 10,
+                    baseEnv.getMaximum(0) + baseEnv.getSpan(0) / 10);
+            final GridGeometry resampleGeom = new GridGeometry(
+                    new GridExtent(256, 256),
+                    resampleEnvelope,
+                    GridOrientation.HOMOTHETY);
+            GridCoverage dataImage = processor.resample(store.read(null), resampleGeom);
+            RenderedImage img = dataImage.render(null);
+
+            ImageProcessor improcessor = new ImageProcessor();
+            improcessor.setExecutionMode(ImageProcessor.Mode.PARALLEL);
+            img = improcessor.prefetch(img, null);
+            Assert.assertNotNull(img);
         }
     }
 }
