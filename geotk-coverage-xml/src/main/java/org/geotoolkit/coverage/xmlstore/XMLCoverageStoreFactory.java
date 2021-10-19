@@ -32,10 +32,10 @@ import org.apache.sis.storage.StorageConnector;
 import org.apache.sis.util.Version;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
-import org.geotoolkit.storage.multires.MultiResolutionResource;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
+import org.geotoolkit.storage.multires.TiledResource;
 
 /**
  * Coverage store relying on an xml file.
@@ -46,7 +46,7 @@ import org.opengis.parameter.ParameterValueGroup;
 @StoreMetadata(
         formatName = XMLCoverageStoreFactory.NAME,
         capabilities = {Capability.READ, Capability.WRITE, Capability.CREATE},
-        resourceTypes = {GridCoverageResource.class, MultiResolutionResource.class})
+        resourceTypes = {GridCoverageResource.class, TiledResource.class})
 @StoreMetadataExt(resourceTypes = ResourceType.PYRAMID)
 public class XMLCoverageStoreFactory extends DataStoreProvider {
 

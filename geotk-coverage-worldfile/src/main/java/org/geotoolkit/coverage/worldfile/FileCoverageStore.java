@@ -52,7 +52,7 @@ import org.geotoolkit.metadata.MetadataUtilities;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
-import org.geotoolkit.storage.coverage.DefiningCoverageResource;
+import org.geotoolkit.storage.coverage.DefiningGridCoverageResource;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
@@ -354,10 +354,10 @@ public class FileCoverageStore extends AbstractCoverageStore implements Resource
 
     @Override
     public GridCoverageResource add(org.apache.sis.storage.Resource resource) throws DataStoreException {
-        if (!(resource instanceof DefiningCoverageResource)) {
+        if (!(resource instanceof DefiningGridCoverageResource)) {
             throw new DataStoreException("Unsupported resource "+resource);
         }
-        final DefiningCoverageResource cr = (DefiningCoverageResource) resource;
+        final DefiningGridCoverageResource cr = (DefiningGridCoverageResource) resource;
         final GenericName name = cr.getName();
 
         final Collection<GenericName> names = DataStores.getNames(this, true, DataSet.class);

@@ -59,7 +59,7 @@ import org.geotoolkit.process.ProcessEvent;
 import org.geotoolkit.process.ProcessListener;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.storage.coverage.mosaic.AggregatedCoverageResource;
-import org.geotoolkit.storage.memory.InMemoryPyramidResource;
+import org.geotoolkit.storage.memory.InMemoryTiledGridCoverageResource;
 import org.geotoolkit.storage.multires.AbstractTileGenerator;
 import org.geotoolkit.storage.multires.DefaultTileMatrixSet;
 import org.geotoolkit.storage.multires.EmptyTile;
@@ -305,9 +305,9 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
                     //modify context
                     final DefaultTileMatrixSet pm = new DefaultTileMatrixSet(pyramid.getCoordinateReferenceSystem());
                     pm.getMosaicsInternal().add(mosaic);
-                    final InMemoryPyramidResource r = new InMemoryPyramidResource(NamesExt.create("test"));
+                    final InMemoryTiledGridCoverageResource r = new InMemoryTiledGridCoverageResource(NamesExt.create("test"));
                     r.setSampleDimensions(resourceCenter.getSampleDimensions());
-                    r.getModels().add(pm);
+                    r.getTileMatrixSets().add(pm);
 
                     //we must still use the original resource for generation because
                     //lower level tiles may not be sufficient to generate border tiles

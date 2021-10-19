@@ -9,13 +9,13 @@ import org.apache.sis.storage.Resource;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.multires.MultiResolutionResource;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.wmts.WebMapTileClient;
 import org.geotoolkit.wmts.xml.WMTSVersion;
 import org.opengis.util.GenericName;
+import org.geotoolkit.storage.multires.TiledResource;
 
 
 public class WMTSClientDemo {
@@ -46,7 +46,7 @@ public class WMTSClientDemo {
                     ref,
                     new DefaultStyleFactory().style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER));
 
-            MultiResolutionResource model = (MultiResolutionResource) ref;
+            TiledResource model = (TiledResource) ref;
             System.out.println(model);
 
             layer.setTitle(n.tip().toString());

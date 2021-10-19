@@ -32,12 +32,12 @@ import org.apache.sis.storage.WritableAggregate;
 import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
 import org.apache.sis.storage.event.StoreListeners;
-import org.geotoolkit.storage.multires.MultiResolutionResource;
 import org.geotoolkit.storage.event.AggregationEvent;
-import org.geotoolkit.storage.coverage.DefiningCoverageResource;
-import org.geotoolkit.storage.coverage.DefiningMultiResolutionResource;
+import org.geotoolkit.storage.coverage.DefiningGridCoverageResource;
+import org.geotoolkit.storage.coverage.DefiningTiledGridCoverageResource;
 import org.opengis.feature.Feature;
 import org.opengis.util.GenericName;
+import org.geotoolkit.storage.multires.TiledResource;
 
 /**
  *
@@ -80,15 +80,15 @@ public class InMemoryAggregate extends AbstractResource implements WritableAggre
             }
             newr = newres;
 
-        } else if (resource instanceof DefiningMultiResolutionResource) {
-            final DefiningMultiResolutionResource cr = (DefiningMultiResolutionResource) resource;
+        } else if (resource instanceof DefiningTiledGridCoverageResource) {
+            final DefiningTiledGridCoverageResource cr = (DefiningTiledGridCoverageResource) resource;
             final GenericName name = cr.getIdentifier().orElse(null);
-            newr = new InMemoryPyramidResource(name);
+            newr = new InMemoryTiledGridCoverageResource(name);
 
-        } else if (resource instanceof GridCoverageResource && resource instanceof MultiResolutionResource) {
+        } else if (resource instanceof GridCoverageResource && resource instanceof TiledResource) {
             final GridCoverageResource cr = (GridCoverageResource) resource;
             final GenericName name = cr.getIdentifier().orElse(null);
-            newr = new InMemoryPyramidResource(name);
+            newr = new InMemoryTiledGridCoverageResource(name);
 
         } else if (resource instanceof GridCoverageResource) {
             final GridCoverageResource cr = (GridCoverageResource) resource;
@@ -97,8 +97,8 @@ public class InMemoryAggregate extends AbstractResource implements WritableAggre
             newres.write(cr.read(null));
             newr = newres;
 
-        } else if (resource instanceof DefiningCoverageResource) {
-            final DefiningCoverageResource cr = (DefiningCoverageResource) resource;
+        } else if (resource instanceof DefiningGridCoverageResource) {
+            final DefiningGridCoverageResource cr = (DefiningGridCoverageResource) resource;
             final GenericName name = cr.getIdentifier().orElse(null);
             newr = new InMemoryGridCoverageResource(name);
 

@@ -34,7 +34,7 @@ import org.apache.sis.image.Interpolation;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.storage.memory.InMemoryPyramidResource;
+import org.geotoolkit.storage.memory.InMemoryTiledGridCoverageResource;
 import org.geotoolkit.storage.memory.InMemoryStore;
 import org.geotoolkit.storage.multires.DefiningTileMatrix;
 import org.geotoolkit.storage.multires.DefiningTileMatrixSet;
@@ -54,7 +54,7 @@ import org.geotoolkit.storage.multires.TileMatrix;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class PyramidWriterTest <T extends InMemoryPyramidResource> extends org.geotoolkit.test.TestBase {
+public class PyramidWriterTest <T extends InMemoryTiledGridCoverageResource> extends org.geotoolkit.test.TestBase {
 
     private static final GenericName NAME = NamesExt.create("test");
     private static final CoordinateReferenceSystem CRS84 = CommonCRS.WGS84.normalizedGeographic();
@@ -77,14 +77,14 @@ public class PyramidWriterTest <T extends InMemoryPyramidResource> extends org.g
     @Test
     public void testSingleGridOverride() throws DataStoreException{
         final InMemoryStore store = new InMemoryStore();
-        final T ref = (T) store.add(new DefiningMultiResolutionResource(NAME));
+        final T ref = (T) store.add(new DefiningTiledGridCoverageResource(NAME));
         ref.setSampleDimensions(Arrays.asList(
                 new SampleDimension.Builder().setName(0).build(),
                 new SampleDimension.Builder().setName(1).build(),
                 new SampleDimension.Builder().setName(2).build(),
                 new SampleDimension.Builder().setName(3).build()
         ));
-        final TileMatrixSet tileMatrixSet = (TileMatrixSet) ref.createModel(new DefiningTileMatrixSet(CRS84));
+        final TileMatrixSet tileMatrixSet = (TileMatrixSet) ref.createTileMatrixSet(new DefiningTileMatrixSet(CRS84));
         final TileMatrix tileMatrix = tileMatrixSet.createTileMatrix(new DefiningTileMatrix(null, UL84, 1, new Dimension(360, 180), new Dimension(1, 1)));
         tileMatrix.writeTiles(Stream.of(new DefaultImageTile(createImage(360, 180, Color.BLACK), 0, 0)), null);
 
@@ -114,14 +114,14 @@ public class PyramidWriterTest <T extends InMemoryPyramidResource> extends org.g
     @Test
     public void testQuadGridOverride() throws DataStoreException{
         final InMemoryStore store = new InMemoryStore();
-        final T ref = (T) store.add(new DefiningMultiResolutionResource(NAME));
+        final T ref = (T) store.add(new DefiningTiledGridCoverageResource(NAME));
         ref.setSampleDimensions(Arrays.asList(
                 new SampleDimension.Builder().setName(0).build(),
                 new SampleDimension.Builder().setName(1).build(),
                 new SampleDimension.Builder().setName(2).build(),
                 new SampleDimension.Builder().setName(3).build()
         ));
-        final TileMatrixSet pyramid = (TileMatrixSet) ref.createModel(new DefiningTileMatrixSet(CRS84));
+        final TileMatrixSet pyramid = (TileMatrixSet) ref.createTileMatrixSet(new DefiningTileMatrixSet(CRS84));
         final TileMatrix mosaic = pyramid.createTileMatrix(new DefiningTileMatrix(null, UL84, 10, new Dimension(9, 9), new Dimension(4, 2)));
         for(int y=0;y<2;y++){
             for(int x=0;x<4;x++){
@@ -154,14 +154,14 @@ public class PyramidWriterTest <T extends InMemoryPyramidResource> extends org.g
     @Test
     public void testPartialQuadGridOverride() throws DataStoreException{
         final InMemoryStore store = new InMemoryStore();
-        final T ref = (T) store.add(new DefiningMultiResolutionResource(NAME));
+        final T ref = (T) store.add(new DefiningTiledGridCoverageResource(NAME));
         ref.setSampleDimensions(Arrays.asList(
                 new SampleDimension.Builder().setName(0).build(),
                 new SampleDimension.Builder().setName(1).build(),
                 new SampleDimension.Builder().setName(2).build(),
                 new SampleDimension.Builder().setName(3).build()
         ));
-        final TileMatrixSet pyramid = (TileMatrixSet) ref.createModel(new DefiningTileMatrixSet(CRS84));
+        final TileMatrixSet pyramid = (TileMatrixSet) ref.createTileMatrixSet(new DefiningTileMatrixSet(CRS84));
         final TileMatrix mosaic = pyramid.createTileMatrix(new DefiningTileMatrix(null, UL84, 10, new Dimension(9, 9), new Dimension(4, 2)));
         for(int y=0;y<2;y++){
             for(int x=0;x<4;x++){
@@ -209,14 +209,14 @@ public class PyramidWriterTest <T extends InMemoryPyramidResource> extends org.g
     @Test
     public void testPartialQuadGridOverride2() throws DataStoreException, IOException{
         final InMemoryStore store = new InMemoryStore();
-        final T ref = (T) store.add(new DefiningMultiResolutionResource(NAME));
+        final T ref = (T) store.add(new DefiningTiledGridCoverageResource(NAME));
         ref.setSampleDimensions(Arrays.asList(
                 new SampleDimension.Builder().setName(0).build(),
                 new SampleDimension.Builder().setName(1).build(),
                 new SampleDimension.Builder().setName(2).build(),
                 new SampleDimension.Builder().setName(3).build()
         ));
-        final TileMatrixSet pyramid = (TileMatrixSet) ref.createModel(new DefiningTileMatrixSet(CRS84));
+        final TileMatrixSet pyramid = (TileMatrixSet) ref.createTileMatrixSet(new DefiningTileMatrixSet(CRS84));
         final TileMatrix mosaic1 = pyramid.createTileMatrix(new DefiningTileMatrix(null, UL84, 10, new Dimension(9, 9), new Dimension(4, 2)));
         for(int y=0;y<2;y++){
             for(int x=0;x<4;x++){
@@ -300,14 +300,14 @@ public class PyramidWriterTest <T extends InMemoryPyramidResource> extends org.g
     @Test
     public void testPartialQuadGridOverrideFlip() throws DataStoreException, IOException, NoSuchAuthorityCodeException, FactoryException{
         final InMemoryStore store = new InMemoryStore();
-        final T ref = (T) store.add(new DefiningMultiResolutionResource(NAME));
+        final T ref = (T) store.add(new DefiningTiledGridCoverageResource(NAME));
         ref.setSampleDimensions(Arrays.asList(
                 new SampleDimension.Builder().setName(0).build(),
                 new SampleDimension.Builder().setName(1).build(),
                 new SampleDimension.Builder().setName(2).build(),
                 new SampleDimension.Builder().setName(3).build()
         ));
-        final TileMatrixSet pyramid = (TileMatrixSet) ref.createModel(new DefiningTileMatrixSet(EPSG4326));
+        final TileMatrixSet pyramid = (TileMatrixSet) ref.createTileMatrixSet(new DefiningTileMatrixSet(EPSG4326));
         final TileMatrix mosaic1 = pyramid.createTileMatrix(new DefiningTileMatrix(null, UL4326, 10, new Dimension(9, 9), new Dimension(2, 4)));
         for(int y=0;y<4;y++){
             for(int x=0;x<2;x++){
@@ -391,14 +391,14 @@ public class PyramidWriterTest <T extends InMemoryPyramidResource> extends org.g
     @Test
     public void testPartialQuadGridOverrideFlip2() throws DataStoreException, IOException, NoSuchAuthorityCodeException, FactoryException{
         final InMemoryStore store = new InMemoryStore();
-        final T ref = (T) store.add(new DefiningMultiResolutionResource(NAME));
+        final T ref = (T) store.add(new DefiningTiledGridCoverageResource(NAME));
         ref.setSampleDimensions(Arrays.asList(
                 new SampleDimension.Builder().setName(0).build(),
                 new SampleDimension.Builder().setName(1).build(),
                 new SampleDimension.Builder().setName(2).build(),
                 new SampleDimension.Builder().setName(3).build()
         ));
-        final TileMatrixSet pyramid = (TileMatrixSet) ref.createModel(new DefiningTileMatrixSet(CRS84));
+        final TileMatrixSet pyramid = (TileMatrixSet) ref.createTileMatrixSet(new DefiningTileMatrixSet(CRS84));
         final TileMatrix mosaic1 = pyramid.createTileMatrix(new DefiningTileMatrix(null, UL84, 10, new Dimension(9, 9), new Dimension(4, 2)));
         for(int y=0;y<2;y++){
             for(int x=0;x<4;x++){

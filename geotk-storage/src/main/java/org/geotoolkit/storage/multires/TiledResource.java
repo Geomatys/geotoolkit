@@ -21,44 +21,46 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
 
 /**
- * A MultiResolutionResource is a ressource which content can be accessed by
+ * A TiledResource is a ressource which content can be accessed by
  * smaller chunks called Tiles.
  * <p>
- * The resource may expose multiple differents models, a model is a defined tile
- * organisation structure. The most common one being the {@linkplain Pyramid} model.
+ * The resource may expose multiple differents {@linkplain TileMatrixSet},
+ * each one with a different {@linkplain CoordinateReferenceSystem}.
  * </p>
+ * Most format specification only support a single {@linkplain TileMatrixSet},
+ * but a few ones like WMTS may have several.
  *
  * @author Johann Sorel (Geomatys)
  */
-public interface MultiResolutionResource extends Resource {
+public interface TiledResource extends Resource {
 
     /**
-     * Returns the collection of available {@linkplain  MultiResolutionModel}.
+     * Returns the collection of available {@linkplain TileMatrixSet}.
      *
-     * @return Collection of available models, never null, can be empty.
+     * @return Collection of available TileMatrixSet, never null, can be empty.
      * @throws org.apache.sis.storage.DataStoreException
      */
-    Collection<? extends MultiResolutionModel> getModels() throws DataStoreException;
+    Collection<? extends TileMatrixSet> getTileMatrixSets() throws DataStoreException;
 
     /**
-     * Create a new {@linkplain  MultiResolutionModel} based on given model.
+     * Create a new {@linkplain TileMatrixSet} based on given model.
      * The created model may have differences.
      * Model identifier may be preserved or not, behavior is implementation specific.
      * If the id is already used a new one will be generated instead.
      *
      * @param template a template model which structure will be used as reference.
-     * @return created {@linkplain  MultiResolutionModel}
+     * @return created {@linkplain  TileMatrixSet}
      * @throws DataStoreException
      */
-    MultiResolutionModel createModel(MultiResolutionModel template) throws DataStoreException;
+    TileMatrixSet createTileMatrixSet(TileMatrixSet template) throws DataStoreException;
 
     /**
-     * Remove an existing model.
+     * Remove an existing {@linkplain TileMatrixSet}.
      *
      * @param identifier not null
      * @throws DataStoreException
      */
-    void removeModel(String identifier) throws DataStoreException;
+    void removeTileMatrixSet(String identifier) throws DataStoreException;
 
     /**
      * Get a description of the inner storage of tiles.

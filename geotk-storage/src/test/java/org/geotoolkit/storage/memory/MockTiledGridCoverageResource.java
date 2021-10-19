@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2019, Geomatys
+ *    (C) 2021, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -20,6 +20,7 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -46,32 +47,56 @@ import org.geotoolkit.storage.event.ContentEvent;
 import org.geotoolkit.storage.event.ModelEvent;
 import org.geotoolkit.storage.multires.AbstractTileMatrix;
 import org.geotoolkit.storage.multires.AbstractTileMatrixSet;
-import org.geotoolkit.storage.multires.MultiResolutionModel;
-import org.geotoolkit.storage.multires.MultiResolutionResource;
-import org.geotoolkit.storage.multires.TileMatrices;
 import org.geotoolkit.storage.multires.Tile;
+import org.geotoolkit.storage.multires.TileMatrices;
+import org.geotoolkit.storage.multires.TileMatrix;
+import org.geotoolkit.storage.multires.TileMatrixSet;
+import org.geotoolkit.storage.multires.TiledResource;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.GenericName;
-import org.geotoolkit.storage.multires.TileMatrixSet;
-import org.geotoolkit.storage.multires.TileMatrix;
 
 /**
+ * Mock pyramid loggin called operations.
  *
  * @author Johann Sorel (Geomatys)
  */
-public class InMemoryPyramidResource extends AbstractGridResource implements MultiResolutionResource, StoreResource, WritableGridCoverageResource {
+final class MockTiledGridCoverageResource extends AbstractGridResource implements TiledResource, StoreResource, WritableGridCoverageResource {
+
+    public static enum EventType {
+        TILE_MATRIX_SET_CREATED,
+        TILE_MATRIX_SET_REMOVED,
+        TILE_MATRIX_CREATED,
+        TILE_MATRIX_REMOVED,
+        TILE_GET,
+        TILE_SET
+    }
+
+    public static final class MockEvent {
+        public EventType type;
+        public Object data;
+
+        public MockEvent(EventType type, Object data) {
+            this.type = type;
+            this.data = data;
+        }
+    }
 
     private final InMemoryStore store;
     private final GenericName identifier;
     private final List<TileMatrixSet> tileMatrixSets = new CopyOnWriteArrayList<>();
     private List<SampleDimension> dimensions;
 
-    public InMemoryPyramidResource(final GenericName name) {
+    /**
+     * Operation which occured in the pyramid.
+     */
+    public final List<MockEvent> localEvents = new ArrayList<>();
+
+    public MockTiledGridCoverageResource(final GenericName name) {
         this(null, name);
     }
 
-    public InMemoryPyramidResource(final InMemoryStore store, final GenericName identifier) {
+    public MockTiledGridCoverageResource(final InMemoryStore store, final GenericName identifier) {
         super(null);
         this.store = store;
         this.identifier = identifier;
@@ -91,7 +116,7 @@ public class InMemoryPyramidResource extends AbstractGridResource implements Mul
      * {@inheritDoc }.
      */
     @Override
-    public Collection<TileMatrixSet> getModels() throws DataStoreException {
+    public Collection<TileMatrixSet> getTileMatrixSets() throws DataStoreException {
         return tileMatrixSets;
     }
 
@@ -114,29 +139,26 @@ public class InMemoryPyramidResource extends AbstractGridResource implements Mul
      * {@inheritDoc }.
      */
     @Override
-    public MultiResolutionModel createModel(MultiResolutionModel template) throws DataStoreException {
-        if (template instanceof TileMatrixSet) {
-            final TileMatrixSet p = (TileMatrixSet) template;
-            final InMemoryTileMatrixSet py = new InMemoryTileMatrixSet(UUID.randomUUID().toString(), p.getCoordinateReferenceSystem());
-            py.setBuildPhase(true);
-            TileMatrices.copyStructure(p, py);
-            py.setBuildPhase(false);
-            tileMatrixSets.add(py);
-            fire(new ModelEvent(this), StoreEvent.class);
-            return py;
-        } else {
-            throw new DataStoreException("Unsupported model "+template);
-        }
+    public TileMatrixSet createTileMatrixSet(TileMatrixSet template) throws DataStoreException {
+        final InMemoryTileMatrixSet py = new InMemoryTileMatrixSet(UUID.randomUUID().toString(), template.getCoordinateReferenceSystem());
+        py.setBuildPhase(true);
+        localEvents.add(new MockEvent(EventType.TILE_MATRIX_SET_CREATED, py));
+        TileMatrices.copyStructure(template, py);
+        py.setBuildPhase(false);
+        tileMatrixSets.add(py);
+        fire(new ModelEvent(this), StoreEvent.class);
+        return py;
     }
 
     @Override
-    public void removeModel(String identifier) throws DataStoreException {
+    public void removeTileMatrixSet(String identifier) throws DataStoreException {
         ArgumentChecks.ensureNonNull("identifier", identifier);
         final Iterator<TileMatrixSet> it     = tileMatrixSets.iterator();
         while (it.hasNext()) {
             final TileMatrixSet tms = it.next();
             if (identifier.equalsIgnoreCase(tms.getIdentifier())) {
                 tileMatrixSets.remove(tms);
+                localEvents.add(new MockEvent(EventType.TILE_MATRIX_SET_REMOVED, tms));
                 fire(new ModelEvent(this), StoreEvent.class);
                 return;
             }
@@ -186,9 +208,10 @@ public class InMemoryPyramidResource extends AbstractGridResource implements Mul
             final InMemoryTileMatrix gm = new InMemoryTileMatrix(mosaicId,
                     this, template.getUpperLeftCorner(), template.getGridSize(), template.getTileSize(), template.getScale());
             tileMatrices.add(gm);
+            localEvents.add(new MockEvent(EventType.TILE_MATRIX_CREATED, gm));
             if (!buildPhase) {
                 //we are creating object, dont send an event until we are finished.
-                InMemoryPyramidResource.this.fire(new ModelEvent(InMemoryPyramidResource.this), StoreEvent.class);
+                MockTiledGridCoverageResource.this.fire(new ModelEvent(MockTiledGridCoverageResource.this), StoreEvent.class);
             }
             return gm;
         }
@@ -196,10 +219,12 @@ public class InMemoryPyramidResource extends AbstractGridResource implements Mul
         @Override
         public void deleteTileMatrix(String mosaicId) throws DataStoreException {
             for (int id = 0, len = tileMatrices.size(); id < len; id++) {
-                if (tileMatrices.get(id).getIdentifier().equalsIgnoreCase(mosaicId)) {
+                final InMemoryTileMatrix gm = tileMatrices.get(id);
+                if (gm.getIdentifier().equalsIgnoreCase(mosaicId)) {
                     tileMatrices.remove(id);
+                    localEvents.add(new MockEvent(EventType.TILE_MATRIX_REMOVED, gm));
                     if (!buildPhase) {
-                        InMemoryPyramidResource.this.fire(new ModelEvent(InMemoryPyramidResource.this), StoreEvent.class);
+                        MockTiledGridCoverageResource.this.fire(new ModelEvent(MockTiledGridCoverageResource.this), StoreEvent.class);
                     }
                     break;
                 }
@@ -227,14 +252,17 @@ public class InMemoryPyramidResource extends AbstractGridResource implements Mul
 
         @Override
         public InMemoryTile getTile(long col, long row, Map hints) throws DataStoreException {
-            return mpTileReference.get(new Point(Math.toIntExact(col), Math.toIntExact(row)));
+            InMemoryTile imt = mpTileReference.get(new Point(Math.toIntExact(col), Math.toIntExact(row)));
+            localEvents.add(new MockEvent(EventType.TILE_GET, imt));
+            return imt;
         }
 
         public synchronized void setTile(int col, int row, InMemoryTile tile) {
             mpTileReference.put(new Point(Math.toIntExact(col), Math.toIntExact(row)), tile);
+            localEvents.add(new MockEvent(EventType.TILE_SET, tile));
             if (!buildPhase) {
                 //we are creating object, dont send an event until we are finished.
-                InMemoryPyramidResource.this.fire(new ContentEvent(InMemoryPyramidResource.this), StoreEvent.class);
+                MockTiledGridCoverageResource.this.fire(new ContentEvent(MockTiledGridCoverageResource.this), StoreEvent.class);
             }
         }
 
