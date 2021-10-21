@@ -16,14 +16,12 @@
  */
 package org.geotoolkit.feature;
 
-import java.util.function.Function;
-import org.apache.sis.feature.Features;
-import org.apache.sis.util.collection.BackingStoreException;
 import java.lang.reflect.Array;
 import java.net.URI;
 import java.net.URL;
 import java.rmi.server.UID;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -34,19 +32,30 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import org.apache.sis.coverage.grid.GridCoverage;
+import static org.apache.sis.feature.AbstractIdentifiedType.NAME_KEY;
 import org.apache.sis.feature.DefaultAttributeType;
 import org.apache.sis.feature.DefaultFeatureType;
+import org.apache.sis.feature.Features;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.feature.Geometries;
+import org.apache.sis.internal.system.DefaultFactories;
+import org.apache.sis.parameter.Parameters;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.Static;
+import org.apache.sis.util.collection.BackingStoreException;
 import org.apache.sis.util.iso.DefaultNameSpace;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.filter.FilterUtilities;
+import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.internal.feature.ArrayFeature;
 import org.geotoolkit.internal.feature.FeatureLoop;
 import org.locationtech.jts.geom.Geometry;
@@ -59,6 +68,7 @@ import org.opengis.feature.FeatureType;
 import org.opengis.feature.IdentifiedType;
 import org.opengis.feature.Operation;
 import org.opengis.feature.Property;
+import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
 import org.opengis.filter.ResourceId;
 import org.opengis.geometry.Envelope;
@@ -69,20 +79,9 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
 import org.opengis.util.NameFactory;
-import org.apache.sis.internal.feature.AttributeConvention;
-import org.apache.sis.internal.system.DefaultFactories;
-
-import static org.apache.sis.feature.AbstractIdentifiedType.NAME_KEY;
-import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
-
-import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.parameter.Parameters;
-import org.geotoolkit.filter.FilterUtilities;
-import org.geotoolkit.geometry.jts.JTS;
-import org.opengis.feature.PropertyNotFoundException;
-import org.opengis.util.FactoryException;
 
 /**
  * NOTE : merge with Apache SIS 'org.apache.sis.feature.Features' class.
@@ -466,7 +465,7 @@ public final class FeatureExt extends Static {
             return ((Date)candidate).clone();
         }else if(candidate instanceof Object[]){
             final Object[] array = (Object[])candidate;
-            final Object[] copy = new Object[array.length];
+            final Object[] copy = Arrays.copyOf(array, array.length);
             for (int i = 0; i < array.length; i++) {
                 copy[i] = deepCopy(array[i]);
             }
