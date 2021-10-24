@@ -127,6 +127,8 @@
               <trimStackTrace>false</trimStackTrace>
               <!-- Required by JAI codec plugins. -->
               <argLine>
+	        <!-- @{argLine} necessary for jacoco generation, because we added more parameters -->
+                @{argLine}
                 --add-opens java.base/sun.security.action=ALL-UNNAMED
                 --add-opens java.desktop/sun.awt.image=ALL-UNNAMED
               </argLine>
@@ -222,7 +224,10 @@
     <snakeyaml.version>1.24</snakeyaml.version> <!-- keep version aligned with jackson -->
     <woodstox.version>6.0.0</woodstox.version>
     <xmlgraphics.version>2.3</xmlgraphics.version>
-
+    <!-- @{argLine} necessary for jacoco generation, we must declare 
+         an empty property to avoid a surefire exception if we run any other 
+         maven phase which doesn't activate jacoco -->
+    <argLine></argLine>
   </properties>
 
 
@@ -677,6 +682,10 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
+          <argLine>
+             <!-- @{argLine} necessary for jacoco generation, because we added more parameters -->
+             @{argLine}
+          </argLine>
           <systemProperties>
             <property>
               <name>derby.stream.error.file</name>
@@ -996,7 +1005,26 @@
           </tags>
         </configuration>
       </plugin>
-
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>0.8.7</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+          <!-- attached to Maven test phase -->
+          <execution>
+            <id>report</id>
+            <phase>test</phase>
+            <goals>
+              <goal>report</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 
