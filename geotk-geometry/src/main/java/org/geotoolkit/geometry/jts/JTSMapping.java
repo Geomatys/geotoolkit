@@ -18,6 +18,8 @@ package org.geotoolkit.geometry.jts;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import org.apache.sis.util.logging.Logging;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryCollection;
@@ -295,8 +297,17 @@ public final class JTSMapping {
         return convertToPolygon(convertToLineString(pt));
     }
 
+    /**
+     * If linestring is a valid ring returns a closed polygon otherwise return
+     * an empty polygon.
+     */
     private static Polygon convertToPolygon(final LineString pt) {
-        return GF.createPolygon(GF.createLinearRing(pt.getCoordinates()), new LinearRing[0]);
+        if (pt.isEmpty() || pt.isRing()) {
+            return GF.createPolygon(GF.createLinearRing(pt.getCoordinates()), new LinearRing[0]);
+        } else {
+            Logging.getLogger("org.geotoolkit.geometry").log(Level.FINE, "LineString {0} is not a valid linear ring to build a polygon,", pt);
+            return GF.createPolygon();
+        }
     }
 
     private static Polygon convertToPolygon(final MultiLineString pt) {
