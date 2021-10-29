@@ -36,18 +36,21 @@ import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.internal.geojson.GeoJSONParser;
 import org.geotoolkit.internal.geojson.GeoJSONUtils;
 import org.geotoolkit.internal.geojson.binding.GeoJSONFeature;
 import org.geotoolkit.internal.geojson.binding.GeoJSONFeatureCollection;
 import org.geotoolkit.internal.geojson.binding.GeoJSONGeometry;
 import org.geotoolkit.internal.geojson.binding.GeoJSONObject;
+import static org.geotoolkit.storage.geojson.GeoJSONConstants.TYPE;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.Attribute;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureAssociationRole;
 import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -72,47 +75,56 @@ class GeoJSONReader implements Iterator<Feature>, AutoCloseable {
     protected Feature current;
     protected int currentFeatureIdx;
 
+    protected Map<FeatureType, FTypeInformation> ftInfos = new HashMap<>();
+
     /**
-     * A flag indicating if we should read identifiers from read stream. it's
-     * activated if the feature type given at built contains an
-     * {@link AttributeConvention#IDENTIFIER_PROPERTY}.
+     * Data stucture recording information about Feature Type :
+     *  - identifier convertion method
+     *  - crs
+     *  - geometric property name
      */
-    protected final boolean hasIdentifier;
-    final Function idConverter;
-    final CoordinateReferenceSystem crs;
-    final String geometryName;
+    protected static class FTypeInformation {
+       /**
+        * A flag indicating if we should read identifiers from read stream. it's
+        * activated if the feature type given at built contains an
+        * {@link AttributeConvention#IDENTIFIER_PROPERTY}.
+        */
+        public final boolean hasIdentifier;
+        public final Function idConverter;
+        public final CoordinateReferenceSystem crs;
+        public final String geometryName;
+
+        FTypeInformation(FeatureType featureType) {
+            hasIdentifier = GeoJSONUtils.hasIdentifier(featureType);
+            if (hasIdentifier) {
+                idConverter = GeoJSONUtils.getIdentifierConverter(featureType);
+            } else {
+                // It should not be used, but we don't set it to null in case someons use it by mistake.
+                idConverter = input -> input;
+            }
+            CoordinateReferenceSystem crs = null;
+            String geometryName = null;
+            try {
+                final PropertyType defaultGeometry = FeatureExt.getDefaultGeometry(featureType);
+                crs = FeatureExt.getCRS(defaultGeometry);
+                geometryName = defaultGeometry.getName().toString();
+            } catch (PropertyNotFoundException ex) {
+                // not mandatory to have a geometric property
+            }
+            this.crs = crs;
+            this.geometryName = geometryName;
+        }
+    }
 
     public GeoJSONReader(Path jsonFile, FeatureType featureType, ReadWriteLock rwLock) {
-        hasIdentifier = GeoJSONUtils.hasIdentifier(featureType);
-        if (hasIdentifier) {
-            idConverter = GeoJSONUtils.getIdentifierConverter(featureType);
-        } else {
-            // It should not be used, but we don't set it to null in case someons use it by mistake.
-            idConverter = input -> input;
-        }
-
-        final PropertyType defaultGeometry = GeoJSONUtils.getDefaultGeometry(featureType);
-        crs = GeoJSONUtils.getCRS(defaultGeometry);
-        geometryName = defaultGeometry.getName().toString();
-
+        ftInfos.put(featureType, new FTypeInformation(featureType));
         this.jsonFile = jsonFile;
         this.featureType = featureType;
         this.rwlock = rwLock;
     }
 
     GeoJSONReader(GeoJSONObject jsonObj, FeatureType featureType, ReadWriteLock rwLock) {
-        hasIdentifier = GeoJSONUtils.hasIdentifier(featureType);
-        if (hasIdentifier) {
-            idConverter = GeoJSONUtils.getIdentifierConverter(featureType);
-        } else {
-            // It should not be used, but we don't set it to null in case someons use it by mistake.
-            idConverter = input -> input;
-        }
-
-        final PropertyType defaultGeometry = GeoJSONUtils.getDefaultGeometry(featureType);
-        crs = GeoJSONUtils.getCRS(defaultGeometry);
-        geometryName = defaultGeometry.getName().toString();
-
+        ftInfos.put(featureType, new FTypeInformation(featureType));
         this.jsonFile = null;
         this.jsonObj = jsonObj;
         this.toRead = false;
@@ -180,24 +192,38 @@ class GeoJSONReader implements Iterator<Feature>, AutoCloseable {
      * Convert a GeoJSONFeature to geotk Feature.
      *
      * @param jsonFeature
-     * @param featureId
      * @return
      */
     Feature toFeature(GeoJSONFeature jsonFeature) throws BackingStoreException {
+        return toFeature(jsonFeature, featureType);
+    }
 
-        //Build geometry
-        final Geometry geom = GeoJSONGeometry.toJTS(jsonFeature.getGeometry(), crs);
+    /**
+     * Convert a GeoJSONFeature to geotk Feature.
+     *
+     * @param jsonFeature
+     * @param ft
+     * @return
+     */
+    Feature toFeature(GeoJSONFeature jsonFeature, FeatureType ft) throws BackingStoreException {
+        FTypeInformation fti = ftInfos.computeIfAbsent(ft, FTypeInformation::new);
 
-        //empty feature
-        final Feature feature = featureType.newInstance();
-        if (hasIdentifier) {
-            Object id = jsonFeature.getId();
-            if (id == null) {
-                id = currentFeatureIdx;
+        //create empty feature
+        final Feature feature = ft.newInstance();
+
+        if (fti.geometryName != null) {
+            //Build geometry
+            final Geometry geom = GeoJSONGeometry.toJTS(jsonFeature.getGeometry(), fti.crs);
+
+            if (fti.hasIdentifier) {
+                Object id = jsonFeature.getId();
+                if (id == null) {
+                    id = currentFeatureIdx;
+                }
+                feature.setPropertyValue(AttributeConvention.IDENTIFIER, fti.idConverter.apply(id));
             }
-            feature.setPropertyValue(AttributeConvention.IDENTIFIER, idConverter.apply(id));
+            feature.setPropertyValue(fti.geometryName, geom);
         }
-        feature.setPropertyValue(geometryName, geom);
 
         //recursively fill other properties
         final Map<String, Object> properties = jsonFeature.getProperties();
@@ -241,8 +267,16 @@ class GeoJSONReader implements Iterator<Feature>, AutoCloseable {
                         //list of objects
                         final List<Feature> subs = new ArrayList<>();
                         for (int i = 0; i < size; i++) {
-                            final Feature subComplexAttribute = assoType.newInstance();
-                            fillFeature(subComplexAttribute, (Map) Array.get(value, i));
+                            Object subValue = Array.get(value, i);
+                            final Feature subComplexAttribute;
+                            if (subValue instanceof Map) {
+                                subComplexAttribute = assoType.newInstance();
+                                fillFeature(subComplexAttribute, (Map) Array.get(value, i));
+                            } else if (subValue instanceof GeoJSONFeature) {
+                                subComplexAttribute = toFeature((GeoJSONFeature)subValue, assoType);
+                            } else {
+                                throw new IllegalArgumentException("Sub value must be a GeoJSONFeature or a map");
+                            }
                             subs.add(subComplexAttribute);
                         }
                         feature.setPropertyValue(attName, subs);
@@ -251,6 +285,18 @@ class GeoJSONReader implements Iterator<Feature>, AutoCloseable {
                     final Feature subComplexAttribute = assoType.newInstance();
                     fillFeature(subComplexAttribute, (Map) value);
                     feature.setPropertyValue(attName, subComplexAttribute);
+                } else if (value instanceof GeoJSONFeature) {
+                    final Feature subComplexAttribute = toFeature((GeoJSONFeature)value, assoType);
+                    feature.setPropertyValue(attName, subComplexAttribute);
+                } else if (value instanceof GeoJSONFeatureCollection) {
+                    GeoJSONFeatureCollection collection = (GeoJSONFeatureCollection) value;
+                    final List<Feature> subFeatures = new ArrayList<>();
+                    for (GeoJSONFeature subFeature : collection.getFeatures()) {
+                        subFeatures.add(toFeature(subFeature, assoType));
+                    }
+                    feature.setPropertyValue(attName, subFeatures);
+                 } else {
+                    LOGGER.warning("Unexpected attribute value type:" + value.getClass());
                 }
 
             } else if (type instanceof AttributeType) {
@@ -270,7 +316,9 @@ class GeoJSONReader implements Iterator<Feature>, AutoCloseable {
 
         Object convertValue = null;
         try {
-            if (value != null) {
+            if (value instanceof GeoJSONGeometry) {
+                convertValue = GeoJSONGeometry.toJTS((GeoJSONGeometry)value, null);
+            } else if (value != null) {
                 final AttributeType<?> propertyType = prop.getType();
                 final Class binding = propertyType.getValueClass();
 
@@ -354,9 +402,10 @@ class GeoJSONReader implements Iterator<Feature>, AutoCloseable {
      * @return
      */
     protected Feature toFeature(GeoJSONGeometry jsonGeometry) {
+        final FTypeInformation fti = ftInfos.get(featureType);
         final Feature feature = featureType.newInstance();
-        final Geometry geom = GeoJSONGeometry.toJTS(jsonGeometry, crs);
-        feature.setPropertyValue(geometryName, geom);
+        final Geometry geom = GeoJSONGeometry.toJTS(jsonGeometry, fti.crs);
+        feature.setPropertyValue(fti.geometryName, geom);
         return feature;
     }
 

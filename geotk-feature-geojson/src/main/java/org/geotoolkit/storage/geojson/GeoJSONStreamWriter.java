@@ -19,6 +19,8 @@ package org.geotoolkit.storage.geojson;
 import com.fasterxml.jackson.core.JsonEncoding;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Collections;
+import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
@@ -30,6 +32,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureNaming;
 import org.apache.sis.storage.IllegalNameException;
 import org.apache.sis.util.collection.BackingStoreException;
+import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.internal.geojson.GeoJSONParser;
 import org.geotoolkit.internal.geojson.GeoJSONUtils;
 import org.locationtech.jts.geom.Geometry;
@@ -83,7 +86,13 @@ public final class GeoJSONStreamWriter implements Iterator<Feature>, AutoCloseab
         this(outputStream, featureType, encoding, doubleAccuracy, false);
     }
 
+
     public GeoJSONStreamWriter(OutputStream outputStream, FeatureType featureType, final JsonEncoding encoding, final int doubleAccuracy, boolean prettyPrint)
+            throws DataStoreException {
+        this(outputStream, featureType, null, null, null, encoding, doubleAccuracy, prettyPrint);
+    }
+
+    public GeoJSONStreamWriter(OutputStream outputStream, FeatureType featureType, List<Link> links, Integer nbMatched, Integer nbReturned, final JsonEncoding encoding, final int doubleAccuracy, boolean prettyPrint)
             throws DataStoreException {
 
         //remove any operation attribute
@@ -131,7 +140,7 @@ public final class GeoJSONStreamWriter implements Iterator<Feature>, AutoCloseab
         try {
             writer = new GeoJSONWriter(outputStream, GeoJSONParser.JSON_FACTORY, encoding, doubleAccuracy, prettyPrint);
             //start write feature collection.
-            writer.writeStartFeatureCollection(GeoJSONUtils.getCRS(featureType), null);
+            writer.writeStartFeatureCollection(FeatureExt.getCRS(featureType), null, links, nbMatched, nbReturned);
             writer.flush();
         } catch (IOException ex) {
             throw new DataStoreException(ex.getMessage(), ex);
@@ -151,7 +160,7 @@ public final class GeoJSONStreamWriter implements Iterator<Feature>, AutoCloseab
             final int doubleAccuracy, boolean prettyPrint) throws IOException {
 
         try (GeoJSONWriter writer = new GeoJSONWriter(outputStream, GeoJSONParser.JSON_FACTORY, encoding, doubleAccuracy, prettyPrint)) {
-            writer.writeSingleFeature(feature);
+            writer.writeFeature(feature, Collections.newSetFromMap(new IdentityHashMap<>()));
         }
     }
 
@@ -196,17 +205,16 @@ public final class GeoJSONStreamWriter implements Iterator<Feature>, AutoCloseab
         }
         lastWritten = edited;
         try {
-            writer.writeFeature(edited);
+            writer.writeFeature(edited, Collections.newSetFromMap(new IdentityHashMap<>()));
             writer.flush();
         } catch (IOException | IllegalArgumentException e) {
             throw new BackingStoreException(e.getMessage(), e);
         }
     }
 
-    public void writeCollection(List<Link> links, Integer nbMatched, Integer nbReturned) throws BackingStoreException {
+    public void writeCollection() throws BackingStoreException {
         try {
-            writer.writeNumber(nbMatched, nbReturned);
-            writer.writeLinks(links);
+
             writer.flush();
         } catch (IOException | IllegalArgumentException e) {
             throw new BackingStoreException(e.getMessage(), e);

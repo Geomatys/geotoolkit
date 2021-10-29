@@ -41,6 +41,7 @@ import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Static;
 import org.apache.sis.util.iso.Names;
 import org.apache.sis.util.iso.SimpleInternationalString;
+import org.geotoolkit.feature.FeatureExt;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.FeatureAssociationRole;
@@ -104,9 +105,7 @@ public final class FeatureTypeUtils extends Static {
         ArgumentChecks.ensureNonNull("FeatureType", ft);
         ArgumentChecks.ensureNonNull("outputFile", output);
 
-        final AttributeType<?> geom = GeoJSONUtils
-                .castOrUnwrap(GeoJSONUtils.getDefaultGeometry(ft))
-                .orElseThrow(() -> new DataStoreException("No default Geometry in given FeatureType : " + ft));
+        Optional<AttributeType<?>> geom = GeoJSONUtils.castOrUnwrap(FeatureExt.getDefaultGeometrySafe(ft));
 
         try (OutputStream outStream = Files.newOutputStream(output, CREATE, WRITE, TRUNCATE_EXISTING);
                 JsonGenerator writer = GeoJSONParser.JSON_FACTORY.createGenerator(outStream, JsonEncoding.UTF8)) {
@@ -121,7 +120,9 @@ public final class FeatureTypeUtils extends Static {
                 writer.writeStringField(DESCRIPTION, ft.getDescription().toString());
             }
 
-            writeGeometryType(geom, writer);
+            if (geom.isPresent()) {
+                writeGeometryType(geom.get(), writer);
+            }
             writeProperties(ft, writer);
 
             writer.writeEndObject();
@@ -169,10 +170,6 @@ public final class FeatureTypeUtils extends Static {
         ArgumentChecks.ensureNonNull("FeatureType", ft);
         ArgumentChecks.ensureNonNull("outputStream", output);
 
-        if (GeoJSONUtils.getDefaultGeometry(ft) == null) {
-            throw new DataStoreException("No default Geometry in given FeatureType : " + ft);
-        }
-
         //start write feature collection.
         writer.writeStartObject();
         writer.writeStringField(TITLE, ft.getName().tip().toString());
@@ -182,9 +179,7 @@ public final class FeatureTypeUtils extends Static {
             writer.writeStringField(DESCRIPTION, ft.getDescription().toString());
         }
 
-        final Optional<AttributeType<?>> geom = GeoJSONUtils.castOrUnwrap(
-                GeoJSONUtils.getDefaultGeometry(ft)
-        );
+        final Optional<AttributeType<?>> geom = GeoJSONUtils.castOrUnwrap(FeatureExt.getDefaultGeometrySafe(ft));
         if (geom.isPresent()) {
             writeGeometryType(geom.get(), writer);
         }
@@ -296,7 +291,7 @@ public final class FeatureTypeUtils extends Static {
             writer.writeStringField(DESCRIPTION, geometryType.getDescription().toString());
         }
         writer.writeStringField(JAVA_TYPE, geometryType.getValueClass().getCanonicalName());
-        CoordinateReferenceSystem crs = GeoJSONUtils.getCRS(geometryType);
+        CoordinateReferenceSystem crs = FeatureExt.getCRS(geometryType);
         if (crs != null) {
             final Optional<String> urn = GeoJSONUtils.toURN(crs);
             if (urn.isPresent()) {

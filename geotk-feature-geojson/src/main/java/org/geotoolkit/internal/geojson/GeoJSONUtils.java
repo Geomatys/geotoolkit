@@ -34,7 +34,6 @@ import static java.nio.file.StandardOpenOption.WRITE;
 import java.text.ParseException;
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
@@ -42,7 +41,6 @@ import java.util.TimeZone;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.logging.Level;
-import java.util.stream.Collectors;
 import org.apache.sis.feature.AbstractOperation;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.feature.AttributeConvention;
@@ -60,7 +58,6 @@ import org.apache.sis.util.Utilities;
 import org.geotoolkit.internal.geojson.binding.GeoJSONObject;
 import static org.geotoolkit.storage.geojson.GeoJSONConstants.*;
 import org.opengis.feature.AttributeType;
-import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.IdentifiedType;
 import org.opengis.feature.Operation;
@@ -89,148 +86,6 @@ public final class GeoJSONUtils extends Static {
      * the property is NOT marked as an SIS convention, false otherwise.
      */
     public static final Predicate<IdentifiedType> IS_NOT_CONVENTION = p -> !AttributeConvention.contains(p.getName());
-
-    /**
-     * Extract the coordinate reference system associated to the primary geometry
-     * of input data type.
-     *
-     * @implNote
-     * Primary geometry is determined using {@link #getDefaultGeometry(org.opengis.feature.FeatureType) }.
-     *
-     * @param type The data type to extract reference system from.
-     * @return The CRS associated to the default geometry of this data type, or
-     * a null value if we cannot determine what is the primary geometry of the
-     * data type. Note that a null value is also returned if a geometry property
-     * is found, but no CRS characteristics is associated with it.
-     */
-    public static CoordinateReferenceSystem getCRS(FeatureType type){
-        try {
-            return getCRS(getDefaultGeometry(type));
-        } catch (IllegalArgumentException | IllegalStateException ex) {
-            //no default geometry property
-            return null;
-        }
-    }
-
-    /**
-     * Extract CRS characteristic if it exist.
-     *
-     * @param type
-     * @return CoordinateReferenceSystem or null
-     */
-    public static CoordinateReferenceSystem getCRS(PropertyType type){
-        return getCharacteristicValue(type, AttributeConvention.CRS_CHARACTERISTIC.toString(), null);
-    }
-
-    /**
-     * Extract characteristic value if it exist.
-     *
-     * @param <T> expected value class
-     * @param type base type to search in
-     * @param charName characteristic name
-     * @param defaulValue default value if characteristic is missing or null.
-     * @return characteristic value or default value is not found
-     */
-    public static <T> T getCharacteristicValue(PropertyType type, String charName, T defaulValue){
-        while (type instanceof Operation) {
-            type = (PropertyType) ((Operation) type).getResult();
-        }
-        if (type instanceof AttributeType) {
-            final AttributeType at = (AttributeType) ((AttributeType) type).characteristics().get(charName);
-            if (at != null) {
-                T val = (T) at.getDefaultValue();
-                return (val == null) ? defaulValue : val;
-            }
-        }
-        return defaulValue;
-    }
-
-    /**
-     * Search for the main geometric property in the given type. We'll search
-     * for an SIS convention first (see
-     * {@link AttributeConvention#GEOMETRY_PROPERTY}. If no convention is set on
-     * the input type, we'll check if it contains a single geometric property.
-     * If it's the case, we return it. Otherwise (no or multiple geometries), we
-     * throw an exception.
-     *
-     * @param type The data type to search into.
-     * @return The main geometric property we've found.
-     * @throws PropertyNotFoundException If no geometric property is available
-     * in the given type.
-     * @throws IllegalStateException If no convention is set (see
-     * {@link AttributeConvention#GEOMETRY_PROPERTY}), and we've found more than
-     * one geometry.
-     */
-    public static PropertyType getDefaultGeometry(final FeatureType type) throws PropertyNotFoundException, IllegalStateException {
-        PropertyType geometry;
-        try {
-            geometry = type.getProperty(AttributeConvention.GEOMETRY);
-        } catch (PropertyNotFoundException e) {
-            try {
-                geometry = searchForGeometry(type);
-            } catch (RuntimeException e2) {
-                e2.addSuppressed(e);
-                throw e2;
-            }
-        }
-
-        return geometry;
-    }
-
-    /**
-     * Search for a geometric attribute outside SIS conventions. More accurately,
-     * we expect the given type to have a single geometry attribute. If many are
-     * found, an exception is thrown.
-     *
-     * @param type The data type to search into.
-     * @return The only geometric property we've found.
-     * @throws PropertyNotFoundException If no geometric property is available in
-     * the given type.
-     * @throws IllegalStateException If we've found more than one geometry.
-     */
-    private static PropertyType searchForGeometry(final FeatureType type) throws PropertyNotFoundException, IllegalStateException {
-        final List<? extends PropertyType> geometries = type.getProperties(true).stream()
-                .filter(IS_NOT_CONVENTION)
-                .filter(AttributeConvention::isGeometryAttribute)
-                .collect(Collectors.toList());
-
-        if (geometries.size() < 1) {
-            throw new PropertyNotFoundException("No geometric property can be found outside of sis convention.");
-        } else if (geometries.size() > 1) {
-            throw new IllegalStateException("Multiple geometries found. We don't know which one to select.");
-        } else {
-            return geometries.get(0);
-        }
-    }
-
-    /**
-     * Get main geometry property value. The ways this method determines default
-     * geometry property are the same as {@link #getDefaultGeometry(org.opengis.feature.FeatureType) }.
-     *
-     * @param input the feature to extract geometry from.
-     * @return Value of the main geometric property of the given feature. The returned
-     * optional will be empty only if the feature defines a geometric property, but has
-     * no value for it.
-     * @throws PropertyNotFoundException If no geometric property is available in
-     * the given feature.
-     * @throws IllegalStateException If we've found more than one geometry.
-     */
-    public static Optional<Object> getDefaultGeometryValue(Feature input) throws PropertyNotFoundException, IllegalStateException {
-        Object geometry;
-        try {
-            geometry = input.getPropertyValue(AttributeConvention.GEOMETRY);
-        } catch (PropertyNotFoundException ex) {
-            try {
-                final PropertyType geomType = getDefaultGeometry(input.getType());
-                geometry = input.getPropertyValue(geomType.getName().toString());
-            } catch (RuntimeException e) {
-                e.addSuppressed(ex);
-                throw e;
-            }
-        }
-
-        return Optional.ofNullable(geometry);
-    }
 
     /**
      * Parse LinkedCRS (href + type).
@@ -268,13 +123,21 @@ public final class GeoJSONUtils extends Static {
         return null;
     }
 
+    public static Optional<AttributeType<?>> castOrUnwrap(Optional<? extends IdentifiedType> input) {
+        if (input.isPresent()) {
+            return castOrUnwrap(input.get());
+        }
+         return Optional.empty();
+    }
+
     /**
      * Test if given data type is an attribute as defined by {@link AttributeType},
      * or if it depends on an attribute, and return it (the attribute) if possible.
+     *
      * @param input the data type to unravel the attribute from.
      * @return The found attribute or an empty shell if we cannot find any.
      */
-    public static Optional<AttributeType<?>> castOrUnwrap(IdentifiedType input) {
+     public static Optional<AttributeType<?>> castOrUnwrap(IdentifiedType input) {
         // In case an operation also implements attribute type, we check it first.
         // TODO : cycle detection ?
         while (!(input instanceof AttributeType) && input instanceof Operation) {
@@ -284,7 +147,6 @@ public final class GeoJSONUtils extends Static {
         if (input instanceof AttributeType) {
             return Optional.of((AttributeType) input);
         }
-
         return Optional.empty();
     }
 

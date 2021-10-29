@@ -388,17 +388,19 @@ public class GeoJSONGeometry extends GeoJSONObject implements Serializable {
     private static final GeometryFactory GF = new GeometryFactory();
 
     /**
-     * Convert GeoJSONGeometry into JTS Geometry with included CRS
+     * Convert GeoJSONGeometry into JTS Geometry with included CRS. If no CRS is
+     * supplied, the default GeoJSON crs will be applied (CRS:84).
      *
      * @param jsonGeometry
-     * @param crs
+     * @param crs The CRS to apply to the JTS geometry, if {@code null}, the
+     * default GeoJSON crs will be applied (CRS:84).
      * @return JTS Geometry
      */
     public static Geometry toJTS(GeoJSONGeometry jsonGeometry, CoordinateReferenceSystem crs) {
 
         if (jsonGeometry != null) {
             if (crs == null) {
-                throw new IllegalArgumentException("Null Coordinate Reference System.");
+                crs = CommonCRS.defaultGeographic();
             }
 
             if (jsonGeometry instanceof GeoJSONPoint) {
