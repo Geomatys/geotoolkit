@@ -20,7 +20,6 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
-import java.awt.image.IndexColorModel;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
@@ -69,8 +68,6 @@ import org.apache.sis.util.collection.Cache;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.image.BufferedImages;
-import org.geotoolkit.image.internal.ImageUtils;
-import org.geotoolkit.image.internal.SampleType;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.process.Monitor;
@@ -279,20 +276,9 @@ public class XMLMosaic implements TileMatrix {
                 SampleModel sampleModel = ref.getSampleModel();
 
                 if (colorModel != null && sampleModel != null) {
-                    int[] java2DColorMap = null;
-                    if (colorModel instanceof IndexColorModel) {
-                        final IndexColorModel indexColorMod = (IndexColorModel) colorModel;
-                        final int mapSize = indexColorMod.getMapSize();
-                        java2DColorMap  = new int[mapSize];
-                        indexColorMod.getRGBs(java2DColorMap);
-//                        colorMap = new long[mapSize];
-//                        for (int p = 0; p < mapSize; p++) colorMap[p] = rgbs[p];
-                    }
-                    emptyTile = ImageUtils.createImage(tileWidth, tileHeight, SampleType.valueOf(sampleModel.getDataType()),
-                            sampleModel.getNumBands(), ImageUtils.getEnumPhotometricInterpretation(colorModel),
-                            ImageUtils.getEnumPlanarConfiguration(sampleModel),
-                            colorModel.hasAlpha(), colorModel.isAlphaPremultiplied(),
-                            java2DColorMap);
+                    sampleModel = sampleModel.createCompatibleSampleModel(tileWidth, tileHeight);
+                    WritableRaster r = Raster.createWritableRaster(sampleModel, sampleModel.createDataBuffer(), null);
+                    emptyTile = new BufferedImage(colorModel, r, colorModel.isAlphaPremultiplied(), null);
 
                 } else {
                     emptyTile = new BufferedImage(tileWidth, tileHeight, BufferedImage.TYPE_INT_ARGB);
@@ -301,7 +287,7 @@ public class XMLMosaic implements TileMatrix {
 
             final ByteArrayOutputStream out = new ByteArrayOutputStream();
             try {
-                ImageIO.write(emptyTile, pyramid.getPyramidSet().getFormatName(), out);
+                ImageIO.write(emptyTile, "png", out);
                 out.flush();
             } catch (IOException ex) {
                 LOGGER.log(Level.SEVERE, null, ex);
@@ -466,6 +452,11 @@ public class XMLMosaic implements TileMatrix {
                 throw new DataStoreException(ex);
             }
         } else {
+            Path p = getTileFile(col, row);
+            if (!Files.exists(p) || p == null) {
+                System.out.println("FILE DONT EXISTTT:" + col + "," + row);
+                return null;
+            }
             tile = new DefaultImageTile(pyramid.getPyramidSet().getReaderSpi(),
                     getTileFile(col, row), 0, new Point(Math.toIntExact(col), Math.toIntExact(row)));
         }
