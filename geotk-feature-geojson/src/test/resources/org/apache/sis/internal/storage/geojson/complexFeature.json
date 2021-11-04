@@ -1,0 +1,89 @@
+{
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [-105.01621, 39.57422]
+            },
+            "properties": {
+                "longProp": 100,
+                "stringProp": "Some String",
+                "integerProp": 15,
+                "booleanProp": true,
+                "level1": {
+                    "type": "FeatureCollection",
+                    "features": [
+                        {
+                            "type": "Feature",
+                            "properties": {
+                                "longProp2": 66446,
+                                "level2": {
+                                    "type": "FeatureCollection",
+                                    "features": [
+                                        {
+                                            "type": "Feature",
+                                            "geometry": {
+                                                "type": "Point",
+                                                "coordinates": [-105.01621, 39.57422]
+                                            },
+                                            "properties": {
+                                                "level2prop": "text"
+                                            }
+                                        }, {
+                                            "type": "Feature",
+                                            "geometry": {
+                                                "type": "Point",
+                                                "coordinates": [-105.01621, 39.57422]
+                                            },
+                                            "properties": {
+                                                "level2prop": "text2"
+                                            }
+                                        }, {
+                                            "type": "Feature",
+                                            "geometry": {
+                                                "type": "Point",
+                                                "coordinates": [-105.01621, 39.57422]
+                                            },
+                                            "properties": {
+                                                "level2prop": "text3"
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }, {
+                            "type": "Feature",
+                            "properties": {
+                                "longProp2": 4444444,
+                                "level2": {
+                                    "type": "FeatureCollection"
+                                    ,
+                                    "features": [
+                                        {
+                                            "type": "Feature",
+                                            "properties": {
+                                                "level2prop": "fish"
+                                            }
+                                        }, {
+                                            "type": "Feature",
+                                            "properties": {
+                                                "level2prop": "cat"
+                                            }
+                                        }, {
+                                            "type": "Feature",
+                                            "properties": {
+                                                "level2prop": "dog"
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+}

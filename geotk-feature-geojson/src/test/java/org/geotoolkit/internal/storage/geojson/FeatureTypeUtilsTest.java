@@ -26,8 +26,8 @@ import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.test.TestCase;
 import org.apache.sis.util.SimpleInternationalString;
+import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.internal.geojson.FeatureTypeUtils;
-import org.geotoolkit.internal.geojson.GeoJSONUtils;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.locationtech.jts.geom.Point;
@@ -63,7 +63,7 @@ public class FeatureTypeUtilsTest extends TestCase {
 
         assertNotNull(readFeatureType);
         assertTrue(hasAGeometry(readFeatureType));
-        assertNotNull(GeoJSONUtils.getCRS(readFeatureType));
+        assertNotNull(FeatureExt.getCRS(readFeatureType));
 
         equalsIgnoreConvention(featureType, readFeatureType);
     }
@@ -82,7 +82,7 @@ public class FeatureTypeUtilsTest extends TestCase {
 
         assertNotNull(readFeatureType);
         assertTrue(hasAGeometry(readFeatureType));
-        assertNull(GeoJSONUtils.getCRS(readFeatureType));
+        assertNull(FeatureExt.getCRS(readFeatureType));
 
         equalsIgnoreConvention(featureType, readFeatureType);
     }
@@ -101,7 +101,7 @@ public class FeatureTypeUtilsTest extends TestCase {
 
         assertNotNull(readFeatureType);
         assertTrue(hasAGeometry(readFeatureType));
-        assertNotNull(GeoJSONUtils.getCRS(readFeatureType));
+        assertNotNull(FeatureExt.getCRS(readFeatureType));
 
         equalsIgnoreConvention(featureType, readFeatureType);
     }

@@ -306,9 +306,12 @@ public final class DimapAccessor extends Static {
         // read special values -------------------------------------------------
         final Element nodeDisplay = firstElement(doc, TAG_IMAGE_DISPLAY);
         final Element nodeBandOrder = firstElement(nodeDisplay, TAG_BAND_DISPLAY_ORDER);
-        final Integer red = textValueSafe(nodeBandOrder, TAG_RED_CHANNEL, Integer.class);
-        final Integer green = textValueSafe(nodeBandOrder, TAG_GREEN_CHANNEL, Integer.class);
-        final Integer blue = textValueSafe(nodeBandOrder, TAG_BLUE_CHANNEL, Integer.class);
+        // Not used anyway
+        if (nodeBandOrder != null) {
+            final Integer red = textValueSafe(nodeBandOrder, TAG_RED_CHANNEL, Integer.class);
+            final Integer green = textValueSafe(nodeBandOrder, TAG_GREEN_CHANNEL, Integer.class);
+            final Integer blue = textValueSafe(nodeBandOrder, TAG_BLUE_CHANNEL, Integer.class);
+        }
 
         // special values
         final Map<String, Integer> specialValues = new HashMap<>();

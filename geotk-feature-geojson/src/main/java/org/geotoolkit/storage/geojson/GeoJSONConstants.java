@@ -16,6 +16,10 @@
  */
 package org.geotoolkit.storage.geojson;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 import org.apache.sis.util.Static;
 
 /**
@@ -37,6 +41,9 @@ public final class GeoJSONConstants extends Static {
     public static final String MULTI_LINESTRING = "MultiLineString";
     public static final String MULTI_POLYGON = "MultiPolygon";
     public static final String GEOMETRY_COLLECTION = "GeometryCollection";
+
+    public static final List<String> GEOMETRY_TYPES = Arrays.asList(POINT, LINESTRING, POLYGON,
+            MULTI_POINT, MULTI_LINESTRING, MULTI_POLYGON, GEOMETRY_COLLECTION);
 
     public static final String CRS_NAME = "name";
     public static final String CRS_LINK = "link";

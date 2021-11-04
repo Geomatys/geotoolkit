@@ -514,6 +514,27 @@ public final class FeatureExt extends Static {
      * for an SIS convention first (see
      * {@link AttributeConvention#GEOMETRY_PROPERTY}. If no convention is set on
      * the input type, we'll check if it contains a single geometric property.
+     * If it's the case, we return it. if multiple geometries are found we throw
+     * an exception.
+     *
+     * @param type The data type to search into.
+     * @return The main geometric property we've found.
+     * @throws IllegalStateException If we've found more than one geometry.
+     */
+    public static Optional<PropertyType> getDefaultGeometrySafe(final FeatureType type) throws IllegalStateException {
+        PropertyType geometry = null;
+        try {
+            geometry = getDefaultGeometry(type);
+        } catch (PropertyNotFoundException e) {
+        }
+        return Optional.ofNullable(geometry);
+    }
+
+    /**
+     * Search for the main geometric property in the given type. We'll search
+     * for an SIS convention first (see
+     * {@link AttributeConvention#GEOMETRY_PROPERTY}. If no convention is set on
+     * the input type, we'll check if it contains a single geometric property.
      * If it's the case, we return it. Otherwise (no or multiple geometries), we
      * throw an exception.
      *
@@ -565,6 +586,13 @@ public final class FeatureExt extends Static {
         } else {
             return geometries.get(0);
         }
+    }
+
+    public static Optional<Object> getDefaultGeometryValueSafe(Feature input) throws IllegalStateException {
+        try {
+            return getDefaultGeometryValue(input);
+        } catch (PropertyNotFoundException ex) {}
+        return Optional.empty();
     }
 
     /**

@@ -26,16 +26,21 @@ import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
 import java.text.NumberFormat;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
+import org.apache.sis.feature.Features;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.Utilities;
+import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.internal.geojson.GeoJSONParser;
 import org.geotoolkit.internal.geojson.GeoJSONUtils;
 import org.geotoolkit.internal.geojson.binding.GeoJSONGeometry;
@@ -83,15 +88,8 @@ final class GeoJSONWriter implements Closeable, Flushable {
 
     private final JsonGenerator writer;
     private final OutputStream outputStream;
-    private boolean first = true;
     private boolean prettyPrint = true;
     private final boolean isBinaryFomat;
-
-    // state boolean to ensure that we can't call writeStartFeatureCollection
-    // if we first called writeSingleFeature
-    private boolean isFeatureCollection;
-    private boolean isSingleFeature;
-    private boolean isSingleGeometry;
 
     private final NumberFormat numberFormat;
 
@@ -116,12 +114,7 @@ final class GeoJSONWriter implements Closeable, Flushable {
         isBinaryFomat = factory != GeoJSONParser.JSON_FACTORY;
     }
 
-    void writeStartFeatureCollection(CoordinateReferenceSystem crs, Envelope envelope) throws IOException {
-
-        assert (!isFeatureCollection && !isSingleFeature && !isSingleGeometry) :
-                "Can't write FeatureCollection if we start a single feature or geometry GeoJSON.";
-        isFeatureCollection = true;
-
+    void writeStartFeatureCollection(CoordinateReferenceSystem crs, Envelope envelope, List<Link> links, Integer nbMatched, Integer nbReturned) throws IOException {
         writer.writeStartObject();
         writeNewLine();
 
@@ -140,56 +133,45 @@ final class GeoJSONWriter implements Closeable, Flushable {
             //TODO write bbox
             writeNewLine();
         }
+        if (nbMatched != null) {
+            writer.writeNumberField("numberMatched", nbMatched);
+            writeNewLine();
+        }
+        if (nbReturned != null) {
+            writer.writeNumberField("numberReturned", nbReturned);
+            writeNewLine();
+        }
+        if (links != null && !links.isEmpty()) {
+            writeLinks(links);
+        }
+        writer.writeArrayFieldStart(FEATURES);
+        writeNewLine();
     }
 
     void writeEndFeatureCollection() throws IOException {
-        assert (isFeatureCollection && !isSingleFeature && !isSingleGeometry) :
-                "Can't write FeatureCollection end before writeStartFeatureCollection().";
-
-        if (!first) {
-            writer.writeEndArray(); //close feature collection array
-        }
+        writer.writeEndArray(); //close feature collection array
         writer.writeEndObject(); //close root object
     }
 
-    /**
-     * Write GeoJSON with a single feature
-     *
-     * @param feature
-     * @throws IOException
-     * @throws IllegalArgumentException
-     */
-    void writeSingleFeature(Feature feature) throws IOException, IllegalArgumentException {
-        assert (!isFeatureCollection && !isSingleFeature && !isSingleGeometry) :
-                "writeSingleFeature can called only once per GeoJSONWriter.";
-
-        isSingleFeature = true;
-        writeFeature(feature, true);
-    }
-
-    void writeFeature(Feature feature) throws IOException, IllegalArgumentException {
-        assert (isFeatureCollection && !isSingleFeature && !isSingleGeometry) :
-                "Can't write a Feature before writeStartFeatureCollection.";
-        writeFeature(feature, false);
+    void writeFeatureCollection(List<Feature> features, FeatureType fType) throws IOException, IllegalArgumentException {
+        final CoordinateReferenceSystem crs = FeatureExt.getCRS(fType);
+        // TODO bbox
+        writeStartFeatureCollection(crs, null, null, null, null);
+        for (Feature feat : features) {
+            writeFeature(feat, Collections.newSetFromMap(new IdentityHashMap<>()));
+        }
+        writeEndFeatureCollection();
     }
 
     /**
      * Write a Feature.
      *
      * @param feature
-     * @param single
      * @throws IOException
      * @throws IllegalArgumentException
      */
-    private void writeFeature(Feature feature, boolean single) throws IOException, IllegalArgumentException {
-        if (!single) {
-            if (first) {
-                writer.writeArrayFieldStart(FEATURES);
-                writeNewLine();
-                first = false;
-            }
-        }
-
+    void writeFeature(Feature feature, Set<Feature> alreadyWritten) throws IOException, IllegalArgumentException {
+        alreadyWritten.add(feature);
         writer.writeStartObject();
         writer.writeStringField(TYPE, FEATURE);
         /* As defined in GeoJSON spec, identifier is an optional attribute. For
@@ -206,17 +188,15 @@ final class GeoJSONWriter implements Closeable, Flushable {
         }
 
         //write CRS
-        if (single) {
-            final CoordinateReferenceSystem crs = GeoJSONUtils.getCRS(feature.getType());
-            if (crs != null && !Utilities.equalsApproximately(crs, CommonCRS.defaultGeographic())) {
-                if (!writeCRS(crs)) {
-                    throw new IOException("Cannot determine a valid URN for " + crs.getName());
-                }
+        final CoordinateReferenceSystem crs = FeatureExt.getCRS(feature.getType());
+        if (crs != null && !Utilities.equalsApproximately(crs, CommonCRS.defaultGeographic())) {
+            if (!writeCRS(crs)) {
+                throw new IOException("Cannot determine a valid URN for " + crs.getName());
             }
         }
 
         //write geometry
-        final Optional<Geometry> geom = GeoJSONUtils.getDefaultGeometryValue(feature)
+        final Optional<Geometry> geom = FeatureExt.getDefaultGeometryValueSafe(feature)
                 .filter(Geometry.class::isInstance)
                 .map(Geometry.class::cast);
 
@@ -226,12 +206,9 @@ final class GeoJSONWriter implements Closeable, Flushable {
         }
 
         //write properties
-        writeProperties(feature, PROPERTIES, true);
+        writeProperties(feature, PROPERTIES, true, alreadyWritten);
         writer.writeEndObject();
-
-        if (!single && !prettyPrint && !isBinaryFomat) {
-            writer.writeRaw(SYS_LF);
-        }
+        writeNewLine();
     }
 
     private void writeNewLine() throws IOException {
@@ -269,7 +246,7 @@ final class GeoJSONWriter implements Closeable, Flushable {
      * @throws IOException
      * @throws IllegalArgumentException
      */
-    private void writeProperties(Feature edited, String fieldName, boolean writeFieldName)
+    private void writeProperties(Feature edited, String fieldName, boolean writeFieldName, Set<Feature> alreadyWritten)
             throws IOException, IllegalArgumentException {
         if (writeFieldName) {
             writer.writeObjectFieldStart(fieldName);
@@ -278,12 +255,14 @@ final class GeoJSONWriter implements Closeable, Flushable {
         }
 
         FeatureType type = edited.getType();
+        PropertyType defGeom = FeatureExt.getDefaultGeometrySafe(type).flatMap(Features::toAttribute).orElse(null);
+
         Collection<? extends PropertyType> descriptors = type.getProperties(true).stream()
                 .filter(GeoJSONUtils.IS_NOT_CONVENTION)
+                .filter(it -> !Objects.equals(defGeom, it))
                 .collect(Collectors.toList());
         for (PropertyType propType : descriptors) {
-            if (AttributeConvention.contains(propType.getName())) continue;
-            if (AttributeConvention.isGeometryAttribute(propType)) continue;
+
             final String name = propType.getName().tip().toString();
             final Object value = edited.getPropertyValue(propType.getName().toString());
 
@@ -292,26 +271,23 @@ final class GeoJSONWriter implements Closeable, Flushable {
                 if (attType.getMaximumOccurs() > 1) {
                     writer.writeArrayFieldStart(name);
                     for (Object v : (Collection) value) {
-                        writeProperty(name, v, false);
+                        writeProperty(name, v, false, alreadyWritten);
                     }
                     writer.writeEndArray();
                 } else {
-                    writeProperty(name, value, true);
+                    writeProperty(name, value, true, alreadyWritten);
                 }
             } else if (propType instanceof FeatureAssociationRole) {
                 final FeatureAssociationRole asso = (FeatureAssociationRole) propType;
                 if (asso.getMaximumOccurs() > 1) {
-                    writer.writeArrayFieldStart(name);
-                    for (Object v : (Collection) value) {
-                        writeProperty(name, v, false);
-                    }
-                    writer.writeEndArray();
+                    writer.writeFieldName(name);
+                    writeFeatureCollection((List<Feature>) value, asso.getValueType());
                 } else {
-                    writeProperty(name, value, true);
+                    writeProperty(name, value, true, alreadyWritten);
                 }
 
             } else if (propType instanceof Operation) {
-                writeProperty(name, value, true);
+                writeProperty(name, value, true, alreadyWritten);
             }
         }
 
@@ -325,9 +301,14 @@ final class GeoJSONWriter implements Closeable, Flushable {
      * @param writeFieldName
      * @throws IOException
      */
-    private void writeProperty(String name, Object value, boolean writeFieldName) throws IOException, IllegalArgumentException {
+    private void writeProperty(String name, Object value, boolean writeFieldName, Set<Feature> alreadyWritten) throws IOException, IllegalArgumentException {
         if (value instanceof Feature) {
-            writeProperties((Feature) value, name, writeFieldName);
+            Feature feat = (Feature)value;
+            // avoid infinite loop
+            if (!alreadyWritten.contains(feat)) {
+                writer.writeFieldName(name);
+                writeFeature(feat, alreadyWritten);
+            }
         } else {
             writeAttribute(name, value, writeFieldName);
         }
@@ -345,7 +326,11 @@ final class GeoJSONWriter implements Closeable, Flushable {
         if (writeFieldName) {
             writer.writeFieldName(name);
         }
-        GeoJSONUtils.writeValue(value, writer);
+        if (value instanceof Geometry) {
+            writeGeoJSONGeometry(GeoJSONGeometry.toGeoJSONGeometry((Geometry) value));
+        } else {
+            GeoJSONUtils.writeValue(value, writer);
+        }
     }
 
     /**
@@ -355,9 +340,6 @@ final class GeoJSONWriter implements Closeable, Flushable {
      * @throws IOException
      */
     void writeSingleGeometry(Attribute geom) throws IOException {
-        assert (!isFeatureCollection && !isSingleFeature && !isSingleGeometry) :
-                "writeSingleGeometry can called only once per GeoJSONWriter.";
-        isSingleGeometry = true;
         GeoJSONGeometry jsonGeometry = GeoJSONGeometry.toGeoJSONGeometry((Geometry) geom.getValue());
         writeGeoJSONGeometry(jsonGeometry);
     }
@@ -369,9 +351,6 @@ final class GeoJSONWriter implements Closeable, Flushable {
      * @throws IOException
      */
     void writeSingleGeometry(Geometry geom) throws IOException {
-        assert (!isFeatureCollection && !isSingleFeature && !isSingleGeometry) :
-                "writeSingleGeometry can called only once per GeoJSONWriter.";
-        isSingleGeometry = true;
         GeoJSONGeometry jsonGeometry = GeoJSONGeometry.toGeoJSONGeometry(geom);
         writeGeoJSONGeometry(jsonGeometry);
     }
@@ -486,17 +465,6 @@ final class GeoJSONWriter implements Closeable, Flushable {
         }
         writer.writeEndArray();
         writeNewLine();
-    }
-
-    public void writeNumber(Integer nbMatched, Integer nbReturned) throws IOException{
-        if (nbMatched != null) {
-            writer.writeNumberField("numberMatched", nbMatched);
-            writeNewLine();
-        }
-        if (nbReturned != null) {
-            writer.writeNumberField("numberReturned", nbReturned);
-            writeNewLine();
-        }
     }
 
 

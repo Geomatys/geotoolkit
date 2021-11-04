@@ -21,6 +21,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.concurrent.locks.ReadWriteLock;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.storage.DataStoreException;
@@ -56,7 +59,8 @@ final class GeoJSONFileWriter extends GeoJSONReader {
             writer = new GeoJSONWriter(tmpFile, GeoJSONParser.getFactory(jsonFile), jsonEncoding, doubleAccuracy, false);
 
             //start write feature collection.
-            writer.writeStartFeatureCollection(crs, null);
+            final FTypeInformation fti = ftInfos.get(featureType);
+            writer.writeStartFeatureCollection(fti.crs, null, null, null, null);
             writer.flush();
         } catch (IOException ex) {
             throw new DataStoreException(ex.getMessage(), ex);
@@ -77,8 +81,9 @@ final class GeoJSONFileWriter extends GeoJSONReader {
             //we reach append mode
             //create empty feature
             edited = featureType.newInstance();
-            if (hasIdentifier) {
-                edited.setPropertyValue(AttributeConvention.IDENTIFIER, idConverter.apply(currentFeatureIdx++));
+            final FTypeInformation fti = ftInfos.get(featureType);
+            if (fti.hasIdentifier) {
+                edited.setPropertyValue(AttributeConvention.IDENTIFIER, fti.idConverter.apply(currentFeatureIdx++));
             }
         }
         return edited;
@@ -96,7 +101,7 @@ final class GeoJSONFileWriter extends GeoJSONReader {
 
         lastWritten = edited;
         try {
-            writer.writeFeature(edited);
+            writer.writeFeature(edited, Collections.newSetFromMap(new IdentityHashMap<>()));
             writer.flush();
         } catch (IOException | IllegalArgumentException e) {
             throw new BackingStoreException(e.getMessage(), e);
