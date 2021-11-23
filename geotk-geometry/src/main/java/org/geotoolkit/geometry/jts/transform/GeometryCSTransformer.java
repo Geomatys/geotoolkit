@@ -190,6 +190,7 @@ public class GeometryCSTransformer implements GeometryTransformer{
     }
 
     public static CoordinateSequence ensureClosed(final CoordinateSequence sequence){
+        if (sequence.size() == 0) return sequence;
         final Coordinate first = sequence.getCoordinate(0);
         final int lastIndex = sequence.size()-1;
         if(!first.equals2D(sequence.getCoordinate(lastIndex))){
