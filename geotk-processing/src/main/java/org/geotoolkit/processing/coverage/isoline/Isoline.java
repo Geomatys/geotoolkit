@@ -151,7 +151,7 @@ public class Isoline extends AbstractProcess {
 
         final List<Feature> features = new ArrayList<>(geom.getNumGeometries());
         for (int i = 0; i < geom.getNumGeometries(); i++) {
-            final Geometry subgeom = JTS.transform(geom.getGeometryN(i), gridToCRS);
+            final Geometry subgeom = org.apache.sis.internal.feature.jts.JTS.transform(geom.getGeometryN(i), gridToCRS);
             subgeom.setUserData(crs);
             final Feature feature = type.newInstance();
             feature.setPropertyValue(AttributeConvention.GEOMETRY, subgeom);

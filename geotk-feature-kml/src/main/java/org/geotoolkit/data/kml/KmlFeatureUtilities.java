@@ -359,12 +359,12 @@ public class KmlFeatureUtilities {
 
         if (cutright instanceof LineString) {
             final AffineTransform2D trs = new AffineTransform2D(1, 0, 0, 1, -180, 0);
-            cutright = JTS.transform(cutright, trs);
+            cutright = org.apache.sis.internal.feature.jts.JTS.transform(cutright, trs);
             strs.add((LineString) cutright);
         }
         if (cutleft instanceof LineString) {
             final AffineTransform2D trs = new AffineTransform2D(1, 0, 0, 1, +180, 0);
-            cutleft = JTS.transform(cutleft, trs);
+            cutleft = org.apache.sis.internal.feature.jts.JTS.transform(cutleft, trs);
             strs.add((LineString) cutleft);
         }
         if (clipped instanceof LineString) {

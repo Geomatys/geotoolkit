@@ -138,7 +138,7 @@ public class GraduationSymbolizerRenderer extends AbstractSymbolizerRenderer<Cac
         renderingContext.switchToDisplayCRS();
         try {
             final Geometry geom = projGeom.getDataGeometryJTS();
-            final Geometry displayGeom = JTS.transform(geom,projGeom.getDataToDisplay());
+            final Geometry displayGeom = org.apache.sis.internal.feature.jts.JTS.transform(geom,projGeom.getDataToDisplay());
 
             if (!forwardCandidates.isEmpty()) {
                 final Shape dispShape = new JTSGeometryJ2D(displayGeom);

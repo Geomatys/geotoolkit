@@ -227,52 +227,6 @@ public final class JTS {
     }
 
     /**
-     * Transforms the geometry to given crs.
-     * Id the geometry has no crs, it is assumed to be already in the given crs.
-     *
-     * @param geom The geom to transform
-     * @param crs target crs.
-     * @return the transformed geometry. It will be a new geometry.
-     * @throws MismatchedDimensionException if the geometry doesn't have the
-     * expected dimension for the specified transform.
-     * @throws TransformException if a point can't be transformed.
-     * @throws org.opengis.util.FactoryException
-     */
-    public static Geometry transform(final Geometry geom, final CoordinateReferenceSystem crs)
-            throws MismatchedDimensionException, TransformException, FactoryException {
-        ArgumentChecks.ensureNonNull("crs", crs);
-        final CoordinateReferenceSystem geomCrs = findCoordinateReferenceSystem(geom);
-        if(geomCrs==null) return geom;
-        final MathTransform trs = CRS.findOperation(geomCrs, crs, null).getMathTransform();
-        final Geometry result = transform(geom, trs);
-        setCRS(result, crs);
-        return result;
-    }
-
-    /**
-     * Transforms the geometry using the default transformer.
-     *
-     * @param geom The geom to transform
-     * @param transform the transform to use during the transformation.
-     * @return the transformed geometry. It will be a new geometry.
-     * @throws MismatchedDimensionException if the geometry doesn't have the
-     * expected dimension for the specified transform.
-     * @throws TransformException if a point can't be transformed.
-     */
-    public static Geometry transform(final Geometry geom, final MathTransform transform)
-            throws MismatchedDimensionException, TransformException {
-        if (geom.isEmpty()) {
-            Geometry g = (Geometry) geom.clone();
-            g.setSRID(0);
-            g.setUserData(null);
-            return g;
-        }
-        final CoordinateSequenceTransformer cstrs = new CoordinateSequenceMathTransformer(transform);
-        final GeometryCSTransformer transformer = new GeometryCSTransformer(cstrs);
-        return transformer.transform(geom);
-    }
-
-    /**
      * Transforms the coordinate using the provided math transform.
      *
      * @param source the source coordinate that will be transformed
@@ -481,7 +435,7 @@ public final class JTS {
             final MathTransform transform = jtsgeom.getTransform();
             if (!transform.isIdentity()) {
                 try {
-                    geometry = JTS.transform(geometry, transform);
+                    geometry = org.apache.sis.internal.feature.jts.JTS.transform(geometry, transform);
                 } catch (MismatchedDimensionException | TransformException ex) {
                     throw new BackingStoreException(ex.getMessage(), ex);
                 }
@@ -1014,7 +968,7 @@ public final class JTS {
 
         //convert geometry
         final MathTransform mt = CRS.findOperation(crsGeom, crsTarget, null).getMathTransform();
-        final Geometry result = transform(geom, mt);
+        final Geometry result = org.apache.sis.internal.feature.jts.JTS.transform(geom, mt);
         setCRS(result, crsTarget);
 
         return result;
