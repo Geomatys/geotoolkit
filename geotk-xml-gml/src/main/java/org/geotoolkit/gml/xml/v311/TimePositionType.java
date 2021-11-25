@@ -233,7 +233,7 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
 
     @Override
     public Date getDate() {
-        if (cachedDate == null && value != null) {
+        if (cachedDate == null && value != null && !value.isEmpty()) {
             cachedDate = parseDate(value);
         }
         return cachedDate;
