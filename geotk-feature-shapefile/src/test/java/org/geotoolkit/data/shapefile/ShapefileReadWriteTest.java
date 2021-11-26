@@ -167,7 +167,7 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
         GenericName typeName = s.getNames().iterator().next();
         Session session = s.createSession(true);
         FeatureType type = s.getFeatureType(typeName.toString());
-        FeatureCollection one = session.getFeatureCollection(QueryBuilder.all(typeName.toString()));
+        FeatureCollection one = session.getFeatureCollection(QueryBuilder.all(typeName));
         File tmp = getTempFile();
 
         ShapefileProvider maker = new ShapefileProvider();
@@ -200,13 +200,13 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
 
         assertFalse(session.hasPendingChanges());
 
-        FeatureCollection copy = session.getFeatureCollection(QueryBuilder.all(typeName.toString()));
+        FeatureCollection copy = session.getFeatureCollection(QueryBuilder.all(typeName));
         compare(original, copy);
 
         // review open
         ShapefileFeatureStore review = new ShapefileFeatureStore(tmp.toURI(), memorymapped, charset);
         typeName = review.getNames().iterator().next();
-        FeatureCollection again = review.createSession(true).getFeatureCollection(QueryBuilder.all(typeName.toString()));
+        FeatureCollection again = review.createSession(true).getFeatureCollection(QueryBuilder.all(typeName));
 
         compare(copy, again);
         compare(original, again);

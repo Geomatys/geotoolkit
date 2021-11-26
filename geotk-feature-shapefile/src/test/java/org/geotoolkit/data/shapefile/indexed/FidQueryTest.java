@@ -169,7 +169,7 @@ public class FidQueryTest extends FIDTestCase {
 
     @Test
     public void testDeleteFeature() throws Exception {
-        FeatureIterator features = ds.getFeatureReader(QueryBuilder.all(name.toString()));
+        FeatureIterator features = ds.getFeatureReader(QueryBuilder.all(name));
         Feature feature;
         try {
             feature = features.next();
@@ -184,7 +184,7 @@ public class FidQueryTest extends FIDTestCase {
         session.commit();
         fids.remove(FeatureExt.getId(feature).getIdentifier());
 
-        assertEquals(fids.size(), ds.getCount(QueryBuilder.all(name.toString())));
+        assertEquals(fids.size(), ds.getCount(QueryBuilder.all(name)));
 
         features = ds.getFeatureReader(QueryBuilder.filtered(name.toString(), createFidFilter));
         try {
@@ -198,7 +198,7 @@ public class FidQueryTest extends FIDTestCase {
 
     @Test
     public void testFIDBBoxQuery() throws Exception {
-        FeatureIterator features = ds.getFeatureReader(QueryBuilder.all(name.toString()));
+        FeatureIterator features = ds.getFeatureReader(QueryBuilder.all(name));
         Feature feature;
         try {
             feature = features.next();

@@ -92,7 +92,7 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
         FeatureStore s1 = createDataStore(fac, TestData.url(AbstractTestCaseSupport.class, "shapes/stream.shp"), true);
         GenericName typeName = s1.getNames().iterator().next();
         FeatureType type = s1.getFeatureType(typeName.toString());
-        FeatureCollection one = s1.createSession(true).getFeatureCollection(QueryBuilder.all(typeName.toString()));
+        FeatureCollection one = s1.createSession(true).getFeatureCollection(QueryBuilder.all(typeName));
 
         ShapefileProvider maker = new ShapefileProvider();
 
@@ -123,7 +123,7 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
         session.commit();
 
         s = createDataStore(maker, tmp.toURI().toURL(), true);
-        assertEquals(one.size() * 2, s.getCount(QueryBuilder.all(s.getNames().iterator().next().toString())));
+        assertEquals(one.size() * 2, s.getCount(QueryBuilder.all(s.getNames().iterator().next())));
     }
 
     void test( final String f ) throws Exception {
@@ -133,7 +133,7 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
         FeatureStore s = createDataStore(new ShapefileProvider(), ShapeTestData.url(f), true);
         GenericName typeName = s.getNames().iterator().next();
         FeatureType type = s.getFeatureType(typeName.toString());
-        FeatureCollection one = s.createSession(true).getFeatureCollection(QueryBuilder.all(typeName.toString()));
+        FeatureCollection one = s.createSession(true).getFeatureCollection(QueryBuilder.all(typeName));
 
         ShapefileProvider maker = new ShapefileProvider();
         test(type, one, getTempFile(), maker, false);
@@ -155,7 +155,7 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
         s = createDataStore(new ShapefileProvider(), tmp.toURI().toURL(), true);
         GenericName typeName = s.getNames().iterator().next();
 
-        FeatureCollection two = s.createSession(true).getFeatureCollection(QueryBuilder.all(typeName.toString()));
+        FeatureCollection two = s.createSession(true).getFeatureCollection(QueryBuilder.all(typeName));
 
         //copy values, order is not tested here.
         Collection<Feature> cone = new ArrayList<>();

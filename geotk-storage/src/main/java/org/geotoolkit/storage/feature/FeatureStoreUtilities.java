@@ -113,7 +113,7 @@ public class FeatureStoreUtilities {
         final MemoryFeatureStore ds = new MemoryFeatureStore(type, true);
         final Session session = ds.createSession(false);
 
-        FeatureCollection col = session.getFeatureCollection(QueryBuilder.all(type.getName().toString()));
+        FeatureCollection col = session.getFeatureCollection(QueryBuilder.all(type.getName()));
         ((AbstractFeatureCollection)col).setIdentifier(id);
 
         return col;

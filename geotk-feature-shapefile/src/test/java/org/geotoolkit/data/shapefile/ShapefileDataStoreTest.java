@@ -287,7 +287,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
 
         FeatureWriter writer = null;
         try {
-            writer = sds.getFeatureWriter(QueryBuilder.all(sds.getNames().iterator().next().toString()));
+            writer = sds.getFeatureWriter(QueryBuilder.all(sds.getNames().iterator().next()));
             while (writer.hasNext()) {
                 Feature feat = writer.next();
                 Byte b = (Byte) feat.getPropertyValue("b");
@@ -326,7 +326,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
             FeatureWriter writer = null;
 
             try {
-                writer = sds.getFeatureWriter(QueryBuilder.all(sds.getNames().iterator().next().toString()));
+                writer = sds.getFeatureWriter(QueryBuilder.all(sds.getNames().iterator().next()));
                 writer.next();
                 writer.remove();
             } finally {
@@ -353,7 +353,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
             FeatureWriter writer = null;
 
             try {
-                writer = sds.getFeatureWriter(QueryBuilder.all(sds.getName().toString()));
+                writer = sds.getFeatureWriter(QueryBuilder.all(sds.getName()));
 //                System.out.println("classe : " + writer.getClass());
                 writer.next();
                 writer.remove();
@@ -380,7 +380,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
             while (idx > 0) {
                 FeatureWriter writer = null;
                 try {
-                    writer = sds.getFeatureWriter(QueryBuilder.all(sds.getName().toString()));
+                    writer = sds.getFeatureWriter(QueryBuilder.all(sds.getName()));
                     while (writer.hasNext()) {
                         writer.next();
                     }
@@ -406,7 +406,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         ShapefileFeatureStore shapefileFeatureStore = new ShapefileFeatureStore(tempFile.toURI());
         shapefileFeatureStore.createFeatureType(featureType);
 
-        FeatureWriter featureWriter = shapefileFeatureStore.getFeatureWriter(QueryBuilder.all(shapefileFeatureStore.getName().toString()));
+        FeatureWriter featureWriter = shapefileFeatureStore.getFeatureWriter(QueryBuilder.all(shapefileFeatureStore.getName()));
 
         // don't add any features to the data store....
 
@@ -669,7 +669,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         final FeatureType sft = fc.iterator().next().getType();
 
         s.createFeatureType(sft);
-        try (FeatureWriter fw = s.getFeatureWriter(QueryBuilder.all(sft.getName().toString()))) {
+        try (FeatureWriter fw = s.getFeatureWriter(QueryBuilder.all(sft.getName()))) {
             Iterator<Feature> it = fc.iterator();
             while (it.hasNext()) {
                 Feature feature = it.next();

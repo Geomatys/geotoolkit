@@ -109,7 +109,7 @@ public class ShapefileRTreeReadWriteTest extends AbstractTestCaseSupport {
         session.commit();
 
         s = new IndexedShapefileFeatureStore(tmp.toURI());
-        assertEquals(one.size() * 2, s.getCount(QueryBuilder.all(s.getName().toString())));
+        assertEquals(one.size() * 2, s.getCount(QueryBuilder.all(s.getName())));
 
         s.close();
     }
@@ -144,7 +144,7 @@ public class ShapefileRTreeReadWriteTest extends AbstractTestCaseSupport {
         s = new IndexedShapefileFeatureStore(tmp.toURI());
         typeName = s.getName();
 
-        FeatureCollection two = s.createSession(true).getFeatureCollection(QueryBuilder.all(typeName.toString()));
+        FeatureCollection two = s.createSession(true).getFeatureCollection(QueryBuilder.all(typeName));
 
         //copy values, order is not tested here.
         Collection<Feature> cone = new ArrayList<>();

@@ -385,7 +385,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         FeatureWriter writer = null;
 
         try {
-            writer = sds.getFeatureWriter(QueryBuilder.all(sds.getName().toString()));
+            writer = sds.getFeatureWriter(QueryBuilder.all(sds.getName()));
 
             while (writer.hasNext()) {
                 Feature feat = writer.next();
@@ -429,7 +429,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
             FeatureWriter writer = null;
 
             try {
-                writer = sds.getFeatureWriter(QueryBuilder.all(sds.getName().toString()));
+                writer = sds.getFeatureWriter(QueryBuilder.all(sds.getName()));
                 writer.next();
                 writer.remove();
             } finally {
@@ -458,7 +458,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
             FeatureWriter writer = null;
 
             try {
-                writer = sds.getFeatureWriter(QueryBuilder.all(sds.getName().toString()));
+                writer = sds.getFeatureWriter(QueryBuilder.all(sds.getName()));
                 writer.next();
                 writer.remove();
             } finally {
@@ -485,7 +485,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
             FeatureWriter writer = null;
 
             try {
-                writer = sds.getFeatureWriter(QueryBuilder.all(sds.getName().toString()));
+                writer = sds.getFeatureWriter(QueryBuilder.all(sds.getName()));
 
                 while (writer.hasNext()) {
                     writer.next();
@@ -507,7 +507,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
     @Test
     public void testTestTransaction() throws Exception {
         final IndexedShapefileFeatureStore sds = createDataStore();
-        final long idx = sds.getCount(QueryBuilder.all(sds.getName().toString()));
+        final long idx = sds.getCount(QueryBuilder.all(sds.getName()));
         final Session session = sds.createSession(true);
 
         Feature[] newFeatures1 = new Feature[1];
@@ -523,7 +523,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         session.addFeatures(sds.getName().toString(),FeatureStoreUtilities.collection(newFeatures1));
         session.addFeatures(sds.getName().toString(),FeatureStoreUtilities.collection(newFeatures2));
         session.commit();
-        assertEquals(idx + 3, sds.getCount(QueryBuilder.all(sds.getName().toString())));
+        assertEquals(idx + 3, sds.getCount(QueryBuilder.all(sds.getName())));
         sds.close();
 
     }
@@ -614,7 +614,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         final FeatureType type = fc.iterator().next().getType();
         s.createFeatureType(type);
 
-        final FeatureWriter fw = s.getFeatureWriter(QueryBuilder.all(type.getName().toString()));
+        final FeatureWriter fw = s.getFeatureWriter(QueryBuilder.all(type.getName()));
         final Iterator<Feature> it = fc.iterator();
 
         while (it.hasNext()) {
@@ -731,7 +731,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         final Session session = ds.createSession(true);
 
         final String validFid1, validFid2, invalidFid1, invalidFid2;
-        try (FeatureIterator features = ds.getFeatureReader(QueryBuilder.all(ds.getName().toString()))) {
+        try (FeatureIterator features = ds.getFeatureReader(QueryBuilder.all(ds.getName()))) {
             validFid1 = FeatureExt.getId(features.next()).getIdentifier();
             validFid2 = FeatureExt.getId(features.next()).getIdentifier();
             invalidFid1 = "_" + FeatureExt.getId(features.next()).getIdentifier();
@@ -756,10 +756,10 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         Filter modifiedFilter = ff.equal(ff.property("f"), ff.literal("modified"));
         assertEquals(2, count(ds, typeName, modifiedFilter));
 
-        final long initialCount = ds.getCount(QueryBuilder.all(ds.getName().toString()));
+        final long initialCount = ds.getCount(QueryBuilder.all(ds.getName()));
         session.removeFeatures(ds.getName().toString(),fidFilter);
         session.commit();
-        final long afterCount = ds.getCount(QueryBuilder.all(ds.getName().toString()));
+        final long afterCount = ds.getCount(QueryBuilder.all(ds.getName()));
         assertEquals(initialCount - 2, afterCount);
     }
 

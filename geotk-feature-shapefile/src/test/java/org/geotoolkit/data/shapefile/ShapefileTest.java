@@ -163,7 +163,7 @@ public class ShapefileTest extends AbstractTestCaseSupport {
 
         s = new ShapefileFeatureStore(tmpFile.toURI());
         typeName = s.getNames().iterator().next();
-        FeatureCollection fc = s.createSession(true).getFeatureCollection(QueryBuilder.all(typeName.toString()));
+        FeatureCollection fc = s.createSession(true).getFeatureCollection(QueryBuilder.all(typeName));
 
         ShapefileReadWriteTest.compare(features, fc);
     }
@@ -193,7 +193,7 @@ public class ShapefileTest extends AbstractTestCaseSupport {
         FeatureType schema = featureStore.getFeatureType(featureStore.getNames().iterator().next().toString());
 
         assertEquals(6+3, schema.getProperties(true).size()); //+3 for env,geom,id calculated fields
-        assertTrue(featureStore.getCount(QueryBuilder.all(schema.getName().toString())) > 0);
+        assertTrue(featureStore.getCount(QueryBuilder.all(schema.getName())) > 0);
     }
 
     @Test

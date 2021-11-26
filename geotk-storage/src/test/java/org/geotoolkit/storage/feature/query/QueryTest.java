@@ -71,27 +71,11 @@ public class QueryTest {
         }
 
         try{
-            QueryBuilder.fids(null);
-            throw new Exception("We can not build a query without at least the type name.");
-        }catch(NullPointerException ex){
-            //ok
-        }
-
-        try{
             QueryBuilder.filtered(null, Filter.exclude());
             throw new Exception("We can not build a query without at least the type name.");
         }catch(NullPointerException ex){
             //ok
         }
-
-        try{
-            QueryBuilder.sorted(null, new SortProperty[]{FF.sort(FF.property("att1"), SortOrder.DESCENDING)});
-            throw new Exception("We can not build a query without at least the type name.");
-        }catch(NullPointerException ex){
-            //ok
-        }
-
-
 
 
         //all-------------------------------------------------------------------
@@ -104,17 +88,6 @@ public class QueryTest {
         assertArrayEquals(query.getSortBy(), new SortProperty[0]);
         assertEquals(query.getOffset(), 0);
 
-        //only ids--------------------------------------------------------------
-        query = QueryBuilder.fids(name.toString());
-        assertEquals(query.getTypeName(), name.toString());
-        assertEquals(query.getResolution(), null);
-        assertEquals(query.getSelection(), Filter.include());
-        assertEquals(query.getLimit(), -1);
-        assertNotNull(query.getPropertyNames()); //must be an empty array, not null
-        assertTrue(query.getPropertyNames().length == 1); //must have only one value
-        assertArrayEquals(query.getSortBy(), new SortProperty[0]);
-        assertEquals(query.getOffset(), 0);
-
         //only filter-----------------------------------------------------------
         query = QueryBuilder.filtered(name.toString(), Filter.exclude());
         assertEquals(query.getTypeName(), name.toString());
@@ -123,18 +96,6 @@ public class QueryTest {
         assertEquals(query.getLimit(), -1);
         assertArrayEquals(query.getPropertyNames(), null);
         assertArrayEquals(query.getSortBy(), new SortProperty[0]);
-        assertEquals(query.getOffset(), 0);
-
-        //only sort by----------------------------------------------------------
-        query = QueryBuilder.sorted(name.toString(), new SortProperty[]{FF.sort(FF.property("att1"), SortOrder.DESCENDING)});
-        assertEquals(query.getTypeName(), name.toString());
-        assertEquals(query.getResolution(), null);
-        assertEquals(query.getSelection(), Filter.include());
-        assertEquals(query.getLimit(), -1);
-        assertArrayEquals(query.getPropertyNames(), null);
-        assertNotNull(query.getSortBy());
-        assertTrue(query.getSortBy().length == 1);
-        assertEquals(query.getSortBy()[0], FF.sort(FF.property("att1"), SortOrder.DESCENDING));
         assertEquals(query.getOffset(), 0);
 
     }

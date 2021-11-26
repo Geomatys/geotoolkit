@@ -51,10 +51,6 @@ import org.opengis.util.GenericName;
 @Deprecated
 public final class QueryBuilder {
 
-    private static final String[] ONLY_ID_PROPERTIES = new String[]{
-        AttributeConvention.IDENTIFIER
-    };
-
     private String typeName = null;
 
     private Filter filter = Filter.include();
@@ -220,42 +216,12 @@ public final class QueryBuilder {
     }
 
     /**
-     * Create a simple query with only a sorted parameter.
-     *
-     * @return Immutable query
-     */
-    public static Query sorted(final String name, final SortProperty ... sorts){
-        final QueryBuilder builder = new QueryBuilder();
-        builder.setTypeName(name);
-        builder.setSortBy(sorts);
-        return builder.buildQuery();
-    }
-
-    /**
      * Implements a query that will fetch all features from a source. This
      * query should retrieve all properties, with no maxFeatures, no
      * filtering, and the default featureType.
      */
     public static Query all(final GenericName name){
         return new Query(name.toString());
-    }
-
-    /**
-     * Implements a query that will fetch all features from a source. This
-     * query should retrieve all properties, with no maxFeatures, no
-     * filtering, and the default featureType.
-     */
-    public static Query all(final String name){
-        return new Query(name);
-    }
-
-    /**
-     * Implements a query that will fetch all the FeatureIDs from a source.
-     * This query should retrive no properties, with no maxFeatures, no
-     * filtering, and the a featureType with no attributes.
-     */
-    public static Query fids(final String name){
-        return new Query(name, ONLY_ID_PROPERTIES);
     }
 
     /**
