@@ -323,8 +323,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements Resou
         final String typeName = baseType.getName().tip().toString();
 
         //check if we must read the 3d values
-        final CoordinateReferenceSystem reproject = gquery.getCoordinateSystemReproject();
-        final boolean read3D = (reproject==null || CRS.getVerticalComponent(reproject, true) != null);
+        final boolean read3D = true;
 
         final ShapefileAttributeReader attReader = getAttributesReader(true, read3D, queryRes);
         final FeatureIDReader idReader = new DefaultFeatureIDReader(typeName);
@@ -336,7 +335,6 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements Resou
         qb.setProperties(queryPropertyNames);
         qb.setFilter(queryFilter);
         qb.setHints(queryHints);
-        qb.setCRS(gquery.getCoordinateSystemReproject());
         qb.setSortBy(gquery.getSortBy());
         qb.setOffset(gquery.getOffset());
         qb.setLimit(gquery.getLimit());

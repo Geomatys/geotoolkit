@@ -45,8 +45,6 @@ public class QueryUtilities {
 
     public static boolean queryAll(final Query query){
         return     query.retrieveAllProperties()
-                && query.getCoordinateSystemReproject() == null
-                && query.getCoordinateSystemReproject() == null
                 && query.getSelection() == Filter.include()
                 && query.getLimit() == -1
                 && query.getSortBy() == null
@@ -167,13 +165,6 @@ public class QueryUtilities {
                 original.getPropertyNames(),
                 second.getPropertyNames());
         qb.setProperties(propNames);
-
-        //use second crs over original crs--------------------------------------
-        if(second.getCoordinateSystemReproject() != null){
-            qb.setCRS(second.getCoordinateSystemReproject());
-        }else{
-            qb.setCRS(original.getCoordinateSystemReproject());
-        }
 
         //join filters----------------------------------------------------------
         Filter filter = original.getSelection();

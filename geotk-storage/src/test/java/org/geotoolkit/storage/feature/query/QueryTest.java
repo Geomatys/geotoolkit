@@ -97,7 +97,6 @@ public class QueryTest {
         //all-------------------------------------------------------------------
         query = QueryBuilder.all(name);
         assertEquals(query.getTypeName(), name.toString());
-        assertEquals(query.getCoordinateSystemReproject(), null);
         assertEquals(query.getResolution(), null);
         assertEquals(query.getSelection(), Filter.include());
         assertEquals(query.getLimit(), -1);
@@ -108,7 +107,6 @@ public class QueryTest {
         //only ids--------------------------------------------------------------
         query = QueryBuilder.fids(name.toString());
         assertEquals(query.getTypeName(), name.toString());
-        assertEquals(query.getCoordinateSystemReproject(), null);
         assertEquals(query.getResolution(), null);
         assertEquals(query.getSelection(), Filter.include());
         assertEquals(query.getLimit(), -1);
@@ -120,7 +118,6 @@ public class QueryTest {
         //only filter-----------------------------------------------------------
         query = QueryBuilder.filtered(name.toString(), Filter.exclude());
         assertEquals(query.getTypeName(), name.toString());
-        assertEquals(query.getCoordinateSystemReproject(), null);
         assertEquals(query.getResolution(), null);
         assertEquals(query.getSelection(), Filter.exclude());
         assertEquals(query.getLimit(), -1);
@@ -131,7 +128,6 @@ public class QueryTest {
         //only sort by----------------------------------------------------------
         query = QueryBuilder.sorted(name.toString(), new SortProperty[]{FF.sort(FF.property("att1"), SortOrder.DESCENDING)});
         assertEquals(query.getTypeName(), name.toString());
-        assertEquals(query.getCoordinateSystemReproject(), null);
         assertEquals(query.getResolution(), null);
         assertEquals(query.getSelection(), Filter.include());
         assertEquals(query.getLimit(), -1);
@@ -163,7 +159,6 @@ public class QueryTest {
 
         //test all parameters---------------------------------------------------
         qb.setTypeName(name);
-        qb.setCRS(CommonCRS.WGS84.normalizedGeographic());
         qb.setResolution(new double[]{45,31});
         qb.setFilter(Filter.exclude());
         qb.setLimit(10);
@@ -173,7 +168,6 @@ public class QueryTest {
         query = qb.buildQuery();
 
         assertEquals(query.getTypeName(), name.toString());
-        assertEquals(query.getCoordinateSystemReproject(), CommonCRS.WGS84.normalizedGeographic());
         assertEquals(query.getResolution()[0], 45d,DELTA);
         assertEquals(query.getResolution()[1], 31d,DELTA);
         assertEquals(query.getSelection(), Filter.exclude());
@@ -191,7 +185,6 @@ public class QueryTest {
         query = qb.buildQuery();
 
         assertEquals(query.getTypeName(), name.toString());
-        assertEquals(query.getCoordinateSystemReproject(), null);
         assertEquals(query.getResolution(), null);
         assertEquals(query.getSelection(), Filter.include());
         assertEquals(query.getLimit(), -1);
@@ -204,7 +197,6 @@ public class QueryTest {
         query = qb.buildQuery();
 
         assertEquals(query.getTypeName(), name.toString());
-        assertEquals(query.getCoordinateSystemReproject(), CommonCRS.WGS84.normalizedGeographic());
         assertEquals(query.getResolution()[0], 45d, DELTA);
         assertEquals(query.getResolution()[1], 31d, DELTA);
         assertEquals(query.getSelection(), Filter.exclude());
@@ -219,7 +211,6 @@ public class QueryTest {
         query = qb.buildQuery();
 
         assertEquals(query.getTypeName(), name.toString());
-        assertEquals(query.getCoordinateSystemReproject(), CommonCRS.WGS84.normalizedGeographic());
         assertEquals(query.getResolution()[0], 45d, DELTA);
         assertEquals(query.getResolution()[1], 31d, DELTA);
         assertEquals(query.getSelection(), Filter.exclude());
@@ -234,7 +225,6 @@ public class QueryTest {
         query = qb.buildQuery();
 
         assertEquals(query.getTypeName(), name.toString());
-        assertEquals(query.getCoordinateSystemReproject(), null);
         assertEquals(query.getResolution(), null);
         assertEquals(query.getSelection(), Filter.include());
         assertEquals(query.getLimit(), -1);

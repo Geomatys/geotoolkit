@@ -227,10 +227,6 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
         if (properties!=null && FeatureTypeExt.isAllProperties(ft, properties)) {
             ft = new ViewMapper(ft, properties).getMappedType();
         }
-        if(gquery.getCoordinateSystemReproject()!=null){
-            ft = new ReprojectMapper(ft, gquery.getCoordinateSystemReproject()).getMappedType();
-        }
-
         return ft;
     }
 

@@ -38,7 +38,6 @@ import org.apache.sis.storage.IllegalNameException;
 import org.apache.sis.storage.Query;
 import org.apache.sis.storage.UnsupportedQueryException;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.Utilities;
 import org.apache.sis.util.Version;
 import static org.geotoolkit.db.JDBCFeatureStore.JDBC_PROPERTY_RELATION;
 import org.geotoolkit.db.dialect.SQLDialect;
@@ -48,7 +47,6 @@ import org.geotoolkit.db.session.JDBCSession;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.feature.FeatureTypeExt;
-import org.geotoolkit.feature.ReprojectMapper;
 import org.geotoolkit.feature.ViewMapper;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.filter.visitor.CRSAdaptorVisitor;
@@ -81,7 +79,6 @@ import org.opengis.filter.ResourceId;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.GenericName;
 
 /**
@@ -415,16 +412,6 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
         // if post filter, wrap it
         if (postFilter != null && postFilter != Filter.include()) {
             reader = FeatureStreams.filter(reader, postFilter);
-        }
-
-        //if we need to reproject data
-        final CoordinateReferenceSystem reproject = query.getCoordinateSystemReproject();
-        if(reproject != null && !Utilities.equalsIgnoreMetadata(reproject, FeatureExt.getCRS(baseType))){
-            try {
-                reader = FeatureStreams.decorate(reader, new ReprojectMapper(reader.getFeatureType(), reproject),query.getHints());
-            } catch (MismatchedFeatureException ex) {
-                throw new DataStoreException(ex);
-            }
         }
 
         //if we need to constraint type

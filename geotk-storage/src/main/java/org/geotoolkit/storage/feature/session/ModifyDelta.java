@@ -131,39 +131,6 @@ public class ModifyDelta extends AbstractDelta{
 
                 //modify the feature
                 feature = GenericModifyFeatureIterator.apply(feature, values);
-                try {
-                    final CoordinateReferenceSystem crs = query.getCoordinateSystemReproject();
-
-                    //wrap reprojection ----------------------------------------------------
-                    if(crs != null){
-                        //check we have a geometry modification
-                        final FeatureType original = session.getFeatureStore().getFeatureType(feature.getType().getName().toString());
-                        for(String desc : values.keySet()){
-                            if (AttributeConvention.isGeometryAttribute(feature.getType().getProperty(desc))) {
-                                final CoordinateReferenceSystem originalCRS = FeatureExt.getCRS(original.getProperty(desc));
-                                if(!Utilities.equalsIgnoreMetadata(originalCRS,crs)){
-                                    MathTransform trs = CRS.findOperation(originalCRS, crs, null).getMathTransform();
-                                    Object geom = feature.getPropertyValue(desc);
-                                    if (geom instanceof Geometry) {
-                                        try {
-                                            geom = JTS.transform((Geometry) geom, trs);
-                                        } catch (MismatchedDimensionException | TransformException ex) {
-                                            throw new FeatureStoreRuntimeException(ex);
-                                        }
-                                        JTS.setCRS((Geometry) geom, crs);
-                                        feature.setPropertyValue(desc, geom);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                } catch (DataStoreException ex) {
-                    getLogger().log(Level.WARNING, null, ex);
-                    feature = null;
-                } catch (FactoryException ex) {
-                    getLogger().log(Level.WARNING, null, ex);
-                    feature = null;
-                }
                 return feature;
             }
         };

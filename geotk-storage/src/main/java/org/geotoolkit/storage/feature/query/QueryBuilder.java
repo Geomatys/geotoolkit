@@ -60,7 +60,6 @@ public final class QueryBuilder {
     private Filter filter = Filter.include();
     private String[] properties = null;
     private SortProperty[] sortBy = null;
-    private CoordinateReferenceSystem crs = null;
     private long startIndex = 0;
     private long maxFeatures = -1;
     private Hints hints = null;
@@ -84,7 +83,6 @@ public final class QueryBuilder {
         filter = Filter.include();
         properties = null;
         sortBy = null;
-        crs = null;
         startIndex = 0;
         maxFeatures = -1;
         resolution = null;
@@ -93,7 +91,6 @@ public final class QueryBuilder {
     }
 
     public void copy(final Query query){
-        this.crs = query.getCoordinateSystemReproject();
         this.resolution = (query.getResolution()==null)?null:query.getResolution().clone();
         this.filter = query.getSelection();
         this.hints = query.getHints();
@@ -158,14 +155,6 @@ public final class QueryBuilder {
         this.maxFeatures = maxFeatures;
     }
 
-    public CoordinateReferenceSystem getCRS() {
-        return crs;
-    }
-
-    public void setCRS(final CoordinateReferenceSystem crs) {
-        this.crs = crs;
-    }
-
     @Deprecated
     public void setResolution(final double[] resolution) {
         this.resolution = resolution;
@@ -215,7 +204,7 @@ public final class QueryBuilder {
     }
 
     public Query buildQuery(){
-        return new Query(typeName, filter, properties, sortBy, crs, startIndex, maxFeatures, resolution, linearResolution, version, hints);
+        return new Query(typeName, filter, properties, sortBy, startIndex, maxFeatures, resolution, linearResolution, version, hints);
     }
 
     /**
@@ -267,18 +256,6 @@ public final class QueryBuilder {
      */
     public static Query fids(final String name){
         return new Query(name, ONLY_ID_PROPERTIES);
-    }
-
-    /**
-     * Create a simple query with only a reproject crs.
-     *
-     * @return Immutable query
-     */
-    public static Query reprojected(final String name, final CoordinateReferenceSystem crs){
-        final QueryBuilder builder = new QueryBuilder();
-        builder.setTypeName(name);
-        builder.setCRS(crs);
-        return builder.buildQuery();
     }
 
     /**

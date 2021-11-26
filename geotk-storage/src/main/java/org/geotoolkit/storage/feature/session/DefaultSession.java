@@ -155,7 +155,6 @@ public class DefaultSession extends AbstractSession {
 
         //we must preserve the original filter after all thoses modifications
         Filter originalFilter = original.getSelection();
-        originalFilter = forceCRS(originalFilter, original.getCoordinateSystemReproject(), true);
         reader = FeatureStreams.filter(reader, originalFilter);
 
         return reader;

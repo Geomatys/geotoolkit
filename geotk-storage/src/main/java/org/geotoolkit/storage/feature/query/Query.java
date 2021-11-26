@@ -67,7 +67,6 @@ public final class Query extends FeatureQuery {
 
     private final String typeName;
     private final Hints hints;
-    private final CoordinateReferenceSystem crs;
     private final double[] resolution;
     private final Object version;
 
@@ -91,7 +90,6 @@ public final class Query extends FeatureQuery {
                 Filter.include(),
                 attributs,
                 null,
-                null,
                 0,
                 -1,
                 null,
@@ -101,7 +99,7 @@ public final class Query extends FeatureQuery {
     }
 
     Query(final String typeName, final Filter filter, final String[] attributs, final SortProperty[] sort,
-            final CoordinateReferenceSystem crs, final long startIndex, final long MaxFeature,
+            final long startIndex, final long MaxFeature,
             final double[] resolution, Quantity<Length> linearResolution, final Object version, final Hints hints){
 
         ensureNonNull("query source", typeName);
@@ -124,7 +122,6 @@ public final class Query extends FeatureQuery {
             setProjection(columns.toArray(new NamedExpression[0]));
         }
         this.typeName = typeName;
-        this.crs = crs;
         this.resolution = resolution;
         this.version = version;
 
@@ -144,7 +141,6 @@ public final class Query extends FeatureQuery {
              query.getSelection(),
              query.getPropertyNames(),
              query.getSortBy(),
-             query.getCoordinateSystemReproject(),
              query.getOffset(),
              query.getLimit(),
              (query.getResolution()==null)?null:query.getResolution().clone(),
@@ -238,31 +234,6 @@ public final class Query extends FeatureQuery {
     }
 
     /**
-     * Request data reprojection.
-     *
-     * <p>
-     * Gets the coordinate System to reproject the data contained in the
-     * backend feature store to.
-     * </p>
-     *
-     * <p>
-     * If the feature store can optimize the reprojection it should, if not then a
-     * decorator on the reader should perform the reprojection on the fly.
-     * </p>
-     *
-     * <p>
-     * If the feature store has the wrong CS then {@link #getCoordinateSystem()} should be set to
-     * the CS to be used, this will perform the reprojection on that.
-     * </p>
-     *
-     * @return The coordinate system that Features from the datasource should
-     *         be reprojected to.
-     */
-    public CoordinateReferenceSystem getCoordinateSystemReproject() {
-        return crs;
-    }
-
-    /**
      * Set The wished resolution of the geometries.
      * Since there is no Envelope provided in the query like in CoverageReadParam
      * this resolution must be expressed in the native data coordinate reference system.
@@ -316,7 +287,6 @@ public final class Query extends FeatureQuery {
         return hints;
     }
 
-
     /**
      * {@inheritDoc }
      */
@@ -338,9 +308,6 @@ public final class Query extends FeatureQuery {
         if (this.hints != other.hints && (this.hints == null || !this.hints.equals(other.hints))) {
             return false;
         }
-        if (this.crs != other.crs && (this.crs == null || !this.crs.equals(other.crs))) {
-            return false;
-        }
         return true;
     }
 
@@ -352,7 +319,6 @@ public final class Query extends FeatureQuery {
         int hash = super.hashCode();
         hash = 83 * hash + (this.typeName != null ? this.typeName.hashCode() : 0);
         hash = 83 * hash + (this.hints != null ? this.hints.hashCode() : 0);
-        hash = 83 * hash + (this.crs != null ? this.crs.hashCode() : 0);
         return hash;
     }
 }

@@ -184,8 +184,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
         Filter              queryFilter = gquery.getSelection();
 
         //check if we must read the 3d values
-        final CoordinateReferenceSystem reproject = gquery.getCoordinateSystemReproject();
-        final boolean read3D = (reproject==null || CRS.getVerticalComponent(reproject, true) != null);
+        final boolean read3D = true;
 
 
         //find the properties we will read and return --------------------------
@@ -273,7 +272,6 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
         }
         qb.setFilter(queryFilter);
         qb.setHints(queryHints);
-        qb.setCRS(gquery.getCoordinateSystemReproject());
         qb.setSortBy(gquery.getSortBy());
         qb.setOffset(gquery.getOffset());
         qb.setLimit(gquery.getLimit());
