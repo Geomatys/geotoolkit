@@ -30,7 +30,6 @@ import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.feature.query.Query;
-import org.geotoolkit.storage.feature.query.QueryBuilder;
 import org.geotoolkit.storage.feature.query.QueryUtilities;
 import org.geotoolkit.storage.feature.session.Session;
 import org.geotoolkit.factory.Hints;
@@ -93,11 +92,12 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection{
 
         final Query iteQuery;
         if(hints != null){
-            final QueryBuilder qb = new QueryBuilder(this.query);
+            final Query qb = new Query();
+            qb.copy(this.query);
             final Hints hts = new Hints(this.query.getHints());
             hts.add(hints);
             qb.setHints(hts);
-            iteQuery = qb.buildQuery();
+            iteQuery = qb;
         }else{
             iteQuery = this.query;
         }

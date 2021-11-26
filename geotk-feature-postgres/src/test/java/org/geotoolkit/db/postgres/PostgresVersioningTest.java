@@ -34,12 +34,12 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.feature.FeatureIterator;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
-import org.geotoolkit.storage.feature.query.QueryBuilder;
 import org.geotoolkit.storage.feature.session.Session;
 import static org.geotoolkit.db.postgres.PostgresProvider.*;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
+import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
@@ -147,7 +147,7 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         Version v2;
         Version v3;
         FeatureIterator ite;
-        final QueryBuilder qb = new QueryBuilder();
+        Query qb = new Query();
 
         //create table
         final FeatureType refType = FTYPE_SIMPLE;
@@ -194,9 +194,9 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         Date date = version.getDate();
 
         //ensure normal reading is correct without version----------------------
-        qb.reset();
+        qb = new Query();
         qb.setTypeName(refType.getName());
-        ite = store.createSession(true).getFeatureCollection(qb.buildQuery()).iterator();
+        ite = store.createSession(true).getFeatureCollection(qb).iterator();
         try{
             feature = ite.next();
             assertEquals(Boolean.TRUE,      feature.getPropertyValue("boolean"));
@@ -209,10 +209,10 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         }
 
         //ensure normal reading is correct with version-------------------------
-        qb.reset();
+        qb = new Query();
         qb.setTypeName(refType.getName());
         qb.setVersionLabel(version.getLabel());
-        ite = store.createSession(true).getFeatureCollection(qb.buildQuery()).iterator();
+        ite = store.createSession(true).getFeatureCollection(qb).iterator();
         try{
             feature = ite.next();
             assertEquals(Boolean.TRUE,      feature.getPropertyValue("boolean"));
@@ -251,9 +251,9 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         assertTrue(v1.getDate().compareTo(v2.getDate()) < 0);
 
         //ensure normal reading is correct without version----------------------
-        qb.reset();
+        qb = new Query();
         qb.setTypeName(refType.getName());
-        ite = store.createSession(true).getFeatureCollection(qb.buildQuery()).iterator();
+        ite = store.createSession(true).getFeatureCollection(qb).iterator();
         try{
             feature = ite.next();
             assertEquals(Boolean.FALSE,       feature.getPropertyValue("boolean"));
@@ -265,10 +265,10 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         }
 
         //ensure normal reading is correct with version-------------------------
-        qb.reset();
+        qb = new Query();
         qb.setTypeName(refType.getName());
         qb.setVersionLabel(v2.getLabel());
-        ite = store.createSession(true).getFeatureCollection(qb.buildQuery()).iterator();
+        ite = store.createSession(true).getFeatureCollection(qb).iterator();
         try{
             feature = ite.next();
             assertEquals(Boolean.FALSE,       feature.getPropertyValue("boolean"));
@@ -280,10 +280,10 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         }
 
         //ensure reading a previous version works ------------------------------
-        qb.reset();
+        qb = new Query();;
         qb.setTypeName(refType.getName());
         qb.setVersionLabel(v1.getLabel());
-        ite = store.createSession(true).getFeatureCollection(qb.buildQuery()).iterator();
+        ite = store.createSession(true).getFeatureCollection(qb).iterator();
         try{
             feature = ite.next();
             assertEquals(Boolean.TRUE,      feature.getPropertyValue("boolean"));
@@ -295,10 +295,10 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         }
 
         //ensure reading a previous version using not exact date----------------
-        qb.reset();
+        qb = new Query();
         qb.setTypeName(refType.getName());
         qb.setVersionDate(new Date(v1.getDate().getTime()+400));
-        ite = store.createSession(true).getFeatureCollection(qb.buildQuery()).iterator();
+        ite = store.createSession(true).getFeatureCollection(qb).iterator();
         try{
             feature = ite.next();
             assertEquals(Boolean.TRUE,      feature.getPropertyValue("boolean"));
@@ -313,9 +313,9 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         //delete record ////////////////////////////////////////////////////////
 
         store.removeFeatures(refType.getName().toString(), fid);
-        qb.reset();
+        qb = new Query();
         qb.setTypeName(refType.getName());
-        assertEquals(0, store.getCount(qb.buildQuery()));
+        assertEquals(0, store.getCount(qb));
 
         //we should have three versions
         versions = vc.list();
@@ -328,27 +328,27 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         assertTrue(v3.getDate().compareTo(v2.getDate()) > 0);
 
         //ensure we have nothing if no version set -----------------------------
-        qb.reset();
+        qb = new Query();
         qb.setTypeName(refType.getName());
-        assertTrue(store.createSession(true).getFeatureCollection(qb.buildQuery()).isEmpty());
+        assertTrue(store.createSession(true).getFeatureCollection(qb).isEmpty());
 
         //ensure we have nothing if latest version set -------------------------
-        qb.reset();
+        qb = new Query();
         qb.setTypeName(refType.getName());
         qb.setVersionLabel(v3.getLabel());
-        assertTrue(store.createSession(true).getFeatureCollection(qb.buildQuery()).isEmpty());
+        assertTrue(store.createSession(true).getFeatureCollection(qb).isEmpty());
 
         //ensure we have nothing with date after deletion ----------------------
-        qb.reset();
+        qb = new Query();
         qb.setTypeName(refType.getName());
         qb.setVersionDate(new Date(v3.getDate().getTime()+400));
-        assertTrue(store.createSession(true).getFeatureCollection(qb.buildQuery()).isEmpty());
+        assertTrue(store.createSession(true).getFeatureCollection(qb).isEmpty());
 
         //ensure reading version 1 works ---------------------------------------
-        qb.reset();
+        qb = new Query();
         qb.setTypeName(refType.getName());
         qb.setVersionLabel(v1.getLabel());
-        ite = store.createSession(true).getFeatureCollection(qb.buildQuery()).iterator();
+        ite = store.createSession(true).getFeatureCollection(qb).iterator();
         try{
             feature = ite.next();
             assertEquals(Boolean.TRUE,      feature.getProperty("boolean").getValue());
@@ -360,10 +360,10 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         }
 
         //ensure reading version 2 works ---------------------------------------
-        qb.reset();
+        qb = new Query();
         qb.setTypeName(refType.getName());
         qb.setVersionLabel(v2.getLabel());
-        ite = store.createSession(true).getFeatureCollection(qb.buildQuery()).iterator();
+        ite = store.createSession(true).getFeatureCollection(qb).iterator();
         try{
             feature = ite.next();
             assertEquals(Boolean.FALSE,      feature.getProperty("boolean").getValue());
@@ -384,9 +384,9 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         assertTrue(versions.isEmpty());
 
         //ensure we have no record----------------------------------------------
-        qb.reset();
+        qb = new Query();
         qb.setTypeName(refType.getName());
-        assertTrue(store.createSession(true).getFeatureCollection(qb.buildQuery()).isEmpty());
+        assertTrue(store.createSession(true).getFeatureCollection(qb).isEmpty());
     }
 
     /**
@@ -400,7 +400,7 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         Feature feature;
         ResourceId fid;
         FeatureIterator ite;
-        final QueryBuilder qb = new QueryBuilder();
+        Query qb = new Query();
 
         final FeatureType refType = FTYPE_SIMPLE;
         store.createFeatureType(refType);
@@ -432,9 +432,9 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         Date date = version.getDate();
 
         //ensure normal reading is correct without version----------------------
-        qb.reset();
+        qb = new Query();
         qb.setTypeName(refType.getName().toString());
-        ite = session.getFeatureCollection(qb.buildQuery()).iterator();
+        ite = session.getFeatureCollection(qb).iterator();
         try{
             feature = ite.next();
             fid = FeatureExt.getId(feature);
@@ -481,9 +481,9 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         //delete record ////////////////////////////////////////////////////////
 
         session.removeFeatures(refType.getName().toString(), fid);
-        qb.reset();
+        qb = new Query();
         qb.setTypeName(refType.getName().toString());
-        assertEquals(0, session.getCount(qb.buildQuery()));
+        assertEquals(0, session.getCount(qb));
 
         //we should have four versions
         versions = vc.list();
@@ -516,7 +516,7 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         Feature feature;
         ResourceId fid;
         FeatureIterator ite;
-        final QueryBuilder qb = new QueryBuilder();
+        Query qb = new Query();
 
         final FeatureType refType = FTYPE_SIMPLE;
         store.createFeatureType(refType);
@@ -554,9 +554,9 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         Date date = version.getDate();
 
         //ensure normal reading is correct without version----------------------
-        qb.reset();
+        qb = new Query();
         qb.setTypeName(refType.getName().toString());
-        ite = session.getFeatureCollection(qb.buildQuery()).iterator();
+        ite = session.getFeatureCollection(qb).iterator();
         try{
             feature = ite.next();
             fid = FeatureExt.getId(feature);
@@ -604,9 +604,9 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         assertEquals(2, versions.size());
 
         //ensure we read the latest --------------------------------------------
-        qb.reset();
+        qb = new Query();
         qb.setTypeName(refType.getName());
-        ite = store.createSession(true).getFeatureCollection(qb.buildQuery()).iterator();
+        ite = store.createSession(true).getFeatureCollection(qb).iterator();
         try{
             feature = ite.next();
             assertEquals(Boolean.TRUE,      feature.getProperty("boolean").getValue());
@@ -621,9 +621,9 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         // make delete + insert at the same time ///////////////////////////////
 
         session.removeFeatures(refType.getName().toString(), fid);
-        qb.reset();
+        qb = new Query();
         qb.setTypeName(refType.getName().toString());
-        assertEquals(0, session.getCount(qb.buildQuery()));
+        assertEquals(0, session.getCount(qb));
 
         //we should have two versions
         versions = vc.list();
@@ -633,9 +633,9 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         //delete record ////////////////////////////////////////////////////////
 
         session.removeFeatures(refType.getName().toString(), fid);
-        qb.reset();
+        qb = new Query();
         qb.setTypeName(refType.getName().toString());
-        assertEquals(0, session.getCount(qb.buildQuery()));
+        assertEquals(0, session.getCount(qb));
 
         //we should have two versions
         versions = vc.list();
@@ -661,9 +661,9 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         assertEquals(3, versions.size());
 
         //ensure we read the latest --------------------------------------------
-        qb.reset();
+        qb = new Query();
         qb.setTypeName(refType.getName().toString());
-        ite = store.createSession(true).getFeatureCollection(qb.buildQuery()).iterator();
+        ite = store.createSession(true).getFeatureCollection(qb).iterator();
         try{
             feature = ite.next();
             assertEquals(Boolean.FALSE,        feature.getProperty("boolean").getValue());
@@ -685,7 +685,7 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         Version v1;
         Version v2;
         FeatureIterator ite;
-        final QueryBuilder qb = new QueryBuilder();
+        Query qb = new Query();
 
         //create table
         final FeatureType refType = FTYPE_SIMPLE;
@@ -720,9 +720,9 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
 
         // get identifier
         //ensure normal reading is correct without version----------------------
-        qb.reset();
+        qb = new Query();
         qb.setTypeName(refType.getName());
-        ite = store.createSession(true).getFeatureCollection(qb.buildQuery()).iterator();
+        ite = store.createSession(true).getFeatureCollection(qb).iterator();
         try{
             feature = ite.next();
             fid = FeatureExt.getId(feature);
@@ -779,11 +779,11 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         versions = vc.list();
         assertEquals(2, versions.size());
         //ensure version 0 does not exist
-        qb.reset();
+        qb = new Query();
         qb.setTypeName(refType.getName());
         qb.setVersionLabel(v0.getLabel());
         try {
-            store.createSession(true).getFeatureCollection(qb.buildQuery()).isEmpty();
+            store.createSession(true).getFeatureCollection(qb).isEmpty();
             fail("should not find version");
         } catch(FeatureStoreRuntimeException ex) {
             //ok
@@ -798,11 +798,11 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         versions = vc.list();
         assertEquals(1, versions.size());
         //ensure version 1 does not exist
-        qb.reset();
+        qb = new Query();
         qb.setTypeName(refType.getName());
         qb.setVersionLabel(v1.getLabel());
         try {
-            store.createSession(true).getFeatureCollection(qb.buildQuery()).isEmpty();
+            store.createSession(true).getFeatureCollection(qb).isEmpty();
             fail("should not find version");
         } catch(FeatureStoreRuntimeException ex) {
             //ok
@@ -830,7 +830,7 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         Version v1;
         Version v2;
         FeatureIterator ite;
-        final QueryBuilder qb = new QueryBuilder();
+        Query qb = new Query();
 
         //create table
         final FeatureType refType = FTYPE_SIMPLE;
@@ -865,9 +865,9 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
 
         // get identifier
         //ensure normal reading is correct without version----------------------
-        qb.reset();
+        qb = new Query();
         qb.setTypeName(refType.getName());
-        ite = store.createSession(true).getFeatureCollection(qb.buildQuery()).iterator();
+        ite = store.createSession(true).getFeatureCollection(qb).iterator();
         try{
             feature = ite.next();
             fid = FeatureExt.getId(feature);
@@ -903,9 +903,9 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         store.removeFeatures(refType.getName().toString(), fid);
 
         //ensure test table is empty
-        qb.reset();
+        qb = new Query();
         qb.setTypeName(refType.getName());
-        assertTrue(store.createSession(true).getFeatureCollection(qb.buildQuery()).isEmpty());
+        assertTrue(store.createSession(true).getFeatureCollection(qb).isEmpty());
 
         //get all versions organized in increase dates order.
         versions = vc.list();
@@ -922,27 +922,27 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         assertEquals(2, versions.size());
 
         //ensure version v2 does not exist
-        qb.reset();
+        qb = new Query();
         qb.setTypeName(refType.getName());
         qb.setVersionLabel(v2.getLabel());
         try {
-            store.createSession(true).getFeatureCollection(qb.buildQuery()).isEmpty();
+            store.createSession(true).getFeatureCollection(qb).isEmpty();
             fail("should not find version");
         } catch(FeatureStoreRuntimeException ex) {
             //ok
         }
 
         //ensure test table contain feature from version 1
-        qb.reset();
+        qb = new Query();
         qb.setTypeName(refType.getName());
-        assertFalse(store.createSession(true).getFeatureCollection(qb.buildQuery()).isEmpty());
+        assertFalse(store.createSession(true).getFeatureCollection(qb).isEmpty());
 
         Feature featV1;
         Feature feat;
         // feature from test base result.
-        qb.reset();
+        qb = new Query();
         qb.setTypeName(refType.getName());
-        ite = store.createSession(true).getFeatureCollection(qb.buildQuery()).iterator();
+        ite = store.createSession(true).getFeatureCollection(qb).iterator();
         try{
             feat = ite.next();
             fid = FeatureExt.getId(feature);
@@ -951,10 +951,10 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         }
 
         // feature from version v1.
-        qb.reset();
+        qb = new Query();
         qb.setTypeName(refType.getName());
         qb.setVersionLabel(v1.getLabel());
-        ite = store.createSession(true).getFeatureCollection(qb.buildQuery()).iterator();
+        ite = store.createSession(true).getFeatureCollection(qb).iterator();
         try{
             featV1 = ite.next();
             fid = FeatureExt.getId(feature);
@@ -973,25 +973,25 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         versions = vc.list();
         assertEquals(1, versions.size());
 
-        qb.reset();
+        qb = new Query();
         qb.setTypeName(refType.getName());
         qb.setVersionLabel(v1.getLabel());
         try {
-            store.createSession(true).getFeatureCollection(qb.buildQuery()).isEmpty();
+            store.createSession(true).getFeatureCollection(qb).isEmpty();
             fail("should not find version");
         } catch(FeatureStoreRuntimeException ex) {
             //ok
         }
 
         //ensure test table contain feature from version 1
-        qb.reset();
+        qb = new Query();
         qb.setTypeName(refType.getName());
-        assertFalse(store.createSession(true).getFeatureCollection(qb.buildQuery()).isEmpty());
+        assertFalse(store.createSession(true).getFeatureCollection(qb).isEmpty());
 
         // feature from test base result.
-        qb.reset();
+        qb = new Query();
         qb.setTypeName(refType.getName());
-        ite = store.createSession(true).getFeatureCollection(qb.buildQuery()).iterator();
+        ite = store.createSession(true).getFeatureCollection(qb).iterator();
         try{
             feat = ite.next();
             fid = FeatureExt.getId(feature);
@@ -1000,10 +1000,10 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         }
 
         // feature from version v1.
-        qb.reset();
+        qb = new Query();
         qb.setTypeName(refType.getName());
         qb.setVersionLabel(v0.getLabel());
-        ite = store.createSession(true).getFeatureCollection(qb.buildQuery()).iterator();
+        ite = store.createSession(true).getFeatureCollection(qb).iterator();
         try{
             featV1 = ite.next();
             fid = FeatureExt.getId(feature);
@@ -1027,7 +1027,7 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         Version v1;
         Version v2;
         FeatureIterator ite;
-        final QueryBuilder qb = new QueryBuilder();
+        Query qb = new Query();
 
         final FeatureType refType = FTYPE_SIMPLE;
 
@@ -1102,9 +1102,9 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         store.addFeatures(refType.getName().toString(), Collections.singleton(feature));
 
         // ensure test table in public2 schema is empty
-        qb.reset();
+        qb = new Query();
         qb.setTypeName(refType.getName());
-        assertTrue(store2.createSession(true).getFeatureCollection(qb.buildQuery()).isEmpty());
+        assertTrue(store2.createSession(true).getFeatureCollection(qb).isEmpty());
 
         // ensure history test table in public2 schema is empty
         assertTrue(vcP2.list().isEmpty());
@@ -1113,9 +1113,9 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
 
         // get feature to update
         // get identifier
-        qb.reset();
+        qb = new Query();
         qb.setTypeName(refType.getName());
-        ite = store.createSession(true).getFeatureCollection(qb.buildQuery()).iterator();
+        ite = store.createSession(true).getFeatureCollection(qb).iterator();
         try{
             feature = ite.next();
             fid = FeatureExt.getId(feature);
@@ -1139,9 +1139,9 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         store.updateFeatures(refType.getName().toString(), fid, updates);
 
         // ensure test table in public2 schema is empty
-        qb.reset();
+        qb = new Query();
         qb.setTypeName(refType.getName());
-        assertTrue(store2.createSession(true).getFeatureCollection(qb.buildQuery()).isEmpty());
+        assertTrue(store2.createSession(true).getFeatureCollection(qb).isEmpty());
 
         // ensure history test table in public2 schema is empty
         assertTrue(vcP2.list().isEmpty());
@@ -1150,9 +1150,9 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         store.removeFeatures(refType.getName().toString(), fid);
 
         // ensure test table in public2 schema is empty
-        qb.reset();
+        qb = new Query();
         qb.setTypeName(refType.getName());
-        assertTrue(store2.createSession(true).getFeatureCollection(qb.buildQuery()).isEmpty());
+        assertTrue(store2.createSession(true).getFeatureCollection(qb).isEmpty());
 
         // ensure history test table in public2 schema is empty
         assertTrue(vcP2.list().isEmpty());
@@ -1166,18 +1166,18 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
 
         vcP1.revert(v1.getDate());
         // ensure test table in public2 schema is empty
-        qb.reset();
+        qb = new Query();
         qb.setTypeName(refType.getName());
-        assertTrue(store2.createSession(true).getFeatureCollection(qb.buildQuery()).isEmpty());
+        assertTrue(store2.createSession(true).getFeatureCollection(qb).isEmpty());
 
         // ensure history test table in public2 schema is empty
         assertTrue(vcP2.list().isEmpty());
 
         vcP1.trim(v1.getDate());
         // ensure test table in public2 schema is empty
-        qb.reset();
+        qb = new Query();
         qb.setTypeName(refType.getName());
-        assertTrue(store2.createSession(true).getFeatureCollection(qb.buildQuery()).isEmpty());
+        assertTrue(store2.createSession(true).getFeatureCollection(qb).isEmpty());
 
         // ensure history test table in public2 schema is empty
         assertTrue(vcP2.list().isEmpty());

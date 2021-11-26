@@ -34,7 +34,7 @@ import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
-import org.geotoolkit.storage.feature.query.QueryBuilder;
+import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
@@ -362,7 +362,7 @@ public class IntervalStyleBuilder extends AbstractTableModel{
         }
 
         //search the extreme values
-        final QueryBuilder query = new QueryBuilder(schema.getName().toString());
+        final Query query = new Query(schema.getName().toString());
 
         if(classification == null || layer == null) return;
         if(!properties.contains(classification)) return;
@@ -375,7 +375,7 @@ public class IntervalStyleBuilder extends AbstractTableModel{
         query.setProperties(qp.toArray(new String[0]));
 
         Iterator<Feature> features = null;
-        try(Stream<Feature> stream = data.subset(query.buildQuery()).features(false)){
+        try(Stream<Feature> stream = data.subset(query).features(false)){
             features = stream.iterator();
             List<Double> values = new ArrayList<Double>();
 

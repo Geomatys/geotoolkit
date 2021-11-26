@@ -16,7 +16,7 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.db.postgres.PostgresStore;
 import org.geotoolkit.map.MapBuilder;
-import org.geotoolkit.storage.feature.query.QueryBuilder;
+import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.style.RandomStyleBuilder;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -73,7 +73,7 @@ public class PostgisRasterDemo {
         store.addFeatures(type.getName().toString(), Collections.singletonList(feature));
 
         //Display it
-        final FeatureSet col = store.createSession(false).getFeatureCollection(QueryBuilder.all(store.getNames().iterator().next()));
+        final FeatureSet col = store.createSession(false).getFeatureCollection(new Query(store.getNames().iterator().next()));
         final MapLayer layer = MapBuilder.createLayer(col);
         layer.setStyle(RandomStyleBuilder.createDefaultRasterStyle());
         final MapLayers context = MapBuilder.createContext();

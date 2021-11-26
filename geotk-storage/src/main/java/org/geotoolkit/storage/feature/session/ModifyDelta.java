@@ -16,39 +16,23 @@
  */
 package org.geotoolkit.storage.feature.session;
 
-import org.locationtech.jts.geom.Geometry;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
-import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.storage.feature.FeatureStore;
 import org.geotoolkit.storage.feature.FeatureIterator;
 import org.geotoolkit.storage.feature.GenericModifyFeatureIterator;
 import org.geotoolkit.storage.memory.WrapFeatureIterator;
 import org.geotoolkit.storage.feature.query.Query;
-import org.geotoolkit.storage.feature.query.QueryBuilder;
-import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.Utilities;
 import org.apache.sis.util.NullArgumentException;
 import org.opengis.feature.Feature;
-import org.opengis.feature.FeatureType;
 import org.opengis.geometry.Envelope;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.util.FactoryException;
-import org.apache.sis.internal.feature.AttributeConvention;
-
 import static org.apache.sis.util.ArgumentChecks.*;
-import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
-import org.geotoolkit.geometry.jts.JTS;
 import org.opengis.filter.Filter;
 import org.opengis.filter.ResourceId;
-import org.opengis.geometry.MismatchedDimensionException;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.TransformException;
 
 
 /**
@@ -108,10 +92,11 @@ public class ModifyDelta extends AbstractDelta{
         //we always include the modified features
         //they will be filtered at return time in the other modified methods
         //todo we should modify this query for count and envelope
-        final QueryBuilder builder = new QueryBuilder(query);
-        builder.setFilter(FF.or(builder.getFilter(),filter));
+        final Query builder = new Query();
+        builder.copy(query);
+        builder.setSelection(FF.or((Filter) builder.getSelection(),filter));
 
-        return builder.buildQuery();
+        return builder;
     }
 
     /**

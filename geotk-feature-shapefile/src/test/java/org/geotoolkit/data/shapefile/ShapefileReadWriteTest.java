@@ -29,7 +29,7 @@ import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.math.MathFunctions;
 import org.apache.sis.util.Numbers;
 import org.geotoolkit.storage.feature.FeatureCollection;
-import org.geotoolkit.storage.feature.query.QueryBuilder;
+import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.storage.feature.session.Session;
 import org.geotoolkit.test.TestData;
 import org.junit.Assert;
@@ -167,7 +167,7 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
         GenericName typeName = s.getNames().iterator().next();
         Session session = s.createSession(true);
         FeatureType type = s.getFeatureType(typeName.toString());
-        FeatureCollection one = session.getFeatureCollection(QueryBuilder.all(typeName));
+        FeatureCollection one = session.getFeatureCollection(new Query(typeName));
         File tmp = getTempFile();
 
         ShapefileProvider maker = new ShapefileProvider();
@@ -200,13 +200,13 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
 
         assertFalse(session.hasPendingChanges());
 
-        FeatureCollection copy = session.getFeatureCollection(QueryBuilder.all(typeName));
+        FeatureCollection copy = session.getFeatureCollection(new Query(typeName));
         compare(original, copy);
 
         // review open
         ShapefileFeatureStore review = new ShapefileFeatureStore(tmp.toURI(), memorymapped, charset);
         typeName = review.getNames().iterator().next();
-        FeatureCollection again = review.createSession(true).getFeatureCollection(QueryBuilder.all(typeName));
+        FeatureCollection again = review.createSession(true).getFeatureCollection(new Query(typeName));
 
         compare(copy, again);
         compare(original, again);

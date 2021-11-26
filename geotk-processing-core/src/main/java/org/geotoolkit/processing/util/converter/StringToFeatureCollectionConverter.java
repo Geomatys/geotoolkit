@@ -27,7 +27,7 @@ import org.geotoolkit.feature.util.converter.SimpleConverter;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.feature.FeatureCollection;
 import org.geotoolkit.storage.feature.FeatureStore;
-import org.geotoolkit.storage.feature.query.QueryBuilder;
+import org.geotoolkit.storage.feature.query.Query;
 
 /**
  * Implementation of ObjectConverter to convert a path to a file in a String to a
@@ -83,7 +83,7 @@ public class StringToFeatureCollectionConverter extends SimpleConverter<String, 
                 throw new UnconvertibleObjectException("More than one FeatureCollection in the file");
             }
 
-            final FeatureCollection collection = store.createSession(true).getFeatureCollection(QueryBuilder.all(store.getNames().iterator().next()));
+            final FeatureCollection collection = store.createSession(true).getFeatureCollection(new Query(store.getNames().iterator().next()));
 
             if(collection != null){
                 return collection;

@@ -81,7 +81,6 @@ import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.geotoolkit.storage.feature.FeatureStreams;
 import org.geotoolkit.storage.feature.FeatureWriter;
 import org.geotoolkit.storage.feature.query.DefaultQueryCapabilities;
-import org.geotoolkit.storage.feature.query.QueryBuilder;
 import org.geotoolkit.storage.feature.query.QueryCapabilities;
 import org.geotoolkit.storage.feature.query.QueryUtilities;
 import org.locationtech.jts.geom.Geometry;
@@ -331,14 +330,14 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements Resou
 
 
         //handle remaining query parameters ------------------------------------
-        final QueryBuilder qb = new QueryBuilder(queryTypeName);
+        final org.geotoolkit.storage.feature.query.Query qb = new org.geotoolkit.storage.feature.query.Query(queryTypeName);
         qb.setProperties(queryPropertyNames);
-        qb.setFilter(queryFilter);
+        qb.setSelection(queryFilter);
         qb.setHints(queryHints);
         qb.setSortBy(gquery.getSortBy());
         qb.setOffset(gquery.getOffset());
         qb.setLimit(gquery.getLimit());
-        return FeatureStreams.subset(reader, qb.buildQuery());
+        return FeatureStreams.subset(reader, qb);
     }
 
     /**

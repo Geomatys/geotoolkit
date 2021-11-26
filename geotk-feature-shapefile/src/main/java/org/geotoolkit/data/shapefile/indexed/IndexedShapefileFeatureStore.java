@@ -37,7 +37,6 @@ import org.apache.sis.storage.UnsupportedQueryException;
 import org.geotoolkit.storage.feature.FeatureReader;
 import org.geotoolkit.storage.feature.FeatureStreams;
 import org.geotoolkit.storage.feature.FeatureWriter;
-import org.geotoolkit.storage.feature.query.QueryBuilder;
 import org.geotoolkit.storage.feature.query.QueryUtilities;
 import org.geotoolkit.data.shapefile.FeatureIDReader;
 import org.geotoolkit.data.shapefile.ShapefileFeatureReader;
@@ -266,16 +265,16 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
         }
 
         //handle remaining query parameters ------------------------------------
-        final QueryBuilder qb = new QueryBuilder(queryTypeName);
+        final org.geotoolkit.storage.feature.query.Query qb = new org.geotoolkit.storage.feature.query.Query(queryTypeName);
         if(readProperties.equals(returnedProperties)){
             qb.setProperties(queryPropertyNames);
         }
-        qb.setFilter(queryFilter);
+        qb.setSelection(queryFilter);
         qb.setHints(queryHints);
         qb.setSortBy(gquery.getSortBy());
         qb.setOffset(gquery.getOffset());
         qb.setLimit(gquery.getLimit());
-        return FeatureStreams.subset(reader, qb.buildQuery());
+        return FeatureStreams.subset(reader, qb);
     }
 
     protected FeatureReader createFeatureReader(

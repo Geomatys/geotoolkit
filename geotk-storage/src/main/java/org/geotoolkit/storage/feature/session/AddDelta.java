@@ -33,7 +33,6 @@ import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.geotoolkit.storage.feature.FeatureCollection;
 import org.geotoolkit.storage.feature.FeatureIterator;
 import org.geotoolkit.storage.feature.query.Query;
-import org.geotoolkit.storage.feature.query.QueryBuilder;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.logging.Logging;
@@ -118,10 +117,11 @@ public class AddDelta extends AbstractDelta{
         //remove the filter, it is handle at the end by the session
         //we can not filter here since some modify operation can follow
         //and change the filter result
-        final QueryBuilder qb = new QueryBuilder(query);
-        qb.setFilter(Filter.include());
+        final Query qb = new Query();
+        qb.copy(query);
+        qb.setSelection(Filter.include());
 
-        final FeatureIterator affected = features.subset(qb.buildQuery()).iterator();
+        final FeatureIterator affected = features.subset(qb).iterator();
 
         final SortProperty[] sort = query.getSortBy();
         if(sort != null && sort.length > 0){

@@ -21,8 +21,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.feature.FeatureReader;
-import org.geotoolkit.storage.feature.query.QueryBuilder;
 import org.geotoolkit.data.shapefile.ShapefileFeatureStore;
+import org.geotoolkit.storage.feature.query.Query;
 import org.junit.Assert;
 import org.junit.Test;
 import org.opengis.feature.Feature;
@@ -44,7 +44,7 @@ public class CPGFileTest extends org.geotoolkit.test.TestBase {
         final URL url = CPGFileTest.class.getResource("/org/geotoolkit/test-data/shapes/utf8.shp");
         final ShapefileFeatureStore store = new ShapefileFeatureStore(url.toURI());
 
-        try(final FeatureReader reader = store.getFeatureReader(QueryBuilder.all(store.getName()))){
+        try(final FeatureReader reader = store.getFeatureReader(new Query(store.getName()))){
             Assert.assertTrue(reader.hasNext());
             final Feature feature = reader.next();
             Assert.assertEquals("&éè\"'(-_çà)=@%$*:test",feature.getProperty("text").getValue());

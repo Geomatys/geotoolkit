@@ -26,7 +26,7 @@ import java.util.Properties;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.storage.feature.query.QueryBuilder;
+import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
 import static org.junit.Assert.assertTrue;
@@ -120,13 +120,13 @@ public class PostgresSpatialQueryTest extends org.geotoolkit.test.TestBase {
         store.createFeatureType(ft);
 
         //test env reading all fields
-        Envelope env = store.getEnvelope(QueryBuilder.all(ft.getName()));
+        Envelope env = store.getEnvelope(new Query(ft.getName()));
         assertNull(env);
 
         //test env reading no fields
-        final QueryBuilder qb = new QueryBuilder(ft.getName().toString());
+        final Query qb = new Query(ft.getName().toString());
         qb.setProperties(new String[0]);
-        env = store.getEnvelope(qb.buildQuery());
+        env = store.getEnvelope(qb);
         assertNull(env);
     }
 
@@ -145,13 +145,13 @@ public class PostgresSpatialQueryTest extends org.geotoolkit.test.TestBase {
         final FeatureType ft = store.getFeatureType("noGeomNoIdTable");
 
         //test env reading all fields
-        Envelope env = store.getEnvelope(QueryBuilder.all(ft.getName()));
+        Envelope env = store.getEnvelope(new Query(ft.getName()));
         assertNull(env);
 
         //test env reading no fields
-        final QueryBuilder qb = new QueryBuilder(ft.getName().toString());
+        final Query qb = new Query(ft.getName().toString());
         qb.setProperties(new String[0]);
-        env = store.getEnvelope(qb.buildQuery());
+        env = store.getEnvelope(qb);
         assertNull(env);
     }
 

@@ -34,7 +34,6 @@ import org.geotoolkit.storage.feature.FeatureIterator;
 import org.geotoolkit.storage.feature.FeatureStore;
 import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.geotoolkit.storage.feature.query.Query;
-import org.geotoolkit.storage.feature.query.QueryBuilder;
 import org.geotoolkit.storage.feature.session.Session;
 import org.geotoolkit.test.TestData;
 import static org.junit.Assert.*;
@@ -92,7 +91,7 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
         FeatureStore s1 = createDataStore(fac, TestData.url(AbstractTestCaseSupport.class, "shapes/stream.shp"), true);
         GenericName typeName = s1.getNames().iterator().next();
         FeatureType type = s1.getFeatureType(typeName.toString());
-        FeatureCollection one = s1.createSession(true).getFeatureCollection(QueryBuilder.all(typeName));
+        FeatureCollection one = s1.createSession(true).getFeatureCollection(new Query(typeName));
 
         ShapefileProvider maker = new ShapefileProvider();
 
@@ -123,7 +122,7 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
         session.commit();
 
         s = createDataStore(maker, tmp.toURI().toURL(), true);
-        assertEquals(one.size() * 2, s.getCount(QueryBuilder.all(s.getNames().iterator().next())));
+        assertEquals(one.size() * 2, s.getCount(new Query(s.getNames().iterator().next())));
     }
 
     void test( final String f ) throws Exception {
@@ -133,7 +132,7 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
         FeatureStore s = createDataStore(new ShapefileProvider(), ShapeTestData.url(f), true);
         GenericName typeName = s.getNames().iterator().next();
         FeatureType type = s.getFeatureType(typeName.toString());
-        FeatureCollection one = s.createSession(true).getFeatureCollection(QueryBuilder.all(typeName));
+        FeatureCollection one = s.createSession(true).getFeatureCollection(new Query(typeName));
 
         ShapefileProvider maker = new ShapefileProvider();
         test(type, one, getTempFile(), maker, false);
@@ -155,7 +154,7 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
         s = createDataStore(new ShapefileProvider(), tmp.toURI().toURL(), true);
         GenericName typeName = s.getNames().iterator().next();
 
-        FeatureCollection two = s.createSession(true).getFeatureCollection(QueryBuilder.all(typeName));
+        FeatureCollection two = s.createSession(true).getFeatureCollection(new Query(typeName));
 
         //copy values, order is not tested here.
         Collection<Feature> cone = new ArrayList<>();
@@ -202,14 +201,14 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
 
         ResourceId filter = ff.resourceId("streams.84");
 
-        FeatureIterator iter = ds.getFeatureReader(QueryBuilder.filtered(ds.getName().toString(), filter));
+        FeatureIterator iter = ds.getFeatureReader(Query.filtered(ds.getName().toString(), filter));
         JTSEnvelope2D bounds;
         try {
             bounds = new JTSEnvelope2D(FeatureExt.getEnvelope(iter.next()));
         } finally {
             iter.close();
         }
-        Query query = QueryBuilder.filtered(ds.getNames().iterator().next().toString(), filter);
+        Query query = Query.filtered(ds.getNames().iterator().next().toString(), filter);
         Envelope result = (Envelope) ds.getEnvelope(query);
         assertTrue(result.equals(bounds));
     }

@@ -146,7 +146,7 @@ public class QueryUtilities {
             throw new NullArgumentException("Both query must not be null.");
         }
 
-        final QueryBuilder qb = new QueryBuilder();
+        final Query qb = new Query();
         qb.setTypeName(original.getTypeName());
 
         //use the more restrictive max features field---------------------------
@@ -175,7 +175,7 @@ public class QueryUtilities {
         } else if ( !filter2.equals(Filter.include()) ){
             filter = FF.and(filter, filter2);
         }
-        qb.setFilter(filter);
+        qb.setSelection(filter);
 
         //group start index ----------------------------------------------------
         long start = original.getOffset() + second.getOffset();
@@ -216,7 +216,7 @@ public class QueryUtilities {
         if(second.getVersionDate()!=null) qb.setVersionDate(second.getVersionDate());
         if(second.getVersionLabel()!=null) qb.setVersionLabel(second.getVersionLabel());
 
-        return qb.buildQuery();
+        return qb;
     }
 
     /**
@@ -306,9 +306,9 @@ public class QueryUtilities {
             firstQuery.getTypeName() :
             secondQuery.getTypeName();
 
-        final QueryBuilder builder = new QueryBuilder();
+        final Query builder = new Query();
         builder.setTypeName(typeName);
-        builder.setFilter(filter);
+        builder.setSelection(filter);
         builder.setLimit(maxFeatures);
         builder.setProperties(propNames);
         builder.setOffset(start);
@@ -319,7 +319,7 @@ public class QueryUtilities {
         if(secondQuery.getVersionDate()!=null) builder.setVersionDate(secondQuery.getVersionDate());
         if(secondQuery.getVersionLabel()!=null) builder.setVersionLabel(secondQuery.getVersionLabel());
 
-        return builder.buildQuery();
+        return builder;
     }
 
     /**

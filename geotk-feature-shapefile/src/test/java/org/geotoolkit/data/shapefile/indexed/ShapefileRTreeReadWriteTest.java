@@ -31,7 +31,7 @@ import org.locationtech.jts.geom.Geometry;
 import java.util.ArrayList;
 import java.util.Collection;
 import org.geotoolkit.storage.feature.FeatureStoreUtilities;
-import org.geotoolkit.storage.feature.query.QueryBuilder;
+import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.storage.feature.session.Session;
 import org.geotoolkit.test.TestData;
 import org.opengis.util.GenericName;
@@ -87,7 +87,7 @@ public class ShapefileRTreeReadWriteTest extends AbstractTestCaseSupport {
                 .url(ShapeTestData.class, "shapes/stream.shp").toURI());
         GenericName typeName = s1.getName();
         FeatureType type = s1.getFeatureType();
-        FeatureCollection one = s1.createSession(true).getFeatureCollection(QueryBuilder.all(typeName));
+        FeatureCollection one = s1.createSession(true).getFeatureCollection(new Query(typeName));
 
 
         doubleWrite(type, one, getTempFile(), false);
@@ -109,7 +109,7 @@ public class ShapefileRTreeReadWriteTest extends AbstractTestCaseSupport {
         session.commit();
 
         s = new IndexedShapefileFeatureStore(tmp.toURI());
-        assertEquals(one.size() * 2, s.getCount(QueryBuilder.all(s.getName())));
+        assertEquals(one.size() * 2, s.getCount(new Query(s.getName())));
 
         s.close();
     }
@@ -118,7 +118,7 @@ public class ShapefileRTreeReadWriteTest extends AbstractTestCaseSupport {
         File file = copyShapefiles(f); // Work on File rather than URL from JAR.
         IndexedShapefileFeatureStore s = new IndexedShapefileFeatureStore(file.toURI());
         FeatureType type = s.getFeatureType();
-        FeatureCollection one = s.createSession(true).getFeatureCollection(QueryBuilder.all(type.getName()));
+        FeatureCollection one = s.createSession(true).getFeatureCollection(new Query(type.getName()));
 
         test(type, one, getTempFile(), false);
         test(type, one, getTempFile(), true);
@@ -144,7 +144,7 @@ public class ShapefileRTreeReadWriteTest extends AbstractTestCaseSupport {
         s = new IndexedShapefileFeatureStore(tmp.toURI());
         typeName = s.getName();
 
-        FeatureCollection two = s.createSession(true).getFeatureCollection(QueryBuilder.all(typeName));
+        FeatureCollection two = s.createSession(true).getFeatureCollection(new Query(typeName));
 
         //copy values, order is not tested here.
         Collection<Feature> cone = new ArrayList<>();

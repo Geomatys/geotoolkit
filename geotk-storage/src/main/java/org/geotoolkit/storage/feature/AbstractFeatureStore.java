@@ -49,7 +49,6 @@ import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.storage.memory.GenericFeatureWriter;
-import org.geotoolkit.storage.feature.query.QueryBuilder;
 import org.geotoolkit.storage.feature.session.DefaultSession;
 import org.geotoolkit.storage.feature.session.Session;
 import org.geotoolkit.factory.Hints;
@@ -252,7 +251,7 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
 
         FeatureWriter writer = null;
         try{
-            writer = getFeatureWriter(QueryBuilder.filtered(typeName, Filter.exclude()));
+            writer = getFeatureWriter(org.geotoolkit.storage.feature.query.Query.filtered(typeName, Filter.exclude()));
             return true;
         }catch(Exception ex){
             //catch anything, log it
@@ -318,9 +317,10 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
                 return null;
             }
 
-            final QueryBuilder qb = new QueryBuilder(gquery);
+            final org.geotoolkit.storage.feature.query.Query qb = new org.geotoolkit.storage.feature.query.Query();
+            qb.copy(gquery);
             qb.setProperties(names.toArray(new String[names.size()]));
-            gquery = qb.buildQuery();
+            gquery = qb;
         }
 
 
@@ -523,7 +523,7 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
     protected List<ResourceId> handleAddWithFeatureWriter(final String groupName, final Collection<? extends Feature> newFeatures,
             final Hints hints) throws DataStoreException{
 
-        try(FeatureWriter featureWriter = getFeatureWriter(QueryBuilder.filtered(groupName, Filter.exclude()))) {
+        try(FeatureWriter featureWriter = getFeatureWriter(org.geotoolkit.storage.feature.query.Query.filtered(groupName, Filter.exclude()))) {
             while (featureWriter.hasNext()) {
                 featureWriter.next();
             }
@@ -540,7 +540,7 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
     protected void handleUpdateWithFeatureWriter(final String groupName, final Filter filter,
             final Map<String, ?> values) throws DataStoreException {
 
-        try(FeatureWriter writer = getFeatureWriter(QueryBuilder.filtered(groupName, filter))) {
+        try(FeatureWriter writer = getFeatureWriter(org.geotoolkit.storage.feature.query.Query.filtered(groupName, filter))) {
             while(writer.hasNext()){
                 final Feature f = writer.next();
                 for(final Entry<String,?> entry : values.entrySet()){
@@ -558,7 +558,7 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
      * FeatureWriter.
      */
     protected void handleRemoveWithFeatureWriter(final String groupName, final Filter filter) throws DataStoreException {
-        try(FeatureWriter writer = getFeatureWriter(QueryBuilder.filtered(groupName, filter))) {
+        try(FeatureWriter writer = getFeatureWriter(org.geotoolkit.storage.feature.query.Query.filtered(groupName, filter))) {
             while(writer.hasNext()){
                 writer.next();
                 writer.remove();

@@ -64,14 +64,14 @@ public class QueryTest {
 
         //test null values------------------------------------------------------
         try{
-            QueryBuilder.all((GenericName)null);
+            new Query((GenericName) null);
             throw new Exception("We can not build a query without at least the type name.");
         }catch(NullPointerException ex){
             //ok
         }
 
         try{
-            QueryBuilder.filtered(null, Filter.exclude());
+            Query.filtered(null, Filter.exclude());
             throw new Exception("We can not build a query without at least the type name.");
         }catch(NullPointerException ex){
             //ok
@@ -79,7 +79,7 @@ public class QueryTest {
 
 
         //all-------------------------------------------------------------------
-        query = QueryBuilder.all(name);
+        query = new Query(name);
         assertEquals(query.getTypeName(), name.toString());
         assertEquals(query.getResolution(), null);
         assertEquals(query.getSelection(), Filter.include());
@@ -89,7 +89,7 @@ public class QueryTest {
         assertEquals(query.getOffset(), 0);
 
         //only filter-----------------------------------------------------------
-        query = QueryBuilder.filtered(name.toString(), Filter.exclude());
+        query = Query.filtered(name.toString(), Filter.exclude());
         assertEquals(query.getTypeName(), name.toString());
         assertEquals(query.getResolution(), null);
         assertEquals(query.getSelection(), Filter.exclude());
@@ -109,24 +109,17 @@ public class QueryTest {
         Query query = null;
         Query query2 = null;
 
-        //test no parameters----------------------------------------------------
-        QueryBuilder qb = new QueryBuilder();
-        try{
-            query = qb.buildQuery();
-            throw new Exception("We can not build a query without at least the type name.");
-        }catch(NullPointerException ex){
-            //ok
-        }
+        Query qb = new Query();
 
         //test all parameters---------------------------------------------------
         qb.setTypeName(name);
         qb.setResolution(new double[]{45,31});
-        qb.setFilter(Filter.exclude());
+        qb.setSelection(Filter.exclude());
         qb.setLimit(10);
         qb.setProperties(new String[]{"att1","att2"});
         qb.setSortBy(new SortProperty[]{FF.sort(FF.property("att1"), SortOrder.DESCENDING)});
         qb.setOffset(5);
-        query = qb.buildQuery();
+        query = qb;
 
         assertEquals(query.getTypeName(), name.toString());
         assertEquals(query.getResolution()[0], 45d,DELTA);
@@ -139,60 +132,6 @@ public class QueryTest {
         assertEquals(query.getOffset(), 5);
 
         query2 = query;
-
-        //test reset------------------------------------------------------------
-        qb.reset();
-        qb.setTypeName(name);
-        query = qb.buildQuery();
-
-        assertEquals(query.getTypeName(), name.toString());
-        assertEquals(query.getResolution(), null);
-        assertEquals(query.getSelection(), Filter.include());
-        assertEquals(query.getLimit(), -1);
-        assertArrayEquals(query.getPropertyNames(), null);
-        assertArrayEquals(query.getSortBy(), new SortProperty[0]);
-        assertEquals(query.getOffset(), 0);
-
-        //test copy-------------------------------------------------------------
-        qb.copy(query2);
-        query = qb.buildQuery();
-
-        assertEquals(query.getTypeName(), name.toString());
-        assertEquals(query.getResolution()[0], 45d, DELTA);
-        assertEquals(query.getResolution()[1], 31d, DELTA);
-        assertEquals(query.getSelection(), Filter.exclude());
-        assertEquals(query.getLimit(), 10l);
-        assertEquals(query.getPropertyNames()[0], "att1");
-        assertEquals(query.getPropertyNames()[1], "att2");
-        assertEquals(query.getSortBy()[0], FF.sort(FF.property("att1"), SortOrder.DESCENDING));
-        assertEquals(query.getOffset(), 5);
-
-        //test constructor with query-------------------------------------------
-        qb = new QueryBuilder(query2);
-        query = qb.buildQuery();
-
-        assertEquals(query.getTypeName(), name.toString());
-        assertEquals(query.getResolution()[0], 45d, DELTA);
-        assertEquals(query.getResolution()[1], 31d, DELTA);
-        assertEquals(query.getSelection(), Filter.exclude());
-        assertEquals(query.getLimit(), 10l);
-        assertEquals(query.getPropertyNames()[0], "att1");
-        assertEquals(query.getPropertyNames()[1], "att2");
-        assertEquals(query.getSortBy()[0], FF.sort(FF.property("att1"), SortOrder.DESCENDING));
-        assertEquals(query.getOffset(), 5);
-
-        //test constructor with name--------------------------------------------
-        qb = new QueryBuilder(name.toString());
-        query = qb.buildQuery();
-
-        assertEquals(query.getTypeName(), name.toString());
-        assertEquals(query.getResolution(), null);
-        assertEquals(query.getSelection(), Filter.include());
-        assertEquals(query.getLimit(), -1);
-        assertArrayEquals(query.getPropertyNames(), null);
-        assertArrayEquals(query.getSortBy(), new SortProperty[0]);
-        assertEquals(query.getOffset(), 0);
-
     }
 
     @Test
@@ -213,7 +152,7 @@ public class QueryTest {
 
         FeatureSet fs = new InMemoryFeatureSet(type, Collections.singleton(feature));
 
-        final FeatureQuery query = QueryBuilder.reproject(type, outCrs);
+        final FeatureQuery query = Query.reproject(type, outCrs);
         final FeatureSet rfs = fs.subset(query);
         final Feature rfeature = rfs.features(false).findFirst().get();
 

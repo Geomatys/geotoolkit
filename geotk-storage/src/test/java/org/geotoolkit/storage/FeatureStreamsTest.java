@@ -34,7 +34,6 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.feature.CheckCloseFeatureIterator;
 import org.geotoolkit.storage.feature.query.Query;
-import org.geotoolkit.storage.feature.query.QueryBuilder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.ReprojectMapper;
 import org.geotoolkit.feature.TransformMapper;
@@ -396,9 +395,7 @@ public class FeatureStreamsTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void testReprojectFeatureIterator() throws DataStoreException, FactoryException{
-        QueryBuilder qb = new QueryBuilder();
-        qb.setTypeName(collection.getType().getName());
-        Query query = qb.buildQuery();
+        Query query = new Query(collection.getType().getName());
         FeatureReader reader = collection.getSession().getFeatureStore().getFeatureReader(query);
 
         final CoordinateReferenceSystem targetCRS = CommonCRS.WGS84.geographic();
@@ -472,9 +469,7 @@ public class FeatureStreamsTest extends org.geotoolkit.test.TestBase {
         collection.add(sf);
 
         //get the reader -------------------------------------------------------
-        QueryBuilder qb = new QueryBuilder();
-        qb.setTypeName(originalType.getName());
-        Query query = qb.buildQuery();
+        Query query = new Query(originalType.getName());
         FeatureReader reader = collection.getSession().getFeatureStore().getFeatureReader(query);
 
         //create the decimate reader -------------------------------------------
@@ -544,9 +539,7 @@ public class FeatureStreamsTest extends org.geotoolkit.test.TestBase {
 
         final FeatureCollection collection = buildSimpleFeatureCollection();
         final ViewMapper reducedType = new ViewMapper(collection.getType(), AttributeConvention.IDENTIFIER,"att_double");
-        final QueryBuilder qb = new QueryBuilder();
-        qb.setTypeName(collection.getType().getName());
-        final Query query = qb.buildQuery();
+        final Query query = new Query(collection.getType().getName());
         FeatureReader reader = collection.getSession().getFeatureStore().getFeatureReader(query);
 
         FeatureReader retyped = FeatureStreams.decorate(reader, reducedType, null);

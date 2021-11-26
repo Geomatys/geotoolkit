@@ -43,7 +43,6 @@ import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.geotoolkit.storage.feature.FeatureStreams;
 import org.geotoolkit.storage.feature.FeatureWriter;
 import org.geotoolkit.storage.feature.query.DefaultQueryCapabilities;
-import org.geotoolkit.storage.feature.query.QueryBuilder;
 import org.geotoolkit.storage.feature.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureExt;
@@ -500,10 +499,10 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
             affected = identifiers(filter);
         }else{
             affected = new ArrayList<>();
-            final QueryBuilder qb = new QueryBuilder(groupName);
-            qb.setFilter(filter);
+            final org.geotoolkit.storage.feature.query.Query qb = new org.geotoolkit.storage.feature.query.Query(groupName);
+            qb.setSelection(filter);
             qb.setProperties(new String[]{AttributeConvention.IDENTIFIER}); //no properties, only ids
-            final FeatureReader reader = getFeatureReader(qb.buildQuery());
+            final FeatureReader reader = getFeatureReader(qb);
             try{
                 while(reader.hasNext()){
                     affected.add(FeatureExt.getId(reader.next()));
@@ -531,14 +530,15 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
 
         //we can handle id filter
         final Filter filter = gquery.getSelection();
-        final QueryBuilder remaining = new QueryBuilder(gquery);
+        final org.geotoolkit.storage.feature.query.Query remaining = new org.geotoolkit.storage.feature.query.Query();
+        remaining.copy(gquery);
 
         final Iterator<? extends Feature> ite;
         if(grp instanceof GroupWithId){
             if(filter instanceof ResourceId){
                 ite = ((GroupWithId)grp).createIterator((ResourceId)filter);
                 if(ite != null){
-                    remaining.setFilter(Filter.include());
+                    remaining.setSelection(Filter.include());
                 }
             }else{
                 ite = ((GroupWithId)grp).createIterator(null);
@@ -553,7 +553,7 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
 
         //fall back on generic parameter handling.
         //todo we should handle at least spatial filter here by using a quadtree.
-        return FeatureStreams.subset(reader, remaining.buildQuery());
+        return FeatureStreams.subset(reader, remaining);
     }
 
     /**

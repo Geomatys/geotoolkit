@@ -45,7 +45,7 @@ import org.geotoolkit.storage.feature.FeatureIterator;
 import org.geotoolkit.storage.feature.FeatureStore;
 import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.geotoolkit.storage.feature.FeatureWriter;
-import org.geotoolkit.storage.feature.query.QueryBuilder;
+import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.storage.memory.GenericMappingFeatureIterator;
 import org.geotoolkit.storage.memory.mapping.FeatureMapper;
 import org.geotoolkit.style.MutableStyle;
@@ -75,7 +75,7 @@ public class ReportDemo {
         final FeatureStore store = (FeatureStore) DataStores.open(
                 (Map)Collections.singletonMap("path",ReportDemo.class.getResource("/data/world/Countries.shp").toURI()));
         final GenericName name = store.getNames().iterator().next();
-        final FeatureCollection countries =  store.createSession(true).getFeatureCollection(QueryBuilder.all(name));
+        final FeatureCollection countries =  store.createSession(true).getFeatureCollection(new Query(name));
 
 
         //Iterator over all the countries --------------------------------------------
@@ -174,7 +174,7 @@ public class ReportDemo {
                 final FeatureType subType = ftb.build();
                 final FeatureCollection subcol = FeatureStoreUtilities.collection("sub", subType);
                 try {
-                    FeatureWriter fw = subcol.getSession().getFeatureStore().getFeatureWriter(QueryBuilder.filtered(subType.getName().toString(), Filter.exclude()));
+                    FeatureWriter fw = subcol.getSession().getFeatureStore().getFeatureWriter(Query.filtered(subType.getName().toString(), Filter.exclude()));
                     for(int i=0,n=new Random().nextInt(20);i<n;i++){
                         Feature f =fw.next();
                         f.setPropertyValue("men",new Random().nextInt());

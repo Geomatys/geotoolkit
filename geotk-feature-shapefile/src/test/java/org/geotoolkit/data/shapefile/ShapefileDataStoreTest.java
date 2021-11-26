@@ -28,7 +28,6 @@ import java.nio.charset.UnsupportedCharsetException;
 import java.util.Arrays;
 import java.util.Date;
 import org.geotoolkit.ShapeTestData;
-import org.geotoolkit.storage.feature.query.QueryBuilder;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.storage.feature.FeatureReader;
 import org.geotoolkit.storage.feature.FeatureWriter;
@@ -85,9 +84,10 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         URL url = ShapeTestData.url(resource);
         ShapefileFeatureStore s = new ShapefileFeatureStore(url.toURI(), true, null);
 
-        final QueryBuilder builder = new QueryBuilder(query);
+        final Query builder = new Query();
+        builder.copy(query);
         builder.setTypeName(s.getName());
-        query = builder.buildQuery();
+        query = builder;
 
         return s.createSession(true).getFeatureCollection(query);
     }
@@ -98,7 +98,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         ShapefileFeatureStore s = new ShapefileFeatureStore(url.toURI(), false, charset);
 
         if(q == null){
-            return s.createSession(true).getFeatureCollection(QueryBuilder.all(s.getName()));
+            return s.createSession(true).getFeatureCollection(new Query(s.getName()));
         }else{
             return s.createSession(true).getFeatureCollection(q);
         }
@@ -106,17 +106,17 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
 
     protected FeatureCollection loadFeatures(final ShapefileFeatureStore s)
             throws Exception {
-        return s.createSession(true).getFeatureCollection(QueryBuilder.all(s.getName()));
+        return s.createSession(true).getFeatureCollection(new Query(s.getName()));
     }
 
     @Test
     public void testLoad() throws Exception {
-        loadFeatures(STATE_POP, QueryBuilder.all(NamesExt.create("statepop")));
+        loadFeatures(STATE_POP, new Query(NamesExt.create("statepop")));
     }
 
     @Test
     public void testLoadDanishChars() throws Exception {
-        FeatureCollection fc = loadFeatures(DANISH, QueryBuilder.all(NamesExt.create("danish_point")));
+        FeatureCollection fc = loadFeatures(DANISH, new Query(NamesExt.create("danish_point")));
         Feature first = firstFeature(fc);
 
         // Charlotte (but with the o is stroked)
@@ -166,17 +166,17 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
      */
     @Test
     public void testEnvelope() throws Exception {
-        FeatureCollection features = loadFeatures(STATE_POP, QueryBuilder.all(NamesExt.create("statepop")));
+        FeatureCollection features = loadFeatures(STATE_POP, new Query(NamesExt.create("statepop")));
         ShapefileFeatureStore s = new ShapefileFeatureStore(ShapeTestData.url(STATE_POP).toURI());
         String typeName = s.getName().toString();
-        FeatureCollection all = s.createSession(true).getFeatureCollection(QueryBuilder.all(s.getName()));
+        FeatureCollection all = s.createSession(true).getFeatureCollection(new Query(s.getName()));
 
         assertEquals(features.getEnvelope(), all.getEnvelope());
     }
 
     @Test
     public void testLoadAndVerify() throws Exception {
-        FeatureCollection features = loadFeatures(STATE_POP, QueryBuilder.all(NamesExt.create("statepop")));
+        FeatureCollection features = loadFeatures(STATE_POP, new Query(NamesExt.create("statepop")));
         // FeatureCollection<SimpleFeatureType, SimpleFeature> features = loadFeaturesM2();
         int count = features.size();
 
@@ -287,7 +287,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
 
         FeatureWriter writer = null;
         try {
-            writer = sds.getFeatureWriter(QueryBuilder.all(sds.getNames().iterator().next()));
+            writer = sds.getFeatureWriter(new Query(sds.getNames().iterator().next()));
             while (writer.hasNext()) {
                 Feature feat = writer.next();
                 Byte b = (Byte) feat.getPropertyValue("b");
@@ -326,7 +326,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
             FeatureWriter writer = null;
 
             try {
-                writer = sds.getFeatureWriter(QueryBuilder.all(sds.getNames().iterator().next()));
+                writer = sds.getFeatureWriter(new Query(sds.getNames().iterator().next()));
                 writer.next();
                 writer.remove();
             } finally {
@@ -353,7 +353,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
             FeatureWriter writer = null;
 
             try {
-                writer = sds.getFeatureWriter(QueryBuilder.all(sds.getName()));
+                writer = sds.getFeatureWriter(new Query(sds.getName()));
 //                System.out.println("classe : " + writer.getClass());
                 writer.next();
                 writer.remove();
@@ -380,7 +380,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
             while (idx > 0) {
                 FeatureWriter writer = null;
                 try {
-                    writer = sds.getFeatureWriter(QueryBuilder.all(sds.getName()));
+                    writer = sds.getFeatureWriter(new Query(sds.getName()));
                     while (writer.hasNext()) {
                         writer.next();
                     }
@@ -406,7 +406,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         ShapefileFeatureStore shapefileFeatureStore = new ShapefileFeatureStore(tempFile.toURI());
         shapefileFeatureStore.createFeatureType(featureType);
 
-        FeatureWriter featureWriter = shapefileFeatureStore.getFeatureWriter(QueryBuilder.all(shapefileFeatureStore.getName()));
+        FeatureWriter featureWriter = shapefileFeatureStore.getFeatureWriter(new Query(shapefileFeatureStore.getName()));
 
         // don't add any features to the data store....
 
@@ -456,7 +456,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         writeFeatures(s, features);
 
         try ( // read them back
-                FeatureReader reader = s.getFeatureReader(QueryBuilder.all(type.getName()))) {
+                FeatureReader reader = s.getFeatureReader(new Query(type.getName()))) {
             Feature f = reader.next();
 
             assertEquals("big decimal", bigDecimal.doubleValue(), ((Number) f
@@ -493,12 +493,12 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         ShapefileFeatureStore store = (ShapefileFeatureStore) new ShapefileProvider()
                 .createDataStore(TestData.url(AbstractTestCaseSupport.class, STREAM).toURI());
         int count = 0;
-        try (FeatureReader reader = store.getFeatureReader(QueryBuilder.all(store.getNames().iterator().next()))) {
+        try (FeatureReader reader = store.getFeatureReader(new Query(store.getNames().iterator().next()))) {
             while (reader.hasNext()) {
                 count++;
                 reader.next();
             }
-            assertEquals(count, store.getCount(QueryBuilder.all(store.getNames().iterator().next())));
+            assertEquals(count, store.getCount(new Query(store.getNames().iterator().next())));
         }
     }
 
@@ -512,11 +512,11 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         ShapefileFeatureStore s = new ShapefileFeatureStore(url.toURI());
 
         // attributes other than geometry can be ignored here
-        final QueryBuilder builder = new QueryBuilder();
+        Query builder = new Query();
         builder.setTypeName(s.getNames().iterator().next());
-        builder.setFilter(Filter.include());
+        builder.setSelection(Filter.include());
         builder.setProperties(new String[]{"the_geom"});
-        Query query = builder.buildQuery();
+        Query query = builder;
 
          FeatureReader reader = s.getFeatureReader(query);
         assertEquals(1, reader.getFeatureType().getProperties(true).size());
@@ -534,11 +534,11 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
                 .getEnvelopeInternal(), null);
         Filter gf = ff.bbox(ff.property("the_geom"), bounds);
 
-        builder.reset();
+        builder = new Query();
         builder.setTypeName(s.getNames().iterator().next());
-        builder.setFilter(gf);
+        builder.setSelection(gf);
         builder.setProperties(new String[]{"the_geom"});
-        query = builder.buildQuery();
+        query = builder;
 
         reader.close();
         reader = s.getFeatureReader(query);
@@ -551,11 +551,11 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         // file please
         Filter cf = ff.equal(ff.property("STATE_NAME"), ff.literal("Illinois"));
 
-        builder.reset();
+        builder = new Query();
         builder.setTypeName(s.getNames().iterator().next());
-        builder.setFilter(cf);
+        builder.setSelection(cf);
         builder.setProperties(new String[]{"the_geom"});
-        query = builder.buildQuery();
+        query = builder;
 
         reader = s.getFeatureReader(query);
         assertEquals(1, reader.getFeatureType().getProperties(true).size());
@@ -669,7 +669,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         final FeatureType sft = fc.iterator().next().getType();
 
         s.createFeatureType(sft);
-        try (FeatureWriter fw = s.getFeatureWriter(QueryBuilder.all(sft.getName()))) {
+        try (FeatureWriter fw = s.getFeatureWriter(new Query(sft.getName()))) {
             Iterator<Feature> it = fc.iterator();
             while (it.hasNext()) {
                 Feature feature = it.next();
