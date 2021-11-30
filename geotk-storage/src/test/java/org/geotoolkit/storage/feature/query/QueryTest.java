@@ -64,37 +64,23 @@ public class QueryTest {
 
         //test null values------------------------------------------------------
         try{
-            QueryBuilder.all((GenericName)null);
+            new Query((GenericName) null);
             throw new Exception("We can not build a query without at least the type name.");
         }catch(NullPointerException ex){
             //ok
         }
 
         try{
-            QueryBuilder.fids(null);
+            Query.filtered(null, Filter.exclude());
             throw new Exception("We can not build a query without at least the type name.");
         }catch(NullPointerException ex){
             //ok
         }
 
-        try{
-            QueryBuilder.filtered(null, Filter.exclude());
-            throw new Exception("We can not build a query without at least the type name.");
-        }catch(NullPointerException ex){
-            //ok
-        }
-
-        try{
-            QueryBuilder.sorted(null, new SortProperty[]{FF.sort(FF.property("att1"), SortOrder.DESCENDING)});
-            throw new Exception("We can not build a query without at least the type name.");
-        }catch(NullPointerException ex){
-            //ok
-        }
 
         //all-------------------------------------------------------------------
-        query = QueryBuilder.all(name);
+        query = new Query(name);
         assertEquals(query.getTypeName(), name.toString());
-        assertEquals(query.getCoordinateSystemReproject(), null);
         assertEquals(query.getResolution(), null);
         assertEquals(query.getSelection(), Filter.include());
         assertFalse(query.getLimit().isPresent());
@@ -102,40 +88,14 @@ public class QueryTest {
         assertArrayEquals(QueryUtilities.getSortProperties(query.getSortBy()), new SortProperty[0]);
         assertEquals(query.getOffset(), 0);
 
-        //only ids--------------------------------------------------------------
-        query = QueryBuilder.fids(name.toString());
-        assertEquals(query.getTypeName(), name.toString());
-        assertEquals(query.getCoordinateSystemReproject(), null);
-        assertEquals(query.getResolution(), null);
-        assertEquals(query.getSelection(), Filter.include());
-        assertFalse(query.getLimit().isPresent());
-        assertNotNull(query.getPropertyNames()); //must be an empty array, not null
-        assertTrue(query.getPropertyNames().length == 1); //must have only one value
-        assertArrayEquals(QueryUtilities.getSortProperties(query.getSortBy()), new SortProperty[0]);
-        assertEquals(query.getOffset(), 0);
-
         //only filter-----------------------------------------------------------
-        query = QueryBuilder.filtered(name.toString(), Filter.exclude());
+        query = Query.filtered(name.toString(), Filter.exclude());
         assertEquals(query.getTypeName(), name.toString());
-        assertEquals(query.getCoordinateSystemReproject(), null);
         assertEquals(query.getResolution(), null);
         assertEquals(query.getSelection(), Filter.exclude());
         assertFalse(query.getLimit().isPresent());
         assertArrayEquals(query.getPropertyNames(), null);
         assertArrayEquals(QueryUtilities.getSortProperties(query.getSortBy()), new SortProperty[0]);
-        assertEquals(query.getOffset(), 0);
-
-        //only sort by----------------------------------------------------------
-        query = QueryBuilder.sorted(name.toString(), new SortProperty[]{FF.sort(FF.property("att1"), SortOrder.DESCENDING)});
-        assertEquals(query.getTypeName(), name.toString());
-        assertEquals(query.getCoordinateSystemReproject(), null);
-        assertEquals(query.getResolution(), null);
-        assertEquals(query.getSelection(), Filter.include());
-        assertFalse(query.getLimit().isPresent());
-        assertArrayEquals(query.getPropertyNames(), null);
-        assertNotNull(query.getSortBy());
-        assertTrue(QueryUtilities.getSortProperties(query.getSortBy()).length == 1);
-        assertEquals(QueryUtilities.getSortProperties(query.getSortBy())[0], FF.sort(FF.property("att1"), SortOrder.DESCENDING));
         assertEquals(query.getOffset(), 0);
 
     }
@@ -149,28 +109,19 @@ public class QueryTest {
         Query query = null;
         Query query2 = null;
 
-        //test no parameters----------------------------------------------------
-        QueryBuilder qb = new QueryBuilder();
-        try{
-            query = qb.buildQuery();
-            throw new Exception("We can not build a query without at least the type name.");
-        }catch(NullPointerException ex){
-            //ok
-        }
+        Query qb = new Query();
 
         //test all parameters---------------------------------------------------
         qb.setTypeName(name);
-        qb.setCRS(CommonCRS.WGS84.normalizedGeographic());
         qb.setResolution(new double[]{45,31});
-        qb.setFilter(Filter.exclude());
+        qb.setSelection(Filter.exclude());
         qb.setLimit(10);
         qb.setProperties(new String[]{"att1","att2"});
         qb.setSortBy(new SortProperty[]{FF.sort(FF.property("att1"), SortOrder.DESCENDING)});
         qb.setOffset(5);
-        query = qb.buildQuery();
+        query = qb;
 
         assertEquals(query.getTypeName(), name.toString());
-        assertEquals(query.getCoordinateSystemReproject(), CommonCRS.WGS84.normalizedGeographic());
         assertEquals(query.getResolution()[0], 45d,DELTA);
         assertEquals(query.getResolution()[1], 31d,DELTA);
         assertEquals(query.getSelection(), Filter.exclude());
@@ -181,63 +132,6 @@ public class QueryTest {
         assertEquals(query.getOffset(), 5);
 
         query2 = query;
-
-        //test reset------------------------------------------------------------
-        qb.reset();
-        qb.setTypeName(name);
-        query = qb.buildQuery();
-
-        assertEquals(query.getTypeName(), name.toString());
-        assertEquals(query.getCoordinateSystemReproject(), null);
-        assertEquals(query.getResolution(), null);
-        assertEquals(query.getSelection(), Filter.include());
-        assertFalse(query.getLimit().isPresent());
-        assertArrayEquals(query.getPropertyNames(), null);
-        assertArrayEquals(QueryUtilities.getSortProperties(query.getSortBy()), new SortProperty[0]);
-        assertEquals(query.getOffset(), 0);
-
-        //test copy-------------------------------------------------------------
-        qb.copy(query2);
-        query = qb.buildQuery();
-
-        assertEquals(query.getTypeName(), name.toString());
-        assertEquals(query.getCoordinateSystemReproject(), CommonCRS.WGS84.normalizedGeographic());
-        assertEquals(query.getResolution()[0], 45d, DELTA);
-        assertEquals(query.getResolution()[1], 31d, DELTA);
-        assertEquals(query.getSelection(), Filter.exclude());
-        assertEquals(query.getLimit().getAsLong(), 10l);
-        assertEquals(query.getPropertyNames()[0], "att1");
-        assertEquals(query.getPropertyNames()[1], "att2");
-        assertEquals(QueryUtilities.getSortProperties(query.getSortBy())[0], FF.sort(FF.property("att1"), SortOrder.DESCENDING));
-        assertEquals(query.getOffset(), 5);
-
-        //test constructor with query-------------------------------------------
-        qb = new QueryBuilder(query2);
-        query = qb.buildQuery();
-
-        assertEquals(query.getTypeName(), name.toString());
-        assertEquals(query.getCoordinateSystemReproject(), CommonCRS.WGS84.normalizedGeographic());
-        assertEquals(query.getResolution()[0], 45d, DELTA);
-        assertEquals(query.getResolution()[1], 31d, DELTA);
-        assertEquals(query.getSelection(), Filter.exclude());
-        assertEquals(query.getLimit().getAsLong(), 10l);
-        assertEquals(query.getPropertyNames()[0], "att1");
-        assertEquals(query.getPropertyNames()[1], "att2");
-        assertEquals(QueryUtilities.getSortProperties(query.getSortBy())[0], FF.sort(FF.property("att1"), SortOrder.DESCENDING));
-        assertEquals(query.getOffset(), 5);
-
-        //test constructor with name--------------------------------------------
-        qb = new QueryBuilder(name.toString());
-        query = qb.buildQuery();
-
-        assertEquals(query.getTypeName(), name.toString());
-        assertEquals(query.getCoordinateSystemReproject(), null);
-        assertEquals(query.getResolution(), null);
-        assertEquals(query.getSelection(), Filter.include());
-        assertFalse(query.getLimit().isPresent());
-        assertArrayEquals(query.getPropertyNames(), null);
-        assertArrayEquals(QueryUtilities.getSortProperties(query.getSortBy()), new SortProperty[0]);
-        assertEquals(query.getOffset(), 0);
     }
 
     @Test
@@ -258,7 +152,7 @@ public class QueryTest {
 
         FeatureSet fs = new InMemoryFeatureSet(type, Collections.singleton(feature));
 
-        final FeatureQuery query = QueryBuilder.reproject(type, outCrs);
+        final FeatureQuery query = Query.reproject(type, outCrs);
         final FeatureSet rfs = fs.subset(query);
         final Feature rfeature = rfs.features(false).findFirst().get();
 

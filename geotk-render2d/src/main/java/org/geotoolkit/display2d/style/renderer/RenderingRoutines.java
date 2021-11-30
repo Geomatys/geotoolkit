@@ -58,7 +58,6 @@ import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.geometry.BoundingBox;
 import org.geotoolkit.storage.feature.FeatureIterator;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
-import org.geotoolkit.storage.feature.query.QueryBuilder;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
@@ -328,9 +327,9 @@ public final class RenderingRoutines {
         filter = FilterUtilities.prepare(filter, Feature.class, expected);
 
         final Hints queryHints = new Hints();
-        final QueryBuilder qb = new QueryBuilder();
+        final org.geotoolkit.storage.feature.query.Query qb = new org.geotoolkit.storage.feature.query.Query();
         qb.setTypeName(schema.getName());
-        qb.setFilter(filter);
+        qb.setSelection(filter);
         qb.setProperties(atts);
 
         //resampling and ignore flag only works when we know the layer crs
@@ -382,7 +381,7 @@ public final class RenderingRoutines {
 
         //set the acumulated hints
         qb.setHints(queryHints);
-        return qb.buildQuery();
+        return qb;
     }
 
     /**
@@ -439,9 +438,9 @@ public final class RenderingRoutines {
         filter = FilterUtilities.prepare(filter,Feature.class,schema);
 
         final Hints queryHints = new Hints();
-        final QueryBuilder qb = new QueryBuilder();
+        final org.geotoolkit.storage.feature.query.Query qb = new org.geotoolkit.storage.feature.query.Query();
         qb.setTypeName(schema.getName());
-        qb.setFilter(filter);
+        qb.setSelection(filter);
 
         //resampling and ignore flag only works when we know the layer crs
         if(layerCRS != null){
@@ -480,7 +479,7 @@ public final class RenderingRoutines {
         //TODO wait for a new geometry implementation
         //qb.setCRS(renderingContext.getObjectiveCRS2D());
 
-        return qb.buildQuery();
+        return qb;
     }
 
     public static BoundingBox optimizeBBox(RenderingContext2D renderingContext, FeatureSet featureSet, double symbolsMargin) throws PortrayalException{

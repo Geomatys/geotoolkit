@@ -30,7 +30,6 @@ import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.processing.vector.VectorDescriptor;
 import org.geotoolkit.processing.vector.VectorProcessUtils;
 import org.geotoolkit.storage.feature.query.Query;
-import org.geotoolkit.storage.feature.query.QueryBuilder;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.Feature;
 import org.opengis.feature.PropertyType;
@@ -115,6 +114,6 @@ public class NearestProcess extends AbstractProcess {
             }
         }
         final Filter filter = FF.or(listID);
-        return QueryBuilder.filtered("nearest", filter);
+        return Query.filtered("nearest", filter);
     }
 }

@@ -1431,16 +1431,28 @@ public final class GO2Utilities {
                     + "GrayScale interpretation of the first coverage image band.");
 
             final ImageStatistics.Band band0 = bands[0];
-            final double bmin        = band0.getMin();
-            final double bmax        = band0.getMax();
-            final Double mean = band0.getMean();
-            final Double std  = band0.getStd();
+            final Double bmin        = band0.getMin();
+            final Double bmax        = band0.getMax();
+            if (bmin == null || bmax == null || !Double.isFinite(bmin) || !Double.isFinite(bmax)) {
+                LOGGER.log(Level.WARNING, "Image statistics object is present but contains null or non-finite extremas. Ignore it");
+                return Optional.empty();
+            }
             double palMin = bmin;
             double palMax = bmax;
-            if (mean != null && std != null) {
+
+            final Double mean = band0.getMean();
+            final Double std  = band0.getStd();
+            if (mean != null && std != null && Double.isFinite(mean) && Double.isFinite(std)) {
                 palMin = Math.max(bmin, mean - 2 * std);
                 palMax = Math.min(bmax, mean + 2 * std);
             }
+
+            if (!Double.isFinite(palMin) || !Double.isFinite(palMax)) {
+                LOGGER.finest("Adapting rendering distribution failed. Fallback on input min/max");
+                palMin = bmin;
+                palMax = bmax;
+            }
+
             assert Double.isFinite(palMin) : "Raster Style fallback : minimum value should be finite. min = "+palMin;
             assert Double.isFinite(palMax) : "Raster Style fallback : maximum value should be finite. max = "+palMax;
             assert palMin >= bmin;

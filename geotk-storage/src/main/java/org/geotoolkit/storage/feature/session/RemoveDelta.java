@@ -24,7 +24,6 @@ import java.util.Set;
 import org.geotoolkit.storage.feature.FeatureStore;
 import org.geotoolkit.storage.feature.FeatureIterator;
 import org.geotoolkit.storage.feature.query.Query;
-import org.geotoolkit.storage.feature.query.QueryBuilder;
 import org.apache.sis.storage.DataStoreException;
 import static org.apache.sis.util.ArgumentChecks.*;
 import static org.geotoolkit.storage.feature.session.AbstractDelta.list;
@@ -80,10 +79,11 @@ public class RemoveDelta extends AbstractDelta{
     public Query modify(final Query query) {
         if(!query.getTypeName().equals(type)) return query;
 
-        final QueryBuilder builder = new QueryBuilder(query);
-        builder.setFilter(FF.and(builder.getFilter(),FF.not(removedIds)));
+        final Query builder = new Query();
+        builder.copy(query);
+        builder.setSelection(FF.and((Filter)builder.getSelection(),FF.not(removedIds)));
 
-        return builder.buildQuery();
+        return builder;
     }
 
     /**

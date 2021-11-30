@@ -23,8 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import org.apache.sis.geometry.GeneralEnvelope;
-import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -60,19 +58,6 @@ public class DefiningTileMatrixSet implements TileMatrixSet {
     @Override
     public Collection<TileMatrix> getTileMatrices() {
         return Collections.unmodifiableCollection(mosaics.values());
-    }
-
-    @Override
-    public Envelope getEnvelope() {
-        GeneralEnvelope env = null;
-        for(TileMatrix mosaic : getTileMatrices()){
-            if(env==null){
-                env = new GeneralEnvelope(mosaic.getEnvelope());
-            }else{
-                env.add(mosaic.getEnvelope());
-            }
-        }
-        return env;
     }
 
     @Override

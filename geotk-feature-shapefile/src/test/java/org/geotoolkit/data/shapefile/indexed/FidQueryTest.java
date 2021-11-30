@@ -32,7 +32,6 @@ import org.geotoolkit.storage.feature.FeatureIterator;
 import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.geotoolkit.storage.feature.FeatureWriter;
 import org.geotoolkit.storage.feature.query.Query;
-import org.geotoolkit.storage.feature.query.QueryBuilder;
 import org.geotoolkit.storage.feature.session.Session;
 import static org.junit.Assert.*;
 import org.junit.Ignore;
@@ -73,7 +72,7 @@ public class FidQueryTest extends FIDTestCase {
         name = ds.getNames().iterator().next();
         session = ds.createSession(true);
 
-        final FeatureIterator features = ds.getFeatureReader(QueryBuilder.all(name));
+        final FeatureIterator features = ds.getFeatureReader(new Query(name));
         try {
             while (features.hasNext()) {
                 numFeatures++;
@@ -108,7 +107,7 @@ public class FidQueryTest extends FIDTestCase {
         collection.add(newFeature);
 
         final List<ResourceId> newFids;
-        try(FeatureWriter writer = ds.getFeatureWriter(QueryBuilder.filtered(name.toString(), Filter.exclude()))){
+        try(FeatureWriter writer = ds.getFeatureWriter(Query.filtered(name.toString(), Filter.exclude()))){
             newFids = FeatureStoreUtilities.write(writer, collection);
         }
         assertEquals(1, newFids.size());
@@ -117,11 +116,9 @@ public class FidQueryTest extends FIDTestCase {
 
         final Filter filter = newFids.iterator().next();
 
-        final QueryBuilder builder = new QueryBuilder();
-        builder.setTypeName(schema.getName());
-        builder.setFilter(filter);
-        final Query query = builder.buildQuery();
-
+        final Query query = new Query();
+        query.setTypeName(schema.getName());
+        query.setSelection(filter);
 
         final FeatureIterator features = ds.getFeatureReader(query);
         try {
@@ -154,7 +151,7 @@ public class FidQueryTest extends FIDTestCase {
         session.updateFeatures(schema.getName().toString(),createFidFilter, Collections.singletonMap("ID", newId));
         session.commit();
 
-        final FeatureIterator features = ds.getFeatureReader(QueryBuilder.filtered(name.toString(), createFidFilter));
+        final FeatureIterator features = ds.getFeatureReader(Query.filtered(name.toString(), createFidFilter));
 
         try {
             assertFalse(feature.equals(features.next()));
@@ -169,7 +166,7 @@ public class FidQueryTest extends FIDTestCase {
 
     @Test
     public void testDeleteFeature() throws Exception {
-        FeatureIterator features = ds.getFeatureReader(QueryBuilder.all(name.toString()));
+        FeatureIterator features = ds.getFeatureReader(new Query(name));
         Feature feature;
         try {
             feature = features.next();
@@ -184,9 +181,9 @@ public class FidQueryTest extends FIDTestCase {
         session.commit();
         fids.remove(FeatureExt.getId(feature).getIdentifier());
 
-        assertEquals(fids.size(), ds.getCount(QueryBuilder.all(name.toString())));
+        assertEquals(fids.size(), ds.getCount(new Query(name)));
 
-        features = ds.getFeatureReader(QueryBuilder.filtered(name.toString(), createFidFilter));
+        features = ds.getFeatureReader(Query.filtered(name.toString(), createFidFilter));
         try {
             assertFalse(features.hasNext());
         } finally {
@@ -198,7 +195,7 @@ public class FidQueryTest extends FIDTestCase {
 
     @Test
     public void testFIDBBoxQuery() throws Exception {
-        FeatureIterator features = ds.getFeatureReader(QueryBuilder.all(name.toString()));
+        FeatureIterator features = ds.getFeatureReader(new Query(name));
         Feature feature;
         try {
             feature = features.next();
@@ -221,7 +218,7 @@ public class FidQueryTest extends FIDTestCase {
         // bboxFilter.addLeftGeometry(factory.createAttributeExpression(geom));
 
         SpatialOperator bbox = fac.bbox(fac.property(""), FeatureExt.getEnvelope(feature));
-        features = ds.getFeatureReader(QueryBuilder.filtered(name.toString(), bbox));
+        features = ds.getFeatureReader(Query.filtered(name.toString(), bbox));
         try {
             while (features.hasNext()) {
                 Feature newFeature = features.next();
@@ -241,7 +238,7 @@ public class FidQueryTest extends FIDTestCase {
             final Entry<String,Feature> entry = iter.next();
             final String fid = (String) entry.getKey();
             final Filter filter = fac.resourceId(fid);
-            final Query query = QueryBuilder.filtered(name.toString(), filter);
+            final Query query = Query.filtered(name.toString(), filter);
             final FeatureIterator features = ds.getFeatureReader(query);
             try {
                 final Feature feature = features.next();

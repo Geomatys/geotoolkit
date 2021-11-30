@@ -18,11 +18,11 @@ package org.geotoolkit.data.shapefile.indexed;
 
 import org.junit.Test;
 
-import org.geotoolkit.storage.feature.query.QueryBuilder;
 import org.geotoolkit.data.shapefile.lock.ShpFiles;
 import org.geotoolkit.data.shapefile.fix.IndexedFidReader;
 import org.geotoolkit.data.shapefile.fix.IndexedFidWriter;
 import org.geotoolkit.data.shapefile.lock.AccessManager;
+import org.geotoolkit.storage.feature.query.Query;
 
 import static org.junit.Assert.*;
 
@@ -41,7 +41,7 @@ public class FidIndexerTest extends FIDTestCase {
         final IndexedShapefileFeatureStore ds = new IndexedShapefileFeatureStore(backshp
                 .toURI(), false, false, IndexType.NONE,null);
 
-        long features = ds.getCount(QueryBuilder.all(ds.getNames().iterator().next()));
+        long features = ds.getCount(new Query(ds.getNames().iterator().next()));
 
         final IndexedFidReader reader = locker.getFIXReader(null);
 

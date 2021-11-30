@@ -81,7 +81,6 @@ import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.geotoolkit.storage.feature.FeatureStreams;
 import org.geotoolkit.storage.feature.FeatureWriter;
 import org.geotoolkit.storage.feature.query.DefaultQueryCapabilities;
-import org.geotoolkit.storage.feature.query.QueryBuilder;
 import org.geotoolkit.storage.feature.query.QueryCapabilities;
 import org.geotoolkit.storage.feature.query.QueryUtilities;
 import org.locationtech.jts.geom.Geometry;
@@ -323,8 +322,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements Resou
         final String typeName = baseType.getName().tip().toString();
 
         //check if we must read the 3d values
-        final CoordinateReferenceSystem reproject = gquery.getCoordinateSystemReproject();
-        final boolean read3D = (reproject==null || CRS.getVerticalComponent(reproject, true) != null);
+        final boolean read3D = true;
 
         final ShapefileAttributeReader attReader = getAttributesReader(true, read3D, queryRes);
         final FeatureIDReader idReader = new DefaultFeatureIDReader(typeName);
@@ -332,15 +330,14 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements Resou
 
 
         //handle remaining query parameters ------------------------------------
-        final QueryBuilder qb = new QueryBuilder(queryTypeName);
+        final org.geotoolkit.storage.feature.query.Query qb = new org.geotoolkit.storage.feature.query.Query(queryTypeName);
         qb.setProperties(queryPropertyNames);
-        qb.setFilter(queryFilter);
+        qb.setSelection(queryFilter);
         qb.setHints(queryHints);
-        qb.setCRS(gquery.getCoordinateSystemReproject());
-        qb.setSortBy(QueryUtilities.getSortProperties(gquery.getSortBy()));
+        qb.setSortBy(gquery.getSortBy());
         qb.setOffset(gquery.getOffset());
-        qb.setLimit(gquery.getLimit().orElse(-1));
-        return FeatureStreams.subset(reader, qb.buildQuery());
+        gquery.getLimit().ifPresent(qb::setLimit);
+        return FeatureStreams.subset(reader, qb);
     }
 
     /**

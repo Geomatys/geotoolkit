@@ -30,14 +30,12 @@ import java.util.*;
 import java.util.logging.Level;
 import org.apache.sis.feature.AbstractOperation;
 import org.apache.sis.internal.feature.AttributeConvention;
-import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Query;
 import org.apache.sis.storage.UnsupportedQueryException;
 import org.geotoolkit.storage.feature.FeatureReader;
 import org.geotoolkit.storage.feature.FeatureStreams;
 import org.geotoolkit.storage.feature.FeatureWriter;
-import org.geotoolkit.storage.feature.query.QueryBuilder;
 import org.geotoolkit.storage.feature.query.QueryUtilities;
 import org.geotoolkit.data.shapefile.FeatureIDReader;
 import org.geotoolkit.data.shapefile.ShapefileFeatureReader;
@@ -70,7 +68,6 @@ import org.opengis.feature.MismatchedFeatureException;
 import org.opengis.feature.PropertyType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.ResourceId;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.GenericName;
 import static org.geotoolkit.data.shapefile.lock.ShpFileType.*;
 import org.opengis.filter.SpatialOperatorName;
@@ -184,8 +181,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
         Filter              queryFilter = gquery.getSelection();
 
         //check if we must read the 3d values
-        final CoordinateReferenceSystem reproject = gquery.getCoordinateSystemReproject();
-        final boolean read3D = (reproject==null || CRS.getVerticalComponent(reproject, true) != null);
+        final boolean read3D = true;
 
 
         //find the properties we will read and return --------------------------
@@ -267,17 +263,16 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
         }
 
         //handle remaining query parameters ------------------------------------
-        final QueryBuilder qb = new QueryBuilder(queryTypeName);
+        final org.geotoolkit.storage.feature.query.Query qb = new org.geotoolkit.storage.feature.query.Query(queryTypeName);
         if(readProperties.equals(returnedProperties)){
             qb.setProperties(queryPropertyNames);
         }
-        qb.setFilter(queryFilter);
+        qb.setSelection(queryFilter);
         qb.setHints(queryHints);
-        qb.setCRS(gquery.getCoordinateSystemReproject());
-        qb.setSortBy(QueryUtilities.getSortProperties(gquery.getSortBy()));
+        qb.setSortBy(gquery.getSortBy());
         qb.setOffset(gquery.getOffset());
-        qb.setLimit(gquery.getLimit().orElse(-1));
-        return FeatureStreams.subset(reader, qb.buildQuery());
+        gquery.getLimit().ifPresent(qb::setLimit);
+        return FeatureStreams.subset(reader, qb);
     }
 
     protected FeatureReader createFeatureReader(

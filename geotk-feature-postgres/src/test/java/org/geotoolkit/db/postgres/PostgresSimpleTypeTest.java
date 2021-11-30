@@ -46,7 +46,6 @@ import org.geotoolkit.storage.feature.FeatureCollection;
 import org.geotoolkit.storage.feature.FeatureIterator;
 import org.geotoolkit.storage.feature.FeatureReader;
 import org.geotoolkit.storage.feature.query.Query;
-import org.geotoolkit.storage.feature.query.QueryBuilder;
 import org.geotoolkit.storage.feature.session.Session;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.geometry.jts.JTS;
@@ -483,7 +482,7 @@ public class PostgresSimpleTypeTest extends org.geotoolkit.test.TestBase {
         assertEquals(FF.resourceId("1"), addedIds.get(0));
 
         Session session = store.createSession(false);
-        FeatureCollection col = session.getFeatureCollection(QueryBuilder.all(resType.getName().toString()));
+        FeatureCollection col = session.getFeatureCollection(new Query(resType.getName()));
         assertEquals(1, col.size());
 
         FeatureIterator ite = col.iterator();
@@ -524,7 +523,7 @@ public class PostgresSimpleTypeTest extends org.geotoolkit.test.TestBase {
         assertEquals(FF.resourceId("1"), addedIds.get(0));
 
         session = store.createSession(false);
-        col = session.getFeatureCollection(QueryBuilder.all(resType.getName().toString()));
+        col = session.getFeatureCollection(new Query(resType.getName()));
         assertEquals(1, col.size());
 
         ite = col.iterator();
@@ -568,7 +567,7 @@ public class PostgresSimpleTypeTest extends org.geotoolkit.test.TestBase {
         assertEquals(FF.resourceId("1"), addedIds.get(0));
 
         final Session session = store.createSession(false);
-        final FeatureCollection col = session.getFeatureCollection(QueryBuilder.all(resType.getName().toString()));
+        final FeatureCollection col = session.getFeatureCollection(new Query(resType.getName()));
         assertEquals(1, col.size());
 
         //Postgis allow NULL in arrays, so returned array are not primitive types
@@ -613,7 +612,7 @@ public class PostgresSimpleTypeTest extends org.geotoolkit.test.TestBase {
         assertEquals(FF.resourceId("1"), addedIds.get(0));
 
         final Session session = store.createSession(false);
-        final FeatureCollection col = session.getFeatureCollection(QueryBuilder.all(resType.getName().toString()));
+        final FeatureCollection col = session.getFeatureCollection(new Query(resType.getName()));
         assertEquals(1, col.size());
 
         //Postgis allow NULL in arrays, so returned array are not primitive types
@@ -699,7 +698,7 @@ public class PostgresSimpleTypeTest extends org.geotoolkit.test.TestBase {
         assertEquals(FF.resourceId("1"), addedIds.get(0));
 
         final Session session = store.createSession(false);
-        final FeatureCollection col = session.getFeatureCollection(QueryBuilder.all(resType.getName().toString()));
+        final FeatureCollection col = session.getFeatureCollection(new Query(resType.getName()));
         assertEquals(1, col.size());
 
         //Postgis allow NULL in arrays, so returned array are not primitive types
@@ -760,7 +759,7 @@ public class PostgresSimpleTypeTest extends org.geotoolkit.test.TestBase {
         assertEquals(1, addedIds.size());
         assertEquals(FF.resourceId("1"), addedIds.get(0));
 
-        final Query query = QueryBuilder.all(resType.getName().toString());
+        final Query query = new Query(resType.getName());
         final FeatureReader ite = store.getFeatureReader(query);
         boolean found = false;
         try{

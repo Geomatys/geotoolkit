@@ -26,11 +26,20 @@ import org.apache.sis.storage.FeatureQuery;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.filter.FilterUtilities;
+import org.locationtech.jts.geom.Geometry;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.IdentifiedType;
+import org.opengis.feature.Operation;
+import org.opengis.feature.PropertyType;
+import org.opengis.filter.Expression;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
+import org.opengis.filter.Literal;
 import org.opengis.filter.ValueReference;
 import org.opengis.filter.SortProperty;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.GenericName;
 
 /**
  * <p>
@@ -64,19 +73,34 @@ public final class Query extends FeatureQuery {
      */
     public static final String GEOTK_QOM = "GEOTK-QOM";
 
-    private final String typeName;
-    private final Hints hints;
-    private final CoordinateReferenceSystem crs;
-    private final double[] resolution;
-    private final Object version;
+    private String typeName;
+    private Hints hints;
+    private double[] resolution;
+    private Object version;
 
+
+    /**
+     * Query with typeName.
+     */
+    public Query() {
+        this.hints = new Hints();
+    }
 
     /**
      * Query with typeName.
      *
      * @param typeName the name of the featureType to retrieve
      */
-    Query(final String typeName) {
+    public Query(final GenericName typeName) {
+        this(typeName.toString(), null);
+    }
+
+    /**
+     * Query with typeName.
+     *
+     * @param typeName the name of the featureType to retrieve
+     */
+    public Query(final String typeName) {
         this(typeName,null);
     }
 
@@ -90,7 +114,6 @@ public final class Query extends FeatureQuery {
                 Filter.include(),
                 attributs,
                 null,
-                null,
                 0,
                 -1,
                 null,
@@ -100,7 +123,7 @@ public final class Query extends FeatureQuery {
     }
 
     Query(final String typeName, Filter filter, final String[] attributs, final SortProperty[] sort,
-            final CoordinateReferenceSystem crs, final long startIndex, final long maxFeatures,
+            final long startIndex, final long maxFeatures,
             final double[] resolution, Quantity<Length> linearResolution, final Object version, final Hints hints){
 
         ensureNonNull("query source", typeName);
@@ -124,7 +147,6 @@ public final class Query extends FeatureQuery {
             setProjection(columns.toArray(new NamedExpression[0]));
         }
         this.typeName = typeName;
-        this.crs = crs;
         this.resolution = resolution;
         this.version = version;
 
@@ -144,7 +166,6 @@ public final class Query extends FeatureQuery {
              query.getSelection(),
              query.getPropertyNames(),
              QueryUtilities.getSortProperties(query.getSortBy()),
-             query.getCoordinateSystemReproject(),
              query.getOffset(),
              query.getLimit().orElse(-1),
              (query.getResolution()==null)?null:query.getResolution().clone(),
@@ -163,6 +184,14 @@ public final class Query extends FeatureQuery {
      */
     public String getTypeName() {
         return typeName;
+    }
+
+    public void setTypeName(final GenericName typeName) {
+        this.typeName = typeName.toString();
+    }
+
+    public void setTypeName(final String typeName) {
+        this.typeName = typeName;
     }
 
     /**
@@ -222,6 +251,18 @@ public final class Query extends FeatureQuery {
         return names;
     }
 
+    @Deprecated
+    public void setProperties(final String[] attributs) {
+        if (attributs != null && attributs.length > 0) {
+            final FilterFactory ff = FilterUtilities.FF;
+            final List<NamedExpression> columns = new ArrayList<>();
+            for (String att : attributs) {
+                columns.add(new NamedExpression(ff.property(att)));
+            }
+            setProjection(columns.toArray(new NamedExpression[0]));
+        }
+    }
+
     /**
      * Convenience method to determine if the query should use the full schema
      * (all properties) of the data source for the features returned.  This
@@ -238,39 +279,20 @@ public final class Query extends FeatureQuery {
     }
 
     /**
-     * Request data reprojection.
-     *
-     * <p>
-     * Gets the coordinate System to reproject the data contained in the
-     * backend feature store to.
-     * </p>
-     *
-     * <p>
-     * If the feature store can optimize the reprojection it should, if not then a
-     * decorator on the reader should perform the reprojection on the fly.
-     * </p>
-     *
-     * <p>
-     * If the feature store has the wrong CS then {@link #getCoordinateSystem()} should be set to
-     * the CS to be used, this will perform the reprojection on that.
-     * </p>
-     *
-     * @return The coordinate system that Features from the datasource should
-     *         be reprojected to.
-     */
-    public CoordinateReferenceSystem getCoordinateSystemReproject() {
-        return crs;
-    }
-
-    /**
      * Set The wished resolution of the geometries.
      * Since there is no Envelope provided in the query like in CoverageReadParam
      * this resolution must be expressed in the native data coordinate reference system.
      *
      * @return resolution or null if no resolution provided.
      */
+    @Deprecated
     public double[] getResolution() {
         return resolution;
+    }
+
+    @Deprecated
+    public void setResolution(final double[] resolution) {
+        this.resolution = resolution;
     }
 
     /**
@@ -299,6 +321,14 @@ public final class Query extends FeatureQuery {
         return null;
     }
 
+    public void setVersionLabel(String label) {
+        this.version = label;
+    }
+
+    public void setVersionDate(Date version) {
+        this.version = version;
+    }
+
     /**
      * Specifies some hints to drive the query execution and results build-up.
      * Hints examples can be the GeometryFactory to be used, a generalization
@@ -316,6 +346,9 @@ public final class Query extends FeatureQuery {
         return hints;
     }
 
+    public void setHints(final Hints hints) {
+        this.hints = hints;
+    }
 
     /**
      * {@inheritDoc }
@@ -338,9 +371,6 @@ public final class Query extends FeatureQuery {
         if (this.hints != other.hints && (this.hints == null || !this.hints.equals(other.hints))) {
             return false;
         }
-        if (this.crs != other.crs && (this.crs == null || !this.crs.equals(other.crs))) {
-            return false;
-        }
         return true;
     }
 
@@ -352,7 +382,61 @@ public final class Query extends FeatureQuery {
         int hash = super.hashCode();
         hash = 83 * hash + (this.typeName != null ? this.typeName.hashCode() : 0);
         hash = 83 * hash + (this.hints != null ? this.hints.hashCode() : 0);
-        hash = 83 * hash + (this.crs != null ? this.crs.hashCode() : 0);
         return hash;
+    }
+
+    public void copy(final Query query){
+        setSelection(query.getSelection());
+        query.getLimit().ifPresent(this::setLimit);
+        setProjection(query.getProjection());
+        setSortBy(query.getSortBy());
+        setOffset(query.getOffset());
+        this.resolution = (query.getResolution()==null)?null:query.getResolution().clone();
+        this.hints = query.getHints();
+        this.typeName = query.getTypeName();
+        this.version = query.getVersionDate();
+        if (this.version == null) this.version = query.getVersionLabel();
+    }
+
+    /**
+     * Create a simple query with only a filter parameter.
+     *
+     * @return Immutable query
+     */
+    public static Query filtered(final String name, final Filter filter){
+        final Query query = new Query(name);
+        query.setSelection(filter);
+        return query;
+    }
+
+    /**
+     * Create a simple query with columns which transform all geometric types to the given crs.
+     */
+    public static FeatureQuery reproject(FeatureType type, final CoordinateReferenceSystem crs) {
+        final FilterFactory ff = FilterUtilities.FF;
+        final Literal crsLiteral = ff.literal(crs);
+
+        final FeatureQuery query = new FeatureQuery();
+        final List<FeatureQuery.NamedExpression> columns = new ArrayList<>();
+
+        for (PropertyType pt : type.getProperties(true)) {
+            final GenericName name = pt.getName();
+            Expression property = ff.property(name.toString());
+
+            //unroll operation
+            IdentifiedType result = pt;
+            while (result instanceof Operation) {
+                result = ((Operation) result).getResult();
+            }
+            if (result instanceof AttributeType) {
+                AttributeType at = (AttributeType) result;
+                if (Geometry.class.isAssignableFrom(at.getValueClass())) {
+                    property = ff.function("ST_Transform", property, crsLiteral);
+                }
+            }
+            columns.add(new FeatureQuery.NamedExpression(property, name));
+        }
+        query.setProjection(columns.toArray(new FeatureQuery.NamedExpression[0]));
+        return query;
     }
 }

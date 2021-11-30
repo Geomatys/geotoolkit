@@ -231,7 +231,6 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
         final String[] properties = remainingParameters.getPropertyNames();
         final SortProperty[] sorts = QueryUtilities.getSortProperties(remainingParameters.getSortBy());
         final double[] resampling = remainingParameters.getResolution();
-        final CoordinateReferenceSystem crs = remainingParameters.getCoordinateSystemReproject();
         final Hints hints = remainingParameters.getHints();
 
         //we should take care of wrapping the reader in a correct order to avoid
@@ -290,11 +289,6 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
             final GeometryScaleTransformer trs = new GeometryScaleTransformer(resampling[0], resampling[1]);
             final TransformMapper ttype = new TransformMapper(result.getType(), trs);
             result = FeatureStreams.decorate(result, ttype);
-        }
-
-        //wrap reprojection ----------------------------------------------------
-        if(crs != null){
-            result = FeatureStreams.decorate(result, new ReprojectMapper(result.getType(), crs));
         }
 
         return result;

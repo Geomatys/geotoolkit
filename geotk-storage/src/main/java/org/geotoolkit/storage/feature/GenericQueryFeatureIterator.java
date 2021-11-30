@@ -50,7 +50,6 @@ public class GenericQueryFeatureIterator {
         final String[] properties = remainingParameters.getPropertyNames();
         final SortProperty[] sorts = QueryUtilities.getSortProperties(remainingParameters.getSortBy());
         final double[] resampling = remainingParameters.getResolution();
-        final CoordinateReferenceSystem crs = remainingParameters.getCoordinateSystemReproject();
         final Hints hints = remainingParameters.getHints();
 
         //we should take care of wrapping the reader in a correct order to avoid
@@ -113,15 +112,6 @@ public class GenericQueryFeatureIterator {
             final GeometryScaleTransformer trs = new GeometryScaleTransformer(resampling[0], resampling[1]);
             final TransformMapper ttype = new TransformMapper(reader.getFeatureType(), trs);
             reader = FeatureStreams.decorate(reader, ttype, hints);
-        }
-
-        //wrap reprojection ----------------------------------------------------
-        if(crs != null){
-            try {
-                reader = FeatureStreams.decorate(reader, new ReprojectMapper(reader.getFeatureType(), crs), hints);
-            } catch (MismatchedFeatureException ex) {
-                throw new DataStoreException(ex);
-            }
         }
 
         return reader;

@@ -27,7 +27,7 @@ import org.geotoolkit.storage.feature.FeatureReader;
 import org.geotoolkit.storage.feature.FeatureStore;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.geotoolkit.storage.feature.FeatureWriter;
-import org.geotoolkit.storage.feature.query.QueryBuilder;
+import org.geotoolkit.storage.feature.query.Query;
 import org.apache.sis.util.Classes;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
@@ -62,7 +62,7 @@ public class GenericFeatureWriter implements FeatureWriter {
     private GenericFeatureWriter(final FeatureStore store, final String typeName, final Filter filter) throws DataStoreException {
         this.store = store;
         this.typeName = typeName;
-        reader = store.getFeatureReader(QueryBuilder.filtered(typeName, filter));
+        reader = store.getFeatureReader(Query.filtered(typeName, filter));
         type = store.getFeatureType(typeName);
     }
 

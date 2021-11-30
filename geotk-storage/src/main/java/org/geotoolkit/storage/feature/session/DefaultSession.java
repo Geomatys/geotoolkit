@@ -32,7 +32,6 @@ import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.geotoolkit.storage.feature.FeatureCollection;
 import org.geotoolkit.storage.feature.FeatureIterator;
 import org.geotoolkit.storage.feature.query.Query;
-import org.geotoolkit.storage.feature.query.QueryBuilder;
 import org.geotoolkit.filter.visitor.DuplicatingFilterVisitor;
 import org.geotoolkit.filter.visitor.SimplifyingFilterVisitor;
 import org.geotoolkit.geometry.BoundingBox;
@@ -155,8 +154,6 @@ public class DefaultSession extends AbstractSession {
 
         //we must preserve the original filter after all thoses modifications
         Filter originalFilter = original.getSelection();
-        if (originalFilter == null) originalFilter = Filter.include();
-        originalFilter = forceCRS(originalFilter, original.getCoordinateSystemReproject(), true);
         reader = FeatureStreams.filter(reader, originalFilter);
 
         return reader;
@@ -204,9 +201,9 @@ public class DefaultSession extends AbstractSession {
                 modified = filter;
             }else{
                 final Set<Filter<Object>> identifiers = new HashSet<>();
-                QueryBuilder qb = new QueryBuilder(groupName);
-                qb.setFilter(filter);
-                final FeatureIterator ite = getFeatureIterator(qb.buildQuery());
+                Query qb = new Query(groupName);
+                qb.setSelection(filter);
+                final FeatureIterator ite = getFeatureIterator(qb);
                 try{
                     while(ite.hasNext()){
                         identifiers.add(FeatureExt.getId(ite.next()));
@@ -243,9 +240,9 @@ public class DefaultSession extends AbstractSession {
                 removed = (ResourceId)filter;
             }else{
                 final Set<Filter<Object>> identifiers = new HashSet<>();
-                QueryBuilder qb = new QueryBuilder(groupName);
-                qb.setFilter(filter);
-                final FeatureIterator ite = getFeatureIterator(qb.buildQuery());
+                Query qb = new Query(groupName);
+                qb.setSelection(filter);
+                final FeatureIterator ite = getFeatureIterator(qb);
                 try{
                     while(ite.hasNext()){
                         identifiers.add(FeatureExt.getId(ite.next()));
@@ -339,9 +336,10 @@ public class DefaultSession extends AbstractSession {
             return query;
         }
 
-        final QueryBuilder qb = new QueryBuilder(query);
-        qb.setFilter(forceCRS(qb.getFilter(), crs,replace));
-        return qb.buildQuery();
+        final Query qb = new Query();
+        qb.copy(query);
+        qb.setSelection(forceCRS(qb.getSelection(), crs,replace));
+        return qb;
     }
 
     private static Filter forceCRS(final Filter filter, final CoordinateReferenceSystem crs, final boolean replace){

@@ -10,7 +10,7 @@ import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.feature.FeatureStore;
-import org.geotoolkit.storage.feature.query.QueryBuilder;
+import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.style.RandomStyleBuilder;
 import org.opengis.util.GenericName;
 
@@ -35,7 +35,7 @@ public class PostgisDemo {
         for(GenericName n : store.getNames()){
             System.out.println(store.getFeatureType(n.toString()));
 
-            final FeatureSet col = store.createSession(true).getFeatureCollection(QueryBuilder.all(n.toString()));
+            final FeatureSet col = store.createSession(true).getFeatureCollection(new Query(n));
             final MapLayer layer = MapBuilder.createLayer(col);
             layer.setStyle(RandomStyleBuilder.createRandomVectorStyle(col.getType()));
             context.getComponents().add(layer);

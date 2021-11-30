@@ -25,7 +25,6 @@ import org.geotoolkit.storage.feature.FeatureIterator;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.storage.memory.WrapFeatureCollection;
 import org.geotoolkit.storage.feature.query.Query;
-import org.geotoolkit.storage.feature.query.QueryBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -127,7 +126,7 @@ public class RegroupFeatureCollection extends WrapFeatureCollection {
         final FilterFactory2 ff = FilterUtilities.FF;
 
         final Filter filter = ff.equal(ff.property(regroupAttribute), ff.literal(attributeValue));
-        return QueryBuilder.filtered("filter", filter);
+        return Query.filtered("filter", filter);
     }
 
     /**

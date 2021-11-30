@@ -145,13 +145,13 @@ public class TileMatrixSetCoverageWriter <T extends TiledResource & org.apache.s
 
         //iteration state informations
         private final Iterator<TileMatrixSet> pyramidsIte;
-        private Iterator<TileMatrix> mosaics;
-        private TileMatrixSet currentPyramid = null;
+        private Iterator<TileMatrix> tileMatrices;
+        private TileMatrixSet currentTileMatrixSet = null;
         private MathTransform crsDestToSrcGrid;
-        private TileMatrix currentMosaic = null;
+        private TileMatrix currentTileMatrix = null;
         private CoordinateReferenceSystem destCrs2D;
         private MathTransform crsDestToCrsCoverage;
-        private Envelope pyramidEnvelope;
+        private Envelope tileMatrixSetEnvelope;
 
         //mosaic infos
         private double res;
@@ -192,7 +192,7 @@ public class TileMatrixSetCoverageWriter <T extends TiledResource & org.apache.s
             final GeneralEnvelope intersection = new GeneralEnvelope(pyramidEnvelope.getCoordinateReferenceSystem());
             intersection.setRange(0, mosaicEnv.getMinimum(0), mosaicEnv.getMaximum(0));
             intersection.setRange(1, mosaicEnv.getMinimum(1), mosaicEnv.getMaximum(1));
-            final int minOrdinate = CoverageUtilities.getMinOrdinate(intersection.getCoordinateReferenceSystem());
+            final int minOrdinate = CRSUtilities.firstHorizontalAxis(intersection.getCoordinateReferenceSystem());
             if (!intersection.intersects(pyramidEnvelope, true)) {
                 return false;
             }
@@ -255,20 +255,20 @@ public class TileMatrixSetCoverageWriter <T extends TiledResource & org.apache.s
             //find next tile to build
             loop:
             while (true) {
-                if (currentPyramid == null) {
+                if (currentTileMatrixSet == null) {
                     if (pyramidsIte.hasNext()) {
-                        currentPyramid = pyramidsIte.next();
+                        currentTileMatrixSet = pyramidsIte.next();
                         try {
                             final GeneralEnvelope tmpFilter = new GeneralEnvelope(
-                                    ReferencingUtilities.transform(requestedEnvelope, currentPyramid.getCoordinateReferenceSystem()));
+                                    ReferencingUtilities.transform(requestedEnvelope, currentTileMatrixSet.getCoordinateReferenceSystem()));
 
-                            mosaics = CoverageUtilities.findMosaics(currentPyramid, tmpFilter, false).iterator();
+                            tileMatrices = TileMatrices.findTileMatrix(currentTileMatrixSet, tmpFilter, false).iterator();
 
                             //define CRS and mathTransform from current pyramid to source coverage.
-                            destCrs2D = CRS.getHorizontalComponent(currentPyramid.getCoordinateReferenceSystem());
+                            destCrs2D = CRS.getHorizontalComponent(currentTileMatrixSet.getCoordinateReferenceSystem());
                             crsDestToCrsCoverage = CRS.findOperation(destCrs2D, crsCoverage2D, null).getMathTransform();
                             //geographic
-                            pyramidEnvelope = Envelopes.transform(requestedEnvelope, destCrs2D);
+                            tileMatrixSetEnvelope = Envelopes.transform(requestedEnvelope, destCrs2D);
                         } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
@@ -282,22 +282,22 @@ public class TileMatrixSetCoverageWriter <T extends TiledResource & org.apache.s
                     }
                 }
 
-                if (currentMosaic == null) {
-                    if (mosaics != null && mosaics.hasNext()) {
+                if (currentTileMatrix == null) {
+                    if (tileMatrices != null && tileMatrices.hasNext()) {
                         //next mosaic
-                        currentMosaic = mosaics.next();
+                        currentTileMatrix = tileMatrices.next();
                         idx=-1;
                     } else {
                         //next pyramid
-                        mosaics = null;
-                        currentMosaic = null;
-                        currentPyramid = null;
+                        tileMatrices = null;
+                        currentTileMatrix = null;
+                        currentTileMatrixSet = null;
                         continue;
                     }
                 }
 
                 if (idx == -1) {
-                    calculateMosaicRange(currentPyramid, currentMosaic, pyramidEnvelope);
+                    calculateMosaicRange(currentTileMatrixSet, currentTileMatrix, tileMatrixSetEnvelope);
                     idx = idminx-1;
                     idy = idminy;
                 }
@@ -310,13 +310,13 @@ public class TileMatrixSetCoverageWriter <T extends TiledResource & org.apache.s
                     }
                     if (idy >= idmaxy) {
                         //finished thie mosaic
-                        currentMosaic = null;
+                        currentTileMatrix = null;
                         continue loop;
                     }
                     break;
                 }
 
-                return new TileUpdater(currentMosaic,
+                return new TileUpdater(currentTileMatrix,
                         idx, idy, sourceImage, interpolation, sourceCoverage);
             }
         }

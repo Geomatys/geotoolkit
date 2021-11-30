@@ -74,8 +74,8 @@ public abstract class AbstractTimePosition {
                     continue;
                 }
             }
+            LOGGER.log(Level.WARNING, "Unable to parse date value:{0}", value);
         }
-        LOGGER.log(Level.WARNING, "Unable to parse date value:{0}", value);
         return null;
     }
 
