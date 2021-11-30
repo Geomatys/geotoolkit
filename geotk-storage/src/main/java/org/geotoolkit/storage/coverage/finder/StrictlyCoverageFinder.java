@@ -22,19 +22,21 @@ import java.util.Collections;
 import java.util.List;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CRS;
-import org.geotoolkit.storage.coverage.CoverageUtilities;
+import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.util.FactoryException;
 import org.geotoolkit.storage.multires.TileMatrixSet;
 import org.geotoolkit.storage.multires.TileMatrix;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * More Mathematical exhaustive CoverageFinder.
  *
  * @author Remi Marechal (Geomatys).
  */
-public class StrictlyCoverageFinder extends CoverageFinder {
+public final class StrictlyCoverageFinder extends CoverageFinder {
 
     /**
      * {@inheritDoc }.
@@ -59,7 +61,7 @@ public class StrictlyCoverageFinder extends CoverageFinder {
                 final Envelope gridEnvelope = gridMosaic.getEnvelope();
                 // if intersection solution exist
                 if (findEnvelope.intersects(gridEnvelope, true)) {
-                    final double ratioTemp = CoverageUtilities.getRatioND(findEnvelope, gridEnvelope);
+                    final double ratioTemp = getRatioND(findEnvelope, gridEnvelope);
                     if (ratioTemp > (bestRatio + DEFAULT_EPSILON)) { // >
                         goodMosaics.clear();
                         goodMosaics.add(gridMosaic);
@@ -117,4 +119,37 @@ public class StrictlyCoverageFinder extends CoverageFinder {
         }
         return result;
     }
+
+    /**
+     * Compute ratio on each ordinate, not within 2D part of {@link CoordinateReferenceSystem},
+     * which represent recovery from each ordinate of searchEnvelope on gridEnvelope.
+     *
+     * @param searchEnvelope user coverage area search.
+     * @param gridEnvelope mosaic envelope.
+     * @return computed ratio.
+     */
+    public static double getRatioND(Envelope searchEnvelope, Envelope gridEnvelope) {
+        ArgumentChecks.ensureNonNull("gridEnvelope", gridEnvelope);
+        ArgumentChecks.ensureNonNull("findEnvelope", searchEnvelope);
+        final CoordinateReferenceSystem crs = gridEnvelope.getCoordinateReferenceSystem();
+        //find index ordinate of crs2D part of this crs.
+        final int minOrdinate2D = CRSUtilities.firstHorizontalAxis(crs);
+        final int maxOrdinate2D = minOrdinate2D + 1;
+        // compute distance
+        final GeneralEnvelope intersection = new GeneralEnvelope(searchEnvelope);
+        intersection.intersect(gridEnvelope);
+        double sumRatio = 0;
+        final int dimension = crs.getCoordinateSystem().getDimension();
+        for (int d = 0; d < dimension; d++) {
+            if (d != minOrdinate2D && d != maxOrdinate2D) {
+                final double ges = gridEnvelope.getSpan(d);
+                // if intersect a slice part of gridEnvelope.
+                // avoid divide by zero
+                if (Math.abs(ges) <= 1E-12) continue;
+                sumRatio += intersection.getSpan(d) / ges;
+            }
+        }
+        return sumRatio;
+    }
+
 }

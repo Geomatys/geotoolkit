@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.storage.DataStoreException;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -109,7 +110,17 @@ public interface TileMatrixSet {
      *
      * @return Envelope
      */
-    Envelope getEnvelope();
+    default Envelope getEnvelope() {
+        final GeneralEnvelope env = new GeneralEnvelope(getCoordinateReferenceSystem());
+        for (TileMatrix tileMatrix : getTileMatrices()) {
+            if (env.isAllNaN()) {
+                env.setEnvelope(tileMatrix.getEnvelope());
+            } else {
+                env.add(tileMatrix.getEnvelope());
+            }
+        }
+        return env;
+    }
 
     /**
      * Create new TileMatrix copied properties from template.

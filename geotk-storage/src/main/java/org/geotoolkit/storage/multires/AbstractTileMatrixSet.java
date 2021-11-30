@@ -19,11 +19,9 @@ package org.geotoolkit.storage.multires;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.util.StringUtilities;
-import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -69,19 +67,6 @@ public abstract class AbstractTileMatrixSet implements TileMatrixSet {
     @Override
     public String toString(){
         return toString(this);
-    }
-
-    @Override
-    public Envelope getEnvelope() {
-        GeneralEnvelope env = null;
-        for(TileMatrix mosaic : getTileMatrices()){
-            if(env==null){
-                env = new GeneralEnvelope(mosaic.getEnvelope());
-            }else{
-                env.add(mosaic.getEnvelope());
-            }
-        }
-        return env;
     }
 
     /**

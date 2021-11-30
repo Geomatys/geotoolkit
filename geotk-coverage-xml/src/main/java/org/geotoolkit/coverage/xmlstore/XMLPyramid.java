@@ -200,19 +200,6 @@ public class XMLPyramid implements TileMatrixSet {
     }
 
     @Override
-    public Envelope getEnvelope() {
-        GeneralEnvelope env = null;
-        for(TileMatrix mosaic : getTileMatrices()){
-            if(env==null){
-                env = new GeneralEnvelope(mosaic.getEnvelope());
-            }else{
-                env.add(mosaic.getEnvelope());
-            }
-        }
-        return env;
-    }
-
-    @Override
     public String toString(){
         return AbstractTileMatrixSet.toString(this);
     }

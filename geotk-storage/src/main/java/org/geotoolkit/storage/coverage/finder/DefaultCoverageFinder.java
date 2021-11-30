@@ -36,7 +36,7 @@ import org.geotoolkit.storage.multires.TileMatrix;
  * @see {@link StrictlyCoverageFinder}
  */
 @Deprecated
-public class DefaultCoverageFinder extends CoverageFinder {
+public final class DefaultCoverageFinder extends CoverageFinder {
 
     /**
      * {@inheritDoc }.

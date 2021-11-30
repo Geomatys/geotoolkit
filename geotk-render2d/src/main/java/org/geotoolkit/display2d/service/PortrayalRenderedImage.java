@@ -32,7 +32,7 @@ import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.canvas.J2DCanvasBuffered;
-import org.geotoolkit.storage.coverage.CoverageUtilities;
+import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
@@ -119,7 +119,7 @@ public class PortrayalRenderedImage extends PlanarImage {
                 viewEnvelope.getMinimum(0),
                 viewEnvelope.getMaximum(1));
 
-        this.minOrdi0 = CoverageUtilities.getMinOrdinate(crs);
+        this.minOrdi0 = CRSUtilities.firstHorizontalAxis(crs);
         this.minOrdi1 = minOrdi0 + 1;
 
         nbtileonheight = 1;
