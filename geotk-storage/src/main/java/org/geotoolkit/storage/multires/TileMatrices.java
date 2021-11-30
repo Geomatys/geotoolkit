@@ -42,6 +42,7 @@ import org.apache.sis.storage.NoSuchDataException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Static;
 import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.geotoolkit.referencing.ReferencingUtilities;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -93,6 +94,36 @@ public final class TileMatrices extends Static {
             }
         }
         return null;
+    }
+
+    /**
+     * Search in the given TileMatrixSet all of the TileMatrix which fit the given parameters. 2 modes
+     * are possible :
+     * - Contains only : Suitable TileMatrix must be CONTAINED (or equal) to given spatial filter.
+     * - Intersection  : Suitable TileMatrix must INTERSECT given filter.
+     *
+     * @param toSearchIn The TileMatrixSet to get TileMatrix from.
+     * @param filter The {@link Envelope} to use to  specify spatial position of wanted TileMatrix.
+     * @param containOnly True if you want 'Contains only' mode, false if you want 'Intersection' mode.
+     * @return A list containing all the TileMatrix which fit the given envelope. Never null, but can be empty.
+     * @throws TransformException If input filter {@link CoordinateReferenceSystem} is not compatible with
+     * input TileMatrix one.
+     */
+    public static List<TileMatrix> findTileMatrix(final TileMatrixSet toSearchIn, Envelope filter, boolean containOnly) throws TransformException {
+        final ArrayList<TileMatrix> result = new ArrayList<>();
+
+        // Rebuild filter envelope from pyramid CRS
+        final GeneralEnvelope tmpFilter = new GeneralEnvelope(
+                ReferencingUtilities.transform(filter, toSearchIn.getCoordinateReferenceSystem()));
+
+        for (TileMatrix tileMatrix : toSearchIn.getTileMatrices()) {
+            final Envelope sourceEnv = tileMatrix.getEnvelope();
+            if ((containOnly && tmpFilter.contains(sourceEnv, true))
+                    || (!containOnly && tmpFilter.intersects(sourceEnv, true))) {
+                result.add(tileMatrix);
+            }
+        }
+        return result;
     }
 
     /**

@@ -26,7 +26,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.sis.coverage.Category;
-import org.geotoolkit.storage.coverage.CoverageUtilities;
 import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.coverage.SampleDimensionType;
 import org.apache.sis.measure.Units;
@@ -127,7 +126,7 @@ public class XMLSampleDimension {
      * @see DataBuffer#TYPE_USHORT
      */
     public int getDataType() {
-        return CoverageUtilities.getDataType(getSampleType());
+        return getDataType(getSampleType());
     }
 
     /**
@@ -165,6 +164,35 @@ public class XMLSampleDimension {
                 xcat.fill(cat);
                 categories.add(xcat);
             }
+        }
+    }
+
+    @Deprecated
+    private static int getDataType(SampleDimensionType sdt) {
+        if (SampleDimensionType.REAL_32BITS.equals(sdt)) {
+            return DataBuffer.TYPE_FLOAT;
+        } else if (SampleDimensionType.REAL_64BITS.equals(sdt)) {
+            return DataBuffer.TYPE_DOUBLE;
+        } else if (SampleDimensionType.SIGNED_8BITS.equals(sdt)) {
+            return DataBuffer.TYPE_BYTE;
+        } else if (SampleDimensionType.SIGNED_16BITS.equals(sdt)) {
+            return DataBuffer.TYPE_SHORT;
+        } else if (SampleDimensionType.SIGNED_32BITS.equals(sdt)) {
+            return DataBuffer.TYPE_INT;
+        } else if (SampleDimensionType.UNSIGNED_1BIT.equals(sdt)) {
+            return DataBuffer.TYPE_BYTE;
+        } else if (SampleDimensionType.UNSIGNED_2BITS.equals(sdt)) {
+            return DataBuffer.TYPE_BYTE;
+        } else if (SampleDimensionType.UNSIGNED_4BITS.equals(sdt)) {
+            return DataBuffer.TYPE_BYTE;
+        } else if (SampleDimensionType.UNSIGNED_8BITS.equals(sdt)) {
+            return DataBuffer.TYPE_BYTE;
+        } else if (SampleDimensionType.UNSIGNED_16BITS.equals(sdt)) {
+            return DataBuffer.TYPE_USHORT;
+        } else if (SampleDimensionType.UNSIGNED_32BITS.equals(sdt)) {
+            return DataBuffer.TYPE_INT;
+        }else {
+            throw new IllegalArgumentException("Unexprected data type : "+sdt);
         }
     }
 }
