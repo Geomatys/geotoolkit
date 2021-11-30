@@ -169,11 +169,15 @@ public interface BandedCoverageResource extends DataSet {
                 xyResult = xyGrid;
             }
 
-            final Evaluator evaluator = coverage.evaluator();
-            evaluator.setNullIfOutside(true);
-            final Vector3d dp = new Vector3d();
-
-            IntStream.range(0, xyResult.length/2).forEach((int i) -> {
+            final ThreadLocal<Evaluator> tl = new ThreadLocal<>();
+            IntStream.range(0, xyResult.length/2).parallel().forEach((int i) -> {
+                Evaluator evaluator = tl.get();
+                if (evaluator == null) {
+                    evaluator = coverage.evaluator();
+                    evaluator.setNullIfOutside(true);
+                    tl.set(evaluator);
+                }
+                final Vector3d dp = new Vector3d();
                 dp.x = xyResult[i*2];
                 dp.y = xyResult[i*2+1];
                 final double[] sample = evaluator.apply(dp);
