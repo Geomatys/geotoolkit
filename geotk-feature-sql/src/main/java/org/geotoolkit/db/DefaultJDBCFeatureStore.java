@@ -38,7 +38,6 @@ import org.apache.sis.storage.IllegalNameException;
 import org.apache.sis.storage.Query;
 import org.apache.sis.storage.UnsupportedQueryException;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.Utilities;
 import org.apache.sis.util.Version;
 import static org.geotoolkit.db.JDBCFeatureStore.JDBC_PROPERTY_RELATION;
 import org.geotoolkit.db.dialect.SQLDialect;
@@ -48,7 +47,6 @@ import org.geotoolkit.db.session.JDBCSession;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.feature.FeatureTypeExt;
-import org.geotoolkit.feature.ReprojectMapper;
 import org.geotoolkit.feature.ViewMapper;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.filter.visitor.CRSAdaptorVisitor;
@@ -62,7 +60,6 @@ import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.geotoolkit.storage.feature.FeatureStreams;
 import org.geotoolkit.storage.feature.FeatureWriter;
 import org.geotoolkit.storage.feature.query.DefaultQueryCapabilities;
-import org.geotoolkit.storage.feature.query.QueryBuilder;
 import org.geotoolkit.storage.feature.query.QueryCapabilities;
 import org.geotoolkit.storage.feature.query.SQLQuery;
 import org.geotoolkit.storage.feature.session.Session;
@@ -81,7 +78,6 @@ import org.opengis.filter.ResourceId;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.GenericName;
 
 /**
@@ -279,10 +275,10 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
             final FeatureReader reader = getQOMFeatureReader(gquery,cnx);
 
             //take care of potential hints, like removing primary keys
-            final QueryBuilder qb = new QueryBuilder();
+            final org.geotoolkit.storage.feature.query.Query qb = new org.geotoolkit.storage.feature.query.Query();
             qb.setTypeName("remaining");
             qb.setHints(gquery.getHints());
-            return FeatureStreams.subset(reader, qb.buildQuery());
+            return FeatureStreams.subset(reader, qb);
 
         } else {
             throw new UnsupportedQueryException();
@@ -332,12 +328,13 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
         preFilter = (Filter) new CRSAdaptorVisitor(tableType).visit(preFilter);
 
         // rebuild a new query with the same params, but just the pre-filter
-        final QueryBuilder builder = new QueryBuilder(query);
-        builder.setFilter(preFilter);
+        final org.geotoolkit.storage.feature.query.Query builder = new org.geotoolkit.storage.feature.query.Query();
+        builder.copy(query);
+        builder.setSelection(preFilter);
         if(query.getResolution() != null){ //attach resampling in hints; used later by postgis dialect
             builder.getHints().add(new Hints(RESAMPLING, query.getResolution()));
         }
-        final org.geotoolkit.storage.feature.query.Query preQuery = builder.buildQuery();
+        final org.geotoolkit.storage.feature.query.Query preQuery = builder;
 
         final FeatureType baseType = getFeatureType(query.getTypeName());
 
@@ -397,7 +394,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
         // so for now if we got one, we let the filter be evaluated in java and not with a sql query
         if (containsOperation(preQuery, baseType)) {
             try {
-                sql = getQueryBuilder().selectSQL(baseType, QueryBuilder.all(baseType.getName()));
+                sql = getQueryBuilder().selectSQL(baseType, new org.geotoolkit.storage.feature.query.Query(baseType.getName()));
                 reader = new JDBCFeatureReader(this, sql, baseType, cnx, release, null);
                 FeatureStreams.subset(reader, query);
             } catch (SQLException ex) {
@@ -415,16 +412,6 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
         // if post filter, wrap it
         if (postFilter != null && postFilter != Filter.include()) {
             reader = FeatureStreams.filter(reader, postFilter);
-        }
-
-        //if we need to reproject data
-        final CoordinateReferenceSystem reproject = query.getCoordinateSystemReproject();
-        if(reproject != null && !Utilities.equalsIgnoreMetadata(reproject, FeatureExt.getCRS(baseType))){
-            try {
-                reader = FeatureStreams.decorate(reader, new ReprojectMapper(reader.getFeatureType(), reproject),query.getHints());
-            } catch (MismatchedFeatureException ex) {
-                throw new DataStoreException(ex);
-            }
         }
 
         //if we need to constraint type
@@ -559,14 +546,14 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
             if ( EditMode.INSERT == mode ) {
                 //build up a statement for the content, inserting only so we dont want
                 //the query to return any data ==> Filter.exclude()
-                final org.geotoolkit.storage.feature.query.Query queryNone = QueryBuilder.filtered(typeName, Filter.exclude());
+                final org.geotoolkit.storage.feature.query.Query queryNone = org.geotoolkit.storage.feature.query.Query.filtered(typeName, Filter.exclude());
                 final String sql = getQueryBuilder().selectSQL(baseType, queryNone);
                 getLogger().fine(sql);
                 return new JDBCFeatureWriterInsert(this,sql,baseType,cnx,release,hints);
             }
 
             // build up a statement for the content
-            final org.geotoolkit.storage.feature.query.Query preQuery = QueryBuilder.filtered(typeName, preFilter);
+            final org.geotoolkit.storage.feature.query.Query preQuery = org.geotoolkit.storage.feature.query.Query.filtered(typeName, preFilter);
             final String sql = getQueryBuilder().selectSQL(baseType, preQuery);
             getLogger().fine(sql);
 

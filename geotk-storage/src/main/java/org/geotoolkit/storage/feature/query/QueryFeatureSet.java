@@ -88,10 +88,6 @@ public final class QueryFeatureSet implements FeatureSet {
         if (properties!=null && FeatureTypeExt.isAllProperties(ft, properties)) {
             ft = new ViewMapper(ft, properties).getMappedType();
         }
-        if (query.getCoordinateSystemReproject() != null) {
-            ft = new ReprojectMapper(ft, query.getCoordinateSystemReproject()).getMappedType();
-        }
-
         return ft;
     }
 

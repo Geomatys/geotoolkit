@@ -33,7 +33,7 @@ import org.apache.sis.parameter.DefaultParameterDescriptorGroup;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.feature.FeatureCollection;
 import org.geotoolkit.storage.feature.FeatureIterator;
-import org.geotoolkit.storage.feature.query.QueryBuilder;
+import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.db.reverse.RelationMetaModel;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.AttributeType;
@@ -118,10 +118,10 @@ public class DBRelationOperation extends AbstractOperation {
     public Property apply(Feature ftr, ParameterValueGroup pvg) {
 
         final Object key = ftr.getPropertyValue(relation.getCurrentColumn());
-        final QueryBuilder qb = new QueryBuilder();
+        final Query qb = new Query();
         qb.setTypeName(NamesExt.create(relation.getForeignTable()));
-        qb.setFilter(relation.toFilter(key));
-        final FeatureCollection res = store.createSession(false).getFeatureCollection(qb.buildQuery());
+        qb.setSelection(relation.toFilter(key));
+        final FeatureCollection res = store.createSession(false).getFeatureCollection(qb);
         final Object value;
         if(type.getMaximumOccurs()==1){
             try (FeatureIterator ite = res.iterator()) {

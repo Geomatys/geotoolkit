@@ -28,7 +28,6 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
-
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.storage.feature.query.Query;
@@ -36,7 +35,6 @@ import org.geotoolkit.storage.feature.query.SortByComparator;
 import org.geotoolkit.storage.feature.session.Session;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureSetMapper;
-import org.geotoolkit.feature.ReprojectMapper;
 import org.geotoolkit.storage.memory.WrapFeatureIterator;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.Feature;
@@ -44,8 +42,6 @@ import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.SortProperty;
 import org.opengis.geometry.Envelope;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.util.FactoryException;
 
 /**
  * Feature stream utility functions.
@@ -288,30 +284,6 @@ public final class FeatureStreams {
      */
     public static Stream<Feature> subset(final Stream<Feature> stream, final FeatureType type, final Query query) throws DataStoreException{
         return GenericQueryFeatureIterator.wrap(stream, type, query);
-    }
-
-    /**
-     * Wrap a FeatureReader with a reprojection.
-     *
-     * @param reader source reader
-     * @param crs target CoordinateReferenceSystem
-     * @param hints additional hints
-     * @return reprojected feature reader
-     * @throws org.opengis.util.FactoryException if a transformation operation fails
-     */
-    public static FeatureReader reproject(final FeatureReader reader, final CoordinateReferenceSystem crs, final Hints hints) throws FactoryException {
-        return GenericMappedFeatureIterator.wrap(reader, new ReprojectMapper(reader.getFeatureType(), crs), hints);
-    }
-
-    /**
-     * Create a reproject FeatureCollection wrapping the given collection.
-     *
-     * @param col source collection
-     * @param crs target CoordinateReferenceSystem
-     * @return reprojected collection
-     */
-    public static FeatureCollection reproject(final FeatureCollection col, final CoordinateReferenceSystem crs){
-        return GenericMappedFeatureIterator.wrap(col, new ReprojectMapper(col.getType(), crs));
     }
 
     /**

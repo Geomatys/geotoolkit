@@ -30,7 +30,7 @@ import org.apache.sis.storage.Resource;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.storage.feature.FeatureStoreUtilities;
-import org.geotoolkit.storage.feature.query.QueryBuilder;
+import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.storage.multires.AbstractTileGenerator;
 import org.geotoolkit.storage.multires.DeferredTile;
 import org.geotoolkit.storage.multires.TileMatrices;
@@ -98,7 +98,7 @@ public class FeatureSetTileGenerator extends AbstractTileGenerator {
 
         final Polygon tileBound = JTS.toGeometry(tileEnv);
 
-        final FeatureQuery query = QueryBuilder.reproject(source.getType(), tileCrs);
+        final FeatureQuery query = Query.reproject(source.getType(), tileCrs);
         query.setSelection(filter);
 
         final FeatureSet subset = source.subset(query);

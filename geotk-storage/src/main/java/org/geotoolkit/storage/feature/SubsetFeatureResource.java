@@ -93,9 +93,6 @@ final class SubsetFeatureResource extends AbstractResource implements FeatureSet
             if (properties!=null && FeatureTypeExt.isAllProperties(type, properties)) {
                 type = new ViewMapper(type, properties).getMappedType();
             }
-            if(query.getCoordinateSystemReproject()!=null){
-                type = new ReprojectMapper(type, query.getCoordinateSystemReproject()).getMappedType();
-            }
         }
         return type;
     }

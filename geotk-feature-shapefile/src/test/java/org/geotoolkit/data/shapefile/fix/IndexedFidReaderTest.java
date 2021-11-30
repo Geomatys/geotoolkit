@@ -23,7 +23,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.storage.feature.FeatureIterator;
-import org.geotoolkit.storage.feature.query.QueryBuilder;
 import org.geotoolkit.data.shapefile.indexed.FIDTestCase;
 import org.geotoolkit.data.shapefile.indexed.IndexType;
 import org.geotoolkit.data.shapefile.indexed.IndexedShapefileFeatureStore;
@@ -31,6 +30,7 @@ import org.geotoolkit.data.shapefile.lock.AccessManager;
 import org.geotoolkit.data.shapefile.lock.ShpFileType;
 import org.geotoolkit.data.shapefile.lock.ShpFiles;
 import org.geotoolkit.data.shapefile.shx.ShxReader;
+import org.geotoolkit.storage.feature.query.Query;
 import org.junit.After;
 import static org.junit.Assert.*;
 import org.junit.Before;
@@ -97,7 +97,7 @@ public class IndexedFidReaderTest extends FIDTestCase {
 
         final IndexedShapefileFeatureStore ds = new IndexedShapefileFeatureStore(backshp.toURI(),
                 true, true, IndexType.NONE,null);
-        final FeatureIterator features = ds.getFeatureReader(QueryBuilder.all(ds.getNames().iterator().next()));
+        final FeatureIterator features = ds.getFeatureReader(new Query(ds.getNames().iterator().next()));
         while (features.hasNext()) {
             final Feature next = features.next();
             expectedCount++;
@@ -120,7 +120,7 @@ public class IndexedFidReaderTest extends FIDTestCase {
         final Set<String> expectedFids = new TreeSet<>(Collections.reverseOrder());
         final IndexedShapefileFeatureStore ds = new IndexedShapefileFeatureStore(backshp.toURI(),
                 true, true, IndexType.NONE,null);
-        final FeatureIterator features = ds.getFeatureReader(QueryBuilder.all(ds.getNames().iterator().next()));
+        final FeatureIterator features = ds.getFeatureReader(new Query(ds.getNames().iterator().next()));
         while (features.hasNext()) {
             final Feature next = features.next();
             expectedCount++;

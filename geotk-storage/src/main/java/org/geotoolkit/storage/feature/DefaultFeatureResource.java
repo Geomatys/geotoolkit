@@ -42,7 +42,6 @@ import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.storage.feature.query.Query;
-import org.geotoolkit.storage.feature.query.QueryBuilder;
 import org.geotoolkit.storage.feature.query.QueryUtilities;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.storage.AbstractResource;
@@ -65,7 +64,7 @@ public class DefaultFeatureResource extends AbstractResource implements Writable
     private final Query query;
 
     public DefaultFeatureResource(FeatureStore store, GenericName name) throws DataStoreException {
-        this(store,QueryBuilder.all(name));
+        this(store,new Query(name));
     }
 
     public DefaultFeatureResource(FeatureStore store, Query query) throws DataStoreException {
@@ -136,7 +135,7 @@ public class DefaultFeatureResource extends AbstractResource implements Writable
      */
     @Override
     public void add(Iterator<? extends Feature> features) throws ReadOnlyStorageException, DataStoreException {
-        try (final FeatureWriter writer = store.getFeatureWriter(QueryBuilder.filtered(query.getTypeName(), Filter.exclude()))) {
+        try (final FeatureWriter writer = store.getFeatureWriter(Query.filtered(query.getTypeName(), Filter.exclude()))) {
             while (features.hasNext()) {
                 FeatureExt.copy(features.next(), writer.next(), true);
                 writer.write();

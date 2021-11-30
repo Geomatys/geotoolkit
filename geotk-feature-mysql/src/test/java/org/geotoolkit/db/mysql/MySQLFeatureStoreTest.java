@@ -51,7 +51,6 @@ import org.geotoolkit.storage.feature.FeatureCollection;
 import org.geotoolkit.storage.feature.FeatureIterator;
 import org.geotoolkit.storage.feature.FeatureReader;
 import org.geotoolkit.storage.feature.query.Query;
-import org.geotoolkit.storage.feature.query.QueryBuilder;
 import org.geotoolkit.storage.feature.session.Session;
 import org.geotoolkit.db.JDBCFeatureStore;
 import org.apache.sis.storage.DataStoreException;
@@ -438,7 +437,7 @@ public class MySQLFeatureStoreTest extends org.geotoolkit.test.TestBase {
         store.addFeatures(resType.getName().toString(), Collections.singleton(feature));
 
         Session session = store.createSession(false);
-        FeatureCollection col = session.getFeatureCollection(QueryBuilder.all(resType.getName().toString()));
+        FeatureCollection col = session.getFeatureCollection(new Query(resType.getName()));
         assertEquals(1, col.size());
 
         FeatureIterator ite = col.iterator();
@@ -476,7 +475,7 @@ public class MySQLFeatureStoreTest extends org.geotoolkit.test.TestBase {
         store.addFeatures(resType.getName().toString(), Collections.singleton(feature));
 
         session = store.createSession(false);
-        col = session.getFeatureCollection(QueryBuilder.all(resType.getName().toString()));
+        col = session.getFeatureCollection(new Query(resType.getName()));
         assertEquals(1, col.size());
 
         ite = col.iterator();
@@ -559,7 +558,7 @@ public class MySQLFeatureStoreTest extends org.geotoolkit.test.TestBase {
         store.addFeatures(resType.getName().toString(), Collections.singleton(feature));
 
         final Session session = store.createSession(false);
-        final FeatureCollection col = session.getFeatureCollection(QueryBuilder.all(resType.getName().toString()));
+        final FeatureCollection col = session.getFeatureCollection(new Query(resType.getName()));
         assertEquals(1, col.size());
 
         //Postgis allow NULL in arrays, so returned array are not primitive types
@@ -631,7 +630,7 @@ public class MySQLFeatureStoreTest extends org.geotoolkit.test.TestBase {
         store.addFeatures(resType.getName().toString(), Collections.singleton(voyage));
 
         final Session session = store.createSession(false);
-        final FeatureCollection col = session.getFeatureCollection(QueryBuilder.all(resType.getName().toString()));
+        final FeatureCollection col = session.getFeatureCollection(new Query(resType.getName()));
         assertEquals(1, col.size());
 
         final FeatureIterator ite = col.iterator();
@@ -707,10 +706,10 @@ public class MySQLFeatureStoreTest extends org.geotoolkit.test.TestBase {
         store.addFeatures(soundingType.getName().toString(), Collections.singleton(sounding));
 
         final Session session = store.createSession(false);
-        final FeatureCollection col = session.getFeatureCollection(QueryBuilder.all(soundingType.getName().toString()));
+        final FeatureCollection col = session.getFeatureCollection(new Query(soundingType.getName()));
         assertEquals(1, col.size());
 
-        final FeatureIterator ite = store.getFeatureReader(QueryBuilder.all(soundingType.getName().toString()));
+        final FeatureIterator ite = store.getFeatureReader(new Query(soundingType.getName()));
         try{
             final Feature resFeature = ite.next();
             assertNotNull(resFeature);
@@ -796,10 +795,10 @@ public class MySQLFeatureStoreTest extends org.geotoolkit.test.TestBase {
         store.addFeatures(recordType.getName().toString(), Collections.singleton(record));
 
         final Session session = store.createSession(false);
-        final FeatureCollection col = session.getFeatureCollection(QueryBuilder.all(recordType.getName().toString()));
+        final FeatureCollection col = session.getFeatureCollection(new Query(recordType.getName()));
         assertEquals(1, col.size());
 
-        final FeatureIterator ite = store.getFeatureReader(QueryBuilder.all(recordType.getName().toString()));
+        final FeatureIterator ite = store.getFeatureReader(new Query(recordType.getName()));
         try{
             final Feature resFeature = ite.next();
             assertNotNull(resFeature);

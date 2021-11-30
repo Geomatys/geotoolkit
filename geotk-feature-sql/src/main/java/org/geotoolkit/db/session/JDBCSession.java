@@ -24,7 +24,7 @@ import org.geotoolkit.feature.FeatureExt;
 
 import org.geotoolkit.storage.feature.FeatureIterator;
 import org.geotoolkit.storage.event.FeatureStoreContentEvent;
-import org.geotoolkit.storage.feature.query.QueryBuilder;
+import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.storage.feature.session.AddDelta;
 import org.geotoolkit.storage.feature.session.DefaultSession;
 import org.geotoolkit.storage.feature.session.Delta;
@@ -176,9 +176,9 @@ public class JDBCSession extends DefaultSession {
                 removeIdFilters.add(removed);
             } else {
                 Set<ResourceId<Object>> identifiers = new HashSet<>();
-                final QueryBuilder qb = new QueryBuilder(groupName);
-                qb.setFilter(filter);
-                final FeatureIterator ite = getFeatureIterator(qb.buildQuery());
+                final Query qb = new Query(groupName);
+                qb.setSelection(filter);
+                final FeatureIterator ite = getFeatureIterator(qb);
                 try{
                     while(ite.hasNext()){
                         identifiers.add(FeatureExt.getId(ite.next()));

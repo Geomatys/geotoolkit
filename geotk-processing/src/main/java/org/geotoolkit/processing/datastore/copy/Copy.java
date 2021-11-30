@@ -38,7 +38,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.feature.FeatureStore;
 import org.geotoolkit.storage.feature.FeatureCollection;
 import org.geotoolkit.storage.feature.query.Query;
-import org.geotoolkit.storage.feature.query.QueryBuilder;
 import org.geotoolkit.storage.feature.session.Session;
 import org.geotoolkit.filter.DefaultPropertyName;
 import org.geotoolkit.filter.visitor.DuplicatingFilterVisitor;
@@ -136,11 +135,12 @@ public class Copy extends AbstractProcess {
 
                 Query query;
                 if (reBuildQuery) {
-                    QueryBuilder builder = new QueryBuilder(queryParam);
+                    Query builder = new Query();
+                    builder.copy(queryParam);
                     builder.setTypeName(n);
-                    query = builder.buildQuery();
+                    query = builder;
                 } else {
-                    query = queryParam != null ? queryParam : QueryBuilder.all(n);
+                    query = queryParam != null ? queryParam : new Query(n);
                 }
 
                 insert(n, sourceSS, targetSS, query, eraseParam, newVersion);
@@ -189,9 +189,10 @@ public class Copy extends AbstractProcess {
         //Change * to featureType default geometry name
         if (query != null && query.getSelection() != null) {
             final Filter newFilter = (Filter) new BBOXFilterVisitor(type).visit((Filter) query.getSelection());
-            final QueryBuilder builder = new QueryBuilder(query);
-            builder.setFilter(newFilter);
-            query = builder.buildQuery();
+            final Query builder = new Query();
+            builder.copy(query);
+            builder.setSelection(newFilter);
+            query = builder;
         }
         final FeatureCollection collection = sourceSS.getFeatureCollection(query);
 

@@ -44,7 +44,7 @@ import org.apache.sis.util.collection.BackingStoreException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.filter.FilterUtilities;
-import org.geotoolkit.storage.feature.query.QueryBuilder;
+import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.storage.feature.session.Session;
 import org.geotoolkit.storage.memory.GenericMappingFeatureCollection;
 import org.geotoolkit.storage.memory.MemoryFeatureStore;
@@ -113,7 +113,7 @@ public class FeatureStoreUtilities {
         final MemoryFeatureStore ds = new MemoryFeatureStore(type, true);
         final Session session = ds.createSession(false);
 
-        FeatureCollection col = session.getFeatureCollection(QueryBuilder.all(type.getName().toString()));
+        FeatureCollection col = session.getFeatureCollection(new Query(type.getName()));
         ((AbstractFeatureCollection)col).setIdentifier(id);
 
         return col;
@@ -520,7 +520,7 @@ public class FeatureStoreUtilities {
                 }
             }
 
-            cols[i] = col.subset( QueryBuilder.filtered(name.toString(), filter) );
+            cols[i] = col.subset(Query.filtered(name.toString(), filter) );
 
             //retype the collection
             final FeatureTypeBuilder ftb = new FeatureTypeBuilder(baseType);

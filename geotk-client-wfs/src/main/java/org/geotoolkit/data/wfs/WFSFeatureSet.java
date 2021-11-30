@@ -75,7 +75,6 @@ import org.geotoolkit.storage.FeatureMapUpdate;
 import org.geotoolkit.storage.feature.FeatureReader;
 import org.geotoolkit.storage.feature.FeatureStreams;
 import org.geotoolkit.storage.feature.GenericNameIndex;
-import org.geotoolkit.storage.feature.query.QueryBuilder;
 import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.wfs.xml.TransactionResponse;
@@ -237,7 +236,7 @@ public class WFSFeatureSet implements WritableFeatureSet {
             q = new QName(namespace, gName.tip().toString(), prefixes.get(namespace));
         }
         try {
-            reader = requestFeature(q, QueryBuilder.all(sft.getName()));
+            reader = requestFeature(q, new org.geotoolkit.storage.feature.query.Query(sft.getName()));
         } catch (IOException | XMLStreamException ex) {
             throw new DataStoreException(ex);
         }
@@ -414,9 +413,10 @@ public class WFSFeatureSet implements WritableFeatureSet {
          * any), because it happens that WFS servers handle it badly.
          *
          */
-        final QueryBuilder remainingQuery;
+        final org.geotoolkit.storage.feature.query.Query remainingQuery;
         if (gquery != null) {
-            remainingQuery = new QueryBuilder(gquery);
+            remainingQuery = new org.geotoolkit.storage.feature.query.Query();
+            remainingQuery.copy(gquery);
 
             final Map<String, String> replacements = type.getProperties(true).stream()
                 // operations are not data sent back by the server.
@@ -451,7 +451,7 @@ public class WFSFeatureSet implements WritableFeatureSet {
             }
 
             // Filter is already processed, but a query builder does not support null filter.
-            remainingQuery.setFilter(Filter.include());
+            remainingQuery.setSelection(Filter.include());
 
             final long start = gquery.getOffset();
             final long max = gquery.getLimit();
@@ -494,7 +494,7 @@ public class WFSFeatureSet implements WritableFeatureSet {
 
         FeatureReader streamReader = reader.readAsStream(stream);
         if (remainingQuery != null) {
-            streamReader = FeatureStreams.subset(streamReader, remainingQuery.buildQuery());
+            streamReader = FeatureStreams.subset(streamReader, remainingQuery);
         }
 
         return streamReader;

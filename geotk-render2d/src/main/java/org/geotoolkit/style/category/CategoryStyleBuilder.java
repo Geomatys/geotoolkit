@@ -36,7 +36,6 @@ import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.geotoolkit.storage.feature.query.Query;
-import org.geotoolkit.storage.feature.query.QueryBuilder;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyleFactory;
@@ -287,14 +286,13 @@ public class CategoryStyleBuilder {
         final ValueReference property = currentProperty;
         final FeatureSet resource = (FeatureSet) layer.getData();
 
-        final QueryBuilder builder = new QueryBuilder();
+        final Query query = new Query();
         try {
-            builder.setTypeName(resource.getType().getName());
+            query.setTypeName(resource.getType().getName());
         } catch (DataStoreException ex) {
             LOGGER.log(Level.FINE, "Error while accessing data", ex);
         }
-        builder.setProperties(new String[]{property.getXPath()});
-        final Query query = builder.buildQuery();
+        query.setProperties(new String[]{property.getXPath()});
 
         try (Stream<Feature> stream = resource.subset(query).features(false)){
             final Iterator<Feature> features = stream.iterator();
