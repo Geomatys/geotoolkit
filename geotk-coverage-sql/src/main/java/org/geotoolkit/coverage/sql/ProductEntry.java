@@ -90,7 +90,7 @@ final class ProductEntry extends Entry {
      * may set this field to 7, while a product of monthly SST coverage may set this field
      * to 30. The value is only approximate.
      */
-    private final Duration temporalResolution;
+    final Duration temporalResolution;
 
     /**
      * A representative format for this product, or {@code null} if none.
@@ -265,7 +265,9 @@ final class ProductEntry extends Entry {
             throw new DataStoreReferencingException(e);
 
         }
-//      metadata.addTemporalResolution(temporalResolution);                 // TODO
+        if (temporalResolution != null) {
+            metadata.addTemporalResolution(temporalResolution.getSeconds() / (24*60*60d));
+        }
         if (format != null) {
             for (final SampleDimension band : format.sampleDimensions) {
                 metadata.addNewBand(band);

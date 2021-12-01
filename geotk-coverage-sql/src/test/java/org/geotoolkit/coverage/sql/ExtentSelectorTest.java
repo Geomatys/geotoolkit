@@ -17,6 +17,7 @@
 package org.geotoolkit.coverage.sql;
 
 import java.util.Date;
+import java.time.Duration;
 import org.apache.sis.internal.referencing.ExtentSelector;
 import org.opengis.metadata.extent.Extent;
 import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
@@ -32,6 +33,18 @@ import static org.junit.Assert.*;
  * Copy of {@code ExtentSelectorTest} from Apache SIS but with temporal tests enabled.
  */
 public final strictfp class ExtentSelectorTest extends TestCase {
+    /**
+     * Whether to test an alternate ordering where distance to TOI is tested last.
+     *
+     * @see ExtentSelector#alternateOrdering
+     */
+    private boolean alternateOrdering;
+
+    /**
+     * The temporal granularity of the Time Of Interest (TOI), or {@code null} if none.
+     */
+    private Duration granularity;
+
     /**
      * Tests the selector when intersection with AOI is a sufficient criterion.
      */
@@ -70,10 +83,35 @@ public final strictfp class ExtentSelectorTest extends TestCase {
      */
     @Test
     public void testTemporal() {
-        assertBestEquals(time(1000, 2000), 2,
-                         time(1500, 3000),
-                         time(1300, 1800),      // Same duration than above, but better centered.
-                         time(1400, 1600));     // Well centered but intersection is small.
+        assertBestEquals(time(1000, 2000, true), 2,
+                         time(1500, 2000, true),
+                         time(1300, 1800, false),       // Same duration than above, but better centered.
+                         time(1400, 1600, true));       // Well centered but intersection is small.
+    }
+
+    /**
+     * Tests using temporal ranges with {@link ExtentSelector#alternateOrdering} set to {@code true}.
+     * The criterion should give precedence to larger geographic area instead of better centered.
+     */
+    @Test
+    public void testAlternateOrdering() {
+        alternateOrdering = true;
+        assertBestEquals(time(1000, 2000, true), 1,
+                         time(1500, 2000, true),        // Not well centered by has larger geographic area.
+                         time(1300, 1800, false),       // Better centered but smaller geographic area.
+                         time(1400, 1600, true));
+    }
+
+    /**
+     * Tests using temporal ranges with {@link ExtentSelector#setTimeGranularity(Duration)} defined.
+     */
+    @Test
+    public void testTimeGranularity() {
+        granularity = Duration.ofSeconds(20);
+        assertBestEquals(time(10000, 70000, true), 3,
+                         time(14000, 47000, false),     // 2 units of temporal resolution.
+                         time(15000, 46000, true),      // Same size if counted in units of temporal resolution.
+                         time(25000, 55000, true));     // Same size in units of resolution, but better centered.
     }
 
     /**
@@ -92,11 +130,30 @@ public final strictfp class ExtentSelectorTest extends TestCase {
 
     /**
      * Creates an extent for a temporal range having the given boundaries.
+     * A geographic extent is also added, but may be ignored because temporal extent has precedence.
+     *
+     * @param startTime  arbitrary start time in milliseconds.
+     * @param endTime    arbitrary end time in milliseconds.
+     * @param largeArea  {@code false} for associating a small geographic area,
+     *                   {@code true} for associating a larger geographic area.
      */
-    private static Extent time(final long startTime, final long endTime) {
+    private static Extent time(final long startTime, final long endTime, final boolean largeArea) {
+        final DefaultGeographicBoundingBox bbox = new DefaultGeographicBoundingBox(
+                largeArea ? -20 : -10, 10,
+                largeArea ?  10 :  20, 30);
         final DefaultTemporalExtent range = new DefaultTemporalExtent();
         range.setBounds(new Date(startTime), new Date(endTime));
-        return new DefaultExtent(null, null, null, range);
+        return new DefaultExtent(null, bbox, null, range);
+    }
+
+    /**
+     * Creates the selector to use for testing purpose.
+     */
+    private ExtentSelector<Integer> create(final Extent aoi) {
+        ExtentSelector<Integer> selector = new ExtentSelector<>(aoi);
+        selector.alternateOrdering = alternateOrdering;
+        selector.setTimeGranularity(granularity);
+        return selector;
     }
 
     /**
@@ -105,34 +162,34 @@ public final strictfp class ExtentSelectorTest extends TestCase {
      * @param aoi       area of interest to give to {@link ExtentSelector} constructor.
      * @param expected  expected best result: 1 for <var>a</var>, 2 for <var>b</var> or 3 for <var>c</var>.
      */
-    private static void assertBestEquals(final Extent aoi, final Integer expected,
-                                         final Extent a, final Extent b, final Extent c)
+    private void assertBestEquals(final Extent aoi, final Integer expected,
+                                  final Extent a, final Extent b, final Extent c)
     {
-        ExtentSelector<Integer> selector = new ExtentSelector<>(aoi);
+        ExtentSelector<Integer> selector = create(aoi);
         selector.evaluate(a, 1);
         selector.evaluate(b, 2);
         selector.evaluate(c, 3);
         assertEquals(expected, selector.best());
 
-        selector = new ExtentSelector<>(aoi);
+        selector = create(aoi);
         selector.evaluate(b, 2);
         selector.evaluate(c, 3);
         selector.evaluate(a, 1);
         assertEquals(expected, selector.best());
 
-        selector = new ExtentSelector<>(aoi);
+        selector = create(aoi);
         selector.evaluate(c, 3);
         selector.evaluate(a, 1);
         selector.evaluate(b, 2);
         assertEquals(expected, selector.best());
 
-        selector = new ExtentSelector<>(aoi);
+        selector = create(aoi);
         selector.evaluate(a, 1);
         selector.evaluate(c, 3);
         selector.evaluate(b, 2);
         assertEquals(expected, selector.best());
 
-        selector = new ExtentSelector<>(aoi);
+        selector = create(aoi);
         selector.evaluate(b, 2);
         selector.evaluate(a, 1);
         selector.evaluate(c, 3);

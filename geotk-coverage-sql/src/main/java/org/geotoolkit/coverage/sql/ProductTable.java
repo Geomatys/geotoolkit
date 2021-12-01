@@ -84,7 +84,8 @@ final class ProductTable extends CachedTable<String,ProductEntry> {
      */
     @Override
     String select() {
-        return "SELECT " + NAME + ", " + PARENT + ", \"exportedGrid\", \"temporalResolution\", \"metadata\""
+        return "SELECT " + NAME + ", " + PARENT + ", \"exportedGrid\","
+                + "EXTRACT(EPOCH FROM \"temporalResolution\"), \"metadata\""
                 + " FROM " + SCHEMA + ".\"" + TABLE + "\" WHERE " + NAME + " = ?";
     }
 
@@ -101,7 +102,7 @@ final class ProductTable extends CachedTable<String,ProductEntry> {
         final String    parent       = results.getString(2);
         final int       gridID       = results.getInt(3);
         final boolean   hasNoGrid    = results.wasNull();
-        final Duration  timeRes      = null;                          // TODO results.getString(4);
+        final double    timeRes      = results.getDouble(4);
         final String    metadata     = results.getString(5);
         GridGeometry    exportedGrid = null;
         GeneralEnvelope envelope     = null;
@@ -121,7 +122,8 @@ final class ProductTable extends CachedTable<String,ProductEntry> {
             }
         }
         final FormatEntry format  = seriesTable.getRepresentativeFormat(name);
-        return new ProductEntry(transaction.database, parent, name, envelope, exportedGrid, timeRes, format, metadata);
+        return new ProductEntry(transaction.database, parent, name, envelope, exportedGrid,
+                (timeRes > 0) ? Duration.ofSeconds(Math.round(timeRes)) : null, format, metadata);
     }
 
     /**
