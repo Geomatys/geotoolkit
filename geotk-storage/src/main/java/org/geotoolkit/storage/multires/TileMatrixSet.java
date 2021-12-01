@@ -112,6 +112,7 @@ public interface TileMatrixSet {
      */
     default Envelope getEnvelope() {
         final GeneralEnvelope env = new GeneralEnvelope(getCoordinateReferenceSystem());
+        env.setToNaN();
         for (TileMatrix tileMatrix : getTileMatrices()) {
             if (env.isAllNaN()) {
                 env.setEnvelope(tileMatrix.getEnvelope());
