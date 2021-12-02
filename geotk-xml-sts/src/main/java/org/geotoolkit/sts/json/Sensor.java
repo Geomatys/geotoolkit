@@ -41,6 +41,8 @@ public class Sensor implements STSResponse, DeltaComparable {
 
     private String metadata = null;
 
+    private Object properties = null;
+
     @JsonProperty("Datastreams")
     private List<Datastream> datastreams = null;
 
@@ -176,6 +178,26 @@ public class Sensor implements STSResponse, DeltaComparable {
         this.metadata = metadata;
     }
 
+    public Sensor properties(Object properties) {
+        this.properties = properties;
+        return this;
+    }
+
+    /**
+     * a set of additional properties specified for the object in the form
+     * \&quot;name\&quot;:\&quot;value\&quot; pair
+     *
+     * @return properties
+    *
+     */
+    public Object getProperties() {
+        return properties;
+    }
+
+    public void setProperties(Object properties) {
+        this.properties = properties;
+    }
+
     public Sensor datastreams(List<Datastream> datastreams) {
         this.datastreams = datastreams;
         return this;
@@ -285,6 +307,7 @@ public class Sensor implements STSResponse, DeltaComparable {
                 && Objects.equals(this.metadata, sensor.metadata)
                 && Objects.equals(this.name, sensor.name)
                 && Objects.equals(this.datastreams, sensor.datastreams)
+                && Objects.equals(this.properties, sensor.properties)
                 && Objects.equals(this.datastreamsIotNavigationLink, sensor.datastreamsIotNavigationLink)
                 && Objects.equals(this.multiDatastreams, sensor.multiDatastreams)
                 && Objects.equals(this.multiDatastreamsIotNavigationLink, sensor.multiDatastreamsIotNavigationLink);
@@ -292,7 +315,7 @@ public class Sensor implements STSResponse, DeltaComparable {
 
     @Override
     public int hashCode() {
-        return java.util.Objects.hash(iotId, iotSelfLink, description, encodingType, metadata, datastreams, datastreamsIotNavigationLink, name, multiDatastreams, multiDatastreamsIotNavigationLink);
+        return java.util.Objects.hash(iotId, iotSelfLink, description, encodingType, metadata, properties, datastreams, datastreamsIotNavigationLink, name, multiDatastreams, multiDatastreamsIotNavigationLink);
     }
 
     @Override
@@ -310,6 +333,7 @@ public class Sensor implements STSResponse, DeltaComparable {
                 && Objects.equals(this.encodingType, sensor.encodingType)
                 && Objects.equals(this.metadata, sensor.metadata)
                 && Objects.equals(this.name, sensor.name)
+                && Objects.equals(this.properties, sensor.properties)
                 && DeltaComparable.equals(this.datastreams, sensor.datastreams, delta)
                 && Objects.equals(this.datastreamsIotNavigationLink, sensor.datastreamsIotNavigationLink)
                 && DeltaComparable.equals(this.multiDatastreams, sensor.multiDatastreams, delta)
@@ -327,6 +351,7 @@ public class Sensor implements STSResponse, DeltaComparable {
         sb.append("    name: ").append(toIndentedString(name)).append("\n");
         sb.append("    encodingType: ").append(toIndentedString(encodingType)).append("\n");
         sb.append("    metadata: ").append(toIndentedString(metadata)).append("\n");
+        sb.append("    properties: ").append(toIndentedString(properties)).append("\n");
         sb.append("    datastreams: ").append(toIndentedString(datastreams)).append("\n");
         sb.append("    datastreamsIotNavigationLink: ").append(toIndentedString(datastreamsIotNavigationLink)).append("\n");
         sb.append("    multiDatastreams: ").append(toIndentedString(multiDatastreams)).append("\n");

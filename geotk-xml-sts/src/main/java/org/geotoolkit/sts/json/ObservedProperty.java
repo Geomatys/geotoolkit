@@ -39,6 +39,8 @@ public class ObservedProperty implements STSResponse, DeltaComparable {
 
     private String description = null;
 
+    private Object properties = null;
+
     @JsonProperty("Datastreams")
     private List<Datastream> datastreams = null;
 
@@ -149,6 +151,26 @@ public class ObservedProperty implements STSResponse, DeltaComparable {
         this.description = description;
     }
 
+    public ObservedProperty properties(Object properties) {
+        this.properties = properties;
+        return this;
+    }
+
+    /**
+     * a set of additional properties specified for the object in the form
+     * \&quot;name\&quot;:\&quot;value\&quot; pair
+     *
+     * @return properties
+    *
+     */
+    public Object getProperties() {
+        return properties;
+    }
+
+    public void setProperties(Object properties) {
+        this.properties = properties;
+    }
+
     public ObservedProperty datastreams(List<Datastream> datastreams) {
         this.datastreams = datastreams;
         return this;
@@ -256,6 +278,7 @@ public class ObservedProperty implements STSResponse, DeltaComparable {
                 && Objects.equals(this.name, observedProperty.name)
                 && Objects.equals(this.definition, observedProperty.definition)
                 && Objects.equals(this.description, observedProperty.description)
+                && Objects.equals(this.properties, observedProperty.properties)
                 && Objects.equals(this.datastreams, observedProperty.datastreams)
                 && Objects.equals(this.datastreamsIotNavigationLink, observedProperty.datastreamsIotNavigationLink)
                 && Objects.equals(this.multiDatastreams, observedProperty.multiDatastreams)
@@ -264,7 +287,7 @@ public class ObservedProperty implements STSResponse, DeltaComparable {
 
     @Override
     public int hashCode() {
-        return java.util.Objects.hash(iotId, iotSelfLink, name, definition, description, datastreams, datastreamsIotNavigationLink, multiDatastreams, multiDatastreamsIotNavigationLink);
+        return java.util.Objects.hash(iotId, iotSelfLink, name, definition, description, properties, datastreams, datastreamsIotNavigationLink, multiDatastreams, multiDatastreamsIotNavigationLink);
     }
 
     @Override
@@ -281,6 +304,7 @@ public class ObservedProperty implements STSResponse, DeltaComparable {
                 && Objects.equals(this.name, observedProperty.name)
                 && Objects.equals(this.definition, observedProperty.definition)
                 && Objects.equals(this.description, observedProperty.description)
+                && Objects.equals(this.properties, observedProperty.properties)
                 && DeltaComparable.equals(this.datastreams, observedProperty.datastreams, delta)
                 && Objects.equals(this.datastreamsIotNavigationLink, observedProperty.datastreamsIotNavigationLink)
                 && DeltaComparable.equals(this.multiDatastreams, observedProperty.multiDatastreams, delta)
@@ -297,6 +321,7 @@ public class ObservedProperty implements STSResponse, DeltaComparable {
         sb.append("    name: ").append(toIndentedString(name)).append("\n");
         sb.append("    definition: ").append(toIndentedString(definition)).append("\n");
         sb.append("    description: ").append(toIndentedString(description)).append("\n");
+        sb.append("    properties: ").append(toIndentedString(properties)).append("\n");
         sb.append("    datastreams: ").append(toIndentedString(datastreams)).append("\n");
         sb.append("    datastreamsIotNavigationLink: ").append(toIndentedString(datastreamsIotNavigationLink)).append("\n");
         sb.append("    multiDatastreams: ").append(toIndentedString(multiDatastreams)).append("\n");

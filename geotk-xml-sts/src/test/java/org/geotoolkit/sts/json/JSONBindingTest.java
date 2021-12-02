@@ -18,14 +18,13 @@ package org.geotoolkit.sts.json;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.IOException;
 import java.io.StringWriter;
 import java.math.BigDecimal;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
-import javax.xml.bind.JAXBException;
+import java.util.Map;
 import org.geotoolkit.nio.IOUtilities;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
@@ -37,7 +36,7 @@ import org.junit.Test;
 public class JSONBindingTest extends org.geotoolkit.test.TestBase {
 
     @Test
-    public void testMarshallingDataArray() throws JAXBException, IOException, URISyntaxException {
+    public void testMarshallingDataArray() throws Exception {
 
         final DataArray dataArray = new DataArray();
         dataArray.setIotCount(new BigDecimal(3));
@@ -71,7 +70,7 @@ public class JSONBindingTest extends org.geotoolkit.test.TestBase {
     }
 
     @Test
-    public void testMarshallingMultiDataArray() throws JAXBException, IOException, URISyntaxException {
+    public void testMarshallingMultiDataArray() throws Exception {
 
         final DataArray dataArray = new DataArray();
         dataArray.setIotCount(new BigDecimal(3));
@@ -105,6 +104,50 @@ public class JSONBindingTest extends org.geotoolkit.test.TestBase {
         m.writeValue(sw, dataArray);
 
         String expResult = IOUtilities.toString(IOUtilities.getResourceAsPath("json/dataArray2.json"));
+        expResult = expResult.replace(" ", "");
+        expResult = expResult.replace("\n", "");
+        String result = sw.toString().replace(" ", "");
+
+        assertEquals(expResult, result);
+
+    }
+
+    @Test
+    public void testSTSCapabilities() throws Exception {
+        STSCapabilities capa = new STSCapabilities();
+        String selfLink = "http://my-server.org/sta/v1.1";
+        
+        capa.addLink("Things", selfLink + "/Things");
+        capa.addLink("Locations", selfLink + "/Locations");
+        capa.addLink("Datastreams", selfLink + "/Datastreams");
+        capa.addLink("MultiDatastreams", selfLink + "/MultiDatastreams");
+        capa.addLink("Sensors", selfLink + "/Sensors");
+        capa.addLink("Observations", selfLink + "/Observations");
+        capa.addLink("ObservedProperties", selfLink + "/ObservedProperties");
+        capa.addLink("FeaturesOfInterest", selfLink + "/FeaturesOfInterest");
+        capa.addLink("HistoricalLocations", selfLink + "/HistoricalLocations");
+
+        List<String> conformance = Arrays.asList("http://www.opengis.net/spec/iot_sensing/1.1/req/batch-request/batch-request",
+                                                 "http://www.opengis.net/spec/iot_sensing/1.1/req/create-observations-via-mqtt/observations-creation",
+                                                 "http://www.opengis.net/spec/iot_sensing/1.1/req/receive-updates-via-mqtt/receive-updates");
+        capa.addServerSetting("conformance", conformance);
+
+        Map<String, List<String>> oc = new LinkedHashMap<>();
+        List<String> endpoints = Arrays.asList("wss://my-server.org/sta/v1.1/mqtt");
+        oc.put("endpoints", endpoints);
+        capa.addServerSetting("http://www.opengis.net/spec/iot_sensing/1.1/req/create-observations-via-mqtt/observations-creation", oc);
+
+        Map<String, List<String>> ru = new LinkedHashMap<>();
+        List<String> endpoints2 = Arrays.asList("wss://my-server.org/sta/v1.1/mqtt");
+        ru.put("endpoints", endpoints2);
+        capa.addServerSetting("http://www.opengis.net/spec/iot_sensing/1.1/req/receive-updates-via-mqtt/receive-updates", ru);
+
+        ObjectMapper m = new ObjectMapper();
+        m.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        StringWriter sw = new StringWriter();
+        m.writeValue(sw, capa);
+
+        String expResult = IOUtilities.toString(IOUtilities.getResourceAsPath("json/capabilities.json"));
         expResult = expResult.replace(" ", "");
         expResult = expResult.replace("\n", "");
         String result = sw.toString().replace(" ", "");

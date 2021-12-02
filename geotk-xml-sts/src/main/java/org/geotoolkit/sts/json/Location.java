@@ -41,6 +41,8 @@ public class Location implements STSResponse, DeltaComparable {
 
     private Object location = null;
 
+    private Object properties = null;
+
     @JsonProperty("Things")
     private List<Thing> things = null;
 
@@ -275,6 +277,26 @@ public class Location implements STSResponse, DeltaComparable {
         this.historicalLocationsIotNavigationLink = historicalLocationsIotNavigationLink;
     }
 
+    public Location properties(Object properties) {
+        this.properties = properties;
+        return this;
+    }
+
+    /**
+     * a set of additional properties specified for the object in the form
+     * \&quot;name\&quot;:\&quot;value\&quot; pair
+     *
+     * @return properties
+    *
+     */
+    public Object getProperties() {
+        return properties;
+    }
+
+    public void setProperties(Object properties) {
+        this.properties = properties;
+    }
+
     @Override
     public boolean equals(java.lang.Object o) {
         if (this == o) {
@@ -290,6 +312,7 @@ public class Location implements STSResponse, DeltaComparable {
                 && Objects.equals(this.encodingType, location.encodingType)
                 && Objects.equals(this.location, location.location)
                 && Objects.equals(this.things, location.things)
+                && Objects.equals(this.properties, location.properties)
                 && Objects.equals(this.historicalLocations, location.historicalLocations)
                 && Objects.equals(this.thingsIotNavigationLink, location.thingsIotNavigationLink)
                 && Objects.equals(this.historicalLocationsIotNavigationLink, location.historicalLocationsIotNavigationLink);
@@ -308,6 +331,7 @@ public class Location implements STSResponse, DeltaComparable {
                 && Objects.equals(this.iotSelfLink, location.iotSelfLink)
                 && Objects.equals(this.description, location.description)
                 && Objects.equals(this.encodingType, location.encodingType)
+                && Objects.equals(this.properties, location.properties)
                 && DeltaComparable.equals(this.location, location.location, delta)
                 && DeltaComparable.equals(this.things, location.things, delta)
                 && DeltaComparable.equals(this.historicalLocations, location.historicalLocations, delta)
@@ -317,7 +341,7 @@ public class Location implements STSResponse, DeltaComparable {
 
     @Override
     public int hashCode() {
-        return java.util.Objects.hash(iotId, iotSelfLink, description, encodingType, location, things, historicalLocations, thingsIotNavigationLink, historicalLocationsIotNavigationLink);
+        return java.util.Objects.hash(iotId, iotSelfLink, description, encodingType, location, properties, things, historicalLocations, thingsIotNavigationLink, historicalLocationsIotNavigationLink);
     }
 
     @Override
@@ -330,6 +354,7 @@ public class Location implements STSResponse, DeltaComparable {
         sb.append("    description: ").append(toIndentedString(description)).append("\n");
         sb.append("    encodingType: ").append(toIndentedString(encodingType)).append("\n");
         sb.append("    location: ").append(toIndentedString(location)).append("\n");
+        sb.append("    properties: ").append(toIndentedString(properties)).append("\n");
         sb.append("    things: ").append(toIndentedString(things)).append("\n");
         sb.append("    historicalLocations: ").append(toIndentedString(historicalLocations)).append("\n");
         sb.append("    thingsIotNavigationLink: ").append(toIndentedString(thingsIotNavigationLink)).append("\n");

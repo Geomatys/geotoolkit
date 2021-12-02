@@ -41,6 +41,8 @@ public class FeatureOfInterest implements STSResponse, DeltaComparable {
 
     private Object feature = null;
 
+    private Object properties = null;
+
     @JsonProperty("Observations")
     private List<Observation> observations = null;
 
@@ -169,6 +171,26 @@ public class FeatureOfInterest implements STSResponse, DeltaComparable {
         this.feature = feature;
     }
 
+    public FeatureOfInterest properties(Object properties) {
+        this.properties = properties;
+        return this;
+    }
+
+    /**
+     * a set of additional properties specified for the object in the form
+     * \&quot;name\&quot;:\&quot;value\&quot; pair
+     *
+     * @return properties
+    *
+     */
+    public Object getProperties() {
+        return properties;
+    }
+
+    public void setProperties(Object properties) {
+        this.properties = properties;
+    }
+
     public FeatureOfInterest observations(List<Observation> observations) {
         this.observations = observations;
         return this;
@@ -230,6 +252,7 @@ public class FeatureOfInterest implements STSResponse, DeltaComparable {
                 && Objects.equals(this.description, featureOfInterest.description)
                 && Objects.equals(this.encodingType, featureOfInterest.encodingType)
                 && Objects.equals(this.feature, featureOfInterest.feature)
+                && Objects.equals(this.properties, featureOfInterest.properties)
                 && Objects.equals(this.name, featureOfInterest.name)
                 && Objects.equals(this.observations, featureOfInterest.observations)
                 && Objects.equals(this.observationsIotNavigationLink, featureOfInterest.observationsIotNavigationLink);
@@ -237,7 +260,7 @@ public class FeatureOfInterest implements STSResponse, DeltaComparable {
 
     @Override
     public int hashCode() {
-        return java.util.Objects.hash(iotId, iotSelfLink, description, encodingType, feature, observations, observationsIotNavigationLink, name);
+        return java.util.Objects.hash(iotId, iotSelfLink, description, encodingType, feature, properties, observations, observationsIotNavigationLink, name);
     }
 
     @Override
@@ -253,6 +276,7 @@ public class FeatureOfInterest implements STSResponse, DeltaComparable {
                 && Objects.equals(this.iotSelfLink, featureOfInterest.iotSelfLink)
                 && Objects.equals(this.description, featureOfInterest.description)
                 && Objects.equals(this.encodingType, featureOfInterest.encodingType)
+                && Objects.equals(this.properties, featureOfInterest.properties)
                 && DeltaComparable.equals(this.feature, featureOfInterest.feature, delta)
                 && Objects.equals(this.name, featureOfInterest.name)
                 && DeltaComparable.equals(this.observations, featureOfInterest.observations, delta)
@@ -269,6 +293,7 @@ public class FeatureOfInterest implements STSResponse, DeltaComparable {
         sb.append("    name: ").append(toIndentedString(name)).append("\n");
         sb.append("    encodingType: ").append(toIndentedString(encodingType)).append("\n");
         sb.append("    feature: ").append(toIndentedString(feature)).append("\n");
+        sb.append("    properties: ").append(toIndentedString(properties)).append("\n");
         sb.append("    observations: ").append(toIndentedString(observations)).append("\n");
         sb.append("    observationsIotNavigationLink: ").append(toIndentedString(observationsIotNavigationLink)).append("\n");
         sb.append("}");
