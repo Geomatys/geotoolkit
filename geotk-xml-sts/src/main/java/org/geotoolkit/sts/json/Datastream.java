@@ -41,6 +41,8 @@ public class Datastream implements STSResponse, DeltaComparable {
 
     private String observationType = null;
 
+    private Object properties = null;
+
     private Object observedArea = null;
 
     private String phenomenonTime = null;
@@ -411,6 +413,26 @@ public class Datastream implements STSResponse, DeltaComparable {
         this.observationsIotNavigationLink = observationsIotNavigationLink;
     }
 
+    public Datastream properties(Object properties) {
+        this.properties = properties;
+        return this;
+    }
+
+    /**
+     * a set of additional properties specified for the object in the form
+     * \&quot;name\&quot;:\&quot;value\&quot; pair
+     *
+     * @return properties
+    *
+     */
+    public Object getProperties() {
+        return properties;
+    }
+
+    public void setProperties(Object properties) {
+        this.properties = properties;
+    }
+
     @Override
     public boolean equals(java.lang.Object o) {
         if (this == o) {
@@ -429,6 +451,7 @@ public class Datastream implements STSResponse, DeltaComparable {
                 && Objects.equals(this.phenomenonTime, datastream.phenomenonTime)
                 && Objects.equals(this.resultTime, datastream.resultTime)
                 && Objects.equals(this.thing, datastream.thing)
+                && Objects.equals(this.properties, datastream.properties)
                 && Objects.equals(this.sensor, datastream.sensor)
                 && Objects.equals(this.observedProperty, datastream.observedProperty)
                 && Objects.equals(this.observations, datastream.observations)
@@ -440,7 +463,7 @@ public class Datastream implements STSResponse, DeltaComparable {
 
     @Override
     public int hashCode() {
-        return java.util.Objects.hash(iotId, iotSelfLink, description, unitOfMeasurement, observationType, observedArea, phenomenonTime, resultTime, thing, sensor, observedProperty, observations, thingIotNavigationLink, sensorIotNavigationLink, observedPropertyIotNavigationLink, observationsIotNavigationLink);
+        return java.util.Objects.hash(iotId, iotSelfLink, description, unitOfMeasurement, observationType, observedArea, properties, phenomenonTime, resultTime, thing, sensor, observedProperty, observations, thingIotNavigationLink, sensorIotNavigationLink, observedPropertyIotNavigationLink, observationsIotNavigationLink);
     }
 
     @Override
@@ -460,6 +483,7 @@ public class Datastream implements STSResponse, DeltaComparable {
                 && DeltaComparable.equals(this.observedArea, datastream.observedArea, delta)
                 && Objects.equals(this.phenomenonTime, datastream.phenomenonTime)
                 && Objects.equals(this.resultTime, datastream.resultTime)
+                && Objects.equals(this.properties, datastream.properties)
                 && DeltaComparable.equals(this.thing, datastream.thing, delta)
                 && DeltaComparable.equals(this.sensor, datastream.sensor, delta)
                 && DeltaComparable.equals(this.observedProperty, datastream.observedProperty, delta)
@@ -480,6 +504,7 @@ public class Datastream implements STSResponse, DeltaComparable {
         sb.append("    description: ").append(toIndentedString(description)).append("\n");
         sb.append("    unitOfMeasure: ").append(toIndentedString(unitOfMeasurement)).append("\n");
         sb.append("    observationType: ").append(toIndentedString(observationType)).append("\n");
+        sb.append("    properties: ").append(toIndentedString(properties)).append("\n");
         sb.append("    observedArea: ").append(toIndentedString(observedArea)).append("\n");
         sb.append("    phenomenonTime: ").append(toIndentedString(phenomenonTime)).append("\n");
         sb.append("    resultTime: ").append(toIndentedString(resultTime)).append("\n");

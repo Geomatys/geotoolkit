@@ -17,7 +17,7 @@
   -->
   <artifactId>geotk-xml-sts</artifactId>
   <packaging>jar</packaging>
-  <name>Bindings OGC - STS : Sensor Things</name>
+  <name>Bindings OGC - STA : Sensor Things API</name>
   <description>
     JSON bindings for sensor things services.
   </description>

@@ -17,7 +17,10 @@
 package org.geotoolkit.sts.json;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 
 /**
@@ -27,6 +30,8 @@ import java.util.Objects;
 public class STSCapabilities implements STSResponse {
 
     protected List<Link> value = new ArrayList<>();
+
+    private final Map<String, Object> serverSettings = new LinkedHashMap();
 
     /**
      * @return the value
@@ -46,6 +51,17 @@ public class STSCapabilities implements STSResponse {
         this.value.add(new Link(name, url));
     }
 
+    /**
+     * @return the serverSettings
+     */
+    public Map getServerSettings() {
+        return serverSettings;
+    }
+
+    public void addServerSetting(String key, Object value) {
+        this.serverSettings.put(key, value);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -53,7 +69,8 @@ public class STSCapabilities implements STSResponse {
         }
         if (o instanceof STSCapabilities) {
             STSCapabilities that = (STSCapabilities) o;
-            return Objects.equals(this.value, that.value);
+            return Objects.equals(this.value,          that.value) &&
+                   Objects.equals(this.serverSettings, that.serverSettings);
         }
         return false;
     }
@@ -62,6 +79,7 @@ public class STSCapabilities implements STSResponse {
     public int hashCode() {
         int hash = 3;
         hash = 79 * hash + Objects.hashCode(this.value);
+        hash = 79 * hash + Objects.hashCode(this.serverSettings);
         return hash;
     }
 
@@ -73,7 +91,30 @@ public class STSCapabilities implements STSResponse {
                 sb.append(v).append('\n');
             }
         }
+        for (Entry<String, Object> entry : serverSettings.entrySet()) {
+            sb.append(entry.getKey()).append(":\n");
+            Object o = entry.getValue();
+            print(sb, o, "\t");
+        }
         return sb.toString();
+    }
+
+    private static void print(StringBuilder sb, Object o, String tab) {
+        if (o instanceof List) {
+            List l = (List) o;
+            for (Object lo : l) {
+                print(sb, lo, tab + "\t");
+            }
+        } else if (o instanceof Map) {
+            Map m = (Map) o;
+            for (Object key : m.keySet()) {
+                sb.append(tab).append(key).append(":\n");
+                Object mo = m.get(key);
+                print(sb, mo, tab + "\t");
+            }
+        } else {
+            sb.append(o).append('\n');
+        }
     }
 
     public static class Link {
