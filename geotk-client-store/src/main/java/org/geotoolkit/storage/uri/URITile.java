@@ -19,7 +19,10 @@ package org.geotoolkit.storage.uri;
 import java.awt.Point;
 import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
+import java.net.URL;
+import java.net.URLConnection;
 import java.nio.file.FileSystemNotFoundException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -36,6 +39,7 @@ import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.security.ClientSecurity;
+import org.geotoolkit.security.DefaultClientSecurity;
 import org.geotoolkit.storage.AbstractResource;
 import org.geotoolkit.storage.coverage.ImageTile;
 import org.geotoolkit.storage.multires.DeferredTile;
@@ -98,25 +102,46 @@ public final class URITile {
             ImageReaderSpi spi = this.spi;
             ImageReader reader = null;
 
-            switch (compression.name()) {
-                case "GZ" :
-                    input = new BufferedInputStream(new GZIPInputStream(new BufferedInputStream(IOUtilities.open(this.input))));
-                    break;
-                case "LZ4" :
-                    input = new BufferedInputStream(new FramedLZ4CompressorInputStream(new BufferedInputStream(IOUtilities.open(this.input))));
-                    break;
-                case "NONE" :
-                    break;
-                default :
-                    throw new IOException("Unsupported compression " + compression.name());
+            //try to have a Path as input, many image readers dislike URI.
+            try {
+                input = Paths.get((URI) input);
+            } catch (FileSystemNotFoundException | SecurityException | IllegalArgumentException ex) {
+                //we have try
             }
 
-            if (input instanceof URI) {
-                //try to have a Path as input, many image readers dislike URI.
-                try {
-                    input = Paths.get((URI) input);
-                } catch (FileSystemNotFoundException | SecurityException | IllegalArgumentException ex) {
-                    //we have try
+            if (input instanceof URI && security != DefaultClientSecurity.NO_SECURITY) {
+                //distant URI, go through the security layer
+                URI uri = (URI) input;
+                URL url = security.secure(uri.toURL());
+                URLConnection urlcnx = security.secure(url.openConnection());
+                InputStream in = urlcnx.getInputStream();
+                in = security.decrypt(new BufferedInputStream(in));
+                input = in;
+
+                switch (compression.name()) {
+                    case "GZ" :
+                        input = new BufferedInputStream(new GZIPInputStream(new BufferedInputStream(in)));
+                        break;
+                    case "LZ4" :
+                        input = new BufferedInputStream(new FramedLZ4CompressorInputStream(new BufferedInputStream(in)));
+                        break;
+                    case "NONE" :
+                        break;
+                    default :
+                        throw new IOException("Unsupported compression " + compression.name());
+                }
+            } else {
+                switch (compression.name()) {
+                    case "GZ" :
+                        input = new BufferedInputStream(new GZIPInputStream(new BufferedInputStream(IOUtilities.open(this.input))));
+                        break;
+                    case "LZ4" :
+                        input = new BufferedInputStream(new FramedLZ4CompressorInputStream(new BufferedInputStream(IOUtilities.open(this.input))));
+                        break;
+                    case "NONE" :
+                        break;
+                    default :
+                        throw new IOException("Unsupported compression " + compression.name());
                 }
             }
 
@@ -220,6 +245,7 @@ public final class URITile {
 
         @Override
         public Resource open() throws DataStoreException {
+            //TODO security is ignored here, how to transmit security to the tile datastore ?
             final StorageConnector sc = new StorageConnector(input);
             return provider.open(sc);
         }
