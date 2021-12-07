@@ -106,6 +106,7 @@ import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.coverage.bandselect.BandSelectProcess;
+import org.geotoolkit.storage.coverage.BandedCoverageResource;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
@@ -825,7 +826,8 @@ public final class DefaultPortrayalService implements PortrayalService{
                 ep.setResource(resource);
                 return Stream.of(ep);
             }
-        } else if (resource instanceof GridCoverageResource) {
+        } else if (resource instanceof GridCoverageResource
+                || resource instanceof BandedCoverageResource) {
             type = null;
         } else if (resource instanceof Aggregate) {
             try {

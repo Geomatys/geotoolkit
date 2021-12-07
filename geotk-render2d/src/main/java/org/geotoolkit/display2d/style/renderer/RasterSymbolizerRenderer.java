@@ -38,10 +38,12 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
 import javax.media.jai.JAI;
 import javax.media.jai.LookupTableJAI;
 import javax.media.jai.RenderedOp;
+import org.apache.sis.coverage.BandedCoverage;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.DisjointExtentException;
 import org.apache.sis.coverage.grid.GridCoverage;
@@ -87,6 +89,7 @@ import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.metadata.MetadataUtilities;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.coverage.statistics.Statistics;
+import org.geotoolkit.storage.coverage.BandedCoverageResource;
 import org.geotoolkit.storage.coverage.ImageStatistics;
 import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
 import org.geotoolkit.style.MutableStyle;
@@ -494,6 +497,19 @@ public class RasterSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer
 
     @Override
     public Stream<Presentation> presentations(MapLayer layer, Resource rs) {
+
+        if (rs instanceof BandedCoverageResource) {
+            BandedCoverageResource bcr = (BandedCoverageResource) rs;
+            try {
+                GridCoverage coverage = BandedCoverageResource.sample(bcr, renderingContext.getGridGeometry2D());
+                rs = new InMemoryGridCoverageResource(rs.getIdentifier().orElse(null), coverage);
+            } catch (DataStoreException ex) {
+                ExceptionPresentation ep = new ExceptionPresentation(ex);
+                ep.setLayer(layer);
+                ep.setResource(rs);
+                return Stream.of(ep);
+            }
+        }
 
         if (rs instanceof GridCoverageResource) {
             GridCoverageResource ref = (GridCoverageResource) rs;
