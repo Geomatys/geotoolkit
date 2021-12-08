@@ -67,11 +67,20 @@
           <artifactId>geotk-storage</artifactId>
           <version>${project.version}</version>
       </dependency>
+      <dependency>
+          <groupId>org.geotoolkit</groupId>
+          <artifactId>geotk-coverage-worldfile</artifactId>
+          <version>${project.version}</version>
+      </dependency>
 
       <dependency>
           <groupId>io.netty</groupId>
           <artifactId>netty</artifactId>
       </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-compress</artifactId>
+        </dependency>
       <dependency>
           <groupId>org.apache.sis.core</groupId>
           <artifactId>sis-utility</artifactId>

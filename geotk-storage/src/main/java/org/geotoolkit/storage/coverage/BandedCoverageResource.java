@@ -16,15 +16,32 @@
  */
 package org.geotoolkit.storage.coverage;
 
+import java.awt.Dimension;
+import java.awt.image.DataBufferDouble;
 import java.util.List;
+import java.util.stream.IntStream;
 import org.apache.sis.coverage.BandedCoverage;
+import org.apache.sis.coverage.BandedCoverage.Evaluator;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridCoverageBuilder;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataSet;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Query;
 import org.apache.sis.storage.UnsupportedQueryException;
 import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.Utilities;
+import org.geotoolkit.geometry.math.Vector3d;
+import org.opengis.coverage.CannotEvaluateException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
 
 /**
  * Experimental interface for banded coverage resources.
@@ -98,4 +115,86 @@ public interface BandedCoverageResource extends DataSet {
      * @throws DataStoreException if an error occurred while reading the coverage data.
      */
     BandedCoverage read(GridGeometry domain, int... range) throws DataStoreException;
+
+    /**
+     *
+     * @param resource
+     * @param domain desired grid extent and resolution, not null.
+     * @param range 0-based indices of sample dimensions to read, or {@code null} or an empty sequence for reading them all.
+     * @return
+     * @throws CannotEvaluateException
+     * @throws DataStoreException
+     */
+    public static GridCoverage sample(BandedCoverageResource resource, final GridGeometry domain, int... range) throws CannotEvaluateException, DataStoreException {
+        ArgumentChecks.ensureNonNull("resource", resource);
+        ArgumentChecks.ensureNonNull("domain", domain);
+
+        try {
+            final BandedCoverage coverage = resource.read(domain, range);
+            if (coverage.getSampleDimensions().size() != 1) {
+                throw new CannotEvaluateException("Only single band sampling supported in current implementation.");
+            }
+
+            final GridExtent extent = domain.getExtent();
+            final int width = Math.toIntExact(extent.getSize(0));
+            final int height = Math.toIntExact(extent.getSize(1));
+            final long lowX = extent.getLow(0);
+            final long lowY = extent.getLow(1);
+            final MathTransform gridToCRS = domain.getGridToCRS(PixelInCell.CELL_CENTER);
+
+            // Verify no overflow is possible before allowing any array
+            final int nbPts = Math.multiplyExact(width, height);
+            final int xyLength = Math.multiplyExact(nbPts, 2);
+            final double[] xyGrid = new double[xyLength];
+            final double[] z = new double[nbPts];
+            for (int y = 0; y < height; y++) {
+                for (int x = 0; x < width; x++) {
+                    int idx = (y * width + x) * 2;
+                    xyGrid[idx] = lowX + x;
+                    xyGrid[idx+1] = lowY + y;
+                }
+            }
+
+            //convert to resulting coverage crs
+            final double[] xyResult;
+            final CoordinateReferenceSystem crs2d = CRS.getHorizontalComponent(resource.getEnvelope().get().getCoordinateReferenceSystem());
+            final CoordinateReferenceSystem gridCrs2d = CRS.getHorizontalComponent(domain.getCoordinateReferenceSystem());
+            if (!Utilities.equalsIgnoreMetadata(gridCrs2d, crs2d)) {
+                MathTransform trs = CRS.findOperation(gridCrs2d, crs2d, null).getMathTransform();
+                trs = MathTransforms.concatenate(gridToCRS, trs);
+                xyResult = xyGrid;
+                trs.transform(xyResult, 0, xyResult, 0, xyResult.length/2);
+            } else {
+                gridToCRS.transform(xyGrid, 0, xyGrid, 0, xyGrid.length/2);
+                xyResult = xyGrid;
+            }
+
+            final ThreadLocal<Evaluator> tl = new ThreadLocal<>();
+            IntStream.range(0, xyResult.length/2).parallel().forEach((int i) -> {
+                Evaluator evaluator = tl.get();
+                if (evaluator == null) {
+                    evaluator = coverage.evaluator();
+                    evaluator.setNullIfOutside(true);
+                    tl.set(evaluator);
+                }
+                final Vector3d dp = new Vector3d();
+                dp.x = xyResult[i*2];
+                dp.y = xyResult[i*2+1];
+                final double[] sample = evaluator.apply(dp);
+                if (sample != null) {
+                    z[i] = sample[0];
+                } else {
+                    z[i] = Double.NaN;
+                }
+            });
+            return new GridCoverageBuilder()
+                    .setDomain(domain)
+                    .setRanges(coverage.getSampleDimensions())
+                    .setValues(new DataBufferDouble(z, z.length), new Dimension(width, height))
+                    .build();
+        } catch (TransformException | FactoryException ex) {
+            throw new CannotEvaluateException(ex.getMessage(), ex);
+        }
+    }
+
 }

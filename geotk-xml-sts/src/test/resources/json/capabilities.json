@@ -1,0 +1,49 @@
+{
+    "value": [
+        {
+            "name": "Things",
+            "url": "http://my-server.org/sta/v1.1/Things"
+        }, {
+            "name": "Locations",
+            "url": "http://my-server.org/sta/v1.1/Locations"
+        }, {
+            "name": "Datastreams",
+            "url": "http://my-server.org/sta/v1.1/Datastreams"
+        }, {
+            "name": "MultiDatastreams",
+            "url": "http://my-server.org/sta/v1.1/MultiDatastreams"
+        }, {
+            "name": "Sensors",
+            "url": "http://my-server.org/sta/v1.1/Sensors"
+        }, {
+            "name": "Observations",
+            "url": "http://my-server.org/sta/v1.1/Observations"
+        }, {
+            "name": "ObservedProperties",
+            "url": "http://my-server.org/sta/v1.1/ObservedProperties"
+        }, {
+            "name": "FeaturesOfInterest",
+            "url": "http://my-server.org/sta/v1.1/FeaturesOfInterest"
+        }, {
+            "name": "HistoricalLocations",
+            "url": "http://my-server.org/sta/v1.1/HistoricalLocations"
+        }
+    ],
+    "serverSettings": {
+        "conformance": [
+            "http://www.opengis.net/spec/iot_sensing/1.1/req/batch-request/batch-request", 
+            "http://www.opengis.net/spec/iot_sensing/1.1/req/create-observations-via-mqtt/observations-creation",
+            "http://www.opengis.net/spec/iot_sensing/1.1/req/receive-updates-via-mqtt/receive-updates"
+        ],
+        "http://www.opengis.net/spec/iot_sensing/1.1/req/create-observations-via-mqtt/observations-creation": {
+            "endpoints": [
+                "wss://my-server.org/sta/v1.1/mqtt"
+            ]
+        },
+        "http://www.opengis.net/spec/iot_sensing/1.1/req/receive-updates-via-mqtt/receive-updates": {
+            "endpoints": [
+                "wss://my-server.org/sta/v1.1/mqtt"
+            ]
+        }
+    }
+}
