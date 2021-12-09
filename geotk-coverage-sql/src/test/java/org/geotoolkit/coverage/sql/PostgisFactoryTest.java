@@ -17,15 +17,9 @@
  */
 package org.geotoolkit.coverage.sql;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.BufferedInputStream;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import javax.sql.DataSource;
 import java.util.Collections;
-import java.util.Properties;
 import java.util.Set;
 
 import org.opengis.util.FactoryException;
@@ -33,54 +27,33 @@ import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.crs.VerticalCRS;
 
-import org.geotoolkit.internal.io.Installation;
 import org.apache.sis.metadata.iso.citation.Citations;
 import org.apache.sis.referencing.CommonCRS;
 
 import org.junit.*;
-import org.postgresql.ds.PGSimpleDataSource;
 
-import static org.junit.Assume.*;
 import static org.geotoolkit.referencing.Assert.*;
 import static org.apache.sis.referencing.IdentifiedObjects.getIdentifier;
 
 
 /**
  * Tests {@link PostgisFactory}.
+ * This tests assume a database named "SpatialMetadata" on the local machine with no password.
  *
  * @author Martin Desruisseaux (Geomatys)
  */
 public final strictfp class PostgisFactoryTest extends org.geotoolkit.test.TestBase {
     /**
-     * Gets the connection parameters to the coverage database.
-     */
-    private static DataSource getCoverageDataSource() throws IOException {
-        final File pf = Installation.TESTS.directory(true).resolve("coverage-sql.properties").toFile();
-        assumeTrue(pf.isFile()); // The test will be skipped if the above resource is not found.
-        final Properties properties = new Properties();
-        try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(pf))) {
-            properties.load(in);
-        }
-        final PGSimpleDataSource ds = new PGSimpleDataSource();
-        ds.setServerName  (properties.getProperty("server"));
-        ds.setDatabaseName(properties.getProperty("database"));
-        ds.setUser        (properties.getProperty("user"));
-        ds.setPassword    (properties.getProperty("password"));
-        return ds;
-    }
-
-    /**
      * Tests a few CRS using the test database of the {@code geotk-coverage-sql} module,
      * if this database is found.
      *
      * @throws FactoryException should not happen.
-     * @throws IOException if an error occurred while reading the properties file.
      * @throws SQLException if an error occurred while reading the PostGIS tables.
      */
     @Test
     @Ignore
-    public void testUsingCoverageSQL() throws FactoryException, IOException, SQLException {
-        final Connection connection = getCoverageDataSource().getConnection();
+    public void testUsingCoverageSQL() throws FactoryException, SQLException {
+        final Connection connection = DatabaseTest.getCoverageDataSource().getConnection();
         final PostgisFactory factory = new PostgisFactory(connection);
         try {
             /*

@@ -70,6 +70,8 @@ final class ProductSubset extends AbstractGridResource {
         final DefaultExtent extent = new DefaultExtent();
         extent.addElements(areaOfInterest);
         final ExtentSelector<GridCoverageEntry> selector = new ExtentSelector<>(extent);
+        selector.setTimeGranularity(product.temporalResolution);
+        selector.alternateOrdering = true;
         entries.forEach(entry -> entry.submitTo(selector));
         GridCoverageEntry result = selector.best();
         if (result == null) {
