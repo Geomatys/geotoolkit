@@ -37,7 +37,7 @@ import org.geotoolkit.util.DeltaComparable;
  * @since   2.0
  * @module
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "type")
 @JsonSubTypes({
     @JsonSubTypes.Type(value = GeoJSONFeatureCollection.class, name = "FeatureCollection"),
     @JsonSubTypes.Type(value = GeoJSONFeature.class, name = "Feature"),
