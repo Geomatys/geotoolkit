@@ -638,7 +638,7 @@ public class PostgresSimpleTypeTest extends org.geotoolkit.test.TestBase {
         reload(true);
 
         ////////////////////////////////////////////////////////////////////////
-        final GeometryFactory gf = new GeometryFactory();
+        final GeometryFactory gf = JTS.getFactory();
         //creating a point -----------------------------------------------
         final Point point = gf.createPoint(new Coordinate(56, 45));
 

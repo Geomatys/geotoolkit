@@ -40,7 +40,7 @@ import org.locationtech.jts.geom.Polygon;
  */
 public final class JTSMapping {
 
-    private static final GeometryFactory GF = new GeometryFactory();
+    private static final GeometryFactory GF = org.geotoolkit.geometry.jts.JTS.getFactory();
 
     private JTSMapping() {
     }

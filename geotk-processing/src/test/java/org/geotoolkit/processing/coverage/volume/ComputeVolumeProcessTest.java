@@ -65,7 +65,7 @@ public strictfp class ComputeVolumeProcessTest extends org.geotoolkit.test.TestB
     /**
      * {@link GeometryFactory} to create geometry to test process in differents way.
      */
-    private final static GeometryFactory GF = new GeometryFactory();
+    private final static GeometryFactory GF = org.geotoolkit.geometry.jts.JTS.getFactory();
 
     /**
      * Test volume computing with bilinear interpolation in a cartesian space.

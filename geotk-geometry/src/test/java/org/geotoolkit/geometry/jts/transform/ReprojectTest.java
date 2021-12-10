@@ -51,7 +51,7 @@ public class ReprojectTest extends org.geotoolkit.test.TestBase {
         //a user reported reprojection cause the geometry first and last point to be different.
         //causing jts to raise an error
 
-        final GeometryFactory GF = new GeometryFactory();
+        final GeometryFactory GF = org.geotoolkit.geometry.jts.JTS.getFactory();
 
         final LinearRing ring = GF.createLinearRing(new Coordinate[]{
                 new Coordinate(29.5314900850289,67.6621244561062),
@@ -75,7 +75,7 @@ public class ReprojectTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void testLinearRingClosing(){
-        final GeometryFactory GF = new GeometryFactory();
+        final GeometryFactory GF = org.geotoolkit.geometry.jts.JTS.getFactory();
         CoordinateSequence sq;
         sq = GF.getCoordinateSequenceFactory().create(new Coordinate[]{
                 new Coordinate(29.5314900850289,67.6621244561062,0),

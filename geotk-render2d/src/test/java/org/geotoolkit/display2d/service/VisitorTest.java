@@ -81,7 +81,7 @@ public class VisitorTest extends org.geotoolkit.test.TestBase {
         final WritableFeatureSet collection = new InMemoryFeatureSet("id", sft);
         final Feature f = sft.newInstance();
 
-        final GeometryFactory gf = new GeometryFactory();
+        final GeometryFactory gf = org.geotoolkit.geometry.jts.JTS.getFactory();
         LinearRing ring = gf.createLinearRing(new Coordinate[]{
                     new Coordinate(10, 10),
                     new Coordinate(20, 10),

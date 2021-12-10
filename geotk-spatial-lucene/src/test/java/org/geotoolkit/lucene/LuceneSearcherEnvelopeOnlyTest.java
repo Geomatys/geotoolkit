@@ -84,7 +84,7 @@ import static org.junit.Assert.*;
  */
 public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
 
-    private static final GeometryFactory GF = new GeometryFactory();
+    private static final GeometryFactory GF = JTS.getFactory();
     private static final FilterFactory2 FF = FilterUtilities.FF;
     private static final Logger LOGGER = Logger.getLogger("org.constellation.lucene");
     private static final double TOLERANCE = 0.001;

@@ -67,7 +67,7 @@ final class CalculateLineStringOperation extends AbstractOperation {
 
     private static final ParameterDescriptorGroup EMPTY_PARAMS = parameters("CalculateLineString", 1);
 
-    private static final GeometryFactory GF = new GeometryFactory();
+    private static final GeometryFactory GF = org.geotoolkit.geometry.jts.JTS.getFactory();
     private static final AttributeType<LineString> TYPE = new DefaultAttributeType<>(
             Collections.singletonMap(NAME_KEY, NamesExt.create("LineString")),LineString.class,1,1,null);
 

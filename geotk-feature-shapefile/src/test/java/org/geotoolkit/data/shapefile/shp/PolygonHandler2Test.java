@@ -92,7 +92,7 @@ public class PolygonHandler2Test extends org.geotoolkit.data.shapefile.AbstractT
             coords[i] = new Coordinate();
         }
 
-        return new GeometryFactory().createLinearRing(coords);
+        return org.geotoolkit.geometry.jts.JTS.getFactory().createLinearRing(coords);
     }
 
     public static Geometry copyTo(final double x, final double y, final double w, final double h,

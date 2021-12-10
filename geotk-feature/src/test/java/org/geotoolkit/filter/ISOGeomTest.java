@@ -40,7 +40,7 @@ import static org.geotoolkit.filter.FilterTestConstants.*;
 public class ISOGeomTest extends org.geotoolkit.test.TestBase {
     @Test
     public void hello() throws NoSuchAuthorityCodeException, FactoryException {
-        GeometryFactory factory = new GeometryFactory();
+        GeometryFactory factory = org.geotoolkit.geometry.jts.JTS.getFactory();
         Point[] points = new Point[3];
         points[0] = factory.createPoint(new Coordinate(70.83, 29.86));
         points[1] = factory.createPoint(new Coordinate(68.87, 31.08));

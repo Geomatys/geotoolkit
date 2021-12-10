@@ -48,7 +48,7 @@ import org.opengis.util.NoSuchIdentifierException;
  */
 public class SpatialJoinTest extends AbstractProcessTest {
 
-    private static final GeometryFactory geometryFactory = new GeometryFactory();
+    private static final GeometryFactory geometryFactory = org.geotoolkit.geometry.jts.JTS.getFactory();
     private static FeatureType type;
 
     public SpatialJoinTest() {

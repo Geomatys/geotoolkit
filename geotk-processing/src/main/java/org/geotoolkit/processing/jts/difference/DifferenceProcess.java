@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.processing.jts.difference;
 
-import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Geometry;
 
 import java.util.Collections;
@@ -50,7 +49,7 @@ public class DifferenceProcess extends AbstractProcess {
             final Geometry geom1 = inputParameters.getValue(DifferenceDescriptor.GEOM1);
             Geometry geom2 = inputParameters.getValue(DifferenceDescriptor.GEOM2);
 
-            Geometry result = new GeometryFactory().buildGeometry(Collections.emptyList());
+            Geometry result = JTS.getFactory().buildGeometry(Collections.emptyList());
 
             // ensure geometries are in the same CRS
             final CoordinateReferenceSystem resultCRS = JTS.getCommonCRS(geom1, geom2);

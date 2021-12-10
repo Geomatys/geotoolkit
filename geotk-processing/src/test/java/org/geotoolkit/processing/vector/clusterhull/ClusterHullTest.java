@@ -35,7 +35,7 @@ public class ClusterHullTest extends AbstractProcessTest {
 
     private static final double TOLERANCE = 1e-4;
 
-    private static GeometryFactory geometryFactory = new GeometryFactory();
+    private static GeometryFactory geometryFactory = org.geotoolkit.geometry.jts.JTS.getFactory();
 
     public ClusterHullTest() {
         super("vector:clusterhull");

@@ -2,7 +2,6 @@
 package org.geotoolkit.pending.demo.geometry;
 
 import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
@@ -26,7 +25,7 @@ public class SRIDDemo {
         CoordinateReferenceSystem backcrs = CRS.forCode(SRIDGenerator.toSRS(srid, SRIDGenerator.Version.V1));
 
 
-        Point pt = new GeometryFactory().createPoint(new Coordinate(10, 50));
+        Point pt = JTS.getFactory().createPoint(new Coordinate(10, 50));
         //set crs on a geometry
         JTS.setCRS(pt, crs);
         //extract crs from geometry srid or user map

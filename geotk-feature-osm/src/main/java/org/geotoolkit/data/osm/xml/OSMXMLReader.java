@@ -53,7 +53,7 @@ import org.opengis.feature.Feature;
  */
 public class OSMXMLReader extends StaxStreamReader{
 
-    private final GeometryFactory GF = new GeometryFactory();
+    private final GeometryFactory GF = org.geotoolkit.geometry.jts.JTS.getFactory();
     private final ISODateParser dateParser = new ISODateParser();
     private Envelope envelope;
 

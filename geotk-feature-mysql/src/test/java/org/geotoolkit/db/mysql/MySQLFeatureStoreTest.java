@@ -502,7 +502,7 @@ public class MySQLFeatureStoreTest extends org.geotoolkit.test.TestBase {
         reload(true);
 
         ////////////////////////////////////////////////////////////////////////
-        final GeometryFactory gf = new GeometryFactory();
+        final GeometryFactory gf = org.geotoolkit.geometry.jts.JTS.getFactory();
         //creating a point -----------------------------------------------
         final Point point = gf.createPoint(new Coordinate(56, 45));
 
@@ -603,7 +603,7 @@ public class MySQLFeatureStoreTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testComplexInsert() throws DataStoreException, VersioningException{
         reload(false);
-        final GeometryFactory gf = new GeometryFactory();
+        final GeometryFactory gf = org.geotoolkit.geometry.jts.JTS.getFactory();
 
         store.createFeatureType(FTYPE_COMPLEX);
         final FeatureType resType = store.getFeatureType(store.getNames().iterator().next().toString());
@@ -828,7 +828,7 @@ public class MySQLFeatureStoreTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testHandMadeSQLQuery() throws Exception{
         reload(false);
-        final GeometryFactory gf = new GeometryFactory();
+        final GeometryFactory gf = org.geotoolkit.geometry.jts.JTS.getFactory();
 
         store.createFeatureType(FTYPE_COMPLEX);
         final FeatureType resType = store.getFeatureType(store.getNames().iterator().next().toString());

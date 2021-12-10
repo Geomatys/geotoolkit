@@ -42,7 +42,7 @@ import org.opengis.feature.FeatureType;
 public class CalculatedLineStringOperationTest {
 
     private static final double DELTA = 0.00000001d;
-    private final GeometryFactory GF = new GeometryFactory();
+    private final GeometryFactory GF = org.geotoolkit.geometry.jts.JTS.getFactory();
 
     @Test
     public void testDepthZeroFeature() {

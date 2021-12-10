@@ -62,7 +62,7 @@ class FeatureProcessor {
 
     private static final double EPSI = 1e-7;
 
-    private static final GeometryFactory GFACTORY = new GeometryFactory();
+    private static final GeometryFactory GFACTORY = org.geotoolkit.geometry.jts.JTS.getFactory();
 
     private GlobalPositioningState state = new GlobalPositioningState();
 

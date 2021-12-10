@@ -49,7 +49,7 @@ public class ConvexHullTest extends AbstractProcessTest {
     @Test
     public void testConvexHull() throws NoSuchIdentifierException, ProcessException, FactoryException {
 
-        GeometryFactory fact = new GeometryFactory();
+        GeometryFactory fact = JTS.getFactory();
 
         // Inputs first
         final LinearRing  ring = fact.createLinearRing(new Coordinate[]{

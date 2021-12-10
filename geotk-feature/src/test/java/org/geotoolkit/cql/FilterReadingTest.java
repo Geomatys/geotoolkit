@@ -51,7 +51,7 @@ public class FilterReadingTest extends org.geotoolkit.test.TestBase {
 
     private static final double DELTA = 0.00000001;
     private final FilterFactory2 FF = FilterUtilities.FF;
-    private final GeometryFactory GF = new GeometryFactory();
+    private final GeometryFactory GF = org.geotoolkit.geometry.jts.JTS.getFactory();
     private final Geometry baseGeometry = GF.createPolygon(
                 GF.createLinearRing(
                     new Coordinate[]{

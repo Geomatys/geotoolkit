@@ -47,7 +47,7 @@ import org.opengis.feature.Feature;
  */
 public class OSMXMLWriterTest extends org.geotoolkit.test.TestBase {
 
-    private static final GeometryFactory GF = new GeometryFactory();
+    private static final GeometryFactory GF = org.geotoolkit.geometry.jts.JTS.getFactory();
 
     public OSMXMLWriterTest() {
     }

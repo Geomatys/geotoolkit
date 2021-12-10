@@ -47,7 +47,7 @@ public abstract class AbstractGeometryTransformer implements GeometryTransformer
 
     public AbstractGeometryTransformer(final CoordinateSequenceFactory csf){
         if(csf == null){
-            this.gf = new GeometryFactory();
+            this.gf = org.geotoolkit.geometry.jts.JTS.getFactory();
             this.csf = gf.getCoordinateSequenceFactory();
         }else{
             this.csf = csf;
@@ -58,7 +58,7 @@ public abstract class AbstractGeometryTransformer implements GeometryTransformer
 
     public AbstractGeometryTransformer(final GeometryFactory gf){
         if(gf == null){
-            this.gf = new GeometryFactory();
+            this.gf = org.geotoolkit.geometry.jts.JTS.getFactory();
             this.csf = gf.getCoordinateSequenceFactory();
         }else{
             this.csf = gf.getCoordinateSequenceFactory();

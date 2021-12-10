@@ -37,7 +37,7 @@ import org.locationtech.jts.geom.Polygon;
  */
 public final class JTSUtilities {
 
-    static final GeometryFactory FACTORY = new GeometryFactory();
+    static final GeometryFactory FACTORY = JTS.getFactory();
 
     private JTSUtilities() {
     }

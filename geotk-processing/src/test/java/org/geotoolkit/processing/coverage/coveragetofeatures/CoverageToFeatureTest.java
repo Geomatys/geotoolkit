@@ -174,7 +174,7 @@ public class CoverageToFeatureTest extends AbstractProcessTest {
 
         final FeatureType type = buildFeatureType();
         final List<Feature> featureList = new ArrayList<>();
-        final GeometryFactory geometryFactory = new GeometryFactory();
+        final GeometryFactory geometryFactory = org.geotoolkit.geometry.jts.JTS.getFactory();
 
         double buffX = 0;
         double buffY = 0;
@@ -210,7 +210,7 @@ public class CoverageToFeatureTest extends AbstractProcessTest {
 
         final FeatureType type = buildFeatureType();
         final List<Feature> featureList = new ArrayList<Feature>();
-        final GeometryFactory geometryFactory = new GeometryFactory();
+        final GeometryFactory geometryFactory = org.geotoolkit.geometry.jts.JTS.getFactory();
 
         double buffX = 0;
         double buffY = 0;

@@ -37,7 +37,7 @@ import org.opengis.util.FactoryException;
  */
 public class SRIDTest {
 
-    private static final GeometryFactory GF = new GeometryFactory();
+    private static final GeometryFactory GF = org.geotoolkit.geometry.jts.JTS.getFactory();
 
     @Test
     public void testSRID(){

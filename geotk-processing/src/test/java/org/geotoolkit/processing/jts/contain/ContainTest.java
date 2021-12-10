@@ -52,7 +52,7 @@ public class ContainTest extends AbstractProcessTest {
     @Test
     public void testContain() throws NoSuchIdentifierException, ProcessException {
 
-        GeometryFactory fact = new GeometryFactory();
+        GeometryFactory fact = JTS.getFactory();
 
         // Inputs first
         final LinearRing  ring = fact.createLinearRing(new Coordinate[]{
@@ -86,7 +86,7 @@ public class ContainTest extends AbstractProcessTest {
     @Test
     public void testContainCRS() throws NoSuchIdentifierException, ProcessException, FactoryException, TransformException {
 
-        GeometryFactory fact = new GeometryFactory();
+        GeometryFactory fact = JTS.getFactory();
 
         // Inputs first
         final LinearRing  ring = fact.createLinearRing(new Coordinate[]{

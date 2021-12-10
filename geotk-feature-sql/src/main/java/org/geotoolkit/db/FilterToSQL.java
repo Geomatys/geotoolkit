@@ -390,7 +390,7 @@ public abstract class FilterToSQL extends Visitor<Object,StringBuilder> {
             if (obj instanceof Envelope) {
                 final Envelope env = (Envelope) obj;
                 final FilterFactory ff = FilterUtilities.FF;
-                final GeometryFactory gf = new GeometryFactory();
+                final GeometryFactory gf = org.geotoolkit.geometry.jts.JTS.getFactory();
                 final Coordinate[] coords = new Coordinate[5];
                 double minx = checkInfinites(env.getMinimum(0));
                 double maxx = checkInfinites(env.getMaximum(0));

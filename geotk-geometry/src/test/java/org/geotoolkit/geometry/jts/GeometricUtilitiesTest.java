@@ -33,7 +33,7 @@ import org.junit.Test;
  */
 public class GeometricUtilitiesTest extends org.geotoolkit.test.TestBase {
 
-    private static final GeometryFactory GF = new GeometryFactory();
+    private static final GeometryFactory GF = GeometricUtilities.getFactory();
 
     @Test
     public void envelopeToJTSSmallTest(){

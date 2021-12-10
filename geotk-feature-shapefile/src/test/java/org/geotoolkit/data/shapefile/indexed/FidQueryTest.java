@@ -97,7 +97,7 @@ public class FidQueryTest extends FIDTestCase {
         final FeatureType schema = ds.getFeatureType(ds.getName().toString());
 
         final Feature newFeature = schema.newInstance();
-        final GeometryFactory gf = new GeometryFactory();
+        final GeometryFactory gf = org.geotoolkit.geometry.jts.JTS.getFactory();
         newFeature.setPropertyValue("a",gf.createPoint((new Coordinate(0, 0))));
         newFeature.setPropertyValue("b",new Long(0));
         newFeature.setPropertyValue("c",new Long(0));

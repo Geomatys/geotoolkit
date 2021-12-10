@@ -91,7 +91,7 @@ public class PolygonHandlerTest extends AbstractTestCaseSupport {
         for (int i = 0; i < coords.length; i++) {
             coords[i] = new Coordinate();
         }
-        return new GeometryFactory().createLinearRing(coords);
+        return org.geotoolkit.geometry.jts.JTS.getFactory().createLinearRing(coords);
     }
 
     public static Geometry copyTo(final double x, final double y, final double w, final double h,

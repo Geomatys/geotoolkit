@@ -34,7 +34,7 @@ public class JTSISOtransformTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void polygonToISOTest() throws Exception {
-        GeometryFactory fact = new GeometryFactory();
+        GeometryFactory fact = org.geotoolkit.geometry.jts.JTS.getFactory();
         final Coordinate[] coordinates = new Coordinate[5];
         coordinates[0] = new Coordinate(0, 0);
         coordinates[1] = new Coordinate(0, 1);
@@ -42,7 +42,7 @@ public class JTSISOtransformTest extends org.geotoolkit.test.TestBase {
         coordinates[3] = new Coordinate(1, 0);
         coordinates[4] = new Coordinate(0, 0);
 
-        LinearRing linear = new GeometryFactory().createLinearRing(coordinates);
+        LinearRing linear = org.geotoolkit.geometry.jts.JTS.getFactory().createLinearRing(coordinates);
         Polygon poly = new Polygon(linear, null, fact);
         poly.setSRID(2154);
 
@@ -56,7 +56,7 @@ public class JTSISOtransformTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void multiPolygonToISOTest() throws Exception {
-        GeometryFactory fact = new GeometryFactory();
+        GeometryFactory fact = org.geotoolkit.geometry.jts.JTS.getFactory();
         final Coordinate[] coordinates = new Coordinate[5];
         coordinates[0] = new Coordinate(0, 0);
         coordinates[1] = new Coordinate(0, 1);
@@ -64,7 +64,7 @@ public class JTSISOtransformTest extends org.geotoolkit.test.TestBase {
         coordinates[3] = new Coordinate(1, 0);
         coordinates[4] = new Coordinate(0, 0);
 
-        LinearRing linear = new GeometryFactory().createLinearRing(coordinates);
+        LinearRing linear = org.geotoolkit.geometry.jts.JTS.getFactory().createLinearRing(coordinates);
         Polygon poly = new Polygon(linear, null, fact);
         poly.setSRID(2154);
 
@@ -75,7 +75,7 @@ public class JTSISOtransformTest extends org.geotoolkit.test.TestBase {
         coordinates2[3] = new Coordinate(11, 10);
         coordinates2[4] = new Coordinate(10, 10);
 
-        LinearRing linear2 = new GeometryFactory().createLinearRing(coordinates2);
+        LinearRing linear2 = org.geotoolkit.geometry.jts.JTS.getFactory().createLinearRing(coordinates2);
         Polygon poly2 = new Polygon(linear2, null, fact);
         poly2.setSRID(2154);
 

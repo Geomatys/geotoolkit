@@ -51,7 +51,7 @@ import org.opengis.util.GenericName;
 public class QueryTest {
 
     private static final FilterFactory FF = FilterUtilities.FF;
-    private static final GeometryFactory GF = new GeometryFactory();
+    private static final GeometryFactory GF = org.geotoolkit.geometry.jts.JTS.getFactory();
     private static final double DELTA = 0.00001;
 
     /**

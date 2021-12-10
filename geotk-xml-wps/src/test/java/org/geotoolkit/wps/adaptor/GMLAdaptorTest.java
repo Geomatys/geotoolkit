@@ -54,7 +54,7 @@ public class GMLAdaptorTest {
         ftb.addAttribute(Polygon.class).setName("geom").setCRS(CommonCRS.WGS84.geographic()).addRole(AttributeRole.DEFAULT_GEOMETRY);
         final FeatureType ft = ftb.build();
 
-        final GeometryFactory gf = new GeometryFactory();
+        final GeometryFactory gf = org.geotoolkit.geometry.jts.JTS.getFactory();
         final LinearRing ring = gf.createLinearRing(new Coordinate[]{
                                     new Coordinate(23, 78),
                                     new Coordinate(-10, 43),

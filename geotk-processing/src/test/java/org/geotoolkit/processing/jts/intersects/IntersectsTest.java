@@ -51,7 +51,7 @@ public class IntersectsTest extends AbstractProcessTest {
     @Test
     public void testIntersects() throws NoSuchIdentifierException, ProcessException {
 
-        GeometryFactory fact = new GeometryFactory();
+        GeometryFactory fact = JTS.getFactory();
 
         // Inputs first
         final LinearRing ring = fact.createLinearRing(new Coordinate[]{
@@ -85,7 +85,7 @@ public class IntersectsTest extends AbstractProcessTest {
     @Test
     public void testIntersectsCRS() throws NoSuchIdentifierException, ProcessException, FactoryException, TransformException {
 
-        GeometryFactory fact = new GeometryFactory();
+        GeometryFactory fact = JTS.getFactory();
 
         // Inputs first
         final LinearRing ring = fact.createLinearRing(new Coordinate[]{

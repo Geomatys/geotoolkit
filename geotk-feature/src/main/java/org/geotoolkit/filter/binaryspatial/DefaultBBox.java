@@ -57,7 +57,7 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<ValueReference, L
         implements BinarySpatialOperator<Object>
 {
     private static final LinearRing[] EMPTY_RINGS = new LinearRing[0];
-    private static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory();
+    private static final GeometryFactory GEOMETRY_FACTORY = JTS.getFactory();
     private static final PreparedGeometryFactory PREPARED_FACTORY = new PreparedGeometryFactory();
 
     //cache the bbox geometry

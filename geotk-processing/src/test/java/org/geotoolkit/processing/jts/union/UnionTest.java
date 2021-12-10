@@ -52,7 +52,7 @@ public class UnionTest extends AbstractProcessTest {
     @Test
     public void testUnion() throws NoSuchIdentifierException, ProcessException {
 
-        GeometryFactory fact = new GeometryFactory();
+        GeometryFactory fact = JTS.getFactory();
 
         // Inputs first
         final LinearRing ring = fact.createLinearRing(new Coordinate[]{
@@ -93,7 +93,7 @@ public class UnionTest extends AbstractProcessTest {
     @Test
     public void testUnionCRS() throws NoSuchIdentifierException, ProcessException, NoSuchAuthorityCodeException, FactoryException, TransformException {
 
-        GeometryFactory fact = new GeometryFactory();
+        GeometryFactory fact = JTS.getFactory();
 
         // Inputs first
         final LinearRing ring = fact.createLinearRing(new Coordinate[]{

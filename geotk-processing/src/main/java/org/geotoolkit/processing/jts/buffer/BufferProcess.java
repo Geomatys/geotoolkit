@@ -17,7 +17,6 @@
 package org.geotoolkit.processing.jts.buffer;
 
 import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
 import java.util.Collections;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.processing.AbstractProcess;
@@ -59,7 +58,7 @@ public class BufferProcess extends AbstractProcess {
 
             final CoordinateReferenceSystem geomCRS = JTS.findCoordinateReferenceSystem(geom);
 
-            Geometry result = new GeometryFactory().buildGeometry(Collections.EMPTY_LIST);
+            Geometry result = JTS.getFactory().buildGeometry(Collections.EMPTY_LIST);
 
             if (segments > 0) {
                 if (endStyle != 0) {

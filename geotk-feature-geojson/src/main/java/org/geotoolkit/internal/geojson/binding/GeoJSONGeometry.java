@@ -385,7 +385,7 @@ public class GeoJSONGeometry extends GeoJSONObject implements Serializable {
         }
     }
 
-    private static final GeometryFactory GF = new GeometryFactory();
+    private static final GeometryFactory GF = org.geotoolkit.geometry.jts.JTS.getFactory();
 
     /**
      * Convert GeoJSONGeometry into JTS Geometry with included CRS. If no CRS is

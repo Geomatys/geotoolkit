@@ -44,7 +44,7 @@ public class LineStringTranslatorTest extends org.geotoolkit.test.TestBase {
     /**
      * Default factory to create lineString.
      */
-    private static final GeometryFactory GEOM_FACTORY = new GeometryFactory();
+    private static final GeometryFactory GEOM_FACTORY = org.geotoolkit.geometry.jts.JTS.getFactory();
 
     /**
      * Create {@link LineString} from coordinates given parameters.

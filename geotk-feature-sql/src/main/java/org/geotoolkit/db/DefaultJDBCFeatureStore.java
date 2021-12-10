@@ -96,7 +96,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
     protected static final QueryCapabilities DEFAULT_CAPABILITIES = new DefaultQueryCapabilities(false, false,
             new String[]{org.geotoolkit.storage.feature.query.Query.GEOTK_QOM, CUSTOM_SQL});
 
-    protected final GeometryFactory geometryFactory = new GeometryFactory();
+    protected final GeometryFactory geometryFactory = org.geotoolkit.geometry.jts.JTS.getFactory();
     protected final FilterFactory filterFactory = FilterUtilities.FF;
 
     private final DataBaseModel dbmodel;

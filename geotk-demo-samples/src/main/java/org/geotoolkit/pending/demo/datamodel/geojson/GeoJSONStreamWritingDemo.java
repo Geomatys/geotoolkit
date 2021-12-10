@@ -22,7 +22,7 @@ public class GeoJSONStreamWritingDemo {
     public static void main(String[] args) throws DataStoreException {
         Demos.init();
 
-        final GeometryFactory gf = new GeometryFactory();
+        final GeometryFactory gf = org.geotoolkit.geometry.jts.JTS.getFactory();
 
         //start by creating a memory featurestore for this test -----------------------------
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();

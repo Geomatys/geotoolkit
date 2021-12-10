@@ -62,7 +62,7 @@ import org.opengis.util.FactoryException;
  */
 public class GridCoverageFeatureSetTest {
 
-    private static final GeometryFactory GF = new GeometryFactory();
+    private static final GeometryFactory GF = org.geotoolkit.geometry.jts.JTS.getFactory();
 
     /**
      * Test coverage 2D mapped as a feature.

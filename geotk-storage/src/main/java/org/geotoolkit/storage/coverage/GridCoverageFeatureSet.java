@@ -412,7 +412,7 @@ public class GridCoverageFeatureSet extends AbstractResource implements FeatureS
 
     private static class GridCoverage2DRecordIterator implements Iterator<Feature> {
 
-        private final GeometryFactory GF = new GeometryFactory();
+        private final GeometryFactory GF = JTS.getFactory();
         private final FeatureType recordType;
         private final GridCoverage coverage;
         private final String[] properties;

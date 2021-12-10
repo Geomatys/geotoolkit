@@ -65,7 +65,7 @@ import org.opengis.feature.PropertyType;
  */
 public class GeoJSONWriteTest extends TestCase {
 
-    private static final GeometryFactory GF = new GeometryFactory();
+    private static final GeometryFactory GF = org.geotoolkit.geometry.jts.JTS.getFactory();
     private static final WKTReader WKT_READER = new WKTReader();
     private static final Properties PROPERTIES = new Properties();
 

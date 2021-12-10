@@ -55,7 +55,7 @@ import org.opengis.feature.FeatureType;
  */
 public class RegroupTest extends AbstractProcessTest {
 
-    private static final GeometryFactory GF = new GeometryFactory();
+    private static final GeometryFactory GF = org.geotoolkit.geometry.jts.JTS.getFactory();
     private static FeatureType type;
 
     public RegroupTest() {

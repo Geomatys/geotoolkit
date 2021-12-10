@@ -48,7 +48,7 @@ public class EnvelopeTest extends AbstractProcessTest {
     @Test
     public void testEnvelope() throws NoSuchIdentifierException, ProcessException, FactoryException {
 
-        GeometryFactory fact = new GeometryFactory();
+        GeometryFactory fact = JTS.getFactory();
 
         // Inputs first
         final LinearRing ring = fact.createLinearRing(new Coordinate[]{

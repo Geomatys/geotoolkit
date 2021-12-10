@@ -67,7 +67,7 @@ import org.opengis.util.GenericName;
  */
 public class MIFStoreTest extends org.geotoolkit.test.TestBase {
 
-    private static final GeometryFactory GF = new GeometryFactory();
+    private static final GeometryFactory GF = org.geotoolkit.geometry.jts.JTS.getFactory();
     private static final FilterFactory FF = FilterUtilities.FF;
     private Path tempDir;
 

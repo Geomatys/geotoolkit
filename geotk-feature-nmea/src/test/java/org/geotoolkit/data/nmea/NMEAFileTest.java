@@ -63,7 +63,7 @@ public class NMEAFileTest extends org.geotoolkit.test.TestBase {
             assertTrue(reader.hasNext());
 
             final Feature f = reader.next();
-            assertEquals(new GeometryFactory().createPoint(new Coordinate(-6.5056183333333335, 53.361336666666666)),
+            assertEquals(org.geotoolkit.geometry.jts.JTS.getFactory().createPoint(new Coordinate(-6.5056183333333335, 53.361336666666666)),
                     f.getProperty("Location").getValue());
             assertEquals(61.7d, f.getPropertyValue(ALT_NAME.toString()));
             assertEquals(null, f.getPropertyValue(DEPTH_NAME.toString()));

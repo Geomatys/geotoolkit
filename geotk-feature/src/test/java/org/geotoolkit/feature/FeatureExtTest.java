@@ -38,7 +38,7 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class FeatureExtTest {
 
-    private static final GeometryFactory GF = new GeometryFactory();
+    private static final GeometryFactory GF = JTS.getFactory();
 
     @Test
     public void parameterToFeatureTest(){

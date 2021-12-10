@@ -51,7 +51,7 @@ import org.openjdk.jmh.annotations.Warmup;
 @Fork(value = 2)
 public class JTSCoordinateSequenceType {
     private static Random RAND = new Random();
-    private static final GeometryFactory GF = new GeometryFactory();
+    private static final GeometryFactory GF = JTS.getFactory();
     private static final CoordinateReferenceSystem SOURCE_CRS = CommonCRS.defaultGeographic();
     private static final CoordinateReferenceSystem TARGET_CRS;
     private static final CoordinateOperation SOURCE_TO_TARGET;

@@ -50,7 +50,7 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class CoverageToVectorProcess extends AbstractProcess {
 
-    private static final GeometryFactory GF = new GeometryFactory();
+    private static final GeometryFactory GF = JTS.getFactory();
     private static final int LAST_LINE = 0;
     private static final int CURRENT_LINE = 1;
 

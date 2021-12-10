@@ -225,7 +225,7 @@ public class CachedPatternSymbolizer extends CachedSymbolizer<PatternSymbolizer>
      * Must implement IsoBand next to SIS isolines.
      */
     private Geometry[] computeNew(GridCoverage coverage, Map<NumberRange,List<Symbolizer>> styles) throws IOException {
-        final GeometryFactory GF = new GeometryFactory();
+        final GeometryFactory GF = JTS.getFactory();
 
         RenderedImage ri = coverage.forConvertedValues(true).render(null);
 

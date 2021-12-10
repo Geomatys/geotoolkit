@@ -75,7 +75,7 @@ public class GraduationTest extends org.geotoolkit.test.TestBase {
         ftb.addAttribute(LineString.class).setName("geom").setCRS(crs);
         final FeatureType type = ftb.build();
 
-        final LineString geom = new GeometryFactory().createLineString(new Coordinate[]{new Coordinate(0, 0), new Coordinate(100, 0)});
+        final LineString geom = org.geotoolkit.geometry.jts.JTS.getFactory().createLineString(new Coordinate[]{new Coordinate(0, 0), new Coordinate(100, 0)});
         geom.setUserData(crs);
         final Feature f = type.newInstance();
         f.setPropertyValue("id", "id-0");

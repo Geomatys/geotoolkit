@@ -137,7 +137,7 @@ public class RegroupProcess extends AbstractProcess {
                 }
             }
         }
-        Geometry regroupGeometry = new GeometryFactory().buildGeometry(geoms);
+        Geometry regroupGeometry = org.geotoolkit.geometry.jts.JTS.getFactory().buildGeometry(geoms);
         Feature resultFeature;
         //In case
         if (regroupAttribute == null && attributeValue == null) {
