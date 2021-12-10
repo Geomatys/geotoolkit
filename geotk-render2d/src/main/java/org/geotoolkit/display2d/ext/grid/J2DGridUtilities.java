@@ -91,7 +91,7 @@ public class J2DGridUtilities {
             ite.next();
         }
 
-        final GeometryFactory fact = new GeometryFactory();
+        final GeometryFactory fact = JTS.getFactory();
         final LinearRing ring = fact.createLinearRing(coords.toArray(new Coordinate[coords.size()]));
         final Polygon bounds = fact.createPolygon(ring, new LinearRing[0]);
 

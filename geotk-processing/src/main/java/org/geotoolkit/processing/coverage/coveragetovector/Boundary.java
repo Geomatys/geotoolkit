@@ -35,7 +35,7 @@ import org.apache.sis.measure.NumberRange;
  */
 public class Boundary {
 
-    private static final GeometryFactory GF = new GeometryFactory();
+    private static final GeometryFactory GF = org.geotoolkit.geometry.jts.JTS.getFactory();
     private static final LinearRing[] EMPTY_RING_ARRAY = new LinearRing[0];
 
     //finished geometries

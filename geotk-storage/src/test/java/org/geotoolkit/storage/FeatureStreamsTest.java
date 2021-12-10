@@ -71,7 +71,7 @@ public class FeatureStreamsTest extends org.geotoolkit.test.TestBase {
 
     private static final double DELTA = 0.000001d;
     private static final FilterFactory FF = FilterUtilities.FF;
-    private static final GeometryFactory GF = new GeometryFactory();
+    private static final GeometryFactory GF = JTS.getFactory();
     private static final Integer COMPLEX_ID_1 = 11;
     private static final Integer COMPLEX_ID_2 = 12;
     private static final GenericName NAME = NamesExt.create("http://test.com", "TestSchema");

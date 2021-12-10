@@ -107,7 +107,7 @@ public class DifferenceTest extends AbstractProcessTest {
 
         final FeatureCollection featureList = FeatureStoreUtilities.collection("noname", type);
 
-        geometryFactory = new GeometryFactory();
+        geometryFactory = org.geotoolkit.geometry.jts.JTS.getFactory();
 
         Feature myFeature1 = type.newInstance();
         LinearRing ring = geometryFactory.createLinearRing(
@@ -194,7 +194,7 @@ public class DifferenceTest extends AbstractProcessTest {
 
         final FeatureCollection featureList = FeatureStoreUtilities.collection("noname", type);
 
-        geometryFactory = new GeometryFactory();
+        geometryFactory = org.geotoolkit.geometry.jts.JTS.getFactory();
 
         Feature myFeature1 = type.newInstance();
         LinearRing ring = geometryFactory.createLinearRing(
@@ -265,7 +265,7 @@ public class DifferenceTest extends AbstractProcessTest {
 
         final FeatureCollection featureList = FeatureStoreUtilities.collection("noname", type);
 
-        geometryFactory = new GeometryFactory();
+        geometryFactory = org.geotoolkit.geometry.jts.JTS.getFactory();
 
 
 

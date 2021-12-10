@@ -47,7 +47,7 @@ import org.opengis.feature.PropertyType;
 public class IndexedBBoxShapefileAttributeReader extends IndexedShapefileAttributeReader<LazyTyleSearchIterator.Buffered<ShpData>>{
 
     private static final PreparedGeometryFactory PREPARED_FACTORY = new PreparedGeometryFactory();
-    private static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory();
+    private static final GeometryFactory GEOMETRY_FACTORY = org.geotoolkit.geometry.jts.JTS.getFactory();
 
     private final Object[] buffer = new Object[metaData.length];
     private final PreparedGeometry boundingGeometry;

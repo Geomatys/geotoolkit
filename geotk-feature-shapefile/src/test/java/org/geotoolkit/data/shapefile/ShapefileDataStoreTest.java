@@ -443,7 +443,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         BigDecimal bigDecimal = new BigDecimal(bigInteger, 2);
 
         final Feature feature = type.newInstance();
-        feature.setPropertyValue("a", new GeometryFactory().createPoint(new Coordinate(1, -1)));
+        feature.setPropertyValue("a", org.geotoolkit.geometry.jts.JTS.getFactory().createPoint(new Coordinate(1, -1)));
         feature.setPropertyValue("b", bigDecimal);
         feature.setPropertyValue("c", bigInteger);
 
@@ -523,7 +523,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         assertEquals("the_geom", reader.getFeatureType().getProperties(true).iterator().next().getName().tip().toString());
 
         // here too, the filter is using the geometry only
-        GeometryFactory gc = new GeometryFactory();
+        GeometryFactory gc = org.geotoolkit.geometry.jts.JTS.getFactory();
         LinearRing ring = gc.createLinearRing(new Coordinate[] {
                 new Coordinate(0, 0), new Coordinate(10, 0),
                 new Coordinate(10, 10), new Coordinate(0, 10),
@@ -577,7 +577,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         BigDecimal bigDecimal = new BigDecimal(bigInteger, 2);
 
         Feature feature = type.newInstance();
-        feature.setPropertyValue("a", new GeometryFactory().createPoint(new Coordinate(1, -1)));
+        feature.setPropertyValue("a", org.geotoolkit.geometry.jts.JTS.getFactory().createPoint(new Coordinate(1, -1)));
         feature.setPropertyValue("b",bigDecimal);
         feature.setPropertyValue("c",bigInteger);
 
@@ -621,7 +621,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         Collection<Feature> features = new ArrayList<>();
         for (int i = 0, ii = 20; i < ii; i++) {
             final Feature feature = featureType.newInstance();
-            feature.setPropertyValue("a",new GeometryFactory().createPoint(new Coordinate(1, -1)));
+            feature.setPropertyValue("a",org.geotoolkit.geometry.jts.JTS.getFactory().createPoint(new Coordinate(1, -1)));
             feature.setPropertyValue("b",new Byte((byte) i));
             feature.setPropertyValue("c",new Short((short) i));
             feature.setPropertyValue("d",new Double(i));

@@ -53,7 +53,7 @@ import org.junit.Test;
  */
 public class GeometrytoJTSTest extends org.geotoolkit.test.TestBase {
 
-    static final GeometryFactory GF = new GeometryFactory();
+    static final GeometryFactory GF = org.geotoolkit.geometry.jts.JTS.getFactory();
 
     @Test
     public void gmlPolygonToJTSTest2D() throws Exception {

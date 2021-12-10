@@ -58,7 +58,7 @@ public class StringToGeometryConverter extends SimpleConverter<String, Geometry>
 
         if(s == null) throw new UnconvertibleObjectException("Empty WKT Geometry");
         try {
-            final WKTReader reader = new WKTReader(new GeometryFactory());
+            final WKTReader reader = new WKTReader(org.geotoolkit.geometry.jts.JTS.getFactory());
             final Geometry geometry = reader.read(s);
 
             return geometry;

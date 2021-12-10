@@ -17,7 +17,7 @@ public class JTSDemo {
     public static void main(String[] args) {
         Demos.init();
 
-        final GeometryFactory gf = new GeometryFactory();
+        final GeometryFactory gf = org.geotoolkit.geometry.jts.JTS.getFactory();
 
         //creating a point -----------------------------------------------
         final Point point = gf.createPoint(new Coordinate(56, 45));

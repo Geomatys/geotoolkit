@@ -181,7 +181,7 @@ public class KrigingProcess extends AbstractProcess {
             palier[i] = minz + i*step;
         }
 
-        final GeometryFactory GF = new GeometryFactory();
+        final GeometryFactory GF = org.geotoolkit.geometry.jts.JTS.getFactory();
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("isoline");
         ftb.addAttribute(LineString.class).setName("geometry").setCRS(crs).addRole(AttributeRole.DEFAULT_GEOMETRY);

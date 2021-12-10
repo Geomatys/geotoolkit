@@ -165,7 +165,7 @@ import org.opengis.feature.Feature;
 public class DefaultKmlFactory implements KmlFactory{
 
     private static final KmlFactory KMLF = new DefaultKmlFactory();
-    private static final GeometryFactory GF = new GeometryFactory();
+    private static final GeometryFactory GF = org.geotoolkit.geometry.jts.JTS.getFactory();
 
     private DefaultKmlFactory(){}
 

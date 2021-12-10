@@ -43,7 +43,7 @@ import org.apache.sis.util.logging.Logging;
  * @module
  */
 public class LucenePropertyBinding extends AbstractBinding<Document> {
-    private static final GeometryFactory GF = new GeometryFactory();
+    private static final GeometryFactory GF = org.geotoolkit.geometry.jts.JTS.getFactory();
 
     private static final ThreadLocal<WKBReader> THREAD_LOCAL = new ThreadLocal<WKBReader>(){
 

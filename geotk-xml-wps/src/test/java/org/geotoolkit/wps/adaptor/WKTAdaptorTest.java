@@ -21,7 +21,7 @@ import static org.junit.Assert.assertTrue;
 
 public class WKTAdaptorTest {
 
-    private static final GeometryFactory GF = new GeometryFactory();
+    private static final GeometryFactory GF = JTS.getFactory();
     public static final WKTAdaptor ADAPTOR = new WKTAdaptor(WKTAdaptor.MIME_TYPE, WKTAdaptor.ENC_UTF8);
 
     private static String adapt(final Geometry geom) {

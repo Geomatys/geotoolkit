@@ -585,7 +585,7 @@ public final class JTS {
     }
 
     public static Polygon toGeometry(final Rectangle envelope) {
-        GeometryFactory gf = new GeometryFactory();
+        GeometryFactory gf = getFactory();
         return gf.createPolygon(gf.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(envelope.getMinX(), envelope.getMinY()),
@@ -606,7 +606,7 @@ public final class JTS {
      * @since 2.4
      */
     public static Polygon toGeometry(final Envelope envelope) {
-        GeometryFactory gf = new GeometryFactory();
+        GeometryFactory gf = getFactory();
         return gf.createPolygon(gf.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(envelope.getMinX(), envelope.getMinY()),
@@ -624,7 +624,7 @@ public final class JTS {
      */
     @Deprecated
     public static Polygon toGeometry(final org.opengis.geometry.Envelope env){
-        final GeometryFactory gf = new GeometryFactory();
+        final GeometryFactory gf = getFactory();
         final Coordinate[] coordinates = new Coordinate[]{
             new Coordinate(env.getMinimum(0), env.getMinimum(1)),
             new Coordinate(env.getMinimum(0), env.getMaximum(1)),
@@ -676,7 +676,7 @@ public final class JTS {
      */
     public static <T extends Geometry> T emptyGeometry(Class<T> geomClass, CoordinateReferenceSystem crs, GeometryFactory factory) {
         ArgumentChecks.ensureNonNull("geometry class", geomClass);
-        if(factory==null) factory = new GeometryFactory();
+        if(factory==null) factory = getFactory();
 
         final T geometry;
         if(Point.class.equals(geomClass)){
@@ -711,7 +711,7 @@ public final class JTS {
      * @since 2.4
      */
     public static Polygon toGeometry(final BoundingBox envelope) {
-        GeometryFactory gf = new GeometryFactory();
+        GeometryFactory gf = getFactory();
         return gf.createPolygon(gf.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(envelope.getMinX(), envelope.getMinY()),
@@ -1176,5 +1176,12 @@ public final class JTS {
         }
     }
 
-
+    /**
+     * Returns the default geometry factory.
+     *
+     * @return the JTS geometry library used in Geotk.
+     */
+    public static GeometryFactory getFactory() {
+        return org.apache.sis.internal.feature.jts.Factory.INSTANCE.factory(false);
+    }
 }

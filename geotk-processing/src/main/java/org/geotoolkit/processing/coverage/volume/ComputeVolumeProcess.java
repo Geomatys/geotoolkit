@@ -237,7 +237,7 @@ public class ComputeVolumeProcess extends AbstractProcess {
             }
 
             //-- geometry factory to create point at n step to test if it is within geometry
-            final GeometryFactory gf = new GeometryFactory();
+            final GeometryFactory gf = JTS.getFactory();
 
             //-- coordinate to test if point is within geom
             final Coordinate coords = new Coordinate();

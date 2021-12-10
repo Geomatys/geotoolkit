@@ -14,7 +14,7 @@ import org.opengis.feature.FeatureType;
 public class FishReader implements Iterator<Feature> {
 
 
-    private final GeometryFactory gf = new GeometryFactory();
+    private final GeometryFactory gf = org.geotoolkit.geometry.jts.JTS.getFactory();
     private final FeatureType type;
     private final Scanner scanner;
 

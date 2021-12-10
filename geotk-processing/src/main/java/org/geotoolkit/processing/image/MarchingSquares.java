@@ -35,7 +35,7 @@ import org.locationtech.jts.operation.linemerge.LineMerger;
  */
 public final class MarchingSquares extends Static {
 
-    private static final GeometryFactory GF = new GeometryFactory();
+    private static final GeometryFactory GF = org.geotoolkit.geometry.jts.JTS.getFactory();
 
     /**
      *

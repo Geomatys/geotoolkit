@@ -112,7 +112,7 @@ import org.opengis.util.FactoryException;
  */
 public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
     private static final FilterFactory FF = FilterUtilities.FF;
-    private static final GeometryFactory GF = new GeometryFactory();
+    private static final GeometryFactory GF = JTS.getFactory();
     private static final MutableStyleFactory SF = new DefaultStyleFactory();
 
     private final List<FeatureSet> featureColls = new ArrayList<>();

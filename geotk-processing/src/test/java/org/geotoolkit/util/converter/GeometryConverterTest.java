@@ -58,7 +58,7 @@ public class GeometryConverterTest extends org.geotoolkit.test.TestBase {
 
     private Geometry buildResultGeom() {
 
-        GeometryFactory gf = new GeometryFactory();
+        GeometryFactory gf = org.geotoolkit.geometry.jts.JTS.getFactory();
         LinearRing ring = gf.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(20, 20),

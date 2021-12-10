@@ -46,7 +46,7 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class ComposeTest {
 
-    public static final GeometryFactory GF = new GeometryFactory();
+    public static final GeometryFactory GF = JTS.getFactory();
 
     @Test
     public void simpleImageTest() throws ProcessException, MismatchedDimensionException, TransformException {

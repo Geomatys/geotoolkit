@@ -141,7 +141,7 @@ import org.opengis.util.GenericName;
  */
 public final class GO2Utilities {
 
-    public static final GeometryFactory JTS_FACTORY = new GeometryFactory();
+    public static final GeometryFactory JTS_FACTORY = org.geotoolkit.geometry.jts.JTS.getFactory();
 
     private static final Map<Class<? extends CachedSymbolizer>,SymbolizerRendererService> RENDERERS =
             new HashMap<Class<? extends CachedSymbolizer>, SymbolizerRendererService>();

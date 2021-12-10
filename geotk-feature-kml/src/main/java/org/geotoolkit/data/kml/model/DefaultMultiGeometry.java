@@ -38,7 +38,7 @@ import static java.util.Collections.*;
  */
 public class DefaultMultiGeometry extends DefaultAbstractGeometry implements MultiGeometry {
 
-    private static final GeometryFactory GF = new GeometryFactory();
+    private static final GeometryFactory GF = org.geotoolkit.geometry.jts.JTS.getFactory();
     protected List<AbstractGeometry> geometries;
 
     /**

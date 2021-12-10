@@ -79,7 +79,7 @@ import org.opengis.style.Symbolizer;
  */
 public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<CachedCellSymbolizer> {
 
-    private static final GeometryFactory GF = new GeometryFactory();
+    private static final GeometryFactory GF = JTS.getFactory();
 
     public CellSymbolizerRenderer(SymbolizerRendererService service,
             CachedCellSymbolizer symbol, RenderingContext2D context) {

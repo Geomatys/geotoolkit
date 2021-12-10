@@ -55,7 +55,7 @@ public final class ComplexToGeometryConverter extends AbstractComplexInputConver
 
     private static ComplexToGeometryConverter INSTANCE;
 
-    private static final GeometryFactory GF = new GeometryFactory();
+    private static final GeometryFactory GF = JTS.getFactory();
 
     private ComplexToGeometryConverter(){
     }

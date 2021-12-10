@@ -144,7 +144,7 @@ public class CoverageToFeaturesProcess extends AbstractProcess {
     static Feature convertToFeature(FeatureType type, long x, long y, GridCoverage coverage, GridCoverageResource resource,
             GridGeometry gridGeom) throws DataStoreException, TransformException {
 
-        final GeometryFactory geomFac = new GeometryFactory();
+        final GeometryFactory geomFac = org.geotoolkit.geometry.jts.JTS.getFactory();
         //get the number of band contained in a cell
         final List<SampleDimension> dims = coverage.getSampleDimensions();
         final int nbBand = dims.size();

@@ -212,7 +212,7 @@ public class KmlFeatureUtilities {
                 }
             }
 
-            final GeometryFactory gf = new GeometryFactory();
+            final GeometryFactory gf = JTS.getFactory();
             Geometry[] geometryArray = new Geometry[multiGeometry.size()];
             for (int i = 0; i < multiGeometry.size(); i++) {
                 geometryArray[i] = multiGeometry.get(i);

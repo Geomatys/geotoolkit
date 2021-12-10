@@ -47,7 +47,7 @@ public class AreaTest extends AbstractProcessTest {
     @Test
     public void testArea() throws NoSuchIdentifierException, ProcessException {
 
-        GeometryFactory fact = new GeometryFactory();
+        GeometryFactory fact = org.geotoolkit.geometry.jts.JTS.getFactory();
 
         // Inputs first
         final LinearRing  ring = fact.createLinearRing(new Coordinate[]{

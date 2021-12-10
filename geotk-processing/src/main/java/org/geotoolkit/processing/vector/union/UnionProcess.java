@@ -100,7 +100,7 @@ public class UnionProcess extends AbstractProcess {
          * In order to get all part of Feature, add a second pass with the diffenrence between the FeatureGeometry
          * and united intersections. if return nothing we have all the geometry feature, else we add the difference
          */
-        Geometry inputGeometry = new GeometryFactory().buildGeometry(Collections.EMPTY_LIST);
+        Geometry inputGeometry = org.geotoolkit.geometry.jts.JTS.getFactory().buildGeometry(Collections.EMPTY_LIST);
         for (final PropertyType inputProperty : inputFeature.getType().getProperties(true)) {
             if (AttributeConvention.isGeometryAttribute(inputProperty)) {
                 final String name = inputProperty.getName().toString();

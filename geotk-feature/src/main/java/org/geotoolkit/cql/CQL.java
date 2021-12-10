@@ -64,7 +64,7 @@ import org.opengis.filter.ValueReference;
  */
 public final class CQL {
 
-    private static final GeometryFactory GF = new GeometryFactory();
+    private static final GeometryFactory GF = org.geotoolkit.geometry.jts.JTS.getFactory();
 
     private CQL() {}
 
