@@ -155,7 +155,7 @@ public class DefaultFeatureMapper implements FeatureMapper {
                 if(!Utilities.equalsIgnoreMetadata(sourceCRS,targetCRS)){
                     //crs are different, reproject source geometry
                     try {
-                        candidateGeom = JTS.transform(candidateGeom, CRS.findOperation(sourceCRS, targetCRS, null).getMathTransform());
+                        candidateGeom = org.apache.sis.internal.feature.jts.JTS.transform(candidateGeom, CRS.findOperation(sourceCRS, targetCRS, null).getMathTransform());
                     } catch (Exception ex) {
                         ex.printStackTrace();
                         return null;

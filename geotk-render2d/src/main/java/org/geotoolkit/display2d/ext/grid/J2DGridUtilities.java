@@ -180,7 +180,7 @@ public class J2DGridUtilities {
 
 
                 //clip geometry to avoid text outside visible area
-                geom = JTS.transform(geom, gridToObj);
+                geom = org.apache.sis.internal.feature.jts.JTS.transform(geom, gridToObj);
                 if(geom == null) continue;
                 geom = geom.intersection(bounds);
                 pg.setDataGeometry(geom, objectiveCRS);
@@ -244,7 +244,7 @@ public class J2DGridUtilities {
                 for(Shape ds : pg.getDisplayShape()) g.draw(ds);
 
                 //clip geometry to avoid text outside visible area
-                geom = JTS.transform(geom, gridToObj);
+                geom = org.apache.sis.internal.feature.jts.JTS.transform(geom, gridToObj);
                 if(geom == null) continue;
                 geom = geom.intersection(bounds);
                 pg.setDataGeometry(geom, objectiveCRS);

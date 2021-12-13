@@ -123,7 +123,7 @@ public class EqualsExactTest extends AbstractProcessTest {
 
 
         final MathTransform mt = CRS.findOperation(crs2, crs1, null).getMathTransform();
-        geom2 = JTS.transform(geom2, mt);
+        geom2 = org.apache.sis.internal.feature.jts.JTS.transform(geom2, mt);
         final Boolean expected = geom.equalsExact(geom2, tolerance);
 
         assertTrue(expected.equals(result));

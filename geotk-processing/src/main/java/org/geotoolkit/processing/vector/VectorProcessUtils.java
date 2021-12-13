@@ -265,7 +265,7 @@ public final class VectorProcessUtils extends Static {
     {
         if (!(wantedCRS.equals(geometryCRS))) {
             final MathTransform transform = CRS.findOperation(geometryCRS, wantedCRS, null).getMathTransform();
-            return JTS.transform(inputGeom, transform);
+            return org.apache.sis.internal.feature.jts.JTS.transform(inputGeom, transform);
         } else {
             return inputGeom;
         }

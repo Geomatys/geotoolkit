@@ -729,7 +729,7 @@ final class KMLGraphicBuilder {
 
             try {
                 transform = getCrs84Transform();
-                ls = JTS.transform((org.locationtech.jts.geom.LineString) lineString, transform);
+                ls = org.apache.sis.internal.feature.jts.JTS.transform((org.locationtech.jts.geom.LineString) lineString, transform);
             } catch (MismatchedDimensionException ex) {
                 context2d.getMonitor().exceptionOccured(ex, Level.WARNING);
                 return;
@@ -767,7 +767,7 @@ final class KMLGraphicBuilder {
 
             try {
                 transform = getCrs84Transform();
-                pol = JTS.transform((org.locationtech.jts.geom.Polygon) polygon, transform);
+                pol = org.apache.sis.internal.feature.jts.JTS.transform((org.locationtech.jts.geom.Polygon) polygon, transform);
             } catch (MismatchedDimensionException ex) {
                 context2d.getMonitor().exceptionOccured(ex, Level.WARNING);
                 return;
@@ -844,7 +844,7 @@ final class KMLGraphicBuilder {
 
             try {
                 transform = getCrs84Transform();
-                lr = JTS.transform((org.locationtech.jts.geom.LinearRing) linearRing, transform);
+                lr = org.apache.sis.internal.feature.jts.JTS.transform((org.locationtech.jts.geom.LinearRing) linearRing, transform);
             } catch (MismatchedDimensionException ex) {
                 context2d.getMonitor().exceptionOccured(ex, Level.WARNING);
                 return;

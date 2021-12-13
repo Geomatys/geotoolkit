@@ -145,7 +145,7 @@ public class JTSCoordinateSequenceType {
             output = GF.createLineString(copy);
             output.setUserData(geom.getUserData());
         } else {
-            output = JTS.transform(geom, SOURCE_TO_TARGET.getMathTransform());
+            output = org.apache.sis.internal.feature.jts.JTS.transform(geom, SOURCE_TO_TARGET.getMathTransform());
         }
 
         if (output.getNumPoints() != geom.getNumPoints()) throw new IllegalStateException("Reprojection has done something weird");
