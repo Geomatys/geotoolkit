@@ -124,12 +124,19 @@ public class GeoJSONWriteTest extends TestCase {
 
     @Test
     public void readingAsWritingPolygonTest() throws IOException {
-        try(final InputStream inputStream = GeoJSONWriteTest.class.getResourceAsStream("/org/apache/sis/internal/storage/geojson/simplePolygon.json")) {
+        final String simplePolygonResource ="/org/apache/sis/internal/storage/geojson/simplePolygon.json";
+
+        try(final InputStream inputStream = GeoJSONWriteTest.class.getResourceAsStream(simplePolygonResource);
+            final InputStream controlInputStream = GeoJSONWriteTest.class.getResourceAsStream(simplePolygonResource)
+        ) {
             final ObjectMapper mapper = new ObjectMapper();
             final GeoJSONGeometry json = mapper.readValue(inputStream, GeoJSONGeometry.class);
             assertTrue(json instanceof GeoJSONGeometry.GeoJSONPolygon);
-            final String expected = "{\"type\":\"Polygon\",\"bbox\":null,\"crs\":null,\"coordinates\":[[[44.999806521858396,-20.796456414334852],[46.06193203129382,-20.796456414334852],[46.06193203129382,-21.791778063994272],[44.999806521858396,-21.791778063994272],[44.999806521858396,-20.796456414334852]]]}";
-            assertEquals( expected, mapper.writeValueAsString(json));
+            final String expectedJSON = IOUtilities.toString(controlInputStream, Charset.forName("UTF-8"));
+            final String writtenJSON = mapper.writeValueAsString(json);
+            assertNotNull(writtenJSON);
+            assertNotNull(expectedJSON);
+            assertEquals( expectedJSON.trim(), mapper.writeValueAsString(json).trim());
         }
     }
 
