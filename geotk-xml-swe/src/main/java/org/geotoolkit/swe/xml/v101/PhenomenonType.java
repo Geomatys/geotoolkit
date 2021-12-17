@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.gml.xml.v311.DefinitionType;
 import org.apache.sis.util.ComparisonMode;
-import org.apache.sis.util.iso.SimpleInternationalString;
+import org.apache.sis.util.SimpleInternationalString;
 import org.geotoolkit.swe.xml.Phenomenon;
 import org.opengis.metadata.Identifier;
 

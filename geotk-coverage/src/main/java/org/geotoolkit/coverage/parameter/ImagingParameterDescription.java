@@ -24,7 +24,7 @@ import java.util.MissingResourceException;
 import java.io.Serializable;
 import javax.media.jai.OperationDescriptor;
 
-import org.apache.sis.util.iso.AbstractInternationalString;
+import org.apache.sis.util.AbstractInternationalString;
 
 
 /**

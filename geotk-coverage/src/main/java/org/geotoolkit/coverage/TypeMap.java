@@ -29,8 +29,8 @@ import static org.geotoolkit.coverage.SampleDimensionType.*;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
-import org.apache.sis.util.iso.AbstractInternationalString;
-import org.apache.sis.util.iso.SimpleInternationalString;
+import org.apache.sis.util.AbstractInternationalString;
+import org.apache.sis.util.SimpleInternationalString;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.measure.Range;
 import org.geotoolkit.lang.Static;

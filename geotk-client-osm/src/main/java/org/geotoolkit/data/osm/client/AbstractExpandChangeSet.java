@@ -90,8 +90,8 @@ public abstract class AbstractExpandChangeSet extends AbstractRequest implements
 
         final Feature node1 = OSMModelConstants.TYPE_NODE.newInstance();
         final Feature node2 = OSMModelConstants.TYPE_NODE.newInstance();
-        node1.setPropertyValue("point", new GeometryFactory().createPoint(new Coordinate(env.getMinimum(1), env.getMinimum(0))));
-        node2.setPropertyValue("point", new GeometryFactory().createPoint(new Coordinate(env.getMaximum(1), env.getMaximum(0))));
+        node1.setPropertyValue("point", org.geotoolkit.geometry.jts.JTS.getFactory().createPoint(new Coordinate(env.getMinimum(1), env.getMinimum(0))));
+        node2.setPropertyValue("point", org.geotoolkit.geometry.jts.JTS.getFactory().createPoint(new Coordinate(env.getMaximum(1), env.getMaximum(0))));
 
         OutputStream stream = conec.getOutputStream();
         stream = security.encrypt(stream);

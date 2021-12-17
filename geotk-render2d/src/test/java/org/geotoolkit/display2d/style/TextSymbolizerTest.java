@@ -67,7 +67,7 @@ import org.opengis.style.TextSymbolizer;
  */
 public class TextSymbolizerTest extends org.geotoolkit.test.TestBase {
 
-    private static final GeometryFactory GF = new GeometryFactory();
+    private static final GeometryFactory GF = org.geotoolkit.geometry.jts.JTS.getFactory();
     private static final MutableStyleFactory SF = new DefaultStyleFactory();
     protected static final FilterFactory FF = FilterUtilities.FF;
 

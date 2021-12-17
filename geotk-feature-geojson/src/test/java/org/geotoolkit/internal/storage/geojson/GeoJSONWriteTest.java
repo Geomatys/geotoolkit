@@ -30,7 +30,7 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Stream;
 import org.apache.sis.coverage.grid.GridCoverage;
-import org.apache.sis.feature.FeatureComparator;
+import org.apache.sis.test.feature.FeatureComparator;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
@@ -38,7 +38,7 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.WritableFeatureSet;
 import org.apache.sis.test.TestCase;
-import org.apache.sis.util.iso.SimpleInternationalString;
+import org.apache.sis.util.SimpleInternationalString;
 import org.geotoolkit.internal.geojson.binding.GeoJSONGeometry;
 import org.geotoolkit.storage.geojson.GeoJSONProvider;
 import org.geotoolkit.storage.geojson.GeoJSONStore;
@@ -66,7 +66,7 @@ import org.opengis.feature.PropertyType;
  */
 public class GeoJSONWriteTest extends TestCase {
 
-    private static final GeometryFactory GF = new GeometryFactory();
+    private static final GeometryFactory GF = org.geotoolkit.geometry.jts.JTS.getFactory();
     private static final WKTReader WKT_READER = new WKTReader();
     private static final Properties PROPERTIES = new Properties();
 
@@ -451,9 +451,9 @@ public class GeoJSONWriteTest extends TestCase {
         links.add(l);
 
         try (GeoJSONStreamWriter fw = new GeoJSONStreamWriter(baos, validFeatureType, links, 10, 5, JsonEncoding.UTF8, 4, false)) {
-           
+
             fw.writeCollection();
-            
+
             Feature feature = fw.next();
             feature.setPropertyValue("type","feat1");
             feature.setPropertyValue("time",new Date(0));
@@ -467,7 +467,7 @@ public class GeoJSONWriteTest extends TestCase {
             fw.write();
 
         }
-        
+
 
         String outputJSON = baos.toString("UTF-8");
         assertNotNull(outputJSON);

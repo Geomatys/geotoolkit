@@ -336,7 +336,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements Resou
         qb.setHints(queryHints);
         qb.setSortBy(gquery.getSortBy());
         qb.setOffset(gquery.getOffset());
-        qb.setLimit(gquery.getLimit());
+        gquery.getLimit().ifPresent(qb::setLimit);
         return FeatureStreams.subset(reader, qb);
     }
 

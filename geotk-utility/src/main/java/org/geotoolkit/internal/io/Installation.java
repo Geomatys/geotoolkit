@@ -24,7 +24,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Properties;
 import java.util.prefs.Preferences;
-import org.apache.sis.internal.system.OS;
 import org.apache.sis.util.logging.Logging;
 
 

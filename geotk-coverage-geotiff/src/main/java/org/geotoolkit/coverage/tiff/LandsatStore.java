@@ -43,7 +43,7 @@ import org.apache.sis.storage.StorageConnector;
  * @author Remi Marechal (Geomatys)
  * @author Johann Sorel (Geomatys)
  */
-public class LandsatStore extends org.apache.sis.storage.earthobservation.LandsatStore implements Aggregate, ResourceOnFileSystem {
+public class LandsatStore extends org.apache.sis.storage.landsat.LandsatStore implements Aggregate, ResourceOnFileSystem {
 
     private final List<Resource> resources = new ArrayList<>();
 

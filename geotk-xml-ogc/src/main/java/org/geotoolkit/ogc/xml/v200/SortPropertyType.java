@@ -142,4 +142,9 @@ public class SortPropertyType implements SortProperty {
     public void setSortOrder(SortOrderType value) {
         this.sortOrder = value;
     }
+
+    @Override
+    public int compare(Object r1, Object r2) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

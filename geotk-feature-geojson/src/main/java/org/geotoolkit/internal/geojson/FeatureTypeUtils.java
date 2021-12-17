@@ -40,7 +40,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Static;
 import org.apache.sis.util.iso.Names;
-import org.apache.sis.util.iso.SimpleInternationalString;
+import org.apache.sis.util.SimpleInternationalString;
 import org.geotoolkit.feature.FeatureExt;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.AttributeType;

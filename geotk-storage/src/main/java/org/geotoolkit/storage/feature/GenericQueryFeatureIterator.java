@@ -26,6 +26,7 @@ import org.geotoolkit.feature.ReprojectMapper;
 import org.geotoolkit.feature.TransformMapper;
 import org.geotoolkit.feature.ViewMapper;
 import org.geotoolkit.geometry.jts.transform.GeometryScaleTransformer;
+import org.geotoolkit.storage.feature.query.QueryUtilities;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.MismatchedFeatureException;
@@ -43,10 +44,11 @@ public class GenericQueryFeatureIterator {
     public static FeatureReader wrap(FeatureReader reader, final Query remainingParameters) throws DataStoreException{
 
         final long start = remainingParameters.getOffset();
-        final long max = remainingParameters.getLimit();
-        final Filter filter = remainingParameters.getSelection();
+        final long max = remainingParameters.getLimit().orElse(-1);
+        Filter filter = remainingParameters.getSelection();
+        if (filter == null) filter = Filter.include();
         final String[] properties = remainingParameters.getPropertyNames();
-        final SortProperty[] sorts = remainingParameters.getSortBy();
+        final SortProperty[] sorts = QueryUtilities.getSortProperties(remainingParameters.getSortBy());
         final double[] resampling = remainingParameters.getResolution();
         final Hints hints = remainingParameters.getHints();
 

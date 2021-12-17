@@ -58,9 +58,6 @@ public class WMTSUtilitiesTest extends org.geotoolkit.test.TestBase {
     /**
      * Test about "EPSG:27571" {@code CoordinateReferenceSystem}.
      * Test at : 2*10E-6 meters precision.
-     *
-     * @throws FactoryException
-     * @throws TransformException
      */
     @Test
     public void testGetAppropriateCRS1() throws TransformException, FactoryException {
@@ -98,9 +95,6 @@ public class WMTSUtilitiesTest extends org.geotoolkit.test.TestBase {
     /**
      * Test about "WGS84" {@code CoordinateReferenceSystem}.
      * Test at : 2*10E-14 ° precision.
-     *
-     * @throws FactoryException
-     * @throws TransformException
      */
     @Test
     public void testGetAppropriateCRS2() throws FactoryException, TransformException {

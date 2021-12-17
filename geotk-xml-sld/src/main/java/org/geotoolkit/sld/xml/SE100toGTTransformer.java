@@ -38,7 +38,7 @@ import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.style.MutableStyleFactory;
-import org.apache.sis.util.iso.SimpleInternationalString;
+import org.apache.sis.util.SimpleInternationalString;
 import org.geotoolkit.util.StringUtilities;
 
 import org.apache.sis.util.logging.Logging;

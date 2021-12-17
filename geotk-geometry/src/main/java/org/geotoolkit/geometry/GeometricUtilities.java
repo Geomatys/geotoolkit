@@ -56,8 +56,6 @@ import org.opengis.geometry.primitive.CurveSegment;
  */
 public class GeometricUtilities {
 
-    private static final GeometryFactory GF = new GeometryFactory();
-
     public static enum WrapResolution {
         /**
          * Convert the coordinates without checking the antemeridian.
@@ -111,6 +109,15 @@ public class GeometricUtilities {
     }
 
     private GeometricUtilities() {}
+
+    /**
+     * Returns the default geometry factory.
+     *
+     * @return the JTS geometry library used in Geotk.
+     */
+    public static GeometryFactory getFactory() {
+        return org.apache.sis.internal.feature.jts.Factory.INSTANCE.factory(false);
+    }
 
     /**
      * Return the shortest orthodromic distance between a boundingBox and a point.
@@ -725,6 +732,7 @@ public class GeometricUtilities {
                 new Coordinate(maxX, minY),
                 new Coordinate(minX, minY),
             };
+            final GeometryFactory GF = getFactory();
             return GF.createPolygon(GF.createLinearRing(coordinates), new LinearRing[0]);
         }
 
@@ -796,6 +804,7 @@ public class GeometricUtilities {
             }
             final Polygon rightpoly = builEnvelopePiece(minX,minY,maxX,maxY,crs,insertMedianPoints);
 
+            final GeometryFactory GF = getFactory();
             return GF.createMultiPolygon(new Polygon[]{leftpoly,rightpoly});
 
         }else if(WrapResolution.CONTIGUOUS == resolution){
@@ -860,6 +869,7 @@ public class GeometricUtilities {
             }
             coordinates[index++] = new Coordinate(minX, minY);
 
+            final GeometryFactory GF = getFactory();
             return GF.createPolygon(GF.createLinearRing(coordinates), new LinearRing[0]);
 
         }else{
@@ -883,6 +893,7 @@ public class GeometricUtilities {
             coordinates[index++] = new Coordinate(maxX, minY);
             coordinates[index++] = new Coordinate(minX, minY);
 
+            final GeometryFactory GF = getFactory();
             return GF.createPolygon(GF.createLinearRing(coordinates), new LinearRing[0]);
         }
 
@@ -896,6 +907,7 @@ public class GeometricUtilities {
                 new Coordinate(maxX, minY),
                 new Coordinate(minX, minY),
             };
+        final GeometryFactory GF = getFactory();
         return GF.createPolygon(GF.createLinearRing(coordinates), new LinearRing[0]);
     }
 

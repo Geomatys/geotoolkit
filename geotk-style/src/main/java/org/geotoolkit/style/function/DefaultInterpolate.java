@@ -291,7 +291,7 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
             colors.getRGBs(ARGB);
 
             transformColormap(ARGB);
-            model = ColorModelFactory.createIndexColorModel(1, visibleBand, ARGB, -1);
+            model = ColorModelFactory.createIndexColorModel(1, visibleBand, ARGB, true, -1);
 
         } else if (candidate instanceof ComponentColorModel) {
             final ComponentColorModel colors = (ComponentColorModel) candidate;
@@ -312,7 +312,7 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
                 }
 
                 transformColormap(ARGB);
-                model = ColorModelFactory.createIndexColorModel(1, visibleBand, ARGB, -1);
+                model = ColorModelFactory.createIndexColorModel(1, visibleBand, ARGB, true, -1);
 
             } else {
                 //we can't handle a index color model when values exceed int max value
@@ -338,7 +338,7 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
                 }
 
                 transformColormap(ARGB);
-                model = ColorModelFactory.createIndexColorModel(1, visibleBand, ARGB, -1);
+                model = ColorModelFactory.createIndexColorModel(1, visibleBand, ARGB, true, -1);
 
             } else {
                 //we can't handle a index color model when values exceed int max value

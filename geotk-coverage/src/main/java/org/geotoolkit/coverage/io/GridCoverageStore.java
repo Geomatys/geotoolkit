@@ -190,7 +190,7 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
     final boolean isLoggable() {
         Level level = logLevel;
         if (level == null) {
-            level = PerformanceLevel.SLOWEST;
+            level = PerformanceLevel.SLOWER;
         }
         return LOGGER.isLoggable(level);
     }
@@ -234,7 +234,7 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
     @Override
     public Level getLogLevel() {
         final Level level = logLevel;
-        return (level != null) ? level : PerformanceLevel.PERFORMANCE;
+        return (level != null) ? level : Level.FINE;
     }
 
     /**
@@ -511,7 +511,7 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
          * than the Envelopes.transform(MathTransform, ...) method, in order to handle the cases
          * where the requested region is over a geographic pole.
          */
-        final GridExtent gridExtent2d = gridExtent.reduce(subSpace);
+        final GridExtent gridExtent2d = gridExtent.reduceDimension(subSpace);
         final Rectangle rect = new Rectangle(
                 Math.toIntExact(gridExtent2d.getLow(0)),
                 Math.toIntExact(gridExtent2d.getLow(1)),

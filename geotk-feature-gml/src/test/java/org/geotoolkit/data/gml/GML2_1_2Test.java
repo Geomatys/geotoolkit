@@ -39,7 +39,7 @@ import org.opengis.util.GenericName;
  */
 public class GML2_1_2Test {
 
-    public static final GeometryFactory GF = new GeometryFactory();
+    public static final GeometryFactory GF = org.geotoolkit.geometry.jts.JTS.getFactory();
 
     @Test
     public void testMultiLigne() throws Exception {

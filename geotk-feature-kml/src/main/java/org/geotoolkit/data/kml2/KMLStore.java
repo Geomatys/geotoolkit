@@ -47,7 +47,7 @@ import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.Query;
 import org.apache.sis.storage.UnsupportedQueryException;
-import org.apache.sis.util.iso.SimpleInternationalString;
+import org.apache.sis.util.SimpleInternationalString;
 import org.apache.sis.xml.MarshallerPool;
 import org.geotoolkit.storage.feature.query.QueryFeatureSet;
 import org.geotoolkit.display2d.GO2Utilities;

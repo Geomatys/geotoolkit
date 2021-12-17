@@ -40,7 +40,6 @@ import javax.measure.quantity.Length;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelope2D;
-import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.internal.referencing.provider.Affine;
@@ -113,7 +112,7 @@ public class RenderingContext2D implements RenderingContext{
     private static final int OTHER_TRS = 2;
     private int current = DISPLAY_TRS;
 
-    public final GeometryFactory GF = new GeometryFactory();
+    public final GeometryFactory GF = JTS.getFactory();
 
     /**
      * The graphics handle to use for painting. This graphics is set by {@link BufferedCanvas2D}

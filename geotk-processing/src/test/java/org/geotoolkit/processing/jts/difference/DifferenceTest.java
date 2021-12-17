@@ -51,7 +51,7 @@ public class DifferenceTest extends AbstractProcessTest {
     @Test
     public void testDifference() throws NoSuchIdentifierException, ProcessException {
 
-        GeometryFactory fact = new GeometryFactory();
+        GeometryFactory fact = JTS.getFactory();
 
         // Inputs first
         final LinearRing ring = fact.createLinearRing(new Coordinate[]{
@@ -93,7 +93,7 @@ public class DifferenceTest extends AbstractProcessTest {
     @Test
     public void testDifferenceCRS() throws NoSuchIdentifierException, ProcessException, FactoryException, TransformException {
 
-        GeometryFactory fact = new GeometryFactory();
+        GeometryFactory fact = JTS.getFactory();
 
         // Inputs first
         final LinearRing ring = fact.createLinearRing(new Coordinate[]{
@@ -133,7 +133,7 @@ public class DifferenceTest extends AbstractProcessTest {
 
 
         final MathTransform mt = CRS.findOperation(crs2, crs1, null).getMathTransform();
-        geom2 = JTS.transform(geom2, mt);
+        geom2 = org.apache.sis.internal.feature.jts.JTS.transform(geom2, mt);
         final Geometry expected = geom1.difference(geom2);
         JTS.setCRS(expected, crs1);
 

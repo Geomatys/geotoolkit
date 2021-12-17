@@ -90,7 +90,7 @@ import org.opengis.util.FactoryException;
  */
 public class ColorModelTest extends org.geotoolkit.test.TestBase {
 
-    private static final GeometryFactory GF = new GeometryFactory();
+    private static final GeometryFactory GF = org.geotoolkit.geometry.jts.JTS.getFactory();
     private static final MutableStyleFactory SF = new DefaultStyleFactory();
 
     private final List<FeatureSet> featureColls = new ArrayList<>();

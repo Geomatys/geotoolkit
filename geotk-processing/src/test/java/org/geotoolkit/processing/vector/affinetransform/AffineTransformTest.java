@@ -55,7 +55,7 @@ import org.opengis.util.NoSuchIdentifierException;
 @Ignore //TODO : transform is now handle with operations, rewrite whole test
 public class AffineTransformTest extends AbstractProcessTest {
 
-    private static final GeometryFactory GF = new GeometryFactory();
+    private static final GeometryFactory GF = org.geotoolkit.geometry.jts.JTS.getFactory();
     private static FeatureType type;
 
     public AffineTransformTest() {

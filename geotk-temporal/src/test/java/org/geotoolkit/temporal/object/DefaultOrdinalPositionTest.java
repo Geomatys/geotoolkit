@@ -22,7 +22,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.sis.metadata.iso.extent.DefaultExtent;
-import org.apache.sis.util.iso.SimpleInternationalString;
+import org.apache.sis.util.SimpleInternationalString;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.temporal.factory.DefaultTemporalFactory;
 import org.junit.After;

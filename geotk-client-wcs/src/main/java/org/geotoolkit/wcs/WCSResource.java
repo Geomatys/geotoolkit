@@ -28,6 +28,7 @@ import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverage2D;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridOrientation;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
@@ -65,7 +66,7 @@ public class WCSResource extends AbstractGridResource implements StoreResource {
 
     @Override
     public GridGeometry getGridGeometry() throws DataStoreException {
-        return new GridGeometry(null, brief.getLonLatEnvelope());
+        return new GridGeometry(null, brief.getLonLatEnvelope(), GridOrientation.HOMOTHETY);
     }
 
     @Override

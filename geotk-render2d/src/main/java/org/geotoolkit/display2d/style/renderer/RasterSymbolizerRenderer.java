@@ -59,7 +59,7 @@ import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.internal.coverage.j2d.TiledImage;
 import org.apache.sis.internal.map.ExceptionPresentation;
 import org.apache.sis.internal.map.Presentation;
-import org.apache.sis.internal.storage.query.FeatureQuery;
+import org.apache.sis.storage.FeatureQuery;
 import org.apache.sis.portrayal.MapLayer;
 import org.apache.sis.portrayal.MapLayers;
 import org.apache.sis.referencing.CRS;

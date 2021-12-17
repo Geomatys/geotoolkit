@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
 import org.apache.sis.feature.DefaultAttributeType;
 import org.apache.sis.measure.Units;
 import org.apache.sis.util.iso.Names;
-import org.apache.sis.util.iso.SimpleInternationalString;
+import org.apache.sis.util.SimpleInternationalString;
 import org.geotoolkit.data.mapinfo.mif.MIFUtils;
 import org.opengis.feature.AttributeType;
 

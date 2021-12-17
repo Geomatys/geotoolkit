@@ -33,7 +33,7 @@ import org.opengis.util.FactoryException;
  */
 public class JTStoGeometryTest {
 
-    private static final GeometryFactory GF = new GeometryFactory();
+    private static final GeometryFactory GF = org.geotoolkit.geometry.jts.JTS.getFactory();
 
     @Test
     public void testPoint_2D_v321() throws FactoryException {

@@ -227,52 +227,6 @@ public final class JTS {
     }
 
     /**
-     * Transforms the geometry to given crs.
-     * Id the geometry has no crs, it is assumed to be already in the given crs.
-     *
-     * @param geom The geom to transform
-     * @param crs target crs.
-     * @return the transformed geometry. It will be a new geometry.
-     * @throws MismatchedDimensionException if the geometry doesn't have the
-     * expected dimension for the specified transform.
-     * @throws TransformException if a point can't be transformed.
-     * @throws org.opengis.util.FactoryException
-     */
-    public static Geometry transform(final Geometry geom, final CoordinateReferenceSystem crs)
-            throws MismatchedDimensionException, TransformException, FactoryException {
-        ArgumentChecks.ensureNonNull("crs", crs);
-        final CoordinateReferenceSystem geomCrs = findCoordinateReferenceSystem(geom);
-        if(geomCrs==null) return geom;
-        final MathTransform trs = CRS.findOperation(geomCrs, crs, null).getMathTransform();
-        final Geometry result = transform(geom, trs);
-        setCRS(result, crs);
-        return result;
-    }
-
-    /**
-     * Transforms the geometry using the default transformer.
-     *
-     * @param geom The geom to transform
-     * @param transform the transform to use during the transformation.
-     * @return the transformed geometry. It will be a new geometry.
-     * @throws MismatchedDimensionException if the geometry doesn't have the
-     * expected dimension for the specified transform.
-     * @throws TransformException if a point can't be transformed.
-     */
-    public static Geometry transform(final Geometry geom, final MathTransform transform)
-            throws MismatchedDimensionException, TransformException {
-        if (geom.isEmpty()) {
-            Geometry g = (Geometry) geom.clone();
-            g.setSRID(0);
-            g.setUserData(null);
-            return g;
-        }
-        final CoordinateSequenceTransformer cstrs = new CoordinateSequenceMathTransformer(transform);
-        final GeometryCSTransformer transformer = new GeometryCSTransformer(cstrs);
-        return transformer.transform(geom);
-    }
-
-    /**
      * Transforms the coordinate using the provided math transform.
      *
      * @param source the source coordinate that will be transformed
@@ -481,7 +435,7 @@ public final class JTS {
             final MathTransform transform = jtsgeom.getTransform();
             if (!transform.isIdentity()) {
                 try {
-                    geometry = JTS.transform(geometry, transform);
+                    geometry = org.apache.sis.internal.feature.jts.JTS.transform(geometry, transform);
                 } catch (MismatchedDimensionException | TransformException ex) {
                     throw new BackingStoreException(ex.getMessage(), ex);
                 }
@@ -585,7 +539,7 @@ public final class JTS {
     }
 
     public static Polygon toGeometry(final Rectangle envelope) {
-        GeometryFactory gf = new GeometryFactory();
+        GeometryFactory gf = getFactory();
         return gf.createPolygon(gf.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(envelope.getMinX(), envelope.getMinY()),
@@ -606,7 +560,7 @@ public final class JTS {
      * @since 2.4
      */
     public static Polygon toGeometry(final Envelope envelope) {
-        GeometryFactory gf = new GeometryFactory();
+        GeometryFactory gf = getFactory();
         return gf.createPolygon(gf.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(envelope.getMinX(), envelope.getMinY()),
@@ -624,7 +578,7 @@ public final class JTS {
      */
     @Deprecated
     public static Polygon toGeometry(final org.opengis.geometry.Envelope env){
-        final GeometryFactory gf = new GeometryFactory();
+        final GeometryFactory gf = getFactory();
         final Coordinate[] coordinates = new Coordinate[]{
             new Coordinate(env.getMinimum(0), env.getMinimum(1)),
             new Coordinate(env.getMinimum(0), env.getMaximum(1)),
@@ -676,7 +630,7 @@ public final class JTS {
      */
     public static <T extends Geometry> T emptyGeometry(Class<T> geomClass, CoordinateReferenceSystem crs, GeometryFactory factory) {
         ArgumentChecks.ensureNonNull("geometry class", geomClass);
-        if(factory==null) factory = new GeometryFactory();
+        if(factory==null) factory = getFactory();
 
         final T geometry;
         if(Point.class.equals(geomClass)){
@@ -711,7 +665,7 @@ public final class JTS {
      * @since 2.4
      */
     public static Polygon toGeometry(final BoundingBox envelope) {
-        GeometryFactory gf = new GeometryFactory();
+        GeometryFactory gf = getFactory();
         return gf.createPolygon(gf.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(envelope.getMinX(), envelope.getMinY()),
@@ -1014,7 +968,7 @@ public final class JTS {
 
         //convert geometry
         final MathTransform mt = CRS.findOperation(crsGeom, crsTarget, null).getMathTransform();
-        final Geometry result = transform(geom, mt);
+        final Geometry result = org.apache.sis.internal.feature.jts.JTS.transform(geom, mt);
         setCRS(result, crsTarget);
 
         return result;
@@ -1176,5 +1130,12 @@ public final class JTS {
         }
     }
 
-
+    /**
+     * Returns the default geometry factory.
+     *
+     * @return the JTS geometry library used in Geotk.
+     */
+    public static GeometryFactory getFactory() {
+        return org.apache.sis.internal.feature.jts.Factory.INSTANCE.factory(false);
+    }
 }

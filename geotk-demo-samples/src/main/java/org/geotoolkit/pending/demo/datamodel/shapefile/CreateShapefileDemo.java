@@ -35,7 +35,7 @@ public class CreateShapefileDemo {
         //create and store a feature
         final List<Feature> features = new ArrayList<>();
         final Feature f = type.newInstance();
-        f.setPropertyValue("the_geom",new GeometryFactory().createPoint(new Coordinate(15, 20)));
+        f.setPropertyValue("the_geom",org.geotoolkit.geometry.jts.JTS.getFactory().createPoint(new Coordinate(15, 20)));
         f.setPropertyValue("name","long river");
         features.add(f);
         store.addFeatures(type.getName().toString(), features);

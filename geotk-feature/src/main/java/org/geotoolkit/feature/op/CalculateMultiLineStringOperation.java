@@ -50,7 +50,7 @@ final class CalculateMultiLineStringOperation extends AbstractOperation {
 
     private static final ParameterDescriptorGroup EMPTY_PARAMS = CalculateLineStringOperation.parameters("CalculateMultiLineString", 1);
 
-    private static final GeometryFactory GF = new GeometryFactory();
+    private static final GeometryFactory GF = org.geotoolkit.geometry.jts.JTS.getFactory();
     private static final AttributeType<MultiLineString> TYPE = new DefaultAttributeType<>(
             Collections.singletonMap(NAME_KEY, NamesExt.create("MultiLineString")),MultiLineString.class,1,1,null);
 

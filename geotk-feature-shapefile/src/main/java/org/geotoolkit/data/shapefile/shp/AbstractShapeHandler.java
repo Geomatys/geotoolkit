@@ -26,7 +26,7 @@ import org.locationtech.jts.geom.GeometryFactory;
  */
 public abstract class AbstractShapeHandler implements ShapeHandler {
 
-    protected static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory();
+    protected static final GeometryFactory GEOMETRY_FACTORY = org.geotoolkit.geometry.jts.JTS.getFactory();
 
     protected final ShapeType shapeType;
     protected final boolean read3D;

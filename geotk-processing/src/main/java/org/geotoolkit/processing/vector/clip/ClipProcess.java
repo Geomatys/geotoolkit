@@ -50,7 +50,7 @@ import org.opengis.feature.AttributeType;
  */
 public class ClipProcess extends AbstractProcess {
 
-    private static final GeometryFactory GF = new GeometryFactory();
+    private static final GeometryFactory GF = org.geotoolkit.geometry.jts.JTS.getFactory();
 
     /**
      * Default constructor

@@ -52,7 +52,6 @@ import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryCollection;
-import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.LinearRing;
 import org.locationtech.jts.geom.MultiLineString;
@@ -266,7 +265,7 @@ public final class VectorProcessUtils extends Static {
     {
         if (!(wantedCRS.equals(geometryCRS))) {
             final MathTransform transform = CRS.findOperation(geometryCRS, wantedCRS, null).getMathTransform();
-            return JTS.transform(inputGeom, transform);
+            return org.apache.sis.internal.feature.jts.JTS.transform(inputGeom, transform);
         } else {
             return inputGeom;
         }
@@ -274,7 +273,7 @@ public final class VectorProcessUtils extends Static {
 
 //
 //    public static Geometry convertToPolygon(Geometry intersectGeom) {
-//        GeometryFactory geomFact = new GeometryFactory();
+//        GeometryFactory geomFact = JTS.getFactory();
 //        LinearRing ring;
 //
 //        if(intersectGeom instanceof Point){
@@ -309,7 +308,7 @@ public final class VectorProcessUtils extends Static {
     public static Geometry intersectionFeatureToFeature(final Feature sourceFeature, final Feature targetFeature,
             final String sourceGeomName, final String targetGeomName) throws FactoryException, TransformException
     {
-        Geometry sourceGeometry = new GeometryFactory().buildGeometry(Collections.EMPTY_LIST);
+        Geometry sourceGeometry = JTS.getFactory().buildGeometry(Collections.EMPTY_LIST);
         CoordinateReferenceSystem sourceCRS = null;
 
         // found used input geometry with CRS
@@ -322,7 +321,7 @@ public final class VectorProcessUtils extends Static {
                 }
             }
         }
-        Geometry targetGeometry = new GeometryFactory().buildGeometry(Collections.EMPTY_LIST);
+        Geometry targetGeometry = JTS.getFactory().buildGeometry(Collections.EMPTY_LIST);
         CoordinateReferenceSystem targetCRS = null;
 
         // found used target geometry with CRS
@@ -365,7 +364,7 @@ public final class VectorProcessUtils extends Static {
         final FeatureCollection resultFeatureList =
                 FeatureStoreUtilities.collection(FeatureExt.getId(inputFeature).getIdentifier() + "-intersection", newType);
 
-        Geometry inputGeometry = new GeometryFactory().buildGeometry(Collections.EMPTY_LIST);
+        Geometry inputGeometry = JTS.getFactory().buildGeometry(Collections.EMPTY_LIST);
         CoordinateReferenceSystem inputCRS = null;
 
         // found used input geometry with CRS
@@ -415,8 +414,8 @@ public final class VectorProcessUtils extends Static {
 
                     //get the first geometry CRS in the map. It'll be used to homogenize the Feature geometries CRS
                     final CoordinateReferenceSystem outputBaseCRS = mapGeomCRS.entrySet().iterator().next().getValue();
-                    Geometry interGeom = new GeometryFactory().buildGeometry(Collections.EMPTY_LIST);
-                    Geometry interGeomBuffer = new GeometryFactory().buildGeometry(Collections.EMPTY_LIST);
+                    Geometry interGeom = JTS.getFactory().buildGeometry(Collections.EMPTY_LIST);
+                    Geometry interGeomBuffer = JTS.getFactory().buildGeometry(Collections.EMPTY_LIST);
 
                     //for each Feature Geometry
                     for (Map.Entry<Geometry, CoordinateReferenceSystem> entry : mapGeomCRS.entrySet()) {

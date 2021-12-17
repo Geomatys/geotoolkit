@@ -22,9 +22,8 @@ import java.util.Date;
 import java.util.List;
 import javax.measure.Quantity;
 import javax.measure.quantity.Length;
-import org.apache.sis.internal.storage.query.FeatureQuery;
+import org.apache.sis.storage.FeatureQuery;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
-import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.filter.FilterUtilities;
 import org.locationtech.jts.geom.Geometry;
@@ -123,18 +122,19 @@ public final class Query extends FeatureQuery {
                 null);
     }
 
-    Query(final String typeName, final Filter filter, final String[] attributs, final SortProperty[] sort,
-            final long startIndex, final long MaxFeature,
+    Query(final String typeName, Filter filter, final String[] attributs, final SortProperty[] sort,
+            final long startIndex, final long maxFeatures,
             final double[] resolution, Quantity<Length> linearResolution, final Object version, final Hints hints){
 
         ensureNonNull("query source", typeName);
         if (filter == null) {
-            throw new NullArgumentException("Query filter can not be null, did you mean Filter.include()?");
+            filter = Filter.include();
         }
-
         setSelection(filter);
         setOffset(startIndex);
-        setLimit(MaxFeature);
+        if (maxFeatures >= 0) {
+            setLimit(maxFeatures);
+        }
         setSortBy(sort);
         setLinearResolution(linearResolution);
 
@@ -165,9 +165,9 @@ public final class Query extends FeatureQuery {
         this(query.getTypeName(),
              query.getSelection(),
              query.getPropertyNames(),
-             query.getSortBy(),
+             QueryUtilities.getSortProperties(query.getSortBy()),
              query.getOffset(),
-             query.getLimit(),
+             query.getLimit().orElse(-1),
              (query.getResolution()==null)?null:query.getResolution().clone(),
              query.getLinearResolution(),
              (query.getVersionDate()!=null)? query.getVersionDate() : query.getVersionLabel(),
@@ -242,11 +242,11 @@ public final class Query extends FeatureQuery {
      *       Query.FIDS.equals( filter ) would meet this need?
      */
     public String[] getPropertyNames() {
-        List<NamedExpression> columns = getProjection();
+        NamedExpression[] columns = getProjection();
         if (columns == null) return null;
-        final String[] names = new String[columns.size()];
+        final String[] names = new String[columns.length];
         for (int i=0;i<names.length;i++) {
-            names[i] = ((ValueReference)columns.get(i).expression).getXPath();
+            names[i] = ((ValueReference)columns[i].expression).getXPath();
         }
         return names;
     }
@@ -387,13 +387,8 @@ public final class Query extends FeatureQuery {
 
     public void copy(final Query query){
         setSelection(query.getSelection());
-        setLimit(query.getLimit());
-        List<NamedExpression> projection = query.getProjection();
-        if (projection != null) {
-            setProjection(projection.toArray(new NamedExpression[0]));
-        } else {
-            setProjection((NamedExpression[]) null);
-        }
+        query.getLimit().ifPresent(this::setLimit);
+        setProjection(query.getProjection());
         setSortBy(query.getSortBy());
         setOffset(query.getOffset());
         this.resolution = (query.getResolution()==null)?null:query.getResolution().clone();

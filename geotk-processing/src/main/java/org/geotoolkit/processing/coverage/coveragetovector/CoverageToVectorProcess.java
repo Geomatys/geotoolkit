@@ -50,7 +50,7 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class CoverageToVectorProcess extends AbstractProcess {
 
-    private static final GeometryFactory GF = new GeometryFactory();
+    private static final GeometryFactory GF = JTS.getFactory();
     private static final int LAST_LINE = 0;
     private static final int CURRENT_LINE = 1;
 
@@ -192,7 +192,7 @@ public class CoverageToVectorProcess extends AbstractProcess {
         for (int i=0; i<ranges.length; i++) {
             final NumberRange range = ranges[i];
             for(Polygon poly : polygons.get(range)) {
-                polygones.add(JTS.transform(poly, gridToCRS));
+                polygones.add(org.apache.sis.internal.feature.jts.JTS.transform(poly, gridToCRS));
             }
             //we dont merge them in a single polygon to avoid to complexe geometries
         }

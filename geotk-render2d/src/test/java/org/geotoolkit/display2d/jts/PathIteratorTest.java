@@ -45,7 +45,7 @@ import static org.junit.Assert.*;
 public class PathIteratorTest extends org.geotoolkit.test.TestBase {
 
     private static double DELTA = 0.000000001d;
-    public static final GeometryFactory GF = new GeometryFactory();
+    public static final GeometryFactory GF = org.geotoolkit.geometry.jts.JTS.getFactory();
 
     public PathIteratorTest() {
     }

@@ -27,7 +27,7 @@ import java.util.Locale;
 import javax.imageio.ImageWriter;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.geometry.Envelope2D;
-import org.apache.sis.internal.system.OS;
+import org.geotoolkit.internal.io.OS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.test.DependsOn;
 import org.geotoolkit.image.SampleModels;

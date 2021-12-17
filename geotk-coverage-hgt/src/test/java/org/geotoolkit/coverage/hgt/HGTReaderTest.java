@@ -155,7 +155,7 @@ public class HGTReaderTest extends org.geotoolkit.test.TestBase {
         final int ySubsampling = 3;
         final MathTransform gridToCrsCorner = new AffineTransform2D(1d/IMG_WIDTH, 0, 0, -1d/IMG_WIDTH, 0, 0+1);
         GridGeometry readParam = new GridGeometry(new GridExtent(IMG_WIDTH, IMG_WIDTH), PixelInCell.CELL_CORNER, gridToCrsCorner, CommonCRS.defaultGeographic())
-                .derive().subsample(xSubsampling, ySubsampling).build();
+                .derive().subgrid((GridExtent) null, xSubsampling, ySubsampling).build();
         RenderedImage read = store.read(readParam).render(null);
         assertEquals("Read image width is invalid !", 3, read.getWidth());
         assertEquals("Read image height is invalid !", 4, read.getHeight());
@@ -179,7 +179,7 @@ public class HGTReaderTest extends org.geotoolkit.test.TestBase {
         final int xOffset = 2;
         final int yOffset = 1;
         readParam = new GridGeometry(new GridExtent(null, new long[]{xOffset, yOffset}, new long[]{IMG_WIDTH,IMG_WIDTH}, false), PixelInCell.CELL_CORNER, gridToCrsCorner, CommonCRS.defaultGeographic())
-                .derive().subsample(xSubsampling, ySubsampling).build();
+                .derive().subgrid((GridExtent) null, xSubsampling, ySubsampling).build();
         read = store.read(readParam).render(null);
         assertEquals("Read image width is invalid !", 2, read.getWidth());
         assertEquals("Read image height is invalid !", 4, read.getHeight());
@@ -213,7 +213,7 @@ public class HGTReaderTest extends org.geotoolkit.test.TestBase {
         final int yOffset = 1;
         final MathTransform gridToCrsCorner = new AffineTransform2D(1d/IMG_WIDTH, 0, 0, -1d/IMG_WIDTH, 0, 0+1);
         GridGeometry readParam = new GridGeometry(new GridExtent(null, new long[]{SOURCE_REGION.x + xOffset,SOURCE_REGION.y + yOffset}, new long[]{SOURCE_REGION.x + SOURCE_REGION.width, SOURCE_REGION.y + SOURCE_REGION.height}, false), PixelInCell.CELL_CORNER, gridToCrsCorner, CommonCRS.defaultGeographic())
-                .derive().subsample(xSubsampling, ySubsampling).build();
+                .derive().subgrid((GridExtent) null, xSubsampling, ySubsampling).build();
 
         final RenderedImage read = store.read(readParam).render(null);
         assertEquals("Read image width is invalid !", 3, read.getWidth());

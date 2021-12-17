@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.apache.sis.feature.FeatureComparator;
+import org.apache.sis.test.feature.FeatureComparator;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.referencing.CommonCRS;

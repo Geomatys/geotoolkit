@@ -18,7 +18,7 @@ package org.geotoolkit.display2d.primitive;
 
 import java.util.logging.Level;
 import java.util.stream.Stream;
-import org.apache.sis.internal.storage.query.FeatureQuery;
+import org.apache.sis.storage.FeatureQuery;
 import org.apache.sis.portrayal.MapLayer;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;

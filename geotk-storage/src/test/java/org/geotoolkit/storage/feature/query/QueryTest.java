@@ -21,7 +21,7 @@ package org.geotoolkit.storage.feature.query;
 import java.util.Collections;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.internal.storage.query.FeatureQuery;
+import org.apache.sis.storage.FeatureQuery;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
@@ -51,7 +51,7 @@ import org.opengis.util.GenericName;
 public class QueryTest {
 
     private static final FilterFactory FF = FilterUtilities.FF;
-    private static final GeometryFactory GF = new GeometryFactory();
+    private static final GeometryFactory GF = org.geotoolkit.geometry.jts.JTS.getFactory();
     private static final double DELTA = 0.00001;
 
     /**
@@ -83,9 +83,9 @@ public class QueryTest {
         assertEquals(query.getTypeName(), name.toString());
         assertEquals(query.getResolution(), null);
         assertEquals(query.getSelection(), Filter.include());
-        assertEquals(query.getLimit(), -1);
+        assertFalse(query.getLimit().isPresent());
         assertArrayEquals(query.getPropertyNames(), null);
-        assertArrayEquals(query.getSortBy(), new SortProperty[0]);
+        assertArrayEquals(QueryUtilities.getSortProperties(query.getSortBy()), new SortProperty[0]);
         assertEquals(query.getOffset(), 0);
 
         //only filter-----------------------------------------------------------
@@ -93,9 +93,9 @@ public class QueryTest {
         assertEquals(query.getTypeName(), name.toString());
         assertEquals(query.getResolution(), null);
         assertEquals(query.getSelection(), Filter.exclude());
-        assertEquals(query.getLimit(), -1);
+        assertFalse(query.getLimit().isPresent());
         assertArrayEquals(query.getPropertyNames(), null);
-        assertArrayEquals(query.getSortBy(), new SortProperty[0]);
+        assertArrayEquals(QueryUtilities.getSortProperties(query.getSortBy()), new SortProperty[0]);
         assertEquals(query.getOffset(), 0);
 
     }
@@ -125,10 +125,10 @@ public class QueryTest {
         assertEquals(query.getResolution()[0], 45d,DELTA);
         assertEquals(query.getResolution()[1], 31d,DELTA);
         assertEquals(query.getSelection(), Filter.exclude());
-        assertEquals(query.getLimit(), 10l);
+        assertEquals(query.getLimit().getAsLong(), 10l);
         assertEquals(query.getPropertyNames()[0], "att1");
         assertEquals(query.getPropertyNames()[1], "att2");
-        assertEquals(query.getSortBy()[0], FF.sort(FF.property("att1"), SortOrder.DESCENDING));
+        assertEquals(QueryUtilities.getSortProperties(query.getSortBy())[0], FF.sort(FF.property("att1"), SortOrder.DESCENDING));
         assertEquals(query.getOffset(), 5);
 
         query2 = query;

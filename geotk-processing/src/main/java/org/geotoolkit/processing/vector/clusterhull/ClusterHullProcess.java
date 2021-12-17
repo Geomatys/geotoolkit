@@ -65,7 +65,7 @@ public class ClusterHullProcess extends AbstractProcess {
     /**
      * Used to build the featureSet result.
      */
-    private static GeometryFactory GEOMETRY_FACTORY = new GeometryFactory();
+    private static GeometryFactory GEOMETRY_FACTORY = org.geotoolkit.geometry.jts.JTS.getFactory();
 
     private int[][] roadmap;
 

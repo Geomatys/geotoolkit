@@ -130,7 +130,7 @@ public class MeasureUtilities {
             MathTransform step2 = f.createParameterizedTransform(p);
             MathTransform trs = f.createConcatenatedTransform(step1, step2);
 
-            Geometry calculatedGeom = JTS.transform(geom, trs);
+            Geometry calculatedGeom = org.apache.sis.internal.feature.jts.JTS.transform(geom, trs);
             double area = calculatedGeom.getArea();
 
             if(unit != Units.SQUARE_METRE){

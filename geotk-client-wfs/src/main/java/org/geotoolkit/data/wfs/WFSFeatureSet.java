@@ -454,7 +454,7 @@ public class WFSFeatureSet implements WritableFeatureSet {
             remainingQuery.setSelection(Filter.include());
 
             final long start = gquery.getOffset();
-            final long max = gquery.getLimit();
+            final long max = gquery.getLimit().orElse(-1);
             if (start <= 0 && max != -1) {
                 request.setMaxFeatures((int) max);
                 // For this one, do not remove from remaining queries : If the

@@ -29,7 +29,7 @@ import org.apache.sis.storage.WritableAggregate;
 import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.iso.SimpleInternationalString;
+import org.apache.sis.util.SimpleInternationalString;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.geometry.Envelope;

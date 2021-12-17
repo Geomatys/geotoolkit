@@ -24,7 +24,7 @@ import java.util.Date;
 import java.util.List;
 import org.apache.sis.metadata.iso.extent.DefaultExtent;
 import org.apache.sis.referencing.NamedIdentifier;
-import org.apache.sis.util.iso.SimpleInternationalString;
+import org.apache.sis.util.SimpleInternationalString;
 import org.geotoolkit.temporal.factory.DefaultTemporalFactory;
 import org.junit.After;
 import org.junit.Before;

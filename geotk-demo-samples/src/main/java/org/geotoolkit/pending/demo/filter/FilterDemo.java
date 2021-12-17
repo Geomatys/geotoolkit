@@ -83,7 +83,7 @@ public class FilterDemo {
 
     public static FeatureSet createSampleCollection(){
 
-        final GeometryFactory gf = new GeometryFactory();
+        final GeometryFactory gf = org.geotoolkit.geometry.jts.JTS.getFactory();
 
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("person");

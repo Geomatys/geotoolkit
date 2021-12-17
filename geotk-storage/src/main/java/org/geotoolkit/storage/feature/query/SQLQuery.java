@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.storage.feature.query;
 
+import org.opengis.geometry.Envelope;
+
 /**
  *
  * @author Johann Sorel (Geomatys)
@@ -36,5 +38,15 @@ public class SQLQuery extends org.apache.sis.storage.Query {
 
     public String getName() {
         return name;
+    }
+
+    @Override
+    public void setSelection(Envelope envlp) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void setProjection(String... strings) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

@@ -18,12 +18,10 @@ package org.geotoolkit.processing.vector.convexhull;
 
 import org.geotoolkit.geometry.jts.JTS;
 import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
 import java.util.Collections;
 
 import org.geotoolkit.storage.feature.FeatureCollection;
 import org.geotoolkit.storage.feature.FeatureIterator;
-import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.processing.AbstractProcess;
 
 import org.opengis.feature.Feature;
@@ -65,7 +63,7 @@ public class ConvexHullProcess extends AbstractProcess {
      * @return the convex hull geometry
      */
     private Geometry computeConvexHull(final FeatureCollection inputFeatureList, String geometryName) {
-        Geometry convexHull = new GeometryFactory().buildGeometry(Collections.EMPTY_LIST);
+        Geometry convexHull = JTS.getFactory().buildGeometry(Collections.EMPTY_LIST);
         CoordinateReferenceSystem crs = null;
         try (final FeatureIterator iter = inputFeatureList.iterator()) {
             while (iter.hasNext()) {

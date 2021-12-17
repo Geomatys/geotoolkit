@@ -38,7 +38,7 @@ import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.iso.SimpleInternationalString;
+import org.apache.sis.util.SimpleInternationalString;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.xml.MarshallerPool;
 import org.geotoolkit.map.MapBuilder;

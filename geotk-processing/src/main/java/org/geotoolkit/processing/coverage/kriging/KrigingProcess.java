@@ -24,6 +24,7 @@ import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridOrientation;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -180,7 +181,7 @@ public class KrigingProcess extends AbstractProcess {
             palier[i] = minz + i*step;
         }
 
-        final GeometryFactory GF = new GeometryFactory();
+        final GeometryFactory GF = org.geotoolkit.geometry.jts.JTS.getFactory();
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("isoline");
         ftb.addAttribute(LineString.class).setName("geometry").setCRS(crs).addRole(AttributeRole.DEFAULT_GEOMETRY);
@@ -272,7 +273,7 @@ public class KrigingProcess extends AbstractProcess {
         }
 
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setDomain(new GridGeometry(new GridExtent(xs.length, ys.length), env));
+        gcb.setDomain(new GridGeometry(new GridExtent(xs.length, ys.length), env, GridOrientation.HOMOTHETY));
         gcb.setValues(BufferedImages.toDataBuffer1D(matrix), null);
         gcb.setRanges(new SampleDimension.Builder().setName(0).build());
         return gcb.build();

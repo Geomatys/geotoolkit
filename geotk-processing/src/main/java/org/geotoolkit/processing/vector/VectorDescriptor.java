@@ -18,7 +18,7 @@ package org.geotoolkit.processing.vector;
 
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.FeatureSet;
-import org.apache.sis.util.iso.SimpleInternationalString;
+import org.apache.sis.util.SimpleInternationalString;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.geotoolkit.storage.feature.FeatureCollection;

@@ -189,8 +189,8 @@
     <ucar.repository.url>https://artifacts.unidata.ucar.edu/repository/unidata-releases</ucar.repository.url>
 
     <!-- associated projects dependencies -->
-    <geoapi.version>4.0-M17</geoapi.version>
-    <sis.version>2.0-M0080</sis.version>
+    <geoapi.version>4.0-M18</geoapi.version>
+    <sis.version>2.0-M0081</sis.version>
     <sis.build.helper.version>1.1</sis.build.helper.version>
     <sis.non-free.version>1.0</sis.non-free.version>
 
@@ -224,8 +224,8 @@
     <snakeyaml.version>1.24</snakeyaml.version> <!-- keep version aligned with jackson -->
     <woodstox.version>6.0.0</woodstox.version>
     <xmlgraphics.version>2.3</xmlgraphics.version>
-    <!-- @{argLine} necessary for jacoco generation, we must declare 
-         an empty property to avoid a surefire exception if we run any other 
+    <!-- @{argLine} necessary for jacoco generation, we must declare
+         an empty property to avoid a surefire exception if we run any other
          maven phase which doesn't activate jacoco -->
     <argLine></argLine>
   </properties>
@@ -1115,14 +1115,14 @@
 
     <module>geotk-processing-core</module>
     <module>geotk-processing</module>
-        
+
     <module>geotk-style</module>
     <module>geotk-svg-batik</module>
     <module>geotk-svg-salamander</module>
     <module>geotk-render</module>
     <module>geotk-render2d</module>
     <module>geotk-jasperreport</module>
-    
+
     <module>geotk-jaxp-core</module>
     <module>geotk-jaxp-gml</module>
     <module>geotk-jaxp-xsd</module>
@@ -1162,7 +1162,7 @@
     <module>geotk-xml-providers</module>
     <module>geotk-xml-thw</module>
     <module>geotk-xml-sts</module>
-    
+
     <module>geotk-storage</module>
     <module>geotk-feature-dbf</module>
     <module>geotk-feature-csv</module>
@@ -1191,7 +1191,7 @@
     <module>geotk-coverage-vi3g</module>
     <module>geotk-observation-store</module>
     <module>geotk-metadata-store</module>
-    
+
     <module>geotk-client-store</module>
     <module>geotk-client-csw</module>
     <module>geotk-client-osm</module>
@@ -1203,9 +1203,9 @@
     <module>geotk-client-ncwms</module>
     <module>geotk-client-wmts</module>
     <module>geotk-client-wps</module>
-        
+
     <module>geotk-mapfile</module>
-        
+
     <module>benchmark</module>
 
     <module>geotk-demo-referencing-javadb</module>

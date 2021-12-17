@@ -19,7 +19,7 @@ package org.geotoolkit.processing.image.statistics;
 import java.awt.image.RenderedImage;
 import org.apache.sis.math.Statistics;
 import org.apache.sis.parameter.ParameterBuilder;
-import org.apache.sis.util.iso.SimpleInternationalString;
+import org.apache.sis.util.SimpleInternationalString;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;

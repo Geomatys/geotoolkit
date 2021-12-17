@@ -26,8 +26,8 @@ import java.util.Map;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.feature.jts.JTS;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.process.ProcessException;
 import static org.junit.Assert.*;
@@ -46,7 +46,7 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class ComposeTest {
 
-    public static final GeometryFactory GF = new GeometryFactory();
+    public static final GeometryFactory GF = org.geotoolkit.geometry.jts.JTS.getFactory();
 
     @Test
     public void simpleImageTest() throws ProcessException, MismatchedDimensionException, TransformException {

@@ -22,7 +22,7 @@ import java.util.Objects;
 import org.opengis.metadata.citation.OnLineFunction;
 import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.util.InternationalString;
-import org.apache.sis.util.iso.SimpleInternationalString;
+import org.apache.sis.util.SimpleInternationalString;
 
 /**
  * Immutable implementation of Types Online Resource.

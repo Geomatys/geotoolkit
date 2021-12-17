@@ -29,7 +29,7 @@ import org.opengis.metadata.content.ImageDescription;
 import org.opengis.metadata.content.ImagingCondition;
 
 import org.apache.sis.test.DependsOn;
-import org.apache.sis.util.iso.SimpleInternationalString;
+import org.apache.sis.util.SimpleInternationalString;
 import org.apache.sis.metadata.iso.acquisition.DefaultInstrument;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.content.DefaultImageDescription;

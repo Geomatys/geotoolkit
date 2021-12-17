@@ -3,7 +3,7 @@ package org.geotoolkit.processing.image.sampleclassifier;
 import java.awt.image.RenderedImage;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.parameter.ParameterBuilder;
-import org.apache.sis.util.iso.SimpleInternationalString;
+import org.apache.sis.util.SimpleInternationalString;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.opengis.parameter.ParameterDescriptor;

@@ -379,7 +379,7 @@ public class DefaultSession extends AbstractSession {
                             } else if (replace) {
                                 //reproject geometry
                                 final MathTransform trs = CRS.findOperation(cdtcrs, crs, null).getMathTransform();
-                                geom = JTS.transform(geom, trs);
+                                geom = org.apache.sis.internal.feature.jts.JTS.transform(geom, trs);
                                 JTS.setCRS(geom, crs);
                                 return FF.literal(geom);
                             }

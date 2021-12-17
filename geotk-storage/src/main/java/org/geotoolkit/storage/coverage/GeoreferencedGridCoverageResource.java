@@ -63,12 +63,12 @@ public abstract class GeoreferencedGridCoverageResource extends AbstractGridReso
                         .rounding(GridRoundingMode.ENCLOSING)
                         .subgrid(domain);
                 extent = derived.getIntersection();
-                subsampling = derived.getSubsamplings();
+                subsampling = derived.getSubsampling();
                 resultGrid = derived.build();
             } else {
                 GridDerivation derived = gg.derive();
                 extent = derived.getIntersection();
-                subsampling = derived.getSubsamplings();
+                subsampling = derived.getSubsampling();
                 resultGrid = derived.build();
             }
         } catch (IllegalGridGeometryException ex) {

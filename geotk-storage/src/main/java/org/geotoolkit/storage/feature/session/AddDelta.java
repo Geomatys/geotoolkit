@@ -37,6 +37,7 @@ import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.storage.feature.FeatureStreams;
+import org.geotoolkit.storage.feature.query.QueryUtilities;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -123,7 +124,7 @@ public class AddDelta extends AbstractDelta{
 
         final FeatureIterator affected = features.subset(qb).iterator();
 
-        final SortProperty[] sort = query.getSortBy();
+        final SortProperty[] sort = QueryUtilities.getSortProperties(query.getSortBy());
         if(sort != null && sort.length > 0){
             return FeatureStreams.combine(query.getSortBy(), reader, affected);
         }else{

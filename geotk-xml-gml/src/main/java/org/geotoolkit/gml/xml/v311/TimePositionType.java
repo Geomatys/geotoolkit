@@ -29,7 +29,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
-import org.apache.sis.util.iso.SimpleInternationalString;
+import org.apache.sis.util.SimpleInternationalString;
 import org.geotoolkit.gml.xml.AbstractTimePosition;
 import org.geotoolkit.gml.xml.TimeIndeterminateValueType;
 import org.opengis.util.InternationalString;

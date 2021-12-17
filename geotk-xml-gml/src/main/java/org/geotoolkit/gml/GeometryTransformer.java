@@ -126,7 +126,7 @@ public class GeometryTransformer implements Supplier<Geometry> {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.gml");
 
-    private static final GeometryFactory GF = new GeometryFactory();
+    private static final GeometryFactory GF = JTS.getFactory();
 
     /**
      * When generating a sequence of points on a circle/arc, it's the angle

@@ -39,7 +39,7 @@ import org.opengis.filter.Expression;
 public class ExpressionWritingTest extends org.geotoolkit.test.TestBase {
 
     private final FilterFactory2 FF = FilterUtilities.FF;
-    private final GeometryFactory GF = new GeometryFactory();
+    private final GeometryFactory GF = org.geotoolkit.geometry.jts.JTS.getFactory();
 
     @Test
     public void testPropertyName1() throws CQLException{

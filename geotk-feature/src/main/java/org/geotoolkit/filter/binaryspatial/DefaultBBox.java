@@ -57,7 +57,7 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<ValueReference, L
         implements BinarySpatialOperator<Object>
 {
     private static final LinearRing[] EMPTY_RINGS = new LinearRing[0];
-    private static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory();
+    private static final GeometryFactory GEOMETRY_FACTORY = JTS.getFactory();
     private static final PreparedGeometryFactory PREPARED_FACTORY = new PreparedGeometryFactory();
 
     //cache the bbox geometry
@@ -164,7 +164,7 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<ValueReference, L
             //reproject in objective crs if needed
             if (!Utilities.equalsIgnoreMetadata(this.crs,candidateCrs)) {
                 try {
-                    candidate = JTS.transform(candidate, CRS.findOperation(candidateCrs, this.crs, null).getMathTransform());
+                    candidate = org.apache.sis.internal.feature.jts.JTS.transform(candidate, CRS.findOperation(candidateCrs, this.crs, null).getMathTransform());
                 } catch (MismatchedDimensionException | TransformException | FactoryException ex) {
                     Logging.getLogger("org.geotoolkit.filter.binaryspatial").log(Level.WARNING, null, ex);
                     return false;

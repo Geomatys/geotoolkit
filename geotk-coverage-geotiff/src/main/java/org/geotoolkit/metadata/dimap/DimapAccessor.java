@@ -71,7 +71,7 @@ import org.apache.sis.metadata.iso.spatial.DefaultGridSpatialRepresentation;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.TransferFunction;
 import org.apache.sis.util.iso.DefaultNameFactory;
-import org.apache.sis.util.iso.SimpleInternationalString;
+import org.apache.sis.util.SimpleInternationalString;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.util.iso.Names;

@@ -52,7 +52,7 @@ public class ContainTest extends AbstractProcessTest {
     @Test
     public void testContain() throws NoSuchIdentifierException, ProcessException {
 
-        GeometryFactory fact = new GeometryFactory();
+        GeometryFactory fact = JTS.getFactory();
 
         // Inputs first
         final LinearRing  ring = fact.createLinearRing(new Coordinate[]{
@@ -86,7 +86,7 @@ public class ContainTest extends AbstractProcessTest {
     @Test
     public void testContainCRS() throws NoSuchIdentifierException, ProcessException, FactoryException, TransformException {
 
-        GeometryFactory fact = new GeometryFactory();
+        GeometryFactory fact = JTS.getFactory();
 
         // Inputs first
         final LinearRing  ring = fact.createLinearRing(new Coordinate[]{
@@ -119,7 +119,7 @@ public class ContainTest extends AbstractProcessTest {
         final Boolean result = (Boolean) proc.call().parameter("result").getValue();
 
         MathTransform mt = CRS.findOperation(crs2, crs1, null).getMathTransform();
-        geom2 = JTS.transform(geom2, mt);
+        geom2 = org.apache.sis.internal.feature.jts.JTS.transform(geom2, mt);
 
         final Boolean expected = geom1.contains(geom2);
 

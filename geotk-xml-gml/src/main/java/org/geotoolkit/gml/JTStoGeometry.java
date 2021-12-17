@@ -165,7 +165,7 @@ public final class JTStoGeometry {
             innerGeometries.add(subGeom);
         }
 
-            final GeometryFactory gf = new GeometryFactory();
+            final GeometryFactory gf = JTS.getFactory();
             //Convert to a MultiPoint
             if (buffer.equals(Point.class)) {
                 final MultiPoint mutlPt = gf.createMultiPoint(innerGeometries.toArray(new Point[innerGeometries.size()]));

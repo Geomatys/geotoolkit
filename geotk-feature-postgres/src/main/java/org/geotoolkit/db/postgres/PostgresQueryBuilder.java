@@ -24,6 +24,7 @@ import org.geotoolkit.db.DefaultJDBCFeatureStore;
 import org.geotoolkit.db.dialect.SQLQueryBuilder;
 import org.geotoolkit.db.reverse.PrimaryKey;
 import org.geotoolkit.filter.visitor.SimplifyingFilterVisitor;
+import org.geotoolkit.storage.feature.query.QueryUtilities;
 import org.geotoolkit.version.VersioningException;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
@@ -92,10 +93,10 @@ public class PostgresQueryBuilder extends SQLQueryBuilder{
         }
 
         // sorting
-        encodeSortBy(featureType, query.getSortBy(), key, sql);
+        encodeSortBy(featureType, QueryUtilities.getSortProperties(query.getSortBy()), key, sql);
 
         // finally encode limit/offset, if necessary
-        dialect.encodeLimitOffset(sql, query.getLimit() == -1 ? null : (int) query.getLimit(), (int) query.getOffset());
+        dialect.encodeLimitOffset(sql, !query.getLimit().isPresent() ? null : (int) query.getLimit().getAsLong(), (int) query.getOffset());
 
         return sql.toString();
     }

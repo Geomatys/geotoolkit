@@ -30,7 +30,6 @@ import java.util.*;
 import java.util.logging.Level;
 import org.apache.sis.feature.AbstractOperation;
 import org.apache.sis.internal.feature.AttributeConvention;
-import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Query;
 import org.apache.sis.storage.UnsupportedQueryException;
@@ -69,7 +68,6 @@ import org.opengis.feature.MismatchedFeatureException;
 import org.opengis.feature.PropertyType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.ResourceId;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.GenericName;
 import static org.geotoolkit.data.shapefile.lock.ShpFileType.*;
 import org.opengis.filter.SpatialOperatorName;
@@ -273,7 +271,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
         qb.setHints(queryHints);
         qb.setSortBy(gquery.getSortBy());
         qb.setOffset(gquery.getOffset());
-        qb.setLimit(gquery.getLimit());
+        gquery.getLimit().ifPresent(qb::setLimit);
         return FeatureStreams.subset(reader, qb);
     }
 

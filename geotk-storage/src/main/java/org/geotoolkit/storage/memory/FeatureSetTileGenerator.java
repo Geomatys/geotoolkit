@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.stream.Stream;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.internal.feature.AttributeConvention;
-import org.apache.sis.internal.storage.query.FeatureQuery;
+import org.apache.sis.storage.FeatureQuery;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.Resource;

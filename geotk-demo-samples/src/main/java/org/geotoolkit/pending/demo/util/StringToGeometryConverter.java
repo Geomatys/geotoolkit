@@ -38,7 +38,7 @@ public class StringToGeometryConverter implements ObjectConverter<String, Geomet
 
             try {
                 //create GeometryFactory and WKTReader
-                final GeometryFactory gf = new GeometryFactory();
+                final GeometryFactory gf = org.geotoolkit.geometry.jts.JTS.getFactory();
                 final WKTReader reader = new WKTReader(gf);
 
                 //read the source String

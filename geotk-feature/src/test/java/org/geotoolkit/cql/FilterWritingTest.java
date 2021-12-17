@@ -38,7 +38,7 @@ import org.opengis.filter.Filter;
 public class FilterWritingTest extends org.geotoolkit.test.TestBase {
 
     private final FilterFactory2 FF = FilterUtilities.FF;
-    private final GeometryFactory GF = new GeometryFactory();
+    private final GeometryFactory GF = org.geotoolkit.geometry.jts.JTS.getFactory();
     private final Geometry baseGeometry = GF.createPolygon(
                 GF.createLinearRing(
                     new Coordinate[]{

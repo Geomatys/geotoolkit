@@ -73,7 +73,7 @@ public class GeometryArrayToReferenceConverter extends AbstractReferenceOutputCo
 
             if (WPSMimeType.APP_GEOJSON.val().equalsIgnoreCase(reference.getMimeType())) {
                 try (OutputStream geometryStream = Files.newOutputStream(geometryArrayFile)) {
-                    GeometryFactory geometryFactory = new GeometryFactory();
+                    GeometryFactory geometryFactory = org.geotoolkit.geometry.jts.JTS.getFactory();
                     Geometry toWrite = new GeometryCollection(source, geometryFactory);
                     GeoJSONStreamWriter.writeSingleGeometry(geometryStream, toWrite, JsonEncoding.UTF8, WPSConvertersUtils.FRACTION_DIGITS, true);
                 }

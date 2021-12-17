@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridOrientation;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
@@ -513,7 +514,7 @@ public class Layer implements AbstractLayer {
                 GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
                 env.setRange(0, bbox.getWestBoundLongitude(), bbox.getEastBoundLongitude());
                 env.setRange(1, bbox.getSouthBoundLatitude(), bbox.getNorthBoundLatitude());
-                return new GridGeometry(null, env);
+                return new GridGeometry(null, env, GridOrientation.HOMOTHETY);
             }
             return null;
         }
@@ -529,7 +530,7 @@ public class Layer implements AbstractLayer {
             if (resx != null && resy != null) {
                 return new EstimatedGridGeometry(env, new double[]{resx, resy});
             } else {
-                return new GridGeometry(null, env);
+                return new GridGeometry(null, env, GridOrientation.HOMOTHETY);
             }
         } catch (FactoryException e) {
             Logging.getLogger("org.geotoolkit.wms.xml.v130").warning(e.getMessage());

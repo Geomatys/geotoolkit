@@ -62,7 +62,7 @@ import org.opengis.util.GenericName;
  */
 public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
 
-    private static final GeometryFactory GF = new GeometryFactory();
+    private static final GeometryFactory GF = org.geotoolkit.geometry.jts.JTS.getFactory();
     private static final FeatureType FTYPE_SIMPLE;
 
     static{

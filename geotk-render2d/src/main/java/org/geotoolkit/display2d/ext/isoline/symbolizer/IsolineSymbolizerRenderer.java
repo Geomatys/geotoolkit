@@ -21,7 +21,7 @@ import java.util.stream.Stream;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.internal.map.ExceptionPresentation;
 import org.apache.sis.internal.map.Presentation;
-import org.apache.sis.internal.storage.query.CoverageQuery;
+import org.apache.sis.storage.CoverageQuery;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.portrayal.MapLayer;
 import org.apache.sis.storage.DataStoreException;
@@ -90,7 +90,7 @@ public class IsolineSymbolizerRenderer  extends AbstractCoverageSymbolizerRender
                 double[] intervales = symbol.getSteps();
 
                 final CoverageQuery query = new CoverageQuery();
-                query.setDomain(renderingContext.getGridGeometry());
+                query.setSelection(renderingContext.getGridGeometry());
                 query.setSourceDomainExpansion(2);
                 final GridCoverageResource res = coverageReference.subset(query);
 

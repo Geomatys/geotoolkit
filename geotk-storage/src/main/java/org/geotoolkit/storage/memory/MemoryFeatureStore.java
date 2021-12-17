@@ -529,7 +529,8 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
         }
 
         //we can handle id filter
-        final Filter filter = gquery.getSelection();
+        Filter filter = gquery.getSelection();
+        if (filter == null) filter = Filter.include();
         final org.geotoolkit.storage.feature.query.Query remaining = new org.geotoolkit.storage.feature.query.Query();
         remaining.copy(gquery);
 

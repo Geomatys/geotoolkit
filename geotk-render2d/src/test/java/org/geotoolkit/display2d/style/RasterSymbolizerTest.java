@@ -275,7 +275,7 @@ public class RasterSymbolizerTest extends org.geotoolkit.test.TestBase {
         final GeneralEnvelope queryenv = new GeneralEnvelope(crs);
         queryenv.setRange(0, -180, 180);
         queryenv.setRange(1, -90, 90);
-        final GridGeometry querygrid = new GridGeometry(queryextent, queryenv);
+        final GridGeometry querygrid = new GridGeometry(queryextent, queryenv, GridOrientation.HOMOTHETY);
 
 
         final MapLayers context = MapBuilder.createContext();

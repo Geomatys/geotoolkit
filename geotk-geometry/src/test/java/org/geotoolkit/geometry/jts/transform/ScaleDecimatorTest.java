@@ -36,7 +36,7 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class ScaleDecimatorTest extends org.geotoolkit.test.TestBase {
 
-    private final GeometryFactory GF = new GeometryFactory();
+    private final GeometryFactory GF = org.geotoolkit.geometry.jts.JTS.getFactory();
 
     public ScaleDecimatorTest() {
     }

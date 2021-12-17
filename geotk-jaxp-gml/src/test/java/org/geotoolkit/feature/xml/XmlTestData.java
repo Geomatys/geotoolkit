@@ -269,7 +269,7 @@ public class XmlTestData {
         // FEATURES ////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////
 
-        final GeometryFactory GF = new GeometryFactory();
+        final GeometryFactory GF = JTS.getFactory();
 
         final Point pt = GF.createPoint(new Coordinate(5, 10));
         JTS.setCRS(pt, crs);

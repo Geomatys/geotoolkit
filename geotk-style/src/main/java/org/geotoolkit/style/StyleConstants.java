@@ -23,7 +23,7 @@ import java.util.List;
 import javax.measure.Unit;
 
 import org.apache.sis.measure.Units;
-import org.apache.sis.util.iso.SimpleInternationalString;
+import org.apache.sis.util.SimpleInternationalString;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.style.function.DefaultInterpolate;
 import org.geotoolkit.style.function.InterpolationPoint;

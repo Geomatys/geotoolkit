@@ -9,8 +9,8 @@
     <name>Build configuration for Geotoolkit</name>
 
     <properties>
-        <geoapi.version>4.0-M17</geoapi.version>
-        <sis.version>2.0-M0080</sis.version>
+        <geoapi.version>4.0-SNAPSHOT</geoapi.version>
+        <sis.version>2.0-SNAPSHOT</sis.version>
         <geotoolkit.version>5.0-SNAPSHOT</geotoolkit.version>
     </properties>
 

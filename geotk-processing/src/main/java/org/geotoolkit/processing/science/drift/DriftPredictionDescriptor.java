@@ -2,7 +2,7 @@ package org.geotoolkit.processing.science.drift;
 
 import java.nio.file.Path;
 import org.apache.sis.parameter.ParameterBuilder;
-import org.apache.sis.util.iso.SimpleInternationalString;
+import org.apache.sis.util.SimpleInternationalString;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.opengis.geometry.DirectPosition;

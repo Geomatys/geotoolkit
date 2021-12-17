@@ -64,7 +64,6 @@ public class SortPropertyType implements SortProperty {
      * Empty constructor used by JAXB
      */
     public SortPropertyType(){
-
     }
 
     /**
@@ -141,5 +140,10 @@ public class SortPropertyType implements SortProperty {
         hash = 17 * hash + (this.propertyName != null ? this.propertyName.hashCode() : 0);
         hash = 17 * hash + (this.sortOrder != null ? this.sortOrder.hashCode() : 0);
         return hash;
+    }
+
+    @Override
+    public int compare(Object r1, Object r2) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

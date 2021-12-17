@@ -12,12 +12,12 @@ INSERT INTO rasters."Formats" ("name", "driver") VALUES
 INSERT INTO rasters."SampleDimensions" ("format", "band", "identifier", "units", "isPacked") VALUES
  ('PNG Temperature [-3 … 32.25]°C', 1, 'SST [-3 … 32.25°C]', '°C', TRUE);
 
-INSERT INTO rasters."Categories" ("format", "band", "name", "lower", "upper", "scale", "offset", "colors", "function") VALUES
- ('PNG Temperature [-3 … 32.25]°C', 1, 'Missing value', 0, 0, NULL, NULL, NULL, NULL),
- ('PNG Temperature [-3 … 32.25]°C', 1, 'Temperature', 1, 255, 0.15, -3, 'rainbow', 'linear');
+INSERT INTO rasters."Categories" ("format", "band", "name", "lower", "upper", "scale", "offset", "function") VALUES
+ ('PNG Temperature [-3 … 32.25]°C', 1, 'Missing value', 0, 0, NULL, NULL, NULL),
+ ('PNG Temperature [-3 … 32.25]°C', 1, 'Temperature', 1, 255, 0.15, -3, 'linear');
 
 INSERT INTO rasters."Products" ("name", "temporalResolution") VALUES
- ('SST (World - 8 days)', 8);
+ ('SST (World - 8 days)', '8 days');
 
 INSERT INTO rasters."Series" ("identifier", "product", "directory", "extension", "format") VALUES
  (100, 'SST (World - 8 days)', 'World/SST/8-days', 'png', 'PNG Temperature [-3 … 32.25]°C');
@@ -47,14 +47,14 @@ INSERT INTO rasters."SampleDimensions" ("format", "band", "identifier", "units",
  ('Mars (u,v)', 1, 'U', 'm/s', FALSE),
  ('Mars (u,v)', 2, 'V', 'm/s', FALSE);
 
-INSERT INTO rasters."Categories" ("format", "band", "name", "lower", "upper", "scale", "offset", "colors", "function") VALUES
- ('Mars (u,v)', 1, 'Missing value', 0, 0, NULL, NULL, NULL, NULL),
- ('Mars (u,v)', 2, 'Missing value', 0, 0, NULL, NULL, NULL, NULL),
- ('Mars (u,v)', 1, 'U component', 1, 255, 0.015, -1.925, 'white-cyan-red', 'linear'),
- ('Mars (u,v)', 2, 'V component', 1, 255, 0.015, -1.925, 'white-cyan-red', 'linear');
+INSERT INTO rasters."Categories" ("format", "band", "name", "lower", "upper", "scale", "offset", "function") VALUES
+ ('Mars (u,v)', 1, 'Missing value', 0, 0, NULL, NULL, NULL),
+ ('Mars (u,v)', 2, 'Missing value', 0, 0, NULL, NULL, NULL),
+ ('Mars (u,v)', 1, 'U component', 1, 255, 0.015, -1.925, 'linear'),
+ ('Mars (u,v)', 2, 'V component', 1, 255, 0.015, -1.925, 'linear');
 
 INSERT INTO rasters."Products" ("name", "temporalResolution") VALUES
- ('Mars (u,v)', 0.0104166666666667);
+ ('Mars (u,v)', '15 minutes');
 
 INSERT INTO rasters."Series" ("identifier", "product", "directory", "extension", "format") VALUES
  (210, 'Mars (u,v)', 'Iroise', 'nc', 'Mars (u,v)');
@@ -62,6 +62,8 @@ INSERT INTO rasters."Series" ("identifier", "product", "directory", "extension",
 INSERT INTO rasters."GridGeometries" ("identifier", "width", "height", "scaleX", "scaleY", "translateX", "translateY", "srid") VALUES
  (210, 273, 423, 0.00404610002742094, -0.00269910622547023, -5.34111768883817, 48.7947150316284, 4326);
 
+-- TODO: "index" column has been removed from database schema.
+-- Needs to be either reintroduced or replaced by another resource selection mechanism.
 INSERT INTO rasters."GridCoverages" ("series", "filename", "index", "startTime", "endTime", "grid") VALUES
  (210, 'champs.r3_23-05-2007', 1, '2007-05-21 23:52:30', '2007-05-22 00:07:30', 210),
  (210, 'champs.r3_23-05-2007', 2, '2007-05-22 00:07:30', '2007-05-22 00:22:30', 210),
@@ -81,14 +83,14 @@ INSERT INTO rasters."SampleDimensions" ("format", "identifier", "units", "isPack
  ('Coriolis (temperature)', 'Temperature', '°C', TRUE),
  ('Coriolis (salinity)',    'Salinity',    '',   TRUE);
 
-INSERT INTO rasters."Categories" ("format", "name", "lower", "upper", "scale", "offset", "colors", "function") VALUES
- ('Coriolis (temperature)', 'Missing value', 0, 0, NULL, NULL, NULL, NULL),
- ('Coriolis (salinity)',    'Missing value', 0, 0, NULL, NULL, NULL, NULL),
- ('Coriolis (temperature)', 'Temperature',   1, 43001, 0.001, -3.001, 'rainbow-t', 'linear'),
- ('Coriolis (salinity)',    'Salinity',      1, 60001, 0.001, -0.001, 'rainbow',   'linear');
+INSERT INTO rasters."Categories" ("format", "name", "lower", "upper", "scale", "offset", "function") VALUES
+ ('Coriolis (temperature)', 'Missing value', 0, 0, NULL, NULL, NULL),
+ ('Coriolis (salinity)',    'Missing value', 0, 0, NULL, NULL, NULL),
+ ('Coriolis (temperature)', 'Temperature',   1, 43001, 0.001, -3.001, 'linear'),
+ ('Coriolis (salinity)',    'Salinity',      1, 60001, 0.001, -0.001, 'linear');
 
 INSERT INTO rasters."Products" ("name", "temporalResolution") VALUES
- ('Coriolis (temperature)', 7);
+ ('Coriolis (temperature)', '7 days');
 
 INSERT INTO rasters."Series" ("identifier", "product", "directory", "extension", "format") VALUES
  (200, 'Coriolis (temperature)', 'World/Coriolis', 'nc', 'Coriolis (temperature)');

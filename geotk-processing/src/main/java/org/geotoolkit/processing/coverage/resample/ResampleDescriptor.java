@@ -24,7 +24,7 @@ import org.apache.sis.internal.simple.SimpleCitation;
 import org.apache.sis.metadata.iso.citation.Citations;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.referencing.NamedIdentifier;
-import org.apache.sis.util.iso.SimpleInternationalString;
+import org.apache.sis.util.SimpleInternationalString;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.ResampleBorderComportement;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;

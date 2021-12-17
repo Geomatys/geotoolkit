@@ -36,7 +36,7 @@ import org.opengis.metadata.content.CoverageContentType;
 import org.opengis.metadata.identification.TopicCategory;
 import org.opengis.metadata.maintenance.ScopeCode;
 
-import org.apache.sis.util.iso.SimpleInternationalString;
+import org.apache.sis.util.SimpleInternationalString;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.metadata.iso.acquisition.DefaultAcquisitionInformation;

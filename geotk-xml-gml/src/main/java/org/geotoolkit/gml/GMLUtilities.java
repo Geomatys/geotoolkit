@@ -74,7 +74,7 @@ import org.opengis.geometry.primitive.SurfaceBoundary;
  */
 public class GMLUtilities {
 
-    private static final GeometryFactory GF = new GeometryFactory();
+    private static final GeometryFactory GF = GeometricUtilities.getFactory();
 
     public GMLUtilities(){}
 

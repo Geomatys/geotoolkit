@@ -157,7 +157,7 @@ public class GeometryExpressionTest extends org.geotoolkit.test.TestBase {
         context.getComponents().add(fml);
 
         final GeneralEnvelope env = new GeneralEnvelope(crs3857);
-        final Point pt = (Point) JTS.transform(point, CRS.findOperation(crs2154, crs3857, null).getMathTransform());
+        final Point pt = (Point) org.apache.sis.internal.feature.jts.JTS.transform(point, CRS.findOperation(crs2154, crs3857, null).getMathTransform());
         env.setRange(0, pt.getX()-500, pt.getX()+500);
         env.setRange(1, pt.getY()-500, pt.getY()+500);
         final CanvasDef canvasDef = new CanvasDef();

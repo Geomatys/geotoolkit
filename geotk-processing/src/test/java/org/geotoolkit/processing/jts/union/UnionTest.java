@@ -52,7 +52,7 @@ public class UnionTest extends AbstractProcessTest {
     @Test
     public void testUnion() throws NoSuchIdentifierException, ProcessException {
 
-        GeometryFactory fact = new GeometryFactory();
+        GeometryFactory fact = JTS.getFactory();
 
         // Inputs first
         final LinearRing ring = fact.createLinearRing(new Coordinate[]{
@@ -93,7 +93,7 @@ public class UnionTest extends AbstractProcessTest {
     @Test
     public void testUnionCRS() throws NoSuchIdentifierException, ProcessException, NoSuchAuthorityCodeException, FactoryException, TransformException {
 
-        GeometryFactory fact = new GeometryFactory();
+        GeometryFactory fact = JTS.getFactory();
 
         // Inputs first
         final LinearRing ring = fact.createLinearRing(new Coordinate[]{
@@ -132,7 +132,7 @@ public class UnionTest extends AbstractProcessTest {
         final Geometry result = (Geometry) proc.call().parameter("result_geom").getValue();
 
         final MathTransform mt = CRS.findOperation(crs2, crs1, null).getMathTransform();
-        geom2 = JTS.transform(geom2, mt);
+        geom2 = org.apache.sis.internal.feature.jts.JTS.transform(geom2, mt);
 
         final Geometry expected = geom1.union(geom2);
         JTS.setCRS(expected, crs1);

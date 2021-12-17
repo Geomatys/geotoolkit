@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.apache.sis.internal.jaxb.gco.InternationalStringAdapter;
 import org.geotoolkit.se.xml.DirectStringAdapter;
-import org.apache.sis.util.iso.SimpleInternationalString;
+import org.apache.sis.util.SimpleInternationalString;
 import org.opengis.style.Description;
 import org.opengis.style.StyleVisitor;
 import org.opengis.util.InternationalString;

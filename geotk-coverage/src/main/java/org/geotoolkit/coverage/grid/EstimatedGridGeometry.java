@@ -17,6 +17,7 @@
 package org.geotoolkit.coverage.grid;
 
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridOrientation;
 import org.opengis.geometry.Envelope;
 
 /**
@@ -29,7 +30,7 @@ public class EstimatedGridGeometry extends GridGeometry {
     private final double[] resolution;
 
     public EstimatedGridGeometry(Envelope envelope, double[] resolution) {
-        super(null, envelope);
+        super(null, envelope, GridOrientation.HOMOTHETY);
         this.resolution = resolution;
     }
 

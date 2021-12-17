@@ -16,7 +16,7 @@ import org.opengis.util.FactoryException;
 public class FeatureDemo {
 
 
-    private static final GeometryFactory GF = new GeometryFactory();
+    private static final GeometryFactory GF = org.geotoolkit.geometry.jts.JTS.getFactory();
 
     public static void main(String[] args) throws NoSuchAuthorityCodeException, FactoryException {
         Demos.init();

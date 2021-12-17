@@ -192,7 +192,7 @@ public class GridCoverageStackTest extends org.geotoolkit.test.TestBase {
 
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         final GridExtent extent = new GridExtent(width, height)
-                .insert(2, DimensionNameType.VERTICAL, 0, 0, true);
+                .insertDimension(2, DimensionNameType.VERTICAL, 0, 0, true);
         gcb.setDomain(new GridGeometry(extent, PixelInCell.CELL_CORNER, gridtoCrs, crs));
         gcb.setValues(image);
 
@@ -211,8 +211,8 @@ public class GridCoverageStackTest extends org.geotoolkit.test.TestBase {
 
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         final GridExtent extent = new GridExtent(width, height)
-                .insert(2, DimensionNameType.VERTICAL, 0, 0, true)
-                .insert(3, DimensionNameType.TIME, 0, 0, true);
+                .insertDimension(2, DimensionNameType.VERTICAL, 0, 0, true)
+                .insertDimension(3, DimensionNameType.TIME, 0, 0, true);
         gcb.setDomain(new GridGeometry(extent, PixelInCell.CELL_CORNER, gridtoCrs, crs));
         gcb.setValues(image);
 

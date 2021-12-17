@@ -46,7 +46,7 @@ public class CentroidTest extends AbstractProcessTest {
     @Test
     public void testCentroid() throws NoSuchIdentifierException, ProcessException, FactoryException {
 
-        GeometryFactory fact = new GeometryFactory();
+        GeometryFactory fact = JTS.getFactory();
 
         // Inputs first
         final LinearRing  ring = fact.createLinearRing(new Coordinate[]{

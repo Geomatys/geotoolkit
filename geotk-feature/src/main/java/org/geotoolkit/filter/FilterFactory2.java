@@ -270,7 +270,7 @@ public class FilterFactory2 extends DefaultFilterFactory<Object,Object,Object> {
         coords[2] = new Coordinate(maxx, maxy);
         coords[3] = new Coordinate(maxx, miny);
         coords[4] = new Coordinate(minx, miny);
-        final GeometryFactory GF = new GeometryFactory();
+        final GeometryFactory GF = org.geotoolkit.geometry.jts.JTS.getFactory();
         final LinearRing ring = GF.createLinearRing(coords);
         final Polygon poly = GF.createPolygon(ring, new LinearRing[0]);
         CoordinateReferenceSystem crs = env.getCoordinateReferenceSystem();

@@ -62,7 +62,7 @@ public class LuceneUtils {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.lucene");
 
-    public static final GeometryFactory GF = new GeometryFactory();
+    public static final GeometryFactory GF = JTS.getFactory();
 
     public static Directory getAppropriateDirectory(final Path indexDirectory) throws IOException {
 

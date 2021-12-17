@@ -106,7 +106,7 @@ public class WPSClientDemo {
             LOGGER.log(Level.INFO, "Parameter : " + current.getName().getCode() + " : \n\t" + current.getRemarks());
         }
 
-        GeometryFactory factory = new GeometryFactory();
+        GeometryFactory factory = org.geotoolkit.geometry.jts.JTS.getFactory();
         Geometry geometry = factory.toGeometry(new Envelope(1.0, 2.0, 43.3, 43.9));
         geometry.setUserData(CommonCRS.WGS84.geographic());
         final double bufDistance = 0.5;

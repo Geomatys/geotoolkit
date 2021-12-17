@@ -211,7 +211,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         IndexedShapefileFeatureStore ds = new IndexedShapefileFeatureStore(url.toURI(), true, true, IndexType.QIX,null);
         FeatureIterator indexIter = ds.getFeatureReader(new Query(ds.getName()));
 
-        GeometryFactory factory = new GeometryFactory();
+        GeometryFactory factory = org.geotoolkit.geometry.jts.JTS.getFactory();
         double area = Double.MAX_VALUE;
         Feature smallestFeature = null;
         while (indexIter.hasNext()) {
@@ -511,7 +511,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
 
         Feature[] newFeatures1 = new Feature[1];
         Feature[] newFeatures2 = new Feature[2];
-        GeometryFactory fac = new GeometryFactory();
+        GeometryFactory fac = org.geotoolkit.geometry.jts.JTS.getFactory();
         newFeatures1[0] = sds.getFeatureType().newInstance();
         newFeatures1[0].setPropertyValue("a",fac.createPoint(new Coordinate(0, 0)));
         newFeatures2[0] = sds.getFeatureType().newInstance();
@@ -552,7 +552,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         Collection<Feature> features = new ArrayList<>();
         for (int i = 0, ii = 20; i < ii; i++) {
             final Feature feature = featureType.newInstance();
-            feature.setPropertyValue("a",new GeometryFactory().createPoint(new Coordinate(1, -1)));
+            feature.setPropertyValue("a",org.geotoolkit.geometry.jts.JTS.getFactory().createPoint(new Coordinate(1, -1)));
             feature.setPropertyValue("b",new Byte((byte) i));
             feature.setPropertyValue("c",new Short((short) i));
             feature.setPropertyValue("d",new Double(i));

@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.internal.storage.query.FeatureQuery;
+import org.apache.sis.storage.FeatureQuery;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
@@ -67,7 +67,7 @@ import org.opengis.util.GenericName;
  */
 public class MIFStoreTest extends org.geotoolkit.test.TestBase {
 
-    private static final GeometryFactory GF = new GeometryFactory();
+    private static final GeometryFactory GF = org.geotoolkit.geometry.jts.JTS.getFactory();
     private static final FilterFactory FF = FilterUtilities.FF;
     private Path tempDir;
 

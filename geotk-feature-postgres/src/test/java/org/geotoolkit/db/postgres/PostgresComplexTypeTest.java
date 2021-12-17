@@ -360,7 +360,7 @@ public class PostgresComplexTypeTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testComplexInsert() throws DataStoreException, VersioningException{
         reload(false);
-        final GeometryFactory gf = new GeometryFactory();
+        final GeometryFactory gf = JTS.getFactory();
 
         store.createFeatureType(FTYPE_COMPLEX);
         final FeatureType resType = store.getFeatureType(store.getNames().iterator().next().toString());
@@ -580,7 +580,7 @@ public class PostgresComplexTypeTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testHandMadeSQLQuery() throws Exception{
         reload(false);
-        final GeometryFactory gf = new GeometryFactory();
+        final GeometryFactory gf = JTS.getFactory();
 
         store.createFeatureType(FTYPE_COMPLEX);
         final FeatureType resType = store.getFeatureType(store.getNames().iterator().next().toString());

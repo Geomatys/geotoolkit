@@ -4,7 +4,7 @@ import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.WritableGridCoverageResource;
-import org.apache.sis.util.iso.SimpleInternationalString;
+import org.apache.sis.util.SimpleInternationalString;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.processing.image.sampleclassifier.*;

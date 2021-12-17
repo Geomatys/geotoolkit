@@ -23,13 +23,14 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.measure.Quantity;
 import javax.measure.quantity.Length;
-import org.apache.sis.internal.storage.query.FeatureQuery;
+import org.apache.sis.storage.FeatureQuery;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.filter.FilterUtilities;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
+import org.opengis.filter.SortBy;
 import org.opengis.filter.SortProperty;
 
 /**
@@ -45,8 +46,8 @@ public class QueryUtilities {
 
     public static boolean queryAll(final Query query){
         return     query.retrieveAllProperties()
-                && query.getSelection() == Filter.include()
-                && query.getLimit() == -1
+                && (query.getSelection() == null || query.getSelection() == Filter.include())
+                && !query.getLimit().isPresent()
                 && query.getSortBy() == null
                 && query.getOffset() == 0;
     }
@@ -56,10 +57,6 @@ public class QueryUtilities {
      * as if it was a sub query result.
      * For example if the original query has a start index of 10 and the
      * sub-query a start index of 5, the resulting startIndex will be 15.
-     *
-     * @param original
-     * @param second
-     * @return sub query
      */
     public static FeatureQuery subQuery(final FeatureQuery original, final FeatureQuery second) {
         ArgumentChecks.ensureNonNull("original", original);
@@ -68,22 +65,22 @@ public class QueryUtilities {
         final FeatureQuery qb = new FeatureQuery();
 
         //use the more restrictive max features field---------------------------
-        long max = original.getLimit();
-        if (second.getLimit() != -1) {
+        long max = original.getLimit().orElse(-1);
+        if (second.getLimit().isPresent()) {
             if (max == -1) {
-                max = second.getLimit();
+                max = second.getLimit().getAsLong();
             } else {
-                max = Math.min(max, second.getLimit());
+                max = Math.min(max, second.getLimit().getAsLong());
             }
         }
         qb.setLimit(max);
 
         //join attributes names-------------------------------------------------
-        final List<FeatureQuery.NamedExpression> columnsOrig = original.getProjection();
-        final List<FeatureQuery.NamedExpression> columnsSecond = original.getProjection();
+        final FeatureQuery.NamedExpression[] columnsOrig = original.getProjection();
+        final FeatureQuery.NamedExpression[] columnsSecond = original.getProjection();
         if (columnsOrig == null) {
             if (columnsSecond != null) {
-                qb.setProjection(columnsSecond.toArray(new FeatureQuery.NamedExpression[0]));
+                qb.setProjection(columnsSecond);
             }
         } else {
             throw new UnsupportedOperationException();
@@ -92,6 +89,8 @@ public class QueryUtilities {
         //join filters----------------------------------------------------------
         Filter filter = original.getSelection();
         Filter filter2 = second.getSelection();
+        if (filter == null) filter = Filter.include();
+        if (filter2 == null) filter2 = Filter.include();
 
         if ( filter.equals(Filter.include()) ){
             filter = filter2;
@@ -106,12 +105,12 @@ public class QueryUtilities {
 
         //ordering -------------------------------------------------------------
         final List<SortProperty> sorts = new ArrayList<>();
-        SortProperty[] sts = original.getSortBy();
+        SortProperty[] sts = getSortProperties(original.getSortBy());
         if (sts != null) {
             sorts.addAll(Arrays.asList(sts));
         }
 
-        sts = second.getSortBy();
+        sts = getSortProperties(second.getSortBy());
         if (sts != null) {
             sorts.addAll(Arrays.asList(sts));
         }
@@ -136,10 +135,6 @@ public class QueryUtilities {
      * For example if the original query has a start index of 10 and the
      * sub-query a start index of 5, the resulting startIndex will be 15.
      * The type name of the first query will override the one of the second.
-     *
-     * @param original
-     * @param second
-     * @return sub query
      */
     public static Query subQuery(final Query original, final Query second){
         if ( original==null || second==null ) {
@@ -150,15 +145,17 @@ public class QueryUtilities {
         qb.setTypeName(original.getTypeName());
 
         //use the more restrictive max features field---------------------------
-        long max = original.getLimit();
-        if (second.getLimit() != -1) {
+        long max = original.getLimit().orElse(-1);
+        if (second.getLimit().isPresent()) {
             if(max == -1){
-                max = second.getLimit();
+                max = second.getLimit().getAsLong();
             }else{
-                max = Math.min(max, second.getLimit());
+                max = Math.min(max, second.getLimit().getAsLong());
             }
         }
-        qb.setLimit(max);
+        if (max >= 0) {
+            qb.setLimit(max);
+        }
 
         //join attributes names-------------------------------------------------
         final String[] propNames = retainAttributes(
@@ -169,6 +166,8 @@ public class QueryUtilities {
         //join filters----------------------------------------------------------
         Filter filter = original.getSelection();
         Filter filter2 = second.getSelection();
+        if (filter == null) filter = Filter.include();
+        if (filter2 == null) filter2 = Filter.include();
 
         if ( filter.equals(Filter.include()) ){
             filter = filter2;
@@ -183,12 +182,12 @@ public class QueryUtilities {
 
         //ordering -------------------------------------------------------------
         final List<SortProperty> sorts = new ArrayList<>();
-        SortProperty[] sts = original.getSortBy();
+        SortProperty[] sts = getSortProperties(original.getSortBy());
         if(sts != null){
             sorts.addAll(Arrays.asList(sts));
         }
 
-        sts = second.getSortBy();
+        sts = getSortProperties(second.getSortBy());
         if(sts != null){
             sorts.addAll(Arrays.asList(sts));
         }
@@ -233,7 +232,6 @@ public class QueryUtilities {
             return atts1;
         }
 
-
         final List atts = new LinkedList();
 
         final List lst1 = UnmodifiableArrayList.wrap(atts1);
@@ -249,5 +247,11 @@ public class QueryUtilities {
         return propNames;
     }
 
-
+    public static <R> SortProperty<R>[] getSortProperties(final SortBy<R> sortBy) {
+        if (sortBy == null) {
+            return new SortProperty[0];
+        }
+        List<? extends SortProperty<R>> p = sortBy.getSortProperties();
+        return p.toArray(new SortProperty[p.size()]);
+    }
 }

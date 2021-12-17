@@ -18,7 +18,7 @@ package org.geotoolkit.processing.coverage.bandcombine;
 
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.parameter.ParameterBuilder;
-import org.apache.sis.util.iso.SimpleInternationalString;
+import org.apache.sis.util.SimpleInternationalString;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.processing.AbstractProcessDescriptor;

@@ -27,7 +27,7 @@ import javax.xml.bind.JAXBException;
 import org.apache.sis.measure.Units;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.apache.sis.util.iso.DefaultInternationalString;
+import org.apache.sis.util.DefaultInternationalString;
 import org.geotoolkit.ows.xml.v200.DomainMetadataType;
 import org.geotoolkit.ows.xml.v200.ValueType;
 import org.geotoolkit.process.Process;

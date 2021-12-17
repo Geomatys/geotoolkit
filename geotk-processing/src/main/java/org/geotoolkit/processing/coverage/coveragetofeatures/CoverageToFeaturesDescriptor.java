@@ -19,7 +19,7 @@ package org.geotoolkit.processing.coverage.coveragetofeatures;
 import java.util.Collection;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.GridCoverageResource;
-import org.apache.sis.util.iso.SimpleInternationalString;
+import org.apache.sis.util.SimpleInternationalString;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
