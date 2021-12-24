@@ -390,22 +390,27 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
             CoordinateReferenceSystem crsdata = fullArea.getCoordinateReferenceSystem();
             if (CRS.isHorizontalCRS(crsarea) && CRS.isHorizontalCRS(crsdata)) {
                 //we are dealing with simple 2D rendering, preserve the canvas grid geometry.
-                if (margin[0] > 0) {
-                    //try to adjust margin
-                    //TODO : we should use a GridCoverageResource.subset with a margin value but this isn't implemented yet
-                    Envelope env = fullArea.getEnvelope();
-                    double[] est = CoverageUtilities.estimateResolution(env, fullArea.getResolution(true), areaOfInterest.getCoordinateReferenceSystem());
-                    margin[0] = (int) Math.ceil(margin[0] * (est[0] / resolution[0]));
-                    margin[1] = (int) Math.ceil(margin[1] * (est[1] / resolution[1]));
+                if (margin != null && Arrays.stream(margin).anyMatch(value -> value != 0)) {
+                    try {
+                        //try to adjust margin
+                        //TODO : we should use a GridCoverageResource.subset with a margin value but this isn't implemented yet
+                        Envelope env = fullArea.getEnvelope();
+                        double[] est = CoverageUtilities.estimateResolution(env, fullArea.getResolution(true), areaOfInterest.getCoordinateReferenceSystem());
+                        margin[0] = (int) Math.ceil(margin[0] * (est[0] / resolution[0]));
+                        margin[1] = (int) Math.ceil(margin[1] * (est[1] / resolution[1]));
+                        areaOfInterest = areaOfInterest.derive().margin(margin).build();
+                        // Force rebuilding envelope. Not sure it is really needed however.
+                        areaOfInterest = new GridGeometry(
+                                areaOfInterest.getExtent(),
+                                PixelInCell.CELL_CENTER,
+                                areaOfInterest.getGridToCRS(PixelInCell.CELL_CENTER),
+                                areaOfInterest.getCoordinateReferenceSystem());
+                        return areaOfInterest;
+                    } catch (Exception e) {
+                        LOGGER.log(Level.WARNING, "Cannot compute adapted margin. Artifacts may appear on tile borders");
+                        LOGGER.log(Level.FINE, "Details about margin computation failure", e);
+                    }
                 }
-                areaOfInterest = areaOfInterest.derive().margin(margin).build();
-                // Force rebuilding envelope. Not sure it is really needed however.
-                areaOfInterest = new GridGeometry(
-                        areaOfInterest.getExtent(),
-                        PixelInCell.CELL_CENTER,
-                        areaOfInterest.getGridToCRS(PixelInCell.CELL_CENTER),
-                        areaOfInterest.getCoordinateReferenceSystem());
-                return areaOfInterest;
             }
         } else {
             //we have no way to apply margin
