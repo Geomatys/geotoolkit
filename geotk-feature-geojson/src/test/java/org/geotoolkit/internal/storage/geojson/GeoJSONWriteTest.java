@@ -39,6 +39,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.WritableFeatureSet;
 import org.apache.sis.test.TestCase;
 import org.apache.sis.util.SimpleInternationalString;
+import org.geotoolkit.internal.geojson.binding.GeoJSONGeometry;
 import org.geotoolkit.storage.geojson.GeoJSONProvider;
 import org.geotoolkit.storage.geojson.GeoJSONStore;
 import org.geotoolkit.storage.geojson.GeoJSONStreamWriter;
@@ -119,6 +120,24 @@ public class GeoJSONWriteTest extends TestCase {
         }
 
         Files.deleteIfExists(file);
+    }
+
+    @Test
+    public void readingAsWritingPolygonTest() throws IOException {
+        final String simplePolygonResource ="/org/apache/sis/internal/storage/geojson/simplePolygon.json";
+
+        try(final InputStream inputStream = GeoJSONWriteTest.class.getResourceAsStream(simplePolygonResource);
+            final InputStream controlInputStream = GeoJSONWriteTest.class.getResourceAsStream(simplePolygonResource)
+        ) {
+            final ObjectMapper mapper = new ObjectMapper();
+            final GeoJSONGeometry json = mapper.readValue(inputStream, GeoJSONGeometry.class);
+            assertTrue(json instanceof GeoJSONGeometry.GeoJSONPolygon);
+            final String expectedJSON = IOUtilities.toString(controlInputStream, Charset.forName("UTF-8"));
+            final String writtenJSON = mapper.writeValueAsString(json);
+            assertNotNull(writtenJSON);
+            assertNotNull(expectedJSON);
+            assertEquals( expectedJSON.trim(), mapper.writeValueAsString(json).trim());
+        }
     }
 
     @Test

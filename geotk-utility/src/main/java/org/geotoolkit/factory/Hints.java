@@ -61,15 +61,6 @@ public class Hints extends RenderingHints {
     ////////////////////////////////////////////////////////////////////////
 
     /**
-     * The {@link org.opengis.referencing.crs.CRSAuthorityFactory} instance to use.
-     *
-     * @see AuthorityFactoryFinder#getCRSAuthorityFactory(String, Hints)
-     * @category Referencing
-     */
-    public static final ClassKey CRS_AUTHORITY_FACTORY = new ClassKey(
-            "org.opengis.referencing.crs.CRSAuthorityFactory");
-
-    /**
      * The {@link org.opengis.referencing.crs.CRSFactory} instance to use.
      *
      * @see FactoryFinder#getCRSFactory(Hints)
@@ -95,16 +86,6 @@ public class Hints extends RenderingHints {
      */
     public static final ClassKey DATUM_FACTORY = new ClassKey(
             "org.opengis.referencing.datum.DatumFactory");
-
-    /**
-     * The {@link org.opengis.referencing.operation.CoordinateOperationAuthorityFactory} instance
-     * to use.
-     *
-     * @see AuthorityFactoryFinder#getCoordinateOperationAuthorityFactory(String, Hints)
-     * @category Referencing
-     */
-    public static final ClassKey COORDINATE_OPERATION_AUTHORITY_FACTORY = new ClassKey(
-            "org.opengis.referencing.operation.CoordinateOperationAuthorityFactory");
 
     /**
      * The {@link org.opengis.referencing.operation.MathTransformFactory} instance to use.

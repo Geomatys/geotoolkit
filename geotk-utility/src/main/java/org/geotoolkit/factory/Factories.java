@@ -107,13 +107,12 @@ public final class Factories extends Static {
      * @throws FactoryRegistryException if no implementation was found or can be created for the
      *         {@link CRSAuthorityFactory} interface.
      *
-     * @see org.geotoolkit.referencing.factory.FallbackAuthorityFactory#create(Class, java.util.Collection)
      * @category Referencing
      */
     public static CRSAuthorityFactory getCRSAuthorityFactory(final String authority)
             throws FactoryRegistryException
     {
-        return getAuthorityFactory(CRSAuthorityFactory.class, authority, Hints.CRS_AUTHORITY_FACTORY);
+        return getAuthorityFactory(CRSAuthorityFactory.class, authority);
     }
 
     /**
@@ -133,8 +132,7 @@ public final class Factories extends Static {
     public static CoordinateOperationAuthorityFactory getCoordinateOperationAuthorityFactory(
             final String authority) throws FactoryRegistryException
     {
-        return getAuthorityFactory(CoordinateOperationAuthorityFactory.class, authority,
-                Hints.COORDINATE_OPERATION_AUTHORITY_FACTORY);
+        return getAuthorityFactory(CoordinateOperationAuthorityFactory.class, authority);
     }
 
     /**
@@ -146,13 +144,12 @@ public final class Factories extends Static {
      *
      * @param  category  The authority factory type.
      * @param  authority The desired authority (e.g. "EPSG").
-     * @param  key       The hint key to use for searching an implementation.
      * @return The first authority factory that matches the supplied hints.
      * @throws FactoryRegistryException if no implementation was found or can be created for the
      *         specified interface.
      */
     private static <T extends AuthorityFactory> T getAuthorityFactory(
-            final Class<T> category, final String authority, final Hints.ClassKey key)
+            final Class<T> category, final String authority)
             throws FactoryRegistryException
     {
         try {
