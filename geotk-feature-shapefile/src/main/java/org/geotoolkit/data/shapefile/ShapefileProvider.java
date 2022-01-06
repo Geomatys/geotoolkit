@@ -236,7 +236,7 @@ public class ShapefileProvider extends DataStoreProvider implements FileFeatureS
         ProbeResult result = FileFeatureStoreFactory.probe(this, connector, MIME_TYPE);
         if (result.isSupported()) {
             //SHP and SHX files have the same signature, we only want to match on the SHP file.
-            final Path path = connector.commit(Path.class, NAME);
+            final Path path = connector.getStorageAs(Path.class);
             final String ext = IOUtilities.extension(path);
             if (!"shp".equalsIgnoreCase(ext)) {
                 return ProbeResult.UNSUPPORTED_STORAGE;
