@@ -82,7 +82,7 @@ public class TiffProvider extends DataStoreProvider implements ProviderOnFileSys
 
     @Override
     public TiffStore open(StorageConnector sc) throws DataStoreException {
-        return new TiffStore(sc.getStorageAs(Path.class));
+        return new TiffStore(sc.commit(Path.class, NAME));
     }
 
     /**

@@ -97,7 +97,7 @@ public class NMEAProvider extends DataStoreProvider implements ProviderOnFileSys
 
     @Override
     public DataStore open(StorageConnector connector) throws DataStoreException {
-        final URI uri = connector.getStorageAs(URI.class);
+        final URI uri = connector.commit(URI.class, NAME);
         final Parameters parameters = Parameters.castOrWrap(PARAMETERS_DESCRIPTOR.createValue());
         parameters.getOrCreate(PATH).setValue(uri);
         return open(parameters);

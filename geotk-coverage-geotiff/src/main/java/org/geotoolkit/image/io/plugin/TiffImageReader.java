@@ -35,7 +35,6 @@ import java.lang.reflect.Array;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.InvalidMarkException;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.SeekableByteChannel;
@@ -1660,7 +1659,7 @@ public class TiffImageReader extends SpatialImageReader {
                 ImageInputStream stream = (ImageInputStream) currentInput;
                 try {
                     stream.reset();
-                } catch (InvalidMarkException ex) {
+                } catch (IOException ex) {
                     //do nothing
                 }
                 stream.mark();
