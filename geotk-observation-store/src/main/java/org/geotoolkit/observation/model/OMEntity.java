@@ -51,6 +51,7 @@ public enum OMEntity {
                 case "offering" : return OFFERING;
                 case "observation" : return OBSERVATION;
                 case "result" : return RESULT;
+                case "historicalLocation" : return HISTORICAL_LOCATION;
                 default: throw new IllegalArgumentException("Unexpected entity name: " + name);
             }
         }
