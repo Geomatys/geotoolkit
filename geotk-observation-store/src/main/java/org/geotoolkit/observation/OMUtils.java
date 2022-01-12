@@ -57,6 +57,7 @@ import org.geotoolkit.swe.xml.AbstractDataRecord;
 import org.geotoolkit.swe.xml.AnyScalar;
 import org.geotoolkit.swe.xml.DataArrayProperty;
 import org.geotoolkit.swe.xml.Phenomenon;
+import org.geotoolkit.swe.xml.PhenomenonProperty;
 import org.geotoolkit.swe.xml.Quantity;
 import org.geotoolkit.swe.xml.TextBlock;
 import org.geotoolkit.swe.xml.UomProperty;
@@ -72,9 +73,12 @@ import org.opengis.observation.Process;
 
 /**
  *
- * @author guilhem
+ * @author Guilhem Legal (Geomatys)
  */
 public class OMUtils {
+
+    public static final String RESPONSE_FORMAT_V100 = "text/xml; subtype=\"om/1.0.0\"";
+    public static final String RESPONSE_FORMAT_V200 = "http://www.opengis.net/om/2.0";
 
     public static final Map<String, TextBlock> TEXT_ENCODING = new HashMap<>();
 
@@ -539,5 +543,54 @@ public class OMUtils {
             }
         }
         return false;
+    }
+
+    public static List<Field> reOrderFields(List<Field> procedureFields, List<Field> subset) {
+        List<Field> result = new ArrayList();
+        for (Field pField : procedureFields) {
+            if (subset.contains(pField)) {
+                result.add(pField);
+            }
+        }
+        return result;
+    }
+
+    public static List<String> getPhenomenonsFields(final PhenomenonProperty phenProp) {
+        final List<String> results = new ArrayList<>();
+        if (phenProp.getHref() != null) {
+            results.add(phenProp.getHref());
+        } else if (phenProp.getPhenomenon() instanceof CompositePhenomenon) {
+            final CompositePhenomenon comp = (CompositePhenomenon) phenProp.getPhenomenon();
+            for (org.opengis.observation.Phenomenon phen : comp.getComponent()) {
+                if (phen instanceof org.geotoolkit.swe.xml.Phenomenon) {
+                    final org.geotoolkit.swe.xml.Phenomenon p = (org.geotoolkit.swe.xml.Phenomenon) phen;
+                    results.add((p.getName() != null) ? p.getName().getCode() : "");
+                }
+            }
+        } else if (phenProp.getPhenomenon() instanceof org.geotoolkit.swe.xml.Phenomenon) {
+            final org.geotoolkit.swe.xml.Phenomenon p = (org.geotoolkit.swe.xml.Phenomenon) phenProp.getPhenomenon();
+            results.add((p.getName() != null) ? p.getName().getCode() : "");
+        }
+        return results;
+    }
+
+    public static Phenomenon getPhenomenon(final PhenomenonProperty phenProp) {
+        if (phenProp.getHref() != null) {
+            return new PhenomenonType(phenProp.getHref(), phenProp.getHref());
+        } else if (phenProp.getPhenomenon() != null) {
+            return phenProp.getPhenomenon();
+
+        }
+        return null;
+    }
+
+    public static String getFOIId(final FeatureProperty foiProp) {
+        if (foiProp.getHref() != null) {
+            return foiProp.getHref();
+        } else if (foiProp.getAbstractFeature() != null) {
+            final AbstractFeature feat = (AbstractFeature) foiProp.getAbstractFeature();
+            return feat.getId();
+        }
+        return null;
     }
 }
