@@ -28,10 +28,11 @@ import java.util.Map;
 import java.util.Set;
 import javax.xml.namespace.QName;
 import org.apache.sis.storage.DataStoreException;
-import static org.geotoolkit.data.om.xml.XmlObservationUtils.RESPONSE_FORMAT_V100;
-import static org.geotoolkit.data.om.xml.XmlObservationUtils.RESPONSE_FORMAT_V200;
+import static org.geotoolkit.observation.OMUtils.RESPONSE_FORMAT_V100;
+import static org.geotoolkit.observation.OMUtils.RESPONSE_FORMAT_V200;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.gml.xml.FeatureProperty;
+import org.geotoolkit.observation.OMUtils;
 import org.geotoolkit.observation.model.OMEntity;
 import org.geotoolkit.observation.ObservationReader;
 import static org.geotoolkit.observation.ObservationReader.ENTITY_TYPE;
@@ -113,13 +114,13 @@ public class XmlObservationReader implements ObservationReader {
                 for (Observation obs : collection.getMember()) {
                     final AbstractObservation o = (AbstractObservation)obs;
                     final PhenomenonProperty phenProp = o.getPropertyObservedProperty();
-                    phenomenons.addAll(XmlObservationUtils.getPhenomenonsFields(phenProp));
+                    phenomenons.addAll(OMUtils.getPhenomenonsFields(phenProp));
                 }
 
             } else if (xmlObject instanceof AbstractObservation) {
                 final AbstractObservation obs = (AbstractObservation)xmlObject;
                 final PhenomenonProperty phenProp = obs.getPropertyObservedProperty();
-                phenomenons.addAll(XmlObservationUtils.getPhenomenonsFields(phenProp));
+                phenomenons.addAll(OMUtils.getPhenomenonsFields(phenProp));
             }
         }
         return phenomenons;
@@ -167,7 +168,7 @@ public class XmlObservationReader implements ObservationReader {
                 for (Observation obs : collection.getMember()) {
                     final AbstractObservation o = (AbstractObservation)obs;
                     final PhenomenonProperty phenProp = o.getPropertyObservedProperty();
-                    final Phenomenon ph = XmlObservationUtils.getPhenomenons(phenProp);
+                    final Phenomenon ph = OMUtils.getPhenomenon(phenProp);
                     if (ph instanceof org.geotoolkit.swe.xml.Phenomenon) {
                         org.geotoolkit.swe.xml.Phenomenon phe = (org.geotoolkit.swe.xml.Phenomenon) ph;
                         if (identifiers.isEmpty() || identifiers.contains(phe.getName().getCode())) {
@@ -179,7 +180,7 @@ public class XmlObservationReader implements ObservationReader {
             } else if (xmlObject instanceof AbstractObservation) {
                 final AbstractObservation obs = (AbstractObservation)xmlObject;
                 final PhenomenonProperty phenProp = obs.getPropertyObservedProperty();
-                final Phenomenon ph = XmlObservationUtils.getPhenomenons(phenProp);
+                final Phenomenon ph = OMUtils.getPhenomenon(phenProp);
                 if (ph instanceof org.geotoolkit.swe.xml.Phenomenon) {
                     org.geotoolkit.swe.xml.Phenomenon phe = (org.geotoolkit.swe.xml.Phenomenon) ph;
                     if (identifiers.isEmpty() || identifiers.contains(phe.getName().getCode())) {
@@ -222,13 +223,13 @@ public class XmlObservationReader implements ObservationReader {
                 for (Observation obs : collection.getMember()) {
                     final AbstractObservation o = (AbstractObservation)obs;
                     final FeatureProperty foiProp = o.getPropertyFeatureOfInterest();
-                    featureOfInterest.add(XmlObservationUtils.getFOIName(foiProp));
+                    featureOfInterest.add(OMUtils.getFOIId(foiProp));
                 }
 
             } else if (xmlObject instanceof AbstractObservation) {
                 final AbstractObservation obs = (AbstractObservation)xmlObject;
                 final FeatureProperty foiProp = obs.getPropertyFeatureOfInterest();
-                featureOfInterest.add(XmlObservationUtils.getFOIName(foiProp));
+                featureOfInterest.add(OMUtils.getFOIId(foiProp));
             }
         }
         return featureOfInterest;
