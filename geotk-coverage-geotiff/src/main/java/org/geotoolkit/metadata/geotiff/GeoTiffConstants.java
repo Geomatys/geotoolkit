@@ -466,4 +466,18 @@ public final class GeoTiffConstants {
     public static final int CT_LambertConfConic =               CT_LambertConfConic_2SP ;
     public static final int CT_LambertConfConic_Helmert =       CT_LambertConfConic_1SP;
     public static final int CT_SouthOrientedGaussConformal =    CT_TransvMercator_SouthOriented;
+
+    enum Tag {
+        GeoAsciiParams(34737),
+        GeoDoubleParams(34736),
+        GeoKeyDirectory(34735),
+        ModelTiePointTag(33922),
+        ModelTransformationTag(34264),
+        ModelPixelScaleTag(33550);
+
+        final int number;
+        Tag(final int number) {
+            this.number = number;
+        }
+    }
 }

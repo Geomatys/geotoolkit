@@ -18,8 +18,6 @@
 package org.geotoolkit.metadata.geotiff;
 
 import java.util.Collection;
-import com.sun.media.imageio.plugins.tiff.GeoTIFFTagSet;
-import com.sun.media.imageio.plugins.tiff.TIFFTag;
 
 import javax.imageio.metadata.IIOMetadataNode;
 
@@ -190,8 +188,8 @@ public final class GeoTiffMetaDataUtils {
     /**
      * Create a TiffField node with id and name from the TIFFTag description.
      */
-    static Node createTiffField(final TIFFTag tag){
-        return createTiffField(tag.getNumber(),tag.getName());
+    static Node createTiffField(final GeoTiffConstants.Tag tag) {
+        return createTiffField(tag.number, tag.name());
     }
 
     /**
@@ -307,30 +305,5 @@ public final class GeoTiffMetaDataUtils {
 
         final Node geoKeyDir = getNodeByNumber(imgFileDir,GeoKeyDirectoryTag);
         return geoKeyDir != null;
-    }
-
-
-    public static TIFFTag getGeoKeyDirectoryTag() {
-        return GeoTIFFTagSet.getInstance().getTag(GeoKeyDirectoryTag);
-    }
-
-    public static TIFFTag getGeoDoubleParamsTag() {
-        return GeoTIFFTagSet.getInstance().getTag(GeoDoubleParamsTag);
-    }
-
-    public static TIFFTag getGeoAsciiParamsTag() {
-        return GeoTIFFTagSet.getInstance().getTag(GeoAsciiParamsTag);
-    }
-
-    public static TIFFTag getModelPixelScaleTag() {
-        return GeoTIFFTagSet.getInstance().getTag(ModelPixelScaleTag);
-    }
-
-    public static TIFFTag getModelTiePointTag() {
-        return GeoTIFFTagSet.getInstance().getTag(ModelTiepointTag);
-    }
-
-    public static TIFFTag getModelTransformationTag() {
-        return GeoTIFFTagSet.getInstance().getTag(ModelTransformationTag);
     }
 }
