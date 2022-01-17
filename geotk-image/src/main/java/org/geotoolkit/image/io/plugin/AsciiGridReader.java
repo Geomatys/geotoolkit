@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.image.io.plugin;
 
-import com.sun.media.imageio.stream.RawImageInputStream;
+import org.geotoolkit.internal.image.jai.RawImageInputStream;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;

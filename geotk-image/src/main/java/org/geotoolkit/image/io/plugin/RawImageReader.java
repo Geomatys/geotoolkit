@@ -43,7 +43,7 @@ import javax.imageio.stream.ImageInputStream;
 import javax.media.jai.iterator.RectIterFactory;
 import javax.media.jai.iterator.WritableRectIter;
 
-import com.sun.media.imageio.stream.RawImageInputStream;
+import org.geotoolkit.internal.image.jai.RawImageInputStream;
 
 import org.geotoolkit.image.SampleModels;
 import org.geotoolkit.image.io.SampleConverter;
