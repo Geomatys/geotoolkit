@@ -18,8 +18,6 @@
 package org.geotoolkit.metadata.geotiff;
 
 import java.util.Collection;
-import com.sun.media.imageio.plugins.tiff.GeoTIFFTagSet;
-import com.sun.media.imageio.plugins.tiff.TIFFTag;
 
 import javax.imageio.metadata.IIOMetadataNode;
 
@@ -28,7 +26,6 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
 
-import static com.sun.media.imageio.plugins.tiff.GeoTIFFTagSet.*;
 import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
 import static org.geotoolkit.util.DomUtilities.*;
 
@@ -191,8 +188,8 @@ public final class GeoTiffMetaDataUtils {
     /**
      * Create a TiffField node with id and name from the TIFFTag description.
      */
-    static Node createTiffField(final TIFFTag tag){
-        return createTiffField(tag.getNumber(),tag.getName());
+    static Node createTiffField(final GeoTiffConstants.Tag tag) {
+        return createTiffField(tag.number, tag.name());
     }
 
     /**
@@ -306,32 +303,7 @@ public final class GeoTiffMetaDataUtils {
         final Node imgFileDir = getNodeByLocalName(candidate,TAG_GEOTIFF_IFD);
         if(imgFileDir == null) return false;
 
-        final Node geoKeyDir = getNodeByNumber(imgFileDir,TAG_GEO_KEY_DIRECTORY);
+        final Node geoKeyDir = getNodeByNumber(imgFileDir,GeoKeyDirectoryTag);
         return geoKeyDir != null;
-    }
-
-
-    public static TIFFTag getGeoKeyDirectoryTag() {
-        return GeoTIFFTagSet.getInstance().getTag(TAG_GEO_KEY_DIRECTORY);
-    }
-
-    public static TIFFTag getGeoDoubleParamsTag() {
-        return GeoTIFFTagSet.getInstance().getTag(TAG_GEO_DOUBLE_PARAMS);
-    }
-
-    public static TIFFTag getGeoAsciiParamsTag() {
-        return GeoTIFFTagSet.getInstance().getTag(TAG_GEO_ASCII_PARAMS);
-    }
-
-    public static TIFFTag getModelPixelScaleTag() {
-        return GeoTIFFTagSet.getInstance().getTag(TAG_MODEL_PIXEL_SCALE);
-    }
-
-    public static TIFFTag getModelTiePointTag() {
-        return GeoTIFFTagSet.getInstance().getTag(TAG_MODEL_TIE_POINT);
-    }
-
-    public static TIFFTag getModelTransformationTag() {
-        return GeoTIFFTagSet.getInstance().getTag(TAG_MODEL_TRANSFORMATION);
     }
 }
