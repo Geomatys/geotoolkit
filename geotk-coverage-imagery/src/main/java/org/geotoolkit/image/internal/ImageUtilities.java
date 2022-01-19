@@ -30,6 +30,7 @@ import javax.media.jai.Interpolation;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Errors;
+import org.apache.sis.internal.coverage.j2d.FillValues;
 import org.apache.sis.util.Classes;
 
 import static java.awt.image.DataBuffer.*;
@@ -308,17 +309,19 @@ public final class ImageUtilities extends Static {
      * Sets every samples in the given image to the given value. This method is typically used
      * for clearing an image content.
      *
-     * @param image The image to fill.
+     * @param image The image to fill (modified in-place).
      * @param value The value to be given to every samples.
+     * @see FillValues used pixel filling engine.
      */
     public static void fill(final WritableRenderedImage image, final Number value) {
+        final FillValues filler = new FillValues(image.getSampleModel(), new Number[]{ value }, true);
         int y = image.getMinTileY();
         for (int ny = image.getNumYTiles(); --ny >= 0; y++) {
             int x = image.getMinTileX();
             for (int nx = image.getNumXTiles(); --nx >= 0; x++) {
                 final WritableRaster raster = image.getWritableTile(x, y);
                 try {
-                    fill(raster.getDataBuffer(), value);
+                    filler.fill(raster);
                 } finally {
                     image.releaseWritableTile(x, y);
                 }
@@ -326,8 +329,13 @@ public final class ImageUtilities extends Static {
         }
     }
 
+    /**
+     * @deprecated Use Apache SIS utilities instead.
+     * @see FillValues#fill(WritableRaster)
+     */
+    @Deprecated
     public static void fill(final WritableRaster raster, final Number value) {
-        fill(raster.getDataBuffer(), value);
+        new FillValues(raster.getSampleModel(), new Number[]{ value }, true).fill(raster);
     }
 
     /**
@@ -340,8 +348,21 @@ public final class ImageUtilities extends Static {
      * and the line stride - the risk of bug would be too high, we are better to stick to
      * the Java API for that.
      *
+     * <h5>Warnings</h5>
+     * Note that filling directly data buffer has following drawbacks:
+     * <ul>
+     *     <li>Deactivate Java 2D accelerations on this image, which means some optimisations won't work anymore on
+     *     this image.</li>
+     *     <li>Filling data buffer means impacting <em>all</em> rasters/images sharing part of it. For example, when
+     *     using a {@link BufferedImage#getSubimage(int, int, int, int) subset of a buffered image}, filling its data
+     *     buffer means filling <em>entirely</em> its parent too.</li>
+     * </ul>
+     * Prefer using {@link FillValues Apache SIS image fill utilities}.
+     *
      * @param buffer The data buffer to fill.
      * @param value  The values to be given to every elements in the data buffer.
+     * @deprecated The use of this method is strongly discouraged due to the warnings mentioned above. Please prefer
+     * using {@link FillValues#fill(WritableRaster)} when possible.
      */
     private static void fill(final DataBuffer buffer, final Number value) {
         final int[] offsets = buffer.getOffsets();
