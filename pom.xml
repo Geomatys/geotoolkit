@@ -571,6 +571,7 @@
                 <requireJavaVersion>
                   <version>15</version>
                 </requireJavaVersion>
+                <dependencyConvergence/>
               </rules>
             </configuration>
           </execution>
