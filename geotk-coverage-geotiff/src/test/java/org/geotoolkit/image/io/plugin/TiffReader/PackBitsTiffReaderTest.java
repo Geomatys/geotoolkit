@@ -16,16 +16,14 @@
  */
 package org.geotoolkit.image.io.plugin.TiffReader;
 
-import com.sun.media.imageio.plugins.tiff.TIFFImageWriteParam;
-
 import java.io.IOException;
+import org.geotoolkit.image.io.plugin.TestTiffImageReaderWriter;
 
 /**
  * Improve tests from {@link TestTiffImageReaderWriter} for reading action,
  * with PackBits compression.
  *
  * @author Remi Marechal (Geomatys).
- * @see TIFFImageWriteParam#compressionTypes
  */
 public strictfp class PackBitsTiffReaderTest extends TestTiffImageReader {
 

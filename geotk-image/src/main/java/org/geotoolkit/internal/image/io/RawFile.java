@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.stream.ImageInputStream;
-import com.sun.media.imageio.stream.RawImageInputStream;
+import org.geotoolkit.internal.image.jai.RawImageInputStream;
 
 import java.awt.Dimension;
 

@@ -17,9 +17,6 @@
 
 package org.geotoolkit.metadata.geotiff;
 
-import com.sun.media.imageio.plugins.tiff.BaselineTIFFTagSet;
-import com.sun.media.imageio.plugins.tiff.GeoTIFFTagSet;
-
 import java.util.Collection;
 import java.awt.geom.AffineTransform;
 import java.text.SimpleDateFormat;
@@ -83,12 +80,12 @@ public final class GeoTiffMetaDataStack {
         }
 
         //remove previous tags if exists
-        final Node nAscii = getNodeByNumber(ifd, getGeoAsciiParamsTag().getNumber());
+        final Node nAscii = getNodeByNumber(ifd, GeoAsciiParamsTag);
         if(nAscii != null){
             ifd.removeChild(nAscii);
         }
 
-        final Node nDoubles = getNodeByNumber(ifd, getGeoDoubleParamsTag().getNumber());
+        final Node nDoubles = getNodeByNumber(ifd, GeoDoubleParamsTag);
         if(nDoubles != null){
             ifd.removeChild(nDoubles);
         }
@@ -102,7 +99,7 @@ public final class GeoTiffMetaDataStack {
     void addDouble(final int keyID, final double value) {
         final KeyDirectoryEntry entry = new KeyDirectoryEntry(
                 keyID,
-                getGeoDoubleParamsTag().getNumber(),
+                GeoDoubleParamsTag,
                 1,
                 doubleValues.size());
         entries.add(entry);
@@ -116,7 +113,7 @@ public final class GeoTiffMetaDataStack {
 
         final KeyDirectoryEntry entry = new KeyDirectoryEntry(
                 keyID,
-                getGeoAsciiParamsTag().getNumber(),
+                GeoAsciiParamsTag,
                 value.length(),
                 asciiValues.length());
         entries.add(entry);
@@ -124,7 +121,7 @@ public final class GeoTiffMetaDataStack {
     }
 
     void setModelPixelScale(final double x, final double y, final double z) {
-        nPixelScale = createTiffField(getModelPixelScaleTag());
+        nPixelScale = createTiffField(Tag.ModelPixelScaleTag);
         nPixelScale.appendChild(createTiffDoubles(x,y,z));
     }
 
@@ -159,7 +156,7 @@ public final class GeoTiffMetaDataStack {
     /**
      * Set maximum sample values into this {@link GeoTiffMetaDataStack} in aim of build or write metadata.
      *
-     * @param maximumSampleValue maximum sample value for each image bands.
+     * @param maximumSampleValues maximum sample value for each image bands.
      * @throws NullArgumentException if maximumSampleValues array is {@code null}.
      */
     void setMaxSampleValue(final int ...maximumSampleValues) {
@@ -204,20 +201,20 @@ public final class GeoTiffMetaDataStack {
         modelTransformation[14] = 0;
         modelTransformation[15] = 1;
 
-        nTransform = createTiffField(getModelTransformationTag());
+        nTransform = createTiffField(Tag.ModelTransformationTag);
         final Node nValues = createTiffDoubles(modelTransformation);
         nTransform.appendChild(nValues);
     }
 
     static Node createModelTransformationElement(final double ... values) {
-        final Node nTransformation = createTiffField(getModelTransformationTag());
+        final Node nTransformation = createTiffField(Tag.ModelTransformationTag);
         final Node nValues = createTiffDoubles(values);
         nTransformation.appendChild(nValues);
         return nTransformation;
     }
 
     static Node createModelTiePointsElement(final Collection<? extends TiePoint> tiePoints) {
-        final Node nTiePoints = createTiffField(getModelTiePointTag());
+        final Node nTiePoints = createTiffField(Tag.ModelTiePointTag);
         final Node nValues = createNode(TAG_GEOTIFF_DOUBLES);
         nTiePoints.appendChild(nValues);
 
@@ -255,16 +252,17 @@ public final class GeoTiffMetaDataStack {
                 values[l+3] = entry.valueOffset;
             }
 
-            final Node nGeoKeyDir = createTiffField(getGeoKeyDirectoryTag());
+            final Node nGeoKeyDir = createTiffField(Tag.GeoKeyDirectory);
             nGeoKeyDir.appendChild(createTiffShorts(values));
             ifd.appendChild(nGeoKeyDir);
         }
 
         //write tagsets
+        /*
         ifd.setAttribute(ATT_TAGSETS,
                 BaselineTIFFTagSet.class.getName() + ","
                 + GeoTIFFTagSet.class.getName());
-
+*/
         if (nPixelScale != null) ifd.appendChild(nPixelScale);
 
         if (!tiePoints.isEmpty()) {
@@ -284,14 +282,14 @@ public final class GeoTiffMetaDataStack {
             ifd.appendChild(date);
 
         if (!doubleValues.isEmpty()) {
-            final Node nDoubles = createTiffField(getGeoDoubleParamsTag());
+            final Node nDoubles = createTiffField(Tag.GeoDoubleParams);
             final Node nValues = createTiffDoubles(doubleValues);
             nDoubles.appendChild(nValues);
             ifd.appendChild(nDoubles);
         }
 
         if (asciiValues.length() > 0) {
-            final Node nAsciis = createTiffField(getGeoAsciiParamsTag());
+            final Node nAsciis = createTiffField(Tag.GeoAsciiParams);
             final Node nValues = createTiffAsciis(asciiValues.toString());
             nAsciis.appendChild(nValues);
             ifd.appendChild(nAsciis);

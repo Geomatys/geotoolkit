@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.image.io;
 
+import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -34,8 +35,6 @@ import org.geotoolkit.image.io.plugin.WorldFileImageReader;
 import org.geotoolkit.image.io.plugin.WorldFileImageWriter;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.CharSequences;
-import org.geotoolkit.image.io.XImageIO;
-import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.test.image.ImageTestBase;
 import org.geotoolkit.test.TestData;
 
@@ -142,7 +141,7 @@ public final strictfp class XImageIOTest extends ImageTestBase {
             // Following line was used to throw a NullPointerException
             // if a plugin declare a null array of MIME types.
             final String[] types = ImageIO.getReaderMIMETypes();
-            assertTrue(types.length > 16); // Arbitrary threshold.
+            assertTrue(types.length > 13); // Arbitrary threshold.
         } finally {
             WorldFileImageReader.Spi.unregisterDefaults(registry);
             WorldFileImageWriter.Spi.unregisterDefaults(registry);

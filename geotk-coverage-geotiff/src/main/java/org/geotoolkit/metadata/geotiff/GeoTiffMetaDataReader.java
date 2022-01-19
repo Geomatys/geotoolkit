@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.metadata.geotiff;
 
-import com.sun.media.imageio.plugins.tiff.GeoTIFFTagSet;
-
 import java.util.logging.Level;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
@@ -50,7 +48,6 @@ import org.geotoolkit.referencing.operation.MathTransforms;
 
 import org.w3c.dom.Node;
 
-import static com.sun.media.imageio.plugins.tiff.GeoTIFFTagSet.*;
 import org.geotoolkit.image.io.metadata.ReferencingBuilder;
 import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
 import static org.geotoolkit.metadata.geotiff.GeoTiffMetaDataUtils.*;
@@ -120,7 +117,7 @@ public final class GeoTiffMetaDataReader {
         imgFileDir = getNodeByLocalName(root,TAG_GEOTIFF_IFD);
         if (imgFileDir == null) throw new IOException("No GeoTiff metadatatas");
 
-        geoKeyDir = getNodeByNumber(imgFileDir,TAG_GEO_KEY_DIRECTORY);
+        geoKeyDir = getNodeByNumber(imgFileDir,GeoKeyDirectoryTag);
     }
 
     /**
@@ -542,7 +539,7 @@ public final class GeoTiffMetaDataReader {
     }
 
     /**
-     * Returns the transformation from the {@link GeoTIFFTagSet#TAG_MODEL_TRANSFORMATION} if it exist.<br>
+     * Returns the transformation from the {@link GeoTiffConstants#ModelTransformationTag} if it exist.<br>
      * May return {@code null}.
      *
      * @return an {@link AffineTransform} if expected geotiff tags are filled, else return {@code null}.
@@ -550,7 +547,7 @@ public final class GeoTiffMetaDataReader {
      */
     private AffineTransform readTransformation() throws IOException {
 
-        final Node node = getNodeByNumber(imgFileDir, TAG_MODEL_TRANSFORMATION);
+        final Node node = getNodeByNumber(imgFileDir, ModelTransformationTag);
         if (node == null) return null;
 
         final Node valueNode = getNodeByLocalName(node, TAG_GEOTIFF_DOUBLES);
@@ -576,7 +573,7 @@ public final class GeoTiffMetaDataReader {
      */
     private double[] readTiePoint() {
 
-        final Node node = getNodeByNumber(imgFileDir, TAG_MODEL_TIE_POINT);
+        final Node node = getNodeByNumber(imgFileDir, ModelTiepointTag);
         if (node == null) return null;
 
         final Node valueNode = getNodeByLocalName(node, TAG_GEOTIFF_DOUBLES);
@@ -590,7 +587,7 @@ public final class GeoTiffMetaDataReader {
      */
     private double[] readPixelScale() {
 
-        final Node node = getNodeByNumber(imgFileDir, TAG_MODEL_PIXEL_SCALE);
+        final Node node = getNodeByNumber(imgFileDir, ModelPixelScaleTag);
         if (node == null) return null;
 
         final Node valueNode = getNodeByLocalName(node, TAG_GEOTIFF_DOUBLES);

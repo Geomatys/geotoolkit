@@ -49,6 +49,7 @@ import static org.geotoolkit.data.om.xml.XmlObservationStoreFactory.FILE_PATH;
 import org.geotoolkit.storage.feature.GenericNameIndex;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.observation.AbstractObservationStore;
+import org.geotoolkit.observation.OMUtils;
 import org.geotoolkit.observation.ObservationReader;
 import org.geotoolkit.observation.xml.AbstractObservation;
 import org.geotoolkit.observation.xml.Process;
@@ -156,13 +157,13 @@ public class XmlObservationStore extends AbstractObservationStore implements Agg
                         result.procedures.add(procedure);
                     }
                     final PhenomenonProperty phenProp = o.getPropertyObservedProperty();
-                    final List<String> fields = XmlObservationUtils.getPhenomenonsFields(phenProp);
+                    final List<String> fields = OMUtils.getPhenomenonsFields(phenProp);
                     for (String field : fields) {
                         if (!result.fields.contains(field)) {
                             result.fields.add(field);
                         }
                     }
-                    final Phenomenon phen = XmlObservationUtils.getPhenomenons(phenProp);
+                    final Phenomenon phen = OMUtils.getPhenomenon(phenProp);
                     if (!result.phenomenons.contains(phen)) {
                         result.phenomenons.add(phen);
                     }
@@ -179,8 +180,8 @@ public class XmlObservationStore extends AbstractObservationStore implements Agg
             if (sensorIds == null || sensorIds.contains(procedure.id)) {
                 result.observations .add(obs);
                 final PhenomenonProperty phenProp = obs.getPropertyObservedProperty();
-                result.fields.addAll(XmlObservationUtils.getPhenomenonsFields(phenProp));
-                result.phenomenons.add(XmlObservationUtils.getPhenomenons(phenProp));
+                result.fields.addAll(OMUtils.getPhenomenonsFields(phenProp));
+                result.phenomenons.add(OMUtils.getPhenomenon(phenProp));
                 result.procedures.add(procedure);
                 result.spatialBound.appendLocation(obs.getSamplingTime(), obs.getFeatureOfInterest());
                 procedure.spatialBound.appendLocation(obs.getSamplingTime(), obs.getFeatureOfInterest());
@@ -205,7 +206,7 @@ public class XmlObservationStore extends AbstractObservationStore implements Agg
                     result.add(procedure);
                 }
                 final PhenomenonProperty phenProp = o.getPropertyObservedProperty();
-                final List<String> fields = XmlObservationUtils.getPhenomenonsFields(phenProp);
+                final List<String> fields = OMUtils.getPhenomenonsFields(phenProp);
                 for (String field : fields) {
                     if (!procedure.fields.contains(field)) {
                         procedure.fields.add(field);
@@ -220,7 +221,7 @@ public class XmlObservationStore extends AbstractObservationStore implements Agg
             final ProcedureTree procedure = new ProcedureTree(proc.getHref(), proc.getName(), proc.getDescription(), "Component", "timeseries");
 
             final PhenomenonProperty phenProp = obs.getPropertyObservedProperty();
-            procedure.fields.addAll(XmlObservationUtils.getPhenomenonsFields(phenProp));
+            procedure.fields.addAll(OMUtils.getPhenomenonsFields(phenProp));
             result.add(procedure);
             procedure.spatialBound.appendLocation(obs.getSamplingTime(), obs.getFeatureOfInterest());
         }
