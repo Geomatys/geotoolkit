@@ -1107,7 +1107,7 @@ public final class XImageIO extends Static {
      * @throws IIOException if no image reader are able to handle the extension given.
      */
     public static String fileExtensionToMimeType(final String extension) throws IIOException {
-        final Iterator<ImageReaderSpi> readers = IIORegistry.lookupProviders(ImageReaderSpi.class);
+        final Iterator<ImageReaderSpi> readers = getImageReaderSpis();
         while (readers.hasNext()) {
             final ImageReaderSpi reader = readers.next();
             final String[] suffixes = reader.getFileSuffixes();
@@ -1133,7 +1133,7 @@ public final class XImageIO extends Static {
      * @throws IIOException if no image reader are able to handle the format name given.
      */
     public static String formatNameToMimeType(final String formatName) throws IIOException {
-        final Iterator<ImageReaderSpi> readers = IIORegistry.lookupProviders(ImageReaderSpi.class);
+        final Iterator<ImageReaderSpi> readers = getImageReaderSpis();
         while (readers.hasNext()) {
             final ImageReaderSpi reader = readers.next();
             final String[] formats = reader.getFormatNames();
@@ -1149,7 +1149,6 @@ public final class XImageIO extends Static {
         throw new IIOException("No available image reader able to handle the format name specified: "+ formatName);
     }
 
-
     /**
      * Returns the format name matching the mime type of an image file.
      * For example, for a mime type "image/png" it will return "png", in most cases.
@@ -1160,7 +1159,7 @@ public final class XImageIO extends Static {
      * @throws IIOException if no image reader are able to handle the mime type given.
      */
     public static String mimeTypeToFormatName(final String mimeType) throws IIOException {
-        final Iterator<ImageReaderSpi> readers = IIORegistry.lookupProviders(ImageReaderSpi.class);
+        final Iterator<ImageReaderSpi> readers = getImageReaderSpis();
         while (readers.hasNext()) {
             final ImageReaderSpi reader = readers.next();
             final String[] mimes = reader.getMIMETypes();
@@ -1174,5 +1173,18 @@ public final class XImageIO extends Static {
             }
         }
         throw new IIOException("No available image reader able to handle the mime type specified: "+ mimeType);
+    }
+
+    /**
+     * Commodity method to load image reader SPIs.
+     * Note that we use {@link IIORegistry#getDefaultInstance() default registry instance}, because since Java 17, using
+     * the alternative {@link IIORegistry#lookupProviders(Class)} does not return image readers from java.desktop module.
+     * The reason is maybe because java.desktop module does not export/provides SPIs as public API. For a reason unknown,
+     * the default IIORegistry loads them anyway. That's what we want for now.
+     *
+     * @return An iterator loading image readers from {@link IIORegistry#getDefaultInstance()}.
+     */
+    private static Iterator<ImageReaderSpi> getImageReaderSpis() {
+        return IIORegistry.getDefaultInstance().getServiceProviders(ImageReaderSpi.class, true);
     }
 }
