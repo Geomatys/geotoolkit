@@ -18,6 +18,13 @@
   <!-- ====================================================
            Project description (including license).
        ==================================================== -->
+
+  <parent>
+    <groupId>com.geomatys</groupId>
+    <artifactId>geomatys-bom</artifactId>
+    <version>2022.3</version>
+  </parent>
+
   <groupId>org.geotoolkit</groupId>
   <artifactId>geotoolkit</artifactId>
   <packaging>pom</packaging>
@@ -114,29 +121,6 @@
        =========================================================== -->
   <profiles>
     <profile>
-      <id>default</id>
-      <activation>
-          <activeByDefault>true</activeByDefault>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <configuration>
-              <trimStackTrace>false</trimStackTrace>
-              <!-- Required by JAI codec plugins. -->
-              <argLine>
-	        <!-- @{argLine} necessary for jacoco generation, because we added more parameters -->
-                @{argLine}
-                --add-opens java.desktop/sun.awt.image=ALL-UNNAMED
-              </argLine>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
       <id>sign-artifacts</id>
       <build>
         <plugins>
@@ -197,29 +181,21 @@
     <batik.version>1.8</batik.version>
     <commons-beanutils.version>1.9.4</commons-beanutils.version>
     <commons-dbcp.version>1.4</commons-dbcp.version>
-    <commons-io.version>1.3.2</commons-io.version>
     <commons-logging.version>1.2</commons-logging.version>
-    <groovy.version>2.4.17</groovy.version> <!-- Versions 2.5+ are no longer packaged as JAR files. -->
-    <jackson.version>2.10.3</jackson.version>
-    <jasperreports.version>6.12.2</jasperreports.version>
+    <jasperreports.version>6.18.1</jasperreports.version>
     <jaxen.version>1.1.2</jaxen.version>
-    <jai.core.version>1.1.3</jai.core.version>
-    <jai.codec.version>1.1.3</jai.codec.version>
     <java.source>1.8</java.source>
     <java.target>1.8</java.target>
-    <javax.activation>1.2.2</javax.activation>  <!-- Should be version number used by JAXB. -->
     <jmh.version>1.25.1</jmh.version>
     <log4j.version>1.2.17</log4j.version>
     <lucene.version>8.4.0</lucene.version>
     <marineapi.version>0.11.0</marineapi.version>
     <mysql.version>8.0.17</mysql.version>
     <nashorn.version>15.3</nashorn.version>
-    <netty.version>3.9.4.Final</netty.version> <!-- Can not upgrade to 3.10.6 because it breaks Geotk build. -->
+    <netty3.version>3.9.4.Final</netty3.version> <!-- Can not upgrade to 3.10.6 because it breaks Geotk build. -->
     <postgis.version>2.3.0</postgis.version>
     <quartz.version>2.3.1</quartz.version>
     <rxtx.version>2.2pre2</rxtx.version>
-    <slf4j.version>1.7.22</slf4j.version> <!-- Version used by edu.ucar dependency. -->
-    <snakeyaml.version>1.24</snakeyaml.version> <!-- keep version aligned with jackson -->
     <woodstox.version>6.0.0</woodstox.version>
     <xmlgraphics.version>2.3</xmlgraphics.version>
     <!-- @{argLine} necessary for jacoco generation, we must declare
@@ -348,23 +324,8 @@
           </exclusions>
       </dependency>
 
-      <dependency>
-        <groupId>javax.media</groupId>
-        <artifactId>jai_core</artifactId>
-        <version>${jai.core.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>javax.media</groupId>
-        <artifactId>jai_codec</artifactId>
-        <version>${jai.codec.version}</version>
-      </dependency>
 
       <!-- Miscellaneous utilities -->
-      <dependency>
-        <groupId>org.quartz-scheduler</groupId>
-        <artifactId>quartz</artifactId>
-        <version>${quartz.version}</version>
-      </dependency>
       <dependency>
         <groupId>commons-beanutils</groupId> <!-- @todo see excludes in sub-modules. -->
         <artifactId>commons-beanutils</artifactId>
@@ -373,7 +334,7 @@
       <dependency>
           <groupId>io.netty</groupId>
           <artifactId>netty</artifactId>
-          <version>${netty.version}</version>
+          <version>${netty3.version}</version>
       </dependency>
 
       <!-- XML -->
@@ -388,35 +349,6 @@
         <version>${jaxen.version}</version>
       </dependency>
 
-       <!-- JSON -->
-      <dependency>
-        <groupId>com.fasterxml.jackson.core</groupId>
-        <artifactId>jackson-databind</artifactId>
-        <version>${jackson.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.fasterxml.jackson.dataformat</groupId>
-        <artifactId>jackson-dataformat-yaml</artifactId>
-        <version>${jackson.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.fasterxml.jackson.dataformat</groupId>
-        <artifactId>jackson-dataformat-cbor</artifactId>
-        <version>${jackson.version}</version>
-      </dependency>
-
-      <!-- Misc. -->
-      <dependency>
-        <groupId>org.apache.commons</groupId>
-        <artifactId>commons-io</artifactId>
-        <version>${commons-io.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>jakarta.activation</groupId>
-        <artifactId>jakarta.activation-api</artifactId>
-        <version>${javax.activation}</version>
-      </dependency>
-
       <!-- Logging -->
       <dependency>
         <groupId>commons-logging</groupId>
@@ -427,12 +359,6 @@
         <groupId>log4j</groupId>
         <artifactId>log4j</artifactId>
         <version>${log4j.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-jdk14</artifactId>
-        <version>${slf4j.version}</version>
-        <scope>runtime</scope> <!-- Should never be needed at compile time. -->
       </dependency>
 
       <!-- Database and Server -->
@@ -493,20 +419,6 @@
         <version>${jasperreports.version}</version>
       </dependency>
 
-      <!-- Groovy -->
-      <dependency>
-        <groupId>org.codehaus.groovy</groupId>
-        <artifactId>groovy-all</artifactId>
-        <version>${groovy.version}</version>               <!-- Versions 2.5+ are no longer packaged as JAR files. -->
-      </dependency>
-
-      <!-- YAML -->
-      <dependency>
-        <groupId>org.yaml</groupId>
-        <artifactId>snakeyaml</artifactId>
-        <version>${snakeyaml.version}</version>            <!-- keep version aligned with Jackson -->
-      </dependency>
-
       <!-- JavaScript -->
       <dependency>
         <groupId>org.openjdk.nashorn</groupId>
@@ -519,11 +431,6 @@
         <groupId>net.sf.marineapi</groupId>
         <artifactId>marineapi</artifactId>
         <version>${marineapi.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.rxtx</groupId>
-        <artifactId>rxtxcomm</artifactId>
-        <version>${rxtx.version}</version>
       </dependency>
 
       <!-- self modules -->
@@ -542,6 +449,15 @@
         <version>${jmh.version}</version>
       </dependency>
 
+      <!--
+      Dependency resolution override needed to pass dependency convergence.
+      Please check regularly if these rules are still needed.
+      -->
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-collections4</artifactId>
+        <version>4.2</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -591,58 +507,8 @@
       <plugins>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-enforcer-plugin</artifactId>
-          <version>3.0.0-M3</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.1</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-resources-plugin</artifactId>
-          <version>2.6</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-jar-plugin</artifactId>
-          <version>2.4</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.22.0</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-source-plugin</artifactId>
-          <version>2.2.1</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-gpg-plugin</artifactId>
           <version>1.5</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-deploy-plugin</artifactId>
-          <version>3.0.0-M1</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-site-plugin</artifactId>
-          <version>3.3</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.felix</groupId>
-          <artifactId>maven-bundle-plugin</artifactId>
-          <version>2.4.0</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-antrun-plugin</artifactId>
-          <version>1.7</version>
         </plugin>
         <plugin>
           <groupId>com.agilejava.docbkx</groupId>
@@ -675,9 +541,11 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
+          <trimStackTrace>false</trimStackTrace>
           <argLine>
              <!-- @{argLine} necessary for jacoco generation, because we added more parameters -->
              @{argLine}
+            --add-opens java.desktop/sun.awt.image=ALL-UNNAMED
           </argLine>
           <systemProperties>
             <property>
@@ -703,6 +571,7 @@
                 <requireJavaVersion>
                   <version>15</version>
                 </requireJavaVersion>
+                <dependencyConvergence/>
               </rules>
             </configuration>
           </execution>
@@ -718,7 +587,11 @@
         <configuration>
           <source>${java.source}</source>       <!-- The -source argument for the Java compiler.   -->
           <target>${java.target}</target>       <!-- The -target argument for the Java compiler.   -->
-          <release>${java.target}</release>
+          <!--
+          Commented for now: fails compilation when value is 8, because of RawImageInputStream class copied from JAI.
+          TODO: once minimal java version becomes 17, try to reactivate it.
+          -->
+          <!--release>${java.target}</release-->
           <debug>true</debug>        <!-- Whether to include debugging information.     -->
           <optimize>false</optimize> <!-- Whether to optimize the compiled code.        -->
           <encoding>${project.build.sourceEncoding}</encoding>
@@ -822,14 +695,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>3.1.1</version>
-        <dependencies>
-          <dependency>
-            <groupId>com.puppycrawl.tools</groupId>
-            <artifactId>checkstyle</artifactId>
-            <version>8.29</version>
-          </dependency>
-        </dependencies>
         <executions>
           <execution>
             <phase>test</phase>
