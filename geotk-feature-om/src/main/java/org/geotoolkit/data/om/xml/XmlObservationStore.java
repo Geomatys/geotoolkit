@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.logging.Level;
@@ -38,7 +37,6 @@ import javax.xml.bind.Unmarshaller;
 import org.apache.sis.internal.storage.AbstractFeatureSet;
 import org.apache.sis.internal.storage.ResourceOnFileSystem;
 import org.apache.sis.internal.storage.StoreResource;
-import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
@@ -49,21 +47,15 @@ import static org.geotoolkit.data.om.xml.XmlObservationStoreFactory.FILE_PATH;
 import org.geotoolkit.storage.feature.GenericNameIndex;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.observation.AbstractObservationStore;
-import org.geotoolkit.observation.OMUtils;
 import org.geotoolkit.observation.ObservationReader;
-import org.geotoolkit.observation.xml.AbstractObservation;
-import org.geotoolkit.observation.xml.Process;
 import org.geotoolkit.observation.model.ExtractionResult;
-import org.geotoolkit.observation.model.ExtractionResult.ProcedureTree;
 import org.geotoolkit.sos.xml.SOSMarshallerPool;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.swe.xml.PhenomenonProperty;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.metadata.Metadata;
 import org.opengis.observation.Observation;
 import org.opengis.observation.ObservationCollection;
-import org.opengis.observation.Phenomenon;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.temporal.TemporalGeometricPrimitive;
 import org.opengis.util.GenericName;
@@ -104,16 +96,25 @@ public class XmlObservationStore extends AbstractObservationStore implements Agg
         return params;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public DataStoreProvider getProvider() {
         return DataStores.getProviderById(XmlObservationStoreFactory.NAME);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Metadata getMetadata() throws DataStoreException {
-        return new DefaultMetadata();
+        return buildMetadata("xml-observation");
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Collection<? extends Resource> components() throws DataStoreException {
         return components;
@@ -138,94 +139,19 @@ public class XmlObservationStore extends AbstractObservationStore implements Agg
     // OBSERVATION STORE ///////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
-    public ExtractionResult getResults(String affectedSensorID, List<String> sensorIds, Set<Phenomenon> phenomenons, final Set<org.opengis.observation.sampling.SamplingFeature> samplingFeatures) throws DataStoreException {
-        if (affectedSensorID != null) {
-            LOGGER.warning("XMLObservation store does not allow to override sensor ID");
-        }
-        final ExtractionResult result = new ExtractionResult();
-        result.spatialBound.initBoundary();
+    protected List<Observation> getAllObservations(final List<String> sensorIDs) throws DataStoreException {
         final Object obj = readFile();
         if (obj instanceof ObservationCollection) {
             final ObservationCollection collection = (ObservationCollection)obj;
-            for (Observation obs : collection.getMember()) {
-                final AbstractObservation o = (AbstractObservation)obs;
-                final Process proc          =  o.getProcedure();
-                final ProcedureTree procedure = new ProcedureTree(proc.getHref(), proc.getName(), proc.getDescription(), "timeseries", "Component");
-                if (sensorIds == null || sensorIds.contains(procedure.id)) {
-                    if (!result.procedures.contains(procedure)) {
-                        result.procedures.add(procedure);
-                    }
-                    final PhenomenonProperty phenProp = o.getPropertyObservedProperty();
-                    final List<String> fields = OMUtils.getPhenomenonsFields(phenProp);
-                    for (String field : fields) {
-                        if (!result.fields.contains(field)) {
-                            result.fields.add(field);
-                        }
-                    }
-                    final Phenomenon phen = OMUtils.getPhenomenon(phenProp);
-                    if (!result.phenomenons.contains(phen)) {
-                        result.phenomenons.add(phen);
-                    }
-                    result.spatialBound.appendLocation(o.getSamplingTime(), o.getFeatureOfInterest());
-                    procedure.spatialBound.appendLocation(o.getSamplingTime(), o.getFeatureOfInterest());
-                    result.observations.add(o);
-                }
-            }
-
-        } else if (obj instanceof AbstractObservation) {
-            final AbstractObservation obs = (AbstractObservation)obj;
-            final Process proc            =  obs.getProcedure();
-            final ProcedureTree procedure = new ProcedureTree(proc.getHref(), proc.getName(), proc.getDescription(), "timeseries", "Component");
-            if (sensorIds == null || sensorIds.contains(procedure.id)) {
-                result.observations .add(obs);
-                final PhenomenonProperty phenProp = obs.getPropertyObservedProperty();
-                result.fields.addAll(OMUtils.getPhenomenonsFields(phenProp));
-                result.phenomenons.add(OMUtils.getPhenomenon(phenProp));
-                result.procedures.add(procedure);
-                result.spatialBound.appendLocation(obs.getSamplingTime(), obs.getFeatureOfInterest());
-                procedure.spatialBound.appendLocation(obs.getSamplingTime(), obs.getFeatureOfInterest());
-            }
-
+            return collection.getMember();
+        } else if (obj instanceof Observation) {
+            return Arrays.asList((Observation)obj);
         }
-        return result;
-    }
-
-    @Override
-    public List<ProcedureTree> getProcedures() throws DataStoreException {
-        final List<ProcedureTree> result = new ArrayList<>();
-        final Object obj = readFile();
-        if (obj instanceof ObservationCollection) {
-            final ObservationCollection collection = (ObservationCollection)obj;
-            for (Observation obs : collection.getMember()) {
-                final AbstractObservation o = (AbstractObservation)obs;
-                final Process proc          =  o.getProcedure();
-                final ProcedureTree procedure = new ProcedureTree(proc.getHref(), proc.getName(), proc.getDescription(), "Component", "timeseries");
-
-                if (!result.contains(procedure)) {
-                    result.add(procedure);
-                }
-                final PhenomenonProperty phenProp = o.getPropertyObservedProperty();
-                final List<String> fields = OMUtils.getPhenomenonsFields(phenProp);
-                for (String field : fields) {
-                    if (!procedure.fields.contains(field)) {
-                        procedure.fields.add(field);
-                    }
-                }
-                procedure.spatialBound.appendLocation(obs.getSamplingTime(), obs.getFeatureOfInterest());
-            }
-
-        } else if (obj instanceof AbstractObservation) {
-            final AbstractObservation obs = (AbstractObservation)obj;
-            final Process proc            =  obs.getProcedure();
-            final ProcedureTree procedure = new ProcedureTree(proc.getHref(), proc.getName(), proc.getDescription(), "Component", "timeseries");
-
-            final PhenomenonProperty phenProp = obs.getPropertyObservedProperty();
-            procedure.fields.addAll(OMUtils.getPhenomenonsFields(phenProp));
-            result.add(procedure);
-            procedure.spatialBound.appendLocation(obs.getSamplingTime(), obs.getFeatureOfInterest());
-        }
-        return result;
+        return new ArrayList<>();
     }
 
     private Object readFile() {
@@ -243,27 +169,12 @@ public class XmlObservationStore extends AbstractObservationStore implements Agg
         return null;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void close() throws DataStoreException {
         // do nothing
-    }
-
-    @Override
-    public TemporalGeometricPrimitive getTemporalBounds() {
-        final ExtractionResult result = new ExtractionResult();
-        result.spatialBound.initBoundary();
-        final Object obj = readFile();
-        if (obj instanceof ObservationCollection) {
-            final ObservationCollection collection = (ObservationCollection)obj;
-            for (Observation obs : collection.getMember()) {
-                result.spatialBound.addTime(obs.getSamplingTime());
-            }
-
-        } else if (obj instanceof AbstractObservation) {
-            final AbstractObservation obs = (AbstractObservation)obj;
-            result.spatialBound.addTime(obs.getSamplingTime());
-        }
-        return result.spatialBound.getTimeObject("2.0.0");
     }
 
     /**

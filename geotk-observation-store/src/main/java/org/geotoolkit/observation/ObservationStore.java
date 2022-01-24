@@ -50,14 +50,44 @@ public interface ObservationStore {
      */
     DataStoreProvider getProvider();
 
+    /**
+     * Returns information about the data store as a whole. The returned metadata object can contain
+     * information such as the spatiotemporal extent of all contained {@linkplain Resource resources},
+     * contact information about the creator or distributor, data quality, update frequency, usage constraints,
+     * file format and more.
+     *
+     * @return information about resources in the data store. Should not be {@code null}.
+     * @throws DataStoreException if an error occurred while reading the metadata.
+     *
+     */
     Metadata getMetadata() throws DataStoreException;
 
-    public abstract Set<GenericName> getProcedureNames();
+    /**
+     * Return the complete list of sensor identifiers.
+     *
+     * @return A list of sensor identifier.
+     */
+    public abstract Set<GenericName> getProcedureNames() throws DataStoreException;
 
+    /**
+     * Return the complete list of sensor description.
+     *
+     * @return A list of sensor description.
+     */
     public abstract List<ProcedureTree> getProcedures() throws DataStoreException;
 
-    public abstract Set<String> getPhenomenonNames();
+    /**
+     * Return the complete list of phenomons identifiers.
+     *
+     * @return A list of sensor identifier.
+     */
+    public abstract Set<String> getPhenomenonNames() throws DataStoreException;
 
+    /**
+     * Return the Global time span of the observations data.
+     *
+     * @return A time period or instant.
+     */
     public abstract TemporalGeometricPrimitive getTemporalBounds() throws DataStoreException;
 
     /**

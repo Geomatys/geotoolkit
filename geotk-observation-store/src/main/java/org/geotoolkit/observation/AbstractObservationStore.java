@@ -16,30 +16,48 @@
  */
 package org.geotoolkit.observation;
 
+import java.util.ArrayList;
 import org.geotoolkit.observation.model.ExtractionResult;
 import org.geotoolkit.observation.model.OMEntity;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.sis.metadata.ModifiableMetadata;
+import org.apache.sis.metadata.iso.DefaultIdentifier;
+import org.apache.sis.metadata.iso.DefaultMetadata;
+import org.apache.sis.metadata.iso.citation.DefaultCitation;
+import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
+import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.gml.xml.AbstractGeometry;
 import static org.geotoolkit.observation.AbstractObservationStoreFactory.*;
+import static org.geotoolkit.observation.OMUtils.OBSERVATION_QNAME;
 import static org.geotoolkit.observation.ObservationReader.ENTITY_TYPE;
+import org.geotoolkit.observation.xml.AbstractObservation;
+import org.geotoolkit.observation.xml.Process;
+import org.geotoolkit.sos.xml.ResponseModeType;
+import org.geotoolkit.swe.xml.PhenomenonProperty;
 import org.geotoolkit.util.NamesExt;
+import org.opengis.metadata.Metadata;
+import org.opengis.observation.Observation;
+import org.opengis.observation.Phenomenon;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.temporal.TemporalGeometricPrimitive;
 import org.opengis.util.GenericName;
 
 /**
+ * Basic implementation of Observation store.
  *
  * @author Guilhem Legal (Geomatys)
  */
@@ -53,6 +71,9 @@ public abstract class AbstractObservationStore extends DataStore implements Obse
         this.parameters = params;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Optional<ParameterValueGroup> getOpenParameters() {
         return Optional.ofNullable(parameters);
@@ -101,42 +122,176 @@ public abstract class AbstractObservationStore extends DataStore implements Obse
         } catch (ParameterNotFoundException ex) {}
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
-    public Set<GenericName> getProcedureNames() {
+    public Set<GenericName> getProcedureNames() throws DataStoreException {
         final Set<GenericName> names = new HashSet<>();
-        try {
-            for (String process : getReader().getEntityNames(Collections.singletonMap(ENTITY_TYPE, OMEntity.OBSERVED_PROPERTY))) {
-                names.add(NamesExt.create(process));
-            }
-        } catch (DataStoreException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+        for (String process : getReader().getEntityNames(Collections.singletonMap(ENTITY_TYPE, OMEntity.OBSERVED_PROPERTY))) {
+            names.add(NamesExt.create(process));
         }
         return names;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
-    public Set<String> getPhenomenonNames() {
-        try {
-            return new HashSet(getReader().getEntityNames(Collections.singletonMap(ENTITY_TYPE, OMEntity.OBSERVED_PROPERTY)));
-        } catch (DataStoreException ex) {
-            LOGGER.log(Level.WARNING, "Error while retrieving phenomenons", ex);
-        }
-        return new HashSet<>();
+    public Set<String> getPhenomenonNames() throws DataStoreException {
+        return new HashSet(getReader().getEntityNames(Collections.singletonMap(ENTITY_TYPE, OMEntity.OBSERVED_PROPERTY)));
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public ExtractionResult getResults() throws DataStoreException {
         return getResults(null, null, new HashSet<>(), new HashSet<>());
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public ExtractionResult getResults(final List<String> sensorIds) throws DataStoreException {
         return getResults(null, sensorIds, new HashSet<>(), new HashSet<>());
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public ExtractionResult getResults(String affectedSensorID, List<String> sensorIds) throws DataStoreException {
         return getResults(affectedSensorID, sensorIds, new HashSet<>(), new HashSet<>());
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public ExtractionResult getResults(final String affectedSensorId, final List<String> sensorIDs, Set<Phenomenon> phenomenons, final Set<org.opengis.observation.sampling.SamplingFeature> samplingFeatures) throws DataStoreException {
+        if (affectedSensorId != null) {
+            LOGGER.warning("This ObservationStore does not allow to override sensor ID");
+        }
+
+        final ExtractionResult result = new ExtractionResult();
+        result.spatialBound.initBoundary();
+
+        final List<Observation> observations = getAllObservations(sensorIDs);
+        for (Observation obs : observations) {
+            final AbstractObservation o = (AbstractObservation) obs;
+            final Process proc          =  o.getProcedure();
+            final ExtractionResult.ProcedureTree procedure = new ExtractionResult.ProcedureTree(proc.getHref(), proc.getName(), proc.getDescription(), "Component", "timeseries");
+            if (sensorIDs == null || sensorIDs.contains(procedure.id)) {
+                if (!result.procedures.contains(procedure)) {
+                    result.procedures.add(procedure);
+                }
+                final PhenomenonProperty phenProp = o.getPropertyObservedProperty();
+                final List<String> fields = OMUtils.getPhenomenonsFields(phenProp);
+                for (String field : fields) {
+                    if (!result.fields.contains(field)) {
+                        result.fields.add(field);
+                    }
+                }
+                final Phenomenon phen = OMUtils.getPhenomenon(phenProp);
+                if (!result.phenomenons.contains(phen)) {
+                    result.phenomenons.add(phen);
+                }
+                result.spatialBound.appendLocation(o.getSamplingTime(), o.getFeatureOfInterest());
+                procedure.spatialBound.appendLocation(o.getSamplingTime(), o.getFeatureOfInterest());
+                procedure.spatialBound.getHistoricalLocations().putAll(getSensorLocations(o.getProcedure().getHref(), "2.0.0"));
+                result.observations.add(o);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public List<ExtractionResult.ProcedureTree> getProcedures() throws DataStoreException {
+        final List<ExtractionResult.ProcedureTree> result = new ArrayList<>();
+
+        final List<Observation> observations = getAllObservations(new ArrayList<>());
+        for (Observation obs : observations) {
+            final AbstractObservation o = (AbstractObservation)obs;
+            final Process proc          =  o.getProcedure();
+            final ExtractionResult.ProcedureTree procedure = new ExtractionResult.ProcedureTree(proc.getHref(), proc.getName(), proc.getDescription(), "Component", "timeseries");
+
+            if (!result.contains(procedure)) {
+                result.add(procedure);
+            }
+            final PhenomenonProperty phenProp = o.getPropertyObservedProperty();
+            final List<String> fields = OMUtils.getPhenomenonsFields(phenProp);
+            for (String field : fields) {
+                if (!procedure.fields.contains(field)) {
+                    procedure.fields.add(field);
+                }
+            }
+            procedure.spatialBound.appendLocation(obs.getSamplingTime(), obs.getFeatureOfInterest());
+            procedure.spatialBound.getHistoricalLocations().putAll(getSensorLocations(proc.getHref(), "2.0.0"));
+        }
+        return result;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public TemporalGeometricPrimitive getTemporalBounds() throws DataStoreException {
+        final ExtractionResult result = new ExtractionResult();
+        result.spatialBound.initBoundary();
+        final List<Observation> observations = getAllObservations(new ArrayList<>());
+        for (Observation obs :observations) {
+            result.spatialBound.addTime(obs.getSamplingTime());
+        }
+        return result.spatialBound.getTimeObject("2.0.0");
+    }
+
+    /**
+     * Return A list of the observations associated with the specified sensors
+     * or all the observations if no sensor identifier is supplied.
+     *
+     * @param sensorIDs A filter on sensor identifiers. Can be empty.
+     *
+     * @return A list of observation.
+     * @throws DataStoreException If the observation extraction fails.
+     */
+    protected List<Observation> getAllObservations(final List<String> sensorIDs) throws DataStoreException {
+        final ObservationFilterReader currentFilter = (ObservationFilterReader) getFilter();
+        final Map<String, Object> hints = new HashMap<>();
+        hints.put("responseMode", ResponseModeType.INLINE);
+        hints.put("resultModel", OBSERVATION_QNAME);
+        currentFilter.init(OMEntity.OBSERVATION, hints);
+        currentFilter.setProcedure(sensorIDs);
+        return currentFilter.getObservations(hints);
+    }
+
+    /**
+     * return the locations list of a sensor over the time.
+     *
+     * @param sensorID Sensor identifier.
+     * @param version SOS version used to determine the xml binding.
+     *
+     * @return A map of time/location.
+     * @throws DataStoreException
+     */
+    protected Map<Date, AbstractGeometry> getSensorLocations(String sensorID, String version) throws DataStoreException {
+        return Collections.EMPTY_MAP;
+    }
+
+
+    protected static Metadata buildMetadata(final String name) {
+        final DefaultMetadata metadata = new DefaultMetadata();
+        final DefaultDataIdentification identification = new DefaultDataIdentification();
+        final NamedIdentifier identifier = new NamedIdentifier(new DefaultIdentifier(name));
+        final DefaultCitation citation = new DefaultCitation(name);
+        citation.setIdentifiers(Collections.singleton(identifier));
+        identification.setCitation(citation);
+        metadata.setIdentificationInfo(Collections.singleton(identification));
+        metadata.transitionTo(ModifiableMetadata.State.FINAL);
+        return metadata;
+    }
 }
