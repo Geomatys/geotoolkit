@@ -88,8 +88,7 @@ public class HGTStore extends DataStore implements GridCoverageResource, Resourc
 
     public HGTStore(final StorageConnector connector) throws DataStoreException {
         super(DataStores.getProviderById(HGTProvider.NAME), connector);
-        this.fileInput = connector.getStorageAs(Path.class);
-        connector.closeAllExcept(this.fileInput);
+        this.fileInput = connector.commit(Path.class, HGTProvider.NAME);
         this.parameters = Parameters.castOrWrap(HGTProvider.PARAMETERS_DESCRIPTOR.createValue());
         this.parameters.getOrCreate(HGTProvider.PATH).setValue(fileInput.toUri());
         this.resource = new Res();

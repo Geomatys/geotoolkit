@@ -114,7 +114,7 @@ public class MIFProvider extends DataStoreProvider implements ProviderOnFileSyst
 
     @Override
     public DataStore open(StorageConnector connector) throws DataStoreException {
-        final URI path = connector.getStorageAs(URI.class);
+        final URI path = connector.commit(URI.class, NAME);
         return new MIFStore(path);
     }
 

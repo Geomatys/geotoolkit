@@ -172,8 +172,8 @@
     <ucar.repository.url>https://artifacts.unidata.ucar.edu/repository/unidata-releases</ucar.repository.url>
 
     <!-- associated projects dependencies -->
-    <geoapi.version>4.0-M18</geoapi.version>
-    <sis.version>2.0-M0081</sis.version>
+    <geoapi.version>4.0-SNAPSHOT</geoapi.version>
+    <sis.version>2.0-SNAPSHOT</sis.version>
     <sis.build.helper.version>1.1</sis.build.helper.version>
     <sis.non-free.version>1.1</sis.non-free.version>
 
@@ -198,6 +198,7 @@
     <rxtx.version>2.2pre2</rxtx.version>
     <woodstox.version>6.0.0</woodstox.version>
     <xmlgraphics.version>2.3</xmlgraphics.version>
+    <antlr.version>4.9.3</antlr.version>
     <!-- @{argLine} necessary for jacoco generation, we must declare
          an empty property to avoid a surefire exception if we run any other
          maven phase which doesn't activate jacoco -->
@@ -335,6 +336,12 @@
           <groupId>io.netty</groupId>
           <artifactId>netty</artifactId>
           <version>${netty3.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>org.antlr</groupId>
+          <artifactId>antlr4-runtime</artifactId>
+          <version>${antlr.version}</version>
+          <scope>compile</scope>
       </dependency>
 
       <!-- XML -->

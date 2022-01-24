@@ -284,7 +284,7 @@ public class ShapefileFolderProvider extends DataStoreProvider {
         }
 
         try {
-            final Object locationValue = connector.getStorageAs(((ParameterDescriptor)desc).getValueClass());
+            final Object locationValue = connector.commit(((ParameterDescriptor)desc).getValueClass(), NAME);
             final ParameterValueGroup params = getOpenParameters().createValue();
             params.parameter(LOCATION).setValue(locationValue);
 

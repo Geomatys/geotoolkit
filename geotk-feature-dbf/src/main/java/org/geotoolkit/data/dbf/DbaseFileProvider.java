@@ -118,7 +118,7 @@ public class DbaseFileProvider extends DataStoreProvider implements ProviderOnFi
     @Override
     public DataStore open(StorageConnector connector) throws DataStoreException {
         try {
-            return new DbaseFileStore(connector.getStorageAs(Path.class));
+            return new DbaseFileStore(connector.commit(Path.class, NAME));
         } catch (MalformedURLException | IllegalArgumentException ex) {
             throw new DataStoreException(ex.getMessage(), ex);
         }

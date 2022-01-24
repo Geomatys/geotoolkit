@@ -63,7 +63,7 @@ public class LandsatStore extends org.apache.sis.storage.landsat.LandsatStore im
     };
 
     public LandsatStore(final StorageConnector connector) throws DataStoreException {
-        this(connector, connector.getStorageAs(Path.class));
+        this(connector, connector.commit(Path.class, LandsatProvider.NAME));
     }
     /**
      * Build Landsat Coverage store.

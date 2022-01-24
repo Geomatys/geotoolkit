@@ -152,7 +152,7 @@ public abstract class AbstractClientProvider extends DataStoreProvider {
     @Override
     public DataStore open(StorageConnector connector) throws DataStoreException {
         try {
-            final URL url = connector.getStorageAs(URL.class);
+            final URL url = connector.commit(URL.class, getShortName());
             Parameters parameters = Parameters.castOrWrap(getOpenParameters().createValue());
             parameters.getOrCreate(URL).setValue(url);
             return open(parameters);

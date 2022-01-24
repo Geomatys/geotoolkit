@@ -81,7 +81,7 @@ public class KMLProvider extends AbstractProvider {
 
     @Override
     public DataStore open(StorageConnector connector) throws DataStoreException {
-        final URI uri = connector.getStorageAs(URI.class);
+        final URI uri = connector.commit(URI.class, NAME);
         if (uri == null) {
             throw new DataStoreException("Unsupported parameters.");
         }

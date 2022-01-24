@@ -51,26 +51,28 @@ public class HeuristicSampleDimensionBuilder extends SampleDimension.Builder {
      * the background value is left unset.
      */
     @Override
-    protected Number defaultBackground() {
-        final Logger logger = Logging.getLogger("org.apache.sis.coverage");
-        try {
-            Optional<BackgroundCandidate> first = categories().stream()
-                    .map(this::score)
-                    .filter(it -> it != null && it.score > 0)
-                    .sorted(Comparator.comparing(BackgroundCandidate::getScore).reversed())
-                    .findFirst();
-            if (first.isPresent()) {
-                final BackgroundCandidate promoted = first.get();
-                logger.log(Level.FINE,
-                        "No background value set by user. Defaulting to {}." +
-                                "Use `setBackground()` to short this automatic choice.",
-                        promoted.category);
-                return promoted.category.getSampleRange().getMinValue();
+    public SampleDimension build() {
+        if (getBackground() == null) {
+            final Logger logger = Logging.getLogger("org.apache.sis.coverage");
+            try {
+                Optional<BackgroundCandidate> first = categories().stream()
+                        .map(this::score)
+                        .filter(it -> it != null && it.score > 0)
+                        .sorted(Comparator.comparing(BackgroundCandidate::getScore).reversed())
+                        .findFirst();
+                if (first.isPresent()) {
+                    final BackgroundCandidate promoted = first.get();
+                    logger.log(Level.FINE,
+                            "No background value set by user. Defaulting to {}." +
+                                    "Use `setBackground()` to short this automatic choice.",
+                            promoted.category);
+                    setBackground(promoted.category.getSampleRange().getMinValue());
+                }
+            } catch (RuntimeException e) {
+                logger.log(Level.FINEST, "Defaulting background value failed", e);
             }
-        } catch (RuntimeException e) {
-            logger.log(Level.FINEST, "Defaulting background value failed", e);
         }
-        return null;
+        return super.build();
     }
 
     /**
