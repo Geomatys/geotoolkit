@@ -157,7 +157,7 @@ public class VI3GStore extends DataStore implements GridCoverageResource, Resour
 
     public VI3GStore(final StorageConnector connector) throws DataStoreException {
         super(DataStores.getProviderById(VI3GProvider.NAME), connector);
-        this.fileInput = connector.getStorageAs(Path.class);
+        this.fileInput = connector.commit(Path.class, VI3GProvider.NAME);
         this.parameters = Parameters.castOrWrap(VI3GProvider.PARAMETERS_DESCRIPTOR.createValue());
         this.parameters.getOrCreate(VI3GProvider.PATH).setValue(fileInput.toUri());
         this.resource = new Res();

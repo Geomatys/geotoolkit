@@ -104,7 +104,7 @@ public class NetcdfObservationStoreFactory extends AbstractObservationStoreFacto
 
     @Override
     public DataStore open(StorageConnector sc) throws DataStoreException {
-        final Path p = sc.getStorageAs(Path.class);
+        final Path p = sc.commit(Path.class, NAME);
         return new NetcdfObservationStore(p);
     }
 }

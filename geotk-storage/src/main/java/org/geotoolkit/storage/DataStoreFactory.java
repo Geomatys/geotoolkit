@@ -97,7 +97,7 @@ public abstract class DataStoreFactory extends DataStoreProvider {
         }
 
         try {
-            final Object locationValue = connector.getStorageAs(((ParameterDescriptor)desc).getValueClass());
+            final Object locationValue = connector.commit(((ParameterDescriptor)desc).getValueClass(), getShortName());
             final ParameterValueGroup params = getOpenParameters().createValue();
             params.parameter(LOCATION).setValue(locationValue);
 

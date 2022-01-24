@@ -99,20 +99,17 @@ public class XMLCoverageStoreFactory extends DataStoreProvider {
     public ProbeResult probeContent(StorageConnector connector) throws DataStoreException {
         final Version version = new Version(XMLCoverageResource.CURRENT_VERSION);
         final String mime = "application/"+NAME;
-        final Path root = connector.getStorageAs(Path.class);
         final String ext = connector.getFileExtension();
         if (ext != null && ext.equalsIgnoreCase("xml")) {
             return new ProbeResult(true, mime, version);
         }
-
         return new ProbeResult(false, mime, version);
     }
 
     @Override
     public DataStore open(StorageConnector connector) throws DataStoreException {
         try {
-            final Path path = connector.getStorageAs(Path.class);
-            connector.closeAllExcept(path);
+            final Path path = connector.commit(Path.class, NAME);
             return new XMLCoverageStore(path);
         } catch (IOException | URISyntaxException ex) {
             throw new DataStoreException(ex.getMessage(), ex);

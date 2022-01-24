@@ -175,8 +175,7 @@ public class FileCoverageProvider extends DataStoreProvider {
 
     @Override
     public DataStore open(StorageConnector connector) throws DataStoreException {
-        final URI path = connector.getStorageAs(URI.class);
-        if (path == null) throw new DataStoreException("Connector is not an URI");
+        final URI path = connector.commit(URI.class, NAME);
         return new FileCoverageStore(path, null);
     }
 

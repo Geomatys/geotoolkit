@@ -133,7 +133,7 @@ public class WFSProvider extends DataStoreProvider {
 
     @Override
     public WebFeatureClient open(StorageConnector connector) throws DataStoreException {
-        final URL url = connector.getStorageAs(URL.class);
+        final URL url = connector.commit(URL.class, NAME);
         final Parameters parameters = Parameters.castOrWrap(PARAMETERS_DESCRIPTOR.createValue());
         parameters.getOrCreate(AbstractClientProvider.URL).setValue(url);
         return open(parameters);
