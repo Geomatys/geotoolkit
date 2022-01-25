@@ -469,7 +469,7 @@ public class XmlFeatureTest extends org.geotoolkit.test.TestBase {
         expResult = expResult.replace("EPSG_VERSION", EPSG_VERSION);
 
         String s = temp.toString();
-        s = s.replaceAll("timeStamp=\"[^\"]*\" ", "timeStamp=\"\" ");
+        s = s.replaceAll("timeStamp=\"[^\"]*\"", "timeStamp=\"\"");
         DomCompare.compare(expResult, s);
     }
 
