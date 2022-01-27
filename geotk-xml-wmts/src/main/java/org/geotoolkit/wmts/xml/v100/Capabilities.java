@@ -123,7 +123,7 @@ public class Capabilities extends CapabilitiesBaseType implements WMTSResponse {
                     for (URLTemplateType template : layer.getResourceURL()) {
                         if (template.getTemplate() != null) {
                             final String templateURL = template.getTemplate();
-                            final int index = templateURL.indexOf(layer.getIdentifier().getValue()) - 1;
+                            final int index = templateURL.lastIndexOf(layer.getIdentifier().getValue()) - 1;
                             if (index != -1) {
                                 final String s = templateURL.substring(index);
                                 template.setTemplate(url.substring(0, url.length() - 1) + s);
@@ -146,7 +146,7 @@ public class Capabilities extends CapabilitiesBaseType implements WMTSResponse {
      */
     public List<Themes> getThemes() {
         if (themes == null) {
-            themes = new ArrayList<Themes>();
+            themes = new ArrayList<>();
         }
         return this.themes;
     }
@@ -161,7 +161,7 @@ public class Capabilities extends CapabilitiesBaseType implements WMTSResponse {
      */
     public List<OnlineResourceType> getWSDL() {
         if (wsdl == null) {
-            wsdl = new ArrayList<OnlineResourceType>();
+            wsdl = new ArrayList<>();
         }
         return this.wsdl;
     }
@@ -175,7 +175,7 @@ public class Capabilities extends CapabilitiesBaseType implements WMTSResponse {
      */
     public List<OnlineResourceType> getServiceMetadataURL() {
         if (serviceMetadataURL == null) {
-            serviceMetadataURL = new ArrayList<OnlineResourceType>();
+            serviceMetadataURL = new ArrayList<>();
         }
         return this.serviceMetadataURL;
     }

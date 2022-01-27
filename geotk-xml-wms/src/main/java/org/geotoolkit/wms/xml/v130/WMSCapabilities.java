@@ -30,6 +30,7 @@ import org.geotoolkit.wms.xml.AbstractCapability;
 import org.geotoolkit.wms.xml.AbstractLayer;
 import org.geotoolkit.wms.xml.AbstractService;
 import org.geotoolkit.wms.xml.AbstractWMSCapabilities;
+import static org.geotoolkit.wms.xml.WMSBindingUtilities.updateLayerURL;
 import org.geotoolkit.wms.xml.WMSResponse;
 
 
@@ -145,29 +146,6 @@ public class WMSCapabilities implements AbstractWMSCapabilities, WMSResponse {
             if (mainLayer != null) {
                 updateLayerURL(url, mainLayer);
             }
-        }
-    }
-
-    private void updateLayerURL(final String url, final Layer layer) {
-        if (layer.getStyle() != null) {
-            for (Style style : layer.getStyle()) {
-                if (style.getLegendURL() != null) {
-                    for (LegendURL legend : style.getLegendURL()) {
-                        if (legend.getOnlineResource() != null &&
-                            legend.getOnlineResource().getHref() != null) {
-                            final String legendURL = legend.getOnlineResource().getHref();
-                            final int index = legendURL.indexOf('?');
-                            if (index != -1) {
-                                final String s = legendURL.substring(index + 1);
-                                legend.getOnlineResource().setHref(url + s);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        for (Layer childLayer : layer.getLayer()) {
-            updateLayerURL(url, childLayer);
         }
     }
 
