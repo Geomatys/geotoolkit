@@ -16,13 +16,13 @@
  */
 package org.geotoolkit.coverage.grid;
 
+import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import static java.lang.Double.NEGATIVE_INFINITY;
 import static java.lang.Double.NaN;
 import static java.lang.Double.POSITIVE_INFINITY;
 import static java.lang.Double.isNaN;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -56,6 +56,7 @@ import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.image.palette.IIOListeners;
 import org.geotoolkit.image.palette.IIOReadProgressAdapter;
 import static org.geotoolkit.internal.InternalUtilities.debugEquals;
+
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.LinearInterpolator1D;
 import org.geotoolkit.resources.Errors;
@@ -101,9 +102,9 @@ import org.opengis.util.FactoryException;
  * an array of {@link Element} objects, which will load the coverage content only when first
  * needed.
  * <p>
- * Each element usually have the same {@linkplain Coverage#getEnvelope() envelope},
+ * Each element usually have the same envelope,
  * but this is not a requirement. Elements are not required to share the same
- * {@linkplain Coverage#getCoordinateReferenceSystem() Coordinate Reference System} neither,
+ * {@linkplain GridCoverage#getCoordinateReferenceSystem() Coordinate Reference System} neither,
  * but they are required to handle the transformation from this coverage CRS to their CRS.
  *
  * {@section Usage}
@@ -126,9 +127,8 @@ import org.opengis.util.FactoryException;
 public class GridCoverageStack extends org.geotoolkit.coverage.grid.GridCoverage {
 
     /**
-     * Reference to a single <var>n</var> dimensional coverage in a (<var>n</var>+1) dimensional
-     * {@linkplain CoverageStack coverage stack}. Each element is expected to extents over a range
-     * of <var>z</var> values in the dimension handled by the {@link CoverageStack} container.
+     * Reference to a single <var>n</var> dimensional coverage in a (<var>n</var>+1) dimensional coverage stack.
+     * Each element is expected to extents over a range of <var>z</var> values in the dimension handled by the container.
      * <p>
      * {@code Element} implementations shall be able to provide their {@linkplain #getZRange()
      * range of z-values} without loading the coverage data. If an expensive loading is required,
@@ -190,8 +190,7 @@ public class GridCoverageStack extends org.geotoolkit.coverage.grid.GridCoverage
         /**
          * Returns the coverage envelope, or {@code null} if this information is too expensive to
          * compute. The envelope may or may not contains an extra dimension for the
-         * {@linkplain #getZRange range of z values}, since the {@link CoverageStack} class is
-         * tolerant in this regard.
+         * {@linkplain #getZRange range of z values}, since this class is tolerant in this regard.
          *
          * {@section Performance note}
          * This method shall not load a large amount of data, since it may be invoked soon.
@@ -234,7 +233,7 @@ public class GridCoverageStack extends org.geotoolkit.coverage.grid.GridCoverage
          * for loading data.
          *
          * {@section Performance note}
-         * The default {@link CoverageStack} implementation caches only the last coverages used.
+         * The default implementation caches only the last coverages used.
          * Consequently, more sophisticated coverage caching (if desired) is implementor
          * responsibility.
          *
@@ -247,9 +246,9 @@ public class GridCoverageStack extends org.geotoolkit.coverage.grid.GridCoverage
     }
 
     /**
-     * A convenience adapter class for wrapping a pre-loaded {@link Coverage} into an
+     * A convenience adapter class for wrapping a pre-loaded {@link GridCoverage} into an
      * {@link Element} object. This adapter provides basic implementation for all methods,
-     * but they require a fully constructed {@link Coverage} object.
+     * but they require a fully constructed {@link GridCoverage} object.
      * <p>
      * Subclasses are strongly encouraged to provides alternative implementation loading
      * only the minimum amount of data required for each method.
@@ -332,17 +331,12 @@ public class GridCoverageStack extends org.geotoolkit.coverage.grid.GridCoverage
         }
 
         /**
-         * Returns the coverage name. The default implementation delegates to the
-         * {@linkplain #getCoverage underlying coverage} if it is an instance of
-         * {@link org.geotoolkit.coverage.grid.GridCoverage}.
+         * Returns the coverage name. Retro-compatibility feature: should be removed in the future.
          */
         @Override
         public String getName() throws IOException {
             Object coverage = getCoverage(null);
-            if (coverage instanceof org.geotoolkit.coverage.grid.GridCoverage)  {
-                coverage = ((org.geotoolkit.coverage.grid.GridCoverage) coverage).getName();
-            }
-            return coverage.toString();
+            return "stack element at "+getZRange();
         }
 
         @Override
@@ -542,9 +536,8 @@ public class GridCoverageStack extends org.geotoolkit.coverage.grid.GridCoverage
     /**
      * Constructs a new coverage stack with all the supplied elements. Every coverages
      * <strong>must</strong> specify their <var>z</var> range in the last dimension of
-     * their {@linkplain Coverage#getEnvelope envelope}, and at least one of those envelopes
-     * shall be {@linkplain Envelope#getCoordinateReferenceSystem associated with a CRS}
-     * (the later is always the case with Geotk implementations of {@link Coverage}).
+     * their envelope, and at least one of those envelopes
+     * shall be {@linkplain Envelope#getCoordinateReferenceSystem associated with a CRS}.
      * The example below constructs two dimensional grid coverages (to be given as the
      * {@code coverages} argument) for the same geographic area, but at different elevations:
      *
@@ -570,7 +563,7 @@ public class GridCoverageStack extends org.geotoolkit.coverage.grid.GridCoverage
      * loading data only when needed.
      *
      * @param  name      The name for this coverage.
-     * @param  coverages All {@link Coverage} elements for this stack.
+     * @param  coverages All {@link GridCoverage} elements for this stack.
      * @throws IOException if an I/O operation was required and failed.
      */
     public GridCoverageStack(final CharSequence name, final Collection<? extends GridCoverage> coverages)
@@ -580,9 +573,9 @@ public class GridCoverageStack extends org.geotoolkit.coverage.grid.GridCoverage
     }
 
     /**
-     * Same as {@link #CoverageStack(CharSequence, java.util.Collection)} with specified zDimension.
+     * Same as {@link #GridCoverageStack(CharSequence, java.util.Collection)} with specified zDimension.
      * @param name      The name for this coverage.
-     * @param coverages All {@link Coverage} elements for this stack.
+     * @param coverages All {@link GridCoverage} elements for this stack.
      * @param zDimension Dimension index in CRS where Z varies. If null, use the last dimension
      * @throws IOException if an I/O operation was required and failed.
      */
@@ -677,8 +670,7 @@ public class GridCoverageStack extends org.geotoolkit.coverage.grid.GridCoverage
                           final Element[] elements,
                           final Integer zDimension) throws IOException, TransformException, FactoryException
     {
-        super(name,
-                buildGridGeometry(
+        super(buildGridGeometry(
                     elements,
                     envelope.getCoordinateReferenceSystem(),
                     zDimension != null ? zDimension  : envelope.getDimension() - 1
@@ -700,7 +692,7 @@ public class GridCoverageStack extends org.geotoolkit.coverage.grid.GridCoverage
      * @param source The stack to copy.
      */
     protected GridCoverageStack(final CharSequence name, final GridCoverageStack source) {
-        super(name, source);
+        super(source);
         // TODO: Put synchronization before the call to super(...) if Sun fixes RFE #4093999
         // ("Relax constraint on placement of this()/super() call in constructors").
         synchronized (source) {
@@ -1077,14 +1069,6 @@ public class GridCoverageStack extends org.geotoolkit.coverage.grid.GridCoverage
     }
 
     /**
-     * Returns the bounding box for the coverage domain in coordinate system coordinates.
-     */
-    @Override
-    public Envelope getEnvelope() {
-        return envelope.clone();
-    }
-
-    /**
      * Snaps the specified coordinate point to the coordinate of the nearest voxel available in
      * this coverage. Invoking any {@code evaluate(...)} method with snapped coordinates will
      * return non-interpolated values.
@@ -1347,7 +1331,7 @@ public class GridCoverageStack extends org.geotoolkit.coverage.grid.GridCoverage
         } else {
             Zp = Z;
         }
-        throw new PointOutsideCoverageException(Errors.format(Errors.Keys.ZvalueOutsideCoverage_2, getName(), Zp));
+        throw new PointOutsideCoverageException(Errors.format(Errors.Keys.ZvalueOutsideCoverage_2, "stack", Zp));
     }
 
     /**
@@ -1610,31 +1594,4 @@ public class GridCoverageStack extends org.geotoolkit.coverage.grid.GridCoverage
             }
         }
     }
-
-    @Override
-    public List<GridCoverage> getSources() {
-        return Collections.emptyList();
-    }
-
-    @Override
-    public GridCoverage forConvertedValues(boolean converted) {
-        final List<Element> celements = new ArrayList<>();
-        for (Element ele : elements) {
-            if (ele instanceof Adapter) {
-                final Adapter ad = (Adapter) ele;
-                final GridCoverage cv = ad.coverage.forConvertedValues(converted);
-                final Adapter adap = new Adapter(cv, ad.range, ad.center);
-                celements.add(adap);
-            } else {
-                throw new BackingStoreException("Only Adapter element instanced supported");
-            }
-        }
-
-        try {
-            return new GridCoverageStack(getName(), getCoordinateReferenceSystem(), celements, zDimension);
-        } catch (IOException | TransformException | FactoryException ex) {
-            throw new BackingStoreException(ex.getMessage(), ex);
-        }
-    }
-
 }
