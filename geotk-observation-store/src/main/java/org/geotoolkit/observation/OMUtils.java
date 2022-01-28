@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+import javax.xml.namespace.QName;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.gml.xml.AbstractFeature;
 import org.geotoolkit.gml.xml.BoundingShape;
@@ -76,6 +77,9 @@ import org.opengis.observation.Process;
  * @author Guilhem Legal (Geomatys)
  */
 public class OMUtils {
+
+    public static final String OM_NAMESPACE = "http://www.opengis.net/om/1.0";
+    public static final QName OBSERVATION_QNAME = new QName(OM_NAMESPACE, "Observation", "om");
 
     public static final String RESPONSE_FORMAT_V100 = "text/xml; subtype=\"om/1.0.0\"";
     public static final String RESPONSE_FORMAT_V200 = "http://www.opengis.net/om/2.0";
