@@ -16,9 +16,11 @@
  */
 package org.geotoolkit.storage.coverage;
 
-import java.io.IOException;
-import java.util.ArrayList;
+import java.awt.image.RenderedImage;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridDerivation;
 import org.apache.sis.coverage.grid.GridExtent;
@@ -31,13 +33,12 @@ import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.event.StoreListeners;
-import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
+import org.opengis.coverage.CannotEvaluateException;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.TransformException;
-import org.opengis.util.FactoryException;
 
 /**
  * Simplified GridCoverageReader which ensures the given GridCoverageReadParam
@@ -85,8 +86,7 @@ public abstract class GeoreferencedGridCoverageResource extends AbstractGridReso
     /**
      * Read a coverage with defined image area.
      *
-     * @param areaLower readInGridCRS lower corner, inclusive
-     * @param areaUpper readInGridCRS upper corner, exclusive
+     * @param extent Extent representing selected domain in source (full-resolution) grid. Never null.
      * @param subsampling image subsampling in pixels
      */
     protected GridCoverage readInGridCRS(GridGeometry resultGrid, GridExtent extent, int[] subsampling, int ... range)
@@ -96,41 +96,16 @@ public abstract class GeoreferencedGridCoverageResource extends AbstractGridReso
 //                int[] areaUpper
 
         // find if we need to readInGridCRS more then one slice
-        int cubeDim = -1;
-        for (int i=0; i<subsampling.length; i++) {
-            final long width = (extent.getHigh(i)+1 - extent.getLow(i) + subsampling[i]-1 ) / subsampling[i];
-            if (i>1 && width>1) {
-                cubeDim = i;
-                break;
-            }
-        }
+        final long unsqueezableDimensions = IntStream.range(0, extent.getDimension())
+                .mapToLong(idx -> extent.getSize(idx) / subsampling[idx])
+                .filter(size -> size > 1)
+                .count();
 
-        if (cubeDim == -1) {
+        if (unsqueezableDimensions < 3) {
             //read a single slice
             return readGridSlice(resultGrid, getLow(extent), getHigh(extent), subsampling);
         } else {
-            //read an Nd cube
-            final List<GridCoverage> coverages = new ArrayList<>();
-            final long lower = extent.getLow(cubeDim);
-            final long upper = extent.getHigh(cubeDim) +1;
-            for(long i=lower;i<upper;i++){
-                final long[] low = extent.getLow().getCoordinateValues();
-                final long[] high = extent.getHigh().getCoordinateValues();
-                low[cubeDim] = i;
-                high[cubeDim] = i;
-                final GridExtent subExtent = new GridExtent(null, low, high, true);
-
-                final GridGeometry subGrid = new GridGeometry(subExtent, PixelInCell.CELL_CENTER,
-                        resultGrid.getGridToCRS(PixelInCell.CELL_CENTER), resultGrid.getCoordinateReferenceSystem());
-
-                coverages.add(readInGridCRS(subGrid, subExtent, subsampling));
-            }
-
-            try {
-                return new GridCoverageStack(getIdentifier().toString(), coverages, cubeDim);
-            } catch (IOException | TransformException | FactoryException ex) {
-                throw new DataStoreException(ex.getMessage(), ex);
-            }
+            return new GridCoverageSelection(resultGrid, getSampleDimensions(), subsampling, range);
         }
     }
 
@@ -198,5 +173,32 @@ public abstract class GeoreferencedGridCoverageResource extends AbstractGridReso
         final MathTransform ssToCrs = MathTransforms.concatenate(ssToGrid, gridGeom.getGridToCRS(PixelInCell.CELL_CORNER));
         final GridExtent extent = new GridExtent(null, null, outExtent, false);
         return new GridGeometry(extent, PixelInCell.CELL_CORNER, ssToCrs, gridGeom.getCoordinateReferenceSystem());
+    }
+
+    private final class GridCoverageSelection extends GridCoverage {
+
+        final int[] subsampling;
+        final int[] bands;
+
+        private GridCoverageSelection(GridGeometry domain, List<? extends SampleDimension> ranges, int[] subsampling, int[] bands) {
+            super(domain, (bands == null || bands.length < 1) ? ranges : IntStream.of(bands).mapToObj(ranges::get).collect(Collectors.toList()));
+            this.subsampling = subsampling;
+            this.bands = bands;
+        }
+
+        @Override
+        public RenderedImage render(GridExtent sliceExtent) throws CannotEvaluateException {
+            final GridGeometry targetGeometry = getGridGeometry().derive().subgrid(sliceExtent).build();
+            try {
+                final GridExtent fullDomainIntersection = GeoreferencedGridCoverageResource.this.getGridGeometry().derive()
+                        .subgrid(targetGeometry)
+                        .getIntersection();
+
+                final GridCoverage coverage = readGridSlice(targetGeometry, getLow(fullDomainIntersection), getHigh(fullDomainIntersection), subsampling, bands);
+                return coverage.render(null);
+            } catch (DataStoreException e) {
+                throw new CannotEvaluateException("Error while loading slice", e);
+            }
+        }
     }
 }
