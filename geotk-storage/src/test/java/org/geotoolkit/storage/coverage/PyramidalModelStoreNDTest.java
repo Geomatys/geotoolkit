@@ -221,20 +221,10 @@ public abstract class PyramidalModelStoreNDTest <T extends TiledResource & org.a
         assertEquals(CORNER_LAT,   env.getMaximum(1), DELTA);//-- -90
         assertEquals( 46.58,       env.getMaximum(2), DELTA);
 
-
-        assertTrue(coverage instanceof GridCoverageStack);
-        final GridCoverageStack stack = (GridCoverageStack) coverage;
-        final List<GridCoverage> lowerCovs = stack.coveragesAt(-15);
-        final List<GridCoverage> upperCovs = stack.coveragesAt(46.58);
-        assertNotNull(lowerCovs);
-        assertNotNull(upperCovs);
-        assertEquals(1, lowerCovs.size());
-        assertEquals(1, upperCovs.size());
-
         //expecting image from mosaic with min resolution and vertical -15
-        checkCoverage(lowerCovs.get(0), 40, 30, colors[0][1], CORNER_LONG, -160, 75, CORNER_LAT, CORNER_V[0], -14);
+        checkCoverage(coverage, 40, 30, colors[0][1], CORNER_LONG, -160, 75, CORNER_LAT, CORNER_V[0], -14);
         //expecting image from mosaic with min resolution and vertical 46.58
-        checkCoverage(upperCovs.get(0), 40, 30, colors[1][1], CORNER_LONG, -160, 75, CORNER_LAT, CORNER_V[1], 47.58);
+        checkCoverage(coverage, 40, 30, colors[1][1], CORNER_LONG, -160, 75, CORNER_LAT, CORNER_V[1], 47.58);
     }
 
     /**
@@ -295,15 +285,11 @@ public abstract class PyramidalModelStoreNDTest <T extends TiledResource & org.a
      */
     private void checkCoverage(GridCoverage coverage, int width, int height, int[][] colors, double... envelope){
         assertTrue(Utilities.equalsApproximately(crs, coverage.getCoordinateReferenceSystem()));
-        Envelope env = coverage.getGridGeometry().getEnvelope();
-        assertEquals(envelope[0], env.getMinimum(0), DELTA);
-        assertEquals(envelope[1], env.getMaximum(0), DELTA);
-        assertEquals(envelope[2], env.getMinimum(1), DELTA);
-        assertEquals(envelope[3], env.getMaximum(1), DELTA);
-        assertEquals(envelope[4], env.getMinimum(2), DELTA);
-        assertEquals(envelope[5], env.getMaximum(2), DELTA);
+        final GeneralEnvelope roi = new GeneralEnvelope(coverage.getCoordinateReferenceSystem());
+        roi.setEnvelope(envelope);
+        final GridGeometry domain = coverage.getGridGeometry().derive().subgrid(roi).build();
 
-        final RenderedImage img = coverage.render(null);
+        final RenderedImage img = coverage.render(domain.getExtent());
         final Raster raster = img.getData();
         assertEquals(width,  img.getWidth());
         assertEquals(height, img.getHeight());
