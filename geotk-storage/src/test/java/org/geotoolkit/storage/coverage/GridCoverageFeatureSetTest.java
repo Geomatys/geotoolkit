@@ -19,6 +19,7 @@ package org.geotoolkit.storage.coverage;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
+import java.awt.image.DataBufferInt;
 import java.awt.image.WritableRaster;
 import java.io.IOException;
 import java.util.Arrays;
@@ -26,6 +27,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.BufferedGridCoverage;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.coverage.grid.GridExtent;
@@ -34,10 +36,9 @@ import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.crs.DefaultCompoundCRS;
-import org.apache.sis.referencing.operation.matrix.Matrix4;
+import org.apache.sis.referencing.operation.matrix.Matrices;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.geometry.jts.coordinatesequence.LiteCoordinateSequence;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.internal.feature.TypeConventions;
@@ -48,6 +49,7 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureAssociationRole;
 import org.opengis.feature.FeatureType;
+import org.opengis.metadata.spatial.DimensionNameType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
@@ -103,7 +105,7 @@ public class GridCoverageFeatureSetTest {
         assertEquals("Coverage",coverageType.getName().toString());
         assertTrue(TypeConventions.COVERAGE_TYPE.isAssignableFrom(coverageType));
 
-        assertEquals("Record",recordType.getName().toString());
+        assertEquals("Record",recordType.getName().tip().toString());
         assertTrue(TypeConventions.COVERAGE_RECORD_TYPE.isAssignableFrom(recordType));
 
         //convert coverage to feature
@@ -163,7 +165,7 @@ public class GridCoverageFeatureSetTest {
         assertEquals("Coverage",coverageType.getName().toString());
         assertTrue(TypeConventions.COVERAGE_TYPE.isAssignableFrom(coverageType));
 
-        assertEquals("Record",recordType.getName().toString());
+        assertEquals("Record",recordType.getName().tip().toString());
         assertTrue(TypeConventions.COVERAGE_RECORD_TYPE.isAssignableFrom(recordType));
 
         //convert coverage to feature
@@ -229,58 +231,31 @@ public class GridCoverageFeatureSetTest {
         sdb.addQuantitative("qualityCat", NumberRange.create(0, true, 100, true), (MathTransform1D) MathTransforms.linear(1, 0), null);
         final SampleDimension sdim2 = sdb.build();
 
-        final GridCoverage slice1;
-        {//create first slice
-            final BufferedImage image1 = BufferedImages.createImage(2, 2, 2, DataBuffer.TYPE_INT);
-            final WritableRaster raster1 = image1.getRaster();
-            raster1.setPixel(0, 0, new int[]{10,2});
-            raster1.setPixel(1, 0, new int[]{30,4});
-            raster1.setPixel(0, 1, new int[]{50,6});
-            raster1.setPixel(1, 1, new int[]{70,8});
+        final int width = 2, height = 2, depth = 2, nbSamples = 2;
 
-            final Matrix matrix = new Matrix4(
-                    2, 0, 0, 31,
-                    0, 2, 0, 11,
-                    0, 0, 1, 100,
-                    0, 0, 0, 1);
-            final MathTransform gridToCrs = MathTransforms.linear(matrix);
-            final GridGeometry gg = new GridGeometry(new GridExtent(null, null, new long[]{2,2,1}, false), PixelInCell.CELL_CENTER, gridToCrs, crs3d);
+        // Cube geometry
+        final GridExtent cubeGrid = new GridExtent(
+                new DimensionNameType[]{DimensionNameType.COLUMN, DimensionNameType.ROW, DimensionNameType.VERTICAL},
+                new long[3],
+                new long[]{width, height, depth}, false);
+        final MathTransform cubeGrid2Crs = MathTransforms.linear(Matrices.create(4, 4, new double[] {
+                2, 0, 0, 31,
+                0, 2, 0, 11,
+                0, 0, 1, 100,
+                0, 0, 0, 1
+        }));
+        final GridGeometry domain = new GridGeometry(cubeGrid, PixelInCell.CELL_CENTER, cubeGrid2Crs, crs3d);
+        final int[] values = {
+                // z = 0
+                10, 2,  30, 4,
+                50, 6,  70, 8,
 
-            final GridCoverageBuilder gcb = new GridCoverageBuilder();
-            gcb.setValues(image1);
-            gcb.setDomain(gg);
-            gcb.setRanges(sdim1,sdim2);
-            slice1 = gcb.build();
-        }
+                // z = 1
+                20, 3,  40, 5,
+                60, 7,  80,9
+        };
 
-        final GridCoverage slice2;
-        {//create first slice
-            final BufferedImage image1 = BufferedImages.createImage(2, 2, 2, DataBuffer.TYPE_INT);
-            final WritableRaster raster1 = image1.getRaster();
-            raster1.setPixel(0, 0, new int[]{20,3});
-            raster1.setPixel(1, 0, new int[]{40,5});
-            raster1.setPixel(0, 1, new int[]{60,7});
-            raster1.setPixel(1, 1, new int[]{80,9});
-
-            final Matrix matrix = new Matrix4(
-                    2, 0, 0, 31,
-                    0, 2, 0, 11,
-                    0, 0, 1, 101,
-                    0, 0, 0, 1);
-            final MathTransform gridToCrs = MathTransforms.linear(matrix);
-            final GridGeometry gg = new GridGeometry(new GridExtent(null, null, new long[]{2,2,1}, false), PixelInCell.CELL_CENTER, gridToCrs, crs3d);
-
-            final GridCoverageBuilder gcb = new GridCoverageBuilder();
-            gcb.setValues(image1);
-            gcb.setDomain(gg);
-            gcb.setRanges(sdim1,sdim2);
-            slice2 = gcb.build();
-        }
-
-        final GridCoverage coverage3D;
-        {//create coverage 3d
-            coverage3D = new GridCoverageStack("Coverage3D", Arrays.asList(slice1, slice2));
-        }
+        final GridCoverage coverage3D = new BufferedGridCoverage(domain, Arrays.asList(sdim1, sdim2), new DataBufferInt(values, values.length));
 
         //test mapped feature type
         final FeatureType coverageType = GridCoverageFeatureSet.createCoverageType(coverage3D);

@@ -616,8 +616,7 @@ public class ImageCoverageWriter extends GridCoverageStore {
                  *  - The translation or scale factors of the above transform are not integers;
                  *  - The requested envelope is greater than the coverage envelope;
                  */
-                final InternationalString name = (coverage instanceof org.geotoolkit.coverage.grid.GridCoverage) ?
-                        ((org.geotoolkit.coverage.grid.GridCoverage) coverage).getName() : null;
+                final InternationalString name = null;
                 final ImageLayout layout = new ImageLayout(
                         requestRegion.x,     requestRegion.y,
                         requestRegion.width, requestRegion.height);

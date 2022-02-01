@@ -37,6 +37,7 @@ import javax.media.jai.ParameterListDescriptor;
 import javax.media.jai.RegistryElementDescriptor;
 
 
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.parameter.DefaultParameterDescriptor;
 import org.apache.sis.parameter.DefaultParameterDescriptorGroup;
 import org.opengis.metadata.Identifier;
@@ -47,7 +48,6 @@ import org.opengis.metadata.citation.ResponsibleParty;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.InvalidParameterNameException;
-import org.geotoolkit.coverage.grid.GridCoverage;
 import org.opengis.metadata.citation.Responsibility;
 import org.opengis.util.InternationalString;
 import org.opengis.util.GenericName;

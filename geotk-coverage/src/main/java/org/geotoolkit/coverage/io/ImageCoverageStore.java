@@ -149,13 +149,8 @@ final class ImageCoverageStore extends Static {
          * unless the ImageReader implements the NamedImageStore interface, as for
          * the NetCDF format.
          */
-        InternationalString name = null;
-        if (coverage instanceof org.geotoolkit.coverage.grid.GridCoverage) {
-            name = ((org.geotoolkit.coverage.grid.GridCoverage) coverage).getName();
-        }
-        if (name == null) {
-            name = Vocabulary.formatInternational(Vocabulary.Keys.Untitled);
-        }
+        final InternationalString name = Vocabulary.formatInternational(Vocabulary.Keys.Untitled);
+
         /*
          * Get the view types (PACKED, GEOPHYSICS).
          */

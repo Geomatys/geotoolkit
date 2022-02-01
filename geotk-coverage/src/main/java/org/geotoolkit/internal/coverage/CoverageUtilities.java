@@ -289,10 +289,12 @@ public final class CoverageUtilities extends Static {
         return gg;
     }
 
+    /**
+     * @deprecated This method now only return an empty text, as name is not part of coverage API anymore. Do not use
+     * this anymore please.
+     */
+    @Deprecated
     public static InternationalString getName(GridCoverage coverage) {
-        if (coverage instanceof org.geotoolkit.coverage.grid.GridCoverage) {
-            return ((org.geotoolkit.coverage.grid.GridCoverage) coverage).getName();
-        }
         return new SimpleInternationalString("");
     }
 

@@ -18,13 +18,9 @@
 package org.geotoolkit.coverage.grid;
 
 import java.awt.Dimension;
-import java.awt.EventQueue;
-import java.awt.Frame;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Shape;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
@@ -74,7 +70,6 @@ import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.io.LineWriter;
-import org.geotoolkit.lang.Debug;
 import org.apache.sis.referencing.operation.matrix.Matrices;
 import org.apache.sis.referencing.operation.matrix.MatrixSIS;
 import org.geotoolkit.resources.Errors;
@@ -126,7 +121,7 @@ import org.opengis.util.InternationalString;
  * @deprecated Use Apache SIS equivalent instead: {@link org.apache.sis.coverage.grid.GridCoverage} and its {@link org.apache.sis.coverage.grid.GridCoverageBuilder builder}.
  */
 @Deprecated
-public abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCoverage implements Localized {
+abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCoverage implements Localized {
 
     /**
      * The logger for grid coverage operations.
@@ -147,11 +142,6 @@ public abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCove
     private static final int VISIBLE_BAND = 0;
 
     /**
-     * The coverage name, or {@code null} if none.
-     */
-    private final InternationalString name;
-
-    /**
      * Constructs a coverage using the specified coordinate reference system. If the coordinate
      * reference system is {@code null}, then the subclasses must override {@link #getDimension()}.
      *
@@ -160,12 +150,10 @@ public abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCove
      * @param grid   the grid extent, CRS and conversion from cell indices to CRS.
      * @param bands  sample dimensions for each image band.
      */
-    protected GridCoverage(final CharSequence name,
-                           final GridGeometry grid,
+    protected GridCoverage(final GridGeometry grid,
                            final List<? extends SampleDimension> bands)
     {
         super(grid, bands);
-        this.name = Types.toInternationalString(name);
         this.sources = null;
     }
 
@@ -177,10 +165,8 @@ public abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCove
      * @param coverage
      *          The source coverage.
      */
-    protected GridCoverage(final CharSequence name, final GridCoverage coverage) {
+    protected GridCoverage(final GridCoverage coverage) {
         super(coverage.getGridGeometry(), coverage.getSampleDimensions());
-        final InternationalString n = Types.toInternationalString(name);
-        this.name = (n != null) ? n : coverage.name;
         this.sources = Collections.singletonList(coverage);
     }
 
@@ -202,7 +188,6 @@ public abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCove
                            final GridCoverage[] sources)
     {
         super(grid, bands);
-        this.name = Types.toInternationalString(name);
         if (sources != null) {
             switch (sources.length) {
                 case 0:  this.sources = null; break;
@@ -212,36 +197,6 @@ public abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCove
         } else {
             this.sources = null;
         }
-    }
-
-    /**
-     * Returns the coverage name, or {@code null} if none. The default
-     * implementation returns the name specified at construction time.
-     *
-     * @return The coverage name, or {@code null}.
-     */
-    public InternationalString getName() {
-        return name;
-    }
-
-    /**
-     * Returns the bounding box for the coverage domain in
-     * {@linkplain #getCoordinateReferenceSystem coordinate reference system} coordinates. May
-     * be {@code null} if this coverage has no associated coordinate reference system. For grid
-     * coverages, the grid cells are centered on each grid coordinate. The envelope for a 2-D
-     * grid coverage includes the following corner positions.
-     *
-     * {@preformat text
-     *     (Minimum row - 0.5, Minimum column - 0.5) for the minimum coordinates
-     *     (Maximum row - 0.5, Maximum column - 0.5) for the maximum coordinates
-     * }
-     *
-     * The default implementation returns the domain of validity of the CRS, if there is one.
-     *
-     * @return The bounding box for the coverage domain in coordinate system coordinates.
-     */
-    public Envelope getEnvelope() {
-        return getGridGeometry().getEnvelope();
     }
 
     @Override
@@ -728,98 +683,6 @@ public abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCove
     }
 
     /**
-     * Display this coverage in a windows. This convenience method is used for debugging purpose.
-     * The exact appareance of the windows and the tools provided may changes in future versions.
-     *
-     * @param  title The window title, or {@code null} for default value.
-     * @param  xAxis Dimension to use for the <var>x</var> display axis.
-     * @param  yAxis Dimension to use for the <var>y</var> display axis.
-     *
-     * @since 2.3
-     */
-    @Debug
-    public void show(String title, final int xAxis, final int yAxis) {
-        if (title == null || (title = title.trim()).isEmpty()) {
-            title = String.valueOf(getName());
-        }
-        // In the following line, the constructor display immediately the viewer.
-        new Viewer(title, getRenderableImage(xAxis, yAxis).createDefaultRendering());
-    }
-
-    /**
-     * A trivial viewer implementation to be used by {@link AbstractCoverage#show(String,int,int)}
-     * method.
-     * <p>
-     * <strong>Implementation note:</strong>
-     * We use AWT Frame, not Swing JFrame, because {@link ScrollingImagePane} is an AWT
-     * component. Swing is an overhead in this context without clear benefic. Note also
-     * that {@code ScrollingImagePanel} includes the scroll bar, so there is no need to
-     * put this component in an other {@code JScrollPane}.
-     */
-    private static final class Viewer extends WindowAdapter implements Runnable {
-        /**
-         * The frame to dispose once closed.
-         */
-        private final Frame frame;
-
-        /**
-         * Displays the specified image in a window with the specified title.
-         */
-        @SuppressWarnings("deprecation")
-        public Viewer(final String title, final RenderedImage image) {
-            final int width  = Math.max(Math.min(image.getWidth(),  800), 24);
-            final int height = Math.max(Math.min(image.getHeight(), 600), 24);
-            frame = new Frame(title);
-            frame.add(new javax.media.jai.widget.ScrollingImagePanel(image, width, height));
-            frame.addWindowListener(this);
-            EventQueue.invokeLater(this);
-        }
-
-        /**
-         * Display the window in the event queue.
-         * Required because 'pack()' is invoked before 'setVisible(true)'.
-         */
-        @Override
-        public void run() {
-            frame.pack();
-            frame.setLocationByPlatform(true);
-            frame.setVisible(true);
-        }
-
-        /**
-         * Invoked when the user closes the window.
-         */
-        @Override
-        public void windowClosing(WindowEvent e) {
-            frame.removeWindowListener(this);
-            frame.dispose();
-        }
-    }
-
-    /**
-     * Display this coverage in a windows. This convenience method is used for
-     * debugging purpose. The exact appareance of the windows and the tools
-     * provided may changes in future versions.
-     *
-     * @param  title The window title, or {@code null} for default value.
-     *
-     * @since 2.3
-     */
-    @Debug
-    public void show(final String title) {
-        show(title, 0, 1);
-    }
-
-    /**
-     * Displays this coverage in a windows. This convenience method is used for debugging purpose.
-     * The exact appareance of the windows and the tools provided may changes in future versions.
-     */
-    @Debug
-    public void show() {
-        show(null);
-    }
-
-    /**
      * Returns the default locale for logging, error messages, <i>etc</i>.
      *
      * @return The default locale for logging and error message.
@@ -838,7 +701,7 @@ public abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCove
         final StringWriter out = new StringWriter();
         out.write(Classes.getShortClassName(this));
         out.write("[\"");
-        out.write(String.valueOf(getName()));
+        out.write("Coverage");
         out.write('"');
         final Envelope envelope = getEnvelope();
         if (envelope != null) {
@@ -874,25 +737,6 @@ public abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCove
     }
 
     /**
-     * Returns the source data for a grid coverage. If the {@code GridCoverage} was produced from
-     * an underlying dataset, the returned list is an empty list. If the {@code GridCoverage} was
-     * produced using {@code GridCoverageProcessor}, then it should
-     * return the source grid coverage of the one used as input to {@code GridCoverageProcessor}.
-     * In general the {@code getSources()} method is intended to return the original
-     * {@code GridCoverage} on which it depends. This is intended to allow applications
-     * to establish what {@code GridCoverage}s will be affected when others are updated,
-     * as well as to trace back to the "raw data".
-     */
-    public List<org.apache.sis.coverage.grid.GridCoverage> getSources() {
-        // Reminder: 'sources' is always null after deserialization.
-        if (sources != null) {
-            return sources;
-        } else {
-            return Collections.emptyList();
-        }
-    }
-
-    /**
      * Constructs an error message for a point that can not be evaluated.
      * This is used for formatting error messages.
      *
@@ -922,18 +766,6 @@ public abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCove
         final Locale locale = getLocale();
         return Errors.getResources(locale).getString(outside ?
                 Errors.Keys.PointOutsideCoverage_1 : Errors.Keys.CantEvaluateForCoordinate_1, toString(point, locale));
-    }
-
-    /**
-     * Constructs a string for the specified point.
-     * This is used for formatting error messages.
-     *
-     * @param  point The coordinate point to format.
-     * @param  locale The locale for formatting numbers.
-     * @return The coordinate point as a string, without '(' or ')' characters.
-     */
-    static String toString(final Point2D point, final Locale locale) {
-        return toString((DirectPosition) new DirectPosition2D(point.getX(), point.getY()), locale);
     }
 
     /**

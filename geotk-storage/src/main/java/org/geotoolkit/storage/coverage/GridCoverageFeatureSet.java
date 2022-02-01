@@ -21,13 +21,17 @@ import java.awt.image.ColorModel;
 import java.awt.image.RenderedImage;
 import java.util.AbstractCollection;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Spliterator;
-import java.util.Spliterators;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import org.apache.sis.coverage.SampleDimension;
@@ -45,8 +49,11 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.storage.Resource;
+import org.apache.sis.util.collection.BackingStoreException;
 import org.apache.sis.util.iso.Names;
-import org.geotoolkit.coverage.grid.GridCoverageStack;
+import org.geotoolkit.coverage.grid.GridGeometryIterator;
 import org.geotoolkit.geometry.GeometricUtilities;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.JTSMapping;
@@ -73,6 +80,11 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.GenericName;
+import org.opengis.util.LocalName;
+
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
+import static org.apache.sis.util.ArgumentChecks.ensureStrictlyPositive;
 
 /**
  * Decorate a GridCoverageResource as a FeatureSet.
@@ -82,6 +94,7 @@ import org.opengis.referencing.operation.TransformException;
 public class GridCoverageFeatureSet extends AbstractResource implements FeatureSet {
 
     private static final String ATT_COLOR = "color";
+    private static final LocalName DEFAULT_COVERAGE_NAME = Names.createLocalName(null, null, "Coverage");
 
     private final org.apache.sis.storage.GridCoverageResource gcr;
 
@@ -92,7 +105,7 @@ public class GridCoverageFeatureSet extends AbstractResource implements FeatureS
 
     @Override
     public Optional<Envelope> getEnvelope() throws DataStoreException {
-        return Optional.ofNullable(gcr.getGridGeometry().getEnvelope());
+        return gcr.getEnvelope();
     }
 
     @Override
@@ -123,30 +136,22 @@ public class GridCoverageFeatureSet extends AbstractResource implements FeatureS
     /**
      * FeatureSet of all coverage voxels.
      */
-    public FeatureSet voxels(final GridGeometry grid) throws DataStoreException {
+    public FeatureSet voxels() throws DataStoreException {
         final FeatureType type = getType();
         final FeatureAssociationRole role = (FeatureAssociationRole) type.getProperty(TypeConventions.RANGE_ELEMENTS_PROPERTY.toString());
-        role.getValueType();
+        final FeatureType valueType = role.getValueType();
 
         return new AbstractFeatureSet(null) {
             @Override
-            public FeatureType getType() throws DataStoreException {
-                return role.getValueType();
+            public FeatureType getType() {
+                return valueType;
             }
 
             @Override
-            public Stream<Feature> features(boolean bln) throws DataStoreException {
-                final GridCoverage cov;
-                try {
-                    cov = gcr.read(grid);
-                } catch (DataStoreException ex) {
-                    throw new FeatureStoreRuntimeException(ex.getMessage(), ex);
-                }
-                final Iterator<Feature> ite = create(role.getValueType(), cov);
-                final Spliterator<Feature> split = Spliterators.spliteratorUnknownSize(ite, Spliterator.ORDERED);
-                return StreamSupport.stream(split,false);
+            public Stream<Feature> features(boolean parallel) {
+                final Stream<Feature> dataStream = create(valueType, gcr);
+                return parallel ? dataStream.parallel() : dataStream;
             }
-
         };
     }
 
@@ -155,7 +160,7 @@ public class GridCoverageFeatureSet extends AbstractResource implements FeatureS
 
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setSuperTypes(TypeConventions.COVERAGE_TYPE);
-        ftb.setName(coverage instanceof org.geotoolkit.coverage.grid.GridCoverage ? ((org.geotoolkit.coverage.grid.GridCoverage) coverage).getName() : "Coverage");
+        ftb.setName(getName(coverage));
         ftb.addAttribute(Polygon.class).setName(AttributeConvention.GEOMETRY_PROPERTY).setCRS(crs).addRole(AttributeRole.DEFAULT_GEOMETRY);
         ftb.addAssociation(createRecordType(coverage)).setName(TypeConventions.RANGE_ELEMENTS_PROPERTY).setMinimumOccurs(0).setMaximumOccurs(Integer.MAX_VALUE);
 
@@ -178,39 +183,22 @@ public class GridCoverageFeatureSet extends AbstractResource implements FeatureS
     }
 
     public static FeatureType createRecordType(GridCoverage coverage) throws DataStoreException {
-        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-        ftb.setSuperTypes(TypeConventions.COVERAGE_RECORD_TYPE);
-        ftb.setName((coverage instanceof org.geotoolkit.coverage.grid.GridCoverage ? ((org.geotoolkit.coverage.grid.GridCoverage) coverage).getName() : "") + "Record" );
-        final CoordinateReferenceSystem crs = coverage.getCoordinateReferenceSystem();
-        final CoordinateReferenceSystem crs2d = CRS.getHorizontalComponent(crs);
-        ftb.addAttribute(Geometry.class).setName(AttributeConvention.GEOMETRY_PROPERTY).setCRS(crs2d).setMinimumOccurs(1).setMaximumOccurs(1).addRole(AttributeRole.DEFAULT_GEOMETRY);
-
-        //if the CRS has more the 2 dimensions, we convert the envelope operation
-        //to an attribute, the envelope will be N dimesion, and the geometry 2D
-        if (crs.getCoordinateSystem().getDimension() > 2) {
-            ftb.addAttribute(Envelope.class).setName(AttributeConvention.ENVELOPE_PROPERTY).setCRS(crs);
-        }
-
-        //use existing sample dimensions
-        final List<SampleDimension> dims = coverage.getSampleDimensions();
-        for (int i=0,n=dims.size();i<n;i++) {
-            final SampleDimension gsd = dims.get(i);
-            final String name = gsd.getName() == null ? ""+i : gsd.getName().toString();
-            ftb.addAttribute(Double.class).setName(name).setMinimumOccurs(1).setMaximumOccurs(1);
-        }
-        ftb.addAttribute(Color.class).setName(ATT_COLOR);
-        return ftb.build();
+        return createRecordType(getName(coverage), coverage.getCoordinateReferenceSystem(), coverage.getSampleDimensions());
     }
 
     public static FeatureType createRecordType(org.apache.sis.storage.GridCoverageResource resource) throws DataStoreException {
+        return createRecordType(
+                resource.getIdentifier().orElse(DEFAULT_COVERAGE_NAME),
+                resource.getGridGeometry().getCoordinateReferenceSystem(),
+                resource.getSampleDimensions());
+    }
 
-        final GridGeometry gridGeometry = resource.getGridGeometry();
-        final CoordinateReferenceSystem crs = gridGeometry.getCoordinateReferenceSystem();
+    private static FeatureType createRecordType(final GenericName dataName, final CoordinateReferenceSystem crs, final List<SampleDimension> samples) {
         final CoordinateReferenceSystem crs2d = CRS.getHorizontalComponent(crs);
 
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setSuperTypes(TypeConventions.COVERAGE_RECORD_TYPE);
-        ftb.setName(resource.getIdentifier().get().tip().toString()+"Record");
+        ftb.setName(Names.createScopedName(dataName, null, "Record"));
         ftb.addAttribute(Geometry.class).setName(AttributeConvention.GEOMETRY_PROPERTY).setCRS(crs2d).setMinimumOccurs(1).setMaximumOccurs(1).addRole(AttributeRole.DEFAULT_GEOMETRY);
 
         //if the CRS has more the 2 dimensions, we convert the envelope operation
@@ -220,7 +208,6 @@ public class GridCoverageFeatureSet extends AbstractResource implements FeatureS
         }
 
         //use existing sample dimensions
-        final List<SampleDimension> samples = resource.getSampleDimensions();
         for (int i=0,n=samples.size();i<n;i++) {
             final SampleDimension gsd = samples.get(i);
             final String name = gsd.getName() == null ? ""+i : gsd.getName().toString();
@@ -230,84 +217,58 @@ public class GridCoverageFeatureSet extends AbstractResource implements FeatureS
         return ftb.build();
     }
 
-    public static FeatureAssociation coverageRecords(final org.apache.sis.storage.GridCoverageResource res, final FeatureAssociationRole role) {
-
-        final Collection<Feature> pixels = new AbstractCollection<Feature>() {
-
-            int count = -1;
-
-            @Override
-            public Iterator<Feature> iterator() {
-                final GridCoverage cov;
-                try {
-                    cov = res.read(null);
-                } catch (DataStoreException ex) {
-                    throw new FeatureStoreRuntimeException(ex.getMessage(), ex);
-                }
-                return create(role.getValueType(), cov);
-            }
-
-            @Override
-            public synchronized int size() {
-                if (count==-1) {
-                    try {
-                        final GridGeometry gg = res.getGridGeometry();
-                        final GridExtent extent = gg.getExtent();
-                        final int dimension = extent.getDimension();
-                        long size = extent.getSize(0);
-                        for (int i=1;i<dimension;i++) {
-                            size *= extent.getSize(i);
-                        }
-                        count = (int) size;
-                    } catch (DataStoreException ex) {
-                        throw new FeatureStoreRuntimeException(ex.getMessage(), ex);
-                    }
-                }
-                return count;
-            }
-        };
-
-        return new AbstractAssociation(role) {
-            @Override
-            public Collection<Feature> getValues() {
-                return pixels;
-            }
-
-            @Override
-            public void setValues(Collection<? extends Feature> values) throws InvalidPropertyValueException {
-                throw new InvalidPropertyValueException("Property is unmodifiable.");
-            }
-
-            @Override
-            public Feature getValue() throws MultiValuedPropertyException {
-                throw new MultiValuedPropertyException();
-            }
-
-            @Override
-            public void setValue(Feature value) throws InvalidPropertyValueException {
-                throw new InvalidPropertyValueException("Property is unmodifiable.");
-            }
-        };
-
+    public static FeatureAssociation coverageRecords(final GridCoverageResource res, final FeatureAssociationRole role) {
+        try {
+            return coverageRecords(role, res.getGridGeometry(), () -> create(role.getValueType(), res));
+        } catch (DataStoreException e) {
+            throw new BackingStoreException("Cannot acquire grid geometry of input resource", e);
+        }
     }
 
+    // TODO: check if this is really desirable. It looks like
     public static FeatureAssociation coverageRecords(final GridCoverage coverage, final FeatureAssociationRole role) {
+        return coverageRecords(role, coverage.getGridGeometry(), () -> create(role.getValueType(), coverage));
+    }
 
-        final FeatureType recordType = role.getValueType();
-
-        final GridGeometry gg = coverage.getGridGeometry();
-        final GridExtent extent = gg.getExtent();
-        final int dimension = extent.getDimension();
-        long size = extent.getSize(0);
-        for (int i=1;i<dimension;i++) {
-            size *= extent.getSize(i);
+    static FeatureAssociation coverageRecords(final FeatureAssociationRole role, final GridGeometry sourceGeometry, Supplier<Stream<Feature>> cellExtractor) {
+        if (!sourceGeometry.isDefined(GridGeometry.EXTENT)) {
+            // Memory safety. See GridCoverageSpliterator constructor below for more explanations
+            throw new IllegalArgumentException("Cannot model a coverage as feature association if it does not define an extent." +
+                    " Please resample your dataset beforehand to provide a fixed resolution view of the data.");
         }
-        final int count = (int) size;
+
+        final long size = getTotalNumberOfCells(sourceGeometry.getExtent());
+        final int count;
+        try {
+            count = Math.toIntExact(size);
+        } catch (ArithmeticException e) {
+            throw new IllegalArgumentException("Input coverage provides too many cells for them to be modeled as a collection of cells (require less than 2 billion cells due to Java API)");
+        }
 
         final Collection<Feature> pixels = new AbstractCollection<Feature>() {
             @Override
             public Iterator<Feature> iterator() {
-                return create(recordType, coverage);
+                return cellExtractor.get().iterator();
+            }
+
+            @Override
+            public void forEach(Consumer<? super Feature> action) {
+                cellExtractor.get().forEach(action);
+            }
+
+            @Override
+            public Spliterator<Feature> spliterator() {
+                return cellExtractor.get().spliterator();
+            }
+
+            @Override
+            public Stream<Feature> stream() {
+                return cellExtractor.get();
+            }
+
+            @Override
+            public Stream<Feature> parallelStream() {
+                return cellExtractor.get().parallel();
             }
 
             @Override
@@ -337,77 +298,140 @@ public class GridCoverageFeatureSet extends AbstractResource implements FeatureS
                 throw new InvalidPropertyValueException("Property is unmodifiable.");
             }
         };
-
     }
 
-    private static Iterator<Feature> create(FeatureType recordType, GridCoverage coverage) {
-        if (coverage instanceof GridCoverageStack) {
-            return new GridCoverageRecordIterator(recordType, (GridCoverageStack) coverage);
-        } else if (coverage instanceof GridCoverage) {
-            return new GridCoverage2DRecordIterator(recordType, coverage);
-        } else {
-            throw new UnsupportedOperationException("Unsupported coverage type "+coverage.getClass().getName());
-        }
+    private static Stream<Feature> create(FeatureType recordType, GridCoverage coverage) {
+        final GridGeometry geom = coverage.getGridGeometry();
+        final Function<GridGeometry, GridCoverage2DRecordIterator> sliceGenerator = sliceGeom
+                -> new GridCoverage2DRecordIterator(recordType, coverage, sliceGeom.getExtent());
+        return StreamSupport.stream(new GridCoverageSpliterator(geom, sliceGenerator), false);
     }
 
-    private static class GridCoverageRecordIterator implements Iterator<Feature> {
-
-        private final FeatureType recordType;
-        private final Iterator<GridCoverage> coverageIte;
-        private Iterator<Feature> subIte;
-        private Feature next = null;
-
-
-        private GridCoverageRecordIterator(FeatureType recordType, GridCoverageStack coverage) {
-            this.recordType = recordType;
-            final int nb = coverage.getStackSize();
-            final List<GridCoverage> stack = new ArrayList<>(nb);
-            for (int i = 0; i < nb; i++) {
-                stack.add((GridCoverage) coverage.coverageAtIndex(i));
+    private static Stream<Feature> create(FeatureType recordType, GridCoverageResource coverage) {
+        final GridGeometry geom;
+        try {
+            geom = coverage.getGridGeometry();
+        } catch (DataStoreException e) {
+            throw new BackingStoreException("Cannot read grid geometry of input resource", e);
+        }
+        final Function<GridGeometry, GridCoverage2DRecordIterator> sliceGenerator = sliceGeom -> {
+            final GridCoverage slicedData;
+            try {
+                slicedData = coverage.read(sliceGeom);
+            } catch (DataStoreException e) {
+                throw new BackingStoreException("Cannot extract a slice from source dataset", e);
             }
-            this.coverageIte = stack.iterator();
+            return new GridCoverage2DRecordIterator(recordType, slicedData);
+        };
+        return StreamSupport.stream(new GridCoverageSpliterator(geom, sliceGenerator), false);
+    }
+
+    /**
+     * Compute how many cells are available in the grid described by the given extent. It is a simple multiplication of
+     * the size of each axis in the extent, with only a little check to ensure each axis value is strictly positive.
+     * @param sourceExtent The extent to compute number of described cells for. Must not be null.
+     * @return Number of cells found in given extent. Always <em>strictly positive</em>.
+     * @throws IllegalArgumentException if input extent is invalid. An extent is marked invalid if it defines no
+     *                                  dimensions, or if all of its dimensions define a size inferior to 1.
+     */
+    private static long getTotalNumberOfCells(GridExtent sourceExtent) {
+        final long totalNumberOfCells;
+        final long[] gridAxisSizes = IntStream.range(0, sourceExtent.getDimension())
+                .mapToLong(sourceExtent::getSize)
+                .toArray();
+        totalNumberOfCells = Arrays.stream(gridAxisSizes)
+                // Corner cases: an extent could provide a size of 0, but that does not mean the entire extent has
+                // degenerated to a 0-dimension dataset. It is used as a sort of workaround to express very thin
+                // slices (enumerated values on axis without any thickness). To avoid error, we remove them before
+                // computing the total number of cells. Note, we do not remove ones. It is VERY important, because even
+                // if there's no reason to use them in the multiplication, it allows to distinguish valid cases where an
+                // extent size is a single cell, from cases where an extent would declare a size < 1.
+                .filter(value -> value > 0)
+                .reduce(Math::multiplyExact)
+                .orElseThrow(() -> new IllegalArgumentException("Input extent has 0 dimensions, or specify only dimensions with a size inferior to 1 (which is invalid)"));
+        return totalNumberOfCells;
+    }
+
+    /**
+     * If input is also a {@link Resource}, return its {@link Resource#getIdentifier() identifier } if present.
+     * If no name is found, a default constant value is returned.
+     */
+    private static GenericName getName(GridCoverage source) throws DataStoreException {
+        if (source instanceof Resource) return ((Resource) source).getIdentifier().orElse(DEFAULT_COVERAGE_NAME);
+        else return DEFAULT_COVERAGE_NAME;
+    }
+
+    private static class GridCoverageSpliterator implements Spliterator<Feature> {
+
+        private final GridGeometryIterator slices;
+        private final long totalNumberOfCells;
+
+        private GridCoverage2DRecordIterator currentSlice;
+
+        private final Function<GridGeometry, GridCoverage2DRecordIterator> sliceGenerator;
+
+        private GridCoverageSpliterator(final GridGeometry sourceGeom, Function<GridGeometry, GridCoverage2DRecordIterator> sliceGenerator) {
+            ensureNonNull("Source grid geometry", sourceGeom);
+            ensureNonNull("Slice generator", sliceGenerator);
+            if (!sourceGeom.isDefined(GridGeometry.EXTENT)) {
+                /* To avoid potential memory problems, force user to have prepared its datasource at a fixed resolution.
+                 * Note that, for now, this safety is required because the spliterator implementation subset source dataset
+                 * by slicing its geometry extent. In the future, if a better solution is setup, and that it does not
+                 * require source extent, we could remove this safety.
+                 */
+                throw new IllegalArgumentException("Cannot stream a dataset whose extent is not defined. Please resample your dataset beforehand to provide a fixed resolution view of the data.");
+            }
+            this.sliceGenerator = sliceGenerator;
+            slices = new GridGeometryIterator(sourceGeom);
+
+            final GridExtent sourceExtent = sourceGeom.getExtent();
+            totalNumberOfCells = getTotalNumberOfCells(sourceExtent);
+            ensureStrictlyPositive("Total number of cells", totalNumberOfCells);
         }
 
         @Override
-        public boolean hasNext() {
-            findNext();
-            return next != null;
+        public boolean tryAdvance(Consumer<? super Feature> action) {
+            if (currentSlice != null && currentSlice.hasNext()) {
+                final Feature nextFeature = currentSlice.next();
+                action.accept(nextFeature);
+                return true;
+            } else if (slices == null || !slices.hasNext()) {
+                return false;
+            } else {
+                final GridGeometry nextSlice = slices.next();
+                currentSlice = sliceGenerator.apply(nextSlice);
+            }
+
+            // Note: candidate to tail-recursion, potentially optimisable by JVM.
+            return tryAdvance(action);
         }
 
         @Override
-        public Feature next() {
-            findNext();
-            if (next == null) {
-                throw new NoSuchElementException("No more features.");
-            }
-            final Feature candidate = next;
-            next = null;
-            return candidate;
+        public Spliterator<Feature> trySplit() {
+            // TODO: split by 2D slice ?
+            return null;
         }
 
         @Override
-        public void remove() {
-            throw new UnsupportedOperationException("Not supported.");
+        public long estimateSize() {
+            // TODO: decrease at each iteration
+            return totalNumberOfCells;
         }
 
-        private void findNext(){
-            if (next != null) return;
+        @Override
+        public int characteristics() {
+            // IMPORTANT: The spliterator is NOT ordered. Intuitively, it should be, as we iterate over a regular/sized
+            // grid. However, the underlying pixel is not forced to row-major iteration, so it might optimiser its
+            // browing regarding tiling structure of source image.
+            return SIZED + DISTINCT + IMMUTABLE + NONNULL;
 
-            while (next == null) {
-                if (subIte == null) {
-                    if (coverageIte.hasNext()) {
-                        subIte = create(recordType, coverageIte.next());
-                    } else {
-                        break;
-                    }
-                } else if(subIte.hasNext()) {
-                    next = subIte.next();
-                } else {
-                    subIte = null;
-                }
-            }
+            // TODO: in the future, the spliterator could be splitted by halfing some source extent dimension(s)
+            // That would allow to provide parallelism whose all sub-spliterators would be sized (size of the orking extent).
+            // If splitted on the most-likely independent dimensions (time or vertical axis), it would allow to load
+            // independent source slices and provide low latency parallelism (I hope).
+            //
+            // + CONCURRENT + SUBSIZED;
         }
-
     }
 
     private static class GridCoverage2DRecordIterator implements Iterator<Feature> {
@@ -427,18 +451,22 @@ public class GridCoverageFeatureSet extends AbstractResource implements FeatureS
         private Feature next = null;
 
         private GridCoverage2DRecordIterator(FeatureType recordType, GridCoverage coverage) {
+            this(recordType, coverage, null);
+        }
+
+        private GridCoverage2DRecordIterator(FeatureType recordType, GridCoverage coverage, final GridExtent roi) {
             this.recordType = recordType;
             this.coverage = coverage.forConvertedValues(true);
-            final RenderedImage samplesImage = this.coverage.forConvertedValues(true).render(null);
+            final RenderedImage samplesImage = this.coverage.forConvertedValues(true).render(roi);
             this.geophysicPixelIterator = new PixelIterator.Builder().create(samplesImage);
-            this.colorImg = this.coverage.forConvertedValues(false).render(null);
+            this.colorImg = this.coverage.forConvertedValues(false).render(roi);
             this.colorModel = colorImg.getColorModel();
             this.coloredPixelIterator = new PixelIterator.Builder().create(colorImg);
             final GridGeometry gridGeometry = this.coverage.getGridGeometry();
             this.envelope = gridGeometry.getEnvelope();
             this.crs = gridGeometry.getCoordinateReferenceSystem();
             this.crsDim = crs.getCoordinateSystem().getDimension();
-            this.imageToCrs = org.geotoolkit.internal.coverage.CoverageUtilities.getImageToCRS(gridGeometry, null, samplesImage, PixelInCell.CELL_CENTER);
+            this.imageToCrs = org.geotoolkit.internal.coverage.CoverageUtilities.getImageToCRS(gridGeometry, roi, samplesImage, PixelInCell.CELL_CENTER);
 
             //list properties
             final List<String> properties = new ArrayList<>();
@@ -536,7 +564,5 @@ public class GridCoverageFeatureSet extends AbstractResource implements FeatureS
                 }
             }
         }
-
     }
-
 }

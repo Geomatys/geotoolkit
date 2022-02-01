@@ -903,6 +903,9 @@
       <id>geotoolkit.org</id>
       <name>Geotoolkit.org repository</name>
       <url>https://maven.geotoolkit.org</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
     </repository>
     <repository>
       <id>geomatys</id>
@@ -918,6 +921,9 @@
       <id>jaspersoft</id>
       <name>jaspersoft repository</name>
       <url>https://jaspersoft.jfrog.io/jaspersoft/third-party-ce-artifacts</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
     </repository>
   </repositories>
 
