@@ -52,6 +52,7 @@ import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.feature.Features;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.map.coverage.RenderingWorkaround;
 import org.apache.sis.internal.referencing.AxisDirections;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.internal.system.DefaultFactories;
@@ -287,7 +288,7 @@ public final class GO2Utilities {
                     buffer = (BufferedImage) img;
                 }else{
                     buffer = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
-                    buffer.createGraphics().drawRenderedImage(img, new AffineTransform());
+                    buffer.createGraphics().drawRenderedImage(RenderingWorkaround.wrap(img), new AffineTransform());
                 }
 
                 //remove black borders+
@@ -312,7 +313,7 @@ public final class GO2Utilities {
                 .getGridToCRS(PixelInCell.CELL_CORNER);
         if(gridToCRS instanceof AffineTransform){
             g2d.setComposite(GO2Utilities.ALPHA_COMPOSITE_1F);
-            g2d.drawRenderedImage(img, (AffineTransform)gridToCRS);
+            g2d.drawRenderedImage(RenderingWorkaround.wrap(img), (AffineTransform)gridToCRS);
             return true;
         }else if (gridToCRS instanceof LinearTransform) {
             final LinearTransform lt = (LinearTransform) gridToCRS;
@@ -1380,7 +1381,7 @@ public final class GO2Utilities {
         if (!img.getColorModel().hasAlpha()) {
             //Add alpha channel
             final BufferedImage buffer = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
-            buffer.createGraphics().drawRenderedImage(img, new AffineTransform());
+            buffer.createGraphics().drawRenderedImage(RenderingWorkaround.wrap(img), new AffineTransform());
             img = buffer;
         }
         return img;

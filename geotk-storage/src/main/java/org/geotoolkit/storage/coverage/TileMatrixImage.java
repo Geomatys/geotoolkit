@@ -351,7 +351,7 @@ public class TileMatrixImage extends ComputedImage implements RenderedImage {
                 //create an empty raster
                 SampleModel sampleModel = getSampleModel();
                 DataBuffer databuffer = getSampleModel().createDataBuffer();
-                Raster raster = Raster.createRaster(sampleModel, databuffer, new Point(0, 0));
+                Raster raster = Raster.createWritableRaster(sampleModel, databuffer, new Point(0, 0));  // TODO: JDK-8275345
                 rasterOut = createRaster(raster, rect.width, rect.height);
             }
 
