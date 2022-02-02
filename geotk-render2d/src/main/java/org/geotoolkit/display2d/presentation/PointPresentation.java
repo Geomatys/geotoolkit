@@ -23,6 +23,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.RenderedImage;
+import org.apache.sis.internal.map.coverage.RenderingWorkaround;
 import org.apache.sis.portrayal.MapLayer;
 import org.apache.sis.storage.Resource;
 import org.geotoolkit.display2d.GO2Utilities;
@@ -49,7 +50,7 @@ public class PointPresentation extends Grid2DPresentation {
         renderingContext.switchToDisplayCRS();
         Graphics2D g2d = renderingContext.getGraphics();
         g2d.setComposite(composite);
-        g2d.drawRenderedImage(image, displayTransform);
+        g2d.drawRenderedImage(RenderingWorkaround.wrap(image), displayTransform);
         return true;
     }
 
