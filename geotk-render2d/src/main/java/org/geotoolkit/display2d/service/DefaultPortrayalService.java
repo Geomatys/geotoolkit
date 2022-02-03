@@ -64,6 +64,7 @@ import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.internal.map.ExceptionPresentation;
 import org.apache.sis.internal.map.Presentation;
+import org.apache.sis.internal.map.coverage.RenderingWorkaround;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.portrayal.MapLayer;
 import org.apache.sis.portrayal.MapLayers;
@@ -1228,7 +1229,7 @@ public final class DefaultPortrayalService implements PortrayalService{
             final WritableRaster wraster = rcm.createCompatibleWritableRaster(img.getWidth(), img.getHeight());
             final BufferedImage rimg = new BufferedImage(rcm, wraster, rcm.isAlphaPremultiplied(), null);
             final Graphics2D g = rimg.createGraphics();
-            g.drawRenderedImage(img, new AffineTransform());
+            g.drawRenderedImage(RenderingWorkaround.wrap(img), new AffineTransform());
             g.dispose();
             img = rimg;
         }
