@@ -51,6 +51,7 @@ import java.util.stream.Stream;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriter;
+import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.stream.ImageOutputStream;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -60,6 +61,7 @@ import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
+import org.apache.sis.internal.storage.io.ChannelDataInput;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ArraysExt;
@@ -287,7 +289,7 @@ public class XMLMosaic implements TileMatrix {
 
             final ByteArrayOutputStream out = new ByteArrayOutputStream();
             try {
-                ImageIO.write(emptyTile, "png", out);
+                ImageIO.write(emptyTile, pyramid.getPyramidSet().getFormatName(), out);
                 out.flush();
             } catch (IOException ex) {
                 LOGGER.log(Level.SEVERE, null, ex);
@@ -444,24 +446,33 @@ public class XMLMosaic implements TileMatrix {
     public ImageTile getTile(long col, long row, Map hints) throws DataStoreException {
 
         final ImageTile tile;
+        // Before any heavy validation, just ensure that we can represent a point from given row/column
+        final Point tilePosition = new Point(Math.toIntExact(col), Math.toIntExact(row));
         if (isEmpty(col, row)) {
-            try {
-                tile = new DefaultImageTile(pyramid.getPyramidSet().getReaderSpi(),
-                        ImageIO.createImageInputStream(new ByteArrayInputStream(createEmptyTile())), 0, new Point(Math.toIntExact(col), Math.toIntExact(row)));
-            } catch (IOException ex) {
-                throw new DataStoreException(ex);
-            }
+            tile = createEmptyTile(tilePosition);
         } else {
-            Path p = getTileFile(col, row);
-            if (!Files.exists(p) || p == null) {
-                System.out.println("FILE DONT EXISTTT:" + col + "," + row);
-                return null;
+            Path tileFile = getTileFile(col, row);
+            if (tileFile == null) {
+                // It happens sometimes, but how ? We need to search further, or stop using XML-based pyramids.
+                LOGGER.warning(() -> "Tile is not marked empty, but associated file does not exists: " + tilePosition);
+                tile = createEmptyTile(tilePosition);
+            } else {
+                tile = new DefaultImageTile(pyramid.getPyramidSet().getReaderSpi(), tileFile, 0, tilePosition);
             }
-            tile = new DefaultImageTile(pyramid.getPyramidSet().getReaderSpi(),
-                    getTileFile(col, row), 0, new Point(Math.toIntExact(col), Math.toIntExact(row)));
         }
 
         return tile;
+    }
+
+    private ImageTile createEmptyTile(Point tilePosition) throws DataStoreException {
+        try {
+            return new DefaultImageTile(
+                    pyramid.getPyramidSet().getReaderSpi(),
+                    ImageIO.createImageInputStream(new ByteArrayInputStream(createEmptyTile())),
+                    0, tilePosition);
+        } catch (IOException ex) {
+            throw new DataStoreException(ex);
+        }
     }
 
     /**
