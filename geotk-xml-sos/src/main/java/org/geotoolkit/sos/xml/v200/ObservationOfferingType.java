@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
@@ -102,6 +103,7 @@ import org.opengis.metadata.Identifier;
     "observationType",
     "featureOfInterestType"
 })
+@XmlRootElement(name = "ObservationOffering")
 public class ObservationOfferingType extends AbstractOfferingType implements ObservationOffering {
 
     private ObservationOfferingType.ObservedArea observedArea;
