@@ -51,7 +51,6 @@ import java.util.stream.Stream;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriter;
-import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.stream.ImageOutputStream;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -61,7 +60,6 @@ import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
-import org.apache.sis.internal.storage.io.ChannelDataInput;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ArraysExt;
@@ -669,15 +667,12 @@ public class XMLMosaic implements TileMatrix {
         ImageOutputStream out = null;
         try {
             final Class[] outTypes = writer.getOriginatingProvider().getOutputTypes();
-            if(ArraysExt.contains(outTypes, Path.class)){
+            if (ArraysExt.contains(outTypes, Path.class)) {
                 //writer support files directly, let him handle it
                 writer.setOutput(tilePath);
             }else{
                 out = ImageIO.createImageOutputStream(tilePath);
                 writer.setOutput(out);
-            }
-            if (out == null) {
-                out = ImageIO.createImageOutputStream(tilePath);
             }
             writer.write(image);
             if (tileExist != null) {
