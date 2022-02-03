@@ -234,8 +234,8 @@ public final class GridAlignedFilter implements CoordinateSequenceFilter {
                         final GeometryCollection gc = (GeometryCollection) ls;
                         for (int k = 0, n = gc.getNumGeometries(); k < n; k++) {
                             final Geometry cd = gc.getGeometryN(k);
-                            geoms.add(ls);
-                            allPolygons &= (ls instanceof Polygon);
+                            geoms.add(cd);
+                            allPolygons &= (cd instanceof Polygon);
                         }
                     } else {
                         geoms.add(ls);
