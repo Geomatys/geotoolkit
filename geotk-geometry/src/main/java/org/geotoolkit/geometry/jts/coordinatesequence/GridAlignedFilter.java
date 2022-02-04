@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2020, Geomatys
+ *    (C) 2020-2022, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -50,6 +50,10 @@ public final class GridAlignedFilter implements CoordinateSequenceFilter {
     private final double stepx;
     private final double stepy;
 
+    private boolean removeColinear = true;
+    private boolean createEmpty = false;
+    private boolean removeSpikes = false;
+
     /**
      * Grid aligned filter constructor.
      * X and Y origin are the coordinate of any point of the grid where
@@ -69,13 +73,83 @@ public final class GridAlignedFilter implements CoordinateSequenceFilter {
     }
 
     /**
+     * Set to true to remove colinear points on lines.
+     * @param removeColinear true to remove colinear.
+     */
+    public void setRemoveColinear(boolean removeColinear) {
+        this.removeColinear = removeColinear;
+    }
+
+    /**
+     * @see #setRemoveColinear(boolean)
+     */
+    public boolean isRemoveColinear() {
+        return removeColinear;
+    }
+
+    /**
+     * If set to true, line and polygon which degenerate to a single point are transformed to empty geometries.
+     *
+     * @param createEmpty true to create empty geometries when geometries degenerate to points
+     */
+    public void setCreateEmpty(boolean createEmpty) {
+        this.createEmpty = createEmpty;
+    }
+
+    /**
+     * @see #setCreateEmpty(boolean)
+     */
+    public boolean isCreateEmpty() {
+        return createEmpty;
+    }
+
+    /**
+     * If set to true, line spkies will be removed.
+     * A spike is point with an offset of 1 on X or Y which goes back to it's original point
+     * just after.
+     *
+     * Example :
+     *    3
+     *    +
+     *    |
+     * +--+--+
+     * 1 2/4 5
+     *
+     * will be simplified in :
+     *
+     * +--+--+
+     * 1  2  3
+     *
+     * @param createEmpty true to create empty geometries when geometries degenerate to points
+     */
+    public void setRemoveSpikes(boolean removeSpikes) {
+        this.removeSpikes = removeSpikes;
+    }
+
+    /**
+     * @see #setRemoveSpikes(boolean)
+     */
+    public boolean isRemoveSpikes() {
+        return removeSpikes;
+    }
+
+    /**
+     * Grid align and simplify geometry.
+     * - duplicated points are removed
+     * - geometry type is never changed
+     */
+    public Geometry alignAndSimplify(Geometry geometry) {
+        return alignAndSimplify(geometry, createEmpty);
+    }
+
+    /**
      * Grid align and simplify geometry.
      * - duplicated points are removed
      * - geometry type is never changed
      *
      * @param createEmpty if true, line and polygon which degenerate to a single point are transformed to empty
      */
-    public Geometry alignAndSimplify(Geometry geometry, boolean createEmpty) {
+    private Geometry alignAndSimplify(Geometry geometry, boolean createEmpty) {
         if (geometry == null || geometry.isEmpty()) {
             return geometry;
         }
@@ -91,7 +165,8 @@ public final class GridAlignedFilter implements CoordinateSequenceFilter {
             result = gf.createPoint(coord);
         } else if (geometry instanceof LinearRing) {
             final LinearRing cdt = (LinearRing) geometry;
-            final CoordinateSequence coordinates = filterAndReduce(gf.getCoordinateSequenceFactory(), cdt.getCoordinateSequence(), createEmpty ? 0 : 3);
+            CoordinateSequence coordinates = filterAndReduce(gf.getCoordinateSequenceFactory(), cdt.getCoordinateSequence(), createEmpty ? 0 : 3, true);
+            if (removeSpikes) coordinates = removeSpikes(gf.getCoordinateSequenceFactory(), coordinates, createEmpty ? 0 : 3, true);
             if (coordinates.size() < 3) {
                 result = gf.createLinearRing();
             } else {
@@ -99,7 +174,8 @@ public final class GridAlignedFilter implements CoordinateSequenceFilter {
             }
         } else if (geometry instanceof LineString) {
             final LineString cdt = (LineString) geometry;
-            final CoordinateSequence coordinates = filterAndReduce(gf.getCoordinateSequenceFactory(), cdt.getCoordinateSequence(), createEmpty ? 0 : 2);
+            CoordinateSequence coordinates = filterAndReduce(gf.getCoordinateSequenceFactory(), cdt.getCoordinateSequence(), createEmpty ? 0 : 2, false);
+            if (removeSpikes) coordinates = removeSpikes(gf.getCoordinateSequenceFactory(), coordinates, createEmpty ? 0 : 2, false);
             if (coordinates.size() < 2) {
                 result = gf.createLineString();
             } else {
@@ -217,14 +293,13 @@ public final class GridAlignedFilter implements CoordinateSequenceFilter {
     }
 
     /**
-     * Align given coordinate sequence removing duplicates.
+     * Align given coordinate sequence removing duplicates and colinear points.
      *
-     * @param cf
-     * @param cs
      * @param minPoints minimum number of points in the sequence
-     * @return
+     * @param isRing true if first/last points must be identical
+     * @return resulting coordinate sequence
      */
-    public CoordinateSequence filterAndReduce(CoordinateSequenceFactory cf, CoordinateSequence cs, int minPoints) {
+    public CoordinateSequence filterAndReduce(CoordinateSequenceFactory cf, CoordinateSequence cs, int minPoints, boolean isRing) {
 
         final int size = cs.size();
         if (size == 0) {
@@ -234,30 +309,76 @@ public final class GridAlignedFilter implements CoordinateSequenceFilter {
         }
 
         final List<Coordinate> coords = new ArrayList<>(size);
+        //transform the first point
         Coordinate previous = filter(cs.getCoordinateCopy(0));
         coords.add(previous);
+
+        double lastSlopeX = Double.POSITIVE_INFINITY;
+        double lastSlopeY = Double.POSITIVE_INFINITY;
 
         for (int i = 1; i < size; i++) {
             final Coordinate c = filter(cs.getCoordinateCopy(i));
             if (c.x != previous.x || c.y != previous.y) {
-                coords.add(c);
-                previous = c;
+
+                if (removeColinear) {
+                    if (lastSlopeX == Double.POSITIVE_INFINITY) {
+                        //first segment
+                        lastSlopeX = (c.x - previous.x);
+                        lastSlopeY = (c.y - previous.y);
+                        coords.add(c);
+                        previous = c;
+                    } else {
+                        /*
+                        Simple colinear test is not enough.
+                        Remove previous point if points are in the same direction
+                        and new point is after the previous one.
+                        */
+                        final double slopeX = (c.x - previous.x);
+                        final double slopeY = (c.y - previous.y);
+                        //final double slopeRatio = slopeX / slopeY;
+                        //final double lastSlopeRatio = lastSlopeX / lastSlopeY;
+                        // if slopeRatio == lastSlopeRatio
+                        // simplified in : slopeX * lastSlopeY == lastSlopeX * slopeY
+                        if ( slopeX * lastSlopeY == lastSlopeX * slopeY
+                          && Math.signum(slopeX) == Math.signum(lastSlopeX)
+                          && Math.signum(slopeY) == Math.signum(lastSlopeY)) {
+                            //previous point in on the segment
+                            previous.setCoordinate(c);
+                        } else {
+                            coords.add(c);
+                            previous = c;
+                            lastSlopeX = slopeX;
+                            lastSlopeY = slopeY;
+                        }
+                    }
+                } else {
+                    coords.add(c);
+                    previous = c;
+                }
             }
         }
 
+        //ensure we have the minimum number of points
         while (coords.size() < minPoints) {
             coords.add(previous.copy());
         }
 
-        return cf.create(coords.toArray(new Coordinate[coords.size()]));
+        //ensure we have a closed ring
+        if (isRing && minPoints > 0) {
+            Coordinate first = coords.get(0);
+            if (!previous.equals(first)) {
+                coords.add(first.copy());
+            }
+        }
+
+        return cf.create(coords.toArray(new Coordinate[0]));
     }
 
     /**
      * Align given coordinate sequence removing duplicates.
+     * This method do not remove colinear points.
      *
-     * @param cs
      * @param minPoints minimum number of points in the sequence
-     * @return
      */
     public Coordinate[] filterAndReduce(Coordinate[] cs, int minPoints) {
 
@@ -285,6 +406,57 @@ public final class GridAlignedFilter implements CoordinateSequenceFilter {
         }
 
         return coords.toArray(new Coordinate[coords.size()]);
+    }
+
+    /**
+     * Remove spikes from given coordinate sequence.
+     *
+     * @param minPoints minimum number of points in the sequence
+     * @param isRing true if first/last points must be identical
+     * @return resulting coordinate sequence
+     */
+    public CoordinateSequence removeSpikes(CoordinateSequenceFactory cf, CoordinateSequence cs, int minPoints, boolean isRing) {
+        final int size = cs.size();
+        if (size == 0) {
+            return cs;
+        } else if (size == 1) {
+            return cs.copy();
+        }
+
+        final List<Coordinate> coords = new ArrayList<>(size);
+        Coordinate previous2 = cs.getCoordinateCopy(0);
+        Coordinate previous1 = cs.getCoordinateCopy(1);
+        coords.add(previous2);
+        coords.add(previous1);
+
+        for (int i = 2; i < size; i++) {
+            final Coordinate c = cs.getCoordinateCopy(i);
+            if (previous2.x == c.x && previous2.y == c.y
+               && Math.abs(previous1.x - previous2.x) < (stepx * 1.9)
+               && Math.abs(previous1.y - previous2.y) < (stepy * 1.9)) {
+                previous1.setCoordinate(c);
+            } else {
+                coords.add(c);
+                previous2 = previous1;
+                previous1 = c;
+
+            }
+        }
+
+        //ensure we have the minimum number of points
+        while (coords.size() < minPoints) {
+            coords.add(previous1.copy());
+        }
+
+        //ensure we have a closed ring
+        if (isRing && minPoints > 0) {
+            Coordinate first = coords.get(0);
+            if (!previous1.equals(first)) {
+                coords.add(first.copy());
+            }
+        }
+
+        return cf.create(coords.toArray(new Coordinate[0]));
     }
 
     @Override
