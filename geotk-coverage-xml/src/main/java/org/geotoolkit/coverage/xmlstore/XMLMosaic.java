@@ -287,7 +287,7 @@ public class XMLMosaic implements TileMatrix {
 
             final ByteArrayOutputStream out = new ByteArrayOutputStream();
             try {
-                ImageIO.write(emptyTile, "png", out);
+                ImageIO.write(emptyTile, pyramid.getPyramidSet().getFormatName(), out);
                 out.flush();
             } catch (IOException ex) {
                 LOGGER.log(Level.SEVERE, null, ex);
@@ -444,24 +444,33 @@ public class XMLMosaic implements TileMatrix {
     public ImageTile getTile(long col, long row, Map hints) throws DataStoreException {
 
         final ImageTile tile;
+        // Before any heavy validation, just ensure that we can represent a point from given row/column
+        final Point tilePosition = new Point(Math.toIntExact(col), Math.toIntExact(row));
         if (isEmpty(col, row)) {
-            try {
-                tile = new DefaultImageTile(pyramid.getPyramidSet().getReaderSpi(),
-                        ImageIO.createImageInputStream(new ByteArrayInputStream(createEmptyTile())), 0, new Point(Math.toIntExact(col), Math.toIntExact(row)));
-            } catch (IOException ex) {
-                throw new DataStoreException(ex);
-            }
+            tile = createEmptyTile(tilePosition);
         } else {
-            Path p = getTileFile(col, row);
-            if (!Files.exists(p) || p == null) {
-                System.out.println("FILE DONT EXISTTT:" + col + "," + row);
-                return null;
+            Path tileFile = getTileFile(col, row);
+            if (tileFile == null) {
+                // It happens sometimes, but how ? We need to search further, or stop using XML-based pyramids.
+                LOGGER.warning(() -> "Tile is not marked empty, but associated file does not exists: " + tilePosition);
+                tile = createEmptyTile(tilePosition);
+            } else {
+                tile = new DefaultImageTile(pyramid.getPyramidSet().getReaderSpi(), tileFile, 0, tilePosition);
             }
-            tile = new DefaultImageTile(pyramid.getPyramidSet().getReaderSpi(),
-                    getTileFile(col, row), 0, new Point(Math.toIntExact(col), Math.toIntExact(row)));
         }
 
         return tile;
+    }
+
+    private ImageTile createEmptyTile(Point tilePosition) throws DataStoreException {
+        try {
+            return new DefaultImageTile(
+                    pyramid.getPyramidSet().getReaderSpi(),
+                    ImageIO.createImageInputStream(new ByteArrayInputStream(createEmptyTile())),
+                    0, tilePosition);
+        } catch (IOException ex) {
+            throw new DataStoreException(ex);
+        }
     }
 
     /**
@@ -658,15 +667,12 @@ public class XMLMosaic implements TileMatrix {
         ImageOutputStream out = null;
         try {
             final Class[] outTypes = writer.getOriginatingProvider().getOutputTypes();
-            if(ArraysExt.contains(outTypes, Path.class)){
+            if (ArraysExt.contains(outTypes, Path.class)) {
                 //writer support files directly, let him handle it
                 writer.setOutput(tilePath);
             }else{
                 out = ImageIO.createImageOutputStream(tilePath);
                 writer.setOutput(out);
-            }
-            if (out == null) {
-                out = ImageIO.createImageOutputStream(tilePath);
             }
             writer.write(image);
             if (tileExist != null) {
