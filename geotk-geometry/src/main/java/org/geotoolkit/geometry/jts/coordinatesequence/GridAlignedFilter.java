@@ -117,8 +117,8 @@ public final class GridAlignedFilter implements CoordinateSequenceFilter {
      *
      * will be simplified in :
      *
-     * +--+--+
-     * 1  2  3
+     * +-----+
+     * 1     2
      *
      * @param createEmpty true to create empty geometries when geometries degenerate to points
      */
@@ -427,33 +427,40 @@ public final class GridAlignedFilter implements CoordinateSequenceFilter {
         Coordinate previous2 = cs.getCoordinateCopy(0);
         Coordinate previous1 = cs.getCoordinateCopy(1);
         coords.add(previous2);
-        coords.add(previous1);
 
         for (int i = 2; i < size; i++) {
-            final Coordinate c = cs.getCoordinateCopy(i);
+            Coordinate c = cs.getCoordinateCopy(i);
             if (previous2.x == c.x && previous2.y == c.y
                && Math.abs(previous1.x - previous2.x) < (stepx * 1.9)
                && Math.abs(previous1.y - previous2.y) < (stepy * 1.9)) {
-                previous1.setCoordinate(c);
+                // Previous 1 point is a spike, we must ignore it
+                // at this point we have a duplicated point previous2 and c
+                // move to the next point which is not the same as previous2
+                for (i++; i < size; i++) {
+                    c = cs.getCoordinateCopy(i);
+                    if (previous2.x != c.x || previous2.y != c.y) break;
+                }
             } else {
-                coords.add(c);
+                coords.add(previous1);
                 previous2 = previous1;
-                previous1 = c;
-
             }
+            previous1 = c;
         }
+        coords.add(previous1);
 
-        //ensure we have the minimum number of points
-        while (coords.size() < minPoints) {
-            coords.add(previous1.copy());
-        }
-
-        //ensure we have a closed ring
-        if (isRing && minPoints > 0) {
-            Coordinate first = coords.get(0);
-            if (!previous1.equals(first)) {
+        /*
+        Ensure we have a closed ring and we respect the minimum number of points
+        We must still do this operation even if it create an none topologic
+        geometry because it may still be visible on the map.
+        */
+        if (isRing) {
+            final Coordinate first = coords.get(0);
+            if (!first.equals(previous1)) {
                 coords.add(first.copy());
             }
+        }
+        while (coords.size() < minPoints) {
+            coords.add(coords.get(coords.size() - 1).copy());
         }
 
         return cf.create(coords.toArray(new Coordinate[0]));

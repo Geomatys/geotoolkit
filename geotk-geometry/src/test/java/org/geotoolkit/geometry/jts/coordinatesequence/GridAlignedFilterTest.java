@@ -424,7 +424,16 @@ public class GridAlignedFilterTest {
             filter.setRemoveColinear(false);
             filter.setRemoveSpikes(true);
             final Geometry result = filter.alignAndSimplify(geometry);
-            assertEquals(fromWkt("LINESTRING (1 2, 2 2, 2 2, 3 2)"), result);
+            assertEquals(fromWkt("LINESTRING (1 2, 2 2, 3 2)"), result);
+        }
+        {// [2 3] spike with consecutive identical points
+            final Geometry geometry = fromWkt("LINESTRING (1 2, 2 2, 2 2, 2 2, 2 3, 2 2, 2 2, 2 2, 2 2, 3 2)");
+            final GridAlignedFilter filter = new GridAlignedFilter(0,0,1,1);
+            filter.setCreateEmpty(false);
+            filter.setRemoveColinear(false);
+            filter.setRemoveSpikes(true);
+            final Geometry result = filter.alignAndSimplify(geometry);
+            assertEquals(fromWkt("LINESTRING (1 2, 2 2, 3 2)"), result);
         }
         {// [2 4] not a spike
             final Geometry geometry = fromWkt("LINESTRING (1 2, 2 2, 2 4, 2 2, 3 2)");
