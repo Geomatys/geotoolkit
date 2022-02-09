@@ -113,8 +113,8 @@ public class DefaultChannelSelection implements ChannelSelection{
      */
     @Override
     public int hashCode() {
-        if(rgb != null) return 17*rgb.hashCode();
-        else return 17*gray.hashCode();
+        if(rgb != null) return 17 * Arrays.hashCode(rgb);
+        else return 17 * gray.hashCode();
     }
 
     /**

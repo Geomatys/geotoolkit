@@ -30,7 +30,7 @@ public class ObservationComparator implements Comparator<Observation> {
 
     @Override
     public int compare(Observation o1, Observation o2) {
-        if (o1.getSamplingTime() != null && o1.getSamplingTime() != null) {
+        if (o1.getSamplingTime() != null && o2.getSamplingTime() != null) {
             final Date timeBegin1;
             if (o1.getSamplingTime() instanceof Period) {
                 timeBegin1 = ((Period)o1.getSamplingTime()).getBeginning().getDate();

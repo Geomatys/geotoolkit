@@ -94,7 +94,8 @@ public final class FeatureLoop {
         }else if(pt instanceof Operation){
             //NOTE : value is a Property, the bifunction can call the set value when needed
             Object val = feature.getPropertyValue(attName);
-            function.apply(pt, val);
+            //we can't do anything to store and operation value back
+            Object newValue = function.apply(pt, val);
         }
     }
 

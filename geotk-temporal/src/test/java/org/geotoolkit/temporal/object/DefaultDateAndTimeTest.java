@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.temporal.object;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.sis.referencing.CommonCRS;
@@ -73,7 +74,7 @@ public class DefaultDateAndTimeTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testGetClockTime() {
         Number[] result = dateAndTime1.getClockTime();
-        assertFalse(dateAndTime2.getClockTime().equals(result));
+        assertFalse(Arrays.equals(dateAndTime2.getClockTime(), result));
     }
 
     /**
@@ -91,7 +92,7 @@ public class DefaultDateAndTimeTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testGetCalendarDate() {
         int[] result = dateAndTime1.getCalendarDate();
-        assertFalse(dateAndTime2.getCalendarDate().equals(result));
+        assertFalse(Arrays.equals(dateAndTime2.getCalendarDate(), result));
     }
 
     /**
@@ -112,7 +113,7 @@ public class DefaultDateAndTimeTest extends org.geotoolkit.test.TestBase {
         int[] result = dateAndTime1.getCalendarDate();
         int[] caldate = {1990, 3, 6};
         ((DefaultDateAndTime) dateAndTime1).setCalendarDate(caldate);
-        assertFalse(dateAndTime1.getCalendarDate().equals(result));
+        assertFalse(Arrays.equals(dateAndTime1.getCalendarDate(), result));
     }
 
     /**
@@ -123,7 +124,7 @@ public class DefaultDateAndTimeTest extends org.geotoolkit.test.TestBase {
         Number[] result = dateAndTime1.getClockTime();
         Number[] clk = {15, 23, 5.7};
         ((DefaultDateAndTime) dateAndTime1).setClockTime(clk);
-        assertFalse(dateAndTime1.getClockTime().equals(result));
+        assertFalse(Arrays.equals(dateAndTime1.getClockTime(), result));
     }
 
     /**
@@ -131,7 +132,7 @@ public class DefaultDateAndTimeTest extends org.geotoolkit.test.TestBase {
      */
     @Test
     public void testEquals() {
-        assertFalse(dateAndTime1.equals(null));
+        assertFalse(dateAndTime1 == null);
         assertEquals(dateAndTime1, dateAndTime1);
     }
 

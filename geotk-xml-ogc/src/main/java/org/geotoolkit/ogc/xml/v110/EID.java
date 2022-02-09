@@ -45,4 +45,9 @@ public class EID {
     public boolean equals(final Object object) {
         return object instanceof EID;
     }
+
+    @Override
+    public int hashCode() {
+        return 7;
+    }
 }

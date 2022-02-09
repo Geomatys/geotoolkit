@@ -107,4 +107,11 @@ public class AnyValueType {
         }
         return false;
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 31 * hash + Objects.hashCode(this.content);
+        return hash;
+    }
 }

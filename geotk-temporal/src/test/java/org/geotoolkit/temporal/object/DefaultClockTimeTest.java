@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.temporal.object;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.sis.referencing.CommonCRS;
@@ -67,7 +68,7 @@ public class DefaultClockTimeTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testGetClockTime() {
         Number[] result = clockTime1.getClockTime();
-        assertFalse(clockTime2.getClockTime().equals(result));
+        assertFalse(Arrays.equals(clockTime2.getClockTime(), result));
     }
 
     /**
@@ -78,7 +79,7 @@ public class DefaultClockTimeTest extends org.geotoolkit.test.TestBase {
         Number[] result = clockTime1.getClockTime();
         Number[] clcktime = {14, 15, 0};
         ((DefaultClockTime) clockTime1).setClockTime(clcktime);
-        assertFalse(clockTime1.getClockTime().equals(result));
+        assertFalse(Arrays.equals(clockTime1.getClockTime(), result));
     }
 
     /**
@@ -86,7 +87,7 @@ public class DefaultClockTimeTest extends org.geotoolkit.test.TestBase {
      */
     @Test
     public void testEquals() {
-        assertFalse(clockTime1.equals(null));
+        assertFalse(clockTime1 == null);
         assertEquals(clockTime1, clockTime1);
     }
 
@@ -105,6 +106,6 @@ public class DefaultClockTimeTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testToString() {
         String result = clockTime1.toString();
-        assertFalse(clockTime2.equals(result));
+        assertFalse(clockTime2.toString().equals(result));
     }
 }

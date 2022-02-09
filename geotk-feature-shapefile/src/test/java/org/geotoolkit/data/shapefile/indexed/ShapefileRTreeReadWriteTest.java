@@ -151,8 +151,8 @@ public class ShapefileRTreeReadWriteTest extends AbstractTestCaseSupport {
         Collection<Feature> ctwo = new ArrayList<>();
         FeatureStoreUtilities.fill(one, cone);
         FeatureStoreUtilities.fill(two, ctwo);
-        one.containsAll(two);
-        two.containsAll(one);
+        //one.containsAll(two);
+        //two.containsAll(one);
 
 //        compare(one.iterator(), two.iterator());
         s.close();

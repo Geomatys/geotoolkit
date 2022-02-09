@@ -556,7 +556,7 @@ public final class WPSIO {
 
         int nbSearch = 0;
         if (mimeType != null) {
-            mimeType.trim();
+            mimeType = mimeType.trim();
             if (mimeType.isEmpty()) {
                 mimeType = null;
             } else {
@@ -565,7 +565,7 @@ public final class WPSIO {
         }
 
         if (encoding != null) {
-            encoding.trim();
+            encoding = encoding.trim();
             if (encoding.isEmpty()) {
                 encoding = null;
             } else {
@@ -574,7 +574,7 @@ public final class WPSIO {
         }
 
         if (schema != null) {
-            schema.trim();
+            schema = schema.trim();
             if (schema.isEmpty()) {
                 schema = null;
             } else {

@@ -84,44 +84,28 @@ public class ShpFilesTestStream {
         }
     }
 
-    @Test
+    @Test(expected = Throwable.class)
     public void testExceptionGetInputStream() throws Exception {
         ShpFiles shpFiles = new ShpFiles(new URL("http://blah/blah.shp"));
-        try{
-            shpFiles.getInputStream(SHP);
-            fail("maybe test is bad?  We want an exception here");
-        }catch(Throwable e){
-        }
+        shpFiles.getInputStream(SHP);
     }
 
-    @Test
+    @Test(expected = Throwable.class)
     public void testExceptionGetOutputStream() throws Exception {
         ShpFiles shpFiles = new ShpFiles(new URL("http://blah/blah.shp"));
-        try{
-            shpFiles.getOutputStream(SHP);
-            fail("maybe test is bad?  We want an exception here");
-        }catch(Throwable e){
-        }
+        shpFiles.getOutputStream(SHP);
     }
 
-    @Test
+    @Test(expected = Throwable.class)
     public void testExceptionGetWriteChannel() throws Exception {
         ShpFiles shpFiles = new ShpFiles(new URL("http://blah/blah.shp"));
-        try{
-            shpFiles.getWriteChannel(SHP);
-            fail("maybe test is bad?  We want an exception here");
-        }catch(Throwable e){
-        }
+        shpFiles.getWriteChannel(SHP);
     }
 
-    @Test
+    @Test(expected = Throwable.class)
     public void testExceptionGetReadChannel() throws Exception {
         ShpFiles shpFiles = new ShpFiles(new URL("http://blah/blah.shp"));
-        try{
-            shpFiles.getReadChannel(SHP);
-            fail("maybe test is bad?  We want an exception here");
-        }catch(Throwable e){
-        }
+        shpFiles.getReadChannel(SHP);
     }
 
     @Test

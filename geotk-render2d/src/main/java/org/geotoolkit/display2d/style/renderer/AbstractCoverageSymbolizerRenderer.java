@@ -214,7 +214,8 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         final GridGeometry baseGG = trySubGrid(refGG, canvasGrid);
         final GridGeometry slice = extractSlice(baseGG, canvasGrid, computeMargin2D(interpolation), true);
 
-        GridCoverage coverage = ref.read(slice, (sourceBands == null || sourceBands.length < 1)? null : sourceBands);
+        if (sourceBands != null && sourceBands.length < 1) sourceBands = null;
+        GridCoverage coverage = ref.read(slice, sourceBands);
 
         if (coverage instanceof GridCoverageStack) {
             Logging.getLogger("org.geotoolkit.display2d.primitive").log(Level.WARNING, "Coverage reader return more than one slice.");

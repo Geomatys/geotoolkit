@@ -437,7 +437,7 @@ public final class GeoJSONUtils extends Static {
         }
 
         return input -> {
-            if (input == null || identifierType.getClass().isAssignableFrom(input.getClass())) {
+            if (input == null || identifierType.isAssignableFrom(input.getClass())) {
                 return input;
             }
 

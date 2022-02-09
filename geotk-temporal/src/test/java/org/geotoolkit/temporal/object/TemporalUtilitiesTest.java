@@ -19,7 +19,6 @@ package org.geotoolkit.temporal.object;
 
 import java.text.ParseException;
 import java.util.Calendar;
-import java.lang.annotation.Annotation;
 import java.util.Date;
 import java.util.TimeZone;
 import org.junit.Test;
@@ -32,22 +31,7 @@ import static java.util.Calendar.*;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class TemporalUtilitiesTest extends org.geotoolkit.test.TestBase implements Test {
-
-    @Override
-    public Class<? extends Throwable> expected() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public long timeout() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Class<? extends Annotation> annotationType() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+public class TemporalUtilitiesTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void dateErrorParsingTest() {

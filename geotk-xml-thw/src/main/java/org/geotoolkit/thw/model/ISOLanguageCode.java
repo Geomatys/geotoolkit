@@ -53,7 +53,7 @@ public enum ISOLanguageCode {
     ENG("English", "ENG", "EN"),
     EST("Estonian", new String[]{"EST"}, "ET"),
     FIN("Finnish", "FIN", "FI"),
-    FRE("Francais", new String[]{"FRE", "FRA"}, "FR", Arrays.asList(new char[]{'e', 'é' , 'è'})),
+    FRE("Francais", new String[]{"FRE", "FRA"}, "FR", Collections.singletonList(new char[]{'e', 'é' , 'è'})),
     GER("German", new String[]{"GER", "DEU"}, "DE"),
     GLE("Gaelic", "GLE","GA"),
     GRE("Greek modern", new String[]{"GRE", "ELL"}, "EL"),
@@ -84,7 +84,7 @@ public enum ISOLanguageCode {
     WOL("Wolof", "WOL", "WO");
 
 
-    private static final Map<String,ISOLanguageCode> MAP = new HashMap<String, ISOLanguageCode>();
+    private static final Map<String,ISOLanguageCode> MAP = new HashMap<>();
     static {
         for(final ISOLanguageCode iso : values()){
             MAP.put(iso.codetwo, iso);

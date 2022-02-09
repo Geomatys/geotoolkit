@@ -219,7 +219,7 @@ public final class WMTSUtilities {
         for (int j = 0; j < nR; j++) {
             for (int i = 0; i < nC; i++) {
                 double gMij = gM.getElement(i, j);
-                if (gMij == Double.NaN || gMij == Double.NEGATIVE_INFINITY || gMij == Double.POSITIVE_INFINITY) {
+                if (!Double.isFinite(gMij)) {
                     return false;
                 }
             }

@@ -203,10 +203,10 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
      */
     public TimePeriodType(final Period period) {
         if (period != null) {
-            if (period.getBeginning() != null && period.getBeginning() != null) {
+            if (period.getBeginning() != null && period.getBeginning().getDate() != null) {
                 this.beginPosition = new TimePositionType(period.getBeginning().getDate());
             }
-            if (period.getEnding() != null && period.getEnding() != null) {
+            if (period.getEnding() != null && period.getEnding().getDate() != null) {
                 this.endPosition = new TimePositionType(period.getEnding().getDate());
             }
         }

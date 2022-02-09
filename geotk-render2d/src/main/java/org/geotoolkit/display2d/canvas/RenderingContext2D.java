@@ -651,7 +651,7 @@ public class RenderingContext2D implements RenderingContext{
     }
 
     private static Point2D.Double toVector(Point2D.Double p0, Point2D.Double p1){
-        return new Point2D.Double(p1.x-p0.x, p1.y-p1.y);
+        return new Point2D.Double(p1.x-p0.x, p1.y-p0.y);
     }
 
     public static void nearestColinearPoint(final double x1, final double y1,

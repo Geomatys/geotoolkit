@@ -132,7 +132,7 @@ public class QueryExpressionType {
             boolean eq = false;
             if (this.content == null && that.content == null) {
                 eq = true;
-            } else if (this.content != null && this.content != null) {
+            } else if (this.content != null && that.content != null) {
                 if (this.content.size() == that.content.size()) {
                     Iterator thisIt = this.content.iterator();
                     Iterator thatIt = that.content.iterator();

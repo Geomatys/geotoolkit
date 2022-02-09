@@ -1,7 +1,6 @@
 package org.geotoolkit.storage.feature;
 
 import java.util.concurrent.Semaphore;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
 import org.opengis.feature.Feature;
@@ -46,8 +45,7 @@ public class FeatureSetWrapperTest {
             if (!barrier.tryAcquire()) {
                 throw new AssertionError("Bad test procedure: test semaphore already busy");
             }
-            test.onClose(barrier::release);
-            return test;
+            return test.onClose(barrier::release);
         }
     }
 }

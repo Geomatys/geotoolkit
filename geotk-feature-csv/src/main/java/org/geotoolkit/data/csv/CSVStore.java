@@ -314,8 +314,7 @@ public class CSVStore extends DataStore implements WritableFeatureSet, ResourceO
     public Stream<Feature> features(boolean parallel) throws DataStoreException {
         final CSVReader reader = new CSVReader(this, getType(), fileLock);
         final Stream<Feature> stream = StreamSupport.stream(Spliterators.spliteratorUnknownSize(reader, Spliterator.ORDERED), false);
-        stream.onClose(reader::close);
-        return stream;
+        return stream.onClose(reader::close);
     }
 
     /**

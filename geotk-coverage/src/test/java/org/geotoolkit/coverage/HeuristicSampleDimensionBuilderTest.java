@@ -47,13 +47,14 @@ public class HeuristicSampleDimensionBuilderTest {
                 .addQuantitative("no-data", 1f, 1.99f, Units.UNITY)
                 .addQuantitative("fill-value", 2f, 3f, Units.UNITY)
                 .build();
+        Number n;
         s.getBackground().ifPresent(bg
                 -> fail("No quantitative category should be promoted as background value, but background is defined: "+bg));
 
         s = new HeuristicSampleDimensionBuilder()
                 .addQualitative("background", 1, 2)
                 .build();
-        s.getBackground()
+        n = s.getBackground()
                 .filter(it -> it.intValue() == 1)
                 .orElseThrow(() -> new AssertionError("No background value defined, but we expect it to be 2"));
 
@@ -62,7 +63,7 @@ public class HeuristicSampleDimensionBuilderTest {
                 .addQuantitative("background", 0, 1, Units.UNITY)
                 .addQualitative("fill-value", 2, 3)
                 .build();
-        s.getBackground()
+        n = s.getBackground()
                 .filter(it -> it.intValue() == 2)
                 .orElseThrow(() -> new AssertionError("No background value defined, but we expect it to be 2"));
 

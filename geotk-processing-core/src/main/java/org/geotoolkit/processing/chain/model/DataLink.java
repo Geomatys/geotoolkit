@@ -164,6 +164,16 @@ public class DataLink {
     }
 
     @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 79 * hash + this.sourceId;
+        hash = 79 * hash + Objects.hashCode(this.sourceCode);
+        hash = 79 * hash + this.targetId;
+        hash = 79 * hash + Objects.hashCode(this.targetCode);
+        return hash;
+    }
+
+    @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("[LinkDto]");
         sb.append("sourceId:").append(sourceId).append('\n');

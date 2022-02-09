@@ -34,7 +34,7 @@ import org.opengis.style.GraphicFill;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class CachedFill extends Cache<Fill>{
+public class CachedFill extends Cache<Fill> {
 
     //Cached values
     private AlphaComposite cachedComposite = null;
@@ -103,7 +103,7 @@ public class CachedFill extends Cache<Fill>{
 
         final GraphicFill graphicFill = styleElement.getGraphicFill();
 
-        if(graphicFill != null && graphicFill != null){
+        if (graphicFill != null) {
             cachedGraphic = CachedGraphic.cache(graphicFill);
 
             switch(cachedGraphic.isStaticVisible()){
@@ -122,7 +122,7 @@ public class CachedFill extends Cache<Fill>{
 
             cachedGraphic.getRequieredAttributsName(requieredAttributs);
 
-        }else{
+        } else {
             final Expression expColor = styleElement.getColor();
 
             if(GO2Utilities.isStatic(expColor)){

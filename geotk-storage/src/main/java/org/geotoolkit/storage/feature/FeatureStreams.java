@@ -453,7 +453,7 @@ public final class FeatureStreams {
         final Iterable<T> iterable = () -> reader;
         Stream<T> stream = StreamSupport.stream(iterable.spliterator(), false);
         if (reader instanceof AutoCloseable) {
-            stream.onClose(new Runnable() {
+            stream = stream.onClose(new Runnable() {
                 @Override
                 public void run() {
                     try {
@@ -916,17 +916,14 @@ public final class FeatureStreams {
 
         @Override
         public Feature next() {
-            if(next == null){
-                hasNext();
+            if (next == null) {
+                if (!hasNext()) {
+                    throw new NoSuchElementException("No more elements.");
+                }
             }
-
-            if(next == null){
-                throw new NoSuchElementException("No more elements.");
-            }else{
-                Feature candidate = next;
-                next = null;
-                return candidate;
-            }
+            Feature candidate = next;
+            next = null;
+            return candidate;
         }
 
         @Override

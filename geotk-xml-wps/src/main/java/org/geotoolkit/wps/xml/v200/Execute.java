@@ -650,7 +650,8 @@ public class Execute extends RequestBase {
         @Deprecated
         public boolean isDocumentOutput() {
             final Response response = checkParent().checkParent().getResponse();
-            return response == null ? null : Response.document.equals(response);
+            if (response == null) return false;
+            return Response.document.equals(response);
         }
 
         /**

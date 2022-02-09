@@ -21,9 +21,9 @@ package org.geotoolkit.data.kml.xsd;
  * @author Samuel Andrés
  * @module
  */
-public class DefaultCdata implements Cdata{
+public class DefaultCdata implements Cdata {
 
-    private String CDATA;
+    private final String CDATA;
 
     public DefaultCdata(String cdata){
         this.CDATA = cdata;
@@ -36,11 +36,11 @@ public class DefaultCdata implements Cdata{
 
     @Override
     public boolean equals(Object object){
-        super.equals(object);
-        if (object instanceof Cdata)
+        if (object instanceof Cdata) {
             return CDATA.equals(((Cdata) object).toString());
-        else
+        } else {
             return false;
+        }
     }
 
     @Override

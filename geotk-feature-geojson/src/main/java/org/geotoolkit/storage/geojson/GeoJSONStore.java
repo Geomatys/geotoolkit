@@ -339,8 +339,7 @@ public final class GeoJSONStore extends DataStore implements ResourceOnFileSyste
     public Stream<Feature> features(boolean parallel) throws DataStoreException {
         final GeoJSONReader reader = new GeoJSONReader(jsonFile, getType(), rwLock);
         final Stream<Feature> stream = StreamSupport.stream(Spliterators.spliteratorUnknownSize(reader, Spliterator.ORDERED), false);
-        stream.onClose(reader::close);
-        return stream;
+        return stream.onClose(reader::close);
     }
 
     @Override
