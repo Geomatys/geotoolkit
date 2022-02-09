@@ -81,11 +81,15 @@ public class GridAlignedFilterTest {
         final Geometry geometry = null;
         final GridAlignedFilter filter = new GridAlignedFilter(0,0,1,1);
         {//without empty flag
-            final Geometry result = filter.alignAndSimplify(geometry, false);
+            filter.setCreateEmpty(false);
+            filter.setRemoveColinear(false);
+            final Geometry result = filter.alignAndSimplify(geometry);
             assertEquals(geometry, result);
         }
         {//with empty flag
-            final Geometry result = filter.alignAndSimplify(geometry, true);
+            filter.setCreateEmpty(true);
+            filter.setRemoveColinear(false);
+            final Geometry result = filter.alignAndSimplify(geometry);
             assertEquals(geometry, result);
         }
 
@@ -99,11 +103,15 @@ public class GridAlignedFilterTest {
         final Geometry geometry = GF.createEmpty(2);
         final GridAlignedFilter filter = new GridAlignedFilter(0,0,1,1);
         {//without empty flag
-            final Geometry result = filter.alignAndSimplify(geometry, false);
+            filter.setCreateEmpty(false);
+            filter.setRemoveColinear(false);
+            final Geometry result = filter.alignAndSimplify(geometry);
             assertEquals(geometry, result);
         }
         {//with empty flag
-            final Geometry result = filter.alignAndSimplify(geometry, true);
+            filter.setCreateEmpty(true);
+            filter.setRemoveColinear(false);
+            final Geometry result = filter.alignAndSimplify(geometry);
             assertEquals(geometry, result);
         }
     }
@@ -116,11 +124,15 @@ public class GridAlignedFilterTest {
         final Point geometry = GF.createPoint(new Coordinate(1.2, 5.6));
         final GridAlignedFilter filter = new GridAlignedFilter(0,0,1,1);
         {//without empty flag
-            final Geometry result = filter.alignAndSimplify(geometry, false);
+            filter.setCreateEmpty(false);
+            filter.setRemoveColinear(false);
+            final Geometry result = filter.alignAndSimplify(geometry);
             assertEquals(GF.createPoint(new Coordinate(1,6)), result);
         }
         {//with empty flag
-            final Geometry result = filter.alignAndSimplify(geometry, true);
+            filter.setCreateEmpty(true);
+            filter.setRemoveColinear(false);
+            final Geometry result = filter.alignAndSimplify(geometry);
             assertEquals(GF.createPoint(new Coordinate(1,6)), result);
         }
     }
@@ -136,11 +148,15 @@ public class GridAlignedFilterTest {
         final MultiPoint geometry = GF.createMultiPointFromCoords(new Coordinate[]{new Coordinate(1.2, 5.6),new Coordinate(1.4, 6.3), new Coordinate(-1.6,-8)});
         final GridAlignedFilter filter = new GridAlignedFilter(0,0,1,1);
         {//without empty flag
-            final Geometry result = filter.alignAndSimplify(geometry, false);
+            filter.setCreateEmpty(false);
+            filter.setRemoveColinear(false);
+            final Geometry result = filter.alignAndSimplify(geometry);
             assertEquals(GF.createMultiPointFromCoords(new Coordinate[]{new Coordinate(1,6), new Coordinate(-2,-8)}), result);
         }
         {//with empty flag
-            final Geometry result = filter.alignAndSimplify(geometry, true);
+            filter.setCreateEmpty(true);
+            filter.setRemoveColinear(false);
+            final Geometry result = filter.alignAndSimplify(geometry);
             assertEquals(GF.createMultiPointFromCoords(new Coordinate[]{new Coordinate(1,6), new Coordinate(-2,-8)}), result);
         }
     }
@@ -154,11 +170,15 @@ public class GridAlignedFilterTest {
             final LineString geometry = GF.createLineString(new Coordinate[]{new Coordinate(1.2, 5.6), new Coordinate(1.4, 6.3)});
             final GridAlignedFilter filter = new GridAlignedFilter(0,0,1,1);
             {//without empty flag
-                final Geometry result = filter.alignAndSimplify(geometry, false);
+                filter.setCreateEmpty(false);
+                filter.setRemoveColinear(false);
+                final Geometry result = filter.alignAndSimplify(geometry);
                 assertEquals(GF.createLineString(new Coordinate[]{new Coordinate(1,6), new Coordinate(1,6)}), result);
             }
             {//with empty flag
-                final Geometry result = filter.alignAndSimplify(geometry, true);
+                filter.setCreateEmpty(true);
+                filter.setRemoveColinear(false);
+                final Geometry result = filter.alignAndSimplify(geometry);
                 assertEquals(GF.createLineString(), result);
             }
         }
@@ -166,11 +186,15 @@ public class GridAlignedFilterTest {
             final LineString geometry = GF.createLineString(new Coordinate[]{new Coordinate(1.2, 5.6),new Coordinate(1.4, 6.3), new Coordinate(-1.6,-8)});
             final GridAlignedFilter filter = new GridAlignedFilter(0,0,1,1);
             {//without empty flag
-                final Geometry result = filter.alignAndSimplify(geometry, false);
+                filter.setCreateEmpty(false);
+                filter.setRemoveColinear(false);
+                final Geometry result = filter.alignAndSimplify(geometry);
                 assertEquals(GF.createLineString(new Coordinate[]{new Coordinate(1,6), new Coordinate(-2,-8)}), result);
             }
             {//with empty flag
-                final Geometry result = filter.alignAndSimplify(geometry, true);
+                filter.setCreateEmpty(true);
+                filter.setRemoveColinear(false);
+                final Geometry result = filter.alignAndSimplify(geometry);
                 assertEquals(GF.createLineString(new Coordinate[]{new Coordinate(1,6), new Coordinate(-2,-8)}), result);
             }
         }
@@ -188,14 +212,18 @@ public class GridAlignedFilterTest {
             });
             final GridAlignedFilter filter = new GridAlignedFilter(0,0,1,1);
             {//without empty flag
-                final Geometry result = filter.alignAndSimplify(geometry, false);
+                filter.setCreateEmpty(false);
+                filter.setRemoveColinear(false);
+                final Geometry result = filter.alignAndSimplify(geometry);
                 assertEquals(
                     GF.createMultiLineString(new LineString[]{
                         GF.createLineString(new Coordinate[]{new Coordinate(1, 6), new Coordinate(1, 6)})
                     }), result);
             }
             {//with empty flag
-                final Geometry result = filter.alignAndSimplify(geometry, true);
+                filter.setCreateEmpty(true);
+                filter.setRemoveColinear(false);
+                final Geometry result = filter.alignAndSimplify(geometry);
                 assertEquals(GF.createMultiLineString(), result);
             }
         }
@@ -206,14 +234,18 @@ public class GridAlignedFilterTest {
             });
             final GridAlignedFilter filter = new GridAlignedFilter(0,0,1,1);
             {//without empty flag
-                final Geometry result = filter.alignAndSimplify(geometry, false);
+                filter.setCreateEmpty(false);
+                filter.setRemoveColinear(false);
+                final Geometry result = filter.alignAndSimplify(geometry);
                 assertEquals(
                     GF.createMultiLineString(new LineString[]{
                         GF.createLineString(new Coordinate[]{new Coordinate(1, 6), new Coordinate(-2, -8)})
                     }), result);
             }
             {//with empty flag
-                final Geometry result = filter.alignAndSimplify(geometry, true);
+                filter.setCreateEmpty(true);
+                filter.setRemoveColinear(false);
+                final Geometry result = filter.alignAndSimplify(geometry);
                 assertEquals(
                     GF.createMultiLineString(new LineString[]{
                         GF.createLineString(new Coordinate[]{new Coordinate(1, 6), new Coordinate(-2, -8)})
@@ -231,11 +263,15 @@ public class GridAlignedFilterTest {
             final Polygon geometry = fromWkt("POLYGON((1.2 5.6, 1.4 6.3, 1.4 6.3, 1.2 5.6))");
             final GridAlignedFilter filter = new GridAlignedFilter(0,0,1,1);
             {//without empty flag
-                final Geometry result = filter.alignAndSimplify(geometry, false);
+                filter.setCreateEmpty(false);
+                filter.setRemoveColinear(false);
+                final Geometry result = filter.alignAndSimplify(geometry);
                 assertEquals(fromWkt("POLYGON EMPTY"), result);
             }
             {//with empty flag
-                final Geometry result = filter.alignAndSimplify(geometry, true);
+                filter.setCreateEmpty(true);
+                filter.setRemoveColinear(false);
+                final Geometry result = filter.alignAndSimplify(geometry);
                 assertEquals(fromWkt("POLYGON EMPTY"), result);
             }
         }
@@ -243,11 +279,15 @@ public class GridAlignedFilterTest {
             final Polygon geometry = fromWkt("POLYGON((1.2 5.6, 1.4 6.3, 3.4 6.3, -1.6 -8, 1.2 5.6))");
             final GridAlignedFilter filter = new GridAlignedFilter(0,0,1,1);
             {//without empty flag
-                final Geometry result = filter.alignAndSimplify(geometry, false);
+                filter.setCreateEmpty(false);
+                filter.setRemoveColinear(false);
+                final Geometry result = filter.alignAndSimplify(geometry);
                 assertEquals(fromWkt("POLYGON((1 6, 3 6, -2 -8, 1 6))"), result);
             }
             {//with empty flag
-                final Geometry result = filter.alignAndSimplify(geometry, true);
+                filter.setCreateEmpty(true);
+                filter.setRemoveColinear(false);
+                final Geometry result = filter.alignAndSimplify(geometry);
                 assertEquals(fromWkt("POLYGON((1 6, 3 6, -2 -8, 1 6))"), result);
             }
         }
@@ -255,11 +295,15 @@ public class GridAlignedFilterTest {
             final Polygon geometry = fromWkt("POLYGON((0.1 0.2, 10.5 0.1, 10.4 10.3, 0.4 10.1, 0.1 0.2), EMPTY, (2.1 7.1, 4.4 7.2, 3.6 3.3, 2.9 2.8, 3.4 3.3, 2.1 7.1), (4.3 3.1, 3.6 2.7, 3.6 3.1, 4.3 3.1))");
             final GridAlignedFilter filter = new GridAlignedFilter(0,0,1,1);
             {//without empty flag
-                final Geometry result = filter.alignAndSimplify(geometry, false);
+                filter.setCreateEmpty(false);
+                filter.setRemoveColinear(false);
+                final Geometry result = filter.alignAndSimplify(geometry);
                 assertEquals(fromWkt("POLYGON ((0 0, 0 10, 10 10, 10 0, 0 0), (2 7, 3 3, 4 3, 4 7, 2 7))"), result);
             }
             {//with empty flag
-                final Geometry result = filter.alignAndSimplify(geometry, true);
+                filter.setCreateEmpty(true);
+                filter.setRemoveColinear(false);
+                final Geometry result = filter.alignAndSimplify(geometry);
                 assertEquals(fromWkt("POLYGON ((0 0, 0 10, 10 10, 10 0, 0 0), (2 7, 3 3, 4 3, 4 7, 2 7))"), result);
             }
         }
@@ -274,11 +318,15 @@ public class GridAlignedFilterTest {
             final MultiPolygon geometry = fromWkt("MULTIPOLYGON(((1.2 5.6, 1.4 6.3, 1.4 6.3, 1.2 5.6)))");
             final GridAlignedFilter filter = new GridAlignedFilter(0,0,1,1);
             {//without empty flag
-                final Geometry result = filter.alignAndSimplify(geometry, false);
+                filter.setCreateEmpty(false);
+                filter.setRemoveColinear(false);
+                final Geometry result = filter.alignAndSimplify(geometry);
                 assertEquals(fromWkt("MULTIPOLYGON EMPTY"), result);
             }
             {//with empty flag
-                final Geometry result = filter.alignAndSimplify(geometry, true);
+                filter.setCreateEmpty(true);
+                filter.setRemoveColinear(false);
+                final Geometry result = filter.alignAndSimplify(geometry);
                 assertEquals(fromWkt("MULTIPOLYGON EMPTY"), result);
             }
         }
@@ -286,11 +334,15 @@ public class GridAlignedFilterTest {
             final MultiPolygon geometry = fromWkt("MULTIPOLYGON(((1.2 5.6, 1.4 6.3, 3.4 6.3, -1.6 -8, 1.2 5.6)), EMPTY)");
             final GridAlignedFilter filter = new GridAlignedFilter(0,0,1,1);
             {//without empty flag
-                final Geometry result = filter.alignAndSimplify(geometry, false);
+                filter.setCreateEmpty(false);
+                filter.setRemoveColinear(false);
+                final Geometry result = filter.alignAndSimplify(geometry);
                 assertEquals(fromWkt("MULTIPOLYGON(((1 6, 3 6, -2 -8, 1 6)))"), result);
             }
             {//with empty flag
-                final Geometry result = filter.alignAndSimplify(geometry, true);
+                filter.setCreateEmpty(true);
+                filter.setRemoveColinear(false);
+                final Geometry result = filter.alignAndSimplify(geometry);
                 assertEquals(fromWkt("MULTIPOLYGON(((1 6, 3 6, -2 -8, 1 6)))"), result);
             }
         }
@@ -298,15 +350,102 @@ public class GridAlignedFilterTest {
             final MultiPolygon geometry = fromWkt("MULTIPOLYGON(EMPTY,((0.1 0.2, 10.5 0.1, 10.4 10.3, 0.4 10.1, 0.1 0.2), EMPTY, (2.1 7.1, 4.4 7.2, 3.6 3.3, 2.9 2.8, 3.4 3.3, 2.1 7.1), (4.3 3.1, 3.6 2.7, 3.6 3.1, 4.3 3.1)), ((1.2 5.6, 1.4 6.3, 3.4 6.3, -1.6 -8, 1.2 5.6)))");
             final GridAlignedFilter filter = new GridAlignedFilter(0,0,1,1);
             {//without empty flag
-                final Geometry result = filter.alignAndSimplify(geometry, false);
+                filter.setCreateEmpty(false);
+                filter.setRemoveColinear(false);
+                final Geometry result = filter.alignAndSimplify(geometry);
                 assertEquals(fromWkt("MULTIPOLYGON (((0 0, 0 10, 10 10, 10 0, 0 0), (2 7, 3 3, 4 3, 4 7, 2 7)), ((1 6, 3 6, -2 -8, 1 6)))"), result);
             }
             {//with empty flag
-                final Geometry result = filter.alignAndSimplify(geometry, true);
+                filter.setCreateEmpty(true);
+                filter.setRemoveColinear(false);
+                final Geometry result = filter.alignAndSimplify(geometry);
                 assertEquals(fromWkt("MULTIPOLYGON (((0 0, 0 10, 10 10, 10 0, 0 0), (2 7, 3 3, 4 3, 4 7, 2 7)), ((1 6, 3 6, -2 -8, 1 6)))"), result);
             }
         }
     }
+
+    /**
+     * Test colinear points removal.
+     */
+    @Test
+    public void testColinearSimplification() throws ParseException {
+        {// points at regular distance on same direction
+            final LineString geometry = GF.createLineString(new Coordinate[]{new Coordinate(1, 2), new Coordinate(2, 2), new Coordinate(3, 2), new Coordinate(4, 2)});
+            final GridAlignedFilter filter = new GridAlignedFilter(0,0,1,1);
+            filter.setCreateEmpty(false);
+            filter.setRemoveColinear(true);
+            final Geometry result = filter.alignAndSimplify(geometry);
+            assertEquals(GF.createLineString(new Coordinate[]{new Coordinate(1, 2), new Coordinate(4, 2)}), result);
+        }
+        {// points at different distance on same direction
+            final LineString geometry = GF.createLineString(new Coordinate[]{new Coordinate(1, 2), new Coordinate(3, 2), new Coordinate(7, 2), new Coordinate(14, 2)});
+            final GridAlignedFilter filter = new GridAlignedFilter(0,0,1,1);
+            filter.setCreateEmpty(false);
+            filter.setRemoveColinear(true);
+            final Geometry result = filter.alignAndSimplify(geometry);
+            assertEquals(GF.createLineString(new Coordinate[]{new Coordinate(1, 2), new Coordinate(14, 2)}), result);
+        }
+        {// points at different distance and different directions
+            final LineString geometry = GF.createLineString(new Coordinate[]{new Coordinate(1, 2), new Coordinate(-3, 2), new Coordinate(7, 2), new Coordinate(14, 2), new Coordinate(30, 2)});
+            final GridAlignedFilter filter = new GridAlignedFilter(0,0,1,1);
+            filter.setCreateEmpty(false);
+            filter.setRemoveColinear(true);
+            final Geometry result = filter.alignAndSimplify(geometry);
+            assertEquals(GF.createLineString(new Coordinate[]{new Coordinate(1, 2), new Coordinate(-3, 2), new Coordinate(30, 2)}), result);
+        }
+        {// points at different distance on same direction, diagonal
+            final LineString geometry = GF.createLineString(new Coordinate[]{new Coordinate(1, 2), new Coordinate(3, 6), new Coordinate(7, 14), new Coordinate(14, 28)});
+            final GridAlignedFilter filter = new GridAlignedFilter(0,0,1,1);
+            filter.setCreateEmpty(false);
+            filter.setRemoveColinear(true);
+            final Geometry result = filter.alignAndSimplify(geometry);
+            assertEquals(GF.createLineString(new Coordinate[]{new Coordinate(1, 2), new Coordinate(14, 28)}), result);
+        }
+    }
+
+    /**
+     * Test spikes removing.
+     */
+    @Test
+    public void testSpikeSimplification() throws ParseException {
+        {// no spike
+            final Geometry geometry = fromWkt("LINESTRING (1 2, 2 2, 3 2)");
+            final GridAlignedFilter filter = new GridAlignedFilter(0,0,1,1);
+            filter.setCreateEmpty(false);
+            filter.setRemoveColinear(false);
+            filter.setRemoveSpikes(true);
+            final Geometry result = filter.alignAndSimplify(geometry);
+            assertEquals(fromWkt("LINESTRING (1 2, 2 2, 3 2)"), result);
+        }
+        {// [2 3] spike
+            final Geometry geometry = fromWkt("LINESTRING (1 2, 2 2, 2 3, 2 2, 3 2)");
+            final GridAlignedFilter filter = new GridAlignedFilter(0,0,1,1);
+            filter.setCreateEmpty(false);
+            filter.setRemoveColinear(false);
+            filter.setRemoveSpikes(true);
+            final Geometry result = filter.alignAndSimplify(geometry);
+            assertEquals(fromWkt("LINESTRING (1 2, 2 2, 3 2)"), result);
+        }
+        {// [2 3] spike with consecutive identical points
+            final Geometry geometry = fromWkt("LINESTRING (1 2, 2 2, 2 2, 2 2, 2 3, 2 2, 2 2, 2 2, 2 2, 3 2)");
+            final GridAlignedFilter filter = new GridAlignedFilter(0,0,1,1);
+            filter.setCreateEmpty(false);
+            filter.setRemoveColinear(false);
+            filter.setRemoveSpikes(true);
+            final Geometry result = filter.alignAndSimplify(geometry);
+            assertEquals(fromWkt("LINESTRING (1 2, 2 2, 3 2)"), result);
+        }
+        {// [2 4] not a spike
+            final Geometry geometry = fromWkt("LINESTRING (1 2, 2 2, 2 4, 2 2, 3 2)");
+            final GridAlignedFilter filter = new GridAlignedFilter(0,0,1,1);
+            filter.setCreateEmpty(false);
+            filter.setRemoveColinear(false);
+            filter.setRemoveSpikes(true);
+            final Geometry result = filter.alignAndSimplify(geometry);
+            assertEquals(fromWkt("LINESTRING (1 2, 2 2, 2 4, 2 2, 3 2)"), result);
+        }
+    }
+
 
     private static <T extends Geometry> T fromWkt(String wkt) throws ParseException {
         return (T) new WKTReader().read(wkt);
