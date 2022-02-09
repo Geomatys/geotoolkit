@@ -55,7 +55,7 @@ public class Constant extends Positionable {
     }
 
     public Constant(final int id, final Class type, final Object value, final int x, final int y) {
-        this(id,type, ConstantUtilities.valueToString(value),x,x);
+        this(id,type, ConstantUtilities.valueToString(value),x,y);
     }
 
     public Constant(final int id, final Class type, final String value, final int x, final int y) {

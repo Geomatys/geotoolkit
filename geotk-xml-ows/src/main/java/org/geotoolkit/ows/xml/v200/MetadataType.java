@@ -381,6 +381,19 @@ public class MetadataType implements AbstractMetadata {
         return false;
     }
 
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 37 * hash + Objects.hashCode(this.about);
+        hash = 37 * hash + Objects.hashCode(this.type);
+        hash = 37 * hash + Objects.hashCode(this.href);
+        hash = 37 * hash + Objects.hashCode(this.role);
+        hash = 37 * hash + Objects.hashCode(this.arcrole);
+        hash = 37 * hash + Objects.hashCode(this.title);
+        hash = 37 * hash + Objects.hashCode(this.show);
+        hash = 37 * hash + Objects.hashCode(this.actuate);
+        return hash;
+    }
 
     @Override
     public String toString() {

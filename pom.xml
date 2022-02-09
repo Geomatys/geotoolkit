@@ -199,6 +199,8 @@
     <woodstox.version>6.0.0</woodstox.version>
     <xmlgraphics.version>2.3</xmlgraphics.version>
     <antlr.version>4.9.3</antlr.version>
+    <!-- ErrorProne 2.11.0 has a knwon bug on JDK-17 : https://giters.com/google/error-prone/issues/2926 -->
+    <error-prone.version>2.10.0</error-prone.version>
     <!-- @{argLine} necessary for jacoco generation, we must declare
          an empty property to avoid a surefire exception if we run any other
          maven phase which doesn't activate jacoco -->
@@ -605,6 +607,24 @@
           <showWarnings>true</showWarnings>
           <showDeprecation>true</showDeprecation>
           <useIncrementalCompilation>false</useIncrementalCompilation> <!-- https://jira.codehaus.org/browse/MCOMPILER-209 -->
+          <compilerArgs>
+            <arg>-XDcompilePolicy=simple</arg>
+            <!-- UnicodeInCode : do not consider unicode chars in code as an error, used in maths and projections -->
+            <!-- TODO : when upgrading ErrorProne to 2.11+ add -Xep:UnicodeInCode:WARN -->
+            <arg>-Xplugin:ErrorProne</arg>
+          </compilerArgs>
+          <annotationProcessorPaths>
+            <path>
+              <groupId>com.google.errorprone</groupId>
+              <artifactId>error_prone_core</artifactId>
+              <version>${error-prone.version}</version>
+            </path>
+            <!-- Other annotation processors go here.
+
+            If 'annotationProcessorPaths' is set, processors will no longer be
+            discovered on the regular -classpath; see also 'Using Error Prone
+            together with other annotation processors' below. -->
+          </annotationProcessorPaths>
         </configuration>
       </plugin>
 

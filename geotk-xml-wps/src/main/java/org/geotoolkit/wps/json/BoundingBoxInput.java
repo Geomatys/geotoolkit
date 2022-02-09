@@ -97,7 +97,7 @@ public class BoundingBoxInput extends InputBase {
         }
         BoundingBoxInput that = (BoundingBoxInput) o;
         return Objects.equals(this.crs, that.crs) &&
-               Objects.equals(this.bbox, that.crs);
+               Objects.equals(this.bbox, that.bbox);
     }
 
     @Override

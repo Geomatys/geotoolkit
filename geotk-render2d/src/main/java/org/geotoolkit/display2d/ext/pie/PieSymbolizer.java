@@ -38,6 +38,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import org.geotoolkit.filter.FilterUtilities;
 
@@ -304,6 +305,14 @@ public final class PieSymbolizer extends SymbolizerType implements ExtensionSymb
                 return false;
             }
             return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 5;
+            hash = 67 * hash + Objects.hashCode(this.quarter);
+            hash = 67 * hash + Objects.hashCode(this.color);
+            return hash;
         }
     }
 }

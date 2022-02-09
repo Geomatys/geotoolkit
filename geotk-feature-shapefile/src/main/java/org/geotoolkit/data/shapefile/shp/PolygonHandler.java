@@ -47,8 +47,8 @@ import org.locationtech.jts.geom.Polygon;
  */
 public class PolygonHandler extends AbstractShapeHandler {
 
-    protected final List<LinearRing> shells = new ArrayList<LinearRing>();
-    protected final List<LinearRing> holes = new ArrayList<LinearRing>();
+    protected final List<LinearRing> shells = new ArrayList<>();
+    protected final List<LinearRing> holes = new ArrayList<>();
 
     public PolygonHandler(final boolean read3D) {
         super(ShapeType.POLYGON,read3D);
@@ -71,8 +71,8 @@ public class PolygonHandler extends AbstractShapeHandler {
             p = pointList[t];
 
             if ((testPoint.x == p.x)
-                    && (testPoint.y == p.y)
-                    && ((testPoint.z == p.z) || (!(testPoint.z == testPoint.z)))
+              && (testPoint.y == p.y)
+              && ((testPoint.z == p.z) || (!(testPoint.z == p.z)))
                     // nan
                     // test;
                     // x!=x

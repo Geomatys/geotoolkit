@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.temporal.object;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.sis.referencing.CommonCRS;
@@ -82,7 +83,7 @@ public class DefaultCalendarDateTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testGetCalendarDate() {
         int[] result = calendarDate1.getCalendarDate();
-        assertFalse(calendarDate2.getCalendarDate().equals(result));
+        assertFalse(Arrays.equals(calendarDate2.getCalendarDate(), result));
     }
 
     /**
@@ -103,7 +104,7 @@ public class DefaultCalendarDateTest extends org.geotoolkit.test.TestBase {
         int[] result = calendarDate1.getCalendarDate();
         int[] caldate = {1995, 5, 5};
         ((DefaultCalendarDate) calendarDate1).setCalendarDate(caldate);
-        assertFalse(calendarDate1.getCalendarDate().equals(result));
+        assertFalse(Arrays.equals(calendarDate1.getCalendarDate(), result));
     }
 
     /**
@@ -111,7 +112,7 @@ public class DefaultCalendarDateTest extends org.geotoolkit.test.TestBase {
      */
     @Test
     public void testEquals() {
-        assertFalse(calendarDate1.equals(null));
+        assertFalse(calendarDate1 == null);
         assertEquals(calendarDate1, calendarDate1);
     }
 

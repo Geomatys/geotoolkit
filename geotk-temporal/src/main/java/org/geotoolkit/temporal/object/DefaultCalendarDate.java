@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.temporal.object;
 
+import java.util.Arrays;
 import java.util.Objects;
 import org.geotoolkit.util.StringUtilities;
 import org.opengis.temporal.CalendarDate;
@@ -90,7 +91,7 @@ public class DefaultCalendarDate extends DefaultTemporalPosition implements Cale
         if (object instanceof DefaultCalendarDate && super.equals(object)) {
             final DefaultCalendarDate that = (DefaultCalendarDate) object;
 
-            return Objects.equals(this.calendarDate, that.calendarDate) &&
+            return Arrays.equals(this.calendarDate, that.calendarDate) &&
                     Objects.equals(this.calendarEraName, that.calendarEraName);
         }
         return false;
@@ -99,7 +100,7 @@ public class DefaultCalendarDate extends DefaultTemporalPosition implements Cale
     @Override
     public int hashCode() {
         int hash = 5;
-        hash = 37 * hash + (this.calendarDate != null ? this.calendarDate.hashCode() : 0);
+        hash = 37 * hash + (this.calendarDate != null ? Arrays.hashCode(this.calendarDate) : 0);
         hash = 37 * hash + (this.calendarEraName != null ? this.calendarEraName.hashCode() : 0);
         return hash;
     }

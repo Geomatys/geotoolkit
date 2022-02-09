@@ -60,6 +60,7 @@ import ucar.nc2.Variable;
 public class NetCDFExtractor {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.sos.netcdf");
+    private static final long LIMIT = (Integer.MIN_VALUE * -1l) + 1l;
 
     public static ExtractionResult getObservationFromNetCDF(final Path netCDFFile, final String procedureID) throws NetCDFParsingException {
         final NCFieldAnalyze analyze = analyzeResult(netCDFFile, null);
@@ -383,7 +384,7 @@ public class NetCDFExtractor {
 
                         final long millis = getTimeValue(timeUnits, timeArray, i);
 
-                        if (millis == 0 || millis == ((Integer.MIN_VALUE * -1) + 1)) {
+                        if (millis == 0 || millis == LIMIT) {
                             continue;
                         }
                         gb.addDate(millis);
@@ -441,7 +442,7 @@ public class NetCDFExtractor {
 
                             final long millis = getTimeValue(timeUnits, timeFirst, constantT, timeArray, i, j);
 
-                            if (millis == 0 || millis == ((Integer.MIN_VALUE * -1) + 1)) {
+                            if (millis == 0 || millis == LIMIT) {
                                 continue;
                             }
                             gb.addDate(millis);
@@ -529,7 +530,7 @@ public class NetCDFExtractor {
                     // iterating over time
                     for (int i = 0; i < count; i++) {
                         final long millis = getTimeValue(timeUnits, timeArray, i);
-                        if (millis == 0 || millis == ((Integer.MIN_VALUE * -1) + 1)) {
+                        if (millis == 0 || millis == LIMIT) {
                             continue;
                         }
                         gb.addDate(millis);
@@ -564,7 +565,7 @@ public class NetCDFExtractor {
 
                             final long millis = getTimeValue(timeUnits, timeFirst, constantT, timeArray, i, j);
 
-                            if (millis == 0 || millis == ((Integer.MIN_VALUE * -1) + 1)) {
+                            if (millis == 0 || millis == LIMIT) {
                                 continue;
                             }
                             gb.addDate(millis);
@@ -648,7 +649,7 @@ public class NetCDFExtractor {
                     if (analyze.hasTime()) {
                         final long millis = getTimeValue(timeUnits, timeArray, 0);
 
-                        if (millis != 0 && millis != ((Integer.MIN_VALUE * -1) + 1)) {
+                        if (millis != 0 && millis != LIMIT) {
                             gb.addDate(millis);
                         }
                     }
@@ -710,7 +711,7 @@ public class NetCDFExtractor {
                         if (analyze.hasTime()) {
                             final long millis = getTimeValue(timeUnits, timeArray, 0);
 
-                            if (millis != 0 && millis != ((Integer.MIN_VALUE * -1) + 1)) {
+                            if (millis != 0 && millis != LIMIT) {
                                 gb.addDate(millis);
                             }
                         }
@@ -802,7 +803,7 @@ public class NetCDFExtractor {
                     if (analyze.hasTime()) {
                         final long millis = getTimeValue(timeUnits, timeArray, 0);
 
-                        if (millis != 0 && millis != ((Integer.MIN_VALUE * -1) + 1)) {
+                        if (millis != 0 && millis != LIMIT) {
                             gb.addDate(millis);
                         }
                     }
@@ -833,7 +834,7 @@ public class NetCDFExtractor {
                         if (analyze.hasTime()) {
                             final long millis = getTimeValue(timeUnits, timeArray, 0);
 
-                            if (millis != 0 && millis != ((Integer.MIN_VALUE * -1) + 1)) {
+                            if (millis != 0 && millis != LIMIT) {
                                 gb.addDate(millis);
                             }
                         }
@@ -904,7 +905,7 @@ public class NetCDFExtractor {
 
                         final long millis = getTimeValue(timeUnits, timeArray, i);
 
-                        if (millis == 0 || millis == ((Integer.MIN_VALUE * -1) + 1)) {
+                        if (millis == 0 || millis == LIMIT) {
                             continue;
                         }
                         gb.addDate(millis);
@@ -970,7 +971,7 @@ public class NetCDFExtractor {
 
                             final long millis = getTimeValue(timeUnits, timeFirst, constantT, timeArray, i, j);
 
-                            if (millis == 0 || millis == ((Integer.MIN_VALUE * -1) + 1)) {
+                            if (millis == 0 || millis == LIMIT) {
                                 continue;
                             }
                             gb.addDate(millis);
@@ -1069,7 +1070,7 @@ public class NetCDFExtractor {
 
                         final long millis = getTimeValue(timeUnits, timeArray, i);
 
-                        if (millis == 0 || millis == ((Integer.MIN_VALUE * -1) + 1)) {
+                        if (millis == 0 || millis == LIMIT) {
                             continue;
                         }
                         gb.addDate(millis);
@@ -1103,7 +1104,7 @@ public class NetCDFExtractor {
 
                             final long millis = getTimeValue(timeUnits, timeFirst, constantT, timeArray, i, j);
 
-                            if (millis == 0 || millis == ((Integer.MIN_VALUE * -1) + 1)) {
+                            if (millis == 0 || millis == LIMIT) {
                                 continue;
                             }
                             gb.addDate(millis);
@@ -1185,7 +1186,7 @@ public class NetCDFExtractor {
 
                             final long millis = getTimeValue(timeUnits, timeArray, i);
 
-                            if (millis == 0 || millis == ((Integer.MIN_VALUE * -1) + 1)) {
+                            if (millis == 0 || millis == LIMIT) {
                                 continue;
                             }
                             gb.addDate(millis);
@@ -1272,7 +1273,7 @@ public class NetCDFExtractor {
 
                             final long millis = getTimeValue(timeUnits, timeArray, i);
 
-                            if (millis == 0 || millis == ((Integer.MIN_VALUE * -1) + 1)) {
+                            if (millis == 0 || millis == LIMIT) {
                                 continue;
                             }
                             gb.addDate(millis);

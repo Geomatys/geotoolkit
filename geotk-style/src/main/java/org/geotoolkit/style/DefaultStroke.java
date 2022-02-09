@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.style;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 import org.opengis.filter.Expression;
@@ -260,7 +261,7 @@ public class DefaultStroke implements Stroke{
     @Override
     public int hashCode() {
         int hash = 1;
-        if(dashes != null) hash *= dashes.hashCode();
+        if(dashes != null) hash *= Arrays.hashCode(dashes);
         if(stroke != null) hash *= stroke.hashCode();
         if(fill != null)   hash *= fill.hashCode();
         hash *= color.hashCode();

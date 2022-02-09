@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.temporal.object;
 
+import java.util.Arrays;
 import java.util.Objects;
 import org.geotoolkit.util.StringUtilities;
 import org.opengis.temporal.CalendarDate;
@@ -107,9 +108,9 @@ public class DefaultDateAndTime extends DefaultTemporalPosition implements DateA
         if (object instanceof DefaultDateAndTime && super.equals(object)) {
             final DefaultDateAndTime that = (DefaultDateAndTime) object;
 
-            return Objects.equals(this.calendarDate, that.calendarDate) &&
+            return Arrays.equals(this.calendarDate, that.calendarDate) &&
                     Objects.equals(this.calendarEraName, that.calendarEraName) &&
-                    Objects.equals(this.clockTime, that.clockTime);
+                    Arrays.equals(this.clockTime, that.clockTime);
         }
         return false;
     }
@@ -117,9 +118,9 @@ public class DefaultDateAndTime extends DefaultTemporalPosition implements DateA
     @Override
     public int hashCode() {
         int hash = 5;
-        hash = 37 * hash + (this.calendarDate != null ? this.calendarDate.hashCode() : 0);
+        hash = 37 * hash + (this.calendarDate != null ? Arrays.hashCode(this.calendarDate) : 0);
         hash = 37 * hash + (this.calendarEraName != null ? this.calendarEraName.hashCode() : 0);
-        hash = 37 * hash + (this.clockTime != null ? this.clockTime.hashCode() : 0);
+        hash = 37 * hash + (this.clockTime != null ? Arrays.hashCode(this.clockTime) : 0);
         return hash;
     }
 

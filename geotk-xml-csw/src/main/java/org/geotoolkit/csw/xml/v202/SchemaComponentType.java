@@ -152,6 +152,14 @@ public class SchemaComponentType implements SchemaComponent {
         return false;
     }
 
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 31 * hash + Objects.hashCode(this.targetNamespace);
+        hash = 31 * hash + Objects.hashCode(this.parentSchema);
+        hash = 31 * hash + Objects.hashCode(this.schemaLanguage);
+        return hash;
+    }
 
     @Override
     public String toString() {

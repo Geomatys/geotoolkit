@@ -236,7 +236,8 @@ public abstract class TextImageWriter extends StreamImageWriter {
                     while (true) {
                         double scaled = value * multiple;
                         if (type == DataBuffer.TYPE_FLOAT) {
-                            scaled = (float) scaled; // Drops the extra digits.
+                            float scaledf = (float) scaled; // Drops the extra digits.
+                            scaled = scaledf;
                         }
                         // Condition below uses '!' in order to cath NaN values.
                         if (!(Math.abs(scaled - Math.rint(scaled)) >= DELTA_THRESHOLD)) {

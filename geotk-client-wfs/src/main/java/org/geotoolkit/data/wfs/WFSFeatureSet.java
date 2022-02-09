@@ -242,8 +242,7 @@ public class WFSFeatureSet implements WritableFeatureSet {
         }
 
         final Stream<Feature> stream = StreamSupport.stream(Spliterators.spliteratorUnknownSize(reader, Spliterator.ORDERED), false);
-        stream.onClose(reader::close);
-        return stream;
+        return stream.onClose(reader::close);
     }
 
     @Override

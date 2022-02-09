@@ -272,7 +272,6 @@ public final class WMSUtilities {
                         for (int i = 0; i < dimStrArray.length; i++) {
                             dblValues[i] = Double.valueOf(dimStrArray[i]).doubleValue();
                         }
-                        dimCRS = dimCRS;
                         minVal = dblValues[0];
                         maxVal = dblValues[dblValues.length - 1];
                     }else{
@@ -309,7 +308,6 @@ public final class WMSUtilities {
                         for(int i=0;i<values.length;i++){
                             values[i] = dblValues.get(i);
                         }
-                        dimCRS = dimCRS;
                         if(values.length>0){
                             minVal = values[0];
                             maxVal = values[values.length - 1];

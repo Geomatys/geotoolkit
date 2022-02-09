@@ -25,7 +25,6 @@ import java.util.logging.Level;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.internal.tree.TreeAccessFile;
-import org.geotoolkit.internal.tree.TreeAccessMemory;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.util.StringUtilities;
 
@@ -588,5 +587,12 @@ public class Node {
                 && objNode.getSiblingId() == getSiblingId()
                 && objNode.getChildId() == getChildId()
                 && objNode.getChildCount() == getChildCount();
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 37 * hash + this.nodeId;
+        return hash;
     }
 }

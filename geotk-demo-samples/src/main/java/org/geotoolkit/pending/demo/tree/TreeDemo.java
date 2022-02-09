@@ -104,7 +104,7 @@ public class TreeDemo {
                 final int envID = treeIdentifier - 1;
                 if (envID >= currentSize) {
                     currentSize = currentSize << 1;
-                    Arrays.copyOf(envelopes, currentSize);
+                    envelopes = Arrays.copyOf(envelopes, currentSize);
                 }
                 envelopes[envID] = object;
             }

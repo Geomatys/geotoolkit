@@ -70,7 +70,8 @@ public class ProjectedCoverage implements ProjectedObject<MapLayer> {
     public GridCoverage getCoverage(final GridGeometry param, int... bands) throws DataStoreException {
         Resource resource = layer.getData();
         if (resource instanceof GridCoverageResource) {
-            GridCoverage result = ((GridCoverageResource)resource).read(param, (bands == null || bands.length < 1)? null : bands);
+            if (bands != null && bands.length < 1) bands = null;
+            GridCoverage result = ((GridCoverageResource) resource).read(param, bands);
             if (result instanceof GridCoverageStack) {
                 Logging.getLogger("org.geotoolkit.display2d.primitive").log(Level.WARNING, "Coverage reader return more than one slice.");
             }

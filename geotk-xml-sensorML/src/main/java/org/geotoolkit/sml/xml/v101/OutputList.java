@@ -90,7 +90,7 @@ public class OutputList extends SensorObject implements AbstractOutputList {
      */
     public List<IoComponentPropertyType> getOutput() {
         if (output == null) {
-            output = new ArrayList<IoComponentPropertyType>();
+            output = new ArrayList<>();
         }
         return this.output;
     }
@@ -99,7 +99,7 @@ public class OutputList extends SensorObject implements AbstractOutputList {
      * Needed for Java reflection.
      */
     public void setOutput(List<IoComponentPropertyType> outputs) {
-        this.output = output;
+        this.output = outputs;
     }
 
     /**

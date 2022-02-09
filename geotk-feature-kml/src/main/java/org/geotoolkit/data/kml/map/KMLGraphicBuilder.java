@@ -584,7 +584,7 @@ final class KMLGraphicBuilder {
                 }
             }
 
-            if (x != Double.NaN && y != Double.NaN) {
+            if (!Double.isNaN(x) && !Double.isNaN(y)) {
                 portrayBalloonStyle(x, y, s, false, placemark);
                 portrayLabelStyle(x, y, s,
                         (String) placemark.getPropertyValue(KmlConstants.TAG_NAME),
