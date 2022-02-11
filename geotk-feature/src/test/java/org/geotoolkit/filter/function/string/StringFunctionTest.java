@@ -21,6 +21,8 @@ import org.junit.Test;
 
 import static org.apache.sis.test.Assert.*;
 import static org.geotoolkit.filter.FilterTestConstants.*;
+import static org.geotoolkit.filter.function.string.StringFunctionFactory.CONCAT;
+
 import org.opengis.filter.Expression;
 
 
@@ -71,5 +73,13 @@ public class StringFunctionTest extends org.geotoolkit.test.TestBase {
         f = FF.function(StringFunctionFactory.TRUNCATE_LAST, FF.literal("72"),FF.literal(3));
         assertEquals(f.apply(null), "72");
         assertSerializedEquals(f); //test serialize
+    }
+
+    @Test
+    public void testStringConcat() {
+        final Expression oneTwo = FF.function(CONCAT, FF.literal("1"), FF.literal("2"));
+        assertEquals("12", oneTwo.apply(null));
+        final Expression oneTwoThree = FF.function(CONCAT, oneTwo, FF.literal("3"));
+        assertEquals("123", oneTwoThree.apply(null));
     }
 }

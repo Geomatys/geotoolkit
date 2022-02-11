@@ -121,9 +121,8 @@ public abstract class AbstractFunction extends AbstractExpression {
 
     protected final String[] stringValues(final Object feature, final int length) {
         final String[] args = new String[length];
-        for (int i=0; i<length; i++) {
-            final Object value = parameters.get(0).apply(feature);
-            if (value != null) args[i] = value.toString();
+        for (int i=0 ; i<length ; i++) {
+            args[i] = stringValue(feature, i);
         }
         return args;
     }
