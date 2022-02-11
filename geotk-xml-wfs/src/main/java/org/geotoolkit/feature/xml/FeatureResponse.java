@@ -16,10 +16,24 @@
  */
 package org.geotoolkit.feature.xml;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import javax.xml.bind.annotation.XmlAttribute;
+import org.geotoolkit.wfs.xml.WFSResponse;
+
 /**
  *
  * @author Rohan FERRE (Géomatys)
  */
-public interface FeatureResponse {
+public abstract class FeatureResponse implements WFSResponse {
 
+    @XmlAttribute
+    private final String service = "OGCAPI-Features";
+    @XmlAttribute
+    private final String version = "1.0.0";
+
+    @Override
+    @JsonIgnore
+    public String getVersion() {
+        return "feat-1.0.0";
+    }
 }

@@ -77,7 +77,6 @@ import org.geotoolkit.internal.jaxb.JTSWrapperMarshallerPool;
 import org.geotoolkit.internal.jaxb.ObjectFactory;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.feature.xml.FeatureSetCollection;
-import org.geotoolkit.feature.xml.Link;
 import org.geotoolkit.xml.StaxStreamWriter;
 import org.opengis.feature.Attribute;
 import org.opengis.feature.AttributeType;

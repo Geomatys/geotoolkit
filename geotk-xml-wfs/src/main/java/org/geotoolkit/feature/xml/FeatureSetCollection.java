@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.apache.sis.storage.FeatureSet;
+import org.geotoolkit.atom.xml.Link;
 
 /**
  *

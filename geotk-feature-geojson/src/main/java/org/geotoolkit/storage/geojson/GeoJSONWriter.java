@@ -63,7 +63,7 @@ import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.geotoolkit.feature.xml.Link;
+import org.geotoolkit.atom.xml.Link;
 
 /**
  * @author Quentin Boileau (Geomatys)
@@ -459,7 +459,8 @@ final class GeoJSONWriter implements Closeable, Flushable {
                 writer.writeStringField("title", link.getTitle());
             }
             if (link.getLength() != null) {
-                writer.writeNumberField("length", link.getLength());
+                Integer length = Integer.parseInt(link.getLength());
+                writer.writeNumberField("length", length);
             }
             writer.writeEndObject();
         }

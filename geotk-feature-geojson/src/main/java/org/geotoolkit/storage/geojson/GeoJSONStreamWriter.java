@@ -39,7 +39,7 @@ import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.Operation;
-import org.geotoolkit.feature.xml.Link;
+import org.geotoolkit.atom.xml.Link;
 
 /**
  * @author Quentin Boileau (Geomatys)

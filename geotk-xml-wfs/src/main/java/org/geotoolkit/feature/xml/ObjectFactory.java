@@ -59,12 +59,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link collections}
+     * Create an instance of {@link Collections}
      *
      * @return
      */
-    public collections createCollections() {
-        return new collections();
+    public Collections createCollections() {
+        return new Collections();
     }
 
     /**

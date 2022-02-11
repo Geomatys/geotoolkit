@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import org.geotoolkit.atom.xml.Link;
 
 /**
  * @author Rohan FERRE (Geomatys)
@@ -30,7 +31,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "Collection")
 @XmlAccessorType(XmlAccessType.FIELD)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Collection implements FeatureResponse {
+public class Collection {
 
     @XmlElement(name = "Id")
     private String id;
@@ -38,6 +39,7 @@ public class Collection implements FeatureResponse {
     private String title;
     @XmlElement(name = "Description")
     private String description;
+    @XmlElement(name = "link", namespace = "http://www.w3.org/2005/Atom")
     private List<Link> links;
     @XmlElement(name = "Extent")
     private Extent extent;
@@ -157,5 +159,14 @@ public class Collection implements FeatureResponse {
      */
     public void setCrs(List<String> crs) {
         this.crs = crs;
+    }
+
+    public void setXMLBBoxMode() {
+        if (this.extent != null && this.extent.getSpatial() != null) {
+            Spatial spa = this.extent.getSpatial();
+            spa.setLowerCorner();
+            spa.setUpperCorner();
+            spa.getBbox().clear();
+        }
     }
 }
