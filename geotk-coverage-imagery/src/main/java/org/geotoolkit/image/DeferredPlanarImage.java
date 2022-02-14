@@ -315,7 +315,7 @@ public final class DeferredPlanarImage extends PlanarImage
         }
         final Point      origin = new Point(tileXToX(tileX), tileYToY(tileY));
         final DataBuffer buffer = getDefaultDataBuffer(sampleModel, colorModel);
-        final Raster     raster = Raster.createRaster(sampleModel, buffer, origin);
+        final Raster     raster = Raster.createWritableRaster(sampleModel, buffer, origin);     // TODO: JDK-8275345
         pendings[tileIndex] = raster;
         fireTileUpdate(tileX, tileY, true);
         return raster;

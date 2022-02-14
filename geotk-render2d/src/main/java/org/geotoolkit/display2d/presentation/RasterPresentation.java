@@ -35,6 +35,7 @@ import javax.media.jai.OpImage;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.image.ImageProcessor;
+import org.apache.sis.internal.map.coverage.RenderingWorkaround;
 import org.apache.sis.portrayal.MapLayer;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
@@ -223,7 +224,7 @@ public class RasterPresentation extends Grid2DPresentation {
 
         if (trs2D instanceof AffineTransform) {
             try {
-                g2d.drawRenderedImage(img, (AffineTransform)trs2D);
+                g2d.drawRenderedImage(RenderingWorkaround.wrap(img), (AffineTransform)trs2D);
                 dataRendered = true;
             } catch (Exception ex) {
                 final StringWriter sw = new StringWriter();
@@ -255,7 +256,7 @@ public class RasterPresentation extends Grid2DPresentation {
                             final CompatibleColorModel model = new CompatibleColorModel(img.getColorModel().getPixelSize(), function);
                             final ImageLayout layout = new ImageLayout().setColorModel(model);
                             img = new NullOpImage(img, layout, null, OpImage.OP_COMPUTE_BOUND);
-                            g2d.drawRenderedImage(img, (AffineTransform)trs2D);
+                            g2d.drawRenderedImage(RenderingWorkaround.wrap(img), (AffineTransform)trs2D);
                             dataRendered = true;
                         } catch(Exception e) {
                             //plenty of errors can happen when painting an image

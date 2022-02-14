@@ -67,7 +67,7 @@ public final class IGNF extends GeodeticAuthorityFactory implements CRSAuthority
         final DefaultResponsibleParty r = new DefaultResponsibleParty(Role.RESOURCE_PROVIDER);
         r.setOrganisationName(new SimpleInternationalString("Institut Géographique National"));
         r.setContactInfo(new DefaultContact(new DefaultOnlineResource(URI.create("http://www.ign.fr"))));
-        final DefaultCitation c = new DefaultCitation();
+        final DefaultCitation c = new DefaultCitation("IGNF");
         c.setCitedResponsibleParties(Collections.singleton(r));
         c.setPresentationForms(Collections.singleton(PresentationForm.TABLE_DIGITAL));
         c.transitionTo(DefaultCitation.State.FINAL);
