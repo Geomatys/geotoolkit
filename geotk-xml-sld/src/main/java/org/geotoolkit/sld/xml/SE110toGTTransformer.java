@@ -313,9 +313,9 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
 //        JAXBElementSubstringType>
 //        JAXBElementStringPositionType>
 
-        try{
+        try {
             return super.visitExpression(jax);
-        }catch(IllegalArgumentException ex){
+        } catch(IllegalArgumentException ex) {
             final String expName = jax.getName().toString();
             final Object obj = jax.getValue();
 
@@ -346,10 +346,11 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
             }else if(obj instanceof StringPositionType){
                  throw new IllegalArgumentException("Not supported yet : Name > " + expName +"  JAXB > " + jax + " OBJECT >" + obj);
             }
+
+            throw new IllegalArgumentException(String.format(
+                    "Unknown expression: Name=%s ; Value-type=%s",
+                    expName, obj == null ? null : obj.getClass().getCanonicalName()));
         }
-
-
-        throw new IllegalArgumentException("Unknowed expression element" + jax);
     }
 
     /**
