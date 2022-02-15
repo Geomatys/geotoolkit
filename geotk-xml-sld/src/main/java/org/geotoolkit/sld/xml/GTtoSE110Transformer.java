@@ -203,10 +203,17 @@ public class GTtoSE110Transformer extends FilterToOGC110Converter implements Sty
     public SvgParameterType visitSVG(final Object obj, final String value) {
         SvgParameterType svg = se_factory.createSvgParameterType();
         svg.setName(value);
-
-        if (obj instanceof Expression) {
-            final Expression exp = (Expression) obj;
-            final JAXBElement<?> ele = extract(exp);
+        // HACK: duplicate code from ColorMap visit method.
+        // Note that the following block cause divergence with duplicated code in GTtoSE100Transformer.
+        // Removing duplication would require a lot of effort (complete rewrite), so for now, I just make code uglier
+        if (obj instanceof Categorize) {
+            svg.getContent().add(se_factory.createCategorize(visit((Categorize) obj)));
+        } else if (obj instanceof Interpolate) {
+            svg.getContent().add(se_factory.createInterpolate(visit((Interpolate) obj)));
+        } else if (obj instanceof Jenks) {
+            svg.getContent().add(se_factory.createJenksType(visit((Jenks) obj)));
+        } else if (obj instanceof Expression) {
+            final JAXBElement<?> ele = extract((Expression) obj);
             if (ele == null) {
                 svg = null;
             } else {
