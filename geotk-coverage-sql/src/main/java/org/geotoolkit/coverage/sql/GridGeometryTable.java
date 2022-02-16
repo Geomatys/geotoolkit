@@ -22,7 +22,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Rectangle2D;
-import java.awt.geom.RectangularShape;
 import java.sql.Array;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -32,10 +31,8 @@ import java.text.ParseException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -186,15 +183,17 @@ final class GridGeometryTable extends CachedTable<Integer,GridGeometryEntry> {
      *
      * @param  extent          width (dimension 0) and height (dimension 1) of the grid.
      * @param  gridToCRS       the transform from grid coordinates to "real world" coordinates.
+     * @param  gridToCRS2D     horizontal component of {@code gridToCRS} as a math transform.
+     * @param  horizontalCRS   the coordinate reference system for the {@value GridGeometryEntry#AFFINE_DIMENSION} first dimensions.
+     * @param  horizontalSRID  the PostGIS spatial identifier for {@code horizontalCRS}.
      * @param  approximate     whether the "grid to CRS" transform is only an approximation of non-linear transform.
-     * @param  horizontalSRID  the coordinate reference system for the {@value GridGeometryEntry#AFFINE_DIMENSION} first dimensions.
      * @param  additionalAxes  names of additional axes, or {@code null} if none.
-     * @param  geographicArea  generator of the WKT of the geographic area. Invoked only if a new entry needs to be inserted.
      * @return the identifier of a matching entry.
      * @throws Exception if the operation failed (many checked exceptions possible).
      */
-    private int findOrInsert(final GridExtent extent, final Matrix gridToCRS, final boolean approximate, final int horizontalSRID,
-            final Array additionalAxes, final Callable<String> geographicArea) throws Exception
+    private int findOrInsert(final GridExtent extent, final Matrix gridToCRS, final MathTransform2D gridToCRS2D,
+            final CoordinateReferenceSystem horizontalCRS, final int horizontalSRID, final boolean approximate,
+            final Array additionalAxes) throws Exception
     {
         if (extent.getLow(0) != 0 || extent.getLow(1) != 0) {
             throw new IllegalUpdateException("Grid extent must start at (0,0).");
@@ -235,7 +234,7 @@ final class GridGeometryTable extends CachedTable<Integer,GridGeometryEntry> {
                 statement.setNull(11, Types.ARRAY);
             }
             if (insert) {
-                statement.setString(12, geographicArea.call());         // Call geographicAreaWKT(…).
+                statement.setString(12, geographicAreaWKT(extent.toEnvelope(gridToCRS2D), horizontalCRS));
                 if (statement.executeUpdate() == 0) {
                     continue;                                           // Should never happen, but we are paranoiac.
                 }
@@ -254,64 +253,54 @@ final class GridGeometryTable extends CachedTable<Integer,GridGeometryEntry> {
      * Returns the geographic extent in Well Known Text format.
      * This method ensures that the geometry stay in the [-180 … +180]° range.
      *
-     * @param  area       extent of the grid to insert in the database.
-     * @param  gridToCRS  a transform mapping cell corner to coordinates in the coverage CRS.
-     * @param  crs        the coverage CRS.
+     * @param  envelope  envelope of the grid to insert in the database.
+     * @param  crs       the coverage CRS.
      * @return geographic area in Well Known Text format.
      */
-    final String geographicAreaWKT(Shape area, MathTransform2D gridToCRS, final CoordinateReferenceSystem crs)
+    final String geographicAreaWKT(GeneralEnvelope envelope, final CoordinateReferenceSystem crs)
             throws FactoryException, TransformException
     {
         final CoordinateReferenceSystem extentCRS = transaction.database.extentCRS;
         if (!Utilities.equalsIgnoreMetadata(crs, extentCRS)) {
             final CoordinateOperation op = CRS.findOperation(crs, extentCRS, null);
-            gridToCRS = (MathTransform2D) MathTransforms.concatenate(gridToCRS, op.getMathTransform());
+            envelope = Envelopes.transform(op, envelope);
         }
-        RectangularShape bounds;
-        try {
-            area = gridToCRS.createTransformedShape(area);
-            bounds = (area instanceof RectangularShape) ? (RectangularShape) area : area.getBounds2D();
-        } catch (TransformException ex) {
-            // May happen if one point is outside posible transformation range.
-            area = null;
-            bounds = null;
-        }
-        if (bounds == null || (Double.isNaN(bounds.getCenterX()) || Double.isNaN(bounds.getCenterY()))) {
+        if (envelope.isEmpty()) {
             /*
              * If the bounds could not be computed by transforming the grid extent,
              * fallback on CRS domain of validity.
              */
-            final Envelope env = CRS.getDomainOfValidity(crs);
-            if (env == null) {
+            envelope = GeneralEnvelope.castOrCopy(CRS.getDomainOfValidity(crs));
+            if (envelope == null) {
                 throw new TransformException("Failed to transform area to WKT and CRS has no defined domain of validity");
             }
-            area = bounds = new Envelope2D(env);
         }
-        final boolean mergeLeft  = bounds.getMinX() < Longitude.MIN_VALUE;
-        final boolean mergeRight = bounds.getMaxX() > Longitude.MAX_VALUE;
+        final boolean mergeLeft  = envelope.getMinimum(0) < Longitude.MIN_VALUE;
+        final boolean mergeRight = envelope.getMaximum(0) > Longitude.MAX_VALUE;
+        Shape area = new IntervalRectangle(envelope.getMinimum(0), envelope.getMinimum(1),
+                                           envelope.getMaximum(0), envelope.getMaximum(1));
         Area merged = null;
         if (mergeLeft | mergeRight) {
-            if (bounds.getWidth() >= Longitude.MAX_VALUE - Longitude.MIN_VALUE) {
-                area = bounds = new IntervalRectangle(Longitude.MIN_VALUE, Math.max(Latitude.MIN_VALUE, bounds.getMinY()),
-                                                      Longitude.MAX_VALUE, Math.min(Latitude.MAX_VALUE, bounds.getMaxY()));
+            if (envelope.getSpan(0) >= Longitude.MAX_VALUE - Longitude.MIN_VALUE) {
+                area = new IntervalRectangle(Longitude.MIN_VALUE, Math.max(Latitude.MIN_VALUE, envelope.getMinimum(1)),
+                                             Longitude.MAX_VALUE, Math.min(Latitude.MAX_VALUE, envelope.getMaximum(1)));
             } else {
                 merged = new Area(area);
                 if (mergeLeft)  add(area, Longitude.MAX_VALUE - Longitude.MIN_VALUE, merged);
                 if (mergeRight) add(area, Longitude.MIN_VALUE - Longitude.MAX_VALUE, merged);
                 merged.intersect(GEOGRAPHIC_AREA);
                 area = merged;
-                bounds = null;
             }
         }
         /*
          * If the shape has curves, we may have an error of up to ANGULAR_PRECISION due to the flattening of curves.
          * Expand the shape by this amount as an attempt to compensate that error. Note that we are applying a scale,
          * not a buffer, so this hack may not work in all cases.
+         *
+         * TODO: obsolete (for now) since we created a rectangle.
          */
         if (hasCurves(area)) {                              // Curves may be created as a result of map projections.
-            if (bounds == null) {
-                bounds = area.getBounds2D();
-            }
+            final Rectangle2D bounds = area.getBounds2D();
             final double cx = bounds.getCenterX();
             final double cy = bounds.getCenterY();
             final AffineTransform at = AffineTransform.getTranslateInstance(cx, cy);
@@ -496,12 +485,7 @@ final class GridGeometryTable extends CachedTable<Integer,GridGeometryEntry> {
                     final SpatialReferencingTable ref = getReferencingTable();
                     final int srid = ref.findOrInsert(crs2D);
                     gridToCRS = ref.adjustGridToCRS(gridToCRS, crs2D, srid);
-                    return findOrInsert(extent, gridToCRS, !isLinear, srid, axes, () -> {
-                        IntervalRectangle area = new IntervalRectangle(
-                                extent.getLow(0), extent.getLow(1),
-                                extent.getHigh(0) + 1, extent.getHigh(1) + 1);
-                        return geographicAreaWKT(area, (MathTransform2D) gridToCRS2D, crs2D);
-                    });
+                    return findOrInsert(extent, gridToCRS, (MathTransform2D) gridToCRS2D, crs2D, srid, !isLinear, axes);
                 }
             }
         }
