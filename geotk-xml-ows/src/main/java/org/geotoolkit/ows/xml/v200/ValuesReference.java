@@ -163,4 +163,12 @@ public class ValuesReference implements org.geotoolkit.ows.xml.ValueReference {
         return false;
     }
 
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 37 * hash + Objects.hashCode(this.value);
+        hash = 37 * hash + Objects.hashCode(this.reference);
+        return hash;
+    }
+
 }

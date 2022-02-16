@@ -276,7 +276,7 @@ public class LuceneSearcherTest extends org.geotoolkit.test.TestBase {
         assertTrue(results.contains("point 2"));
         assertTrue(results.contains("point 3"));
         assertTrue(results.contains("box 2"));
-        assertTrue(results.contains("box 2 projected") || results.contains("box 2 projected")); // depends on tests order
+        assertTrue(results.contains("box 2 projected"));
         assertTrue(results.contains("box 4"));
         assertTrue(results.contains("line 1"));
         assertTrue(results.contains("line 1 projected"));
@@ -315,7 +315,7 @@ public class LuceneSearcherTest extends org.geotoolkit.test.TestBase {
         assertTrue(results.contains("point 2"));
         assertTrue(results.contains("point 3"));
         assertTrue(results.contains("box 2"));
-        assertTrue(results.contains("box 2 projected") || results.contains("box 2 projected")); // depends on tests order
+        assertTrue(results.contains("box 2 projected"));
         assertTrue(results.contains("box 4"));
         assertTrue(results.contains("line 1"));
         assertTrue(results.contains("line 1 projected"));
@@ -352,7 +352,7 @@ public class LuceneSearcherTest extends org.geotoolkit.test.TestBase {
         assertTrue(results.contains("point 4"));
         assertTrue(results.contains("box 3"));
         assertTrue(results.contains("box 2"));
-        assertTrue(results.contains("box 2 projected") || results.contains("box 2 projected")); // depends on tests order
+        assertTrue(results.contains("box 2 projected"));
         assertTrue(results.contains("box 5"));
         assertTrue(results.contains("line 1"));
         assertTrue(results.contains("line 1 projected"));

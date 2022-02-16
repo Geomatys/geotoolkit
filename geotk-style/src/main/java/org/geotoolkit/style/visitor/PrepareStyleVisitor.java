@@ -67,6 +67,10 @@ public class PrepareStyleVisitor extends PrepareFilterVisitor implements StyleVi
 
     public PrepareStyleVisitor(final Class clazz,final FeatureType expectedType){
         super(clazz, expectedType);
+        // HACK: For now, there's conflict between Geotk SLD expression and SIS expression functions.
+        // As a workaround, we prevent unnecessary analysis/copy of expression on friction points.
+        // TODO: complete rewrite might be necessary in the future.
+        setExpressionHandler("Interpolate", interpol -> interpol);
     }
 
     @Override

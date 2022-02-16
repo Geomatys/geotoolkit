@@ -143,8 +143,7 @@ public class DbaseFileStore extends DataStore implements FeatureSet, ResourceOnF
     public Stream<Feature> features(boolean parallel) throws DataStoreException {
         final DBFFeatureReader reader = new DBFFeatureReader();
         final Stream<Feature> stream = StreamSupport.stream(Spliterators.spliteratorUnknownSize(reader, Spliterator.ORDERED), false);
-        stream.onClose(reader::close);
-        return stream;
+        return stream.onClose(reader::close);
     }
 
     @Override

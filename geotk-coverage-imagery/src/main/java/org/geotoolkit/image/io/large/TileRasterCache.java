@@ -70,4 +70,12 @@ final class TileRasterCache {
         TileRasterCache lr = (TileRasterCache) obj;
         return (gridX == lr.getGridX() && gridY == lr.getGridY() && raster == lr.getRaster());
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 29 * hash + this.gridX;
+        hash = 29 * hash + this.gridY;
+        return hash;
+    }
 }

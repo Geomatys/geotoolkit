@@ -108,9 +108,8 @@ public class DomainMetadataType implements DomainMetadata {
 
     @Override
     public void setReference(String value) {
-        this.reference = reference;
+        this.reference = value;
     }
-
 
     /**
      * Verify that this entry is identical to the specified object.

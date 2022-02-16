@@ -154,8 +154,7 @@ public class TileMatrixSetFeatureReader {
                 @Override
                 public Stream<Feature> features(boolean parallel) throws DataStoreException {
                     final Stream<Feature> stream = StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, 0), false);
-                    stream.onClose(iterator::close);
-                    return stream;
+                    return stream.onClose(iterator::close);
                 }
             };
 

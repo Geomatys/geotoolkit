@@ -151,8 +151,6 @@ public abstract class AbstractComplexInputConverter<T> extends WPSDefaultConvert
                     }
                 })
                 .map(ReferenceToFeatureCollectionConverter::castOrWrap);
-        result.onClose(() -> fcollReader.dispose());
-
-        return result;
+        return result.onClose(() -> fcollReader.dispose());
     }
 }

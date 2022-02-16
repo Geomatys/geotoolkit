@@ -233,7 +233,7 @@ public class J2DLegendUtilities {
                 // Get the image from the ones previously stored, to not resend a get legend graphic request.
                 BufferedImage image = null;
                 try {
-                    image = legendResults.get(layer.getData().getIdentifier().get().tip().toString());
+                    image = legendResults.get(layer.getData().getIdentifier().get());
                 } catch (DataStoreException ex) {
                     //do nothing
                 }

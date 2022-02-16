@@ -216,10 +216,9 @@ public final class ProcessConsole {
         String firstArg = args[0];
         if (args.length == 1 && "-ui".equalsIgnoreCase(firstArg)) {
             try {
-
-
                 Class<?> clazzfx = Class.forName("javafx.embed.swing.JFXPanel");
-                clazzfx.newInstance();
+                //check it can be created
+                Object inst = clazzfx.newInstance();
                 Class<?> clazz = Class.forName("org.geotoolkit.gui.javafx.process.FXExecutionPane");
                 Method fct = clazz.getMethod("show", Collection.class);
                 fct.invoke(null, registries);

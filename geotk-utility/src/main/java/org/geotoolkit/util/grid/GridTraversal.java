@@ -20,6 +20,7 @@ package org.geotoolkit.util.grid;
 import java.awt.geom.Point2D;
 import java.util.Arrays;
 import java.util.List;
+import java.util.OptionalDouble;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -418,24 +419,60 @@ public class GridTraversal implements Spliterator<double[]> {
      * @return True if we detect that the two vectors are colinear. False if not.
      */
     static boolean areColinear(final double[] u, final double[] v) {
+        return Double.isFinite(colinearityFactor(u, v, COLINEAR_EPSILON));
+    }
+
+    /**
+     * Tries to compute a scalar value K that satisfies <pre>u = Kv</pre>. This is possible only if both vectors are
+     * colinears, so {@link Double#NaN} will be returned if inputs are not colinear vectors.
+     *
+     * WARNING: inputs won't be validated, but they <em>must</em> follow these rules:
+     * <ul>
+     *     <li>u and v vectors must have the same number of dimensions</li>
+     *     <li>Dimension of input vector must be strictly positive (greater or equal to 1)</li>
+     *     <li>Given tolerance must be positive (greater or equal to 0)</li>
+     * </ul>
+     *
+     * Notes:
+     * <ul>
+     *  <li>Be careful to choose a tolerance that matches your vectors magnitude.</li>
+     *  <li>as a tolerance is accepted for K value, you must know that returned K value precision is not more than
+     *  provided tolerance. This is because K is computed from first dimension of input vectors. The computation of K on
+     *  other dimensions is only used as control values, so if there's a difference regarding input tolerance, you should
+     *  keep in mind that returned K value is not averaged along all dimensions, it is the K of the first dimension.</li>
+     *  <li>This code would be a perfect candidate for vectorization</li>
+     *  <li>Maybe branchless optimisation would be possible</li>
+     *  <li>OptionalDouble instead of double would make return value semantic clearer, however, there's currently a high
+     *  cost for such construct (but in the future, Valhalla will open doors to a brand new world of optimisations).</li>
+     * </ul>
+     *
+     * @param u First vector to compare (linear vector: represent a segment, or a move along one)
+     * @param v Second vector to compare (linear vector: represent a segment, or a move along one)
+     * @param tolerance An epsilon that represents the accepted shift for K coefficient between dimensions.
+     * @return NaN if vectors are <em>not</em> colinear. Otherwise, return the scalar K representing proportionality
+     * between input colinear vectors.
+     */
+    static double colinearityFactor(final double[] u, final double[] v, double tolerance) {
         // Ensure that u = kv for any moving/non null dimension.
-        double coef = Double.NaN;
+        double coef = 1.0;
+        boolean coefInitialized = false;
         for (int i = 0 ; i < u.length ; i++) {
             double uv = v[i] - u[i];
             if (!Double.isFinite(uv)) {
-                return false;
+                return Double.NaN;
             } else if (isNearZero(uv)) {
                 // No need to take into account. No move along this dimension
                 continue;
             } else if (isNearZero(u[i])) {
-                return false;
-            } else if (!Double.isFinite(coef)) {
+                return Double.NaN;
+            } else if (!coefInitialized) {
                 coef = v[i] / u[i];
-            } else if (Math.abs(coef - (v[i] / u[i])) > COLINEAR_EPSILON) {
-                return false;
+                coefInitialized = true;
+            } else if (Math.abs(coef - (v[i] / u[i])) > tolerance) {
+                return Double.NaN;
             }
         }
 
-        return true;
+        return coef;
     }
 }

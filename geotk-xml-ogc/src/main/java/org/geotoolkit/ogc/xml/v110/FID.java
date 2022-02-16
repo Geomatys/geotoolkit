@@ -45,4 +45,9 @@ public class FID {
     public boolean equals(final Object object) {
         return object instanceof FID;
     }
+
+    @Override
+    public int hashCode() {
+        return 7;
+    }
 }

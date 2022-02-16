@@ -462,7 +462,7 @@ public class EventChain extends Chain {
         }
 
         //we can not have more then one link pointing to the same target
-        final List<DataLink> otherLinks = new ArrayList<DataLink>();
+        final List<DataLink> otherLinks = new ArrayList<>();
         for(DataLink lk : getDataLinks()){
             if(lk.getTargetId() == link.getTargetId() && lk.getTargetCode().equals(link.getTargetCode())){
                 otherLinks.add(lk);
@@ -478,13 +478,13 @@ public class EventChain extends Chain {
                 return false;
             } else {
 
-                final Set<Integer> newSourceConnditional = new HashSet<Integer>();
+                final Set<Integer> newSourceConnditional = new HashSet<>();
                 searchForConditionalParent(newSourceId, newSourceConnditional);
 
                 if (newSourceConnditional.isEmpty()) {
                     return false;
                 } else {
-                    final Set<Integer> otherSourceConditonal = new HashSet<Integer>();
+                    final Set<Integer> otherSourceConditonal = new HashSet<>();
                     for (FlowLink exec : execLinks) {
                         if (exec.getSourceId() != newSourceId) {
                             searchForConditionalParent(exec.getSourceId(), otherSourceConditonal);
@@ -523,7 +523,7 @@ public class EventChain extends Chain {
     }
 
     private void clearFlowLinkList(final List<FlowLink> inputExecLinks, final List<DataLink> inputLinks) {
-        final List<FlowLink> clearedExecLinkList = new ArrayList<FlowLink>();
+        final List<FlowLink> clearedExecLinkList = new ArrayList<>();
         for (DataLink lk : inputLinks) {
             for (FlowLink executionLink : inputExecLinks) {
                 if (executionLink.getSourceId() == lk.getSourceId()) {
@@ -532,18 +532,18 @@ public class EventChain extends Chain {
                 }
             }
         }
-        inputLinks.removeAll(clearedExecLinkList);
+        inputExecLinks.removeAll(clearedExecLinkList);
     }
 
     private List<FlowLink> getFlowLinkFromId(final Integer identifier, boolean source) {
-        final List<FlowLink> links = new ArrayList<FlowLink>();
+        final List<FlowLink> links = new ArrayList<>();
         for (FlowLink execLink : getFlowLinks()) {
             if (source) {
-                if (execLink.getTargetId() == identifier.intValue()) {
+                if (execLink.getTargetId() == identifier) {
                     links.add(execLink);
                 }
             } else {
-                if (execLink.getSourceId() == identifier.intValue()) {
+                if (execLink.getSourceId() == identifier) {
                     links.add(execLink);
                 }
             }

@@ -159,6 +159,14 @@ public class HyperCubeIterator implements Iterator<HyperCube>{
         }
 
         @Override
+        public int hashCode() {
+            int hash = 5;
+            hash = 61 * hash + Arrays.hashCode(this.lower);
+            hash = 61 * hash + Arrays.hashCode(this.upper);
+            return hash;
+        }
+
+        @Override
         public String toString() {
             return "HyperCube "+Arrays.toString(lower)+" "+Arrays.toString(upper);
         }

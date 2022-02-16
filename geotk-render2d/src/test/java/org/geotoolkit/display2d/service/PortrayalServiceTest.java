@@ -222,6 +222,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
     /**
      * Test the grid geometry we provided is used.
      */
+    @Test
     public void testGridGeometryPreserved() throws PortrayalException, FactoryException {
 
         final SceneDef sceneDef = new SceneDef();

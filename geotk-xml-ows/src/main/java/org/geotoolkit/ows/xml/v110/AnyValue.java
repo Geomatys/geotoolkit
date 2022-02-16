@@ -62,4 +62,9 @@ public class AnyValue implements org.geotoolkit.ows.xml.AnyValue {
         return "[AnyValue]";
     }
 
+    @Override
+    public int hashCode() {
+        return 7;
+    }
+
 }

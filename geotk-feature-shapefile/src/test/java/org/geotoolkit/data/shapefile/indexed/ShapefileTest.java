@@ -55,7 +55,7 @@ public class ShapefileTest extends org.geotoolkit.data.shapefile.ShapefileTest {
             Geometry geom = (Geometry) record.shape();
             assertEquals(new Envelope(record.minX, record.maxX, record.minY,
                     record.maxY), geom.getEnvelopeInternal());
-            record.toString();
+            assertNotNull(record.toString());
         }
         reader.close();
         copyShapefiles(STATEPOP);

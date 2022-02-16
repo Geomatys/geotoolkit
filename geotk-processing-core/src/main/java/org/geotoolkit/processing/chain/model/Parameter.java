@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.processing.chain.model;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -223,7 +224,7 @@ public class Parameter {
                    Objects  .equals(this.remarks, that.remarks) &&
                    Objects  .equals(this.userMap, that.userMap) &&
                    Objects  .equals(this.formats, that.formats) &&
-                   Objects  .equals(this.validValues, that.validValues) &&
+                   Arrays.equals(this.validValues, that.validValues) &&
                    Objects  .equals(this.type, that.type);
         }
         return false;

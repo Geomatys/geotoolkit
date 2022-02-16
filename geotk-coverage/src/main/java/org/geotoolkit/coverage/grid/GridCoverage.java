@@ -289,7 +289,8 @@ abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCoverage im
         public Renderable(final int xAxis, final int yAxis) {
             this.xAxis = xAxis;
             this.yAxis = yAxis;
-            final Envelope envelope = getEnvelope().get();      // We do not support missing value.
+            final Envelope envelope = getEnvelope()
+                    .orElseThrow(() -> new IllegalStateException("Deprecated Coverage API requires an envelope"));
             bounds = new Rectangle2D.Double(envelope.getMinimum(xAxis), envelope.getMinimum(yAxis),
                                             envelope.getSpan   (xAxis), envelope.getSpan   (yAxis));
         }
@@ -701,10 +702,11 @@ abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCoverage im
         out.write("[\"");
         out.write("Coverage");
         out.write('"');
-        getEnvelope().ifPresent((envelope) -> {
-            out.write(", ");
-            out.write(envelope.toString());
-        });
+        final Envelope envelope = getEnvelope()
+                .orElseThrow(() -> new IllegalStateException("Deprecated Coverage API requires an envelope"));
+        out.write(", ");
+        out.write(envelope.toString());
+        
         final CoordinateReferenceSystem crs = getCoordinateReferenceSystem();
         if (crs != null) {
             out.write(", ");

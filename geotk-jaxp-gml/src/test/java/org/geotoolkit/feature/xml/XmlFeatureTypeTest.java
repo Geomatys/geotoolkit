@@ -184,7 +184,6 @@ public class XmlFeatureTypeTest extends org.geotoolkit.test.TestBase {
                 .getResourceAsStream("/org/geotoolkit/feature/xml/ComplexType.xsd")).getValues());
         removeGMLBaseTypes(types);
         assertEquals(1, types.size());
-        complexType.equals(types.get(0));
 
         Collection<? extends PropertyType> expProperties = complexType.getProperties(false);
         Collection<? extends PropertyType> resProperties = types.get(0).getProperties(false);

@@ -99,7 +99,7 @@ public class DefaultFill implements Fill{
         DefaultFill other = (DefaultFill) obj;
 
         return Objects.equals(this.color, other.color)
-                && Objects.equals(this.fill, this.fill)
+                && Objects.equals(this.fill, other.fill)
                 && Objects.equals(this.opacity, other.opacity);
     }
 

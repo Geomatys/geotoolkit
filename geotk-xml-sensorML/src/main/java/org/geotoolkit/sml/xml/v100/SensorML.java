@@ -385,7 +385,7 @@ public class SensorML implements AbstractSensorML {
                    Objects.equals(this.characteristics,    that.characteristics)    &&
                    Objects.equals(this.classification,     that.classification)     &&
                    Objects.equals(this.contact,            that.contact)            &&
-                   Objects.equals(this.documentation,      that.contact)            &&
+                   Objects.equals(this.documentation,      that.documentation)      &&
                    Objects.equals(this.history,            that.history)            &&
                    Objects.equals(this.identification,     that.identification)     &&
                    Objects.equals(this.keywords,           that.keywords)           &&

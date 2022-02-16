@@ -211,7 +211,7 @@ public class ShapefileTest extends AbstractTestCaseSupport {
                 Geometry geom = (Geometry) record.shape();
                 assertEquals(new Envelope(record.minX, record.maxX,
                         record.minY, record.maxY), geom.getEnvelopeInternal());
-                record.toString();
+                assertNotNull(record.toString());
             }
             copyShapefiles(STATEPOP);
             reader.close();
