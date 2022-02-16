@@ -28,6 +28,7 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.coverage.grid.GridCoverage2D;
+import org.apache.sis.image.ImageProcessor;
 import org.apache.sis.internal.storage.AbstractGridResource;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.WritableGridCoverageResource;
@@ -95,9 +96,10 @@ public class InMemoryGridCoverageResource extends AbstractGridResource implement
         if (range != null && range.length != 0) {
             final RenderedImage image = coverage.render(null);
             final GridGeometry grid = CoverageUtilities.forceLowerToZero(coverage.getGridGeometry());
-            final BufferedImage newImage = BufferedImages.createImage(image, null, null, range.length, null);
+            //final BufferedImage newImage = BufferedImages.createImage(image, null, null, range.length, null);
+            RenderedImage newImage = new ImageProcessor().selectBands(image, range);
 
-            final WritablePixelIterator wite = WritablePixelIterator.create(newImage);
+            /*final WritablePixelIterator wite = WritablePixelIterator.create(newImage);
             final PixelIterator rite = PixelIterator.create(image);
             while (wite.next()) {
                 final Point position = wite.getPosition();
@@ -105,7 +107,7 @@ public class InMemoryGridCoverageResource extends AbstractGridResource implement
                 for (int i=0;i<range.length;i++) {
                     wite.setSample(i, rite.getSampleDouble(range[i]));
                 }
-            }
+            }*/
             final List<SampleDimension> sampleDimensions = coverage.getSampleDimensions();
             final List<SampleDimension> sds = new ArrayList<>(range.length);
             for (int i = 0; i < range.length; i++) {
