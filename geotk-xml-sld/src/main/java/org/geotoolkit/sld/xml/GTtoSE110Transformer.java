@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.measure.Unit;
 import javax.measure.quantity.Length;
@@ -258,7 +259,7 @@ public class GTtoSE110Transformer extends FilterToOGC110Converter implements Sty
     /**
      * Transform a Unit to the corresponding SLD string.
      */
-    public String visitUOM(final Unit<Length> uom) {
+    public String visitUOM(final Unit<?> uom) {
         if (uom == null) {
             return null;
         }
@@ -267,8 +268,16 @@ public class GTtoSE110Transformer extends FilterToOGC110Converter implements Sty
             return "http://www.opengeospatial.org/se/units/metre";
         } else if (uom.equals(Units.FOOT)) {
             return "http://www.opengeospatial.org/se/units/foot";
-        } else {
+        } else if (uom.equals(Units.POINT) || uom.equals(Units.PIXEL)) {
             return "http://www.opengeospatial.org/se/units/pixel";
+        } else {
+            String textRepresentation = uom.getSymbol();
+            if (textRepresentation == null) textRepresentation = uom.getName();
+            if (textRepresentation == null) {
+                Logger.getLogger("org.geotoolkit.sld.xml")
+                        .warning("Unrepresentable unit (no available symbol or name) will be ignored.");
+            }
+            return textRepresentation;
         }
     }
 
