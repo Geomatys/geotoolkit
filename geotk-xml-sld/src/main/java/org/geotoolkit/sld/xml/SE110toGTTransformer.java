@@ -32,6 +32,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.measure.Unit;
 import javax.measure.quantity.Length;
@@ -278,18 +279,24 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
     }
 
     public Unit<Length> visitUOM(final String uom) {
-        if(uom == null) return Units.POINT;
+        if (uom == null) return Units.POINT;
 
-        if(UOM_METRE.equalsIgnoreCase(uom)){
+        if (UOM_METRE.equalsIgnoreCase(uom)) {
             return Units.METRE;
-        }else if(UOM_FOOT.equalsIgnoreCase(uom)){
+        } else if(UOM_FOOT.equalsIgnoreCase(uom)) {
             return Units.FOOT;
-        }else if(UOM_PIXEL.equalsIgnoreCase(uom)){
+        } else if(UOM_PIXEL.equalsIgnoreCase(uom)) {
             return Units.POINT;
-        }else{
+        } else try {
+            final Unit<?> unit = Units.valueOf(uom);
+            if (unit == null || Units.PIXEL.equals(unit)) return Units.POINT;
+            else return unit.asType(Length.class);
+        } catch (Exception e) {
+            final Logger logger = Logger.getLogger("org.geotoolkit.sld.xml");
+            logger.warning("Input unit cannot be parsed. Defaulting to 'point' unit. More details available in debug logs");
+            logger.log(Level.FINE, e, () -> "Cannot parse unit: "+uom);
             return Units.POINT;
         }
-
     }
 
     /**

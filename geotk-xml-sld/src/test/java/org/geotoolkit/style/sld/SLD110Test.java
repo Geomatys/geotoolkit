@@ -20,11 +20,17 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import org.apache.sis.internal.system.DefaultFactories;
+import org.apache.sis.measure.Units;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.se.xml.v110.ParameterValueType;
+import org.geotoolkit.se.xml.v110.TextSymbolizerType;
+import org.geotoolkit.sld.xml.GTtoSE110Transformer;
+import org.geotoolkit.sld.xml.SE110toGTTransformer;
 import org.geotoolkit.sld.xml.v110.StyledLayerDescriptor;
 import org.geotoolkit.sld.DefaultSLDFactory;
 import org.geotoolkit.sld.MutableSLDFactory;
@@ -38,6 +44,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 import org.geotoolkit.filter.FilterFactory2;
 import org.geotoolkit.filter.FilterUtilities;
+import org.opengis.style.TextSymbolizer;
 import org.opengis.util.FactoryException;
 import org.opengis.sld.Extent;
 import org.opengis.sld.FeatureTypeConstraint;
@@ -278,5 +285,39 @@ public class SLD110Test {
 
         POOL.recycle(MARSHALLER);
         POOL.recycle(UNMARSHALLER);
+    }
+
+    @Test
+    public void testUnitTranscription() {
+        final SE110toGTTransformer se2gt = new SE110toGTTransformer(FILTER_FACTORY, STYLE_FACTORY);
+        final GTtoSE110Transformer gt2se = new GTtoSE110Transformer();
+        final TextSymbolizerType textSymbol = new TextSymbolizerType();
+        final ParameterValueType labelType = new ParameterValueType();
+        labelType.getContent().add("label");
+        textSymbol.setLabel(labelType);
+
+        textSymbol.setUom("km");
+        TextSymbolizer transcriptedText = se2gt.visit(textSymbol);
+        assertEquals("Converted unit of measure", Units.KILOMETRE, transcriptedText.getUnitOfMeasure());
+        TextSymbolizerType revertedSymbol = gt2se.visit(transcriptedText, null).getValue();
+        assertEquals("Reverted unit of measure", "km", revertedSymbol.getUom());
+
+        textSymbol.setUom(null);
+        transcriptedText = se2gt.visit(textSymbol);
+        assertEquals("Converted unit of measure", Units.POINT, transcriptedText.getUnitOfMeasure());
+        revertedSymbol = gt2se.visit(transcriptedText, null).getValue();
+        assertEquals("Reverted unit of measure", "http://www.opengeospatial.org/se/units/pixel", revertedSymbol.getUom());
+
+        textSymbol.setUom("px");
+        transcriptedText = se2gt.visit(textSymbol);
+        assertEquals("Converted unit of measure", Units.POINT, transcriptedText.getUnitOfMeasure());
+        revertedSymbol = gt2se.visit(transcriptedText, null).getValue();
+        assertEquals("Reverted unit of measure", "http://www.opengeospatial.org/se/units/pixel", revertedSymbol.getUom());
+
+        textSymbol.setUom("meter");
+        transcriptedText = se2gt.visit(textSymbol);
+        assertEquals("Converted unit of measure", Units.METRE, transcriptedText.getUnitOfMeasure());
+        revertedSymbol = gt2se.visit(transcriptedText, null).getValue();
+        assertEquals("Reverted unit of measure", "http://www.opengeospatial.org/se/units/metre", revertedSymbol.getUom());
     }
 }
