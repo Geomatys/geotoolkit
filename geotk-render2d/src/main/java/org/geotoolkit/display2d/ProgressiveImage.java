@@ -31,6 +31,7 @@ import java.util.NoSuchElementException;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import javax.media.jai.RasterFactory;
@@ -72,6 +73,7 @@ final class ProgressiveImage {
 
     private J2DCanvasBuffered canvas;
 
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.display2d");
     /**
      *
      * @param canvasDef : canvas size will be ignored
@@ -193,60 +195,64 @@ final class ProgressiveImage {
         }
 
         try {
-            DefaultPortrayalService.prepareCanvas(canvas, cdef, sdef);
-        } catch (PortrayalException ex) {
-            ex.printStackTrace();
-        }
+            try {
+                DefaultPortrayalService.prepareCanvas(canvas, cdef, sdef);
+            } catch (PortrayalException ex) {
+                LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+            }
 
-        final double tilespanX = scale * tileSize.width;
-        final double tilespanY = scale * tileSize.height;
+            final double tilespanX = scale * tileSize.width;
+            final double tilespanY = scale * tileSize.height;
 
-        final GeneralEnvelope canvasEnv = new GeneralEnvelope(canvas.getObjectiveCRS());
-        canvasEnv.setRange(0,
-                upperleft.getX() + (col) * tilespanX,
-                upperleft.getX() + (col + nbtileonwidth) * tilespanX);
-        canvasEnv.setRange(1,
-                upperleft.getY() - (row + nbtileonheight) * tilespanY,
-                upperleft.getY() - (row) * tilespanY);
+            final GeneralEnvelope canvasEnv = new GeneralEnvelope(canvas.getObjectiveCRS());
+            canvasEnv.setRange(0,
+                    upperleft.getX() + (col) * tilespanX,
+                    upperleft.getX() + (col + nbtileonwidth) * tilespanX);
+            canvasEnv.setRange(1,
+                    upperleft.getY() - (row + nbtileonheight) * tilespanY,
+                    upperleft.getY() - (row) * tilespanY);
 
-        try {
-            canvas.setVisibleArea(canvasEnv);
-        } catch (NoninvertibleTransformException | TransformException ex) {
-            Logging.getLogger("org.geotoolkit.display2d.process.pyramid").log(Level.SEVERE, null, ex);
-        }
+            try {
+                canvas.setVisibleArea(canvasEnv);
+            } catch (NoninvertibleTransformException | TransformException ex) {
+                LOGGER.log(Level.SEVERE, null, ex);
+            }
 
-        boolean batchIsEmpty = !canvas.repaint();
-        if (skipEmptyTiles && batchIsEmpty) {
-            //empty rendering
-            return nbtileonwidth;
-        }
+            boolean batchIsEmpty = !canvas.repaint();
+            if (skipEmptyTiles && batchIsEmpty) {
+                //empty rendering
+                return nbtileonwidth;
+            }
 
-        //cut the canvas buffer in pieces
-        final BufferedImage canvasBuffer = canvas.getSnapShot();
-        for(int x=0; x<nbtileonwidth && col+x<gridSize.width; x++){
-            for(int y=0; y<nbtileonheight && row+y<gridSize.height; y++){
-                BufferedImage tile = canvasBuffer.getSubimage(
-                        x*tileSize.width,
-                        y*tileSize.height,
-                        tileSize.width,
-                        tileSize.height);
+            //cut the canvas buffer in pieces
+            final BufferedImage canvasBuffer = canvas.getSnapShot();
+            for(int x=0; x<nbtileonwidth && col+x<gridSize.width; x++){
+                for(int y=0; y<nbtileonheight && row+y<gridSize.height; y++){
+                    BufferedImage tile = canvasBuffer.getSubimage(
+                            x*tileSize.width,
+                            y*tileSize.height,
+                            tileSize.width,
+                            tileSize.height);
 
-                //TODO temporary reset, need to be fixed
-                //redefined raster corner to be at 0,0
-                WritableRaster clipRaster = tile.getRaster();
-                final WritableRaster raster = clipRaster.createCompatibleWritableRaster(0, 0, clipRaster.getWidth(), clipRaster.getHeight());
-                raster.setRect(clipRaster);
-                tile = new BufferedImage(tile.getColorModel(), raster, tile.getColorModel().isAlphaPremultiplied(), null);
+                    //TODO temporary reset, need to be fixed
+                    //redefined raster corner to be at 0,0
+                    WritableRaster clipRaster = tile.getRaster();
+                    final WritableRaster raster = clipRaster.createCompatibleWritableRaster(0, 0, clipRaster.getWidth(), clipRaster.getHeight());
+                    raster.setRect(clipRaster);
+                    tile = new BufferedImage(tile.getColorModel(), raster, tile.getColorModel().isAlphaPremultiplied(), null);
 
-                if (skipEmptyTiles && BufferedImages.isAll(tile, empty)) {
-                    //empty tile
-                } else {
-                    tiles.add(new DefaultImageTile(tile, col+x, row+y));
+                    if (skipEmptyTiles && BufferedImages.isAll(tile, empty)) {
+                        //empty tile
+                    } else {
+                        tiles.add(new DefaultImageTile(tile, col+x, row+y));
+                    }
                 }
             }
-        }
+            return nbtileonwidth;
 
-        return nbtileonwidth;
+        } finally {
+            canvas.dispose();
+        }
     }
 
 }
