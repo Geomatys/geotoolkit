@@ -29,17 +29,15 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.AxisDirections;
-import org.apache.sis.internal.referencing.j2d.IntervalRectangle;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;
-import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.crs.TemporalCRS;
-import org.opengis.referencing.operation.MathTransform2D;
 
 
 /**
@@ -158,9 +156,8 @@ final class GridCoverageTable extends Table {
         final SingleCRS horizontalCRS = CRS.getHorizontalComponent(crs);
         if (horizontalCRS != null) {
             final int d = AxisDirections.indexOfColinear(crs.getCoordinateSystem(), horizontalCRS.getCoordinateSystem());
-            IntervalRectangle area = new IntervalRectangle(areaOfInterest.getMinimum(d), areaOfInterest.getMinimum(d + 1),
-                                                           areaOfInterest.getMaximum(d), areaOfInterest.getMaximum(d + 1));
-            extentWKT = gridGeometries.geographicAreaWKT(area, (MathTransform2D) MathTransforms.identity(2), horizontalCRS);
+            final GeneralEnvelope area = GeneralEnvelope.castOrCopy(areaOfInterest).subEnvelope(d, d + GridGeometryEntry.AFFINE_DIMENSION);
+            extentWKT = gridGeometries.geographicAreaWKT(area, horizontalCRS);
         } else {
             throw new CatalogException("Horizontal CRS not identified in " + crs.getName().getCode());
         }
@@ -251,9 +248,8 @@ final class GridCoverageTable extends Table {
         final SingleCRS horizontalCRS = CRS.getHorizontalComponent(crs);
         if (horizontalCRS != null) {
             final int d = AxisDirections.indexOfColinear(crs.getCoordinateSystem(), horizontalCRS.getCoordinateSystem());
-            IntervalRectangle area = new IntervalRectangle(areaOfInterest.getMinimum(d), areaOfInterest.getMinimum(d + 1),
-                                                           areaOfInterest.getMaximum(d), areaOfInterest.getMaximum(d + 1));
-            extentWKT = gridGeometries.geographicAreaWKT(area, (MathTransform2D) MathTransforms.identity(2), horizontalCRS);
+            final GeneralEnvelope area = GeneralEnvelope.castOrCopy(areaOfInterest).subEnvelope(d, d + GridGeometryEntry.AFFINE_DIMENSION);
+            extentWKT = gridGeometries.geographicAreaWKT(area, horizontalCRS);
         } else {
             throw new CatalogException("Horizontal CRS not identified in " + crs.getName().getCode());
         }
@@ -270,7 +266,6 @@ final class GridCoverageTable extends Table {
         }
         statement.executeUpdate();
     }
-
 
     /**
      * Adds a coverage having the specified grid geometry.
