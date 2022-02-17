@@ -1,11 +1,5 @@
 package org.geotoolkit.internal.image.jai;
 
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by FernFlower decompiler)
-//
-
-import com.sun.imageio.plugins.common.ImageUtil;
 import java.awt.Dimension;
 import java.awt.image.ColorModel;
 import java.awt.image.SampleModel;
@@ -14,6 +8,7 @@ import java.nio.ByteOrder;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.stream.IIOByteBuffer;
 import javax.imageio.stream.ImageInputStream;
+import org.geotoolkit.image.internal.ImageUtils;
 
 /**
  * Drastically simplified copy of JAI RawImageInputStream. Done temporarily to remove dependency to jai_imageio artifact.
@@ -38,15 +33,10 @@ public class RawImageInputStream implements ImageInputStream {
     public RawImageInputStream(ImageInputStream source, SampleModel sampleModel, long[] imageOffsets, Dimension[] imageDimensions) {
         if (imageOffsets != null && imageDimensions != null && imageOffsets.length == imageDimensions.length) {
             this.source = source;
-            // TODO: check if we can avoid that
-            ColorModel colorModel = ImageUtil.createColorModel(sampleModel);
-            if (colorModel == null) {
-                throw new IllegalArgumentException("Cannot create color model");
-            } else {
-                this.type = new ImageTypeSpecifier(colorModel, sampleModel);
-                this.imageOffsets = imageOffsets;
-                this.imageDimensions = imageDimensions;
-            }
+            final ColorModel colorModel = ImageUtils.createColorModel(sampleModel);
+            this.type = new ImageTypeSpecifier(colorModel, sampleModel);
+            this.imageOffsets = imageOffsets;
+            this.imageDimensions = imageDimensions;
         } else {
             throw new IllegalArgumentException("Raw image input stream arguments are invalid");
         }

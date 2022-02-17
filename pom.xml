@@ -184,8 +184,7 @@
     <commons-logging.version>1.2</commons-logging.version>
     <jasperreports.version>6.18.1</jasperreports.version>
     <jaxen.version>1.1.2</jaxen.version>
-    <java.source>1.8</java.source>
-    <java.target>1.8</java.target>
+    <java.version>17</java.version>
     <jmh.version>1.25.1</jmh.version>
     <log4j.version>1.2.17</log4j.version>
     <lucene.version>8.4.0</lucene.version>
@@ -554,7 +553,6 @@
           <argLine>
              <!-- @{argLine} necessary for jacoco generation, because we added more parameters -->
              @{argLine}
-            --add-opens java.desktop/sun.awt.image=ALL-UNNAMED
           </argLine>
           <systemProperties>
             <property>
@@ -578,7 +576,7 @@
             <configuration>
               <rules>
                 <requireJavaVersion>
-                  <version>15</version>
+                  <version>${java.version}</version>
                 </requireJavaVersion>
                 <dependencyConvergence/>
               </rules>
@@ -594,13 +592,13 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
-          <source>${java.source}</source>       <!-- The -source argument for the Java compiler.   -->
-          <target>${java.target}</target>       <!-- The -target argument for the Java compiler.   -->
+          <source>${java.version}</source>       <!-- The -source argument for the Java compiler.   -->
+          <target>${java.version}</target>       <!-- The -target argument for the Java compiler.   -->
           <!--
           Commented for now: fails compilation when value is 8, because of RawImageInputStream class copied from JAI.
           TODO: once minimal java version becomes 17, try to reactivate it.
           -->
-          <!--release>${java.target}</release-->
+          <release>${java.version}</release>
           <debug>true</debug>        <!-- Whether to include debugging information.     -->
           <optimize>false</optimize> <!-- Whether to optimize the compiled code.        -->
           <encoding>${project.build.sourceEncoding}</encoding>
@@ -722,6 +720,17 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
+        <!--
+        TODO: remove dependency override once maven plugin import a newer version.
+        We need at least CheckStyle 9.3 to support JDK 17 new features like instanceof+cast shortcut.
+        -->
+        <dependencies>
+          <dependency>
+            <groupId>com.puppycrawl.tools</groupId>
+            <artifactId>checkstyle</artifactId>
+            <version>9.3</version>
+          </dependency>
+        </dependencies>
         <executions>
           <execution>
             <phase>test</phase>
