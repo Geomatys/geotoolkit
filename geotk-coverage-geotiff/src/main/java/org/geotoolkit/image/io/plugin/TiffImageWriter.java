@@ -18,19 +18,7 @@ package org.geotoolkit.image.io.plugin;
 
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
-import java.awt.image.DataBuffer;
-import java.awt.image.DataBufferByte;
-import java.awt.image.DataBufferDouble;
-import java.awt.image.DataBufferFloat;
-import java.awt.image.DataBufferInt;
-import java.awt.image.DataBufferShort;
-import java.awt.image.DataBufferUShort;
-import java.awt.image.IndexColorModel;
-import java.awt.image.Raster;
-import java.awt.image.RenderedImage;
-import java.awt.image.SampleModel;
+import java.awt.image.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -1852,20 +1840,7 @@ public class TiffImageWriter extends SpatialImageWriter {
          * Tiff specification does not provide this case.
          * To avoid this case we should replace sample bgr into rgb sens.
          */
-        int[] dataOffsets = null;
-        if (initRast instanceof sun.awt.image.ByteComponentRaster) {
-            sun.awt.image.ByteComponentRaster initSunRaster = (sun.awt.image.ByteComponentRaster) initRast;
-            final int[] dataOffsetsSun = initSunRaster.getDataOffsets();
-            //-- we verify that sens of iteration is not complient
-            //-- if sens is rgb we do nothing as normal comportement
-            for (int i = 0, l = dataOffsetsSun.length; i < l; i++) {
-                if (dataOffsetsSun[i] != i) {
-                    //-- raster bands iteration sens is not complient
-                    dataOffsets = dataOffsetsSun;
-                    break;
-                }
-            }
-        }
+        final int[] dataOffsets = getDataOffsets(initRast);
 
         // ----------------- padding array --------------------//
         assert tileRegion.width  % subsampleX == 0;
@@ -2745,26 +2720,7 @@ public class TiffImageWriter extends SpatialImageWriter {
         final int numbanks = initRastBuff.getNumBanks();
 
         //-- particularity case for sun.awt.image.ByteComponentRaster --//
-        /*
-         * This particularity raster allow dataOffsets properties.
-         * Precisely into byte raster case, may exist case where raster is defined has bgr in contrary to rgb.
-         * Tiff specification does not provide this case.
-         * To avoid this case we should replace sample bgr into rgb sens.
-         */
-        int[] dataOffsets = null;
-        if (initRast instanceof sun.awt.image.ByteComponentRaster) {
-            sun.awt.image.ByteComponentRaster initSunRaster = (sun.awt.image.ByteComponentRaster) initRast;
-            final int[] dataOffsetsSun = initSunRaster.getDataOffsets();
-            //-- we verify that sens of iteration is not complient
-            //-- if sens is rgb we do nothing as normal comportement
-            for (int i = 0, l = dataOffsetsSun.length; i < l; i++) {
-                if (dataOffsetsSun[i] != i) {
-                    //-- raster bands iteration sens is not complient
-                    dataOffsets = dataOffsetsSun;
-                    break;
-                }
-            }
-        }
+        int[] dataOffsets = getDataOffsets(initRast);
 
         assert bitPerSample != 0;
 
@@ -3084,6 +3040,38 @@ public class TiffImageWriter extends SpatialImageWriter {
         writeByteCountAndOffsets(byteCountTagPosition, arrayType, byteCountArray, offsetTagPosition, arrayType, offsetArray);
         //-- add current offset array in current headProperties --//
         addProperty(StripOffsets, (isBigTIFF) ? TYPE_ULONG : TYPE_UINT, Array.getLength(offsetArray), offsetArray, headProperties);
+    }
+
+    /**
+     * This particularity raster allow dataOffsets properties.
+     * Precisely into byte raster case, may exist case where raster is defined has bgr in contrary to rgb.
+     * Tiff specification does not provide this case.
+     * To avoid this case we should replace sample bgr into rgb sens.
+     *
+     * --> Note added later: code changed to avoid using RawImageInputStream, that is not accessible normally.
+     * Instead of relying on raster implementation, we mimic its behavior, and reconstitute dataOffsets from sample
+     * model analysis. This is a workaround until Apache SIS provides a GeoTiff writer. To be more precise, it is a
+     * ugly hack, to avoid using internal class, but keeping the exact same behaviour than before.
+     */
+    private int[] getDataOffsets(final Raster raster) {
+        final DataBuffer buffer = raster.getDataBuffer();
+        final SampleModel sm = raster.getSampleModel();
+        if (buffer.getNumBanks() == 1 && buffer instanceof DataBufferByte && sm instanceof ComponentSampleModel ism) {
+            int scanlineStride = ism.getScanlineStride();
+            int pixelStride = ism.getPixelStride();
+            int dbOffset = buffer.getOffset();
+            int xOffset = raster.getMinX() - raster.getSampleModelTranslateX();
+            int yOffset = raster.getMinY() - raster.getSampleModelTranslateY();
+            final int[] dataOffsets = ism.getBandOffsets();
+            for (int i = 0 ; i < dataOffsets.length ; i++) {
+                dataOffsets[i] += dbOffset
+                        + xOffset * pixelStride
+                        + yOffset * scanlineStride;
+            }
+
+            return dataOffsets;
+        }
+        return null;
     }
 
     /**
