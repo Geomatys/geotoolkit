@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Stream;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.feature.builder.AttributeRole;
@@ -84,6 +85,11 @@ public class Isoline extends AbstractProcess {
         }
 
         try {
+            final List<SampleDimension> bands = resource.getSampleDimensions();
+            // TODO: support multiple bands; Both SIS and Geotk support it, but process interval input is designed for mono-band.
+            // Changing it would cause a breaking-change.
+            if (bands.size() != 1) throw new ProcessException("Only single banded coverages are supported for now, but input dataset has "+bands.size(), this);
+
             final GridCoverage coverage = resource.read(null);
             final GridGeometry gridgeom = coverage.getGridGeometry();
             final CoordinateReferenceSystem crs = gridgeom.isDefined(GridGeometry.CRS) ? gridgeom.getCoordinateReferenceSystem() : null;
