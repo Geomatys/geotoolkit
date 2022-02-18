@@ -27,6 +27,7 @@ import java.util.stream.Stream;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.internal.feature.AttributeConvention;
@@ -110,7 +111,7 @@ public class Isoline extends AbstractProcess {
             final RenderedImage image = coverage.render(null);
             final GridGeometry gridgeom = coverage.getGridGeometry();
             gridToCRS = getImageToCrs(gridgeom, image);
-            crs = gridgeom.getCoordinateReferenceSystem();
+            crs = gridgeom.isDefined(GridGeometry.CRS) ? gridgeom.getCoordinateReferenceSystem() : null;
             type = getOrCreateIsoType(featureStore, featureTypeName, crs);
             col = (WritableFeatureSet) featureStore.findResource(type.getName().toString());
 
@@ -152,7 +153,7 @@ public class Isoline extends AbstractProcess {
         final List<Feature> features = new ArrayList<>(geom.getNumGeometries());
         for (int i = 0; i < geom.getNumGeometries(); i++) {
             final Geometry subgeom = org.apache.sis.internal.feature.jts.JTS.transform(geom.getGeometryN(i), gridToCRS);
-            subgeom.setUserData(crs);
+            if (crs != null) subgeom.setUserData(crs);
             final Feature feature = type.newInstance();
             feature.setPropertyValue(AttributeConvention.GEOMETRY, subgeom);
             feature.setPropertyValue("value", threshold);
@@ -188,7 +189,9 @@ public class Isoline extends AbstractProcess {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(featureTypeName != null ? featureTypeName : "contour");
         ftb.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
-        ftb.addAttribute(LineString.class).setName(AttributeConvention.GEOMETRY_PROPERTY).setCRS(crs).addRole(AttributeRole.DEFAULT_GEOMETRY);
+        final AttributeTypeBuilder<LineString> lineAttribute = ftb.addAttribute(LineString.class).setName(AttributeConvention.GEOMETRY_PROPERTY);
+        if (crs != null) lineAttribute.setCRS(crs);
+        lineAttribute.addRole(AttributeRole.DEFAULT_GEOMETRY);
         ftb.addAttribute(Double.class).setName("value");
         return ftb.build();
     }
