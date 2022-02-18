@@ -87,6 +87,9 @@ public class IsolineComparison {
     @State(Scope.Thread)
     public static class GeotkProcess {
 
+        @Param({ "SIS_MARCHING_SQUARE", "GEOTK_MARCHING_SQUARE" })
+        public String method;
+
         public Process process;
 
         @Setup
@@ -96,12 +99,13 @@ public class IsolineComparison {
                     .setDomain(new GridGeometry(
                             new GridExtent(input.image.getWidth(), input.image.getHeight()),
                             PixelInCell.CELL_CENTER, MathTransforms.identity(2),
-                            CommonCRS.defaultGeographic())) //
+                            CommonCRS.defaultGeographic()))
                     .build();
             final Parameters params = Parameters.castOrWrap(IsolineDescriptor.INSTANCE.getInputDescriptor().createValue());
             params.getOrCreate(IsolineDescriptor.COVERAGE_REF).setValue(new MemoryGridResource(null, coverage));
             params.getOrCreate(IsolineDescriptor.INTERVALS).setValue(input.isolineLevels);
             params.getOrCreate(IsolineDescriptor.FEATURE_NAME).setValue("isolines");
+            params.getOrCreate(IsolineDescriptor.METHOD).setValue(method);
             process = IsolineDescriptor.INSTANCE.createProcess(params);
         }
     }
@@ -137,6 +141,12 @@ public class IsolineComparison {
     /**
      * Measure Geotoolkit isolines. Note that the process object that launches the computation is prepared before-hand
      * in a state object, to avoid polluting final measures.
+     * Also, this benchmark has 2 branches:
+     * <ul>
+     *     <li>Using SIS method. It allows to get an idea of the overhead caused by the process
+     *     (argument preparation, Feature conversion, etc.) compared to {@link #sisIsolinesToJTS(Input, Blackhole)}.</li>
+     *     <li>Using Geok method. It allows to compare SIS performance gain compared to Geotk.</li>
+     * </ul>
      */
     @Benchmark
     public ParameterValueGroup geotkIsolines(GeotkProcess process) throws Exception {
@@ -181,6 +191,7 @@ public class IsolineComparison {
         // Run Geotk isoline process
         canvas = createCanvas(input.image);
         final GeotkProcess process = new GeotkProcess();
+        process.method = IsolineDescriptor.Method.GEOTK_MARCHING_SQUARE.name();
         process.setup(input);
         final FeatureSet features = Parameters.castOrWrap(process.process.call()).getMandatoryValue(IsolineDescriptor.FCOLL);
         features.features(false)

@@ -18,11 +18,9 @@ package org.geotoolkit.processing.coverage.isoline;
 
 import java.awt.Rectangle;
 import java.awt.image.RenderedImage;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
-import java.util.function.Function;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
@@ -32,6 +30,8 @@ import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.internal.feature.jts.Factory;
+import org.apache.sis.internal.processing.image.Isolines;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
@@ -40,20 +40,25 @@ import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.WritableAggregate;
 import org.apache.sis.storage.WritableFeatureSet;
 import org.apache.sis.util.collection.BackingStoreException;
+import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
+
 import static org.geotoolkit.processing.coverage.isoline.IsolineDescriptor.*;
 import org.geotoolkit.processing.image.MarchingSquares;
 import org.geotoolkit.storage.feature.DefiningFeatureSet;
 import org.geotoolkit.storage.memory.InMemoryStore;
+import org.geotoolkit.util.Streams;
 import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryCollection;
+import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.MultiLineString;
+import org.locationtech.jts.geom.Polygon;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
-import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
@@ -95,71 +100,99 @@ public class Isoline extends AbstractProcess {
             final CoordinateReferenceSystem crs = gridgeom.isDefined(GridGeometry.CRS) ? gridgeom.getCoordinateReferenceSystem() : null;
             final FeatureType type = getOrCreateIsoType(featureStore, featureTypeName, crs);
             final WritableFeatureSet outputDataset = (WritableFeatureSet) featureStore.findResource(type.getName().toString());
-            final List<Feature> batches = new ArrayList<Feature>() {
-                @Override
-                public synchronized boolean addAll(Collection<? extends Feature> c) {
-                    boolean b = super.addAll(c);
-                    if (super.size() > 200) {
-                        try {
-                            outputDataset.add(super.iterator());
-                        } catch (DataStoreException ex) {
-                            throw new BackingStoreException(ex);
-                        }
-                        clear();
-                    }
-                    return b;
-                }
-            };
 
             final RenderedImage image = coverage.render(null);
             final MathTransform gridToCRS = getImageToCrs(gridgeom, image);
+            final IsolineInput context = new IsolineInput(image, intervals, type, gridToCRS, crs);
 
-            final Stream<Rectangle> stream = BufferedImages.tileStream(image, 1, 1, 0, 0);
-            stream.map(new Function<Rectangle, List<Feature>>() {
-                @Override
-                public List<Feature> apply(Rectangle r) {
-                    final List<Feature> features = new ArrayList<>();
-                    for (double threshold : intervals) {
-                        try {
-                            for (Feature f : build(image, r, threshold, crs, type, gridToCRS)) {
-                                features.add(f);
+            final Stream<IsolineRecord> isolines;
+            final String method = inputParameters.getValue(METHOD);
+            if (Method.GEOTK_MARCHING_SQUARE.name().equals(method)) isolines = computeMarchingSquareGeotk(context);
+            else isolines = computeMarchingSquareSIS(context);
+
+            try {
+                Streams.batchExecute(
+                        isolines
+                                .map(record -> toFeature(record, context)),
+                        values -> {
+                            try {
+                                outputDataset.add(values.iterator());
+                            } catch (DataStoreException e) {
+                                throw new BackingStoreException(e);
                             }
-                        } catch (MismatchedDimensionException | TransformException ex) {
-                            throw new BackingStoreException(ex.getMessage(), ex);
-                        }
-                    }
-                    return features;
-            }
-            }).parallel().forEach(batches::addAll);
-
-            if (!batches.isEmpty()) {
-                outputDataset.add(batches.iterator());
+                        },
+                        200);
+            } catch (BackingStoreException e) {
+                final Throwable cause = e.getCause();
+                if (cause instanceof TransformException) throw (TransformException) cause;
+                else if (cause instanceof DataStoreException) throw (DataStoreException) cause;
+                else throw e;
             }
 
-            outputParameters.parameter("outFeatureCollection").setValue(outputDataset);
+            outputParameters.getOrCreate(FCOLL).setValue(outputDataset);
+        } catch (TransformException ex) {
+            throw new ProcessException("Cannot transforms isolines from image space to real(geographic or projected) space", this, ex);
         } catch (DataStoreException ex) {
-            throw new ProcessException(ex.getMessage(), this, ex);
+            throw new ProcessException("Cannot read input data, or cannot interact with output datastore", this, ex);
         }
     }
 
-    private List<Feature> build(RenderedImage image, Rectangle rectangle, double threshold, CoordinateReferenceSystem crs, final FeatureType outputType, final MathTransform imageToCrs) throws MismatchedDimensionException, TransformException {
-        final PixelIterator ite = new PixelIterator.Builder().setRegionOfInterest(rectangle).create(image);
-        MultiLineString geom = MarchingSquares.build(ite, threshold, 0, true);
-        if (geom == null) {
-            return Collections.EMPTY_LIST;
-        }
+    private Stream<IsolineRecord> computeMarchingSquareSIS(IsolineInput context) throws TransformException {
+        final Isolines[] isolines = Isolines.generate(context.image, new double[][]{context.intervals}, context.imageToIsolineCoordinateTransform);
+        final GeometryFactory factory = Factory.INSTANCE.factory(false);
+        return Arrays.stream(isolines)
+                /* Notes:
+                 * 1. Geometry conversion from J2D to JTS use a flatness argument which is not adapted to the dataset.
+                 *    However, as isoline proces does not generate any curve (only segments), it should not have any
+                 *    impact on conversions.
+                 * 2. We expand geometry collections into unitary line-strings / rings, because output feature type
+                 *    specifies LineString geometry type.
+                 */
+                .mapMulti((isoline, sink) -> isoline.polylines().forEach((threshold, shape) -> {
+                    final Geometry jtsGeom = JTS.fromAwt(factory, shape, 1);
+                    if (jtsGeom instanceof GeometryCollection jtsCol) {
+                        for (int i = 0 ; i < jtsCol.getNumGeometries() ; i++) {
+                            sink.accept(new IsolineRecord(threshold, jtsCol.getGeometryN(i)));
+                        }
+                    } else {
+                        sink.accept(new IsolineRecord(threshold, jtsGeom));
+                    }
+                }));
+    }
 
-        final List<Feature> features = new ArrayList<>(geom.getNumGeometries());
-        for (int i = 0; i < geom.getNumGeometries(); i++) {
-            final Geometry subgeom = org.apache.sis.internal.feature.jts.JTS.transform(geom.getGeometryN(i), imageToCrs);
-            if (crs != null) subgeom.setUserData(crs);
-            final Feature feature = outputType.newInstance();
-            feature.setPropertyValue(AttributeConvention.GEOMETRY, subgeom);
-            feature.setPropertyValue("value", threshold);
-            features.add(feature);
-        }
+    private Stream<IsolineRecord> computeMarchingSquareGeotk(final IsolineInput input) {
+        return BufferedImages.tileStream(input.image, 1, 1, 0, 0)
+                .flatMap(tile -> Arrays.stream(input.intervals)
+                            .boxed()
+                            .flatMap(threshold -> geotkInternalComputationForTile(input, tile, threshold)));
+    }
 
-        return features;
+    private Stream<IsolineRecord> geotkInternalComputationForTile(IsolineInput input, final Rectangle roi, final double threshold) {
+        final PixelIterator ite = new PixelIterator.Builder().setRegionOfInterest(roi).create(input.image);
+        MultiLineString isolines = MarchingSquares.build(ite, threshold, 0, true);
+        if (isolines == null || isolines.isEmpty()) return Stream.empty();
+        else return IntStream.range(0, isolines.getNumGeometries())
+                .mapToObj(idx -> {
+                    try {
+                        final Geometry geometryN = isolines.getGeometryN(idx);
+                        return org.apache.sis.internal.feature.jts.JTS.transform(geometryN, input.imageToIsolineCoordinateTransform);
+                    } catch (TransformException e) {
+                        throw new BackingStoreException(e);
+                    }
+                })
+                .map(geometry -> new IsolineRecord(threshold, geometry));
+    }
+
+    private static Feature toFeature(final IsolineRecord record, IsolineInput context) {
+        Geometry geom = record.shape;
+        // For retro-compatibility purpose, we force output to be only line strings.
+        if (geom instanceof Polygon) geom = ((Polygon) geom).getExteriorRing();
+        if (context.outputCrs != null) geom.setUserData(context.outputCrs);
+
+        final Feature feature = context.outputType.newInstance();
+        feature.setPropertyValue(AttributeConvention.GEOMETRY, geom);
+        feature.setPropertyValue("value", record.threshold);
+        return feature;
     }
 
     private static FeatureType getOrCreateIsoType(DataStore featureStore, String featureTypeName, CoordinateReferenceSystem crs) throws DataStoreException {
@@ -178,10 +211,6 @@ public class Isoline extends AbstractProcess {
 
     /**
      * Build contour FeatureType.
-     *
-     * @param featureTypeName
-     * @return
-     * @throws DataStoreException
      */
     public static FeatureType buildIsolineFeatureType(String featureTypeName, CoordinateReferenceSystem crs) {
         //FeatureType with scale
@@ -204,4 +233,7 @@ public class Isoline extends AbstractProcess {
         final MathTransform gridSourceToCrs = source.getGridToCRS(PixelInCell.CELL_CENTER);
         return MathTransforms.concatenate(sourceOffset, gridSourceToCrs);
     }
+
+    private record IsolineInput(RenderedImage image, double[] intervals, FeatureType outputType, MathTransform imageToIsolineCoordinateTransform, CoordinateReferenceSystem outputCrs) {}
+    private record IsolineRecord(double threshold, Geometry shape) {}
 }

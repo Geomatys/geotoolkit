@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.processing.coverage.isoline;
 
+import java.util.Arrays;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.FeatureSet;
@@ -81,9 +82,14 @@ public class IsolineDescriptor extends AbstractProcessDescriptor {
             .setRequired(true)
             .create(double[].class, null);
 
+    public static final ParameterDescriptor<String> METHOD = new ParameterBuilder()
+            .addName("method")
+            .setRequired(false)
+            .createEnumerated(String.class, Arrays.stream(Method.values()).map(Method::name).toArray(String[]::new), Method.SIS_MARCHING_SQUARE.name());
+
      /**Input parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =
-            new ParameterBuilder().addName("InputParameters").createGroup(COVERAGE_REF, FEATURE_STORE, FEATURE_NAME, INTERVALS);
+            new ParameterBuilder().addName("InputParameters").createGroup(COVERAGE_REF, FEATURE_STORE, FEATURE_NAME, INTERVALS, METHOD);
 
     /*
      * FeatureCollection of isoline
@@ -110,4 +116,8 @@ public class IsolineDescriptor extends AbstractProcessDescriptor {
        return new Isoline(INSTANCE, input);
     }
 
+    public enum Method {
+        SIS_MARCHING_SQUARE,
+        GEOTK_MARCHING_SQUARE
+    }
 }
