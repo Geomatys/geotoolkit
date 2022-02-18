@@ -39,7 +39,6 @@ import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.WritableAggregate;
 import org.apache.sis.storage.WritableFeatureSet;
 import org.apache.sis.util.collection.BackingStoreException;
-import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
@@ -69,12 +68,6 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class Isoline extends AbstractProcess {
 
-    private CoordinateReferenceSystem crs;
-    private MathTransform gridToCRS;
-    private FeatureType type;
-    private WritableFeatureSet col;
-    private double[] intervals;
-
     public Isoline(ProcessDescriptor desc, ParameterValueGroup input) {
         super(desc, input);
     }
@@ -84,20 +77,25 @@ public class Isoline extends AbstractProcess {
         final GridCoverageResource resource = inputParameters.getValue(COVERAGE_REF);
         DataStore featureStore = inputParameters.getValue(FEATURE_STORE);
         final String featureTypeName = inputParameters.getValue(FEATURE_NAME);
-        intervals = inputParameters.getValue(INTERVALS);
+        final double[] intervals = inputParameters.getValue(INTERVALS);
 
         if (featureStore == null) {
             featureStore = new InMemoryStore();
         }
 
         try {
+            final GridCoverage coverage = resource.read(null);
+            final GridGeometry gridgeom = coverage.getGridGeometry();
+            final CoordinateReferenceSystem crs = gridgeom.isDefined(GridGeometry.CRS) ? gridgeom.getCoordinateReferenceSystem() : null;
+            final FeatureType type = getOrCreateIsoType(featureStore, featureTypeName, crs);
+            final WritableFeatureSet outputDataset = (WritableFeatureSet) featureStore.findResource(type.getName().toString());
             final List<Feature> batches = new ArrayList<Feature>() {
                 @Override
                 public synchronized boolean addAll(Collection<? extends Feature> c) {
                     boolean b = super.addAll(c);
                     if (super.size() > 200) {
                         try {
-                            col.add(super.iterator());
+                            outputDataset.add(super.iterator());
                         } catch (DataStoreException ex) {
                             throw new BackingStoreException(ex);
                         }
@@ -107,13 +105,8 @@ public class Isoline extends AbstractProcess {
                 }
             };
 
-            final GridCoverage coverage = resource.read(null);
             final RenderedImage image = coverage.render(null);
-            final GridGeometry gridgeom = coverage.getGridGeometry();
-            gridToCRS = getImageToCrs(gridgeom, image);
-            crs = gridgeom.isDefined(GridGeometry.CRS) ? gridgeom.getCoordinateReferenceSystem() : null;
-            type = getOrCreateIsoType(featureStore, featureTypeName, crs);
-            col = (WritableFeatureSet) featureStore.findResource(type.getName().toString());
+            final MathTransform gridToCRS = getImageToCrs(gridgeom, image);
 
             final Stream<Rectangle> stream = BufferedImages.tileStream(image, 1, 1, 0, 0);
             stream.map(new Function<Rectangle, List<Feature>>() {
@@ -122,7 +115,7 @@ public class Isoline extends AbstractProcess {
                     final List<Feature> features = new ArrayList<>();
                     for (double threshold : intervals) {
                         try {
-                            for (Feature f : build(image, r, threshold, crs)) {
+                            for (Feature f : build(image, r, threshold, crs, type, gridToCRS)) {
                                 features.add(f);
                             }
                         } catch (MismatchedDimensionException | TransformException ex) {
@@ -134,16 +127,16 @@ public class Isoline extends AbstractProcess {
             }).parallel().forEach(batches::addAll);
 
             if (!batches.isEmpty()) {
-                col.add(batches.iterator());
+                outputDataset.add(batches.iterator());
             }
+
+            outputParameters.parameter("outFeatureCollection").setValue(outputDataset);
         } catch (DataStoreException ex) {
             throw new ProcessException(ex.getMessage(), this, ex);
         }
-
-        outputParameters.parameter("outFeatureCollection").setValue(col);
     }
 
-    private List<Feature> build(RenderedImage image, Rectangle rectangle, double threshold, CoordinateReferenceSystem crs) throws MismatchedDimensionException, TransformException {
+    private List<Feature> build(RenderedImage image, Rectangle rectangle, double threshold, CoordinateReferenceSystem crs, final FeatureType outputType, final MathTransform imageToCrs) throws MismatchedDimensionException, TransformException {
         final PixelIterator ite = new PixelIterator.Builder().setRegionOfInterest(rectangle).create(image);
         MultiLineString geom = MarchingSquares.build(ite, threshold, 0, true);
         if (geom == null) {
@@ -152,9 +145,9 @@ public class Isoline extends AbstractProcess {
 
         final List<Feature> features = new ArrayList<>(geom.getNumGeometries());
         for (int i = 0; i < geom.getNumGeometries(); i++) {
-            final Geometry subgeom = org.apache.sis.internal.feature.jts.JTS.transform(geom.getGeometryN(i), gridToCRS);
+            final Geometry subgeom = org.apache.sis.internal.feature.jts.JTS.transform(geom.getGeometryN(i), imageToCrs);
             if (crs != null) subgeom.setUserData(crs);
-            final Feature feature = type.newInstance();
+            final Feature feature = outputType.newInstance();
             feature.setPropertyValue(AttributeConvention.GEOMETRY, subgeom);
             feature.setPropertyValue("value", threshold);
             features.add(feature);
@@ -184,7 +177,7 @@ public class Isoline extends AbstractProcess {
      * @return
      * @throws DataStoreException
      */
-    public static FeatureType buildIsolineFeatureType(String featureTypeName,CoordinateReferenceSystem crs) throws DataStoreException {
+    public static FeatureType buildIsolineFeatureType(String featureTypeName, CoordinateReferenceSystem crs) {
         //FeatureType with scale
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(featureTypeName != null ? featureTypeName : "contour");
