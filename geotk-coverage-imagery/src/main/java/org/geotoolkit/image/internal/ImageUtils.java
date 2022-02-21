@@ -31,7 +31,12 @@ import java.awt.image.SampleModel;
 import java.util.Arrays;
 import javax.imageio.ImageTypeSpecifier;
 import org.apache.sis.internal.coverage.j2d.ColorModelFactory;
+
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import static org.geotoolkit.image.internal.PlanarConfiguration.INTERLEAVED;
+
+import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.lang.Static;
 
 /**
@@ -253,7 +258,7 @@ public class ImageUtils extends Static {
       * @see PhotometricInterpretation
       */
     public static ColorModel createColorModel(final SampleType type, final int numBand,
-                                              final PhotometricInterpretation pI,
+                                              PhotometricInterpretation pI,
                                               final boolean hasAlpha, final boolean isAlphaPremultiplied,
                                               final int[] java2DColorMap) {
          final int sampleBitSize;
@@ -293,6 +298,11 @@ public class ImageUtils extends Static {
             default : throw new IllegalArgumentException("Unknow sample type.");
         }
 
+        if (pI == null) {
+            if (numBand == 3 || numBand == 4 && hasAlpha) pI = PhotometricInterpretation.RGB;
+            else if (java2DColorMap != null) pI = PhotometricInterpretation.PALETTE;
+            else pI = PhotometricInterpretation.GRAYSCALE;
+        }
         final short photometricInterpret;
         switch(pI) {
             case GRAYSCALE : {
@@ -314,6 +324,26 @@ public class ImageUtils extends Static {
                                 photometricInterpret, sampleFormat,
                                 hasAlpha, isAlphaPremultiplied,
                                 java2DColorMap);
+    }
+
+    /**
+     * This method is a shortcut for other <pre>createColorModel</pre> methods in this class.
+     * It also tries to mimic an utility method not accessible anymore since Java 17:
+     * <pre>com.sun.imageio.plugins.common.ImageUtil.createColorModel(sampleModel)</pre>
+     *
+     * WARNING: this is a very approximate guess of colors associated to a raster model. In many case, you might want
+     * to create a color model manually, that better fits your use-case.
+     *
+     * @param sm Sample model to associate a color model to. Must not be null.
+     * @return The guessed color-model, never null.
+     * @throws IllegalArgumentException if we cannot guess a color model from given sample model
+     * @throws NullArgumentException if given sample model is null.
+     */
+    public static ColorModel createColorModel(final SampleModel sm) throws IllegalArgumentException {
+        ensureNonNull("Sample model", sm);
+        final int numBands = sm.getNumBands();
+        final SampleType sampleType = SampleType.valueOf(sm.getDataType());
+        return createColorModel(sampleType, numBands, null, numBands == 4, false, null);
     }
 
     /**

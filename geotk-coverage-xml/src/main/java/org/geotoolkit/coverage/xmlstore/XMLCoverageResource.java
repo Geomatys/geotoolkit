@@ -244,6 +244,10 @@ public class XMLCoverageResource extends AbstractGridResource implements TiledRe
         return store;
     }
 
+    public void setOriginator(XMLCoverageStore store) {
+        this.store = store;
+    }
+
     public List<XMLSampleDimension> getXMLSampleDimensions() {
         if (sampleDimensions == null) sampleDimensions = new ArrayList<>();
         return sampleDimensions;
