@@ -31,6 +31,7 @@ import org.apache.sis.coverage.grid.GridOrientation;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.coverage.j2d.WritableTiledImage;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.internal.feature.jts.Factory;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
@@ -47,6 +48,7 @@ import org.geotoolkit.test.Assert;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKTReader;
@@ -58,10 +60,18 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.util.NoSuchIdentifierException;
 
 /**
- *
+ * Note: We do not use {@link Geometry#equalsExact(Geometry, double) equalsExact+tolerance } to test isoline equality:
+ * <ul>
+ *     <li>There's no guarantee the geometries use the same winding order</li>
+ *     <li>In case of rings, we cannot ensure they use the same starting point.</li>
+ * </ul>
+ * Therefore, we use the {@link Geometry#equalsTopo(Geometry)}.
+ * Alternatively, we could create a small buffer from one of the lines, and check that it contains the second one.
  * @author Johann Sorel (Geomatys)
  */
 public class IsolineTest extends org.geotoolkit.test.TestBase {
+
+    private static final GeometryFactory GEOM_FACTORY = Factory.INSTANCE.factory(false);
 
     /**
      * Test an isoline created arount a central point.
@@ -97,8 +107,7 @@ public class IsolineTest extends org.geotoolkit.test.TestBase {
         assertEquals(1l, FeatureStoreUtilities.getCount(col, true).longValue());
         final Feature feature = col.features(true).findFirst().get();
         final LineString geom = (LineString) feature.getPropertyValue(AttributeConvention.GEOMETRY);
-        assertEquals("LINESTRING (1 1.5, 1.5 2, 2 1.5, 1.5 1, 1 1.5)", geom.toText());
-
+        assertIsolineEquals("LINESTRING (1 1.5, 1.5 2, 2 1.5, 1.5 1, 1 1.5)", geom);
     }
 
     @Test
@@ -119,7 +128,6 @@ public class IsolineTest extends org.geotoolkit.test.TestBase {
         final GridCoverage coverage = gcb.build();
         final GridCoverageResource ref = new InMemoryGridCoverageResource(coverage);
 
-
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME, IsolineDescriptor.NAME);
         final ParameterValueGroup procparams = desc.getInputDescriptor().createValue();
         procparams.parameter("inCoverageRef").setValue(ref);
@@ -130,8 +138,7 @@ public class IsolineTest extends org.geotoolkit.test.TestBase {
         assertEquals(1, FeatureStoreUtilities.getCount(col, true).longValue());
         final Feature feature = col.features(false).iterator().next();
         final LineString geom = (LineString) feature.getPropertyValue(AttributeConvention.GEOMETRY);
-        assertEquals("LINESTRING (2 0.5, 2 1.5, 2.5 2)", geom.toText());
-
+        assertIsolineEquals("LINESTRING (2 0.5, 2 1.5, 2.5 2)", geom);
     }
 
     @Test
@@ -164,11 +171,13 @@ public class IsolineTest extends org.geotoolkit.test.TestBase {
         assertEquals(1, FeatureStoreUtilities.getCount(col, true).longValue());
         final Feature feature = col.features(false).iterator().next();
         final LineString geom = (LineString) feature.getPropertyValue(AttributeConvention.GEOMETRY);
-        assertEquals("LINESTRING (2 2.625, 2 1.875, 2.5 1.5)", geom.toText());
-
+        assertIsolineEquals("LINESTRING (2 2.625, 2 1.875, 2.5 1.5)", geom);
     }
 
-
+    /**
+     * A single threshold is detected near a no-data border. The algorithm should consider that not enough data is
+     * available to draw a segment.
+     */
     @Test
     public void test4() throws Exception{
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
@@ -198,13 +207,7 @@ public class IsolineTest extends org.geotoolkit.test.TestBase {
         final org.geotoolkit.process.Process process = desc.createProcess(procparams);
         final ParameterValueGroup result = process.call();
         FeatureSet col = (FeatureSet) result.parameter("outFeatureCollection").getValue();
-        assertEquals(1, FeatureStoreUtilities.getCount(col, true).longValue());
-
-        org.opengis.feature.Feature candidate = col.features(false).iterator().next();
-        Geometry geom = (Geometry) candidate.getPropertyValue(AttributeConvention.GEOMETRY);
-        assertTrue(geom instanceof LineString);
-        LineString line = (LineString) geom;
-        assertEquals("LINESTRING (1.5 2.7515672842277548, 1.6830860462828303 2.916666666666667, 2.5 3.5590333533118175, 3.5 3.765209494383988, 4.5 3.8283104640195758, 4.771314100938448 4.083333333333334, 4.5 4.484307738208203, 3.5 5.01232266160712, 2.5 5.131933362127943, 1.5039371438387097 5.25)", line.toText());
+        assertEquals(0, FeatureStoreUtilities.getCount(col, true).longValue());
     }
 
     /**
@@ -256,20 +259,13 @@ public class IsolineTest extends org.geotoolkit.test.TestBase {
         final ParameterValueGroup result = process.call();
         final FeatureSet col = (FeatureSet) result.parameter("outFeatureCollection").getValue();
         final List<Feature> features = col.features(false).collect(Collectors.toList());
-        assertEquals(4, features.size());
-        final LineString geom1 = (LineString) features.get(0).getPropertyValue(AttributeConvention.GEOMETRY);
-        final LineString geom2 = (LineString) features.get(1).getPropertyValue(AttributeConvention.GEOMETRY);
-        final LineString geom3 = (LineString) features.get(2).getPropertyValue(AttributeConvention.GEOMETRY);
-        final LineString geom4 = (LineString) features.get(3).getPropertyValue(AttributeConvention.GEOMETRY);
-        LineMerger merger = new LineMerger();
-        merger.add(geom1);
-        merger.add(geom2);
-        merger.add(geom3);
-        merger.add(geom4);
-        Collection merged = merger.getMergedLineStrings();
-        Assert.assertEquals(1, merged.size());
-        final Geometry geometry = (Geometry) merged.iterator().next();
-        assertTrue(new WKTReader().read("LINESTRING (1 0.5, 2 0.5, 2.5 1, 2.5 2, 2 2.5, 1 2.5, 0.5 2, 0.5 1, 1 0.5)").equalsTopo(geometry));
+        assertEquals(1L, features.size());
+        final LineString geom = (LineString) features.get(0).getPropertyValue(AttributeConvention.GEOMETRY);
+        assertIsolineEquals("LINESTRING (1 0.5, 2 0.5, 2.5 1, 2.5 2, 2 2.5, 1 2.5, 0.5 2, 0.5 1, 1 0.5)", geom);
     }
 
+    private static void assertIsolineEquals(String expectedWkt, final Geometry isoline) throws ParseException {
+        final Geometry expectedGeometry = new WKTReader(GEOM_FACTORY).read(expectedWkt);
+        assertTrue(String.format("Geometry should be equal.%nExpected: %s%nBut was: %s", expectedWkt, isoline), isoline.equalsTopo(expectedGeometry));
+    }
 }
