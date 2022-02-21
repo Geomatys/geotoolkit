@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.StringJoiner;
 import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -77,7 +78,9 @@ import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureAssociationRole;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.Operation;
+import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
+import org.opengis.filter.ResourceId;
 import org.opengis.util.GenericName;
 
 /**
@@ -381,7 +384,7 @@ public final class Utils {
     }
 
     public static boolean isGeometricType(final GenericName elementType) {
-        if (elementType != null && NamesExt.getNamespace(elementType)!=null && NamesExt.getNamespace(elementType).contains(GML_311_NAMESPACE)) {
+        if (elementType != null && NamesExt.getNamespace(elementType) != null && NamesExt.getNamespace(elementType).contains(GML_311_NAMESPACE)) {
             return GEOMETRIC_NAME.contains(elementType.tip().toString());
         }
         return false;
@@ -399,6 +402,47 @@ public final class Utils {
             return FeatureExt.getCharacteristicValue(type, GMLConvention.NILLABLE_PROPERTY.toString(), false);
         }
         return false;
+    }
+
+    /**
+     * Return ture if the property is an XML attribute.
+     *
+     * @param name The property name.
+     * @return true if property is an atribute, starts by a @
+     */
+    public static boolean isAttributeProperty(GenericName name) {
+        final String localPart = name.tip().toString();
+        return !localPart.isEmpty() && localPart.charAt(0) == '@';
+    }
+
+    /**
+     * Test if the feature is nill by searching for a property named "@nil".
+     * If the property is missing return {@code null}.
+     * If such a property is found, it will look for a property named "@nilReason".
+     * if the nill reason is found, the value will be returned, otherwise return Boolean.TRUE.
+     *
+     * @param feature The feature to inspect.
+     *
+     * @return null if the object is not nill
+     *         Boolean.TRUE if the object is nill without reason
+     *         String if the object is nill with a reason
+     */
+    public static Object isNill(Feature feature) {
+        try {
+            if (Boolean.TRUE.equals(feature.getPropertyValue("@nil"))) {
+                try {
+                    Object reason = feature.getPropertyValue("@nilReason");
+                    if (reason != null) {
+                       return Utils.getStringValue(reason);
+                    }
+                } catch (PropertyNotFoundException ex) {
+                }
+                return true;
+            }
+        } catch (PropertyNotFoundException ex) {
+            return null;
+        }
+        return null;
     }
 
     /**
@@ -486,7 +530,7 @@ public final class Utils {
 
     }
 
-    private static final Map<Class, QName> GEOMETRY_NAME_BINDING_311 = new HashMap<Class, QName>();
+    private static final Map<Class, QName> GEOMETRY_NAME_BINDING_311 = new HashMap<>();
     static {
 
         GEOMETRY_NAME_BINDING_311.put(MultiPoint.class,         new QName(GML_311_NAMESPACE, "MultiPointPropertyType", "gml"));
@@ -500,7 +544,7 @@ public final class Utils {
         GEOMETRY_NAME_BINDING_311.put(LinearRing.class,         new QName(GML_311_NAMESPACE, "RingPropertyType", "gml"));
     }
 
-    private static final Map<Class, QName> GEOMETRY_NAME_BINDING_321 = new HashMap<Class, QName>();
+    private static final Map<Class, QName> GEOMETRY_NAME_BINDING_321 = new HashMap<>();
     static {
 
         GEOMETRY_NAME_BINDING_321.put(MultiPoint.class,         new QName(GML_321_NAMESPACE, "MultiPointPropertyType", "gml"));
@@ -513,10 +557,12 @@ public final class Utils {
         GEOMETRY_NAME_BINDING_321.put(Polygon.class,            new QName(GML_321_NAMESPACE, "SurfacePropertyType", "gml"));
         GEOMETRY_NAME_BINDING_321.put(LinearRing.class,         new QName(GML_321_NAMESPACE, "RingPropertyType", "gml"));
     }
+
     /**
      * Return a QName intended to be used in a xsd XML file from the specified class.
      *
-     * @param type  a primitive type Class.
+     * @param type a primitive type Class.
+     * @param gmlVersion GML version (default to 3.1.1) if not specified.
      * @return A QName describing the class.
      */
     public static QName getQNameFromType(final PropertyType type, final String gmlVersion) {
@@ -597,7 +643,6 @@ public final class Utils {
                 return "CHARACTERS";
             case XMLEvent.COMMENT:
                 return "COMMENT";
-
         }
         return "UNKNOWN_EVENT_TYPE";
     }
@@ -636,7 +681,7 @@ public final class Utils {
      * @return
      */
     public static List<QName> getQNameListFromNameSet(final Collection<GenericName> typeNames) {
-        final List<QName> result = new ArrayList<QName>(typeNames.size());
+        final List<QName> result = new ArrayList<>(typeNames.size());
         for (GenericName typeName : typeNames) {
             result.add(Utils.getQnameFromName(typeName));
         }
@@ -649,7 +694,7 @@ public final class Utils {
      * @return
      */
     public static List<GenericName> getNameListFromQNameSet(final Collection<QName> typeNames) {
-        final List<GenericName> result = new ArrayList<GenericName>(typeNames.size());
+        final List<GenericName> result = new ArrayList<>(typeNames.size());
         for (QName typeName : typeNames) {
             result.add(Utils.getNameFromQname(typeName));
         }
@@ -694,21 +739,21 @@ public final class Utils {
     public static Collection<?> propertyValueAsList(Feature feature, String propertyName){
         final Object val = feature.getPropertyValue(propertyName);
         final PropertyType type = feature.getType().getProperty(propertyName);
-        if(type instanceof AttributeType){
-            if(((AttributeType)type).getMinimumOccurs()>1){
+        if (type instanceof AttributeType) {
+            if (((AttributeType)type).getMinimumOccurs() > 1) {
                 return (Collection<?>) val;
-            }else{
+            } else {
                 return Collections.singleton(val);
             }
-        }else if(type instanceof FeatureAssociationRole){
-            if(((FeatureAssociationRole)type).getMinimumOccurs()>1){
+        } else if(type instanceof FeatureAssociationRole) {
+            if (((FeatureAssociationRole)type).getMinimumOccurs() > 1) {
                 return (Collection<?>) val;
-            }else{
+            } else {
                 return Collections.singleton(val);
             }
-        }else if(type instanceof Operation){
+        } else if (type instanceof Operation) {
             return Collections.singleton(val);
-        }else{
+        } else {
             throw new IllegalArgumentException("Unknown propert type : "+type);
         }
     }
@@ -815,19 +860,16 @@ public final class Utils {
 
     private static boolean isCompletePath(String path) {
         path = path.toLowerCase();
-        if ( path.startsWith("http:")
-          || path.startsWith("https:")
-          || path.startsWith("file:")) {
-            return true;
-        }
-        return false;
+        return path.startsWith("http:")
+            || path.startsWith("https:")
+            || path.startsWith("file:");
     }
 
     public static String getNameWithTypeSuffix(String name){
-        if(name.endsWith("Type")){
+        if (name.endsWith("Type")) {
             return name;
-        }else{
-            return name+="Type";
+        } else {
+            return name + "Type";
         }
     }
 
@@ -845,9 +887,9 @@ public final class Utils {
         if (name.endsWith("PropertyType")) {
             return name;
         } else if (name.endsWith("Property")) {
-            return name += "Type";
+            return name + "Type";
         } else {
-            return name += "PropertyType";
+            return name + "PropertyType";
         }
     }
 
@@ -953,4 +995,53 @@ public final class Utils {
         }
     }
 
+    /**
+     * Build a string containing the namespace and schema location of a map.
+     *
+     * @param schemaLocations a Map of namespace / schema location.
+     *
+     * @return A String to be used as an XML schema location declaration.
+     */
+    public static String buildSchemaLocationString(Map<String, String> schemaLocations) {
+        if (schemaLocations != null && !schemaLocations.isEmpty()) {
+            final StringJoiner sb = new StringJoiner(" ");
+            for (Entry<String, String> entry : schemaLocations.entrySet()) {
+                sb.add(entry.getKey()).add(entry.getValue());
+            }
+            return sb.toString();
+        }
+        return "";
+    }
+
+    /**
+     * Return  a string value of the FeatureId for a given feature.
+     * If the feature id can not be foud, the fallback value will be returned.
+     *
+     * I the id contains the character ':', it will be replaced by '_' for xml validation purpose.
+     *
+     * @param feature The feature on which we want to extract the feature id.
+     * @param fallback Fallback value if we can not succeed to extract a featureId.
+     * @return
+     */
+    public static String getId(Feature feature, String fallback) {
+        final ResourceId attId;
+        try {
+            attId = FeatureExt.getId(feature);
+        } catch (PropertyNotFoundException ex) {
+            return fallback;
+        }
+        if (attId == null) return fallback;
+        final String id = attId.getIdentifier();
+        if (id == null) return fallback;
+
+        if (id instanceof String) {
+            if (((String) id).isEmpty()) {
+                return fallback;
+            } else {
+                return ((String) id).replace(':', '_');
+            }
+        } else {
+            return String.valueOf(id).replace(':', '_');
+        }
+    }
 }

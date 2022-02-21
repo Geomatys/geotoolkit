@@ -39,16 +39,6 @@ public interface XmlFeatureWriter extends Configurable {
     void write(final Object candidate, final Object output) throws IOException, XMLStreamException, DataStoreException;
 
     /**
-     * Write an XML representation of the specified feature collection or feature
-     * into the output.
-     *
-     * @param candidate Feature, FeatureCollection or list of FeatureCollection to write
-     * @param output where to write the candidate
-     * @param nbMatched total number of feature matching (feature collection can be limited)
-     */
-    void write(final Object candidate, final Object output, final Integer nbMatched) throws IOException, XMLStreamException, DataStoreException;
-
-    /**
      * Free the resources.
      */
     void dispose() throws IOException, XMLStreamException;

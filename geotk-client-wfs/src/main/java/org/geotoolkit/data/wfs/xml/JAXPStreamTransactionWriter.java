@@ -241,7 +241,7 @@ public class JAXPStreamTransactionWriter {
         final FeatureSet col = element.getFeatures();
         final JAXPStreamFeatureWriter fw = new JAXPStreamFeatureWriter();
         fw.setOutput(writer);
-        fw.writeFeatureCollection(col, null, true);
+        fw.writeFeatureCollection(col, null, null, true);
 
         writer.writeEndElement();
     }
@@ -272,13 +272,11 @@ public class JAXPStreamTransactionWriter {
         //write typename--------------------------------------------------------
         final GenericName typeName = element.getTypeName();
         final String ns = NamesExt.getNamespace(typeName);
-        final String prefix;
         if (ns != null && !ns.isEmpty()) {
-            prefix = "geons"+inc.incrementAndGet();
+            final String prefix = "geons"+inc.incrementAndGet();
             writer.writeAttribute("xmlns:"+prefix, ns);
             writer.writeAttribute(PROP_TYPENAME, prefix + ':' + typeName.tip());
         } else {
-            prefix = null;
             writer.writeAttribute(PROP_TYPENAME, typeName.tip().toString());
         }
 
@@ -417,21 +415,25 @@ public class JAXPStreamTransactionWriter {
 
     private static String bestType(final Object candidate){
 
-        if(candidate instanceof String){
+        if (candidate instanceof String) {
             return TYPE_STRING;
-        }else if(candidate instanceof Integer){
+        } else if(candidate instanceof Integer) {
             return TYPE_INTEGER;
-        }else if(candidate instanceof Boolean){
+        } else if(candidate instanceof Boolean) {
             return TYPE_BOOLEAN;
-        }else if(candidate instanceof Date){
+        } else if(candidate instanceof Date) {
             return TYPE_DATE;
-        }else if(candidate instanceof Float || candidate instanceof Double){
+        } else if(candidate instanceof Float || candidate instanceof Double) {
             return TYPE_DECIMAL;
-        }else if(candidate instanceof org.opengis.geometry.Geometry){
+        } else if(candidate instanceof org.opengis.geometry.Geometry) {
             //is that correct ?
             return GML_PREFIX+':'+"Geometry";
-        }else{
-            throw new IllegalArgumentException("Unexpected attribut type : "+ candidate.getClass());
+        } else {
+            String typeStr = "null";
+            if (candidate != null) {
+                typeStr = candidate.getClass().toString();
+            }
+            throw new IllegalArgumentException("Unexpected attribut type : " + typeStr);
         }
     }
 
