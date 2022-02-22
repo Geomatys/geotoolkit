@@ -19,7 +19,10 @@ package org.geotoolkit.util;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.IntFunction;
+import java.util.stream.Collector;
 import java.util.stream.Stream;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.lang.Static;
@@ -27,6 +30,7 @@ import org.geotoolkit.lang.Static;
 /**
  *
  * @author Johann Sorel (Geomatys)
+ * @author Alexis Manin (Geomatys)
  */
 public final class Streams extends Static {
 
@@ -35,39 +39,24 @@ public final class Streams extends Static {
      * the consumer is called.
      * The last batch may have a size smaller then the batchSize.
      *
-     * @param <T> object types in the stream.
-     * @param stream
-     * @param batchConsumer
-     * @param batchSize
+     * <h5>Use-case</h5>:
+     * This method fits the very peculiar use-case described in {@link CollectorsExt#sinkSynchronized(Object, BiConsumer)}:
+     * when it is needed to sink values issued in parallel to a single output that is not thread-safe. In any other case,
+     * this method will do more harm than good.
+     * If your output is already synchronized on its own, and you only want to reduce synchronization cost by collecting
+     * values by batch, you should directly use {@link CollectorsExt#buffering(int, int, IntFunction, Collector)}:
+     * <pre>
+     *     final Collector downStreamCollector = CollectorsExt.sink(mySink, mySink::accumulate);
+     *     final Collector collectByBatches = CollectorsExt.buffering(batchSize, downStreamCollector);
+     *     var referenceToMySink = myParallelStream.collect(collectByBatches);
+     *     assert mySink == referenceToMySink;
+     * </pre>
      */
     public static <T> void batchExecute(Stream<T> stream, Consumer<Collection<T>> batchConsumer, int batchSize) {
-        ArgumentChecks.ensureStrictlyPositive("batchSize", batchSize);
-
         final Object lock = new Object();
-        final List<T> batches = new ArrayList<T>(batchSize) {
-            @Override
-            public boolean add(T c) {
-                boolean added;
-                List batch = null;
-                synchronized (lock) {
-                    added = super.add(c);
-                    if (super.size() >= batchSize) {
-                        batch = new ArrayList(this);
-                        clear();
-                    }
-                }
-                if (batch != null) {
-                    batchConsumer.accept(batch);
-                }
-                return added;
-            }
-        };
-
-        stream.parallel().forEach(batches::add);
-
-        if (!batches.isEmpty()) {
-            batchConsumer.accept(batches);
-        }
+        final Object result = stream.parallel().collect(
+                CollectorsExt.buffering(batchSize,
+                        CollectorsExt.sinkSynchronized(lock, (sink, batch) -> batchConsumer.accept(batch))));
+        assert lock == result : "Stream batch execute result should be the given sink";
     }
-
 }
