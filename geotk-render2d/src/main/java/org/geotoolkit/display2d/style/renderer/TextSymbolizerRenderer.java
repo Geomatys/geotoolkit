@@ -59,16 +59,15 @@ public class TextSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedTex
         if (!symbol.isVisible(feature)) return Stream.empty();
 
         //we adjust coefficient for rendering ------------------------------
-        float coeff = 1;
+        final float coeff;
         if (dispGeom) {
             //symbol is in display unit
             coeff = 1;
         } else {
-            //we have a special unit we must adjust the coefficient
-            coeff = renderingContext.getUnitCoefficient(symbolUnit);
-            // calculate scale difference between objective and display
+            //we have a special unit we must adjust the coefficient. We adapt it to the current region of interest,
+            // by computin scale difference between objective and display
             final AffineTransform inverse = renderingContext.getObjectiveToDisplay();
-            coeff *= Math.abs(AffineTransforms2D.getScale(inverse));
+            coeff = (float) (this.coeff * Math.abs(AffineTransforms2D.getScale(inverse)));
         }
 
 
@@ -110,7 +109,8 @@ public class TextSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedTex
                 label, j2dFont, fontPaint,
                 haloWidth, haloPaint,
                 anchor[0], anchor[1],
-                disp[0], disp[1],
+                // SE 11.3.2: displacement is expressed in defined unit of measurement
+                disp[0] * coeff, disp[1] * coeff,
                 rotation, renderingContext.getDisplayCRS(),
                 projectedGeometry);
 
@@ -127,9 +127,11 @@ public class TextSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedTex
                     fontPaint,
                     haloWidth,
                     haloPaint,
-                    lp.getGap(feature),
-                    lp.getInitialGap(feature),
-                    lp.getOffset(feature),
+                    // SE section 11: Gap and initial gap are defined using UOM.
+                    lp.getGap(feature) * coeff,
+                    lp.getInitialGap(feature) * coeff,
+                    // SE 11.1.4 and 11.4.4: Perpendicular offset is in defined unit of measurement
+                    lp.getOffset(feature) * coeff,
                     lp.isRepeated(),
                     lp.isAligned(),
                     lp.isGeneralizeLine(),
