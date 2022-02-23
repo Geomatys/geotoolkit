@@ -90,9 +90,23 @@ public class TextSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedTex
             haloPaint = Color.WHITE;
         }
 
-        //extract text parameters
-        final Paint fontPaint = symbol.getFontPaint(feature, 0,0, coeff, hints);
-        final Font j2dFont = symbol.getJ2dFont(feature, coeff);
+        /* Extract text parameters.
+         * Note:
+         * There's an ambiguity in SE encoding. Section 11 defines that any size, including font size, should use
+         * defined UOMs. However, text symbology section 11.4.3 states that font size unit is always in pixels.
+         * For now, we force no coefficient, to match both:
+         *  - Most specific information (11.4.3)
+         *  - Most common use-case. Unit of measurement is useful mostly for displacements, to ensure text does not
+         *    overlap geometry at given zoom levels. However, for texts, pixel values is often preferred, to ensure
+         *    lisibility on screen.
+         *
+         * TODO: A better way might be to allow expressions suffixed with "px", as defined in SE section 11, last phrase.
+         * For now, however, we do not code this solution, because it should be applied on any size in style,
+         * and would require a big rework. Sizes should provide Measures instead of numeric values to check if measure
+         * has a local uom (expressed as a suffix), or none, in case the context defined uom should be used.
+         */
+        final Paint fontPaint = symbol.getFontPaint(feature, 0,0, 1, hints);
+        final Font j2dFont = symbol.getJ2dFont(feature, 1);
 
         //symbolizer doesnt match the featuretype, no geometry found with this name.
         final ProjectedGeometry projectedGeometry = new ProjectedGeometry(renderingContext);
