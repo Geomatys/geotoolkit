@@ -22,11 +22,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.ConcurrentModificationException;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.stream.Stream;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverageBuilder;
@@ -38,13 +34,10 @@ import org.apache.sis.storage.event.StoreListener;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.SearchArea;
 import org.geotoolkit.display.canvas.RenderingContext;
-import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.presentation.RasterPresentation;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
-import org.geotoolkit.map.WeakMapItemListener;
-import org.geotoolkit.storage.event.StorageListener;
 import org.opengis.display.primitive.Graphic;
 
 
@@ -53,57 +46,16 @@ import org.opengis.display.primitive.Graphic;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public final class MapLayerJ2D extends MapItemJ2D<MapLayer> implements StoreListener<StoreEvent> {
-
-    private final PropertyChangeListener ll = new PropertyChangeListener() {
-
-        @Override
-        public void propertyChange(PropertyChangeEvent event) {
-            if (getCanvas().isAutoRepaint()) {
-                if (item.isVisible()){
-                    //TODO should call a repaint only on this graphic
-                    getCanvas().repaint();
-                }
-            }
-        }
-    };
-
-    private final WeakMapItemListener weakLayerListener;
-    private final StorageListener.Weak weakResourceListener = new StorageListener.Weak(this);
+public final class MapLayerJ2D extends MapItemJ2D<MapLayer> {
 
 
     public MapLayerJ2D(final J2DCanvas canvas, final MapLayer layer){
         //do not use layer crs here, to long to calculate
         super(canvas, layer, false);
-        WeakMapItemListener tmpAllocListener = null;
-        try {
-            tmpAllocListener = new WeakMapItemListener(layer, ll,
-                MapLayer.STYLE_PROPERTY,
-                MapLayer.OPACITY_PROPERTY,
-                MapLayer.QUERY_PROPERTY);
-
-            weakResourceListener.registerSource(layer.getData());
-        } catch (ConcurrentModificationException e) {
-            GO2Utilities.LOGGER.log(Level.WARNING, "Cannot observe layer for changes du to concurrent access error.");
-        } catch (Exception e) {
-            GO2Utilities.LOGGER.log(Level.WARNING, "Cannot observe layer for changes.", e);
-        }
-        weakLayerListener = tmpAllocListener;
     }
 
     @Override
     public void dispose() {
-        try (
-                AutoCloseable superClose = super::dispose;
-                AutoCloseable wllClose = weakLayerListener != null ? weakLayerListener::dispose : () -> {};
-                AutoCloseable wrlClose = weakResourceListener::dispose
-        ) {
-            // Nothing to do. Try/w/r allows to properly close all resources even in case of error.
-        } catch (RuntimeException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
     /**
@@ -162,14 +114,6 @@ public final class MapLayerJ2D extends MapItemJ2D<MapLayer> implements StoreList
         //since this is a custom layer, we have no way to find a child graphic.
         graphics.add(this);
         return graphics;
-    }
-
-    @Override
-    public void eventOccured(StoreEvent event) {
-        if (item.isVisible() && getCanvas().isAutoRepaint()) {
-            //TODO should call a repaint only on this graphic
-            getCanvas().repaint();
-        }
     }
 
 }
