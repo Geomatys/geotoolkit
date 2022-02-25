@@ -334,10 +334,11 @@ public class Predictor extends AbstractProcess {
                 move.y = wind.y + current.y;
                 move.scale(ctx.timestep.getSeconds());
 
-                location.x += move.x;
-                location.y += move.y;
+                final double[] movedLocation = location.getCoordinate();
+                movedLocation[0] += move.x;
+                movedLocation[1] += move.y;
 
-                children.add(ctx.points.add(location.getCoordinate(), pw));
+                children.add(ctx.points.add(movedLocation, pw));
             }
 
             if (children.size() > 0) {
