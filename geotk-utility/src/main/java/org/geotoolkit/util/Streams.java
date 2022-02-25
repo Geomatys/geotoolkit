@@ -16,15 +16,12 @@
  */
 package org.geotoolkit.util;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.IntFunction;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
-import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.lang.Static;
 
 /**
