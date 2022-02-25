@@ -1,3 +1,19 @@
+/*
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2022, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
 package org.geotoolkit.benchmarks;
 
 import java.util.ArrayList;
@@ -28,6 +44,8 @@ import org.openjdk.jmh.infra.Blackhole;
  * Note: If we'd use Reactor, none of this would be needed, as it provides a wonderful buffer operator, and, more
  * importantly for this use case a lot of tools to manage concurrency, and move from parallel to sequential
  * pipelines smoothly.
+ *
+ * @author Alexis Manin (Geomatys)
  */
 @Warmup(iterations = 4, time = 5)
 @Measurement(iterations = 4, time = 10)
