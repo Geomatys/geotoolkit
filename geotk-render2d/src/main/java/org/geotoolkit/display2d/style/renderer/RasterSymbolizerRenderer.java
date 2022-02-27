@@ -581,18 +581,23 @@ public class RasterSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer
 
     private int[] channelSelection(RasterSymbolizer sourceSymbol, GridCoverageResource ref) throws PortrayalException, DataStoreException {
         final ChannelSelection selections = sourceSymbol.getChannelSelection();
-        final List<SampleDimension> sampleDimensions = ref.getSampleDimensions();
         final int[] channelSelection;
         //we can change sample dimension only if we have more then one available.
-        if (selections != null && (sampleDimensions == null || sampleDimensions.size() > 1)) {
-            final SelectedChannelType channel = selections.getGrayChannel();
+        if (selections != null) {
+            //delay sample dimension reading until we really need it, it may be expensive
+            final List<SampleDimension> sampleDimensions = ref.getSampleDimensions();
+            if (sampleDimensions == null || sampleDimensions.size() > 1) {
+                final SelectedChannelType channel = selections.getGrayChannel();
 
-            final SelectedChannelType[] channels = channel != null?
-                    new SelectedChannelType[]{channel} : selections.getRGBChannels();
-            if (channels != null && channels.length > 0) {
-                channelSelection = new int[channels.length];
-                for (int i = 0 ; i < channels.length ; i++) {
-                    channelSelection[i] = getBandIndice(channels[i].getChannelName(), sampleDimensions);
+                final SelectedChannelType[] channels = channel != null?
+                        new SelectedChannelType[]{channel} : selections.getRGBChannels();
+                if (channels != null && channels.length > 0) {
+                    channelSelection = new int[channels.length];
+                    for (int i = 0 ; i < channels.length ; i++) {
+                        channelSelection[i] = getBandIndice(channels[i].getChannelName(), sampleDimensions);
+                    }
+                } else {
+                    channelSelection = null;
                 }
             } else {
                 channelSelection = null;

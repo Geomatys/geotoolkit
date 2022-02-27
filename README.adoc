@@ -1,0 +1,44 @@
+= Geotoolkit
+
+Geotoolkit is an open-source library that provides tools to manipulate cartographic data:
+
+* Scientific computing
+* Data decoding from various file formats or web-services
+* Data binding to many OGC standards
+* https://www.ogc.org/standards/se[OGC Symbology Encoding] compliant rendering
+
+== Project status
+
+The project is being progressively ported to the https://sis.apache.org[Apache SIS] project.
+The aim is to rework functionalities to make them more performant, more stable and respectful of ISO/OGC standards.
+Future additions in Geotoolkit will essentially be for prototyping purpose.
+
+== Build
+
+Compilation requires:
+
+ * JDK 17 or higher
+ * Maven 3.8.4 or higher
+
+Compile using `mvn install` command.
+
+== Code samples
+
+Look at link:geotk-demo-samples[] directory for code samples on various subjects, like map drawing, data extraction from file, etc.
+
+== Versioning policy
+
+As Geotoolkit project is now mosty a sandbox project, we've decided to move away from semantic versioning.
+The new versioning scheme is a https://calver.org/[calendar based versioning] of the form _YY.MM.dd[-patch-number]_.
+
+[WARNING]
+====
+No retro-compatibility policy is enforced anymore on the project.
+It means that a breaking API change can occur without any previous notice
+between two tags of the project.
+====
+
+== Java version compatibility
+
+Any tag from 4.0 to 22.02.16 are compatible with JDK 8.
+Moving forward, any new release will require Java 17 as minimal requirement.

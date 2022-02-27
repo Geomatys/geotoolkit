@@ -211,6 +211,16 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         final InterpolationCase interpolation = InterpolationCase.BILINEAR;
 
         final GridGeometry refGG = ref.getGridGeometry();
+
+        //fast envelope intersection in 2D
+        if (refGG.isDefined(GridGeometry.ENVELOPE)) {
+            GeneralEnvelope bbox = renderingContext.getCanvasObjectiveBounds2D();
+            Envelope refEnv = Envelopes.transform(refGG.getEnvelope(), bbox.getCoordinateReferenceSystem());
+            if (!bbox.intersects(refEnv, true)) {
+                throw new DisjointExtentException("Coverage resource envelope do not intersect canvas");
+            }
+        }
+
         final GridGeometry baseGG = trySubGrid(refGG, canvasGrid);
         final GridGeometry slice = extractSlice(baseGG, canvasGrid, computeMargin2D(interpolation), true);
 

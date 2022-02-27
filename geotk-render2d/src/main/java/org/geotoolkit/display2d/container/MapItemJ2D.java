@@ -22,9 +22,6 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,20 +29,15 @@ import java.util.logging.Level;
 import javax.media.jai.JAI;
 import javax.media.jai.TileFactory;
 import javax.media.jai.TileRecycler;
-import org.apache.sis.internal.map.ListChangeEvent;
-import org.apache.sis.measure.NumberRange;
 import org.apache.sis.portrayal.MapItem;
 import org.apache.sis.portrayal.MapLayer;
 import org.apache.sis.portrayal.MapLayers;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.display.SearchArea;
 import org.geotoolkit.display.canvas.RenderingContext;
-import org.geotoolkit.display.primitive.SceneNode;
-import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
-import org.geotoolkit.map.WeakMapItemListener;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.geometry.Envelope;
 
@@ -54,13 +46,12 @@ import org.opengis.geometry.Envelope;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class MapItemJ2D<T extends MapItem> extends GraphicJ2D implements PropertyChangeListener {
+public class MapItemJ2D<T extends MapItem> extends GraphicJ2D {
 
     private static final TileRecycler TILE_RECYCLER = (TileRecycler)JAI.getDefaultInstance().getRenderingHint(JAI.KEY_TILE_RECYCLER);
     private static final TileFactory TILE_FACTORY = (TileFactory)JAI.getDefaultInstance().getRenderingHint(JAI.KEY_TILE_FACTORY);
     private static final Point pt = new Point(0, 0);
 
-    private final WeakMapItemListener weakListener;
 
     //childs
     private final Map<MapItem, GraphicJ2D> itemGraphics = new HashMap<>();
@@ -83,17 +74,6 @@ public class MapItemJ2D<T extends MapItem> extends GraphicJ2D implements Propert
             }
         }
 
-        //listen to mapitem changes
-        // TODO: To avoid try/catch/logging, we should find a way to configure "static" maps that do not need to be listened.
-        WeakMapItemListener tmpAllocListener = null;
-        try {
-            tmpAllocListener = new WeakMapItemListener(item, this, MapItem.VISIBLE_PROPERTY, MapLayers.COMPONENTS_PROPERTY);
-        } catch (ConcurrentModificationException e) {
-            GO2Utilities.LOGGER.log(Level.WARNING, "Cannot listen map item change due to concurrent access.");
-        } catch (Exception e) {
-            GO2Utilities.LOGGER.log(Level.WARNING, "Cannot listen map item change", e);
-        }
-        weakListener = tmpAllocListener;
     }
 
     @Override
@@ -127,9 +107,6 @@ public class MapItemJ2D<T extends MapItem> extends GraphicJ2D implements Propert
     @Override
     public void dispose() {
         super.dispose();
-        if (weakListener != null) {
-            weakListener.dispose();
-        }
 
         for(GraphicJ2D graphic : itemGraphics.values()){
             graphic.dispose();
@@ -161,54 +138,6 @@ public class MapItemJ2D<T extends MapItem> extends GraphicJ2D implements Propert
     public List<Graphic> getGraphicAt(final RenderingContext rdcontext, final SearchArea mask, List<Graphic> graphics) {
         //do not loop on children
         return graphics;
-    }
-
-
-    // item listener ----------------------------------------------
-
-    @Override
-    public void propertyChange(final PropertyChangeEvent event) {
-        if (getCanvas().isAutoRepaint()) {
-            final String propName = event.getPropertyName();
-            if(MapItem.VISIBLE_PROPERTY.equals(propName)){
-                //TODO should call a repaint only on this graphic
-                getCanvas().repaint();
-            }
-        }
-        if (event instanceof ListChangeEvent) {
-            itemChange((ListChangeEvent<MapItem>) event);
-        }
-    }
-
-    private void itemChange(final ListChangeEvent<MapItem> event) {
-        final ListChangeEvent.Type type = event.getType();
-
-        if (ListChangeEvent.Type.ADDED == type) {
-            final NumberRange range = event.getRange();
-            int index = (int) range.getMinDouble();
-            for(final MapItem child : event.getItems()){
-                final GraphicJ2D gj2d = parseChild(child);
-                getChildren().add(index,(SceneNode)gj2d);
-                itemGraphics.put(child, gj2d);
-                index++;
-            }
-
-            //TODO should call a repaint only on this graphic
-            getCanvas().repaint();
-
-        } else if (ListChangeEvent.Type.REMOVED == type) {
-            for(final MapItem child : event.getItems()){
-                //remove the graphic
-                final GraphicJ2D gra = itemGraphics.remove(child);
-                if(gra != null){
-                    getChildren().remove(gra);
-                    gra.dispose();
-                }
-            }
-
-            //TODO should call a repaint only on this graphic
-            getCanvas().repaint();
-        }
     }
 
     //tyling utilities ---------------------------------------------------------

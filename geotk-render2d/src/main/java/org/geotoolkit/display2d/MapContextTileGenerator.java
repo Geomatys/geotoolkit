@@ -35,8 +35,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.Function;
-import java.util.function.LongConsumer;
+import java.util.logging.Level;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import javax.media.jai.RasterFactory;
@@ -249,18 +248,18 @@ public class MapContextTileGenerator extends AbstractTileGenerator {
             using the previously generated level.
             */
             if (env != null) {
-            try {
-                CoordinateReferenceSystem targetCrs = pyramid.getCoordinateReferenceSystem();
-                Envelope baseEnv = env;
-                env = Envelopes.transform(env, targetCrs);
-                double[] minres = new double[]{resolutions.getMinDouble(), resolutions.getMinDouble()};
-                double[] maxres = new double[]{resolutions.getMaxDouble(), resolutions.getMaxDouble()};
-                minres = ReferencingUtilities.convertResolution(baseEnv, minres, targetCrs, null);
-                maxres = ReferencingUtilities.convertResolution(baseEnv, maxres, targetCrs, null);
-                resolutions = NumberRange.create(minres[0], true, maxres[0], true);
-            } catch (TransformException ex) {
-                throw new DataStoreException(ex.getMessage(), ex);
-            }
+                try {
+                    CoordinateReferenceSystem targetCrs = pyramid.getCoordinateReferenceSystem();
+                    Envelope baseEnv = env;
+                    env = Envelopes.transform(env, targetCrs);
+                    double[] minres = new double[]{resolutions.getMinDouble(), resolutions.getMinDouble()};
+                    double[] maxres = new double[]{resolutions.getMaxDouble(), resolutions.getMaxDouble()};
+                    minres = ReferencingUtilities.convertResolution(baseEnv, minres, targetCrs, null);
+                    maxres = ReferencingUtilities.convertResolution(baseEnv, maxres, targetCrs, null);
+                    resolutions = NumberRange.create(minres[0], true, maxres[0], true);
+                } catch (TransformException ex) {
+                    throw new DataStoreException(ex.getMessage(), ex);
+                }
             }
 
             //generate lower level from data
@@ -291,56 +290,35 @@ public class MapContextTileGenerator extends AbstractTileGenerator {
                     canvasDef.setEnvelope(mosaic.getEnvelope());
                     final SceneDef sceneDef = new SceneDef(parent, hints);
 
+
                     //one thread per line, the progressive image generates multiple tiles when drawing
                     //this approach is more efficient from profiling result then using tile by tile
                     //generation
-                    LongStream.range(rect.y, rect.y+rect.height).parallel().forEach(new LongConsumer() {
-                        @Override
-                        public void accept(final long y) {
-                            final long[] nb = new long[2];
-                            final NumberFormat format = NumberFormat.getIntegerInstance(Locale.FRANCE);
-                            try {
-                                final ProgressiveImage img = new ProgressiveImage(canvasDef, sceneDef,
+                    Stream<Tile> stream = LongStream.range(rect.y, rect.y+rect.height).parallel().boxed().flatMap((Long y) -> {
+                        try {
+                            final ProgressiveImage img = new ProgressiveImage(canvasDef, sceneDef,
                                     mosaic.getGridSize(), mosaic.getTileSize(), mosaic.getScale(), 0);
-
-                                Stream<Tile> stream = img.generate(rect.x, rect.x+rect.width, (int)y, skipEmptyTiles);
-
-                                if (listener != null) {
-                                    stream = stream.map(new Function<Tile, Tile>() {
-                                        @Override
-                                        public Tile apply(Tile t) {
-                                            nb[0]++;
-                                            if (nb[0]%1000 == 0) {
-                                                final long time = System.currentTimeMillis();
-                                                if (tempo.updateAndGet((long operand) -> ((time-operand)  > 3000) ? time : operand) == time) {
-                                                    long v = al.addAndGet(nb[0]);
-                                                    nb[1] += nb[0];
-                                                    nb[0] = 0;
-                                                    listener.progressing(new ProcessEvent(DUMMY, format.format(v)+msg, (float) (( ((double)v)/((double)total) )*100.0)  ));
-                                                }
-                                            }
-                                            return t;
-                                        }
-                                    });
-                                }
-                                mosaic.writeTiles(stream, null);
-
-                            } catch (Exception ex) {
-                                ex.printStackTrace();
-                            }
-
-                            al.addAndGet(nb[0]);
-                            nb[1] += nb[0];
-                            nb[0] = 0;
-                            long v = al.addAndGet(rect.width - nb[1]); //empty tiles
-                            if (listener != null) {
-                                final long time = System.currentTimeMillis();
-                                if (tempo.updateAndGet((long operand) -> ((time-operand)  > 3000) ? time : operand) == time) {
-                                    listener.progressing(new ProcessEvent(DUMMY, format.format(v)+msg, (float) (( ((double)v)/((double)total) )*100.0)  ));
-                                }
-                            }
+                            return img.generate(rect.x, rect.x+rect.width, y.intValue(), skipEmptyTiles);
+                        } catch (Exception ex) {
+                            LOGGER.log(Level.INFO, "Failed to generate a tile {0}", ex.getMessage());
+                            LOGGER.log(Level.FINER, "Failed to generate a tile ", ex);
+                            return Stream.empty();
                         }
                     });
+                    if (listener != null) {
+                        final NumberFormat format = NumberFormat.getIntegerInstance(Locale.FRANCE);
+                        stream = stream.map((Tile t) -> {
+                            long n = al.incrementAndGet();
+                            if (n % 1000 == 0) {
+                                final long time = System.currentTimeMillis();
+                                if (tempo.updateAndGet((long operand) -> ((time-operand)  > 3000) ? time : operand) == time) {
+                                    listener.progressing(new ProcessEvent(DUMMY, format.format(n)+msg, (float) (( ((double)n)/((double)total) )*100.0)  ));
+                                }
+                            }
+                            return t;
+                        });
+                    }
+                    mosaic.writeTiles(stream, null);
 
                     //last level event
                     final NumberFormat format = NumberFormat.getIntegerInstance(Locale.FRANCE);
