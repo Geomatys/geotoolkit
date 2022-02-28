@@ -33,12 +33,11 @@ import org.geotoolkit.geometry.math.Vector2d;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
-import org.geotoolkit.processing.science.drift.DriftPredictionDescriptor;
-import org.geotoolkit.processing.science.drift.DriftPredictor;
-import org.geotoolkit.processing.science.drift.Output;
-import org.geotoolkit.processing.science.drift.v2.PointBucket.PointReference;
 import static org.geotoolkit.processing.science.drift.v2.PredictorDescriptor.*;
-import static org.geotoolkit.processing.science.drift.v2.Utilities.*;
+import org.geotoolkit.processing.science.drift.Output;
+import static org.geotoolkit.processing.science.drift.v2.Utilities.setTime;
+import org.geotoolkit.processing.science.drift.Weight;
+import org.geotoolkit.processing.science.drift.v2.PointBucket.PointReference;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -50,8 +49,9 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import ucar.ma2.InvalidRangeException;
 
+
 /**
- * It's a port of {@link DriftPredictor}. The aim is to use arbitrary UV data source as meteo dataset, instead of hard-
+ * The aim is to use arbitrary UV data source as meteo dataset, instead of hard-
  * coded data used by the original process. Other attempts are:
  *
  * <ol>
@@ -69,7 +69,7 @@ public class Predictor extends AbstractProcess {
 
     /**
      * Where to send debugging info. If non-null, this is usually {@link System#out}.
-     * Tip: if non-null, better to have a {@link #weights} array of length one,
+     * Tip: if non-null, better to have a {@link Weight weights} array of length one,
      * otherwise it become difficult to follow the trajectory.
      */
     private static final PrintStream OUT = null;
@@ -83,13 +83,13 @@ public class Predictor extends AbstractProcess {
     @Override
     protected void execute() throws ProcessException {
         //// TODO: move in prediction context
-        final Instant startTime = Instant.ofEpochMilli(inputParameters.getMandatoryValue(DriftPredictionDescriptor.START_TIMESTAMP));
-        final Instant endTime = Instant.ofEpochMilli(inputParameters.getMandatoryValue(DriftPredictionDescriptor.END_TIMESTAMP));
+        final Instant startTime = Instant.ofEpochMilli(inputParameters.getMandatoryValue(START_TIMESTAMP));
+        final Instant endTime = Instant.ofEpochMilli(inputParameters.getMandatoryValue(END_TIMESTAMP));
 
         final MeteoDataset meteo= initData();
         final Origin origin;
         try {
-            DirectPosition tmpOrigin = inputParameters.getMandatoryValue(DriftPredictionDescriptor.START_POINT);
+            DirectPosition tmpOrigin = inputParameters.getMandatoryValue(START_POINT);
             tmpOrigin = setTime(tmpOrigin, startTime);
             origin = new Origin(fit(tmpOrigin, meteo));
         } catch (FactoryException|TransformException ex) {
@@ -130,7 +130,7 @@ public class Predictor extends AbstractProcess {
             throw new ProcessException("Error while computing", this, ex);
         }
 
-        outputParameters.getOrCreate(DriftPredictionDescriptor.OUTPUT_DATA).setValue(outputFile);
+        outputParameters.getOrCreate(OUTPUT_DATA).setValue(outputFile);
     }
 
     private void write(final List<Output> outputs, final GridGeometry grid, final Instant startTime, final Path outputFile) throws IOException, InvalidRangeException, ProcessException {
@@ -202,7 +202,7 @@ public class Predictor extends AbstractProcess {
 
         outputs.add(new Output(globalProba, ctx.grid.width, ctx.grid.height));
 
-        outputParameters.getOrCreate(DriftPredictionDescriptor.ACTUAL_END_TIMESTAMP).setValue(stepTime.toEpochMilli());
+        outputParameters.getOrCreate(ACTUAL_END_TIMESTAMP).setValue(stepTime.toEpochMilli());
 
         return outputs;
     }
@@ -242,12 +242,12 @@ public class Predictor extends AbstractProcess {
         );
     }
 
-    private DriftPredictor.Weight[] initWeights() throws ProcessException {
+    private Weight[] initWeights() throws ProcessException {
         final String code = PredictorDescriptor.WEIGHTS.getName().getCode();
-        DriftPredictor.Weight[] result = inputParameters.groups(code).stream()
+        Weight[] result = inputParameters.groups(code).stream()
                 .map(Parameters::castOrWrap)
                 .map(Predictor::readWeight)
-                .toArray(size -> new DriftPredictor.Weight[size]);
+                .toArray(size -> new Weight[size]);
         if (result.length < 1) {
             throw new ProcessException("No weight provided as input", this);
         }
@@ -255,8 +255,8 @@ public class Predictor extends AbstractProcess {
         return result;
     }
 
-    private static DriftPredictor.Weight readWeight(final Parameters weightParam) {
-        return new DriftPredictor.Weight(
+    private static Weight readWeight(final Parameters weightParam) {
+        return new Weight(
                 weightParam.doubleValue(CURRENT_WEIGHT),
                 weightParam.doubleValue(WIND_WEIGHT),
                 weightParam.doubleValue(WEIGHT_PROBABILITY)
@@ -322,7 +322,7 @@ public class Predictor extends AbstractProcess {
              * is the same position in grid coordinates. Now compute different possible drift speeds.
              */
             final List<PointReference> children = new ArrayList<>(ctx.weights.length);
-            for (final DriftPredictor.Weight w : ctx.weights) {
+            for (final Weight w : ctx.weights) {
                 final double pw = ref.getWeight() * w.probability;
 //                if (pw <= ctx.probabilityThreshold) {
 //                    continue;
@@ -334,10 +334,11 @@ public class Predictor extends AbstractProcess {
                 move.y = wind.y + current.y;
                 move.scale(ctx.timestep.getSeconds());
 
-                location.x += move.x;
-                location.y += move.y;
+                final double[] movedLocation = location.getCoordinate();
+                movedLocation[0] += move.x;
+                movedLocation[1] += move.y;
 
-                children.add(ctx.points.add(location.getCoordinate(), pw));
+                children.add(ctx.points.add(movedLocation, pw));
             }
 
             if (children.size() > 0) {
@@ -494,13 +495,13 @@ public class Predictor extends AbstractProcess {
 
         final PointBucket points;
 
-        final DriftPredictor.Weight[] weights;
+        final Weight[] weights;
 
         double probabilityThreshold;
 
         final double[] probabilityGrid;
 
-        public PredictionContext(GridModel targetGrid, DriftPredictor.Weight[] weights, Duration timestep, int nbPts) throws NoninvertibleTransformException {
+        public PredictionContext(GridModel targetGrid, Weight[] weights, Duration timestep, int nbPts) throws NoninvertibleTransformException {
             this.probabilityThreshold = 0.2;
             this.grid = targetGrid;
             this.timestep = timestep;

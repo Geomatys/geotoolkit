@@ -3,43 +3,6 @@
  */
 package org.geotoolkit.processing.science.drift.v2;
 
-import org.apache.sis.coverage.SampleDimension;
-import org.apache.sis.coverage.grid.GridCoverage;
-import org.apache.sis.coverage.grid.GridExtent;
-import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.geometry.DirectPosition2D;
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.apache.sis.measure.Units;
-import org.apache.sis.parameter.Parameters;
-import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.referencing.crs.DefaultCompoundCRS;
-import org.apache.sis.referencing.operation.transform.MathTransforms;
-import org.apache.sis.storage.*;
-import org.apache.sis.storage.event.StoreEvent;
-import org.apache.sis.storage.event.StoreListener;
-import org.apache.sis.util.iso.Names;
-import org.geotoolkit.image.internal.ImageUtilities;
-import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.process.ProcessEvent;
-import org.geotoolkit.process.ProcessException;
-import org.geotoolkit.process.ProcessFinder;
-import org.geotoolkit.processing.GeotkProcessingRegistry;
-import org.geotoolkit.processing.ProcessListenerAdapter;
-import org.geotoolkit.processing.science.drift.DriftPredictionDescriptor;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.opengis.coverage.CannotEvaluateException;
-import org.opengis.geometry.Envelope;
-import org.opengis.metadata.Metadata;
-import org.opengis.metadata.spatial.DimensionNameType;
-import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.datum.PixelInCell;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.util.GenericName;
-import org.opengis.util.NoSuchIdentifierException;
-
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.nio.file.Files;
@@ -54,8 +17,49 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.geometry.DirectPosition2D;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.measure.Units;
+import org.apache.sis.parameter.Parameters;
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.crs.DefaultCompoundCRS;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.apache.sis.storage.DataStore;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.DataStores;
+import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.storage.StorageConnector;
+import org.apache.sis.storage.event.StoreEvent;
+import org.apache.sis.storage.event.StoreListener;
+import org.apache.sis.util.iso.Names;
+import org.geotoolkit.image.internal.ImageUtilities;
+import org.geotoolkit.process.ProcessDescriptor;
+import org.geotoolkit.process.ProcessEvent;
+import org.geotoolkit.process.ProcessException;
+import org.geotoolkit.process.ProcessFinder;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
+import org.geotoolkit.processing.ProcessListenerAdapter;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.opengis.coverage.CannotEvaluateException;
+import org.opengis.geometry.Envelope;
+import org.opengis.metadata.Metadata;
+import org.opengis.metadata.spatial.DimensionNameType;
+import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.util.GenericName;
+import org.opengis.util.NoSuchIdentifierException;
 
-import static org.opengis.metadata.spatial.DimensionNameType.*;
+import static org.opengis.metadata.spatial.DimensionNameType.COLUMN;
+import static org.opengis.metadata.spatial.DimensionNameType.ROW;
+import static org.opengis.metadata.spatial.DimensionNameType.TIME;
 
 /**
  *
@@ -125,10 +129,10 @@ public class PredictorTest {
         input.getOrCreate(PredictorDescriptor.TARGET_WIDTH).setValue(256);
         input.getOrCreate(PredictorDescriptor.TARGET_HEIGHT).setValue(256);
         input.getOrCreate(PredictorDescriptor.TIMESTEP).setValue(1);
-        input.getOrCreate(DriftPredictionDescriptor.START_TIMESTAMP).setValue(0);
+        input.getOrCreate(PredictorDescriptor.START_TIMESTAMP).setValue(0);
         final long expectedEndTime = 7000;
-        input.getOrCreate(DriftPredictionDescriptor.END_TIMESTAMP).setValue(expectedEndTime);
-        input.getOrCreate(DriftPredictionDescriptor.START_POINT)
+        input.getOrCreate(PredictorDescriptor.END_TIMESTAMP).setValue(expectedEndTime);
+        input.getOrCreate(PredictorDescriptor.START_POINT)
                 .setValue(new DirectPosition2D(CommonCRS.defaultGeographic(), 0.1, 0.2));
         input.getOrCreate(PredictorDescriptor.WIND_RESOURCE).setValue(new MockCoverageResource("wind"));
         input.getOrCreate(PredictorDescriptor.CURRENT_RESOURCE).setValue(new MockCoverageResource("current"));
@@ -157,8 +161,8 @@ public class PredictorTest {
                 .thenApply(Parameters::castOrWrap)
                 .get(30, TimeUnit.SECONDS);
 
-        final long outTime = output.getMandatoryValue(DriftPredictionDescriptor.ACTUAL_END_TIMESTAMP);
-        final Path netcdf = output.getMandatoryValue(DriftPredictionDescriptor.OUTPUT_DATA);
+        final long outTime = output.getMandatoryValue(PredictorDescriptor.ACTUAL_END_TIMESTAMP);
+        final Path netcdf = output.getMandatoryValue(PredictorDescriptor.OUTPUT_DATA);
 
         try {
             Assert.assertEquals("Expected time of ending", expectedEndTime, outTime);
