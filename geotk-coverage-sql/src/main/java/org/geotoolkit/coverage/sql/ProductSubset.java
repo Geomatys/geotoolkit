@@ -71,6 +71,11 @@ final class ProductSubset extends AbstractGridResource {
         extent.addElements(areaOfInterest);
         final ExtentSelector<GridCoverageEntry> selector = new ExtentSelector<>(extent);
         selector.setTimeGranularity(product.temporalResolution);
+        /*
+         * TODO: need a better criteria for deciding when to seet `alternateOrdering` to true.
+         * It could be  (requested time range) > (non-overlapping time range between images).
+         * We want `false` when the requested time range is small (sometime 1 ms is used).
+         */
         selector.alternateOrdering = true;
         entries.forEach(entry -> entry.submitTo(selector));
         GridCoverageEntry result = selector.best();
