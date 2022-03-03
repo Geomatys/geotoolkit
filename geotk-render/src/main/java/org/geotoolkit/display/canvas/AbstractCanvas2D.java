@@ -74,6 +74,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
+import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.crs.CompoundCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeneralDerivedCRS;
@@ -343,20 +344,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
     }
 
     public final Rectangle2D getDisplayBounds() {
-
-        final GridGeometry gridGeometry = getGridGeometry();
-        final CoordinateReferenceSystem crs = gridGeometry.getCoordinateReferenceSystem();
-        final int idx = getHorizontalIndex(crs);
-
-        //we are expecting axis index to be preserved from grid to crs
-        final GridExtent extent = gridGeometry.getExtent().reduceDimension(idx, idx+1);
-
-        final Rectangle2D.Double bounds = new Rectangle2D.Double();
-        bounds.x = extent.getLow(0);
-        bounds.y = extent.getLow(1);
-        bounds.width = extent.getSize(0);
-        bounds.height = extent.getSize(1);
-        return bounds;
+        return toRectangle(getGridGeometry2D().getExtent());
     }
 
     public void setDisplayBounds(Rectangle2D bounds) {
@@ -1227,5 +1215,16 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
                 tr.setTransform(m00, m10, m01, m11, m02, m12);
             }
         }
+    }
+
+    public static Rectangle toRectangle(final GridExtent extent) {
+        final int dimension = extent.getDimension();
+        if (dimension != 2) throw new MismatchedDimensionException("Only 2D extents can be converted to rectangle, but input dimension is "+ dimension);
+        return new Rectangle(
+                Math.toIntExact(extent.getLow(0)),
+                Math.toIntExact(extent.getLow(1)),
+                Math.toIntExact(extent.getSize(0)),
+                Math.toIntExact(extent.getSize(1))
+        );
     }
 }
