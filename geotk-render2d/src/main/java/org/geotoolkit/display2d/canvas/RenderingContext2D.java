@@ -238,7 +238,6 @@ public class RenderingContext2D implements RenderingContext{
     private Shape              canvasObjectiveShape = null;
     private Envelope           canvasObjectiveBBox  = null;
     private Envelope           canvasObjectiveBBox2D  = null;
-    private BoundingBox        canvasObjectiveBBox2DB  = null;
 
     private GridGeometry gridGeometry;
     private GridGeometry gridGeometry2d;
@@ -304,7 +303,6 @@ public class RenderingContext2D implements RenderingContext{
 
         //calculate the objective bbox with there temporal and elevation parameters ----
         this.canvasObjectiveBBox2D = new Envelope2D(objectiveCRS2D,canvasObjectiveBounds);
-        this.canvasObjectiveBBox2DB = new BoundingBox(canvasObjectiveBBox2D);
 
         //calculate the resolution -----------------------------------------------
         this.dpi = dpi;
@@ -518,7 +516,6 @@ public class RenderingContext2D implements RenderingContext{
                 //fix the envelopes, normalize them using wrap infos
                 canvasObjectiveBBox = ReferencingUtilities.wrapNormalize(canvasObjectiveBBox, wrapPoints);
                 canvasObjectiveBBox2D = ReferencingUtilities.wrapNormalize(canvasObjectiveBBox2D, wrapPoints);
-                canvasObjectiveBBox2DB = new BoundingBox(canvasObjectiveBBox2D);
 
                 paintingObjectiveBBox = ReferencingUtilities.wrapNormalize(paintingObjectiveBBox, wrapPoints);
                 paintingObjectiveBBox2D = ReferencingUtilities.wrapNormalize(paintingObjectiveBBox2D, wrapPoints);
@@ -594,7 +591,6 @@ public class RenderingContext2D implements RenderingContext{
 
         //calculate the objective bbox with there temporal and elevation parameters ----
         this.canvasObjectiveBBox2D = new Envelope2D(objectiveCRS2D,canvasObjectiveBounds);
-        this.canvasObjectiveBBox2DB = new BoundingBox(canvasObjectiveBBox2D);
 
         //calculate the resolution -----------------------------------------------
         this.dpi = 90;
@@ -1044,36 +1040,8 @@ public class RenderingContext2D implements RenderingContext{
     /**
      * {@inheritDoc }
      */
-    public Shape getPaintingDisplayShape(){
-        return paintingDisplayShape;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    public Rectangle getPaintingDisplayBounds(){
-        return paintingDisplaybounds;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    public Shape getPaintingObjectiveShape(){
-        return paintingObjectiveShape;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
     public BoundingBox getPaintingObjectiveBounds2D(){
         return paintingObjectiveBBox2DB;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    public Envelope getPaintingObjectiveBounds(){
-        return paintingObjectiveBBox;
     }
 
     public GeometryCSTransformer getObjectiveToDisplayGeometryTransformer() {
@@ -1085,13 +1053,6 @@ public class RenderingContext2D implements RenderingContext{
     /**
      * {@inheritDoc }
      */
-    public Shape getCanvasDisplayShape() {
-        return canvasDisplayShape;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
     public Rectangle getCanvasDisplayBounds() {
         return canvasDisplaybounds;
     }
@@ -1099,15 +1060,8 @@ public class RenderingContext2D implements RenderingContext{
     /**
      * {@inheritDoc }
      */
-    public Shape getCanvasObjectiveShape() {
-        return canvasObjectiveShape;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    public BoundingBox getCanvasObjectiveBounds2D() {
-        return canvasObjectiveBBox2DB;
+    public Envelope getCanvasObjectiveBounds2D() {
+        return canvasObjectiveBBox2D;
     }
 
     /**
