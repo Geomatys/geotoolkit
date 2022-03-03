@@ -137,7 +137,7 @@ public class J2DCanvasBuffered extends J2DCanvas{
         output.setClip(clipBounds);
         output.addRenderingHints(getHints(true));
 
-        final RenderingContext2D context = prepareContext(output,null);
+        final RenderingContext2D context = prepareContext(output);
 
         //paint background if there is one.
         if(painter != null){

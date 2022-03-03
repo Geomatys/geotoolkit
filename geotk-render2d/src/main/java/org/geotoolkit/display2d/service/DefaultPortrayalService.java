@@ -797,7 +797,7 @@ public final class DefaultPortrayalService implements PortrayalService{
         final J2DCanvasBuffered canvas = new J2DCanvasBuffered(crs,
                 canvasDef.getDimension(),sceneDef.getHints());
         prepareCanvas(canvas, canvasDef, sceneDef);
-        final RenderingContext2D renderContext = canvas.prepareContext(img.createGraphics(), new Rectangle(canvasDef.getDimension()));
+        final RenderingContext2D renderContext = canvas.prepareContext(img.createGraphics());
 
         final MapLayers context = sceneDef.getContext();
         final List<MapLayer> layers = MapBuilder.getLayers(context);

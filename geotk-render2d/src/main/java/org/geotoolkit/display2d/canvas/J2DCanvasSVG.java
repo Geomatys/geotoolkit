@@ -109,7 +109,7 @@ public class J2DCanvasSVG extends J2DCanvas{
         g2D.setClip(clipBounds);
         g2D.addRenderingHints(getHints(true));
 
-        final RenderingContext2D context = prepareContext(g2D,null);
+        final RenderingContext2D context = prepareContext(g2D);
 
         //paint background if there is one.
         if(painter != null){
