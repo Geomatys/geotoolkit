@@ -4,7 +4,6 @@ import org.locationtech.jts.geom.Geometry;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.filter.binaryspatial.LooseBBox;
 import org.geotoolkit.filter.binaryspatial.UnreprojectedLooseBBox;
-import org.geotoolkit.geometry.BoundingBox;
 import org.geotoolkit.geometry.jts.JTS;
 import org.apache.sis.referencing.CRS;
 import org.opengis.feature.AttributeType;
@@ -67,21 +66,21 @@ public class CRSAdaptorVisitor extends DuplicatingFilterVisitor {
                             l = ff.literal(geom);
                         } else if (lo instanceof Envelope) {
                             Envelope env = Envelopes.transform((Envelope) lo, targetCrs);
-                            l = ff.literal(new BoundingBox(env));
+                            l = ff.literal(env);
                         }
                     } catch (Exception ex){
                         throw new IllegalArgumentException(ex.getMessage(), ex);
                     }
                 }
                 final Object obj = l.getValue();
-                if (obj instanceof BoundingBox) {
+                if (obj instanceof Envelope env) {
                     FilterFactory ff = FilterUtilities.FF;
                     if (filter instanceof UnreprojectedLooseBBox) {
-                        return new UnreprojectedLooseBBox((ValueReference)exp1, ff.literal((BoundingBox) obj));
+                        return new UnreprojectedLooseBBox((ValueReference)exp1, ff.literal(env));
                     } else if (filter instanceof LooseBBox) {
-                        return new LooseBBox((ValueReference)exp1, ff.literal((BoundingBox) obj));
+                        return new LooseBBox((ValueReference)exp1, ff.literal(env));
                     } else {
-                        return ff.bbox(exp1, (BoundingBox) obj);
+                        return ff.bbox(exp1, env);
                     }
                 } else {
                     throw new IllegalArgumentException("Illegal BBOX filter, "

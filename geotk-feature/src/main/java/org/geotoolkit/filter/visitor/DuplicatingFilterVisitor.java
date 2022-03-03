@@ -25,15 +25,12 @@ import org.apache.sis.internal.filter.FunctionNames;
 
 import org.geotoolkit.filter.FilterFactory2;
 import org.geotoolkit.filter.FilterUtilities;
-import org.geotoolkit.filter.binaryspatial.UnreprojectedLooseBBox;
-import org.geotoolkit.filter.binaryspatial.LooseBBox;
 
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.MatchAction;
 import org.opengis.filter.Expression;
 import org.opengis.filter.Literal;
-import org.geotoolkit.geometry.BoundingBox;
 import org.opengis.filter.BetweenComparisonOperator;
 import org.opengis.filter.BinaryComparisonOperator;
 import org.opengis.filter.BinarySpatialOperator;
@@ -152,22 +149,9 @@ public class DuplicatingFilterVisitor extends AbstractVisitor<Object,Object> {
                 throw new IllegalArgumentException("Illegal BBOX filter, "
                         + "second expression should have been a literal with a boundingBox value:\n" + filter);
             }
-            Literal l = (Literal) visit(exp2);
-            final Object obj = l.getValue();
-            if (obj instanceof BoundingBox) {
-                if (filter instanceof UnreprojectedLooseBBox) {
-                    return new UnreprojectedLooseBBox((ValueReference) exp1, ff.literal((BoundingBox) obj));
-                } else if (filter instanceof LooseBBox) {
-                    return new LooseBBox((ValueReference) exp1, ff.literal((BoundingBox) obj));
-                } else {
-                    return ff.bbox(exp1, (BoundingBox) obj);
-                }
-            } else if (obj instanceof Envelope) {
-                return ff.bbox(exp1, (Envelope) obj);
-            } else {
-                throw new IllegalArgumentException("Illegal BBOX filter, "
-                    + "second expression should have been a literal with a boundingBox value but value was a : \n" + obj.getClass());
-            }
+            Literal<?, ?> l = (Literal<?, ?>) visit(exp2);
+            final Envelope obj = l.toValueType(Envelope.class).apply(null);
+            return ff.bbox(exp1, obj);
         });
         setDistanceSpatialHandlers((f) -> {
             final DistanceOperator<Object> filter = (DistanceOperator<Object>) f;

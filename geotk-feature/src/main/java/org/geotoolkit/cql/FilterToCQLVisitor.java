@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.cql;
 
+import org.apache.sis.geometry.Envelope2D;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.io.WKTWriter;
 import java.util.Date;
@@ -25,7 +26,6 @@ import java.util.TimeZone;
 import java.util.regex.Pattern;
 import org.apache.sis.internal.filter.FunctionNames;
 import org.apache.sis.internal.filter.Visitor;
-import org.geotoolkit.geometry.BoundingBox;
 import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.opengis.filter.BetweenComparisonOperator;
 import org.opengis.filter.BinarySpatialOperator;
@@ -46,6 +46,7 @@ import org.opengis.filter.SpatialOperatorName;
 import org.opengis.filter.TemporalOperator;
 import org.opengis.filter.TemporalOperatorName;
 import org.opengis.filter.ValueReference;
+import org.opengis.geometry.Envelope;
 
 /**
  * Visitor to convert a Filter in CQL.
@@ -192,7 +193,7 @@ public final class FilterToCQLVisitor extends Visitor<Object,StringBuilder> {
             if (exp1 instanceof ValueReference && exp2 instanceof Literal) {
                 //use writing : BBOX(att,v1,v2,v3,v4)
                 Object value = ((Literal) exp2).getValue();
-                BoundingBox e = (BoundingBox) ((Literal) exp2).getValue();
+                Envelope2D e = new Envelope2D((Envelope) value);
                 sb.append("BBOX(");
                 sb.append(((ValueReference) exp1).getXPath());
                 sb.append(',');

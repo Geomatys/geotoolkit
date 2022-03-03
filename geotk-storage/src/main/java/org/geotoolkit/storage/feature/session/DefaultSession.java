@@ -17,6 +17,8 @@
 
 package org.geotoolkit.storage.feature.session;
 
+import java.util.logging.Logger;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.locationtech.jts.geom.Geometry;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -34,7 +36,6 @@ import org.geotoolkit.storage.feature.FeatureIterator;
 import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.filter.visitor.DuplicatingFilterVisitor;
 import org.geotoolkit.filter.visitor.SimplifyingFilterVisitor;
-import org.geotoolkit.geometry.BoundingBox;
 import org.geotoolkit.geometry.jts.JTS;
 import org.apache.sis.referencing.CRS;
 import org.geotoolkit.version.Version;
@@ -351,20 +352,19 @@ public class DefaultSession extends AbstractSession {
                 setExpressionHandler(FunctionNames.Literal, (e) -> {
                     final Literal expression = (Literal) e;
                     final Object obj = expression.getValue();
-                    if (obj instanceof BoundingBox) {
-                        BoundingBox bb = (BoundingBox) obj;
+                    if (obj instanceof Envelope bb) {
                         if (bb.getCoordinateReferenceSystem() == null) {
                             //force crs definition
-                            bb = new BoundingBox(bb, crs);
+                            GeneralEnvelope env = new GeneralEnvelope(bb);
+                            env.setCoordinateReferenceSystem(crs);
                             return FF.literal(bb);
                         } else if (replace) {
                             try {
                                 //reproject bbox
                                 final Envelope env = Envelopes.transform(bb, crs);
-                                bb = new BoundingBox(env);
-                                return FF.literal(bb);
+                                return FF.literal(env);
                             } catch (TransformException ex) {
-                                Logging.getLogger("org.geotoolkit.data.session").log(Level.SEVERE, null, ex);
+                                Logger.getLogger("org.geotoolkit.data.session").log(Level.SEVERE, null, ex);
                             }
                         }
                         return expression;

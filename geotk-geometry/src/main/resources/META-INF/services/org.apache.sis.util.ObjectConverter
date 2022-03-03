@@ -1,3 +1,4 @@
 org.geotoolkit.geometry.jts.converter.LineStringToMultiLineStringConverter
 org.geotoolkit.geometry.jts.converter.PointToMultiPointConverter
 org.geotoolkit.geometry.jts.converter.PolygonToMultiPolygonConverter
+org.geotoolkit.geometry.jts.converter.GeometryToEnvelopeConverter

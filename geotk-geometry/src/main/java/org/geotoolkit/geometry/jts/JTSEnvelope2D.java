@@ -22,10 +22,8 @@ import java.awt.geom.Rectangle2D;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 import java.util.Objects;
-import org.geotoolkit.geometry.BoundingBox;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.MismatchedDimensionException;
-import org.opengis.geometry.MismatchedReferenceSystemException;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.CoordinateOperation;
@@ -38,13 +36,12 @@ import org.geotoolkit.referencing.CRS;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.geometry.Envelopes;
-import org.apache.sis.util.Utilities;
 
 /**
  * A JTS envelope associated with a
  * {@linkplain CoordinateReferenceSystem coordinate reference system}. In
  * addition, this JTS envelope also implements the Types
- * {@linkplain org.opengis.geometry.coordinate.Envelope envelope} interface
+ * {@linkplain org.opengis.geometry.Envelope envelope} interface
  * for interoperability with Types.
  *
  * @module
@@ -67,11 +64,6 @@ public class JTSEnvelope2D extends Envelope implements org.opengis.geometry.Enve
             Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, null) {
 
         private static final long serialVersionUID = -3188702602373537164L;
-
-        @Override
-        public boolean contains(BoundingBox bbox) {
-            return true;
-        }
 
         @Override
         public boolean contains(Coordinate p) {
@@ -180,19 +172,6 @@ public class JTSEnvelope2D extends Envelope implements org.opengis.geometry.Enve
     }
 
     /**
-     * Creates a new envelope from an existing bounding box.
-     *
-     * @param bbox The bounding box to initialize from.
-     * @throws MismatchedDimensionException if the CRS dimension is not valid.
-     *
-     * @since 2.4
-     */
-    public JTSEnvelope2D(final BoundingBox bbox) throws MismatchedDimensionException {
-        this(bbox.getMinX(), bbox.getMaxX(), bbox.getMinY(), bbox.getMaxY(),
-                bbox.getCoordinateReferenceSystem());
-    }
-
-    /**
      * Creates a new envelope from an existing OGC envelope.
      *
      * @param envelope The envelope to initialize from.
@@ -213,29 +192,13 @@ public class JTSEnvelope2D extends Envelope implements org.opengis.geometry.Enve
      *
      * @param envelope The envelope to initialize from.
      * @param crs The coordinate reference system.
-     * @throws MismatchedDimensionExceptionif the CRS dimension is not valid.
+     * @throws MismatchedDimensionException if the CRS dimension is not valid.
      */
     public JTSEnvelope2D(final Envelope envelope, final CoordinateReferenceSystem crs)
             throws MismatchedDimensionException {
         super(envelope);
         this.crs = crs;
         checkCoordinateReferenceSystemDimension();
-    }
-
-    /**
-     * Sets this envelope to the specified bounding box.
-     */
-    public void init(final BoundingBox bounds) {
-        super.init(bounds.getMinimum(0), bounds.getMaximum(0), bounds.getMinimum(1),
-                bounds.getMaximum(1));
-        this.crs = bounds.getCoordinateReferenceSystem();
-    }
-
-    /**
-     * Returns the specified bounding box as a JTS envelope.
-     */
-    private static Envelope getJTSEnvelope(final BoundingBox bbox) {
-        return new JTSEnvelope2D(bbox);
     }
 
     /**
@@ -251,26 +214,7 @@ public class JTSEnvelope2D extends Envelope implements org.opengis.geometry.Enve
             if (dimension != expected) {
                 throw new MismatchedDimensionException(Errors.format(
                         Errors.Keys.MismatchedDimension_3, crs.getName().getCode(),
-                        new Integer(dimension), new Integer(expected)));
-            }
-        }
-    }
-
-    /**
-     * Make sure that the specified bounding box uses the same CRS than this one.
-     *
-     * @param  bbox The other bounding box to test for compatibility.
-     * @throws MismatchedReferenceSystemException if the CRS are incompatibles.
-     */
-    private void ensureCompatibleReferenceSystem(final BoundingBox bbox)
-            throws MismatchedReferenceSystemException {
-        if (crs != null) {
-            final CoordinateReferenceSystem other = bbox.getCoordinateReferenceSystem();
-            if (other != null) {
-                if (!Utilities.equalsIgnoreMetadata(crs, other)) {
-                    throw new MismatchedReferenceSystemException(Errors.format(
-                            Errors.Keys.MismatchedCoordinateReferenceSystem));
-                }
+                        dimension, expected));
             }
         }
     }
@@ -377,67 +321,12 @@ public class JTSEnvelope2D extends Envelope implements org.opengis.geometry.Enve
     }
 
     /**
-     * Returns {@code true} if the provided bounds are contained by this bounding box.
-     *
-     * @since 2.4
-     */
-    public boolean contains(final BoundingBox bbox) {
-        ensureCompatibleReferenceSystem(bbox);
-        return super.contains(getJTSEnvelope(bbox));
-    }
-
-    /**
-     * Check if this bounding box intersects the provided bounds.
-     *
-     * @since 2.4
-     */
-    public boolean intersects(final BoundingBox bbox) {
-        ensureCompatibleReferenceSystem(bbox);
-        return super.intersects(getJTSEnvelope(bbox));
-    }
-
-    /**
-     * Include the provided bounding box, expanding as necessary.
-     *
-     * @since 2.4
-     */
-    public void include(final BoundingBox bbox) {
-        ensureCompatibleReferenceSystem(bbox);
-        super.expandToInclude(getJTSEnvelope(bbox));
-    }
-
-    /**
      * Include the provided coordinates, expanding as necessary.
      *
      * @since 2.4
      */
     public void include(final double x, final double y) {
         super.expandToInclude(x, y);
-    }
-
-    /**
-     * Initialize the bounding box with another bounding box.
-     *
-     * @since 2.4
-     */
-    public void setBounds(final BoundingBox bbox) {
-        ensureCompatibleReferenceSystem(bbox);
-        super.init(getJTSEnvelope(bbox));
-    }
-
-    /**
-     * Returns a new bounding box which contains the transformed shape of this bounding box.
-     * This is a convenience method that delegate its work to the {@link #transform transform}
-     * method.
-     *
-     * @since 2.4
-     */
-    public BoundingBox toBounds(final CoordinateReferenceSystem targetCRS) throws TransformException {
-        try {
-            return new BoundingBox(transform(targetCRS));
-        } catch (FactoryException e) {
-            throw new TransformException(e.getLocalizedMessage(), e);
-        }
     }
 
     /**
@@ -574,22 +463,5 @@ public class JTSEnvelope2D extends Envelope implements org.opengis.geometry.Enve
 
             return new JTSEnvelope2D(e, null);
         }
-    }
-
-    /**
-     * Utility method to ensure that an BoundingBox in a JTSEnvelope2D.
-     * <p>
-     * This method first checks if <tt>e</tt> is an instanceof {@link JTSEnvelope2D},
-     * if it is, itself is returned. If not <code>new JTSEnvelope2D(e)</code>
-     * is returned.
-     * </p>
-     * @param e The envelope.
-     * @return JTSEnvelope2D
-     */
-    public static JTSEnvelope2D reference(final BoundingBox e) {
-        if (e == null) {
-            return null;
-        }
-        return new JTSEnvelope2D(e);
     }
 }

@@ -16,12 +16,13 @@
  */
 package org.geotoolkit.filter.visitor;
 
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.locationtech.jts.geom.Geometry;
 import java.util.logging.Level;
 import org.apache.sis.internal.filter.FunctionNames;
-import org.geotoolkit.geometry.BoundingBox;
 import org.geotoolkit.geometry.jts.JTS;
 import org.opengis.filter.Literal;
+import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 import org.apache.sis.util.logging.Logging;
@@ -40,10 +41,10 @@ public class FillCrsVisitor extends DuplicatingFilterVisitor {
         setExpressionHandler(FunctionNames.Literal, (e) -> {
             final Literal<Object,?> expression = (Literal<Object,?>) e;
             Object obj = expression.getValue();
-            if (obj instanceof BoundingBox) {
-                BoundingBox bbox = (BoundingBox) obj;
+            if (obj instanceof Envelope bbox) {
                 if (bbox.getCoordinateReferenceSystem() == null) {
-                    obj = new BoundingBox(bbox, crs);
+                    obj = new GeneralEnvelope(bbox);
+                    ((GeneralEnvelope) obj).setCoordinateReferenceSystem(crs);
                 }
             } else if (obj instanceof Geometry) {
                 try {

@@ -17,6 +17,7 @@
 package org.geotoolkit.style.ogc;
 
 import javax.xml.bind.JAXBException;
+import org.apache.sis.geometry.Envelope2D;
 import org.geotoolkit.sld.xml.StyleXmlIO;
 import org.junit.Test;
 import org.opengis.filter.Filter;
@@ -26,7 +27,7 @@ import org.opengis.filter.ValueReference;
 import org.opengis.filter.SortProperty;
 import org.opengis.filter.SortOrder;
 import org.opengis.filter.BinarySpatialOperator;
-import org.geotoolkit.geometry.BoundingBox;
+import org.opengis.geometry.Envelope;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.apache.sis.referencing.CommonCRS;
@@ -70,7 +71,7 @@ public class OGCforSLD110Test {
         assertEquals("abc3", ((Literal)ff1.getOperand2()).getValue());
         assertEquals("sf:attribut.Géométrie", ((ValueReference)ff2.getOperand1()).getXPath());
 
-        final BoundingBox geom = (BoundingBox) ((Literal)ff2.getOperand2()).getValue();
+        final Envelope2D geom = new Envelope2D( (Envelope) ((Literal)ff2.getOperand2()).getValue());
         assertEquals(34d,geom.getMinX(),1e-7);
         assertEquals(40d,geom.getMaxX(),1e-7);
         assertEquals(15d,geom.getMinY(),1e-7);
