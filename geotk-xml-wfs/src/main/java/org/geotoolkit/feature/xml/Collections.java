@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import org.geotoolkit.atom.xml.Link;
 
 /**
  * @author Rohan FERRE (Geomatys)
@@ -30,19 +31,19 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "Collections")
 @XmlAccessorType(XmlAccessType.FIELD)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class collections implements FeatureResponse {
+public class Collections extends FeatureResponse {
 
-    @XmlElement(name = "link")
+    @XmlElement(name = "link", namespace = "http://www.w3.org/2005/Atom")
     private List<Link> links;
     @XmlElement(name = "Collection")
     private List<Collection> collections;
 
-    public collections() {
+    public Collections() {
         links = new ArrayList<>();
         collections = new ArrayList<>();
     }
 
-    public collections(List<Link> links, List<Collection> collections) {
+    public Collections(List<Link> links, List<Collection> collections) {
         this.links = links;
         this.collections = collections;
     }
@@ -79,4 +80,9 @@ public class collections implements FeatureResponse {
         this.collections = collections;
     }
 
+    public void setXMLBBoxMode() {
+        if (collections != null) {
+            collections.forEach(c -> c.setXMLBBoxMode());
+        }
+    }
 }

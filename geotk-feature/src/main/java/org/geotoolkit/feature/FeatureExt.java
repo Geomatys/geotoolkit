@@ -165,7 +165,8 @@ public final class FeatureExt extends Static {
      *
      * This method expect the feature to have the IDENTIFIER_PROPERTY field.
      *
-     * @param feature
+     * @param feature The feature on which we want to extract the feature id.
+     *
      * @return FeatureId
      */
     public static ResourceId getId(Feature feature) {

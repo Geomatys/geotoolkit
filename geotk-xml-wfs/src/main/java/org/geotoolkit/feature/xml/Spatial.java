@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
 /**
@@ -34,17 +35,18 @@ public class Spatial {
     private List<BoundingBox> bbox;
     @XmlElement(name = "LowerCorner")
     private String lowerCorner = null;
-    @XmlElement(name = "LowerCorner")
+    @XmlElement(name = "UpperCorner")
     private String upperCorner = null;
-    private List<String> crs;
+
+    @XmlAttribute
+    private String crs;
 
     public Spatial() {
         bbox = new ArrayList<>();
-        crs = new ArrayList<>();
-        crs.add("http://www.opengis.net/def/crs/OGC/1.3/CRS84"); // Default link
+        crs = "http://www.opengis.net/def/crs/OGC/1.3/CRS84";
     }
 
-    public Spatial(String description, List<BoundingBox> bbox, List<String> crs) {
+    public Spatial(String description, List<BoundingBox> bbox, String crs) {
         this.description = description;
         this.bbox = bbox;
         this.crs = crs;
@@ -79,16 +81,16 @@ public class Spatial {
     }
 
     /**
-     * @return the crs : array list of link
+     * @return the crs.
      */
-    public List<String> getCrs() {
+    public String getCrs() {
         return crs;
     }
 
     /**
-     * @param crs the array list of link to set
+     * @param crs the crs to set
      */
-    public void setCrs(List<String> crs) {
+    public void setCrs(String crs) {
         this.crs = crs;
     }
 
@@ -133,5 +135,11 @@ public class Spatial {
         if (bbox != null && bbox.size() > 0) {
             upperCorner = String.valueOf(bbox.get(0).getMaxx()) + " " + String.valueOf(bbox.get(0).getMaxy());
         }
+    }
+
+    public void setXmlMode() {
+        this.setLowerCorner();
+        this.setUpperCorner();
+        this.getBbox().clear();
     }
 }

@@ -587,9 +587,8 @@ public class XmlFeatureTest extends org.geotoolkit.test.TestBase {
     public void testWriteSimpleFeatureSetCollection() throws JAXBException, IOException, XMLStreamException,
             DataStoreException, ParserConfigurationException, SAXException{
         final StringWriter temp = new StringWriter();
-        final XmlFeatureWriter writer = new JAXPStreamFeatureWriter("3.2.1", null, null);
-        final FeatureSetCollection collection = new FeatureSetCollection(collectionSimple, null, 3, 3);
-        writer.write(collection, temp);
+        final XmlFeatureWriter writer = new JAXPStreamFeatureWriter("3.2.1", "feat-1.0.0", null);
+        writer.write(collectionSimple, temp);
         writer.dispose();
 
         String s = temp.toString();

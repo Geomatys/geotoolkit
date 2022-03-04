@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import org.geotoolkit.atom.xml.Link;
 
 /**
  * @author Rohan FERRE (Geomatys)
@@ -30,30 +31,30 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "ConformsTo")
 @XmlAccessorType(XmlAccessType.FIELD)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Conformance implements FeatureResponse {
+public class Conformance extends FeatureResponse {
 
-    @XmlElement(name = "link")
-    private List<String> conformsTo;
+    @XmlElement(name = "link", namespace = "http://www.w3.org/2005/Atom")
+    private List<Link> conformsTo;
 
     public Conformance() {
         conformsTo = new ArrayList<>();
     }
 
-    public Conformance(List<String> conformsTo) {
+    public Conformance(List<Link> conformsTo) {
         this.conformsTo = conformsTo;
     }
 
     /**
      * @return the array list of link
      */
-    public List<String> getConformsTo() {
+    public List<Link> getConformsTo() {
         return conformsTo;
     }
 
     /**
      * @param conformsTo the array list to set
      */
-    public void setConformsTo(List<String> conformsTo) {
+    public void setConformsTo(List<Link> conformsTo) {
         this.conformsTo = conformsTo;
     }
 }

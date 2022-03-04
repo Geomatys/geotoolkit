@@ -33,6 +33,7 @@ import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.xml.MarshallerPool;
 import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.geotoolkit.feature.FeatureExt;
+import org.geotoolkit.feature.model.FeatureSetWrapper;
 import org.geotoolkit.feature.xml.Utils;
 import org.geotoolkit.feature.xml.XmlFeatureWriter;
 import org.geotoolkit.filter.FilterUtilities;
@@ -85,26 +86,29 @@ public class JAXPStreamValueCollectionWriter extends StaxStreamWriter implements
      * {@inheritDoc}
      */
     @Override
-    public void write(final Object candidate, final Object output) throws IOException, XMLStreamException, DataStoreException {
-        write(candidate, output, null);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void write(final Object candidate, final Object output, final Integer nbMatched) throws IOException, XMLStreamException, DataStoreException {
+    public void write(Object candidate, final Object output) throws IOException, XMLStreamException, DataStoreException {
         setOutput(output);
+        Integer nbReturned = null;
+        Integer nbMatched = null;
+        if (candidate instanceof FeatureSetWrapper) {
+            FeatureSetWrapper fsw = (FeatureSetWrapper) candidate;
+            nbReturned = fsw.getNbReturned();
+            nbMatched  = fsw.getNbMatched();
+            if (fsw.getFeatureSet().size() == 1) {
+                candidate = fsw.getFeatureSet().get(0);
+            } else {
+                candidate = fsw.getFeatureSet();
+            }
+        }
         FeatureSet collection;
         if (candidate instanceof Feature) {
            collection =  FeatureStoreUtilities.collection((Feature)candidate);
         } else if (candidate instanceof FeatureSet) {
             collection = (FeatureSet) candidate;
         } else {
-            throw new IllegalArgumentException("The given object is not a Feature or a" +
-                    " FeatureCollection: "+ candidate);
+            throw new IllegalArgumentException("The given object is not a Feature or a FeatureSet: "+ candidate);
         }
-        writeValueCollection(collection, nbMatched);
+        writeValueCollection(collection, nbReturned, nbMatched);
     }
 
     /**
@@ -225,14 +229,13 @@ public class JAXPStreamValueCollectionWriter extends StaxStreamWriter implements
             writer.writeCharacters(Utils.getStringValue(value));
         }
     }
+
     /**
      *
      * @param featureCollection
-     * @param writer
-     * @param fragment : true if we write in a stream, dont write start and end elements
      * @throws DataStoreException
      */
-    public void writeValueCollection(final FeatureSet featureCollection, final Integer nbMatched) throws DataStoreException, XMLStreamException {
+    public void writeValueCollection(final FeatureSet featureCollection, final Integer nbReturned, final Integer nbMatched) throws DataStoreException, XMLStreamException {
 
         // the XML header
         writer.writeStartDocument("UTF-8", "1.0");
@@ -251,7 +254,13 @@ public class JAXPStreamValueCollectionWriter extends StaxStreamWriter implements
         /*
          * Other WFS value collection attribute
          */
-        writer.writeAttribute("numberReturned", Long.toString(FeatureStoreUtilities.getCount(featureCollection)));
+        final String returnedStr;
+        if (nbReturned != null) {
+            returnedStr = nbReturned.toString();
+        } else {
+            returnedStr = Long.toString(FeatureStoreUtilities.getCount(featureCollection));
+        }
+        writer.writeAttribute("numberReturned", returnedStr);
         if (nbMatched != null) {
             writer.writeAttribute("numberMatched", Integer.toString(nbMatched));
         }

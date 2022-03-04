@@ -43,7 +43,7 @@ import org.geotoolkit.internal.geojson.binding.GeoJSONGeometry;
 import org.geotoolkit.storage.geojson.GeoJSONProvider;
 import org.geotoolkit.storage.geojson.GeoJSONStore;
 import org.geotoolkit.storage.geojson.GeoJSONStreamWriter;
-import org.geotoolkit.feature.xml.Link;
+import org.geotoolkit.atom.xml.Link;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.util.NamesExt;
 import static org.junit.Assert.*;
@@ -446,13 +446,13 @@ public class GeoJSONWriteTest extends TestCase {
         FeatureType validFeatureType = buildGeometryFeatureType("simpleFT", Point.class);
 
         Point pt = (Point)WKT_READER.read(PROPERTIES.getProperty("point"));
-        Link l = new Link("http://test.com", null, null, null, null, null);
+        Link l = new Link("http://test.com", null, null, null);
         List<Link> links = new ArrayList<>();
         links.add(l);
 
-        try (GeoJSONStreamWriter fw = new GeoJSONStreamWriter(baos, validFeatureType, links, 10, 5, JsonEncoding.UTF8, 4, false)) {
+        try (GeoJSONStreamWriter fw = new GeoJSONStreamWriter(baos, validFeatureType, JsonEncoding.UTF8, 4, false)) {
 
-            fw.writeCollection();
+            fw.writeCollection(links, 10, 5);
 
             Feature feature = fw.next();
             feature.setPropertyValue("type","feat1");
