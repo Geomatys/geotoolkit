@@ -146,7 +146,7 @@ public class LuceneUtils {
             bound.setRange(1, jtsBound.getMinY(), jtsBound.getMaxY());
 
             // reproject to cartesian CRS
-            return (GeneralEnvelope) Envelopes.transform(bound, treeCrs);
+            return GeneralEnvelope.castOrCopy(Envelopes.transform(bound, treeCrs));
         } catch (FactoryException ex) {
             LOGGER.log(Level.WARNING, "Factory exception while getting filter geometry crs", ex);
         } catch (TransformException ex) {
@@ -160,7 +160,7 @@ public class LuceneUtils {
      */
     private static GeneralEnvelope getReprojectedEnvelope(final org.opengis.geometry.Envelope env, final CoordinateReferenceSystem treeCrs) {
         try {
-            return (GeneralEnvelope) Envelopes.transform(env, treeCrs);
+            return new GeneralEnvelope(Envelopes.transform(env, treeCrs));
         } catch (TransformException ex) {
             LOGGER.log(Level.WARNING, "Transform exception while reprojecting filter geometry", ex);
         }

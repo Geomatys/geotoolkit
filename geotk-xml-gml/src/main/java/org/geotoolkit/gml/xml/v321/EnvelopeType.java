@@ -428,12 +428,16 @@ public class EnvelopeType implements Envelope, org.geotoolkit.gml.xml.Envelope {
 
     @Override
     public double getMedian(int i) throws IndexOutOfBoundsException {
-        throw new UnsupportedOperationException("Not implemented yet.");
+        // Note: do not support wrap-around. This implementation is very limited, avoid if possible
+        if (upperCorner == null || lowerCorner == null) return Double.NaN;
+        else return 0.5 * (upperCorner.getOrdinate(i) + lowerCorner.getOrdinate(i));
     }
 
     @Override
     public double getSpan(int i) throws IndexOutOfBoundsException {
-        throw new UnsupportedOperationException("Not implemented yet.");
+        // Note: do not support wrap-around. This implementation is very limited, avoid if possible
+        if (upperCorner == null || lowerCorner == null) return Double.NaN;
+        else return upperCorner.getOrdinate(i) - lowerCorner.getOrdinate(i);
     }
 
     /**
