@@ -43,11 +43,7 @@ import org.apache.sis.util.Utilities;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display.shape.ShapeUtilities;
-import org.geotoolkit.geometry.BoundingBox;
 import org.geotoolkit.geometry.jts.awt.JTSGeometryJ2D;
-import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
-import org.geotoolkit.geometry.jts.transform.CoordinateSequenceTransformer;
-import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
 import org.geotoolkit.resources.Errors;
 import org.locationtech.jts.algorithm.Orientation;
 import org.locationtech.jts.geom.Coordinate;
@@ -652,28 +648,6 @@ public final class JTS {
         }
         if (crs!=null) JTS.setCRS(geometry, crs);
         return geometry;
-    }
-
-    /**
-     * Converts a {@link BoundingBox} to a polygon. <p> The resulting polygon
-     * contains an outer ring with verticies:
-     * (x1,y1),(x2,y1),(x2,y2),(x1,y2),(x1,y1)
-     *
-     * @param envelope The original envelope.
-     * @return The envelope as a polygon.
-     *
-     * @since 2.4
-     */
-    public static Polygon toGeometry(final BoundingBox envelope) {
-        GeometryFactory gf = getFactory();
-        return gf.createPolygon(gf.createLinearRing(
-                new Coordinate[]{
-                    new Coordinate(envelope.getMinX(), envelope.getMinY()),
-                    new Coordinate(envelope.getMaxX(), envelope.getMinY()),
-                    new Coordinate(envelope.getMaxX(), envelope.getMaxY()),
-                    new Coordinate(envelope.getMinX(), envelope.getMaxY()),
-                    new Coordinate(envelope.getMinX(), envelope.getMinY())
-                }), null);
     }
 
     /**

@@ -55,7 +55,6 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.feature.ViewMapper;
 import org.geotoolkit.filter.FilterUtilities;
-import org.geotoolkit.geometry.BoundingBox;
 import org.geotoolkit.storage.feature.FeatureIterator;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
@@ -164,7 +163,7 @@ public final class RenderingRoutines {
         try {
             geomDesc = FeatureExt.getDefaultGeometry(schema);
         } catch(PropertyNotFoundException | IllegalStateException ex){};
-        final BoundingBox bbox                   = optimizeBBox(renderingContext, fs, symbolsMargin);
+        final Envelope bbox                      = optimizeBBox(renderingContext, fs, symbolsMargin);
         final CoordinateReferenceSystem layerCRS = FeatureExt.getCRS(schema);
         final RenderingHints hints               = renderingContext.getRenderingHints();
 
@@ -384,106 +383,8 @@ public final class RenderingRoutines {
         return qb;
     }
 
-    /**
-     * Creates an optimal query to send to the datastore, knowing which properties are knowned and
-     * the appropriate bounding box to filter.
-     */
-    public static FeatureQuery prepareQuery(final RenderingContext2D renderingContext,
-            final MapLayer layer, double symbolsMargin) throws PortrayalException{
-
-        final FeatureSet fs = (FeatureSet) layer.getData();
-        final FeatureType schema;
-        try {
-            schema = fs.getType();
-        } catch (DataStoreException ex) {
-            throw new PortrayalException(ex.getMessage(), ex);
-        }
-        final BoundingBox bbox                   = optimizeBBox(renderingContext, fs, symbolsMargin);
-        final CoordinateReferenceSystem layerCRS = FeatureExt.getCRS(schema);
-        final RenderingHints hints               = renderingContext.getRenderingHints();
-
-        String geomAttName;
-        try {
-            geomAttName = FeatureExt.getDefaultGeometry(schema).getName().toString();
-        } catch (Exception e) {
-            // We don't want rendering to fail because of a single layer.
-            geomAttName = null;
-        }
-
-        Filter filter;
-
-        //final Envelope layerBounds = layer.getBounds();
-        //we better not do any call to the layer bounding box before since it can be
-        //really expensive, the featurestore is the best placed to check if he might
-        //optimize the filter.
-        //if( ((BoundingBox)bbox).contains(new BoundingBox(layerBounds))){
-            //the layer bounds overlaps the bbox, no need for a spatial filter
-        //   filter = Filter.include();
-        //}else{
-        //make a bbox filter
-        if(geomAttName != null){
-            filter = FILTER_FACTORY.bbox(FILTER_FACTORY.property(geomAttName),bbox);
-        }else{
-            filter = Filter.exclude();
-        }
-        //}
-
-        //concatenate geographic filter with data filter if there is one
-        Query query = layer.getQuery();
-        if (query instanceof FeatureQuery) {
-            filter = FILTER_FACTORY.and(filter, (Filter) ((FeatureQuery) query).getSelection());
-        }
-
-        //optimize the filter---------------------------------------------------
-        filter = FilterUtilities.prepare(filter,Feature.class,schema);
-
-        final Hints queryHints = new Hints();
-        final org.geotoolkit.storage.feature.query.Query qb = new org.geotoolkit.storage.feature.query.Query();
-        qb.setTypeName(schema.getName());
-        qb.setSelection(filter);
-
-        //resampling and ignore flag only works when we know the layer crs
-        if(layerCRS != null){
-            //add resampling -------------------------------------------------------
-            Boolean resample = (hints == null) ? null : (Boolean) hints.get(GO2Hints.KEY_GENERALIZE);
-            if(!Boolean.FALSE.equals(resample)){
-                //we only disable resampling if it is explictly specified
-                final double[] res = renderingContext.getResolution(layerCRS);
-
-                //adjust with the generalization factor
-                final Number n =  (hints==null) ? null : (Number)hints.get(GO2Hints.KEY_GENERALIZE_FACTOR);
-                final double factor;
-                if(n != null){
-                    factor = n.doubleValue();
-                }else{
-                    factor = GO2Hints.GENERALIZE_FACTOR_DEFAULT.doubleValue();
-                }
-                res[0] *= factor;
-                res[1] *= factor;
-                qb.setResolution(res);
-            }
-
-            //add ignore flag ------------------------------------------------------
-            //TODO this is efficient but erases values, when plenty of then are to be rendered
-            //we should find another way to handle this
-            //if(!GO2Utilities.visibleMargin(rules, 1.01f, renderingContext)){
-            //    //style does not expend itself further than the feature geometry
-            //    //that mean geometries smaller than a pixel will not be renderer or barely visible
-            //    queryHints.put(Hints.KEY_IGNORE_SMALL_FEATURES, renderingContext.getResolution(layerCRS));
-            //}
-        }
-
-        //add reprojection -----------------------------------------------------
-        //we don't reproject, the reprojection may produce curves but JTS can not represent those.
-        //so we generate those curves in java2d shapes by doing the transformation ourself.
-        //TODO wait for a new geometry implementation
-        //qb.setCRS(renderingContext.getObjectiveCRS2D());
-
-        return qb;
-    }
-
-    public static BoundingBox optimizeBBox(RenderingContext2D renderingContext, FeatureSet featureSet, double symbolsMargin) throws PortrayalException{
-        BoundingBox bbox                                         = renderingContext.getPaintingObjectiveBounds2D();
+    public static Envelope optimizeBBox(RenderingContext2D renderingContext, FeatureSet featureSet, double symbolsMargin) throws PortrayalException{
+        Envelope bbox                                            = renderingContext.getCanvasObjectiveBounds2D();
         final CoordinateReferenceSystem bboxCRS                  = bbox.getCoordinateReferenceSystem();
         final CanvasMonitor monitor                              = renderingContext.getMonitor();
         final CoordinateReferenceSystem layerCRS;
@@ -498,7 +399,7 @@ public final class RenderingRoutines {
             final GeneralEnvelope env = new GeneralEnvelope(bbox);
             env.setRange(0, env.getMinimum(0)-symbolsMargin, env.getMaximum(0)+symbolsMargin);
             env.setRange(1, env.getMinimum(1)-symbolsMargin, env.getMaximum(1)+symbolsMargin);
-            bbox = new BoundingBox(env);
+            bbox = env;
         }
 
         //layer crs may be null if it define an abstract collection
@@ -544,7 +445,7 @@ public final class RenderingRoutines {
             env = new GeneralEnvelope(env);
             ((GeneralEnvelope)env).setCoordinateReferenceSystem(layerCRS);
 
-            bbox = new BoundingBox(env);
+            bbox = env;
         }
         return bbox;
     }

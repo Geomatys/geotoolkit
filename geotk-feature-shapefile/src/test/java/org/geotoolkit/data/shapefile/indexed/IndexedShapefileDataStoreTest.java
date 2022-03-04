@@ -36,6 +36,7 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
@@ -45,7 +46,6 @@ import org.geotoolkit.data.shapefile.ShapefileFeatureStore;
 import org.geotoolkit.data.shapefile.lock.ShpFileType;
 import org.geotoolkit.factory.FactoryRegistryException;
 import org.geotoolkit.feature.FeatureExt;
-import org.geotoolkit.geometry.BoundingBox;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.storage.feature.FeatureCollection;
 import org.geotoolkit.storage.feature.FeatureIterator;
@@ -217,9 +217,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         while (indexIter.hasNext()) {
             Feature newFeature = indexIter.next();
 
-            BoundingBox bounds = BoundingBox.castOrCopy(FeatureExt.getEnvelope(newFeature));
-            Geometry geometry = factory.toGeometry(new JTSEnvelope2D(
-                    bounds));
+            Geometry geometry = factory.toGeometry(new JTSEnvelope2D(FeatureExt.getEnvelope(newFeature)));
             double newArea = geometry.getArea();
 
             if (smallestFeature == null || newArea < area) {

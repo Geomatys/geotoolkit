@@ -37,7 +37,6 @@ import org.locationtech.jts.geom.prep.PreparedGeometryFactory;
 import org.opengis.feature.Feature;
 import org.opengis.feature.PropertyType;
 import org.opengis.filter.ValueReference;
-import org.geotoolkit.geometry.BoundingBox;
 import org.opengis.filter.BinarySpatialOperator;
 import org.opengis.filter.Literal;
 import org.opengis.filter.SpatialOperatorName;
@@ -53,7 +52,7 @@ import org.opengis.util.FactoryException;
  *
  * @author Johann Sorel (Geomatys).
  */
-public class DefaultBBox extends AbstractBinarySpatialOperator<ValueReference, Literal<Object,BoundingBox>>
+public class DefaultBBox extends AbstractBinarySpatialOperator<ValueReference, Literal<Object,Envelope>>
         implements BinarySpatialOperator<Object>
 {
     private static final LinearRing[] EMPTY_RINGS = new LinearRing[0];
@@ -65,7 +64,7 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<ValueReference, L
     protected final org.locationtech.jts.geom.Envelope boundingEnv;
     protected final CoordinateReferenceSystem crs;
 
-    public DefaultBBox(final ValueReference property, final Literal<Object,BoundingBox> bbox) {
+    public DefaultBBox(final ValueReference property, final Literal<Object,Envelope> bbox) {
         super(nonNullPropertyName(property),bbox);
         boundingGeometry = toGeometry(bbox.getValue());
         boundingEnv = boundingGeometry.getGeometry().getEnvelopeInternal();

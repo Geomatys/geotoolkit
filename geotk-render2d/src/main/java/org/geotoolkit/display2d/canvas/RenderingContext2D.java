@@ -21,7 +21,6 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
-import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -37,7 +36,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.measure.Unit;
 import javax.measure.quantity.Length;
-import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -48,6 +46,7 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.crs.DefaultDerivedCRS;
 import org.apache.sis.referencing.operation.DefaultConversion;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display.canvas.CanvasUtilities;
@@ -58,7 +57,6 @@ import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.style.labeling.LabelRenderer;
 import org.geotoolkit.display2d.style.labeling.decimate.DecimationLabelRenderer;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.geometry.BoundingBox;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
 import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
@@ -79,6 +77,9 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
+import static org.geotoolkit.display.canvas.AbstractCanvas2D.toRectangle;
 
 
 /**
@@ -225,20 +226,9 @@ public class RenderingContext2D implements RenderingContext{
     private final Date[] temporalRange = new Date[2];
     private final Double[] elevationRange = new Double[2];
 
-
-    private Shape              paintingDisplayShape   = null;
-    private Rectangle          paintingDisplaybounds  = null;
-    private Shape              paintingObjectiveShape = null;
-    private Envelope           paintingObjectiveBBox  = null;
-    private Envelope           paintingObjectiveBBox2D  = null;
-    private BoundingBox        paintingObjectiveBBox2DB  = null;
-
-    private Shape              canvasDisplayShape   = null;
     private Rectangle          canvasDisplaybounds  = null;
-    private Shape              canvasObjectiveShape = null;
     private Envelope           canvasObjectiveBBox  = null;
-    private Envelope           canvasObjectiveBBox2D  = null;
-    private BoundingBox        canvasObjectiveBBox2DB  = null;
+    private Envelope2D         canvasObjectiveBBox2D  = null;
 
     private GridGeometry gridGeometry;
     private GridGeometry gridGeometry2d;
@@ -260,21 +250,28 @@ public class RenderingContext2D implements RenderingContext{
      *
      * @param canvas        The canvas which creates this rendering context.
      */
-    public RenderingContext2D(J2DCanvas canvas, GridGeometry gridGeometry, GridGeometry gridGeometry2d, final AffineTransform2D objToDisp, final CanvasMonitor monitor,
-            final Shape paintingDisplayShape, final Shape paintingObjectiveShape,
-            final Shape canvasDisplayShape, final Shape canvasObjectiveShape, final double dpi){
+    public RenderingContext2D(J2DCanvas canvas, GridGeometry gridGeometry, GridGeometry gridGeometry2d, final CanvasMonitor monitor, final double dpi) {
+        ensureNonNull("Grid geometry", gridGeometry);
+        ensureNonNull("Grid geometry 2D", gridGeometry2d);
         this.gridGeometry = gridGeometry;
         this.gridGeometry2d = gridGeometry2d;
         this.canvasObjectiveBBox= canvas.getVisibleEnvelope();
         this.objectiveCRS       = canvasObjectiveBBox.getCoordinateReferenceSystem();
         this.objectiveCRS2D     = canvas.getObjectiveCRS2D();
         this.displayCRS         = canvas.getDisplayCRS();
-        this.objectiveToDisplay = objToDisp;
+
+        this.canvasDisplaybounds = toRectangle(gridGeometry2d.getExtent());
         try {
-            this.displayToObjective = objToDisp.inverse();
+            this.displayToObjective = (AffineTransform2D) MathTransforms.concatenate(
+                    MathTransforms.translation(canvasDisplaybounds.x, canvasDisplaybounds.y),
+                    gridGeometry2d.getGridToCRS(PixelInCell.CELL_CORNER));
+            this.objectiveToDisplay = displayToObjective.inverse();
         } catch (NoninvertibleTransformException ex) {
-            LOGGER.log(Level.WARNING, null, ex);
+            throw new IllegalArgumentException("2D Renderer support only grid geometries providing an invertible grid2Crs", ex);
+        } catch (ClassCastException ex) {
+            throw new IllegalArgumentException("2D Renderer support only grid geometries whose grid to crs conversion is a 2D affine transform", ex);
         }
+
         this.monitor = monitor;
         ((CoordinateSequenceMathTransformer)this.objToDisplayTransformer.getCSTransformer())
                 .setTransform(objectiveToDisplay);
@@ -288,10 +285,6 @@ public class RenderingContext2D implements RenderingContext{
 
 
         //calculate canvas shape/bounds values ---------------------------------
-        this.canvasDisplayShape = canvasDisplayShape;
-        final Rectangle2D canvasDisplayBounds = canvasDisplayShape.getBounds2D();
-        this.canvasDisplaybounds = canvasDisplayBounds.getBounds();
-        this.canvasObjectiveShape = canvasObjectiveShape;
         this.displayClipRect = (Rectangle2D) canvasDisplaybounds.clone();
         this.displayClipRect.setRect(
                 displayClipRect.getX()-CLIP_PIXEL_MARGIN,
@@ -300,31 +293,13 @@ public class RenderingContext2D implements RenderingContext{
                 displayClipRect.getHeight()+2*CLIP_PIXEL_MARGIN);
         this.displayClip = JTS.toGeometry(canvasDisplaybounds);
 
-        final Rectangle2D canvasObjectiveBounds = canvasObjectiveShape.getBounds2D();
-
         //calculate the objective bbox with there temporal and elevation parameters ----
-        this.canvasObjectiveBBox2D = new Envelope2D(objectiveCRS2D,canvasObjectiveBounds);
-        this.canvasObjectiveBBox2DB = new BoundingBox(canvasObjectiveBBox2D);
+        this.canvasObjectiveBBox2D = new Envelope2D(gridGeometry2d.getEnvelope());
 
         //calculate the resolution -----------------------------------------------
         this.dpi = dpi;
-        this.resolution = new double[2]; //-- explicitely exprime resolution only into multidimensional CRS horizontal 2D part
-        this.resolution[0] = canvasObjectiveBounds.getWidth()/canvasDisplayBounds.getWidth();
-        this.resolution[1] = canvasObjectiveBounds.getHeight()/canvasDisplayBounds.getHeight();
+        this.resolution = gridGeometry2d.getResolution(true); //-- explicitely exprime resolution only into multidimensional CRS horizontal 2D part
         adjustResolutionWithDPI(resolution);
-
-        //calculate painting shape/bounds values -------------------------------
-        this.paintingDisplayShape = paintingDisplayShape;
-        final Rectangle2D paintingDisplayBounds = paintingDisplayShape.getBounds2D();
-        this.paintingDisplaybounds = paintingDisplayBounds.getBounds();
-        this.paintingObjectiveShape = paintingObjectiveShape;
-
-        final Rectangle2D paintingObjectiveBounds = paintingObjectiveShape.getBounds2D();
-        this.paintingObjectiveBBox2D = new Envelope2D(objectiveCRS2D,paintingObjectiveBounds);
-        this.paintingObjectiveBBox2DB = new BoundingBox(paintingObjectiveBBox2D);
-        this.paintingObjectiveBBox = new GeneralEnvelope(canvasObjectiveBBox);
-        ((GeneralEnvelope)this.paintingObjectiveBBox).setRange(0, paintingObjectiveBounds.getMinX(), paintingObjectiveBounds.getMaxX());
-        ((GeneralEnvelope)this.paintingObjectiveBBox).setRange(1, paintingObjectiveBounds.getMinY(), paintingObjectiveBounds.getMaxY());
 
         try {
             geoScale = canvas.getGeographicScale();
@@ -393,6 +368,7 @@ public class RenderingContext2D implements RenderingContext{
 //                }
 //            }
 
+            // TODO: verify if a simple envelopes.normalize or using SIS wrap-around adjustement would be enough to replace this code
             if(wrapPoints != null){
                 //search the multiples transformations
                 wraps = new RenderingWrapParams();
@@ -460,7 +436,7 @@ public class RenderingContext2D implements RenderingContext{
 
                 //normal transforms
                 wraps.wrapObj = new AffineTransform2D(new AffineTransform());
-                wraps.wrapObjToDisp = objToDisp;
+                wraps.wrapObjToDisp = this.objectiveToDisplay;
 
                 //decreasing and increasing wraps
                 wraps.wrapDecObjToDisp = new AffineTransform2D[nbLeft];
@@ -469,14 +445,14 @@ public class RenderingContext2D implements RenderingContext{
                 wraps.wrapIncObj       = new AffineTransform2D[nbRight];
 
                 final AffineTransform dif = new AffineTransform();
-                final AffineTransform step = new AffineTransform(objToDisp);
+                final AffineTransform step = new AffineTransform(objectiveToDisplay);
                 dif.setToTranslation(x2-x1,y2-y1);
                 for(int i=0;i<nbRight;i++){
                     step.concatenate(dif);
                     wraps.wrapIncObj[i] = new AffineTransform2D(1, 0, 0, 1, (x2-x1)*(i+1), (y2-y1)*(i+1));
                     wraps.wrapIncObjToDisp[i] = new AffineTransform2D(step);
                 }
-                step.setTransform(objToDisp);
+                step.setTransform(objectiveToDisplay);
                 dif.setToTranslation(x1-x2,y1-y2);
                 for(int i=0;i<nbLeft;i++){
                     step.concatenate(dif);
@@ -512,17 +488,12 @@ public class RenderingContext2D implements RenderingContext{
                 }
                 wraps.wrapArea = (org.locationtech.jts.geom.Polygon)JTS.toGeometry(env);
                 wraps.objectiveJTSEnvelope = new org.locationtech.jts.geom.Envelope(
-                        canvasObjectiveBounds.getMinX(),canvasObjectiveBounds.getMaxX(),
-                        canvasObjectiveBounds.getMinY(),canvasObjectiveBounds.getMaxY());
+                        canvasObjectiveBBox2D.getMinX(),canvasObjectiveBBox2D.getMaxX(),
+                        canvasObjectiveBBox2D.getMinY(),canvasObjectiveBBox2D.getMaxY());
 
                 //fix the envelopes, normalize them using wrap infos
                 canvasObjectiveBBox = ReferencingUtilities.wrapNormalize(canvasObjectiveBBox, wrapPoints);
-                canvasObjectiveBBox2D = ReferencingUtilities.wrapNormalize(canvasObjectiveBBox2D, wrapPoints);
-                canvasObjectiveBBox2DB = new BoundingBox(canvasObjectiveBBox2D);
-
-                paintingObjectiveBBox = ReferencingUtilities.wrapNormalize(paintingObjectiveBBox, wrapPoints);
-                paintingObjectiveBBox2D = ReferencingUtilities.wrapNormalize(paintingObjectiveBBox2D, wrapPoints);
-                paintingObjectiveBBox2DB = new BoundingBox(paintingObjectiveBBox2D);
+                canvasObjectiveBBox2D = new Envelope2D(ReferencingUtilities.wrapNormalize(canvasObjectiveBBox2D, wrapPoints));
             }
 
         } catch (TransformException ex) {
@@ -577,11 +548,7 @@ public class RenderingContext2D implements RenderingContext{
                 objCRS2D.getCoordinateSystem());
 
         //calculate canvas shape/bounds values ---------------------------------
-        final GridExtent extent = gridGeometry2d.getExtent();
-        this.canvasDisplayShape = new Rectangle2D.Double(extent.getLow(0), extent.getLow(1), extent.getSize(0), extent.getSize(1));
-        final Rectangle2D canvasDisplayBounds = canvasDisplayShape.getBounds2D();
-        this.canvasDisplaybounds = canvasDisplayBounds.getBounds();
-        this.canvasObjectiveShape = displayToObjective.createTransformedShape(canvasDisplayShape);
+        this.canvasDisplaybounds = toRectangle(gridGeometry2d.getExtent());
         this.displayClipRect = (Rectangle2D) canvasDisplaybounds.clone();
         this.displayClipRect.setRect(
                 displayClipRect.getX()-CLIP_PIXEL_MARGIN,
@@ -590,31 +557,13 @@ public class RenderingContext2D implements RenderingContext{
                 displayClipRect.getHeight()+2*CLIP_PIXEL_MARGIN);
         this.displayClip = JTS.toGeometry(canvasDisplaybounds);
 
-        final Rectangle2D canvasObjectiveBounds = canvasObjectiveShape.getBounds2D();
-
         //calculate the objective bbox with there temporal and elevation parameters ----
-        this.canvasObjectiveBBox2D = new Envelope2D(objectiveCRS2D,canvasObjectiveBounds);
-        this.canvasObjectiveBBox2DB = new BoundingBox(canvasObjectiveBBox2D);
+        this.canvasObjectiveBBox2D = new Envelope2D(gridGeometry2d.getEnvelope());
 
         //calculate the resolution -----------------------------------------------
         this.dpi = 90;
-        this.resolution = new double[2]; //-- explicitely exprime resolution only into multidimensional CRS horizontal 2D part
-        this.resolution[0] = canvasObjectiveBounds.getWidth()/canvasDisplayBounds.getWidth();
-        this.resolution[1] = canvasObjectiveBounds.getHeight()/canvasDisplayBounds.getHeight();
+        this.resolution = gridGeometry2d.getResolution(true); //-- explicitely exprime resolution only into multidimensional CRS horizontal 2D part
         adjustResolutionWithDPI(resolution);
-
-        //calculate painting shape/bounds values -------------------------------
-        this.paintingDisplayShape = canvasDisplayShape;
-        final Rectangle2D paintingDisplayBounds = paintingDisplayShape.getBounds2D();
-        this.paintingDisplaybounds = paintingDisplayBounds.getBounds();
-        this.paintingObjectiveShape = displayToObjective.createTransformedShape(paintingDisplayShape);
-
-        final Rectangle2D paintingObjectiveBounds = paintingObjectiveShape.getBounds2D();
-        this.paintingObjectiveBBox2D = new Envelope2D(objectiveCRS2D,paintingObjectiveBounds);
-        this.paintingObjectiveBBox2DB = new BoundingBox(paintingObjectiveBBox2D);
-        this.paintingObjectiveBBox = new GeneralEnvelope(canvasObjectiveBBox);
-        ((GeneralEnvelope)this.paintingObjectiveBBox).setRange(0, paintingObjectiveBounds.getMinX(), paintingObjectiveBounds.getMaxX());
-        ((GeneralEnvelope)this.paintingObjectiveBBox).setRange(1, paintingObjectiveBounds.getMinY(), paintingObjectiveBounds.getMaxY());
 
         try {
             geoScale = computeGeographicScale(this.gridGeometry);
@@ -685,7 +634,6 @@ public class RenderingContext2D implements RenderingContext{
         this.coeffs.clear();
         this.canvasDisplaybounds = null;
         this.displayCRS = null;
-        this.canvasDisplayShape = null;
         this.displayToDevice = null;
         this.graphics = null;
         this.renderingHints = null;
@@ -693,7 +641,6 @@ public class RenderingContext2D implements RenderingContext{
         this.monitor = null;
         this.canvasObjectiveBBox = null;
         this.objectiveCRS = null;
-        this.canvasObjectiveShape = null;
         this.objectiveToDevice = null;
         this.objectiveToDisplay = null;
         this.resolution = null;
@@ -1039,55 +986,11 @@ public class RenderingContext2D implements RenderingContext{
         return elevationRange;
     }
 
-    // Informations about the currently painted area ---------------------------
-
-    /**
-     * {@inheritDoc }
-     */
-    public Shape getPaintingDisplayShape(){
-        return paintingDisplayShape;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    public Rectangle getPaintingDisplayBounds(){
-        return paintingDisplaybounds;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    public Shape getPaintingObjectiveShape(){
-        return paintingObjectiveShape;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    public BoundingBox getPaintingObjectiveBounds2D(){
-        return paintingObjectiveBBox2DB;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    public Envelope getPaintingObjectiveBounds(){
-        return paintingObjectiveBBox;
-    }
-
     public GeometryCSTransformer getObjectiveToDisplayGeometryTransformer() {
         return objToDisplayTransformer;
     }
 
     // Informations about the complete canvas area -----------------------------
-
-    /**
-     * {@inheritDoc }
-     */
-    public Shape getCanvasDisplayShape() {
-        return canvasDisplayShape;
-    }
 
     /**
      * {@inheritDoc }
@@ -1099,15 +1002,8 @@ public class RenderingContext2D implements RenderingContext{
     /**
      * {@inheritDoc }
      */
-    public Shape getCanvasObjectiveShape() {
-        return canvasObjectiveShape;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    public BoundingBox getCanvasObjectiveBounds2D() {
-        return canvasObjectiveBBox2DB;
+    public Envelope getCanvasObjectiveBounds2D() {
+        return canvasObjectiveBBox2D;
     }
 
     /**
@@ -1165,28 +1061,12 @@ public class RenderingContext2D implements RenderingContext{
         sb.append(elevationRange[0]).append("  to  ").append(elevationRange[1]).append("\n");
 
         sb.append("\n---------- Canvas Geometries ----------\n");
-        sb.append("Display Shape = \n");
-        sb.append(canvasDisplayShape).append("\n");
         sb.append("Display Bounds = \n");
         sb.append(canvasDisplaybounds).append("\n");
-        sb.append("Objective Shape = \n");
-        sb.append(canvasObjectiveShape).append("\n");
         sb.append("Objective BBOX = \n");
         sb.append(canvasObjectiveBBox).append("\n");
         sb.append("Objective BBOX 2D = \n");
         sb.append(canvasObjectiveBBox2D).append("\n");
-
-        sb.append("\n---------- Painting Geometries (dirty area) ----------\n");
-        sb.append("Display Shape = \n");
-        sb.append(paintingDisplayShape).append("\n");
-        sb.append("Display Bounds = \n");
-        sb.append(paintingDisplaybounds).append("\n");
-        sb.append("Objective Shape = \n");
-        sb.append(paintingObjectiveShape).append("\n");
-        sb.append("Objective BBOX = \n");
-        sb.append(paintingObjectiveBBox).append("\n");
-        sb.append("Objective BBOX 2D = \n");
-        sb.append(paintingObjectiveBBox2D).append("\n");
 
         sb.append("\n---------- Transforms ----------\n");
         sb.append("Objective to Display = \n");

@@ -74,7 +74,7 @@ public final class J2DCanvasDirect extends J2DCanvas {
         final Graphics2D output = g2d;
         output.addRenderingHints(getHints(true));
 
-        final RenderingContext2D context = prepareContext(output, null);
+        final RenderingContext2D context = prepareContext(output);
 
         //paint background if there is one.
         if (painter != null) {
