@@ -450,9 +450,9 @@ public class GeoJSONWriteTest extends TestCase {
         List<Link> links = new ArrayList<>();
         links.add(l);
 
-        try (GeoJSONStreamWriter fw = new GeoJSONStreamWriter(baos, validFeatureType, links, 10, 5, JsonEncoding.UTF8, 4, false)) {
+        try (GeoJSONStreamWriter fw = new GeoJSONStreamWriter(baos, validFeatureType, JsonEncoding.UTF8, 4, false)) {
 
-            fw.writeCollection();
+            fw.writeCollection(links, 10, 5);
 
             Feature feature = fw.next();
             feature.setPropertyValue("type","feat1");

@@ -61,6 +61,8 @@ public final class GeoJSONStreamWriter implements Iterator<Feature>, AutoCloseab
 
     final Function idConverter;
 
+    private boolean headerWritten = false;
+
     /**
      *
      * @param outputStream stream were GeoJSON will be written
@@ -88,11 +90,6 @@ public final class GeoJSONStreamWriter implements Iterator<Feature>, AutoCloseab
 
 
     public GeoJSONStreamWriter(OutputStream outputStream, FeatureType featureType, final JsonEncoding encoding, final int doubleAccuracy, boolean prettyPrint)
-            throws DataStoreException {
-        this(outputStream, featureType, null, null, null, encoding, doubleAccuracy, prettyPrint);
-    }
-
-    public GeoJSONStreamWriter(OutputStream outputStream, FeatureType featureType, List<Link> links, Integer nbMatched, Integer nbReturned, final JsonEncoding encoding, final int doubleAccuracy, boolean prettyPrint)
             throws DataStoreException {
 
         //remove any operation attribute
@@ -139,9 +136,6 @@ public final class GeoJSONStreamWriter implements Iterator<Feature>, AutoCloseab
 
         try {
             writer = new GeoJSONWriter(outputStream, GeoJSONParser.JSON_FACTORY, encoding, doubleAccuracy, prettyPrint);
-            //start write feature collection.
-            writer.writeStartFeatureCollection(FeatureExt.getCRS(featureType), null, links, nbMatched, nbReturned);
-            writer.flush();
         } catch (IOException ex) {
             throw new DataStoreException(ex.getMessage(), ex);
         }
@@ -200,6 +194,9 @@ public final class GeoJSONStreamWriter implements Iterator<Feature>, AutoCloseab
     }
 
     public void write() throws BackingStoreException {
+        if (!headerWritten) {
+            writeCollection(Collections.EMPTY_LIST, null, null);
+        }
         if (edited == null || edited.equals(lastWritten)) {
             return;
         }
@@ -212,13 +209,15 @@ public final class GeoJSONStreamWriter implements Iterator<Feature>, AutoCloseab
         }
     }
 
-    public void writeCollection() throws BackingStoreException {
+    public void writeCollection(List<Link> links, Integer nbMatched, Integer nbReturned) throws BackingStoreException {
         try {
-
+            //start write feature collection.
+            writer.writeStartFeatureCollection(FeatureExt.getCRS(featureType), null, links, nbMatched, nbReturned);
             writer.flush();
         } catch (IOException | IllegalArgumentException e) {
             throw new BackingStoreException(e.getMessage(), e);
         }
+        headerWritten = true;
     }
 
     @Override
