@@ -409,16 +409,14 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
             }
         }
 
+        writeStartDocument();
         if (candidate instanceof Feature) {
             writeFeature((Feature) candidate,true);
         } else if (candidate instanceof FeatureSet) {
-            writeStartDocument();
             writeFeatureCollection((FeatureSet) candidate, nbReturned, nbMatched, true);
-            writeEndDocument();
         } else if (candidate instanceof List) {
             // see http://schemas.opengis.net/wfs/2.0/examples/GetFeature/GetFeature_08_Res.xml
             List collections = (List) candidate;
-            writeStartDocument();
             long count = 0;
             List<FeatureType> types = new ArrayList<>();
             for (Object c : collections) {
@@ -445,11 +443,11 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                 }
             }
             writeEndCollection();
-            writeEndDocument();
         } else {
             throw new IllegalArgumentException("The given object is not a Feature or a" +
                     " FeatureSet: "+ candidate);
         }
+        writeEndDocument();
     }
 
     /**
