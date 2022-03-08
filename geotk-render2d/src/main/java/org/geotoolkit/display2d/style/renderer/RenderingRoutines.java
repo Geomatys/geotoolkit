@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
@@ -47,6 +48,7 @@ import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GO2Utilities;
 import static org.geotoolkit.display2d.GO2Utilities.FILTER_FACTORY;
+import static org.geotoolkit.display2d.GO2Utilities.LOGGER;
 import static org.geotoolkit.display2d.GO2Utilities.STYLE_FACTORY;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
@@ -68,6 +70,7 @@ import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.Expression;
+import org.opengis.filter.Literal;
 import org.opengis.filter.ValueReference;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.extent.GeographicBoundingBox;
@@ -159,30 +162,35 @@ public final class RenderingRoutines {
         } catch (DataStoreException ex) {
             throw new PortrayalException(ex.getMessage(), ex);
         }
+        // Note: do not use layer boundary to define the target bbox, because it can be expensive.
+        // Anyway, the target resource will be better to determine clipping between rendering boundaries and its own.
         final Envelope bbox                      = optimizeBBox(renderingContext, fs, symbolsMargin);
         final CoordinateReferenceSystem layerCRS = FeatureExt.getCRS(schema);
         final RenderingHints hints               = renderingContext.getRenderingHints();
 
         /*
-         * search used geometries:
-         * - if the rule uses default geometry, it will be added to needed geometry properties after the loop
-         * - If the rule specifies geometric expression, and its a value reference, we can safely register it for filter
-         * - If the geometry property is too complex, we fallback by requiring all available geometric properties.
+         * To restrict queried values to the rendering area, we must identify what geometries are used by the style.
+         * For each applied symbol, there are 3 possible cases:
+         * - if the rule uses default geometries, they will be added to the geometry property list after the loop
+         * - The geometric expression is a value reference, we can safely register it in geometric properties. The
+         *   reference xpath is unwrapped in a set to ensure we won't create any doublon filters.
+         * - If the geometry property is a complex expression(Ex: a value computed from non geometric fields), we keep
+         *   it as is to apply a filter directly upon it. Note that even if it's an expression derived from geometric
+         *   fields, we cannot apply spatial filter on them, because the expression could drastically change topology.
+         *   For example, if the expression is 'buffer', the result geometry would be larger than any of its operands.
+         *   TODO: such cases are maybe manageable by replacing bbox filter by a distance filter based upon the buffer
+         *   distance. But would it do more good than harm ?
          */
-        boolean allDefined = true;
         boolean isDefaultGeometryNeeded = rules == null || rules.isEmpty();
         final Set<String> geomProperties = new HashSet<>();
+        final Set<Expression> complexProperties = new HashSet<>();
         if (rules != null) {
             for (Rule r : rules) {
                 for (Symbolizer s : r.symbolizers()) {
                     final Expression expGeom = s.getGeometry();
-                    // TODO: ask martin if we can detect a constant nil expression
-                    if (expGeom == null) isDefaultGeometryNeeded = true;
-                    else if (expGeom instanceof ValueReference) {
-                        geomProperties.add( ((ValueReference)expGeom).getXPath() );
-                    } else {
-                        allDefined = false;
-                    }
+                    if (isNil(expGeom)) isDefaultGeometryNeeded = true;
+                    else if (expGeom instanceof ValueReference) geomProperties.add( ((ValueReference)expGeom).getXPath() );
+                    else complexProperties.add(expGeom);
                 }
             }
         }
@@ -193,14 +201,11 @@ public final class RenderingRoutines {
                 final String geomName = Features.getLinkTarget(defaultGeometry)
                         .orElseGet(() -> defaultGeometry.getName().toString());
                 geomProperties.add(geomName);
-            } catch (PropertyNotFoundException | IllegalStateException e) {
+            } catch (PropertyNotFoundException e) {
                 throw new PortrayalException("Default geometry cannot be determined. " +
                         "However, it is needed to properly define filtering rules.");
-            }
-        }
-
-
-        if (!allDefined) {
+            } catch (IllegalStateException e) {
+                // If there's multiple geometric properties, and no primary one, we will use them all
                 schema.getProperties(true)
                         .stream()
                         // Ignore links: they're doublons of existing attributes. However, we want to keep computed values.
@@ -208,38 +213,42 @@ public final class RenderingRoutines {
                         .filter(AttributeConvention::isGeometryAttribute)
                         .map(p -> p.getName().toString())
                         .forEach(geomProperties::add);
-        }
-
-        if (geomProperties.isEmpty()) {
-            throw new PortrayalException("Filters cannot be safely determined from style rules, and no geometric " +
-                    "property has been found to perform a fallback spatial clipping");
-        }
-
-        //final Envelope layerBounds = layer.getBounds();
-        //we better not do any call to the layer bounding box before since it can be
-        //really expensive, the featurestore is the best placed to check if he might
-        //optimize the filter.
-        //make a bbox filter
-        Filter<Object> filter;
-        if (geomProperties.size() == 1) {
-            final String geomAttName = geomProperties.iterator().next();
-            filter = FILTER_FACTORY.bbox(FILTER_FACTORY.property(geomAttName),bbox);
-        } else {
-            //make an OR filter with all geometries
-            final List<Filter<Object>> geomFilters = new ArrayList<>();
-            for (String geomAttName : geomProperties) {
-                geomFilters.add(FILTER_FACTORY.bbox(FILTER_FACTORY.property(geomAttName),bbox));
             }
-            filter = FILTER_FACTORY.or(geomFilters);
         }
 
+        if (!complexProperties.isEmpty()) {
+            LOGGER.fine("A style rule uses complex geometric properties. It can severly affect performance");
+        }
 
+        final Optional<Filter> spatialFilter =
+                Stream.concat(
+                        geomProperties.stream().map(FILTER_FACTORY::property),
+                        complexProperties.stream()
+                )
+                        .<Filter>map(expression -> FILTER_FACTORY.bbox(expression, bbox))
+                        .reduce(FILTER_FACTORY::or);
+
+        Filter userFilter= null;
         //concatenate geographic filter with data filter if there is one
         if (layer != null) {
             Query query = layer.getQuery();
             if (query instanceof FeatureQuery) {
-                filter = FILTER_FACTORY.and(filter, (Filter) ((FeatureQuery) query).getSelection());
+                userFilter = ((FeatureQuery) query).getSelection();
             }
+        }
+
+        Filter filter;
+        if (spatialFilter.isPresent()) {
+            if (userFilter == null) filter = spatialFilter.get();
+            // Note: we give priority to the spatial filter here, because it is our main use case: rendering is driven
+            // by bounding box.
+            else filter = FILTER_FACTORY.and(spatialFilter.get(), userFilter);
+        } else if (userFilter == null) {
+            throw new PortrayalException("No spatial filter can be determined from style rules, and no user filter specified." +
+                    "We refuse dataset full-scan. To authorize it, manually specify Filter 'INCLUDE' on your map layer.");
+        } else {
+            LOGGER.warning("Spatial filter cannot be determined for rendering. However, user has provided a custom filter that we'll use as sole filtering policy");
+            filter = userFilter;
         }
 
         final Set<String> copy = new HashSet<>();
@@ -404,6 +413,16 @@ public final class RenderingRoutines {
         //set the acumulated hints
         qb.setHints(queryHints);
         return qb;
+    }
+
+    private static boolean isNil(Expression expGeom) {
+        if (expGeom == null) return true;
+        if (expGeom instanceof Literal) {
+            final Object value = ((Literal<?, ?>) expGeom).getValue();
+            return (value == null);
+        }
+
+        return false;
     }
 
     public static Envelope optimizeBBox(RenderingContext2D renderingContext, FeatureSet featureSet, double symbolsMargin) throws PortrayalException{
