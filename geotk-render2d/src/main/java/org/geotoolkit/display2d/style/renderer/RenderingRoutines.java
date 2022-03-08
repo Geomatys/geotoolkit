@@ -159,57 +159,80 @@ public final class RenderingRoutines {
         } catch (DataStoreException ex) {
             throw new PortrayalException(ex.getMessage(), ex);
         }
-        PropertyType geomDesc = null;
-        try {
-            geomDesc = FeatureExt.getDefaultGeometry(schema);
-        } catch(PropertyNotFoundException | IllegalStateException ex){};
         final Envelope bbox                      = optimizeBBox(renderingContext, fs, symbolsMargin);
         final CoordinateReferenceSystem layerCRS = FeatureExt.getCRS(schema);
         final RenderingHints hints               = renderingContext.getRenderingHints();
 
-        //search used geometries
+        /*
+         * search used geometries:
+         * - if the rule uses default geometry, it will be added to needed geometry properties after the loop
+         * - If the rule specifies geometric expression, and its a value reference, we can safely register it for filter
+         * - If the geometry property is too complex, we fallback by requiring all available geometric properties.
+         */
         boolean allDefined = true;
+        boolean isDefaultGeometryNeeded = rules == null || rules.isEmpty();
         final Set<String> geomProperties = new HashSet<>();
         if (rules != null) {
             for (Rule r : rules) {
                 for (Symbolizer s : r.symbolizers()) {
                     final Expression expGeom = s.getGeometry();
-                    if (expGeom instanceof ValueReference) {
+                    // TODO: ask martin if we can detect a constant nil expression
+                    if (expGeom == null) isDefaultGeometryNeeded = true;
+                    else if (expGeom instanceof ValueReference) {
                         geomProperties.add( ((ValueReference)expGeom).getXPath() );
                     } else {
                         allDefined = false;
                     }
                 }
             }
-        } else {
-            allDefined = false;
-        }
-        if (geomDesc!=null && !allDefined) {
-            geomProperties.add(Features.getLinkTarget(geomDesc).orElse(geomDesc.getName().toString()));
         }
 
-        Filter<Object> filter;
+        if (isDefaultGeometryNeeded) {
+            try {
+                final PropertyType defaultGeometry = FeatureExt.getDefaultGeometry(schema);
+                final String geomName = Features.getLinkTarget(defaultGeometry)
+                        .orElseGet(() -> defaultGeometry.getName().toString());
+                geomProperties.add(geomName);
+            } catch (PropertyNotFoundException | IllegalStateException e) {
+                throw new PortrayalException("Default geometry cannot be determined. " +
+                        "However, it is needed to properly define filtering rules.");
+            }
+        }
+
+
+        if (!allDefined) {
+                schema.getProperties(true)
+                        .stream()
+                        // Ignore links: they're doublons of existing attributes. However, we want to keep computed values.
+                        .filter(p -> !Features.getLinkTarget(p).isPresent())
+                        .filter(AttributeConvention::isGeometryAttribute)
+                        .map(p -> p.getName().toString())
+                        .forEach(geomProperties::add);
+        }
+
+        if (geomProperties.isEmpty()) {
+            throw new PortrayalException("Filters cannot be safely determined from style rules, and no geometric " +
+                    "property has been found to perform a fallback spatial clipping");
+        }
 
         //final Envelope layerBounds = layer.getBounds();
         //we better not do any call to the layer bounding box before since it can be
         //really expensive, the featurestore is the best placed to check if he might
         //optimize the filter.
         //make a bbox filter
-        if (!geomProperties.isEmpty()) {
-            if (geomProperties.size() == 1) {
-                final String geomAttName = geomProperties.iterator().next();
-                filter = FILTER_FACTORY.bbox(FILTER_FACTORY.property(geomAttName),bbox);
-            } else {
-                //make an OR filter with all geometries
-                final List<Filter<Object>> geomFilters = new ArrayList<>();
-                for (String geomAttName : geomProperties) {
-                    geomFilters.add(FILTER_FACTORY.bbox(FILTER_FACTORY.property(geomAttName),bbox));
-                }
-                filter = FILTER_FACTORY.or(geomFilters);
-            }
+        Filter<Object> filter;
+        if (geomProperties.size() == 1) {
+            final String geomAttName = geomProperties.iterator().next();
+            filter = FILTER_FACTORY.bbox(FILTER_FACTORY.property(geomAttName),bbox);
         } else {
-            filter = Filter.exclude();
+            //make an OR filter with all geometries
+            final List<Filter<Object>> geomFilters = new ArrayList<>();
+            for (String geomAttName : geomProperties) {
+                geomFilters.add(FILTER_FACTORY.bbox(FILTER_FACTORY.property(geomAttName),bbox));
+            }
+            filter = FILTER_FACTORY.or(geomFilters);
         }
+
 
         //concatenate geographic filter with data filter if there is one
         if (layer != null) {
