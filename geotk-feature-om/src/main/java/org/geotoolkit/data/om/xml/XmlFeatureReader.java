@@ -26,7 +26,6 @@ import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
 import org.geotoolkit.feature.FeatureTypeExt;
 import org.apache.sis.internal.feature.AttributeConvention;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.storage.feature.FeatureReader;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.geotoolkit.gml.GeometrytoJTS;
@@ -51,7 +50,7 @@ import org.opengis.util.FactoryException;
  */
 class XmlFeatureReader implements FeatureReader {
 
-    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data.om");
+    protected static final Logger LOGGER = Logger.getLogger("org.geotoolkit.data.om");
 
     private boolean firstCRS = true;
     protected FeatureType type;

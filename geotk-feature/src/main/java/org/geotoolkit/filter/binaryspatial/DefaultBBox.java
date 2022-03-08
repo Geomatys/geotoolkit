@@ -18,12 +18,12 @@
 package org.geotoolkit.filter.binaryspatial;
 
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.util.Utilities;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.filter.DefaultPropertyName;
 import org.geotoolkit.geometry.jts.JTS;
@@ -165,7 +165,7 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<ValueReference, L
                 try {
                     candidate = org.apache.sis.internal.feature.jts.JTS.transform(candidate, CRS.findOperation(candidateCrs, this.crs, null).getMathTransform());
                 } catch (MismatchedDimensionException | TransformException | FactoryException ex) {
-                    Logging.getLogger("org.geotoolkit.filter.binaryspatial").log(Level.WARNING, null, ex);
+                    Logger.getLogger("org.geotoolkit.filter.binaryspatial").log(Level.WARNING, null, ex);
                     return false;
                 }
             }

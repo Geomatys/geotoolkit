@@ -90,7 +90,7 @@ public final class Formats extends Static {
 
         /**
          * Invoked when a recoverable error occurred. Implementors will typically delegate to
-         * {@link org.apache.sis.util.logging.Logging#recoverableException(Logger, Class, String, Throwable)}
+         * {@link org.apache.sis.util.logging.Logger#recoverableException(Logger, Class, String, Throwable)}
          * with appropriate class an method name.
          *
          * @param error The error which occurred.

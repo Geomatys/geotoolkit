@@ -19,11 +19,11 @@ package org.geotoolkit.internal.image.io;
 
 import java.util.Arrays;
 import java.io.IOException;
+import java.util.logging.Logger;
 import javax.imageio.stream.ImageInputStream;
 
 import org.geotoolkit.lang.Debug;
 import org.geotoolkit.lang.Decorator;
-import org.apache.sis.util.logging.Logging;
 
 
 /**
@@ -113,7 +113,7 @@ public final class CheckedImageInputStream extends ImageInputStreamProxy {
             for (final StackTraceElement element : creator) {
                 buffer.append("  ").append(element).append('\n');
             }
-            Logging.getLogger("org.geotoolkit.image.io").warning(buffer.toString());
+            Logger.getLogger("org.geotoolkit.image.io").warning(buffer.toString());
         }
     }
 }

@@ -21,7 +21,6 @@ import java.util.logging.Logger;
 import org.geotoolkit.client.AbstractRequest;
 import org.geotoolkit.ebrim.xml.EBRIMMarshallerPool;
 import org.geotoolkit.security.ClientSecurity;
-import org.apache.sis.util.logging.Logging;
 import org.apache.sis.xml.MarshallerPool;
 
 /**
@@ -35,7 +34,7 @@ public abstract class AbstractCSWRequest extends AbstractRequest{
     /**
      * Default logger for all DescribeRecord requests.
      */
-    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.csw");
+    protected static final Logger LOGGER = Logger.getLogger("org.geotoolkit.csw");
 
     protected static final MarshallerPool POOL;
 

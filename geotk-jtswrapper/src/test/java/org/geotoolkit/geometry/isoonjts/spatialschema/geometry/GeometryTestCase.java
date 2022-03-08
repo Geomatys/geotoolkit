@@ -23,7 +23,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.logging.Logger;
-import org.apache.sis.util.logging.Logging;
 import org.junit.Test;
 
 /**
@@ -38,7 +37,7 @@ import org.junit.Test;
  */
 public class GeometryTestCase {
 
-    private static final Logger LOG = Logging.getLogger("org.geotoolkit.geometry.isoonjts.spatialschema.geometry");
+    private static final Logger LOG = Logger.getLogger("org.geotoolkit.geometry.isoonjts.spatialschema.geometry");
     private List operationList;
     private Geometry geomA;
     private Geometry geomB;

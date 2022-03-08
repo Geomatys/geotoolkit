@@ -30,7 +30,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.service.DefaultGlyphService;
@@ -49,7 +48,7 @@ import org.opengis.style.PointSymbolizer;
  */
 public class CellRendererService extends AbstractSymbolizerRendererService<CellSymbolizer,CachedCellSymbolizer>{
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.display");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.display");
 
     private static final int HEADER_SIZE = 16;
     private static final Font HEADER_FONT = new Font("monospaced", Font.PLAIN, 11);

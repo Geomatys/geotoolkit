@@ -25,7 +25,6 @@ import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.cql.CQLException;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.cql.CQL;
 import org.opengis.filter.Filter;
 import org.opengis.metadata.Metadata;
@@ -37,7 +36,7 @@ import org.opengis.metadata.Metadata;
  */
 public final class ConstantUtilities {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.processing.chain");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.processing.chain");
 
     private ConstantUtilities() {}
 

@@ -24,14 +24,11 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
-import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.internal.map.Presentation;
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.canvas.AbstractCanvas2D;
 import org.geotoolkit.display.container.GraphicContainer;
@@ -52,8 +49,6 @@ import org.geotoolkit.renderer.GroupPresentation;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.geometry.Geometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.datum.PixelInCell;
-import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 
 /**
@@ -209,7 +204,7 @@ public abstract class J2DCanvas extends AbstractCanvas2D{
                             }
                         }
                     } catch (PortrayalException | DataStoreException ex) {
-                        Logging.getLogger("org.geotoolkit.display2d").log(Level.INFO, ex.getMessage(), ex);
+                        Logger.getLogger("org.geotoolkit.display2d").log(Level.INFO, ex.getMessage(), ex);
                     }
                 }
             }

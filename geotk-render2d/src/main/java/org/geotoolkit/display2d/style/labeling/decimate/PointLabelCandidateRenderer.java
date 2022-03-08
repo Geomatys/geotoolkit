@@ -27,7 +27,7 @@ import java.awt.geom.RoundRectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
-import org.apache.sis.util.logging.Logging;
+import java.util.logging.Logger;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.labeling.PointLabelDescriptor;
@@ -63,7 +63,7 @@ public class PointLabelCandidateRenderer implements LabelCandidateRenderer<Point
         try {
             shapes = label.getGeometry().getDisplayGeometryJTS();
         } catch (TransformException ex) {
-            Logging.getLogger("org.geotoolkit.display2d.style.labeling.decimate").log(Level.WARNING, null, ex);
+            Logger.getLogger("org.geotoolkit.display2d.style.labeling.decimate").log(Level.WARNING, null, ex);
         }
         if (shapes == null) return null;
 

@@ -31,7 +31,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.internal.storage.io.IOUtilities;
 import org.apache.sis.util.Numbers;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.internal.geojson.binding.GeoJSONCRS;
 import org.geotoolkit.internal.geojson.binding.GeoJSONFeature;
 import org.geotoolkit.internal.geojson.binding.GeoJSONFeatureCollection;
@@ -59,7 +58,7 @@ public final class GeoJSONParser {
 
     public static final JsonFactory JSON_FACTORY = new JsonFactory();
     public static final JsonFactory CBOR_FACTORY;
-    public static final Logger LOGGER = Logging.getLogger("org.apache.sis.storage.geojson.utils");
+    public static final Logger LOGGER = Logger.getLogger("org.apache.sis.storage.geojson.utils");
 
     static {
         JsonFactory factory = null;

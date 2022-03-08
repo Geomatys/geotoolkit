@@ -24,7 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
-import org.apache.sis.util.logging.Logging;
+import java.util.logging.Logger;
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.geotoolkit.filter.DefaultPropertyName;
 import org.geotoolkit.filter.function.AbstractFunction;
@@ -139,7 +139,7 @@ public class GroovyFunction extends AbstractFunction {
             script.setBinding(bindings);
             return script.run();
         } catch (CompilationFailedException ex) {
-            Logging.getLogger("org.geotoolkit.filter.function.groovy").log(Level.WARNING, null, ex);
+            Logger.getLogger("org.geotoolkit.filter.function.groovy").log(Level.WARNING, null, ex);
         }
         return "";
     }

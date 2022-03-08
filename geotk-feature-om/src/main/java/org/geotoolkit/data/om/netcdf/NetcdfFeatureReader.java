@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.internal.feature.AttributeConvention;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.storage.feature.FeatureReader;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.geotoolkit.data.om.OMFeatureTypes;
@@ -31,7 +30,7 @@ import org.opengis.util.FactoryException;
  */
 class NetcdfFeatureReader implements FeatureReader {
 
-    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data.om");
+    protected static final Logger LOGGER = Logger.getLogger("org.geotoolkit.data.om");
 
     private boolean firstCRS = true;
     protected FeatureType type;

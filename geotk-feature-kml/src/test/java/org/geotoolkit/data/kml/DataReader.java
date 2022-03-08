@@ -23,14 +23,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
-
 import org.geotoolkit.data.kml.model.Extensions.Names;
 import org.geotoolkit.data.kml.model.KmlException;
 import org.geotoolkit.data.kml.xml.KmlExtensionReader;
 import org.geotoolkit.xml.StaxStreamReader;
-import org.apache.sis.util.logging.Logging;
 
 /**
  *
@@ -67,7 +66,7 @@ public class DataReader extends StaxStreamReader implements KmlExtensionReader {
                 }
             }
         } catch (URISyntaxException | XMLStreamException | KmlException ex) {
-            Logging.getLogger("org.geotoolkit.data.kml").log(Level.SEVERE, null, ex);
+            Logger.getLogger("org.geotoolkit.data.kml").log(Level.SEVERE, null, ex);
         }
         return root;
     }

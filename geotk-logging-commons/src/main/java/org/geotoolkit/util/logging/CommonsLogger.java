@@ -34,7 +34,7 @@ import org.apache.sis.util.logging.LoggerAdapter;
  * @module
  *
  * @see CommonsLoggerFactory
- * @see Logging
+ * @see Logger
  */
 final class CommonsLogger extends LoggerAdapter {
     /**
@@ -54,7 +54,7 @@ final class CommonsLogger extends LoggerAdapter {
     }
 
     /**
-     * Do nothing since Commons-Logging doesn't support programmatic change of logging level.
+     * Do nothing since Commons-Logger doesn't support programmatic change of logging level.
      */
     @Override
     public void setLevel(Level level) {

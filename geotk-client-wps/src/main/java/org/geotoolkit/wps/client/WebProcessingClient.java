@@ -27,7 +27,6 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.Unmarshaller;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreProvider;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.AbstractClient;
 import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.ows.xml.ExceptionResponse;
@@ -53,7 +52,7 @@ import org.opengis.util.GenericName;
  */
 public class WebProcessingClient extends AbstractClient {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.wps");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.wps");
     private static final int TIMEOUT_CAPS = 10000;
 
     private Capabilities capabilities;

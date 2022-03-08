@@ -29,6 +29,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -43,7 +44,6 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.nio.IOUtilities;
 import org.w3c.dom.Document;
@@ -290,7 +290,7 @@ public final class DomUtilities extends Static {
         try {
             return textValue(parent, tagName, clazz);
         } catch (UnconvertibleObjectException ex) {
-            Logging.getLogger("org.geotoolkit.util").log(Level.WARNING, null, ex);
+            Logger.getLogger("org.geotoolkit.util").log(Level.WARNING, null, ex);
             return null;
         }
     }
@@ -303,7 +303,7 @@ public final class DomUtilities extends Static {
         try {
             return textValue(parent, tagName, clazz, recusive);
         } catch (UnconvertibleObjectException ex) {
-            Logging.getLogger("org.geotoolkit.util").log(Level.WARNING, null, ex);
+            Logger.getLogger("org.geotoolkit.util").log(Level.WARNING, null, ex);
             return null;
         }
     }
@@ -316,7 +316,7 @@ public final class DomUtilities extends Static {
         try {
             return textAttributeValue(parent, tagName,attributeName,  clazz);
         } catch (UnconvertibleObjectException ex) {
-            Logging.getLogger("org.geotoolkit.util").log(Level.WARNING, null, ex);
+            Logger.getLogger("org.geotoolkit.util").log(Level.WARNING, null, ex);
             return null;
         }
     }
@@ -329,7 +329,7 @@ public final class DomUtilities extends Static {
         try {
             return textAttributeValue(parent, tagName,attributeName,  clazz, recursive);
         } catch (UnconvertibleObjectException ex) {
-            Logging.getLogger("org.geotoolkit.util").log(Level.WARNING, null, ex);
+            Logger.getLogger("org.geotoolkit.util").log(Level.WARNING, null, ex);
             return null;
         }
     }

@@ -33,7 +33,6 @@ import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.DirectPosition;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.IdentifiedObjects;
-import org.apache.sis.util.logging.Logging;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CompoundCRS;
@@ -79,7 +78,7 @@ import static org.geotoolkit.util.Utilities.listNullEquals;
 @XmlRootElement(name = "Envelope")
 public class EnvelopeType implements Envelope, org.geotoolkit.gml.xml.Envelope {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.gml.xml.v321");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.gml.xml.v321");
 
     private DirectPositionType lowerCorner;
     private DirectPositionType upperCorner;

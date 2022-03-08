@@ -23,7 +23,6 @@ import javax.xml.bind.Unmarshaller;
 import org.geotoolkit.gml.xml.v311.*;
 
 import org.apache.sis.internal.jaxb.geometry.GM_Object;
-import org.apache.sis.util.logging.Logging;
 import org.opengis.geometry.Geometry;
 import org.apache.sis.internal.jaxb.AdapterReplacement;
 
@@ -40,7 +39,7 @@ import org.apache.sis.internal.jaxb.AdapterReplacement;
  */
 public final class GmlGeometryAdapter extends GM_Object implements AdapterReplacement {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.gml");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.gml");
 
     /**
      * Empty constructor for JAXB only.

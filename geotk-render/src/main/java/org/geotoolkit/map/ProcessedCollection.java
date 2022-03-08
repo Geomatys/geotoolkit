@@ -27,7 +27,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
-import org.apache.sis.util.logging.Logging;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -38,7 +37,7 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class ProcessedCollection extends AbstractCollection{
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.map");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.map");
 
     private ProcessDescriptor processDescriptor;
     private ParameterValueGroup inputParam;

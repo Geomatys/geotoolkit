@@ -36,7 +36,6 @@ import org.geotoolkit.gml.xml.v311.CodeType;
 import org.opengis.coverage.grid.RectifiedGrid;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
-import org.apache.sis.util.logging.Logging;
 
 
 /**
@@ -78,7 +77,7 @@ import org.apache.sis.util.logging.Logging;
 })
 public class GridCrsType {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.wcs.xml.v111");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.wcs.xml.v111");
 
     @XmlElement(namespace = "http://www.opengis.net/gml")
     private CodeType srsName;

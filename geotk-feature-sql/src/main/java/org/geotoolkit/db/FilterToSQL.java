@@ -40,23 +40,23 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LinearRing;
 import org.opengis.feature.FeatureType;
-import org.opengis.filter.BinaryComparisonOperator;
-import org.opengis.filter.Filter;
-import org.opengis.filter.FilterFactory;
 import org.opengis.filter.BetweenComparisonOperator;
+import org.opengis.filter.BinaryComparisonOperator;
 import org.opengis.filter.BinarySpatialOperator;
 import org.opengis.filter.ComparisonOperatorName;
 import org.opengis.filter.DistanceOperator;
 import org.opengis.filter.DistanceOperatorName;
 import org.opengis.filter.Expression;
+import org.opengis.filter.Filter;
+import org.opengis.filter.FilterFactory;
 import org.opengis.filter.LikeOperator;
 import org.opengis.filter.Literal;
 import org.opengis.filter.LogicalOperator;
 import org.opengis.filter.LogicalOperatorName;
-import org.opengis.filter.ValueReference;
 import org.opengis.filter.ResourceId;
 import org.opengis.filter.SpatialOperator;
 import org.opengis.filter.SpatialOperatorName;
+import org.opengis.filter.ValueReference;
 import org.opengis.geometry.Envelope;
 import org.opengis.util.GenericName;
 
@@ -526,6 +526,6 @@ public abstract class FilterToSQL extends Visitor<Object,StringBuilder> {
     }
 
     protected Logger getLogger() {
-        return Logging.getLogger(getClass());
+        return Logger.getLogger(getClass().getName());
     }
 }

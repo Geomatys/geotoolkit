@@ -29,7 +29,6 @@ import javax.xml.bind.Unmarshaller;
 import org.geotoolkit.sld.MutableSLDFactory;
 import org.geotoolkit.sld.MutableStyledLayerDescriptor;
 import org.geotoolkit.style.MutableStyleFactory;
-import org.apache.sis.util.logging.Logging;
 import org.apache.sis.xml.MarshallerPool;
 import org.geotoolkit.filter.FilterFactory2;
 import org.opengis.sld.StyledLayerDescriptor;
@@ -44,7 +43,7 @@ import javax.xml.bind.JAXBContext;
  */
 public class JAXBSLDUtilities {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.sld.xml");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.sld.xml");
 
     private final FilterFactory2 filterFactory;
     private final MutableStyleFactory styleFactory;

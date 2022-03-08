@@ -28,10 +28,10 @@ import java.awt.geom.NoninvertibleTransformException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
-import org.apache.sis.util.logging.Logging;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
+import org.apache.sis.util.logging.Logging;
 
 
 /**

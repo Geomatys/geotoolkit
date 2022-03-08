@@ -37,7 +37,6 @@ import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.feature.xml.XmlFeatureReader;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
@@ -65,7 +64,7 @@ import org.opengis.sld.StyledLayerDescriptor;
  */
 public final class WPSIO {
 
-    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.wps.io");
+    protected static final Logger LOGGER = Logger.getLogger("org.geotoolkit.wps.io");
 
     /**
      * A key for userdata map of an {@link org.geotoolkit.parameter.ExtendedParameterDescriptor} object. The aim is to

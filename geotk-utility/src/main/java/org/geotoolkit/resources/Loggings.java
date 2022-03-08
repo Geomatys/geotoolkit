@@ -23,8 +23,8 @@ import java.util.ResourceBundle;
 import java.util.logging.LogRecord;
 import java.util.logging.Level;
 import java.text.MessageFormat;
-import org.apache.sis.util.resources.IndexedResourceBundle;
 import org.apache.sis.util.logging.Logging;
+import org.apache.sis.util.resources.IndexedResourceBundle;
 
 
 /**

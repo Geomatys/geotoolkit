@@ -49,7 +49,6 @@ import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
-import org.apache.sis.util.logging.Logging;
 import org.apache.sis.xml.MarshallerPool;
 
 // Types dependencies
@@ -67,6 +66,7 @@ import org.w3c.dom.Node;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import static java.nio.file.StandardOpenOption.*;
+import java.util.logging.Logger;
 import org.apache.sis.internal.system.DefaultFactories;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.filter.FilterUtilities;
@@ -188,7 +188,7 @@ public final class StyleXmlIO {
                 final URL url = online.getLinkage().toURL();
                 return unMarshaller.unmarshal(url);
             } catch (MalformedURLException ex) {
-                Logging.getLogger("org.geotoolkit.sld.xml").log(Level.WARNING, null, ex);
+                Logger.getLogger("org.geotoolkit.sld.xml").log(Level.WARNING, null, ex);
                 return null;
             }
         }else{

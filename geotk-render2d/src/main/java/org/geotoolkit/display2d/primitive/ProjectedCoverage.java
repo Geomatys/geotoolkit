@@ -17,13 +17,13 @@
 package org.geotoolkit.display2d.primitive;
 
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.portrayal.MapLayer;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.opengis.filter.Expression;
 
@@ -73,7 +73,7 @@ public class ProjectedCoverage implements ProjectedObject<MapLayer> {
             if (bands != null && bands.length < 1) bands = null;
             GridCoverage result = ((GridCoverageResource) resource).read(param, bands);
             if (result instanceof GridCoverageStack) {
-                Logging.getLogger("org.geotoolkit.display2d.primitive").log(Level.WARNING, "Coverage reader return more than one slice.");
+                Logger.getLogger("org.geotoolkit.display2d.primitive").log(Level.WARNING, "Coverage reader return more than one slice.");
             }
             while (result instanceof GridCoverageStack) {
                 //pick the first slice

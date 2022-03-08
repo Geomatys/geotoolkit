@@ -40,7 +40,6 @@ import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
-import org.apache.sis.util.logging.Logging;
 import org.apache.sis.xml.MarshallerPool;
 import org.apache.sis.xml.Namespaces;
 import org.geotoolkit.storage.feature.FeatureStoreUtilities;
@@ -72,7 +71,7 @@ public class ElementFeatureWriter {
     /**
      * Logger for this writer.
      */
-    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.feature.xml.jaxp");
+    protected static final Logger LOGGER = Logger.getLogger("org.geotoolkit.feature.xml.jaxp");
 
     /**
      * The pool of marshallers used for marshalling geometries.

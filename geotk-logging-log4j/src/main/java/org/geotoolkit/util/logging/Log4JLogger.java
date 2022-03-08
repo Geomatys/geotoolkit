@@ -33,7 +33,7 @@ import org.apache.sis.util.logging.LoggerAdapter;
  * @module
  *
  * @see Log4JLoggerFactory
- * @see Logging
+ * @see Logger
  */
 final class Log4JLogger extends LoggerAdapter {
     /**

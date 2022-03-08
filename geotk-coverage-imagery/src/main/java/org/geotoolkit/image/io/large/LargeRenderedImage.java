@@ -36,7 +36,6 @@ import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Disposable;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.image.internal.ImageUtils;
 import org.geotoolkit.image.internal.PlanarConfiguration;
 import org.geotoolkit.image.internal.SampleType;
@@ -54,7 +53,7 @@ import org.geotoolkit.image.internal.SampleType;
  */
 public class LargeRenderedImage implements RenderedImage, Disposable {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.image.io.large");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.image.io.large");
 
     /**
      * Mechanic to store tile on hard drive.
@@ -261,7 +260,7 @@ public class LargeRenderedImage implements RenderedImage, Disposable {
 //            try {
 //                vector.add(new LargeRenderedImage(imageReader, id, tilecache, new Dimension(tileWidth, tileHeight)));
 //            } catch (IOException ex) {
-//                Logging.getLogger("org.geotoolkit.image.io.large").log(Level.SEVERE, null, ex);
+//                Logger.getLogger("org.geotoolkit.image.io.large").log(Level.SEVERE, null, ex);
 //            }
 //        }
 //        return vector;

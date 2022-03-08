@@ -23,7 +23,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.ogc.xml.TemporalOperator;
 import org.opengis.filter.Filter;
 
@@ -49,7 +48,7 @@ import org.opengis.filter.Filter;
 })
 public abstract class TemporalOpsType implements Filter, TemporalOperator {
 
-    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.ogc.xml.v200");
+    protected static final Logger LOGGER = Logger.getLogger("org.geotoolkit.ogc.xml.v200");
 
     @Override
     public boolean test(final Object object) {

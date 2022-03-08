@@ -37,7 +37,6 @@ import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import static org.geotoolkit.observation.AbstractObservationStoreFactory.*;
 import static org.geotoolkit.observation.OMUtils.OBSERVATION_QNAME;
@@ -63,7 +62,7 @@ import org.opengis.util.GenericName;
  */
 public abstract class AbstractObservationStore extends DataStore implements ObservationStore, Resource {
 
-    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.observation");
+    protected static final Logger LOGGER = Logger.getLogger("org.geotoolkit.observation");
 
     protected final ParameterValueGroup parameters;
 

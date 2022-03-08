@@ -26,7 +26,6 @@ import java.util.logging.Logger;
 import org.geotoolkit.client.AbstractRequest;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.security.ClientSecurity;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.opengis.geometry.Envelope;
 import org.opengis.util.FactoryException;
@@ -44,7 +43,7 @@ public abstract class AbstractGetCoverage extends AbstractRequest implements Get
     /**
      * Default logger for all GetCoverage requests.
      */
-    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.wcs");
+    protected static final Logger LOGGER = Logger.getLogger("org.geotoolkit.wcs");
 
     protected final String version;
 

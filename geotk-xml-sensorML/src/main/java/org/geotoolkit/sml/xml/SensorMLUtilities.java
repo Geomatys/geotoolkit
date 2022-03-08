@@ -21,7 +21,6 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 
 /**
@@ -30,7 +29,7 @@ import org.geotoolkit.gml.xml.AbstractGeometry;
  */
 public class SensorMLUtilities {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.sml.xml");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.sml.xml");
 
     public static String getSensorMLType(final AbstractSensorML sml) {
         if (sml.getMember() != null)  {

@@ -19,7 +19,6 @@ package org.geotoolkit.ncwms;
 import java.util.logging.Logger;
 
 import org.geotoolkit.security.ClientSecurity;
-import org.apache.sis.util.logging.Logging;
 
 /**
  * Abstract implementation of {@link NcGetTimeseriesRequest}, which defines the parameters for
@@ -33,7 +32,7 @@ public abstract class AbstractNcGetTimeseries extends AbstractNcGetFeatureInfo i
     /**
      * Default logger for all GetTimeseries requests.
      */
-    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.ncwms");
+    protected static final Logger LOGGER = Logger.getLogger("org.geotoolkit.ncwms");
 
     private String dateBegin = null;
     private String dateEnd = null;

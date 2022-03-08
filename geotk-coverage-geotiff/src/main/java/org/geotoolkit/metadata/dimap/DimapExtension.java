@@ -17,7 +17,6 @@ import javax.xml.transform.TransformerException;
 import org.opengis.util.FactoryException;
 
 import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.util.logging.Logging;
 
 import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
@@ -41,7 +40,7 @@ import org.xml.sax.SAXException;
  */
 public class DimapExtension extends GeoTiffExtension {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.metadata.dimap");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.metadata.dimap");
 
     @Override
     public boolean isPresent(Object input) {

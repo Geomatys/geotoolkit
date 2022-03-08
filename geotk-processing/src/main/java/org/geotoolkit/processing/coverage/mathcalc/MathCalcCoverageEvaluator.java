@@ -19,11 +19,11 @@ package org.geotoolkit.processing.coverage.mathcalc;
 import java.util.AbstractMap;
 import java.util.Set;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridEvaluator;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.referencing.CRS;
-import org.apache.sis.util.logging.Logging;
 import org.opengis.filter.Expression;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -103,7 +103,7 @@ public class MathCalcCoverageEvaluator implements FillCoverage.SampleEvaluator {
                     try {
                         baseToCoverage[i].transform(coord, coverageCoord[i]);
                     } catch (Exception ex) {
-                        Logging.getLogger("org.geotoolkit.processing.coverage.mathcalc").log(Level.WARNING, ex.getMessage(), ex);
+                        Logger.getLogger("org.geotoolkit.processing.coverage.mathcalc").log(Level.WARNING, ex.getMessage(), ex);
                         return Double.NaN;
                     }
                     break;

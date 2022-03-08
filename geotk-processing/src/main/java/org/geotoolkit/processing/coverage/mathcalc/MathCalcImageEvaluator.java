@@ -19,12 +19,11 @@ package org.geotoolkit.processing.coverage.mathcalc;
 
 import java.util.Arrays;
 import java.util.logging.Level;
-
+import java.util.logging.Logger;
 import org.apache.sis.geometry.GeneralDirectPosition;
-import org.geotoolkit.storage.coverage.ProcessedRenderedImage;
 import org.geotoolkit.processing.coverage.mathcalc.FillCoverage.SampleEvaluator;
+import org.geotoolkit.storage.coverage.ProcessedRenderedImage;
 import org.opengis.referencing.operation.MathTransform;
-import org.apache.sis.util.logging.Logging;
 
 /**
  *
@@ -59,7 +58,7 @@ public class MathCalcImageEvaluator implements ProcessedRenderedImage.Evaluator 
         try {
             gridToCrs.transform(gridCoord, 0, crsCoord, 0, 1);
         } catch (Exception ex) {
-            Logging.getLogger("org.geotoolkit.processing.coverage.mathcalc").log(Level.WARNING, ex.getMessage(), ex);
+            Logger.getLogger("org.geotoolkit.processing.coverage.mathcalc").log(Level.WARNING, ex.getMessage(), ex);
             //we should use NoData value
             Arrays.fill(sampleBuffer, Double.NaN);
         }

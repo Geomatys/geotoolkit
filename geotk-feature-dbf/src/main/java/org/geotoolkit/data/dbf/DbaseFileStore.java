@@ -44,7 +44,6 @@ import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.FeatureSet;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.data.dbf.DbaseFileReader.Row;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
@@ -65,7 +64,7 @@ import org.opengis.util.GenericName;
  */
 public class DbaseFileStore extends DataStore implements FeatureSet, ResourceOnFileSystem {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data.dbf");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.data.dbf");
     private final ReadWriteLock RWLock = new ReentrantReadWriteLock();
 
     private final Parameters parameters;

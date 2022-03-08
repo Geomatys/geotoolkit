@@ -28,7 +28,6 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.csw.xml.RequestStatus;
 
 
@@ -62,7 +61,7 @@ import org.geotoolkit.csw.xml.RequestStatus;
 @XmlType(name = "RequestStatusType")
 public class RequestStatusType implements RequestStatus {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.csw.xml.v300");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.csw.xml.v300");
 
     @XmlAttribute(name = "timestamp")
     @XmlSchemaType(name = "dateTime")

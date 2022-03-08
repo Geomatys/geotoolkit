@@ -42,7 +42,6 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CRS;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.index.tree.manager.NamedEnvelope;
 import org.opengis.filter.Filter;
@@ -60,7 +59,7 @@ import org.opengis.util.CodeList;
  */
 public class LuceneUtils {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.lucene");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.lucene");
 
     public static final GeometryFactory GF = JTS.getFactory();
 

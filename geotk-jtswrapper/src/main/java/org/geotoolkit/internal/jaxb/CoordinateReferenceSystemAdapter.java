@@ -2,6 +2,7 @@
 package org.geotoolkit.internal.jaxb;
 
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import org.apache.sis.metadata.iso.citation.Citations;
 import org.apache.sis.referencing.CRS;
@@ -9,9 +10,8 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.collection.Cache;
-import org.apache.sis.util.logging.Logging;
-import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.FactoryException;
 
 /**
  *
@@ -64,7 +64,7 @@ public class CoordinateReferenceSystemAdapter  extends XmlAdapter<String, Coordi
                     CoordinateReferenceSystemAdapter.cachedIdentifier.put(crs, srsName);
                 }
             } catch (FactoryException ex) {
-                Logging.getLogger("org.geotoolkit.referencing").log(Level.WARNING, null, ex);
+                Logger.getLogger("org.geotoolkit.referencing").log(Level.WARNING, null, ex);
             }
         }
         return srsName;

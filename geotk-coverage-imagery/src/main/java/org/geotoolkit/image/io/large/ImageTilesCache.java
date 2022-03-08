@@ -43,7 +43,6 @@ import javax.imageio.stream.ImageOutputStream;
 import javax.media.jai.RasterFactory;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.collection.WeakValueHashMap;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.nio.IOUtilities;
 
 /**
@@ -62,7 +61,7 @@ final class ImageTilesCache extends PhantomReference<RenderedImage> {
      *
      * @see #checkMap()
      */
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.image.io.large");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.image.io.large");
 
     private static final Path TEMPORARY_PATH = Paths.get(System.getProperty("java.io.tmpdir"));
     private static final String FORMAT = "geotiff";

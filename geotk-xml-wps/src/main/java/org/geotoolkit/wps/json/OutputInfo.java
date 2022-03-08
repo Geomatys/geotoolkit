@@ -21,7 +21,6 @@ import java.util.Objects;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.gml.xml.GMLMarshallerPool;
 import org.geotoolkit.ows.xml.BoundingBox;
@@ -34,7 +33,7 @@ import org.geotoolkit.wps.xml.v200.LiteralValue;
  */
 public class OutputInfo {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.wps.json");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.wps.json");
 
     private String id = null;
 

@@ -35,7 +35,6 @@ import javax.media.jai.TileComputationListener;
 
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.Disposable;
-import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.collection.WeakValueHashMap;
 import org.geotoolkit.image.color.ColorUtilities;
@@ -89,7 +88,7 @@ public final class DeferredPlanarImage extends PlanarImage
     /**
      * The logger for information messages.
      */
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.image");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.image");
 
     /**
      * The thickness (in pixels) of the box to draw around deferred tiles, or 0 for disabling

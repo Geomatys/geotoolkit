@@ -47,7 +47,6 @@ import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Numbers;
 import org.apache.sis.util.iso.Names;
-import org.apache.sis.util.logging.Logging;
 
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
@@ -80,7 +79,7 @@ public strictfp class ThirdPartyMetaDataReader {
     /**
      * Logger to diffuse no blocking error message.
      */
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.metadata.geotiff");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.metadata.geotiff");
 
     /**
      * Root {@link Node} from analysed {@link SpatialMetadata}.

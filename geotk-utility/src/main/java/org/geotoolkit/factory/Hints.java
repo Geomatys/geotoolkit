@@ -31,9 +31,10 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.logging.Logger;
 import org.apache.sis.io.TableAppender;
-import org.apache.sis.util.logging.Logging;
 import static org.apache.sis.internal.util.CollectionsExt.unmodifiableOrCopy;
+import org.apache.sis.util.logging.Logging;
 import org.opengis.util.InternationalString;
 
 
@@ -774,7 +775,7 @@ public class Hints extends RenderingHints {
                 try {
                     Integer.parseInt(value.toString());
                 } catch (NumberFormatException e) {
-                    Logging.getLogger("org.geotoolkit.factory").finer(e.toString());
+                    Logger.getLogger("org.geotoolkit.factory").finer(e.toString());
                 }
             }
             return false;

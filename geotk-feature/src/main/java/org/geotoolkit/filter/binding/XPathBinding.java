@@ -20,11 +20,11 @@ package org.geotoolkit.filter.binding;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.apache.sis.util.ObjectConverters;
 
 import org.jaxen.JaxenException;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.filter.binding.JaxenFeatureNavigator.Fake;
 import org.opengis.feature.Attribute;
 import org.opengis.feature.Feature;
@@ -130,7 +130,7 @@ public class XPathBinding<C> extends AbstractBinding<C> {
             }
 
         } catch (JaxenException ex) {
-            Logging.getLogger("org.geotoolkit.filter.binding").log(Level.WARNING, null, ex);
+            Logger.getLogger("org.geotoolkit.filter.binding").log(Level.WARNING, null, ex);
         }
         return null;
     }

@@ -23,7 +23,6 @@ import java.util.Optional;
 import java.util.logging.Logger;
 import javax.swing.event.EventListenerList;
 import org.apache.sis.util.Classes;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.factory.Hints;
 
 /**
@@ -40,7 +39,7 @@ public class DisplayElement {
     /**
      * Default logger for the display module.
      */
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.display");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.display");
 
     /**
      * A set of rendering hints.

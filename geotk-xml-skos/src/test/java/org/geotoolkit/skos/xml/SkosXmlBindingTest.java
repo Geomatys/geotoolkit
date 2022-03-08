@@ -28,7 +28,6 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 //Junit dependencies
-import org.apache.sis.util.logging.Logging;
 import org.apache.sis.xml.MarshallerPool;
 import org.junit.*;
 
@@ -42,7 +41,7 @@ import static org.apache.sis.test.MetadataAssert.*;
  */
 public class SkosXmlBindingTest extends org.geotoolkit.test.TestBase {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.skos");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.skos");
 
     private MarshallerPool pool;
     private Unmarshaller unmarshaller;

@@ -34,7 +34,6 @@ import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.NoSuchDataException;
 import org.apache.sis.util.collection.BackingStoreException;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessEvent;
@@ -52,7 +51,7 @@ import org.opengis.referencing.operation.TransformException;
  */
 public abstract class AbstractTileGenerator implements TileGenerator {
 
-    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.storage.multires");
+    protected static final Logger LOGGER = Logger.getLogger("org.geotoolkit.storage.multires");
 
     protected static final Process DUMMY = new Process() {
         @Override

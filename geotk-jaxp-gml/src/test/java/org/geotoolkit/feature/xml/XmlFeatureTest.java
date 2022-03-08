@@ -32,6 +32,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.xml.bind.JAXBException;
@@ -45,10 +46,9 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import org.apache.sis.storage.FeatureQuery;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureQuery;
 import org.apache.sis.storage.FeatureSet;
-import org.apache.sis.util.logging.Logging;
 import static org.geotoolkit.feature.xml.XmlTestData.*;
 import org.geotoolkit.feature.xml.jaxp.ElementFeatureWriter;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
@@ -345,7 +345,7 @@ public class XmlFeatureTest extends org.geotoolkit.test.TestBase {
             query.setSortBy(FF.sort(FF.property("attDouble"), SortOrder.ASCENDING));
             result = result.subset(query);
         } catch (DataStoreException ex) {
-            Logging.getLogger("org.geotoolkit.feature.xml").log(Level.SEVERE, null, ex);
+            Logger.getLogger("org.geotoolkit.feature.xml").log(Level.SEVERE, null, ex);
         }
 
         try (Stream<Feature> resultS = result.features(false);
@@ -370,7 +370,7 @@ public class XmlFeatureTest extends org.geotoolkit.test.TestBase {
         URL url = new URL("http://www.ifremer.fr/services/wfs1?SERVICE=WFS&VERSION=1.1.0&REQUEST=DescribeFeatureType&TYPENAME=quadrige&OUTPUTFORMAT=text/xml;%20subtype=%22gml/3.1.1%22");
         final String response = getStringResponse(url.openConnection());
         if (response.contains("<!-- ERROR: Failed opening layer (null) -->")) {
-            Logging.getLogger("org.geotoolkit.feature.xml").warning("Skipping embedded test. external service not responding correctly");
+            Logger.getLogger("org.geotoolkit.feature.xml").warning("Skipping embedded test. external service not responding correctly");
             return;
         }
 

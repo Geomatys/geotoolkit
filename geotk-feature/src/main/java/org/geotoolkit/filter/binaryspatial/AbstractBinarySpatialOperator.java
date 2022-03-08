@@ -34,7 +34,6 @@ import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.Utilities;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.AbstractJTSGeometry;
 import org.geotoolkit.geometry.jts.JTS;
 import org.locationtech.jts.geom.Geometry;
@@ -58,7 +57,7 @@ import org.opengis.util.FactoryException;
  * @param <F> Expression or subclass
  */
 public abstract class AbstractBinarySpatialOperator<E extends Expression,F extends Expression> implements Serializable {
-    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.filter.binaryspatial");
+    protected static final Logger LOGGER = Logger.getLogger("org.geotoolkit.filter.binaryspatial");
     protected static final CoordinateReferenceSystem MERCATOR;
 
     static{

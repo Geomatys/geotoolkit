@@ -20,7 +20,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.WritableGridCoverageResource;
 import org.apache.sis.util.Utilities;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.grid.GridGeometryIterator;
 import org.geotoolkit.image.interpolation.InterpolationCase;
@@ -47,7 +46,7 @@ import org.opengis.util.FactoryException;
  */
 public class Categorize extends AbstractProcess {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.processing");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.processing");
     private static final SampleClassifierDescriptor IMG_CAT_DESC = new SampleClassifierDescriptor();
 
     public Categorize() {

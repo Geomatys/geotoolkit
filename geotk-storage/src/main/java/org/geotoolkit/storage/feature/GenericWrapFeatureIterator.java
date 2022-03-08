@@ -21,12 +21,8 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.sis.util.Classes;
-import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.storage.feature.FeatureIterator;
-import org.geotoolkit.storage.feature.FeatureReader;
-import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
-import org.geotoolkit.storage.feature.FeatureWriter;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 
@@ -71,7 +67,7 @@ public class GenericWrapFeatureIterator implements FeatureIterator {
             try {
                 ((Closeable) iterator).close();
             } catch (IOException ex) {
-                Logging.getLogger("org.geotoolkit.data.memory").log(Level.WARNING, null, ex);
+                Logger.getLogger("org.geotoolkit.data.memory").log(Level.WARNING, null, ex);
             }
         }
     }

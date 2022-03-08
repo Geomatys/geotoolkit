@@ -20,13 +20,12 @@ package org.geotoolkit.util.logging;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.util.logging.Logging;
-
 import org.junit.*;
 import static org.junit.Assert.*;
 
 
 /**
- * Tests the {@link Logging} class.
+ * Tests the {@link Logger} class.
  *
  * @author Martin Desruisseaux (IRD)
  * @version 3.00

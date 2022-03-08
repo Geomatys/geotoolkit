@@ -30,7 +30,6 @@ import java.util.logging.LogRecord;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.CharSequences;
-import org.apache.sis.util.logging.Logging;
 
 
 /**
@@ -262,7 +261,7 @@ public class LoggedFormat<T> extends Format {
      */
     protected void logWarning(final LogRecord warning) {
         if (logger != null) {
-            final Logger logger = Logging.getLogger(this.logger);
+            final Logger logger = Logger.getLogger(this.logger);
             if (warning.getLoggerName() == null) {
                 warning.setLoggerName(logger.getName());
             }

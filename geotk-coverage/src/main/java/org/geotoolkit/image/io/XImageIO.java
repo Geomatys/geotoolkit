@@ -143,7 +143,7 @@ import org.geotoolkit.util.collection.DeferringIterator;
  */
 public final class XImageIO extends Static {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.image");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.image");
 
     /**
      * Used in {@code switch} statements for selecting the method to invoke

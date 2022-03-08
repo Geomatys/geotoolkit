@@ -19,13 +19,13 @@ package org.geotoolkit.filter.visitor;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.locationtech.jts.geom.Geometry;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.sis.internal.filter.FunctionNames;
 import org.geotoolkit.geometry.jts.JTS;
 import org.opengis.filter.Literal;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
-import org.apache.sis.util.logging.Logging;
 
 /**
  * Used to clean PropertyEqualsTo on identifiers.
@@ -55,7 +55,7 @@ public class FillCrsVisitor extends DuplicatingFilterVisitor {
                     }
                     obj = geo;
                 } catch (FactoryException ex) {
-                    Logging.getLogger("org.geotoolkit.filter.visitor").log(Level.SEVERE, null, ex);
+                    Logger.getLogger("org.geotoolkit.filter.visitor").log(Level.SEVERE, null, ex);
                 }
             }
             return ff.literal(obj);

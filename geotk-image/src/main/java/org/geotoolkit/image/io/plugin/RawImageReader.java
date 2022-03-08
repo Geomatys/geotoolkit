@@ -42,19 +42,17 @@ import javax.imageio.spi.ServiceRegistry;
 import javax.imageio.stream.ImageInputStream;
 import javax.media.jai.iterator.RectIterFactory;
 import javax.media.jai.iterator.WritableRectIter;
-
-import org.geotoolkit.internal.image.jai.RawImageInputStream;
-
-import org.geotoolkit.image.SampleModels;
-import org.geotoolkit.image.io.SampleConverter;
-import org.geotoolkit.image.io.SpatialImageReader;
-import org.geotoolkit.lang.SystemOverride;
-import org.geotoolkit.resources.Errors;
-import org.geotoolkit.resources.Descriptions;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.image.SampleModels;
+import org.geotoolkit.image.io.SampleConverter;
+import org.geotoolkit.image.io.SpatialImageReader;
 import org.geotoolkit.image.io.UnsupportedImageFormatException;
+import org.geotoolkit.internal.image.jai.RawImageInputStream;
+import org.geotoolkit.lang.SystemOverride;
+import org.geotoolkit.resources.Descriptions;
+import org.geotoolkit.resources.Errors;
 
 
 /**

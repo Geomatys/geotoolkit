@@ -41,7 +41,6 @@ import javax.swing.ImageIcon;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import org.apache.sis.measure.Units;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.ogc.xml.OGC110toGTTransformer;
 import org.geotoolkit.se.xml.v110.AnchorPointType;
 import org.geotoolkit.se.xml.v110.CategorizeType;
@@ -202,7 +201,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
         try {
             uri = new URI(ort.getHref());
         } catch (URISyntaxException ex) {
-            Logging.getLogger("org.geotoolkit.sld.xml").log(Level.WARNING, null, ex);
+            Logger.getLogger("org.geotoolkit.sld.xml").log(Level.WARNING, null, ex);
         }
 
         if (uri != null) {
@@ -453,7 +452,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
                 try{
                     return xmlUtilities.readFeatureTypeStyle(or, Specification.SymbologyEncoding.V_1_1_0);
                 }catch(JAXBException ex){
-                    Logging.getLogger("org.geotoolkit.sld.xml").log(Level.WARNING, null, ex);
+                    Logger.getLogger("org.geotoolkit.sld.xml").log(Level.WARNING, null, ex);
                 }
                 return null;
             }
@@ -556,7 +555,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
             try{
                 return xmlUtilities.readRule(or, Specification.SymbologyEncoding.V_1_1_0);
             } catch (JAXBException ex) {
-                Logging.getLogger("org.geotoolkit.sld.xml").log(Level.WARNING, null, ex);
+                Logger.getLogger("org.geotoolkit.sld.xml").log(Level.WARNING, null, ex);
             }
             return null;
         }
@@ -1080,7 +1079,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
                         final BufferedImage image = ImageIO.read(is);
                         icon = new ImageIcon(image);
                     }catch(IOException ex){
-                        Logging.getLogger("org.geotoolkit.sld.xml").log(Level.WARNING, null, ex);
+                        Logger.getLogger("org.geotoolkit.sld.xml").log(Level.WARNING, null, ex);
                     }
                 }
             }

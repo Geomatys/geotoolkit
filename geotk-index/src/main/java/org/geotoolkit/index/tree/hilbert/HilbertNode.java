@@ -21,14 +21,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.Classes;
-import static org.geotoolkit.internal.tree.TreeUtilities.*;
 import org.geotoolkit.index.tree.Node;
 import org.geotoolkit.internal.tree.TreeAccess;
+import static org.geotoolkit.internal.tree.TreeUtilities.*;
 import org.geotoolkit.path.iterator.HilbertIterator;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.util.StringUtilities;
 
 /**
@@ -562,7 +562,7 @@ final class HilbertNode extends Node {
                 return Classes.getShortClassName(this)+"Data : parent : "+getParentId()+" ID : "+getNodeId()+" sibling : "+getSiblingId()+" value : "+(-getChildId())+" bound : "+Arrays.toString(getBoundary());
             }
         } catch (IOException ex) {
-            Logging.getLogger("org.geotoolkit.index.tree.hilbert").log(Level.SEVERE, null, ex);
+            Logger.getLogger("org.geotoolkit.index.tree.hilbert").log(Level.SEVERE, null, ex);
         }
         return null;
     }

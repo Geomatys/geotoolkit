@@ -72,7 +72,6 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.TransferFunction;
 import org.apache.sis.util.iso.DefaultNameFactory;
 import org.apache.sis.util.SimpleInternationalString;
-import org.apache.sis.util.logging.Logging;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.geometry.isoonjts.GeometryUtils;
@@ -122,7 +121,7 @@ import org.w3c.dom.NodeList;
 @SuppressWarnings("restriction")
 public final class DimapAccessor extends Static {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.metadata.dimap");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.metadata.dimap");
 
     private DimapAccessor() {
     }

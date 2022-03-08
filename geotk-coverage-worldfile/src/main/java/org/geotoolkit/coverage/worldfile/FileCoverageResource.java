@@ -45,7 +45,6 @@ import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.referencing.operation.transform.TransformSeparator;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.WritableGridCoverageResource;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.TypeMap;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
@@ -68,7 +67,7 @@ import org.opengis.util.GenericName;
  */
 public final class FileCoverageResource extends AbstractGridResource implements WritableGridCoverageResource {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.coverage.filestore");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.coverage.filestore");
 
     private final FileCoverageStore store;
     private final GenericName name;
@@ -112,7 +111,7 @@ public final class FileCoverageResource extends AbstractGridResource implements 
                 try {
                     reader.dispose();
                 } catch (DataStoreException ex) {
-                    Logging.getLogger("org.geotoolkit.storage.coverage").log(Level.WARNING, ex.getMessage(), ex);
+                    Logger.getLogger("org.geotoolkit.storage.coverage").log(Level.WARNING, ex.getMessage(), ex);
                 }
             }
         }
@@ -154,7 +153,7 @@ public final class FileCoverageResource extends AbstractGridResource implements 
                 try {
                     reader.dispose();
                 } catch (DataStoreException ex) {
-                    Logging.getLogger("org.geotoolkit.storage.coverage").log(Level.WARNING, ex.getMessage(), ex);
+                    Logger.getLogger("org.geotoolkit.storage.coverage").log(Level.WARNING, ex.getMessage(), ex);
                 }
             }
         }

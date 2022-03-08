@@ -20,10 +20,11 @@ package org.geotoolkit.internal;
 import java.util.logging.Level;
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
+import java.util.logging.Logger;
 
 import org.apache.sis.util.Disposable;
-import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.Classes;
+import org.apache.sis.util.logging.Logging;
 
 
 /**
@@ -122,6 +123,6 @@ public class ReferenceQueueConsumer<T> extends Thread {
                 Logging.unexpectedException(null, getClass(), "run", exception);
             }
         }
-        Logging.getLogger("org.geotoolkit.internal").log(level, "{0} daemon stopped.", Classes.getShortClassName(this));
+        Logger.getLogger("org.geotoolkit.internal").log(level, "{0} daemon stopped.", Classes.getShortClassName(this));
     }
 }

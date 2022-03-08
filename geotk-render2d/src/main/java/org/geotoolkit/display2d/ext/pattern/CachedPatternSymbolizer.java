@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.NavigableMap;
 import java.util.Set;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.feature.builder.AttributeRole;
@@ -39,7 +40,6 @@ import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.image.ImageProcessor;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.FeatureSet;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
@@ -147,7 +147,7 @@ public class CachedPatternSymbolizer extends CachedSymbolizer<PatternSymbolizer>
             polygons = (Geometry[]) process.call().parameter(
                 CoverageToVectorDescriptor.GEOMETRIES.getName().getCode()).getValue();
         } catch (ProcessException ex) {
-            Logging.getLogger("org.geotoolkit.display2d.ext.pattern").log(Level.WARNING, null, ex);
+            Logger.getLogger("org.geotoolkit.display2d.ext.pattern").log(Level.WARNING, null, ex);
             throw new IOException(ex.getMessage(), ex);
         }
 
@@ -214,7 +214,7 @@ public class CachedPatternSymbolizer extends CachedSymbolizer<PatternSymbolizer>
             polygons = (Geometry[]) process.call().parameter(
                 CoverageToVectorDescriptor.GEOMETRIES.getName().getCode()).getValue();
         } catch (ProcessException ex) {
-            Logging.getLogger("org.geotoolkit.display2d.ext.pattern").log(Level.WARNING, null, ex);
+            Logger.getLogger("org.geotoolkit.display2d.ext.pattern").log(Level.WARNING, null, ex);
             throw new IOException(ex.getMessage(), ex);
         }
         return polygons;

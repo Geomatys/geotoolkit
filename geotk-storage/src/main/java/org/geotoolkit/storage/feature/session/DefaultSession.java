@@ -50,7 +50,6 @@ import org.opengis.referencing.operation.TransformException;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.internal.filter.FunctionNames;
 import org.apache.sis.referencing.NamedIdentifier;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.storage.feature.DefaultSelectorFeatureCollection;
 import org.geotoolkit.storage.feature.FeatureStreams;
@@ -384,7 +383,7 @@ public class DefaultSession extends AbstractSession {
                                 return FF.literal(geom);
                             }
                         } catch (Exception ex) {
-                            Logging.getLogger("org.geotoolkit.data.session").log(Level.WARNING, ex.getLocalizedMessage(), ex);
+                            Logger.getLogger("org.geotoolkit.data.session").log(Level.WARNING, ex.getLocalizedMessage(), ex);
                             geom = (Geometry) geom.clone();
                             JTS.setCRS(geom, crs);
                             return FF.literal(geom);

@@ -29,7 +29,6 @@ import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.image.ComputedImage;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.collection.BackingStoreException;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.math.XMath;
@@ -48,7 +47,7 @@ import org.geotoolkit.storage.multires.TileMatrix;
  */
 public class TileMatrixImage extends ComputedImage implements RenderedImage {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.storage.coverage");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.storage.coverage");
 
     /**
      * The original TileMatrix to read

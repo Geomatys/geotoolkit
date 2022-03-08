@@ -25,7 +25,6 @@ import javax.imageio.spi.IIORegistry;
 import javax.sql.DataSource;
 import org.apache.sis.internal.metadata.sql.Initializer;
 import org.apache.sis.internal.system.DefaultFactories;
-import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.logging.MonolineFormatter;
 import org.geotoolkit.internal.SetupService;
 import org.geotoolkit.internal.Threads;
@@ -62,7 +61,7 @@ import org.geotoolkit.internal.sql.DefaultDataSource;
  *     <td nowrap>{@code geotk-utility}</td>
  *     <td><ul>
  *       <li>If {@code platform != "server"}:
- *         <ul><li><code>{@linkplain Logging#forceMonolineConsoleOutput Logging.forceMonolineConsoleOutput}(null)</code></li></ul>
+ *         <ul><li><code>{@linkplain Logger#forceMonolineConsoleOutput Logger.forceMonolineConsoleOutput}(null)</code></li></ul>
  *       </li>
  *     </ul></td>
  *     <td>&nbsp;</td>

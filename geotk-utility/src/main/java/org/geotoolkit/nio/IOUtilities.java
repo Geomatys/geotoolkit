@@ -19,7 +19,6 @@ package org.geotoolkit.nio;
 
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Exceptions;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.io.ContentFormatException;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Errors;
@@ -56,7 +55,7 @@ public final class IOUtilities extends Static {
     /**
      * Logger
      */
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.io");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.io");
 
     /**
      * The default buffer size for copy operations.

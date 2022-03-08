@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.measure.Unit;
 import javax.swing.Icon;
 import javax.xml.bind.JAXBElement;
@@ -41,7 +42,6 @@ import org.geotoolkit.style.MutableStyleFactory;
 import org.apache.sis.util.SimpleInternationalString;
 import org.geotoolkit.util.StringUtilities;
 
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.filter.FilterFactory2;
 import org.opengis.filter.Expression;
 import org.opengis.metadata.citation.OnlineResource;
@@ -111,7 +111,7 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
         try {
             uri = new URI(ort.getHref());
         } catch (URISyntaxException ex) {
-            Logging.getLogger("org.geotoolkit.sld.xml").log(Level.WARNING, null, ex);
+            Logger.getLogger("org.geotoolkit.sld.xml").log(Level.WARNING, null, ex);
         }
 
         if (uri != null) {

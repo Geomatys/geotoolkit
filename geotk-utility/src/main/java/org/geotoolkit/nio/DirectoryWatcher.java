@@ -1,7 +1,6 @@
 package org.geotoolkit.nio;
 
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.logging.Logging;
 
 import javax.swing.event.EventListenerList;
 import java.io.Closeable;
@@ -46,7 +45,7 @@ import static java.nio.file.StandardWatchEventKinds.*;
  */
 public class DirectoryWatcher implements Closeable {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.io");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.io");
 
     private final WatchService service;
     private final Thread watchThread;

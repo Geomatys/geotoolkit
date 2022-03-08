@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.coverage.SampleDimension;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.image.io.plugin.yaml.internal.YamlImageInfo;
 
 /**
@@ -67,7 +66,7 @@ public final class YamlFiles {
     /**
      * Logger to diffuse no blocking error message.
      */
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.image.io.plugin.yaml");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.image.io.plugin.yaml");
 
     /**
      * Read Yaml informations from String.<br>

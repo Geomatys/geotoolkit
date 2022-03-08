@@ -33,7 +33,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.logging.Logging;
 
 /**
  * Utility class to build icones from TTF font.
@@ -43,7 +42,7 @@ import org.apache.sis.util.logging.Logging;
 public final class IconBuilder {
 
     /** The logger for the rendering module. */
-    static final Logger LOGGER = Logging.getLogger("org.geotoolkit.font");
+    static final Logger LOGGER = Logger.getLogger("org.geotoolkit.font");
 
     private static final Supplier<IllegalStateException> INIT_ERROR = () -> new IllegalStateException("Font awesome has not been initialized properly.");
 

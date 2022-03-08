@@ -54,7 +54,6 @@ import org.geotoolkit.observation.xml.AbstractObservation;
 import org.geotoolkit.sampling.xml.v100.SamplingCurveType;
 import org.geotoolkit.sampling.xml.v100.SamplingSolidType;
 import org.geotoolkit.sampling.xml.v100.SamplingSurfaceType;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.gml.xml.BoundingShape;
 import org.geotoolkit.swe.xml.v101.CompositePhenomenonType;
@@ -98,7 +97,7 @@ public class ObservationType implements Entry, AbstractObservation {
     /**
      * A logger (debugging purpose)
      */
-    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.observation.xml.v100");
+    protected static final Logger LOGGER = Logger.getLogger("org.geotoolkit.observation.xml.v100");
 
     /**
      *The observation name

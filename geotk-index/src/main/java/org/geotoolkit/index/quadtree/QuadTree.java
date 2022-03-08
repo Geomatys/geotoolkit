@@ -27,7 +27,6 @@ import java.util.logging.Logger;
 
 import org.geotoolkit.index.CloseableCollection;
 import org.geotoolkit.index.Data;
-import org.apache.sis.util.logging.Logging;
 
 import org.locationtech.jts.geom.Envelope;
 
@@ -46,7 +45,7 @@ public class QuadTree {
 
     private static final double SPLITRATIO = 0.55d;
 
-    public static final Logger LOGGER = Logging.getLogger("org.geotoolkit.index.quadtree");
+    public static final Logger LOGGER = Logger.getLogger("org.geotoolkit.index.quadtree");
 
     //open iterators
     private final Set iterators = new HashSet();

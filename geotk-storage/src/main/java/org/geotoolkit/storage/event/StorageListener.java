@@ -25,7 +25,6 @@ import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
 import org.geotoolkit.internal.ReferenceQueueConsumer;
 import org.apache.sis.util.Disposable;
-import org.apache.sis.util.logging.Logging;
 
 
 /**
@@ -41,7 +40,7 @@ import org.apache.sis.util.logging.Logging;
  */
 public final class StorageListener {
 
-    static final Logger LOGGER = Logging.getLogger("org.geotoolkit.storage");
+    static final Logger LOGGER = Logger.getLogger("org.geotoolkit.storage");
 
     private StorageListener(){}
 

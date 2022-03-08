@@ -26,19 +26,17 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.io.wkt.*;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.storage.multires.AbstractTileMatrixSet;
-import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.geotoolkit.storage.multires.TileMatrixSet;
 import org.geotoolkit.storage.multires.TileMatrix;
@@ -137,7 +135,7 @@ public class XMLPyramid implements TileMatrixSet {
                 crsobj = (CoordinateReferenceSystem) in.readObject();
             } catch (Exception ex) {
                 final String msg = "Unable to read base64 serialized CRS, fallback to WKT : "+ex.getMessage();
-                Logging.getLogger("org.geotoolkit.coverage.xmlstore").log(Level.WARNING, msg);
+                Logger.getLogger("org.geotoolkit.coverage.xmlstore").log(Level.WARNING, msg);
             }
         }
 
@@ -176,7 +174,7 @@ public class XMLPyramid implements TileMatrixSet {
                 out.close();
                 this.serializedCrs = Base64.getEncoder().encodeToString(bo.toByteArray());
             } catch (IOException serializedEx) {
-                Logging.getLogger("org.geotoolkit.coverage.xmlstore").log(Level.WARNING, serializedEx.getMessage(), serializedEx);
+                Logger.getLogger("org.geotoolkit.coverage.xmlstore").log(Level.WARNING, serializedEx.getMessage(), serializedEx);
             }
         }
 

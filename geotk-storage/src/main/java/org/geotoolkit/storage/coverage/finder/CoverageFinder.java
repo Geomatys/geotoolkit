@@ -22,13 +22,13 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Utilities;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.storage.multires.TileMatrices;
 import org.opengis.geometry.DirectPosition;
@@ -168,7 +168,7 @@ public abstract class CoverageFinder {
                 try {
                     pyramidBound = Envelopes.transform(pyramidBound, crs2D);
                 } catch (TransformException ex) {
-                    Logging.getLogger("org.geotoolkit.storage.coverage").log(Level.WARNING, ex.getMessage(), ex);
+                    Logger.getLogger("org.geotoolkit.storage.coverage").log(Level.WARNING, ex.getMessage(), ex);
                 }
                 if (!crsBound.intersects(pyramidBound, true)) continue;// no intersection
                 intersection.setEnvelope(crsBound);

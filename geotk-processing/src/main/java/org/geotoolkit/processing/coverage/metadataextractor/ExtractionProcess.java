@@ -18,13 +18,13 @@
 package org.geotoolkit.processing.coverage.metadataextractor;
 
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStores;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
 import org.opengis.metadata.Metadata;
@@ -77,14 +77,14 @@ public class ExtractionProcess extends AbstractProcess {
                 Metadata metadata = ((Resource) input).getMetadata();
                 outputParameters.getOrCreate(ExtractionDescriptor.OUT_METADATA).setValue(metadata);
             } catch (DataStoreException ex) {
-                Logging.getLogger("org.geotoolkit.processing.coverage.metadataextractor").log(Level.SEVERE, null, ex);
+                Logger.getLogger("org.geotoolkit.processing.coverage.metadataextractor").log(Level.SEVERE, null, ex);
             }
         } else {
             try (DataStore store = DataStores.open(input)) {
                 Metadata metadata = store.getMetadata();
                 outputParameters.getOrCreate(ExtractionDescriptor.OUT_METADATA).setValue(metadata);
             } catch (DataStoreException ex) {
-                Logging.getLogger("org.geotoolkit.processing.coverage.metadataextractor").log(Level.SEVERE, null, ex);
+                Logger.getLogger("org.geotoolkit.processing.coverage.metadataextractor").log(Level.SEVERE, null, ex);
             }
         }
     }

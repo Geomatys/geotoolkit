@@ -24,7 +24,6 @@ import java.util.ServiceLoader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.metadata.iso.DefaultMetadata;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.ows.xml.v100.ExceptionReport;
 
 
@@ -34,7 +33,7 @@ import org.geotoolkit.ows.xml.v100.ExceptionReport;
  */
 public class CSWClassesContext {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.csw.xml");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.csw.xml");
 
     protected CSWClassesContext() {}
 

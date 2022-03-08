@@ -47,7 +47,6 @@ import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.NoSuchDataException;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.ReferencingUtilities;
@@ -79,7 +78,7 @@ public class TileMatrixSetCoverageReader <T extends TiledResource & org.apache.s
 
     private final T ref;
 
-    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.storage.coverage");
+    protected static final Logger LOGGER = Logger.getLogger("org.geotoolkit.storage.coverage");
 
     public TileMatrixSetCoverageReader(T ref) {
         this.ref = ref;

@@ -38,7 +38,6 @@ import org.apache.sis.portrayal.MapLayers;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.ext.BackgroundTemplate;
 import org.geotoolkit.display2d.ext.BackgroundUtilities;
@@ -58,7 +57,7 @@ import org.opengis.util.InternationalString;
  * @module
  */
 public class J2DLegendUtilities {
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.display2d.ext.legend");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.display2d.ext.legend");
 
     private static final int GLYPH_SPACE = 5;
 

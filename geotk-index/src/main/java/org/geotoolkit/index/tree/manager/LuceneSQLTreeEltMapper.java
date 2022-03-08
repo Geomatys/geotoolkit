@@ -21,7 +21,6 @@ import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.logging.Logger;
 import javax.sql.DataSource;
-import org.apache.sis.util.logging.Logging;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -30,7 +29,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public abstract class LuceneSQLTreeEltMapper {
 
-    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.index.tree.manager");
+    protected static final Logger LOGGER = Logger.getLogger("org.geotoolkit.index.tree.manager");
 
      /**
      * Mutual Coordinate Reference System from all stored NamedEnvelopes.

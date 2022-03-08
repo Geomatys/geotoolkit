@@ -64,7 +64,7 @@ import org.apache.sis.util.logging.Logging;
  */
 public class RasterSymbolizerRendererService extends AbstractSymbolizerRendererService<RasterSymbolizer, CachedRasterSymbolizer>{
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.display2d.style.renderer");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.display2d.style.renderer");
 
     private static final int LEGEND_PALETTE_WIDTH = 30;
     private static final Font LEGEND_FONT = new Font(Font.SERIF, Font.BOLD, 12);

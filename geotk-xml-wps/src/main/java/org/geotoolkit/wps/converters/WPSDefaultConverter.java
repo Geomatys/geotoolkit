@@ -9,7 +9,6 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.feature.util.converter.SimpleConverter;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.apache.sis.util.logging.Logging;
 
 /**
  * Default abstract class for {@link WPSObjectConverter}.
@@ -17,7 +16,7 @@ import org.apache.sis.util.logging.Logging;
  */
 public abstract class WPSDefaultConverter<S, T> extends SimpleConverter<S, T> implements WPSObjectConverter<S, T> {
 
-    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.wps.converters");
+    protected static final Logger LOGGER = Logger.getLogger("org.geotoolkit.wps.converters");
 
     /**
      * Default constructor.

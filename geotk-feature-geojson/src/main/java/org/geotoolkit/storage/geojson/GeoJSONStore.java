@@ -42,7 +42,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.WritableFeatureSet;
 import org.apache.sis.util.iso.Names;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.internal.geojson.FeatureTypeUtils;
 import org.geotoolkit.internal.geojson.GeoJSONParser;
 import org.geotoolkit.internal.geojson.GeoJSONUtils;
@@ -77,7 +76,7 @@ import org.opengis.util.GenericName;
  */
 public final class GeoJSONStore extends DataStore implements ResourceOnFileSystem, WritableFeatureSet {
 
-    private static final Logger LOGGER = Logging.getLogger("org.apache.sis.storage.geojson");
+    private static final Logger LOGGER = Logger.getLogger("org.apache.sis.storage.geojson");
     private static final String DESC_FILE_SUFFIX = "_Type.json";
 
     private final ReadWriteLock rwLock = new ReentrantReadWriteLock();

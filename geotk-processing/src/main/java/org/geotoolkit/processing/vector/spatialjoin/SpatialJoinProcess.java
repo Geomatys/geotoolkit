@@ -19,6 +19,7 @@ package org.geotoolkit.processing.vector.spatialjoin;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
@@ -26,7 +27,6 @@ import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.feature.SingleAttributeTypeBuilder;
 import org.geotoolkit.geometry.jts.JTS;
@@ -146,7 +146,7 @@ public class SpatialJoinProcess extends AbstractProcess {
                 try {
                     featureOut = (FeatureSet) proc.call().parameter("feature_out").getValue();
                 } catch (ProcessException ex) {
-                    Logging.getLogger("org.geotoolkit.processing.vector.spatialjoin").log(Level.WARNING, null, ex);
+                    Logger.getLogger("org.geotoolkit.processing.vector.spatialjoin").log(Level.WARNING, null, ex);
                     return null;
                 }
 

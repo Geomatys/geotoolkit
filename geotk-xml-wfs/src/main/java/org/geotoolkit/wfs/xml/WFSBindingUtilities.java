@@ -23,6 +23,7 @@ import java.io.Reader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
@@ -31,7 +32,6 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.Source;
 import org.apache.sis.util.ArgumentChecks;
 
-import org.apache.sis.util.logging.Logging;
 import org.apache.sis.xml.MarshallerPool;
 import org.geotoolkit.ows.xml.ExceptionResponse;
 
@@ -105,7 +105,7 @@ public class WFSBindingUtilities {
                 final URL url = online.getLinkage().toURL();
                 return unMarshaller.unmarshal(url);
             } catch (MalformedURLException ex) {
-                Logging.getLogger("org.geotoolkit.wfs.xml").log(Level.WARNING, null, ex);
+                Logger.getLogger("org.geotoolkit.wfs.xml").log(Level.WARNING, null, ex);
                 return null;
             }
 

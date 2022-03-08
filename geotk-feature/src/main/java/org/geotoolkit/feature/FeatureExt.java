@@ -53,7 +53,6 @@ import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.Static;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.apache.sis.util.iso.DefaultNameSpace;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.internal.feature.ArrayFeature;
@@ -90,7 +89,7 @@ import org.opengis.util.NameFactory;
  */
 public final class FeatureExt extends Static {
 
-    public static final Logger LOGGER = Logging.getLogger("org.geotoolkit.feature");
+    public static final Logger LOGGER = Logger.getLogger("org.geotoolkit.feature");
 
     /**
      * Default attribute type names separator.

@@ -44,9 +44,9 @@ import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.CharSequences;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.nio.IOUtilities;
+import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -62,7 +62,7 @@ import org.opengis.feature.PropertyType;
  */
 public class MIFReader implements Iterator<Feature>, AutoCloseable {
 
-    private final static Logger LOGGER = Logging.getLogger("org.geotoolkit.data.mapinfo.mif");
+    private final static Logger LOGGER = Logger.getLogger("org.geotoolkit.data.mapinfo.mif");
 
     private static final Pattern GEOMETRY_ID_PATTERN;
     static {

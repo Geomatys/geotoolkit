@@ -40,9 +40,9 @@ import org.geotoolkit.display.shape.DoubleDimension2D;
 import org.apache.sis.referencing.operation.matrix.Matrix2;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
-import org.apache.sis.util.logging.Logging;
 
 import static org.apache.sis.util.ArgumentChecks.ensurePositive;
+import org.apache.sis.util.logging.Logging;
 
 
 /**

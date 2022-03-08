@@ -30,7 +30,6 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.measure.Longitude;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.observation.xml.Process;
 import org.geotoolkit.sampling.xml.SamplingFeature;
@@ -59,7 +58,7 @@ import ucar.nc2.Variable;
  */
 public class NetCDFExtractor {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.sos.netcdf");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.sos.netcdf");
     private static final long LIMIT = (Integer.MIN_VALUE * -1l) + 1l;
 
     public static ExtractionResult getObservationFromNetCDF(final Path netCDFFile, final String procedureID) throws NetCDFParsingException {

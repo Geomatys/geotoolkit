@@ -49,12 +49,12 @@ import org.apache.sis.util.iso.Types;
 import org.geotoolkit.internal.image.io.DataTypes;
 import org.apache.sis.util.CharSequences;
 import org.apache.sis.util.NullArgumentException;
-import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.iso.DefaultNameSpace;
 import org.geotoolkit.lang.Builder;
 
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.DefaultConversion;
+import org.apache.sis.util.logging.Logging;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
 
 

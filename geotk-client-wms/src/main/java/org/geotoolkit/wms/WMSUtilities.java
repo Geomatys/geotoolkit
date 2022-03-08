@@ -41,7 +41,6 @@ import org.apache.sis.referencing.cs.AbstractCS;
 import org.apache.sis.referencing.cs.DefaultCoordinateSystemAxis;
 import org.apache.sis.referencing.datum.DefaultEngineeringDatum;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.coverage.grid.EstimatedGridGeometry;
 import org.geotoolkit.referencing.ReferencingUtilities;
@@ -65,7 +64,7 @@ import org.opengis.util.FactoryException;
  */
 public final class WMSUtilities {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.wms");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.wms");
 
     private static final SimpleDateFormat PERIOD_DATE_FORMAT = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
     static {
@@ -290,7 +289,7 @@ public final class WMSUtilities {
                                     }
                                     continue;
                                 } catch (ParseException ex) {
-                                    Logging.getLogger("org.geotoolkit.wms").log(Level.FINER, "Value : {0} is not a period", candidate);
+                                    Logger.getLogger("org.geotoolkit.wms").log(Level.FINER, "Value : {0} is not a period", candidate);
                                 }
                             }
 
@@ -300,7 +299,7 @@ public final class WMSUtilities {
                                 dblValues.add((double)date.getTime());
                                 continue;
                             } catch (ParseException ex) {
-                                Logging.getLogger("org.geotoolkit.wms").log(Level.FINER, "Value : {0} is not a date", candidate);
+                                Logger.getLogger("org.geotoolkit.wms").log(Level.FINER, "Value : {0} is not a date", candidate);
                             }
                         }
 

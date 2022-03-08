@@ -36,7 +36,6 @@ import org.apache.sis.util.SimpleInternationalString;
 import org.geotoolkit.temporal.reference.DefaultTemporalCoordinateSystem;
 import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.util.collection.UnSynchronizedCache;
-import org.apache.sis.util.logging.Logging;
 
 import org.opengis.temporal.CalendarDate;
 import org.opengis.temporal.DateAndTime;
@@ -57,7 +56,7 @@ import static org.geotoolkit.temporal.object.TemporalConstants.*;
  */
 public final class TemporalUtilities {
 
-    private static final Logger LOGGER = Logging
+    private static final Logger LOGGER = Logger
             .getLogger("org.geotoolkit.temporal.object");
     private static final String DEFAULT_TIMEZONE = TimeZone.getDefault()
             .getID();

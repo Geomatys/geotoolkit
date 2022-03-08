@@ -6,12 +6,12 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.measure.Quantity;
 import javax.xml.bind.JAXBElement;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.IdentifiedObjects;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.gml.JTStoGeometry;
 import org.geotoolkit.gml.xml.AbstractGeometry;
@@ -307,7 +307,7 @@ public class FilterToOGC200Converter implements FilterToOGCConverter<FilterType>
                 try {
                     crs = CRS.forCode(srid);
                 } catch (Exception ex) {
-                    Logging.getLogger("org.geotoolkit.sld.xml").log(Level.WARNING, null, ex);
+                    Logger.getLogger("org.geotoolkit.sld.xml").log(Level.WARNING, null, ex);
                     crs = null;
                 }
                 final AbstractGeometry gmlGeom;
@@ -349,7 +349,7 @@ public class FilterToOGC200Converter implements FilterToOGCConverter<FilterType>
                     try {
                         urn = IdentifiedObjects.lookupURN(genv.getCoordinateReferenceSystem(), null);
                     } catch (FactoryException ex) {
-                        Logging.getLogger("org.geotoolkit.sld.xml").log(Level.WARNING, null, ex);
+                        Logger.getLogger("org.geotoolkit.sld.xml").log(Level.WARNING, null, ex);
                         urn = null;
                     }
                     if (urn == null) {

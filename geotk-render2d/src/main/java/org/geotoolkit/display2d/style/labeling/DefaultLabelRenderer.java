@@ -29,10 +29,10 @@ import java.awt.geom.RoundRectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.j2d.TextStroke;
 import static org.apache.sis.util.ArgumentChecks.*;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.opengis.referencing.operation.TransformException;
 
@@ -119,7 +119,7 @@ public class DefaultLabelRenderer implements LabelRenderer{
             //point to change from tile to tile
             geoms = label.getGeometry().getDisplayGeometryJTS();
         } catch (TransformException ex) {
-            Logging.getLogger("org.geotoolkit.display2d.style.labeling").log(Level.WARNING, null, ex);
+            Logger.getLogger("org.geotoolkit.display2d.style.labeling").log(Level.WARNING, null, ex);
             return;
         }
 
@@ -182,7 +182,7 @@ public class DefaultLabelRenderer implements LabelRenderer{
         try {
             geoms = label.getGeometry().getDisplayShape();
         } catch (TransformException ex) {
-            Logging.getLogger("org.geotoolkit.display2d.style.labeling").log(Level.WARNING, null, ex);
+            Logger.getLogger("org.geotoolkit.display2d.style.labeling").log(Level.WARNING, null, ex);
             return;
         }
 

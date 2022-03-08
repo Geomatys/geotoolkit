@@ -27,7 +27,6 @@ import org.apache.sis.parameter.DefaultParameterValue;
 import org.apache.sis.util.ObjectConverter;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.cql.CQL;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.filter.function.groovy.GroovyFunctionFactory;
@@ -61,7 +60,7 @@ import org.opengis.util.NoSuchIdentifierException;
  */
 public class ChainProcess extends AbstractProcess {
 
-    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.processing.chain");
+    protected static final Logger LOGGER = Logger.getLogger("org.geotoolkit.processing.chain");
 
     private Process currentProcess;
 

@@ -66,7 +66,6 @@ import org.apache.sis.util.NullArgumentException;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.collection.Cache;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
@@ -163,7 +162,7 @@ public final class GO2Utilities {
     public static final Point2D GLYPH_POINT;
     public static final Shape GLYPH_TEXT;
 
-    public static final Logger LOGGER = Logging.getLogger("org.geotoolkit.display2d");
+    public static final Logger LOGGER = Logger.getLogger("org.geotoolkit.display2d");
 
     /**
      * A tolerance value for black color. Used in {@linkplain #removeBlackBorder(java.awt.image.WritableRenderedImage)}

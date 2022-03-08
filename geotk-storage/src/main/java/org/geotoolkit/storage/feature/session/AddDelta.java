@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.storage.DataStoreException;
@@ -35,7 +36,6 @@ import org.geotoolkit.storage.feature.FeatureIterator;
 import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import static org.apache.sis.util.ArgumentChecks.*;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.storage.feature.FeatureStreams;
 import org.geotoolkit.storage.feature.query.QueryUtilities;
 import org.geotoolkit.util.NamesExt;
@@ -73,7 +73,7 @@ public class AddDelta extends AbstractDelta{
         try {
             ft = session.getFeatureStore().getFeatureType(typeName);
         } catch (DataStoreException ex) {
-            Logging.getLogger("org.geotoolkit.data.session").log(Level.WARNING, null, ex);
+            Logger.getLogger("org.geotoolkit.data.session").log(Level.WARNING, null, ex);
             ft = null;
         }
 
@@ -93,7 +93,7 @@ public class AddDelta extends AbstractDelta{
                 try {
                     ((Closeable) ite).close();
                 } catch (IOException ex) {
-                    Logging.getLogger("org.geotoolkit.data.session").log(Level.WARNING, "Error while closing iterator : ", ex);
+                    Logger.getLogger("org.geotoolkit.data.session").log(Level.WARNING, "Error while closing iterator : ", ex);
                 }
             }
         }

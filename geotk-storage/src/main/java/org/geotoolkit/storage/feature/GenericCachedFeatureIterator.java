@@ -21,13 +21,8 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.sis.util.Classes;
-import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.storage.feature.FeatureCollection;
-import org.geotoolkit.storage.feature.FeatureIterator;
-import org.geotoolkit.storage.feature.FeatureReader;
-import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
-import org.geotoolkit.storage.feature.FeatureWriter;
 import org.geotoolkit.storage.memory.WrapFeatureCollection;
 import org.geotoolkit.factory.Hints;
 import org.opengis.feature.Feature;
@@ -145,7 +140,7 @@ public class GenericCachedFeatureIterator implements FeatureIterator {
             try {
                 buffer = (Feature[]) queue.take();
             } catch (InterruptedException ex) {
-                Logging.getLogger("org.geotoolkit.data.memory").log(Level.WARNING, ex.getMessage(), ex);
+                Logger.getLogger("org.geotoolkit.data.memory").log(Level.WARNING, ex.getMessage(), ex);
             }
             bufferIndex = 0;
 
@@ -282,7 +277,7 @@ public class GenericCachedFeatureIterator implements FeatureIterator {
                         }
                     }catch(FeatureStoreRuntimeException ex){
                         subException = ex;
-                        Logging.getLogger("org.geotoolkit.data.memory").log(Level.WARNING, subException.getMessage(),ex);
+                        Logger.getLogger("org.geotoolkit.data.memory").log(Level.WARNING, subException.getMessage(),ex);
                         break;
                     }
 
@@ -297,7 +292,7 @@ public class GenericCachedFeatureIterator implements FeatureIterator {
                                     QUEUELOCK.wait();
                                 }
                             } catch (InterruptedException ex) {
-                                Logging.getLogger("org.geotoolkit.data.memory").log(Level.WARNING, ex.getMessage(), ex);
+                                Logger.getLogger("org.geotoolkit.data.memory").log(Level.WARNING, ex.getMessage(), ex);
                             }
                         }
 

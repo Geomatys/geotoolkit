@@ -19,6 +19,7 @@ package org.geotoolkit.wms.xml.v111;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -30,7 +31,6 @@ import org.apache.sis.coverage.grid.GridOrientation;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.EstimatedGridGeometry;
 import org.geotoolkit.wms.xml.AbstractDimension;
 import org.geotoolkit.wms.xml.AbstractGeographicBoundingBox;
@@ -542,7 +542,7 @@ public class Layer implements AbstractLayer {
                 return new GridGeometry(null, env, GridOrientation.HOMOTHETY);
             }
         } catch (FactoryException e) {
-            Logging.getLogger("org.geotoolkit.wms.xml.v110").warning(e.getMessage());
+            Logger.getLogger("org.geotoolkit.wms.xml.v110").warning(e.getMessage());
         }
 
         return null;

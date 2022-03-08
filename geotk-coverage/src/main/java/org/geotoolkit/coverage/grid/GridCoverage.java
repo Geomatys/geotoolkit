@@ -65,13 +65,12 @@ import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.Localized;
-import org.apache.sis.util.iso.Types;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.io.LineWriter;
 import org.apache.sis.referencing.operation.matrix.Matrices;
 import org.apache.sis.referencing.operation.matrix.MatrixSIS;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.resources.Errors;
 import org.opengis.coverage.CannotEvaluateException;
 import org.opengis.geometry.DirectPosition;
@@ -79,7 +78,6 @@ import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;
-import org.opengis.util.InternationalString;
 
 
 /**
@@ -126,7 +124,7 @@ abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCoverage im
     /**
      * The logger for grid coverage operations.
      */
-    public static final Logger LOGGER = Logging.getLogger("org.geotoolkit.coverage.grid");
+    public static final Logger LOGGER = Logger.getLogger("org.geotoolkit.coverage.grid");
 
     /**
      * Sources grid coverage, or {@code null} if none. This information is lost during

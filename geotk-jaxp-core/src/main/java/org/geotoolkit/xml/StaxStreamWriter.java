@@ -37,7 +37,6 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.Result;
 import javax.xml.transform.stax.StAXResult;
-import org.apache.sis.util.logging.Logging;
 import org.apache.sis.xml.Namespaces;
 
 
@@ -78,7 +77,7 @@ public abstract class StaxStreamWriter extends AbstractConfigurable {
     /**
      * Logger for this writer.
      */
-    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.xml");
+    protected static final Logger LOGGER = Logger.getLogger("org.geotoolkit.xml");
 
     /**
      * The factory built-in the JDK. This is different than {@link XMLOutputFactory#newFactory()},

@@ -72,7 +72,6 @@ import org.apache.sis.referencing.cs.DefaultCoordinateSystemAxis;
 import org.apache.sis.referencing.datum.DefaultEllipsoid;
 import org.apache.sis.referencing.datum.DefaultGeodeticDatum;
 import org.apache.sis.referencing.factory.GeodeticAuthorityFactory;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.image.io.metadata.ReferencingBuilder;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
@@ -126,7 +125,7 @@ final class GeoTiffCRSReader {
     /**
      * Logger to diffuse no blocking error message.
      */
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.metadata.geotiff");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.metadata.geotiff");
 
     /** EPSG factories for various purposes. */
     private final GeodeticAuthorityFactory epsgFactory;

@@ -24,6 +24,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.measure.Unit;
 import javax.xml.bind.JAXBException;
 import org.apache.sis.internal.system.DefaultFactories;
@@ -62,7 +63,6 @@ import org.opengis.style.Stroke;
 import org.opengis.style.Symbolizer;
 import org.opengis.style.TextSymbolizer;
 import org.geotoolkit.sld.xml.Specification;
-import org.apache.sis.util.logging.Logging;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.opengis.filter.Filter;
@@ -259,7 +259,7 @@ public class XMLUtilitiesTest {
         OnlineResource online = null;
         try { online = STYLE_FACTORY.onlineResource(new URI("http://geomayts.fr/anSLDFile.xml"));
         } catch (URISyntaxException ex) {
-            Logging.getLogger("org.geotoolkit.style").log(Level.WARNING, null, ex);
+            Logger.getLogger("org.geotoolkit.style").log(Level.WARNING, null, ex);
         }
         SLDLibrary lib = SLD_FACTORY.createSLDLibrary(online);
         geoSLD.libraries().add(lib);

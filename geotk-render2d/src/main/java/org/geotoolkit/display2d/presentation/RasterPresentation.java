@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.media.jai.ImageLayout;
 import javax.media.jai.NullOpImage;
 import javax.media.jai.OpImage;
@@ -40,7 +41,6 @@ import org.apache.sis.portrayal.MapLayer;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.Resource;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display2d.GO2Hints;
@@ -170,7 +170,7 @@ public class RasterPresentation extends Grid2DPresentation {
             }
 
         } catch (MismatchedDimensionException | TransformException | FactoryException ex) {
-            Logging.getLogger("org.geotoolkit.display2d").log(Level.INFO, ex.getMessage(), ex);
+            Logger.getLogger("org.geotoolkit.display2d").log(Level.INFO, ex.getMessage(), ex);
         }
         return false;
     }
