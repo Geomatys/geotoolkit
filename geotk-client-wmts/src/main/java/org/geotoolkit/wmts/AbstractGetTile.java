@@ -19,7 +19,6 @@ package org.geotoolkit.wmts;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.AbstractRequest;
 import org.geotoolkit.security.ClientSecurity;
 
@@ -34,7 +33,7 @@ public abstract class AbstractGetTile extends AbstractRequest implements GetTile
     /**
      * Default logger for all GetMap requests.
      */
-    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.wmts");
+    protected static final Logger LOGGER = Logger.getLogger("org.geotoolkit.wmts");
 
     /**
      * The version to use for this webservice request.

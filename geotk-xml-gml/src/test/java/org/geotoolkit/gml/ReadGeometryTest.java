@@ -3,10 +3,10 @@ package org.geotoolkit.gml;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.ValidationEvent;
-import org.apache.sis.util.logging.Logging;
 import org.apache.sis.xml.MarshallerPool;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.gml.xml.GMLMarshallerPool;
@@ -56,7 +56,7 @@ public abstract class ReadGeometryTest {
 
             final LogRecord record = new LogRecord(shouldContinue ? Level.WARNING : Level.SEVERE, event.getMessage());
             record.setThrown(event.getLinkedException());
-            Logging.getLogger("org.geotoolkit.gml").log(record);
+            Logger.getLogger("org.geotoolkit.gml").log(record);
 
             return shouldContinue;
         });

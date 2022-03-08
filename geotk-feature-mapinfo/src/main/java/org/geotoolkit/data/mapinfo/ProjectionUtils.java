@@ -52,7 +52,6 @@ import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.logging.Logging;
 
 import static org.geotoolkit.data.mapinfo.ProjectionParameters.PARAMETER_LIST;
 import static org.geotoolkit.data.mapinfo.ProjectionParameters.getProjectionParameters;
@@ -69,7 +68,7 @@ public class ProjectionUtils {
     private static final String MAP_INFO_NAMESPACE = org.apache.sis.metadata.iso.citation.Citations.getIdentifier(Citations.MAP_INFO);
     private static final char NAMESPACE_SEPARATOR = ':';
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data.mapinfo");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.data.mapinfo");
 
     private static final CRSFactory CRS_FACTORY = DefaultFactories.forBuildin(CRSFactory.class);
     private static final CSFactory CS_FACTORY = DefaultFactories.forBuildin(CSFactory.class);

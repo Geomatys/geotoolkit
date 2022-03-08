@@ -32,7 +32,6 @@ import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.AbstractClient;
 import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.client.Client;
@@ -73,7 +72,7 @@ import org.opengis.util.GenericName;
  */
 public class WebMapClient extends AbstractClient implements Client, Aggregate {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.wms");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.wms");
 
     private AbstractWMSCapabilities capabilities;
     private Resource rootNode = null;

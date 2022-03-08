@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlTransient;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.temporal.object.ISODateParser;
 import org.opengis.temporal.TemporalPosition;
 
@@ -37,7 +36,7 @@ import org.opengis.temporal.TemporalPosition;
 @XmlTransient
 public abstract class AbstractTimePosition {
 
-    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.gml.xml");
+    protected static final Logger LOGGER = Logger.getLogger("org.geotoolkit.gml.xml");
 
     protected static final List<DateFormat> FORMATTERS = new ArrayList<DateFormat>();
 

@@ -40,6 +40,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.IIOException;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
@@ -52,7 +53,6 @@ import org.apache.sis.internal.storage.io.ChannelImageOutputStream;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.NullArgumentException;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.image.internal.ImageUtils;
 import static org.geotoolkit.image.internal.ImageUtils.*;
 import org.geotoolkit.image.io.SpatialImageWriteParam;
@@ -3635,7 +3635,7 @@ public class TiffImageWriter extends SpatialImageWriter {
                 }
             }
         } catch (IOException ex) {
-            Logging.getLogger("org.geotoolkit.image.io.plugin").log(Level.SEVERE, null, ex);
+            Logger.getLogger("org.geotoolkit.image.io.plugin").log(Level.SEVERE, null, ex);
         }
         channel = null;
     }

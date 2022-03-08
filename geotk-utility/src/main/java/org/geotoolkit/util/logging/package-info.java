@@ -36,14 +36,14 @@
  *
  * {@section Note for Geotk developers}
  * All Geotk code should fetch their logger through a call to the SIS
- * {@link org.apache.sis.util.logging.Logging#getLogger(String)} method, <strong>not</strong>
+ * {@link org.apache.sis.util.logging.Logger#getLogger(String)} method, <strong>not</strong>
  * the standard {@link java.util.logging.Logger#getLogger(String)} method. This is necessary in
  * order to give Geotk/SIS a chance to redirect log events to an other logging framework.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.16
  *
- * @see <a href="http://download.oracle.com/javase/6/docs/technotes/guides/logging/overview.html">Java Logging Overview</a>
+ * @see <a href="http://download.oracle.com/javase/6/docs/technotes/guides/logging/overview.html">Java Logger Overview</a>
  *
  * @since 2.4
  * @module

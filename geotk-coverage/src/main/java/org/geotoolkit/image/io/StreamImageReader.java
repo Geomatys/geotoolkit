@@ -27,9 +27,9 @@ import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.stream.ImageInputStream;
+import org.apache.sis.util.logging.Logging;
 
 import org.geotoolkit.resources.Errors;
-import org.apache.sis.util.logging.Logging;
 
 
 /**

@@ -38,11 +38,11 @@ import org.opengis.metadata.citation.Citation;
 import org.opengis.coverage.grid.GridEnvelope;
 
 import org.apache.sis.measure.NumberRange;
-import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.iso.Types;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.geometry.GeneralDirectPosition;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.resources.Errors;
 import org.opengis.coverage.grid.RectifiedGrid;
 

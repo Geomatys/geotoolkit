@@ -31,7 +31,6 @@ import org.opengis.util.FactoryException;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
 import org.apache.sis.referencing.CRS;
-import org.apache.sis.util.logging.Logging;
 
 import org.geotoolkit.image.io.metadata.ReferencingBuilder;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
@@ -123,7 +122,7 @@ public abstract class GeoTiffExtension {
         CoordinateReferenceSystem crs = rb.getCoordinateReferenceSystem(CoordinateReferenceSystem.class);
         if(crs==null){
             //no crs defined, we can't add any slice axis value
-            final Logger logger = Logging.getLogger("org.geotoolkit.metadata.geotiff");
+            final Logger logger = Logger.getLogger("org.geotoolkit.metadata.geotiff");
             logger.info("Tiff has no base CRS, slice dimension crs will not be added.");
             return;
         }

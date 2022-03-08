@@ -18,7 +18,6 @@ import javax.xml.bind.ValidationEventHandler;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.sis.test.xml.DocumentComparator;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.logging.Logging;
 import org.apache.sis.xml.MarshallerPool;
 import org.junit.Assert;
 import org.xml.sax.SAXException;
@@ -29,7 +28,7 @@ import org.xml.sax.SAXException;
  */
 public class XMLBindingTestBuilder<T> {
 
-    public static final Logger LOGGER = Logging.getLogger("org.geotoolkit.wps.xml");
+    public static final Logger LOGGER = Logger.getLogger("org.geotoolkit.wps.xml");
 
     private static final ErrorLogger ERROR_LOGGER = new ErrorLogger();
 

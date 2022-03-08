@@ -22,7 +22,6 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 //Junit dependencies
-import org.apache.sis.util.logging.Logging;
 import org.apache.sis.xml.MarshallerPool;
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -34,7 +33,7 @@ import static org.junit.Assert.*;
  */
 public class XsdXMLBindingTest extends org.geotoolkit.test.TestBase {
 
-    private Logger logger = Logging.getLogger("org.geotoolkit.wfs.xml");
+    private Logger logger = Logger.getLogger("org.geotoolkit.wfs.xml");
     private static MarshallerPool pool;
 
     private Unmarshaller unmarshaller;

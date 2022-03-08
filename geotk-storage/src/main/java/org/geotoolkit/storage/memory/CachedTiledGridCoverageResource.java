@@ -34,6 +34,7 @@ import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
@@ -48,7 +49,6 @@ import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
 import org.apache.sis.util.collection.Cache;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.internal.Threads;
 import org.geotoolkit.nio.IOUtilities;
@@ -612,7 +612,7 @@ public class CachedTiledGridCoverageResource <T extends TiledResource & org.apac
             try {
                 mosaic.loadTile(col, row, hints);
             } catch (DataStoreException ex) {
-                Logging.getLogger("org.geotoolkit.storage").log(Level.WARNING, ex.getMessage(), ex);
+                Logger.getLogger("org.geotoolkit.storage").log(Level.WARNING, ex.getMessage(), ex);
             }
         }
 

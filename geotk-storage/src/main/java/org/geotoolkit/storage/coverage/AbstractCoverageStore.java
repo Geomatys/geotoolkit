@@ -43,7 +43,6 @@ import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
 import org.apache.sis.storage.event.WarningEvent;
 import org.apache.sis.util.Classes;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.event.StorageEvent;
 import org.opengis.metadata.Metadata;
@@ -62,7 +61,7 @@ import org.opengis.util.GenericName;
  */
 public abstract class AbstractCoverageStore extends DataStore implements AutoCloseable, Resource {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.storage.coverage");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.storage.coverage");
     protected final Parameters parameters;
 
     protected AbstractCoverageStore(final ParameterValueGroup params) {

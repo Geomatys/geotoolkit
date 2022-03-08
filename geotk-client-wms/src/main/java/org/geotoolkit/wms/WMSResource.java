@@ -55,7 +55,6 @@ import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.Utilities;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.client.Request;
 import org.geotoolkit.internal.referencing.CRSUtilities;
@@ -84,7 +83,7 @@ import org.opengis.util.GenericName;
 public class WMSResource extends AbstractGridResource implements StoreResource {
 
     static final Dimension DEFAULT_SIZE = new Dimension(256, 256);
-    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.wms");
+    protected static final Logger LOGGER = Logger.getLogger("org.geotoolkit.wms");
 
     /**
      * Configure the politic when the requested envelope is in CRS:84.

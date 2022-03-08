@@ -28,7 +28,6 @@ import org.apache.sis.feature.builder.PropertyTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.Deprecable;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
 import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
@@ -50,7 +49,7 @@ import org.opengis.util.FactoryException;
  */
 public class ReprojectMapper extends FeatureSetMapper {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.feature");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.feature");
 
     private final CoordinateReferenceSystem targetCRS;
     private final Set<String> fullNames = new HashSet<>();

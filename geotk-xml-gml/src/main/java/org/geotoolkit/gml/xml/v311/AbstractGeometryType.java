@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -34,7 +35,6 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
 import org.apache.sis.util.ComparisonMode;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.opengis.filter.Expression;
 import org.opengis.geometry.DirectPosition;
@@ -250,7 +250,7 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
                 }
                 return crs;
             } catch (FactoryException ex) {
-                Logging.getLogger("org.geotoolkit.gml.xml.v311").log(Level.WARNING, "Could not decode CRS which name is : " + srsName, ex);
+                Logger.getLogger("org.geotoolkit.gml.xml.v311").log(Level.WARNING, "Could not decode CRS which name is : " + srsName, ex);
             }
         }
 

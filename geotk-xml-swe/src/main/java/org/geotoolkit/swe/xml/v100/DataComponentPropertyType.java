@@ -18,6 +18,7 @@ package org.geotoolkit.swe.xml.v100;
 
 import java.util.Objects;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -54,7 +55,6 @@ import org.geotoolkit.swe.xml.Position;
 import org.geotoolkit.swe.xml.Quantity;
 import org.geotoolkit.swe.xml.SimpleDataRecord;
 import org.geotoolkit.swe.xml.Vector;
-import org.apache.sis.util.logging.Logging;
 
 
 /**
@@ -412,7 +412,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
         } else if (obj instanceof DataArrayType) {
             abstractDataArray = factory.createDataArray((DataArrayType) obj);
         } else if (obj != null) {
-            Logging.getLogger("org.geotoolkit.swe.xml.v100").log(Level.WARNING, "Unimplemented case:{0}", obj.getClass().getName());
+            Logger.getLogger("org.geotoolkit.swe.xml.v100").log(Level.WARNING, "Unimplemented case:{0}", obj.getClass().getName());
         }
 
     }

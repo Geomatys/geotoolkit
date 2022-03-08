@@ -35,7 +35,6 @@ import org.apache.sis.referencing.cs.AxesConvention;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.collection.Cache;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.gml.xml.AbstractCurveSegment;
 import org.geotoolkit.gml.xml.AbstractGeometry;
@@ -124,7 +123,7 @@ import org.opengis.util.FactoryException;
  */
 public class GeometryTransformer implements Supplier<Geometry> {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.gml");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.gml");
 
     private static final GeometryFactory GF = JTS.getFactory();
 

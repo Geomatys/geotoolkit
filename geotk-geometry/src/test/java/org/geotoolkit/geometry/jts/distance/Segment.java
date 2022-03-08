@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import org.apache.sis.util.logging.Logging;
 import org.locationtech.jts.geom.Coordinate;
 
 /**
@@ -20,7 +19,7 @@ import org.locationtech.jts.geom.Coordinate;
  */
 class Segment {
 
-    static final Logger LOGGER = Logging.getLogger("org.geotoolkit.geometry.jts.distance.test");
+    static final Logger LOGGER = Logger.getLogger("org.geotoolkit.geometry.jts.distance.test");
 
     final String title;
     final Coordinate start;

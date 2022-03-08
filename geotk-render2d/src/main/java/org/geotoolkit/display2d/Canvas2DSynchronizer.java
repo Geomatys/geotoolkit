@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
-import org.apache.sis.util.logging.Logging;
+import java.util.logging.Logger;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.util.WeakPropertyChangeListener;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -84,7 +84,7 @@ public class Canvas2DSynchronizer implements PropertyChangeListener{
                 state.canvas.setObjectiveCRS(crs);
                 state.canvas.setCenterTransform(centerTransform);
             } catch (TransformException | FactoryException ex) {
-                Logging.getLogger("org.geotoolkit.display2d").log(Level.INFO, ex.getMessage(),ex);
+                Logger.getLogger("org.geotoolkit.display2d").log(Level.INFO, ex.getMessage(),ex);
             }
         }
         updating = false;

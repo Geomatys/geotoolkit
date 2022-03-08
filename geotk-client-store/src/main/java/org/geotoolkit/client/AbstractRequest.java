@@ -31,10 +31,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 import org.apache.sis.io.TableAppender;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.security.DefaultClientSecurity;
@@ -244,7 +244,7 @@ public abstract class AbstractRequest implements Request {
                         }
                     }
                 } catch (UnsupportedEncodingException ex) {
-                    Logging.getLogger("org.geotoolkit.client").log(Level.WARNING, "Unsupported charset encoding:{0}", ex.getMessage());
+                    Logger.getLogger("org.geotoolkit.client").log(Level.WARNING, "Unsupported charset encoding:{0}", ex.getMessage());
                 }
                 firstKeyRead = true;
             }

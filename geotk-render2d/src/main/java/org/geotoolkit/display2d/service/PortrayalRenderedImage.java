@@ -25,10 +25,10 @@ import java.util.Deque;
 import java.util.EventListener;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.event.EventListenerList;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PlanarImage;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.canvas.J2DCanvasBuffered;
@@ -306,7 +306,7 @@ public class PortrayalRenderedImage extends PlanarImage {
 
             cvs.setVisibleArea(canvasEnv);
         } catch (NoninvertibleTransformException | TransformException | PortrayalException ex) {
-            Logging.getLogger("org.geotoolkit.display2d.service").log(Level.SEVERE, null, ex);
+            Logger.getLogger("org.geotoolkit.display2d.service").log(Level.SEVERE, null, ex);
         }
 
         //cut the canvas buffer in pieces

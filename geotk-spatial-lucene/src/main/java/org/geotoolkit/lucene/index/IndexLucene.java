@@ -32,7 +32,6 @@ import org.apache.lucene.analysis.CharArraySet;
 import org.apache.lucene.store.RAMDirectory;
 import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.lucene.analysis.standard.ClassicAnalyzer;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.index.tree.StoreIndexException;
 import org.geotoolkit.index.tree.TreeElementMapper;
 import org.geotoolkit.index.tree.manager.NamedEnvelope;
@@ -50,7 +49,7 @@ public abstract class IndexLucene {
     /**
      * for debug purpose.
      */
-    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.lucene.index");
+    protected static final Logger LOGGER = Logger.getLogger("org.geotoolkit.lucene.index");
 
     /**
      * A lucene analyser.

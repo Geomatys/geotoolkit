@@ -19,12 +19,12 @@ package org.geotoolkit.wmts.model;
 import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.storage.multires.AbstractTileMatrixSet;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -60,10 +60,10 @@ public class WMTSTileMatrixSet extends AbstractTileMatrixSet {
                 crs = CRS.forCode("EPSG:"+crsstr);
             } catch (Exception e) {
                 e.addSuppressed(ex);
-                Logging.getLogger("org.geotoolkit.wmts.model").log(Level.WARNING, null, e);
+                Logger.getLogger("org.geotoolkit.wmts.model").log(Level.WARNING, null, e);
             }
         } catch (FactoryException ex) {
-            Logging.getLogger("org.geotoolkit.wmts.model").log(Level.WARNING, null, ex);
+            Logger.getLogger("org.geotoolkit.wmts.model").log(Level.WARNING, null, ex);
         }
 
         final org.geotoolkit.wmts.xml.v100.TileMatrixSetLimits limits = link.getTileMatrixSetLimits();

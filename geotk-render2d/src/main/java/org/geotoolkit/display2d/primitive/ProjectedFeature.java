@@ -17,12 +17,12 @@
 package org.geotoolkit.display2d.primitive;
 
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
 import org.apache.sis.storage.FeatureQuery;
 import org.apache.sis.portrayal.MapLayer;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import static org.geotoolkit.display2d.primitive.DefaultProjectedObject.DEFAULT_GEOM;
@@ -69,7 +69,7 @@ public class ProjectedFeature extends DefaultProjectedObject<Feature> {
             try {
                 return getCompleteFeature(getFeatureId());
             } catch (DataStoreException ex) {
-                Logging.getLogger("org.geotoolkit.display2d.primitive").log(Level.WARNING, null, ex);
+                Logger.getLogger("org.geotoolkit.display2d.primitive").log(Level.WARNING, null, ex);
             }
         }
 

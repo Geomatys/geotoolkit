@@ -17,7 +17,6 @@
 
 package org.geotoolkit.metadata;
 
-import org.apache.sis.util.logging.Logging;
 import org.w3c.dom.Node;
 
 import java.net.URI;
@@ -38,7 +37,7 @@ public abstract class AbstractMetadataReader implements MetadataReader {
     /**
      * A debugging logger
      */
-    protected static final Logger LOGGER = Logging.getLogger("org.constellation.metadata.io");
+    protected static final Logger LOGGER = Logger.getLogger("org.constellation.metadata.io");
 
     /**
      * A flag indicating if the cache mecanism is enabled or not.

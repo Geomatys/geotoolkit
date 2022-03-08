@@ -1,6 +1,5 @@
 package org.geotoolkit.util.dom;
 
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.util.DomUtilities;
 import org.w3c.dom.Attr;
 import org.w3c.dom.DOMException;
@@ -29,7 +28,7 @@ import java.util.logging.Logger;
  */
 public class LazyLoadElement implements Element {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.util.dom");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.util.dom");
 
     private final Path xmlFile;
     private volatile Element element;

@@ -55,7 +55,6 @@ import javax.xml.stream.events.XMLEvent;
 import org.apache.sis.feature.Features;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.util.Numbers;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.util.NamesExt;
@@ -114,7 +113,7 @@ public final class Utils {
      */
     public static final GenericName SIMPLETYPE_NAME_CHARACTERISTIC = NamesExt.create("http://sis.apache.org/xsd",  "@simpletypename");
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.feature.xml");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.feature.xml");
 
     private static final DateFormat timestampFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
     private static final DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd'Z'");

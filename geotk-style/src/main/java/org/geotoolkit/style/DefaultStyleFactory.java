@@ -40,7 +40,6 @@ import org.geotoolkit.style.function.Method;
 import org.geotoolkit.style.function.Mode;
 import org.geotoolkit.style.function.ThreshholdsBelongTo;
 import org.apache.sis.util.SimpleInternationalString;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.filter.DefaultPropertyName;
 import org.geotoolkit.filter.FilterUtilities;
 import org.opengis.filter.Filter;
@@ -101,7 +100,7 @@ import org.geotoolkit.style.function.Jenks;
  */
 public class DefaultStyleFactory implements MutableStyleFactory {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.style");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.style");
 
     private static final FilterFactory FF = FilterUtilities.FF;
 

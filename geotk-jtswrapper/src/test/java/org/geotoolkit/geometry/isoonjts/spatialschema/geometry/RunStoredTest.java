@@ -25,7 +25,6 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.logging.Logger;
-import org.apache.sis.util.logging.Logging;
 import static org.junit.Assert.*;
 import org.junit.Test;
 
@@ -36,7 +35,7 @@ import org.junit.Test;
  */
 public class RunStoredTest {
 
-    private static final Logger LOG = Logging.getLogger("org.geotoolkit.geometry.isoonjts.spatialschema.geometry");
+    private static final Logger LOG = Logger.getLogger("org.geotoolkit.geometry.isoonjts.spatialschema.geometry");
     private static String TEST_DIRECTORY = "src/main/resources/org/geotoolkit/test-data/xml/geometry";
 
     private FilenameFilter xmlFilter = new FilenameFilter() {

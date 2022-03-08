@@ -20,6 +20,7 @@ package org.geotoolkit.wmc;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -39,7 +40,6 @@ import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.SimpleInternationalString;
-import org.apache.sis.util.logging.Logging;
 import org.apache.sis.xml.MarshallerPool;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.storage.DataStores;
@@ -131,7 +131,7 @@ public class WMCUtilities {
             try {
                 srs = AbstractCRS.castOrCopy(CRS.forCode(bbox.getSRS())).forConvention(AxesConvention.RIGHT_HANDED);
             } catch (FactoryException ex) {
-                Logging.getLogger("org.geotoolkit.wmc").log(Level.SEVERE, null, ex);
+                Logger.getLogger("org.geotoolkit.wmc").log(Level.SEVERE, null, ex);
             }
             final double width = bbox.getMaxx().subtract(bbox.getMinx()).doubleValue();
             final double height = bbox.getMaxy().subtract(bbox.getMiny()).doubleValue();
@@ -165,7 +165,7 @@ public class WMCUtilities {
                 parameters.parameter("url").setValue(serviceURL);
                 server = factory.open(parameters);
             } catch (Exception ex) {
-                Logging.getLogger("org.geotoolkit.wmc").log(Level.SEVERE, null, ex);
+                Logger.getLogger("org.geotoolkit.wmc").log(Level.SEVERE, null, ex);
                 continue;
             }
 
@@ -183,7 +183,7 @@ public class WMCUtilities {
                 }
 
             } catch (DataStoreException ex) {
-                Logging.getLogger("org.geotoolkit.wmc").log(Level.SEVERE, null, ex);
+                Logger.getLogger("org.geotoolkit.wmc").log(Level.SEVERE, null, ex);
                 continue;
             }
         }

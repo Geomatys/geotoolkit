@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.index.tree.StoreIndexException;
 import org.geotoolkit.index.tree.Tree;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -38,7 +37,7 @@ public class AbstractRtreeManager {
     protected static final Map<Path, Tree<NamedEnvelope>> CACHED_TREES = new HashMap<>();
     protected static final Map<Path, List<Object>> TREE_OWNERS = new HashMap<>();
 
-    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.index.tree.manager");
+    protected static final Logger LOGGER = Logger.getLogger("org.geotoolkit.index.tree.manager");
 
     public static final CoordinateReferenceSystem DEFAULT_CRS = CommonCRS.defaultGeographic();
 

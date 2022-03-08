@@ -21,9 +21,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.filter.DefaultPropertyName;
 import org.geotoolkit.filter.function.AbstractFunction;
 import org.luaj.vm2.script.LuaScriptEngine;
@@ -126,7 +126,7 @@ public class LuaFunction extends AbstractFunction {
         try {
             return e.eval(lua);
         } catch (ScriptException ex) {
-            Logging.getLogger("org.geotoolkit.filter.function.lua").log(Level.WARNING, ex.getMessage());
+            Logger.getLogger("org.geotoolkit.filter.function.lua").log(Level.WARNING, ex.getMessage());
         }
         return "";
     }

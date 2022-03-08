@@ -24,10 +24,10 @@ import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.Localized;
 import org.apache.sis.util.Classes;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.image.io.SpatialImageReader;
 import org.geotoolkit.image.io.SpatialImageWriter;
 import org.geotoolkit.image.io.WarningProducer;
-import org.apache.sis.util.logging.Logging;
 
 
 /**

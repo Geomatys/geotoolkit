@@ -48,7 +48,6 @@ import org.apache.sis.referencing.operation.DefaultConversion;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.util.Utilities;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display.canvas.CanvasUtilities;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
@@ -104,7 +103,7 @@ public class RenderingContext2D implements RenderingContext{
      */
     private static final int CLIP_PIXEL_MARGIN = 50;
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.display2d.canvas");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.display2d.canvas");
     private static final int MAX_WRAP = 3;
     private static final Map<Font,FontMetrics> fontMetrics = new HashMap<>();
 

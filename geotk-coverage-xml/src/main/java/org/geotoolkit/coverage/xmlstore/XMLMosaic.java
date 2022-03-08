@@ -65,7 +65,6 @@ import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.apache.sis.util.collection.Cache;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.io.XImageIO;
@@ -89,7 +88,7 @@ import org.geotoolkit.storage.multires.TileMatrix;
 @XmlAccessorType(XmlAccessType.NONE)
 public class XMLMosaic implements TileMatrix {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.coverage.xmlstore");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.coverage.xmlstore");
     private static final NumberFormat DECIMAL_FORMAT = NumberFormat.getInstance(Locale.ENGLISH);
 
     /** Executor used to write images */

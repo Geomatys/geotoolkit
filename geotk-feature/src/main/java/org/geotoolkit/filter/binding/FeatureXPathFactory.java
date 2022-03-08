@@ -19,7 +19,6 @@ package org.geotoolkit.filter.binding;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.sis.util.logging.Logging;
 import org.jaxen.ContextSupport;
 import org.jaxen.JaxenException;
 import org.jaxen.Navigator;
@@ -42,7 +41,7 @@ import org.jaxen.saxpath.Axis;
  */
 final class FeatureXPathFactory extends DefaultXPathFactory{
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.filter.binding");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.filter.binding");
 
     static final FeatureXPathFactory INSTANCE = new FeatureXPathFactory();
 

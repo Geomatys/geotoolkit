@@ -17,7 +17,6 @@
 package org.geotoolkit.image.io.large;
 
 import org.apache.sis.util.Static;
-import org.apache.sis.util.logging.Logging;
 
 import java.util.Arrays;
 import java.util.IllegalFormatException;
@@ -30,7 +29,7 @@ import java.util.logging.Logger;
  */
 public final class ImageCacheConfiguration extends Static {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.image.io.large");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.image.io.large");
 
     /**
      * List of supported memory units.

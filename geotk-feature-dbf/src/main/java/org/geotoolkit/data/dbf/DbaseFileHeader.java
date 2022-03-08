@@ -41,7 +41,6 @@ import org.apache.sis.feature.Features;
 import org.geotoolkit.feature.SingleAttributeTypeBuilder;
 import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.internal.feature.AttributeConvention;
-import org.apache.sis.util.logging.Logging;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;
@@ -58,7 +57,7 @@ import org.opengis.feature.PropertyType;
  */
 public class DbaseFileHeader {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data.shapefile");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.data.shapefile");
 
     // Constant for the size of a record
     private static final int FILE_DESCRIPTOR_SIZE = 32;

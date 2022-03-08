@@ -72,7 +72,6 @@ import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.DefaultInternationalString;
 import org.apache.sis.util.SimpleInternationalString;
-import org.apache.sis.util.logging.Logging;
 import static org.geotoolkit.coverage.tiff.LandsatConstants.*;
 import org.geotoolkit.coverage.tiff.LandsatConstants.CoverageGroup;
 import org.geotoolkit.referencing.cs.PredefinedCS;
@@ -113,7 +112,7 @@ import org.opengis.util.InternationalString;
 @Deprecated
 final class LandsatMetadataParser {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.coverage");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.coverage");
 
     /**
      * {@link Path} link to Landsat Metadatas.

@@ -43,7 +43,6 @@ import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.Version;
-import org.apache.sis.util.logging.Logging;
 
 import org.geotoolkit.gml.xml.v311.DirectPositionType;
 import org.geotoolkit.gml.xml.v311.EnvelopeType;
@@ -106,7 +105,7 @@ public class GetCoverageType implements GetCoverage {
     @XmlAttribute(required = true)
     private String version;
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.wcs.xml.v100");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.wcs.xml.v100");
 
     /**
      * Empty constructor used by JAXB.

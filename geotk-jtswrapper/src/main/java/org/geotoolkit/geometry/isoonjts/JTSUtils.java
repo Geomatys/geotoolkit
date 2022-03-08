@@ -16,18 +16,13 @@
  */
 package org.geotoolkit.geometry.isoonjts;
 
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryCollection;
-import org.locationtech.jts.geom.MultiLineString;
-import org.locationtech.jts.geom.MultiPoint;
-import org.locationtech.jts.geom.MultiPolygon;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
-
+import java.util.logging.Logger;
 import org.apache.sis.geometry.GeneralDirectPosition;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.geometry.isoonjts.spatialschema.JTSPositionFactory;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate.AbstractJTSAggregate;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate.JTSMultiCurve;
@@ -40,26 +35,28 @@ import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSPolyg
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSCurve;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSPrimitiveFactory;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
-import org.apache.sis.referencing.CRS;
-import org.opengis.util.FactoryException;
-
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.cs.AxisDirection;
-import org.opengis.referencing.cs.CoordinateSystem;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryCollection;
+import org.locationtech.jts.geom.MultiLineString;
+import org.locationtech.jts.geom.MultiPoint;
+import org.locationtech.jts.geom.MultiPolygon;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.Geometry;
 import org.opengis.geometry.PositionFactory;
 import org.opengis.geometry.coordinate.GeometryFactory;
 import org.opengis.geometry.coordinate.LineString;
+import org.opengis.geometry.coordinate.PointArray;
 import org.opengis.geometry.coordinate.Polygon;
+import org.opengis.geometry.coordinate.Position;
 import org.opengis.geometry.primitive.Curve;
 import org.opengis.geometry.primitive.PrimitiveFactory;
 import org.opengis.geometry.primitive.Ring;
 import org.opengis.geometry.primitive.SurfaceBoundary;
-import org.opengis.geometry.coordinate.PointArray;
-import org.opengis.geometry.coordinate.Position;
-import org.apache.sis.util.logging.Logging;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.cs.AxisDirection;
+import org.opengis.referencing.cs.CoordinateSystem;
+import org.opengis.util.FactoryException;
 
 /**
  * Class with static methods to help the conversion process between JTS
@@ -99,7 +96,7 @@ public final class JTSUtils {
                 try {
                     crs = CRS.forCode(strCRS);
                 } catch (FactoryException ex) {
-                    Logging.getLogger("org.geotoolkit.geometry.isoonjts").log(Level.SEVERE, null, ex);
+                    Logger.getLogger("org.geotoolkit.geometry.isoonjts").log(Level.SEVERE, null, ex);
                 }
             }
         }

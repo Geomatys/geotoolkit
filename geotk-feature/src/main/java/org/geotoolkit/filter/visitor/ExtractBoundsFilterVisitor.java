@@ -28,7 +28,6 @@ import java.util.logging.Level;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.internal.filter.FunctionNames;
 import org.apache.sis.util.Utilities;
-import org.apache.sis.util.logging.Logging;
 import org.opengis.filter.Filter;
 import org.opengis.filter.SpatialOperator;
 import org.opengis.filter.SpatialOperatorName;
@@ -66,7 +65,7 @@ import org.opengis.referencing.operation.TransformException;
 public class ExtractBoundsFilterVisitor extends NullFilterVisitor<Envelope> {
     private static NullFilterVisitor BOUNDS_VISITOR = new ExtractBoundsFilterVisitor();
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.filter.visitor");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.filter.visitor");
 
     public static Envelope bbox(final Filter filter, final Envelope e) {
         Container<Envelope> c = new Container<Envelope>();

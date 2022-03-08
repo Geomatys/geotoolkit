@@ -18,7 +18,6 @@ package org.geotoolkit.display.canvas.control;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.sis.util.logging.Logging;
 
 /**
  * Monitor which try to never fail the rendering.
@@ -28,7 +27,7 @@ import org.apache.sis.util.logging.Logging;
  */
 public class NeverFailMonitor extends AbstractCanvasMonitor{
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.display.canvas.control");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.display.canvas.control");
 
     /**
      * {@inheritDoc }

@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.referencing.CRS;
@@ -41,7 +42,6 @@ import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.collection.BackingStoreException;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display.shape.ShapeUtilities;
 import org.geotoolkit.geometry.jts.awt.JTSGeometryJ2D;
 import org.geotoolkit.resources.Errors;
@@ -717,7 +717,7 @@ public final class JTS {
             int srid = SRIDGenerator.toSRID(crs, SRIDGenerator.Version.V1);
             geom.setSRID(srid);
         } catch (IllegalArgumentException e) {
-            Logging.getLogger("org.geotoolkit.geometry")
+            Logger.getLogger("org.geotoolkit.geometry")
                     .log(Level.FINE, "Cannot update SRID of geometry. It will be reset.", e);
             geom.setSRID(0);
         }

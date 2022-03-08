@@ -20,6 +20,7 @@ package org.geotoolkit.csw.xml.v300;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -29,7 +30,6 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.csw.xml.Acknowledgement;
 
 
@@ -100,7 +100,7 @@ public class AcknowledgementType implements Acknowledgement {
                 DatatypeFactory factory = DatatypeFactory.newInstance();
                 this.timeStamp = factory.newXMLGregorianCalendar(cal);
             } catch (DatatypeConfigurationException ex) {
-                Logging.getLogger("org.geotoolkit.csw.xml.v300").log(Level.SEVERE, null, ex);
+                Logger.getLogger("org.geotoolkit.csw.xml.v300").log(Level.SEVERE, null, ex);
             }
         }
     }

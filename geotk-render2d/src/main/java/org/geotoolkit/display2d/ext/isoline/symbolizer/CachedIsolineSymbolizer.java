@@ -17,7 +17,6 @@
 
 package org.geotoolkit.display2d.ext.isoline.symbolizer;
 
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.style.*;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
@@ -42,7 +41,7 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
  */
 public class CachedIsolineSymbolizer extends CachedSymbolizer<IsolineSymbolizer> {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.display2d.ext.isoline.symbolizer");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.display2d.ext.isoline.symbolizer");
 
     private CachedRasterSymbolizer cachedRS;
     private ProcessDescriptor isolineDesc;

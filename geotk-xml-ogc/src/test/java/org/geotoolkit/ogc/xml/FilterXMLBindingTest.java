@@ -50,7 +50,6 @@ import org.geotoolkit.ogc.xml.v200.PropertyIsBetweenType;
 import org.geotoolkit.ogc.xml.v200.UpperBoundaryType;
 import org.geotoolkit.ogc.xml.v200.LiteralType;
 import org.geotoolkit.gml.xml.v321.TimeInstantType;
-import org.apache.sis.util.logging.Logging;
 import org.apache.sis.xml.MarshallerPool;
 
 //Junit dependencies
@@ -68,7 +67,7 @@ import static org.apache.sis.test.MetadataAssert.*;
  */
 public class FilterXMLBindingTest extends org.geotoolkit.test.TestBase {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.filter");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.filter");
 
     private static final MarshallerPool pool = FilterMarshallerPool.getInstance();
     private Unmarshaller unmarshaller;

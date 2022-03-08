@@ -18,10 +18,10 @@ package org.geotoolkit.gml.xml;
 
 import java.util.List;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
-import org.apache.sis.util.logging.Logging;
 import org.opengis.metadata.Identifier;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
@@ -59,7 +59,7 @@ public interface Envelope extends org.opengis.geometry.Envelope, AbstractGeometr
                 }
                 return crs;
             } catch (FactoryException ex) {
-                Logging.getLogger("org.geotoolkit.gml.xml.v321").log(Level.WARNING, "Could not decode CRS which name is : " + getSrsName(), ex);
+                Logger.getLogger("org.geotoolkit.gml.xml.v321").log(Level.WARNING, "Could not decode CRS which name is : " + getSrsName(), ex);
             }
         }
 

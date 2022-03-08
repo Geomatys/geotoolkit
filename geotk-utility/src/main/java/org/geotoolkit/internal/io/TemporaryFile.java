@@ -30,9 +30,9 @@ import java.lang.ref.PhantomReference;
 import org.apache.sis.util.Disposable;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.internal.ReferenceQueueConsumer;
 import org.geotoolkit.internal.Threads;
+import org.geotoolkit.resources.Loggings;
 
 
 /**

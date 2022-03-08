@@ -23,7 +23,6 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.filter.AbstractExpression;
 import org.geotoolkit.image.classification.Classification;
 import static org.geotoolkit.style.StyleConstants.*;
@@ -48,7 +47,7 @@ import org.opengis.util.ScopedName;
 public class DefaultJenks extends AbstractExpression implements Jenks {
 
     private static final PaletteFactory PALETTE_FACTORY = PaletteFactory.getDefault();
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.style.function");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.style.function");
 
     private Literal classNumber;
     private Literal paletteName;

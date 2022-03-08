@@ -30,8 +30,8 @@ import javax.imageio.IIOException;
 import org.geotoolkit.io.LineFormat;
 import org.geotoolkit.io.DefaultFileFilter;
 import org.apache.sis.internal.storage.io.IOUtilities;
-import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.collection.WeakHashSet;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.resources.IndexedResourceBundle;
 

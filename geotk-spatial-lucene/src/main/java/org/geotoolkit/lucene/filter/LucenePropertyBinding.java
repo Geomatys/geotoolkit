@@ -25,13 +25,13 @@ import org.locationtech.jts.io.WKBReader;
 
 import java.io.IOException;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.util.BytesRef;
 
 import org.geotoolkit.filter.binding.AbstractBinding;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
-import org.apache.sis.util.logging.Logging;
 
 
 /**
@@ -85,7 +85,7 @@ public class LucenePropertyBinding extends AbstractBinding<Document> {
                 geom.setSRID(srid);
                 return (T) geom;
             } catch (IOException | ParseException ex) {
-                Logging.getLogger("org.geotoolkit.lucene.filter").log(Level.WARNING, null, ex);
+                Logger.getLogger("org.geotoolkit.lucene.filter").log(Level.WARNING, null, ex);
             }
         }
 

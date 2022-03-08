@@ -43,7 +43,6 @@ import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 import org.geotoolkit.data.shapefile.shx.ShxReader;
 import org.geotoolkit.data.dbf.Closeable;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.logging.Logging;
 
 /**
  * Manage reader and writer creation with proper read/write locks.
@@ -53,7 +52,7 @@ import org.apache.sis.util.logging.Logging;
  */
 public final class AccessManager {
 
-    private static final Logger LOGGER =  Logging.getLogger("org.geotoolkit.data.shapefile.lock");
+    private static final Logger LOGGER =  Logger.getLogger("org.geotoolkit.data.shapefile.lock");
 
     private static class AccessEntry{
 

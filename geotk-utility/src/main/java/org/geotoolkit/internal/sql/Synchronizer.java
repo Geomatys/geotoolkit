@@ -33,11 +33,10 @@ import java.util.Objects;
 import java.util.LinkedHashMap;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 import org.apache.sis.io.TableAppender;
-
-import org.geotoolkit.nio.IOUtilities;
 import org.apache.sis.util.CharSequences;
-import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.nio.IOUtilities;
 
 import static org.apache.sis.util.collection.Containers.hashMapCapacity;
 
@@ -70,7 +69,7 @@ import static org.apache.sis.util.collection.Containers.hashMapCapacity;
  */
 public final class Synchronizer {
     /**
-     * Logging level to use for SQL operations.
+     * Logger level to use for SQL operations.
      */
     private static final Level SELECT = Level.FINE, UPDATE = Level.FINE;
 
@@ -629,6 +628,6 @@ nextTable: for (final String table : tables.keySet()) {
         final LogRecord record = new LogRecord(level, message);
         record.setSourceClassName(Synchronizer.class.getName());
         record.setSourceMethodName(method);
-        Logging.getLogger("org.geotoolkit.sql").log(record);
+        Logger.getLogger("org.geotoolkit.sql").log(record);
     }
 }

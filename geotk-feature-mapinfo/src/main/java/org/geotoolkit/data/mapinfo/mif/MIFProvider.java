@@ -29,7 +29,6 @@ import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.storage.ProviderOnFileSystem;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
@@ -65,7 +64,7 @@ import org.opengis.parameter.ParameterValueGroup;
                         MultiPolygon.class})
 public class MIFProvider extends DataStoreProvider implements ProviderOnFileSystem {
 
-    public final static Logger LOGGER = Logging.getLogger("org.geotoolkit.data.mapinfo.mif");
+    public final static Logger LOGGER = Logger.getLogger("org.geotoolkit.data.mapinfo.mif");
 
     /** factory identification **/
     public static final String NAME = "MIF-MID";

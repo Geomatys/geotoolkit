@@ -20,7 +20,6 @@ import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.index.LogicalFilterType;
 import org.geotoolkit.lucene.filter.LuceneOGCSpatialQuery;
 import org.geotoolkit.lucene.filter.SpatialQuery;
@@ -76,7 +75,7 @@ public abstract class AbstractAnalyzerTest {
 
     protected static final FilterFactory2 FF = FilterUtilities.FF;
 
-    protected static final Logger LOGGER = Logging.getLogger("org.constellation.metadata.index.generic");
+    protected static final Logger LOGGER = Logger.getLogger("org.constellation.metadata.index.generic");
 
     protected static final FieldType SORT_TYPE = new FieldType();
 

@@ -21,7 +21,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.logging.Logger;
 import static org.apache.sis.util.ArgumentChecks.*;
-import org.apache.sis.util.logging.Logging;
 
 /**
  * General interface for cached style element.
@@ -30,7 +29,7 @@ import org.apache.sis.util.logging.Logging;
  */
 public abstract class Cache<T extends Object> {
 
-    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.display2d.style");
+    protected static final Logger LOGGER = Logger.getLogger("org.geotoolkit.display2d.style");
 
     /**
      * Empty collection used for attributes when the style needs

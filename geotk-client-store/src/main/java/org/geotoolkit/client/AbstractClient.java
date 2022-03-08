@@ -36,7 +36,6 @@ import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.security.DefaultClientSecurity;
 import org.opengis.metadata.Metadata;
@@ -52,7 +51,7 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public abstract class AbstractClient extends DataStore implements Client {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.client");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.client");
 
     protected final Parameters parameters;
     protected final URL serverURL;

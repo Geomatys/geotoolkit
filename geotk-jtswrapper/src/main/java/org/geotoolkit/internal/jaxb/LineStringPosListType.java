@@ -4,18 +4,18 @@ package org.geotoolkit.internal.jaxb;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.apache.sis.geometry.GeneralDirectPosition;
-import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSLineString;
 import org.apache.sis.referencing.CRS;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSLineString;
 import org.opengis.geometry.coordinate.Position;
-import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.apache.sis.util.logging.Logging;
+import org.opengis.util.FactoryException;
 
 /**
  *
@@ -59,7 +59,7 @@ public class LineStringPosListType {
             try {
                 crs = CRS.forCode(srsName);
             } catch (FactoryException ex) {
-                Logging.getLogger("org.geotoolkit.internal.jaxb").log(Level.WARNING, null, ex);
+                Logger.getLogger("org.geotoolkit.internal.jaxb").log(Level.WARNING, null, ex);
             }
         }
         final JTSLineString result = new JTSLineString(crs);

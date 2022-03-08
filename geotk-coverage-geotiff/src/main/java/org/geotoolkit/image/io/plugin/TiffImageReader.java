@@ -52,6 +52,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
@@ -977,7 +978,7 @@ public class TiffImageReader extends SpatialImageReader {
                 if (channel != null) channel.close();
             }
         } catch (IOException ex) {
-            Logging.getLogger("org.geotoolkit.image.io.plugin").log(Level.SEVERE, null, ex);
+            Logger.getLogger("org.geotoolkit.image.io.plugin").log(Level.SEVERE, null, ex);
         }
         channel      = null;
         imageStream  = null;

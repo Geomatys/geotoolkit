@@ -35,7 +35,6 @@ import org.apache.sis.feature.builder.AttributeRole;
 import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.data.mapinfo.mif.MIFUtils;
 import org.geotoolkit.geometry.jts.JTS;
 import org.opengis.feature.AttributeType;
@@ -53,7 +52,7 @@ import org.opengis.feature.PropertyNotFoundException;
  */
 public abstract class MIFGeometryBuilder {
 
-    protected final static Logger LOGGER = Logging.getLogger("org.geotoolkit.data.mapinfo.mif.geometry");
+    protected final static Logger LOGGER = Logger.getLogger("org.geotoolkit.data.mapinfo.mif.geometry");
     protected final static GeometryFactory GEOMETRY_FACTORY = new GeometryFactory(
             new PrecisionModel(), 0, JTS.getFactory().getCoordinateSequenceFactory());
 

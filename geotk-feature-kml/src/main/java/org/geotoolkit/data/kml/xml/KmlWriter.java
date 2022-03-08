@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.data.kml.xml;
 
-import org.locationtech.jts.geom.CoordinateSequence;
-
 import java.awt.Color;
 import java.io.IOException;
 import java.net.URI;
@@ -27,13 +25,11 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
-import org.opengis.feature.Feature;
+import java.util.logging.Logger;
 import javax.xml.stream.XMLStreamException;
-
-import org.geotoolkit.xal.xml.XalWriter;
-import org.geotoolkit.atom.xml.AtomWriter;
 import org.geotoolkit.atom.model.AtomLink;
 import org.geotoolkit.atom.model.AtomPersonConstruct;
+import org.geotoolkit.atom.xml.AtomWriter;
 import org.geotoolkit.data.kml.KmlUtilities;
 import org.geotoolkit.data.kml.model.AbstractColorStyle;
 import org.geotoolkit.data.kml.model.AbstractGeometry;
@@ -109,14 +105,15 @@ import org.geotoolkit.data.kml.model.Url;
 import org.geotoolkit.data.kml.model.Vec2;
 import org.geotoolkit.data.kml.model.ViewRefreshMode;
 import org.geotoolkit.data.kml.model.ViewVolume;
+import static org.geotoolkit.data.kml.xml.KmlConstants.*;
+import org.geotoolkit.data.kml.xsd.Cdata;
+import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 import org.geotoolkit.xal.model.AddressDetails;
 import org.geotoolkit.xal.model.XalException;
-import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
-import org.geotoolkit.data.kml.xsd.Cdata;
+import org.geotoolkit.xal.xml.XalWriter;
 import org.geotoolkit.xml.StaxStreamWriter;
-
-import org.apache.sis.util.logging.Logging;
-import static org.geotoolkit.data.kml.xml.KmlConstants.*;
+import org.locationtech.jts.geom.CoordinateSequence;
+import org.opengis.feature.Feature;
 
 /**
  * This class provides a method to read KML files, version 2.2.
@@ -605,7 +602,7 @@ public class KmlWriter extends StaxStreamWriter {
             try {
                 XAL_WRITER.writeAddressDetails(value);
             } catch (XalException ex) {
-                Logging.getLogger("org.geotoolkit.data.kml.map").log(Level.SEVERE, null, ex);
+                Logger.getLogger("org.geotoolkit.data.kml.map").log(Level.SEVERE, null, ex);
             }
         }
     }

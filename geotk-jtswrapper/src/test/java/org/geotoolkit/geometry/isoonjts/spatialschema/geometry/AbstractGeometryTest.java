@@ -20,23 +20,21 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.sis.internal.system.DefaultFactories;
-import org.opengis.util.FactoryException;
-import org.opengis.referencing.crs.CRSFactory;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSGeometryFactory;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSPrimitiveFactory;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.coordinate.LineString;
 import org.opengis.geometry.primitive.Curve;
 import org.opengis.geometry.primitive.PrimitiveFactory;
 import org.opengis.geometry.primitive.Ring;
-import org.opengis.geometry.primitive.SurfaceBoundary;
 import org.opengis.geometry.primitive.Surface;
-
-import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSGeometryFactory;
-import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSPrimitiveFactory;
-import org.apache.sis.util.logging.Logging;
+import org.opengis.geometry.primitive.SurfaceBoundary;
+import org.opengis.referencing.crs.CRSFactory;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.FactoryException;
 
 /**
  * Provided test case.
@@ -69,7 +67,7 @@ public abstract class AbstractGeometryTest {
         try {
             crs = crsFact.createFromWKT(WGS84_WKT);
         } catch (FactoryException ex) {
-            Logging.getLogger("org.geotoolkit.geometry.isoonjts.spatialschema.geometry").log(Level.WARNING, null, ex);
+            Logger.getLogger("org.geotoolkit.geometry.isoonjts.spatialschema.geometry").log(Level.WARNING, null, ex);
         }
         GEOMETRY_FACTORY = new JTSGeometryFactory(crs);
         PRIMITIVE_FACTORY = new JTSPrimitiveFactory(crs);

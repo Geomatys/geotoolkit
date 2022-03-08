@@ -39,6 +39,12 @@ import javax.swing.SwingConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import org.apache.sis.measure.Units;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.IdentifiedObjects;
+import org.apache.sis.util.ObjectConverters;
+import org.apache.sis.util.UnconvertibleObjectException;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.ext.grid.DefaultGridTemplate;
@@ -60,14 +66,8 @@ import org.geotoolkit.display2d.ext.text.DefaultTextTemplate;
 import org.geotoolkit.display2d.ext.text.GraphicTextJ2D;
 import org.geotoolkit.display2d.ext.text.TextTemplate;
 import org.geotoolkit.display2d.service.PortrayalExtension;
-import org.apache.sis.referencing.CRS;
-import org.apache.sis.util.ObjectConverters;
-import org.apache.sis.util.logging.Logging;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
-import org.apache.sis.measure.Units;
-import org.apache.sis.referencing.IdentifiedObjects;
-import org.apache.sis.util.UnconvertibleObjectException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -81,7 +81,7 @@ import org.xml.sax.SAXException;
  */
 public final class DecorationXMLParser {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.display2d.ext");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.display2d.ext");
 
     private static final String TAG_DECORATION = "Decoration";
     private static final String TAG_BACKGROUND = "Background";

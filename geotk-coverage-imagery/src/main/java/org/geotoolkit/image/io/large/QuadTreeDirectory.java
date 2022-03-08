@@ -24,7 +24,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.sis.util.logging.Logging;
 
 /**
  * Create tree directory made, starting from tree root directory, define by user.
@@ -33,7 +32,7 @@ import org.apache.sis.util.logging.Logging;
  */
 public class QuadTreeDirectory {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.image.io.large");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.image.io.large");
 
     private static final String D00 = "00";
     private static final String D01 = "01";

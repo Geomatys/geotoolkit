@@ -35,7 +35,6 @@ import org.apache.sis.util.ObjectConverter;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.collection.BackingStoreException;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.internal.geojson.GeoJSONParser;
 import org.geotoolkit.internal.geojson.GeoJSONUtils;
@@ -63,7 +62,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 class GeoJSONReader implements Iterator<Feature>, AutoCloseable {
 
-    private static final Logger LOGGER = Logging.getLogger("org.apache.sis.storage.geojson");
+    private static final Logger LOGGER = Logger.getLogger("org.apache.sis.storage.geojson");
     private final Map<Map.Entry<Class, Class>, ObjectConverter> convertersCache = new HashMap<>();
 
     private GeoJSONObject jsonObj;

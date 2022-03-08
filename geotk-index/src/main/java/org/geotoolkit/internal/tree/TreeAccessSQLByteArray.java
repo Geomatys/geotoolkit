@@ -12,7 +12,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Logger;
 import javax.sql.DataSource;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.index.tree.manager.postgres.LuceneSGBDTreeEltMapper;
 import static org.geotoolkit.index.tree.manager.postgres.LuceneSGBDTreeEltMapper.SCHEMA;
 import org.geotoolkit.index.tree.manager.util.AeSimpleSHA1;
@@ -24,7 +23,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class TreeAccessSQLByteArray extends TreeAccessByteArray {
 
-    private final Logger LOGGER = Logging.getLogger("org.geotoolkit.internal.tree");
+    private final Logger LOGGER = Logger.getLogger("org.geotoolkit.internal.tree");
     private final DataSource source;
     private final Path directory;
 

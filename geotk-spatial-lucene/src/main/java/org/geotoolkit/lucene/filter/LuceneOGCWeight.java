@@ -40,7 +40,6 @@ import org.apache.lucene.util.BitSetIterator;
 import org.apache.lucene.util.Bits;
 import org.apache.lucene.util.FixedBitSet;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.filter.SpatialFilterType;
 import org.geotoolkit.index.tree.StoreIndexException;
 import org.geotoolkit.index.tree.Tree;
@@ -84,7 +83,7 @@ public class LuceneOGCWeight extends Weight {
     private final ScoreMode scoreMode;
     private final float boost;
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.lucene.filter");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.lucene.filter");
 
     public LuceneOGCWeight(Query parentQuery, final Tree tree, org.opengis.filter.Filter filter, IndexSearcher searcher, ScoreMode scoreMode, float boost, boolean envelopeOnly) {
         super(parentQuery);

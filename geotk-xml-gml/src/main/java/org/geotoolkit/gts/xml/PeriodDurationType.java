@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -32,7 +33,6 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.Duration;
 import org.apache.sis.util.SimpleInternationalString;
-import org.apache.sis.util.logging.Logging;
 import org.opengis.temporal.PeriodDuration;
 import org.opengis.util.InternationalString;
 
@@ -77,7 +77,7 @@ public class PeriodDurationType implements PeriodDuration {
             final DatatypeFactory factory = DatatypeFactory.newInstance();
             this.tmPeriodDuration = factory.newDuration(s);
         } catch (DatatypeConfigurationException ex) {
-            Logging.getLogger("org.geotoolkit.gts.xml").log(Level.WARNING, "Error while initializing the TM_PeriodDuration", ex);
+            Logger.getLogger("org.geotoolkit.gts.xml").log(Level.WARNING, "Error while initializing the TM_PeriodDuration", ex);
         }
 
     }
@@ -88,7 +88,7 @@ public class PeriodDurationType implements PeriodDuration {
             final DatatypeFactory factory = DatatypeFactory.newInstance();
             this.tmPeriodDuration = factory.newDuration(isPositive, years, months, days, hours, minutes, seconds);
         } catch (DatatypeConfigurationException ex) {
-            Logging.getLogger("org.geotoolkit.gts.xml").log(Level.WARNING, "Error while initializing the TM_PeriodDuration", ex);
+            Logger.getLogger("org.geotoolkit.gts.xml").log(Level.WARNING, "Error while initializing the TM_PeriodDuration", ex);
         }
 
     }
@@ -99,7 +99,7 @@ public class PeriodDurationType implements PeriodDuration {
             final DatatypeFactory factory = DatatypeFactory.newInstance();
             this.tmPeriodDuration = factory.newDuration(isPositive, years, months, days, hours, minutes, seconds);
         } catch (DatatypeConfigurationException ex) {
-            Logging.getLogger("org.geotoolkit.gts.xml").log(Level.WARNING, "Error while initializing the TM_PeriodDuration", ex);
+            Logger.getLogger("org.geotoolkit.gts.xml").log(Level.WARNING, "Error while initializing the TM_PeriodDuration", ex);
         }
 
     }

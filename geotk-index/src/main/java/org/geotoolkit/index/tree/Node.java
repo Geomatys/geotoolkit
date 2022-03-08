@@ -15,17 +15,16 @@
  *    Lesser General Public License for more details.
  */
 package org.geotoolkit.index.tree;
-import org.geotoolkit.internal.tree.TreeAccess;
 import java.io.IOException;
-import static org.geotoolkit.internal.tree.TreeUtilities.*;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.Classes;
+import org.geotoolkit.internal.tree.TreeAccess;
 import org.geotoolkit.internal.tree.TreeAccessFile;
-import org.apache.sis.util.logging.Logging;
+import static org.geotoolkit.internal.tree.TreeUtilities.*;
 import org.geotoolkit.util.StringUtilities;
 
 /**
@@ -561,7 +560,7 @@ public class Node {
                 return Classes.getShortClassName(this)+"Data : parent : "+getParentId()+" ID : "+getNodeId()+" sibling : "+getSiblingId()+" value : "+(-getChildId())+" bound : "+Arrays.toString(getBoundary());
             }
         } catch (IOException ex) {
-            Logging.getLogger("org.geotoolkit.index.tree").log(Level.SEVERE, null, ex);
+            Logger.getLogger("org.geotoolkit.index.tree").log(Level.SEVERE, null, ex);
         }
         return null;
     }

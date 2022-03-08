@@ -36,7 +36,6 @@ import org.apache.sis.referencing.GeodeticCalculator;
 import org.geotoolkit.geometry.jts.JTS;
 import org.apache.sis.internal.referencing.ReferencingUtilities;
 import org.apache.sis.internal.system.DefaultFactories;
-import org.apache.sis.util.logging.Logging;
 
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.parameter.ParameterValueGroup;
@@ -55,7 +54,7 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class MeasureUtilities {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.display");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.display");
 
     public static double calculateLenght(final Geometry geom, final CoordinateReferenceSystem geomCRS, final Unit<Length> unit){
 

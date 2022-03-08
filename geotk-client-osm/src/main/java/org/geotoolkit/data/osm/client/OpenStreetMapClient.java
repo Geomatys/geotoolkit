@@ -26,7 +26,6 @@ import java.util.logging.Logger;
 import javax.xml.stream.XMLStreamException;
 import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.AbstractClient;
 import org.geotoolkit.client.Request;
 import org.geotoolkit.data.osm.client.v060.ChangeElement060;
@@ -64,7 +63,7 @@ import org.opengis.util.GenericName;
  */
 public class OpenStreetMapClient extends AbstractClient {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data.osm.client");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.data.osm.client");
 
     private Api capabilities = null;
 
