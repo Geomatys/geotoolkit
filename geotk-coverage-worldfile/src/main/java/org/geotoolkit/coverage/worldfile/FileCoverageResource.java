@@ -111,7 +111,7 @@ public final class FileCoverageResource extends AbstractGridResource implements 
                 try {
                     reader.dispose();
                 } catch (DataStoreException ex) {
-                    Logger.getLogger("org.geotoolkit.storage.coverage").log(Level.WARNING, ex.getMessage(), ex);
+                    LOGGER.log(Level.WARNING, ex.getMessage(), ex);
                 }
             }
         }
@@ -153,7 +153,7 @@ public final class FileCoverageResource extends AbstractGridResource implements 
                 try {
                     reader.dispose();
                 } catch (DataStoreException ex) {
-                    Logger.getLogger("org.geotoolkit.storage.coverage").log(Level.WARNING, ex.getMessage(), ex);
+                    LOGGER.log(Level.WARNING, ex.getMessage(), ex);
                 }
             }
         }

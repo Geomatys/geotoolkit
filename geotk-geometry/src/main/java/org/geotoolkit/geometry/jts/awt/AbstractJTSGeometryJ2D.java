@@ -90,7 +90,7 @@ public abstract class AbstractJTSGeometryJ2D<T extends Geometry> implements Shap
         try {
             return transform.inverse();
         } catch (org.opengis.referencing.operation.NoninvertibleTransformException ex) {
-            Logger.getLogger("org.geotoolkit.display2d.primitive.jts").log(Level.WARNING, ex.getMessage(), ex);
+            LOGGER.log(Level.WARNING, ex.getMessage(), ex);
             return null;
         }
     }

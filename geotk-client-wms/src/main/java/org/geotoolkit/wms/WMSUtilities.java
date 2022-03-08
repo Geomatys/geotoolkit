@@ -289,7 +289,7 @@ public final class WMSUtilities {
                                     }
                                     continue;
                                 } catch (ParseException ex) {
-                                    Logger.getLogger("org.geotoolkit.wms").log(Level.FINER, "Value : {0} is not a period", candidate);
+                                    LOGGER.log(Level.FINER, "Value : {0} is not a period", candidate);
                                 }
                             }
 
@@ -299,7 +299,7 @@ public final class WMSUtilities {
                                 dblValues.add((double)date.getTime());
                                 continue;
                             } catch (ParseException ex) {
-                                Logger.getLogger("org.geotoolkit.wms").log(Level.FINER, "Value : {0} is not a date", candidate);
+                                LOGGER.log(Level.FINER, "Value : {0} is not a date", candidate);
                             }
                         }
 
