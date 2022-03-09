@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.internal.storage.geojson;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
@@ -43,6 +44,7 @@ import org.geotoolkit.internal.geojson.binding.GeoJSONGeometry;
 import org.geotoolkit.internal.geojson.binding.GeoJSONObject;
 import org.geotoolkit.storage.geojson.GeoJSONProvider;
 import org.geotoolkit.storage.geojson.GeoJSONStore;
+import org.junit.Assert;
 import org.junit.Test;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryCollection;
@@ -491,5 +493,19 @@ public class GeoJSONReadTest extends TestCase {
     private void testFeatureTypes(FeatureType expected, FeatureType result) {
         final FeatureComparator comparator = new FeatureComparator(expected, result);
         comparator.compare();
+    }
+
+    @Test
+    public void parsingOrderBugTest() throws IOException {
+        String geoJsonPolygonString = "" +
+                "         {\n" +
+                "           \"coordinates\": [\n" +
+                "             [ [100.0, 0.0], [101.0, 0.0], [101.0, 1.0],\n" +
+                "               [100.0, 1.0], [100.0, 0.0] ]\n" +
+                "           ],\n" +
+                "           \"type\": \"Polygon\"\n" +
+                "         }" ;
+        GeoJSONObject obj = GeoJSONParser.parse(new ByteArrayInputStream( geoJsonPolygonString.getBytes()));
+        Assert.assertTrue("A geometry should have been decoded", obj instanceof GeoJSONGeometry.GeoJSONPolygon);
     }
 }
