@@ -19,14 +19,11 @@ package org.geotoolkit.coverage.sql;
 
 import java.util.List;
 import java.nio.file.Path;
-import java.util.logging.Level;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStores;
 import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.StorageConnector;
 import org.apache.sis.coverage.SampleDimension;
-import org.geotoolkit.image.io.WarningProducer;
 
 
 /**
@@ -96,13 +93,5 @@ final class FormatEntry extends Entry {
      */
     final DataStore open(final Path path) throws DataStoreException {
         return NewRaster.open(provider, path);
-    }
-
-    /**
-     * Returns {@code true} if the provider is an Apache SIS implementation.
-     * This is used as a temporary workaround while we are migrating from Geotk data store API to Apache SIS data store API.
-     */
-    final boolean isImplementedBySIS() {
-        return (provider != null) && provider.getClass().getName().startsWith("org.apache.sis.");
     }
 }

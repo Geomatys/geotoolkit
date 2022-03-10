@@ -306,10 +306,6 @@ final class ProductEntry extends Entry {
         }
     }
 
-    final boolean isImplementedBySIS() {
-        return (format != null) && format.isImplementedBySIS();
-    }
-
     public GridCoverage read(GridGeometry areaOfInterest, int... bands) throws DataStoreException {
         // SIS API (GridCoverageResource#read) specifies that a null area should fallback to entire domain.
         if (areaOfInterest == null) {

@@ -19,6 +19,7 @@ package org.geotoolkit.coverage.sql;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.ProviderMismatchException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -29,17 +30,17 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.AxisDirections;
-import org.apache.sis.internal.referencing.j2d.IntervalRectangle;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;
-import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.crs.TemporalCRS;
-import org.opengis.referencing.operation.MathTransform2D;
 
 
 /**
@@ -71,6 +72,8 @@ final class GridCoverageTable extends Table {
      * The table of grid geometries.
      */
     private final GridGeometryTable gridGeometries;
+
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.coverage.sql");
 
     /**
      * Constructs a new {@code GridCoverageTable}.
@@ -158,9 +161,8 @@ final class GridCoverageTable extends Table {
         final SingleCRS horizontalCRS = CRS.getHorizontalComponent(crs);
         if (horizontalCRS != null) {
             final int d = AxisDirections.indexOfColinear(crs.getCoordinateSystem(), horizontalCRS.getCoordinateSystem());
-            IntervalRectangle area = new IntervalRectangle(areaOfInterest.getMinimum(d), areaOfInterest.getMinimum(d + 1),
-                                                           areaOfInterest.getMaximum(d), areaOfInterest.getMaximum(d + 1));
-            extentWKT = gridGeometries.geographicAreaWKT(area, (MathTransform2D) MathTransforms.identity(2), horizontalCRS);
+            final GeneralEnvelope area = GeneralEnvelope.castOrCopy(areaOfInterest).subEnvelope(d, d + GridGeometryEntry.AFFINE_DIMENSION);
+            extentWKT = gridGeometries.geographicAreaWKT(area, horizontalCRS);
         } else {
             throw new CatalogException("Horizontal CRS not identified in " + crs.getName().getCode());
         }
@@ -251,9 +253,8 @@ final class GridCoverageTable extends Table {
         final SingleCRS horizontalCRS = CRS.getHorizontalComponent(crs);
         if (horizontalCRS != null) {
             final int d = AxisDirections.indexOfColinear(crs.getCoordinateSystem(), horizontalCRS.getCoordinateSystem());
-            IntervalRectangle area = new IntervalRectangle(areaOfInterest.getMinimum(d), areaOfInterest.getMinimum(d + 1),
-                                                           areaOfInterest.getMaximum(d), areaOfInterest.getMaximum(d + 1));
-            extentWKT = gridGeometries.geographicAreaWKT(area, (MathTransform2D) MathTransforms.identity(2), horizontalCRS);
+            final GeneralEnvelope area = GeneralEnvelope.castOrCopy(areaOfInterest).subEnvelope(d, d + GridGeometryEntry.AFFINE_DIMENSION);
+            extentWKT = gridGeometries.geographicAreaWKT(area, horizontalCRS);
         } else {
             throw new CatalogException("Horizontal CRS not identified in " + crs.getName().getCode());
         }
@@ -271,7 +272,6 @@ final class GridCoverageTable extends Table {
         statement.executeUpdate();
     }
 
-
     /**
      * Adds a coverage having the specified grid geometry.
      *
@@ -285,7 +285,12 @@ final class GridCoverageTable extends Table {
          */
         Path path = raster.path;
         if (path.isAbsolute()) {
-            path = transaction.database.root.relativize(path);
+            try {
+                path = transaction.database.root.relativize(path);
+            } catch (ProviderMismatchException ex) {
+                // happen when we try to relativize 2 path from different filestem type.
+                LOGGER.log(Level.FINEST, "Unable to relative path.", ex);
+            }
         }
         String filename  = path.getFileName().toString();
         String extension = null;

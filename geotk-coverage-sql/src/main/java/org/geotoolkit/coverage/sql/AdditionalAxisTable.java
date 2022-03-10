@@ -82,8 +82,9 @@ final class AdditionalAxisTable extends CachedTable<String,AdditionalAxisEntry> 
     /**
      * Maximum number of additional axes for the same name. Current algorithm is very inefficient
      * for a large number of name collisions, so we are better to keep this limit small.
+     * TODO: reduce the limit after fixing the problem of forecast duplication.
      */
-    private static final int MAX_AXES = 100;
+    private static final int MAX_AXES = 100000;
 
     /**
      * Whether to enable the replacement of some vertical datum.
