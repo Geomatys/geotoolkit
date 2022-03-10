@@ -19,6 +19,7 @@ package org.geotoolkit.coverage.sql;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.ProviderMismatchException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -29,6 +30,8 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.AxisDirections;
 import org.apache.sis.referencing.CRS;
@@ -69,6 +72,8 @@ final class GridCoverageTable extends Table {
      * The table of grid geometries.
      */
     private final GridGeometryTable gridGeometries;
+
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.coverage.sql");
 
     /**
      * Constructs a new {@code GridCoverageTable}.
@@ -280,7 +285,12 @@ final class GridCoverageTable extends Table {
          */
         Path path = raster.path;
         if (path.isAbsolute()) {
-            path = transaction.database.root.relativize(path);
+            try {
+                path = transaction.database.root.relativize(path);
+            } catch (ProviderMismatchException ex) {
+                // happen when we try to relativize 2 path from different filestem type.
+                LOGGER.log(Level.FINEST, "Unable to relative path.", ex);
+            }
         }
         String filename  = path.getFileName().toString();
         String extension = null;
