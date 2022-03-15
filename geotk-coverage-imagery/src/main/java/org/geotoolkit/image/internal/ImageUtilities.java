@@ -314,7 +314,11 @@ public final class ImageUtilities extends Static {
      * @see FillValues used pixel filling engine.
      */
     public static void fill(final WritableRenderedImage image, final Number value) {
-        final FillValues filler = new FillValues(image.getSampleModel(), new Number[]{ value }, true);
+        final SampleModel sampleModel = image.getSampleModel();
+        final int numBands = sampleModel.getNumBands();
+        final Number[] fillValues = new Number[numBands];
+        Arrays.fill(fillValues, value);
+        final FillValues filler = new FillValues(sampleModel, fillValues, true);
         int y = image.getMinTileY();
         for (int ny = image.getNumYTiles(); --ny >= 0; y++) {
             int x = image.getMinTileX();
