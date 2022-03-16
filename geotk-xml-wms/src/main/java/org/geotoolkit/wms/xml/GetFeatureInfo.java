@@ -20,6 +20,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.sis.util.Version;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
@@ -67,8 +68,7 @@ public final class GetFeatureInfo extends GetMap implements org.geotoolkit.ows.x
 
     public GetFeatureInfo(final GetMap getMap, final int x, final int y,
                           final List<GenericName> queryLayers, final String infoFormat,
-                          final Integer featureCount)
-    {
+                          final Integer featureCount) {
         super(getMap);
         this.x = x;
         this.y = y;
@@ -83,7 +83,7 @@ public final class GetFeatureInfo extends GetMap implements org.geotoolkit.ows.x
                   final Dimension size, final Color background,
                   final Boolean transparent, final String exceptions, final int x, final int y,
                   final List<GenericName> queryLayers, final String infoFormat, final Integer featureCount,
-                  final Object parameters)
+                  final Map<String, Object> parameters)
     {
         super(envelope, version, format, layers, styles, sld, elevation, dates, size,
                 background, transparent, 0,exceptions, parameters);
