@@ -17,10 +17,10 @@
 package org.geotoolkit.storage.memory;
 
 import java.awt.Dimension;
-import java.awt.Point;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.PriorityBlockingQueue;
@@ -46,13 +48,13 @@ import org.apache.sis.storage.AbstractGridCoverageResource;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
 import org.apache.sis.util.collection.Cache;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.internal.Threads;
 import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.process.Monitor;
 import org.geotoolkit.storage.AbstractResource;
 import org.geotoolkit.storage.coverage.ImageTile;
 import org.geotoolkit.storage.coverage.TileMatrixSetCoverageReader;
@@ -60,11 +62,15 @@ import org.geotoolkit.storage.event.ModelEvent;
 import org.geotoolkit.storage.event.StorageListener;
 import org.geotoolkit.storage.multires.AbstractTileMatrix;
 import org.geotoolkit.storage.multires.AbstractTileMatrixSet;
+import org.geotoolkit.storage.multires.ImageTileMatrix;
 import org.geotoolkit.storage.multires.Tile;
 import org.geotoolkit.storage.multires.TileMatrix;
 import org.geotoolkit.storage.multires.TileMatrixSet;
+import org.geotoolkit.storage.multires.TileStatus;
 import org.geotoolkit.storage.multires.TiledResource;
-import org.opengis.geometry.DirectPosition;
+import org.geotoolkit.storage.multires.WritableTileMatrix;
+import org.geotoolkit.storage.multires.WritableTileMatrixSet;
+import org.geotoolkit.storage.multires.WritableTiledResource;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.GenericName;
@@ -78,7 +84,7 @@ import org.opengis.util.GenericName;
  * @author Johann Sorel (Geomatys)
  */
 public class CachedTiledGridCoverageResource <T extends TiledResource & org.apache.sis.storage.GridCoverageResource>
-        extends AbstractGridCoverageResource implements TiledResource, GridCoverageResource
+        extends AbstractGridCoverageResource implements WritableTiledResource, GridCoverageResource
 {
 
     private static final BlockingQueue IMAGEQUEUE = new PriorityBlockingQueue(Runtime.getRuntime().availableProcessors()*200);
@@ -176,26 +182,26 @@ public class CachedTiledGridCoverageResource <T extends TiledResource & org.apac
      * {@inheritDoc }.
      */
     @Override
-    public Collection<TileMatrixSet> getTileMatrixSets() throws DataStoreException {
-        final Collection<TileMatrixSet> parentPyramids = (Collection<TileMatrixSet>) parent.getTileMatrixSets();
+    public Collection<WritableTileMatrixSet> getTileMatrixSets() throws DataStoreException {
+        final Collection<? extends TileMatrixSet> parentPyramids = parent.getTileMatrixSets();
 
-        final List<TileMatrixSet> pyramids;
+        final List<WritableTileMatrixSet> pyramids;
         synchronized (cacheMap) {
             //check cached pyramids, we need to do this until an event system is created
 
             //add missing pyramids in the cache view
             final Set<String> keys = new HashSet<>();
             for (TileMatrixSet candidate : parentPyramids) {
-                if (!cacheMap.containsKey(candidate.getIdentifier())) {
-                    cacheMap.put(candidate.getIdentifier(), new CacheTileMatrixSet(candidate));
+                if (!cacheMap.containsKey(candidate.getIdentifier().toString())) {
+                    cacheMap.put(candidate.getIdentifier().toString(), new CacheTileMatrixSet(candidate));
                 }
-                keys.add(candidate.getIdentifier());
+                keys.add(candidate.getIdentifier().toString());
             }
             if (cacheMap.size() != parentPyramids.size()) {
                 //some pyramids have been deleted from parent
                 cacheMap.keySet().retainAll(keys);
             }
-            pyramids = UnmodifiableArrayList.wrap(cacheMap.values().toArray(new TileMatrixSet[0]));
+            pyramids = UnmodifiableArrayList.wrap(cacheMap.values().toArray(new WritableTileMatrixSet[0]));
         }
 
         return pyramids;
@@ -218,19 +224,27 @@ public class CachedTiledGridCoverageResource <T extends TiledResource & org.apac
      * {@inheritDoc }.
      */
     @Override
-    public TileMatrixSet createTileMatrixSet(TileMatrixSet template) throws DataStoreException {
+    public WritableTileMatrixSet createTileMatrixSet(TileMatrixSet template) throws DataStoreException {
+        if (!(parent instanceof WritableTiledResource)) {
+            throw new DataStoreException("Not writable");
+        }
+
         synchronized (cacheMap) {
-            final TileMatrixSet newParentPyramid = parent.createTileMatrixSet(template);
+            final WritableTileMatrixSet newParentPyramid = ((WritableTiledResource) parent).createTileMatrixSet(template);
             final CacheTileMatrixSet cached = new CacheTileMatrixSet(newParentPyramid);
-            cacheMap.put(cached.getIdentifier(), cached);
+            cacheMap.put(cached.getIdentifier().toString(), cached);
             return cached;
         }
     }
 
     @Override
-    public void removeTileMatrixSet(String identifier) throws DataStoreException {
+    public void deleteTileMatrixSet(String identifier) throws DataStoreException {
+        if (!(parent instanceof WritableTiledResource)) {
+            throw new DataStoreException("Not writable");
+        }
+
         synchronized (cacheMap) {
-            parent.removeTileMatrixSet(identifier);
+            ((WritableTiledResource) parent).deleteTileMatrixSet(identifier);
             cacheMap.remove(identifier);
         }
     }
@@ -249,26 +263,26 @@ public class CachedTiledGridCoverageResource <T extends TiledResource & org.apac
         super.clearCache();
     }
 
-    private class CacheTileMatrixSet implements TileMatrixSet {
+    private class CacheTileMatrixSet implements WritableTileMatrixSet {
 
         private final TileMatrixSet parent;
-        private final Map<String,CacheTileMatrix> cacheMap = new HashMap<>();
+        private final Map<GenericName,CacheTileMatrix> cacheMap = new HashMap<>();
 
         public CacheTileMatrixSet(TileMatrixSet parent) {
             this.parent = parent;
         }
 
         @Override
-        public Collection<? extends TileMatrix> getTileMatrices() {
-            final Collection<? extends TileMatrix> parentMosaics = parent.getTileMatrices();
+        public SortedMap<GenericName, ? extends WritableTileMatrix> getTileMatrices() {
+            final SortedMap<GenericName,? extends TileMatrix> parentMosaics = parent.getTileMatrices();
 
             //check cached mosaics, we need to do this until an event system is created
 
             //add missing mosaics in the cache view
-            final List<TileMatrix> mosaics;
+            SortedMap<GenericName, CacheTileMatrix> mosaics;
             synchronized (cacheMap) {
-                final Set<String> keys = new HashSet<>();
-                for (TileMatrix m : parentMosaics) {
+                final Set<GenericName> keys = new HashSet<>();
+                for (TileMatrix m : parentMosaics.values()) {
                     if (!cacheMap.containsKey(m.getIdentifier())) {
                         cacheMap.put(m.getIdentifier(), new CacheTileMatrix(this, parent.getIdentifier(), m));
                     }
@@ -278,16 +292,22 @@ public class CachedTiledGridCoverageResource <T extends TiledResource & org.apac
                     //some mosaics have been deleted from parent
                     cacheMap.keySet().retainAll(keys);
                 }
-                mosaics = UnmodifiableArrayList.wrap(cacheMap.values().toArray(new TileMatrix[0]));
+                mosaics = new TreeMap<>(parentMosaics.comparator());
+                mosaics.putAll(cacheMap);
+                mosaics = Collections.unmodifiableSortedMap(mosaics);
             }
 
             return mosaics;
         }
 
         @Override
-        public TileMatrix createTileMatrix(TileMatrix template) throws DataStoreException {
+        public WritableTileMatrix createTileMatrix(TileMatrix template) throws DataStoreException {
+            if (!(parent instanceof WritableTileMatrixSet)) {
+                throw new DataStoreException("Not writable");
+            }
+
             synchronized (cacheMap) {
-                final TileMatrix newParentMosaic = parent.createTileMatrix(template);
+                final TileMatrix newParentMosaic = ((WritableTileMatrixSet) parent).createTileMatrix(template);
                 final CacheTileMatrix cached = new CacheTileMatrix(this, parent.getIdentifier(), newParentMosaic);
                 cacheMap.put(cached.getIdentifier(), cached);
                 return cached;
@@ -296,9 +316,18 @@ public class CachedTiledGridCoverageResource <T extends TiledResource & org.apac
 
         @Override
         public void deleteTileMatrix(String mosaicId) throws DataStoreException {
+            if (!(parent instanceof WritableTileMatrixSet)) {
+                throw new DataStoreException("Not writable");
+            }
+
             synchronized (cacheMap) {
-                parent.deleteTileMatrix(mosaicId);
-                cacheMap.remove(mosaicId);
+                ((WritableTileMatrixSet) parent).deleteTileMatrix(mosaicId);
+                for (TileMatrix tm : cacheMap.values()) {
+                    if (tm.getIdentifier().toString().equals(mosaicId)) {
+                        cacheMap.remove(tm.getIdentifier());
+                        break;
+                    }
+                }
             }
         }
 
@@ -308,18 +337,13 @@ public class CachedTiledGridCoverageResource <T extends TiledResource & org.apac
         }
 
         @Override
-        public Envelope getEnvelope() {
+        public Optional<Envelope> getEnvelope() {
             return parent.getEnvelope();
         }
 
         @Override
-        public String getIdentifier() {
+        public GenericName getIdentifier() {
             return parent.getIdentifier();
-        }
-
-        @Override
-        public String getFormat() {
-            return parent.getFormat();
         }
 
         @Override
@@ -328,36 +352,26 @@ public class CachedTiledGridCoverageResource <T extends TiledResource & org.apac
         }
     }
 
-    private class CacheTileMatrix implements TileMatrix {
+    private class CacheTileMatrix implements WritableTileMatrix, ImageTileMatrix {
 
         private final CacheTileMatrixSet pyramid;
         private final String baseid;
         private final TileMatrix parent;
 
-        public CacheTileMatrix(CacheTileMatrixSet pyramid, String pyramidId, TileMatrix parent) {
+        public CacheTileMatrix(CacheTileMatrixSet pyramid, GenericName pyramidId, TileMatrix parent) {
             this.pyramid = pyramid;
             this.parent = parent;
             this.baseid = pyramidId + "¤" + parent.getIdentifier() +"¤";
         }
 
         @Override
-        public String getIdentifier() {
+        public GenericName getIdentifier() {
             return parent.getIdentifier();
         }
 
         @Override
-        public DirectPosition getUpperLeftCorner() {
-            return parent.getUpperLeftCorner();
-        }
-
-        @Override
-        public Dimension getGridSize() {
-            return parent.getGridSize();
-        }
-
-        @Override
-        public double getScale() {
-            return parent.getScale();
+        public GridGeometry getTilingScheme() {
+            return parent.getTilingScheme();
         }
 
         @Override
@@ -366,56 +380,54 @@ public class CachedTiledGridCoverageResource <T extends TiledResource & org.apac
         }
 
         @Override
-        public GridExtent getDataExtent() {
-            return parent.getDataExtent();
+        public void writeTiles(Stream<Tile> tiles) throws DataStoreException {
+            if (!(parent instanceof WritableTileMatrix)) {
+                throw new DataStoreException("Not writable");
+            }
+            ((WritableTileMatrix) parent).writeTiles(tiles);
+        }
+
+        private String tileId(long... indices) {
+            return new StringBuilder(baseid).append(indices[0]).append("¤").append(indices[1]).toString();
         }
 
         @Override
-        public void writeTiles(Stream<Tile> tiles, Monitor monitor) throws DataStoreException {
-            parent.writeTiles(tiles, monitor);
+        public TileStatus getTileStatus(long... indices) throws DataStoreException {
+            CacheTile tile = tiles.peek(tileId(indices[0], indices[1]));
+            if (tile != null) return TileStatus.EXISTS;
+            return parent.getTileStatus(indices);
         }
 
-        private String tileId(long col, long row) {
-            return new StringBuilder(baseid).append(col).append("¤").append(row).toString();
-        }
-
-        @Override
-        public boolean isMissing(long col, long row) {
-            CacheTile tile = tiles.peek(tileId(col, row));
-            if (tile != null) return false;
-            return parent.isMissing(col, row);
-        }
-
-        private boolean isInCache(long col, long row) {
-            return tiles.peek(tileId(col, row)) != null;
+        private boolean isInCache(long... indices) {
+            return tiles.peek(tileId(indices)) != null;
         }
 
         @Override
-        public CacheTile getTile(final long col, final long row, final Map hints) throws DataStoreException {
-            final String key = tileId(col, row);
+        public Optional<Tile> getTile(final long... indices) throws DataStoreException {
+            final String key = tileId(indices);
 
             CacheTile value = tiles.peek(key);
             if (value == null) {
                 if (noblocking) {
                     if (tilesInProcess.add(key)) {
                         //loadUpperTile(col, row);
-                        IMAGEQUEUE.add(new TileLoader(CacheTileMatrix.this, col, row, hints));
+                        IMAGEQUEUE.add(new TileLoader(CacheTileMatrix.this, indices));
                     }
                 } else {
-                    value = loadTile(col, row, hints);
+                    value = loadTile(indices);
                 }
             }
-            return value;
+            return Optional.ofNullable(value);
         }
 
-        private CacheTile loadTile(long col, long row, Map hints) throws DataStoreException {
-            final String key = tileId(col, row);
+        private CacheTile loadTile(long... indices) throws DataStoreException {
+            final String key = tileId(indices);
             CacheTile value = null;
             final Cache.Handler<CacheTile> handler = tiles.lock(key);
             try {
                 value = handler.peek();
                 if (value == null || !value.finalResult) {
-                    final Tile parentTile = parent.getTile(col, row, hints);
+                    final Tile parentTile = parent.getTile(indices).orElse(null);
                     if (parentTile instanceof ImageTile) {
                         final ImageTile pt = (ImageTile) parentTile;
                         final RenderedImage image;
@@ -427,8 +439,7 @@ public class CachedTiledGridCoverageResource <T extends TiledResource & org.apac
                         if (value != null) {
                             value.setImage(image, true);
                         } else {
-                            final Point coord = new Point(Math.toIntExact(col), Math.toIntExact(row));
-                            value = new CacheTile(image, coord, true);
+                            value = new CacheTile(image, indices, true);
                         }
                     } else {
                         throw new DataStoreException("Unsuppported tile instance "+ parentTile);
@@ -506,9 +517,22 @@ public class CachedTiledGridCoverageResource <T extends TiledResource & org.apac
 //        }
 
         @Override
-        public void deleteTile(int tileX, int tileY) throws DataStoreException {
-            parent.deleteTile(tileX, tileY);
-            tiles.remove(tileId(tileX, tileY));
+        public long deleteTiles(GridExtent indicesRanges) throws DataStoreException {
+            if (!(parent instanceof WritableTileMatrix)) {
+                throw new DataStoreException("Not writable");
+            }
+            if (indicesRanges == null) {
+                tiles.clear();
+            } else {
+                long[] low = indicesRanges.getLow().getCoordinateValues();
+                long[] high = indicesRanges.getHigh().getCoordinateValues();
+                for (long x = low[0]; x <= high[0]; x++) {
+                    for (long y = low[1]; y <= high[1]; y++) {
+                        tiles.remove(tileId(x, y));
+                    }
+                }
+            }
+            return ((WritableTileMatrix) parent).deleteTiles(indicesRanges);
         }
 
         @Override
@@ -530,10 +554,10 @@ public class CachedTiledGridCoverageResource <T extends TiledResource & org.apac
     private final class CacheTile extends AbstractResource implements ImageTile{
 
         private RenderedImage input;
-        private Point position;
+        private long[] position;
         private boolean finalResult;
 
-        public CacheTile(RenderedImage image, Point position, boolean finalResult) {
+        public CacheTile(RenderedImage image, long[] position, boolean finalResult) {
             this.input = image;
             this.position = position;
             this.finalResult = finalResult;
@@ -543,6 +567,11 @@ public class CachedTiledGridCoverageResource <T extends TiledResource & org.apac
             if (this.finalResult) return;
             input = image;
             this.finalResult = finalResult;
+        }
+
+        @Override
+        public TileStatus getStatus() {
+            return TileStatus.EXISTS;
         }
 
         @Override
@@ -589,8 +618,13 @@ public class CachedTiledGridCoverageResource <T extends TiledResource & org.apac
         }
 
         @Override
-        public Point getPosition() {
-            return position;
+        public long[] getIndices() {
+            return position.clone();
+        }
+
+        @Override
+        public Resource getResource() throws DataStoreException {
+            return this;
         }
     }
 
@@ -598,22 +632,18 @@ public class CachedTiledGridCoverageResource <T extends TiledResource & org.apac
 
         private final long creationTime;
         private final CacheTileMatrix mosaic;
-        private final long col;
-        private final long row;
-        private final Map hints;
+        private final long[] indices;
 
-        private TileLoader(CacheTileMatrix mosaic, long col, long row, Map hints) {
+        private TileLoader(CacheTileMatrix mosaic, long[] indices) {
             this.mosaic = mosaic;
-            this.col = col;
-            this.row = row;
-            this.hints = hints;
+            this.indices = indices;
             this.creationTime = System.nanoTime();
         }
 
         @Override
         public void run() {
             try {
-                mosaic.loadTile(col, row, hints);
+                mosaic.loadTile(indices);
             } catch (DataStoreException ex) {
                 Logger.getLogger("org.geotoolkit.storage").log(Level.WARNING, ex.getMessage(), ex);
             }

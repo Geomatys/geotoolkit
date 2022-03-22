@@ -37,7 +37,7 @@ import java.util.Base64;
 import java.util.BitSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
@@ -56,8 +56,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.GeneralDirectPosition;
-import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.storage.DataStoreException;
@@ -65,19 +65,20 @@ import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.apache.sis.util.collection.Cache;
+import org.apache.sis.util.iso.Names;
 import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.io.XImageIO;
-import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.process.Monitor;
 import org.geotoolkit.storage.coverage.DefaultImageTile;
 import org.geotoolkit.storage.coverage.ImageTile;
 import org.geotoolkit.storage.multires.AbstractTileMatrix;
 import org.geotoolkit.storage.multires.Tile;
+import org.geotoolkit.storage.multires.TileMatrices;
+import org.geotoolkit.storage.multires.TileStatus;
+import org.geotoolkit.storage.multires.WritableTileMatrix;
 import org.opengis.coverage.PointOutsideCoverageException;
-import org.opengis.geometry.DirectPosition;
-import org.opengis.geometry.Envelope;
-import org.geotoolkit.storage.multires.TileMatrix;
+import org.opengis.util.GenericName;
 
 /**
  *
@@ -86,7 +87,7 @@ import org.geotoolkit.storage.multires.TileMatrix;
  * @module
  */
 @XmlAccessorType(XmlAccessType.NONE)
-public class XMLMosaic implements TileMatrix {
+public class XMLMosaic implements WritableTileMatrix {
 
     private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.coverage.xmlstore");
     private static final NumberFormat DECIMAL_FORMAT = NumberFormat.getInstance(Locale.ENGLISH);
@@ -305,20 +306,21 @@ public class XMLMosaic implements TileMatrix {
      * Id equals scale string value
      */
     @Override
-    public String getIdentifier() {
+    public GenericName getIdentifier() {
         final StringBuilder sb = new StringBuilder();
         sb.append(scale);
 
         final XMLCoverageResource ref = pyramid.getPyramidSet().getRef();
         final String version = ref.getVersion();
 
+        String name;
         if("1.0".equals(version)){
             //backward compatibility for older pyramid files
             for(int i=0;i<upperLeft.length;i++){
                 sb.append('x');
                 sb.append(upperLeft[i]);
             }
-            return sb.toString().replace(DecimalFormatSymbols.getInstance().getDecimalSeparator(), 'd');
+            name = sb.toString().replace(DecimalFormatSymbols.getInstance().getDecimalSeparator(), 'd');
         }else{
             for(int i=0;i<upperLeft.length;i++){
                 sb.append('x');
@@ -326,14 +328,15 @@ public class XMLMosaic implements TileMatrix {
                     sb.append(DECIMAL_FORMAT.format(upperLeft[i]));
                 }
             }
-            return sb.toString().replace('.', 'd');
+            name = sb.toString().replace('.', 'd');
         }
+        return Names.createLocalName(null, null, name);
     }
 
     public Path getFolder() {
         if (folder == null) {
             final Path pyramidDirectory = pyramid.getFolder();
-            folder = pyramidDirectory.resolve(getIdentifier());
+            folder = pyramidDirectory.resolve(getIdentifier().toString());
             // For retro-compatibility purpose.
             if (!Files.isDirectory(folder)) {
                 final Path tmpFolder = pyramidDirectory.resolve(String.valueOf(scale));
@@ -351,20 +354,11 @@ public class XMLMosaic implements TileMatrix {
     }
 
     @Override
-    public DirectPosition getUpperLeftCorner() {
+    public GridGeometry getTilingScheme() {
         final GeneralDirectPosition ul = new GeneralDirectPosition(pyramid.getCoordinateReferenceSystem());
-        for(int i=0;i<upperLeft.length;i++) ul.setOrdinate(i, upperLeft[i]);
-        return ul;
-    }
-
-    @Override
-    public Dimension getGridSize() {
-        return new Dimension(gridWidth, gridHeight);
-    }
-
-    @Override
-    public double getScale() {
-        return scale;
+        for (int i=0;i<upperLeft.length;i++) ul.setOrdinate(i, upperLeft[i]);
+        final Dimension gridSize = new Dimension(gridWidth, gridHeight);
+        return TileMatrices.toGridGeometry(ul, gridSize, scale, new Dimension(tileWidth, tileHeight));
     }
 
     @Override
@@ -373,50 +367,34 @@ public class XMLMosaic implements TileMatrix {
     }
 
     @Override
-    public Envelope getEnvelope() {
-        final GeneralDirectPosition ul = new GeneralDirectPosition(getUpperLeftCorner());
-        final int xAxis = CRSUtilities.firstHorizontalAxis(ul.getCoordinateReferenceSystem());
-        assert xAxis >= 0;
-        final int yAxis = xAxis + 1;
-        final double minX = ul.getOrdinate(xAxis);
-        final double maxY = ul.getOrdinate(yAxis);
-        final double spanX = tileWidth * gridWidth * getScale();
-        final double spanY = tileHeight * gridHeight * getScale();
-
-        final GeneralEnvelope envelope = new GeneralEnvelope(ul,ul);
-        envelope.setRange(xAxis, minX, minX + spanX);
-        envelope.setRange(yAxis, maxY - spanY, maxY);
-
-        return envelope;
-    }
-
-    @Override
-    public boolean isMissing(long col, long row) throws PointOutsideCoverageException {
+    public TileStatus getTileStatus(long... indices) throws PointOutsideCoverageException {
         bitsetLock.readLock().lock();
         try {
             if (tileExist == null || tileExist.isEmpty()) {
                 try {
-                    final Point key = new Point(Math.toIntExact(col), Math.toIntExact(row));
-                    return getIsMissingCache().getOrCreate(key, new Callable<Boolean>() {
+                    final Point key = new Point(Math.toIntExact(indices[0]), Math.toIntExact(indices[1]));
+                    boolean missing = getIsMissingCache().getOrCreate(key, new Callable<Boolean>() {
                         @Override
                         public Boolean call() throws Exception {
                             return getTileFile(key.x, key.y) == null;
                         }
                     });
+                    return missing ? TileStatus.MISSING : TileStatus.EXISTS;
                 } catch (PointOutsideCoverageException e) {
-                    throw e;
+                    return TileStatus.OUTSIDE_EXTENT;
                 } catch (Exception e) {
                     LOGGER.log(Level.FINE, e.getLocalizedMessage(), e);
-                    return true;
+                    return TileStatus.IN_ERROR;
                 }
             } else {
-                final long index = getTileIndex(col, row);
+                final long index = getTileIndex(indices[0], indices[1]);
                 if (index < 0) {
-                    LOGGER.log(Level.FINE, "You try to request a tile out of mosaic tile boundary at coordinates : X = "+col+", Y = "+row
+                    LOGGER.log(Level.FINE, "You try to request a tile out of mosaic tile boundary at coordinates : X = "+indices[0]+", Y = "+indices[1]
                     +"Expected grid boundary : [(0, 0) ; ("+getGridSize().width+","+getGridSize().height+")]");
-                    return true;
+                    return TileStatus.OUTSIDE_EXTENT;
                 }
-                return !tileExist.get(Math.toIntExact(index));
+                boolean missing = !tileExist.get(Math.toIntExact(index));
+                return missing ? TileStatus.MISSING : TileStatus.EXISTS;
             }
         } finally {
             bitsetLock.readLock().unlock();
@@ -440,28 +418,27 @@ public class XMLMosaic implements TileMatrix {
     }
 
     @Override
-    public ImageTile getTile(long col, long row, Map hints) throws DataStoreException {
+    public Optional<Tile> getTile(long... indices) throws DataStoreException {
 
         final ImageTile tile;
         // Before any heavy validation, just ensure that we can represent a point from given row/column
-        final Point tilePosition = new Point(Math.toIntExact(col), Math.toIntExact(row));
-        if (isEmpty(col, row)) {
-            tile = createEmptyTile(tilePosition);
+        if (isEmpty(indices[0], indices[1])) {
+            tile = createEmptyTile(indices);
         } else {
-            Path tileFile = getTileFile(col, row);
+            Path tileFile = getTileFile(indices[0], indices[1]);
             if (tileFile == null) {
                 // It happens sometimes, but how ? We need to search further, or stop using XML-based pyramids.
-                LOGGER.warning(() -> "Tile is not marked empty, but associated file does not exists: " + tilePosition);
-                tile = createEmptyTile(tilePosition);
+                LOGGER.warning(() -> "Tile is not marked empty, but associated file does not exists: " + Arrays.toString(indices));
+                tile = createEmptyTile(indices);
             } else {
-                tile = new DefaultImageTile(pyramid.getPyramidSet().getReaderSpi(), tileFile, 0, tilePosition);
+                tile = new DefaultImageTile(pyramid.getPyramidSet().getReaderSpi(), tileFile, 0, indices);
             }
         }
 
-        return tile;
+        return Optional.ofNullable(tile);
     }
 
-    private ImageTile createEmptyTile(Point tilePosition) throws DataStoreException {
+    private ImageTile createEmptyTile(long... tilePosition) throws DataStoreException {
         try {
             return new DefaultImageTile(
                     pyramid.getPyramidSet().getReaderSpi(),
@@ -470,60 +447,6 @@ public class XMLMosaic implements TileMatrix {
         } catch (IOException ex) {
             throw new DataStoreException(ex);
         }
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public GridExtent getDataExtent() {
-
-        if (dataPixelWidth != 0 && dataPixelHeight != 0) {
-            return new GridExtent(dataPixelWidth, dataPixelHeight);
-        }
-        return new GridExtent(
-                ((long) gridWidth) * tileWidth,
-                ((long) gridHeight) * tileHeight);
-
-        /**
-        final Path folder = getFolder();
-
-        try (DirectoryStream<Path> tileStream = Files.newDirectoryStream(folder)) {
-
-            Point start = new Point(gridWidth, gridHeight);
-            Point end = new Point(0, 0);
-            Point currPos = null;
-            for (Path tile : tileStream) {
-                final String tileFileName = tile.getFileName().toString();
-                currPos = parsePosition(tileFileName);
-                start.x = Math.min(start.x, currPos.x);
-                start.y = Math.min(start.y, currPos.y);
-                end.x = Math.max(end.x, currPos.x);
-                end.y = Math.max(end.y, currPos.y);
-            }
-
-            //no tiles in mosaic directory
-            //return null as documentation says
-            if (currPos == null) {
-                return null;
-            }
-
-            assert end.x >= start.x;
-            assert end.y >= start.y;
-
-            return new Rectangle(start.x, start.y, end.x - start.x, end.y - start.y);
-
-        } catch (IOException e) {
-           LOGGER.log(Level.FINE, "Data area compute failed "+e.getLocalizedMessage(), e);
-            //error with directory stream
-            return null;
-        }*/
-    }
-
-    private Point parsePosition(String tileFile) {
-        String posStr = tileFile.substring(0, tileFile.lastIndexOf('.'));
-        String[] split = posStr.split("_");
-        return new Point(Integer.valueOf(split[1]), Integer.valueOf(split[0]));
     }
 
     @Override
@@ -560,7 +483,7 @@ public class XMLMosaic implements TileMatrix {
      * @return the first available tile path {@link Path} use to write tile.
      * @throws DataStoreException
      */
-    private Path getDefaultTileFile(int col, int row) throws DataStoreException {
+    private Path getDefaultTileFile(long col, long row) throws DataStoreException {
         final Path fil = getTileFiles(col, row)[0];
 //        assert !fil.exists(): "created file should not exist : path : "+fil.getPath();
         return fil;
@@ -588,13 +511,13 @@ public class XMLMosaic implements TileMatrix {
     }
 
     @Override
-    public void writeTiles(Stream<Tile> tiles, Monitor monitor) throws DataStoreException {
+    public void writeTiles(Stream<Tile> tiles) throws DataStoreException {
         try {
             tiles.parallel().forEach((Tile tile) -> {
                 if (tile instanceof ImageTile) {
                     final ImageTile imgTile = (ImageTile) tile;
                     try {
-                        writeTile(imgTile.getPosition(), imgTile.getImage());
+                        writeTile(imgTile.getIndices(), imgTile.getImage());
                     } catch (IOException ex) {
                         throw new BackingStoreException(new DataStoreException(ex.getMessage(), ex));
                     } catch (DataStoreException ex) {
@@ -609,9 +532,9 @@ public class XMLMosaic implements TileMatrix {
         }
     }
 
-    private void writeTile(Point pt, RenderedImage image) throws DataStoreException {
-        int col = pt.x;
-        int row = pt.y;
+    private void writeTile(long[] pt, RenderedImage image) throws DataStoreException {
+        long col = pt[0];
+        long row = pt[1];
         //-- check conformity between internal data and currentImage.
         //-- if no sm and cm automatical set from image (use for the first insertion)
         final XMLCoverageResource ref = pyramid.getPyramidSet().getRef();
@@ -625,7 +548,7 @@ public class XMLMosaic implements TileMatrix {
         }
     }
 
-    void createTile(int col, int row, RenderedImage image) throws DataStoreException {
+    void createTile(long col, long row, RenderedImage image) throws DataStoreException {
         ImageWriter writer = null;
         try {
             writer = acquireImageWriter();
@@ -639,7 +562,7 @@ public class XMLMosaic implements TileMatrix {
         }
     }
 
-    void createTile(final int col, final int row, final RenderedImage image, final ImageWriter writer) throws DataStoreException {
+    void createTile(final long col, final long row, final RenderedImage image, final ImageWriter writer) throws DataStoreException {
 
         try {
             checkMosaicFolderExist();
@@ -684,7 +607,7 @@ public class XMLMosaic implements TileMatrix {
                     bitsetLock.writeLock().unlock();
                 }
             } else {
-                getIsMissingCache().put(new Point(col, row), false);
+                getIsMissingCache().put(new Point(Math.toIntExact(col), Math.toIntExact(row)), false);
             }
         } catch (IOException ex) {
             throw new DataStoreException(ex.getMessage(), ex);
@@ -706,7 +629,7 @@ public class XMLMosaic implements TileMatrix {
      * {@inheritDoc }.
      */
     @Override
-    public void deleteTile(int col, int row) throws DataStoreException {
+    public long deleteTiles(GridExtent indicesRanges) throws DataStoreException {
         throw new DataStoreException("Not supported yet.");
     }
 
@@ -812,7 +735,7 @@ public class XMLMosaic implements TileMatrix {
     @Override
     public synchronized Tile anyTile() throws DataStoreException {
         if (anyTile == null) {
-            anyTile = getTile(0, 0, null);
+            anyTile = getTile(0, 0).orElse(null);
         }
         return anyTile;
     }

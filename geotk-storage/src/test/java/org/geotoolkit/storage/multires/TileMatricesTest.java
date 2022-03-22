@@ -17,7 +17,7 @@
 package org.geotoolkit.storage.multires;
 
 import java.awt.Dimension;
-import java.awt.Rectangle;
+import org.apache.sis.coverage.grid.DisjointExtentException;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.DirectPosition2D;
@@ -28,8 +28,9 @@ import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.NoSuchDataException;
+import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.coverage.grid.EstimatedGridGeometry;
+import org.geotoolkit.util.NamesExt;
 import org.junit.Assert;
 import org.junit.Test;
 import org.opengis.geometry.Envelope;
@@ -54,19 +55,19 @@ public class TileMatricesTest {
         final AffineTransform2D gridToCrs = new AffineTransform2D(1, 0, 0, -1, -50, 40);
         final GridGeometry gg = new GridGeometry(extent, PixelInCell.CELL_CENTER, gridToCrs, crs);
 
-        final DefiningTileMatrixSet pyramid = TileMatrices.createTemplate(gg, new Dimension(256, 256));
-        Assert.assertEquals(crs, pyramid.getCoordinateReferenceSystem());
+        final DefiningTileMatrixSet tms = TileMatrices.createTemplate(gg, new Dimension(256, 256));
+        Assert.assertEquals(crs, tms.getCoordinateReferenceSystem());
 
-        Assert.assertEquals(3, pyramid.getTileMatrices().size());
-        final double[] scales = pyramid.getScales();
+        Assert.assertEquals(3, tms.getTileMatrices().size());
+        final double[] scales = TileMatrices.getScales(tms);
         Assert.assertEquals(3, scales.length);
         Assert.assertEquals(1, scales[0], DELTA);
         Assert.assertEquals(2, scales[1], DELTA);
         Assert.assertEquals(4, scales[2], DELTA);
 
-        final TileMatrix m1 = pyramid.getTileMatrices(scales[0]).iterator().next();
-        final TileMatrix m2 = pyramid.getTileMatrices(scales[1]).iterator().next();
-        final TileMatrix m3 = pyramid.getTileMatrices(scales[2]).iterator().next();
+        final TileMatrix m1 = TileMatrices.getTileMatrices(tms,scales[0]).iterator().next();
+        final TileMatrix m2 = TileMatrices.getTileMatrices(tms,scales[1]).iterator().next();
+        final TileMatrix m3 = TileMatrices.getTileMatrices(tms,scales[2]).iterator().next();
 
         //upperleft corner is in PixelInCell.CELL_CORNER, causing the 0.5 offset.
         final DirectPosition2D upperleft = new DirectPosition2D(crs, -50.5, 40.5);
@@ -78,9 +79,9 @@ public class TileMatricesTest {
         Assert.assertEquals(new Dimension(256, 256), m2.getTileSize());
         Assert.assertEquals(new Dimension(256, 256), m3.getTileSize());
 
-        Assert.assertEquals(new Dimension(4, 2), m1.getGridSize());
-        Assert.assertEquals(new Dimension(2, 1), m2.getGridSize());
-        Assert.assertEquals(new Dimension(1, 1), m3.getGridSize());
+        Assert.assertTrue(new GridExtent(4, 2).equals(m1.getTilingScheme().getExtent(), ComparisonMode.IGNORE_METADATA));
+        Assert.assertTrue(new GridExtent(2, 1).equals(m2.getTilingScheme().getExtent(), ComparisonMode.IGNORE_METADATA));
+        Assert.assertTrue(new GridExtent(1, 1).equals(m3.getTilingScheme().getExtent(), ComparisonMode.IGNORE_METADATA));
 
 
     }
@@ -100,7 +101,7 @@ public class TileMatricesTest {
         {// Wgs84 TEMPLATE /////////////////////////////////////////////////////
             final CoordinateReferenceSystem tempCrs = CRS.forCode("CRS:84");
             final DefiningTileMatrixSet template = TileMatrices.createTemplate(gridGeom, tempCrs, new Dimension(256, 256));
-            final Envelope tempEnv = template.getEnvelope();
+            final Envelope tempEnv = template.getEnvelope().orElse(null);
             Assert.assertEquals(tempCrs, template.getCoordinateReferenceSystem());
             Assert.assertEquals(tempCrs, tempEnv.getCoordinateReferenceSystem());
             Assert.assertTrue(new GeneralEnvelope(Envelopes.transform(tempEnv, baseCrs)).contains(baseEnv));
@@ -110,7 +111,7 @@ public class TileMatricesTest {
         {// Mercator TEMPLATE /////////////////////////////////////////////////////
             final CoordinateReferenceSystem tempCrs = CRS.forCode("EPSG:3395");
             final DefiningTileMatrixSet template = TileMatrices.createTemplate(gridGeom, tempCrs, new Dimension(256, 256));
-            final Envelope tempEnv = template.getEnvelope();
+            final Envelope tempEnv = template.getEnvelope().orElse(null);
             Assert.assertEquals(tempCrs, template.getCoordinateReferenceSystem());
             Assert.assertEquals(tempCrs, tempEnv.getCoordinateReferenceSystem());
             Assert.assertTrue(new GeneralEnvelope(Envelopes.transform(tempEnv, baseCrs)).contains(baseEnv));
@@ -125,21 +126,21 @@ public class TileMatricesTest {
         final GeneralDirectPosition corner = new GeneralDirectPosition(crs);
         corner.setOrdinate(0, 0);
         corner.setOrdinate(1, 0);
-        TileMatrix matrix = new DefiningTileMatrix("", corner, 1, new Dimension(1, 1), new Dimension(10, 10));
+        TileMatrix matrix = new DefiningTileMatrix(NamesExt.createRandomUUID(), corner, 1, new Dimension(1, 1), new Dimension(10, 10));
 
         final GeneralEnvelope env = new GeneralEnvelope(crs);
         env.setRange(0, 0.0, 0.1);
         env.setRange(1, -0.1, -0.0);
 
-        Rectangle rect = TileMatrices.getTilesInEnvelope(matrix, env);
-        Assert.assertEquals(new Rectangle(0, 0, 1, 1), rect);
+        GridExtent rect = TileMatrices.getTilesInEnvelope(matrix, env);
+        Assert.assertEquals(new GridExtent(null, new long[]{0,0}, new long[]{1,1}, false), rect);
 
         env.setRange(0, 100, 120);
         env.setRange(1, -0.1, -0.0);
         try {
             rect = TileMatrices.getTilesInEnvelope(matrix, env);
             Assert.fail("Request is outside tile matrix, should have failed");
-        } catch (NoSuchDataException ex) {
+        } catch (DisjointExtentException ex) {
             //ok
         }
     }

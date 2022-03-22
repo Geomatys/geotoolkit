@@ -17,8 +17,6 @@
 package org.geotoolkit.storage.coverage;
 
 import java.awt.Dimension;
-import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
@@ -29,10 +27,9 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.LongFunction;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.logging.Level;
-import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
@@ -68,6 +65,9 @@ import org.geotoolkit.storage.multires.TileInError;
 import org.geotoolkit.storage.multires.TileMatrices;
 import org.geotoolkit.storage.multires.TileMatrix;
 import org.geotoolkit.storage.multires.TileMatrixSet;
+import org.geotoolkit.storage.multires.TileStatus;
+import org.geotoolkit.storage.multires.WritableTileMatrix;
+import org.geotoolkit.storage.multires.WritableTileMatrixSet;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.util.StringUtilities;
 import org.opengis.geometry.Envelope;
@@ -207,7 +207,7 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
     }
 
     @Override
-    public void generate(TileMatrixSet pyramid, Envelope env, NumberRange resolutions,
+    public void generate(WritableTileMatrixSet pyramid, Envelope env, NumberRange resolutions,
             ProcessListener listener) throws DataStoreException, InterruptedException {
         if (!coverageIsHomogeneous) {
             super.generate(pyramid, env, resolutions, listener);
@@ -236,8 +236,8 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
         }
 
         //generate lower level from data
-        final TileMatrix[] mosaics = pyramid.getTileMatrices().toArray(new TileMatrix[0]);
-        Arrays.sort(mosaics, (TileMatrix o1, TileMatrix o2) -> Double.compare(o1.getScale(), o2.getScale()));
+        final WritableTileMatrix[] tileMatrices = pyramid.getTileMatrices().values().toArray(new WritableTileMatrix[0]);
+        Arrays.sort(tileMatrices, TileMatrices.SCALE_COMPARATOR);
 
         final long total = TileMatrices.countTiles(pyramid, env, resolutions);
         final double totalAsDouble = total;
@@ -247,46 +247,45 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
         GridCoverageResource resourceCenter = this.resource;
         GridCoverageResource resourceBorder = this.resource;
 
-        for (final TileMatrix mosaic : mosaics) {
-            if (resolutions == null || resolutions.contains(mosaic.getScale())) {
-                final Rectangle rect;
+        for (final WritableTileMatrix tileMatrix : tileMatrices) {
+            if (resolutions == null || resolutions.contains(TileMatrices.getScale(tileMatrix))) {
+                final GridExtent rect;
                 try {
-                    rect = TileMatrices.getTilesInEnvelope(mosaic, env);
+                    rect = TileMatrices.getTilesInEnvelope(tileMatrix, env);
                 } catch (NoSuchDataException ex) {
                     continue;
                 }
                 final GridCoverageResource sourceCenter = resourceCenter;
                 final GridCoverageResource sourceBorder = resourceBorder;
 
-                final long nbTile = ((long)rect.width) * ((long)rect.height);
+                final long nbTile = TileMatrices.countCells(rect);
                 final long eventstep = Math.min(1000, Math.max(1, nbTile/100l));
-                Stream<Tile> stream = LongStream.range(0, nbTile).parallel()
-                        .mapToObj(new LongFunction<Tile>() {
-                            @Override
-                            public Tile apply(long value) {
-                                final long x = rect.x + (value % rect.width);
-                                final long y = rect.y + (value / rect.width);
 
-                                final boolean isBorderTile = (x == rect.x || x == (rect.x + rect.width-1))
-                                                          || (y == rect.y || y == (rect.y + rect.height-1));
+                Stream<Tile> stream = TileMatrices.pointStream(rect).parallel()
+                        .map(new Function<long[],Tile>() {
+                            @Override
+                            public Tile apply(long[] indices) {
+                                final boolean isBorderTile = TileMatrices.onBorder(rect, indices);
 
                                 Tile data = null;
                                 try {
-                                    if (skipExistingTiles && !mosaic.isMissing((int) x, (int) y)) {
+                                    final TileStatus tileStatus = tileMatrix.getTileStatus(indices);
+                                    if (skipExistingTiles && tileStatus == TileStatus.EXISTS) {
                                         //tile already exist
                                         return null;
                                     }
 
-                                    final Point coord = new Point((int)x, (int)y);
                                     try {
-                                        data = generateTile(pyramid, mosaic, coord, isBorderTile ? sourceBorder : sourceCenter);
+                                        data = generateTile(pyramid, tileMatrix, indices, isBorderTile ? sourceBorder : sourceCenter);
                                     } catch (Exception ex) {
-                                        data = TileInError.create(coord, null, ex);
+                                        data = TileInError.create(indices, null, ex);
                                     }
+                                } catch (DataStoreException ex) {
+                                    LOGGER.warning(ex.getMessage());
                                 } finally {
                                     long v = al.incrementAndGet();
                                     if (listener != null & (v % eventstep == 0))  {
-                                        listener.progressing(new ProcessEvent(DUMMY, v+"/"+total+" mosaic="+mosaic.getIdentifier()+" scale="+mosaic.getScale(), progress.get()  ));
+                                        listener.progressing(new ProcessEvent(DUMMY, v+"/"+total+" mosaic="+tileMatrix.getIdentifier(), progress.get()  ));
                                     }
                                 }
                                 return data;
@@ -294,17 +293,17 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
                         })
                         .filter(this::emptyFilter);
 
-                batchWrite(stream, mosaic, listener == null ? null : err -> listener.progressing(new ProcessEvent(DUMMY, "Error while writing tile batch", progress.get(), err)), 200);
+                batchWrite(stream, tileMatrix, listener == null ? null : err -> listener.progressing(new ProcessEvent(DUMMY, "Error while writing tile batch", progress.get(), err)), 200);
 
                 long v = al.get();
                 if (listener != null) {
-                    listener.progressing(new ProcessEvent(DUMMY, v+"/"+total+" mosaic="+mosaic.getIdentifier()+" scale="+mosaic.getScale(), progress.get()  ));
+                    listener.progressing(new ProcessEvent(DUMMY, v+"/"+total+" mosaic="+tileMatrix.getIdentifier(), progress.get()  ));
                 }
 
                 if (!generateFromSource) {
                     //modify context
-                    final DefaultTileMatrixSet pm = new DefaultTileMatrixSet(pyramid.getCoordinateReferenceSystem());
-                    pm.getMosaicsInternal().add(mosaic);
+                    final DefaultTileMatrixSet.Writable pm = new DefaultTileMatrixSet.Writable(pyramid.getCoordinateReferenceSystem()){};
+                    pm.getMosaicsInternal().insertByScale(tileMatrix);
                     final InMemoryTiledGridCoverageResource r = new InMemoryTiledGridCoverageResource(NamesExt.create("test"));
                     r.setSampleDimensions(resourceCenter.getSampleDimensions());
                     r.getTileMatrixSets().add(pm);
@@ -325,11 +324,11 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
     }
 
     @Override
-    public Tile generateTile(TileMatrixSet pyramid, TileMatrix mosaic, Point tileCoord) throws DataStoreException {
+    public Tile generateTile(WritableTileMatrixSet pyramid, WritableTileMatrix mosaic, long[] tileCoord) throws DataStoreException {
         return generateTile(pyramid, mosaic, tileCoord, resource);
     }
 
-    private Tile generateTile(TileMatrixSet pyramid, TileMatrix mosaic, Point tileCoord, GridCoverageResource resource) throws DataStoreException {
+    private Tile generateTile(TileMatrixSet pyramid, TileMatrix mosaic, long[] tileCoord, GridCoverageResource resource) throws DataStoreException {
         final Dimension tileSize = mosaic.getTileSize();
         final CoordinateReferenceSystem crs = pyramid.getCoordinateReferenceSystem();
         final LinearTransform gridToCrsNd = TileMatrices.getTileGridToCRS(mosaic, tileCoord, PixelInCell.CELL_CENTER);
@@ -394,7 +393,7 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
                 base = baseRendering.get(2, TimeUnit.SECONDS);
                 final BufferedImage image = BufferedImages.createImage(base, tileSize.width, tileSize.height, null, null);
                 BufferedImages.setAll(image, fillValues == null ? empty : fillValues);
-                return new DefaultImageTile(image, source.getPosition());
+                return new DefaultImageTile(image, source.getIndices());
             } catch (Exception e) {
                 LOGGER.log(Level.WARNING, "Cannot emulate empty tile !", e);
             }

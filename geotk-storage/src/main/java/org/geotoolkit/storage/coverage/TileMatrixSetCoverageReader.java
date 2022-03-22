@@ -17,7 +17,6 @@
 package org.geotoolkit.storage.coverage;
 
 import java.awt.Dimension;
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
@@ -105,7 +104,7 @@ public class TileMatrixSetCoverageReader <T extends TiledResource & org.apache.s
             return GridGeometry.UNDEFINED;
         }
 
-        final List<TileMatrix> mosaics = new ArrayList<>(pyramid.getTileMatrices());
+        final List<TileMatrix> mosaics = new ArrayList<>(pyramid.getTileMatrices().values());
         if (mosaics.isEmpty()) {
             //no mosaics
             return GridGeometry.UNDEFINED;
@@ -122,12 +121,12 @@ public class TileMatrixSetCoverageReader <T extends TiledResource & org.apache.s
         final TileMatrix mosaic  = mosaics.get(0);
 
         //-- we expect no rotation
-        final MathTransform gridToCRS = TileMatrices.getTileGridToCRS2D(mosaic, new Point(0, 0), PixelInCell.CELL_CORNER);
+        final MathTransform gridToCRS = TileMatrices.getTileGridToCRS2D(mosaic, new long[]{0, 0}, PixelInCell.CELL_CORNER);
 
         //-- get all mosaics with same scale
-        final double scal = mosaic.getScale();
+        final double scal = mosaic.getResolution()[0];
         for (int m = mosaics.size() - 1; m >= 0; m--) {
-            if (mosaics.get(m).getScale() != scal) mosaics.remove(m);
+            if (mosaics.get(m).getResolution()[0] != scal) mosaics.remove(m);
         }
 
         final int minordi = CRSUtilities.firstHorizontalAxis(crs);
@@ -240,7 +239,12 @@ public class TileMatrixSetCoverageReader <T extends TiledResource & org.apache.s
 
         final Dimension tileSize = mosaic.getTileSize();
 
-        final Rectangle tilesInEnvelope = TileMatrices.getTilesInEnvelope(mosaic, wantedEnv);
+        final GridExtent area = TileMatrices.getTilesInEnvelope(mosaic, wantedEnv);
+        final Rectangle tilesInEnvelope = new Rectangle(
+                    (int) area.getLow(0),
+                    (int) area.getLow(1),
+                    (int) area.getSize(0),
+                    (int) area.getSize(1));
         final int tileMinCol = tilesInEnvelope.x;
         final int tileMinRow = tilesInEnvelope.y;
 
@@ -258,7 +262,7 @@ public class TileMatrixSetCoverageReader <T extends TiledResource & org.apache.s
 
             final GridExtent ge = new GridExtent(null, null, high, false);
             final MathTransform gtc = TileMatrices.getTileGridToCRSND(mosaic,
-                    new Point(0,0),wantedCRS.getCoordinateSystem().getDimension(),
+                    new long[]{0,0},wantedCRS.getCoordinateSystem().getDimension(),
                     PixelInCell.CELL_CENTER);
             final GridGeometry gridgeo = new GridGeometry(ge, PixelInCell.CELL_CENTER, gtc, wantedCRS);
 
@@ -279,7 +283,7 @@ public class TileMatrixSetCoverageReader <T extends TiledResource & org.apache.s
                 h[1] = (tilesInEnvelope.height) * tileSize.height;
                 crop = new GridExtent(null, l, h, false);
                 final MathTransform gtcr = TileMatrices.getTileGridToCRSND(mosaic,
-                        new Point(tilesInEnvelope.x,tilesInEnvelope.y),wantedCRS.getCoordinateSystem().getDimension(),
+                        new long[]{tilesInEnvelope.x,tilesInEnvelope.y}, wantedCRS.getCoordinateSystem().getDimension(),
                         PixelInCell.CELL_CENTER);
                 final GridGeometry cropped = new GridGeometry(crop, PixelInCell.CELL_CENTER, gtcr, wantedCRS);
 
@@ -300,7 +304,7 @@ public class TileMatrixSetCoverageReader <T extends TiledResource & org.apache.s
 
         final GridExtent ge = new GridExtent(null, null, high, false);
         final MathTransform gtc = TileMatrices.getTileGridToCRSND(mosaic,
-                new Point(tileMinCol,tileMinRow),wantedCRS.getCoordinateSystem().getDimension(),
+                new long[]{tileMinCol, tileMinRow}, wantedCRS.getCoordinateSystem().getDimension(),
                 PixelInCell.CELL_CENTER);
         final GridGeometry gridgeo = new GridGeometry(ge, PixelInCell.CELL_CENTER, gtc, wantedCRS);
         return new GridCoverage2D(gridgeo, sampleDimensions, image);
@@ -309,8 +313,8 @@ public class TileMatrixSetCoverageReader <T extends TiledResource & org.apache.s
     private GridCoverage readCube(List<TileMatrix> mosaics, Envelope wantedEnv, int... range) throws DataStoreException {
         //regroup mosaic by hierarchy cubes
         final TreeMap groups = new TreeMap();
-        for (TileMatrix mosaic : mosaics) {
-            appendSlice(groups, mosaic);
+        for (TileMatrix tileMatrix : mosaics) {
+            appendSlice(groups, tileMatrix);
         }
 
         int dim = wantedEnv.getDimension();

@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.client.map;
 
-import java.awt.Point;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -29,6 +28,7 @@ import org.apache.sis.storage.StorageConnector;
 import org.geotoolkit.client.Request;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.storage.coverage.DefaultImageTile;
+import org.geotoolkit.storage.multires.TileStatus;
 
 /**
  *
@@ -36,7 +36,7 @@ import org.geotoolkit.storage.coverage.DefaultImageTile;
  */
 public class RequestImageTile extends DefaultImageTile {
 
-    public RequestImageTile(ImageReaderSpi spi, Request input, int imageIndex, Point position) {
+    public RequestImageTile(ImageReaderSpi spi, Request input, int imageIndex, long... position) {
         super(spi, input, imageIndex, position);
     }
 
@@ -76,5 +76,10 @@ public class RequestImageTile extends DefaultImageTile {
         final ImageReader reader = spi.createReaderInstance();
         reader.setInput(in, true, true);
         return reader;
+    }
+
+    @Override
+    public TileStatus getStatus() {
+        return TileStatus.UNKNOWN;
     }
 }

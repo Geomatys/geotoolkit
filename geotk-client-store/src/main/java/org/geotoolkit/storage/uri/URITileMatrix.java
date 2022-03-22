@@ -17,7 +17,6 @@
 package org.geotoolkit.storage.uri;
 
 import java.awt.Dimension;
-import java.awt.Point;
 import java.awt.image.RenderedImage;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -32,7 +31,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.Map;
+import java.util.Iterator;
 import java.util.Optional;
 import java.util.stream.Stream;
 import java.util.zip.GZIPOutputStream;
@@ -51,6 +50,7 @@ import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.StorageConnector;
 import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.security.ClientSecurity;
@@ -60,34 +60,36 @@ import org.geotoolkit.storage.coverage.BandedCoverageResource;
 import org.geotoolkit.storage.coverage.ImageTile;
 import org.geotoolkit.storage.coverage.WritableBandedCoverageResource;
 import org.geotoolkit.storage.multires.AbstractTileMatrix;
-import org.geotoolkit.storage.multires.DeferredTile;
+import org.geotoolkit.storage.multires.ImageTileMatrix;
 import org.geotoolkit.storage.multires.Tile;
-import org.geotoolkit.storage.multires.TileMatrixSet;
+import org.geotoolkit.storage.multires.TileMatrices;
+import org.geotoolkit.storage.multires.TileStatus;
+import org.geotoolkit.storage.multires.WritableTileMatrix;
+import org.geotoolkit.storage.multires.WritableTileMatrixSet;
 import org.opengis.geometry.DirectPosition;
+import org.opengis.util.GenericName;
 
 /**
  * Tile matrix with resources located by URI.
  *
  * @author Johann Sorel (Geomatys)
  */
-public class URITileMatrix extends AbstractTileMatrix {
+public class URITileMatrix extends AbstractTileMatrix implements WritableTileMatrix, ImageTileMatrix {
 
     private final URI folderUri;
     private final ClientSecurity security;
     private final URITileFormat format;
-    private final Dimension dataSize;
 
     //first evaluated when needed
     private Boolean isOnFileSystem = null;
 
-    public URITileMatrix(TileMatrixSet parent, URI folder, ClientSecurity security, URITileFormat format, String id,
-            DirectPosition upperLeft, Dimension gridSize, Dimension tileSize, Dimension dataSize, double scale) {
+    public URITileMatrix(WritableTileMatrixSet parent, URI folder, ClientSecurity security, URITileFormat format, GenericName id,
+            DirectPosition upperLeft, Dimension gridSize, Dimension tileSize, double scale) {
         super(id, parent, upperLeft, gridSize, tileSize, scale);
         ArgumentChecks.ensureNonNull("folder", folder);
         ArgumentChecks.ensureNonNull("format", format);
         ArgumentChecks.ensureNonNull("security", security);
         this.security = security;
-        this.dataSize = dataSize;
         this.folderUri = folder;
         this.format = format;
     }
@@ -112,55 +114,67 @@ public class URITileMatrix extends AbstractTileMatrix {
     }
 
     @Override
-    public GridExtent getDataExtent() {
-        if (dataSize != null) {
-            return new GridExtent(dataSize.width, dataSize.height);
-        }
-        return super.getDataExtent();
-    }
-
-    @Override
-    protected boolean isWritable() throws DataStoreException {
-        return toPath(folderUri) != null;
-    }
-
-    @Override
-    public boolean isMissing(long col, long row) {
-        final URI tileUri = getTilePath(col, row);
+    public TileStatus getTileStatus(long... indices) {
+        final URI tileUri = getTilePath(indices[0], indices[1]);
         final Path tilePath = toPath(tileUri);
         if (tilePath != null) {
-            return !Files.exists(tilePath);
+            return !Files.exists(tilePath) ?
+                    TileStatus.MISSING : TileStatus.EXISTS;
         } else {
             //getting tile may be expensive
-            //we assume the tile exist
-            return false;
+            return TileStatus.UNKNOWN;
         }
     }
 
     @Override
-    public Tile getTile(long col, long row, Map hints) throws DataStoreException {
-        final URI tileUri = getTilePath(col, row);
+    public Optional<Tile> getTile(long... indices) throws DataStoreException {
+        final URI tileUri = getTilePath(indices[0], indices[1]);
         final Path tilePath = toPath(tileUri);
-        if (tilePath != null && !Files.exists(tilePath)) return null;
-        return URITile.create(this, tileUri, security, new Point(Math.toIntExact(col), Math.toIntExact(row)));
+        if (tilePath != null && !Files.exists(tilePath)) return Optional.empty();
+        return Optional.of(URITile.create(this, tileUri, security, indices));
     }
 
     @Override
-    public void deleteTile(int tileX, int tileY) throws DataStoreException {
-        final URI tileUri = getTilePath(tileX, tileY);
-        final Path tilePath = toPath(tileUri);
-        if (tilePath == null) {
-            throw new DataStoreException("Tile " + tileUri + " is not on the file system, delete is not supported.");
+    public long deleteTiles(GridExtent indicesRanges) throws DataStoreException {
+        if (indicesRanges == null) indicesRanges = getTilingScheme().getExtent();
+
+        long nb = 0;
+        try (Stream<long[]> stream = TileMatrices.pointStream(indicesRanges)) {
+            final Iterator<long[]> iterator = stream.iterator();
+            while (iterator.hasNext()) {
+                final long[] indices = iterator.next();
+                final URI tileUri = getTilePath(indices[0], indices[1]);
+                final Path tilePath = toPath(tileUri);
+                if (tilePath == null) {
+                    throw new DataStoreException("Tile " + tileUri + " is not on the file system, delete is not supported.");
+                }
+                try {
+                    if (Files.deleteIfExists(tilePath)) nb++;
+                } catch (IOException ex) {
+                    throw new DataStoreException(ex);
+                }
+            }
         }
-        try {
-            Files.deleteIfExists(tilePath);
-        } catch (IOException ex) {
-            throw new DataStoreException();
-        }
+        return nb;
     }
 
     public URI getTilePath(long x, long y) {
         return URIPattern.resolve(folderUri, this, format.getPattern(), x, y);
+    }
+
+    @Override
+    public void writeTiles(Stream<Tile> tiles) throws DataStoreException {
+        try {
+            tiles.parallel().forEach((Tile tile) -> {
+                try {
+                    writeTile(tile);
+                } catch (DataStoreException ex) {
+                    throw new BackingStoreException(ex);
+                }
+            });
+        } catch (BackingStoreException ex) {
+            throw ex.unwrapOrRethrow(DataStoreException.class);
+        }
     }
 
     /**
@@ -168,11 +182,10 @@ public class URITileMatrix extends AbstractTileMatrix {
      * @param tile
      * @throws DataStoreException
      */
-    @Override
-    protected void writeTile(Tile tile) throws DataStoreException {
+    private void writeTile(Tile tile) throws DataStoreException {
         ArgumentChecks.ensureNonNull("tile", tile);
-        final int tileX = tile.getPosition().x;
-        final int tileY = tile.getPosition().y;
+        final long tileX = tile.getIndices()[0];
+        final long tileY = tile.getIndices()[1];
         final URI tileUri = getTilePath(tileX, tileY);
         final Path tilePath = toPath(tileUri);
         if (tilePath == null) {
@@ -220,10 +233,7 @@ public class URITileMatrix extends AbstractTileMatrix {
             final StorageConnector connector = new StorageConnector(tempTilePath);
             try (final DataStore store = provider.open(connector)) {
 
-                Resource tileData = tile;
-                if (tile instanceof DeferredTile) {
-                    tileData = ((DeferredTile) tile).open();
-                }
+                Resource tileData = tile.getResource();
 
                 if (tileData instanceof Assets) {
                     final Assets source = (Assets) tile;
@@ -311,13 +321,13 @@ public class URITileMatrix extends AbstractTileMatrix {
         final Path folderPath = toPath(folderUri);
         if (folderPath == null) {
             //TODO : find a better solution
-            return getTile(0, 0);
+            return getTile(0, 0).orElse(null);
         } else {
             //search for a tile file
             try (final Stream<Path> stream = Files.find(folderPath, 256, (Path t, BasicFileAttributes u) -> t.getFileName().toString().endsWith(suffix))) {
                 final Optional<Path> first = stream.findFirst();
                 if (first.isPresent()) {
-                    return URITile.create(this, first.get().toUri(), security, new Point(0, 0));
+                    return URITile.create(this, first.get().toUri(), security, new long[]{0, 0});
                 }
             } catch (IOException | DataStoreException ex) {
                 //do nothing

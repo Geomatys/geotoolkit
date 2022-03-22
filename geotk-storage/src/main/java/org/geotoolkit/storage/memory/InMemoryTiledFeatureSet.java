@@ -22,38 +22,44 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Optional;
+import java.util.SortedMap;
 import java.util.stream.Stream;
 import org.apache.sis.storage.AbstractFeatureSet;
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.storage.feature.TileMatrixSetFeatureReader;
 import org.geotoolkit.storage.multires.AbstractTileMatrix;
 import org.geotoolkit.storage.multires.AbstractTileMatrixSet;
-import org.geotoolkit.storage.multires.DeferredTile;
+import org.geotoolkit.storage.multires.ScaleSortedMap;
 import org.geotoolkit.storage.multires.Tile;
 import org.geotoolkit.storage.multires.TileFormat;
 import org.geotoolkit.storage.multires.TileMatrices;
 import org.geotoolkit.storage.multires.TileMatrix;
 import org.geotoolkit.storage.multires.TileMatrixSet;
-import org.geotoolkit.storage.multires.TiledResource;
+import org.geotoolkit.storage.multires.TileStatus;
+import org.geotoolkit.storage.multires.WritableTileMatrix;
+import org.geotoolkit.storage.multires.WritableTileMatrixSet;
+import org.geotoolkit.storage.multires.WritableTiledResource;
+import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
-import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.GenericName;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public class InMemoryTiledFeatureSet extends AbstractFeatureSet implements TiledResource {
+public class InMemoryTiledFeatureSet extends AbstractFeatureSet implements WritableTiledResource {
 
-    private final Map<String,TileMatrixSet> models = new HashMap<>();
+    private final Map<String,WritableTileMatrixSet> models = new HashMap<>();
     private final FeatureType type;
 
     public InMemoryTiledFeatureSet(FeatureType type) {
@@ -72,29 +78,29 @@ public class InMemoryTiledFeatureSet extends AbstractFeatureSet implements Tiled
     }
 
     @Override
-    public Collection<TileMatrixSet> getTileMatrixSets() throws DataStoreException {
+    public Collection<WritableTileMatrixSet> getTileMatrixSets() throws DataStoreException {
         return Collections.unmodifiableCollection(models.values());
     }
 
     @Override
-    public TileMatrixSet createTileMatrixSet(TileMatrixSet template) throws DataStoreException {
-        String id = template.getIdentifier();
+    public WritableTileMatrixSet createTileMatrixSet(TileMatrixSet template) throws DataStoreException {
+        GenericName id = template.getIdentifier();
         if (id == null) {
             //create a unique id
-            id = UUID.randomUUID().toString();
-        } else if (models.containsKey(id)) {
+            id = NamesExt.createRandomUUID();
+        } else if (models.containsKey(id.toString())) {
             //change id to avoid overriding an existing pyramid
-            id = UUID.randomUUID().toString();
+            id = NamesExt.createRandomUUID();
         }
 
         final InMemoryTileMatrixSet py = new InMemoryTileMatrixSet(id, template.getCoordinateReferenceSystem());
         TileMatrices.copyStructure(template, py);
-        models.put(id, py);
+        models.put(id.toString(), py);
         return py;
     }
 
     @Override
-    public void removeTileMatrixSet(String identifier) throws DataStoreException {
+    public void deleteTileMatrixSet(String identifier) throws DataStoreException {
         ArgumentChecks.ensureNonNull("identifier", identifier);
         models.remove(identifier);
     }
@@ -104,55 +110,55 @@ public class InMemoryTiledFeatureSet extends AbstractFeatureSet implements Tiled
         return new TileMatrixSetFeatureReader(this, type).features(null, parallel);
     }
 
-    private final class InMemoryTileMatrixSet extends AbstractTileMatrixSet {
+    private final class InMemoryTileMatrixSet extends AbstractTileMatrixSet implements WritableTileMatrixSet {
 
-        private final List<InMemoryTileMatrix> mosaics = new CopyOnWriteArrayList<>();
+        private final ScaleSortedMap<InMemoryTileMatrix> mosaics = new ScaleSortedMap<>();
 
-        public InMemoryTileMatrixSet(String id, CoordinateReferenceSystem crs) {
+        public InMemoryTileMatrixSet(GenericName id, CoordinateReferenceSystem crs) {
             super(id, crs);
         }
 
         @Override
-        public Collection<? extends TileMatrix> getTileMatrices() {
-            return Collections.unmodifiableList(mosaics);
+        public SortedMap<GenericName,? extends WritableTileMatrix> getTileMatrices() {
+            return Collections.unmodifiableSortedMap(mosaics);
         }
 
         @Override
-        public TileMatrix createTileMatrix(TileMatrix template) throws DataStoreException {
-            final String mosaicId = UUID.randomUUID().toString();
-            final InMemoryTileMatrix gm = new InMemoryTileMatrix(mosaicId,
-                    this, template.getUpperLeftCorner(), template.getGridSize(), template.getTileSize(), template.getScale());
-            mosaics.add(gm);
+        public WritableTileMatrix createTileMatrix(TileMatrix template) throws DataStoreException {
+            final InMemoryTileMatrix gm = new InMemoryTileMatrix(NamesExt.createRandomUUID(),
+                    this, template.getTilingScheme(), template.getTileSize());
+            mosaics.insertByScale(gm);
             return gm;
         }
 
         @Override
         public void deleteTileMatrix(String mosaicId) throws DataStoreException {
-            for (int id = 0, len = mosaics.size(); id < len; id++) {
-                if (mosaics.get(id).getIdentifier().equalsIgnoreCase(mosaicId)) {
-                    mosaics.remove(id);
-                    break;
+            for (InMemoryTileMatrix tm : mosaics.values()) {
+                if (tm.getIdentifier().toString().equals(mosaicId)) {
+                    mosaics.removeByScale(tm);
+                    return;
                 }
             }
         }
     }
 
-    private final class InMemoryTileMatrix extends AbstractTileMatrix {
+    private final class InMemoryTileMatrix extends AbstractTileMatrix implements WritableTileMatrix {
 
         private final Map<Point,InMemoryDeferredTile> mpTileReference = new HashMap<>();
 
-        public InMemoryTileMatrix(final String id, TileMatrixSet pyramid, DirectPosition upperLeft, Dimension gridSize, Dimension tileSize, double scale) {
-            super(id, pyramid, upperLeft, gridSize, tileSize, scale);
+        public InMemoryTileMatrix(final GenericName id, WritableTileMatrixSet pyramid, GridGeometry tilingScheme, Dimension tileSize) {
+            super(id, pyramid, tilingScheme, tileSize);
         }
 
         @Override
-        public boolean isMissing(long col, long row) {
-            return mpTileReference.get(new Point(Math.toIntExact(col), Math.toIntExact(row))) == null;
+        public TileStatus getTileStatus(long... indices) {
+            return mpTileReference.get(new Point(Math.toIntExact(indices[0]), Math.toIntExact(indices[1]))) == null ?
+                    TileStatus.MISSING : TileStatus.EXISTS;
         }
 
         @Override
-        public InMemoryDeferredTile getTile(long col, long row, Map hints) throws DataStoreException {
-            return mpTileReference.get(new Point(Math.toIntExact(col), Math.toIntExact(row)));
+        public Optional<Tile> getTile(long... indices) throws DataStoreException {
+            return Optional.ofNullable(mpTileReference.get(new Point(Math.toIntExact(indices[0]), Math.toIntExact(indices[1]))));
         }
 
         public synchronized void setTile(int col, int row, InMemoryDeferredTile tile) {
@@ -160,16 +166,22 @@ public class InMemoryTiledFeatureSet extends AbstractFeatureSet implements Tiled
         }
 
         @Override
-        protected boolean isWritable() throws DataStoreException {
-            return true;
+        public void writeTiles(Stream<Tile> tiles) throws DataStoreException {
+            try {
+                tiles.parallel().forEach((Tile tile) -> {
+                    try {
+                        writeTile(tile);
+                    } catch (DataStoreException ex) {
+                        throw new BackingStoreException(ex);
+                    }
+                });
+            } catch (BackingStoreException ex) {
+                throw ex.unwrapOrRethrow(DataStoreException.class);
+            }
         }
 
-        @Override
-        protected void writeTile(Tile tile) throws DataStoreException {
-            Resource r = tile;
-            if (r instanceof DeferredTile) {
-                r = ((DeferredTile) r).open();
-            }
+        private void writeTile(Tile tile) throws DataStoreException {
+            Resource r = tile.getResource();
 
             if (r instanceof FeatureSet) {
                 final FeatureSet imgTile = (FeatureSet) r;
@@ -177,17 +189,31 @@ public class InMemoryTiledFeatureSet extends AbstractFeatureSet implements Tiled
                 try (Stream<Feature> stream = imgTile.features(false)) {
                     imfs.add(stream.iterator());
                 }
-                final int tileX = tile.getPosition().x;
-                final int tileY = tile.getPosition().y;
-                setTile(tileX, tileY, new InMemoryDeferredTile(new Point(tileX, tileY), imfs));
+                long[] indices = tile.getIndices();
+                setTile((int) indices[0], (int) indices[1], new InMemoryDeferredTile(indices, imfs));
             } else {
                 throw new DataStoreException("Only FeatureSet tiles are supported.");
             }
         }
 
         @Override
-        public void deleteTile(int tileX, int tileY) throws DataStoreException {
-            setTile(tileX,tileY,null);
+        public long deleteTiles(GridExtent indicesRanges) throws DataStoreException {
+            if (indicesRanges == null) {
+                long nb = mpTileReference.size();
+                mpTileReference.clear();
+                return nb;
+            } else {
+                long nb = 0;
+                final long[] low = indicesRanges.getLow().getCoordinateValues();
+                final long[] high = indicesRanges.getHigh().getCoordinateValues();
+                for (long x = low[0]; x <= high[0]; x++) {
+                    for (long y = low[1]; y <= high[1]; y++) {
+                        InMemoryDeferredTile previous = mpTileReference.remove(new Point(Math.toIntExact(x), Math.toIntExact(y)));
+                        if (previous != null) nb++;
+                    }
+                }
+                return nb;
+            }
         }
 
         @Override

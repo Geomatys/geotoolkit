@@ -18,7 +18,6 @@
 package org.geotoolkit.processing.coverage.mathcalc;
 
 import java.awt.Dimension;
-import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.DataBuffer;
@@ -44,6 +43,9 @@ import org.geotoolkit.geometry.HyperCubeIterator;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.storage.coverage.*;
 import org.geotoolkit.storage.multires.TileMatrices;
+import org.geotoolkit.storage.multires.WritableTileMatrix;
+import org.geotoolkit.storage.multires.WritableTileMatrixSet;
+import org.geotoolkit.storage.multires.WritableTiledResource;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.datum.PixelInCell;
@@ -51,9 +53,6 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
-import org.geotoolkit.storage.multires.TileMatrixSet;
-import org.geotoolkit.storage.multires.TileMatrix;
-import org.geotoolkit.storage.multires.TiledResource;
 
 /**
  * TODO : This should be part of the CoverageWriter interface.
@@ -184,7 +183,7 @@ public class FillCoverage {
      * @param evaluator
      * @param outRef
      */
-    public static void fill(TiledResource outRef, SampleEvaluator evaluator)
+    public static void fill(WritableTiledResource outRef, SampleEvaluator evaluator)
             throws DataStoreException, TransformException, FactoryException {
 
 //        final ColorModel cm = outRef.getColorModel();
@@ -192,21 +191,21 @@ public class FillCoverage {
         final ColorModel cm = null;
         final SampleModel sm = null;
 
-        for(TileMatrixSet pyramid : TileMatrices.getTileMatrixSets(outRef)){
-            for(TileMatrix mosaic : pyramid.getTileMatrices()){
+        for(WritableTileMatrixSet pyramid : outRef.getTileMatrixSets()){
+            for(WritableTileMatrix mosaic : pyramid.getTileMatrices().values()){
                 final Dimension tileSize = mosaic.getTileSize();
                 final double[] upperLeftGeo = mosaic.getUpperLeftCorner().getCoordinate();
 
                 final Dimension gridSize = mosaic.getGridSize();
                 for(int y=0;y<gridSize.height;y++){
                     for(int x=0;x<gridSize.width;x++){
-                        final MathTransform gridToCRS = TileMatrices.getTileGridToCRS(mosaic, new Point(x, y), PixelInCell.CELL_CENTER);
+                        final MathTransform gridToCRS = TileMatrices.getTileGridToCRS(mosaic, new long[]{x, y}, PixelInCell.CELL_CENTER);
                         final MathTransform crsToGrid = gridToCRS.inverse();
                         final double[] baseCoord = new double[upperLeftGeo.length];
                         crsToGrid.transform(upperLeftGeo, 0, baseCoord, 0, 1);
                         final MathCalcImageEvaluator eval = new MathCalcImageEvaluator(baseCoord, gridToCRS, evaluator.copy());
                         final ProcessedRenderedImage image = new ProcessedRenderedImage(sm, cm, eval, tileSize.width, tileSize.height);
-                        mosaic.writeTiles(Stream.of(new DefaultImageTile(image, new Point(x, y))), null);
+                        mosaic.writeTiles(Stream.of(new DefaultImageTile(image, new long[]{x, y})));
                     }
                 }
             }

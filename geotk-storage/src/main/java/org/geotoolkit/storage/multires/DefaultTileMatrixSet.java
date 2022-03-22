@@ -16,11 +16,11 @@
  */
 package org.geotoolkit.storage.multires;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
+import java.util.SortedMap;
 import org.apache.sis.storage.DataStoreException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.GenericName;
 
 /**
  * Default pyramid
@@ -30,40 +30,52 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class DefaultTileMatrixSet extends AbstractTileMatrixSet {
 
-    private final List<TileMatrix> mosaics = new ArrayList<>();
+    private final ScaleSortedMap<TileMatrix> mosaics = new ScaleSortedMap<>();
 
     public DefaultTileMatrixSet(CoordinateReferenceSystem crs) {
         this(null,crs);
     }
 
-    public DefaultTileMatrixSet(String id, CoordinateReferenceSystem crs) {
+    public DefaultTileMatrixSet(GenericName id, CoordinateReferenceSystem crs) {
         super(id,crs);
-    }
-
-    public void setFormat(String format) {
-        this.format = format;
     }
 
     /**
      * Internal list of pyramids, modify with causion.
      */
-    public List<TileMatrix> getMosaicsInternal() {
+    public ScaleSortedMap<TileMatrix> getMosaicsInternal() {
         return mosaics;
     }
 
     @Override
-    public List<TileMatrix> getTileMatrices() {
-        return Collections.unmodifiableList(mosaics);
+    public SortedMap<GenericName, ? extends TileMatrix> getTileMatrices() {
+        return Collections.unmodifiableSortedMap(mosaics);
     }
 
-    @Override
-    public TileMatrix createTileMatrix(TileMatrix template) throws DataStoreException {
-        throw new UnsupportedOperationException("Not supported.");
-    }
 
-    @Override
-    public void deleteTileMatrix(String mosaicId) throws DataStoreException {
-        throw new UnsupportedOperationException("Not supported.");
-    }
+    public static abstract class Writable extends DefaultTileMatrixSet implements WritableTileMatrixSet {
 
+        public Writable(CoordinateReferenceSystem crs) {
+            this(null,crs);
+        }
+
+        public Writable(GenericName id, CoordinateReferenceSystem crs) {
+            super(id,crs);
+        }
+
+        @Override
+        public SortedMap<GenericName,? extends WritableTileMatrix> getTileMatrices() {
+            return (SortedMap<GenericName,? extends WritableTileMatrix>) super.getTileMatrices();
+        }
+
+        @Override
+        public WritableTileMatrix createTileMatrix(TileMatrix template) throws DataStoreException {
+            throw new UnsupportedOperationException("Not supported.");
+        }
+
+        @Override
+        public void deleteTileMatrix(String mosaicId) throws DataStoreException {
+            throw new UnsupportedOperationException("Not supported.");
+        }
+    }
 }

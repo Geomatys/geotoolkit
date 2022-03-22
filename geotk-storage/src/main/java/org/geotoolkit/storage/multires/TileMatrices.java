@@ -17,15 +17,19 @@
 package org.geotoolkit.storage.multires;
 
 import java.awt.Dimension;
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
-import org.apache.sis.coverage.grid.DisjointExtentException;
+import java.util.Optional;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.stream.LongStream;
+import java.util.stream.Stream;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridRoundingMode;
-import org.apache.sis.coverage.grid.IllegalGridGeometryException;
 import org.apache.sis.coverage.grid.PixelTranslation;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralDirectPosition;
@@ -35,12 +39,14 @@ import org.apache.sis.measure.NumberRange;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.matrix.Matrices;
+import org.apache.sis.referencing.operation.matrix.MatrixSIS;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.NoSuchDataException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Static;
+import org.apache.sis.util.iso.Names;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.opengis.geometry.DirectPosition;
@@ -48,6 +54,7 @@ import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
@@ -58,6 +65,19 @@ import org.opengis.util.FactoryException;
  */
 public final class TileMatrices extends Static {
 
+    public static Comparator<TileMatrix> SCALE_COMPARATOR = new Comparator<TileMatrix>() {
+        @Override
+        public int compare(TileMatrix tm1, TileMatrix tm2) {
+            final double[] res1 = tm1.getTilingScheme().getResolution(true);
+            final double[] res2 = tm2.getTilingScheme().getResolution(true);
+            for (int i = 0; i < res1.length; i++) {
+                int cmp = Double.compare(res1[i], res2[i]);
+                if (cmp != 0) return cmp;
+            }
+            return 0;
+        }
+    };
+
     /**
      * Additional hint : to specify the mime type.
      */
@@ -65,10 +85,88 @@ public final class TileMatrices extends Static {
 
     private TileMatrices(){}
 
+    /**
+     * TODO
+     * until all calls to getScale are remove, preserve the old bahavior : return the longitude pixel scale.
+     */
+    @Deprecated
+    public static double getScale(TileMatrix tileMatrix) {
+        return tileMatrix.getResolution()[0];
+    }
+
+    public static GridGeometry toGridGeometry(DirectPosition upperleft, Dimension gridSize, double scale, Dimension tileSize) {
+        final CoordinateReferenceSystem crs = upperleft.getCoordinateReferenceSystem();
+
+        final int dimension = crs.getCoordinateSystem().getDimension();
+        final long[] low = new long[dimension];
+        final long[] high = new long[dimension];
+        high[0] = gridSize.width-1;
+        high[1] = gridSize.height-1;
+        final GridExtent extent = new GridExtent(null, low, high, true);
+
+        final double offsetX  = upperleft.getOrdinate(0);
+        final double offsetY = upperleft.getOrdinate(1);
+        MatrixSIS matrix = Matrices.createDiagonal(dimension+1, dimension+1);
+        matrix.setElement(0, 0, scale * tileSize.width);
+        matrix.setElement(1, 1, -scale * tileSize.height);
+        matrix.setElement(0, dimension, offsetX);
+        matrix.setElement(1, dimension, offsetY);
+        for (int i = 2; i < dimension; i++) {
+            // this shoud normaly be zero, but it causes exception a many places, 0.0 is not handle well yet in the library
+            double span = 1.0;
+            matrix.setElement(i, i, span);
+            matrix.setElement(i, dimension, upperleft.getOrdinate(i) - span/2.0);
+        }
+        final MathTransform gridToCrs = MathTransforms.linear(matrix);
+        return new GridGeometry(extent, PixelInCell.CELL_CORNER, gridToCrs, crs);
+    }
+
+    /**
+     * @return the different scales available in the pyramid.
+     * The scale value is expressed in CRS unit by image cell (pixel usually)
+     * Scales are sorted in natural order, from smallest to highest.
+     */
+    public static double[] getScales(TileMatrixSet tileMatrixSet) {
+        final SortedSet<Double> scaleSet = new TreeSet<Double>();
+
+        for(TileMatrix tileMatrix : tileMatrixSet.getTileMatrices().values()){
+            scaleSet.add(TileMatrices.getScale(tileMatrix));
+        }
+
+        final double[] scales = new double[scaleSet.size()];
+
+        int i=0;
+        for (Double d : scaleSet) {
+            scales[i] = d;
+            i++;
+        }
+
+        return scales;
+    }
+
+    /**
+     * @param scale the wanted scale, must match an available scale of the scales table.
+     * @return Collection<TileMatrix> available TileMatrix at this scale.
+     * Waring : in multidimensional pyramids, multiple TileMatrix at the same scale
+     * may exist.
+     */
+    public static Collection<? extends TileMatrix> getTileMatrices(TileMatrixSet tileMatrixSet, double scale) {
+        final List<TileMatrix> candidates = new ArrayList<>();
+        for (TileMatrix tileMatrix : tileMatrixSet.getTileMatrices().values()) {
+            if (TileMatrices.getScale(tileMatrix) == scale) {
+                candidates.add(tileMatrix);
+            }
+        }
+        return candidates;
+    }
+
     public static Envelope getEnvelope(TiledResource resource) throws DataStoreException {
-        for(TileMatrixSet pyramid : getTileMatrixSets(resource)){
+        for(TileMatrixSet pyramid : resource.getTileMatrixSets()){
             //we consider the first pyramid to be in the main data crs
-            return pyramid.getEnvelope();
+            Optional<Envelope> opt = pyramid.getEnvelope();
+            if (opt.isPresent()) {
+                return opt.get();
+            }
         }
         return null;
     }
@@ -88,7 +186,7 @@ public final class TileMatrices extends Static {
             return null;
         }
 
-        for (TileMatrix m : p.getTileMatrices()) {
+        for (TileMatrix m : p.getTileMatrices().values()) {
             if (m.getIdentifier().equals(tileMatrixId)) {
                 return m;
             }
@@ -116,8 +214,8 @@ public final class TileMatrices extends Static {
         final GeneralEnvelope tmpFilter = new GeneralEnvelope(
                 ReferencingUtilities.transform(filter, toSearchIn.getCoordinateReferenceSystem()));
 
-        for (TileMatrix tileMatrix : toSearchIn.getTileMatrices()) {
-            final Envelope sourceEnv = tileMatrix.getEnvelope();
+        for (TileMatrix tileMatrix : toSearchIn.getTileMatrices().values()) {
+            final Envelope sourceEnv = tileMatrix.getTilingScheme().getEnvelope();
             if ((containOnly && tmpFilter.contains(sourceEnv, true))
                     || (!containOnly && tmpFilter.intersects(sourceEnv, true))) {
                 result.add(tileMatrix);
@@ -143,38 +241,30 @@ public final class TileMatrices extends Static {
     /**
      * Delete all tiles in the pyramid intersecting given envelope and resolution range.
      *
-     * @param pyramid Pyramid to clean
+     * @param tileMatrixSet Pyramid to clean
      * @param env restricted envelope, can be null
      * @param resolutions restricted resolution range
      * @throws DataStoreException
      */
-    public static void clear(TileMatrixSet pyramid, Envelope env, NumberRange resolutions) throws DataStoreException {
+    public static void clear(WritableTileMatrixSet tileMatrixSet, Envelope env, NumberRange resolutions) throws DataStoreException {
 
         if (env != null) {
             try {
-                env = Envelopes.transform(env, pyramid.getCoordinateReferenceSystem());
+                env = Envelopes.transform(env, tileMatrixSet.getCoordinateReferenceSystem());
             } catch (TransformException ex) {
                 throw new DataStoreException(ex.getMessage(), ex);
             }
         }
 
-        for (TileMatrix mosaic : pyramid.getTileMatrices()) {
-            if (resolutions == null || resolutions.contains(mosaic.getScale())) {
-                final Rectangle rect;
-                if (env == null) {
-                    rect = new Rectangle(mosaic.getGridSize());
-                } else {
-                    try {
-                        rect = TileMatrices.getTilesInEnvelope(mosaic, env);
-                    } catch (NoSuchDataException ex) {
-                        continue;
-                    }
+        for (WritableTileMatrix tileMatrix : tileMatrixSet.getTileMatrices().values()) {
+            if (resolutions == null || resolutions.contains(tileMatrix.getScale())) {
+                final GridExtent extent;
+                try {
+                    extent = TileMatrices.getTilesInEnvelope(tileMatrix, env);
+                } catch (NoSuchDataException ex) {
+                    continue;
                 }
-                for (int x=rect.x, xn=rect.x+rect.width; x<xn; x++) {
-                    for (int y=rect.y, yn=rect.y+rect.height; y<yn; y++) {
-                        mosaic.deleteTile(x, y);
-                    }
-                }
+                tileMatrix.deleteTiles(extent);
             }
         }
     }
@@ -185,20 +275,12 @@ public final class TileMatrices extends Static {
      * @param base not null
      * @param target not null
      */
-    public static void copyStructure(TileMatrixSet base, TileMatrixSet target) throws DataStoreException {
+    public static void copyStructure(TileMatrixSet base, WritableTileMatrixSet target) throws DataStoreException {
         ArgumentChecks.ensureNonNull("base", base);
         ArgumentChecks.ensureNonNull("target", target);
-        for (TileMatrix m : base.getTileMatrices()) {
+        for (TileMatrix m : base.getTileMatrices().values()) {
             target.createTileMatrix(m);
         }
-    }
-
-    public static List<TileMatrixSet> getTileMatrixSets(TiledResource resource) throws DataStoreException {
-        final List<TileMatrixSet> pyramids = new ArrayList<>();
-        for (TileMatrixSet model : resource.getTileMatrixSets()) {
-            pyramids.add(model);
-        }
-        return pyramids;
     }
 
     /**
@@ -209,7 +291,7 @@ public final class TileMatrices extends Static {
      * @param orientation pixel orientation
      * @return MathTransform never null
      */
-    public static LinearTransform getTileGridToCRS(TileMatrix tileMatrix, Point location, PixelInCell orientation){
+    public static LinearTransform getTileGridToCRS(TileMatrix tileMatrix, long[] location, PixelInCell orientation){
         final DirectPosition upperleft = tileMatrix.getUpperLeftCorner();
         return getTileGridToCRSND(tileMatrix, location, upperleft.getDimension(), orientation);
     }
@@ -224,7 +306,7 @@ public final class TileMatrices extends Static {
      * @param orientation pixel orientation
      * @return MathTransform never null
      */
-    public static LinearTransform getTileGridToCRSND(TileMatrix tileMatrix, Point location, int nbDim, PixelInCell orientation){
+    public static LinearTransform getTileGridToCRSND(TileMatrix tileMatrix, long[] location, int nbDim, PixelInCell orientation){
 
         final AffineTransform2D trs2d = getTileGridToCRS2D(tileMatrix, location, orientation);
         final DirectPosition upperleft = tileMatrix.getUpperLeftCorner();
@@ -254,14 +336,14 @@ public final class TileMatrices extends Static {
      * @param orientation pixel orientation
      * @return AffineTransform2D never null.
      */
-    public static AffineTransform2D getTileGridToCRS2D(TileMatrix tileMatrix, Point location, PixelInCell orientation){
+    public static AffineTransform2D getTileGridToCRS2D(TileMatrix tileMatrix, long[] location, PixelInCell orientation){
 
         final Dimension tileSize = tileMatrix.getTileSize();
         final DirectPosition upperleft = tileMatrix.getUpperLeftCorner();
         final double scale = tileMatrix.getScale();
 
-        final double offsetX  = upperleft.getOrdinate(0) + location.x * (scale * tileSize.width) ;
-        final double offsetY = upperleft.getOrdinate(1) - location.y * (scale * tileSize.height);
+        final double offsetX  = upperleft.getOrdinate(0) + location[0] * (scale * tileSize.width) ;
+        final double offsetY = upperleft.getOrdinate(1) - location[1] * (scale * tileSize.height);
         AffineTransform2D transform2D = new AffineTransform2D(scale, 0, 0, -scale, offsetX, offsetY);
         if (orientation.equals(PixelInCell.CELL_CENTER)) {
             return (AffineTransform2D) PixelTranslation.translate(transform2D, PixelInCell.CELL_CORNER, PixelInCell.CELL_CENTER);
@@ -271,13 +353,8 @@ public final class TileMatrices extends Static {
 
     /**
      * Compute tile envelope from mosaic and position.
-     *
-     * @param tileMatrix
-     * @param col
-     * @param row
-     * @return
      */
-    public static Envelope computeTileEnvelope(TileMatrix tileMatrix, final long col, final long row) {
+    public static Envelope computeTileEnvelope(TileMatrix tileMatrix, final long[] location) {
         final Dimension tileSize = tileMatrix.getTileSize();
         final double scale = tileMatrix.getScale();
         final GeneralDirectPosition ul = new GeneralDirectPosition(tileMatrix.getUpperLeftCorner());
@@ -289,33 +366,8 @@ public final class TileMatrices extends Static {
         final double spanY = tileSize.height * scale;
 
         final GeneralEnvelope envelope = new GeneralEnvelope(ul.getCoordinateReferenceSystem());
-        envelope.setRange(xAxis, minX + col*spanX, minX + (col+1)*spanX);
-        envelope.setRange(yAxis, maxY - (row+1)*spanY, maxY - row*spanY);
-
-        return envelope;
-    }
-
-    /**
-     * Compute mosaic envelope from it's corner, scale and size.
-     *
-     * @param tileMatrix
-     * @return
-     */
-    public static GeneralEnvelope computeMosaicEnvelope(TileMatrix tileMatrix) {
-        final Dimension tileSize = tileMatrix.getTileSize();
-        final Dimension gridSize = tileMatrix.getGridSize();
-        final double scale = tileMatrix.getScale();
-        final GeneralDirectPosition ul = new GeneralDirectPosition(tileMatrix.getUpperLeftCorner());
-        final int xAxis = Math.max(CRSUtilities.firstHorizontalAxis(ul.getCoordinateReferenceSystem()), 0);
-        final int yAxis = xAxis + 1;
-        final double minX = ul.getOrdinate(xAxis);
-        final double maxY = ul.getOrdinate(yAxis);
-        final double spanX = scale * tileSize.width * gridSize.width;
-        final double spanY = scale * tileSize.height * gridSize.height;
-
-        final GeneralEnvelope envelope = new GeneralEnvelope(ul,ul);
-        envelope.setRange(xAxis, minX, minX + spanX);
-        envelope.setRange(yAxis, maxY - spanY, maxY );
+        envelope.setRange(xAxis, minX + location[0]*spanX, minX + (location[0]+1)*spanX);
+        envelope.setRange(yAxis, maxY - (location[1]+1)*spanY, maxY - location[1]*spanY);
 
         return envelope;
     }
@@ -330,36 +382,12 @@ public final class TileMatrices extends Static {
      * @throws org.apache.sis.storage.DataStoreException if the grid geometry of the tile matrix isn't well defined
      * @throws org.apache.sis.storage.NoSuchDataException if envelope do not intersect tile matrix
      */
-    public static Rectangle getTilesInEnvelope(TileMatrix tileMatrix, Envelope wantedEnv) throws DataStoreException {
+    public static GridExtent getTilesInEnvelope(TileMatrix tileMatrix, Envelope wantedEnv) throws DataStoreException {
         if (wantedEnv == null) {
-            return new Rectangle(tileMatrix.getGridSize());
+            return tileMatrix.getTilingScheme().getExtent();
         }
 
-        final SingleCRS crs2d = CRS.getHorizontalComponent(tileMatrix.getUpperLeftCorner().getCoordinateReferenceSystem());
-        final Dimension tileSize = tileMatrix.getTileSize();
-        final Dimension gridSize = tileMatrix.getGridSize();
-        final AffineTransform2D tileGridToCrs = getTileGridToCRS2D(tileMatrix, new Point(0,0), PixelInCell.CELL_CENTER);
-        final GridExtent matrixExtent = new GridExtent((long) tileSize.width*gridSize.width, (long) tileSize.height*gridSize.height);
-        final GridGeometry pixelMatrixGridGeom = new GridGeometry(matrixExtent, PixelInCell.CELL_CENTER, tileGridToCrs, crs2d);
-        final GridExtent intersection;
-        try {
-            wantedEnv = Envelopes.transform(wantedEnv, pixelMatrixGridGeom.getCoordinateReferenceSystem());
-            final GridGeometry gridMatrixGridGeom = pixelMatrixGridGeom.derive().subgrid((GridExtent) null, tileMatrix.getTileSize().width, tileMatrix.getTileSize().height).build();
-            intersection = gridMatrixGridGeom.derive()
-                    .rounding(GridRoundingMode.ENCLOSING)
-                    .subgrid(wantedEnv)
-                    .getIntersection();
-        } catch (DisjointExtentException ex) {
-            throw new NoSuchDataException(ex.getMessage(), ex);
-        } catch (IllegalGridGeometryException | IllegalStateException | TransformException ex) {
-            throw new DataStoreException(ex.getMessage(), ex);
-        }
-
-        return new Rectangle(
-                (int) intersection.getLow(0),
-                (int) intersection.getLow(1),
-                (int) intersection.getSize(0),
-                (int) intersection.getSize(1));
+        return tileMatrix.getTilingScheme().derive().rounding(GridRoundingMode.ENCLOSING).subgrid(wantedEnv).getIntersection();
     }
 
     /**
@@ -391,20 +419,20 @@ public final class TileMatrices extends Static {
         final List<TileMatrix> mosaics = new ArrayList<>();
 
         int level = 0;
-        final DefiningTileMatrix level0 = new DefiningTileMatrix(""+level, corner, 360.0/512.0, tileSize, new Dimension(2, 1));
+        final DefiningTileMatrix level0 = new DefiningTileMatrix(Names.createLocalName(null, null, ""+level), corner, 360.0/512.0, tileSize, new Dimension(2, 1));
         mosaics.add(level0);
 
         level++;
         DefiningTileMatrix parent = level0;
         for (;level<=maxDepth;level++) {
-            final DefiningTileMatrix levelN = new DefiningTileMatrix(""+level, corner,
+            final DefiningTileMatrix levelN = new DefiningTileMatrix(Names.createLocalName(null, null, ""+level), corner,
                     parent.getScale() / 2.0, tileSize,
                     new Dimension(parent.getGridSize().width*2, parent.getGridSize().height*2));
             mosaics.add(levelN);
             parent = levelN;
         }
 
-        return new DefiningTileMatrixSet("wgs84", "", crs, mosaics);
+        return new DefiningTileMatrixSet(Names.createLocalName(null, null, "wgs84"), crs, mosaics);
     }
 
     /**
@@ -573,13 +601,13 @@ public final class TileMatrices extends Static {
      * @param location
      * @return
      */
-    public static GridGeometry getAbsoluteTileGridGeometry2D(TileMatrix tileMatrix, Point location) {
+    public static GridGeometry getAbsoluteTileGridGeometry2D(TileMatrix tileMatrix, long[] location) {
         final SingleCRS crs2d = CRS.getHorizontalComponent(tileMatrix.getUpperLeftCorner().getCoordinateReferenceSystem());
         final Dimension tileSize = tileMatrix.getTileSize();
-        final AffineTransform2D matrixGridToCrs = getTileGridToCRS2D(tileMatrix, new Point(0,0), PixelInCell.CELL_CENTER);
+        final AffineTransform2D matrixGridToCrs = getTileGridToCRS2D(tileMatrix, new long[]{0,0}, PixelInCell.CELL_CENTER);
         final long[] low = new long[]{
-            (long) location.x * tileSize.width,
-            (long) location.y * tileSize.height,
+            location[0] * tileSize.width,
+            location[1] * tileSize.height,
         };
         final long[] high = new long[]{
             low[0] + tileSize.width,
@@ -589,7 +617,7 @@ public final class TileMatrices extends Static {
         return new GridGeometry(tileExtent, PixelInCell.CELL_CENTER, matrixGridToCrs, crs2d);
     }
 
-    public static GridGeometry getTileGridGeometry2D(TileMatrix tileMatrix, Point location) {
+    public static GridGeometry getTileGridGeometry2D(TileMatrix tileMatrix, long[] location) {
         final SingleCRS crs2d = CRS.getHorizontalComponent(tileMatrix.getUpperLeftCorner().getCoordinateReferenceSystem());
         final Dimension tileSize = tileMatrix.getTileSize();
         final AffineTransform2D tileGridToCrs = getTileGridToCRS2D(tileMatrix, location, PixelInCell.CELL_CENTER);
@@ -600,7 +628,7 @@ public final class TileMatrices extends Static {
     public static GridGeometry getTileGridGeometry2D(TileMatrix tileMatrix, Rectangle rectangle) {
         final SingleCRS crs2d = CRS.getHorizontalComponent(tileMatrix.getUpperLeftCorner().getCoordinateReferenceSystem());
         final Dimension tileSize = tileMatrix.getTileSize();
-        final AffineTransform2D tileGridToCrs = getTileGridToCRS2D(tileMatrix, rectangle.getLocation(), PixelInCell.CELL_CENTER);
+        final AffineTransform2D tileGridToCrs = getTileGridToCRS2D(tileMatrix, new long[]{rectangle.x, rectangle.y}, PixelInCell.CELL_CENTER);
         final GridExtent tileExtent = new GridExtent((long) tileSize.width * rectangle.width, (long) tileSize.height * rectangle.height);
         return new GridGeometry(tileExtent, PixelInCell.CELL_CENTER, tileGridToCrs, crs2d);
     }
@@ -609,7 +637,7 @@ public final class TileMatrices extends Static {
      * @deprecated use getTileGridGeometry2D method without crs parameter.
      */
     @Deprecated
-    public static GridGeometry getTileGridGeometry2D(TileMatrix tileMatrix, Point location, CoordinateReferenceSystem crs) {
+    public static GridGeometry getTileGridGeometry2D(TileMatrix tileMatrix, long[] location, CoordinateReferenceSystem crs) {
         final Dimension tileSize = tileMatrix.getTileSize();
         final AffineTransform2D tileGridToCrs = getTileGridToCRS2D(tileMatrix, location, PixelInCell.CELL_CENTER);
         final GridExtent tileExtent = new GridExtent(tileSize.width, tileSize.height);
@@ -622,7 +650,7 @@ public final class TileMatrices extends Static {
     @Deprecated
     public static GridGeometry getTileGridGeometry2D(TileMatrix tileMatrix, Rectangle rectangle, CoordinateReferenceSystem crs) {
         final Dimension tileSize = tileMatrix.getTileSize();
-        final AffineTransform2D tileGridToCrs = getTileGridToCRS2D(tileMatrix, rectangle.getLocation(), PixelInCell.CELL_CENTER);
+        final AffineTransform2D tileGridToCrs = getTileGridToCRS2D(tileMatrix, new long[]{rectangle.x, rectangle.y}, PixelInCell.CELL_CENTER);
         final GridExtent tileExtent = new GridExtent((long) tileSize.width * rectangle.width, (long) tileSize.height * rectangle.height);
         return new GridGeometry(tileExtent, PixelInCell.CELL_CENTER, tileGridToCrs, crs);
     }
@@ -630,30 +658,85 @@ public final class TileMatrices extends Static {
     /**
      * Count the number of tiles in TileMatrixSet.
      *
-     * @param pyramid
+     * @param tileMatrixSet
      * @param env searched envelope, can be null
      * @param resolutions, searched resolutions, can be null
      * @return number of tiles.
      * @throws DataStoreException
      */
-    public static long countTiles(TileMatrixSet pyramid, Envelope env, NumberRange resolutions) throws DataStoreException {
+    public static long countTiles(TileMatrixSet tileMatrixSet, Envelope env, NumberRange resolutions) throws DataStoreException {
 
         long count = 0;
-        for (TileMatrix mosaic : pyramid.getTileMatrices()) {
-            if (resolutions == null || resolutions.containsAny(mosaic.getScale())) {
-                if (env == null) {
-                    count += ((long) mosaic.getGridSize().width) * ((long) mosaic.getGridSize().height);
-                } else {
-                    final Rectangle rect;
-                    try {
-                        rect = TileMatrices.getTilesInEnvelope(mosaic, env);
-                    } catch (NoSuchDataException ex) {
-                        continue;
-                    }
-                    count += ((long) rect.width) * ((long) rect.height);
+        for (TileMatrix tileMatrix : tileMatrixSet.getTileMatrices().values()) {
+            if (resolutions == null || resolutions.containsAny(tileMatrix.getScale())) {
+                GridExtent ext;
+                try {
+                    ext = TileMatrices.getTilesInEnvelope(tileMatrix, env);
+                } catch (NoSuchDataException ex) {
+                    continue;
                 }
+                count += countCells(ext);
             }
         }
         return count;
+    }
+
+    public static long countCells(GridExtent extent) {
+        long nb = 1;
+        for (int i = 0; i < extent.getDimension(); i++) {
+            nb *= extent.getSize(i);
+        }
+        return nb;
+    }
+
+    /**
+     * Test if indices are within GridExtent range.
+     * TODO : remove when GridExtent.contains is available in SIS.
+     */
+    public static boolean contains(GridExtent extent, long... indices) {
+        for (int i = 0; i < indices.length; i++) {
+            if (indices[i] < extent.getLow(i) || indices[i] > extent.getHigh(i)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Test if indices are on the border of the GridExtent.
+     */
+    public static boolean onBorder(GridExtent extent, long... indices) {
+        for (int i = 0, n = extent.getDimension(); i < n; i++) {
+            if (indices[i] == extent.getLow(i) || indices[i] == extent.getHigh(i)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Create a stream of point in the GridExtent.
+     */
+    public static Stream<long[]> pointStream(GridExtent extent) {
+        final int dimension = extent.getDimension();
+        final long[] low = extent.getLow().getCoordinateValues();
+        final long[] high = extent.getHigh().getCoordinateValues();
+
+        Stream<long[]> stream = LongStream.range(low[0], high[0]+1)
+                .mapToObj((long value) -> {
+                    final long[] array = new long[dimension];
+                    array[0] = value;
+                    return array;
+        });
+        for (int i = 1; i <dimension; i++) {
+            final int idx = i;
+            stream = stream.flatMap((long[] t) -> LongStream.range(low[idx], high[idx]+1)
+                    .mapToObj((long value) -> {
+                        final long[] array = t.clone();
+                        array[idx] = value;
+                        return array;
+                    }));
+        }
+        return stream;
     }
 }

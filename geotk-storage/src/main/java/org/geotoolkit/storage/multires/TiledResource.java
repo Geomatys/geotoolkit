@@ -43,26 +43,6 @@ public interface TiledResource extends Resource {
     Collection<? extends TileMatrixSet> getTileMatrixSets() throws DataStoreException;
 
     /**
-     * Create a new {@linkplain TileMatrixSet} based on given model.
-     * The created model may have differences.
-     * Model identifier may be preserved or not, behavior is implementation specific.
-     * If the id is already used a new one will be generated instead.
-     *
-     * @param template a template model which structure will be used as reference.
-     * @return created {@linkplain  TileMatrixSet}
-     * @throws DataStoreException
-     */
-    TileMatrixSet createTileMatrixSet(TileMatrixSet template) throws DataStoreException;
-
-    /**
-     * Remove an existing {@linkplain TileMatrixSet}.
-     *
-     * @param identifier not null
-     * @throws DataStoreException
-     */
-    void removeTileMatrixSet(String identifier) throws DataStoreException;
-
-    /**
      * Get a description of the inner storage of tiles.
      *
      * @return Tile format description, never null but may not contain any useful information.

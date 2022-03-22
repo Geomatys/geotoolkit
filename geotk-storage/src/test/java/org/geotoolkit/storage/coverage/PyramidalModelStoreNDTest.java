@@ -22,7 +22,6 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
-import java.util.List;
 import java.util.stream.Stream;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
@@ -34,21 +33,18 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.WritableAggregate;
 import org.apache.sis.util.Utilities;
-import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.storage.multires.DefiningTileMatrix;
 import org.geotoolkit.storage.multires.DefiningTileMatrixSet;
 import org.geotoolkit.storage.multires.TileMatrices;
-import org.geotoolkit.storage.coverage.DefaultImageTile;
-import org.geotoolkit.storage.coverage.DefiningGridCoverageResource;
+import org.geotoolkit.storage.multires.WritableTileMatrix;
+import org.geotoolkit.storage.multires.WritableTileMatrixSet;
+import org.geotoolkit.storage.multires.WritableTiledResource;
 import org.geotoolkit.util.NamesExt;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.GenericName;
-import org.geotoolkit.storage.multires.TileMatrixSet;
-import org.geotoolkit.storage.multires.TileMatrix;
-import org.geotoolkit.storage.multires.TiledResource;
 
 /**
  * Abstract pyramid store test.
@@ -56,7 +52,7 @@ import org.geotoolkit.storage.multires.TiledResource;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public abstract class PyramidalModelStoreNDTest <T extends TiledResource & org.apache.sis.storage.GridCoverageResource> extends org.geotoolkit.test.TestBase {
+public abstract class PyramidalModelStoreNDTest <T extends WritableTiledResource & org.apache.sis.storage.GridCoverageResource> extends org.geotoolkit.test.TestBase {
 
     private static final double DELTA = 0.00000001;
 
@@ -112,11 +108,11 @@ public abstract class PyramidalModelStoreNDTest <T extends TiledResource & org.a
             colors[v][1][3][2] = color++;
         }
 
-        final TileMatrixSet pyramid = (TileMatrixSet) ref.createTileMatrixSet(new DefiningTileMatrixSet(crs));
+        final WritableTileMatrixSet pyramid = ref.createTileMatrixSet(new DefiningTileMatrixSet(crs));
         for(int v=0;v<CORNER_V.length;v++){
-            final TileMatrix mosaic_s0 = pyramid.createTileMatrix(new DefiningTileMatrix(null, createCorner(CORNER_LONG,CORNER_LAT,CORNER_V[v]), 1,
+            final WritableTileMatrix mosaic_s0 = pyramid.createTileMatrix(new DefiningTileMatrix(null, createCorner(CORNER_LONG,CORNER_LAT,CORNER_V[v]), 1,
                             new Dimension(10, 10), new Dimension(2, 2)));
-            final TileMatrix mosaic_s1 = pyramid.createTileMatrix(new DefiningTileMatrix(null, createCorner(CORNER_LONG,CORNER_LAT,CORNER_V[v]), 0.5,
+            final WritableTileMatrix mosaic_s1 = pyramid.createTileMatrix(new DefiningTileMatrix(null, createCorner(CORNER_LONG,CORNER_LAT,CORNER_V[v]), 0.5,
                             new Dimension(10, 10), new Dimension(4, 3)));
 
             //insert tiles
@@ -125,7 +121,7 @@ public abstract class PyramidalModelStoreNDTest <T extends TiledResource & org.a
                     new DefaultImageTile(createImage(colors[v][0][1][0]), 1, 0),
                     new DefaultImageTile(createImage(colors[v][0][0][1]), 0, 1),
                     new DefaultImageTile(createImage(colors[v][0][1][1]), 1, 1)
-                ),null);
+                ));
 
             mosaic_s1.writeTiles(Stream.of(
                     new DefaultImageTile(createImage(colors[v][1][0][0]), 0, 0),
@@ -140,7 +136,7 @@ public abstract class PyramidalModelStoreNDTest <T extends TiledResource & org.a
                     new DefaultImageTile(createImage(colors[v][1][1][2]), 1, 2),
                     new DefaultImageTile(createImage(colors[v][1][2][2]), 2, 2),
                     new DefaultImageTile(createImage(colors[v][1][3][2]), 3, 2)
-                ),null);
+                ));
         }
 
         crs = pyramid.getCoordinateReferenceSystem();

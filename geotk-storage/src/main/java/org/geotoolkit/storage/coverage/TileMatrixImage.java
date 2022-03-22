@@ -35,6 +35,7 @@ import org.geotoolkit.math.XMath;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.multires.Tile;
 import org.geotoolkit.storage.multires.TileMatrix;
+import org.geotoolkit.storage.multires.TileStatus;
 
 /**
  * Implementation of RenderedImage using GridMosaic.
@@ -228,8 +229,8 @@ public class TileMatrixImage extends ComputedImage implements RenderedImage {
         try {
             DataBuffer buffer = null;
 
-            if (!matrix.isMissing(mosaictileX,mosaictileY)) {
-                final ImageTile tile = (ImageTile) matrix.getTile(mosaictileX,mosaictileY);
+            if (!isTileMissing(matrix, mosaictileX, mosaictileY)) {
+                final ImageTile tile = (ImageTile) matrix.getTile(mosaictileX,mosaictileY).orElse(null);
                 //can happen if tile is really missing, the isMissing method is a best effort call
                 if (tile != null) {
                     final RenderedImage image = tile.getImage();
@@ -288,8 +289,11 @@ public class TileMatrixImage extends ComputedImage implements RenderedImage {
         return raster;
     }
 
-    private boolean isTileMissing(int x, int y) throws DataStoreException{
-        return matrix.isMissing(x+gridRange.x, y+gridRange.y);
+    private boolean isTileMissing(TileMatrix matrix, long x, long y) throws DataStoreException{
+        final TileStatus status = matrix.getTileStatus(x + gridRange.x, y + gridRange.y);
+        return status == TileStatus.MISSING
+            || status == TileStatus.OUTSIDE_EXTENT
+            || status == TileStatus.IN_ERROR;
     }
 
     /**
@@ -312,7 +316,7 @@ public class TileMatrixImage extends ComputedImage implements RenderedImage {
 
             for (int y = Math.max(upperLeftPosition.y, 0); y < Math.min(lowerRightPosition.y + 1, this.getNumYTiles()); y++) {
                 for (int x = Math.max(upperLeftPosition.x, 0); x < Math.min(lowerRightPosition.x + 1, this.getNumXTiles()); x++) {
-                    if (!isTileMissing(x, y)) {
+                    if (!isTileMissing(matrix, x, y)) {
                         Raster tile = getTile(x, y, true, false);
                         if (tile != null) {
                             final Rectangle tileRect = new Rectangle(x * this.getTileWidth(), y * this.getTileHeight(), this.getTileWidth(), this.getTileHeight());

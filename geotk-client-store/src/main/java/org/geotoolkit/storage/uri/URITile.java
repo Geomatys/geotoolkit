@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.storage.uri;
 
-import java.awt.Point;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,8 +41,8 @@ import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.security.DefaultClientSecurity;
 import org.geotoolkit.storage.AbstractResource;
 import org.geotoolkit.storage.coverage.ImageTile;
-import org.geotoolkit.storage.multires.DeferredTile;
 import org.geotoolkit.storage.multires.Tile;
+import org.geotoolkit.storage.multires.TileStatus;
 
 /**
  * TileMatrix Tile resolved by an URI.
@@ -64,7 +63,7 @@ public final class URITile {
      * @return Tile may be an ImageTile or DeferredTile based on matrix tile format.
      * @throws DataStoreException
      */
-    public static Tile create(URITileMatrix tilematrix, URI path, ClientSecurity security, Point position) throws DataStoreException {
+    public static Tile create(URITileMatrix tilematrix, URI path, ClientSecurity security, long[] position) throws DataStoreException {
         ArgumentChecks.ensureNonNull("security", security);
         final URITileFormat.Compression compression = tilematrix.getFormat().getCompression();
 
@@ -85,9 +84,9 @@ public final class URITile {
         private final URI input;
         private final ClientSecurity security;
         private final int imageIndex;
-        private final Point position;
+        private final long[] position;
 
-        public Image(ImageReaderSpi spi, URI input, ClientSecurity security, int imageIndex, Point position, URITileFormat.Compression compression) {
+        public Image(ImageReaderSpi spi, URI input, ClientSecurity security, int imageIndex, long[] position, URITileFormat.Compression compression) {
             this.spi = spi;
             this.input = input;
             this.security = security;
@@ -196,8 +195,18 @@ public final class URITile {
         }
 
         @Override
-        public Point getPosition() {
-            return position;
+        public long[] getIndices() {
+            return position.clone();
+        }
+
+        @Override
+        public TileStatus getStatus() {
+            return TileStatus.EXISTS;
+        }
+
+        @Override
+        public Resource getResource() throws DataStoreException {
+            return this;
         }
 
         @Override
@@ -213,15 +222,15 @@ public final class URITile {
     /**
      * Dataset format tile.
      */
-    private static class DataSet extends AbstractResource implements Tile, DeferredTile, ResourceOnFileSystem {
+    private static class DataSet extends AbstractResource implements Tile, ResourceOnFileSystem {
 
         private final URITileFormat.Compression compression;
         private final DataStoreProvider provider;
         private final URI input;
         private final ClientSecurity security;
-        private final Point position;
+        private final long[] position;
 
-        public DataSet(DataStoreProvider provider, URI input, ClientSecurity security, Point position, URITileFormat.Compression compression) {
+        public DataSet(DataStoreProvider provider, URI input, ClientSecurity security, long[] position, URITileFormat.Compression compression) {
             this.provider = provider;
             this.input = input;
             this.security = security;
@@ -230,8 +239,13 @@ public final class URITile {
         }
 
         @Override
-        public Point getPosition() {
+        public long[] getIndices() {
             return position;
+        }
+
+        @Override
+        public TileStatus getStatus() {
+            return TileStatus.EXISTS;
         }
 
         @Override
@@ -244,7 +258,7 @@ public final class URITile {
         }
 
         @Override
-        public Resource open() throws DataStoreException {
+        public Resource getResource() throws DataStoreException {
             //TODO security is ignored here, how to transmit security to the tile datastore ?
             final StorageConnector sc = new StorageConnector(input);
             return provider.open(sc);

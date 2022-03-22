@@ -16,38 +16,36 @@
  */
 package org.geotoolkit.storage.memory;
 
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.internal.feature.AttributeConvention;
-import org.apache.sis.storage.FeatureQuery;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureQuery;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.Resource;
 import org.geotoolkit.feature.FeatureExt;
+import org.geotoolkit.filter.FilterFactory2;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.storage.multires.AbstractTileGenerator;
-import org.geotoolkit.storage.multires.DeferredTile;
-import org.geotoolkit.storage.multires.TileMatrices;
 import org.geotoolkit.storage.multires.Tile;
+import org.geotoolkit.storage.multires.TileMatrices;
+import org.geotoolkit.storage.multires.WritableTileMatrix;
+import org.geotoolkit.storage.multires.WritableTileMatrixSet;
 import org.geotoolkit.util.StringUtilities;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.simplify.TopologyPreservingSimplifier;
 import org.opengis.feature.Feature;
 import org.opengis.filter.Filter;
-import org.geotoolkit.filter.FilterFactory2;
-import org.geotoolkit.filter.FilterUtilities;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
-import org.geotoolkit.storage.multires.TileMatrixSet;
-import org.geotoolkit.storage.multires.TileMatrix;
 
 /**
  * Generate tiles with a FeatureSet resource.
@@ -75,19 +73,15 @@ public class FeatureSetTileGenerator extends AbstractTileGenerator {
 
     @Override
     protected boolean isEmpty(Tile tile) throws DataStoreException {
-        Resource r = tile;
-        if (r instanceof DeferredTile) {
-            r = ((DeferredTile) r).open();
-        }
-
+        Resource r = tile.getResource();
         FeatureSet fs = (FeatureSet) r;
         return FeatureStoreUtilities.getCount(fs) == 0l;
     }
 
     @Override
-    public Tile generateTile(TileMatrixSet pyramid, TileMatrix mosaic, Point tileCoord) throws DataStoreException {
+    public Tile generateTile(WritableTileMatrixSet tileMatrixSet, WritableTileMatrix tileMatrix, long[] tileCoord) throws DataStoreException {
 
-        final Envelope tileEnv = TileMatrices.computeTileEnvelope(mosaic, tileCoord.x, tileCoord.y);
+        final Envelope tileEnv = TileMatrices.computeTileEnvelope(tileMatrix, tileCoord);
         final CoordinateReferenceSystem tileCrs = tileEnv.getCoordinateReferenceSystem();
         final Filter filter;
         try {
@@ -102,7 +96,7 @@ public class FeatureSetTileGenerator extends AbstractTileGenerator {
         query.setSelection(filter);
 
         final FeatureSet subset = source.subset(query);
-        final double scale = mosaic.getScale();
+        final double scale = TileMatrices.getScale(tileMatrix);
 
         final List<Feature> features = new ArrayList<>();
 

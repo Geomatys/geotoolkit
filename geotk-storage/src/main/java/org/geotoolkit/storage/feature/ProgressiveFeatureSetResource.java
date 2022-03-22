@@ -20,8 +20,8 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Stream;
 import org.apache.sis.storage.AbstractFeatureSet;
-import org.apache.sis.storage.FeatureQuery;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureQuery;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.Query;
 import org.apache.sis.storage.UnsupportedQueryException;
@@ -29,6 +29,8 @@ import org.geotoolkit.storage.multires.GeneralProgressiveResource;
 import org.geotoolkit.storage.multires.TileGenerator;
 import org.geotoolkit.storage.multires.TileMatrixSet;
 import org.geotoolkit.storage.multires.TiledResource;
+import org.geotoolkit.storage.multires.WritableTileMatrixSet;
+import org.geotoolkit.storage.multires.WritableTiledResource;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.geometry.Envelope;
@@ -38,7 +40,7 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class ProgressiveFeatureSetResource<T extends FeatureSet & TiledResource>
+public class ProgressiveFeatureSetResource<T extends FeatureSet & WritableTiledResource>
         extends GeneralProgressiveResource implements FeatureSet, TiledResource {
 
     private T base = null;
@@ -54,14 +56,14 @@ public class ProgressiveFeatureSetResource<T extends FeatureSet & TiledResource>
         //search for a pyramid
         //-- we use the first pyramid as default
         for (TileMatrixSet model : models) {
-            return Optional.ofNullable(model.getEnvelope());
+            return model.getEnvelope();
         }
         return Optional.empty();
     }
 
     @Override
-    public Collection<TileMatrixSet> getTileMatrixSets() throws DataStoreException {
-        return (Collection<TileMatrixSet>) super.getTileMatrixSets();
+    public Collection<WritableTileMatrixSet> getTileMatrixSets() throws DataStoreException {
+        return (Collection<WritableTileMatrixSet>) super.getTileMatrixSets();
     }
 
     @Override

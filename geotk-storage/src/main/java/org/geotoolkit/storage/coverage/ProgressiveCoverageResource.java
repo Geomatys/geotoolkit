@@ -25,14 +25,15 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.storage.multires.GeneralProgressiveResource;
 import org.geotoolkit.storage.multires.TileGenerator;
-import org.geotoolkit.storage.multires.TileMatrixSet;
 import org.geotoolkit.storage.multires.TiledResource;
+import org.geotoolkit.storage.multires.WritableTileMatrixSet;
+import org.geotoolkit.storage.multires.WritableTiledResource;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public final class ProgressiveCoverageResource<T extends GridCoverageResource & TiledResource>
+public final class ProgressiveCoverageResource<T extends GridCoverageResource & WritableTiledResource>
         extends GeneralProgressiveResource implements GridCoverageResource, TiledResource, IProgressiveCoverageResource {
 
     private T base = null;
@@ -43,8 +44,8 @@ public final class ProgressiveCoverageResource<T extends GridCoverageResource & 
     }
 
     @Override
-    public Collection<TileMatrixSet> getTileMatrixSets() throws DataStoreException {
-        return (Collection<TileMatrixSet>) super.getTileMatrixSets();
+    public Collection<WritableTileMatrixSet> getTileMatrixSets() throws DataStoreException {
+        return (Collection<WritableTileMatrixSet>) super.getTileMatrixSets();
     }
 
     @Override

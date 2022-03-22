@@ -46,7 +46,7 @@ public class TileMatrixImageTest {
                 .setName(0)
                 .build();
 
-        final TileMatrixImage image = TileMatrixImage.create(tileMatrisSet.getTileMatrices().iterator().next(), null, Arrays.asList(sampleDimension));
+        final TileMatrixImage image = TileMatrixImage.create(tileMatrisSet.getTileMatrices().values().iterator().next(), null, Arrays.asList(sampleDimension));
 
         Assert.assertTrue(BufferedImages.isAll(image, new double[]{35.7}));
 

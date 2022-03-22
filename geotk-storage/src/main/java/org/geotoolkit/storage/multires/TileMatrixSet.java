@@ -16,15 +16,12 @@
  */
 package org.geotoolkit.storage.multires;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.Optional;
+import java.util.SortedMap;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.storage.DataStoreException;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.GenericName;
 
 /**
  * A TileMatrixSet is a collection of TileMatrix in the same CRS but at different
@@ -41,103 +38,53 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 public interface TileMatrixSet {
 
     /**
-     * @return unique id.
-     */
-    String getIdentifier();
-
-    /**
-     * Returns the mime type of tiles used in the model.
-     * All tiles use the same format.
+     * Returns an alphanumeric identifier which is unique in the {@link TiledResource} that contains
+     * this {@code TileMatrixSet}. A tiled resource may contains more than one tile matrix set if the
+     * resource prepared different set of tiles for different CRS.
      *
-     * @return time format.
+     * @return a unique (within {@link TiledResource}) identifier.
      */
-    String getFormat();
+    GenericName getIdentifier();
 
     /**
-     * @return the crs used for all tiles in the pyramid.
+     * Returns the coordinate reference system of all {@code TileMatrix} instances in this set.
+     * This is the value returned by {@code TileMatrix.getTilingScheme().getCoordinateReferenceSystem()}.
+     *
+     * @return the CRS used by all {@code TileMatrix} instances in this set.
+     *
+     * @see TileMatrix#getTilingScheme()
      */
     CoordinateReferenceSystem getCoordinateReferenceSystem();
 
     /**
-     * @return unmodifiable collection of all TileMatrix.
-     * Waring : in multidimensional pyramids, multiple TileMatrix at the same scale
-     * may exist.
-     */
-    Collection<? extends TileMatrix> getTileMatrices();
-
-    /**
-     * @return the different scales available in the pyramid.
-     * The scale value is expressed in CRS unit by image cell (pixel usually)
-     * Scales are sorted in natural order, from smallest to highest.
-     */
-    default double[] getScales() {
-        final SortedSet<Double> scaleSet = new TreeSet<Double>();
-
-        for(TileMatrix m : TileMatrixSet.this.getTileMatrices()){
-            scaleSet.add(m.getScale());
-        }
-
-        final double[] scales = new double[scaleSet.size()];
-
-        int i=0;
-        for(Double d : scaleSet){
-            scales[i] = d;
-            i++;
-        }
-
-        return scales;
-    }
-
-    /**
-     * @param scale the wanted scale, must match an available scale of the scales table.
-     * @return Collection<TileMatrix> available TileMatrix at this scale.
-     * Waring : in multidimensional pyramids, multiple TileMatrix at the same scale
-     * may exist.
-     */
-    default Collection<TileMatrix> getTileMatrices(double scale) {
-        final List<TileMatrix> candidates = new ArrayList<>();
-        for (TileMatrix m : TileMatrixSet.this.getTileMatrices()) {
-            if (m.getScale() == scale) {
-                candidates.add(m);
-            }
-        }
-        return candidates;
-    }
-
-    /**
-     * Get pyramid envelope.
-     * This is the aggregation of all TileMatrix envelopes.
+     * Returns an envelope that encompasses all {@code TileMatrix} instances in this set.
+     * This is the {@linkplain org.apache.sis.geometry.GeneralEnvelope#add(Envelope) union}
+     * of all values returned by {@code TileMatrix.getTilingScheme().getEnvelope()}.
+     * May be empty if too costly to compute.
      *
-     * @return Envelope
+     * @return the bounding box for all tile matrices in CRS coordinates, if available.
      */
-    default Envelope getEnvelope() {
+    default Optional<Envelope> getEnvelope() {
         final GeneralEnvelope env = new GeneralEnvelope(getCoordinateReferenceSystem());
         env.setToNaN();
-        for (TileMatrix tileMatrix : getTileMatrices()) {
+        for (TileMatrix tileMatrix : getTileMatrices().values()) {
             if (env.isAllNaN()) {
-                env.setEnvelope(tileMatrix.getEnvelope());
+                env.setEnvelope(tileMatrix.getTilingScheme().getEnvelope());
             } else {
-                env.add(tileMatrix.getEnvelope());
+                env.add(tileMatrix.getTilingScheme().getEnvelope());
             }
         }
-        return env;
+        return Optional.of(env);
     }
 
     /**
-     * Create new TileMatrix copied properties from template.
+     * Returns all {@link TileMatrix} instances in this set, together with their identifiers.
+     * For each value in the map, the associated key is {@link TileMatrix#getIdentifier()}.
+     * Entries are sorted from coarser resolution (highest scale denominator) to most detailed
+     * resolution (lowest scale denominator).
      *
-     * @param template TileMatrix model
-     * @return created TileMatrix
-     * @throws DataStoreException
+     * @return unmodifiable collection of all {@code TileMatrix} instances with their identifiers.
      */
-    TileMatrix createTileMatrix(TileMatrix template) throws DataStoreException;
-
-    /**
-     * Delete given TileMatrix.
-     *
-     * @param tileMatrixId
-     * @throws DataStoreException
-     */
-    void deleteTileMatrix(String tileMatrixId) throws DataStoreException;
+    SortedMap<GenericName, ? extends TileMatrix> getTileMatrices();
 
 }

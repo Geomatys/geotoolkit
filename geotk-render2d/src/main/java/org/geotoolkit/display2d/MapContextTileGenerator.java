@@ -66,10 +66,11 @@ import org.geotoolkit.storage.coverage.ImageTile;
 import org.geotoolkit.storage.memory.InMemoryTiledGridCoverageResource;
 import org.geotoolkit.storage.multires.AbstractTileGenerator;
 import org.geotoolkit.storage.multires.DefaultTileMatrixSet;
+import org.geotoolkit.storage.multires.ImageTileMatrix;
 import org.geotoolkit.storage.multires.Tile;
 import org.geotoolkit.storage.multires.TileMatrices;
-import org.geotoolkit.storage.multires.TileMatrix;
-import org.geotoolkit.storage.multires.TileMatrixSet;
+import org.geotoolkit.storage.multires.WritableTileMatrix;
+import org.geotoolkit.storage.multires.WritableTileMatrixSet;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.filter.Expression;
 import org.opengis.geometry.Envelope;
@@ -143,13 +144,13 @@ public class MapContextTileGenerator extends AbstractTileGenerator {
     }
 
     @Override
-    public Tile generateTile(TileMatrixSet pyramid, TileMatrix mosaic, Point tileCoord) throws DataStoreException {
+    public Tile generateTile(WritableTileMatrixSet pyramid, WritableTileMatrix mosaic, long[] tileCoord) throws DataStoreException {
         final LinearTransform tileGridToCrs = TileMatrices.getTileGridToCRS(mosaic, tileCoord, PixelInCell.CELL_CENTER);
-        final Dimension tileSize = mosaic.getTileSize();
+        final Dimension tileSize = ((ImageTileMatrix) mosaic).getTileSize();
         final GridGeometry gridGeom = new GridGeometry(
                 new GridExtent(tileSize.width, tileSize.height),
                 PixelInCell.CELL_CENTER,
-                tileGridToCrs, mosaic.getUpperLeftCorner().getCoordinateReferenceSystem());
+                tileGridToCrs, mosaic.getTilingScheme().getCoordinateReferenceSystem());
 
         final CanvasDef canvas = new CanvasDef();
         canvas.setGridGeometry(gridGeom);
@@ -168,7 +169,7 @@ public class MapContextTileGenerator extends AbstractTileGenerator {
     }
 
     @Override
-    public void generate(TileMatrixSet pyramid, Envelope env, NumberRange resolutions,
+    public void generate(WritableTileMatrixSet tileMatrixSet, Envelope env, NumberRange resolutions,
             ProcessListener listener) throws DataStoreException, InterruptedException {
 
         //check if we can optimize tiles generation
@@ -249,7 +250,7 @@ public class MapContextTileGenerator extends AbstractTileGenerator {
             */
             if (env != null) {
                 try {
-                    CoordinateReferenceSystem targetCrs = pyramid.getCoordinateReferenceSystem();
+                    CoordinateReferenceSystem targetCrs = tileMatrixSet.getCoordinateReferenceSystem();
                     Envelope baseEnv = env;
                     env = Envelopes.transform(env, targetCrs);
                     double[] minres = new double[]{resolutions.getMinDouble(), resolutions.getMinDouble()};
@@ -263,31 +264,36 @@ public class MapContextTileGenerator extends AbstractTileGenerator {
             }
 
             //generate lower level from data
-            final TileMatrix[] mosaics = pyramid.getTileMatrices().toArray(new TileMatrix[0]);
-            Arrays.sort(mosaics, (TileMatrix o1, TileMatrix o2) -> Double.compare(o1.getScale(), o2.getScale()));
+            final WritableTileMatrix[] tileMatrices = tileMatrixSet.getTileMatrices().values().toArray(new WritableTileMatrix[0]);
+            Arrays.sort(tileMatrices, TileMatrices.SCALE_COMPARATOR);
 
             MapLayers parent = sceneDef.getContext();
             Hints hints = sceneDef.getHints();
 
-            final long total = TileMatrices.countTiles(pyramid, env, resolutions);
+            final long total = TileMatrices.countTiles(tileMatrixSet, env, resolutions);
             final AtomicLong al = new AtomicLong();
             //send an event only every few seconds
             final AtomicLong tempo = new AtomicLong(System.currentTimeMillis());
             final String msg = " / "+ NumberFormat.getIntegerInstance(Locale.FRANCE).format(total);
 
-            for (final TileMatrix mosaic : mosaics) {
-                if (resolutions == null || resolutions.contains(mosaic.getScale())) {
+            for (final WritableTileMatrix tileMatrix : tileMatrices) {
+                if (resolutions == null || resolutions.contains(TileMatrices.getScale(tileMatrix))) {
 
                     final Rectangle rect;
                     try {
-                        rect = TileMatrices.getTilesInEnvelope(mosaic, env);
+                        GridExtent area = TileMatrices.getTilesInEnvelope(tileMatrix, env);
+                        rect = new Rectangle(
+                            (int) area.getLow(0),
+                            (int) area.getLow(1),
+                            (int) area.getSize(0),
+                            (int) area.getSize(1));
                     } catch (NoSuchDataException ex) {
                         continue;
                     }
 
                     final CanvasDef canvasDef = new CanvasDef();
                     canvasDef.setBackground(this.canvasDef.getBackground());
-                    canvasDef.setEnvelope(mosaic.getEnvelope());
+                    canvasDef.setEnvelope(tileMatrix.getTilingScheme().getEnvelope());
                     final SceneDef sceneDef = new SceneDef(parent, hints);
 
 
@@ -297,7 +303,7 @@ public class MapContextTileGenerator extends AbstractTileGenerator {
                     Stream<Tile> stream = LongStream.range(rect.y, rect.y+rect.height).parallel().boxed().flatMap((Long y) -> {
                         try {
                             final ProgressiveImage img = new ProgressiveImage(canvasDef, sceneDef,
-                                    mosaic.getGridSize(), mosaic.getTileSize(), mosaic.getScale(), 0);
+                                    tileMatrix.getTilingScheme(), tileMatrix.getTileSize(), 0);
                             return img.generate(rect.x, rect.x+rect.width, y.intValue(), skipEmptyTiles);
                         } catch (Exception ex) {
                             LOGGER.log(Level.INFO, "Failed to generate a tile {0}", ex.getMessage());
@@ -318,7 +324,7 @@ public class MapContextTileGenerator extends AbstractTileGenerator {
                             return t;
                         });
                     }
-                    mosaic.writeTiles(stream, null);
+                    tileMatrix.writeTiles(stream);
 
                     //last level event
                     final NumberFormat format = NumberFormat.getIntegerInstance(Locale.FRANCE);
@@ -328,8 +334,8 @@ public class MapContextTileGenerator extends AbstractTileGenerator {
                     }
 
                     //modify context
-                    final DefaultTileMatrixSet pm = new DefaultTileMatrixSet(pyramid.getCoordinateReferenceSystem());
-                    pm.getMosaicsInternal().add(mosaic);
+                    final DefaultTileMatrixSet.Writable pm = new DefaultTileMatrixSet.Writable(tileMatrixSet.getCoordinateReferenceSystem()){};
+                    pm.getMosaicsInternal().insertByScale(tileMatrix);
                     final InMemoryTiledGridCoverageResource r = new InMemoryTiledGridCoverageResource(NamesExt.create("test"));
                     r.setSampleDimensions(sampleDimensions);
                     r.getTileMatrixSets().add(pm);
@@ -343,7 +349,7 @@ public class MapContextTileGenerator extends AbstractTileGenerator {
                 }
             }
         } else {
-            super.generate(pyramid, env, resolutions, listener);
+            super.generate(tileMatrixSet, env, resolutions, listener);
         }
     }
 

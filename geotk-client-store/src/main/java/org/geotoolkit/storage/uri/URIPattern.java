@@ -20,6 +20,7 @@ import java.io.File;
 import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
@@ -96,8 +97,9 @@ public final class URIPattern {
         pattern = pattern.replace(PATTERN_X, "" + x);
         pattern = pattern.replace(PATTERN_Y, "" + y);
         //reverse values
-        long reverseX = tilematrix.getGridSize().width -1 - x;
-        long reverseY = tilematrix.getGridSize().height -1 - y;
+        final GridExtent extent = tilematrix.getTilingScheme().getExtent();
+        long reverseX = extent.getSize(0) - 1 - x;
+        long reverseY = extent.getSize(1) - 1 - y;
         pattern = pattern.replace(PATTERN_REVERSEX, "" + reverseX);
         pattern = pattern.replace(PATTERN_REVERSEY, "" + reverseY);
 

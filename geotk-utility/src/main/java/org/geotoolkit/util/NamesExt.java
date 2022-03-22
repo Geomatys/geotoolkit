@@ -16,11 +16,14 @@
  */
 package org.geotoolkit.util;
 
+import java.util.UUID;
 import javax.xml.namespace.QName;
 import org.apache.sis.internal.system.DefaultFactories;
+import org.apache.sis.util.iso.Names;
 import org.geotoolkit.lang.Static;
 import org.opengis.metadata.Identifier;
 import org.opengis.util.GenericName;
+import org.opengis.util.LocalName;
 import org.opengis.util.NameFactory;
 import org.opengis.util.ScopedName;
 
@@ -31,6 +34,14 @@ import org.opengis.util.ScopedName;
  * @author Johann Sorel (Geomatys)
  */
 public final class NamesExt extends Static {
+
+    /**
+     * Create a random generic name based on a random UUID;
+     */
+    public static LocalName createRandomUUID() {
+        final String uuid = UUID.randomUUID().toString();
+        return Names.createLocalName(null, null, uuid);
+    }
 
     public static GenericName create(final QName qname) {
         return create(qname.getNamespaceURI(), qname.getLocalPart());

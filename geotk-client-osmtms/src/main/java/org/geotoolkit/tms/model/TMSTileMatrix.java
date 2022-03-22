@@ -17,16 +17,17 @@
 package org.geotoolkit.tms.model;
 
 import java.awt.Dimension;
-import java.awt.Point;
-import java.util.Collection;
-import java.util.Map;
-import java.util.concurrent.BlockingQueue;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.storage.coverage.ImageTile;
 import org.geotoolkit.storage.multires.AbstractTileMatrix;
 import org.geotoolkit.storage.multires.Tile;
-import org.opengis.geometry.DirectPosition;
+import org.geotoolkit.storage.multires.TileMatrices;
 import org.geotoolkit.storage.multires.TileMatrixSet;
+import org.opengis.geometry.DirectPosition;
 
 /**
  *
@@ -41,7 +42,7 @@ public class TMSTileMatrix extends AbstractTileMatrix {
 
     public TMSTileMatrix(TMSTileMatrixSets set, TileMatrixSet pyramid, DirectPosition upperLeft, Dimension gridSize,
             Dimension tileSize, double scale, int scaleLevel) {
-        super(pyramid,upperLeft,gridSize,tileSize,scale);
+        super(null, pyramid,upperLeft,gridSize,tileSize,scale);
         this.scaleLevel = scaleLevel;
         this.set = set;
     }
@@ -51,24 +52,21 @@ public class TMSTileMatrix extends AbstractTileMatrix {
     }
 
     @Override
-    protected boolean isWritable() throws DataStoreException {
-        return false;
+    public Optional<Tile> getTile(long... indices) throws DataStoreException {
+        return set.getTile(getTileMatrixSet(), this, indices, null);
     }
 
     @Override
-    public ImageTile getTile(long col, long row, Map hints) throws DataStoreException {
-        return set.getTile(getTileMatrixSet(), this, col, row, hints);
-    }
-
-    @Override
-    public BlockingQueue<Object> getTiles(Collection<? extends Point> positions, Map hints) throws DataStoreException {
-        return set.getTiles(getTileMatrixSet(), this, positions, hints);
+    public Stream<Tile> getTiles(GridExtent indicesRanges, boolean parallel) throws DataStoreException {
+        if (indicesRanges == null) indicesRanges = getTilingScheme().getExtent();
+        final List<long[]> points = TileMatrices.pointStream(indicesRanges).collect(Collectors.toList());
+        return set.getTiles(getTileMatrixSet(), this, points, null);
     }
 
     @Override
     public synchronized Tile anyTile() throws DataStoreException {
         if (anyTile == null) {
-            anyTile = getTile(0, 0, null);
+            anyTile = getTile(0, 0).orElse(null);
         }
         return anyTile;
     }

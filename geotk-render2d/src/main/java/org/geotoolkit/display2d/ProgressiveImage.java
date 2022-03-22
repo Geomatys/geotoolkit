@@ -35,6 +35,8 @@ import java.util.logging.Logger;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import javax.media.jai.RasterFactory;
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PixelIterator;
 import org.geotoolkit.display.PortrayalException;
@@ -60,6 +62,7 @@ final class ProgressiveImage {
 
     private final ColorModel colorModel;
     private final SampleModel sampleModel;
+    private final GridGeometry tilingScheme;
     private final Dimension gridSize;
     private final Dimension tileSize;
     private final double scale;
@@ -77,11 +80,14 @@ final class ProgressiveImage {
      *
      * @param canvasDef : canvas size will be ignored
      */
-    public ProgressiveImage(final CanvasDef canvasDef, final SceneDef sceneDef,
-            final Dimension gridSize, final Dimension tileSize, final double scale, int nbPainter) throws PortrayalException{
-        this.gridSize = gridSize;
+    public ProgressiveImage(final CanvasDef canvasDef, final SceneDef sceneDef, GridGeometry tilingScheme, final Dimension tileSize, int nbPainter) throws PortrayalException{
+        this.tilingScheme = tilingScheme;
+        final GridExtent extent = tilingScheme.getExtent();
+        this.gridSize = new Dimension(Math.toIntExact(extent.getSize(0)), Math.toIntExact(extent.getSize(1)));
         this.tileSize = tileSize;
-        this.scale = scale;
+        double[] resolution = tilingScheme.getResolution(true);
+        resolution[0] /= tileSize.width;
+        this.scale = resolution[0];
 
         ColorModel cm = ColorModel.getRGBdefault();
         if (sceneDef.getHints() != null) {

@@ -81,16 +81,6 @@ public final class WMTSResource extends AbstractGridCoverageResource implements 
     }
 
     @Override
-    public TileMatrixSet createTileMatrixSet(TileMatrixSet template) throws DataStoreException {
-        throw new DataStoreException("Not supported.");
-    }
-
-    @Override
-    public void removeTileMatrixSet(String identifier) throws DataStoreException {
-        throw new DataStoreException("Not supported.");
-    }
-
-    @Override
     public GridGeometry getGridGeometry() throws DataStoreException {
         return new TileMatrixSetCoverageReader<>(this).getGridGeometry();
     }

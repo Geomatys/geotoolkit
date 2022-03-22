@@ -25,14 +25,14 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.client.Request;
 import org.geotoolkit.client.map.CachedTileMatrixSets;
 import org.geotoolkit.storage.multires.DefaultTileMatrixSet;
+import org.geotoolkit.storage.multires.TileMatrix;
+import org.geotoolkit.storage.multires.TileMatrixSet;
 import org.geotoolkit.tms.GetTileRequest;
 import org.geotoolkit.tms.TileMapClient;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
-import org.geotoolkit.storage.multires.TileMatrixSet;
-import org.geotoolkit.storage.multires.TileMatrix;
 
 /**
  *
@@ -89,7 +89,7 @@ public class TMSTileMatrixSets extends CachedTileMatrixSets {
                     scale,
                     i);
 
-            pyramid.getMosaicsInternal().add(mosaic);
+            pyramid.getMosaicsInternal().insertByScale(mosaic);
         }
 
         getTileMatrixSets().add(pyramid);
@@ -101,11 +101,11 @@ public class TMSTileMatrixSets extends CachedTileMatrixSets {
     }
 
     @Override
-    public Request getTileRequest(TileMatrixSet pyramid, TileMatrix mosaic, long col, long row, Map hints) throws DataStoreException {
+    public Request getTileRequest(TileMatrixSet pyramid, TileMatrix mosaic, long[] indices, Map hints) throws DataStoreException {
         final GetTileRequest request = getServer().createGetTile();
         request.setScaleLevel(((TMSTileMatrix) mosaic).getScaleLevel());
-        request.setTileCol(col);
-        request.setTileRow(row);
+        request.setTileCol(indices[0]);
+        request.setTileRow(indices[1]);
         return request;
     }
 

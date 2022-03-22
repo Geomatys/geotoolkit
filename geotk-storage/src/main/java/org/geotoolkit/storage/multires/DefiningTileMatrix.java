@@ -17,66 +17,43 @@
 package org.geotoolkit.storage.multires;
 
 import java.awt.Dimension;
-import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Stream;
 import org.apache.sis.coverage.grid.GridExtent;
-import org.apache.sis.geometry.GeneralDirectPosition;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.process.Monitor;
 import org.opengis.coverage.PointOutsideCoverageException;
 import org.opengis.geometry.DirectPosition;
+import org.opengis.util.GenericName;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public class DefiningTileMatrix implements TileMatrix {
+public class DefiningTileMatrix implements WritableTileMatrix, ImageTileMatrix {
 
-    private final String identifier;
-    private final DirectPosition upperLeft;
-    private final double scale;
+    private final GenericName identifier;
+    private final GridGeometry tilingScheme;
     private final Dimension tileSize;
-    private final Dimension gridSize;
-    private final GridExtent dataExtent;
 
-    public DefiningTileMatrix(String identifier, DirectPosition upperLeft, double scale, Dimension tileSize, Dimension gridSize) {
-        this(identifier,upperLeft, scale, tileSize, gridSize, (GridExtent) null);
+    public DefiningTileMatrix(GenericName identifier, DirectPosition upperLeft, double scale, Dimension tileSize, Dimension gridSize) {
+        this(identifier, TileMatrices.toGridGeometry(upperLeft, gridSize, scale, tileSize), tileSize);
     }
 
-    public DefiningTileMatrix(String identifier, DirectPosition upperLeft, double scale, Dimension tileSize, Dimension gridSize, Dimension dataExtent) {
-        this(identifier,upperLeft, scale, tileSize, gridSize, new GridExtent(dataExtent.width, dataExtent.height));
-    }
-
-    public DefiningTileMatrix(String identifier, DirectPosition upperLeft, double scale, Dimension tileSize, Dimension gridSize, GridExtent dataExtent) {
+    public DefiningTileMatrix(GenericName identifier, GridGeometry tilingScheme, Dimension tileSize) {
         this.identifier = identifier;
-        this.upperLeft = upperLeft;
-        this.scale = scale;
+        this.tilingScheme = tilingScheme;
         this.tileSize = tileSize;
-        this.gridSize = gridSize;
-        this.dataExtent = dataExtent != null ? dataExtent :
-                new GridExtent(
-                        ((long) gridSize.width) * tileSize.width,
-                        ((long) gridSize.height) * tileSize.height);
     }
 
     @Override
-    public String getIdentifier() {
+    public GenericName getIdentifier() {
         return identifier;
     }
 
     @Override
-    public DirectPosition getUpperLeftCorner() {
-        return new GeneralDirectPosition(upperLeft); //defensive copy
-    }
-
-    @Override
-    public Dimension getGridSize() {
-        return (Dimension) gridSize.clone(); //defensive copy
-    }
-
-    @Override
-    public double getScale() {
-        return scale;
+    public GridGeometry getTilingScheme() {
+        return tilingScheme;
     }
 
     @Override
@@ -85,28 +62,23 @@ public class DefiningTileMatrix implements TileMatrix {
     }
 
     @Override
-    public GridExtent getDataExtent() {
-        return dataExtent;
+    public TileStatus getTileStatus(long... indices) throws PointOutsideCoverageException {
+        return TileStatus.MISSING;
     }
 
     @Override
-    public boolean isMissing(long col, long row) throws PointOutsideCoverageException {
-        return true;
+    public Optional<Tile> getTile(long... indices) throws DataStoreException {
+        return Optional.empty();
     }
 
     @Override
-    public Tile getTile(long col, long row, Map hints) throws DataStoreException {
-        return null;
-    }
-
-    @Override
-    public void writeTiles(Stream<Tile> tiles, Monitor monitor) throws DataStoreException {
+    public void writeTiles(Stream<Tile> tiles) throws DataStoreException {
         throw new DataStoreException("Not supported.");
     }
 
     @Override
-    public void deleteTile(int tileX, int tileY) throws DataStoreException {
-        //has no effect
+    public long deleteTiles(GridExtent indicesRanges) throws DataStoreException {
+        throw new DataStoreException("Not supported");
     }
 
     @Override
