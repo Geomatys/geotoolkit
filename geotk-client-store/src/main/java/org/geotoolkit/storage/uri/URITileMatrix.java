@@ -235,7 +235,7 @@ public class URITileMatrix extends AbstractTileMatrix {
                     } else {
                         throw new DataStoreException("No procedure found to copy from "+tile.getClass()+" to "+store.getClass());
                     }
-                } if (tileData instanceof BandedCoverageResource && store instanceof WritableBandedCoverageResource) {
+                } else if (tileData instanceof BandedCoverageResource && store instanceof WritableBandedCoverageResource) {
                     final BandedCoverage bandedCoverage = ((BandedCoverageResource) tileData).read(null);
                     ((WritableBandedCoverageResource) store).write(bandedCoverage);
                 } else {
