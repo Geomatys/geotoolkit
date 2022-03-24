@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.referencing.CRS;
@@ -41,13 +42,8 @@ import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.collection.BackingStoreException;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display.shape.ShapeUtilities;
-import org.geotoolkit.geometry.BoundingBox;
 import org.geotoolkit.geometry.jts.awt.JTSGeometryJ2D;
-import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
-import org.geotoolkit.geometry.jts.transform.CoordinateSequenceTransformer;
-import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
 import org.geotoolkit.resources.Errors;
 import org.locationtech.jts.algorithm.Orientation;
 import org.locationtech.jts.geom.Coordinate;
@@ -655,28 +651,6 @@ public final class JTS {
     }
 
     /**
-     * Converts a {@link BoundingBox} to a polygon. <p> The resulting polygon
-     * contains an outer ring with verticies:
-     * (x1,y1),(x2,y1),(x2,y2),(x1,y2),(x1,y1)
-     *
-     * @param envelope The original envelope.
-     * @return The envelope as a polygon.
-     *
-     * @since 2.4
-     */
-    public static Polygon toGeometry(final BoundingBox envelope) {
-        GeometryFactory gf = getFactory();
-        return gf.createPolygon(gf.createLinearRing(
-                new Coordinate[]{
-                    new Coordinate(envelope.getMinX(), envelope.getMinY()),
-                    new Coordinate(envelope.getMaxX(), envelope.getMinY()),
-                    new Coordinate(envelope.getMaxX(), envelope.getMaxY()),
-                    new Coordinate(envelope.getMinX(), envelope.getMaxY()),
-                    new Coordinate(envelope.getMinX(), envelope.getMinY())
-                }), null);
-    }
-
-    /**
      * Checks a Geometry coordinates are within the area of validity of the
      * specified reference system. If a coordinate falls outside the area of
      * validity a {@link ProjectionException} is thrown
@@ -743,7 +717,7 @@ public final class JTS {
             int srid = SRIDGenerator.toSRID(crs, SRIDGenerator.Version.V1);
             geom.setSRID(srid);
         } catch (IllegalArgumentException e) {
-            Logging.getLogger("org.geotoolkit.geometry")
+            Logger.getLogger("org.geotoolkit.geometry")
                     .log(Level.FINE, "Cannot update SRID of geometry. It will be reset.", e);
             geom.setSRID(0);
         }

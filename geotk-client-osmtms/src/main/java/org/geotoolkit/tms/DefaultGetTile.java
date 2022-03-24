@@ -17,7 +17,6 @@
 package org.geotoolkit.tms;
 
 import java.util.logging.Logger;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.AbstractRequest;
 
 /**
@@ -30,7 +29,7 @@ public class DefaultGetTile extends AbstractRequest implements GetTileRequest {
     /**
      * Default logger for all GetTile requests.
      */
-    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.tms");
+    protected static final Logger LOGGER = Logger.getLogger("org.geotoolkit.tms");
 
     private String pattern = "{z}/{x}/{y}.png";
     private int scale = 0;

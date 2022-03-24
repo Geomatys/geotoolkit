@@ -24,7 +24,6 @@ import java.util.logging.Logger;
 import java.util.stream.Stream;
 import org.apache.sis.internal.map.ExceptionPresentation;
 import org.apache.sis.internal.map.Presentation;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.presentation.Grid2DPresentation;
@@ -41,7 +40,7 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class J2DPainter {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.display2d.container");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.display2d.container");
 
     public boolean paint(RenderingContext2D renderingContext, Stream<Presentation> presentations, boolean labelsOnTop) throws PortrayalException {
 

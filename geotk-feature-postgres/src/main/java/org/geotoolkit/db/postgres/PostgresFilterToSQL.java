@@ -20,7 +20,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.feature.Features;
 import org.apache.sis.util.Version;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.db.FilterToSQL;
 import org.geotoolkit.db.JDBCFeatureStore;
 import org.geotoolkit.db.reverse.PrimaryKey;
@@ -42,7 +41,7 @@ public class PostgresFilterToSQL extends FilterToSQL {
 
     private final Version pgVersion;
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.db.postgres");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.db.postgres");
 
     public PostgresFilterToSQL(final FeatureType featureType, final PrimaryKey pkey, final Version pgVersion) {
         super(featureType, pkey);

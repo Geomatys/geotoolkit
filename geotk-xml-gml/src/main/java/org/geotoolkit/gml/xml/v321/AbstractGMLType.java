@@ -52,7 +52,6 @@ import org.geotoolkit.gml.GMLStandard;
 import org.apache.sis.xml.IdentifiedObject;
 import org.opengis.util.GenericName;
 import org.opengis.util.InternationalString;
-import org.apache.sis.util.logging.Logging;
 
 
 /**
@@ -93,7 +92,7 @@ import org.apache.sis.util.logging.Logging;
     DefinitionBaseType.class
 })
 public abstract class AbstractGMLType extends AbstractMetadata implements AbstractGML, Serializable, Entry, IdentifiedObject {
-    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.gml.xml.v321");
+    protected static final Logger LOGGER = Logger.getLogger("org.geotoolkit.gml.xml.v321");
 
     /**
      * The value to be returned by {@link #getStandard()}.

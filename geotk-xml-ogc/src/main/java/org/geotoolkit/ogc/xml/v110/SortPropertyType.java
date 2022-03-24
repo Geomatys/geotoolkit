@@ -23,7 +23,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.apache.sis.util.logging.Logging;
 import org.opengis.filter.SortProperty;
 import org.opengis.filter.SortOrder;
 
@@ -53,7 +52,7 @@ import org.opengis.filter.SortOrder;
 })
 public class SortPropertyType implements SortProperty {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.ogc.xml.v110");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.ogc.xml.v110");
 
     @XmlElement(name = "PropertyName", required = true)
     private PropertyNameType propertyName;

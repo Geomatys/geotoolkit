@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.index.tree;
 
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.internal.tree.TreeUtilities;
 
 import java.io.File;
@@ -42,7 +41,7 @@ import org.opengis.geometry.Envelope;
  */
 public abstract class TreeTest extends org.geotoolkit.test.TestBase {
 
-    protected Logger LOGGER = Logging.getLogger("org.geotoolkit.index.tree");
+    protected Logger LOGGER = Logger.getLogger("org.geotoolkit.index.tree");
 
     /**
      * A temporary directory which will contains all files needed for Tree testing. Directory is deleted after each test

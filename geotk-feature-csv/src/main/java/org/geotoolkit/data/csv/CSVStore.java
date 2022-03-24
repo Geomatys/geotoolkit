@@ -61,7 +61,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.StorageConnector;
 import org.apache.sis.storage.WritableFeatureSet;
 import org.apache.sis.storage.event.StoreEvent;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.storage.event.FeatureStoreContentEvent;
 import org.geotoolkit.storage.event.FeatureStoreManagementEvent;
 import org.geotoolkit.feature.FeatureExt;
@@ -97,7 +96,7 @@ public class CSVStore extends DataStore implements WritableFeatureSet, ResourceO
     public static final String COMMENT_STRING = "#";
     public static final Charset UTF8_ENCODING = Charset.forName("UTF-8");
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.csv");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.csv");
 
     protected final FilterFactory FF = FilterUtilities.FF;
 

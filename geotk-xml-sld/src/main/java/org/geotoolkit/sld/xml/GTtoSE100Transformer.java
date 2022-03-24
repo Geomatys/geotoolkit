@@ -19,6 +19,7 @@ package org.geotoolkit.sld.xml;
 import java.net.MalformedURLException;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.measure.quantity.Length;
 import javax.measure.Unit;
 import javax.xml.bind.JAXBElement;
@@ -26,7 +27,6 @@ import javax.xml.namespace.QName;
 import org.geotoolkit.ogc.xml.v100.PropertyNameType;
 import org.geotoolkit.sld.xml.v100.CssParameter;
 import org.geotoolkit.sld.xml.v100.ParameterValueType;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.style.StyleUtilities;
 import org.opengis.filter.Expression;
 import org.opengis.metadata.citation.OnlineResource;
@@ -664,7 +664,7 @@ public class GTtoSE100Transformer extends FilterToOGC100Converter implements Sty
         try {
             ort.setHref(or.getLinkage().toURL().toString());
         } catch (MalformedURLException ex) {
-            Logging.getLogger("org.geotoolkit.sld.xml").log(Level.WARNING, null, ex);
+            Logger.getLogger("org.geotoolkit.sld.xml").log(Level.WARNING, null, ex);
         }
         return ort;
     }

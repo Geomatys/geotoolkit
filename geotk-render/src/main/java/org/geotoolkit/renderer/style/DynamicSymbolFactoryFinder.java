@@ -47,7 +47,7 @@ import java.util.logging.Logger;
  */
 public final class DynamicSymbolFactoryFinder {
     /** The logger for the filter module. */
-    protected static final Logger LOGGER = org.apache.sis.util.logging.Logging
+    protected static final Logger LOGGER = Logger
             .getLogger("org.geotoolkit.renderer.style");
 
     private static final List<MarkFactory> MARK_FACTORIES = new ArrayList<>();

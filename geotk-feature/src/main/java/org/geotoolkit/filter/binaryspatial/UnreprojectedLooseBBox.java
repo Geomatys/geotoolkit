@@ -19,8 +19,8 @@ package org.geotoolkit.filter.binaryspatial;
 
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.filter.ValueReference;
-import org.geotoolkit.geometry.BoundingBox;
 import org.opengis.filter.Literal;
+import org.opengis.geometry.Envelope;
 
 /**
  * Perform the same work as the LooseBBox expect it does not reproject the candidate geometry to the filter CRS.
@@ -30,7 +30,7 @@ import org.opengis.filter.Literal;
  */
 public class UnreprojectedLooseBBox extends LooseBBox {
 
-    public UnreprojectedLooseBBox(final ValueReference property, final Literal<Object,BoundingBox> bbox) {
+    public UnreprojectedLooseBBox(final ValueReference property, final Literal<Object, Envelope> bbox) {
         super(property,bbox);
     }
 

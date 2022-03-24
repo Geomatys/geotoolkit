@@ -23,7 +23,6 @@ import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
@@ -38,7 +37,7 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class ProcessedCoverageResource extends InMemoryGridCoverageResource {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.map");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.map");
 
     private ProcessDescriptor processDescriptor;
     private ParameterValueGroup inputParam;

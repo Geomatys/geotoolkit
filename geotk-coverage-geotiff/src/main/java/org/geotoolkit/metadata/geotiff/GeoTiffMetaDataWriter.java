@@ -45,7 +45,6 @@ import org.opengis.util.FactoryException;
 
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.logging.Logging;
 import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
@@ -66,7 +65,7 @@ import org.opengis.referencing.crs.SingleCRS;
  */
 public class GeoTiffMetaDataWriter {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.metadata.geotiff");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.metadata.geotiff");
 
     public GeoTiffMetaDataWriter(){}
 

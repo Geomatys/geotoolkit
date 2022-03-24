@@ -11,9 +11,6 @@ import java.util.List;
 import javax.imageio.ImageIO;
 import org.apache.sis.io.wkt.Convention;
 import org.apache.sis.io.wkt.WKTFormat;
-import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.referencing.crs.DefaultCompoundCRS;
-import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.image.palette.PaletteFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import ucar.ma2.Array;
@@ -149,7 +146,7 @@ public final class Output {
         file.addVariableAttribute(perDay, new Attribute("valid_min",  min / max));
         file.addVariableAttribute(perDay, new Attribute("valid_max",  1f));         // max / max
         file.addVariableAttribute(perDay, new Attribute("_FillValue", 0f));
-        file.addVariableAttribute(perDay, new Attribute("ESRI_pe_string", f.format(addTime(dataCRS))));
+        file.addVariableAttribute(perDay, new Attribute("ESRI_pe_string", f.format(dataCRS)));
 
         final Variable overall = file.addVariable(null, "prob_overall", DataType.FLOAT, Arrays.asList(ydim, xdim));
         file.addVariableAttribute(overall, new Attribute("valid_min",  min / max));
@@ -179,15 +176,6 @@ public final class Output {
         file.write(perDay,  Array.factory(DataType.FLOAT, new int[] {nt, height, width}, d1));
         file.write(overall, Array.factory(DataType.FLOAT, new int[] {    height, width}, d2));
         file.close();
-    }
-
-    private static CoordinateReferenceSystem addTime(final CoordinateReferenceSystem horizontalComponent) {
-        final DefaultTemporalCRS timeCRS = new DefaultTemporalCRS(
-                Collections.singletonMap("name", "days"),
-                CommonCRS.Temporal.JAVA.datum(),
-                CommonCRS.Temporal.JULIAN.crs().getCoordinateSystem()
-        );
-        return new DefaultCompoundCRS(Collections.singletonMap("name", "perDayCRS"), horizontalComponent, timeCRS);
     }
 
     public static void writeSnapshots(final Path outputDir, final List<Output> outputs) throws IOException {

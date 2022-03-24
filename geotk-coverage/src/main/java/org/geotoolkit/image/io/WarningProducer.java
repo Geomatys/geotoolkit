@@ -23,7 +23,6 @@ import javax.imageio.event.IIOReadWarningListener;
 import javax.imageio.event.IIOWriteWarningListener;
 
 import org.apache.sis.util.Localized;
-import org.apache.sis.util.logging.Logging;
 
 
 /**
@@ -74,7 +73,7 @@ public interface WarningProducer extends Localized {
     /**
      * The logger to use as a fallback when no warning listener can be reach.
      */
-    Logger LOGGER = Logging.getLogger("org.geotoolkit.image.io");
+    Logger LOGGER = Logger.getLogger("org.geotoolkit.image.io");
 
     /**
      * Invoked when a warning occurred. This method is typically invoked by the class implementing

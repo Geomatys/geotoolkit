@@ -32,7 +32,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.geotoolkit.csw.xml.CSWMarshallerPool;
 import org.geotoolkit.csw.xml.CswNodeComparator;
 import org.geotoolkit.csw.xml.RecordProperty;
-import org.apache.sis.util.logging.Logging;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -64,7 +63,7 @@ import org.w3c.dom.Node;
     "value"
 })
 public class RecordPropertyType implements RecordProperty{
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.csw.xml.v202");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.csw.xml.v202");
 
     @XmlElement(name = "Name", required = true)
     private String name;

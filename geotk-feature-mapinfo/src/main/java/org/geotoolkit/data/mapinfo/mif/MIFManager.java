@@ -43,7 +43,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.NullArgumentException;
-import org.apache.sis.util.logging.Logging;
 
 import org.apache.sis.util.Utilities;
 import static java.nio.file.StandardOpenOption.*;
@@ -69,7 +68,7 @@ import org.opengis.util.FactoryException;
  */
 public class MIFManager {
 
-    public static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data.mapinfo.mif");
+    public static final Logger LOGGER = Logger.getLogger("org.geotoolkit.data.mapinfo.mif");
 
     /**
      * A pattern frequently used to find MIF categories (for words without digit).

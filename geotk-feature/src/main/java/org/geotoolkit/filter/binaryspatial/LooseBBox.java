@@ -20,7 +20,6 @@ package org.geotoolkit.filter.binaryspatial;
 import org.locationtech.jts.geom.Geometry;
 import org.apache.sis.referencing.CRS;
 import org.opengis.filter.ValueReference;
-import org.geotoolkit.geometry.BoundingBox;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.referencing.ReferencingUtilities;
@@ -35,7 +34,7 @@ import org.opengis.geometry.Envelope;
  */
 public class LooseBBox extends DefaultBBox {
 
-    public LooseBBox(final ValueReference property, final Literal<Object,BoundingBox> bbox) {
+    public LooseBBox(final ValueReference property, final Literal<Object,Envelope> bbox) {
         super(property,bbox);
     }
 

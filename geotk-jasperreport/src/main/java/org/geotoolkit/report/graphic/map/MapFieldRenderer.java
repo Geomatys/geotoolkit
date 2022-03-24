@@ -19,8 +19,8 @@ package org.geotoolkit.report.graphic.map;
 
 
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.sf.jasperreports.engine.JRField;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
@@ -68,7 +68,7 @@ public class MapFieldRenderer implements JRFieldRenderer {
             try {
                 DefaultPortrayalService.prepareCanvas(renderable, canvasDef, sceneDef);
             } catch (PortrayalException ex) {
-                Logging.getLogger("org.geotoolkit.report.graphic.map").log(Level.WARNING, ex.getLocalizedMessage(), ex);
+                Logger.getLogger("org.geotoolkit.report.graphic.map").log(Level.WARNING, ex.getLocalizedMessage(), ex);
             }
             map.setDelegate(renderable);
         }

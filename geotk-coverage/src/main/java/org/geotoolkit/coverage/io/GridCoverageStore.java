@@ -61,7 +61,6 @@ import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Localized;
 import org.apache.sis.util.Utilities;
-import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.logging.PerformanceLevel;
 
 import org.geotoolkit.display.shape.XRectangle2D;
@@ -104,7 +103,7 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
      *
      * @since 3.15
      */
-    static final Logger LOGGER = Logging.getLogger("org.geotoolkit.coverage.io");
+    static final Logger LOGGER = Logger.getLogger("org.geotoolkit.coverage.io");
 
     /**
      * Minimal image width and height, in pixels. If the user requests a smaller image,

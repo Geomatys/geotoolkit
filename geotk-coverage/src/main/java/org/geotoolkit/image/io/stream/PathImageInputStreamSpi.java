@@ -23,10 +23,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.spi.ImageInputStreamSpi;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.MemoryCacheImageInputStream;
-import org.apache.sis.util.logging.Logging;
 
 
 /**
@@ -49,8 +50,8 @@ public class PathImageInputStreamSpi extends ImageInputStreamSpi {
     public ImageInputStream createInputStreamInstance(Object input, boolean useCache, File cacheDir) throws IOException {
         final Path path = (Path) input;
         if (Files.isDirectory(path)) {
-            Logging.getLogger("org.geotoolkit.image.io.stream")
-                    .finer("Unable to open ImageInputStream on directory : " + path.toAbsolutePath().toString());
+            Logger.getLogger("org.geotoolkit.image.io.stream")
+                    .log(Level.FINER, "Unable to open ImageInputStream on directory : {0}", path.toAbsolutePath().toString());
             return null;
         }
 

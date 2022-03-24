@@ -16,13 +16,10 @@
  */
 package org.geotoolkit.data.kml.xml;
 
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.CoordinateSequence;
-
-import java.net.URISyntaxException;
 import java.awt.Color;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -30,16 +27,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
-
-import org.geotoolkit.xal.xml.XalReader;
-import org.geotoolkit.atom.xml.AtomReader;
-import org.geotoolkit.data.kml.KmlFactory;
-import org.geotoolkit.data.kml.DefaultKmlFactory;
-import org.geotoolkit.atom.model.AtomPersonConstruct;
 import org.geotoolkit.atom.model.AtomLink;
+import org.geotoolkit.atom.model.AtomPersonConstruct;
+import org.geotoolkit.atom.xml.AtomReader;
+import org.geotoolkit.data.kml.DefaultKmlFactory;
+import org.geotoolkit.data.kml.KmlFactory;
 import org.geotoolkit.data.kml.KmlUtilities;
+import static org.geotoolkit.data.kml.KmlUtilities.*;
 import org.geotoolkit.data.kml.model.AbstractColorStyle;
 import org.geotoolkit.data.kml.model.AbstractGeometry;
 import org.geotoolkit.data.kml.model.AbstractLatLonBox;
@@ -113,15 +110,15 @@ import org.geotoolkit.data.kml.model.Url;
 import org.geotoolkit.data.kml.model.Vec2;
 import org.geotoolkit.data.kml.model.ViewRefreshMode;
 import org.geotoolkit.data.kml.model.ViewVolume;
-import org.geotoolkit.xal.model.AddressDetails;
-import org.geotoolkit.xal.model.XalException;
+import static org.geotoolkit.data.kml.xml.KmlConstants.*;
 import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 import org.geotoolkit.temporal.object.ISODateParser;
+import org.geotoolkit.xal.model.AddressDetails;
+import org.geotoolkit.xal.model.XalException;
+import org.geotoolkit.xal.xml.XalReader;
 import org.geotoolkit.xml.StaxStreamReader;
-
-import org.apache.sis.util.logging.Logging;
-import static org.geotoolkit.data.kml.xml.KmlConstants.*;
-import static org.geotoolkit.data.kml.KmlUtilities.*;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.CoordinateSequence;
 import org.opengis.feature.Feature;
 
 /**
@@ -3908,7 +3905,7 @@ boucle: while (reader.hasNext()) {
         try {
             resultat = XAL_READER.readAddressDetails();
         } catch (XalException ex) {
-            Logging.getLogger("org.geotoolkit.data.kml.map").log(Level.SEVERE, null, ex);
+            Logger.getLogger("org.geotoolkit.data.kml.map").log(Level.SEVERE, null, ex);
         }
         return resultat;
     }

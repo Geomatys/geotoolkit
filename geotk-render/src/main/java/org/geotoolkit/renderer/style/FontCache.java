@@ -37,7 +37,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.sis.util.logging.Logging;
 
 /**
  * Lookup and caches font definitions for faster retrieval
@@ -49,7 +48,7 @@ import org.apache.sis.util.logging.Logging;
 public class FontCache {
 
     /** The logger for the rendering module. */
-    static final Logger LOGGER = Logging.getLogger("org.geotoolkit.renderer.style");
+    static final Logger LOGGER = Logger.getLogger("org.geotoolkit.renderer.style");
 
     private static FontCache defaultInstance;
 

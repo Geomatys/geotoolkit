@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.metadata;
 
-import org.apache.sis.util.logging.Logging;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -29,7 +28,7 @@ public abstract class AbstractMetadataWriter implements MetadataWriter {
     /**
      * A debugging logger.
      */
-    protected static final Logger LOGGER = Logging.getLogger("org.constellation.metadata.io");
+    protected static final Logger LOGGER = Logger.getLogger("org.constellation.metadata.io");
 
     public static final int INSERTED = 0;
 

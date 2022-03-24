@@ -37,7 +37,6 @@ import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.Query;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.collection.BackingStoreException;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display2d.GO2Utilities;
@@ -60,7 +59,7 @@ import org.opengis.style.Symbolizer;
  */
 public abstract class AbstractSymbolizerRenderer<C extends CachedSymbolizer<? extends Symbolizer>> implements SymbolizerRenderer{
 
-    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.display2d.style.renderer");
+    protected static final Logger LOGGER = Logger.getLogger("org.geotoolkit.display2d.style.renderer");
 
     protected final SymbolizerRendererService service;
     protected final RenderingContext2D renderingContext;

@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
@@ -47,6 +48,7 @@ import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GO2Utilities;
 import static org.geotoolkit.display2d.GO2Utilities.FILTER_FACTORY;
+import static org.geotoolkit.display2d.GO2Utilities.LOGGER;
 import static org.geotoolkit.display2d.GO2Utilities.STYLE_FACTORY;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
@@ -55,7 +57,6 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.feature.ViewMapper;
 import org.geotoolkit.filter.FilterUtilities;
-import org.geotoolkit.geometry.BoundingBox;
 import org.geotoolkit.storage.feature.FeatureIterator;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
@@ -69,6 +70,7 @@ import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.Expression;
+import org.opengis.filter.Literal;
 import org.opengis.filter.ValueReference;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.extent.GeographicBoundingBox;
@@ -160,64 +162,93 @@ public final class RenderingRoutines {
         } catch (DataStoreException ex) {
             throw new PortrayalException(ex.getMessage(), ex);
         }
-        PropertyType geomDesc = null;
-        try {
-            geomDesc = FeatureExt.getDefaultGeometry(schema);
-        } catch(PropertyNotFoundException | IllegalStateException ex){};
-        final BoundingBox bbox                   = optimizeBBox(renderingContext, fs, symbolsMargin);
+        // Note: do not use layer boundary to define the target bbox, because it can be expensive.
+        // Anyway, the target resource will be better to determine clipping between rendering boundaries and its own.
+        final Envelope bbox                      = optimizeBBox(renderingContext, fs, symbolsMargin);
         final CoordinateReferenceSystem layerCRS = FeatureExt.getCRS(schema);
         final RenderingHints hints               = renderingContext.getRenderingHints();
 
-        //search used geometries
-        boolean allDefined = true;
+        /*
+         * To restrict queried values to the rendering area, we must identify what geometries are used by the style.
+         * For each applied symbol, there are 3 possible cases:
+         * - if the rule uses default geometries, they will be added to the geometry property list after the loop
+         * - The geometric expression is a value reference, we can safely register it in geometric properties. The
+         *   reference xpath is unwrapped in a set to ensure we won't create any doublon filters.
+         * - If the geometry property is a complex expression(Ex: a value computed from non geometric fields), we keep
+         *   it as is to apply a filter directly upon it. Note that even if it's an expression derived from geometric
+         *   fields, we cannot apply spatial filter on them, because the expression could drastically change topology.
+         *   For example, if the expression is 'buffer', the result geometry would be larger than any of its operands.
+         *   TODO: such cases are maybe manageable by replacing bbox filter by a distance filter based upon the buffer
+         *   distance. But would it do more good than harm ?
+         */
+        boolean isDefaultGeometryNeeded = rules == null || rules.isEmpty();
         final Set<String> geomProperties = new HashSet<>();
+        final Set<Expression> complexProperties = new HashSet<>();
         if (rules != null) {
             for (Rule r : rules) {
                 for (Symbolizer s : r.symbolizers()) {
                     final Expression expGeom = s.getGeometry();
-                    if (expGeom instanceof ValueReference) {
-                        geomProperties.add( ((ValueReference)expGeom).getXPath() );
-                    } else {
-                        allDefined = false;
-                    }
+                    if (isNil(expGeom)) isDefaultGeometryNeeded = true;
+                    else if (expGeom instanceof ValueReference) geomProperties.add( ((ValueReference)expGeom).getXPath() );
+                    else complexProperties.add(expGeom);
                 }
             }
-        } else {
-            allDefined = false;
-        }
-        if (geomDesc!=null && !allDefined) {
-            geomProperties.add(Features.getLinkTarget(geomDesc).orElse(geomDesc.getName().toString()));
         }
 
-        Filter<Object> filter;
-
-        //final Envelope layerBounds = layer.getBounds();
-        //we better not do any call to the layer bounding box before since it can be
-        //really expensive, the featurestore is the best placed to check if he might
-        //optimize the filter.
-        //make a bbox filter
-        if (!geomProperties.isEmpty()) {
-            if (geomProperties.size() == 1) {
-                final String geomAttName = geomProperties.iterator().next();
-                filter = FILTER_FACTORY.bbox(FILTER_FACTORY.property(geomAttName),bbox);
-            } else {
-                //make an OR filter with all geometries
-                final List<Filter<Object>> geomFilters = new ArrayList<>();
-                for (String geomAttName : geomProperties) {
-                    geomFilters.add(FILTER_FACTORY.bbox(FILTER_FACTORY.property(geomAttName),bbox));
-                }
-                filter = FILTER_FACTORY.or(geomFilters);
+        if (isDefaultGeometryNeeded) {
+            try {
+                final PropertyType defaultGeometry = FeatureExt.getDefaultGeometry(schema);
+                final String geomName = Features.getLinkTarget(defaultGeometry)
+                        .orElseGet(() -> defaultGeometry.getName().toString());
+                geomProperties.add(geomName);
+            } catch (PropertyNotFoundException e) {
+                throw new PortrayalException("Default geometry cannot be determined. " +
+                        "However, it is needed to properly define filtering rules.");
+            } catch (IllegalStateException e) {
+                // If there's multiple geometric properties, and no primary one, we will use them all
+                schema.getProperties(true)
+                        .stream()
+                        // Ignore links: they're doublons of existing attributes. However, we want to keep computed values.
+                        .filter(p -> !Features.getLinkTarget(p).isPresent())
+                        .filter(AttributeConvention::isGeometryAttribute)
+                        .map(p -> p.getName().toString())
+                        .forEach(geomProperties::add);
             }
-        } else {
-            filter = Filter.exclude();
         }
 
+        if (!complexProperties.isEmpty()) {
+            LOGGER.fine("A style rule uses complex geometric properties. It can severly affect performance");
+        }
+
+        final Optional<Filter> spatialFilter =
+                Stream.concat(
+                        geomProperties.stream().map(FILTER_FACTORY::property),
+                        complexProperties.stream()
+                )
+                        .<Filter>map(expression -> FILTER_FACTORY.bbox(expression, bbox))
+                        .reduce(FILTER_FACTORY::or);
+
+        Filter userFilter= null;
         //concatenate geographic filter with data filter if there is one
         if (layer != null) {
             Query query = layer.getQuery();
             if (query instanceof FeatureQuery) {
-                filter = FILTER_FACTORY.and(filter, (Filter) ((FeatureQuery) query).getSelection());
+                userFilter = ((FeatureQuery) query).getSelection();
             }
+        }
+
+        Filter filter;
+        if (spatialFilter.isPresent()) {
+            if (userFilter == null) filter = spatialFilter.get();
+            // Note: we give priority to the spatial filter here, because it is our main use case: rendering is driven
+            // by bounding box.
+            else filter = FILTER_FACTORY.and(spatialFilter.get(), userFilter);
+        } else if (userFilter == null) {
+            throw new PortrayalException("No spatial filter can be determined from style rules, and no user filter specified." +
+                    "We refuse dataset full-scan. To authorize it, manually specify Filter 'INCLUDE' on your map layer.");
+        } else {
+            LOGGER.warning("Spatial filter cannot be determined for rendering. However, user has provided a custom filter that we'll use as sole filtering policy");
+            filter = userFilter;
         }
 
         final Set<String> copy = new HashSet<>();
@@ -384,106 +415,18 @@ public final class RenderingRoutines {
         return qb;
     }
 
-    /**
-     * Creates an optimal query to send to the datastore, knowing which properties are knowned and
-     * the appropriate bounding box to filter.
-     */
-    public static FeatureQuery prepareQuery(final RenderingContext2D renderingContext,
-            final MapLayer layer, double symbolsMargin) throws PortrayalException{
-
-        final FeatureSet fs = (FeatureSet) layer.getData();
-        final FeatureType schema;
-        try {
-            schema = fs.getType();
-        } catch (DataStoreException ex) {
-            throw new PortrayalException(ex.getMessage(), ex);
-        }
-        final BoundingBox bbox                   = optimizeBBox(renderingContext, fs, symbolsMargin);
-        final CoordinateReferenceSystem layerCRS = FeatureExt.getCRS(schema);
-        final RenderingHints hints               = renderingContext.getRenderingHints();
-
-        String geomAttName;
-        try {
-            geomAttName = FeatureExt.getDefaultGeometry(schema).getName().toString();
-        } catch (Exception e) {
-            // We don't want rendering to fail because of a single layer.
-            geomAttName = null;
+    private static boolean isNil(Expression expGeom) {
+        if (expGeom == null) return true;
+        if (expGeom instanceof Literal) {
+            final Object value = ((Literal<?, ?>) expGeom).getValue();
+            return (value == null);
         }
 
-        Filter filter;
-
-        //final Envelope layerBounds = layer.getBounds();
-        //we better not do any call to the layer bounding box before since it can be
-        //really expensive, the featurestore is the best placed to check if he might
-        //optimize the filter.
-        //if( ((BoundingBox)bbox).contains(new BoundingBox(layerBounds))){
-            //the layer bounds overlaps the bbox, no need for a spatial filter
-        //   filter = Filter.include();
-        //}else{
-        //make a bbox filter
-        if(geomAttName != null){
-            filter = FILTER_FACTORY.bbox(FILTER_FACTORY.property(geomAttName),bbox);
-        }else{
-            filter = Filter.exclude();
-        }
-        //}
-
-        //concatenate geographic filter with data filter if there is one
-        Query query = layer.getQuery();
-        if (query instanceof FeatureQuery) {
-            filter = FILTER_FACTORY.and(filter, (Filter) ((FeatureQuery) query).getSelection());
-        }
-
-        //optimize the filter---------------------------------------------------
-        filter = FilterUtilities.prepare(filter,Feature.class,schema);
-
-        final Hints queryHints = new Hints();
-        final org.geotoolkit.storage.feature.query.Query qb = new org.geotoolkit.storage.feature.query.Query();
-        qb.setTypeName(schema.getName());
-        qb.setSelection(filter);
-
-        //resampling and ignore flag only works when we know the layer crs
-        if(layerCRS != null){
-            //add resampling -------------------------------------------------------
-            Boolean resample = (hints == null) ? null : (Boolean) hints.get(GO2Hints.KEY_GENERALIZE);
-            if(!Boolean.FALSE.equals(resample)){
-                //we only disable resampling if it is explictly specified
-                final double[] res = renderingContext.getResolution(layerCRS);
-
-                //adjust with the generalization factor
-                final Number n =  (hints==null) ? null : (Number)hints.get(GO2Hints.KEY_GENERALIZE_FACTOR);
-                final double factor;
-                if(n != null){
-                    factor = n.doubleValue();
-                }else{
-                    factor = GO2Hints.GENERALIZE_FACTOR_DEFAULT.doubleValue();
-                }
-                res[0] *= factor;
-                res[1] *= factor;
-                qb.setResolution(res);
-            }
-
-            //add ignore flag ------------------------------------------------------
-            //TODO this is efficient but erases values, when plenty of then are to be rendered
-            //we should find another way to handle this
-            //if(!GO2Utilities.visibleMargin(rules, 1.01f, renderingContext)){
-            //    //style does not expend itself further than the feature geometry
-            //    //that mean geometries smaller than a pixel will not be renderer or barely visible
-            //    queryHints.put(Hints.KEY_IGNORE_SMALL_FEATURES, renderingContext.getResolution(layerCRS));
-            //}
-        }
-
-        //add reprojection -----------------------------------------------------
-        //we don't reproject, the reprojection may produce curves but JTS can not represent those.
-        //so we generate those curves in java2d shapes by doing the transformation ourself.
-        //TODO wait for a new geometry implementation
-        //qb.setCRS(renderingContext.getObjectiveCRS2D());
-
-        return qb;
+        return false;
     }
 
-    public static BoundingBox optimizeBBox(RenderingContext2D renderingContext, FeatureSet featureSet, double symbolsMargin) throws PortrayalException{
-        BoundingBox bbox                                         = renderingContext.getPaintingObjectiveBounds2D();
+    public static Envelope optimizeBBox(RenderingContext2D renderingContext, FeatureSet featureSet, double symbolsMargin) throws PortrayalException{
+        Envelope bbox                                            = renderingContext.getCanvasObjectiveBounds2D();
         final CoordinateReferenceSystem bboxCRS                  = bbox.getCoordinateReferenceSystem();
         final CanvasMonitor monitor                              = renderingContext.getMonitor();
         final CoordinateReferenceSystem layerCRS;
@@ -498,7 +441,7 @@ public final class RenderingRoutines {
             final GeneralEnvelope env = new GeneralEnvelope(bbox);
             env.setRange(0, env.getMinimum(0)-symbolsMargin, env.getMaximum(0)+symbolsMargin);
             env.setRange(1, env.getMinimum(1)-symbolsMargin, env.getMaximum(1)+symbolsMargin);
-            bbox = new BoundingBox(env);
+            bbox = env;
         }
 
         //layer crs may be null if it define an abstract collection
@@ -544,7 +487,7 @@ public final class RenderingRoutines {
             env = new GeneralEnvelope(env);
             ((GeneralEnvelope)env).setCoordinateReferenceSystem(layerCRS);
 
-            bbox = new BoundingBox(env);
+            bbox = env;
         }
         return bbox;
     }

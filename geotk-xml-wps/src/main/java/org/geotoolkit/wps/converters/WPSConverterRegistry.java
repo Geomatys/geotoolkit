@@ -28,7 +28,6 @@ import org.geotoolkit.processing.util.converter.StringToNumberRangeConverter;
 import org.geotoolkit.processing.util.converter.StringToSortByConverter;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.wps.converters.inputs.complex.*;
 import org.geotoolkit.wps.converters.inputs.literal.*;
 import org.geotoolkit.wps.converters.inputs.references.*;
@@ -47,7 +46,7 @@ import org.geotoolkit.wps.xml.v200.Reference;
  */
 public class WPSConverterRegistry {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.wps.converters");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.wps.converters");
     private final List<WPSObjectConverter> converters;
     private static WPSConverterRegistry INSTANCE;
 

@@ -46,7 +46,6 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
 import org.apache.sis.util.collection.Cache;
-import org.apache.sis.util.logging.Logging;
 import org.apache.sis.xml.MarshallerPool;
 import org.geotoolkit.feature.xml.GMLConvention;
 import org.geotoolkit.feature.xml.Utils;
@@ -74,7 +73,7 @@ import org.w3c.dom.Node;
  */
 public class XSDSchemaContext {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.feature.xml.jaxp");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.feature.xml.jaxp");
     private static final MarshallerPool POOL = XSDMarshallerPool.getInstance();
     private static final Cache<String,Schema> SCHEMA_CACHE = new Cache<>(60,60,true);
 

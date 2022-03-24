@@ -71,7 +71,6 @@ import org.geotoolkit.csw.xml.v202.TransactionResponseType;
 import org.geotoolkit.csw.xml.v202.TransactionSummaryType;
 
 import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
-import org.apache.sis.util.logging.Logging;
 import org.apache.sis.xml.MarshallerPool;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -91,7 +90,7 @@ public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
         TimeZone.setDefault(TimeZone.getTimeZone("CET"));
     }
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.csw.xml");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.csw.xml");
 
     private final MarshallerPool pool = CSWMarshallerPool.getInstance();
 

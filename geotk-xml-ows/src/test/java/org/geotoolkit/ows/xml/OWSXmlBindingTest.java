@@ -34,7 +34,6 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.ParserConfigurationException;
 
 // Geotoolkit dependencies
-import org.apache.sis.util.logging.Logging;
 import org.apache.sis.xml.MarshallerPool;
 
 //Junit dependencies
@@ -57,7 +56,7 @@ import static org.apache.sis.test.MetadataAssert.*;
  */
 public class OWSXmlBindingTest extends org.geotoolkit.test.TestBase {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.ows.xml");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.ows.xml");
 
     private static final MarshallerPool pool = ExceptionReportMarshallerPool.getInstance();
     private static final MarshallerPool owsPool = OWSMarshallerPool.getInstance();

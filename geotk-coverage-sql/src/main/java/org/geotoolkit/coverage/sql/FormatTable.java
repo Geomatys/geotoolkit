@@ -22,6 +22,7 @@ import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.measure.MeasurementRange;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.logging.Logging;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -30,6 +31,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**
@@ -46,8 +49,10 @@ final class FormatTable extends CachedTable<String,FormatEntry> {
     /**
      * Maximum number of formats for the same name. Current algorithm is very inefficient
      * for a large number of name collisions, so we are better to keep this limit small.
+     * TODO: reduce limit to 99 when real issue is solved.
      */
-    private static final int MAX_FORMATS = 100;
+    private static final int MAX_FORMATS = 99999;
+    static final Logger LOGGER = Logging.getLogger("org.geotoolkit.coverage.sql");
 
     /**
      * The sample dimensions table.
@@ -284,8 +289,11 @@ next:           while (results.next()) {
                 }
                 return suggestedID;
             }
+
             if (n >= MAX_FORMATS) {
                 throw new CatalogException("Rows already exist for all names up to \"" + suggestedID + "\".");
+            } else if (n == 9000) {
+                LOGGER.log(Level.WARNING, "Number of rows for format {0}: it's over 9000 ! (ง •̀_•́)ง", suggestedID);
             }
             if (buffer == null) {
                 buffer = new StringBuilder(suggestedID).append('-');

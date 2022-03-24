@@ -45,7 +45,6 @@ import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.storage.event.CoverageStoreManagementEvent;
@@ -77,7 +76,7 @@ import org.opengis.util.GenericName;
  */
 public class AmendedCoverageResource implements Resource, GridCoverageResource, StoreResource {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.coverage");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.coverage");
 
     protected final Set<StoreListener> listeners = new HashSet<>();
     protected final GridCoverageResource ref;

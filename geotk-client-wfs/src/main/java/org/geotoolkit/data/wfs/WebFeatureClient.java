@@ -40,7 +40,6 @@ import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.Resource;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.AbstractClientProvider;
 import org.geotoolkit.client.Client;
 import org.geotoolkit.data.wfs.v100.GetFeature100;
@@ -71,7 +70,7 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class WebFeatureClient extends DataStore implements Aggregate, Client {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.client");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.client");
 
     private final Parameters parameters;
     private List<WFSFeatureSet> components;

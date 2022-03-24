@@ -23,7 +23,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.sis.util.logging.Logging;
 import org.opengis.feature.FeatureType;
 import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
@@ -58,7 +57,7 @@ import static org.geotoolkit.processing.datastore.copy.CopyDescriptor.*;
  */
 public class Copy extends AbstractProcess {
 
-    private static Logger LOGGER = Logging.getLogger("org.geotoolkit.processing.datastore.copy");
+    private static Logger LOGGER = Logger.getLogger("org.geotoolkit.processing.datastore.copy");
 
     /**
      * Default constructor
@@ -225,7 +224,7 @@ public class Copy extends AbstractProcess {
             targetSS.removeFeatures(name.toString(), Filter.include());
         }
 
-        //Logging
+        //Logger
         final StringBuilder logMsg = new StringBuilder("Insert ");
         logMsg.append(collection.size()).append(" features ");
         logMsg.append("in type ").append(name.tip().toString());

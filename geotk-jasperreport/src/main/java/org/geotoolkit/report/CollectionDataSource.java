@@ -21,15 +21,13 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
-
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRField;
-
+import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.logging.Logging;
-import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.filter.binding.Bindings;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;

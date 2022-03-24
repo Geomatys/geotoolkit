@@ -30,10 +30,10 @@ import java.sql.SQLException;
 import java.sql.DatabaseMetaData;
 import javax.sql.DataSource;
 
-import org.geotoolkit.resources.Loggings;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.Classes;
+import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.resources.Loggings;
 
 
 /**
@@ -51,7 +51,7 @@ public class DefaultDataSource implements DataSource {
      * The logger where to report the JDBC driver version. Note that the logger
      * name intentionally hides the {@code "internal"} part of the package name.
      */
-    public static final Logger LOGGER = Logging.getLogger("org.geotoolkit.sql");
+    public static final Logger LOGGER = Logger.getLogger("org.geotoolkit.sql");
 
     /**
      * The driver names of the connection returned by {@code DefaultDataSource}.

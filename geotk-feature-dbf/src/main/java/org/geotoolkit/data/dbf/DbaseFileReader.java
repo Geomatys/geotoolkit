@@ -34,7 +34,6 @@ import java.nio.charset.CoderResult;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.sis.util.logging.Logging;
 
 /**
  * A DbaseFileReader is used to read a dbase III format file. <br>
@@ -67,7 +66,7 @@ public final class DbaseFileReader implements Closeable{
     /**
      * Logger.
      */
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data.dbf");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.data.dbf");
 
     public static final Charset DEFAULT_STRING_CHARSET = Charset.forName("ISO-8859-1");
 

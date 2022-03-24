@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.logging.Logger;
 import org.geotoolkit.client.AbstractRequest;
 import org.geotoolkit.security.ClientSecurity;
-import org.apache.sis.util.logging.Logging;
 
 
 /**
@@ -38,7 +37,7 @@ public abstract class AbstractGetLegend extends AbstractRequest implements GetLe
     /**
      * Default logger for all GetLegendGraphic requests.
      */
-    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.wms");
+    protected static final Logger LOGGER = Logger.getLogger("org.geotoolkit.wms");
 
     /**
      * The version to use for this webservice request.

@@ -61,7 +61,7 @@ public class LayerDescriptionType {
     @XmlElement(name = "OnlineResource", namespace = "http://www.opengis.net/se", required = true)
     private OnlineResourceType onlineResource;
     @XmlElement(name = "TypeName", required = true)
-    private List<TypeNameType> typeName = new ArrayList<TypeNameType>();
+    private List<TypeNameType> typeName = new ArrayList<>();
 
     /**
      * An empty Constructor used by jaxB
@@ -76,6 +76,20 @@ public class LayerDescriptionType {
         this.onlineResource = onlineResource;
         for (final TypeNameType element : typeNames) {
             this.typeName.add(element);
+        }
+    }
+
+    /**
+     * Build a new LayerDescriptionType
+     * Simplified version
+     */
+    public LayerDescriptionType(final String url, final String... typeNames) {
+        if (url != null) {
+            this.onlineResource = new OnlineResourceType(url);
+        }
+        this.typeName = new ArrayList<>();
+        for (final String element : typeNames) {
+            this.typeName.add(new TypeNameType(element));
         }
     }
 

@@ -27,11 +27,11 @@ import org.w3c.dom.Node;
 
 import org.apache.sis.util.CharSequences;
 import org.apache.sis.measure.NumberRange;
-import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.Numbers;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.metadata.ValueRestriction;
 import org.geotoolkit.gui.swing.tree.NamedTreeNode;
 import org.geotoolkit.gui.swing.tree.TreeTableNode;

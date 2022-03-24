@@ -8,7 +8,6 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.logging.Logger;
 import javax.sql.DataSource;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.index.tree.Node;
 import org.geotoolkit.index.tree.StoreIndexException;
 import org.geotoolkit.index.tree.Tree;
@@ -27,7 +26,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class PGTreeWrapper implements Tree {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.index.tree.manager.postgres");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.index.tree.manager.postgres");
 
     private long lastUpdate;
 

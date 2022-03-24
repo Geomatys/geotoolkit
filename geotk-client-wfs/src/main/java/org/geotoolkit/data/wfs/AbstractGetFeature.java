@@ -42,7 +42,6 @@ import org.geotoolkit.client.AbstractRequest;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.filter.visitor.SimplifyingFilterVisitor;
 import org.geotoolkit.security.ClientSecurity;
-import org.apache.sis.util.logging.Logging;
 import org.apache.sis.xml.MarshallerPool;
 import org.geotoolkit.ogc.xml.FilterMarshallerPool;
 import org.geotoolkit.ogc.xml.FilterVersion;
@@ -68,7 +67,7 @@ import org.opengis.filter.Expression;
  * @module
  */
 public abstract class AbstractGetFeature extends AbstractRequest implements GetFeatureRequest{
-    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data.wfs");
+    protected static final Logger LOGGER = Logger.getLogger("org.geotoolkit.data.wfs");
     protected final WFSVersion version;
 
     private QName typeName       = null;

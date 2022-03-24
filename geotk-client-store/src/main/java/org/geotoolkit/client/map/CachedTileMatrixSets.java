@@ -44,7 +44,6 @@ import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.MemoryCacheImageInputStream;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.collection.Cache;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.Client;
 import org.geotoolkit.client.Request;
 import org.geotoolkit.image.io.XImageIO;
@@ -75,7 +74,7 @@ public abstract class CachedTileMatrixSets extends DefaultTileMatrixSets {
      */
     public static final String PROPERTY_NIO = "nio_query";
 
-    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.client.map");
+    protected static final Logger LOGGER = Logger.getLogger("org.geotoolkit.client.map");
 
     //NIO netty bootstrap.
     private static ClientBootstrap BOOTSTRAP;
@@ -251,7 +250,7 @@ public abstract class CachedTileMatrixSets extends DefaultTileMatrixSets {
                     str = str.substring(str.indexOf('/'));
                     downloadList.add(new ImagePack(str, pyramid, mosaic, p, hints));
                 } catch (MalformedURLException ex) {
-                    Logging.getLogger("org.geotoolkit.client.map").log(Level.SEVERE, null, ex);
+                    Logger.getLogger("org.geotoolkit.client.map").log(Level.SEVERE, null, ex);
                 }
             }
         }

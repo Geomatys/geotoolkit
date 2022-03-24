@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.sis.geometry.ImmutableEnvelope;
 import org.geotoolkit.ows.xml.RequestBase;
@@ -107,18 +108,17 @@ public class GetMap implements RequestBase {
 
     private String service;
 
-
     /**
      * All query parameters, this might hold additional parameters that providers
      * or renderers may understand.
      */
-    private final Object parameters;
+    private final Map<String, Object> parameters;
 
     /**
      * Default minimal constructor to generate a {@code GetMap} request.
      */
     public GetMap(final Envelope envelope, final Version version, final String format,
-                  final List<GenericName> layers, final Dimension size, Object parameters)
+                  final List<GenericName> layers, final Dimension size, Map<String, Object> parameters)
     {
         this(envelope, version, format, layers, new ArrayList<String>(), size, parameters);
     }
@@ -128,7 +128,7 @@ public class GetMap implements RequestBase {
      */
     public GetMap(final Envelope envelope, final Version version, final String format,
                   final List<GenericName> layers, final List<String> styles, final Dimension size,
-                  Object parameters)
+                  Map<String, Object> parameters)
     {
         this(envelope, version, format, layers, styles, null, null, size, parameters);
     }
@@ -138,7 +138,7 @@ public class GetMap implements RequestBase {
      */
     public GetMap(final Envelope envelope, final Version version, final String format,
                   final List<GenericName> layers, final List<String> styles, final Double elevation,
-                  final List<Date> date, final Dimension size, Object parameters)
+                  final List<Date> date, final Dimension size, Map<String, Object> parameters)
     {
         this(envelope, version, format, layers, styles, null, elevation, date, size, null, null, 0, null, parameters);
     }
@@ -151,7 +151,7 @@ public class GetMap implements RequestBase {
                   final StyledLayerDescriptor sld, final Double elevation, final List<Date> date,
                   final Dimension size, final Color background,
                   final Boolean transparent, double azimuth, final String exceptions,
-                  final Object parameters) {
+                  final Map<String, Object> parameters) {
         this.version = version;
         this.parameters = parameters;
         this.envelope = new ImmutableEnvelope(envelope);
@@ -378,7 +378,7 @@ public class GetMap implements RequestBase {
     /**
      * @return the parameters
      */
-    public Object getParameters() {
+    public Map<String, Object> getParameters() {
         return parameters;
     }
 

@@ -34,12 +34,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.net.ssl.HttpsURLConnection;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.sis.test.DependsOnMethod;
 import org.apache.sis.test.TestCase;
-import org.apache.sis.util.logging.Logging;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Assume;
@@ -83,7 +83,7 @@ public class HtmlBuilderTest extends TestCase {
                 }
             });
         } catch (IOException e) {
-            Logging.getLogger("org.geotoolkit.tests").log(Level.WARNING, "Cannot delete temporary directory used for tests.", e);
+            Logger.getLogger("org.geotoolkit.tests").log(Level.WARNING, "Cannot delete temporary directory used for tests.", e);
         }
     }
 

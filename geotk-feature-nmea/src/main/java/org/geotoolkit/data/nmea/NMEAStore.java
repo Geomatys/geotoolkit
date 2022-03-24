@@ -51,7 +51,6 @@ import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.StorageConnector;
-import org.apache.sis.util.logging.Logging;
 
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.DataStores;
@@ -70,7 +69,7 @@ import org.locationtech.jts.geom.Point;
  */
 public class NMEAStore extends DataStore implements FeatureSet, ResourceOnFileSystem {
 
-    static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data.nmea");
+    static final Logger LOGGER = Logger.getLogger("org.geotoolkit.data.nmea");
 
     // INTERNAL USE OPTIMISATION: avoid calling synchronized "toString" method on local names.
     public final static String RAW_TYPE_NAME  = "NMEA POINT";

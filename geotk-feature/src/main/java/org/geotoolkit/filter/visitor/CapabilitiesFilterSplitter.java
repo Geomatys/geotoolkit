@@ -29,7 +29,6 @@ import java.util.regex.Pattern;
 import org.apache.sis.internal.filter.FunctionNames;
 import org.apache.sis.internal.filter.Visitor;
 import org.geotoolkit.filter.capability.DefaultFilterCapabilities;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.filter.FilterUtilities;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.BetweenComparisonOperator;
@@ -86,7 +85,7 @@ import org.opengis.util.CodeList;
  */
 public class CapabilitiesFilterSplitter extends Visitor<Object,Object> {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.filter.visitor");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.filter.visitor");
     private static final Pattern ID_PATTERN       = Pattern.compile("@(\\w+:)?id");
     private static final Pattern PROPERTY_PATTERN = Pattern.compile("(\\w+:)?(.+)");
 

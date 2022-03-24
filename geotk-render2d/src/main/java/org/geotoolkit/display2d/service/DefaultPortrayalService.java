@@ -50,6 +50,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
 import javax.imageio.IIOException;
 import javax.imageio.IIOImage;
@@ -77,7 +78,6 @@ import org.apache.sis.storage.Query;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Classes;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.io.GridCoverageWriteParam;
 import org.geotoolkit.coverage.io.ImageCoverageWriter;
 import org.geotoolkit.display.PortrayalException;
@@ -706,7 +706,7 @@ public final class DefaultPortrayalService implements PortrayalService{
                 try {
                     writer.dispose();
                 } catch (DataStoreException ex1) {
-                    Logging.getLogger("org.geotoolkit.display2d.service").log(Level.WARNING, null, ex1);
+                    Logger.getLogger("org.geotoolkit.display2d.service").log(Level.WARNING, null, ex1);
                 }
                 throw new PortrayalException(ex);
             }
@@ -797,7 +797,7 @@ public final class DefaultPortrayalService implements PortrayalService{
         final J2DCanvasBuffered canvas = new J2DCanvasBuffered(crs,
                 canvasDef.getDimension(),sceneDef.getHints());
         prepareCanvas(canvas, canvasDef, sceneDef);
-        final RenderingContext2D renderContext = canvas.prepareContext(img.createGraphics(), new Rectangle(canvasDef.getDimension()));
+        final RenderingContext2D renderContext = canvas.prepareContext(img.createGraphics());
 
         final MapLayers context = sceneDef.getContext();
         final List<MapLayer> layers = MapBuilder.getLayers(context);

@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -29,7 +30,6 @@ import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import org.apache.sis.storage.FeatureSet;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.storage.feature.query.SortByComparator;
 import org.geotoolkit.storage.feature.session.Session;
@@ -459,7 +459,7 @@ public final class FeatureStreams {
                     try {
                         ((AutoCloseable)reader).close();
                     } catch (Exception ex) {
-                        Logging.getLogger("org.geotoolkit.data").log(Level.WARNING, null, ex);
+                        Logger.getLogger("org.geotoolkit.data").log(Level.WARNING, null, ex);
                     }
                 }
             });

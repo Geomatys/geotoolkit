@@ -18,6 +18,7 @@ package org.geotoolkit.wcs.xml.v100;
 
 import java.util.List;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSeeAlso;
@@ -28,7 +29,6 @@ import org.apache.sis.referencing.CRS;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
-import org.apache.sis.util.logging.Logging;
 
 
 /**
@@ -73,7 +73,7 @@ public class LonLatEnvelopeBaseType extends EnvelopeType implements Envelope{
         try {
             return CRS.forCode(getSrsName());
         } catch (FactoryException ex) {
-            Logging.getLogger("org.geotoolkit.wcs.xml.v100").log(Level.SEVERE, null, ex);
+            Logger.getLogger("org.geotoolkit.wcs.xml.v100").log(Level.SEVERE, null, ex);
         }
         return null;
     }

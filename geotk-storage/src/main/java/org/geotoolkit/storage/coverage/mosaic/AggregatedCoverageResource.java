@@ -67,7 +67,6 @@ import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.apache.sis.util.collection.FrequencySortedSet;
-import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.resources.Vocabulary;
 import org.geotoolkit.coverage.grid.EstimatedGridGeometry;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
@@ -104,7 +103,7 @@ import org.opengis.util.GenericName;
  */
 public final class AggregatedCoverageResource implements WritableAggregate, GridCoverageResource {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.storage.coverage");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.storage.coverage");
 
     public static enum Mode {
         /**
@@ -1139,7 +1138,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
                         if (source.sampleTransform != null) try {
                             sourcePixel[0] = source.sampleTransform.transform(sourcePixel[0]);
                         } catch (TransformException ex) {
-                            Logging.getLogger("org.geotoolkit.storage.coverage.mosaic").log(Level.INFO, ex.getMessage(), ex);
+                            Logger.getLogger("org.geotoolkit.storage.coverage.mosaic").log(Level.INFO, ex.getMessage(), ex);
                             return null;
                         }
 
@@ -1345,7 +1344,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
         try {
             initModel();
         } catch (DataStoreException ex) {
-            Logging.getLogger("org.geotoolkit.coverage").log(Level.INFO, ex.getMessage(), ex);
+            Logger.getLogger("org.geotoolkit.coverage").log(Level.INFO, ex.getMessage(), ex);
         }
 
         final List<String> texts = new ArrayList<>();

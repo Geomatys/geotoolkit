@@ -37,7 +37,6 @@ import java.util.stream.StreamSupport;
 import javax.media.jai.RasterFactory;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PixelIterator;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.J2DCanvasBuffered;
 import org.geotoolkit.display2d.service.CanvasDef;
@@ -184,14 +183,16 @@ final class ProgressiveImage {
             nbtileonwidth = gridSize.width - col;
         }
 
-        if (canvas == null) {
-            final Dimension canvasSize = new Dimension(
-                    nbtileonwidth*tileSize.width,
-                    nbtileonheight*tileSize.height);
+        final Dimension canvasSize = new Dimension(
+                nbtileonwidth*tileSize.width,
+                nbtileonheight*tileSize.height);
 
+        if (canvas == null || !canvas.getSize().equals(canvasSize)) {
             final Hints hints = new Hints();
             hints.put(GO2Hints.KEY_COLOR_MODEL, colorModel);
             canvas = new J2DCanvasBuffered(cdef.getEnvelope().getCoordinateReferenceSystem(), canvasSize, hints);
+        } else if (!canvasSize.equals(canvas.getSize())) {
+            canvas.setSize(canvasSize);
         }
 
         try {

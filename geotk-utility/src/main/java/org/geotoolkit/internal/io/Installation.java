@@ -23,6 +23,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Properties;
+import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 import org.apache.sis.util.logging.Logging;
 
@@ -139,7 +140,7 @@ public enum Installation {
                 prefs.remove(key);
             }
         } catch (SecurityException e) {
-            Logging.recoverableException(Logging.getLogger("org.geotoolkit"), Installation.class, "set", e);
+            Logging.recoverableException(Logger.getLogger("org.geotoolkit"), Installation.class, "set", e);
         }
     }
 
@@ -154,7 +155,7 @@ public enum Installation {
                 return preference().get(key, null);
             }
         } catch (SecurityException e) {
-            Logging.recoverableException(Logging.getLogger("org.geotoolkit"), Installation.class, "set", e);
+            Logging.recoverableException(Logger.getLogger("org.geotoolkit"), Installation.class, "set", e);
         }
         return null;
     }
@@ -200,7 +201,7 @@ public enum Installation {
                 }
             }
         } catch (SecurityException e) {
-            Logging.getLogger("org.geotoolkit").warning(e.toString());
+            Logger.getLogger("org.geotoolkit").warning(e.toString());
         }
         return Paths.get(System.getProperty("java.io.tmpdir"), "Geotoolkit.org");
     }

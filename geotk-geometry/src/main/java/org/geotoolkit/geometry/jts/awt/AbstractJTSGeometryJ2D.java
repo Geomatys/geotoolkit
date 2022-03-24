@@ -30,7 +30,6 @@ import java.awt.geom.Rectangle2D;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.sis.util.logging.Logging;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 
@@ -44,7 +43,7 @@ import org.opengis.referencing.operation.TransformException;
  */
 public abstract class AbstractJTSGeometryJ2D<T extends Geometry> implements Shape, Cloneable {
 
-    static final Logger LOGGER = Logging.getLogger("org.geotoolkit.geometry");
+    static final Logger LOGGER = Logger.getLogger("org.geotoolkit.geometry");
 
     /** The wrapped JTS geometry */
     protected T geometry;
@@ -91,7 +90,7 @@ public abstract class AbstractJTSGeometryJ2D<T extends Geometry> implements Shap
         try {
             return transform.inverse();
         } catch (org.opengis.referencing.operation.NoninvertibleTransformException ex) {
-            Logging.getLogger("org.geotoolkit.display2d.primitive.jts").log(Level.WARNING, ex.getMessage(), ex);
+            LOGGER.log(Level.WARNING, ex.getMessage(), ex);
             return null;
         }
     }

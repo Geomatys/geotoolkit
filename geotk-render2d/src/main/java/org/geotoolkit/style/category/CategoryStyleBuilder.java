@@ -31,7 +31,6 @@ import org.apache.sis.portrayal.MapLayer;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.Resource;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
@@ -80,7 +79,7 @@ import org.opengis.style.Symbolizer;
  */
 public class CategoryStyleBuilder {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.style");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.style");
 
     private final MutableStyleFactory sf;
     private final FilterFactory ff;

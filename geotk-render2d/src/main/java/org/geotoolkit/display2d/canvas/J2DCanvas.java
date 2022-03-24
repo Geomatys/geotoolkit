@@ -24,14 +24,11 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
-import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.internal.map.Presentation;
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.canvas.AbstractCanvas2D;
 import org.geotoolkit.display.container.GraphicContainer;
@@ -52,8 +49,6 @@ import org.geotoolkit.renderer.GroupPresentation;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.geometry.Geometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.datum.PixelInCell;
-import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 
 /**
@@ -88,57 +83,20 @@ public abstract class J2DCanvas extends AbstractCanvas2D{
      * You may provide a null Graphic2D if you need to prepare a context for only a "hit"
      * operation.
      */
-    public RenderingContext2D prepareContext(final Graphics2D output, Shape paintingDisplayShape) {
-
-        final Shape canvasDisplayShape = getDisplayBounds();
-
-        //we are prepare a rendering with Graphics2D, which work in corner.
-        final AffineTransform2D dispToObjCorner;
-        final AffineTransform2D objToDispCorner;
-        try {
-            final GridGeometry gridGeometry2D = getGridGeometry2D();
-            final long[] sourceCorner = gridGeometry2D.getExtent().getLow().getCoordinateValues();
-            final MathTransform sourceOffset = MathTransforms.translation((sourceCorner[0] - 0), (sourceCorner[1] - 0));
-            final MathTransform gridSourceToCrs = gridGeometry2D.getGridToCRS(PixelInCell.CELL_CORNER);
-            final MathTransform imgSourceToCrs = MathTransforms.concatenate(sourceOffset, gridSourceToCrs);
-
-            dispToObjCorner = (AffineTransform2D) imgSourceToCrs;
-            objToDispCorner = dispToObjCorner.inverse();
-        } catch (org.opengis.referencing.operation.NoninvertibleTransformException ex) {
-            throw new IllegalStateException(ex.getMessage(), ex);
-        }
+    public RenderingContext2D prepareContext(final Graphics2D output) {
 
         if(output != null) output.addRenderingHints(getHints(true));
 
-        final Shape canvasObjectShape;
-
-        final Shape displayBounds = getDisplayBounds();
-        canvasObjectShape = dispToObjCorner.createTransformedShape(displayBounds);
-
-        final Shape paintingObjectiveShape;
-
-        if (paintingDisplayShape == null) {
-            paintingDisplayShape = canvasDisplayShape;
-            paintingObjectiveShape = canvasObjectShape;
-        } else {
-            paintingObjectiveShape = dispToObjCorner.createTransformedShape(paintingDisplayShape);
-        }
-
         //grab the dpi
         Number dpi = (Number)getRenderingHint(GO2Hints.KEY_DPI);
-        if(dpi == null){
+        if(dpi == null) {
             dpi = 90;
         }
 
         RenderingContext2D context = new RenderingContext2D(this,
                 getGridGeometry(),
                 getGridGeometry2D(),
-                objToDispCorner,
                 monitor,
-                paintingDisplayShape,
-                paintingObjectiveShape,
-                canvasDisplayShape,
-                canvasObjectShape,
                 dpi.doubleValue());
         if (output != null) context.initGraphic(output);
 
@@ -219,7 +177,7 @@ public abstract class J2DCanvas extends AbstractCanvas2D{
 
         if (container != null) {
 
-            final RenderingContext2D searchContext = prepareContext(null,null);
+            final RenderingContext2D searchContext = prepareContext(null);
 
             final SearchAreaJ2D searchMask = J2DCanvas.createSearchArea(searchContext, displayShape);
 
@@ -246,7 +204,7 @@ public abstract class J2DCanvas extends AbstractCanvas2D{
                             }
                         }
                     } catch (PortrayalException | DataStoreException ex) {
-                        Logging.getLogger("org.geotoolkit.display2d").log(Level.INFO, ex.getMessage(), ex);
+                        Logger.getLogger("org.geotoolkit.display2d").log(Level.INFO, ex.getMessage(), ex);
                     }
                 }
             }

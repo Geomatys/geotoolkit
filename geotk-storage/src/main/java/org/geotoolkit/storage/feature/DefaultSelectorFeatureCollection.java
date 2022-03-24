@@ -25,9 +25,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.feature.FeatureExt;
-import org.apache.sis.util.logging.Logging;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.storage.feature.query.QueryUtilities;
@@ -159,7 +159,7 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection{
         try {
             return getSession().getFeatureStore().isWritable(query.getTypeName().toString());
         } catch (DataStoreException ex) {
-            Logging.getLogger("org.geotoolkit.data").log(Level.WARNING, null, ex);
+            Logger.getLogger("org.geotoolkit.data").log(Level.WARNING, null, ex);
             return false;
         }
     }

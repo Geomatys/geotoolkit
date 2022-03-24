@@ -18,7 +18,6 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.logging.Logging;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.SingleCRS;
@@ -32,7 +31,7 @@ import org.opengis.util.FactoryException;
  */
 class Utilities {
 
-    static final Logger LOGGER = Logging.getLogger("org.geotoolkit.processing.science.drift");
+    static final Logger LOGGER = Logger.getLogger("org.geotoolkit.processing.science.drift");
 
     /**
      * TODO : should we use millisecond precision ?

@@ -26,7 +26,6 @@ import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.referencing.CRS;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.AbstractRequest;
 import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.referencing.ReferencingUtilities;
@@ -60,7 +59,7 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
     /**
      * Default logger for all GetMap requests.
      */
-    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.wms");
+    protected static final Logger LOGGER = Logger.getLogger("org.geotoolkit.wms");
     /**
      * The version to use for this webservice request.
      */

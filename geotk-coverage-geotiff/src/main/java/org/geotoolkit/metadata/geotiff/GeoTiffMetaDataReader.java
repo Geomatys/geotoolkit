@@ -37,7 +37,6 @@ import org.apache.sis.referencing.operation.matrix.Matrix3;
 import org.apache.sis.referencing.operation.matrix.MatrixSIS;
 import org.apache.sis.referencing.operation.matrix.NoninvertibleMatrixException;
 import org.apache.sis.util.Classes;
-import org.apache.sis.util.logging.Logging;
 
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
@@ -63,7 +62,7 @@ import static org.geotoolkit.util.DomUtilities.*;
  */
 public final class GeoTiffMetaDataReader {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.metadata.geotiff");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.metadata.geotiff");
 
     public static class ValueMap extends HashMap<Integer, Object> {
 

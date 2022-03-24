@@ -21,13 +21,14 @@ import java.time.Instant;
 import javax.measure.Quantity;
 import javax.measure.quantity.Length;
 import org.apache.sis.filter.DefaultFilterFactory;
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.ImmutableEnvelope;
 import org.apache.sis.geometry.WraparoundMethod;
 import org.apache.sis.measure.Quantities;
 import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.filter.binaryspatial.DefaultBBox;
-import org.geotoolkit.geometry.BoundingBox;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.locationtech.jts.geom.Coordinate;
@@ -89,9 +90,8 @@ public class FilterFactory2 extends DefaultFilterFactory<Object,Object,Object> {
     public BinarySpatialOperator<Object> bbox(final Expression e, final double minx, final double miny,
             final double maxx, final double maxy, final String srs)
     {
-        final BoundingBox env;
         if (srs == null || srs.trim().isEmpty()) {
-            env = new BoundingBox(new double[]{minx, miny}, new double[]{maxx, maxy});
+            final Envelope env = new ImmutableEnvelope(new double[]{minx, miny}, new double[]{maxx, maxy}, null);
             return bbox(e, env);
         }
         CoordinateReferenceSystem crs = null;
@@ -133,7 +133,8 @@ public class FilterFactory2 extends DefaultFilterFactory<Object,Object,Object> {
             throw new IllegalArgumentException("Invalid srs : " +srs +" , check that you have the corresponding authority registered." +
                     "\n primary exception : "+firstException.getMessage(), firstException);
         }
-        env = new BoundingBox(crs);
+
+        final GeneralEnvelope env = new GeneralEnvelope(crs);
         env.setRange(0, minx, maxx);
         env.setRange(1, miny, maxy);
         return bbox(e,env);
@@ -142,7 +143,7 @@ public class FilterFactory2 extends DefaultFilterFactory<Object,Object,Object> {
     @Override
     public BinarySpatialOperator<Object> bbox(final Expression e, final Envelope bounds) {
         if (e instanceof ValueReference) {
-            return new DefaultBBox((ValueReference) e, super.literal(BoundingBox.castOrCopy(bounds)));
+            return new DefaultBBox((ValueReference) e, super.literal(bounds));
         }
         return super.bbox(e, bounds);
     }
@@ -284,7 +285,7 @@ public class FilterFactory2 extends DefaultFilterFactory<Object,Object,Object> {
     public Literal literal(Object obj) {
         if (obj instanceof JTSGeometry) {
             obj = ((JTSGeometry) obj).getJTSGeometry();
-        } else if (obj instanceof Envelope && !(obj instanceof BoundingBox)) {
+        } else if (obj instanceof Envelope) {
             //special case for envelopes to change them in JTS geometries
             obj = toGeometry((Envelope) obj);
         }

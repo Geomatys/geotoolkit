@@ -19,7 +19,6 @@ package org.geotoolkit.pending.demo.datamodel.nmea;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.sis.util.logging.Logging;
 
 import org.geotoolkit.data.nmea.Discovery;
 import org.geotoolkit.data.nmea.FlowableFeatureSet;
@@ -37,7 +36,7 @@ import reactor.core.publisher.Flux;
  */
 public class NMEASerialPortReaderDemo {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.pending.demo.datamodel.nmea");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.pending.demo.datamodel.nmea");
 
     public static void main(String[] args) throws Exception {
         // This component allows for serial port scan

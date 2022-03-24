@@ -23,7 +23,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.coverage.Category;
 import org.apache.sis.coverage.SampleDimension;
-import org.apache.sis.util.logging.Logging;
 
 
 /**
@@ -53,7 +52,7 @@ public class HeuristicSampleDimensionBuilder extends SampleDimension.Builder {
     @Override
     public SampleDimension build() {
         if (getBackground() == null) {
-            final Logger logger = Logging.getLogger("org.apache.sis.coverage");
+            final Logger logger = Logger.getLogger("org.apache.sis.coverage");
             try {
                 Optional<BackgroundCandidate> first = categories().stream()
                         .map(this::score)

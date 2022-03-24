@@ -19,7 +19,6 @@ package org.geotoolkit.ncwms;
 import java.util.logging.Logger;
 import org.geotoolkit.security.ClientSecurity;
 
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.wms.AbstractGetMap;
 
 
@@ -35,7 +34,7 @@ public abstract class AbstractNcGetMap extends AbstractGetMap implements NcGetMa
     /**
      * Default logger for all GetMap requests.
      */
-    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.ncwms");
+    protected static final Logger LOGGER = Logger.getLogger("org.geotoolkit.ncwms");
 
     protected Integer opacity = null;
 

@@ -90,7 +90,6 @@ import org.geotoolkit.ogc.xml.v110.TouchesType;
 import org.geotoolkit.ogc.xml.v110.UpperBoundaryType;
 import org.geotoolkit.ogc.xml.v110.WithinType;
 import org.apache.sis.referencing.IdentifiedObjects;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.filter.capability.ComparisonOperators;
 import org.geotoolkit.ogc.xml.FilterXmlFactory;
 import org.opengis.filter.Filter;
@@ -133,7 +132,7 @@ import org.opengis.geometry.Geometry;
  */
 public class FilterFactoryImpl extends FilterFactory2 {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.filter");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.filter");
 
     private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
     static {

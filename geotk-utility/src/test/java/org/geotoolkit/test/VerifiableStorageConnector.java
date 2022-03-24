@@ -15,7 +15,6 @@ import javax.imageio.stream.ImageInputStream;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.StorageConnector;
 import org.apache.sis.util.collection.BackingStoreException;
-import org.apache.sis.util.logging.Logging;
 
 import static org.geotoolkit.test.VerifiableStorageConnector.Integrity.KO;
 import static org.geotoolkit.test.VerifiableStorageConnector.Integrity.OK;
@@ -25,7 +24,7 @@ import static org.junit.Assert.fail;
 
 public class VerifiableStorageConnector extends StorageConnector {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.test");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.test");
     
     private final CharSequence description;
     private final Map<Object, IntegrityKey> checkers;

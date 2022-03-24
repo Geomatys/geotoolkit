@@ -999,8 +999,6 @@
     <module>geotk-utility</module>
     <module>geotk-temporal</module>
     <module>geotk-maven-report</module>
-    <module>geotk-logging-commons</module>
-    <module>geotk-logging-log4j</module>
     <module>geotk-utility-jdbc</module>
     <module>geotk-analytics</module>
 

@@ -46,7 +46,6 @@ import org.apache.sis.storage.IllegalNameException;
 import org.apache.sis.storage.WritableFeatureSet;
 import org.apache.sis.util.Numbers;
 import org.apache.sis.util.ObjectConverters;
-import org.apache.sis.util.logging.Logging;
 import org.apache.sis.xml.MarshallerPool;
 import org.apache.sis.xml.Namespaces;
 import org.geotoolkit.feature.xml.ExceptionReport;
@@ -93,7 +92,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
     public static final String READ_EMBEDDED_FEATURE_TYPE = "readEmbeddedFeatureType";
     public static final String SKIP_UNEXPECTED_PROPERTY_TAGS = "skipUnexpectedPropertyTags";
     public static final String BINDING_PACKAGE = "bindingPackage";
-    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.feature.xml.jaxp");
+    protected static final Logger LOGGER = Logger.getLogger("org.geotoolkit.feature.xml.jaxp");
     private Unmarshaller unmarshaller;
     public static final String LONGITUDE_FIRST = "longitudeFirst";
 

@@ -35,7 +35,6 @@ import static org.apache.sis.storage.DataStoreProvider.LOCATION;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.data.shapefile.indexed.IndexType;
 import org.geotoolkit.data.shapefile.indexed.IndexedShapefileFeatureStore;
 import org.geotoolkit.data.shapefile.lock.ShpFileType;
@@ -92,7 +91,7 @@ public class ShapefileProvider extends DataStoreProvider implements FileFeatureS
     public static final String NAME = "shapefile";
 
     public static final String ENCODING = "UTF-8";
-    public static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data.shapefile");
+    public static final Logger LOGGER = Logger.getLogger("org.geotoolkit.data.shapefile");
 
     public static final String MIME_TYPE = "application/x-shapefile";
 

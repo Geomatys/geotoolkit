@@ -42,7 +42,6 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CRS;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.index.tree.manager.NamedEnvelope;
 import org.opengis.filter.Filter;
@@ -60,7 +59,7 @@ import org.opengis.util.CodeList;
  */
 public class LuceneUtils {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.lucene");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.lucene");
 
     public static final GeometryFactory GF = JTS.getFactory();
 
@@ -146,7 +145,7 @@ public class LuceneUtils {
             bound.setRange(1, jtsBound.getMinY(), jtsBound.getMaxY());
 
             // reproject to cartesian CRS
-            return (GeneralEnvelope) Envelopes.transform(bound, treeCrs);
+            return GeneralEnvelope.castOrCopy(Envelopes.transform(bound, treeCrs));
         } catch (FactoryException ex) {
             LOGGER.log(Level.WARNING, "Factory exception while getting filter geometry crs", ex);
         } catch (TransformException ex) {
@@ -160,7 +159,7 @@ public class LuceneUtils {
      */
     private static GeneralEnvelope getReprojectedEnvelope(final org.opengis.geometry.Envelope env, final CoordinateReferenceSystem treeCrs) {
         try {
-            return (GeneralEnvelope) Envelopes.transform(env, treeCrs);
+            return new GeneralEnvelope(Envelopes.transform(env, treeCrs));
         } catch (TransformException ex) {
             LOGGER.log(Level.WARNING, "Transform exception while reprojecting filter geometry", ex);
         }

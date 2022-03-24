@@ -23,7 +23,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.AbstractClient;
 import org.geotoolkit.csw.v202.DescribeRecord202;
 import org.geotoolkit.csw.v202.GetCapabilities202;
@@ -52,7 +51,7 @@ public class CatalogServicesClient extends AbstractClient {
     /**
      * Used for debugging purpose
      */
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.csw");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.csw");
     /**
      * Stored capabilities object that can be updated by calling {@link CatalogServicesServer.updateGetCapabilities}
      */

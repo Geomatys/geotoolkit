@@ -40,7 +40,6 @@ import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.se.xml.v110.RuleType;
@@ -77,7 +76,7 @@ public class CellSymbolizer extends SymbolizerType implements ExtensionSymbolize
     public static final String PROPERY_SUFFIX_RMS = "_rms";
     public static final String PROPERY_SUFFIX_SUM = "_sum";
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.display2d.ext.cellular");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.display2d.ext.cellular");
     public static final String NAME = "Cell";
 
     @XmlElement(name = "CellSize",namespace="http://geotoolkit.org")

@@ -30,7 +30,6 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.IdentifiedObjects;
-import org.apache.sis.util.logging.Logging;
 import org.opengis.filter.Expression;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CompoundCRS;
@@ -81,7 +80,7 @@ import org.opengis.util.ScopedName;
 @XmlRootElement(name="Envelope")
 public class EnvelopeType implements org.opengis.geometry.Envelope, org.geotoolkit.gml.xml.Envelope, Expression {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.gml.xml.v311");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.gml.xml.v311");
 
     /**
      * this attribute do not exist. Must be removed

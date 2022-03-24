@@ -28,7 +28,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.media.jai.TileCache;
 
-import org.apache.sis.util.logging.Logging;
 
 /**
  * Manage {@link RenderedImage} and its {@link Raster} to don't exceed JVM memory capacity.
@@ -44,7 +43,7 @@ import org.apache.sis.util.logging.Logging;
  */
 public final class LargeCache implements TileCache {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.image.io.large");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.image.io.large");
 
     private final ReferenceQueue<RenderedImage> phantomQueue = new ReferenceQueue<>();
 
@@ -330,7 +329,7 @@ public final class LargeCache implements TileCache {
 //        try {
 //            return tileManagers.get(ri).getTiles();
 //        } catch (IOException ex) {
-//            Logging.getLogger("org.geotoolkit.image.io.large").log(Level.SEVERE, null, ex);
+//            Logger.getLogger("org.geotoolkit.image.io.large").log(Level.SEVERE, null, ex);
 //        }
 //        return null;
     }

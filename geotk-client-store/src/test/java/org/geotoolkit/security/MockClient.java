@@ -20,9 +20,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Optional;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreProvider;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.AbstractClient;
 import org.geotoolkit.client.AbstractClientProvider;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -43,7 +43,7 @@ public class MockClient extends AbstractClient{
         try {
             PARAM.parameter("url").setValue(new URL("http://test.com"));
         } catch (MalformedURLException ex) {
-            Logging.getLogger("org.geotoolkit.security").log(Level.SEVERE, null, ex);
+            Logger.getLogger("org.geotoolkit.security").log(Level.SEVERE, null, ex);
         }
     }
 

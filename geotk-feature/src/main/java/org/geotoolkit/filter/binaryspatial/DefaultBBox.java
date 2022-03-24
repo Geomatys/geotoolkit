@@ -18,12 +18,12 @@
 package org.geotoolkit.filter.binaryspatial;
 
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.util.Utilities;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.filter.DefaultPropertyName;
 import org.geotoolkit.geometry.jts.JTS;
@@ -37,7 +37,6 @@ import org.locationtech.jts.geom.prep.PreparedGeometryFactory;
 import org.opengis.feature.Feature;
 import org.opengis.feature.PropertyType;
 import org.opengis.filter.ValueReference;
-import org.geotoolkit.geometry.BoundingBox;
 import org.opengis.filter.BinarySpatialOperator;
 import org.opengis.filter.Literal;
 import org.opengis.filter.SpatialOperatorName;
@@ -53,7 +52,7 @@ import org.opengis.util.FactoryException;
  *
  * @author Johann Sorel (Geomatys).
  */
-public class DefaultBBox extends AbstractBinarySpatialOperator<ValueReference, Literal<Object,BoundingBox>>
+public class DefaultBBox extends AbstractBinarySpatialOperator<ValueReference, Literal<Object,Envelope>>
         implements BinarySpatialOperator<Object>
 {
     private static final LinearRing[] EMPTY_RINGS = new LinearRing[0];
@@ -65,7 +64,7 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<ValueReference, L
     protected final org.locationtech.jts.geom.Envelope boundingEnv;
     protected final CoordinateReferenceSystem crs;
 
-    public DefaultBBox(final ValueReference property, final Literal<Object,BoundingBox> bbox) {
+    public DefaultBBox(final ValueReference property, final Literal<Object,Envelope> bbox) {
         super(nonNullPropertyName(property),bbox);
         boundingGeometry = toGeometry(bbox.getValue());
         boundingEnv = boundingGeometry.getGeometry().getEnvelopeInternal();
@@ -166,7 +165,7 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<ValueReference, L
                 try {
                     candidate = org.apache.sis.internal.feature.jts.JTS.transform(candidate, CRS.findOperation(candidateCrs, this.crs, null).getMathTransform());
                 } catch (MismatchedDimensionException | TransformException | FactoryException ex) {
-                    Logging.getLogger("org.geotoolkit.filter.binaryspatial").log(Level.WARNING, null, ex);
+                    Logger.getLogger("org.geotoolkit.filter.binaryspatial").log(Level.WARNING, null, ex);
                     return false;
                 }
             }

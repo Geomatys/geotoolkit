@@ -20,11 +20,11 @@ package org.geotoolkit.data.shapefile;
 import java.io.IOException;
 import java.util.NoSuchElementException;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Classes;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.geometry.jts.JTS;
@@ -218,11 +218,11 @@ public class ShapefileFeatureReader implements FeatureReader {
     @Override
     protected void finalize() throws Throwable {
         if (!closed) {
-            Logging.getLogger("org.geotoolkit.data.shapefile").warning(
+            Logger.getLogger("org.geotoolkit.data.shapefile").warning(
                     "UNCLOSED ITERATOR : There is code leaving simple feature reader open, "
                     + "this may cause memory leaks or data integrity problems !");
             if (creationStack != null) {
-                Logging.getLogger("org.geotoolkit.data.shapefile").log(Level.WARNING,
+                Logger.getLogger("org.geotoolkit.data.shapefile").log(Level.WARNING,
                         "The unclosed reader originated on this stack trace", creationStack);
             }
             close();

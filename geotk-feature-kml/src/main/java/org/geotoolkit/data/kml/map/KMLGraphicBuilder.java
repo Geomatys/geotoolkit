@@ -38,6 +38,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.JLabel;
 import org.apache.sis.coverage.grid.GridCoverage;
@@ -46,7 +47,6 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.Resource;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.data.kml.model.AbstractGeometry;
 import org.geotoolkit.data.kml.model.AbstractStyleSelector;
 import org.geotoolkit.data.kml.model.BalloonStyle;
@@ -85,7 +85,6 @@ import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.display2d.style.labeling.DefaultLabelLayer;
 import org.geotoolkit.display2d.style.labeling.DefaultPointLabelDescriptor;
 import org.geotoolkit.display2d.style.labeling.LabelLayer;
-import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.awt.JTSGeometryJ2D;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.apache.sis.portrayal.MapLayer;
@@ -136,7 +135,7 @@ final class KMLGraphicBuilder {
         try {
             builder = new KMLGraphicBuilder();
         } catch (IOException ex) {
-            Logging.getLogger("org.geotoolkit.data.kml.map").log(Level.SEVERE, "Error initializing KML graphic builder", ex);
+            Logger.getLogger("org.geotoolkit.data.kml.map").log(Level.SEVERE, "Error initializing KML graphic builder", ex);
         }
         INSTANCE = builder;
     }
@@ -513,7 +512,7 @@ final class KMLGraphicBuilder {
                 portrayKml(cache.kml);
                 context2D.getLabelRenderer(true).portrayLabels();
             } catch (TransformException | IOException | ProcessException ex) {
-                Logging.getLogger("org.geotoolkit.data.kml.map").log(Level.SEVERE, null, ex);
+                Logger.getLogger("org.geotoolkit.data.kml.map").log(Level.SEVERE, null, ex);
             }
             cache.styles.clear();
             cache.styleMaps.clear();

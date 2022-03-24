@@ -40,12 +40,12 @@ import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.util.Utilities;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.Disposable;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.Locales;
 import org.geotoolkit.resources.Loggings;
 import org.apache.sis.util.resources.IndexedResourceBundle;
 import org.apache.sis.internal.coverage.j2d.ImageUtilities;
+import org.apache.sis.util.logging.Logging;
 
 import static org.geotoolkit.image.io.SpatialImageReader.Spi.getMetadataFormatCode;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;

@@ -16,20 +16,14 @@
  */
 package org.geotoolkit.storage.memory;
 
-import java.io.Closeable;
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
-
 import org.geotoolkit.storage.feature.FeatureIterator;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
-
-import org.apache.sis.internal.system.Loggers;
-import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.Classes;
-import org.apache.sis.util.logging.Logging;
 import org.opengis.feature.Feature;
 
 /**
@@ -84,7 +78,7 @@ public abstract class WrapFeatureIterator implements FeatureIterator {
         try {
             closeOp.close();
         } catch (Exception e) {
-            Logging.getLogger("org.geotoolkit.data.memory").log(Level.WARNING, "Error while closing resources", e);
+            Logger.getLogger("org.geotoolkit.data.memory").log(Level.WARNING, "Error while closing resources", e);
         }
     }
 

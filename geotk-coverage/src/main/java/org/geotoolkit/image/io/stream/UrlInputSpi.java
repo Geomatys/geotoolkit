@@ -25,12 +25,11 @@ import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.SocketException;
+import java.util.logging.Logger;
 import javax.imageio.spi.ImageInputStreamSpi;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.FileCacheImageInputStream;
-
 import org.apache.sis.util.logging.Logging;
-
 
 /**
  * A service provider for creating {@link ImageInputStream}s from {@link URL}s.
@@ -134,7 +133,7 @@ public class UrlInputSpi extends ImageInputStreamSpi {
             stopper.cancel();
             // Thread.interrupted() must be first in order to clear the flag.
             if (Thread.interrupted() || stopper.interrupted) {
-                Logging.getLogger("org.geotoolkit.image.io.stream").warning("System.runFinalization() was blocked.");
+                Logger.getLogger("org.geotoolkit.image.io.stream").warning("System.runFinalization() was blocked.");
             }
         }
         return new FileCacheImageInputStream(stream, cacheDir);

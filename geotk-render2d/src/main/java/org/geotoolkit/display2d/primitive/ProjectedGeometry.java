@@ -22,7 +22,6 @@ import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.referencing.CRS;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.geometry.jts.JTS;
@@ -49,7 +48,7 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class ProjectedGeometry  {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.display2d.primitive");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.display2d.primitive");
 
     private final RenderingContext2D context;
     private MathTransform2D dataToObjective;
@@ -114,7 +113,7 @@ public class ProjectedGeometry  {
                 dataToDisplay = (MathTransform2D) CRS.findOperation(dataCRS, context.getDisplayCRS(), null).getMathTransform();
             }
         } catch (UndefinedCRSException ex) {
-            Logging.getLogger("org.geotoolkit.display2d.primitive").log(Level.FINE, "Geometry has no defined crs");
+            Logger.getLogger("org.geotoolkit.display2d.primitive").log(Level.FINE, "Geometry has no defined crs");
         } catch (Exception ex) {
             LOGGER.log(Level.WARNING, "An error occurred while analysing input geometry referencing", ex);
         }

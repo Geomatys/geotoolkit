@@ -17,38 +17,36 @@
  */
 package org.geotoolkit.image.io.plugin;
 
+import java.awt.Rectangle;
+import java.awt.geom.AffineTransform;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.Locale;
 import java.util.Set;
-import java.util.Collections;
+import java.util.logging.Logger;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ServiceRegistry;
-import java.awt.geom.AffineTransform;
-import java.awt.Rectangle;
-
-import org.opengis.metadata.spatial.PixelOrientation;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
-import org.geotoolkit.image.io.InformationType;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.image.io.ImageReaderAdapter;
-import org.geotoolkit.image.io.metadata.SpatialMetadata;
+import org.geotoolkit.image.io.InformationType;
+import org.geotoolkit.image.io.SpatialImageReader;
 import org.geotoolkit.image.io.metadata.ReferencingBuilder;
+import org.geotoolkit.image.io.metadata.SpatialMetadata;
+import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
+import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
 import org.geotoolkit.internal.image.io.SupportFiles;
-import org.geotoolkit.internal.image.io.Formats;
+import org.geotoolkit.io.wkt.PrjFiles;
+import org.geotoolkit.lang.Configuration;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.lang.Configuration;
-import org.geotoolkit.io.wkt.PrjFiles;
-import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.image.io.SpatialImageReader;
-
-import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
+import org.opengis.metadata.spatial.PixelOrientation;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 
 /**
@@ -474,7 +472,7 @@ public class WorldFileImageReader extends ImageReaderAdapter {
                      * This format will not be available, but it will not prevent the
                      * rest of the application to work.
                      */
-                    Logging.recoverableException(Logging.getLogger("org.geotoolkit.image.io"),
+                    Logging.recoverableException(Logger.getLogger("org.geotoolkit.image.io"),
                             Spi.class, "registerDefaults", e);
                     continue;
                 }

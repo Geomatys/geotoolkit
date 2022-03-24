@@ -22,13 +22,13 @@ import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperReportsContext;
 import net.sf.jasperreports.renderers.Graphics2DRenderable;
 import net.sf.jasperreports.renderers.Renderable;
 import org.apache.sis.portrayal.MapLayers;
 import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display.canvas.control.NeverFailMonitor;
 import org.geotoolkit.display.container.GraphicContainer;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
@@ -93,7 +93,7 @@ public class CanvasRenderer extends J2DCanvas implements Graphics2DRenderable, R
         final Graphics2D output = g2d;
         output.addRenderingHints(getHints(true));
 
-        final RenderingContext2D context = prepareContext(output,null);
+        final RenderingContext2D context = prepareContext(output);
 
         //paint background if there is one.
         if(painter != null){
@@ -137,7 +137,7 @@ public class CanvasRenderer extends J2DCanvas implements Graphics2DRenderable, R
             setVisibleArea(area);
             setRotation(rotation);
         } catch (NoninvertibleTransformException | TransformException ex) {
-            Logging.getLogger("org.geotoolkit.report.graphic.map").log(Level.WARNING, null, ex);
+            Logger.getLogger("org.geotoolkit.report.graphic.map").log(Level.WARNING, null, ex);
         }
 
         g2d = (Graphics2D) gd.create();

@@ -40,7 +40,6 @@ import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.feature.builder.PropertyTypeBuilder;
 import org.apache.sis.storage.IllegalNameException;
 import org.apache.sis.util.ObjectConverters;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.feature.SingleAttributeTypeBuilder;
 import org.geotoolkit.feature.xml.GMLConvention;
@@ -94,7 +93,7 @@ import org.opengis.util.GenericName;
  */
 public class JAXBFeatureTypeReader extends AbstractConfigurable {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.feature.xml.jaxp");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.feature.xml.jaxp");
     private static final String FLAG_ID = "isId";
     private static final GenericName UNNAMED = NamesExt.create("unnamed");
 

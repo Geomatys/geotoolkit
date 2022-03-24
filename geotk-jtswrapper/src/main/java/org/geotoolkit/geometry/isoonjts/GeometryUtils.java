@@ -30,7 +30,6 @@ import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSGeome
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSPrimitiveFactory;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.util.logging.Logging;
 import org.apache.sis.measure.Units;
 
 import org.opengis.util.FactoryException;
@@ -67,7 +66,7 @@ import org.apache.sis.geometry.Envelopes;
  */
 public final class GeometryUtils {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.geometry.isoonjts");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.geometry.isoonjts");
     private static final Envelope WHOLE_WORLD;
 
     static{

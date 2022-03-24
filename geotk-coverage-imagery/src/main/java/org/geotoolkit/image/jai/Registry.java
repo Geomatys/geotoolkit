@@ -38,7 +38,6 @@ import org.geotoolkit.lang.Static;
 import org.geotoolkit.lang.Workaround;
 import org.geotoolkit.lang.Configuration;
 import org.geotoolkit.resources.Loggings;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.internal.image.jai.*;
 
 import static org.geotoolkit.image.internal.Setup.PRODUCT_NAME;
@@ -308,7 +307,7 @@ public final class Registry extends Static {
     private static void log(final String method, final LogRecord record) {
         record.setSourceClassName(Registry.class.getName());
         record.setSourceMethodName(method);
-        final Logger logger = Logging.getLogger("org.geotoolkit.image.jai");
+        final Logger logger = Logger.getLogger("org.geotoolkit.image.jai");
         record.setLoggerName(logger.getName());
         logger.log(record);
     }

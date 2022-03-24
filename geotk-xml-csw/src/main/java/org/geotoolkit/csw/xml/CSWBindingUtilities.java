@@ -22,13 +22,13 @@ import java.io.Reader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.Source;
 
-import org.apache.sis.util.logging.Logging;
 import org.apache.sis.xml.MarshallerPool;
 
 import org.opengis.metadata.citation.OnlineResource;
@@ -96,7 +96,7 @@ public class CSWBindingUtilities {
                 final URL url = online.getLinkage().toURL();
                 return unMarshaller.unmarshal(url);
             } catch (MalformedURLException ex) {
-                Logging.getLogger("org.geotoolkit.csw.xml").log(Level.WARNING, null, ex);
+                Logger.getLogger("org.geotoolkit.csw.xml").log(Level.WARNING, null, ex);
                 return null;
             }
 

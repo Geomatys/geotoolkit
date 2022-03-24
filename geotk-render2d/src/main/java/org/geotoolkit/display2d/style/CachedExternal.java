@@ -24,13 +24,13 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.Collection;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import org.geotoolkit.renderer.style.DynamicSymbolFactoryFinder;
 import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.style.ColorReplacement;
 import org.opengis.style.ExternalGraphic;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.nio.IOUtilities;
 import org.opengis.filter.Expression;
 
@@ -146,7 +146,7 @@ public class CachedExternal extends Cache<ExternalGraphic>{
                     final BufferedImage buffer = DynamicSymbolFactoryFinder.getImage(uri, styleElement.getFormat(),size, hints);
                     return recode(buffer, styleElement.getColorReplacements());
                 }catch (Exception ex){
-                    Logging.getLogger("org.geotoolkit.display2d.style").log(Level.WARNING, null, ex);
+                    Logger.getLogger("org.geotoolkit.display2d.style").log(Level.WARNING, null, ex);
                 }
             }
 

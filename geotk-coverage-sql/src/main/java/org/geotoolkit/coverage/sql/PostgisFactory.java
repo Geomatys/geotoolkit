@@ -38,13 +38,13 @@ import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 
-import org.apache.sis.util.logging.Logging;
 import org.apache.sis.internal.simple.SimpleCitation;
 import org.apache.sis.io.wkt.WKTDictionary;
 import org.apache.sis.util.iso.DefaultNameSpace;
 import org.apache.sis.io.TableAppender;
 import org.apache.sis.io.wkt.Convention;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 

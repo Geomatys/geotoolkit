@@ -31,7 +31,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.internal.storage.io.IOUtilities;
 import org.apache.sis.util.Numbers;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.internal.geojson.binding.GeoJSONCRS;
 import org.geotoolkit.internal.geojson.binding.GeoJSONFeature;
 import org.geotoolkit.internal.geojson.binding.GeoJSONFeatureCollection;
@@ -44,6 +43,8 @@ import org.geotoolkit.internal.geojson.binding.GeoJSONGeometry.GeoJSONMultiPolyg
 import org.geotoolkit.internal.geojson.binding.GeoJSONGeometry.GeoJSONPoint;
 import org.geotoolkit.internal.geojson.binding.GeoJSONGeometry.GeoJSONPolygon;
 import org.geotoolkit.internal.geojson.binding.GeoJSONObject;
+import org.geotoolkit.storage.geojson.GeoJSONConstants;
+
 import static org.geotoolkit.storage.geojson.GeoJSONConstants.*;
 
 /**
@@ -59,7 +60,7 @@ public final class GeoJSONParser {
 
     public static final JsonFactory JSON_FACTORY = new JsonFactory();
     public static final JsonFactory CBOR_FACTORY;
-    public static final Logger LOGGER = Logging.getLogger("org.apache.sis.storage.geojson.utils");
+    public static final Logger LOGGER = Logger.getLogger("org.apache.sis.storage.geojson.utils");
 
     static {
         JsonFactory factory = null;
@@ -179,6 +180,8 @@ public final class GeoJSONParser {
         if (object == null) {
             object = new GeoJSONObject();
         }
+
+        Object tempCoordinates = null;
         while (p.nextToken() != JsonToken.END_OBJECT) {
             String fieldname = p.getCurrentName();
 
@@ -198,6 +201,10 @@ public final class GeoJSONParser {
                     p.nextToken();
                     String value = p.getValueAsString();
                     object = getOrCreateFromType(object, value, lazy);
+                    if (tempCoordinates != null) {
+                        setGeometryCoordinates((GeoJSONGeometry) object, tempCoordinates);
+                        tempCoordinates = null;
+                    }
                     break;
 
                 case BBOX:
@@ -240,7 +247,14 @@ public final class GeoJSONParser {
                     if (object instanceof GeoJSONGeometry) {
                         parseGeometry((GeoJSONGeometry) object, p);
                     } else {
-                        LOGGER.log(Level.WARNING, "Error need type before coordinates");
+                        // This should happen when the geometry type is located after the coordinates attribute.
+                        // In such case, we decode coordinate array and keep it cached until we encounter the
+                        // geometry value type.
+                        // TODO: develop a more optimized parsing strategy, specialized for double primitives
+                        final JsonToken coordValueStart = p.nextToken();
+                        if (coordValueStart == JsonToken.VALUE_NULL) throw new JsonParseException(p, "Invalid null value for coordinates attribute on geometry object");
+                        else if (coordValueStart != JsonToken.START_ARRAY) throw new JsonParseException(p, "Invalid value for coordinates attribute on geometry object: an array is expected");
+                        tempCoordinates = parseArray2(p);
                     }
                     break;
 
@@ -257,6 +271,11 @@ public final class GeoJSONParser {
                     p.skipChildren();
             }
         }
+
+        if (tempCoordinates != null) throw new JsonParseException(p,
+                "Coordinates have not been bound to a geometry type." +
+                        " Verify that input geojson geometry contains a supported `type` attribute");
+
         return object;
     }
 
@@ -465,6 +484,18 @@ public final class GeoJSONParser {
         }
     }
 
+    private static void setGeometryCoordinates(GeoJSONGeometry geom, Object coordinates) {
+        if      (geom instanceof GeoJSONPoint g           && coordinates instanceof double[] c      ) g.setCoordinates(c);
+        else if (geom instanceof GeoJSONLineString g      && coordinates instanceof double[][] c    ) g.setCoordinates(c);
+        else if (geom instanceof GeoJSONPolygon g         && coordinates instanceof double[][][] c  ) g.setCoordinates(c);
+        else if (geom instanceof GeoJSONMultiPoint g      && coordinates instanceof double[][] c    ) g.setCoordinates(c);
+        else if (geom instanceof GeoJSONMultiLineString g && coordinates instanceof double[][][] c  ) g.setCoordinates(c);
+        else if (geom instanceof GeoJSONMultiPolygon g    && coordinates instanceof double[][][][] c) g.setCoordinates(c);
+        else throw new IllegalArgumentException("Incompatible Geometry type and coordinate value type." +
+                    "Geometry type: " + geom.getType() + ". " +
+                    "Coordinate value type: " + (coordinates == null ? "null" : coordinates.getClass()));
+    }
+
     /**
      * Full parse of GeoJSONFeatures for a GeoJSONFeatureCollection
      *
@@ -557,7 +588,7 @@ public final class GeoJSONParser {
      * bbox and crs parameter to the new GeoJSONObject.
      *
      * @param object previous object.
-     * @param type see {@link org.apache.sis.storage.geojson.GeoJSONConstants}
+     * @param type see {@link GeoJSONConstants}
      * @return GeoJSONObject
      */
     private static GeoJSONObject getOrCreateFromType(GeoJSONObject object, String type) {
@@ -570,7 +601,7 @@ public final class GeoJSONParser {
      * bbox and crs parameter to the new GeoJSONObject.
      *
      * @param object previous object.
-     * @param type see {@link org.apache.sis.storage.geojson.GeoJSONConstants}
+     * @param type see {@link GeoJSONConstants}
      * @param lazy lazy mode flag
      * @return GeoJSONObject
      */

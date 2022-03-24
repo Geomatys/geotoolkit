@@ -33,7 +33,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.StringJoiner;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.stream.Stream;
@@ -51,8 +50,12 @@ import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.xml.MarshallerPool;
 import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.geotoolkit.feature.FeatureExt;
+import org.geotoolkit.feature.model.FeatureSetWrapper;
 import org.geotoolkit.feature.xml.GMLConvention;
 import org.geotoolkit.feature.xml.Utils;
+import static org.geotoolkit.feature.xml.Utils.buildSchemaLocationString;
+import static org.geotoolkit.feature.xml.Utils.getId;
+import static org.geotoolkit.feature.xml.Utils.isAttributeProperty;
 import org.geotoolkit.feature.xml.XmlFeatureWriter;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.gml.JTStoGeometry;
@@ -76,8 +79,6 @@ import org.geotoolkit.gml.xml.v321.SolidPropertyType;
 import org.geotoolkit.internal.jaxb.JTSWrapperMarshallerPool;
 import org.geotoolkit.internal.jaxb.ObjectFactory;
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.feature.xml.FeatureSetCollection;
-import org.geotoolkit.feature.xml.Link;
 import org.geotoolkit.xml.StaxStreamWriter;
 import org.opengis.feature.Attribute;
 import org.opengis.feature.AttributeType;
@@ -85,16 +86,13 @@ import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureAssociationRole;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.Property;
-import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
-import org.opengis.filter.ResourceId;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.Geometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
 import org.w3c.dom.Document;
-//import org.geotoolkit.wfs.xml
 
 /**
  * Handles writing process of features using JAXP. The {@link #dispose()} method MUST be
@@ -128,12 +126,11 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
 
     private final String gmlVersion;
     private final String wfsVersion;
+    private final String wfsPrefix;
     private final String wfsNamespace;
     private final String wfsLocation;
     private final String gmlNamespace;
     private final String gmlLocation;
-
-    private final String sfNamespace = "http://www.opengis.net/ogcapi-features-1/1.0/sf";
 
 
     //automatic id increment for geometries id
@@ -153,9 +150,15 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
         this.gmlVersion = gmlVersion;
         this.wfsVersion = wfsVersion;
         if ("2.0.0".equals(wfsVersion)) {
+            wfsPrefix    = "wfs";
             wfsNamespace = "http://www.opengis.net/wfs/2.0";
             wfsLocation  = "http://schemas.opengis.net/wfs/2.0/wfs.xsd";
+        } else if ("feat-1.0.0".equals(wfsVersion)) {
+            wfsPrefix    = "sf";
+            wfsNamespace = "http://www.opengis.net/ogcapi-features-1/1.0/sf";
+            wfsLocation  = "http://schemas.opengis.net/ogcapi/features/part1/1.0/xml/core-sf.xsd";
         } else {
+            wfsPrefix    = "wfs";
             wfsNamespace = "http://www.opengis.net/wfs";
             wfsLocation  = "http://schemas.opengis.net/wfs/1.1.0/wfs.xsd";
         }
@@ -190,9 +193,9 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
     /**
      * Write xml document start encoding and version.
      *
-     * @throws XMLStreamException
+     * @throws XMLStreamException  If the xml writing fails.
      */
-    public void writeStartDocument() throws XMLStreamException {
+    private void writeStartDocument() throws XMLStreamException {
         writer.writeStartDocument("UTF-8", "1.0");
         writer.flush();
     }
@@ -201,30 +204,50 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
      * Write xml document end.
      * This method will close the stax writer.
      *
-     * @throws XMLStreamException
+     * @throws XMLStreamException  If the xml writing fails.
      */
-    public void writeEndDocument() throws XMLStreamException {
+    private void writeEndDocument() throws XMLStreamException {
         writer.writeEndDocument();
         writer.flush();
         writer.close();
     }
 
-    public void writeStartWFSCollection(String wfsVersion, String gmlVersion, String collectionId, long featureCount, Number featureMatched) throws XMLStreamException {
+    /**
+     * write the wrapping XML mark for a featureSet depending on the WFS version.
+     *
+     * @param featureSet The featureSet (used for writing identifier, envelope, specific namespace). can be {@code null} in case of an empty collection.
+     * @param featureCount The number of feature in the featureSet. can be {@code null} and will be computed depending on the version.
+     * @param featureMatched The total number of features matching the request but not included in the featureSet.
+     * @param root If set to {@code true}, the namespaces will be written in the root XML mark.
+     *
+     * @throws XMLStreamException If the xml writing fails.
+     * @throws DataStoreException If the retrieval of featureType, identifier or envelope on the featureSet fails.
+     */
+    private void writeStartCollection(FeatureSet featureSet, Number featureCount, Number featureMatched, boolean root) throws XMLStreamException, DataStoreException {
 
         // the root Element
-        writer.writeStartElement("wfs", "FeatureCollection", wfsNamespace);
+        writer.writeStartElement(wfsPrefix, "FeatureCollection", wfsNamespace);
 
-        // id does not appear in WFS 2
-        if (!"2.0.0".equals(wfsVersion)) {
+        // id only appear in WFS 1.1.0
+        if ("1.1.0".equals(wfsVersion)) {
+            final String collectionId;
+            if (featureSet != null) {
+                collectionId = featureSet.getIdentifier().map(GenericName::toString).orElse("");
+            } else {
+                collectionId = "collection-1";
+            }
             writer.writeAttribute("gml", gmlNamespace, "id", collectionId);
         }
-        // timestamp
-        synchronized(FORMATTER) {
-            writer.writeAttribute("timeStamp", FORMATTER.format(new Date(System.currentTimeMillis())));
+
+        // timestamp only appear in WFS
+        if ("1.1.0".equals(wfsVersion) || "2.0.0".equals(wfsVersion)) {
+            synchronized(FORMATTER) {
+                writer.writeAttribute("timeStamp", FORMATTER.format(new Date(System.currentTimeMillis())));
+            }
         }
 
         writeCommonNamespaces();
-        writer.writeNamespace("wfs", wfsNamespace);
+        writer.writeNamespace(wfsPrefix, wfsNamespace); // i suspect this is not neccesary
 
         final String schemaLocation = buildSchemaLocationString(schemaLocations);
         if (!schemaLocation.isEmpty()) {
@@ -235,78 +258,44 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
          * Other version dependant WFS feature collection attribute
          */
         if ("2.0.0".equals(wfsVersion)) {
-            writer.writeAttribute("numberReturned", Long.toString(featureCount));
+            writer.writeAttribute("numberReturned", Long.toString(featureCount.longValue()));
             if (featureMatched != null) {
                 writer.writeAttribute("numberMatched", Long.toString(featureMatched.longValue()));
             }
-        } else {
-            writer.writeAttribute("numberOfFeatures", Long.toString(featureCount));
+        } else if ("1.1.0".equals(wfsVersion)) {
+            writer.writeAttribute("numberOfFeatures", Long.toString(featureCount.longValue()));
         }
 
+        if (featureSet != null) {
+            if (root) {
+                writeNamespaces(featureSet.getType());
+            }
+            //get or compute envelope
+            Envelope envelope = FeatureStoreUtilities.getEnvelope(featureSet);
+            writeBounds(envelope, writer);
+        }
         writer.flush();
     }
 
     /**
-     * <p>
-     * A feature collection is a collection of feature instances.Within GML 3.2.1, the generic
-     * gml:FeatureCollection element has been deprecated. A feature collection is any feature class
-     * with a property element in its content model (for example member) which is derived by
-     * extension from gml:AbstractFeatureMemberType.
-     * <p>
-     * <p>
-     * Only the feature collection tag is written by this method.
-     * All properties must be written separately.
-     * </p>
+     * Close the feature collection mark and flush the stream.
      *
-     * @param collection feature which matches the definition of a collection.
-     * @throws XMLStreamException
+     * @throws XMLStreamException If the xml writing fails.
      */
-    public void writeStartCollection(Feature collection) throws XMLStreamException {
-
-        final FeatureType collectionType = collection.getType();
-        final GenericName typeName = collectionType.getName();
-        final String namespace = getNamespace(typeName);
-        final String localPart = typeName.tip().toString();
-
-        if (namespace != null && !namespace.isEmpty()) {
-            final Prefix prefix = getPrefix(namespace);
-            writer.writeStartElement(prefix.prefix, localPart, namespace);
-            if (prefix.unknow) {
-                writer.writeNamespace(prefix.prefix, namespace);
-            }
-        } else {
-            writer.writeStartElement(localPart);
-        }
-
-        writeNamespaces(collectionType);
-
-        final String schemaLocation = buildSchemaLocationString(schemaLocations);
-        if (!schemaLocation.isEmpty()) {
-            writer.writeAttribute("xsi", XSI_NAMESPACE, "schemaLocation", schemaLocation);
-        }
-
-        writer.flush();
-    }
-
-    public void writeEndCollection() throws XMLStreamException {
+    private void writeEndCollection() throws XMLStreamException {
         writer.writeEndElement();
         writer.flush();
-    }
-
-    public void writeStartMember(String prefix, String localName, String namespace) throws XMLStreamException {
-        writer.writeStartElement(prefix, localName, namespace);
-    }
-
-    public void writeEndMember() throws XMLStreamException {
-        writer.writeEndElement();
     }
 
     /**
      * Write the feature into the stream.
      *
-     * @param feature The feature
+     * @param feature The feature to write.
+     * @param root If set to {@code true}, the namespaces and schemaLocations will be written in the root XML mark.
+     *
+     * @throws javax.xml.stream.XMLStreamException If the xml writing fails.
      */
-    public void writeFeature(final Feature feature, final boolean root) throws XMLStreamException {
+    private void writeFeature(final Feature feature, final boolean root) throws XMLStreamException {
         //reset geometry id increment
         gidInc = 0;
 
@@ -356,94 +345,78 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
     /**
      * Write feature set as a WFS Collection.
      * @param featureSet FeatureSet to write
+     * @param featureCount number of feature returned (will be computed if missing).
      * @param nbMatched number of matching features
+     * @param root If set to {@code true}, the namespaces will be written in the root XML mark.
+     *
+     * @throws javax.xml.stream.XMLStreamException If the xml writing fails.
      */
-    public void writeFeatureCollection(final FeatureSet featureSet, final Integer nbMatched, boolean root)
-            throws DataStoreException, XMLStreamException {
+    public void writeFeatureCollection(final FeatureSet featureSet, Number featureCount, final Integer nbMatched, boolean root) throws DataStoreException, XMLStreamException {
 
-        final String collectionId = featureSet.getIdentifier().map(GenericName::toString).orElse("");
-        final long size = FeatureStoreUtilities.getCount(featureSet);
-
-        writeStartWFSCollection(wfsVersion, gmlVersion, collectionId, size, nbMatched);
-        if (root) {
-            writeNamespaces(featureSet.getType());
+        // feature count is computed if not specified and not for feature API.
+        if (featureCount == null && !"feat-1.0.0".equals(wfsVersion)) {
+            featureCount = FeatureStoreUtilities.getCount(featureSet);
         }
-        //get or compute envelope
-        Envelope envelope = FeatureStoreUtilities.getEnvelope(featureSet);
-        writeBounds(envelope, writer);
+
+        writeStartCollection(featureSet, featureCount, nbMatched, root);
+
+        String memberPrefix;
+        String memberName;
+        String memberNmsp;
+        if ("2.0.0".equals(wfsVersion)) {
+            memberPrefix = wfsPrefix;
+            memberName = "member";
+            memberNmsp = wfsNamespace;
+        } else if ("feat-1.0.0".equals(wfsVersion)) {
+            memberPrefix = wfsPrefix;
+            memberName = "featureMember";
+            memberNmsp = wfsNamespace;
+        } else {
+            memberPrefix = "gml";
+            memberName = "featureMember";
+            memberNmsp = gmlNamespace;
+        }
 
         // we write each feature member of the collection
         try (Stream<Feature> stream = featureSet.features(false)) {
             final Iterator<Feature> iterator = stream.iterator();
             while (iterator.hasNext()) {
                 final Feature f = iterator.next();
-                if ("2.0.0".equals(wfsVersion)) {
-                    writeStartMember("wfs", "member", wfsNamespace);
-                    writeFeature(f, false);
-                    writeEndMember();
-                } else {
-                    writeStartMember("gml", "featureMember", gmlNamespace);
-                    writeFeature(f, false);
-                    writeEndMember();
-                }
+                writer.writeStartElement(memberPrefix, memberName, memberNmsp);
+                writeFeature(f, false);
+                writer.writeEndElement();
             }
         }
         writeEndCollection();
     }
 
-    public void writeFeatureSetCollection(final FeatureSet featureSet) throws DataStoreException, XMLStreamException {
-        final String collectionId = featureSet.getIdentifier().map(GenericName::toString).orElse("");
-
-        writer.writeStartElement("sf", "FeatureCollection", sfNamespace);
-
-        writeCommonNamespaces();
-
-        final String schemaLocation = buildSchemaLocationString(schemaLocations);
-        if (!schemaLocation.isEmpty()) {
-            writer.writeAttribute("xsi", XSI_NAMESPACE, "schemaLocation", schemaLocation);
-        }
-
-        writeNamespaces(featureSet.getType());
-
-        Envelope envelope = FeatureStoreUtilities.getEnvelope(featureSet);
-        writeBounds(envelope, writer);
-
-        // we write each feature member of the collection
-        try (Stream<Feature> stream = featureSet.features(false)) {
-            final Iterator<Feature> iterator = stream.iterator();
-            while (iterator.hasNext()) {
-                final Feature f = iterator.next();
-                writeStartMember("sf", "featureMember", sfNamespace);
-                writeFeature(f, false);
-                writeEndMember();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void write(Object candidate, final Object output) throws IOException, XMLStreamException, DataStoreException {
+        setOutput(output);
+        Integer nbReturned = null;
+        Integer nbMatched = null;
+        if (candidate instanceof FeatureSetWrapper) {
+            FeatureSetWrapper fsw = (FeatureSetWrapper) candidate;
+            nbReturned = fsw.getNbReturned();
+            nbMatched  = fsw.getNbMatched();
+            if (fsw.getFeatureSet().size() == 1) {
+                candidate = fsw.getFeatureSet().get(0);
+            } else {
+                candidate = fsw.getFeatureSet();
             }
         }
-    }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void write(final Object candidate, final Object output) throws IOException, XMLStreamException, DataStoreException {
-        this.write(candidate, output, null);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void write(final Object candidate, final Object output, final Integer nbMatched) throws IOException, XMLStreamException, DataStoreException {
-        setOutput(output);
+        writeStartDocument();
         if (candidate instanceof Feature) {
             writeFeature((Feature) candidate,true);
         } else if (candidate instanceof FeatureSet) {
-            writeStartDocument();
-            writeFeatureCollection((FeatureSet) candidate, nbMatched, true);
-            writeEndDocument();
+            writeFeatureCollection((FeatureSet) candidate, nbReturned, nbMatched, true);
         } else if (candidate instanceof List) {
             // see http://schemas.opengis.net/wfs/2.0/examples/GetFeature/GetFeature_08_Res.xml
             List collections = (List) candidate;
-            writeStartDocument();
             long count = 0;
             List<FeatureType> types = new ArrayList<>();
             for (Object c : collections) {
@@ -455,52 +428,26 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                 }
             }
 
-            writeStartWFSCollection(wfsVersion, gmlVersion, "collection-1", count, nbMatched);
+            writeStartCollection(null, count, nbMatched, true);
             writeNamespaces(types);
 
             for (Object collection : collections) {
                 if ("2.0.0".equals(wfsVersion)) {
-                    writeStartMember("wfs", "member", wfsNamespace);
-                    writeFeatureCollection((FeatureSet) collection, null, false);
-                    writeEndMember();
+                    writer.writeStartElement(wfsPrefix, "member", wfsNamespace);
+                    writeFeatureCollection((FeatureSet) collection, null, null, false);
+                    writer.writeEndElement();
                 } else {
-                    writeStartMember("gml", "featureMember", gmlNamespace);
-                    writeFeatureCollection((FeatureSet) collection, null, false);
-                    writeEndMember();
+                    writer.writeStartElement("gml", "featureMember", gmlNamespace);
+                    writeFeatureCollection((FeatureSet) collection, null, null, false);
+                    writer.writeEndElement();
                 }
             }
             writeEndCollection();
-            writeEndDocument();
-        } else if (candidate instanceof FeatureSetCollection) {
-            writeStartDocument();
-            writeFeatureSetCollection(((FeatureSetCollection) candidate).getFeatureSet());
-            writeEndDocument();
         } else {
             throw new IllegalArgumentException("The given object is not a Feature or a" +
                     " FeatureSet: "+ candidate);
         }
-    }
-
-    private static String getId(Feature att, String fallback) {
-        final ResourceId attId;
-        try {
-            attId = FeatureExt.getId(att);
-        } catch (PropertyNotFoundException ex) {
-            return fallback;
-        }
-        if (attId == null) return fallback;
-        final String id = attId.getIdentifier();
-        if (id == null) return fallback;
-
-        if (id instanceof String) {
-            if (((String) id).isEmpty()) {
-                return fallback;
-            } else {
-                return ((String) id).replace(':', '_');
-            }
-        } else {
-            return String.valueOf(id).replace(':', '_');
-        }
+        writeEndDocument();
     }
 
     /**
@@ -549,31 +496,6 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
             }
         }
         return nil;
-    }
-
-    /**
-     * Test if the feature is nill.
-     *
-     * @return null if the object is not nill
-     *         Boolean.TRUE if the object is nill without reason
-     *         String if the object is nill with a reason
-     */
-    private static Object isNill(Feature feature) {
-        try {
-            if (Boolean.TRUE.equals(feature.getPropertyValue("@nil"))) {
-                try {
-                    Object reason = feature.getPropertyValue("@nilReason");
-                    if (reason != null) {
-                       return Utils.getStringValue(reason);
-                    }
-                } catch (PropertyNotFoundException ex) {
-                }
-                return true;
-            }
-        } catch (PropertyNotFoundException ex) {
-            return null;
-        }
-        return null;
     }
 
     private void writeComplexProperties(final Feature feature, String id) throws XMLStreamException {
@@ -676,7 +598,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
             }
 
             //nill case
-            final Object isNil = isNill(ca);
+            final Object isNil = Utils.isNill(ca);
             if (isNil != null) {
                 writeAttributeProperties(ca);
                 writer.writeEndElement();
@@ -979,7 +901,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
             }
         }
         if ("2.0.0".equals(wfsVersion)) {
-            streamWriter.writeStartElement("wfs", "boundedBy", wfsNamespace);
+            streamWriter.writeStartElement(wfsPrefix, "boundedBy", wfsNamespace);
         } else {
             streamWriter.writeStartElement("gml", "boundedBy", gmlNamespace);
         }
@@ -1020,25 +942,5 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
             return gmlNamespace;
         }
         return namespace;
-    }
-
-    /**
-     *
-     * @return true if property is an atribute, starts by a @
-     */
-    private static boolean isAttributeProperty(GenericName name) {
-        final String localPart = name.tip().toString();
-        return !localPart.isEmpty() && localPart.charAt(0) == '@';
-    }
-
-    private static String buildSchemaLocationString(Map<String,String> schemaLocations) {
-        if (schemaLocations != null && !schemaLocations.isEmpty()) {
-            final StringJoiner sb = new StringJoiner(" ");
-            for (Entry<String, String> entry : schemaLocations.entrySet()) {
-                sb.add(entry.getKey()).add(entry.getValue());
-            }
-            return sb.toString();
-        }
-        return "";
     }
 }

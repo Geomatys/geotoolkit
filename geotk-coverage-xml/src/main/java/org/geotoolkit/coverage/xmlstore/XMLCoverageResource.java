@@ -35,6 +35,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -53,7 +54,6 @@ import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.WritableGridCoverageResource;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.logging.Logging;
 import org.apache.sis.xml.MarshallerPool;
 import org.geotoolkit.coverage.SampleDimensionType;
 import org.geotoolkit.coverage.SampleDimensionUtils;
@@ -90,7 +90,7 @@ public class XMLCoverageResource extends AbstractGridResource implements TiledRe
         try {
             POOL = new MarshallerPool(JAXBContext.newInstance(XMLCoverageResource.class), null);
         } catch (JAXBException ex) {
-            Logging.getLogger("org.geotoolkit.coverage.xmlstore").log(Level.WARNING, ex.getMessage(), ex);
+            Logger.getLogger("org.geotoolkit.coverage.xmlstore").log(Level.WARNING, ex.getMessage(), ex);
             throw new RuntimeException("Failed to initialize JAXB XML Coverage reference marshaller pool.");
         }
     }
@@ -354,7 +354,7 @@ public class XMLCoverageResource extends AbstractGridResource implements TiledRe
                     marshaller.marshal(this, os);
                     POOL.recycle(marshaller);
                 } catch (JAXBException ex) {
-                    Logging.getLogger("org.geotoolkit.coverage.xmlstore").log(Level.WARNING, ex.getMessage(), ex);
+                    Logger.getLogger("org.geotoolkit.coverage.xmlstore").log(Level.WARNING, ex.getMessage(), ex);
                 } catch (IOException e) {
                     throw new DataStoreException("Unable to save pyramid definition : "+e.getLocalizedMessage(), e);
                 }

@@ -20,6 +20,7 @@ package org.geotoolkit.internal.jaxb;
 
 import java.util.*;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -27,12 +28,11 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 import org.apache.sis.referencing.CRS;
-import org.apache.sis.util.logging.Logging;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.coordinate.Position;
-import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.FactoryException;
 
 /**
  *
@@ -228,9 +228,9 @@ public class DirectPositionType implements DirectPosition {
                     crs =  CRS.forCode(srsName);
                 }
             } catch (NoSuchAuthorityCodeException ex) {
-                Logging.getLogger("org.geotoolkit.referencing").log(Level.WARNING, ex.getMessage());
+                Logger.getLogger("org.geotoolkit.referencing").log(Level.WARNING, ex.getMessage());
             } catch (FactoryException ex) {
-                Logging.getLogger("org.geotoolkit.referencing").log(Level.WARNING, null, ex);
+                Logger.getLogger("org.geotoolkit.referencing").log(Level.WARNING, null, ex);
             }
             cachedCRS.put(srsName, crs);
         }

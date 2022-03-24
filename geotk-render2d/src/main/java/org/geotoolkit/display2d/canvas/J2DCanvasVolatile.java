@@ -181,7 +181,7 @@ public class J2DCanvasVolatile extends J2DCanvas{
             output.setClip(paintingDisplayShape);
 
             //must be called outside of the lock or it may provoque a deadlock
-            context2D = prepareContext(output, paintingDisplayShape);
+            context2D = prepareContext(output);
 
             //paint background if there is one.
             if(painter != null){

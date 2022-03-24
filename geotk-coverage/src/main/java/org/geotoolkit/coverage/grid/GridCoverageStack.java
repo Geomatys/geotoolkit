@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.coverage.grid;
 
-import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import static java.lang.Double.NEGATIVE_INFINITY;
@@ -52,7 +51,6 @@ import org.apache.sis.util.Classes;
 import static org.apache.sis.util.Utilities.equalsIgnoreMetadata;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.apache.sis.util.collection.FrequencySortedSet;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.image.palette.IIOListeners;
 import org.geotoolkit.image.palette.IIOReadProgressAdapter;
 import static org.geotoolkit.internal.InternalUtilities.debugEquals;
@@ -897,7 +895,7 @@ public class GridCoverageStack extends org.geotoolkit.coverage.grid.GridCoverage
                                 FoundMismatchedCRS_4, size, elements.length, f[0], f[size-1]);
                         record.setSourceClassName(GridCoverageStack.class.getName());
                         record.setSourceMethodName("<init>"); // This is the public method invoked.
-                        final Logger logger = Logging.getLogger("org.geotoolkit.coverage");
+                        final Logger logger = Logger.getLogger("org.geotoolkit.coverage");
                         record.setLoggerName(logger.getName());
                         logger.log(record);
                         // Fall through
@@ -1544,7 +1542,7 @@ public class GridCoverageStack extends org.geotoolkit.coverage.grid.GridCoverage
      * @param record The log record. The message contains information about the images to load.
      */
     protected void logLoading(final LogRecord record) {
-        final Logger logger = Logging.getLogger("org.geotoolkit.coverage");
+        final Logger logger = Logger.getLogger("org.geotoolkit.coverage");
         record.setLoggerName(logger.getName());
         logger.log(record);
     }

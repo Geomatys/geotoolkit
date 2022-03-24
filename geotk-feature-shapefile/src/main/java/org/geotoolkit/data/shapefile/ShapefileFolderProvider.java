@@ -35,7 +35,6 @@ import static org.apache.sis.storage.DataStoreProvider.LOCATION;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.nio.PathFilterVisitor;
 import org.geotoolkit.nio.PosixPathMatcher;
@@ -73,7 +72,7 @@ import org.opengis.parameter.ParameterValueGroup;
                         MultiPolygon.class})
 public class ShapefileFolderProvider extends DataStoreProvider {
 
-    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data");
+    protected static final Logger LOGGER = Logger.getLogger("org.geotoolkit.data");
 
     /** factory identification **/
     public static final String NAME = derivateName(ShapefileProvider.NAME);

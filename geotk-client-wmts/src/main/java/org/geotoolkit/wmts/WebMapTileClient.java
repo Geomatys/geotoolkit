@@ -29,7 +29,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.AbstractClient;
 import org.geotoolkit.client.AbstractClientProvider;
 import org.geotoolkit.client.Client;
@@ -55,7 +54,7 @@ import org.opengis.util.GenericName;
  */
 public class WebMapTileClient extends AbstractClient implements Client, Aggregate {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.wmts");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.wmts");
 
     private Capabilities capabilities;
     private List<WMTSResource> resources = null;

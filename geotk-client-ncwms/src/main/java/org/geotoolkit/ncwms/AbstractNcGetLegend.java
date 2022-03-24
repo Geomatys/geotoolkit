@@ -18,7 +18,6 @@ package org.geotoolkit.ncwms;
 
 import java.util.logging.Logger;
 import org.geotoolkit.security.ClientSecurity;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.wms.AbstractGetLegend;
 
 
@@ -34,7 +33,7 @@ public abstract class AbstractNcGetLegend extends AbstractGetLegend implements N
     /**
      * Default logger for all GetLegendGraphic requests.
      */
-    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.ncwms");
+    protected static final Logger LOGGER = Logger.getLogger("org.geotoolkit.ncwms");
 
     protected Integer opacity = null;
 

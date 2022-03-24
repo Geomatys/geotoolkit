@@ -22,7 +22,6 @@ import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
 import org.geotoolkit.client.AbstractRequest;
 import javax.xml.bind.JAXBContext;
-import org.apache.sis.util.logging.Logging;
 import org.apache.sis.xml.MarshallerPool;
 
 /**
@@ -36,7 +35,7 @@ public class AbstractSOSRequest extends AbstractRequest {
     /**
      * Logger specific for this implementation of {@link Request}.
      */
-    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.sos");
+    protected static final Logger LOGGER = Logger.getLogger("org.geotoolkit.sos");
 
     protected static final MarshallerPool POOL;
     static {

@@ -41,7 +41,6 @@ import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.util.ArgumentChecks;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.collection.BackingStoreException;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.storage.feature.query.Query;
@@ -82,7 +81,7 @@ import org.opengis.util.GenericName;
  */
 public class FeatureStoreUtilities {
 
-    static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data");
+    static final Logger LOGGER = Logger.getLogger("org.geotoolkit.data");
 
     private FeatureStoreUtilities() {
     }

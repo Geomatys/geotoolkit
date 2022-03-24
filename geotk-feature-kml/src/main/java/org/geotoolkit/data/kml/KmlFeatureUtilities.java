@@ -46,7 +46,6 @@ import java.util.logging.Logger;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
-import org.apache.sis.util.logging.Logging;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.Property;
@@ -60,7 +59,7 @@ import org.geotoolkit.data.kml.xml.KmlConstants;
  */
 public class KmlFeatureUtilities {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data.kml");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.data.kml");
 
     /**
      * create {@link SimpleFeature} from kml or kmz file on a folder

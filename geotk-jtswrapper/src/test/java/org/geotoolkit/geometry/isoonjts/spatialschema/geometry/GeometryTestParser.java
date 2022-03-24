@@ -38,7 +38,6 @@ import org.opengis.geometry.primitive.PrimitiveFactory;
 import org.opengis.geometry.Geometry;
 import org.opengis.geometry.PositionFactory;
 import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.geometry.isoonjts.GeometryParser;
 
 
@@ -49,7 +48,7 @@ import org.geotoolkit.geometry.isoonjts.GeometryParser;
  */
 public class GeometryTestParser {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.geometry.isoonjts.spatialschema.geometry");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.geometry.isoonjts.spatialschema.geometry");
 
     private DocumentBuilderFactory documentBuilderFactory;
     private DocumentBuilder documentBuilder;

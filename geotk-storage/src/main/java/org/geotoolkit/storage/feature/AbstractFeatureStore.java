@@ -47,7 +47,6 @@ import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.collection.BackingStoreException;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.storage.memory.GenericFeatureWriter;
 import org.geotoolkit.storage.feature.session.DefaultSession;
 import org.geotoolkit.storage.feature.session.Session;
@@ -96,7 +95,7 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
 
     protected static final String NO_NAMESPACE = "no namespace";
 
-    private static final Logger logger = Logging.getLogger("org.geotoolkit.data");
+    private static final Logger logger = Logger.getLogger("org.geotoolkit.data");
 
     protected final Parameters parameters;
     protected final Set<StoreListener> listeners = new HashSet<>();

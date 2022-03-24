@@ -35,7 +35,6 @@ import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.apache.sis.parameter.Parameters;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessingRegistry;
@@ -58,7 +57,7 @@ import org.opengis.util.NoSuchIdentifierException;
  */
 public class WPSProcessingRegistry implements ProcessingRegistry {
 
-    static final Logger LOGGER = Logging.getLogger("org.geotoolkit.wps");
+    static final Logger LOGGER = Logger.getLogger("org.geotoolkit.wps");
 
     private final WebProcessingClient client;
 

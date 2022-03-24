@@ -44,7 +44,6 @@ import javax.xml.transform.Source;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.validation.Schema;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.logging.Logging;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -55,7 +54,7 @@ import org.xml.sax.SAXException;
  */
 public class DTDIgnoreUnmarshaller implements Unmarshaller {
 
-    static final Logger LOGGER = Logging.getLogger("org.geotoolkit.wms.xml");
+    static final Logger LOGGER = Logger.getLogger("org.geotoolkit.wms.xml");
 
     private static final SAXParserFactory SAX_FACTORY;
     static {

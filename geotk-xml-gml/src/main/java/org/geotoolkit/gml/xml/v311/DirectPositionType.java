@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -28,7 +29,6 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.IdentifiedObjects;
-import org.apache.sis.util.logging.Logging;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -180,7 +180,7 @@ public class DirectPositionType implements org.geotoolkit.gml.xml.DirectPosition
                     try {
                         this.srsName = IdentifiedObjects.lookupURN(crs, null);
                     } catch (FactoryException ex) {
-                        Logging.getLogger("org.geotoolkit.gml.xml.v311").log(Level.WARNING, null, ex);
+                        Logger.getLogger("org.geotoolkit.gml.xml.v311").log(Level.WARNING, null, ex);
                     }
                 }
                 this.srsDimension = position.getDimension();
@@ -301,7 +301,7 @@ public class DirectPositionType implements org.geotoolkit.gml.xml.DirectPosition
             try {
                 return CRS.forCode(srsName);
             } catch (FactoryException ex) {
-                Logging.getLogger("org.geotoolkit.gml.xml.v311").log(Level.WARNING, null, ex);
+                Logger.getLogger("org.geotoolkit.gml.xml.v311").log(Level.WARNING, null, ex);
             }
         }
         return null;
