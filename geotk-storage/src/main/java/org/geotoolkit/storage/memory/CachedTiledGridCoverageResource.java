@@ -107,7 +107,7 @@ public class CachedTiledGridCoverageResource <T extends TiledResource & org.apac
         public void eventOccured(StoreEvent event) {
             cacheMap.clear();
             tiles.clear();
-            fire(new ModelEvent(CachedTiledGridCoverageResource.this), StoreEvent.class);
+            listeners.fire(new ModelEvent(CachedTiledGridCoverageResource.this), StoreEvent.class);
         }
     };
     private final StorageListener.Weak weakListener = new StorageListener.Weak(eventListener);
@@ -244,6 +244,7 @@ public class CachedTiledGridCoverageResource <T extends TiledResource & org.apac
     @Override
     public void clearCache() {
         tiles.clear();
+        super.clearCache();
     }
 
     private class CacheTileMatrixSet implements TileMatrixSet {

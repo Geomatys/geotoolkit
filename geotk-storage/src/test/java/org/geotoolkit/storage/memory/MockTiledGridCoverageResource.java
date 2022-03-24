@@ -146,7 +146,7 @@ final class MockTiledGridCoverageResource extends AbstractGridResource implement
         TileMatrices.copyStructure(template, py);
         py.setBuildPhase(false);
         tileMatrixSets.add(py);
-        fire(new ModelEvent(this), StoreEvent.class);
+        listeners.fire(new ModelEvent(this), StoreEvent.class);
         return py;
     }
 
@@ -159,7 +159,7 @@ final class MockTiledGridCoverageResource extends AbstractGridResource implement
             if (identifier.equalsIgnoreCase(tms.getIdentifier())) {
                 tileMatrixSets.remove(tms);
                 localEvents.add(new MockEvent(EventType.TILE_MATRIX_SET_REMOVED, tms));
-                fire(new ModelEvent(this), StoreEvent.class);
+                listeners.fire(new ModelEvent(this), StoreEvent.class);
                 return;
             }
         }
@@ -211,7 +211,7 @@ final class MockTiledGridCoverageResource extends AbstractGridResource implement
             localEvents.add(new MockEvent(EventType.TILE_MATRIX_CREATED, gm));
             if (!buildPhase) {
                 //we are creating object, dont send an event until we are finished.
-                MockTiledGridCoverageResource.this.fire(new ModelEvent(MockTiledGridCoverageResource.this), StoreEvent.class);
+                listeners.fire(new ModelEvent(MockTiledGridCoverageResource.this), StoreEvent.class);
             }
             return gm;
         }
@@ -224,7 +224,7 @@ final class MockTiledGridCoverageResource extends AbstractGridResource implement
                     tileMatrices.remove(id);
                     localEvents.add(new MockEvent(EventType.TILE_MATRIX_REMOVED, gm));
                     if (!buildPhase) {
-                        MockTiledGridCoverageResource.this.fire(new ModelEvent(MockTiledGridCoverageResource.this), StoreEvent.class);
+                        listeners.fire(new ModelEvent(MockTiledGridCoverageResource.this), StoreEvent.class);
                     }
                     break;
                 }
@@ -262,7 +262,7 @@ final class MockTiledGridCoverageResource extends AbstractGridResource implement
             localEvents.add(new MockEvent(EventType.TILE_SET, tile));
             if (!buildPhase) {
                 //we are creating object, dont send an event until we are finished.
-                MockTiledGridCoverageResource.this.fire(new ContentEvent(MockTiledGridCoverageResource.this), StoreEvent.class);
+                listeners.fire(new ContentEvent(MockTiledGridCoverageResource.this), StoreEvent.class);
             }
         }
 
@@ -319,5 +319,4 @@ final class MockTiledGridCoverageResource extends AbstractGridResource implement
             return (RenderedImage) super.getInput();
         }
     }
-
 }

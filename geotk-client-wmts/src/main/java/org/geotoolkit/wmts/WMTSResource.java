@@ -158,7 +158,7 @@ public final class WMTSResource extends AbstractGridResource implements TiledRes
     void resetCache() {
         set = null;
         //send event
-        fire(new ModelEvent(this), StoreEvent.class);
+        listeners.fire(new ModelEvent(this), StoreEvent.class);
     }
 
 }
