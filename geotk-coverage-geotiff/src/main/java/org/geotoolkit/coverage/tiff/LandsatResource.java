@@ -150,7 +150,7 @@ final class LandsatResource extends GeoreferencedGridCoverageResource implements
             throw new DataStoreException(ex.getMessage(), ex);
         }
         metadata.addDefaultMetadata(this, listeners);
-        return metadata.build(true);
+        return metadata.buildAndFreeze();
     }
 
     @Override

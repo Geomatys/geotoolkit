@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.storage.memory;
 
-import java.awt.Point;
-import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,14 +23,11 @@ import java.util.Optional;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.image.PixelIterator;
-import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.coverage.grid.GridCoverage2D;
 import org.apache.sis.image.ImageProcessor;
-import org.apache.sis.internal.storage.AbstractGridResource;
+import org.apache.sis.storage.AbstractGridCoverageResource;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.WritableGridCoverageResource;
-import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.util.GenericName;
@@ -42,7 +37,7 @@ import org.opengis.util.InternationalString;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class InMemoryGridCoverageResource extends AbstractGridResource implements WritableGridCoverageResource {
+public class InMemoryGridCoverageResource extends AbstractGridCoverageResource implements WritableGridCoverageResource {
 
     private final GenericName name;
     private GridCoverage coverage;

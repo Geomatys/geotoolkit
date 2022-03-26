@@ -17,7 +17,7 @@
 package org.geotoolkit.processing.vector.spatialjoin;
 
 import java.util.stream.Stream;
-import org.apache.sis.internal.storage.AbstractFeatureSet;
+import org.apache.sis.storage.AbstractFeatureSet;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.opengis.feature.Feature;

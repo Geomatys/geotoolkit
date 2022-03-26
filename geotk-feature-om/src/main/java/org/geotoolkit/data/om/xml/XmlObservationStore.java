@@ -34,7 +34,7 @@ import java.util.stream.StreamSupport;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
-import org.apache.sis.internal.storage.AbstractFeatureSet;
+import org.apache.sis.storage.AbstractFeatureSet;
 import org.apache.sis.internal.storage.ResourceOnFileSystem;
 import org.apache.sis.internal.storage.StoreResource;
 import org.apache.sis.storage.Aggregate;
@@ -48,7 +48,6 @@ import org.geotoolkit.storage.feature.GenericNameIndex;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.observation.AbstractObservationStore;
 import org.geotoolkit.observation.ObservationReader;
-import org.geotoolkit.observation.model.ExtractionResult;
 import org.geotoolkit.sos.xml.SOSMarshallerPool;
 import org.geotoolkit.storage.DataStores;
 import org.opengis.feature.Feature;
@@ -57,7 +56,6 @@ import org.opengis.metadata.Metadata;
 import org.opengis.observation.Observation;
 import org.opengis.observation.ObservationCollection;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.temporal.TemporalGeometricPrimitive;
 import org.opengis.util.GenericName;
 
 /**

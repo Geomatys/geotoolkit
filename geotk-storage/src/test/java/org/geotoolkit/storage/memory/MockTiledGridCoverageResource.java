@@ -33,7 +33,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.internal.storage.AbstractGridResource;
+import org.apache.sis.storage.AbstractGridCoverageResource;
 import org.apache.sis.internal.storage.StoreResource;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
@@ -61,8 +61,9 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-final class MockTiledGridCoverageResource extends AbstractGridResource implements TiledResource, StoreResource, WritableGridCoverageResource {
-
+final class MockTiledGridCoverageResource extends AbstractGridCoverageResource
+        implements TiledResource, StoreResource, WritableGridCoverageResource
+{
     public static enum EventType {
         TILE_MATRIX_SET_CREATED,
         TILE_MATRIX_SET_REMOVED,

@@ -32,7 +32,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.internal.storage.AbstractGridResource;
+import org.apache.sis.storage.AbstractGridCoverageResource;
 import org.apache.sis.internal.storage.StoreResource;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
@@ -59,8 +59,9 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class InMemoryTiledGridCoverageResource extends AbstractGridResource implements TiledResource, StoreResource, WritableGridCoverageResource {
-
+public class InMemoryTiledGridCoverageResource extends AbstractGridCoverageResource
+        implements TiledResource, StoreResource, WritableGridCoverageResource
+{
     private final InMemoryStore store;
     private final GenericName identifier;
     private final List<TileMatrixSet> tileMatrixSets = new CopyOnWriteArrayList<>();

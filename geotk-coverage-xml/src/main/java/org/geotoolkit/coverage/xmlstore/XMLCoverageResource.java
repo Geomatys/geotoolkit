@@ -47,7 +47,7 @@ import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.image.PixelIterator;
-import org.apache.sis.internal.storage.AbstractGridResource;
+import org.apache.sis.storage.AbstractGridCoverageResource;
 import org.apache.sis.internal.storage.StoreResource;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStore;
@@ -75,7 +75,9 @@ import org.opengis.util.GenericName;
  * @module
  */
 @XmlRootElement(name="CoverageReference")
-public class XMLCoverageResource extends AbstractGridResource implements TiledResource, StoreResource, WritableGridCoverageResource {
+public class XMLCoverageResource extends AbstractGridCoverageResource
+        implements TiledResource, StoreResource, WritableGridCoverageResource
+{
 
     /**
      * Changes :

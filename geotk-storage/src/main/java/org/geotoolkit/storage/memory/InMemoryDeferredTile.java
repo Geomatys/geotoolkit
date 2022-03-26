@@ -17,7 +17,7 @@
 package org.geotoolkit.storage.memory;
 
 import java.awt.Point;
-import org.apache.sis.internal.storage.AbstractResource;
+import org.apache.sis.storage.AbstractResource;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
 import org.geotoolkit.storage.multires.DeferredTile;

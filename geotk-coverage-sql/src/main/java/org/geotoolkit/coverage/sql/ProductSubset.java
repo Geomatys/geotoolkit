@@ -26,11 +26,11 @@ import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.internal.referencing.ExtentSelector;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.internal.storage.AbstractGridResource;
+import org.apache.sis.storage.AbstractGridCoverageResource;
 import org.apache.sis.metadata.iso.extent.DefaultExtent;
 
 
-final class ProductSubset extends AbstractGridResource {
+final class ProductSubset extends AbstractGridCoverageResource {
     /**
      * The product for which this object is a subset.
      */

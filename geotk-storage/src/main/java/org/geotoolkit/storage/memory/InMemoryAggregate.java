@@ -22,7 +22,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
-import org.apache.sis.internal.storage.AbstractResource;
+import org.apache.sis.storage.AbstractResource;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;

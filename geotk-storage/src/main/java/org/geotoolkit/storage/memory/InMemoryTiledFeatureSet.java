@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Stream;
-import org.apache.sis.internal.storage.AbstractFeatureSet;
+import org.apache.sis.storage.AbstractFeatureSet;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.Resource;
