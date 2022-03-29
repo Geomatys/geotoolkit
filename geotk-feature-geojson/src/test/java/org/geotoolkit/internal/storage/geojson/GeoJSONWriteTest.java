@@ -620,6 +620,16 @@ public class GeoJSONWriteTest extends TestCase {
         Files.deleteIfExists(file);
     }
 
+    /**
+     * Verify writer can be safely closed without being used.
+     * It can happen when a component receive an empty dataset, and therefore does not write anything in output.
+     */
+    @Test
+    public void testWriteEmptyStream() throws Exception {
+        final GeoJSONStreamWriter writer = new GeoJSONStreamWriter(new ByteArrayOutputStream(0), buildGeometryFeatureType("test", Point.class), 7);
+        writer.close();
+    }
+
     private FeatureType buildGeometryFeatureType(String name, Class<?> geomClass) {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(name);
