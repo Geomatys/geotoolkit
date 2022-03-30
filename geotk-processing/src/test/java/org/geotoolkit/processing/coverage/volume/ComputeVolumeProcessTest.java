@@ -28,7 +28,7 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
-import org.apache.sis.internal.storage.AbstractGridResource;
+import org.apache.sis.storage.AbstractGridCoverageResource;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.iso.Names;
@@ -398,7 +398,7 @@ public strictfp class ComputeVolumeProcessTest extends org.geotoolkit.test.TestB
     /**
      * {@link GridCoverageResource} need to test {@link ComputeVolumeProcess} class.
      */
-    private class TestResource extends AbstractGridResource {
+    private class TestResource extends AbstractGridCoverageResource {
 
         final GridCoverage coverage;
 

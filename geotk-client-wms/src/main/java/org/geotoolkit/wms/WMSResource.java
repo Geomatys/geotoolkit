@@ -47,7 +47,7 @@ import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.AxisDirections;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.apache.sis.internal.storage.AbstractGridResource;
+import org.apache.sis.storage.AbstractGridCoverageResource;
 import org.apache.sis.internal.storage.StoreResource;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
@@ -80,7 +80,7 @@ import org.opengis.util.GenericName;
  * @author Cédric Briançon (Geomatys)
  * @module
  */
-public class WMSResource extends AbstractGridResource implements StoreResource {
+public class WMSResource extends AbstractGridCoverageResource implements StoreResource {
 
     static final Dimension DEFAULT_SIZE = new Dimension(256, 256);
     protected static final Logger LOGGER = Logger.getLogger("org.geotoolkit.wms");

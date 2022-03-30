@@ -23,7 +23,7 @@ import java.util.Optional;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.internal.storage.AbstractGridResource;
+import org.apache.sis.storage.AbstractGridCoverageResource;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.NamesExt;
@@ -55,7 +55,7 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class DefiningGridCoverageResource extends AbstractGridResource implements org.apache.sis.storage.GridCoverageResource {
+public class DefiningGridCoverageResource extends AbstractGridCoverageResource implements org.apache.sis.storage.GridCoverageResource {
 
     private final GenericName name;
     private GridGeometry gridGeometry;

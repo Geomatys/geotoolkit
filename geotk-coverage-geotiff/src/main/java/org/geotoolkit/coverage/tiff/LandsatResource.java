@@ -50,6 +50,7 @@ import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.storage.coverage.GeoreferencedGridCoverageResource;
 import org.opengis.geometry.Envelope;
+import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
@@ -138,7 +139,8 @@ final class LandsatResource extends GeoreferencedGridCoverageResource implements
     }
 
     @Override
-    protected void createMetadata(MetadataBuilder metadata) throws DataStoreException {
+    protected Metadata createMetadata() throws DataStoreException {
+        final MetadataBuilder metadata = new MetadataBuilder();
         try {
             //TODO merge this metadata in default one
             metadataParser.getMetadata(group);
@@ -147,7 +149,8 @@ final class LandsatResource extends GeoreferencedGridCoverageResource implements
         } catch (ParseException ex) {
             throw new DataStoreException(ex.getMessage(), ex);
         }
-        super.createMetadata(metadata);
+        metadata.addDefaultMetadata(this, listeners);
+        return metadata.buildAndFreeze();
     }
 
     @Override

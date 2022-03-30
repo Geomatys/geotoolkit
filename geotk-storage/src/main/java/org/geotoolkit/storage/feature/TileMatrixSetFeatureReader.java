@@ -30,7 +30,7 @@ import javax.measure.Quantity;
 import javax.measure.Unit;
 import javax.measure.quantity.Length;
 import org.apache.sis.geometry.Envelopes;
-import org.apache.sis.internal.storage.AbstractFeatureSet;
+import org.apache.sis.storage.AbstractFeatureSet;
 import org.apache.sis.storage.FeatureQuery;
 import org.apache.sis.measure.Quantities;
 import org.apache.sis.measure.Units;

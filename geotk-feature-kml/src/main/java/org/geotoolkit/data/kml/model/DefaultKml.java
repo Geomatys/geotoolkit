@@ -22,7 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import org.apache.sis.internal.storage.AbstractResource;
+import org.apache.sis.storage.AbstractResource;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.data.kml.xml.KmlConstants;
 import static org.geotoolkit.data.kml.xml.KmlConstants.*;

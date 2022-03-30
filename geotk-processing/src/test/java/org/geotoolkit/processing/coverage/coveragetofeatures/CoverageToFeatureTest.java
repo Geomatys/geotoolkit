@@ -31,8 +31,7 @@ import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.apache.sis.internal.storage.AbstractGridResource;
-import org.apache.sis.internal.storage.MetadataBuilder;
+import org.apache.sis.storage.AbstractGridCoverageResource;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
@@ -242,7 +241,7 @@ public class CoverageToFeatureTest extends AbstractProcessTest {
         return featureList;
     }
 
-    private static class SimpleCoverageReader extends AbstractGridResource {
+    private static class SimpleCoverageReader extends AbstractGridCoverageResource {
 
         private final GridCoverage coverage;
         private final PixelInCell pixPos;
@@ -269,11 +268,6 @@ public class CoverageToFeatureTest extends AbstractProcessTest {
         @Override
         public List<SampleDimension> getSampleDimensions() throws DataStoreException, CancellationException {
             return coverage.getSampleDimensions();
-        }
-
-        @Override
-        protected void createMetadata(MetadataBuilder metadata) throws DataStoreException {
-            super.createMetadata(metadata); //To change body of generated methods, choose Tools | Templates.
         }
 
         public SpatialMetadata getCoverageMetadata() throws DataStoreException {

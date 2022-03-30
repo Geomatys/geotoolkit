@@ -24,7 +24,7 @@ import java.util.stream.IntStream;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.internal.storage.AbstractGridResource;
+import org.apache.sis.storage.AbstractGridCoverageResource;
 import org.apache.sis.internal.storage.ResourceOnFileSystem;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStore;
@@ -124,7 +124,7 @@ final class TiffStore extends DataStore implements ResourceOnFileSystem, Writabl
     }
 
 
-    private final class Resource extends AbstractGridResource implements WritableGridCoverageResource {
+    private final class Resource extends AbstractGridCoverageResource implements WritableGridCoverageResource {
 
         //caches
         private List<SampleDimension> sampleDimensions;

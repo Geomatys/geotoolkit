@@ -53,7 +53,6 @@ import org.geotoolkit.storage.feature.session.Session;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.feature.FeatureTypeExt;
-import org.geotoolkit.feature.ReprojectMapper;
 import org.geotoolkit.feature.ViewMapper;
 import org.geotoolkit.storage.event.StorageEvent;
 import org.geotoolkit.util.NamesExt;
@@ -140,7 +139,7 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
             throw e.unwrapOrRethrow(DataStoreException.class);
         }
 
-        return builder.build(false);
+        return builder.build();
     }
 
     @Override
