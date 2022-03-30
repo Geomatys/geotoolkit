@@ -22,7 +22,7 @@ import java.util.Optional;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.internal.storage.AbstractGridResource;
+import org.apache.sis.storage.AbstractGridCoverageResource;
 import org.apache.sis.internal.storage.StoreResource;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
@@ -38,7 +38,7 @@ import org.opengis.util.GenericName;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class WMSCCoverageResource extends AbstractGridResource implements TiledResource, StoreResource {
+public class WMSCCoverageResource extends AbstractGridCoverageResource implements TiledResource, StoreResource {
 
     private final WebMapClientCached server;
     private final GenericName name;

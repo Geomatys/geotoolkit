@@ -32,7 +32,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.internal.storage.AbstractGridResource;
+import org.apache.sis.storage.AbstractGridCoverageResource;
 import org.apache.sis.internal.storage.StoreResource;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
@@ -59,8 +59,9 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class InMemoryTiledGridCoverageResource extends AbstractGridResource implements TiledResource, StoreResource, WritableGridCoverageResource {
-
+public class InMemoryTiledGridCoverageResource extends AbstractGridCoverageResource
+        implements TiledResource, StoreResource, WritableGridCoverageResource
+{
     private final InMemoryStore store;
     private final GenericName identifier;
     private final List<TileMatrixSet> tileMatrixSets = new CopyOnWriteArrayList<>();
@@ -120,7 +121,7 @@ public class InMemoryTiledGridCoverageResource extends AbstractGridResource impl
         TileMatrices.copyStructure(p, py);
         py.setBuildPhase(false);
         tileMatrixSets.add(py);
-        fire(new ModelEvent(this), StoreEvent.class);
+        listeners.fire(new ModelEvent(this), StoreEvent.class);
         return py;
     }
 
@@ -132,7 +133,7 @@ public class InMemoryTiledGridCoverageResource extends AbstractGridResource impl
             final TileMatrixSet tms = it.next();
             if (identifier.equalsIgnoreCase(tms.getIdentifier())) {
                 tileMatrixSets.remove(tms);
-                fire(new ModelEvent(this), StoreEvent.class);
+                listeners.fire(new ModelEvent(this), StoreEvent.class);
                 return;
             }
         }
@@ -183,7 +184,7 @@ public class InMemoryTiledGridCoverageResource extends AbstractGridResource impl
             tileMatrices.add(gm);
             if (!buildPhase) {
                 //we are creating object, dont send an event until we are finished.
-                InMemoryTiledGridCoverageResource.this.fire(new ModelEvent(InMemoryTiledGridCoverageResource.this), StoreEvent.class);
+                listeners.fire(new ModelEvent(InMemoryTiledGridCoverageResource.this), StoreEvent.class);
             }
             return gm;
         }
@@ -194,7 +195,7 @@ public class InMemoryTiledGridCoverageResource extends AbstractGridResource impl
                 if (tileMatrices.get(id).getIdentifier().equalsIgnoreCase(mosaicId)) {
                     tileMatrices.remove(id);
                     if (!buildPhase) {
-                        InMemoryTiledGridCoverageResource.this.fire(new ModelEvent(InMemoryTiledGridCoverageResource.this), StoreEvent.class);
+                        listeners.fire(new ModelEvent(InMemoryTiledGridCoverageResource.this), StoreEvent.class);
                     }
                     break;
                 }
@@ -229,7 +230,7 @@ public class InMemoryTiledGridCoverageResource extends AbstractGridResource impl
             mpTileReference.put(new Point(Math.toIntExact(col), Math.toIntExact(row)), tile);
             if (!buildPhase) {
                 //we are creating object, dont send an event until we are finished.
-                InMemoryTiledGridCoverageResource.this.fire(new ContentEvent(InMemoryTiledGridCoverageResource.this), StoreEvent.class);
+                listeners.fire(new ContentEvent(InMemoryTiledGridCoverageResource.this), StoreEvent.class);
             }
         }
 

@@ -28,7 +28,7 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.apache.sis.internal.storage.AbstractGridResource;
+import org.apache.sis.storage.AbstractGridCoverageResource;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Utilities;
@@ -50,7 +50,7 @@ import org.opengis.util.NameSpace;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-final class PortrayalCoverageResource extends AbstractGridResource {
+final class PortrayalCoverageResource extends AbstractGridCoverageResource {
 
     private final SceneDef scene;
     private final GenericName name;

@@ -32,7 +32,7 @@ import org.apache.sis.coverage.grid.GridOrientation;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.apache.sis.internal.storage.AbstractGridResource;
+import org.apache.sis.storage.AbstractGridCoverageResource;
 import org.apache.sis.internal.storage.StoreResource;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStore;
@@ -50,7 +50,7 @@ import org.opengis.referencing.operation.TransformException;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class WCSResource extends AbstractGridResource implements StoreResource {
+public class WCSResource extends AbstractGridCoverageResource implements StoreResource {
 
     static final Dimension DEFAULT_SIZE = new Dimension(256, 256);
 

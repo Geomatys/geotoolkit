@@ -37,7 +37,7 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.AxisDirections;
-import org.apache.sis.internal.storage.AbstractGridResource;
+import org.apache.sis.storage.AbstractGridCoverageResource;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CRS;
@@ -65,7 +65,7 @@ import org.opengis.util.GenericName;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public final class FileCoverageResource extends AbstractGridResource implements WritableGridCoverageResource {
+public final class FileCoverageResource extends AbstractGridCoverageResource implements WritableGridCoverageResource {
 
     private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.coverage.filestore");
 

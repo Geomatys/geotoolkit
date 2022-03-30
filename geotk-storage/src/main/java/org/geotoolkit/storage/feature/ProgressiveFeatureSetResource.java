@@ -19,7 +19,7 @@ package org.geotoolkit.storage.feature;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Stream;
-import org.apache.sis.internal.storage.AbstractFeatureSet;
+import org.apache.sis.storage.AbstractFeatureSet;
 import org.apache.sis.storage.FeatureQuery;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;

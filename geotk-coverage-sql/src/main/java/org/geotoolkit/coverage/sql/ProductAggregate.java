@@ -68,7 +68,7 @@ final class ProductAggregate extends AbstractResource implements Aggregate {
     protected DefaultMetadata createMetadata() throws DataStoreException {
         final MetadataBuilder builder = new MetadataBuilder();
         product.createMetadata(builder);
-        return builder.build(false);
+        return builder.build();
     }
 
     static final class AlsoGrid extends ProductResource implements Aggregate {

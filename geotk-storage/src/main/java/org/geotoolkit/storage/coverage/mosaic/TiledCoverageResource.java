@@ -49,7 +49,7 @@ import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.apache.sis.image.ComputedImage;
 import org.apache.sis.internal.referencing.j2d.Tile;
 import org.apache.sis.internal.referencing.j2d.TileOrganizer;
-import org.apache.sis.internal.storage.AbstractGridResource;
+import org.apache.sis.storage.AbstractGridCoverageResource;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.image.BufferedImages;
@@ -62,7 +62,7 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class TiledCoverageResource extends AbstractGridResource {
+public class TiledCoverageResource extends AbstractGridCoverageResource {
 
     private final GridGeometry gridGeometry;
     private final ResourceTile[] tiles;

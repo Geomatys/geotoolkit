@@ -42,7 +42,7 @@ import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.internal.storage.AbstractGridResource;
+import org.apache.sis.storage.AbstractGridCoverageResource;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
@@ -77,7 +77,9 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class CachedTiledGridCoverageResource <T extends TiledResource & org.apache.sis.storage.GridCoverageResource> extends AbstractGridResource implements TiledResource, GridCoverageResource {
+public class CachedTiledGridCoverageResource <T extends TiledResource & org.apache.sis.storage.GridCoverageResource>
+        extends AbstractGridCoverageResource implements TiledResource, GridCoverageResource
+{
 
     private static final BlockingQueue IMAGEQUEUE = new PriorityBlockingQueue(Runtime.getRuntime().availableProcessors()*200);
     private static final ThreadPoolExecutor EXEC;
@@ -107,7 +109,7 @@ public class CachedTiledGridCoverageResource <T extends TiledResource & org.apac
         public void eventOccured(StoreEvent event) {
             cacheMap.clear();
             tiles.clear();
-            fire(new ModelEvent(CachedTiledGridCoverageResource.this), StoreEvent.class);
+            listeners.fire(new ModelEvent(CachedTiledGridCoverageResource.this), StoreEvent.class);
         }
     };
     private final StorageListener.Weak weakListener = new StorageListener.Weak(eventListener);
@@ -244,6 +246,7 @@ public class CachedTiledGridCoverageResource <T extends TiledResource & org.apac
     @Override
     public void clearCache() {
         tiles.clear();
+        super.clearCache();
     }
 
     private class CacheTileMatrixSet implements TileMatrixSet {

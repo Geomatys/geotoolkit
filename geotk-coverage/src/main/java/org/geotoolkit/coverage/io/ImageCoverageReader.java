@@ -1097,7 +1097,7 @@ public class ImageCoverageReader extends GridCoverageStore {
                                 mb.setTransferFunction(f.getScale(), f.getOffset());
                             });
                         }
-                        final DefaultMetadata meta = mb.build(false);
+                        final DefaultMetadata meta = mb.build();
                         final CoverageDescription imgDesc = (CoverageDescription) meta.getContentInfo().iterator().next();
                         ci.getAttributeGroups().addAll((Collection)imgDesc.getAttributeGroups());
                     }

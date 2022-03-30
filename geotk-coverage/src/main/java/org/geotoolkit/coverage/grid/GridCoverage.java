@@ -704,10 +704,9 @@ abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCoverage im
         out.write('"');
         final Envelope envelope = getEnvelope()
                 .orElseThrow(() -> new IllegalStateException("Deprecated Coverage API requires an envelope"));
-        if (envelope != null) {
-            out.write(", ");
-            out.write(envelope.toString());
-        }
+        out.write(", ");
+        out.write(envelope.toString());
+
         final CoordinateReferenceSystem crs = getCoordinateReferenceSystem();
         if (crs != null) {
             out.write(", ");

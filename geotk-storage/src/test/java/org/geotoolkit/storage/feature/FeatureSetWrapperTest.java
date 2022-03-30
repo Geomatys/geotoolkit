@@ -6,7 +6,7 @@ import java.util.stream.Stream;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 
-import org.apache.sis.internal.storage.AbstractFeatureSet;
+import org.apache.sis.storage.AbstractFeatureSet;
 import org.apache.sis.storage.DataStoreException;
 
 import org.junit.Assert;

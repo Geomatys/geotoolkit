@@ -27,7 +27,7 @@ import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.apache.sis.coverage.grid.IllegalGridGeometryException;
-import org.apache.sis.internal.storage.AbstractGridResource;
+import org.apache.sis.storage.AbstractGridCoverageResource;
 import org.apache.sis.referencing.operation.matrix.Matrices;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
@@ -46,7 +46,7 @@ import org.opengis.referencing.operation.TransformException;
  *
  * @author Johann Sorel (Geomatys)
  */
-public abstract class GeoreferencedGridCoverageResource extends AbstractGridResource {
+public abstract class GeoreferencedGridCoverageResource extends AbstractGridCoverageResource {
 
     protected GeoreferencedGridCoverageResource(Resource resource) {
         super(resource instanceof StoreListeners ? (StoreListeners) resource : null);
