@@ -64,7 +64,7 @@ public abstract class URITileMatrixSet extends AbstractTileMatrixSet implements 
     }
 
     @Override
-    public WritableTileMatrix createTileMatrix(TileMatrix template) throws DataStoreException {
+    public WritableTileMatrix createTileMatrix(org.apache.sis.storage.tiling.TileMatrix template) throws DataStoreException {
         throw new DataStoreException("Unsupported operation");
     }
 

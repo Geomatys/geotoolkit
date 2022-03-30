@@ -743,7 +743,7 @@ public class XMLCoverageResource extends AbstractGridCoverageResource
     }
 
     @Override
-    public WritableTileMatrixSet createTileMatrixSet(TileMatrixSet template) throws DataStoreException {
+    public WritableTileMatrixSet createTileMatrixSet(org.apache.sis.storage.tiling.TileMatrixSet template) throws DataStoreException {
         final XMLPyramidSet set = getPyramidSet();
         final WritableTileMatrixSet pyramid = set.createPyramid(getIdentifier().get().tip().toString(), template.getCoordinateReferenceSystem());
         save();

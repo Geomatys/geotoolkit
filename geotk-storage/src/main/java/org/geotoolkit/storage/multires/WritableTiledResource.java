@@ -18,7 +18,6 @@ package org.geotoolkit.storage.multires;
 
 import java.util.Collection;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.NoSuchDataException;
 import org.apache.sis.storage.ReadOnlyStorageException;
 
 
@@ -30,7 +29,7 @@ import org.apache.sis.storage.ReadOnlyStorageException;
  * @author  Johann Sorel (Geomatys)
  * @author  Martin Desruisseaux (Geomatys)
  */
-public interface WritableTiledResource extends TiledResource {
+public interface WritableTiledResource extends TiledResource, org.apache.sis.storage.tiling.WritableTiledResource {
     /**
      * Returns the collection of all available tile matrix sets in this resource.
      * The returned collection is unmodifiable but live: additions or removals of
@@ -57,17 +56,6 @@ public interface WritableTiledResource extends TiledResource {
      * @throws IncompatibleResourceException if the given tile matrix set is incompatible with this resource.
      * @throws DataStoreException if creating the tile matrix set failed for another reason.
      */
-    WritableTileMatrixSet createTileMatrixSet(TileMatrixSet tiles) throws DataStoreException;
-
-    /**
-     * Deletes a {@code TileMatrixSet} identified by the given name. The given identifier shall be the
-     * <code>{@linkplain TileMatrixSet#getIdentifier()}.toString()</code> value of the set to delete.
-     *
-     * @param  identifier  identifier of the {@link TileMatrixSet} to delete.
-     * @throws NoSuchDataException if there is no tile matrix set associated to the given identifier in this resource.
-     * @throws ReadOnlyStorageException if this resource is not writable. It may be caused by insufficient credentials.
-     * @throws DataStoreException if deleting the tile matrix set failed for another reason.
-     */
-    void deleteTileMatrixSet(String identifier) throws DataStoreException;
+    WritableTileMatrixSet createTileMatrixSet(org.apache.sis.storage.tiling.TileMatrixSet tiles) throws DataStoreException;
 
 }

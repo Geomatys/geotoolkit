@@ -63,10 +63,10 @@ import org.geotoolkit.storage.event.StorageListener;
 import org.geotoolkit.storage.multires.AbstractTileMatrix;
 import org.geotoolkit.storage.multires.AbstractTileMatrixSet;
 import org.geotoolkit.storage.multires.ImageTileMatrix;
-import org.geotoolkit.storage.multires.Tile;
+import org.apache.sis.storage.tiling.Tile;
 import org.geotoolkit.storage.multires.TileMatrix;
 import org.geotoolkit.storage.multires.TileMatrixSet;
-import org.geotoolkit.storage.multires.TileStatus;
+import org.apache.sis.storage.tiling.TileStatus;
 import org.geotoolkit.storage.multires.TiledResource;
 import org.geotoolkit.storage.multires.WritableTileMatrix;
 import org.geotoolkit.storage.multires.WritableTileMatrixSet;
@@ -224,7 +224,7 @@ public class CachedTiledGridCoverageResource <T extends TiledResource & org.apac
      * {@inheritDoc }.
      */
     @Override
-    public WritableTileMatrixSet createTileMatrixSet(TileMatrixSet template) throws DataStoreException {
+    public WritableTileMatrixSet createTileMatrixSet(org.apache.sis.storage.tiling.TileMatrixSet template) throws DataStoreException {
         if (!(parent instanceof WritableTiledResource)) {
             throw new DataStoreException("Not writable");
         }
@@ -301,7 +301,7 @@ public class CachedTiledGridCoverageResource <T extends TiledResource & org.apac
         }
 
         @Override
-        public WritableTileMatrix createTileMatrix(TileMatrix template) throws DataStoreException {
+        public WritableTileMatrix createTileMatrix(org.apache.sis.storage.tiling.TileMatrix template) throws DataStoreException {
             if (!(parent instanceof WritableTileMatrixSet)) {
                 throw new DataStoreException("Not writable");
             }

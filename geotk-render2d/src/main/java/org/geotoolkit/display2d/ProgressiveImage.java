@@ -48,7 +48,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.storage.coverage.DefaultImageTile;
 import org.geotoolkit.storage.coverage.ImageTile;
-import org.geotoolkit.storage.multires.Tile;
+import org.apache.sis.storage.tiling.Tile;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
 

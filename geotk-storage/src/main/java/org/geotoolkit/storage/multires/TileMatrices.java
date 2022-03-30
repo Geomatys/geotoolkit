@@ -65,9 +65,9 @@ import org.opengis.util.FactoryException;
  */
 public final class TileMatrices extends Static {
 
-    public static Comparator<TileMatrix> SCALE_COMPARATOR = new Comparator<TileMatrix>() {
+    public static Comparator<org.apache.sis.storage.tiling.TileMatrix> SCALE_COMPARATOR = new Comparator<org.apache.sis.storage.tiling.TileMatrix>() {
         @Override
-        public int compare(TileMatrix tm1, TileMatrix tm2) {
+        public int compare(org.apache.sis.storage.tiling.TileMatrix tm1, org.apache.sis.storage.tiling.TileMatrix tm2) {
             final double[] res1 = tm1.getTilingScheme().getResolution(true);
             final double[] res2 = tm2.getTilingScheme().getResolution(true);
             for (int i = 0; i < res1.length; i++) {
@@ -90,7 +90,7 @@ public final class TileMatrices extends Static {
      * until all calls to getScale are remove, preserve the old bahavior : return the longitude pixel scale.
      */
     @Deprecated
-    public static double getScale(TileMatrix tileMatrix) {
+    public static double getScale(org.apache.sis.storage.tiling.TileMatrix tileMatrix) {
         return tileMatrix.getResolution()[0];
     }
 
@@ -275,10 +275,10 @@ public final class TileMatrices extends Static {
      * @param base not null
      * @param target not null
      */
-    public static void copyStructure(TileMatrixSet base, WritableTileMatrixSet target) throws DataStoreException {
+    public static void copyStructure(org.apache.sis.storage.tiling.TileMatrixSet base, WritableTileMatrixSet target) throws DataStoreException {
         ArgumentChecks.ensureNonNull("base", base);
         ArgumentChecks.ensureNonNull("target", target);
-        for (TileMatrix m : base.getTileMatrices().values()) {
+        for (org.apache.sis.storage.tiling.TileMatrix m : base.getTileMatrices().values()) {
             target.createTileMatrix(m);
         }
     }

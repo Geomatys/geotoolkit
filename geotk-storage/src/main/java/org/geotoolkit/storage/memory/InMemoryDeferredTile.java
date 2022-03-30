@@ -18,8 +18,8 @@ package org.geotoolkit.storage.memory;
 
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
-import org.geotoolkit.storage.multires.Tile;
-import org.geotoolkit.storage.multires.TileStatus;
+import org.apache.sis.storage.tiling.Tile;
+import org.apache.sis.storage.tiling.TileStatus;
 
 /**
  *

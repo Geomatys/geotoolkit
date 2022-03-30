@@ -41,8 +41,8 @@ import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.security.DefaultClientSecurity;
 import org.geotoolkit.storage.AbstractResource;
 import org.geotoolkit.storage.coverage.ImageTile;
-import org.geotoolkit.storage.multires.Tile;
-import org.geotoolkit.storage.multires.TileStatus;
+import org.apache.sis.storage.tiling.Tile;
+import org.apache.sis.storage.tiling.TileStatus;
 
 /**
  * TileMatrix Tile resolved by an URI.

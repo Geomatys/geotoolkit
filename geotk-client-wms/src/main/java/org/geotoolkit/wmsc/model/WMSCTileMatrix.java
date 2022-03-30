@@ -26,11 +26,11 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.storage.multires.AbstractTileMatrix;
-import org.geotoolkit.storage.multires.Tile;
+import org.apache.sis.storage.tiling.Tile;
 import org.geotoolkit.storage.multires.TileMatrices;
 import org.geotoolkit.storage.multires.TileMatrix;
 import org.geotoolkit.storage.multires.TileMatrixSet;
-import org.geotoolkit.storage.multires.TileStatus;
+import org.apache.sis.storage.tiling.TileStatus;
 import org.geotoolkit.wms.xml.v111.BoundingBox;
 import org.opengis.util.GenericName;
 

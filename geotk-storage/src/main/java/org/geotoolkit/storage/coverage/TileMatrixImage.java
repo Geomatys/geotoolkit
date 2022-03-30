@@ -33,9 +33,9 @@ import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.math.XMath;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.multires.Tile;
+import org.apache.sis.storage.tiling.Tile;
 import org.geotoolkit.storage.multires.TileMatrix;
-import org.geotoolkit.storage.multires.TileStatus;
+import org.apache.sis.storage.tiling.TileStatus;
 
 /**
  * Implementation of RenderedImage using GridMosaic.

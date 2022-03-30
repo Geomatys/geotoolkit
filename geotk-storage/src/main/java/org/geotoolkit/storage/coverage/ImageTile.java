@@ -21,7 +21,7 @@ import java.io.IOException;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
 import org.geotoolkit.image.io.XImageIO;
-import org.geotoolkit.storage.multires.Tile;
+import org.apache.sis.storage.tiling.Tile;
 
 /**
  * Expose informations on how to access a tile.

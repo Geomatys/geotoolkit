@@ -38,6 +38,8 @@ import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.storage.tiling.Tile;
+import org.apache.sis.storage.tiling.TileStatus;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.process.ProcessListener;
 import org.geotoolkit.storage.coverage.IProgressiveCoverageResource;
@@ -121,7 +123,7 @@ public class GeneralProgressiveResource extends AbstractResource implements Prog
      * {@inheritDoc }.
      */
     @Override
-    public WritableTileMatrixSet createTileMatrixSet(TileMatrixSet template) throws DataStoreException {
+    public WritableTileMatrixSet createTileMatrixSet(org.apache.sis.storage.tiling.TileMatrixSet template) throws DataStoreException {
         synchronized (cachePyramids) {
             final WritableTileMatrixSet newParentPyramid = base.createTileMatrixSet(template);
             final ProgressiveTileMatrixSet cached = new ProgressiveTileMatrixSet(newParentPyramid);
@@ -222,7 +224,7 @@ public class GeneralProgressiveResource extends AbstractResource implements Prog
         }
 
         @Override
-        public WritableTileMatrix createTileMatrix(TileMatrix template) throws DataStoreException {
+        public WritableTileMatrix createTileMatrix(org.apache.sis.storage.tiling.TileMatrix template) throws DataStoreException {
             synchronized (cacheMosaics) {
                 final WritableTileMatrix newParentMosaic = parent.createTileMatrix(template);
                 final ProgressiveTileMatrix cached = new ProgressiveTileMatrix(ProgressiveTileMatrixSet.this, newParentMosaic);

@@ -28,7 +28,7 @@ import org.apache.sis.storage.StorageConnector;
 import org.geotoolkit.client.Request;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.storage.coverage.DefaultImageTile;
-import org.geotoolkit.storage.multires.TileStatus;
+import org.apache.sis.storage.tiling.TileStatus;
 
 /**
  *

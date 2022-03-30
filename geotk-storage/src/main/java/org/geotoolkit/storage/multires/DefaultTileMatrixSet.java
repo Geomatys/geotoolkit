@@ -69,7 +69,7 @@ public class DefaultTileMatrixSet extends AbstractTileMatrixSet {
         }
 
         @Override
-        public WritableTileMatrix createTileMatrix(TileMatrix template) throws DataStoreException {
+        public WritableTileMatrix createTileMatrix(org.apache.sis.storage.tiling.TileMatrix template) throws DataStoreException {
             throw new UnsupportedOperationException("Not supported.");
         }
 

@@ -3,6 +3,7 @@ package org.geotoolkit.storage.multires;
 import java.util.Optional;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
+import org.apache.sis.storage.tiling.TileStatus;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 public interface TileInError extends EmptyTile {

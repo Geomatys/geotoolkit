@@ -216,7 +216,8 @@ public class XMLPyramid implements WritableTileMatrixSet {
     }
 
     @Override
-    public WritableTileMatrix createTileMatrix(TileMatrix template) throws DataStoreException {
+    public WritableTileMatrix createTileMatrix(org.apache.sis.storage.tiling.TileMatrix templateSis) throws DataStoreException {
+        final TileMatrix template = (TileMatrix) templateSis;
         final XMLMosaic mosaic = new XMLMosaic();
         mosaic.scale = template.getResolution()[0];
         mosaic.gridWidth = template.getGridSize().width;

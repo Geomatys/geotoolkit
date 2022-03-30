@@ -25,7 +25,7 @@ import org.apache.sis.storage.Resource;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.AbstractResource;
-import org.geotoolkit.storage.multires.TileStatus;
+import org.apache.sis.storage.tiling.TileStatus;
 
 /**
  * Default implementation of a TileReference

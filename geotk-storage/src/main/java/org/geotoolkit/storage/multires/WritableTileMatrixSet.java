@@ -18,7 +18,6 @@ package org.geotoolkit.storage.multires;
 
 import java.util.SortedMap;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.NoSuchDataException;
 import org.apache.sis.storage.ReadOnlyStorageException;
 import org.opengis.util.GenericName;
 
@@ -31,7 +30,7 @@ import org.opengis.util.GenericName;
  * @author  Johann Sorel (Geomatys)
  * @author  Martin Desruisseaux (Geomatys)
  */
-public interface WritableTileMatrixSet extends TileMatrixSet {
+public interface WritableTileMatrixSet extends TileMatrixSet, org.apache.sis.storage.tiling.WritableTileMatrixSet {
     /**
      * Returns all {@link WritableTileMatrix} instances in this set, together with their identifiers.
      * For each value in the map, the associated key is {@link WritableTileMatrix#getIdentifier()}.
@@ -65,17 +64,6 @@ public interface WritableTileMatrixSet extends TileMatrixSet {
      * @throws IncompatibleResourceException if the tiling scheme of the given tile matrix is not compatible with this set.
      * @throws DataStoreException if creating the tile matrix failed for another reason.
      */
-    WritableTileMatrix createTileMatrix(TileMatrix tiles) throws DataStoreException;
-
-    /**
-     * Deletes a {@code TileMatrix} identified by the given name. The given identifier shall be the
-     * <code>{@linkplain TileMatrix#getIdentifier()}.toString()</code> value of the tile matrix to delete.
-     *
-     * @param  identifier  identifier of the {@link TileMatrix} to delete.
-     * @throws NoSuchDataException if there is no tile matrix associated to the given identifier in this set.
-     * @throws ReadOnlyStorageException if this tile matrix set is not writable. It may be caused by insufficient credentials.
-     * @throws DataStoreException if deleting the tile matrix failed for another reason.
-     */
-    void deleteTileMatrix(String identifier) throws DataStoreException;
+    WritableTileMatrix createTileMatrix(org.apache.sis.storage.tiling.TileMatrix tiles) throws DataStoreException;
 
 }

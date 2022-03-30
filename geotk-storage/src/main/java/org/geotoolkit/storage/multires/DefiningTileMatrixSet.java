@@ -63,12 +63,12 @@ public class DefiningTileMatrixSet implements WritableTileMatrixSet {
     }
 
     @Override
-    public WritableTileMatrix createTileMatrix(TileMatrix template) {
+    public WritableTileMatrix createTileMatrix(org.apache.sis.storage.tiling.TileMatrix template) {
         GenericName uid = template.getIdentifier();
         if (matrices.containsKey(uid)) {
             uid = NamesExt.createRandomUUID();
         }
-        final DefiningTileMatrix m2 = new DefiningTileMatrix(uid, template.getTilingScheme(), template.getTileSize());
+        final DefiningTileMatrix m2 = new DefiningTileMatrix(uid, template.getTilingScheme(), ((TileMatrix)template).getTileSize());
         matrices.insertByScale(m2);
         return m2;
     }

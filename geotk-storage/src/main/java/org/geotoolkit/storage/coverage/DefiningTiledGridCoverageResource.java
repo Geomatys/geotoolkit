@@ -27,7 +27,6 @@ import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.storage.multires.DefiningTileMatrixSet;
 import org.geotoolkit.storage.multires.TileFormat;
 import org.geotoolkit.storage.multires.TileMatrices;
-import org.geotoolkit.storage.multires.TileMatrixSet;
 import org.geotoolkit.storage.multires.WritableTileMatrixSet;
 import org.geotoolkit.storage.multires.WritableTiledResource;
 import org.geotoolkit.util.NamesExt;
@@ -71,7 +70,7 @@ public class DefiningTiledGridCoverageResource extends DefiningGridCoverageResou
     }
 
     @Override
-    public WritableTileMatrixSet createTileMatrixSet(TileMatrixSet template) throws DataStoreException {
+    public WritableTileMatrixSet createTileMatrixSet(org.apache.sis.storage.tiling.TileMatrixSet template) throws DataStoreException {
         GenericName id = template.getIdentifier();
         if (id == null) {
             //create a unique id

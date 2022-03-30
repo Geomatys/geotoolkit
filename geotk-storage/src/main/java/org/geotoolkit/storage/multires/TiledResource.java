@@ -18,7 +18,6 @@ package org.geotoolkit.storage.multires;
 
 import java.util.Collection;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.Resource;
 
 /**
  * A TiledResource is a ressource which content can be accessed by
@@ -32,7 +31,7 @@ import org.apache.sis.storage.Resource;
  *
  * @author Johann Sorel (Geomatys)
  */
-public interface TiledResource extends Resource {
+public interface TiledResource extends org.apache.sis.storage.tiling.TiledResource {
 
     /**
      * Returns the collection of available {@linkplain TileMatrixSet}.

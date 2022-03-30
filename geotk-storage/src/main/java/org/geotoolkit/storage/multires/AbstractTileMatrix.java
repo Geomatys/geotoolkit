@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.UUID;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.storage.tiling.TileStatus;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.iso.Names;
 import org.opengis.geometry.DirectPosition;

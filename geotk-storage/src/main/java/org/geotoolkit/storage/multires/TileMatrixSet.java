@@ -35,26 +35,7 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public interface TileMatrixSet {
-
-    /**
-     * Returns an alphanumeric identifier which is unique in the {@link TiledResource} that contains
-     * this {@code TileMatrixSet}. A tiled resource may contains more than one tile matrix set if the
-     * resource prepared different set of tiles for different CRS.
-     *
-     * @return a unique (within {@link TiledResource}) identifier.
-     */
-    GenericName getIdentifier();
-
-    /**
-     * Returns the coordinate reference system of all {@code TileMatrix} instances in this set.
-     * This is the value returned by {@code TileMatrix.getTilingScheme().getCoordinateReferenceSystem()}.
-     *
-     * @return the CRS used by all {@code TileMatrix} instances in this set.
-     *
-     * @see TileMatrix#getTilingScheme()
-     */
-    CoordinateReferenceSystem getCoordinateReferenceSystem();
+public interface TileMatrixSet extends org.apache.sis.storage.tiling.TileMatrixSet {
 
     /**
      * Returns an envelope that encompasses all {@code TileMatrix} instances in this set.

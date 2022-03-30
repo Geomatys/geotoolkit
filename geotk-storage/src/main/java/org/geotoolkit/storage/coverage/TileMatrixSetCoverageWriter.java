@@ -49,7 +49,7 @@ import org.geotoolkit.storage.coverage.mosaic.AggregatedCoverageResource;
 import org.geotoolkit.storage.multires.TileMatrices;
 import org.geotoolkit.storage.multires.TileMatrix;
 import org.geotoolkit.storage.multires.TileMatrixSet;
-import org.geotoolkit.storage.multires.TileStatus;
+import org.apache.sis.storage.tiling.TileStatus;
 import org.geotoolkit.storage.multires.TiledResource;
 import org.geotoolkit.storage.multires.WritableTileMatrix;
 import org.opengis.geometry.Envelope;

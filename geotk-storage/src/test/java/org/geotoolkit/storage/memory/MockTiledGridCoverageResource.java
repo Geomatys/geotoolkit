@@ -51,11 +51,11 @@ import org.geotoolkit.storage.event.ModelEvent;
 import org.geotoolkit.storage.multires.AbstractTileMatrix;
 import org.geotoolkit.storage.multires.AbstractTileMatrixSet;
 import org.geotoolkit.storage.multires.ScaleSortedMap;
-import org.geotoolkit.storage.multires.Tile;
+import org.apache.sis.storage.tiling.Tile;
 import org.geotoolkit.storage.multires.TileMatrices;
 import org.geotoolkit.storage.multires.TileMatrix;
 import org.geotoolkit.storage.multires.TileMatrixSet;
-import org.geotoolkit.storage.multires.TileStatus;
+import org.apache.sis.storage.tiling.TileStatus;
 import org.geotoolkit.storage.multires.WritableTileMatrix;
 import org.geotoolkit.storage.multires.WritableTileMatrixSet;
 import org.geotoolkit.storage.multires.WritableTiledResource;
@@ -147,7 +147,7 @@ final class MockTiledGridCoverageResource extends AbstractGridCoverageResource
      * {@inheritDoc }.
      */
     @Override
-    public WritableTileMatrixSet createTileMatrixSet(TileMatrixSet template) throws DataStoreException {
+    public WritableTileMatrixSet createTileMatrixSet(org.apache.sis.storage.tiling.TileMatrixSet template) throws DataStoreException {
         final InMemoryTileMatrixSet py = new InMemoryTileMatrixSet(NamesExt.createRandomUUID(), template.getCoordinateReferenceSystem());
         py.setBuildPhase(true);
         localEvents.add(new MockEvent(EventType.TILE_MATRIX_SET_CREATED, py));
@@ -211,9 +211,9 @@ final class MockTiledGridCoverageResource extends AbstractGridCoverageResource
         }
 
         @Override
-        public WritableTileMatrix createTileMatrix(TileMatrix template) throws DataStoreException {
+        public WritableTileMatrix createTileMatrix(org.apache.sis.storage.tiling.TileMatrix template) throws DataStoreException {
             final InMemoryTileMatrix gm = new InMemoryTileMatrix(NamesExt.createRandomUUID(),
-                    this, template.getTilingScheme(), template.getTileSize());
+                    this, template.getTilingScheme(), ((TileMatrix)template).getTileSize());
             tileMatrices.insertByScale(gm);
             localEvents.add(new MockEvent(EventType.TILE_MATRIX_CREATED, gm));
             if (!buildPhase) {
