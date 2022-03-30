@@ -227,10 +227,13 @@ public final class GeoJSONStreamWriter implements Iterator<Feature>, AutoCloseab
 
     @Override
     public void close() {
-        try {
-            writer.writeEndFeatureCollection();
-            writer.flush();
-            writer.close();
+        try (writer) {
+            // If the header flag is set to false, it means that nothing has been written previously,
+            // there's no pending feature collection to close.
+            if (headerWritten) {
+                writer.writeEndFeatureCollection();
+                writer.flush();
+            }
         } catch (IOException ex) {
             throw new BackingStoreException(ex);
         }
