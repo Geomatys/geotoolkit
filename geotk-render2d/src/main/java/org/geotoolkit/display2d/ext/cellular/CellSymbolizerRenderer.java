@@ -250,12 +250,8 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
             }
         }
 
-        final Rule rule = symbol.getSource().getRule();
-        final InMemoryFeatureSet subfs = new InMemoryFeatureSet(cellType, features);
-        final MapLayer subLayer = MapBuilder.createLayer(subfs);
-        subLayer.setStyle(GO2Utilities.STYLE_FACTORY.style(rule.symbolizers().toArray(new Symbolizer[0])));
-
-        return DefaultPortrayalService.present(subLayer, subfs, renderingContext);
+        final MapLayer subLayer = createCellLayer(layer, cellType, features);
+        return DefaultPortrayalService.present(subLayer, subLayer.getData(), renderingContext);
     }
 
     private Stream<Presentation> presentations(MapLayer layer, final GridCoverageResource resource) {
@@ -368,12 +364,20 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
                 features.add(feature);
             }
         }
-        final InMemoryFeatureSet fs = new InMemoryFeatureSet(cellType, features);
 
-        final MapLayer subLayer = MapBuilder.createLayer(fs);
-        subLayer.setStyle(GO2Utilities.STYLE_FACTORY.style(rule.symbolizers().toArray(new Symbolizer[0])));
-
-        return DefaultPortrayalService.present(subLayer, fs, renderingContext);
+        final MapLayer subLayer = createCellLayer(layer, cellType, features);
+        return DefaultPortrayalService.present(subLayer, subLayer.getData(), renderingContext);
     }
 
+    private MapLayer createCellLayer(final MapLayer sourceLayer, final FeatureType cellType, final List<Feature> cells) {
+        final InMemoryFeatureSet subfs = new InMemoryFeatureSet(cellType, cells);
+        final MapLayer subLayer = MapBuilder.createLayer(subfs);
+        subLayer.setIdentifier(sourceLayer.getIdentifier());
+        subLayer.setTitle(sourceLayer.getTitle());
+
+        final Rule rule = symbol.getSource().getRule();
+        subLayer.setStyle(GO2Utilities.STYLE_FACTORY.style(rule.symbolizers().toArray(Symbolizer[]::new)));
+
+        return subLayer;
+    }
 }
