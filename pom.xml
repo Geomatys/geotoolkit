@@ -22,7 +22,7 @@
   <parent>
     <groupId>com.geomatys</groupId>
     <artifactId>geomatys-bom</artifactId>
-    <version>2022.3</version>
+    <version>2022.4</version>
   </parent>
 
   <groupId>org.geotoolkit</groupId>
@@ -185,16 +185,12 @@
     <jasperreports.version>6.18.1</jasperreports.version>
     <jaxen.version>1.1.2</jaxen.version>
     <java.version>17</java.version>
-    <jmh.version>1.34</jmh.version>
-    <log4j.version>1.2.17</log4j.version>
     <lucene.version>8.4.0</lucene.version>
     <marineapi.version>0.11.0</marineapi.version>
-    <mysql.version>8.0.17</mysql.version>
     <nashorn.version>15.3</nashorn.version>
     <netty3.version>3.9.4.Final</netty3.version> <!-- Can not upgrade to 3.10.6 because it breaks Geotk build. -->
     <postgis.version>2.3.0</postgis.version>
     <quartz.version>2.3.1</quartz.version>
-    <rxtx.version>2.2pre2</rxtx.version>
     <woodstox.version>6.0.0</woodstox.version>
     <xmlgraphics.version>2.3</xmlgraphics.version>
     <antlr.version>4.9.3</antlr.version>
@@ -363,22 +359,12 @@
         <artifactId>commons-logging</artifactId>
         <version>${commons-logging.version}</version>
       </dependency>
-      <dependency>
-        <groupId>log4j</groupId>
-        <artifactId>log4j</artifactId>
-        <version>${log4j.version}</version>
-      </dependency>
 
       <!-- Database and Server -->
       <dependency>
         <groupId>net.postgis</groupId>
         <artifactId>postgis-jdbc</artifactId>
         <version>${postgis.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>mysql</groupId>
-        <artifactId>mysql-connector-java</artifactId>
-        <version>${mysql.version}</version>
       </dependency>
       <dependency>
         <groupId>commons-dbcp</groupId>
@@ -445,17 +431,6 @@
       <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-feature</artifactId><version>${project.version}</version></dependency>
       <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-utility</artifactId><version>${project.version}</version><type>test-jar</type></dependency>
       <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-xml-tms</artifactId><version>${project.version}</version></dependency>
-
-      <dependency>
-        <groupId>org.openjdk.jmh</groupId>
-        <artifactId>jmh-core</artifactId>
-        <version>${jmh.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.openjdk.jmh</groupId>
-        <artifactId>jmh-generator-annprocess</artifactId>
-        <version>${jmh.version}</version>
-      </dependency>
 
       <!--
       Dependency resolution override needed to pass dependency convergence.
