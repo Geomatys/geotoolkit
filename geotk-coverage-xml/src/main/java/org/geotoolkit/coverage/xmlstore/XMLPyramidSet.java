@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.*;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.image.io.XImageIO;
+import org.geotoolkit.storage.multires.WritableTileMatrixSet;
 import org.geotoolkit.util.StringUtilities;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.geotoolkit.storage.multires.TileMatrixSet;
 
 /**
  *
@@ -88,7 +88,7 @@ public class XMLPyramidSet {
         return pyramids;
     }
 
-    public Collection<TileMatrixSet> getPyramids() {
+    public Collection<WritableTileMatrixSet> getPyramids() {
         return (Collection)pyramids();
     }
 
@@ -104,7 +104,7 @@ public class XMLPyramidSet {
      * @return The newly created pyramid.
      * @throws org.apache.sis.storage.DataStoreException If the given CRS is null or invalid.
      */
-    TileMatrixSet createPyramid(final String layerName, final CoordinateReferenceSystem crs) throws DataStoreException {
+    WritableTileMatrixSet createPyramid(final String layerName, final CoordinateReferenceSystem crs) throws DataStoreException {
         final XMLPyramid pyramid = new XMLPyramid(crs);
         pyramid.id = UUID.randomUUID().toString();
         pyramid.initialize(this);

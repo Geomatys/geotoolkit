@@ -17,32 +17,34 @@
 package org.geotoolkit.storage.multires;
 
 import java.awt.Dimension;
-import java.awt.Point;
 import java.awt.image.RenderedImage;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.stream.Stream;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.storage.AbstractResource;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.storage.tiling.Tile;
+import org.apache.sis.storage.tiling.TileStatus;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.process.Monitor;
 import org.geotoolkit.process.ProcessListener;
 import org.geotoolkit.storage.coverage.IProgressiveCoverageResource;
 import org.geotoolkit.storage.coverage.TileMatrixImage;
 import org.geotoolkit.util.StringUtilities;
-import org.opengis.coverage.PointOutsideCoverageException;
-import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.GenericName;
@@ -55,12 +57,12 @@ import org.opengis.util.GenericName;
  */
 public class GeneralProgressiveResource extends AbstractResource implements ProgressiveResource, IProgressiveCoverageResource {
 
-    protected final TiledResource base;
+    protected final WritableTiledResource base;
     private GenericName identifier;
     private final Map<String,ProgressiveTileMatrixSet> cachePyramids = new HashMap<>();
     protected TileGenerator generator;
 
-    public GeneralProgressiveResource(TiledResource base, TileGenerator generator) {
+    public GeneralProgressiveResource(WritableTiledResource base, TileGenerator generator) {
         super(null);
         this.base = base;
         this.generator = generator;
@@ -92,26 +94,26 @@ public class GeneralProgressiveResource extends AbstractResource implements Prog
      * {@inheritDoc }.
      */
     @Override
-    public Collection<TileMatrixSet> getTileMatrixSets() throws DataStoreException {
-        final Collection<TileMatrixSet> parentPyramids = (Collection<TileMatrixSet>) base.getTileMatrixSets();
+    public Collection<WritableTileMatrixSet> getTileMatrixSets() throws DataStoreException {
+        final Collection<? extends WritableTileMatrixSet> parentPyramids = base.getTileMatrixSets();
 
-        final List<TileMatrixSet> pyramids;
+        final List<WritableTileMatrixSet> pyramids;
         synchronized (cachePyramids) {
             //check pyramids, we need to do this until an event system is created
 
             //add missing pyramids in the view
             final Set<String> keys = new HashSet<>();
-            for (TileMatrixSet candidate : parentPyramids) {
-                if (!cachePyramids.containsKey(candidate.getIdentifier())) {
-                    cachePyramids.put(candidate.getIdentifier(), new ProgressiveTileMatrixSet(candidate));
+            for (WritableTileMatrixSet candidate : parentPyramids) {
+                if (!cachePyramids.containsKey(candidate.getIdentifier().toString())) {
+                    cachePyramids.put(candidate.getIdentifier().toString(), new ProgressiveTileMatrixSet(candidate));
                 }
-                keys.add(candidate.getIdentifier());
+                keys.add(candidate.getIdentifier().toString());
             }
             if (cachePyramids.size() != parentPyramids.size()) {
                 //some pyramids have been deleted from parent
                 cachePyramids.keySet().retainAll(keys);
             }
-            pyramids = UnmodifiableArrayList.wrap(cachePyramids.values().toArray(new TileMatrixSet[0]));
+            pyramids = UnmodifiableArrayList.wrap(cachePyramids.values().toArray(new WritableTileMatrixSet[0]));
         }
 
         return pyramids;
@@ -121,26 +123,26 @@ public class GeneralProgressiveResource extends AbstractResource implements Prog
      * {@inheritDoc }.
      */
     @Override
-    public TileMatrixSet createTileMatrixSet(TileMatrixSet template) throws DataStoreException {
+    public WritableTileMatrixSet createTileMatrixSet(org.apache.sis.storage.tiling.TileMatrixSet template) throws DataStoreException {
         synchronized (cachePyramids) {
-            final TileMatrixSet newParentPyramid = base.createTileMatrixSet(template);
+            final WritableTileMatrixSet newParentPyramid = base.createTileMatrixSet(template);
             final ProgressiveTileMatrixSet cached = new ProgressiveTileMatrixSet(newParentPyramid);
-            cachePyramids.put(cached.getIdentifier(), cached);
+            cachePyramids.put(cached.getIdentifier().toString(), cached);
             return cached;
         }
     }
 
     @Override
-    public void removeTileMatrixSet(String identifier) throws DataStoreException {
+    public void deleteTileMatrixSet(String identifier) throws DataStoreException {
         synchronized (cachePyramids) {
-            base.removeTileMatrixSet(identifier);
+            base.deleteTileMatrixSet(identifier);
             cachePyramids.remove(identifier);
         }
     }
 
     @Override
     public void clear(Envelope env, NumberRange resolutions) throws DataStoreException {
-        for (TileMatrixSet pyramid : TileMatrices.getTileMatrixSets(base)) {
+        for (WritableTileMatrixSet pyramid : base.getTileMatrixSets()) {
             TileMatrices.clear(pyramid, env, resolutions);
         }
     }
@@ -148,7 +150,7 @@ public class GeneralProgressiveResource extends AbstractResource implements Prog
     @Override
     public void generate(Envelope env, NumberRange resolutions, ProcessListener listener) throws DataStoreException {
         try {
-            for (TileMatrixSet pyramid : TileMatrices.getTileMatrixSets(base)) {
+            for (WritableTileMatrixSet pyramid : base.getTileMatrixSets()) {
                 generator.generate(pyramid, env, resolutions, listener);
             }
         } catch (InterruptedException ex) {
@@ -169,12 +171,12 @@ public class GeneralProgressiveResource extends AbstractResource implements Prog
         return StringUtilities.toStringTree(name, elements);
     }
 
-    private final class ProgressiveTileMatrixSet implements TileMatrixSet {
+    private final class ProgressiveTileMatrixSet implements WritableTileMatrixSet {
 
-        private final TileMatrixSet parent;
-        private final Map<String,ProgressiveTileMatrix> cacheMosaics = new HashMap<>();
+        private final WritableTileMatrixSet parent;
+        private final Map<GenericName,ProgressiveTileMatrix> cacheMosaics = new HashMap<>();
 
-        ProgressiveTileMatrixSet(TileMatrixSet pyramid) {
+        ProgressiveTileMatrixSet(WritableTileMatrixSet pyramid) {
             this.parent = pyramid;
         }
 
@@ -184,16 +186,16 @@ public class GeneralProgressiveResource extends AbstractResource implements Prog
         }
 
         @Override
-        public Collection<? extends TileMatrix> getTileMatrices() {
-            final Collection<? extends TileMatrix> parentMosaics = parent.getTileMatrices();
+        public SortedMap<GenericName, ? extends WritableTileMatrix> getTileMatrices() {
+            final SortedMap<GenericName, ? extends WritableTileMatrix> parentMosaics = parent.getTileMatrices();
 
-            final List<TileMatrix> pmosaics;
+            SortedMap<GenericName, WritableTileMatrix> pmosaics;
             synchronized (cacheMosaics) {
                 //check mosaics, we need to do this until an event system is created
 
                 //add missing mosaics in the view
-                final Set<String> keys = new HashSet<>();
-                for (TileMatrix candidate : parentMosaics) {
+                final Set<GenericName> keys = new HashSet<>();
+                for (WritableTileMatrix candidate : parentMosaics.values()) {
                     if (!cacheMosaics.containsKey(candidate.getIdentifier())) {
                         cacheMosaics.put(candidate.getIdentifier(), new ProgressiveTileMatrix(ProgressiveTileMatrixSet.this, candidate));
                     }
@@ -203,36 +205,28 @@ public class GeneralProgressiveResource extends AbstractResource implements Prog
                     //some mosaics have been deleted from parent
                     cacheMosaics.keySet().retainAll(keys);
                 }
-                pmosaics = UnmodifiableArrayList.wrap(cacheMosaics.values().toArray(new TileMatrix[0]));
+                pmosaics = new TreeMap<>(parentMosaics.comparator());
+                pmosaics.putAll(cacheMosaics);
+                pmosaics = Collections.unmodifiableSortedMap(pmosaics);
             }
 
             return pmosaics;
         }
 
         @Override
-        public double[] getScales() {
-            return parent.getScales();
-        }
-
-        @Override
-        public Envelope getEnvelope() {
+        public Optional<Envelope> getEnvelope() {
             return parent.getEnvelope();
         }
 
         @Override
-        public String getIdentifier() {
+        public GenericName getIdentifier() {
             return parent.getIdentifier();
         }
 
         @Override
-        public String getFormat() {
-            return parent.getFormat();
-        }
-
-        @Override
-        public TileMatrix createTileMatrix(TileMatrix template) throws DataStoreException {
+        public WritableTileMatrix createTileMatrix(org.apache.sis.storage.tiling.TileMatrix template) throws DataStoreException {
             synchronized (cacheMosaics) {
-                final TileMatrix newParentMosaic = parent.createTileMatrix(template);
+                final WritableTileMatrix newParentMosaic = parent.createTileMatrix(template);
                 final ProgressiveTileMatrix cached = new ProgressiveTileMatrix(ProgressiveTileMatrixSet.this, newParentMosaic);
                 cacheMosaics.put(cached.getIdentifier(), cached);
                 return cached;
@@ -243,7 +237,12 @@ public class GeneralProgressiveResource extends AbstractResource implements Prog
         public void deleteTileMatrix(String mosaicId) throws DataStoreException {
             synchronized (cacheMosaics) {
                 parent.deleteTileMatrix(mosaicId);
-                cacheMosaics.remove(mosaicId);
+                for (TileMatrix tm : cacheMosaics.values()) {
+                    if (tm.getIdentifier().toString().equals(mosaicId)) {
+                        cacheMosaics.remove(tm.getIdentifier());
+                        break;
+                    }
+                }
             }
         }
 
@@ -253,35 +252,25 @@ public class GeneralProgressiveResource extends AbstractResource implements Prog
         }
     }
 
-    public final class ProgressiveTileMatrix implements TileMatrix {
+    public final class ProgressiveTileMatrix implements WritableTileMatrix {
 
         private final ProgressiveTileMatrixSet pyramid;
-        private final TileMatrix base;
+        private final WritableTileMatrix base;
         private TileMatrixImage image;
 
-        ProgressiveTileMatrix(ProgressiveTileMatrixSet pyramid, TileMatrix base) {
+        ProgressiveTileMatrix(ProgressiveTileMatrixSet pyramid, WritableTileMatrix base) {
             this.pyramid = pyramid;
             this.base = base;
         }
 
         @Override
-        public String getIdentifier() {
+        public GenericName getIdentifier() {
             return base.getIdentifier();
         }
 
         @Override
-        public DirectPosition getUpperLeftCorner() {
-            return base.getUpperLeftCorner();
-        }
-
-        @Override
-        public Dimension getGridSize() {
-            return base.getGridSize();
-        }
-
-        @Override
-        public double getScale() {
-            return base.getScale();
+        public GridGeometry getTilingScheme() {
+            return base.getTilingScheme();
         }
 
         @Override
@@ -290,54 +279,36 @@ public class GeneralProgressiveResource extends AbstractResource implements Prog
         }
 
         @Override
-        public Envelope getEnvelope() {
-            return base.getEnvelope();
-        }
-
-        @Override
-        public boolean isMissing(long col, long row) throws PointOutsideCoverageException {
+        public TileStatus getTileStatus(long... indices) throws DataStoreException {
             if (generator == null) {
-                return base.isMissing(col, row);
+                return base.getTileStatus(indices);
             }
             //tile will be generated
-            return false;
+            return TileStatus.EXISTS;
         }
 
         @Override
-        public Tile getTile(long col, long row, Map hints) throws DataStoreException {
-            Tile tile = base.getTile(col, row);
+        public Optional<Tile> getTile(long... indices) throws DataStoreException {
+            Tile tile = base.getTile(indices).orElse(null);
             if (tile == null && generator != null) {
                 //generate tile
-                tile = generator.generateTile(pyramid, base, new Point(Math.toIntExact(col), Math.toIntExact(row)));
+                tile = generator.generateTile(pyramid, base, indices);
                 if (!(base instanceof DefiningTileMatrix)) {
-                    base.writeTiles(Stream.of(tile), null);
-                    tile = base.getTile(col, row);
+                    base.writeTiles(Stream.of(tile));
+                    tile = base.getTile(indices).orElse(null);
                 }
             }
-            return tile;
-        }
-
-        /**
-         * Return the full extent, tiles will be generated.
-         * @return
-         */
-        @Override
-        public GridExtent getDataExtent() {
-            final Dimension tileSize = getTileSize();
-            final Dimension gridSize = getGridSize();
-            return new GridExtent(
-                    ((long) gridSize.width) * tileSize.width,
-                    ((long) gridSize.height) * tileSize.height);
+            return Optional.ofNullable(tile);
         }
 
         @Override
-        public void writeTiles(Stream<Tile> tiles, Monitor monitor) throws DataStoreException {
-            base.writeTiles(tiles, monitor);
+        public void writeTiles(Stream<Tile> tiles) throws DataStoreException {
+            base.writeTiles(tiles);
         }
 
         @Override
-        public void deleteTile(int tileX, int tileY) throws DataStoreException {
-            base.deleteTile(tileX, tileY);
+        public long deleteTiles(GridExtent indicesRanges) throws DataStoreException {
+            return base.deleteTiles(indicesRanges);
         }
 
         @Override
@@ -347,7 +318,7 @@ public class GeneralProgressiveResource extends AbstractResource implements Prog
             } catch (DataStoreException ex) {
                 //may be empty
             }
-            return getTile(0, 0, null);
+            return getTile(0, 0).orElse(null);
         }
 
         public synchronized RenderedImage asImage() throws DataStoreException {

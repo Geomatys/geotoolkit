@@ -16,36 +16,38 @@
  */
 package org.geotoolkit.storage.memory;
 
-import java.awt.Point;
-import org.apache.sis.storage.AbstractResource;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
-import org.geotoolkit.storage.multires.DeferredTile;
-import org.geotoolkit.storage.multires.Tile;
+import org.apache.sis.storage.tiling.Tile;
+import org.apache.sis.storage.tiling.TileStatus;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public final class InMemoryDeferredTile extends AbstractResource implements Tile, DeferredTile {
+public final class InMemoryDeferredTile implements Tile {
 
-    private final Point position;
+    private final long[] position;
     private final Resource fs;
 
-    public InMemoryDeferredTile(Point position, Resource fs) {
-        super(null);
+    public InMemoryDeferredTile(long[] position, Resource fs) {
         this.position = position;
         this.fs = fs;
     }
 
     @Override
-    public Resource open() throws DataStoreException {
+    public Resource getResource() throws DataStoreException {
         return fs;
     }
 
     @Override
-    public Point getPosition() {
-        return position;
+    public TileStatus getStatus() {
+        return TileStatus.EXISTS;
+    }
+
+    @Override
+    public long[] getIndices() {
+        return position.clone();
     }
 
 }

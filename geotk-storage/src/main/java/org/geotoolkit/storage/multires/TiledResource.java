@@ -18,7 +18,6 @@ package org.geotoolkit.storage.multires;
 
 import java.util.Collection;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.Resource;
 
 /**
  * A TiledResource is a ressource which content can be accessed by
@@ -32,7 +31,7 @@ import org.apache.sis.storage.Resource;
  *
  * @author Johann Sorel (Geomatys)
  */
-public interface TiledResource extends Resource {
+public interface TiledResource extends org.apache.sis.storage.tiling.TiledResource {
 
     /**
      * Returns the collection of available {@linkplain TileMatrixSet}.
@@ -41,26 +40,6 @@ public interface TiledResource extends Resource {
      * @throws org.apache.sis.storage.DataStoreException
      */
     Collection<? extends TileMatrixSet> getTileMatrixSets() throws DataStoreException;
-
-    /**
-     * Create a new {@linkplain TileMatrixSet} based on given model.
-     * The created model may have differences.
-     * Model identifier may be preserved or not, behavior is implementation specific.
-     * If the id is already used a new one will be generated instead.
-     *
-     * @param template a template model which structure will be used as reference.
-     * @return created {@linkplain  TileMatrixSet}
-     * @throws DataStoreException
-     */
-    TileMatrixSet createTileMatrixSet(TileMatrixSet template) throws DataStoreException;
-
-    /**
-     * Remove an existing {@linkplain TileMatrixSet}.
-     *
-     * @param identifier not null
-     * @throws DataStoreException
-     */
-    void removeTileMatrixSet(String identifier) throws DataStoreException;
 
     /**
      * Get a description of the inner storage of tiles.

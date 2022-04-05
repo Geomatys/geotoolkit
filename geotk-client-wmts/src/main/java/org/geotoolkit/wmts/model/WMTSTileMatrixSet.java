@@ -16,20 +16,19 @@
  */
 package org.geotoolkit.wmts.model;
 
-import java.util.Collection;
-import java.util.List;
+import java.util.Collections;
+import java.util.SortedMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
-import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.multires.AbstractTileMatrixSet;
+import org.geotoolkit.storage.multires.ScaleSortedMap;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
-import org.geotoolkit.storage.multires.TileMatrix;
+import org.opengis.util.GenericName;
 
 /**
  *
@@ -42,7 +41,7 @@ public class WMTSTileMatrixSet extends AbstractTileMatrixSet {
     private final org.geotoolkit.wmts.xml.v100.TileMatrixSetLink link;
     private final org.geotoolkit.wmts.xml.v100.TileMatrixSet matrixset;
     private CoordinateReferenceSystem crs;
-    private final List<TileMatrix> mosaics;
+    private final SortedMap<GenericName,WMTSTileMatrix> mosaics;
 
     public WMTSTileMatrixSet(final WMTSTileMatrixSets set, final org.geotoolkit.wmts.xml.v100.TileMatrixSetLink link){
         super(null);
@@ -68,8 +67,8 @@ public class WMTSTileMatrixSet extends AbstractTileMatrixSet {
 
         final org.geotoolkit.wmts.xml.v100.TileMatrixSetLimits limits = link.getTileMatrixSetLimits();
 
-        final TileMatrix[] mosaics = new TileMatrix[matrixset.getTileMatrix().size()];
-        for (int i=0;i<mosaics.length;i++) {
+        final ScaleSortedMap<WMTSTileMatrix> m = new ScaleSortedMap<>();
+        for (int i=0,n=matrixset.getTileMatrix().size();i<n;i++) {
             final org.geotoolkit.wmts.xml.v100.TileMatrix matrix = matrixset.getTileMatrix().get(i);
             org.geotoolkit.wmts.xml.v100.TileMatrixLimits limit = null;
             if(limits != null){
@@ -80,9 +79,9 @@ public class WMTSTileMatrixSet extends AbstractTileMatrixSet {
                     }
                 }
             }
-            mosaics[i] = new WMTSTileMatrix(this, matrix, limit);
+            m.insertByScale(new WMTSTileMatrix(this, matrix, limit));
         }
-        this.mosaics = UnmodifiableArrayList.wrap(mosaics);
+        this.mosaics = Collections.unmodifiableSortedMap(m);
     }
 
     public org.geotoolkit.wmts.xml.v100.TileMatrixSet getMatrixset() {
@@ -99,18 +98,8 @@ public class WMTSTileMatrixSet extends AbstractTileMatrixSet {
     }
 
     @Override
-    public Collection<? extends TileMatrix> getTileMatrices() {
+    public SortedMap<GenericName,WMTSTileMatrix> getTileMatrices() {
         return mosaics;
-    }
-
-    @Override
-    public TileMatrix createTileMatrix(TileMatrix template) throws DataStoreException {
-        throw new DataStoreException("Not supported.");
-    }
-
-    @Override
-    public void deleteTileMatrix(String mosaicId) throws DataStoreException {
-        throw new DataStoreException("Not supported.");
     }
 
 }

@@ -17,18 +17,15 @@
 package org.geotoolkit.storage.multires;
 
 import java.awt.Dimension;
-import java.awt.Point;
+import java.util.Arrays;
 import java.util.UUID;
-import java.util.stream.Stream;
-import org.apache.sis.coverage.grid.GridExtent;
-import org.apache.sis.geometry.GeneralDirectPosition;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.tiling.TileStatus;
 import org.apache.sis.util.Classes;
-import org.apache.sis.util.collection.BackingStoreException;
-import org.geotoolkit.process.Monitor;
+import org.apache.sis.util.iso.Names;
 import org.opengis.geometry.DirectPosition;
-import org.opengis.geometry.Envelope;
+import org.opengis.util.GenericName;
 
 /**
  * Abstract TileMatrix.
@@ -38,38 +35,25 @@ import org.opengis.geometry.Envelope;
  */
 public abstract class AbstractTileMatrix implements TileMatrix {
 
-    private final String id;
+    private final GenericName id;
     private final TileMatrixSet pyramid;
-    private final DirectPosition upperLeft;
-    private final Dimension gridSize;
+    private final GridGeometry tilingScheme;
     private final Dimension tileSize;
-    private final double scale;
 
-    public AbstractTileMatrix(TileMatrixSet pyramid, DirectPosition upperLeft, Dimension gridSize,
+    public AbstractTileMatrix(GenericName id, TileMatrixSet pyramid, DirectPosition upperLeft, Dimension gridSize,
             Dimension tileSize, double scale) {
-        this(null,pyramid,upperLeft,gridSize,tileSize,scale);
+        this(id, pyramid, TileMatrices.toGridGeometry(upperLeft, gridSize, scale, tileSize), tileSize);
     }
 
-    public AbstractTileMatrix(String id, TileMatrixSet pyramid, DirectPosition upperLeft, Dimension gridSize,
-            Dimension tileSize, double scale) {
+    public AbstractTileMatrix(GenericName id, TileMatrixSet pyramid, GridGeometry tilingScheme, Dimension tileSize) {
         this.pyramid = pyramid;
-        this.upperLeft = new GeneralDirectPosition(upperLeft);
-        this.scale = scale;
-        this.gridSize = (Dimension) gridSize.clone();
+        this.tilingScheme = tilingScheme;
         this.tileSize = (Dimension) tileSize.clone();
 
         if (id == null) {
-            this.id = UUID.randomUUID().toString();
+            this.id = Names.createLocalName(null, null, UUID.randomUUID().toString());
         } else {
             this.id = id;
-        }
-
-        try {
-            //ensure we do not exceed integer max value.
-            Math.multiplyExact(gridSize.width, tileSize.width);
-            Math.multiplyExact(gridSize.height, tileSize.height);
-        } catch (ArithmeticException ex) {
-            throw new IllegalArgumentException("Trying to create a tile matrix too large, Scale:" + scale + " Grid size:" + gridSize + " Tile size: " + tileSize, ex);
         }
     }
 
@@ -77,8 +61,13 @@ public abstract class AbstractTileMatrix implements TileMatrix {
      * {@inheritDoc}
      */
     @Override
-    public String getIdentifier() {
+    public GenericName getIdentifier() {
         return id;
+    }
+
+    @Override
+    public GridGeometry getTilingScheme() {
+        return tilingScheme;
     }
 
     /**
@@ -86,22 +75,6 @@ public abstract class AbstractTileMatrix implements TileMatrix {
      */
     public TileMatrixSet getTileMatrixSet() {
         return pyramid;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public DirectPosition getUpperLeftCorner() {
-        return new GeneralDirectPosition(upperLeft); //defensive copy
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Dimension getGridSize() {
-        return (Dimension) gridSize.clone(); //defensive copy
     }
 
     /**
@@ -116,110 +89,8 @@ public abstract class AbstractTileMatrix implements TileMatrix {
      * {@inheritDoc}
      */
     @Override
-    public double getScale() {
-        return scale;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Envelope getEnvelope() {
-        return TileMatrices.computeMosaicEnvelope(this);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isMissing(long col, long row) {
-        return false;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public GridExtent getDataExtent() {
-
-        Point start = null;
-        for (int y = 0; y < gridSize.height; y++) {
-            for (int x = 0; x < gridSize.width; x++) {
-                if (!isMissing(x,y)) {
-                     start = new Point(x,y);
-                     break;//--get only the first point of the grid
-                }
-            }
-            if (start != null) break;//--get only the first point of the grid
-        }
-
-        if (start != null) {
-            Point end = null;
-            for (int y = gridSize.height-1; y >= start.y; y--) {
-                for (int x = gridSize.width-1; x >= start.x; x--) {
-                    if (!isMissing(x, y)) {
-                        end = new Point(x, y);
-                        break; //-- get only the last tile grid
-                    }
-                }
-                if (end != null) break; //-- get only the last tile grid
-            }
-
-            assert end.x >= start.x;
-            assert end.y >= start.y;
-
-            //at this point we are sure of the Y range
-            //we still need to search for X
-            for (int y = start.y; y <= end.y; y++) {
-                for (int x = 0; x < start.x; x++) {
-                    if (!isMissing(x, y)) {
-                        start.x = x;
-                    }
-                }
-                for (int x = gridSize.width-1; x > end.x; x--) {
-                    if (!isMissing(x, y)) {
-                        end.x = x;
-                    }
-                }
-            }
-
-            long sx = ((long) start.x) * tileSize.width;
-            long sy = ((long) start.y) * tileSize.height;
-            long ex = ((long) end.x + 1) * tileSize.width;
-            long ey = ((long) end.y + 1) * tileSize.height;
-            return new GridExtent(null, new long[]{sx,sy}, new long[]{ex,ey}, false);
-        } else {
-            //all mosaic tiles are missing
-            return new GridExtent(
-                    ((long) gridSize.width) * tileSize.width,
-                    ((long) gridSize.height) * tileSize.height);
-        }
-    }
-
-    protected abstract boolean isWritable() throws DataStoreException;
-
-    @Override
-    public void writeTiles(Stream<Tile> tiles, Monitor monitor) throws DataStoreException {
-        try {
-            tiles.parallel().forEach((Tile tile) -> {
-                try {
-                    writeTile(tile);
-                } catch (DataStoreException ex) {
-                    throw new BackingStoreException(ex);
-                }
-            });
-        } catch (BackingStoreException ex) {
-            throw ex.unwrapOrRethrow(DataStoreException.class);
-        }
-    }
-
-    protected void writeTile(Tile tile) throws DataStoreException {
-        throw new DataStoreException("Writing not supported");
-    }
-
-    @Override
-    public void deleteTile(int tileX, int tileY) throws DataStoreException {
-        throw new DataStoreException("Pyramid writing not supported.");
+    public TileStatus getTileStatus(long... indices) {
+        return TileStatus.UNKNOWN;
     }
 
     @Override
@@ -234,10 +105,10 @@ public abstract class AbstractTileMatrix implements TileMatrix {
     public static String toString(TileMatrix mosaic) {
         final StringBuilder sb = new StringBuilder(Classes.getShortClassName(mosaic));
         sb.append("   id = ").append(mosaic.getIdentifier());
-        sb.append("   scale = ").append(mosaic.getScale());
-        sb.append("   gridSize[").append(mosaic.getGridSize().width).append(',').append(mosaic.getGridSize().height).append(']');
+        sb.append("   resolution = ").append(Arrays.toString(mosaic.getTilingScheme().getResolution(true)));
+        sb.append("   gridSize = ").append(mosaic.getTilingScheme().getExtent());
         sb.append("   tileSize[").append(mosaic.getTileSize().width).append(',').append(mosaic.getTileSize().height).append(']');
-        sb.append("   bbox = ").append(new GeneralEnvelope(mosaic.getEnvelope()).toString());
+        sb.append("   bbox = ").append(new GeneralEnvelope(mosaic.getTilingScheme().getEnvelope()).toString());
         return sb.toString();
     }
 

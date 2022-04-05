@@ -26,6 +26,7 @@ import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.ComparisonMode;
 import org.junit.Assert;
 import org.junit.Test;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -49,7 +50,7 @@ public class TileMatrixSetBuilderTest {
         final AffineTransform2D gridToCrs = new AffineTransform2D(1, 0, 0, -1, -50, 40);
         final GridGeometry gg = new GridGeometry(extent, PixelInCell.CELL_CORNER, gridToCrs, crs);
 
-        final DefiningTileMatrixSet pyramid = new TileMatrixSetBuilder()
+        final DefiningTileMatrixSet tms = new TileMatrixSetBuilder()
                 .setDomain(gg)
                 .setIteration(TileMatrixSetBuilder.Iteration.BOTTOM_TO_TOP)
                 .setTileSize(new Dimension(256, 256))
@@ -59,18 +60,18 @@ public class TileMatrixSetBuilderTest {
 
         final DirectPosition2D upperleft = new DirectPosition2D(crs, -50, 40);
 
-        Assert.assertEquals(crs, pyramid.getCoordinateReferenceSystem());
-        Assert.assertEquals(3, pyramid.getTileMatrices().size());
+        Assert.assertEquals(crs, tms.getCoordinateReferenceSystem());
+        Assert.assertEquals(3, tms.getTileMatrices().size());
 
-        final double[] scales = pyramid.getScales();
+        final double[] scales = TileMatrices.getScales(tms);
         Assert.assertEquals(3, scales.length);
         Assert.assertEquals(1, scales[0], DELTA);
         Assert.assertEquals(2, scales[1], DELTA);
         Assert.assertEquals(4, scales[2], DELTA);
 
-        final TileMatrix m1 = pyramid.getTileMatrices(scales[0]).iterator().next();
-        final TileMatrix m2 = pyramid.getTileMatrices(scales[1]).iterator().next();
-        final TileMatrix m3 = pyramid.getTileMatrices(scales[2]).iterator().next();
+        final TileMatrix m1 = TileMatrices.getTileMatrices(tms,scales[0]).iterator().next();
+        final TileMatrix m2 = TileMatrices.getTileMatrices(tms,scales[1]).iterator().next();
+        final TileMatrix m3 = TileMatrices.getTileMatrices(tms,scales[2]).iterator().next();
 
         Assert.assertEquals(upperleft, m1.getUpperLeftCorner());
         Assert.assertEquals(upperleft, m2.getUpperLeftCorner());
@@ -80,9 +81,9 @@ public class TileMatrixSetBuilderTest {
         Assert.assertEquals(new Dimension(256, 256), m2.getTileSize());
         Assert.assertEquals(new Dimension(256, 256), m3.getTileSize());
 
-        Assert.assertEquals(new Dimension(4, 2), m1.getGridSize());
-        Assert.assertEquals(new Dimension(2, 1), m2.getGridSize());
-        Assert.assertEquals(new Dimension(1, 1), m3.getGridSize());
+        Assert.assertTrue(new GridExtent(4, 2).equals(m1.getTilingScheme().getExtent(), ComparisonMode.IGNORE_METADATA));
+        Assert.assertTrue(new GridExtent(2, 1).equals(m2.getTilingScheme().getExtent(), ComparisonMode.IGNORE_METADATA));
+        Assert.assertTrue(new GridExtent(1, 1).equals(m3.getTilingScheme().getExtent(), ComparisonMode.IGNORE_METADATA));
     }
 
     @Test
@@ -93,7 +94,7 @@ public class TileMatrixSetBuilderTest {
         final AffineTransform2D gridToCrs = new AffineTransform2D(1, 0, 0, -1, -180, 90);
         final GridGeometry gg = new GridGeometry(extent, PixelInCell.CELL_CORNER, gridToCrs, crs);
 
-        final DefiningTileMatrixSet pyramid = new TileMatrixSetBuilder()
+        final DefiningTileMatrixSet tms = new TileMatrixSetBuilder()
                 .setDomain(gg)
                 .setIteration(TileMatrixSetBuilder.Iteration.TOP_TO_BOTTOM_STRICT)
                 .setTileSize(new Dimension(256, 256))
@@ -102,21 +103,21 @@ public class TileMatrixSetBuilderTest {
 
         final DirectPosition2D upperleft = new DirectPosition2D(crs, -180, 90);
 
-        Assert.assertEquals(crs, pyramid.getCoordinateReferenceSystem());
-        Assert.assertEquals(1, pyramid.getTileMatrices().size());
+        Assert.assertEquals(crs, tms.getCoordinateReferenceSystem());
+        Assert.assertEquals(1, tms.getTileMatrices().size());
 
-        final double[] scales = pyramid.getScales();
+        final double[] scales = TileMatrices.getScales(tms);
         Assert.assertEquals(360.0/2.0/256.0, scales[0], DELTA);
 
-        final TileMatrix m1 = pyramid.getTileMatrices(scales[0]).iterator().next();
+        final TileMatrix m1 = TileMatrices.getTileMatrices(tms,scales[0]).iterator().next();
 
         Assert.assertEquals(upperleft, m1.getUpperLeftCorner());
 
         Assert.assertEquals(new Dimension(256, 256), m1.getTileSize());
 
-        Assert.assertEquals("0", m1.getIdentifier());
+        Assert.assertEquals("0", m1.getIdentifier().toString());
 
-        Assert.assertEquals(new Dimension(2, 1), m1.getGridSize());
+        Assert.assertTrue(new GridExtent(2, 1).equals(m1.getTilingScheme().getExtent(), ComparisonMode.IGNORE_METADATA));
     }
 
     @Test
@@ -127,7 +128,7 @@ public class TileMatrixSetBuilderTest {
         final AffineTransform2D gridToCrs = new AffineTransform2D(1, 0, 0, -1, -180, 90);
         final GridGeometry gg = new GridGeometry(extent, PixelInCell.CELL_CORNER, gridToCrs, crs);
 
-        final DefiningTileMatrixSet pyramid = new TileMatrixSetBuilder()
+        final DefiningTileMatrixSet tms = new TileMatrixSetBuilder()
                 .setDomain(gg)
                 .setIteration(TileMatrixSetBuilder.Iteration.TOP_TO_BOTTOM_EXTRAPOLATE)
                 .setTileSize(new Dimension(256, 256))
@@ -136,15 +137,15 @@ public class TileMatrixSetBuilderTest {
 
         final DirectPosition2D upperleft = new DirectPosition2D(crs, -180, 90.0);
 
-        Assert.assertEquals(crs, pyramid.getCoordinateReferenceSystem());
-        Assert.assertEquals(2, pyramid.getTileMatrices().size());
+        Assert.assertEquals(crs, tms.getCoordinateReferenceSystem());
+        Assert.assertEquals(2, tms.getTileMatrices().size());
 
-        final double[] scales = pyramid.getScales();
+        final double[] scales = TileMatrices.getScales(tms);
         Assert.assertEquals(360.0/4.0/256.0, scales[0], DELTA);
         Assert.assertEquals(360.0/2.0/256.0, scales[1], DELTA);
 
-        final TileMatrix m1 = pyramid.getTileMatrices(scales[0]).iterator().next();
-        final TileMatrix m2 = pyramid.getTileMatrices(scales[1]).iterator().next();
+        final TileMatrix m1 = TileMatrices.getTileMatrices(tms,scales[0]).iterator().next();
+        final TileMatrix m2 = TileMatrices.getTileMatrices(tms,scales[1]).iterator().next();
 
         Assert.assertEquals(upperleft, m1.getUpperLeftCorner());
         Assert.assertEquals(upperleft, m2.getUpperLeftCorner());
@@ -152,11 +153,11 @@ public class TileMatrixSetBuilderTest {
         Assert.assertEquals(new Dimension(256, 256), m1.getTileSize());
         Assert.assertEquals(new Dimension(256, 256), m2.getTileSize());
 
-        Assert.assertEquals("1", m1.getIdentifier());
-        Assert.assertEquals("0", m2.getIdentifier());
+        Assert.assertEquals("1", m1.getIdentifier().toString());
+        Assert.assertEquals("0", m2.getIdentifier().toString());
 
-        Assert.assertEquals(new Dimension(4, 2), m1.getGridSize());
-        Assert.assertEquals(new Dimension(2, 1), m2.getGridSize());
+        Assert.assertTrue(new GridExtent(4, 2).equals(m1.getTilingScheme().getExtent(), ComparisonMode.IGNORE_METADATA));
+        Assert.assertTrue(new GridExtent(2, 1).equals(m2.getTilingScheme().getExtent(), ComparisonMode.IGNORE_METADATA));
     }
 
     @Test
@@ -168,48 +169,48 @@ public class TileMatrixSetBuilderTest {
         final GridGeometry gridGeometry = new GridGeometry(extent, PixelInCell.CELL_CORNER, gridToCrs, crs);
 
         { //here the only tile matrix has a more accurate resolution the the data, lastexact iteration must not add any tile matrix
-            final DefiningTileMatrixSet pyramid = new TileMatrixSetBuilder()
+            final DefiningTileMatrixSet tms = new TileMatrixSetBuilder()
                     .setDomain(gridGeometry)
                     .setIteration(TileMatrixSetBuilder.Iteration.TOP_TO_BOTTOM_LASTEXACT)
                     .setTileSize(new Dimension(256, 256))
                     .setScaleFactor(2.0)
                     .build();
 
-            Assert.assertEquals(crs, pyramid.getCoordinateReferenceSystem());
+            Assert.assertEquals(crs, tms.getCoordinateReferenceSystem());
 
-            Assert.assertEquals(1, pyramid.getTileMatrices().size());
-            final double[] scales = pyramid.getScales();
+            Assert.assertEquals(1, tms.getTileMatrices().size());
+            final double[] scales = TileMatrices.getScales(tms);
             Assert.assertEquals(360.0/2.0/256.0, scales[0], DELTA);
 
-            final TileMatrix m1 = pyramid.getTileMatrices(scales[0]).iterator().next();
+            final TileMatrix m1 = TileMatrices.getTileMatrices(tms,scales[0]).iterator().next();
 
             final DirectPosition2D upperleft = new DirectPosition2D(crs, -180, 90.0);
             Assert.assertEquals(upperleft, m1.getUpperLeftCorner());
 
             Assert.assertEquals(new Dimension(256, 256), m1.getTileSize());
 
-            Assert.assertEquals("0", m1.getIdentifier());
+            Assert.assertEquals("0", m1.getIdentifier().toString());
 
-            Assert.assertEquals(new Dimension(2, 1), m1.getGridSize());
+            Assert.assertTrue(new GridExtent(2, 1).equals(m1.getTilingScheme().getExtent(), ComparisonMode.IGNORE_METADATA));
         }
 
         {
-            final DefiningTileMatrixSet pyramid = new TileMatrixSetBuilder()
+            final DefiningTileMatrixSet tms = new TileMatrixSetBuilder()
                     .setDomain(gridGeometry)
                     .setIteration(TileMatrixSetBuilder.Iteration.TOP_TO_BOTTOM_LASTEXACT)
                     .setTileSize(new Dimension(128, 128))
                     .setScaleFactor(2.0)
                     .build();
 
-            Assert.assertEquals(crs, pyramid.getCoordinateReferenceSystem());
+            Assert.assertEquals(crs, tms.getCoordinateReferenceSystem());
 
-            Assert.assertEquals(2, pyramid.getTileMatrices().size());
-            final double[] scales = pyramid.getScales();
+            Assert.assertEquals(2, tms.getTileMatrices().size());
+            final double[] scales = TileMatrices.getScales(tms);
             Assert.assertEquals(1.0, scales[0], DELTA); //exact data scale
             Assert.assertEquals(360.0/2.0/128.0, scales[1], DELTA);
 
-            final TileMatrix m1 = pyramid.getTileMatrices(scales[0]).iterator().next();
-            final TileMatrix m2 = pyramid.getTileMatrices(scales[1]).iterator().next();
+            final TileMatrix m1 = TileMatrices.getTileMatrices(tms,scales[0]).iterator().next();
+            final TileMatrix m2 = TileMatrices.getTileMatrices(tms,scales[1]).iterator().next();
 
             final DirectPosition2D upperleft = new DirectPosition2D(crs, -180, 90.0);
             Assert.assertEquals(upperleft, m1.getUpperLeftCorner());
@@ -218,11 +219,11 @@ public class TileMatrixSetBuilderTest {
             Assert.assertEquals(new Dimension(128, 128), m1.getTileSize());
             Assert.assertEquals(new Dimension(128, 128), m2.getTileSize());
 
-            Assert.assertEquals("1", m1.getIdentifier());
-            Assert.assertEquals("0", m2.getIdentifier());
+            Assert.assertEquals("1", m1.getIdentifier().toString());
+            Assert.assertEquals("0", m2.getIdentifier().toString());
 
-            Assert.assertEquals(new Dimension(3, 2), m1.getGridSize());
-            Assert.assertEquals(new Dimension(2, 1), m2.getGridSize());
+            Assert.assertTrue(new GridExtent(3, 2).equals(m1.getTilingScheme().getExtent(), ComparisonMode.IGNORE_METADATA));
+            Assert.assertTrue(new GridExtent(2, 1).equals(m2.getTilingScheme().getExtent(), ComparisonMode.IGNORE_METADATA));
         }
     }
 
@@ -234,7 +235,7 @@ public class TileMatrixSetBuilderTest {
         final AffineTransform2D gridToCrs = new AffineTransform2D(1, 0, 0, -1, -180, 90);
         final GridGeometry gg = new GridGeometry(extent, PixelInCell.CELL_CORNER, gridToCrs, crs);
 
-        final DefiningTileMatrixSet pyramid = new TileMatrixSetBuilder()
+        final DefiningTileMatrixSet tms = new TileMatrixSetBuilder()
                 .setDomain(gg)
                 .setIteration(TileMatrixSetBuilder.Iteration.TOP_TO_BOTTOM_EXTRAPOLATE)
                 .setTileSize(new Dimension(256, 256))
@@ -244,17 +245,17 @@ public class TileMatrixSetBuilderTest {
 
         final DirectPosition2D upperleft = new DirectPosition2D(crs, -180, 90.0);
 
-        Assert.assertEquals(crs, pyramid.getCoordinateReferenceSystem());
-        Assert.assertEquals(3, pyramid.getTileMatrices().size());
+        Assert.assertEquals(crs, tms.getCoordinateReferenceSystem());
+        Assert.assertEquals(3, tms.getTileMatrices().size());
 
-        final double[] scales = pyramid.getScales();
+        final double[] scales = TileMatrices.getScales(tms);
         Assert.assertEquals(0.01, scales[0], DELTA);
         Assert.assertEquals(0.05, scales[1], DELTA);
         Assert.assertEquals(0.1, scales[2], DELTA);
 
-        final TileMatrix m1 = pyramid.getTileMatrices(scales[0]).iterator().next();
-        final TileMatrix m2 = pyramid.getTileMatrices(scales[1]).iterator().next();
-        final TileMatrix m3 = pyramid.getTileMatrices(scales[2]).iterator().next();
+        final TileMatrix m1 = TileMatrices.getTileMatrices(tms,scales[0]).iterator().next();
+        final TileMatrix m2 = TileMatrices.getTileMatrices(tms,scales[1]).iterator().next();
+        final TileMatrix m3 = TileMatrices.getTileMatrices(tms,scales[2]).iterator().next();
 
         Assert.assertEquals(upperleft, m1.getUpperLeftCorner());
         Assert.assertEquals(upperleft, m2.getUpperLeftCorner());
@@ -264,13 +265,13 @@ public class TileMatrixSetBuilderTest {
         Assert.assertEquals(new Dimension(256, 256), m2.getTileSize());
         Assert.assertEquals(new Dimension(256, 256), m3.getTileSize());
 
-        Assert.assertEquals("2", m1.getIdentifier());
-        Assert.assertEquals("1", m2.getIdentifier());
-        Assert.assertEquals("0", m3.getIdentifier());
+        Assert.assertEquals("2", m1.getIdentifier().toString());
+        Assert.assertEquals("1", m2.getIdentifier().toString());
+        Assert.assertEquals("0", m3.getIdentifier().toString());
 
-        Assert.assertEquals(new Dimension(141, 71), m1.getGridSize());
-        Assert.assertEquals(new Dimension(29, 15), m2.getGridSize());
-        Assert.assertEquals(new Dimension(15, 8), m3.getGridSize());
+        Assert.assertTrue(new GridExtent(141, 71).equals(m1.getTilingScheme().getExtent(), ComparisonMode.IGNORE_METADATA));
+        Assert.assertTrue(new GridExtent(29, 15).equals(m2.getTilingScheme().getExtent(), ComparisonMode.IGNORE_METADATA));
+        Assert.assertTrue(new GridExtent(15, 8).equals(m3.getTilingScheme().getExtent(), ComparisonMode.IGNORE_METADATA));
     }
 
     @Test
@@ -287,25 +288,25 @@ public class TileMatrixSetBuilderTest {
         tmsBuilder.setIteration(TileMatrixSetBuilder.Iteration.BOTTOM_TO_TOP);
         tmsBuilder.setDomain(bbox, 1);
 
-        DefiningTileMatrixSet pyramid = tmsBuilder.build();
+        DefiningTileMatrixSet tms = tmsBuilder.build();
 
         final GeneralDirectPosition upperleft = new GeneralDirectPosition(crs);
         upperleft.setOrdinate(0, 1);
         upperleft.setOrdinate(1, 50);
         upperleft.setOrdinate(2, 1000);
 
-        Assert.assertEquals(crs, pyramid.getCoordinateReferenceSystem());
-        Assert.assertEquals(1, pyramid.getTileMatrices().size());
+        Assert.assertEquals(crs, tms.getCoordinateReferenceSystem());
+        Assert.assertEquals(1, tms.getTileMatrices().size());
 
-        final double[] scales = pyramid.getScales();
+        final double[] scales = TileMatrices.getScales(tms);
         Assert.assertEquals(1, scales.length);
         Assert.assertEquals(1, scales[0], DELTA);
 
-        final TileMatrix m1 = pyramid.getTileMatrices(scales[0]).iterator().next();
+        final TileMatrix m1 = TileMatrices.getTileMatrices(tms,scales[0]).iterator().next();
 
         Assert.assertEquals(upperleft, m1.getUpperLeftCorner());
         Assert.assertEquals(new Dimension(30, 30), m1.getTileSize());
-        Assert.assertEquals(new Dimension(1, 1), m1.getGridSize());
+        Assert.assertTrue(new GridExtent(null, new long[3], new long[]{1,1,1},false).equals(m1.getTilingScheme().getExtent(), ComparisonMode.IGNORE_METADATA));
     }
 
 }

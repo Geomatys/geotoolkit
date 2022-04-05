@@ -19,7 +19,6 @@ package org.geotoolkit.storage.coverage;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
@@ -41,6 +40,7 @@ import org.geotoolkit.storage.memory.InMemoryTiledGridCoverageResource;
 import org.geotoolkit.storage.multires.TileMatrices;
 import org.geotoolkit.storage.multires.TileMatrix;
 import org.geotoolkit.storage.multires.TileMatrixSet;
+import org.geotoolkit.storage.multires.WritableTileMatrixSet;
 import org.junit.Assert;
 import org.junit.Test;
 import org.opengis.geometry.Envelope;
@@ -81,7 +81,7 @@ public class CoverageTileGeneratorTest {
 
 
         final InMemoryTiledGridCoverageResource ipr = new InMemoryTiledGridCoverageResource(Names.createLocalName(null, null, "test"));
-        final TileMatrixSet tileMatrixSet = (TileMatrixSet) ipr.createTileMatrixSet(TileMatrices.createWorldWGS84Template(4));
+        final WritableTileMatrixSet tileMatrixSet = ipr.createTileMatrixSet(TileMatrices.createWorldWGS84Template(4));
 
         generator.generate(tileMatrixSet, null, null, null);
 
@@ -119,7 +119,7 @@ public class CoverageTileGeneratorTest {
         generateEnvelope.setRange(1, 0, 30);
 
         final InMemoryTiledGridCoverageResource ipr = new InMemoryTiledGridCoverageResource(Names.createLocalName(null, null, "test"));
-        final TileMatrixSet tileMatrixSet = (TileMatrixSet) ipr.createTileMatrixSet(TileMatrices.createWorldWGS84Template(4));
+        final WritableTileMatrixSet tileMatrixSet = ipr.createTileMatrixSet(TileMatrices.createWorldWGS84Template(4));
 
         generator.generate(tileMatrixSet, generateEnvelope, null, null);
 
@@ -158,7 +158,7 @@ public class CoverageTileGeneratorTest {
         generateEnvelope.setRange(1, 0, 30);
 
         final InMemoryTiledGridCoverageResource ipr = new InMemoryTiledGridCoverageResource(Names.createLocalName(null, null, "test"));
-        final TileMatrixSet tileMatrixSet = (TileMatrixSet) ipr.createTileMatrixSet(TileMatrices.createWorldWGS84Template(1));
+        final WritableTileMatrixSet tileMatrixSet = ipr.createTileMatrixSet(TileMatrices.createWorldWGS84Template(1));
 
         generator.generate(tileMatrixSet, generateEnvelope, null, null);
 
@@ -170,12 +170,12 @@ public class CoverageTileGeneratorTest {
         final GridCoverageResource origin = generator.getOrigin();
         final GeneralEnvelope dataEnvelope = new GeneralEnvelope(origin.getGridGeometry().getEnvelope());
 
-        for (TileMatrix tileMatrix : tileMatrixSet.getTileMatrices()) {
+        for (TileMatrix tileMatrix : tileMatrixSet.getTileMatrices().values()) {
             final Dimension gridSize = tileMatrix.getGridSize();
             for (int y = 0; y < gridSize.height; y++) {
                 for (int x = 0; x < gridSize.width; x++) {
-                    final ImageTile tile = (ImageTile) tileMatrix.getTile(x, y);
-                    final Point tileCoord = new Point(x, y);
+                    final ImageTile tile = (ImageTile) tileMatrix.getTile(x, y).orElse(null);
+                    final long[] tileCoord = new long[]{x, y};
                     final GridGeometry tileGridGeom = TileMatrices.getTileGridGeometry2D(tileMatrix, tileCoord);
                     final Envelope tileEnv = tileGridGeom.getEnvelope();
                     if (generateEnvelope == null || generateEnvelope.intersects(tileEnv)) {

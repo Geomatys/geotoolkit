@@ -30,15 +30,18 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.iso.Names;
 import org.geotoolkit.coverage.grid.EstimatedGridGeometry;
 import org.geotoolkit.coverage.grid.GridGeometryIterator;
 import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.geotoolkit.util.NamesExt;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.util.FactoryException;
+import org.opengis.util.GenericName;
 
 /**
  *
@@ -324,7 +327,7 @@ public final class TileMatrixSetBuilder {
                     int idinc = 0;
                     for (double scale : scales) {
                         final String name = isSlice ? "" + idinc++ : UUID.randomUUID().toString();
-                        pyramid.createTileMatrix(createTileMatrix(name, upperLeft, scale, spanX, spanY));
+                        pyramid.createTileMatrix(createTileMatrix(Names.createLocalName(null, null, name), upperLeft, scale, spanX, spanY));
                     }
                 } else {
 
@@ -346,14 +349,14 @@ public final class TileMatrixSetBuilder {
                         case BOTTOM_TO_TOP :
                             {
                                 double res = resolution;
-                                DefiningTileMatrix m = createTileMatrix(UUID.randomUUID().toString(), upperLeft, res, spanX, spanY);
+                                DefiningTileMatrix m = createTileMatrix(NamesExt.createRandomUUID(), upperLeft, res, spanX, spanY);
                                 Dimension gridSize = m.getGridSize();
                                 pyramid.createTileMatrix(m);
 
                                 //multiply resolution by given ratio until we reach one or two tiles.
                                 while (gridSize.width * gridSize.height > nbTileThreshold) {
                                     res *= scaleFactor;
-                                    m = createTileMatrix(UUID.randomUUID().toString(), upperLeft, res, spanX, spanY);
+                                    m = createTileMatrix(NamesExt.createRandomUUID(), upperLeft, res, spanX, spanY);
                                     gridSize = m.getGridSize();
                                     pyramid.createTileMatrix(m);
                                 }
@@ -368,7 +371,7 @@ public final class TileMatrixSetBuilder {
                                 if (last.getKey() > resolution) {
                                     //add a tile matrix with exact resolution
                                     final String name = isSlice ? "" + (last.getValue() + 1) : UUID.randomUUID().toString();
-                                    pyramid.createTileMatrix(createTileMatrix("" + name, upperLeft, resolution, spanX, spanY));
+                                    pyramid.createTileMatrix(createTileMatrix(Names.createLocalName(null, null, name), upperLeft, resolution, spanX, spanY));
                                 }
                             }
                             break;
@@ -378,7 +381,7 @@ public final class TileMatrixSetBuilder {
                                 if (last.getKey() != resolution) {
                                     //add a tile matrix with next resolution
                                     final String name = isSlice ? "" + (last.getValue() + 1) : UUID.randomUUID().toString();
-                                    pyramid.createTileMatrix(createTileMatrix("" + name, upperLeft, last.getKey() / scaleFactor, spanX, spanY));
+                                    pyramid.createTileMatrix(createTileMatrix(Names.createLocalName(null, null, name), upperLeft, last.getKey() / scaleFactor, spanX, spanY));
                                 }
                             }
                             break;
@@ -410,7 +413,7 @@ public final class TileMatrixSetBuilder {
 
         int idinc = 0;
         String name = isSlice ? "" + idinc : UUID.randomUUID().toString();
-        pyramid.createTileMatrix(createTileMatrix(name, upperLeft, res, spanX, spanY));
+        pyramid.createTileMatrix(createTileMatrix(Names.createLocalName(null, null, name), upperLeft, res, spanX, spanY));
 
         double lastRes = res;
         res /= scaleFactor;
@@ -418,14 +421,14 @@ public final class TileMatrixSetBuilder {
             idinc++;
             lastRes = res;
             name = isSlice ? "" + idinc : UUID.randomUUID().toString();
-            pyramid.createTileMatrix(createTileMatrix(name, upperLeft, res, spanX, spanY));
+            pyramid.createTileMatrix(createTileMatrix(Names.createLocalName(null, null, name), upperLeft, res, spanX, spanY));
             res /= scaleFactor;
         }
 
         return new AbstractMap.SimpleEntry<>(lastRes, idinc);
     }
 
-    private DefiningTileMatrix createTileMatrix(String id, DirectPosition upperLeft, double resolution, double spanX, double spanY) {
+    private DefiningTileMatrix createTileMatrix(GenericName id, DirectPosition upperLeft, double resolution, double spanX, double spanY) {
         final double nbX = (spanX / resolution) / tileSize.width;
         final double nbY = (spanY / resolution) / tileSize.height;
         final Dimension gridSize = new Dimension(

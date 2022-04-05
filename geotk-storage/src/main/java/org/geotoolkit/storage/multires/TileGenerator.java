@@ -16,9 +16,9 @@
  */
 package org.geotoolkit.storage.multires;
 
-import java.awt.Point;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.tiling.Tile;
 import org.geotoolkit.process.ProcessListener;
 import org.opengis.geometry.Envelope;
 
@@ -38,7 +38,7 @@ public interface TileGenerator {
      * @return created tile
      * @throws DataStoreException
      */
-    Tile generateTile(TileMatrixSet tileMatrixSet, TileMatrix tileMatrix, Point tileCoord) throws DataStoreException;
+    Tile generateTile(WritableTileMatrixSet tileMatrixSet, WritableTileMatrix tileMatrix, long[] tileCoord) throws DataStoreException;
 
     /**
      * Generate given box of data.
@@ -53,6 +53,6 @@ public interface TileGenerator {
      * @throws DataStoreException
      * @throws java.lang.InterruptedException
      */
-    void generate(TileMatrixSet tileMatrixSet, Envelope env, NumberRange resolutions, ProcessListener listener) throws DataStoreException, InterruptedException;
+    void generate(WritableTileMatrixSet tileMatrixSet, Envelope env, NumberRange resolutions, ProcessListener listener) throws DataStoreException, InterruptedException;
 
 }

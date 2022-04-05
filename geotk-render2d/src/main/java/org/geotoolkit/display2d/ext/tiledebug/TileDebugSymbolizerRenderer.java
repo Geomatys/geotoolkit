@@ -21,7 +21,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.Stroke;
@@ -30,9 +29,11 @@ import java.awt.geom.Rectangle2D;
 import java.text.AttributedString;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.internal.map.ExceptionPresentation;
 import org.apache.sis.internal.map.Presentation;
@@ -47,17 +48,16 @@ import org.geotoolkit.display2d.presentation.TextPresentation2;
 import org.geotoolkit.display2d.style.renderer.AbstractCoverageSymbolizerRenderer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.geotoolkit.geometry.GeometricUtilities;
-import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.awt.JTSGeometryJ2D;
 import org.geotoolkit.storage.coverage.TileMatrixSetCoverageReader;
 import org.geotoolkit.storage.multires.TileMatrices;
 import org.geotoolkit.storage.multires.TileMatrix;
+import org.geotoolkit.storage.multires.TiledResource;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
-import org.geotoolkit.storage.multires.TiledResource;
 
 /**
  * Renderer for Tile debug symbolizer.
@@ -96,19 +96,22 @@ public final class TileDebugSymbolizerRenderer extends AbstractCoverageSymbolize
             final Envelope wantedEnv = intersect.getKey();
 
             for (TileMatrix m : mosaics) {
-                final CoordinateReferenceSystem crs = m.getUpperLeftCorner().getCoordinateReferenceSystem();
+                final CoordinateReferenceSystem crs = m.getTilingScheme().getCoordinateReferenceSystem();
                 final CoordinateReferenceSystem crs2d = CRS.getHorizontalComponent(crs);
 
-                final Rectangle rectangle;
+                final GridExtent extent;
                 try {
-                    rectangle = TileMatrices.getTilesInEnvelope(m, wantedEnv);
+                    extent = TileMatrices.getTilesInEnvelope(m, wantedEnv);
                 } catch (NoSuchDataException ex) {
                     continue;
                 }
 
-                for (int x = 0; x < rectangle.width; x++) {
-                    for (int y = 0;y < rectangle.height; y++) {
-                        final GridGeometry gridgeom = TileMatrices.getTileGridGeometry2D(m, new Point(rectangle.x+x, rectangle.y+y), crs2d);
+                try (Stream<long[]> indices = TileMatrices.pointStream(extent)) {
+                    final Iterator<long[]> iterator = indices.iterator();
+                    while (iterator.hasNext()) {
+                        long[] indice = iterator.next();
+
+                        final GridGeometry gridgeom = TileMatrices.getTileGridGeometry2D(m, indice, crs2d);
                         Geometry geom = GeometricUtilities.toJTSGeometry(gridgeom.getEnvelope(), GeometricUtilities.WrapResolution.NONE);
                         geom.setUserData(crs2d);
                         geom = org.apache.sis.internal.feature.jts.JTS.transform(geom, renderingContext.getDisplayCRS());
@@ -125,15 +128,15 @@ public final class TileDebugSymbolizerRenderer extends AbstractCoverageSymbolize
                         final double centerX = bounds.getCenterX();
                         final double centerY = bounds.getCenterY();
 
-                        String mid = m.getIdentifier();
+                        String mid = m.getIdentifier().toString();
                         if (mid.length() > 10) {
                             mid = mid.substring(0, 9) + "..";
                         }
 
                         final String mosaicId = "Z: " + mid;
-                        final String mosaicScale = "S: " + new DecimalFormat("#0.00000").format(m.getScale());
-                        final String strX = "X: " + (rectangle.x+x);
-                        final String strY = "Y: " + (rectangle.y+y);
+                        final String mosaicScale = "S: " + new DecimalFormat("#0.00000").format(m.getTilingScheme().getResolution(true)[0]);
+                        final String strX = "X: " + (indice[0]);
+                        final String strY = "Y: " + (indice[1]);
 
                         String longest = mosaicId;
                         if (mosaicScale.length() > longest.length()) longest = mosaicScale;
@@ -214,6 +217,7 @@ public final class TileDebugSymbolizerRenderer extends AbstractCoverageSymbolize
 
                     }
                 }
+
             }
 
         } catch (DataStoreException | TransformException | FactoryException ex) {
