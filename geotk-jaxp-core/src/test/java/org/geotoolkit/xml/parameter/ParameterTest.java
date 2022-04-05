@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import org.geotoolkit.parameter.Parameter;
 import org.geotoolkit.parameter.ParameterGroup;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.opengis.metadata.citation.Citation;
@@ -33,6 +32,7 @@ import org.opengis.parameter.GeneralParameterValue;
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 import org.apache.sis.parameter.DefaultParameterDescriptorGroup;
+import org.apache.sis.parameter.DefaultParameterValue;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.util.DefaultInternationalString;
 import org.geotoolkit.parameter.Parameters;
@@ -50,16 +50,18 @@ import static org.junit.Assert.*;
  */
 public class ParameterTest extends org.geotoolkit.test.TestBase {
 
-    private static final String WRITING_FILE =
+    private static final String PARAMETER_FILE =
             "src/test/resources/org/geotoolkit/xml/parameter/parameterWriting.xml";
     private static final String WRITING_ALIAS_FILE =
             "src/test/resources/org/geotoolkit/xml/parameter/parameterWritingAlias.xml";
-    private static final String WRITING_SCHEMA =
+    private static final String SCHEMA_FILE =
             "src/test/resources/org/geotoolkit/xml/parameter/parameterSchema.xml";
-    private static final String WRITING_AFTER_READING_FILE =
-            "src/test/resources/org/geotoolkit/xml/parameter/parameterWritingAfterReading.xml";
-    private static final String WRITING_AFTER_READING_SCHEMA =
-            "src/test/resources/org/geotoolkit/xml/parameter/parameterSchemaAfterReading.xml";
+
+    private static File WRITING_FILE;
+    private static File WRITING_SCHEMA;
+    private static File WRITING_AFTER_READING_FILE;
+    private static File WRITING_AFTER_READING_SCHEMA;
+
     private static ParameterValueGroup INITIAL;
     private static ParameterDescriptorGroup INITIAL_DESC;
     private static ParameterDescriptorGroup ALIAS_DESC;
@@ -131,11 +133,11 @@ public class ParameterTest extends org.geotoolkit.test.TestBase {
         assertEquals("nameDG",descriptorGroup.getName().getCode());
         assertEquals("yokoyoko",descriptorGroup.getRemarks().toString());
 
-        assertEquals(7, descriptorGroup.descriptors().size());
+        assertEquals(8, descriptorGroup.descriptors().size());
 
         assertTrue(descriptorGroup.descriptors().get(0) instanceof ParameterDescriptor);
         final ParameterDescriptor descriptor1 = (ParameterDescriptor) descriptorGroup.descriptors().get(0);
-        final Set<String> valid1 = new TreeSet<String>();
+        final Set<String> valid1 = new TreeSet<>();
         valid1.add("salut");
         valid1.add("defaut");
         assertEquals(java.util.Collections.unmodifiableSet(valid1), descriptor1.getValidValues());
@@ -153,7 +155,7 @@ public class ParameterTest extends org.geotoolkit.test.TestBase {
 
         assertTrue(descriptorGroup.descriptors().get(2) instanceof ParameterDescriptor);
         final ParameterDescriptor descriptor3 = (ParameterDescriptor) descriptorGroup.descriptors().get(2);
-        final Set<String> valid3 = new TreeSet<String>();
+        final Set<String> valid3 = new TreeSet<>();
         valid3.add("autruche");
         valid3.add("oiseau");
         valid3.add("poulet");
@@ -164,7 +166,7 @@ public class ParameterTest extends org.geotoolkit.test.TestBase {
 
         assertTrue(descriptorGroup.descriptors().get(3) instanceof ParameterDescriptor);
         final ParameterDescriptor descriptor4 = (ParameterDescriptor) descriptorGroup.descriptors().get(3);
-        final Set<String> valid4 = new TreeSet<String>();
+        final Set<String> valid4 = new TreeSet<>();
         valid4.add("train");
         valid4.add("transport");
         valid4.add("voiture");
@@ -205,6 +207,13 @@ public class ParameterTest extends org.geotoolkit.test.TestBase {
         //assertEquals(new SimpleInternationalString("myTitle"),descriptor7.getName().getAuthority().getTitle());
         assertEquals("nameD7",descriptor7.getName().getCode());
 
+        assertTrue(descriptorGroup.descriptors().get(7) instanceof ParameterDescriptor);
+        final ParameterDescriptor descriptor8 = (ParameterDescriptor) descriptorGroup.descriptors().get(7);
+        assertEquals("remarks", descriptor8.getRemarks().toString());
+        assertEquals(null, descriptor8.getValidValues());
+        assertEquals(null, descriptor8.getDefaultValue());
+        assertEquals(String.class, descriptor8.getValueClass());
+        assertEquals(new NamedIdentifier(null, "name D8"), descriptor8.getName());
     }
 
     /**
@@ -220,7 +229,8 @@ public class ParameterTest extends org.geotoolkit.test.TestBase {
         final ParameterDescriptor descriptor1 = new ParameterBuilder()
                 .addName("nameD1")
                 .createEnumerated(String.class, valid1, def1);
-        final GeneralParameterValue parameter1 = new Parameter(descriptor1, value1);
+        final DefaultParameterValue parameter1 = new DefaultParameterValue(descriptor1);
+        parameter1.setValue(value1);
 
         // PARAMETER VALUE 2
         final String value2 = "cuisine";
@@ -231,7 +241,8 @@ public class ParameterTest extends org.geotoolkit.test.TestBase {
                 .setRemarks(remarks)
                 .setRequired(true)
                 .create(String.class, def2);
-        final GeneralParameterValue parameter2 = new Parameter(descriptor2, value2);
+        final DefaultParameterValue parameter2 = new DefaultParameterValue(descriptor2);
+        parameter2.setValue(value2);
 
         // PARAMETER VALUE 3
         final String value3 = "oiseau";
@@ -241,7 +252,8 @@ public class ParameterTest extends org.geotoolkit.test.TestBase {
                 .addName("nameD3")
                 .setRequired(true)
                 .createEnumerated(String.class, valid3, def3);
-        final GeneralParameterValue parameter3 = new Parameter(descriptor3, value3);
+        final DefaultParameterValue parameter3 = new DefaultParameterValue(descriptor3);
+        parameter3.setValue(value3);
 
         // PARAMETER VALUE 4
         final String value4 = "transport";
@@ -252,7 +264,8 @@ public class ParameterTest extends org.geotoolkit.test.TestBase {
                 .addName(authority4, "nameD4")
                 .setRequired(true)
                 .createEnumerated(String.class, valid4, def4);
-        final GeneralParameterValue parameter4 = new Parameter(descriptor4, value4);
+        final DefaultParameterValue parameter4 = new DefaultParameterValue(descriptor4);
+        parameter4.setValue(value4);
 
         // PARAMETER VALUE 5
         final Double value5 = 5.2;
@@ -263,7 +276,8 @@ public class ParameterTest extends org.geotoolkit.test.TestBase {
                 .addName(authority5, "nameD5")
                 .setRequired(true)
                 .createBounded(Double.class, 4.1, 7.2, def5);
-        final GeneralParameterValue parameter5 = new Parameter(descriptor5, value5);
+        final DefaultParameterValue parameter5 = new DefaultParameterValue(descriptor5);
+        parameter5.setValue(value5);
 
         // PARAMETER VALUE 6
         final Boolean value6 = true;
@@ -274,7 +288,8 @@ public class ParameterTest extends org.geotoolkit.test.TestBase {
                 .addName(authority6, "nameD6")
                 .setRequired(true)
                 .createBounded(Boolean.class, false,true,def6);
-        final GeneralParameterValue parameter6 = new Parameter(descriptor6, value6);
+        final DefaultParameterValue parameter6 = new DefaultParameterValue(descriptor6);
+        parameter6.setValue(value6);
 
         // PARAMETER VALUE 7
         final String value7 = "bigoudi";
@@ -285,24 +300,35 @@ public class ParameterTest extends org.geotoolkit.test.TestBase {
                 .addName(authority7, "nameD7")
                 .setRequired(true)
                 .createBounded(String.class, "Alphabet", "zanzibar", def7);
-        final GeneralParameterValue parameter7 = new Parameter(descriptor7, value7);
+        final DefaultParameterValue parameter7 = new DefaultParameterValue(descriptor7);
+        parameter7.setValue(value7);
+
+         // PARAMETER VALUE 8
+        final String value8 = "lapis lazulis";
+        final ParameterDescriptor descriptor8 = new ParameterBuilder()
+                .addName("name D8")
+                .setRemarks(remarks)
+                .setRequired(true)
+                .create(String.class, null);
+        final DefaultParameterValue parameter8 = new DefaultParameterValue(descriptor8);
+        parameter8.setValue(value8);
 
         // PARAMETER VALUE GROUP
         final GeneralParameterDescriptor[] descriptors = new GeneralParameterDescriptor[]{
-            descriptor1, descriptor2, descriptor3, descriptor4, descriptor5, descriptor6, descriptor7};
-        final Map<String, Object> properties = new HashMap<String, Object>();
+            descriptor1, descriptor2, descriptor3, descriptor4, descriptor5, descriptor6, descriptor7, descriptor8};
+        final Map<String, Object> properties = new HashMap<>();
         properties.put("name", "nameDG");
         properties.put("remarks", new DefaultInternationalString("yokoyoko"));
         final ParameterDescriptorGroup descriptorGroup = new DefaultParameterDescriptorGroup(
                 properties, 1, 2, descriptors);
         final GeneralParameterValue[] valueGroup = new GeneralParameterValue[]{
-            parameter1, parameter2, parameter3, parameter4, parameter5, parameter6, parameter7};
+            parameter1, parameter2, parameter3, parameter4, parameter5, parameter6, parameter7, parameter8};
         final ParameterValueGroup parameterGroup = new ParameterGroup(descriptorGroup, valueGroup);
 
         // GLOBAL PARAMETER VALUE GROUP
         final GeneralParameterDescriptor[] globalDescriptors = new GeneralParameterDescriptor[]{
             descriptorGroup};
-        final Map<String, Object> globalProperties = new HashMap<String, Object>();
+        final Map<String, Object> globalProperties = new HashMap<>();
         globalProperties.put("name", "nameGD");
         final ParameterDescriptorGroup globalDescriptorGroup = new DefaultParameterDescriptorGroup(
                 globalProperties, 1, 1, globalDescriptors);
@@ -324,15 +350,15 @@ public class ParameterTest extends org.geotoolkit.test.TestBase {
     public static void writing_Operation(final GeneralParameterValue globalParameter)
             throws IOException, XMLStreamException {
 
-        final File output = new File(WRITING_FILE);
+        WRITING_FILE = File.createTempFile("parameter", "xml");
         final ParameterValueWriter writer = new ParameterValueWriter();
-        writer.setOutput(output);
+        writer.setOutput(WRITING_FILE);
         writer.write(globalParameter);
         writer.dispose();
 
-        final File schema = new File(WRITING_SCHEMA);
+        WRITING_SCHEMA = File.createTempFile("schema", "xml");
         final ParameterDescriptorWriter schemaWriter = new ParameterDescriptorWriter();
-        schemaWriter.setOutput(schema);
+        schemaWriter.setOutput(WRITING_SCHEMA);
         schemaWriter.write(globalParameter.getDescriptor());
         schemaWriter.dispose();
 
@@ -352,22 +378,24 @@ public class ParameterTest extends org.geotoolkit.test.TestBase {
             throws IOException, XMLStreamException, ClassNotFoundException {
 
         final ParameterDescriptorReader descriptorReader = new ParameterDescriptorReader();
-        descriptorReader.setInput(new File(WRITING_SCHEMA));
+        descriptorReader.setInput(new File(SCHEMA_FILE));
 
         final ParameterValueReader valueReader = new ParameterValueReader(descriptorReader);
-        valueReader.setInput(new File(WRITING_FILE));
+        valueReader.setInput(new File(PARAMETER_FILE));
 
         final GeneralParameterValue parameterValue = valueReader.read();
         valueReader.dispose();
         descriptorReader.dispose();
 
         final ParameterValueWriter valueWriter = new ParameterValueWriter();
-        valueWriter.setOutput(new File(WRITING_AFTER_READING_FILE));
+        WRITING_AFTER_READING_FILE = File.createTempFile("parameter-after-read", "xml");
+        valueWriter.setOutput(WRITING_AFTER_READING_FILE);
         valueWriter.write(parameterValue);
         valueWriter.dispose();
 
         final ParameterDescriptorWriter descriptorWriter = new ParameterDescriptorWriter();
-        descriptorWriter.setOutput(new File(WRITING_AFTER_READING_SCHEMA));
+        WRITING_AFTER_READING_SCHEMA = File.createTempFile("schema-after-read", "xml");
+        descriptorWriter.setOutput(WRITING_AFTER_READING_SCHEMA);
         descriptorWriter.write(parameterValue.getDescriptor());
         descriptorWriter.dispose();
         return (ParameterValueGroup) parameterValue;
@@ -384,7 +412,7 @@ public class ParameterTest extends org.geotoolkit.test.TestBase {
             throws IOException, XMLStreamException {
 
         final ParameterValueReader valueReader = new ParameterValueReader(INITIAL_DESC);
-        valueReader.setInput(new File(WRITING_FILE));
+        valueReader.setInput(new File(PARAMETER_FILE));
         final GeneralParameterValue parameterValue = valueReader.read();
         valueReader.dispose();
         assertEquals(INITIAL, parameterValue);
@@ -418,7 +446,7 @@ public class ParameterTest extends org.geotoolkit.test.TestBase {
             throws IOException, XMLStreamException, ClassNotFoundException {
 
         final ParameterDescriptorReader descriptorReader = new ParameterDescriptorReader();
-        descriptorReader.setInput(new File(WRITING_SCHEMA));
+        descriptorReader.setInput(new File(SCHEMA_FILE));
         descriptorReader.read();
         final GeneralParameterDescriptor parameterDescriptor = descriptorReader.getDescriptorsRoot();
         descriptorReader.dispose();

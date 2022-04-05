@@ -24,8 +24,8 @@ import java.nio.file.Paths;
 import java.util.*;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
+import org.apache.sis.parameter.DefaultParameterValue;
 import org.apache.sis.referencing.IdentifiedObjects;
-import org.geotoolkit.parameter.Parameter;
 import org.geotoolkit.parameter.ParameterGroup;
 import org.apache.sis.util.ObjectConverters;
 import org.geotoolkit.xml.StaxStreamReader;
@@ -144,7 +144,7 @@ public class ParameterValueReader extends StaxStreamReader {
                             break;
 
                         case XMLStreamConstants.END_ELEMENT:
-                            if (IdentifiedObjects.getNames(desc, null).contains(reader.getLocalName())
+                            if (descriptorContainsName(desc, reader.getLocalName())
                                     && URI_PARAMETER.contains(reader.getNamespaceURI())) {
                                 break boucle;
                             }
@@ -165,7 +165,10 @@ public class ParameterValueReader extends StaxStreamReader {
                 }
             }
             if (converted != null) {
-                result = new Parameter((ParameterDescriptor) desc,converted);
+                DefaultParameterValue dpv = new DefaultParameterValue((ParameterDescriptor) desc);
+                dpv.setValue(converted);
+                result = dpv;
+
             } else {
                 result = null;
             }
@@ -180,6 +183,11 @@ public class ParameterValueReader extends StaxStreamReader {
         return result;
     }
 
+    private boolean descriptorContainsName(GeneralParameterDescriptor desc, String name) {
+        Set<String> names = IdentifiedObjects.getNames(desc, null);
+        return names.contains(name) || names.contains(name.replace('_', ' '));
+    }
+
     /**
      * <p>This method reads a value group</p>
      *
@@ -192,7 +200,7 @@ public class ParameterValueReader extends StaxStreamReader {
 
         final ParameterDescriptorGroup desc = (ParameterDescriptorGroup) stack.peekFirst();
 
-        final List<GeneralParameterValue> values = new ArrayList<GeneralParameterValue>();
+        final List<GeneralParameterValue> values = new ArrayList<>();
 
         boucle:
         while (reader.hasNext()) {
@@ -206,7 +214,7 @@ public class ParameterValueReader extends StaxStreamReader {
                     break;
 
                 case XMLStreamConstants.END_ELEMENT:
-                    if (IdentifiedObjects.getNames(desc, null).contains(reader.getLocalName())
+                    if (descriptorContainsName(desc, reader.getLocalName())
                             && URI_PARAMETER.contains(reader.getNamespaceURI())) {
                         break boucle;
                     }
@@ -241,14 +249,7 @@ public class ParameterValueReader extends StaxStreamReader {
             String name) throws XMLStreamException{
 
         if (desc == null) {
-            boolean match = false;
-            for (String pname : IdentifiedObjects.getNames(rootDesc, null)) {
-                if (pname.equals(name) || pname.equals(name.replace('_', ' '))) {
-                    match = true;
-                    break;
-                }
-            }
-
+            boolean match = descriptorContainsName(rootDesc, name);
             if (!match) {
                 throw new XMLStreamException("Descriptor for name : "+name+" not found.");
             }
@@ -262,9 +263,9 @@ public class ParameterValueReader extends StaxStreamReader {
 
             ParameterDescriptorGroup pdg = (ParameterDescriptorGroup) desc;
             GeneralParameterDescriptor candidate = null;
-            try{
+            try {
                 return pdg.descriptor(name);
-            }catch(ParameterNotFoundException ex){
+            } catch(ParameterNotFoundException ex) {
                 //second try
                 name = name.replace('_', ' ');
             }
