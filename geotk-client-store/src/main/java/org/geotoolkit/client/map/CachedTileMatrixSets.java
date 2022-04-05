@@ -269,7 +269,7 @@ public abstract class CachedTileMatrixSets extends DefaultTileMatrixSets {
                     throw new RuntimeException(ex.getMessage(), ex);
                 }
             }
-        });
+        }).takeWhile(Objects::nonNull);
     }
 
     /**
