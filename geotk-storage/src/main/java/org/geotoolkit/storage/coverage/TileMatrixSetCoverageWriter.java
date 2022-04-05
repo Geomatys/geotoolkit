@@ -16,26 +16,27 @@
  */
 package org.geotoolkit.storage.coverage;
 
-import java.awt.Dimension;
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.util.Iterator;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.concurrent.CancellationException;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+import org.apache.sis.coverage.grid.DisjointExtentException;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.ImageCombiner;
 import org.apache.sis.image.Interpolation;
 import org.apache.sis.referencing.CRS;
-import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.referencing.operation.transform.TransformSeparator;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
@@ -46,7 +47,11 @@ import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.storage.coverage.mosaic.AggregatedCoverageResource;
 import org.geotoolkit.storage.multires.TileMatrices;
-import org.opengis.geometry.DirectPosition;
+import org.geotoolkit.storage.multires.TileMatrix;
+import org.geotoolkit.storage.multires.TileMatrixSet;
+import org.apache.sis.storage.tiling.TileStatus;
+import org.geotoolkit.storage.multires.TiledResource;
+import org.geotoolkit.storage.multires.WritableTileMatrix;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
@@ -54,9 +59,6 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
-import org.geotoolkit.storage.multires.TileMatrixSet;
-import org.geotoolkit.storage.multires.TileMatrix;
-import org.geotoolkit.storage.multires.TiledResource;
 
 
 /**
@@ -137,36 +139,25 @@ public class TileMatrixSetCoverageWriter <T extends TiledResource & org.apache.s
 
         private final GridCoverage sourceCoverage;
         private final Envelope requestedEnvelope;
-        private final CoordinateReferenceSystem crsCoverage2D;
         private final RenderedImage sourceImage;
-        private final MathTransform srcCRSToGrid;
         private final Interpolation interpolation;
         private volatile boolean finished = false;
 
         //iteration state informations
-        private final Iterator<TileMatrixSet> pyramidsIte;
-        private Iterator<TileMatrix> tileMatrices;
+        private final Iterator<? extends TileMatrixSet> pyramidsIte;
+        private Iterator<WritableTileMatrix> tileMatrices;
         private TileMatrixSet currentTileMatrixSet = null;
-        private MathTransform crsDestToSrcGrid;
-        private TileMatrix currentTileMatrix = null;
+        private WritableTileMatrix currentTileMatrix = null;
         private CoordinateReferenceSystem destCrs2D;
-        private MathTransform crsDestToCrsCoverage;
         private Envelope tileMatrixSetEnvelope;
 
         //mosaic infos
-        private double res;
-        private double mosULX;
-        private double mosULY;
-        private int mosAreaX;
-        private int mosAreaY;
-        private int mosAreaMaxX;
-        private int mosAreaMaxY;
-        private int idminx;
-        private int idminy;
-        private int idmaxx;
-        private int idmaxy;
-        private int idx = -1;
-        private int idy = -1;
+        private long idminx;
+        private long idminy;
+        private long idmaxx;
+        private long idmaxy;
+        private long idx = -1;
+        private long idy = -1;
 
         private Runnable next = null;
 
@@ -174,54 +165,28 @@ public class TileMatrixSetCoverageWriter <T extends TiledResource & org.apache.s
                 CoordinateReferenceSystem crsCoverage2D, RenderedImage sourceImage,
                 MathTransform srcCRSToGrid, Interpolation interpolation, GridCoverage sourceCoverage) throws DataStoreException{
             this.requestedEnvelope = requestedEnvelope;
-            this.crsCoverage2D = crsCoverage2D;
             this.sourceImage = sourceImage;
-            this.srcCRSToGrid = srcCRSToGrid;
             this.interpolation = interpolation;
-            pyramidsIte = TileMatrices.getTileMatrixSets(model).iterator();
+            pyramidsIte = model.getTileMatrixSets().iterator();
             this.sourceCoverage = sourceCoverage;
         }
 
-        private boolean calculateMosaicRange(final TileMatrixSet pyramid, final TileMatrix mosaic, Envelope pyramidEnvelope){
-
-            res = mosaic.getScale();
-            final DirectPosition moUpperLeft = mosaic.getUpperLeftCorner();
-
-            // define geographic intersection
-            final Envelope mosaicEnv = mosaic.getEnvelope();
-            final GeneralEnvelope intersection = new GeneralEnvelope(pyramidEnvelope.getCoordinateReferenceSystem());
-            intersection.setRange(0, mosaicEnv.getMinimum(0), mosaicEnv.getMaximum(0));
-            intersection.setRange(1, mosaicEnv.getMinimum(1), mosaicEnv.getMaximum(1));
-            final int minOrdinate = CRSUtilities.firstHorizontalAxis(intersection.getCoordinateReferenceSystem());
-            if (!intersection.intersects(pyramidEnvelope, true)) {
-                return false;
-            }
-            intersection.intersect(pyramidEnvelope);
-
-            // mosaic upper left corner coordinates.
-            mosULX      = moUpperLeft.getOrdinate(minOrdinate);
-            mosULY      = moUpperLeft.getOrdinate(minOrdinate+1);
-
-            //define pixel work area of current mosaic.
-            mosAreaX       = (int) Math.round(Math.abs((mosULX - intersection.getMinimum(minOrdinate))) /res);
-            mosAreaY       = (int) Math.round(Math.abs((mosULY - intersection.getMaximum(minOrdinate+1))) /res);
-            final int mosAreaWidth   = (int)((intersection.getSpan(minOrdinate) / res));
-
-            final int mosAreaHeight  = (int)((intersection.getSpan(minOrdinate+1) / res));
-            mosAreaMaxX    = mosAreaX + mosAreaWidth;
-            mosAreaMaxY    = mosAreaY + mosAreaHeight;
-
-            // mosaic tiles properties.
-            final Dimension tileSize = mosaic.getTileSize();
-            final int tileWidth      = tileSize.width;
-            final int tileHeight     = tileSize.height;
+        private boolean calculateMosaicRange(final TileMatrix tileMatrix, Envelope pyramidEnvelope){
 
             // define tiles indexes from current mosaic which will be changed.
-            idminx         = mosAreaX / tileWidth;
-            idminy         = mosAreaY / tileHeight;
-            idmaxx         = (mosAreaMaxX + tileWidth-1) / tileWidth;
-            idmaxy         = (mosAreaMaxY + tileHeight - 1) / tileHeight;
-
+            final GridExtent intersection;
+            try {
+                intersection = tileMatrix.getTilingScheme().derive()
+                    .rounding(GridRoundingMode.ENCLOSING)
+                    .subgrid(pyramidEnvelope)
+                    .getIntersection();
+            } catch (DisjointExtentException ex) {
+                return false;
+            }
+            idminx = intersection.getLow(0);
+            idminy = intersection.getLow(1);
+            idmaxx = intersection.getHigh(0) + 1;
+            idmaxy = intersection.getHigh(1) + 1;
             return true;
         }
 
@@ -262,18 +227,15 @@ public class TileMatrixSetCoverageWriter <T extends TiledResource & org.apache.s
                             final GeneralEnvelope tmpFilter = new GeneralEnvelope(
                                     ReferencingUtilities.transform(requestedEnvelope, currentTileMatrixSet.getCoordinateReferenceSystem()));
 
-                            tileMatrices = TileMatrices.findTileMatrix(currentTileMatrixSet, tmpFilter, false).iterator();
+                            tileMatrices = ((List) TileMatrices.findTileMatrix(currentTileMatrixSet, tmpFilter, false)).iterator();
 
                             //define CRS and mathTransform from current pyramid to source coverage.
                             destCrs2D = CRS.getHorizontalComponent(currentTileMatrixSet.getCoordinateReferenceSystem());
-                            crsDestToCrsCoverage = CRS.findOperation(destCrs2D, crsCoverage2D, null).getMathTransform();
                             //geographic
                             tileMatrixSetEnvelope = Envelopes.transform(requestedEnvelope, destCrs2D);
                         } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
-
-                        crsDestToSrcGrid = MathTransforms.concatenate(crsDestToCrsCoverage, srcCRSToGrid);
 
                     } else {
                         //we have finish
@@ -297,7 +259,7 @@ public class TileMatrixSetCoverageWriter <T extends TiledResource & org.apache.s
                 }
 
                 if (idx == -1) {
-                    calculateMosaicRange(currentTileMatrixSet, currentTileMatrix, tileMatrixSetEnvelope);
+                    calculateMosaicRange(currentTileMatrix, tileMatrixSetEnvelope);
                     idx = idminx-1;
                     idy = idminy;
                 }
@@ -325,9 +287,9 @@ public class TileMatrixSetCoverageWriter <T extends TiledResource & org.apache.s
 
     private static class TileUpdater <T extends TiledResource & org.apache.sis.storage.GridCoverageResource> implements Runnable{
 
-        private final TileMatrix mosaic;
-        private final int idx;
-        private final int idy;
+        private final WritableTileMatrix mosaic;
+        private final long idx;
+        private final long idy;
         private final Interpolation interpolation;
         private final RenderedImage baseImage;
         private final GridCoverage coverage;
@@ -335,7 +297,7 @@ public class TileMatrixSetCoverageWriter <T extends TiledResource & org.apache.s
         private final int tileWidth;
         private final int tileHeight;
 
-        public TileUpdater(TileMatrix mosaic, int idx, int idy,
+        public TileUpdater(WritableTileMatrix mosaic, long idx, long idy,
                 RenderedImage image, Interpolation interpolation, GridCoverage coverage) {
             this.mosaic = mosaic;
             this.idx = idx;
@@ -351,20 +313,20 @@ public class TileMatrixSetCoverageWriter <T extends TiledResource & org.apache.s
         public void run() {
             final BufferedImage currentlyTile;
 
-            if (!mosaic.isMissing(idx, idy)) {
-                try {
-                    ImageTile tile = (ImageTile) mosaic.getTile(idx, idy);
-                    currentlyTile = (BufferedImage) tile.getImage();
-                } catch (Exception ex) {
-                    throw new RuntimeException(ex);
-                }
-            } else {
-                currentlyTile = BufferedImages.createImage(tileWidth, tileHeight, baseImage);
-            }
-
-            final GridGeometry tileGridGeom = TileMatrices.getTileGridGeometry2D(mosaic, new Point(idx, idy));
-
             try {
+                if (mosaic.getTileStatus(idx, idy) != TileStatus.MISSING) {
+                    try {
+                        ImageTile tile = (ImageTile) mosaic.getTile(idx, idy).orElse(null);
+                        currentlyTile = (BufferedImage) tile.getImage();
+                    } catch (Exception ex) {
+                        throw new RuntimeException(ex);
+                    }
+                } else {
+                    currentlyTile = BufferedImages.createImage(tileWidth, tileHeight, baseImage);
+                }
+
+                final GridGeometry tileGridGeom = TileMatrices.getTileGridGeometry2D(mosaic, new long[]{idx, idy});
+
                 final RenderedImage coverageImage = coverage.render(null);
                 final MathTransform toSource = AggregatedCoverageResource.createTransform(tileGridGeom, currentlyTile, coverage.getGridGeometry(), coverageImage);
 
@@ -372,7 +334,7 @@ public class TileMatrixSetCoverageWriter <T extends TiledResource & org.apache.s
                 ic.setInterpolation(interpolation);
                 ic.resample(coverage.render(null), new Rectangle(currentlyTile.getWidth(), currentlyTile.getHeight()), toSource);
                 final RenderedImage tileImage = ic.result();
-                mosaic.writeTiles(Stream.of(new DefaultImageTile(tileImage, new Point(idx, idy))), null);
+                mosaic.writeTiles(Stream.of(new DefaultImageTile(tileImage, new long[]{idx, idy})));
             } catch (Exception ex) {
                 throw new RuntimeException(ex);
             }

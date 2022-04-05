@@ -36,10 +36,14 @@ import org.apache.sis.io.wkt.*;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.iso.Names;
 import org.geotoolkit.storage.multires.AbstractTileMatrixSet;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.geotoolkit.storage.multires.TileMatrixSet;
+import org.geotoolkit.storage.multires.ScaleSortedMap;
 import org.geotoolkit.storage.multires.TileMatrix;
+import org.geotoolkit.storage.multires.WritableTileMatrix;
+import org.geotoolkit.storage.multires.WritableTileMatrixSet;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.GenericName;
 
 /**
  *
@@ -48,7 +52,7 @@ import org.geotoolkit.storage.multires.TileMatrix;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name="XMLPyramid")
-public class XMLPyramid implements TileMatrixSet {
+public class XMLPyramid implements WritableTileMatrixSet {
 
     @XmlElement(name="id")
     String id;
@@ -92,17 +96,6 @@ public class XMLPyramid implements TileMatrixSet {
         }
     }
 
-    @Override
-    public String getFormat() {
-        final String format = set.getFormatName();
-        switch (format) {
-            case "JPEG": return "image/jpeg";
-            case "PNG": return "image/png";
-            case "PostGISWKBraster" : return "application/wkb"; // better mime type ?
-            default : throw new IllegalStateException("unexpected pyramid format");
-        }
-    }
-
     public List<XMLMosaic> mosaics() {
         if(mosaics == null){
             mosaics = new CopyOnWriteArrayList<>();
@@ -111,12 +104,12 @@ public class XMLPyramid implements TileMatrixSet {
     }
 
     @Override
-    public String getIdentifier() {
-        return id;
+    public GenericName getIdentifier() {
+        return Names.createLocalName(null, null, id);
     }
 
     public Path getFolder(){
-        return getPyramidSet().getRef().getFolder().resolve(getIdentifier());
+        return getPyramidSet().getRef().getFolder().resolve(id);
     }
 
     public XMLPyramidSet getPyramidSet() {
@@ -193,8 +186,12 @@ public class XMLPyramid implements TileMatrixSet {
     }
 
     @Override
-    public List<TileMatrix> getTileMatrices() {
-        return new ArrayList<TileMatrix>(mosaics());
+    public SortedMap<GenericName,WritableTileMatrix> getTileMatrices() {
+        final ScaleSortedMap<WritableTileMatrix> map = new ScaleSortedMap<>();
+        for(WritableTileMatrix wtm : mosaics()) {
+            map.insertByScale(wtm);
+        }
+        return map;
     }
 
     @Override
@@ -219,16 +216,18 @@ public class XMLPyramid implements TileMatrixSet {
     }
 
     @Override
-    public TileMatrix createTileMatrix(TileMatrix template) throws DataStoreException {
+    public WritableTileMatrix createTileMatrix(org.apache.sis.storage.tiling.TileMatrix templateSis) throws DataStoreException {
+        final TileMatrix template = (TileMatrix) templateSis;
         final XMLMosaic mosaic = new XMLMosaic();
-        mosaic.scale = template.getScale();
+        mosaic.scale = template.getResolution()[0];
         mosaic.gridWidth = template.getGridSize().width;
         mosaic.gridHeight = template.getGridSize().height;
         mosaic.tileWidth = template.getTileSize().width;
         mosaic.tileHeight = template.getTileSize().height;
         mosaic.upperLeft = template.getUpperLeftCorner().getCoordinate();
-        mosaic.dataPixelWidth = template.getDataExtent().getSize(0);
-        mosaic.dataPixelHeight = template.getDataExtent().getSize(1);
+        //for backward compatibility
+        mosaic.dataPixelWidth = mosaic.gridWidth * mosaic.tileWidth;
+        mosaic.dataPixelHeight = mosaic.gridHeight * mosaic.tileHeight;
         mosaics.add(mosaic);
         mosaic.initialize(this);
         set.getRef().save();

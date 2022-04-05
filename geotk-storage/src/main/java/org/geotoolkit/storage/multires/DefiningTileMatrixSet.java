@@ -17,36 +17,33 @@
 package org.geotoolkit.storage.multires;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.SortedMap;
+import org.geotoolkit.util.NamesExt;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.GenericName;
 
 /**
  *
  * @author Johann Sorel
  */
-public class DefiningTileMatrixSet implements TileMatrixSet {
+public class DefiningTileMatrixSet implements WritableTileMatrixSet {
 
-    private final String identifier;
-    private final String format;
+    private final GenericName identifier;
     private final CoordinateReferenceSystem crs;
-    private final Map<String,TileMatrix> mosaics = new HashMap<>();
+    private final ScaleSortedMap<WritableTileMatrix> matrices = new ScaleSortedMap<>();
 
     public DefiningTileMatrixSet(CoordinateReferenceSystem crs) {
-        this(null,null,crs,new ArrayList());
+        this(null,crs,new ArrayList());
     }
 
-    public DefiningTileMatrixSet(String identifier, String format, CoordinateReferenceSystem crs, List<TileMatrix> mosaics) {
+    public DefiningTileMatrixSet(GenericName identifier, CoordinateReferenceSystem crs, List<TileMatrix> mosaics) {
         this.identifier = identifier;
-        this.format = format;
         this.crs = crs;
 
         for (TileMatrix m : mosaics) {
-            this.mosaics.put(m.getIdentifier(), m);
+            createTileMatrix(m);
         }
     }
 
@@ -56,36 +53,34 @@ public class DefiningTileMatrixSet implements TileMatrixSet {
     }
 
     @Override
-    public Collection<TileMatrix> getTileMatrices() {
-        return Collections.unmodifiableCollection(mosaics.values());
+    public SortedMap<GenericName, WritableTileMatrix> getTileMatrices() {
+        return Collections.unmodifiableSortedMap(matrices);
     }
 
     @Override
-    public String getIdentifier() {
+    public GenericName getIdentifier() {
         return identifier;
     }
 
     @Override
-    public String getFormat() {
-        return format;
-    }
-
-    @Override
-    public TileMatrix createTileMatrix(TileMatrix template) {
-        String uid = template.getIdentifier();
-        if (mosaics.containsKey(uid)) {
-            uid = UUID.randomUUID().toString();
+    public WritableTileMatrix createTileMatrix(org.apache.sis.storage.tiling.TileMatrix template) {
+        GenericName uid = template.getIdentifier();
+        if (matrices.containsKey(uid)) {
+            uid = NamesExt.createRandomUUID();
         }
-
-        final DefiningTileMatrix m2 = new DefiningTileMatrix(uid, template.getUpperLeftCorner(),
-                template.getScale(), template.getTileSize(), template.getGridSize());
-        mosaics.put(m2.getIdentifier(), m2);
+        final DefiningTileMatrix m2 = new DefiningTileMatrix(uid, template.getTilingScheme(), ((TileMatrix)template).getTileSize());
+        matrices.insertByScale(m2);
         return m2;
     }
 
     @Override
-    public void deleteTileMatrix(String mosaicId) {
-        mosaics.remove(mosaicId);
+    public void deleteTileMatrix(String matrixId) {
+        for (WritableTileMatrix tm : matrices.values()) {
+            if (tm.getIdentifier().toString().equals(matrixId)) {
+                matrices.removeByScale(tm);
+                break;
+            }
+        }
     }
 
     @Override

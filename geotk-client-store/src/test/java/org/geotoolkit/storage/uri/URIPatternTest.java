@@ -21,7 +21,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import org.apache.sis.geometry.DirectPosition2D;
+import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.storage.multires.DefiningTileMatrix;
+import org.geotoolkit.util.NamesExt;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -34,7 +36,7 @@ public class URIPatternTest {
     @Test
     public void testTileMatrixPattern() throws IOException {
 
-        final DefiningTileMatrix mosaic = new DefiningTileMatrix("", new DirectPosition2D(0, 0), 1, new Dimension(10, 10), new Dimension(64, 32));
+        final DefiningTileMatrix mosaic = new DefiningTileMatrix(NamesExt.createRandomUUID(), new DirectPosition2D(CommonCRS.WGS84.normalizedGeographic()), 1, new Dimension(10, 10), new Dimension(64, 32));
         final Path base = Files.createTempDirectory("pattern").resolve("tm");
         Files.createDirectories(base);
         base.toFile().deleteOnExit();

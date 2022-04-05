@@ -4,14 +4,14 @@ package org.geotoolkit.storage.coverage;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.process.ProcessListener;
+import org.geotoolkit.storage.multires.WritableTiledResource;
 import org.opengis.geometry.Envelope;
-import org.geotoolkit.storage.multires.TiledResource;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public interface IProgressiveCoverageResource extends TiledResource {
+public interface IProgressiveCoverageResource extends WritableTiledResource {
 
     void clear(Envelope env, NumberRange resolutions) throws DataStoreException;
 

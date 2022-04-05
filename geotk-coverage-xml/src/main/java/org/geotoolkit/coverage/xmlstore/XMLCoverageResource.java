@@ -62,9 +62,11 @@ import org.geotoolkit.image.internal.PlanarConfiguration;
 import org.geotoolkit.image.internal.SampleType;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.coverage.TileMatrixSetCoverageReader;
+import org.geotoolkit.storage.multires.TileFormat;
 import org.geotoolkit.storage.multires.TileMatrices;
 import org.geotoolkit.storage.multires.TileMatrixSet;
-import org.geotoolkit.storage.multires.TiledResource;
+import org.geotoolkit.storage.multires.WritableTileMatrixSet;
+import org.geotoolkit.storage.multires.WritableTiledResource;
 import org.opengis.util.GenericName;
 
 /**
@@ -76,7 +78,7 @@ import org.opengis.util.GenericName;
  */
 @XmlRootElement(name="CoverageReference")
 public class XMLCoverageResource extends AbstractGridCoverageResource
-        implements TiledResource, StoreResource, WritableGridCoverageResource
+        implements WritableTiledResource, StoreResource, WritableGridCoverageResource
 {
 
     /**
@@ -270,6 +272,24 @@ public class XMLCoverageResource extends AbstractGridCoverageResource
         }
     }
 
+    @Override
+    public TileFormat getTileFormat() {
+        String format = getPreferredFormat();
+        if (format == null || format.isEmpty()) {
+            format = getPackMode().equals("GEOPHYSICS") ? "tiff" : "PNG";
+        }
+        format = format.toLowerCase();
+        final String mimeType;
+        switch (format) {
+            case "geotiff" :
+            case "tiff" : mimeType = "image/tiff"; break;
+            case "jpeg" : mimeType = "image/jpeg"; break;
+            case "png" : mimeType = "image/png"; break;
+            default: mimeType = format;
+        }
+        return new TileFormat(mimeType, null, TileFormat.Compression.NONE);
+    }
+
     public String getVersion() {
         if(version==null) version = CURRENT_VERSION;
         return version;
@@ -307,7 +327,7 @@ public class XMLCoverageResource extends AbstractGridCoverageResource
     }
 
     @Override
-    public Collection<TileMatrixSet> getTileMatrixSets() throws DataStoreException {
+    public Collection<WritableTileMatrixSet> getTileMatrixSets() throws DataStoreException {
         return set.getPyramids();
     }
 
@@ -723,16 +743,16 @@ public class XMLCoverageResource extends AbstractGridCoverageResource
     }
 
     @Override
-    public TileMatrixSet createTileMatrixSet(TileMatrixSet template) throws DataStoreException {
+    public WritableTileMatrixSet createTileMatrixSet(org.apache.sis.storage.tiling.TileMatrixSet template) throws DataStoreException {
         final XMLPyramidSet set = getPyramidSet();
-        final TileMatrixSet pyramid = set.createPyramid(getIdentifier().get().tip().toString(), template.getCoordinateReferenceSystem());
+        final WritableTileMatrixSet pyramid = set.createPyramid(getIdentifier().get().tip().toString(), template.getCoordinateReferenceSystem());
         save();
         TileMatrices.copyStructure(template, pyramid);
         return pyramid;
     }
 
     @Override
-    public void removeTileMatrixSet(String identifier) throws DataStoreException {
+    public void deleteTileMatrixSet(String identifier) throws DataStoreException {
         throw new DataStoreException("Not supported yet.");
     }
 

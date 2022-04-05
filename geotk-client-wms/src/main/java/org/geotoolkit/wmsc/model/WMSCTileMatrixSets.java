@@ -24,6 +24,8 @@ import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.client.Request;
 import org.geotoolkit.client.map.CachedTileMatrixSets;
 import org.geotoolkit.storage.multires.TileMatrices;
+import org.geotoolkit.storage.multires.TileMatrix;
+import org.geotoolkit.storage.multires.TileMatrixSet;
 import org.geotoolkit.wms.GetMapRequest;
 import org.geotoolkit.wms.xml.v111.Capability;
 import org.geotoolkit.wms.xml.v111.VendorSpecificCapabilities;
@@ -31,8 +33,6 @@ import org.geotoolkit.wmsc.WebMapClientCached;
 import org.geotoolkit.wmsc.xml.v111.TileSet;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
-import org.geotoolkit.storage.multires.TileMatrixSet;
-import org.geotoolkit.storage.multires.TileMatrix;
 
 /**
  *
@@ -91,10 +91,10 @@ public class WMSCTileMatrixSets extends CachedTileMatrixSets {
     }
 
     @Override
-    public Request getTileRequest(TileMatrixSet pyramid, TileMatrix mosaic, long col, long row, Map hints) throws DataStoreException {
+    public Request getTileRequest(TileMatrixSet pyramid, TileMatrix mosaic, long[] indices, Map hints) throws DataStoreException {
         final GetMapRequest request = getServer().createGetMap();
         request.setLayers(layer);
-        request.setEnvelope(TileMatrices.computeTileEnvelope(mosaic, col, row));
+        request.setEnvelope(TileMatrices.computeTileEnvelope(mosaic, indices));
         request.setDimension(mosaic.getTileSize());
         request.setFormat(((WMSCTileMatrixSet)pyramid).getTileset().getFormat());
         return request;

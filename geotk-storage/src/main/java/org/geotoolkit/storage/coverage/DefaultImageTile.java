@@ -16,14 +16,16 @@
  */
 package org.geotoolkit.storage.coverage;
 
-import java.awt.Point;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.Resource;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.AbstractResource;
+import org.apache.sis.storage.tiling.TileStatus;
 
 /**
  * Default implementation of a TileReference
@@ -36,24 +38,31 @@ public class DefaultImageTile extends AbstractResource implements ImageTile{
     protected final ImageReaderSpi spi;
     protected final Object input;
     protected final int imageIndex;
-    protected final Point position;
+    protected final long[] position;
 
-    public DefaultImageTile(RenderedImage image, int x, int y) {
-        this(image, new Point(x, y));
-    }
 
-    public DefaultImageTile(RenderedImage image, Point position) {
+    public DefaultImageTile(RenderedImage image, long... position) {
         this.spi = null;
         this.input = image;
         this.imageIndex = 0;
         this.position = position;
     }
 
-    public DefaultImageTile(ImageReaderSpi spi, Object input, int imageIndex, Point position) {
+    public DefaultImageTile(ImageReaderSpi spi, Object input, int imageIndex, long... position) {
         this.spi = spi;
         this.input = input;
         this.imageIndex = imageIndex;
         this.position = position;
+    }
+
+    @Override
+    public Resource getResource() throws DataStoreException {
+        return this;
+    }
+
+    @Override
+    public TileStatus getStatus() {
+        return TileStatus.EXISTS;
     }
 
     @Override
@@ -112,7 +121,7 @@ public class DefaultImageTile extends AbstractResource implements ImageTile{
     }
 
     @Override
-    public Point getPosition() {
+    public long[] getIndices() {
         return position;
     }
 

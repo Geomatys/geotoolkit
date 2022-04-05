@@ -16,19 +16,19 @@
  */
 package org.geotoolkit.wmsc.model;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.SortedMap;
 import org.apache.sis.geometry.GeneralDirectPosition;
-import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.referencing.CRS;
-import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.multires.AbstractTileMatrixSet;
+import org.geotoolkit.storage.multires.ScaleSortedMap;
+import org.geotoolkit.storage.multires.TileMatrix;
 import org.geotoolkit.wmsc.xml.v111.TileSet;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
-import org.geotoolkit.storage.multires.TileMatrix;
+import org.opengis.util.GenericName;
 
 /**
  *
@@ -40,7 +40,7 @@ public class WMSCTileMatrixSet extends AbstractTileMatrixSet {
     private final TileSet tileset;
     private final GeneralDirectPosition upperleft;
     private final WMSCTileMatrixSets set;
-    private final List<TileMatrix> mosaics;
+    private final SortedMap<GenericName,WMSCTileMatrix> mosaics;
 
     public WMSCTileMatrixSet(final WMSCTileMatrixSets set, final TileSet tileset) throws NoSuchAuthorityCodeException, FactoryException{
         super(CRS.forCode(tileset.getSRS()));
@@ -54,11 +54,11 @@ public class WMSCTileMatrixSet extends AbstractTileMatrixSet {
         List<Double> ress = tileset.getResolutions();
         if (ress == null) ress = Collections.EMPTY_LIST;
 
-        final TileMatrix[] mosaics = new TileMatrix[ress.size()];
-        for (int i=0; i<mosaics.length; i++){
-            mosaics[i] = new WMSCTileMatrix(this, tileset.getResolutions().get(i));
+        ScaleSortedMap<WMSCTileMatrix>m = new ScaleSortedMap<>();
+        for (int i=0; i<ress.size(); i++){
+            m.insertByScale(new WMSCTileMatrix(this, tileset.getResolutions().get(i)));
         }
-        this.mosaics = UnmodifiableArrayList.wrap(mosaics);
+        this.mosaics = Collections.unmodifiableSortedMap(m);
     }
 
     public WMSCTileMatrixSets getPyramidSet() {
@@ -74,18 +74,8 @@ public class WMSCTileMatrixSet extends AbstractTileMatrixSet {
     }
 
     @Override
-    public Collection<? extends TileMatrix> getTileMatrices() {
+    public SortedMap<GenericName, ? extends TileMatrix> getTileMatrices() {
         return mosaics;
-    }
-
-    @Override
-    public TileMatrix createTileMatrix(TileMatrix template) throws DataStoreException {
-        throw new DataStoreException("Not supported.");
-    }
-
-    @Override
-    public void deleteTileMatrix(String mosaicId) throws DataStoreException {
-        throw new DataStoreException("Not supported.");
     }
 
 }

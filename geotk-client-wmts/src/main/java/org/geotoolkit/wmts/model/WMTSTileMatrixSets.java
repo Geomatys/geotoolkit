@@ -22,11 +22,11 @@ import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.client.Request;
 import org.geotoolkit.client.map.CachedTileMatrixSets;
 import org.geotoolkit.storage.multires.TileMatrices;
+import org.geotoolkit.storage.multires.TileMatrix;
+import org.geotoolkit.storage.multires.TileMatrixSet;
 import org.geotoolkit.wmts.GetTileRequest;
 import org.geotoolkit.wmts.WebMapTileClient;
 import org.geotoolkit.wmts.xml.v100.*;
-import org.geotoolkit.storage.multires.TileMatrixSet;
-import org.geotoolkit.storage.multires.TileMatrix;
 
 /**
  *
@@ -101,7 +101,7 @@ public class WMTSTileMatrixSets extends CachedTileMatrixSets {
     }
 
     @Override
-    public Request getTileRequest(TileMatrixSet pyramid, TileMatrix mosaic, long col, long row, Map hints) throws DataStoreException {
+    public Request getTileRequest(TileMatrixSet pyramid, TileMatrix mosaic, long[] indices, Map hints) throws DataStoreException {
         final WMTSTileMatrix wmtsMosaic = (WMTSTileMatrix) mosaic;
 
         if (hints == null) hints = new HashMap();
@@ -134,8 +134,8 @@ public class WMTSTileMatrixSets extends CachedTileMatrixSets {
         request.setFormat(format.toString());
 
         request.setLayer(layerName);
-        request.setTileCol(col);
-        request.setTileRow(row);
+        request.setTileCol(indices[0]);
+        request.setTileRow(indices[1]);
         request.setTileMatrix(wmtsMosaic.getMatrix().getIdentifier().getValue());
         request.setTileMatrixSet(wmtsMosaic.getPyramid().getMatrixset().getIdentifier().getValue());
 

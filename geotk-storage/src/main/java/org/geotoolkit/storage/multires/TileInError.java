@@ -1,14 +1,9 @@
 package org.geotoolkit.storage.multires;
 
-import java.awt.Point;
 import java.util.Optional;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.event.StoreEvent;
-import org.apache.sis.storage.event.StoreListener;
-import org.apache.sis.util.ArgumentChecks;
-import org.opengis.metadata.Metadata;
-import org.opengis.util.GenericName;
-
+import org.apache.sis.storage.Resource;
+import org.apache.sis.storage.tiling.TileStatus;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 public interface TileInError extends EmptyTile {
@@ -24,11 +19,11 @@ public interface TileInError extends EmptyTile {
      */
     Optional<CharSequence> reason();
 
-    static TileInError create(Point position, final Exception cause) {
+    static TileInError create(long[] position, final Exception cause) {
         return create(position, null, cause);
     }
 
-    static TileInError create(Point position, final CharSequence reason, final Exception cause) {
+    static TileInError create(long[] position, final CharSequence reason, final Exception cause) {
         ensureNonNull("Tile coordinate", position);
         ensureNonNull("Error cause", cause);
         return new TileInError() {
@@ -43,28 +38,18 @@ public interface TileInError extends EmptyTile {
             }
 
             @Override
-            public Point getPosition() {
+            public long[] getIndices() {
                 return position;
             }
 
             @Override
-            public Optional<GenericName> getIdentifier() throws DataStoreException {
-                return Optional.empty();
+            public TileStatus getStatus() {
+                return TileStatus.IN_ERROR;
             }
 
             @Override
-            public Metadata getMetadata() throws DataStoreException {
-                throw new UnsupportedOperationException("Not supported yet"); // geomatyz on 14/09/2020
-            }
-
-            @Override
-            public <T extends StoreEvent> void addListener(Class<T> aClass, StoreListener<? super T> storeListener) {
-                throw new UnsupportedOperationException("Not supported yet"); // geomatyz on 14/09/2020
-            }
-
-            @Override
-            public <T extends StoreEvent> void removeListener(Class<T> aClass, StoreListener<? super T> storeListener) {
-                throw new UnsupportedOperationException("Not supported yet"); // geomatyz on 14/09/2020
+            public Resource getResource() throws DataStoreException {
+                throw new DataStoreException(cause);
             }
         };
     }

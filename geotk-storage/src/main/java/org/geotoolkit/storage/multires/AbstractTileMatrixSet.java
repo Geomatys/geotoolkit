@@ -21,8 +21,10 @@ import java.util.List;
 import java.util.UUID;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.util.Classes;
+import org.apache.sis.util.iso.Names;
 import org.geotoolkit.util.StringUtilities;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.GenericName;
 
 /**
  * Abstract MatrixSet
@@ -32,31 +34,25 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public abstract class AbstractTileMatrixSet implements TileMatrixSet {
 
-    protected final String id;
+    protected final GenericName id;
     protected final CoordinateReferenceSystem crs;
-    protected String format = null;
 
     public AbstractTileMatrixSet(CoordinateReferenceSystem crs) {
         this(null,crs);
     }
 
-    public AbstractTileMatrixSet(String id, CoordinateReferenceSystem crs) {
+    public AbstractTileMatrixSet(GenericName id, CoordinateReferenceSystem crs) {
         this.crs = crs;
         if(id == null){
-            this.id = UUID.randomUUID().toString();
+            this.id = Names.createLocalName(null, null, UUID.randomUUID().toString());
         }else{
             this.id = id;
         }
     }
 
     @Override
-    public String getIdentifier() {
+    public GenericName getIdentifier() {
         return id;
-    }
-
-    @Override
-    public String getFormat() {
-        return format;
     }
 
     @Override
@@ -76,9 +72,8 @@ public abstract class AbstractTileMatrixSet implements TileMatrixSet {
     public static String toString(TileMatrixSet pyramid) {
         final List<String> elements = new ArrayList<>();
         elements.add("id : " + pyramid.getIdentifier());
-        elements.add("format : " + pyramid.getFormat());
         elements.add("crs : " + IdentifiedObjects.getIdentifierOrName(pyramid.getCoordinateReferenceSystem()));
-        elements.add(StringUtilities.toStringTree("mosaics", pyramid.getTileMatrices()));
+        elements.add(StringUtilities.toStringTree("mosaics", pyramid.getTileMatrices().values()));
         return StringUtilities.toStringTree(Classes.getShortClassName(pyramid), elements);
     }
 }

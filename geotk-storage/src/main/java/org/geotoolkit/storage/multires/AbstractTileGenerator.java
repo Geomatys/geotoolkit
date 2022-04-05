@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.storage.multires;
 
-import java.awt.Point;
-import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -28,11 +26,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.IllegalGridGeometryException;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.NoSuchDataException;
+import org.apache.sis.storage.tiling.Tile;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -98,7 +98,7 @@ public abstract class AbstractTileGenerator implements TileGenerator {
     }
 
     @Override
-    public void generate(TileMatrixSet pyramid, Envelope env, NumberRange resolutions,
+    public void generate(WritableTileMatrixSet pyramid, Envelope env, NumberRange resolutions,
             ProcessListener listener) throws DataStoreException, InterruptedException {
 
         if (env != null) {
@@ -114,42 +114,42 @@ public abstract class AbstractTileGenerator implements TileGenerator {
 
         //generate mosaic in resolution order
         //this order allows the pyramid to be used at high scales until she is not completed.
-        final List<TileMatrix> mosaics = new ArrayList<>(pyramid.getTileMatrices());
-        mosaics.sort((TileMatrix o1, TileMatrix o2) -> Double.compare(o2.getScale(), o1.getScale()));
-        for (final TileMatrix mosaic : mosaics) {
-            if (resolutions == null || resolutions.containsAny(mosaic.getScale())) {
+        final List<WritableTileMatrix> mosaics = new ArrayList<>(pyramid.getTileMatrices().values());
+        mosaics.sort(TileMatrices.SCALE_COMPARATOR.reversed());
+        for (final WritableTileMatrix tileMatrix : mosaics) {
+            if (resolutions == null || resolutions.containsAny(TileMatrices.getScale(tileMatrix))) {
 
-                final Rectangle rect;
+                final GridExtent rect;
                 try {
-                    rect = TileMatrices.getTilesInEnvelope(mosaic, env);
+                    rect = TileMatrices.getTilesInEnvelope(tileMatrix, env);
                 } catch (NoSuchDataException ex) {
                     continue;
                 }
 
-                final long nbTile = ((long)rect.width) * ((long)rect.height);
+                final long nbTile = TileMatrices.countCells(rect);
                 final long eventstep = Math.min(1000, Math.max(1, nbTile/100l));
                 Stream<Tile> stream = LongStream.range(0, nbTile).parallel()
                         .mapToObj(new LongFunction<Tile>() {
                             @Override
                             public Tile apply(long value) {
-                                final long x = rect.x + (value % rect.width);
-                                final long y = rect.y + (value / rect.width);
+                                final long x = rect.getLow(0) + (value % rect.getSize(0));
+                                final long y = rect.getLow(1) + (value / rect.getSize(0));
 
                                 Tile data = null;
                                 try {
                                     //do not regenerate existing tiles
                                     //if (!mosaic.isMissing((int)x, (int)y)) return;
 
-                                    final Point coord = new Point((int)x, (int)y);
+                                    final long[] coord = new long[]{x, y};
                                     try {
-                                        data = generateTile(pyramid, mosaic, coord);
+                                        data = generateTile(pyramid, tileMatrix, coord);
                                     } catch (Exception ex) {
                                         data = TileInError.create(coord, null, ex);
                                     }
                                 } finally {
                                     long v = al.incrementAndGet();
                                     if (listener != null & (v % eventstep == 0))  {
-                                        listener.progressing(new ProcessEvent(DUMMY, v+"/"+total+" mosaic="+mosaic.getIdentifier()+" scale="+mosaic.getScale(), (float) (( ((double)v)/((double)total) )*100.0)  ));
+                                        listener.progressing(new ProcessEvent(DUMMY, v+"/"+total+" mosaic="+tileMatrix.getIdentifier(), (float) (( ((double)v)/((double)total) )*100.0)  ));
                                     }
                                 }
                                 return data;
@@ -157,20 +157,20 @@ public abstract class AbstractTileGenerator implements TileGenerator {
                         })
                         .filter(this::emptyFilter);
 
-                batchWrite(stream, mosaic, listener == null ? null : err -> listener.progressing(new ProcessEvent(DUMMY, "Error while writing tile batch", (float) (( ((double)al.get())/((double)total) )*100.0))), 200);
+                batchWrite(stream, tileMatrix, listener == null ? null : err -> listener.progressing(new ProcessEvent(DUMMY, "Error while writing tile batch", (float) (( ((double)al.get())/((double)total) )*100.0))), 200);
 
                 long v = al.get();
                 if (listener != null) {
-                    listener.progressing(new ProcessEvent(DUMMY, v+"/"+total+" mosaic="+mosaic.getIdentifier()+" scale="+mosaic.getScale(), (float) (( ((double)v)/((double)total) )*100.0)  ));
+                    listener.progressing(new ProcessEvent(DUMMY, v+"/"+total+" mosaic="+tileMatrix.getIdentifier(), (float) (( ((double)v)/((double)total) )*100.0)  ));
                 }
             }
         }
     }
 
-    protected void batchWrite(Stream<Tile> source, TileMatrix destination, Consumer<Exception> errorHandler, int batchSize) {
+    protected void batchWrite(Stream<Tile> source, WritableTileMatrix destination, Consumer<Exception> errorHandler, int batchSize) {
         Streams.batchExecute(source, (Collection<Tile> t) -> {
             try {
-                destination.writeTiles(t.stream(), null);
+                destination.writeTiles(t.stream());
             } catch (DataStoreException ex) {
                 LOGGER.log(Level.WARNING, "Failed to write tile batch", ex);
                 if (errorHandler != null) errorHandler.accept(ex);
@@ -184,7 +184,7 @@ public abstract class AbstractTileGenerator implements TileGenerator {
         if (data instanceof TileInError) {
             final TileInError error = (TileInError) data;
             final boolean errorDueToNoDataAvailable = (error.getCause() instanceof NoSuchDataException || error.getCause() instanceof IllegalGridGeometryException);
-            LOGGER.log(errorDueToNoDataAvailable ? Level.FINER : Level.WARNING, error.getCause(), () -> String.format("Error on tile loading:%nTile coordinate: %s", error.getPosition()));
+            LOGGER.log(errorDueToNoDataAvailable ? Level.FINER : Level.WARNING, error.getCause(), () -> String.format("Error on tile loading:%nTile coordinate: %s", error.getIndices()));
             if (!errorDueToNoDataAvailable) return false;
         }
         try {

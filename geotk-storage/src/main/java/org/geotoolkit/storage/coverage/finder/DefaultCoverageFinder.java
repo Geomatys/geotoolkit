@@ -16,19 +16,19 @@
  */
 package org.geotoolkit.storage.coverage.finder;
 
-import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.apache.sis.geometry.GeneralEnvelope;
-import org.opengis.geometry.DirectPosition;
+import org.apache.sis.coverage.grid.DisjointExtentException;
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridRoundingMode;
+import org.geotoolkit.storage.multires.TileMatrix;
+import org.geotoolkit.storage.multires.TileMatrixSet;
 import org.opengis.geometry.Envelope;
 import org.opengis.util.FactoryException;
-import org.geotoolkit.storage.multires.TileMatrixSet;
-import org.geotoolkit.storage.multires.TileMatrix;
 
 /**
- * Define a default CoverageFinder adapted for projects.<br/>
+ * Define a default CoverageFinder adapted for projects.
  * In attempt to replace this class by {@link StrictlyCoverageFinder}.
  *
  * @author Remi Marechal (Geomatys).
@@ -42,33 +42,35 @@ public final class DefaultCoverageFinder extends CoverageFinder {
      * {@inheritDoc }.
      */
     @Override
-    public TileMatrix findMosaic(TileMatrixSet pyramid, double resolution, double tolerance, Envelope env, Integer maxTileNumber) throws FactoryException {
-        final List<TileMatrix> mosaics = new ArrayList<TileMatrix>(pyramid.getTileMatrices());
-        Collections.sort(mosaics, SCALE_COMPARATOR);
-        Collections.reverse(mosaics);
+    public TileMatrix findMosaic(TileMatrixSet tileMatrixSet, double resolution, double tolerance, Envelope env, Integer maxTileNumber) throws FactoryException {
+        final List<TileMatrix> tileMatrices = new ArrayList<>(tileMatrixSet.getTileMatrices().values());
+        Collections.sort(tileMatrices, SCALE_COMPARATOR);
+        Collections.reverse(tileMatrices);
         TileMatrix result = null;
         mosaicLoop:
-        for (TileMatrix candidate : mosaics) {
+        for (TileMatrix tileMatrix : tileMatrices) {
             //check the mosaic intersect the searched envelope
-            final GeneralEnvelope clip = new GeneralEnvelope(candidate.getEnvelope());
-            if (!clip.intersects(env, true)) continue;
-            //calculate the intersection, will be used to determinate the number of tiles used.
-            clip.intersect(env);
 
-            final DirectPosition ul = candidate.getUpperLeftCorner();
-            final double scale = candidate.getScale();
+            GridExtent intersection;
+            try {
+                intersection = tileMatrix.getTilingScheme().derive().rounding(GridRoundingMode.ENCLOSING).subgrid(env).getIntersection();
+            } catch (DisjointExtentException ex) {
+                continue;
+            }
+
+            final Envelope ul = tileMatrix.getTilingScheme().getEnvelope();
 
             if (result == null) {
                 //set the highest mosaic as base
-                result = candidate;
+                result = tileMatrix;
             } else {
                 //check additional axis
                 for (int i = 2, n = ul.getDimension(); i < n; i++) {
                     final double median = env.getMedian(i);
                     final double currentDistance = Math.abs(
-                            candidate.getUpperLeftCorner().getOrdinate(i) - median);
+                            result.getTilingScheme().getEnvelope().getMedian(i) - median);
                     final double candidateDistance = Math.abs(
-                            ul.getOrdinate(i) - median);
+                            ul.getMedian(i) - median);
 
                     if (candidateDistance < currentDistance) {
                         //better mosaic
@@ -82,9 +84,9 @@ public final class DefaultCoverageFinder extends CoverageFinder {
             }
 
             //check if it will not require too much tiles
-            final Dimension tileSize = candidate.getTileSize();
-            double nbtileX = clip.getSpan(0) / (tileSize.width * scale);
-            double nbtileY = clip.getSpan(1) / (tileSize.height * scale);
+            final double[] scale = tileMatrix.getResolution();
+            double nbtileX = intersection.getSize(0);
+            double nbtileY = intersection.getSize(1);
 
             //if the envelope has some NaN, we presume it's a square
             if (Double.isNaN(nbtileX) || Double.isInfinite(nbtileX)) {
@@ -99,9 +101,9 @@ public final class DefaultCoverageFinder extends CoverageFinder {
                 break;
             }
 
-            result = candidate;
+            result = tileMatrix;
 
-            if ((scale * (1 - tolerance)) < resolution) {
+            if ((scale[0] * (1 - tolerance)) < resolution) {
                 //we found the most accurate resolution
                 break;
             }

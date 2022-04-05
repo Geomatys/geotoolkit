@@ -28,10 +28,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
+import java.util.SortedMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Stream;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.storage.AbstractGridCoverageResource;
 import org.apache.sis.internal.storage.StoreResource;
@@ -40,6 +42,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.WritableGridCoverageResource;
 import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.storage.coverage.DefaultImageTile;
 import org.geotoolkit.storage.coverage.ImageTile;
 import org.geotoolkit.storage.coverage.TileMatrixSetCoverageReader;
@@ -47,12 +50,16 @@ import org.geotoolkit.storage.event.ContentEvent;
 import org.geotoolkit.storage.event.ModelEvent;
 import org.geotoolkit.storage.multires.AbstractTileMatrix;
 import org.geotoolkit.storage.multires.AbstractTileMatrixSet;
-import org.geotoolkit.storage.multires.Tile;
+import org.geotoolkit.storage.multires.ScaleSortedMap;
+import org.apache.sis.storage.tiling.Tile;
 import org.geotoolkit.storage.multires.TileMatrices;
 import org.geotoolkit.storage.multires.TileMatrix;
 import org.geotoolkit.storage.multires.TileMatrixSet;
-import org.geotoolkit.storage.multires.TiledResource;
-import org.opengis.geometry.DirectPosition;
+import org.apache.sis.storage.tiling.TileStatus;
+import org.geotoolkit.storage.multires.WritableTileMatrix;
+import org.geotoolkit.storage.multires.WritableTileMatrixSet;
+import org.geotoolkit.storage.multires.WritableTiledResource;
+import org.geotoolkit.util.NamesExt;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.GenericName;
 
@@ -62,7 +69,7 @@ import org.opengis.util.GenericName;
  * @author Johann Sorel (Geomatys)
  */
 final class MockTiledGridCoverageResource extends AbstractGridCoverageResource
-        implements TiledResource, StoreResource, WritableGridCoverageResource
+        implements WritableTiledResource, StoreResource, WritableGridCoverageResource
 {
     public static enum EventType {
         TILE_MATRIX_SET_CREATED,
@@ -85,7 +92,7 @@ final class MockTiledGridCoverageResource extends AbstractGridCoverageResource
 
     private final InMemoryStore store;
     private final GenericName identifier;
-    private final List<TileMatrixSet> tileMatrixSets = new CopyOnWriteArrayList<>();
+    private final List<WritableTileMatrixSet> tileMatrixSets = new CopyOnWriteArrayList<>();
     private List<SampleDimension> dimensions;
 
     /**
@@ -117,7 +124,7 @@ final class MockTiledGridCoverageResource extends AbstractGridCoverageResource
      * {@inheritDoc }.
      */
     @Override
-    public Collection<TileMatrixSet> getTileMatrixSets() throws DataStoreException {
+    public Collection<WritableTileMatrixSet> getTileMatrixSets() throws DataStoreException {
         return tileMatrixSets;
     }
 
@@ -140,8 +147,8 @@ final class MockTiledGridCoverageResource extends AbstractGridCoverageResource
      * {@inheritDoc }.
      */
     @Override
-    public TileMatrixSet createTileMatrixSet(TileMatrixSet template) throws DataStoreException {
-        final InMemoryTileMatrixSet py = new InMemoryTileMatrixSet(UUID.randomUUID().toString(), template.getCoordinateReferenceSystem());
+    public WritableTileMatrixSet createTileMatrixSet(org.apache.sis.storage.tiling.TileMatrixSet template) throws DataStoreException {
+        final InMemoryTileMatrixSet py = new InMemoryTileMatrixSet(NamesExt.createRandomUUID(), template.getCoordinateReferenceSystem());
         py.setBuildPhase(true);
         localEvents.add(new MockEvent(EventType.TILE_MATRIX_SET_CREATED, py));
         TileMatrices.copyStructure(template, py);
@@ -152,12 +159,12 @@ final class MockTiledGridCoverageResource extends AbstractGridCoverageResource
     }
 
     @Override
-    public void removeTileMatrixSet(String identifier) throws DataStoreException {
+    public void deleteTileMatrixSet(String identifier) throws DataStoreException {
         ArgumentChecks.ensureNonNull("identifier", identifier);
-        final Iterator<TileMatrixSet> it     = tileMatrixSets.iterator();
+        final Iterator<WritableTileMatrixSet> it = tileMatrixSets.iterator();
         while (it.hasNext()) {
             final TileMatrixSet tms = it.next();
-            if (identifier.equalsIgnoreCase(tms.getIdentifier())) {
+            if (identifier.equalsIgnoreCase(tms.getIdentifier().toString())) {
                 tileMatrixSets.remove(tms);
                 localEvents.add(new MockEvent(EventType.TILE_MATRIX_SET_REMOVED, tms));
                 listeners.fire(new ModelEvent(this), StoreEvent.class);
@@ -182,33 +189,32 @@ final class MockTiledGridCoverageResource extends AbstractGridCoverageResource
         throw new UnsupportedOperationException("Not supported.");
     }
 
-    private final class InMemoryTileMatrixSet extends AbstractTileMatrixSet {
+    private final class InMemoryTileMatrixSet extends AbstractTileMatrixSet implements WritableTileMatrixSet {
 
-        private final List<InMemoryTileMatrix> tileMatrices = new CopyOnWriteArrayList<>();
+        private final ScaleSortedMap<InMemoryTileMatrix> tileMatrices = new ScaleSortedMap<>();
         private boolean buildPhase = false;
 
-        public InMemoryTileMatrixSet(String id, CoordinateReferenceSystem crs) {
+        public InMemoryTileMatrixSet(GenericName id, CoordinateReferenceSystem crs) {
             super(id, crs);
         }
 
         @Override
-        public Collection<? extends TileMatrix> getTileMatrices() {
-            return Collections.unmodifiableList(tileMatrices);
+        public SortedMap<GenericName, ? extends WritableTileMatrix> getTileMatrices() {
+            return Collections.unmodifiableSortedMap(tileMatrices);
         }
 
         private void setBuildPhase(boolean buildPhase) {
             this.buildPhase = buildPhase;
-            for (InMemoryTileMatrix it : tileMatrices) {
+            for (InMemoryTileMatrix it : tileMatrices.values()) {
                 it.setBuildPhase(buildPhase);
             }
         }
 
         @Override
-        public TileMatrix createTileMatrix(TileMatrix template) throws DataStoreException {
-            final String mosaicId = UUID.randomUUID().toString();
-            final InMemoryTileMatrix gm = new InMemoryTileMatrix(mosaicId,
-                    this, template.getUpperLeftCorner(), template.getGridSize(), template.getTileSize(), template.getScale());
-            tileMatrices.add(gm);
+        public WritableTileMatrix createTileMatrix(org.apache.sis.storage.tiling.TileMatrix template) throws DataStoreException {
+            final InMemoryTileMatrix gm = new InMemoryTileMatrix(NamesExt.createRandomUUID(),
+                    this, template.getTilingScheme(), ((TileMatrix)template).getTileSize());
+            tileMatrices.insertByScale(gm);
             localEvents.add(new MockEvent(EventType.TILE_MATRIX_CREATED, gm));
             if (!buildPhase) {
                 //we are creating object, dont send an event until we are finished.
@@ -219,11 +225,10 @@ final class MockTiledGridCoverageResource extends AbstractGridCoverageResource
 
         @Override
         public void deleteTileMatrix(String mosaicId) throws DataStoreException {
-            for (int id = 0, len = tileMatrices.size(); id < len; id++) {
-                final InMemoryTileMatrix gm = tileMatrices.get(id);
-                if (gm.getIdentifier().equalsIgnoreCase(mosaicId)) {
-                    tileMatrices.remove(id);
-                    localEvents.add(new MockEvent(EventType.TILE_MATRIX_REMOVED, gm));
+            for (TileMatrix tm : tileMatrices.values()) {
+                if (tm.getIdentifier().toString().equalsIgnoreCase(mosaicId)) {
+                    tileMatrices.remove(tm.getIdentifier());
+                    localEvents.add(new MockEvent(EventType.TILE_MATRIX_REMOVED, tm));
                     if (!buildPhase) {
                         listeners.fire(new ModelEvent(MockTiledGridCoverageResource.this), StoreEvent.class);
                     }
@@ -233,13 +238,13 @@ final class MockTiledGridCoverageResource extends AbstractGridCoverageResource
         }
     }
 
-    private final class InMemoryTileMatrix extends AbstractTileMatrix {
+    private final class InMemoryTileMatrix extends AbstractTileMatrix implements WritableTileMatrix {
 
         private final Map<Point,InMemoryTile> mpTileReference = new HashMap<>();
         private boolean buildPhase = false;
 
-        public InMemoryTileMatrix(final String id, TileMatrixSet pyramid, DirectPosition upperLeft, Dimension gridSize, Dimension tileSize, double scale) {
-            super(id, pyramid, upperLeft, gridSize, tileSize, scale);
+        public InMemoryTileMatrix(final GenericName id, WritableTileMatrixSet pyramid, GridGeometry tilingScheme, Dimension tileSize) {
+            super(id, pyramid, tilingScheme, tileSize);
         }
 
         private void setBuildPhase(boolean buildPhase) {
@@ -247,18 +252,19 @@ final class MockTiledGridCoverageResource extends AbstractGridCoverageResource
         }
 
         @Override
-        public boolean isMissing(long col, long row) {
-            return mpTileReference.get(new Point(Math.toIntExact(col), Math.toIntExact(row))) == null;
+        public TileStatus getTileStatus(long... indices) {
+            return mpTileReference.get(new Point(Math.toIntExact(indices[0]), Math.toIntExact(indices[1]))) == null ?
+                    TileStatus.MISSING : TileStatus.EXISTS;
         }
 
         @Override
-        public InMemoryTile getTile(long col, long row, Map hints) throws DataStoreException {
-            InMemoryTile imt = mpTileReference.get(new Point(Math.toIntExact(col), Math.toIntExact(row)));
+        public Optional<Tile> getTile(long... indices) throws DataStoreException {
+            InMemoryTile imt = mpTileReference.get(new Point(Math.toIntExact(indices[0]), Math.toIntExact(indices[1])));
             localEvents.add(new MockEvent(EventType.TILE_GET, imt));
-            return imt;
+            return Optional.ofNullable(imt);
         }
 
-        public synchronized void setTile(int col, int row, InMemoryTile tile) {
+        public synchronized void setTile(long col, long row, InMemoryTile tile) {
             mpTileReference.put(new Point(Math.toIntExact(col), Math.toIntExact(row)), tile);
             localEvents.add(new MockEvent(EventType.TILE_SET, tile));
             if (!buildPhase) {
@@ -268,12 +274,21 @@ final class MockTiledGridCoverageResource extends AbstractGridCoverageResource
         }
 
         @Override
-        protected boolean isWritable() throws DataStoreException {
-            return true;
+        public void writeTiles(Stream<Tile> tiles) throws DataStoreException {
+            try {
+                tiles.parallel().forEach((Tile tile) -> {
+                    try {
+                        writeTile(tile);
+                    } catch (DataStoreException ex) {
+                        throw new BackingStoreException(ex);
+                    }
+                });
+            } catch (BackingStoreException ex) {
+                throw ex.unwrapOrRethrow(DataStoreException.class);
+            }
         }
 
-        @Override
-        protected void writeTile(Tile tile) throws DataStoreException {
+        private void writeTile(Tile tile) throws DataStoreException {
             if (tile instanceof ImageTile) {
                 final ImageTile imgTile = (ImageTile) tile;
                 try {
@@ -283,9 +298,9 @@ final class MockTiledGridCoverageResource extends AbstractGridCoverageResource
                     if (tileSize.width < image.getWidth() || tileSize.height < image.getHeight()) {
                         throw new IllegalArgumentException("Uncorrect image size ["+image.getWidth()+","+image.getHeight()+"] expecting size ["+tileSize.width+","+tileSize.height+"]");
                     }
-                    final int tileX = imgTile.getPosition().x;
-                    final int tileY = imgTile.getPosition().y;
-                    setTile(tileX, tileY, new InMemoryTile(image, 0, new Point(tileX, tileY)));
+                    final long tileX = imgTile.getIndices()[0];
+                    final long tileY = imgTile.getIndices()[1];
+                    setTile(tileX, tileY, new InMemoryTile(image, 0, imgTile.getIndices()));
                 } catch (IOException ex) {
                     throw new DataStoreException(ex.getMessage(), ex);
                 }
@@ -295,8 +310,23 @@ final class MockTiledGridCoverageResource extends AbstractGridCoverageResource
         }
 
         @Override
-        public void deleteTile(int tileX, int tileY) throws DataStoreException {
-            setTile(tileX,tileY,null);
+        public long deleteTiles(GridExtent indicesRanges) throws DataStoreException {
+            if (indicesRanges == null) {
+                long nb = mpTileReference.size();
+                mpTileReference.clear();
+                return nb;
+            } else {
+                long nb = 0;
+                final long[] low = indicesRanges.getLow().getCoordinateValues();
+                final long[] high = indicesRanges.getHigh().getCoordinateValues();
+                for (long x = low[0]; x <= high[0]; x++) {
+                    for (long y = low[1]; y <= high[1]; y++) {
+                        InMemoryTile previous = mpTileReference.remove(new Point(Math.toIntExact(x), Math.toIntExact(y)));
+                        if (previous != null) nb++;
+                    }
+                }
+                return nb;
+            }
         }
 
         @Override
@@ -311,7 +341,7 @@ final class MockTiledGridCoverageResource extends AbstractGridCoverageResource
 
     private final class InMemoryTile extends DefaultImageTile {
 
-        public InMemoryTile(RenderedImage input, int imageIndex, Point position) {
+        public InMemoryTile(RenderedImage input, int imageIndex, long[] position) {
             super(IImageReader.IISpi.INSTANCE, input, imageIndex, position);
         }
 

@@ -18,6 +18,7 @@ package org.geotoolkit.storage.coverage.finder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -31,15 +32,14 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.storage.multires.TileMatrices;
-import org.opengis.geometry.DirectPosition;
+import org.geotoolkit.storage.multires.TileMatrix;
+import org.geotoolkit.storage.multires.TileMatrixSet;
+import org.geotoolkit.storage.multires.TiledResource;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
-import org.geotoolkit.storage.multires.TileMatrixSet;
-import org.geotoolkit.storage.multires.TileMatrix;
-import org.geotoolkit.storage.multires.TiledResource;
 
 /**
  * Define {@link TileMatrixSet} and {@link GridMosaic} search rules.
@@ -75,7 +75,7 @@ public abstract class CoverageFinder {
     /**
      * Find all mosaics in the pyramid which match given resolution and envelope.
      *
-     * @param pyramid
+     * @param tileMatrixSet
      * @param resolution
      * @param tolerance
      * @param env
@@ -83,18 +83,18 @@ public abstract class CoverageFinder {
      * @throws IllegalArgumentException if no mosaic found when requested with bad resolution.
      * @throws DisjointCoverageDomainException if no mosaic intersect requested envelope
      */
-    public List<TileMatrix> findMosaics(final TileMatrixSet pyramid, final double resolution,
+    public List<TileMatrix> findMosaics(final TileMatrixSet tileMatrixSet, final double resolution,
             final double tolerance, final Envelope env) throws DisjointCoverageDomainException {
-        final List<TileMatrix> mosaics = new ArrayList<>(pyramid.getTileMatrices());
-        Collections.sort(mosaics, SCALE_COMPARATOR);
-        Collections.reverse(mosaics);
+        final List<TileMatrix> tileMatrices = new ArrayList<>(tileMatrixSet.getTileMatrices().values());
+        Collections.sort(tileMatrices, SCALE_COMPARATOR);
+        Collections.reverse(tileMatrices);
         final List<TileMatrix> result = new ArrayList<>();
 
         //find the most accurate resolution
-        final double[] scales = pyramid.getScales();
+        final double[] scales = TileMatrices.getScales(tileMatrixSet);
         if (scales.length == 0) return result;
         double bestScale = scales[0];
-        for (double d : pyramid.getScales()) {
+        for (double d : TileMatrices.getScales(tileMatrixSet)) {
             if (d > resolution) {
                 //scale is greater but closer to wanted resolution
                 bestScale = d < bestScale ? d : bestScale;
@@ -106,16 +106,16 @@ public abstract class CoverageFinder {
 
         int notIntersected = 0;
         //-- search mosaics
-        for (TileMatrix candidate : mosaics) {
+        for (TileMatrix tileMatrix : tileMatrices) {
             //-- check the mosaic intersect the searched envelope
-            final GeneralEnvelope clip = new GeneralEnvelope(candidate.getEnvelope());
+            final GeneralEnvelope clip = new GeneralEnvelope(tileMatrix.getTilingScheme().getEnvelope());
             if (!clip.intersects(env, true)) {
                 notIntersected++;
                 continue;
             }
-            final double scale = candidate.getScale();
+            final double scale = tileMatrix.getResolution()[0];
             if (scale != bestScale) continue;
-            result.add(candidate);
+            result.add(tileMatrix);
         }
 
         if (result.isEmpty()) {
@@ -139,11 +139,11 @@ public abstract class CoverageFinder {
      * @return Pyramid, never null except if the pyramid set is empty
      */
     public final TileMatrixSet findPyramid(final TiledResource set, final CoordinateReferenceSystem crs) throws FactoryException, DataStoreException {
-        final List<TileMatrixSet> pyramids = TileMatrices.getTileMatrixSets(set);
+        final Collection<? extends TileMatrixSet> pyramids = set.getTileMatrixSets();
         if (pyramids.isEmpty()) {
             return null;
         } else if (pyramids.size() == 1) {
-            return pyramids.get(0);
+            return pyramids.iterator().next();
         }
 
         final CoordinateReferenceSystem crs2D = CRS.getHorizontalComponent(crs);
@@ -231,22 +231,24 @@ public abstract class CoverageFinder {
     public static final Comparator<TileMatrix> SCALE_COMPARATOR = new Comparator<TileMatrix>() {
         @Override
         public int compare(final TileMatrix m1, final TileMatrix m2) {
-            final double res = m1.getScale() - m2.getScale();
-            if(res == 0){
+            final double[] res1 = m1.getResolution();
+            final double[] res2 = m2.getResolution();
+            final double res = res1[0] - res2[0];
+            if (res == 0) {
                 //same scale check additional axes
-                final DirectPosition m1ul = m1.getUpperLeftCorner();
-                final DirectPosition m2ul = m2.getUpperLeftCorner();
-                for(int i=2,n=m1ul.getDimension();i<n;i++){
-                    final double ord1 = m1ul.getOrdinate(i);
-                    final double ord2 = m2ul.getOrdinate(i);
+                final Envelope m1ul = m1.getTilingScheme().getEnvelope();
+                final Envelope m2ul = m2.getTilingScheme().getEnvelope();
+                for (int i = 2, n = m1ul.getDimension(); i < n; i++) {
+                    final double ord1 = m1ul.getMinimum(i);
+                    final double ord2 = m2ul.getMinimum(i);
                     final int c = Double.valueOf(ord1).compareTo(ord2);
-                    if(c != 0) return c;
+                    if (c != 0) return c;
                 }
 
                 return 0;
-            }else if(res > 0){
+            } else if (res > 0) {
                 return 1;
-            }else{
+            } else {
                 return -1;
             }
         }

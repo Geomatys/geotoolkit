@@ -16,10 +16,7 @@
  */
 package org.geotoolkit.client.map;
 
-import java.awt.Point;
 import java.awt.image.RenderedImage;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,14 +27,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.BlockingQueue;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 import javax.imageio.ImageIO;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.stream.ImageInputStream;
@@ -49,7 +47,10 @@ import org.geotoolkit.client.Request;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.security.DefaultClientSecurity;
 import org.geotoolkit.storage.coverage.*;
+import org.apache.sis.storage.tiling.Tile;
 import org.geotoolkit.storage.multires.TileMatrices;
+import org.geotoolkit.storage.multires.TileMatrix;
+import org.geotoolkit.storage.multires.TileMatrixSet;
 import org.jboss.netty.bootstrap.ClientBootstrap;
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.ChannelBuffers;
@@ -58,8 +59,6 @@ import org.jboss.netty.channel.group.ChannelGroup;
 import org.jboss.netty.channel.group.DefaultChannelGroup;
 import org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory;
 import org.jboss.netty.handler.codec.http.*;
-import org.geotoolkit.storage.multires.TileMatrixSet;
-import org.geotoolkit.storage.multires.TileMatrix;
 
 /**
  *
@@ -67,6 +66,11 @@ import org.geotoolkit.storage.multires.TileMatrix;
  * @module
  */
 public abstract class CachedTileMatrixSets extends DefaultTileMatrixSets {
+
+    /**
+     * Sentinel object used to notify the end of the queue.
+     */
+    private static final Object END_OF_QUEUE = new Object();
 
     /**
      * Boolean property used on tiled servers to force using NIO connections.
@@ -117,9 +121,9 @@ public abstract class CachedTileMatrixSets extends DefaultTileMatrixSets {
         return server;
     }
 
-    public abstract Request getTileRequest(TileMatrixSet pyramid, TileMatrix mosaic, long col, long row, Map hints) throws DataStoreException;
+    public abstract Request getTileRequest(TileMatrixSet pyramid, TileMatrix mosaic, long[] indices, Map hints) throws DataStoreException;
 
-    public ImageTile getTile(TileMatrixSet pyramid, TileMatrix mosaic, long col, long row, Map hints) throws DataStoreException {
+    public Optional<Tile> getTile(TileMatrixSet pyramid, TileMatrix mosaic, long[] indices, Map hints) throws DataStoreException {
         final String formatmime = (hints == null) ? null : (String) hints.get(TileMatrices.HINT_FORMAT);
         ImageReaderSpi spi = null;
         if (formatmime != null) {
@@ -131,24 +135,24 @@ public abstract class CachedTileMatrixSets extends DefaultTileMatrixSets {
         }
 
         if (cacheImages) {
-            return new DefaultImageTile(spi, getTileImage(pyramid, mosaic, col, row, hints), 0, new Point(Math.toIntExact(col), Math.toIntExact(row)));
+            return Optional.of(new DefaultImageTile(spi, getTileImage(pyramid, mosaic, indices, hints), 0, indices));
         } else {
-            return new RequestImageTile(spi, getTileRequest(pyramid, mosaic, col, row, hints), 0, new Point(Math.toIntExact(col), Math.toIntExact(row)));
+            return Optional.of(new RequestImageTile(spi, getTileRequest(pyramid, mosaic, indices, hints), 0, indices));
         }
     }
 
-    private static String toId(TileMatrixSet pyramid, TileMatrix mosaic, long col, long row, Map hints) {
-        final String pyramidId = pyramid.getIdentifier();
-        final String mosaicId = mosaic.getIdentifier();
+    private static String toId(TileMatrixSet pyramid, TileMatrix mosaic, long... indices) {
+        final String pyramidId = pyramid.getIdentifier().toString();
+        final String mosaicId = mosaic.getIdentifier().toString();
 
-        final StringBuilder sb = new StringBuilder(pyramidId).append('_').append(mosaicId).append('_').append(col).append('_').append(row);
+        final StringBuilder sb = new StringBuilder(pyramidId).append('_').append(mosaicId).append('_').append(indices[0]).append('_').append(indices[1]);
 
         return sb.toString();
     }
 
-    private RenderedImage getTileImage(TileMatrixSet pyramid, TileMatrix mosaic, long col, long row, Map hints) throws DataStoreException {
+    private RenderedImage getTileImage(TileMatrixSet pyramid, TileMatrix mosaic, long[] indices, Map hints) throws DataStoreException {
 
-        final String tileId = toId(pyramid, mosaic, col, row, hints);
+        final String tileId = toId(pyramid, mosaic, indices);
 
         //use the cache if available
         RenderedImage value = tileCache.peek(tileId);
@@ -157,7 +161,7 @@ public abstract class CachedTileMatrixSets extends DefaultTileMatrixSets {
             try {
                 value = handler.peek();
                 if (value == null) {
-                    final Request request = getTileRequest(pyramid, mosaic, col, row, hints);
+                    final Request request = getTileRequest(pyramid, mosaic, indices, hints);
                     InputStream stream = null;
                     ImageInputStream iis = null;
                     try {
@@ -190,27 +194,27 @@ public abstract class CachedTileMatrixSets extends DefaultTileMatrixSets {
         return value;
     }
 
-    public BlockingQueue<Object> getTiles(TileMatrixSet pyramid, TileMatrix mosaic, Collection<? extends Point> locations, Map hints) throws DataStoreException {
+    public Stream<Tile> getTiles(TileMatrixSet pyramid, TileMatrix mosaic, Collection<long[]> locations, Map hints) throws DataStoreException {
 
         if (!cacheImages || !useURLQueries) {
             //can not optimize a non url server
-            return queryUnoptimizedIO(pyramid, mosaic, locations, hints);
+            return queryUnoptimizedIO(pyramid, mosaic, locations);
         }
 
         final Client server = getServer();
 
         if (server == null) {
-            return queryUnoptimizedIO(pyramid, mosaic, locations, hints);
+            return queryUnoptimizedIO(pyramid, mosaic, locations);
         }
 
         if (!(server.getClientSecurity() == DefaultClientSecurity.NO_SECURITY)) {
             //we can optimize only if there is no security
-            return queryUnoptimizedIO(pyramid, mosaic, locations, hints);
+            return queryUnoptimizedIO(pyramid, mosaic, locations);
         }
 
         final boolean useNIO = Boolean.TRUE.equals(server.getUserProperty(PROPERTY_NIO));
         if(!useNIO){
-            return queryUnoptimizedIO(pyramid, mosaic, locations, hints);
+            return queryUnoptimizedIO(pyramid, mosaic, locations);
         }
 
         final URL url = server.getURL();
@@ -218,52 +222,54 @@ public abstract class CachedTileMatrixSets extends DefaultTileMatrixSets {
 
         if (!"http".equalsIgnoreCase(protocol)) {
             //we can optimize only an http protocol
-            return queryUnoptimizedIO(pyramid, mosaic, locations, hints);
+            return queryUnoptimizedIO(pyramid, mosaic, locations);
         }
 
-
-        final CancellableQueue<Object> queue = new CancellableQueue<Object>(1000);
+        final CancellableQueue<Object> queue = new CancellableQueue<>(1000);
 
         //compose the requiered queries
-        final List<ImagePack> downloadList = new ArrayList<ImagePack>();
-        for (Point p : locations) {
+        final List<ImagePack> downloadList = new ArrayList<>();
+        for (long[] p : locations) {
             //check the cache if we have the image already
-            final String tid = toId(pyramid, mosaic, p.x, p.y, hints);
+            final String tid = toId(pyramid, mosaic, p);
             final RenderedImage image = tileCache.get(tid);
-
-            if (queue.isCancelled()) {
-                queue.offer(TileMatrix.END_OF_QUEUE); //end sentinel
-                return queue;
-            }
 
             if (image != null) {
                 //image was in cache, reuse it
-                final ImagePack pack = new ImagePack(pyramid, mosaic, p, hints);
+                final ImagePack pack = new ImagePack(pyramid, mosaic, p);
                 pack.img = image;
                 queue.offer(pack.getTile());
             } else {
                 //we will have to download this image
                 String str;
                 try {
-                    str = getTileRequest(pyramid, mosaic, p.x, p.y, hints).getURL().toString();
+                    str = getTileRequest(pyramid, mosaic, p, hints).getURL().toString();
                     str = str.replaceFirst("http://", "");
                     str = str.substring(str.indexOf('/'));
-                    downloadList.add(new ImagePack(str, pyramid, mosaic, p, hints));
+                    downloadList.add(new ImagePack(str, pyramid, mosaic, p));
                 } catch (MalformedURLException ex) {
                     Logger.getLogger("org.geotoolkit.client.map").log(Level.SEVERE, null, ex);
                 }
             }
         }
 
-        //nothing to download, everything was in cache.
-        if (downloadList.isEmpty()) {
-            queue.offer(TileMatrix.END_OF_QUEUE); //end sentinel
-            return queue;
+        if (!downloadList.isEmpty()) {
+            queryUsingNIO(url, queue, downloadList);
         }
 
-        queryUsingNIO(url, queue, downloadList);
-
-        return queue;
+        return Stream.generate(new Supplier<Tile>() {
+            @Override
+            public Tile get() {
+                Object take;
+                try {
+                    take = queue.take();
+                    if (take == END_OF_QUEUE) return null;
+                    return (Tile) take;
+                } catch (InterruptedException ex) {
+                    throw new RuntimeException(ex.getMessage(), ex);
+                }
+            }
+        }).takeWhile(Objects::nonNull);
     }
 
     /**
@@ -287,7 +293,7 @@ public abstract class CachedTileMatrixSets extends DefaultTileMatrixSets {
                     try {
                         //put a custom object, this is used in the iterator
                         //to detect the end.
-                        queue.put(TileMatrix.END_OF_QUEUE);
+                        queue.put(END_OF_QUEUE);
                     } catch (InterruptedException ex) {
                         LOGGER.log(Level.WARNING, ex.getMessage(), ex);
                     }
@@ -295,7 +301,7 @@ public abstract class CachedTileMatrixSets extends DefaultTileMatrixSets {
             }
         };
 
-        final Map<Integer, ImagePack> PACK_MAP = new ConcurrentHashMap<Integer, ImagePack>();
+        final Map<Integer, ImagePack> PACK_MAP = new ConcurrentHashMap<>();
 
         // Set up the event pipeline factory.
         final ClientBootstrap boot = getBootstrap();
@@ -331,107 +337,54 @@ public abstract class CachedTileMatrixSets extends DefaultTileMatrixSets {
     /**
      * Use standard java IO with a thread pool.
      */
-    private void queryUsingIO(final CancellableQueue queue,
-            final List<ImagePack> downloadList){
-
-        final int processors = Runtime.getRuntime().availableProcessors();
-        final ExecutorService es = Executors.newFixedThreadPool(processors*2);
-
-        queue.addPropertyChangeListener(new PropertyChangeListener() {
-                    @Override
-                    public void propertyChange(PropertyChangeEvent evt) {
-                        es.shutdownNow();
-                    }
-                });
-
-        final CountDownLatch latch = new CountDownLatch(downloadList.size()) {
-            @Override
-            public void countDown() {
-                super.countDown();
-                if (getCount() <= 0 && !queue.isCancelled()) {
-                    try {
-                        //put a custom object, this is used in the iterator
-                        //to detect the end.
-                        queue.put(TileMatrix.END_OF_QUEUE);
-                    } catch (InterruptedException ex) {
-                        LOGGER.log(Level.INFO, ex.getMessage(), ex);
-                    }
-                    es.shutdown();
-                }
+    private Stream<Tile> queryUsingIO(final List<ImagePack> downloadList){
+        return downloadList.stream().parallel().map((ImagePack pack) -> {
+            final Tile tr;
+            try {
+                tr = pack.readNow();
+            } catch (Exception ex) {
+                LOGGER.log(Level.WARNING, ex.getMessage(),ex);
+                return null;
             }
-        };
-
-        for(final ImagePack pack : downloadList){
-            es.submit(new Runnable() {
-                @Override
-                public void run() {
-                    try{
-                        final ImageTile tr;
-                        try {
-                            tr = pack.readNow();
-                        } catch (Exception ex) {
-                            LOGGER.log(Level.WARNING, ex.getMessage(),ex);
-                            return;
-                        }
-
-                        boolean added = false;
-                        while(!added && !queue.isCancelled()){
-                            try {
-                                added = queue.offer(tr,200, TimeUnit.MILLISECONDS);
-                            } catch (InterruptedException ex) {
-                                LOGGER.log(Level.FINE, ex.getMessage());
-                            }
-                        }
-                    }finally{
-                        latch.countDown();
-                    }
-                }
-            });
-        }
-
+            return tr;
+        }).filter(Objects::nonNull);
     }
 
     /**
      * When service is secured or has other constraints we can only use standard IO.
      */
-    private CancellableQueue queryUnoptimizedIO(TileMatrixSet pyramid, TileMatrix mosaic, Collection<? extends Point> locations, Map hints){
+    private Stream<Tile> queryUnoptimizedIO(TileMatrixSet pyramid, TileMatrix mosaic, Collection<long[]> locations){
 
-        final CancellableQueue<Object> queue = new CancellableQueue<Object>(1000);
+        final List<Tile> queue = new ArrayList<>();
 
         //compose the requiered queries
-        final List<ImagePack> downloadList = new ArrayList<ImagePack>();
-        for (Point p : locations) {
+        final List<ImagePack> downloadList = new ArrayList<>();
+        for (long[] p : locations) {
             //check the cache if we have the image already
-            final String tid = toId(pyramid,mosaic, p.x, p.y, hints);
+            final String tid = toId(pyramid,mosaic, p);
             RenderedImage image = null;
-            if(tileCache != null){
+            if (tileCache != null) {
                 image = tileCache.get(tid);
-            }
-
-            if (queue.isCancelled()) {
-                queue.offer(TileMatrix.END_OF_QUEUE); //end sentinel
-                return queue;
             }
 
             if (image != null) {
                 //image was in cache, reuse it
-                final ImagePack pack = new ImagePack(tid, pyramid, mosaic, p, hints);
+                final ImagePack pack = new ImagePack(tid, pyramid, mosaic, p);
                 pack.img = image;
-                queue.offer(pack.getTile());
+                queue.add(pack.getTile());
             } else {
                 //we will have to download this image
-                downloadList.add(new ImagePack(pyramid, mosaic, p, hints));
+                downloadList.add(new ImagePack(pyramid, mosaic, p));
             }
         }
 
         //nothing to download, everything was in cache.
         if (downloadList.isEmpty()) {
-            queue.offer(TileMatrix.END_OF_QUEUE); //end sentinel
-            return queue;
+            return queue.stream();
         }
-
-        queryUsingIO(queue, downloadList);
-        return queue;
+        return Stream.concat(
+                queue.stream(),
+                queryUsingIO(downloadList));
     }
 
     /**
@@ -442,25 +395,22 @@ public abstract class CachedTileMatrixSets extends DefaultTileMatrixSets {
         private final String requestPath;
         private final TileMatrixSet pyramid;
         private final TileMatrix mosaic;
-        private final Point pt;
+        private final long[] pt;
         private final ChannelBuffer buffer = ChannelBuffers.dynamicBuffer();
-        private final Map hints;
         private RenderedImage img;
 
-        public ImagePack(String requestPath, TileMatrixSet pyramid, TileMatrix mosaic, Point pt, Map hints) {
+        public ImagePack(String requestPath, TileMatrixSet pyramid, TileMatrix mosaic, long[] pt) {
             this.requestPath = requestPath;
             this.pyramid = pyramid;
             this.mosaic = mosaic;
             this.pt = pt;
-            this.hints = hints;
         }
 
-        public ImagePack(TileMatrixSet pyramid, TileMatrix mosaic, Point pt, Map hints) {
+        public ImagePack(TileMatrixSet pyramid, TileMatrix mosaic, long[] pt) {
             this.requestPath = null;
             this.pyramid = pyramid;
             this.mosaic = mosaic;
             this.pt = pt;
-            this.hints = hints;
         }
 
         public String getRequestPath() {
@@ -468,12 +418,13 @@ public abstract class CachedTileMatrixSets extends DefaultTileMatrixSets {
         }
 
         public ImageTile readNow() throws DataStoreException, IOException{
-            final ImageTile ref = (ImageTile) mosaic.getTile(pt.x, pt.y, hints);
+            //tile should never be null at this point
+            final ImageTile ref = (ImageTile) mosaic.getTile(new long[]{pt[0], pt[1]}).orElse(null);
             if(ref.getInput() instanceof RenderedImage){
                 return ref;
             }
             final RenderedImage img = ref.getImage();
-            return new DefaultImageTile(ref.getImageReaderSpi(), img, 0, ref.getPosition());
+            return new DefaultImageTile(ref.getImageReaderSpi(), img, 0, ref.getIndices());
         }
 
         public ImageTile getTile() {
@@ -481,7 +432,7 @@ public abstract class CachedTileMatrixSets extends DefaultTileMatrixSets {
                 try {
                     img = ImageIO.read(new ByteArrayInputStream(buffer.array()));
                     if(tileCache != null){
-                        final String tid = toId(pyramid, mosaic, pt.x, pt.y, null);
+                        final String tid = toId(pyramid, mosaic, pt[0], pt[1]);
                         //store it in the cache
                         tileCache.put(tid, img);
                     }
