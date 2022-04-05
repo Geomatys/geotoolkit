@@ -32,6 +32,7 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
@@ -256,9 +257,19 @@ public abstract class CachedTileMatrixSets extends DefaultTileMatrixSets {
             queryUsingNIO(url, queue, downloadList);
         }
 
-        return queue.stream()
-                .filter(Tile.class::isInstance)
-                .map(Tile.class::cast);
+        return Stream.generate(new Supplier<Tile>() {
+            @Override
+            public Tile get() {
+                Object take;
+                try {
+                    take = queue.take();
+                    if (take == END_OF_QUEUE) return null;
+                    return (Tile) take;
+                } catch (InterruptedException ex) {
+                    throw new RuntimeException(ex.getMessage(), ex);
+                }
+            }
+        });
     }
 
     /**
@@ -290,7 +301,7 @@ public abstract class CachedTileMatrixSets extends DefaultTileMatrixSets {
             }
         };
 
-        final Map<Integer, ImagePack> PACK_MAP = new ConcurrentHashMap<Integer, ImagePack>();
+        final Map<Integer, ImagePack> PACK_MAP = new ConcurrentHashMap<>();
 
         // Set up the event pipeline factory.
         final ClientBootstrap boot = getBootstrap();

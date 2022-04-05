@@ -189,7 +189,7 @@ public abstract class PyramidalModelStoreNDTest <T extends WritableTiledResource
         assertEquals( 0, gridEnv.getLow(2));
         assertEquals( 1, gridEnv.getHigh(2));
 
-        final Envelope env = TileMatrices.getEnvelope(ref);
+        final Envelope env = ref.getEnvelope().orElseThrow();
         assertEquals(-180, env.getMinimum(0), DELTA);
         assertEquals(-180 +(4*10)*0.5, env.getMaximum(0), DELTA);
         assertEquals(  90, env.getMaximum(1), DELTA);

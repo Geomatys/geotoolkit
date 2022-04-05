@@ -21,9 +21,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.multires.AbstractTileMatrixSet;
-import org.geotoolkit.storage.multires.TileMatrix;
-import org.geotoolkit.storage.multires.WritableTileMatrix;
-import org.geotoolkit.storage.multires.WritableTileMatrixSet;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.GenericName;
 
@@ -32,7 +29,7 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public abstract class URITileMatrixSet extends AbstractTileMatrixSet implements WritableTileMatrixSet {
+public abstract class URITileMatrixSet extends AbstractTileMatrixSet {
 
     protected final URI root;
     protected final URITileFormat tileFormat;
@@ -61,16 +58,6 @@ public abstract class URITileMatrixSet extends AbstractTileMatrixSet implements 
 
     public URITileFormat getTileFormat() {
         return tileFormat;
-    }
-
-    @Override
-    public WritableTileMatrix createTileMatrix(org.apache.sis.storage.tiling.TileMatrix template) throws DataStoreException {
-        throw new DataStoreException("Unsupported operation");
-    }
-
-    @Override
-    public void deleteTileMatrix(String tilematrixId) throws DataStoreException {
-        throw new DataStoreException("Unsupported operation");
     }
 
 }

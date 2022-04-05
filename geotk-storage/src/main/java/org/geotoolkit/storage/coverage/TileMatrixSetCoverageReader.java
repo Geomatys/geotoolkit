@@ -241,10 +241,10 @@ public class TileMatrixSetCoverageReader <T extends TiledResource & org.apache.s
 
         final GridExtent area = TileMatrices.getTilesInEnvelope(mosaic, wantedEnv);
         final Rectangle tilesInEnvelope = new Rectangle(
-                    (int) area.getLow(0),
-                    (int) area.getLow(1),
-                    (int) area.getSize(0),
-                    (int) area.getSize(1));
+                    Math.toIntExact(area.getLow(0)),
+                    Math.toIntExact(area.getLow(1)),
+                    Math.toIntExact(area.getSize(0)),
+                    Math.toIntExact(area.getSize(1)));
         final int tileMinCol = tilesInEnvelope.x;
         final int tileMinRow = tilesInEnvelope.y;
 

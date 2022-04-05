@@ -94,6 +94,19 @@ public final class TileMatrices extends Static {
         return tileMatrix.getResolution()[0];
     }
 
+    /**
+     * Create TileMatrix GridGeometry from corner, size and scale informations.
+     * This method expect the grid size to match dimensions 0,1 of the corner CRS.
+     * The upper left corner may have more then two dimensions, extract dimension will generate a 1 unit slice
+     * in the GridGeometry.
+     * Created GridGeometry will have the orientation GridOrientation.REFLECTION_Y.
+     *
+     * @param upperleft top left corner of the tile matrix
+     * @param gridSize tile matrix grid size
+     * @param scale pixel resolution
+     * @param tileSize tile size in pixels
+     * @return TileMatrix GridGeometry.
+     */
     public static GridGeometry toGridGeometry(DirectPosition upperleft, Dimension gridSize, double scale, Dimension tileSize) {
         final CoordinateReferenceSystem crs = upperleft.getCoordinateReferenceSystem();
 
@@ -127,21 +140,10 @@ public final class TileMatrices extends Static {
      * Scales are sorted in natural order, from smallest to highest.
      */
     public static double[] getScales(TileMatrixSet tileMatrixSet) {
-        final SortedSet<Double> scaleSet = new TreeSet<Double>();
-
-        for(TileMatrix tileMatrix : tileMatrixSet.getTileMatrices().values()){
-            scaleSet.add(TileMatrices.getScale(tileMatrix));
-        }
-
-        final double[] scales = new double[scaleSet.size()];
-
-        int i=0;
-        for (Double d : scaleSet) {
-            scales[i] = d;
-            i++;
-        }
-
-        return scales;
+        return tileMatrixSet.getTileMatrices().values().stream()
+                .mapToDouble(TileMatrices::getScale)
+                .sorted()
+                .toArray();
     }
 
     /**
@@ -158,17 +160,6 @@ public final class TileMatrices extends Static {
             }
         }
         return candidates;
-    }
-
-    public static Envelope getEnvelope(TiledResource resource) throws DataStoreException {
-        for(TileMatrixSet pyramid : resource.getTileMatrixSets()){
-            //we consider the first pyramid to be in the main data crs
-            Optional<Envelope> opt = pyramid.getEnvelope();
-            if (opt.isPresent()) {
-                return opt.get();
-            }
-        }
-        return null;
     }
 
     public static TileMatrixSet getTileMatrixSet(TiledResource resource, String tilematrixsetId) throws DataStoreException {
@@ -352,24 +343,13 @@ public final class TileMatrices extends Static {
     }
 
     /**
-     * Compute tile envelope from mosaic and position.
+     * Compute tile envelope from matrix and position.
      */
     public static Envelope computeTileEnvelope(TileMatrix tileMatrix, final long[] location) {
-        final Dimension tileSize = tileMatrix.getTileSize();
-        final double scale = tileMatrix.getScale();
-        final GeneralDirectPosition ul = new GeneralDirectPosition(tileMatrix.getUpperLeftCorner());
-        final int xAxis = Math.max(CRSUtilities.firstHorizontalAxis(ul.getCoordinateReferenceSystem()), 0);
-        final int yAxis = xAxis + 1;
-        final double minX = ul.getOrdinate(xAxis);
-        final double maxY = ul.getOrdinate(yAxis);
-        final double spanX = tileSize.width * scale;
-        final double spanY = tileSize.height * scale;
-
-        final GeneralEnvelope envelope = new GeneralEnvelope(ul.getCoordinateReferenceSystem());
-        envelope.setRange(xAxis, minX + location[0]*spanX, minX + (location[0]+1)*spanX);
-        envelope.setRange(yAxis, maxY - (location[1]+1)*spanY, maxY - location[1]*spanY);
-
-        return envelope;
+        return tileMatrix.getTilingScheme().derive()
+                .subgrid(new GridExtent(null, location, location, true))
+                .build()
+                .getEnvelope();
     }
 
     /**
@@ -716,6 +696,8 @@ public final class TileMatrices extends Static {
 
     /**
      * Create a stream of point in the GridExtent.
+     *
+     * TODO : make a more efficient implementation.
      */
     public static Stream<long[]> pointStream(GridExtent extent) {
         final int dimension = extent.getDimension();

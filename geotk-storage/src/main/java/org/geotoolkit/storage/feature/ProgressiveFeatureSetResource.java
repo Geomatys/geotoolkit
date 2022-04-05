@@ -29,7 +29,6 @@ import org.geotoolkit.storage.multires.GeneralProgressiveResource;
 import org.geotoolkit.storage.multires.TileGenerator;
 import org.geotoolkit.storage.multires.TileMatrixSet;
 import org.geotoolkit.storage.multires.TiledResource;
-import org.geotoolkit.storage.multires.WritableTileMatrixSet;
 import org.geotoolkit.storage.multires.WritableTiledResource;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -43,7 +42,7 @@ import org.opengis.util.GenericName;
 public class ProgressiveFeatureSetResource<T extends FeatureSet & WritableTiledResource>
         extends GeneralProgressiveResource implements FeatureSet, TiledResource {
 
-    private T base = null;
+    private final T base;
 
     public ProgressiveFeatureSetResource(T resource, TileGenerator generator) throws DataStoreException {
         super(resource, generator);
@@ -59,11 +58,6 @@ public class ProgressiveFeatureSetResource<T extends FeatureSet & WritableTiledR
             return model.getEnvelope();
         }
         return Optional.empty();
-    }
-
-    @Override
-    public Collection<WritableTileMatrixSet> getTileMatrixSets() throws DataStoreException {
-        return (Collection<WritableTileMatrixSet>) super.getTileMatrixSets();
     }
 
     @Override

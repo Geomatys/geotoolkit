@@ -283,10 +283,10 @@ public class MapContextTileGenerator extends AbstractTileGenerator {
                     try {
                         GridExtent area = TileMatrices.getTilesInEnvelope(tileMatrix, env);
                         rect = new Rectangle(
-                            (int) area.getLow(0),
-                            (int) area.getLow(1),
-                            (int) area.getSize(0),
-                            (int) area.getSize(1));
+                            Math.toIntExact(area.getLow(0)),
+                            Math.toIntExact(area.getLow(1)),
+                            Math.toIntExact(area.getSize(0)),
+                            Math.toIntExact(area.getSize(1)));
                     } catch (NoSuchDataException ex) {
                         continue;
                     }

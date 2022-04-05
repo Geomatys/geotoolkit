@@ -269,10 +269,20 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
 
                                 Tile data = null;
                                 try {
-                                    final TileStatus tileStatus = tileMatrix.getTileStatus(indices);
-                                    if (skipExistingTiles && tileStatus == TileStatus.EXISTS) {
-                                        //tile already exist
-                                        return null;
+                                    if (skipExistingTiles) {
+                                        try {
+                                            if (TileStatus.EXISTS.equals(tileMatrix.getTileStatus(indices))) {
+                                                //tile already exist
+                                                return null;
+                                            }
+                                        } catch (DataStoreException ex) {
+                                            //just log it, consider the tile do not exist
+                                            LOGGER.warning(ex.getMessage());
+                                            if (listener != null) {
+                                                long v = al.incrementAndGet();
+                                                listener.progressing(new ProcessEvent(DUMMY, v+"/"+total+" mosaic="+tileMatrix.getIdentifier(), progress.get(), ex));
+                                            }
+                                        }
                                     }
 
                                     try {
@@ -280,8 +290,6 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
                                     } catch (Exception ex) {
                                         data = TileInError.create(indices, null, ex);
                                     }
-                                } catch (DataStoreException ex) {
-                                    LOGGER.warning(ex.getMessage());
                                 } finally {
                                     long v = al.incrementAndGet();
                                     if (listener != null & (v % eventstep == 0))  {

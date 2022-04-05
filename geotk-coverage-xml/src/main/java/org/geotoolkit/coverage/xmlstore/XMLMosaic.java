@@ -737,7 +737,7 @@ public class XMLMosaic implements WritableTileMatrix {
         if (anyTile == null) {
             anyTile = getTile(0, 0).orElse(null);
         }
-        return anyTile;
+        return anyTile != null ? anyTile : createEmptyTile(0,0);
     }
 
     private class TileWriter implements Runnable{
