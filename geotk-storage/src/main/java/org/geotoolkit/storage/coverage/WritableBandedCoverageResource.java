@@ -20,7 +20,7 @@ public interface WritableBandedCoverageResource extends BandedCoverageResource {
      * Writes a new coverage in the data store for this resource. If a coverage already exists for this resource,
      * then the behavior of this method is determined by the given options. If no option is specified, the default
      * behavior is to fail if writing a coverage would cause an existing coverage to be overwritten.
-     * This behavior can be modified by requesting the {@linkplain CommonOption#TRUNCATE replacement}
+     * This behavior can be modified by requesting the {@linkplain CommonOption#REPLACE replacement}
      * or {@linkplain CommonOption#UPDATE update} of existing coverages.
      *
      * @param  coverage  new data to write in the data store for this resource.
