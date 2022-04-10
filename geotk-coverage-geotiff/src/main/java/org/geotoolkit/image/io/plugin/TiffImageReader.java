@@ -97,48 +97,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 import org.opengis.util.NoSuchIdentifierException;
 
-/**
- * An image reader for uncompressed TIFF files or RGB images. This image reader duplicates the works
- * performed by the reader provided in <cite>Image I/O extension for Java Advanced Imaging</cite>,
- * but is specialized to the specific case of uncompressed files. For such case, this
- * {@code RawTiffImageReader} is faster.
- * <p>
- * {@code RawTiffImageReader} has the following restrictions:
- * <p>
- * <ul>
- *   <li>Can read only from files as a {@link File} or {@link String} input objects
- *       (the standard {@link javax.imageio.stream.ImageInputStream} is not supported).</li>
- *   <li>Can read only uncompressed (RAW) images
- *       (the JPEG and LZW compressions are not supported).</li>
- *   <li>Can read only tiled images (this restriction may be removed in a future version).</li>
- *   <li>Color model must be RGB (this restriction may be removed in a future version).</li>
- *   <li>Components are stored in "chunky" format, not planar (this restriction may be removed
- *       in a future version).</li>
- *   <li>The source and target bands can not be modified (this restriction may be removed
- *       in a future version).</li>
- *   <li>Metadata are ignored (this restriction may be removed in a future version).</li>
- * </ul>
- * <p>
- * Because of the above-cited restrictions, this reader registers itself only after the JAI
- * readers (unless otherwise specified). Users wanting this reader should request for it
- * explicitly, for example as below:
- *
- * {@preformat java
- *     ImageReaderSpi spi = IIORegistry.getDefaultInstance().getServiceProviderByClass(RawTiffImageReader.class);
- *     ImageReader reader = spi.createReaderInstance();
- * }
- *
- * This image reader can also process <cite>Big TIFF</cite> images.
- *
- * @author Martin Desruisseaux (Geomatys)
- * @author Remi Marechal       (Geomatys)
- * @author Alexis Manin        (Geomatys)
- * @author Johann Sorel        (Geomatys)
- * @version 3.16
- *
- * @since 3.16
- * @module
- */
 public class TiffImageReader extends SpatialImageReader {
 
     /**
@@ -3711,8 +3669,8 @@ public class TiffImageReader extends SpatialImageReader {
     }
 
     /**
-     * Service provider interface (SPI) for {@code RawTiffImageReader}s. This SPI provides
-     * necessary implementation for creating default {@link RawTiffImageReader} instances.
+     * Service provider interface (SPI) for {@code TiffImageReader}s. This SPI provides
+     * necessary implementation for creating default {@link TiffImageReader} instances.
      * <p>
      * The default constructor initializes the fields to the values listed below.
      * Users wanting different values should create a subclass of {@code Spi} and
@@ -3722,7 +3680,7 @@ public class TiffImageReader extends SpatialImageReader {
      *   <tr bgcolor="lightblue"><th>Field</th><th>Value</th></tr>
      *   <tr><td>&nbsp;{@link #names}           &nbsp;</td><td>&nbsp;{@code "tiff"}&nbsp;</td></tr>
      *   <tr><td>&nbsp;{@link #MIMETypes}       &nbsp;</td><td>&nbsp;{@code "image/tiff"}&nbsp;</td></tr>
-     *   <tr><td>&nbsp;{@link #pluginClassName} &nbsp;</td><td>&nbsp;{@code "org.geotoolkit.image.io.plugin.RawTiffImageReader"}&nbsp;</td></tr>
+     *   <tr><td>&nbsp;{@link #pluginClassName} &nbsp;</td><td>&nbsp;{@code "org.geotoolkit.image.io.plugin.TiffImageReader"}&nbsp;</td></tr>
      *   <tr><td>&nbsp;{@link #vendorName}      &nbsp;</td><td>&nbsp;{@code "Geotoolkit.org"}&nbsp;</td></tr>
      *   <tr><td>&nbsp;{@link #version}         &nbsp;</td><td>&nbsp;Value of {@link org.geotoolkit.util.Version#GEOTOOLKIT}&nbsp;</td></tr>
      * </table>
@@ -3748,7 +3706,7 @@ public class TiffImageReader extends SpatialImageReader {
         private static final String[] SUFFIXES = new String[] {"tiff", "tif", "geotiff", "geotif"};
 
         /**
-         * The mime types for the {@link RawTiffImageReader}.
+         * The mime types for the {@link TiffImageReader}.
          */
         private static final String[] MIME_TYPES = {"image/tiff", "image/x-geotiff", "image/tiff;subtype=geotiff"};
 
@@ -3794,11 +3752,8 @@ public class TiffImageReader extends SpatialImageReader {
         }
 
         /**
-         * Current implementation returns {@code false} in every case. Future implementation
-         * may perform a better check if the {@link RawTiffImageReader} become less restrictive.
-         *
          * @param  source The input source to be decoded.
-         * @return {@code true} if the given source can be used by {@link RawTiffImageReader}.
+         * @return {@code true} if the given source can be used by {@link TiffImageReader}.
          * @throws IOException if an I/O error occurs while reading the stream.
          */
         @Override
@@ -3865,14 +3820,14 @@ public class TiffImageReader extends SpatialImageReader {
         /**
          * Invoked when this Service Provider is registered. By default, this method
          * {@linkplain ServiceRegistry#setOrdering(Class, Object, Object) sets the ordering}
-         * of this {@code RawTiffImageReader.Spi} after the one provided in <cite>Image I/O
+         * of this {@code TiffImageReader.Spi} after the one provided in <cite>Image I/O
          * extension for JAI</cite>. This behavior can be changed by setting the
          * <code>{@value org.geotoolkit.lang.SystemOverride#KEY_ALLOW_OVERRIDE}</code>
          * system property explicitly to {@code true}.
          * <p>
          * Note that the Geotk TIFF image reader will be selected only if the source given to the
          * {@link #canDecodeInput(Object)} method is compliant with the restrictions documented
-         * in {@link RawTiffImageReader} javadoc, otherwise the standard TIFF image reader will
+         * in {@link TiffImageReader} javadoc, otherwise the standard TIFF image reader will
          * be selected instead.
          *
          * @param registry The registry where is service is registered.

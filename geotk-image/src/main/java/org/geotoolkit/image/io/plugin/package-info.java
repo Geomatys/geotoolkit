@@ -35,12 +35,6 @@
  *     <td>&nbsp;</td>
  *     <td>&nbsp;Require {@link com.sun.media.imageio.stream.RawImageInputStream}.&nbsp;</td>
  *   </tr><tr>
- *     <td>&nbsp;{@link org.geotoolkit.image.io.plugin.RawTiffImageReader}&nbsp;</td>
- *     <td>&nbsp;</td>
- *     <td>&nbsp;{@code tiff}&nbsp;</td>
- *     <td>&nbsp;{@code image/tiff}&nbsp;</td>
- *     <td>&nbsp;For uncompressed TIFF images only.&nbsp;</td>
- *   </tr><tr>
  *     <td>&nbsp;{@link org.geotoolkit.image.io.plugin.TextMatrixImageReader}&nbsp;</td>
  *     <td>&nbsp;{@link org.geotoolkit.image.io.plugin.TextMatrixImageWriter}&nbsp;</td>
  *     <td>&nbsp;{@code matrix}&nbsp;</td>
