@@ -38,7 +38,6 @@ import org.opengis.util.FactoryException;
 import org.opengis.test.coverage.image.ImageWriterTestCase;
 
 import org.apache.sis.referencing.CRS;
-import org.geotoolkit.image.io.TextImageWriter;
 import org.geotoolkit.test.referencing.WKT;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
@@ -58,9 +57,6 @@ import org.geotoolkit.image.palette.PaletteFactory;
  * This arbitrary locale is fixed in order to keep the build locale-independent.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.20
- *
- * @since 3.06 (derived from 2.4)
  */
 public abstract strictfp class TextImageWriterTestBase extends ImageWriterTestCase {
     /**

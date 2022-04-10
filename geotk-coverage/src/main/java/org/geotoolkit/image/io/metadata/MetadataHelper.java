@@ -24,7 +24,6 @@ import java.util.Objects;
 import java.text.NumberFormat;
 import java.text.FieldPosition;
 import java.awt.Rectangle;
-import java.awt.geom.Dimension2D;
 import java.awt.geom.AffineTransform;
 import javax.imageio.IIOParam;
 import javax.measure.Unit;
@@ -52,7 +51,6 @@ import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.geotoolkit.internal.InternalUtilities;
 import org.apache.sis.coverage.Category;
 import org.apache.sis.internal.system.DefaultFactories;
-import org.geotoolkit.display.shape.DoubleDimension2D;
 import org.geotoolkit.image.io.ImageMetadataException;
 import org.apache.sis.referencing.operation.matrix.Matrix2;
 import org.apache.sis.referencing.operation.matrix.Matrices;
@@ -443,76 +441,6 @@ public class MetadataHelper implements Localized {
             }
         }
         return true;
-    }
-
-    /**
-     * Returns the size of pixels, which must be square. The {@code gridToCRS} argument is
-     * typically the output of {@link #getAffineTransform getAffineTransform}. This method
-     * checks if the given transform complies with the following conditions:
-     * <p>
-     * <ul>
-     *   <li>The {@link AffineTransform#getScaleX() scaleX} coefficient must be
-     *       greater than zero.</li>
-     *   <li>The {@link AffineTransform#getScaleY() scaleY} coefficient must be
-     *       the negative value of {@code scaleX}, because the Y axis is assumed
-     *       reversed.</li>
-     *   <li>The {@link AffineTransform#getShearX() shearX} and {@link AffineTransform#getShearY()
-     *       shearY} coefficients must be zero.</li>
-     * </ul>
-     * <p>
-     * If all those conditions are meet, then {@code scaleX} is returned. Otherwise an
-     * exception is thrown. This behavior is convenient for code like the
-     * {@linkplain org.geotoolkit.image.io.plugin.AsciiGridWriter ASCII Grid writer},
-     * which require square pixels as of format specification.
-     *
-     * @param  gridToCRS The affine transform from which to extract the cell size.
-     * @return The cell size as a positive and non-null value.
-     * @throws ImageMetadataException If the affine transform does not comply with the above cited conditions.
-     */
-    public double getCellSize(final AffineTransform gridToCRS) throws ImageMetadataException {
-        final double size = gridToCRS.getScaleX();
-        if (size > 0) {
-            final double tol = size * EPS;
-            if (Math.abs(gridToCRS.getScaleY() + size) <= tol &&
-                Math.abs(gridToCRS.getShearX()) <= tol &&
-                Math.abs(gridToCRS.getShearY()) <= tol)
-            {
-                return size;
-            }
-        }
-        throw new ImageMetadataException(error(Errors.Keys.PixelsNotSquareOrRotatedImage));
-    }
-
-    /**
-     * Returns the dimension of pixels, or {@code null} if not applicable. The {@code gridToCRS}
-     * argument is typically the output of {@link #getAffineTransform getAffineTransform}. This
-     * method checks if the given transform complies with the following conditions:
-     * <p>
-     * <ul>
-     *   <li>The {@link AffineTransform#getShearX() shearX}
-     *       and {@link AffineTransform#getShearY() shearY} coefficients are zero.</li>
-     * </ul>
-     * <p>
-     * If this condition is meet, then {@code scaleX} and <strong>the negative value</strong>
-     * of {@code scaleY} (because the Y axis is assumed reversed) are returned in a new
-     * {@link Dimension2D} object. Otherwise {@code null} is returned. This behavior is
-     * convenient for code like the {@linkplain org.geotoolkit.image.io.plugin.AsciiGridWriter
-     * ASCII Grid writer}, which require square pixels unless some extensions are enabled for
-     * rectangular pixel.
-     *
-     * @param  gridToCRS The affine transform from which to extract the cell size.
-     * @return The cell dimension, or {@code null} if the image is rotated.
-     */
-    public Dimension2D getCellDimension(final AffineTransform gridToCRS) {
-        final double dx =  gridToCRS.getScaleX();
-        final double dy = -gridToCRS.getScaleY();
-        final double tol = Math.max(Math.abs(dx), Math.abs(dy)) * EPS;
-        if (Math.abs(gridToCRS.getShearX()) <= tol &&
-            Math.abs(gridToCRS.getShearY()) <= tol)
-        {
-            return new DoubleDimension2D(dx, dy);
-        }
-        return null;
     }
 
     /**

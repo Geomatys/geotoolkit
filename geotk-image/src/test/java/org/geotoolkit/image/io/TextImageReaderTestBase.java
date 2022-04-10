@@ -26,9 +26,6 @@ import java.awt.image.BufferedImage;
 import java.awt.image.IndexColorModel;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.ImageIO;
-import org.geotoolkit.image.io.SampleConversionType;
-import org.geotoolkit.image.io.SpatialImageReadParam;
-
 import org.opengis.test.coverage.image.ImageReaderTestCase;
 
 import org.junit.*;
@@ -40,9 +37,6 @@ import static org.junit.Assert.*;
  * The base class for {@link TextImageReader} tests.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.20
- *
- * @since 3.06
  */
 public abstract strictfp class TextImageReaderTestBase extends ImageReaderTestCase {
     /**

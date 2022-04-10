@@ -29,12 +29,6 @@
  *     <th>MIME type</th>
  *     <th>Comments</th>
  *   </tr><tr>
- *     <td>&nbsp;{@link org.geotoolkit.image.io.plugin.AsciiGridReader}&nbsp;</td>
- *     <td>&nbsp;{@link org.geotoolkit.image.io.plugin.AsciiGridWriter}&nbsp;</td>
- *     <td>&nbsp;{@code ascii-grid}&nbsp;</td>
- *     <td>&nbsp;{@code text/plain}&nbsp;</td>
- *     <td>&nbsp;US locale and ASCII encoding.&nbsp;</td>
- *   </tr><tr>
  *     <td>&nbsp;{@link org.geotoolkit.image.io.plugin.NetcdfImageReader}&nbsp;</td>
  *     <td>&nbsp;{@link org.geotoolkit.image.io.plugin.NetcdfImageWriter}&nbsp;</td>
  *     <td>&nbsp;{@code netcdf}&nbsp;</td>
