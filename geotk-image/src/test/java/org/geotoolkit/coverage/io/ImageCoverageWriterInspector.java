@@ -108,11 +108,10 @@ final strictfp class ImageCoverageWriterInspector extends ImageCoverageWriter {
      */
     @Override
     protected MathTransform2D geodeticToPixelCoordinates(final GridGeometry gridGeometry,
-            final GridCoverageStoreParam geodeticParam, final IIOParam pixelParam,
-            final boolean isNetcdfHack) // TODO: DEPRECATED: to be removed in Apache SIS.
+            final GridCoverageStoreParam geodeticParam, final IIOParam pixelParam)
             throws DataStoreException
     {
-        final MathTransform2D tr = super.geodeticToPixelCoordinates(gridGeometry, geodeticParam, pixelParam, isNetcdfHack);
+        final MathTransform2D tr = super.geodeticToPixelCoordinates(gridGeometry, geodeticParam, pixelParam);
         differenceTransform = tr;
         return tr;
     }

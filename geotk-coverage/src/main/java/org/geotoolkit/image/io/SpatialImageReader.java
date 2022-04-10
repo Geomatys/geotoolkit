@@ -406,8 +406,7 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
 
     /**
      * Returns {@code true} if the image at the given index has a color palette. Some formats like
-     * {@linkplain org.geotoolkit.image.io.plugin.RawImageReader RAW} or
-     * {@linkplain org.geotoolkit.image.io.plugin.NetcdfImageReader NetCDF} don't store any color
+     * {@linkplain org.geotoolkit.image.io.plugin.RawImageReader RAW} don't store any color
      * information with the pixel values, while other formats like PNG or JPEG (optionally wrapped
      * in a {@linkplain org.geotoolkit.image.io.plugin.WorldFileImageReader World File reader})
      * provide such color palette.

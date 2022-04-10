@@ -1375,7 +1375,7 @@ public class ImageCoverageReader extends GridCoverageStore {
              * Convert geodetic envelope and resolution to pixel coordinates.
              * Store the result of the above conversions in the ImageReadParam object.
              */
-            destToExtractedGrid = geodeticToPixelCoordinates(gridGeometry, param, imageParam, false);
+            destToExtractedGrid = geodeticToPixelCoordinates(gridGeometry, param, imageParam);
             /*
              * Conceptually we could compute right now:
              *

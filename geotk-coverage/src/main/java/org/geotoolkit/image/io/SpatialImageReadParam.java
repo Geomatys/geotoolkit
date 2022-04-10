@@ -47,8 +47,7 @@ import org.geotoolkit.image.palette.PaletteFactory;
  * {@link ImageReadParam} class with the following additional capabilities:
  * <p>
  * <ul>
- *   <li><p>Specify the plane to read in datasets having more than 2 dimensions, as for example
- *       in {@linkplain org.geotoolkit.image.io.plugin.NetcdfImageReader NetCDF} files.</p></li>
+ *   <li><p>Specify the plane to read in datasets having more than 2 dimensions.</p></li>
  *
  *   <li><p>Specify the name of a {@linkplain Palette color palette}. This is useful when
  *       reading an image from a file that doesn't contain such information.</p></li>

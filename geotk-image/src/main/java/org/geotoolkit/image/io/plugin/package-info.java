@@ -29,12 +29,6 @@
  *     <th>MIME type</th>
  *     <th>Comments</th>
  *   </tr><tr>
- *     <td>&nbsp;{@link org.geotoolkit.image.io.plugin.NetcdfImageReader}&nbsp;</td>
- *     <td>&nbsp;{@link org.geotoolkit.image.io.plugin.NetcdfImageWriter}&nbsp;</td>
- *     <td>&nbsp;{@code netcdf}&nbsp;</td>
- *     <td>&nbsp;{@code application/netcdf}&nbsp;</td>
- *     <td>&nbsp;Assume <A HREF="http://www.cfconventions.org/">CF Metadata conventions</A>.&nbsp;</td>
- *   </tr><tr>
  *     <td>&nbsp;{@link org.geotoolkit.image.io.plugin.RawImageReader}&nbsp;</td>
  *     <td>&nbsp;</td>
  *     <td>&nbsp;{@code raw}&nbsp;</td>

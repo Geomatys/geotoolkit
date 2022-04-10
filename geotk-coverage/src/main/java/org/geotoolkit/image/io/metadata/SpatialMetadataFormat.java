@@ -267,7 +267,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
 
     /**
      * The ISO-19115 format name, which is {@value}. This metadata format is big and supported
-     * only by a few plugins like {@link org.geotoolkit.image.io.plugin.NetcdfImageReader}.
+     * only by a few plugins.
      * For applications that don't need to full verbosity of ISO 19115, consider using the
      * {@linkplain #getStreamInstance(String) stream metadata instance} identified by the
      * {@value #GEOTK_FORMAT_NAME} name instead.
