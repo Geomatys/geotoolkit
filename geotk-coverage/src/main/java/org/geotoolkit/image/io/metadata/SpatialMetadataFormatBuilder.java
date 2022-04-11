@@ -709,8 +709,7 @@ public class SpatialMetadataFormatBuilder extends Builder<SpatialMetadataFormat>
 
     /**
      * Adds the tree structure for an ISO-19115 metadata object.
-     * <b>Warning:</b> this tree is big and is supported only for a few plugins like
-     * {@link org.geotoolkit.image.io.plugin.NetcdfImageReader}.
+     * <b>Warning:</b> this tree is big and is supported only for a few plugins.
      *
      * @param addToElement The name of the element where to add the tree,
      *        or {@code null} for adding the tree at the root.

@@ -569,8 +569,6 @@ public class ImageCoverageWriter extends GridCoverageStore {
         if (!isLast && !imageWriter.canWriteSequence()) {
             throw new CoverageStoreException(Errors.format(Errors.Keys.UnsupportedMultiOccurrence_1, GridCoverage.class));
         }
-        final boolean isNetcdfHack = imageWriter.getClass().getName().equals("org.geotoolkit.image.io.plugin.NetcdfImageWriter"); // TODO: DEPRECATED: to be removed in Apache SIS.
-        final boolean isTiffHack = imageWriter.getClass().getName().equals("org.geotoolkit.image.io.plugin.TiffImageWriter");
         /*
          * Convert the geodetic coordinates to pixel coordinates.
          */
@@ -600,7 +598,7 @@ public class ImageCoverageWriter extends GridCoverageStore {
                 throw new CoverageStoreException(Errors.getResources(locale).getString(
                         Errors.Keys.IllegalArgument_2, "interpolation", interpolation.name()));
             }
-            destToExtractedGrid = geodeticToPixelCoordinates(gridGeometry, param, imageParam, isNetcdfHack);
+            destToExtractedGrid = geodeticToPixelCoordinates(gridGeometry, param, imageParam);
             imageParam.setSourceBands(param.getSourceBands());
             final Rectangle sourceRegion  = imageParam.getSourceRegion();
             final Rectangle requestRegion = requestedBounds;
