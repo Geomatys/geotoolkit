@@ -28,7 +28,6 @@ import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.util.Classes;
 import static org.geotoolkit.coverage.io.GridCoverageStore.LOGGER;
-import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
 import static org.geotoolkit.internal.InternalUtilities.adjustForRoundingError;
 import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.lang.Static;
@@ -47,14 +46,10 @@ import org.opengis.util.InternationalString;
  * class in order to reduce the amount of code de load when there is no logging. To make that
  * effective, it is caller responsibility to check if logging are enabled before to invoke any
  * method in this class.
- *
- * @author Martin Desruisseaux (Geomatys)
- * @version 3.16
- *
- * @since 3.15
- * @module
  */
 final class ImageCoverageStore extends Static {
+    private static final int X_DIMENSION = 0, Y_DIMENSION = 1;
+
     /**
      * Do not allow instantiation of this class.
      */

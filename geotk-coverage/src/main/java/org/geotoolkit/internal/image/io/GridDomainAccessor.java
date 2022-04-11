@@ -27,7 +27,6 @@ import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.util.logging.Logging;
-import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
 import org.geotoolkit.image.io.metadata.MetadataHelper;
 import org.geotoolkit.image.io.metadata.MetadataNodeAccessor;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
@@ -63,6 +62,8 @@ import org.opengis.referencing.operation.TransformException;
  * @module
  */
 public final class GridDomainAccessor extends MetadataNodeAccessor {
+    private static final int X_DIMENSION = 0, Y_DIMENSION = 1;
+
     /**
      * The name of the single attribute to declare for node that contains array.
      * This is used mostly for the following:

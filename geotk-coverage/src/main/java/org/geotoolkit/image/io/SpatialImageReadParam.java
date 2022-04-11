@@ -28,67 +28,25 @@ import java.awt.image.IndexColorModel;
 import javax.imageio.IIOParam;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageReadParam;
-
-import org.opengis.referencing.cs.AxisDirection;
-
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.resources.IndexedResourceBundle;
 import org.geotoolkit.image.io.metadata.SampleDomain;
 import org.geotoolkit.internal.image.io.Warnings;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.util.Classes;
-
-import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 import org.geotoolkit.image.palette.PaletteFactory;
 
 
 /**
  * Default parameters for {@link SpatialImageReader}. This class extends the standard
  * {@link ImageReadParam} class with the following additional capabilities:
- * <p>
- * <ul>
- *   <li><p>Specify the plane to read in datasets having more than 2 dimensions.</p></li>
  *
+ * <ul>
  *   <li><p>Specify the name of a {@linkplain Palette color palette}. This is useful when
  *       reading an image from a file that doesn't contain such information.</p></li>
- *
- *   <li><p>For images having more than one band where the bands are <strong>not</strong> color
- *       components, specify which band to use with the {@linkplain IndexColorModel Index
- *       Color Model}. For example an image may contain <cite>Sea Surface Temperature</cite> (SST)
- *       measurements in the first band, and an estimation of the measurement errors in the second
- *       band. Users may want to read both bands for computation purpose, while applying a color
- *       palette using only the values in the first band.</p></li>
  * </ul>
  *
- * {@section Handling more than two dimensions}
- * Some file formats like NetCDF can store dataset having more than two dimensions.
- * Geotk handles the supplemental dimensions with the following policies by default:
- *
- * <ol>
- *   <li><p>The two first dimensions - typically named (<var>x</var>, <var>y</var>) - are
- *     assigned to the (<var>columns</var>, <var>rows</var>) pixel indices.</p></li>
- *
- *   <li><p>An additional dimension can optionally be assigned to band indices. This is typically the
- *     altitude (<var>z</var>) in a dataset having the (<var>x</var>, <var>y</var>, <var>z</var>,
- *     <var>t</var>) dimensions, but can be customized. The actual dimension assigned to band
- *     indices is returned by {@link DimensionSlice#findDimensionIndex(Iterable)}. See
- *     {@link MultidimensionalImageStore} for more information.</p></li>
- *
- *   <li><p>An additional dimension can optionally be assigned to image index. This is typically
- *     the time (<var>t</var>) in a dataset having the (<var>x</var>, <var>y</var>, <var>z</var>,
- *     <var>t</var>) dimensions, but can be customized. See
- *     {@link MultidimensionalImageStore} for more information.</p></li>
- *
- *   <li><p>Only one slice of every supplemental dimensions can be read. By default the data at index
- *     0 are loaded, but different indices can be selected (see {@link DimensionSlice}). The actual
- *     index used is the value returned by {@link #getSliceIndex(Object[])}.</p></li>
- * </ol>
- *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.20
- *
- * @since 3.05 (derived from 2.4)
- * @module
  */
 public class SpatialImageReadParam extends ImageReadParam implements WarningProducer {
     /**
@@ -99,14 +57,6 @@ public class SpatialImageReadParam extends ImageReadParam implements WarningProd
      * @see #setPaletteName(String)
      */
     public static final String DEFAULT_PALETTE_NAME = "grayscale";
-
-    /**
-     * The set of {@link DimensionSlice} instances, which contains also the
-     * implementation of public API exposed in {@code SpatialImageReadParam}.
-     *
-     * @since 3.08
-     */
-    private DimensionSet dimensionSlices;
 
     /**
      * The name of the color palette.
@@ -158,128 +108,6 @@ public class SpatialImageReadParam extends ImageReadParam implements WarningProd
      */
     private IndexedResourceBundle getErrorResources() {
         return Errors.getResources(getLocale());
-    }
-
-    /**
-     * Returns {@code true} if the parameters contain at least one {@link DimensionSlice}.
-     * Invoking this method is equivalent to testing
-     * <code>!{@linkplain #getDimensionSlices()}.isEmpty()</code>.
-     *
-     * @return If the parameters contain at least one dimension slice.
-     *
-     * @since 3.21
-     */
-    public boolean hasDimensionSlices() {
-        return (dimensionSlices != null) && !dimensionSlices.isEmpty();
-    }
-
-    /**
-     * Creates a new handler for selecting a slice of the (<var>x</var>, <var>y</var>) plane to
-     * read. This is relevant only for <var>n</var>-dimensional dataset where <var>n</var>&gt;2.
-     * The caller should invoke one or many {@link DimensionSlice#addDimensionId(int)
-     * addDimensionId(...)} methods for specifying the dimension, and invoke
-     * {@link DimensionSlice#setSliceIndex(int)} for specifying the index of the
-     * <cite>slice point</cite> (WMS 2.0 terminology).
-     * <p>
-     * A new handler can be created for each supplemental dimension above the two (<var>x</var>,
-     * <var>y</var>) dimensions and the bands handled by Java2D. If no slice is specified for a
-     * supplemental dimension, then the default is the slice at index 0.
-     *
-     * @return A new handler for specifying the index of the slice to read in a supplemental
-     *         dimension.
-     *
-     * @since 3.08
-     */
-    public DimensionSlice newDimensionSlice() {
-        if (dimensionSlices == null) {
-            dimensionSlices = new DimensionSet(this);
-        }
-        return new DimensionSlice(dimensionSlices);
-    }
-
-    /**
-     * Returns all {@code DimensionSlice} instances known to this parameters block. They are
-     * the instances created by {@link #newDimensionSlice()} and for which at least one
-     * {@linkplain DimensionSlice#addDimensionId(String[]) identifier has been added}.
-     * <p>
-     * The returned collection is <cite>live</cite>: if {@linkplain #newDimensionSlice() new
-     * dimension slices} are created, they will appear dynamically in the returned set.
-     *
-     * @return The dimensions registered in this parameters, or an empty set if none.
-     *
-     * @since 3.08
-     */
-    @SuppressWarnings({"unchecked","rawtypes"})
-    public Set<DimensionSlice> getDimensionSlices() {
-        if (dimensionSlices == null) {
-            dimensionSlices = new DimensionSet(this);
-        }
-        return (Set) dimensionSlices;
-    }
-
-    /**
-     * Returns the dimension slice identified by at least one of the given identifiers. This is
-     * relevant mostly for <var>n</var>-dimensional dataset where <var>n</var>&gt;2. The dimension
-     * can be identified by a zero-based index as an {@link Integer}, a dimension name as a
-     * {@link String}, or an axis direction as an {@link AxisDirection}. More than one identifier
-     * can be specified in order to increase the chance to get the index, for example:
-     *
-     * {@preformat java
-     *     DimensionSlice slice = getDimensionSlice("time", AxisDirection.FUTURE);
-     * }
-     *
-     * If different slices are found for the given identifiers, then a
-     * {@linkplain SpatialImageReader#warningOccurred warning is emitted}
-     * and this method returns the first slice matching the given identifiers.
-     * If no slice is found, {@code null} is returned.
-     *
-     * @param  dimensionIds {@link Integer}, {@link String} or {@link AxisDirection}
-     *         that identify the dimension for which the slice is desired.
-     * @return The first slice found for the given dimension identifiers, or {@code null} if none.
-     *
-     * @since 3.08
-     */
-    public DimensionSlice getDimensionSlice(final Object... dimensionIds) {
-        return (dimensionSlices != null) ? (DimensionSlice) dimensionSlices.getDimensionSlice(
-                SpatialImageReadParam.class, dimensionIds) : null;
-    }
-
-    /**
-     * Returns the index of the slice in the dimension identified by at least one of the given
-     * identifiers. This method is equivalent to the code below, except that a warning is emitted
-     * only if index values are ambiguous:
-     *
-     * {@preformat java
-     *     DimensionSlice slice = getDimensionSlice(dimensionIds);
-     *     return (slice != null) ? slice.getSliceIndex() : 0;
-     * }
-     *
-     * This method is relevant mostly for <var>n</var>-dimensional dataset where <var>n</var>&gt;2.
-     * The dimension can be identified by a zero-based index as an {@link Integer}, a dimension
-     * name as a {@link String}, or an axis direction as an {@link AxisDirection}. More than one
-     * identifier can be specified in order to increase the chance to get the index, for example:
-     *
-     * {@preformat java
-     *     int index = getSliceIndex("time", AxisDirection.FUTURE);
-     * }
-     *
-     * If different indices are found for the given identifiers, then a
-     * {@linkplain SpatialImageReader#warningOccurred warning is emitted}
-     * and this method returns the index for the first slice matching the given identifiers.
-     * If no index is found, 0 (which is the default index value) is returned.
-     *
-     * @param  dimensionIds {@link Integer}, {@link String} or {@link AxisDirection}
-     *         that identify the dimension for which the index is desired.
-     * @return The index set in the first slice found for the given dimension identifiers,
-     *         or 0 if none.
-     *
-     * @see DimensionSlice#getSliceIndex()
-     *
-     * @since 3.08
-     */
-    public int getSliceIndex(final Object... dimensionIds) {
-        return (dimensionSlices != null) ? dimensionSlices.getSliceIndex(
-                SpatialImageReadParam.class, dimensionIds) : 0;
     }
 
     /**
@@ -574,30 +402,18 @@ public class SpatialImageReadParam extends ImageReadParam implements WarningProd
         if (paletteName != null) {
             buffer.append("palette=\"").append(paletteName).append('"');
         }
-        return toStringEnd(buffer, dimensionSlices);
+        return toStringEnd(buffer);
     }
 
     /**
-     * Completes the string representation with the list of dimension slices. If the last character
-     * in the given buffer is a space, then this method removes the two last characters on the
-     * assumption that they are {@code ", "}. Then the closing {@code ']'} character is appended.
+     * Completes the string representation.
      */
-    static String toStringEnd(final StringBuilder buffer, final Set<DimensionIdentification> identifiers) {
+    static String toStringEnd(final StringBuilder buffer) {
         final int length = buffer.length();
         if (buffer.charAt(length - 1) == ' ') {
             buffer.setLength(length - 2);
         }
         buffer.append(']');
-        if (!isNullOrEmpty(identifiers)) {
-            int last = 0;
-            for (final DimensionIdentification slice : identifiers) {
-                last = buffer.append("\n\u00A0\u00A0\u251C\u2500\u00A0").length();
-                buffer.append(slice);
-            }
-            if (last != 0) {
-                buffer.append('\n').setCharAt(last - 3, '\u2514');
-            }
-        }
         return buffer.toString();
     }
 }

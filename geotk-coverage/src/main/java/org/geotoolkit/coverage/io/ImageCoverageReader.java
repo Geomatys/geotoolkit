@@ -75,10 +75,7 @@ import org.apache.sis.util.resources.Vocabulary;
 import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.coverage.grid.GridGeometryIterator;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.image.io.DimensionSlice;
 import org.geotoolkit.image.io.ImageMetadataException;
-import static org.geotoolkit.image.io.MultidimensionalImageStore.X_DIMENSION;
-import static org.geotoolkit.image.io.MultidimensionalImageStore.Y_DIMENSION;
 import org.geotoolkit.image.io.SampleConversionType;
 import org.geotoolkit.image.io.SpatialImageReadParam;
 import org.geotoolkit.image.io.SpatialImageReader;
@@ -164,6 +161,8 @@ import org.w3c.dom.NodeList;
  * @author Johann Sorel (Geomatys)
  */
 public class ImageCoverageReader extends GridCoverageStore {
+    private static final int X_DIMENSION = 0, Y_DIMENSION = 1;
+
     /**
      * The name of metadata nodes we are interested in. Some implementations of
      * {@link ImageReader} may use this information for reading only the metadata
@@ -1442,7 +1441,7 @@ public class ImageCoverageReader extends GridCoverageStore {
              *       class. We need to refactor geodeticToPixelCoordinates(…) in a new helper
              *       class for making easier to divide the work in smaller parts.
              */
-            if (param != null && !sp.hasDimensionSlices()) {
+            if (param != null) {
                 final int gridDim = gridGeometry.getDimension();
                 if (gridDim > 2) { // max(X_DIMENSION, Y_DIMENSION) + 1
                     final CoordinateReferenceSystem crs = gridGeometry.getCoordinateReferenceSystem();
@@ -1473,12 +1472,7 @@ public class ImageCoverageReader extends GridCoverageStore {
                                 if (i != gridDimensionX && i != gridDimensionY) {
                                     final double sliceIndex = indices[i];
                                     if (!Double.isNaN(sliceIndex)) {
-                                        final DimensionSlice slice = sp.newDimensionSlice();
-                                        slice.addDimensionId(i);
-                                        slice.setSliceIndex((int) Math.round(
-                                                Math.max(gridExtent != null ? gridExtent.getLow (i) : Integer.MIN_VALUE,
-                                                Math.min(gridExtent != null ? gridExtent.getHigh(i) : Integer.MAX_VALUE,
-                                                sliceIndex))));
+                                        throw new CoverageStoreException("No longer supported.");
                                     }
                                 }
                             }
@@ -1545,16 +1539,6 @@ public class ImageCoverageReader extends GridCoverageStore {
             final long[] high = GridGeometryIterator.getHigh(gridExtent);
             low[xi] = xmin; high[xi] = xmin + image.getWidth()  - 1;
             low[yi] = ymin; high[yi] = ymin + image.getHeight() - 1;
-            if (imageParam instanceof SpatialImageReadParam) {
-                for (final DimensionSlice slice : ((SpatialImageReadParam) imageParam).getDimensionSlices()) {
-                    for (final Object id : slice.getDimensionIds()) {
-                        if (id instanceof Integer) {
-                            final int dim = (Integer) id;
-                            low[dim] = high[dim] = slice.getSliceIndex();
-                        }
-                    }
-                }
-            }
             final GridExtent newGridRange = new GridExtent(null, low, high, true);
             if (newGridToCRS != gridToCRS || !newGridRange.equals(gridExtent)) {
                 gridGeometry = new GridGeometry(newGridRange, PixelInCell.CELL_CORNER,

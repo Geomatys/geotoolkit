@@ -56,8 +56,6 @@ import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArraysExt;
-import static org.geotoolkit.image.io.MultidimensionalImageStore.X_DIMENSION;
-import static org.geotoolkit.image.io.MultidimensionalImageStore.Y_DIMENSION;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.image.io.metadata.ReferencingBuilder;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
@@ -104,6 +102,7 @@ import org.opengis.util.InternationalString;
  * @author Johann Sorel (Geomatys)
  */
 public class ImageCoverageWriter extends GridCoverageStore {
+    private static final int X_DIMENSION = 0, Y_DIMENSION = 1;
 
     /**
      * The output (typically a {@link java.io.File}, {@link java.net.URL} or {@link String}),
