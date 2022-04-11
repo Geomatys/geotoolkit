@@ -29,10 +29,6 @@ import org.geotoolkit.internal.image.io.Warnings;
  * This is a place-holder for future developments.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.20
- *
- * @since 3.08
- * @module
  */
 public class SpatialImageWriteParam extends ImageWriteParam implements WarningProducer {
     /**
@@ -73,6 +69,6 @@ public class SpatialImageWriteParam extends ImageWriteParam implements WarningPr
     @Override
     public String toString() {
         final StringBuilder buffer = SpatialImageReadParam.toStringBegining(this);
-        return SpatialImageReadParam.toStringEnd(buffer, null);
+        return SpatialImageReadParam.toStringEnd(buffer);
     }
 }

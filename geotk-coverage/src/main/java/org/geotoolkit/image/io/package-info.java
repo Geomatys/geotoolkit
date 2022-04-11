@@ -74,12 +74,6 @@
  * Concrete implementations are provided in the {@linkplain org.geotoolkit.image.io.plugin plugin}
  * and {@linkplain org.geotoolkit.image.io.mosaic mosaic} sub-packages.
  *
- * {@section Multi-dimensional dataset}
- * The Java Image I/O library is designed for two-dimensional images. The Geotk library extends
- * the Java library with the {@link org.geotoolkit.image.io.MultidimensionalImageStore} interface,
- * which provide method for accessing data above the two first dimensions. See the
- * {@code MultidimensionalImageStore} javadoc for more details.
- *
  * {@section Conversion of sample values}
  * Spatial image formats often contain geophysical values (e.g. temperatures in Celsius degrees,
  * elevation in metres, etc.) better represented as floating point numbers than integers. Those
@@ -176,6 +170,4 @@
  * @module
  */
 package org.geotoolkit.image.io;
-
-import java.util.Properties;              // For javadoc
-import javax.imageio.spi.ServiceRegistry; // For javadoc
+// For javadoc

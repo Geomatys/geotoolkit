@@ -37,7 +37,6 @@ import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.storage.DataStoreException;
 
 import static org.geotoolkit.test.Assert.*;
-import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
 
 
 /**
@@ -47,6 +46,8 @@ import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
  * @author Martin Desruisseaux (Geomatys)
  */
 final strictfp class ImageCoverageWriterInspector extends ImageCoverageWriter {
+    private static final int X_DIMENSION = 0, Y_DIMENSION = 1;
+
     /**
      * Small number for comparison of floating point values.
      */
