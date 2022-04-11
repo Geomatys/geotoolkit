@@ -29,29 +29,11 @@
  *     <th>MIME type</th>
  *     <th>Comments</th>
  *   </tr><tr>
- *     <td>&nbsp;{@link org.geotoolkit.image.io.plugin.AsciiGridReader}&nbsp;</td>
- *     <td>&nbsp;{@link org.geotoolkit.image.io.plugin.AsciiGridWriter}&nbsp;</td>
- *     <td>&nbsp;{@code ascii-grid}&nbsp;</td>
- *     <td>&nbsp;{@code text/plain}&nbsp;</td>
- *     <td>&nbsp;US locale and ASCII encoding.&nbsp;</td>
- *   </tr><tr>
- *     <td>&nbsp;{@link org.geotoolkit.image.io.plugin.NetcdfImageReader}&nbsp;</td>
- *     <td>&nbsp;{@link org.geotoolkit.image.io.plugin.NetcdfImageWriter}&nbsp;</td>
- *     <td>&nbsp;{@code netcdf}&nbsp;</td>
- *     <td>&nbsp;{@code application/netcdf}&nbsp;</td>
- *     <td>&nbsp;Assume <A HREF="http://www.cfconventions.org/">CF Metadata conventions</A>.&nbsp;</td>
- *   </tr><tr>
  *     <td>&nbsp;{@link org.geotoolkit.image.io.plugin.RawImageReader}&nbsp;</td>
  *     <td>&nbsp;</td>
  *     <td>&nbsp;{@code raw}&nbsp;</td>
  *     <td>&nbsp;</td>
  *     <td>&nbsp;Require {@link com.sun.media.imageio.stream.RawImageInputStream}.&nbsp;</td>
- *   </tr><tr>
- *     <td>&nbsp;{@link org.geotoolkit.image.io.plugin.RawTiffImageReader}&nbsp;</td>
- *     <td>&nbsp;</td>
- *     <td>&nbsp;{@code tiff}&nbsp;</td>
- *     <td>&nbsp;{@code image/tiff}&nbsp;</td>
- *     <td>&nbsp;For uncompressed TIFF images only.&nbsp;</td>
  *   </tr><tr>
  *     <td>&nbsp;{@link org.geotoolkit.image.io.plugin.TextMatrixImageReader}&nbsp;</td>
  *     <td>&nbsp;{@link org.geotoolkit.image.io.plugin.TextMatrixImageWriter}&nbsp;</td>

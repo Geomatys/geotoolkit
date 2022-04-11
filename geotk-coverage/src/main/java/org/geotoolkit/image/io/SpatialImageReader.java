@@ -102,8 +102,7 @@ import org.geotoolkit.util.Utilities;
  * <ul>
  *   <li><p>Provides default {@link #getNumImages(boolean)} and {@link #getNumBands(int)}
  *     implementations, which return 1. This default behavior matches simple image formats
- *     like {@linkplain org.geotoolkit.image.io.plugin.RawImageReader RAW} or
- *     {@linkplain org.geotoolkit.image.io.plugin.AsciiGridReader ASCII} files.
+ *     like {@linkplain org.geotoolkit.image.io.plugin.RawImageReader RAW} files.
  *     Those methods need to be overridden for more complex image formats.</p></li>
  *
  *   <li><p>Provides {@link #checkImageIndex(int)} and {@link #checkBandIndex(int,int)} convenience
@@ -407,9 +406,7 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
 
     /**
      * Returns {@code true} if the image at the given index has a color palette. Some formats like
-     * {@linkplain org.geotoolkit.image.io.plugin.RawImageReader RAW},
-     * {@linkplain org.geotoolkit.image.io.plugin.AsciiGridReader ASCII Grid} or
-     * {@linkplain org.geotoolkit.image.io.plugin.NetcdfImageReader NetCDF} don't store any color
+     * {@linkplain org.geotoolkit.image.io.plugin.RawImageReader RAW} don't store any color
      * information with the pixel values, while other formats like PNG or JPEG (optionally wrapped
      * in a {@linkplain org.geotoolkit.image.io.plugin.WorldFileImageReader World File reader})
      * provide such color palette.

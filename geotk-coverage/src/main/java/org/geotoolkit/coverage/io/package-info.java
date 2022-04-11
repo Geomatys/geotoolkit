@@ -25,8 +25,6 @@
  * Many different data formats exist. However most of this variety is not handled by this package.
  * The various data formats are rather handled by different subclasses of {@code ImageReader},
  * for example
- * {@link org.geotoolkit.image.io.plugin.AsciiGridReader},
- * {@link org.geotoolkit.image.io.plugin.NetcdfImageReader} and
  * {@link org.geotoolkit.image.io.plugin.WorldFileImageReader}.
  * All those different {@code ImageReader} implementations can be wrapped by the
  * same {@link org.geotoolkit.coverage.io.ImageCoverageReader} implementation.

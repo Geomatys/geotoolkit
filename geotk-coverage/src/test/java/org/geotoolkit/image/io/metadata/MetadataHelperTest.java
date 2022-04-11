@@ -25,7 +25,6 @@ import org.opengis.coverage.grid.RectifiedGrid;
 import org.opengis.referencing.operation.MathTransform;
 
 import org.apache.sis.util.Localized;
-import org.geotoolkit.display.shape.DoubleDimension2D;
 import org.geotoolkit.image.io.ImageMetadataException;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
 
@@ -61,8 +60,6 @@ public final strictfp class MetadataHelperTest implements Localized {
      * Contains also opportunist tests of the following methods:
      * <p>
      * <ul>
-     *   <li>{@link MetadataHelper#getCellDimension}</li>
-     *   <li>{@link MetadataHelper#getCellSize}</li>
      *   <li>{@link MetadataHelper#formatCellDimension}</li>
      *   <li>{@link MetadataHelper#getGridToCRS}</li>
      * </ul>
@@ -91,13 +88,6 @@ public final strictfp class MetadataHelperTest implements Localized {
         assertEquals("Testing origin", new Point2D.Double(-10,-20), tr.transform(new Point2D.Double(), null));
         assertEquals("Testing offset vector 1", new Point2D.Double(3,4), tr.deltaTransform(new Point2D.Double(1,0), null));
         assertEquals("Testing offset vector 2", new Point2D.Double(0,8), tr.deltaTransform(new Point2D.Double(0,1), null));
-        assertNull(hlp.getCellDimension(tr));
-        try {
-            hlp.getCellSize(tr);
-            fail("Should not allow to compute a cell size.");
-        } catch (ImageMetadataException e) {
-            // This is the expected exception.
-        }
         assertEquals("5 × 8", hlp.formatCellDimension(grid, null));
         /*
          * getGridCRS(...) should returns an equivalent transform.
@@ -131,8 +121,6 @@ public final strictfp class MetadataHelperTest implements Localized {
         assertEquals( -4, tr.getScaleY(),      EPS);
         assertEquals(  0, tr.getShearX(),      EPS);
         assertEquals(  0, tr.getShearY(),      EPS);
-        assertEquals(  4, hlp.getCellSize(tr), EPS);
-        assertEquals(new DoubleDimension2D(4,4), hlp.getCellDimension(tr));
         assertEquals("4", hlp.formatCellDimension(grid, null));
     }
 }

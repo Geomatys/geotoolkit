@@ -57,9 +57,8 @@ public final class Factories extends Static {
      * The {@code geotk-coverageio} module defines new {@link javax.imageio.ImageReader}
      * implementations, which are automatically discovered by the standard JDK through the
      * {@code META-INF/services/} mechanism. If a web container contains two copies of the
-     * Geotoolkit.org library - one for each web application - then all image formats like
-     * {@link org.geotoolkit.image.io.plugin.NetcdfImageReader} will be registered twice,
-     * because the JVM will find two {@code NetcdfImageReader.Spi} classes loaded by two
+     * Geotoolkit.org library - one for each web application - then all image formats will be registered twice,
+     * because the JVM will find two {@code Spi} classes loaded by two
      * different class loaders.
      * <p>
      * The service provider instance returned by {@link javax.imageio.spi.IIORegistry} may
