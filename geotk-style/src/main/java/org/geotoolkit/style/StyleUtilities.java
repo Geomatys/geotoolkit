@@ -17,6 +17,9 @@
 
 package org.geotoolkit.style;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
@@ -28,9 +31,12 @@ import org.geotoolkit.sld.MutableStyledLayerDescriptor;
 import org.geotoolkit.sld.MutableUserLayer;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.filter.FilterUtilities;
+import org.geotoolkit.style.io.PaletteReader;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.Expression;
 import org.opengis.sld.Layer;
+import org.opengis.sld.LayerStyle;
+import org.opengis.sld.NamedLayer;
 import org.opengis.sld.StyledLayerDescriptor;
 import org.opengis.sld.UserLayer;
 import org.opengis.style.*;
@@ -251,6 +257,78 @@ public final class StyleUtilities extends Static {
             str.getLineCap(),
             str.getDashArray(),
             str.getDashOffset());
+    }
+
+    /**
+     * Extract all the Mutable styles found in a StyledLayerDescriptor.
+     *
+     * @param sld a StyledLayerDescriptor.
+     * @return A list of Mutable styles.
+     */
+    public static List<MutableStyle> getStylesFromSLD(StyledLayerDescriptor sld) {
+        final List<MutableStyle> styles = new ArrayList<>();
+        for (Layer sldLayer : sld.layers()) {
+            if (sldLayer instanceof NamedLayer nl) {
+                for (LayerStyle ls : nl.styles()) {
+                    if (ls instanceof MutableStyle ms) {
+                        styles.add(ms);
+                    }
+                }
+            } else if (sldLayer instanceof UserLayer ul) {
+                for (org.opengis.style.Style ls : ul.styles()) {
+                    if (ls instanceof MutableStyle ms) {
+                        styles.add(ms);
+                    }
+                }
+            }
+        }
+        return styles;
+    }
+
+    /**
+     * Build a style from a palette file.
+     *
+     * @param filename The file name (used to determine the extension: cpt, clr,
+     * pal)
+     * @param fileContent The file content.
+     *
+     * @return A raster style.
+     * @throws IOException
+     */
+    public static MutableStyle getStyleFromPalette(String filename, final byte[] fileContent) throws IOException {
+        return getStyleFromPalette(filename, new String(fileContent));
+    }
+
+    /**
+     * Build a style from a palette file.
+     *
+     * @param filename The file name (used to determine the extension: cpt, clr,
+     * pal). Must not be {@code null}
+     * @param fileContent The file content.
+     *
+     * @return A raster style.
+     * @throws IOException
+     */
+    public static MutableStyle getStyleFromPalette(String filename, final String fileContent) throws IOException {
+        filename = filename.toLowerCase();
+        ColorMap colormap = null;
+
+        if (filename.endsWith("cpt")) {
+            PaletteReader reader = new PaletteReader(PaletteReader.PATTERN_CPT);
+            colormap = reader.read(fileContent);
+        } else if (filename.endsWith("clr")) {
+            PaletteReader reader = new PaletteReader(PaletteReader.PATTERN_CLR);
+            colormap = reader.read(fileContent);
+        } else if (filename.endsWith("pal")) {
+            PaletteReader reader = new PaletteReader(PaletteReader.PATTERN_PAL);
+            colormap = reader.read(fileContent);
+        }
+        if (colormap != null) {
+            final MutableStyleFactory SF = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
+            RasterSymbolizer symbol = SF.rasterSymbolizer(null, null, null, null, colormap, null, null, null);
+            return SF.style(symbol);
+        }
+        return null;
     }
 
     private static Expression correctOpacity(final Expression exp, final double opacity){
