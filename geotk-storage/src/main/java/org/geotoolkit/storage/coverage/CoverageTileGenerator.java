@@ -406,7 +406,7 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
                     return new DefaultImageTile(image, source.getIndices());
                 } else {
                     if (result instanceof NoSuchDataException) {
-                        LOGGER.log(Level.INFO, "Resource is empty, create empty tile from samples informations");
+                        LOGGER.log(Level.FINE, "Resource is empty, create empty tile from samples informations");
                     } else {
                         Exception ex = (Exception) result;
                         LOGGER.log(Level.WARNING, ex.getMessage(), ex);

@@ -65,6 +65,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
 import static org.junit.Assert.assertEquals;
+import org.opengis.metadata.spatial.DimensionNameType;
 import org.opengis.referencing.datum.PixelInCell;
 import static org.opengis.referencing.datum.PixelInCell.CELL_CENTER;
 
@@ -561,8 +562,7 @@ public class AggregatedCoverageResourceTest {
         ((AggregatedCoverageResource) aggregate).setInterpolation(Interpolation.NEAREST);
 
         final GridGeometry gridGeometry = aggregate.getGridGeometry();
-        Assert.assertTrue(!gridGeometry.isDefined(GridGeometry.EXTENT));
-        Assert.assertTrue(gridGeometry.isDefined(GridGeometry.ENVELOPE));
+        assertEquals(grid, gridGeometry);
 
         final GridCoverage coverage = aggregate.read(grid).forConvertedValues(true);
         final RenderedImage image = coverage.render(null);
@@ -838,7 +838,6 @@ public class AggregatedCoverageResourceTest {
         reader.moveTo(1, 0); assertEquals(2, reader.getSample(0)); assertEquals(5, reader.getSample(1));
         reader.moveTo(2, 0); assertEquals(3, reader.getSample(0)); assertEquals(6, reader.getSample(1));
     }
-
 
     /**
      * Test aggregation generates a NaN between coverages
@@ -1340,5 +1339,62 @@ public class AggregatedCoverageResourceTest {
         reader.moveTo(2, 0); Assert.assertEquals(3, reader.getSample(0));
     }
 
+    /**
+     * Test grid geometry aggreation with negative scale.
+     */
+    @Test
+    public void testGridAggregationWithNegativeScale() throws DataStoreException, TransformException {
+
+        final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
+
+        final SampleDimension sd = new SampleDimension.Builder()
+                .setName("data")
+                .setBackground("no-data", Short.MIN_VALUE)
+                .build();
+        final List<SampleDimension> bands = Arrays.asList(sd);
+
+        /*
+        Coverage 1
+        5 +---+
+          | 1 |
+          +---+
+          0
+
+        Coverage 2
+             12 +---+
+                | 2 |
+                +---+
+                2
+        */
+
+        final GridGeometry grid1 = new GridGeometry(new GridExtent(1, 1), CELL_CENTER, new AffineTransform2D(1, 0, 0, -1, 0, 5), crs);
+        final GridGeometry grid2 = new GridGeometry(new GridExtent(1, 1), CELL_CENTER, new AffineTransform2D(1, 0, 0, -1, 2, 12), crs);
+
+        final GridCoverage coverage1 = new BufferedGridCoverage(grid1, bands, DataBuffer.TYPE_SHORT);
+        final GridCoverage coverage2 = new BufferedGridCoverage(grid2, bands, DataBuffer.TYPE_SHORT);
+        final GridCoverageResource resource1 = new InMemoryGridCoverageResource(coverage1);
+        final GridCoverageResource resource2 = new InMemoryGridCoverageResource(coverage2);
+
+        final GridCoverageResource aggregate =  AggregatedCoverageResource.create(
+                null, AggregatedCoverageResource.Mode.ORDER,
+                resource1, resource2);
+        ((AggregatedCoverageResource) aggregate).setInterpolation(Interpolation.NEAREST);
+
+        final GridGeometry result = aggregate.getGridGeometry();
+
+        //check envelopes combine both grid envelope
+        final Envelope resultEnv = result.getEnvelope();
+        final GeneralEnvelope expectedEnv = new GeneralEnvelope(grid1.getEnvelope());
+        expectedEnv.add(grid2.getEnvelope());
+        assertEquals(expectedEnv, new GeneralEnvelope(resultEnv));
+
+        //check grid geometry
+        final GridGeometry expected = new GridGeometry(
+                new GridExtent(new DimensionNameType[]{DimensionNameType.COLUMN, DimensionNameType.ROW},
+                        new long[]{0,-7}, new long[]{2, 0}, true),
+                CELL_CENTER,
+                new AffineTransform2D(1, 0, 0, -1, 0, 5), crs);
+        assertEquals(expected, result);
+    }
 
 }
