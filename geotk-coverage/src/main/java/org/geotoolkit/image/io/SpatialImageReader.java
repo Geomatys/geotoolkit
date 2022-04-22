@@ -44,7 +44,6 @@ import org.apache.sis.util.Locales;
 import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.resources.IndexedResourceBundle;
-import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
 import static org.geotoolkit.image.io.SampleConversionType.*;
 import org.geotoolkit.image.io.metadata.MetadataHelper;
 import org.geotoolkit.image.io.metadata.SampleDimension;
@@ -122,16 +121,10 @@ import org.geotoolkit.util.Utilities;
  * <p>
  * See the {@link #getDestination(int, ImageReadParam, int, int, SampleConverter[])} method for an
  * example of code using some of the services provided by this class.
- *
- * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.19
- *
- * @see SpatialImageWriter
- *
- * @since 3.06 (derived from 1.2)
- * @module
  */
 public abstract class SpatialImageReader extends ImageReader implements WarningProducer, Disposable {
+    private static final int X_DIMENSION = 0, Y_DIMENSION = 1;
+
     /**
      * Stream and image metadata for each images, or {@code null} if not yet created.
      * The element at index 0 is the stream metadata, and next elements are image metadata
@@ -258,15 +251,10 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
     /**
      * Returns the number of dimension of the image at the given index.
      * The default implementation returns 2.
-     * {@link MultidimensionalImageStore} implementations provide a different value.
      *
      * @param  imageIndex The image index.
      * @return The number of dimension for the image at the given index.
      * @throws IOException if an error occurs reading the information from the input source.
-     *
-     * @see MultidimensionalImageStore
-     *
-     * @since 2.5
      */
     public int getDimension(final int imageIndex) throws IOException {
         checkImageIndex(imageIndex);
@@ -277,15 +265,10 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
      * Returns the grid envelope of the image at the given index. The default implementation
      * creates a grid envelope from the information provided by {@link #getDimension(int)},
      * {@link #getWidth(int)} and {@link #getHeight(int)} methods.
-     * {@link MultidimensionalImageStore} implementations provide a different value.
      *
      * @param  imageIndex The image index.
      * @return The grid envelope for the image at the given index.
      * @throws IOException if an error occurs reading the information from the input source.
-     *
-     * @see MultidimensionalImageStore
-     *
-     * @since 3.19
      */
     @SuppressWarnings("fallthrough")
     public GridExtent getGridEnvelope(final int imageIndex) throws IOException {

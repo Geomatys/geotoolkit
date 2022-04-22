@@ -73,8 +73,6 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.logging.LogProducer;
 
 import static java.lang.Math.abs;
-import static org.geotoolkit.image.io.MultidimensionalImageStore.X_DIMENSION;
-import static org.geotoolkit.image.io.MultidimensionalImageStore.Y_DIMENSION;
 import static org.geotoolkit.internal.InternalUtilities.adjustForRoundingError;
 
 
@@ -83,14 +81,10 @@ import static org.geotoolkit.internal.InternalUtilities.adjustForRoundingError;
  * provides common functionalities to {@linkplain #setLocale(Locale) set the locale} used
  * for error messages, {@linkplain #abort() abort} a reading or writing process, and
  * {@linkplain #reset() reset} or {@linkplain #dispose() dispose} the reader or writer.
- *
- * @author Martin Desruisseaux (Geomatys)
- * @version 3.20
- *
- * @since 3.12
- * @module
  */
 public abstract class GridCoverageStore implements LogProducer, Localized {
+    private static final int X_DIMENSION = 0, Y_DIMENSION = 1;
+
     /**
      * Set to {@code true} for allowing debug information to be send to the
      * {@linkplain System#out standard output stream}.

@@ -158,32 +158,31 @@ public final class StyleXmlIO {
 
     private Object unmarshall(final Object source, final Unmarshaller unMarshaller)
             throws JAXBException{
-        if(source instanceof File){
-            return unMarshaller.unmarshal( (File)source );
-        }else if(source instanceof Path){
-            try (InputStream in = Files.newInputStream((Path) source)) {
-                return unMarshaller.unmarshal( in );
+        if (source instanceof File sf) {
+            return unMarshaller.unmarshal(sf);
+        } else if (source instanceof Path sp) {
+            try (InputStream in = Files.newInputStream(sp)) {
+                return unMarshaller.unmarshal(in);
             } catch (IOException e) {
                 throw new JAXBException(e.getMessage(), e);
             }
-        }else if(source instanceof InputSource){
-            return unMarshaller.unmarshal( (InputSource)source );
-        }else if(source instanceof InputStream){
-            return unMarshaller.unmarshal( (InputStream)source );
-        }else if(source instanceof Node){
-            return unMarshaller.unmarshal( (Node)source );
-        }else if(source instanceof Reader){
-            return unMarshaller.unmarshal( (Reader)source );
-        }else if(source instanceof Source){
-            return unMarshaller.unmarshal( (Source)source );
-        }else if(source instanceof URL){
-            return unMarshaller.unmarshal( (URL)source );
-        }else if(source instanceof XMLEventReader){
-            return unMarshaller.unmarshal( (XMLEventReader)source );
-        }else if(source instanceof XMLStreamReader){
-            return unMarshaller.unmarshal( (XMLStreamReader)source );
-        }else if(source instanceof OnlineResource){
-            final OnlineResource online = (OnlineResource) source;
+        } else if (source instanceof InputSource is) {
+            return unMarshaller.unmarshal(is);
+        } else if (source instanceof InputStream is) {
+            return unMarshaller.unmarshal(is);
+        } else if (source instanceof Node nd) {
+            return unMarshaller.unmarshal(nd);
+        } else if (source instanceof Reader r) {
+            return unMarshaller.unmarshal(r);
+        } else if (source instanceof Source src) {
+            return unMarshaller.unmarshal( src);
+        } else if (source instanceof URL u) {
+            return unMarshaller.unmarshal(u);
+        } else if (source instanceof XMLEventReader xer) {
+            return unMarshaller.unmarshal(xer);
+        } else if (source instanceof XMLStreamReader xsr) {
+            return unMarshaller.unmarshal(xsr);
+        } else if (source instanceof OnlineResource online) {
             try {
                 final URL url = online.getLinkage().toURL();
                 return unMarshaller.unmarshal(url);
@@ -191,7 +190,11 @@ public final class StyleXmlIO {
                 Logger.getLogger("org.geotoolkit.sld.xml").log(Level.WARNING, null, ex);
                 return null;
             }
-        }else{
+        } else if (source instanceof String str) {
+            return unMarshaller.unmarshal(new StringReader(str));
+        } else if (source instanceof byte[] buffer) {
+            return unMarshaller.unmarshal(new ByteArrayInputStream(buffer));
+        } else {
             throw new IllegalArgumentException("Source object is not a valid class :" + source.getClass());
         }
     }

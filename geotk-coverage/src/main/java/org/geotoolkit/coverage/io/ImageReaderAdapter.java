@@ -48,7 +48,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.NullArgumentException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.SampleDimensionUtils;
-import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
 import org.geotoolkit.image.io.SpatialImageReader;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.resources.Errors;
@@ -78,6 +77,8 @@ import org.opengis.referencing.operation.TransformException;
  * @author Martin Desruisseaux (Geomatys)
  */
 public class ImageReaderAdapter extends SpatialImageReader {
+    private static final int X_DIMENSION = 0, Y_DIMENSION = 1;
+
     /**
      * The sample dimension to make visible. Declared as a constant in order to spot
      * the places where the value {@value} is assumed.
