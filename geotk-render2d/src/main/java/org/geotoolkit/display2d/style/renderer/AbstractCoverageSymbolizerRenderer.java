@@ -216,7 +216,9 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         //fast envelope intersection in 2D
         if (refGG.isDefined(GridGeometry.ENVELOPE)) {
             Envelope bbox = renderingContext.getCanvasObjectiveBounds2D();
-            Envelope refEnv = Envelopes.transform(refGG.getEnvelope(), bbox.getCoordinateReferenceSystem());
+            //Use GridGeometry.getEnvelope(crs) instead of Envelopes.transform(refGG.getEnvelope(), bboxcrs)
+            //This method makes additional clipping and use a more accurate transformation in relation to grid extent
+            Envelope refEnv = refGG.getEnvelope(bbox.getCoordinateReferenceSystem());
             if (!AbstractEnvelope.castOrCopy(bbox).intersects(refEnv, true)) {
                 throw new DisjointExtentException("Coverage resource envelope do not intersect canvas");
             }
