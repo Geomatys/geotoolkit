@@ -212,8 +212,7 @@ public final class Setup extends Static {
             throw new IllegalStateException();
         }
         state = 1;
-        if ("server".equalsIgnoreCase(get(properties, "platform", "desktop"))) {
-        } else {
+        if (!"server".equalsIgnoreCase(get(properties, "platform", "desktop"))) {
             MonolineFormatter.install();
         }
         Initializer.setDefault(Setup::getEPSG);
