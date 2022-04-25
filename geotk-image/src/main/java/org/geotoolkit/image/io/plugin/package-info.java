@@ -18,8 +18,7 @@
 
 /**
  * Extensions to {@link javax.imageio.ImageReader} and {@link javax.imageio.ImageWriter} for binary
- * files and text files. The {@code geotk-coverageio.jar} and {@code geotk-coverageio-netcdf.jar}
- * files declare service providers for the following formats:
+ * files and text files. This module declares service providers for the following formats:
  * <p>
  * <table border="1" cellspacing="0" cellpadding="4">
  *   <tr bgcolor="lightblue">
@@ -28,12 +27,6 @@
  *     <th>Name</th>
  *     <th>MIME type</th>
  *     <th>Comments</th>
- *   </tr><tr>
- *     <td>&nbsp;{@link org.geotoolkit.image.io.plugin.RawImageReader}&nbsp;</td>
- *     <td>&nbsp;</td>
- *     <td>&nbsp;{@code raw}&nbsp;</td>
- *     <td>&nbsp;</td>
- *     <td>&nbsp;Require {@link com.sun.media.imageio.stream.RawImageInputStream}.&nbsp;</td>
  *   </tr><tr>
  *     <td>&nbsp;{@link org.geotoolkit.image.io.plugin.TextMatrixImageReader}&nbsp;</td>
  *     <td>&nbsp;{@link org.geotoolkit.image.io.plugin.TextMatrixImageWriter}&nbsp;</td>
@@ -53,12 +46,6 @@
  *     <td>&nbsp;</td>
  *     <td>&nbsp;Require {@linkplain org.geotoolkit.image.io.plugin.WorldFileImageReader.Spi#registerDefaults
  *         explicit registration}.&nbsp;</td>
- *   </tr><tr>
- *     <td>&nbsp;{@link org.geotoolkit.image.io.mosaic.MosaicImageReader}&nbsp;</td>
- *     <td>&nbsp;{@link org.geotoolkit.image.io.mosaic.MosaicImageWriter}&nbsp;</td>
- *     <td>&nbsp;{@code mosaic}&nbsp;</td>
- *     <td>&nbsp;</td>
- *     <td>&nbsp;See {@link org.geotoolkit.image.io.mosaic}.&nbsp;</td>
  *   </tr>
  * </table>
  *

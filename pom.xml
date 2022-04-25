@@ -569,10 +569,6 @@
         <configuration>
           <source>${java.version}</source>       <!-- The -source argument for the Java compiler.   -->
           <target>${java.version}</target>       <!-- The -target argument for the Java compiler.   -->
-          <!--
-          Commented for now: fails compilation when value is 8, because of RawImageInputStream class copied from JAI.
-          TODO: once minimal java version becomes 17, try to reactivate it.
-          -->
           <release>${java.version}</release>
           <debug>true</debug>        <!-- Whether to include debugging information.     -->
           <optimize>false</optimize> <!-- Whether to optimize the compiled code.        -->
