@@ -47,12 +47,6 @@
  *     <td>Base class for readers/writers that require {@link java.io.File} input or output.
  *         Other kind of input/output are copied in a temporary file. This is used for wrapping
  *         native libraries which doesn't work with Java streams.</td>
- *   </tr><tr>
- *     <td>{@link org.geotoolkit.image.io.ImageReaderAdapter}</td>
- *     <td>{@link org.geotoolkit.image.io.ImageWriterAdapter}</td>
- *     <td>Base class for readers/writers which delegate most of their work to an other
- *         reader/writer. This is used for appending additional metadata to the ones
- *         processed by the standard readers/writers.</td>
  *   </tr><tr bgcolor="lightblue">
  *     <th>{@link javax.imageio.ImageReadParam}</th>
  *     <th>{@link javax.imageio.ImageWriteParam}</th>

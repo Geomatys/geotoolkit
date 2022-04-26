@@ -134,8 +134,6 @@ abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCoverage im
 
     /**
      * The sample dimension to make visible by {@link #getRenderableImage}.
-     *
-     * @see org.geotoolkit.coverage.io.ImageReaderAdapter#VISIBLE_BAND
      */
     private static final int VISIBLE_BAND = 0;
 

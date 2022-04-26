@@ -1227,7 +1227,7 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
 
     /**
      * Allows any resources held by this reader to be released. If an input stream were
-     * created by {@link StreamImageReader} or {@link ImageReaderAdapter}, it will be
+     * created by {@link StreamImageReader}, it will be
      * {@linkplain StreamImageReader#close() closed} before to dispose this reader.
      */
     @Override
@@ -1319,7 +1319,7 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
          * Adds the {@value SpatialMetadataFormat#GEOTK_FORMAT_NAME} to the given array, if
          * not already presents. This method returns a shared array for some common cases.
          */
-        static String[] addExtraMetadataFormat(final String formatName, final String nativeName, final String[] formatNames) {
+        private static String[] addExtraMetadataFormat(final String formatName, final String nativeName, final String[] formatNames) {
             ArgumentChecks.ensureNonNull("formatName", formatName);
             if (formatName.equals(nativeName) || ArraysExt.contains(formatNames, formatName)) {
                 return formatNames;
