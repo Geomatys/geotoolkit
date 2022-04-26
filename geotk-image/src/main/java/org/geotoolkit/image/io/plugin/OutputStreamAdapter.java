@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.image.io;
+package org.geotoolkit.image.io.plugin;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -24,12 +24,6 @@ import javax.imageio.stream.ImageOutputStream;
 
 /**
  * Wraps an {@link ImageOutputStream} into a standard {@link OutputStream}.
- *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
- *
- * @since 1.2
- * @module
  */
 final class OutputStreamAdapter extends OutputStream {
     /**

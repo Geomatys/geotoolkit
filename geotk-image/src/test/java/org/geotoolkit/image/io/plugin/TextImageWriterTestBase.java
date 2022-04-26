@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.image.io;
+package org.geotoolkit.image.io.plugin;
 
 import java.util.Locale;
 import java.text.NumberFormat;
@@ -55,10 +55,8 @@ import org.geotoolkit.image.palette.PaletteFactory;
  * The base class for {@link TextImageWriter} tests.
  * The writers should use the {@link Locale#CANADA}.
  * This arbitrary locale is fixed in order to keep the build locale-independent.
- *
- * @author Martin Desruisseaux (IRD, Geomatys)
  */
-public abstract strictfp class TextImageWriterTestBase extends ImageWriterTestCase {
+abstract strictfp class TextImageWriterTestBase extends ImageWriterTestCase {
     /**
      * Creates a new test suite.
      */
