@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.image.io;
+package org.geotoolkit.image.io.plugin;
 
 import java.io.*; // Many imports, including some for javadoc only.
 import java.nio.charset.Charset;
@@ -50,14 +50,6 @@ import javax.media.jai.iterator.RectIter;
  *       in the {@linkplain Spi Service Provider}. Alternatively, subclasses can also get more
  *       control by overriding the {@link #getCharset(ImageWriteParam)} method.</li>
  * </ul>
- *
- * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.08
- *
- * @see TextImageReader
- *
- * @since 3.08 (derived from 1.2)
- * @module
  */
 public abstract class TextImageWriter extends StreamImageWriter {
     /**

@@ -159,7 +159,7 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
     /**
      * Returns the resources for formatting error messages.
      */
-    final IndexedResourceBundle getErrorResources() {
+    private IndexedResourceBundle getErrorResources() {
         return Errors.getResources(getLocale());
     }
 
@@ -1198,7 +1198,7 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
      * methods that do not allow {@link IOException} to be thrown. Since we will not use
      * the stream anymore after closing it, it should not be a big deal if an error occurred.
      */
-    final void closeSilently() {
+    private void closeSilently() {
         try {
             close();
         } catch (IOException exception) {
@@ -1226,9 +1226,7 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
      */
 
     /**
-     * Allows any resources held by this reader to be released. If an input stream were
-     * created by {@link StreamImageReader}, it will be
-     * {@linkplain StreamImageReader#close() closed} before to dispose this reader.
+     * Allows any resources held by this reader to be released.
      */
     @Override
     public void dispose() {

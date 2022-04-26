@@ -40,10 +40,8 @@ import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.util.Utilities;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.Disposable;
-import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.Locales;
 import org.geotoolkit.resources.Loggings;
-import org.apache.sis.util.resources.IndexedResourceBundle;
 import org.apache.sis.internal.coverage.j2d.ImageUtilities;
 import org.apache.sis.util.logging.Logging;
 
@@ -122,13 +120,6 @@ public abstract class SpatialImageWriter extends ImageWriter implements WarningP
     public void setOutput(final Object output) {
         closeSilently();
         super.setOutput(output);
-    }
-
-    /**
-     * Returns the resources for formatting error messages.
-     */
-    final IndexedResourceBundle getErrorResources() {
-        return Errors.getResources(getLocale());
     }
 
     /**
@@ -507,7 +498,7 @@ public abstract class SpatialImageWriter extends ImageWriter implements WarningP
      * methods that do not allow {@link IOException} to be thrown. Since we will not use
      * the stream anymore after closing it, it should not be a big deal if an error occurred.
      */
-    final void closeSilently() {
+    private void closeSilently() {
         try {
             close();
         } catch (IOException exception) {
@@ -519,14 +510,10 @@ public abstract class SpatialImageWriter extends ImageWriter implements WarningP
      * Invoked when a new output is set or when the writer is disposed. The default implementation
      * clears the internal cache. Sub-classes can override this method if they have more resources
      * to dispose, but should always invoke {@code super.close()}.
-     * <p>
-     * This method is overridden and given {@code protected} access by {@link StreamImageWriter}.
-     * It is called "{@code close}" in order to match the
-     * purpose which appear in the public API of those classes.
      *
      * @throws IOException If an error occurred while closing a stream (applicable to subclasses only).
      */
-    void close() throws IOException {
+    protected void close() throws IOException {
         imageIndex = 0;
         thumbnailIndex = 0;
     }
@@ -538,9 +525,7 @@ public abstract class SpatialImageWriter extends ImageWriter implements WarningP
      */
 
     /**
-     * Allows any resources held by this writer to be released. If an output stream were
-     * created by {@link StreamImageWriter}, it will be
-     * {@linkplain StreamImageWriter#close() closed} before to dispose this reader.
+     * Allows any resources held by this writer to be released.
      */
     @Override
     public void dispose() {

@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.image.io;
+package org.geotoolkit.image.io.plugin;
 
 import java.io.*; // Many imports, including some for javadoc only.
 import java.util.Set;
@@ -35,12 +35,6 @@ import org.geotoolkit.io.LineFormat;
  * A dummy implementation of {@link TextImageReader} used only by default implementation
  * of {@link TextImageReader.Spi#canDecodeInput}. This class is more lightweight than
  * loading the real image reader implementation.
- *
- * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.08
- *
- * @since 3.08 (derived from 2.4)
- * @module
  */
 final class TestReader extends TextImageReader {
     /**

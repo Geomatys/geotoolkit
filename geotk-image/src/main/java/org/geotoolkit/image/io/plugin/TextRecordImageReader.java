@@ -35,7 +35,6 @@ import javax.imageio.spi.ServiceRegistry;
 import org.geotoolkit.io.LineFormat;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Descriptions;
-import org.geotoolkit.image.io.TextImageReader;
 import org.geotoolkit.image.io.SampleConverter;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.internal.image.io.DimensionAccessor;

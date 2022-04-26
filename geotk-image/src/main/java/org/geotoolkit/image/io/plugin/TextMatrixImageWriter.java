@@ -32,7 +32,6 @@ import javax.media.jai.iterator.RectIter;
 
 import org.apache.sis.util.CharSequences;
 import org.geotoolkit.image.ImageDimension;
-import org.geotoolkit.image.io.TextImageWriter;
 import org.geotoolkit.resources.Descriptions;
 
 
