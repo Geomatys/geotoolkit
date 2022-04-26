@@ -162,14 +162,6 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
      *     <td>&nbsp;{@code "main"}&nbsp;</td>
      *     <td>&nbsp;{@code ImageWriterAdapter}&nbsp;</td>
      *     <td>&nbsp;The output to be given to the {@linkplain #main} writer.&nbsp;</td>
-     *   </tr><tr>
-     *     <td>&nbsp;{@code "tfw"}&nbsp;</td>
-     *     <td>&nbsp;{@link org.geotoolkit.image.io.plugin.WorldFileImageWriter}&nbsp;</td>
-     *     <td>&nbsp;The output for the <cite>World File</cite>.&nbsp;</td>
-     *   </tr><tr>
-     *     <td>&nbsp;{@code "prj"}&nbsp;</td>
-     *     <td>&nbsp;{@link org.geotoolkit.image.io.plugin.WorldFileImageWriter}&nbsp;</td>
-     *     <td>&nbsp;The output for the <cite>Map Projection</cite> file.&nbsp;</td>
      *   </tr>
      * </table>
      * <p>

@@ -116,21 +116,6 @@ import org.geotoolkit.util.collection.DeferringIterator;
  * {@code setInput(Object)} flavor is invoked. This is usually equivalent to setting the two
  * boolean argument to {@code false}, but this behavior could have been overridden by the plugin.
  *
- * {@section Example}
- * The following example reads a TIFF image. Because we use an input of type {@link File}
- * instead than {@link ImageInputStream}, the {@link WorldFileImageReader} can be used.
- * Consequently the metadata associated with the TIFF image can contain geolocalization
- * information if a {@code ".tfw"} file was found together with the {@code ".tiff"} file.
- *
- * {@preformat java
- *     File          input    = new File("my_image.tiff");
- *     ImageReader   reader   = XImageIO.getReaderBySuffix(input, true, false);
- *     IIOMetadata   metadata = reader.getImageMetadata(0);
- *     BufferedImage image    = reader.read(0);
- *     XImageIO.close(reader);
- *     reader.dispose();
- * }
- *
  * {@section Mandatory and optional arguments}
  * Every methods defined in this class expect exactly one mandatory argument, which is always
  * the first argument. All other arguments are optional and can be {@code null}.

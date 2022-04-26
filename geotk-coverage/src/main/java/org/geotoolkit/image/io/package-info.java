@@ -148,17 +148,13 @@
  * <ol>
  *   <li>Invoke some AWT method first; see {@code setDefaultCodecPreferences()} below for explanation.</li>
  *   <li>{@link org.geotoolkit.image.jai.Registry#setDefaultCodecPreferences()}</li>
- *   <li>{@link org.geotoolkit.image.io.plugin.WorldFileImageReader.Spi#registerDefaults(ServiceRegistry)}</li>
- *   <li>{@link org.geotoolkit.image.io.plugin.WorldFileImageWriter.Spi#registerDefaults(ServiceRegistry)}</li>
  * </ol>
  * <p>
  * <b>Alternative:</b> {@link org.geotoolkit.lang.Setup#initialize(Properties)} performs
  * (among other tasks) all the above tasks except 1.
  * <p>
  * Those methods can be invoked more than once if the set of standard readers available (PNG, TIFF,
- * <i>etc.</i>) is changed. For example invoking {@code WorldFileImageReader.Spi.registerDefaults(...)}
- * again will replace the old <cite>World File</cite> readers by new one wrapping the new standard
- * readers.
+ * <i>etc.</i>) is changed.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Antoine Hnawia (IRD)

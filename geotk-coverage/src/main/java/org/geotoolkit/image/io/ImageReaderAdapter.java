@@ -203,14 +203,6 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
      *     <td>&nbsp;{@code "main"}&nbsp;</td>
      *     <td>&nbsp;{@code ImageReaderAdapter}&nbsp;</td>
      *     <td>&nbsp;The input to be given to the {@linkplain #main} reader.&nbsp;</td>
-     *   </tr><tr>
-     *     <td>&nbsp;{@code "tfw"}&nbsp;</td>
-     *     <td>&nbsp;{@link org.geotoolkit.image.io.plugin.WorldFileImageReader}&nbsp;</td>
-     *     <td>&nbsp;The input for the <cite>World File</cite>.&nbsp;</td>
-     *   </tr><tr>
-     *     <td>&nbsp;{@code "prj"}&nbsp;</td>
-     *     <td>&nbsp;{@link org.geotoolkit.image.io.plugin.WorldFileImageReader}&nbsp;</td>
-     *     <td>&nbsp;The input for the <cite>Map Projection</cite> file.&nbsp;</td>
      *   </tr>
      * </table>
      * <p>

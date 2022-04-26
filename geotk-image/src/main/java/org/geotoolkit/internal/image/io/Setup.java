@@ -22,10 +22,7 @@ import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.Properties;
 import javax.imageio.spi.IIORegistry;
-
 import org.geotoolkit.internal.SetupService;
-import org.geotoolkit.image.io.plugin.WorldFileImageReader;
-import org.geotoolkit.image.io.plugin.WorldFileImageWriter;
 
 
 /**
@@ -46,8 +43,6 @@ public final class Setup implements SetupService {
     @Override
     public void initialize(final Properties properties, final boolean reinit) {
         final IIORegistry registry = IIORegistry.getDefaultInstance();
-        WorldFileImageReader.Spi.registerDefaults(registry);
-        WorldFileImageWriter.Spi.registerDefaults(registry);
         if (reinit) {
             IIORegistry.getDefaultInstance().registerApplicationClasspathSpis();
         }
@@ -62,8 +57,6 @@ public final class Setup implements SetupService {
     @Override
     public void shutdown() {
         final IIORegistry registry = IIORegistry.getDefaultInstance();
-        WorldFileImageReader.Spi.unregisterDefaults(registry);
-        WorldFileImageWriter.Spi.unregisterDefaults(registry);
         final List<Object> toRemove = new ArrayList<>();
         final Iterator<Class<?>> categories = registry.getCategories();
         while (categories.hasNext()) {

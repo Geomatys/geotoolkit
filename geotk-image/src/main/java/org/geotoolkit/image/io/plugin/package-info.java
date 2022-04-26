@@ -39,13 +39,6 @@
  *     <td>&nbsp;{@code records}&nbsp;</td>
  *     <td>&nbsp;{@code text/plain}&nbsp;</td>
  *     <td>&nbsp;Locale sensitive.&nbsp;</td>
- *   </tr><tr>
- *     <td>&nbsp;{@link org.geotoolkit.image.io.plugin.WorldFileImageReader}&nbsp;</td>
- *     <td>&nbsp;{@link org.geotoolkit.image.io.plugin.WorldFileImageWriter}&nbsp;</td>
- *     <td>&nbsp;</td>
- *     <td>&nbsp;</td>
- *     <td>&nbsp;Require {@linkplain org.geotoolkit.image.io.plugin.WorldFileImageReader.Spi#registerDefaults
- *         explicit registration}.&nbsp;</td>
  *   </tr>
  * </table>
  *
