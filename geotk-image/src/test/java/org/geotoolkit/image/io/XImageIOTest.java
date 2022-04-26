@@ -24,15 +24,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Iterator;
 import javax.imageio.ImageReader;
-import javax.imageio.ImageIO;
 import javax.imageio.ImageWriter;
 import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageReaderSpi;
 
 import org.geotoolkit.image.SampleModels;
 import org.geotoolkit.internal.io.TemporaryFile;
-import org.geotoolkit.image.io.plugin.WorldFileImageReader;
-import org.geotoolkit.image.io.plugin.WorldFileImageWriter;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.test.image.ImageTestBase;
 import org.geotoolkit.test.TestData;
@@ -45,9 +42,6 @@ import static org.junit.Assert.*;
  * Tests {@link XImageIO}. Also ensure that every plugins are correctly registered.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.20
- *
- * @since 3.07
  */
 public final strictfp class XImageIOTest extends ImageTestBase {
     /**
@@ -126,24 +120,13 @@ public final strictfp class XImageIOTest extends ImageTestBase {
     @Test
     public void testPluginsRegistration() {
         final IIORegistry registry = IIORegistry.getDefaultInstance();
-        WorldFileImageReader.Spi.registerDefaults(registry);
-        WorldFileImageWriter.Spi.registerDefaults(registry);
-        try {
-            final Iterator<ImageReaderSpi> it = registry.getServiceProviders(ImageReaderSpi.class, false);
-            while (it.hasNext()) {
-                final ImageReaderSpi spi = it.next();
-                final String name = Classes.getShortClassName(spi);
-                assertNotNull(name, spi.getFormatNames());
-                assertNotNull(name, spi.getInputTypes());
-                assertNotNull(name, spi.getMIMETypes()); // See method javadoc.
-            }
-            // Following line was used to throw a NullPointerException
-            // if a plugin declare a null array of MIME types.
-            final String[] types = ImageIO.getReaderMIMETypes();
-            assertTrue(types.length > 13); // Arbitrary threshold.
-        } finally {
-            WorldFileImageReader.Spi.unregisterDefaults(registry);
-            WorldFileImageWriter.Spi.unregisterDefaults(registry);
+        final Iterator<ImageReaderSpi> it = registry.getServiceProviders(ImageReaderSpi.class, false);
+        while (it.hasNext()) {
+            final ImageReaderSpi spi = it.next();
+            final String name = Classes.getShortClassName(spi);
+            assertNotNull(name, spi.getFormatNames());
+            assertNotNull(name, spi.getInputTypes());
+            assertNotNull(name, spi.getMIMETypes()); // See method javadoc.
         }
     }
 }

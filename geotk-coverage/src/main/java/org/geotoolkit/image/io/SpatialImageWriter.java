@@ -520,8 +520,8 @@ public abstract class SpatialImageWriter extends ImageWriter implements WarningP
      * clears the internal cache. Sub-classes can override this method if they have more resources
      * to dispose, but should always invoke {@code super.close()}.
      * <p>
-     * This method is overridden and given {@code protected} access by {@link StreamImageWriter}
-     * and {@link ImageWriterAdapter}. It is called "{@code close}" in order to match the
+     * This method is overridden and given {@code protected} access by {@link StreamImageWriter}.
+     * It is called "{@code close}" in order to match the
      * purpose which appear in the public API of those classes.
      *
      * @throws IOException If an error occurred while closing a stream (applicable to subclasses only).
@@ -539,7 +539,7 @@ public abstract class SpatialImageWriter extends ImageWriter implements WarningP
 
     /**
      * Allows any resources held by this writer to be released. If an output stream were
-     * created by {@link StreamImageWriter} or {@link ImageWriterAdapter}, it will be
+     * created by {@link StreamImageWriter}, it will be
      * {@linkplain StreamImageWriter#close() closed} before to dispose this reader.
      */
     @Override
@@ -594,22 +594,6 @@ public abstract class SpatialImageWriter extends ImageWriter implements WarningP
                 vendorName = "Geotoolkit.org";
                 version    = Utilities.VERSION.toString();
             }
-        }
-
-        /**
-         * Adds the given format to the list of extra stream or metadata format names,
-         * if not already present. This method does nothing if the format is already
-         * listed as the native or an extra format.
-         *
-         * @param formatName
-         * @param stream {@code true} for adding to the list of {@linkplain #extraStreamMetadataFormatNames extra stream formats}.
-         * @param image  {@code true} for adding to the list of {@linkplain #extraImageMetadataFormatNames extra image formats}.
-         *
-         * @since 3.20
-         */
-        protected void addExtraMetadataFormat(final String formatName, final boolean stream, final boolean image) {
-            if (stream) extraStreamMetadataFormatNames = ImageReaderAdapter.Spi.addExtraMetadataFormat(formatName, nativeStreamMetadataFormatName, extraStreamMetadataFormatNames);
-            if (image)  extraImageMetadataFormatNames  = ImageReaderAdapter.Spi.addExtraMetadataFormat(formatName, nativeImageMetadataFormatName,  extraImageMetadataFormatNames);
         }
 
         /**

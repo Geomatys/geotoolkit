@@ -22,7 +22,6 @@ import org.apache.sis.portrayal.MapLayers;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
 import org.geotoolkit.gui.swing.tree.MutableTreeNode;
-import org.geotoolkit.image.io.plugin.WorldFileImageReader;
 import org.geotoolkit.pending.demo.Demos;
 
 /**
@@ -137,8 +136,6 @@ public class DemoFrame extends JFrame {
 
 
     public static void main(String[] args) throws DataStoreException, MalformedURLException {
-        WorldFileImageReader.Spi.registerDefaults(null);
-
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception ex) {

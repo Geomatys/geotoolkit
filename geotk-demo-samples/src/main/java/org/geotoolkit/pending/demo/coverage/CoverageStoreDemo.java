@@ -9,8 +9,6 @@ import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
 import org.geotoolkit.coverage.worldfile.FileCoverageProvider;
-import org.geotoolkit.image.io.plugin.WorldFileImageReader;
-import org.geotoolkit.image.io.plugin.WorldFileImageWriter;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.pending.demo.Demos;
@@ -25,8 +23,6 @@ public class CoverageStoreDemo {
 
     public static void main(String[] args) throws Exception {
         Demos.init();
-        WorldFileImageReader.Spi.registerDefaults(null);
-        WorldFileImageWriter.Spi.registerDefaults(null);
 
         Path dataResources = IOUtilities.getResourceAsPath("data");
 

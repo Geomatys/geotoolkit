@@ -24,8 +24,6 @@ import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.image.io.plugin.WorldFileImageReader;
-import org.geotoolkit.image.io.plugin.WorldFileImageWriter;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.test.image.ImageTestBase;
 import org.junit.*;
@@ -45,24 +43,6 @@ public final strictfp class CoverageIOTest extends ImageTestBase {
      */
     public CoverageIOTest() {
         super(CoverageIO.class);
-    }
-
-    /**
-     * Ensures that the World Files codecs are registered.
-     */
-    @BeforeClass
-    public static void registerWorldFiles() {
-        WorldFileImageReader.Spi.registerDefaults(null);
-        WorldFileImageWriter.Spi.registerDefaults(null);
-    }
-
-    /**
-     * Unregisters the World files codecs after the test suite.
-     */
-    @AfterClass
-    public static void unregisterWorldFiles() {
-        WorldFileImageWriter.Spi.unregisterDefaults(null);
-        WorldFileImageReader.Spi.unregisterDefaults(null);
     }
 
     /**
@@ -102,8 +82,8 @@ public final strictfp class CoverageIOTest extends ImageTestBase {
         final AffineTransform gridToCRS = (AffineTransform) geom.getGridToCRS(PixelInCell.CELL_CENTER);
         assertEquals("scaleX",        1.0, gridToCRS.getScaleX(),     0);
         assertEquals("scaleY",       -1.0, gridToCRS.getScaleY(),     0);
-        assertEquals("translateX", -179.5, gridToCRS.getTranslateX(), 0);
-        assertEquals("translateY", ty-0.5, gridToCRS.getTranslateY(), 0);
+        assertEquals("translateX", -180.0, gridToCRS.getTranslateX(), 0);
+        assertEquals("translateY",     ty, gridToCRS.getTranslateY(), 0);
 
         final GridExtent range = geom.getExtent();
         assertEquals("Width",  width,  range.getSize(0));

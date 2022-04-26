@@ -389,8 +389,7 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
     /**
      * Returns {@code true} if the image at the given index has a color palette.
      * Some formats don't store any color
-     * information with the pixel values, while other formats like PNG or JPEG (optionally wrapped
-     * in a {@linkplain org.geotoolkit.image.io.plugin.WorldFileImageReader World File reader})
+     * information with the pixel values, while other formats like PNG or JPEG
      * provide such color palette.
      * <p>
      * If this method returns {@code false}, no color information is included in the stream
@@ -1228,7 +1227,7 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
 
     /**
      * Allows any resources held by this reader to be released. If an input stream were
-     * created by {@link StreamImageReader} or {@link ImageReaderAdapter}, it will be
+     * created by {@link StreamImageReader}, it will be
      * {@linkplain StreamImageReader#close() closed} before to dispose this reader.
      */
     @Override
@@ -1320,7 +1319,7 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
          * Adds the {@value SpatialMetadataFormat#GEOTK_FORMAT_NAME} to the given array, if
          * not already presents. This method returns a shared array for some common cases.
          */
-        static String[] addExtraMetadataFormat(final String formatName, final String nativeName, final String[] formatNames) {
+        private static String[] addExtraMetadataFormat(final String formatName, final String nativeName, final String[] formatNames) {
             ArgumentChecks.ensureNonNull("formatName", formatName);
             if (formatName.equals(nativeName) || ArraysExt.contains(formatNames, formatName)) {
                 return formatNames;

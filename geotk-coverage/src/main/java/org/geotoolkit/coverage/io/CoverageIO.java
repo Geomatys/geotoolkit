@@ -22,6 +22,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.Collections;
 import javax.imageio.ImageIO;
 import javax.imageio.stream.FileImageInputStream;
@@ -29,7 +30,18 @@ import javax.imageio.stream.FileImageOutputStream;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.internal.storage.MemoryGridResource;
+import org.apache.sis.internal.storage.image.WorldFileStoreProvider;
+import org.apache.sis.setup.OptionKey;
+import org.apache.sis.storage.Aggregate;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.DataStores;
+import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.storage.Resource;
+import org.apache.sis.storage.StorageConnector;
+import org.apache.sis.storage.UnsupportedStorageException;
+import org.apache.sis.storage.WritableAggregate;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.internal.image.io.CheckedImageInputStream;
 import org.geotoolkit.internal.image.io.CheckedImageOutputStream;
@@ -79,6 +91,20 @@ public final class CoverageIO extends Static {
      * @throws DataStoreException If the coverage can not be read.
      */
     public static GridCoverage read(final Object input) throws DataStoreException {
+        try (DataStore ds = DataStores.open(input)) {
+            if (ds instanceof GridCoverageResource) {
+                return ((GridCoverageResource) ds).read(null, null);
+            }
+            if (ds instanceof Aggregate) {
+                for (Resource r : ((Aggregate) ds).components()) {
+                    if (r instanceof GridCoverageResource) {
+                        return ((GridCoverageResource) r).read(null, null);
+                    }
+                }
+            }
+        } catch (UnsupportedStorageException e) {
+            // Ignore, will try fallback below.
+        }
         final ImageCoverageReader reader = createSimpleReader(input);
         try {
             return reader.read(null);
@@ -104,6 +130,19 @@ public final class CoverageIO extends Static {
             throws DataStoreException
     {
         ensureNonNull("coverage", coverage);
+        if (formatName != null && formatName.endsWith("-wf")) {
+            final StorageConnector c = new StorageConnector(output);
+            c.setOption(OptionKey.OPEN_OPTIONS, new StandardOpenOption[] {
+                StandardOpenOption.WRITE,
+                StandardOpenOption.CREATE,
+                StandardOpenOption.TRUNCATE_EXISTING
+            });
+            try (DataStore ds = new WorldFileStoreProvider().open(c)) {
+                WritableAggregate wr = (WritableAggregate) ds;
+                wr.add(new MemoryGridResource(null, coverage));
+            }
+            return;
+        }
         write(Collections.singleton(coverage), formatName, output);
     }
 
