@@ -431,12 +431,7 @@ public class ImageUtils extends Static {
      *
      * @param sampleBitsSize bit size for each sample.
      * @param numBand expected band number
-     * @param photometricInterpretation
-     * @param sampleFormat
      * @param planarConfiguration define planar configuration of asked {@link ImageTypeSpecifier}, 1 for interveaved 2 for banded sampleModel.
-     * @param hasAlpha
-     * @param isAlphaPremultiplied
-     * @param java2DColorMap
      * @return {@link ImageTypeSpecifier}.
      */
     public static ImageTypeSpecifier buildImageTypeSpecifier(final int sampleBitsSize, final int numBand,
