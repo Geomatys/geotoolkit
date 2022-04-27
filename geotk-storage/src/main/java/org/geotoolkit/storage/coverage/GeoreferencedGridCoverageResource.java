@@ -103,7 +103,7 @@ public abstract class GeoreferencedGridCoverageResource extends AbstractGridCove
 
         if (unsqueezableDimensions < 3) {
             //read a single slice
-            return readGridSlice(resultGrid, getLow(extent), getHigh(extent), subsampling);
+            return readGridSlice(resultGrid, getLow(extent), getHigh(extent), subsampling, range);
         } else {
             return new GridCoverageSelection(resultGrid, getSampleDimensions(), subsampling, range);
         }
