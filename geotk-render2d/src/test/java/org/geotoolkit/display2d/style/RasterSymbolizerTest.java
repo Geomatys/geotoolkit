@@ -44,6 +44,7 @@ import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.canvas.control.NeverFailMonitor;
 import org.geotoolkit.display2d.GO2Hints;
+import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
@@ -56,6 +57,9 @@ import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
 import org.geotoolkit.style.DefaultStyleFactory;
+import org.geotoolkit.style.MutableFeatureTypeStyle;
+import org.geotoolkit.style.MutableRule;
+import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
 import static org.junit.Assert.assertArrayEquals;
@@ -64,6 +68,10 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Polygon;
+import org.opengis.filter.Expression;
 import org.opengis.filter.FilterFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
@@ -241,7 +249,6 @@ public class RasterSymbolizerTest extends org.geotoolkit.test.TestBase {
 
     }
 
-
     /**
      * Render a coverage with nearest and lanczos interpolation.
      */
@@ -399,6 +406,68 @@ public class RasterSymbolizerTest extends org.geotoolkit.test.TestBase {
 
         new MockRasterRenderer(canvasGeom)
                 .testObjectiveDisjoint(new InMemoryGridCoverageResource(baseData));
+    }
+
+    @Test
+    public void renderWithMask() throws Exception {
+
+        final BufferedImage image = new BufferedImage(360, 180, BufferedImage.TYPE_INT_ARGB);
+        final Graphics2D g = image.createGraphics();
+        g.setColor(Color.RED);
+        g.fillRect(0, 0, 360, 180);
+
+        final GridExtent extent = new GridExtent(360, 180);
+        final AffineTransform2D gridToCrs = new AffineTransform2D(1, 0, 0, -1, -180, 90);
+        final GridGeometry grid = new GridGeometry(extent, PixelInCell.CELL_CORNER, gridToCrs, CommonCRS.WGS84.normalizedGeographic());
+
+        final GridCoverage2D coverage = new GridCoverage2D(grid, null, image);
+        final GridCoverageResource resource = new InMemoryGridCoverageResource(coverage);
+
+        final GeometryFactory gf = new GeometryFactory();
+        final Polygon polygon = gf.createPolygon(new Coordinate[]{
+            new Coordinate(0, 0),
+            new Coordinate(0, 60),
+            new Coordinate(60, 60),
+            new Coordinate(60, 0),
+            new Coordinate(0, 0)
+        });
+        polygon.setUserData(CommonCRS.WGS84.normalizedGeographic());
+
+        final MutableStyleFactory sf = GO2Utilities.STYLE_FACTORY;
+        final MutableStyle style = sf.style();
+        final MutableFeatureTypeStyle fts = sf.featureTypeStyle();
+        final MutableRule rule = sf.rule();
+        final Expression geomExp = GO2Utilities.FILTER_FACTORY.literal(polygon);
+        final RasterSymbolizer rs = sf.rasterSymbolizer(null, geomExp, null, null, null, null, null, null, null, null, null);
+
+        style.featureTypeStyles().add(fts);
+        fts.rules().add(rule);
+        rule.symbolizers().add(rs);
+
+        final MapLayer layer = new MapLayer();
+        layer.setData(resource);
+        layer.setStyle(style);
+
+
+        final MapLayers context = MapBuilder.createContext();
+        context.getComponents().add(layer);
+
+        final CanvasDef cdef = new CanvasDef(grid);
+        final SceneDef sdef = new SceneDef(context);
+        final BufferedImage result = DefaultPortrayalService.portray(cdef, sdef);
+
+        final int RED = Color.RED.getRGB();
+        assertEquals(0, result.getRGB(0, 0));
+        assertEquals(0, result.getRGB(10, 10));
+        assertEquals(0, result.getRGB(189, 28));
+        assertEquals(RED, result.getRGB(189, 31));
+        assertEquals(0, result.getRGB(178, 66));
+        assertEquals(RED, result.getRGB(181, 66));
+        assertEquals(0, result.getRGB(241, 66));
+        assertEquals(RED, result.getRGB(238, 66));
+        assertEquals(0, result.getRGB(219, 91));
+        assertEquals(RED, result.getRGB(219, 88));
+        assertEquals(RED, result.getRGB(209, 58));
     }
 
     private static RenderingContext2D mockRenderingContext(final GridGeometry target) {
