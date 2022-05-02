@@ -23,7 +23,9 @@ import org.apache.sis.coverage.RegionOfInterest;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverageProcessor;
 import org.apache.sis.filter.Optimization;
+import org.apache.sis.internal.feature.jts.JTS;
 import org.apache.sis.internal.filter.Visitor;
+import org.locationtech.jts.geom.Geometry;
 import org.opengis.coverage.GeometryValuePair;
 import org.opengis.filter.Expression;
 import org.opengis.filter.Filter;
@@ -117,6 +119,8 @@ final class CompiledFilter {
         }
         if (geometry instanceof RegionOfInterest) {
             roi = (RegionOfInterest) geometry;
+        } else if (geometry instanceof Geometry) {
+            roi = new RegionOfInterest(JTS.asShape((Geometry) geometry), null);
         } else if (geometry instanceof Shape) {
             roi = new RegionOfInterest((Shape) geometry, null);
         } else {

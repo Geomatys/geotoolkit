@@ -84,7 +84,7 @@ public class FilteredCoverageQuery extends CoverageQuery {
      * @throws DataStoreException if an error occurred during creation of the subset.
      */
     @Override
-    protected GridCoverageResource execute(final GridCoverageResource source) throws DataStoreException {
+    public GridCoverageResource execute(final GridCoverageResource source) throws DataStoreException {
         GridCoverageResource resource = super.execute(source);
         if (filter != null) {
             resource = new FilteredCoverageResource(source, processor, filter);
