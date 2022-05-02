@@ -20,7 +20,6 @@ package org.geotoolkit.referencing.operation.projection;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.operation.TransformException;
 import org.apache.sis.parameter.Parameters;
-import org.apache.sis.test.DependsOn;
 import org.junit.*;
 
 import static org.junit.Assert.*;
@@ -35,7 +34,6 @@ import static org.geotoolkit.referencing.operation.provider.Stereographic.PARAME
  *
  * @since 3.19
  */
-@DependsOn(UnitaryProjectionTest.class)
 public final strictfp class StereographicTest extends ProjectionTestBase {
     /**
      * Creates a default test suite.

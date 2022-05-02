@@ -34,7 +34,6 @@ import org.apache.sis.referencing.operation.projection.NormalizedProjection;
 import org.apache.sis.referencing.operation.projection.ProjectionException;
 
 import static java.lang.Math.*;
-import static org.apache.sis.math.MathFunctions.atanh;
 
 
 abstract class UnitaryProjection extends NormalizedProjection {
@@ -209,48 +208,5 @@ abstract class UnitaryProjection extends NormalizedProjection {
         /*
          * NOTE: 0.5*(t + 1/t)   =   1/cosφ
          */
-    }
-
-    /**
-     * Calculates <var>q</var>, Snyder equation (3-12).
-     * This equation has the following properties:
-     * <ul>
-     *   <li>Input  in the [-1 ... +1] range.</li>
-     *   <li>Output in the [-2 ... +2] range.</li>
-     *   <li>Output is 0 when input is 0.</li>
-     *   <li>Output of the same sign than input.</li>
-     *   <li>{@code qsfn(-sinφ) == -qsfn(sinφ)}.</li>
-     * </ul>
-     *
-     * @param sinφ Sine of the latitude <var>q</var> is calculated for.
-     * @return <var>q</var> from Snyder equation (3-12).
-     */
-    final double qsfn(final double sinφ) {
-        if (eccentricity < EPSILON) {
-            return 2 * sinφ;
-        }
-        /*
-         * Above check was required because the expression below would simplify to
-         * sinφ - 0.5/0*log(1) where the right terms are infinity multiplied by
-         * zero, thus producing NaN.
-         */
-        final double esinφ = eccentricity * sinφ;
-        return (1 - eccentricitySquared) * (sinφ / (1 - esinφ*esinφ) + atanh(esinφ)/eccentricity);
-    }
-
-    /**
-     * Gets the derivative of the {@link #qsfn(double)} method.
-     *
-     * @param  sinφ The sine of latitude.
-     * @param  cosφ The cosines of latitude.
-     * @return The {@code qsfn} derivative at the specified latitude.
-     *
-     * @since 3.18
-     */
-    final double dqsfn_dφ(final double sinφ, final double cosφ) {
-        assert !(abs(sinφ*sinφ + cosφ*cosφ - 1) > ARGUMENT_TOLERANCE);
-        double esinφ2 = eccentricity * sinφ;
-        esinφ2 *= esinφ2;
-        return (1 - eccentricitySquared) * (cosφ / (1 - esinφ2)) * (1 + ((1 + esinφ2) / (1 - esinφ2)));
     }
 }
