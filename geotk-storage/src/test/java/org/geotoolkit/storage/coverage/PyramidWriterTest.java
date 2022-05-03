@@ -38,6 +38,7 @@ import org.geotoolkit.storage.memory.InMemoryStore;
 import org.geotoolkit.storage.memory.InMemoryTiledGridCoverageResource;
 import org.geotoolkit.storage.multires.DefiningTileMatrix;
 import org.geotoolkit.storage.multires.DefiningTileMatrixSet;
+import org.geotoolkit.storage.multires.TileMatrices;
 import org.geotoolkit.storage.multires.WritableTileMatrix;
 import org.geotoolkit.storage.multires.WritableTileMatrixSet;
 import org.geotoolkit.util.NamesExt;
@@ -85,7 +86,9 @@ public class PyramidWriterTest <T extends InMemoryTiledGridCoverageResource> ext
                 new SampleDimension.Builder().setName(3).build()
         ));
         final WritableTileMatrixSet tileMatrixSet = ref.createTileMatrixSet(new DefiningTileMatrixSet(CRS84));
-        final WritableTileMatrix tileMatrix = tileMatrixSet.createTileMatrix(new DefiningTileMatrix(null, UL84, 1, new Dimension(360, 180), new Dimension(1, 1)));
+        final Dimension tileSize = new Dimension(360, 180);
+        final WritableTileMatrix tileMatrix = tileMatrixSet.createTileMatrix(
+                new DefiningTileMatrix(null, TileMatrices.toTilingScheme(UL84, new Dimension(1, 1), 1.0, tileSize), tileSize));
         tileMatrix.writeTiles(Stream.of(new DefaultImageTile(createImage(360, 180, Color.BLACK), 0, 0)));
 
         //sanity check
@@ -122,7 +125,9 @@ public class PyramidWriterTest <T extends InMemoryTiledGridCoverageResource> ext
                 new SampleDimension.Builder().setName(3).build()
         ));
         final WritableTileMatrixSet pyramid = ref.createTileMatrixSet(new DefiningTileMatrixSet(CRS84));
-        final WritableTileMatrix mosaic = pyramid.createTileMatrix(new DefiningTileMatrix(null, UL84, 10, new Dimension(9, 9), new Dimension(4, 2)));
+        final Dimension tileSize = new Dimension(9, 9);
+        final WritableTileMatrix mosaic = pyramid.createTileMatrix(
+                new DefiningTileMatrix(null, TileMatrices.toTilingScheme(UL84, new Dimension(4, 2), 10.0, tileSize), tileSize));
         for(int y=0;y<2;y++){
             for(int x=0;x<4;x++){
                 mosaic.writeTiles(Stream.of(new DefaultImageTile(createImage(9, 9, Color.BLACK), x, y)));
@@ -162,7 +167,9 @@ public class PyramidWriterTest <T extends InMemoryTiledGridCoverageResource> ext
                 new SampleDimension.Builder().setName(3).build()
         ));
         final WritableTileMatrixSet pyramid = ref.createTileMatrixSet(new DefiningTileMatrixSet(CRS84));
-        final WritableTileMatrix mosaic = pyramid.createTileMatrix(new DefiningTileMatrix(null, UL84, 10, new Dimension(9, 9), new Dimension(4, 2)));
+        final Dimension tileSize = new Dimension(9, 9);
+        final WritableTileMatrix mosaic = pyramid.createTileMatrix(
+                new DefiningTileMatrix(null, TileMatrices.toTilingScheme(UL84, new Dimension(4, 2), 10.0, tileSize), tileSize));
         for(int y=0;y<2;y++){
             for(int x=0;x<4;x++){
                 mosaic.writeTiles(Stream.of(new DefaultImageTile(createImage(9, 9, Color.BLACK), x, y)));
@@ -217,13 +224,16 @@ public class PyramidWriterTest <T extends InMemoryTiledGridCoverageResource> ext
                 new SampleDimension.Builder().setName(3).build()
         ));
         final WritableTileMatrixSet pyramid = ref.createTileMatrixSet(new DefiningTileMatrixSet(CRS84));
-        final WritableTileMatrix mosaic1 = pyramid.createTileMatrix(new DefiningTileMatrix(null, UL84, 10, new Dimension(9, 9), new Dimension(4, 2)));
+        final Dimension tileSize = new Dimension(9, 9);
+        final WritableTileMatrix mosaic1 = pyramid.createTileMatrix(
+                new DefiningTileMatrix(null, TileMatrices.toTilingScheme(UL84, new Dimension(4, 2), 10.0, tileSize), tileSize));
         for(int y=0;y<2;y++){
             for(int x=0;x<4;x++){
                 mosaic1.writeTiles(Stream.of(new DefaultImageTile(createImage(9, 9, Color.BLACK), x, y)));
             }
         }
-        final WritableTileMatrix mosaic2 = pyramid.createTileMatrix(new DefiningTileMatrix(null, UL84, 20, new Dimension(9, 9), new Dimension(2, 1)));
+        final WritableTileMatrix mosaic2 = pyramid.createTileMatrix(
+                new DefiningTileMatrix(null, TileMatrices.toTilingScheme(UL84, new Dimension(2, 1), 20.0, tileSize), tileSize));
         for(int y=0;y<1;y++){
             for(int x=0;x<2;x++){
                 mosaic2.writeTiles(Stream.of(new DefaultImageTile(createImage(9, 9, Color.BLACK), x, y)));
@@ -308,13 +318,16 @@ public class PyramidWriterTest <T extends InMemoryTiledGridCoverageResource> ext
                 new SampleDimension.Builder().setName(3).build()
         ));
         final WritableTileMatrixSet pyramid = ref.createTileMatrixSet(new DefiningTileMatrixSet(EPSG4326));
-        final WritableTileMatrix mosaic1 = pyramid.createTileMatrix(new DefiningTileMatrix(null, UL4326, 10, new Dimension(9, 9), new Dimension(2, 4)));
+        final Dimension tileSize = new Dimension(9, 9);
+        final WritableTileMatrix mosaic1 = pyramid.createTileMatrix(
+                new DefiningTileMatrix(null, TileMatrices.toTilingScheme(UL4326, new Dimension(2, 4), 10.0, tileSize), tileSize));
         for(int y=0;y<4;y++){
             for(int x=0;x<2;x++){
                 mosaic1.writeTiles(Stream.of(new DefaultImageTile(createImage(9, 9, Color.BLACK), x, y)));
             }
         }
-        final WritableTileMatrix mosaic2 = pyramid.createTileMatrix(new DefiningTileMatrix(null, UL4326, 20, new Dimension(9, 9), new Dimension(1, 2)));
+        final WritableTileMatrix mosaic2 = pyramid.createTileMatrix(
+                new DefiningTileMatrix(null, TileMatrices.toTilingScheme(UL4326, new Dimension(1, 2), 20.0, tileSize), tileSize));
         for(int y=0;y<2;y++){
             for(int x=0;x<1;x++){
                 mosaic2.writeTiles(Stream.of(new DefaultImageTile(createImage(9, 9, Color.BLACK), x, y)));
@@ -399,13 +412,16 @@ public class PyramidWriterTest <T extends InMemoryTiledGridCoverageResource> ext
                 new SampleDimension.Builder().setName(3).build()
         ));
         final WritableTileMatrixSet pyramid = ref.createTileMatrixSet(new DefiningTileMatrixSet(CRS84));
-        final WritableTileMatrix mosaic1 = pyramid.createTileMatrix(new DefiningTileMatrix(null, UL84, 10, new Dimension(9, 9), new Dimension(4, 2)));
+        final Dimension tileSize = new Dimension(9, 9);
+        final WritableTileMatrix mosaic1 = pyramid.createTileMatrix(
+                new DefiningTileMatrix(null, TileMatrices.toTilingScheme(UL84, new Dimension(4, 2), 10.0, tileSize), tileSize));
         for(int y=0;y<2;y++){
             for(int x=0;x<4;x++){
                 mosaic1.writeTiles(Stream.of(new DefaultImageTile(createImage(9, 9, Color.BLACK), x, y)));
             }
         }
-        final WritableTileMatrix mosaic2 = pyramid.createTileMatrix(new DefiningTileMatrix(null, UL84, 20, new Dimension(9, 9), new Dimension(2, 1)));
+        final WritableTileMatrix mosaic2 = pyramid.createTileMatrix(
+                new DefiningTileMatrix(null, TileMatrices.toTilingScheme(UL84, new Dimension(2, 1), 20.0, tileSize), tileSize));
         for(int y=0;y<1;y++){
             for(int x=0;x<2;x++){
                 mosaic2.writeTiles(Stream.of(new DefaultImageTile(createImage(9, 9, Color.BLACK), x, y)));

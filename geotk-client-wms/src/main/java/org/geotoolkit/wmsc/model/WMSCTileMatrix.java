@@ -63,7 +63,7 @@ public class WMSCTileMatrix implements TileMatrix {
         gridSize.width = (int) (spanX / (scale*tileWidth));
         gridSize.height = (int) (spanY / (scale*tileHeight));
 
-        tilingScheme = TileMatrices.toGridGeometry(pyramid.getUpperLeftCorner(), gridSize, scale, new Dimension(
+        tilingScheme = TileMatrices.toTilingScheme(pyramid.getUpperLeftCorner(), gridSize, scale, new Dimension(
                 pyramid.getTileset().getWidth(),
                 pyramid.getTileset().getHeight()));
     }

@@ -110,10 +110,11 @@ public abstract class PyramidalModelStoreNDTest <T extends WritableTiledResource
 
         final WritableTileMatrixSet pyramid = ref.createTileMatrixSet(new DefiningTileMatrixSet(crs));
         for(int v=0;v<CORNER_V.length;v++){
-            final WritableTileMatrix mosaic_s0 = pyramid.createTileMatrix(new DefiningTileMatrix(null, createCorner(CORNER_LONG,CORNER_LAT,CORNER_V[v]), 1,
-                            new Dimension(10, 10), new Dimension(2, 2)));
-            final WritableTileMatrix mosaic_s1 = pyramid.createTileMatrix(new DefiningTileMatrix(null, createCorner(CORNER_LONG,CORNER_LAT,CORNER_V[v]), 0.5,
-                            new Dimension(10, 10), new Dimension(4, 3)));
+            final Dimension tileSize = new Dimension(10,10);
+            final WritableTileMatrix mosaic_s0 = pyramid.createTileMatrix(new DefiningTileMatrix(null,
+                    TileMatrices.toTilingScheme(createCorner(CORNER_LONG,CORNER_LAT,CORNER_V[v]), new Dimension(2, 2), 1.0, tileSize), tileSize));
+            final WritableTileMatrix mosaic_s1 = pyramid.createTileMatrix(new DefiningTileMatrix(null,
+                    TileMatrices.toTilingScheme(createCorner(CORNER_LONG,CORNER_LAT,CORNER_V[v]), new Dimension(4, 3), 0.5, tileSize), tileSize));
 
             //insert tiles
             mosaic_s0.writeTiles(Stream.of(

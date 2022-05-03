@@ -126,7 +126,11 @@ public class TileMatricesTest {
         final GeneralDirectPosition corner = new GeneralDirectPosition(crs);
         corner.setOrdinate(0, 0);
         corner.setOrdinate(1, 0);
-        TileMatrix matrix = new DefiningTileMatrix(NamesExt.createRandomUUID(), corner, 1, new Dimension(1, 1), new Dimension(10, 10));
+        final Dimension tileSize = new Dimension(10, 10);
+        TileMatrix matrix = new DefiningTileMatrix(
+                NamesExt.createRandomUUID(),
+                TileMatrices.toTilingScheme(corner, new Dimension(1,1), 1.0, tileSize),
+                tileSize);
 
         final GeneralEnvelope env = new GeneralEnvelope(crs);
         env.setRange(0, 0.0, 0.1);

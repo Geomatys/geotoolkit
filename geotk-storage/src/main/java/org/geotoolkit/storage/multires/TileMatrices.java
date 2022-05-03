@@ -62,9 +62,9 @@ import org.opengis.util.FactoryException;
  */
 public final class TileMatrices extends Static {
 
-    public static Comparator<org.apache.sis.storage.tiling.TileMatrix> SCALE_COMPARATOR = new Comparator<org.apache.sis.storage.tiling.TileMatrix>() {
+    public static Comparator<TileMatrix> SCALE_COMPARATOR = new Comparator<TileMatrix>() {
         @Override
-        public int compare(org.apache.sis.storage.tiling.TileMatrix tm1, org.apache.sis.storage.tiling.TileMatrix tm2) {
+        public int compare(TileMatrix tm1, TileMatrix tm2) {
             final double[] res1 = tm1.getTilingScheme().getResolution(true);
             final double[] res2 = tm2.getTilingScheme().getResolution(true);
             for (int i = 0; i < res1.length; i++) {
@@ -87,7 +87,7 @@ public final class TileMatrices extends Static {
      * until all calls to getScale are remove, preserve the old bahavior : return the longitude pixel scale.
      */
     @Deprecated
-    public static double getScale(org.apache.sis.storage.tiling.TileMatrix tileMatrix) {
+    public static double getScale(TileMatrix tileMatrix) {
         return tileMatrix.getResolution()[0];
     }
 
@@ -99,7 +99,7 @@ public final class TileMatrices extends Static {
      * @return upper left corner of the TileMatrix, expressed in pyramid CRS.
      */
     @Deprecated
-    public static DirectPosition getUpperLeftCorner(org.apache.sis.storage.tiling.TileMatrix tileMatrix) {
+    public static DirectPosition getUpperLeftCorner(TileMatrix tileMatrix) {
         final GeneralEnvelope envelope = new GeneralEnvelope(tileMatrix.getTilingScheme().getEnvelope());
         final GeneralDirectPosition upperLeft = new GeneralDirectPosition(envelope.getCoordinateReferenceSystem());
         upperLeft.setOrdinate(0, envelope.getMinimum(0));
@@ -114,7 +114,7 @@ public final class TileMatrices extends Static {
      * @return size of the grid in number of columns/rows.
      */
     @Deprecated
-    public static Dimension getGridSize(org.apache.sis.storage.tiling.TileMatrix tileMatrix) {
+    public static Dimension getGridSize(TileMatrix tileMatrix) {
         final GridExtent extent = tileMatrix.getTilingScheme().getExtent();
         return new Dimension(Math.toIntExact(extent.getSize(0)), Math.toIntExact(extent.getSize(1)));
     }
@@ -132,7 +132,7 @@ public final class TileMatrices extends Static {
      * @param tileSize tile size in pixels
      * @return TileMatrix GridGeometry.
      */
-    public static GridGeometry toGridGeometry(DirectPosition upperleft, Dimension gridSize, double scale, Dimension tileSize) {
+    public static GridGeometry toTilingScheme(DirectPosition upperleft, Dimension gridSize, double scale, Dimension tileSize) {
         final CoordinateReferenceSystem crs = upperleft.getCoordinateReferenceSystem();
 
         final int dimension = crs.getCoordinateSystem().getDimension();
@@ -251,7 +251,8 @@ public final class TileMatrices extends Static {
         double scale = tileMatrix.getResolution()[0];
         scale *= tileMatrix.getTileSize().width;
         scale /= tileSize.width;
-        return new DefiningTileMatrix(tileMatrix.getIdentifier(), getUpperLeftCorner(tileMatrix), scale, tileSize, getGridSize(tileMatrix));
+        return new DefiningTileMatrix(tileMatrix.getIdentifier(),
+                toTilingScheme(getUpperLeftCorner(tileMatrix), getGridSize(tileMatrix), scale, tileSize), tileSize);
     }
 
     /**
@@ -294,7 +295,7 @@ public final class TileMatrices extends Static {
     public static void copyStructure(org.apache.sis.storage.tiling.TileMatrixSet base, WritableTileMatrixSet target) throws DataStoreException {
         ArgumentChecks.ensureNonNull("base", base);
         ArgumentChecks.ensureNonNull("target", target);
-        for (org.apache.sis.storage.tiling.TileMatrix m : base.getTileMatrices().values()) {
+        for (TileMatrix m : base.getTileMatrices().values()) {
             target.createTileMatrix(m);
         }
     }
@@ -426,7 +427,10 @@ public final class TileMatrices extends Static {
         Dimension gridSize = new Dimension(2, 1);
         double scale = 360.0/512.0;
         int level = 0;
-        final DefiningTileMatrix level0 = new DefiningTileMatrix(Names.createLocalName(null, null, ""+level), corner, scale, tileSize, new Dimension(gridSize));
+        final DefiningTileMatrix level0 = new DefiningTileMatrix(
+                Names.createLocalName(null, null, ""+level),
+                toTilingScheme(corner, gridSize, scale, tileSize),
+                tileSize);
         mosaics.add(level0);
 
         level++;
@@ -434,9 +438,10 @@ public final class TileMatrices extends Static {
             gridSize.width *= 2.0;
             gridSize.height *= 2.0;
             scale /= 2.0;
-            final DefiningTileMatrix levelN = new DefiningTileMatrix(Names.createLocalName(null, null, ""+level), corner,
-                    scale, tileSize,
-                    new Dimension(gridSize));
+            final DefiningTileMatrix levelN = new DefiningTileMatrix(
+                    Names.createLocalName(null, null, ""+level),
+                    toTilingScheme(corner, gridSize, scale, tileSize),
+                    tileSize);
             mosaics.add(levelN);
         }
 

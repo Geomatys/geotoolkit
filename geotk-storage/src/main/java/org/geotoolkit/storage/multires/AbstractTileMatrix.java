@@ -42,7 +42,7 @@ public abstract class AbstractTileMatrix implements TileMatrix {
 
     public AbstractTileMatrix(GenericName id, TileMatrixSet pyramid, DirectPosition upperLeft, Dimension gridSize,
             Dimension tileSize, double scale) {
-        this(id, pyramid, TileMatrices.toGridGeometry(upperLeft, gridSize, scale, tileSize), tileSize);
+        this(id, pyramid, TileMatrices.toTilingScheme(upperLeft, gridSize, scale, tileSize), tileSize);
     }
 
     public AbstractTileMatrix(GenericName id, TileMatrixSet pyramid, GridGeometry tilingScheme, Dimension tileSize) {
@@ -100,15 +100,15 @@ public abstract class AbstractTileMatrix implements TileMatrix {
 
     /**
      * Pretty print outut of given mosaic.
-     * @param mosaic not null
+     * @param matrix not null
      */
-    public static String toString(TileMatrix mosaic) {
-        final StringBuilder sb = new StringBuilder(Classes.getShortClassName(mosaic));
-        sb.append("   id = ").append(mosaic.getIdentifier());
-        sb.append("   resolution = ").append(Arrays.toString(mosaic.getTilingScheme().getResolution(true)));
-        sb.append("   gridSize = ").append(mosaic.getTilingScheme().getExtent());
-        sb.append("   tileSize[").append(mosaic.getTileSize().width).append(',').append(mosaic.getTileSize().height).append(']');
-        sb.append("   bbox = ").append(new GeneralEnvelope(mosaic.getTilingScheme().getEnvelope()).toString());
+    public static String toString(TileMatrix matrix) {
+        final StringBuilder sb = new StringBuilder(Classes.getShortClassName(matrix));
+        sb.append("   id = ").append(matrix.getIdentifier());
+        sb.append("   resolution = ").append(Arrays.toString(matrix.getTilingScheme().getResolution(true)));
+        sb.append("   gridSize = ").append(matrix.getTilingScheme().getExtent());
+        sb.append("   tileSize[").append(matrix.getTileSize().width).append(',').append(matrix.getTileSize().height).append(']');
+        sb.append("   bbox = ").append(new GeneralEnvelope(matrix.getTilingScheme().getEnvelope()).toString());
         return sb.toString();
     }
 

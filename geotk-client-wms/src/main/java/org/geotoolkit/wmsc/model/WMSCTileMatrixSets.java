@@ -91,12 +91,12 @@ public class WMSCTileMatrixSets extends CachedTileMatrixSets {
     }
 
     @Override
-    public Request getTileRequest(TileMatrixSet pyramid, TileMatrix mosaic, long[] indices, Map hints) throws DataStoreException {
+    public Request getTileRequest(TileMatrixSet matrixset, TileMatrix matrix, long[] indices, Map hints) throws DataStoreException {
         final GetMapRequest request = getServer().createGetMap();
         request.setLayers(layer);
-        request.setEnvelope(TileMatrices.computeTileEnvelope(mosaic, indices));
-        request.setDimension(mosaic.getTileSize());
-        request.setFormat(((WMSCTileMatrixSet)pyramid).getTileset().getFormat());
+        request.setEnvelope(TileMatrices.computeTileEnvelope(matrix, indices));
+        request.setDimension(matrix.getTileSize());
+        request.setFormat(((WMSCTileMatrixSet)matrixset).getTileset().getFormat());
         return request;
     }
 

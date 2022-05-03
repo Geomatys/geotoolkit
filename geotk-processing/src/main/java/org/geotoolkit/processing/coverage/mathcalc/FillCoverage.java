@@ -191,21 +191,21 @@ public class FillCoverage {
         final ColorModel cm = null;
         final SampleModel sm = null;
 
-        for(WritableTileMatrixSet pyramid : outRef.getTileMatrixSets()){
-            for(WritableTileMatrix mosaic : pyramid.getTileMatrices().values()){
-                final Dimension tileSize = mosaic.getTileSize();
-                final double[] upperLeftGeo = TileMatrices.getUpperLeftCorner(mosaic).getCoordinate();
+        for(WritableTileMatrixSet matrixset : outRef.getTileMatrixSets()){
+            for(WritableTileMatrix matrix : matrixset.getTileMatrices().values()){
+                final Dimension tileSize = matrix.getTileSize();
+                final double[] upperLeftGeo = TileMatrices.getUpperLeftCorner(matrix).getCoordinate();
 
-                final Dimension gridSize = TileMatrices.getGridSize(mosaic);
+                final Dimension gridSize = TileMatrices.getGridSize(matrix);
                 for(int y=0;y<gridSize.height;y++){
                     for(int x=0;x<gridSize.width;x++){
-                        final MathTransform gridToCRS = TileMatrices.getTileGridToCRS(mosaic, new long[]{x, y}, PixelInCell.CELL_CENTER);
+                        final MathTransform gridToCRS = TileMatrices.getTileGridToCRS(matrix, new long[]{x, y}, PixelInCell.CELL_CENTER);
                         final MathTransform crsToGrid = gridToCRS.inverse();
                         final double[] baseCoord = new double[upperLeftGeo.length];
                         crsToGrid.transform(upperLeftGeo, 0, baseCoord, 0, 1);
                         final MathCalcImageEvaluator eval = new MathCalcImageEvaluator(baseCoord, gridToCRS, evaluator.copy());
                         final ProcessedRenderedImage image = new ProcessedRenderedImage(sm, cm, eval, tileSize.width, tileSize.height);
-                        mosaic.writeTiles(Stream.of(new DefaultImageTile(image, new long[]{x, y})));
+                        matrix.writeTiles(Stream.of(new DefaultImageTile(image, new long[]{x, y})));
                     }
                 }
             }

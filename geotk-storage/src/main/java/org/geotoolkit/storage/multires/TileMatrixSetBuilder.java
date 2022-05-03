@@ -435,7 +435,9 @@ public final class TileMatrixSetBuilder {
                 (int) Math.ceil(nbX),
                 (int) Math.ceil(nbY)
         );
-        return new DefiningTileMatrix(id, upperLeft, resolution, tileSize, new Dimension(gridSize));
+        return new DefiningTileMatrix(id,
+                TileMatrices.toTilingScheme(upperLeft, gridSize, resolution, tileSize),
+                tileSize);
     }
 
     /**
