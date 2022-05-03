@@ -337,10 +337,10 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
         return generateTile(pyramid, mosaic, tileCoord, resource);
     }
 
-    private Tile generateTile(TileMatrixSet pyramid, TileMatrix mosaic, long[] tileCoord, GridCoverageResource resource) throws DataStoreException {
-        final Dimension tileSize = mosaic.getTileSize();
+    private Tile generateTile(TileMatrixSet pyramid, TileMatrix matrix, long[] tileCoord, GridCoverageResource resource) throws DataStoreException {
+        final Dimension tileSize = matrix.getTileSize();
         final CoordinateReferenceSystem crs = pyramid.getCoordinateReferenceSystem();
-        final LinearTransform gridToCrsNd = TileMatrices.getTileGridToCRS(mosaic, tileCoord, PixelInCell.CELL_CENTER);
+        final LinearTransform gridToCrsNd = TileMatrices.getTileGridToCRS(matrix, tileCoord, PixelInCell.CELL_CENTER);
         final long[] high = new long[crs.getCoordinateSystem().getDimension()];
         high[0] = tileSize.width-1; //inclusive
         high[1] = tileSize.height-1; //inclusive

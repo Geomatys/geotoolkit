@@ -25,7 +25,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.tiling.Tile;
 import org.apache.sis.storage.tiling.TileStatus;
 import org.opengis.coverage.PointOutsideCoverageException;
-import org.opengis.geometry.DirectPosition;
 import org.opengis.util.GenericName;
 
 /**
@@ -37,10 +36,6 @@ public class DefiningTileMatrix implements WritableTileMatrix, ImageTileMatrix {
     private final GenericName identifier;
     private final GridGeometry tilingScheme;
     private final Dimension tileSize;
-
-    public DefiningTileMatrix(GenericName identifier, DirectPosition upperLeft, double scale, Dimension tileSize, Dimension gridSize) {
-        this(identifier, TileMatrices.toGridGeometry(upperLeft, gridSize, scale, tileSize), tileSize);
-    }
 
     public DefiningTileMatrix(GenericName identifier, GridGeometry tilingScheme, Dimension tileSize) {
         this.identifier = identifier;

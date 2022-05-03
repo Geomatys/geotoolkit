@@ -41,6 +41,7 @@ import org.geotoolkit.storage.memory.InMemoryStore;
 import org.geotoolkit.storage.memory.InMemoryTiledGridCoverageResource;
 import org.geotoolkit.storage.multires.DefiningTileMatrix;
 import org.geotoolkit.storage.multires.DefiningTileMatrixSet;
+import org.geotoolkit.storage.multires.TileMatrices;
 import org.geotoolkit.storage.multires.WritableTileMatrix;
 import org.geotoolkit.storage.multires.WritableTileMatrixSet;
 import org.geotoolkit.storage.multires.WritableTiledResource;
@@ -185,7 +186,9 @@ public class PyramidReaderTest extends org.geotoolkit.test.TestBase {
         for(double[] slice : geovalues){
             final GeneralDirectPosition upperLeft = new GeneralDirectPosition(crs);
             upperLeft.setCoordinate(-50,60,slice[0],slice[1]);
-            final WritableTileMatrix mosaic = pyramid.createTileMatrix(new DefiningTileMatrix(null, upperLeft, 1, tilePixelSize, gridSize));
+            final WritableTileMatrix mosaic = pyramid.createTileMatrix(new DefiningTileMatrix(null,
+                    TileMatrices.toTilingScheme(upperLeft, gridSize, 1.0, tilePixelSize),
+                    tilePixelSize));
 
             final float sample = (float)slice[2];
             for(int x=0;x<gridSize.width;x++){

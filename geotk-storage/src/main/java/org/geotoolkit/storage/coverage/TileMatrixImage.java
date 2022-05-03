@@ -36,6 +36,7 @@ import org.geotoolkit.storage.DataStores;
 import org.apache.sis.storage.tiling.Tile;
 import org.geotoolkit.storage.multires.TileMatrix;
 import org.apache.sis.storage.tiling.TileStatus;
+import org.geotoolkit.storage.multires.TileMatrices;
 
 /**
  * Implementation of RenderedImage using GridMosaic.
@@ -79,7 +80,7 @@ public class TileMatrixImage extends ComputedImage implements RenderedImage {
 
     public static TileMatrixImage create(TileMatrix matrix, Rectangle gridRange, final List<SampleDimension> sampleDimensions) throws DataStoreException {
         if (gridRange == null) {
-            gridRange = new Rectangle(matrix.getGridSize());
+            gridRange = new Rectangle(TileMatrices.getGridSize(matrix));
         }
 
         if (gridRange.width == 0 || gridRange.height == 0) {

@@ -287,7 +287,7 @@ public class TileMatrixSetCoverageWriter <T extends TiledResource & org.apache.s
 
     private static class TileUpdater <T extends TiledResource & org.apache.sis.storage.GridCoverageResource> implements Runnable{
 
-        private final WritableTileMatrix mosaic;
+        private final WritableTileMatrix matrix;
         private final long idx;
         private final long idy;
         private final Interpolation interpolation;
@@ -297,14 +297,14 @@ public class TileMatrixSetCoverageWriter <T extends TiledResource & org.apache.s
         private final int tileWidth;
         private final int tileHeight;
 
-        public TileUpdater(WritableTileMatrix mosaic, long idx, long idy,
+        public TileUpdater(WritableTileMatrix matrix, long idx, long idy,
                 RenderedImage image, Interpolation interpolation, GridCoverage coverage) {
-            this.mosaic = mosaic;
+            this.matrix = matrix;
             this.idx = idx;
             this.idy = idy;
             this.interpolation = interpolation;
-            this.tileWidth = mosaic.getTileSize().width;
-            this.tileHeight = mosaic.getTileSize().height;
+            this.tileWidth = matrix.getTileSize().width;
+            this.tileHeight = matrix.getTileSize().height;
             this.baseImage = image;
             this.coverage = coverage;
         }
@@ -314,9 +314,9 @@ public class TileMatrixSetCoverageWriter <T extends TiledResource & org.apache.s
             final BufferedImage currentlyTile;
 
             try {
-                if (mosaic.getTileStatus(idx, idy) != TileStatus.MISSING) {
+                if (matrix.getTileStatus(idx, idy) != TileStatus.MISSING) {
                     try {
-                        ImageTile tile = (ImageTile) mosaic.getTile(idx, idy).orElse(null);
+                        ImageTile tile = (ImageTile) matrix.getTile(idx, idy).orElse(null);
                         currentlyTile = (BufferedImage) tile.getImage();
                     } catch (Exception ex) {
                         throw new RuntimeException(ex);
@@ -325,7 +325,7 @@ public class TileMatrixSetCoverageWriter <T extends TiledResource & org.apache.s
                     currentlyTile = BufferedImages.createImage(tileWidth, tileHeight, baseImage);
                 }
 
-                final GridGeometry tileGridGeom = TileMatrices.getTileGridGeometry2D(mosaic, new long[]{idx, idy});
+                final GridGeometry tileGridGeom = TileMatrices.getTileGridGeometry2D(matrix, new long[]{idx, idy});
 
                 final RenderedImage coverageImage = coverage.render(null);
                 final MathTransform toSource = AggregatedCoverageResource.createTransform(tileGridGeom, currentlyTile, coverage.getGridGeometry(), coverageImage);
@@ -334,7 +334,7 @@ public class TileMatrixSetCoverageWriter <T extends TiledResource & org.apache.s
                 ic.setInterpolation(interpolation);
                 ic.resample(coverage.render(null), new Rectangle(currentlyTile.getWidth(), currentlyTile.getHeight()), toSource);
                 final RenderedImage tileImage = ic.result();
-                mosaic.writeTiles(Stream.of(new DefaultImageTile(tileImage, new long[]{idx, idy})));
+                matrix.writeTiles(Stream.of(new DefaultImageTile(tileImage, new long[]{idx, idy})));
             } catch (Exception ex) {
                 throw new RuntimeException(ex);
             }
