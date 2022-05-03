@@ -184,7 +184,7 @@ public final class GO2Utilities {
         fillColorToleranceTable(0, 2, blackColorsList, new double[]{0, 0, 0, 255}, COLOR_TOLERANCE);
         BLACK_COLORS = blackColorsList.toArray(new double[0][]);
 
-        final ServiceLoader<SymbolizerRendererService> loader = ServiceLoader.load(SymbolizerRendererService.class);
+        final ServiceLoader<SymbolizerRendererService> loader = ServiceLoader.load(SymbolizerRendererService.class, SymbolizerRendererService.class.getClassLoader());
         for(SymbolizerRendererService renderer : loader){
             RENDERERS.put(renderer.getCachedSymbolizerClass(), renderer);
         }

@@ -358,7 +358,7 @@ public class XMLMosaic implements WritableTileMatrix {
         final GeneralDirectPosition ul = new GeneralDirectPosition(pyramid.getCoordinateReferenceSystem());
         for (int i=0;i<upperLeft.length;i++) ul.setOrdinate(i, upperLeft[i]);
         final Dimension gridSize = new Dimension(gridWidth, gridHeight);
-        return TileMatrices.toGridGeometry(ul, gridSize, scale, new Dimension(tileWidth, tileHeight));
+        return TileMatrices.toTilingScheme(ul, gridSize, scale, new Dimension(tileWidth, tileHeight));
     }
 
     @Override
@@ -390,7 +390,7 @@ public class XMLMosaic implements WritableTileMatrix {
                 final long index = getTileIndex(indices[0], indices[1]);
                 if (index < 0) {
                     LOGGER.log(Level.FINE, "You try to request a tile out of mosaic tile boundary at coordinates : X = "+indices[0]+", Y = "+indices[1]
-                    +"Expected grid boundary : [(0, 0) ; ("+getGridSize().width+","+getGridSize().height+")]");
+                    +"Expected grid boundary : [(0, 0) ; ("+getTilingScheme().getExtent().getSize(0)+","+getTilingScheme().getExtent().getSize(1)+")]");
                     return TileStatus.OUTSIDE_EXTENT;
                 }
                 boolean missing = !tileExist.get(Math.toIntExact(index));
@@ -635,7 +635,8 @@ public class XMLMosaic implements WritableTileMatrix {
 
     private void checkPosition(long col, long row) throws PointOutsideCoverageException {
         // TODO : Negative indices are allowed ?
-        if(col < 0 || row < 0 || col >= getGridSize().width || row >=getGridSize().height){
+        GridExtent extent = getTilingScheme().getExtent();
+        if (col < 0 || row < 0 || col >= extent.getSize(0) || row >= extent.getSize(1)) {
             throw new PointOutsideCoverageException("Tile position is outside the grid : " + col + " " + row, new GeneralDirectPosition(col, row));
         }
     }
@@ -654,7 +655,8 @@ public class XMLMosaic implements WritableTileMatrix {
     }
 
     private long getTileIndex(long col, long row){
-        return row*getGridSize().width + col;
+        final GridExtent extent = getTilingScheme().getExtent();
+        return row * extent.getSize(0) + col;
     }
 
     @XmlElement

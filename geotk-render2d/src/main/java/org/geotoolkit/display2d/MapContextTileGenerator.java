@@ -144,13 +144,13 @@ public class MapContextTileGenerator extends AbstractTileGenerator {
     }
 
     @Override
-    public Tile generateTile(WritableTileMatrixSet pyramid, WritableTileMatrix mosaic, long[] tileCoord) throws DataStoreException {
-        final LinearTransform tileGridToCrs = TileMatrices.getTileGridToCRS(mosaic, tileCoord, PixelInCell.CELL_CENTER);
-        final Dimension tileSize = ((ImageTileMatrix) mosaic).getTileSize();
+    public Tile generateTile(WritableTileMatrixSet pyramid, WritableTileMatrix matrix, long[] tileCoord) throws DataStoreException {
+        final LinearTransform tileGridToCrs = TileMatrices.getTileGridToCRS(matrix, tileCoord, PixelInCell.CELL_CENTER);
+        final Dimension tileSize = ((ImageTileMatrix) matrix).getTileSize();
         final GridGeometry gridGeom = new GridGeometry(
                 new GridExtent(tileSize.width, tileSize.height),
                 PixelInCell.CELL_CENTER,
-                tileGridToCrs, mosaic.getTilingScheme().getCoordinateReferenceSystem());
+                tileGridToCrs, matrix.getTilingScheme().getCoordinateReferenceSystem());
 
         final CanvasDef canvas = new CanvasDef();
         canvas.setGridGeometry(gridGeom);

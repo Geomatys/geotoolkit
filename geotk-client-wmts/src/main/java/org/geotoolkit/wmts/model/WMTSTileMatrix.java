@@ -62,7 +62,7 @@ public class WMTSTileMatrix implements TileMatrix {
         final GeneralDirectPosition ul = new GeneralDirectPosition(pyramid.getCoordinateReferenceSystem());
         ul.setOrdinate(0, matrix.getTopLeftCorner().get(0));
         ul.setOrdinate(1, matrix.getTopLeftCorner().get(1));
-        this.tilingScheme = TileMatrices.toGridGeometry(ul,
+        this.tilingScheme = TileMatrices.toTilingScheme(ul,
                 new Dimension(matrix.getMatrixWidth(), matrix.getMatrixHeight()), scale,
                 new Dimension(matrix.getTileWidth(), matrix.getTileHeight()));
     }

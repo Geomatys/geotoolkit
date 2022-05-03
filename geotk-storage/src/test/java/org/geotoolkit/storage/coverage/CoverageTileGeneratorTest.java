@@ -171,7 +171,7 @@ public class CoverageTileGeneratorTest {
         final GeneralEnvelope dataEnvelope = new GeneralEnvelope(origin.getGridGeometry().getEnvelope());
 
         for (TileMatrix tileMatrix : tileMatrixSet.getTileMatrices().values()) {
-            final Dimension gridSize = tileMatrix.getGridSize();
+            final Dimension gridSize = TileMatrices.getGridSize(tileMatrix);
             for (int y = 0; y < gridSize.height; y++) {
                 for (int x = 0; x < gridSize.width; x++) {
                     final ImageTile tile = (ImageTile) tileMatrix.getTile(x, y).orElse(null);

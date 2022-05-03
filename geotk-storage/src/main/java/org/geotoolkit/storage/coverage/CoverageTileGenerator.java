@@ -18,6 +18,7 @@ package org.geotoolkit.storage.coverage;
 
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -84,7 +85,7 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
 
     private final GridCoverageResource resource;
     private final double[] empty;
-    private final Future<RenderedImage> baseRendering;
+    private final Future<Object> baseRendering;
 
     private InterpolationCase interpolation = InterpolationCase.NEIGHBOR;
     private double[] fillValues;
@@ -336,10 +337,10 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
         return generateTile(pyramid, mosaic, tileCoord, resource);
     }
 
-    private Tile generateTile(TileMatrixSet pyramid, TileMatrix mosaic, long[] tileCoord, GridCoverageResource resource) throws DataStoreException {
-        final Dimension tileSize = mosaic.getTileSize();
+    private Tile generateTile(TileMatrixSet pyramid, TileMatrix matrix, long[] tileCoord, GridCoverageResource resource) throws DataStoreException {
+        final Dimension tileSize = matrix.getTileSize();
         final CoordinateReferenceSystem crs = pyramid.getCoordinateReferenceSystem();
-        final LinearTransform gridToCrsNd = TileMatrices.getTileGridToCRS(mosaic, tileCoord, PixelInCell.CELL_CENTER);
+        final LinearTransform gridToCrsNd = TileMatrices.getTileGridToCRS(matrix, tileCoord, PixelInCell.CELL_CENTER);
         final long[] high = new long[crs.getCoordinateSystem().getDimension()];
         high[0] = tileSize.width-1; //inclusive
         high[1] = tileSize.height-1; //inclusive
@@ -396,10 +397,24 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
 
     private Tile replaceIfEmpty(final Tile source, Dimension tileSize) {
         if (source instanceof EmptyTile) {
-            final RenderedImage base;
             try {
-                base = baseRendering.get(2, TimeUnit.SECONDS);
-                final BufferedImage image = BufferedImages.createImage(base, tileSize.width, tileSize.height, null, null);
+                Object result = baseRendering.get(2, TimeUnit.SECONDS);
+                if (result instanceof RenderedImage) {
+                    final RenderedImage base = (RenderedImage) result;
+                    final BufferedImage image = BufferedImages.createImage(base, tileSize.width, tileSize.height, null, null);
+                    BufferedImages.setAll(image, fillValues == null ? empty : fillValues);
+                    return new DefaultImageTile(image, source.getIndices());
+                } else {
+                    if (result instanceof NoSuchDataException) {
+                        LOGGER.log(Level.FINE, "Resource is empty, create empty tile from samples informations");
+                    } else {
+                        Exception ex = (Exception) result;
+                        LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+                    }
+                }
+
+                double[] arr = fillValues == null ? empty : fillValues;
+                final BufferedImage image = BufferedImages.createImage(tileSize.width, tileSize.height, arr.length, DataBuffer.TYPE_DOUBLE);
                 BufferedImages.setAll(image, fillValues == null ? empty : fillValues);
                 return new DefaultImageTile(image, source.getIndices());
             } catch (Exception e) {
@@ -418,9 +433,9 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
      * and result (by tile) error.
      *
      * @param resource The resource to read from
-     * @return Result of the rendering. Never null;
+     * @return Result of the rendering. Never null, RenderedImage or Exception
      */
-    private static RenderedImage createBaseRendering(final GridCoverageResource resource) throws DataStoreException {
+    private static Object createBaseRendering(final GridCoverageResource resource) throws DataStoreException {
         final GridGeometry gg = resource.getGridGeometry();
 
         final long[] lower;
@@ -454,6 +469,10 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
             final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
             newGg = new GridGeometry(newExtent, CRS.getDomainOfValidity(crs), GridOrientation.REFLECTION_Y);
         }
-        return resource.read(newGg).render(null);
+        try {
+            return resource.read(newGg).render(null);
+        } catch (Exception ex) {
+            return ex;
+        }
     }
 }

@@ -55,6 +55,7 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.internal.coverage.j2d.TiledImage;
+import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.map.ExceptionPresentation;
 import org.apache.sis.internal.map.Presentation;
 import org.apache.sis.internal.map.coverage.RenderingWorkaround;
@@ -77,8 +78,11 @@ import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.display2d.style.CachedRasterSymbolizer;
+import org.geotoolkit.filter.coverage.CoverageFilterFactory;
+import org.geotoolkit.filter.coverage.FilteredCoverageQuery;
 import org.geotoolkit.filter.visitor.DefaultFilterVisitor;
 import org.geotoolkit.geometry.GeometricUtilities;
+import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.interpolation.Interpolation;
 import org.geotoolkit.image.interpolation.InterpolationCase;
@@ -94,6 +98,7 @@ import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.Polygon;
 import org.opengis.coverage.CannotEvaluateException;
 import org.opengis.coverage.grid.SequenceType;
 import org.opengis.feature.Feature;
@@ -184,7 +189,7 @@ public class RasterSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer
      * @param ref needed to compute statistics from internal metadata in case where missing informations.
      * @param coverage current styled coverage.
      * @param styleElement the {@link RasterSymbolizer} which contain styles properties.
-     * @return styled coverage representation.
+     * @return styled coverage representation, can be null.
      * @throws ProcessException if problem during apply Color map or shaded relief styles.
      * @throws FactoryException if problem during apply shaded relief style.
      * @throws TransformException if problem during apply shaded relief style.
@@ -204,7 +209,49 @@ public class RasterSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer
         final int numBands = image.getSampleModel().getNumBands();
         final List<SampleDimension> sampleDimensions = new ArrayList<>(numBands);
         for (int i=0;i<numBands;i++) sampleDimensions.add(new SampleDimension.Builder().setName(i).build());
-        return new GridCoverage2D(coverage.getGridGeometry(), sampleDimensions, image);
+        GridCoverage2D result = new GridCoverage2D(coverage.getGridGeometry(), sampleDimensions, image);
+
+        //Apply geometry mask
+        Expression<Feature, ?> expression = styleElement.getGeometry();
+        if (expression != null) {
+            //create a boundary feature
+            Envelope env = coverage.getEnvelope().get();
+            final CoordinateReferenceSystem crs2d = CRS.getHorizontalComponent(env.getCoordinateReferenceSystem());
+            env = Envelopes.transform(env, crs2d);
+            final Polygon polygon = JTS.toGeometry(env);
+            polygon.setUserData(crs2d);
+
+            final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+            ftb.setName("boundary");
+            ftb.addAttribute(Geometry.class).setName(AttributeConvention.GEOMETRY_PROPERTY).setCRS(crs2d).addRole(AttributeRole.DEFAULT_GEOMETRY);
+            final FeatureType featureType = ftb.build();
+            Feature feature = featureType.newInstance();
+            feature.setPropertyValue(AttributeConvention.GEOMETRY, polygon);
+
+            Object geomValue = expression.apply(feature);
+
+            if (geomValue instanceof Geometry) {
+                final Geometry geom = (Geometry) geomValue;
+                if (geom.isEmpty()) {
+                    return null;
+                }
+                final FilteredCoverageQuery fcq = new FilteredCoverageQuery();
+                final CoverageFilterFactory cff = CoverageFilterFactory.DEFAULT;
+                fcq.filter(cff.intersects(cff.property("*"), cff.literal(geom)));
+                try {
+                    final GridCoverageResource gcrr = fcq.execute(new InMemoryGridCoverageResource(result));
+                    result = (GridCoverage2D) gcrr.read(null);
+                } catch (DataStoreException ex) {
+                    throw new PortrayalException(ex.getMessage(), ex);
+                }
+            } else {
+                //use 'else' for backward compatibility, like field names on database raster attributes
+                //no intersection
+                LOGGER.log(Level.FINE, "Encounter value {0} as raster symbolizer geometry expression, value is not a Geometry, it will be ignored for backward compatibility.", geomValue);
+            }
+        }
+
+        return result;
     }
 
     /**
@@ -523,6 +570,7 @@ public class RasterSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer
                 }
 
                 final GridCoverage2D dataImage = applyStyle(ref, dataCoverage, sourceSymbol);
+                if (dataImage == null) return Stream.empty();
                 final RasterPresentation rasterPresentation = new RasterPresentation(layer, layer.getData(), dataImage);
                 rasterPresentation.forGrid(renderingContext);
 
@@ -567,6 +615,7 @@ public class RasterSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer
             }
 
             final GridCoverage2D dataImage = applyStyle(ref, dataCoverage, sourceSymbol);
+            if (dataImage == null) return Stream.empty();
             final RasterPresentation rasterPresentation = new RasterPresentation(layer, ref, dataImage);
             rasterPresentation.forGrid(renderingContext);
 
