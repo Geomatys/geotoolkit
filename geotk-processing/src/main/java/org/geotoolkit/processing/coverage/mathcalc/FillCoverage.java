@@ -194,9 +194,9 @@ public class FillCoverage {
         for(WritableTileMatrixSet pyramid : outRef.getTileMatrixSets()){
             for(WritableTileMatrix mosaic : pyramid.getTileMatrices().values()){
                 final Dimension tileSize = mosaic.getTileSize();
-                final double[] upperLeftGeo = mosaic.getUpperLeftCorner().getCoordinate();
+                final double[] upperLeftGeo = TileMatrices.getUpperLeftCorner(mosaic).getCoordinate();
 
-                final Dimension gridSize = mosaic.getGridSize();
+                final Dimension gridSize = TileMatrices.getGridSize(mosaic);
                 for(int y=0;y<gridSize.height;y++){
                     for(int x=0;x<gridSize.width;x++){
                         final MathTransform gridToCRS = TileMatrices.getTileGridToCRS(mosaic, new long[]{x, y}, PixelInCell.CELL_CENTER);

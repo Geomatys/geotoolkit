@@ -22,9 +22,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
-import java.util.SortedSet;
-import java.util.TreeSet;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import org.apache.sis.coverage.grid.GridExtent;
@@ -44,10 +41,10 @@ import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.NoSuchDataException;
+import org.apache.sis.storage.tiling.TileMatrix;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Static;
 import org.apache.sis.util.iso.Names;
-import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
@@ -92,6 +89,34 @@ public final class TileMatrices extends Static {
     @Deprecated
     public static double getScale(org.apache.sis.storage.tiling.TileMatrix tileMatrix) {
         return tileMatrix.getResolution()[0];
+    }
+
+    /**
+     * Returns the upper left corner of the TileMatrix.
+     * The corner is in PixelInCell.CELL_CORNER, so it contains a translate of a half
+     * pixel compared to a GridToCrs transform of a coverage.
+     *
+     * @return upper left corner of the TileMatrix, expressed in pyramid CRS.
+     */
+    @Deprecated
+    public static DirectPosition getUpperLeftCorner(org.apache.sis.storage.tiling.TileMatrix tileMatrix) {
+        final GeneralEnvelope envelope = new GeneralEnvelope(tileMatrix.getTilingScheme().getEnvelope());
+        final GeneralDirectPosition upperLeft = new GeneralDirectPosition(envelope.getCoordinateReferenceSystem());
+        upperLeft.setOrdinate(0, envelope.getMinimum(0));
+        upperLeft.setOrdinate(1, envelope.getMaximum(1));
+        for (int i = 2, n = envelope.getDimension(); i < n; i++) {
+            upperLeft.setOrdinate(i, envelope.getMedian(i));
+        }
+        return upperLeft;
+    }
+
+    /**
+     * @return size of the grid in number of columns/rows.
+     */
+    @Deprecated
+    public static Dimension getGridSize(org.apache.sis.storage.tiling.TileMatrix tileMatrix) {
+        final GridExtent extent = tileMatrix.getTilingScheme().getExtent();
+        return new Dimension(Math.toIntExact(extent.getSize(0)), Math.toIntExact(extent.getSize(1)));
     }
 
     /**
@@ -152,9 +177,9 @@ public final class TileMatrices extends Static {
      * Waring : in multidimensional pyramids, multiple TileMatrix at the same scale
      * may exist.
      */
-    public static Collection<? extends TileMatrix> getTileMatrices(TileMatrixSet tileMatrixSet, double scale) {
-        final List<TileMatrix> candidates = new ArrayList<>();
-        for (TileMatrix tileMatrix : tileMatrixSet.getTileMatrices().values()) {
+    public static Collection<? extends org.geotoolkit.storage.multires.TileMatrix> getTileMatrices(TileMatrixSet tileMatrixSet, double scale) {
+        final List<org.geotoolkit.storage.multires.TileMatrix> candidates = new ArrayList<>();
+        for (org.geotoolkit.storage.multires.TileMatrix tileMatrix : tileMatrixSet.getTileMatrices().values()) {
             if (TileMatrices.getScale(tileMatrix) == scale) {
                 candidates.add(tileMatrix);
             }
@@ -171,13 +196,13 @@ public final class TileMatrices extends Static {
         return null;
     }
 
-    public static TileMatrix getTileMatrix(TiledResource model, String pyramidId, String tileMatrixId) throws DataStoreException {
+    public static org.geotoolkit.storage.multires.TileMatrix getTileMatrix(TiledResource model, String pyramidId, String tileMatrixId) throws DataStoreException {
         final TileMatrixSet p = getTileMatrixSet(model, pyramidId);
         if (p == null) {
             return null;
         }
 
-        for (TileMatrix m : p.getTileMatrices().values()) {
+        for (org.geotoolkit.storage.multires.TileMatrix m : p.getTileMatrices().values()) {
             if (m.getIdentifier().equals(tileMatrixId)) {
                 return m;
             }
@@ -198,14 +223,14 @@ public final class TileMatrices extends Static {
      * @throws TransformException If input filter {@link CoordinateReferenceSystem} is not compatible with
      * input TileMatrix one.
      */
-    public static List<TileMatrix> findTileMatrix(final TileMatrixSet toSearchIn, Envelope filter, boolean containOnly) throws TransformException {
-        final ArrayList<TileMatrix> result = new ArrayList<>();
+    public static List<org.geotoolkit.storage.multires.TileMatrix> findTileMatrix(final TileMatrixSet toSearchIn, Envelope filter, boolean containOnly) throws TransformException {
+        final ArrayList<org.geotoolkit.storage.multires.TileMatrix> result = new ArrayList<>();
 
         // Rebuild filter envelope from pyramid CRS
         final GeneralEnvelope tmpFilter = new GeneralEnvelope(
                 ReferencingUtilities.transform(filter, toSearchIn.getCoordinateReferenceSystem()));
 
-        for (TileMatrix tileMatrix : toSearchIn.getTileMatrices().values()) {
+        for (org.geotoolkit.storage.multires.TileMatrix tileMatrix : toSearchIn.getTileMatrices().values()) {
             final Envelope sourceEnv = tileMatrix.getTilingScheme().getEnvelope();
             if ((containOnly && tmpFilter.contains(sourceEnv, true))
                     || (!containOnly && tmpFilter.intersects(sourceEnv, true))) {
@@ -222,11 +247,11 @@ public final class TileMatrices extends Static {
      * @param tileSize
      * @return
      */
-    public static DefiningTileMatrix resizeTile(TileMatrix tileMatrix, Dimension tileSize) {
-        double scale = tileMatrix.getScale();
+    public static DefiningTileMatrix resizeTile(org.geotoolkit.storage.multires.TileMatrix tileMatrix, Dimension tileSize) {
+        double scale = tileMatrix.getResolution()[0];
         scale *= tileMatrix.getTileSize().width;
         scale /= tileSize.width;
-        return new DefiningTileMatrix(tileMatrix.getIdentifier(), tileMatrix.getUpperLeftCorner(), scale, tileSize, tileMatrix.getGridSize());
+        return new DefiningTileMatrix(tileMatrix.getIdentifier(), getUpperLeftCorner(tileMatrix), scale, tileSize, getGridSize(tileMatrix));
     }
 
     /**
@@ -248,7 +273,7 @@ public final class TileMatrices extends Static {
         }
 
         for (WritableTileMatrix tileMatrix : tileMatrixSet.getTileMatrices().values()) {
-            if (resolutions == null || resolutions.contains(tileMatrix.getScale())) {
+            if (resolutions == null || resolutions.contains(tileMatrix.getResolution()[0])) {
                 final GridExtent extent;
                 try {
                     extent = TileMatrices.getTilesInEnvelope(tileMatrix, env);
@@ -282,8 +307,8 @@ public final class TileMatrices extends Static {
      * @param orientation pixel orientation
      * @return MathTransform never null
      */
-    public static LinearTransform getTileGridToCRS(TileMatrix tileMatrix, long[] location, PixelInCell orientation){
-        final DirectPosition upperleft = tileMatrix.getUpperLeftCorner();
+    public static LinearTransform getTileGridToCRS(org.geotoolkit.storage.multires.TileMatrix tileMatrix, long[] location, PixelInCell orientation){
+        final DirectPosition upperleft = getUpperLeftCorner(tileMatrix);
         return getTileGridToCRSND(tileMatrix, location, upperleft.getDimension(), orientation);
     }
 
@@ -297,10 +322,10 @@ public final class TileMatrices extends Static {
      * @param orientation pixel orientation
      * @return MathTransform never null
      */
-    public static LinearTransform getTileGridToCRSND(TileMatrix tileMatrix, long[] location, int nbDim, PixelInCell orientation){
+    public static LinearTransform getTileGridToCRSND(org.geotoolkit.storage.multires.TileMatrix tileMatrix, long[] location, int nbDim, PixelInCell orientation){
 
         final AffineTransform2D trs2d = getTileGridToCRS2D(tileMatrix, location, orientation);
-        final DirectPosition upperleft = tileMatrix.getUpperLeftCorner();
+        final DirectPosition upperleft = getUpperLeftCorner(tileMatrix);
 
         if(upperleft.getDimension()==2){
             return trs2d;
@@ -327,11 +352,11 @@ public final class TileMatrices extends Static {
      * @param orientation pixel orientation
      * @return AffineTransform2D never null.
      */
-    public static AffineTransform2D getTileGridToCRS2D(TileMatrix tileMatrix, long[] location, PixelInCell orientation){
+    public static AffineTransform2D getTileGridToCRS2D(org.geotoolkit.storage.multires.TileMatrix tileMatrix, long[] location, PixelInCell orientation){
 
         final Dimension tileSize = tileMatrix.getTileSize();
-        final DirectPosition upperleft = tileMatrix.getUpperLeftCorner();
-        final double scale = tileMatrix.getScale();
+        final DirectPosition upperleft = getUpperLeftCorner(tileMatrix);
+        final double scale = tileMatrix.getResolution()[0];
 
         final double offsetX  = upperleft.getOrdinate(0) + location[0] * (scale * tileSize.width) ;
         final double offsetY = upperleft.getOrdinate(1) - location[1] * (scale * tileSize.height);
@@ -345,7 +370,7 @@ public final class TileMatrices extends Static {
     /**
      * Compute tile envelope from matrix and position.
      */
-    public static Envelope computeTileEnvelope(TileMatrix tileMatrix, final long[] location) {
+    public static Envelope computeTileEnvelope(org.geotoolkit.storage.multires.TileMatrix tileMatrix, final long[] location) {
         return tileMatrix.getTilingScheme().derive()
                 .subgrid(new GridExtent(null, location, location, true))
                 .build()
@@ -362,7 +387,7 @@ public final class TileMatrices extends Static {
      * @throws org.apache.sis.storage.DataStoreException if the grid geometry of the tile matrix isn't well defined
      * @throws org.apache.sis.storage.NoSuchDataException if envelope do not intersect tile matrix
      */
-    public static GridExtent getTilesInEnvelope(TileMatrix tileMatrix, Envelope wantedEnv) throws DataStoreException {
+    public static GridExtent getTilesInEnvelope(org.geotoolkit.storage.multires.TileMatrix tileMatrix, Envelope wantedEnv) throws DataStoreException {
         if (wantedEnv == null) {
             return tileMatrix.getTilingScheme().getExtent();
         }
@@ -396,20 +421,23 @@ public final class TileMatrices extends Static {
         corner.setOrdinate(0, -180.0);
         corner.setOrdinate(1, 90.0);
 
-        final List<TileMatrix> mosaics = new ArrayList<>();
+        final List<org.geotoolkit.storage.multires.TileMatrix> mosaics = new ArrayList<>();
 
+        Dimension gridSize = new Dimension(2, 1);
+        double scale = 360.0/512.0;
         int level = 0;
-        final DefiningTileMatrix level0 = new DefiningTileMatrix(Names.createLocalName(null, null, ""+level), corner, 360.0/512.0, tileSize, new Dimension(2, 1));
+        final DefiningTileMatrix level0 = new DefiningTileMatrix(Names.createLocalName(null, null, ""+level), corner, scale, tileSize, new Dimension(gridSize));
         mosaics.add(level0);
 
         level++;
-        DefiningTileMatrix parent = level0;
         for (;level<=maxDepth;level++) {
+            gridSize.width *= 2.0;
+            gridSize.height *= 2.0;
+            scale /= 2.0;
             final DefiningTileMatrix levelN = new DefiningTileMatrix(Names.createLocalName(null, null, ""+level), corner,
-                    parent.getScale() / 2.0, tileSize,
-                    new Dimension(parent.getGridSize().width*2, parent.getGridSize().height*2));
+                    scale, tileSize,
+                    new Dimension(gridSize));
             mosaics.add(levelN);
-            parent = levelN;
         }
 
         return new DefiningTileMatrixSet(Names.createLocalName(null, null, "wgs84"), crs, mosaics);
@@ -581,8 +609,8 @@ public final class TileMatrices extends Static {
      * @param location
      * @return
      */
-    public static GridGeometry getAbsoluteTileGridGeometry2D(TileMatrix tileMatrix, long[] location) {
-        final SingleCRS crs2d = CRS.getHorizontalComponent(tileMatrix.getUpperLeftCorner().getCoordinateReferenceSystem());
+    public static GridGeometry getAbsoluteTileGridGeometry2D(org.geotoolkit.storage.multires.TileMatrix tileMatrix, long[] location) {
+        final SingleCRS crs2d = CRS.getHorizontalComponent(tileMatrix.getTilingScheme().getCoordinateReferenceSystem());
         final Dimension tileSize = tileMatrix.getTileSize();
         final AffineTransform2D matrixGridToCrs = getTileGridToCRS2D(tileMatrix, new long[]{0,0}, PixelInCell.CELL_CENTER);
         final long[] low = new long[]{
@@ -597,16 +625,16 @@ public final class TileMatrices extends Static {
         return new GridGeometry(tileExtent, PixelInCell.CELL_CENTER, matrixGridToCrs, crs2d);
     }
 
-    public static GridGeometry getTileGridGeometry2D(TileMatrix tileMatrix, long[] location) {
-        final SingleCRS crs2d = CRS.getHorizontalComponent(tileMatrix.getUpperLeftCorner().getCoordinateReferenceSystem());
+    public static GridGeometry getTileGridGeometry2D(org.geotoolkit.storage.multires.TileMatrix tileMatrix, long[] location) {
+        final SingleCRS crs2d = CRS.getHorizontalComponent(tileMatrix.getTilingScheme().getCoordinateReferenceSystem());
         final Dimension tileSize = tileMatrix.getTileSize();
         final AffineTransform2D tileGridToCrs = getTileGridToCRS2D(tileMatrix, location, PixelInCell.CELL_CENTER);
         final GridExtent tileExtent = new GridExtent(tileSize.width, tileSize.height);
         return new GridGeometry(tileExtent, PixelInCell.CELL_CENTER, tileGridToCrs, crs2d);
     }
 
-    public static GridGeometry getTileGridGeometry2D(TileMatrix tileMatrix, Rectangle rectangle) {
-        final SingleCRS crs2d = CRS.getHorizontalComponent(tileMatrix.getUpperLeftCorner().getCoordinateReferenceSystem());
+    public static GridGeometry getTileGridGeometry2D(org.geotoolkit.storage.multires.TileMatrix tileMatrix, Rectangle rectangle) {
+        final SingleCRS crs2d = CRS.getHorizontalComponent(tileMatrix.getTilingScheme().getCoordinateReferenceSystem());
         final Dimension tileSize = tileMatrix.getTileSize();
         final AffineTransform2D tileGridToCrs = getTileGridToCRS2D(tileMatrix, new long[]{rectangle.x, rectangle.y}, PixelInCell.CELL_CENTER);
         final GridExtent tileExtent = new GridExtent((long) tileSize.width * rectangle.width, (long) tileSize.height * rectangle.height);
@@ -617,7 +645,7 @@ public final class TileMatrices extends Static {
      * @deprecated use getTileGridGeometry2D method without crs parameter.
      */
     @Deprecated
-    public static GridGeometry getTileGridGeometry2D(TileMatrix tileMatrix, long[] location, CoordinateReferenceSystem crs) {
+    public static GridGeometry getTileGridGeometry2D(org.geotoolkit.storage.multires.TileMatrix tileMatrix, long[] location, CoordinateReferenceSystem crs) {
         final Dimension tileSize = tileMatrix.getTileSize();
         final AffineTransform2D tileGridToCrs = getTileGridToCRS2D(tileMatrix, location, PixelInCell.CELL_CENTER);
         final GridExtent tileExtent = new GridExtent(tileSize.width, tileSize.height);
@@ -628,7 +656,7 @@ public final class TileMatrices extends Static {
      * @deprecated use getTileGridGeometry2D method without crs parameter.
      */
     @Deprecated
-    public static GridGeometry getTileGridGeometry2D(TileMatrix tileMatrix, Rectangle rectangle, CoordinateReferenceSystem crs) {
+    public static GridGeometry getTileGridGeometry2D(org.geotoolkit.storage.multires.TileMatrix tileMatrix, Rectangle rectangle, CoordinateReferenceSystem crs) {
         final Dimension tileSize = tileMatrix.getTileSize();
         final AffineTransform2D tileGridToCrs = getTileGridToCRS2D(tileMatrix, new long[]{rectangle.x, rectangle.y}, PixelInCell.CELL_CENTER);
         final GridExtent tileExtent = new GridExtent((long) tileSize.width * rectangle.width, (long) tileSize.height * rectangle.height);
@@ -647,8 +675,8 @@ public final class TileMatrices extends Static {
     public static long countTiles(TileMatrixSet tileMatrixSet, Envelope env, NumberRange resolutions) throws DataStoreException {
 
         long count = 0;
-        for (TileMatrix tileMatrix : tileMatrixSet.getTileMatrices().values()) {
-            if (resolutions == null || resolutions.containsAny(tileMatrix.getScale())) {
+        for (org.geotoolkit.storage.multires.TileMatrix tileMatrix : tileMatrixSet.getTileMatrices().values()) {
+            if (resolutions == null || resolutions.containsAny(tileMatrix.getResolution()[0])) {
                 GridExtent ext;
                 try {
                     ext = TileMatrices.getTilesInEnvelope(tileMatrix, env);

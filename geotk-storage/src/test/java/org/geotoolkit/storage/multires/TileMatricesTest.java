@@ -71,9 +71,9 @@ public class TileMatricesTest {
 
         //upperleft corner is in PixelInCell.CELL_CORNER, causing the 0.5 offset.
         final DirectPosition2D upperleft = new DirectPosition2D(crs, -50.5, 40.5);
-        Assert.assertEquals(upperleft, m1.getUpperLeftCorner());
-        Assert.assertEquals(upperleft, m2.getUpperLeftCorner());
-        Assert.assertEquals(upperleft, m3.getUpperLeftCorner());
+        Assert.assertEquals(upperleft, TileMatrices.getUpperLeftCorner(m1));
+        Assert.assertEquals(upperleft, TileMatrices.getUpperLeftCorner(m2));
+        Assert.assertEquals(upperleft, TileMatrices.getUpperLeftCorner(m3));
 
         Assert.assertEquals(new Dimension(256, 256), m1.getTileSize());
         Assert.assertEquals(new Dimension(256, 256), m2.getTileSize());

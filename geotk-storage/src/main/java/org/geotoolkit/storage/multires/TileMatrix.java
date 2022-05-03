@@ -21,12 +21,9 @@ import java.util.Objects;
 import java.util.stream.Stream;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.geometry.GeneralDirectPosition;
-import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.tiling.Tile;
 import org.apache.sis.storage.tiling.TileStatus;
-import org.opengis.geometry.DirectPosition;
 
 /**
  * A TileMatrix is collection of tiles with the same size and properties placed
@@ -85,6 +82,7 @@ public interface TileMatrix extends org.apache.sis.storage.tiling.TileMatrix {
      *         Iteration order of the stream may vary from one implementation to another and from one call to another.
      * @throws DataStoreException if the stream creation failed.
      */
+    @Override
     default Stream<Tile> getTiles(GridExtent indicesRanges, boolean parallel) throws DataStoreException {
         if (indicesRanges == null) indicesRanges = getTilingScheme().getExtent();
         final Stream<long[]> stream = TileMatrices.pointStream(indicesRanges);
@@ -95,42 +93,6 @@ public interface TileMatrix extends org.apache.sis.storage.tiling.TileMatrix {
                 return TileInError.create(t, ex);
             }
         }).filter(Objects::nonNull);
-    }
-
-    /**
-     * Returns the upper left corner of the TileMatrix.
-     * The corner is in PixelInCell.CELL_CORNER, so it contains a translate of a half
-     * pixel compared to a GridToCrs transform of a coverage.
-     *
-     * @return upper left corner of the TileMatrix, expressed in pyramid CRS.
-     */
-    @Deprecated
-    default DirectPosition getUpperLeftCorner() {
-        final GeneralEnvelope envelope = new GeneralEnvelope(getTilingScheme().getEnvelope());
-        final GeneralDirectPosition upperLeft = new GeneralDirectPosition(envelope.getCoordinateReferenceSystem());
-        upperLeft.setOrdinate(0, envelope.getMinimum(0));
-        upperLeft.setOrdinate(1, envelope.getMaximum(1));
-        for (int i = 2, n = envelope.getDimension(); i < n; i++) {
-            upperLeft.setOrdinate(i, envelope.getMedian(i));
-        }
-        return upperLeft;
-    }
-
-    /**
-     * @return size of the grid in number of columns/rows.
-     */
-    @Deprecated
-    default Dimension getGridSize() {
-        final GridExtent extent = getTilingScheme().getExtent();
-        return new Dimension(Math.toIntExact(extent.getSize(0)), Math.toIntExact(extent.getSize(1)));
-    }
-
-    /**
-     * @return size of a pixel in crs unit
-     */
-    @Deprecated
-    default double getScale() {
-        return getResolution()[0];
     }
 
     /**

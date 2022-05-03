@@ -137,7 +137,7 @@ public class TileMatrixSetCoverageReader <T extends TiledResource & org.apache.s
                 //-- pass by TreeSet to avoid duplicate
                 final SortedSet<Double> axisValues = new TreeSet();
                 for (final TileMatrix gridMos : mosaics) {
-                   axisValues.add(gridMos.getUpperLeftCorner().getOrdinate(i));
+                   axisValues.add(TileMatrices.getUpperLeftCorner(gridMos).getOrdinate(i));
                 }
                 //-- convert Double[] -> double[]
                 final double[] axVals = new double[axisValues.size()];
@@ -149,7 +149,7 @@ public class TileMatrixSetCoverageReader <T extends TiledResource & org.apache.s
         }
 
         //-- size of internal pixel data recovered
-        final Dimension gridSize = mosaic.getGridSize();
+        final Dimension gridSize = TileMatrices.getGridSize(mosaic);
         final Dimension tileSize = mosaic.getTileSize();
         final GridExtent dataSize = new GridExtent(
                     ((long) gridSize.width) * tileSize.width,
@@ -330,7 +330,7 @@ public class TileMatrixSetCoverageReader <T extends TiledResource & org.apache.s
      * @throws CoverageStoreException
      */
     private void appendSlice(final TreeMap<Double,Object> rootGroup, TileMatrix mosaic) throws DataStoreException {
-        final DirectPosition upperLeft = mosaic.getUpperLeftCorner();
+        final DirectPosition upperLeft = TileMatrices.getUpperLeftCorner(mosaic);
         TreeMap<Double,Object> groups = rootGroup;
 
         //regroup them by inverse axis order so we can rebuild stacks always adding dimensions at the end

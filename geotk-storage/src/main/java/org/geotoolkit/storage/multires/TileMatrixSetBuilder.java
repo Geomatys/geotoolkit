@@ -350,14 +350,14 @@ public final class TileMatrixSetBuilder {
                             {
                                 double res = resolution;
                                 DefiningTileMatrix m = createTileMatrix(NamesExt.createRandomUUID(), upperLeft, res, spanX, spanY);
-                                Dimension gridSize = m.getGridSize();
+                                Dimension gridSize = TileMatrices.getGridSize(m);
                                 pyramid.createTileMatrix(m);
 
                                 //multiply resolution by given ratio until we reach one or two tiles.
                                 while (gridSize.width * gridSize.height > nbTileThreshold) {
                                     res *= scaleFactor;
                                     m = createTileMatrix(NamesExt.createRandomUUID(), upperLeft, res, spanX, spanY);
-                                    gridSize = m.getGridSize();
+                                    gridSize = TileMatrices.getGridSize(m);
                                     pyramid.createTileMatrix(m);
                                 }
                             }

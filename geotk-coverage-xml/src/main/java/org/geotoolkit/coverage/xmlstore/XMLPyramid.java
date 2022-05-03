@@ -39,6 +39,7 @@ import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.storage.multires.AbstractTileMatrixSet;
 import org.geotoolkit.storage.multires.ScaleSortedMap;
+import org.geotoolkit.storage.multires.TileMatrices;
 import org.geotoolkit.storage.multires.TileMatrix;
 import org.geotoolkit.storage.multires.WritableTileMatrix;
 import org.geotoolkit.storage.multires.WritableTileMatrixSet;
@@ -220,11 +221,11 @@ public class XMLPyramid implements WritableTileMatrixSet {
         final TileMatrix template = (TileMatrix) templateSis;
         final XMLMosaic mosaic = new XMLMosaic();
         mosaic.scale = template.getResolution()[0];
-        mosaic.gridWidth = template.getGridSize().width;
-        mosaic.gridHeight = template.getGridSize().height;
+        mosaic.gridWidth = TileMatrices.getGridSize(template).width;
+        mosaic.gridHeight = TileMatrices.getGridSize(template).height;
         mosaic.tileWidth = template.getTileSize().width;
         mosaic.tileHeight = template.getTileSize().height;
-        mosaic.upperLeft = template.getUpperLeftCorner().getCoordinate();
+        mosaic.upperLeft = TileMatrices.getUpperLeftCorner(template).getCoordinate();
         //for backward compatibility
         mosaic.dataPixelWidth = mosaic.gridWidth * mosaic.tileWidth;
         mosaic.dataPixelHeight = mosaic.gridHeight * mosaic.tileHeight;
