@@ -162,6 +162,8 @@ public final class NamesExt extends Static {
             return ((ScopedName) name).path().toString();
         } else if (name instanceof Identifier) {
             return ((Identifier) name).getCodeSpace();
+        } else if (name instanceof LocalName ln && !ln.scope().isGlobal()) {
+            return ln.scope().name().toString();
         }
         return null;
     }
