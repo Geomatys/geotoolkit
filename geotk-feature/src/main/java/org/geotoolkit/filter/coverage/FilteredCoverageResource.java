@@ -62,7 +62,7 @@ final class FilteredCoverageResource extends AbstractGridCoverageResource {
     FilteredCoverageResource(final GridCoverageResource source,
             final GridCoverageProcessor processor, final CompiledFilter filter)
     {
-        super(source instanceof StoreListeners ? (StoreListeners) source : null);
+        super(source instanceof StoreListeners ? (StoreListeners) source : null, false);
         this.source    = source;
         this.processor = processor;
         this.filter    = filter;

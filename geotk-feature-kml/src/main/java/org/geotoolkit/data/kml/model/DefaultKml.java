@@ -46,25 +46,15 @@ public class DefaultKml extends AbstractResource implements Kml {
     private Feature abstractFeature;
     private Map<String, String> extensionsUris = new HashMap<>();
 
-    /**
-     *
-     */
     public DefaultKml() {
-        super(null);
+        super(null, false);
     }
 
-    /**
-     *
-     * @param networkLinkControl
-     * @param abstractFeature
-     * @param kmlSimpleExtensions
-     * @param kmlObjectExtensions
-     */
     public DefaultKml(NetworkLinkControl networkLinkControl,
             Feature abstractFeature,
             List<SimpleTypeContainer> kmlSimpleExtensions,
             List<Object> kmlObjectExtensions) {
-        super(null);
+        super(null, false);
         this.networkLinkControl = networkLinkControl;
         this.abstractFeature = abstractFeature;
         if (kmlSimpleExtensions != null) {
@@ -75,37 +65,21 @@ public class DefaultKml extends AbstractResource implements Kml {
         }
     }
 
-    /**
-     *
-     * @{@inheritDoc }
-     */
     @Override
     public String getVersion() {
         return this.version;
     }
 
-    /**
-     *
-     * @{@inheritDoc }
-     */
     @Override
     public NetworkLinkControl getNetworkLinkControl() {
         return this.networkLinkControl;
     }
 
-    /**
-     *
-     * @{@inheritDoc }
-     */
     @Override
     public Feature getAbstractFeature() {
         return this.abstractFeature;
     }
 
-    /**
-     *
-     * @{@inheritDoc }
-     */
     @Override
     public void setVersion(String version) throws KmlException {
         if (URI_KML_2_1.equals(version) || URI_KML_2_2.equals(version)) {
@@ -115,55 +89,31 @@ public class DefaultKml extends AbstractResource implements Kml {
         }
     }
 
-    /**
-     *
-     * @{@inheritDoc }
-     */
     @Override
     public void setNetworkLinkControl(NetworkLinkControl networkLinkCOntrol) {
         this.networkLinkControl = networkLinkCOntrol;
     }
 
-    /**
-     *
-     * @{@inheritDoc }
-     */
     @Override
     public void setAbstractFeature(Feature feature) {
         this.abstractFeature = feature;
     }
 
-    /**
-     *
-     * @{@inheritDoc }
-     */
     @Override
     public Extensions extensions() {
         return this.extensions;
     }
 
-    /**
-     *
-     * @{@inheritDoc }
-     */
     @Override
     public Map<String, String> getExtensionsUris() {
         return this.extensionsUris;
     }
 
-    /**
-     *
-     * @{@inheritDoc }
-     */
     @Override
     public void setExtensionsUris(Map<String, String> extensionsUris) {
         this.extensionsUris = extensionsUris;
     }
 
-    /**
-     *
-     * @{@inheritDoc }
-     */
     @Override
     public void addExtensionUri(String uri, String prefix){
         this.extensionsUris.put(uri, prefix);

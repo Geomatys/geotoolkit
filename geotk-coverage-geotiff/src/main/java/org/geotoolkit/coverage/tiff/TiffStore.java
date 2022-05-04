@@ -132,7 +132,7 @@ final class TiffStore extends DataStore implements ResourceOnFileSystem, Writabl
 
 
         private Resource() {
-            super(null);
+            super(null, false);
         }
 
         @Override

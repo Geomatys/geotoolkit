@@ -30,7 +30,7 @@ public class FeatureSetWrapperTest {
         final Semaphore barrier;
 
         protected SynchronizedSet(final Semaphore barrier) {
-            super(null);
+            super(null, false);
             this.barrier = barrier;
         }
 

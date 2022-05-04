@@ -50,7 +50,7 @@ public final class WMTSResource extends AbstractGridCoverageResource implements 
     private WMTSTileMatrixSets set;
 
     WMTSResource(WebMapTileClient server, GenericName name, boolean cacheImage){
-        super(null);
+        super(null, false);
         this.server = server;
         this.name = name;
         this.cacheImage = cacheImage;

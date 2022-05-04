@@ -57,7 +57,7 @@ final class PortrayalCoverageResource extends AbstractGridCoverageResource {
     private String contextName;
 
     public PortrayalCoverageResource(final SceneDef scene) {
-        super(null);
+        super(null, false);
         this.scene = scene;
 
         contextName = scene.getContext().getIdentifier();

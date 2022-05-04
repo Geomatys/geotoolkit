@@ -140,7 +140,7 @@ public class TileMatrixSetFeatureReader {
                     .onClose(iterator::close);
         } else {
             //create a fake subset
-            final FeatureSet subfs = new AbstractFeatureSet(null) {
+            final FeatureSet subfs = new AbstractFeatureSet(null, false) {
                 @Override
                 public FeatureType getType() throws DataStoreException {
                     return type;

@@ -403,7 +403,7 @@ public strictfp class ComputeVolumeProcessTest extends org.geotoolkit.test.TestB
         final GridCoverage coverage;
 
         TestResource(final RenderedImage image, final Envelope envelope){
-            super(null);
+            super(null, false);
 
 
             final SampleDimension.Builder builder = new SampleDimension.Builder();

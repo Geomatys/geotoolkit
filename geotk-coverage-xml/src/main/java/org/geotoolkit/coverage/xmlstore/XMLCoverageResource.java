@@ -64,7 +64,6 @@ import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.coverage.TileMatrixSetCoverageReader;
 import org.geotoolkit.storage.multires.TileFormat;
 import org.geotoolkit.storage.multires.TileMatrices;
-import org.geotoolkit.storage.multires.TileMatrixSet;
 import org.geotoolkit.storage.multires.WritableTileMatrixSet;
 import org.geotoolkit.storage.multires.WritableTiledResource;
 import org.opengis.util.GenericName;
@@ -232,11 +231,11 @@ public class XMLCoverageResource extends AbstractGridCoverageResource
     private List<SampleDimension> cacheDimensions = null;
 
     public XMLCoverageResource() {
-        super(null);
+        super(null, false);
     }
 
     public XMLCoverageResource(XMLCoverageStore store, GenericName name, XMLPyramidSet set) {
-        super(null);
+        super(null, false);
         this.store = store;
         id = new NamedIdentifier(name);
         this.set = set;
