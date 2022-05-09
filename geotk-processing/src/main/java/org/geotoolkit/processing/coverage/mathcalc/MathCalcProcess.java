@@ -19,19 +19,20 @@ package org.geotoolkit.processing.coverage.mathcalc;
 
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.cql.CQL;
 import org.apache.sis.cql.CQLException;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.WritableGridCoverageResource;
 import org.apache.sis.util.Utilities;
-import org.geotoolkit.cql.CQL;
 import org.geotoolkit.filter.FilterFactory2;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.storage.multires.WritableTiledResource;
 import org.opengis.filter.Expression;
+import org.opengis.filter.FilterFactory;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
@@ -78,7 +79,7 @@ public class MathCalcProcess extends AbstractProcess {
         final FilterFactory2 ff = FilterUtilities.FF;
         final Expression exp;
         try {
-            exp = CQL.parseExpression(inFormula, ff);
+            exp = CQL.parseExpression(inFormula, (FilterFactory) ff);
         } catch (CQLException ex) {
             throw new ProcessException(ex.getMessage(), this, ex);
         }
