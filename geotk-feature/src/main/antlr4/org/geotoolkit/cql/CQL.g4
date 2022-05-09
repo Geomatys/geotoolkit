@@ -165,7 +165,7 @@ fragment HEX_DIGIT : ('0'..'9'|'a'..'f'|'A'..'F') ;
 
 fragment
 ESC_SEQ
-    :   '\\' ('b'|'t'|'n'|'f'|'r'|'\"'|'\''|'\\')
+    :   '\\' ('b'|'t'|'n'|'f'|'r'|'"'|'\''|'\\')
     |   UNICODE_ESC
     |   OCTAL_ESC
     ;
@@ -192,7 +192,7 @@ UNICODE_ESC
 expressionNum : INT | FLOAT ;	
 expressionUnary : UNARY? expressionNum ;
 	
-coordinate          : expressionUnary expressionUnary ;
+coordinate         : expressionUnary expressionUnary ;
 coordinateSerie    : LPAREN coordinate (COMMA coordinate)*  RPAREN ;
 coordinateSeries   : LPAREN coordinateSerie (COMMA coordinateSerie)* RPAREN;
 
