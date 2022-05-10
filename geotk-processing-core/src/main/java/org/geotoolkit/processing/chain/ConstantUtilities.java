@@ -24,8 +24,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.sis.cql.CQL;
 import org.apache.sis.cql.CQLException;
-import org.geotoolkit.cql.CQL;
 import org.opengis.filter.Filter;
 import org.opengis.metadata.Metadata;
 
