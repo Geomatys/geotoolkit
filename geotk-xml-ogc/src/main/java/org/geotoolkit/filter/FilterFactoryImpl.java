@@ -27,6 +27,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Logger;
+import javax.measure.Quantity;
+import javax.measure.quantity.Length;
 import org.geotoolkit.gml.xml.v311.AbstractGeometryType;
 import org.geotoolkit.gml.xml.v311.CoordinatesType;
 import org.geotoolkit.gml.xml.v311.DirectPositionType;
@@ -510,6 +512,32 @@ public class FilterFactoryImpl extends FilterFactory2 {
     }
 
     @Override
+    public DistanceOperator<Object> beyond(Expression<? super Object, ? extends Object> geometry1, Expression<? super Object, ? extends Object> geometry2, Quantity<Length> distance) {
+        String propertyName = "";
+        if (geometry1 instanceof PropertyNameType) {
+            propertyName = ((PropertyNameType)geometry1).getXPath();
+        } else {
+            throw new IllegalArgumentException("unexpected type instead of propertyNameType: " + geometry1.getClass().getSimpleName());
+        }
+        // we transform the JTS geometry into a GML geometry
+        Object geom = null;
+        if (geometry2 instanceof LiteralType) {
+            geom = ((LiteralType)geometry2).getValue();
+            geom = GeometryToGML(geom);
+        }
+        String units = null;
+        if (distance != null && distance.getUnit() != null) {
+            units = distance.getUnit().getName();
+        }
+        Double dist = null;
+        if (distance != null && distance.getValue()!= null) {
+            dist = distance.getValue().doubleValue();
+        }
+        return new BeyondType(propertyName, (AbstractGeometryType) geom, dist, units);
+    }
+
+
+    @Override
     public DistanceOperator<Object> beyond(final String propertyName, final Geometry geometry, final double distance, final String units) {
         return new BeyondType(propertyName, (AbstractGeometryType) geometry, distance, units);
     }
@@ -533,6 +561,34 @@ public class FilterFactoryImpl extends FilterFactory2 {
             units = units.substring(0, units.length() - 1);
         }
         return new BeyondType(propertyName, (AbstractGeometryType) geom, distance, units);
+    }
+
+    @Override
+    public DistanceOperator<Object> within(Expression<? super Object, ? extends Object> geometry1, Expression<? super Object, ? extends Object> geometry2, Quantity<Length> distance) {
+        String propertyName = "";
+
+        // we get the propertyName
+        if (geometry1 instanceof PropertyNameType) {
+            propertyName = ((PropertyNameType)geometry1).getXPath();
+        } else {
+            throw new IllegalArgumentException("unexpected type instead of propertyNameType: " + geometry1.getClass().getSimpleName());
+        }
+        // we transform the JTS geometry into a GML geometry
+        Object geom = null;
+        if (geometry2 instanceof LiteralType) {
+            geom = ((LiteralType)geometry2).getValue();
+            geom = GeometryToGML(geom);
+        }
+        String units = null;
+        if (distance != null && distance.getUnit() != null) {
+            units = distance.getUnit().getName();
+        }
+        Double dist = null;
+        if (distance != null && distance.getValue()!= null) {
+            dist = distance.getValue().doubleValue();
+        }
+        
+        return new DWithinType(propertyName, (AbstractGeometryType) geom, dist, units);
     }
 
     @Override
