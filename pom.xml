@@ -193,7 +193,6 @@
     <quartz.version>2.3.1</quartz.version>
     <woodstox.version>6.0.0</woodstox.version>
     <xmlgraphics.version>2.3</xmlgraphics.version>
-    <antlr.version>4.10.1</antlr.version>
     <!-- ErrorProne 2.11.0 has a knwon bug on JDK-17 : https://giters.com/google/error-prone/issues/2926 -->
     <error-prone.version>2.10.0</error-prone.version>
     <!-- @{argLine} necessary for jacoco generation, we must declare
@@ -333,12 +332,6 @@
           <groupId>io.netty</groupId>
           <artifactId>netty</artifactId>
           <version>${netty3.version}</version>
-      </dependency>
-      <dependency>
-          <groupId>org.antlr</groupId>
-          <artifactId>antlr4-runtime</artifactId>
-          <version>${antlr.version}</version>
-          <scope>compile</scope>
       </dependency>
 
       <!-- XML -->

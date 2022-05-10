@@ -2,8 +2,8 @@
 
 package org.geotoolkit.pending.demo.filter;
 
+import org.apache.sis.cql.CQL;
 import org.apache.sis.cql.CQLException;
-import org.geotoolkit.cql.CQL;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.pending.demo.Demos;
 import org.opengis.filter.Filter;

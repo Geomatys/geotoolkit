@@ -23,11 +23,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.sis.cql.CQL;
+import org.apache.sis.internal.feature.FeatureUtilities;
 import org.apache.sis.parameter.DefaultParameterValue;
 import org.apache.sis.util.ObjectConverter;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.cql.CQL;
+import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.filter.function.groovy.GroovyFunctionFactory;
 import org.geotoolkit.filter.function.javascript.JavaScriptFunctionFactory;
@@ -275,7 +277,7 @@ public class ChainProcess extends AbstractProcess {
         }else{
             throw new ProcessException("Unknwoned syntax : "+syntax+" supported sysntaxes are : CQL,Javascript,Groovy", this, null);
         }
-        return filter.test(inputs);
+        return filter.test(FeatureExt.toFeature(inputs));
     }
 
     private ProcessDescriptor getProcessDescriptor(final ElementProcess desc) throws NoSuchIdentifierException{

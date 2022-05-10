@@ -33,7 +33,11 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
+import org.apache.sis.cql.CQL;
 import org.apache.sis.cql.CQLException;
+import org.apache.sis.internal.cql.AntlrCQL;
+import org.apache.sis.internal.cql.CQLLexer;
+import org.apache.sis.internal.cql.CQLParser;
 import org.opengis.filter.Filter;
 import org.opengis.filter.Expression;
 
@@ -170,7 +174,7 @@ public class JCQLTextPane extends JPanel implements KeyListener{
         final StyledDocument doc = (StyledDocument) guiText.getDocument();
         final String txt = guiText.getText();
 
-        final ParseTree tree = CQL.compile(txt);
+        final ParseTree tree = AntlrCQL.compile(txt);
         doc.setCharacterAttributes(0, txt.length(), styleError, true);
         syntaxHighLight(tree, doc, new AtomicInteger());
         firePropertyChange("content", null, txt);
