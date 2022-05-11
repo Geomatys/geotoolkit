@@ -31,13 +31,10 @@ import java.awt.image.SampleModel;
 import java.util.Arrays;
 import javax.imageio.ImageTypeSpecifier;
 import org.apache.sis.internal.coverage.j2d.ColorModelFactory;
+import org.geotoolkit.lang.Static;
 
-import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import static org.geotoolkit.image.internal.PlanarConfiguration.INTERLEAVED;
 
-import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.NullArgumentException;
-import org.geotoolkit.lang.Static;
 
 /**
  * Aggregate some methods to create {@link BufferedImage} more easily.
@@ -248,8 +245,6 @@ public class ImageUtils extends Static {
       * @param type type of data within {@link ColorModel}.
       * @param numBand band nmber.
       * @param pI define type of {@link ColorModel}, for example RGB, palette etc.
-     * @param hasAlpha
-     * @param isAlphaPremultiplied
       * @param java2DColorMap array which define map when PhotometricInterpretation is type palette, or should be {@code null}.
       * @return created {@link ColorModel}.
       * @throws UnsupportedOperationException if problem during {@link ColorModel} creation.
@@ -324,26 +319,6 @@ public class ImageUtils extends Static {
                                 photometricInterpret, sampleFormat,
                                 hasAlpha, isAlphaPremultiplied,
                                 java2DColorMap);
-    }
-
-    /**
-     * This method is a shortcut for other <pre>createColorModel</pre> methods in this class.
-     * It also tries to mimic an utility method not accessible anymore since Java 17:
-     * <pre>com.sun.imageio.plugins.common.ImageUtil.createColorModel(sampleModel)</pre>
-     *
-     * WARNING: this is a very approximate guess of colors associated to a raster model. In many case, you might want
-     * to create a color model manually, that better fits your use-case.
-     *
-     * @param sm Sample model to associate a color model to. Must not be null.
-     * @return The guessed color-model, never null.
-     * @throws IllegalArgumentException if we cannot guess a color model from given sample model
-     * @throws NullArgumentException if given sample model is null.
-     */
-    public static ColorModel createColorModel(final SampleModel sm) throws IllegalArgumentException {
-        ensureNonNull("Sample model", sm);
-        final int numBands = sm.getNumBands();
-        final SampleType sampleType = SampleType.valueOf(sm.getDataType());
-        return createColorModel(sampleType, numBands, null, numBands == 4, false, null);
     }
 
     /**
@@ -456,12 +431,7 @@ public class ImageUtils extends Static {
      *
      * @param sampleBitsSize bit size for each sample.
      * @param numBand expected band number
-     * @param photometricInterpretation
-     * @param sampleFormat
      * @param planarConfiguration define planar configuration of asked {@link ImageTypeSpecifier}, 1 for interveaved 2 for banded sampleModel.
-     * @param hasAlpha
-     * @param isAlphaPremultiplied
-     * @param java2DColorMap
      * @return {@link ImageTypeSpecifier}.
      */
     public static ImageTypeSpecifier buildImageTypeSpecifier(final int sampleBitsSize, final int numBand,

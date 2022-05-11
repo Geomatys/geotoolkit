@@ -238,7 +238,7 @@ public class NetcdfObservationStore extends DataStore implements Aggregate, Reso
         private final GenericName name;
 
         FeatureView(GenericName name) {
-            super(null);
+            super(null, false);
             this.name = name;
         }
 

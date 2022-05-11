@@ -184,7 +184,7 @@ public class WMSResource extends AbstractGridCoverageResource implements StoreRe
     }
 
     public WMSResource(final WebMapClient server, final GenericName ... names) {
-        super(null);
+        super(null, false);
         this.server = server;
         this.identifier = names[0];
 

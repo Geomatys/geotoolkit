@@ -79,7 +79,7 @@ import org.geotoolkit.metadata.geotiff.GeoTiffMetaDataReader.ValueMap;
 import org.geotoolkit.referencing.cs.PredefinedCS;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.operation.provider.Krovak;
-import org.geotoolkit.referencing.operation.provider.LambertAzimuthalEqualArea;
+import org.apache.sis.internal.referencing.provider.LambertAzimuthalEqualArea;
 import org.geotoolkit.referencing.operation.provider.NewZealandMapGrid;
 import org.apache.sis.internal.referencing.provider.Orthographic;
 import org.geotoolkit.referencing.operation.provider.Stereographic;
@@ -955,9 +955,9 @@ final class GeoTiffCRSReader {
              */
             if (name.equalsIgnoreCase("Lambert_Azimuthal_Equal_Area")
                     || code == CT_LambertAzimEqualArea) {
-                parameters = mtFactory.getDefaultParameters(code(LambertAzimuthalEqualArea.PARAMETERS));
-                parameters.parameter(code(LambertAzimuthalEqualArea.LATITUDE_OF_CENTRE)).setValue(getOriginLat(metadata));
-                parameters.parameter(code(LambertAzimuthalEqualArea.LONGITUDE_OF_CENTRE)).setValue(getOriginLong(metadata));
+                parameters = mtFactory.getDefaultParameters(code(new LambertAzimuthalEqualArea().getParameters()));
+                parameters.parameter(code(LambertAzimuthalEqualArea.LATITUDE_OF_ORIGIN)).setValue(getOriginLat(metadata));
+                parameters.parameter(code(LambertAzimuthalEqualArea.LONGITUDE_OF_ORIGIN)).setValue(getOriginLong(metadata));
                 parameters.parameter(code(LambertAzimuthalEqualArea.FALSE_EASTING)).setValue(getFalseEasting(metadata));
                 parameters.parameter(code(LambertAzimuthalEqualArea.FALSE_NORTHING)).setValue(getFalseNorthing(metadata));
                 return parameters;

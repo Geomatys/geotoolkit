@@ -84,7 +84,7 @@ public class ProgressiveFeatureSetResource<T extends FeatureSet & WritableTiledR
         private final FeatureQuery query;
 
         private SubSet(FeatureQuery query) {
-            super(null);
+            super(null, false);
             this.query = query;
         }
 

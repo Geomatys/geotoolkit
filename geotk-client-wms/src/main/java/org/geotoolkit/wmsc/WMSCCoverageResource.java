@@ -46,7 +46,7 @@ public class WMSCCoverageResource extends AbstractGridCoverageResource implement
 
     public WMSCCoverageResource(final WebMapClientCached server,
             final GenericName name) throws CapabilitiesException{
-        super(null);
+        super(null, false);
         this.server = server;
         this.name = name;
         set = new WMSCTileMatrixSets(server, name.tip().toString());

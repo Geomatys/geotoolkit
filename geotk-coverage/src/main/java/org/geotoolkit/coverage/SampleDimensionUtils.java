@@ -208,7 +208,7 @@ public final class SampleDimensionUtils {
             ranges.put(range, colors);
         }
         return org.apache.sis.internal.coverage.j2d.ColorModelFactory.createPiecewise(
-                type, numBands, visibleBand, ranges.entrySet());
+                type, numBands, visibleBand, ranges);
     }
 
     /**

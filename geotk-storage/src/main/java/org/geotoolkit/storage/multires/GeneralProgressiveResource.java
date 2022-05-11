@@ -63,7 +63,7 @@ public class GeneralProgressiveResource extends AbstractResource implements Prog
     protected TileGenerator generator;
 
     public GeneralProgressiveResource(WritableTiledResource base, TileGenerator generator) {
-        super(null);
+        super(null, false);
         this.base = base;
         this.generator = generator;
     }

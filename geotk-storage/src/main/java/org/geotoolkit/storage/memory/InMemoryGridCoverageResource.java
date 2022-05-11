@@ -43,12 +43,12 @@ public class InMemoryGridCoverageResource extends AbstractGridCoverageResource i
     private GridCoverage coverage;
 
     public InMemoryGridCoverageResource() {
-        super(null);
+        super(null, false);
         this.name = null;
     }
 
     public InMemoryGridCoverageResource(GenericName name) {
-        super(null);
+        super(null, false);
         this.name = name;
     }
 
@@ -57,7 +57,7 @@ public class InMemoryGridCoverageResource extends AbstractGridCoverageResource i
     }
 
     public InMemoryGridCoverageResource(GenericName name, GridCoverage coverage) {
-        super(null);
+        super(null, false);
         if (name == null) {
             InternationalString in = CoverageUtilities.getName(coverage);
             this.name = (in == null) ? null : NamesExt.create(in.toString());

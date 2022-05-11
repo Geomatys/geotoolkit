@@ -105,7 +105,7 @@ final class MockTiledGridCoverageResource extends AbstractGridCoverageResource
     }
 
     public MockTiledGridCoverageResource(final InMemoryStore store, final GenericName identifier) {
-        super(null);
+        super(null, false);
         this.store = store;
         this.identifier = identifier;
     }

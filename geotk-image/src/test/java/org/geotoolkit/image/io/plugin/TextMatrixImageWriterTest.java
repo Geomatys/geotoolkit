@@ -27,10 +27,9 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageWriter;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.IIOImage;
+import org.junit.Test;
+import org.junit.Ignore;
 
-import org.geotoolkit.image.io.TextImageWriterTestBase;
-
-import org.junit.*;
 import static org.geotoolkit.test.Assert.*;
 
 

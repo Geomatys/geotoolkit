@@ -29,7 +29,6 @@ import java.util.Collection;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.IIOException;
@@ -116,21 +115,6 @@ import org.geotoolkit.util.collection.DeferringIterator;
  * {@code setInput(Object)} flavor is invoked. This is usually equivalent to setting the two
  * boolean argument to {@code false}, but this behavior could have been overridden by the plugin.
  *
- * {@section Example}
- * The following example reads a TIFF image. Because we use an input of type {@link File}
- * instead than {@link ImageInputStream}, the {@link WorldFileImageReader} can be used.
- * Consequently the metadata associated with the TIFF image can contain geolocalization
- * information if a {@code ".tfw"} file was found together with the {@code ".tiff"} file.
- *
- * {@preformat java
- *     File          input    = new File("my_image.tiff");
- *     ImageReader   reader   = XImageIO.getReaderBySuffix(input, true, false);
- *     IIOMetadata   metadata = reader.getImageMetadata(0);
- *     BufferedImage image    = reader.read(0);
- *     XImageIO.close(reader);
- *     reader.dispose();
- * }
- *
  * {@section Mandatory and optional arguments}
  * Every methods defined in this class expect exactly one mandatory argument, which is always
  * the first argument. All other arguments are optional and can be {@code null}.
@@ -171,7 +155,7 @@ public final class XImageIO extends Static {
      * @param  mode Either {@link #NAME}, {@link #SUFFIX} or {@link #MIME}.
      * @return The requested identifiers.
      */
-    static String[] getIdentifiers(final ImageReaderWriterSpi spi, final int mode) {
+    private static String[] getIdentifiers(final ImageReaderWriterSpi spi, final int mode) {
         switch (mode) {
             case NAME:   return spi.getFormatNames();
             case SUFFIX: return spi.getFileSuffixes();
@@ -330,20 +314,6 @@ public final class XImageIO extends Static {
             //-- to avoid unexpected jai tiff reader
             if (JAI_TIFF_READER_HACK.equalsIgnoreCase(spi.getClass().getName())) continue;
 
-            if (Boolean.TRUE.equals(ignoreMetadata)) {
-                /*
-                 * If the caller is not interested in metadata, avoid the WorldFileImageReader.Spi
-                 * wrapper in order to avoid the cost of reading the TFW/PRJ files.  We will rather
-                 * use directly the wrapped reader, which should be somewhere next in the iteration.
-                 */
-                if (spi instanceof ImageReaderAdapter.Spi) {
-                    final Set<InformationType> info = ((ImageReaderAdapter.Spi) spi).getModifiedInformation(input);
-                    if (!info.contains(InformationType.RASTER) && !info.contains(InformationType.IMAGE)) {
-                        // Actually, skips the adapter only if it does not modify the pixel values.
-                        continue;
-                    }
-                }
-            }
             if (input == null || spi.canDecodeInput(input)) {
                 return createReaderInstance(spi, input, seekForwardOnly, ignoreMetadata);
             }

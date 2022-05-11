@@ -50,11 +50,11 @@ public class InMemoryAggregate extends AbstractResource implements WritableAggre
     private GenericName identifier;
 
     public InMemoryAggregate() {
-        super(null);
+        super(null, false);
     }
 
     public InMemoryAggregate(GenericName identifier) {
-        super(null);
+        super(null, false);
         this.identifier = identifier;
     }
 

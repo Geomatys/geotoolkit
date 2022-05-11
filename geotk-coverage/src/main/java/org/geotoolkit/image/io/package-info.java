@@ -30,29 +30,6 @@
  *     <td>{@link org.geotoolkit.image.io.SpatialImageReader}</td>
  *     <td>{@link org.geotoolkit.image.io.SpatialImageWriter}</td>
  *     <td>Base class for readers/writers of spatial (usually geographic) data.</td>
- *   </tr><tr>
- *     <td>{@link org.geotoolkit.image.io.StreamImageReader}</td>
- *     <td>{@link org.geotoolkit.image.io.StreamImageWriter}</td>
- *     <td>Base class for readers/writers working with
- *         {@link java.io.InputStream}/{@link java.io.OutputStream} or channels.
- *         Other kind of input/output are converted to stream when first needed.</td>
- *   </tr><tr>
- *     <td>{@link org.geotoolkit.image.io.TextImageReader}</td>
- *     <td>{@link org.geotoolkit.image.io.TextImageWriter}</td>
- *     <td>Base class for readers/writers working with {@link java.io.Reader}/{@link java.io.Writer}.
- *         This implies the use of a character encoding, which may be local-dependent.</td>
- *   </tr><tr>
- *     <td>{@link org.geotoolkit.image.io.FileImageReader}</td>
- *     <td>{@link org.geotoolkit.image.io.FileImageWriter}</td>
- *     <td>Base class for readers/writers that require {@link java.io.File} input or output.
- *         Other kind of input/output are copied in a temporary file. This is used for wrapping
- *         native libraries which doesn't work with Java streams.</td>
- *   </tr><tr>
- *     <td>{@link org.geotoolkit.image.io.ImageReaderAdapter}</td>
- *     <td>{@link org.geotoolkit.image.io.ImageWriterAdapter}</td>
- *     <td>Base class for readers/writers which delegate most of their work to an other
- *         reader/writer. This is used for appending additional metadata to the ones
- *         processed by the standard readers/writers.</td>
  *   </tr><tr bgcolor="lightblue">
  *     <th>{@link javax.imageio.ImageReadParam}</th>
  *     <th>{@link javax.imageio.ImageWriteParam}</th>
@@ -148,17 +125,13 @@
  * <ol>
  *   <li>Invoke some AWT method first; see {@code setDefaultCodecPreferences()} below for explanation.</li>
  *   <li>{@link org.geotoolkit.image.jai.Registry#setDefaultCodecPreferences()}</li>
- *   <li>{@link org.geotoolkit.image.io.plugin.WorldFileImageReader.Spi#registerDefaults(ServiceRegistry)}</li>
- *   <li>{@link org.geotoolkit.image.io.plugin.WorldFileImageWriter.Spi#registerDefaults(ServiceRegistry)}</li>
  * </ol>
  * <p>
  * <b>Alternative:</b> {@link org.geotoolkit.lang.Setup#initialize(Properties)} performs
  * (among other tasks) all the above tasks except 1.
  * <p>
  * Those methods can be invoked more than once if the set of standard readers available (PNG, TIFF,
- * <i>etc.</i>) is changed. For example invoking {@code WorldFileImageReader.Spi.registerDefaults(...)}
- * again will replace the old <cite>World File</cite> readers by new one wrapping the new standard
- * readers.
+ * <i>etc.</i>) is changed.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Antoine Hnawia (IRD)

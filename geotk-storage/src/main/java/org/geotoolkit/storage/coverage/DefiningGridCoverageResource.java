@@ -74,7 +74,7 @@ public class DefiningGridCoverageResource extends AbstractGridCoverageResource i
      * @param name mandatory new resource name
      */
     public DefiningGridCoverageResource(GenericName name) {
-        super(null);
+        super(null, false);
         ArgumentChecks.ensureNonNull("name", name);
         this.name = name;
     }

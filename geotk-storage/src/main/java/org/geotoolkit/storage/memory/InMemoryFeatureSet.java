@@ -68,7 +68,7 @@ public class InMemoryFeatureSet extends AbstractFeatureSet implements WritableFe
      * @param features collection of stored features, this list will not be copied.
      */
     public InMemoryFeatureSet(FeatureType type, List<Feature> features) {
-        super(null);
+        super(null, false);
         this.type = type;
         this.features = features;
     }
@@ -80,7 +80,7 @@ public class InMemoryFeatureSet extends AbstractFeatureSet implements WritableFe
      * @param features collection of stored features, this list will not be copied.
      */
     public InMemoryFeatureSet(GenericName id, FeatureType type, List<Feature> features) {
-        super(null);
+        super(null, false);
         this.id = id;
         this.type = type;
         this.features = features;

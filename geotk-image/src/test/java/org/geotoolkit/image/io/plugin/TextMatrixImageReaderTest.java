@@ -25,7 +25,6 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 
 import org.geotoolkit.test.TestData;
-import org.geotoolkit.image.io.TextImageReaderTestBase;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 
 import org.junit.*;

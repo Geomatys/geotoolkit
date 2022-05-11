@@ -43,7 +43,7 @@ final class MIFFeatureSet extends AbstractFeatureSet implements WritableFeatureS
     private final GenericName name;
 
     public MIFFeatureSet(MIFStore store, GenericName name) {
-        super(null);
+        super(null, false);
         this.store = store;
         this.name = name;
     }

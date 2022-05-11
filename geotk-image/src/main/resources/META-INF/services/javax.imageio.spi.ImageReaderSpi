@@ -1,4 +1,3 @@
-org.geotoolkit.image.io.plugin.RawImageReader$Spi
 org.geotoolkit.image.io.plugin.TextMatrixImageReader$Spi
 org.geotoolkit.image.io.plugin.TextRecordImageReader$Spi
 # Note: TextRecordImageReader must be after TextMatrixImageReader

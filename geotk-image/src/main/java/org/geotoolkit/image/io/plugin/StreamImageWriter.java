@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.image.io;
+package org.geotoolkit.image.io.plugin;
 
 import java.io.*; // Many imports, including some for javadoc only.
 import java.net.URI;
@@ -28,6 +28,8 @@ import java.nio.channels.WritableByteChannel;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.stream.ImageOutputStream;
+import org.apache.sis.util.resources.IndexedResourceBundle;
+import org.geotoolkit.image.io.SpatialImageWriter;
 
 import org.geotoolkit.resources.Errors;
 
@@ -47,16 +49,8 @@ import org.geotoolkit.resources.Errors;
  *
  * Note the {@link TextImageWriter} subclass can go one step further by wrapping the
  * {@code InputStream} into a {@link java.io.BufferedWriter} using some character encoding.
- *
- * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.20
- *
- * @see StreamImageReader
- *
- * @since 2.4
- * @module
  */
-public abstract class StreamImageWriter extends SpatialImageWriter {
+abstract class StreamImageWriter extends SpatialImageWriter {
     /**
      * The stream to {@linkplain #close() close} on {@link #setOutput(.Object)}, {@link #reset()}
      * or {@link #dispose()} method invocation. This stream is typically an
@@ -172,6 +166,13 @@ public abstract class StreamImageWriter extends SpatialImageWriter {
     }
 
     /**
+     * Returns the resources for formatting error messages.
+     */
+    private IndexedResourceBundle getErrorResources() {
+        return Errors.getResources(getLocale());
+    }
+
+    /**
      * Closes the output stream created by {@link #getOutputStream()}. This method does nothing
      * if the output stream is the {@linkplain #output output} instance given by the user rather
      * than a stream created by this class from a {@link File} or {@link URL} output.
@@ -192,17 +193,6 @@ public abstract class StreamImageWriter extends SpatialImageWriter {
         closeOnReset = null;
         stream       = null;
         super.close();
-    }
-
-    /**
-     * Invokes the {@link #close()} method when this writer is garbage-collected.
-     * Note that this will actually close the stream only if it has been created
-     * by this writer, rather than supplied by the user.
-     */
-    @Override
-    protected void finalize() throws Throwable {
-        closeSilently();
-        super.finalize();
     }
 
 
@@ -231,14 +221,6 @@ public abstract class StreamImageWriter extends SpatialImageWriter {
      *
      * It is up to subclass constructors to initialize all other instance variables
      * in order to provide working versions of every methods.
-     *
-     * @author Martin Desruisseaux (IRD)
-     * @version 3.20
-     *
-     * @see StreamImageReader.Spi
-     *
-     * @since 2.4
-     * @module
      */
     protected abstract static class Spi extends SpatialImageWriter.Spi {
         /**

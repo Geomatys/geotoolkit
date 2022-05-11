@@ -49,7 +49,7 @@ import org.opengis.referencing.operation.TransformException;
 public abstract class GeoreferencedGridCoverageResource extends AbstractGridCoverageResource {
 
     protected GeoreferencedGridCoverageResource(Resource resource) {
-        super(resource instanceof StoreListeners ? (StoreListeners) resource : null);
+        super(resource instanceof StoreListeners ? (StoreListeners) resource : null, false);
     }
 
     @Override

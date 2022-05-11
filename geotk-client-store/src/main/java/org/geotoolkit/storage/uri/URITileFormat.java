@@ -24,7 +24,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.image.io.XImageIO;
-import org.geotoolkit.image.io.plugin.WorldFileImageReader;
 import org.geotoolkit.storage.multires.TileFormat;
 
 /**
@@ -266,10 +265,6 @@ public final class URITileFormat extends TileFormat {
      * @return Single tile ImageReaderSpi, null if format is not an image.
      */
     public ImageReaderSpi getImageSpi() {
-        //unwrap image reader adaptor
-        //we do not want the geospatial informations
-        //TODO : needed until Worldfile readers stop wrapping image reader api
-        imageSpi = WorldFileImageReader.Spi.unwrap(imageSpi);
         return imageSpi;
     }
 

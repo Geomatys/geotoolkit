@@ -45,7 +45,7 @@ public class TMSResource extends AbstractGridCoverageResource implements TiledRe
     private final GenericName name;
 
     TMSResource(TileMapClient client, GenericName name){
-        super(null);
+        super(null, false);
         this.client = client;
         this.name = name;
     }

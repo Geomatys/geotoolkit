@@ -248,7 +248,7 @@ public class CoverageToFeatureTest extends AbstractProcessTest {
         private final GenericName name;
 
         public SimpleCoverageReader(final GridCoverage coverage, PixelInCell pixPos) {
-            super(null);
+            super(null, false);
             this.coverage = coverage;
             this.pixPos = pixPos;
             InternationalString nam = CoverageUtilities.getName(coverage);

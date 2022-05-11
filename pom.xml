@@ -173,7 +173,7 @@
 
     <!-- associated projects dependencies -->
     <geoapi.version>4.0-M19</geoapi.version>
-    <sis.version>2.0-M0084</sis.version>
+    <sis.version>2.0-M0115</sis.version>
     <sis.build.helper.version>1.1</sis.build.helper.version>
     <sis.non-free.version>1.1</sis.non-free.version>
 
@@ -562,10 +562,6 @@
         <configuration>
           <source>${java.version}</source>       <!-- The -source argument for the Java compiler.   -->
           <target>${java.version}</target>       <!-- The -target argument for the Java compiler.   -->
-          <!--
-          Commented for now: fails compilation when value is 8, because of RawImageInputStream class copied from JAI.
-          TODO: once minimal java version becomes 17, try to reactivate it.
-          -->
           <release>${java.version}</release>
           <debug>true</debug>        <!-- Whether to include debugging information.     -->
           <optimize>false</optimize> <!-- Whether to optimize the compiled code.        -->
@@ -1044,7 +1040,6 @@
     <module>geotk-feature-mapinfo</module>
     <module>geotk-feature-nmea</module>
     <module>geotk-coverage-worldfile</module>
-    <module>geotk-coverage-bil</module>
     <module>geotk-coverage-geotiff</module>
     <module>geotk-coverage-imagery</module>
     <!-- Obsolete module, still contains interesting things, salvage what we can before removing it -->

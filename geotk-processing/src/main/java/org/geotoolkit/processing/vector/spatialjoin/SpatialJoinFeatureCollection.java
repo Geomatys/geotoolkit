@@ -43,7 +43,7 @@ public class SpatialJoinFeatureCollection extends AbstractFeatureSet {
      */
     public SpatialJoinFeatureCollection(final FeatureSet sourceFC,
             final FeatureSet targetFC, final boolean method) throws DataStoreException {
-        super(null);
+        super(null, false);
         this.targetFC = targetFC;
         this.sourceFC = sourceFC;
         this.method = method;

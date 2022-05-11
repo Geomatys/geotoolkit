@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.image.io;
+package org.geotoolkit.image.io.plugin;
 
 import java.io.IOException;
 import java.awt.Rectangle;
@@ -30,15 +30,15 @@ import org.opengis.test.coverage.image.ImageReaderTestCase;
 
 import org.junit.*;
 import static java.lang.Float.NaN;
+import org.geotoolkit.image.io.SampleConversionType;
+import org.geotoolkit.image.io.SpatialImageReadParam;
 import static org.junit.Assert.*;
 
 
 /**
  * The base class for {@link TextImageReader} tests.
- *
- * @author Martin Desruisseaux (Geomatys)
  */
-public abstract strictfp class TextImageReaderTestBase extends ImageReaderTestCase {
+abstract strictfp class TextImageReaderTestBase extends ImageReaderTestCase {
     /**
      * The precision for comparison of sample values. The values in the test files provided
      * in this package have 3 significant digits, so the precision is set to the next digit.

@@ -42,7 +42,6 @@ import org.apache.sis.storage.tiling.Tile;
 import org.geotoolkit.storage.multires.TileFormat;
 import org.geotoolkit.storage.multires.TileMatrices;
 import org.geotoolkit.storage.multires.TileMatrix;
-import org.geotoolkit.storage.multires.TileMatrixSet;
 import org.apache.sis.storage.tiling.TileStatus;
 import org.geotoolkit.storage.multires.WritableTileMatrix;
 import org.geotoolkit.storage.multires.WritableTileMatrixSet;
@@ -63,7 +62,7 @@ public class InMemoryTiledFeatureSet extends AbstractFeatureSet implements Writa
     private final FeatureType type;
 
     public InMemoryTiledFeatureSet(FeatureType type) {
-        super(null);
+        super(null, false);
         this.type = type;
     }
 

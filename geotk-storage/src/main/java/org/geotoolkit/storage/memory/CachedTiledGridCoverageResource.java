@@ -157,7 +157,7 @@ public class CachedTiledGridCoverageResource <T extends TiledResource & org.apac
      *  if the tile is not available, loading starts and it will be available later.
      */
     public CachedTiledGridCoverageResource(T parent, int initialCapacity, final long costLimit, final boolean soft, boolean noblocking) {
-        super(null);
+        super(null, false);
         this.parent = parent;
         this.tiles = new Cache<String, CacheTile>(initialCapacity, costLimit, soft);
         this.tiles.setKeyCollisionAllowed(true);

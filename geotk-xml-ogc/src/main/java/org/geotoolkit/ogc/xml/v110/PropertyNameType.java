@@ -107,6 +107,9 @@ public class PropertyNameType extends AbstractExpression implements ValueReferen
 
     @Override
     public Object apply(final Object object) {
+        if (object == null) {
+            return content;
+        }
         throw new UnsupportedOperationException("Property name in the right part is not allowed.");
     }
 

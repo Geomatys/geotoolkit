@@ -14,7 +14,6 @@ import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.GridCoverageResource;
-import org.geotoolkit.image.io.plugin.WorldFileImageReader;
 import org.geotoolkit.image.jai.Registry;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.pending.demo.Demos;
@@ -34,7 +33,6 @@ public class MapContextDemo {
         Demos.init();
 
         //preloading parameters --------------
-        WorldFileImageReader.Spi.registerDefaults(null);
         Registry.setDefaultCodecPreferences();
         //------------------------------------
 

@@ -199,6 +199,7 @@ public class CoverageImageTest extends org.geotoolkit.test.TestBase {
      * @throws IOException
      */
     @Test
+    @org.junit.Ignore("We will remove the class tested by this method.")
     public void coverageReaderTest() throws PortrayalException, DataStoreException, IOException {
 
         ImageIO.scanForPlugins();

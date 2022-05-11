@@ -26,11 +26,10 @@ import javax.imageio.ImageReader;
 import javax.imageio.IIOException;
 
 import org.geotoolkit.test.TestData;
-import org.geotoolkit.image.io.TextImageReader;
-import org.geotoolkit.image.io.TextImageReaderTestBase;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 
-import org.junit.*;
+import org.junit.Test;
+
 import static org.geotoolkit.test.Assert.*;
 import static org.geotoolkit.test.Commons.*;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;

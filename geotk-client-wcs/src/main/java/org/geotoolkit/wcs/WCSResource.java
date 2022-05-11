@@ -59,7 +59,7 @@ public class WCSResource extends AbstractGridCoverageResource implements StoreRe
     private final String format = "image/png";
 
     public WCSResource(WebCoverageClient server, CoverageOfferingBriefType brief) {
-        super(null);
+        super(null, false);
         this.server = server;
         this.brief = brief;
     }

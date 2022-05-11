@@ -62,7 +62,7 @@ final class ProductSubset extends AbstractGridCoverageResource {
     ProductSubset(final ProductEntry product, final Envelope areaOfInterest, final double[] resolution,
                   final List<GridCoverageEntry> entries) throws DataStoreException, TransformException
     {
-        super(null);
+        super(null, false);
         this.product        = product;
         this.areaOfInterest = areaOfInterest;
         this.resolution     = resolution;

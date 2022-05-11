@@ -141,7 +141,7 @@ public class GridCoverageFeatureSet extends AbstractResource implements FeatureS
         final FeatureAssociationRole role = (FeatureAssociationRole) type.getProperty(TypeConventions.RANGE_ELEMENTS_PROPERTY.toString());
         final FeatureType valueType = role.getValueType();
 
-        return new AbstractFeatureSet(null) {
+        return new AbstractFeatureSet(null, false) {
             @Override
             public FeatureType getType() {
                 return valueType;

@@ -76,7 +76,7 @@ public class TiledCoverageResource extends AbstractGridCoverageResource {
     private ColorModel colorModel;
 
     private TiledCoverageResource(GridGeometry gridGeometry, Tile[] tiles) throws DataStoreException {
-        super(null);
+        super(null, false);
         this.gridGeometry = gridGeometry;
         this.tiles = Arrays.copyOf(tiles, tiles.length, ResourceTile[].class);
 

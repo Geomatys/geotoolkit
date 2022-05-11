@@ -66,15 +66,6 @@ import org.geotoolkit.internal.sql.DefaultDataSource;
  *     </ul></td>
  *     <td>&nbsp;</td>
  *   </tr><tr>
- *     <td nowrap>{@code geotk-coverageio}</td>
- *     <td><ul>
- *       <li><code>{@linkplain org.geotoolkit.image.io.plugin.WorldFileImageReader.Spi#registerDefaults WorldFileImageReader.Spi.registerDefaults}(null)</code></li>
- *       <li><code>{@linkplain org.geotoolkit.image.io.plugin.WorldFileImageWriter.Spi#registerDefaults WorldFileImageWriter.Spi.registerDefaults}(null)</code></li>
- *     </ul></td>
- *     <td>
- *       Remove from {@link IIORegistry} every plugins defined in any {@code org.geotoolkit} package.
- *     </td>
- *   </tr><tr>
  *     <td nowrap>{@code geotk-coverageio-netcdf}</td>
  *     <td><ul>
  *       <li>If {@code netcdfCacheLimit != 0}:
@@ -212,8 +203,7 @@ public final class Setup extends Static {
             throw new IllegalStateException();
         }
         state = 1;
-        if ("server".equalsIgnoreCase(get(properties, "platform", "desktop"))) {
-        } else {
+        if (!"server".equalsIgnoreCase(get(properties, "platform", "desktop"))) {
             MonolineFormatter.install();
         }
         Initializer.setDefault(Setup::getEPSG);

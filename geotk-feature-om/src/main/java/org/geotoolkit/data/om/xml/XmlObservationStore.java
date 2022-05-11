@@ -197,7 +197,7 @@ public class XmlObservationStore extends AbstractObservationStore implements Agg
         private final GenericName name;
 
         FeatureView(GenericName name) {
-            super(null);
+            super(null, false);
             this.name = name;
         }
 

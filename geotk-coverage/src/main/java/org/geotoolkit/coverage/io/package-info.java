@@ -23,9 +23,7 @@
  * sample values using an {@link javax.imageio.ImageReader} from the standard Java library.
  * <p>
  * Many different data formats exist. However most of this variety is not handled by this package.
- * The various data formats are rather handled by different subclasses of {@code ImageReader},
- * for example
- * {@link org.geotoolkit.image.io.plugin.WorldFileImageReader}.
+ * The various data formats are rather handled by different subclasses of {@code ImageReader}.
  * All those different {@code ImageReader} implementations can be wrapped by the
  * same {@link org.geotoolkit.coverage.io.ImageCoverageReader} implementation.
  *

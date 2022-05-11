@@ -40,7 +40,6 @@ import javax.imageio.spi.ImageReaderSpi;
 import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.io.LineFormat;
 import org.geotoolkit.resources.Descriptions;
-import org.geotoolkit.image.io.TextImageReader;
 import org.geotoolkit.image.io.SampleConverter;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.internal.image.io.DimensionAccessor;

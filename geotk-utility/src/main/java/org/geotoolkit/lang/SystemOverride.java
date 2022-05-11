@@ -20,10 +20,7 @@ package org.geotoolkit.lang;
 
 /**
  * Marker interface for <cite>Service Providers</cite> that may override a JDK
- * service, or a service provided by a standard extension. For example the
- * {@link org.geotoolkit.image.io.plugin.RawImageReader.Spi} class provides a
- * {@code "raw"} image reader which can override the one provided by the
- * <cite>Image I/O extension for JAI</cite> library.
+ * service, or a service provided by a standard extension.
  * <p>
  * The default behavior (to override the standard provider or not) is provider-dependent.
  * However the actual behavior can be forced explicitly. For example Geotk can be prevented

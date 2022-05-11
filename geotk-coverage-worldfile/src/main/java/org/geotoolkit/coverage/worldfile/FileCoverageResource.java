@@ -77,7 +77,7 @@ public final class FileCoverageResource extends AbstractGridCoverageResource imp
     private GridGeometry cachedGridGeometry;
 
     FileCoverageResource(FileCoverageStore store, GenericName name, Path file) {
-        super(null);
+        super(null, false);
         this.store = store;
         this.name = name;
         this.file = file;

@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.image.io;
+package org.geotoolkit.image.io.plugin;
 
 import java.io.*; // Many imports, including some for javadoc only.
 import java.net.URI;
@@ -28,6 +28,9 @@ import java.nio.channels.ReadableByteChannel;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.stream.ImageInputStream;
 import org.apache.sis.util.logging.Logging;
+import org.apache.sis.util.resources.IndexedResourceBundle;
+import org.geotoolkit.image.io.InputStreamAdapter;
+import org.geotoolkit.image.io.SpatialImageReader;
 
 import org.geotoolkit.resources.Errors;
 
@@ -47,16 +50,8 @@ import org.geotoolkit.resources.Errors;
  *
  * Note the {@link TextImageReader} subclass can go one step further by wrapping the
  * {@code InputStream} into a {@link java.io.BufferedReader} using some character encoding.
- *
- * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.20
- *
- * @see StreamImageWriter
- *
- * @since 2.4
- * @module
  */
-public abstract class StreamImageReader extends SpatialImageReader {
+abstract class StreamImageReader extends SpatialImageReader {
     /**
      * The stream to {@linkplain #close() close} on {@link #setInput(Object,boolean,boolean)
      * setInput(...)}, {@link #reset()} or {@link #dispose()} method invocation. This stream
@@ -231,6 +226,13 @@ public abstract class StreamImageReader extends SpatialImageReader {
     }
 
     /**
+     * Returns the resources for formatting error messages.
+     */
+    private IndexedResourceBundle getErrorResources() {
+        return Errors.getResources(getLocale());
+    }
+
+    /**
      * Returns the {@linkplain #input input} as an {@linkplain ReadableByteChannel readable byte
      * channel}. If the input is already such channel, it is returned unchanged. Otherwise this
      * method creates a new channel from the {@link Path} input or the value returned by
@@ -301,17 +303,6 @@ public abstract class StreamImageReader extends SpatialImageReader {
         stream  = null;
     }
 
-    /**
-     * Invokes the {@link #close()} method when this reader is garbage-collected.
-     * Note that this will actually close the stream only if it has been created
-     * by this reader, rather than supplied by the user.
-     */
-    @Override
-    protected void finalize() throws Throwable {
-        closeSilently();
-        super.finalize();
-    }
-
 
 
 
@@ -337,14 +328,6 @@ public abstract class StreamImageReader extends SpatialImageReader {
      * <p>
      * It is up to subclass constructors to initialize all other instance variables
      * in order to provide working versions of every methods.
-     *
-     * @author Martin Desruisseaux (IRD, Geomatys)
-     * @version 3.20
-     *
-     * @see StreamImageWriter.Spi
-     *
-     * @since 2.4
-     * @module
      */
     protected abstract static class Spi extends SpatialImageReader.Spi {
         /**
