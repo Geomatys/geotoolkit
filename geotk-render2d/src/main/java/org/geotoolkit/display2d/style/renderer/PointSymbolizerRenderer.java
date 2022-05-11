@@ -121,14 +121,18 @@ public class PointSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedPo
         }
 
         /**
-         * Rendering context defines a Java2D rotation (counter-clockwise), but symbolizer defines a clockwise one
-         * (note: Cannot find this information in SLD specification, but that's documented in GeoServer documentation).
-         * To properly manage rotations, we have to merge them immediately because they
+         * The Rotation element gives the rotation of a graphic in the clockwise direction about its
+         * center point in decimal degrees, encoded as a floating-point number. Negative values
+         * mean counter-clockwise rotation. The default value is 0.0 (no rotation). Note that there is
+         * no connection between source geometry types and rotations; the point used for plotting
+         * has no inherent direction. Also, the point within the graphic about which it is rotated is
+         * format dependent. If a format does not include an inherent rotation point, then the point
+         * of rotation should be the centroid.
          */
-        double ccwRotation = -symbol.getRotation(candidate);
-        if (Math.abs(ccwRotation) < ROTATION_TOLERANCE) ccwRotation = 0.0;
+        double cwRotation = symbol.getRotation(candidate);
+        if (Math.abs(cwRotation) < ROTATION_TOLERANCE) cwRotation = 0.0;
         final AffineTransform rotation = new AffineTransform();
-        rotation.rotate(ccwRotation);
+        rotation.rotate(cwRotation);
 
         final int postx = (int) (-img.getWidth()*anchor[0] + disps[0]);
         final int posty = (int) (-img.getHeight()*anchor[1] - disps[1]);

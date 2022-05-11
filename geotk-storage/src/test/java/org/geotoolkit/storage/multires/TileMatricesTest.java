@@ -28,6 +28,7 @@ import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.NoSuchDataException;
 import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.coverage.grid.EstimatedGridGeometry;
 import org.geotoolkit.util.NamesExt;
@@ -144,7 +145,7 @@ public class TileMatricesTest {
         try {
             rect = TileMatrices.getTilesInEnvelope(matrix, env);
             Assert.fail("Request is outside tile matrix, should have failed");
-        } catch (DisjointExtentException ex) {
+        } catch (NoSuchDataException ex) {
             //ok
         }
     }

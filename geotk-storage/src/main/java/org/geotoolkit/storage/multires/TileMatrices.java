@@ -24,6 +24,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
+import org.apache.sis.coverage.grid.DisjointExtentException;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridRoundingMode;
@@ -392,8 +393,14 @@ public final class TileMatrices extends Static {
         if (wantedEnv == null) {
             return tileMatrix.getTilingScheme().getExtent();
         }
-
-        return tileMatrix.getTilingScheme().derive().rounding(GridRoundingMode.ENCLOSING).subgrid(wantedEnv).getIntersection();
+        try {
+            return tileMatrix.getTilingScheme().derive()
+                    .rounding(GridRoundingMode.ENCLOSING)
+                    .subgrid(wantedEnv)
+                    .getIntersection();
+        } catch (DisjointExtentException ex) {
+            throw new NoSuchDataException(ex.getMessage());
+        }
     }
 
     /**
