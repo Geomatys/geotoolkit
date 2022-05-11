@@ -317,20 +317,24 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
         float candidateRotation = cachedRotation;
         Float candidateSize = (forcedSize!=null) ? forcedSize : cachedSize;
 
-        if(Float.isNaN(candidateOpacity)){
+        if (Float.isNaN(candidateOpacity)) {
             final Expression expOpacity = styleElement.getOpacity();
             candidateOpacity = GO2Utilities.evaluate(expOpacity, candidate, 1f,0f,1);
         }
 
-        if(Float.isNaN(candidateRotation)){
+        if (Float.isNaN(candidateRotation)) {
             final Expression expRotation = styleElement.getRotation();
             final Number rot = GO2Utilities.evaluate(expRotation, candidate, Number.class, 0f);
             candidateRotation = (float) Math.toRadians(rot.doubleValue());
         }
 
-        if(candidateSize.isNaN()){
+        if (candidateSize.isNaN()) {
             final Expression expSize = styleElement.getSize();
             candidateSize = GO2Utilities.evaluate(expSize, candidate, Number.class, Float.NaN).floatValue();
+        }
+        if (candidateSize < 1f) {
+            //requested image is too small, will not be visible
+            return null;
         }
 
         //the subbuffer image
@@ -342,36 +346,36 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
 //        }
 
         //we have a cached mark ------------------------------------------------------------------
-        if(cachedMark != null){
-            if(candidateSize.isNaN()){
+        if (cachedMark != null) {
+            if (candidateSize.isNaN()) {
                 subBuffer = cachedMark.getImage(candidate, 16*coeff,hints);
-            }else{
+            } else {
                 subBuffer = cachedMark.getImage(candidate, candidateSize*coeff,hints);
             }
         }
 
 
         //we have a cached external --------------------------------------------------------------
-        if(cachedExternal != null){
+        if (cachedExternal != null) {
             subBuffer = cachedExternal.getImage(candidateSize,coeff,hints);
         }
 
-        if(subBuffer==null){
+        if (subBuffer == null) {
             //may happen if image is too small
             return null;
         }
 
         final boolean skipRotation = candidateRotation == 0 || !withRotation;
         //no operation to append to image, return the buffer directly ----------------------------
-        if( skipRotation && candidateOpacity == 1 ) return subBuffer;
+        if (skipRotation && candidateOpacity == 1) return subBuffer;
 
         // we must change opacity or rotation ----------------------------------------------------
         final int maxSizeX;
         final int maxSizeY;
-        if(skipRotation) {
+        if (skipRotation) {
             maxSizeX = subBuffer.getWidth();
             maxSizeY = subBuffer.getHeight();
-        }else{
+        } else {
             Rectangle rect = new Rectangle(subBuffer.getWidth(), subBuffer.getHeight());
             TransformedShape trs = new TransformedShape();
             trs.setOriginalShape(rect);
@@ -381,21 +385,22 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
             maxSizeY = (int) rotatedRect.getHeight();
         }
 
-        if(maxSizeX<=0 || maxSizeY<=0){
+        if (maxSizeX<=0 || maxSizeY<=0) {
             return null;
         }
 
         final BufferedImage buffer = new BufferedImage( maxSizeX , maxSizeY, BufferedImage.TYPE_INT_ARGB);
         final Graphics2D g2 = (Graphics2D) buffer.getGraphics();
-        if(hints != null){
+        if (hints != null) {
             g2.setRenderingHints(hints);
         }
 
         final Composite j2dComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, candidateOpacity);
 
         g2.setComposite(j2dComposite);
-        if (!skipRotation)
+        if (!skipRotation) {
             g2.rotate(candidateRotation, maxSizeX/2f, maxSizeY/2f);
+        }
         final int translateX = (maxSizeX-subBuffer.getWidth())/2;
         final int translateY = (maxSizeY-subBuffer.getHeight())/2;
         g2.drawImage(subBuffer, translateX, translateY, null);
