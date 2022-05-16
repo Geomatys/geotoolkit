@@ -22,7 +22,6 @@ import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.measure.MeasurementRange;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.logging.Logging;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -52,7 +51,7 @@ final class FormatTable extends CachedTable<String,FormatEntry> {
      * TODO: reduce limit to 99 when real issue is solved.
      */
     private static final int MAX_FORMATS = 99999;
-    static final Logger LOGGER = Logging.getLogger("org.geotoolkit.coverage.sql");
+    static final Logger LOGGER = Logger.getLogger("org.geotoolkit.coverage.sql");
 
     /**
      * The sample dimensions table.

@@ -587,7 +587,7 @@ public class FilterFactoryImpl extends FilterFactory2 {
         if (distance != null && distance.getValue()!= null) {
             dist = distance.getValue().doubleValue();
         }
-        
+
         return new DWithinType(propertyName, (AbstractGeometryType) geom, dist, units);
     }
 
