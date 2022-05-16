@@ -76,6 +76,7 @@ import org.geotoolkit.storage.multires.AbstractTileMatrix;
 import org.apache.sis.storage.tiling.Tile;
 import org.geotoolkit.storage.multires.TileMatrices;
 import org.apache.sis.storage.tiling.TileStatus;
+import org.geotoolkit.storage.multires.ImageTileMatrix;
 import org.geotoolkit.storage.multires.WritableTileMatrix;
 import org.opengis.coverage.PointOutsideCoverageException;
 import org.opengis.util.GenericName;
@@ -87,7 +88,7 @@ import org.opengis.util.GenericName;
  * @module
  */
 @XmlAccessorType(XmlAccessType.NONE)
-public class XMLMosaic implements WritableTileMatrix {
+public class XMLMosaic implements WritableTileMatrix, ImageTileMatrix {
 
     private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.coverage.xmlstore");
     private static final NumberFormat DECIMAL_FORMAT = NumberFormat.getInstance(Locale.ENGLISH);
