@@ -25,6 +25,9 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.stream.Stream;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridCoverageProcessor;
+import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridOrientation;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.internal.feature.AttributeConvention;
@@ -284,6 +287,12 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
             coverage = coverage.forConvertedValues(true);
         }
         if (coverage == null) {
+            LOGGER.log(Level.WARNING, "Reprojected coverage is null.");
+            return Stream.empty();
+        }
+        try {
+            coverage = new GridCoverageProcessor().resample(coverage, new GridGeometry(null, env, GridOrientation.HOMOTHETY));
+        } catch (TransformException ex) {
             LOGGER.log(Level.WARNING, "Reprojected coverage is null.");
             return Stream.empty();
         }

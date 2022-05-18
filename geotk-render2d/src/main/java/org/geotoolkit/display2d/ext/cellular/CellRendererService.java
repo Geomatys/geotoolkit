@@ -171,6 +171,7 @@ public class CellRendererService extends AbstractSymbolizerRendererService<CellS
      * layer and we cannot adapt it.
      */
     private static MapLayer mimicCellLayer(MapLayer layer) {
+        if (layer == null) return null;
         final Resource resource = layer.getData();
 
         //fake layer

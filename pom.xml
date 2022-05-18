@@ -172,13 +172,13 @@
     <ucar.repository.url>https://artifacts.unidata.ucar.edu/repository/unidata-releases</ucar.repository.url>
 
     <!-- associated projects dependencies -->
-    <geoapi.version>4.0-SNAPSHOT</geoapi.version>
-    <sis.version>2.0-SNAPSHOT</sis.version>
+    <geoapi.version>4.0-M19</geoapi.version>
+    <sis.version>2.0-M0115</sis.version>
     <sis.build.helper.version>1.1</sis.build.helper.version>
     <sis.non-free.version>1.1</sis.non-free.version>
 
     <!-- third party dependencies versions -->
-    <batik.version>1.8</batik.version>
+    <batik.version>1.14</batik.version>
     <commons-beanutils.version>1.9.4</commons-beanutils.version>
     <commons-dbcp.version>1.4</commons-dbcp.version>
     <commons-logging.version>1.2</commons-logging.version>
@@ -396,6 +396,11 @@
       <dependency>
         <groupId>org.apache.xmlgraphics</groupId>
         <artifactId>batik-codec</artifactId>
+        <version>${batik.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.xmlgraphics</groupId>
+        <artifactId>batik-script</artifactId>
         <version>${batik.version}</version>
       </dependency>
 

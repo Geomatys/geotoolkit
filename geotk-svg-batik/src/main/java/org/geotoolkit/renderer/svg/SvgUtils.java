@@ -27,6 +27,8 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.net.URI;
 import java.util.Map.Entry;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.DocumentLoader;
 import org.apache.batik.bridge.GVTBuilder;
@@ -41,6 +43,7 @@ import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.TranscodingHints;
 import org.apache.batik.transcoder.TranscodingHints.Key;
 import org.apache.batik.util.XMLResourceDescriptor;
+import org.apache.sis.storage.Resource;
 import org.w3c.dom.Document;
 import org.w3c.dom.svg.SVGDocument;
 import org.xml.sax.XMLReader;
@@ -52,6 +55,14 @@ import org.xml.sax.XMLReader;
  */
 public class SvgUtils {
 
+    static {
+        try {
+            //force class loading in main classloader, batik do not load properly with stream thread pool
+            Resource.class.getClassLoader().loadClass("org.apache.batik.bridge.svg12.SVG12BridgeContext");
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger("org.geotoolkit.renderer.svg").log(Level.SEVERE, null, ex);
+        }
+    }
     private SvgUtils(){}
 
     public static Image read(final Document svgdom, final Dimension dim) throws TranscoderException, IOException{

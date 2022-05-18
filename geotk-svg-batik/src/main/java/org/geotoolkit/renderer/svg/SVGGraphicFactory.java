@@ -22,8 +22,11 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -62,6 +65,16 @@ public class SVGGraphicFactory implements ExternalGraphicFactory {
                 stream = SVGGraphicFactory.class.getResourceAsStream(uri.toString());
             }catch(Exception e){
                 Logger.getLogger("org.geotoolkit.renderer.svg").log(Level.WARNING, e.getMessage(), e);
+            }
+        }
+        final String strUri = uri.toString();
+        if (stream == null && strUri.toLowerCase().startsWith("data:")) {
+            final int bidx = strUri.indexOf(";base64,");
+            if (bidx > 0) {
+                final String mimetype = strUri.substring(5, bidx);
+                final String base64 = strUri.substring(bidx + 8);
+                final byte[] datas = Base64.getDecoder().decode(base64);
+                stream = new ByteArrayInputStream(datas);
             }
         }
 

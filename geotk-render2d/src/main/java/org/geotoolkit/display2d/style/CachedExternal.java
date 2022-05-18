@@ -93,7 +93,12 @@ public class CachedExternal extends Cache<ExternalGraphic>{
             if(online != null && online.getLinkage() != null){
 
                 final URI uri = styleElement.getOnlineResource().getLinkage();
-                isSVG = uri != null && uri.toString().toLowerCase().endsWith(".svg");
+                if (uri != null) {
+                    final String uristr = uri.toString().toLowerCase();
+                    isSVG = uristr.endsWith(".svg") || uristr.startsWith("data:image/svg+xml;base64");
+                } else {
+                    isSVG = false;
+                }
 
                 if (!isSVG) {
                     try (InputStream in = IOUtilities.open(uri)){
