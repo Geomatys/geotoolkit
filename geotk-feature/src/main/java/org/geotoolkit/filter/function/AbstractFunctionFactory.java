@@ -11,7 +11,6 @@ import java.util.Map;
 import java.util.Set;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.util.SimpleInternationalString;
-import org.geotoolkit.internal.simple.SimpleParameterDescriptor;
 import org.opengis.filter.Expression;
 import org.opengis.filter.Literal;
 import org.opengis.parameter.GeneralParameterDescriptor;
@@ -101,12 +100,12 @@ public class AbstractFunctionFactory implements FunctionFactory{
             description = new SimpleInternationalString(clazz.getSimpleName());
         }
 
+        final ParameterBuilder params = new ParameterBuilder();
         for(int i=0;;i++){
             try {
                 final Short key = (Short) Bundle.Keys.class.getDeclaredField(baseName+"_arg"+i).get(null);
                 final InternationalString argDesc = Bundle.formatInternational(key);
 
-                final ParameterBuilder params = new ParameterBuilder();
                 params.addName("arg"+i);
                 params.setRemarks(argDesc);
                 args.add(params.create(Object.class, null));
@@ -120,7 +119,7 @@ public class AbstractFunctionFactory implements FunctionFactory{
                 final Constructor construct = clazz.getConstructors()[0];
                 final GeneralParameterDescriptor[] cstParams = new GeneralParameterDescriptor[construct.getParameterTypes().length];
                 for(int i=0;i<cstParams.length;i++){
-                    args.add(new SimpleParameterDescriptor(Object.class, "", "param"+(i+1)));
+                    args.add(params.addName("param"+(i+1)).create(Object.class, null));
                 }
             }catch(Exception ex){
             }catch(Error ex){
@@ -130,7 +129,6 @@ public class AbstractFunctionFactory implements FunctionFactory{
         final GeneralParameterDescriptor[] cstParams = new GeneralParameterDescriptor[args.size()];
         args.toArray(cstParams);
 
-        final ParameterBuilder params = new ParameterBuilder();
         params.addName(name);
         params.setRemarks(description);
         try{
