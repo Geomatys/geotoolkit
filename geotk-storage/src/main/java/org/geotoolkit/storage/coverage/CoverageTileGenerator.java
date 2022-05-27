@@ -49,6 +49,8 @@ import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.NoSuchDataException;
+import org.apache.sis.storage.tiling.Tile;
+import org.apache.sis.storage.tiling.TileStatus;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.image.BufferedImages;
@@ -61,12 +63,10 @@ import org.geotoolkit.storage.memory.InMemoryTiledGridCoverageResource;
 import org.geotoolkit.storage.multires.AbstractTileGenerator;
 import org.geotoolkit.storage.multires.DefaultTileMatrixSet;
 import org.geotoolkit.storage.multires.EmptyTile;
-import org.apache.sis.storage.tiling.Tile;
 import org.geotoolkit.storage.multires.TileInError;
 import org.geotoolkit.storage.multires.TileMatrices;
 import org.geotoolkit.storage.multires.TileMatrix;
 import org.geotoolkit.storage.multires.TileMatrixSet;
-import org.apache.sis.storage.tiling.TileStatus;
 import org.geotoolkit.storage.multires.WritableTileMatrix;
 import org.geotoolkit.storage.multires.WritableTileMatrixSet;
 import org.geotoolkit.util.NamesExt;
@@ -398,7 +398,7 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
     private Tile replaceIfEmpty(final Tile source, Dimension tileSize) {
         if (source instanceof EmptyTile) {
             try {
-                Object result = baseRendering.get(2, TimeUnit.SECONDS);
+                Object result = baseRendering.get(5, TimeUnit.MINUTES);
                 if (result instanceof RenderedImage) {
                     final RenderedImage base = (RenderedImage) result;
                     final BufferedImage image = BufferedImages.createImage(base, tileSize.width, tileSize.height, null, null);

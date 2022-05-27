@@ -28,15 +28,15 @@ import java.util.logging.Logger;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.image.ComputedImage;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.tiling.Tile;
+import org.apache.sis.storage.tiling.TileStatus;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.math.XMath;
 import org.geotoolkit.storage.DataStores;
-import org.apache.sis.storage.tiling.Tile;
-import org.geotoolkit.storage.multires.TileMatrix;
-import org.apache.sis.storage.tiling.TileStatus;
 import org.geotoolkit.storage.multires.TileMatrices;
+import org.geotoolkit.storage.multires.TileMatrix;
 
 /**
  * Implementation of RenderedImage using GridMosaic.
@@ -230,7 +230,7 @@ public class TileMatrixImage extends ComputedImage implements RenderedImage {
         try {
             DataBuffer buffer = null;
 
-            if (!isTileMissing(matrix, mosaictileX, mosaictileY)) {
+            if (!isTileMissing(tileX, tileY)) {
                 final ImageTile tile = (ImageTile) matrix.getTile(mosaictileX,mosaictileY).orElse(null);
                 //can happen if tile is really missing, the isMissing method is a best effort call
                 if (tile != null) {
@@ -290,7 +290,14 @@ public class TileMatrixImage extends ComputedImage implements RenderedImage {
         return raster;
     }
 
-    private boolean isTileMissing(TileMatrix matrix, long x, long y) throws DataStoreException{
+    /**
+     * @param matrix
+     * @param x tile X coordinate in the image range
+     * @param y tile Y coordinate in the image range
+     * @return
+     * @throws DataStoreException
+     */
+    private boolean isTileMissing(long x, long y) throws DataStoreException{
         final TileStatus status = matrix.getTileStatus(x + gridRange.x, y + gridRange.y);
         return status == TileStatus.MISSING
             || status == TileStatus.OUTSIDE_EXTENT
@@ -317,7 +324,7 @@ public class TileMatrixImage extends ComputedImage implements RenderedImage {
 
             for (int y = Math.max(upperLeftPosition.y, 0); y < Math.min(lowerRightPosition.y + 1, this.getNumYTiles()); y++) {
                 for (int x = Math.max(upperLeftPosition.x, 0); x < Math.min(lowerRightPosition.x + 1, this.getNumXTiles()); x++) {
-                    if (!isTileMissing(matrix, x, y)) {
+                    if (!isTileMissing(x, y)) {
                         Raster tile = getTile(x, y, true, false);
                         if (tile != null) {
                             final Rectangle tileRect = new Rectangle(x * this.getTileWidth(), y * this.getTileHeight(), this.getTileWidth(), this.getTileHeight());

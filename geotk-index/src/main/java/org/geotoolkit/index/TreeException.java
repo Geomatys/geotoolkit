@@ -46,8 +46,7 @@ public class TreeException extends IOException {
      * @param cause
      */
     public TreeException(final String message, final Throwable cause) {
-        super(message);
-        initCause(cause);
+        super(message, cause);
         assert Exceptions.isValidMessage(message) : message;
     }
 
