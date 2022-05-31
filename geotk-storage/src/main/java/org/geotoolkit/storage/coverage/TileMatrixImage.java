@@ -26,8 +26,13 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.image.ComputedImage;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.tiling.Tile;
 import org.apache.sis.storage.tiling.TileStatus;
 import org.apache.sis.util.collection.BackingStoreException;
@@ -92,8 +97,20 @@ public class TileMatrixImage extends ComputedImage implements RenderedImage {
             Tile tile = matrix.anyTile();
             if (tile instanceof ImageTile) {
                 sample = ((ImageTile) tile).getImage();
+            } else if (tile != null) {
+                final Resource resource = tile.getResource();
+                if (resource instanceof GridCoverageResource gcr) {
+                    final GridGeometry gridGeometry = gcr.getGridGeometry();
+                    final GridExtent extent = gridGeometry.getExtent();
+                    final long[] low = extent.getLow().getCoordinateValues();
+                    final GridExtent subExtent = new GridExtent(null, low, low, true);
+                    GridCoverage coverage = gcr.read(gridGeometry.derive().subgrid(subExtent).build());
+                    sample = coverage.render(null);
+                } else {
+                    throw new DataStoreException("TileMatrix does not contain a coverage");
+                }
             } else {
-                throw new DataStoreException("Mosaic does not contain images");
+                throw new DataStoreException("TileMatrix does not contain a coverage");
             }
         } catch (DataStoreException | IOException ex) {
             if (sampleDimensions != null) {
@@ -115,7 +132,8 @@ public class TileMatrixImage extends ComputedImage implements RenderedImage {
             Arrays.fill(fillPixel, Double.NaN);
         }
 
-        final SampleModel sm = sample.getSampleModel();
+        final Dimension tileSize = matrix.getTileSize();
+        final SampleModel sm = sample.getSampleModel().createCompatibleSampleModel(tileSize.width, tileSize.height);
         final ColorModel cm = sample.getColorModel();
         final Raster rm = sample.getTile(sample.getMinTileX(), sample.getMinTileY());
         return new TileMatrixImage(matrix, gridRange, sm, cm, rm, fillPixel);
@@ -231,10 +249,10 @@ public class TileMatrixImage extends ComputedImage implements RenderedImage {
             DataBuffer buffer = null;
 
             if (!isTileMissing(tileX, tileY)) {
-                final ImageTile tile = (ImageTile) matrix.getTile(mosaictileX,mosaictileY).orElse(null);
-                //can happen if tile is really missing, the isMissing method is a best effort call
-                if (tile != null) {
-                    final RenderedImage image = tile.getImage();
+                final Tile tile = matrix.getTile(mosaictileX,mosaictileY).orElse(null);
+                //can be null if tile is really missing, the isMissing method is a best effort call
+                if (tile instanceof ImageTile imgtile) {
+                    final RenderedImage image = imgtile.getImage();
                     Raster tileRaster;
                     if (image instanceof BufferedImage) {
                         tileRaster = ((BufferedImage) image).getRaster();
@@ -247,6 +265,24 @@ public class TileMatrixImage extends ComputedImage implements RenderedImage {
                         throw new BackingStoreException("Fix mosaic implementation " + matrix.getClass().getName() + " " + ex.getMessage(), ex);
                     }
                     buffer = tileRaster.getDataBuffer();
+                } else if (tile != null) {
+                    final Resource resource = tile.getResource();
+                    if (resource instanceof GridCoverageResource gcr) {
+                        GridCoverage coverage = gcr.read(null);
+                        RenderedImage image = coverage.render(null);
+                        Raster tileRaster;
+                        if (image.getNumXTiles() == 1 && image.getNumYTiles() == 1) {
+                            tileRaster = image.getTile(image.getMinTileX(), image.getMinTileY());
+                        } else {
+                            tileRaster = image.getData();
+                        }
+                        try {
+                            tileRaster = BufferedImages.makeConform(tileRaster, rasterModel);
+                        } catch (ImagingOpException ex) {
+                            throw new BackingStoreException("Fix mosaic implementation " + matrix.getClass().getName() + " " + ex.getMessage(), ex);
+                        }
+                        buffer = tileRaster.getDataBuffer();
+                    }
                 }
             }
 
