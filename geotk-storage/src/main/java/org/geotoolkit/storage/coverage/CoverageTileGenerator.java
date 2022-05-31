@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -52,6 +53,7 @@ import org.apache.sis.storage.NoSuchDataException;
 import org.apache.sis.storage.tiling.Tile;
 import org.apache.sis.storage.tiling.TileStatus;
 import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.Utilities;
 import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.interpolation.InterpolationCase;
@@ -92,6 +94,7 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
     private boolean coverageIsHomogeneous = true;
     private boolean skipExistingTiles = false;
     private boolean generateFromSource = false;
+    private boolean alwaysGenerateUsingLowerLevel = false;
 
     public CoverageTileGenerator(GridCoverageResource resource) throws DataStoreException {
         ArgumentChecks.ensureNonNull("resource", resource);
@@ -184,6 +187,24 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
      */
     public boolean isGenerateFromSource() {
         return generateFromSource;
+    }
+
+    /**
+     * Set to true to always generate tiles using previously generated level
+     * when possible otherwise original resource may still be used on border tiles
+     * to generate complete tiles.
+     * This flag has not effect when generateFromSource flag is active or if resource
+     * is not homogeneous.
+     * This flag may produce partially filled tiles at upper levels.
+     *
+     * @param alwaysGnerateUsingLowerLevel
+     */
+    public void setAlwaysGenerateUsingLowerLevel(boolean alwaysGnerateUsingLowerLevel) {
+        this.alwaysGenerateUsingLowerLevel = alwaysGnerateUsingLowerLevel;
+    }
+
+    public boolean isAlwaysGenerateUsingLowerLevel() {
+        return alwaysGenerateUsingLowerLevel;
     }
 
     private static double getEmptyValue(SampleDimension dim){
@@ -317,16 +338,34 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
                     r.setSampleDimensions(resourceCenter.getSampleDimensions());
                     r.getTileMatrixSets().add(pm);
 
-                    //we must still use the original resource for generation because
-                    //lower level tiles may not be sufficient to generate border tiles
-                    final AggregatedCoverageResource aggregated = new AggregatedCoverageResource();
-                    aggregated.setMode(AggregatedCoverageResource.Mode.ORDER);
-                    aggregated.add(r);
-                    aggregated.add(this.resource);
-                    aggregated.setInterpolation(interpolation.toSis());
+                    if (alwaysGenerateUsingLowerLevel) {
+                        resourceCenter = r;
+                        resourceBorder = r;
+                    } else {
+                        //we may still have to use the original resource for generation because
+                        //lower level tiles may not be sufficient to generate border tiles
+                        final AggregatedCoverageResource aggregated = new AggregatedCoverageResource();
+                        aggregated.setMode(AggregatedCoverageResource.Mode.ORDER);
+                        aggregated.add(r);
+                        aggregated.add(this.resource);
+                        aggregated.setInterpolation(interpolation.toSis());
 
-                    resourceCenter = r;
-                    resourceBorder = aggregated;
+                        resourceCenter = r;
+                        resourceBorder = aggregated;
+
+                        // common case when tiling a data in the same crs and
+                        // matrix envelope equals requested envelope.
+                        // then we can avoid aggregation
+                        Optional<Envelope> cdt = this.resource.getEnvelope();
+                        if (cdt.isPresent() && Utilities.equalsIgnoreMetadata(cdt.get().getCoordinateReferenceSystem(), r.getEnvelope().get().getCoordinateReferenceSystem())) {
+                            Envelope dataEnv = cdt.get();
+                            Envelope genEnv = (env == null) ? r.getEnvelope().get() : env;
+                            if (dataEnv.equals(genEnv)){
+                                resourceCenter = r;
+                                resourceBorder = r;
+                            }
+                        }
+                    }
                 }
             }
         }

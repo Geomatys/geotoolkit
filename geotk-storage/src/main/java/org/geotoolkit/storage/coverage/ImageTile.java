@@ -20,8 +20,8 @@ import java.awt.image.RenderedImage;
 import java.io.IOException;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
-import org.geotoolkit.image.io.XImageIO;
 import org.apache.sis.storage.tiling.Tile;
+import org.geotoolkit.image.io.XImageIO;
 
 /**
  * Expose informations on how to access a tile.
@@ -29,8 +29,9 @@ import org.apache.sis.storage.tiling.Tile;
  * TODO : should be a parent of {@link org.geotoolkit.image.io.mosaic.Tile}.
  *
  * @author Johann Sorel (Geomatys)
- * @module
+ * @deprecated use Tile.getResource to obtain a GridCoverageResource instead
  */
+@Deprecated
 public interface ImageTile extends Tile {
 
     /**
