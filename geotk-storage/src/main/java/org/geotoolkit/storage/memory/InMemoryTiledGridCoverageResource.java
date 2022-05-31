@@ -34,12 +34,14 @@ import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.storage.AbstractGridCoverageResource;
 import org.apache.sis.internal.storage.StoreResource;
+import org.apache.sis.storage.AbstractGridCoverageResource;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.WritableGridCoverageResource;
 import org.apache.sis.storage.event.StoreEvent;
+import org.apache.sis.storage.tiling.Tile;
+import org.apache.sis.storage.tiling.TileStatus;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.storage.coverage.DefaultImageTile;
@@ -50,11 +52,9 @@ import org.geotoolkit.storage.event.ModelEvent;
 import org.geotoolkit.storage.multires.AbstractTileMatrix;
 import org.geotoolkit.storage.multires.AbstractTileMatrixSet;
 import org.geotoolkit.storage.multires.ScaleSortedMap;
-import org.apache.sis.storage.tiling.Tile;
 import org.geotoolkit.storage.multires.TileMatrices;
 import org.geotoolkit.storage.multires.TileMatrix;
 import org.geotoolkit.storage.multires.TileMatrixSet;
-import org.apache.sis.storage.tiling.TileStatus;
 import org.geotoolkit.storage.multires.WritableTileMatrix;
 import org.geotoolkit.storage.multires.WritableTileMatrixSet;
 import org.geotoolkit.storage.multires.WritableTiledResource;
@@ -211,7 +211,7 @@ public class InMemoryTiledGridCoverageResource extends AbstractGridCoverageResou
 
     private final class InMemoryTileMatrix extends AbstractTileMatrix implements WritableTileMatrix {
 
-        private final Map<Point,InMemoryTile> mpTileReference = new HashMap<>();
+        private final Map<Point,Tile> mpTileReference = new HashMap<>();
         private boolean buildPhase = false;
 
         public InMemoryTileMatrix(final GenericName id, WritableTileMatrixSet pyramid, GridGeometry tilingScheme, Dimension tileSize) {
@@ -233,7 +233,7 @@ public class InMemoryTiledGridCoverageResource extends AbstractGridCoverageResou
             return Optional.ofNullable(mpTileReference.get(new Point(Math.toIntExact(indices[0]), Math.toIntExact(indices[1]))));
         }
 
-        public synchronized void setTile(long col, long row, InMemoryTile tile) {
+        public synchronized void setTile(long col, long row, Tile tile) {
             mpTileReference.put(new Point(Math.toIntExact(col), Math.toIntExact(row)), tile);
             if (!buildPhase) {
                 //we are creating object, dont send an event until we are finished.
@@ -257,6 +257,8 @@ public class InMemoryTiledGridCoverageResource extends AbstractGridCoverageResou
         }
 
         private void writeTile(Tile tile) throws DataStoreException {
+            final long tileX = tile.getIndices()[0];
+            final long tileY = tile.getIndices()[1];
             if (tile instanceof ImageTile) {
                 final ImageTile imgTile = (ImageTile) tile;
                 try {
@@ -266,14 +268,15 @@ public class InMemoryTiledGridCoverageResource extends AbstractGridCoverageResou
                     if (tileSize.width < image.getWidth() || tileSize.height < image.getHeight()) {
                         throw new IllegalArgumentException("Uncorrect image size ["+image.getWidth()+","+image.getHeight()+"] expecting size ["+tileSize.width+","+tileSize.height+"]");
                     }
-                    final long tileX = imgTile.getIndices()[0];
-                    final long tileY = imgTile.getIndices()[1];
                     setTile(tileX, tileY, new InMemoryTile(image, 0, imgTile.getIndices()));
                 } catch (IOException ex) {
                     throw new DataStoreException(ex.getMessage(), ex);
                 }
             } else {
-                throw new DataStoreException("Only ImageTile are supported.");
+                //TODO : what should we do ?
+                // - keep the given tile
+                // - copy the tile : tile resource may have a wide range of interfaces, complicated...
+                setTile(tileX, tileY, tile);
             }
         }
 
@@ -289,7 +292,7 @@ public class InMemoryTiledGridCoverageResource extends AbstractGridCoverageResou
                 final long[] high = indicesRanges.getHigh().getCoordinateValues();
                 for (long x = low[0]; x <= high[0]; x++) {
                     for (long y = low[1]; y <= high[1]; y++) {
-                        InMemoryTile previous = mpTileReference.remove(new Point(Math.toIntExact(x), Math.toIntExact(y)));
+                        Tile previous = mpTileReference.remove(new Point(Math.toIntExact(x), Math.toIntExact(y)));
                         if (previous != null) nb++;
                     }
                 }
@@ -299,7 +302,7 @@ public class InMemoryTiledGridCoverageResource extends AbstractGridCoverageResou
 
         @Override
         public Tile anyTile() throws DataStoreException {
-            final Iterator<InMemoryTile> iterator = mpTileReference.values().iterator();
+            final Iterator<Tile> iterator = mpTileReference.values().iterator();
             if (iterator.hasNext()) {
                 return iterator.next();
             }
