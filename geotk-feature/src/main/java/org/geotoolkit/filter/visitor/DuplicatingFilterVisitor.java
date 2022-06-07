@@ -19,27 +19,27 @@ package org.geotoolkit.filter.visitor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.measure.Quantity;
 import javax.measure.quantity.Length;
 import org.apache.sis.internal.filter.FunctionNames;
-
 import org.geotoolkit.filter.FilterFactory2;
 import org.geotoolkit.filter.FilterUtilities;
-
-import org.opengis.filter.Filter;
-import org.opengis.filter.FilterFactory;
-import org.opengis.filter.MatchAction;
-import org.opengis.filter.Expression;
-import org.opengis.filter.Literal;
 import org.opengis.filter.BetweenComparisonOperator;
 import org.opengis.filter.BinaryComparisonOperator;
 import org.opengis.filter.BinarySpatialOperator;
 import org.opengis.filter.ComparisonOperatorName;
 import org.opengis.filter.DistanceOperator;
 import org.opengis.filter.DistanceOperatorName;
+import org.opengis.filter.Expression;
+import org.opengis.filter.Filter;
+import org.opengis.filter.FilterFactory;
 import org.opengis.filter.LikeOperator;
+import org.opengis.filter.Literal;
 import org.opengis.filter.LogicalOperator;
 import org.opengis.filter.LogicalOperatorName;
+import org.opengis.filter.MatchAction;
 import org.opengis.filter.ResourceId;
 import org.opengis.filter.SpatialOperatorName;
 import org.opengis.filter.TemporalOperator;
@@ -203,6 +203,11 @@ public class DuplicatingFilterVisitor extends AbstractVisitor<Object,Object> {
         for (int i=0; i<args.length; i++) {
             args[i] = (Expression) visit(old.get(i));
         }
-        return ff.function(expression.getFunctionName().tip().toString(), args);
+        try {
+            return ff.function(expression.getFunctionName().tip().toString(), args);
+        } catch (IllegalArgumentException ex) {
+            Logger.getLogger("org.geotoolkit.filter").log(Level.FINE, "Could not duplicate expression {0} it will remain untouched.", expression.getFunctionName());
+            return expression;
+        }
     }
 }

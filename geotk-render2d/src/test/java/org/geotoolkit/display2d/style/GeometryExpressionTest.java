@@ -25,6 +25,7 @@ import javax.imageio.ImageIO;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.filter.sqlmm.SQLMM;
 import org.apache.sis.measure.Units;
 import org.apache.sis.portrayal.MapLayer;
 import org.apache.sis.portrayal.MapLayers;
@@ -35,6 +36,7 @@ import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.service.SceneDef;
+import org.geotoolkit.filter.FilterFactory2;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.storage.feature.FeatureStoreUtilities;
@@ -48,7 +50,6 @@ import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Point;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
-import org.geotoolkit.filter.FilterFactory2;
 import org.opengis.filter.Expression;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.style.Fill;
@@ -82,7 +83,7 @@ public class GeometryExpressionTest extends org.geotoolkit.test.TestBase {
         final Feature feature = type.newInstance();
         feature.setPropertyValue("geom", point);
 
-        final Expression geomExp = FF.function("buffer", FF.property("geom"),FF.literal(10));
+        final Expression geomExp = FF.function(SQLMM.ST_Buffer.name(), FF.property("geom"),FF.literal(10));
         final Fill fill = SF.fill(Color.RED);
         final PolygonSymbolizer symbolizer = SF.polygonSymbolizer(
                 "", geomExp, DEFAULT_DESCRIPTION, DEFAULT_UOM, null, fill, DEFAULT_DISPLACEMENT, LITERAL_ZERO_FLOAT);

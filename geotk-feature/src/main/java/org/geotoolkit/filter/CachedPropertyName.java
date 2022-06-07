@@ -17,15 +17,11 @@
 
 package org.geotoolkit.filter;
 
-import java.util.Collections;
-import java.util.List;
-import org.opengis.filter.ValueReference;
-
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.filter.binding.Binding;
 import org.geotoolkit.filter.binding.Bindings;
 import org.opengis.feature.FeatureType;
-import org.opengis.util.ScopedName;
+import org.opengis.filter.ValueReference;
 
 /**
  *
@@ -43,16 +39,6 @@ class CachedPropertyName extends AbstractExpression implements ValueReference<Ob
 
         final Binding fallacc = Bindings.getBinding(clazz,property);
         this.accessor = fallacc;
-    }
-
-    @Override
-    public ScopedName getFunctionName() {
-        return createName("PropertyName");
-    }
-
-    @Override
-    public List getParameters() {
-        return Collections.EMPTY_LIST;
     }
 
     /**

@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.function.Supplier;
 import javax.measure.Unit;
 import org.apache.sis.feature.Features;
+import org.apache.sis.internal.filter.sqlmm.SQLMM;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.measure.Units;
 import org.geotoolkit.feature.FeatureExt;
@@ -37,8 +38,8 @@ import org.opengis.feature.AttributeType;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
-import org.opengis.filter.FilterFactory;
 import org.opengis.filter.Expression;
+import org.opengis.filter.FilterFactory;
 import org.opengis.filter.Literal;
 import org.opengis.style.*;
 
@@ -167,18 +168,18 @@ public class RandomStyleBuilder {
 
             final MutableRule rulePoint = SF.rule(pointSymbol.get());
             rulePoint.setFilter(FF.or(
-                                    FF.equal(FF.function("geometryType", FF.property(type.getName().toString())), FF.literal("Point")),
-                                    FF.equal(FF.function("geometryType", FF.property(type.getName().toString())), FF.literal("MultiPoint"))
+                                    FF.equal(FF.function(SQLMM.ST_GeometryType.name(), FF.property(type.getName().toString())), FF.literal("ST_Point")),
+                                    FF.equal(FF.function(SQLMM.ST_GeometryType.name(), FF.property(type.getName().toString())), FF.literal("ST_MultiPoint"))
                                 ));
             final MutableRule ruleLine = SF.rule(lineSymbol.get());
             ruleLine.setFilter(FF.or(
-                                    FF.equal(FF.function("geometryType", FF.property(type.getName().toString())), FF.literal("LineString")),
-                                    FF.equal(FF.function("geometryType", FF.property(type.getName().toString())), FF.literal("MultiLineString"))
+                                    FF.equal(FF.function(SQLMM.ST_GeometryType.name(), FF.property(type.getName().toString())), FF.literal("ST_LineString")),
+                                    FF.equal(FF.function(SQLMM.ST_GeometryType.name(), FF.property(type.getName().toString())), FF.literal("ST_MultiLineString"))
                                 ));
             final MutableRule rulePolygon = SF.rule(polygonSymbol.get());
             rulePolygon.setFilter(FF.or(
-                                    FF.equal(FF.function("geometryType", FF.property(type.getName().toString())), FF.literal("Polygon")),
-                                    FF.equal(FF.function("geometryType", FF.property(type.getName().toString())), FF.literal("MultiPolygon"))
+                                    FF.equal(FF.function(SQLMM.ST_GeometryType.name(), FF.property(type.getName().toString())), FF.literal("ST_Polygon")),
+                                    FF.equal(FF.function(SQLMM.ST_GeometryType.name(), FF.property(type.getName().toString())), FF.literal("ST_MultiPolygon"))
                                 ));
 
             fts.rules().add(rulePoint);
