@@ -54,7 +54,6 @@ public final class Setup implements SetupService {
      */
     @Override
     public void initialize(final Properties properties, final boolean reinit) {
-        Registry.setDefaultCodecPreferences();
         if (reinit) {
             Registry.registerGeotoolkitServices(JAI.getDefaultInstance().getOperationRegistry());
             initialized = true;

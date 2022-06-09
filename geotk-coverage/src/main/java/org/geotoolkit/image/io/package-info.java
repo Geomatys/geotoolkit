@@ -117,22 +117,6 @@
  * The {@link org.geotoolkit.coverage.io.CoverageIO} class provides higher-level static methods
  * related to {@link org.geotoolkit.coverage.grid.GridCoverage} I/O operations.
  *
- * {@section System initialization}
- * While not mandatory, it is recommended to invoke the following methods at least once before
- * to use the Geotk library. Those methods are not invoked automatically in order to let users
- * control their application configuration.
- * <p>
- * <ol>
- *   <li>Invoke some AWT method first; see {@code setDefaultCodecPreferences()} below for explanation.</li>
- *   <li>{@link org.geotoolkit.image.jai.Registry#setDefaultCodecPreferences()}</li>
- * </ol>
- * <p>
- * <b>Alternative:</b> {@link org.geotoolkit.lang.Setup#initialize(Properties)} performs
- * (among other tasks) all the above tasks except 1.
- * <p>
- * Those methods can be invoked more than once if the set of standard readers available (PNG, TIFF,
- * <i>etc.</i>) is changed.
- *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Antoine Hnawia (IRD)
  * @version 3.20

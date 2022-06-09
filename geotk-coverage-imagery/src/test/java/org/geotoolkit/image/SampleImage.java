@@ -19,7 +19,6 @@ package org.geotoolkit.image;
 
 import java.io.IOException;
 import javax.imageio.ImageIO;
-import javax.imageio.spi.ImageReaderSpi;
 import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
 import java.awt.image.BufferedImage;
@@ -27,7 +26,6 @@ import java.awt.image.SampleModel;
 import java.awt.image.PixelInterleavedSampleModel;
 import java.awt.image.MultiPixelPackedSampleModel;
 
-import org.geotoolkit.image.jai.Registry;
 import org.geotoolkit.test.Commons;
 import org.geotoolkit.test.TestData;
 
@@ -74,13 +72,6 @@ public strictfp enum SampleImage {
      * There is no accurate CRS associated to this image.
      */
     CONTOUR("Contour.png", MultiPixelPackedSampleModel.class, 1089548139L);
-
-    /**
-     * Ensure that the standard PNG reader (the one provided in JSE) is used.
-     */
-    static {
-        Registry.setNativeCodecAllowed("png", ImageReaderSpi.class, false);
-    }
 
     /**
      * The filename to load.
