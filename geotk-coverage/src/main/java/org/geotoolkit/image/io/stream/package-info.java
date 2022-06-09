@@ -20,11 +20,5 @@
  * Services provider for {@linkplain javax.imageio.stream.ImageInputStream image input streams}.
  * This package adds a service provider for creating input stream from URL. The default service
  * provider assumes no {@linkplain java.net.Proxy proxy}.
- *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
- *
- * @since 2.4
- * @module
  */
 package org.geotoolkit.image.io.stream;

@@ -28,6 +28,7 @@ import java.io.InputStreamReader;
 import java.lang.management.ManagementFactory;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import javax.imageio.stream.ImageInputStream;
 
 /**
  * Test Path implementation of ImageStream.
@@ -79,7 +80,8 @@ public class PathImageStreamTest {
 
             //test ImageInputStream
             Assert.assertFalse(isOpened(pid, imageName));
-            try (PathImageInputStream imagein = new PathImageInputStream(imagePath)) {
+            PathImageInputStreamSpi rspi = new PathImageInputStreamSpi();
+            try (ImageInputStream imagein = rspi.createInputStreamInstance(imagePath)) {
                 //should be opened
                 Assert.assertTrue(isOpened(pid, imageName));
             }
@@ -92,8 +94,6 @@ public class PathImageStreamTest {
     /**
      * Execute lsof command with test runner pid and search if fileReference is opened.
      *
-     * @param pid
-     * @param fileReference
      * @return true if opened, false otherwise
      */
     private boolean isOpened(String pid, String fileReference) throws Exception {
@@ -112,6 +112,4 @@ public class PathImageStreamTest {
         }
         return false;
     }
-
-
 }

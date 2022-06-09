@@ -25,6 +25,7 @@ import javax.media.jai.OperationRegistry;
 import javax.media.jai.registry.RIFRegistry;
 import javax.media.jai.RegistryElementDescriptor;
 import java.awt.image.renderable.RenderedImageFactory;
+import javax.imageio.ImageIO;
 
 import org.geotoolkit.image.jai.Registry;
 import org.geotoolkit.internal.SetupService;
@@ -54,7 +55,7 @@ public final class Setup implements SetupService {
      */
     @Override
     public void initialize(final Properties properties, final boolean reinit) {
-        Registry.setDefaultCodecPreferences();
+        ImageIO.setUseCache(false);
         if (reinit) {
             Registry.registerGeotoolkitServices(JAI.getDefaultInstance().getOperationRegistry());
             initialized = true;

@@ -25,7 +25,7 @@ import java.io.OutputStream;
  *
  * @author Quentin Boileau (Geomatys)
  */
-public class ClosableMemoryCacheImageOutputStream  extends MemoryCacheImageOutputStream {
+final class ClosableMemoryCacheImageOutputStream  extends MemoryCacheImageOutputStream {
 
     private OutputStream sourceStream;
 
