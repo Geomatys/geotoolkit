@@ -18,7 +18,7 @@ package org.geotoolkit.image.io.stream;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
+import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -27,7 +27,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.spi.ImageInputStreamSpi;
 import javax.imageio.stream.ImageInputStream;
-import javax.imageio.stream.MemoryCacheImageInputStream;
+import org.apache.sis.internal.storage.io.ChannelImageInputStream;
 
 
 /**
@@ -43,7 +43,7 @@ public class PathImageInputStreamSpi extends ImageInputStreamSpi {
 
     @Override
     public String getDescription(Locale locale) {
-        return "Stream from a NIO Path."; // TODO: localize
+        return "Stream from a NIO Path.";
     }
 
     @Override
@@ -54,27 +54,9 @@ public class PathImageInputStreamSpi extends ImageInputStreamSpi {
                     .log(Level.FINER, "Unable to open ImageInputStream on directory : {0}", path.toAbsolutePath().toString());
             return null;
         }
-
-        if (useCache) {
-            return new ClosingCachedImageStream(Files.newInputStream(path, StandardOpenOption.READ));
-        }
-        return new PathImageInputStream(path);
-    }
-
-    private static class ClosingCachedImageStream extends MemoryCacheImageInputStream {
-
-        private final InputStream in;
-
-        public ClosingCachedImageStream(InputStream in) {
-            super(in);
-            this.in = in;
-        }
-
-        @Override
-        public void close() throws IOException {
-            super.close();
-            in.close();
-        }
-
+        return new ChannelImageInputStream(path.getFileName().toString(),
+                Files.newByteChannel(path, StandardOpenOption.READ),
+                ByteBuffer.allocate(4096),
+                false);
     }
 }
