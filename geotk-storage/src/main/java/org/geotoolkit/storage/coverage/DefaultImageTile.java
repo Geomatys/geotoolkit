@@ -18,14 +18,23 @@ package org.geotoolkit.storage.coverage;
 
 import java.awt.image.RenderedImage;
 import java.io.IOException;
+import java.util.List;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
+import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridCoverage2D;
+import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.storage.AbstractGridCoverageResource;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
+import org.apache.sis.storage.tiling.Tile;
+import org.apache.sis.storage.tiling.TileStatus;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.storage.AbstractResource;
-import org.apache.sis.storage.tiling.TileStatus;
+import org.geotoolkit.storage.multires.TileMatrices;
+import org.geotoolkit.storage.multires.TileMatrix;
 
 /**
  * Default implementation of a TileReference
@@ -33,22 +42,29 @@ import org.apache.sis.storage.tiling.TileStatus;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class DefaultImageTile extends AbstractResource implements ImageTile{
+public class DefaultImageTile extends AbstractGridCoverageResource implements Tile {
 
+    protected final TileMatrix matrix;
     protected final ImageReaderSpi spi;
     protected final Object input;
     protected final int imageIndex;
     protected final long[] position;
 
 
-    public DefaultImageTile(RenderedImage image, long... position) {
+    public DefaultImageTile(TileMatrix matrix, RenderedImage image, long... position) {
+        super(null,false);
+        ArgumentChecks.ensureNonNull("matrix", matrix);
+        this.matrix = matrix;
         this.spi = null;
         this.input = image;
         this.imageIndex = 0;
         this.position = position;
     }
 
-    public DefaultImageTile(ImageReaderSpi spi, Object input, int imageIndex, long... position) {
+    public DefaultImageTile(TileMatrix matrix, ImageReaderSpi spi, Object input, int imageIndex, long... position) {
+        super(null,false);
+        ArgumentChecks.ensureNonNull("matrix", matrix);
+        this.matrix = matrix;
         this.spi = spi;
         this.input = input;
         this.imageIndex = imageIndex;
@@ -65,7 +81,43 @@ public class DefaultImageTile extends AbstractResource implements ImageTile{
         return TileStatus.EXISTS;
     }
 
-    @Override
+    /**
+     * Default implementation check if input is an image.
+     * If not a reader is used to read the image.
+     *
+     * @return RenderedImage
+     * @throws java.io.IOException
+     */
+    public RenderedImage getImage() throws IOException {
+        final Object input = getInput();
+        RenderedImage tileImage = null;
+        if (input instanceof RenderedImage) {
+            tileImage = (RenderedImage) input;
+        } else {
+            ImageReader reader = null;
+            try {
+                reader    = getImageReader();
+                tileImage = reader.read(getImageIndex());
+            } catch (IOException ex) {
+                throw new IOException("Failed to read tile : "+ input +"\n"+ex.getMessage(), ex);
+            } finally {
+                XImageIO.disposeSilently(reader);
+            }
+        }
+        return tileImage;
+    }
+
+    /**
+     * Returns a new reader created by the {@linkplain #getImageReaderSpi provider} and setup for
+     * reading the image from the {@linkplain #getInput input}. This method returns a new reader
+     * on each invocation.
+     * <p>
+     * It is the user's responsibility to close the {@linkplain ImageReader#getInput reader input}
+     * after usage and {@linkplain ImageReader#dispose() dispose} the reader.
+     *
+     * @return An image reader with its {@linkplain ImageReader#getInput input} set.
+     * @throws IOException if the image reader can't be initialized.
+     */
     public ImageReader getImageReader() throws IOException {
         ImageReaderSpi spi = this.spi;
         ImageReader reader = null;
@@ -105,17 +157,36 @@ public class DefaultImageTile extends AbstractResource implements ImageTile{
         return reader;
     }
 
-    @Override
+    /**
+     * Returns the image reader provider (never {@code null}). This is the provider used for
+     * creating the {@linkplain ImageReader image reader} to be used for reading this tile.
+     *
+     * @return The image reader provider.
+     *
+     * @see ImageReaderSpi#createReaderInstance()
+     */
     public ImageReaderSpi getImageReaderSpi() {
         return spi;
     }
 
-    @Override
+    /**
+     * Returns the input to be given to the image reader for reading this tile.
+     *
+     * @return The image input.
+     *
+     * @see ImageReader#setInput
+     */
     public Object getInput() {
         return input;
     }
 
-    @Override
+    /**
+     * Returns the image index to be given to the image reader for reading this tile.
+     *
+     * @return The image index, numbered from 0.
+     *
+     * @see ImageReader#read(int)
+     */
     public int getImageIndex() {
         return imageIndex;
     }
@@ -123,6 +194,27 @@ public class DefaultImageTile extends AbstractResource implements ImageTile{
     @Override
     public long[] getIndices() {
         return position;
+    }
+
+    @Override
+    public GridGeometry getGridGeometry() throws DataStoreException {
+        return TileMatrices.getTileGridGeometry2D(matrix, position);
+    }
+
+    @Override
+    public List<SampleDimension> getSampleDimensions() throws DataStoreException {
+        return read(null).getSampleDimensions();
+    }
+
+    @Override
+    public GridCoverage read(GridGeometry domain, int... range) throws DataStoreException {
+        final RenderedImage image;
+        try {
+            image = getImage();
+        } catch (IOException ex) {
+            throw new DataStoreException(ex.getMessage(), ex);
+        }
+        return new GridCoverage2D(getGridGeometry(), null, image);
     }
 
 }

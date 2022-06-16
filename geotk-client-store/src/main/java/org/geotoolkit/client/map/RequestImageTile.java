@@ -25,10 +25,11 @@ import javax.imageio.stream.ImageInputStream;
 import org.apache.sis.setup.OptionKey;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.StorageConnector;
+import org.apache.sis.storage.tiling.TileStatus;
 import org.geotoolkit.client.Request;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.storage.coverage.DefaultImageTile;
-import org.apache.sis.storage.tiling.TileStatus;
+import org.geotoolkit.storage.multires.TileMatrix;
 
 /**
  *
@@ -36,8 +37,8 @@ import org.apache.sis.storage.tiling.TileStatus;
  */
 public class RequestImageTile extends DefaultImageTile {
 
-    public RequestImageTile(ImageReaderSpi spi, Request input, int imageIndex, long... position) {
-        super(spi, input, imageIndex, position);
+    public RequestImageTile(TileMatrix matrix, ImageReaderSpi spi, Request input, int imageIndex, long... position) {
+        super(matrix, spi, input, imageIndex, position);
     }
 
     @Override

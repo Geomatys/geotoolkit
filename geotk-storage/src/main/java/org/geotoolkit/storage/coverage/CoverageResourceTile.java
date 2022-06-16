@@ -16,11 +16,13 @@
  */
 package org.geotoolkit.storage.coverage;
 
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.tiling.Tile;
 import org.apache.sis.storage.tiling.TileStatus;
+import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
 
 /**
  * A tile which holds a reference to a GridCoverageResource.
@@ -36,6 +38,10 @@ public final class CoverageResourceTile implements Tile {
     public CoverageResourceTile(long[] indices, GridCoverageResource resource) {
         this.indices = indices.clone();
         this.resource = resource;
+    }
+
+    public CoverageResourceTile(long[] indices, GridCoverage coverage) {
+        this(indices, new InMemoryGridCoverageResource(coverage));
     }
 
     @Override

@@ -61,6 +61,10 @@ import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.storage.Resource;
+import org.apache.sis.storage.tiling.Tile;
+import org.apache.sis.storage.tiling.TileStatus;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.collection.BackingStoreException;
@@ -71,12 +75,9 @@ import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.process.Monitor;
 import org.geotoolkit.storage.coverage.DefaultImageTile;
-import org.geotoolkit.storage.coverage.ImageTile;
 import org.geotoolkit.storage.multires.AbstractTileMatrix;
-import org.apache.sis.storage.tiling.Tile;
-import org.geotoolkit.storage.multires.TileMatrices;
-import org.apache.sis.storage.tiling.TileStatus;
 import org.geotoolkit.storage.multires.ImageTileMatrix;
+import org.geotoolkit.storage.multires.TileMatrices;
 import org.geotoolkit.storage.multires.WritableTileMatrix;
 import org.opengis.coverage.PointOutsideCoverageException;
 import org.opengis.util.GenericName;
@@ -421,7 +422,7 @@ public class XMLMosaic implements WritableTileMatrix, ImageTileMatrix {
     @Override
     public Optional<Tile> getTile(long... indices) throws DataStoreException {
 
-        final ImageTile tile;
+        final Tile tile;
         // Before any heavy validation, just ensure that we can represent a point from given row/column
         if (isEmpty(indices[0], indices[1])) {
             tile = createEmptyTile(indices);
@@ -432,16 +433,16 @@ public class XMLMosaic implements WritableTileMatrix, ImageTileMatrix {
                 LOGGER.warning(() -> "Tile is not marked empty, but associated file does not exists: " + Arrays.toString(indices));
                 tile = createEmptyTile(indices);
             } else {
-                tile = new DefaultImageTile(pyramid.getPyramidSet().getReaderSpi(), tileFile, 0, indices);
+                tile = new DefaultImageTile(this, pyramid.getPyramidSet().getReaderSpi(), tileFile, 0, indices);
             }
         }
 
         return Optional.ofNullable(tile);
     }
 
-    private ImageTile createEmptyTile(long... tilePosition) throws DataStoreException {
+    private Tile createEmptyTile(long... tilePosition) throws DataStoreException {
         try {
-            return new DefaultImageTile(
+            return new DefaultImageTile(this,
                     pyramid.getPyramidSet().getReaderSpi(),
                     ImageIO.createImageInputStream(new ByteArrayInputStream(createEmptyTile())),
                     0, tilePosition);
@@ -515,17 +516,16 @@ public class XMLMosaic implements WritableTileMatrix, ImageTileMatrix {
     public void writeTiles(Stream<Tile> tiles) throws DataStoreException {
         try {
             tiles.parallel().forEach((Tile tile) -> {
-                if (tile instanceof ImageTile) {
-                    final ImageTile imgTile = (ImageTile) tile;
-                    try {
-                        writeTile(imgTile.getIndices(), imgTile.getImage());
-                    } catch (IOException ex) {
-                        throw new BackingStoreException(new DataStoreException(ex.getMessage(), ex));
-                    } catch (DataStoreException ex) {
-                        throw new BackingStoreException(ex);
+                try {
+                    final Resource resource = tile.getResource();
+                    if (resource instanceof GridCoverageResource) {
+                        final GridCoverageResource gcr = (GridCoverageResource) resource;
+                        writeTile(tile.getIndices(), gcr.read(null).render(null));
+                    } else {
+                        throw new BackingStoreException(new DataStoreException("Only ImageTile are supported."));
                     }
-                } else {
-                    throw new BackingStoreException(new DataStoreException("Only ImageTile are supported."));
+                } catch (DataStoreException ex) {
+                    throw new BackingStoreException(ex);
                 }
             });
         } catch (BackingStoreException ex) {

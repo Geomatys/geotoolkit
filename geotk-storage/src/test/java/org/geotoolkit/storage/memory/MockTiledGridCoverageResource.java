@@ -19,7 +19,6 @@ package org.geotoolkit.storage.memory;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.image.RenderedImage;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -35,27 +34,28 @@ import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.storage.AbstractGridCoverageResource;
 import org.apache.sis.internal.storage.StoreResource;
+import org.apache.sis.storage.AbstractGridCoverageResource;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.WritableGridCoverageResource;
 import org.apache.sis.storage.event.StoreEvent;
+import org.apache.sis.storage.tiling.Tile;
+import org.apache.sis.storage.tiling.TileStatus;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.storage.coverage.DefaultImageTile;
-import org.geotoolkit.storage.coverage.ImageTile;
 import org.geotoolkit.storage.coverage.TileMatrixSetCoverageReader;
 import org.geotoolkit.storage.event.ContentEvent;
 import org.geotoolkit.storage.event.ModelEvent;
 import org.geotoolkit.storage.multires.AbstractTileMatrix;
 import org.geotoolkit.storage.multires.AbstractTileMatrixSet;
 import org.geotoolkit.storage.multires.ScaleSortedMap;
-import org.apache.sis.storage.tiling.Tile;
 import org.geotoolkit.storage.multires.TileMatrices;
 import org.geotoolkit.storage.multires.TileMatrix;
 import org.geotoolkit.storage.multires.TileMatrixSet;
-import org.apache.sis.storage.tiling.TileStatus;
 import org.geotoolkit.storage.multires.WritableTileMatrix;
 import org.geotoolkit.storage.multires.WritableTileMatrixSet;
 import org.geotoolkit.storage.multires.WritableTiledResource;
@@ -289,21 +289,18 @@ final class MockTiledGridCoverageResource extends AbstractGridCoverageResource
         }
 
         private void writeTile(Tile tile) throws DataStoreException {
-            if (tile instanceof ImageTile) {
-                final ImageTile imgTile = (ImageTile) tile;
-                try {
-                    RenderedImage image = imgTile.getImage();
+            final Resource resource = tile.getResource();
+            if (resource instanceof GridCoverageResource) {
+                final GridCoverageResource imgTile = (GridCoverageResource) resource;
+                RenderedImage image = imgTile.read(null).render(null);
 
-                    final Dimension tileSize = getTileSize();
-                    if (tileSize.width < image.getWidth() || tileSize.height < image.getHeight()) {
-                        throw new IllegalArgumentException("Uncorrect image size ["+image.getWidth()+","+image.getHeight()+"] expecting size ["+tileSize.width+","+tileSize.height+"]");
-                    }
-                    final long tileX = imgTile.getIndices()[0];
-                    final long tileY = imgTile.getIndices()[1];
-                    setTile(tileX, tileY, new InMemoryTile(image, 0, imgTile.getIndices()));
-                } catch (IOException ex) {
-                    throw new DataStoreException(ex.getMessage(), ex);
+                final Dimension tileSize = getTileSize();
+                if (tileSize.width < image.getWidth() || tileSize.height < image.getHeight()) {
+                    throw new IllegalArgumentException("Uncorrect image size ["+image.getWidth()+","+image.getHeight()+"] expecting size ["+tileSize.width+","+tileSize.height+"]");
                 }
+                final long tileX = tile.getIndices()[0];
+                final long tileY = tile.getIndices()[1];
+                setTile(tileX, tileY, new InMemoryTile(this, image, 0, tile.getIndices()));
             } else {
                 throw new DataStoreException("Only ImageTile are supported.");
             }
@@ -341,8 +338,8 @@ final class MockTiledGridCoverageResource extends AbstractGridCoverageResource
 
     private final class InMemoryTile extends DefaultImageTile {
 
-        public InMemoryTile(RenderedImage input, int imageIndex, long[] position) {
-            super(IImageReader.IISpi.INSTANCE, input, imageIndex, position);
+        public InMemoryTile(TileMatrix matrix, RenderedImage input, int imageIndex, long[] position) {
+            super(matrix, IImageReader.IISpi.INSTANCE, input, imageIndex, position);
         }
 
         @Override
