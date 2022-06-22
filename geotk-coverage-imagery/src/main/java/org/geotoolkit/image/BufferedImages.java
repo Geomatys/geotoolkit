@@ -179,7 +179,8 @@ public class BufferedImages extends Static {
                 }
                 final int[] zero = new int[1];
                 //TODO create our own raster factory to avoid JAI
-                raster = RasterFactory.createBandedRaster(buffer, width, height, width, zero, zero, upperLeft);
+                raster = org.apache.sis.internal.coverage.j2d.RasterFactory.createRaster(buffer, width, height, 1, width, zero, zero, upperLeft);
+                //raster = RasterFactory.createBandedRaster(buffer, width, height, width, zero, zero, upperLeft);
             }
 
         } else {

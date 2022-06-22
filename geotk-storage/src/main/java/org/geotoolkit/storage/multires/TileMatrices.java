@@ -49,6 +49,7 @@ import org.apache.sis.util.iso.Names;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
+import org.opengis.metadata.spatial.DimensionNameType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.datum.PixelInCell;
@@ -760,5 +761,46 @@ public final class TileMatrices extends Static {
                     }));
         }
         return stream;
+    }
+
+    /**
+     * Expand gridgeometry, opposite of subsampling.
+     *
+     * @param tilingScheme
+     * @param tileSize
+     * @return
+     */
+    public static GridGeometry surSampling(GridGeometry tilingScheme, long[] tileSize) {
+
+        final GridExtent pixelExtent = surSampling(tilingScheme.getExtent(), tileSize);
+        final int dimension = pixelExtent.getDimension();
+        final double[] scaling = new double[dimension];
+        for (int i = 0; i < dimension; i++) {
+            scaling[i] = 1.0 / tileSize[i];
+        }
+        final MathTransform gridToCrs = MathTransforms.concatenate(
+                MathTransforms.scale(scaling),
+                tilingScheme.getGridToCRS(PixelInCell.CELL_CORNER));
+        return new GridGeometry(pixelExtent, PixelInCell.CELL_CORNER, gridToCrs, tilingScheme.getCoordinateReferenceSystem());
+    }
+
+    /**
+     * Expand GridExtent, opposite of subsampling.
+     *
+     * @param extent
+     * @param tileSize
+     * @return
+     */
+    public static GridExtent surSampling(GridExtent extent, long[] tileSize) {
+
+        final long[] low = extent.getLow().getCoordinateValues();
+        final long[] high = extent.getHigh().getCoordinateValues();
+        final DimensionNameType[] names = new DimensionNameType[low.length];
+        for (int i = 0; i < names.length; i++) {
+            names[i] = extent.getAxisType(i).orElse(null);
+            low[i] *= tileSize[i];
+            high[i] = (high[i] + 1) * tileSize[i];
+        }
+        return new GridExtent(names, low, high, false);
     }
 }
