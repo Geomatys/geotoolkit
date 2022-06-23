@@ -53,7 +53,7 @@ public class Origin {
      * @return The drift origin position, as a 2D UTM position.
      */
     public DirectPosition2D getOrigin2d() {
-        return new DirectPosition2D(origin2d);
+        return new DirectPosition2D((DirectPosition)origin2d);
     }
 
     public DirectPosition getSource() {
