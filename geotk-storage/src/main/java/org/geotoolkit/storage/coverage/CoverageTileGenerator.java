@@ -20,7 +20,6 @@ import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -50,6 +49,7 @@ import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.NoSuchDataException;
+import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.tiling.Tile;
 import org.apache.sis.storage.tiling.TileStatus;
 import org.apache.sis.util.ArgumentChecks;
@@ -219,12 +219,13 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
 
     @Override
     protected boolean isEmpty(Tile tileData) throws DataStoreException {
-        ImageTile it = (ImageTile) tileData;
-        try {
-            final RenderedImage image = it.getImage();
+        final Resource resource = tileData.getResource();
+        if (resource instanceof GridCoverageResource gcr) {
+            final GridCoverage coverage = gcr.read(null);
+            final RenderedImage image = coverage.render(null);
             return BufferedImages.isAll(image, empty);
-        } catch (IOException ex) {
-            throw new DataStoreException(ex.getMessage(), ex);
+        } else {
+            return true;
         }
     }
 
@@ -393,7 +394,7 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
             Arrays.fill(margins, 2);
             coverage = resource.read(gridGeomNd.derive().margin(margins).build());
         } catch (NoSuchDataException ex) {
-            return replaceIfEmpty(TileInError.create(tileCoord, ex), tileSize);
+            return replaceIfEmpty(matrix, TileInError.create(tileCoord, ex), tileSize);
         } catch (DataStoreException ex) {
             throw ex;
         }
@@ -413,13 +414,13 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
         } catch (TransformException ex) {
             throw new DataStoreException(ex.getMessage(), ex);
         } catch (IllegalGridGeometryException ex) {
-            return replaceIfEmpty(TileInError.create(tileCoord, ex), tileSize);
+            return replaceIfEmpty(matrix, TileInError.create(tileCoord, ex), tileSize);
         }
 
         RenderedImage image = coverage.render(null);
         ImageProcessor ip = new ImageProcessor();
         image = ip.prefetch(image, null);
-        return new DefaultImageTile(image, tileCoord);
+        return new DefaultImageTile(matrix, image, tileCoord);
     }
 
     @Override
@@ -434,7 +435,7 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
         return StringUtilities.toStringTree(this.getClass().getSimpleName(), elements);
     }
 
-    private Tile replaceIfEmpty(final Tile source, Dimension tileSize) {
+    private Tile replaceIfEmpty(TileMatrix matrix, final Tile source, Dimension tileSize) {
         if (source instanceof EmptyTile) {
             try {
                 Object result = baseRendering.get(5, TimeUnit.MINUTES);
@@ -442,7 +443,7 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
                     final RenderedImage base = (RenderedImage) result;
                     final BufferedImage image = BufferedImages.createImage(base, tileSize.width, tileSize.height, null, null);
                     BufferedImages.setAll(image, fillValues == null ? empty : fillValues);
-                    return new DefaultImageTile(image, source.getIndices());
+                    return new DefaultImageTile(matrix, image, source.getIndices());
                 } else {
                     if (result instanceof NoSuchDataException) {
                         LOGGER.log(Level.FINE, "Resource is empty, create empty tile from samples informations");
@@ -455,7 +456,7 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
                 double[] arr = fillValues == null ? empty : fillValues;
                 final BufferedImage image = BufferedImages.createImage(tileSize.width, tileSize.height, arr.length, DataBuffer.TYPE_DOUBLE);
                 BufferedImages.setAll(image, fillValues == null ? empty : fillValues);
-                return new DefaultImageTile(image, source.getIndices());
+                return new DefaultImageTile(matrix, image, source.getIndices());
             } catch (Exception e) {
                 LOGGER.log(Level.WARNING, "Cannot emulate empty tile !", e);
             }

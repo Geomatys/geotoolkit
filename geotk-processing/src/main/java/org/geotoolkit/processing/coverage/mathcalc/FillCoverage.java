@@ -205,7 +205,7 @@ public class FillCoverage {
                         crsToGrid.transform(upperLeftGeo, 0, baseCoord, 0, 1);
                         final MathCalcImageEvaluator eval = new MathCalcImageEvaluator(baseCoord, gridToCRS, evaluator.copy());
                         final ProcessedRenderedImage image = new ProcessedRenderedImage(sm, cm, eval, tileSize.width, tileSize.height);
-                        matrix.writeTiles(Stream.of(new DefaultImageTile(image, new long[]{x, y})));
+                        matrix.writeTiles(Stream.of(new DefaultImageTile(matrix, image, new long[]{x, y})));
                     }
                 }
             }

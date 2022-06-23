@@ -39,6 +39,8 @@ import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PixelIterator;
+import org.apache.sis.storage.tiling.Tile;
+import org.apache.sis.util.iso.Names;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.J2DCanvasBuffered;
 import org.geotoolkit.display2d.service.CanvasDef;
@@ -47,8 +49,7 @@ import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.storage.coverage.DefaultImageTile;
-import org.geotoolkit.storage.coverage.ImageTile;
-import org.apache.sis.storage.tiling.Tile;
+import org.geotoolkit.storage.multires.DefiningTileMatrix;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
 
@@ -142,9 +143,9 @@ final class ProgressiveImage {
 
     public Stream<Tile> generate(final int minx, final int maxx, int y, boolean skipEmptyTiles) {
 
-        final Iterator<ImageTile> ite = new Iterator<ImageTile>() {
+        final Iterator<Tile> ite = new Iterator<Tile>() {
 
-            private final LinkedList<ImageTile> tiles = new LinkedList<>();
+            private final LinkedList<Tile> tiles = new LinkedList<>();
             private int x = minx;
 
             @Override
@@ -154,7 +155,7 @@ final class ProgressiveImage {
             }
 
             @Override
-            public ImageTile next() {
+            public Tile next() {
                 findNext();
                 if (tiles.isEmpty()) throw new NoSuchElementException();
                 return tiles.removeFirst();
@@ -177,7 +178,7 @@ final class ProgressiveImage {
      * @param tiles
      * @return number of tiles generated on X axe
      */
-    private int renderTiles(int col, int row, boolean skipEmptyTiles, Collection<ImageTile> tiles) {
+    private int renderTiles(int col, int row, boolean skipEmptyTiles, Collection<Tile> tiles) {
 
         /*
          * clip generated size to grid limits otherwise this causes a large canvas
@@ -251,7 +252,8 @@ final class ProgressiveImage {
                     if (skipEmptyTiles && BufferedImages.isAll(tile, empty)) {
                         //empty tile
                     } else {
-                        tiles.add(new DefaultImageTile(tile, col+x, row+y));
+                        final DefiningTileMatrix dtm = new DefiningTileMatrix(Names.createLocalName(null, null, "temp"), tilingScheme, tileSize);
+                        tiles.add(new DefaultImageTile(dtm, tile, col+x, row+y));
                     }
                 }
             }

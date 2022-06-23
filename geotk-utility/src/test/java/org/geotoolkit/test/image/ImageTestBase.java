@@ -60,20 +60,6 @@ public abstract strictfp class ImageTestBase extends TestBase {
     public static final float SAMPLE_TOLERANCE = 1E-5f;
 
     /**
-     * Invokes {@link org.geotoolkit.image.jai.Registry#setDefaultCodecPreferences()}
-     * in order to improve consistency between different execution of test suites.
-     */
-    static {
-        try {
-            Class.forName("org.geotoolkit.image.jai.Registry")
-                 .getMethod("setDefaultCodecPreferences", (Class<?>[]) null)
-                 .invoke(null, (Object[]) null);
-        } catch (ReflectiveOperationException e) {
-            System.err.println(e);
-        }
-    }
-
-    /**
      * The image being tested.
      */
     protected RenderedImage image;

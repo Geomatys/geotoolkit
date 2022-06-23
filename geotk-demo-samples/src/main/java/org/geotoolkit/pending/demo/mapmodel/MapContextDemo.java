@@ -14,7 +14,6 @@ import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.GridCoverageResource;
-import org.geotoolkit.image.jai.Registry;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.pending.demo.rendering.PortrayalDemo;
@@ -31,10 +30,6 @@ public class MapContextDemo {
 
     public static void main(String[] args) throws Exception{
         Demos.init();
-
-        //preloading parameters --------------
-        Registry.setDefaultCodecPreferences();
-        //------------------------------------
 
 
         //create a map context

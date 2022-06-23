@@ -118,25 +118,25 @@ public abstract class PyramidalModelStoreNDTest <T extends WritableTiledResource
 
             //insert tiles
             mosaic_s0.writeTiles(Stream.of(
-                    new DefaultImageTile(createImage(colors[v][0][0][0]), 0, 0),
-                    new DefaultImageTile(createImage(colors[v][0][1][0]), 1, 0),
-                    new DefaultImageTile(createImage(colors[v][0][0][1]), 0, 1),
-                    new DefaultImageTile(createImage(colors[v][0][1][1]), 1, 1)
+                    new DefaultImageTile(mosaic_s0, createImage(colors[v][0][0][0]), 0, 0),
+                    new DefaultImageTile(mosaic_s0, createImage(colors[v][0][1][0]), 1, 0),
+                    new DefaultImageTile(mosaic_s0, createImage(colors[v][0][0][1]), 0, 1),
+                    new DefaultImageTile(mosaic_s0, createImage(colors[v][0][1][1]), 1, 1)
                 ));
 
             mosaic_s1.writeTiles(Stream.of(
-                    new DefaultImageTile(createImage(colors[v][1][0][0]), 0, 0),
-                    new DefaultImageTile(createImage(colors[v][1][1][0]), 1, 0),
-                    new DefaultImageTile(createImage(colors[v][1][2][0]), 2, 0),
-                    new DefaultImageTile(createImage(colors[v][1][3][0]), 3, 0),
-                    new DefaultImageTile(createImage(colors[v][1][0][1]), 0, 1),
-                    new DefaultImageTile(createImage(colors[v][1][1][1]), 1, 1),
-                    new DefaultImageTile(createImage(colors[v][1][2][1]), 2, 1),
-                    new DefaultImageTile(createImage(colors[v][1][3][1]), 3, 1),
-                    new DefaultImageTile(createImage(colors[v][1][0][2]), 0, 2),
-                    new DefaultImageTile(createImage(colors[v][1][1][2]), 1, 2),
-                    new DefaultImageTile(createImage(colors[v][1][2][2]), 2, 2),
-                    new DefaultImageTile(createImage(colors[v][1][3][2]), 3, 2)
+                    new DefaultImageTile(mosaic_s1, createImage(colors[v][1][0][0]), 0, 0),
+                    new DefaultImageTile(mosaic_s1, createImage(colors[v][1][1][0]), 1, 0),
+                    new DefaultImageTile(mosaic_s1, createImage(colors[v][1][2][0]), 2, 0),
+                    new DefaultImageTile(mosaic_s1, createImage(colors[v][1][3][0]), 3, 0),
+                    new DefaultImageTile(mosaic_s1, createImage(colors[v][1][0][1]), 0, 1),
+                    new DefaultImageTile(mosaic_s1, createImage(colors[v][1][1][1]), 1, 1),
+                    new DefaultImageTile(mosaic_s1, createImage(colors[v][1][2][1]), 2, 1),
+                    new DefaultImageTile(mosaic_s1, createImage(colors[v][1][3][1]), 3, 1),
+                    new DefaultImageTile(mosaic_s1, createImage(colors[v][1][0][2]), 0, 2),
+                    new DefaultImageTile(mosaic_s1, createImage(colors[v][1][1][2]), 1, 2),
+                    new DefaultImageTile(mosaic_s1, createImage(colors[v][1][2][2]), 2, 2),
+                    new DefaultImageTile(mosaic_s1, createImage(colors[v][1][3][2]), 3, 2)
                 ));
         }
 

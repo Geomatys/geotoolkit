@@ -25,7 +25,6 @@ import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.storage.coverage.DefaultImageTile;
-import org.geotoolkit.storage.coverage.ImageTile;
 import org.geotoolkit.storage.multires.TileMatrices;
 import org.geotoolkit.storage.multires.TileMatrix;
 import org.geotoolkit.storage.multires.TileMatrixSet;
@@ -64,13 +63,13 @@ public class CachedTiledGridCoverageResourceTest {
 
         //write a new tile
         final WritableTileMatrix tileMatrix = tileMatrixSet.getTileMatrices().values().iterator().next();
-        final ImageTile it = new DefaultImageTile(new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB), 0, 0);
+        final DefaultImageTile it = new DefaultImageTile(tileMatrix, new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB), 0, 0);
         tileMatrix.writeTiles(Stream.of(it));
         Assert.assertEquals(1, events.size());
         events.clear();
 
         //update existing tile
-        final ImageTile it2 = new DefaultImageTile(new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB), 0, 0);
+        final DefaultImageTile it2 = new DefaultImageTile(tileMatrix, new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB), 0, 0);
         tileMatrix.writeTiles(Stream.of(it2));
         Assert.assertEquals(1, events.size());
         events.clear();
@@ -86,8 +85,8 @@ public class CachedTiledGridCoverageResourceTest {
         final MockTiledGridCoverageResource parent = new MockTiledGridCoverageResource(Names.createLocalName(null, null, "test"));
         final WritableTileMatrixSet tileMatrixSet = parent.createTileMatrixSet(TileMatrices.createWorldWGS84Template(0));
         final WritableTileMatrix tileMatrix = tileMatrixSet.getTileMatrices().values().iterator().next();
-        final ImageTile it0 = new DefaultImageTile(new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB), 0, 0);
-        final ImageTile it1 = new DefaultImageTile(new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB), 1, 0);
+        final DefaultImageTile it0 = new DefaultImageTile(tileMatrix, new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB), 0, 0);
+        final DefaultImageTile it1 = new DefaultImageTile(tileMatrix, new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB), 1, 0);
         tileMatrix.writeTiles(Stream.of(it0, it1));
         Assert.assertEquals(4, parent.localEvents.size());
         Assert.assertEquals(MockTiledGridCoverageResource.EventType.TILE_MATRIX_SET_CREATED, parent.localEvents.get(0).type);
@@ -128,8 +127,8 @@ public class CachedTiledGridCoverageResourceTest {
         final MockTiledGridCoverageResource parent = new MockTiledGridCoverageResource(Names.createLocalName(null, null, "test"));
         final WritableTileMatrixSet tileMatrixSet = parent.createTileMatrixSet(TileMatrices.createWorldWGS84Template(0));
         final WritableTileMatrix tileMatrix = tileMatrixSet.getTileMatrices().values().iterator().next();
-        final ImageTile it0 = new DefaultImageTile(new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB), 0, 0);
-        final ImageTile it1 = new DefaultImageTile(new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB), 1, 0);
+        final DefaultImageTile it0 = new DefaultImageTile(tileMatrix, new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB), 0, 0);
+        final DefaultImageTile it1 = new DefaultImageTile(tileMatrix, new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB), 1, 0);
         tileMatrix.writeTiles(Stream.of(it0, it1));
         Assert.assertEquals(4, parent.localEvents.size());
         Assert.assertEquals(MockTiledGridCoverageResource.EventType.TILE_MATRIX_SET_CREATED, parent.localEvents.get(0).type);

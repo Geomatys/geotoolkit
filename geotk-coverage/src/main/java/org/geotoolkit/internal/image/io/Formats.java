@@ -47,13 +47,7 @@ public final class Formats extends Static {
     }
 
     /**
-     * Returns the image reader provider for the given format name. This method prefers
-     * standard readers instead than JAI ones, except for the TIFF format for which the
-     * JAI reader is preferred.
-     * <p>
-     * <b>NOTE:</b> The rule for preferring a reader are the same ones than the rules implemented
-     * by {@link org.geotoolkit.image.jai.Registry#setDefaultCodecPreferences()}. If the rule in
-     * the above methods are modified, the rules in this method shall be modified accordingly.
+     * Returns the image reader provider for the given format name.
      *
      * @param  format The name of the provider to fetch, or {@code null}.
      * @param  exclude Base class of readers to exclude, or {@code null} if none.
@@ -67,13 +61,7 @@ public final class Formats extends Static {
     }
 
     /**
-     * Returns the image writer provider for the given format name. This method prefers
-     * standard writers instead than JAI ones, except for the TIFF format for which the
-     * JAI writer is preferred.
-     * <p>
-     * <b>NOTE:</b> The rule for preferring a writer are the same ones than the rules implemented
-     * by {@link org.geotoolkit.image.jai.Registry#setDefaultCodecPreferences()}. If the rule in
-     * the above methods are modified, the rules in this method shall be modified accordingly.
+     * Returns the image writer provider for the given format name.
      *
      * @param  format The name of the provider to fetch, or {@code null}.
      * @param  exclude Base class of writers to exclude, or {@code null} if none.
@@ -98,7 +86,6 @@ public final class Formats extends Static {
         }
         format = format.trim();
         T fallback = null;
-        final boolean preferJAI = format.equalsIgnoreCase("TIFF");
         final IIORegistry registry = IIORegistry.getDefaultInstance();
         final Iterator<T> it=orderForClassLoader(registry.getServiceProviders(type, true));
         while (it.hasNext()) {
@@ -107,16 +94,6 @@ public final class Formats extends Static {
                 continue;
             }
             if (ArraysExt.contains(provider.getFormatNames(), format)) {
-                /*
-                 * NOTE: The following method uses the same rule for identifying JAI codecs.
-                 *       If we change the way to identify those codecs here, we should do the
-                 *       same for the other method.
-                 *
-                 * org.geotoolkit.image.jai.Registry.setNativeCodecAllowed(String, Class, boolean)
-                 */
-                if (provider.getClass().getName().startsWith("com.sun.media.") == preferJAI) {
-                    return provider;
-                }
                 if (fallback == null) {
                     fallback = provider;
                 }

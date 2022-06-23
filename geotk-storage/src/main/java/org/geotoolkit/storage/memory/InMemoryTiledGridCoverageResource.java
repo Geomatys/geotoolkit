@@ -18,8 +18,6 @@ package org.geotoolkit.storage.memory;
 
 import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.image.RenderedImage;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -44,8 +42,6 @@ import org.apache.sis.storage.tiling.Tile;
 import org.apache.sis.storage.tiling.TileStatus;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.collection.BackingStoreException;
-import org.geotoolkit.storage.coverage.DefaultImageTile;
-import org.geotoolkit.storage.coverage.ImageTile;
 import org.geotoolkit.storage.coverage.TileMatrixSetCoverageReader;
 import org.geotoolkit.storage.event.ContentEvent;
 import org.geotoolkit.storage.event.ModelEvent;
@@ -259,25 +255,10 @@ public class InMemoryTiledGridCoverageResource extends AbstractGridCoverageResou
         private void writeTile(Tile tile) throws DataStoreException {
             final long tileX = tile.getIndices()[0];
             final long tileY = tile.getIndices()[1];
-            if (tile instanceof ImageTile) {
-                final ImageTile imgTile = (ImageTile) tile;
-                try {
-                    RenderedImage image = imgTile.getImage();
-
-                    final Dimension tileSize = getTileSize();
-                    if (tileSize.width < image.getWidth() || tileSize.height < image.getHeight()) {
-                        throw new IllegalArgumentException("Uncorrect image size ["+image.getWidth()+","+image.getHeight()+"] expecting size ["+tileSize.width+","+tileSize.height+"]");
-                    }
-                    setTile(tileX, tileY, new InMemoryTile(image, 0, imgTile.getIndices()));
-                } catch (IOException ex) {
-                    throw new DataStoreException(ex.getMessage(), ex);
-                }
-            } else {
-                //TODO : what should we do ?
-                // - keep the given tile
-                // - copy the tile : tile resource may have a wide range of interfaces, complicated...
-                setTile(tileX, tileY, tile);
-            }
+            //TODO : what should we do ?
+            // - keep the given tile
+            // - copy the tile : tile resource may have a wide range of interfaces, complicated...
+            setTile(tileX, tileY, tile);
         }
 
         @Override
@@ -307,18 +288,6 @@ public class InMemoryTiledGridCoverageResource extends AbstractGridCoverageResou
                 return iterator.next();
             }
             throw new DataStoreException("No tiles in mosaic");
-        }
-    }
-
-    private final class InMemoryTile extends DefaultImageTile {
-
-        public InMemoryTile(RenderedImage input, int imageIndex, long[] position) {
-            super(IImageReader.IISpi.INSTANCE, input, imageIndex, position);
-        }
-
-        @Override
-        public RenderedImage getInput() {
-            return (RenderedImage) super.getInput();
         }
     }
 

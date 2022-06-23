@@ -194,7 +194,7 @@ public class PyramidReaderTest extends org.geotoolkit.test.TestBase {
             for(int x=0;x<gridSize.width;x++){
                 for(int y=0;y<gridSize.height;y++){
                     BufferedImage image = createRenderedImage(tilePixelSize.width, tilePixelSize.height, sample, sample);
-                    mosaic.writeTiles(Stream.of(new DefaultImageTile(image, x, y)));
+                    mosaic.writeTiles(Stream.of(new DefaultImageTile(mosaic, image, x, y)));
                 }
             }
         }

@@ -34,15 +34,16 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.StorageConnector;
+import org.apache.sis.storage.tiling.Tile;
+import org.apache.sis.storage.tiling.TileStatus;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.security.DefaultClientSecurity;
 import org.geotoolkit.storage.AbstractResource;
-import org.geotoolkit.storage.coverage.ImageTile;
-import org.apache.sis.storage.tiling.Tile;
-import org.apache.sis.storage.tiling.TileStatus;
+import org.geotoolkit.storage.coverage.DefaultImageTile;
+import org.geotoolkit.storage.multires.TileMatrix;
 
 /**
  * TileMatrix Tile resolved by an URI.
@@ -68,7 +69,7 @@ public final class URITile {
         final URITileFormat.Compression compression = tilematrix.getFormat().getCompression();
 
         if (tilematrix.getFormat().isImage()) {
-            return new Image(tilematrix.getFormat().getImageSpi(), path, security, 0, position, compression);
+            return new Image(tilematrix, tilematrix.getFormat().getImageSpi(), path, security, 0, position, compression);
         } else {
             return new DataSet(tilematrix.getFormat().getStoreProvider(), path, security, position, compression);
         }
@@ -77,21 +78,14 @@ public final class URITile {
     /**
      * Image format tile.
      */
-    private static class Image extends AbstractResource implements ImageTile, ResourceOnFileSystem {
+    private static class Image extends DefaultImageTile implements ResourceOnFileSystem {
 
         private final URITileFormat.Compression compression;
-        private final ImageReaderSpi spi;
-        private final URI input;
         private final ClientSecurity security;
-        private final int imageIndex;
-        private final long[] position;
 
-        public Image(ImageReaderSpi spi, URI input, ClientSecurity security, int imageIndex, long[] position, URITileFormat.Compression compression) {
-            this.spi = spi;
-            this.input = input;
+        public Image(TileMatrix matrix, ImageReaderSpi spi, URI input, ClientSecurity security, int imageIndex, long[] position, URITileFormat.Compression compression) {
+            super(matrix, spi, input, imageIndex, position);
             this.security = security;
-            this.imageIndex = imageIndex;
-            this.position = position;
             this.compression = compression;
         }
 
@@ -185,34 +179,9 @@ public final class URITile {
         }
 
         @Override
-        public URI getInput() {
-            return input;
-        }
-
-        @Override
-        public int getImageIndex() {
-            return imageIndex;
-        }
-
-        @Override
-        public long[] getIndices() {
-            return position.clone();
-        }
-
-        @Override
-        public TileStatus getStatus() {
-            return TileStatus.EXISTS;
-        }
-
-        @Override
-        public Resource getResource() throws DataStoreException {
-            return this;
-        }
-
-        @Override
         public Path[] getComponentFiles() throws DataStoreException {
             try {
-                return new Path[]{Paths.get(input)};
+                return new Path[]{Paths.get((URI) input)};
             } catch (FileSystemNotFoundException | SecurityException | IllegalArgumentException ex) {
                 return new Path[0];
             }

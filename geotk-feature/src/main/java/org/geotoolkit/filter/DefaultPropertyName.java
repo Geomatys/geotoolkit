@@ -18,16 +18,12 @@
 package org.geotoolkit.filter;
 
 
-import java.util.Collections;
-import java.util.List;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.feature.builder.PropertyTypeBuilder;
 import org.apache.sis.internal.feature.FeatureExpression;
-import org.apache.sis.internal.filter.FunctionNames;
 import org.apache.sis.referencing.CRS;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.logging.Logging;
-import static org.geotoolkit.filter.AbstractExpression.createName;
 import org.geotoolkit.filter.binding.Binding;
 import org.geotoolkit.filter.binding.Bindings;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
@@ -39,7 +35,6 @@ import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
 import org.opengis.filter.ValueReference;
 import org.opengis.util.FactoryException;
-import org.opengis.util.ScopedName;
 
 /**
  * Immutable property name expression.
@@ -60,16 +55,6 @@ public class DefaultPropertyName extends AbstractExpression implements ValueRefe
         ensureNonNull("property name", property);
         this.property = property;
         isSimple = (property == null || property.isEmpty() || !(property.contains("/") || property.startsWith("*")));
-    }
-
-    @Override
-    public ScopedName getFunctionName() {
-        return createName(FunctionNames.ValueReference);
-    }
-
-    @Override
-    public List getParameters() {
-        return Collections.EMPTY_LIST;
     }
 
     /**

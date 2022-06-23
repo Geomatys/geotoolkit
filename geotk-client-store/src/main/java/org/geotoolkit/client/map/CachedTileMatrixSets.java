@@ -41,13 +41,13 @@ import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.MemoryCacheImageInputStream;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.tiling.Tile;
 import org.apache.sis.util.collection.Cache;
 import org.geotoolkit.client.Client;
 import org.geotoolkit.client.Request;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.security.DefaultClientSecurity;
 import org.geotoolkit.storage.coverage.*;
-import org.apache.sis.storage.tiling.Tile;
 import org.geotoolkit.storage.multires.TileMatrices;
 import org.geotoolkit.storage.multires.TileMatrix;
 import org.geotoolkit.storage.multires.TileMatrixSet;
@@ -135,9 +135,9 @@ public abstract class CachedTileMatrixSets extends DefaultTileMatrixSets {
         }
 
         if (cacheImages) {
-            return Optional.of(new DefaultImageTile(spi, getTileImage(pyramid, mosaic, indices, hints), 0, indices));
+            return Optional.of(new DefaultImageTile(mosaic, spi, getTileImage(pyramid, mosaic, indices, hints), 0, indices));
         } else {
-            return Optional.of(new RequestImageTile(spi, getTileRequest(pyramid, mosaic, indices, hints), 0, indices));
+            return Optional.of(new RequestImageTile(mosaic, spi, getTileRequest(pyramid, mosaic, indices, hints), 0, indices));
         }
     }
 
@@ -417,17 +417,17 @@ public abstract class CachedTileMatrixSets extends DefaultTileMatrixSets {
             return requestPath;
         }
 
-        public ImageTile readNow() throws DataStoreException, IOException{
+        public Tile readNow() throws DataStoreException, IOException{
             //tile should never be null at this point
-            final ImageTile ref = (ImageTile) mosaic.getTile(new long[]{pt[0], pt[1]}).orElse(null);
+            final DefaultImageTile ref = (DefaultImageTile) mosaic.getTile(new long[]{pt[0], pt[1]}).orElse(null);
             if(ref.getInput() instanceof RenderedImage){
                 return ref;
             }
             final RenderedImage img = ref.getImage();
-            return new DefaultImageTile(ref.getImageReaderSpi(), img, 0, ref.getIndices());
+            return new DefaultImageTile(mosaic, ref.getImageReaderSpi(), img, 0, ref.getIndices());
         }
 
-        public ImageTile getTile() {
+        public Tile getTile() {
             if(img == null){
                 try {
                     img = ImageIO.read(new ByteArrayInputStream(buffer.array()));
@@ -440,7 +440,7 @@ public abstract class CachedTileMatrixSets extends DefaultTileMatrixSets {
                     LOGGER.log(Level.WARNING, ex.getMessage(), ex);
                 }
             }
-            return new DefaultImageTile(null, img, 0, pt);
+            return new DefaultImageTile(mosaic, null, img, 0, pt);
         }
     }
 

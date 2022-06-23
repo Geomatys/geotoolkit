@@ -47,8 +47,11 @@ import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
+import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.StorageConnector;
+import org.apache.sis.storage.tiling.Tile;
+import org.apache.sis.storage.tiling.TileStatus;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.image.io.XImageIO;
@@ -57,13 +60,10 @@ import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.Assets;
 import org.geotoolkit.storage.Assets.Data;
 import org.geotoolkit.storage.coverage.BandedCoverageResource;
-import org.geotoolkit.storage.coverage.ImageTile;
 import org.geotoolkit.storage.coverage.WritableBandedCoverageResource;
 import org.geotoolkit.storage.multires.AbstractTileMatrix;
 import org.geotoolkit.storage.multires.ImageTileMatrix;
-import org.apache.sis.storage.tiling.Tile;
 import org.geotoolkit.storage.multires.TileMatrices;
-import org.apache.sis.storage.tiling.TileStatus;
 import org.geotoolkit.storage.multires.WritableTileMatrix;
 import org.geotoolkit.storage.multires.WritableTileMatrixSet;
 import org.opengis.geometry.DirectPosition;
@@ -198,10 +198,11 @@ public class URITileMatrix extends AbstractTileMatrix implements WritableTileMat
             throw new DataStoreException(ex.getMessage(), ex);
         }
 
+        final Resource tileData = tile.getResource();
         if (format.isImage()) {
-            if (tile instanceof ImageTile) {
+            if (tileData instanceof GridCoverageResource gcr) {
                 try {
-                    final RenderedImage image = ((ImageTile) tile).getImage();
+                    final RenderedImage image = gcr.read(null).render(null);
                     final ImageWriterSpi writerSpi = XImageIO.getImageWriterSpi(format.getImageSpi());
                     final ImageWriter writer = writerSpi.createWriterInstance();
 
@@ -233,7 +234,6 @@ public class URITileMatrix extends AbstractTileMatrix implements WritableTileMat
             final StorageConnector connector = new StorageConnector(tempTilePath);
             try (final DataStore store = provider.open(connector)) {
 
-                Resource tileData = tile.getResource();
 
                 if (tileData instanceof Assets) {
                     final Assets source = (Assets) tile;

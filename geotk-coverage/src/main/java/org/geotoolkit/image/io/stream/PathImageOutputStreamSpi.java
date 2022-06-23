@@ -16,12 +16,9 @@
  */
 package org.geotoolkit.image.io.stream;
 
-import javax.imageio.ImageIO;
 import javax.imageio.spi.ImageOutputStreamSpi;
-import javax.imageio.stream.FileCacheImageOutputStream;
 import javax.imageio.stream.FileImageOutputStream;
 import javax.imageio.stream.ImageOutputStream;
-import javax.imageio.stream.MemoryCacheImageOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -39,8 +36,6 @@ import static java.nio.file.StandardOpenOption.WRITE;
  * This SPI doesn't support cache and create ImageOutputStream as wrapper of OutputStream.
  * Wrapped {@link OutputStream} is obtained using {@link Files#newOutputStream(Path, OpenOption...)} with options
  * {@link java.nio.file.StandardOpenOption#CREATE} and {@link java.nio.file.StandardOpenOption#WRITE}
- *
- * @author Quentin Boileau (Geomatys)
  */
 public class PathImageOutputStreamSpi extends ImageOutputStreamSpi {
 
@@ -50,44 +45,31 @@ public class PathImageOutputStreamSpi extends ImageOutputStreamSpi {
 
     @Override
     public String getDescription(Locale locale) {
-        return "Stream from a NIO Path."; // TODO: localize
+        return "Stream from a NIO Path.";
     }
 
     @Override
     public ImageOutputStream createOutputStreamInstance(Object output, boolean useCache, File cacheDir) throws IOException {
-
         final Path outputPath = (Path) output;
-
         try {
-            if (useCache) {
-                //create from path because cacheImageOutputStream implementation use OutputStream.
-                return createFromPath(outputPath, cacheDir);
-            } else {
-                //try to File
-                final File outputFile = outputPath.toFile();
-                //direct file access
-                return new FileImageOutputStream(outputFile);
-            }
+            return new FileImageOutputStream(outputPath.toFile());
         } catch (UnsupportedOperationException ex) {
             // toFile() not supported, use stream
-            return createFromPath(outputPath, cacheDir);
         }
-    }
-
-    /**
-     * Create only cached ImageOutputStream from stream opened with input {@link Path}.
-     *
-     * @param outputPath
-     * @param cacheDir if {@code null}, use in memory implementation, otherwise
-     * @return cached ImageOutputStream with underling OutputStream
-     * @throws IOException
-     */
-    private ImageOutputStream createFromPath(Path outputPath, File cacheDir) throws IOException {
-        OutputStream outputStream = Files.newOutputStream(outputPath, CREATE, WRITE);
-
-        return new ClosableFileCacheImageOutputStream(outputStream, cacheDir);
-
-        //use memory cache if business need it
-        //return new ClosableMemoryCacheImageOutputStream(outputStream);
+        final OutputStream stream = Files.newOutputStream(outputPath, CREATE, WRITE);
+        try {
+            if (useCache) {
+                return new ClosableFileCacheImageOutputStream(stream, cacheDir);
+            } else {
+                return new ClosableMemoryCacheImageOutputStream(stream);
+            }
+        } catch (Exception e) {
+            try {
+                stream.close();
+            } catch (Exception bis) {
+                e.addSuppressed(bis);
+            }
+            throw e;
+        }
     }
 }

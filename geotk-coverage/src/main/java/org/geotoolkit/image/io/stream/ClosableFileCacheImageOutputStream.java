@@ -26,7 +26,7 @@ import java.io.OutputStream;
  *
  * @author Quentin Boileau (Geomatys)
  */
-public class ClosableFileCacheImageOutputStream extends FileCacheImageOutputStream {
+final class ClosableFileCacheImageOutputStream extends FileCacheImageOutputStream {
 
     private OutputStream sourceStream;
 

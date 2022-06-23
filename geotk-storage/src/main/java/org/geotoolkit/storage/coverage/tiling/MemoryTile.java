@@ -14,34 +14,30 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.storage.coverage;
+package org.geotoolkit.storage.coverage.tiling;
 
-import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.tiling.Tile;
 import org.apache.sis.storage.tiling.TileStatus;
-import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
+import org.apache.sis.util.ArgumentChecks;
 
 /**
- * A tile which holds a reference to a GridCoverageResource.
+ * A tile which holds a reference to a Resource.
  * No verifications on the tile indices and it's grid geometry coherency are made.
  *
  * @author Johann Sorel (Geomatys)
  */
-public final class CoverageResourceTile implements Tile {
+public final class MemoryTile implements Tile {
 
     private final long[] indices;
-    private final GridCoverageResource resource;
+    private final Resource resource;
 
-    public CoverageResourceTile(long[] indices, GridCoverageResource resource) {
+    public MemoryTile(long[] indices, Resource resource) {
+        ArgumentChecks.ensureNonNull("indices", indices);
+        ArgumentChecks.ensureNonNull("resource", resource);
         this.indices = indices.clone();
         this.resource = resource;
-    }
-
-    public CoverageResourceTile(long[] indices, GridCoverage coverage) {
-        this(indices, new InMemoryGridCoverageResource(coverage));
     }
 
     @Override
