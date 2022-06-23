@@ -27,7 +27,6 @@ import java.awt.image.ColorModel;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
-import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,7 +48,9 @@ import org.apache.sis.portrayal.MapLayer;
 import org.apache.sis.portrayal.MapLayers;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.NoSuchDataException;
+import org.apache.sis.storage.tiling.Tile;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.ext.dynamicrange.DynamicRangeSymbolizer;
 import org.geotoolkit.display2d.service.CanvasDef;
@@ -62,12 +63,9 @@ import org.geotoolkit.process.ProcessEvent;
 import org.geotoolkit.process.ProcessListener;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.storage.coverage.DefaultImageTile;
-import org.geotoolkit.storage.coverage.ImageTile;
 import org.geotoolkit.storage.memory.InMemoryTiledGridCoverageResource;
 import org.geotoolkit.storage.multires.AbstractTileGenerator;
 import org.geotoolkit.storage.multires.DefaultTileMatrixSet;
-import org.geotoolkit.storage.multires.ImageTileMatrix;
-import org.apache.sis.storage.tiling.Tile;
 import org.geotoolkit.storage.multires.TileMatrices;
 import org.geotoolkit.storage.multires.WritableTileMatrix;
 import org.geotoolkit.storage.multires.WritableTileMatrixSet;
@@ -157,7 +155,7 @@ public class MapContextTileGenerator extends AbstractTileGenerator {
         canvas.setBackground(canvasDef.getBackground());
         try {
             final BufferedImage image = DefaultPortrayalService.portray(canvas, sceneDef);
-            return new DefaultImageTile(image, tileCoord);
+            return new DefaultImageTile(matrix, image, tileCoord);
         } catch (PortrayalException ex) {
             throw new DataStoreException(ex.getMessage(), ex);
         }
@@ -355,12 +353,9 @@ public class MapContextTileGenerator extends AbstractTileGenerator {
 
     @Override
     protected boolean isEmpty(Tile tile) throws DataStoreException {
-        try {
-            RenderedImage img = ((ImageTile) tile).getImage();
-            return BufferedImages.isAll(img, empty);
-        } catch (IOException ex) {
-            throw new DataStoreException(ex.getMessage(),ex);
-        }
+        final GridCoverageResource resource = (GridCoverageResource) tile.getResource();
+        final RenderedImage img = resource.read(null).render(null);
+        return BufferedImages.isAll(img, empty);
     }
 
 }

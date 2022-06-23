@@ -33,6 +33,7 @@ import org.apache.sis.image.Interpolation;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.storage.tiling.Tile;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
@@ -174,12 +175,13 @@ public class CoverageTileGeneratorTest {
             final Dimension gridSize = TileMatrices.getGridSize(tileMatrix);
             for (int y = 0; y < gridSize.height; y++) {
                 for (int x = 0; x < gridSize.width; x++) {
-                    final ImageTile tile = (ImageTile) tileMatrix.getTile(x, y).orElse(null);
+                    final Tile tile = tileMatrix.getTile(x, y).orElse(null);
                     final long[] tileCoord = new long[]{x, y};
                     final GridGeometry tileGridGeom = TileMatrices.getTileGridGeometry2D(tileMatrix, tileCoord);
                     final Envelope tileEnv = tileGridGeom.getEnvelope();
                     if (generateEnvelope == null || generateEnvelope.intersects(tileEnv)) {
-                        final RenderedImage tileImage = tile.getImage();
+                        GridCoverageResource gcr = (GridCoverageResource) tile.getResource();
+                        final RenderedImage tileImage = gcr.read(null).render(null);
                         if (dataEnvelope.contains(tileEnv)) {
                             //all red
                             Assert.assertTrue(BufferedImages.isAll(tileImage, new double[]{255.0, 0.0, 0.0, 255.0}));

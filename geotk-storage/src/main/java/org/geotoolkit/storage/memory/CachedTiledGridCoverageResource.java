@@ -17,8 +17,6 @@
 package org.geotoolkit.storage.memory;
 
 import java.awt.Dimension;
-import java.awt.image.RenderedImage;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -38,8 +36,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
-import javax.imageio.ImageReader;
-import javax.imageio.spi.ImageReaderSpi;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
@@ -54,11 +50,7 @@ import org.apache.sis.storage.event.StoreListener;
 import org.apache.sis.storage.tiling.Tile;
 import org.apache.sis.storage.tiling.TileStatus;
 import org.apache.sis.util.collection.Cache;
-import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.internal.Threads;
-import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.storage.AbstractResource;
-import org.geotoolkit.storage.coverage.ImageTile;
 import org.geotoolkit.storage.coverage.TileMatrixSetCoverageReader;
 import org.geotoolkit.storage.event.ModelEvent;
 import org.geotoolkit.storage.event.StorageListener;
@@ -428,26 +420,12 @@ public class CachedTiledGridCoverageResource <T extends TiledResource & org.apac
                 value = handler.peek();
                 if (value == null || !value.isFinalResult()) {
                     final Tile parentTile = parent.getTile(indices).orElse(null);
-                    if (parentTile instanceof ImageTile pt) {
-                        final RenderedImage image;
-                        try {
-                            image = pt.getImage();
-                        } catch (IOException ex) {
-                            throw new DataStoreException(ex.getMessage(), ex);
-                        }
-                        if (value != null) {
-                            ((CacheImageTile) value).setImage(image, true);
-                        } else {
-                            value = new CacheImageTile(image, indices, true);
-                        }
+                    final Resource resource = parentTile.getResource();
+                    if (resource instanceof GridCoverageResource gcr) {
+                        GridCoverage coverage = gcr.read(null);
+                        value = new CacheTile(coverage, indices);
                     } else {
-                        final Resource resource = parentTile.getResource();
-                        if (resource instanceof GridCoverageResource gcr) {
-                            GridCoverage coverage = gcr.read(null);
-                            value = new CacheCoverageTile(coverage, indices);
-                        } else {
-                            throw new DataStoreException("Unsuppported tile instance "+ parentTile);
-                        }
+                        throw new DataStoreException("Unsuppported tile instance "+ parentTile);
                     }
                 }
             } finally {
@@ -556,100 +534,12 @@ public class CachedTiledGridCoverageResource <T extends TiledResource & org.apac
         }
     }
 
-    private interface CacheTile extends Tile {
-
-        boolean isFinalResult();
-    }
-
-    @Deprecated
-    private final class CacheImageTile extends AbstractResource implements ImageTile, CacheTile{
-
-        private RenderedImage input;
-        private long[] position;
-        private boolean finalResult;
-
-        public CacheImageTile(RenderedImage image, long[] position, boolean finalResult) {
-            this.input = image;
-            this.position = position;
-            this.finalResult = finalResult;
-        }
-
-        private synchronized void setImage(RenderedImage image, boolean finalResult) {
-            if (this.finalResult) return;
-            input = image;
-            this.finalResult = finalResult;
-        }
-
-        @Override
-        public TileStatus getStatus() {
-            return TileStatus.EXISTS;
-        }
-
-        @Override
-        public boolean isFinalResult() {
-            return finalResult;
-        }
-
-        @Override
-        public ImageReader getImageReader() throws IOException {
-            ImageReaderSpi spi = IImageReader.IISpi.INSTANCE;
-            ImageReader reader = null;
-
-            Object in = null;
-            try {
-                in = XImageIO.toSupportedInput(spi, input);
-                reader = spi.createReaderInstance();
-                reader.setInput(in, true, true);
-            } catch (IOException | RuntimeException e) {
-                try {
-                    IOUtilities.close(in);
-                } catch (IOException ex) {
-                    e.addSuppressed(ex);
-                }
-                if (reader != null) {
-                    try {
-                        XImageIO.dispose(reader);
-                    } catch (Exception ex) {
-                        e.addSuppressed(ex);
-                    }
-                }
-                throw e;
-            }
-            return reader;
-        }
-
-        @Override
-        public ImageReaderSpi getImageReaderSpi() {
-            return IImageReader.IISpi.INSTANCE;
-        }
-
-        @Override
-        public RenderedImage getInput() {
-            return input;
-        }
-
-        @Override
-        public int getImageIndex() {
-            return 0;
-        }
-
-        @Override
-        public long[] getIndices() {
-            return position.clone();
-        }
-
-        @Override
-        public Resource getResource() throws DataStoreException {
-            return this;
-        }
-    }
-
-    private final class CacheCoverageTile implements CacheTile{
+    private final class CacheTile implements Tile{
 
         private final long[] position;
         private final InMemoryGridCoverageResource imgcr;
 
-        public CacheCoverageTile(GridCoverage input, long[] position) {
+        public CacheTile(GridCoverage input, long[] position) {
             this.position = position;
             this.imgcr = new InMemoryGridCoverageResource(input);
         }
@@ -669,7 +559,6 @@ public class CachedTiledGridCoverageResource <T extends TiledResource & org.apac
             return imgcr;
         }
 
-        @Override
         public boolean isFinalResult() {
             return true;
         }

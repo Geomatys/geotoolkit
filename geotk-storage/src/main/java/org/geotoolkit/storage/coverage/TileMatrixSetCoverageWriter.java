@@ -40,6 +40,8 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.TransformSeparator;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.storage.tiling.Tile;
+import org.apache.sis.storage.tiling.TileStatus;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.image.BufferedImages;
@@ -49,7 +51,6 @@ import org.geotoolkit.storage.coverage.mosaic.AggregatedCoverageResource;
 import org.geotoolkit.storage.multires.TileMatrices;
 import org.geotoolkit.storage.multires.TileMatrix;
 import org.geotoolkit.storage.multires.TileMatrixSet;
-import org.apache.sis.storage.tiling.TileStatus;
 import org.geotoolkit.storage.multires.TiledResource;
 import org.geotoolkit.storage.multires.WritableTileMatrix;
 import org.opengis.geometry.Envelope;
@@ -316,8 +317,11 @@ public class TileMatrixSetCoverageWriter <T extends TiledResource & org.apache.s
             try {
                 if (matrix.getTileStatus(idx, idy) != TileStatus.MISSING) {
                     try {
-                        ImageTile tile = (ImageTile) matrix.getTile(idx, idy).orElse(null);
-                        currentlyTile = (BufferedImage) tile.getImage();
+                        Tile tile = (Tile) matrix.getTile(idx, idy).orElse(null);
+                        //TODO possible null pointer here, what should we do ?
+                        GridCoverageResource resource = (GridCoverageResource) tile.getResource();
+                        //TODO this wille have to be reviewed, it will work with only a few datastores
+                        currentlyTile = (BufferedImage) resource.read(null).render(null);
                     } catch (Exception ex) {
                         throw new RuntimeException(ex);
                     }
@@ -334,7 +338,7 @@ public class TileMatrixSetCoverageWriter <T extends TiledResource & org.apache.s
                 ic.setInterpolation(interpolation);
                 ic.resample(coverage.render(null), new Rectangle(currentlyTile.getWidth(), currentlyTile.getHeight()), toSource);
                 final RenderedImage tileImage = ic.result();
-                matrix.writeTiles(Stream.of(new DefaultImageTile(tileImage, new long[]{idx, idy})));
+                matrix.writeTiles(Stream.of(new DefaultImageTile(matrix, tileImage, new long[]{idx, idy})));
             } catch (Exception ex) {
                 throw new RuntimeException(ex);
             }

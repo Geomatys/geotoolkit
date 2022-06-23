@@ -17,10 +17,15 @@
 
 package org.geotoolkit.processing;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,6 +35,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.logging.LogManager;
 import javax.measure.Unit;
 import org.apache.sis.internal.util.X364;
 import static org.apache.sis.internal.util.X364.*;
@@ -165,6 +171,18 @@ public final class ProcessConsole {
                             "";
 
     public ProcessConsole() {
+
+        // search for a logging configuration
+        Path p = Paths.get("logging.properties");
+        if (Files.exists(p)) {
+            System.out.println("Loading logging.properties");
+            try (InputStream is = Files.newInputStream(p)) {
+                LogManager.getLogManager().readConfiguration(is);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
         Setup.initialize(null);
         //set default processing registries
         Iterator<ProcessingRegistry> ite = ProcessFinder.getProcessFactories();
@@ -306,8 +324,14 @@ public final class ProcessConsole {
 
         Setup.shutdown();
 
+        print(FOREGROUND_YELLOW,"Process ended, exiting",FOREGROUND_DEFAULT,"\n");
+
         if (failed) {
             System.exit(1);
+        } else {
+            //we force exit, this is necessary because some dependencies
+            //holds thread pools and other kind of structures which prevent exiting.
+            System.exit(0);
         }
 
     }

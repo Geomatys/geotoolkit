@@ -62,6 +62,13 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>org.apache.sis.storage</groupId>
+      <artifactId>sis-storage</artifactId>
+      <version>${sis.version}</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.geotoolkit</groupId>
       <artifactId>geotk-utility</artifactId>
       <version>${project.version}</version>
