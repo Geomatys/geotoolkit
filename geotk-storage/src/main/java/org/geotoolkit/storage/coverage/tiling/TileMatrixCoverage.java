@@ -85,17 +85,18 @@ final class TileMatrixCoverage extends GridCoverage {
         } else {
             userGeometry = gridGeometry.derive().subgrid(userExtent).build();
         }
+        final GridExtent readExtent = userGeometry.getExtent();
 
         //ensure we have a valid 2D image extent
         //will raise an exception if incorrect
-        final int[] xyAxes = userExtent.getSubspaceDimensions(2);
+        final int[] xyAxes = readExtent.getSubspaceDimensions(2);
 
         //convert the requested extent to tile range.
-        final GridExtent absoluteTileExtent = userExtent.subsample(Arrays.stream(tileSize).mapToInt(Math::toIntExact).toArray());
+        final GridExtent absoluteTileExtent = readExtent.subsample(Arrays.stream(tileSize).mapToInt(Math::toIntExact).toArray());
         final GridExtent absolutedReadExtent = TileMatrices.surSampling(absoluteTileExtent, tileSize);
 
         //compute image model and image
-        final Object[] structure = resource.getImageModel(userExtent, range);
+        final Object[] structure = resource.getImageModel(readExtent, range);
         final SampleModel sampleModel = (SampleModel) structure[0];
         final ColorModel colorModel = (ColorModel) structure[1];
         final Raster rasterModel = (Raster) structure[2];
