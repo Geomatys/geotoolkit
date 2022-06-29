@@ -39,7 +39,7 @@ import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessEvent;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessListener;
-import org.geotoolkit.util.Streams;
+import org.geotoolkit.util.BatchCollector;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.lineage.ProcessStep;
 import org.opengis.parameter.ParameterValueGroup;
@@ -168,7 +168,8 @@ public abstract class AbstractTileGenerator implements TileGenerator {
     }
 
     protected void batchWrite(Stream<Tile> source, WritableTileMatrix destination, Consumer<Exception> errorHandler, int batchSize) {
-        Streams.batchExecute(source, (Collection<Tile> t) -> {
+
+        BatchCollector.batchExecute(source, (Collection<Tile> t) -> {
             try {
                 destination.writeTiles(t.stream());
             } catch (DataStoreException ex) {
