@@ -40,7 +40,6 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridOrientation;
 import org.apache.sis.coverage.grid.IllegalGridGeometryException;
 import org.apache.sis.geometry.Envelopes;
-import org.apache.sis.image.ImageProcessor;
 import org.apache.sis.image.Interpolation;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.referencing.CRS;
@@ -61,9 +60,8 @@ import org.geotoolkit.process.ProcessEvent;
 import org.geotoolkit.process.ProcessListener;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.storage.coverage.mosaic.AggregatedCoverageResource;
-import org.geotoolkit.storage.memory.InMemoryTiledGridCoverageResource;
+import org.geotoolkit.storage.coverage.tiling.TileMatrixCoverageResource;
 import org.geotoolkit.storage.multires.AbstractTileGenerator;
-import org.geotoolkit.storage.multires.DefaultTileMatrixSet;
 import org.geotoolkit.storage.multires.EmptyTile;
 import org.geotoolkit.storage.multires.TileInError;
 import org.geotoolkit.storage.multires.TileMatrices;
@@ -71,7 +69,6 @@ import org.geotoolkit.storage.multires.TileMatrix;
 import org.geotoolkit.storage.multires.TileMatrixSet;
 import org.geotoolkit.storage.multires.WritableTileMatrix;
 import org.geotoolkit.storage.multires.WritableTileMatrixSet;
-import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.util.StringUtilities;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -333,11 +330,8 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
 
                 if (!generateFromSource) {
                     //modify context
-                    final DefaultTileMatrixSet.Writable pm = new DefaultTileMatrixSet.Writable(pyramid.getCoordinateReferenceSystem()){};
-                    pm.getMosaicsInternal().insertByScale(tileMatrix);
-                    final InMemoryTiledGridCoverageResource r = new InMemoryTiledGridCoverageResource(NamesExt.create("test"));
-                    r.setSampleDimensions(resourceCenter.getSampleDimensions());
-                    r.getTileMatrixSets().add(pm);
+                    Dimension tileSize = tileMatrix.getTileSize();
+                    final GridCoverageResource r = new TileMatrixCoverageResource(tileMatrix, new long[]{tileSize.width, tileSize.height}, resourceCenter.getSampleDimensions());
 
                     if (alwaysGenerateUsingLowerLevel) {
                         resourceCenter = r;
@@ -418,8 +412,6 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
         }
 
         RenderedImage image = coverage.render(null);
-        ImageProcessor ip = new ImageProcessor();
-        image = ip.prefetch(image, null);
         return new DefaultImageTile(matrix, image, tileCoord);
     }
 
