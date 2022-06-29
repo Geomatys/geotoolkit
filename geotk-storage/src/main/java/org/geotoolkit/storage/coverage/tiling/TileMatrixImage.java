@@ -30,6 +30,8 @@ import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.image.ComputedImage;
+import org.apache.sis.internal.coverage.j2d.FillValues;
+import org.apache.sis.internal.coverage.j2d.TilePlaceholder;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
@@ -96,6 +98,7 @@ final class TileMatrixImage extends ComputedImage implements RenderedImage {
      * Fill pixel values used when creating empty tiles.
      */
     private final double[] fillPixel;
+    private final TilePlaceholder placeHolder;
     /**
      * Image start X
      */
@@ -150,6 +153,14 @@ final class TileMatrixImage extends ComputedImage implements RenderedImage {
         this.minY = minY;
         this.width = width;
         this.height = height;
+
+        if (fillPixel != null) {
+            final Number[] values = new Number[fillPixel.length];
+            for (int i = 0; i < values.length; i++) values[i] = fillPixel[i];
+            placeHolder = TilePlaceholder.filled(sampleModel, new FillValues(sampleModel, values, true));
+        } else {
+            placeHolder = TilePlaceholder.empty(sampleModel);
+        }
     }
 
     /**
@@ -294,8 +305,7 @@ final class TileMatrixImage extends ComputedImage implements RenderedImage {
             boolean isEmpty = false;
             if (!nullable && buffer == null) {
                 //create an empty buffer
-                buffer = getSampleModel().createDataBuffer();
-                isEmpty = true;
+                return placeHolder.create(new Point(rX, rY));
             }
 
             if (buffer != null) {
@@ -319,9 +329,7 @@ final class TileMatrixImage extends ComputedImage implements RenderedImage {
 
         if (raster == null && !nullable) {
             //create an empty buffer
-            final DataBuffer buffer = getSampleModel().createDataBuffer();
-            raster = Raster.createWritableRaster(getSampleModel(), buffer, new Point(rX, rY));
-            BufferedImages.setAll((WritableRaster) raster, fillPixel);
+            return placeHolder.create(new Point(rX, rY));
         }
 
         return raster;
