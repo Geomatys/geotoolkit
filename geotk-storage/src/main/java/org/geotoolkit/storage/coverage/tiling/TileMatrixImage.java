@@ -271,8 +271,8 @@ final class TileMatrixImage extends ComputedImage implements RenderedImage {
         matrixtileIdx[xAxisIndex] = tileX;
         matrixtileIdx[yAxisIndex] = tileY;
 
-        final int rX = minX + tileX * this.getTileWidth();
-        final int rY = minY + tileY * this.getTileHeight();
+        final int rX = minX + (tileX-getMinTileX()) * this.getTileWidth();
+        final int rY = minY + (tileY-getMinTileY()) * this.getTileHeight();
 
         Raster raster = null;
         try {
