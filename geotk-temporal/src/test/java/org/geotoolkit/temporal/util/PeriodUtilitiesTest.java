@@ -163,7 +163,8 @@ public class PeriodUtilitiesTest extends org.geotoolkit.test.TestBase {
 
 
 
-        expResult = "2004-01-28T00:00:00Z/2004-02-25T00:00:00Z/P1W,2004-02-25T00:00:00Z/2004-03-20T00:00:00Z/P1W1D";
+        //expResult = "2004-01-28T00:00:00Z/2004-02-25T00:00:00Z/P1W,2004-02-25T00:00:00Z/2004-03-20T00:00:00Z/P1W1D";
+        expResult = "2004-01-28T00:00:00Z/2004-02-25T00:00:00Z/P1W,2004-03-04T00:00:00Z/2004-03-20T00:00:00Z/P1W1D";
         result = instance.getDatesRespresentation(dates);
         System.out.println("expected =" + expResult + '\n' +
                            "result   =" + result);
@@ -397,8 +398,16 @@ public class PeriodUtilitiesTest extends org.geotoolkit.test.TestBase {
 
 
 
-
+        // old format with redundance in end_period / start_period
         periods = "2004-01-28T00:00:00Z/2004-02-25T00:00:00Z/P1W,2004-02-25T00:00:00Z/2004-03-20T00:00:00Z/P1W1D";
+        result = instance.getDatesFromPeriodDescription(periods);
+        System.out.println("expected =" + expResult + '\n' +
+                           "result   =" + result);
+        assertEquals(expResult, result);
+
+        // new format with no redundance
+        periods =  "2004-01-28T00:00:00Z/2004-02-25T00:00:00Z/P1W,2004-03-04T00:00:00Z/2004-03-20T00:00:00Z/P1W1D";
+
         result = instance.getDatesFromPeriodDescription(periods);
         System.out.println("expected =" + expResult + '\n' +
                            "result   =" + result);

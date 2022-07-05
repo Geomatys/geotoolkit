@@ -112,13 +112,14 @@ public class PeriodUtilities {
                     }
                     response.append(getPeriodDescription(dates.subSet(first, d), previousGap)).append(',');
                     nbDataInGap = 1;
+                    first = d;
                 } else {
                     if (nbDataInGap > 0) {
                         dateFormat.format(previousDate, response, new FieldPosition(0)).append(',');
                         nbDataInGap = 1;
                     }
+                    first = previousDate;
                 }
-                first = previousDate;
 
             } else {
                 nbDataInGap++;
