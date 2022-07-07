@@ -321,7 +321,7 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
                         })
                         .filter(this::emptyFilter);
 
-                batchWrite(stream, tileMatrix, listener == null ? null : err -> listener.progressing(new ProcessEvent(DUMMY, "Error while writing tile batch", progress.get(), err)), 200);
+                streamWrite(stream, tileMatrix, listener == null ? null : err -> listener.progressing(new ProcessEvent(DUMMY, "Error while writing tile batch", progress.get(), err)));
 
                 long v = al.get();
                 if (listener != null) {

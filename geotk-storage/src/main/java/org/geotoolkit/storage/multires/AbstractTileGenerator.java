@@ -17,7 +17,6 @@
 package org.geotoolkit.storage.multires;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
@@ -39,7 +38,6 @@ import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessEvent;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessListener;
-import org.geotoolkit.util.BatchCollector;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.lineage.ProcessStep;
 import org.opengis.parameter.ParameterValueGroup;
@@ -157,7 +155,7 @@ public abstract class AbstractTileGenerator implements TileGenerator {
                         })
                         .filter(this::emptyFilter);
 
-                batchWrite(stream, tileMatrix, listener == null ? null : err -> listener.progressing(new ProcessEvent(DUMMY, "Error while writing tile batch", (float) (( ((double)al.get())/((double)total) )*100.0))), 200);
+                streamWrite(stream, tileMatrix, listener == null ? null : err -> listener.progressing(new ProcessEvent(DUMMY, "Error while writing tile batch", (float) (( ((double)al.get())/((double)total) )*100.0))));
 
                 long v = al.get();
                 if (listener != null) {
@@ -167,16 +165,14 @@ public abstract class AbstractTileGenerator implements TileGenerator {
         }
     }
 
-    protected void batchWrite(Stream<Tile> source, WritableTileMatrix destination, Consumer<Exception> errorHandler, int batchSize) {
+    protected void streamWrite(Stream<Tile> source, WritableTileMatrix destination, Consumer<Exception> errorHandler) {
 
-        BatchCollector.batchExecute(source, (Collection<Tile> t) -> {
-            try {
-                destination.writeTiles(t.stream());
-            } catch (DataStoreException ex) {
-                LOGGER.log(Level.WARNING, "Failed to write tile batch", ex);
-                if (errorHandler != null) errorHandler.accept(ex);
-            }
-        }, batchSize);
+        try {
+            destination.writeTiles(source.parallel());
+        } catch (DataStoreException ex) {
+            LOGGER.log(Level.WARNING, "Failed to write tile batch", ex);
+            if (errorHandler != null) errorHandler.accept(ex);
+        }
     }
 
     // TODO: we should be able to simplify this if we transmit correctly empty tiles and tiles in error.
