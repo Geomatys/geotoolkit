@@ -32,6 +32,8 @@ import org.apache.commons.compress.compressors.lz4.FramedLZ4CompressorInputStrea
 import org.apache.sis.internal.storage.ResourceOnFileSystem;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
+import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.StorageConnector;
 import org.apache.sis.storage.tiling.Tile;
@@ -42,7 +44,9 @@ import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.security.DefaultClientSecurity;
 import org.geotoolkit.storage.AbstractResource;
+import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.coverage.DefaultImageTile;
+import org.geotoolkit.storage.multires.TileFormat;
 import org.geotoolkit.storage.multires.TileMatrix;
 
 /**
@@ -51,6 +55,11 @@ import org.geotoolkit.storage.multires.TileMatrix;
  * @author Johann Sorel (Geomatys)
  */
 public final class URITile {
+
+    private static final DataStoreProvider GEOTIFFPROVIDER;
+    static {
+        GEOTIFFPROVIDER = DataStores.getProviderById("GeoTIFF");
+    }
 
     private URITile(){}
 
@@ -68,7 +77,18 @@ public final class URITile {
         ArgumentChecks.ensureNonNull("security", security);
         final URITileFormat.Compression compression = tilematrix.getFormat().getCompression();
 
-        if (tilematrix.getFormat().isImage()) {
+        URITileFormat format = tilematrix.getFormat();
+        if (format.isImage()) {
+            if (GEOTIFFPROVIDER != null
+              && "image/tiff".equalsIgnoreCase(format.getMimeType())
+              && TileFormat.Compression.NONE.equals(compression)
+              && security == DefaultClientSecurity.NO_SECURITY
+              && tilematrix.toPath(path) != null) {
+                //if we are using a tiff image format, with no compression or security and on local file system
+                //use apache sis geotiff provider instead
+                return new DataSet(GEOTIFFPROVIDER, path, security, position, compression);
+            }
+
             return new Image(tilematrix, tilematrix.getFormat().getImageSpi(), path, security, 0, position, compression);
         } else {
             return new DataSet(tilematrix.getFormat().getStoreProvider(), path, security, position, compression);
@@ -230,7 +250,13 @@ public final class URITile {
         public Resource getResource() throws DataStoreException {
             //TODO security is ignored here, how to transmit security to the tile datastore ?
             final StorageConnector sc = new StorageConnector(input);
-            return provider.open(sc);
+            Resource resource = provider.open(sc);
+            //providers are often aggregates, see if we can find a coverage or featureset
+            Resource candidate = DataStores.flatten(resource, true, GridCoverageResource.class).stream().findFirst().orElse(null);
+            if (candidate != null) return candidate;
+            candidate = DataStores.flatten(resource, true, FeatureSet.class).stream().findFirst().orElse(null);
+            if (candidate != null) return candidate;
+            return resource;
         }
     }
 
