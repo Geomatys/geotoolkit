@@ -51,6 +51,7 @@ import org.geotoolkit.processing.util.converter.StringToFeatureCollectionConvert
 import org.geotoolkit.processing.util.converter.StringToGeometryConverter;
 import org.geotoolkit.processing.util.converter.StringToMapConverter;
 import org.geotoolkit.processing.util.converter.StringToSortByConverter;
+import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.geotoolkit.util.StringUtilities;
 import org.opengis.metadata.Identifier;
 import org.opengis.parameter.GeneralParameterDescriptor;
@@ -87,9 +88,12 @@ public final class ProcessConsole {
 
     private final ProcessListener consoleAdapter = new ProcessListener() {
 
+        private long startTimeMs;
+
         @Override
         public void started(final ProcessEvent event) {
             printEvent(event, FOREGROUND_DEFAULT.sequence());
+            startTimeMs = System.currentTimeMillis();
         }
         @Override
         public void progressing(final ProcessEvent event) {
@@ -120,6 +124,11 @@ public final class ProcessConsole {
         }
 
         private void printEvent(final ProcessEvent event, final String color) {
+
+            final long currentTimeMs = System.currentTimeMillis();
+            final long etd = currentTimeMs - startTimeMs;
+            final long eta = (long) (((100.0 * etd) / event.getProgress()) - etd);
+
             final StringBuilder sb = new StringBuilder();
             sb.append(color);
             sb.append(BOLD.sequence());
@@ -127,6 +136,15 @@ public final class ProcessConsole {
             sb.append("%\t");
             sb.append(RESET.sequence());
             sb.append(color);
+            if (eta > 0 && etd > 0) {
+                sb.append("Elapsed: ");
+                sb.append(TemporalUtilities.durationToString(etd));
+                sb.append("\t");
+                sb.append("Remaining: ~");
+                sb.append(TemporalUtilities.durationToString(eta));
+                sb.append("\t");
+            }
+
 
             final InternationalString message = event.getTask();
             if(message != null){

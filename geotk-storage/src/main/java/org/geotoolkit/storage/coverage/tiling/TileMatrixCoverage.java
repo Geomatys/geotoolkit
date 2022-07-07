@@ -113,8 +113,18 @@ final class TileMatrixCoverage extends GridCoverage {
          */
         final int minX = (int) (absolutedReadExtent.getLow(xyAxes[0]) - userExtent.getLow(xyAxes[0]));
         final int minY = (int) (absolutedReadExtent.getLow(xyAxes[1]) - userExtent.getLow(xyAxes[1]));
-        final int width = Math.toIntExact(userExtent.getSize(xyAxes[0]));
-        final int height = Math.toIntExact(userExtent.getSize(xyAxes[1]));
+        /*
+          Compute exact width/height.
+            final int width = Math.toIntExact(
+                    Math.min(absolutedReadExtent.getSize(xyAxes[0]),
+                             userExtent.getSize(xyAxes[0])));
+            final int height = Math.toIntExact(
+                    Math.min(absolutedReadExtent.getSize(xyAxes[1]),
+                             userExtent.getSize(xyAxes[1])));
+
+          We do not use it, and return the size which is a factor of the number of tiles
+          this reflects the tilematrix internal structure.
+        */
 
         //create image
         return new TileMatrixImage(
@@ -127,8 +137,7 @@ final class TileMatrixCoverage extends GridCoverage {
                 rasterModel,
                 range,
                 fillPixel,
-                minX, minY,
-                width, height
+                minX, minY
         );
     }
 

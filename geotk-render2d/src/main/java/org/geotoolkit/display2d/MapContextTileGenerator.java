@@ -251,11 +251,13 @@ public class MapContextTileGenerator extends AbstractTileGenerator {
                     CoordinateReferenceSystem targetCrs = tileMatrixSet.getCoordinateReferenceSystem();
                     Envelope baseEnv = env;
                     env = Envelopes.transform(env, targetCrs);
-                    double[] minres = new double[]{resolutions.getMinDouble(), resolutions.getMinDouble()};
-                    double[] maxres = new double[]{resolutions.getMaxDouble(), resolutions.getMaxDouble()};
-                    minres = ReferencingUtilities.convertResolution(baseEnv, minres, targetCrs, null);
-                    maxres = ReferencingUtilities.convertResolution(baseEnv, maxres, targetCrs, null);
-                    resolutions = NumberRange.create(minres[0], true, maxres[0], true);
+                    if (resolutions != null) {
+                        double[] minres = new double[]{resolutions.getMinDouble(), resolutions.getMinDouble()};
+                        double[] maxres = new double[]{resolutions.getMaxDouble(), resolutions.getMaxDouble()};
+                        minres = ReferencingUtilities.convertResolution(baseEnv, minres, targetCrs, null);
+                        maxres = ReferencingUtilities.convertResolution(baseEnv, maxres, targetCrs, null);
+                        resolutions = NumberRange.create(minres[0], true, maxres[0], true);
+                    }
                 } catch (TransformException ex) {
                     throw new DataStoreException(ex.getMessage(), ex);
                 }
