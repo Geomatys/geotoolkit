@@ -118,7 +118,7 @@ public class DefaultImageTile extends AbstractGridCoverageResource implements Ti
      * @return An image reader with its {@linkplain ImageReader#getInput input} set.
      * @throws IOException if the image reader can't be initialized.
      */
-    public ImageReader getImageReader() throws IOException {
+    protected ImageReader getImageReader() throws IOException {
         ImageReaderSpi spi = this.spi;
         ImageReader reader = null;
 
