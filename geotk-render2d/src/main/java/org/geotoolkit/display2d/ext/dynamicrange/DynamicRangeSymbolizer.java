@@ -139,6 +139,13 @@ public class DynamicRangeSymbolizer extends SymbolizerType implements ExtensionS
             upper = new DRBound();
         }
 
+        public DRChannel(String band, String colorSpaceComponent, DRBound lower, DRBound upper) {
+            this.band = band;
+            this.colorSpaceComponent = colorSpaceComponent;
+            this.lower = lower;
+            this.upper = upper;
+        }
+
         public String getBand() {
             return band;
         }
@@ -193,6 +200,11 @@ public class DynamicRangeSymbolizer extends SymbolizerType implements ExtensionS
 
         public DRBound() {
             setMode(MODE_EXPRESSION);
+        }
+
+        public DRBound(String mode, Expression value) {
+            setMode(mode);
+            setValue(value);
         }
 
         /**

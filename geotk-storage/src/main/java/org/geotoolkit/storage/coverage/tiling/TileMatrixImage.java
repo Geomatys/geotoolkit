@@ -27,9 +27,12 @@ import java.awt.image.WritableRaster;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridCoverageProcessor;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.image.ComputedImage;
+import org.apache.sis.image.Interpolation;
+import org.apache.sis.image.PlanarImage;
 import org.apache.sis.internal.coverage.j2d.FillValues;
 import org.apache.sis.internal.coverage.j2d.TilePlaceholder;
 import org.apache.sis.storage.DataStoreException;
@@ -41,6 +44,7 @@ import org.apache.sis.storage.tiling.TileStatus;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.storage.DataStores;
+import org.geotoolkit.storage.multires.TileMatrices;
 
 /**
  * Implementation of RenderedImage over a TileMatrix composed of GriCoverages.
@@ -110,11 +114,11 @@ final class TileMatrixImage extends ComputedImage implements RenderedImage {
     /**
      * Image width
      */
-    private final int width;
+    private int width;
     /**
      * Image height
      */
-    private final int height;
+    private int height;
 
     /**
      * Constructor
@@ -133,9 +137,7 @@ final class TileMatrixImage extends ComputedImage implements RenderedImage {
             int[] sampleRange,
             double[] fillPixel,
             int minX,
-            int minY,
-            int width,
-            int height){
+            int minY){
         super(sampleModel);
         this.matrix = matrix;
         this.gridRange = gridRange;
@@ -151,8 +153,8 @@ final class TileMatrixImage extends ComputedImage implements RenderedImage {
         this.yAxisIndex = xyAxis[1];
         this.minX = minX;
         this.minY = minY;
-        this.width = width;
-        this.height = height;
+        this.width = getNumXTiles() * getTileWidth();
+        this.height = getNumYTiles()* getTileHeight();
 
         if (fillPixel != null) {
             final Number[] values = new Number[fillPixel.length];
@@ -161,6 +163,34 @@ final class TileMatrixImage extends ComputedImage implements RenderedImage {
         } else {
             placeHolder = TilePlaceholder.empty(sampleModel);
         }
+        assert (verify() == null);
+    }
+
+    /**
+     * Constructor with user defined image size.
+     *
+     * @param matrix the TileMatrix to read as a rendered image
+     * @param gridRange the tile to include in the rendered image.
+     *        rectangle max max values are exclusive.
+     */
+    TileMatrixImage(
+            final TileMatrix matrix,
+            GridExtent gridRange,
+            GridGeometry readGeometry,
+            long[] tileSize,
+            SampleModel sampleModel,
+            ColorModel colorModel,
+            Raster rasterModel,
+            int[] sampleRange,
+            double[] fillPixel,
+            int minX,
+            int minY,
+            int width,
+            int height){
+        this(matrix, gridRange, readGeometry, tileSize, sampleModel, colorModel, rasterModel, sampleRange, fillPixel, minX, minY);
+        this.width = width;
+        this.height = height;
+        assert (verify() == null);
     }
 
     /**
@@ -267,9 +297,7 @@ final class TileMatrixImage extends ComputedImage implements RenderedImage {
     }
 
     private Raster getTile(final int tileX, final int tileY, boolean nullable, boolean allowException) throws Exception {
-        final long[] matrixtileIdx = gridRange.getLow().getCoordinateValues();
-        matrixtileIdx[xAxisIndex] = tileX;
-        matrixtileIdx[yAxisIndex] = tileY;
+        final long[] matrixtileIdx = toTileIndices(tileX, tileY);
 
         final int rX = minX + (tileX-getMinTileX()) * this.getTileWidth();
         final int rY = minY + (tileY-getMinTileY()) * this.getTileHeight();
@@ -284,7 +312,18 @@ final class TileMatrixImage extends ComputedImage implements RenderedImage {
                 if (tile != null) {
                     final Resource resource = tile.getResource();
                     if (resource instanceof GridCoverageResource gcr) {
-                        final GridCoverage coverage = gcr.read(readGeometry, sampleRange);
+
+                        final GridGeometry tileGeometry = getTileGeometry(tileX, tileY);
+
+                        GridCoverage coverage = gcr.read(tileGeometry, sampleRange);
+
+                        //at this stage the coverage may vary a lot, so does the renderedimage
+                        //to ensure we have exactly what we requested we resample it to what is expected.
+                        //we expect the resampling to skip all unnecessary operations
+                        final GridCoverageProcessor gcp = new GridCoverageProcessor();
+                        gcp.setInterpolation(Interpolation.NEAREST);
+                        coverage = gcp.resample(coverage, tileGeometry);
+
                         final RenderedImage image = coverage.render(coverage.getGridGeometry().getExtent());
                         Raster tileRaster;
                         if (image.getNumXTiles() == 1 && image.getNumYTiles() == 1) {
@@ -336,6 +375,38 @@ final class TileMatrixImage extends ComputedImage implements RenderedImage {
     }
 
     /**
+     * Get tile grid geometry in N dimension.
+     */
+    private GridGeometry getTileGeometry(int tileX, int tileY) throws DataStoreException {
+        final long[] indices = toTileIndices(tileX, tileY);
+        //grid geometry of the tile in the tiling scheme
+        GridGeometry geom = matrix.getTilingScheme().derive().subgrid(new GridExtent(null, indices, indices, true)).build();
+        //grid geometry of the tile in pixels
+        geom = TileMatrices.surSampling(geom, tileSize);
+        final GridExtent tileExtentNd = geom.getExtent();
+        //N dimension intersection, this should be a 2d slice
+        final GridExtent intersection = geom.derive().subgrid(readGeometry).getIntersection();
+        //the exact 2d slice
+        long[] low = new long[intersection.getDimension()];
+        long[] high = new long[low.length];
+        for (int i = 0; i < low.length; i++) {
+            if (i == xAxisIndex || i == yAxisIndex) {
+                low[i] = tileExtentNd.getLow(i);
+                high[i] = tileExtentNd.getHigh(i);
+            } else {
+                //all other axis are expecte to have a span of one
+                low[i] = intersection.getLow(i);
+                high[i] = intersection.getHigh(i);
+                if (low[i] != high[i]) {
+                    throw new DataStoreException("Intersection is expected to be a 2D slice");
+                }
+            }
+        }
+        final GridExtent slice = new GridExtent(null, low, high, true);
+        return geom.derive().subgrid(slice).build();
+    }
+
+    /**
      * @param matrix
      * @param x tile X coordinate in the image range
      * @param y tile Y coordinate in the image range
@@ -343,13 +414,17 @@ final class TileMatrixImage extends ComputedImage implements RenderedImage {
      * @throws DataStoreException
      */
     private boolean isTileMissing(long x, long y) throws DataStoreException{
-        final long[] indices = gridRange.getLow().getCoordinateValues();
-        indices[xAxisIndex] = x;
-        indices[yAxisIndex] = y;
+        final long[] indices = toTileIndices(x, y);
         final TileStatus status = matrix.getTileStatus(indices);
         return status == TileStatus.MISSING
             || status == TileStatus.OUTSIDE_EXTENT
             || status == TileStatus.IN_ERROR;
     }
 
+    private long[] toTileIndices(long x, long y) {
+        final long[] indices = gridRange.getLow().getCoordinateValues();
+        indices[xAxisIndex] = x;
+        indices[yAxisIndex] = y;
+        return indices;
+    }
 }

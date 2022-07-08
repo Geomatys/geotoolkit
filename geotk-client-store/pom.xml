@@ -67,6 +67,10 @@
           <artifactId>geotk-storage</artifactId>
           <version>${project.version}</version>
       </dependency>
+      <dependency>
+          <groupId>org.apache.sis.storage</groupId>
+          <artifactId>sis-geotiff</artifactId>
+      </dependency>
 
       <dependency>
           <groupId>io.netty</groupId>

@@ -342,7 +342,7 @@ public class URITileMatrix extends AbstractTileMatrix implements WritableTileMat
      *
      * @return Path if uri is on the filesytem, null otherwise
      */
-    private Path toPath(URI uri) {
+    Path toPath(URI uri) {
         //defensive copy
         final Boolean isOnFs = this.isOnFileSystem;
         if (isOnFs == null) {
