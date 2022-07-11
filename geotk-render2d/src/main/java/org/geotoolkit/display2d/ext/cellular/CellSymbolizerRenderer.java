@@ -21,6 +21,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.stream.Stream;
@@ -58,6 +59,10 @@ import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.storage.memory.InMemoryFeatureSet;
+import org.geotoolkit.style.DefaultMutableStyle;
+import org.geotoolkit.style.MutableFeatureTypeStyle;
+import org.geotoolkit.style.MutableStyle;
+import org.geotoolkit.style.MutableStyleFactory;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -385,7 +390,13 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
         subLayer.setTitle(sourceLayer.getTitle());
 
         final Rule rule = symbol.getSource().getRule();
-        subLayer.setStyle(GO2Utilities.STYLE_FACTORY.style(rule.symbolizers().toArray(Symbolizer[]::new)));
+
+        MutableStyleFactory sf = GO2Utilities.STYLE_FACTORY;
+        MutableFeatureTypeStyle fts = sf.featureTypeStyle(rule.symbolizers().toArray(Symbolizer[]::new));
+        fts.rules().get(0).setFilter(rule.getFilter());
+        final MutableStyle style = new DefaultMutableStyle();
+        style.featureTypeStyles().add(fts);
+        subLayer.setStyle(style);
 
         return subLayer;
     }
