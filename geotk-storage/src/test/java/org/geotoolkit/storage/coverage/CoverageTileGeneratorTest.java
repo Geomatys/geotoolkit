@@ -20,9 +20,16 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import javax.measure.Unit;
+import javax.measure.quantity.Length;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridCoverage2D;
 import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.coverage.grid.GridCoverageProcessor;
 import org.apache.sis.coverage.grid.GridExtent;
@@ -30,6 +37,8 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridOrientation;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.Interpolation;
+import org.apache.sis.measure.Units;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
@@ -166,6 +175,54 @@ public class CoverageTileGeneratorTest {
         compare(generator, tileMatrixSet, generateEnvelope);
     }
 
+    /**
+     * Test empty values are correctly found from sample dimensions.
+     */
+    @Test
+    public void testEmptyValues() throws DataStoreException {
+
+        {//RGB image
+            final GridCoverage2D coverage = new GridCoverage2D(
+                    new GridGeometry(new GridExtent(1, 1),
+                            CRS.getDomainOfValidity(CommonCRS.WGS84.normalizedGeographic()), GridOrientation.REFLECTION_Y), null,
+                    new BufferedImage(1, 1, BufferedImage.TYPE_3BYTE_BGR));
+
+            final GridCoverageResource gcr = new InMemoryGridCoverageResource(coverage);
+
+            final CoverageTileGenerator tg = new CoverageTileGenerator(gcr);
+            Assert.assertArrayEquals(new double[]{0,0,0},tg.getEmpty(), 0.0);
+        }
+
+        {//RGBA image
+            final GridCoverage2D coverage = new GridCoverage2D(
+                    new GridGeometry(new GridExtent(1, 1),
+                            CRS.getDomainOfValidity(CommonCRS.WGS84.normalizedGeographic()), GridOrientation.REFLECTION_Y), null,
+                    new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB));
+
+            final GridCoverageResource gcr = new InMemoryGridCoverageResource(coverage);
+
+            final CoverageTileGenerator tg = new CoverageTileGenerator(gcr);
+            Assert.assertArrayEquals(new double[]{0,0,0,0},tg.getEmpty(), 0.0);
+        }
+
+        { //special samples
+            final List<SampleDimension> sd = new ArrayList<>();
+            sd.add(new SampleDimension.Builder().setName("a").setBackground(123.456).build());
+            sd.add(new SampleDimension.Builder().setName("b").addQualitative(null, 789.123).addQuantitative("data", 0, 100, Units.METRE).build());
+
+            final GridCoverage2D coverage = new GridCoverage2D(
+                    new GridGeometry(new GridExtent(1, 1),
+                            CRS.getDomainOfValidity(CommonCRS.WGS84.normalizedGeographic()), GridOrientation.REFLECTION_Y), sd,
+                    BufferedImages.createImage(1, 1, 2, DataBuffer.TYPE_FLOAT));
+
+            final GridCoverageResource gcr = new InMemoryGridCoverageResource(coverage);
+
+            final CoverageTileGenerator tg = new CoverageTileGenerator(gcr);
+            Assert.assertArrayEquals(new double[]{123.456, 789.123},tg.getEmpty(), 0.0);
+        }
+
+    }
+
     private void compare(CoverageTileGenerator generator, TileMatrixSet tileMatrixSet, GeneralEnvelope generateEnvelope) throws DataStoreException, IOException, TransformException {
 
         final GridCoverageResource origin = generator.getOrigin();
@@ -204,4 +261,5 @@ public class CoverageTileGeneratorTest {
             }
         }
     }
+
 }
