@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2018, Geomatys
+ *    (C) 2018-2022, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -53,7 +54,6 @@ import org.apache.sis.storage.tiling.Tile;
 import org.apache.sis.storage.tiling.TileStatus;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Utilities;
-import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.process.ProcessEvent;
@@ -83,7 +83,7 @@ import org.opengis.referencing.operation.TransformException;
 public class CoverageTileGenerator extends AbstractTileGenerator {
 
     private final GridCoverageResource resource;
-    private final double[] empty;
+    private double[] empty;
     private final Future<Object> baseRendering;
 
     private InterpolationCase interpolation = InterpolationCase.NEIGHBOR;
@@ -102,9 +102,8 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
         }
         empty = new double[sampleDimensions.size()];
         for (int i = 0; i < empty.length; i++) {
-            empty[i] = getEmptyValue(sampleDimensions.get(i));
+            empty[i] = getFillValue(sampleDimensions.get(i)).doubleValue();
         }
-
         baseRendering = ForkJoinPool.commonPool().submit(() -> createBaseRendering(resource));
     }
 
@@ -161,12 +160,44 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
         this.skipExistingTiles = skipExistingTiles;
     }
 
+    /**
+     * Set sample values used when an empty tile is created.
+     * @param fillValues not null
+     */
     public void setFillValues(double[] fillValues) {
-        this.fillValues = fillValues;
+        ArgumentChecks.ensureNonNull("fillValues", fillValues);
+        if (fillValues.length != empty.length) {
+            throw new IllegalArgumentException("Array size must be " + empty.length);
+        }
+        this.fillValues = fillValues.clone();
     }
 
+    /**
+     * Get fill values.
+     * @return fill values, may be null.
+     */
     public double[] getFillValues() {
-        return fillValues;
+        return fillValues == null ? null : fillValues.clone();
+    }
+
+    /**
+     * Set sample values used to identify an empty tile.
+     * @param empty not null
+     */
+    public void setEmpty(double[] empty) {
+        ArgumentChecks.ensureNonNull("empty", empty);
+        if (this.empty.length != empty.length) {
+            throw new IllegalArgumentException("Array size must be " + empty.length);
+        }
+        this.empty = empty;
+    }
+
+    /**
+     * Get sample values used to identify an empty tile.
+     * @return empty values,
+     */
+    public double[] getEmpty() {
+        return empty.clone();
     }
 
     /**
@@ -204,12 +235,21 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
         return alwaysGenerateUsingLowerLevel;
     }
 
-    private static double getEmptyValue(SampleDimension dim){
-        //dim = dim.forConvertedValues(true);
-        double fillValue = Double.NaN;
-        final double[] nodata = SampleDimensionUtils.getNoDataValues(dim);
-        if (nodata!=null && nodata.length>0) {
-            fillValue = nodata[0];
+    /**
+     * Get fill value, this can be background or no-data value.
+     * If none of those values are available NaN is returned if sample dimension
+     * allows it otherwise return zero.
+     */
+    private static Number getFillValue(SampleDimension dim){
+        Number fillValue = dim.allowsNaN() ? Double.NaN : 0.0;
+        final Optional<Number> background = dim.getBackground();
+        if (background.isPresent()) {
+            fillValue = background.get();
+        } else {
+            final Set<Number> noDatas = dim.getNoDataValues();
+            if (!noDatas.isEmpty()) {
+                fillValue = noDatas.iterator().next();
+            }
         }
         return fillValue;
     }
