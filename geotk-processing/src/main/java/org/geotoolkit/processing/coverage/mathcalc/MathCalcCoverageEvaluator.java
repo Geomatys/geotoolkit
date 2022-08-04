@@ -21,7 +21,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.coverage.grid.GridCoverage;
-import org.apache.sis.coverage.grid.GridEvaluator;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.referencing.CRS;
 import org.opengis.filter.Expression;
@@ -70,7 +69,7 @@ public class MathCalcCoverageEvaluator implements FillCoverage.SampleEvaluator {
     private static class DynamicPick extends AbstractMap {
 
         private final GridCoverage[] coverages;
-        private final GridEvaluator[] evaluators;
+        private final GridCoverage.Evaluator[] evaluators;
         private final String[] mapping;
         private final MathTransform[] baseToCoverage;
         private final GeneralDirectPosition[] coverageCoord;
@@ -78,7 +77,7 @@ public class MathCalcCoverageEvaluator implements FillCoverage.SampleEvaluator {
 
         private DynamicPick(GridCoverage[] coverages, String[] mapping, DirectPosition coord) throws FactoryException {
             this.coverages = coverages;
-            evaluators = new GridEvaluator[coverages.length];
+            evaluators = new GridCoverage.Evaluator[coverages.length];
             for (int i=0; i<coverages.length; i++) {
                 evaluators[i] = coverages[i].evaluator();
             }
