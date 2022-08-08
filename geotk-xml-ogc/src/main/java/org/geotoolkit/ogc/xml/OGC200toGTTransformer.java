@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.measure.Quantity;
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
 
@@ -34,6 +35,7 @@ import org.geotoolkit.gml.xml.v321.EnvelopeType;
 import org.geotoolkit.ogc.xml.v200.*;
 import org.apache.sis.referencing.CRS;
 
+import org.opengis.filter.FilterFactory;
 import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
 import org.geotoolkit.filter.FilterFactory2;
@@ -53,16 +55,16 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
  */
 public class OGC200toGTTransformer {
 
-    protected final FilterFactory2 filterFactory;
+    protected final FilterFactory filterFactory;
 
     private final Map<String, String> namespaceMapping;
 
-    public OGC200toGTTransformer(final FilterFactory2 factory) {
+    public OGC200toGTTransformer(final FilterFactory factory) {
         this.filterFactory   = factory;
         this.namespaceMapping = null;
     }
 
-    public OGC200toGTTransformer(final FilterFactory2 factory, final Map<String, String> namespaceMapping) {
+    public OGC200toGTTransformer(final FilterFactory factory, final Map<String, String> namespaceMapping) {
         this.filterFactory = factory;
         this.namespaceMapping = namespaceMapping;
     }
@@ -154,14 +156,13 @@ public class OGC200toGTTransformer {
 
             final Expression geom1 = visitPropertyName(pnt);
             final Expression geom2 = visit(geom);
-            //TODO marche pas ? ou est la distance ? Double.valueOf(dt.getContent());
-            final double distance = 0;
-            final String units = dt.getUom();
+
+            final Quantity distance = dstOp.getDistance();
 
             if (OGCJAXBStatics.FILTER_SPATIAL_DWITHIN.equalsIgnoreCase(OpName)) {
-                return filterFactory.dwithin(geom1, geom2, distance, units);
+                return filterFactory.within(geom1, geom2, distance);
             } else if (OGCJAXBStatics.FILTER_SPATIAL_BEYOND.equalsIgnoreCase(OpName)) {
-                return filterFactory.beyond(geom1, geom2, distance, units);
+                return filterFactory.beyond(geom1, geom2, distance);
             }
             throw new IllegalArgumentException("Illegal filter element" + OpName + " : " + ops);
 
@@ -183,15 +184,9 @@ public class OGC200toGTTransformer {
             } else {
                 geom = null;
             }
-            final double minx = box.getLowerCorner().getOrdinate(0);
-            final double maxx = box.getUpperCorner().getOrdinate(0);
-            final double miny = box.getLowerCorner().getOrdinate(1);
-            final double maxy = box.getUpperCorner().getOrdinate(1);
-
-            final String srs =  box.getSrsName();
 
             if (OGCJAXBStatics.FILTER_SPATIAL_BBOX.equalsIgnoreCase(OpName)) {
-                return filterFactory.bbox(geom, minx, miny, maxx, maxy, srs);
+                return filterFactory.bbox(geom, box);
             }
             throw new IllegalArgumentException("Illegal filter element" + OpName + " : " + ops);
         }
@@ -316,7 +311,9 @@ public class OGC200toGTTransformer {
             final org.geotoolkit.ogc.xml.v200.PropertyIsLikeType property = (org.geotoolkit.ogc.xml.v200.PropertyIsLikeType) ops;
 
             final Expression expr = visitPropertyName(property.getPropertyName());
-            final String pattern = visitExpression(property.getLiteralType()).toString();
+            final String pattern = visitExpression(property.getLiteralType())
+                    .toValueType(String.class)
+                    .apply(null);
             final char wild = property.getWildCard();
             final char single = property.getSingleChar();
             final char escape = property.getEscapeChar();
@@ -499,7 +496,7 @@ public class OGC200toGTTransformer {
     /**
      * Transform a literalType in Expression.
      */
-    public Expression visitExpression(final LiteralType type){
+    public Expression<?, ?> visitExpression(final LiteralType type){
         final List<Object> content = type.getContent();
         for(Object obj : content){
             if(obj != null && !obj.toString().trim().isEmpty()){
