@@ -31,7 +31,7 @@ import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.feature.jts.Factory;
-import org.apache.sis.internal.processing.image.Isolines;
+import org.apache.sis.internal.processing.isoline.Isolines;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
