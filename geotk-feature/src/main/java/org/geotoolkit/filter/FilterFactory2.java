@@ -275,9 +275,11 @@ public class FilterFactory2 extends DefaultFilterFactory<Object,Object,Object> {
         final LinearRing ring = GF.createLinearRing(coords);
         final Polygon poly = GF.createPolygon(ring, new LinearRing[0]);
         CoordinateReferenceSystem crs = env.getCoordinateReferenceSystem();
-        final int srid = SRIDGenerator.toSRID(crs, SRIDGenerator.Version.V1);
-        poly.setSRID(srid);
-        poly.setUserData(crs);
+        if (crs != null) {
+            final int srid = SRIDGenerator.toSRID(crs, SRIDGenerator.Version.V1);
+            poly.setSRID(srid);
+            poly.setUserData(crs);
+        }
         return poly;
     }
 
