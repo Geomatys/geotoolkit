@@ -42,7 +42,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
-import org.apache.sis.internal.storage.ConcatenatedFeatureSet;
+import org.apache.sis.internal.storage.aggregate.ConcatenatedFeatureSet;
 import org.apache.sis.internal.storage.ResourceOnFileSystem;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
