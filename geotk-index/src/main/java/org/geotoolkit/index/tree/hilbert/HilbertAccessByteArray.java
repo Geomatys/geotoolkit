@@ -17,7 +17,7 @@
 package org.geotoolkit.index.tree.hilbert;
 
 import java.io.IOException;
-import org.geotoolkit.internal.tree.SeekableByteArrayChannel;
+import org.geotoolkit.io.SeekableByteArrayChannel;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
