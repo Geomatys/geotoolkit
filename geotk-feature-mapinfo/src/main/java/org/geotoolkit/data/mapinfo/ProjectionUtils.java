@@ -65,7 +65,7 @@ import org.opengis.referencing.datum.DatumAuthorityFactory;
  */
 public class ProjectionUtils {
 
-    private static final String MAP_INFO_NAMESPACE = org.apache.sis.metadata.iso.citation.Citations.getIdentifier(Citations.MAP_INFO);
+    private static final String MAP_INFO_NAMESPACE = "MapInfo";
     private static final char NAMESPACE_SEPARATOR = ':';
 
     private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.data.mapinfo");
@@ -195,6 +195,11 @@ public class ProjectionUtils {
         if(projMatch.find()) {
             projCode = Integer.decode(projMatch.group());
         }
+        if (projCode > 2000) {
+            //TODO codes over 2000 have a special meaning : find what ?
+            projCode -= 2000;
+        }
+
         paramList = getProjectionParameters(projCode);
 
         // Datum
