@@ -70,9 +70,9 @@ public class ProjectionParameters {
      */
     public static String[] getProjectionParameters(int projectionCode) throws FactoryException {
         final int[] parameterIndices = PROJECTION_PARAMETERS.get(projectionCode);
-        if(parameterIndices != null) {
+        if (parameterIndices != null) {
             String[] parameters = new String[parameterIndices.length];
-            for(int i = 0 ; i < parameterIndices.length ; i++) {
+            for (int i = 0 ; i < parameterIndices.length ; i++) {
                 parameters[i] = PARAMETER_LIST.get(parameterIndices[i]);
             }
             return parameters;

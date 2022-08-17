@@ -49,6 +49,16 @@
     <dependencies>
         <dependency>
             <groupId>org.geotoolkit</groupId>
+            <artifactId>geotk-processing</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotoolkit</groupId>
+            <artifactId>geotk-xml-sld</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-storage</artifactId>
             <version>${project.version}</version>
         </dependency>
