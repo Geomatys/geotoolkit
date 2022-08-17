@@ -1069,8 +1069,6 @@
     <module>geotk-client-wmts</module>
     <module>geotk-client-wps</module>
 
-    <module>geotk-mapfile</module>
-
     <module>benchmark</module>
 
     <module>geotk-demo-referencing-javadb</module>
