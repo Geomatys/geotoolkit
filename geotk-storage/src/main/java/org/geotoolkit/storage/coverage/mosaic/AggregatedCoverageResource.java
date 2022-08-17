@@ -904,7 +904,8 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
                     final GridCoverageProcessor processor = new GridCoverageProcessor();
                     processor.setInterpolation(interpolation);
                     processor.setPositionalAccuracyHints(accuracy);
-                    final RenderedImage intermediate = processor.resample(sourceCoverage, canvas).render(null);
+                    //ensure we have expected image correctly aligned
+                    final RenderedImage intermediate = processor.resample(sourceCoverage, canvas).render(canvas.getExtent());
 
                     aggregate(result, intermediate, mask, transparent, transparent);
                 } catch (NoSuchDataException ex) {
@@ -1264,8 +1265,9 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
     private void aggregate(BufferedImage result, RenderedImage source, BitSet2D mask, double[] resultNoData, double[] sourceNoData) {
 
         //we need to merge image, replacing only not-NaN values
-        final PixelIterator sourceIte = new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).create(source);
         final WritablePixelIterator resultIte = new WritablePixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).createWritable(result);
+        //intersect source domain to result domain
+        final PixelIterator sourceIte = new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).setRegionOfInterest(resultIte.getDomain()).create(source);
         final double[] sourcePx = new double[sourceIte.getNumBands()];
         final double[] resultPx = new double[sourceIte.getNumBands()];
         while (sourceIte.next()) {

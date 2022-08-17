@@ -20,6 +20,7 @@ import java.io.IOException;
 import org.geotoolkit.index.tree.Node;
 import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.index.tree.basic.SplitCase;
+import org.geotoolkit.io.SeekableByteArrayChannel;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**

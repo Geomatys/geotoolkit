@@ -16,12 +16,10 @@
  */
 package org.geotoolkit.image.io.stream;
 
-import java.io.ByteArrayInputStream;
+import org.geotoolkit.io.SeekableByteArrayChannel;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.util.Locale;
 import javax.imageio.spi.ImageInputStreamSpi;
@@ -49,8 +47,8 @@ public class ByteArrayImageInputStreamSpi extends ImageInputStreamSpi {
     @Override
     public ImageInputStream createInputStreamInstance(Object input, boolean useCache, File cacheDir) throws IOException {
         final byte[] data = (byte[]) input;
-        final InputStream astream = new ByteArrayInputStream(data);
-        final ReadableByteChannel channel = Channels.newChannel(astream);
+        final ReadableByteChannel channel = new SeekableByteArrayChannel(data);
+        //note : we do not use an empty channel because readers may move backward after a flush.
         final ChannelDataInput cdi = new ChannelDataInput("in memory byte array", channel, ByteBuffer.wrap(data),true);
         return new ChannelImageInputStream(cdi);
     }
