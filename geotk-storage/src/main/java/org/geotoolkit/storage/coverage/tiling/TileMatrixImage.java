@@ -44,6 +44,7 @@ import org.apache.sis.storage.tiling.TileStatus;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.storage.DataStores;
+import org.geotoolkit.storage.multires.TileInError;
 import org.geotoolkit.storage.multires.TileMatrices;
 
 /**
@@ -306,38 +307,36 @@ final class TileMatrixImage extends ComputedImage implements RenderedImage {
         try {
             DataBuffer buffer = null;
 
-            if (!isTileMissing(tileX, tileY)) {
-                final Tile tile = matrix.getTile(matrixtileIdx).orElse(null);
-                //can be null if tile is really missing, the isMissing method is a best effort call
-                if (tile != null) {
-                    final Resource resource = tile.getResource();
-                    if (resource instanceof GridCoverageResource gcr) {
+            final Tile tile = matrix.getTile(matrixtileIdx).orElse(null);
+            //can be null if tile is really missing, the isMissing method is a best effort call
+            if (tile != null && !(tile instanceof TileInError)) {
+                final Resource resource = tile.getResource();
+                if (resource instanceof GridCoverageResource gcr) {
 
-                        final GridGeometry tileGeometry = getTileGeometry(tileX, tileY);
+                    final GridGeometry tileGeometry = getTileGeometry(tileX, tileY);
 
-                        GridCoverage coverage = gcr.read(tileGeometry, sampleRange);
+                    GridCoverage coverage = gcr.read(tileGeometry, sampleRange);
 
-                        //at this stage the coverage may vary a lot, so does the renderedimage
-                        //to ensure we have exactly what we requested we resample it to what is expected.
-                        //we expect the resampling to skip all unnecessary operations
-                        final GridCoverageProcessor gcp = new GridCoverageProcessor();
-                        gcp.setInterpolation(Interpolation.NEAREST);
-                        coverage = gcp.resample(coverage, tileGeometry);
+                    //at this stage the coverage may vary a lot, so does the renderedimage
+                    //to ensure we have exactly what we requested we resample it to what is expected.
+                    //we expect the resampling to skip all unnecessary operations
+                    final GridCoverageProcessor gcp = new GridCoverageProcessor();
+                    gcp.setInterpolation(Interpolation.NEAREST);
+                    coverage = gcp.resample(coverage, tileGeometry);
 
-                        final RenderedImage image = coverage.render(coverage.getGridGeometry().getExtent());
-                        Raster tileRaster;
-                        if (image.getNumXTiles() == 1 && image.getNumYTiles() == 1) {
-                            tileRaster = image.getTile(image.getMinTileX(), image.getMinTileY());
-                        } else {
-                            tileRaster = image.getData();
-                        }
-                        try {
-                            tileRaster = BufferedImages.makeConform(tileRaster, rasterModel);
-                        } catch (ImagingOpException ex) {
-                            throw new BackingStoreException("Fix mosaic implementation " + matrix.getClass().getName() + " " + ex.getMessage(), ex);
-                        }
-                        buffer = tileRaster.getDataBuffer();
+                    final RenderedImage image = coverage.render(coverage.getGridGeometry().getExtent());
+                    Raster tileRaster;
+                    if (image.getNumXTiles() == 1 && image.getNumYTiles() == 1) {
+                        tileRaster = image.getTile(image.getMinTileX(), image.getMinTileY());
+                    } else {
+                        tileRaster = image.getData();
                     }
+                    try {
+                        tileRaster = BufferedImages.makeConform(tileRaster, rasterModel);
+                    } catch (ImagingOpException ex) {
+                        throw new BackingStoreException("Fix mosaic implementation " + matrix.getClass().getName() + " " + ex.getMessage(), ex);
+                    }
+                    buffer = tileRaster.getDataBuffer();
                 }
             }
 
