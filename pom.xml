@@ -22,7 +22,7 @@
   <parent>
     <groupId>com.geomatys</groupId>
     <artifactId>geomatys-bom</artifactId>
-    <version>2022.4</version>
+    <version>2022.5</version>
   </parent>
 
   <groupId>org.geotoolkit</groupId>
@@ -173,7 +173,7 @@
 
     <!-- associated projects dependencies -->
     <geoapi.version>4.0-M19</geoapi.version>
-    <sis.version>2.0-M0115</sis.version>
+    <sis.version>2.0-M0116</sis.version>
     <sis.build.helper.version>1.1</sis.build.helper.version>
     <sis.non-free.version>1.1</sis.non-free.version>
 
@@ -192,7 +192,6 @@
     <postgis.version>2.3.0</postgis.version>
     <quartz.version>2.3.1</quartz.version>
     <woodstox.version>6.0.0</woodstox.version>
-    <xmlgraphics.version>2.3</xmlgraphics.version>
     <!-- ErrorProne 2.11.0 has a knwon bug on JDK-17 : https://giters.com/google/error-prone/issues/2926 -->
     <error-prone.version>2.10.0</error-prone.version>
     <!-- @{argLine} necessary for jacoco generation, we must declare
@@ -378,11 +377,6 @@
       </dependency>
 
       <!-- Batik SVG -->
-      <dependency>
-        <groupId>org.apache.xmlgraphics</groupId>
-        <artifactId>xmlgraphics-commons</artifactId>
-        <version>${xmlgraphics.version}</version>
-      </dependency>
       <dependency>
         <groupId>org.apache.xmlgraphics</groupId>
         <artifactId>batik-transcoder</artifactId>
@@ -1044,7 +1038,6 @@
     <module>geotk-feature-postgres</module>
     <module>geotk-feature-mapinfo</module>
     <module>geotk-feature-nmea</module>
-    <module>geotk-coverage-worldfile</module>
     <module>geotk-coverage-geotiff</module>
     <module>geotk-coverage-imagery</module>
     <!-- Obsolete module, still contains interesting things, salvage what we can before removing it -->

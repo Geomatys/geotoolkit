@@ -19,7 +19,7 @@ import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.internal.feature.jts.Factory;
 import org.apache.sis.internal.feature.jts.JTS;
-import org.apache.sis.internal.processing.image.Isolines;
+import org.apache.sis.internal.processing.isoline.Isolines;
 import org.apache.sis.internal.storage.MemoryGridResource;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CommonCRS;

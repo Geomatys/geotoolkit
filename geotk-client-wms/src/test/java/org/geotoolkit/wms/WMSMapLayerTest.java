@@ -206,18 +206,19 @@ public class WMSMapLayerTest extends org.geotoolkit.test.TestBase {
         final URL url = layer.queryFeatureInfo(env, rect, 140, 250, new String[]{"test"}, "gml", 1).getURL();
 
         final String sUrl = url.toString();
+        final String message = "was:" + sUrl;
         assertTrue(sUrl.startsWith("http://test.com?"));
-        assertTrue("was:" + sUrl, sUrl.contains("BBOX=-180.0%2C-90.0%2C180.0%2C90.0"));
-        assertTrue("was:" + sUrl, sUrl.contains("SRS=EPSG%3A4326"));
-        assertTrue("was:" + sUrl, sUrl.contains("FORMAT=image%2Fpng"));
-        assertTrue("was:" + sUrl, sUrl.contains("WIDTH=360"));
-        assertTrue("was:" + sUrl, sUrl.contains("HEIGHT=180"));
-        assertTrue("was:" + sUrl, sUrl.contains("LAYERS=test"));
-        assertTrue("was:" + sUrl, sUrl.contains("STYLES="));
-        assertTrue("was:" + sUrl, sUrl.contains("INFO_FORMAT=gml"));
-        assertTrue("was:" + sUrl, sUrl.contains("QUERY_LAYERS=test"));
-        assertTrue("was:" + sUrl, sUrl.contains("X=140"));
-        assertTrue("was:" + sUrl, sUrl.contains("Y=250"));
+        assertTrue(message, sUrl.contains("BBOX=-180.0%2C-90.0%2C180.0%2C90.0"));
+        assertTrue(message, sUrl.contains("SRS=EPSG%3A4326"));
+        assertTrue(message, sUrl.contains("FORMAT=image%2Fpng"));
+        assertTrue(message, sUrl.contains("WIDTH=360"));
+        assertTrue(message, sUrl.contains("HEIGHT=180"));
+        assertTrue(message, sUrl.contains("LAYERS=test"));
+        assertTrue(message, sUrl.contains("STYLES="));
+        assertTrue(message, sUrl.contains("INFO_FORMAT=gml"));
+        assertTrue(message, sUrl.contains("QUERY_LAYERS=test"));
+        assertTrue(message, sUrl.contains("X=140"));
+        assertTrue(message, sUrl.contains("Y=250"));
     }
 
     /**
@@ -251,18 +252,19 @@ public class WMSMapLayerTest extends org.geotoolkit.test.TestBase {
         final URL url = layer.queryFeatureInfo(env, rect, 140, 250, new String[]{"test"}, "gml", 1).getURL();
 
         final String sUrl = url.toString();
+        final String message = "was:" + sUrl;
         assertTrue(sUrl.startsWith("http://test.com?"));
-        assertTrue("was:" + sUrl, sUrl.contains("BBOX=-90.0%2C-180.0%2C90.0%2C180.0"));
-        assertTrue("was:" + sUrl, sUrl.contains("CRS=EPSG%3A4326"));
-        assertTrue("was:" + sUrl, sUrl.contains("FORMAT=image%2Fpng"));
-        assertTrue("was:" + sUrl, sUrl.contains("WIDTH=360"));
-        assertTrue("was:" + sUrl, sUrl.contains("HEIGHT=180"));
-        assertTrue("was:" + sUrl, sUrl.contains("LAYERS=test"));
-        assertTrue("was:" + sUrl, sUrl.contains("STYLES="));
-        assertTrue("was:" + sUrl, sUrl.contains("INFO_FORMAT=gml"));
-        assertTrue("was:" + sUrl, sUrl.contains("QUERY_LAYERS=test"));
-        assertTrue("was:" + sUrl, sUrl.contains("I=140"));
-        assertTrue("was:" + sUrl, sUrl.contains("J=250"));
+        assertTrue(message, sUrl.contains("BBOX=-90.0%2C-180.0%2C90.0%2C180.0"));
+        assertTrue(message, sUrl.contains("CRS=EPSG%3A4326"));
+        assertTrue(message, sUrl.contains("FORMAT=image%2Fpng"));
+        assertTrue(message, sUrl.contains("WIDTH=360"));
+        assertTrue(message, sUrl.contains("HEIGHT=180"));
+        assertTrue(message, sUrl.contains("LAYERS=test"));
+        assertTrue(message, sUrl.contains("STYLES="));
+        assertTrue(message, sUrl.contains("INFO_FORMAT=gml"));
+        assertTrue(message, sUrl.contains("QUERY_LAYERS=test"));
+        assertTrue(message, sUrl.contains("I=140"));
+        assertTrue(message, sUrl.contains("J=250"));
     }
 
     /**
@@ -296,18 +298,19 @@ public class WMSMapLayerTest extends org.geotoolkit.test.TestBase {
         final URL url = layer.queryFeatureInfo(env, rect, 140, 250, new String[]{"test"}, "gml", 1).getURL();
 
         final String sUrl = url.toString();
+        final String message = "was:" + sUrl;
         assertTrue(sUrl.startsWith("http://test.com?"));
-        assertTrue("was:" + sUrl,sUrl.contains("BBOX=-180.0%2C-90.0%2C180.0%2C90.0"));
-        assertTrue("was:" + sUrl,sUrl.contains("CRS=CRS%3A84"));
-        assertTrue("was:" + sUrl, sUrl.contains("FORMAT=image%2Fpng"));
-        assertTrue("was:" + sUrl, sUrl.contains("WIDTH=360"));
-        assertTrue("was:" + sUrl, sUrl.contains("HEIGHT=180"));
-        assertTrue("was:" + sUrl, sUrl.contains("LAYERS=test"));
-        assertTrue("was:" + sUrl, sUrl.contains("STYLES="));
-        assertTrue("was:" + sUrl, sUrl.contains("INFO_FORMAT=gml"));
-        assertTrue("was:" + sUrl, sUrl.contains("QUERY_LAYERS=test"));
-        assertTrue("was:" + sUrl, sUrl.contains("I=140"));
-        assertTrue("was:" + sUrl, sUrl.contains("J=250"));
+        assertTrue(message,sUrl.contains("BBOX=-180.0%2C-90.0%2C180.0%2C90.0"));
+        assertTrue(message,sUrl.contains("CRS=CRS%3A84"));
+        assertTrue(message, sUrl.contains("FORMAT=image%2Fpng"));
+        assertTrue(message, sUrl.contains("WIDTH=360"));
+        assertTrue(message, sUrl.contains("HEIGHT=180"));
+        assertTrue(message, sUrl.contains("LAYERS=test"));
+        assertTrue(message, sUrl.contains("STYLES="));
+        assertTrue(message, sUrl.contains("INFO_FORMAT=gml"));
+        assertTrue(message, sUrl.contains("QUERY_LAYERS=test"));
+        assertTrue(message, sUrl.contains("I=140"));
+        assertTrue(message, sUrl.contains("J=250"));
     }
 
     /**
@@ -342,18 +345,19 @@ public class WMSMapLayerTest extends org.geotoolkit.test.TestBase {
         final URL url = layer.queryFeatureInfo(env, rect, 140, 250, new String[]{"test"}, "gml", 1).getURL();
 
         final String sUrl = url.toString();
+        final String message = "was:" + sUrl;
         assertTrue(sUrl.startsWith("http://test.com?"));
         assertTrue(sUrl.contains("BBOX=-180.0%2C-90.0%2C180.0%2C90.0"));
-        assertTrue("was:" + sUrl, sUrl.contains("SRS=EPSG%3A4326"));
-        assertTrue("was:" + sUrl, sUrl.contains("FORMAT=image%2Fpng"));
-        assertTrue("was:" + sUrl, sUrl.contains("WIDTH=360"));
-        assertTrue("was:" + sUrl, sUrl.contains("HEIGHT=180"));
-        assertTrue("was:" + sUrl, sUrl.contains("LAYERS=test"));
-        assertTrue("was:" + sUrl, sUrl.contains("STYLES="));
-        assertTrue("was:" + sUrl, sUrl.contains("INFO_FORMAT=gml"));
-        assertTrue("was:" + sUrl, sUrl.contains("QUERY_LAYERS=test"));
-        assertTrue("was:" + sUrl, sUrl.contains("X=140"));
-        assertTrue("was:" + sUrl, sUrl.contains("Y=250"));
+        assertTrue(message, sUrl.contains("SRS=EPSG%3A4326"));
+        assertTrue(message, sUrl.contains("FORMAT=image%2Fpng"));
+        assertTrue(message, sUrl.contains("WIDTH=360"));
+        assertTrue(message, sUrl.contains("HEIGHT=180"));
+        assertTrue(message, sUrl.contains("LAYERS=test"));
+        assertTrue(message, sUrl.contains("STYLES="));
+        assertTrue(message, sUrl.contains("INFO_FORMAT=gml"));
+        assertTrue(message, sUrl.contains("QUERY_LAYERS=test"));
+        assertTrue(message, sUrl.contains("X=140"));
+        assertTrue(message, sUrl.contains("Y=250"));
     }
 
     /**
@@ -388,18 +392,19 @@ public class WMSMapLayerTest extends org.geotoolkit.test.TestBase {
         final URL url = layer.queryFeatureInfo(env, rect, 140, 250, new String[]{"test"}, "gml", 1).getURL();
 
         final String sUrl = url.toString();
+        final String message = "was:" + sUrl;
         assertTrue(sUrl.startsWith("http://test.com?"));
-        assertTrue("was:" + sUrl, sUrl.contains("BBOX=-90.0%2C-180.0%2C90.0%2C180.0"));
-        assertTrue("was:" + sUrl, sUrl.contains("CRS=EPSG%3A4326"));
-        assertTrue("was:" + sUrl, sUrl.contains("FORMAT=image%2Fpng"));
-        assertTrue("was:" + sUrl, sUrl.contains("WIDTH=360"));
-        assertTrue("was:" + sUrl, sUrl.contains("HEIGHT=180"));
-        assertTrue("was:" + sUrl, sUrl.contains("LAYERS=test"));
-        assertTrue("was:" + sUrl, sUrl.contains("STYLES="));
-        assertTrue("was:" + sUrl, sUrl.contains("INFO_FORMAT=gml"));
-        assertTrue("was:" + sUrl, sUrl.contains("QUERY_LAYERS=test"));
-        assertTrue("was:" + sUrl, sUrl.contains("I=140"));
-        assertTrue("was:" + sUrl, sUrl.contains("J=250"));
+        assertTrue(message, sUrl.contains("BBOX=-90.0%2C-180.0%2C90.0%2C180.0"));
+        assertTrue(message, sUrl.contains("CRS=EPSG%3A4326"));
+        assertTrue(message, sUrl.contains("FORMAT=image%2Fpng"));
+        assertTrue(message, sUrl.contains("WIDTH=360"));
+        assertTrue(message, sUrl.contains("HEIGHT=180"));
+        assertTrue(message, sUrl.contains("LAYERS=test"));
+        assertTrue(message, sUrl.contains("STYLES="));
+        assertTrue(message, sUrl.contains("INFO_FORMAT=gml"));
+        assertTrue(message, sUrl.contains("QUERY_LAYERS=test"));
+        assertTrue(message, sUrl.contains("I=140"));
+        assertTrue(message, sUrl.contains("J=250"));
     }
 
     /**
@@ -435,19 +440,20 @@ public class WMSMapLayerTest extends org.geotoolkit.test.TestBase {
         final URL url = layer.queryFeatureInfo(env, rect, 140, 250, new String[]{"test"}, "gml", 1).getURL();
 
         final String sUrl = url.toString();
+        final String message = "was:" + sUrl;
 
         assertTrue(sUrl.startsWith("http://test.com?"));
-        assertTrue("was:" + sUrl, sUrl.contains("BBOX=-179.9999885408455%2C-85.05112779126262%2C179.9999885408455%2C85.05112779126263"));
-        assertTrue("was:" + sUrl, sUrl.contains("SRS=EPSG%3A4326"));
-        assertTrue("was:" + sUrl, sUrl.contains("FORMAT=image%2Fpng"));
-        assertTrue("was:" + sUrl, sUrl.contains("WIDTH=512"));
-        assertTrue("was:" + sUrl, sUrl.contains("HEIGHT=512"));
-        assertTrue("was:" + sUrl, sUrl.contains("LAYERS=test"));
-        assertTrue("was:" + sUrl, sUrl.contains("STYLES="));
-        assertTrue("was:" + sUrl, sUrl.contains("INFO_FORMAT=gml"));
-        assertTrue("was:" + sUrl, sUrl.contains("QUERY_LAYERS=test"));
-        assertTrue("was:" + sUrl, sUrl.contains("X=140"));
-        assertTrue("was:" + sUrl, sUrl.contains("Y=243"));
+        assertTrue(message, sUrl.matches(".+BBOX=-179.99998854\\d+%2C-85.05112779\\d+%2C179.99998854\\d+%2C85.05112779\\d+.+"));
+        assertTrue(message, sUrl.contains("SRS=EPSG%3A4326"));
+        assertTrue(message, sUrl.contains("FORMAT=image%2Fpng"));
+        assertTrue(message, sUrl.contains("WIDTH=512"));
+        assertTrue(message, sUrl.contains("HEIGHT=512"));
+        assertTrue(message, sUrl.contains("LAYERS=test"));
+        assertTrue(message, sUrl.contains("STYLES="));
+        assertTrue(message, sUrl.contains("INFO_FORMAT=gml"));
+        assertTrue(message, sUrl.contains("QUERY_LAYERS=test"));
+        assertTrue(message, sUrl.contains("X=140"));
+        assertTrue(message, sUrl.contains("Y=243"));
     }
 
     /**
@@ -482,18 +488,19 @@ public class WMSMapLayerTest extends org.geotoolkit.test.TestBase {
         final URL url = layer.queryFeatureInfo(env, rect, 140, 250, new String[]{"test"}, "gml", 1).getURL();
 
         final String sUrl = url.toString();
+        final String message = "was:" + sUrl;
         assertTrue(sUrl.startsWith("http://test.com?"));
-        assertTrue("was:" + sUrl, sUrl.contains("BBOX=-179.9999885408455%2C-85.05112779126262%2C179.9999885408455%2C85.05112779126263"));
-        assertTrue("was:" + sUrl, sUrl.contains("CRS=CRS%3A84"));
-        assertTrue("was:" + sUrl, sUrl.contains("FORMAT=image%2Fpng"));
-        assertTrue("was:" + sUrl, sUrl.contains("WIDTH=512"));
-        assertTrue("was:" + sUrl, sUrl.contains("HEIGHT=512"));
-        assertTrue("was:" + sUrl, sUrl.contains("LAYERS=test"));
-        assertTrue("was:" + sUrl, sUrl.contains("STYLES="));
-        assertTrue("was:" + sUrl, sUrl.contains("INFO_FORMAT=gml"));
-        assertTrue("was:" + sUrl, sUrl.contains("QUERY_LAYERS=test"));
-        assertTrue("was:" + sUrl, sUrl.contains("I=140"));
-        assertTrue("was:" + sUrl, sUrl.contains("J=243"));
+        assertTrue(message, sUrl.matches(".+BBOX=-179.99998854\\d+%2C-85.05112779\\d+%2C179.99998854\\d+%2C85.05112779\\d+.+"));
+        assertTrue(message, sUrl.contains("CRS=CRS%3A84"));
+        assertTrue(message, sUrl.contains("FORMAT=image%2Fpng"));
+        assertTrue(message, sUrl.contains("WIDTH=512"));
+        assertTrue(message, sUrl.contains("HEIGHT=512"));
+        assertTrue(message, sUrl.contains("LAYERS=test"));
+        assertTrue(message, sUrl.contains("STYLES="));
+        assertTrue(message, sUrl.contains("INFO_FORMAT=gml"));
+        assertTrue(message, sUrl.contains("QUERY_LAYERS=test"));
+        assertTrue(message, sUrl.contains("I=140"));
+        assertTrue(message, sUrl.contains("J=243"));
     }
 
     /**
@@ -530,18 +537,19 @@ public class WMSMapLayerTest extends org.geotoolkit.test.TestBase {
         final URL url = layer.queryFeatureInfo(env, rect, 140, 250, new String[]{"test"}, "gml", 1).getURL();
 
         final String sUrl = url.toString();
+        final String message = "was:" + sUrl;
         assertTrue(sUrl.startsWith("http://test.com?"));
-        assertTrue("was:" + sUrl, sUrl.contains("BBOX=-179.9999885408455%2C-85.05112779126262%2C179.9999885408455%2C85.05112779126263"));
-        assertTrue("was:" + sUrl, sUrl.contains("SRS=EPSG%3A4326"));
-        assertTrue("was:" + sUrl, sUrl.contains("FORMAT=image%2Fpng"));
-        assertTrue("was:" + sUrl, sUrl.contains("WIDTH=512"));
-        assertTrue("was:" + sUrl, sUrl.contains("HEIGHT=512"));
-        assertTrue("was:" + sUrl, sUrl.contains("LAYERS=test"));
-        assertTrue("was:" + sUrl, sUrl.contains("STYLES="));
-        assertTrue("was:" + sUrl, sUrl.contains("INFO_FORMAT=gml"));
-        assertTrue("was:" + sUrl, sUrl.contains("QUERY_LAYERS=test"));
-        assertTrue("was:" + sUrl, sUrl.contains("X=140"));
-        assertTrue("was:" + sUrl, sUrl.contains("Y=243"));
+        assertTrue(message, sUrl.matches(".+BBOX=-179.99998854\\d+%2C-85.05112779\\d+%2C179.99998854\\d+%2C85.05112779\\d+.+"));
+        assertTrue(message, sUrl.contains("SRS=EPSG%3A4326"));
+        assertTrue(message, sUrl.contains("FORMAT=image%2Fpng"));
+        assertTrue(message, sUrl.contains("WIDTH=512"));
+        assertTrue(message, sUrl.contains("HEIGHT=512"));
+        assertTrue(message, sUrl.contains("LAYERS=test"));
+        assertTrue(message, sUrl.contains("STYLES="));
+        assertTrue(message, sUrl.contains("INFO_FORMAT=gml"));
+        assertTrue(message, sUrl.contains("QUERY_LAYERS=test"));
+        assertTrue(message, sUrl.contains("X=140"));
+        assertTrue(message, sUrl.contains("Y=243"));
     }
 
     /**
@@ -576,18 +584,19 @@ public class WMSMapLayerTest extends org.geotoolkit.test.TestBase {
         final URL url = layer.queryFeatureInfo(env, rect, 140, 250, new String[]{"test"}, "gml", 1).getURL();
 
         final String sUrl = url.toString();
+        final String message = "was:" + sUrl;
         assertTrue(sUrl.startsWith("http://test.com?"));
-        assertTrue("was:" + sUrl, sUrl.contains("BBOX=-85.05112779126262%2C-179.9999885408455%2C85.05112779126263%2C179.9999885408455"));
-        assertTrue("was:" + sUrl, sUrl.contains("CRS=EPSG%3A4326"));
-        assertTrue("was:" + sUrl, sUrl.contains("FORMAT=image%2Fpng"));
-        assertTrue("was:" + sUrl, sUrl.contains("WIDTH=512"));
-        assertTrue("was:" + sUrl, sUrl.contains("HEIGHT=512"));
-        assertTrue("was:" + sUrl, sUrl.contains("LAYERS=test"));
-        assertTrue("was:" + sUrl, sUrl.contains("STYLES="));
-        assertTrue("was:" + sUrl, sUrl.contains("INFO_FORMAT=gml"));
-        assertTrue("was:" + sUrl, sUrl.contains("QUERY_LAYERS=test"));
-        assertTrue("was:" + sUrl, sUrl.contains("I=140"));
-        assertTrue("was:" + sUrl, sUrl.contains("J=243"));
+        assertTrue(message, sUrl.matches(".+BBOX=-85.05112779\\d+%2C-179.99998854\\d+%2C85.05112779\\d+%2C179.99998854\\d+.+"));
+        assertTrue(message, sUrl.contains("CRS=EPSG%3A4326"));
+        assertTrue(message, sUrl.contains("FORMAT=image%2Fpng"));
+        assertTrue(message, sUrl.contains("WIDTH=512"));
+        assertTrue(message, sUrl.contains("HEIGHT=512"));
+        assertTrue(message, sUrl.contains("LAYERS=test"));
+        assertTrue(message, sUrl.contains("STYLES="));
+        assertTrue(message, sUrl.contains("INFO_FORMAT=gml"));
+        assertTrue(message, sUrl.contains("QUERY_LAYERS=test"));
+        assertTrue(message, sUrl.contains("I=140"));
+        assertTrue(message, sUrl.contains("J=243"));
     }
 
     /**
@@ -609,21 +618,22 @@ public class WMSMapLayerTest extends org.geotoolkit.test.TestBase {
         final Dimension rect = new Dimension(140, 20);
         final URL url = layer.queryLegend(rect, "image/gif", "test", 2500.0).getURL();
         final String sUrl = url.toString();
-        assertTrue("was:" + sUrl, sUrl.contains("SERVICE=WMS"));
-        assertTrue("was:" + sUrl, sUrl.contains("VERSION=1.1.1"));
-        assertTrue("was:" + sUrl, sUrl.contains("REQUEST=GetLegendGraphic"));
-        assertTrue("was:" + sUrl, sUrl.contains("FORMAT=image%2Fgif"));
-        assertTrue("was:" + sUrl, sUrl.contains("EXCEPTIONS=application%2Ftest"));
-        assertTrue("was:" + sUrl, sUrl.contains("LAYER=BlueMarble"));
-        assertTrue("was:" + sUrl, sUrl.contains("STYLE=test"));
-        assertTrue("was:" + sUrl, sUrl.contains("WIDTH=140"));
-        assertTrue("was:" + sUrl, sUrl.contains("HEIGHT=20"));
-        assertTrue("was:" + sUrl, sUrl.contains("RULE=test"));
-        assertTrue("was:" + sUrl, sUrl.contains("SCALE=2500"));
-        assertTrue("was:" + sUrl, sUrl.contains("SLD_VERSION=3.3.3"));
-        assertTrue("was:" + sUrl, sUrl.contains("TIME=20-20-20T20%3A20%3A20Z"));
-        assertTrue("was:" + sUrl, sUrl.contains("ELEVATION=500"));
-        assertTrue("was:" + sUrl, sUrl.contains("DIMRANGE=-50%2C50"));
+        final String message = "was:" + sUrl;
+        assertTrue(message, sUrl.contains("SERVICE=WMS"));
+        assertTrue(message, sUrl.contains("VERSION=1.1.1"));
+        assertTrue(message, sUrl.contains("REQUEST=GetLegendGraphic"));
+        assertTrue(message, sUrl.contains("FORMAT=image%2Fgif"));
+        assertTrue(message, sUrl.contains("EXCEPTIONS=application%2Ftest"));
+        assertTrue(message, sUrl.contains("LAYER=BlueMarble"));
+        assertTrue(message, sUrl.contains("STYLE=test"));
+        assertTrue(message, sUrl.contains("WIDTH=140"));
+        assertTrue(message, sUrl.contains("HEIGHT=20"));
+        assertTrue(message, sUrl.contains("RULE=test"));
+        assertTrue(message, sUrl.contains("SCALE=2500"));
+        assertTrue(message, sUrl.contains("SLD_VERSION=3.3.3"));
+        assertTrue(message, sUrl.contains("TIME=20-20-20T20%3A20%3A20Z"));
+        assertTrue(message, sUrl.contains("ELEVATION=500"));
+        assertTrue(message, sUrl.contains("DIMRANGE=-50%2C50"));
 
     }
 
@@ -646,23 +656,21 @@ public class WMSMapLayerTest extends org.geotoolkit.test.TestBase {
         final Dimension rect = new Dimension(140, 20);
         final URL url = layer.queryLegend(rect, "image/gif", "test", 2500.0).getURL();
         final String sUrl = url.toString();
-        assertTrue("was:" + sUrl, sUrl.contains("SERVICE=WMS"));
-        assertTrue("was:" + sUrl, sUrl.contains("VERSION=1.3.0"));
-        assertTrue("was:" + sUrl, sUrl.contains("REQUEST=GetLegendGraphic"));
-        assertTrue("was:" + sUrl, sUrl.contains("FORMAT=image%2Fgif"));
-        assertTrue("was:" + sUrl, sUrl.contains("EXCEPTIONS=application%2Ftest"));
-        assertTrue("was:" + sUrl, sUrl.contains("LAYER=BlueMarble"));
-        assertTrue("was:" + sUrl, sUrl.contains("STYLE=test"));
-        assertTrue("was:" + sUrl, sUrl.contains("WIDTH=140"));
-        assertTrue("was:" + sUrl, sUrl.contains("HEIGHT=20"));
-        assertTrue("was:" + sUrl, sUrl.contains("RULE=test"));
-        assertTrue("was:" + sUrl, sUrl.contains("SCALE=2500"));
-        assertTrue("was:" + sUrl, sUrl.contains("SLD_VERSION=3.3.3"));
-        assertTrue("was:" + sUrl, sUrl.contains("TIME=20-20-20T20%3A20%3A20Z"));
-        assertTrue("was:" + sUrl, sUrl.contains("ELEVATION=500"));
-        assertTrue("was:" + sUrl, sUrl.contains("DIMRANGE=-50%2C50"));
-
+        final String message = "was:" + sUrl;
+        assertTrue(message, sUrl.contains("SERVICE=WMS"));
+        assertTrue(message, sUrl.contains("VERSION=1.3.0"));
+        assertTrue(message, sUrl.contains("REQUEST=GetLegendGraphic"));
+        assertTrue(message, sUrl.contains("FORMAT=image%2Fgif"));
+        assertTrue(message, sUrl.contains("EXCEPTIONS=application%2Ftest"));
+        assertTrue(message, sUrl.contains("LAYER=BlueMarble"));
+        assertTrue(message, sUrl.contains("STYLE=test"));
+        assertTrue(message, sUrl.contains("WIDTH=140"));
+        assertTrue(message, sUrl.contains("HEIGHT=20"));
+        assertTrue(message, sUrl.contains("RULE=test"));
+        assertTrue(message, sUrl.contains("SCALE=2500"));
+        assertTrue(message, sUrl.contains("SLD_VERSION=3.3.3"));
+        assertTrue(message, sUrl.contains("TIME=20-20-20T20%3A20%3A20Z"));
+        assertTrue(message, sUrl.contains("ELEVATION=500"));
+        assertTrue(message, sUrl.contains("DIMRANGE=-50%2C50"));
     }
-
-
 }

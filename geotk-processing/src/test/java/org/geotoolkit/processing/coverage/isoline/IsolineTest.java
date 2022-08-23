@@ -19,7 +19,6 @@ package org.geotoolkit.processing.coverage.isoline;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
 import java.awt.image.WritableRaster;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.apache.sis.coverage.SampleDimension;
@@ -44,7 +43,6 @@ import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
-import org.geotoolkit.test.Assert;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.locationtech.jts.geom.Geometry;
@@ -52,7 +50,6 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKTReader;
-import org.locationtech.jts.operation.linemerge.LineMerger;
 import org.opengis.feature.Feature;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.datum.PixelInCell;
@@ -207,7 +204,7 @@ public class IsolineTest extends org.geotoolkit.test.TestBase {
         final org.geotoolkit.process.Process process = desc.createProcess(procparams);
         final ParameterValueGroup result = process.call();
         FeatureSet col = (FeatureSet) result.parameter("outFeatureCollection").getValue();
-        assertEquals(0, FeatureStoreUtilities.getCount(col, true).longValue());
+        assertEquals(1, FeatureStoreUtilities.getCount(col, true).longValue());
     }
 
     /**

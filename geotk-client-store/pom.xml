@@ -68,11 +68,6 @@
           <version>${project.version}</version>
       </dependency>
       <dependency>
-          <groupId>org.geotoolkit</groupId>
-          <artifactId>geotk-coverage-worldfile</artifactId>
-          <version>${project.version}</version>
-      </dependency>
-      <dependency>
           <groupId>org.apache.sis.storage</groupId>
           <artifactId>sis-geotiff</artifactId>
       </dependency>
