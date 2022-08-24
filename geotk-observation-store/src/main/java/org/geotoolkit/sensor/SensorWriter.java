@@ -60,32 +60,6 @@ public interface SensorWriter {
     int replaceSensor(String id, AbstractSensorML process) throws DataStoreException;
 
     /**
-     * Start a transaction on the datasource.
-     *
-     * @throws org.apache.sis.storage.DataStoreException
-     */
-    @Deprecated
-    void startTransaction() throws DataStoreException;
-
-    /**
-     * Abort if there is a transaction running.
-     * Restore the data like they were before the begin of the transaction.
-     *
-     * @throws org.apache.sis.storage.DataStoreException
-     */
-    @Deprecated
-    void abortTransaction() throws DataStoreException;
-
-    /**
-     * End a transaction (if there is one running)
-     * and store the changement made during this transaction on the datasource.
-     *
-     * @throws org.apache.sis.storage.DataStoreException
-     */
-    @Deprecated
-    void endTransaction() throws DataStoreException;
-
-    /**
      * Create a new identifier for a sensor.
      *
      * @return The new available identifier.
@@ -95,6 +69,8 @@ public interface SensorWriter {
 
     /**
      * Return informations about the implementation class.
+     *
+     * @return informations.
      */
     String getInfos();
 

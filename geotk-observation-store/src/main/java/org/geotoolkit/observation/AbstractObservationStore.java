@@ -82,7 +82,7 @@ public abstract class AbstractObservationStore extends DataStore implements Obse
      * {@inheritDoc }
      */
     @Override
-    public ObservationFilterReader getFilter() {
+    public ObservationFilterReader getFilter() throws DataStoreException {
         return null;
     }
 
@@ -90,7 +90,7 @@ public abstract class AbstractObservationStore extends DataStore implements Obse
      * {@inheritDoc }
      */
     @Override
-    public ObservationWriter getWriter() {
+    public ObservationWriter getWriter() throws DataStoreException {
         return null;
     }
 

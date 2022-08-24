@@ -138,22 +138,25 @@ public interface ObservationStore {
      * Return an Observation Reader on the data.
      *
      * @return An Observation Reader.
+     * @throws org.apache.sis.storage.DataStoreException if the reader creation fails
      */
-    public abstract ObservationReader getReader();
+    public abstract ObservationReader getReader() throws DataStoreException;
 
     /**
      * Return an Observation Filter on the data.
      *
      * @return An Observation Filter.
+     * @throws org.apache.sis.storage.DataStoreException if the writer creation fails
      */
-    public abstract ObservationFilterReader getFilter();
+    public abstract ObservationFilterReader getFilter() throws DataStoreException;
 
     /**
      * Return an Observation Writer on the data.
      *
      * @return An Observation Writer.
+     * @throws org.apache.sis.storage.DataStoreException if the writer creation fails
      */
-    public abstract ObservationWriter getWriter();
+    public abstract ObservationWriter getWriter() throws DataStoreException;
 
     void close() throws DataStoreException;
 

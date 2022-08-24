@@ -40,6 +40,8 @@ public class ObservationTemplate {
     }
 
     /**
+     * Template procedure.
+     *
      * @return the procedure
      */
     public Process getProcedure() {
@@ -47,6 +49,8 @@ public class ObservationTemplate {
     }
 
     /**
+     * Set the template procedure.
+     *
      * @param procedure the procedure to set
      */
     public void setProcedure(Process procedure) {
@@ -54,6 +58,8 @@ public class ObservationTemplate {
     }
 
     /**
+     * List of the template observed properties.
+     *
      * @return the observableProperty
      */
     public List<PhenomenonProperty> getObservedProperties() {
@@ -61,6 +67,8 @@ public class ObservationTemplate {
     }
 
     /**
+     * Set the template observed properties.
+     *
      * @param observedProperties the observableProperty to set
      */
     public void setObservedProperty(List<PhenomenonProperty> observedProperties) {
@@ -68,6 +76,8 @@ public class ObservationTemplate {
     }
 
     /**
+     * Template feature of interest.
+     *
      * @return the featureOfInterest
      */
     public String getFeatureOfInterest() {
@@ -75,6 +85,7 @@ public class ObservationTemplate {
     }
 
     /**
+     * set the template feature of interest.
      * @param featureOfInterest the featureOfInterest to set
      */
     public void setFeatureOfInterest(String featureOfInterest) {
@@ -82,19 +93,19 @@ public class ObservationTemplate {
     }
 
     /**
-     * @return the observation
+     * Full observation template.
+     *
+     * @return the observation template.
      */
     public Observation getObservation() {
         return observation;
     }
 
     /**
+     * Set the full observation template.
      * @param observation the observation to set
      */
     public void setObservation(Observation observation) {
         this.observation = observation;
     }
-
-
-
 }
