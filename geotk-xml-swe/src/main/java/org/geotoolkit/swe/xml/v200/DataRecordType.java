@@ -67,8 +67,8 @@ public class DataRecordType extends AbstractDataComponentType implements DataRec
 
     }
 
-    public DataRecordType(final String id, final String definition, final boolean fixed, final List<Field> fields) {
-        super(id, definition, !fixed);
+    public DataRecordType(final String id, final String definition, final Boolean fixed, final List<Field> fields) {
+        super(id, definition, fixed != null ? !fixed : null);
         this.field = fields;
     }
 

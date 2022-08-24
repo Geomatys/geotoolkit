@@ -95,7 +95,7 @@ public class QuantityType extends AbstractDataComponentType implements Quantity 
                 this.constraint = new AllowedValuesPropertyType(q.getConstraint());
             }
             if (q.getQuality() != null) {
-                this.quality = new ArrayList<QualityPropertyType>();
+                this.quality = new ArrayList<>();
                 for (AbstractQualityProperty qual : q.getQuality()) {
                     this.quality.add(new QualityPropertyType(qual));
                 }
@@ -104,18 +104,20 @@ public class QuantityType extends AbstractDataComponentType implements Quantity 
     }
 
     public QuantityType(final String definition, final UomPropertyType uom, final Double value) {
-        super(definition);
-        this.uom   = uom;
-        this.value = value;
+        this(null, null, definition, uom, value, null);
     }
 
     public QuantityType(final String axisID, final String definition, final UomPropertyType uom, final Double value) {
-        super(definition);
+        this(null, axisID, definition, uom, value, null);
+    }
+
+    public QuantityType(final String id, final String axisID, final String definition, final UomPropertyType uom, final Double value, List<QualityPropertyType> quality) {
+        super(id, definition, null);
         this.axisID = axisID;
         this.uom    = uom;
         this.value  = value;
+        this.quality = quality;
     }
-
 
     /**
      * Gets the value of the uom property.

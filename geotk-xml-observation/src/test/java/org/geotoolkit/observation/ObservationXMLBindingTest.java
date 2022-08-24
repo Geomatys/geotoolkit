@@ -49,6 +49,14 @@ import org.apache.sis.xml.MarshallerPool;
 import org.junit.*;
 
 import static org.apache.sis.test.MetadataAssert.*;
+import org.geotoolkit.observation.xml.v200.OMObservationType;
+import org.geotoolkit.observation.xml.v200.TimeObjectPropertyType;
+import org.geotoolkit.swe.xml.v101.QualityPropertyType;
+import org.geotoolkit.swe.xml.v101.QuantityType;
+import org.geotoolkit.swe.xml.v200.DataRecordType;
+import org.geotoolkit.swe.xml.v200.Field;
+import org.geotoolkit.swe.xml.v200.TextEncodingType;
+import org.geotoolkit.swe.xml.v200.TextType;
 
 
 /**
@@ -65,10 +73,13 @@ public class ObservationXMLBindingTest extends org.geotoolkit.test.TestBase {
     @Before
     public void setUp() throws JAXBException {
         pool = new MarshallerPool(JAXBContext.newInstance(
-                "org.geotoolkit.sampling.xml.v100:" +
-                "org.geotoolkit.swe.xml.v101:" +
-                "org.geotoolkit.observation.xml.v100:" +
                 "org.geotoolkit.gml.xml.v311:" +
+                "org.geotoolkit.swe.xml.v101:" +
+                "org.geotoolkit.swe.xml.v200:" +
+                "org.geotoolkit.observation.xml.v100:" +
+                "org.geotoolkit.sampling.xml.v100:" +
+                "org.geotoolkit.sampling.xml.v200:" +
+                "org.geotoolkit.samplingspatial.xml.v200:" +
                 "org.apache.sis.internal.jaxb.geometry"), null);
         unmarshaller = pool.acquireUnmarshaller();
         marshaller   = pool.acquireMarshaller();
@@ -99,10 +110,15 @@ public class ObservationXMLBindingTest extends org.geotoolkit.test.TestBase {
         PhenomenonType observedProperty = new PhenomenonType("phenomenon-007", "urn:OGC:phenomenon-007");
         TimePeriodType samplingTime      = new TimePeriodType("t1", "2007-01-01", "2008-09-09");
 
-        TextBlockType encoding            = new TextBlockType("encoding-001", ",", "@@", ".");
+        TextBlockType encoding             = new TextBlockType("encoding-001", ",", "@@", ".");
         List<AnyScalarPropertyType> fields = new ArrayList<>();
         AnyScalarPropertyType field        = new AnyScalarPropertyType("text-field-001", new Text("urn:something", "some value"));
         fields.add(field);
+
+        QuantityType q = new QuantityType("urn:something2", "some value");
+        q.setQuality(new QualityPropertyType(new Text("quality_flag", "quality flag", null)));
+        AnyScalarPropertyType field2       = new AnyScalarPropertyType("quality-field-001", q);
+        fields.add(field2);
         SimpleDataRecordType record       = new SimpleDataRecordType(fields);
         DataArrayType array               = new DataArrayType("array-001", 1, "array-001", record, encoding, "somevalue", null);
         DataArrayPropertyType arrayProp    = new DataArrayPropertyType(array);
@@ -162,6 +178,14 @@ public class ObservationXMLBindingTest extends org.geotoolkit.test.TestBase {
                            "                            <swe:value>some value</swe:value>" + '\n' +
                            "                        </swe:Text>" + '\n' +
                            "                    </swe:field>" + '\n' +
+                           "                    <swe:field name=\"quality-field-001\">\n" +
+                           "                        <swe:Quantity definition=\"urn:something2\">\n" +
+                           "                            <swe:uom code=\"some value\"/>\n" +
+                           "                            <swe:quality>\n" +
+                           "                                <swe:Text definition=\"quality flag\" gml:id=\"quality_flag\"/>\n" +
+                           "                            </swe:quality>\n" +
+                           "                        </swe:Quantity>\n" +
+                           "                    </swe:field>" +
                            "                </swe:SimpleDataRecord>" + '\n' +
                            "            </swe:elementType>" + '\n' +
                            "            <swe:encoding>" + '\n' +
@@ -241,6 +265,99 @@ public class ObservationXMLBindingTest extends org.geotoolkit.test.TestBase {
 
         result = sw.toString();
 
+    }
+
+    @Test
+    public void marshallingV2Test() throws Exception {
+
+        org.geotoolkit.gml.xml.v321.FeaturePropertyType foi = new org.geotoolkit.gml.xml.v321.FeaturePropertyType("foi-007");
+
+        PhenomenonType observedProperty = new PhenomenonType("phenomenon-007", "urn:OGC:phenomenon-007");
+        org.geotoolkit.gml.xml.v321.TimePeriodType samplingTime      = new org.geotoolkit.gml.xml.v321.TimePeriodType("t1", "2007-01-01", "2008-09-09");
+
+        TextEncodingType encoding             = new TextEncodingType("encoding-001", ",", "@@", ".");
+        List<Field> fields = new ArrayList<>();
+        Field field        = new Field("text-field-001", new TextType("urn:something", "some value"));
+        fields.add(field);
+
+        org.geotoolkit.swe.xml.v200.QuantityType q = new org.geotoolkit.swe.xml.v200.QuantityType("urn:something2", "some value", null);
+        q.setQuality(Arrays.asList(new org.geotoolkit.swe.xml.v200.QualityPropertyType(new TextType("qflag", "quality_flag", null))));
+        Field field2       = new Field("quality-field-001", q);
+        fields.add(field2);
+        DataRecordType record       = new DataRecordType("record1", "def", null, fields);
+        org.geotoolkit.swe.xml.v200.DataArrayType array               = new org.geotoolkit.swe.xml.v200.DataArrayType("array-001", 1, encoding, "somevalue", "array-001", record, null);
+        org.geotoolkit.swe.xml.v200.DataArrayPropertyType arrayProp    = new org.geotoolkit.swe.xml.v200.DataArrayPropertyType(array);
+
+
+        OMObservationType obs = new OMObservationType("urn:Observation-007",
+                                                      "observation definition",
+                                                      "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_ComplexObservation",
+                                                      samplingTime,
+                                                      "urn:sensor:007",
+                                                      "urn:OGC:phenomenon-007",
+                                                      null,
+                                                      foi,
+                                                      arrayProp);
+
+        StringWriter sw = new StringWriter();
+        marshaller.marshal(obs, sw);
+
+        String result = sw.toString();
+        //we remove the first line
+        result = result.substring(result.indexOf("?>") + 2).trim();
+        String expResult =  "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+                            "<om:Observation gml:id=\"urn:Observation-007\" \n" +
+                            "                  xmlns:gml=\"http://www.opengis.net/gml/3.2\" \n" +
+                            "                  xmlns:sa=\"http://www.opengis.net/sampling/1.0\"\n" +
+                            "                  xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" \n" +
+                            "                  xmlns:swe=\"http://www.opengis.net/swe/2.0\" \n" +
+                            "                  xmlns:om=\"http://www.opengis.net/om/2.0\" \n" +
+                            "                  xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n" +
+                            "  <gml:name>observation definition</gml:name>\n" +
+                            "  <gml:boundedBy xsi:nil=\"true\"/>\n" +
+                            "  <om:type xlink:href=\"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_ComplexObservation\"/>\n" +
+                            "  <om:phenomenonTime>\n" +
+                            "    <gml:TimePeriod gml:id=\"t1\">\n" +
+                            "      <gml:beginPosition>2007-01-01</gml:beginPosition>\n" +
+                            "      <gml:endPosition>2008-09-09</gml:endPosition>\n" +
+                            "    </gml:TimePeriod>\n" +
+                            "  </om:phenomenonTime>\n" +
+                            "  <om:resultTime/>\n" +
+                            "  <om:procedure xlink:href=\"urn:sensor:007\"/>\n" +
+                            "  <om:observedProperty xlink:href=\"urn:OGC:phenomenon-007\"/>\n" +
+                            "  <om:featureOfInterest xlink:href=\"foi-007\"/>\n" +
+                            "  <om:result xsi:type=\"swe:DataArrayPropertyType\">\n" +
+                            "    <swe:DataArray id=\"array-001\">\n" +
+                            "      <swe:elementCount>\n" +
+                            "        <swe:Count>\n" +
+                            "          <swe:value>1</swe:value>\n" +
+                            "        </swe:Count>\n" +
+                            "      </swe:elementCount>\n" +
+                            "      <swe:elementType name=\"array-001\">\n" +
+                            "        <swe:DataRecord definition=\"def\" id=\"record1\">\n" +
+                            "          <swe:field name=\"text-field-001\">\n" +
+                            "            <swe:Text definition=\"urn:something\">\n" +
+                            "              <swe:value>some value</swe:value>\n" +
+                            "            </swe:Text>\n" +
+                            "          </swe:field>\n" +
+                            "          <swe:field name=\"quality-field-001\">\n" +
+                            "            <swe:Quantity definition=\"urn:something2\">\n" +
+                            "              <swe:quality>\n" +
+                            "                <swe:Text id=\"qflag\" definition=\"quality_flag\"/>\n" +
+                            "              </swe:quality>\n" +
+                            "              <swe:uom code=\"some value\"/>\n" +
+                            "            </swe:Quantity>\n" +
+                            "          </swe:field>\n" +
+                            "        </swe:DataRecord>\n" +
+                            "      </swe:elementType>\n" +
+                            "      <swe:encoding>\n" +
+                            "        <swe:TextEncoding decimalSeparator=\",\" tokenSeparator=\"@@\" blockSeparator=\".\" id=\"encoding-001\"/>\n" +
+                            "      </swe:encoding>\n" +
+                            "      <swe:values>somevalue</swe:values>\n" +
+                            "    </swe:DataArray>\n" +
+                            "  </om:result>\n" +
+                            "</om:Observation>";
+        assertXmlEquals(expResult, result, "xmlns:*", "xsi:type");
     }
 
     /**

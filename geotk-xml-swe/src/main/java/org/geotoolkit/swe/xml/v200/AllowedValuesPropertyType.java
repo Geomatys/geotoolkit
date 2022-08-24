@@ -76,6 +76,21 @@ public class AllowedValuesPropertyType implements AbstractAllowedValuesProperty 
 
     }
 
+    public AllowedValuesPropertyType(final AbstractAllowedValuesProperty avp) {
+        if (avp != null) {
+            this.actuate   = avp.getActuate() != null ? ActuateType.fromValue(avp.getActuate()) : null;
+            if (avp.getAllowedValues() != null) {
+                this.allowedValues = new AllowedValuesType(avp.getAllowedValues());
+            }
+            this.arcrole = avp.getArcrole();
+            this.href    = avp.getHref();
+            this.role    = avp.getRole();
+            this.show    = avp.getShow() != null ? ShowType.fromValue(avp.getShow()) : null;
+            this.title   = avp.getTitle();
+            this.type    = avp.getType() != null ? TypeType.fromValue(avp.getType()) : null;
+        }
+    }
+
     public AllowedValuesPropertyType(AllowedValuesType allowedValues) {
         this.allowedValues = allowedValues;
     }

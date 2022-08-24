@@ -29,6 +29,8 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.apache.sis.metadata.iso.DefaultIdentifier;
+import org.opengis.metadata.Identifier;
 
 
 /**
@@ -99,7 +101,7 @@ public class AbstractSWEType {
      */
     public List<Object> getExtension() {
         if (extension == null) {
-            extension = new ArrayList<Object>();
+            extension = new ArrayList<>();
         }
         return this.extension;
     }

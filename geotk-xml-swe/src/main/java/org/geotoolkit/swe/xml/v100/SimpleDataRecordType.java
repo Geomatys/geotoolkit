@@ -66,7 +66,7 @@ public class SimpleDataRecordType extends AbstractDataRecordType implements Simp
 
     }
 
-    public SimpleDataRecordType(final String blockId, final String id, final String definition, final boolean fixed, final List<AnyScalarPropertyType> field) {
+    public SimpleDataRecordType(final String blockId, final String id, final String definition, final Boolean fixed, final List<AnyScalarPropertyType> field) {
         super(id, definition, fixed);
         this.blockId = blockId;
         this.field = field;

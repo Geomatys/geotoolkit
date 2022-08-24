@@ -69,7 +69,7 @@ public class QuantityType extends AbstractDataComponentType implements Quantity 
                 this.constraint = new AllowedValuesPropertyType(q.getConstraint());
             }
             if (q.getQuality() != null) {
-                this.quality = new ArrayList<QualityPropertyType>();
+                this.quality = new ArrayList<>();
                 for (AbstractQualityProperty qual : q.getQuality()) {
                     this.quality.add(new QualityPropertyType(qual));
                 }
@@ -77,34 +77,34 @@ public class QuantityType extends AbstractDataComponentType implements Quantity 
         }
     }
 
-    /**
-     * Build a new QuantityType
-     */
-    public QuantityType(final String definition, final String uomCode, final String uomHref) {
-        super(null, definition, null);
-        this.uom = new UomPropertyType(uomCode, uomHref);
-    }
-
-    /**
-     * Build a new QuantityType
-     */
     public QuantityType(final String definition, final String uomCode) {
-        super(null, definition, null);
+       this(definition, uomCode, null);
         this.uom = new UomPropertyType(uomCode, null);
     }
 
+    public QuantityType(final String definition, final String uomCode, final String uomHref) {
+        this(definition, new UomPropertyType(uomCode, uomHref), null);
+    }
 
     public QuantityType(final String definition, final UomPropertyType uom, final Double value) {
-        super(definition);
-        this.uom   = uom;
-        this.value = value;
+        this(null, definition, uom, value);
     }
 
     public QuantityType(final String axisID, final String definition, final UomPropertyType uom, final Double value) {
-        super(definition);
+        this(axisID, null, definition, uom, value, null);
+    }
+
+    public QuantityType(final String axisID, final String referenceFrame, final String definition, final UomPropertyType uom, final Double value, List<QualityPropertyType> quality) {
+        this(null, axisID, referenceFrame, definition, uom, value, quality);
+    }
+
+    public QuantityType(final String id, final String axisID, final String referenceFrame, final String definition, final UomPropertyType uom, final Double value, List<QualityPropertyType> quality) {
+        super(id, definition, null);
         this.axisID = axisID;
+        this.referenceFrame = referenceFrame;
         this.uom    = uom;
         this.value  = value;
+        this.quality = quality;
     }
 
     /**
@@ -194,7 +194,7 @@ public class QuantityType extends AbstractDataComponentType implements Quantity 
     public void setQuality(final QualityPropertyType quality) {
         if (quality != null) {
             if (this.quality == null) {
-                this.quality = new ArrayList<QualityPropertyType>();
+                this.quality = new ArrayList<>();
             }
             this.quality.add(quality);
         }
@@ -237,8 +237,7 @@ public class QuantityType extends AbstractDataComponentType implements Quantity 
 
     @Override
     public String toString() {
-        StringBuilder s = new StringBuilder();
-        s.append("[QuantityType]").append('\n').append("super:").append(super.toString()).append('\n');
+        StringBuilder s = new StringBuilder(super.toString());
         if (axisID != null) {
             s.append("axisId:").append(axisID).append('\n');
         }

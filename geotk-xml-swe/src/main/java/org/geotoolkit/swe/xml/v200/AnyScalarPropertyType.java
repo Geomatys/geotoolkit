@@ -21,7 +21,16 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.AbstractBoolean;
+import org.geotoolkit.swe.xml.AbstractCategory;
+import org.geotoolkit.swe.xml.AbstractCount;
+import org.geotoolkit.swe.xml.AbstractDataComponent;
+import org.geotoolkit.swe.xml.AbstractText;
+import org.geotoolkit.swe.xml.AbstractTime;
+import org.geotoolkit.swe.xml.AnyScalar;
+import org.geotoolkit.swe.xml.Quantity;
 import org.geotoolkit.xlink.xml.v100.ActuateType;
 import org.geotoolkit.xlink.xml.v100.ShowType;
 import org.geotoolkit.xlink.xml.v100.TypeType;
@@ -58,6 +67,9 @@ import org.geotoolkit.xlink.xml.v100.TypeType;
 })
 public class AnyScalarPropertyType {
 
+    @XmlTransient
+    private String idDataRecord;
+
     @XmlElement(name = "Boolean")
     private BooleanType _boolean;
     @XmlElement(name = "Count")
@@ -84,6 +96,73 @@ public class AnyScalarPropertyType {
     private ShowType show;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private ActuateType actuate;
+
+    public AnyScalarPropertyType() {
+
+    }
+
+    public AnyScalarPropertyType(final AnyScalar sc) {
+        if (sc != null) {
+            if (sc.getValue() != null) {
+                AbstractDataComponent component = sc.getValue();
+                if (component instanceof AbstractTime at) {
+                    this.time = new TimeType(at);
+
+                } else if (component instanceof Quantity q) {
+                    this.quantity = new QuantityType(q);
+
+                } else if (component instanceof AbstractBoolean ab) {
+                    this._boolean = new BooleanType(ab);
+
+                } else if (component instanceof AbstractText at) {
+                    this.text = new TextType(at);
+
+                } else if (component instanceof AbstractCount ac) {
+                    this.count = new CountType(ac);
+
+                } else if (component instanceof AbstractCategory ac) {
+                    this.category = new CategoryType(ac);
+
+                } else {
+                   throw new IllegalArgumentException("Unexpected scalar type:" + component.getClass().getName());
+                }
+            }
+            if (sc.getActuate() != null) {
+                this.actuate = ActuateType.fromValue(sc.getActuate());
+            }
+            this.arcrole = sc.getArcrole();
+            this.href    = sc.getHref();
+            this.role    = sc.getRole();
+            if (sc.getShow() != null) {
+                this.show = ShowType.fromValue(sc.getShow());
+            }
+            if (sc.getType() != null) {
+                this.type = TypeType.fromValue(sc.getType());
+            }
+        }
+    }
+
+    /**
+     * Build a new component Property.
+     */
+    public AnyScalarPropertyType(final String idDataRecord, final AbstractDataComponentType component) {
+        this.idDataRecord = idDataRecord;
+        if (component instanceof TimeType) {
+            this.time = (TimeType)component;
+        } else if (component instanceof QuantityType) {
+            this.quantity = (QuantityType)component;
+        } else if (component instanceof BooleanType) {
+            this._boolean = (BooleanType)component;
+        } else if (component instanceof TextType) {
+            this.text = (TextType)component;
+        } else if (component instanceof CountType) {
+            this.count = (CountType)component;
+        } else if (component instanceof CategoryType) {
+            this.category = (CategoryType)component;
+        } else {
+            throw new IllegalArgumentException("Unexpected scalar type:" + component.getClass().getName());
+        }
+    }
 
     /**
      * Gets the value of the boolean property.
@@ -399,6 +478,10 @@ public class AnyScalarPropertyType {
      */
     public void setActuate(ActuateType value) {
         this.actuate = value;
+    }
+
+    public String getIdDataRecord() {
+        return idDataRecord;
     }
 
 }

@@ -77,6 +77,19 @@ public class UnitReference implements UomProperty {
         this.code = code;
     }
 
+    public UnitReference(final UomProperty uom) {
+        if (uom != null) {
+            this.actuate   = uom.getActuate() != null ? ActuateType.fromValue(uom.getActuate()) : null;
+            this.arcrole   = uom.getArcrole();
+            this.code      = uom.getCode();
+            this.href      = uom.getHref();
+            this.role      = uom.getRole();
+            this.show      = uom.getShow() != null ? ShowType.fromValue(uom.getShow()) : null;
+            this.title     = uom.getTitle();
+            this.type      = uom.getType() != null ? TypeType.fromValue(uom.getType()) : null;
+        }
+    }
+
     public UnitReference(final String code, final String href) {
         this.code = code;
         this.href = href;

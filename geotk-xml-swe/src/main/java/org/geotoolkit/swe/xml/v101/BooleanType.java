@@ -47,9 +47,6 @@ public class BooleanType extends AbstractDataComponentType  implements AbstractB
 
     }
 
-    /**
-     * Build a new TimeType
-     */
     public BooleanType(final AbstractBoolean bool) {
         super(bool);
         if (bool != null) {
@@ -57,14 +54,14 @@ public class BooleanType extends AbstractDataComponentType  implements AbstractB
             this.axisID = bool.getAxisID();
             this.referenceFrame = bool.getReferenceFrame();
         }
-
     }
 
-    /**
-     * Build a new TimeType
-     */
     public BooleanType(final String definition, final java.lang.Boolean value) {
-        super(null, definition, null);
+        this(null, definition, value);
+    }
+
+    public BooleanType(final String id, final String definition, final java.lang.Boolean value) {
+        super(id, definition, null);
         this.value = value;
 
     }

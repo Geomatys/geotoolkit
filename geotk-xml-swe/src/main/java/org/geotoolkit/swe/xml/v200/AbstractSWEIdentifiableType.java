@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.AbstractGML;
 import org.opengis.metadata.Identifier;
 
 
@@ -77,6 +78,14 @@ public class AbstractSWEIdentifiableType extends AbstractSWEType {
         this.description = that.description;
         this.identifier  = that.identifier;
         this.label       = that.label;
+    }
+
+    public AbstractSWEIdentifiableType(final AbstractGML that) {
+        super(that.getId());
+        this.description = that.getDescription();
+        if (that.getName() != null) {
+            this.identifier  = that.getName().getCode();
+        }
     }
     /**
      * Gets the value of the identifier property.

@@ -55,6 +55,31 @@ public class SweXmlFactory {
         }
     }
 
+    public static AbstractQualityProperty createQualityProperty(final String version, final AbstractDataComponent compo) {
+        if ("1.0.0".equals(version)) {
+            if (compo != null && !(compo instanceof org.geotoolkit.swe.xml.v100.AbstractDataComponentType)) {
+                throw new IllegalArgumentException("Unexpected SWE version for component object.");
+            }
+            return new org.geotoolkit.swe.xml.v100.QualityPropertyType((org.geotoolkit.swe.xml.v100.AbstractDataComponentType) compo);
+        } else if ("1.0.1".equals(version)) {
+            if (compo != null && !(compo instanceof org.geotoolkit.swe.xml.v101.AbstractDataComponentType)) {
+                throw new IllegalArgumentException("Unexpected SWE version for component object.");
+            }
+            return new org.geotoolkit.swe.xml.v101.QualityPropertyType((org.geotoolkit.swe.xml.v101.AbstractDataComponentType) compo);
+        } else if ("2.0.0".equals(version)) {
+            if (compo != null && !(compo instanceof org.geotoolkit.swe.xml.v200.AbstractDataComponentType)) {
+                throw new IllegalArgumentException("Unexpected SWE version for component object.");
+            }
+            return new org.geotoolkit.swe.xml.v200.QualityPropertyType((org.geotoolkit.swe.xml.v200.AbstractDataComponentType) compo);
+        } else {
+            throw new IllegalArgumentException("Unexpected SWE version:" + version);
+        }
+    }
+
+    public static Quantity createQuantity(final String version, final String definition, final UomProperty uom, final Double value) {
+        return createQuantity(version, null, definition, uom, value, null);
+    }
+    
     /**
      * Build a Quantity object in the factory version.
      *
@@ -64,32 +89,66 @@ public class SweXmlFactory {
      * @param value
      * @return
      */
-    public static Quantity createQuantity(final String version, final String definition, final UomProperty uom, final Double value) {
+    public static Quantity createQuantity(final String version, final String id, final String definition, final UomProperty uom, final Double value, final List<AbstractQualityProperty> quality) {
 
         if ("1.0.0".equals(version)) {
             if (uom != null && !(uom instanceof org.geotoolkit.swe.xml.v100.UomPropertyType)) {
                 throw new IllegalArgumentException("Unexpected SWE version for uomProperty object.");
             }
-            return new org.geotoolkit.swe.xml.v100.QuantityType(definition,
+            final List<org.geotoolkit.swe.xml.v100.QualityPropertyType> qual100 = new ArrayList<>();
+            if (quality != null) {
+                for (AbstractQualityProperty q : quality) {
+                    if (q != null && !(q instanceof org.geotoolkit.swe.xml.v100.QualityPropertyType)) {
+                        throw new IllegalArgumentException("Unexpected SWE version for quality object.");
+                    }
+                    qual100.add((org.geotoolkit.swe.xml.v100.QualityPropertyType)q);
+                }
+            }
+            return new org.geotoolkit.swe.xml.v100.QuantityType(id,
+                                                                null,
+                                                                definition,
                                                                 (org.geotoolkit.swe.xml.v100.UomPropertyType)uom,
-                                                                value);
+                                                                value,
+                                                                qual100);
         } else if ("1.0.1".equals(version)) {
             if (uom != null && !(uom instanceof org.geotoolkit.swe.xml.v101.UomPropertyType)) {
                 throw new IllegalArgumentException("Unexpected SWE version for uomProperty object.");
             }
-            return new org.geotoolkit.swe.xml.v101.QuantityType(definition,
-                                                                (org.geotoolkit.swe.xml.v101.UomPropertyType)uom,
-                                                                value);
-        } else if ("2.0.0".equals(version)) {
-            final String code;
-            if (uom != null) {
-                code = uom.getCode();
-            } else {
-                code = null;
+            final List<org.geotoolkit.swe.xml.v101.QualityPropertyType> qual101 = new ArrayList<>();
+            if (quality != null) {
+                for (AbstractQualityProperty q : quality) {
+                    if (q != null && !(q instanceof org.geotoolkit.swe.xml.v101.QualityPropertyType)) {
+                        throw new IllegalArgumentException("Unexpected SWE version for quality object.");
+                    }
+                    qual101.add((org.geotoolkit.swe.xml.v101.QualityPropertyType)q);
+                }
             }
-            return new org.geotoolkit.swe.xml.v200.QuantityType(definition,
-                                                                code,
-                                                                value);
+            return new org.geotoolkit.swe.xml.v101.QuantityType(id,
+                                                                null,
+                                                                definition,
+                                                                null,
+                                                                (org.geotoolkit.swe.xml.v101.UomPropertyType)uom,
+                                                                value,
+                                                                qual101);
+        } else if ("2.0.0".equals(version)) {
+            if (uom != null && !(uom instanceof org.geotoolkit.swe.xml.v200.UnitReference)) {
+                throw new IllegalArgumentException("Unexpected SWE version for uomProperty object.");
+            }
+            final List<org.geotoolkit.swe.xml.v200.QualityPropertyType> qual200 = new ArrayList<>();
+            if (quality != null) {
+                for (AbstractQualityProperty q : quality) {
+                    if (q != null && !(q instanceof org.geotoolkit.swe.xml.v200.QualityPropertyType)) {
+                        throw new IllegalArgumentException("Unexpected SWE version for quality object.");
+                    }
+                    qual200.add((org.geotoolkit.swe.xml.v200.QualityPropertyType)q);
+                }
+            }
+            return new org.geotoolkit.swe.xml.v200.QuantityType(id,
+                                                                null,
+                                                                definition,
+                                                                (org.geotoolkit.swe.xml.v200.UnitReference)uom,
+                                                                value,
+                                                                qual200);
         } else {
             throw new IllegalArgumentException("Unexpected SWE version:" + version);
         }
@@ -146,12 +205,26 @@ public class SweXmlFactory {
      * @return
      */
     public static AbstractText createText(final String version, final String definition, final String value) {
+        return createText(version, null, definition, value, null);
+    }
+
+    
+    public static AbstractText createText(final String version, final String id, final String definition, final String value, final List<AbstractQualityProperty> quality) {
         if ("1.0.0".equals(version)) {
-            return new org.geotoolkit.swe.xml.v100.Text(definition, value);
+            return new org.geotoolkit.swe.xml.v100.Text(id, definition, value);
         } else if ("1.0.1".equals(version)) {
-            return new org.geotoolkit.swe.xml.v101.Text(definition, value);
+            return new org.geotoolkit.swe.xml.v101.Text(id, definition, value);
         } else if ("2.0.0".equals(version)) {
-            return new org.geotoolkit.swe.xml.v200.TextType(definition, value);
+            final List<org.geotoolkit.swe.xml.v200.QualityPropertyType> qual200 = new ArrayList<>();
+            if (quality != null) {
+                for (AbstractQualityProperty q : quality) {
+                    if (q != null && !(q instanceof org.geotoolkit.swe.xml.v200.QualityPropertyType)) {
+                        throw new IllegalArgumentException("Unexpected SWE version for quality object.");
+                    }
+                    qual200.add((org.geotoolkit.swe.xml.v200.QualityPropertyType)q);
+                }
+            }
+            return new org.geotoolkit.swe.xml.v200.TextType(id, definition, value, qual200);
         } else {
             throw new IllegalArgumentException("Unexpected SWE version:" + version);
         }
@@ -178,33 +251,59 @@ public class SweXmlFactory {
     }
 
     public static AbstractBoolean createBoolean(final String version, final String definition, final Boolean value) {
+        return createBoolean(version, null, definition, value, null);
+    }
+
+    public static AbstractBoolean createBoolean(final String version, final String id, final String definition, final Boolean value, final List<AbstractQualityProperty> quality) {
         if ("1.0.0".equals(version)) {
-            return new org.geotoolkit.swe.xml.v100.BooleanType(definition, value);
+            return new org.geotoolkit.swe.xml.v100.BooleanType(id, definition, value);
         } else if ("1.0.1".equals(version)) {
-            return new org.geotoolkit.swe.xml.v101.BooleanType(definition, value);
+            return new org.geotoolkit.swe.xml.v101.BooleanType(id, definition, value);
         } else if ("2.0.0".equals(version)) {
-            return new org.geotoolkit.swe.xml.v200.BooleanType(value, definition);
+            final List<org.geotoolkit.swe.xml.v200.QualityPropertyType> qual200 = new ArrayList<>();
+            if (quality != null) {
+                for (AbstractQualityProperty q : quality) {
+                    if (q != null && !(q instanceof org.geotoolkit.swe.xml.v200.QualityPropertyType)) {
+                        throw new IllegalArgumentException("Unexpected SWE version for quality object.");
+                    }
+                    qual200.add((org.geotoolkit.swe.xml.v200.QualityPropertyType)q);
+                }
+            }
+            return new org.geotoolkit.swe.xml.v200.BooleanType(id, value, definition, qual200);
         } else {
             throw new IllegalArgumentException("Unexpected SWE version:" + version);
         }
     }
 
     public static AbstractTime createTime(final String version, final String definition, final UomProperty uom) {
+        return createTime(version, null, definition, uom, null);
+    }
+
+    public static AbstractTime createTime(final String version, final String id, final String definition, final UomProperty uom, final List<AbstractQualityProperty> quality) {
         if ("1.0.0".equals(version)) {
             if (uom != null && !(uom instanceof org.geotoolkit.swe.xml.v100.UomPropertyType)) {
                 throw new IllegalArgumentException("Unexpected SWE version for uomProperty object.");
             }
-            return new org.geotoolkit.swe.xml.v100.TimeType(definition, (org.geotoolkit.swe.xml.v100.UomPropertyType)uom);
+            return new org.geotoolkit.swe.xml.v100.TimeType(id, definition, (org.geotoolkit.swe.xml.v100.UomPropertyType)uom);
         } else if ("1.0.1".equals(version)) {
             if (uom != null && !(uom instanceof org.geotoolkit.swe.xml.v101.UomPropertyType)) {
                 throw new IllegalArgumentException("Unexpected SWE version for uomProperty object.");
             }
-            return new org.geotoolkit.swe.xml.v101.TimeType(definition, (org.geotoolkit.swe.xml.v101.UomPropertyType)uom);
+            return new org.geotoolkit.swe.xml.v101.TimeType(id, definition, (org.geotoolkit.swe.xml.v101.UomPropertyType)uom);
         } else if ("2.0.0".equals(version)) {
             if (uom != null && !(uom instanceof org.geotoolkit.swe.xml.v200.UnitReference)) {
                 throw new IllegalArgumentException("Unexpected SWE version for uomProperty object.");
             }
-            return new org.geotoolkit.swe.xml.v200.TimeType(definition, (org.geotoolkit.swe.xml.v200.UnitReference)uom);
+            final List<org.geotoolkit.swe.xml.v200.QualityPropertyType> qual200 = new ArrayList<>();
+            if (quality != null) {
+                for (AbstractQualityProperty q : quality) {
+                    if (q != null && !(q instanceof org.geotoolkit.swe.xml.v200.QualityPropertyType)) {
+                        throw new IllegalArgumentException("Unexpected SWE version for quality object.");
+                    }
+                    qual200.add((org.geotoolkit.swe.xml.v200.QualityPropertyType)q);
+                }
+            }
+            return new org.geotoolkit.swe.xml.v200.TimeType(id, definition, (org.geotoolkit.swe.xml.v200.UnitReference)uom, qual200);
         } else {
             throw new IllegalArgumentException("Unexpected SWE version:" + version);
         }
@@ -318,9 +417,9 @@ public class SweXmlFactory {
         }
     }
 
-    public static AbstractDataRecord buildSimpleDataRecord(final String version, final String blockid, final String id, final String definition, final boolean fixed, final List<AnyScalar> components) {
+    public static AbstractDataRecord buildSimpleDataRecord(final String version, final String blockid, final String id, final String definition, final Boolean fixed, final List<AnyScalar> components) {
         if ("1.0.0".equals(version)) {
-            final List<org.geotoolkit.swe.xml.v100.AnyScalarPropertyType> compos = new ArrayList<org.geotoolkit.swe.xml.v100.AnyScalarPropertyType>();
+            final List<org.geotoolkit.swe.xml.v100.AnyScalarPropertyType> compos = new ArrayList<>();
             for (AnyScalar scalar : components) {
                 if (scalar != null && !(scalar instanceof org.geotoolkit.swe.xml.v100.AnyScalarPropertyType)) {
                     throw new IllegalArgumentException("Unexpected SWE version for component object.");
@@ -334,7 +433,7 @@ public class SweXmlFactory {
                                                                         compos);
 
         } else if ("1.0.1".equals(version)) {
-            final List<org.geotoolkit.swe.xml.v101.AnyScalarPropertyType> compos = new ArrayList<org.geotoolkit.swe.xml.v101.AnyScalarPropertyType>();
+            final List<org.geotoolkit.swe.xml.v101.AnyScalarPropertyType> compos = new ArrayList<>();
             for (AnyScalar scalar : components) {
                 if (scalar != null && !(scalar instanceof org.geotoolkit.swe.xml.v101.AnyScalarPropertyType)) {
                     throw new IllegalArgumentException("Unexpected SWE version for component object.");
@@ -347,7 +446,7 @@ public class SweXmlFactory {
                                                                         fixed,
                                                                         compos);
         } else if ("2.0.0".equals(version)) {
-            final List<org.geotoolkit.swe.xml.v200.Field> compos = new ArrayList<org.geotoolkit.swe.xml.v200.Field>();
+            final List<org.geotoolkit.swe.xml.v200.Field> compos = new ArrayList<>();
             for (AnyScalar scalar : components) {
                 if (scalar != null && !(scalar instanceof org.geotoolkit.swe.xml.v200.Field)) {
                     throw new IllegalArgumentException("Unexpected SWE version for component object.");

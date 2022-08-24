@@ -64,6 +64,16 @@ public class AllowedValuesType extends AbstractSWEType implements AbstractAllowe
     private List<JAXBElement<List<Double>>> interval;
     private BigInteger significantFigures;
 
+    public AllowedValuesType() {
+
+    }
+
+    public AllowedValuesType(final AbstractAllowedValues av) {
+        super(av.getId());
+        this.value = av.getValueList();
+        this.setInterval(av.getInterval());
+    }
+
     /**
      * Gets the value of the value property.
      *
@@ -88,6 +98,16 @@ public class AllowedValuesType extends AbstractSWEType implements AbstractAllowe
             }
         }
         return null;
+    }
+
+    public void setInterval(final List<Double> interval) {
+        if (interval != null) {
+            if (this.interval == null) {
+                this.interval = new ArrayList<>();
+            }
+            ObjectFactory factory = new ObjectFactory();
+            this.interval.add(factory.createAllowedValuesTypeInterval(interval));
+        }
     }
 
     /**
