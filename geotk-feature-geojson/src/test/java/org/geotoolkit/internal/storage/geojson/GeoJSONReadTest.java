@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.test.feature.FeatureComparator;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
@@ -64,6 +65,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * @author Quentin Boileau (Geomatys)
@@ -448,7 +450,7 @@ public class GeoJSONReadTest extends TestCase {
 
     private GeoJSONStore fromResource(final String resourcePath) throws URISyntaxException, DataStoreException {
         URL pointFile = GeoJSONReadTest.class.getResource(resourcePath);
-        assertNotNull("Bad test resource location");
+        assertNotNull("Bad test resource location", pointFile);
 
         return new GeoJSONStore(new GeoJSONProvider(), pointFile.toURI(), null);
     }
@@ -456,6 +458,7 @@ public class GeoJSONReadTest extends TestCase {
     private FeatureType buildPropertyArrayFeatureType(String name, Class<?> geomClass) {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(name);
+        ftb.addAttribute(String.class).setName("id").addRole(AttributeRole.IDENTIFIER_COMPONENT);
         ftb.addAttribute(Double[][].class).setName("array");
         ftb.addAttribute(geomClass).setName("geometry").setCRS(CommonCRS.WGS84.normalizedGeographic()).addRole(AttributeRole.DEFAULT_GEOMETRY);
         return ftb.build();
@@ -507,5 +510,54 @@ public class GeoJSONReadTest extends TestCase {
                 "         }" ;
         GeoJSONObject obj = GeoJSONParser.parse(new ByteArrayInputStream( geoJsonPolygonString.getBytes()));
         Assert.assertTrue("A geometry should have been decoded", obj instanceof GeoJSONGeometry.GeoJSONPolygon);
+    }
+
+    /**
+     * Verify IDs are read. We use two files, to ensure that whatever id field (feature id or property id) is present on
+     * the first feature in the file, we detect an identifier.
+     * We also ensure that feature id has priority over property id.
+     */
+    @Test
+    public void fetchId() throws Exception {
+        List<Feature> list;
+        try (
+                var store = fromResource("/org/apache/sis/internal/storage/geojson/id_management.json");
+                var features = store.features(false)
+        ) {
+            list = features.toList();
+        }
+
+        assertEquals(2, list.size());
+        assertEquals("id-0", list.get(0).getPropertyValue(AttributeConvention.IDENTIFIER));
+        assertEquals("id-1", list.get(1).getPropertyValue(AttributeConvention.IDENTIFIER));
+
+        try (
+                var store = fromResource("/org/apache/sis/internal/storage/geojson/id_management2.json");
+                var features = store.features(false)
+        ) {
+            list = features.toList();
+        }
+
+        assertEquals(2, list.size());
+        assertEquals("id-1", list.get(0).getPropertyValue(AttributeConvention.IDENTIFIER));
+        assertEquals("id-0", list.get(1).getPropertyValue(AttributeConvention.IDENTIFIER));
+    }
+
+    /**
+     * When both feature id and a property named id are set, we automatically erase the property with the id.
+     * <em>However</em>, if the fields have incompatible data type, we must raise an error, because their not mergeable.
+     */
+    @Test
+    public void errorOnAmbiguousId() throws Exception {
+        final Feature f;
+        try (
+                var store = fromResource("/org/apache/sis/internal/storage/geojson/id_conflict.json");
+                var features = store.features(false)
+        ) {
+            var list = features.toList();
+            fail("We should not accept identifiers with incompatible type");
+        } catch (DataStoreException | IllegalArgumentException e) {
+            // expected behaviour
+        }
     }
 }

@@ -191,8 +191,7 @@ public final class GeoJSONParser {
 
             switch (fieldname) {
                 case ID:
-                    p.nextToken();
-                    String id = p.getValueAsString();
+                    Object id = getValue(p.nextToken(), p);
                     if (object instanceof GeoJSONFeature) {
                         ((GeoJSONFeature) object).setId(id);
                     }
