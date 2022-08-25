@@ -94,7 +94,6 @@ public final class GeoJSONParser {
      *
      * @param jsonFile file to parse
      * @return GeoJSONObject
-     * @throws IOException
      */
     public static GeoJSONObject parse(Path jsonFile) throws IOException {
         return parse(jsonFile, Boolean.FALSE);
@@ -110,7 +109,6 @@ public final class GeoJSONParser {
      * @param jsonFile file to parse
      * @param lazy lazy mode flag
      * @return GeoJSONObject
-     * @throws IOException
      */
     public static GeoJSONObject parse(Path jsonFile, boolean lazy) throws IOException {
 
@@ -118,8 +116,8 @@ public final class GeoJSONParser {
                 JsonParser p = getFactory(jsonFile).createParser(reader)) {
 
             JsonToken startToken = p.nextToken();
-            assert (startToken == JsonToken.START_OBJECT) : "Input File is not a JSON file " + jsonFile.toAbsolutePath().toString();
-            return parseGeoJSONObject(p, lazy, jsonFile, false);
+            assert (startToken == JsonToken.START_OBJECT) : "Input File is not a JSON file " + jsonFile.toAbsolutePath();
+            return parseGeoJSONObject(p, lazy, jsonFile);
         }
     }
 
@@ -129,7 +127,6 @@ public final class GeoJSONParser {
      *
      * @param inputStream stream to parse
      * @return GeoJSONObject
-     * @throws IOException
      */
     public static GeoJSONObject parse(InputStream inputStream) throws IOException {
         try (JsonParser p = JSON_FACTORY.createParser(inputStream)) {
@@ -145,10 +142,9 @@ public final class GeoJSONParser {
      *
      * @param p parser jackson parser with current token on a START_OBJECT.
      * @return GeoJSONObject (FeatureCollection, Feature or a Geometry)
-     * @throws IOException
      */
     public static GeoJSONObject parseGeoJSONObject(JsonParser p) throws IOException {
-        return parseGeoJSONObject(p, Boolean.FALSE, null, false);
+        return parseGeoJSONObject(p, Boolean.FALSE, null);
     }
 
     /**
@@ -158,10 +154,9 @@ public final class GeoJSONParser {
      * @param p parser jackson parser with current token on a START_OBJECT.
      * @param lazy lazy mode flag
      * @return GeoJSONObject (FeatureCollection, Feature or a Geometry)
-     * @throws IOException
      */
-    private static GeoJSONObject parseGeoJSONObject(JsonParser p, Boolean lazy, Path source, boolean readAlreadyStarted) throws IOException {
-        return parseGeoJSONObject(p, lazy, source, true, null);
+    private static GeoJSONObject parseGeoJSONObject(JsonParser p, Boolean lazy, Path source) throws IOException {
+        return parseGeoJSONObject(p, lazy, source, null);
     }
 
     /**
@@ -171,12 +166,8 @@ public final class GeoJSONParser {
      * @param p parser jackson parser with current token on a START_OBJECT.
      * @param lazy lazy mode flag
      * @return GeoJSONObject (FeatureCollection, Feature or a Geometry)
-     * @throws IOException
      */
-    private static GeoJSONObject parseGeoJSONObject(JsonParser p, Boolean lazy, Path source, boolean readAlreadyStarted, GeoJSONObject object) throws IOException {
-        if (!readAlreadyStarted) {
-            assert (p.getCurrentToken() == JsonToken.START_OBJECT);
-        }
+    private static GeoJSONObject parseGeoJSONObject(JsonParser p, Boolean lazy, Path source, GeoJSONObject object) throws IOException {
         if (object == null) {
             object = new GeoJSONObject();
         }
@@ -283,7 +274,6 @@ public final class GeoJSONParser {
      *
      * @param feature Feature to attach properties
      * @param p parser
-     * @throws IOException
      */
     private static void parseProperties(GeoJSONFeature feature, JsonParser p) throws IOException {
         p.nextToken(); // "{"
@@ -296,7 +286,6 @@ public final class GeoJSONParser {
      *
      * @param p parser jackson parser with current token on a START_OBJECT.
      * @return Map of String - Object
-     * @throws IOException
      */
     private static Map<String, Object> parseMap(JsonParser p) throws IOException {
         Map<String, Object> map = new HashMap<>();
@@ -334,20 +323,19 @@ public final class GeoJSONParser {
 
         assert (currentToken == JsonToken.START_OBJECT);
 
-        boolean firstToken = true;
         while (p.nextToken() != JsonToken.END_OBJECT) {
             String key = p.getCurrentName();
             JsonToken next = p.nextToken();
             Object value = getValue(next, p);
 
             // read a GeoJSON feature / featureCollection
-            if (firstToken && key.equals("type") && value instanceof String && (FEATURE.equals(value) || FEATURE_COLLECTION.equals(value))) {
-                return parseGeoJSONObject(p, false, null, true);
+            if (key.equals("type") && value instanceof String && (FEATURE.equals(value) || FEATURE_COLLECTION.equals(value))) {
+                return parseGeoJSONObject(p, false, null);
 
             // read a secondary geometric attribute
-            } else if (firstToken && key.equals("type") && value instanceof String && GEOMETRY_TYPES.contains((String) value)) {
+            } else if (key.equals("type") && value instanceof String && GEOMETRY_TYPES.contains((String) value)) {
                 GeoJSONObject geom = getOrCreateFromType(null, (String) value);
-                return parseGeoJSONObject(p, false, null, true, geom);
+                return parseGeoJSONObject(p, false, null, geom);
 
             // read simple object into a map
             } else {
@@ -363,12 +351,11 @@ public final class GeoJSONParser {
      *
      * @param p parser jackson parser with current token on a START_ARRAY.
      * @return array object typed after first element class
-     * @throws IOException
      */
     private static Object parseArray2(JsonParser p) throws IOException {
         assert (p.getCurrentToken() == JsonToken.START_ARRAY);
         List<Object> list = new ArrayList<>();
-        Set<Class> valueTypes = new HashSet<>();
+        Set<Class<?>> valueTypes = new HashSet<>();
         boolean nullFound = false;
         JsonToken token;
         while ((token = p.nextToken()) != JsonToken.END_ARRAY) {
@@ -385,7 +372,7 @@ public final class GeoJSONParser {
             return new Object[list.size()];
         }
 
-        final Class valueType = valueTypes.stream()
+        final Class<?> valueType = valueTypes.stream()
                 .reduce(GeoJSONParser::findCommonType)
                 .orElseThrow(() -> new JsonParseException(p, "Cannot properly resolve array type"));
         if (!nullFound && Numbers.isFloat(valueType)) {
@@ -406,7 +393,7 @@ public final class GeoJSONParser {
         }
     }
 
-    private static Class findCommonType(Class c1, Class c2) {
+    private static Class<?> findCommonType(Class<?> c1, Class<?> c2) {
         if (c1.isAssignableFrom(c2)) return c1;
         else if (c2.isAssignableFrom(c1)) return c2;
         if (Number.class.isAssignableFrom(c1) && Number.class.isAssignableFrom(c2)) {
@@ -432,7 +419,6 @@ public final class GeoJSONParser {
      * @param p parser
      * @return current token value String or Integer or Float or Boolean or null
      * or an array or a map.
-     * @throws IOException
      */
     static Object getValue(JsonToken token, JsonParser p) throws IOException {
         if (token == JsonToken.VALUE_STRING) {
@@ -461,10 +447,6 @@ public final class GeoJSONParser {
 
     /**
      * Parse a coordinates array(s) and add to given GeoJSONGeometry.
-     *
-     * @param geom GeoJSONGeometry
-     * @param p parser
-     * @throws IOException
      */
     private static void parseGeometry(GeoJSONGeometry geom, JsonParser p) throws IOException {
         p.nextToken(); // "["
@@ -497,17 +479,13 @@ public final class GeoJSONParser {
 
     /**
      * Full parse of GeoJSONFeatures for a GeoJSONFeatureCollection
-     *
-     * @param coll GeoJSONFeatureCollection
-     * @param p parser
-     * @throws IOException
      */
     private static void parseFeatureCollection(GeoJSONFeatureCollection coll, JsonParser p) throws IOException {
         p.nextToken(); // "{"
         // messages is array, loop until token equal to "]"
         while (p.nextToken() != JsonToken.END_ARRAY) {
 
-            GeoJSONObject obj = parseGeoJSONObject(p, false, null, false);
+            GeoJSONObject obj = parseGeoJSONObject(p, false, null);
             if (obj instanceof GeoJSONFeature) {
                 coll.getFeatures().add((GeoJSONFeature) obj);
             } else {
@@ -520,11 +498,6 @@ public final class GeoJSONParser {
      * Lazy parse of GeoJSONFeatures for a GeoJSONFeatureCollection. Only find
      * an set START_ARRAY and END_ARRAY TokenLocation of the features array to
      * the GeoJSONFeatureCollection object.
-     *
-     * @param coll GeoJSONFeatureCollection
-     * @param p parser
-     * @param source
-     * @throws IOException
      */
     private static void lazyParseFeatureCollection(GeoJSONFeatureCollection coll, JsonParser p, Path source) throws IOException {
 
@@ -551,10 +524,6 @@ public final class GeoJSONParser {
 
     /**
      * Parse GeoJSONGeometry for GeoJSONFeature.
-     *
-     * @param feature GeoJSONFeature
-     * @param p parser
-     * @throws IOException
      */
     private static void parseFeatureGeometry(GeoJSONFeature feature, JsonParser p) throws IOException {
         p.nextToken(); // "{"
@@ -566,10 +535,6 @@ public final class GeoJSONParser {
 
     /**
      * Parse GeoJSONGeometry for GeoJSONGeometryCollection.
-     *
-     * @param geom GeoJSONGeometryCollection
-     * @param p parser
-     * @throws IOException
      */
     private static void parseGeometryCollection(GeoJSONGeometryCollection geom, JsonParser p) throws IOException {
         p.nextToken(); // "["
@@ -689,7 +654,6 @@ public final class GeoJSONParser {
      *
      * @param p JsonParser location MUST be on a START_ARRAY token.
      * @return an array of double with a length of 4 or 6.
-     * @throws IOException
      */
     private static double[] parseBBoxArray(JsonParser p) throws IOException {
         assert (p.getCurrentToken() == JsonToken.START_ARRAY);
@@ -711,8 +675,6 @@ public final class GeoJSONParser {
      * Parse a CRS Object. JsonParser location MUST be on a START_OBJECT token.
      *
      * @param p JsonParser location MUST be on a START_OBJECT token.
-     * @return GeoJSONCRS
-     * @throws IOException
      */
     private static GeoJSONCRS parseCRS(JsonParser p) throws IOException {
         assert (p.getCurrentToken() == JsonToken.START_OBJECT);
@@ -739,7 +701,6 @@ public final class GeoJSONParser {
      *
      * @param p JsonParser location MUST be on a START_ARRAY token.
      * @return an array of double like [X,Y,(Z)]
-     * @throws IOException
      */
     private static double[] parsePoint(JsonParser p) throws IOException {
         assert (p.getCurrentToken() == JsonToken.START_ARRAY);
@@ -762,7 +723,6 @@ public final class GeoJSONParser {
      *
      * @param p JsonParser location MUST be on a START_ARRAY token.
      * @return an array of double like [[X0,Y0,(Z0)], [X1,Y1,(Z1)]]
-     * @throws IOException
      */
     private static double[][] parseLineString(JsonParser p) throws IOException {
         assert (p.getCurrentToken() == JsonToken.START_ARRAY);
@@ -782,7 +742,6 @@ public final class GeoJSONParser {
      * @param p JsonParser location MUST be on a START_ARRAY token.
      * @return an array of double like [ [[X0,Y0,(Z0)], [X1,Y1,(Z1)]],
      * [[X0,Y0,(Z0)], [X1,Y1,(Z1)]], ... ]
-     * @throws IOException
      */
     private static double[][][] parseMultiLineString(JsonParser p) throws IOException {
         assert (p.getCurrentToken() == JsonToken.START_ARRAY);
@@ -803,7 +762,6 @@ public final class GeoJSONParser {
      * @return an array of double like [[ [[X0,Y0,(Z0)], [X1,Y1,(Z1)]],
      * [[X0,Y0,(Z0)], [X1,Y1,(Z1)]] ],[ [[X0,Y0,(Z0)], [X1,Y1,(Z1)]],
      * [[X0,Y0,(Z0)], [X1,Y1,(Z1)]] ], ... ]
-     * @throws IOException
      */
     private static double[][][][] parseMultiPolygon(JsonParser p) throws IOException {
         assert (p.getCurrentToken() == JsonToken.START_ARRAY);

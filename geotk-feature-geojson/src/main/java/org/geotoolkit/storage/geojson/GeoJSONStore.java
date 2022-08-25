@@ -84,8 +84,8 @@ public final class GeoJSONStore extends DataStore implements ResourceOnFileSyste
 
     private GenericName name;
     private FeatureType featureType;
-    private Path descFile;
-    private Path jsonFile;
+    private final Path descFile;
+    private final Path jsonFile;
     private final Integer coordAccuracy;
     private final boolean isLocal;
 
@@ -110,7 +110,7 @@ public final class GeoJSONStore extends DataStore implements ResourceOnFileSyste
         //FIXME
         this.isLocal = "file".equalsIgnoreCase(uri.getScheme());
 
-        Path tmpFile = null;
+        Path tmpFile;
         try {
             tmpFile = Paths.get(uri);
         } catch (FileSystemNotFoundException ex) {
@@ -184,10 +184,6 @@ public final class GeoJSONStore extends DataStore implements ResourceOnFileSyste
     /**
      * Read FeatureType from a JSON-Schema file if exist or directly from the
      * input JSON file.
-     *
-     * @return
-     * @throws DataStoreException
-     * @throws IOException
      */
     private FeatureType readType() throws DataStoreException, IOException {
         if (Files.exists(descFile) && Files.size(descFile) != 0) {
@@ -203,7 +199,7 @@ public final class GeoJSONStore extends DataStore implements ResourceOnFileSyste
                 // build FeatureType from the first Feature of JSON file.
                 final GeoJSONObject obj = GeoJSONParser.parse(jsonFile, true);
                 if (obj == null) {
-                    throw new DataStoreException("Invalid GeoJSON file " + jsonFile.toString());
+                    throw new DataStoreException("Invalid GeoJSON file " + jsonFile);
                 }
 
                 CoordinateReferenceSystem crs = GeoJSONUtils.getCRS(obj);
@@ -212,7 +208,7 @@ public final class GeoJSONStore extends DataStore implements ResourceOnFileSyste
                     GeoJSONFeatureCollection jsonFeatureCollection = (GeoJSONFeatureCollection) obj;
                     if (!jsonFeatureCollection.hasNext()) {
                         //empty FeatureCollection error ?
-                        throw new DataStoreException("Empty GeoJSON FeatureCollection " + jsonFile.toString());
+                        throw new DataStoreException("Empty GeoJSON FeatureCollection " + jsonFile);
                     } else {
 
                         // TODO should we analyse all Features from FeatureCollection to be sure
@@ -337,7 +333,7 @@ public final class GeoJSONStore extends DataStore implements ResourceOnFileSyste
 
     @Override
     public Optional<Envelope> getEnvelope() throws DataStoreException {
-        Envelope envelope = null;
+        Envelope envelope;
         rwLock.readLock().lock();
         try {
             final GeoJSONObject obj = GeoJSONParser.parse(jsonFile, true);
