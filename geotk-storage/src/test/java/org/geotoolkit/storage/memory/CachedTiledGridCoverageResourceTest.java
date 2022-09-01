@@ -23,13 +23,13 @@ import java.util.stream.Stream;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
+import org.apache.sis.storage.tiling.TileMatrix;
+import org.apache.sis.storage.tiling.TileMatrixSet;
+import org.apache.sis.storage.tiling.WritableTileMatrix;
+import org.apache.sis.storage.tiling.WritableTileMatrixSet;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.storage.coverage.DefaultImageTile;
 import org.geotoolkit.storage.multires.TileMatrices;
-import org.geotoolkit.storage.multires.TileMatrix;
-import org.geotoolkit.storage.multires.TileMatrixSet;
-import org.geotoolkit.storage.multires.WritableTileMatrix;
-import org.geotoolkit.storage.multires.WritableTileMatrixSet;
 import org.junit.Assert;
 import org.junit.Test;
 

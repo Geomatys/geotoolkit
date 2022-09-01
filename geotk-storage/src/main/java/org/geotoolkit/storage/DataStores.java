@@ -42,6 +42,8 @@ import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.WritableAggregate;
 import org.apache.sis.storage.WritableFeatureSet;
+import org.apache.sis.storage.tiling.TileMatrixSet;
+import org.apache.sis.storage.tiling.TiledResource;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.Classes;
@@ -50,8 +52,6 @@ import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.DataStores.ResourceWalker.VisitOption;
 import org.geotoolkit.storage.multires.ProgressiveResource;
 import org.geotoolkit.storage.multires.TileFormat;
-import org.geotoolkit.storage.multires.TileMatrixSet;
-import org.geotoolkit.storage.multires.TiledResource;
 import org.geotoolkit.util.StringUtilities;
 import org.opengis.feature.FeatureType;
 import org.opengis.parameter.InvalidParameterValueException;
@@ -443,7 +443,7 @@ public final class DataStores extends Static {
 
         if (rs instanceof TiledResource) {
             final TiledResource cdt = (TiledResource) rs;
-            final TileFormat tileFormat = cdt.getTileFormat();
+            final TileFormat tileFormat = (cdt instanceof org.geotoolkit.storage.multires.TiledResource) ? ((org.geotoolkit.storage.multires.TiledResource)cdt).getTileFormat() : null;
 
             final Map<String,Object> map = new LinkedHashMap<>();
             mp.put("MultiResolutionResource", map);

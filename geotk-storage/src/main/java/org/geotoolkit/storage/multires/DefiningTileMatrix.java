@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.storage.multires;
 
-import java.awt.Dimension;
 import java.util.Optional;
 import java.util.stream.Stream;
 import org.apache.sis.coverage.grid.GridExtent;
@@ -35,12 +34,12 @@ public class DefiningTileMatrix implements WritableTileMatrix, ImageTileMatrix {
 
     private final GenericName identifier;
     private final GridGeometry tilingScheme;
-    private final Dimension tileSize;
+    private final int[] tileSize;
 
-    public DefiningTileMatrix(GenericName identifier, GridGeometry tilingScheme, Dimension tileSize) {
+    public DefiningTileMatrix(GenericName identifier, GridGeometry tilingScheme, int[] tileSize) {
         this.identifier = identifier;
         this.tilingScheme = tilingScheme;
-        this.tileSize = tileSize;
+        this.tileSize = tileSize.clone();
     }
 
     @Override
@@ -54,8 +53,8 @@ public class DefiningTileMatrix implements WritableTileMatrix, ImageTileMatrix {
     }
 
     @Override
-    public Dimension getTileSize() {
-        return (Dimension) tileSize.clone(); //defensive copy
+    public int[] getTileSize() {
+        return tileSize.clone(); //defensive copy
     }
 
     @Override

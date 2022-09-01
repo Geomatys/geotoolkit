@@ -38,14 +38,14 @@ import org.apache.sis.referencing.operation.matrix.MatrixSIS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.WritableGridCoverageResource;
+import org.apache.sis.storage.tiling.WritableTileMatrix;
+import org.apache.sis.storage.tiling.WritableTileMatrixSet;
+import org.apache.sis.storage.tiling.WritableTiledResource;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.geometry.HyperCubeIterator;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.storage.coverage.*;
 import org.geotoolkit.storage.multires.TileMatrices;
-import org.geotoolkit.storage.multires.WritableTileMatrix;
-import org.geotoolkit.storage.multires.WritableTileMatrixSet;
-import org.geotoolkit.storage.multires.WritableTiledResource;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.datum.PixelInCell;
@@ -193,7 +193,7 @@ public class FillCoverage {
 
         for(WritableTileMatrixSet matrixset : outRef.getTileMatrixSets()){
             for(WritableTileMatrix matrix : matrixset.getTileMatrices().values()){
-                final Dimension tileSize = matrix.getTileSize();
+                final int[] tileSize = TileMatrices.getTileSize(matrix);
                 final double[] upperLeftGeo = TileMatrices.getUpperLeftCorner(matrix).getCoordinate();
 
                 final Dimension gridSize = TileMatrices.getGridSize(matrix);
@@ -204,7 +204,7 @@ public class FillCoverage {
                         final double[] baseCoord = new double[upperLeftGeo.length];
                         crsToGrid.transform(upperLeftGeo, 0, baseCoord, 0, 1);
                         final MathCalcImageEvaluator eval = new MathCalcImageEvaluator(baseCoord, gridToCRS, evaluator.copy());
-                        final ProcessedRenderedImage image = new ProcessedRenderedImage(sm, cm, eval, tileSize.width, tileSize.height);
+                        final ProcessedRenderedImage image = new ProcessedRenderedImage(sm, cm, eval, (int) tileSize[0], (int) tileSize[1]);
                         matrix.writeTiles(Stream.of(new DefaultImageTile(matrix, image, new long[]{x, y})));
                     }
                 }

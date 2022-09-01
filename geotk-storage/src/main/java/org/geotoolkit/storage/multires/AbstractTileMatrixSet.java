@@ -69,7 +69,7 @@ public abstract class AbstractTileMatrixSet implements TileMatrixSet {
      * Pretty print output of given pyramid.
      * @param pyramid not null
      */
-    public static String toString(TileMatrixSet pyramid) {
+    public static String toString(org.apache.sis.storage.tiling.TileMatrixSet pyramid) {
         final List<String> elements = new ArrayList<>();
         elements.add("id : " + pyramid.getIdentifier());
         elements.add("crs : " + IdentifiedObjects.getIdentifierOrName(pyramid.getCoordinateReferenceSystem()));

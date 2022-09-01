@@ -50,12 +50,12 @@ import org.opengis.coverage.CannotEvaluateException;
 public final class TileMatrixCoverageResource extends AbstractGridCoverageResource {
 
     private final TileMatrix matrix;
-    private final long[] tileSize;
+    private final int[] tileSize;
     private final GridGeometry tilingScheme;
     private final GridGeometry coverageGrid;
     private final List<SampleDimension> sampleDimensions;
 
-    public TileMatrixCoverageResource(TileMatrix matrix, long[] tileSize, List<SampleDimension> sampleDimensions) {
+    public TileMatrixCoverageResource(TileMatrix matrix, int[] tileSize, List<SampleDimension> sampleDimensions) {
         super(null, false);
         ArgumentChecks.ensureNonNull("matrix", matrix);
         ArgumentChecks.ensureNonNull("tileSize", tileSize);

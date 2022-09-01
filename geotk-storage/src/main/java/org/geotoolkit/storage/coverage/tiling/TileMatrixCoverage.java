@@ -20,7 +20,6 @@ import java.awt.image.ColorModel;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
-import java.util.Arrays;
 import java.util.List;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
@@ -29,7 +28,6 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.apache.sis.storage.tiling.TileMatrix;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.storage.multires.TileMatrices;
 import org.opengis.coverage.CannotEvaluateException;
 
 /**
@@ -41,7 +39,7 @@ final class TileMatrixCoverage extends GridCoverage {
 
     private final TileMatrixCoverageResource resource;
     private final int[] range;
-    private final long[] tileSize;
+    private final int[] tileSize;
 
     /**
      *
@@ -55,7 +53,7 @@ final class TileMatrixCoverage extends GridCoverage {
     TileMatrixCoverage(
             TileMatrixCoverageResource resource,
             GridExtent schemeIntersection,
-            long[] tileSize,
+            int[] tileSize,
             int[] range,
             List<SampleDimension> sampleDimensions) {
         super(buildGridGeometry(schemeIntersection, resource.getMatrix(), tileSize), sampleDimensions);
@@ -68,7 +66,7 @@ final class TileMatrixCoverage extends GridCoverage {
         this.range = range.clone();
     }
 
-    private static GridGeometry buildGridGeometry(GridExtent extent, TileMatrix matrix, long[] tileSize) {
+    private static GridGeometry buildGridGeometry(GridExtent extent, TileMatrix matrix, int[] tileSize) {
         final GridGeometry tilingScheme = matrix.getTilingScheme();
         return TileMatrices.surSampling(tilingScheme.derive().rounding(GridRoundingMode.ENCLOSING).subgrid(extent).build(), tileSize);
     }
@@ -92,8 +90,13 @@ final class TileMatrixCoverage extends GridCoverage {
         final int[] xyAxes = readExtent.getSubspaceDimensions(2);
 
         //convert the requested extent to tile range.
+<<<<<<< HEAD
         final GridExtent absoluteTileExtent = readExtent.subsample(Arrays.stream(tileSize).mapToInt(Math::toIntExact).toArray());
         final GridExtent absolutedReadExtent = TileMatrices.surSampling(absoluteTileExtent, tileSize);
+=======
+        final GridExtent absoluteTileExtent = readExtent.subsample(tileSize);
+        final GridExtent absolutedReadExtent = absoluteTileExtent.upsample(tileSize);
+>>>>>>> 5f16a6fa18 (chore(TileMatrix): change tile size parameter from long[] to int[])
 
         //compute image model and image
         final Object[] structure = resource.getImageModel(readExtent, range);

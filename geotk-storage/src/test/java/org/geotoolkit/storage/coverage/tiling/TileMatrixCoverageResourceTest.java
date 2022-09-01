@@ -65,7 +65,7 @@ public class TileMatrixCoverageResourceTest extends CoverageReadConsistency {
         final MathTransform gridToCrs = new AffineTransform2D(1, 0, 0, -1, -179.5, 89.5);
 
         final GridGeometry tilingScheme = new GridGeometry(extent, PixelInCell.CELL_CENTER, gridToCrs, crs);
-        final long[] tileSize = new long[]{4,4};
+        final int[] tileSize = new int[]{4,4};
         final MemoryTileMatrix matrix = new MemoryTileMatrix(Names.createLocalName(null, null, "test"), tilingScheme, tileSize);
 
         final SampleDimension dim0 = new SampleDimension.Builder().setName("band 0").build();

@@ -42,6 +42,8 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.NoSuchDataException;
 import org.apache.sis.storage.Resource;
+import org.apache.sis.storage.tiling.TileMatrix;
+import org.apache.sis.storage.tiling.TiledResource;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.presentation.ShapePresentation;
 import org.geotoolkit.display2d.presentation.TextPresentation2;
@@ -51,8 +53,6 @@ import org.geotoolkit.geometry.GeometricUtilities;
 import org.geotoolkit.geometry.jts.awt.JTSGeometryJ2D;
 import org.geotoolkit.storage.coverage.TileMatrixSetCoverageReader;
 import org.geotoolkit.storage.multires.TileMatrices;
-import org.geotoolkit.storage.multires.TileMatrix;
-import org.geotoolkit.storage.multires.TiledResource;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -111,7 +111,7 @@ public final class TileDebugSymbolizerRenderer extends AbstractCoverageSymbolize
                     while (iterator.hasNext()) {
                         long[] indice = iterator.next();
 
-                        final GridGeometry gridgeom = TileMatrices.getTileGridGeometry2D(m, indice, crs2d);
+                        final GridGeometry gridgeom = TileMatrices.getTileGridGeometry2D(m, indice, TileMatrices.getTileSize(m));
                         Geometry geom = GeometricUtilities.toJTSGeometry(gridgeom.getEnvelope(), GeometricUtilities.WrapResolution.NONE);
                         geom.setUserData(crs2d);
                         geom = org.apache.sis.internal.feature.jts.JTS.transform(geom, renderingContext.getDisplayCRS());

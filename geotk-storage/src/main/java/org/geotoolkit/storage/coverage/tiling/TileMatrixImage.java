@@ -32,7 +32,6 @@ import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.image.ComputedImage;
 import org.apache.sis.image.Interpolation;
-import org.apache.sis.image.PlanarImage;
 import org.apache.sis.internal.coverage.j2d.FillValues;
 import org.apache.sis.internal.coverage.j2d.TilePlaceholder;
 import org.apache.sis.storage.DataStoreException;
@@ -76,7 +75,7 @@ final class TileMatrixImage extends ComputedImage implements RenderedImage {
     /**
      * Each tile size
      */
-    private final long[] tileSize;
+    private final int[] tileSize;
     /**
      * Index of the coverage axe used as X/Row in the image.
      */
@@ -131,7 +130,7 @@ final class TileMatrixImage extends ComputedImage implements RenderedImage {
             final TileMatrix matrix,
             GridExtent gridRange,
             GridGeometry readGeometry,
-            long[] tileSize,
+            int[] tileSize,
             SampleModel sampleModel,
             ColorModel colorModel,
             Raster rasterModel,
@@ -178,7 +177,7 @@ final class TileMatrixImage extends ComputedImage implements RenderedImage {
             final TileMatrix matrix,
             GridExtent gridRange,
             GridGeometry readGeometry,
-            long[] tileSize,
+            int[] tileSize,
             SampleModel sampleModel,
             ColorModel colorModel,
             Raster rasterModel,

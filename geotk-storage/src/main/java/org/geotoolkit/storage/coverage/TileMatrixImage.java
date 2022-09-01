@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.storage.coverage;
 
-import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.*;
@@ -112,8 +111,8 @@ public class TileMatrixImage extends ComputedImage implements RenderedImage {
         } catch (DataStoreException ex) {
             if (sampleDimensions != null) {
                 //use a fake tile created from sample dimensions
-                final Dimension tileSize = matrix.getTileSize();
-                sample = BufferedImages.createImage(tileSize.width, tileSize.height, sampleDimensions.size(), DataBuffer.TYPE_DOUBLE);
+                final int[] tileSize = matrix.getTileSize();
+                sample = BufferedImages.createImage((int) tileSize[0], (int) tileSize[1], sampleDimensions.size(), DataBuffer.TYPE_DOUBLE);
             } else if (ex instanceof DataStoreException) {
                 throw (DataStoreException) ex;
             } else {
@@ -129,8 +128,8 @@ public class TileMatrixImage extends ComputedImage implements RenderedImage {
             Arrays.fill(fillPixel, Double.NaN);
         }
 
-        final Dimension tileSize = matrix.getTileSize();
-        final SampleModel sm = sample.getSampleModel().createCompatibleSampleModel(tileSize.width, tileSize.height);
+        final int[] tileSize = matrix.getTileSize();
+        final SampleModel sm = sample.getSampleModel().createCompatibleSampleModel((int) tileSize[0], (int) tileSize[1]);
         final ColorModel cm = sample.getColorModel();
         final Raster rm = sample.getTile(sample.getMinTileX(), sample.getMinTileY());
         return new TileMatrixImage(matrix, gridRange, sm, cm, rm, fillPixel);
@@ -189,7 +188,7 @@ public class TileMatrixImage extends ComputedImage implements RenderedImage {
      */
     @Override
     public int getWidth() {
-        return gridRange.width * this.matrix.getTileSize().width;
+        return gridRange.width * (int) this.matrix.getTileSize()[0];
     }
 
     /**
@@ -197,7 +196,7 @@ public class TileMatrixImage extends ComputedImage implements RenderedImage {
      */
     @Override
     public int getHeight() {
-        return gridRange.height * this.matrix.getTileSize().height;
+        return gridRange.height * (int) this.matrix.getTileSize()[1];
     }
 
     /**
@@ -221,7 +220,7 @@ public class TileMatrixImage extends ComputedImage implements RenderedImage {
      */
     @Override
     public int getTileWidth() {
-        return this.matrix.getTileSize().width;
+        return (int) this.matrix.getTileSize()[0];
     }
 
     /**
@@ -229,7 +228,7 @@ public class TileMatrixImage extends ComputedImage implements RenderedImage {
      */
     @Override
     public int getTileHeight() {
-        return this.matrix.getTileSize().height;
+        return (int) this.matrix.getTileSize()[1];
     }
 
     @Override

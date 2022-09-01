@@ -21,6 +21,7 @@ import java.util.SortedMap;
 import org.apache.sis.storage.DataStoreException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.GenericName;
+import org.apache.sis.storage.tiling.TileMatrix;
 
 /**
  * Default pyramid

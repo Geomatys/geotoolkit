@@ -32,6 +32,8 @@ import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.NoSuchDataException;
 import org.apache.sis.storage.tiling.Tile;
+import org.apache.sis.storage.tiling.WritableTileMatrixSet;
+import org.apache.sis.storage.tiling.WritableTileMatrix;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;

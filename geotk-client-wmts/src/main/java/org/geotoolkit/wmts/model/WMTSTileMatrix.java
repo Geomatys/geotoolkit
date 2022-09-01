@@ -64,7 +64,7 @@ public class WMTSTileMatrix implements TileMatrix {
         ul.setOrdinate(1, matrix.getTopLeftCorner().get(1));
         this.tilingScheme = TileMatrices.toTilingScheme(ul,
                 new Dimension(matrix.getMatrixWidth(), matrix.getMatrixHeight()), scale,
-                new Dimension(matrix.getTileWidth(), matrix.getTileHeight()));
+                new int[]{matrix.getTileWidth(), matrix.getTileHeight()});
     }
 
     public org.geotoolkit.wmts.xml.v100.TileMatrix getMatrix() {
@@ -86,10 +86,10 @@ public class WMTSTileMatrix implements TileMatrix {
     }
 
     @Override
-    public Dimension getTileSize() {
-        return new Dimension(
+    public int[] getTileSize() {
+        return new int[]{
                 matrix.getTileWidth(),
-                matrix.getTileHeight());
+                matrix.getTileHeight()};
     }
 
     @Override

@@ -87,7 +87,7 @@ public class PyramidWriterTest <T extends InMemoryTiledGridCoverageResource> ext
                 new SampleDimension.Builder().setName(3).build()
         ));
         final WritableTileMatrixSet tileMatrixSet = ref.createTileMatrixSet(new DefiningTileMatrixSet(CRS84));
-        final Dimension tileSize = new Dimension(360, 180);
+        final int[] tileSize = new int[]{360, 180};
         final WritableTileMatrix tileMatrix = tileMatrixSet.createTileMatrix(
                 new DefiningTileMatrix(null, TileMatrices.toTilingScheme(UL84, new Dimension(1, 1), 1.0, tileSize), tileSize));
         tileMatrix.writeTiles(Stream.of(new DefaultImageTile(tileMatrix, createImage(360, 180, Color.BLACK), 0, 0)));
@@ -126,7 +126,7 @@ public class PyramidWriterTest <T extends InMemoryTiledGridCoverageResource> ext
                 new SampleDimension.Builder().setName(3).build()
         ));
         final WritableTileMatrixSet pyramid = ref.createTileMatrixSet(new DefiningTileMatrixSet(CRS84));
-        final Dimension tileSize = new Dimension(9, 9);
+        final int[] tileSize = new int[]{9, 9};
         final WritableTileMatrix mosaic = pyramid.createTileMatrix(
                 new DefiningTileMatrix(null, TileMatrices.toTilingScheme(UL84, new Dimension(4, 2), 10.0, tileSize), tileSize));
         for(int y=0;y<2;y++){
@@ -168,7 +168,7 @@ public class PyramidWriterTest <T extends InMemoryTiledGridCoverageResource> ext
                 new SampleDimension.Builder().setName(3).build()
         ));
         final WritableTileMatrixSet pyramid = ref.createTileMatrixSet(new DefiningTileMatrixSet(CRS84));
-        final Dimension tileSize = new Dimension(9, 9);
+        final int[] tileSize = new int[]{9, 9};
         final WritableTileMatrix tileMatrix = pyramid.createTileMatrix(
                 new DefiningTileMatrix(null, TileMatrices.toTilingScheme(UL84, new Dimension(4, 2), 10.0, tileSize), tileSize));
         for(int y=0;y<2;y++){
@@ -225,7 +225,7 @@ public class PyramidWriterTest <T extends InMemoryTiledGridCoverageResource> ext
                 new SampleDimension.Builder().setName(3).build()
         ));
         final WritableTileMatrixSet pyramid = ref.createTileMatrixSet(new DefiningTileMatrixSet(CRS84));
-        final Dimension tileSize = new Dimension(9, 9);
+        final int[] tileSize = new int[]{9, 9};
         final WritableTileMatrix tileMatrix1 = pyramid.createTileMatrix(
                 new DefiningTileMatrix(null, TileMatrices.toTilingScheme(UL84, new Dimension(4, 2), 10.0, tileSize), tileSize));
         for(int y=0;y<2;y++){
@@ -319,7 +319,7 @@ public class PyramidWriterTest <T extends InMemoryTiledGridCoverageResource> ext
                 new SampleDimension.Builder().setName(3).build()
         ));
         final WritableTileMatrixSet pyramid = ref.createTileMatrixSet(new DefiningTileMatrixSet(EPSG4326));
-        final Dimension tileSize = new Dimension(9, 9);
+        final int[] tileSize = new int[]{9, 9};
         final WritableTileMatrix tileMatrix1 = pyramid.createTileMatrix(
                 new DefiningTileMatrix(null, TileMatrices.toTilingScheme(UL4326, new Dimension(2, 4), 10.0, tileSize), tileSize));
         for(int y=0;y<4;y++){
@@ -413,7 +413,7 @@ public class PyramidWriterTest <T extends InMemoryTiledGridCoverageResource> ext
                 new SampleDimension.Builder().setName(3).build()
         ));
         final WritableTileMatrixSet pyramid = ref.createTileMatrixSet(new DefiningTileMatrixSet(CRS84));
-        final Dimension tileSize = new Dimension(9, 9);
+        final int[] tileSize = new int[]{9, 9};
         final WritableTileMatrix tileMatrix1 = pyramid.createTileMatrix(
                 new DefiningTileMatrix(null, TileMatrices.toTilingScheme(UL84, new Dimension(4, 2), 10.0, tileSize), tileSize));
         for(int y=0;y<2;y++){

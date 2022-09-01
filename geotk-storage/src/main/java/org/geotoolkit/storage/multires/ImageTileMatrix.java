@@ -3,8 +3,6 @@
  */
 package org.geotoolkit.storage.multires;
 
-import java.awt.Dimension;
-
 /**
  *
  * @author Johann Sorel (Geomatys)
@@ -35,14 +33,14 @@ public interface ImageTileMatrix extends TileMatrix {
      */
     default double[] getResolution() {
         double[] resolution = getTilingScheme().getResolution(true);
-        Dimension tileSize = getTileSize();
-        resolution[0] /= tileSize.width;
-        resolution[1] /= tileSize.height;
+        int[] tileSize = getTileSize();
+        resolution[0] /= tileSize[0];
+        resolution[1] /= tileSize[1];
         return resolution;
     }
 
     /**
      * @return tile dimension in cell units.
      */
-    Dimension getTileSize();
+    int[] getTileSize();
 }

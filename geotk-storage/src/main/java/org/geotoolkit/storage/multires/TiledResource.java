@@ -18,6 +18,7 @@ package org.geotoolkit.storage.multires;
 
 import java.util.Collection;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.tiling.TileMatrixSet;
 
 /**
  * A TiledResource is a ressource which content can be accessed by
