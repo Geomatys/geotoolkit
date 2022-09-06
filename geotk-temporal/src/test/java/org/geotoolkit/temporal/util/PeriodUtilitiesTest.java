@@ -163,7 +163,8 @@ public class PeriodUtilitiesTest extends org.geotoolkit.test.TestBase {
 
 
 
-        expResult = "2004-01-28T00:00:00Z/2004-02-25T00:00:00Z/P1W,2004-02-25T00:00:00Z/2004-03-20T00:00:00Z/P1W1D";
+        //expResult = "2004-01-28T00:00:00Z/2004-02-25T00:00:00Z/P1W,2004-02-25T00:00:00Z/2004-03-20T00:00:00Z/P1W1D";
+        expResult = "2004-01-28T00:00:00Z/2004-02-25T00:00:00Z/P1W,2004-03-04T00:00:00Z/2004-03-20T00:00:00Z/P1W1D";
         result = instance.getDatesRespresentation(dates);
         System.out.println("expected =" + expResult + '\n' +
                            "result   =" + result);
@@ -212,10 +213,30 @@ public class PeriodUtilitiesTest extends org.geotoolkit.test.TestBase {
         dates.add(df.parse("2011-10-31T00:00:00Z"));
 
         expResult = "2003-01-07T00:00:00Z,2004-01-07T00:00:00Z,2004-01-28T00:00:00Z/2004-03-17T00:00:00Z/P1W,2005-03-02T00:00:00Z,2005-07-20T00:00:00Z,2005-11-09T00:00:00Z/2005-11-30T00:00:00Z/P1W,2009-10-31T00:00:00Z/2011-10-31T00:00:00Z/P12M";
+        result = instance.getDatesRespresentation(dates, true);
+        assertEquals(expResult, result);
+
+        // no year/month version
+        expResult = "2003-01-07T00:00:00Z,2004-01-07T00:00:00Z,2004-01-28T00:00:00Z/2004-03-17T00:00:00Z/P1W,2005-03-02T00:00:00Z,2005-07-20T00:00:00Z,2005-11-09T00:00:00Z/2005-11-30T00:00:00Z/P1W,2009-10-31T00:00:00Z/2011-10-31T00:00:00Z/P52W1D";
         result = instance.getDatesRespresentation(dates);
         assertEquals(expResult, result);
 
 
+        dates    = new TreeSet<>();
+        dates.add(df.parse("2018-08-16T11:59:30Z"));
+        dates.add(df.parse("2018-09-15T23:59:30Z"));
+        dates.add(df.parse("2018-10-16T11:59:30Z"));
+        dates.add(df.parse("2018-11-15T23:59:30Z"));
+        dates.add(df.parse("2018-12-16T11:59:30Z"));
+
+
+        expResult = "2018-08-16T11:59:30Z/2018-12-16T11:59:30Z/P1MT2H";
+        result    = instance.getDatesRespresentation(dates, true);
+        assertEquals(expResult, result);
+
+        expResult = "2018-08-16T11:59:30Z/2018-12-16T11:59:30Z/P4W2DT12H";
+        result    = instance.getDatesRespresentation(dates);
+        assertEquals(expResult, result);
     }
 
     /**
@@ -397,8 +418,16 @@ public class PeriodUtilitiesTest extends org.geotoolkit.test.TestBase {
 
 
 
-
+        // old format with redundance in end_period / start_period
         periods = "2004-01-28T00:00:00Z/2004-02-25T00:00:00Z/P1W,2004-02-25T00:00:00Z/2004-03-20T00:00:00Z/P1W1D";
+        result = instance.getDatesFromPeriodDescription(periods);
+        System.out.println("expected =" + expResult + '\n' +
+                           "result   =" + result);
+        assertEquals(expResult, result);
+
+        // new format with no redundance
+        periods =  "2004-01-28T00:00:00Z/2004-02-25T00:00:00Z/P1W,2004-03-04T00:00:00Z/2004-03-20T00:00:00Z/P1W1D";
+
         result = instance.getDatesFromPeriodDescription(periods);
         System.out.println("expected =" + expResult + '\n' +
                            "result   =" + result);
@@ -480,6 +509,24 @@ public class PeriodUtilitiesTest extends org.geotoolkit.test.TestBase {
 
         result = instance.getDatesFromPeriodDescription(periods);
         assertEquals(expResult, result);
+
+        /**
+         * Test 6
+         */
+        expResult    = new TreeSet<>();
+        expResult.add(df2.parse("2018-08-16T11:59:30.000Z"));
+        expResult.add(df2.parse("2018-09-15T23:59:30.000Z"));
+        expResult.add(df2.parse("2018-10-16T11:59:30.000Z"));
+        expResult.add(df2.parse("2018-11-15T23:59:30.000Z"));
+        expResult.add(df2.parse("2018-12-16T11:59:30.000Z"));
+
+
+        periods = "2018-08-16T11:59:30.000Z/2018-12-16T11:59:30.000Z/P1MT2H";
+        result = instance.getDatesFromPeriodDescription(periods);
+
+        printResults(result);
+        assertEquals(expResult.size(), result.size());
+        assertEquals(expResult, result);
     }
 
     /**
@@ -501,4 +548,11 @@ public class PeriodUtilitiesTest extends org.geotoolkit.test.TestBase {
 
     }
 
+    private static void printResults(SortedSet<Date> dates) {
+        DateFormat df2 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        df2.setTimeZone(TimeZone.getTimeZone("GMT+0"));
+        for (Date d : dates) {
+            System.out.println(df2.format(d));
+        }
+    }
 }

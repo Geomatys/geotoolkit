@@ -76,13 +76,18 @@ public class PeriodUtilities {
             throw new IllegalArgumentException("date can not be parsed!");
         }
     }
+
+    public String getDatesRespresentation(final SortedSet<Date> dates) {
+        return getDatesRespresentation(dates, false);
+    }
+
     /**
      * Evaluate the periodical gap between the different available time.
      * Return a String concatening periods and isolated date.
      *
      * @param dates a sorted set of date (ordered by time).
      */
-    public String getDatesRespresentation(final SortedSet<Date> dates) {
+    public String getDatesRespresentation(final SortedSet<Date> dates, boolean useMonthAndYear) {
         if (dates.comparator() != null) {
             throw new IllegalArgumentException("Dates should be sorted naturaly without any custom comparator.");
         }
@@ -110,15 +115,16 @@ public class PeriodUtilities {
                         final int pos = response.indexOf(firstDate);
                         response.delete(pos, pos + firstDate.length() + 1);
                     }
-                    response.append(getPeriodDescription(dates.subSet(first, d), previousGap)).append(',');
+                    response.append(getPeriodDescription(dates.subSet(first, d), previousGap, useMonthAndYear)).append(',');
                     nbDataInGap = 1;
+                    first = d;
                 } else {
                     if (nbDataInGap > 0) {
                         dateFormat.format(previousDate, response, new FieldPosition(0)).append(',');
                         nbDataInGap = 1;
                     }
+                    first = previousDate;
                 }
-                first = previousDate;
 
             } else {
                 nbDataInGap++;
@@ -134,7 +140,7 @@ public class PeriodUtilities {
                     final int pos = response.indexOf(firstDate);
                     response.delete(pos, pos + firstDate.length() + 1);
                 }
-                response.append(getPeriodDescription(dates.tailSet(first), gap));
+                response.append(getPeriodDescription(dates.tailSet(first), gap, useMonthAndYear));
                 nbDataInGap = 1;
             } else {
                 if (nbDataInGap > 0) {
@@ -147,10 +153,14 @@ public class PeriodUtilities {
         return response.toString();
     }
 
+    public String getPeriodDescription(final SortedSet<Date> dates, long gap) {
+        return getPeriodDescription(dates, gap, false);
+    }
+
     /**
      * Return a String for a range of date (or just one)
      */
-    public String getPeriodDescription(final SortedSet<Date> dates, long gap) {
+    public String getPeriodDescription(final SortedSet<Date> dates, long gap, boolean useMonthAndYear) {
         final StringBuffer response = new StringBuffer();
         dateFormat.format(dates.first(), response, new FieldPosition(0));
         response.append('/');
@@ -158,21 +168,24 @@ public class PeriodUtilities {
         dateFormat.format(dates.last(), response, new FieldPosition(0));
         response.append("/P");
 
-        //we look if the gap is more than one year (31536000000 ms)
-        long temp = gap / YEAR_MS;
-        if (temp > 1) {
-            response.append(temp).append('Y');
-            gap -= temp * YEAR_MS;
+        if (useMonthAndYear) {
+            //we look if the gap is more than one year (31536000000 ms)
+            long temp = gap / YEAR_MS;
+            if (temp > 1) {
+                response.append(temp).append('Y');
+                gap -= temp * YEAR_MS;
+            }
+
+            //we look if the gap is more than one month (2628000000 ms)
+            temp = gap / MONTH_MS;
+            if (temp >= 1) {
+                response.append(temp).append('M');
+                gap -= temp * MONTH_MS;
+            }
         }
 
-        //we look if the gap is more than one month (2628000000 ms)
-        temp = gap / MONTH_MS;
-        if (temp >= 1) {
-            response.append(temp).append('M');
-            gap -= temp * MONTH_MS;
-        }
         //we look if the gap is more than one week (604800000 ms)
-        temp = gap / WEEK_MS;
+        long temp = gap / WEEK_MS;
         if (temp >= 1) {
             response.append(temp).append('W');
             gap -= temp * WEEK_MS;
