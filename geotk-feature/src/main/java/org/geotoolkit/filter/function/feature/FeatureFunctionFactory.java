@@ -29,11 +29,15 @@ import org.geotoolkit.filter.function.AbstractFunctionFactory;
 public class FeatureFunctionFactory extends AbstractFunctionFactory {
 
     public static final String FEATURETYPENAME = "featureTypeName";
+    public static final String DATA_INTERSECTION = "featuresetIntersection";
+    public static final String DATA_DIFFERENCE = "featuresetDifference";
 
     private static final Map<String,Class> FUNCTIONS = new HashMap<>();
 
     static {
         FUNCTIONS.put(FEATURETYPENAME, FeatureTypeNameFunction.class);
+        FUNCTIONS.put(DATA_INTERSECTION, FeatureSetIntersectionFunction.class);
+        FUNCTIONS.put(DATA_DIFFERENCE, FeatureSetDifferenceFunction.class);
     }
 
     public FeatureFunctionFactory() {
