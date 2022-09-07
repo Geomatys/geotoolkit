@@ -41,7 +41,7 @@ public class QuantityType extends AbstractDataComponentType implements Quantity 
 
     private UomPropertyType uom;
     private AllowedValuesPropertyType constraint;
-    private List<QualityPropertyType> quality;
+    private List<QualityPropertyType> quality = new ArrayList<>();
     private Double value;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
@@ -91,7 +91,7 @@ public class QuantityType extends AbstractDataComponentType implements Quantity 
     }
 
     public QuantityType(final String axisID, final String definition, final UomPropertyType uom, final Double value) {
-        this(axisID, null, definition, uom, value, null);
+        this(axisID, null, definition, uom, value, new ArrayList<>());
     }
 
     public QuantityType(final String axisID, final String referenceFrame, final String definition, final UomPropertyType uom, final Double value, List<QualityPropertyType> quality) {

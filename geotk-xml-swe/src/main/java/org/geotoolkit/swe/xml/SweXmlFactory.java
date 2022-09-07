@@ -79,7 +79,7 @@ public class SweXmlFactory {
     public static Quantity createQuantity(final String version, final String definition, final UomProperty uom, final Double value) {
         return createQuantity(version, null, definition, uom, value, null);
     }
-    
+
     /**
      * Build a Quantity object in the factory version.
      *
@@ -125,8 +125,8 @@ public class SweXmlFactory {
             }
             return new org.geotoolkit.swe.xml.v101.QuantityType(id,
                                                                 null,
-                                                                definition,
                                                                 null,
+                                                                definition,
                                                                 (org.geotoolkit.swe.xml.v101.UomPropertyType)uom,
                                                                 value,
                                                                 qual101);
@@ -208,7 +208,6 @@ public class SweXmlFactory {
         return createText(version, null, definition, value, null);
     }
 
-    
     public static AbstractText createText(final String version, final String id, final String definition, final String value, final List<AbstractQualityProperty> quality) {
         if ("1.0.0".equals(version)) {
             return new org.geotoolkit.swe.xml.v100.Text(id, definition, value);

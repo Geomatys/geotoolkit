@@ -344,21 +344,21 @@ public class AnyScalarPropertyType implements AnyScalar, Entry {
 
     @Override
     public String toString() {
-        final StringBuilder s = new StringBuilder("[AnyScalarPropertyType\n]");
+        final StringBuilder s = new StringBuilder("[AnyScalarPropertyType]\n");
         if(name != null) {
             s.append("name=").append(name).append('\n');
         }
         if (abstractDataComponent != null) {
-            s.append(abstractDataComponent).append('\n');
+            s.append("abstractDataComponent:").append(abstractDataComponent).append('\n');
         }
         if (_boolean != null) {
-            s.append(_boolean).append('\n');
+            s.append("_boolean:").append(_boolean).append('\n');
         }
         if (quantity != null) {
-            s.append(quantity).append('\n');
+            s.append("quantity:").append(quantity).append('\n');
         }
         if (time != null) {
-            s.append(time).append('\n');
+            s.append("time:").append(time).append('\n');
         }
         if(actuate != null) {
             s.append("actuate=").append(actuate).append('\n');

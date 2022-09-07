@@ -70,7 +70,7 @@ import org.geotoolkit.swe.xml.AbstractDataComponent;
 })
 public abstract class AbstractSimpleComponentType extends AbstractDataComponentType {
 
-    protected List<QualityPropertyType> quality;
+    protected List<QualityPropertyType> quality = new ArrayList<>();
     private NilValuesPropertyType nilValues;
     @XmlAttribute
     @XmlSchemaType(name = "anyURI")
@@ -95,7 +95,7 @@ public abstract class AbstractSimpleComponentType extends AbstractDataComponentT
     }
 
     public AbstractSimpleComponentType(final String id, final String definition, final String axisID) {
-        this(id, definition, axisID, null);
+        this(id, definition, axisID, new ArrayList<>());
     }
 
     public AbstractSimpleComponentType(final String id, final String definition, final String axisID, final List<QualityPropertyType> quality) {

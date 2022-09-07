@@ -21,7 +21,10 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -45,18 +48,31 @@ import org.geotoolkit.swe.xml.v101.SimpleDataRecordType;
 import org.geotoolkit.swe.xml.v101.Text;
 import org.geotoolkit.swe.xml.v101.TextBlockType;
 import javax.xml.bind.JAXBContext;
+import org.apache.sis.internal.xml.LegacyNamespaces;
+import org.apache.sis.measure.Units;
+import org.apache.sis.metadata.iso.quality.DefaultQuantitativeAttributeAccuracy;
+import org.apache.sis.metadata.iso.quality.DefaultQuantitativeResult;
 import org.apache.sis.xml.MarshallerPool;
 import org.junit.*;
 
 import static org.apache.sis.test.MetadataAssert.*;
+import org.apache.sis.util.SimpleInternationalString;
+import org.apache.sis.util.iso.DefaultRecord;
+import org.apache.sis.util.iso.DefaultRecordSchema;
+import org.apache.sis.util.iso.Names;
+import org.apache.sis.xml.IdentifierSpace;
+import org.apache.sis.xml.XML;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.observation.xml.v200.OMObservationType;
-import org.geotoolkit.observation.xml.v200.TimeObjectPropertyType;
 import org.geotoolkit.swe.xml.v101.QualityPropertyType;
 import org.geotoolkit.swe.xml.v101.QuantityType;
 import org.geotoolkit.swe.xml.v200.DataRecordType;
 import org.geotoolkit.swe.xml.v200.Field;
 import org.geotoolkit.swe.xml.v200.TextEncodingType;
 import org.geotoolkit.swe.xml.v200.TextType;
+import org.opengis.metadata.quality.Element;
+import org.opengis.util.RecordType;
+import org.opengis.util.TypeName;
 
 
 /**
@@ -72,17 +88,21 @@ public class ObservationXMLBindingTest extends org.geotoolkit.test.TestBase {
 
     @Before
     public void setUp() throws JAXBException {
+        final Map<String,Object> properties = new HashMap<>();
+        //properties.put(XML.METADATA_VERSION, LegacyNamespaces.VERSION_2007);
         pool = new MarshallerPool(JAXBContext.newInstance(
                 "org.geotoolkit.gml.xml.v311:" +
                 "org.geotoolkit.swe.xml.v101:" +
                 "org.geotoolkit.swe.xml.v200:" +
                 "org.geotoolkit.observation.xml.v100:" +
+                "org.geotoolkit.observation.xml.v200:" +
                 "org.geotoolkit.sampling.xml.v100:" +
                 "org.geotoolkit.sampling.xml.v200:" +
                 "org.geotoolkit.samplingspatial.xml.v200:" +
-                "org.apache.sis.internal.jaxb.geometry"), null);
+                "org.apache.sis.internal.jaxb.geometry"), properties);
         unmarshaller = pool.acquireUnmarshaller();
         marshaller   = pool.acquireMarshaller();
+        marshaller.setProperty(XML.METADATA_VERSION, LegacyNamespaces.VERSION_2007);
     }
 
     @After
@@ -201,7 +221,10 @@ public class ObservationXMLBindingTest extends org.geotoolkit.test.TestBase {
         UnitOfMeasureEntry uom  = new UnitOfMeasureEntry("m", "meters", "distance", "meters");
         MeasureType meas       = new MeasureType(uom, 7);
         MeasurementType measmt = new MeasurementType("urn:Observation-007", "observation definition", sp, observedProperty, "urn:sensor:007", meas, samplingTime);
-
+        
+        Element quality    = createQualityElement();
+        measmt.setQuality(quality);
+        
         sw = new StringWriter();
         marshaller.marshal(measmt, sw);
 
@@ -209,42 +232,7 @@ public class ObservationXMLBindingTest extends org.geotoolkit.test.TestBase {
         //we remove the first line
         result = result.substring(result.indexOf("?>") + 2).trim();
 
-        expResult =        "<om:Measurement xmlns:sampling=\"http://www.opengis.net/sampling/1.0\"" +
-                                          " xmlns:om=\"http://www.opengis.net/om/1.0\"" +
-                                          " xmlns:xlink=\"http://www.w3.org/1999/xlink\"" +
-                                          " xmlns:gml=\"http://www.opengis.net/gml\"" +
-                                          " xmlns:swe=\"http://www.opengis.net/swe/1.0.1\"" +
-                                          " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" + '\n' +
-                           "    <gml:name>urn:Observation-007</gml:name>" + '\n' +
-                           "    <om:samplingTime>" + '\n' +
-                           "        <gml:TimePeriod gml:id=\"t1\">" + '\n' +
-                           "            <gml:beginPosition>2007-01-01</gml:beginPosition>" + '\n' +
-                           "            <gml:endPosition>2008-09-09</gml:endPosition>" + '\n' +
-                           "        </gml:TimePeriod>" + '\n' +
-                           "    </om:samplingTime>" + '\n' +
-                           "    <om:procedure xlink:href=\"urn:sensor:007\"/>" + '\n' +
-                           "    <om:observedProperty>" + '\n' +
-                           "        <swe:Phenomenon gml:id=\"phenomenon-007\">" + '\n' +
-                           "            <gml:name>urn:OGC:phenomenon-007</gml:name>" + '\n' +
-                           "        </swe:Phenomenon>" + '\n' +
-                           "    </om:observedProperty>" + '\n' +
-                           "    <om:featureOfInterest>" + '\n' +
-                           "        <sampling:SamplingPoint gml:id=\"samplingID-007\">" + '\n' +
-                           "            <gml:description>a sampling Test</gml:description>" + '\n' +
-                           "            <gml:name>urn:sampling:test:007</gml:name>" + '\n' +
-                           "            <gml:boundedBy>" + '\n' +
-                           "                <gml:Null>not_bounded</gml:Null>" + '\n' +
-                           "            </gml:boundedBy>" + '\n' +
-                           "            <sampling:sampledFeature xlink:href=\"\"/>" + '\n' +
-                           "            <sampling:position>" + '\n' +
-                           "                <gml:Point gml:id=\"point-ID\">" + '\n' +
-                           "                    <gml:pos srsName=\"urn:ogc:crs:espg:4326\" srsDimension=\"2\">3.2 6.5</gml:pos>" + '\n' +
-                           "                </gml:Point>" + '\n' +
-                           "            </sampling:position>" + '\n' +
-                           "        </sampling:SamplingPoint>" + '\n' +
-                           "    </om:featureOfInterest>" + '\n' +
-                           "    <om:result xsi:type=\"om:MeasureType\" uom=\"meters\">7.0</om:result>" + '\n' +
-                           "</om:Measurement>\n";
+        expResult = IOUtilities.toString(this.getClass().getResourceAsStream("obs1.xml"));
         assertXmlEquals(expResult, result, "xmlns:*");
 
 
@@ -299,67 +287,44 @@ public class ObservationXMLBindingTest extends org.geotoolkit.test.TestBase {
                                                       foi,
                                                       arrayProp);
 
+        Element quality    = createQualityElement();
+        obs.setResultQuality(Arrays.asList(quality));
+
         StringWriter sw = new StringWriter();
         marshaller.marshal(obs, sw);
 
         String result = sw.toString();
         //we remove the first line
         result = result.substring(result.indexOf("?>") + 2).trim();
-        String expResult =  "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
-                            "<om:Observation gml:id=\"urn:Observation-007\" \n" +
-                            "                  xmlns:gml=\"http://www.opengis.net/gml/3.2\" \n" +
-                            "                  xmlns:sa=\"http://www.opengis.net/sampling/1.0\"\n" +
-                            "                  xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" \n" +
-                            "                  xmlns:swe=\"http://www.opengis.net/swe/2.0\" \n" +
-                            "                  xmlns:om=\"http://www.opengis.net/om/2.0\" \n" +
-                            "                  xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n" +
-                            "  <gml:name>observation definition</gml:name>\n" +
-                            "  <gml:boundedBy xsi:nil=\"true\"/>\n" +
-                            "  <om:type xlink:href=\"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_ComplexObservation\"/>\n" +
-                            "  <om:phenomenonTime>\n" +
-                            "    <gml:TimePeriod gml:id=\"t1\">\n" +
-                            "      <gml:beginPosition>2007-01-01</gml:beginPosition>\n" +
-                            "      <gml:endPosition>2008-09-09</gml:endPosition>\n" +
-                            "    </gml:TimePeriod>\n" +
-                            "  </om:phenomenonTime>\n" +
-                            "  <om:resultTime/>\n" +
-                            "  <om:procedure xlink:href=\"urn:sensor:007\"/>\n" +
-                            "  <om:observedProperty xlink:href=\"urn:OGC:phenomenon-007\"/>\n" +
-                            "  <om:featureOfInterest xlink:href=\"foi-007\"/>\n" +
-                            "  <om:result xsi:type=\"swe:DataArrayPropertyType\">\n" +
-                            "    <swe:DataArray id=\"array-001\">\n" +
-                            "      <swe:elementCount>\n" +
-                            "        <swe:Count>\n" +
-                            "          <swe:value>1</swe:value>\n" +
-                            "        </swe:Count>\n" +
-                            "      </swe:elementCount>\n" +
-                            "      <swe:elementType name=\"array-001\">\n" +
-                            "        <swe:DataRecord definition=\"def\" id=\"record1\">\n" +
-                            "          <swe:field name=\"text-field-001\">\n" +
-                            "            <swe:Text definition=\"urn:something\">\n" +
-                            "              <swe:value>some value</swe:value>\n" +
-                            "            </swe:Text>\n" +
-                            "          </swe:field>\n" +
-                            "          <swe:field name=\"quality-field-001\">\n" +
-                            "            <swe:Quantity definition=\"urn:something2\">\n" +
-                            "              <swe:quality>\n" +
-                            "                <swe:Text id=\"qflag\" definition=\"quality_flag\"/>\n" +
-                            "              </swe:quality>\n" +
-                            "              <swe:uom code=\"some value\"/>\n" +
-                            "            </swe:Quantity>\n" +
-                            "          </swe:field>\n" +
-                            "        </swe:DataRecord>\n" +
-                            "      </swe:elementType>\n" +
-                            "      <swe:encoding>\n" +
-                            "        <swe:TextEncoding decimalSeparator=\",\" tokenSeparator=\"@@\" blockSeparator=\".\" id=\"encoding-001\"/>\n" +
-                            "      </swe:encoding>\n" +
-                            "      <swe:values>somevalue</swe:values>\n" +
-                            "    </swe:DataArray>\n" +
-                            "  </om:result>\n" +
-                            "</om:Observation>";
+        String expResult =  IOUtilities.toString(this.getClass().getResourceAsStream("obs2.xml"));
         assertXmlEquals(expResult, result, "xmlns:*", "xsi:type");
     }
 
+
+    private Element createQualityElement() {
+        DefaultQuantitativeAttributeAccuracy element = new DefaultQuantitativeAttributeAccuracy();
+        element.setNamesOfMeasure(Arrays.asList(new SimpleInternationalString("quality-field")));
+
+        DefaultQuantitativeResult res = new DefaultQuantitativeResult();
+        res.getIdentifierMap().put(IdentifierSpace.ID, "id-00");
+
+        TypeName tn = Names.createTypeName(null, null, "tname");
+
+        DefaultRecordSchema schema = new DefaultRecordSchema(null, null, "MySchema");
+        // The same instance can be reused for all records to create in that schema.
+
+        Map<CharSequence,Class<?>> fieldss = new LinkedHashMap<>();
+        fieldss.put("value",    Double .class);
+        RecordType rt = schema.createRecordType("MyRecordType", fieldss);
+
+        DefaultRecord r = new DefaultRecord(rt);
+        r.set(rt.getMembers().iterator().next(), 2.3);
+        res.setValues(Arrays.asList(r));
+
+        res.setValueUnit(Units.AMPERE);
+        element.setResults(Arrays.asList(res));
+        return element;
+    }
     /**
      * Test simple Record Marshalling.
      *

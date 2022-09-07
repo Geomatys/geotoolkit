@@ -43,6 +43,12 @@ public class ObservationFilterFlags {
     public static final String INCLUDE_ID_IN_DATABLOCK = "includeIDInDataBlock";
 
     /**
+     * Used for profile observations (dataArray) retrieval.
+     * If set to true, the pehenomenon time will be added in the datablock for each measure.
+     */
+    public static final String INCLUDE_TIME_FOR_FOR_PROFILE = "includeTimeForProfile";
+
+    /**
      * Used for Phenomenon retrieval.
      * If set to true, the composite phenomenons will be decomposed and their components will be returned.
      */

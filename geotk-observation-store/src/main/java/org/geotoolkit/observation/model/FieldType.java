@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.observation.model;
 
+import java.util.Date;
+
 /**
  *
  * @author Guilhem Legal (Geomatys)
@@ -41,6 +43,16 @@ public enum FieldType {
             case "Boolean": return BOOLEAN;
             case "Time": return TIME;
             default: throw new IllegalArgumentException("Unexpected value for field type enum:" + label);
+        }
+    }
+
+    public Class<?> getJavaType() {
+        switch (this) {
+            case QUANTITY: return Double.class;
+            case TEXT: return String.class;
+            case BOOLEAN: return Boolean.class;
+            case TIME: return Date.class;
+            default: throw new IllegalArgumentException("Unexpected value for field type enum:" + this);
         }
     }
 }

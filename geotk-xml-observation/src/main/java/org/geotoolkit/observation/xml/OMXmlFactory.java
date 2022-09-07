@@ -26,6 +26,7 @@ import org.geotoolkit.swe.xml.AbstractDataValueProperty;
 import org.geotoolkit.swe.xml.v101.PhenomenonType;
 import org.geotoolkit.swe.xml.v200.EncodedValuesPropertyType;
 import org.opengis.metadata.Identifier;
+import org.opengis.metadata.quality.Element;
 import org.opengis.observation.Measurement;
 import org.opengis.observation.Observation;
 import org.opengis.observation.sampling.SamplingFeature;
@@ -462,6 +463,11 @@ public class OMXmlFactory {
 
     public static AbstractObservation buildMeasurement(final String version, final String id, final String name, final String definition, final FeatureProperty sampledFeature, final org.opengis.observation.Phenomenon phen,
             final org.opengis.observation.Process procedure, final Object result, final TemporalGeometricPrimitive time, BoundingShape bound) {
+        return buildMeasurement(version, id, name, definition, sampledFeature, phen, procedure, result, time, bound, null);
+    }
+
+    public static AbstractObservation buildMeasurement(final String version, final String id, final String name, final String definition, final FeatureProperty sampledFeature, final org.opengis.observation.Phenomenon phen,
+            final org.opengis.observation.Process procedure, final Object result, final TemporalGeometricPrimitive time, BoundingShape bound, List<Element> resultQuality) {
         if ("1.0.0".equals(version)) {
             if (sampledFeature != null && !(sampledFeature instanceof org.geotoolkit.gml.xml.v311.FeaturePropertyType)) {
                 throw new IllegalArgumentException("unexpected object version for sampled feature element");
@@ -481,12 +487,18 @@ public class OMXmlFactory {
             if (procedure != null && !(procedure instanceof org.geotoolkit.observation.xml.v100.ProcessType)) {
                 throw new IllegalArgumentException("unexpected object version for time element");
             }
+
+            // observation V1 can only contain one result quality
+            Element singleQuality = null;
+            if (resultQuality != null && !resultQuality.isEmpty()) {
+                singleQuality = resultQuality.get(0);
+            }
             return new org.geotoolkit.observation.xml.v100.MeasurementType(name,
                                                                            definition,
                                                                            (org.geotoolkit.gml.xml.v311.FeaturePropertyType)sampledFeature,
                                                                            phenProp,
                                                                            (org.geotoolkit.observation.xml.v100.ProcessType)procedure ,
-                                                                           null,
+                                                                           singleQuality,
                                                                            (org.geotoolkit.observation.xml.v100.MeasureType)result,
                                                                            (org.geotoolkit.gml.xml.v311.AbstractTimeGeometricPrimitiveType)time,
                                                                             null, null, null);
@@ -523,7 +535,8 @@ public class OMXmlFactory {
                                                                             phen,
                                                                             (org.geotoolkit.gml.xml.v321.FeaturePropertyType)sampledFeature,
                                                                             result,
-                                                                            (org.geotoolkit.gml.xml.v321.BoundingShapeType)bound);
+                                                                            (org.geotoolkit.gml.xml.v321.BoundingShapeType)bound,
+                                                                            resultQuality);
         } else {
             throw new IllegalArgumentException("unexpected sos version number:" + version);
         }

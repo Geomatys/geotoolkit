@@ -17,7 +17,10 @@
 package org.geotoolkit.observation.xml.v100;
 
 // jaxb import
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBElement;
@@ -29,6 +32,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.apache.sis.internal.jaxb.metadata.DQ_Element;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 
 // openGis dependencies
@@ -78,6 +83,7 @@ import org.opengis.temporal.TemporalGeometricPrimitive;
     "procedureTime",
     "observedProperty",
     "featureOfInterest",
+    "resultQuality",
     "result"
 })
 @XmlRootElement(name = "Observation")
@@ -135,11 +141,8 @@ public class ObservationType implements Entry, AbstractObservation {
     @XmlTransient
     private Distribution distribution;*/
 
-    /**
-     * La qualité de la donnée. Peut être nul si cette information n'est pas disponible.
-     */
-    @XmlTransient
-    private ElementType resultQuality;
+    @XmlJavaTypeAdapter(DQ_Element.class)
+    private Element resultQuality;
 
     /**
      * le resultat de l'observation de n'importe quel type
@@ -246,7 +249,7 @@ public class ObservationType implements Entry, AbstractObservation {
                             final FeaturePropertyType  featureOfInterest,
                             final PhenomenonPropertyType observedProperty,
                             final ProcessType          procedure,
-                            final ElementType          quality,
+                            final Element              quality,
                             final Object               result,
                             final AbstractTimeGeometricPrimitiveType  samplingTime,
                             final DefaultMetadata      observationMetadata,
@@ -437,6 +440,18 @@ public class ObservationType implements Entry, AbstractObservation {
     @Override
     public Element getQuality() {
         return resultQuality;
+    }
+
+    public void setQuality(final Element resultQuality) {
+        this.resultQuality = resultQuality;
+    }
+
+    @Override
+    public List<Element> getResultQuality() {
+        if (resultQuality != null) {
+            return Arrays.asList(resultQuality);
+        }
+        return new ArrayList<>();
     }
 
     /**

@@ -80,6 +80,7 @@ public class OMUtils {
 
     public static final String OM_NAMESPACE = "http://www.opengis.net/om/1.0";
     public static final QName OBSERVATION_QNAME = new QName(OM_NAMESPACE, "Observation", "om");
+    public static final QName MEASUREMENT_QNAME = new QName(OM_NAMESPACE, "Measurement", "om");
 
     public static final String RESPONSE_FORMAT_V100 = "text/xml; subtype=\"om/1.0.0\"";
     public static final String RESPONSE_FORMAT_V200 = "http://www.opengis.net/om/2.0";

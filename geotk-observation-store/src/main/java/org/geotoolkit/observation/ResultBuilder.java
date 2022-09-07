@@ -62,6 +62,17 @@ public class ResultBuilder {
         }
     }
 
+    public void clear() {
+        switch (mode) {
+            case DATA_ARRAY:
+                dataArray = new ArrayList<>();
+                break;
+            case CSV:
+                values = new StringBuilder();
+                break;
+        }
+    }
+
     public void newBlock() {
         switch (getMode()) {
             case DATA_ARRAY:
