@@ -150,28 +150,4 @@ public class TileMatricesTest {
         }
     }
 
-    @Test
-    public void testSurSamplingGridExtent() {
-
-        final GridExtent extent = new GridExtent(null, new long[]{10,-8}, new long[]{100, 50}, false);
-        final GridExtent surSampling = TileMatrices.surSampling(extent, new long[]{4,4});
-
-        Assert.assertArrayEquals(new long[]{40,-32}, surSampling.getLow().getCoordinateValues());
-        Assert.assertArrayEquals(new long[]{399, 199}, surSampling.getHigh().getCoordinateValues());
-    }
-
-//    @Test
-//    public void testSurSamplingGridGeometry() {
-//
-//        final GridExtent extent = new GridExtent(null, new long[]{10,-8}, new long[]{100, 50}, true);
-//        final MathTransform gridToCRS = new AffineTransform2D(1, 0, 0, -2, 10, 50);
-//        final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
-//
-//        final GridGeometry gridGeom = new GridGeometry(extent, PixelInCell.CELL_CENTER, gridToCRS, crs);
-//
-//        final GridGeometry surSampling = TileMatrices.surSampling(gridGeom, new long[]{4,4});
-//        System.out.println(surSampling);
-//
-//        Assert.assertTrue(new GridExtent(null, new long[]{10*4,-8*4}, new long[]{100*4, 50*4}, true).equals(surSampling, ComparisonMode.IGNORE_METADATA));
-//    }
 }

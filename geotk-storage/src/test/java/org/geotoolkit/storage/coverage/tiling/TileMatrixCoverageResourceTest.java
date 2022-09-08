@@ -36,7 +36,6 @@ import org.apache.sis.test.storage.CoverageReadConsistency;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
-import org.geotoolkit.storage.multires.TileMatrices;
 import org.junit.BeforeClass;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
@@ -74,7 +73,7 @@ public class TileMatrixCoverageResourceTest extends CoverageReadConsistency {
         for (int x = 0; x <= extent.getHigh(0); x++) {
             for (int y = 0; y <= extent.getHigh(1); y++) {
                 GridGeometry tileGeometry = tilingScheme.derive().subgrid(new GridExtent(null, new long[]{x,y}, new long[]{x,y}, true)).build();
-                tileGeometry = TileMatrices.surSampling(tileGeometry, tileSize);
+                tileGeometry = tileGeometry.upsample(tileSize);
                 final BufferedImage image = BufferedImages.createImage((int) tileSize[0], (int) tileSize[1], 1, DataBuffer.TYPE_DOUBLE);
                 final WritablePixelIterator ite = WritablePixelIterator.create(image);
                 while (ite.next()) {

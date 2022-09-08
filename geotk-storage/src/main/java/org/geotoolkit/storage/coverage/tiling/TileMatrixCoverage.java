@@ -68,7 +68,8 @@ final class TileMatrixCoverage extends GridCoverage {
 
     private static GridGeometry buildGridGeometry(GridExtent extent, TileMatrix matrix, int[] tileSize) {
         final GridGeometry tilingScheme = matrix.getTilingScheme();
-        return TileMatrices.surSampling(tilingScheme.derive().rounding(GridRoundingMode.ENCLOSING).subgrid(extent).build(), tileSize);
+        return tilingScheme.derive().rounding(GridRoundingMode.ENCLOSING).subgrid(extent).build()
+                .upsample(tileSize);
     }
 
     @Override
@@ -90,13 +91,8 @@ final class TileMatrixCoverage extends GridCoverage {
         final int[] xyAxes = readExtent.getSubspaceDimensions(2);
 
         //convert the requested extent to tile range.
-<<<<<<< HEAD
-        final GridExtent absoluteTileExtent = readExtent.subsample(Arrays.stream(tileSize).mapToInt(Math::toIntExact).toArray());
-        final GridExtent absolutedReadExtent = TileMatrices.surSampling(absoluteTileExtent, tileSize);
-=======
         final GridExtent absoluteTileExtent = readExtent.subsample(tileSize);
         final GridExtent absolutedReadExtent = absoluteTileExtent.upsample(tileSize);
->>>>>>> 5f16a6fa18 (chore(TileMatrix): change tile size parameter from long[] to int[])
 
         //compute image model and image
         final Object[] structure = resource.getImageModel(readExtent, range);

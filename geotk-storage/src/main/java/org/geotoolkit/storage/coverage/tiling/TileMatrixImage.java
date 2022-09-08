@@ -24,6 +24,7 @@ import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.coverage.grid.GridCoverage;
@@ -380,7 +381,7 @@ final class TileMatrixImage extends ComputedImage implements RenderedImage {
         //grid geometry of the tile in the tiling scheme
         GridGeometry geom = matrix.getTilingScheme().derive().subgrid(new GridExtent(null, indices, indices, true)).build();
         //grid geometry of the tile in pixels
-        geom = TileMatrices.surSampling(geom, tileSize);
+        geom = geom.upsample(tileSize);
         final GridExtent tileExtentNd = geom.getExtent();
         //N dimension intersection, this should be a 2d slice
         final GridExtent intersection = geom.derive().subgrid(readGeometry).getIntersection();

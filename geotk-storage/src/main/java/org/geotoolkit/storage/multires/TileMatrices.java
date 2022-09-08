@@ -19,6 +19,7 @@ package org.geotoolkit.storage.multires;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
@@ -55,9 +56,7 @@ import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
-import org.opengis.metadata.spatial.DimensionNameType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.Matrix;
@@ -671,7 +670,7 @@ public final class TileMatrices extends Static {
      */
     public static GridGeometry getAbsoluteTileGridGeometry(TileMatrix tileMatrix, GridExtent extent, int[] tileSize) {
         final GridGeometry schemeGridGeometry = tileMatrix.getTilingScheme().derive().clipping(GridClippingMode.NONE).subgrid(extent).build();
-        return surSampling(schemeGridGeometry, tileSize);
+        return schemeGridGeometry.upsample(tileSize);
     }
 
     /**
@@ -708,7 +707,7 @@ public final class TileMatrices extends Static {
      */
     public static GridGeometry getAbsoluteTileGridGeometry2D(TileMatrix tileMatrix, GridExtent extent, int[] tileSize) {
         final GridGeometry schemeGridGeometry = tileMatrix.getTilingScheme().derive().clipping(GridClippingMode.NONE).subgrid(extent).build();
-        GridGeometry tileGridGeometry = surSampling(schemeGridGeometry, tileSize);
+        GridGeometry tileGridGeometry = schemeGridGeometry.upsample(tileSize);
         final CoordinateReferenceSystem crs = tileGridGeometry.getCoordinateReferenceSystem();
         if (crs.getCoordinateSystem().getDimension() > 2) {
             final int idx = CRSUtilities.firstHorizontalAxis(tileGridGeometry.getCoordinateReferenceSystem());
@@ -818,57 +817,4 @@ public final class TileMatrices extends Static {
         return stream;
     }
 
-    /**
-     * Expand gridgeometry, opposite of subsampling.
-     *
-     * @param tilingScheme
-     * @param tileSize
-     * @return
-     */
-    public static GridGeometry surSampling(GridGeometry tilingScheme, long[] tileSize) {
-
-        final GridExtent pixelExtent = surSampling(tilingScheme.getExtent(), tileSize);
-        final int dimension = pixelExtent.getDimension();
-
-        final MathTransform schemeGridToCrs = tilingScheme.getGridToCRS(PixelInCell.CELL_CORNER);
-        final MathTransform gridToCrs;
-        if (schemeGridToCrs instanceof LinearTransform lnt) {
-            final MatrixSIS matrix = Matrices.copy(lnt.getMatrix());
-            for (int i = 0; i < dimension; i++) {
-                for (int k = 0; k < dimension; k++) {
-                    matrix.setElement(i, k, matrix.getElement(i, k) / tileSize[i]);
-                }
-            }
-            gridToCrs = MathTransforms.linear(matrix);
-        } else {
-            final double[] scaling = new double[dimension];
-            for (int i = 0; i < dimension; i++) {
-                scaling[i] = 1.0 / tileSize[i];
-            }
-            gridToCrs = MathTransforms.concatenate(
-                    MathTransforms.scale(scaling),
-                    tilingScheme.getGridToCRS(PixelInCell.CELL_CORNER));
-        }
-        return new GridGeometry(pixelExtent, PixelInCell.CELL_CORNER, gridToCrs, tilingScheme.getCoordinateReferenceSystem());
-    }
-
-    /**
-     * Expand GridExtent, opposite of subsampling.
-     *
-     * @param extent
-     * @param tileSize
-     * @return
-     */
-    public static GridExtent surSampling(GridExtent extent, long[] tileSize) {
-
-        final long[] low = extent.getLow().getCoordinateValues();
-        final long[] high = extent.getHigh().getCoordinateValues();
-        final DimensionNameType[] names = new DimensionNameType[low.length];
-        for (int i = 0; i < names.length; i++) {
-            names[i] = extent.getAxisType(i).orElse(null);
-            low[i] *= tileSize[i];
-            high[i] = (high[i] + 1) * tileSize[i];
-        }
-        return new GridExtent(names, low, high, false);
-    }
 }

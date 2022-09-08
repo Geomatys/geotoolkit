@@ -39,7 +39,6 @@ import org.apache.sis.storage.tiling.TileMatrix;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.image.BufferedImages;
-import org.geotoolkit.storage.multires.TileMatrices;
 import org.opengis.coverage.CannotEvaluateException;
 
 /**
@@ -64,7 +63,7 @@ public final class TileMatrixCoverageResource extends AbstractGridCoverageResour
         this.tileSize = tileSize.clone();
         this.sampleDimensions = UnmodifiableArrayList.wrap(sampleDimensions.toArray(SampleDimension[]::new));
         this.tilingScheme = matrix.getTilingScheme();
-        this.coverageGrid = TileMatrices.surSampling(tilingScheme, tileSize);
+        this.coverageGrid = tilingScheme.upsample(tileSize);
     }
 
     TileMatrix getMatrix() {
