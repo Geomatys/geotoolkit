@@ -213,20 +213,18 @@ class GeoJSONReader implements Iterator<Feature>, AutoCloseable {
         if (fti.geometryName != null) {
             //Build geometry
             final Geometry geom = GeoJSONGeometry.toJTS(jsonFeature.getGeometry(), fti.crs);
-
-            if (fti.hasIdentifier) {
-                Object id = jsonFeature.getId();
-                if (id == null) {
-                    id = currentFeatureIdx;
-                }
-                feature.setPropertyValue(AttributeConvention.IDENTIFIER, fti.idConverter.apply(id));
-            }
             feature.setPropertyValue(fti.geometryName, geom);
         }
 
         //recursively fill other properties
         final Map<String, Object> properties = jsonFeature.getProperties();
         fillFeature(feature, properties);
+
+        // Fill identifier after properties, to ensure that feature identifier has priority over any property named "id".
+        if (fti.hasIdentifier) {
+            Object id = jsonFeature.getId();
+            if (id != null) feature.setPropertyValue(AttributeConvention.IDENTIFIER, fti.idConverter.apply(id));
+        }
 
         currentFeatureIdx++;
         return feature;

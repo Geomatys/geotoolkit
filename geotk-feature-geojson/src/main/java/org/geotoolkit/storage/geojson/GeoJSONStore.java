@@ -32,7 +32,6 @@ import java.util.logging.Logger;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import org.apache.sis.feature.builder.AttributeRole;
-import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.storage.ResourceOnFileSystem;
 import org.apache.sis.metadata.iso.DefaultMetadata;
@@ -41,7 +40,6 @@ import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.WritableFeatureSet;
-import org.apache.sis.util.iso.Names;
 import org.geotoolkit.internal.geojson.FeatureTypeUtils;
 import org.geotoolkit.internal.geojson.GeoJSONParser;
 import org.geotoolkit.internal.geojson.GeoJSONUtils;
@@ -78,6 +76,7 @@ public final class GeoJSONStore extends DataStore implements ResourceOnFileSyste
 
     private static final Logger LOGGER = Logger.getLogger("org.apache.sis.storage.geojson");
     private static final String DESC_FILE_SUFFIX = "_Type.json";
+    public static final String ID_PROPERTY_NAME = "id";
 
     private final ReadWriteLock rwLock = new ReentrantReadWriteLock();
     private final DataStoreProvider provider;
@@ -85,10 +84,10 @@ public final class GeoJSONStore extends DataStore implements ResourceOnFileSyste
 
     private GenericName name;
     private FeatureType featureType;
-    private Path descFile;
-    private Path jsonFile;
-    private Integer coordAccuracy;
-    private boolean isLocal = true;
+    private final Path descFile;
+    private final Path jsonFile;
+    private final Integer coordAccuracy;
+    private final boolean isLocal;
 
     public GeoJSONStore(DataStoreProvider provider, final Path path, Integer coordAccuracy)
             throws DataStoreException {
@@ -111,7 +110,7 @@ public final class GeoJSONStore extends DataStore implements ResourceOnFileSyste
         //FIXME
         this.isLocal = "file".equalsIgnoreCase(uri.getScheme());
 
-        Path tmpFile = null;
+        Path tmpFile;
         try {
             tmpFile = Paths.get(uri);
         } catch (FileSystemNotFoundException ex) {
@@ -185,10 +184,6 @@ public final class GeoJSONStore extends DataStore implements ResourceOnFileSyste
     /**
      * Read FeatureType from a JSON-Schema file if exist or directly from the
      * input JSON file.
-     *
-     * @return
-     * @throws DataStoreException
-     * @throws IOException
      */
     private FeatureType readType() throws DataStoreException, IOException {
         if (Files.exists(descFile) && Files.size(descFile) != 0) {
@@ -204,7 +199,7 @@ public final class GeoJSONStore extends DataStore implements ResourceOnFileSyste
                 // build FeatureType from the first Feature of JSON file.
                 final GeoJSONObject obj = GeoJSONParser.parse(jsonFile, true);
                 if (obj == null) {
-                    throw new DataStoreException("Invalid GeoJSON file " + jsonFile.toString());
+                    throw new DataStoreException("Invalid GeoJSON file " + jsonFile);
                 }
 
                 CoordinateReferenceSystem crs = GeoJSONUtils.getCRS(obj);
@@ -213,7 +208,7 @@ public final class GeoJSONStore extends DataStore implements ResourceOnFileSyste
                     GeoJSONFeatureCollection jsonFeatureCollection = (GeoJSONFeatureCollection) obj;
                     if (!jsonFeatureCollection.hasNext()) {
                         //empty FeatureCollection error ?
-                        throw new DataStoreException("Empty GeoJSON FeatureCollection " + jsonFile.toString());
+                        throw new DataStoreException("Empty GeoJSON FeatureCollection " + jsonFile);
                     } else {
 
                         // TODO should we analyse all Features from FeatureCollection to be sure
@@ -240,20 +235,42 @@ public final class GeoJSONStore extends DataStore implements ResourceOnFileSyste
 
     static void fillTypeFromFeature(FeatureTypeBuilder ftb, CoordinateReferenceSystem crs,
             GeoJSONFeature jsonFeature, boolean analyseGeometry) {
+
+        // Consider anything optional for JSON data types.
+        ftb.setDefaultMultiplicity(0, 1);
+
         if (analyseGeometry) {
             ftb.addAttribute(findBinding(jsonFeature.getGeometry())).setName("geometry").setCRS(crs).addRole(AttributeRole.DEFAULT_GEOMETRY);
         } else {
             ftb.addAttribute(Geometry.class).setName("geometry").setCRS(crs).addRole(AttributeRole.DEFAULT_GEOMETRY);
         }
+
+        final Object id = jsonFeature.getId();
+        if (id != null) {
+            ftb.addAttribute(id.getClass()).setName(ID_PROPERTY_NAME).addRole(AttributeRole.IDENTIFIER_COMPONENT);
+        }
+
         for (Map.Entry<String, Object> property : jsonFeature.getProperties().entrySet()) {
             final Object value = property.getValue();
             final Class<?> binding = value != null ? value.getClass() : String.class;
-            final GenericName name = Names.createLocalName(null, null, property.getKey());
-            final AttributeTypeBuilder<?> atb = ftb.addAttribute(binding).setName(name);
-            if ("id".equals(property.getKey()) || "fid".equals(property.getKey())) {
-                atb.addRole(AttributeRole.IDENTIFIER_COMPONENT);
+            final String name = property.getKey();
+            final boolean isId = ID_PROPERTY_NAME.equals(name);
+            if (isId) {
+                LOGGER.warning("Feature identifier has been found in properties. It is INVALID regarding GeoJSON specification RFC-7946. Property values might be erased by Feature identifier.");
+                if (id != null) {
+                    if (binding.equals(id.getClass())) continue;
+                    else throw new IllegalArgumentException("An id property has been found, and its type is not compatible with Feature id type.");
+                }
             }
+
+            var atb = ftb.addAttribute(binding).setName(name);
+            if (isId) atb.addRole(AttributeRole.IDENTIFIER_COMPONENT);
         }
+
+        // TODO: at this point, if no ID has been registered, should we add one optional with Object type ?
+        // In case we read a single feature, this is not coherent. But it is not a very common case.
+        // Most of the time, we try to define data type of a feature collection only from its first feature.
+        // In such case, having no id on the first feature does not mean it will be absent on other objects.
     }
 
     private static Class<? extends Geometry> findBinding(GeoJSONGeometry jsonGeometry) {
@@ -316,7 +333,7 @@ public final class GeoJSONStore extends DataStore implements ResourceOnFileSyste
 
     @Override
     public Optional<Envelope> getEnvelope() throws DataStoreException {
-        Envelope envelope = null;
+        Envelope envelope;
         rwLock.readLock().lock();
         try {
             final GeoJSONObject obj = GeoJSONParser.parse(jsonFile, true);
