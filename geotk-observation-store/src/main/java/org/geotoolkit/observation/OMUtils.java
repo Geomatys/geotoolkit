@@ -153,9 +153,7 @@ public class OMUtils {
         final List<AnyScalar> fields = new ArrayList<>();
         fields.add(PRESSION_FIELD.get(version));
         for (Field phenomenon : phenomenons) {
-            final UomProperty uom = SOSXmlFactory.buildUomProperty(version, phenomenon.uom, null);
-            final Quantity cat = SOSXmlFactory.buildQuantity(version, phenomenon.name, uom, null);
-            fields.add(SOSXmlFactory.buildAnyScalar(version, null, phenomenon.name, cat));
+            fields.add(phenomenon.getScalar(version));
         }
         return SOSXmlFactory.buildSimpleDatarecord(version, null, null, null, true, fields);
     }
@@ -164,9 +162,7 @@ public class OMUtils {
         final List<AnyScalar> fields = new ArrayList<>();
         fields.add(TIME_FIELD.get(version));
         for (Field phenomenon : phenomenons) {
-            final UomProperty uom = SOSXmlFactory.buildUomProperty(version, phenomenon.uom, null);
-            final Quantity cat = SOSXmlFactory.buildQuantity(version, phenomenon.name, uom, null);
-            fields.add(SOSXmlFactory.buildAnyScalar(version, null, phenomenon.name, cat));
+            fields.add(phenomenon.getScalar(version));
         }
         return SOSXmlFactory.buildSimpleDatarecord(version, null, null, null, true, fields);
     }
@@ -177,9 +173,7 @@ public class OMUtils {
         fields.add(LATITUDE_FIELD.get(version));
         fields.add(LONGITUDE_FIELD.get(version));
         for (Field phenomenon : phenomenons) {
-            final UomProperty uom = SOSXmlFactory.buildUomProperty(version, phenomenon.uom, null);
-            final Quantity cat = SOSXmlFactory.buildQuantity(version, phenomenon.name, uom, null);
-            fields.add(SOSXmlFactory.buildAnyScalar(version, null, phenomenon.name, cat));
+            fields.add(phenomenon.getScalar(version));
         }
         return SOSXmlFactory.buildSimpleDatarecord(version, null, null, null, true, fields);
     }
