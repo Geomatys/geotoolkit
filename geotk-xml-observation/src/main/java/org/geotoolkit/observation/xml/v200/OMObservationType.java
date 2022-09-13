@@ -146,6 +146,12 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
     public OMObservationType(final String id, final String name, final String type, final AbstractTimeObjectType phenomenonTime,
             final OMProcessPropertyType procedure, final String observedProperty, final Phenomenon hiddenObservedProperty,
             final FeaturePropertyType foi, final Object result, final BoundingShapeType shape) {
+        this(id, name, type, phenomenonTime, procedure, observedProperty, hiddenObservedProperty, foi, result, shape, null);
+    }
+
+    public OMObservationType(final String id, final String name, final String type, final AbstractTimeObjectType phenomenonTime,
+            final OMProcessPropertyType procedure, final String observedProperty, final Phenomenon hiddenObservedProperty,
+            final FeaturePropertyType foi, final Object result, final BoundingShapeType shape, List<Element> resultQuality) {
         super(id, name, null, null, shape);
         this.type = new ReferenceType(type);
         this.phenomenonTime = new TimeObjectPropertyType(phenomenonTime);
@@ -157,6 +163,7 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
         this.featureOfInterest   = foi;
         this.result = result;
         this.hiddenObservedProperty = hiddenObservedProperty;
+        this.resultQuality = resultQuality;
     }
 
     /**
@@ -533,11 +540,16 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
      * {@link DQElementPropertyType }
      *
      */
+    @Override
     public List<Element> getResultQuality() {
         if (resultQuality == null) {
-            resultQuality = new ArrayList<Element>();
+            resultQuality = new ArrayList<>();
         }
         return this.resultQuality;
+    }
+
+    public void setResultQuality(List<Element> resultQuality) {
+        this.resultQuality = resultQuality;
     }
 
     @Override
@@ -547,6 +559,7 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
         }
         return null;
     }
+
     /**
      * Gets the value of the result property.
      *

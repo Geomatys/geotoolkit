@@ -38,7 +38,8 @@ public class Observation implements STSResponse, DeltaComparable {
 
     private String resultTime = null;
 
-    private String resultQuality = null;
+    // keep the object type to be compatible with direct String value
+    private Object resultQuality = null;
 
     private String validTime = null;
 
@@ -169,7 +170,7 @@ public class Observation implements STSResponse, DeltaComparable {
         this.resultTime = resultTime;
     }
 
-    public Observation resultQuality(String resultQuality) {
+    public Observation resultQuality(Object resultQuality) {
         this.resultQuality = resultQuality;
         return this;
     }
@@ -180,11 +181,11 @@ public class Observation implements STSResponse, DeltaComparable {
      * @return resultQuality
   *
      */
-    public String getResultQuality() {
+    public Object getResultQuality() {
         return resultQuality;
     }
 
-    public void setResultQuality(String resultQuality) {
+    public void setResultQuality(Object resultQuality) {
         this.resultQuality = resultQuality;
     }
 

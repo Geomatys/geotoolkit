@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.AbstractDataComponent;
 import org.geotoolkit.swe.xml.AbstractQualityProperty;
 import org.geotoolkit.util.Utilities;
 
@@ -99,6 +100,20 @@ public class QualityPropertyType implements AbstractQualityProperty {
 
     }
 
+    public QualityPropertyType(AbstractDataComponent dc) {
+        if (dc instanceof QuantityType q) {
+            this.quantity = q;
+        } else if (dc instanceof QuantityRange qr) {
+            this.quantityRange = qr;
+        } else if (dc instanceof Category c) {
+            this.category = c;
+        } else if (dc instanceof Text t) {
+            this.text = t;
+        } else if (dc != null) {
+            throw new IllegalArgumentException("Unexpected data component type:" + dc.getClass().getName());
+        }
+    }
+
     public QualityPropertyType(final AbstractQualityProperty aq) {
         if (aq != null) {
             this.actuate = aq.getActuate();
@@ -124,14 +139,27 @@ public class QualityPropertyType implements AbstractQualityProperty {
         }
     }
 
+    @Override
+    public AbstractDataComponent getDataComponent() {
+        if (quantity != null) {
+            return quantity;
+        } else if (quantityRange != null) {
+            return quantityRange;
+        } else if (category != null) {
+            return category;
+        } else if (text != null) {
+            return text;
+        }
+        return null;
+    }
+
     /**
      * Gets the value of the quantity property.
      *
-     * @return
-     *     possible object is
-     *     {@link Quantity }
+     * @return possible object is {@link Quantity }
      *
      */
+    @Override
     public QuantityType getQuantity() {
         return quantity;
     }
@@ -156,6 +184,7 @@ public class QualityPropertyType implements AbstractQualityProperty {
      *     {@link QuantityRange }
      *
      */
+    @Override
     public QuantityRange getQuantityRange() {
         return quantityRange;
     }
@@ -180,6 +209,7 @@ public class QualityPropertyType implements AbstractQualityProperty {
      *     {@link Category }
      *
      */
+    @Override
     public Category getCategory() {
         return category;
     }
@@ -204,6 +234,7 @@ public class QualityPropertyType implements AbstractQualityProperty {
      *     {@link Text }
      *
      */
+    @Override
     public Text getText() {
         return text;
     }
@@ -228,6 +259,7 @@ public class QualityPropertyType implements AbstractQualityProperty {
      *     {@link String }
      *
      */
+    @Override
     public String getRemoteSchema() {
         return remoteSchema;
     }
@@ -252,6 +284,7 @@ public class QualityPropertyType implements AbstractQualityProperty {
      *     {@link String }
      *
      */
+    @Override
     public String getType() {
         return type;
     }
@@ -276,6 +309,7 @@ public class QualityPropertyType implements AbstractQualityProperty {
      *     {@link String }
      *
      */
+    @Override
     public String getHref() {
         return href;
     }
@@ -300,6 +334,7 @@ public class QualityPropertyType implements AbstractQualityProperty {
      *     {@link String }
      *
      */
+    @Override
     public String getRole() {
         return role;
     }
@@ -324,6 +359,7 @@ public class QualityPropertyType implements AbstractQualityProperty {
      *     {@link String }
      *
      */
+    @Override
     public String getArcrole() {
         return arcrole;
     }
@@ -348,6 +384,7 @@ public class QualityPropertyType implements AbstractQualityProperty {
      *     {@link String }
      *
      */
+    @Override
     public String getTitle() {
         return title;
     }
@@ -372,6 +409,7 @@ public class QualityPropertyType implements AbstractQualityProperty {
      *     {@link String }
      *
      */
+    @Override
     public String getShow() {
         return show;
     }
@@ -396,6 +434,7 @@ public class QualityPropertyType implements AbstractQualityProperty {
      *     {@link String }
      *
      */
+    @Override
     public String getActuate() {
         return actuate;
     }
@@ -462,8 +501,7 @@ public class QualityPropertyType implements AbstractQualityProperty {
         if (object == this) {
             return true;
         }
-        if (object instanceof QualityPropertyType) {
-            final QualityPropertyType that = (QualityPropertyType) object;
+        if (object instanceof QualityPropertyType that) {
 
             return Objects.equals(this.category,           that.category)         &&
                    Objects.equals(this.quantity,           that.quantity)         &&

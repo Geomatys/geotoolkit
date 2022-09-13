@@ -22,6 +22,7 @@ import org.geotoolkit.ows.xml.OWSExceptionCode;
 import org.opengis.util.CodeList;
 
 /**
+ * Specific Observation store exception.
  *
  * @author Guilhem Legal (Geomatys)
  */

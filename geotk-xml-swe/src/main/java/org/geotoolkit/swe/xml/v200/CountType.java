@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.swe.xml.AbstractCount;
+import org.geotoolkit.swe.xml.AbstractText;
 
 
 /**
@@ -57,8 +58,16 @@ public class CountType extends AbstractSimpleComponentType implements AbstractCo
     public CountType() {
     }
 
-    public CountType(final String definition, final int value) {
+    public CountType(final String definition, final Integer value) {
+        super(null, definition, null);
         this.value = value;
+    }
+
+    public CountType(final AbstractCount tx) {
+        super(tx);
+        if (tx != null) {
+            this.value = tx.getValue();
+        }
     }
 
     /**

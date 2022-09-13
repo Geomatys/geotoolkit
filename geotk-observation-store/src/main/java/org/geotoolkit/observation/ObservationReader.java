@@ -55,7 +55,7 @@ public interface ObservationReader {
      *
      * @param hints a map of filters.
      * @return A list of entity identifiers.
-     * @throws org.apache.sis.storage.DataStoreException
+     * @throws org.apache.sis.storage.DataStoreException If an error occurs during retrieval.
      */
     Collection<String> getEntityNames(final Map<String, Object> hints) throws DataStoreException;
 
@@ -67,8 +67,8 @@ public interface ObservationReader {
      * - identifier: (key: id)
      *
      * @param hints a map of filters.
-     * @return
-     * @throws org.apache.sis.storage.DataStoreException
+     * @return {@code true} if the specified entity identifier exist.
+     * @throws org.apache.sis.storage.DataStoreException If an error occurs during retrieval.
      */
     boolean existEntity(final Map<String, Object> hints) throws DataStoreException;
 
@@ -81,38 +81,43 @@ public interface ObservationReader {
      * - one ore many offering identifiers: (key: id)
      *
      * @param hints a map of filters.
-     * @return
-     * @throws org.apache.sis.storage.DataStoreException
+     * @return The offerings for the specified names.
+     * @throws org.apache.sis.storage.DataStoreException If an error occurs during retrieval.
      */
     List<ObservationOffering> getObservationOfferings(final Map<String, Object> hints) throws DataStoreException;
 
     /**
-     * Return a list of the phenomenon.
+     * Return a filtered list of phenomenons.
      *
      * * The hints can contains various filter such as :
      * - SOS version of the request (key: version)
      * - one ore many offering identifiers: (key: id)
      *
      * @param hints a map of filters.
-     * @return
-     * @throws org.apache.sis.storage.DataStoreException
+     * @return a list of phenomenons.
+     * @throws org.apache.sis.storage.DataStoreException If an error occurs during retrieval.
      */
     Collection<Phenomenon> getPhenomenons(final Map<String, Object> hints) throws DataStoreException;
 
     /**
-     * Return a process.
-     * @return
-     * @throws org.apache.sis.storage.DataStoreException
+     * Return a process by its identifier.
+     *
+     * @param identifier process identifier.
+     * @param version SOS version.
+     *
+     * @return a process.
+     * @throws org.apache.sis.storage.DataStoreException If an error occurs
+     * during retrieval.
      */
     Process getProcess(final String identifier, final String version) throws DataStoreException;
 
     /**
-     * Return a the temporal bounds for the specified procedure.
+     * Return the temporal bounds for the specified procedure.
      *
      * @param version SOS version of the request.
      * @param sensorID an procedure identifier.
-     * @return
-     * @throws org.apache.sis.storage.DataStoreException
+     * @return the temporal bounds for the specified procedure.
+     * @throws org.apache.sis.storage.DataStoreException If an error occurs during retrieval.
      */
     TemporalGeometricPrimitive getTimeForProcedure(final String version, final String sensorID) throws DataStoreException;
 
@@ -123,30 +128,31 @@ public interface ObservationReader {
      * @param version SOS version of the request.
      *
      * @return the corresponding feature Of interest.
-     * @throws org.apache.sis.storage.DataStoreException
+     * @throws org.apache.sis.storage.DataStoreException If an error occurs during retrieval.
      */
     SamplingFeature getFeatureOfInterest(final String samplingFeatureName, final String version) throws DataStoreException;
 
     /**
-     * Return a sampling feature for the specified sampling feature.
+     * Return the time span for the specified sampling feature (identified by its name and version).
      *
-     * @param samplingFeatureName
+     * @param samplingFeatureName The identifier of the feature of interest.
      * @param version SOS version of the request.
      *
-     * @return
-     * @throws org.apache.sis.storage.DataStoreException
+     * @return the time span a sampling feature.
+     * @throws org.apache.sis.storage.DataStoreException If an error occurs during retrieval.
      */
     TemporalPrimitive getFeatureOfInterestTime(final String samplingFeatureName, final String version) throws DataStoreException;
 
     /**
      * Return an observation for the specified identifier.
      *
-     * @param identifier
-     * @param resultModel
-     * @param mode
-     * @param version
-     * @return
-     * @throws org.apache.sis.storage.DataStoreException
+     * @param identifier Observation identifier.
+     * @param resultModel Result model , like Measurements or complex observations.
+     * @param mode Result mode (inline, result template...)
+     * @param version SOS version of the request.
+     *
+     * @return An observation.
+     * @throws org.apache.sis.storage.DataStoreException If an error occurs during retrieval.
      */
     Observation getObservation(final String identifier, final QName resultModel, final ResponseModeType mode, final String version) throws DataStoreException;
 
@@ -155,47 +161,53 @@ public interface ObservationReader {
      *
      * @param procedure a procedure identifier.
      * @param version output version of the template.
-     * @return
-     * @throws DataStoreException
+     * @return an observation template.
+     * @throws DataStoreException If an error occurs during retrieval.
      */
     Observation getTemplateForProcedure(final String procedure, final String version) throws DataStoreException;
 
     /**
      * Return a result for the specified identifier.
      *
-     * @param identifier
-     * @param resultModel
-     * @param version
-     * @return
-     * @throws org.apache.sis.storage.DataStoreException
+     * @param identifier Observation identifier.
+     * @param resultModel Result model , like Measurements or complex observations.
+     * @param version SOS version of the request.
+     *
+     * @return a result for the specified identifier.
+     * @throws org.apache.sis.storage.DataStoreException If an error occurs during retrieval.
      */
     Object getResult(final String identifier, final QName resultModel, final String version) throws DataStoreException;
 
     /**
      * Create a new identifier for an observation.
-     * @return
-     * @throws org.apache.sis.storage.DataStoreException
+     *
+     * @return an observation identifier.
+     * @throws org.apache.sis.storage.DataStoreException If an error occurs during retrieval.
      */
     String getNewObservationId() throws DataStoreException;
 
     /**
      * Return the minimal/maximal value for the offering event Time
-     * @return
-     * @throws org.apache.sis.storage.DataStoreException
+     *
+     * @param version SOS version.
+     * @return A time span.
+     * @throws org.apache.sis.storage.DataStoreException If an error occurs during retrieval.
      */
     TemporalPrimitive getEventTime(String version) throws DataStoreException;
 
     /**
-     * Return the list of supported response Mode
-     * @return
-     * @throws org.apache.sis.storage.DataStoreException
+     * Return the list of supported response modes.
+     *
+     * @return supported response modes.
+     * @throws org.apache.sis.storage.DataStoreException If an error occurs during retrieval.
      */
     List<ResponseModeType> getResponseModes() throws DataStoreException;
 
     /**
-     * Return the list of supported response formats for each version
-     * @return
-     * @throws org.apache.sis.storage.DataStoreException
+     * Return the list of supported response formats for each version.
+     *
+     * @return supported response formats by version.
+     * @throws org.apache.sis.storage.DataStoreException If an error occurs during retrieval.
      */
     Map<String, List<String>> getResponseFormats() throws DataStoreException;
 
@@ -203,9 +215,10 @@ public interface ObservationReader {
      * Extract the geometry for a procedure.
      *
      * @param sensorID the procedure/sensor identifier
-     * @param version
-     * @return
-     * @throws org.apache.sis.storage.DataStoreException
+     * @param version SOS version of the request.
+     *
+     * @return sensor geometry.
+     * @throws org.apache.sis.storage.DataStoreException If an error occurs during retrieval.
      */
     AbstractGeometry getSensorLocation(final String sensorID, final String version) throws DataStoreException;
 
@@ -213,15 +226,17 @@ public interface ObservationReader {
      * Extract the locations through time for a procedure.
      *
      * @param sensorID the procedure/sensor identifier
-     * @param version
-     * @return
-     * @throws org.apache.sis.storage.DataStoreException
+     * @param version SOS version of the request.
+     *
+     * @return ssensor locations over time.
+     * @throws org.apache.sis.storage.DataStoreException If an error occurs
+     * during retrieval.
      */
     Map<Date, AbstractGeometry> getSensorLocations(final String sensorID, final String version) throws DataStoreException;
 
     /**
      * Return informations about the implementation class.
-     * @return
+     * @return informations.
      */
     String getInfos();
 

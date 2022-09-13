@@ -17,6 +17,7 @@
 
 package org.geotoolkit.swe.xml.v200;
 
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
@@ -55,8 +56,25 @@ public class BooleanType extends AbstractSimpleComponentType implements Abstract
     }
 
     public BooleanType(final Boolean value, final String definition) {
-        super(null, definition, null);
+        this(null, value, definition, null);
+    }
+
+    public BooleanType(final String id, final Boolean value, final String definition, final List<QualityPropertyType> quality) {
+        super(id, definition, null, quality);
         this.value = value;
+    }
+
+    /**
+     * Build a new TimeType
+     */
+    public BooleanType(final AbstractBoolean bool) {
+        super(bool);
+        if (bool != null) {
+            this.value  = bool.isValue();
+            this.axisID = bool.getAxisID();
+            this.referenceFrame = bool.getReferenceFrame();
+        }
+
     }
 
     /**

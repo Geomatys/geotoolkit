@@ -75,7 +75,11 @@ public class BooleanType extends AbstractDataComponentType implements AbstractBo
     }
 
     public BooleanType(final String definition, final Boolean value) {
-        super(definition);
+        this(null, definition, value);
+    }
+
+    public BooleanType(final String id, final String definition, final Boolean value) {
+        super(id, definition, null);
         this.value = value;
     }
 

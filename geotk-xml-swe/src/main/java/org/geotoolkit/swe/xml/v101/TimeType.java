@@ -32,13 +32,15 @@ import org.apache.sis.util.ComparisonMode;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Time", propOrder = {
     "uom",
+    "constraint",
+    "quality",
     "value"
 })
 public class TimeType extends AbstractDataComponentType implements AbstractTime {
 
     private UomPropertyType uom;
-    //private AllowedTimesPropertyType constraint;
-    //private QualityPropertyType quality;
+    private AllowedTimesPropertyType constraint;
+    private QualityPropertyType quality;
     @XmlList
     private List<String> value;
     @XmlAttribute
@@ -65,11 +67,10 @@ public class TimeType extends AbstractDataComponentType implements AbstractTime 
             this.referenceTime  = time.getReferenceTime();
             this.localFrame     = time.getLocalFrame();
             List<String> times  = time.getValue();
-            if (times.size() > 0) {
+            if (!times.isEmpty()) {
                 this.value      =  times;
             }
         }
-
     }
 
     /**
@@ -83,7 +84,11 @@ public class TimeType extends AbstractDataComponentType implements AbstractTime 
     }
 
     public TimeType(final String definition, final UomPropertyType uom) {
-        super(null, definition, null);
+        this(null, definition, uom);
+    }
+
+    public TimeType(final String id, final String definition, final UomPropertyType uom) {
+        super(id, definition, null);
         this.uom = uom;
     }
 
@@ -109,7 +114,7 @@ public class TimeType extends AbstractDataComponentType implements AbstractTime 
     @Override
     public List<String> getValue() {
         if (value == null) {
-            value = new ArrayList<String>();
+            value = new ArrayList<>();
         }
         return this.value;
     }
@@ -138,6 +143,22 @@ public class TimeType extends AbstractDataComponentType implements AbstractTime 
         return referenceTime;
     }
 
+    public AllowedTimesPropertyType getConstraint() {
+        return constraint;
+    }
+
+    public void setConstraint(AllowedTimesPropertyType constraint) {
+        this.constraint = constraint;
+    }
+
+    public QualityPropertyType getQuality() {
+        return quality;
+    }
+
+    public void setQuality(QualityPropertyType quality) {
+        this.quality = quality;
+    }
+
     /**
      * Verify if this entry is identical to the specified object.
      */
@@ -160,6 +181,8 @@ public class TimeType extends AbstractDataComponentType implements AbstractTime 
                    Objects.equals(this.referenceFrame, that.referenceFrame) &&
                    Objects.equals(this.referenceTime,  that.referenceTime)  &&
                    Objects.equals(this.uom,            that.uom)            &&
+                   Objects.equals(this.constraint,     that.constraint)     &&
+                   Objects.equals(this.quality,        that.quality)        &&
                    valueEqorEmpty;
         }
         return false;
@@ -173,6 +196,8 @@ public class TimeType extends AbstractDataComponentType implements AbstractTime 
         hash = 61 * hash + (this.localFrame != null ? this.localFrame.hashCode() : 0);
         hash = 61 * hash + (this.referenceFrame != null ? this.referenceFrame.hashCode() : 0);
         hash = 61 * hash + (this.referenceTime != null ? this.referenceTime.hashCode() : 0);
+        hash = 61 * hash + (this.constraint != null ? this.constraint.hashCode() : 0);
+        hash = 61 * hash + (this.quality != null ? this.quality.hashCode() : 0);
         return hash;
     }
 
@@ -187,6 +212,12 @@ public class TimeType extends AbstractDataComponentType implements AbstractTime 
         }
         if (referenceTime != null) {
             s.append("referenceTime:").append(referenceTime).append('\n');
+        }
+        if (constraint != null) {
+            s.append("constraint:").append(constraint).append('\n');
+        }
+        if (quality != null) {
+            s.append("quality:").append(quality).append('\n');
         }
         if (value != null) {
             s.append("value:").append('\n');

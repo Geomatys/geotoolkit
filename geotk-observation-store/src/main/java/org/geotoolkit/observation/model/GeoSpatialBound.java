@@ -61,8 +61,7 @@ public class GeoSpatialBound {
     public void appendLocation(final TemporalObject time, final AnyFeature feature) {
         Date d = addTime(time);
         AbstractGeometry ageom = null;
-        if (feature instanceof SamplingFeature) {
-            final SamplingFeature sf = (SamplingFeature) feature;
+        if (feature instanceof SamplingFeature sf) {
             final Geometry geom = sf.getGeometry();
             if (geom instanceof AbstractGeometry) {
                 ageom = (AbstractGeometry)geom;
@@ -96,13 +95,11 @@ public class GeoSpatialBound {
      * @return
      */
     public Date addTime(final TemporalObject time) {
-        if (time instanceof Instant) {
-            final Instant i = (Instant) time;
+        if (time instanceof Instant i) {
             if (i.getDate() != null) {
                 return addDate(i.getDate());
             }
-        } else if (time instanceof Period) {
-            final Period p = (Period) time;
+        } else if (time instanceof Period p) {
             addTime(p.getEnding());
             return addTime(p.getBeginning());
         }
@@ -179,14 +176,12 @@ public class GeoSpatialBound {
     }
 
     private void extractBoundary(final AbstractGeometry geom) {
-        if (geom instanceof Point) {
-            final Point p = (Point) geom;
+        if (geom instanceof Point p) {
             if (p.getPos() != null) {
                 addXCoordinate(p.getPos().getOrdinate(0));
                 addYCoordinate(p.getPos().getOrdinate(1));
             }
-        } else if (geom instanceof LineString) {
-            final LineString ls = (LineString) geom;
+        } else if (geom instanceof LineString ls) {
             final Envelope env = ls.getBounds();
             if (env != null) {
                 addXCoordinate(env.getMinimum(0));
@@ -194,8 +189,7 @@ public class GeoSpatialBound {
                 addYCoordinate(env.getMinimum(1));
                 addYCoordinate(env.getMaximum(1));
             }
-        } else if (geom instanceof Polygon) {
-            final Polygon p = (Polygon) geom;
+        } else if (geom instanceof Polygon p) {
             AbstractRing ext = p.getExterior().getAbstractRing();
             // TODO
         }
@@ -246,7 +240,7 @@ public class GeoSpatialBound {
         if ("1.0.0".equals(version)) {
             final org.geotoolkit.gml.xml.v311.DirectPositionType lower = new org.geotoolkit.gml.xml.v311.DirectPositionType(minx, miny);
             final org.geotoolkit.gml.xml.v311.DirectPositionType upper = new org.geotoolkit.gml.xml.v311.DirectPositionType(maxx, maxy);
-            return new org.geotoolkit.gml.xml.v311.EnvelopeType(null, lower, upper, null);
+            return new org.geotoolkit.gml.xml.v311.EnvelopeType(lower, upper, null);
         } else if ("2.0.0".equals(version)) {
             final org.geotoolkit.gml.xml.v321.DirectPositionType lower = new org.geotoolkit.gml.xml.v321.DirectPositionType(minx, miny);
             final org.geotoolkit.gml.xml.v321.DirectPositionType upper = new org.geotoolkit.gml.xml.v321.DirectPositionType(maxx, maxy);

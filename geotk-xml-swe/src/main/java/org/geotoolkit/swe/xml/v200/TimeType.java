@@ -20,6 +20,8 @@ package org.geotoolkit.swe.xml.v200;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -27,6 +29,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlList;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import org.geotoolkit.swe.xml.AbstractTime;
 
@@ -78,8 +82,34 @@ public class TimeType extends AbstractSimpleComponentType implements AbstractTim
 
     }
 
+    public TimeType(final AbstractTime time) {
+        super(time);
+        if (time != null) {
+           if (time.getUom() != null) {
+                this.uom = new UnitReference(time.getUom());
+            }
+            this.referenceFrame = time.getReferenceFrame();
+            if (time.getReferenceTime() != null) {
+               try {
+                   this.referenceTime  = DatatypeFactory.newInstance().newXMLGregorianCalendar(time.getReferenceTime());
+               } catch (DatatypeConfigurationException ex) {
+                   throw new IllegalArgumentException(ex);
+               }
+            }
+            this.localFrame     = time.getLocalFrame();
+            List<String> times  = time.getValue();
+            if (!times.isEmpty()) {
+                this.value      =  times;
+            }
+        }
+    }
+
     public TimeType(final String definition, final UnitReference uom) {
-        super(null, definition, null);
+        this(null, definition, uom, null);
+    }
+
+    public TimeType(final String id, final String definition, final UnitReference uom, final List<QualityPropertyType> quality) {
+        super(id, definition, null, quality);
         if (uom != null) {
             this.uom = uom;
         } else {

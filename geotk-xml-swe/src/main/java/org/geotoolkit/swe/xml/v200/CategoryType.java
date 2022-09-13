@@ -18,6 +18,7 @@
 
 package org.geotoolkit.swe.xml.v200;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
@@ -64,6 +65,16 @@ public class CategoryType extends AbstractSimpleComponentType implements Abstrac
     public CategoryType(final String definition, final String value) {
         super(null, definition, null);
         this.value = value;
+    }
+
+    public CategoryType(final AbstractCategory tx) {
+        super(tx);
+        if (tx != null) {
+            this.value = tx.getValue();
+            if (tx.getCodeSpace() != null) {
+                this.codeSpace = new Reference(tx.getCodeSpace());
+            }
+        }
     }
 
     /**
@@ -141,4 +152,42 @@ public class CategoryType extends AbstractSimpleComponentType implements Abstrac
         this.value = value;
     }
 
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof CategoryType && super.equals(object)) {
+            final CategoryType that = (CategoryType) object;
+
+            return Objects.equals(this.constraint,  that.constraint) &&
+                   Objects.equals(this.codeSpace,   that.codeSpace) &&
+                   Objects.equals(this.value,       that.value);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = super.hashCode();
+        hash = 47 * hash + (this.constraint != null ? this.constraint.hashCode() : 0);
+        hash = 47 * hash + (this.codeSpace != null ? this.codeSpace.hashCode() : 0);
+        hash = 47 * hash + (this.value != null ? this.value.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder s = new StringBuilder(super.toString());
+        if (constraint != null) {
+            s.append("constraint=").append(constraint).append('\n');
+        }
+        if (codeSpace != null) {
+            s.append("codeSpace=").append(codeSpace).append('\n');
+        }
+        if (value != null) {
+            s.append("value=").append(value).append('\n');
+        }
+        return s.toString();
+    }
 }

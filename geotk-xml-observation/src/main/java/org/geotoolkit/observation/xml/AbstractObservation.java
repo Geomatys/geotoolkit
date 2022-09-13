@@ -24,6 +24,7 @@ import org.geotoolkit.gml.xml.FeatureProperty;
 import org.geotoolkit.gml.xml.LocationProperty;
 import org.geotoolkit.swe.xml.PhenomenonProperty;
 import org.opengis.metadata.Identifier;
+import org.opengis.metadata.quality.Element;
 import org.opengis.observation.Observation;
 import org.opengis.temporal.Period;
 import org.opengis.temporal.TemporalGeometricPrimitive;
@@ -64,4 +65,6 @@ public interface AbstractObservation extends Observation {
     FeatureProperty getPropertyFeatureOfInterest();
 
     AbstractObservation getTemporaryTemplate(final String temporaryName, TemporalGeometricPrimitive time);
+
+    List<Element> getResultQuality();
 }

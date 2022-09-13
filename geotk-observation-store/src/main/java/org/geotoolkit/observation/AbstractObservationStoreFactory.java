@@ -103,7 +103,9 @@ public abstract class AbstractObservationStoreFactory extends DataStoreProvider 
             .create(String.class, null);
 
     /**
-     * {@inheritDoc }
+     * @param params Store parameters candidate.
+     *
+     * @return true if the store can handle the specified parameters.
      */
     public boolean canProcess(final ParameterValueGroup params) {
         if(params == null){
@@ -129,8 +131,9 @@ public abstract class AbstractObservationStoreFactory extends DataStoreProvider 
      * Check if the Identifier parameter exist.
      * if it exist, it must be set to 'value' otherwise return false.
      * if not present, return true;
-     * @param params
-     * @return
+     * @param params Store parameters candidate.
+     *
+     * @return true if the identifier param has been found and is correct.
      */
     protected boolean checkIdentifier(final ParameterValueGroup params){
         final String expectedId;
