@@ -17,6 +17,7 @@
 package org.geotoolkit.sts.json;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -25,7 +26,13 @@ import java.util.Objects;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class DataArrayResponse implements STSResponse {
+public class DataArrayResponse implements STSPagedResponse {
+
+    @JsonProperty("@iot.count")
+    private BigDecimal iotCount = null;
+
+    @JsonProperty("@iot.nextLink")
+    private String iotNextLink = null;
 
     @JsonProperty("value")
     private List<DataArray> value = null;
@@ -62,6 +69,48 @@ public class DataArrayResponse implements STSResponse {
         this.value = value;
     }
 
+    public DataArrayResponse iotCount(BigDecimal iotCount) {
+        this.iotCount = iotCount;
+        return this;
+    }
+
+    /**
+     * Get iotCount
+     *
+     * @return iotCount
+  *
+     */
+    @Override
+    public BigDecimal getIotCount() {
+        return iotCount;
+    }
+
+    @Override
+    public void setIotCount(BigDecimal iotCount) {
+        this.iotCount = iotCount;
+    }
+
+    public DataArrayResponse iotNextLink(String iotNextLink) {
+        this.iotNextLink = iotNextLink;
+        return this;
+    }
+
+    /**
+     * Get iotNextLink
+     *
+     * @return iotNextLink
+  *
+     */
+    @Override
+    public String getIotNextLink() {
+        return iotNextLink;
+    }
+
+    @Override
+    public void setIotNextLink(String iotNextLink) {
+        this.iotNextLink = iotNextLink;
+    }
+
     @Override
     public boolean equals(java.lang.Object o) {
         if (this == o) {
@@ -71,19 +120,23 @@ public class DataArrayResponse implements STSResponse {
             return false;
         }
         DataArrayResponse da = (DataArrayResponse) o;
-        return Objects.equals(this.value, da.value);
+        return Objects.equals(this.iotCount, da.iotCount) &&
+               Objects.equals(this.value, da.value) &&
+               Objects.equals(this.iotNextLink, da.iotNextLink);
     }
 
     @Override
     public int hashCode() {
-        return java.util.Objects.hash(value);
+        return java.util.Objects.hash(iotCount, value, iotNextLink);
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("class DataArrayResponse {\n");
+        sb.append("    iotCount: ").append(toIndentedString(iotCount)).append("\n");
         sb.append("    value: ").append(toIndentedString(value)).append("\n");
+        sb.append("    iotNextLink: ").append(toIndentedString(iotNextLink)).append("\n");
         sb.append("}");
         return sb.toString();
     }

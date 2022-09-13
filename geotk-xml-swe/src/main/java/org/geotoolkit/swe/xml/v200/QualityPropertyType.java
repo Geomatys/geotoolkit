@@ -17,11 +17,13 @@
 
 package org.geotoolkit.swe.xml.v200;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.AbstractDataComponent;
 import org.geotoolkit.swe.xml.AbstractQualityProperty;
 import org.geotoolkit.xlink.xml.v100.ActuateType;
 import org.geotoolkit.xlink.xml.v100.ShowType;
@@ -79,6 +81,65 @@ public class QualityPropertyType implements AbstractQualityProperty {
     private ShowType show;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private ActuateType actuate;
+
+    /**
+     * A empty constructor used by JAXB
+     */
+    public QualityPropertyType() {
+
+    }
+
+    public QualityPropertyType(final AbstractQualityProperty aq) {
+        if (aq != null) {
+            this.actuate = aq.getActuate() != null ? ActuateType.fromValue(aq.getActuate()) : null;
+            this.arcrole = aq.getArcrole();
+            if (aq.getCategory() != null) {
+                this.category = new CategoryType(aq.getCategory());
+            }
+            this.href = aq.getHref();
+            if (aq.getQuantity() != null) {
+                this.quantity = new QuantityType(aq.getQuantity());
+            }
+            if (aq.getQuantityRange() != null) {
+                this.quantityRange = new QuantityRangeType(aq.getQuantityRange());
+            }
+            this.role = aq.getRole();
+            this.show = aq.getShow() != null ? ShowType.fromValue(aq.getShow()) : null;
+            if (aq.getText() != null) {
+                this.text = new TextType(aq.getText());
+            }
+            this.title = aq.getTitle();
+            this.type = aq.getType() != null ? TypeType.fromValue(aq.getType()) : null;
+        }
+    }
+
+    public QualityPropertyType(AbstractDataComponent dc) {
+        if (dc instanceof QuantityType q) {
+            this.quantity = q;
+        } else if (dc instanceof QuantityRangeType qr) {
+            this.quantityRange = qr;
+        } else if (dc instanceof CategoryType c) {
+            this.category = c;
+        } else if (dc instanceof TextType t) {
+            this.text = t;
+        } else if (dc != null) {
+            throw new IllegalArgumentException("Unexpected data component type:" + dc.getClass().getName());
+        }
+    }
+
+    @Override
+    public AbstractDataComponent getDataComponent() {
+        if (quantity != null) {
+            return quantity;
+        } else if (quantityRange != null) {
+            return quantityRange;
+        } else if (category != null) {
+            return category;
+        } else if (text != null) {
+            return text;
+        }
+        return null;
+    }
 
     /**
      * Gets the value of the quantity property.
@@ -368,5 +429,84 @@ public class QualityPropertyType implements AbstractQualityProperty {
     @Override
     public String getRemoteSchema() {
         return null;
+    }
+
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof QualityPropertyType) {
+            final QualityPropertyType that = (QualityPropertyType) object;
+
+            return Objects.equals(this.quantity,      that.quantity) &&
+                   Objects.equals(this.quantityRange, that.quantityRange) &&
+                   Objects.equals(this.category,      that.category) &&
+                   Objects.equals(this.text,          that.text) &&
+                   Objects.equals(this.type,          that.type) &&
+                   Objects.equals(this.href,          that.href) &&
+                   Objects.equals(this.role,          that.role) &&
+                   Objects.equals(this.arcrole,       that.arcrole) &&
+                   Objects.equals(this.title,         that.title) &&
+                   Objects.equals(this.show,          that.show) &&
+                   Objects.equals(this.actuate,       that.actuate);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 47 * hash + (this.quantity != null ? this.quantity.hashCode() : 0);
+        hash = 47 * hash + (this.quantityRange != null ? this.quantityRange.hashCode() : 0);
+        hash = 47 * hash + (this.category != null ? this.category.hashCode() : 0);
+        hash = 47 * hash + (this.text != null ? this.text.hashCode() : 0);
+        hash = 47 * hash + (this.type != null ? this.type.hashCode() : 0);
+        hash = 47 * hash + (this.href != null ? this.href.hashCode() : 0);
+        hash = 47 * hash + (this.role != null ? this.role.hashCode() : 0);
+        hash = 47 * hash + (this.arcrole != null ? this.arcrole.hashCode() : 0);
+        hash = 47 * hash + (this.title != null ? this.title.hashCode() : 0);
+        hash = 47 * hash + (this.show != null ? this.show.hashCode() : 0);
+        hash = 47 * hash + (this.actuate != null ? this.actuate.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder s = new StringBuilder("[QualityPropertyType]\n");
+        if (quantity != null) {
+            s.append("quantity=").append(quantity).append('\n');
+        }
+        if (quantityRange != null) {
+            s.append("quantityRange=").append(quantityRange).append('\n');
+        }
+        if (category != null) {
+            s.append("category=").append(category).append('\n');
+        }
+        if (text != null) {
+            s.append("text=").append(text).append('\n');
+        }
+        if (type != null) {
+            s.append("type=").append(type).append('\n');
+        }
+        if (href != null) {
+            s.append("href=").append(href).append('\n');
+        }
+        if (role != null) {
+            s.append("role=").append(role).append('\n');
+        }
+        if (arcrole != null) {
+            s.append("arcrole=").append(arcrole).append('\n');
+        }
+        if (title != null) {
+            s.append("title=").append(title).append('\n');
+        }
+        if (show != null) {
+            s.append("show=").append(show).append('\n');
+        }
+        if (actuate != null) {
+            s.append("actuate=").append(actuate).append('\n');
+        }
+        return s.toString();
     }
 }

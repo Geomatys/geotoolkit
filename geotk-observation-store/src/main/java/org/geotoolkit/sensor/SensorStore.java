@@ -59,7 +59,7 @@ public interface SensorStore extends AutoCloseable {
      * Return all sensor identifiers.
      *
      * @return All sensor ID's.
-     * @throws org.apache.sis.storage.DataStoreException
+     * @throws org.apache.sis.storage.DataStoreException if an error occurs during the retrieval.
      */
     Collection<String> getSensorNames() throws DataStoreException;
 
@@ -67,7 +67,7 @@ public interface SensorStore extends AutoCloseable {
      * Return the number of sensors in the data source.
      *
      * @return The number of sensors.
-     * @throws org.apache.sis.storage.DataStoreException
+     * @throws org.apache.sis.storage.DataStoreException if an error occurs during the retrieval.
      */
     int getSensorCount() throws DataStoreException;
 
@@ -77,7 +77,7 @@ public interface SensorStore extends AutoCloseable {
      * @param sensorID The identifier of the sensor.
      *
      * @return the specified sensor description from the specified ID.
-     * @throws org.apache.sis.storage.DataStoreException
+     * @throws org.apache.sis.storage.DataStoreException if an error occurs during the retrieval.
      */
     AbstractSensorML getSensorML(final String sensorID) throws DataStoreException;
 
@@ -87,7 +87,7 @@ public interface SensorStore extends AutoCloseable {
      * @param id The identifier of the sensor
      * @return True if the operation succeed.
      *
-     * @throws org.apache.sis.storage.DataStoreException
+     * @throws org.apache.sis.storage.DataStoreException if an error occurs during the retrieval.
      */
     boolean deleteSensor(String id) throws DataStoreException;
 
@@ -95,7 +95,7 @@ public interface SensorStore extends AutoCloseable {
      * Create a new identifier for a sensor.
      * @return The new available identifier.
      *
-     * @throws org.apache.sis.storage.DataStoreException
+     * @throws org.apache.sis.storage.DataStoreException if an error occurs during the retrieval.
      */
     String getNewSensorId() throws DataStoreException;
 
@@ -106,7 +106,7 @@ public interface SensorStore extends AutoCloseable {
      * @param sensor The sensor description.
      * @return True if the operation suceed.
      *
-     * @throws org.apache.sis.storage.DataStoreException
+     * @throws org.apache.sis.storage.DataStoreException if an error occurs during the retrieval.
      */
     boolean writeSensor(String id, Object sensor) throws DataStoreException;
 
@@ -116,7 +116,7 @@ public interface SensorStore extends AutoCloseable {
      * @param id The identifier of the sensor
      * @param sensor The sensor metadata object
      *
-     * @throws org.apache.sis.storage.DataStoreException
+     * @throws org.apache.sis.storage.DataStoreException if an error occurs during the retrieval.
      */
     int replaceSensor(String id, Object sensor) throws DataStoreException;
 
@@ -127,6 +127,10 @@ public interface SensorStore extends AutoCloseable {
      */
     String getInfos();
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     void close() throws DataStoreException;
 
 }

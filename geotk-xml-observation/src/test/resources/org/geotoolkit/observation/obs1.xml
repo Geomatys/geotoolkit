@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<om:Measurement xmlns:gco="http://www.isotc211.org/2005/gco"
+                xmlns:sa="http://www.opengis.net/sampling/1.0"
+                xmlns:om="http://www.opengis.net/om/1.0"
+                xmlns:xlink="http://www.w3.org/1999/xlink"
+                xmlns:gml="http://www.opengis.net/gml"
+                xmlns:swe="http://www.opengis.net/swe/1.0.1"
+                xmlns:gmd="http://www.isotc211.org/2005/gmd"
+                xmlns:gcol="http://www.isotc211.org/2005/gco"
+                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <gml:name>urn:Observation-007</gml:name>
+    <om:samplingTime>
+        <gml:TimePeriod gml:id="t1">
+            <gml:beginPosition>2007-01-01</gml:beginPosition>
+            <gml:endPosition>2008-09-09</gml:endPosition>
+        </gml:TimePeriod>
+    </om:samplingTime>
+    <om:procedure xlink:href="urn:sensor:007"></om:procedure>
+    <om:observedProperty>
+        <swe:Phenomenon gml:id="phenomenon-007">
+            <gml:name>urn:OGC:phenomenon-007</gml:name>
+        </swe:Phenomenon>
+    </om:observedProperty>
+    <om:featureOfInterest>
+        <sa:SamplingPoint gml:id="samplingID-007">
+            <gml:description>a sampling Test</gml:description>
+            <gml:name>urn:sampling:test:007</gml:name>
+            <gml:boundedBy>
+                <gml:Null>not_bounded</gml:Null>
+            </gml:boundedBy>
+            <sa:sampledFeature xlink:href=""></sa:sampledFeature>
+            <sa:position>
+                <gml:Point gml:id="point-ID">
+                    <gml:pos srsDimension="2" srsName="urn:ogc:crs:espg:4326">3.2 6.5</gml:pos>
+                </gml:Point>
+            </sa:position>
+        </sa:SamplingPoint>
+    </om:featureOfInterest>
+    <om:resultQuality>
+        <gmd:DQ_QuantitativeAttributeAccuracy>
+            <gmd:nameOfMeasure>
+                <gcol:CharacterString>quality-field</gcol:CharacterString>
+            </gmd:nameOfMeasure>
+            <gmd:result>
+                <gmd:DQ_QuantitativeResult id="id-00">
+                    <gmd:value>
+                        <gcol:Record>2.3</gcol:Record>
+                    </gmd:value>
+                    <gmd:valueType>
+                        <gcol:RecordType>OGC:Real</gcol:RecordType>
+                    </gmd:valueType>
+                    <gmd:valueUnit>A</gmd:valueUnit>
+                </gmd:DQ_QuantitativeResult>
+            </gmd:result>
+        </gmd:DQ_QuantitativeAttributeAccuracy>
+    </om:resultQuality>
+    <om:result xsi:type="om:MeasureType" uom="meters">7.0</om:result>
+</om:Measurement>

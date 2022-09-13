@@ -62,7 +62,7 @@ public abstract class AbstractDataRecordType extends AbstractDataComponentType i
         super(definition);
     }
 
-    public AbstractDataRecordType(final String id, final String definition, final boolean fixed) {
+    public AbstractDataRecordType(final String id, final String definition, final Boolean fixed) {
         super(id, definition, fixed);
     }
 

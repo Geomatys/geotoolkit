@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.AbstractDataComponent;
 
 
 /**
@@ -69,21 +70,38 @@ import javax.xml.bind.annotation.XmlType;
 })
 public abstract class AbstractSimpleComponentType extends AbstractDataComponentType {
 
-    private List<QualityPropertyType> quality;
+    protected List<QualityPropertyType> quality = new ArrayList<>();
     private NilValuesPropertyType nilValues;
     @XmlAttribute
     @XmlSchemaType(name = "anyURI")
-    private String referenceFrame;
+    protected String referenceFrame;
     @XmlAttribute
-    private String axisID;
+    protected String axisID;
 
     public AbstractSimpleComponentType() {
 
     }
 
+    public AbstractSimpleComponentType(final AbstractDataComponent component) {
+        super(component);
+        if (component instanceof AbstractSimpleComponentType asc) {
+            this.axisID         = asc.axisID;
+            this.referenceFrame = asc.referenceFrame;
+            this.nilValues      = asc.nilValues;
+            if (asc.quality != null) {
+                this.quality    = new ArrayList<>(asc.quality);
+            }
+        }
+    }
+
     public AbstractSimpleComponentType(final String id, final String definition, final String axisID) {
+        this(id, definition, axisID, new ArrayList<>());
+    }
+
+    public AbstractSimpleComponentType(final String id, final String definition, final String axisID, final List<QualityPropertyType> quality) {
         super(id, definition, null);
         this.axisID = axisID;
+        this.quality = quality;
     }
 
     /**
@@ -99,6 +117,10 @@ public abstract class AbstractSimpleComponentType extends AbstractDataComponentT
             quality = new ArrayList<>();
         }
         return this.quality;
+    }
+
+    public void setQuality(List<QualityPropertyType> quality) {
+       this.quality = quality;
     }
 
     /**
@@ -191,7 +213,7 @@ public abstract class AbstractSimpleComponentType extends AbstractDataComponentT
 
     @Override
     public int hashCode() {
-        int hash = 5;
+        int hash = super.hashCode();;
         hash = 47 * hash + (this.axisID != null ? this.axisID.hashCode() : 0);
         hash = 47 * hash + (this.nilValues != null ? this.nilValues.hashCode() : 0);
         hash = 47 * hash + (this.referenceFrame != null ? this.referenceFrame.hashCode() : 0);
@@ -199,9 +221,6 @@ public abstract class AbstractSimpleComponentType extends AbstractDataComponentT
         return hash;
     }
 
-    /**
-     * Retourne une representation de l'objet.
-     */
     @Override
     public String toString() {
         final StringBuilder s = new StringBuilder(super.toString());
@@ -215,10 +234,11 @@ public abstract class AbstractSimpleComponentType extends AbstractDataComponentT
             s.append("referenceFrame=").append(referenceFrame).append('\n');
         }
         if (quality != null) {
-            s.append("quality:\n");
+            s.append("quality: [\n");
             for (QualityPropertyType q : quality) {
                 s.append(q).append('\n');
             }
+             s.append("]");
         }
         return s.toString();
     }

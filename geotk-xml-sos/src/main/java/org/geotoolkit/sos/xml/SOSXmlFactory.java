@@ -47,6 +47,7 @@ import org.geotoolkit.swe.xml.AbstractBoolean;
 import org.geotoolkit.swe.xml.AbstractDataComponent;
 import org.geotoolkit.swe.xml.AbstractDataRecord;
 import org.geotoolkit.swe.xml.AbstractEncoding;
+import org.geotoolkit.swe.xml.AbstractQualityProperty;
 import org.geotoolkit.swe.xml.AbstractText;
 import org.geotoolkit.swe.xml.AbstractTime;
 import org.geotoolkit.swe.xml.AnyScalar;
@@ -1073,11 +1074,25 @@ public class SOSXmlFactory {
         }
     }
 
-    public static Quantity buildQuantity(final String version,  final String definition, final UomProperty uom, final Double value) {
+    public static AbstractQualityProperty buildQualityProperty(final String version, final AbstractDataComponent compo) {
         if ("2.0.0".equals(version)) {
-            return SweXmlFactory.createQuantity("2.0.0", definition, uom, value);
+            return SweXmlFactory.createQualityProperty("2.0.0", compo);
         } else if ("1.0.0".equals(version)) {
-            return SweXmlFactory.createQuantity("1.0.1", definition, uom, value);
+            return SweXmlFactory.createQualityProperty("1.0.1", compo);
+        } else {
+            throw new IllegalArgumentException("unexpected SOS version number:" + version);
+        }
+    }
+
+    public static Quantity buildQuantity(final String version,  final String definition, final UomProperty uom, final Double value) {
+        return buildQuantity(version, null, definition, uom, value, null);
+    }
+
+    public static Quantity buildQuantity(final String version, final String id, final String definition, final UomProperty uom, final Double value, final List<AbstractQualityProperty> quality) {
+        if ("2.0.0".equals(version)) {
+            return SweXmlFactory.createQuantity("2.0.0", id, definition, uom, value, quality);
+        } else if ("1.0.0".equals(version)) {
+            return SweXmlFactory.createQuantity("1.0.1", id, definition, uom, value, quality);
         } else {
             throw new IllegalArgumentException("unexpected SOS version number:" + version);
         }
@@ -1094,30 +1109,42 @@ public class SOSXmlFactory {
     }
 
     public static AbstractTime buildTime(final String version, final String definition, final UomProperty uom) {
+        return buildTime(version, null, definition, uom, null);
+    }
+
+    public static AbstractTime buildTime(final String version, final String id, final String definition, final UomProperty uom, final List<AbstractQualityProperty> quality) {
         if ("2.0.0".equals(version)) {
-            return SweXmlFactory.createTime("2.0.0", definition, uom);
+            return SweXmlFactory.createTime("2.0.0", id, definition, uom, quality);
         } else if ("1.0.0".equals(version)) {
-            return SweXmlFactory.createTime("1.0.1", definition, uom);
+            return SweXmlFactory.createTime("1.0.1", id, definition, uom, quality);
         } else {
             throw new IllegalArgumentException("Unexpected SOS version:" + version);
         }
     }
 
     public static AbstractBoolean buildBoolean(final String version, final String definition, final Boolean value) {
+        return buildBoolean(version, null, definition, value, null);
+    }
+
+    public static AbstractBoolean buildBoolean(final String version, final String id, final String definition, final Boolean value, final List<AbstractQualityProperty> quality) {
         if ("2.0.0".equals(version)) {
-            return SweXmlFactory.createBoolean("2.0.0", definition, value);
+            return SweXmlFactory.createBoolean("2.0.0", id, definition, value, quality);
         } else if ("1.0.0".equals(version)) {
-            return SweXmlFactory.createBoolean("1.0.1", definition, value);
+            return SweXmlFactory.createBoolean("1.0.1", id, definition, value, quality);
         } else {
             throw new IllegalArgumentException("Unexpected SOS version:" + version);
         }
     }
 
     public static AbstractText buildText(final String version, final String definition, final String value) {
+        return buildText(version, null, definition, value, null);
+    }
+
+    public static AbstractText buildText(final String version, final String id, final String definition, final String value, final List<AbstractQualityProperty> quality) {
         if ("2.0.0".equals(version)) {
-            return SweXmlFactory.createText("2.0.0", definition, value);
+            return SweXmlFactory.createText("2.0.0", id, definition, value, quality);
         } else if ("1.0.0".equals(version)) {
-            return SweXmlFactory.createText("1.0.1", definition, value);
+            return SweXmlFactory.createText("1.0.1", id, definition, value, quality);
         } else {
             throw new IllegalArgumentException("Unexpected SOS version:" + version);
         }
@@ -1133,7 +1160,7 @@ public class SOSXmlFactory {
         }
     }
 
-    public static AbstractDataRecord buildSimpleDatarecord(final String version,  final String blockid, final String id, final String definition, final boolean fixed, final List<AnyScalar> components) {
+    public static AbstractDataRecord buildSimpleDatarecord(final String version,  final String blockid, final String id, final String definition, final Boolean fixed, final List<AnyScalar> components) {
         if ("2.0.0".equals(version)) {
             return SweXmlFactory.buildSimpleDataRecord("2.0.0",  blockid, id, definition, fixed, components);
         } else if ("1.0.0".equals(version)) {

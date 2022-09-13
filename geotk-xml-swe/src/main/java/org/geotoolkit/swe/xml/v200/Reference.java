@@ -63,6 +63,22 @@ public class Reference implements AbstractCodeSpaceProperty {
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private ActuateType actuate;
 
+    public Reference() {
+
+    }
+
+    public Reference(final AbstractCodeSpaceProperty cs) {
+        if (cs != null) {
+            this.actuate = cs.getActuate() != null ? ActuateType.fromValue(cs.getActuate()) : null;
+            this.arcrole = cs.getArcrole();
+            this.href = cs.getHref();
+            this.role = cs.getRole();
+            this.show = cs.getShow() != null ? ShowType.fromValue(cs.getShow()) : null;
+            this.title = cs.getTitle();
+            this.type = cs.getType() != null ? TypeType.fromValue(cs.getType()) : null;
+        }
+    }
+
     /**
      * Gets the value of the type property.
      *

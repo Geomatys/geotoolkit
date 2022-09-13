@@ -80,6 +80,7 @@ public class OMUtils {
 
     public static final String OM_NAMESPACE = "http://www.opengis.net/om/1.0";
     public static final QName OBSERVATION_QNAME = new QName(OM_NAMESPACE, "Observation", "om");
+    public static final QName MEASUREMENT_QNAME = new QName(OM_NAMESPACE, "Measurement", "om");
 
     public static final String RESPONSE_FORMAT_V100 = "text/xml; subtype=\"om/1.0.0\"";
     public static final String RESPONSE_FORMAT_V200 = "http://www.opengis.net/om/2.0";
@@ -152,9 +153,7 @@ public class OMUtils {
         final List<AnyScalar> fields = new ArrayList<>();
         fields.add(PRESSION_FIELD.get(version));
         for (Field phenomenon : phenomenons) {
-            final UomProperty uom = SOSXmlFactory.buildUomProperty(version, phenomenon.uom, null);
-            final Quantity cat = SOSXmlFactory.buildQuantity(version, phenomenon.name, uom, null);
-            fields.add(SOSXmlFactory.buildAnyScalar(version, null, phenomenon.name, cat));
+            fields.add(phenomenon.getScalar(version));
         }
         return SOSXmlFactory.buildSimpleDatarecord(version, null, null, null, true, fields);
     }
@@ -163,9 +162,7 @@ public class OMUtils {
         final List<AnyScalar> fields = new ArrayList<>();
         fields.add(TIME_FIELD.get(version));
         for (Field phenomenon : phenomenons) {
-            final UomProperty uom = SOSXmlFactory.buildUomProperty(version, phenomenon.uom, null);
-            final Quantity cat = SOSXmlFactory.buildQuantity(version, phenomenon.name, uom, null);
-            fields.add(SOSXmlFactory.buildAnyScalar(version, null, phenomenon.name, cat));
+            fields.add(phenomenon.getScalar(version));
         }
         return SOSXmlFactory.buildSimpleDatarecord(version, null, null, null, true, fields);
     }
@@ -176,9 +173,7 @@ public class OMUtils {
         fields.add(LATITUDE_FIELD.get(version));
         fields.add(LONGITUDE_FIELD.get(version));
         for (Field phenomenon : phenomenons) {
-            final UomProperty uom = SOSXmlFactory.buildUomProperty(version, phenomenon.uom, null);
-            final Quantity cat = SOSXmlFactory.buildQuantity(version, phenomenon.name, uom, null);
-            fields.add(SOSXmlFactory.buildAnyScalar(version, null, phenomenon.name, cat));
+            fields.add(phenomenon.getScalar(version));
         }
         return SOSXmlFactory.buildSimpleDatarecord(version, null, null, null, true, fields);
     }
@@ -207,8 +202,7 @@ public class OMUtils {
 
             // look for an already existing (composite) phenomenon to use instead of creating a new one
             for (org.opengis.observation.Phenomenon existingPhen : existingPhens) {
-                if (existingPhen instanceof CompositePhenomenon) {
-                    CompositePhenomenon cphen = (CompositePhenomenon) existingPhen;
+                if (existingPhen instanceof CompositePhenomenon cphen) {
                     if (componentsEquals(cphen.getComponent(), types)) {
                         return (Phenomenon) cphen;
                     }
@@ -295,11 +289,11 @@ public class OMUtils {
      * Return the physical ID of a sensor.
      * This ID is found into a "Identifier" mark with the name 'supervisorCode'
      *
-     * @param sensor
+     * @param sensor A SML sensor decription.
      * @return
      */
     public static String getPhysicalID(final AbstractSensorML sensor) {
-        if (sensor != null && sensor.getMember().size() > 0) {
+        if (sensor != null && !sensor.getMember().isEmpty()) {
             final AbstractProcess process = sensor.getMember().get(0).getRealProcess();
             final List<? extends AbstractIdentification> idents = process.getIdentification();
 
@@ -320,8 +314,8 @@ public class OMUtils {
      * return a SQL formatted timestamp
      *
      * @param time a GML time position object.
-     * @return
-     * @throws org.geotoolkit.observation.ObservationStoreException
+     * @return time representation.
+     * @throws org.geotoolkit.observation.ObservationStoreException If the date is {@code null} or if time parse fails.
      */
     public static String getTimeValue(final Date time) throws ObservationStoreException {
         if (time != null) {
@@ -353,12 +347,13 @@ public class OMUtils {
     }
 
     /**
-     * Return an envelope containing all the Observation member of the collection.
+     * Return an envelope containing all the observation member of the collection.
      *
-     * @param version
-     * @param observations
-     * @param srsName
-     * @return
+     * @param version SOS version.
+     * @param observations A list of complex observations.
+     * @param srsName srs name of the result envelope.
+     *
+     * @return an envelope.
      */
     public static Envelope getCollectionBound(final String version, final List<Observation> observations, final String srsName) {
         double minx = Double.MAX_VALUE;
@@ -442,8 +437,8 @@ public class OMUtils {
             Object value = hints.get(key);
             if (value instanceof Boolean) {
                 return (boolean) value;
-            } else if (value instanceof String) {
-                return Boolean.parseBoolean((String) value);
+            } else if (value instanceof String s) {
+                return Boolean.parseBoolean(s);
             } else {
                 throw new IllegalArgumentException("unexpected type for hints param:" + key);
             }
@@ -456,8 +451,8 @@ public class OMUtils {
             Object value = hints.get(key);
             if (value instanceof Integer) {
                 return (Integer) value;
-            } else if (value instanceof String) {
-                return Integer.parseInt((String) value);
+            } else if (value instanceof String s) {
+                return Integer.parseInt(s);
             } else {
                 throw new IllegalArgumentException("unexpected type for hints param:" + key);
             }
@@ -470,8 +465,8 @@ public class OMUtils {
             Object value = hints.get(key);
             if (value instanceof Long) {
                 return (Long) value;
-            } else if (value instanceof String) {
-                return Long.parseLong((String) value);
+            } else if (value instanceof String s) {
+                return Long.parseLong(s);
             } else {
                 throw new IllegalArgumentException("unexpected type for hints param:" + key);
             }
@@ -484,8 +479,8 @@ public class OMUtils {
             Object value = hints.get(key);
             if (value instanceof OMEntity) {
                 return (OMEntity) value;
-            } else if (value instanceof String) {
-                return OMEntity.fromName((String) value);
+            } else if (value instanceof String s) {
+                return OMEntity.fromName(s);
             } else {
                 throw new IllegalArgumentException("unexpected type for hints param:" + key);
             }
@@ -524,8 +519,8 @@ public class OMUtils {
     }
 
     public static String getId(org.opengis.observation.Phenomenon phen) {
-        if (phen instanceof org.geotoolkit.swe.xml.Phenomenon) {
-            return ((org.geotoolkit.swe.xml.Phenomenon)phen).getId();
+        if (phen instanceof org.geotoolkit.swe.xml.Phenomenon swePhen) {
+            return swePhen.getId();
         }
         throw new IllegalArgumentException("Unable to get an id from the phenomenon");
     }
@@ -563,8 +558,7 @@ public class OMUtils {
         final List<String> results = new ArrayList<>();
         if (phenProp.getHref() != null) {
             results.add(phenProp.getHref());
-        } else if (phenProp.getPhenomenon() instanceof CompositePhenomenon) {
-            final CompositePhenomenon comp = (CompositePhenomenon) phenProp.getPhenomenon();
+        } else if (phenProp.getPhenomenon() instanceof CompositePhenomenon comp) {
             for (org.opengis.observation.Phenomenon phen : comp.getComponent()) {
                 if (phen instanceof org.geotoolkit.swe.xml.Phenomenon) {
                     final org.geotoolkit.swe.xml.Phenomenon p = (org.geotoolkit.swe.xml.Phenomenon) phen;

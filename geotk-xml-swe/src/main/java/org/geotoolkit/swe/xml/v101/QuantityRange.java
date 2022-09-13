@@ -119,7 +119,7 @@ public class QuantityRange extends AbstractDataComponentType implements Abstract
     @Override
     public List<QualityPropertyType> getQuality() {
         if (quality == null) {
-            quality = new ArrayList<QualityPropertyType>();
+            quality = new ArrayList<>();
         }
         return this.quality;
     }
@@ -127,7 +127,7 @@ public class QuantityRange extends AbstractDataComponentType implements Abstract
     public void setQuality(final QualityPropertyType quality) {
         if (quality != null) {
             if (this.quality == null) {
-                this.quality = new ArrayList<QualityPropertyType>();
+                this.quality = new ArrayList<>();
             }
             this.quality.add(quality);
         }
@@ -159,7 +159,7 @@ public class QuantityRange extends AbstractDataComponentType implements Abstract
     @Override
     public List<Double> getValue() {
         if (value == null) {
-            value = new ArrayList<Double>();
+            value = new ArrayList<>();
         }
         return this.value;
     }

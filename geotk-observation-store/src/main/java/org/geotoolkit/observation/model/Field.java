@@ -17,10 +17,13 @@
 package org.geotoolkit.observation.model;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import static org.geotoolkit.sos.xml.SOSXmlFactory.*;
 import org.geotoolkit.swe.xml.AbstractBoolean;
 import org.geotoolkit.swe.xml.AbstractDataComponent;
+import org.geotoolkit.swe.xml.AbstractQualityProperty;
 import org.geotoolkit.swe.xml.AbstractText;
 import org.geotoolkit.swe.xml.AbstractTime;
 import org.geotoolkit.swe.xml.AnyScalar;
@@ -64,6 +67,11 @@ public class Field {
     public final String uom;
 
     /**
+     * Associated quality fields.
+     */
+    public final List<Field> qualityFields;
+
+    /**
      * Build a field.
      *
      * @param index The place of the field in a dataArray.
@@ -74,12 +82,28 @@ public class Field {
      * @param uom Unit of measure of the associated data.
      */
     public Field(final Integer index, final FieldType type, final String name, final String label, final String description, final String uom) {
+        this(index, type, name, label, description, uom, new ArrayList<>());
+    }
+
+    /**
+     * Build a field.
+     *
+     * @param index The place of the field in a dataArray.
+     * @param type The data type of the field.
+     * @param name Field name, used as an identifier for the field.
+     * @param label Field label, used as an human description for the field.
+     * @param description An URN describing the field.
+     * @param uom Unit of measure of the associated data.
+     * @param qualityFields Associated quality fields.
+     */
+    public Field(final Integer index, final FieldType type, final String name, final String label, final String description, final String uom, List<Field> qualityFields) {
         this.index = index;
         this.description = description;
         this.name = name;
         this.type = type;
         this.uom = uom;
         this.label = label;
+        this.qualityFields = qualityFields;
     }
 
     /**
@@ -91,12 +115,12 @@ public class Field {
      * @param value A SWE datacomopnent extracted form a data array.
      * @throws SQLException
      */
-    public Field(final int index, final String name, final String label, final AbstractDataComponent value) throws SQLException {
+    public Field(final Integer index, final String name, final String label, final AbstractDataComponent value) throws SQLException {
         this.name = name;
         this.index = index;
         this.label = label;
-        if (value instanceof Quantity) {
-            final Quantity q = (Quantity) value;
+        this.qualityFields = new ArrayList<>();
+        if (value instanceof Quantity q) {
             this.description = q.getDefinition();
             this.type = FieldType.QUANTITY;
             if (q.getUom() != null) {
@@ -104,18 +128,23 @@ public class Field {
             } else {
                 this.uom = null;
             }
-        } else if (value instanceof AbstractText) {
-            final AbstractText q = (AbstractText) value;
+            if (q.getQuality() != null) {
+                for (AbstractQualityProperty aqp : q.getQuality()) {
+                    AbstractDataComponent dc = aqp.getDataComponent();
+                    if (dc != null) {
+                        this.qualityFields.add(new Field(null, dc.getId(), aqp.getTitle(), dc));
+                    }
+                }
+            }
+        } else if (value instanceof AbstractText q) {
             this.description = q.getDefinition();
             this.type = FieldType.TEXT;
             this.uom = null;
-        } else if (value instanceof AbstractBoolean) {
-            final AbstractBoolean q = (AbstractBoolean) value;
+        } else if (value instanceof AbstractBoolean q) {
             this.description = q.getDefinition();
             this.type = FieldType.BOOLEAN;
             this.uom = null;
-        } else if (value instanceof AbstractTime) {
-            final AbstractTime q = (AbstractTime) value;
+        } else if (value instanceof AbstractTime q) {
             this.description = q.getDefinition();
             this.type = FieldType.TIME;
             if (q.getUom() != null) {
@@ -126,7 +155,6 @@ public class Field {
         } else {
             throw new SQLException("Only Quantity, Text AND Time is supported for now");
         }
-
     }
 
     /**
@@ -136,20 +164,31 @@ public class Field {
      * @return
      */
     public AnyScalar getScalar(final String version) {
+        final AbstractDataComponent compo = getComponent(version, false);
+        return buildAnyScalar(version, null, name, compo);
+    }
+
+    private AbstractDataComponent getComponent(final String version, boolean nameAsId) {
+        final List<AbstractQualityProperty> quality = new ArrayList<>();
+        if (qualityFields != null) {
+            for (Field qField : qualityFields) {
+                quality.add(buildQualityProperty(version, qField.getComponent(version, true)));
+            }
+        }
         final AbstractDataComponent compo;
         if (FieldType.QUANTITY.equals(type)) {
             final UomProperty uomCode = buildUomProperty(version, uom, null);
-            compo = buildQuantity(version, description, uomCode, null);
+            compo = buildQuantity(version, nameAsId ? name : null, description, uomCode, null, quality);
         } else if (FieldType.TEXT.equals(type)) {
-            compo = buildText(version, description, null);
+            compo = buildText(version, nameAsId ? name : null, description, null, quality);
         } else if (FieldType.TIME.equals(type)) {
-            compo = buildTime(version, description, null);
+            compo = buildTime(version, nameAsId ? name : null, description, null, quality);
         } else if (FieldType.BOOLEAN.equals(type)) {
-            compo = buildBoolean(version, description, null);
+            compo = buildBoolean(version, nameAsId ? name : null, description, null, quality);
         } else {
             throw new IllegalArgumentException("Unexpected field Type:" + type);
         }
-        return buildAnyScalar(version, null, name, compo);
+        return compo;
     }
 
     /**
@@ -200,12 +239,11 @@ public class Field {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof Field) {
-            final Field that = (Field) obj;
+        if (obj instanceof Field that) {
             return Objects.equals(this.description, that.description)
-                    && Objects.equals(this.name, that.name)
-                    && Objects.equals(this.type, that.type)
-                    && Objects.equals(this.uom, that.uom);
+                && Objects.equals(this.name, that.name)
+                && Objects.equals(this.type, that.type)
+                && Objects.equals(this.uom, that.uom);
         }
         return false;
     }

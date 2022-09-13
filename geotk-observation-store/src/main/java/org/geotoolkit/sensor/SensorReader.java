@@ -42,7 +42,7 @@ public interface SensorReader {
      * @param sensorID The identifier of the sensor.
      *
      * @return the specified sensor description from the specified ID.
-     * @throws org.apache.sis.storage.DataStoreException
+     * @throws org.apache.sis.storage.DataStoreException If an error occurs during retrieval.
      */
     AbstractSensorML getSensor(final String sensorID) throws DataStoreException;
 
@@ -50,7 +50,7 @@ public interface SensorReader {
      * Return all sensor ID's.
      *
      * @return All sensor ID's.
-     * @throws org.apache.sis.storage.DataStoreException
+     * @throws org.apache.sis.storage.DataStoreException If an error occurs during retrieval.
      */
     Collection<String> getSensorNames() throws DataStoreException;
 
@@ -65,13 +65,13 @@ public interface SensorReader {
      * Return the number of sensors in the data source.
      *
      * @return The number of sensors.
-     * @throws org.apache.sis.storage.DataStoreException
+     * @throws org.apache.sis.storage.DataStoreException If an error occurs during retrieval.
      */
     int getSensorCount() throws DataStoreException;
 
     /**
      * Remove the specified sensor metadata from the cache.
-     * @param sensorID
+     * @param sensorID sensor identifier.
      */
     void removeFromCache(final String sensorID);
 

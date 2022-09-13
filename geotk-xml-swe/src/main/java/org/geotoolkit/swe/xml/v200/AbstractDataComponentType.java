@@ -74,13 +74,13 @@ public abstract class AbstractDataComponentType extends AbstractSWEIdentifiableT
     public AbstractDataComponentType(final String id, final String definition, final Boolean updatable) {
         super(id);
         this.definition = definition;
+        this.updatable = updatable;
     }
 
-    public AbstractDataComponentType(final AbstractDataComponentType that) {
+    public AbstractDataComponentType(final AbstractDataComponent that) {
         super(that);
-        this.definition = that.definition;
-        this.optional   = that.optional;
-        this.updatable  = that.updatable;
+        this.definition = that.getDefinition();
+        this.updatable  = that.isFixed() != null ? !that.isFixed() : null;
     }
 
     /**

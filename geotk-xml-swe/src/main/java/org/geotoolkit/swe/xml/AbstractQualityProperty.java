@@ -23,6 +23,8 @@ package org.geotoolkit.swe.xml;
  */
 public interface AbstractQualityProperty {
 
+    public AbstractDataComponent getDataComponent();
+
     public Quantity getQuantity();
 
     public AbstractQuantityRange getQuantityRange();
