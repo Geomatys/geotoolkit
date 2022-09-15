@@ -56,7 +56,7 @@ import org.opengis.util.GenericName;
  * If the source coverage is backed by a {@link java.awt.image.WritableRenderedImage},
  * then changes in the source coverage are reflected in the returned coverage and conversely.
  *
- * @see GridCoverageProcessor#convert(org.apache.sis.coverage.grid.GridCoverage, org.opengis.referencing.operation.MathTransform1D[], java.util.function.Function) 
+ * @see GridCoverageProcessor#convert(org.apache.sis.coverage.grid.GridCoverage, org.opengis.referencing.operation.MathTransform1D[], java.util.function.Function)
  * @see ImageProcessor#convert(RenderedImage, NumberRange<?>[], MathTransform1D[], DataType, ColorModel)
  *
  * @author Johann Sorel (Geomatys)
