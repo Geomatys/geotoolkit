@@ -173,7 +173,7 @@
 
     <!-- associated projects dependencies -->
     <geoapi.version>4.0-M19</geoapi.version>
-    <sis.version>2.0-M0116</sis.version>
+    <sis.version>2.0-M0117</sis.version>
     <sis.build.helper.version>1.1</sis.build.helper.version>
     <sis.non-free.version>1.1</sis.non-free.version>
 
