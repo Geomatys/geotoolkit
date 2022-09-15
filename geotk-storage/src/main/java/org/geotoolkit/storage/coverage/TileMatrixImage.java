@@ -244,27 +244,25 @@ public class TileMatrixImage extends ComputedImage implements RenderedImage {
         try {
             DataBuffer buffer = null;
 
-            if (!isTileMissing(tileX, tileY)) {
-                final Tile tile = matrix.getTile(mosaictileX,mosaictileY).orElse(null);
-                //can be null if tile is really missing, the isMissing method is a best effort call
-                if (tile != null) {
-                    final Resource resource = tile.getResource();
-                    if (resource instanceof GridCoverageResource gcr) {
-                        GridCoverage coverage = gcr.read(null);
-                        RenderedImage image = coverage.render(null);
-                        Raster tileRaster;
-                        if (image.getNumXTiles() == 1 && image.getNumYTiles() == 1) {
-                            tileRaster = image.getTile(image.getMinTileX(), image.getMinTileY());
-                        } else {
-                            tileRaster = image.getData();
-                        }
-                        try {
-                            tileRaster = BufferedImages.makeConform(tileRaster, rasterModel);
-                        } catch (ImagingOpException ex) {
-                            throw new BackingStoreException("Fix mosaic implementation " + matrix.getClass().getName() + " " + ex.getMessage(), ex);
-                        }
-                        buffer = tileRaster.getDataBuffer();
+            final Tile tile = matrix.getTile(mosaictileX,mosaictileY).orElse(null);
+            //can be null if tile is really missing, the isMissing method is a best effort call
+            if (tile != null) {
+                final Resource resource = tile.getResource();
+                if (resource instanceof GridCoverageResource gcr) {
+                    GridCoverage coverage = gcr.read(null);
+                    RenderedImage image = coverage.render(null);
+                    Raster tileRaster;
+                    if (image.getNumXTiles() == 1 && image.getNumYTiles() == 1) {
+                        tileRaster = image.getTile(image.getMinTileX(), image.getMinTileY());
+                    } else {
+                        tileRaster = image.getData();
                     }
+                    try {
+                        tileRaster = BufferedImages.makeConform(tileRaster, rasterModel);
+                    } catch (ImagingOpException ex) {
+                        throw new BackingStoreException("Fix mosaic implementation " + matrix.getClass().getName() + " " + ex.getMessage(), ex);
+                    }
+                    buffer = tileRaster.getDataBuffer();
                 }
             }
 
