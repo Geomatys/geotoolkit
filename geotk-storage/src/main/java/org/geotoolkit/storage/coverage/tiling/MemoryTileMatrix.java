@@ -45,7 +45,7 @@ public final class MemoryTileMatrix implements WritableTileMatrix {
 
     private final GenericName identifier;
     private final GridGeometry tilingScheme;
-    private final long[] tileSize;
+    private final int[] tileSize;
     private final Map<LongKey,Tile> tiles = Collections.synchronizedMap(new HashMap<>());
 
     /**
@@ -56,7 +56,7 @@ public final class MemoryTileMatrix implements WritableTileMatrix {
      * @param tileSize tile size in pixel, if tiles are not images an estimated size should be used.
      *        This information is used only for resolution computation.
      */
-    public MemoryTileMatrix(final GenericName identifier, GridGeometry tilingScheme, long[] tileSize) {
+    public MemoryTileMatrix(final GenericName identifier, GridGeometry tilingScheme, int[] tileSize) {
         ArgumentChecks.ensureNonNull("identifier", identifier);
         ArgumentChecks.ensureNonNull("tilingScheme", tilingScheme);
         ArgumentChecks.ensureNonNull("tileSize", tileSize);

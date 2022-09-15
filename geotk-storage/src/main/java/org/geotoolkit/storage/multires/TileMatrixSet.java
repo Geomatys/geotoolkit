@@ -19,6 +19,7 @@ package org.geotoolkit.storage.multires;
 import java.util.Optional;
 import java.util.SortedMap;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.storage.tiling.TileMatrix;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.GenericName;

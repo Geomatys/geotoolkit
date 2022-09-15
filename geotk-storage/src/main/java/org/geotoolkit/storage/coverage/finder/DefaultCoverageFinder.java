@@ -22,8 +22,8 @@ import java.util.List;
 import org.apache.sis.coverage.grid.DisjointExtentException;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridRoundingMode;
-import org.geotoolkit.storage.multires.TileMatrix;
-import org.geotoolkit.storage.multires.TileMatrixSet;
+import org.apache.sis.storage.tiling.TileMatrix;
+import org.apache.sis.storage.tiling.TileMatrixSet;
 import org.opengis.geometry.Envelope;
 import org.opengis.util.FactoryException;
 

@@ -41,6 +41,8 @@ import org.apache.sis.referencing.operation.transform.TransformSeparator;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.tiling.Tile;
+import org.apache.sis.storage.tiling.TileMatrix;
+import org.apache.sis.storage.tiling.TileMatrixSet;
 import org.apache.sis.storage.tiling.TileStatus;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Utilities;
@@ -49,8 +51,6 @@ import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.storage.coverage.mosaic.AggregatedCoverageResource;
 import org.geotoolkit.storage.multires.TileMatrices;
-import org.geotoolkit.storage.multires.TileMatrix;
-import org.geotoolkit.storage.multires.TileMatrixSet;
 import org.geotoolkit.storage.multires.TiledResource;
 import org.geotoolkit.storage.multires.WritableTileMatrix;
 import org.opengis.geometry.Envelope;
@@ -114,7 +114,7 @@ public class TileMatrixSetCoverageWriter <T extends TiledResource & org.apache.s
         final MathTransform srcCRSToGrid;
         RenderedImage image = null;
         try {
-            image        = coverage.render(null);
+            image        = coverage.render(coverage.getGridGeometry().getExtent());
             srcCRSToGrid = coverage.getGridGeometry().getGridToCRS(PixelInCell.CELL_CENTER).inverse();
         } catch (NoninvertibleTransformException ex) {
             throw new DataStoreException(ex);
@@ -125,7 +125,8 @@ public class TileMatrixSetCoverageWriter <T extends TiledResource & org.apache.s
             //extract the 2D part of the gridtocrs transform
             final TransformSeparator filter = new TransformSeparator(srcCRSToGrid);
             filter.addSourceDimensionRange(0, 2);
-            tileQueue = new Ite(reference, requestedEnvelope, crsCoverage2D, image, filter.separate(), interpolation, coverage);
+            filter.separate();
+            tileQueue = new Ite(reference, requestedEnvelope, image, interpolation, coverage);
         } catch (FactoryException ex) {
             throw new DataStoreException(ex);
         }
@@ -162,9 +163,7 @@ public class TileMatrixSetCoverageWriter <T extends TiledResource & org.apache.s
 
         private Runnable next = null;
 
-        private Ite(T model, Envelope requestedEnvelope,
-                CoordinateReferenceSystem crsCoverage2D, RenderedImage sourceImage,
-                MathTransform srcCRSToGrid, Interpolation interpolation, GridCoverage sourceCoverage) throws DataStoreException{
+        private Ite(T model, Envelope requestedEnvelope, RenderedImage sourceImage, Interpolation interpolation, GridCoverage sourceCoverage) throws DataStoreException{
             this.requestedEnvelope = requestedEnvelope;
             this.sourceImage = sourceImage;
             this.interpolation = interpolation;
@@ -295,6 +294,7 @@ public class TileMatrixSetCoverageWriter <T extends TiledResource & org.apache.s
         private final RenderedImage baseImage;
         private final GridCoverage coverage;
 
+        private final int[] tileSize;
         private final int tileWidth;
         private final int tileHeight;
 
@@ -304,8 +304,9 @@ public class TileMatrixSetCoverageWriter <T extends TiledResource & org.apache.s
             this.idx = idx;
             this.idy = idy;
             this.interpolation = interpolation;
-            this.tileWidth = matrix.getTileSize().width;
-            this.tileHeight = matrix.getTileSize().height;
+            this.tileSize = matrix.getTileSize();
+            this.tileWidth = (int) tileSize[0];
+            this.tileHeight = (int) tileSize[1];
             this.baseImage = image;
             this.coverage = coverage;
         }
@@ -320,8 +321,9 @@ public class TileMatrixSetCoverageWriter <T extends TiledResource & org.apache.s
                         Tile tile = (Tile) matrix.getTile(idx, idy).orElse(null);
                         //TODO possible null pointer here, what should we do ?
                         GridCoverageResource resource = (GridCoverageResource) tile.getResource();
-                        //TODO this wille have to be reviewed, it will work with only a few datastores
-                        currentlyTile = (BufferedImage) resource.read(null).render(null);
+                        //TODO this will have to be reviewed, it will work with only a few datastores
+                        GridCoverage coverage = resource.read(null);
+                        currentlyTile = (BufferedImage) coverage.render(coverage.getGridGeometry().getExtent());
                     } catch (Exception ex) {
                         throw new RuntimeException(ex);
                     }
@@ -329,14 +331,14 @@ public class TileMatrixSetCoverageWriter <T extends TiledResource & org.apache.s
                     currentlyTile = BufferedImages.createImage(tileWidth, tileHeight, baseImage);
                 }
 
-                final GridGeometry tileGridGeom = TileMatrices.getTileGridGeometry2D(matrix, new long[]{idx, idy});
+                final GridGeometry tileGridGeom = TileMatrices.getTileGridGeometry2D(matrix, new long[]{idx, idy}, tileSize);
 
-                final RenderedImage coverageImage = coverage.render(null);
+                final RenderedImage coverageImage = coverage.render(coverage.getGridGeometry().getExtent());
                 final MathTransform toSource = AggregatedCoverageResource.createTransform(tileGridGeom, currentlyTile, coverage.getGridGeometry(), coverageImage);
 
                 final ImageCombiner ic = new ImageCombiner(currentlyTile);
                 ic.setInterpolation(interpolation);
-                ic.resample(coverage.render(null), new Rectangle(currentlyTile.getWidth(), currentlyTile.getHeight()), toSource);
+                ic.resample(coverageImage, new Rectangle(currentlyTile.getWidth(), currentlyTile.getHeight()), toSource);
                 final RenderedImage tileImage = ic.result();
                 matrix.writeTiles(Stream.of(new DefaultImageTile(matrix, tileImage, new long[]{idx, idy})));
             } catch (Exception ex) {

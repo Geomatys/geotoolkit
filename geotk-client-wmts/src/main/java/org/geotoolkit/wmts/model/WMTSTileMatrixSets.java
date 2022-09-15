@@ -22,11 +22,11 @@ import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.client.Request;
 import org.geotoolkit.client.map.CachedTileMatrixSets;
 import org.geotoolkit.storage.multires.TileMatrices;
-import org.geotoolkit.storage.multires.TileMatrix;
-import org.geotoolkit.storage.multires.TileMatrixSet;
 import org.geotoolkit.wmts.GetTileRequest;
 import org.geotoolkit.wmts.WebMapTileClient;
 import org.geotoolkit.wmts.xml.v100.*;
+import org.apache.sis.storage.tiling.TileMatrix;
+import org.apache.sis.storage.tiling.TileMatrixSet;
 
 /**
  *

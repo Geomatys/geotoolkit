@@ -17,6 +17,7 @@
 package org.geotoolkit.storage.multires;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
@@ -32,6 +33,8 @@ import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.NoSuchDataException;
 import org.apache.sis.storage.tiling.Tile;
+import org.apache.sis.storage.tiling.WritableTileMatrixSet;
+import org.apache.sis.storage.tiling.WritableTileMatrix;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -181,7 +184,7 @@ public abstract class AbstractTileGenerator implements TileGenerator {
         if (data instanceof TileInError) {
             final TileInError error = (TileInError) data;
             final boolean errorDueToNoDataAvailable = (error.getCause() instanceof NoSuchDataException || error.getCause() instanceof IllegalGridGeometryException);
-            LOGGER.log(errorDueToNoDataAvailable ? Level.FINER : Level.WARNING, error.getCause(), () -> String.format("Error on tile loading:%nTile coordinate: %s", error.getIndices()));
+            LOGGER.log(errorDueToNoDataAvailable ? Level.FINER : Level.WARNING, error.getCause(), () -> String.format("Error on tile loading:%nTile coordinate: %s", Arrays.toString(error.getIndices())));
             if (!errorDueToNoDataAvailable) return false;
         }
         try {

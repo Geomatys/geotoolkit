@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.storage.multires;
 
-import java.awt.Dimension;
 import java.awt.image.RenderedImage;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -40,6 +39,10 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.tiling.Tile;
 import org.apache.sis.storage.tiling.TileStatus;
+import org.apache.sis.storage.tiling.TileMatrix;
+import org.apache.sis.storage.tiling.WritableTiledResource;
+import org.apache.sis.storage.tiling.WritableTileMatrix;
+import org.apache.sis.storage.tiling.WritableTileMatrixSet;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.process.ProcessListener;
 import org.geotoolkit.storage.coverage.IProgressiveCoverageResource;
@@ -252,7 +255,7 @@ public class GeneralProgressiveResource extends AbstractResource implements Prog
         }
     }
 
-    public final class ProgressiveTileMatrix implements WritableTileMatrix {
+    public final class ProgressiveTileMatrix implements org.geotoolkit.storage.multires.WritableTileMatrix {
 
         private final ProgressiveTileMatrixSet pyramid;
         private final WritableTileMatrix base;
@@ -274,8 +277,8 @@ public class GeneralProgressiveResource extends AbstractResource implements Prog
         }
 
         @Override
-        public Dimension getTileSize() {
-            return base.getTileSize();
+        public int[] getTileSize() {
+            return TileMatrices.getTileSize(base);
         }
 
         @Override
@@ -314,7 +317,7 @@ public class GeneralProgressiveResource extends AbstractResource implements Prog
         @Override
         public Tile anyTile() throws DataStoreException {
             try {
-                return base.anyTile();
+                return ((org.geotoolkit.storage.multires.WritableTileMatrix) base).anyTile();
             } catch (DataStoreException ex) {
                 //may be empty
             }

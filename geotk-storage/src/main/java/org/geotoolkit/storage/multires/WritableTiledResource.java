@@ -19,6 +19,7 @@ package org.geotoolkit.storage.multires;
 import java.util.Collection;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.ReadOnlyStorageException;
+import org.apache.sis.storage.tiling.WritableTileMatrixSet;
 
 
 /**
@@ -56,6 +57,7 @@ public interface WritableTiledResource extends TiledResource, org.apache.sis.sto
      * @throws IncompatibleResourceException if the given tile matrix set is incompatible with this resource.
      * @throws DataStoreException if creating the tile matrix set failed for another reason.
      */
+    @Override
     WritableTileMatrixSet createTileMatrixSet(org.apache.sis.storage.tiling.TileMatrixSet tiles) throws DataStoreException;
 
 }

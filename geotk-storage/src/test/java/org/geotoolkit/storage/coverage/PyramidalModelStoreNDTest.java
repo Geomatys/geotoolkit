@@ -32,13 +32,13 @@ import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.WritableAggregate;
+import org.apache.sis.storage.tiling.WritableTileMatrix;
+import org.apache.sis.storage.tiling.WritableTileMatrixSet;
+import org.apache.sis.storage.tiling.WritableTiledResource;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.storage.multires.DefiningTileMatrix;
 import org.geotoolkit.storage.multires.DefiningTileMatrixSet;
 import org.geotoolkit.storage.multires.TileMatrices;
-import org.geotoolkit.storage.multires.WritableTileMatrix;
-import org.geotoolkit.storage.multires.WritableTileMatrixSet;
-import org.geotoolkit.storage.multires.WritableTiledResource;
 import org.geotoolkit.util.NamesExt;
 import static org.junit.Assert.*;
 import org.junit.Test;
@@ -110,7 +110,7 @@ public abstract class PyramidalModelStoreNDTest <T extends WritableTiledResource
 
         final WritableTileMatrixSet pyramid = ref.createTileMatrixSet(new DefiningTileMatrixSet(crs));
         for(int v=0;v<CORNER_V.length;v++){
-            final Dimension tileSize = new Dimension(10,10);
+            final int[] tileSize = new int[]{10,10};
             final WritableTileMatrix mosaic_s0 = pyramid.createTileMatrix(new DefiningTileMatrix(null,
                     TileMatrices.toTilingScheme(createCorner(CORNER_LONG,CORNER_LAT,CORNER_V[v]), new Dimension(2, 2), 1.0, tileSize), tileSize));
             final WritableTileMatrix mosaic_s1 = pyramid.createTileMatrix(new DefiningTileMatrix(null,

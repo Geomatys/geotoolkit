@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.storage.memory;
 
-import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.image.RenderedImage;
 import java.util.ArrayList;
@@ -243,7 +242,7 @@ final class MockTiledGridCoverageResource extends AbstractGridCoverageResource
         private final Map<Point,InMemoryTile> mpTileReference = new HashMap<>();
         private boolean buildPhase = false;
 
-        public InMemoryTileMatrix(final GenericName id, WritableTileMatrixSet pyramid, GridGeometry tilingScheme, Dimension tileSize) {
+        public InMemoryTileMatrix(final GenericName id, WritableTileMatrixSet pyramid, GridGeometry tilingScheme, int[] tileSize) {
             super(id, pyramid, tilingScheme, tileSize);
         }
 
@@ -294,9 +293,9 @@ final class MockTiledGridCoverageResource extends AbstractGridCoverageResource
                 final GridCoverageResource imgTile = (GridCoverageResource) resource;
                 RenderedImage image = imgTile.read(null).render(null);
 
-                final Dimension tileSize = getTileSize();
-                if (tileSize.width < image.getWidth() || tileSize.height < image.getHeight()) {
-                    throw new IllegalArgumentException("Uncorrect image size ["+image.getWidth()+","+image.getHeight()+"] expecting size ["+tileSize.width+","+tileSize.height+"]");
+                final int[] tileSize = getTileSize();
+                if (tileSize[0] < image.getWidth() || tileSize[1] < image.getHeight()) {
+                    throw new IllegalArgumentException("Uncorrect image size ["+image.getWidth()+","+image.getHeight()+"] expecting size ["+tileSize[0]+","+tileSize[1]+"]");
                 }
                 final long tileX = tile.getIndices()[0];
                 final long tileY = tile.getIndices()[1];

@@ -28,6 +28,7 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.NoSuchDataException;
+import org.apache.sis.storage.tiling.TileMatrix;
 import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.coverage.grid.EstimatedGridGeometry;
 import org.geotoolkit.util.NamesExt;
@@ -55,7 +56,7 @@ public class TileMatricesTest {
         final AffineTransform2D gridToCrs = new AffineTransform2D(1, 0, 0, -1, -50, 40);
         final GridGeometry gg = new GridGeometry(extent, PixelInCell.CELL_CENTER, gridToCrs, crs);
 
-        final DefiningTileMatrixSet tms = TileMatrices.createTemplate(gg, new Dimension(256, 256));
+        final DefiningTileMatrixSet tms = TileMatrices.createTemplate(gg, new int[]{256, 256});
         Assert.assertEquals(crs, tms.getCoordinateReferenceSystem());
 
         Assert.assertEquals(3, tms.getTileMatrices().size());
@@ -75,9 +76,9 @@ public class TileMatricesTest {
         Assert.assertEquals(upperleft, TileMatrices.getUpperLeftCorner(m2));
         Assert.assertEquals(upperleft, TileMatrices.getUpperLeftCorner(m3));
 
-        Assert.assertEquals(new Dimension(256, 256), m1.getTileSize());
-        Assert.assertEquals(new Dimension(256, 256), m2.getTileSize());
-        Assert.assertEquals(new Dimension(256, 256), m3.getTileSize());
+        Assert.assertArrayEquals(new int[]{256, 256}, TileMatrices.getTileSize(m1));
+        Assert.assertArrayEquals(new int[]{256, 256}, TileMatrices.getTileSize(m2));
+        Assert.assertArrayEquals(new int[]{256, 256}, TileMatrices.getTileSize(m3));
 
         Assert.assertTrue(new GridExtent(4, 2).equals(m1.getTilingScheme().getExtent(), ComparisonMode.IGNORE_METADATA));
         Assert.assertTrue(new GridExtent(2, 1).equals(m2.getTilingScheme().getExtent(), ComparisonMode.IGNORE_METADATA));
@@ -100,7 +101,7 @@ public class TileMatricesTest {
 
         {// Wgs84 TEMPLATE /////////////////////////////////////////////////////
             final CoordinateReferenceSystem tempCrs = CRS.forCode("CRS:84");
-            final DefiningTileMatrixSet template = TileMatrices.createTemplate(gridGeom, tempCrs, new Dimension(256, 256));
+            final DefiningTileMatrixSet template = TileMatrices.createTemplate(gridGeom, tempCrs, new int[]{256, 256});
             final Envelope tempEnv = template.getEnvelope().orElse(null);
             Assert.assertEquals(tempCrs, template.getCoordinateReferenceSystem());
             Assert.assertEquals(tempCrs, tempEnv.getCoordinateReferenceSystem());
@@ -110,7 +111,7 @@ public class TileMatricesTest {
 
         {// Mercator TEMPLATE /////////////////////////////////////////////////////
             final CoordinateReferenceSystem tempCrs = CRS.forCode("EPSG:3395");
-            final DefiningTileMatrixSet template = TileMatrices.createTemplate(gridGeom, tempCrs, new Dimension(256, 256));
+            final DefiningTileMatrixSet template = TileMatrices.createTemplate(gridGeom, tempCrs, new int[]{256, 256});
             final Envelope tempEnv = template.getEnvelope().orElse(null);
             Assert.assertEquals(tempCrs, template.getCoordinateReferenceSystem());
             Assert.assertEquals(tempCrs, tempEnv.getCoordinateReferenceSystem());
@@ -126,7 +127,7 @@ public class TileMatricesTest {
         final GeneralDirectPosition corner = new GeneralDirectPosition(crs);
         corner.setOrdinate(0, 0);
         corner.setOrdinate(1, 0);
-        final Dimension tileSize = new Dimension(10, 10);
+        final int[] tileSize = new int[]{10, 10};
         TileMatrix matrix = new DefiningTileMatrix(
                 NamesExt.createRandomUUID(),
                 TileMatrices.toTilingScheme(corner, new Dimension(1,1), 1.0, tileSize),
@@ -149,28 +150,4 @@ public class TileMatricesTest {
         }
     }
 
-    @Test
-    public void testSurSamplingGridExtent() {
-
-        final GridExtent extent = new GridExtent(null, new long[]{10,-8}, new long[]{100, 50}, false);
-        final GridExtent surSampling = TileMatrices.surSampling(extent, new long[]{4,4});
-
-        Assert.assertArrayEquals(new long[]{40,-32}, surSampling.getLow().getCoordinateValues());
-        Assert.assertArrayEquals(new long[]{399, 199}, surSampling.getHigh().getCoordinateValues());
-    }
-
-//    @Test
-//    public void testSurSamplingGridGeometry() {
-//
-//        final GridExtent extent = new GridExtent(null, new long[]{10,-8}, new long[]{100, 50}, true);
-//        final MathTransform gridToCRS = new AffineTransform2D(1, 0, 0, -2, 10, 50);
-//        final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
-//
-//        final GridGeometry gridGeom = new GridGeometry(extent, PixelInCell.CELL_CENTER, gridToCRS, crs);
-//
-//        final GridGeometry surSampling = TileMatrices.surSampling(gridGeom, new long[]{4,4});
-//        System.out.println(surSampling);
-//
-//        Assert.assertTrue(new GridExtent(null, new long[]{10*4,-8*4}, new long[]{100*4, 50*4}, true).equals(surSampling, ComparisonMode.IGNORE_METADATA));
-//    }
 }

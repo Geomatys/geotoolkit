@@ -38,11 +38,11 @@ public class DefiningTileMatrixSet implements WritableTileMatrixSet {
         this(null,crs,new ArrayList());
     }
 
-    public DefiningTileMatrixSet(GenericName identifier, CoordinateReferenceSystem crs, List<TileMatrix> mosaics) {
+    public DefiningTileMatrixSet(GenericName identifier, CoordinateReferenceSystem crs, List<? extends org.apache.sis.storage.tiling.TileMatrix> mosaics) {
         this.identifier = identifier;
         this.crs = crs;
 
-        for (TileMatrix m : mosaics) {
+        for (org.apache.sis.storage.tiling.TileMatrix m : mosaics) {
             createTileMatrix(m);
         }
     }

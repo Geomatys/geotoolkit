@@ -21,6 +21,8 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.tiling.Tile;
 import org.geotoolkit.process.ProcessListener;
 import org.opengis.geometry.Envelope;
+import org.apache.sis.storage.tiling.WritableTileMatrixSet;
+import org.apache.sis.storage.tiling.WritableTileMatrix;
 
 /**
  *

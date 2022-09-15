@@ -45,6 +45,9 @@ import org.apache.sis.image.ImageProcessor;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.NoSuchDataException;
+import org.apache.sis.storage.tiling.TileMatrix;
+import org.apache.sis.storage.tiling.TileMatrixSet;
+import org.apache.sis.storage.tiling.TiledResource;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.internal.referencing.CRSUtilities;
@@ -53,9 +56,6 @@ import org.geotoolkit.storage.coverage.finder.CoverageFinder;
 import org.geotoolkit.storage.coverage.finder.DefaultCoverageFinder;
 import org.geotoolkit.storage.multires.GeneralProgressiveResource;
 import org.geotoolkit.storage.multires.TileMatrices;
-import org.geotoolkit.storage.multires.TileMatrix;
-import org.geotoolkit.storage.multires.TileMatrixSet;
-import org.geotoolkit.storage.multires.TiledResource;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
@@ -88,7 +88,7 @@ public class TileMatrixSetCoverageReader <T extends TiledResource & org.apache.s
 
         //search for a pyramid
         //-- we use the first pyramid as default
-        org.geotoolkit.storage.multires.TileMatrixSet pyramid = null;
+        TileMatrixSet pyramid = null;
         for (TileMatrixSet model : models) {
             pyramid = model;
             break;
@@ -150,10 +150,10 @@ public class TileMatrixSetCoverageReader <T extends TiledResource & org.apache.s
 
         //-- size of internal pixel data recovered
         final Dimension gridSize = TileMatrices.getGridSize(matrix);
-        final Dimension tileSize = matrix.getTileSize();
+        final int[] tileSize = TileMatrices.getTileSize(matrix);
         final GridExtent dataSize = new GridExtent(
-                    ((long) gridSize.width) * tileSize.width,
-                    ((long) gridSize.height) * tileSize.height);
+                    ((long) gridSize.width) * tileSize[0],
+                    ((long) gridSize.height) * tileSize[1]);
 
         final long[] low  = new long[nbdim];
         final long[] high  = new long[nbdim];
@@ -237,7 +237,7 @@ public class TileMatrixSetCoverageReader <T extends TiledResource & org.apache.s
             sampleDimensions = subSamples;
         }
 
-        final Dimension tileSize = matrix.getTileSize();
+        final int[] tileSize = TileMatrices.getTileSize(matrix);
 
         final GridExtent area = TileMatrices.getTilesInEnvelope(matrix, wantedEnv);
         final Rectangle tilesInEnvelope = new Rectangle(
@@ -271,16 +271,16 @@ public class TileMatrixSetCoverageReader <T extends TiledResource & org.apache.s
             { //reduce area
                 final long[] l = new long[high.length];
                 final long[] h = new long[high.length];
-                l[0] = tilesInEnvelope.x * tileSize.width;
-                l[1] = tilesInEnvelope.y * tileSize.height;
-                h[0] = (tilesInEnvelope.x+tilesInEnvelope.width) * tileSize.width;
-                h[1] = (tilesInEnvelope.y+tilesInEnvelope.height) * tileSize.height;
+                l[0] = tilesInEnvelope.x * tileSize[0];
+                l[1] = tilesInEnvelope.y * tileSize[1];
+                h[0] = (tilesInEnvelope.x+tilesInEnvelope.width) * tileSize[0];
+                h[1] = (tilesInEnvelope.y+tilesInEnvelope.height) * tileSize[1];
                 GridExtent crop = new GridExtent(null, l, h, false);
                 RenderedImage subImage = coverage.render(crop);
                 l[0] = 0;
                 l[1] = 0;
-                h[0] = (tilesInEnvelope.width) * tileSize.width;
-                h[1] = (tilesInEnvelope.height) * tileSize.height;
+                h[0] = (tilesInEnvelope.width) * tileSize[0];
+                h[1] = (tilesInEnvelope.height) * tileSize[1];
                 crop = new GridExtent(null, l, h, false);
                 final MathTransform gtcr = TileMatrices.getTileGridToCRSND(matrix,
                         new long[]{tilesInEnvelope.x,tilesInEnvelope.y}, wantedCRS.getCoordinateSystem().getDimension(),
@@ -292,7 +292,7 @@ public class TileMatrixSetCoverageReader <T extends TiledResource & org.apache.s
         }
 
 
-        RenderedImage image =  TileMatrixImage.create(matrix, tilesInEnvelope, sampleDimensions);
+        RenderedImage image =  TileMatrixImage.create((org.geotoolkit.storage.multires.TileMatrix) matrix, tilesInEnvelope, sampleDimensions);
         if (range != null) {
             image = new ImageProcessor().selectBands(image, range);
         }

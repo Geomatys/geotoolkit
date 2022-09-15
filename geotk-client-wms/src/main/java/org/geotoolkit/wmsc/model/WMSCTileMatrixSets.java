@@ -16,16 +16,17 @@
  */
 package org.geotoolkit.wmsc.model;
 
+import java.awt.Dimension;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.tiling.TileMatrix;
+import org.apache.sis.storage.tiling.TileMatrixSet;
 import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.client.Request;
 import org.geotoolkit.client.map.CachedTileMatrixSets;
 import org.geotoolkit.storage.multires.TileMatrices;
-import org.geotoolkit.storage.multires.TileMatrix;
-import org.geotoolkit.storage.multires.TileMatrixSet;
 import org.geotoolkit.wms.GetMapRequest;
 import org.geotoolkit.wms.xml.v111.Capability;
 import org.geotoolkit.wms.xml.v111.VendorSpecificCapabilities;
@@ -92,10 +93,11 @@ public class WMSCTileMatrixSets extends CachedTileMatrixSets {
 
     @Override
     public Request getTileRequest(TileMatrixSet matrixset, TileMatrix matrix, long[] indices, Map hints) throws DataStoreException {
+        final int[] tileSize = TileMatrices.getTileSize(matrix);
         final GetMapRequest request = getServer().createGetMap();
         request.setLayers(layer);
         request.setEnvelope(TileMatrices.computeTileEnvelope(matrix, indices));
-        request.setDimension(matrix.getTileSize());
+        request.setDimension(new Dimension((int) tileSize[0], (int) tileSize[1]));
         request.setFormat(((WMSCTileMatrixSet)matrixset).getTileset().getFormat());
         return request;
     }

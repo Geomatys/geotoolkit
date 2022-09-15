@@ -18,6 +18,7 @@ package org.geotoolkit.storage.coverage;
 
 import java.awt.image.RenderedImage;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
@@ -29,12 +30,12 @@ import org.apache.sis.storage.AbstractGridCoverageResource;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.tiling.Tile;
+import org.apache.sis.storage.tiling.TileMatrix;
 import org.apache.sis.storage.tiling.TileStatus;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.multires.TileMatrices;
-import org.geotoolkit.storage.multires.TileMatrix;
 
 /**
  * Default implementation of a TileReference
@@ -44,7 +45,7 @@ import org.geotoolkit.storage.multires.TileMatrix;
  */
 public class DefaultImageTile extends AbstractGridCoverageResource implements Tile {
 
-    protected final TileMatrix matrix;
+    protected final org.geotoolkit.storage.multires.TileMatrix matrix;
     protected final ImageReaderSpi spi;
     protected final Object input;
     protected final int imageIndex;
@@ -54,7 +55,14 @@ public class DefaultImageTile extends AbstractGridCoverageResource implements Ti
     public DefaultImageTile(TileMatrix matrix, RenderedImage image, long... position) {
         super(null,false);
         ArgumentChecks.ensureNonNull("matrix", matrix);
-        this.matrix = matrix;
+        ArgumentChecks.ensureCanCast("matrix", org.geotoolkit.storage.multires.TileMatrix.class, matrix);
+        if (position.length != matrix.getTilingScheme().getDimension()) {
+            throw new IllegalArgumentException("Position size (" + position.length + ")do not match matrix dimension (" + matrix.getTilingScheme().getDimension()+ ")");
+        }
+        if (!matrix.getTilingScheme().getExtent().contains(position)) {
+            throw new IllegalArgumentException("Position " + Arrays.toString(position) + " is not within matrix extent " + matrix.getTilingScheme().getExtent() + ")");
+        }
+        this.matrix = (org.geotoolkit.storage.multires.TileMatrix) matrix;
         this.spi = null;
         this.input = image;
         this.imageIndex = 0;
@@ -64,7 +72,14 @@ public class DefaultImageTile extends AbstractGridCoverageResource implements Ti
     public DefaultImageTile(TileMatrix matrix, ImageReaderSpi spi, Object input, int imageIndex, long... position) {
         super(null,false);
         ArgumentChecks.ensureNonNull("matrix", matrix);
-        this.matrix = matrix;
+        ArgumentChecks.ensureCanCast("matrix", org.geotoolkit.storage.multires.TileMatrix.class, matrix);
+        if (position.length != matrix.getTilingScheme().getDimension()) {
+            throw new IllegalArgumentException("Position size (" + position.length + ")do not match matrix dimension (" + matrix.getTilingScheme().getDimension()+ ")");
+        }
+        if (!matrix.getTilingScheme().getExtent().contains(position)) {
+            throw new IllegalArgumentException("Position " + Arrays.toString(position) + " is not within matrix extent " + matrix.getTilingScheme().getExtent() + ")");
+        }
+        this.matrix = (org.geotoolkit.storage.multires.TileMatrix) matrix;
         this.spi = spi;
         this.input = input;
         this.imageIndex = imageIndex;
@@ -193,12 +208,12 @@ public class DefaultImageTile extends AbstractGridCoverageResource implements Ti
 
     @Override
     public long[] getIndices() {
-        return position;
+        return position.clone();
     }
 
     @Override
     public GridGeometry getGridGeometry() throws DataStoreException {
-        return TileMatrices.getTileGridGeometry2D(matrix, position);
+        return TileMatrices.getTileGridGeometry2D(matrix, position, matrix.getTileSize());
     }
 
     @Override

@@ -22,11 +22,11 @@ import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.tiling.TileMatrix;
+import org.apache.sis.storage.tiling.TileMatrixSet;
 import org.geotoolkit.client.Request;
 import org.geotoolkit.client.map.CachedTileMatrixSets;
 import org.geotoolkit.storage.multires.DefaultTileMatrixSet;
-import org.geotoolkit.storage.multires.TileMatrix;
-import org.geotoolkit.storage.multires.TileMatrixSet;
 import org.geotoolkit.tms.GetTileRequest;
 import org.geotoolkit.tms.TileMapClient;
 import org.opengis.geometry.Envelope;
@@ -85,7 +85,7 @@ public class TMSTileMatrixSets extends CachedTileMatrixSets {
             final TMSTileMatrix mosaic = new TMSTileMatrix(
                     this, pyramid, upperLeft,
                     new Dimension(size, size),
-                    new Dimension(tileWidth, tileHeight),
+                    new int[]{tileWidth, tileHeight},
                     scale,
                     i);
 

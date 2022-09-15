@@ -364,12 +364,12 @@ public class XMLMosaic implements WritableTileMatrix, ImageTileMatrix {
         final GeneralDirectPosition ul = new GeneralDirectPosition(pyramid.getCoordinateReferenceSystem());
         for (int i=0;i<upperLeft.length;i++) ul.setOrdinate(i, upperLeft[i]);
         final Dimension gridSize = new Dimension(gridWidth, gridHeight);
-        return TileMatrices.toTilingScheme(ul, gridSize, scale, new Dimension(tileWidth, tileHeight));
+        return TileMatrices.toTilingScheme(ul, gridSize, scale, new int[]{tileWidth, tileHeight});
     }
 
     @Override
-    public Dimension getTileSize() {
-        return new Dimension(tileWidth, tileHeight);
+    public int[] getTileSize() {
+        return new int[]{tileWidth, tileHeight};
     }
 
     @Override

@@ -25,8 +25,8 @@ import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.multires.AbstractTileMatrix;
 import org.apache.sis.storage.tiling.Tile;
+import org.apache.sis.storage.tiling.TileMatrixSet;
 import org.geotoolkit.storage.multires.TileMatrices;
-import org.geotoolkit.storage.multires.TileMatrixSet;
 import org.opengis.geometry.DirectPosition;
 
 /**
@@ -41,7 +41,7 @@ public class TMSTileMatrix extends AbstractTileMatrix {
     private Tile anyTile = null;
 
     public TMSTileMatrix(TMSTileMatrixSets set, TileMatrixSet pyramid, DirectPosition upperLeft, Dimension gridSize,
-            Dimension tileSize, double scale, int scaleLevel) {
+            int[] tileSize, double scale, int scaleLevel) {
         super(null, pyramid,upperLeft,gridSize,tileSize,scale);
         this.scaleLevel = scaleLevel;
         this.set = set;

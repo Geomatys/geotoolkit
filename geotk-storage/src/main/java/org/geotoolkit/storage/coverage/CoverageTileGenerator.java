@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.storage.coverage;
 
-import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
@@ -51,7 +50,11 @@ import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.NoSuchDataException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.tiling.Tile;
+import org.apache.sis.storage.tiling.TileMatrix;
+import org.apache.sis.storage.tiling.TileMatrixSet;
 import org.apache.sis.storage.tiling.TileStatus;
+import org.apache.sis.storage.tiling.WritableTileMatrix;
+import org.apache.sis.storage.tiling.WritableTileMatrixSet;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.image.BufferedImages;
@@ -65,10 +68,6 @@ import org.geotoolkit.storage.multires.AbstractTileGenerator;
 import org.geotoolkit.storage.multires.EmptyTile;
 import org.geotoolkit.storage.multires.TileInError;
 import org.geotoolkit.storage.multires.TileMatrices;
-import org.geotoolkit.storage.multires.TileMatrix;
-import org.geotoolkit.storage.multires.TileMatrixSet;
-import org.geotoolkit.storage.multires.WritableTileMatrix;
-import org.geotoolkit.storage.multires.WritableTileMatrixSet;
 import org.geotoolkit.util.StringUtilities;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -370,8 +369,8 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
 
                 if (!generateFromSource) {
                     //modify context
-                    Dimension tileSize = tileMatrix.getTileSize();
-                    final GridCoverageResource r = new TileMatrixCoverageResource(tileMatrix, new long[]{tileSize.width, tileSize.height}, resourceCenter.getSampleDimensions());
+                    int[] tileSize = ((org.geotoolkit.storage.multires.TileMatrix)tileMatrix).getTileSize();
+                    final GridCoverageResource r = new TileMatrixCoverageResource(tileMatrix, tileSize, resourceCenter.getSampleDimensions());
 
                     if (alwaysGenerateUsingLowerLevel) {
                         resourceCenter = r;
@@ -412,12 +411,12 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
     }
 
     private Tile generateTile(TileMatrixSet pyramid, TileMatrix matrix, long[] tileCoord, GridCoverageResource resource) throws DataStoreException {
-        final Dimension tileSize = matrix.getTileSize();
+        final int[] tileSize = ((org.geotoolkit.storage.multires.TileMatrix)matrix).getTileSize();
         final CoordinateReferenceSystem crs = pyramid.getCoordinateReferenceSystem();
         final LinearTransform gridToCrsNd = TileMatrices.getTileGridToCRS(matrix, tileCoord, PixelInCell.CELL_CENTER);
         final long[] high = new long[crs.getCoordinateSystem().getDimension()];
-        high[0] = tileSize.width-1; //inclusive
-        high[1] = tileSize.height-1; //inclusive
+        high[0] = tileSize[0]-1; //inclusive
+        high[1] = tileSize[1]-1; //inclusive
         final GridExtent extent = new GridExtent(null, null, high, true);
         final GridGeometry gridGeomNd = new GridGeometry(extent, PixelInCell.CELL_CENTER, gridToCrsNd, crs);
 
@@ -467,13 +466,13 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
         return StringUtilities.toStringTree(this.getClass().getSimpleName(), elements);
     }
 
-    private Tile replaceIfEmpty(TileMatrix matrix, final Tile source, Dimension tileSize) {
+    private Tile replaceIfEmpty(TileMatrix matrix, final Tile source, int[] tileSize) {
         if (source instanceof EmptyTile) {
             try {
                 Object result = baseRendering.get(5, TimeUnit.MINUTES);
                 if (result instanceof RenderedImage) {
                     final RenderedImage base = (RenderedImage) result;
-                    final BufferedImage image = BufferedImages.createImage(base, tileSize.width, tileSize.height, null, null);
+                    final BufferedImage image = BufferedImages.createImage(base, (int) tileSize[0], (int) tileSize[1], null, null);
                     BufferedImages.setAll(image, fillValues == null ? empty : fillValues);
                     return new DefaultImageTile(matrix, image, source.getIndices());
                 } else {
@@ -486,7 +485,7 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
                 }
 
                 double[] arr = fillValues == null ? empty : fillValues;
-                final BufferedImage image = BufferedImages.createImage(tileSize.width, tileSize.height, arr.length, DataBuffer.TYPE_DOUBLE);
+                final BufferedImage image = BufferedImages.createImage((int) tileSize[0], (int) tileSize[1], arr.length, DataBuffer.TYPE_DOUBLE);
                 BufferedImages.setAll(image, fillValues == null ? empty : fillValues);
                 return new DefaultImageTile(matrix, image, source.getIndices());
             } catch (Exception e) {
