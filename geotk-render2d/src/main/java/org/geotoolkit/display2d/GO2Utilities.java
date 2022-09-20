@@ -308,7 +308,7 @@ public final class GO2Utilities {
         );
 
         final MathTransform gridToCRS = coverage.getGridGeometry()
-                .reduce(xAxis, xAxis + 1)
+                .selectDimensions(xAxis, xAxis + 1)
                 .getGridToCRS(PixelInCell.CELL_CORNER);
         if(gridToCRS instanceof AffineTransform){
             g2d.setComposite(GO2Utilities.ALPHA_COMPOSITE_1F);

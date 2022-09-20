@@ -148,7 +148,7 @@ public final class WMTSResource extends AbstractGridCoverageResource implements 
     void resetCache() {
         set = null;
         //send event
-        listeners.fire(new ModelEvent(this), StoreEvent.class);
+        listeners.fire(StoreEvent.class, new ModelEvent(this));
     }
 
 }

@@ -711,7 +711,7 @@ public final class TileMatrices extends Static {
         final CoordinateReferenceSystem crs = tileGridGeometry.getCoordinateReferenceSystem();
         if (crs.getCoordinateSystem().getDimension() > 2) {
             final int idx = CRSUtilities.firstHorizontalAxis(tileGridGeometry.getCoordinateReferenceSystem());
-            tileGridGeometry = tileGridGeometry.reduce(idx, idx+1);
+            tileGridGeometry = tileGridGeometry.selectDimensions(idx, idx+1);
         }
         return tileGridGeometry;
     }

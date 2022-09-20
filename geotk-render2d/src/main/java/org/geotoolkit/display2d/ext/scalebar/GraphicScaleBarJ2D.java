@@ -32,6 +32,7 @@ import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.ext.PositionedGraphic2D;
 import org.opengis.geometry.Envelope;
+import org.opengis.referencing.datum.PixelInCell;
 
 /**
  * Java2D graphic object displaying a scalebar.
@@ -79,7 +80,7 @@ public class GraphicScaleBarJ2D extends PositionedGraphic2D{
 
         final Graphics2D g2d = context.getGraphics();
 
-        final double[] center = context.getGridGeometry2D().getExtent().getPointOfInterest();
+        final double[] center = context.getGridGeometry2D().getExtent().getPointOfInterest(PixelInCell.CELL_CENTER);
         context.getDisplayToObjective().transform(center, 0, center, 0, 1);
         final Point2D centerPoint = new Point2D.Double(center[0], center[1]);
 

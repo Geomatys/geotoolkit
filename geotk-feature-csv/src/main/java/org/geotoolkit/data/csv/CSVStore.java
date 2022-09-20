@@ -323,7 +323,7 @@ public class CSVStore extends DataStore implements WritableFeatureSet, ResourceO
      * @todo should specify the event type.
      */
     protected void sendEvent(final StoreEvent event) {
-        listeners.fire(event, StoreEvent.class);
+        listeners.fire(StoreEvent.class, event);
     }
 
     @Override
