@@ -52,6 +52,8 @@ import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.StorageConnector;
 import org.apache.sis.storage.tiling.Tile;
 import org.apache.sis.storage.tiling.TileStatus;
+import org.apache.sis.storage.tiling.WritableTileMatrix;
+import org.apache.sis.storage.tiling.WritableTileMatrixSet;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.image.io.XImageIO;
@@ -64,8 +66,6 @@ import org.geotoolkit.storage.coverage.WritableBandedCoverageResource;
 import org.geotoolkit.storage.multires.AbstractTileMatrix;
 import org.geotoolkit.storage.multires.ImageTileMatrix;
 import org.geotoolkit.storage.multires.TileMatrices;
-import org.geotoolkit.storage.multires.WritableTileMatrix;
-import org.geotoolkit.storage.multires.WritableTileMatrixSet;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.util.GenericName;
 
@@ -84,7 +84,7 @@ public class URITileMatrix extends AbstractTileMatrix implements WritableTileMat
     private Boolean isOnFileSystem = null;
 
     public URITileMatrix(WritableTileMatrixSet parent, URI folder, ClientSecurity security, URITileFormat format, GenericName id,
-            DirectPosition upperLeft, Dimension gridSize, Dimension tileSize, double scale) {
+            DirectPosition upperLeft, Dimension gridSize, int[] tileSize, double scale) {
         super(id, parent, upperLeft, gridSize, tileSize, scale);
         ArgumentChecks.ensureNonNull("folder", folder);
         ArgumentChecks.ensureNonNull("format", format);

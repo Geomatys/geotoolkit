@@ -17,7 +17,6 @@
 package org.geotoolkit.display2d;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -51,6 +50,9 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.NoSuchDataException;
 import org.apache.sis.storage.tiling.Tile;
+import org.apache.sis.storage.tiling.WritableTileMatrix;
+import org.apache.sis.storage.tiling.WritableTileMatrixSet;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.ext.dynamicrange.DynamicRangeSymbolizer;
 import org.geotoolkit.display2d.service.CanvasDef;
@@ -67,8 +69,7 @@ import org.geotoolkit.storage.memory.InMemoryTiledGridCoverageResource;
 import org.geotoolkit.storage.multires.AbstractTileGenerator;
 import org.geotoolkit.storage.multires.DefaultTileMatrixSet;
 import org.geotoolkit.storage.multires.TileMatrices;
-import org.geotoolkit.storage.multires.WritableTileMatrix;
-import org.geotoolkit.storage.multires.WritableTileMatrixSet;
+import org.geotoolkit.storage.multires.TileMatrix;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.filter.Expression;
 import org.opengis.geometry.Envelope;
@@ -144,9 +145,9 @@ public class MapContextTileGenerator extends AbstractTileGenerator {
     @Override
     public Tile generateTile(WritableTileMatrixSet pyramid, WritableTileMatrix matrix, long[] tileCoord) throws DataStoreException {
         final LinearTransform tileGridToCrs = TileMatrices.getTileGridToCRS(matrix, tileCoord, PixelInCell.CELL_CENTER);
-        final Dimension tileSize = matrix.getTileSize();
+        final int[] tileSize = ((TileMatrix) matrix).getTileSize();
         final GridGeometry gridGeom = new GridGeometry(
-                new GridExtent(tileSize.width, tileSize.height),
+                new GridExtent(null, null, ArraysExt.copyAsLongs(tileSize), false),
                 PixelInCell.CELL_CENTER,
                 tileGridToCrs, matrix.getTilingScheme().getCoordinateReferenceSystem());
 
@@ -303,7 +304,7 @@ public class MapContextTileGenerator extends AbstractTileGenerator {
                     Stream<Tile> stream = LongStream.range(rect.y, rect.y+rect.height).parallel().boxed().flatMap((Long y) -> {
                         try {
                             final ProgressiveImage img = new ProgressiveImage(canvasDef, sceneDef,
-                                    tileMatrix.getTilingScheme(), tileMatrix.getTileSize(), 0);
+                                    tileMatrix.getTilingScheme(), TileMatrices.getTileSize(tileMatrix), 0);
                             return img.generate(rect.x, rect.x+rect.width, y.intValue(), skipEmptyTiles);
                         } catch (Exception ex) {
                             LOGGER.log(Level.INFO, "Failed to generate a tile {0}", ex.getMessage());

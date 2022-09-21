@@ -22,11 +22,11 @@ import java.util.Collections;
 import java.util.List;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CRS;
+import org.apache.sis.storage.tiling.TileMatrix;
+import org.apache.sis.storage.tiling.TileMatrixSet;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.storage.multires.TileMatrices;
-import org.geotoolkit.storage.multires.TileMatrix;
-import org.geotoolkit.storage.multires.TileMatrixSet;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
@@ -94,9 +94,9 @@ public final class StrictlyCoverageFinder extends CoverageFinder {
                 result = candidate;
             }
             //check if it will not requiere too much tiles
-            final Dimension tileSize = candidate.getTileSize();
-            double nbtileX = env.getSpan(0) / (tileSize.width*scale);
-            double nbtileY = env.getSpan(1) / (tileSize.height*scale);
+            final int[] tileSize = TileMatrices.getTileSize(candidate);
+            double nbtileX = env.getSpan(0) / (tileSize[0]*scale);
+            double nbtileY = env.getSpan(1) / (tileSize[1]*scale);
 
             //if the envelope has some NaN, we presume it's a square
             if(Double.isNaN(nbtileX) || Double.isInfinite(nbtileX)){

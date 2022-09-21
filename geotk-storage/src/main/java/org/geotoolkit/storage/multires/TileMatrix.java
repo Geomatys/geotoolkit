@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.storage.multires;
 
-import java.awt.Dimension;
 import java.util.Objects;
 import java.util.stream.Stream;
 import org.apache.sis.coverage.grid.GridExtent;
@@ -57,9 +56,9 @@ public interface TileMatrix extends org.apache.sis.storage.tiling.TileMatrix {
      */
     default double[] getResolution() {
         double[] resolution = getTilingScheme().getResolution(true);
-        Dimension tileSize = getTileSize();
-        resolution[0] /= tileSize.width;
-        resolution[1] /= tileSize.height;
+        int[] tileSize = getTileSize();
+        resolution[0] /= tileSize[0];
+        resolution[1] /= tileSize[1];
         return resolution;
     }
 
@@ -99,7 +98,7 @@ public interface TileMatrix extends org.apache.sis.storage.tiling.TileMatrix {
      * @return tile dimension in cell units.
      */
     @Deprecated
-    Dimension getTileSize();
+    int[] getTileSize();
 
     /**
      * Find a tile in the TileMatrix.

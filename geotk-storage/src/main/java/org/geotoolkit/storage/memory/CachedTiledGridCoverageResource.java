@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.storage.memory;
 
-import java.awt.Dimension;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -48,7 +47,11 @@ import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
 import org.apache.sis.storage.tiling.Tile;
+import org.apache.sis.storage.tiling.TileMatrix;
+import org.apache.sis.storage.tiling.TileMatrixSet;
 import org.apache.sis.storage.tiling.TileStatus;
+import org.apache.sis.storage.tiling.WritableTileMatrix;
+import org.apache.sis.storage.tiling.WritableTileMatrixSet;
 import org.apache.sis.util.collection.Cache;
 import org.geotoolkit.internal.Threads;
 import org.geotoolkit.storage.coverage.TileMatrixSetCoverageReader;
@@ -57,11 +60,7 @@ import org.geotoolkit.storage.event.StorageListener;
 import org.geotoolkit.storage.multires.AbstractTileMatrix;
 import org.geotoolkit.storage.multires.AbstractTileMatrixSet;
 import org.geotoolkit.storage.multires.ImageTileMatrix;
-import org.geotoolkit.storage.multires.TileMatrix;
-import org.geotoolkit.storage.multires.TileMatrixSet;
 import org.geotoolkit.storage.multires.TiledResource;
-import org.geotoolkit.storage.multires.WritableTileMatrix;
-import org.geotoolkit.storage.multires.WritableTileMatrixSet;
 import org.geotoolkit.storage.multires.WritableTiledResource;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -216,7 +215,7 @@ public class CachedTiledGridCoverageResource <T extends TiledResource & org.apac
      * {@inheritDoc }.
      */
     @Override
-    public WritableTileMatrixSet createTileMatrixSet(org.apache.sis.storage.tiling.TileMatrixSet template) throws DataStoreException {
+    public WritableTileMatrixSet createTileMatrixSet(TileMatrixSet template) throws DataStoreException {
         if (!(parent instanceof WritableTiledResource)) {
             throw new DataStoreException("Not writable");
         }
@@ -266,7 +265,7 @@ public class CachedTiledGridCoverageResource <T extends TiledResource & org.apac
 
         @Override
         public SortedMap<GenericName, ? extends WritableTileMatrix> getTileMatrices() {
-            final SortedMap<GenericName,? extends TileMatrix> parentMosaics = parent.getTileMatrices();
+            final SortedMap<GenericName,? extends org.apache.sis.storage.tiling.TileMatrix> parentMosaics = parent.getTileMatrices();
 
             //check cached mosaics, we need to do this until an event system is created
 
@@ -367,8 +366,8 @@ public class CachedTiledGridCoverageResource <T extends TiledResource & org.apac
         }
 
         @Override
-        public Dimension getTileSize() {
-            return parent.getTileSize();
+        public int[] getTileSize() {
+            return ((org.geotoolkit.storage.multires.TileMatrix) parent).getTileSize();
         }
 
         @Override
@@ -525,7 +524,7 @@ public class CachedTiledGridCoverageResource <T extends TiledResource & org.apac
                 CacheTile value = ite.next().getValue();
                 return value;
             }
-            return parent.anyTile();
+            return ((org.geotoolkit.storage.multires.TileMatrix) parent).anyTile();
         }
 
         @Override

@@ -28,6 +28,9 @@ import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.operation.matrix.Matrices;
+import org.apache.sis.referencing.operation.matrix.MatrixSIS;
+import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.iso.Names;
@@ -37,6 +40,7 @@ import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
+import org.opengis.metadata.spatial.DimensionNameType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
@@ -80,7 +84,7 @@ public final class TileMatrixSetBuilder {
         BOTTOM_TO_TOP
     }
 
-    private Dimension tileSize = new Dimension(256, 256);
+    private int[] tileSize = new int[]{256, 256};
     private GridGeometry gridGeometry = new GridGeometry(null, CRS.getDomainOfValidity(CommonCRS.WGS84.normalizedGeographic()), GridOrientation.HOMOTHETY);
     private boolean isSlice = true;
     private double scaleFactor = 2.0;
@@ -94,11 +98,12 @@ public final class TileMatrixSetBuilder {
      * @param tileSize not null
      * @return this
      */
-    public TileMatrixSetBuilder setTileSize(Dimension tileSize) {
+    public TileMatrixSetBuilder setTileSize(int[] tileSize) {
         ArgumentChecks.ensureNonNull("tileSize", tileSize);
-        ArgumentChecks.ensurePositive("tile width", tileSize.width);
-        ArgumentChecks.ensurePositive("tile height", tileSize.height);
-        this.tileSize = new Dimension(tileSize);
+        for (int i=0;i<tileSize.length;i++) {
+            ArgumentChecks.ensurePositive("tile size", tileSize[i]);
+        }
+        this.tileSize = tileSize.clone();
         return this;
     }
 
@@ -106,8 +111,8 @@ public final class TileMatrixSetBuilder {
      * Returns the tile size.
      * @return tile size, never null.
      */
-    public Dimension getTileSize() {
-        return new Dimension(tileSize);
+    public int[] getTileSize() {
+        return tileSize.clone();
     }
 
     /**
@@ -398,16 +403,16 @@ public final class TileMatrixSetBuilder {
     }
 
     private Entry<Double, Integer> buildTopToBottom(DefiningTileMatrixSet pyramid, DirectPosition upperLeft, double spanX, double spanY, double resolution) {
-        final double resX = spanX / tileSize.width;
-        final double resY = spanY / tileSize.height;
+        final double resX = spanX / tileSize[0];
+        final double resY = spanY / tileSize[1];
         double res = resX;
         if (resX < resY) {
             //compute number of tiles on Y
-            double nbY = (int) Math.ceil((spanY / resX) / tileSize.height);
+            double nbY = (int) Math.ceil((spanY / resX) / tileSize[1]);
             res = (nbY <= nbTileThreshold) ? resX : resY;
         } else if (resY < resX) {
             //compute number of tiles on X
-            double nbX = (int) Math.ceil((spanX / resY) / tileSize.width);
+            double nbX = (int) Math.ceil((spanX / resY) / tileSize[0]);
             res = (nbX <= nbTileThreshold) ? resY : resX;
         }
 
@@ -429,8 +434,8 @@ public final class TileMatrixSetBuilder {
     }
 
     private DefiningTileMatrix createTileMatrix(GenericName id, DirectPosition upperLeft, double resolution, double spanX, double spanY) {
-        final double nbX = (spanX / resolution) / tileSize.width;
-        final double nbY = (spanY / resolution) / tileSize.height;
+        final double nbX = (spanX / resolution) / tileSize[0];
+        final double nbY = (spanY / resolution) / tileSize[1];
         final Dimension gridSize = new Dimension(
                 (int) Math.ceil(nbX),
                 (int) Math.ceil(nbY)
@@ -450,4 +455,115 @@ public final class TileMatrixSetBuilder {
         }
         return size <= 2;
     }
+
+    /**
+     * Create a build working by subdivision of a top tilingScheme.
+     *
+     * @param env not null, transformed in a TilingScheme of a single tile.
+     * @return builder not null
+     */
+    public static TopBuilder fromTop(Envelope env) {
+        final GridExtent extent = new GridExtent(null, new long[env.getDimension()], new long[env.getDimension()], true);
+        final GridGeometry tilingScheme = new GridGeometry(extent, env, GridOrientation.HOMOTHETY);
+        return fromTop(tilingScheme);
+    }
+
+    /**
+     * Create a build working by subdivision of a top tilingScheme.
+     *
+     * @param tilingScheme, top level tiling scheme.
+     * @return builder not null
+     */
+    public static TopBuilder fromTop(GridGeometry tilingScheme) {
+        return new TopBuilder(tilingScheme);
+    }
+
+    public static class TopBuilder {
+
+        private final GridGeometry tilingScheme;
+        private int lod = 1;
+        private int[] axis;
+        private int[] tileSize = new int[]{256, 256};
+
+        private TopBuilder(GridGeometry tilingScheme) {
+            this.tilingScheme = tilingScheme;
+            axis = new int[tilingScheme.getCoordinateReferenceSystem().getCoordinateSystem().getDimension()];
+            for (int i = 0; i < axis.length; i++) {
+                axis[i] = i;
+            }
+        }
+
+        /**
+         * Set number of LOD to generate.
+         * @param lod must be at least one.
+         */
+        public TopBuilder subdivide(int lod) {
+            ArgumentChecks.ensureStrictlyPositive("lod", lod);
+            this.lod = lod;
+            return this;
+        }
+
+        /**s
+         * @return number of LOD to generate.
+         */
+        public int getSubdivision() {
+            return lod;
+        }
+
+        /**
+         * Define axis to subdivide.
+         * @param axis not null
+         */
+        public TopBuilder axis(int ... axis) {
+            this.axis = axis.clone();
+            return this;
+        }
+
+        /**
+         * Get axis which are subdivided.
+         */
+        public int[] getAxis() {
+            return axis.clone();
+        }
+
+        public DefiningTileMatrixSet build() {
+            final CoordinateReferenceSystem crs = tilingScheme.getCoordinateReferenceSystem();
+            final DefiningTileMatrixSet tms = new DefiningTileMatrixSet(crs);
+
+            final GridExtent extent = tilingScheme.getExtent();
+            final MathTransform gridToCRS = tilingScheme.getGridToCRS(PixelInCell.CELL_CORNER);
+            final int dimension = extent.getDimension();
+
+            final DimensionNameType[] axisNames = new DimensionNameType[dimension];
+            for (int k = 0; k < dimension; k++) {
+                axisNames[k] = extent.getAxisType(k).orElse(null);
+            }
+
+            for (int i = 0; i < lod; i++) {
+
+                final int subdivision = 1 << i; //same as Math.pow(2, i);
+                final MatrixSIS matrix = Matrices.createDiagonal(dimension+1, dimension+1);
+
+                final long[] high = new long[dimension];
+                for (int k = 0; k < dimension; k++) {
+                    high[k] = (extent.getHigh(k) + 1);
+                    if (Arrays.binarySearch(axis, k) >= 0) {
+                        high[k] *= subdivision;
+                        matrix.setElement(k, k, 1.0/subdivision);
+                    }
+                }
+                final GridExtent subExtent = new GridExtent(axisNames, extent.getLow().getCoordinateValues(), high, false);
+
+                final LinearTransform division = MathTransforms.linear(matrix);
+                final MathTransform subGridToCrs = MathTransforms.concatenate(division, gridToCRS);
+
+                final GridGeometry subTilingScheme = new GridGeometry(subExtent, PixelInCell.CELL_CORNER, subGridToCrs, crs);
+                tms.createTileMatrix(new DefiningTileMatrix(Names.createLocalName(null, null, Integer.toString(i)), subTilingScheme, tileSize));
+            }
+
+            return tms;
+        }
+
+    }
+
 }

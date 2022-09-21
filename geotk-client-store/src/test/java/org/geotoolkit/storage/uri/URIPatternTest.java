@@ -37,7 +37,7 @@ public class URIPatternTest {
     @Test
     public void testTileMatrixPattern() throws IOException {
 
-        final Dimension tileSize = new Dimension(10, 10);
+        final int[] tileSize = new int[]{10, 10};
         final DefiningTileMatrix mosaic = new DefiningTileMatrix(NamesExt.createRandomUUID(),
                 TileMatrices.toTilingScheme(new DirectPosition2D(CommonCRS.WGS84.normalizedGeographic()), new Dimension(64, 32), 1.0, tileSize), tileSize);
         final Path base = Files.createTempDirectory("pattern").resolve("tm");

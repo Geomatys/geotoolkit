@@ -81,13 +81,13 @@ final class ProgressiveImage {
      *
      * @param canvasDef : canvas size will be ignored
      */
-    public ProgressiveImage(final CanvasDef canvasDef, final SceneDef sceneDef, GridGeometry tilingScheme, final Dimension tileSize, int nbPainter) throws PortrayalException{
+    public ProgressiveImage(final CanvasDef canvasDef, final SceneDef sceneDef, GridGeometry tilingScheme, final int[] tileSize, int nbPainter) throws PortrayalException{
         this.tilingScheme = tilingScheme;
         final GridExtent extent = tilingScheme.getExtent();
         this.gridSize = new Dimension(Math.toIntExact(extent.getSize(0)), Math.toIntExact(extent.getSize(1)));
-        this.tileSize = tileSize;
+        this.tileSize = new Dimension((int) tileSize[0], (int) tileSize[1]);
         double[] resolution = tilingScheme.getResolution(true);
-        resolution[0] /= tileSize.width;
+        resolution[0] /= this.tileSize.width;
         this.scale = resolution[0];
 
         ColorModel cm = ColorModel.getRGBdefault();
@@ -105,7 +105,7 @@ final class ProgressiveImage {
                 envelope.getMaximum(1));
 
         //prepare a J2DCanvas to render several tiles in the same tile
-        int maxNbTile = (1024*1024) / (tileSize.width*tileSize.height);
+        int maxNbTile = (1024*1024) / (this.tileSize.width*this.tileSize.height);
         maxNbTile = Math.max(1, maxNbTile);
 
         if (maxNbTile < gridSize.width) {
@@ -252,7 +252,7 @@ final class ProgressiveImage {
                     if (skipEmptyTiles && BufferedImages.isAll(tile, empty)) {
                         //empty tile
                     } else {
-                        final DefiningTileMatrix dtm = new DefiningTileMatrix(Names.createLocalName(null, null, "temp"), tilingScheme, tileSize);
+                        final DefiningTileMatrix dtm = new DefiningTileMatrix(Names.createLocalName(null, null, "temp"), tilingScheme, new int[]{tileSize.width, tileSize.height});
                         tiles.add(new DefaultImageTile(dtm, tile, col+x, row+y));
                     }
                 }

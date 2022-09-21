@@ -21,7 +21,9 @@ import java.util.Arrays;
 import java.util.UUID;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.tiling.TileStatus;
+import org.apache.sis.storage.tiling.TileMatrixSet;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.iso.Names;
 import org.opengis.geometry.DirectPosition;
@@ -38,17 +40,20 @@ public abstract class AbstractTileMatrix implements TileMatrix {
     private final GenericName id;
     private final TileMatrixSet pyramid;
     private final GridGeometry tilingScheme;
-    private final Dimension tileSize;
+    private final int[] tileSize;
 
     public AbstractTileMatrix(GenericName id, TileMatrixSet pyramid, DirectPosition upperLeft, Dimension gridSize,
-            Dimension tileSize, double scale) {
+            int[] tileSize, double scale) {
         this(id, pyramid, TileMatrices.toTilingScheme(upperLeft, gridSize, scale, tileSize), tileSize);
     }
 
-    public AbstractTileMatrix(GenericName id, TileMatrixSet pyramid, GridGeometry tilingScheme, Dimension tileSize) {
+    public AbstractTileMatrix(GenericName id, TileMatrixSet pyramid, GridGeometry tilingScheme, int[] tileSize) {
         this.pyramid = pyramid;
         this.tilingScheme = tilingScheme;
-        this.tileSize = (Dimension) tileSize.clone();
+        this.tileSize = tileSize.clone();
+        if (tileSize.length != tilingScheme.getExtent().getDimension()) {
+            throw new IllegalArgumentException("Tile size (" + tileSize.length + ") must match tiling scheme extent dimension (" + tilingScheme.getExtent().getDimension() + ")");
+        }
 
         if (id == null) {
             this.id = Names.createLocalName(null, null, UUID.randomUUID().toString());
@@ -81,15 +86,15 @@ public abstract class AbstractTileMatrix implements TileMatrix {
      * {@inheritDoc}
      */
     @Override
-    public Dimension getTileSize() {
-        return (Dimension) tileSize.clone(); //defensive copy
+    public int[] getTileSize() {
+        return tileSize.clone(); //defensive copy
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public TileStatus getTileStatus(long... indices) {
+    public TileStatus getTileStatus(long... indices) throws DataStoreException {
         return TileStatus.UNKNOWN;
     }
 
@@ -107,7 +112,7 @@ public abstract class AbstractTileMatrix implements TileMatrix {
         sb.append("   id = ").append(matrix.getIdentifier());
         sb.append("   resolution = ").append(Arrays.toString(matrix.getTilingScheme().getResolution(true)));
         sb.append("   gridSize = ").append(matrix.getTilingScheme().getExtent());
-        sb.append("   tileSize[").append(matrix.getTileSize().width).append(',').append(matrix.getTileSize().height).append(']');
+        sb.append("   tileSize = ").append(Arrays.toString(matrix.getTileSize()));
         sb.append("   bbox = ").append(new GeneralEnvelope(matrix.getTilingScheme().getEnvelope()).toString());
         return sb.toString();
     }

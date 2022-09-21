@@ -34,6 +34,9 @@ import org.apache.sis.measure.NumberRange;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.storage.tiling.WritableTileMatrix;
+import org.apache.sis.storage.tiling.WritableTileMatrixSet;
+import org.apache.sis.storage.tiling.WritableTiledResource;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.grid.GridGeometryIterator;
 import org.geotoolkit.image.BufferedImages;
@@ -42,9 +45,6 @@ import org.geotoolkit.storage.memory.InMemoryTiledGridCoverageResource;
 import org.geotoolkit.storage.multires.DefiningTileMatrix;
 import org.geotoolkit.storage.multires.DefiningTileMatrixSet;
 import org.geotoolkit.storage.multires.TileMatrices;
-import org.geotoolkit.storage.multires.WritableTileMatrix;
-import org.geotoolkit.storage.multires.WritableTileMatrixSet;
-import org.geotoolkit.storage.multires.WritableTiledResource;
 import org.geotoolkit.util.NamesExt;
 import org.junit.Assert;
 import org.junit.Test;
@@ -181,7 +181,7 @@ public class PyramidReaderTest extends org.geotoolkit.test.TestBase {
         final WritableTileMatrixSet pyramid = ((WritableTiledResource) ref).createTileMatrixSet(new DefiningTileMatrixSet(crs));
 
         final Dimension gridSize = new Dimension(4, 3);
-        final Dimension tilePixelSize = new Dimension(width, height);
+        final int[] tilePixelSize = new int[]{width, height,1,1};
 
         for(double[] slice : geovalues){
             final GeneralDirectPosition upperLeft = new GeneralDirectPosition(crs);
@@ -193,8 +193,8 @@ public class PyramidReaderTest extends org.geotoolkit.test.TestBase {
             final float sample = (float)slice[2];
             for(int x=0;x<gridSize.width;x++){
                 for(int y=0;y<gridSize.height;y++){
-                    BufferedImage image = createRenderedImage(tilePixelSize.width, tilePixelSize.height, sample, sample);
-                    mosaic.writeTiles(Stream.of(new DefaultImageTile(mosaic, image, x, y)));
+                    BufferedImage image = createRenderedImage((int) tilePixelSize[0], (int) tilePixelSize[1], sample, sample);
+                    mosaic.writeTiles(Stream.of(new DefaultImageTile(mosaic, image, x, y, 0, 0)));
                 }
             }
         }

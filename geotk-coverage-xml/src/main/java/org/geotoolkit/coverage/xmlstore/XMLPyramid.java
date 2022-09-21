@@ -223,8 +223,8 @@ public class XMLPyramid implements WritableTileMatrixSet {
         mosaic.scale = template.getResolution()[0];
         mosaic.gridWidth = TileMatrices.getGridSize(template).width;
         mosaic.gridHeight = TileMatrices.getGridSize(template).height;
-        mosaic.tileWidth = template.getTileSize().width;
-        mosaic.tileHeight = template.getTileSize().height;
+        mosaic.tileWidth = (int) template.getTileSize()[0];
+        mosaic.tileHeight = (int) template.getTileSize()[1];
         mosaic.upperLeft = TileMatrices.getUpperLeftCorner(template).getCoordinate();
         //for backward compatibility
         mosaic.dataPixelWidth = mosaic.gridWidth * mosaic.tileWidth;

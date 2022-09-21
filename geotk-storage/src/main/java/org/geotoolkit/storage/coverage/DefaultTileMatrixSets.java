@@ -19,9 +19,9 @@ package org.geotoolkit.storage.coverage;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import org.apache.sis.storage.tiling.TileMatrixSet;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.util.StringUtilities;
-import org.geotoolkit.storage.multires.TileMatrixSet;
 
 /**
  * Default PyramidSet.
@@ -31,7 +31,7 @@ import org.geotoolkit.storage.multires.TileMatrixSet;
  */
 public class DefaultTileMatrixSets {
 
-    private final List<TileMatrixSet> tileMatrixSets = new ArrayList<TileMatrixSet>();
+    private final List<TileMatrixSet> tileMatrixSets = new ArrayList<>();
 
     public Collection<TileMatrixSet> getTileMatrixSets() {
         return tileMatrixSets;

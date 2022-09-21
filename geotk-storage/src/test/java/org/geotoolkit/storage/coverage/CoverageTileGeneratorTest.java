@@ -25,8 +25,6 @@ import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import javax.measure.Unit;
-import javax.measure.quantity.Length;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverage2D;
@@ -43,14 +41,14 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.tiling.Tile;
+import org.apache.sis.storage.tiling.TileMatrix;
+import org.apache.sis.storage.tiling.TileMatrixSet;
+import org.apache.sis.storage.tiling.WritableTileMatrixSet;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
 import org.geotoolkit.storage.memory.InMemoryTiledGridCoverageResource;
 import org.geotoolkit.storage.multires.TileMatrices;
-import org.geotoolkit.storage.multires.TileMatrix;
-import org.geotoolkit.storage.multires.TileMatrixSet;
-import org.geotoolkit.storage.multires.WritableTileMatrixSet;
 import org.junit.Assert;
 import org.junit.Test;
 import org.opengis.geometry.Envelope;
@@ -234,7 +232,7 @@ public class CoverageTileGeneratorTest {
                 for (int x = 0; x < gridSize.width; x++) {
                     final Tile tile = tileMatrix.getTile(x, y).orElse(null);
                     final long[] tileCoord = new long[]{x, y};
-                    final GridGeometry tileGridGeom = TileMatrices.getTileGridGeometry2D(tileMatrix, tileCoord);
+                    final GridGeometry tileGridGeom = TileMatrices.getTileGridGeometry2D(tileMatrix, tileCoord, TileMatrices.getTileSize(tileMatrix));
                     final Envelope tileEnv = tileGridGeom.getEnvelope();
                     if (generateEnvelope == null || generateEnvelope.intersects(tileEnv)) {
                         GridCoverageResource gcr = (GridCoverageResource) tile.getResource();

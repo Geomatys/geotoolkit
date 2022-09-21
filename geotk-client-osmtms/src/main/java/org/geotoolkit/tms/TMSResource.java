@@ -27,9 +27,9 @@ import org.apache.sis.storage.AbstractGridCoverageResource;
 import org.apache.sis.internal.storage.StoreResource;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.tiling.TileMatrixSet;
+import org.apache.sis.storage.tiling.TiledResource;
 import org.geotoolkit.storage.coverage.TileMatrixSetCoverageReader;
-import org.geotoolkit.storage.multires.TileMatrixSet;
-import org.geotoolkit.storage.multires.TiledResource;
 import org.geotoolkit.tms.model.TMSTileMatrixSets;
 import org.opengis.util.GenericName;
 

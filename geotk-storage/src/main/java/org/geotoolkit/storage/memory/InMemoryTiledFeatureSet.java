@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.storage.memory;
 
-import java.awt.Dimension;
 import java.awt.Point;
 import java.util.Collection;
 import java.util.Collections;
@@ -145,7 +144,7 @@ public class InMemoryTiledFeatureSet extends AbstractFeatureSet implements Writa
 
         private final Map<Point,InMemoryDeferredTile> mpTileReference = new HashMap<>();
 
-        public InMemoryTileMatrix(final GenericName id, WritableTileMatrixSet pyramid, GridGeometry tilingScheme, Dimension tileSize) {
+        public InMemoryTileMatrix(final GenericName id, WritableTileMatrixSet pyramid, GridGeometry tilingScheme, int[] tileSize) {
             super(id, pyramid, tilingScheme, tileSize);
         }
 

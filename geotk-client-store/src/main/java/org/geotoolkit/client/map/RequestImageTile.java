@@ -25,11 +25,11 @@ import javax.imageio.stream.ImageInputStream;
 import org.apache.sis.setup.OptionKey;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.StorageConnector;
+import org.apache.sis.storage.tiling.TileMatrix;
 import org.apache.sis.storage.tiling.TileStatus;
 import org.geotoolkit.client.Request;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.storage.coverage.DefaultImageTile;
-import org.geotoolkit.storage.multires.TileMatrix;
 
 /**
  *
