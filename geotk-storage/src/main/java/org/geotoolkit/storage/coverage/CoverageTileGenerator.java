@@ -33,6 +33,7 @@ import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.stream.Stream;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridClippingMode;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverageProcessor;
 import org.apache.sis.coverage.grid.GridExtent;
@@ -44,7 +45,6 @@ import org.apache.sis.image.Interpolation;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.NoSuchDataException;
@@ -412,20 +412,14 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
 
     private Tile generateTile(TileMatrixSet pyramid, TileMatrix matrix, long[] tileCoord, GridCoverageResource resource) throws DataStoreException {
         final int[] tileSize = ((org.geotoolkit.storage.multires.TileMatrix)matrix).getTileSize();
-        final CoordinateReferenceSystem crs = pyramid.getCoordinateReferenceSystem();
-        final LinearTransform gridToCrsNd = TileMatrices.getTileGridToCRS(matrix, tileCoord, PixelInCell.CELL_CENTER);
-        final long[] high = new long[crs.getCoordinateSystem().getDimension()];
-        high[0] = tileSize[0]-1; //inclusive
-        high[1] = tileSize[1]-1; //inclusive
-        final GridExtent extent = new GridExtent(null, null, high, true);
-        final GridGeometry gridGeomNd = new GridGeometry(extent, PixelInCell.CELL_CENTER, gridToCrsNd, crs);
+        final GridGeometry gridGeomNd = matrix.getTilingScheme().derive().subgrid(new GridExtent(null, tileCoord, tileCoord, true)).build().upsample(tileSize);
 
         GridCoverage coverage;
         try {
             //add a margin for resample operations
-            final int[] margins = new int[extent.getDimension()];
+            final int[] margins = new int[gridGeomNd.getDimension()];
             Arrays.fill(margins, 2);
-            coverage = resource.read(gridGeomNd.derive().margin(margins).build());
+            coverage = resource.read(gridGeomNd.derive().clipping(GridClippingMode.BORDER_EXPANSION).margin(margins).build());
         } catch (NoSuchDataException ex) {
             return replaceIfEmpty(matrix, TileInError.create(tileCoord, ex), tileSize);
         } catch (DataStoreException ex) {
@@ -450,7 +444,7 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
             return replaceIfEmpty(matrix, TileInError.create(tileCoord, ex), tileSize);
         }
 
-        RenderedImage image = coverage.render(null);
+        RenderedImage image = coverage.render(coverage.getGridGeometry().getExtent());
         return new DefaultImageTile(matrix, image, tileCoord);
     }
 
