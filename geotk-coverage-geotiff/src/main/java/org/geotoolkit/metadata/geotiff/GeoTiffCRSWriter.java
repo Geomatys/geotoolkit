@@ -49,13 +49,15 @@ import org.apache.sis.internal.referencing.provider.Mercator2SP;
 import org.apache.sis.internal.referencing.provider.PolarStereographicA;
 import org.apache.sis.internal.referencing.provider.PolarStereographicB;
 import org.apache.sis.internal.referencing.provider.TransverseMercator;
-import org.apache.sis.referencing.operation.transform.AbstractMathTransform;
 import org.apache.sis.internal.referencing.ReferencingUtilities;
 
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.apache.sis.metadata.iso.citation.Citations;
 import org.apache.sis.internal.referencing.provider.Orthographic;
 import org.apache.sis.internal.referencing.provider.ObliqueMercator;
+import org.apache.sis.internal.referencing.provider.PseudoSinusoidal;
+import org.apache.sis.internal.referencing.provider.Sinusoidal;
+import org.apache.sis.parameter.Parameterized;
 import org.geotoolkit.referencing.operation.provider.Stereographic;
 import org.geotoolkit.resources.Errors;
 
@@ -210,18 +212,17 @@ public final class GeoTiffCRSWriter {
 
         final MathTransform trs = projection.getMathTransform();
 
-        if(trs instanceof AbstractMathTransform){
-            final AbstractMathTransform mt = (AbstractMathTransform) projection.getMathTransform();
-            final ParameterValueGroup parameters = mt.getParameterValues();
+        if (trs instanceof Parameterized) {
+            final ParameterValueGroup parameters = ((Parameterized) trs).getParameterValues();
+            if (parameters != null) {
+                // key 3075 and parameters
+                fillCoordinateProjectionTransform(stack, parameters, name);
 
-            // key 3075 and parameters
-            fillCoordinateProjectionTransform(stack, parameters, name);
-        }else{
-            throw new IOException("Unsupported transform " + trs);
+                // parse linear unit
+                fillLinearUnit(stack, projectedCRS);
+            }
         }
-
-        // parse linear unit
-        fillLinearUnit(stack, projectedCRS);
+        throw new IOException("Unsupported transform " + trs);
     }
 
     /**
@@ -519,6 +520,28 @@ public final class GeoTiffCRSWriter {
         if (IdentifiedObjects.isHeuristicMatchForName(new Orthographic().getParameters(), desc)) {
             // key 3075
             stack.addShort(ProjCoordTransGeoKey, CT_Orthographic);
+            stack.addAscii(PCSCitationGeoKey, name);
+
+            // params
+            stack.addDouble(ProjCenterLongGeoKey,    value(parameters,Orthographic.LONGITUDE_OF_ORIGIN));
+            stack.addDouble(ProjCenterLatGeoKey,     value(parameters,Orthographic.LATITUDE_OF_ORIGIN));
+            stack.addDouble(ProjFalseEastingGeoKey,  value(parameters,Orthographic.FALSE_EASTING));
+            stack.addDouble(ProjFalseNorthingGeoKey, value(parameters,Orthographic.FALSE_NORTHING));
+            return;
+        }
+
+        // /////////////////////////////////////////////////////////////////////
+        // Sinusoidal
+        // /////////////////////////////////////////////////////////////////////
+        if (IdentifiedObjects.isHeuristicMatchForName(new Sinusoidal().getParameters(), desc) ||
+            IdentifiedObjects.isHeuristicMatchForName(new PseudoSinusoidal().getParameters(), desc))
+            /*
+             * TODO: accepting "Pseudo-sinusoidal" here is not correct.
+             *       Image will appear at the wrong location (offsetted).
+             */
+        {
+            // key 3075
+            stack.addShort(ProjCoordTransGeoKey, CT_Sinusoidal);
             stack.addAscii(PCSCitationGeoKey, name);
 
             // params
