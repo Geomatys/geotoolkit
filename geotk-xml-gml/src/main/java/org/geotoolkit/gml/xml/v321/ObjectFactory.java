@@ -515,7 +515,7 @@ public class ObjectFactory {
     private final static QName _BooleanList_QNAME = new QName("http://www.opengis.net/gml/3.2", "BooleanList");
     private final static QName _CoordOperation_QNAME = new QName("http://www.opengis.net/gml/3.2", "coordOperation");
     private final static QName _GridTypeLimits_QNAME = new QName("http://www.opengis.net/gml/3.2", "limits");
-    private final static QName _GridTypeAxisLabels_QNAME = new QName("http://www.opengis.net/gml/3.2", "axisLabels");
+    public final static QName _GridTypeAxisLabels_QNAME = new QName("http://www.opengis.net/gml/3.2", "axisLabels");
     private final static QName _GridTypeAxisName_QNAME = new QName("http://www.opengis.net/gml/3.2", "axisName");
 
     /**

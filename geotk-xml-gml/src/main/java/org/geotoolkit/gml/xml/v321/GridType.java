@@ -30,8 +30,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.apache.sis.coverage.grid.GridGeometry;
+import static org.geotoolkit.gml.xml.v321.ObjectFactory._GridTypeAxisLabels_QNAME;
 import org.opengis.coverage.grid.Grid;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.cs.CoordinateSystem;
 
 
 /**
@@ -84,8 +87,8 @@ public class GridType extends AbstractGeometryType {
     }
 
     public GridType(final Grid grid, final CoordinateReferenceSystem crs) {
-        final ObjectFactory factory = new ObjectFactory();
         if (grid != null) {
+            final ObjectFactory factory = new ObjectFactory();
             this.dimension = grid.getDimension();
             final GridEnvelopeType limits = new GridEnvelopeType(grid.getExtent());
             this.rest = new ArrayList<>();
@@ -96,6 +99,24 @@ public class GridType extends AbstractGeometryType {
                 final List<String> axisNames = new ArrayList<>();
                 for (int i = 0; i < crs.getCoordinateSystem().getDimension(); i++) {
                     axisNames.add(crs.getCoordinateSystem().getAxis(i).getAbbreviation());
+                }
+                this.rest.add(factory.createGridTypeAxisLabels(axisNames));
+            }
+        }
+    }
+
+    public GridType(final GridGeometry gg) {
+        if (gg != null) {
+            final ObjectFactory factory = new ObjectFactory();
+            this.dimension = gg.getDimension();
+            final GridEnvelopeType limits = new GridEnvelopeType(gg.getExtent());
+            this.rest = new ArrayList<>();
+            this.rest.add(factory.createGridTypeLimits(new GridLimitsType(limits)));
+            if (gg.isDefined(GridGeometry.CRS)) {
+                CoordinateSystem cs = gg.getCoordinateReferenceSystem().getCoordinateSystem();
+                final List<String> axisNames = new ArrayList<>();
+                for (int i = 0; i < cs.getDimension(); i++) {
+                    axisNames.add(cs.getAxis(i).getAbbreviation());
                 }
                 this.rest.add(factory.createGridTypeAxisLabels(axisNames));
             }
@@ -141,6 +162,16 @@ public class GridType extends AbstractGeometryType {
         return this.rest;
     }
 
+    public List<String> getGridAxisLabels() {
+        if (rest != null) {
+            for (JAXBElement<?> elem : rest) {
+                if (elem.getName().equals(_GridTypeAxisLabels_QNAME) && elem.getValue() instanceof List axisLabels) {
+                    return axisLabels;
+                }
+            }
+        }
+        return new ArrayList<>();
+    }
     /**
      * Gets the value of the dimension property.
      *
