@@ -88,7 +88,6 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
     private InterpolationCase interpolation = InterpolationCase.NEIGHBOR;
     private double[] fillValues;
     private boolean coverageIsHomogeneous = true;
-    private boolean skipExistingTiles = false;
     private boolean generateFromSource = false;
     private boolean alwaysGenerateUsingLowerLevel = false;
 
@@ -144,19 +143,6 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
      */
     public void setCoverageIsHomogeneous(boolean coverageIsHomogeneous) {
         this.coverageIsHomogeneous = coverageIsHomogeneous;
-    }
-
-    public boolean isSkipExistingTiles() {
-        return skipExistingTiles;
-    }
-
-    /**
-     * Indicate if existing tiles should be regenerated.
-     *
-     * @param skipExistingTiles
-     */
-    public void setSkipExistingTiles(boolean skipExistingTiles) {
-        this.skipExistingTiles = skipExistingTiles;
     }
 
     /**
