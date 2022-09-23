@@ -55,7 +55,6 @@ import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.apache.sis.metadata.iso.citation.Citations;
 import org.apache.sis.internal.referencing.provider.Orthographic;
 import org.apache.sis.internal.referencing.provider.ObliqueMercator;
-import org.apache.sis.internal.referencing.provider.PseudoSinusoidal;
 import org.apache.sis.internal.referencing.provider.Sinusoidal;
 import org.apache.sis.parameter.Parameterized;
 import org.geotoolkit.referencing.operation.provider.Stereographic;
@@ -533,13 +532,7 @@ public final class GeoTiffCRSWriter {
         // /////////////////////////////////////////////////////////////////////
         // Sinusoidal
         // /////////////////////////////////////////////////////////////////////
-        if (IdentifiedObjects.isHeuristicMatchForName(new Sinusoidal().getParameters(), desc) ||
-            IdentifiedObjects.isHeuristicMatchForName(new PseudoSinusoidal().getParameters(), desc))
-            /*
-             * TODO: accepting "Pseudo-sinusoidal" here is not correct.
-             *       Image will appear at the wrong location (offsetted).
-             */
-        {
+        if (IdentifiedObjects.isHeuristicMatchForName(new Sinusoidal().getParameters(), desc)) {
             // key 3075
             stack.addShort(ProjCoordTransGeoKey, CT_Sinusoidal);
             stack.addAscii(PCSCitationGeoKey, name);
