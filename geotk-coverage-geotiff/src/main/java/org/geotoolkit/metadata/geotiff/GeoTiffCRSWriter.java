@@ -219,6 +219,7 @@ public final class GeoTiffCRSWriter {
 
                 // parse linear unit
                 fillLinearUnit(stack, projectedCRS);
+                return;
             }
         }
         throw new IOException("Unsupported transform " + trs);
