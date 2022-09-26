@@ -545,10 +545,9 @@ public final class GeoTiffCRSWriter {
             stack.addAscii(PCSCitationGeoKey, name);
 
             // params
-            stack.addDouble(ProjCenterLongGeoKey,    value(parameters,Orthographic.LONGITUDE_OF_ORIGIN));
-            stack.addDouble(ProjCenterLatGeoKey,     value(parameters,Orthographic.LATITUDE_OF_ORIGIN));
-            stack.addDouble(ProjFalseEastingGeoKey,  value(parameters,Orthographic.FALSE_EASTING));
-            stack.addDouble(ProjFalseNorthingGeoKey, value(parameters,Orthographic.FALSE_NORTHING));
+            stack.addDouble(ProjCenterLongGeoKey,    value(parameters,Sinusoidal.CENTRAL_MERIDIAN));
+            stack.addDouble(ProjFalseEastingGeoKey,  value(parameters,Sinusoidal.FALSE_EASTING));
+            stack.addDouble(ProjFalseNorthingGeoKey, value(parameters,Sinusoidal.FALSE_NORTHING));
             return;
         }
 
