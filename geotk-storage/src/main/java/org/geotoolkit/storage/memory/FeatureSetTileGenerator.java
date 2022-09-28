@@ -19,30 +19,33 @@ package org.geotoolkit.storage.memory;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Stream;
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.filter.DefaultFilterFactory;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureQuery;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.Resource;
-import org.geotoolkit.feature.FeatureExt;
-import org.geotoolkit.filter.FilterFactory2;
-import org.geotoolkit.filter.FilterUtilities;
-import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.storage.feature.FeatureStoreUtilities;
-import org.geotoolkit.storage.feature.query.Query;
-import org.geotoolkit.storage.multires.AbstractTileGenerator;
 import org.apache.sis.storage.tiling.Tile;
 import org.apache.sis.storage.tiling.WritableTileMatrix;
 import org.apache.sis.storage.tiling.WritableTileMatrixSet;
+import org.geotoolkit.feature.FeatureExt;
+import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.geometry.jts.coordinatesequence.GridAlignedFilter;
+import org.geotoolkit.storage.feature.FeatureStoreUtilities;
+import org.geotoolkit.storage.feature.query.Query;
+import org.geotoolkit.storage.multires.AbstractTileGenerator;
 import org.geotoolkit.storage.multires.TileMatrices;
 import org.geotoolkit.util.StringUtilities;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Polygon;
-import org.locationtech.jts.simplify.TopologyPreservingSimplifier;
 import org.opengis.feature.Feature;
 import org.opengis.filter.Filter;
+import org.opengis.filter.FilterFactory;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
@@ -62,7 +65,7 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class FeatureSetTileGenerator extends AbstractTileGenerator {
 
-    private static final FilterFactory2 FF = FilterUtilities.FF;
+    private static final FilterFactory FF = DefaultFilterFactory.forFeatures();
     private final FeatureSet source;
     private final CoordinateReferenceSystem sourceCrs;
 
@@ -78,10 +81,40 @@ public class FeatureSetTileGenerator extends AbstractTileGenerator {
         return FeatureStoreUtilities.getCount(fs) == 0l;
     }
 
+    /**
+     * Create the function responsible for geometry simplifications.
+     * If the function returns a null, the feature will be discarded.
+     *
+     * @param tileGrid current tile being generated
+     * @return function to simplify geometries.
+     */
+    public Function<Geometry,Geometry> buildSimplifier(GridGeometry tileGrid) {
+        final double[] resolution = tileGrid.getResolution(true);
+        final Envelope tileEnv = tileGrid.getEnvelope();
+        final GridAlignedFilter geometryAligned = new GridAlignedFilter(tileEnv.getMinimum(0), tileEnv.getMinimum(1), resolution[0], resolution[1]);
+        geometryAligned.setCreateEmpty(false);
+        geometryAligned.setRemoveColinear(true);
+        geometryAligned.setRemoveSpikes(true);
+        return geometryAligned::alignAndSimplify;
+    }
+
+    /**
+     * Apply an operation on the tile FeatureSet after it has been simplified.
+     *
+     * @param tileGrid current tile being generated
+     * @param features tile FeatureSet
+     * @return modified tile FeatureSet
+     */
+    public FeatureSet postSimplify(GridGeometry tileGrid, FeatureSet features) throws DataStoreException {
+        return features;
+    }
+
     @Override
     public Tile generateTile(WritableTileMatrixSet tileMatrixSet, WritableTileMatrix tileMatrix, long[] tileCoord) throws DataStoreException {
 
-        final Envelope tileEnv = TileMatrices.computeTileEnvelope(tileMatrix, tileCoord);
+        final int[] tileSize = TileMatrices.getTileSize(tileMatrix);
+        final GridGeometry tileGrid = tileMatrix.getTilingScheme().derive().subgrid(new GridExtent(null, tileCoord, tileCoord, true)).build().upsample(tileSize);
+        final Envelope tileEnv = tileGrid.getEnvelope();
         final CoordinateReferenceSystem tileCrs = tileEnv.getCoordinateReferenceSystem();
         final Filter filter;
         try {
@@ -90,14 +123,14 @@ public class FeatureSetTileGenerator extends AbstractTileGenerator {
             throw new DataStoreException(ex.getMessage(), ex);
         }
 
+        final Function<Geometry, Geometry> simplifier = buildSimplifier(tileGrid);
+
         final Polygon tileBound = JTS.toGeometry(tileEnv);
 
         final FeatureQuery query = Query.reproject(source.getType(), tileCrs);
         query.setSelection(filter);
 
         final FeatureSet subset = source.subset(query);
-        final double scale = TileMatrices.getScale(tileMatrix);
-
         final List<Feature> features = new ArrayList<>();
 
         try (Stream<Feature> stream = subset.features(false)) {
@@ -116,20 +149,21 @@ public class FeatureSetTileGenerator extends AbstractTileGenerator {
                 geometry = geometry.intersection(tileBound);
 
                 //simplify
-                TopologyPreservingSimplifier simplifier = new TopologyPreservingSimplifier(geometry);
-                simplifier.setDistanceTolerance(scale);
-                geometry = simplifier.getResultGeometry();
+                geometry = simplifier.apply(geometry);
 
-                //reset user data and srid
-                geometry.setSRID(srid);
-                geometry.setUserData(userData);
+                if (geometry != null) {
+                    //reset user data and srid
+                    geometry.setSRID(srid);
+                    geometry.setUserData(userData);
 
-                feature.setPropertyValue(AttributeConvention.GEOMETRY, geometry);
-                features.add(feature);
+                    feature.setPropertyValue(AttributeConvention.GEOMETRY, geometry);
+                    features.add(feature);
+                }
             }
         }
 
-        final InMemoryFeatureSet fs = new InMemoryFeatureSet(subset.getType(), features);
+        FeatureSet fs = new InMemoryFeatureSet(subset.getType(), features);
+        fs = postSimplify(tileGrid, fs);
         return new InMemoryDeferredTile(tileCoord, fs);
     }
 
@@ -138,7 +172,7 @@ public class FeatureSetTileGenerator extends AbstractTileGenerator {
             //convert envelope to data crs, more efficient
             env = Envelopes.transform(env, sourceCrs);
         }
-        return FF.intersects(FF.property(AttributeConvention.GEOMETRY), FF.literal(env));
+        return FF.bbox(FF.property(AttributeConvention.GEOMETRY), env);
     }
 
     @Override

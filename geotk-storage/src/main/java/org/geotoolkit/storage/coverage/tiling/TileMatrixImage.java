@@ -24,7 +24,6 @@ import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
-import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.coverage.grid.GridCoverage;
@@ -45,7 +44,6 @@ import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.multires.TileInError;
-import org.geotoolkit.storage.multires.TileMatrices;
 
 /**
  * Implementation of RenderedImage over a TileMatrix composed of GriCoverages.

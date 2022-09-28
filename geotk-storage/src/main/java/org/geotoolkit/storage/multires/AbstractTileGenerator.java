@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 import java.util.function.LongFunction;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.LongStream;
@@ -33,8 +34,9 @@ import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.NoSuchDataException;
 import org.apache.sis.storage.tiling.Tile;
-import org.apache.sis.storage.tiling.WritableTileMatrixSet;
+import org.apache.sis.storage.tiling.TileStatus;
 import org.apache.sis.storage.tiling.WritableTileMatrix;
+import org.apache.sis.storage.tiling.WritableTileMatrixSet;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -90,12 +92,30 @@ public abstract class AbstractTileGenerator implements TileGenerator {
     };
 
     protected boolean skipEmptyTiles = false;
+    protected boolean skipExistingTiles = false;
 
     public AbstractTileGenerator() {
     }
 
     public void skipEmptyTiles(boolean b) {
         skipEmptyTiles = b;
+    }
+
+
+    /**
+     * Indicate if existing tiles should be regenerated.
+     *
+     * @param skipExistingTiles
+     */
+    public void setSkipExistingTiles(boolean skipExistingTiles) {
+        this.skipExistingTiles = skipExistingTiles;
+    }
+
+    /**
+     * @return true if existing tiles are skipped
+     */
+    public boolean isSkipExistingTiles() {
+        return skipExistingTiles;
     }
 
     @Override
@@ -111,7 +131,9 @@ public abstract class AbstractTileGenerator implements TileGenerator {
         }
 
         final long total = TileMatrices.countTiles(pyramid, env, resolutions);
+        final double totalAsDouble = total;
         final AtomicLong al = new AtomicLong();
+        final Supplier<Float> progress = () -> (float) (al.get() / totalAsDouble *100.0);
 
         //generate mosaic in resolution order
         //this order allows the pyramid to be used at high scales until she is not completed.
@@ -135,22 +157,35 @@ public abstract class AbstractTileGenerator implements TileGenerator {
                             public Tile apply(long value) {
                                 final long x = rect.getLow(0) + (value % rect.getSize(0));
                                 final long y = rect.getLow(1) + (value / rect.getSize(0));
+                                final long[] indices = new long[]{x, y};
 
                                 Tile data = null;
                                 try {
-                                    //do not regenerate existing tiles
-                                    //if (!mosaic.isMissing((int)x, (int)y)) return;
+                                    if (skipExistingTiles) {
+                                        try {
+                                            if (TileStatus.EXISTS.equals(tileMatrix.getTileStatus(indices))) {
+                                                //tile already exist
+                                                return null;
+                                            }
+                                        } catch (DataStoreException ex) {
+                                            //just log it, consider the tile do not exist
+                                            LOGGER.warning(ex.getMessage());
+                                            if (listener != null) {
+                                                long v = al.incrementAndGet();
+                                                listener.progressing(new ProcessEvent(DUMMY, v+"/"+total+" TileMatrix="+tileMatrix.getIdentifier(), progress.get(), ex));
+                                            }
+                                        }
+                                    }
 
-                                    final long[] coord = new long[]{x, y};
                                     try {
-                                        data = generateTile(pyramid, tileMatrix, coord);
+                                        data = generateTile(pyramid, tileMatrix, indices);
                                     } catch (Exception ex) {
-                                        data = TileInError.create(coord, null, ex);
+                                        data = TileInError.create(indices, null, ex);
                                     }
                                 } finally {
                                     long v = al.incrementAndGet();
                                     if (listener != null & (v % eventstep == 0))  {
-                                        listener.progressing(new ProcessEvent(DUMMY, v+"/"+total+" mosaic="+tileMatrix.getIdentifier(), (float) (( ((double)v)/((double)total) )*100.0)  ));
+                                        listener.progressing(new ProcessEvent(DUMMY, v+"/"+total+" TileMatrix="+tileMatrix.getIdentifier(), progress.get()));
                                     }
                                 }
                                 return data;
@@ -158,11 +193,11 @@ public abstract class AbstractTileGenerator implements TileGenerator {
                         })
                         .filter(this::emptyFilter);
 
-                streamWrite(stream, tileMatrix, listener == null ? null : err -> listener.progressing(new ProcessEvent(DUMMY, "Error while writing tile batch", (float) (( ((double)al.get())/((double)total) )*100.0))));
+                streamWrite(stream, tileMatrix, listener == null ? null : err -> listener.progressing(new ProcessEvent(DUMMY, "Error while writing tile batch", progress.get())));
 
                 long v = al.get();
                 if (listener != null) {
-                    listener.progressing(new ProcessEvent(DUMMY, v+"/"+total+" mosaic="+tileMatrix.getIdentifier(), (float) (( ((double)v)/((double)total) )*100.0)  ));
+                    listener.progressing(new ProcessEvent(DUMMY, v+"/"+total+" TileMatrix="+tileMatrix.getIdentifier(), progress.get()  ));
                 }
             }
         }
@@ -193,31 +228,6 @@ public abstract class AbstractTileGenerator implements TileGenerator {
             throw new BackingStoreException(ex.getMessage(), ex);
         }
     }
-
-//    private void Tile generateTile(Rectangle rect, long value) {
-//        final long x = rect.x + (value % rect.width);
-//        final long y = rect.y + (value / rect.width);
-//
-//        try {
-//            //do not regenerate existing tiles
-//            //if (!mosaic.isMissing((int)x, (int)y)) return;
-//
-//            final Point coord = new Point((int)x, (int)y);
-//            try {
-//                final Tile data = generateTile(pyramid, mosaic, coord);
-//                if (!skipEmptyTiles || (skipEmptyTiles && !isEmpty(data))) {
-//                    mosaic.writeTiles(Stream.of(data), null);
-//                }
-//            } catch (Exception ex) {
-//                ex.printStackTrace();
-//            }
-//        } finally {
-//            long v = al.incrementAndGet();
-//            if (listener != null & (v % eventstep == 0))  {
-//                listener.progressing(new ProcessEvent(DUMMY, v+"/"+total+" mosaic="+mosaic.getIdentifier()+" scale="+mosaic.getScale(), (float) (( ((double)v)/((double)total) )*100.0)  ));
-//            }
-//        }
-//    }
 
     protected abstract boolean isEmpty(Tile tile) throws DataStoreException;
 
