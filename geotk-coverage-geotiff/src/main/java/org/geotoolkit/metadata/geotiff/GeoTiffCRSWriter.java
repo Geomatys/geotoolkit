@@ -55,7 +55,6 @@ import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.apache.sis.metadata.iso.citation.Citations;
 import org.apache.sis.internal.referencing.provider.Orthographic;
 import org.apache.sis.internal.referencing.provider.ObliqueMercator;
-import org.apache.sis.internal.referencing.provider.PseudoSinusoidal;
 import org.apache.sis.internal.referencing.provider.Sinusoidal;
 import org.apache.sis.parameter.Parameterized;
 import org.geotoolkit.referencing.operation.provider.Stereographic;
@@ -220,6 +219,7 @@ public final class GeoTiffCRSWriter {
 
                 // parse linear unit
                 fillLinearUnit(stack, projectedCRS);
+                return;
             }
         }
         throw new IOException("Unsupported transform " + trs);
@@ -533,22 +533,15 @@ public final class GeoTiffCRSWriter {
         // /////////////////////////////////////////////////////////////////////
         // Sinusoidal
         // /////////////////////////////////////////////////////////////////////
-        if (IdentifiedObjects.isHeuristicMatchForName(new Sinusoidal().getParameters(), desc) ||
-            IdentifiedObjects.isHeuristicMatchForName(new PseudoSinusoidal().getParameters(), desc))
-            /*
-             * TODO: accepting "Pseudo-sinusoidal" here is not correct.
-             *       Image will appear at the wrong location (offsetted).
-             */
-        {
+        if (IdentifiedObjects.isHeuristicMatchForName(new Sinusoidal().getParameters(), desc)) {
             // key 3075
             stack.addShort(ProjCoordTransGeoKey, CT_Sinusoidal);
             stack.addAscii(PCSCitationGeoKey, name);
 
             // params
-            stack.addDouble(ProjCenterLongGeoKey,    value(parameters,Orthographic.LONGITUDE_OF_ORIGIN));
-            stack.addDouble(ProjCenterLatGeoKey,     value(parameters,Orthographic.LATITUDE_OF_ORIGIN));
-            stack.addDouble(ProjFalseEastingGeoKey,  value(parameters,Orthographic.FALSE_EASTING));
-            stack.addDouble(ProjFalseNorthingGeoKey, value(parameters,Orthographic.FALSE_NORTHING));
+            stack.addDouble(ProjCenterLongGeoKey,    value(parameters,Sinusoidal.CENTRAL_MERIDIAN));
+            stack.addDouble(ProjFalseEastingGeoKey,  value(parameters,Sinusoidal.FALSE_EASTING));
+            stack.addDouble(ProjFalseNorthingGeoKey, value(parameters,Sinusoidal.FALSE_NORTHING));
             return;
         }
 
