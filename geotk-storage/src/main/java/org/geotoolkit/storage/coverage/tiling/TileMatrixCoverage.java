@@ -22,6 +22,7 @@ import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import java.util.List;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridClippingMode;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
@@ -91,7 +92,12 @@ final class TileMatrixCoverage extends GridCoverage {
         final int[] xyAxes = readExtent.getSubspaceDimensions(2);
 
         //convert the requested extent to tile range.
-        final GridExtent absoluteTileExtent = readExtent.subsample(tileSize);
+        final GridGeometry tilingScheme = gridGeometry.derive().subgrid(null, tileSize).build();
+        final GridExtent absoluteTileExtent = tilingScheme.derive()
+                .clipping(GridClippingMode.STRICT)
+                .rounding(GridRoundingMode.ENCLOSING)
+                .subgrid(userGeometry).getIntersection();
+        //final GridExtent absoluteTileExtent = readExtent.subsample(tileSize);
         final GridExtent absolutedReadExtent = absoluteTileExtent.upsample(tileSize);
 
         //compute image model and image
