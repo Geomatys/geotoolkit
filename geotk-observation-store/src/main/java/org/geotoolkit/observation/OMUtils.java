@@ -53,13 +53,14 @@ import org.geotoolkit.sml.xml.AbstractProcess;
 import org.geotoolkit.sml.xml.AbstractSensorML;
 import org.geotoolkit.sos.MeasureStringBuilder;
 import org.geotoolkit.sos.xml.SOSXmlFactory;
+import static org.geotoolkit.sos.xml.SOSXmlFactory.buildDataArrayProperty;
+import static org.geotoolkit.sos.xml.SOSXmlFactory.buildSimpleDatarecord;
 import org.geotoolkit.swe.xml.AbstractDataComponent;
 import org.geotoolkit.swe.xml.AbstractDataRecord;
 import org.geotoolkit.swe.xml.AnyScalar;
 import org.geotoolkit.swe.xml.DataArrayProperty;
 import org.geotoolkit.swe.xml.Phenomenon;
 import org.geotoolkit.swe.xml.PhenomenonProperty;
-import org.geotoolkit.swe.xml.Quantity;
 import org.geotoolkit.swe.xml.TextBlock;
 import org.geotoolkit.swe.xml.UomProperty;
 import org.geotoolkit.swe.xml.v101.CompositePhenomenonType;
@@ -77,6 +78,8 @@ import org.opengis.observation.Process;
  * @author Guilhem Legal (Geomatys)
  */
 public class OMUtils {
+
+    public static final String EVENT_TIME = "eventTime";
 
     public static final String OM_NAMESPACE = "http://www.opengis.net/om/1.0";
     public static final QName OBSERVATION_QNAME = new QName(OM_NAMESPACE, "Observation", "om");
@@ -176,6 +179,15 @@ public class OMUtils {
             fields.add(phenomenon.getScalar(version));
         }
         return SOSXmlFactory.buildSimpleDatarecord(version, null, null, null, true, fields);
+    }
+
+    public static AnyScalar buildSimpleAnyScalar(String version, String uom, String name, String definition) {
+        UomProperty uomProp = null;
+        if (uom != null) {
+            uomProp = SOSXmlFactory.buildUomProperty(version, uom, null);
+        }
+        final AbstractDataComponent compo = SOSXmlFactory.buildQuantity(version, definition, uomProp, null);
+        return SOSXmlFactory.buildAnyScalar(version, null, name, compo);
     }
 
     public static Phenomenon getPhenomenon(final String version, final List<? extends Field> phenomenons) {
@@ -590,5 +602,19 @@ public class OMUtils {
             return feat.getId();
         }
         return null;
+    }
+
+    public static DataArrayProperty buildComplexResult(final String version, final Collection<AnyScalar> fields, final int nbValue,
+            final TextBlock encoding, final ResultBuilder values, final int cpt) {
+        final String arrayID     = "dataArray-" + cpt;
+        final String recordID    = "datarecord-" + cpt;
+        final AbstractDataRecord record = buildSimpleDatarecord(version, null, recordID, null, null, new ArrayList<>(fields));
+        String stringValues = null;
+        List<Object> dataValues = null;
+        if (values != null) {
+            stringValues = values.getStringValues();
+            dataValues   = values.getDataArray();
+        }
+        return buildDataArrayProperty(version, arrayID, nbValue, arrayID, record, encoding, stringValues, dataValues);
     }
 }
