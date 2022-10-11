@@ -22,18 +22,19 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
+import javax.measure.Quantity;
+import javax.measure.quantity.Length;
 import org.apache.sis.filter.DefaultFilterFactory;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.feature.Geometries;
+import org.apache.sis.measure.Quantities;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureQuery;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.filter.function.AbstractFunction;
-import org.geotoolkit.geometry.jts.JTSEnvelope2D;
-import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryCollection;
 import org.locationtech.jts.geom.MultiPolygon;
@@ -72,26 +73,8 @@ public class FeatureSetIntersectionFunction extends AbstractFunction {
         final List<Polygon> union = new ArrayList<>();
 
         if (resource instanceof FeatureSet fs) {
-
-            final Envelope geomEnv = geom.getEnvelopeInternal();
-            org.opengis.geometry.Envelope env = new JTSEnvelope2D(geomEnv, geomCrs);
-
             try {
-                //try to pre transform envelope, to avoid every geometry transformation
-                final FeatureType fsType = fs.getType();
-                CoordinateReferenceSystem fscrs = FeatureExt.getCRS(fsType);
-                if (fscrs != null) {
-                    env = Envelopes.transform(env, fscrs);
-                }
-            } catch (DataStoreException | TransformException ex) {
-                //do nothing
-            }
-
-            try {
-                final FeatureQuery query = new FeatureQuery();
-                query.setSelection(FF.bbox(FF.property(AttributeConvention.GEOMETRY), env));
-
-                final FeatureSet subset = fs.subset(query);
+                final FeatureSet subset = fs.subset(createQuery(geom, fs));
 
                 try (Stream<Feature> stream = subset.features(false)) {
                     final Iterator<Feature> iterator = stream.iterator();
@@ -152,4 +135,27 @@ public class FeatureSetIntersectionFunction extends AbstractFunction {
         return col;
     }
 
+    static FeatureQuery createQuery(Geometry geom, FeatureSet target) {
+        final FilterFactory ff = DefaultFilterFactory.forFeatures();
+
+        final double resolution = geom.getFactory().getPrecisionModel().getScale();
+        org.opengis.geometry.Envelope geomEnv = Geometries.wrap(geom).get().getEnvelope();
+        final CoordinateReferenceSystem geomCrs = geomEnv.getCoordinateReferenceSystem();
+
+        try {
+            //try to pre transform envelope, to avoid every geometry transformation
+            final FeatureType fsType = target.getType();
+            CoordinateReferenceSystem fscrs = FeatureExt.getCRS(fsType);
+            if (fscrs != null) {
+                geomEnv = Envelopes.transform(geomEnv, fscrs);
+            }
+        } catch (DataStoreException | TransformException ex) {
+            //do nothing
+        }
+
+        final FeatureQuery query = new FeatureQuery();
+        query.setLinearResolution((Quantity<Length>) Quantities.create(resolution, geomCrs.getCoordinateSystem().getAxis(0).getUnit()));
+        query.setSelection(ff.bbox(ff.property(AttributeConvention.GEOMETRY), geomEnv));
+        return query;
+    }
 }

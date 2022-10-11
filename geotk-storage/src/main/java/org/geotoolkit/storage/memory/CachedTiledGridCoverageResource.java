@@ -50,8 +50,10 @@ import org.apache.sis.storage.tiling.Tile;
 import org.apache.sis.storage.tiling.TileMatrix;
 import org.apache.sis.storage.tiling.TileMatrixSet;
 import org.apache.sis.storage.tiling.TileStatus;
+import org.apache.sis.storage.tiling.TiledResource;
 import org.apache.sis.storage.tiling.WritableTileMatrix;
 import org.apache.sis.storage.tiling.WritableTileMatrixSet;
+import org.apache.sis.storage.tiling.WritableTiledResource;
 import org.apache.sis.util.collection.Cache;
 import org.geotoolkit.internal.Threads;
 import org.geotoolkit.storage.coverage.TileMatrixSetCoverageReader;
@@ -60,8 +62,6 @@ import org.geotoolkit.storage.event.StorageListener;
 import org.geotoolkit.storage.multires.AbstractTileMatrix;
 import org.geotoolkit.storage.multires.AbstractTileMatrixSet;
 import org.geotoolkit.storage.multires.ImageTileMatrix;
-import org.geotoolkit.storage.multires.TiledResource;
-import org.geotoolkit.storage.multires.WritableTiledResource;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.GenericName;
@@ -433,70 +433,6 @@ public class CachedTiledGridCoverageResource <T extends TiledResource & org.apac
             }
             return value;
         }
-
-        /**
-         * Following is an experimental tile generation from available upper level tiles.
-         * Should be nice to reactive when coverage and mosaic API has moved to SIS.
-         */
-//        private void loadUpperTile(long col, long row) throws DataStoreException {
-//
-//            //find closest mosaic with a lower resolution
-//            CacheMosaic candidate = null;
-//            for (CacheMosaic m : (Collection<CacheMosaic>) pyramid.getMosaics()) {
-//                if (m.getScale() > parent.getScale()) {
-//                    if (candidate == null) {
-//                        candidate = m;
-//                    } else if (m.getScale() < candidate.getScale()) {
-//                        candidate = m;
-//                    }
-//                }
-//            }
-//
-//            if (candidate == null) return;
-//
-//            //compute wanted tile grid geometry
-//            final Point coord = new Point(Math.toIntExact(col), Math.toIntExact(row));
-//            final CoordinateReferenceSystem crs = pyramid.getCoordinateReferenceSystem();
-//            final List<SampleDimension> sds = getSampleDimensions();
-//            final GridGeometry tileGridGeometry = Pyramids.getTileGridGeometry2D(this, coord, crs);
-//
-//            //check parent tiles are available in the cache
-//            final Rectangle rectangle = Pyramids.getTilesInEnvelope(candidate, tileGridGeometry.getEnvelope());
-//            for (int x=0;x<rectangle.width;x++) {
-//                for (int y=0;y<rectangle.height;y++) {
-//                    if (!candidate.isInCache(rectangle.x+x, rectangle.y+y)) {
-//                        return;
-//                    }
-//                }
-//            }
-//
-//            //compute candidate mosaic
-//            final MosaicImage image = new MosaicImage(candidate, rectangle, sds);
-//            final GridGeometry aboveGridGeometry = Pyramids.getTileGridGeometry2D(candidate, rectangle, crs);
-//            final GridCoverage coverage = new GridCoverage2D(aboveGridGeometry, sds, image);
-//
-//            //resample tile
-//            CacheTile tile;
-//            try {
-//                BufferedImage img = BufferedImages.createImage(image, null, null, null, null);
-//                MosaicedCoverageResource.resample(coverage, image, InterpolationCase.NEIGHBOR, tileGridGeometry, img);
-//                tile = new CacheTile(img, coord, false);
-//            } catch (TransformException | FactoryException ex) {
-//                throw new DataStoreException(ex.getMessage(), ex);
-//            }
-//
-//            final String key = tileId(col, row);
-//            CacheTile value = null;
-//            final Cache.Handler<CacheTile> handler = tiles.lock(key);
-//            try {
-//                value = handler.peek();
-//                if (value == null) {
-//                    value = tile;
-//                }
-//            } finally {
-//                handler.putAndUnlock(value);
-//            }
-//        }
 
         @Override
         public long deleteTiles(GridExtent indicesRanges) throws DataStoreException {
