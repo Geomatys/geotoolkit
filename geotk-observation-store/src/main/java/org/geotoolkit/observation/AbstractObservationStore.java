@@ -265,7 +265,7 @@ public abstract class AbstractObservationStore extends DataStore implements Obse
         hints.put("resultModel", OBSERVATION_QNAME);
         currentFilter.init(OMEntity.OBSERVATION, hints);
         currentFilter.setProcedure(sensorIDs);
-        return currentFilter.getObservations(hints);
+        return currentFilter.getObservations();
     }
 
     /**

@@ -102,12 +102,12 @@ public interface ObservationFilterReader {
     /**
      * Execute the current query and return a list of observation result.
      */
-    List<ObservationResult> filterResult(Map<String, Object> hints) throws DataStoreException;
+    List<ObservationResult> filterResult() throws DataStoreException;
 
     /**
      * Execute the current query and return a list of entity identifiers.
      */
-    Set<String> getIdentifiers(Map<String, Object> hints) throws DataStoreException;
+    Set<String> getIdentifiers() throws DataStoreException;
 
     /**
      * Execute the current query and return the matching count.
@@ -136,58 +136,49 @@ public interface ObservationFilterReader {
      /**
      * Return a list of Observation matching the builded filter.
      *
-     * @param hints extraction hints like the O&M version for the xml object returned.
      * @return A list of Observation matching the builded filter.
      */
-    List<Observation> getObservations(final Map<String,Object> hints) throws DataStoreException;
+    List<Observation> getObservations() throws DataStoreException;
 
     /**
      *
-     * @param hints extraction hints like the O&M version for the xml object returned.
      */
-    List<SamplingFeature> getFeatureOfInterests(final Map<String,Object> hints) throws DataStoreException;
+    List<SamplingFeature> getFeatureOfInterests() throws DataStoreException;
 
     /**
      *
-     * @param hints extraction hints like the O&M version for the xml object returned.
      */
-    List<Phenomenon> getPhenomenons(final Map<String,Object> hints) throws DataStoreException;
+    List<Phenomenon> getPhenomenons() throws DataStoreException;
 
     /**
      *
-     * @param hints extraction hints like the O&M version for the xml object returned.
      */
-    List<Process> getProcesses(final Map<String,Object> hints) throws DataStoreException;
+    List<Process> getProcesses() throws DataStoreException;
 
     /**
      *
-     * @param hints extraction hints like the O&M version for the xml object returned.
      */
-    Map<String, Geometry> getSensorLocations(final Map<String,Object> hints) throws DataStoreException;
+    Map<String, Geometry> getSensorLocations() throws DataStoreException;
 
     /**
-     *
-     * @param hints extraction hints like the O&M version for the xml object returned.
      *
      * @return
      * @throws DataStoreException
      */
-    Map<String, Map<Date, Geometry>> getSensorHistoricalLocations(final Map<String,Object> hints) throws DataStoreException;
+    Map<String, Map<Date, Geometry>> getSensorHistoricalLocations() throws DataStoreException;
 
     /**
      *
-     * @param hints extraction hints like the O&M version for the xml object returned.
      */
-    Map<String, List<Date>> getSensorTimes(final Map<String,Object> hints) throws DataStoreException;
+    Map<String, List<Date>> getSensorTimes() throws DataStoreException;
 
     /**
      * Return direct observations results.
      * Object type depends on the response Mode, response formats, etc/
      *
-     * @param hints hints like decimation size, algorithm etc.
      * @return An encoded block of data in a string.
      */
-    Object getResults(final Map<String, Object> hints) throws DataStoreException;
+    Object getResults() throws DataStoreException;
 
     /**
      * MIME type of the data that will be returned as the result of a GetObservation request.
