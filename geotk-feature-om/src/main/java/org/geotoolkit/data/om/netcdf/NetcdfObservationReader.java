@@ -251,11 +251,6 @@ public class NetcdfObservationReader implements ObservationReader {
     }
 
     @Override
-    public String getInfos() {
-        return "NetCDF observation file Reader 4.x";
-    }
-
-    @Override
     public void destroy() {
         //do nothing
     }

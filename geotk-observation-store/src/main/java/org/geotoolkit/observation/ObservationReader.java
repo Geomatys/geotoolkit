@@ -235,12 +235,6 @@ public interface ObservationReader {
     Map<Date, AbstractGeometry> getSensorLocations(final String sensorID, final String version) throws DataStoreException;
 
     /**
-     * Return informations about the implementation class.
-     * @return informations.
-     */
-    String getInfos();
-
-    /**
      * free the resources and close the database connection if there is one.
      */
     void destroy();

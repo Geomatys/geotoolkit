@@ -335,11 +335,6 @@ public class XmlObservationReader implements ObservationReader {
     }
 
     @Override
-    public String getInfos() {
-        return "O&M xml file Reader 4.x";
-    }
-
-    @Override
     public void destroy() {
         // do nothing
     }

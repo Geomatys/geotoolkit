@@ -146,11 +146,6 @@ public interface ObservationWriter {
     void recordProcedureLocation(final String physicalID, final AbstractGeometry position) throws DataStoreException;
 
     /**
-     * Return informations about the implementation class.
-     */
-    String getInfos();
-
-    /**
      * Free all the resources and close dataSource connections.
      */
     void destroy();
