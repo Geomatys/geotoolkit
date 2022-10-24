@@ -1049,6 +1049,7 @@
     <module>geotk-coverage-vi3g</module>
     <module>geotk-observation-store</module>
     <module>geotk-metadata-store</module>
+    <module>geotk-hdf</module>
 
     <module>geotk-client-store</module>
     <module>geotk-client-csw</module>
