@@ -67,28 +67,28 @@ public interface ObservationStore {
      *
      * @return A list of sensor identifier.
      */
-    public abstract Set<GenericName> getProcedureNames() throws DataStoreException;
+    Set<GenericName> getProcedureNames() throws DataStoreException;
 
     /**
      * Return the complete list of sensor description.
      *
      * @return A list of sensor description.
      */
-    public abstract List<ProcedureTree> getProcedures() throws DataStoreException;
+    List<ProcedureTree> getProcedures() throws DataStoreException;
 
     /**
      * Return the complete list of phenomons identifiers.
      *
      * @return A list of sensor identifier.
      */
-    public abstract Set<String> getPhenomenonNames() throws DataStoreException;
+    Set<String> getPhenomenonNames() throws DataStoreException;
 
     /**
      * Return the Global time span of the observations data.
      *
      * @return A time period or instant.
      */
-    public abstract TemporalGeometricPrimitive getTemporalBounds() throws DataStoreException;
+    TemporalGeometricPrimitive getTemporalBounds() throws DataStoreException;
 
     /**
      * Extract All the procedures / observations / features of interest /
@@ -97,7 +97,7 @@ public interface ObservationStore {
      * @return
      * @throws DataStoreException
      */
-    public abstract ExtractionResult getResults() throws DataStoreException;
+    ExtractionResult getResults() throws DataStoreException;
 
     /**
      * Extract All the procedures / observations / features of interest /
@@ -106,7 +106,7 @@ public interface ObservationStore {
      *
      * @param sensorIds a filter on sensor identifiers or {@code null}.
      */
-    public abstract ExtractionResult getResults(final List<String> sensorIds) throws DataStoreException;
+    ExtractionResult getResults(final List<String> sensorIds) throws DataStoreException;
 
     /**
      * Extract All the procedures / observations / features of interest / phenoemenon / spatial informations in this store.
@@ -116,7 +116,7 @@ public interface ObservationStore {
      * @param affectedSensorID a assigned sensor identifier or {@code null}.
      * @param sensorIds a filter on sensor identifiers or {@code null}.
      */
-    public abstract ExtractionResult getResults(final String affectedSensorID, final List<String> sensorIds) throws DataStoreException;
+    ExtractionResult getResults(final String affectedSensorID, final List<String> sensorIds) throws DataStoreException;
 
     /**
      * Extract All the procedures / observations / features of interest /
@@ -132,7 +132,7 @@ public interface ObservationStore {
      * @param existingPhenomenons A set of existing phenomenons.
      * @param existingSamplingFeatures A set of existing sampling features.
      */
-    public abstract ExtractionResult getResults(final String affectedSensorID, final List<String> sensorIds, final Set<Phenomenon> existingPhenomenons, final Set<SamplingFeature> existingSamplingFeatures) throws DataStoreException;
+    ExtractionResult getResults(final String affectedSensorID, final List<String> sensorIds, final Set<Phenomenon> existingPhenomenons, final Set<SamplingFeature> existingSamplingFeatures) throws DataStoreException;
 
     /**
      * Return an Observation Reader on the data.
@@ -140,7 +140,7 @@ public interface ObservationStore {
      * @return An Observation Reader.
      * @throws org.apache.sis.storage.DataStoreException if the reader creation fails
      */
-    public abstract ObservationReader getReader() throws DataStoreException;
+    ObservationReader getReader() throws DataStoreException;
 
     /**
      * Return an Observation Filter on the data.
@@ -148,7 +148,7 @@ public interface ObservationStore {
      * @return An Observation Filter.
      * @throws org.apache.sis.storage.DataStoreException if the writer creation fails
      */
-    public abstract ObservationFilterReader getFilter() throws DataStoreException;
+    ObservationFilterReader getFilter() throws DataStoreException;
 
     /**
      * Return an Observation Writer on the data.
@@ -156,7 +156,9 @@ public interface ObservationStore {
      * @return An Observation Writer.
      * @throws org.apache.sis.storage.DataStoreException if the writer creation fails
      */
-    public abstract ObservationWriter getWriter() throws DataStoreException;
+    ObservationWriter getWriter() throws DataStoreException;
+
+    ObservationStoreCapabilities getCapabilities();
 
     void close() throws DataStoreException;
 

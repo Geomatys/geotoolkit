@@ -21,8 +21,11 @@ import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.Spliterator;
@@ -42,11 +45,15 @@ import org.geotoolkit.data.om.OMFeatureTypes;
 import static org.geotoolkit.data.om.netcdf.NetcdfObservationStoreFactory.FILE_PATH;
 import org.geotoolkit.storage.feature.GenericNameIndex;
 import org.geotoolkit.nio.IOUtilities;
+import static org.geotoolkit.observation.OMUtils.RESPONSE_FORMAT_V100;
+import static org.geotoolkit.observation.OMUtils.RESPONSE_FORMAT_V200;
 import org.geotoolkit.observation.ObservationFilterReader;
 import org.geotoolkit.observation.ObservationReader;
 import org.geotoolkit.observation.ObservationStore;
+import org.geotoolkit.observation.ObservationStoreCapabilities;
 import org.geotoolkit.observation.ObservationWriter;
 import org.geotoolkit.observation.model.ExtractionResult;
+import org.geotoolkit.sos.xml.ResponseModeType;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.Feature;
@@ -266,4 +273,12 @@ public class NetcdfObservationStore extends DataStore implements Aggregate, Reso
         }
     }
 
+    @Override
+    public ObservationStoreCapabilities getCapabilities() {
+        final Map<String, List<String>> responseFormats = new HashMap<>();
+        responseFormats.put("1.0.0", Arrays.asList(RESPONSE_FORMAT_V100));
+        responseFormats.put("2.0.0", Arrays.asList(RESPONSE_FORMAT_V200));
+        final List<String> responseMode = Arrays.asList(ResponseModeType.INLINE.value());
+        return new ObservationStoreCapabilities(false, false, false, new ArrayList<>(), responseFormats, responseMode, false);
+    }
 }

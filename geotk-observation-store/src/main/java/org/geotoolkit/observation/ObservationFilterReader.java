@@ -93,13 +93,6 @@ public interface ObservationFilterReader {
     void setResultFilter(final BinaryComparisonOperator filter) throws DataStoreException;
 
     /**
-     * Return the list of properties that can be applied on the result.
-     *
-     * @return  the list of properties that can be applied on the result.
-     */
-    List<String> supportedQueryableResultProperties();
-
-    /**
      * Execute the current query and return a list of observation result.
      */
     List<ObservationResult> filterResult() throws DataStoreException;
@@ -120,16 +113,6 @@ public interface ObservationFilterReader {
      * Refresh the index if it need it.
      */
     void refresh() throws DataStoreException;
-
-    /**
-     * Return true if each observation has a position.
-     */
-    boolean isBoundedObservation();
-
-    /**
-     * Return true if template are filled with a default period when there is no eventTime suplied.
-     */
-    boolean isDefaultTemplateTime();
 
     void destroy();
 
@@ -189,13 +172,6 @@ public interface ObservationFilterReader {
      * @param responseFormat the MIME type of the response.
      */
     void setResponseFormat(String responseFormat);
-
-    /**
-     * return true if the filter reader take in charge the calculation of the collection bounding shape.
-     *
-     * @return True if the filter compute itself the bounding shape of the collection.
-     */
-    boolean computeCollectionBound();
 
     /**
      * If the filter reader caompute itself the bounding shape of the obervation collection.
