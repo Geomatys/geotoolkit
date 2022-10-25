@@ -164,16 +164,6 @@ public interface ObservationFilterReader {
     Object getResults() throws DataStoreException;
 
     /**
-     * MIME type of the data that will be returned as the result of a GetObservation request.
-     * This is usually text/xml; subtype="om/1.0.0".
-     * In the case  that data is delivered out of band it might be text/xml;subtype="tml/2.0" for TML or some
-     * other MIME type.
-     *
-     * @param responseFormat the MIME type of the response.
-     */
-    void setResponseFormat(String responseFormat);
-
-    /**
      * If the filter reader caompute itself the bounding shape of the obervation collection.
      * this methode return the current shape.
      */
