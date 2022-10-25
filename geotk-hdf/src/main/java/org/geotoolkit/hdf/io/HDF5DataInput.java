@@ -153,8 +153,18 @@ public interface HDF5DataInput extends AutoCloseable {
      * @return result string
      */
     default String readNullTerminatedString(int padding, Charset charset) throws IOException {
+        return readNullTerminatedString(padding, Integer.MAX_VALUE, charset);
+    }
+
+    /**
+     * Read a null terminated string.
+     * @param padding string may be padded with multiple null, indicate padding here.
+     * @param maxSize maximum length of the String, will stop reading at this index even if a null has not been found.
+     * @return result string
+     */
+    default String readNullTerminatedString(int padding, int maxSize, Charset charset) throws IOException {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        for (;;) {
+        for (int i = 0; i < maxSize; i++) {
             byte b = readByte();
             if (b == 0) break;
             out.write(b);
