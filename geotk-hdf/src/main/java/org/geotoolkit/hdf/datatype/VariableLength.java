@@ -129,7 +129,7 @@ public final class VariableLength extends DataType {
 
                 switch (paddingType) {
                     case PADDING_NULL_TERMINATED:
-                        return channel.readNullTerminatedString(0, characterSet == 0 ? StandardCharsets.US_ASCII : StandardCharsets.UTF_8);
+                        return channel.readNullTerminatedString(0, (int) globalHeapObject.objectSize, characterSet == 0 ? StandardCharsets.US_ASCII : StandardCharsets.UTF_8);
                     case PADDING_NULL_PAD:
                         throw new IOException("Unsupported padding " + paddingType);
                     case PADDING_SPACE_PAD:
