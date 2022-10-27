@@ -74,6 +74,7 @@ import org.opengis.util.GenericName;
  */
 public final class Dataset extends AbstractResource implements Node {
 
+    private final Group parent;
     private final Connector connector;
     private final SymbolTableEntry entry;
 
@@ -93,8 +94,9 @@ public final class Dataset extends AbstractResource implements Node {
     private final int cellByteSize;
     private final long[] dimensionByteSize;
 
-    public Dataset(Connector connector, SymbolTableEntry entry, String name) throws IOException, DataStoreException {
+    public Dataset(Group parent, Connector connector, SymbolTableEntry entry, String name) throws IOException, DataStoreException {
         super(null, false);
+        this.parent = parent;
         this.connector = connector;
         this.entry = entry;
         this.name = name;
@@ -144,6 +146,11 @@ public final class Dataset extends AbstractResource implements Node {
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public Group getParent() {
+        return parent;
     }
 
     @Override

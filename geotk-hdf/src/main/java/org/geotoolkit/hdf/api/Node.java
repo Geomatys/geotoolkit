@@ -26,6 +26,8 @@ import org.apache.sis.storage.Resource;
  */
 public interface Node extends Resource {
 
+    Group getParent();
+
     String getName();
 
     Map<String,Object> getAttributes();

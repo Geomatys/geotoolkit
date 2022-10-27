@@ -53,6 +53,7 @@ import org.opengis.util.GenericName;
  */
 public final class DefaultGroup extends AbstractResource implements Group, Aggregate {
 
+    private final Group parent;
     private final Connector connector;
     private final SymbolTableEntry entry;
 
@@ -64,8 +65,9 @@ public final class DefaultGroup extends AbstractResource implements Group, Aggre
     //parsed values
     private final Map<String,Object> attributes = new HashMap<>();
 
-    public DefaultGroup(Connector connector, SymbolTableEntry entry, String name) throws IOException, DataStoreException {
+    public DefaultGroup(Group parent, Connector connector, SymbolTableEntry entry, String name) throws IOException, DataStoreException {
         super(null, false);
+        this.parent = parent;
         this.name = name;
         this.connector = connector;
         this.entry = entry;
@@ -91,6 +93,11 @@ public final class DefaultGroup extends AbstractResource implements Group, Aggre
                 }
             }
         }
+    }
+
+    @Override
+    public Group getParent() {
+        return parent;
     }
 
     @Override
@@ -124,9 +131,9 @@ public final class DefaultGroup extends AbstractResource implements Group, Aggre
             final String componentName = entry.getName(channel, localHeap).orElse("");
             final int cacheType = entry.getCacheType();
             if (cacheType == 0) {
-                components.add(new Dataset(connector, entry, componentName));
+                components.add(new Dataset(this, connector, entry, componentName));
             } else if (cacheType == 1) {
-                components.add(new DefaultGroup(connector, entry, componentName));
+                components.add(new DefaultGroup(this, connector, entry, componentName));
             } else if (cacheType == 2) {
                 throw new IOException("Not supported yet");
             } else {

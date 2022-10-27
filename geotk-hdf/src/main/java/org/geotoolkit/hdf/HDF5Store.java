@@ -46,7 +46,7 @@ public final class HDF5Store extends DataStore implements Group, Aggregate, Reso
 
     public HDF5Store(Path path) throws IllegalArgumentException, DataStoreException, IOException {
         cnx = new Connector(path);
-        root = new DefaultGroup(cnx, cnx.getSuperblock().rootGroupSymbolTableEntry, path.getFileName().toString());
+        root = new DefaultGroup(null, cnx, cnx.getSuperblock().rootGroupSymbolTableEntry, path.getFileName().toString());
     }
 
     @Override
@@ -69,6 +69,11 @@ public final class HDF5Store extends DataStore implements Group, Aggregate, Reso
     @Override
     public String getName() {
         return root.getName();
+    }
+
+    @Override
+    public Group getParent() {
+        return root.getParent();
     }
 
     @Override
