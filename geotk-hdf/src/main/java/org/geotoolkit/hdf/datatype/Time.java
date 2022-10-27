@@ -17,6 +17,7 @@
 package org.geotoolkit.hdf.datatype;
 
 import java.io.IOException;
+import java.nio.ByteOrder;
 import org.geotoolkit.hdf.io.HDF5DataInput;
 
 /**
@@ -29,7 +30,7 @@ public final class Time extends DataType {
      * Byte Order. If zero, byte order is little-endian; otherwise, byte
      * order is big endian.
      */
-    public final int byteOrder;
+    public final ByteOrder byteOrder;
     /**
      * The number of bits of precision of the time value.
      */
@@ -37,7 +38,7 @@ public final class Time extends DataType {
 
     public Time(int byteSize, int classBitFields, HDF5DataInput channel) throws IOException {
         super(byteSize);
-        byteOrder = classBitFields & 0b1;
+        byteOrder = (classBitFields & 0b1) == 0 ? ByteOrder.LITTLE_ENDIAN : ByteOrder.BIG_ENDIAN;
         bitPrecision = channel.readUnsignedShort();
     }
 

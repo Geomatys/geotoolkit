@@ -145,13 +145,18 @@ public final class FloatingPoint extends DataType {
 
     @Override
     public Object readData(HDF5DataInput input) throws IOException {
-        if (byteOrder == 0) {
-            //little endian
-        } else if (byteOrder == 1) {
-            //big endian
-            input.order(ByteOrder.BIG_ENDIAN);
-        } else {
-            throw new IOException("Unsupported endian " + byteOrder);
+        final ByteOrder previous = input.order();
+        switch (byteOrder) {
+            case 0:
+                //little endian
+                input.order(ByteOrder.LITTLE_ENDIAN);
+                break;
+            case 1:
+                //big endian
+                input.order(ByteOrder.BIG_ENDIAN);
+                break;
+            default:
+                throw new IOException("Unsupported endian " + byteOrder);
         }
 
         try {
@@ -164,14 +169,7 @@ public final class FloatingPoint extends DataType {
                     throw new IOException("Unsupported type " + knownType);
             }
         } finally {
-            if (byteOrder == 0) {
-                //little endian
-            } else if (byteOrder == 1) {
-                //big endian
-                input.order(ByteOrder.LITTLE_ENDIAN);
-            } else {
-                throw new IOException("Unsupported endian " + byteOrder);
-            }
+            input.order(previous);
         }
     }
 }

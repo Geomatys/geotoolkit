@@ -30,7 +30,7 @@ public final class BitField extends DataType {
      * Byte Order. If zero, byte order is little-endian; otherwise, byte order
      * is big endian.
      */
-    private int byteOrder;
+    private ByteOrder byteOrder;
     /**
      * Padding type. Bit 1 is the lo_pad type and bit 2 is the hi_pad type.
      * If a datum has unused bits at either end, then the lo_pad or hi_pad bit
@@ -50,7 +50,7 @@ public final class BitField extends DataType {
 
     public BitField(int byteSize, int classBitFields, HDF5DataInput channel) throws IOException {
         super(byteSize);
-        byteOrder = classBitFields & 0b1;
+        byteOrder = (classBitFields & 0b1) == 0 ? ByteOrder.LITTLE_ENDIAN : ByteOrder.BIG_ENDIAN;
         paddingType = (classBitFields & 0b110) >> 1;
 
         bitOffset = channel.readUnsignedShort();
@@ -64,15 +64,8 @@ public final class BitField extends DataType {
 
     @Override
     public Object readData(HDF5DataInput input) throws IOException {
-        if (byteOrder == 0) {
-            //little endian
-        } else if (byteOrder == 1) {
-            //big endian
-            input.order(ByteOrder.BIG_ENDIAN);
-        } else {
-            throw new IOException("Unsupported endian " + byteOrder);
-        }
-
+        final ByteOrder previous = input.order();
+        input.order(byteOrder);
         try {
             long position1 = input.getStreamPosition();
             input.readBits(bitOffset);
@@ -88,14 +81,7 @@ public final class BitField extends DataType {
 
             return value;
         } finally {
-            if (byteOrder == 0) {
-                //little endian
-            } else if (byteOrder == 1) {
-                //big endian
-                input.order(ByteOrder.LITTLE_ENDIAN);
-            } else {
-                throw new IOException("Unsupported endian " + byteOrder);
-            }
+            input.order(previous);
         }
 
 
