@@ -187,7 +187,7 @@ public final class Dataset extends AbstractResource implements Node {
         return filter;
     }
 
-    public Object read(GridExtent extent) throws IOException, DataStoreException {
+    public Object read(GridExtent extent, int ... compoundindexes) throws IOException, DataStoreException {
 
         //build read extent
         final int[] dimensionSizes = dataspace.getDimensionSizes();
@@ -296,9 +296,9 @@ public final class Dataset extends AbstractResource implements Node {
             //read datas
             if (dimensionSizes.length == 0) {
                 //scalar value
-                return datatype.readData(channel);
+                return datatype.readData(channel, compoundindexes);
             } else {
-                return readDatas(channel, extent);
+                return readDatas(channel, extent, compoundindexes);
             }
 
         } finally {
@@ -308,7 +308,7 @@ public final class Dataset extends AbstractResource implements Node {
         }
     }
 
-    private Object readDatas(HDF5DataInput channel, GridExtent extent) throws IOException {
+    private Object readDatas(HDF5DataInput channel, GridExtent extent, int ... compoundindexes) throws IOException {
         final long[] low = extent.getLow().getCoordinateValues();
         final long[] high = extent.getHigh().getCoordinateValues();
         final int[] dimensions = new int[low.length];
@@ -316,10 +316,10 @@ public final class Dataset extends AbstractResource implements Node {
             dimensions[i] = Math.toIntExact(high[i] - low[i] + 1);
         }
 
-        return readDatas(channel, low, high, dimensions, 0);
+        return readDatas(channel, low, high, dimensions, 0, compoundindexes);
     }
 
-    private Object readDatas(HDF5DataInput channel, final long[] low, final long[] high, final int[] dimensions, int dimIdx) throws IOException {
+    private Object readDatas(HDF5DataInput channel, final long[] low, final long[] high, final int[] dimensions, int dimIdx, int ... compoundindexes) throws IOException {
 
 //        channel.mark();
         final long basePosition = channel.getStreamPosition();
@@ -328,13 +328,13 @@ public final class Dataset extends AbstractResource implements Node {
         if (dimIdx == low.length - 1) {
             //a strip
             channel.seek(basePosition + (cellByteSize * low[dimIdx]));
-            values = datatype.readData(channel, dimensions[dimIdx]);
+            values = datatype.readData(channel, dimensions[dimIdx], compoundindexes);
         } else {
             //an array of strips
             values = java.lang.reflect.Array.newInstance(datatype.getValueClass(), dimensions[dimIdx], 0);
             for (int k = 0; k < dimensions[dimIdx]; k++) {
                 channel.seek(basePosition + (low[dimIdx] + k) * dimensionByteSize[dimIdx]);
-                final Object strip = readDatas(channel, low, high, dimensions, dimIdx+1);
+                final Object strip = readDatas(channel, low, high, dimensions, dimIdx+1, compoundindexes);
                 java.lang.reflect.Array.set(values, k, strip);
             }
         }

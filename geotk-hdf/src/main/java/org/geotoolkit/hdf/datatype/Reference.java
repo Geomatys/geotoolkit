@@ -36,7 +36,7 @@ public final class Reference extends DataType {
     }
 
     @Override
-    public Object readData(HDF5DataInput input) throws IOException {
+    public Object readData(HDF5DataInput input, int ... compoundindexes) throws IOException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }

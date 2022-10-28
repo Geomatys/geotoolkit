@@ -84,22 +84,23 @@ public abstract class DataType {
      * Read a single datatype value.
      * @param input to read from, not null
      * @param dimensions null for a scalar value, variable size of an array.
+     * @param compoundindexes only used for compound types, to read only specified compound members
      */
-    public Object readData(HDF5DataInput input, int[] dimensions) throws IOException {
+    public Object readData(HDF5DataInput input, int[] dimensions, int ... compoundindexes) throws IOException {
         if (dimensions == null || dimensions.length == 0) {
-            return readData(input);
+            return readData(input, compoundindexes);
         } else {
             Object array = java.lang.reflect.Array.newInstance(getValueClass(), dimensions);
             if (dimensions.length == 1) {
                 for (int x = 0; x < dimensions[0]; x++) {
-                    Object value = readData(input);
+                    Object value = readData(input, compoundindexes);
                     java.lang.reflect.Array.set(array, x, value);
                 }
             } else if (dimensions.length == 2) {
                 for (int y = 0; y < dimensions[0]; y++) {
                     Object arr = java.lang.reflect.Array.get(array, y);
                     for (int x = 0; x < dimensions[1]; x++) {
-                        Object value = readData(input);
+                        Object value = readData(input, compoundindexes);
                         java.lang.reflect.Array.set(arr, x, value);
                     }
                 }
@@ -112,15 +113,15 @@ public abstract class DataType {
      * Read a strip of datatype values.
      * @param input to read from, not null
      */
-    public Object readData(HDF5DataInput input, int size) throws IOException {
+    public Object readData(HDF5DataInput input, int size, int ... compoundindexes) throws IOException {
         Object array = java.lang.reflect.Array.newInstance(getValueClass(), size);
         for (int x = 0; x < size; x++) {
-            java.lang.reflect.Array.set(array, x, readData(input));
+            java.lang.reflect.Array.set(array, x, readData(input, compoundindexes));
         }
         return array;
     }
 
-    public abstract Object readData(HDF5DataInput input) throws IOException;
+    public abstract Object readData(HDF5DataInput input, int ... compoundindexes) throws IOException;
 
     @Override
     public String toString() {

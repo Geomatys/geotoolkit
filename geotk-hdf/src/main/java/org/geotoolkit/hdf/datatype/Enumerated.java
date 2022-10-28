@@ -92,17 +92,17 @@ public final class Enumerated extends DataType {
     }
 
     @Override
-    public Object readData(HDF5DataInput input) throws IOException {
+    public Object readData(HDF5DataInput input, int ... compoundindexes) throws IOException {
         return baseType.readData(input);
     }
 
     @Override
-    public Object readData(HDF5DataInput input, int size) throws IOException {
-        return baseType.readData(input, size);
+    public Object readData(HDF5DataInput input, int size, int ... compoundindexes) throws IOException {
+        return baseType.readData(input, size, compoundindexes);
     }
 
     @Override
-    public Object readData(HDF5DataInput input, int[] dimensions) throws IOException {
+    public Object readData(HDF5DataInput input, int[] dimensions, int ... compoundindexes) throws IOException {
         return baseType.readData(input, dimensions);
     }
 

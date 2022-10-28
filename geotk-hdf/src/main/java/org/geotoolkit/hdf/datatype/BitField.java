@@ -63,7 +63,7 @@ public final class BitField extends DataType {
     }
 
     @Override
-    public Object readData(HDF5DataInput input) throws IOException {
+    public Object readData(HDF5DataInput input, int ... compoundindexes) throws IOException {
         final ByteOrder previous = input.order();
         input.order(byteOrder);
         try {
