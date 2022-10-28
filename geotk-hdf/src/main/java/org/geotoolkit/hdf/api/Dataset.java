@@ -18,10 +18,12 @@ package org.geotoolkit.hdf.api;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.SequenceInputStream;
 import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -261,7 +263,7 @@ public final class Dataset extends AbstractResource implements Node {
                         fill = fillValue.getFillValue();
                     }
 
-                    InputStream stream = null;
+                    final List<InputStream> stack = new ArrayList<>();
                     long offset = 0;
                     for (Entry<Long,ChunkInputStream> entry : chunks.entrySet()) {
                         final Long start = entry.getKey();
@@ -269,19 +271,21 @@ public final class Dataset extends AbstractResource implements Node {
 
                         if (start != offset) {
                             //add fill values
-                            ConstantInputStream fillStream = new ConstantInputStream(start-offset, fill);
-                            stream = (stream == null) ? fillStream : new java.io.SequenceInputStream(stream, fillStream);
+                            ConstantInputStream fillStream = ConstantInputStream.create(start-offset, fill);
+                            stack.add(fillStream);
                             offset = start;
                         }
 
-                        stream = (stream == null) ? chunk : new java.io.SequenceInputStream(stream, chunk);
+                        stack.add(chunk);
                         offset += chunk.getUncompressedSize();
                     }
-                    if (offset != endOffset) {
+                    if (offset < endOffset) {
                         //fill what remains
-                        ConstantInputStream fillStream = new ConstantInputStream(endOffset-offset, fill);
-                        stream = (stream == null) ? fillStream : new java.io.SequenceInputStream(stream, fillStream);
+                        ConstantInputStream fillStream = ConstantInputStream.create(endOffset-offset, fill);
+                        stack.add(fillStream);
                     }
+                    //create a btree style sequence of stream to avoid deep stack trace concatenation
+                    InputStream stream = createStackStream(stack);
 
                     final ReadableByteChannel rbc = Channels.newChannel(stream);
                     channel = new HDF5ChannelDataInput(new ChannelDataInput("", rbc, ByteBuffer.allocate(4096), false));
@@ -306,6 +310,13 @@ public final class Dataset extends AbstractResource implements Node {
                 channel.close();
             }
         }
+    }
+
+    private static InputStream createStackStream(List<InputStream> streams) {
+        if (streams.size() == 1) return streams.get(0);
+        final InputStream s0 = createStackStream(streams.subList(0, streams.size()/2));
+        final InputStream s1 = createStackStream(streams.subList(streams.size()/2, streams.size()));
+        return new SequenceInputStream(s0, s1);
     }
 
     private Object readDatas(HDF5DataInput channel, GridExtent extent, int ... compoundindexes) throws IOException {
