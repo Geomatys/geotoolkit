@@ -17,6 +17,7 @@
 package org.geotoolkit.hdf.message;
 
 import java.io.IOException;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.geotoolkit.hdf.io.HDF5DataInput;
 
 /**
@@ -101,6 +102,10 @@ public final class DataspaceMessage extends Message {
             size[i] = Math.toIntExact(dimensionSizes[i]);
         }
         return size;
+    }
+
+    public GridExtent getDimensionExtent() {
+        return new GridExtent(null, null, dimensionSizes, false);
     }
 
     /**

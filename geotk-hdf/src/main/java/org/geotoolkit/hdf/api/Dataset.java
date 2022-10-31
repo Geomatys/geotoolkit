@@ -27,21 +27,31 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.TreeMap;
+import java.util.function.Function;
+import java.util.stream.Stream;
 import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.storage.io.ChannelDataInput;
 import org.apache.sis.storage.AbstractResource;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.ArraysExt;
+import static org.apache.sis.util.ArraysExt.swap;
+import org.apache.sis.util.collection.BackingStoreException;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.hdf.ObjectHeader;
 import org.geotoolkit.hdf.SymbolTableEntry;
 import org.geotoolkit.hdf.btree.BTreeV1;
 import org.geotoolkit.hdf.btree.BTreeV1Chunk;
+import org.geotoolkit.hdf.datatype.Compound;
+import org.geotoolkit.hdf.datatype.Compound.Member;
 import org.geotoolkit.hdf.datatype.DataType;
 import org.geotoolkit.hdf.filter.Deflate;
 import org.geotoolkit.hdf.filter.Filter;
@@ -64,6 +74,9 @@ import org.geotoolkit.hdf.message.Message;
 import org.geotoolkit.hdf.message.NillMessage;
 import org.geotoolkit.hdf.message.ObjectHeaderContinuationMessage;
 import org.geotoolkit.hdf.message.ObjectModificationTimeMessage;
+import org.geotoolkit.storage.multires.TileMatrices;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 import org.opengis.util.GenericName;
 
 /**
@@ -74,7 +87,9 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public final class Dataset extends AbstractResource implements Node {
+public final class Dataset extends AbstractResource implements Node, FeatureSet {
+
+    private static final String HDF_INDEX = "hdf-index";
 
     private final Group parent;
     private final Connector connector;
@@ -95,6 +110,11 @@ public final class Dataset extends AbstractResource implements Node {
     //decoding informations
     private final int cellByteSize;
     private final long[] dimensionByteSize;
+
+    //featureset
+    private FeatureType featureType;
+    private boolean is1D;
+    private boolean isEmpty;
 
     public Dataset(Group parent, Connector connector, SymbolTableEntry entry, String name) throws IOException, DataStoreException {
         super(null, false);
@@ -134,7 +154,8 @@ public final class Dataset extends AbstractResource implements Node {
             }
         }
 
-        final int[] dimensionSizes = dataspace.getDimensionSizes();
+        final int[] dimensionSizes = dataspace.getDimensionSizes().clone();
+        ArraysExt.reverse(dimensionSizes);
         cellByteSize = datatype.getByteSize();
         dimensionByteSize = new long[dimensionSizes.length];
         if (dimensionSizes.length > 0){
@@ -142,6 +163,7 @@ public final class Dataset extends AbstractResource implements Node {
             for (int i = 1; i < dimensionSizes.length; i++) {
                 dimensionByteSize[i] = dimensionByteSize[i-1] * dimensionSizes[i-1];
             }
+            reverse(dimensionByteSize);
         }
     }
 
@@ -163,6 +185,120 @@ public final class Dataset extends AbstractResource implements Node {
     @Override
     public Map<String, Object> getAttributes() {
         return Collections.unmodifiableMap(attributes);
+    }
+
+    @Override
+    public synchronized FeatureType getType() throws DataStoreException {
+        if (featureType == null) {
+            final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+            ftb.setName(name);
+
+            final int[] dimensionSizes = dataspace.getDimensionSizes();
+            if (dimensionSizes == null) {
+                isEmpty = true;
+                is1D = true;
+            } else {
+                for (int i = 0; i < dimensionSizes.length; i++) {
+                    if (dimensionSizes[i] == 0) {
+                        isEmpty = true;
+                        break;
+                    }
+                }
+                is1D = dimensionSizes.length == 1;
+            }
+
+            if (is1D) {
+                ftb.addAttribute(Long.class).setName(HDF_INDEX).addRole(AttributeRole.IDENTIFIER_COMPONENT);
+            } else {
+                ftb.addAttribute(long[].class).setName(HDF_INDEX).addRole(AttributeRole.IDENTIFIER_COMPONENT);
+            }
+
+            if (datatype instanceof Compound cmp) {
+                for (Member member : cmp.members) {
+                    ftb.addAttribute(member.memberType.getValueClass()).setName(member.name);
+                }
+            } else {
+                ftb.addAttribute(datatype.getValueClass()).setName("value");
+            }
+            featureType = ftb.build();
+        }
+        return featureType;
+    }
+
+    @Override
+    public Stream<Feature> features(boolean bln) throws DataStoreException {
+        if (isEmpty) return Stream.empty();
+
+        //limited to 1D dataset
+        final int[] dimensionSizes = getDataspace().getDimensionSizes();
+        final GridExtent area = getDataspace().getDimensionExtent();
+
+        //read by blocks of 1000
+        final int blockSize = 1000;
+        final int[] sub = new int[dimensionSizes.length];
+        Arrays.fill(sub, blockSize);
+        final GridExtent points = area.subsample(sub);
+
+        Stream<GridExtent> streamExtent = TileMatrices.pointStream(points).map(new Function<long[],GridExtent>() {
+            @Override
+            public GridExtent apply(long[] value) {
+                final long[] low = new long[dimensionSizes.length];
+                final long[] high = new long[dimensionSizes.length];
+                for (int i=0;i<low.length;i++) {
+                    low[i] = value[i] * blockSize;
+                    high[i] = (value[i]+1) * blockSize -1; //inclusive
+                }
+                //ensure we do not got out of data range
+                return area.intersect(new GridExtent(null, low, high, true));
+            }
+        });
+
+        return streamExtent.flatMap(new Function<GridExtent, Stream<Feature>>() {
+            @Override
+            public Stream<Feature> apply(GridExtent t) {
+                try {
+                    return toFeatures(t);
+                } catch (IOException | DataStoreException ex) {
+                    throw new BackingStoreException(ex.getMessage(), ex);
+                }
+            }
+        });
+    }
+
+    private Stream<Feature> toFeatures(GridExtent extent) throws DataStoreException, IOException {
+        final FeatureType type = getType();
+        final Object rawData = read(extent);
+
+        final long[] low = extent.getLow().getCoordinateValues();
+        final List<Feature> features = new ArrayList<>();
+
+        final Iterator<long[]> iterator = TileMatrices.pointStream(extent).iterator();
+        while (iterator.hasNext()) {
+            final long[] location = iterator.next();
+            Object rawRecord = Array.get(rawData, Math.toIntExact(location[0] - low[0]));
+            if (!is1D) {
+                for (int i = 1; i < low.length; i++) {
+                    rawRecord = Array.get(rawRecord, Math.toIntExact(location[i] - low[i]));
+                }
+            }
+
+            final Feature feature = type.newInstance();
+            if (is1D) {
+                feature.setPropertyValue(HDF_INDEX, location[0]);
+            } else {
+                feature.setPropertyValue(HDF_INDEX, location);
+            }
+            if (datatype instanceof Compound cmp) {
+                for (int k = 0; k < cmp.members.length; k++) {
+                    feature.setPropertyValue(cmp.members[k].name, Array.get(rawRecord, k));
+                }
+            } else {
+                feature.setPropertyValue("value", rawRecord);
+            }
+            features.add(feature);
+        }
+
+        return features.stream();
     }
 
     public DataType getDataType() {
@@ -194,7 +330,9 @@ public final class Dataset extends AbstractResource implements Node {
         //build read extent
         final int[] dimensionSizes = dataspace.getDimensionSizes();
         if (extent == null) {
-            extent = new GridExtent(null, null, ArraysExt.copyAsLongs(dimensionSizes), false);
+            extent = dataspace.getDimensionExtent();
+        } else if (!dataspace.getDimensionExtent().intersect(extent).equals(extent)){
+            throw new DataStoreException("Requested extent " + extent + " is not contained in " + dataspace.getDimensionExtent());
         }
 
         final long startOffset = locationToOffset(extent.getLow().getCoordinateValues());
@@ -430,6 +568,23 @@ public final class Dataset extends AbstractResource implements Node {
             return Arrays.toString(arr);
         } else {
             return String.valueOf(value);
+        }
+    }
+
+    /**
+     * Reverses the order of elements in the given array.
+     * This operation is performed in-place.
+     * If the given array is {@code null}, then this method does nothing.
+     *
+     * @param  values  the array in which to reverse the order of elements, or {@code null} if none.
+     */
+    public static void reverse(final long[] values) {
+        if (values != null) {
+            int i = values.length >>> 1;
+            int j = i + (values.length & 1);
+            while (--i >= 0) {
+                swap(values, i, j++);
+            }
         }
     }
 }
