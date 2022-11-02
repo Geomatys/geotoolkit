@@ -60,7 +60,6 @@ import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.metadata.Metadata;
 import org.opengis.observation.Phenomenon;
-import org.opengis.observation.sampling.SamplingFeature;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.temporal.TemporalGeometricPrimitive;
 import org.opengis.util.GenericName;
@@ -144,28 +143,20 @@ public class NetcdfObservationStore extends DataStore implements Aggregate, Reso
 
     @Override
     public ExtractionResult getResults() throws DataStoreException {
-        try {
-            return NetCDFExtractor.getObservationFromNetCDF(analyze, getProcedureID(), null, new HashSet<>());
-        } catch (NetCDFParsingException ex) {
-            throw new DataStoreException(ex);
-        }
+        return getResults(getProcedureID(), new ArrayList<>());
     }
 
     @Override
     public ExtractionResult getResults(final List<String> sensorIDs) throws DataStoreException {
-        return getResults(getProcedureID(), sensorIDs, new HashSet<>(), new HashSet<>());
+        return getResults(getProcedureID(), sensorIDs);
     }
 
     @Override
     public ExtractionResult getResults(final String affectedSensorID, final List<String> sensorIDs) throws DataStoreException {
-        return getResults(affectedSensorID, sensorIDs, new HashSet<>(), new HashSet<>());
-    }
-
-    @Override
-    public ExtractionResult getResults(String affectedSensorID, List<String> sensorIds, Set<Phenomenon> phenomenons, Set<SamplingFeature> samplingFeatures) throws DataStoreException {
         try {
             // existing sampling features are not used yet
-            return NetCDFExtractor.getObservationFromNetCDF(analyze, affectedSensorID, sensorIds, phenomenons);
+            Set<Phenomenon> phenomenons = new HashSet<>();
+            return NetCDFExtractor.getObservationFromNetCDF(analyze, affectedSensorID, sensorIDs, phenomenons);
         } catch (NetCDFParsingException ex) {
             throw new DataStoreException(ex);
         }

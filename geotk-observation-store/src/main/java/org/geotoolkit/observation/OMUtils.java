@@ -42,6 +42,7 @@ import org.geotoolkit.gml.xml.LineString;
 import org.geotoolkit.gml.xml.Point;
 import org.geotoolkit.observation.model.Field;
 import org.geotoolkit.observation.model.OMEntity;
+import org.geotoolkit.observation.result.ResultBuilder;
 import org.geotoolkit.observation.xml.AbstractObservation;
 import org.geotoolkit.observation.xml.OMXmlFactory;
 import static org.geotoolkit.ows.xml.OWSExceptionCode.INVALID_PARAMETER_VALUE;
@@ -231,7 +232,7 @@ public class OMUtils {
         return phenomenon;
     }
 
-    private static boolean componentsEquals(Collection as, Collection bs) {
+    public static boolean componentsEquals(Collection as, Collection bs) {
         if (as.size() == bs.size()) {
             Iterator i1 = as.iterator();
             Iterator i2 = bs.iterator();
