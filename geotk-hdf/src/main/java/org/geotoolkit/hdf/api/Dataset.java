@@ -45,7 +45,6 @@ import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.ArraysExt;
 import static org.apache.sis.util.ArraysExt.swap;
 import org.apache.sis.util.collection.BackingStoreException;
-import org.apache.sis.util.iso.Names;
 import org.geotoolkit.hdf.ObjectHeader;
 import org.geotoolkit.hdf.SymbolTableEntry;
 import org.geotoolkit.hdf.btree.BTreeV1;
@@ -96,6 +95,7 @@ public final class Dataset extends AbstractResource implements Node, FeatureSet 
     private final SymbolTableEntry entry;
 
     private final String name;
+    private final GenericName genericName;
     private final BTreeV1 btree;
     private final LocalHeap localHeap;
 
@@ -165,6 +165,8 @@ public final class Dataset extends AbstractResource implements Node, FeatureSet 
             }
             reverse(dimensionByteSize);
         }
+
+        genericName = Node.createName(this);
     }
 
     @Override
@@ -179,7 +181,7 @@ public final class Dataset extends AbstractResource implements Node, FeatureSet 
 
     @Override
     public Optional<GenericName> getIdentifier() throws DataStoreException {
-        return Optional.of(Names.createLocalName(null, null, name));
+        return Optional.of(genericName);
     }
 
     @Override
@@ -191,7 +193,7 @@ public final class Dataset extends AbstractResource implements Node, FeatureSet 
     public synchronized FeatureType getType() throws DataStoreException {
         if (featureType == null) {
             final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-            ftb.setName(name);
+            ftb.setName(getIdentifier().get());
 
             final int[] dimensionSizes = dataspace.getDimensionSizes();
             if (dimensionSizes == null) {

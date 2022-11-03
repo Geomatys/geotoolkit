@@ -26,7 +26,6 @@ import java.util.Optional;
 import org.apache.sis.storage.AbstractResource;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.iso.Names;
 import org.geotoolkit.hdf.IOStructure;
 import org.geotoolkit.hdf.ObjectHeader;
 import org.geotoolkit.hdf.SymbolTableEntry;
@@ -58,6 +57,7 @@ public final class DefaultGroup extends AbstractResource implements Group, Aggre
     private final SymbolTableEntry entry;
 
     private final String name;
+    private final GenericName genericName;
     private final BTreeV1 btree;
     private final LocalHeap localHeap;
     private final List<Node> components = new ArrayList<>();
@@ -93,6 +93,8 @@ public final class DefaultGroup extends AbstractResource implements Group, Aggre
                 }
             }
         }
+
+        genericName = Node.createName(this);
     }
 
     @Override
@@ -102,7 +104,7 @@ public final class DefaultGroup extends AbstractResource implements Group, Aggre
 
     @Override
     public Optional<GenericName> getIdentifier() throws DataStoreException {
-        return Optional.of(Names.createLocalName(null, null, name));
+        return Optional.of(genericName);
     }
 
     private void buildComponents(final HDF5DataInput channel, SymbolTableMessage stm) throws IOException, DataStoreException {

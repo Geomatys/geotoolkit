@@ -34,6 +34,7 @@ import org.geotoolkit.hdf.api.Node;
 import org.geotoolkit.hdf.io.Connector;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.util.GenericName;
 
 /**
  *
@@ -69,6 +70,11 @@ public final class HDF5Store extends DataStore implements Group, Aggregate, Reso
     @Override
     public String getName() {
         return root.getName();
+    }
+
+    @Override
+    public Optional<GenericName> getIdentifier() throws DataStoreException {
+        return root.getIdentifier();
     }
 
     @Override
