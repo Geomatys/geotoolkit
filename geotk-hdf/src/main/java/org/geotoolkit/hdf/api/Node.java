@@ -16,8 +16,12 @@
  */
 package org.geotoolkit.hdf.api;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import org.apache.sis.storage.Resource;
+import org.apache.sis.util.iso.Names;
+import org.opengis.util.GenericName;
 
 /**
  * Parent interface for Group and Dataset.
@@ -26,7 +30,22 @@ import org.apache.sis.storage.Resource;
  */
 public interface Node extends Resource {
 
+    Group getParent();
+
     String getName();
 
     Map<String,Object> getAttributes();
+
+    public static GenericName createName(Node node) {
+        if (node.getParent() == null) {
+            //root node
+            return Names.createLocalName(null, null, node.getName());
+        }
+
+        final List<String> parts = new ArrayList<>();
+        for (Node n = node; n != null && n.getParent() != null; n = n.getParent()) {
+            parts.add(0, n.getName());
+        }
+        return Names.createGenericName(null, null, parts.toArray(String[]::new));
+    }
 }

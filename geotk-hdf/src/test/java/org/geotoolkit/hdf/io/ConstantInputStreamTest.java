@@ -14,30 +14,28 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.hdf.datatype;
+package org.geotoolkit.hdf.io;
 
 import java.io.IOException;
-import org.geotoolkit.hdf.io.HDF5DataInput;
+import java.io.InputStream;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public final class Opaque extends DataType {
+public class ConstantInputStreamTest {
 
-    public Opaque(int byteSize, int classBitFields, HDF5DataInput channel) throws IOException {
-        super(byteSize);
-        throw new IOException("TODO");
+    @Test
+    public void testRead() throws IOException {
+        final InputStream is = ConstantInputStream.create(100, new byte[]{5});
+
+        final byte[] array = new byte[200];
+        int nb = is.read(array, 100, 26);
+        Assert.assertEquals(26, nb);
+        for(int i=  0;i<100;i++) Assert.assertEquals(0, array[i]);
+        for(int i=100;i<126;i++) Assert.assertEquals(5, array[i]);
+        for(int i=126;i<200;i++) Assert.assertEquals(0, array[i]);
     }
-
-    @Override
-    public Class getValueClass() {
-        return byte[].class;
-    }
-
-    @Override
-    public Object readData(HDF5DataInput input, int ... compoundindexes) throws IOException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
 }

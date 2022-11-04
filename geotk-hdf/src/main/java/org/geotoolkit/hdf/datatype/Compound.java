@@ -41,6 +41,7 @@ public final class Compound extends DataType {
 
     private final Class componentClass;
     private final Class valueClass;
+    private final int[] allMembers;
 
     public Compound(int byteSize, int version, int classBitFields, HDF5DataInput channel) throws IOException {
         super(byteSize);
@@ -58,7 +59,8 @@ public final class Compound extends DataType {
         }
 
         //compute value class
-        Class c = members[0].memberType.getValueClass();
+        //we have a optimized version for double array.
+        Class c = double.class;
         for (int i = 0; i < members.length; i++) {
             Class mc = members[i].memberType.getValueClass();
             if (mc != c) {
@@ -68,6 +70,11 @@ public final class Compound extends DataType {
         }
         componentClass = c;
         valueClass = java.lang.reflect.Array.newInstance(c, 1).getClass();
+
+        allMembers = new int[members.length];
+        for (int i=0;i<members.length;i++) {
+            allMembers[i] = i;
+        }
     }
 
     @Override
@@ -75,17 +82,52 @@ public final class Compound extends DataType {
         return valueClass;
     }
 
+    /**
+     * Read a strip of datatype values.
+     * @param input to read from, not null
+     */
     @Override
-    public Object readData(HDF5DataInput channel) throws IOException {
-        final long position = channel.getStreamPosition();
-        final Object array = java.lang.reflect.Array.newInstance(componentClass, members.length);
-        for (int i = 0; i < members.length; i++) {
-            channel.seek(position + members[i].byteOffsetOfMember);
-            java.lang.reflect.Array.set(array, i, members[i].memberType.readData(channel));
+    public Object readData(HDF5DataInput input, int size, int ... compoundindexes) throws IOException {
+        if (double.class.equals(componentClass)) {
+            final double[][] array = new double[size][0];
+            for (int x = 0; x < size; x++) {
+                array[x] = (double[]) readData(input, compoundindexes);
+            }
+            return array;
+        } else {
+            final Object[][] array = new Object[size][0];
+            for (int x = 0; x < size; x++) {
+                array[x] = (Object[]) readData(input, compoundindexes);
+            }
+            return array;
         }
-        //move to end of data
-        channel.seek(position + byteSize);
-        return array;
+    }
+
+    @Override
+    public Object readData(HDF5DataInput channel, int ... compoundindexes) throws IOException {
+        final long position = channel.getStreamPosition();
+
+        if (compoundindexes == null || compoundindexes.length == 0) compoundindexes = allMembers;
+
+        if (double.class.equals(componentClass)) {
+            final double[] array = new double[compoundindexes.length];
+            for (int i = 0; i < compoundindexes.length; i++) {
+                channel.seek(position + members[compoundindexes[i]].byteOffsetOfMember);
+                array[i] = (double) members[compoundindexes[i]].memberType.readData(channel);
+            }
+            //move to end of data
+            channel.seek(position + byteSize);
+            return array;
+        } else {
+            final Object[] array = new Object[compoundindexes.length];
+            for (int i = 0; i < compoundindexes.length; i++) {
+                channel.seek(position + members[compoundindexes[i]].byteOffsetOfMember);
+                array[i] = members[compoundindexes[i]].memberType.readData(channel);
+            }
+            //move to end of data
+            channel.seek(position + byteSize);
+            return array;
+        }
     }
 
     @Override

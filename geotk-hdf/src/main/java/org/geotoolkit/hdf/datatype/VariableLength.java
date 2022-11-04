@@ -95,7 +95,7 @@ public final class VariableLength extends DataType {
     }
 
     @Override
-    public Object readData(HDF5DataInput channel) throws IOException {
+    public Object readData(HDF5DataInput channel, int ... compoundindexes) throws IOException {
 
         if (type == 0) {
             //undefined type

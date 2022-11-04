@@ -34,6 +34,7 @@ import org.geotoolkit.hdf.api.Node;
 import org.geotoolkit.hdf.io.Connector;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.util.GenericName;
 
 /**
  *
@@ -46,7 +47,7 @@ public final class HDF5Store extends DataStore implements Group, Aggregate, Reso
 
     public HDF5Store(Path path) throws IllegalArgumentException, DataStoreException, IOException {
         cnx = new Connector(path);
-        root = new DefaultGroup(cnx, cnx.getSuperblock().rootGroupSymbolTableEntry, path.getFileName().toString());
+        root = new DefaultGroup(null, cnx, cnx.getSuperblock().rootGroupSymbolTableEntry, path.getFileName().toString());
     }
 
     @Override
@@ -69,6 +70,16 @@ public final class HDF5Store extends DataStore implements Group, Aggregate, Reso
     @Override
     public String getName() {
         return root.getName();
+    }
+
+    @Override
+    public Optional<GenericName> getIdentifier() throws DataStoreException {
+        return root.getIdentifier();
+    }
+
+    @Override
+    public Group getParent() {
+        return root.getParent();
     }
 
     @Override

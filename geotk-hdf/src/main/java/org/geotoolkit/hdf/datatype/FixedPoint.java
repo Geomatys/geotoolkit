@@ -30,7 +30,7 @@ public final class FixedPoint extends DataType {
      * Byte Order. If zero, byte order is little-endian; otherwise,
      * byte order is big endian.
      */
-    public final int byteOrder;
+    public final ByteOrder byteOrder;
     /**
      * Padding type. Bit 1 is the lo_pad bit and bit 2 is the hi_pad bit.
      * If a datum has unused bits at either end, then the lo_pad or hi_pad
@@ -72,7 +72,7 @@ public final class FixedPoint extends DataType {
 
     public FixedPoint(int byteSize, int classBitFields, HDF5DataInput channel) throws IOException {
         super(byteSize);
-        byteOrder = classBitFields & 0b1;
+        byteOrder = (classBitFields & 0b1) == 0 ? ByteOrder.LITTLE_ENDIAN : ByteOrder.BIG_ENDIAN;
         paddingType = (classBitFields & 0b110) >> 1;
         signed = ((classBitFields & 0b1000) >> 3) != 0;
         byteOffset = channel.readUnsignedShort();
@@ -105,16 +105,9 @@ public final class FixedPoint extends DataType {
     }
 
     @Override
-    public Object readData(HDF5DataInput input) throws IOException {
-        if (byteOrder == 0) {
-            //little endian
-        } else if (byteOrder == 1) {
-            //big endian
-            input.order(ByteOrder.BIG_ENDIAN);
-        } else {
-            throw new IOException("Unsupported endian " + byteOrder);
-        }
-
+    public Object readData(HDF5DataInput input, int ... compoundindexes) throws IOException {
+        final ByteOrder previous = input.order();
+        input.order(byteOrder);
         try {
             switch (knownType) {
                 case INT8 :
@@ -135,14 +128,7 @@ public final class FixedPoint extends DataType {
                     throw new IOException("Unsupported type " + knownType);
             }
         } finally {
-            if (byteOrder == 0) {
-                //little endian
-            } else if (byteOrder == 1) {
-                //big endian
-                input.order(ByteOrder.LITTLE_ENDIAN);
-            } else {
-                throw new IOException("Unsupported endian " + byteOrder);
-            }
+            input.order(previous);
         }
     }
 }
