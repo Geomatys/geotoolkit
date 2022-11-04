@@ -49,6 +49,10 @@ public final class BTreeV1Chunk {
     public long[] offset;
 
     public long address;
+    /**
+     * Opportuniste uncompressed chunk size.
+     */
+    public long uncompressedSize = -1;
 
     public void read(HDF5DataInput channel, int dimension) throws IOException {
         size = channel.readUnsignedInt();

@@ -17,12 +17,9 @@
 package org.geotoolkit.hdf.api;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.SequenceInputStream;
 import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.SeekableByteChannel;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -31,6 +28,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.NavigableMap;
 import java.util.Optional;
 import java.util.TreeMap;
 import java.util.function.Function;
@@ -52,15 +50,13 @@ import org.geotoolkit.hdf.btree.BTreeV1Chunk;
 import org.geotoolkit.hdf.datatype.Compound;
 import org.geotoolkit.hdf.datatype.Compound.Member;
 import org.geotoolkit.hdf.datatype.DataType;
-import org.geotoolkit.hdf.filter.Deflate;
-import org.geotoolkit.hdf.filter.Filter;
-import org.geotoolkit.hdf.filter.Shuffle;
 import org.geotoolkit.hdf.heap.LocalHeap;
-import org.geotoolkit.hdf.io.ChunkInputStream;
+import org.geotoolkit.hdf.io.ChunkSeekableByteChannel;
 import org.geotoolkit.hdf.io.Connector;
-import org.geotoolkit.hdf.io.ConstantInputStream;
+import org.geotoolkit.hdf.io.ConstantSeekableByteChannel;
 import org.geotoolkit.hdf.io.HDF5ChannelDataInput;
 import org.geotoolkit.hdf.io.HDF5DataInput;
+import org.geotoolkit.hdf.io.SequenceSeekableByteChannel;
 import org.geotoolkit.hdf.message.AttributeMessage;
 import org.geotoolkit.hdf.message.BogusMessage;
 import org.geotoolkit.hdf.message.DataLayoutMessage;
@@ -110,6 +106,7 @@ public final class Dataset extends AbstractResource implements Node, FeatureSet 
     //decoding informations
     private final int cellByteSize;
     private final long[] dimensionByteSize;
+    private TreeMap<Long,BTreeV1Chunk> chunks = null;
 
     //featureset
     private FeatureType featureType;
@@ -359,43 +356,30 @@ public final class Dataset extends AbstractResource implements Node, FeatureSet 
                 } else {
 
                     //build filters
-                    final Filter[] filters;
+                    final List<FilterDescription> filters;
                     if (filter == null) {
-                        filters = new Filter[0];
+                        filters = Collections.EMPTY_LIST;
                     } else {
-                        final List<FilterDescription> lst = filter.getFilters();
-                        filters = new Filter[lst.size()];
-                        for (int i = 0; i < filters.length; i++) {
-                            final FilterDescription desc = lst.get(i);
-                            filters[i] = switch (desc.filteridentificationValue) {
-                                case FilterPipelineMessage.DEFLATE -> new Deflate();
-                                case FilterPipelineMessage.SHUFFLE -> new Shuffle(desc.clientData[0]);
-                                default -> throw new IOException("Unsupported filter " + desc.filteridentificationValue);
-                            };
-                        }
+                        filters = filter.getFilters();
                     }
 
                     //read btree of all chunks
-                    channel.seek(cdt.address);
-                    final BTreeV1 datatree = new BTreeV1();
-                    datatree.read(channel, dataspace.getDimensionSizes().length);
-                    final BTreeV1.DataNode node = (BTreeV1.DataNode) datatree.root;
-                    final List<BTreeV1Chunk> rawChunks = node.getChunks();
+                    final TreeMap<Long,BTreeV1Chunk> rawchunks = getChunks(channel);
 
-                    final Map<Long,ChunkInputStream> chunks = new TreeMap<>();
-                    for (int i = 0, n = rawChunks.size(); i < n; i++) {
-                        final BTreeV1Chunk chunk = rawChunks.get(i);
+                    //keep only the chunks in the range we will read
+                    final Long floor = rawchunks.floorKey(startOffset);
+                    final Long ceiling = rawchunks.floorKey(endOffset);
+
+                    final NavigableMap<Long, BTreeV1Chunk> candidates = rawchunks.subMap(floor == null ? rawchunks.firstKey() : floor, true,
+                            ceiling == null ? rawchunks.lastKey() : ceiling, true);
+
+                    final TreeMap<Long,ChunkSeekableByteChannel> chunks = new TreeMap<>();
+                    for (Entry<Long,BTreeV1Chunk> entry : candidates.entrySet()) {
+                        final BTreeV1Chunk chunk = entry.getValue();
                         if (chunk.filterMask != 0) {
                             throw new IOException("Filter masks not supported yet");
                         }
-                        final long[] startCoordinate = chunk.offset;
-                        final long location = locationToOffset(startCoordinate);
-
-                        if (location >= startOffset && location <= endOffset) {
-                            //keep only the chunks in the range we will read
-                            final ChunkInputStream s = new ChunkInputStream(channel, chunk.address, chunk.size, filters);
-                            chunks.put(location, s);
-                        }
+                        chunks.put(entry.getKey(), new ChunkSeekableByteChannel(chunk, channel, filters));
                     }
 
                     byte[] fill = new byte[1];
@@ -403,32 +387,31 @@ public final class Dataset extends AbstractResource implements Node, FeatureSet 
                         fill = fillValue.getFillValue();
                     }
 
-                    final List<InputStream> stack = new ArrayList<>();
+                    final List<SeekableByteChannel> stack = new ArrayList<>();
                     long offset = 0;
-                    for (Entry<Long,ChunkInputStream> entry : chunks.entrySet()) {
+                    for (Entry<Long,ChunkSeekableByteChannel> entry : chunks.entrySet()) {
                         final Long start = entry.getKey();
-                        final ChunkInputStream chunk = entry.getValue();
+                        final ChunkSeekableByteChannel chunk = entry.getValue();
 
                         if (start != offset) {
                             //add fill values
-                            ConstantInputStream fillStream = ConstantInputStream.create(start-offset, fill);
+                            ConstantSeekableByteChannel fillStream = new ConstantSeekableByteChannel(start-offset, fill);
                             stack.add(fillStream);
                             offset = start;
                         }
 
                         stack.add(chunk);
-                        offset += chunk.getUncompressedSize();
+                        offset += chunk.size();
                     }
                     if (offset < endOffset) {
                         //fill what remains
-                        ConstantInputStream fillStream = ConstantInputStream.create(endOffset-offset, fill);
+                        ConstantSeekableByteChannel fillStream = new ConstantSeekableByteChannel(endOffset-offset, fill);
                         stack.add(fillStream);
                     }
                     //create a btree style sequence of stream to avoid deep stack trace concatenation
-                    InputStream stream = createStackStream(stack);
+                    SeekableByteChannel stream = createStackStream(stack);
 
-                    final ReadableByteChannel rbc = Channels.newChannel(stream);
-                    channel = new HDF5ChannelDataInput(new ChannelDataInput("", rbc, ByteBuffer.allocate(4096), false));
+                    channel = new HDF5ChannelDataInput(new ChannelDataInput("", stream, ByteBuffer.allocate(4096), false));
                 }
 
             } else if (layout instanceof DataLayoutMessage.Virtual cdt) {
@@ -452,11 +435,32 @@ public final class Dataset extends AbstractResource implements Node, FeatureSet 
         }
     }
 
-    private static InputStream createStackStream(List<InputStream> streams) {
+    private synchronized TreeMap<Long,BTreeV1Chunk> getChunks(HDF5DataInput channel) throws IOException {
+        if (chunks == null) {
+            final DataLayoutMessage.Chunked cdt = (DataLayoutMessage.Chunked) layout;
+            //read btree of all chunks
+            channel.seek(cdt.address);
+            final BTreeV1 datatree = new BTreeV1();
+            datatree.read(channel, dataspace.getDimensionSizes().length);
+            final BTreeV1.DataNode node = (BTreeV1.DataNode) datatree.root;
+            final List<BTreeV1Chunk> rawChunks = node.getChunks();
+
+            chunks = new TreeMap<>();
+            for (BTreeV1Chunk chl : rawChunks) {
+                final long[] startCoordinate = chl.offset;
+                final long location = locationToOffset(startCoordinate);
+                chunks.put(location, chl);
+            }
+        }
+
+        return chunks;
+    }
+
+    private static SeekableByteChannel createStackStream(List<SeekableByteChannel> streams) throws IOException {
         if (streams.size() == 1) return streams.get(0);
-        final InputStream s0 = createStackStream(streams.subList(0, streams.size()/2));
-        final InputStream s1 = createStackStream(streams.subList(streams.size()/2, streams.size()));
-        return new SequenceInputStream(s0, s1);
+        final SeekableByteChannel s0 = createStackStream(streams.subList(0, streams.size()/2));
+        final SeekableByteChannel s1 = createStackStream(streams.subList(streams.size()/2, streams.size()));
+        return new SequenceSeekableByteChannel(s0, s1);
     }
 
     private Object readDatas(HDF5DataInput channel, GridExtent extent, int ... compoundindexes) throws IOException {

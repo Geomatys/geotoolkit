@@ -20,6 +20,9 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import org.geotoolkit.hdf.filter.Deflate;
+import org.geotoolkit.hdf.filter.Filter;
+import org.geotoolkit.hdf.filter.Shuffle;
 import org.geotoolkit.hdf.io.HDF5DataInput;
 
 /**
@@ -191,5 +194,17 @@ public final class FilterPipelineMessage extends Message {
          */
         public int[] clientData;
 
+        private Filter filter;
+
+        public Filter getFilter() throws IOException {
+            if (filter == null) {
+                filter = switch (filteridentificationValue) {
+                    case FilterPipelineMessage.DEFLATE -> new Deflate();
+                    case FilterPipelineMessage.SHUFFLE -> new Shuffle(clientData[0]);
+                    default -> throw new IOException("Unsupported filter " + filteridentificationValue);
+                };
+            }
+            return filter;
+        }
     }
 }
