@@ -52,6 +52,10 @@ public class ParameterTest extends org.geotoolkit.test.TestBase {
 
     private static final String PARAMETER_FILE =
             "src/test/resources/org/geotoolkit/xml/parameter/parameterWriting.xml";
+    private static final String PARAMETER_EXTRA_FILE =
+            "src/test/resources/org/geotoolkit/xml/parameter/parameterExtra.xml";
+    private static final String PARAMETER_EXTRA_GROUP_FILE =
+            "src/test/resources/org/geotoolkit/xml/parameter/parameterGroupExtra.xml";
     private static final String WRITING_ALIAS_FILE =
             "src/test/resources/org/geotoolkit/xml/parameter/parameterWritingAlias.xml";
     private static final String SCHEMA_FILE =
@@ -419,7 +423,66 @@ public class ParameterTest extends org.geotoolkit.test.TestBase {
     }
 
     /**
-     * <p>This method tests reading file value with a descriptor instance.</p>
+     * <p>
+     * This method tests reading file value with a descriptor instance.</p>
+     * the file contain an unknow parameter
+     *
+     * @throws IOException
+     * @throws XMLStreamException
+     */
+    @Test
+    public void extraParamReadingValueXMLTest()
+            throws IOException, XMLStreamException {
+
+        boolean exLaunched = false;
+        try {
+            final ParameterValueReader valueReader = new ParameterValueReader(INITIAL_DESC);
+            valueReader.setInput(new File(PARAMETER_EXTRA_FILE));
+            valueReader.read();
+        } catch (XMLStreamException ex) {
+            exLaunched = true;
+        }
+        assertTrue(exLaunched);
+
+        final ParameterValueReader valueReader = new ParameterValueReader(INITIAL_DESC, true);
+        valueReader.setInput(new File(PARAMETER_EXTRA_FILE));
+        final GeneralParameterValue parameterValue = valueReader.read();
+        valueReader.dispose();
+        assertEquals(INITIAL, parameterValue);
+    }
+
+    /**
+     * <p>
+     * This method tests reading file value with a descriptor instance.</p>
+     * the file contain an unknow parameter group
+     *
+     * @throws IOException
+     * @throws XMLStreamException
+     */
+    @Test
+    public void extraParamGroupReadingValueXMLTest()
+            throws IOException, XMLStreamException {
+
+        boolean exLaunched = false;
+        try {
+            final ParameterValueReader valueReader = new ParameterValueReader(INITIAL_DESC);
+            valueReader.setInput(new File(PARAMETER_EXTRA_GROUP_FILE));
+            valueReader.read();
+        } catch (XMLStreamException ex) {
+            exLaunched = true;
+        }
+        assertTrue(exLaunched);
+
+        final ParameterValueReader valueReader = new ParameterValueReader(INITIAL_DESC, true);
+        valueReader.setInput(new File(PARAMETER_EXTRA_GROUP_FILE));
+        final GeneralParameterValue parameterValue = valueReader.read();
+        valueReader.dispose();
+        assertEquals(INITIAL, parameterValue);
+    }
+
+    /**
+     * <p>
+     * This method tests reading file value with a descriptor instance.</p>
      *
      * @throws IOException
      * @throws XMLStreamException
