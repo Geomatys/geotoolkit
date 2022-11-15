@@ -49,6 +49,7 @@ public class ParameterValueReader extends StaxStreamReader {
 
     private final GeneralParameterDescriptor rootDesc ;
     private final Deque<GeneralParameterDescriptor> stack = new ArrayDeque<GeneralParameterDescriptor>();
+    private final boolean ignoreUnknowParameter;
 
     /**
      * <p>Constructs the value reader with a descriptor reader.</p>
@@ -57,10 +58,20 @@ public class ParameterValueReader extends StaxStreamReader {
      */
     public ParameterValueReader(final ParameterDescriptorReader descriptorReader)
             throws IOException, XMLStreamException, ClassNotFoundException{
+        this(descriptorReader, false);
+    }
+    /**
+     * <p>Constructs the value reader with a descriptor reader.</p>
+     *
+     * @param descriptorReader
+     */
+    public ParameterValueReader(final ParameterDescriptorReader descriptorReader, boolean ignoreUnknowParameter)
+            throws IOException, XMLStreamException, ClassNotFoundException{
 
         descriptorReader.read();
         rootDesc = descriptorReader.getDescriptorsRoot();
         descriptorReader.dispose();
+        this.ignoreUnknowParameter = ignoreUnknowParameter;
     }
 
     /**
@@ -69,7 +80,12 @@ public class ParameterValueReader extends StaxStreamReader {
      * @param descriptor
      */
     public ParameterValueReader(final GeneralParameterDescriptor descriptor){
+        this(descriptor, false);
+    }
+
+    public ParameterValueReader(final GeneralParameterDescriptor descriptor, boolean ignoreUnknowParameter){
         rootDesc = descriptor;
+        this.ignoreUnknowParameter = ignoreUnknowParameter;
     }
 
     /**
@@ -104,11 +120,17 @@ public class ParameterValueReader extends StaxStreamReader {
      * @return
      * @throws XMLStreamException
      */
-    private GeneralParameterValue readValue(final String eName)
-            throws XMLStreamException{
+    private GeneralParameterValue readValue(final String eName) throws XMLStreamException {
 
         GeneralParameterDescriptor desc = stack.peekFirst();
-        desc = getDescriptor(desc, eName);
+        try {
+            desc = getDescriptor(desc, eName);
+        } catch (XMLStreamException ex) {
+            if (ignoreUnknowParameter) {
+                return null;
+            }
+            throw ex;
+        }
         stack.addFirst(desc); //push
 
         final GeneralParameterValue result;
