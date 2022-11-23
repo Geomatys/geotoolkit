@@ -22,11 +22,13 @@ import java.text.ParsePosition;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.StringTokenizer;
 import java.util.TimeZone;
 import org.geotoolkit.resources.Errors;
@@ -56,34 +58,44 @@ public final class TimeParser {
      */
     static final long MILLIS_IN_DAY = 24*60*60*1000;
 
+    private static class DatePattern {
+        public final String pattern;
+        public final String period;
+
+        public DatePattern(String pattern, String period) {
+            this.pattern = pattern;
+            this.period = period;
+        }
+    }
+
     /**
      * All patterns that are correct regarding the ISO-8601 norm.
      */
-    private static final String[] PATTERNS = {
-        "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
-        "yyyy-MM-dd'T'HH:mm:ss'Z'",
-        "yyyy-MM-dd'T'HH:mm:ss",
-        "yyyy-MM-dd'T'HH:mm'Z'",
-        "yyyy-MM-dd'T'HH:mm",
-        "yyyy-MM-dd'T'HH'Z'",
-        "yyyy-MM-dd'T'HH",
-        "yyyy-MM-dd",
-        "yyyy-MM",
-        "yyyy"
+    private static final DatePattern[] PATTERNS = {
+        new DatePattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", null),
+        new DatePattern("yyyy-MM-dd'T'HH:mm:ss'Z'",     null),
+        new DatePattern("yyyy-MM-dd'T'HH:mm:ss",        null),
+        new DatePattern("yyyy-MM-dd'T'HH:mm'Z'",        null),
+        new DatePattern("yyyy-MM-dd'T'HH:mm",           null),
+        new DatePattern("yyyy-MM-dd'T'HH'Z'",           "PT1H"),
+        new DatePattern("yyyy-MM-dd'T'HH",              "PT1H"),
+        new DatePattern("yyyy-MM-dd",                   "P1D"),
+        new DatePattern("yyyy-MM",                      "P1M"),
+        new DatePattern("yyyy",                         "P1Y"),
     };
 
     /**
-     * The date format for each pattern.
+     * The date format for each dp.
      */
-    private static final Map<TimeParser,DateFormat> PARSERS = new HashMap<TimeParser,DateFormat>(16);
+    private static final Map<TimeParser,DateFormat> PARSERS = new HashMap<>(16);
     static {
         final TimeZone timezone = TimeZone.getTimeZone("UTC");
         for (int i=0; i<PATTERNS.length; i++) {
-            final String pattern = PATTERNS[i];
-            final DateFormat format = new SimpleDateFormat(pattern, Locale.CANADA);
+            final DatePattern dp = PATTERNS[i];
+            final DateFormat format = new SimpleDateFormat(dp.pattern, Locale.CANADA);
             format.setTimeZone(timezone);
-            if (PARSERS.put(new TimeParser(pattern), format) != null) {
-                throw new AssertionError(pattern); // Should never occurs.
+            if (PARSERS.put(new TimeParser(dp.pattern, dp.period), format) != null) {
+                throw new AssertionError(dp.pattern); // Should never occurs.
             }
             if (i == 0) { // The default format to be used if none if found.
                 PARSERS.put(null, format);
@@ -107,10 +119,12 @@ public final class TimeParser {
      */
     private final boolean hasTimeZone;
 
+    private final String period;
+
     /**
-     * Creates the parser for the given pattern (which may be a formatted date).
+     * Creates the parser for the given dp (which may be a formatted date).
      */
-    private TimeParser(final String pattern) {
+    private TimeParser(final String pattern, String period) {
         final int length = pattern.length();
         int numDateFields = 1;
         int numTimeFields = 0;
@@ -128,8 +142,8 @@ public final class TimeParser {
         this.numDateFields = numDateFields;
         this.numTimeFields = numTimeFields;
         this.hasTimeZone   = hasTimeZone;
+        this.period        = period;
     }
-
 
 
 
@@ -146,8 +160,25 @@ public final class TimeParser {
      * @param  dates The destination list where to append the parsed dates.
      * @throws ParseException if the string can not be parsed.
      */
-    public static void parse(String value, final long defaultPeriod, final List<Date> dates)
-            throws ParseException
+    public static void parse(String value, final long defaultPeriod, final List<Date> dates) throws ParseException
+    {
+        parse(value, defaultPeriod, dates, false);
+    }
+
+    /**
+     * Parses the date given in parameter. The date format should comply to ISO-8601 standard.
+     * The string may contain either a single date or a start time, an end time and a period.
+     * In the first case, this method returns a singleton containing only the parsed date. In
+     * the second case, this method returns a list including all dates from start time up to
+     * the end time with the interval specified in the {@code value} string.
+     *
+     * @param  value The date, time and period to parse.
+     * @param  defaultPeriod The default period (in milliseconds) if it is needed but not specified.
+     *                       If equal to 0, the period will be composed only with start and end date.
+     * @param  dates The destination list where to append the parsed dates.
+     * @throws ParseException if the string can not be parsed.
+     */
+    public static void parse(String value, final long defaultPeriod, final List<Date> dates, boolean transformIncompleteDateInPeriod) throws ParseException
     {
         if (value == null) {
             return;
@@ -163,11 +194,16 @@ public final class TimeParser {
                 // Empty string possibly between two "/" (should not occurs)
                 continue;
             }
-            final Date start = parseDate(elements.nextToken());
-            if (!elements.hasMoreTokens()) {
-                // A single date is specified (most common case).
-                dates.add(start);
+            final String token = elements.nextToken();
+            final boolean single = !elements.hasMoreTokens();
+            final Date start;
+            // A single date is specified (most common case).
+            if (single) {
+                List<Date> period = parseDatePeriod(token, transformIncompleteDateInPeriod);
+                dates.addAll(period);
                 continue;
+            } else {
+                start = parseDate(token);
             }
             // Period like "yyyy-MM-ddTHH:mm:ssZ/yyyy-MM-ddTHH:mm:ssZ/P1D"
             final Date end = parseDate(elements.nextToken());
@@ -191,6 +227,61 @@ public final class TimeParser {
         }
     }
 
+    private static List<Date> parseDatePeriod(String value, boolean transformIncompleteInPeriod) throws ParseException {
+        value = value.trim();
+        TimeParser tmp    = new TimeParser(value, null);
+        DateFormat format = null;
+        String period     = null;
+        for (Entry<TimeParser, DateFormat> candidate : PARSERS.entrySet()) {
+            TimeParser key = candidate.getKey();
+            if (key != null && key.equals(tmp)) {
+                tmp = key;
+                format = candidate.getValue();
+                period = tmp.period;
+                break;
+            }
+        }
+        if (format == null) {
+            // Gets a default format.
+            format = PARSERS.get(null);
+        }
+        Date start = parseDate(value, format);
+        List<Date> dates = new ArrayList<>();
+        dates.add(start);
+        if (period != null && transformIncompleteInPeriod) {
+
+            switch (period) {
+                case "PT1H" -> {
+                    Date end = new Date(start.getTime() + 60*60*1000 - 1000);
+                    dates.add(end);
+                }
+                case "P1D" -> {
+                    Date end = new Date(start.getTime() + 24*60*60*1000 - 1000);
+                    dates.add(end);
+                }
+                case "P1M" -> {
+                    Calendar c = Calendar.getInstance();
+                    c.clear();
+                    c.setTime(start);
+                    c.set(Calendar.MONTH, c.get(Calendar.MONTH) + 1);
+                    Date end = new Date(c.getTimeInMillis()- 1000);
+                    dates.add(end);
+                }
+                case "P1Y" -> {
+                    Calendar c = Calendar.getInstance();
+                    c.clear();
+                    c.setTime(start);
+                    c.set(Calendar.YEAR, c.get(Calendar.YEAR) + 1);
+                    Date end = new Date(c.getTimeInMillis()- 1000);
+                    dates.add(end);
+                }
+                default -> throw new AssertionError("Unknown period:" + period);
+            }
+        }
+        return dates;
+
+    }
+
     /**
      * Parses date given in parameter according the ISO-8601 standard. This parameter
      * should follow a syntax defined in the {@link #PATTERNS} array to be validated.
@@ -201,11 +292,16 @@ public final class TimeParser {
      */
     private static Date parseDate(String value) throws ParseException {
         value = value.trim();
-        DateFormat format = PARSERS.get(new TimeParser(value));
+        DateFormat format = PARSERS.get(new TimeParser(value, null));
         if (format == null) {
             // Gets a default format.
             format = PARSERS.get(null);
         }
+        return parseDate(value, format);
+    }
+
+
+    private static Date parseDate(String value, DateFormat format) throws ParseException {
         /*
          * We do not use the standard method DateFormat.parse(String), because if the parsing
          * stops before the end of the string, the remaining characters are just ignored and

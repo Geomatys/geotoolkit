@@ -78,4 +78,96 @@ public class TimeParserTest {
         assertEquals(format.parse("2007-01-10T12Z"), dates.get(6));
         assertEquals(format.parse("2007-01-12T00Z"), dates.get(7));
     }
+
+    @Test
+    public void testParse() throws ParseException {
+
+        final DateFormat fullFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        fullFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+        final List<Date> dates = new ArrayList<>();
+        TimeParser.parse("2007-01-01T12:00:00Z", 0L, dates);
+        assertEquals(1, dates.size());
+
+        assertEquals(fullFormat.parse("2007-01-01T12:00:00Z"), dates.get(0));
+
+        // 1 hours imcomplete period
+        dates.clear();
+        TimeParser.parse("2007-01-01T01", 0L, dates);
+        assertEquals(1, dates.size());
+        assertEquals(fullFormat.parse("2007-01-01T01:00:00Z"), dates.get(0));
+
+        dates.clear();
+        TimeParser.parse("2007-01-01T01", 0L, dates, true);
+        assertEquals(2, dates.size());
+
+        assertEquals(fullFormat.parse("2007-01-01T01:00:00Z"), dates.get(0));
+        assertEquals(fullFormat.parse("2007-01-01T01:59:59Z"), dates.get(1));
+
+        // 1 day imcomplete period
+        dates.clear();
+        TimeParser.parse("2007-01-01", 0L, dates);
+        assertEquals(1, dates.size());
+        assertEquals(fullFormat.parse("2007-01-01T00:00:00Z"), dates.get(0));
+
+        dates.clear();
+        TimeParser.parse("2007-01-01", 0L, dates, true);
+        assertEquals(2, dates.size());
+
+        assertEquals(fullFormat.parse("2007-01-01T00:00:00Z"), dates.get(0));
+        assertEquals(fullFormat.parse("2007-01-01T23:59:59Z"), dates.get(1));
+
+         // 1 day imcomplete period (end of month)
+        dates.clear();
+        TimeParser.parse("2007-01-31", 0L, dates);
+        assertEquals(1, dates.size());
+        assertEquals(fullFormat.parse("2007-01-31T00:00:00Z"), dates.get(0));
+
+        dates.clear();
+        TimeParser.parse("2007-01-31", 0L, dates, true);
+        assertEquals(2, dates.size());
+
+        assertEquals(fullFormat.parse("2007-01-31T00:00:00Z"), dates.get(0));
+        assertEquals(fullFormat.parse("2007-01-31T23:59:59Z"), dates.get(1));
+
+        // 1 month imcomplete period
+        dates.clear();
+        TimeParser.parse("2007-01", 0L, dates);
+        assertEquals(1, dates.size());
+        assertEquals(fullFormat.parse("2007-01-01T00:00:00Z"), dates.get(0));
+
+        dates.clear();
+        TimeParser.parse("2007-01", 0L, dates, true);
+        assertEquals(2, dates.size());
+
+        assertEquals(fullFormat.parse("2007-01-01T00:00:00Z"), dates.get(0));
+        assertEquals(fullFormat.parse("2007-01-31T23:59:59Z"), dates.get(1));
+
+        // 1 month imcomplete period (end of the year)
+        dates.clear();
+        TimeParser.parse("2007-12", 0L, dates);
+        assertEquals(1, dates.size());
+        assertEquals(fullFormat.parse("2007-12-01T00:00:00Z"), dates.get(0));
+
+        dates.clear();
+        TimeParser.parse("2007-12", 0L, dates, true);
+        assertEquals(2, dates.size());
+
+        assertEquals(fullFormat.parse("2007-12-01T00:00:00Z"), dates.get(0));
+        assertEquals(fullFormat.parse("2007-12-31T23:59:59Z"), dates.get(1));
+
+        // 1 year imcomplete period
+        dates.clear();
+        TimeParser.parse("2007", 0L, dates);
+        assertEquals(1, dates.size());
+        assertEquals(fullFormat.parse("2007-01-01T00:00:00Z"), dates.get(0));
+
+        dates.clear();
+        TimeParser.parse("2007", 0L, dates, true);
+        assertEquals(2, dates.size());
+
+        assertEquals(fullFormat.parse("2007-01-01T00:00:00Z"), dates.get(0));
+        assertEquals(fullFormat.parse("2007-12-31T23:59:59Z"), dates.get(1));
+        
+    }
 }
