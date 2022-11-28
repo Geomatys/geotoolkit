@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.observation;
+package org.geotoolkit.observation.result;
 
 import org.geotoolkit.observation.model.ResultMode;
 import org.geotoolkit.observation.model.Field;
@@ -114,6 +114,8 @@ public class ResultBuilder {
             appendFloat((Float) value);
         } else if (value instanceof Integer) {
             appendInteger((Integer) value);
+        } else if (value instanceof Long) {
+            appendLong((Long) value);
         } else if (value == null) {
             switch (getMode()) {
                 case DATA_ARRAY:
@@ -269,13 +271,15 @@ public class ResultBuilder {
     public void appendHeaders(List<Field> fields) {
         switch (getMode()) {
             case CSV:
+                boolean first = true;
                 for (Field pheno : fields) {
-                    // hack for the current graph in cstl you only work when the main field is named "time"
-                    if (csvHack && FieldType.TIME.equals(pheno.type)) {
+                    // hack for the current graph in examind you only work when the main field is named "time"
+                    if (csvHack && FieldType.TIME.equals(pheno.type) && first) {
                         values.append("time").append(encoding.getTokenSeparator());
                     } else {
-                        values.append(pheno.description).append(encoding.getTokenSeparator());
+                        values.append(pheno.label).append(encoding.getTokenSeparator());
                     }
+                    first = false;
                 }
                 values.setCharAt(values.length() - 1, '\n');
         }
