@@ -17,7 +17,7 @@
 package org.geotoolkit.observation;
 
 import java.util.ArrayList;
-import org.geotoolkit.observation.model.ExtractionResult;
+import org.geotoolkit.observation.model.ObservationDataset;
 import org.geotoolkit.observation.model.OMEntity;
 import java.util.Collections;
 import java.util.Date;
@@ -41,6 +41,9 @@ import org.geotoolkit.gml.xml.AbstractGeometry;
 import static org.geotoolkit.observation.AbstractObservationStoreFactory.*;
 import static org.geotoolkit.observation.OMUtils.OBSERVATION_QNAME;
 import static org.geotoolkit.observation.ObservationReader.ENTITY_TYPE;
+import static org.geotoolkit.observation.model.ObservationTransformUtils.*;
+import org.geotoolkit.observation.model.ProcedureDataset;
+import org.geotoolkit.observation.model.Phenomenon;
 import org.geotoolkit.observation.xml.AbstractObservation;
 import org.geotoolkit.observation.xml.Process;
 import org.geotoolkit.sos.xml.ResponseModeType;
@@ -48,7 +51,6 @@ import org.geotoolkit.swe.xml.PhenomenonProperty;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.metadata.Metadata;
 import org.opengis.observation.Observation;
-import org.opengis.observation.Phenomenon;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValueGroup;
@@ -145,7 +147,7 @@ public abstract class AbstractObservationStore extends DataStore implements Obse
      * {@inheritDoc }
      */
     @Override
-    public ExtractionResult getResults() throws DataStoreException {
+    public ObservationDataset getResults() throws DataStoreException {
         return getResults(null, null);
     }
 
@@ -153,7 +155,7 @@ public abstract class AbstractObservationStore extends DataStore implements Obse
      * {@inheritDoc }
      */
     @Override
-    public ExtractionResult getResults(final List<String> sensorIds) throws DataStoreException {
+    public ObservationDataset getResults(final List<String> sensorIds) throws DataStoreException {
         return getResults(null, sensorIds);
     }
 
@@ -161,38 +163,38 @@ public abstract class AbstractObservationStore extends DataStore implements Obse
      * {@inheritDoc }
      */
     @Override
-    public ExtractionResult getResults(String affectedSensorId, List<String> sensorIDs) throws DataStoreException {
+    public ObservationDataset getResults(String affectedSensorId, List<String> sensorIDs) throws DataStoreException {
         if (affectedSensorId != null) {
             LOGGER.warning("This ObservationStore does not allow to override sensor ID");
         }
 
-        final ExtractionResult result = new ExtractionResult();
+        final ObservationDataset result = new ObservationDataset();
         result.spatialBound.initBoundary();
 
         final List<Observation> observations = getAllObservations(sensorIDs);
         for (Observation obs : observations) {
             final AbstractObservation o = (AbstractObservation) obs;
             final Process proc          =  o.getProcedure();
-            final ExtractionResult.ProcedureTree procedure = new ExtractionResult.ProcedureTree(proc.getHref(), proc.getName(), proc.getDescription(), "Component", "timeseries");
-            if (sensorIDs == null || sensorIDs.contains(procedure.id)) {
+            final ProcedureDataset procedure = new ProcedureDataset(proc.getHref(), proc.getName(), proc.getDescription(), "Component", "timeseries", new ArrayList<>(), null);
+            if (sensorIDs == null || sensorIDs.contains(procedure.getId())) {
                 if (!result.procedures.contains(procedure)) {
                     result.procedures.add(procedure);
                 }
                 final PhenomenonProperty phenProp = o.getPropertyObservedProperty();
                 final List<String> fields = OMUtils.getPhenomenonsFields(phenProp);
                 for (String field : fields) {
-                    if (!result.fields.contains(field)) {
-                        result.fields.add(field);
+                    if (!procedure.fields.contains(field)) {
+                        procedure.fields.add(field);
                     }
                 }
-                final Phenomenon phen = OMUtils.getPhenomenon(phenProp);
+                final Phenomenon phen = toModel(OMUtils.getPhenomenon(phenProp));
                 if (!result.phenomenons.contains(phen)) {
                     result.phenomenons.add(phen);
                 }
                 result.spatialBound.appendLocation(o.getSamplingTime(), o.getFeatureOfInterest());
                 procedure.spatialBound.appendLocation(o.getSamplingTime(), o.getFeatureOfInterest());
                 procedure.spatialBound.getHistoricalLocations().putAll(getSensorLocations(o.getProcedure().getHref(), "2.0.0"));
-                result.observations.add(o);
+                result.observations.add(toModel(o));
             }
         }
         return result;
@@ -202,14 +204,14 @@ public abstract class AbstractObservationStore extends DataStore implements Obse
      * {@inheritDoc }
      */
     @Override
-    public List<ExtractionResult.ProcedureTree> getProcedures() throws DataStoreException {
-        final List<ExtractionResult.ProcedureTree> result = new ArrayList<>();
+    public List<ProcedureDataset> getProcedures() throws DataStoreException {
+        final List<ProcedureDataset> result = new ArrayList<>();
 
         final List<Observation> observations = getAllObservations(new ArrayList<>());
         for (Observation obs : observations) {
             final AbstractObservation o = (AbstractObservation)obs;
             final Process proc          =  o.getProcedure();
-            final ExtractionResult.ProcedureTree procedure = new ExtractionResult.ProcedureTree(proc.getHref(), proc.getName(), proc.getDescription(), "Component", "timeseries");
+            final ProcedureDataset procedure = new ProcedureDataset(proc.getHref(), proc.getName(), proc.getDescription(), "Component", "timeseries", new ArrayList<>(), null);
 
             if (!result.contains(procedure)) {
                 result.add(procedure);
@@ -232,7 +234,7 @@ public abstract class AbstractObservationStore extends DataStore implements Obse
      */
     @Override
     public TemporalGeometricPrimitive getTemporalBounds() throws DataStoreException {
-        final ExtractionResult result = new ExtractionResult();
+        final ObservationDataset result = new ObservationDataset();
         result.spatialBound.initBoundary();
         final List<Observation> observations = getAllObservations(new ArrayList<>());
         for (Observation obs :observations) {

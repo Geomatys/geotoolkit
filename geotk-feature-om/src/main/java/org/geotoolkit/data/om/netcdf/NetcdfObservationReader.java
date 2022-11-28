@@ -17,10 +17,8 @@
 package org.geotoolkit.data.om.netcdf;
 
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -29,15 +27,13 @@ import javax.xml.namespace.QName;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.nio.IOUtilities;
-import static org.geotoolkit.observation.OMUtils.RESPONSE_FORMAT_V100;
-import static org.geotoolkit.observation.OMUtils.RESPONSE_FORMAT_V200;
 import org.geotoolkit.observation.ObservationReader;
 import org.geotoolkit.observation.xml.AbstractObservation;
 import org.geotoolkit.observation.model.OMEntity;
 import static org.geotoolkit.observation.ObservationReader.ENTITY_TYPE;
 import static org.geotoolkit.observation.ObservationReader.SENSOR_TYPE;
 import static org.geotoolkit.observation.ObservationReader.SOS_VERSION;
-import org.geotoolkit.observation.model.ExtractionResult;
+import org.geotoolkit.observation.model.ObservationDataset;
 import org.geotoolkit.sos.xml.ObservationOffering;
 import org.geotoolkit.sos.xml.ResponseModeType;
 import org.geotoolkit.sos.xml.SOSXmlFactory;
@@ -140,7 +136,7 @@ public class NetcdfObservationReader implements ObservationReader {
     @Override
     public TemporalGeometricPrimitive getTimeForProcedure(final String version, final String sensorID) throws DataStoreException {
         try {
-            final ExtractionResult result = NetCDFExtractor.getObservationFromNetCDF(analyze, getProcedureID(), null, new HashSet<>());
+            final ObservationDataset result = NetCDFExtractor.getObservationFromNetCDF(analyze, getProcedureID(), null, new HashSet<>());
             if (result != null && result.spatialBound != null) {
                 return result.spatialBound.getTimeObject(version);
             }
@@ -161,8 +157,8 @@ public class NetcdfObservationReader implements ObservationReader {
 
     private Collection<String> getFeatureOfInterestNames() throws DataStoreException {
         try {
-            final ExtractionResult result = NetCDFExtractor.getObservationFromNetCDF(analyze, getProcedureID(), null, new HashSet<>());
-            return result.featureOfInterestNames;
+            final ObservationDataset result = NetCDFExtractor.getObservationFromNetCDF(analyze, getProcedureID(), null, new HashSet<>());
+            return result.featureOfInterest.stream().map(foi -> foi.getId()).toList();
         } catch (NetCDFParsingException ex) {
             throw new DataStoreException(ex);
         }
@@ -171,7 +167,7 @@ public class NetcdfObservationReader implements ObservationReader {
     @Override
     public SamplingFeature getFeatureOfInterest(final String samplingFeatureName, final String version) throws DataStoreException {
         try {
-            final ExtractionResult result = NetCDFExtractor.getObservationFromNetCDF(analyze, getProcedureID(), null, new HashSet<>());
+            final ObservationDataset result = NetCDFExtractor.getObservationFromNetCDF(analyze, getProcedureID(), null, new HashSet<>());
             for (SamplingFeature feature : result.featureOfInterest) {
                 if (feature instanceof org.geotoolkit.sampling.xml.SamplingFeature &&
                    ((org.geotoolkit.sampling.xml.SamplingFeature)feature).getId().equals(samplingFeatureName)) {
@@ -192,7 +188,7 @@ public class NetcdfObservationReader implements ObservationReader {
     @Override
     public Observation getObservation(final String identifier, final QName resultModel, final ResponseModeType mode, final String version) throws DataStoreException {
        try {
-            final ExtractionResult result = NetCDFExtractor.getObservationFromNetCDF(analyze, getProcedureID(), null, new HashSet<>());
+            final ObservationDataset result = NetCDFExtractor.getObservationFromNetCDF(analyze, getProcedureID(), null, new HashSet<>());
             for (Observation obs : result.observations) {
                 final AbstractObservation o = (AbstractObservation) obs;
                 if (o.getId().equals(identifier)) {

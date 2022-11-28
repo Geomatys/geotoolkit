@@ -52,7 +52,8 @@ import org.geotoolkit.observation.ObservationReader;
 import org.geotoolkit.observation.ObservationStore;
 import org.geotoolkit.observation.ObservationStoreCapabilities;
 import org.geotoolkit.observation.ObservationWriter;
-import org.geotoolkit.observation.model.ExtractionResult;
+import org.geotoolkit.observation.model.ObservationDataset;
+import org.geotoolkit.observation.model.ProcedureDataset;
 import org.geotoolkit.sos.xml.ResponseModeType;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.util.NamesExt;
@@ -142,17 +143,17 @@ public class NetcdfObservationStore extends DataStore implements Aggregate, Reso
     }
 
     @Override
-    public ExtractionResult getResults() throws DataStoreException {
+    public ObservationDataset getResults() throws DataStoreException {
         return getResults(getProcedureID(), new ArrayList<>());
     }
 
     @Override
-    public ExtractionResult getResults(final List<String> sensorIDs) throws DataStoreException {
+    public ObservationDataset getResults(final List<String> sensorIDs) throws DataStoreException {
         return getResults(getProcedureID(), sensorIDs);
     }
 
     @Override
-    public ExtractionResult getResults(final String affectedSensorID, final List<String> sensorIDs) throws DataStoreException {
+    public ObservationDataset getResults(final String affectedSensorID, final List<String> sensorIDs) throws DataStoreException {
         try {
             // existing sampling features are not used yet
             Set<Phenomenon> phenomenons = new HashSet<>();
@@ -179,7 +180,7 @@ public class NetcdfObservationStore extends DataStore implements Aggregate, Reso
     @Override
     public TemporalGeometricPrimitive getTemporalBounds() throws DataStoreException {
         try {
-            final ExtractionResult result = NetCDFExtractor.getObservationFromNetCDF(analyze, getProcedureID(), null, new HashSet<>());
+            final ObservationDataset result = NetCDFExtractor.getObservationFromNetCDF(analyze, getProcedureID(), null, new HashSet<>());
             if (result != null && result.spatialBound != null) {
                 return result.spatialBound.getTimeObject("2.0.0");
             }
@@ -206,7 +207,7 @@ public class NetcdfObservationStore extends DataStore implements Aggregate, Reso
     }
 
     @Override
-    public List<ExtractionResult.ProcedureTree> getProcedures() throws DataStoreException {
+    public List<ProcedureDataset> getProcedures() throws DataStoreException {
         try {
             return NetCDFExtractor.getProcedures(analyze, getProcedureID(), null);
 

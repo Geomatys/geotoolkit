@@ -18,18 +18,14 @@
 package org.geotoolkit.data.om.xml;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.xml.namespace.QName;
 import org.apache.sis.storage.DataStoreException;
-import static org.geotoolkit.observation.OMUtils.RESPONSE_FORMAT_V100;
-import static org.geotoolkit.observation.OMUtils.RESPONSE_FORMAT_V200;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.gml.xml.FeatureProperty;
 import org.geotoolkit.observation.OMUtils;
@@ -42,7 +38,7 @@ import static org.geotoolkit.observation.ObservationReader.SOS_VERSION;
 
 import org.geotoolkit.observation.xml.*;
 import org.geotoolkit.observation.xml.Process;
-import org.geotoolkit.observation.model.ExtractionResult;
+import org.geotoolkit.observation.model.ObservationDataset;
 import org.geotoolkit.sos.xml.ObservationOffering;
 import org.geotoolkit.sos.xml.ResponseModeType;
 import org.geotoolkit.swe.xml.PhenomenonProperty;
@@ -193,7 +189,7 @@ public class XmlObservationReader implements ObservationReader {
 
     @Override
     public TemporalGeometricPrimitive getTimeForProcedure(final String version, final String sensorID) throws DataStoreException {
-        final ExtractionResult result = new ExtractionResult();
+        final ObservationDataset result = new ObservationDataset();
         for (Object xmlObject : xmlObjects) {
             if (xmlObject instanceof ObservationCollection) {
                 final ObservationCollection collection = (ObservationCollection)xmlObject;
