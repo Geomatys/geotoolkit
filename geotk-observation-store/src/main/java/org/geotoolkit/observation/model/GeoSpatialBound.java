@@ -16,25 +16,24 @@
  */
 package org.geotoolkit.observation.model;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.geotoolkit.gml.GMLUtilities;
-import org.geotoolkit.gml.xml.AbstractGeometry;
-import org.geotoolkit.gml.xml.AbstractRing;
-import org.geotoolkit.gml.xml.Envelope;
-import org.geotoolkit.gml.xml.LineString;
-import org.geotoolkit.gml.xml.Point;
-import org.geotoolkit.gml.xml.Polygon;
-import org.geotoolkit.gml.xml.v321.AbstractGeometryType;
-import org.geotoolkit.sampling.xml.SamplingFeature;
-import org.geotoolkit.sos.xml.SOSXmlFactory;
-import org.opengis.geometry.Geometry;
-import org.opengis.observation.AnyFeature;
+import java.util.Optional;
+import java.util.UUID;
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.temporal.object.DefaultInstant;
+import org.geotoolkit.temporal.object.DefaultPeriod;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
+import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
 import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
 import org.opengis.temporal.TemporalGeometricPrimitive;
@@ -55,33 +54,30 @@ public class GeoSpatialBound {
     public Double miny;
     public Double maxy;
 
-    private final List<AbstractGeometry> geometries = new ArrayList<>();
-    private final Map<Date, AbstractGeometry> historicalLocation = new HashMap<>();
+    private final List<Geometry> geometries = new ArrayList<>();
+    private final Map<Date, Geometry> historicalLocation = new HashMap<>();
 
-    public void appendLocation(final TemporalObject time, final AnyFeature feature) {
+    private static final GeometryFactory GF = new GeometryFactory();
+
+    public void appendLocation(final TemporalObject time, final SamplingFeature feature) {
         Date d = addTime(time);
-        AbstractGeometry ageom = null;
-        if (feature instanceof SamplingFeature sf) {
-            final Geometry geom = sf.getGeometry();
-            if (geom instanceof AbstractGeometry) {
-                ageom = (AbstractGeometry)geom;
-            } else if (geom != null) {
-                ageom = GMLUtilities.getGMLFromISO(geom);
-            }
-            addGeometry(ageom);
-            extractBoundary(ageom);
+        Geometry geom = null;
+        if (feature != null) {
+            geom = feature.getGeometry();
+            addGeometry(geom);
+            extractBoundary(geom);
         }
-        if (d != null && ageom != null) {
-            historicalLocation.put(d, ageom);
+        if (d != null && geom != null) {
+            historicalLocation.put(d, geom);
         }
     }
 
-    public void addLocation(final long millis, AbstractGeometry geometry) {
+    public void addLocation(final long millis, Geometry geometry) {
         final Date d = new Date(millis);
         addLocation(d, geometry);
     }
 
-    public void addLocation(final Date d, AbstractGeometry geometry) {
+    public void addLocation(final Date d, Geometry geometry) {
         addDate(d);
         addGeometry(geometry);
         historicalLocation.put(d, geometry);
@@ -175,27 +171,24 @@ public class GeoSpatialBound {
         maxy = 90.0;
     }
 
-    private void extractBoundary(final AbstractGeometry geom) {
+    private void extractBoundary(final Geometry geom) {
         if (geom instanceof Point p) {
-            if (p.getPos() != null) {
-                addXCoordinate(p.getPos().getOrdinate(0));
-                addYCoordinate(p.getPos().getOrdinate(1));
+            if (p.getCoordinate()!= null) {
+                addXCoordinate(p.getCoordinate().getOrdinate(0));
+                addYCoordinate(p.getCoordinate().getOrdinate(1));
             }
-        } else if (geom instanceof LineString ls) {
-            final Envelope env = ls.getBounds();
+        } else if (geom != null){
+            final Envelope env = geom.getEnvelopeInternal();
             if (env != null) {
-                addXCoordinate(env.getMinimum(0));
-                addXCoordinate(env.getMaximum(0));
-                addYCoordinate(env.getMinimum(1));
-                addYCoordinate(env.getMaximum(1));
+                addXCoordinate(env.getMinX());
+                addXCoordinate(env.getMaxX());
+                addYCoordinate(env.getMinY());
+                addYCoordinate(env.getMaxY());
             }
-        } else if (geom instanceof Polygon p) {
-            AbstractRing ext = p.getExterior().getAbstractRing();
-            // TODO
         }
     }
 
-    public void addGeometry(final AbstractGeometry geometry) {
+    public void addGeometry(final Geometry geometry) {
         if (!geometries.contains(geometry)) {
             geometries.add(geometry);
         }
@@ -214,7 +207,7 @@ public class GeoSpatialBound {
         addYCoordinate(other.miny);
         addYCoordinate(other.maxy);
 
-        for (AbstractGeometry geom : other.geometries) {
+        for (Geometry geom : other.geometries) {
             if (!this.geometries.contains(geom)) {
                 this.geometries.add(geom);
             }
@@ -222,68 +215,52 @@ public class GeoSpatialBound {
         this.historicalLocation.putAll(other.historicalLocation);
     }
 
-    public TemporalGeometricPrimitive getTimeObject(final String version) {
+    public TemporalGeometricPrimitive getTimeObject() {
         if (dateStart != null && dateEnd != null) {
+            String id = UUID.randomUUID().toString();
             if (dateStart.getTime() == dateEnd.getTime()) {
-                return SOSXmlFactory.buildTimeInstant(version, new Timestamp(dateStart.getTime()));
+                return new DefaultInstant(Collections.singletonMap(NAME_KEY, id + "time"), dateStart);
             } else {
-                return SOSXmlFactory.buildTimePeriod(version, new Timestamp(dateStart.getTime()), new Timestamp(dateEnd.getTime()));
+                return new DefaultPeriod(Collections.singletonMap(NAME_KEY, id + "-time"),
+                                         new DefaultInstant(Collections.singletonMap(NAME_KEY, id + "-st-time"), dateStart),
+                                         new DefaultInstant(Collections.singletonMap(NAME_KEY, id + "-en-time"), dateEnd));
             }
         }
         return null;
     }
 
-    public Envelope getSpatialBounds(final String version) {
+    public Optional<Envelope> getSpatialBounds() {
+        if (!hasFullSpatialCoordinates()) {
+            return Optional.empty();
+        }
+        return Optional.of(new Envelope(minx, maxx, miny, maxy));
+    }
+
+    public Optional<org.opengis.geometry.Envelope> getEnvelope() {
+        if (!hasFullSpatialCoordinates()) {
+            return Optional.empty();
+        }
+        GeneralEnvelope env = new GeneralEnvelope(CommonCRS.defaultGeographic());
+        env.setRange(0, minx, maxx);
+        env.setRange(1, miny, maxy);
+        return Optional.of(env);
+    }
+
+    public Geometry getPolyGonBounds() {
         if (!hasFullSpatialCoordinates()) {
             return null;
         }
-        if ("1.0.0".equals(version)) {
-            final org.geotoolkit.gml.xml.v311.DirectPositionType lower = new org.geotoolkit.gml.xml.v311.DirectPositionType(minx, miny);
-            final org.geotoolkit.gml.xml.v311.DirectPositionType upper = new org.geotoolkit.gml.xml.v311.DirectPositionType(maxx, maxy);
-            return new org.geotoolkit.gml.xml.v311.EnvelopeType(lower, upper, null);
-        } else if ("2.0.0".equals(version)) {
-            final org.geotoolkit.gml.xml.v321.DirectPositionType lower = new org.geotoolkit.gml.xml.v321.DirectPositionType(minx, miny);
-            final org.geotoolkit.gml.xml.v321.DirectPositionType upper = new org.geotoolkit.gml.xml.v321.DirectPositionType(maxx, maxy);
-            return new org.geotoolkit.gml.xml.v321.EnvelopeType(lower, upper, null);
-        } else {
-            throw new IllegalArgumentException("unexpected version:" + version);
-        }
+        final List<Coordinate> positions = new ArrayList<>();
+        positions.add(new Coordinate(minx, miny));
+        positions.add(new Coordinate(maxx, miny));
+        positions.add(new Coordinate(maxx, maxy));
+        positions.add(new Coordinate(minx, maxy));
+        positions.add(new Coordinate(minx, miny));
+
+        return GF.createPolygon(positions.toArray(Coordinate[]::new));
     }
 
-    public AbstractGeometry getPolyGonBounds(final String version) {
-        if (!hasFullSpatialCoordinates()) {
-            return null;
-        }
-        final List<Double> positions = new ArrayList<>();
-        positions.add(miny);
-        positions.add(minx);
-
-        positions.add(miny);
-        positions.add(maxx);
-
-        positions.add(maxy);
-        positions.add(maxx);
-
-        positions.add(maxy);
-        positions.add(minx);
-
-        positions.add(miny);
-        positions.add(minx);
-
-        if ("1.0.0".equals(version)) {
-            final org.geotoolkit.gml.xml.v311.DirectPositionListType posList = new org.geotoolkit.gml.xml.v311.DirectPositionListType(positions);
-            final org.geotoolkit.gml.xml.v311.AbstractRingType exterior = new org.geotoolkit.gml.xml.v311.LinearRingType("EPSG:4326", posList);
-            return new org.geotoolkit.gml.xml.v311.PolygonType(exterior, null);
-        } else if ("2.0.0".equals(version)) {
-            final org.geotoolkit.gml.xml.v321.DirectPositionListType posList = new org.geotoolkit.gml.xml.v321.DirectPositionListType(positions);
-            final org.geotoolkit.gml.xml.v321.AbstractRingType exterior = new org.geotoolkit.gml.xml.v321.LinearRingType("EPSG:4326", posList);
-            return new org.geotoolkit.gml.xml.v321.PolygonType(exterior, null);
-        } else {
-            throw new IllegalArgumentException("unexpected version:" + version);
-        }
-    }
-
-    public AbstractGeometry getLastGeometry(final String version) {
+    public Geometry getLastGeometry() {
         if (historicalLocation.isEmpty()) {
             return null;
         } else {
@@ -293,22 +270,17 @@ public class GeoSpatialBound {
         }
     }
 
-    public AbstractGeometry getFullGeometry(final String version) {
+    public Geometry getFullGeometry() {
         if (geometries.isEmpty()) {
             return null;
         } else if (geometries.size() == 1) {
             return geometries.get(0);
         } else {
-            final List<org.geotoolkit.gml.xml.v321.GeometryPropertyType> members = new ArrayList<>();
-            for (AbstractGeometry geom : geometries) {
-                members.add(new org.geotoolkit.gml.xml.v321.GeometryPropertyType((AbstractGeometryType) geom));
-            }
-            final org.geotoolkit.gml.xml.v321.MultiGeometryType geom = new org.geotoolkit.gml.xml.v321.MultiGeometryType(members);
-            return geom;
+            return GF.createGeometryCollection(geometries.toArray(Geometry[]::new));
         }
     }
 
-    public Map<Date, AbstractGeometry> getHistoricalLocations() {
+    public Map<Date, Geometry> getHistoricalLocations() {
         return historicalLocation;
     }
 }

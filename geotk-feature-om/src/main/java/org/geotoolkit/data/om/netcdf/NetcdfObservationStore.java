@@ -26,7 +26,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.Spliterator;
 import java.util.Spliterators;
@@ -35,7 +34,6 @@ import java.util.stream.StreamSupport;
 import org.apache.sis.storage.AbstractFeatureSet;
 import org.apache.sis.internal.storage.ResourceOnFileSystem;
 import org.apache.sis.internal.storage.StoreResource;
-import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
@@ -45,9 +43,9 @@ import org.geotoolkit.data.om.OMFeatureTypes;
 import static org.geotoolkit.data.om.netcdf.NetcdfObservationStoreFactory.FILE_PATH;
 import org.geotoolkit.storage.feature.GenericNameIndex;
 import org.geotoolkit.nio.IOUtilities;
+import org.geotoolkit.observation.AbstractObservationStore;
 import static org.geotoolkit.observation.OMUtils.RESPONSE_FORMAT_V100;
 import static org.geotoolkit.observation.OMUtils.RESPONSE_FORMAT_V200;
-import org.geotoolkit.observation.ObservationFilterReader;
 import org.geotoolkit.observation.ObservationReader;
 import org.geotoolkit.observation.ObservationStore;
 import org.geotoolkit.observation.ObservationStoreCapabilities;
@@ -55,12 +53,14 @@ import org.geotoolkit.observation.ObservationWriter;
 import org.geotoolkit.observation.model.ObservationDataset;
 import org.geotoolkit.observation.model.ProcedureDataset;
 import org.geotoolkit.sos.xml.ResponseModeType;
+import org.geotoolkit.observation.model.ObservationDataset;
+import org.geotoolkit.observation.model.ProcedureDataset;
+import org.geotoolkit.observation.model.ResponseMode;
+import org.geotoolkit.observation.query.AbstractObservationQuery;
+import org.geotoolkit.observation.query.DatasetQuery;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
-import org.opengis.metadata.Metadata;
-import org.opengis.observation.Phenomenon;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.temporal.TemporalGeometricPrimitive;
 import org.opengis.util.GenericName;
@@ -69,16 +69,15 @@ import org.opengis.util.GenericName;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class NetcdfObservationStore extends DataStore implements Aggregate, ResourceOnFileSystem,ObservationStore {
+public class NetcdfObservationStore extends AbstractObservationStore implements Aggregate, ResourceOnFileSystem,ObservationStore {
 
     protected final GenericNameIndex<FeatureType> types;
-    private final ParameterValueGroup parameters;
     private final Path dataFile;
     private final NCFieldAnalyze analyze;
     private final List<Resource> components = new ArrayList<>();
 
     public NetcdfObservationStore(final ParameterValueGroup params) {
-        this.parameters = params;
+        super(params);
         dataFile = Paths.get((URI) params.parameter(FILE_PATH.getName().toString()).getValue());
         analyze = NetCDFExtractor.analyzeResult(dataFile, null);
         types = OMFeatureTypes.getFeatureTypes(IOUtilities.filenameWithoutExtension(dataFile));
@@ -89,15 +88,13 @@ public class NetcdfObservationStore extends DataStore implements Aggregate, Reso
     }
 
     public NetcdfObservationStore(final Path observationFile) {
-        parameters = NetcdfObservationStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
-        parameters.parameter(FILE_PATH.getName().toString()).setValue(observationFile.toUri());
-        dataFile = observationFile;
-        analyze = NetCDFExtractor.analyzeResult(dataFile, null);
-        types = OMFeatureTypes.getFeatureTypes(IOUtilities.filenameWithoutExtension(dataFile));
+        this(toParams(observationFile));
+    }
 
-        for (GenericName name : types.getNames()) {
-            components.add(new FeatureView(name));
-        }
+    private static ParameterValueGroup toParams(final Path observationFile) {
+        ParameterValueGroup parameters = NetcdfObservationStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
+        parameters.parameter(FILE_PATH.getName().toString()).setValue(observationFile.toUri());
+        return parameters;
     }
 
     @Override
@@ -106,20 +103,8 @@ public class NetcdfObservationStore extends DataStore implements Aggregate, Reso
     }
 
     @Override
-    public Optional<ParameterValueGroup> getOpenParameters() {
-        return Optional.of(parameters);
-    }
-
-    @Override
-    public Metadata getMetadata() throws DataStoreException {
-        return new DefaultMetadata();
-    }
-
-    /**
-     * @return the dataFile
-     */
-    public Path getDataFile() {
-        return dataFile;
+    protected String getStoreIdentifier() {
+        return "netcdf-observation";
     }
 
     @Override
@@ -131,58 +116,62 @@ public class NetcdfObservationStore extends DataStore implements Aggregate, Reso
     // OBSERVATION STORE ///////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
 
-    @Override
-    public Set<GenericName> getProcedureNames() {
-        final Set<GenericName> names = new HashSet<>();
-        names.add(NamesExt.create(getProcedureID()));
-        return names;
-    }
-
     private String getProcedureID() {
         return IOUtilities.filenameWithoutExtension(dataFile);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
-    public ObservationDataset getResults() throws DataStoreException {
-        return getResults(getProcedureID(), new ArrayList<>());
+    public Set<String> getEntityNames(AbstractObservationQuery query) throws DataStoreException {
+        if (query == null) throw new DataStoreException("Query must no be null");
+
+        // no filters will be applied.
+        ObservationReader reader = getReader();
+        if (reader != null) {
+            return new HashSet<>(reader.getEntityNames(query.getEntityType()));
+        }
+
+        throw new UnsupportedOperationException("Unable to list entity without a least a reader or a filterReader.");
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
-    public ObservationDataset getResults(final List<String> sensorIDs) throws DataStoreException {
-        return getResults(getProcedureID(), sensorIDs);
-    }
-
-    @Override
-    public ObservationDataset getResults(final String affectedSensorID, final List<String> sensorIDs) throws DataStoreException {
+    public ObservationDataset getDataset(final DatasetQuery query) throws DataStoreException {
+        String affectedSensorID = query.getAffectedSensorID() != null ? query.getAffectedSensorID() : getProcedureID();
         try {
-            // existing sampling features are not used yet
-            Set<Phenomenon> phenomenons = new HashSet<>();
-            return NetCDFExtractor.getObservationFromNetCDF(analyze, affectedSensorID, sensorIDs, phenomenons);
+            return NetCDFExtractor.getObservationFromNetCDF(analyze, affectedSensorID, query.getSensorIds(), new HashSet<>());
         } catch (NetCDFParsingException ex) {
             throw new DataStoreException(ex);
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
-    public void close() throws DataStoreException {
-        // do nothing
-    }
+    public List<ProcedureDataset> getProcedureDatasets(DatasetQuery query) throws DataStoreException {
+        try {
+            String affectedSensorID = query.getAffectedSensorID() != null ? query.getAffectedSensorID() : getProcedureID();
+            return NetCDFExtractor.getProcedures(analyze, affectedSensorID, null);
 
-    @Override
-    public Set<String> getPhenomenonNames() {
-        final Set<String> phenomenons = new HashSet<>();
-        for (NCField field : analyze.phenfields) {
-            phenomenons.add(field.name);
+        } catch (NetCDFParsingException ex) {
+            throw new DataStoreException(ex);
         }
-        return phenomenons;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public TemporalGeometricPrimitive getTemporalBounds() throws DataStoreException {
         try {
             final ObservationDataset result = NetCDFExtractor.getObservationFromNetCDF(analyze, getProcedureID(), null, new HashSet<>());
             if (result != null && result.spatialBound != null) {
-                return result.spatialBound.getTimeObject("2.0.0");
+                return result.spatialBound.getTimeObject();
             }
             return null;
         } catch (NetCDFParsingException ex) {
@@ -204,32 +193,6 @@ public class NetcdfObservationStore extends DataStore implements Aggregate, Reso
     @Override
     public ObservationReader getReader() {
         return new NetcdfObservationReader(dataFile, analyze);
-    }
-
-    @Override
-    public List<ProcedureDataset> getProcedures() throws DataStoreException {
-        try {
-            return NetCDFExtractor.getProcedures(analyze, getProcedureID(), null);
-
-        } catch (NetCDFParsingException ex) {
-            throw new DataStoreException(ex);
-        }
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public ObservationFilterReader getFilter() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public ObservationWriter getWriter() {
-        return null;
     }
 
     private final class FeatureView extends AbstractFeatureSet implements StoreResource {
@@ -270,7 +233,7 @@ public class NetcdfObservationStore extends DataStore implements Aggregate, Reso
         final Map<String, List<String>> responseFormats = new HashMap<>();
         responseFormats.put("1.0.0", Arrays.asList(RESPONSE_FORMAT_V100));
         responseFormats.put("2.0.0", Arrays.asList(RESPONSE_FORMAT_V200));
-        final List<String> responseMode = Arrays.asList(ResponseModeType.INLINE.value());
+        final List<ResponseMode> responseMode = Arrays.asList(ResponseMode.INLINE);
         return new ObservationStoreCapabilities(false, false, false, new ArrayList<>(), responseFormats, responseMode, false);
     }
 }

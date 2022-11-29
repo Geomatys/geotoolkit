@@ -17,16 +17,17 @@
 
 package org.geotoolkit.observation;
 
-import org.geotoolkit.observation.model.OMEntity;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.gml.xml.Envelope;
+import org.geotoolkit.observation.model.Offering;
+import org.geotoolkit.observation.query.AbstractObservationQuery;
+import org.locationtech.jts.geom.Geometry;
 import org.opengis.filter.BinaryComparisonOperator;
 import org.opengis.filter.TemporalOperator;
-import org.opengis.geometry.Geometry;
+import org.opengis.geometry.Envelope;
 import org.opengis.observation.Observation;
 import org.opengis.observation.Phenomenon;
 import org.opengis.observation.sampling.SamplingFeature;
@@ -38,20 +39,26 @@ import org.opengis.observation.Process;
  */
 public interface ObservationFilterReader {
 
-    void init(OMEntity objectType, final Map<String,Object> hints) throws DataStoreException;
+    void init(AbstractObservationQuery query) throws DataStoreException;
 
     /**
      * Add some procedure filter to the request.
+     *
+     * @param procedures A list of procedure identifiers.
      */
     void setProcedure(final List<String> procedures) throws DataStoreException;
 
     /**
      * Add some filter ont procedure type to the request.
+     *
+     * @param type procedure type like 'System' or 'component'.
      */
     void setProcedureType(final String type) throws DataStoreException;
 
     /**
      * Add some phenomenon filter to the request.
+     *
+     * @param phenomenon A list of phenomenon identifiers.
      */
     void setObservedProperties(final List<String> phenomenon);
 
@@ -82,6 +89,8 @@ public interface ObservationFilterReader {
 
     /**
      * Set the offering for the current request
+     *
+     * @param offerings A list of offering identifiers.
      */
     void setOfferings(final List<String> offerings) throws DataStoreException;
 
@@ -91,6 +100,13 @@ public interface ObservationFilterReader {
      * @param filter a comparison filter the result.
      */
     void setResultFilter(final BinaryComparisonOperator filter) throws DataStoreException;
+
+    /**
+     * Add a filter on the entity properties.
+     *
+     * @param filter a comparison filter the property.
+     */
+    void setPropertiesFilter(final BinaryComparisonOperator filter) throws DataStoreException;
 
     /**
      * Execute the current query and return a list of observation result.
@@ -116,44 +132,70 @@ public interface ObservationFilterReader {
 
     void destroy();
 
-     /**
+    /**
      * Return a list of Observation matching the builded filter.
+     *
+     * Implementation should always return instanceof {@linkplain org.geotoolkit.observation.model.Observation}
      *
      * @return A list of Observation matching the builded filter.
      */
     List<Observation> getObservations() throws DataStoreException;
 
     /**
+     * Return a list of Sampling feature matching the builded filter.
      *
+     * Implementation should always return instanceof {@linkplain org.geotoolkit.observation.model.SamplingFeature}
+     *
+     * @return A list of Sampling feature matching the builded filter.
      */
     List<SamplingFeature> getFeatureOfInterests() throws DataStoreException;
 
     /**
+     * Return a list of Phenomenon matching the builded filter.
      *
+     * Implementation should always return instanceof {@linkplain org.geotoolkit.observation.model.Phenomenon}
+     *
+     * @return A list of Phenomenon matching the builded filter.
      */
     List<Phenomenon> getPhenomenons() throws DataStoreException;
 
     /**
+     *  Return a list of Procedure matching the builded filter.
      *
+     * Implementation should always return instanceof {@linkplain org.geotoolkit.observation.model.Procedure}
+     *
+     * @return A list of Procedure matching the builded filter.
      */
     List<Process> getProcesses() throws DataStoreException;
 
     /**
+     *  Return a list of Offering matching the builded filter.
      *
+     * @return A list of Offering matching the builded filter.
+     */
+    List<Offering> getOfferings() throws DataStoreException;
+
+    /**
+     * Return a Map of sensor locations matching the builded filter.
+     *
+     * @return A Map of sensor locations matching the builded filter.
      */
     Map<String, Geometry> getSensorLocations() throws DataStoreException;
 
     /**
+     * Return a Map of sensor historical locations matching the builded filter.
      *
-     * @return
-     * @throws DataStoreException
+     * @return A Map of sensor locations matching the builded filter.
      */
     Map<String, Map<Date, Geometry>> getSensorHistoricalLocations() throws DataStoreException;
 
     /**
+     * Return a Map of sensor times matching the builded filter.
+     * This is a simpliest version of getSensorHistoricalLocations() without geometry extraction
      *
+     * @return A Map of sensor times matching the builded filter.
      */
-    Map<String, List<Date>> getSensorTimes() throws DataStoreException;
+    Map<String, Set<Date>> getSensorHistoricalTimes() throws DataStoreException;
 
     /**
      * Return direct observations results.
@@ -164,9 +206,8 @@ public interface ObservationFilterReader {
     Object getResults() throws DataStoreException;
 
     /**
-     * If the filter reader caompute itself the bounding shape of the obervation collection.
+     * If the filter reader compute itself the bounding shape of the obervation collection.
      * this methode return the current shape.
      */
     Envelope getCollectionBoundingShape();
 }
-
