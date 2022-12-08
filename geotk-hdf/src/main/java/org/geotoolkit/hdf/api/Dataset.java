@@ -20,9 +20,14 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
 import java.nio.channels.SeekableByteChannel;
+import java.text.ParseException;
+import java.time.Instant;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
+import static java.util.Collections.singletonMap;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -32,17 +37,33 @@ import java.util.NavigableMap;
 import java.util.Optional;
 import java.util.TreeMap;
 import java.util.function.Function;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
+import javax.measure.Unit;
+import javax.measure.format.ParserException;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.storage.io.ChannelDataInput;
+import org.apache.sis.measure.Units;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.NamedIdentifier;
+import org.apache.sis.referencing.crs.DefaultTemporalCRS;
+import org.apache.sis.referencing.cs.DefaultCoordinateSystemAxis;
+import org.apache.sis.referencing.cs.DefaultTimeCS;
+import org.apache.sis.referencing.datum.DefaultTemporalDatum;
 import org.apache.sis.storage.AbstractResource;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.storage.netcdf.AttributeNames;
 import org.apache.sis.util.ArraysExt;
 import static org.apache.sis.util.ArraysExt.swap;
 import org.apache.sis.util.collection.BackingStoreException;
+import org.apache.sis.util.iso.Names;
+import org.apache.sis.util.resources.Vocabulary;
 import org.geotoolkit.hdf.ObjectHeader;
 import org.geotoolkit.hdf.SymbolTableEntry;
 import org.geotoolkit.hdf.btree.BTreeV1;
@@ -70,8 +91,17 @@ import org.geotoolkit.hdf.message.NillMessage;
 import org.geotoolkit.hdf.message.ObjectHeaderContinuationMessage;
 import org.geotoolkit.hdf.message.ObjectModificationTimeMessage;
 import org.geotoolkit.storage.multires.TileMatrices;
+import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
+import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.crs.TemporalCRS;
+import org.opengis.referencing.cs.AxisDirection;
+import org.opengis.referencing.datum.TemporalDatum;
+import org.opengis.referencing.operation.MathTransform1D;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
 
 /**
@@ -84,6 +114,7 @@ import org.opengis.util.GenericName;
  */
 public final class Dataset extends AbstractResource implements Node, FeatureSet {
 
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.hdf");
     private static final String HDF_INDEX = "hdf-index";
 
     private final Group parent;
@@ -112,6 +143,7 @@ public final class Dataset extends AbstractResource implements Node, FeatureSet 
     private FeatureType featureType;
     private boolean is1D;
     private boolean isEmpty;
+    private final Map<String,MathTransform1D> timeAttributes = new HashMap<>();
 
     public Dataset(Group parent, Connector connector, SymbolTableEntry entry, String name) throws IOException, DataStoreException {
         super(null, false);
@@ -186,6 +218,68 @@ public final class Dataset extends AbstractResource implements Node, FeatureSet 
         return Collections.unmodifiableMap(attributes);
     }
 
+    /**
+     * Extract attribute descrption concatenating CF standard_name and long_name.
+     * @param attributeName, null if datatype is not compund.
+     * @return
+     */
+    public String getAttributeDescription(String attributeName) {
+        final Object standardName = attributes.get(attributeName == null ? AttributeNames.STANDARD_NAME : attributeName + ":" + AttributeNames.STANDARD_NAME);
+        final Object longName = attributes.get(attributeName == null ? "long_name" : attributeName + ":long_name");
+        final StringBuilder description = new StringBuilder();
+        if (standardName != null) {
+            description.append(standardName);
+        }
+        if (longName != null) {
+            if (!description.isEmpty()) {
+                description.append(" : ");
+            }
+            description.append(longName);
+        }
+        if (!description.isEmpty()) {
+            return description.toString();
+        }
+        return null;
+    }
+
+    public Entry<Unit,CoordinateReferenceSystem> getAttributeUnit(String attributeName) {
+        final Object units = attributes.get(attributeName + ":units");
+        final String unitStr = String.valueOf(units);
+        Unit unit = null;
+        CoordinateReferenceSystem crs = null;
+        try {
+            unit = Units.valueOf(unitStr);
+        } catch (ParserException ex) {
+            int idx = unitStr.indexOf("since");
+            if (idx > 0) {
+                try {
+                    final String baseUnitStr = unitStr.substring(0, idx).trim();
+                    unit = Units.valueOf(baseUnitStr);
+                    final String originStr = unitStr.substring(idx+5).trim();
+                    final Calendar epoch = TemporalUtilities.parseDateCal(originStr);
+
+                    final Map<String,?> props = singletonMap(NAME_KEY, new NamedIdentifier(null, "attributeName"));
+                    final TemporalDatum datum = new DefaultTemporalDatum(props, epoch.getTime());
+                    final Map<String,Object> properties = new HashMap<>();
+                    properties.put(TemporalCRS.IDENTIFIERS_KEY, new NamedIdentifier(Names.createLocalName(null, null, attributeName)));
+                    final Map<String,?> cs   = singletonMap(NAME_KEY, new NamedIdentifier(null, Vocabulary.formatInternational(Vocabulary.Keys.Temporal)));
+                    final Map<String,?> axis = singletonMap(NAME_KEY, new NamedIdentifier(null, Vocabulary.formatInternational(Vocabulary.Keys.Time)));
+                    final DefaultTimeCS timeCs = new DefaultTimeCS(cs, new DefaultCoordinateSystemAxis(axis, "t", AxisDirection.FUTURE, unit));
+                    crs = new DefaultTemporalCRS(properties, datum, timeCs);
+
+                } catch (ParserException | ParseException e) {
+                    LOGGER.log(Level.WARNING, "Failed to parse unit {0}", unitStr);
+                }
+            } else {
+                LOGGER.log(Level.WARNING, "Failed to parse unit {0}", unitStr);
+            }
+        }
+        if (unit != null) {
+            return new AbstractMap.SimpleImmutableEntry<>(unit, crs);
+        }
+        return null;
+    }
+
     @Override
     public synchronized FeatureType getType() throws DataStoreException {
         if (featureType == null) {
@@ -214,7 +308,30 @@ public final class Dataset extends AbstractResource implements Node, FeatureSet 
 
             if (datatype instanceof Compound cmp) {
                 for (Member member : cmp.members) {
-                    ftb.addAttribute(member.memberType.getValueClass()).setName(member.name);
+                    final Entry<Unit,CoordinateReferenceSystem> unitAndCrs = getAttributeUnit(member.name);
+                    final String description = getAttributeDescription(member.name);
+
+                    final AttributeTypeBuilder atb = ftb.addAttribute(member.memberType.getValueClass()).setName(member.name);
+                    if (description != null) {
+                        atb.setDescription(description);
+                    }
+                    if (unitAndCrs != null) {
+                        atb.setUnit(unitAndCrs.getKey());
+                        if (unitAndCrs.getValue() != null) {
+                            CoordinateReferenceSystem crs = unitAndCrs.getValue();
+                            atb.setCRS(crs);
+                            if (crs instanceof TemporalCRS) {
+                                atb.setValueClass(Instant.class);
+                                final MathTransform1D mt;
+                                try {
+                                    mt = (MathTransform1D) CRS.findOperation(crs, CommonCRS.Temporal.JAVA.crs(), null).getMathTransform();
+                                } catch (FactoryException ex) {
+                                    throw new DataStoreException(ex);
+                                }
+                                timeAttributes.put(member.name, mt);
+                            }
+                        }
+                    }
                 }
             } else {
                 ftb.addAttribute(datatype.getValueClass()).setName("value");
@@ -257,14 +374,14 @@ public final class Dataset extends AbstractResource implements Node, FeatureSet 
             public Stream<Feature> apply(GridExtent t) {
                 try {
                     return toFeatures(t);
-                } catch (IOException | DataStoreException ex) {
+                } catch (IOException | DataStoreException | TransformException ex) {
                     throw new BackingStoreException(ex.getMessage(), ex);
                 }
             }
         });
     }
 
-    private Stream<Feature> toFeatures(GridExtent extent) throws DataStoreException, IOException {
+    private Stream<Feature> toFeatures(GridExtent extent) throws DataStoreException, IOException, TransformException {
         final FeatureType type = getType();
         final Object rawData = read(extent);
 
@@ -289,7 +406,15 @@ public final class Dataset extends AbstractResource implements Node, FeatureSet 
             }
             if (datatype instanceof Compound cmp) {
                 for (int k = 0; k < cmp.members.length; k++) {
-                    feature.setPropertyValue(cmp.members[k].name, Array.get(rawRecord, k));
+                    final String name = cmp.members[k].name;
+                    Object value = Array.get(rawRecord, k);
+                    MathTransform1D trs1d = timeAttributes.get(name);
+                    if (trs1d != null) {
+                        //convert value to Instant
+                        final double timeMs = trs1d.transform(((Number) value).doubleValue());
+                        value = Instant.ofEpochMilli((long) timeMs);
+                    }
+                    feature.setPropertyValue(name, value);
                 }
             } else {
                 feature.setPropertyValue("value", rawRecord);
@@ -441,13 +566,13 @@ public final class Dataset extends AbstractResource implements Node, FeatureSet 
             //read btree of all chunks
             channel.seek(cdt.address);
             final BTreeV1 datatree = new BTreeV1();
-            datatree.read(channel, dataspace.getDimensionSizes().length);
+            datatree.read(channel, cdt.dimensionSizes);
             final BTreeV1.DataNode node = (BTreeV1.DataNode) datatree.root;
             final List<BTreeV1Chunk> rawChunks = node.getChunks();
 
             chunks = new TreeMap<>();
             for (BTreeV1Chunk chl : rawChunks) {
-                final long[] startCoordinate = chl.offset;
+                final long[] startCoordinate = chl.offset.getLow().getCoordinateValues();
                 final long location = locationToOffset(startCoordinate);
                 chunks.put(location, chl);
             }
@@ -486,7 +611,9 @@ public final class Dataset extends AbstractResource implements Node, FeatureSet 
             values = datatype.readData(channel, dimensions[dimIdx], compoundindexes);
         } else {
             //an array of strips
-            values = java.lang.reflect.Array.newInstance(datatype.getValueClass(), dimensions[dimIdx], 0);
+            final int[] sizes = new int[dimensions.length - dimIdx];
+            sizes[0] = dimensions[dimIdx];
+            values = java.lang.reflect.Array.newInstance(datatype.getValueClass(), sizes);
             for (int k = 0; k < dimensions[dimIdx]; k++) {
                 channel.seek(basePosition + (low[dimIdx] + k) * dimensionByteSize[dimIdx]);
                 final Object strip = readDatas(channel, low, high, dimensions, dimIdx+1, compoundindexes);
