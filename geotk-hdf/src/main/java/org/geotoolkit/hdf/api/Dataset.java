@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.concurrent.Callable;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -454,9 +455,7 @@ public final class Dataset extends AbstractResource implements Node, FeatureSet 
         }
 
         //build channel
-        HDF5DataInput channel = null;
-        try {
-            channel = connector.createChannel();
+        try (HDF5DataInput channel = connector.createChannel()) {
 
             //build the fill value
             byte[] fill = new byte[1];
@@ -518,18 +517,14 @@ public final class Dataset extends AbstractResource implements Node, FeatureSet 
                 final Object results = java.lang.reflect.Array.newInstance(datatype.getValueClass(), dimensions);
 
                 for (BTreeV1Chunk chunk : chunks) {
-                    channel.seek(chunk.address);
-                    final ChunkSeekableByteChannel chunkChannel = new ChunkSeekableByteChannel(chunk, channel, filters);
-                    final HDF5ChannelDataInput hdF5ChannelDataInput = new HDF5ChannelDataInput(new ChannelDataInput("", chunkChannel, ByteBuffer.allocate(4096), false));
-                    appendChunkDatas(results, hdF5ChannelDataInput, chunk.offset, extent, compoundindexes);
-                    hdF5ChannelDataInput.close();
+
+                    appendChunkDatas(results, () -> {
+                        channel.seek(chunk.address);
+                        final ChunkSeekableByteChannel chunkChannel = new ChunkSeekableByteChannel(chunk, channel, filters);
+                        return new HDF5ChannelDataInput(new ChannelDataInput("", chunkChannel, ByteBuffer.allocate(4096), false));
+                    }, chunk.offset, extent, compoundindexes);
                 }
                 return results;
-            }
-
-        } finally {
-            if (channel != null) {
-                channel.close();
             }
         }
     }
@@ -548,7 +543,7 @@ public final class Dataset extends AbstractResource implements Node, FeatureSet 
         return chunks;
     }
 
-    private void appendChunkDatas(Object results, HDF5DataInput chunkChannel,
+    private void appendChunkDatas(Object results, Callable<HDF5DataInput> chunkChannel,
             GridExtent chunkExtent, GridExtent queryExtent, int ... compoundindexes) throws IOException {
 
         final GridExtent intersection = chunkExtent.intersect(queryExtent);
@@ -564,10 +559,15 @@ public final class Dataset extends AbstractResource implements Node, FeatureSet 
             fulldimensions[i] = (int) chunkExtent.getSize(i);
             intersectionToQueryTranslate[i] = intersectionlow[i] - queryExtent.getLow(i);
         }
-        Object chunkDatas = readChunkDatas(chunkChannel, buildCellSizes(cellByteSize, fulldimensions), chunkTranslate, intersectionlow, dimensions, 0, compoundindexes);
-
-        //copy datas in result array
-        copy(chunkDatas, results, intersectionToQueryTranslate);
+        try (HDF5DataInput dfi = chunkChannel.call()) {
+            Object chunkDatas = readChunkDatas(dfi, buildCellSizes(cellByteSize, fulldimensions), chunkTranslate, intersectionlow, dimensions, 0, compoundindexes);
+            //copy datas in result array
+            copy(chunkDatas, results, intersectionToQueryTranslate);
+        } catch (IOException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            throw new IOException(ex);
+        }
     }
 
     private Object readChunkDatas(HDF5DataInput chunkChannel, final long[] dimensionByteSize, final long[] chunkLow, final long[] intersectionLow, final int[] intersectionSize, int dimIdx, int ... compoundindexes) throws IOException {
