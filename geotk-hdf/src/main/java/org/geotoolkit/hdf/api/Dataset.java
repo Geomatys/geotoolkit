@@ -19,7 +19,6 @@ package org.geotoolkit.hdf.api;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
-import java.nio.channels.SeekableByteChannel;
 import java.text.ParseException;
 import java.time.Instant;
 import java.util.AbstractMap;
@@ -33,9 +32,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.NavigableMap;
 import java.util.Optional;
-import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -74,10 +71,8 @@ import org.geotoolkit.hdf.datatype.DataType;
 import org.geotoolkit.hdf.heap.LocalHeap;
 import org.geotoolkit.hdf.io.ChunkSeekableByteChannel;
 import org.geotoolkit.hdf.io.Connector;
-import org.geotoolkit.hdf.io.ConstantSeekableByteChannel;
 import org.geotoolkit.hdf.io.HDF5ChannelDataInput;
 import org.geotoolkit.hdf.io.HDF5DataInput;
-import org.geotoolkit.hdf.io.SequenceSeekableByteChannel;
 import org.geotoolkit.hdf.message.AttributeMessage;
 import org.geotoolkit.hdf.message.BogusMessage;
 import org.geotoolkit.hdf.message.DataLayoutMessage;
@@ -119,7 +114,6 @@ public final class Dataset extends AbstractResource implements Node, FeatureSet 
 
     private final Group parent;
     private final Connector connector;
-    private final SymbolTableEntry entry;
 
     private final String name;
     private final GenericName genericName;
@@ -136,8 +130,7 @@ public final class Dataset extends AbstractResource implements Node, FeatureSet 
 
     //decoding informations
     private final int cellByteSize;
-    private final long[] dimensionByteSize;
-    private TreeMap<Long,BTreeV1Chunk> chunks = null;
+    private List<BTreeV1Chunk> chunks = null;
 
     //featureset
     private FeatureType featureType;
@@ -149,7 +142,6 @@ public final class Dataset extends AbstractResource implements Node, FeatureSet 
         super(null, false);
         this.parent = parent;
         this.connector = connector;
-        this.entry = entry;
         this.name = name;
 
         final ObjectHeader header;
@@ -183,10 +175,13 @@ public final class Dataset extends AbstractResource implements Node, FeatureSet 
             }
         }
 
-        final int[] dimensionSizes = dataspace.getDimensionSizes().clone();
-        ArraysExt.reverse(dimensionSizes);
         cellByteSize = datatype.getByteSize();
-        dimensionByteSize = new long[dimensionSizes.length];
+        genericName = Node.createName(this);
+    }
+
+    private static long[] buildCellSizes(int cellByteSize, int[] dimensionSizes){
+        ArraysExt.reverse(dimensionSizes);
+        long[] dimensionByteSize = new long[dimensionSizes.length];
         if (dimensionSizes.length > 0){
             dimensionByteSize[0] = cellByteSize;
             for (int i = 1; i < dimensionSizes.length; i++) {
@@ -194,8 +189,7 @@ public final class Dataset extends AbstractResource implements Node, FeatureSet 
             }
             reverse(dimensionByteSize);
         }
-
-        genericName = Node.createName(this);
+        return dimensionByteSize;
     }
 
     @Override
@@ -459,84 +453,51 @@ public final class Dataset extends AbstractResource implements Node, FeatureSet 
             throw new DataStoreException("Requested extent " + extent + " is not contained in " + dataspace.getDimensionExtent());
         }
 
-        final long startOffset = locationToOffset(extent.getLow().getCoordinateValues());
-        final long endOffset = locationToOffset(extent.getHigh().getCoordinateValues());
-
         //build channel
         HDF5DataInput channel = null;
         try {
-            if (layout instanceof DataLayoutMessage.Compact cdt) {
-                channel = connector.createChannel();
-                channel.seek(cdt.rawDataAddress);
-            } else if (layout instanceof DataLayoutMessage.Contiguous cdt) {
-                channel = connector.createChannel();
-                channel.seek(cdt.address);
-            } else if (layout instanceof DataLayoutMessage.Chunked cdt) {
-                channel = connector.createChannel();
+            channel = connector.createChannel();
 
-                if (channel.isUndefinedLength(cdt.address)) {
-                    //no data allocated
-                    final ChannelDataInput cdi = new ChannelDataInput("no-data-allocated", ByteBuffer.wrap(new byte[0]));
-                    channel = new HDF5ChannelDataInput(cdi);
+            //build the fill value
+            byte[] fill = new byte[1];
+            if (fillValue != null && fillValue.getFillValue() != null && fillValue.getFillValue().length > 0) {
+                fill = fillValue.getFillValue();
+            }
+
+            final List<BTreeV1Chunk> chunks;
+            final List<FilterDescription> filters = new ArrayList<>();
+
+            if (layout instanceof DataLayoutMessage.Compact cdt) {
+                final BTreeV1Chunk fakeChunk = new BTreeV1Chunk();
+                fakeChunk.address = cdt.rawDataAddress;
+                fakeChunk.uncompressedSize = cdt.size;
+                fakeChunk.size = cdt.size;
+                fakeChunk.filterMask = 255;
+                fakeChunk.offset = getDataspace().getDimensionExtent();
+                chunks = Arrays.asList(fakeChunk);
+
+            } else if (layout instanceof DataLayoutMessage.Contiguous cdt) {
+                final BTreeV1Chunk fakeChunk = new BTreeV1Chunk();
+                fakeChunk.address = cdt.address;
+                fakeChunk.uncompressedSize = cdt.size;
+                fakeChunk.size = cdt.size;
+                fakeChunk.filterMask = 255;
+                fakeChunk.offset = getDataspace().getDimensionExtent();
+                chunks = Arrays.asList(fakeChunk);
+
+            } else if (layout instanceof DataLayoutMessage.Chunked cdt) {
+
+                if (connector.isUndefinedLength(cdt.address)) {
+                    chunks = Collections.EMPTY_LIST;
                 } else {
 
                     //build filters
-                    final List<FilterDescription> filters;
-                    if (filter == null) {
-                        filters = Collections.EMPTY_LIST;
-                    } else {
-                        filters = filter.getFilters();
+                    if (filter != null) {
+                        filters.addAll(filter.getFilters());
                     }
 
                     //read btree of all chunks
-                    final TreeMap<Long,BTreeV1Chunk> rawchunks = getChunks(channel);
-
-                    //keep only the chunks in the range we will read
-                    final Long floor = rawchunks.floorKey(startOffset);
-                    final Long ceiling = rawchunks.floorKey(endOffset);
-
-                    final NavigableMap<Long, BTreeV1Chunk> candidates = rawchunks.subMap(floor == null ? rawchunks.firstKey() : floor, true,
-                            ceiling == null ? rawchunks.lastKey() : ceiling, true);
-
-                    final TreeMap<Long,ChunkSeekableByteChannel> chunks = new TreeMap<>();
-                    for (Entry<Long,BTreeV1Chunk> entry : candidates.entrySet()) {
-                        final BTreeV1Chunk chunk = entry.getValue();
-                        if (chunk.filterMask != 0) {
-                            throw new IOException("Filter masks not supported yet");
-                        }
-                        chunks.put(entry.getKey(), new ChunkSeekableByteChannel(chunk, channel, filters));
-                    }
-
-                    byte[] fill = new byte[1];
-                    if (fillValue != null && fillValue.getFillValue() != null && fillValue.getFillValue().length > 0) {
-                        fill = fillValue.getFillValue();
-                    }
-
-                    final List<SeekableByteChannel> stack = new ArrayList<>();
-                    long offset = 0;
-                    for (Entry<Long,ChunkSeekableByteChannel> entry : chunks.entrySet()) {
-                        final Long start = entry.getKey();
-                        final ChunkSeekableByteChannel chunk = entry.getValue();
-
-                        if (start != offset) {
-                            //add fill values
-                            ConstantSeekableByteChannel fillStream = new ConstantSeekableByteChannel(start-offset, fill);
-                            stack.add(fillStream);
-                            offset = start;
-                        }
-
-                        stack.add(chunk);
-                        offset += chunk.size();
-                    }
-                    if (offset < endOffset) {
-                        //fill what remains
-                        ConstantSeekableByteChannel fillStream = new ConstantSeekableByteChannel(endOffset-offset, fill);
-                        stack.add(fillStream);
-                    }
-                    //create a btree style sequence of stream to avoid deep stack trace concatenation
-                    SeekableByteChannel stream = createStackStream(stack);
-
-                    channel = new HDF5ChannelDataInput(new ChannelDataInput("", stream, ByteBuffer.allocate(4096), false));
+                    chunks = getChunks(channel);
                 }
 
             } else if (layout instanceof DataLayoutMessage.Virtual cdt) {
@@ -550,7 +511,20 @@ public final class Dataset extends AbstractResource implements Node, FeatureSet 
                 //scalar value
                 return datatype.readData(channel, compoundindexes);
             } else {
-                return readDatas(channel, extent, compoundindexes);
+                final int[] dimensions = new int[extent.getDimension()];
+                for (int i = 0; i< dimensions.length; i++) {
+                    dimensions[i] = (int) extent.getSize(i);
+                }
+                final Object results = java.lang.reflect.Array.newInstance(datatype.getValueClass(), dimensions);
+
+                for (BTreeV1Chunk chunk : chunks) {
+                    channel.seek(chunk.address);
+                    final ChunkSeekableByteChannel chunkChannel = new ChunkSeekableByteChannel(chunk, channel, filters);
+                    final HDF5ChannelDataInput hdF5ChannelDataInput = new HDF5ChannelDataInput(new ChannelDataInput("", chunkChannel, ByteBuffer.allocate(4096), false));
+                    appendChunkDatas(results, hdF5ChannelDataInput, chunk.offset, extent, compoundindexes);
+                    hdF5ChannelDataInput.close();
+                }
+                return results;
             }
 
         } finally {
@@ -560,7 +534,7 @@ public final class Dataset extends AbstractResource implements Node, FeatureSet 
         }
     }
 
-    private synchronized TreeMap<Long,BTreeV1Chunk> getChunks(HDF5DataInput channel) throws IOException {
+    private synchronized List<BTreeV1Chunk> getChunks(HDF5DataInput channel) throws IOException {
         if (chunks == null) {
             final DataLayoutMessage.Chunked cdt = (DataLayoutMessage.Chunked) layout;
             //read btree of all chunks
@@ -568,74 +542,70 @@ public final class Dataset extends AbstractResource implements Node, FeatureSet 
             final BTreeV1 datatree = new BTreeV1();
             datatree.read(channel, cdt.dimensionSizes);
             final BTreeV1.DataNode node = (BTreeV1.DataNode) datatree.root;
-            final List<BTreeV1Chunk> rawChunks = node.getChunks();
-
-            chunks = new TreeMap<>();
-            for (BTreeV1Chunk chl : rawChunks) {
-                final long[] startCoordinate = chl.offset.getLow().getCoordinateValues();
-                final long location = locationToOffset(startCoordinate);
-                chunks.put(location, chl);
-            }
+            chunks = new ArrayList<>(node.getChunks());
         }
 
         return chunks;
     }
 
-    private static SeekableByteChannel createStackStream(List<SeekableByteChannel> streams) throws IOException {
-        if (streams.size() == 1) return streams.get(0);
-        final SeekableByteChannel s0 = createStackStream(streams.subList(0, streams.size()/2));
-        final SeekableByteChannel s1 = createStackStream(streams.subList(streams.size()/2, streams.size()));
-        return new SequenceSeekableByteChannel(s0, s1);
-    }
+    private void appendChunkDatas(Object results, HDF5DataInput chunkChannel,
+            GridExtent chunkExtent, GridExtent queryExtent, int ... compoundindexes) throws IOException {
 
-    private Object readDatas(HDF5DataInput channel, GridExtent extent, int ... compoundindexes) throws IOException {
-        final long[] low = extent.getLow().getCoordinateValues();
-        final long[] high = extent.getHigh().getCoordinateValues();
-        final int[] dimensions = new int[low.length];
+        final GridExtent intersection = chunkExtent.intersect(queryExtent);
+        final long[] chunkTranslate = chunkExtent.getLow().getCoordinateValues();
+
+        final long[] intersectionlow = intersection.getLow().getCoordinateValues();
+        final int[] dimensions = new int[intersectionlow.length];
+        final int[] fulldimensions = new int[intersectionlow.length];
+        final long[] intersectionToQueryTranslate = new long[intersectionlow.length];
         for (int i = 0; i< dimensions.length; i++) {
-            dimensions[i] = Math.toIntExact(high[i] - low[i] + 1);
+            dimensions[i] = (int) intersection.getSize(i);
+            if (dimensions[i] <= 0) return;
+            fulldimensions[i] = (int) chunkExtent.getSize(i);
+            intersectionToQueryTranslate[i] = intersectionlow[i] - queryExtent.getLow(i);
         }
+        Object chunkDatas = readChunkDatas(chunkChannel, buildCellSizes(cellByteSize, fulldimensions), chunkTranslate, intersectionlow, dimensions, 0, compoundindexes);
 
-        return readDatas(channel, low, high, dimensions, 0, compoundindexes);
+        //copy datas in result array
+        copy(chunkDatas, results, intersectionToQueryTranslate);
     }
 
-    private Object readDatas(HDF5DataInput channel, final long[] low, final long[] high, final int[] dimensions, int dimIdx, int ... compoundindexes) throws IOException {
-
-//        channel.mark();
-        final long basePosition = channel.getStreamPosition();
-
+    private Object readChunkDatas(HDF5DataInput chunkChannel, final long[] dimensionByteSize, final long[] chunkLow, final long[] intersectionLow, final int[] intersectionSize, int dimIdx, int ... compoundindexes) throws IOException {
+        final long basePosition = chunkChannel.getStreamPosition();
         Object values;
-        if (dimIdx == low.length - 1) {
+        if (dimIdx == intersectionLow.length - 1) {
             //a strip
-            channel.seek(basePosition + (cellByteSize * low[dimIdx]));
-            values = datatype.readData(channel, dimensions[dimIdx], compoundindexes);
+            chunkChannel.seek(basePosition + (cellByteSize * (intersectionLow[dimIdx] - chunkLow[dimIdx])));
+            values = datatype.readData(chunkChannel, intersectionSize[dimIdx], compoundindexes);
         } else {
             //an array of strips
-            final int[] sizes = new int[dimensions.length - dimIdx];
-            sizes[0] = dimensions[dimIdx];
+            final int[] sizes = new int[intersectionSize.length - dimIdx];
+            sizes[0] = intersectionSize[dimIdx];
             values = java.lang.reflect.Array.newInstance(datatype.getValueClass(), sizes);
-            for (int k = 0; k < dimensions[dimIdx]; k++) {
-                channel.seek(basePosition + (low[dimIdx] + k) * dimensionByteSize[dimIdx]);
-                final Object strip = readDatas(channel, low, high, dimensions, dimIdx+1, compoundindexes);
+            for (int k = 0; k < intersectionSize[dimIdx]; k++) {
+                chunkChannel.seek(basePosition + ((intersectionLow[dimIdx] - chunkLow[dimIdx]) + k) * dimensionByteSize[dimIdx]);
+                final Object strip = readChunkDatas(chunkChannel, dimensionByteSize, chunkLow, intersectionLow, intersectionSize, dimIdx+1, compoundindexes);
                 java.lang.reflect.Array.set(values, k, strip);
             }
         }
-
-//        channel.reset();
         return values;
     }
 
-    /**
-     * Convert given location to offset in the data stream.
-     * @param location sample location
-     * @return offset in datastream
-     */
-    private long locationToOffset(long[] location) {
-        long offset = 0;
-        for (int i = 0; i < dimensionByteSize.length; i++) {
-            offset += dimensionByteSize[i] * location[i];
+    private static void copy(Object source, Object target, long[] offset) {
+
+        if (offset.length == 1) {
+            int length = Array.getLength(source);
+            if (length == 0) return;
+            System.arraycopy(source, 0, target, (int) offset[0], length);
+        } else {
+            int nb = Array.getLength(source);
+            final long[] subOffset = Arrays.copyOfRange(offset, 1, offset.length);
+            for (int i = 0; i < nb; i++) {
+                final Object subSource = Array.get(source, i);
+                final Object subTarget = Array.get(target, (int) (i + offset[0]));
+                copy(subSource, subTarget,subOffset);
+            }
         }
-        return offset;
     }
 
     @Override

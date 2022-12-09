@@ -43,7 +43,7 @@ public class ReadTest {
 
         URL url = ReadTest.class.getResource("test_data.h5");
         try (HDF5Store store = (HDF5Store) DataStores.open(url)) {
-            System.out.println(store.toString());
+//            System.out.println(store.toString());
 
             { // 1D floating point
                 final Dataset dataset = (Dataset) store.getComponent("array_1D");
@@ -201,15 +201,30 @@ public class ReadTest {
                 assertEquals(20, values.length);
                 assertEquals(20, values[19].length);
                 assertEquals(20, values[10][19].length);
+                for (int x = 0; x < values.length; x++) {
+                    for (int y = 0; y < values.length; y++) {
+                        for (int z = 0; z < values.length; z++) {
+                            assertEquals((byte)x, values[x][y][z][0]);
+                            assertEquals((byte)y, values[x][y][z][1]);
+                            assertEquals((byte)z, values[x][y][z][2]);
+                        }
+                    }
+                }
 
                 //read part
                 values = (Object[][][][]) dataset.read(new GridExtent(null, new long[]{5,12,17}, new long[]{8,14,19}, false));
-                assertArrayEquals(new Object[]{(byte)5, (byte)14, (byte)17}, values[0][0][0]);
-                assertArrayEquals(new Object[]{(byte)6, (byte)14, (byte)17}, values[1][0][0]);
-                assertArrayEquals(new Object[]{(byte)7, (byte)14, (byte)17}, values[2][0][0]);
-                assertArrayEquals(new Object[]{(byte)5, (byte)14, (byte)17}, values[0][1][0]);
-                assertArrayEquals(new Object[]{(byte)6, (byte)14, (byte)17}, values[1][1][0]);
-                assertArrayEquals(new Object[]{(byte)7, (byte)14, (byte)17}, values[2][1][0]);
+                assertArrayEquals(new Object[]{(byte)5, (byte)12, (byte)17}, values[0][0][0]);
+                assertArrayEquals(new Object[]{(byte)6, (byte)12, (byte)17}, values[1][0][0]);
+                assertArrayEquals(new Object[]{(byte)7, (byte)12, (byte)17}, values[2][0][0]);
+                assertArrayEquals(new Object[]{(byte)5, (byte)13, (byte)17}, values[0][1][0]);
+                assertArrayEquals(new Object[]{(byte)6, (byte)13, (byte)17}, values[1][1][0]);
+                assertArrayEquals(new Object[]{(byte)7, (byte)13, (byte)17}, values[2][1][0]);
+                assertArrayEquals(new Object[]{(byte)5, (byte)12, (byte)18}, values[0][0][1]);
+                assertArrayEquals(new Object[]{(byte)6, (byte)12, (byte)18}, values[1][0][1]);
+                assertArrayEquals(new Object[]{(byte)7, (byte)12, (byte)18}, values[2][0][1]);
+                assertArrayEquals(new Object[]{(byte)5, (byte)13, (byte)18}, values[0][1][1]);
+                assertArrayEquals(new Object[]{(byte)6, (byte)13, (byte)18}, values[1][1][1]);
+                assertArrayEquals(new Object[]{(byte)7, (byte)13, (byte)18}, values[2][1][1]);
             }
 
         }
