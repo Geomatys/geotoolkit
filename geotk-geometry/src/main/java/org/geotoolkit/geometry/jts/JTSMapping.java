@@ -387,6 +387,13 @@ public final class JTSMapping {
     }
 
     /**
+     * Filter given geometry to a Point or MultiPoint.
+     * If the given geometry already matches it is returned unchanged.
+     * GeometryCollection are filtered and only matching geometries are preserved.
+     * Any other geometry types are skipped.
+     * Returned geometry is null only if given geometry is also null otherwise
+     * the geometry is never null but can be an empty geometry.
+     *
      * @param geometry can be null
      * @return geometry composed of ponctual elements only.
      */
@@ -431,6 +438,13 @@ public final class JTSMapping {
     }
 
     /**
+     * Filter given geometry to a LineString, LinearRing or MultiLineString.
+     * If the given geometry already matches it is returned unchanged.
+     * GeometryCollection are filtered and only matching geometries are preserved.
+     * Any other geometry types are skipped.
+     * Returned geometry is null only if given geometry is also null otherwise
+     * the geometry is never null but can be an empty geometry.
+     *
      * @param geometry can be null
      * @return geometry composed of linear elements only.
      */
@@ -476,6 +490,13 @@ public final class JTSMapping {
     }
 
     /**
+     * Filter given geometry to a Polygon or MultiPolygon.
+     * If the given geometry already matches it is returned unchanged.
+     * GeometryCollection are filtered and only matching geometries are preserved.
+     * Any other geometry types are skipped.
+     * Returned geometry is null only if given geometry is also null otherwise
+     * the geometry is never null but can be an empty geometry.
+     *
      * @param geometry can be null
      * @return geometry composed of polygon elements only.
      */
