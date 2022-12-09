@@ -23,6 +23,10 @@ import org.apache.sis.internal.storage.io.ChannelDataInput;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.StorageConnector;
 import org.geotoolkit.hdf.SuperBlock;
+import static org.geotoolkit.hdf.io.HDF5DataInput.UNDEFINED_1;
+import static org.geotoolkit.hdf.io.HDF5DataInput.UNDEFINED_2;
+import static org.geotoolkit.hdf.io.HDF5DataInput.UNDEFINED_4;
+import static org.geotoolkit.hdf.io.HDF5DataInput.UNDEFINED_8;
 
 /**
  *
@@ -67,5 +71,90 @@ public final class Connector implements AutoCloseable {
 
     @Override
     public void close() {
+    }
+
+
+    /**
+     * @see V. Appendix A: Definitions
+     * @param offset tested address
+     * @return true if offset in undefined
+     */
+    public boolean isDefinedOffset(long offset) {
+        return !isUndefinedOffset(offset);
+    }
+
+    /**
+     * @see V. Appendix A: Definitions
+     * @param offset tested address
+     * @return true if offset in undefined
+     */
+    public boolean isUndefinedOffset(long offset) {
+        return isUndefinedOffset(offset, superblock.getSizeOfOffsets());
+    }
+
+    /**
+     * @see V. Appendix A: Definitions
+     * @param length tested length
+     * @return true if offset in undefined
+     */
+    public boolean isDefinedLength(long length) {
+        return !isUndefinedLength(length);
+    }
+
+    /**
+     * @see V. Appendix A: Definitions
+     * @param length tested length
+     * @return true if offset in undefined
+     */
+    public boolean isUndefinedLength(long length) {
+        return isUndefinedLength(length, superblock.getSizeOfLengths());
+    }
+
+    /**
+     * @see V. Appendix A: Definitions
+     * @param offset tested address
+     * @return true if offset in undefined
+     */
+    public static boolean isDefinedOffset(long offset, int offsetSize) {
+        return !isUndefinedOffset(offset, offsetSize);
+    }
+
+    /**
+     * @see V. Appendix A: Definitions
+     * @param offset tested address
+     * @return true if offset in undefined
+     */
+    public static boolean isUndefinedOffset(long offset, int offsetSize) {
+        return switch (offsetSize) {
+            case 1 -> (offset == UNDEFINED_1);
+            case 2 -> (offset == UNDEFINED_2);
+            case 4 -> (offset == UNDEFINED_4);
+            case 8 -> (offset == UNDEFINED_8);
+            default -> throw new IllegalArgumentException("Unsupported size " + offsetSize);
+        };
+    }
+
+    /**
+     * @see V. Appendix A: Definitions
+     * @param length tested length
+     * @return true if offset in undefined
+     */
+    public static boolean isDefinedLength(long length, int lengthSize) {
+        return !isUndefinedLength(length, lengthSize);
+    }
+
+    /**
+     * @see V. Appendix A: Definitions
+     * @param length tested length
+     * @return true if offset in undefined
+     */
+    public static boolean isUndefinedLength(long length, int lengthSize) {
+        return switch (lengthSize) {
+            case 1 -> (length == UNDEFINED_1);
+            case 2 -> (length == UNDEFINED_2);
+            case 4 -> (length == UNDEFINED_4);
+            case 8 -> (length == UNDEFINED_8);
+            default -> throw new IllegalArgumentException("Unsupported size " + lengthSize);
+        };
     }
 }

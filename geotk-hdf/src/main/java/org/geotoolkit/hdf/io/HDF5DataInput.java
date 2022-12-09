@@ -206,14 +206,7 @@ public interface HDF5DataInput extends AutoCloseable {
      * @return true if offset in undefined
      */
     default boolean isUndefinedOffset(long offset) {
-        final int offsetSize = getOffsetSize();
-        return switch (offsetSize) {
-            case 1 -> (offset == UNDEFINED_1);
-            case 2 -> (offset == UNDEFINED_2);
-            case 4 -> (offset == UNDEFINED_4);
-            case 8 -> (offset == UNDEFINED_8);
-            default -> throw new IllegalArgumentException("Unsupported size " + offsetSize);
-        };
+        return Connector.isUndefinedOffset(offset, getOffsetSize());
     }
 
     /**
@@ -231,14 +224,7 @@ public interface HDF5DataInput extends AutoCloseable {
      * @return true if offset in undefined
      */
     default boolean isUndefinedLength(long length) {
-        final int lengthSize = getLengthSize();
-        return switch (lengthSize) {
-            case 1 -> (length == UNDEFINED_1);
-            case 2 -> (length == UNDEFINED_2);
-            case 4 -> (length == UNDEFINED_4);
-            case 8 -> (length == UNDEFINED_8);
-            default -> throw new IllegalArgumentException("Unsupported size " + lengthSize);
-        };
+        return Connector.isUndefinedLength(length, getLengthSize());
     }
 
 }

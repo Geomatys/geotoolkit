@@ -21,6 +21,17 @@ import java.nio.ByteOrder;
 import org.geotoolkit.hdf.io.HDF5DataInput;
 
 /**
+ * Format is obscur, specification don't say anything on the bits definition or
+ * calendar.
+ * <p>
+ * In HDF-5 source code version 1.12.2 file : H5Odtype.c ligne 1275 we can see
+ * the fields is two bytes long.
+ * <p>
+ * In HDF-5 source code version 1.12.2 file : H5Tpublic.h ligne 1791 there is a note : <br>
+ * Unsupported datatype: The time datatype class, #H5T_TIME,
+ * is not supported. If #H5T_TIME is used, the resulting data will
+ * be readable and modifiable only on the originating computing
+ * platform; it will not be portable to other platforms.
  *
  * @author Johann Sorel (Geomatys)
  */
@@ -44,11 +55,11 @@ public final class Time extends DataType {
 
     @Override
     public Class getValueClass() {
-        return long.class;
+        return int.class;
     }
 
     @Override
     public Object readData(HDF5DataInput input, int ... compoundindexes) throws IOException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return input.readUnsignedShort();
     }
 }
