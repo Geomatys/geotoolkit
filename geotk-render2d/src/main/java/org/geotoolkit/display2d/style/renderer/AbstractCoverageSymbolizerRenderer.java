@@ -271,7 +271,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
                     .rounding(GridRoundingMode.ENCLOSING)
                     .subgrid(ge)
                     .build()
-                    .reduce(0,1);
+                    .selectDimensions(0,1);
             } catch (DisjointExtentException ex) {
                 //don't log, still continue
             } catch (IllegalGridGeometryException ex) {
@@ -340,7 +340,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
 
         //reduce the canvas grid to 2D
         if (canvasGrid.getCoordinateReferenceSystem().getCoordinateSystem().getDimension() > 2) {
-            canvasGrid = canvasGrid.reduce(0,1);
+            canvasGrid = canvasGrid.selectDimensions(0,1);
         }
 
         //compute forward transform

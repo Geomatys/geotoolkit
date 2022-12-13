@@ -33,7 +33,6 @@ import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
 import org.apache.sis.image.ComputedImage;
 import org.apache.sis.internal.coverage.j2d.ImageLayout;
-import org.apache.sis.internal.jdk9.JDK9;
 import org.apache.sis.util.ArgumentChecks;
 
 
@@ -188,7 +187,7 @@ public final class DeferredImageRead extends ComputedImage {
     @Override
     public final int getMinX() {
         // We may have temporary `int` overflow after multiplication but exact result after addition.
-        return Math.toIntExact(tileGridXOffset + JDK9.multiplyFull(getMinTileX(), getTileWidth()));
+        return Math.toIntExact(tileGridXOffset + Math.multiplyFull(getMinTileX(), getTileWidth()));
     }
 
     /**
@@ -199,7 +198,7 @@ public final class DeferredImageRead extends ComputedImage {
     @Override
     public final int getMinY() {
         // We may have temporary `int` overflow after multiplication but exact result after addition.
-        return Math.toIntExact(tileGridYOffset + JDK9.multiplyFull(getMinTileY(), getTileHeight()));
+        return Math.toIntExact(tileGridYOffset + Math.multiplyFull(getMinTileY(), getTileHeight()));
     }
 
     /**

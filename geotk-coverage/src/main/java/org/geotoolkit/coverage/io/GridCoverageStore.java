@@ -488,7 +488,7 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
     {
         final GridExtent      gridExtent = gridGeometry.getExtent();
         final int[] subSpace = gridExtent.getSubspaceDimensions(2);
-        final GridGeometry gridGeom2d = gridGeometry.reduce(subSpace);
+        final GridGeometry gridGeom2d = gridGeometry.selectDimensions(subSpace);
         final MathTransform2D gridToCRS  = (MathTransform2D) gridGeom2d.getGridToCRS(PixelInCell.CELL_CORNER);
         final MathTransform2D crsToGrid  = gridToCRS.inverse();
         /*
@@ -502,7 +502,7 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
          * than the Envelopes.transform(MathTransform, ...) method, in order to handle the cases
          * where the requested region is over a geographic pole.
          */
-        final GridExtent gridExtent2d = gridExtent.reduceDimension(subSpace);
+        final GridExtent gridExtent2d = gridExtent.selectDimensions(subSpace);
         final Rectangle rect = new Rectangle(
                 Math.toIntExact(gridExtent2d.getLow(0)),
                 Math.toIntExact(gridExtent2d.getLow(1)),

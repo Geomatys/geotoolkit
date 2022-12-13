@@ -205,7 +205,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
             return Optional.of(source);
         } else if (source.isDefined(GridGeometry.EXTENT)) {
             final int[] space2d = source.getExtent().getSubspaceDimensions(2);
-            return Optional.ofNullable(source.reduce(space2d));
+            return Optional.ofNullable(source.selectDimensions(space2d));
         } else if (source.isDefined(GridGeometry.CRS | GridGeometry.GRID_TO_CRS)) {
             final CoordinateReferenceSystem crs = source.getCoordinateReferenceSystem();
             final int east = AxisDirections.indexOfColinear(crs.getCoordinateSystem(), AxisDirection.EAST);
@@ -214,13 +214,13 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
             final int north = AxisDirections.indexOfColinear(crs.getCoordinateSystem(), AxisDirection.NORTH);
             int[] orderedAxes = {Math.min(east, north), Math.max(east, north)};
 
-            final CoordinateReferenceSystem crs2d = CRS.reduce(crs, orderedAxes);
+            final CoordinateReferenceSystem crs2d = CRS.selectDimensions(crs, orderedAxes);
             final MathTransform gridToCRS = source.getGridToCRS(PixelInCell.CELL_CENTER);
             final TransformSeparator sep = new TransformSeparator(gridToCRS);
             sep.addTargetDimensions(orderedAxes);
             final MathTransform gridToCRS2D = sep.separate();
             //we are expecting axis index to be preserved from grid to crs
-            final GridExtent extent = source.getExtent().reduceDimension(sep.getSourceDimensions());
+            final GridExtent extent = source.getExtent().selectDimensions(sep.getSourceDimensions());
 
             return Optional.of(new GridGeometry(extent, PixelInCell.CELL_CENTER, gridToCRS2D, crs2d));
         }

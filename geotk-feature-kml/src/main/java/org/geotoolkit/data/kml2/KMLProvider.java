@@ -25,6 +25,8 @@ import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
 import java.net.URI;
+import java.util.Collections;
+import java.util.HashMap;
 import org.apache.sis.internal.storage.Capability;
 import org.apache.sis.internal.storage.StoreMetadata;
 import org.apache.sis.internal.storage.xml.AbstractProvider;
@@ -75,8 +77,7 @@ public class KMLProvider extends AbstractProvider {
     }
 
     public KMLProvider(){
-        super(NAME);
-        mimeForNameSpaces.put("http://www.opengis.net/kml/2.2", MIME_TYPE);
+        super(NAME, Collections.singletonMap("http://www.opengis.net/kml/2.2", MIME_TYPE), new HashMap<>());
     }
 
     @Override

@@ -514,7 +514,7 @@ public class RenderingContext2D implements RenderingContext{
 
         //extract 2d grid
         final int[] space2d = gridGeometry.getExtent().getSubspaceDimensions(2);
-        this.gridGeometry2d = gridGeometry.reduce(space2d);
+        this.gridGeometry2d = gridGeometry.selectDimensions(space2d);
 
         this.canvasObjectiveBBox = gridGeometry.getEnvelope();
         this.objectiveCRS = gridGeometry.getCoordinateReferenceSystem();
@@ -1095,7 +1095,7 @@ public class RenderingContext2D implements RenderingContext{
      *                               illegal state.
      */
     private final double computeGeographicScale(GridGeometry grid) throws TransformException {
-        double[] pointOfInterest = grid.getExtent().getPointOfInterest();
+        double[] pointOfInterest = grid.getExtent().getPointOfInterest(PixelInCell.CELL_CENTER);
         return CanvasUtilities.getGeographicScale(new Point2D.Double(pointOfInterest[0], pointOfInterest[1]),
                 getObjectiveToDisplay(), getObjectiveCRS2D());
     }

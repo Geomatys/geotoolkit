@@ -106,7 +106,7 @@ public class CachedTiledGridCoverageResource <T extends TiledResource & org.apac
         public void eventOccured(StoreEvent event) {
             cacheMap.clear();
             tiles.clear();
-            listeners.fire(new ModelEvent(CachedTiledGridCoverageResource.this), StoreEvent.class);
+            listeners.fire(StoreEvent.class, new ModelEvent(CachedTiledGridCoverageResource.this));
         }
     };
     private final StorageListener.Weak weakListener = new StorageListener.Weak(eventListener);

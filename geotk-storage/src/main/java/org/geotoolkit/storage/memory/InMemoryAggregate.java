@@ -115,7 +115,7 @@ public class InMemoryAggregate extends AbstractResource implements WritableAggre
         }
 
         resources.add(newr);
-        listeners.fire(new AggregationEvent(this, AggregationEvent.TYPE_ADD, newr), AggregationEvent.class);
+        listeners.fire(AggregationEvent.class, new AggregationEvent(this, AggregationEvent.TYPE_ADD, newr));
         return newr;
     }
 
@@ -124,7 +124,7 @@ public class InMemoryAggregate extends AbstractResource implements WritableAggre
         if (!resources.remove(resource)) {
             throw new DataStoreException("Resource not found");
         }
-        listeners.fire(new AggregationEvent(this, AggregationEvent.TYPE_REMOVE, resource), AggregationEvent.class);
+        listeners.fire(AggregationEvent.class, new AggregationEvent(this, AggregationEvent.TYPE_REMOVE, resource));
     }
 
     @Override

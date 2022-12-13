@@ -338,7 +338,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
             throw new DataStoreException("Resource not found");
         }
         if (sendEvent) {
-            listeners.fire(new AggregationEvent(this, AggregationEvent.TYPE_REMOVE, resource), AggregationEvent.class);
+            listeners.fire(AggregationEvent.class, new AggregationEvent(this, AggregationEvent.TYPE_REMOVE, resource));
         }
         eraseCaches();
     }
@@ -355,7 +355,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
             }
             band.sources.clear();
         }
-        listeners.fire(new AggregationEvent(this, AggregationEvent.TYPE_REMOVE, removed.toArray(new Resource[0])), AggregationEvent.class);
+        listeners.fire(AggregationEvent.class, new AggregationEvent(this, AggregationEvent.TYPE_REMOVE, removed.toArray(new Resource[0])));
         eraseCaches();
     }
 
@@ -375,7 +375,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
                 //first resource in the aggregation
                 bands.addAll(toMapping(Arrays.asList(gcr)));
                 eraseCaches();
-                listeners.fire(new AggregationEvent(this, AggregationEvent.TYPE_ADD, resource), AggregationEvent.class);
+                listeners.fire(AggregationEvent.class, new AggregationEvent(this, AggregationEvent.TYPE_ADD, resource));
                 return resource;
             }
 
@@ -397,7 +397,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
                 remove(resource, false);
                 throw ex;
             }
-            listeners.fire(new AggregationEvent(this, AggregationEvent.TYPE_ADD, resource), AggregationEvent.class);
+            listeners.fire(AggregationEvent.class, new AggregationEvent(this, AggregationEvent.TYPE_ADD, resource));
             return resource;
         } else {
             throw new DataStoreException("Resource must be an instance of GridCoverageResource");
@@ -827,8 +827,8 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
             vb.cachedSampleDimension = null;
         }
         tree = null;
-        listeners.fire(new ModelEvent(this), ModelEvent.class);
-        listeners.fire(new ContentEvent(this), ContentEvent.class);
+        listeners.fire(ModelEvent.class, new ModelEvent(this));
+        listeners.fire(ContentEvent.class, new ContentEvent(this));
         photographic = false;
         homogeneous = false;
     }
@@ -1512,7 +1512,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
             final CoordinateOperation crsToCrs = CRS.findOperation(result.getCoordinateReferenceSystem(), target.getCoordinateReferenceSystem(), null);
             final MathTransform trs = MathTransforms.concatenate(gridToCRS, crsToCrs.getMathTransform(), target.getGridToCRS(PixelInCell.CELL_CENTER).inverse());
             //transform a unitary vector at most representative point
-            double[] point = result.getExtent().getPointOfInterest();
+            double[] point = result.getExtent().getPointOfInterest(PixelInCell.CELL_CENTER);
             double[] vector = Arrays.copyOf(point, 4);
             double diagonal = 1.0 / Math.sqrt(2); //for a vector of length = 1
             vector[2] = point[0] + diagonal;
