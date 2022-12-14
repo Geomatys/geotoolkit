@@ -463,53 +463,60 @@ public final class Dataset extends AbstractResource implements Node, FeatureSet 
                 fill = fillValue.getFillValue();
             }
 
-            final List<BTreeV1Chunk> chunks;
-            final List<FilterDescription> filters = new ArrayList<>();
-
-            if (layout instanceof DataLayoutMessage.Compact cdt) {
-                final BTreeV1Chunk fakeChunk = new BTreeV1Chunk();
-                fakeChunk.address = cdt.rawDataAddress;
-                fakeChunk.uncompressedSize = cdt.size;
-                fakeChunk.size = cdt.size;
-                fakeChunk.filterMask = 255;
-                fakeChunk.offset = getDataspace().getDimensionExtent();
-                chunks = Arrays.asList(fakeChunk);
-
-            } else if (layout instanceof DataLayoutMessage.Contiguous cdt) {
-                final BTreeV1Chunk fakeChunk = new BTreeV1Chunk();
-                fakeChunk.address = cdt.address;
-                fakeChunk.uncompressedSize = cdt.size;
-                fakeChunk.size = cdt.size;
-                fakeChunk.filterMask = 255;
-                fakeChunk.offset = getDataspace().getDimensionExtent();
-                chunks = Arrays.asList(fakeChunk);
-
-            } else if (layout instanceof DataLayoutMessage.Chunked cdt) {
-
-                if (connector.isUndefinedLength(cdt.address)) {
-                    chunks = Collections.EMPTY_LIST;
-                } else {
-
-                    //build filters
-                    if (filter != null) {
-                        filters.addAll(filter.getFilters());
-                    }
-
-                    //read btree of all chunks
-                    chunks = getChunks(channel);
-                }
-
-            } else if (layout instanceof DataLayoutMessage.Virtual cdt) {
-                throw new IOException("Not supported layout " + layout.getClass().getSimpleName());
-            } else {
-                throw new IOException("Unexpected layout " + layout.getClass().getSimpleName());
-            }
-
-            //read datas
             if (dimensionSizes.length == 0) {
                 //scalar value
+                if (layout instanceof DataLayoutMessage.Compact cdt) {
+                    channel.seek(cdt.rawDataAddress);
+                } else if (layout instanceof DataLayoutMessage.Contiguous cdt) {
+                    channel.seek(cdt.address);
+                } else if (layout instanceof DataLayoutMessage.Chunked cdt) {
+                    throw new DataStoreException("Using chunked layout for a scalar value is not supported");
+                }
                 return datatype.readData(channel, compoundindexes);
             } else {
+                final List<BTreeV1Chunk> chunks;
+                final List<FilterDescription> filters = new ArrayList<>();
+
+                if (layout instanceof DataLayoutMessage.Compact cdt) {
+                    final BTreeV1Chunk fakeChunk = new BTreeV1Chunk();
+                    fakeChunk.address = cdt.rawDataAddress;
+                    fakeChunk.uncompressedSize = cdt.size;
+                    fakeChunk.size = cdt.size;
+                    fakeChunk.filterMask = 255;
+                    fakeChunk.offset = getDataspace().getDimensionExtent();
+                    chunks = Arrays.asList(fakeChunk);
+
+                } else if (layout instanceof DataLayoutMessage.Contiguous cdt) {
+                    final BTreeV1Chunk fakeChunk = new BTreeV1Chunk();
+                    fakeChunk.address = cdt.address;
+                    fakeChunk.uncompressedSize = cdt.size;
+                    fakeChunk.size = cdt.size;
+                    fakeChunk.filterMask = 255;
+                    fakeChunk.offset = getDataspace().getDimensionExtent();
+                    chunks = Arrays.asList(fakeChunk);
+
+                } else if (layout instanceof DataLayoutMessage.Chunked cdt) {
+
+                    if (connector.isUndefinedLength(cdt.address)) {
+                        chunks = Collections.EMPTY_LIST;
+                    } else {
+
+                        //build filters
+                        if (filter != null) {
+                            filters.addAll(filter.getFilters());
+                        }
+
+                        //read btree of all chunks
+                        chunks = getChunks(channel);
+                    }
+
+                } else if (layout instanceof DataLayoutMessage.Virtual cdt) {
+                    throw new IOException("Not supported layout " + layout.getClass().getSimpleName());
+                } else {
+                    throw new IOException("Unexpected layout " + layout.getClass().getSimpleName());
+                }
+
+                //read datas
                 final int[] dimensions = new int[extent.getDimension()];
                 for (int i = 0; i< dimensions.length; i++) {
                     dimensions[i] = (int) extent.getSize(i);
@@ -517,11 +524,14 @@ public final class Dataset extends AbstractResource implements Node, FeatureSet 
                 final Object results = java.lang.reflect.Array.newInstance(datatype.getValueClass(), dimensions);
 
                 for (BTreeV1Chunk chunk : chunks) {
-
                     appendChunkDatas(results, () -> {
                         channel.seek(chunk.address);
-                        final ChunkSeekableByteChannel chunkChannel = new ChunkSeekableByteChannel(chunk, channel, filters);
-                        return new HDF5ChannelDataInput(new ChannelDataInput("", chunkChannel, ByteBuffer.allocate(4096), false));
+                        if (chunk.filterMask == 255) {
+                            return channel;
+                        } else {
+                            final ChunkSeekableByteChannel chunkChannel = new ChunkSeekableByteChannel(chunk, channel, filters);
+                            return new HDF5ChannelDataInput(new ChannelDataInput("", chunkChannel, ByteBuffer.allocate(4096), false));
+                        }
                     }, chunk.offset, extent, compoundindexes);
                 }
                 return results;
@@ -559,7 +569,9 @@ public final class Dataset extends AbstractResource implements Node, FeatureSet 
             fulldimensions[i] = (int) chunkExtent.getSize(i);
             intersectionToQueryTranslate[i] = intersectionlow[i] - queryExtent.getLow(i);
         }
-        try (HDF5DataInput dfi = chunkChannel.call()) {
+        HDF5DataInput dfi = null;
+        try {
+            dfi = chunkChannel.call();
             Object chunkDatas = readChunkDatas(dfi, buildCellSizes(cellByteSize, fulldimensions), chunkTranslate, intersectionlow, dimensions, 0, compoundindexes);
             //copy datas in result array
             copy(chunkDatas, results, intersectionToQueryTranslate);
@@ -567,6 +579,11 @@ public final class Dataset extends AbstractResource implements Node, FeatureSet 
             throw ex;
         } catch (Exception ex) {
             throw new IOException(ex);
+        } finally {
+            //close channel only if it's a chunk
+            if (dfi instanceof ChunkSeekableByteChannel csbc) {
+                csbc.close();
+            }
         }
     }
 
