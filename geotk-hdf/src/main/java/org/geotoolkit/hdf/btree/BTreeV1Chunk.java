@@ -18,6 +18,7 @@ package org.geotoolkit.hdf.btree;
 
 import java.io.IOException;
 import java.util.Arrays;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.geotoolkit.hdf.io.HDF5DataInput;
 
 /**
@@ -46,17 +47,24 @@ public final class BTreeV1Chunk {
      * [5,5,5], there will be three such 64-bit values, each with the value of
      * 5, followed by a 0 value.
      */
-    public long[] offset;
+    public GridExtent offset;
 
     public long address;
+    /**
+     * Opportuniste uncompressed chunk size.
+     */
+    public long uncompressedSize = -1;
 
-    public void read(HDF5DataInput channel, int dimension) throws IOException {
+    public void read(HDF5DataInput channel, int[] chunkDimension) throws IOException {
         size = channel.readUnsignedInt();
         filterMask = channel.readUnsignedInt();
-        offset = new long[dimension];
-        for (int i = 0; i < dimension; i++) {
-            offset[i] = channel.readLong();
+        final long[] low = new long[chunkDimension.length];
+        final long[] high = new long[chunkDimension.length];
+        for (int i = 0; i < low.length; i++) {
+            low[i] = channel.readLong();
+            high[i] = low[i] + chunkDimension[i];
         }
+        this.offset = new GridExtent(null, low, high, false);
         long last = channel.readLong();
         if (last != 0) {
             throw new IOException("Last dimension should be 0 but was " + last);
@@ -69,7 +77,7 @@ public final class BTreeV1Chunk {
         sb.append("size:").append(size);
         sb.append(",filterMask:").append(filterMask);
         sb.append(",address:").append(address);
-        sb.append(",offset:").append(Arrays.toString(offset));
+        sb.append(",offset:").append(Arrays.toString(offset.getLow().getCoordinateValues()));
         sb.append("}");
         return sb.toString();
     }

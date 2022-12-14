@@ -77,32 +77,32 @@ public final class BTreeV1 extends IOStructure {
 
     @Override
     public void read(HDF5DataInput channel) throws IOException {
-        read(channel,0);
+        read(channel, new int[0]);
     }
 
     /**
      *
      * @param channel
-     * @param dimension only used for nodeType == 1
+     * @param chunkDimension only used for nodeType == 1
      * @throws IOException
      */
-    public void read(HDF5DataInput channel, int dimension) throws IOException {
+    public void read(HDF5DataInput channel, int[] chunkDimension) throws IOException {
         header = new Header();
         header.read(channel);
         if (header.nodeType == 0) {
             if (header.nodeLevel == 0) {
                 root = new GroupNode();
-                root.read(channel, header, dimension);
+                root.read(channel, header, chunkDimension);
             } else {
                 throw new IOException("Group node with more then one level not supported yet");
             }
         } else if (header.nodeType == 1) {
             if (header.nodeLevel == 0) {
                 root = new ChunksNode();
-                root.read(channel, header, dimension);
+                root.read(channel, header, chunkDimension);
             } else {
                 root = new ParentChunksNode();
-                root.read(channel, header, dimension);
+                root.read(channel, header, chunkDimension);
             }
         } else {
             throw new IOException("Unexpected node type");
@@ -120,7 +120,7 @@ public final class BTreeV1 extends IOStructure {
      */
     public static abstract class Node {
 
-        abstract void read(HDF5DataInput channel, Header header, int dimension) throws IOException;
+        abstract void read(HDF5DataInput channel, Header header, int[] chunkDimension) throws IOException;
     }
 
     public static final class GroupNode extends Node {
@@ -147,7 +147,7 @@ public final class BTreeV1 extends IOStructure {
         public long[] groupChildAddresses;
 
         @Override
-        public void read(HDF5DataInput channel, Header header, int dimension) throws IOException {
+        public void read(HDF5DataInput channel, Header header, int[] chunkDimension) throws IOException {
             groupChildKeys = new long[header.entriesUsed + 1];
             groupChildAddresses = new long[header.entriesUsed];
             for (int i = 0; i < header.entriesUsed; i++) {
@@ -173,23 +173,23 @@ public final class BTreeV1 extends IOStructure {
         public DataNode[] dataKeys;
 
         @Override
-        public void read(HDF5DataInput channel, Header header, int dimension) throws IOException {
+        public void read(HDF5DataInput channel, Header header, int[] chunkDimension) throws IOException {
             //dataset node
             dataKeys = new DataNode[header.entriesUsed];
             for (int i = 0; i < header.entriesUsed; i++) {
                 final BTreeV1Chunk key = new BTreeV1Chunk();
-                key.read(channel, dimension);
+                key.read(channel, chunkDimension);
                 key.address = channel.readOffset();
                 channel.mark();
                 channel.seek(key.address);
                 final BTreeV1 subtree = new BTreeV1();
-                subtree.read(channel, dimension);
+                subtree.read(channel, chunkDimension);
                 dataKeys[i] = (DataNode) subtree.root;
                 channel.reset();
             }
 
             //contains one more unused key
-            channel.skipFully(4 + 4 + (dimension + 1) * 8);
+            channel.skipFully(4 + 4 + (chunkDimension.length + 1) * 8);
         }
 
         @Override
@@ -211,16 +211,16 @@ public final class BTreeV1 extends IOStructure {
         public BTreeV1Chunk[] dataKeys;
 
         @Override
-        public void read(HDF5DataInput channel, Header header, int dimension) throws IOException {
+        public void read(HDF5DataInput channel, Header header, int[] chunkDimension) throws IOException {
             //dataset node
             dataKeys = new BTreeV1Chunk[header.entriesUsed];
             for (int i = 0; i < header.entriesUsed; i++) {
                 dataKeys[i] = new BTreeV1Chunk();
-                dataKeys[i].read(channel, dimension);
+                dataKeys[i].read(channel, chunkDimension);
                 dataKeys[i].address = channel.readOffset();
             }
             //contains one more unused key
-            channel.skipFully(4 + 4 + (dimension + 1) * 8);
+            channel.skipFully(4 + 4 + (chunkDimension.length + 1) * 8);
         }
 
         @Override

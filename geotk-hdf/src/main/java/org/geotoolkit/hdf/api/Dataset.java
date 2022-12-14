@@ -17,34 +17,51 @@
 package org.geotoolkit.hdf.api;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.SequenceInputStream;
 import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
+import java.text.ParseException;
+import java.time.Instant;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
+import static java.util.Collections.singletonMap;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.TreeMap;
+import java.util.concurrent.Callable;
 import java.util.function.Function;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
+import javax.measure.Unit;
+import javax.measure.format.ParserException;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.storage.io.ChannelDataInput;
+import org.apache.sis.measure.Units;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.NamedIdentifier;
+import org.apache.sis.referencing.crs.DefaultTemporalCRS;
+import org.apache.sis.referencing.cs.DefaultCoordinateSystemAxis;
+import org.apache.sis.referencing.cs.DefaultTimeCS;
+import org.apache.sis.referencing.datum.DefaultTemporalDatum;
 import org.apache.sis.storage.AbstractResource;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.storage.netcdf.AttributeNames;
 import org.apache.sis.util.ArraysExt;
 import static org.apache.sis.util.ArraysExt.swap;
 import org.apache.sis.util.collection.BackingStoreException;
+import org.apache.sis.util.iso.Names;
+import org.apache.sis.util.resources.Vocabulary;
 import org.geotoolkit.hdf.ObjectHeader;
 import org.geotoolkit.hdf.SymbolTableEntry;
 import org.geotoolkit.hdf.btree.BTreeV1;
@@ -52,13 +69,9 @@ import org.geotoolkit.hdf.btree.BTreeV1Chunk;
 import org.geotoolkit.hdf.datatype.Compound;
 import org.geotoolkit.hdf.datatype.Compound.Member;
 import org.geotoolkit.hdf.datatype.DataType;
-import org.geotoolkit.hdf.filter.Deflate;
-import org.geotoolkit.hdf.filter.Filter;
-import org.geotoolkit.hdf.filter.Shuffle;
 import org.geotoolkit.hdf.heap.LocalHeap;
-import org.geotoolkit.hdf.io.ChunkInputStream;
+import org.geotoolkit.hdf.io.ChunkSeekableByteChannel;
 import org.geotoolkit.hdf.io.Connector;
-import org.geotoolkit.hdf.io.ConstantInputStream;
 import org.geotoolkit.hdf.io.HDF5ChannelDataInput;
 import org.geotoolkit.hdf.io.HDF5DataInput;
 import org.geotoolkit.hdf.message.AttributeMessage;
@@ -74,8 +87,17 @@ import org.geotoolkit.hdf.message.NillMessage;
 import org.geotoolkit.hdf.message.ObjectHeaderContinuationMessage;
 import org.geotoolkit.hdf.message.ObjectModificationTimeMessage;
 import org.geotoolkit.storage.multires.TileMatrices;
+import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
+import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.crs.TemporalCRS;
+import org.opengis.referencing.cs.AxisDirection;
+import org.opengis.referencing.datum.TemporalDatum;
+import org.opengis.referencing.operation.MathTransform1D;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
 
 /**
@@ -88,11 +110,11 @@ import org.opengis.util.GenericName;
  */
 public final class Dataset extends AbstractResource implements Node, FeatureSet {
 
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.hdf");
     private static final String HDF_INDEX = "hdf-index";
 
     private final Group parent;
     private final Connector connector;
-    private final SymbolTableEntry entry;
 
     private final String name;
     private final GenericName genericName;
@@ -109,18 +131,18 @@ public final class Dataset extends AbstractResource implements Node, FeatureSet 
 
     //decoding informations
     private final int cellByteSize;
-    private final long[] dimensionByteSize;
+    private List<BTreeV1Chunk> chunks = null;
 
     //featureset
     private FeatureType featureType;
     private boolean is1D;
     private boolean isEmpty;
+    private final Map<String,MathTransform1D> timeAttributes = new HashMap<>();
 
     public Dataset(Group parent, Connector connector, SymbolTableEntry entry, String name) throws IOException, DataStoreException {
         super(null, false);
         this.parent = parent;
         this.connector = connector;
-        this.entry = entry;
         this.name = name;
 
         final ObjectHeader header;
@@ -154,10 +176,13 @@ public final class Dataset extends AbstractResource implements Node, FeatureSet 
             }
         }
 
-        final int[] dimensionSizes = dataspace.getDimensionSizes().clone();
-        ArraysExt.reverse(dimensionSizes);
         cellByteSize = datatype.getByteSize();
-        dimensionByteSize = new long[dimensionSizes.length];
+        genericName = Node.createName(this);
+    }
+
+    private static long[] buildCellSizes(int cellByteSize, int[] dimensionSizes){
+        ArraysExt.reverse(dimensionSizes);
+        long[] dimensionByteSize = new long[dimensionSizes.length];
         if (dimensionSizes.length > 0){
             dimensionByteSize[0] = cellByteSize;
             for (int i = 1; i < dimensionSizes.length; i++) {
@@ -165,8 +190,7 @@ public final class Dataset extends AbstractResource implements Node, FeatureSet 
             }
             reverse(dimensionByteSize);
         }
-
-        genericName = Node.createName(this);
+        return dimensionByteSize;
     }
 
     @Override
@@ -187,6 +211,68 @@ public final class Dataset extends AbstractResource implements Node, FeatureSet 
     @Override
     public Map<String, Object> getAttributes() {
         return Collections.unmodifiableMap(attributes);
+    }
+
+    /**
+     * Extract attribute descrption concatenating CF standard_name and long_name.
+     * @param attributeName, null if datatype is not compund.
+     * @return
+     */
+    public String getAttributeDescription(String attributeName) {
+        final Object standardName = attributes.get(attributeName == null ? AttributeNames.STANDARD_NAME : attributeName + ":" + AttributeNames.STANDARD_NAME);
+        final Object longName = attributes.get(attributeName == null ? "long_name" : attributeName + ":long_name");
+        final StringBuilder description = new StringBuilder();
+        if (standardName != null) {
+            description.append(standardName);
+        }
+        if (longName != null) {
+            if (!description.isEmpty()) {
+                description.append(" : ");
+            }
+            description.append(longName);
+        }
+        if (!description.isEmpty()) {
+            return description.toString();
+        }
+        return null;
+    }
+
+    public Entry<Unit,CoordinateReferenceSystem> getAttributeUnit(String attributeName) {
+        final Object units = attributes.get(attributeName + ":units");
+        final String unitStr = String.valueOf(units);
+        Unit unit = null;
+        CoordinateReferenceSystem crs = null;
+        try {
+            unit = Units.valueOf(unitStr);
+        } catch (ParserException ex) {
+            int idx = unitStr.indexOf("since");
+            if (idx > 0) {
+                try {
+                    final String baseUnitStr = unitStr.substring(0, idx).trim();
+                    unit = Units.valueOf(baseUnitStr);
+                    final String originStr = unitStr.substring(idx+5).trim();
+                    final Calendar epoch = TemporalUtilities.parseDateCal(originStr);
+
+                    final Map<String,?> props = singletonMap(NAME_KEY, new NamedIdentifier(null, "attributeName"));
+                    final TemporalDatum datum = new DefaultTemporalDatum(props, epoch.getTime());
+                    final Map<String,Object> properties = new HashMap<>();
+                    properties.put(TemporalCRS.IDENTIFIERS_KEY, new NamedIdentifier(Names.createLocalName(null, null, attributeName)));
+                    final Map<String,?> cs   = singletonMap(NAME_KEY, new NamedIdentifier(null, Vocabulary.formatInternational(Vocabulary.Keys.Temporal)));
+                    final Map<String,?> axis = singletonMap(NAME_KEY, new NamedIdentifier(null, Vocabulary.formatInternational(Vocabulary.Keys.Time)));
+                    final DefaultTimeCS timeCs = new DefaultTimeCS(cs, new DefaultCoordinateSystemAxis(axis, "t", AxisDirection.FUTURE, unit));
+                    crs = new DefaultTemporalCRS(properties, datum, timeCs);
+
+                } catch (ParserException | ParseException e) {
+                    LOGGER.log(Level.WARNING, "Failed to parse unit {0}", unitStr);
+                }
+            } else {
+                LOGGER.log(Level.WARNING, "Failed to parse unit {0}", unitStr);
+            }
+        }
+        if (unit != null) {
+            return new AbstractMap.SimpleImmutableEntry<>(unit, crs);
+        }
+        return null;
     }
 
     @Override
@@ -217,7 +303,30 @@ public final class Dataset extends AbstractResource implements Node, FeatureSet 
 
             if (datatype instanceof Compound cmp) {
                 for (Member member : cmp.members) {
-                    ftb.addAttribute(member.memberType.getValueClass()).setName(member.name);
+                    final Entry<Unit,CoordinateReferenceSystem> unitAndCrs = getAttributeUnit(member.name);
+                    final String description = getAttributeDescription(member.name);
+
+                    final AttributeTypeBuilder atb = ftb.addAttribute(member.memberType.getValueClass()).setName(member.name);
+                    if (description != null) {
+                        atb.setDescription(description);
+                    }
+                    if (unitAndCrs != null) {
+                        atb.setUnit(unitAndCrs.getKey());
+                        if (unitAndCrs.getValue() != null) {
+                            CoordinateReferenceSystem crs = unitAndCrs.getValue();
+                            atb.setCRS(crs);
+                            if (crs instanceof TemporalCRS) {
+                                atb.setValueClass(Instant.class);
+                                final MathTransform1D mt;
+                                try {
+                                    mt = (MathTransform1D) CRS.findOperation(crs, CommonCRS.Temporal.JAVA.crs(), null).getMathTransform();
+                                } catch (FactoryException ex) {
+                                    throw new DataStoreException(ex);
+                                }
+                                timeAttributes.put(member.name, mt);
+                            }
+                        }
+                    }
                 }
             } else {
                 ftb.addAttribute(datatype.getValueClass()).setName("value");
@@ -260,14 +369,14 @@ public final class Dataset extends AbstractResource implements Node, FeatureSet 
             public Stream<Feature> apply(GridExtent t) {
                 try {
                     return toFeatures(t);
-                } catch (IOException | DataStoreException ex) {
+                } catch (IOException | DataStoreException | TransformException ex) {
                     throw new BackingStoreException(ex.getMessage(), ex);
                 }
             }
         });
     }
 
-    private Stream<Feature> toFeatures(GridExtent extent) throws DataStoreException, IOException {
+    private Stream<Feature> toFeatures(GridExtent extent) throws DataStoreException, IOException, TransformException {
         final FeatureType type = getType();
         final Object rawData = read(extent);
 
@@ -292,7 +401,15 @@ public final class Dataset extends AbstractResource implements Node, FeatureSet 
             }
             if (datatype instanceof Compound cmp) {
                 for (int k = 0; k < cmp.members.length; k++) {
-                    feature.setPropertyValue(cmp.members[k].name, Array.get(rawRecord, k));
+                    final String name = cmp.members[k].name;
+                    Object value = Array.get(rawRecord, k);
+                    MathTransform1D trs1d = timeAttributes.get(name);
+                    if (trs1d != null) {
+                        //convert value to Instant
+                        final double timeMs = trs1d.transform(((Number) value).doubleValue());
+                        value = Instant.ofEpochMilli((long) timeMs);
+                    }
+                    feature.setPropertyValue(name, value);
                 }
             } else {
                 feature.setPropertyValue("value", rawRecord);
@@ -337,174 +454,175 @@ public final class Dataset extends AbstractResource implements Node, FeatureSet 
             throw new DataStoreException("Requested extent " + extent + " is not contained in " + dataspace.getDimensionExtent());
         }
 
-        final long startOffset = locationToOffset(extent.getLow().getCoordinateValues());
-        final long endOffset = locationToOffset(extent.getHigh().getCoordinateValues());
-
         //build channel
-        HDF5DataInput channel = null;
-        try {
-            if (layout instanceof DataLayoutMessage.Compact cdt) {
-                channel = connector.createChannel();
-                channel.seek(cdt.rawDataAddress);
-            } else if (layout instanceof DataLayoutMessage.Contiguous cdt) {
-                channel = connector.createChannel();
-                channel.seek(cdt.address);
-            } else if (layout instanceof DataLayoutMessage.Chunked cdt) {
-                channel = connector.createChannel();
+        try (HDF5DataInput channel = connector.createChannel()) {
 
-                if (channel.isUndefinedLength(cdt.address)) {
-                    //no data allocated
-                    final ChannelDataInput cdi = new ChannelDataInput("no-data-allocated", ByteBuffer.wrap(new byte[0]));
-                    channel = new HDF5ChannelDataInput(cdi);
-                } else {
-
-                    //build filters
-                    final Filter[] filters;
-                    if (filter == null) {
-                        filters = new Filter[0];
-                    } else {
-                        final List<FilterDescription> lst = filter.getFilters();
-                        filters = new Filter[lst.size()];
-                        for (int i = 0; i < filters.length; i++) {
-                            final FilterDescription desc = lst.get(i);
-                            filters[i] = switch (desc.filteridentificationValue) {
-                                case FilterPipelineMessage.DEFLATE -> new Deflate();
-                                case FilterPipelineMessage.SHUFFLE -> new Shuffle(desc.clientData[0]);
-                                default -> throw new IOException("Unsupported filter " + desc.filteridentificationValue);
-                            };
-                        }
-                    }
-
-                    //read btree of all chunks
-                    channel.seek(cdt.address);
-                    final BTreeV1 datatree = new BTreeV1();
-                    datatree.read(channel, dataspace.getDimensionSizes().length);
-                    final BTreeV1.DataNode node = (BTreeV1.DataNode) datatree.root;
-                    final List<BTreeV1Chunk> rawChunks = node.getChunks();
-
-                    final Map<Long,ChunkInputStream> chunks = new TreeMap<>();
-                    for (int i = 0, n = rawChunks.size(); i < n; i++) {
-                        final BTreeV1Chunk chunk = rawChunks.get(i);
-                        if (chunk.filterMask != 0) {
-                            throw new IOException("Filter masks not supported yet");
-                        }
-                        final long[] startCoordinate = chunk.offset;
-                        final long location = locationToOffset(startCoordinate);
-
-                        if (location >= startOffset && location <= endOffset) {
-                            //keep only the chunks in the range we will read
-                            final ChunkInputStream s = new ChunkInputStream(channel, chunk.address, chunk.size, filters);
-                            chunks.put(location, s);
-                        }
-                    }
-
-                    byte[] fill = new byte[1];
-                    if (fillValue != null && fillValue.getFillValue() != null && fillValue.getFillValue().length > 0) {
-                        fill = fillValue.getFillValue();
-                    }
-
-                    final List<InputStream> stack = new ArrayList<>();
-                    long offset = 0;
-                    for (Entry<Long,ChunkInputStream> entry : chunks.entrySet()) {
-                        final Long start = entry.getKey();
-                        final ChunkInputStream chunk = entry.getValue();
-
-                        if (start != offset) {
-                            //add fill values
-                            ConstantInputStream fillStream = ConstantInputStream.create(start-offset, fill);
-                            stack.add(fillStream);
-                            offset = start;
-                        }
-
-                        stack.add(chunk);
-                        offset += chunk.getUncompressedSize();
-                    }
-                    if (offset < endOffset) {
-                        //fill what remains
-                        ConstantInputStream fillStream = ConstantInputStream.create(endOffset-offset, fill);
-                        stack.add(fillStream);
-                    }
-                    //create a btree style sequence of stream to avoid deep stack trace concatenation
-                    InputStream stream = createStackStream(stack);
-
-                    final ReadableByteChannel rbc = Channels.newChannel(stream);
-                    channel = new HDF5ChannelDataInput(new ChannelDataInput("", rbc, ByteBuffer.allocate(4096), false));
-                }
-
-            } else if (layout instanceof DataLayoutMessage.Virtual cdt) {
-                throw new IOException("Not supported layout " + layout.getClass().getSimpleName());
-            } else {
-                throw new IOException("Unexpected layout " + layout.getClass().getSimpleName());
+            //build the fill value
+            byte[] fill = new byte[1];
+            if (fillValue != null && fillValue.getFillValue() != null && fillValue.getFillValue().length > 0) {
+                fill = fillValue.getFillValue();
             }
 
-            //read datas
             if (dimensionSizes.length == 0) {
                 //scalar value
+                if (layout instanceof DataLayoutMessage.Compact cdt) {
+                    channel.seek(cdt.rawDataAddress);
+                } else if (layout instanceof DataLayoutMessage.Contiguous cdt) {
+                    channel.seek(cdt.address);
+                } else if (layout instanceof DataLayoutMessage.Chunked cdt) {
+                    throw new DataStoreException("Using chunked layout for a scalar value is not supported");
+                }
                 return datatype.readData(channel, compoundindexes);
             } else {
-                return readDatas(channel, extent, compoundindexes);
-            }
+                final List<BTreeV1Chunk> chunks;
+                final List<FilterDescription> filters = new ArrayList<>();
 
-        } finally {
-            if (channel != null) {
-                channel.close();
+                if (layout instanceof DataLayoutMessage.Compact cdt) {
+                    final BTreeV1Chunk fakeChunk = new BTreeV1Chunk();
+                    fakeChunk.address = cdt.rawDataAddress;
+                    fakeChunk.uncompressedSize = cdt.size;
+                    fakeChunk.size = cdt.size;
+                    fakeChunk.filterMask = 255;
+                    fakeChunk.offset = getDataspace().getDimensionExtent();
+                    chunks = Arrays.asList(fakeChunk);
+
+                } else if (layout instanceof DataLayoutMessage.Contiguous cdt) {
+                    final BTreeV1Chunk fakeChunk = new BTreeV1Chunk();
+                    fakeChunk.address = cdt.address;
+                    fakeChunk.uncompressedSize = cdt.size;
+                    fakeChunk.size = cdt.size;
+                    fakeChunk.filterMask = 255;
+                    fakeChunk.offset = getDataspace().getDimensionExtent();
+                    chunks = Arrays.asList(fakeChunk);
+
+                } else if (layout instanceof DataLayoutMessage.Chunked cdt) {
+
+                    if (connector.isUndefinedLength(cdt.address)) {
+                        chunks = Collections.EMPTY_LIST;
+                    } else {
+
+                        //build filters
+                        if (filter != null) {
+                            filters.addAll(filter.getFilters());
+                        }
+
+                        //read btree of all chunks
+                        chunks = getChunks(channel);
+                    }
+
+                } else if (layout instanceof DataLayoutMessage.Virtual cdt) {
+                    throw new IOException("Not supported layout " + layout.getClass().getSimpleName());
+                } else {
+                    throw new IOException("Unexpected layout " + layout.getClass().getSimpleName());
+                }
+
+                //read datas
+                final int[] dimensions = new int[extent.getDimension()];
+                for (int i = 0; i< dimensions.length; i++) {
+                    dimensions[i] = (int) extent.getSize(i);
+                }
+                final Object results = java.lang.reflect.Array.newInstance(datatype.getValueClass(), dimensions);
+
+                for (BTreeV1Chunk chunk : chunks) {
+                    appendChunkDatas(results, () -> {
+                        channel.seek(chunk.address);
+                        if (chunk.filterMask == 255) {
+                            return channel;
+                        } else {
+                            final ChunkSeekableByteChannel chunkChannel = new ChunkSeekableByteChannel(chunk, channel, filters);
+                            return new HDF5ChannelDataInput(new ChannelDataInput("", chunkChannel, ByteBuffer.allocate(4096), false));
+                        }
+                    }, chunk.offset, extent, compoundindexes);
+                }
+                return results;
             }
         }
     }
 
-    private static InputStream createStackStream(List<InputStream> streams) {
-        if (streams.size() == 1) return streams.get(0);
-        final InputStream s0 = createStackStream(streams.subList(0, streams.size()/2));
-        final InputStream s1 = createStackStream(streams.subList(streams.size()/2, streams.size()));
-        return new SequenceInputStream(s0, s1);
+    private synchronized List<BTreeV1Chunk> getChunks(HDF5DataInput channel) throws IOException {
+        if (chunks == null) {
+            final DataLayoutMessage.Chunked cdt = (DataLayoutMessage.Chunked) layout;
+            //read btree of all chunks
+            channel.seek(cdt.address);
+            final BTreeV1 datatree = new BTreeV1();
+            datatree.read(channel, cdt.dimensionSizes);
+            final BTreeV1.DataNode node = (BTreeV1.DataNode) datatree.root;
+            chunks = new ArrayList<>(node.getChunks());
+        }
+
+        return chunks;
     }
 
-    private Object readDatas(HDF5DataInput channel, GridExtent extent, int ... compoundindexes) throws IOException {
-        final long[] low = extent.getLow().getCoordinateValues();
-        final long[] high = extent.getHigh().getCoordinateValues();
-        final int[] dimensions = new int[low.length];
+    private void appendChunkDatas(Object results, Callable<HDF5DataInput> chunkChannel,
+            GridExtent chunkExtent, GridExtent queryExtent, int ... compoundindexes) throws IOException {
+
+        final GridExtent intersection = chunkExtent.intersect(queryExtent);
+        final long[] chunkTranslate = chunkExtent.getLow().getCoordinateValues();
+
+        final long[] intersectionlow = intersection.getLow().getCoordinateValues();
+        final int[] dimensions = new int[intersectionlow.length];
+        final int[] fulldimensions = new int[intersectionlow.length];
+        final long[] intersectionToQueryTranslate = new long[intersectionlow.length];
         for (int i = 0; i< dimensions.length; i++) {
-            dimensions[i] = Math.toIntExact(high[i] - low[i] + 1);
+            dimensions[i] = (int) intersection.getSize(i);
+            if (dimensions[i] <= 0) return;
+            fulldimensions[i] = (int) chunkExtent.getSize(i);
+            intersectionToQueryTranslate[i] = intersectionlow[i] - queryExtent.getLow(i);
         }
-
-        return readDatas(channel, low, high, dimensions, 0, compoundindexes);
+        HDF5DataInput dfi = null;
+        try {
+            dfi = chunkChannel.call();
+            Object chunkDatas = readChunkDatas(dfi, buildCellSizes(cellByteSize, fulldimensions), chunkTranslate, intersectionlow, dimensions, 0, compoundindexes);
+            //copy datas in result array
+            copy(chunkDatas, results, intersectionToQueryTranslate);
+        } catch (IOException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            throw new IOException(ex);
+        } finally {
+            //close channel only if it's a chunk
+            if (dfi instanceof ChunkSeekableByteChannel csbc) {
+                csbc.close();
+            }
+        }
     }
 
-    private Object readDatas(HDF5DataInput channel, final long[] low, final long[] high, final int[] dimensions, int dimIdx, int ... compoundindexes) throws IOException {
-
-//        channel.mark();
-        final long basePosition = channel.getStreamPosition();
-
+    private Object readChunkDatas(HDF5DataInput chunkChannel, final long[] dimensionByteSize, final long[] chunkLow, final long[] intersectionLow, final int[] intersectionSize, int dimIdx, int ... compoundindexes) throws IOException {
+        final long basePosition = chunkChannel.getStreamPosition();
         Object values;
-        if (dimIdx == low.length - 1) {
+        if (dimIdx == intersectionLow.length - 1) {
             //a strip
-            channel.seek(basePosition + (cellByteSize * low[dimIdx]));
-            values = datatype.readData(channel, dimensions[dimIdx], compoundindexes);
+            chunkChannel.seek(basePosition + (cellByteSize * (intersectionLow[dimIdx] - chunkLow[dimIdx])));
+            values = datatype.readData(chunkChannel, intersectionSize[dimIdx], compoundindexes);
         } else {
             //an array of strips
-            values = java.lang.reflect.Array.newInstance(datatype.getValueClass(), dimensions[dimIdx], 0);
-            for (int k = 0; k < dimensions[dimIdx]; k++) {
-                channel.seek(basePosition + (low[dimIdx] + k) * dimensionByteSize[dimIdx]);
-                final Object strip = readDatas(channel, low, high, dimensions, dimIdx+1, compoundindexes);
+            final int[] sizes = new int[intersectionSize.length - dimIdx];
+            sizes[0] = intersectionSize[dimIdx];
+            values = java.lang.reflect.Array.newInstance(datatype.getValueClass(), sizes);
+            for (int k = 0; k < intersectionSize[dimIdx]; k++) {
+                chunkChannel.seek(basePosition + ((intersectionLow[dimIdx] - chunkLow[dimIdx]) + k) * dimensionByteSize[dimIdx]);
+                final Object strip = readChunkDatas(chunkChannel, dimensionByteSize, chunkLow, intersectionLow, intersectionSize, dimIdx+1, compoundindexes);
                 java.lang.reflect.Array.set(values, k, strip);
             }
         }
-
-//        channel.reset();
         return values;
     }
 
-    /**
-     * Convert given location to offset in the data stream.
-     * @param location sample location
-     * @return offset in datastream
-     */
-    private long locationToOffset(long[] location) {
-        long offset = 0;
-        for (int i = 0; i < dimensionByteSize.length; i++) {
-            offset += dimensionByteSize[i] * location[i];
+    private static void copy(Object source, Object target, long[] offset) {
+
+        if (offset.length == 1) {
+            int length = Array.getLength(source);
+            if (length == 0) return;
+            System.arraycopy(source, 0, target, (int) offset[0], length);
+        } else {
+            int nb = Array.getLength(source);
+            final long[] subOffset = Arrays.copyOfRange(offset, 1, offset.length);
+            for (int i = 0; i < nb; i++) {
+                final Object subSource = Array.get(source, i);
+                final Object subTarget = Array.get(target, (int) (i + offset[0]));
+                copy(subSource, subTarget,subOffset);
+            }
         }
-        return offset;
     }
 
     @Override

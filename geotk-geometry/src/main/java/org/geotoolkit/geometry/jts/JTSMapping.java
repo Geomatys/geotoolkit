@@ -386,4 +386,157 @@ public final class JTSMapping {
         return null;
     }
 
+    /**
+     * Filter given geometry to a Point or MultiPoint.
+     * If the given geometry already matches it is returned unchanged.
+     * GeometryCollection are filtered and only matching geometries are preserved.
+     * Any other geometry types are skipped.
+     * Returned geometry is null only if given geometry is also null otherwise
+     * the geometry is never null but can be an empty geometry.
+     *
+     * @param geometry can be null
+     * @return geometry composed of ponctual elements only.
+     */
+    public static Geometry preservePonctuals(Geometry geometry) {
+        if (geometry == null) return null;
+
+        final Object userData = geometry.getUserData();
+        final String geometryType = geometry.getGeometryType();
+
+        if (Geometry.TYPENAME_POINT.equals(geometryType)
+         || Geometry.TYPENAME_MULTIPOINT.equals(geometryType)) {
+            //already valid type
+        } else if (Geometry.TYPENAME_GEOMETRYCOLLECTION.equals(geometryType)) {
+            final GeometryCollection gc = (GeometryCollection) geometry;
+            final List<Point> parts = new ArrayList<>();
+            for (int i = 0, in = gc.getNumGeometries(); i < in; i++) {
+                Geometry cdt = preservePonctuals(gc.getGeometryN(i));
+                if (cdt instanceof Point) {
+                    parts.add((Point) cdt);
+                } else if (cdt instanceof MultiPoint) {
+                    MultiPoint mp = (MultiPoint) cdt;
+                    for (int k = 0, kn = mp.getNumGeometries(); k < kn; k++) {
+                        parts.add((Point) mp.getGeometryN(k));
+                    }
+                }
+            }
+            int size = parts.size();
+            if (size == 0) {
+                geometry = geometry.getFactory().createPoint(); //empty
+            } else if (size == 1) {
+                geometry = parts.get(0);
+            } else {
+                geometry = geometry.getFactory().createMultiPoint(GeometryFactory.toPointArray(parts));
+            }
+            geometry.setUserData(userData);
+        } else {
+            geometry = geometry.getFactory().createPoint(); //empty
+            geometry.setUserData(userData);
+        }
+
+        return geometry;
+    }
+
+    /**
+     * Filter given geometry to a LineString, LinearRing or MultiLineString.
+     * If the given geometry already matches it is returned unchanged.
+     * GeometryCollection are filtered and only matching geometries are preserved.
+     * Any other geometry types are skipped.
+     * Returned geometry is null only if given geometry is also null otherwise
+     * the geometry is never null but can be an empty geometry.
+     *
+     * @param geometry can be null
+     * @return geometry composed of linear elements only.
+     */
+    public static Geometry preserveLinears(Geometry geometry) {
+        if (geometry == null) return null;
+
+        final Object userData = geometry.getUserData();
+        final String geometryType = geometry.getGeometryType();
+
+        if (Geometry.TYPENAME_LINESTRING.equals(geometryType)
+         || Geometry.TYPENAME_LINEARRING.equals(geometryType)
+         || Geometry.TYPENAME_MULTILINESTRING.equals(geometryType)) {
+            //already valid type
+        } else if (Geometry.TYPENAME_GEOMETRYCOLLECTION.equals(geometryType)) {
+            final GeometryCollection gc = (GeometryCollection) geometry;
+            final List<LineString> parts = new ArrayList<>();
+            for (int i = 0, in = gc.getNumGeometries(); i < in; i++) {
+                Geometry cdt = preserveLinears(gc.getGeometryN(i));
+                if (cdt instanceof LineString) {
+                    parts.add((LineString) cdt);
+                } else if (cdt instanceof MultiLineString) {
+                    MultiLineString mp = (MultiLineString) cdt;
+                    for (int k = 0, kn = mp.getNumGeometries(); k < kn; k++) {
+                        parts.add((LineString) mp.getGeometryN(k));
+                    }
+                }
+            }
+            int size = parts.size();
+            if (size == 0) {
+                geometry = geometry.getFactory().createLineString(); //empty
+            } else if (size == 1) {
+                geometry = parts.get(0);
+            } else {
+                geometry = geometry.getFactory().createMultiLineString(GeometryFactory.toLineStringArray(parts));
+            }
+            geometry.setUserData(userData);
+        } else {
+            geometry = geometry.getFactory().createLineString(); //empty
+            geometry.setUserData(userData);
+        }
+
+        return geometry;
+    }
+
+    /**
+     * Filter given geometry to a Polygon or MultiPolygon.
+     * If the given geometry already matches it is returned unchanged.
+     * GeometryCollection are filtered and only matching geometries are preserved.
+     * Any other geometry types are skipped.
+     * Returned geometry is null only if given geometry is also null otherwise
+     * the geometry is never null but can be an empty geometry.
+     *
+     * @param geometry can be null
+     * @return geometry composed of polygon elements only.
+     */
+    public static Geometry preservePolygonals(Geometry geometry) {
+        if (geometry == null) return null;
+
+        final Object userData = geometry.getUserData();
+        final String geometryType = geometry.getGeometryType();
+
+        if (Geometry.TYPENAME_POLYGON.equals(geometryType)
+         || Geometry.TYPENAME_MULTIPOLYGON.equals(geometryType)) {
+            //already valid type
+        } else if (Geometry.TYPENAME_GEOMETRYCOLLECTION.equals(geometryType)) {
+            final GeometryCollection gc = (GeometryCollection) geometry;
+            final List<Polygon> parts = new ArrayList<>();
+            for (int i = 0, in = gc.getNumGeometries(); i < in; i++) {
+                Geometry cdt = preservePolygonals(gc.getGeometryN(i));
+                if (cdt instanceof Polygon) {
+                    parts.add((Polygon) cdt);
+                } else if (cdt instanceof MultiPolygon) {
+                    MultiPolygon mp = (MultiPolygon) cdt;
+                    for (int k = 0, kn = mp.getNumGeometries(); k < kn; k++) {
+                        parts.add((Polygon) mp.getGeometryN(k));
+                    }
+                }
+            }
+            int size = parts.size();
+            if (size == 0) {
+                geometry = geometry.getFactory().createPolygon(); //empty
+            } else if (size == 1) {
+                geometry = parts.get(0);
+            } else {
+                geometry = geometry.getFactory().createMultiPolygon(GeometryFactory.toPolygonArray(parts));
+            }
+            geometry.setUserData(userData);
+        } else {
+            geometry = geometry.getFactory().createPolygon(); //empty
+            geometry.setUserData(userData);
+        }
+
+        return geometry;
+    }
 }
