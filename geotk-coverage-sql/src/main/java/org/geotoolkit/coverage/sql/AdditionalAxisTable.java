@@ -26,7 +26,7 @@ import java.sql.PreparedStatement;
 import java.time.Instant;
 import javax.measure.Unit;
 import javax.measure.UnitConverter;
-import javax.measure.format.ParserException;
+import javax.measure.format.MeasurementParseException;
 
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.SingleCRS;
@@ -220,7 +220,7 @@ final class AdditionalAxisTable extends CachedTable<String,AdditionalAxisEntry> 
         try {
             crs = crs(datum, Types.forCodeName(AxisDirection.class, direction, false), Units.valueOf(units), transaction.database);
             error = null;
-        } catch (ParserException | FactoryException e) {
+        } catch (MeasurementParseException | FactoryException e) {
             crs = null;
             error = e;
         }

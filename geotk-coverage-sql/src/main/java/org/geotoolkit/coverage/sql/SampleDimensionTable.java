@@ -26,7 +26,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
 import javax.measure.Unit;
-import javax.measure.format.ParserException;
+import javax.measure.format.MeasurementParseException;
 import org.opengis.util.FactoryException;
 import org.apache.sis.measure.Units;
 import org.apache.sis.coverage.Category;
@@ -107,7 +107,7 @@ final class SampleDimensionTable extends Table {
                     } else {
                         try {
                             unit = transaction.database.unitFormat.parse(unitSymbol);
-                        } catch (ParserException e) {
+                        } catch (MeasurementParseException e) {
                             throw new IllegalRecordException(e, results, 3, name);
                         }
                     }
