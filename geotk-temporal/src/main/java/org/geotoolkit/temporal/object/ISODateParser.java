@@ -22,7 +22,6 @@ import java.util.GregorianCalendar;
 import java.util.Map;
 import java.util.TimeZone;
 
-import org.geotoolkit.util.XInteger;
 import org.geotoolkit.util.collection.UnSynchronizedCache;
 
 /**
@@ -59,6 +58,7 @@ public class ISODateParser {
 
     private static final TimeZone GMT0 = TimeZone.getTimeZone("GMT+0");
     private final Calendar calendar = Calendar.getInstance();
+    private static final int DECIMAL = 10;
 
     private final Map<String,TimeZone> TIME_ZONES = new UnSynchronizedCache<String, TimeZone>(10){
         @Override
@@ -104,7 +104,7 @@ public class ISODateParser {
                 // yyyy
                 // yyyyZ
                 // yyyy'Z'
-                year = XInteger.parseIntSigned(date, 0, index1);
+                year = Integer.parseInt(date, 0, index1, DECIMAL);
 
                 month = 1; // a -1 occures at the end.
                 day = 1;
@@ -123,10 +123,10 @@ public class ISODateParser {
                 if (date.indexOf('-') == 0)
                     idxNegative = 1;
 
-                year = XInteger.parseIntSigned(date, 0, idxNegative + 4);
+                year = Integer.parseInt(date, 0, idxNegative + 4, DECIMAL);
 
                 if (index1 <= 7) {
-                    month = XInteger.parseIntSigned(date, idxNegative + 4, index1);
+                    month = Integer.parseInt(date, idxNegative + 4, index1, DECIMAL);
 
                     day = 1;
                     hour = 0;
@@ -139,17 +139,17 @@ public class ISODateParser {
                     // yyyyMMdd
                     // yyyyMMddZ
                     // yyyyMMdd'Z'
-                    month = XInteger.parseIntSigned(date, idxNegative + 4, idxNegative + 6);
+                    month = Integer.parseInt(date, idxNegative + 4, idxNegative + 6, DECIMAL);
 
                     if (index1 <= 9) {
-                        day = XInteger.parseIntSigned(date, idxNegative + 6, index1);
+                        day = Integer.parseInt(date, idxNegative + 6, index1, DECIMAL);
 
                     } else {
                         //date is like :
                         // yyyyMMdd
                         // yyyyMMddZ
                         // yyyyMMdd'Z'
-                        day = XInteger.parseIntSigned(date, idxNegative + 6, idxNegative + 8);
+                        day = Integer.parseInt(date, idxNegative + 6, idxNegative + 8, DECIMAL);
 
                         //@TODO Manage hour,min,sec,mill cases
                     }
@@ -162,7 +162,7 @@ public class ISODateParser {
             }
 
         }else{
-            year = XInteger.parseIntSigned(date, 0, index1);
+            year = Integer.parseInt(date, 0, index1, DECIMAL);
             index1++;
 
             if((index2 = date.indexOf('-', index1)) < 0){
@@ -173,7 +173,7 @@ public class ISODateParser {
 
                 index2 = searchTimeZone(date, index1, bufferTZ);
 
-                month = XInteger.parseIntUnsigned(date, index1, index2);
+                month = Integer.parseUnsignedInt(date, index1, index2, DECIMAL);
                 day = 1;
                 hour = 0;
                 min = 0;
@@ -181,7 +181,7 @@ public class ISODateParser {
                 mil = 0;
 
             }else{
-                month = XInteger.parseIntUnsigned(date, index1, index2);
+                month = Integer.parseUnsignedInt(date, index1, index2, DECIMAL);
                 index2++;
 
                 if((index1 = date.indexOf('T', index2)) < 0){
@@ -192,35 +192,35 @@ public class ISODateParser {
 
                     index1 = searchTimeZone(date, index2, bufferTZ);
 
-                    day = XInteger.parseIntUnsigned(date, index2, index1);
+                    day = Integer.parseUnsignedInt(date, index2, index1, DECIMAL);
                     hour = 0;
                     min = 0;
                     sec = 0;
                     mil = 0;
                 }else{
-                    day = XInteger.parseIntUnsigned(date, index2, index1);
+                    day = Integer.parseUnsignedInt(date, index2, index1, DECIMAL);
                     index1++;
 
                     index2 = date.indexOf(':', index1);
-                    hour = XInteger.parseIntUnsigned(date, index1, index2);
+                    hour = Integer.parseUnsignedInt(date, index1, index2, DECIMAL);
                     index2++;
 
                     index1 = date.indexOf(':', index2);
-                    min = XInteger.parseIntUnsigned(date, index2, index1);
+                    min = Integer.parseUnsignedInt(date, index2, index1, DECIMAL);
                     index1++;
 
                     index2 = date.indexOf('.',index1);
                     if(index2 > 0){
                         //we have milliseconds
-                        sec = XInteger.parseIntUnsigned(date, index1, index2);
+                        sec = Integer.parseUnsignedInt(date, index1, index2, DECIMAL);
                         index2++;
 
                         index1 = searchTimeZone(date, index2, bufferTZ);
 
-                        mil = XInteger.parseIntUnsigned(date, index2, index1);
+                        mil = Integer.parseUnsignedInt(date, index2, index1, DECIMAL);
                     }else{
                         index2 = searchTimeZone(date, index1, bufferTZ);
-                        sec = XInteger.parseIntUnsigned(date, index1, index2);
+                        sec = Integer.parseUnsignedInt(date, index1, index2, DECIMAL);
                         mil = 0;
                     }
                 }

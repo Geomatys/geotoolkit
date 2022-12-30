@@ -22,7 +22,6 @@ import java.nio.Buffer;
 import java.nio.CharBuffer;
 import java.util.Calendar;
 import java.util.Date;
-import org.geotoolkit.util.XInteger;
 
 /**
  * Class for holding the information assicated with a record.
@@ -273,7 +272,7 @@ abstract class DbaseField {
         public Object read(final CharBuffer charBuffer) throws IOException {
             try {
                 final CharSequence number = extractNumberString(charBuffer,0);
-                return XInteger.parseIntSigned(number, 0, number.length());
+                return Integer.parseInt(number, 0, number.length(), 10);
                 // else will fall through to the floating point number
             } catch (NumberFormatException e) {
                 return ZERO;
