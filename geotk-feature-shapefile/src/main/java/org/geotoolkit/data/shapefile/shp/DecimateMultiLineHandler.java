@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.data.shapefile.shp;
 
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
 import org.apache.sis.storage.DataStoreException;
@@ -55,7 +54,7 @@ public class DecimateMultiLineHandler extends MultiLineHandler {
         }
         final int dimensions = (read3D && shapeType == ShapeType.ARCZ) ? 3 : 2;
         // skip bounding box (not needed)
-         ((Buffer) buffer).position(((Buffer) buffer).position() + 4 * 8);
+         buffer.position(buffer.position() + 4 * 8);
 
         final int numParts = buffer.getInt();
         final int numPoints = buffer.getInt(); // total number of points
