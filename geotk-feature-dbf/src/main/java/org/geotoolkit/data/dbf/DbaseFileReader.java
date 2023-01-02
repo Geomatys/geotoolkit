@@ -21,7 +21,6 @@
 package org.geotoolkit.data.dbf;
 
 import java.io.IOException;
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.CharBuffer;
@@ -55,8 +54,6 @@ import java.util.logging.Logger;
  * Remember that the Row object is always the same.
  * The values are parsed as they are read, so it pays to copy them out (as each
  * call to Row.read() will result in an expensive String parse).
- *
- * TODO: remove all Buffer cast after migration to JDK9.
  *
  * @author Ian Schneider
  * @author Johann Sorel (Geomatys)
@@ -137,7 +134,7 @@ public final class DbaseFileReader implements Closeable{
         if (channel instanceof FileChannel && this.useMemoryMappedBuffer) {
             final FileChannel fc = (FileChannel) channel;
             this.buffer = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
-            ((Buffer) this.buffer).position((int) fc.position());
+            this.buffer.position((int) fc.position());
         } else {
             // Force useMemoryMappedBuffer to false
             this.useMemoryMappedBuffer = false;
@@ -149,7 +146,7 @@ public final class DbaseFileReader implements Closeable{
             buffer = ByteBuffer.allocate(size);
             // fill it and reset
             fill(buffer, channel);
-            ((Buffer) buffer).flip();
+            buffer.flip();
         }
 
         // The entire file is in little endian
@@ -174,7 +171,7 @@ public final class DbaseFileReader implements Closeable{
             r = channel.read(buffer);
         }
         if (r == -1) {
-            ((Buffer) buffer).limit(((Buffer) buffer).position());
+            buffer.limit(buffer.position());
         }
     }
 
@@ -183,11 +180,11 @@ public final class DbaseFileReader implements Closeable{
      * @throws IOException
      */
     private void bufferCheck() throws IOException {
-        ((Buffer) buffer).limit(buffer.capacity());
+        buffer.limit(buffer.capacity());
         if (!buffer.isReadOnly() && buffer.remaining() < header.getRecordLength()) {
             buffer.compact();
             fill(buffer, channel);
-            ((Buffer) buffer).position(0);
+            buffer.position(0);
         }
     }
 
@@ -226,7 +223,7 @@ public final class DbaseFileReader implements Closeable{
 
         if(cnt != 0){
             //move cursor to next record if it's not the first
-            ((Buffer) buffer).position(((Buffer) buffer).position() + header.getRecordLength());
+            buffer.position(buffer.position() + header.getRecordLength());
         }
         prepareNext();
     }
@@ -245,10 +242,10 @@ public final class DbaseFileReader implements Closeable{
             char deleted = (char) buffer.get();
             if (deleted == '*') {
                 //record was deleted, move to next one, -1 for the delete flag we just read
-                ((Buffer) buffer).position(((Buffer) buffer).position()+header.getRecordLength()-1);
+                buffer.position(buffer.position()+header.getRecordLength()-1);
                 continue;
             }
-            ((Buffer) buffer).position(((Buffer) buffer).position()-1);
+            buffer.position(buffer.position()-1);
             foundRecord = true;
             next = row;
         }
@@ -258,12 +255,12 @@ public final class DbaseFileReader implements Closeable{
 
     private void prepareFieldRead(final DbaseField field, final int fieldOffset) throws CharacterCodingException{
         //prepare byte buffer
-        final int previousposition = ((Buffer) buffer).position();
-        final int previouslimit = ((Buffer) buffer).limit();
+        final int previousposition = buffer.position();
+        final int previouslimit = buffer.limit();
         decoder.reset();
-        ((Buffer) charBuffer).clear();
-        ((Buffer) buffer).position(previousposition + fieldOffset);
-        ((Buffer) buffer).limit(((Buffer) buffer).position() + field.fieldLength);
+        charBuffer.clear();
+        buffer.position(previousposition + fieldOffset);
+        buffer.limit(buffer.position() + field.fieldLength);
         CoderResult result = decoder.decode(buffer, charBuffer, true);
         if(result == CoderResult.OVERFLOW){
             result.throwException();
@@ -278,9 +275,9 @@ public final class DbaseFileReader implements Closeable{
         if(CoderResult.UNDERFLOW != result){
             result.throwException();
         }
-        ((Buffer) buffer).limit(previouslimit);
-        ((Buffer) buffer).position(previousposition);
-         ((Buffer) charBuffer).flip();
+        buffer.limit(previouslimit);
+        buffer.position(previousposition);
+        charBuffer.flip();
     }
 
     /**
@@ -290,9 +287,9 @@ public final class DbaseFileReader implements Closeable{
      */
     public void transferTo(final DbaseFileWriter writer) throws IOException {
         bufferCheck();
-        ((Buffer) buffer).limit(((Buffer) buffer).position() + header.getRecordLength());
+        buffer.limit(buffer.position() + header.getRecordLength());
         writer.channel.write(buffer);
-        ((Buffer) buffer).limit(buffer.capacity());
+        buffer.limit(buffer.capacity());
         cnt++;
     }
 
@@ -310,14 +307,14 @@ public final class DbaseFileReader implements Closeable{
                     + header.getRecordLength() * (long)(recno - 1);
 
             if (useMemoryMappedBuffer) {
-                ((Buffer) buffer).position((int)newPosition);
+                buffer.position((int)newPosition);
             } else {
                 final FileChannel fc = (FileChannel) channel;
                 fc.position(newPosition);
-                ((Buffer) buffer).limit(buffer.capacity());
-                ((Buffer) buffer).position(0);
+                buffer.limit(buffer.capacity());
+                buffer.position(0);
                 fill(buffer, channel);
-                ((Buffer) buffer).position(0);
+                buffer.position(0);
             }
             prepareNext();
         } else {

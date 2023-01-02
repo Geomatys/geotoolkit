@@ -19,7 +19,6 @@ package org.geotoolkit.data.shapefile.shx;
 
 import java.io.EOFException;
 import java.io.IOException;
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
@@ -39,8 +38,6 @@ import org.geotoolkit.data.dbf.Closeable;
  * <a href="http://www.esri.com/library/whitepapers/pdfs/shapefile.pdf"><b>"ESRI(r)
  * Shapefile - A Technical Description"</b><br> * <i>'An ESRI White Paper .
  * May 1997'</i></a>
- *
- * TODO: remove all Buffer cast after migration to JDK9.
  *
  * @author Ian Schneider
  * @author Johann Sorel (Geomatys)
@@ -141,7 +138,7 @@ public final class ShxReader implements Closeable{
                  throw new EOFException("End of file reached while reading SHX header");
              }
         }
-        ((Buffer) buffer).flip();
+        buffer.flip();
         return ShapefileHeader.read(buffer, true);
     }
 
@@ -155,7 +152,7 @@ public final class ShxReader implements Closeable{
                  throw new EOFException("End of file reached while reading SHX records");
              }
         }
-        ((Buffer) buffer).flip();
+        buffer.flip();
         content = new int[remaining / 4]; // 2 integer for each record
         final IntBuffer ints = buffer.asIntBuffer();
         ints.get(content);
@@ -173,11 +170,11 @@ public final class ShxReader implements Closeable{
                 channel.position(pos);
                 buffer.clear();
                 channel.read(buffer);
-                ((Buffer) buffer).flip();
+                buffer.flip();
             }
         }
 
-        ((Buffer) buffer).position(pos - channelOffset);
+        buffer.position(pos - channelOffset);
         recOffset = buffer.getInt();
         recLen    = buffer.getInt();
         lastIndex = index;

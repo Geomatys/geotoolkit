@@ -18,7 +18,6 @@
 package org.geotoolkit.data.shapefile.shx;
 
 import java.io.IOException;
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import org.geotoolkit.data.shapefile.shp.ShapeType;
@@ -113,10 +112,10 @@ public class ShxWriter implements Closeable{
      * Drain buffer into underlying channel.
      */
     private void drain() throws IOException {
-        ((Buffer)buffer).flip();
+        buffer.flip();
         while (buffer.remaining() > 0)
             channel.write(buffer);
-        ((Buffer)buffer).flip().limit(buffer.capacity());
+        buffer.flip().limit(buffer.capacity());
     }
 
 }

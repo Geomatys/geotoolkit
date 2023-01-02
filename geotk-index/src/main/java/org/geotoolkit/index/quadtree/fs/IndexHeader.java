@@ -17,7 +17,6 @@
 package org.geotoolkit.index.quadtree.fs;
 
 import java.io.IOException;
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.ReadableByteChannel;
@@ -27,9 +26,6 @@ import org.geotoolkit.index.quadtree.QuadTree;
 import org.geotoolkit.index.quadtree.StoreException;
 
 /**
- * DOCUMENT ME!
- *
- * TODO: remove all Buffer cast after migration to JDK9.
  *
  * @author Tommaso Nolli
  * @module
@@ -64,7 +60,7 @@ public class IndexHeader {
         final ByteBuffer buf = ByteBuffer.allocate(8);
 
         channel.read(buf);
-        ((Buffer) buf).flip();
+        buf.flip();
 
         byte[] tmp = new byte[3];
         buf.get(tmp);
@@ -77,7 +73,7 @@ public class IndexHeader {
                     + "is deprecated; It is strongly recommended "
                     + "to regenerate it in new format.");
 
-            ((Buffer) buf).position(0);
+            buf.position(0);
             tmp = buf.array();
 
             boolean lsb;
@@ -98,7 +94,7 @@ public class IndexHeader {
         final Charset charSet = Charset.forName("US-ASCII");
 
         final ByteBuffer tmp = charSet.encode(SIGNATURE);
-        ((Buffer) tmp).position(0);
+        tmp.position(0);
         buf.put(tmp);
         buf.put(this.byteOrder);
         buf.put(VERSION);

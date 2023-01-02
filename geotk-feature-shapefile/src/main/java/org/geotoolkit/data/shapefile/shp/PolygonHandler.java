@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.data.shapefile.shp;
 
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
 import java.util.ArrayList;
@@ -36,8 +35,6 @@ import org.locationtech.jts.geom.Polygon;
 
 /**
  * Wrapper for a Shapefile polygon.
- *
- * TODO: remove all Buffer cast after migration to JDK9.
  *
  * @author aaime
  * @author Ian Schneider
@@ -150,7 +147,7 @@ public class PolygonHandler extends AbstractShapeHandler {
         holes.clear();
 
         // skip the bounds
-        ((Buffer) buffer).position(((Buffer) buffer).position() + 32);
+        buffer.position(buffer.position() + 32);
 
         final int numParts = buffer.getInt();
         final int numPoints = buffer.getInt();

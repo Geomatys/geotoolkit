@@ -4,7 +4,6 @@
 package org.geotoolkit.processing.science.drift.v2;
 
 import java.awt.geom.Point2D;
-import java.nio.Buffer;
 import java.nio.DoubleBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -90,7 +89,7 @@ class PointBucket {
         }
 
         try {
-            /* HACK: cast for jdk8 support */ ((Buffer) buffer).position(idx);
+            buffer.position(idx);
             buffer.put(point);
             final PointReference ref = new PointReference(idx, weight);
             references.add(ref);
