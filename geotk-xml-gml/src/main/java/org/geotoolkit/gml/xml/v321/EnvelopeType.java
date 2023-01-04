@@ -406,6 +406,13 @@ public class EnvelopeType implements Envelope, org.geotoolkit.gml.xml.Envelope {
 
     @Override
     public int getDimension() {
+        if (srsDimension == null && srsName != null) {
+            // try to compute the dimension
+            CoordinateReferenceSystem crs = getCoordinateReferenceSystem();
+            if (crs != null) {
+                srsDimension = crs.getCoordinateSystem().getDimension();
+            }
+        }
         return srsDimension;
     }
 

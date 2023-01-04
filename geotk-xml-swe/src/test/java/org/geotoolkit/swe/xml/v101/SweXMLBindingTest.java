@@ -14,35 +14,20 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.swe;
+package org.geotoolkit.swe.xml.v101;
 
-import java.io.IOException;
-import java.io.StringReader;
-import org.geotoolkit.swe.xml.v101.AbstractDataComponentType;
 import java.util.List;
 import java.util.ArrayList;
 import java.io.StringWriter;
 import java.util.Arrays;
-import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import javax.xml.parsers.ParserConfigurationException;
-import org.geotoolkit.swe.xml.v101.AnyScalarPropertyType;
-import org.geotoolkit.swe.xml.v101.DataArrayType;
-import org.geotoolkit.swe.xml.v101.SimpleDataRecordType;
-import org.geotoolkit.swe.xml.v101.Text;
-import org.geotoolkit.swe.xml.v101.TextBlockType;
-import org.geotoolkit.swe.xml.v101.DataBlockDefinitionType;
-import org.geotoolkit.swe.xml.v101.DataRecordType;
-import org.geotoolkit.swe.xml.v101.DataComponentPropertyType;
-import org.geotoolkit.swe.xml.v101.ObjectFactory;
 
 import org.geotoolkit.util.StringUtilities;
 import javax.xml.bind.JAXBContext;
 import org.apache.sis.xml.MarshallerPool;
 import org.junit.*;
-import org.xml.sax.SAXException;
 
 import static org.apache.sis.test.MetadataAssert.*;
 
@@ -50,7 +35,6 @@ import static org.apache.sis.test.MetadataAssert.*;
 /**
  *
  * @author Guilhem Legal (Geomatys)
- * @module
  */
 public class SweXMLBindingTest extends org.geotoolkit.test.TestBase {
 
@@ -87,8 +71,8 @@ public class SweXMLBindingTest extends org.geotoolkit.test.TestBase {
      * Test simple Record Marshalling.
      */
     @Test
-    public void marshallingTest() throws JAXBException, IOException, ParserConfigurationException, SAXException {
-        Text text = new Text("definition", "some value");
+    public void marshallingTest() throws Exception {
+        Text text = new Text("id-001", "urn:ogc:id-001", "some description", "urn:ogc:def:id-001", "some value");
 
         StringWriter sw = new StringWriter();
         marshaller.marshal(text, sw);
@@ -99,10 +83,14 @@ public class SweXMLBindingTest extends org.geotoolkit.test.TestBase {
         //we remove the xmlmns
         result = StringUtilities.removeXmlns(result);
 
-        String expResult = "<swe:Text definition=\"definition\" >" + '\n' +
-                           "  <swe:value>some value</swe:value>" + '\n' +
-                           "</swe:Text>";
-        assertEquals(expResult, result.trim());
+        String expResult = """
+                           <swe:Text definition="urn:ogc:def:id-001" ns6:id="id-001" >
+                             <ns6:description>some description</ns6:description>
+                             <ns6:name>urn:ogc:id-001</ns6:name>
+                             <swe:value>some value</swe:value>
+                           </swe:Text> 
+                           """;
+        assertEquals(expResult.trim(), result.trim());
 
         SimpleDataRecordType elementType = new SimpleDataRecordType();
         AnyScalarPropertyType any = new AnyScalarPropertyType("id-1", "any name", text);
@@ -129,8 +117,10 @@ public class SweXMLBindingTest extends org.geotoolkit.test.TestBase {
                     "    <swe:elementType name=\"array-id-1\">" + '\n' +
                     "        <swe:SimpleDataRecord>" + '\n' +
                     "            <swe:field name=\"any name\">" + '\n' +
-                    "                <swe:Text definition=\"definition\">" + '\n' +
-                    "                    <swe:value>some value</swe:value>" + '\n' +
+                    "                <swe:Text definition=\"urn:ogc:def:id-001\" gml:id=\"id-001\">\n" +
+                    "                   <gml:description>some description</gml:description>\n" +
+                    "                   <gml:name>urn:ogc:id-001</gml:name>\n" +
+                    "                   <swe:value>some value</swe:value>\n" +
                     "                </swe:Text>" + '\n' +
                     "            </swe:field>" + '\n' +
                     "        </swe:SimpleDataRecord>" + '\n' +
@@ -145,23 +135,69 @@ public class SweXMLBindingTest extends org.geotoolkit.test.TestBase {
 
         ObjectFactory factory = new ObjectFactory();
 
-        final List<DataComponentPropertyType> fields = new ArrayList<DataComponentPropertyType>();
+        final List<DataComponentPropertyType> fields = new ArrayList<>();
         fields.add(DataComponentPropertyType.LATITUDE_FIELD);
         fields.add(DataComponentPropertyType.LONGITUDE_FIELD);
         fields.add(DataComponentPropertyType.TIME_FIELD);
         final DataRecordType posRecord = new DataRecordType(null, fields);
         final DataBlockDefinitionType definition = new DataBlockDefinitionType(null, Arrays.asList((AbstractDataComponentType)posRecord), TextBlockType.DEFAULT_ENCODING);
 
-        marshaller.marshal(factory.createDataBlockDefinition(definition), System.out);
+        sw = new StringWriter();
+        marshaller.marshal(factory.createDataBlockDefinition(definition), sw);
+        result = sw.toString();
 
+        String expected = """
+                          <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                          <swe:DataBlockDefinition xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:swe="http://www.opengis.net/swe/1.0.1" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:om="http://www.opengis.net/om/1.0" xmlns:ns6="http://www.opengis.net/gml" xmlns:ns7="http://www.opengis.net/swe/2.0">
+                            <swe:DataRecord>
+                              <swe:field name="Latitude">
+                                <swe:Quantity definition="urn:ogc:phenomenon:latitude:wgs84">
+                                  <swe:uom code="degree"/>
+                                </swe:Quantity>
+                              </swe:field>
+                              <swe:field name="Longitude">
+                                <swe:Quantity definition="urn:ogc:phenomenon:longitude:wgs84">
+                                  <swe:uom code="degree"/>
+                                </swe:Quantity>
+                              </swe:field>
+                              <swe:field name="Time">
+                                <swe:Time definition="urn:ogc:data:time:iso8601">
+                                  <swe:value></swe:value>
+                                </swe:Time>
+                              </swe:field>
+                            </swe:DataRecord>
+                            <swe:encoding>
+                              <swe:TextBlock tokenSeparator="," decimalSeparator="." blockSeparator="@@" id="encoding-1"/>
+                            </swe:encoding>
+                          </swe:DataBlockDefinition>
+                          """;
+
+        assertXmlEquals(expected, result, "xmlns:*");
+
+        expected = """
+                   <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                   <ns7:DataArray xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:swe="http://www.opengis.net/swe/1.0.1" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:om="http://www.opengis.net/om/1.0" xmlns:ns6="http://www.opengis.net/gml" xmlns:ns7="http://www.opengis.net/swe/2.0" id="test-id">
+                     <ns7:elementCount>
+                       <ns7:Count>
+                         <ns7:value>2</ns7:value>
+                       </ns7:Count>
+                     </ns7:elementCount>
+                     <ns7:values>balbbla</ns7:values>
+                   </ns7:DataArray>
+                   """;
         org.geotoolkit.swe.xml.v200.ObjectFactory factoryV200 = new org.geotoolkit.swe.xml.v200.ObjectFactory();
         org.geotoolkit.swe.xml.v200.DataArrayType arrayV200 = new org.geotoolkit.swe.xml.v200.DataArrayType("test-id", 2, null, "balbbla", "test-id", null, null);
-        marshaller.marshal(factoryV200.createDataArray(arrayV200), System.out);
+
+        sw = new StringWriter();
+        marshaller.marshal(factoryV200.createDataArray(arrayV200), sw);
+        result = sw.toString();
+
+        assertXmlEquals(expected, result, "xmlns:*");
     }
 
     @Test
     public void cloneDataBlockDefinitionTest() throws Exception {
-        final List<DataComponentPropertyType> fields = new ArrayList<DataComponentPropertyType>();
+        final List<DataComponentPropertyType> fields = new ArrayList<>();
         fields.add(DataComponentPropertyType.LATITUDE_FIELD);
         fields.add(DataComponentPropertyType.LONGITUDE_FIELD);
         fields.add(DataComponentPropertyType.TIME_FIELD);
@@ -172,50 +208,5 @@ public class SweXMLBindingTest extends org.geotoolkit.test.TestBase {
 
         assertEquals(expResult.getEncoding(), result.getEncoding());
         assertEquals(expResult, result);
-    }
-
-    @Test
-    public void unmarshallingTest() throws Exception {
-        String s =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + '\n' +
-        "<swe:DataArray xmlns:swe=\"http://www.opengis.net/swe/2.0\">" + '\n' +
-        "        <swe:elementCount>" + '\n' +
-        "                <swe:Count>" + '\n' +
-        "                        <swe:value>5</swe:value>" + '\n' +
-        "                </swe:Count>" + '\n' +
-        "        </swe:elementCount>" + '\n' +
-        "        <swe:elementType name=\"point\">" + '\n' +
-        "                <swe:DataRecord>" + '\n' +
-        "                        <swe:field name=\"depth\">" + '\n' +
-        "                                <swe:Quantity definition=\"http://mmisw.org/ont/cf/parameter/depth\">" + '\n' +
-        "                                        <swe:label>Sampling Point Vertical Location</swe:label>" + '\n' +
-        "                                        <swe:uom code=\"m\"/>" + '\n' +
-        "                                </swe:Quantity>" + '\n' +
-        "                        </swe:field>" + '\n' +
-        "                        <swe:field name=\"temperature\">" + '\n' +
-        "                                <swe:Quantity definition=\"http://mmisw.org/ont/cf/parameter/sea_water_temperature\">" + '\n' +
-        "                                        <swe:label>Temperature</swe:label>" + '\n' +
-        "                                        <swe:uom code=\"Cel\"/>" + '\n' +
-        "                                </swe:Quantity>" + '\n' +
-        "                        </swe:field>" + '\n' +
-        "                        <swe:field name=\"salinity\">" + '\n' +
-        "                          <swe:Quantity definition=\"http://mmisw.org/ont/cf/parameter/sea_water_salinity\">" + '\n' +
-        "                                        <swe:label>Salinity</swe:label>" + '\n' +
-        "                                        <swe:uom code=\"[ppth]\"/>" + '\n' +
-        "                                </swe:Quantity>" + '\n' +
-        "                        </swe:field>" + '\n' +
-        "                </swe:DataRecord>" + '\n' +
-        "        </swe:elementType>" + '\n' +
-        "        <swe:encoding>" + '\n' +
-        "                <swe:TextEncoding blockSeparator=\" \" tokenSeparator=\",\"/>" + '\n' +
-        "        </swe:encoding>" + '\n' +
-        "        <swe:values>00,12,45 10,13,20 20,14,30 30,13,35 40,13,40</swe:values>" + '\n' +
-        "</swe:DataArray>";
-
-        Object obj = unmarshaller.unmarshal(new StringReader(s));
-        if (obj instanceof JAXBElement) {
-            obj = ((JAXBElement)obj).getValue();
-        }
-        System.out.println(obj);
     }
 }

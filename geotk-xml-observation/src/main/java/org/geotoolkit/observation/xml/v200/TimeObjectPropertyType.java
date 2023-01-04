@@ -28,11 +28,7 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v321.ObjectFactory;
-import org.geotoolkit.gml.xml.v321.AbstractTimeComplexType;
-import org.geotoolkit.gml.xml.v321.AbstractTimeGeometricPrimitiveType;
 import org.geotoolkit.gml.xml.v321.AbstractTimeObjectType;
-import org.geotoolkit.gml.xml.v321.AbstractTimePrimitiveType;
-import org.geotoolkit.gml.xml.v321.AbstractTimeTopologyPrimitiveType;
 import org.geotoolkit.gml.xml.v321.TimeEdgeType;
 import org.geotoolkit.gml.xml.v321.TimeInstantType;
 import org.geotoolkit.gml.xml.v321.TimeNodeType;
@@ -102,16 +98,16 @@ public class TimeObjectPropertyType {
 
     private JAXBElement<? extends AbstractTimeObjectType> buildTime(final AbstractTimeObjectType value) {
         final ObjectFactory factory = new ObjectFactory();
-        if (value instanceof TimePeriodType) {
-           return factory.createTimePeriod((TimePeriodType)value);
-        } else if (value instanceof TimeInstantType) {
-           return factory.createTimeInstant((TimeInstantType)value);
-        } else if (value instanceof TimeEdgeType) {
-           return factory.createTimeEdge((TimeEdgeType)value);
-        } else if (value instanceof TimeNodeType) {
-           return factory.createTimeNode((TimeNodeType)value);
-        } else if (value instanceof TimeTopologyComplexType) {
-           return factory.createTimeTopologyComplex((TimeTopologyComplexType)value);
+        if (value instanceof TimePeriodType tp) {
+           return factory.createTimePeriod(tp);
+        } else if (value instanceof TimeInstantType ti) {
+           return factory.createTimeInstant(ti);
+        } else if (value instanceof TimeEdgeType te) {
+           return factory.createTimeEdge(te);
+        } else if (value instanceof TimeNodeType tn) {
+           return factory.createTimeNode(tn);
+        } else if (value instanceof TimeTopologyComplexType ttc) {
+           return factory.createTimeTopologyComplex(ttc);
         }
         return null;
     }
@@ -179,7 +175,7 @@ public class TimeObjectPropertyType {
      */
     public List<String> getNilReason() {
         if (nilReason == null) {
-            nilReason = new ArrayList<String>();
+            nilReason = new ArrayList<>();
         }
         return this.nilReason;
     }
@@ -381,12 +377,41 @@ public class TimeObjectPropertyType {
     }
 
     @Override
+    public String toString() {
+        final StringBuilder s = new StringBuilder("[TimeObjectPropertyType]");
+        if (abstractTimeObject != null)
+            s.append("abstractTimeObject").append(abstractTimeObject.getValue()).append('\n');
+
+        if(actuate != null) {
+            s.append("actuate=").append(actuate).append('\n');
+        }
+        if(arcrole != null) {
+            s.append("arcrole=").append(arcrole).append('\n');
+        }
+        if(href != null) {
+            s.append("href=").append(href).append('\n');
+        }
+        if(role != null) {
+            s.append("role=").append(role).append('\n');
+        }
+        if(show != null) {
+            s.append("show=").append(show).append('\n');
+        }
+        if(title != null) {
+            s.append("title=").append(title).append('\n');
+        }
+        if(type != null) {
+            s.append("type=").append(type).append('\n');
+        }
+        return s.toString();
+    }
+
+    @Override
     public boolean equals(final Object object) {
         if (object == this) {
             return true;
         }
-        if (object instanceof TimeObjectPropertyType) {
-            final TimeObjectPropertyType that = (TimeObjectPropertyType) object;
+        if (object instanceof TimeObjectPropertyType that) {
 
             boolean feat = false;
             if (this.abstractTimeObject == null && that.abstractTimeObject == null) {

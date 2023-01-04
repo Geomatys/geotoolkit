@@ -100,15 +100,15 @@ public class Count extends AbstractDataComponentType implements AbstractCount {
             if (q.getConstraint() != null) {
                 this.constraint = new AllowedValuesPropertyType(q.getConstraint());
             }
-            if (q.getQuality() != null && q.getQuality().size() > 0) {
-                this.quality = new ArrayList<QualityPropertyType>();
+            if (q.getQuality() != null && !q.getQuality().isEmpty()) {
+                this.quality = new ArrayList<>();
                 for (AbstractQualityProperty qual : q.getQuality()) {
                     this.quality.add(new QualityPropertyType(qual));
                 }
             }
             this.referenceFrame = q.getReferenceFrame();
             if (q.getValue() != null) {
-                this.value = q.getValue().intValue();
+                this.value = q.getValue();
             }
         }
     }
@@ -116,7 +116,7 @@ public class Count extends AbstractDataComponentType implements AbstractCount {
     /**
      * Build a new Count with only the value.
      */
-    public Count(final int value) {
+    public Count(final Integer value) {
         this.value = value;
     }
 
@@ -126,7 +126,7 @@ public class Count extends AbstractDataComponentType implements AbstractCount {
     @Override
     public List<QualityPropertyType> getQuality() {
         if (quality == null) {
-            quality = new ArrayList<QualityPropertyType>();
+            quality = new ArrayList<>();
         }
         return this.quality;
     }
@@ -134,7 +134,7 @@ public class Count extends AbstractDataComponentType implements AbstractCount {
     public void setQuality(final QualityPropertyType quality) {
         if (quality != null) {
             if (this.quality == null) {
-                this.quality = new ArrayList<QualityPropertyType>();
+                this.quality = new ArrayList<>();
             }
             this.quality.add(quality);
         }

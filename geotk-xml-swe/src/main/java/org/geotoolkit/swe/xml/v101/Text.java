@@ -70,7 +70,11 @@ public class Text extends AbstractDataComponentType implements AbstractText {
     }
 
     public Text(String id, final String definition, final String value) {
-        super(id, definition, null);
+        this(id, null, null, definition, value);
+    }
+
+    public Text(final String id, final String name, final String description, final String definition, final String value) {
+        super(id, name, description, definition, null);
         this.value = value;
     }
 

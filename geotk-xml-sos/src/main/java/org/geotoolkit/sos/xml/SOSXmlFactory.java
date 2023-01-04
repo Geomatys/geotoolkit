@@ -32,6 +32,7 @@ import org.geotoolkit.gml.xml.Point;
 import org.geotoolkit.gml.xml.Polygon;
 import org.geotoolkit.gml.xml.TimeIndeterminateValueType;
 import org.geotoolkit.gml.xml.v321.ReferenceType;
+import org.geotoolkit.observation.xml.AbstractObservation;
 import org.geotoolkit.observation.xml.OMXmlFactory;
 import org.geotoolkit.observation.xml.v100.ProcessType;
 import org.geotoolkit.observation.xml.v200.OMProcessPropertyType;
@@ -43,6 +44,7 @@ import org.geotoolkit.ows.xml.AcceptVersions;
 import org.geotoolkit.ows.xml.OWSXmlFactory;
 import org.geotoolkit.ows.xml.Range;
 import org.geotoolkit.ows.xml.Sections;
+import org.geotoolkit.sos.MeasureStringBuilder;
 import org.geotoolkit.swe.xml.AbstractBoolean;
 import org.geotoolkit.swe.xml.AbstractDataComponent;
 import org.geotoolkit.swe.xml.AbstractDataRecord;
@@ -60,6 +62,7 @@ import org.geotoolkit.swe.xml.SweXmlFactory;
 import org.geotoolkit.swe.xml.TextBlock;
 import org.geotoolkit.swe.xml.UomProperty;
 import org.geotoolkit.swe.xml.v101.PhenomenonPropertyType;
+import static org.geotoolkit.swe.xml.v200.TextEncodingType.DEFAULT_ENCODING;
 import org.geotoolkit.swes.xml.DeleteSensor;
 import org.geotoolkit.swes.xml.DeleteSensorResponse;
 import org.geotoolkit.swes.xml.DescribeSensor;
@@ -68,7 +71,7 @@ import org.opengis.filter.Filter;
 import org.opengis.filter.SpatialOperator;
 import org.opengis.filter.TemporalOperator;
 import org.opengis.geometry.DirectPosition;
-import org.opengis.observation.CompositePhenomenon;
+import org.opengis.observation.Measure;
 import org.opengis.observation.Observation;
 import org.opengis.observation.ObservationCollection;
 import org.opengis.observation.sampling.SamplingFeature;
@@ -118,8 +121,8 @@ public class SOSXmlFactory {
         if ("2.0.0".equals(version)) {
             final List<org.geotoolkit.sos.xml.v200.ObservationOfferingType> off200 = new ArrayList<>();
             for (ObservationOffering off : offerings ) {
-                if (off instanceof org.geotoolkit.sos.xml.v200.ObservationOfferingType) {
-                    off200.add((org.geotoolkit.sos.xml.v200.ObservationOfferingType)off);
+                if (off instanceof org.geotoolkit.sos.xml.v200.ObservationOfferingType o2) {
+                    off200.add(o2);
                 } else {
                     throw new IllegalArgumentException("unexpected object version for offering element");
                 }
@@ -128,8 +131,8 @@ public class SOSXmlFactory {
         } else if ("1.0.0".equals(version)) {
             final List<org.geotoolkit.sos.xml.v100.ObservationOfferingType> off100 = new ArrayList<>();
             for (ObservationOffering off : offerings ) {
-                if (off instanceof org.geotoolkit.sos.xml.v100.ObservationOfferingType) {
-                    off100.add((org.geotoolkit.sos.xml.v100.ObservationOfferingType)off);
+                if (off instanceof org.geotoolkit.sos.xml.v100.ObservationOfferingType o1) {
+                    off100.add(o1);
                 } else {
                     throw new IllegalArgumentException("unexpected object version for offering element");
                 }
@@ -181,8 +184,8 @@ public class SOSXmlFactory {
             final List<org.geotoolkit.sos.xml.v200.InsertionCapabilitiesPropertyType> ext200 = new ArrayList<>();
             if (extension != null) {
                 for (Object obs : extension) {
-                    if (obs instanceof org.geotoolkit.sos.xml.v200.InsertionCapabilitiesPropertyType) {
-                        ext200.add((org.geotoolkit.sos.xml.v200.InsertionCapabilitiesPropertyType) obs);
+                    if (obs instanceof org.geotoolkit.sos.xml.v200.InsertionCapabilitiesPropertyType icp) {
+                        ext200.add(icp);
                     } else {
                         throw new IllegalArgumentException("unexpected object version for extension element");
                     }
@@ -237,8 +240,8 @@ public class SOSXmlFactory {
             final List<org.geotoolkit.observation.xml.v200.OMObservationType> obs200 = new ArrayList<>();
             if (observations != null) {
                 for (Observation obs : observations) {
-                    if (obs instanceof org.geotoolkit.observation.xml.v200.OMObservationType) {
-                        obs200.add((org.geotoolkit.observation.xml.v200.OMObservationType) obs);
+                    if (obs instanceof org.geotoolkit.observation.xml.v200.OMObservationType o) {
+                        obs200.add(o);
                     } else {
                         throw new IllegalArgumentException("unexpected object version for observation element");
                     }
@@ -256,13 +259,13 @@ public class SOSXmlFactory {
         }
     }
 
-    public static ObservationCollection buildGetObservationResponse(final String version, final String id, final Envelope bounds, final List<Observation> observations) {
+    public static ObservationCollection buildGetObservationResponse(final String version, final String id, final Envelope bounds, final List<AbstractObservation> observations) {
         if ("2.0.0".equals(version)) {
             final List<org.geotoolkit.observation.xml.v200.OMObservationType> obs200 = new ArrayList<>();
             if (observations != null) {
                 for (Observation obs : observations) {
-                    if (obs instanceof org.geotoolkit.observation.xml.v200.OMObservationType) {
-                        obs200.add((org.geotoolkit.observation.xml.v200.OMObservationType) obs);
+                    if (obs instanceof org.geotoolkit.observation.xml.v200.OMObservationType o) {
+                        obs200.add(o);
                     } else {
                         throw new IllegalArgumentException("unexpected object version for observation element");
                     }
@@ -273,8 +276,8 @@ public class SOSXmlFactory {
             final List<org.geotoolkit.observation.xml.v100.ObservationType> obs100 = new ArrayList<>();
             if (observations != null) {
                 for (Observation obs : observations) {
-                    if (obs instanceof org.geotoolkit.observation.xml.v100.ObservationType) {
-                        obs100.add((org.geotoolkit.observation.xml.v100.ObservationType) obs);
+                    if (obs instanceof org.geotoolkit.observation.xml.v100.ObservationType o) {
+                        obs100.add(o);
                     } else {
                         throw new IllegalArgumentException("unexpected object version for observation element");
                     }
@@ -291,13 +294,13 @@ public class SOSXmlFactory {
         }
     }
 
-    public static ObservationCollection buildGetObservationByIdResponse(final String version, final String id, final Envelope bounds, final List<Observation> observations) {
+    public static ObservationCollection buildGetObservationByIdResponse(final String version, final String id, final Envelope bounds, final List<AbstractObservation> observations) {
         if ("2.0.0".equals(version)) {
             final List<org.geotoolkit.observation.xml.v200.OMObservationType> obs200 = new ArrayList<>();
             if (observations != null) {
                 for (Observation obs : observations) {
-                    if (obs instanceof org.geotoolkit.observation.xml.v200.OMObservationType) {
-                        obs200.add((org.geotoolkit.observation.xml.v200.OMObservationType) obs);
+                    if (obs instanceof org.geotoolkit.observation.xml.v200.OMObservationType o) {
+                        obs200.add(o);
                     } else if (obs != null){
                         throw new IllegalArgumentException("unexpected object version for observation element");
                     }
@@ -308,8 +311,8 @@ public class SOSXmlFactory {
             final List<org.geotoolkit.observation.xml.v100.ObservationType> obs100 = new ArrayList<>();
             if (observations != null) {
                 for (Observation obs : observations) {
-                    if (obs instanceof org.geotoolkit.observation.xml.v100.ObservationType) {
-                        obs100.add((org.geotoolkit.observation.xml.v100.ObservationType) obs);
+                    if (obs instanceof org.geotoolkit.observation.xml.v100.ObservationType o) {
+                        obs100.add(o);
                     } else if (obs != null){
                         throw new IllegalArgumentException("unexpected object version for observation element");
                     }
@@ -324,6 +327,23 @@ public class SOSXmlFactory {
         } else {
             throw new IllegalArgumentException("unexpected version number:" + version);
         }
+    }
+
+    public static AbstractObservation buildObservation(final String version, final String obsid, final org.geotoolkit.sampling.xml.SamplingFeature sf,
+            final org.opengis.observation.Phenomenon phenomenon, final Process procedure, final int count , final AbstractDataRecord datarecord, final MeasureStringBuilder sb, final TemporalGeometricPrimitive time) {
+
+        final DataArrayProperty result = SOSXmlFactory.buildDataArrayProperty(version, "array-1", count, "SimpleDataArray", datarecord, DEFAULT_ENCODING, sb.getString(), null);
+        final FeatureProperty foi = SOSXmlFactory.buildFeatureProperty(version, sf);
+        return OMXmlFactory.buildObservation(version,       // version
+                                             obsid,         // id
+                                             obsid,         // name
+                                             null,          // description
+                                             foi,           // foi
+                                             phenomenon,    // phenomenon
+                                             procedure,     // procedure
+                                             result,        // result
+                                             time,
+                                             null);
     }
 
     public static ObservationCollection buildObservationCollection(final String version, final String nillValue) {
@@ -336,7 +356,7 @@ public class SOSXmlFactory {
         }
     }
 
-    public static Observation cloneObservation(final String version, final Observation observation) {
+    public static AbstractObservation cloneObservation(final String version, final Observation observation) {
         if ("2.0.0".equals(version)) {
             if (!(observation instanceof org.geotoolkit.observation.xml.v200.OMObservationType)) {
                 throw new IllegalArgumentException("unexpected object version for observation");
@@ -395,9 +415,9 @@ public class SOSXmlFactory {
             final ResponseModeType responseMode, final String srsName) {
         if ("2.0.0".equals(version)) {
             final List<org.geotoolkit.ogc.xml.v200.TemporalOpsType> times = new ArrayList<>();
-            for (Filter tf : temporalFilter) {
-                if (tf instanceof org.geotoolkit.ogc.xml.v200.TemporalOpsType) {
-                    times.add((org.geotoolkit.ogc.xml.v200.TemporalOpsType)tf);
+            for (Filter f : temporalFilter) {
+                if (f instanceof org.geotoolkit.ogc.xml.v200.TemporalOpsType tf) {
+                    times.add(tf);
                 } else {
                     throw new IllegalArgumentException("unexpected object version for time filter");
                 }
@@ -426,8 +446,8 @@ public class SOSXmlFactory {
             }
             org.geotoolkit.sos.xml.v100.GetObservation.FeatureOfInterest foiFilter = null;
             if (spatialFilter != null) {
-                if (spatialFilter instanceof org.geotoolkit.ogc.xml.v110.BBOXType) {
-                    foiFilter = new org.geotoolkit.sos.xml.v100.GetObservation.FeatureOfInterest((org.geotoolkit.ogc.xml.v110.BBOXType) spatialFilter);
+                if (spatialFilter instanceof org.geotoolkit.ogc.xml.v110.BBOXType bbox) {
+                    foiFilter = new org.geotoolkit.sos.xml.v100.GetObservation.FeatureOfInterest(bbox);
                 } else  {
                      throw new IllegalArgumentException("unexpected object version for spatial filter element");
                 }
@@ -437,8 +457,8 @@ public class SOSXmlFactory {
 
             org.geotoolkit.sos.xml.v100.GetObservation.Result result = null;
             if (resultFilter != null) {
-                if (resultFilter instanceof org.geotoolkit.ogc.xml.v110.ComparisonOpsType) {
-                    result = new org.geotoolkit.sos.xml.v100.GetObservation.Result((org.geotoolkit.ogc.xml.v110.ComparisonOpsType)resultFilter);
+                if (resultFilter instanceof org.geotoolkit.ogc.xml.v110.ComparisonOpsType comp) {
+                    result = new org.geotoolkit.sos.xml.v100.GetObservation.Result(comp);
                 } else {
                     throw new IllegalArgumentException("unexpected object version for result filter element");
                 }
@@ -581,6 +601,25 @@ public class SOSXmlFactory {
         }
     }
 
+    public static TemporalGeometricPrimitive buildTimeObject(final String version, final String id, final TemporalGeometricPrimitive temp) {
+        String gmlVersion;
+        if ("2.0.0".equals(version)) {
+            gmlVersion = "3.2.1";
+        } else if ("1.0.0".equals(version)) {
+            gmlVersion = "3.1.1";
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + version);
+        }
+        if (temp instanceof Period p) {
+            return GMLXmlFactory.createTimePeriod(gmlVersion, id, p);
+        } else if (temp instanceof Instant i) {
+            return GMLXmlFactory.createTimeInstant(gmlVersion, id, i.getDate());
+        } else if (temp != null) {
+            throw new IllegalArgumentException("unexpected temporal type:" + temp.getClass().getName());
+        }
+        return null;
+    }
+
     public static Period buildTimePeriod(final String version, final Date dateBegin, final Date dateEnd) {
         return buildTimePeriod(version, null, dateBegin, dateEnd);
     }
@@ -681,16 +720,12 @@ public class SOSXmlFactory {
     }
 
     public static ObservationOffering buildOffering(final String version, final String id, final String name, final String description, final List<String> srsName,
-            final TemporalGeometricPrimitive time,  final List<String> procedure, final List<PhenomenonProperty> observedProperties, final List<String> observedPropertiesv200,
+            final TemporalGeometricPrimitive time,  final String procedure, final List<PhenomenonProperty> observedProperties, final List<String> observedPropertiesv200,
             final List<String> featureOfInterest, final List<String> responseFormat, final List<QName> resultModel, final List<String> resultModelV200, final List<ResponseModeType> responseMode,
             final List<String> procedureDescriptionFormat) {
         if ("2.0.0".equals(version)) {
             if (time != null && !(time instanceof org.geotoolkit.gml.xml.v321.TimePeriodType)) {
                 throw new IllegalArgumentException("unexpected object version for time element");
-            }
-            String singleProcedure = null;
-            if (!procedure.isEmpty()) {
-                singleProcedure = procedure.get(0);
             }
             return new org.geotoolkit.sos.xml.v200.ObservationOfferingType(
                                             id,
@@ -699,7 +734,7 @@ public class SOSXmlFactory {
                                             description,
                                             null,
                                             (org.geotoolkit.gml.xml.v321.TimePeriodType)time,
-                                            singleProcedure,
+                                            procedure,
                                             observedPropertiesv200,
                                             featureOfInterest,
                                             responseFormat,
@@ -724,7 +759,7 @@ public class SOSXmlFactory {
                                             description,
                                             srsName,
                                             (org.geotoolkit.gml.xml.v311.AbstractTimeGeometricPrimitiveType)time,
-                                            procedure,
+                                            Arrays.asList(procedure),
                                             phenProp,
                                             featureOfInterest,
                                             responseFormat,
@@ -748,14 +783,14 @@ public class SOSXmlFactory {
     /**
      * Build the correct featurePropertyType from a sampling feature id
      *
-     * @param feature
+     * @param featureId Feature identifier.
      * @return
      */
-    public static FeatureProperty buildFeatureProperty(final String version, final String featureid) {
+    public static FeatureProperty buildFeatureProperty(final String version, final String featureId) {
         if ("2.0.0".equals(version)) {
-            return new org.geotoolkit.gml.xml.v321.FeaturePropertyType(featureid);
+            return new org.geotoolkit.gml.xml.v321.FeaturePropertyType(featureId);
         } else if ("1.0.0".equals(version)) {
-            return new org.geotoolkit.gml.xml.v311.FeaturePropertyType(featureid);
+            return new org.geotoolkit.gml.xml.v311.FeaturePropertyType(featureId);
         } else {
             throw new IllegalArgumentException("unexpected sos version number:" + version);
         }
@@ -775,17 +810,30 @@ public class SOSXmlFactory {
         }
     }
 
-    public static Object buildMeasure(final String version, final String name, final String uom, final Double value) {
+    public static Measure buildMeasure(final String version, final String uom, Number value) {
+        // XML does not support null value
         if ("2.0.0".equals(version)) {
-            return new org.geotoolkit.gml.xml.v321.MeasureType(uom, value);
+            double dValue;
+            if (value == null) {
+                dValue = 0.0d;
+            } else {
+                dValue = value.doubleValue();
+            }
+            return new org.geotoolkit.gml.xml.v321.MeasureType(uom, dValue);
         } else if ("1.0.0".equals(version)) {
-            return new org.geotoolkit.observation.xml.v100.MeasureType(uom, value.floatValue());
+            float fValue;
+            if (value == null) {
+                fValue = 0.0f;
+            } else {
+                fValue = value.floatValue();
+            }
+            return new org.geotoolkit.observation.xml.v100.MeasureType(uom, fValue);
         } else {
             throw new IllegalArgumentException("unexpected sos version number:" + version);
         }
     }
 
-    public static Phenomenon buildPhenomenon(final String version, final String id, final String name, final String definition, final String description) {
+    public static org.geotoolkit.swe.xml.Phenomenon buildPhenomenon(final String version, final String id, final String name, final String definition, final String description) {
         if ("2.0.0".equals(version)) {
             return new org.geotoolkit.observation.xml.v200.OMObservationType.InternalPhenomenon(id, name, definition, description);
         } else if ("1.0.0".equals(version)) {
@@ -795,7 +843,7 @@ public class SOSXmlFactory {
         }
     }
 
-    public static CompositePhenomenon buildCompositePhenomenon(final String version, final String id, final String name, final String definition, final String description, final List<org.opengis.observation.Phenomenon> phenomenons) {
+    public static org.geotoolkit.swe.xml.CompositePhenomenon buildCompositePhenomenon(final String version, final String id, final String name, final String definition, final String description, final List<Phenomenon> phenomenons) {
         if ("2.0.0".equals(version)) {
             final List<org.geotoolkit.observation.xml.v200.OMObservationType.InternalPhenomenon> phens = new ArrayList<>();
             for (org.opengis.observation.Phenomenon phen : phenomenons) {
@@ -838,6 +886,14 @@ public class SOSXmlFactory {
         }
     }
 
+    public static org.geotoolkit.sampling.xml.SamplingFeature buildSamplingPoint(final String version, final String srsName, final String identifier, final double latitude, final double longitude) {
+        final DirectPosition position = SOSXmlFactory.buildDirectPosition(version, srsName, 2, Arrays.asList(latitude, longitude));
+        final Point geom              = SOSXmlFactory.buildPoint(version, "SamplingPoint", position);
+        geom.setSrsName(srsName);
+        final org.geotoolkit.sampling.xml.SamplingFeature sp = SOSXmlFactory.buildSamplingPoint(version, identifier, null, null, null, geom);
+        return sp;
+    }
+
     /**
      * Build the correct featurePropertyType from a sampling feature id
      *
@@ -870,6 +926,12 @@ public class SOSXmlFactory {
         } else {
             throw new IllegalArgumentException("unexpected sos version number:" + version);
         }
+    }
+
+    public static org.geotoolkit.sampling.xml.SamplingFeature buildSamplingCurve(final String version, final String identifier, final String srsName, final List<DirectPosition> positions) {
+        final LineString geom = SOSXmlFactory.buildLineString(version, null, srsName, positions);
+        final org.geotoolkit.sampling.xml.SamplingFeature sp = SOSXmlFactory.buildSamplingCurve(version, identifier, null, null, null, geom, null, null, null);
+        return sp;
     }
 
     public static  org.geotoolkit.sampling.xml.SamplingFeature buildSamplingCurve(final String version, final String id, final String name, final String description, final FeatureProperty sampledFeature,
@@ -1180,7 +1242,7 @@ public class SOSXmlFactory {
         }
     }
 
-    public static DataArrayProperty buildDataArrayProperty(final String version, final String id, final int count, final String elementName,
+    public static DataArrayProperty buildDataArrayProperty(final String version, final String id, final Integer count, final String elementName,
             final AbstractDataRecord elementType, final AbstractEncoding encoding, final String values, final List<Object> dataValues) {
         if ("2.0.0".equals(version)) {
             return new org.geotoolkit.swe.xml.v200.DataArrayPropertyType((org.geotoolkit.swe.xml.v200.DataArrayType)SweXmlFactory.buildDataArray("2.0.0",  id, count, elementName, elementType, encoding, values, dataValues));

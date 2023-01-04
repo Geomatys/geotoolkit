@@ -74,11 +74,12 @@ public class AbstractDataComponentType extends AbstractGMLType implements Abstra
         }
     }
 
-    /**
-     * a simple constructor used by the sub classes to initialize l'Type.
-     */
     public AbstractDataComponentType(final String id, final String definition, final Boolean fixed) {
-        super(id);
+        this(id, null, null, definition, fixed);
+    }
+
+    public AbstractDataComponentType(final String id, final String name, final String description, final String definition, final Boolean fixed) {
+        super(id, name, description, null);
         if (definition != null) {
             this.definition = definition;
         }
@@ -90,16 +91,10 @@ public class AbstractDataComponentType extends AbstractGMLType implements Abstra
         return STANDARD;
     }
 
-//    /**
-//     * Return the identifier of this data record.
-//     */
-//    @Override
-//    public String getName() {
-//        if (super.getName() != null) {
-//            return super.getName();
-//        }
-//        return super.getId();
-//    }
+    @Override
+    public String getLabel() {
+        return null;
+    }
 
     /**
      * {@inheritDoc}
@@ -160,5 +155,4 @@ public class AbstractDataComponentType extends AbstractGMLType implements Abstra
         s.append(" fixed = ").append(fixed).append('\n');
         return s.toString();
     }
-
 }

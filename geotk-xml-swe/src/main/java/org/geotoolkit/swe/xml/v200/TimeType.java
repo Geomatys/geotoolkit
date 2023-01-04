@@ -20,8 +20,6 @@ package org.geotoolkit.swe.xml.v200;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -112,8 +110,6 @@ public class TimeType extends AbstractSimpleComponentType implements AbstractTim
         super(id, definition, null, quality);
         if (uom != null) {
             this.uom = uom;
-        } else {
-            this.uom = new UnitReference();
         }
     }
 

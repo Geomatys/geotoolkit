@@ -26,6 +26,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.FeatureProperty;
+import org.geotoolkit.gml.xml.v321.FeaturePropertyType;
 import org.geotoolkit.swe.xml.Phenomenon;
 import org.geotoolkit.swe.xml.PhenomenonProperty;
 import org.geotoolkit.swes.xml.InsertSensor;
@@ -190,6 +192,10 @@ public class InsertSensorType extends ExtensibleRequestType implements InsertSen
         return this.observableProperty;
     }
 
+    public void setObservableProperty(List<String> observableProperty) {
+        this.observableProperty = observableProperty;
+    }
+
     /**
      * Gets the value of the relatedFeature property.
      *
@@ -202,6 +208,10 @@ public class InsertSensorType extends ExtensibleRequestType implements InsertSen
             relatedFeature = new ArrayList<>();
         }
         return this.relatedFeature;
+    }
+
+    public void setRelatedFeature(List<InsertSensorType.RelatedFeature> relatedFeature) {
+        this.relatedFeature = relatedFeature;
     }
 
     /**
@@ -225,7 +235,20 @@ public class InsertSensorType extends ExtensibleRequestType implements InsertSen
 
     @Override
     public ObservationTemplate getObservationTemplate() {
-        return new ObservationTemplateType(observableProperty);
+        String featureOfInterest = null;
+        if (relatedFeature != null) {
+            for (RelatedFeature rf : relatedFeature) {
+                if (rf.featureRelationship != null && rf.featureRelationship.getTarget() != null) {
+                    FeaturePropertyType featProp = rf.featureRelationship.getTarget();
+                    if (featProp.getAbstractFeature() != null) {
+                        featureOfInterest = featProp.getAbstractFeature().getId();
+                    } else if (featProp.getHref() != null) {
+                        featureOfInterest = featProp.getHref();
+                    }
+                }
+            }
+        }
+        return new ObservationTemplateType(observableProperty, featureOfInterest);
     }
 
     /**
@@ -239,8 +262,15 @@ public class InsertSensorType extends ExtensibleRequestType implements InsertSen
 
         private final List<String> observableProperty;
 
-        public ObservationTemplateType(final List<String> properties) {
-            this.observableProperty = properties;
+        private final String featureOfInterest;
+
+        public ObservationTemplateType(final List<String> properties, String featureOfInterest) {
+            if (properties == null) {
+                this.observableProperty = new ArrayList<>();
+            } else {
+                this.observableProperty = properties;
+            }
+            this.featureOfInterest = featureOfInterest;
         }
 
         @Override
@@ -273,9 +303,10 @@ public class InsertSensorType extends ExtensibleRequestType implements InsertSen
             return observableProperty;
         }
 
+
         @Override
         public String getFeatureOfInterest() {
-            return null;
+            return featureOfInterest;
         }
 
         @Override
@@ -399,6 +430,20 @@ public class InsertSensorType extends ExtensibleRequestType implements InsertSen
 
         @XmlElement(name = "FeatureRelationship", required = true)
         private FeatureRelationshipType featureRelationship;
+
+        public RelatedFeature() {
+
+        }
+
+        public RelatedFeature(FeatureRelationshipType featureRelationship) {
+            this.featureRelationship = featureRelationship;
+        }
+
+        public RelatedFeature(String relatedFeatureId) {
+            if (relatedFeatureId != null) {
+                this.featureRelationship = new FeatureRelationshipType(relatedFeatureId);
+            }
+        }
 
         /**
          * Gets the value of the featureRelationship property.

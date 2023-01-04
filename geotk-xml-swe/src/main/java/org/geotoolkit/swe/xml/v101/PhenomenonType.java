@@ -118,6 +118,11 @@ public class PhenomenonType extends DefinitionType implements Phenomenon {
         }
     }
 
+    @Override
+    public String getDefinition() {
+        return definition;
+    }
+
     /**
      * Retourne un code représentant ce phenomene.
      */

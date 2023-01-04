@@ -22,6 +22,7 @@ import java.util.List;
 import javax.xml.namespace.QName;
 import org.geotoolkit.gml.xml.Envelope;
 import org.opengis.metadata.Identifier;
+import org.opengis.observation.Phenomenon;
 import org.opengis.temporal.TemporalGeometricPrimitive;
 
 /**
@@ -54,9 +55,13 @@ public interface ObservationOffering {
 
     List<String> getObservedProperties();
 
+    List<Phenomenon> getFullObservedProperties();
+
     List<String> getResponseFormat();
 
     List<ResponseModeType> getResponseMode();
+
+    List<String> getProcedureDescriptionFormat();
 
     void addFeatureOfInterest(String foi);
 

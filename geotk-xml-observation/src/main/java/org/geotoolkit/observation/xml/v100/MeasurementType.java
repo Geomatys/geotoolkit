@@ -60,12 +60,11 @@ public class MeasurementType extends ObservationType implements Measurement {
      *
      * @param station           La station d'observation (par exemple une position de pêche).
      * @param observedProperty  Ce que l'on observe (température, quantité pêchée, <cite>etc.</cite>).
-     * @param process           La procedure effectuée sur cette operation.
+     * @param procedure         La procedure effectuée sur cette operation.
      * @param quality
      * @param result            Le resultat de l'observation, ici une measure.
      * @param samplingTime
      * @param observationMetadata
-     * @param resultDefinition
      * @param procedureTime
      * @param procedureParameter
      */
@@ -88,10 +87,8 @@ public class MeasurementType extends ObservationType implements Measurement {
      * Crée une nouvelle mesure  reduite adapté a BRGM.
      *
      * @param station     La station d'observation (par exemple une position de pêche).
-     * @param observable  Ce que l'on observe (température, quantité pêchée, <cite>etc.</cite>).
-     * @param value       La valeur mesurée.
-     * @param error       Estimation de l'erreur sur la valeur mesurée, ou {@link Float#NaN NaN}
-     *                    si l'erreur est inconnue ou ne s'applique pas.
+     * @param observedProperty  Ce que l'on observe (température, quantité pêchée, <cite>etc.</cite>).
+     * @param result       La valeur mesurée.
      */
     public MeasurementType(final String              name,
                            final String              definition,
@@ -120,6 +117,11 @@ public class MeasurementType extends ObservationType implements Measurement {
     public MeasurementType(final MeasurementType meas) {
         super(meas);
 
+    }
+
+    @Override
+    public String getObservationType() {
+        return "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement";
     }
 
     @Override

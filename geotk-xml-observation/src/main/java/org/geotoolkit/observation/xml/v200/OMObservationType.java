@@ -44,10 +44,12 @@ import org.geotoolkit.sampling.xml.v200.SFSamplingFeatureType;
 import org.geotoolkit.swe.xml.v200.DataArrayPropertyType;
 import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.util.SimpleInternationalString;
-import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.gml.xml.v321.BoundingShapeType;
 import org.geotoolkit.gml.xml.v321.TimeInstantType;
 import org.geotoolkit.gml.xml.v321.TimePositionType;
+import org.geotoolkit.samplingspatial.xml.v200.SFSpatialSamplingFeatureType;
+import org.geotoolkit.swe.xml.AbstractDataComponent;
+import org.geotoolkit.swe.xml.AbstractTime;
 import org.geotoolkit.swe.xml.AnyScalar;
 import org.geotoolkit.swe.xml.DataArray;
 import org.geotoolkit.swe.xml.DataArrayProperty;
@@ -127,7 +129,7 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
     @XmlElement(required = true, nillable = true)
     private FeaturePropertyType featureOfInterest;
     @XmlJavaTypeAdapter(DQ_Element.class)
-    private List<Element> resultQuality;
+    private List<Element> resultQuality = new ArrayList<>();
     @XmlElement(required = true)
     private Object result;
 
@@ -225,6 +227,14 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
      */
     public void setType(ReferenceType value) {
         this.type = value;
+    }
+
+    @Override
+    public String getObservationType() {
+        if (type != null) {
+            return type.getHref();
+        }
+        return "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Observation";
     }
 
     /**
@@ -462,12 +472,24 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
             return hiddenObservedProperty;
         } else if (observedProperty != null) {
             if (result instanceof DataArrayProperty) {
-                final List<String> fields = getFieldsFromResult((DataArrayProperty) result);
+                final List<Field> fields = getFieldsFromResult((DataArrayProperty) result);
                 final List<InternalPhenomenon> phenomenons = new ArrayList<>();
-                for (String field : fields) {
-                    phenomenons.add(new InternalPhenomenon(field, field, field, null));
+                // remove main time field
+                if (!fields.isEmpty() && fields.get(0).time) {
+                    fields.remove(0);
                 }
-                return new InternalCompositePhenomenon(observedProperty.getHref(), observedProperty.getHref(), observedProperty.getHref(), null, phenomenons);
+                if (fields.size() == 1) {
+                    String id = fields.get(0).id;
+                    String name = fields.get(0).name;
+                    String definition = fields.get(0).definition;
+                    String description = fields.get(0).description;
+                    return new InternalPhenomenon(id, name, definition, description);
+                } else {
+                    for (Field field : fields) {
+                        phenomenons.add(new InternalPhenomenon(field.id, field.name, field.definition, field.description));
+                    }
+                    return new InternalCompositePhenomenon(observedProperty.getHref(), observedProperty.getHref(), observedProperty.getHref(), null, phenomenons);
+                }
             }
             return new InternalPhenomenon(observedProperty.getHref(), observedProperty.getHref(), null, null);
         }
@@ -495,6 +517,16 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setFullObservedProperty(final Phenomenon observedProperty) {
+        this.hiddenObservedProperty = observedProperty;
+        if (observedProperty instanceof org.geotoolkit.swe.xml.Phenomenon op) {
+            this.observedProperty = new ReferenceType(op.getId());
+        }
+    }
 
     /**
      * Gets the value of the featureOfInterest property.
@@ -520,6 +552,20 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
         }
         return null;
     }
+
+    @Override
+    public void setFullFeatureOfInterest(SamplingFeature foi) {
+        final org.geotoolkit.sampling.xml.v200.ObjectFactory samplingFactory = new org.geotoolkit.sampling.xml.v200.ObjectFactory();
+        final org.geotoolkit.samplingspatial.xml.v200.ObjectFactory spatialFactory = new org.geotoolkit.samplingspatial.xml.v200.ObjectFactory();
+        if (foi instanceof SFSpatialSamplingFeatureType) {
+           this.featureOfInterest = new FeaturePropertyType(spatialFactory.createSFSpatialSamplingFeature((SFSpatialSamplingFeatureType)foi));
+        } else if (foi instanceof SFSamplingFeatureType) {
+            this.featureOfInterest = new FeaturePropertyType(samplingFactory.createSFSamplingFeature((SFSamplingFeatureType)foi));
+        } else if (foi != null) {
+           throw new IllegalArgumentException("unexpected object version");
+        }
+    }
+
 
     /**
      * Sets the value of the featureOfInterest property.
@@ -596,20 +642,39 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    private List<String> getFieldsFromResult(final DataArrayProperty arrayProp) {
-        final List<String> fields = new ArrayList<>();
+    private static class Field {
+        public final String id;
+        public final String name;
+        public final String description;
+        public final String definition;
+        public final boolean time;
+        public Field(String id, String name, String description, String definition, boolean time) {
+            this.id = id;
+            this.name = name;
+            this.description = description;
+            this.definition = definition;
+            this.time = time;
+        }
+    }
+
+    private List<Field> getFieldsFromResult(final DataArrayProperty arrayProp) {
+        final List<Field> fields = new ArrayList<>();
         if (arrayProp.getDataArray() != null) {
             final DataArray array = arrayProp.getDataArray();
             if (array.getPropertyElementType().getAbstractRecord() instanceof DataRecord) {
                 final DataRecord record = (DataRecord)array.getPropertyElementType().getAbstractRecord();
                 for (DataComponentProperty field : record.getField()) {
-                    fields.add(field.getName());
+                    AbstractDataComponent component = field.getValue();
+                    String name = component.getName() != null ? component.getName().getCode() : field.getName();
+                    fields.add(new Field(field.getName(), name, component.getDescription(), component.getDefinition(), component instanceof AbstractTime));
                 }
 
             } else if (array.getPropertyElementType().getAbstractRecord() instanceof SimpleDataRecord) {
                 final SimpleDataRecord record = (SimpleDataRecord)array.getPropertyElementType().getAbstractRecord();
                 for (AnyScalar field : record.getField()) {
-                    fields.add(field.getName());
+                    AbstractDataComponent component = field.getValue();
+                    String name = component.getName() != null ? component.getName().getCode() : null;
+                    fields.add(new Field(field.getName(), name, component.getDescription(), component.getDefinition(), component instanceof AbstractTime));
                 }
             }
         }
@@ -759,13 +824,18 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
         }
 
         @Override
+        public String getDefinition() {
+            return definition;
+        }
+
+        @Override
         public String getDescription() {
             return description;
         }
 
         @Override
         public boolean equals(final Object obj) {
-            if (obj instanceof Phenomenon) {
+            if (obj instanceof org.geotoolkit.swe.xml.Phenomenon) {
                 final org.geotoolkit.swe.xml.Phenomenon that = (org.geotoolkit.swe.xml.Phenomenon) obj;
                 return Objects.equals(this.getName(), that.getName());
             }
@@ -850,6 +920,11 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
         }
 
         @Override
+        public String getDefinition() {
+            return definition;
+        }
+
+        @Override
         public List<? extends PhenomenonProperty> getRealComponent() {
             final List<InternalPhenomenonProperty> phenProps = new ArrayList<>();
             for (InternalPhenomenon phen : phenomenons) {
@@ -875,8 +950,7 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
 
         @Override
         public boolean equals(final Object obj) {
-            if (obj instanceof Phenomenon) {
-                final org.geotoolkit.swe.xml.Phenomenon that = (org.geotoolkit.swe.xml.Phenomenon) obj;
+            if (obj instanceof org.geotoolkit.swe.xml.CompositePhenomenon that) {
                 return Objects.equals(this.getName(), that.getName());
             }
             return false;

@@ -29,6 +29,9 @@ import org.apache.sis.test.xml.DocumentComparator;
 import org.geotoolkit.sos.xml.SOSMarshallerPool;
 
 import org.apache.sis.xml.MarshallerPool;
+import org.geotoolkit.gml.xml.v321.DirectPositionType;
+import org.geotoolkit.gml.xml.v321.EnvelopeType;
+import org.geotoolkit.gml.xml.v321.TimePeriodType;
 
 //Junit dependencies
 import org.junit.*;
@@ -88,28 +91,98 @@ public class SosXMLBindingTest extends org.geotoolkit.test.TestBase {
         //we remove the first line
         result = result.substring(result.indexOf("?>") + 2).trim();
 
-        String expResult = "<sos:InsertObservationResponse xmlns:sos=\"http://www.opengis.net/sos/2.0\">\n" +
-                           "  <sos:observation>new-id</sos:observation>\n" +
-                           "</sos:InsertObservationResponse>\n" ;
-        final ExtendedDOMComparator comparator = new ExtendedDOMComparator(expResult, result);
+        String expResult = """
+                           <sos:InsertObservationResponse xmlns:sos="http://www.opengis.net/sos/2.0">
+                             <sos:observation>new-id</sos:observation>
+                           </sos:InsertObservationResponse>
+                           """ ;
+        ExtendedDOMComparator comparator = new ExtendedDOMComparator(expResult, result);
         comparator.compare();
 
         final GetObservationType go = new GetObservationType();
         go.getExtension().add("responseMode: out-of-band");
 
+        sw = new StringWriter();
         marshaller.marshal(go, sw);
 
-        System.out.println(sw.toString());
+        result = sw.toString();
+        //we remove the first line
+        result = result.substring(result.indexOf("?>") + 2).trim();
 
+        expResult = """
+                    <sos:GetObservation xmlns:sos="http://www.opengis.net/sos/2.0" xmlns:swes="http://www.opengis.net/swes/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+                      <swes:extension xsi:type="xs:string">responseMode: out-of-band</swes:extension>
+                    </sos:GetObservation>
+                    """;
+        comparator = new ExtendedDOMComparator(expResult, result);
+        comparator.compare();
+
+        ObservationOfferingType offeringType = new ObservationOfferingType("off-1",
+                                                                           "off-1",
+                                                                           "offering:1",
+                                                                           "some description",
+                                                                            new EnvelopeType(new DirectPositionType(1.0, 2.0), new DirectPositionType(1.0, 2.0), "EPSG:4326"),
+                                                                            new TimePeriodType("t-id", "2000-01-01T00:00:00",  "2001-01-01T00:00:00"),
+                                                                            "proc_001",
+                                                                            Arrays.asList("obsProp1", "obsProp2"),
+                                                                            Arrays.asList("feat1", "feat2"),
+                                                                            Arrays.asList("http://www.opengis.net/om/2.0"),
+                                                                            Arrays.asList("http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Observation",
+                                                                                          "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement"),
+                                                                            Arrays.asList("http://www.opengis.net/sensorML/1.0.0",
+                                                                                          "http://www.opengis.net/sensorML/1.0.1"));
+        sw = new StringWriter();
+        marshaller.marshal(offeringType, sw);
+
+        result = sw.toString();
+        //we remove the first line
+        result = result.substring(result.indexOf("?>") + 2).trim();
+
+        expResult = """
+                    <sos:ObservationOffering swes:id="off-1" xmlns:sos="http://www.opengis.net/sos/2.0" xmlns:swes="http://www.opengis.net/swes/2.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:gml="http://www.opengis.net/gml/3.2">
+                        <swes:description>some description</swes:description>
+                        <swes:identifier>off-1</swes:identifier>
+                        <swes:name>offering:1</swes:name>
+                        <swes:procedure>proc_001</swes:procedure>
+                        <swes:procedureDescriptionFormat>http://www.opengis.net/sensorML/1.0.0</swes:procedureDescriptionFormat>
+                        <swes:procedureDescriptionFormat>http://www.opengis.net/sensorML/1.0.1</swes:procedureDescriptionFormat>
+                        <swes:observableProperty>obsProp1</swes:observableProperty>
+                        <swes:observableProperty>obsProp2</swes:observableProperty>
+                        <swes:relatedFeature>
+                            <swes:FeatureRelationship>
+                                <swes:target xlink:href="feat1"/>
+                            </swes:FeatureRelationship>
+                        </swes:relatedFeature>
+                        <swes:relatedFeature>
+                            <swes:FeatureRelationship>
+                                <swes:target xlink:href="feat2"/>
+                            </swes:FeatureRelationship>
+                        </swes:relatedFeature>
+                        <sos:phenomenonTime>
+                            <gml:TimePeriod gml:id="time-off-1">
+                                <gml:beginPosition>2000-01-01T00:00:00</gml:beginPosition>
+                                <gml:endPosition>2001-01-01T00:00:00</gml:endPosition>
+                            </gml:TimePeriod>
+                        </sos:phenomenonTime>
+                        <sos:responseFormat>http://www.opengis.net/om/2.0</sos:responseFormat>
+                        <sos:observationType>http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Observation</sos:observationType>
+                        <sos:observationType>http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement</sos:observationType>
+                    </sos:ObservationOffering>
+                    """;
+
+        comparator = new ExtendedDOMComparator(expResult, result);
+        comparator.compare();
     }
 
     @Test
     public void umarshallingTest() throws Exception {
        final InsertObservationResponseType expResult = new InsertObservationResponseType(Arrays.asList("new-id"));
 
-        String xml = "<sos:InsertObservationResponse xmlns:sos=\"http://www.opengis.net/sos/2.0\">\n" +
-                     "  <sos:observation>new-id</sos:observation>\n" +
-                     "</sos:InsertObservationResponse>\n" ;
+        String xml = """
+                     <sos:InsertObservationResponse xmlns:sos="http://www.opengis.net/sos/2.0">
+                       <sos:observation>new-id</sos:observation>
+                     </sos:InsertObservationResponse>
+                     """ ;
 
         Object result = unmarshaller.unmarshal(new StringReader(xml));
 

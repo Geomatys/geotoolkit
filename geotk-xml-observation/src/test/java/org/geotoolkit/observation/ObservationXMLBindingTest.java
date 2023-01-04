@@ -62,6 +62,8 @@ import org.apache.sis.util.iso.DefaultRecordSchema;
 import org.apache.sis.util.iso.Names;
 import org.apache.sis.xml.IdentifierSpace;
 import org.apache.sis.xml.XML;
+import org.geotoolkit.gml.xml.v311.AbstractTimeGeometricPrimitiveType;
+import org.geotoolkit.gml.xml.v311.TimeInstantType;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.observation.xml.v200.OMObservationType;
 import org.geotoolkit.swe.xml.v101.QualityPropertyType;
@@ -221,10 +223,10 @@ public class ObservationXMLBindingTest extends org.geotoolkit.test.TestBase {
         UnitOfMeasureEntry uom  = new UnitOfMeasureEntry("m", "meters", "distance", "meters");
         MeasureType meas       = new MeasureType(uom, 7);
         MeasurementType measmt = new MeasurementType("urn:Observation-007", "observation definition", sp, observedProperty, "urn:sensor:007", meas, samplingTime);
-        
+
         Element quality    = createQualityElement();
         measmt.setQuality(quality);
-        
+
         sw = new StringWriter();
         marshaller.marshal(measmt, sw);
 
@@ -508,10 +510,9 @@ public class ObservationXMLBindingTest extends org.geotoolkit.test.TestBase {
                "        <om:Measurement>" + '\n' +
                "            <gml:name>urn:ogc:object:observationTemplate:SunSpot:0014.4F01.0000.2626-12</gml:name>" + '\n' +
                "            <om:samplingTime>" + '\n' +
-               "                <gml:TimePeriod>" + '\n' +
-               "                    <gml:beginPosition>2009-08-03 11:18:06</gml:beginPosition>" + '\n' +
-               "                    <gml:endPosition indeterminatePosition=\"now\"></gml:endPosition>" + '\n' +
-               "                </gml:TimePeriod>" + '\n' +
+               "                <gml:TimeInstant>" + '\n' +
+               "                    <gml:timePosition>2009-08-03T11:18:06.0</gml:timePosition>" + '\n' +
+               "                </gml:TimeInstant>" + '\n' +
                "            </om:samplingTime>" + '\n' +
                "            <om:procedure xlink:href=\"urn:ogc:object:sensor:SunSpot:0014.4F01.0000.2626\"/>" + '\n' +
                "            <om:observedProperty>" + '\n' +
@@ -544,6 +545,15 @@ public class ObservationXMLBindingTest extends org.geotoolkit.test.TestBase {
         sr = new StringReader(xml);
 
         ObservationCollectionType result3 =  (ObservationCollectionType) unmarshaller.unmarshal(sr);
+        assertEquals(1, result3.getMember().size());
+
+        assertTrue(result3.getMember().get(0) instanceof  MeasurementType);
+        MeasurementType measResult3 = (MeasurementType) result3.getMember().get(0);
+
+        assertNotNull(measResult3.getSamplingTime());
+        AbstractTimeGeometricPrimitiveType samplingTime1 = measResult3.getSamplingTime();
+        assertTrue(samplingTime1 instanceof TimeInstantType);
+
 
     }
 }
