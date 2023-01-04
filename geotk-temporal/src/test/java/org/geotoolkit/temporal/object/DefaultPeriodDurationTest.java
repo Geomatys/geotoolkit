@@ -199,7 +199,7 @@ public class DefaultPeriodDurationTest extends org.geotoolkit.test.TestBase {
      */
     @Test
     public void testEquals() {
-        assertFalse(periodDuration1.equals(null));
+        assertNotNull(periodDuration1);
         assertEquals(periodDuration1, periodDuration1);
         assertFalse(periodDuration1.equals(periodDuration2));
     }

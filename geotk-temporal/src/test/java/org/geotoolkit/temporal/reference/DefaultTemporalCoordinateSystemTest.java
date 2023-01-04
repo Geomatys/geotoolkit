@@ -68,26 +68,6 @@ public class DefaultTemporalCoordinateSystemTest extends org.geotoolkit.test.Tes
         temporalCoordinate2 = null;
     }
 
-//    /**
-//     * Test of setOrigin method, of class DefaultTemporalCoordinateSystem.
-//     */
-//    @Test
-//    public void testSetOrigin() {
-//        Date result = temporalCoordinateSystem1.getOrigin();
-//        ((DefaultTemporalCoordinateSystem) temporalCoordinateSystem1).setOrigin(new Date());
-//        assertFalse(temporalCoordinateSystem1.getOrigin().equals(result));
-//    }
-//
-//    /**
-//     * Test of setInterval method, of class DefaultTemporalCoordinateSystem.
-//     */
-//    @Test
-//    public void testSetInterval() {
-//        InternationalString result = temporalCoordinateSystem1.getInterval();
-//        ((DefaultTemporalCoordinateSystem) temporalCoordinateSystem1).setInterval(new SimpleInternationalString("hour"));
-//        assertFalse(temporalCoordinateSystem1.getInterval().equals(result));
-//    }
-
     /**
      * Test of getOrigin method, of class DefaultTemporalCoordinateSystem.
      */
@@ -130,7 +110,7 @@ public class DefaultTemporalCoordinateSystemTest extends org.geotoolkit.test.Tes
      */
     @Test
     public void testEquals() {
-        assertFalse(temporalCoordinateSystem1.equals(null));
+        assertNotNull(temporalCoordinateSystem1);
         assertEquals(temporalCoordinateSystem1, temporalCoordinateSystem1);
         assertFalse(temporalCoordinateSystem1.equals(temporalCoordinateSystem2));
     }

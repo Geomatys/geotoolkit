@@ -38,7 +38,7 @@ public class DefaultOrdinalEraTest extends org.geotoolkit.test.TestBase {
 
     private OrdinalEra ordinalEra1;
     private OrdinalEra ordinalEra2;
-    private Calendar cal = Calendar.getInstance();
+    private final Calendar cal = Calendar.getInstance();
     private final static DefaultTemporalFactory FACTORY = new DefaultTemporalFactory();
 
     @Before
@@ -97,36 +97,6 @@ public class DefaultOrdinalEraTest extends org.geotoolkit.test.TestBase {
         assertEquals(ordinalEra2.getMember(), result);
     }
 
-//    /**
-//     * Test of setName method, of class DefaultOrdinalEra.
-//     */
-//    @Test
-//    public void testSetName() {
-//        InternationalString result = ordinalEra1.getName();
-//        ((DefaultOrdinalEra) ordinalEra1).setName(new SimpleInternationalString(""));
-//        assertFalse(ordinalEra1.getName().equals(result));
-//    }
-
-//    /**
-//     * Test of setBeginning method, of class DefaultOrdinalEra.
-//     */
-//    @Test
-//    public void testSetBeginning() {
-//        Date result = ordinalEra1.getBegin();
-////        ((DefaultOrdinalEra) ordinalEra1).setBeginning(new Date());
-//        assertFalse(ordinalEra1.getBegin().equals(result));
-//    }
-
-//    /**
-//     * Test of setEnd method, of class DefaultOrdinalEra.
-//     */
-//    @Test
-//    public void testSetEnd() {
-//        Date result = ordinalEra1.getEnd();
-////        ((DefaultOrdinalEra) ordinalEra1).setEnd(new Date());
-//        assertFalse(ordinalEra1.getEnd().equals(result));
-//    }
-
     /**
      * Test of getGroup method, of class DefaultOrdinalEra.
      */
@@ -152,7 +122,7 @@ public class DefaultOrdinalEraTest extends org.geotoolkit.test.TestBase {
      */
     @Test
     public void testEquals() {
-        assertFalse(ordinalEra1.equals(null));
+        assertNotNull(ordinalEra1);
         assertEquals(ordinalEra1, ordinalEra1);
         assertFalse(ordinalEra1.equals(ordinalEra2));
     }

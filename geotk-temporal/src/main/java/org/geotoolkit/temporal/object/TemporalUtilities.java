@@ -25,6 +25,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
 import java.util.SimpleTimeZone;
 import java.util.TimeZone;
 import java.util.logging.Level;
@@ -1081,5 +1082,19 @@ public final class TemporalUtilities {
         return "";
     }
 
+    /**
+     * Compare the the number of milliseconds since January 1, 1970, 00:00:00 GMT between two dates instead of object equality.
+     * This allow two equals date of different implementation (like Timestamp and Date) to be compared.
+     *
+     * @param d1 first date.
+     * @param d2 second date
+     * @return {@code true} if the number of milliseconds since January 1, 1970, 00:00:00 GMT of the two dates are equals.
+     */
+    public static boolean dateEquals(Date d1, Date d2) {
+        if (d1 != null && d2 != null) {
+            return d1.getTime() == d2.getTime();
+        }
+        return Objects.equals(d1, d2);
+    }
 
 }

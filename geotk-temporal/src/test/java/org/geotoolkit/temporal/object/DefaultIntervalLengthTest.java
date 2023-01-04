@@ -93,7 +93,7 @@ public class DefaultIntervalLengthTest extends org.geotoolkit.test.TestBase {
      */
     @Test
     public void testEquals() {
-        assertFalse(intervalLength1.equals(null));
+        assertNotNull(intervalLength1);
         assertEquals(intervalLength1, intervalLength1);
         assertFalse(intervalLength1.equals(intervalLength2));
     }

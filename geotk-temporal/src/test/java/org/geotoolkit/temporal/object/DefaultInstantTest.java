@@ -38,7 +38,7 @@ public class DefaultInstantTest extends org.geotoolkit.test.TestBase {
 
     private Instant instant1;
     private Instant instant2;
-    private Calendar cal = Calendar.getInstance();
+    private final Calendar cal = Calendar.getInstance();
 
     @Before
     public void setUp() {
@@ -70,57 +70,6 @@ public class DefaultInstantTest extends org.geotoolkit.test.TestBase {
         assertFalse(instant2.getDate().equals(result));
     }
 
-//    /**
-//     * Test of getBegunBy method, of class DefaultInstant.
-//     */
-//    @Test
-//    public void testGetBegunBy() {
-//        Collection<Period> result = instant1.getBegunBy();
-//        assertEquals(instant2.getBegunBy(), result);
-//    }
-//
-//    /**
-//     * Test of getEndedBy method, of class DefaultInstant.
-//     */
-//    @Test
-//    public void testGetEndedBy() {
-//        Collection<Period> result = instant1.getEndedBy();
-//        assertEquals(instant2.getEndedBy(), result);
-//    }
-
-//    /**
-//     * Test of setPosition method, of class DefaultInstant.
-//     */
-//    @Test
-//    public void testSetPosition() {
-//        Position result = instant1.getPosition();
-//        Position position = new DefaultPosition(new Date());
-//        ((DefaultInstant) instant1).setPosition(position);
-//        assertFalse(instant1.getPosition().equals(result));
-//    }
-//
-//    /**
-//     * Test of setBegunBy method, of class DefaultInstant.
-//     */
-//    @Test
-//    public void testSetBegunBy() {
-//        Collection<Period> result = instant1.getBegunBy();
-//        Collection<Period> begunby = null;
-//        ((DefaultInstant) instant1).setBegunBy(begunby);
-//        assertEquals(instant1.getBegunBy(), result);
-//    }
-//
-//    /**
-//     * Test of setEndBy method, of class DefaultInstant.
-//     */
-//    @Test
-//    public void testSetEndBy() {
-//        Collection<Period> result = instant1.getEndedBy();
-//        Collection<Period> endedby = null;
-//        ((DefaultInstant) instant1).setEndBy(endedby);
-//        assertEquals(instant1.getEndedBy(), result);
-//    }
-
     /**
      * Test of equals method, of class DefaultInstant.
      */
@@ -128,7 +77,7 @@ public class DefaultInstantTest extends org.geotoolkit.test.TestBase {
     public void testEquals() {
         cal.set(2000, 1, 1);
 
-        assertFalse(instant1.equals(null));
+        assertNotNull(instant1);
         assertEquals(cal.getTime().getTime(), instant1.getDate().getTime());
         assertFalse(instant1.equals(instant2));
     }

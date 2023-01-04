@@ -98,13 +98,15 @@ public class DefaultPeriod extends DefaultTemporalGeometricPrimitive implements 
         super(properties);
         ArgumentChecks.ensureNonNull("begining", begining);
         ArgumentChecks.ensureNonNull("ending", ending);
-    //-- begining must be before or equals ending
+        //-- begining must be before or equals to ending
         if (begining != null &&
-                (RelativePosition.BEFORE.equals(begining.relativePosition(ending)) ||
-                RelativePosition.EQUALS.equals(begining.relativePosition(ending)))) {
+           (RelativePosition.BEFORE.equals(begining.relativePosition(ending)) ||
+            RelativePosition.EQUALS.equals(begining.relativePosition(ending)))) {
              this.begining = begining;
              this.ending = ending;
-         }
+        } else {
+            throw new IllegalArgumentException("begining must be before or equals ending");
+        }
      }
 
     /**
@@ -220,7 +222,7 @@ public class DefaultPeriod extends DefaultTemporalGeometricPrimitive implements 
             final DefaultPeriod that = (DefaultPeriod) object;
 
             return Objects.equals(this.begining, that.begining) &&
-                    Objects.equals(this.ending, that.ending);
+                   Objects.equals(this.ending, that.ending);
         }
         return false;
     }
