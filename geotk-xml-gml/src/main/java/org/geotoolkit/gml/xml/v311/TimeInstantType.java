@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.gml.GmlInstant;
+import org.geotoolkit.gml.xml.GMLInstant;
 import org.geotoolkit.gml.xml.AbstractTimePosition;
 import org.opengis.filter.Literal;
 import org.opengis.temporal.Instant;
@@ -59,7 +59,7 @@ import org.opengis.temporal.TemporalPosition;
     "timePosition"
 })
 @XmlRootElement(name = "TimeInstant")
-public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implements GmlInstant, Instant, Serializable, Literal {
+public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implements GMLInstant, Serializable, Literal {
 
     @XmlElement(required = true)
     private TimePositionType timePosition;
@@ -193,8 +193,7 @@ public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implemen
         if (object == this) {
             return true;
         }
-        if (object instanceof TimeInstantType) {
-            final TimeInstantType that = (TimeInstantType) object;
+        if (object instanceof TimeInstantType that) {
             return  Objects.equals(this.timePosition, that.timePosition);
         }
         return false;

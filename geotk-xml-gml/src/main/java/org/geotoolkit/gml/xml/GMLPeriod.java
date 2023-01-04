@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2012, Geomatys
+ *    (C) 2022, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,15 +16,14 @@
  */
 package org.geotoolkit.gml.xml;
 
-import org.opengis.temporal.Instant;
+import org.opengis.temporal.Period;
 
 /**
  *
- * @author rmarechal
+ * @author Guilhem Legal (Geomatys)
  */
-public interface GMLInstant extends Instant {
+public interface GMLPeriod extends Period {
 
     public String getId();
 
-    public AbstractTimePosition getTimePosition();
 }

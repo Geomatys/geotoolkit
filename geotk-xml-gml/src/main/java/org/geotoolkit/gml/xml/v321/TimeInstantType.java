@@ -27,9 +27,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.gml.GmlInstant;
 import org.geotoolkit.gml.xml.AbstractTimePosition;
-import org.opengis.temporal.Instant;
+import org.geotoolkit.gml.xml.GMLInstant;
 import org.opengis.temporal.TemporalPosition;
 
 
@@ -57,7 +56,7 @@ import org.opengis.temporal.TemporalPosition;
     "timePosition"
 })
 @XmlRootElement(name = "TimeInstant")
-public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implements GmlInstant, Instant, Serializable{
+public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implements GMLInstant, Serializable{
 
     @XmlElement(required = true)
     private TimePositionType timePosition;
@@ -122,8 +121,8 @@ public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implemen
     }
 
     public void setPosition(final AbstractTimePosition value) {
-        if (value instanceof TimePositionType) {
-            this.timePosition = (TimePositionType)value;
+        if (value instanceof TimePositionType tp) {
+            this.timePosition = tp;
         } else if (value != null) {
             this.timePosition = new TimePositionType(value.getDate());
         } else {
@@ -137,16 +136,6 @@ public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implemen
         }
         return -1;
     }
-
-//    @Override
-//    public Collection<Period> getBegunBy() {
-//        return null;
-//    }
-//
-//    @Override
-//    public Collection<Period> getEndedBy() {
-//        return null;
-//    }
 
     /**
      * Sets the value of the timePosition property.

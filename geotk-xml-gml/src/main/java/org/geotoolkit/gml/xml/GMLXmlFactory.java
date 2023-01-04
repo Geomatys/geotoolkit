@@ -63,13 +63,13 @@ public class GMLXmlFactory {
 
     public static MultiPoint buildMultiPoint(final String version, final List<Point> points, final String srsName) {
         if ("3.2.1".equals(version)) {
-            final List<org.geotoolkit.gml.xml.v321.PointPropertyType> pointList = new ArrayList<org.geotoolkit.gml.xml.v321.PointPropertyType>();
+            final List<org.geotoolkit.gml.xml.v321.PointPropertyType> pointList = new ArrayList<>();
             for (Point pt : points) {
                 pointList.add(new org.geotoolkit.gml.xml.v321.PointPropertyType((org.geotoolkit.gml.xml.v321.PointType)pt));
             }
             return new org.geotoolkit.gml.xml.v321.MultiPointType(srsName, pointList);
         } else if ("3.1.1".equals(version)) {
-            final List<org.geotoolkit.gml.xml.v311.PointPropertyType> pointList = new ArrayList<org.geotoolkit.gml.xml.v311.PointPropertyType>();
+            final List<org.geotoolkit.gml.xml.v311.PointPropertyType> pointList = new ArrayList<>();
             for (Point pt : points) {
                 pointList.add(new org.geotoolkit.gml.xml.v311.PointPropertyType((org.geotoolkit.gml.xml.v311.PointType)pt));
             }
@@ -237,6 +237,16 @@ public class GMLXmlFactory {
             return new org.geotoolkit.gml.xml.v321.BoundingShapeType(envelope);
         } else if ("3.1.1".equals(version)) {
             return new org.geotoolkit.gml.xml.v311.BoundingShapeType(envelope);
+        } else {
+            throw new IllegalArgumentException("unexpected gml version number:" + version);
+        }
+    }
+
+    public static Period createTimePeriod(final String version, final String id, final Period p) {
+        if ("3.2.1".equals(version)) {
+            return new org.geotoolkit.gml.xml.v321.TimePeriodType(id, p);
+        } else if ("3.1.1".equals(version)) {
+            return new org.geotoolkit.gml.xml.v311.TimePeriodType(id, p);
         } else {
             throw new IllegalArgumentException("unexpected gml version number:" + version);
         }

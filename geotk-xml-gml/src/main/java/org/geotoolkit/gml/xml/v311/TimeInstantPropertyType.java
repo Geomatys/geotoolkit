@@ -17,6 +17,7 @@
 package org.geotoolkit.gml.xml.v311;
 
 import java.io.Serializable;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -303,4 +304,58 @@ public class TimeInstantPropertyType implements Serializable {
         this.actuate = value;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder s = new StringBuilder("[TimeInstantPropertyType]");
+        if (timeInstant != null)
+            s.append("timeInstant").append(timeInstant).append('\n');
+
+        if(actuate != null) {
+            s.append("actuate=").append(actuate).append('\n');
+        }
+        if(arcrole != null) {
+            s.append("arcrole=").append(arcrole).append('\n');
+        }
+        if(href != null) {
+            s.append("href=").append(href).append('\n');
+        }
+        if(role != null) {
+            s.append("role=").append(role).append('\n');
+        }
+        if(show != null) {
+            s.append("show=").append(show).append('\n');
+        }
+        if(title != null) {
+            s.append("title=").append(title).append('\n');
+        }
+        if(type != null) {
+            s.append("type=").append(type).append('\n');
+        }
+        return s.toString();
+    }
+
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof TimeInstantPropertyType that) {
+
+            return Objects.equals(this.timeInstant,        that.timeInstant)      &&
+                   Objects.equals(this.actuate,            that.actuate)          &&
+                   Objects.equals(this.arcrole,            that.arcrole)          &&
+                   Objects.equals(this.type,               that.type)             &&
+                   Objects.equals(this.href,               that.href)             &&
+                   Objects.equals(this.remoteSchema,       that.remoteSchema)     &&
+                   Objects.equals(this.show,               that.show)             &&
+                   Objects.equals(this.role,               that.role)             &&
+                   Objects.equals(this.title,              that.title);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(timeInstant, remoteSchema, actuate, arcrole, href,role, show, title, type);
+    }
 }
