@@ -20,8 +20,12 @@ package org.geotoolkit.sml.xml;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 import org.geotoolkit.gml.xml.AbstractGeometry;
+import org.opengis.metadata.Identifier;
 
 /**
  *
@@ -32,14 +36,7 @@ public class SensorMLUtilities {
     private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.sml.xml");
 
     public static String getSensorMLType(final AbstractSensorML sml) {
-        if (sml.getMember() != null)  {
-            //assume only one member
-            for (SMLMember member : sml.getMember()) {
-                final AbstractProcess process = member.getRealProcess();
-                return getSensorMLType(process);
-            }
-        }
-        return "unknow";
+        return getFirstProcess(sml).map(SensorMLUtilities::getSensorMLType).orElse("unknown");
     }
 
     public static String getSensorMLType(final AbstractProcess process) {
@@ -54,24 +51,16 @@ public class SensorMLUtilities {
         } else if (process instanceof AbstractProcessModel) {
             return "ProcessModel";
         }
-        return "unknow";
+        return "unknown";
     }
 
     public static List<String> getChildrenIdentifiers(final AbstractSensorML sml) {
-        if (sml.getMember() != null)  {
-            //assume only one member
-            for (SMLMember member : sml.getMember()) {
-                final AbstractProcess process = member.getRealProcess();
-                return getChildren(process);
-            }
-        }
-        return new ArrayList<>();
+        return getFirstProcess(sml).map(SensorMLUtilities::getChildren).orElse(new ArrayList<>());
     }
 
     public static List<String> getChildren(final AbstractProcess process) {
         final List<String> results = new ArrayList<>();
-        if (process instanceof System) {
-            final System s = (System) process;
+        if (process instanceof System s) {
             final AbstractComponents compos = s.getComponents();
             if (compos != null && compos.getComponentList() != null) {
                 for (ComponentProperty cp : compos.getComponentList().getComponent()){
@@ -84,8 +73,7 @@ public class SensorMLUtilities {
                     }
                 }
             }
-        } else if (process instanceof AbstractProcessChain) {
-            final AbstractProcessChain s = (AbstractProcessChain) process;
+        } else if (process instanceof AbstractProcessChain s) {
             final AbstractComponents compos = s.getComponents();
             if (compos != null && compos.getComponentList() != null) {
                 for (ComponentProperty cp : compos.getComponentList().getComponent()){
@@ -102,18 +90,14 @@ public class SensorMLUtilities {
         return results;
     }
 
-    public static String getSmlID(final AbstractSensorML sensor) {
-        if (sensor != null && sensor.getMember().size() > 0) {
-            final AbstractProcess process = sensor.getMember().get(0).getRealProcess();
-            return getSmlID(process);
-        }
-        return "unknow_identifier";
+    public static String getSmlID(final AbstractSensorML sml) {
+        return getFirstProcess(sml).map(SensorMLUtilities::getSmlID).orElse("unknown_identifier");
     }
 
     public static String getSmlID(final AbstractProcess process) {
         final List<? extends AbstractIdentification> idents = process.getIdentification();
 
-        for(AbstractIdentification ident : idents) {
+        for (AbstractIdentification ident : idents) {
             if (ident.getIdentifierList() != null) {
                 for (AbstractIdentifier identifier: ident.getIdentifierList().getIdentifier()) {
                     if (("uniqueID".equals(identifier.getName()) && identifier.getTerm() != null) ||
@@ -128,7 +112,7 @@ public class SensorMLUtilities {
         if (process.getId() != null) {
             return process.getId();
         }
-        return "unknow_identifier";
+        return "unknown_identifier";
     }
 
     /**
@@ -137,43 +121,89 @@ public class SensorMLUtilities {
      * @param sensor
      * @return
      */
-    public static AbstractGeometry getSensorPosition(final AbstractSensorML sensor) {
-        if (sensor.getMember().size() == 1) {
-            if (sensor.getMember().get(0).getRealProcess() instanceof AbstractDerivableComponent) {
-                final AbstractDerivableComponent component = (AbstractDerivableComponent) sensor.getMember().get(0).getRealProcess();
-                if (component.getSMLLocation() != null && component.getSMLLocation().getGeometry()!= null) {
-                    return component.getSMLLocation().getGeometry();
-                } else if (component.getPosition() != null && component.getPosition().getPosition() != null &&
-                           component.getPosition().getPosition().getLocation() != null && component.getPosition().getPosition().getLocation().getVector() != null) {
-                    final URI crs = component.getPosition().getPosition().getReferenceFrame();
-                    return component.getPosition().getPosition().getLocation().getVector().getGeometry(crs);
-                }
+    public static Optional<AbstractGeometry> getSensorPosition(final AbstractSensorML sensor) {
+        return getFirstProcess(sensor).flatMap(SensorMLUtilities::getSensorPosition);
+    }
+
+    public static Optional<AbstractGeometry> getSensorPosition(final AbstractProcess process) {
+        if (process instanceof AbstractDerivableComponent component) {
+            if (component.getSMLLocation() != null && component.getSMLLocation().getGeometry()!= null) {
+                return Optional.of(component.getSMLLocation().getGeometry());
+            } else if (component.getPosition() != null &&
+                       component.getPosition().getPosition() != null &&
+                       component.getPosition().getPosition().getLocation() != null &&
+                       component.getPosition().getPosition().getLocation().getVector() != null) {
+                final URI crs = component.getPosition().getPosition().getReferenceFrame();
+                return Optional.of(component.getPosition().getPosition().getLocation().getVector().getGeometry(crs));
             }
         }
         LOGGER.warning("there is no sensor position in the specified sensorML");
-        return null;
+        return Optional.empty();
     }
 
-    public static String getOMType(final AbstractSensorML sensor) {
-        if (sensor != null && sensor.getMember().size() > 0) {
-            final AbstractProcess process = sensor.getMember().get(0).getRealProcess();
-            return getOMType(process);
-        }
-        return null;
+    public static Optional<String> getOMType(final AbstractSensorML sensor) {
+        return getFirstProcess(sensor).flatMap(SensorMLUtilities::getOMType);
     }
 
-    public static String getOMType(final AbstractProcess process) {
-        final List<? extends AbstractClassification> classifs = process.getClassification();
-
-        for (AbstractClassification classif : classifs) {
-            if (classif.getClassifierList()!= null) {
-                for (AbstractClassifier classifier: classif.getClassifierList().getClassifier()) {
-                    if ("data-type".equals(classifier.getName()) && classifier.getTerm() != null) {
-                        return classifier.getTerm().getValue();
-                    }
-                }
-            }
-        }
-        return null;
+    public static Optional<String> getOMType(final AbstractProcess process) {
+        var classifs = process.getClassification();
+        if (classifs == null || classifs.isEmpty()) return Optional.empty();
+        return classifs.stream()
+                       .flatMap(cl -> cl.getClassifierList() == null ? Stream.empty() : cl.getClassifierList().getClassifier().stream())
+                       .filter(classifier -> "data-type".equals(classifier.getName()) && classifier.getTerm() != null)
+                       .map(classifier -> classifier.getTerm().getValue())
+                       .findFirst();
     }
+
+    /**
+     * Search for the first non-null/available process described by the sensor.
+     * If none can be found, return an empty optional.
+     */
+    public static Optional<AbstractProcess> getFirstProcess(final AbstractSensorML sensor) {
+        var members = sensor == null ? null : sensor.getMember();
+        if (members == null || members.isEmpty()) return Optional.empty();
+        return members.stream()
+                      .map(SMLMember::getRealProcess)
+                      .filter(Objects::nonNull)
+                      .findFirst();
+    }
+
+    /**
+     * Return the gml name of the first process member in the specified sensorML.
+     *
+     * @param sensor A sensorML object.
+     * @return the code name or {@code Optional.empty()}
+     */
+    public static Optional<String> getSmlName(final AbstractSensorML sensor) {
+        return getFirstProcess(sensor)
+                   .map(AbstractProcess::getName)
+                   .map(Identifier::getCode);
+    }
+
+    /**
+     * Return the gml description of the first process member in the specified sensorML.
+     *
+     * @param sensor A sensorML object.
+     * @return the description or {@code Optional.empty()}
+     */
+    public static Optional<String> getSmlDescription(final AbstractSensorML sensor) {
+        return getFirstProcess(sensor).map(AbstractProcess::getDescription);
+    }
+
+    /**
+     * Return the physical ID of a sensor.
+     * This ID is found into a "Identifier" mark with the name 'supervisorCode'
+     *
+     * @param sensor A SML sensor decription.
+     * @return the physical id or {@code Optional.empty()}
+     */
+    public static Optional<String> getPhysicalID(final AbstractSensorML sensor) {
+        return getFirstProcess(sensor).stream()
+                                      .flatMap(p -> p.getIdentification().stream())
+                                      .flatMap(id -> id.getIdentifierList() == null ? Stream.empty() : id.getIdentifierList().getIdentifier().stream())
+                                      .filter(identifier -> "supervisorCode".equals(identifier.getName()) && identifier.getTerm() != null)
+                                      .map(identifier -> identifier.getTerm().getValue())
+                                      .findFirst();
+    }
+
 }
