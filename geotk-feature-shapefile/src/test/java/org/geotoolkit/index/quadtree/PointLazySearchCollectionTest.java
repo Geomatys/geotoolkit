@@ -59,6 +59,7 @@ public class PointLazySearchCollectionTest extends AbstractTestCaseSupport {
         if (iterator != null)
             tree.close(iterator);
         tree.close();
+        dr.close();
         super.tearDown();
         file.getParentFile().delete();
     }

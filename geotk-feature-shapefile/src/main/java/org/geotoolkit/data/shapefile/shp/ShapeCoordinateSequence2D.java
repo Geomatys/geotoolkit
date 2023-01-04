@@ -17,27 +17,59 @@
 
 package org.geotoolkit.data.shapefile.shp;
 
+import java.util.Arrays;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.CoordinateSequence;
 import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.impl.PackedCoordinateSequence;
 
 /**
  * Coordinates are ordered in an array like [x1,y1, ... xN, yN]
  *
+ * Differs from {@link PackedCoordinateSequence}:
+ * <ul>
+ *     <li>
+ *         An offset and size allow to use only part of the source coordinate array.
+ *         This allow to densely pack multiple geometries in a single double array.
+ *         This allow to avoid copies of array as much as possible.
+ *     </li>
+ *     <li>
+ *         {@link #expandEnvelope(Envelope)} is <em>heavily</em> optimized, to avoid repeating calls to {@link Envelope#expandToInclude(double, double)} )} calls.
+ *     </li>
+ *     <li>Base for {@link ShapeCoordinateSequence3D Shape 3D sequence}, that packs all z coordinates at the end of the array.</li>
+ * </ul>
+ *
  * @author Johann Sorel (Geomatys)
+ * @author Alexis Manin (Geomatys)
  * @module
  */
 class ShapeCoordinateSequence2D implements CoordinateSequence {
 
+    /**
+     * Offset as number of elements in {@link #coordinates} array.
+     * This is the number of numbers to skip, not the number of points/coordinates.
+     */
+    protected final int offset;
     protected final double[] coordinates;
     protected final int size;
 
-    ShapeCoordinateSequence2D(final double[] coordinates){
+    ShapeCoordinateSequence2D(final double[] coordinates) {
         this(coordinates, coordinates.length/2);
     }
 
-    ShapeCoordinateSequence2D(final double[] coordinates, final int size){
+    ShapeCoordinateSequence2D(final double[] coordinates, final int size) {
+        this(coordinates, 0, size);
+    }
+
+    /**
+     *
+     * @param coordinates The array containing points of this sequence.
+     * @param offset Offset where the coordinate sequence starts. This is the number of elements to skip from array start.
+     * @param size Number of <em>points</em> in this coordinate sequences.
+     */
+    ShapeCoordinateSequence2D(final double[] coordinates, final int offset, final int size) {
         this.coordinates = coordinates;
+        this.offset = offset;
         this.size = size;
     }
 
@@ -48,7 +80,7 @@ class ShapeCoordinateSequence2D implements CoordinateSequence {
 
     @Override
     public Coordinate getCoordinate(final int index) {
-        final int i = index*2;
+        final int i = offset + index * 2;
         return new Coordinate(coordinates[i], coordinates[i+1], Coordinate.NULL_ORDINATE);
     }
 
@@ -59,24 +91,24 @@ class ShapeCoordinateSequence2D implements CoordinateSequence {
 
     @Override
     public void getCoordinate(final int index, final Coordinate coord) {
-        final int i = index*2;
+        final int i = offset + index * 2;
         coord.x = coordinates[i];
         coord.y = coordinates[i+1];
     }
 
     @Override
     public double getX(final int index) {
-        return coordinates[index*2];
+        return coordinates[offset + index * 2];
     }
 
     @Override
     public double getY(final int index) {
-        return coordinates[index*2 + 1];
+        return coordinates[offset + index * 2 + 1];
     }
 
     @Override
     public double getOrdinate(final int index, final int ordinate) {
-        return coordinates[index*2 + ordinate];
+        return coordinates[offset + index * 2 + ordinate];
     }
 
     @Override
@@ -86,7 +118,7 @@ class ShapeCoordinateSequence2D implements CoordinateSequence {
 
     @Override
     public void setOrdinate(final int index, final int ordinate, final double value) {
-        coordinates[index*2 + ordinate] = value;
+        coordinates[offset + index * 2 + ordinate] = value;
     }
 
     @Override
@@ -100,16 +132,17 @@ class ShapeCoordinateSequence2D implements CoordinateSequence {
 
     @Override
     public Envelope expandEnvelope(final Envelope envlp) {
-        if(size == 0){
+        if(size == 0) {
             return envlp;
         }
 
-        double minX = coordinates[0];
-        double minY = coordinates[1];
+        final int startIdx = offset;
+        double minX = coordinates[startIdx];
+        double minY = coordinates[startIdx + 1];
         double maxX = minX;
         double maxY = minY;
 
-        for(int i=2,n=size*2; i<n; i++){
+        for (int i=startIdx + 2, n=startIdx + size * 2; i<n; i++) {
             final double x = coordinates[i];
             final double y = coordinates[++i];
             if(x < minX) minX = x;
@@ -125,12 +158,14 @@ class ShapeCoordinateSequence2D implements CoordinateSequence {
 
     @Override
     public CoordinateSequence clone(){
-        return new ShapeCoordinateSequence2D(coordinates);
+        return copy();
     }
 
     @Override
     public CoordinateSequence copy() {
-        return new ShapeCoordinateSequence2D(coordinates);
+        // WARNING: if the coordinate array contains multiple/many geometries, copying it might cause important overhead.
+        // To reduce the problem, we create an array copy containing only this geometry.
+        final double[] coordinates = Arrays.copyOfRange(this.coordinates, offset, offset + size * 2);
+        return new ShapeCoordinateSequence2D(coordinates, 0, size);
     }
-
 }
