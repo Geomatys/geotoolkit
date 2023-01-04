@@ -29,9 +29,9 @@ import javax.xml.datatype.Duration;
 import org.geotoolkit.gml.xml.TimeIndeterminateValueType;
 import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.gml.xml.AbstractTimePosition;
+import org.geotoolkit.gml.xml.GMLPeriod;
 import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
-//import org.opengis.temporal.Position;
 
 
 /**
@@ -69,7 +69,7 @@ import org.opengis.temporal.Period;
     "timeInterval"
 })
 @XmlRootElement(name="TimePeriod")
-public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implements Period, Serializable{
+public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implements GMLPeriod, Serializable{
 
     private TimePositionType beginPosition;
     private TimeInstantPropertyType begin;
@@ -88,6 +88,18 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
      */
     public TimePeriodType(final Instant beginPosition, final Instant endPosition) {
         this(null, beginPosition, endPosition);
+    }
+
+    public TimePeriodType(final String id, final Period period) {
+        super(id);
+        if (period != null) {
+            if (period.getBeginning() != null) {
+                this.beginPosition = new TimePositionType(period.getBeginning().getDate());
+            }
+            if (period.getEnding() != null) {
+                this.endPosition = new TimePositionType(period.getEnding().getDate());
+            }
+        }
     }
 
     /**

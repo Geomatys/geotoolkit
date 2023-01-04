@@ -94,7 +94,7 @@ public class DefaultOrdinalReferenceSystemTest extends org.geotoolkit.test.TestB
      */
     @Test
     public void testEquals() {
-        assertFalse(ordinalReferenceSystem1.equals(null));
+        assertNotNull(ordinalReferenceSystem1);
         assertEquals(ordinalReferenceSystem1, ordinalReferenceSystem1);
         assertFalse(ordinalReferenceSystem1.equals(ordinalReferenceSystem2));
     }

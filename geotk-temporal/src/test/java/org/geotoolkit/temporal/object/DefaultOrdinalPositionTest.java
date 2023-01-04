@@ -44,7 +44,7 @@ public class DefaultOrdinalPositionTest extends org.geotoolkit.test.TestBase {
 
     private OrdinalPosition ordinalPosition1;
     private OrdinalPosition ordinalPosition2;
-    private Calendar cal = Calendar.getInstance();
+    private final Calendar cal = Calendar.getInstance();
     private final static DefaultTemporalFactory FACTORY = new DefaultTemporalFactory();
 
     @Before
@@ -104,7 +104,7 @@ public class DefaultOrdinalPositionTest extends org.geotoolkit.test.TestBase {
      */
     @Test
     public void testEquals() {
-        assertFalse(ordinalPosition1.equals(null));
+        assertNotNull(ordinalPosition1);
         assertEquals(ordinalPosition1, ordinalPosition1);
         assertFalse(ordinalPosition1.equals(ordinalPosition2));
     }

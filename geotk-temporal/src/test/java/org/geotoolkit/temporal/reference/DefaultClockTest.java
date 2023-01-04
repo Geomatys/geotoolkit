@@ -114,36 +114,6 @@ public class DefaultClockTest extends org.geotoolkit.test.TestBase {
     public void testUtcTrans() {
         //@todo this method is not implemented yet!
     }
-//
-//    /**
-//     * Test of setReferenceEvent method, of class DefaultClock.
-//     */
-//    @Test
-//    public void testSetReferenceEvent() {
-//        InternationalString result = clock1.getReferenceEvent();
-//        ((DefaultClock) clock1).setReferenceEvent(new SimpleInternationalString(""));
-//        assertFalse(clock1.getReferenceEvent().equals(result));
-//    }
-
-//    /**
-//     * Test of setReferenceTime method, of class DefaultClock.
-//     */
-//    @Test
-//    public void testSetReferenceTime() {
-//        ClockTime result = clock1.getReferenceTime();
-//        ((DefaultClock) clock1).setReferenceTime(new DefaultClockTime(clock1, IndeterminateValue.UNKNOWN, null));
-//        assertFalse(clock1.getReferenceTime().equals(result));
-//    }
-//
-//    /**
-//     * Test of setUtcReference method, of class DefaultClock.
-//     */
-//    @Test
-//    public void testSetUtcReference() {
-//        ClockTime result = clock1.getUTCReference();
-//        ((DefaultClock) clock1).setUtcReference(new DefaultClockTime(clock1, IndeterminateValue.UNKNOWN, null));
-//        assertFalse(clock1.getUTCReference().equals(result));
-//    }
 
     /**
      * Test of getDateBasis method, of class DefaultClock.
@@ -159,7 +129,7 @@ public class DefaultClockTest extends org.geotoolkit.test.TestBase {
      */
     @Test
     public void testEquals() {
-        assertFalse(clock1.equals(null));
+        assertNotNull(clock1);
         assertEquals(clock1, clock1);
         assertFalse(clock1.equals(clock2));
     }

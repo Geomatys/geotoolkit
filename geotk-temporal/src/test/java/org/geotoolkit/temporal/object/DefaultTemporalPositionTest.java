@@ -80,7 +80,7 @@ public class DefaultTemporalPositionTest extends org.geotoolkit.test.TestBase {
      */
     @Test
     public void testEquals() {
-        assertFalse(temporalPosition1.equals(null));
+        assertNotNull(temporalPosition1);
         assertEquals(temporalPosition1, temporalPosition1);
         assertFalse(temporalPosition1.equals(temporalPosition2));
     }

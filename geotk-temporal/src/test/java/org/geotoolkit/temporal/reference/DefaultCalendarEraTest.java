@@ -47,7 +47,7 @@ public class DefaultCalendarEraTest extends org.geotoolkit.test.TestBase {
 
     private CalendarEra calendarEra1;
     private CalendarEra calendarEra2;
-    private Calendar cal = Calendar.getInstance();
+    private final Calendar cal = Calendar.getInstance();
     private final static DefaultTemporalFactory FACTORY = new DefaultTemporalFactory();
     private TemporalReferenceSystem frame1, frame2;
 

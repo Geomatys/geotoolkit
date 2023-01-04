@@ -17,16 +17,17 @@
  */
 package org.geotoolkit.temporal.object;
 
-import org.geotoolkit.temporal.object.DefaultPeriod;
-import org.geotoolkit.temporal.object.DefaultInstant;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import static org.apache.sis.feature.AbstractIdentifiedType.NAME_KEY;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.opengis.temporal.Duration;
 import org.opengis.temporal.Instant;
+import org.opengis.temporal.Period;
 import org.opengis.temporal.TemporalGeometricPrimitive;
 
 
@@ -37,20 +38,18 @@ import org.opengis.temporal.TemporalGeometricPrimitive;
  */
 public class DefaultTemporalGeometricPrimitiveTest extends org.geotoolkit.test.TestBase {
 
-    private TemporalGeometricPrimitive temporalGeomericPrimitive1;
-    private TemporalGeometricPrimitive temporalGeomericPrimitive2;
-    private Calendar cal = Calendar.getInstance();
+    private Instant temporalGeomericPrimitive1;
+    private Instant temporalGeomericPrimitive2;
+    private final Calendar cal = Calendar.getInstance();
 
     @Before
     public void setUp() {
 
-//        cal.set(1981, 6, 25);
-//        Date date = cal.getTime();
-//
-//        position1 = new DefaultPosition(date);
-//        position2 = new DefaultPosition(new Date());
-//        temporalGeomericPrimitive1 = new DefaultInstant(position1);
-//        temporalGeomericPrimitive2 = new DefaultInstant(position2);
+       cal.set(1981, 6, 25);
+       Date date = cal.getTime();
+
+       temporalGeomericPrimitive1 = new DefaultInstant(Collections.singletonMap(NAME_KEY, "id1"), date);
+       temporalGeomericPrimitive2 = new DefaultInstant(Collections.singletonMap(NAME_KEY, "id2"), new Date());
     }
 
     @After
@@ -66,28 +65,27 @@ public class DefaultTemporalGeometricPrimitiveTest extends org.geotoolkit.test.T
     public void testDistance() {
         TemporalGeometricPrimitive other;
 
-//        //calcul Distance with instant objects
-//        Calendar cal = Calendar.getInstance();
-//        cal.set(2000, 0, 1);
-//        Position position = new DefaultPosition(cal.getTime());
-//        other = new DefaultInstant(position);
-//        Duration result = temporalGeomericPrimitive1.distance(other);
-//        assertFalse(temporalGeomericPrimitive2.distance(other).equals(result));
-//
-//        //calcul Distance with instant and period
-//        cal.set(2009, 1, 1);
-//        Instant i1 = new DefaultInstant(new DefaultPosition(cal.getTime()));
-//        cal.set(2012, 1, 1);
-//        Instant i2 = new DefaultInstant(new DefaultPosition(cal.getTime()));
-//        other = new DefaultPeriod(i1, i2);
-//        result = temporalGeomericPrimitive1.distance(other);
-//        assertFalse(temporalGeomericPrimitive2.distance(other).equals(result));
-//
-//        //calcul Distance between Period objects
-//        temporalGeomericPrimitive1 = new DefaultPeriod(new DefaultInstant(position1), new DefaultInstant(position2));
-//        temporalGeomericPrimitive2 = new DefaultPeriod(i1, new DefaultInstant(position2));
-//        result = temporalGeomericPrimitive1.distance(other);
-//        assertTrue(temporalGeomericPrimitive2.distance(other).equals(result));
+        //calcul Distance with instant objects
+        Calendar cal = Calendar.getInstance();
+        cal.set(2000, 0, 1);
+        other = new DefaultInstant(Collections.singletonMap(NAME_KEY, "id1"), cal.getTime());
+        Duration result = temporalGeomericPrimitive1.distance(other);
+        assertFalse(temporalGeomericPrimitive2.distance(other).equals(result));
+
+        //calcul Distance with instant and period
+        cal.set(2009, 1, 1);
+        Instant i1 = new DefaultInstant(Collections.singletonMap(NAME_KEY, "id1"), cal.getTime());
+        cal.set(2012, 1, 1);
+        Instant i2 = new DefaultInstant(Collections.singletonMap(NAME_KEY, "id1"), cal.getTime());
+        other = new DefaultPeriod(Collections.singletonMap(NAME_KEY, "tp1"), i1, i2);
+        result = temporalGeomericPrimitive1.distance(other);
+        assertFalse(temporalGeomericPrimitive2.distance(other).equals(result));
+
+        //calcul Distance between Period objects
+        Period tp1 = new DefaultPeriod(Collections.singletonMap(NAME_KEY, "tp1"), temporalGeomericPrimitive1, temporalGeomericPrimitive2);
+        Period tp2 = new DefaultPeriod(Collections.singletonMap(NAME_KEY, "tp2"), i1, temporalGeomericPrimitive2);
+        result = tp1.distance(other);
+        assertTrue(tp2.distance(other).equals(result));
 
     }
 
@@ -96,11 +94,11 @@ public class DefaultTemporalGeometricPrimitiveTest extends org.geotoolkit.test.T
      */
     @Test
     public void testLength() {
-//        Calendar cal = Calendar.getInstance();
-//        cal.set(2033, 0, 1);
-//        temporalGeomericPrimitive1 = new DefaultPeriod(new DefaultInstant(position1), new DefaultInstant(position2));
-//        temporalGeomericPrimitive2 = new DefaultPeriod(new DefaultInstant(position2), new DefaultInstant(new DefaultPosition(cal.getTime())));
-//        Duration result = temporalGeomericPrimitive1.length();
-//        assertFalse(temporalGeomericPrimitive2.length().equals(result));
+        Calendar cal = Calendar.getInstance();
+        cal.set(2033, 0, 1);
+        Period tp1 = new DefaultPeriod(Collections.singletonMap(NAME_KEY, "tp1"), temporalGeomericPrimitive1, temporalGeomericPrimitive2);
+        Period tp2 = new DefaultPeriod(Collections.singletonMap(NAME_KEY, "tp2"), temporalGeomericPrimitive2, new DefaultInstant(Collections.singletonMap(NAME_KEY, "id1"), cal.getTime()));
+        Duration result = tp1.length();
+        assertFalse(tp2.length().equals(result));
     }
 }
