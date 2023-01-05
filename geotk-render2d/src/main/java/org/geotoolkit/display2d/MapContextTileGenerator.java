@@ -155,7 +155,7 @@ public class MapContextTileGenerator extends AbstractTileGenerator {
         canvas.setGridGeometry(gridGeom);
         canvas.setBackground(canvasDef.getBackground());
         try {
-            final BufferedImage image = DefaultPortrayalService.portray(canvas, sceneDef);
+            final RenderedImage image = DefaultPortrayalService.portray(canvas, sceneDef);
             return new DefaultImageTile(matrix, image, tileCoord);
         } catch (PortrayalException ex) {
             throw new DataStoreException(ex.getMessage(), ex);

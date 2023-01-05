@@ -18,6 +18,7 @@ package org.geotoolkit.coverage.wkb;
 
 import java.awt.Point;
 import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
@@ -103,7 +104,7 @@ public class WKBRasterReader {
      */
     public GridCoverage readCoverage(final InputStream stream, CRSAuthorityFactory authorityFactory)
             throws IOException, NoSuchAuthorityCodeException, FactoryException{
-        final BufferedImage image = read(stream);
+        final RenderedImage image = read(stream);
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         final String epsgCode = "EPSG:"+srid;
         final CoordinateReferenceSystem crs;

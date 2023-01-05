@@ -18,7 +18,6 @@ package org.geotoolkit.display2d.ext.northarrow;
 
 import java.awt.Dimension;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -40,7 +39,7 @@ public class DefaultNorthArrowTemplate implements NorthArrowTemplate{
     private final URL svgFile;
     private final BackgroundTemplate background;
     private final Dimension size;
-    private Image buffer = null;
+    private BufferedImage buffer;
 
     public DefaultNorthArrowTemplate(final BackgroundTemplate background,final URL file, Dimension size){
 
@@ -53,7 +52,7 @@ public class DefaultNorthArrowTemplate implements NorthArrowTemplate{
         try {
             buffer = ImageIO.read(file);
 
-            if(buffer != null && (buffer.getHeight(null) != size.getHeight() || buffer.getWidth(null) != size.getWidth())){
+            if (buffer != null && (buffer.getHeight() != size.getHeight() || buffer.getWidth() != size.getWidth())) {
                 final BufferedImage img = new BufferedImage(size.width, size.height, BufferedImage.TYPE_INT_ARGB);
                 img.getGraphics().drawImage(buffer, 0, 0, size.width, size.height, null);
 
@@ -70,7 +69,7 @@ public class DefaultNorthArrowTemplate implements NorthArrowTemplate{
      * {@inheritDoc }
      */
     @Override
-    public Image getImage() {
+    public BufferedImage getImage() {
         if(buffer != null){
             return buffer;
         }else{

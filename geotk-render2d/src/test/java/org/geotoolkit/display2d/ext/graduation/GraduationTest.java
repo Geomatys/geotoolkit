@@ -18,7 +18,7 @@ package org.geotoolkit.display2d.ext.graduation;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -42,7 +42,6 @@ import org.geotoolkit.style.MutableStyle;
 import org.junit.Assert;
 import org.junit.Test;
 import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -93,7 +92,7 @@ public class GraduationTest extends org.geotoolkit.test.TestBase {
         cdef.setBackground(Color.darkGray);
         cdef.setEnvelope(CRS.getDomainOfValidity(crs));
 
-        final BufferedImage img = DefaultPortrayalService.portray(cdef, sdef);
+        final RenderedImage img = DefaultPortrayalService.portray(cdef, sdef);
         Assert.assertNotNull(img);
     }
 

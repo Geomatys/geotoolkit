@@ -7,6 +7,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
+import java.awt.image.RenderedImage;
 import java.util.Arrays;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
@@ -72,51 +73,59 @@ public class PointSymbolizerTest {
 
         { //test no rotation
             layer.setStyle(createRotatedTriangle(0));
-            final BufferedImage buffer = createWorldImage(layer);
-            Assert.assertEquals(WHITE, buffer.getRGB(170, 80));
-            Assert.assertEquals(WHITE, buffer.getRGB(170, 85));
-            Assert.assertEquals(BLACK, buffer.getRGB(170, 100));
-            Assert.assertEquals(BLACK, buffer.getRGB(180, 80));
-            Assert.assertEquals(BLACK, buffer.getRGB(180, 85));
-            Assert.assertEquals(BLACK, buffer.getRGB(180, 100));
-            Assert.assertEquals(WHITE, buffer.getRGB(190, 80));
-            Assert.assertEquals(WHITE, buffer.getRGB(190, 85));
-            Assert.assertEquals(BLACK, buffer.getRGB(190, 100));
+            final RenderedImage buffer = createWorldImage(layer);
+            Assert.assertEquals(WHITE, getRGB(buffer, 170, 80));
+            Assert.assertEquals(WHITE, getRGB(buffer, 170, 85));
+            Assert.assertEquals(BLACK, getRGB(buffer, 170, 100));
+            Assert.assertEquals(BLACK, getRGB(buffer, 180, 80));
+            Assert.assertEquals(BLACK, getRGB(buffer, 180, 85));
+            Assert.assertEquals(BLACK, getRGB(buffer, 180, 100));
+            Assert.assertEquals(WHITE, getRGB(buffer, 190, 80));
+            Assert.assertEquals(WHITE, getRGB(buffer, 190, 85));
+            Assert.assertEquals(BLACK, getRGB(buffer, 190, 100));
         }
 
         { //test right rotation
             layer.setStyle(createRotatedTriangle(45));
-            final BufferedImage buffer = createWorldImage(layer);
-            Assert.assertEquals(WHITE, buffer.getRGB(170, 80));
-            Assert.assertEquals(BLACK, buffer.getRGB(170, 85));
-            Assert.assertEquals(BLACK, buffer.getRGB(170, 100));
-            Assert.assertEquals(WHITE, buffer.getRGB(180, 80));
-            Assert.assertEquals(BLACK, buffer.getRGB(180, 85));
-            Assert.assertEquals(BLACK, buffer.getRGB(180, 100));
-            Assert.assertEquals(WHITE, buffer.getRGB(190, 80));
-            Assert.assertEquals(WHITE, buffer.getRGB(190, 85));
-            Assert.assertEquals(WHITE, buffer.getRGB(190, 100));
+            final RenderedImage buffer = createWorldImage(layer);
+            Assert.assertEquals(WHITE, getRGB(buffer, 170, 80));
+            Assert.assertEquals(BLACK, getRGB(buffer, 170, 85));
+            Assert.assertEquals(BLACK, getRGB(buffer, 170, 100));
+            Assert.assertEquals(WHITE, getRGB(buffer, 180, 80));
+            Assert.assertEquals(BLACK, getRGB(buffer, 180, 85));
+            Assert.assertEquals(BLACK, getRGB(buffer, 180, 100));
+            Assert.assertEquals(WHITE, getRGB(buffer, 190, 80));
+            Assert.assertEquals(WHITE, getRGB(buffer, 190, 85));
+            Assert.assertEquals(WHITE, getRGB(buffer, 190, 100));
         }
 
         { //test left rotation
             layer.setStyle(createRotatedTriangle(-45));
-            final BufferedImage buffer = createWorldImage(layer);
-            Assert.assertEquals(BLACK, buffer.getRGB(170, 80));
-            Assert.assertEquals(WHITE, buffer.getRGB(170, 85));
-            Assert.assertEquals(WHITE, buffer.getRGB(170, 100));
-            Assert.assertEquals(WHITE, buffer.getRGB(180, 80));
-            Assert.assertEquals(BLACK, buffer.getRGB(180, 85));
-            Assert.assertEquals(BLACK, buffer.getRGB(180, 100));
-            Assert.assertEquals(WHITE, buffer.getRGB(190, 80));
-            Assert.assertEquals(BLACK, buffer.getRGB(190, 85));
-            Assert.assertEquals(BLACK, buffer.getRGB(190, 100));
+            final RenderedImage buffer = createWorldImage(layer);
+            Assert.assertEquals(BLACK, getRGB(buffer, 170, 80));
+            Assert.assertEquals(WHITE, getRGB(buffer, 170, 85));
+            Assert.assertEquals(WHITE, getRGB(buffer, 170, 100));
+            Assert.assertEquals(WHITE, getRGB(buffer, 180, 80));
+            Assert.assertEquals(BLACK, getRGB(buffer, 180, 85));
+            Assert.assertEquals(BLACK, getRGB(buffer, 180, 100));
+            Assert.assertEquals(WHITE, getRGB(buffer, 190, 80));
+            Assert.assertEquals(BLACK, getRGB(buffer, 190, 85));
+            Assert.assertEquals(BLACK, getRGB(buffer, 190, 100));
         }
+    }
+
+    /*
+     * Current implementation assume that we have a buffered image.
+     * TODO: update this method if this is no longer the case.
+     */
+    private static int getRGB(RenderedImage image, int x, int y) {
+        return ((BufferedImage) image).getRGB(x, y);
     }
 
     /**
      * Generate a black and white image.
      */
-    private static BufferedImage createWorldImage(MapItem item) throws PortrayalException {
+    private static RenderedImage createWorldImage(MapItem item) throws PortrayalException {
         final MapLayers context;
         if (item instanceof MapLayers) {
             context = (MapLayers) item;

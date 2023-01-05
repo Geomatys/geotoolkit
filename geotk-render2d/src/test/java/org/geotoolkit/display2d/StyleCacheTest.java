@@ -17,7 +17,7 @@
 package org.geotoolkit.display2d;
 
 import java.awt.Color;
-import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
 import java.util.ArrayList;
 import java.util.List;
 import org.geotoolkit.display2d.style.CachedExternal;
@@ -127,7 +127,7 @@ public class StyleCacheTest extends org.geotoolkit.test.TestBase {
         assertEquals(VisibilityState.VISIBLE, cached.isStaticVisible() );
         assertTrue(cached.isVisible(null));
 
-        BufferedImage buffer = cached.getImage(Float.NaN, 1, null);
+        RenderedImage buffer = cached.getImage(Float.NaN, 1, null);
         assertNotNull(buffer);
         assertEquals(buffer.getWidth(), 12);
         assertEquals(buffer.getHeight(), 12);
@@ -184,8 +184,8 @@ public class StyleCacheTest extends org.geotoolkit.test.TestBase {
         assertTrue(cached.isVisible(null));
 
 
-        BufferedImage buffer1 = cached.getImage(null, 5f, null);
-        BufferedImage buffer2 = cached.getImage(null, 5f, null);
+        RenderedImage buffer1 = cached.getImage(null, 5f, null);
+        RenderedImage buffer2 = cached.getImage(null, 5f, null);
 
         //we must have exactly the same object
         assertTrue(buffer1 == buffer2);
@@ -211,7 +211,7 @@ public class StyleCacheTest extends org.geotoolkit.test.TestBase {
         assertEquals(VisibilityState.DYNAMIC, cached.isStaticVisible() );
         assertTrue(cached.isVisible(null));
 
-        BufferedImage buffer = cached.getImage(null, 1, null);
+        RenderedImage buffer = cached.getImage(null, 1, null);
         assertNotNull(buffer);
         assertEquals(buffer.getWidth(), 12);
         assertEquals(buffer.getHeight(), 12);

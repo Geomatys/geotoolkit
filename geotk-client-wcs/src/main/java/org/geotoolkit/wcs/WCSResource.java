@@ -19,6 +19,7 @@ package org.geotoolkit.wcs;
 import java.awt.Dimension;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -130,7 +131,7 @@ public class WCSResource extends AbstractGridCoverageResource implements StoreRe
 
         //read image
         try (final InputStream stream = request.getResponseStream()) {
-            BufferedImage image = ImageIO.read(stream);
+            RenderedImage image = ImageIO.read(stream);
 
             //the envelope CRS may have been changed by prepareQuery method
             final CoordinateReferenceSystem resultCrs = CRS.getHorizontalComponent(env.getCoordinateReferenceSystem());

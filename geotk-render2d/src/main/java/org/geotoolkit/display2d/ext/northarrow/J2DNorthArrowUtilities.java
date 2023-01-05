@@ -18,11 +18,12 @@ package org.geotoolkit.display2d.ext.northarrow;
 
 import java.awt.Dimension;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Shape;
+import java.awt.image.BufferedImage;
+
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.ext.BackgroundTemplate;
 import org.geotoolkit.display2d.ext.BackgroundUtilities;
@@ -104,7 +105,7 @@ public class J2DNorthArrowUtilities {
             g2d.translate(-bounds.getCenterX(), -bounds.getCenterY());
             g2d.setClip(oldClip);
         }else{
-            final Image img = template.getImage();
+            final BufferedImage img = template.getImage();
             if(img == null) return;
 
             final Shape oldClip = g2d.getClip();

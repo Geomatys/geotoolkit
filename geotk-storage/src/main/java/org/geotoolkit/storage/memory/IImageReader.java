@@ -5,11 +5,12 @@
  */
 package org.geotoolkit.storage.memory;
 
+
 import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Locale;
 import javax.imageio.ImageReadParam;
@@ -28,11 +29,11 @@ public final class IImageReader extends ImageReader {
         super(spi);
     }
 
-    private BufferedImage getImage() throws IOException {
-        if (input instanceof BufferedImage) {
-            return (BufferedImage) input;
+    private RenderedImage getImage() throws IOException {
+        if (input instanceof RenderedImage) {
+            return (RenderedImage) input;
         } else {
-            throw new IOException("Input is not a BufferedImage : " + input);
+            throw new IOException("Input is not a RenderedImage : " + input);
         }
     }
 
@@ -70,10 +71,9 @@ public final class IImageReader extends ImageReader {
     @Override
     public BufferedImage read(int imageIndex, ImageReadParam param) throws IOException {
         //defensive copy
-        final BufferedImage image = getImage();
+        final RenderedImage image = getImage();
         final WritableRaster rastercp = image.copyData(null);
-        final BufferedImage copy = new BufferedImage(image.getColorModel(), rastercp, image.isAlphaPremultiplied(), new Hashtable<Object, Object>());
-        return copy;
+        return new BufferedImage(image.getColorModel(), rastercp, image.getColorModel().isAlphaPremultiplied(), null);
     }
 
     public static final class IISpi extends ImageReaderSpi{

@@ -17,7 +17,7 @@
 package org.geotoolkit.display2d.style.renderer;
 
 import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
 import java.util.stream.Stream;
 import org.apache.sis.internal.map.ExceptionPresentation;
 import org.apache.sis.internal.map.Presentation;
@@ -99,7 +99,7 @@ public class PointSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedPo
         }
 
         //create the image--------------------------------------------------
-        final BufferedImage img = symbol.getImage(candidate,coeff,false, hints);
+        final RenderedImage img = symbol.getImage(candidate,coeff,false, hints);
 
         if (img == null) {
             //may be correct, image can be too small for rendering

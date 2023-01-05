@@ -18,9 +18,9 @@ package org.geotoolkit.display2d.style;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.Raster;
+import java.awt.image.RenderedImage;
 import java.util.Arrays;
 import javax.measure.Unit;
 import org.apache.sis.feature.builder.AttributeRole;
@@ -120,7 +120,7 @@ public class TextSymbolizerTest extends org.geotoolkit.test.TestBase {
         final CanvasDef canvasdef = new CanvasDef(new Dimension(360, 180), env);
         canvasdef.setBackground(Color.WHITE);
 
-        final BufferedImage buffer = DefaultPortrayalService.portray(canvasdef, scenedef);
+        final RenderedImage buffer = DefaultPortrayalService.portray(canvasdef, scenedef);
         //ImageIO.write(buffer, "PNG", new File("test.png"));
 
         //we expect to have a blue label at the center of the image
