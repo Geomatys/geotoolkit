@@ -22,7 +22,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -151,9 +151,9 @@ public class LineSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedLin
             final float initGap = gc.getInitialGap(feature);
             final Point2D pt = new Point2D.Double();
             final CachedGraphicStroke cgs = gc.getCachedGraphic();
-            final BufferedImage img = cgs.getImage(feature, 1, hints);
-            final float imgWidth = img.getWidth(null);
-            final float imgHeight = img.getHeight(null);
+            final RenderedImage img = cgs.getImage(feature, 1, hints);
+            final float imgWidth = img.getWidth();
+            final float imgHeight = img.getHeight();
             final float gap = gc.getGap(feature)+ imgWidth;
             final AffineTransform trs = new AffineTransform();
 

@@ -19,6 +19,7 @@ package org.geotoolkit.display2d.style;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
@@ -103,23 +104,31 @@ public class GeometryExpressionTest extends org.geotoolkit.test.TestBase {
         canvasDef.setBackground(Color.WHITE);
         final SceneDef sceneDef = new SceneDef(context);
 
-        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef);
+        final RenderedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef);
 
         //we must obtain a red point of 10pixel width at image center
         final int red = Color.RED.getRGB();
         final int white = Color.WHITE.getRGB();
 
-        Assert.assertEquals(white, image.getRGB(20, 9));
-        Assert.assertEquals(red, image.getRGB(20, 11));
-        Assert.assertEquals(red, image.getRGB(20, 20));
-        Assert.assertEquals(red, image.getRGB(20, 29));
-        Assert.assertEquals(white, image.getRGB(20, 31));
+        Assert.assertEquals(white, getRGB(image, 20, 9));
+        Assert.assertEquals(red, getRGB(image, 20, 11));
+        Assert.assertEquals(red, getRGB(image, 20, 20));
+        Assert.assertEquals(red, getRGB(image, 20, 29));
+        Assert.assertEquals(white, getRGB(image, 20, 31));
 
-        Assert.assertEquals(white, image.getRGB(9, 20));
-        Assert.assertEquals(red, image.getRGB(11, 20));
-        Assert.assertEquals(red, image.getRGB(20, 20));
-        Assert.assertEquals(red, image.getRGB(29, 20));
-        Assert.assertEquals(white, image.getRGB(31, 20));
+        Assert.assertEquals(white, getRGB(image, 9, 20));
+        Assert.assertEquals(red, getRGB(image, 11, 20));
+        Assert.assertEquals(red, getRGB(image, 20, 20));
+        Assert.assertEquals(red, getRGB(image, 29, 20));
+        Assert.assertEquals(white, getRGB(image, 31, 20));
+    }
+
+    /*
+     * Current implementation assume that we have a buffered image.
+     * TODO: update this method if this is no longer the case.
+     */
+    private static int getRGB(RenderedImage image, int x, int y) {
+        return ((BufferedImage) image).getRGB(x, y);
     }
 
     /**
@@ -167,24 +176,24 @@ public class GeometryExpressionTest extends org.geotoolkit.test.TestBase {
         canvasDef.setBackground(Color.WHITE);
         final SceneDef sceneDef = new SceneDef(context);
 
-        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef);
+        final RenderedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef);
         ImageIO.write(image, "png", new File("test.png"));
 
         //we must obtain a red point of 20pixel width at image center
         final int red = Color.RED.getRGB();
         final int white = Color.WHITE.getRGB();
 
-        Assert.assertEquals(white, image.getRGB(20, 9));
-        Assert.assertEquals(red, image.getRGB(20, 11));
-        Assert.assertEquals(red, image.getRGB(20, 20));
-        Assert.assertEquals(red, image.getRGB(20, 29));
-        Assert.assertEquals(white, image.getRGB(20, 31));
+        Assert.assertEquals(white, getRGB(image, 20, 9));
+        Assert.assertEquals(red, getRGB(image, 20, 11));
+        Assert.assertEquals(red, getRGB(image, 20, 20));
+        Assert.assertEquals(red, getRGB(image, 20, 29));
+        Assert.assertEquals(white, getRGB(image, 20, 31));
 
-        Assert.assertEquals(white, image.getRGB(9, 20));
-        Assert.assertEquals(red, image.getRGB(11, 20));
-        Assert.assertEquals(red, image.getRGB(20, 20));
-        Assert.assertEquals(red, image.getRGB(29, 20));
-        Assert.assertEquals(white, image.getRGB(31, 20));
+        Assert.assertEquals(white, getRGB(image, 9, 20));
+        Assert.assertEquals(red, getRGB(image, 11, 20));
+        Assert.assertEquals(red, getRGB(image, 20, 20));
+        Assert.assertEquals(red, getRGB(image, 29, 20));
+        Assert.assertEquals(white, getRGB(image, 31, 20));
 
     }
 

@@ -21,6 +21,9 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.Raster;
+import java.awt.image.RenderedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -100,7 +103,7 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
         canvasDef.setBackground(Color.WHITE);
         canvasDef.setEnvelope(env);
 
-        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef);
+        final RenderedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef);
         checkImage(image, new Rectangle(180, 80, 20, 10));
     }
 
@@ -129,7 +132,7 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
         canvasDef.setDimension(new Dimension(360, 180));
         canvasDef.setBackground(Color.WHITE);
 
-        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef);
+        final RenderedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef);
         checkImage(image, new Rectangle(350, 80, 10, 20),
                           new Rectangle(0, 80, 10, 20));
     }
@@ -159,7 +162,7 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
         canvasDef.setDimension(new Dimension(360, 180));
         canvasDef.setBackground(Color.WHITE);
 
-        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef);
+        final RenderedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef);
         checkImage(image, new Rectangle(350, 80, 10, 20),
                           new Rectangle(0, 80, 10, 20));
     }
@@ -189,7 +192,7 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
         canvasDef.setDimension(new Dimension(360, 180));
         canvasDef.setBackground(Color.WHITE);
 
-        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef);
+        final RenderedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef);
         checkImage(image, new Rectangle(350, 80, 10, 20),
                           new Rectangle(0, 80, 10, 20));
     }
@@ -219,7 +222,7 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
         canvasDef.setDimension(new Dimension(360, 180));
         canvasDef.setBackground(Color.WHITE);
 
-        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef);
+        final RenderedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef);
         checkImage(image, new Rectangle(350, 80, 10, 20),
                           new Rectangle(0, 80, 10, 20));
     }
@@ -249,7 +252,7 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
         final CanvasDef canvasDef = new CanvasDef(new Dimension(360, 180), env);
         canvasDef.setBackground(Color.WHITE);
 
-        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef);
+        final RenderedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef);
         checkImage(image, new Rectangle(0, 80, 360, 20));
     }
 
@@ -276,7 +279,7 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
         final CanvasDef canvasDef = new CanvasDef(new Dimension(360*4, 180), env);
         canvasDef.setBackground(Color.WHITE);
 
-        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef);
+        final RenderedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef);
         checkImage(image, new Rectangle(180     , 80, 20, 10),
                           new Rectangle(180+ 360, 80, 20, 10),
                           new Rectangle(180+ 720, 80, 20, 10),
@@ -306,7 +309,7 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
         final CanvasDef canvasDef = new CanvasDef(new Dimension(1080, 180), env);
         canvasDef.setBackground(Color.WHITE);
 
-        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef);
+        final RenderedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef);
         checkImage(image, new Rectangle(-5      , 80, 20, 10),
                           new Rectangle(-5 + 360, 80, 20, 10),
                           new Rectangle(-5 + 720, 80, 20, 10),
@@ -332,7 +335,7 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
         final CanvasDef canvasDef = new CanvasDef(new Dimension(360, 180), env);
         canvasDef.setBackground(Color.WHITE);
 
-        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef);
+        final RenderedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef);
 
         ImageIO.write(image, "PNG", File.createTempFile("test", ".png"));
 
@@ -362,7 +365,7 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
         final CanvasDef canvasDef = new CanvasDef(new Dimension(360, 180), env);
         canvasDef.setBackground(Color.WHITE);
 
-        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef);
+        final RenderedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef);
 
         ImageIO.write(image, "PNG", File.createTempFile("test", ".png"));
 
@@ -391,7 +394,7 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
         final CanvasDef canvasDef = new CanvasDef(new Dimension(360, 180), env);
         canvasDef.setBackground(Color.WHITE);
 
-        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef);
+        final RenderedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef);
         checkImage(image, new Rectangle(350, 80, 10, 20),
                           new Rectangle(0, 80, 10, 20));
     }
@@ -415,7 +418,7 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
         final CanvasDef canvasDef = new CanvasDef(new Dimension(360, 180), env);
         canvasDef.setBackground(Color.WHITE);
 
-        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef);
+        final RenderedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef);
         checkImage(image, new Rectangle(350, 80, 10, 20),
                           new Rectangle(0, 80, 10, 20));
     }
@@ -438,7 +441,7 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
         final CanvasDef canvasDef = new CanvasDef(new Dimension(360, 180), env);
         canvasDef.setBackground(Color.WHITE);
 
-        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef);
+        final RenderedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef);
         checkImage(image, new Rectangle(350, 80, 10, 20),
                           new Rectangle(0, 80, 10, 20));
     }
@@ -461,7 +464,7 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
         final CanvasDef canvasDef = new CanvasDef(new Dimension(360, 180), env);
         canvasDef.setBackground(Color.WHITE);
 
-        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef);
+        final RenderedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef);
         checkImage(image, new Rectangle(60, 50, 260, 110));
     }
 
@@ -483,7 +486,7 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
         final CanvasDef canvasDef = new CanvasDef(new Dimension(360, 180), env);
         canvasDef.setBackground(Color.WHITE);
 
-        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef);
+        final RenderedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef);
         checkImage(image, new Rectangle(0, 0, 360, 180));
     }
 
@@ -506,7 +509,7 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
         final CanvasDef canvasDef = new CanvasDef(new Dimension(360, 180), env);
         canvasDef.setBackground(Color.WHITE);
 
-        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef);
+        final RenderedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef);
         checkImage(image, new Rectangle(350, 80, 10, 20),
                           new Rectangle(0, 80, 10, 20));
     }
@@ -530,7 +533,7 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
         final CanvasDef canvasDef = new CanvasDef(new Dimension(360, 180), env);
         canvasDef.setBackground(Color.WHITE);
 
-        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef);
+        final RenderedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef);
         checkImage(image, new Rectangle(350, 80, 10, 20),
                           new Rectangle(0, 80, 10, 20));
     }
@@ -539,17 +542,20 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
      * Test the image content.
      * The image must be completely white and pixels inside the fille areas must be black.
      */
-    private void checkImage(BufferedImage image, Rectangle ... fillAreas){
+    private void checkImage(RenderedImage image, Rectangle ... fillAreas){
 
         final int white = Color.WHITE.getRGB();
         final int black = Color.RED.getRGB();
 
-        final int width = image.getWidth();
-        final int height = image.getHeight();
+        ColorModel cm = image.getColorModel();
+        Raster raster = (image instanceof BufferedImage) ? ((BufferedImage) image).getRaster() : image.getData();
 
-        for(int y=0;y<height;y++){
-            for(int x=0;x<width;x++){
-                int rgb = image.getRGB(x, y);
+        final int xmax = raster.getMinX() + raster.getWidth();
+        final int ymax = raster.getMinY() + raster.getHeight();
+
+        for (int y=raster.getMinY(); y<ymax; y++) {
+            for (int x=raster.getMinX(); x < xmax; x++) {
+                int rgb = cm.getRGB(raster.getDataElements(x, y, null));
 
                 boolean inside = false;
                 for(Rectangle rect : fillAreas){

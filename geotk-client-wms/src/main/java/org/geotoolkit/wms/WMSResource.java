@@ -22,6 +22,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -521,7 +522,7 @@ public class WMSResource extends AbstractGridCoverageResource implements StoreRe
 
         //read image
         try (final InputStream stream = request.getResponseStream()) {
-            BufferedImage image = ImageIO.read(stream);
+            RenderedImage image = ImageIO.read(stream);
 
             //the envelope CRS may have been changed by prepareQuery method
             final CoordinateReferenceSystem resultCrs = CRS.getHorizontalComponent(env.getCoordinateReferenceSystem());

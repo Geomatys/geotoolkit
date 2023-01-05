@@ -23,6 +23,7 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
 import java.util.List;
 import org.geotoolkit.display.shape.TransformedShape;
 import org.geotoolkit.display2d.GO2Utilities;
@@ -490,7 +491,7 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
         if(candidateSize <= 0) return 0;
 
         //the subbuffer image
-        BufferedImage subBuffer = null;
+        RenderedImage subBuffer = null;
 
 //        //we have a cached subbuffer ------------------------------------------------------------
 //        if(cachedValues.containsKey(ID_SUBBUFFER)){
@@ -582,7 +583,6 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
 
 //            if(cachedValues.get(ID_SUBBUFFER) == null){
             if(true){
-
 
                 //test dynamic mark
                 if(cachedMark != null){

@@ -24,7 +24,6 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
-import java.awt.image.WritableRaster;
 import static java.lang.Double.NEGATIVE_INFINITY;
 import static java.lang.Double.POSITIVE_INFINITY;
 import java.util.ArrayList;
@@ -322,7 +321,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         env.setRange(1, -90, +90);
         final CanvasDef cdef = new CanvasDef(new Dimension(360, 180), env);
 
-        final BufferedImage result = DefaultPortrayalService.portray(cdef, sdef);
+        final RenderedImage result = DefaultPortrayalService.portray(cdef, sdef);
         final Raster raster = result.getData();
         final int[] pixel = new int[4];
         final int[] trans = new int[]{0,0,0,0};
@@ -375,11 +374,13 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         final SceneDef scene = new SceneDef(context);
         final CanvasDef canvas = new CanvasDef(new Dimension(256, 256), env);
 
-        final BufferedImage result = DefaultPortrayalService.portray(canvas, scene);
+        final RenderedImage result = DefaultPortrayalService.portray(canvas, scene);
         final int color = Color.BLUE.getRGB();
         for (int y=0;y<256;y++) {
             for (int x=0;x<256;x++) {
-                assertEquals(color, result.getRGB(x, y));
+                Object pix = result.getData().getDataElements(x,y,null);
+                int[] pixArray = (int[])pix;
+                assertEquals(color, pixArray[0]);
             }
         }
     }
@@ -426,11 +427,11 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
 
         CanvasDef cdef = new CanvasDef(new Dimension(360, 360), env);
         cdef.setBackground(Color.WHITE);
-        BufferedImage buffer = DefaultPortrayalService.portray(cdef, new SceneDef(context, hints));
+        RenderedImage buffer = DefaultPortrayalService.portray(cdef, new SceneDef(context, hints));
         assertEquals(360,buffer.getWidth());
         assertEquals(360,buffer.getHeight());
 
-        WritableRaster raster = buffer.getRaster();
+        Raster raster = buffer.getData();
         raster.getPixel(0, 0, pixel);       assertArrayEquals(white, pixel);
         raster.getPixel(359, 0, pixel);     assertArrayEquals(white, pixel);
         raster.getPixel(359, 359, pixel);   assertArrayEquals(white, pixel);
@@ -451,7 +452,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         assertEquals(360,buffer.getWidth());
         assertEquals(360,buffer.getHeight());
 
-        raster = buffer.getRaster();
+        raster = buffer.getData();
         raster.getPixel(0, 0, pixel);       assertArrayEquals(white, pixel);
         raster.getPixel(359, 0, pixel);     assertArrayEquals(white, pixel);
         raster.getPixel(359, 359, pixel);   assertArrayEquals(white, pixel);
@@ -537,11 +538,19 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         cdef.setBackground(Color.WHITE);
         final SceneDef sdef = new SceneDef(context);
 
-        final BufferedImage img = DefaultPortrayalService.portray(cdef, sdef);
+        final RenderedImage img = DefaultPortrayalService.portray(cdef, sdef);
 
-        assertEquals(Color.BLACK.getRGB(), img.getRGB(9, 5));
-        assertEquals(Color.BLACK.getRGB(), img.getRGB(8, 5));
-        assertEquals(Color.WHITE.getRGB(), img.getRGB(7, 5));
+        assertEquals(Color.BLACK.getRGB(), getRGB(img, 9, 5));
+        assertEquals(Color.BLACK.getRGB(), getRGB(img, 8, 5));
+        assertEquals(Color.WHITE.getRGB(), getRGB(img, 7, 5));
+    }
+
+    /*
+     * Current implementation assume that we have a buffered image.
+     * TODO: update this method if this is no longer the case.
+     */
+    private static int getRGB(RenderedImage image, int x, int y) {
+        return ((BufferedImage) image).getRGB(x, y);
     }
 
     /**
@@ -686,7 +695,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
                     final CanvasDef cdef = new CanvasDef(new Dimension(800,600), cenv);
                     cdef.setAzimuth(0);
                     cdef.setMonitor(monitor);
-                    final BufferedImage img = DefaultPortrayalService.portray(
+                    final RenderedImage img = DefaultPortrayalService.portray(
                         cdef, new SceneDef(context));
                     assertNull(monitor.getLastException());
                     assertNotNull(img);

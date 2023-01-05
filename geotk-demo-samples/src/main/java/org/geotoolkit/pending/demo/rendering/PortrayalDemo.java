@@ -3,6 +3,7 @@ package org.geotoolkit.pending.demo.rendering;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URISyntaxException;
@@ -20,6 +21,7 @@ import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.service.SceneDef;
+import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.storage.DataStores;
@@ -45,11 +47,11 @@ public class PortrayalDemo {
         final SceneDef scenedef = new SceneDef(context);
 
         //generate the image
-        final BufferedImage img = DefaultPortrayalService.portray(canvasdef, scenedef);
+        final RenderedImage img = DefaultPortrayalService.portray(canvasdef, scenedef);
 
         //show the image
         final JFrame frm = new JFrame();
-        frm.setContentPane(new JLabel(new ImageIcon(img)));
+        frm.setContentPane(new JLabel(new ImageIcon(BufferedImages.createImage(img.getWidth(),img.getHeight(),img))));
         frm.pack();
         frm.setLocationRelativeTo(null);
         frm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

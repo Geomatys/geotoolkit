@@ -22,6 +22,7 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
+import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -66,6 +67,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+
 import org.junit.Ignore;
 import org.junit.Test;
 import org.locationtech.jts.geom.Coordinate;
@@ -124,10 +126,18 @@ public class RasterSymbolizerTest extends org.geotoolkit.test.TestBase {
 
         final CanvasDef cdef = new CanvasDef(grid);
         final SceneDef sdef = new SceneDef(context);
-        final BufferedImage result = DefaultPortrayalService.portray(cdef, sdef);
-        assertEquals(Color.RED.getRGB(),   result.getRGB(0, 0));
-        assertEquals(Color.GREEN.getRGB(), result.getRGB(359, 0));
-        assertEquals(Color.BLUE.getRGB(),  result.getRGB(0, 179));
+        final RenderedImage result = DefaultPortrayalService.portray(cdef, sdef);
+        assertEquals(Color.RED.getRGB(),   getRGB(result, 0, 0));
+        assertEquals(Color.GREEN.getRGB(), getRGB(result, 359, 0));
+        assertEquals(Color.BLUE.getRGB(),  getRGB(result, 0, 179));
+    }
+
+    /*
+     * Current implementation assume that we have a buffered image.
+     * TODO: update this method if this is no longer the case.
+     */
+    private static int getRGB(RenderedImage image, int x, int y) {
+        return ((BufferedImage) image).getRGB(x, y);
     }
 
     /**
@@ -160,26 +170,26 @@ public class RasterSymbolizerTest extends org.geotoolkit.test.TestBase {
 
         final CanvasDef cdef = new CanvasDef(grid);
         final SceneDef sdef = new SceneDef(context);
-        BufferedImage result = DefaultPortrayalService.portray(cdef, sdef);
-        assertEquals(Color.RED.getRGB(),   result.getRGB(0, 0));
-        assertEquals(Color.GREEN.getRGB(), result.getRGB(17, 0));
-        assertEquals(Color.BLUE.getRGB(),  result.getRGB(0, 8));
+        RenderedImage result = DefaultPortrayalService.portray(cdef, sdef);
+        assertEquals(Color.RED.getRGB(),   getRGB(result, 0, 0));
+        assertEquals(Color.GREEN.getRGB(), getRGB(result, 17, 0));
+        assertEquals(Color.BLUE.getRGB(),  getRGB(result, 0, 8));
 
         // Now, test with a resample (flip axes):
         final GridExtent latLonExtent = new GridExtent(9, 18);
         AffineTransform2D latLonG2C = new AffineTransform2D(20, 0, 0, 20, -80, -170);
         GridGeometry latLonGrid = new GridGeometry(latLonExtent, PixelInCell.CELL_CENTER, latLonG2C, CommonCRS.WGS84.geographic());
         result = DefaultPortrayalService.portray(new CanvasDef(latLonGrid), sdef);
-        assertEquals(Color.RED.getRGB(),   result.getRGB(0, 0));
-        assertEquals(Color.GREEN.getRGB(), result.getRGB(0, 17));
-        assertEquals(Color.BLUE.getRGB(),  result.getRGB(8, 0));
+        assertEquals(Color.RED.getRGB(),   getRGB(result, 0, 0));
+        assertEquals(Color.GREEN.getRGB(), getRGB(result, 0, 17));
+        assertEquals(Color.BLUE.getRGB(),  getRGB(result, 8, 0));
 
         latLonG2C = new AffineTransform2D(-20, 0, 0, 20, 80, -170);
         latLonGrid = new GridGeometry(latLonExtent, PixelInCell.CELL_CENTER, latLonG2C, CommonCRS.WGS84.geographic());
         result = DefaultPortrayalService.portray(new CanvasDef(latLonGrid), sdef);
-        assertEquals(Color.RED.getRGB(),   result.getRGB(8, 0));
-        assertEquals(Color.GREEN.getRGB(), result.getRGB(8, 17));
-        assertEquals(Color.BLUE.getRGB(),  result.getRGB(0, 0));
+        assertEquals(Color.RED.getRGB(),   getRGB(result, 8, 0));
+        assertEquals(Color.GREEN.getRGB(), getRGB(result, 8, 17));
+        assertEquals(Color.BLUE.getRGB(),  getRGB(result, 0, 0));
 
     }
 
@@ -216,7 +226,7 @@ public class RasterSymbolizerTest extends org.geotoolkit.test.TestBase {
         final CanvasDef canvasdef = new CanvasDef(new Dimension(800, 800), env);
         canvasdef.setBackground(Color.WHITE);
 
-        final BufferedImage buffer = DefaultPortrayalService.portray(canvasdef, scenedef);
+        final RenderedImage buffer = DefaultPortrayalService.portray(canvasdef, scenedef);
         ImageIO.write(buffer, "PNG", new File("test.png"));
 
         //We should obtain a green triangle crossing the image looking like this :
@@ -288,9 +298,9 @@ public class RasterSymbolizerTest extends org.geotoolkit.test.TestBase {
         final MapLayers context = MapBuilder.createContext();
         context.getComponents().add(MapBuilder.createCoverageLayer(new InMemoryGridCoverageResource(coverage)));
 
-        final BufferedImage nearest;
-        final BufferedImage bicubic;
-        final BufferedImage lanczos;
+        final RenderedImage nearest;
+        final RenderedImage bicubic;
+        final RenderedImage lanczos;
         {
             final Hints hints = new Hints();
             hints.put(GO2Hints.KEY_INTERPOLATION, InterpolationCase.NEIGHBOR);
@@ -313,9 +323,9 @@ public class RasterSymbolizerTest extends org.geotoolkit.test.TestBase {
             lanczos = DefaultPortrayalService.portray(cdef, sdef);
         }
 
-        int nearestRgb = nearest.getRGB(179, 0);
-        int bicubicRgb = bicubic.getRGB(179, 0);
-        int naczosRgb = lanczos.getRGB(179, 0);
+        int nearestRgb = getRGB(nearest, 179, 0);
+        int bicubicRgb = getRGB(bicubic, 179, 0);
+        int naczosRgb  = getRGB(lanczos, 179, 0);
 
         assertTrue(nearestRgb != bicubicRgb);
         assertTrue(bicubicRgb != naczosRgb);
@@ -348,7 +358,7 @@ public class RasterSymbolizerTest extends org.geotoolkit.test.TestBase {
         MapLayer layer = MapBuilder.createLayer(new InMemoryGridCoverageResource(baseData));
         final MapLayers ctx = MapBuilder.createContext();
         ctx.getComponents().add(layer);
-        BufferedImage rendering = DefaultPortrayalService.portray(
+        RenderedImage rendering = DefaultPortrayalService.portray(
                 new CanvasDef(new Dimension(2, 2), geom.getEnvelope()),
                 new SceneDef(ctx, new Hints(GO2Hints.KEY_INTERPOLATION, InterpolationCase.NEIGHBOR,
                         RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR))
@@ -356,7 +366,7 @@ public class RasterSymbolizerTest extends org.geotoolkit.test.TestBase {
 
         // As display is oriented upper-left, output should be flipped on y axis. Also, the renderer will stretch values
         // along 256 colors, so we have to adapt comparison.
-        final int[] pixels = rendering.getRaster().getPixels(0, 0, 2, 2, (int[]) null);
+        final int[] pixels = rendering.getData().getPixels(0, 0, 2, 2, (int[]) null);
         final int[] expected = {
                 255, 255, 255, 255,  165, 165, 165, 255,
                   0,   0,   0, 255,   88,  88,  88, 255
@@ -379,10 +389,10 @@ public class RasterSymbolizerTest extends org.geotoolkit.test.TestBase {
                         RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR))
         );
 
-        assertEquals(Color.WHITE.getRGB(), rendering.getRGB(0, 0));
-        assertEquals(Color.BLUE.getRGB(), rendering.getRGB(1, 0));
-        assertEquals(Color.RED.getRGB(), rendering.getRGB(0, 1));
-        assertEquals(Color.GREEN.getRGB(), rendering.getRGB(1, 1));
+        assertEquals(Color.WHITE.getRGB(), getRGB(rendering, 0, 0));
+        assertEquals(Color.BLUE .getRGB(), getRGB(rendering, 1, 0));
+        assertEquals(Color.RED  .getRGB(), getRGB(rendering, 0, 1));
+        assertEquals(Color.GREEN.getRGB(), getRGB(rendering, 1, 1));
     }
 
     @Test
@@ -454,20 +464,20 @@ public class RasterSymbolizerTest extends org.geotoolkit.test.TestBase {
 
         final CanvasDef cdef = new CanvasDef(grid);
         final SceneDef sdef = new SceneDef(context);
-        final BufferedImage result = DefaultPortrayalService.portray(cdef, sdef);
+        final RenderedImage result = DefaultPortrayalService.portray(cdef, sdef);
 
         final int RED = Color.RED.getRGB();
-        assertEquals(0, result.getRGB(0, 0));
-        assertEquals(0, result.getRGB(10, 10));
-        assertEquals(0, result.getRGB(189, 28));
-        assertEquals(RED, result.getRGB(189, 31));
-        assertEquals(0, result.getRGB(178, 66));
-        assertEquals(RED, result.getRGB(181, 66));
-        assertEquals(0, result.getRGB(241, 66));
-        assertEquals(RED, result.getRGB(238, 66));
-        assertEquals(0, result.getRGB(219, 91));
-        assertEquals(RED, result.getRGB(219, 88));
-        assertEquals(RED, result.getRGB(209, 58));
+        assertEquals(0,   getRGB(result, 0,   0));
+        assertEquals(0,   getRGB(result, 10,  10));
+        assertEquals(0,   getRGB(result, 189, 28));
+        assertEquals(RED, getRGB(result, 189, 31));
+        assertEquals(0,   getRGB(result, 178, 66));
+        assertEquals(RED, getRGB(result, 181, 66));
+        assertEquals(0,   getRGB(result, 241, 66));
+        assertEquals(RED, getRGB(result, 238, 66));
+        assertEquals(0,   getRGB(result, 219, 91));
+        assertEquals(RED, getRGB(result, 219, 88));
+        assertEquals(RED, getRGB(result, 209, 58));
     }
 
     private static RenderingContext2D mockRenderingContext(final GridGeometry target) {
