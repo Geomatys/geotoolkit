@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
-import org.geotoolkit.temporal.util.TimeParser;
 import static org.junit.Assert.*;
 import org.junit.Test;
 
@@ -66,7 +65,7 @@ public class TimeParserTest {
         final DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH'Z'");
         format.setTimeZone(TimeZone.getTimeZone("UTC"));
 
-        final List<Date> dates = new ArrayList<Date>();
+        final List<Date> dates = new ArrayList<>();
         TimeParser.parse(PERIOD, TimeParser.MILLIS_IN_DAY, dates);
         // Verify that the list contains at least one element.
         assertFalse(dates.isEmpty());

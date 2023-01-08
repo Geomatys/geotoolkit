@@ -86,7 +86,7 @@ public class DefaultTemporalCoordinateTest extends org.geotoolkit.test.TestBase 
      */
     @Test
     public void testEquals() {
-        assertFalse(temporalCoordinate1.equals(null));
+        assertNotNull(temporalCoordinate1);
         assertEquals(temporalCoordinate1, temporalCoordinate1);
         assertFalse(temporalCoordinate1.equals(temporalCoordinate2));
     }

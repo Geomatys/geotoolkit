@@ -120,63 +120,6 @@ public class DefaultTemporalReferenceSystemTest extends org.geotoolkit.test.Test
         //@todo this method is not implemented yet!
     }
 
-//    /**
-//     * Test of setName method, of class DefaultTemporalReferenceSystem.
-//     */
-//    @Test
-//    public void testSetName() {
-//        Identifier result = temporalReferenceSystem1.getName();
-////        ((DefaultTemporalReferenceSystem) temporalReferenceSystem1).setName(new NamedIdentifier(null, "new name"));
-//        assertFalse(temporalReferenceSystem1.getName().equals(result));
-//    }
-
-//    /**
-//     * Test of setDomainOfValidity method, of class DefaultTemporalReferenceSystem.
-//     */
-//    @Test
-//    public void testSetDomainOfValidity() {
-//        Extent result = temporalReferenceSystem1.getDomainOfValidity();
-//        DefaultExtent domainOfValidity = new DefaultExtent();
-//        domainOfValidity.setDescription(new SimpleInternationalString("Western Europe"));
-//        Calendar cal = Calendar.getInstance();
-//        cal.set(0, 0, 0);
-//        DefaultTemporalExtent temporalExt = new DefaultTemporalExtent();
-//        temporalExt.setBounds(cal.getTime(), new Date());
-//        Collection<TemporalExtent> collection = new ArrayList<TemporalExtent>();
-//        collection.add(temporalExt);
-//        domainOfValidity.setTemporalElements(collection);
-////        ((DefaultTemporalReferenceSystem) temporalReferenceSystem1).setDomainOfValidity(domainOfValidity);
-//        assertFalse(temporalReferenceSystem1.getDomainOfValidity().equals(result));
-//    }
-//    /**
-//     * Test of setName method, of class DefaultTemporalReferenceSystem.
-//     */
-//    @Test
-//    public void testSetName() {
-//        ReferenceIdentifier result = temporalReferenceSystem1.getName();
-//        ((DefaultTemporalReferenceSystem) temporalReferenceSystem1).setName(new NamedIdentifier(null, "new name"));
-//        assertFalse(temporalReferenceSystem1.getName().equals(result));
-//    }
-//
-//    /**
-//     * Test of setDomainOfValidity method, of class DefaultTemporalReferenceSystem.
-//     */
-//    @Test
-//    public void testSetDomainOfValidity() {
-//        Extent result = temporalReferenceSystem1.getDomainOfValidity();
-//        DefaultExtent domainOfValidity = new DefaultExtent();
-//        domainOfValidity.setDescription(new SimpleInternationalString("Western Europe"));
-//        Calendar cal = Calendar.getInstance();
-//        cal.set(0, 0, 0);
-//        DefaultTemporalExtent temporalExt = new DefaultTemporalExtent();
-//        temporalExt.setBounds(cal.getTime(), new Date());
-//        Collection<TemporalExtent> collection = new ArrayList<TemporalExtent>();
-//        collection.add(temporalExt);
-//        domainOfValidity.setTemporalElements(collection);
-//        ((DefaultTemporalReferenceSystem) temporalReferenceSystem1).setDomainOfValidity(domainOfValidity);
-//        assertFalse(temporalReferenceSystem1.getDomainOfValidity().equals(result));
-//    }
-
     /**
      * Test of setValidArea method, of class DefaultTemporalReferenceSystem.
      */
@@ -199,7 +142,7 @@ public class DefaultTemporalReferenceSystemTest extends org.geotoolkit.test.Test
      */
     @Test
     public void testEquals() {
-        assertFalse(temporalReferenceSystem1.equals(null));
+        assertNotNull(temporalReferenceSystem1);
         assertEquals(temporalReferenceSystem1, temporalReferenceSystem1);
         assertFalse(temporalReferenceSystem1.equals(temporalReferenceSystem2));
     }

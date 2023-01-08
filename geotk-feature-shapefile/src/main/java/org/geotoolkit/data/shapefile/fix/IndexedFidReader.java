@@ -21,7 +21,6 @@ package org.geotoolkit.data.shapefile.fix;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
@@ -38,8 +37,6 @@ import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 
 /**
  * This object reads from a file the fid of a feature in a shapefile.
- *
- * TODO: remove all Buffer cast after migration to JDK9.
  *
  * @author Jesse
  * @author Johann Sorel (Geomatys)
@@ -82,20 +79,20 @@ public class IndexedFidReader implements FeatureIDReader, Closeable {
         getHeader(fixUrl);
 
         buffer = ByteBuffer.allocate(IndexedFidWriter.RECORD_SIZE * 1024);
-        ((Buffer) buffer).position(((Buffer) buffer).limit());
+        buffer.position(buffer.limit());
     }
 
     private void getHeader(final URI fixUrl) throws IOException {
         final ByteBuffer buffer = ByteBuffer.allocate(IndexedFidWriter.HEADER_SIZE);
         ShapefileReader.fill(buffer, readChannel);
 
-        if (((Buffer) buffer).position() == 0) {
+        if (buffer.position() == 0) {
             done = true;
             count = 0;
             return;
         }
 
-        ((Buffer) buffer).position(0);
+        buffer.position(0);
 
         byte version = buffer.get();
 
@@ -203,7 +200,7 @@ public class IndexedFidReader implements FeatureIDReader, Closeable {
         goTo(predictedRec);
         hasNext(); // force data reading
         next();
-        ((Buffer) buffer).limit(buffer.capacity());
+        buffer.limit(buffer.capacity());
         if (currentId == desired) {
             return currentShxIndex;
         }
@@ -242,10 +239,10 @@ public class IndexedFidReader implements FeatureIDReader, Closeable {
                     || newPosition < bufferStart) {
                 FileChannel fc = (FileChannel) readChannel;
                 fc.position(newPosition);
-                ((Buffer) buffer).limit(buffer.capacity());
-                ((Buffer) buffer).position(((Buffer) buffer).limit());
+                buffer.limit(buffer.capacity());
+                buffer.position(buffer.limit());
             } else {
-                ((Buffer) buffer).position((int) (newPosition - bufferStart));
+                buffer.position((int) (newPosition - bufferStart));
             }
         } else {
             throw new IOException(
@@ -283,8 +280,8 @@ public class IndexedFidReader implements FeatureIDReader, Closeable {
             return false;
         }
 
-        if (((Buffer) buffer).position() == ((Buffer) buffer).limit()) {
-            ((Buffer) buffer).position(0);
+        if (buffer.position() == buffer.limit()) {
+            buffer.position(0);
 
             final FileChannel fc = (FileChannel) readChannel;
 
@@ -297,7 +294,7 @@ public class IndexedFidReader implements FeatureIDReader, Closeable {
             }
 
             if (read != 0) {
-                ((Buffer) buffer).position(0);
+                buffer.position(0);
             }
         }
 

@@ -20,7 +20,6 @@ package org.geotoolkit.temporal.object;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.SimpleInternationalString;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.temporal.reference.DefaultTemporalReferenceSystem;
@@ -31,7 +30,6 @@ import org.opengis.temporal.DateAndTime;
 import org.opengis.temporal.TemporalReferenceSystem;
 import static org.junit.Assert.*;
 import org.opengis.referencing.IdentifiedObject;
-import org.opengis.referencing.datum.TemporalDatum;
 import org.opengis.util.InternationalString;
 
 
@@ -50,9 +48,7 @@ public class DefaultDateAndTimeTest extends org.geotoolkit.test.TestBase {
         NamedIdentifier name = new NamedIdentifier(null, "Gregorian calendar");
         final Map<String, Object> properties = new HashMap<>();
         properties.put(IdentifiedObject.NAME_KEY, name);
-        TemporalDatum tempdat = CommonCRS.Temporal.UNIX.datum();
         TemporalReferenceSystem frame = new DefaultTemporalReferenceSystem(properties);
-//        TemporalReferenceSystem frame = new DefaultTemporalReferenceSystem(name, null);
         int[] cal1 = {1981, 6, 25};
         int[] cal2 = {2000, 1, 1};
         Number[] clck1 = {8, 16, 25};

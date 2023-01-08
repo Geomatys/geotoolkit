@@ -166,42 +166,13 @@ public class DefaultCalendarTest extends org.geotoolkit.test.TestBase {
         Clock result = calendar1.getTimeBasis();
         assertEquals(calendar2.getTimeBasis(), result);
     }
-//
-//    /**
-//     * Test of setBasis method, of class DefaultCalendar.
-//     */
-//    @Test
-//    public void testSetBasis() throws ParseException {
-//        Collection<CalendarEra> result = (Collection<CalendarEra>) calendar1.getReferenceFrames();
-//        int[] calendarDate = {1, 1, 1};
-//        CalendarEra calendarEra = new DefaultCalendarEra(new SimpleInternationalString("Babylonian calendar"),
-//                new SimpleInternationalString("Ascension of Nebuchadnezzar II to the throne of Babylon"),
-//                new DefaultCalendarDate(calendar1, null, null, calendarDate),
-//                new DefaultJulianDate(calendar1, null, 1721423.25),
-//                new DefaultPeriod(new DefaultInstant(new DefaultPosition(new DefaultJulianDate(calendar1, null, 2087769))),
-//                new DefaultInstant(new DefaultPosition(new DefaultJulianDate(calendar1, null, 2299160)))));
-//        Collection<CalendarEra> collection = new ArrayList<CalendarEra>();
-//        collection.add(calendarEra);
-//        ((DefaultCalendar) calendar1).setReferenceFrames(collection);
-//        assertFalse(calendar1.getReferenceFrames().equals(result));
-//    }
-//
-//    /**
-//     * Test of setClock method, of class DefaultCalendar.
-//     */
-//    @Test
-//    public void testSetClock() {
-//        Clock result = calendar1.getTimeBasis();
-//        ((DefaultCalendar) calendar1).setTimeBasis(null);
-//        assertEquals(calendar1.getTimeBasis(), result);
-//    }
 
     /**
      * Test of equals method, of class DefaultCalendar.
      */
     @Test
     public void testEquals() {
-        assertFalse(calendar1.equals(null));
+        assertNotNull(calendar1);
         assertEquals(calendar1, calendar1);
         assertFalse(calendar1.equals(calendar2));
     }

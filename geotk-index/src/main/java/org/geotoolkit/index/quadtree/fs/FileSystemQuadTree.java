@@ -21,7 +21,6 @@ import org.locationtech.jts.geom.Envelope;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
@@ -51,7 +50,7 @@ public class FileSystemQuadTree extends QuadTree {
         final ByteBuffer buf = ByteBuffer.allocate(8);
         buf.order(order);
         channel.read(buf);
-        ((Buffer) buf).flip(); //TODO: remove all Buffer cast after migration to JDK9.
+        buf.flip();
 
         return new FileSystemQuadTree(buf.getInt(), buf.getInt(), channel, order);
     }

@@ -20,6 +20,7 @@ package org.geotoolkit.temporal.object;
 import java.util.Map;
 import org.apache.sis.referencing.AbstractIdentifiedObject;
 import org.opengis.referencing.ReferenceSystem;
+import org.opengis.temporal.IndeterminateValue;
 import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
 import org.opengis.temporal.RelativePosition;
@@ -71,7 +72,43 @@ public abstract class DefaultTemporalPrimitive extends AbstractIdentifiedObject 
             Instant timeobject = (Instant) this;
             Instant instantOther = (Instant) other;
 
+            // test the relative position when the other paramter has an indeterminate value.
             if (timeobject.getDate() == null || instantOther.getDate() == null) {
+                if (timeobject.getDate() != null && instantOther.getTemporalPosition() != null && instantOther.getTemporalPosition().getIndeterminatePosition() != null) {
+                    IndeterminateValue indeterminatePosition = instantOther.getTemporalPosition().getIndeterminatePosition();
+                    if (indeterminatePosition == IndeterminateValue.AFTER) {
+                       return RelativePosition.AFTER;
+                    } else if (indeterminatePosition == IndeterminateValue.BEFORE) {
+                       return RelativePosition.BEFORE;
+                    } else if (indeterminatePosition == IndeterminateValue.NOW) {
+                       long currentMillis = System.currentTimeMillis();
+                       long toMillis      = timeobject.getDate().getTime();
+                       if (toMillis > currentMillis) {
+                           return RelativePosition.AFTER;
+                       } else if (toMillis < currentMillis) {
+                           return RelativePosition.BEFORE;
+                       } else {
+                           return RelativePosition.EQUALS;
+                       }
+                    }
+                } else if (instantOther.getDate() != null && timeobject.getTemporalPosition() != null && timeobject.getTemporalPosition().getIndeterminatePosition() != null) {
+                    IndeterminateValue indeterminatePosition =  timeobject.getTemporalPosition().getIndeterminatePosition();
+                    if (indeterminatePosition == IndeterminateValue.AFTER) {
+                       return RelativePosition.AFTER;
+                    } else if (indeterminatePosition == IndeterminateValue.BEFORE) {
+                       return RelativePosition.BEFORE;
+                    } else if (indeterminatePosition == IndeterminateValue.NOW) {
+                       long currentMillis = System.currentTimeMillis();
+                       long toMillis      = instantOther.getDate().getTime();
+                       if (toMillis > currentMillis) {
+                           return RelativePosition.BEFORE;
+                       } else if (toMillis < currentMillis) {
+                           return RelativePosition.AFTER;
+                       } else {
+                           return RelativePosition.EQUALS;
+                       }
+                    }
+                }
                 return null;
             } else if (timeobject.getDate().before(instantOther.getDate())) {
                 return RelativePosition.BEFORE;

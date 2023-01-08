@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.util.NullArgumentException;
+import static org.geotoolkit.temporal.object.TemporalUtilities.dateEquals;
 import org.opengis.temporal.Instant;
 import org.opengis.temporal.TemporalPosition;
 import org.opengis.temporal.TemporalReferenceSystem;
@@ -207,64 +208,6 @@ public class DefaultInstant extends DefaultTemporalGeometricPrimitive implements
     public TemporalPosition getTemporalPosition() {
         return temporalPosition;
     }
-//
-//    /**
-//     * Returns the Collection of temporal {@link org.opengis.temporal.Period}s,
-//     * for which this Instant is the beginning.
-//     *
-//     * @return the Collection of temporal {@link org.opengis.temporal.Period}s,
-//     * for which this Instant is the beginning. The collection may be empty.
-//     * @see org.opengis.temporal.Period#getBeginning()
-//     */
-//    @Override
-//    public Collection<Period> getBegunBy() {
-//        return begunBy;
-//    }
-//
-//    /**
-//     * Returns the collection of temporal {@link org.opengis.temporal.Period}s,
-//     * for which this Instant is the end.
-//     *
-//     * @return the Collection of temporal {@link org.opengis.temporal.Period}s,
-//     * for which this Instant is the end. The collection may be empty.
-//     * @see org.opengis.temporal.Period#getEnding()
-//     */
-//    @Override
-//    public Collection<Period> getEndedBy() {
-//        return endBy;
-//    }
-//
-//    /**
-//     * Set a new position of this {@linkplain Instant TM_Instant},
-//     * it shall be associated with a single {@link TemporalReferenceSystem}.
-//     *
-//     * @param position The new position of this {@linkplain Instant TM_Instant}.
-//     */
-//    public void setPosition(final Position position) {
-//        this.position = position;
-//    }
-//
-//    /**
-//     * Set a new collection of temporal {@link org.opengis.temporal.Period}s,
-//     * for which this Instant is the beginning.
-//     *
-//     * @param begunBy The new collection of temporal {@link org.opengis.temporal.Period}s,
-//     * for which this Instant is the beginning.
-//     */
-//    public void setBegunBy(final Collection<Period> begunBy) {
-//        this.begunBy = begunBy;
-//    }
-//
-//    /**
-//     * Set a new collection of temporal {@link org.opengis.temporal.Period}s,
-//     * for which this Instant is the end.
-//     *
-//     * @param endBy The new collection of temporal {@link org.opengis.temporal.Period}s,
-//     * for which this Instant is the end.
-//     */
-//    public void setEndBy(final Collection<Period> endBy) {
-//        this.endBy = endBy;
-//    }
 
     /**
      * Verify if this entry is identical to the specified object.
@@ -277,9 +220,8 @@ public class DefaultInstant extends DefaultTemporalGeometricPrimitive implements
         if (object instanceof DefaultInstant) {
             final DefaultInstant that = (DefaultInstant) object;
 
-            return Objects.equals(this.date, that.date) &&
-                   Objects.equals(this.temporalPosition, that.temporalPosition);// &&
-//                    Objects.equals(this.endBy, that.endBy);
+            return dateEquals(this.date, that.date) &&
+                   Objects.equals(this.temporalPosition, that.temporalPosition);
         }
         return false;
     }
@@ -291,8 +233,6 @@ public class DefaultInstant extends DefaultTemporalGeometricPrimitive implements
     protected long computeHashCode() {
         int hash = 5;
         hash = 37 * hash + (this.date != null ? this.date.hashCode() : 0);
-//        hash = 37 * hash + (this.begunBy != null ? this.begunBy.hashCode() : 0);
-//        hash = 37 * hash + (this.endBy != null ? this.endBy.hashCode() : 0);
         return hash;
     }
 
@@ -308,9 +248,6 @@ public class DefaultInstant extends DefaultTemporalGeometricPrimitive implements
         if (temporalPosition != null) {
             s.append("temporalPosition :").append(temporalPosition).append('\n');
         }
-//        if (endBy != null) {
-//            s.append("endBy:").append(endBy).append('\n');
-//        }
         return s.toString();
     }
 }

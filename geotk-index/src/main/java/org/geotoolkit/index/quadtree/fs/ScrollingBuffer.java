@@ -19,7 +19,6 @@
 package org.geotoolkit.index.quadtree.fs;
 
 import java.io.IOException;
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
@@ -28,8 +27,6 @@ import java.nio.channels.FileChannel;
 /**
  * A utility class to access file contents by using a single scrolling
  * buffer reading file contents with a minimum of 8kb per access
- *
- * TODO: remove all Buffer cast after migration to JDK9.
  *
  * @author Johann Sorel (Geomatys)
  * @module
@@ -52,7 +49,7 @@ public class ScrollingBuffer {
         this.original = ByteBuffer.allocateDirect(8 * 1024);
         this.original.order(order);
         channel.read(original);
-        ((Buffer) original).flip();
+        original.flip();
     }
 
     public int getInt() throws IOException {
@@ -76,16 +73,16 @@ public class ScrollingBuffer {
         }
         // read the array using a view
         final IntBuffer intView = original.asIntBuffer();
-        ((Buffer) intView).limit(array.length);
+        intView.limit(array.length);
         intView.get(array);
         // don't forget to update the original buffer position, since the
         // view is independent
-        ((Buffer) original).position(((Buffer) original).position() + size);
+        original.position(original.position() + size);
     }
 
     void refillBuffer(final int requiredSize) throws IOException {
         // compute the actual position up to we have read something
-        final long currentPosition = bufferStart + ((Buffer) original).position();
+        final long currentPosition = bufferStart + original.position();
         // if the buffer is not big enough enlarge it
         if (original.capacity() < requiredSize) {
             int size = original.capacity();
@@ -100,9 +97,9 @@ public class ScrollingBuffer {
 
     private void readBuffer(final long currentPosition) throws IOException {
         channel.position(currentPosition);
-        ((Buffer) original).clear();
+        original.clear();
         channel.read(original);
-        ((Buffer) original).flip();
+        original.flip();
         bufferStart = currentPosition;
     }
 
@@ -113,8 +110,8 @@ public class ScrollingBuffer {
         // if the new position is already in the buffer, just move the
         // buffer position
         // otherwise we have to reload it
-        if (newPosition >= bufferStart && newPosition <= bufferStart + ((Buffer) original).limit()) {
-            ((Buffer) original).position((int) (newPosition - bufferStart));
+        if (newPosition >= bufferStart && newPosition <= bufferStart + original.limit()) {
+            original.position((int) (newPosition - bufferStart));
         } else {
             readBuffer(newPosition);
         }
@@ -124,6 +121,6 @@ public class ScrollingBuffer {
      * Returns the absolute position of the next byte that will be read
      */
     public long getPosition() {
-        return bufferStart + ((Buffer) original).position();
+        return bufferStart + original.position();
     }
 }

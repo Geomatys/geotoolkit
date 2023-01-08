@@ -32,6 +32,7 @@ import javax.xml.bind.annotation.XmlValue;
 import org.apache.sis.util.SimpleInternationalString;
 import org.geotoolkit.gml.xml.AbstractTimePosition;
 import org.geotoolkit.gml.xml.TimeIndeterminateValueType;
+import static org.geotoolkit.temporal.object.TemporalUtilities.dateEquals;
 import org.opengis.util.InternationalString;
 
 
@@ -111,7 +112,7 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
     /**
      * build a simple Timposition with only a value from a timestamp.
      *
-     * @param value a date.
+     * @param time a date.
      */
     public TimePositionType(final Date time){
         setValue(time);
@@ -239,7 +240,6 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
         return cachedDate;
     }
 
-//    @Override
     public Time getTime() {
         String v = getValue();
         if (v != null) {
@@ -248,7 +248,6 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
         return null;
     }
 
-//    @Override
     public InternationalString getDateTime() {
         String v = getValue();
         if (v != null) {
@@ -265,13 +264,12 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
         if (object == this) {
             return true;
         }
-        if (object instanceof TimePositionType) {
-            final TimePositionType that = (TimePositionType) object;
+        if (object instanceof TimePositionType that) {
             return Objects.equals(this.calendarEraName,       that.calendarEraName)       &&
                    Objects.equals(this.frame,                 that.frame)                 &&
                    Objects.equals(this.indeterminatePosition, that.indeterminatePosition) &&
                    // fix equals issue with diferent facet value, but same dateTime
-                   (Objects.equals(this.value, that.value) || Objects.equals(this.getDate(), that.getDate()));
+                   (Objects.equals(this.value, that.value) || dateEquals(this.getDate(), that.getDate()));
         }
         return false;
     }

@@ -36,14 +36,14 @@ public class TemporalUtilitiesTest extends org.geotoolkit.test.TestBase {
     @Test
     public void dateErrorParsingTest() {
         try {
-            TemporalUtilities.parseDate("fsdfsdfs");
+            TemporalUtilities.parseDateCal("fsdfsdfs");
             fail("Parsing should have raise a parse exception.");
         } catch (ParseException ex) {
             // ok
         }
 
         try {
-            TemporalUtilities.parseDate(null);
+            TemporalUtilities.parseDateCal(null);
             fail("Parsing should have raise a null pointer exception.");
         } catch (NullPointerException ex) {
             // ok
@@ -66,7 +66,7 @@ public class TemporalUtilitiesTest extends org.geotoolkit.test.TestBase {
         int mil = 512;
 
         str = "11/1995";
-        date.setTime(TemporalUtilities.parseDate(str));
+        date.setTime(TemporalUtilities.parseDateCal(str).getTime());
         date.setTimeZone(TimeZone.getDefault());
         assertEquals(year, date.get(YEAR));
         assertEquals(month, date.get(MONTH));
@@ -77,7 +77,7 @@ public class TemporalUtilitiesTest extends org.geotoolkit.test.TestBase {
         assertEquals(0, date.get(MILLISECOND));
 
         str = "23/11/1995";
-        date.setTime(TemporalUtilities.parseDate(str));
+        date.setTime(TemporalUtilities.parseDateCal(str).getTime());
         date.setTimeZone(TimeZone.getDefault());
         assertEquals(year, date.get(YEAR));
         assertEquals(month, date.get(MONTH));
@@ -88,7 +88,7 @@ public class TemporalUtilitiesTest extends org.geotoolkit.test.TestBase {
         assertEquals(0, date.get(MILLISECOND));
 
         str = "23 novembre 1995";
-        date.setTime(TemporalUtilities.parseDate(str));
+        date.setTime(TemporalUtilities.parseDateCal(str).getTime());
         date.setTimeZone(TimeZone.getDefault());
         assertEquals(year, date.get(YEAR));
         assertEquals(month, date.get(MONTH));
@@ -99,7 +99,7 @@ public class TemporalUtilitiesTest extends org.geotoolkit.test.TestBase {
         assertEquals(0, date.get(MILLISECOND));
 
         str = "1995-11-23 16:41:36";
-        date.setTime(TemporalUtilities.parseDate(str));
+        date.setTime(TemporalUtilities.parseDateCal(str).getTime());
         date.setTimeZone(TimeZone.getDefault());
         assertEquals(year, date.get(YEAR));
         assertEquals(month, date.get(MONTH));
@@ -110,7 +110,7 @@ public class TemporalUtilitiesTest extends org.geotoolkit.test.TestBase {
         assertEquals(0, date.get(MILLISECOND));
 
         str = "Novembre 1995";
-        date.setTime(TemporalUtilities.parseDate(str));
+        date.setTime(TemporalUtilities.parseDateCal(str).getTime());
         date.setTimeZone(TimeZone.getDefault());
         assertEquals(year, date.get(YEAR));
         assertEquals(month, date.get(MONTH));
@@ -121,7 +121,7 @@ public class TemporalUtilitiesTest extends org.geotoolkit.test.TestBase {
         assertEquals(0, date.get(MILLISECOND));
 
         str = "11-1995";
-        date.setTime(TemporalUtilities.parseDate(str));
+        date.setTime(TemporalUtilities.parseDateCal(str).getTime());
         date.setTimeZone(TimeZone.getDefault());
         assertEquals(year, date.get(YEAR));
         assertEquals(month, date.get(MONTH));
@@ -132,7 +132,7 @@ public class TemporalUtilitiesTest extends org.geotoolkit.test.TestBase {
         assertEquals(0, date.get(MILLISECOND));
 
         str = "1995-11-23T16:41:36";
-        date.setTime(TemporalUtilities.parseDate(str));
+        date.setTime(TemporalUtilities.parseDateCal(str).getTime());
         date.setTimeZone(TimeZone.getDefault());
         assertEquals(year, date.get(YEAR));
         assertEquals(month, date.get(MONTH));
@@ -143,7 +143,7 @@ public class TemporalUtilitiesTest extends org.geotoolkit.test.TestBase {
         assertEquals(0, date.get(MILLISECOND));
 
         str = "1995-11-23Z";
-        date.setTime(TemporalUtilities.parseDate(str));
+        date.setTime(TemporalUtilities.parseDateCal(str).getTime());
         date.setTimeZone(TimeZone.getTimeZone("GMT+0"));
         assertEquals(year, date.get(YEAR));
         assertEquals(month, date.get(MONTH));
@@ -154,7 +154,7 @@ public class TemporalUtilitiesTest extends org.geotoolkit.test.TestBase {
         assertEquals(0, date.get(MILLISECOND));
 
         str = "1995";
-        date.setTime(TemporalUtilities.parseDate(str));
+        date.setTime(TemporalUtilities.parseDateCal(str).getTime());
         date.setTimeZone(TimeZone.getDefault());
         assertEquals(year, date.get(YEAR));
         assertEquals(0, date.get(MONTH));
@@ -165,7 +165,7 @@ public class TemporalUtilitiesTest extends org.geotoolkit.test.TestBase {
         assertEquals(0, date.get(MILLISECOND));
 
         str = "1995-11";
-        date.setTime(TemporalUtilities.parseDate(str));
+        date.setTime(TemporalUtilities.parseDateCal(str).getTime());
         date.setTimeZone(TimeZone.getDefault());
         assertEquals(year, date.get(YEAR));
         assertEquals(month, date.get(MONTH));
@@ -176,7 +176,7 @@ public class TemporalUtilitiesTest extends org.geotoolkit.test.TestBase {
         assertEquals(0, date.get(MILLISECOND));
 
         str = "1995:11:23 16:41:36";
-        date.setTime(TemporalUtilities.parseDate(str));
+        date.setTime(TemporalUtilities.parseDateCal(str).getTime());
         date.setTimeZone(TimeZone.getDefault());
         assertEquals(year, date.get(YEAR));
         assertEquals(month, date.get(MONTH));
@@ -190,7 +190,7 @@ public class TemporalUtilitiesTest extends org.geotoolkit.test.TestBase {
         // dates--------------------------------------------------------
 
         str = "1995-11-23T16:41:36";
-        date.setTime(TemporalUtilities.parseDate(str));
+        date.setTime(TemporalUtilities.parseDateCal(str).getTime());
         date.setTimeZone(TimeZone.getDefault());
         assertEquals(year, date.get(YEAR));
         assertEquals(month, date.get(MONTH));
@@ -201,7 +201,7 @@ public class TemporalUtilitiesTest extends org.geotoolkit.test.TestBase {
         assertEquals(0, date.get(MILLISECOND));
 
         str = "1995-11-23T16:41:36.512";
-        date.setTime(TemporalUtilities.parseDate(str));
+        date.setTime(TemporalUtilities.parseDateCal(str).getTime());
         date.setTimeZone(TimeZone.getDefault());
         assertEquals(year, date.get(YEAR));
         assertEquals(month, date.get(MONTH));
@@ -212,7 +212,7 @@ public class TemporalUtilitiesTest extends org.geotoolkit.test.TestBase {
         assertEquals(mil, date.get(MILLISECOND));
 
         str = "1995-11-23T16:41:36Z";
-        date.setTime(TemporalUtilities.parseDate(str));
+        date.setTime(TemporalUtilities.parseDateCal(str).getTime());
         date.setTimeZone(TimeZone.getTimeZone("GMT+0"));
         assertEquals(year, date.get(YEAR));
         assertEquals(month, date.get(MONTH));
@@ -223,7 +223,7 @@ public class TemporalUtilitiesTest extends org.geotoolkit.test.TestBase {
         assertEquals(0, date.get(MILLISECOND));
 
         str = "1995-11-23T16:41:36.512Z";
-        date.setTime(TemporalUtilities.parseDate(str));
+        date.setTime(TemporalUtilities.parseDateCal(str).getTime());
         date.setTimeZone(TimeZone.getTimeZone("GMT+0"));
         assertEquals(year, date.get(YEAR));
         assertEquals(month, date.get(MONTH));
@@ -234,7 +234,7 @@ public class TemporalUtilitiesTest extends org.geotoolkit.test.TestBase {
         assertEquals(512, date.get(MILLISECOND));
 
         str = "1995-11-23"; //no Z, we are in local time zone
-        date.setTime(TemporalUtilities.parseDate(str));
+        date.setTime(TemporalUtilities.parseDateCal(str).getTime());
         date.setTimeZone(TimeZone.getDefault());
         assertEquals(year, date.get(YEAR));
         assertEquals(month, date.get(MONTH));
@@ -245,7 +245,7 @@ public class TemporalUtilitiesTest extends org.geotoolkit.test.TestBase {
         assertEquals(0, date.get(MILLISECOND));
 
         str = "1995-11-23T16:41:36+04";
-        date.setTime(TemporalUtilities.parseDate(str));
+        date.setTime(TemporalUtilities.parseDateCal(str).getTime());
         date.setTimeZone(TimeZone.getTimeZone("GMT+0"));
         assertEquals(year, date.get(YEAR));
         assertEquals(month, date.get(MONTH));
@@ -256,7 +256,7 @@ public class TemporalUtilitiesTest extends org.geotoolkit.test.TestBase {
         assertEquals(0, date.get(MILLISECOND));
 
         str = "1995-11-23T16:41:36+04:00";
-        date.setTime(TemporalUtilities.parseDate(str));
+        date.setTime(TemporalUtilities.parseDateCal(str).getTime());
         date.setTimeZone(TimeZone.getTimeZone("GMT+0"));
         assertEquals(year, date.get(YEAR));
         assertEquals(month, date.get(MONTH));
@@ -267,7 +267,7 @@ public class TemporalUtilitiesTest extends org.geotoolkit.test.TestBase {
         assertEquals(0, date.get(MILLISECOND));
 
         str = "1995-11-23T16:41:36-04";
-        date.setTime(TemporalUtilities.parseDate(str));
+        date.setTime(TemporalUtilities.parseDateCal(str).getTime());
         date.setTimeZone(TimeZone.getTimeZone("GMT+0"));
         assertEquals(year, date.get(YEAR));
         assertEquals(month, date.get(MONTH));
@@ -278,7 +278,7 @@ public class TemporalUtilitiesTest extends org.geotoolkit.test.TestBase {
         assertEquals(0, date.get(MILLISECOND));
 
         str = "1995-11-23T16:41:36-04:00";
-        date.setTime(TemporalUtilities.parseDate(str));
+        date.setTime(TemporalUtilities.parseDateCal(str).getTime());
         date.setTimeZone(TimeZone.getTimeZone("GMT+0"));
         assertEquals(year, date.get(YEAR));
         assertEquals(month, date.get(MONTH));
