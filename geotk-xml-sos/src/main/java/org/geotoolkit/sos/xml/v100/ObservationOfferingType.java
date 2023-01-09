@@ -43,6 +43,7 @@ import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.gml.xml.v311.TimeInstantType;
 import org.geotoolkit.gml.xml.v311.TimePeriodType;
 import org.geotoolkit.gml.xml.v311.TimePositionType;
+import org.opengis.observation.Phenomenon;
 
 
 /**
@@ -271,6 +272,11 @@ public class ObservationOfferingType extends AbstractFeatureType implements Obse
     }
 
     @Override
+    public List<Phenomenon> getFullObservedProperties() {
+        return new ArrayList<>(getObservedProperty());
+    }
+
+    @Override
     public List<String> getObservedProperties() {
         final List<String> result = new ArrayList<>();
         if (observedProperty != null) {
@@ -358,10 +364,20 @@ public class ObservationOfferingType extends AbstractFeatureType implements Obse
      */
     @Override
     public List<ResponseModeType> getResponseMode() {
-       if (responseMode == null){
+        if (responseMode == null) {
             responseMode = new ArrayList<>();
         }
-       return responseMode;
+        return responseMode;
+    }
+
+    /**
+     * SOS V2.0.0 compatibility.
+     *
+     * @return
+     */
+    @Override
+    public List<String> getProcedureDescriptionFormat() {
+        return new ArrayList<>();
     }
 
     /**

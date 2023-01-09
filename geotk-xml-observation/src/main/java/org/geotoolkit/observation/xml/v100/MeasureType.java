@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.observation.xml.v100;
 
-// Constellation dependencies
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -28,8 +27,6 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 import org.geotoolkit.gml.xml.v311.UnitOfMeasureEntry;
-
-// GeotoolKit dependencies
 import org.opengis.observation.Measure;
 
 
@@ -148,7 +145,7 @@ public class MeasureType implements Measure {
      */
     @Override
     public String toString() {
-        StringBuilder s = new StringBuilder();
+        StringBuilder s = new StringBuilder("[MeasureType]");
         if (uom != null) {
             s.append("uom =").append(uom).append('\n');
         }

@@ -26,6 +26,7 @@ import java.util.logging.Logger;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -104,6 +105,9 @@ public class ObservationType implements Entry, AbstractObservation {
      * A logger (debugging purpose)
      */
     protected static final Logger LOGGER = Logger.getLogger("org.geotoolkit.observation.xml.v100");
+
+    @XmlAttribute(namespace = "http://www.opengis.net/gml")
+    private String id;
 
     /**
      *The observation name
@@ -317,8 +321,21 @@ public class ObservationType implements Entry, AbstractObservation {
 
     }
 
-    /**
-     */
+    @Override
+    public String getObservationType() {
+        return "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Observation";
+    }
+
+    @Override
+    public String getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(String id) {
+       this.id = id;
+    }
+
     @Override
     public void setName(final Identifier name) {
         if (name != null) {
@@ -355,6 +372,18 @@ public class ObservationType implements Entry, AbstractObservation {
             }
         }
         return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setFullFeatureOfInterest(final SamplingFeature foi) {
+        if (foi instanceof AbstractFeatureType aft) {
+            this.setFeatureOfInterest(aft);
+        } else if (observedProperty != null) {
+            throw new IllegalArgumentException("Unexpected phenomenon implementation. expecting Sampling 1.0.0");
+        }
     }
 
     public void setFeatureOfInterest(final AbstractFeatureType featureOfInterest) {
@@ -394,12 +423,21 @@ public class ObservationType implements Entry, AbstractObservation {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public void setObservedProperty(final PhenomenonType observedProperty) {
         if (observedProperty != null) {
             this.observedProperty = new PhenomenonPropertyType(observedProperty);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setFullObservedProperty(final Phenomenon observedProperty) {
+        if (observedProperty instanceof PhenomenonType phen) {
+            this.observedProperty = new PhenomenonPropertyType(phen);
+        } else if (observedProperty != null) {
+            throw new IllegalArgumentException("Unexpected phenomenon implementation. expecting SWE 1.0.0");
         }
     }
 
@@ -715,11 +753,13 @@ public class ObservationType implements Entry, AbstractObservation {
             } else if (this.result != null && that.result != null) {
                 res = Objects.equals(this.result.getValue(), that.result.getValue());
             }
-            return Objects.equals(this.featureOfInterest,   that.featureOfInterest)   &&
+            return Objects.equals(this.id,                  that.id)                  &&
+                   Objects.equals(this.name,                that.name)                &&
+                   Objects.equals(this.featureOfInterest,   that.featureOfInterest)   &&
                    Objects.equals(this.observedProperty,    that.observedProperty)    &&
                    Objects.equals(this.procedure,           that.procedure)           &&
                    Objects.equals(this.resultQuality,       that.resultQuality)       &&
-                   res                                                                  &&
+                   res                                                                &&
                    Objects.equals(this.samplingTime,        that.samplingTime)        &&
                    Objects.equals(this.observationMetadata, that.observationMetadata) &&
                    Objects.equals(this.procedureTime,       that.procedureTime)       &&
@@ -744,9 +784,10 @@ public class ObservationType implements Entry, AbstractObservation {
         StringBuilder s    = new StringBuilder("[").append(this.getClass().getSimpleName()).append(']');
         char lineSeparator = '\n';
         s.append(lineSeparator);
-        s.append("name = ").append(name);
+        s.append("id = ").append(id).append(lineSeparator);
+        s.append("name = ").append(name).append(lineSeparator);
         if (definition != null) {
-            s.append("definition = ").append(definition);
+            s.append("definition = ").append(definition).append(lineSeparator);
         }
         s.append(lineSeparator);
         if (samplingTime != null) {
@@ -771,15 +812,5 @@ public class ObservationType implements Entry, AbstractObservation {
             s.append(" result = ").append(result.getValue()).append(lineSeparator);
         }
         return s.toString();
-    }
-
-    @Override
-    public String getId() {
-        return name;
-    }
-
-    @Override
-    public void setId(String id) {
-        // do nothing no id on v 1.0.0
     }
 }

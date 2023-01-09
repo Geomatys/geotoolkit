@@ -100,7 +100,7 @@ public class Count extends AbstractDataComponentType implements AbstractCount {
         }
     }
 
-    public Count(final int value) {
+    public Count(final Integer value) {
         this.value = value;
     }
 

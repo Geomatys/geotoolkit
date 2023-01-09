@@ -99,7 +99,11 @@ public abstract class AbstractSimpleComponentType extends AbstractDataComponentT
     }
 
     public AbstractSimpleComponentType(final String id, final String definition, final String axisID, final List<QualityPropertyType> quality) {
-        super(id, definition, null);
+        this(id, null, null, definition, axisID, quality);
+    }
+
+    public AbstractSimpleComponentType(final String id, final String identifier, final String description, final String definition, final String axisID, final List<QualityPropertyType> quality) {
+        super(id, identifier, description, definition, null);
         this.axisID = axisID;
         this.quality = quality;
     }

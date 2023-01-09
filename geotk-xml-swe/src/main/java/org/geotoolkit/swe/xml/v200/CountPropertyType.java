@@ -76,7 +76,7 @@ public class CountPropertyType implements AbstractElementCount {
 
     }
 
-    public CountPropertyType(final int value) {
+    public CountPropertyType(final Integer value) {
         this.count = new CountType(null, value);
     }
 

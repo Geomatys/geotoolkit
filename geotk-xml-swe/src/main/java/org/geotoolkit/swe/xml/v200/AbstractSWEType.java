@@ -85,7 +85,7 @@ public class AbstractSWEType {
     public AbstractSWEType(final AbstractSWEType that) {
         this.id = that.id;
         if (that.extension != null) {
-            this.extension = new ArrayList<Object>(that.extension);
+            this.extension = new ArrayList<>(that.extension);
         }
     }
 
@@ -133,9 +133,7 @@ public class AbstractSWEType {
         if (object == this) {
             return true;
         }
-        if (object instanceof AbstractSWEType) {
-            final AbstractSWEType that = (AbstractSWEType) object;
-
+        if (object instanceof AbstractSWEType that) {
             return Objects.equals(this.extension, that.extension) &&
                    Objects.equals(this.id,        that.id);
         }

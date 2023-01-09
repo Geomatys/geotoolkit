@@ -18,6 +18,7 @@
 
 package org.geotoolkit.gml.xml.v321;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -124,4 +125,35 @@ public class MeasureType implements Measure {
         this.uom = value;
     }
 
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        return object instanceof MeasureType that &&
+               Objects.equals(this.uom,   that.uom) &&
+               Objects.equals(this.value, that.value) ;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 89 * hash + (int) (Double.doubleToLongBits(this.value) ^ (Double.doubleToLongBits(this.value) >>> 32));
+        hash = 89 * hash + Objects.hashCode(this.uom);
+        return hash;
+    }
+
+
+    /**
+     * Retourne une description de l'objet (debug).
+     */
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder("[MeasureType]");
+        if (uom != null) {
+            s.append("uom =").append(uom).append('\n');
+        }
+        s.append(" value=").append(value).append('\n');
+        return  s.toString();
+    }
 }

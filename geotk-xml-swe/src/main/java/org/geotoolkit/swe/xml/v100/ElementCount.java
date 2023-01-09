@@ -76,7 +76,7 @@ public class ElementCount implements AbstractElementCount {
         }
     }
 
-    public ElementCount(final int value) {
+    public ElementCount(final Integer value) {
         this.count = new Count();
     }
 
