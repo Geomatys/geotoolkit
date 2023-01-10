@@ -32,6 +32,9 @@ import org.locationtech.jts.geom.LinearRing;
 import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Polygon;
 
+import static org.locationtech.jts.algorithm.Orientation.COUNTERCLOCKWISE;
+import static org.locationtech.jts.algorithm.Orientation.index;
+
 
 /**
  * Wrapper for a Shapefile polygon.
@@ -43,9 +46,6 @@ import org.locationtech.jts.geom.Polygon;
  * @module
  */
 public class PolygonHandler extends AbstractShapeHandler {
-
-    protected final List<LinearRing> shells = new ArrayList<>();
-    protected final List<LinearRing> holes = new ArrayList<>();
 
     public PolygonHandler(final boolean read3D) {
         super(ShapeType.POLYGON,read3D);
@@ -123,6 +123,10 @@ public class PolygonHandler extends AbstractShapeHandler {
         return length;
     }
 
+    protected CoordinateSequence decimateRing(CoordinateSequence ring) {
+        return ring;
+    }
+
     @Override
     public Geometry estimated(final double minX, final double maxX, final double minY, final double maxY) {
         final double[] array = new double[]{
@@ -141,10 +145,6 @@ public class PolygonHandler extends AbstractShapeHandler {
         if (type == ShapeType.NULL) {
             return createNull();
         }
-
-        //clear from previous read
-        shells.clear();
-        holes.clear();
 
         // skip the bounds
         buffer.position(buffer.position() + 32);
@@ -166,8 +166,21 @@ public class PolygonHandler extends AbstractShapeHandler {
         dbuffer.get(coords);
 
         int coordIndex = 0;
-        for (int part = 0; part < numParts; part++) {
+        /**
+         * This shortcut is important for performance: If there's only a single ring, there's no need to try to
+         * differentiate holes from shells. This means that we can avoid checking rings orientations,
+         * create intermediate lists, etc.
+         */
+        if (numParts == 1) {
+            final CoordinateSequence points = dimensions == 2
+                    ? new ShapeCoordinateSequence2D(coords, coordIndex * 2, numPoints)
+                    : new ShapeCoordinateSequence3D(coords, coordIndex * 2, numPoints, xySize + 2);
+            return GEOMETRY_FACTORY.createMultiPolygon(new Polygon[]{ GEOMETRY_FACTORY.createPolygon(decimateRing(points)) });
+        }
 
+        final List<LinearRing> shells = new ArrayList<>();
+        final List<LinearRing> holes = new ArrayList<>();
+        for (int part = 0; part < numParts; part++) {
             final int finish;
             if (part == (numParts - 1)) {
                 finish = numPoints;
@@ -183,20 +196,17 @@ public class PolygonHandler extends AbstractShapeHandler {
                 continue;
             }
 
-            final Coordinate[] points = new Coordinate[length];
-            for (int i = 0; i < length; i++) {
-                if(dimensions==2){
-                    points[i] = new Coordinate(coords[coordIndex*2],coords[coordIndex*2+1]);
-                }else{
-                    points[i] = new Coordinate(coords[coordIndex*2],coords[coordIndex*2+1],coords[xySize+coordIndex+2]);
-                }
-                coordIndex++;
-            }
+            final CoordinateSequence points = dimensions == 2
+                    ? new ShapeCoordinateSequence2D(coords, coordIndex * 2, length)
+                    : new ShapeCoordinateSequence3D(coords, coordIndex * 2, length, xySize + 2 + coordIndex);
+            coordIndex += length;
 
-            JTS.ensureClosed(points);
+            // Is this really required ?
+            ensureClosed(points);
 
             final LinearRing ring = GEOMETRY_FACTORY.createLinearRing(points);
-            if (CGAlgorithms.isCCW(points)) {
+
+            if (isCCW(points)) {
                 // counter-clockwise
                 holes.add(ring);
             } else {
@@ -223,102 +233,15 @@ public class PolygonHandler extends AbstractShapeHandler {
         }
     }
 
-
-//    @Override
-//    public Object read(ByteBuffer buffer, ShapeType type) {
-//        if (type == ShapeType.NULL) {
-//            return createNull();
-//        }
-//        // skip the bounds
-//        buffer.position(buffer.position() + 4 * 8);
-//
-//        final int numParts = buffer.getInt();
-//        final int numPoints = buffer.getInt();
-//        final int[] partOffsets = new int[numParts];
-//
-//        for (int i = 0; i < numParts; i++) {
-//            partOffsets[i] = buffer.getInt();
-//        }
-//
-//        final List<LinearRing> shells = new ArrayList<LinearRing>();
-//        final List<LinearRing> holes = new ArrayList<LinearRing>();
-//
-//        final Coordinate[] coords = new Coordinate[numPoints];
-//        for (int t = 0; t < numPoints; t++) {
-//            coords[t] = new Coordinate(buffer.getDouble(), buffer.getDouble());
-//        }
-//
-//        if (shapeType == ShapeType.POLYGONZ) {
-//            // skip zmin and zmax
-//            buffer.position(buffer.position() + 2 * 8);
-//
-//            for (int t = 0; t < numPoints; t++) {
-//                coords[t].z = buffer.getDouble();
-//            }
-//        }
-//
-//        int offset = 0;
-//        int start;
-//        int finish;
-//        int length;
-//
-//        for (int part = 0; part < numParts; part++) {
-//            start = partOffsets[part];
-//
-//            if (part == (numParts - 1)) {
-//                finish = numPoints;
-//            } else {
-//                finish = partOffsets[part + 1];
-//            }
-//
-//            length = finish - start;
-//
-//            // Use the progressive CCW algorithm.
-//            // basically the area algorithm for polygons
-//            // which also tells us vertex order based upon the
-//            // sign of the area.
-//            Coordinate[] points = new Coordinate[length];
-//            // double area = 0;
-//            // int sx = offset;
-//            for (int i = 0; i < length; i++) {
-//                points[i] = coords[offset++];
-//                // int j = sx + (i + 1) % length;
-//                // area += points[i].x * coords[j].y;
-//                // area -= points[i].y * coords[j].x;
-//            }
-//            // area = -area / 2;
-//            // REVISIT: polyons with only 1 or 2 points are not polygons -
-//            // geometryFactory will bomb so we skip if we find one.
-//            if (points.length == 0 || points.length > 3) {
-//                LinearRing ring = GEOMETRY_FACTORY.createLinearRing(points);
-//
-//                if (CGAlgorithms.isCCW(points)) {
-//                    // counter-clockwise
-//                    holes.add(ring);
-//                } else {
-//                    // clockwise
-//                    shells.add(ring);
-//                }
-//            }
-//        }
-//
-//        // quick optimization: if there's only one shell no need to check
-//        // for holes inclusion
-//        if (shells.size() == 1) {
-//            return createMulti(shells.get(0), holes);
-//        }
-//        // if for some reason, there is only one hole, we just reverse it and
-//        // carry on.
-//        else if (holes.size() == 1 && shells.isEmpty()) {
-//            //LOGGER.warning("only one hole in this polygon record");
-//            return createMulti(JTSUtilities.reverseRing(holes.get(0)));
-//        } else {
-//
-//            // build an association between shells and holes
-//            final List<List<LinearRing>> holesForShells = assignHolesToShells(shells, holes);
-//            return buildGeometries(shells, holes, holesForShells);
-//        }
-//    }
+    private static void ensureClosed(CoordinateSequence seq) {
+        final int last = seq.size() - 1;
+        double startX = seq.getX(0);
+        double endX = seq.getX(last);
+        double startY = seq.getY(0);
+        double endY = seq.getY(last);
+        if (startX != endX) seq.setOrdinate(last, 0, startX);
+        if (startY != endY) seq.setOrdinate(last, 1, startY);
+    }
 
     /**
      * @param shells
@@ -529,4 +452,98 @@ public class PolygonHandler extends AbstractShapeHandler {
         }
     }
 
+
+    /**
+     * Copied from JTS 1.19.0: same code, but optimized for packed coordinate sequence.
+     * We try to replace calls to "getCoordinate" in loops, to avoid unnecessary Coordinate object creation.
+     * @param ring
+     * @return
+     */
+    static boolean isCCW(CoordinateSequence ring)
+    {
+        // # of points without closing endpoint
+        int nPts = ring.size() - 1;
+        // return default value if ring is flat
+        if (nPts < 3) return false;
+
+        /**
+         * Find first highest point after a lower point, if one exists
+         * (e.g. a rising segment)
+         * If one does not exist, hiIndex will remain 0
+         * and the ring must be flat.
+         * Note this relies on the convention that
+         * rings have the same start and end point.
+         */
+        Coordinate upHiPt = ring.getCoordinate(0);
+        double prevY = upHiPt.y;
+        Coordinate upLowPt = new Coordinate(Coordinate.NULL_ORDINATE, Coordinate.NULL_ORDINATE);
+        int iUpHi = 0;
+        for (int i = 1; i <= nPts; i++) {
+            double py = ring.getOrdinate(i, Coordinate.Y);
+            /**
+             * If segment is upwards and endpoint is higher, record it
+             */
+            if (py > prevY && py >= upHiPt.y) {
+                upHiPt.x = ring.getOrdinate(i, Coordinate.X);
+                upHiPt.y = py;
+                iUpHi = i;
+                upLowPt.x = ring.getOrdinate(i-1, Coordinate.X);
+                upLowPt.y = prevY;
+            }
+            prevY = py;
+        }
+        /**
+         * Check if ring is flat and return default value if so
+         */
+        if (iUpHi == 0) return false;
+
+        /**
+         * Find the next lower point after the high point
+         * (e.g. a falling segment).
+         * This must exist since ring is not flat.
+         */
+        int iDownLow = iUpHi;
+        do {
+            iDownLow = (iDownLow + 1) % nPts;
+        } while (iDownLow != iUpHi && ring.getOrdinate(iDownLow, Coordinate.Y) == upHiPt.y );
+
+        Coordinate downLowPt = ring.getCoordinate(iDownLow);
+        int iDownHi = iDownLow > 0 ? iDownLow - 1 : nPts - 1;
+        Coordinate downHiPt = ring.getCoordinate(iDownHi);
+
+        /**
+         * Two cases can occur:
+         * 1) the hiPt and the downPrevPt are the same.
+         *    This is the general position case of a "pointed cap".
+         *    The ring orientation is determined by the orientation of the cap
+         * 2) The hiPt and the downPrevPt are different.
+         *    In this case the top of the cap is flat.
+         *    The ring orientation is given by the direction of the flat segment
+         */
+        if (upHiPt.equals2D(downHiPt)) {
+            /**
+             * Check for the case where the cap has configuration A-B-A.
+             * This can happen if the ring does not contain 3 distinct points
+             * (including the case where the input array has fewer than 4 elements), or
+             * it contains coincident line segments.
+             */
+            if (upLowPt.equals2D(upHiPt) || downLowPt.equals2D(upHiPt) || upLowPt.equals2D(downLowPt))
+                return false;
+
+            /**
+             * It can happen that the top segments are coincident.
+             * This is an invalid ring, which cannot be computed correctly.
+             * In this case the orientation is 0, and the result is false.
+             */
+            int index = index(upLowPt, upHiPt, downLowPt);
+            return index == COUNTERCLOCKWISE;
+        }
+        else {
+            /**
+             * Flat cap - direction of flat top determines orientation
+             */
+            double delX = downHiPt.x - upHiPt.x;
+            return delX < 0;
+        }
+    }
 }
