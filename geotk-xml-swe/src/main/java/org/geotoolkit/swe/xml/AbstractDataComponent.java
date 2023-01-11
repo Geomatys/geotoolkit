@@ -42,4 +42,5 @@ public interface AbstractDataComponent extends AbstractGML {
     @UML(identifier="fixed", obligation=OPTIONAL, specification=UNSPECIFIED )
     Boolean isFixed();
 
+    String getLabel();
 }

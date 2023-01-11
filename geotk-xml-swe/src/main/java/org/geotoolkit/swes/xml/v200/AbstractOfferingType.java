@@ -24,6 +24,9 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.apache.sis.metadata.iso.DefaultIdentifier;
+import org.opengis.metadata.Identifier;
+import org.opengis.observation.Phenomenon;
 
 
 /**
@@ -147,6 +150,34 @@ public abstract class AbstractOfferingType extends AbstractSWESType {
             observableProperty = new ArrayList<>();
         }
         return this.observableProperty;
+    }
+
+    public List<Phenomenon> getFullObservedProperties() {
+        List<Phenomenon> results = new ArrayList<>();
+        for (String op : getObservableProperty()) {
+            results.add(new org.geotoolkit.swe.xml.Phenomenon() {
+                @Override
+                public String getId() {
+                    return op;
+                }
+
+                @Override
+                public Identifier getName() {
+                    return new DefaultIdentifier(op);
+                }
+
+                @Override
+                public String getDefinition() {
+                    return null;
+                }
+
+                @Override
+                public String getDescription() {
+                    return null;
+                }
+            });
+        }
+        return results;
     }
 
     /**

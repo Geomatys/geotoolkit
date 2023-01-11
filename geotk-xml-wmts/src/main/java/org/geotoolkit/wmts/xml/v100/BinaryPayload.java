@@ -131,12 +131,12 @@ public class BinaryPayload {
         in.close();//un-necessary but good practice.
 
         return bi;
-}
+    }
 
     /**
      * Convert the Tile image to a BufferedImage.
      *
-     * @param format a String containing the mime type of a format (e.g., "image/png" or "image/tiff").
+     * @param mimeType a String containing the mime type of a format (e.g., "image/png" or "image/tiff").
      * @return
      * @throws IOException
      */

@@ -461,7 +461,7 @@ public class SweXmlFactory {
         }
     }
 
-    public static DataArray buildDataArray(final String version, final String id, final int count, final String elementName, final AbstractDataRecord elementType,
+    public static DataArray buildDataArray(final String version, final String id, final Integer count, final String elementName, final AbstractDataRecord elementType,
             final AbstractEncoding encoding, final String values, final List<Object> dataValues) {
         if ("1.0.0".equals(version)) {
             if (!(elementType instanceof org.geotoolkit.swe.xml.v100.AbstractDataRecordType)) {

@@ -68,7 +68,11 @@ public class TextType extends AbstractSimpleComponentType implements AbstractTex
     }
 
     public TextType(final String id, final String definition, final String value, final List<QualityPropertyType> quality) {
-        super(id, definition, null, quality);
+        this(id, null, null, definition, value, quality);
+    }
+
+    public TextType(final String id, final String identifier, final String description, final String definition, final String value, final List<QualityPropertyType> quality) {
+        super(id, identifier, description, definition, null, quality);
         this.value = value;
     }
 

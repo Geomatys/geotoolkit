@@ -105,6 +105,11 @@ public abstract class AbstractDataComponentType extends AbstractGMLType implemen
         return  new MetadataStandard(new SimpleCitation("SWE"), Package.getPackage("org.geotoolkit.swe.xml"));
     }
 
+    @Override
+    public String getLabel() {
+        return null;
+    }
+
     /**
      * Gets the value of the fixed property.
      */

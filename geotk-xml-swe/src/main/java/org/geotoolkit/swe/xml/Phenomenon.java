@@ -29,5 +29,7 @@ public interface Phenomenon extends org.opengis.observation.Phenomenon {
 
     Identifier getName();
 
+    String getDefinition();
+
     String getDescription();
 }

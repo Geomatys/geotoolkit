@@ -121,7 +121,7 @@ public class DataArrayType extends AbstractDataComponentType implements DataArra
 
     }
 
-    public DataArrayType(final String id, final int count, final AbstractEncodingType encoding, final String values,
+    public DataArrayType(final String id, final Integer count, final AbstractEncodingType encoding, final String values,
             final String elementName, final AbstractDataComponentType elementType , final List<Object> dataValues) {
         super(id, null, null);
         this.elementCount = new CountPropertyType(count);

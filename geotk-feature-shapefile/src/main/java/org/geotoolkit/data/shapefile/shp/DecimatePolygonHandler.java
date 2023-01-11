@@ -16,15 +16,10 @@
  */
 package org.geotoolkit.data.shapefile.shp;
 
-import java.nio.ByteBuffer;
-import java.nio.DoubleBuffer;
-import java.util.List;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.geometry.jts.JTS;
-import org.locationtech.jts.algorithm.CGAlgorithms;
 import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.LinearRing;
+import org.locationtech.jts.geom.CoordinateSequence;
+import org.locationtech.jts.geom.impl.CoordinateArraySequence;
 
 
 /**
@@ -51,97 +46,14 @@ public class DecimatePolygonHandler extends PolygonHandler {
     }
 
     @Override
-    public Geometry read(final ByteBuffer buffer, final ShapeType type) {
-        if (type == ShapeType.NULL) {
-            return createNull();
-        }
-
-        //clear from previous read
-        shells.clear();
-        holes.clear();
-
-        // skip the bounds
-        buffer.position( buffer.position() + 32);
-
-        final int numParts = buffer.getInt();
-        final int numPoints = buffer.getInt();
-        final int[] partOffsets = new int[numParts];
-
-        for (int i = 0; i < numParts; i++) {
-            partOffsets[i] = buffer.getInt();
-        }
-
-        final DoubleBuffer dbuffer = buffer.asDoubleBuffer();
-        final int dimensions = (read3D && shapeType == ShapeType.POLYGONZ)? 3:2;
-
-        //read everything in one round : +2 for minZ/maxZ
-        final double[] coords = new double[numPoints*dimensions + ((dimensions==2)?0:2)];
-        final int xySize = numPoints*2;
-        dbuffer.get(coords);
-
-        int coordIndex = 0;
-        for (int part = 0; part < numParts; part++) {
-
-            final int finish;
-            if (part == (numParts - 1)) {
-                finish = numPoints;
-            } else {
-                finish = partOffsets[part + 1];
-            }
-            final int length = finish - partOffsets[part];
-
-            // REVISIT: polyons with only 1 to 3 points are not polygons -
-            // geometryFactory will bomb so we skip if we find one.
-            if(length > 0 && length < 4){
-                coordIndex += length;
-                continue;
-            }
-
-            final Coordinate[] points = new Coordinate[length];
-            for (int i = 0; i < length; i++) {
-                if(dimensions==2){
-                    points[i] = new Coordinate(coords[coordIndex*2],coords[coordIndex*2+1]);
-                }else{
-                    points[i] = new Coordinate(coords[coordIndex*2],coords[coordIndex*2+1],coords[xySize+coordIndex+2]);
-                }
-                coordIndex++;
-            }
-
-            JTS.ensureClosed(points);
-
-            final LinearRing ring = GEOMETRY_FACTORY.createLinearRing(decimateRing(points));
-            if (CGAlgorithms.isCCW(points)) {
-                // counter-clockwise
-                holes.add(ring);
-            } else {
-                // clockwise
-                shells.add(ring);
-            }
-        }
-
-        // quick optimization: if there's only one shell no need to check
-        // for holes inclusion
-        if (shells.size() == 1) {
-            return createMulti(shells.get(0), holes);
-        }
-        // if for some reason, there is only one hole, we just reverse it and
-        // carry on.
-        else if (holes.size() == 1 && shells.isEmpty()) {
-            //LOGGER.warning("only one hole in this polygon record");
-            return createMulti(JTS.reverseRing(holes.get(0)));
-        } else {
-
-            // build an association between shells and holes
-            final List<List<LinearRing>> holesForShells = assignHolesToShells(shells, holes);
-            return buildGeometries(shells, holes, holesForShells);
-        }
-    }
-
-    private Coordinate[] decimateRing(final Coordinate[] coords) {
+    protected CoordinateSequence decimateRing(final CoordinateSequence source) {
         int length = 1;
 
+        // TODO: try to optimize this to use coordinate sequence directly.
+        Coordinate[] coords = source.toCoordinateArray();
+
         int i=1,j=0;
-        for(; i<coords.length-1; i++){
+        for(; i<coords.length - 1 ; i++) {
             final double distX = Math.abs(coords[j].x - coords[i].x);
             if(distX > resX){
                 length++;
@@ -165,7 +77,7 @@ public class DecimatePolygonHandler extends PolygonHandler {
 
         if (length == coords.length) {
             //nothing to decimate
-            return coords;
+            return new CoordinateArraySequence(coords, source.getDimension(), source.getMeasures());
         } else {
             //ensure we have the minimum number of points
             if (length < 4) {
@@ -182,7 +94,7 @@ public class DecimatePolygonHandler extends PolygonHandler {
             }
             final Coordinate[] cs = new Coordinate[length];
             System.arraycopy(coords, 0, cs, 0, length);
-            return cs;
+            return new CoordinateArraySequence(cs, source.getDimension(), source.getMeasures());
         }
     }
 }

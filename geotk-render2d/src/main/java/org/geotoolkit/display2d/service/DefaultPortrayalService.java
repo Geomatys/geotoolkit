@@ -165,7 +165,7 @@ public final class DefaultPortrayalService implements PortrayalService{
     private DefaultPortrayalService(){}
 
     ////////////////////////////////////////////////////////////////////////////
-    // PAINTING IN A BUFFERED IMAGE ////////////////////////////////////////////
+    // PAINTING IN A RENDERED IMAGE ////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -176,7 +176,7 @@ public final class DefaultPortrayalService implements PortrayalService{
      * @param canvasDimension : size of the wanted image
      * @return resulting image of the portraying operation
      */
-    public static BufferedImage portray(final MapLayers context, final Envelope contextEnv,
+    public static RenderedImage portray(final MapLayers context, final Envelope contextEnv,
             final Dimension canvasDimension, final boolean strechImage)
             throws PortrayalException {
         final CanvasDef canvasDef = new CanvasDef();
@@ -186,7 +186,7 @@ public final class DefaultPortrayalService implements PortrayalService{
         return portray(canvasDef, new SceneDef(context));
     }
 
-    public static BufferedImage portray(final MapLayers context, final Envelope contextEnv,
+    public static RenderedImage portray(final MapLayers context, final Envelope contextEnv,
             final Dimension canvasDimension, final boolean strechImage, final float azimuth,
             final CanvasMonitor monitor, final Color background)
             throws PortrayalException {
@@ -200,7 +200,7 @@ public final class DefaultPortrayalService implements PortrayalService{
         return portray(canvasDef, new SceneDef(context));
     }
 
-    public static BufferedImage portray(final MapLayers context, final Envelope contextEnv,
+    public static RenderedImage portray(final MapLayers context, final Envelope contextEnv,
             final Dimension canvasDimension,
             final boolean strechImage, final float azimuth, final CanvasMonitor monitor,
             final Color background, final Hints hints) throws PortrayalException {
@@ -214,7 +214,7 @@ public final class DefaultPortrayalService implements PortrayalService{
         return portray(canvasDef, new SceneDef(context, hints));
     }
 
-    public static BufferedImage portray(final MapLayers context, final Envelope contextEnv,
+    public static RenderedImage portray(final MapLayers context, final Envelope contextEnv,
             final Dimension canvasDimension,
             final boolean strechImage, final float azimuth, final CanvasMonitor monitor,
             final Color background, final Hints hints, final PortrayalExtension ... extensions) throws PortrayalException{
@@ -228,7 +228,7 @@ public final class DefaultPortrayalService implements PortrayalService{
         return portray(canvasDef, new SceneDef(context, hints, extensions));
     }
 
-    public static BufferedImage portray(final CanvasDef canvasDef, final SceneDef sceneDef) throws PortrayalException{
+    public static RenderedImage portray(final CanvasDef canvasDef, final SceneDef sceneDef) throws PortrayalException{
 
         final Envelope contextEnv = canvasDef.getEnvelope();
         final CoordinateReferenceSystem crs = contextEnv.getCoordinateReferenceSystem();
@@ -251,9 +251,9 @@ public final class DefaultPortrayalService implements PortrayalService{
         prepareCanvas(canvas, canvasDef, sceneDef);
         canvas.repaint();
 
-        BufferedImage buffer = null;
+        RenderedImage buffer = null;
         if (graphics == null) {
-            buffer = (BufferedImage) canvas.getSnapShot();
+            buffer = (RenderedImage) canvas.getSnapShot();
             try {
                 canvas.dispose();
             } catch (RuntimeException e) {
@@ -532,7 +532,7 @@ public final class DefaultPortrayalService implements PortrayalService{
 
         } else {
             //use the rendering engine to generate an image
-            BufferedImage image = portray(canvasDef,sceneDef);
+            RenderedImage image = portray(canvasDef,sceneDef);
 
             if (image == null) {
                 throw new PortrayalException("No image created by the canvas.");
@@ -546,7 +546,7 @@ public final class DefaultPortrayalService implements PortrayalService{
                         env.getSpan(1) / (double) dim.height};
 
                 //check the image color model
-                image = (BufferedImage) rectifyImageColorModel(image, mime);
+                image = rectifyImageColorModel(image, mime);
 
                 final GridCoverageBuilder gcb = new GridCoverageBuilder();
                 gcb.setDomain(env);

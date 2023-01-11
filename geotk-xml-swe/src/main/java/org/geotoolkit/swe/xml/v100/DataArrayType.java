@@ -80,7 +80,7 @@ public class DataArrayType extends AbstractDataArrayType implements DataArray {
         }
     }
 
-    public DataArrayType(final String id, final int count, final String elementName, final AbstractDataRecordType elementType,
+    public DataArrayType(final String id, final Integer count, final String elementName, final AbstractDataRecordType elementType,
             final AbstractEncodingType encoding, final String values, final List<Object> dataValues) {
         super(id, count);
         if (elementType != null) {

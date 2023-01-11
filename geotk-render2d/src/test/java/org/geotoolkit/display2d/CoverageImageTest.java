@@ -112,7 +112,7 @@ public class CoverageImageTest extends org.geotoolkit.test.TestBase {
      * @param resultImage expected image.
      * @param proportionalityCoefficient resample coefficient.
      */
-    private void checkImage(RenderedImage sourceImage, BufferedImage resultImage, int proportionalityCoefficient) {
+    private void checkImage(RenderedImage sourceImage, RenderedImage resultImage, int proportionalityCoefficient) {
         final int numband = sourceImage.getSampleModel().getNumBands();
         final int srcMinX = sourceImage.getMinX();
         final int srcMinY = sourceImage.getMinY();
@@ -162,7 +162,7 @@ public class CoverageImageTest extends org.geotoolkit.test.TestBase {
         sdef.setHints(hints);
         cdef.setEnvelope(resEnv);
 
-        final BufferedImage imgResult = DefaultPortrayalService.portray(cdef, sdef);
+        final RenderedImage imgResult = DefaultPortrayalService.portray(cdef, sdef);
         checkImage(sourceImage, imgResult, proportionalityCoefficient);
     }
 

@@ -26,6 +26,7 @@ import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 import java.awt.image.IndexColorModel;
 import java.awt.image.Raster;
+import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -206,7 +207,7 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
 
-        final BufferedImage img = DefaultPortrayalService.portray(
+        final RenderedImage img = DefaultPortrayalService.portray(
                 new CanvasDef(new Dimension(800, 600), env),
                 new SceneDef(context));
 
@@ -229,7 +230,7 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
 
         final CanvasDef cdef = new CanvasDef(new Dimension(800, 600), env);
         cdef.setBackground(Color.GREEN);
-        final BufferedImage img = DefaultPortrayalService.portray(cdef, new SceneDef(context));
+        final RenderedImage img = DefaultPortrayalService.portray(cdef, new SceneDef(context));
 
         assertTrue( img.getColorModel() instanceof IndexColorModel);
 
@@ -249,7 +250,7 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
 
         final CanvasDef cdef = new CanvasDef(new Dimension(800, 600), env);
         cdef.setBackground(Color.GREEN);
-        final BufferedImage img = DefaultPortrayalService.portray(cdef,
+        final RenderedImage img = DefaultPortrayalService.portray(cdef,
                 new SceneDef(context, new Hints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)));
 
         //background is single color opaque we should obtain an RGB color model because of active
@@ -269,7 +270,7 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
 
         final CanvasDef cdef = new CanvasDef(new Dimension(800, 600), env);
         cdef.setBackground(new Color(0.5f, 0.1f, 0.7f, 0.6f));
-        final BufferedImage img = DefaultPortrayalService.portray(cdef, new SceneDef(context));
+        final RenderedImage img = DefaultPortrayalService.portray(cdef, new SceneDef(context));
 
         //background is not opaque we should obtain an RGBA color model
         assertTrue(!(img.getColorModel() instanceof IndexColorModel));
@@ -287,7 +288,7 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
 
         final CanvasDef cdef = new CanvasDef(new Dimension(800, 600), env);
         cdef.setBackground(Color.GREEN);
-        final BufferedImage img = DefaultPortrayalService.portray(cdef,
+        final RenderedImage img = DefaultPortrayalService.portray(cdef,
                 new SceneDef(context,null, new PortrayalExtension() {
                         @Override
                         public void completeCanvas(J2DCanvas canvas) throws PortrayalException {
@@ -314,7 +315,7 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
 
         final CanvasDef cdef = new CanvasDef(new Dimension(800, 600), env);
         cdef.setBackground(Color.WHITE);
-        final BufferedImage img = DefaultPortrayalService.portray(cdef, new SceneDef(context));
+        final RenderedImage img = DefaultPortrayalService.portray(cdef, new SceneDef(context));
 
         assertTrue( img.getColorModel() instanceof IndexColorModel);
         final IndexColorModel icm = (IndexColorModel) img.getColorModel();
@@ -350,7 +351,7 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
 
         final CanvasDef cdef = new CanvasDef(new Dimension(800, 600), env);
         cdef.setBackground(Color.WHITE);
-        final BufferedImage img = DefaultPortrayalService.portray(cdef, new SceneDef(context));
+        final RenderedImage img = DefaultPortrayalService.portray(cdef, new SceneDef(context));
 
         //background is opaque we should obtain an RGB color model since raster styles
         //are unpredictable
@@ -418,7 +419,7 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
 
         final CanvasDef cdef = new CanvasDef(new Dimension(800, 600), envelope);
         cdef.setBackground(Color.WHITE);
-        final BufferedImage result = DefaultPortrayalService.portray(cdef, new SceneDef(context));
+        final RenderedImage result = DefaultPortrayalService.portray(cdef, new SceneDef(context));
 
         //background is opaque we should obtain an RGB color model since raster styles
         //are unpredictable
@@ -464,7 +465,7 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
 
         final CanvasDef cdef = new CanvasDef(new Dimension(800, 600), envelope);
         cdef.setBackground(Color.WHITE);
-        final BufferedImage result = DefaultPortrayalService.portray(cdef, new SceneDef(context));
+        final RenderedImage result = DefaultPortrayalService.portray(cdef, new SceneDef(context));
 
         //background is opaque we should obtain an RGB color model since raster styles
         //are unpredictable

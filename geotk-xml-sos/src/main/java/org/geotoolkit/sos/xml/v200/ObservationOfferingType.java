@@ -31,13 +31,11 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 import org.geotoolkit.gml.xml.v321.EnvelopeType;
-import org.geotoolkit.gml.xml.v321.EnvelopeWithTimePeriodType;
 import org.geotoolkit.gml.xml.v321.TimePeriodType;
 import org.geotoolkit.gml.xml.v321.TimePositionType;
 import org.geotoolkit.sos.xml.ObservationOffering;
 import org.geotoolkit.sos.xml.ResponseModeType;
 import org.geotoolkit.swes.xml.v200.AbstractOfferingType;
-import org.opengis.metadata.Identifier;
 
 
 /**
@@ -304,7 +302,7 @@ public class ObservationOfferingType extends AbstractOfferingType implements Obs
     @Override
     public List<String> getFeatureOfInterestIds() {
         final List<String> results = new ArrayList<>();
-        for (RelatedFeature feat : getRelatedFeature()) {
+        for (AbstractOfferingType.RelatedFeature feat : getRelatedFeature()) {
             if (feat.getFeatureRelationship() != null &&
                 feat.getFeatureRelationship().getTarget() != null &&
                 feat.getFeatureRelationship().getTarget().getHref() != null) {

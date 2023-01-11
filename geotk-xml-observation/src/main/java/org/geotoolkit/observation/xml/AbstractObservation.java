@@ -21,11 +21,12 @@ import java.util.List;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.gml.xml.BoundingShape;
 import org.geotoolkit.gml.xml.FeatureProperty;
-import org.geotoolkit.gml.xml.LocationProperty;
 import org.geotoolkit.swe.xml.PhenomenonProperty;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.quality.Element;
 import org.opengis.observation.Observation;
+import org.opengis.observation.Phenomenon;
+import org.opengis.observation.sampling.SamplingFeature;
 import org.opengis.temporal.Period;
 import org.opengis.temporal.TemporalGeometricPrimitive;
 
@@ -64,7 +65,13 @@ public interface AbstractObservation extends Observation {
 
     FeatureProperty getPropertyFeatureOfInterest();
 
+    void setFullObservedProperty(Phenomenon observedProperty);
+
+    void setFullFeatureOfInterest(SamplingFeature foi);
+
     AbstractObservation getTemporaryTemplate(final String temporaryName, TemporalGeometricPrimitive time);
 
     List<Element> getResultQuality();
+
+    String getObservationType();
 }
