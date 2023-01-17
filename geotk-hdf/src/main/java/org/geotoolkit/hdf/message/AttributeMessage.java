@@ -216,7 +216,7 @@ public final class AttributeMessage extends Message {
 
         if (!dataspace.isNull()) {
             try {
-                data = dataType.readData(channel, dataspace.getDimensionSizes());
+                data = dataType.readData(channel, dataspace.getDimensionSizes(), null);
             } catch (DataStoreException ex) {
                 //decoding error, caused by a bad or broken file
                 LOGGER.log(Level.WARNING, "Failed to read attribute " + name + " message data", ex);

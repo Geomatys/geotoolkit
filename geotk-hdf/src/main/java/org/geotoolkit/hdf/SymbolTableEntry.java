@@ -103,6 +103,15 @@ public final class SymbolTableEntry extends IOStructure {
         return cacheType;
     }
 
+    /**
+     * Every object has an object header which serves as a permanent location
+     * for the object’s metadata. In addition to appearing in the object header,
+     * some of the object’s metadata can be cached in the scratch-pad space.
+     */
+    public long getObjectHeaderAddress() {
+        return objectHeaderAddress;
+    }
+
     public synchronized ObjectHeader getHeader(HDF5DataInput channel) throws IOException, DataStoreException {
         if (objectHeader == null && channel.isDefinedOffset(objectHeaderAddress)) {
             channel.mark();

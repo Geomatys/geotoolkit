@@ -73,6 +73,11 @@ public final class HDF5Store extends DataStore implements Group, Aggregate, Reso
     }
 
     @Override
+    public long getAddress() {
+        return 0;
+    }
+
+    @Override
     public Optional<GenericName> getIdentifier() throws DataStoreException {
         return root.getIdentifier();
     }

@@ -100,7 +100,7 @@ public final class VariableLength extends DataType {
     }
 
     @Override
-    public Object readData(HDF5DataInput channel, int ... compoundindexes) throws IOException {
+    public Object readData(HDF5DataInput channel, int ... compoundindexes) throws IOException, DataStoreException {
 
         /*
         Data is not here, it is in a global heap
@@ -136,7 +136,8 @@ public final class VariableLength extends DataType {
 
                 switch (paddingType) {
                     case PADDING_NULL_TERMINATED:
-                        return channel.readNBytes((int) globalHeapObject.objectSize);
+                        return baseType.readData(channel);
+                        //return channel.readNBytes((int) globalHeapObject.objectSize);
                     case PADDING_NULL_PAD:
                     case PADDING_SPACE_PAD:
                     default:

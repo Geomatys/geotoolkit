@@ -19,6 +19,8 @@ package org.geotoolkit.hdf.api;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import org.apache.sis.storage.Aggregate;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.iso.Names;
 import org.opengis.util.GenericName;
@@ -33,6 +35,31 @@ public interface Node extends Resource {
     Group getParent();
 
     String getName();
+
+    /**
+     * Offset in the file of this node.
+     * This is used by Reference data types.
+     * @return object file address
+     */
+    long getAddress();
+
+    /**
+     * Search the resource and it's children for the node with given address.
+     */
+    default Node findNode(long address) throws DataStoreException {
+        if (getAddress() == address) {
+            return this;
+        }
+        if (this instanceof Aggregate agg) {
+            for (Resource r : agg.components()) {
+                if (r instanceof Node n) {
+                    Node cdt = n.findNode(address);
+                    if (cdt != null) return cdt;
+                }
+            }
+        }
+        return null;
+    }
 
     Map<String,Object> getAttributes();
 

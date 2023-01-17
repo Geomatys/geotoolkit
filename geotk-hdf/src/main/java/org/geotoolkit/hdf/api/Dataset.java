@@ -65,6 +65,7 @@ import org.apache.sis.util.iso.Names;
 import org.apache.sis.util.resources.Vocabulary;
 import org.geotoolkit.hdf.ObjectHeader;
 import org.geotoolkit.hdf.SymbolTableEntry;
+import static org.geotoolkit.hdf.api.DefaultGroup.prettyPrint;
 import org.geotoolkit.hdf.btree.BTreeV1;
 import org.geotoolkit.hdf.btree.BTreeV1Chunk;
 import org.geotoolkit.hdf.datatype.Compound;
@@ -121,6 +122,7 @@ public final class Dataset extends AbstractResource implements Node, FeatureSet 
     private final GenericName genericName;
     private final BTreeV1 btree;
     private final LocalHeap localHeap;
+    private final long address;
 
     //parsed values
     private final Map<String,Object> attributes = new HashMap<>();
@@ -145,6 +147,7 @@ public final class Dataset extends AbstractResource implements Node, FeatureSet 
         this.parent = parent;
         this.connector = connector;
         this.name = name;
+        this.address = entry.getObjectHeaderAddress();
 
         final ObjectHeader header;
         try (final HDF5DataInput channel = connector.createChannel()) {
@@ -202,6 +205,11 @@ public final class Dataset extends AbstractResource implements Node, FeatureSet 
     @Override
     public Group getParent() {
         return parent;
+    }
+
+    @Override
+    public long getAddress() {
+        return address;
     }
 
     @Override
@@ -639,11 +647,7 @@ public final class Dataset extends AbstractResource implements Node, FeatureSet 
         final StringBuilder sb = new StringBuilder(name);
         sb.append("[HDF5-Dataset]");
         for (Map.Entry entry : getAttributes().entrySet()) {
-            Object v = entry.getValue();
-            if (v instanceof CharSequence) {
-                v = "\"" + v + "\"";
-                v = ((String)v).replace('\n', ' ');
-            }
+            Object v = prettyPrint(this, entry.getValue());
             sb.append('\n').append("@").append(entry.getKey()).append(" = ").append(v);
         }
         sb.append("\n").append(".layout = ").append(layout.getClass().getSimpleName());

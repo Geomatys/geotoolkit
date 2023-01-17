@@ -49,6 +49,7 @@ public final class Reference extends DataType {
 
     public Reference(int byteSize, int version, int classBitFields, HDF5DataInput channel) throws IOException {
         super(byteSize);
+        if (byteSize != 8) throw new IOException("Unexpected reference length "+ byteSize + ", was expecting 8");
         if (version < 4) {
             this.type = classBitFields & 0b1111;
             this.version = 0;
@@ -67,6 +68,14 @@ public final class Reference extends DataType {
 
     @Override
     public Object readData(HDF5DataInput input, int ... compoundindexes) throws IOException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return new Object(input.readLong());
+    }
+
+    public static class Object {
+        public final long address;
+
+        public Object(long address) {
+            this.address = address;
+        }
     }
 }

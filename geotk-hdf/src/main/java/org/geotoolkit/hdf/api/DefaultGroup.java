@@ -17,7 +17,10 @@
 package org.geotoolkit.hdf.api;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -31,6 +34,7 @@ import org.geotoolkit.hdf.ObjectHeader;
 import org.geotoolkit.hdf.SymbolTableEntry;
 import org.geotoolkit.hdf.SymbolTableNode;
 import org.geotoolkit.hdf.btree.BTreeV1;
+import org.geotoolkit.hdf.datatype.Reference;
 import org.geotoolkit.hdf.heap.LocalHeap;
 import org.geotoolkit.hdf.io.Connector;
 import org.geotoolkit.hdf.io.HDF5DataInput;
@@ -56,6 +60,7 @@ public final class DefaultGroup extends AbstractResource implements Group, Aggre
     private final Connector connector;
     private final SymbolTableEntry entry;
 
+    private final long address;
     private final String name;
     private final GenericName genericName;
     private final BTreeV1 btree;
@@ -72,7 +77,7 @@ public final class DefaultGroup extends AbstractResource implements Group, Aggre
         this.connector = connector;
         this.entry = entry;
         this.genericName = Node.createName(this);
-        System.out.println(genericName);
+        this.address = entry.getObjectHeaderAddress();
 
         final ObjectHeader header;
         try (final HDF5DataInput channel = connector.createChannel()) {
@@ -100,6 +105,11 @@ public final class DefaultGroup extends AbstractResource implements Group, Aggre
     @Override
     public Group getParent() {
         return parent;
+    }
+
+    @Override
+    public long getAddress() {
+        return address;
     }
 
     @Override
@@ -191,13 +201,48 @@ public final class DefaultGroup extends AbstractResource implements Group, Aggre
         final StringBuilder sb = new StringBuilder(name);
         sb.append("[HDF5-Group]");
         for (Map.Entry entry : getAttributes().entrySet()) {
-            Object v = entry.getValue();
-            if (v instanceof CharSequence) {
-                v = "\"" + v + "\"";
-                v = ((String)v).replace('\n', ' ');
-            }
+            Object v = prettyPrint(this, entry.getValue());
             sb.append('\n').append("@").append(entry.getKey()).append(" = ").append(v);
         }
         return StringUtilities.toStringTree(sb.toString(), components());
+    }
+
+    static Object prettyPrint(Node base, Object v) {
+        if (v instanceof Reference.Object ref) {
+            //get the root node
+            Node root = base;
+            while (root != null && root.getParent() != null) {
+                root = root.getParent();
+            }
+
+            try {
+                Node candidate = root.findNode(ref.address);
+                if (candidate != null) {
+                    v = candidate.getIdentifier().orElse(null);
+                } else {
+                    v = "Reference not found for address " + ref.address;
+                }
+            } catch (DataStoreException ex) {
+                v = ex.getMessage();
+            }
+
+        } else if (v instanceof CharSequence) {
+            v = "\"" + v + "\"";
+            v = ((String)v).replace('\n', ' ');
+        } else if (v instanceof Collection c) {
+            final List<Object> lst = new ArrayList<>();
+            for (Object o : c) {
+                lst.add(prettyPrint(base, o));
+            }
+            v = Arrays.toString(lst.toArray());
+        } else if (v != null && v.getClass().isArray()) {
+            int l = Array.getLength(v);
+            final List<Object> lst = new ArrayList<>(l);
+            for (int i = 0; i < l; i++) {
+                lst.add(prettyPrint(base, Array.get(v, i)));
+            }
+            v = Arrays.toString(lst.toArray());
+        }
+        return v;
     }
 }
