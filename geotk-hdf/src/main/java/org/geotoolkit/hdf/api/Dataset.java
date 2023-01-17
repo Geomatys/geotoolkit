@@ -65,7 +65,7 @@ import org.apache.sis.util.iso.Names;
 import org.apache.sis.util.resources.Vocabulary;
 import org.geotoolkit.hdf.ObjectHeader;
 import org.geotoolkit.hdf.SymbolTableEntry;
-import static org.geotoolkit.hdf.api.DefaultGroup.prettyPrint;
+import static org.geotoolkit.hdf.api.Group.prettyPrint;
 import org.geotoolkit.hdf.btree.BTreeV1;
 import org.geotoolkit.hdf.btree.BTreeV1Chunk;
 import org.geotoolkit.hdf.datatype.Compound;

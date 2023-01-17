@@ -46,7 +46,7 @@ public class ReadTest {
 //            System.out.println(store.toString());
 
             { // 1D floating point
-                final Dataset dataset = (Dataset) store.getComponent("array_1D");
+                final Dataset dataset = (Dataset) store.getRootGroup().getComponent("array_1D");
                 assertTrue(dataset.getDataType() instanceof FloatingPoint);
                 assertArrayEquals(new int[]{50}, dataset.getDataspace().getDimensionSizes());
                 double[] values;
@@ -63,7 +63,7 @@ public class ReadTest {
             }
 
             { // 2D floating point
-                final Dataset dataset = (Dataset) store.getComponent("array_2D");
+                final Dataset dataset = (Dataset) store.getRootGroup().getComponent("array_2D");
                 assertTrue(dataset.getDataType() instanceof FixedPoint);
                 assertArrayEquals(new int[]{20,20}, dataset.getDataspace().getDimensionSizes());
                 int[][] values;
@@ -81,7 +81,7 @@ public class ReadTest {
             }
 
             { // 3D floating point
-                final Dataset dataset = (Dataset) store.getComponent("array_3D");
+                final Dataset dataset = (Dataset) store.getRootGroup().getComponent("array_3D");
                 assertTrue(dataset.getDataType() instanceof FixedPoint);
                 assertArrayEquals(new int[]{20,20,20}, dataset.getDataspace().getDimensionSizes());
                 int[][][] values;
@@ -103,7 +103,7 @@ public class ReadTest {
             }
 
             { // 1D floating point
-                final Dataset dataset = (Dataset) store.getComponent("table");
+                final Dataset dataset = (Dataset) store.getRootGroup().getComponent("table");
                 assertTrue(dataset.getDataType() instanceof Compound);
                 Compound cmpd = (Compound) dataset.getDataType();
                 assertEquals(Object[].class, cmpd.getValueClass());
@@ -148,7 +148,7 @@ public class ReadTest {
             }
 
             { // 2D floating point
-                final Dataset dataset = (Dataset) store.getComponent("table_2D");
+                final Dataset dataset = (Dataset) store.getRootGroup().getComponent("table_2D");
                 assertTrue(dataset.getDataType() instanceof Compound);
                 Compound cmpd = (Compound) dataset.getDataType();
                 assertEquals(Object[].class, cmpd.getValueClass());
@@ -182,7 +182,7 @@ public class ReadTest {
             }
 
             { // 3D floating point
-                final Dataset dataset = (Dataset) store.getComponent("table_3D");
+                final Dataset dataset = (Dataset) store.getRootGroup().getComponent("table_3D");
                 assertTrue(dataset.getDataType() instanceof Compound);
                 Compound cmpd = (Compound) dataset.getDataType();
                 assertEquals(Object[].class, cmpd.getValueClass());
