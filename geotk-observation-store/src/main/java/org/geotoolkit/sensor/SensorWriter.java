@@ -68,13 +68,6 @@ public interface SensorWriter {
     String getNewSensorId() throws DataStoreException;
 
     /**
-     * Return informations about the implementation class.
-     *
-     * @return informations.
-     */
-    String getInfos();
-
-    /**
      * Free the resources and close the connections to datasource.
      */
     void destroy();

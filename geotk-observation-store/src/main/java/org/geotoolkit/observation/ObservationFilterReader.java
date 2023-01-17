@@ -117,11 +117,6 @@ public interface ObservationFilterReader {
     long getCount() throws DataStoreException;
 
     /**
-     * Return informations about the implementation class.
-     */
-    String getInfos();
-
-    /**
      * Refresh the index if it need it.
      */
     void refresh() throws DataStoreException;

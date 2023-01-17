@@ -117,22 +117,6 @@ public abstract class AbstractSensorStore extends DataStore implements SensorSto
     }
 
     @Override
-    public String getInfos() {
-        final StringBuilder infos = new StringBuilder();
-        if (reader != null) {
-            infos.append('\n').append(reader.getInfos()).append(" loaded.\n");
-        } else {
-            infos.append("No SensorML reader loaded.\n");
-        }
-        if (writer != null) {
-            infos.append(writer.getInfos()).append(" loaded.\n").append('\n');
-        } else {
-            infos.append("No SensorML writer loaded.\n");
-        }
-        return infos.toString();
-    }
-
-    @Override
     public void close() {
         if (reader != null) {reader.destroy();}
         if (writer != null) {writer.destroy();}

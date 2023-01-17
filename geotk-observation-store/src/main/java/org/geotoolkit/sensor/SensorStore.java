@@ -121,13 +121,6 @@ public interface SensorStore extends AutoCloseable {
     int replaceSensor(String id, Object sensor) throws DataStoreException;
 
     /**
-     * Return informations about the implementation class.
-     *
-     * @return A String description of the used implementations.
-     */
-    String getInfos();
-
-    /**
      * {@inheritDoc }
      */
     @Override
