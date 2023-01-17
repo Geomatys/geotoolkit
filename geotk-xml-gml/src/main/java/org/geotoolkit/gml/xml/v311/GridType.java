@@ -25,7 +25,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.opengis.coverage.grid.Grid;
+import org.opengis.referencing.cs.CoordinateSystem;
 
 
 /**
@@ -89,6 +91,20 @@ public class GridType extends AbstractGeometryType {
             this.axisName  = grid.getAxisNames();
             this.dimension = grid.getDimension();
             this.limits    = new GridLimitsType(grid.getExtent());
+        }
+    }
+
+    public GridType(final GridGeometry gg) {
+        if (gg != null) {
+            this.dimension = gg.getDimension();
+            this.limits = new GridLimitsType(gg.getExtent());
+            if (gg.isDefined(GridGeometry.CRS)) {
+                CoordinateSystem cs = gg.getCoordinateReferenceSystem().getCoordinateSystem();
+                this.axisName = new ArrayList<>();
+                for (int i = 0; i < cs.getDimension(); i++) {
+                    axisName.add(cs.getAxis(i).getAbbreviation());
+                }
+            }
         }
     }
 

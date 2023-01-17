@@ -196,6 +196,9 @@ abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCoverage im
 
     @Override
     public RenderedImage render(GridExtent sliceExtent) throws CannotEvaluateException {
+        if (sliceExtent == null) {
+            sliceExtent = getGridGeometry().derive().sliceByRatio(1, 0, 1).build().getExtent();
+        }
         final int[] indices = sliceExtent.getSubspaceDimensions(2);
         final int xAxis = indices[0];
         final int yAxis = indices[1];
