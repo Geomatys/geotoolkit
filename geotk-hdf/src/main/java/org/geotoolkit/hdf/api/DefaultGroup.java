@@ -71,6 +71,8 @@ public final class DefaultGroup extends AbstractResource implements Group, Aggre
         this.name = name;
         this.connector = connector;
         this.entry = entry;
+        this.genericName = Node.createName(this);
+        System.out.println(genericName);
 
         final ObjectHeader header;
         try (final HDF5DataInput channel = connector.createChannel()) {
@@ -93,8 +95,6 @@ public final class DefaultGroup extends AbstractResource implements Group, Aggre
                 }
             }
         }
-
-        genericName = Node.createName(this);
     }
 
     @Override
@@ -116,14 +116,30 @@ public final class DefaultGroup extends AbstractResource implements Group, Aggre
         final BTreeV1 btree = (BTreeV1) IOStructure.loadIdentifiedObject(channel);
         channel.reset();
 
+        buildComponents(channel, localHeap, btree);
+    }
+
+    private void buildComponents(final HDF5DataInput channel, LocalHeap localHeap, BTreeV1 btree) throws IOException, DataStoreException {
         final BTreeV1.GroupNode node = (BTreeV1.GroupNode) btree.root;
+
         for (long adr : node.groupChildAddresses) {
             channel.seek(adr);
             IOStructure struct = IOStructure.loadIdentifiedObject(channel);
-            if (struct instanceof SymbolTableNode stn) {
-                buildComponents(channel, localHeap, stn);
+
+            if (btree.header.nodeLevel == 0) {
+                //leaf group
+                if (struct instanceof SymbolTableNode stn) {
+                    buildComponents(channel, localHeap, stn);
+                } else {
+                    throw new IOException("Unexpected " + struct);
+                }
             } else {
-                throw new IOException("Unexpected " + struct);
+                //group in group
+                if (struct instanceof BTreeV1 subtree) {
+                    buildComponents(channel, localHeap, subtree);
+                } else {
+                    throw new IOException("Unexpected " + struct);
+                }
             }
         }
     }
@@ -149,6 +165,7 @@ public final class DefaultGroup extends AbstractResource implements Group, Aggre
         return name;
     }
 
+    @Override
     public Node getComponent(String name) {
         for (Node n : components()) {
             if (name.equals(n.getName())) {

@@ -595,7 +595,7 @@ public final class Dataset extends AbstractResource implements Node, FeatureSet 
         }
     }
 
-    private Object readChunkDatas(HDF5DataInput chunkChannel, final long[] dimensionByteSize, final long[] chunkLow, final long[] intersectionLow, final int[] intersectionSize, int dimIdx, int ... compoundindexes) throws IOException {
+    private Object readChunkDatas(HDF5DataInput chunkChannel, final long[] dimensionByteSize, final long[] chunkLow, final long[] intersectionLow, final int[] intersectionSize, int dimIdx, int ... compoundindexes) throws IOException, DataStoreException {
         final long basePosition = chunkChannel.getStreamPosition();
         Object values;
         if (dimIdx == intersectionLow.length - 1) {

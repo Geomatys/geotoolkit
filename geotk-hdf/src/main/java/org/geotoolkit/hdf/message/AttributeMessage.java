@@ -18,6 +18,9 @@ package org.geotoolkit.hdf.message;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.hdf.datatype.DataType;
 import org.geotoolkit.hdf.io.HDF5DataInput;
 
@@ -50,6 +53,8 @@ import org.geotoolkit.hdf.io.HDF5DataInput;
  */
 public final class AttributeMessage extends Message {
 
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.hdf");
+
     /**
      * Attribute name.
      */
@@ -79,6 +84,10 @@ public final class AttributeMessage extends Message {
      * and dataspace descriptions. This field is not padded with additional bytes.
      */
     private Object data;
+    /**
+     * Store data reading exception.
+     */
+    private Exception dataException;
 
     /**
      * Attribute name.
@@ -94,8 +103,15 @@ public final class AttributeMessage extends Message {
         return data;
     }
 
+    /**
+     * @return raised exception if data decoding has failed
+     */
+    public Exception getDataException() {
+        return dataException;
+    }
+
     @Override
-    public void read(HDF5DataInput channel) throws IOException {
+    public void read(HDF5DataInput channel) throws IOException, DataStoreException {
 
         /*
         The version number information is used for changes in the format of the
@@ -199,7 +215,14 @@ public final class AttributeMessage extends Message {
         }
 
         if (!dataspace.isNull()) {
-            data = dataType.readData(channel, dataspace.getDimensionSizes());
+            try {
+                data = dataType.readData(channel, dataspace.getDimensionSizes());
+            } catch (DataStoreException ex) {
+                //decoding error, caused by a bad or broken file
+                LOGGER.log(Level.WARNING, "Failed to read attribute " + name + " message data", ex);
+                dataException = ex;
+                data = null;
+            }
         }
 
     }

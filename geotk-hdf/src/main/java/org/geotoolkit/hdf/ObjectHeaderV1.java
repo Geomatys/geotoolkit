@@ -19,6 +19,7 @@ package org.geotoolkit.hdf;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.hdf.io.HDF5DataInput;
 import org.geotoolkit.hdf.message.Message;
 import org.geotoolkit.hdf.message.ObjectHeaderContinuationMessage;
@@ -75,7 +76,7 @@ public final class ObjectHeaderV1 extends IOStructure implements ObjectHeader {
     }
 
     @Override
-    public void read(HDF5DataInput channel) throws IOException {
+    public void read(HDF5DataInput channel) throws IOException, DataStoreException {
         /*
         This value is used to determine the format of the information in the object
         header. When the format of the object header is changed, the version number
@@ -95,7 +96,7 @@ public final class ObjectHeaderV1 extends IOStructure implements ObjectHeader {
         }
     }
 
-    private void readMessage(HDF5DataInput channel) throws IOException {
+    private void readMessage(HDF5DataInput channel) throws IOException, DataStoreException {
         /**
          * This value specifies the type of information included in the
          * following header message data. The message types for header messages

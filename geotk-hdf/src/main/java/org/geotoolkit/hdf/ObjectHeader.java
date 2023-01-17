@@ -18,6 +18,7 @@ package org.geotoolkit.hdf;
 
 import java.io.IOException;
 import java.util.List;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.hdf.io.HDF5DataInput;
 import org.geotoolkit.hdf.message.Message;
 
@@ -33,7 +34,7 @@ public interface ObjectHeader {
      */
     List<Message> getMessages();
 
-    void read(HDF5DataInput channel) throws IOException;
+    void read(HDF5DataInput channel) throws IOException, DataStoreException;
 
     public static ObjectHeader forVersion(int version) {
         return switch (version) {
