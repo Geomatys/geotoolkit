@@ -123,7 +123,7 @@ public class InMemoryTiledGridCoverageResource extends AbstractGridCoverageResou
         TileMatrices.copyStructure(p, py);
         py.setBuildPhase(false);
         tileMatrixSets.add(py);
-        listeners.fire(new ModelEvent(this), StoreEvent.class);
+        listeners.fire(StoreEvent.class, new ModelEvent(this));
         return py;
     }
 
@@ -135,7 +135,7 @@ public class InMemoryTiledGridCoverageResource extends AbstractGridCoverageResou
             final WritableTileMatrixSet tms = it.next();
             if (identifier.equalsIgnoreCase(tms.getIdentifier().toString())) {
                 tileMatrixSets.remove(tms);
-                listeners.fire(new ModelEvent(this), StoreEvent.class);
+                listeners.fire(StoreEvent.class, new ModelEvent(this));
                 return;
             }
         }
@@ -185,7 +185,7 @@ public class InMemoryTiledGridCoverageResource extends AbstractGridCoverageResou
             tileMatrices.insertByScale(gm);
             if (!buildPhase) {
                 //we are creating object, dont send an event until we are finished.
-                listeners.fire(new ModelEvent(InMemoryTiledGridCoverageResource.this), StoreEvent.class);
+                listeners.fire(StoreEvent.class, new ModelEvent(InMemoryTiledGridCoverageResource.this));
             }
             return gm;
         }
@@ -196,7 +196,7 @@ public class InMemoryTiledGridCoverageResource extends AbstractGridCoverageResou
                 if (tm.getIdentifier().toString().equals(mosaicId)) {
                     tileMatrices.remove(tm.getIdentifier());
                     if (!buildPhase) {
-                        listeners.fire(new ModelEvent(InMemoryTiledGridCoverageResource.this), StoreEvent.class);
+                        listeners.fire(StoreEvent.class, new ModelEvent(InMemoryTiledGridCoverageResource.this));
                     }
                     break;
                 }
@@ -232,7 +232,7 @@ public class InMemoryTiledGridCoverageResource extends AbstractGridCoverageResou
             mpTileReference.put(new Point(Math.toIntExact(col), Math.toIntExact(row)), tile);
             if (!buildPhase) {
                 //we are creating object, dont send an event until we are finished.
-                listeners.fire(new ContentEvent(InMemoryTiledGridCoverageResource.this), StoreEvent.class);
+                listeners.fire(StoreEvent.class, new ContentEvent(InMemoryTiledGridCoverageResource.this));
             }
         }
 

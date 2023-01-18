@@ -31,7 +31,7 @@ public class ReducedGridCoverage extends GridCoverage {
     private final int[] dimensions;
 
     public ReducedGridCoverage(GridCoverage parent, int ... dimensions) {
-        super(parent.getGridGeometry().reduce(dimensions), parent.getSampleDimensions());
+        super(parent.getGridGeometry().selectDimensions(dimensions), parent.getSampleDimensions());
         this.parent = parent;
         this.dimensions = dimensions;
     }

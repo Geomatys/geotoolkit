@@ -547,7 +547,7 @@ public class ImageCoverageWriter extends GridCoverageStore {
          * provided in the GridCoverageWriteParam. In order to get the ImageWriteParam, we
          * need the ImageWriter, which need the RenderedImage, which need the GridGeometry.
          */
-        GridGeometry gridGeometry = coverage.getGridGeometry().reduce(0, 1);
+        GridGeometry gridGeometry = coverage.getGridGeometry().selectDimensions(0, 1);
 
         RenderedImage image = coverage.render(null);
         while (image instanceof RenderedImageAdapter) {

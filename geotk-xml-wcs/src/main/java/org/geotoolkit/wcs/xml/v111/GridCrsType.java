@@ -173,7 +173,7 @@ public class GridCrsType {
 
            Matrix m = MathTransforms.getMatrix(gridToCRS);
            if (m == null) {
-               m = MathTransforms.getMatrix(gg.reduce(0,1).getGridToCRS(PixelInCell.CELL_CORNER));
+               m = MathTransforms.getMatrix(gg.selectDimensions(0,1).getGridToCRS(PixelInCell.CELL_CORNER));
            }
            if (m != null) {
                this.gridOffsets = new ArrayList<>();

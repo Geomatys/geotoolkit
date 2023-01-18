@@ -329,7 +329,7 @@ public abstract class AbstractCoverageStore extends DataStore implements AutoClo
      * @todo should specify the event type.
      */
     protected void sendEvent(final StoreEvent event) {
-        listeners.fire(event, StoreEvent.class);
+        listeners.fire(StoreEvent.class, event);
     }
 
     /**

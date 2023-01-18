@@ -261,7 +261,7 @@ class SimpleUVSource implements UVSource {
                             .build();
                     final GridCoverage snapshot = source.read(snapshotGeom, uvIndices.x, uvIndices.y);
                     snapshotGeom = snapshot.getGridGeometry()
-                            .reduce(horizontalAxisIdx, horizontalAxisIdx+1);
+                            .selectDimensions(horizontalAxisIdx, horizontalAxisIdx+1);
                     final GridExtent extent2d = snapshotGeom.getExtent();
                     dataCrs2Grid = MathTransforms.concatenate(
                             snapshotGeom.getGridToCRS(PixelInCell.CELL_CENTER).inverse(),

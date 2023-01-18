@@ -106,7 +106,7 @@ public class RectifiedGridType extends GridType {
 
            Matrix m = MathTransforms.getMatrix(gridToCRS);
            if (m == null) {
-               m = MathTransforms.getMatrix(gg.reduce(0,1).getGridToCRS(PixelInCell.CELL_CORNER));
+               m = MathTransforms.getMatrix(gg.selectDimensions(0,1).getGridToCRS(PixelInCell.CELL_CORNER));
            }
            if (m != null) {
                for (int j = 0; j < m.getNumRow() -1; j++) {

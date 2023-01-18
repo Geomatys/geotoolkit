@@ -39,7 +39,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 import javax.measure.Unit;
-import javax.measure.format.ParserException;
+import javax.measure.format.MeasurementParseException;
+import org.apache.sis.coverage.grid.DisjointExtentException;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
@@ -244,7 +245,7 @@ public final class Dataset extends AbstractResource implements Node, FeatureSet 
         CoordinateReferenceSystem crs = null;
         try {
             unit = Units.valueOf(unitStr);
-        } catch (ParserException ex) {
+        } catch (MeasurementParseException ex) {
             int idx = unitStr.indexOf("since");
             if (idx > 0) {
                 try {
@@ -262,7 +263,7 @@ public final class Dataset extends AbstractResource implements Node, FeatureSet 
                     final DefaultTimeCS timeCs = new DefaultTimeCS(cs, new DefaultCoordinateSystemAxis(axis, "t", AxisDirection.FUTURE, unit));
                     crs = new DefaultTemporalCRS(properties, datum, timeCs);
 
-                } catch (ParserException | ParseException e) {
+                } catch (MeasurementParseException | ParseException e) {
                     LOGGER.log(Level.WARNING, "Failed to parse unit {0}", unitStr);
                 }
             } else {
@@ -556,7 +557,14 @@ public final class Dataset extends AbstractResource implements Node, FeatureSet 
     private void appendChunkDatas(Object results, Callable<HDF5DataInput> chunkChannel,
             GridExtent chunkExtent, GridExtent queryExtent, int ... compoundindexes) throws IOException {
 
-        final GridExtent intersection = chunkExtent.intersect(queryExtent);
+
+        final GridExtent intersection;
+        try {
+            intersection = chunkExtent.intersect(queryExtent);
+        } catch (DisjointExtentException e) {
+            LOGGER.log(Level.FINER, () -> String.format("Chunk extent does not intersect queried one:%nChunk: %s%nQueried: %s%n", chunkExtent, queryExtent));
+            return;
+        }
         final long[] chunkTranslate = chunkExtent.getLow().getCoordinateValues();
 
         final long[] intersectionlow = intersection.getLow().getCoordinateValues();
