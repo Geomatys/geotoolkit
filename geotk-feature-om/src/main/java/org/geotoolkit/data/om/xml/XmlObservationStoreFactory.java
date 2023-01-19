@@ -109,7 +109,11 @@ public class XmlObservationStoreFactory extends AbstractObservationStoreFactory 
 
     @Override
     public DataStore open(StorageConnector sc) throws DataStoreException {
-        final Path p = sc.commit(Path.class, NAME);
-        return new XmlObservationStore(p);
+        try {
+            final Path p = sc.commit(Path.class, NAME);
+            return new XmlObservationStore(p);
+        } catch (IOException ex) {
+            throw new DataStoreException(ex);
+        }
     }
 }

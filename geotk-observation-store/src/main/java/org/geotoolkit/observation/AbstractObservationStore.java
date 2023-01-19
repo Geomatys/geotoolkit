@@ -16,7 +16,9 @@
  */
 package org.geotoolkit.observation;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import org.geotoolkit.observation.model.ObservationDataset;
 import java.util.Date;
 import java.util.HashMap;
@@ -26,6 +28,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
@@ -35,6 +38,8 @@ import org.geotoolkit.observation.model.OMEntity;
 import static org.geotoolkit.observation.model.OMEntity.PROCEDURE;
 import static org.geotoolkit.observation.model.OMEntity.RESULT;
 import org.geotoolkit.observation.model.Offering;
+import org.geotoolkit.observation.feature.OMFeatureTypes;
+import org.geotoolkit.observation.feature.SensorFeatureSet;
 import org.geotoolkit.observation.model.ProcedureDataset;
 import org.geotoolkit.observation.query.AbstractObservationQuery;
 import org.geotoolkit.observation.query.DatasetQuery;
@@ -66,11 +71,13 @@ import org.opengis.temporal.TemporalGeometricPrimitive;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public abstract class AbstractObservationStore extends DataStore implements ObservationStore, Resource {
+public abstract class AbstractObservationStore extends DataStore implements ObservationStore, Aggregate {
 
     protected static final Logger LOGGER = Logger.getLogger("org.geotoolkit.observation");
 
     protected final ParameterValueGroup parameters;
+
+    protected List<Resource> featureSets;
 
     protected AbstractObservationStore(final ParameterValueGroup params) {
         this.parameters = params;
@@ -292,6 +299,18 @@ public abstract class AbstractObservationStore extends DataStore implements Obse
     @Override
     public void close() throws DataStoreException {
         // do nothing
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public synchronized Collection<? extends Resource> components() throws DataStoreException {
+        if (featureSets == null) {
+            featureSets = new ArrayList<>();
+            featureSets.add(new SensorFeatureSet(this, OMFeatureTypes.buildSensorFeatureType()));
+        }
+        return featureSets;
     }
 
     @Override

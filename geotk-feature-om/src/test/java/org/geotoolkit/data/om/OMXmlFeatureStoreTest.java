@@ -26,8 +26,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.apache.sis.feature.builder.AttributeRole;
-import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.parameter.DefaultParameterValueGroup;
 import org.apache.sis.referencing.CRS;
@@ -35,10 +33,10 @@ import org.apache.sis.storage.DataStore;
 import org.geotoolkit.data.om.xml.XmlObservationStore;
 import org.geotoolkit.storage.AbstractReadingTests;
 import org.geotoolkit.data.om.xml.XmlObservationStoreFactory;
-import org.geotoolkit.feature.xml.GMLConvention;
 import org.geotoolkit.nio.IOUtilities;
+import org.geotoolkit.observation.feature.OMFeatureTypes;
 import org.geotoolkit.util.NamesExt;
-import org.locationtech.jts.geom.Geometry;
+import org.opengis.feature.FeatureType;
 import org.opengis.util.GenericName;
 
 /**
@@ -61,53 +59,24 @@ public class OMXmlFeatureStoreTest extends AbstractReadingTests{
             store = new XmlObservationStore(parameters);
 
             final String nsOM = "http://www.opengis.net/sampling/1.0";
-            final String nsGML = "http://www.opengis.net/gml";
             final GenericName name = NamesExt.create(nsOM, "observation1");
             names.add(name);
-
-            final FeatureTypeBuilder featureTypeBuilder = new FeatureTypeBuilder();
-            featureTypeBuilder.setName(name);
-            featureTypeBuilder.setSuperTypes(GMLConvention.ABSTRACTFEATURETYPE_31);
-            featureTypeBuilder.addAttribute(String.class).setName(NamesExt.create(nsGML, "description")).setMinimumOccurs(0).setMaximumOccurs(1);
-            featureTypeBuilder.addAttribute(String.class).setName(NamesExt.create(nsGML, "name")).setMinimumOccurs(1).setMaximumOccurs(Integer.MAX_VALUE);
-            featureTypeBuilder.addAttribute(String.class).setName(NamesExt.create(nsOM, "sampledFeature"))
-                    .setMinimumOccurs(0).setMaximumOccurs(Integer.MAX_VALUE).addCharacteristic(GMLConvention.NILLABLE_CHARACTERISTIC);
-            featureTypeBuilder.addAttribute(Geometry.class).setName(NamesExt.create(nsOM, "position")).addRole(AttributeRole.DEFAULT_GEOMETRY);
 
             int size = 1;
             GeneralEnvelope env = new GeneralEnvelope(CRS.forCode("EPSG:27582"));
             env.setRange(0, 65400.0, 65400.0);
             env.setRange(1, 1731368.0, 1731368.0);
 
+            FeatureType type = OMFeatureTypes.buildSamplingFeatureFeatureType(name);
+
             final AbstractReadingTests.ExpectedResult res = new AbstractReadingTests.ExpectedResult(name,
-                    featureTypeBuilder.build(), size, env);
+                    type, size, env);
             expecteds.add(res);
 
         }catch(Exception ex){
             ex.printStackTrace();
         }
     }
-
-//    @Override
-//    public void tearDown() {
-//        try{
-//            if (ds != null) {
-//                ds.shutdown();
-//            }
-//
-//            File fdb = new File("TestOM");
-//            if(fdb.exists()){
-//                IOUtilities.deleteRecursively(fdb.toPath());
-//            }
-//
-//            File dlog = new File("derby.log");
-//            if (dlog.exists()) {
-//                dlog.delete();
-//            }
-//        }catch(Exception ex){
-//            ex.printStackTrace();
-//        }
-//    }
 
     @Override
     protected DataStore getDataStore() {
