@@ -146,7 +146,7 @@ public abstract class AbstractObservationStore extends DataStore implements Obse
      */
     @Override
     public ExtractionResult getResults() throws DataStoreException {
-        return getResults(null, null, new HashSet<>(), new HashSet<>());
+        return getResults(null, null);
     }
 
     /**
@@ -154,22 +154,14 @@ public abstract class AbstractObservationStore extends DataStore implements Obse
      */
     @Override
     public ExtractionResult getResults(final List<String> sensorIds) throws DataStoreException {
-        return getResults(null, sensorIds, new HashSet<>(), new HashSet<>());
+        return getResults(null, sensorIds);
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public ExtractionResult getResults(String affectedSensorID, List<String> sensorIds) throws DataStoreException {
-        return getResults(affectedSensorID, sensorIds, new HashSet<>(), new HashSet<>());
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public ExtractionResult getResults(final String affectedSensorId, final List<String> sensorIDs, Set<Phenomenon> phenomenons, final Set<org.opengis.observation.sampling.SamplingFeature> samplingFeatures) throws DataStoreException {
+    public ExtractionResult getResults(String affectedSensorId, List<String> sensorIDs) throws DataStoreException {
         if (affectedSensorId != null) {
             LOGGER.warning("This ObservationStore does not allow to override sensor ID");
         }
@@ -265,7 +257,7 @@ public abstract class AbstractObservationStore extends DataStore implements Obse
         hints.put("resultModel", OBSERVATION_QNAME);
         currentFilter.init(OMEntity.OBSERVATION, hints);
         currentFilter.setProcedure(sensorIDs);
-        return currentFilter.getObservations(hints);
+        return currentFilter.getObservations();
     }
 
     /**

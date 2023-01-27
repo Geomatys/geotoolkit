@@ -25,7 +25,9 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.logging.Level;
@@ -47,7 +49,11 @@ import static org.geotoolkit.data.om.xml.XmlObservationStoreFactory.FILE_PATH;
 import org.geotoolkit.storage.feature.GenericNameIndex;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.observation.AbstractObservationStore;
+import static org.geotoolkit.observation.OMUtils.RESPONSE_FORMAT_V100;
+import static org.geotoolkit.observation.OMUtils.RESPONSE_FORMAT_V200;
 import org.geotoolkit.observation.ObservationReader;
+import org.geotoolkit.observation.ObservationStoreCapabilities;
+import org.geotoolkit.sos.xml.ResponseModeType;
 import org.geotoolkit.sos.xml.SOSMarshallerPool;
 import org.geotoolkit.storage.DataStores;
 import org.opengis.feature.Feature;
@@ -190,6 +196,15 @@ public class XmlObservationStore extends AbstractObservationStore implements Agg
     public ObservationReader getReader() {
         final Object obj = readFile();
         return new XmlObservationReader(Arrays.asList(obj));
+    }
+
+    @Override
+    public ObservationStoreCapabilities getCapabilities() {
+        final Map<String, List<String>> responseFormats = new HashMap<>();
+        responseFormats.put("1.0.0", Arrays.asList(RESPONSE_FORMAT_V100));
+        responseFormats.put("2.0.0", Arrays.asList(RESPONSE_FORMAT_V200));
+        final List<String> responseMode = Arrays.asList(ResponseModeType.INLINE.value());
+        return new ObservationStoreCapabilities(false, false, false, new ArrayList<>(), responseFormats, responseMode, false);
     }
 
     private final class FeatureView extends AbstractFeatureSet implements StoreResource {

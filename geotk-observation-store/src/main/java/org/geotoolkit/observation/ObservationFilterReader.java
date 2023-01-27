@@ -93,21 +93,14 @@ public interface ObservationFilterReader {
     void setResultFilter(final BinaryComparisonOperator filter) throws DataStoreException;
 
     /**
-     * Return the list of properties that can be applied on the result.
-     *
-     * @return  the list of properties that can be applied on the result.
-     */
-    List<String> supportedQueryableResultProperties();
-
-    /**
      * Execute the current query and return a list of observation result.
      */
-    List<ObservationResult> filterResult(Map<String, Object> hints) throws DataStoreException;
+    List<ObservationResult> filterResult() throws DataStoreException;
 
     /**
      * Execute the current query and return a list of entity identifiers.
      */
-    Set<String> getIdentifiers(Map<String, Object> hints) throws DataStoreException;
+    Set<String> getIdentifiers() throws DataStoreException;
 
     /**
      * Execute the current query and return the matching count.
@@ -121,90 +114,54 @@ public interface ObservationFilterReader {
      */
     void refresh() throws DataStoreException;
 
-    /**
-     * Return true if each observation has a position.
-     */
-    boolean isBoundedObservation();
-
-    /**
-     * Return true if template are filled with a default period when there is no eventTime suplied.
-     */
-    boolean isDefaultTemplateTime();
-
     void destroy();
 
      /**
      * Return a list of Observation matching the builded filter.
      *
-     * @param hints extraction hints like the O&M version for the xml object returned.
      * @return A list of Observation matching the builded filter.
      */
-    List<Observation> getObservations(final Map<String,Object> hints) throws DataStoreException;
+    List<Observation> getObservations() throws DataStoreException;
 
     /**
      *
-     * @param hints extraction hints like the O&M version for the xml object returned.
      */
-    List<SamplingFeature> getFeatureOfInterests(final Map<String,Object> hints) throws DataStoreException;
+    List<SamplingFeature> getFeatureOfInterests() throws DataStoreException;
 
     /**
      *
-     * @param hints extraction hints like the O&M version for the xml object returned.
      */
-    List<Phenomenon> getPhenomenons(final Map<String,Object> hints) throws DataStoreException;
+    List<Phenomenon> getPhenomenons() throws DataStoreException;
 
     /**
      *
-     * @param hints extraction hints like the O&M version for the xml object returned.
      */
-    List<Process> getProcesses(final Map<String,Object> hints) throws DataStoreException;
+    List<Process> getProcesses() throws DataStoreException;
 
     /**
      *
-     * @param hints extraction hints like the O&M version for the xml object returned.
      */
-    Map<String, Geometry> getSensorLocations(final Map<String,Object> hints) throws DataStoreException;
+    Map<String, Geometry> getSensorLocations() throws DataStoreException;
 
     /**
-     *
-     * @param hints extraction hints like the O&M version for the xml object returned.
      *
      * @return
      * @throws DataStoreException
      */
-    Map<String, Map<Date, Geometry>> getSensorHistoricalLocations(final Map<String,Object> hints) throws DataStoreException;
+    Map<String, Map<Date, Geometry>> getSensorHistoricalLocations() throws DataStoreException;
 
     /**
      *
-     * @param hints extraction hints like the O&M version for the xml object returned.
      */
-    Map<String, List<Date>> getSensorTimes(final Map<String,Object> hints) throws DataStoreException;
+    Map<String, List<Date>> getSensorTimes() throws DataStoreException;
 
     /**
      * Return direct observations results.
      * Object type depends on the response Mode, response formats, etc/
      *
-     * @param hints hints like decimation size, algorithm etc.
      * @return An encoded block of data in a string.
      */
-    Object getResults(final Map<String, Object> hints) throws DataStoreException;
-
-    /**
-     * MIME type of the data that will be returned as the result of a GetObservation request.
-     * This is usually text/xml; subtype="om/1.0.0".
-     * In the case  that data is delivered out of band it might be text/xml;subtype="tml/2.0" for TML or some
-     * other MIME type.
-     *
-     * @param responseFormat the MIME type of the response.
-     */
-    void setResponseFormat(String responseFormat);
-
-    /**
-     * return true if the filter reader take in charge the calculation of the collection bounding shape.
-     *
-     * @return True if the filter compute itself the bounding shape of the collection.
-     */
-    boolean computeCollectionBound();
+    Object getResults() throws DataStoreException;
 
     /**
      * If the filter reader caompute itself the bounding shape of the obervation collection.
