@@ -90,15 +90,11 @@ public final class BTreeV1 extends IOStructure {
         header = new Header();
         header.read(channel);
         if (header.nodeType == 0) {
-            if (header.nodeLevel == 0) {
-                root = new GroupNode();
-                root.read(channel, header, chunkDimension);
-            } else {
-                throw new IOException("Group node with more then one level not supported yet");
-            }
+            root = new GroupNode();
+            root.read(channel, header, chunkDimension);
         } else if (header.nodeType == 1) {
             if (header.nodeLevel == 0) {
-                root = new ChunksNode();
+                root = new LeafChunksNode();
                 root.read(channel, header, chunkDimension);
             } else {
                 root = new ParentChunksNode();
@@ -206,7 +202,7 @@ public final class BTreeV1 extends IOStructure {
 
     }
 
-    public static final class ChunksNode extends DataNode {
+    public static final class LeafChunksNode extends DataNode {
 
         public BTreeV1Chunk[] dataKeys;
 
@@ -234,7 +230,7 @@ public final class BTreeV1 extends IOStructure {
         }
     }
 
-    private static final class Header {
+    public static final class Header {
 
         /**
          * Each B-tree points to a particular type of data.

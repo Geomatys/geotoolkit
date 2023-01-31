@@ -19,6 +19,7 @@ package org.geotoolkit.hdf.datatype;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.hdf.io.HDF5DataInput;
 import org.geotoolkit.util.StringUtilities;
 
@@ -43,7 +44,7 @@ public final class Compound extends DataType {
     private final Class valueClass;
     private final int[] allMembers;
 
-    public Compound(int byteSize, int version, int classBitFields, HDF5DataInput channel) throws IOException {
+    public Compound(int byteSize, int version, int classBitFields, HDF5DataInput channel) throws IOException, DataStoreException {
         super(byteSize);
         /*
         Number of Members. This field contains the number of members defined
@@ -87,7 +88,7 @@ public final class Compound extends DataType {
      * @param input to read from, not null
      */
     @Override
-    public Object readData(HDF5DataInput input, int size, int ... compoundindexes) throws IOException {
+    public Object readData(HDF5DataInput input, int size, int ... compoundindexes) throws IOException, DataStoreException {
         if (double.class.equals(componentClass)) {
             final double[][] array = new double[size][0];
             for (int x = 0; x < size; x++) {
@@ -104,7 +105,7 @@ public final class Compound extends DataType {
     }
 
     @Override
-    public Object readData(HDF5DataInput channel, int ... compoundindexes) throws IOException {
+    public Object readData(HDF5DataInput channel, int ... compoundindexes) throws IOException, DataStoreException {
         final long position = channel.getStreamPosition();
 
         if (compoundindexes == null || compoundindexes.length == 0) compoundindexes = allMembers;
@@ -158,7 +159,7 @@ public final class Compound extends DataType {
         */
        public DataType memberType;
 
-       private void read(int version, int size, HDF5DataInput channel) throws IOException {
+       private void read(int version, int size, HDF5DataInput channel) throws IOException, DataStoreException {
            if (version == 1) {
                 name = channel.readNullTerminatedString(8, StandardCharsets.US_ASCII);
                 /*
@@ -203,7 +204,7 @@ public final class Compound extends DataType {
                 }
                 memberType = DataType.readMessageType(channel);
             } else {
-                throw new IOException("Unexpected Compound datatype version " + version);
+                throw new DataStoreException("Unexpected Compound datatype version " + version);
             }
         }
 

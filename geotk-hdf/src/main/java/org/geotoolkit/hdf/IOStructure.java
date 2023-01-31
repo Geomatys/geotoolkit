@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.hdf.btree.BTreeV1;
 import org.geotoolkit.hdf.btree.BTreeV2;
 import org.geotoolkit.hdf.btree.BTreeV2InternalNode;
@@ -41,14 +42,14 @@ import org.geotoolkit.util.StringUtilities;
  */
 public abstract class IOStructure {
 
-    public abstract void read(HDF5DataInput channel) throws IOException;
+    public abstract void read(HDF5DataInput channel) throws IOException, DataStoreException;
 
     @Override
     public String toString() {
         return reflectionToString(this);
     }
 
-    public static IOStructure loadIdentifiedObject(HDF5DataInput channel) throws IOException{
+    public static IOStructure loadIdentifiedObject(HDF5DataInput channel) throws IOException, DataStoreException{
         channel.mark();
         final byte[] signature = channel.readNBytes(4);
         channel.reset();
@@ -88,7 +89,7 @@ public abstract class IOStructure {
         } else if (Arrays.equals(LocalHeap.SIGNATURE, signature)) {
             structure = new LocalHeap();
         } else {
-            throw new IOException("Unknown structure for signature " + Arrays.toString(signature));
+            throw new DataStoreException("Unknown structure for signature " + Arrays.toString(signature));
         }
 
         structure.read(channel);

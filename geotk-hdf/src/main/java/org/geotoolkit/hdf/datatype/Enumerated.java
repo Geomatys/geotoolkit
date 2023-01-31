@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.hdf.io.HDF5DataInput;
 import org.geotoolkit.util.StringUtilities;
 
@@ -47,7 +48,7 @@ public final class Enumerated extends DataType {
      */
     private final Object[] values;
 
-    public Enumerated(int byteSize, int version, int classBitFields, HDF5DataInput channel) throws IOException {
+    public Enumerated(int byteSize, int version, int classBitFields, HDF5DataInput channel) throws IOException, DataStoreException {
         super(byteSize);
         final int numberOfMembers = classBitFields & 0b1111111111111111;
 
@@ -92,17 +93,17 @@ public final class Enumerated extends DataType {
     }
 
     @Override
-    public Object readData(HDF5DataInput input, int ... compoundindexes) throws IOException {
+    public Object readData(HDF5DataInput input, int ... compoundindexes) throws IOException, DataStoreException {
         return baseType.readData(input);
     }
 
     @Override
-    public Object readData(HDF5DataInput input, int size, int ... compoundindexes) throws IOException {
+    public Object readData(HDF5DataInput input, int size, int ... compoundindexes) throws IOException, DataStoreException {
         return baseType.readData(input, size, compoundindexes);
     }
 
     @Override
-    public Object readData(HDF5DataInput input, int[] dimensions, int ... compoundindexes) throws IOException {
+    public Object readData(HDF5DataInput input, int[] dimensions, int ... compoundindexes) throws IOException, DataStoreException {
         return baseType.readData(input, dimensions);
     }
 

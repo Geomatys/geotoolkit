@@ -18,6 +18,7 @@ package org.geotoolkit.hdf.datatype;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.hdf.heap.GlobalHeapId;
 import org.geotoolkit.hdf.heap.GlobalHeapObject;
 import org.geotoolkit.hdf.io.HDF5DataInput;
@@ -81,7 +82,7 @@ public final class VariableLength extends DataType {
      */
     public final DataType baseType;
 
-    public VariableLength(int byteSize, int classBitFields, HDF5DataInput channel) throws IOException {
+    public VariableLength(int byteSize, int classBitFields, HDF5DataInput channel) throws IOException, DataStoreException {
         super(byteSize);
         type = classBitFields & 0b1111;
         paddingType = (classBitFields & 0b11110000) >> 4;
@@ -91,37 +92,62 @@ public final class VariableLength extends DataType {
 
     @Override
     public Class getValueClass() {
-        return String.class;
+        if (type == 0) {
+            return Object.class;
+        } else {
+            return String.class;
+        }
     }
 
     @Override
-    public Object readData(HDF5DataInput channel, int ... compoundindexes) throws IOException {
+    public Object readData(HDF5DataInput channel, int ... compoundindexes) throws IOException, DataStoreException {
+
+        /*
+        Data is not here, it is in a global heap
+        this is noted in the global heap section : III.E. Disk Format: Level 1E - Global Heap
+        The HDF5 Library creates global heap collections as needed, so there
+        may be multiple collections throughout the file. The set of all of
+        them is abstractly called the “global heap”, although they do not
+        actually link to each other, and there is no global place in the file
+        where you can discover all of the collections. The collections are
+        found simply by finding a reference to one through another object in
+        the file. For example, data of variable-length datatype elements is
+        stored in the global heap and is accessed via a global heap ID. The
+        format for global heap IDs is described at the end of this section.
+        */
+
+        //TODO is is not defined anywhere, but 4bytes are here with an unkown information
+        channel.skipFully(4);
+
+        final GlobalHeapId globalheapId = new GlobalHeapId();
+        globalheapId.read(channel);
+        final GlobalHeapObject globalHeapObject = channel.getGlobalHeapObject(globalheapId);
+        if (globalHeapObject == null) {
+            channel.getGlobalHeapObject(globalheapId);
+            //throw new IOException("global heap object not found " + globalheapId);
+            return null;
+        }
 
         if (type == 0) {
             //undefined type
-            throw new UnsupportedOperationException("Not supported yet.");
+            try {
+                channel.mark();
+                channel.seek(globalHeapObject.streamDataPosition);
+
+                switch (paddingType) {
+                    case PADDING_NULL_TERMINATED:
+                        return baseType.readData(channel);
+                        //return channel.readNBytes((int) globalHeapObject.objectSize);
+                    case PADDING_NULL_PAD:
+                    case PADDING_SPACE_PAD:
+                    default:
+                        throw new IOException("Unsupported padding " + paddingType);
+                }
+            } finally {
+                channel.reset();
+            }
+
         } else if (type == 1) {
-
-            /*
-            Data is not here, it is in a global heap
-            this is noted in the global heap section : III.E. Disk Format: Level 1E - Global Heap
-            The HDF5 Library creates global heap collections as needed, so there
-            may be multiple collections throughout the file. The set of all of
-            them is abstractly called the “global heap”, although they do not
-            actually link to each other, and there is no global place in the file
-            where you can discover all of the collections. The collections are
-            found simply by finding a reference to one through another object in
-            the file. For example, data of variable-length datatype elements is
-            stored in the global heap and is accessed via a global heap ID. The
-            format for global heap IDs is described at the end of this section.
-            */
-
-            //TODO is is not defined anywhere, but 4bytes are here with an unkown information
-            channel.skipFully(4);
-
-            final GlobalHeapId globalheapId = new GlobalHeapId();
-            globalheapId.read(channel);
-            final GlobalHeapObject globalHeapObject = channel.getGlobalHeapObject(globalheapId);
 
             try {
                 channel.mark();
@@ -131,16 +157,13 @@ public final class VariableLength extends DataType {
                     case PADDING_NULL_TERMINATED:
                         return channel.readNullTerminatedString(0, (int) globalHeapObject.objectSize, characterSet == 0 ? StandardCharsets.US_ASCII : StandardCharsets.UTF_8);
                     case PADDING_NULL_PAD:
-                        throw new IOException("Unsupported padding " + paddingType);
                     case PADDING_SPACE_PAD:
-                        throw new IOException("Unsupported padding " + paddingType);
                     default:
                         throw new IOException("Unsupported padding " + paddingType);
                 }
             } finally {
                 channel.reset();
             }
-
 
         } else {
             throw new IOException("Unexpected type " + type);

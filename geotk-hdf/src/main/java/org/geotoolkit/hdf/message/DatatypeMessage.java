@@ -17,6 +17,7 @@
 package org.geotoolkit.hdf.message;
 
 import java.io.IOException;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.hdf.datatype.DataType;
 import org.geotoolkit.hdf.io.HDF5DataInput;
 
@@ -55,7 +56,7 @@ public final class DatatypeMessage extends Message {
     }
 
     @Override
-    public void read(HDF5DataInput channel) throws IOException {
+    public void read(HDF5DataInput channel) throws IOException, DataStoreException {
         dataType = DataType.readMessageType(channel);
     }
 
