@@ -17,6 +17,7 @@
 package org.geotoolkit.hdf.datatype;
 
 import java.io.IOException;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.hdf.io.HDF5DataInput;
 
 /**
@@ -86,7 +87,7 @@ public abstract class DataType {
      * @param dimensions null for a scalar value, variable size of an array.
      * @param compoundindexes only used for compound types, to read only specified compound members
      */
-    public Object readData(HDF5DataInput input, int[] dimensions, int ... compoundindexes) throws IOException {
+    public Object readData(HDF5DataInput input, int[] dimensions, int ... compoundindexes) throws IOException, DataStoreException {
         if (dimensions == null || dimensions.length == 0) {
             return readData(input, compoundindexes);
         } else {
@@ -113,7 +114,7 @@ public abstract class DataType {
      * Read a strip of datatype values.
      * @param input to read from, not null
      */
-    public Object readData(HDF5DataInput input, int size, int ... compoundindexes) throws IOException {
+    public Object readData(HDF5DataInput input, int size, int ... compoundindexes) throws IOException, DataStoreException {
         Object array = java.lang.reflect.Array.newInstance(getValueClass(), size);
         for (int x = 0; x < size; x++) {
             java.lang.reflect.Array.set(array, x, readData(input, compoundindexes));
@@ -121,14 +122,14 @@ public abstract class DataType {
         return array;
     }
 
-    public abstract Object readData(HDF5DataInput input, int ... compoundindexes) throws IOException;
+    public abstract Object readData(HDF5DataInput input, int ... compoundindexes) throws IOException, DataStoreException;
 
     @Override
     public String toString() {
         return this.getClass().getSimpleName();
     }
 
-    public static DataType readMessageType(HDF5DataInput channel) throws IOException {
+    public static DataType readMessageType(HDF5DataInput channel) throws IOException, DataStoreException {
 
         /*
         The version of the datatype message and the datatype’s class information
@@ -187,7 +188,7 @@ public abstract class DataType {
             case CLASSE_BIT_FIELD       -> new BitField(byteSize, classBitFields, channel);
             case CLASSE_OPAQUE          -> new Opaque(byteSize, classBitFields, channel);
             case CLASSE_COMPOUND        -> new Compound(byteSize, version, classBitFields, channel);
-            case CLASSE_REFERENCE       -> new Reference(byteSize, classBitFields, channel);
+            case CLASSE_REFERENCE       -> new Reference(byteSize, version, classBitFields, channel);
             case CLASSE_ENUMERATED      -> new Enumerated(byteSize, version, classBitFields, channel);
             case CLASSE_VARIABLE_LENGTH -> new VariableLength(byteSize, classBitFields, channel);
             case CLASSE_ARRAY           -> new Array(byteSize, classBitFields, channel);

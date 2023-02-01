@@ -17,7 +17,6 @@
 
 package org.geotoolkit.observation;
 
-// J2SE dependencies
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -179,14 +178,6 @@ public interface ObservationReader {
     Object getResult(final String identifier, final QName resultModel, final String version) throws DataStoreException;
 
     /**
-     * Create a new identifier for an observation.
-     *
-     * @return an observation identifier.
-     * @throws org.apache.sis.storage.DataStoreException If an error occurs during retrieval.
-     */
-    String getNewObservationId() throws DataStoreException;
-
-    /**
      * Return the minimal/maximal value for the offering event Time
      *
      * @param version SOS version.
@@ -194,22 +185,6 @@ public interface ObservationReader {
      * @throws org.apache.sis.storage.DataStoreException If an error occurs during retrieval.
      */
     TemporalPrimitive getEventTime(String version) throws DataStoreException;
-
-    /**
-     * Return the list of supported response modes.
-     *
-     * @return supported response modes.
-     * @throws org.apache.sis.storage.DataStoreException If an error occurs during retrieval.
-     */
-    List<ResponseModeType> getResponseModes() throws DataStoreException;
-
-    /**
-     * Return the list of supported response formats for each version.
-     *
-     * @return supported response formats by version.
-     * @throws org.apache.sis.storage.DataStoreException If an error occurs during retrieval.
-     */
-    Map<String, List<String>> getResponseFormats() throws DataStoreException;
 
     /**
      * Extract the geometry for a procedure.
@@ -233,12 +208,6 @@ public interface ObservationReader {
      * during retrieval.
      */
     Map<Date, AbstractGeometry> getSensorLocations(final String sensorID, final String version) throws DataStoreException;
-
-    /**
-     * Return informations about the implementation class.
-     * @return informations.
-     */
-    String getInfos();
 
     /**
      * free the resources and close the database connection if there is one.

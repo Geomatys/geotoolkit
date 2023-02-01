@@ -18,11 +18,20 @@ package org.geotoolkit.gml.xml.v311;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.geometry.GeneralDirectPosition;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.opengis.coverage.grid.RectifiedGrid;
+import org.opengis.geometry.DirectPosition;
+import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.Matrix;
+import org.opengis.referencing.operation.TransformException;
 
 
 /**
@@ -73,6 +82,31 @@ public class RectifiedGridType extends GridType {
            final List<double[]> vectors = grid.getOffsetVectors();
            for (double[] vector : vectors) {
                 offsetVector.add(new VectorType(vector));
+           }
+       }
+    }
+
+    public RectifiedGridType(final GridGeometry gg) throws TransformException {
+       super(gg);
+       if (gg != null) {
+           MathTransform gridToCRS = gg.getGridToCRS(PixelInCell.CELL_CORNER);
+           DirectPosition ori = gridToCRS.transform(new GeneralDirectPosition(gridToCRS.getSourceDimensions()), null);
+           origin = new PointType(ori, false);
+           origin.setId("pt-" + new Random().nextInt()); // for xml validation
+           offsetVector    = new ArrayList<>();
+
+           Matrix m = MathTransforms.getMatrix(gridToCRS);
+           if (m == null) {
+               m = MathTransforms.getMatrix(gg.selectDimensions(0,1).getGridToCRS(PixelInCell.CELL_CORNER));
+           }
+           if (m != null) {
+               for (int j = 0; j < m.getNumRow() -1; j++) {
+                   double[] row = new double[gridToCRS.getSourceDimensions()];
+                   for (int i = 0; i < m.getNumCol() - 1; i++) {
+                       row[i] = m.getElement(j, i);
+                   }
+                   offsetVector.add(new VectorType(row));
+               }
            }
        }
     }

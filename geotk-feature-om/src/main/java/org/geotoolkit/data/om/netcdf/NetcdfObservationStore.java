@@ -21,8 +21,11 @@ import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.Spliterator;
@@ -42,18 +45,21 @@ import org.geotoolkit.data.om.OMFeatureTypes;
 import static org.geotoolkit.data.om.netcdf.NetcdfObservationStoreFactory.FILE_PATH;
 import org.geotoolkit.storage.feature.GenericNameIndex;
 import org.geotoolkit.nio.IOUtilities;
+import static org.geotoolkit.observation.OMUtils.RESPONSE_FORMAT_V100;
+import static org.geotoolkit.observation.OMUtils.RESPONSE_FORMAT_V200;
 import org.geotoolkit.observation.ObservationFilterReader;
 import org.geotoolkit.observation.ObservationReader;
 import org.geotoolkit.observation.ObservationStore;
+import org.geotoolkit.observation.ObservationStoreCapabilities;
 import org.geotoolkit.observation.ObservationWriter;
 import org.geotoolkit.observation.model.ExtractionResult;
+import org.geotoolkit.sos.xml.ResponseModeType;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.metadata.Metadata;
 import org.opengis.observation.Phenomenon;
-import org.opengis.observation.sampling.SamplingFeature;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.temporal.TemporalGeometricPrimitive;
 import org.opengis.util.GenericName;
@@ -137,28 +143,20 @@ public class NetcdfObservationStore extends DataStore implements Aggregate, Reso
 
     @Override
     public ExtractionResult getResults() throws DataStoreException {
-        try {
-            return NetCDFExtractor.getObservationFromNetCDF(analyze, getProcedureID(), null, new HashSet<>());
-        } catch (NetCDFParsingException ex) {
-            throw new DataStoreException(ex);
-        }
+        return getResults(getProcedureID(), new ArrayList<>());
     }
 
     @Override
     public ExtractionResult getResults(final List<String> sensorIDs) throws DataStoreException {
-        return getResults(getProcedureID(), sensorIDs, new HashSet<>(), new HashSet<>());
+        return getResults(getProcedureID(), sensorIDs);
     }
 
     @Override
     public ExtractionResult getResults(final String affectedSensorID, final List<String> sensorIDs) throws DataStoreException {
-        return getResults(affectedSensorID, sensorIDs, new HashSet<>(), new HashSet<>());
-    }
-
-    @Override
-    public ExtractionResult getResults(String affectedSensorID, List<String> sensorIds, Set<Phenomenon> phenomenons, Set<SamplingFeature> samplingFeatures) throws DataStoreException {
         try {
             // existing sampling features are not used yet
-            return NetCDFExtractor.getObservationFromNetCDF(analyze, affectedSensorID, sensorIds, phenomenons);
+            Set<Phenomenon> phenomenons = new HashSet<>();
+            return NetCDFExtractor.getObservationFromNetCDF(analyze, affectedSensorID, sensorIDs, phenomenons);
         } catch (NetCDFParsingException ex) {
             throw new DataStoreException(ex);
         }
@@ -266,4 +264,12 @@ public class NetcdfObservationStore extends DataStore implements Aggregate, Reso
         }
     }
 
+    @Override
+    public ObservationStoreCapabilities getCapabilities() {
+        final Map<String, List<String>> responseFormats = new HashMap<>();
+        responseFormats.put("1.0.0", Arrays.asList(RESPONSE_FORMAT_V100));
+        responseFormats.put("2.0.0", Arrays.asList(RESPONSE_FORMAT_V200));
+        final List<String> responseMode = Arrays.asList(ResponseModeType.INLINE.value());
+        return new ObservationStoreCapabilities(false, false, false, new ArrayList<>(), responseFormats, responseMode, false);
+    }
 }

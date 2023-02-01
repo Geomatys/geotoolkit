@@ -18,6 +18,7 @@ package org.geotoolkit.hdf;
 
 import java.io.IOException;
 import java.util.Optional;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.hdf.btree.BTreeV1;
 import org.geotoolkit.hdf.heap.LocalHeap;
 import org.geotoolkit.hdf.io.HDF5DataInput;
@@ -102,7 +103,16 @@ public final class SymbolTableEntry extends IOStructure {
         return cacheType;
     }
 
-    public synchronized ObjectHeader getHeader(HDF5DataInput channel) throws IOException {
+    /**
+     * Every object has an object header which serves as a permanent location
+     * for the object’s metadata. In addition to appearing in the object header,
+     * some of the object’s metadata can be cached in the scratch-pad space.
+     */
+    public long getObjectHeaderAddress() {
+        return objectHeaderAddress;
+    }
+
+    public synchronized ObjectHeader getHeader(HDF5DataInput channel) throws IOException, DataStoreException {
         if (objectHeader == null && channel.isDefinedOffset(objectHeaderAddress)) {
             channel.mark();
             channel.seek(objectHeaderAddress);
@@ -131,7 +141,7 @@ public final class SymbolTableEntry extends IOStructure {
         return Optional.ofNullable(name);
     }
 
-    public synchronized Optional<BTreeV1> getBTree(HDF5DataInput channel) throws IOException {
+    public synchronized Optional<BTreeV1> getBTree(HDF5DataInput channel) throws IOException, DataStoreException {
         if (btree == null && cacheType == 1) {
             channel.mark();
             channel.seek(addressOfBtree);
@@ -141,7 +151,7 @@ public final class SymbolTableEntry extends IOStructure {
         return Optional.ofNullable(btree);
     }
 
-    public synchronized Optional<LocalHeap> getLocalHeap(HDF5DataInput channel) throws IOException {
+    public synchronized Optional<LocalHeap> getLocalHeap(HDF5DataInput channel) throws IOException, DataStoreException {
         if (btree == null && cacheType == 1) {
             channel.mark();
             channel.seek(addressOfNameHeap);

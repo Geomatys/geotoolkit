@@ -19,7 +19,6 @@ package org.geotoolkit.hdf;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;
-import java.util.Map;
 import java.util.Optional;
 import org.apache.sis.internal.storage.ResourceOnFileSystem;
 import org.apache.sis.metadata.iso.DefaultMetadata;
@@ -28,9 +27,7 @@ import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
-import org.geotoolkit.hdf.api.DefaultGroup;
 import org.geotoolkit.hdf.api.Group;
-import org.geotoolkit.hdf.api.Node;
 import org.geotoolkit.hdf.io.Connector;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
@@ -40,14 +37,14 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public final class HDF5Store extends DataStore implements Group, Aggregate, ResourceOnFileSystem {
+public final class HDF5Store extends DataStore implements Aggregate, ResourceOnFileSystem {
 
     private final Connector cnx;
-    private final DefaultGroup root;
+    private final Group root;
 
     public HDF5Store(Path path) throws IllegalArgumentException, DataStoreException, IOException {
         cnx = new Connector(path);
-        root = new DefaultGroup(null, cnx, cnx.getSuperblock().rootGroupSymbolTableEntry, path.getFileName().toString());
+        root = new Group(null, cnx, cnx.getSuperblock().rootGroupSymbolTableEntry, path.getFileName().toString());
     }
 
     @Override
@@ -67,9 +64,12 @@ public final class HDF5Store extends DataStore implements Group, Aggregate, Reso
         cnx.close();
     }
 
-    @Override
-    public String getName() {
-        return root.getName();
+    /**
+     * Get root HDF-5 Group.
+     * @return root HDF-5 Group, never null.
+     */
+    public Group getRootGroup() {
+        return root;
     }
 
     @Override
@@ -78,23 +78,8 @@ public final class HDF5Store extends DataStore implements Group, Aggregate, Reso
     }
 
     @Override
-    public Group getParent() {
-        return root.getParent();
-    }
-
-    @Override
-    public Map<String, Object> getAttributes() {
-        return root.getAttributes();
-    }
-
-    @Override
     public Collection<? extends Resource> components() throws DataStoreException {
         return root.components();
-    }
-
-    @Override
-    public Node getComponent(String name) {
-        return root.getComponent(name);
     }
 
     @Override
@@ -104,7 +89,7 @@ public final class HDF5Store extends DataStore implements Group, Aggregate, Reso
 
     @Override
     public String toString() {
-        return root.toString();
+        return getRootGroup().toString();
     }
 
 }

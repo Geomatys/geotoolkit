@@ -21,6 +21,7 @@
 package org.geotoolkit.data.dbf;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.CharBuffer;
@@ -30,6 +31,7 @@ import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CoderResult;
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -59,7 +61,7 @@ import java.util.logging.Logger;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public final class DbaseFileReader implements Closeable{
+public final class DbaseFileReader implements Closeable, Iterator{
     /**
      * Logger.
      */
@@ -177,14 +179,17 @@ public final class DbaseFileReader implements Closeable{
 
     /**
      * Fill buffer if remaining is smaller then one record size.
-     * @throws IOException
      */
-    private void bufferCheck() throws IOException {
+    private void bufferCheck() {
         buffer.limit(buffer.capacity());
         if (!buffer.isReadOnly() && buffer.remaining() < header.getRecordLength()) {
-            buffer.compact();
-            fill(buffer, channel);
-            buffer.position(0);
+            try {
+                buffer.compact();
+                fill(buffer, channel);
+                buffer.position(0);
+            } catch (IOException ex) {
+                throw new UncheckedIOException("Cannot read from DBF file", ex);
+            }
         }
     }
 
@@ -203,22 +208,23 @@ public final class DbaseFileReader implements Closeable{
      *
      * @return True if more records exist, false otherwise.
      */
+    @Override
     public boolean hasNext() {
         return cnt < header.getNumRecords();
     }
 
     /**
      * @return Row, always same instance
-     * @throws IOException
      */
-    public Row next() throws IOException {
+    @Override
+    public Row next() {
         checkNext();
         final Row r = next;
         next = null;
         return r;
     }
 
-    private void checkNext() throws IOException{
+    private void checkNext() {
         if(next!=null)return;
 
         if(cnt != 0){
@@ -232,7 +238,7 @@ public final class DbaseFileReader implements Closeable{
      * fill buffer with current record, skip it if it's deleted
      * @throws IOException
      */
-    private void prepareNext() throws IOException {
+    private void prepareNext() {
 
         boolean foundRecord = false;
         while (!foundRecord) {

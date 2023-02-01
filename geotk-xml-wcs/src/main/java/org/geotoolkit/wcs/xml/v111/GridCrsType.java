@@ -17,10 +17,13 @@
 package org.geotoolkit.wcs.xml.v111;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.DoubleStream;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -31,10 +34,20 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.referencing.IdentifiedObjects;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.gml.xml.v311.CodeType;
+import org.geotoolkit.gml.xml.v311.GridLimitsType;
 import org.opengis.coverage.grid.RectifiedGrid;
+import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.cs.CoordinateSystem;
+import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.Matrix;
+import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
 
@@ -125,13 +138,13 @@ public class GridCrsType {
     public GridCrsType(final RectifiedGrid grid) {
         if (grid != null) {
             if (grid.getOrigin() != null) {
-                this.gridOrigin = new ArrayList<Double>();
+                this.gridOrigin = new ArrayList<>();
                 for (double d : grid.getOrigin().getCoordinate()) {
                     this.gridOrigin.add(d);
                 }
             }
             if (grid.getOffsetVectors() != null) {
-                this.gridOffsets = new ArrayList<Double>();
+                this.gridOffsets = new ArrayList<>();
                 for (double[] da : grid.getOffsetVectors()) {
                     for (double d : da) {
                         this.gridOffsets.add(d);
@@ -150,6 +163,37 @@ public class GridCrsType {
             }
 
         }
+    }
+
+    public GridCrsType(final GridGeometry gg) throws TransformException {
+       if (gg != null) {
+           MathTransform gridToCRS = gg.getGridToCRS(PixelInCell.CELL_CORNER);
+           DirectPosition ori = gridToCRS.transform(new GeneralDirectPosition(gridToCRS.getSourceDimensions()), null);
+           this.gridOrigin = DoubleStream.of(ori.getCoordinate()).boxed().collect(Collectors.toList());
+
+           Matrix m = MathTransforms.getMatrix(gridToCRS);
+           if (m == null) {
+               m = MathTransforms.getMatrix(gg.selectDimensions(0,1).getGridToCRS(PixelInCell.CELL_CORNER));
+           }
+           if (m != null) {
+               this.gridOffsets = new ArrayList<>();
+               for (int j = 0; j < m.getNumRow() -1; j++) {
+                   for (int i = 0; i < m.getNumCol() - 1; i++) {
+                       this.gridOffsets.add(m.getElement(j, i));
+                   }
+               }
+           }
+           final CoordinateReferenceSystem crss = gg.getCoordinateReferenceSystem();
+           if (crss != null) {
+               try {
+                   srsName = new CodeType("EPSG:" + IdentifiedObjects.lookupEPSG(crss));
+               } catch (FactoryException ex) {
+                   LOGGER.log(Level.WARNING, "Factory exception while creating WCS GRIDType from opengis one", ex);
+               } catch (NullPointerException ex) {
+                   LOGGER.log(Level.WARNING, "Null Pointer exception while creating WCS GRIDType from opengis one", ex);
+               }
+           }
+       }
     }
 
     /**

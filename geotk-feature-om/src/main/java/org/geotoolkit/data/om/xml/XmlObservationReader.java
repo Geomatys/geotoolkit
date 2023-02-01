@@ -299,26 +299,8 @@ public class XmlObservationReader implements ObservationReader {
     }
 
     @Override
-    public String getNewObservationId() throws DataStoreException {
-        throw new DataStoreException("Not supported in this implementation.");
-    }
-
-    @Override
     public TemporalPrimitive getEventTime(String version) throws DataStoreException {
         throw new DataStoreException("Not supported yet in this implementation.");
-    }
-
-    @Override
-    public List<ResponseModeType> getResponseModes() throws DataStoreException {
-        return Arrays.asList(ResponseModeType.INLINE);
-    }
-
-    @Override
-    public Map<String, List<String>> getResponseFormats() throws DataStoreException {
-        final Map<String, List<String>> result = new HashMap<>();
-        result.put("1.0.0", Arrays.asList(RESPONSE_FORMAT_V100));
-        result.put("2.0.0", Arrays.asList(RESPONSE_FORMAT_V200));
-        return result;
     }
 
     @Override
@@ -332,11 +314,6 @@ public class XmlObservationReader implements ObservationReader {
     @Override
     public Map<Date, AbstractGeometry> getSensorLocations(String sensorID, String version) throws DataStoreException {
         throw new UnsupportedOperationException("Not supported yet in this implementation.");
-    }
-
-    @Override
-    public String getInfos() {
-        return "O&M xml file Reader 4.x";
     }
 
     @Override

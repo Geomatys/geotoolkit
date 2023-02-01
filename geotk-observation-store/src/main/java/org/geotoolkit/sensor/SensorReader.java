@@ -55,13 +55,6 @@ public interface SensorReader {
     Collection<String> getSensorNames() throws DataStoreException;
 
     /**
-     * Return informations about the implementation class.
-     *
-     * @return A String description of the used implementations.
-     */
-    String getInfos();
-
-    /**
      * Return the number of sensors in the data source.
      *
      * @return The number of sensors.
