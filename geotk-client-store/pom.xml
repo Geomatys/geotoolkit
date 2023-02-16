@@ -81,6 +81,12 @@
             <artifactId>commons-compress</artifactId>
         </dependency>
       <dependency>
+          <groupId>org.geotoolkit</groupId>
+          <artifactId>geotk-coverage-geotiff</artifactId>
+          <version>${project.version}</version>
+          <scope>test</scope>
+      </dependency>
+      <dependency>
           <groupId>org.apache.sis.core</groupId>
           <artifactId>sis-utility</artifactId>
           <version>${sis.version}</version>

@@ -25,10 +25,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
-import java.nio.file.FileSystemNotFoundException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Iterator;
@@ -77,18 +75,18 @@ import org.opengis.util.GenericName;
 public class URITileMatrix extends AbstractTileMatrix implements WritableTileMatrix, ImageTileMatrix {
 
     private final URI folderUri;
+    private final URIResolver resolver;
     private final ClientSecurity security;
     private final URITileFormat format;
 
-    //first evaluated when needed
-    private Boolean isOnFileSystem = null;
-
-    public URITileMatrix(WritableTileMatrixSet parent, URI folder, ClientSecurity security, URITileFormat format, GenericName id,
+    public URITileMatrix(WritableTileMatrixSet parent, URI folder, URIResolver resolver, ClientSecurity security, URITileFormat format, GenericName id,
             DirectPosition upperLeft, Dimension gridSize, int[] tileSize, double scale) {
         super(id, parent, upperLeft, gridSize, tileSize, scale);
         ArgumentChecks.ensureNonNull("folder", folder);
         ArgumentChecks.ensureNonNull("format", format);
+        ArgumentChecks.ensureNonNull("resolver", resolver);
         ArgumentChecks.ensureNonNull("security", security);
+        this.resolver = resolver;
         this.security = security;
         this.folderUri = folder;
         this.format = format;
@@ -108,6 +106,10 @@ public class URITileMatrix extends AbstractTileMatrix implements WritableTileMat
         return format;
     }
 
+    public URIResolver getResolver() {
+        return resolver;
+    }
+
     @Override
     public URITileMatrixSet getTileMatrixSet() {
         return (URITileMatrixSet) super.getTileMatrixSet();
@@ -116,7 +118,7 @@ public class URITileMatrix extends AbstractTileMatrix implements WritableTileMat
     @Override
     public TileStatus getTileStatus(long... indices) {
         final URI tileUri = getTilePath(indices[0], indices[1]);
-        final Path tilePath = toPath(tileUri);
+        final Path tilePath = resolver.toPath(tileUri);
         if (tilePath != null) {
             return !Files.exists(tilePath) ?
                     TileStatus.MISSING : TileStatus.EXISTS;
@@ -129,7 +131,7 @@ public class URITileMatrix extends AbstractTileMatrix implements WritableTileMat
     @Override
     public Optional<Tile> getTile(long... indices) throws DataStoreException {
         final URI tileUri = getTilePath(indices[0], indices[1]);
-        final Path tilePath = toPath(tileUri);
+        final Path tilePath = resolver.toPath(tileUri);
         if (tilePath != null && !Files.exists(tilePath)) return Optional.empty();
         return Optional.of(URITile.create(this, tileUri, security, indices));
     }
@@ -144,7 +146,7 @@ public class URITileMatrix extends AbstractTileMatrix implements WritableTileMat
             while (iterator.hasNext()) {
                 final long[] indices = iterator.next();
                 final URI tileUri = getTilePath(indices[0], indices[1]);
-                final Path tilePath = toPath(tileUri);
+                final Path tilePath = resolver.toPath(tileUri);
                 if (tilePath == null) {
                     throw new DataStoreException("Tile " + tileUri + " is not on the file system, delete is not supported.");
                 }
@@ -187,7 +189,7 @@ public class URITileMatrix extends AbstractTileMatrix implements WritableTileMat
         final long tileX = tile.getIndices()[0];
         final long tileY = tile.getIndices()[1];
         final URI tileUri = getTilePath(tileX, tileY);
-        final Path tilePath = toPath(tileUri);
+        final Path tilePath = resolver.toPath(tileUri);
         if (tilePath == null) {
             throw new DataStoreException("Tile " + tileUri + " is not on the file system, writing is not supported.");
         }
@@ -318,7 +320,7 @@ public class URITileMatrix extends AbstractTileMatrix implements WritableTileMat
         int idx = pattern.lastIndexOf('.');
         final String suffix = pattern.substring(idx);
 
-        final Path folderPath = toPath(folderUri);
+        final Path folderPath = resolver.toPath(folderUri);
         if (folderPath == null) {
             //TODO : find a better solution
             return getTile(0, 0).orElse(null);
@@ -336,24 +338,4 @@ public class URITileMatrix extends AbstractTileMatrix implements WritableTileMat
         }
     }
 
-    /**
-     * This method could be synchronized but causes a lot of locks.
-     * We are better of recomputing the value a few times in the worst case.
-     *
-     * @return Path if uri is on the filesytem, null otherwise
-     */
-    Path toPath(URI uri) {
-        //defensive copy
-        final Boolean isOnFs = this.isOnFileSystem;
-        if (isOnFs == null) {
-            try {
-                final Path path = Paths.get(uri);
-                this.isOnFileSystem = Boolean.TRUE;
-                return path;
-            } catch (FileSystemNotFoundException | SecurityException | IllegalArgumentException ex) {
-                return null;
-            }
-        }
-        return isOnFs ? Paths.get(uri) : null;
-    }
 }

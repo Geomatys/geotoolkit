@@ -18,13 +18,14 @@ package org.geotoolkit.storage.uri;
 
 import java.io.File;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.referencing.IdentifiedObjects;
+import org.geotoolkit.storage.multires.TileMatrix;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
-import org.geotoolkit.storage.multires.TileMatrix;
 
 /**
  * URI pattern resolving utility class.
@@ -104,16 +105,25 @@ public final class URIPattern {
         pattern = pattern.replace(PATTERN_REVERSEY, "" + reverseY);
 
         //resolve path
-        URI path = base;
-        final String[] parts = pattern.split("/");
-        for (int i = 0; i < parts.length; i++) {
-            if (i != parts.length-1) {
-                path = path.resolve(parts[i] + "/");
-            } else {
-                path = path.resolve(parts[i]);
+        if (base.isOpaque()) {
+            //we dont know how this system works, we will assume it is similar to a normal path
+            try {
+                return new URI(base.getScheme(), base.getSchemeSpecificPart() + pattern, base.getFragment());
+            } catch (URISyntaxException ex) {
+                throw new IllegalArgumentException("Unsupported base URI " + base);
             }
+        } else {
+            URI path = base;
+            final String[] parts = pattern.split("/");
+            for (int i = 0; i < parts.length; i++) {
+                if (i != parts.length-1) {
+                    path = path.resolve(parts[i] + "/");
+                } else {
+                    path = path.resolve(parts[i]);
+                }
+            }
+            return path;
         }
-        return path;
     }
 
 }

@@ -33,22 +33,25 @@ public abstract class URITileMatrixSet extends AbstractTileMatrixSet {
 
     protected final URI root;
     protected final URITileFormat tileFormat;
+    protected final URIResolver resolver;
     protected final ClientSecurity security;
 
     /**
      * @param tilematrixSetId not null
      * @param root not null
+     * @param resolver can be null
      * @param format not null
      * @param crs not null
      * @throws DataStoreException
      */
-    public URITileMatrixSet(GenericName tilematrixSetId, URI root, ClientSecurity security, URITileFormat format, CoordinateReferenceSystem crs) throws DataStoreException {
+    public URITileMatrixSet(GenericName tilematrixSetId, URI root, URIResolver resolver, ClientSecurity security, URITileFormat format, CoordinateReferenceSystem crs) throws DataStoreException {
         super(tilematrixSetId, crs);
         ArgumentChecks.ensureNonNull("root", root);
         ArgumentChecks.ensureNonNull("crs", crs);
         ArgumentChecks.ensureNonNull("format", format);
         this.root = root;
         this.tileFormat = format;
+        this.resolver = resolver;
         this.security = security;
     }
 
