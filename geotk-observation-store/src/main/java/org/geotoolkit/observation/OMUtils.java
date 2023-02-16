@@ -445,18 +445,20 @@ public class OMUtils {
         return "2.0.0";
     }
 
-    public static boolean getBooleanHint(Map<String, Object> hints, String key, boolean defaultValue) {
+    public static boolean getBooleanHint(Map<String, Object> hints, String key, boolean fallback) {
         if (hints != null && hints.containsKey(key)) {
             Object value = hints.get(key);
             if (value instanceof Boolean) {
                 return (boolean) value;
             } else if (value instanceof String s) {
                 return Boolean.parseBoolean(s);
+            } else if (value == null) {
+                return fallback;
             } else {
                 throw new IllegalArgumentException("unexpected type for hints param:" + key);
             }
         }
-        return defaultValue;
+        return fallback;
     }
 
     public static Integer getIntegerHint(Map<String, Object> hints, String key, Integer fallback) {
@@ -466,6 +468,8 @@ public class OMUtils {
                 return (Integer) value;
             } else if (value instanceof String s) {
                 return Integer.parseInt(s);
+            } else if (value == null) {
+                return fallback;
             } else {
                 throw new IllegalArgumentException("unexpected type for hints param:" + key);
             }
@@ -480,20 +484,8 @@ public class OMUtils {
                 return (Long) value;
             } else if (value instanceof String s) {
                 return Long.parseLong(s);
-            } else {
-                throw new IllegalArgumentException("unexpected type for hints param:" + key);
-            }
-        }
-        return null;
-    }
-
-    public static OMEntity getObjectTypeHint(Map<String, Object> hints, String key) {
-        if (hints != null && hints.containsKey(key)) {
-            Object value = hints.get(key);
-            if (value instanceof OMEntity) {
-                return (OMEntity) value;
-            } else if (value instanceof String s) {
-                return OMEntity.fromName(s);
+            } else if (value == null) {
+                return null;
             } else {
                 throw new IllegalArgumentException("unexpected type for hints param:" + key);
             }

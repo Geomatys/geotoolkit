@@ -137,7 +137,6 @@ public class XmlObservationReader implements ObservationReader {
         }
         String identifier   = (String) hints.get(IDENTIFIER);
         String sensorType   = (String) hints.get(SENSOR_TYPE);
-        String version      = (String) hints.get(SOS_VERSION);
         switch (entityType) {
             case FEATURE_OF_INTEREST: return getFeatureOfInterestNames().contains(identifier);
             case OBSERVED_PROPERTY:   return getPhenomenonNames().contains(identifier);
