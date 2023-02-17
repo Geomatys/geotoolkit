@@ -1,0 +1,7 @@
+{
+    "id" : "phen-1",
+    "name" : "urn:phen:1",
+    "description" : "phenomenon number 1",
+    "properties" : { },
+    "definition" : "urn:phen:1"
+  }
