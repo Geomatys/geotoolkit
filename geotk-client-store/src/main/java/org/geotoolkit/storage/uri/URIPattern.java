@@ -108,7 +108,14 @@ public final class URIPattern {
         if (base.isOpaque()) {
             //we dont know how this system works, we will assume it is similar to a normal path
             try {
-                return new URI(base.getScheme(), base.getSchemeSpecificPart() + pattern, base.getFragment());
+                String schemeSpecificPart = base.getSchemeSpecificPart();
+                if (!schemeSpecificPart.endsWith("/")) {
+                    schemeSpecificPart += "/";
+                }
+                if (pattern.startsWith("/")) {
+                    pattern = pattern.substring(1);
+                }
+                return new URI(base.getScheme(), schemeSpecificPart + pattern, base.getFragment());
             } catch (URISyntaxException ex) {
                 throw new IllegalArgumentException("Unsupported base URI " + base);
             }

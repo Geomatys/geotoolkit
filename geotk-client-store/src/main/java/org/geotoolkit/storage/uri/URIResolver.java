@@ -24,6 +24,8 @@ import java.nio.file.FileSystemNotFoundException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.sis.util.ArgumentChecks;
 
 /**
@@ -37,8 +39,25 @@ import org.apache.sis.util.ArgumentChecks;
 public final class URIResolver implements AutoCloseable {
 
     private final URI reference;
+    private Path referencePath;
     private final boolean isZip;
+
     //first evaluated when needed
+    /*
+    NOTE 1 : JRE ZipFileSystem keeps all files in memory untile the filesystem
+    is closed.
+
+    NOTE 2 : JRE ZipFileSystem keeps all files in memory unless
+    we specify env.put("useTempFile", Boolean.TRUE);
+    https://stackoverflow.com/questions/23858706/zipping-a-huge-folder-by-using-a-zipfilesystem-results-in-outofmemoryerror
+    The drawback is a lot of temporay files which stresses the local file system.
+
+    NOTE 3 : An attempt solution was to keep track of the zip filesystem size
+    and close/reopen it at regular threshold.
+    But this doesn't work because the FileStore.getTotalSize() returns the original size
+    without files currently in memory.
+
+    */
     private Boolean isOnFileSystem;
     private FileSystem fileSystem;
 
@@ -79,10 +98,9 @@ public final class URIResolver implements AutoCloseable {
         //resolve the reference first
         if (this.isOnFileSystem == null) {
             synchronized (this) {
-                Path rootPath;
                 try {
-                    rootPath = Paths.get(reference);
-                    this.isOnFileSystem = Boolean.TRUE;
+                    referencePath = Paths.get(reference);
+                    isOnFileSystem = Boolean.TRUE;
                 } catch (FileSystemNotFoundException | SecurityException | IllegalArgumentException ex) {
                     return null;
                 }
@@ -90,7 +108,7 @@ public final class URIResolver implements AutoCloseable {
                 if (isOnFileSystem && isZip) {
                     if (fileSystem == null) {
                         try {
-                            fileSystem = FileSystems.newFileSystem(rootPath);
+                            fileSystem = buildFileSystem(referencePath);
                         } catch (IOException ex) {
                             throw new IllegalStateException("Failed to open zip filesystem on " + reference);
                         }
@@ -99,8 +117,7 @@ public final class URIResolver implements AutoCloseable {
             }
         }
 
-        final Boolean isOnFs = this.isOnFileSystem;
-        if (isOnFs) {
+        if (this.isOnFileSystem) {
             if (fileSystem != null) {
                 try {
                     uri = format(uri);
@@ -128,6 +145,17 @@ public final class URIResolver implements AutoCloseable {
             }
         }
         return null;
+    }
+
+    private FileSystem buildFileSystem(Path path) throws IOException {
+        final Map<String, Object> env = new HashMap<>();
+        env.put("create", "true");
+        env.put("compressionMethod", "STORED");
+        //using temp files is necessary, if we don't use it the filesystem keeps them in memory
+        //and may result in an OutOfMemory error
+        env.put("useTempFile", Boolean.TRUE);
+
+        return FileSystems.newFileSystem(path, env);
     }
 
     @Override
