@@ -16,16 +16,14 @@
  */
 package org.geotoolkit.observation;
 
-import org.geotoolkit.observation.model.ExtractionResult;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
-import org.geotoolkit.observation.model.ExtractionResult.ProcedureTree;
+import org.geotoolkit.observation.model.ObservationDataset;
+import org.geotoolkit.observation.model.ProcedureDataset;
 import org.opengis.metadata.Metadata;
-import org.opengis.observation.Phenomenon;
-import org.opengis.observation.sampling.SamplingFeature;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.temporal.TemporalGeometricPrimitive;
 import org.opengis.util.GenericName;
@@ -74,7 +72,7 @@ public interface ObservationStore {
      *
      * @return A list of sensor description.
      */
-    List<ProcedureTree> getProcedures() throws DataStoreException;
+    List<ProcedureDataset> getProcedures() throws DataStoreException;
 
     /**
      * Return the complete list of phenomons identifiers.
@@ -97,7 +95,7 @@ public interface ObservationStore {
      * @return
      * @throws DataStoreException
      */
-    ExtractionResult getResults() throws DataStoreException;
+    ObservationDataset getResults() throws DataStoreException;
 
     /**
      * Extract All the procedures / observations / features of interest /
@@ -106,7 +104,7 @@ public interface ObservationStore {
      *
      * @param sensorIds a filter on sensor identifiers or {@code null}.
      */
-    ExtractionResult getResults(final List<String> sensorIds) throws DataStoreException;
+    ObservationDataset getResults(final List<String> sensorIds) throws DataStoreException;
 
     /**
      * Extract All the procedures / observations / features of interest / phenoemenon / spatial informations in this store.
@@ -116,7 +114,7 @@ public interface ObservationStore {
      * @param affectedSensorID a assigned sensor identifier or {@code null}.
      * @param sensorIds a filter on sensor identifiers or {@code null}.
      */
-    ExtractionResult getResults(final String affectedSensorID, final List<String> sensorIds) throws DataStoreException;
+    ObservationDataset getResults(final String affectedSensorID, final List<String> sensorIds) throws DataStoreException;
 
     /**
      * Return an Observation Reader on the data.

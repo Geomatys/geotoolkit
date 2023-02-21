@@ -17,12 +17,11 @@
 
 package org.geotoolkit.observation;
 
-import org.geotoolkit.observation.model.ExtractionResult;
+import org.geotoolkit.observation.model.ObservationDataset;
 import java.util.List;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.sos.xml.ObservationOffering;
-import org.geotoolkit.observation.model.ObservationTemplate;
 import org.opengis.observation.Observation;
 import org.opengis.observation.Phenomenon;
 
@@ -31,17 +30,6 @@ import org.opengis.observation.Phenomenon;
  * @author Guilhem Legal (Geomatys)
  */
 public interface ObservationWriter {
-
-    /**
-     * Write a new Observation template into the database
-     *
-     * @param template An O&M observation
-     *
-     * @return The new identifiers of the observation
-     *
-     * @throws org.apache.sis.storage.DataStoreException
-     */
-    String writeObservationTemplate(final ObservationTemplate template) throws DataStoreException;
 
     /**
      * Write a new Observation into the database
@@ -134,7 +122,7 @@ public interface ObservationWriter {
      * @param procedure
      * @throws org.apache.sis.storage.DataStoreException
      */
-    void writeProcedure(final ExtractionResult.ProcedureTree procedure) throws DataStoreException;
+    void writeProcedure(final ObservationDataset procedure) throws DataStoreException;
 
     /**
      * Record the location of a sensor.
