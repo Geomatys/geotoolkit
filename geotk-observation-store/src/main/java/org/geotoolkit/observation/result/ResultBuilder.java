@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import org.geotoolkit.observation.model.FieldType;
-import org.geotoolkit.swe.xml.TextBlock;
+import org.geotoolkit.observation.model.TextEncoderProperties;
 
 /**
  *
@@ -41,14 +41,14 @@ public class ResultBuilder {
 
     private StringBuilder values;
     private StringBuilder currentLine;
-    private final TextBlock encoding;
+    private final TextEncoderProperties encoding;
 
     private List<Object> dataArray;
     private List<Object> currentArrayLine;
 
     private int count = 0;
 
-    public ResultBuilder(ResultMode mode, final TextBlock encoding, boolean csvHack) {
+    public ResultBuilder(ResultMode mode, final TextEncoderProperties encoding, boolean csvHack) {
         this.mode = mode;
         this.csvHack = csvHack;
         this.encoding = encoding;

@@ -17,7 +17,6 @@
 
 package org.geotoolkit.data.om.xml;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
@@ -26,28 +25,27 @@ import java.util.Map;
 import java.util.Set;
 import javax.xml.namespace.QName;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.gml.xml.FeatureProperty;
-import org.geotoolkit.observation.OMUtils;
 import org.geotoolkit.observation.model.OMEntity;
 import org.geotoolkit.observation.ObservationReader;
-import static org.geotoolkit.observation.ObservationReader.ENTITY_TYPE;
-import static org.geotoolkit.observation.ObservationReader.IDENTIFIER;
-import static org.geotoolkit.observation.ObservationReader.SENSOR_TYPE;
-import static org.geotoolkit.observation.ObservationReader.SOS_VERSION;
 
 import org.geotoolkit.observation.xml.*;
 import org.geotoolkit.observation.xml.Process;
 import org.geotoolkit.observation.model.ObservationDataset;
-import org.geotoolkit.sos.xml.ObservationOffering;
-import org.geotoolkit.sos.xml.ResponseModeType;
+import org.geotoolkit.observation.model.Offering;
+import org.geotoolkit.observation.model.Procedure;
+import org.geotoolkit.observation.model.ResponseMode;
+import org.geotoolkit.observation.model.Result;
+import static org.geotoolkit.observation.model.ObservationTransformUtils.toModel;
+import org.geotoolkit.observation.query.IdentifierQuery;
+import org.geotoolkit.sos.xml.OMXMLUtils;
 import org.geotoolkit.swe.xml.PhenomenonProperty;
+import org.locationtech.jts.geom.Geometry;
 import org.opengis.observation.Observation;
 import org.opengis.observation.ObservationCollection;
 import org.opengis.observation.Phenomenon;
 import org.opengis.observation.sampling.SamplingFeature;
 import org.opengis.temporal.TemporalGeometricPrimitive;
-import org.opengis.temporal.TemporalPrimitive;
 
 /**
  *
@@ -65,14 +63,14 @@ public class XmlObservationReader implements ObservationReader {
      * {@inheritDoc}
      */
     @Override
-    public Collection<String> getEntityNames(final Map<String, Object> hints) throws DataStoreException {
-        OMEntity entityType = (OMEntity) hints.get(ENTITY_TYPE);
-        String sensorType   = (String) hints.get(SENSOR_TYPE);
-        String version      = (String) hints.get(SOS_VERSION);
+    public Collection<String> getEntityNames(final OMEntity entityType) throws DataStoreException {
+        if (entityType == null) {
+            throw new DataStoreException("Missing entity type parameter");
+        }
         switch (entityType) {
             case FEATURE_OF_INTEREST: return getFeatureOfInterestNames();
             case OBSERVED_PROPERTY:   return getPhenomenonNames();
-            case PROCEDURE:           return getProcedureNames(sensorType);
+            case PROCEDURE:           return getProcedureNames();
             case LOCATION:            throw new DataStoreException("not implemented yet.");
             case HISTORICAL_LOCATION: throw new DataStoreException("not implemented yet.");
             case OFFERING:            throw new DataStoreException("offerings are not handled in XML observation reader.");
@@ -82,19 +80,17 @@ public class XmlObservationReader implements ObservationReader {
         }
     }
 
-    private Collection<String> getProcedureNames(String sensorType) throws DataStoreException {
+    private Collection<String> getProcedureNames() throws DataStoreException {
         // no filter yet
         final Set<String> names = new HashSet<>();
         for (Object xmlObject : xmlObjects) {
-            if (xmlObject instanceof ObservationCollection) {
-                final ObservationCollection collection = (ObservationCollection)xmlObject;
+            if (xmlObject instanceof ObservationCollection collection) {
                 for (Observation obs : collection.getMember()) {
                     final org.geotoolkit.observation.xml.Process process = (Process)obs.getProcedure();
                     names.add(process.getHref());
                 }
 
-            } else if (xmlObject instanceof Observation) {
-                final Observation obs = (Observation)xmlObject;
+            } else if (xmlObject instanceof Observation obs) {
                 final Process process = (Process)obs.getProcedure();
                 names.add(process.getHref());
             }
@@ -105,18 +101,16 @@ public class XmlObservationReader implements ObservationReader {
     private Collection<String> getPhenomenonNames() throws DataStoreException {
         final Set<String> phenomenons = new HashSet<>();
         for (Object xmlObject : xmlObjects) {
-            if (xmlObject instanceof ObservationCollection) {
-                final ObservationCollection collection = (ObservationCollection)xmlObject;
+            if (xmlObject instanceof ObservationCollection collection) {
                 for (Observation obs : collection.getMember()) {
                     final AbstractObservation o = (AbstractObservation)obs;
                     final PhenomenonProperty phenProp = o.getPropertyObservedProperty();
-                    phenomenons.addAll(OMUtils.getPhenomenonsFields(phenProp));
+                    phenomenons.addAll(OMXMLUtils.getPhenomenonsFields(phenProp));
                 }
 
-            } else if (xmlObject instanceof AbstractObservation) {
-                final AbstractObservation obs = (AbstractObservation)xmlObject;
+            } else if (xmlObject instanceof AbstractObservation obs) {
                 final PhenomenonProperty phenProp = obs.getPropertyObservedProperty();
-                phenomenons.addAll(OMUtils.getPhenomenonsFields(phenProp));
+                phenomenons.addAll(OMXMLUtils.getPhenomenonsFields(phenProp));
             }
         }
         return phenomenons;
@@ -126,17 +120,16 @@ public class XmlObservationReader implements ObservationReader {
      * {@inheritDoc}
      */
     @Override
-    public boolean existEntity(final Map<String, Object> hints) throws DataStoreException {
-        OMEntity entityType = (OMEntity) hints.get(ENTITY_TYPE);
+    public boolean existEntity(final IdentifierQuery query) throws DataStoreException {
+        OMEntity entityType = query.getEntityType();
         if (entityType == null) {
             throw new DataStoreException("Missing entity type parameter");
         }
-        String identifier   = (String) hints.get(IDENTIFIER);
-        String sensorType   = (String) hints.get(SENSOR_TYPE);
+        String identifier   = query.getIdentifier();
         switch (entityType) {
             case FEATURE_OF_INTEREST: return getFeatureOfInterestNames().contains(identifier);
             case OBSERVED_PROPERTY:   return getPhenomenonNames().contains(identifier);
-            case PROCEDURE:           return getProcedureNames(null).contains(identifier);
+            case PROCEDURE:           return getProcedureNames().contains(identifier);
             case LOCATION:            throw new DataStoreException("not implemented yet.");
             case HISTORICAL_LOCATION: throw new DataStoreException("not implemented yet.");
             case OFFERING:            throw new DataStoreException("offerings are not handled in XML observation reader.");
@@ -147,52 +140,34 @@ public class XmlObservationReader implements ObservationReader {
     }
 
     @Override
-    public Collection<Phenomenon> getPhenomenons(final Map<String, Object> hints) throws DataStoreException {
-        final Set<Phenomenon> phenomenons = new HashSet<>();
-        String version       = (String) hints.get(SOS_VERSION);
-        Object identifierVal = hints.get(IDENTIFIER);
-        List<String> identifiers = new ArrayList<>();
-        if (identifierVal instanceof Collection) {
-            identifiers.addAll((Collection<? extends String>) identifierVal);
-        } else if (identifierVal instanceof String) {
-            identifiers.add((String) identifierVal);
-        }
+    public Phenomenon getPhenomenon(final String identifier) throws DataStoreException {
         for (Object xmlObject : xmlObjects) {
-            if (xmlObject instanceof ObservationCollection) {
-                final ObservationCollection collection = (ObservationCollection)xmlObject;
+            if (xmlObject instanceof ObservationCollection collection) {
                 for (Observation obs : collection.getMember()) {
                     final AbstractObservation o = (AbstractObservation)obs;
                     final PhenomenonProperty phenProp = o.getPropertyObservedProperty();
-                    final Phenomenon ph = OMUtils.getPhenomenon(phenProp);
-                    if (ph instanceof org.geotoolkit.swe.xml.Phenomenon) {
-                        org.geotoolkit.swe.xml.Phenomenon phe = (org.geotoolkit.swe.xml.Phenomenon) ph;
-                        if (identifiers.isEmpty() || identifiers.contains(phe.getName().getCode())) {
-                            phenomenons.add(ph);
-                        }
+                    final org.geotoolkit.observation.model.Phenomenon ph = toModel(phenProp);
+                    if (identifier.equals(ph.getId())) {
+                        return ph;
                     }
                 }
 
-            } else if (xmlObject instanceof AbstractObservation) {
-                final AbstractObservation obs = (AbstractObservation)xmlObject;
+            } else if (xmlObject instanceof AbstractObservation obs) {
                 final PhenomenonProperty phenProp = obs.getPropertyObservedProperty();
-                final Phenomenon ph = OMUtils.getPhenomenon(phenProp);
-                if (ph instanceof org.geotoolkit.swe.xml.Phenomenon) {
-                    org.geotoolkit.swe.xml.Phenomenon phe = (org.geotoolkit.swe.xml.Phenomenon) ph;
-                    if (identifiers.isEmpty() || identifiers.contains(phe.getName().getCode())) {
-                        phenomenons.add(ph);
-                    }
+                final org.geotoolkit.observation.model.Phenomenon ph = toModel(phenProp);
+                if (identifier.equals(ph.getId())) {
+                    return ph;
                 }
             }
         }
-        return phenomenons;
+        return null;
     }
 
     @Override
-    public TemporalGeometricPrimitive getTimeForProcedure(final String version, final String sensorID) throws DataStoreException {
+    public TemporalGeometricPrimitive getProcedureTime(final String sensorID) throws DataStoreException {
         final ObservationDataset result = new ObservationDataset();
         for (Object xmlObject : xmlObjects) {
-            if (xmlObject instanceof ObservationCollection) {
-                final ObservationCollection collection = (ObservationCollection)xmlObject;
+            if (xmlObject instanceof ObservationCollection collection) {
                 for (Observation obs : collection.getMember()) {
                     final AbstractObservation o = (AbstractObservation) obs;
                     if (sensorID.equals(o.getProcedure().getHref())) {
@@ -200,56 +175,51 @@ public class XmlObservationReader implements ObservationReader {
                     }
                 }
 
-            } else if (xmlObject instanceof AbstractObservation) {
-                final AbstractObservation obs = (AbstractObservation)xmlObject;
+            } else if (xmlObject instanceof AbstractObservation obs) {
                 if (sensorID.equals(obs.getProcedure().getHref())) {
                     result.spatialBound.addTime(obs.getSamplingTime());
                 }
             }
         }
-        return result.spatialBound.getTimeObject("2.0.0");
+        return result.spatialBound.getTimeObject();
     }
 
     private Collection<String> getFeatureOfInterestNames() throws DataStoreException {
         final Set<String> featureOfInterest = new HashSet<>();
         for (Object xmlObject : xmlObjects) {
-            if (xmlObject instanceof ObservationCollection) {
-                final ObservationCollection collection = (ObservationCollection)xmlObject;
+            if (xmlObject instanceof ObservationCollection collection) {
                 for (Observation obs : collection.getMember()) {
                     final AbstractObservation o = (AbstractObservation)obs;
                     final FeatureProperty foiProp = o.getPropertyFeatureOfInterest();
-                    featureOfInterest.add(OMUtils.getFOIId(foiProp));
+                    featureOfInterest.add(OMXMLUtils.getFOIId(foiProp));
                 }
 
-            } else if (xmlObject instanceof AbstractObservation) {
-                final AbstractObservation obs = (AbstractObservation)xmlObject;
+            } else if (xmlObject instanceof AbstractObservation obs) {
                 final FeatureProperty foiProp = obs.getPropertyFeatureOfInterest();
-                featureOfInterest.add(OMUtils.getFOIId(foiProp));
+                featureOfInterest.add(OMXMLUtils.getFOIId(foiProp));
             }
         }
         return featureOfInterest;
     }
 
     @Override
-    public SamplingFeature getFeatureOfInterest(final String samplingFeatureName, final String version) throws DataStoreException {
+    public SamplingFeature getFeatureOfInterest(final String identifier) throws DataStoreException {
         for (Object xmlObject : xmlObjects) {
-            if (xmlObject instanceof ObservationCollection) {
-                final ObservationCollection collection = (ObservationCollection)xmlObject;
+            if (xmlObject instanceof ObservationCollection collection) {
                 for (Observation obs : collection.getMember()) {
                     final AbstractObservation o = (AbstractObservation)obs;
                     final FeatureProperty foiProp = o.getPropertyFeatureOfInterest();
                     if (foiProp != null && foiProp.getAbstractFeature() != null && foiProp.getAbstractFeature().getId() != null &&
-                            foiProp.getAbstractFeature().getId().equals(samplingFeatureName)) {
-                        return (SamplingFeature) foiProp.getAbstractFeature();
+                            foiProp.getAbstractFeature().getId().equals(identifier)) {
+                        return toModel((SamplingFeature) foiProp.getAbstractFeature());
                     }
                 }
 
-            } else if (xmlObject instanceof AbstractObservation) {
-                final AbstractObservation obs = (AbstractObservation)xmlObject;
+            } else if (xmlObject instanceof AbstractObservation obs) {
                 final FeatureProperty foiProp = obs.getPropertyFeatureOfInterest();
                 if (foiProp != null && foiProp.getAbstractFeature() != null && foiProp.getAbstractFeature().getId() != null &&
-                        foiProp.getAbstractFeature().getId().equals(samplingFeatureName)) {
-                    return (SamplingFeature) foiProp.getAbstractFeature();
+                        foiProp.getAbstractFeature().getId().equals(identifier)) {
+                    return toModel((SamplingFeature) foiProp.getAbstractFeature());
                 }
             }
         }
@@ -257,26 +227,24 @@ public class XmlObservationReader implements ObservationReader {
     }
 
     @Override
-    public TemporalPrimitive getFeatureOfInterestTime(final String samplingFeatureName, final String version) throws DataStoreException {
+    public TemporalGeometricPrimitive getFeatureOfInterestTime(final String samplingFeatureName) throws DataStoreException {
         throw new DataStoreException("Not supported yet in this implementation.");
     }
 
     @Override
-    public Observation getObservation(final String identifier, final QName resultModel, final ResponseModeType mode, final String version) throws DataStoreException {
+    public Observation getObservation(final String identifier, final QName resultModel, final ResponseMode mode) throws DataStoreException {
         for (Object xmlObject : xmlObjects) {
-            if (xmlObject instanceof ObservationCollection) {
-                final ObservationCollection collection = (ObservationCollection)xmlObject;
+            if (xmlObject instanceof ObservationCollection collection) {
                 for (Observation obs : collection.getMember()) {
                     final AbstractObservation o = (AbstractObservation)obs;
                     if (o.getId().equals(identifier)) {
-                        return o;
+                        return toModel(o);
                     }
                 }
 
-            } else if (xmlObject instanceof AbstractObservation) {
-                final AbstractObservation o = (AbstractObservation)xmlObject;
-                if (o.getId().equals(identifier)) {
-                    return o;
+            } else if (xmlObject instanceof AbstractObservation obs) {
+                if (obs.getId().equals(identifier)) {
+                    return toModel(obs);
                 }
             }
         }
@@ -284,22 +252,40 @@ public class XmlObservationReader implements ObservationReader {
     }
 
     @Override
-    public Object getResult(final String identifier, final QName resultModel, final String version) throws DataStoreException {
+    public Result getResult(final String identifier, final QName resultModel) throws DataStoreException {
         throw new DataStoreException("Not supported yet in this implementation.");
     }
 
     @Override
-    public org.opengis.observation.Process getProcess(String identifier, String version) throws DataStoreException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public org.opengis.observation.Process getProcess(String identifier) throws DataStoreException {
+        for (Object xmlObject : xmlObjects) {
+            if (xmlObject instanceof ObservationCollection collection) {
+                for (Observation obs : collection.getMember()) {
+                    if (obs.getProcedure() instanceof org.geotoolkit.observation.xml.Process proc) {
+                        if (identifier.equals(proc.getHref())) {
+                            return new Procedure(proc.getHref());
+                        }
+                    }
+                }
+
+            } else if (xmlObject instanceof Observation obs) {
+                if (obs.getProcedure() instanceof org.geotoolkit.observation.xml.Process proc) {
+                    if (identifier.equals(proc.getHref())) {
+                        return new Procedure(proc.getHref());
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     @Override
-    public TemporalPrimitive getEventTime(String version) throws DataStoreException {
+    public TemporalGeometricPrimitive getEventTime() throws DataStoreException {
         throw new DataStoreException("Not supported yet in this implementation.");
     }
 
     @Override
-    public AbstractGeometry getSensorLocation(final String sensorID, final String version) throws DataStoreException {
+    public Geometry getSensorLocation(final String sensorID) throws DataStoreException {
         throw new UnsupportedOperationException("Not supported yet in this implementation.");
     }
 
@@ -307,7 +293,7 @@ public class XmlObservationReader implements ObservationReader {
      * {@inheritDoc}
      */
     @Override
-    public Map<Date, AbstractGeometry> getSensorLocations(String sensorID, String version) throws DataStoreException {
+    public Map<Date, Geometry> getSensorLocations(String sensorID) throws DataStoreException {
         throw new UnsupportedOperationException("Not supported yet in this implementation.");
     }
 
@@ -317,12 +303,12 @@ public class XmlObservationReader implements ObservationReader {
     }
 
    @Override
-    public List<ObservationOffering> getObservationOfferings(final Map<String, Object> hints) throws DataStoreException {
+    public Offering getObservationOffering(String identifier) throws DataStoreException {
         throw new DataStoreException("offerings are not handled in XML observation reader.");
     }
 
     @Override
-    public Observation getTemplateForProcedure(final String procedure, final String version) throws DataStoreException {
+    public Observation getTemplateForProcedure(final String procedure) throws DataStoreException {
         throw new DataStoreException("Not supported yet in this implementation.");
     }
 }

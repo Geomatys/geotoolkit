@@ -16,12 +16,10 @@
  */
 package org.geotoolkit.observation;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.sis.internal.util.UnmodifiableArrayList;
+import org.geotoolkit.observation.model.ResponseMode;
 
 /**
  *
@@ -37,7 +35,7 @@ public class ObservationStoreCapabilities {
     /**
      * The list of supported response modes.
      */
-    public final List<String> responseModes ;
+    public final List<ResponseMode> responseModes ;
 
     /**
      * the list of properties that can be applied on the result.
@@ -65,7 +63,7 @@ public class ObservationStoreCapabilities {
     public final boolean hasFilter;
 
     public ObservationStoreCapabilities(boolean isDefaultTemplateTime, boolean isBoundedObservation,  boolean computeCollectionBound,
-            List<String> queryableResultProperties, Map<String, List<String>> responseFormats, List<String> responseModes, boolean hasFilter) {
+            List<String> queryableResultProperties, Map<String, List<String>> responseFormats, List<ResponseMode> responseModes, boolean hasFilter) {
         this.isDefaultTemplateTime = isDefaultTemplateTime;
         this.isBoundedObservation = isBoundedObservation;
         this.computeCollectionBound = computeCollectionBound;

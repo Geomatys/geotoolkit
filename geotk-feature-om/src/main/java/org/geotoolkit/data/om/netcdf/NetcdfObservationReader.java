@@ -20,33 +20,28 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.xml.namespace.QName;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.observation.ObservationReader;
-import org.geotoolkit.observation.xml.AbstractObservation;
 import org.geotoolkit.observation.model.OMEntity;
-import static org.geotoolkit.observation.ObservationReader.ENTITY_TYPE;
-import static org.geotoolkit.observation.ObservationReader.SENSOR_TYPE;
-import static org.geotoolkit.observation.ObservationReader.SOS_VERSION;
 import org.geotoolkit.observation.model.ObservationDataset;
-import org.geotoolkit.sos.xml.ObservationOffering;
-import org.geotoolkit.sos.xml.ResponseModeType;
-import org.geotoolkit.sos.xml.SOSXmlFactory;
-import org.opengis.observation.Observation;
-import org.opengis.observation.Phenomenon;
-import org.opengis.observation.Process;
-import org.opengis.observation.sampling.SamplingFeature;
+import org.geotoolkit.observation.model.Observation;
+import org.geotoolkit.observation.model.Offering;
+import org.geotoolkit.observation.model.Phenomenon;
+import org.geotoolkit.observation.model.Procedure;
+import org.geotoolkit.observation.model.ResponseMode;
+import org.geotoolkit.observation.model.Result;
+import org.geotoolkit.observation.model.SamplingFeature;
+import org.geotoolkit.observation.query.IdentifierQuery;
+import org.locationtech.jts.geom.Geometry;
 import org.opengis.temporal.TemporalGeometricPrimitive;
-import org.opengis.temporal.TemporalPrimitive;
 
 /**
  *
- * @author guilhem
+ * @author Guilhem (Geomatys)
  */
 public class NetcdfObservationReader implements ObservationReader {
 
@@ -62,14 +57,11 @@ public class NetcdfObservationReader implements ObservationReader {
      * {@inheritDoc}
      */
     @Override
-    public Collection<String> getEntityNames(final Map<String, Object> hints) throws DataStoreException {
-        OMEntity entityType = (OMEntity) hints.get(ENTITY_TYPE);
-        String sensorType   = (String) hints.get(SENSOR_TYPE);
-        String version      = (String) hints.get(SOS_VERSION);
+    public Collection<String> getEntityNames(final OMEntity entityType) throws DataStoreException {
         switch (entityType) {
             case FEATURE_OF_INTEREST: return getFeatureOfInterestNames();
             case OBSERVED_PROPERTY:   return getPhenomenonNames();
-            case PROCEDURE:           return getProcedureNames(sensorType);
+            case PROCEDURE:           return getProcedureNames();
             case LOCATION:            throw new DataStoreException("not implemented yet.");
             case HISTORICAL_LOCATION: throw new DataStoreException("not implemented yet.");
             case OFFERING:            throw new DataStoreException("offerings are not handled in File observation reader.");
@@ -79,7 +71,7 @@ public class NetcdfObservationReader implements ObservationReader {
         }
     }
 
-    private Collection<String> getProcedureNames(String sensorType) throws DataStoreException {
+    private Collection<String> getProcedureNames() throws DataStoreException {
         final Set<String> names = new HashSet<>();
         names.add(getProcedureID());
         return names;
@@ -101,12 +93,12 @@ public class NetcdfObservationReader implements ObservationReader {
      * {@inheritDoc}
      */
     @Override
-    public boolean existEntity(final Map<String, Object> hints) throws DataStoreException {
-        OMEntity entityType = (OMEntity) hints.get(ENTITY_TYPE);
+    public boolean existEntity(final IdentifierQuery query) throws DataStoreException {
+        OMEntity entityType = query.getEntityType();
         if (entityType == null) {
             throw new DataStoreException("Missing entity type parameter");
         }
-        String identifier   = (String) hints.get(IDENTIFIER);
+        String identifier   = query.getIdentifier();
         switch (entityType) {
             case FEATURE_OF_INTEREST: return getFeatureOfInterestNames().contains(identifier);
             case OBSERVED_PROPERTY:   return existPhenomenon(identifier);
@@ -121,24 +113,24 @@ public class NetcdfObservationReader implements ObservationReader {
     }
 
     @Override
-    public Collection<Phenomenon> getPhenomenons(final Map<String, Object> hints) throws DataStoreException {
+    public Phenomenon getPhenomenon(String identifier) throws DataStoreException {
         throw new UnsupportedOperationException("Not supported yet in netcdf implementation.");
     }
 
     @Override
-    public Process getProcess(String identifier, String version) throws DataStoreException {
+    public Procedure getProcess(String identifier) throws DataStoreException {
         if (existProcedure(identifier)) {
-            return SOSXmlFactory.buildProcess(version, identifier);
+            return new Procedure(identifier);
         }
         return null;
     }
 
     @Override
-    public TemporalGeometricPrimitive getTimeForProcedure(final String version, final String sensorID) throws DataStoreException {
+    public TemporalGeometricPrimitive getProcedureTime(final String sensorID) throws DataStoreException {
         try {
             final ObservationDataset result = NetCDFExtractor.getObservationFromNetCDF(analyze, getProcedureID(), null, new HashSet<>());
             if (result != null && result.spatialBound != null) {
-                return result.spatialBound.getTimeObject(version);
+                return result.spatialBound.getTimeObject();
             }
             return null;
         } catch (NetCDFParsingException ex) {
@@ -165,12 +157,11 @@ public class NetcdfObservationReader implements ObservationReader {
     }
 
     @Override
-    public SamplingFeature getFeatureOfInterest(final String samplingFeatureName, final String version) throws DataStoreException {
+    public SamplingFeature getFeatureOfInterest(final String identifier) throws DataStoreException {
         try {
             final ObservationDataset result = NetCDFExtractor.getObservationFromNetCDF(analyze, getProcedureID(), null, new HashSet<>());
-            for (SamplingFeature feature : result.featureOfInterest) {
-                if (feature instanceof org.geotoolkit.sampling.xml.SamplingFeature &&
-                   ((org.geotoolkit.sampling.xml.SamplingFeature)feature).getId().equals(samplingFeatureName)) {
+            for (org.geotoolkit.observation.model.SamplingFeature feature : result.featureOfInterest) {
+                if (feature.getId().equals(identifier)) {
                     return feature;
                 }
             }
@@ -181,18 +172,17 @@ public class NetcdfObservationReader implements ObservationReader {
     }
 
     @Override
-    public TemporalPrimitive getFeatureOfInterestTime(String samplingFeatureName, String version) throws DataStoreException {
+    public TemporalGeometricPrimitive getFeatureOfInterestTime(String samplingFeatureName) throws DataStoreException {
         throw new DataStoreException("Not supported yet in this this implementation.");
     }
 
     @Override
-    public Observation getObservation(final String identifier, final QName resultModel, final ResponseModeType mode, final String version) throws DataStoreException {
+    public Observation getObservation(final String identifier, final QName resultModel, final ResponseMode mode) throws DataStoreException {
        try {
             final ObservationDataset result = NetCDFExtractor.getObservationFromNetCDF(analyze, getProcedureID(), null, new HashSet<>());
             for (Observation obs : result.observations) {
-                final AbstractObservation o = (AbstractObservation) obs;
-                if (o.getId().equals(identifier)) {
-                    return o;
+                if (obs.getId().equals(identifier)) {
+                    return obs;
                 }
             }
         } catch (NetCDFParsingException ex) {
@@ -202,7 +192,7 @@ public class NetcdfObservationReader implements ObservationReader {
     }
 
     @Override
-    public Object getResult(final String identifier, final QName resultModel, final String version) throws DataStoreException {
+    public Result getResult(final String identifier, final QName resultModel) throws DataStoreException {
         throw new DataStoreException("Not supported yet in this this implementation.");
     }
 
@@ -211,12 +201,12 @@ public class NetcdfObservationReader implements ObservationReader {
     }
 
     @Override
-    public TemporalPrimitive getEventTime(String version) throws DataStoreException {
+    public TemporalGeometricPrimitive getEventTime() throws DataStoreException {
         throw new DataStoreException("Not supported yet in this this implementation.");
     }
 
     @Override
-    public AbstractGeometry getSensorLocation(String sensorID, String version) throws DataStoreException {
+    public Geometry getSensorLocation(String sensorID) throws DataStoreException {
         throw new DataStoreException("Not supported yet in this this implementation.");
     }
 
@@ -224,7 +214,7 @@ public class NetcdfObservationReader implements ObservationReader {
      * {@inheritDoc}
      */
     @Override
-    public Map<Date, AbstractGeometry> getSensorLocations(String sensorID, String version) throws DataStoreException {
+    public Map<Date, Geometry> getSensorLocations(String sensorID) throws DataStoreException {
         throw new UnsupportedOperationException("Not supported yet in this implementation.");
     }
 
@@ -234,12 +224,12 @@ public class NetcdfObservationReader implements ObservationReader {
     }
 
     @Override
-    public List<ObservationOffering> getObservationOfferings(final Map<String, Object> hints) throws DataStoreException {
+    public Offering getObservationOffering(String identifier) throws DataStoreException {
         throw new DataStoreException("offerings are not handled in File observation reader.");
     }
 
     @Override
-    public Observation getTemplateForProcedure(final String procedure, final String version) throws DataStoreException {
+    public Observation getTemplateForProcedure(final String procedure) throws DataStoreException {
         throw new DataStoreException("Not supported yet in this this implementation.");
     }
 }

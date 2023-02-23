@@ -18,10 +18,8 @@
 
 package org.geotoolkit.data.om;
 
-import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.nio.file.Path;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -38,6 +36,7 @@ import org.geotoolkit.data.om.netcdf.NetcdfObservationStoreFactory;
 import org.geotoolkit.feature.xml.GMLConvention;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.util.NamesExt;
+import org.junit.BeforeClass;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.util.GenericName;
 
@@ -50,64 +49,40 @@ public class NetCDFFeatureStoreTest extends AbstractReadingTests {
     private static DataStore store;
     private static final Set<GenericName> names = new HashSet<>();
     private static final List<AbstractReadingTests.ExpectedResult> expecteds = new ArrayList<>();
-    static{
-        try{
-            final Path f = IOUtilities.getResourceAsPath("org/geotoolkit/sql/test-trajectories.nc");
 
-            DefaultParameterValueGroup parameters = (DefaultParameterValueGroup) NetcdfObservationStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
-            parameters.getOrCreate(NetcdfObservationStoreFactory.IDENTIFIER).setValue("observationFile");
-            parameters.getOrCreate(NetcdfObservationStoreFactory.FILE_PATH).setValue(f.toUri().toURL());
+    @BeforeClass
+    public static void init() throws Exception {
+        final Path f = IOUtilities.getResourceAsPath("org/geotoolkit/sql/test-trajectories.nc");
 
-            store = new NetcdfObservationStore(parameters);
+        DefaultParameterValueGroup parameters = (DefaultParameterValueGroup) NetcdfObservationStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
+        parameters.getOrCreate(NetcdfObservationStoreFactory.IDENTIFIER).setValue("observationFile");
+        parameters.getOrCreate(NetcdfObservationStoreFactory.FILE_PATH).setValue(f.toUri().toURL());
 
-            final String nsOM = "http://www.opengis.net/sampling/1.0";
-            final String nsGML = "http://www.opengis.net/gml";
-            final GenericName name = NamesExt.create(nsOM, "test-trajectories");
-            names.add(name);
+        store = new NetcdfObservationStore(parameters);
 
-            final FeatureTypeBuilder featureTypeBuilder = new FeatureTypeBuilder();
-            featureTypeBuilder.setName(name);
-            featureTypeBuilder.setSuperTypes(GMLConvention.ABSTRACTFEATURETYPE_31);
-            featureTypeBuilder.addAttribute(String.class).setName(NamesExt.create(nsGML, "description")).setMinimumOccurs(0).setMaximumOccurs(1);
-            featureTypeBuilder.addAttribute(String.class).setName(NamesExt.create(nsGML, "name")).setMinimumOccurs(1).setMaximumOccurs(Integer.MAX_VALUE);
-            featureTypeBuilder.addAttribute(String.class).setName(NamesExt.create(nsOM, "sampledFeature"))
-                    .setMinimumOccurs(0).setMaximumOccurs(Integer.MAX_VALUE).addCharacteristic(GMLConvention.NILLABLE_CHARACTERISTIC);
-            featureTypeBuilder.addAttribute(Geometry.class).setName(NamesExt.create(nsOM, "position")).addRole(AttributeRole.DEFAULT_GEOMETRY);
+        final String nsOM = "http://www.opengis.net/sampling/1.0";
+        final String nsGML = "http://www.opengis.net/gml";
+        final GenericName name = NamesExt.create(nsOM, "test-trajectories");
+        names.add(name);
 
-            int size = 4;
-            GeneralEnvelope env = new GeneralEnvelope(CRS.forCode("EPSG:27582"));
-            env.setRange(0, -51.78333, 27.816);
-            env.setRange(1, -19.802, 128.6);
+        final FeatureTypeBuilder featureTypeBuilder = new FeatureTypeBuilder();
+        featureTypeBuilder.setName(name);
+        featureTypeBuilder.setSuperTypes(GMLConvention.ABSTRACTFEATURETYPE_31);
+        featureTypeBuilder.addAttribute(String.class).setName(NamesExt.create(nsGML, "description")).setMinimumOccurs(0).setMaximumOccurs(1);
+        featureTypeBuilder.addAttribute(String.class).setName(NamesExt.create(nsGML, "name")).setMinimumOccurs(1).setMaximumOccurs(Integer.MAX_VALUE);
+        featureTypeBuilder.addAttribute(String.class).setName(NamesExt.create(nsOM, "sampledFeature"))
+                .setMinimumOccurs(0).setMaximumOccurs(Integer.MAX_VALUE).addCharacteristic(GMLConvention.NILLABLE_CHARACTERISTIC);
+        featureTypeBuilder.addAttribute(Geometry.class).setName(NamesExt.create(nsOM, "position")).addRole(AttributeRole.DEFAULT_GEOMETRY);
 
-            final AbstractReadingTests.ExpectedResult res = new AbstractReadingTests.ExpectedResult(name,
-                    featureTypeBuilder.build(), size, env);
-            expecteds.add(res);
+        int size = 4;
+        GeneralEnvelope env = new GeneralEnvelope(CRS.forCode("EPSG:27582"));
+        env.setRange(0, -51.78333, 27.816);
+        env.setRange(1, -19.802, 128.6);
 
-        }catch(Exception ex){
-            ex.printStackTrace();
-        }
+        final AbstractReadingTests.ExpectedResult res = new AbstractReadingTests.ExpectedResult(name,
+                featureTypeBuilder.build(), size, env);
+        expecteds.add(res);
     }
-
-//    @Override
-//    public void tearDown() {
-//        try{
-//            if (ds != null) {
-//                ds.shutdown();
-//            }
-//
-//            File fdb = new File("TestOM");
-//            if(fdb.exists()){
-//                IOUtilities.deleteRecursively(fdb.toPath());
-//            }
-//
-//            File dlog = new File("derby.log");
-//            if (dlog.exists()) {
-//                dlog.delete();
-//            }
-//        }catch(Exception ex){
-//            ex.printStackTrace();
-//        }
-//    }
 
     @Override
     protected DataStore getDataStore() {
@@ -122,19 +97,5 @@ public class NetCDFFeatureStoreTest extends AbstractReadingTests {
     @Override
     protected List<AbstractReadingTests.ExpectedResult> getReaderTests() {
         return expecteds;
-    }
-
-    public static InputStream getResourceAsStream(final String url) {
-        final ClassLoader cl = getContextClassLoader();
-        return cl.getResourceAsStream(url);
-    }
-
-    public static ClassLoader getContextClassLoader() {
-        return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
-            @Override
-            public ClassLoader run() {
-                return Thread.currentThread().getContextClassLoader();
-            }
-        });
     }
 }

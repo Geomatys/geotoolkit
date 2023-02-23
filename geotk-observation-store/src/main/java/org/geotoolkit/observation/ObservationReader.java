@@ -19,19 +19,20 @@ package org.geotoolkit.observation;
 
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import javax.xml.namespace.QName;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.gml.xml.AbstractGeometry;
-import org.geotoolkit.sos.xml.ObservationOffering;
-import org.geotoolkit.sos.xml.ResponseModeType;
+import org.geotoolkit.observation.model.OMEntity;
+import org.geotoolkit.observation.model.Offering;
+import org.geotoolkit.observation.model.ResponseMode;
+import org.geotoolkit.observation.model.Result;
+import org.geotoolkit.observation.query.IdentifierQuery;
+import org.locationtech.jts.geom.Geometry;
 import org.opengis.observation.Observation;
 import org.opengis.observation.Phenomenon;
 import org.opengis.observation.Process;
 import org.opengis.observation.sampling.SamplingFeature;
 import org.opengis.temporal.TemporalGeometricPrimitive;
-import org.opengis.temporal.TemporalPrimitive;
 
 /**
  *
@@ -47,100 +48,85 @@ public interface ObservationReader {
     /**
      * Return the list of entity identifiers.
      *
-     * The hints can contains various filter such as :
-     * - SOS version of the request (key: version)
-     * - object entity (key: entityType)
-     * - sensor type: (key: sensorType)
-     *
-     * @param hints a map of filters.
+     * @param entityType The type of entity to list.
      * @return A list of entity identifiers.
      * @throws org.apache.sis.storage.DataStoreException If an error occurs during retrieval.
      */
-    Collection<String> getEntityNames(final Map<String, Object> hints) throws DataStoreException;
+    Collection<String> getEntityNames(final OMEntity entityType) throws DataStoreException;
 
     /**
      * Return {@code true} if the specified entity identifier exist.
      *
-      * The hints can contains various filter such as :
-     * - object entity (key: entityType)
-     * - identifier: (key: id)
      *
-     * @param hints a map of filters.
+     * @param query an idntifier query.
      * @return {@code true} if the specified entity identifier exist.
      * @throws org.apache.sis.storage.DataStoreException If an error occurs during retrieval.
      */
-    boolean existEntity(final Map<String, Object> hints) throws DataStoreException;
+    boolean existEntity(final IdentifierQuery query) throws DataStoreException;
 
     /**
-     * Return The offerings for the specified names.
+     * Return The offering for the specified identifier.
      *
-     * The hints can contains various filter such as :
-     * - SOS version of the request (key: version)
-     * - sensor type: (key: sensorType)
-     * - one ore many offering identifiers: (key: id)
+     * @param offeringId An offering identifier.
+     * @return The offering for the specified idntifier or {@code null}.
      *
-     * @param hints a map of filters.
-     * @return The offerings for the specified names.
      * @throws org.apache.sis.storage.DataStoreException If an error occurs during retrieval.
      */
-    List<ObservationOffering> getObservationOfferings(final Map<String, Object> hints) throws DataStoreException;
+    Offering getObservationOffering(String offeringId) throws DataStoreException;
 
     /**
-     * Return a filtered list of phenomenons.
+     * Return a identified phenomenon if exist.
      *
-     * * The hints can contains various filter such as :
-     * - SOS version of the request (key: version)
-     * - one ore many offering identifiers: (key: id)
+     * Implementation must return {@linkplain org.geotoolkit.observation.model.Phenomenon}
      *
-     * @param hints a map of filters.
-     * @return a list of phenomenons.
+     * @param phenomenonId A phenomenon identifier.
+     *
+     * @return a phenomenon or {@code null}.
      * @throws org.apache.sis.storage.DataStoreException If an error occurs during retrieval.
      */
-    Collection<Phenomenon> getPhenomenons(final Map<String, Object> hints) throws DataStoreException;
+    Phenomenon getPhenomenon(String phenomenonId) throws DataStoreException;
 
     /**
      * Return a process by its identifier.
      *
      * @param identifier process identifier.
-     * @param version SOS version.
+     *
+     * Implementation should always return instanceof {@linkplain org.geotoolkit.observation.model.Process}
      *
      * @return a process.
      * @throws org.apache.sis.storage.DataStoreException If an error occurs
      * during retrieval.
      */
-    Process getProcess(final String identifier, final String version) throws DataStoreException;
+    Process getProcess(final String identifier) throws DataStoreException;
 
     /**
      * Return the temporal bounds for the specified procedure.
      *
-     * @param version SOS version of the request.
      * @param sensorID an procedure identifier.
      * @return the temporal bounds for the specified procedure.
      * @throws org.apache.sis.storage.DataStoreException If an error occurs during retrieval.
      */
-    TemporalGeometricPrimitive getTimeForProcedure(final String version, final String sensorID) throws DataStoreException;
+    TemporalGeometricPrimitive getProcedureTime(final String sensorID) throws DataStoreException;
 
     /**
      * Return a sampling feature for the specified sampling feature.
      *
-     * @param samplingFeatureName The identifier of the feature of interest.
-     * @param version SOS version of the request.
+     * @param samplingFeatureId The identifier of the feature of interest.
      *
      * @return the corresponding feature Of interest.
      * @throws org.apache.sis.storage.DataStoreException If an error occurs during retrieval.
      */
-    SamplingFeature getFeatureOfInterest(final String samplingFeatureName, final String version) throws DataStoreException;
+    SamplingFeature getFeatureOfInterest(final String samplingFeatureId) throws DataStoreException;
 
     /**
-     * Return the time span for the specified sampling feature (identified by its name and version).
+     * Return the time span for the specified sampling feature identifier.
      *
      * @param samplingFeatureName The identifier of the feature of interest.
-     * @param version SOS version of the request.
      *
      * @return the time span a sampling feature.
      * @throws org.apache.sis.storage.DataStoreException If an error occurs during retrieval.
      */
-    TemporalPrimitive getFeatureOfInterestTime(final String samplingFeatureName, final String version) throws DataStoreException;
+    TemporalGeometricPrimitive getFeatureOfInterestTime(final String samplingFeatureName) throws DataStoreException;
 
     /**
      * Return an observation for the specified identifier.
@@ -148,66 +134,60 @@ public interface ObservationReader {
      * @param identifier Observation identifier.
      * @param resultModel Result model , like Measurements or complex observations.
      * @param mode Result mode (inline, result template...)
-     * @param version SOS version of the request.
      *
      * @return An observation.
      * @throws org.apache.sis.storage.DataStoreException If an error occurs during retrieval.
      */
-    Observation getObservation(final String identifier, final QName resultModel, final ResponseModeType mode, final String version) throws DataStoreException;
+    Observation getObservation(final String identifier, final QName resultModel, final ResponseMode mode) throws DataStoreException;
 
     /**
      * return an observation template for the specified procedure.
      *
      * @param procedure a procedure identifier.
-     * @param version output version of the template.
      * @return an observation template.
      * @throws DataStoreException If an error occurs during retrieval.
      */
-    Observation getTemplateForProcedure(final String procedure, final String version) throws DataStoreException;
+    Observation getTemplateForProcedure(final String procedure) throws DataStoreException;
 
     /**
      * Return a result for the specified identifier.
      *
      * @param identifier Observation identifier.
      * @param resultModel Result model , like Measurements or complex observations.
-     * @param version SOS version of the request.
      *
      * @return a result for the specified identifier.
      * @throws org.apache.sis.storage.DataStoreException If an error occurs during retrieval.
      */
-    Object getResult(final String identifier, final QName resultModel, final String version) throws DataStoreException;
+    Result getResult(final String identifier, final QName resultModel) throws DataStoreException;
 
     /**
      * Return the minimal/maximal value for the offering event Time
      *
-     * @param version SOS version.
      * @return A time span.
      * @throws org.apache.sis.storage.DataStoreException If an error occurs during retrieval.
      */
-    TemporalPrimitive getEventTime(String version) throws DataStoreException;
+    TemporalGeometricPrimitive getEventTime() throws DataStoreException;
 
     /**
      * Extract the geometry for a procedure.
      *
      * @param sensorID the procedure/sensor identifier
-     * @param version SOS version of the request.
      *
      * @return sensor geometry.
      * @throws org.apache.sis.storage.DataStoreException If an error occurs during retrieval.
      */
-    AbstractGeometry getSensorLocation(final String sensorID, final String version) throws DataStoreException;
+    Geometry getSensorLocation(final String sensorID) throws DataStoreException;
 
     /**
      * Extract the locations through time for a procedure.
      *
      * @param sensorID the procedure/sensor identifier
-     * @param version SOS version of the request.
      *
      * @return ssensor locations over time.
      * @throws org.apache.sis.storage.DataStoreException If an error occurs
      * during retrieval.
      */
-    Map<Date, AbstractGeometry> getSensorLocations(final String sensorID, final String version) throws DataStoreException;
+    Map<Date, Geometry> getSensorLocations(final String sensorID) throws DataStoreException;
 
     /**
      * free the resources and close the database connection if there is one.

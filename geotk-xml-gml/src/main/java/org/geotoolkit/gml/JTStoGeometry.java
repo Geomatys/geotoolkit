@@ -94,30 +94,22 @@ public final class JTStoGeometry {
         if (crs == null) {
             crs = JTS.findCoordinateReferenceSystem(jts);
         }
-        if (jts instanceof Point) {
-            return toGML(gmlVersion, (Point) jts, crs);
-
-        } else if (jts instanceof Polygon) {
-            return toGML(gmlVersion,(Polygon) jts, crs);
-
-        } else if (jts instanceof LinearRing) {
-            return toGML(gmlVersion,(LinearRing) jts, crs);
-
-        } else if (jts instanceof LineString) {
-            return toGML(gmlVersion,(LineString) jts, crs);
-
-        } else if (jts instanceof MultiPoint) {
-            return toGML(gmlVersion,(MultiPoint) jts, crs);
-
-        } else if (jts instanceof MultiLineString) {
-            return toGML(gmlVersion,(MultiLineString) jts, crs);
-
-        } else if (jts instanceof MultiPolygon) {
-            return toGML(gmlVersion,(MultiPolygon) jts, crs);
-
-        } else if (jts instanceof GeometryCollection) {
-            return toGML(gmlVersion,(GeometryCollection) jts, crs);
-
+        if (jts instanceof Point pt) {
+            return toGML(gmlVersion, pt, crs);
+        } else if (jts instanceof Polygon po) {
+            return toGML(gmlVersion, po, crs);
+        } else if (jts instanceof LinearRing lr) {
+            return toGML(gmlVersion, lr, crs);
+        } else if (jts instanceof LineString ls) {
+            return toGML(gmlVersion, ls, crs);
+        } else if (jts instanceof MultiPoint mp) {
+            return toGML(gmlVersion, mp, crs);
+        } else if (jts instanceof MultiLineString mls) {
+            return toGML(gmlVersion, mls, crs);
+        } else if (jts instanceof MultiPolygon mpo) {
+            return toGML(gmlVersion, mpo, crs);
+        } else if (jts instanceof GeometryCollection gc) {
+            return toGML(gmlVersion, gc, crs);
         } else {
             throw new IllegalArgumentException("Unsupported geometry type : " + jts);
         }
@@ -139,7 +131,7 @@ public final class JTStoGeometry {
             throws NoSuchAuthorityCodeException, FactoryException {
 
         //Test if it's a 2D Geometry from CRS
-        isValideGeometry(crs);
+        isValidGeometry(crs);
 
         if (jtsGeom.isEmpty()) {
             throw new IllegalArgumentException("Cannot write empty geometry for unidentified geometry collection type");
@@ -203,7 +195,7 @@ public final class JTStoGeometry {
             throws NoSuchAuthorityCodeException, FactoryException {
 
         //Test if it's a 2D Geometry from CRS
-        isValideGeometry(crs);
+        isValidGeometry(crs);
         final String srsName = getSRS(crs);
         final int srsDimension = crs.getCoordinateSystem().getDimension();
 
@@ -237,7 +229,7 @@ public final class JTStoGeometry {
             throws NoSuchAuthorityCodeException, FactoryException {
 
         //Test if it's a 2D Geometry from CRS
-        isValideGeometry(crs);
+        isValidGeometry(crs);
         final String srsName = getSRS(crs);
         final int srsDimension = crs.getCoordinateSystem().getDimension();
 
@@ -271,7 +263,7 @@ public final class JTStoGeometry {
             throws NoSuchAuthorityCodeException, FactoryException {
 
         //Test if it's a 2D Geometry from CRS
-        isValideGeometry(crs);
+        isValidGeometry(crs);
         final String srsName = getSRS(crs);
         final int srsDimension = crs.getCoordinateSystem().getDimension();
 
@@ -305,7 +297,7 @@ public final class JTStoGeometry {
             throws NoSuchAuthorityCodeException, FactoryException {
 
         //Test if it's a 2D Geometry from CRS
-        isValideGeometry(crs);
+        isValidGeometry(crs);
         final String srsName = getSRS(crs);
         final int srsDimension = crs.getCoordinateSystem().getDimension();
 
@@ -340,7 +332,7 @@ public final class JTStoGeometry {
             throws NoSuchAuthorityCodeException, FactoryException {
 
         //Test if it's a 2D Geometry from CRS
-        isValideGeometry(crs);
+        isValidGeometry(crs);
         final Coordinate[] jtsCoord = jtsGeom.getCoordinates();
 
         final List<Double> coordList = new ArrayList<>();
@@ -369,7 +361,7 @@ public final class JTStoGeometry {
             throws NoSuchAuthorityCodeException, FactoryException {
 
         //Test if it's a 2D Geometry from CRS
-        isValideGeometry(crs);
+        isValidGeometry(crs);
         final Coordinate[] jtsCoord = jtsGeom.getCoordinates();
 
         final List<Double> coordList = new ArrayList<>();
@@ -397,7 +389,7 @@ public final class JTStoGeometry {
             throws NoSuchAuthorityCodeException, FactoryException {
 
         //Test if it's a 2D Geometry from CRS
-        isValideGeometry(crs);
+        isValidGeometry(crs);
 
         final org.geotoolkit.gml.xml.Point gmlPoint = buildPoint(gmlVersion, null, coordinateToDirectPosition(gmlVersion, jtsPoint.getCoordinate(), crs));
 
@@ -454,7 +446,7 @@ public final class JTStoGeometry {
      * @param crs
      * @return <code>true</code> for valid Geometry, <code>false</code> else.
      */
-    private static void isValideGeometry(final CoordinateReferenceSystem crs) {
+    private static void isValidGeometry(final CoordinateReferenceSystem crs) {
         if (crs == null || crs.getCoordinateSystem() == null) {
             throw new IllegalArgumentException("This service support only 2D JTS Geometry (CRS null, or coordinate system null).");
         } else if (crs.getCoordinateSystem().getDimension() != 2) {
