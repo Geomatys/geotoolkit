@@ -60,8 +60,12 @@ final class ZipPath implements Path {
         return path;
     }
 
-    String getZip4jPath() {
-        return path.substring(1); //remove leading slash
+    String getZip4jPath() throws ZipException {
+        if (path.startsWith(ZipFileSystem.SEPARATOR)) {
+            return path.substring(1); //remove leading slash
+        } else {
+            throw new ZipException("path is not absolute");
+        }
     }
 
     /**
@@ -105,7 +109,7 @@ final class ZipPath implements Path {
     @Override
     public Path getParent() {
         prepare();
-        return elements.length == 0 ? null : subpath(0, elements.length - 2);
+        return elements.length == 0 ? null : subpath(0, elements.length - 1);
     }
 
     @Override
@@ -125,7 +129,7 @@ final class ZipPath implements Path {
         prepare();
         final StringJoiner joiner = new StringJoiner(ZipFileSystem.SEPARATOR);
         for (int i = beginIndex; i < endIndex; i++) joiner.add(elements[i]);
-        return new ZipPath(fileSystem, joiner.toString());
+        return new ZipPath(fileSystem, joiner.toString() + ZipFileSystem.SEPARATOR);
     }
 
     @Override
@@ -183,7 +187,12 @@ final class ZipPath implements Path {
 
     @Override
     public Path toAbsolutePath() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        prepare();
+        if (isAbsolute) {
+            return this;
+        } else {
+            throw new UnsupportedOperationException("Path can not be made absolute");
+        }
     }
 
     @Override

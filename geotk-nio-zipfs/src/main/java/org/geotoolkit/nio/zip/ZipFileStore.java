@@ -26,11 +26,15 @@ import java.nio.file.attribute.BasicFileAttributeView;
 import java.nio.file.attribute.FileAttributeView;
 import java.nio.file.attribute.FileStoreAttributeView;
 import java.util.List;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import net.lingala.zip4j.io.inputstream.ZipInputStream;
 import net.lingala.zip4j.model.FileHeader;
 import net.lingala.zip4j.model.ZipParameters;
+import net.lingala.zip4j.model.enums.CompressionLevel;
+import net.lingala.zip4j.model.enums.CompressionMethod;
 import org.apache.sis.util.ArgumentChecks;
 
 /**
@@ -43,6 +47,7 @@ final class ZipFileStore extends FileStore {
     private final ZipFile zip;
     private final Path path;
     private final boolean readOnly;
+    private final ReadWriteLock lock = new ReentrantReadWriteLock();
 
     ZipFileStore(Path path) {
         ArgumentChecks.ensureNonNull("path", path);
@@ -102,7 +107,14 @@ final class ZipFileStore extends FileStore {
     }
 
     FileHeader getFileHeader(String inzipPath) throws ZipException {
-        return zip.getFileHeader(inzipPath);
+        lock.readLock().lock();
+        FileHeader header;
+        try {
+            header = zip.getFileHeader(inzipPath);
+        } finally {
+            lock.readLock().unlock();
+        }
+        return header;
     }
 
     URI getFileURI() {
@@ -110,7 +122,12 @@ final class ZipFileStore extends FileStore {
     }
 
     void close() throws IOException {
-        zip.close();
+        lock.writeLock().lock();
+        try {
+            zip.close();
+        } finally {
+            lock.writeLock().unlock();
+        }
     }
 
     /**
@@ -119,8 +136,44 @@ final class ZipFileStore extends FileStore {
      * @param parameters not null
      * @throws ZipException
      */
-    synchronized void addStream(InputStream input, ZipParameters parameters) throws ZipException {
-        zip.addStream(input, parameters);
+    void addStream(InputStream input, ZipParameters parameters) throws ZipException {
+        lock.writeLock().lock();
+        try {
+            zip.addStream(input, parameters);
+        } finally {
+            lock.writeLock().unlock();
+        }
+    }
+
+    void rename(String source, String target) throws ZipException {
+        lock.writeLock().lock();
+        try {
+            zip.renameFile(source, target);
+        } finally {
+            lock.writeLock().unlock();
+        }
+    }
+
+    void copy(String source, String target) throws IOException {
+        lock.writeLock().lock();
+        try (InputStream in = zip.getInputStream(zip.getFileHeader(source))) {
+            ZipParameters parameters = new ZipParameters();
+            parameters.setFileNameInZip(target);
+            parameters.setCompressionLevel(CompressionLevel.NO_COMPRESSION);
+            parameters.setCompressionMethod(CompressionMethod.STORE);
+            zip.addStream(in, parameters);
+        } finally {
+            lock.writeLock().unlock();
+        }
+    }
+
+    void delete(FileHeader header) throws ZipException {
+        lock.writeLock().lock();
+        try {
+            zip.removeFile(header);
+        } finally {
+            lock.writeLock().unlock();
+        }
     }
 
     ZipInputStream getInputStream(FileHeader header) throws IOException {

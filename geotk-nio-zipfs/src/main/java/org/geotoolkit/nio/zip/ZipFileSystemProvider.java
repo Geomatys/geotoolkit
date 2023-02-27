@@ -24,6 +24,7 @@ import java.net.URISyntaxException;
 import java.nio.channels.SeekableByteChannel;
 import java.nio.file.AccessMode;
 import java.nio.file.CopyOption;
+import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.FileStore;
@@ -32,6 +33,7 @@ import java.nio.file.FileSystemAlreadyExistsException;
 import java.nio.file.FileSystemNotFoundException;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.NotDirectoryException;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
@@ -269,17 +271,43 @@ public final class ZipFileSystemProvider extends FileSystemProvider {
     @Override
     public void delete(Path path) throws IOException {
         final ZipPath zpath = castOrException(path);
-        throw new IOException("Not supported yet.");
+        final FileHeader header = zpath.getHeader();
+        if (header == null) {
+            throw new NoSuchFileException(zpath.getPath());
+        } else if (header.isDirectory()) {
+            //check it is empty
+            try (final DirectoryStream<Path> stream = newDirectoryStream(path, null)) {
+                if (!stream.iterator().hasNext()) {
+                    throw new DirectoryNotEmptyException(zpath.getPath());
+                }
+            }
+        }
+        //delete it
+        zpath.fileSystem.store.delete(header);
     }
 
     @Override
     public void copy(Path source, Path target, CopyOption... options) throws IOException {
-        throw new IOException("Not supported yet.");
+        final ZipPath zsource = castOrException(source);
+        final ZipPath ztarget = castOrException(target);
+
+        if (ztarget.fileSystem == zsource.fileSystem) {
+            zsource.fileSystem.store.copy(zsource.getZip4jPath(), ztarget.getZip4jPath());
+        } else {
+            throw new IOException("Not supported yet.");
+        }
     }
 
     @Override
     public void move(Path source, Path target, CopyOption... options) throws IOException {
-        throw new IOException("Not supported yet.");
+        final ZipPath zsource = castOrException(source);
+        final ZipPath ztarget = castOrException(target);
+
+        if (ztarget.fileSystem == zsource.fileSystem) {
+            zsource.fileSystem.store.rename(zsource.getZip4jPath(), ztarget.getZip4jPath());
+        } else {
+            throw new IOException("Not supported yet.");
+        }
     }
 
     @Override

@@ -33,6 +33,19 @@ import org.apache.sis.util.ArgumentChecks;
  * - local URI
  * - local zip URI with pattern file:/archive.zip!/file.ext
  * - local zip URI with jar pattern jar:file:/archive.zip!/file.ext
+ * - local zip URI with zip pattern zip:file:/archive.zip!/file.ext
+ *
+ * Notes on JRE ZipFileSystem, which is not used here because :
+ * - JRE ZipFileSystem keeps all files in memory untile the filesystem
+ * is closed.
+ * - JRE ZipFileSystem keeps all files in memory unless
+ * we specify env.put("useTempFile", Boolean.TRUE);
+ * https://stackoverflow.com/questions/23858706/zipping-a-huge-folder-by-using-a-zipfilesystem-results-in-outofmemoryerror
+ * The drawback is a lot of temporay files which stresses the local file system.
+ * - An attempt solution was to keep track of the zip filesystem size
+ * and close/reopen it at regular threshold.
+ * But this doesn't work because the FileStore.getTotalSize() returns the original size
+ * without files currently in memory.
  *
  * @author Johann Sorel (Geomatys)
  */
@@ -43,21 +56,6 @@ public final class URIResolver implements AutoCloseable {
     private final boolean isZip;
 
     //first evaluated when needed
-    /*
-    NOTE 1 : JRE ZipFileSystem keeps all files in memory untile the filesystem
-    is closed.
-
-    NOTE 2 : JRE ZipFileSystem keeps all files in memory unless
-    we specify env.put("useTempFile", Boolean.TRUE);
-    https://stackoverflow.com/questions/23858706/zipping-a-huge-folder-by-using-a-zipfilesystem-results-in-outofmemoryerror
-    The drawback is a lot of temporay files which stresses the local file system.
-
-    NOTE 3 : An attempt solution was to keep track of the zip filesystem size
-    and close/reopen it at regular threshold.
-    But this doesn't work because the FileStore.getTotalSize() returns the original size
-    without files currently in memory.
-
-    */
     private Boolean isOnFileSystem;
     private FileSystem fileSystem;
 
@@ -70,8 +68,9 @@ public final class URIResolver implements AutoCloseable {
         ArgumentChecks.ensureNonNull("reference", reference);
         String str = reference.toString();
 
-        //see if we are dealing with a jar path and remove it
-        if (str.startsWith("jar:")) {
+        //see if we are dealing with a jar or zip path and remove it
+        if ( str.startsWith("jar:")
+           || str.startsWith("zip:")) {
             str = str.substring(4);
         }
 
@@ -109,7 +108,7 @@ public final class URIResolver implements AutoCloseable {
                     if (fileSystem == null) {
                         try {
                             fileSystem = buildFileSystem(referencePath);
-                        } catch (IOException ex) {
+                        } catch (IOException | URISyntaxException ex) {
                             throw new IllegalStateException("Failed to open zip filesystem on " + reference);
                         }
                     }
@@ -133,7 +132,7 @@ public final class URIResolver implements AutoCloseable {
                 if (!zipPath.startsWith("!/")) {
                     throw new IllegalArgumentException(uriPath + "is incorrect, should have the pattern archive.zip!/file.ext");
                 }
-                return fileSystem.getPath(zipPath.substring(2));
+                return fileSystem.getPath(zipPath.substring(1));
             } else {
                 try {
                     final Path path = Paths.get(uri);
@@ -147,15 +146,20 @@ public final class URIResolver implements AutoCloseable {
         return null;
     }
 
-    private FileSystem buildFileSystem(Path path) throws IOException {
-        final Map<String, Object> env = new HashMap<>();
-        env.put("create", "true");
-        env.put("compressionMethod", "STORED");
-        //using temp files is necessary, if we don't use it the filesystem keeps them in memory
-        //and may result in an OutOfMemory error
-        env.put("useTempFile", Boolean.TRUE);
+    private FileSystem buildFileSystem(Path path) throws IOException, URISyntaxException {
+        if (false) {
+            //Obsolete for now, mabe JDK ZipFileSystem will improve with versions ?
+            final Map<String, Object> env = new HashMap<>();
+            env.put("create", "true");
+            env.put("compressionMethod", "STORED");
+            //using temp files is necessary, if we don't use it the filesystem keeps them in memory
+            //and may result in an OutOfMemory error
+            env.put("useTempFile", Boolean.TRUE);
+            return FileSystems.newFileSystem(path, env);
+        }
 
-        return FileSystems.newFileSystem(path, env);
+        URI uri = new URI("zip:" + path.toUri().toString());
+        return FileSystems.newFileSystem(uri, null);
     }
 
     @Override
@@ -168,7 +172,8 @@ public final class URIResolver implements AutoCloseable {
     private static URI format(URI uri) throws URISyntaxException {
         String str = uri.toString();
         //see if we are dealing with a jar path and remove it
-        if (str.startsWith("jar:")) {
+        if ( str.startsWith("jar:")
+           || str.startsWith("zip:")) {
             str = str.substring(4);
             uri = new URI(str);
         }

@@ -1,6 +1,18 @@
 /*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/UnitTests/JUnit4TestClass.java to edit this template
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2023, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
  */
 package org.geotoolkit.nio.zip;
 
@@ -25,7 +37,7 @@ import org.junit.Test;
 
 /**
  *
- * @author jsorel
+ * @author Johann Sorel (Geomatys)
  */
 public class ZipFileSystemProviderTest {
 
@@ -234,25 +246,111 @@ public class ZipFileSystemProviderTest {
     /**
      * Test of delete method, of class ZipFileSystemProvider.
      */
-    @Ignore
     @Test
     public void testDelete() throws Exception {
+
+        final Path path = Files.createTempFile("fs", ".zip");
+        try (InputStream in = ZipFileSystemProviderTest.class.getResourceAsStream("test.zip")) {
+            Files.copy(in, path, StandardCopyOption.REPLACE_EXISTING);
+        }
+
+        final URI uri = new URI("zip:"+path.toUri().toString());
+        try (FileSystem fs = FileSystems.newFileSystem(uri,null)) {
+
+            assertTrue(Files.deleteIfExists(fs.getPath("/test/2/3.txt")));
+
+            final Path path2 = fs.getPath("/test", "2/");
+            try (DirectoryStream<Path> stream = Files.newDirectoryStream(path2)) {
+                final Iterator<Path> iterator = stream.iterator();
+                final Path p1 = iterator.next();
+                final Path p2 = iterator.next();
+                assertFalse(iterator.hasNext());
+                assertEquals("1.txt", p1.getFileName().toString());
+                assertEquals("2.txt", p2.getFileName().toString());
+                assertFalse(Files.isDirectory(p1));
+                assertFalse(Files.isDirectory(p2));
+            }
+
+            assertFalse(Files.deleteIfExists(fs.getPath("/test/2/4.txt")));
+
+        } finally {
+            Files.deleteIfExists(path);
+        }
     }
 
     /**
      * Test of copy method, of class ZipFileSystemProvider.
      */
-    @Ignore
     @Test
     public void testCopy() throws Exception {
+
+        final Path path = Files.createTempFile("fs", ".zip");
+        try (InputStream in = ZipFileSystemProviderTest.class.getResourceAsStream("test.zip")) {
+            Files.copy(in, path, StandardCopyOption.REPLACE_EXISTING);
+        }
+
+        final URI uri = new URI("zip:"+path.toUri().toString());
+        try (FileSystem fs = FileSystems.newFileSystem(uri,null)) {
+
+            Files.copy(fs.getPath("/test/2/3.txt"), fs.getPath("/test/2/5.txt"));
+
+            final Path path2 = fs.getPath("/test", "2/");
+            try (DirectoryStream<Path> stream = Files.newDirectoryStream(path2)) {
+                final Iterator<Path> iterator = stream.iterator();
+                final Path p1 = iterator.next();
+                final Path p2 = iterator.next();
+                final Path p3 = iterator.next();
+                final Path p4 = iterator.next();
+                assertFalse(iterator.hasNext());
+                assertEquals("1.txt", p1.getFileName().toString());
+                assertEquals("2.txt", p2.getFileName().toString());
+                assertEquals("3.txt", p3.getFileName().toString());
+                assertEquals("5.txt", p4.getFileName().toString());
+                assertFalse(Files.isDirectory(p1));
+                assertFalse(Files.isDirectory(p2));
+                assertFalse(Files.isDirectory(p3));
+                assertFalse(Files.isDirectory(p4));
+            }
+
+        } finally {
+            Files.deleteIfExists(path);
+        }
     }
 
     /**
      * Test of move method, of class ZipFileSystemProvider.
      */
-    @Ignore
     @Test
     public void testMove() throws Exception {
+
+        final Path path = Files.createTempFile("fs", ".zip");
+        try (InputStream in = ZipFileSystemProviderTest.class.getResourceAsStream("test.zip")) {
+            Files.copy(in, path, StandardCopyOption.REPLACE_EXISTING);
+        }
+
+        final URI uri = new URI("zip:"+path.toUri().toString());
+        try (FileSystem fs = FileSystems.newFileSystem(uri,null)) {
+
+            Files.move(fs.getPath("/test/2/3.txt"), fs.getPath("/test/2/5.txt"));
+
+            final Path path2 = fs.getPath("/test", "2/");
+            try (DirectoryStream<Path> stream = Files.newDirectoryStream(path2)) {
+                final Iterator<Path> iterator = stream.iterator();
+                final Path p1 = iterator.next();
+                final Path p2 = iterator.next();
+                final Path p3 = iterator.next();
+                assertFalse(iterator.hasNext());
+                assertEquals("1.txt", p1.getFileName().toString());
+                assertEquals("2.txt", p2.getFileName().toString());
+                assertEquals("5.txt", p3.getFileName().toString());
+                assertFalse(Files.isDirectory(p1));
+                assertFalse(Files.isDirectory(p2));
+                assertFalse(Files.isDirectory(p3));
+            }
+
+        } finally {
+            Files.deleteIfExists(path);
+        }
     }
 
     /**

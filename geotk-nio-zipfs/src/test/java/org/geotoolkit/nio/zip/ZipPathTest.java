@@ -1,15 +1,34 @@
 /*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/UnitTests/JUnit4TestClass.java to edit this template
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2023, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
  */
 package org.geotoolkit.nio.zip;
 
+import java.net.URI;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import static org.geotoolkit.nio.zip.ZipFileSystemProviderTest.EMPTY_ZIP;
+import static org.junit.Assert.*;
 import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  *
- * @author jsorel
+ * @author Johann Sorel (Geomatys)
  */
 public class ZipPathTest {
 
@@ -51,9 +70,30 @@ public class ZipPathTest {
     /**
      * Test of getParent method, of class ZipPath.
      */
-    @Ignore
     @Test
-    public void testGetParent() {
+    public void testGetParent() throws Exception {
+
+        final Path path = Files.createTempFile("fs", ".zip");
+        Files.write(path, EMPTY_ZIP);
+
+        final URI uri = new URI("zip:"+path.toUri().toString());
+        try (FileSystem fs = FileSystems.newFileSystem(uri,null)) {
+
+            //absolute paths
+            final Path abs1 = fs.getPath("/test.txt");
+            assertEquals(uri.toString()+"!/", abs1.getParent().toUri().toString());
+            final Path abs2 = fs.getPath("/folder/test.txt");
+            assertEquals(uri.toString()+"!/folder/", abs2.getParent().toUri().toString());
+
+            //relative path, no uri available
+            final Path rel1 = fs.getPath("folder/test.txt");
+            assertEquals("folder/test.txt", rel1.toString());
+            assertEquals("folder/", rel1.getParent().toString());
+            assertEquals(null, rel1.toUri());
+            assertEquals(null, rel1.getParent().toUri());
+        } finally {
+            Files.deleteIfExists(path);
+        }
     }
 
     /**
