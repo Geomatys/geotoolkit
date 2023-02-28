@@ -330,6 +330,15 @@ public final class ZipFileSystemProvider extends FileSystemProvider {
 
     @Override
     public void checkAccess(Path path, AccessMode... modes) throws IOException {
+        final ZipPath zpath = castOrException(path);
+        final FileHeader header = zpath.getHeader();
+        if (modes == null || modes.length == 0) {
+            //check file exist
+            if (header == null) {
+                throw new NoSuchFileException(zpath.getPath());
+            }
+            return;
+        }
         throw new IOException("Not supported yet.");
     }
 
