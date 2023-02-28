@@ -39,7 +39,7 @@
         <artifactId>geotk-storage</artifactId>
         <version>${project.version}</version>
     </dependency>
-     <dependency>
+    <dependency>
         <groupId>org.geotoolkit</groupId>
         <artifactId>geotk-xml-sos</artifactId>
         <version>${project.version}</version>
@@ -47,6 +47,14 @@
     <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
+        <scope>test</scope>
+    </dependency>
+    <!-- for json comporator in test -->
+    <dependency>
+        <groupId>org.geotoolkit</groupId>
+        <artifactId>geotk-feature-geojson</artifactId>
+        <type>test-jar</type>
+        <version>${project.version}</version>
         <scope>test</scope>
     </dependency>
   </dependencies>

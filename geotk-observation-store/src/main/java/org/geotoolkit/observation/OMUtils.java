@@ -16,8 +16,11 @@
  */
 package org.geotoolkit.observation;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -28,18 +31,28 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.UUID;
 import java.util.logging.Logger;
+import javax.measure.format.MeasurementParseException;
 import javax.xml.namespace.QName;
 import org.apache.sis.geometry.AbstractEnvelope;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.internal.feature.Geometries;
 import org.apache.sis.internal.feature.GeometryWrapper;
+import org.apache.sis.internal.metadata.RecordSchemaSIS;
+import static org.apache.sis.internal.metadata.RecordSchemaSIS.INSTANCE;
+import org.apache.sis.measure.Units;
 import org.apache.sis.metadata.ModifiableMetadata;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
+import org.apache.sis.metadata.iso.quality.DefaultQuantitativeAttributeAccuracy;
+import org.apache.sis.metadata.iso.quality.DefaultQuantitativeResult;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.SimpleInternationalString;
+import org.apache.sis.util.iso.DefaultRecord;
+import org.apache.sis.util.iso.DefaultRecordType;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.observation.model.ComplexResult;
 import org.geotoolkit.observation.model.Field;
@@ -56,6 +69,7 @@ import org.geotoolkit.temporal.object.ISODateParser;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.Metadata;
+import org.opengis.metadata.quality.Element;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValueGroup;
@@ -65,6 +79,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.temporal.Instant;
 import org.opengis.temporal.TemporalGeometricPrimitive;
 import org.opengis.util.FactoryException;
+import org.opengis.util.RecordType;
 
 /**
  *
@@ -407,14 +422,14 @@ public class OMUtils {
         return metadata;
     }
 
-    public static <T> List<T> applyPostPagination(List<T> full, Integer offset, Integer limit) {
+    public static <T> List<T> applyPostPagination(List<T> full, Long offset, Long limit) {
         var slice = computeRange(full.size(), offset, limit);
         return slice.isEmpty()
                 ? Collections.emptyList()
                 : new ArrayList<>(full.subList(slice.from, slice.to));
     }
 
-    private static IntRange computeRange(int maxSize, Integer offset, Integer limit) {
+    private static IntRange computeRange(int maxSize, Long offset, Long limit) {
         final int from = offset == null ? 0 : Math.toIntExact(offset);
         final int to = limit == null ? maxSize : Math.min(Math.toIntExact(from + limit), maxSize);
         return new IntRange(from, to);
@@ -424,7 +439,7 @@ public class OMUtils {
         boolean isEmpty() { return from >= to; }
     }
 
-    public static <K, V> Map<K, V> applyPostPagination(Map<K, V> full, Integer offset, Integer limit) {
+    public static <K, V> Map<K, V> applyPostPagination(Map<K, V> full, Long offset, Long limit) {
         var slice = computeRange(full.size(), offset, limit);
         if (slice.isEmpty()) return Collections.EMPTY_MAP;
 
@@ -441,4 +456,61 @@ public class OMUtils {
         return result;
     }
 
+    public static Element createQualityElement(Field field, Object value) {
+        DefaultQuantitativeAttributeAccuracy element = new DefaultQuantitativeAttributeAccuracy();
+        element.setNamesOfMeasure(Arrays.asList(new SimpleInternationalString(field.name)));
+        if (value != null) {
+            DefaultQuantitativeResult res      = new DefaultQuantitativeResult();
+
+            RecordType rt = INSTANCE.createRecordType("global", Collections.singletonMap("CharacterString", String.class));
+
+            DefaultRecord r = new DefaultRecord(rt);
+            r.set(rt.getMembers().iterator().next(), value);
+            res.setValues(Arrays.asList(r));
+            res.setValueType(rt);
+            if (field.uom != null) {
+                res.setValueUnit(Units.valueOf(field.uom));
+            }
+            element.setResults(Arrays.asList(res));
+        }
+        return element;
+    }
+
+    /**
+     * Temporary until SIS version is updated
+     */
+    public static Element createQualityElement2(Field field, Object value) throws ReflectiveOperationException {
+        return createQualityElement2(field.name, field.uom, value);
+    }
+
+    /**
+     * Temporary until SIS version is updated
+     */
+    public static Element createQualityElement2(String name, String uom, Object value) throws ReflectiveOperationException {
+        ArgumentChecks.ensureNonNull("name", name);
+        DefaultQuantitativeAttributeAccuracy element = new DefaultQuantitativeAttributeAccuracy();
+        element.setNamesOfMeasure(Collections.singleton(new SimpleInternationalString(name)));
+        if (value != null) {
+            DefaultQuantitativeResult res = new DefaultQuantitativeResult();
+            Constructor<DefaultRecordType> c = DefaultRecordType.class.getDeclaredConstructor();
+            c.setAccessible(true);
+            DefaultRecordType rt = c.newInstance();
+            Method m = DefaultRecordType.class.getDeclaredMethod("setValue", String.class);
+            m.setAccessible(true);
+            m.invoke(rt, "CharacterString");
+            DefaultRecord r = new DefaultRecord(RecordSchemaSIS.STRING);
+            r.set(RecordSchemaSIS.STRING.getMembers().iterator().next(), value);
+            res.setValues(Collections.singletonList(r));
+            res.setValueType(rt);
+            if (uom != null) {
+                try {
+                    res.setValueUnit(Units.valueOf(uom));
+                } catch (MeasurementParseException ex) {
+                    LOGGER.warning("Error while parsing uom : " + uom);
+                }
+            }
+            element.setResults(Collections.singleton(res));
+        }
+        return element;
+    }
 }

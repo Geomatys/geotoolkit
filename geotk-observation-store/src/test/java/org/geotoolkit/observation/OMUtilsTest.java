@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2020, Geomatys
+ *    (C) 2020L, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -85,37 +85,37 @@ public class OMUtilsTest {
         List<String> results = OMUtils.applyPostPagination(input, null, null);
         Assert.assertEquals(input, results);
 
-        results = OMUtils.applyPostPagination(input, 0, 10);
+        results = OMUtils.applyPostPagination(input, 0L, 10L);
         Assert.assertEquals(input, results);
 
-        results = OMUtils.applyPostPagination(input, null, 10);
+        results = OMUtils.applyPostPagination(input, null, 10L);
         Assert.assertEquals(input, results);
 
-        results = OMUtils.applyPostPagination(input, 0, null);
+        results = OMUtils.applyPostPagination(input, 0L, null);
         Assert.assertEquals(input, results);
 
         List<String> expected = Arrays.asList("1", "2", "3", "4", "5");
 
-        results = OMUtils.applyPostPagination(input, 0, 5);
+        results = OMUtils.applyPostPagination(input, 0L, 5L);
         Assert.assertEquals(expected, results);
 
-        results = OMUtils.applyPostPagination(input, null, 5);
+        results = OMUtils.applyPostPagination(input, null, 5L);
         Assert.assertEquals(expected, results);
 
         expected = Arrays.asList("6", "7", "8", "9", "10");
 
-        results = OMUtils.applyPostPagination(input, 5, 5);
+        results = OMUtils.applyPostPagination(input, 5L, 5L);
         Assert.assertEquals(expected, results);
 
-        results = OMUtils.applyPostPagination(input, 5, null);
+        results = OMUtils.applyPostPagination(input, 5L, null);
         Assert.assertEquals(expected, results);
 
-        results = OMUtils.applyPostPagination(input, 5, 20);
+        results = OMUtils.applyPostPagination(input, 5L, 20L);
         Assert.assertEquals(expected, results);
 
         expected = Arrays.asList("3", "4", "5", "6", "7", "8");
 
-        results = OMUtils.applyPostPagination(input, 2, 6);
+        results = OMUtils.applyPostPagination(input, 2L, 6L);
         Assert.assertEquals(expected, results);
     }
 
@@ -137,36 +137,36 @@ public class OMUtilsTest {
         Map<String, List<String>> results = OMUtils.applyPostPagination(input, null, null);
         Assert.assertEquals(input, results);
 
-        results = OMUtils.applyPostPagination(input, null, 10);
+        results = OMUtils.applyPostPagination(input, null, 10L);
         Assert.assertEquals(input, results);
 
-        results = OMUtils.applyPostPagination(input, 0, null);
+        results = OMUtils.applyPostPagination(input, 0L, null);
         Assert.assertEquals(input, results);
 
-        results = OMUtils.applyPostPagination(input, 0, 10);
+        results = OMUtils.applyPostPagination(input, 0L, 10L);
         Assert.assertEquals(input, results);
         
         Map<String, List<String>> expected = new LinkedHashMap<>();
         expected.put("1", l1);
         expected.put("2", l2);
 
-        results = OMUtils.applyPostPagination(input, 0, 2);
+        results = OMUtils.applyPostPagination(input, 0L, 2L);
         Assert.assertEquals(expected, results);
 
-        results = OMUtils.applyPostPagination(input, null, 2);
+        results = OMUtils.applyPostPagination(input, null, 2L);
         Assert.assertEquals(expected, results);
 
         expected = new LinkedHashMap<>();
         expected.put("4", l4);
         expected.put("5", l5);
 
-        results = OMUtils.applyPostPagination(input, 3, 2);
+        results = OMUtils.applyPostPagination(input, 3L, 2L);
         Assert.assertEquals(expected, results);
 
-        results = OMUtils.applyPostPagination(input, 3, null);
+        results = OMUtils.applyPostPagination(input, 3L, null);
         Assert.assertEquals(expected, results);
 
-        results = OMUtils.applyPostPagination(input, 3, 10);
+        results = OMUtils.applyPostPagination(input, 3L, 10L);
         Assert.assertEquals(expected, results);
 
         expected = new LinkedHashMap<>();
@@ -174,7 +174,7 @@ public class OMUtilsTest {
         expected.put("3", l3);
         expected.put("4", l4);
 
-        results = OMUtils.applyPostPagination(input, 1, 3);
+        results = OMUtils.applyPostPagination(input, 1L, 3L);
         Assert.assertEquals(expected, results);
 
     }

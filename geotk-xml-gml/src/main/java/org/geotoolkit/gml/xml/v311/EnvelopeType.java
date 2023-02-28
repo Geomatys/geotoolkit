@@ -495,12 +495,16 @@ public class EnvelopeType implements org.opengis.geometry.Envelope, org.geotoolk
 
     @Override
     public double getMedian(final int i) throws IndexOutOfBoundsException {
-        throw new UnsupportedOperationException("Not implemented yet.");
+        // Note: do not support wrap-around. This implementation is very limited, avoid if possible
+        if (upperCorner == null || lowerCorner == null) return Double.NaN;
+        else return 0.5 * (upperCorner.getOrdinate(i) + lowerCorner.getOrdinate(i));
     }
 
     @Override
     public double getSpan(final int i) throws IndexOutOfBoundsException {
-        throw new UnsupportedOperationException("Not implemented yet.");
+        // Note: do not support wrap-around. This implementation is very limited, avoid if possible
+        if (upperCorner == null || lowerCorner == null) return Double.NaN;
+        else return upperCorner.getOrdinate(i) - lowerCorner.getOrdinate(i);
     }
 
     @Override
