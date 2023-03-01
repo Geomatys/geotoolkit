@@ -56,7 +56,7 @@ public final class URIResolver implements AutoCloseable {
     private final boolean isZip;
 
     //first evaluated when needed
-    private Boolean isOnFileSystem;
+    private volatile Boolean isOnFileSystem;
     private FileSystem fileSystem;
 
     /**
@@ -95,11 +95,12 @@ public final class URIResolver implements AutoCloseable {
     public Path toPath(URI uri) {
 
         //resolve the reference first
-        if (this.isOnFileSystem == null) {
+        Boolean isOnFileSystem = this.isOnFileSystem;
+        if (isOnFileSystem == null) {
             synchronized (this) {
                 try {
                     referencePath = Paths.get(reference);
-                    isOnFileSystem = Boolean.TRUE;
+                    this.isOnFileSystem = isOnFileSystem = Boolean.TRUE;
                 } catch (FileSystemNotFoundException | SecurityException | IllegalArgumentException ex) {
                     return null;
                 }
@@ -116,7 +117,7 @@ public final class URIResolver implements AutoCloseable {
             }
         }
 
-        if (this.isOnFileSystem) {
+        if (isOnFileSystem) {
             if (fileSystem != null) {
                 try {
                     uri = format(uri);
