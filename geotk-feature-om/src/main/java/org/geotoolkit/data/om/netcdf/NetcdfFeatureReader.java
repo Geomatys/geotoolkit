@@ -9,9 +9,9 @@ import java.util.logging.Logger;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.geotoolkit.storage.feature.FeatureReader;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
-import org.geotoolkit.data.om.OMFeatureTypes;
 import org.geotoolkit.feature.ReprojectMapper;
 import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.observation.feature.OMFeatureTypes;
 import org.geotoolkit.observation.model.ObservationDataset;
 import org.geotoolkit.observation.model.Observation;
 import org.geotoolkit.observation.model.SamplingFeature;
@@ -61,9 +61,9 @@ class NetcdfFeatureReader implements FeatureReader {
         return cpt < features.size();
     }
 
-    protected final Feature getFeatureFromFOI(final SamplingFeature foi) {
+    protected final Feature getFeatureFromFOI(final SamplingFeature feature) {
         try {
-            final Geometry geom = foi.getGeometry();
+            final Geometry geom = feature.getGeometry();
 
             if (firstCRS && geom != null) {
                 //configure crs in the feature type
@@ -72,16 +72,16 @@ class NetcdfFeatureReader implements FeatureReader {
                 firstCRS = false;
             }
             final Feature f = type.newInstance();
-            f.setPropertyValue(AttributeConvention.IDENTIFIER, foi.getId());
-            f.setPropertyValue(OMFeatureTypes.ATT_DESC.toString(), foi.getDescription());
-            f.setPropertyValue(OMFeatureTypes.ATT_NAME.toString(), foi.getName());
-            f.setPropertyValue(OMFeatureTypes.ATT_POSITION.toString(), geom);
+            f.setPropertyValue(AttributeConvention.IDENTIFIER, feature.getId());
+            f.setPropertyValue(OMFeatureTypes.SF_ATT_DESC.toString(), feature.getDescription());
+            f.setPropertyValue(OMFeatureTypes.SF_ATT_NAME.toString(), feature.getName());
+            f.setPropertyValue(OMFeatureTypes.SF_ATT_POSITION.toString(),geom);
 
             final List<String> sampleds = new ArrayList<>();
-            if (foi.getSampledFeatureId() != null) {
-                sampleds.add(foi.getSampledFeatureId());
+            if (feature.getSampledFeatureId() != null) {
+                sampleds.add(feature.getSampledFeatureId());
             }
-            f.setPropertyValue(OMFeatureTypes.ATT_SAMPLED.toString(), sampleds);
+            f.setPropertyValue(OMFeatureTypes.SF_ATT_SAMPLED.toString(),sampleds);
             return f;
         } catch (FactoryException ex) {
             LOGGER.log(Level.WARNING, "error while transforming GML geometry to JTS", ex);

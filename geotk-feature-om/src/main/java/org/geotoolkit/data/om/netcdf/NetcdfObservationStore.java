@@ -22,6 +22,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -39,9 +40,7 @@ import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.Resource;
-import org.geotoolkit.data.om.OMFeatureTypes;
 import static org.geotoolkit.data.om.netcdf.NetcdfObservationStoreFactory.FILE_PATH;
-import org.geotoolkit.storage.feature.GenericNameIndex;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.observation.AbstractObservationStore;
 import static org.geotoolkit.observation.OMUtils.RESPONSE_FORMAT_V100;
@@ -49,16 +48,16 @@ import static org.geotoolkit.observation.OMUtils.RESPONSE_FORMAT_V200;
 import org.geotoolkit.observation.ObservationReader;
 import org.geotoolkit.observation.ObservationStore;
 import org.geotoolkit.observation.ObservationStoreCapabilities;
-import org.geotoolkit.observation.ObservationWriter;
 import org.geotoolkit.observation.model.ObservationDataset;
 import org.geotoolkit.observation.model.ProcedureDataset;
-import org.geotoolkit.sos.xml.ResponseModeType;
+import org.geotoolkit.observation.feature.OMFeatureTypes;
 import org.geotoolkit.observation.model.ObservationDataset;
 import org.geotoolkit.observation.model.ProcedureDataset;
 import org.geotoolkit.observation.model.ResponseMode;
 import org.geotoolkit.observation.query.AbstractObservationQuery;
 import org.geotoolkit.observation.query.DatasetQuery;
 import org.geotoolkit.storage.DataStores;
+import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.parameter.ParameterValueGroup;
@@ -71,20 +70,13 @@ import org.opengis.util.GenericName;
  */
 public class NetcdfObservationStore extends AbstractObservationStore implements Aggregate, ResourceOnFileSystem,ObservationStore {
 
-    protected final GenericNameIndex<FeatureType> types;
     private final Path dataFile;
     private final NCFieldAnalyze analyze;
-    private final List<Resource> components = new ArrayList<>();
 
     public NetcdfObservationStore(final ParameterValueGroup params) {
         super(params);
         dataFile = Paths.get((URI) params.parameter(FILE_PATH.getName().toString()).getValue());
         analyze = NetCDFExtractor.analyzeResult(dataFile, null);
-        types = OMFeatureTypes.getFeatureTypes(IOUtilities.filenameWithoutExtension(dataFile));
-
-        for (GenericName name : types.getNames()) {
-            components.add(new FeatureView(name));
-        }
     }
 
     public NetcdfObservationStore(final Path observationFile) {
@@ -108,8 +100,13 @@ public class NetcdfObservationStore extends AbstractObservationStore implements 
     }
 
     @Override
-    public List<Resource> components() {
-        return components;
+    public synchronized Collection<? extends Resource> components() throws DataStoreException {
+        if (featureSets == null) {
+            featureSets = new ArrayList<>();
+            GenericName name = NamesExt.create(OMFeatureTypes.OM_NAMESPACE, IOUtilities.filenameWithoutExtension(dataFile));
+            featureSets.add(new FeatureView(this, OMFeatureTypes.buildSamplingFeatureFeatureType(name)));
+        }
+        return featureSets;
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -197,28 +194,29 @@ public class NetcdfObservationStore extends AbstractObservationStore implements 
 
     private final class FeatureView extends AbstractFeatureSet implements StoreResource {
 
-        private final GenericName name;
+        private final FeatureType type;
+        private final ObservationStore store;
 
-        FeatureView(GenericName name) {
+        FeatureView(ObservationStore originator, FeatureType type) {
             super(null, false);
-            this.name = name;
+            this.type = type;
+            this.store = originator;
         }
 
         @Override
         public FeatureType getType() throws DataStoreException {
-            return types.get(NetcdfObservationStore.this, name.toString());
+            return type;
         }
 
         @Override
         public DataStore getOriginator() {
-            return NetcdfObservationStore.this;
+            return (DataStore) store;
         }
 
         @Override
         public Stream<Feature> features(boolean parallel) throws DataStoreException {
-            final FeatureType sft = getType();
             try {
-                final NetcdfFeatureReader reader = new NetcdfFeatureReader(dataFile, sft);
+                final NetcdfFeatureReader reader = new NetcdfFeatureReader(dataFile, type);
                 final Spliterator<Feature> spliterator = Spliterators.spliteratorUnknownSize(reader, Spliterator.ORDERED);
                 final Stream<Feature> stream = StreamSupport.stream(spliterator, false);
                 return stream.onClose(reader::close);

@@ -31,10 +31,7 @@ import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.geotoolkit.gml.GeometrytoJTS;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.gml.xml.FeatureProperty;
-import static org.geotoolkit.data.om.OMFeatureTypes.ATT_DESC;
-import static org.geotoolkit.data.om.OMFeatureTypes.ATT_NAME;
-import static org.geotoolkit.data.om.OMFeatureTypes.ATT_POSITION;
-import static org.geotoolkit.data.om.OMFeatureTypes.ATT_SAMPLED;
+import static org.geotoolkit.observation.feature.OMFeatureTypes.*;
 import org.geotoolkit.observation.xml.AbstractObservation;
 import org.geotoolkit.sampling.xml.SamplingFeature;
 import org.opengis.feature.Feature;
@@ -114,11 +111,11 @@ class XmlFeatureReader implements FeatureReader {
                     type = FeatureTypeExt.createSubType(type, null, crs);
                     firstCRS = false;
                 }
-                f.setPropertyValue(ATT_DESC.toString(), feature.getDescription());
+                f.setPropertyValue(SF_ATT_DESC.toString(), feature.getDescription());
                 if (feature.getName() != null) {
-                    f.setPropertyValue(ATT_NAME.toString(), feature.getName().toString());
+                    f.setPropertyValue(SF_ATT_NAME.toString(), feature.getName().toString());
                 }
-                f.setPropertyValue(ATT_POSITION.toString(),geom);
+                f.setPropertyValue(SF_ATT_POSITION.toString(),geom);
 
                 final List<String> sampleds = new ArrayList<>();
                 for (FeatureProperty featProp : feature.getSampledFeatures()) {
@@ -126,7 +123,7 @@ class XmlFeatureReader implements FeatureReader {
                         sampleds.add(featProp.getHref());
                     }
                 }
-                f.setPropertyValue(ATT_SAMPLED.toString(),sampleds);
+                f.setPropertyValue(SF_ATT_SAMPLED.toString(),sampleds);
                 return f;
             } catch (FactoryException ex) {
                 LOGGER.log(Level.WARNING, "error while transforming GML geometry to JTS", ex);
