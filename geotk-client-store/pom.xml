@@ -68,6 +68,11 @@
           <version>${project.version}</version>
       </dependency>
       <dependency>
+          <groupId>org.geotoolkit</groupId>
+          <artifactId>geotk-nio-zipfs</artifactId>
+          <version>${project.version}</version>
+      </dependency>
+      <dependency>
           <groupId>org.apache.sis.storage</groupId>
           <artifactId>sis-geotiff</artifactId>
       </dependency>
@@ -80,6 +85,12 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-compress</artifactId>
         </dependency>
+      <dependency>
+          <groupId>org.geotoolkit</groupId>
+          <artifactId>geotk-coverage-geotiff</artifactId>
+          <version>${project.version}</version>
+          <scope>test</scope>
+      </dependency>
       <dependency>
           <groupId>org.apache.sis.core</groupId>
           <artifactId>sis-utility</artifactId>
