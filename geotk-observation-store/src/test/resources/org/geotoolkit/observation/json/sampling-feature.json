@@ -1,0 +1,11 @@
+{
+    "id": "station-001",
+    "name": "10972X0137-PONT",
+    "description": "Point d'eau BSSS",
+    "properties": {},
+    "sampledFeatureId": "urn:-sandre:object:bdrhf:123X",
+    "geometry": {
+        "crs": "urn:ogc:def:crs:EPSG:9.9.1:27582",
+        "geometry": "POINT (65400 1731368)"
+    }
+}

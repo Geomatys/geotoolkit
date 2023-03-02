@@ -224,6 +224,14 @@ public class InMemoryTiledGridCoverageResource extends AbstractGridCoverageResou
         }
 
         @Override
+        public Stream<Tile> getTiles(GridExtent indicesRanges, boolean parallel) throws DataStoreException {
+            if (mpTileReference.isEmpty()) {
+                return Stream.empty();
+            }
+            return super.getTiles(indicesRanges, parallel);
+        }
+
+        @Override
         public Optional<Tile> getTile(long... indices) throws DataStoreException {
             return Optional.ofNullable(mpTileReference.get(new Point(Math.toIntExact(indices[0]), Math.toIntExact(indices[1]))));
         }

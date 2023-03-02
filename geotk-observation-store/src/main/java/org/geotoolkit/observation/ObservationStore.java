@@ -16,19 +16,35 @@
  */
 package org.geotoolkit.observation;
 
-import org.geotoolkit.observation.model.ExtractionResult;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
-import org.geotoolkit.observation.model.ExtractionResult.ProcedureTree;
+import org.geotoolkit.observation.model.ObservationDataset;
+import org.geotoolkit.observation.model.Offering;
+import org.geotoolkit.observation.model.ProcedureDataset;
+import org.geotoolkit.observation.query.AbstractObservationQuery;
+import org.geotoolkit.observation.query.DatasetQuery;
+import org.geotoolkit.observation.query.HistoricalLocationQuery;
+import org.geotoolkit.observation.query.IdentifierQuery;
+import org.geotoolkit.observation.query.LocationQuery;
+import org.geotoolkit.observation.query.ObservationQuery;
+import org.geotoolkit.observation.query.ObservedPropertyQuery;
+import org.geotoolkit.observation.query.OfferingQuery;
+import org.geotoolkit.observation.query.ProcedureQuery;
+import org.geotoolkit.observation.query.ResultQuery;
+import org.geotoolkit.observation.query.SamplingFeatureQuery;
+import org.locationtech.jts.geom.Geometry;
 import org.opengis.metadata.Metadata;
+import org.opengis.observation.Observation;
 import org.opengis.observation.Phenomenon;
+import org.opengis.observation.Process;
 import org.opengis.observation.sampling.SamplingFeature;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.temporal.TemporalGeometricPrimitive;
-import org.opengis.util.GenericName;
 
 /**
  *
@@ -63,25 +79,122 @@ public interface ObservationStore {
     Metadata getMetadata() throws DataStoreException;
 
     /**
-     * Return the complete list of sensor identifiers.
+     * Return {@code true} if the specified entity identifier exist.
      *
-     * @return A list of sensor identifier.
+     *
+     * @param query an idntifier query.
+     * @return {@code true} if the specified entity identifier exist.
+     * @throws org.apache.sis.storage.DataStoreException If an error occurs during retrieval.
      */
-    Set<GenericName> getProcedureNames() throws DataStoreException;
+    boolean existEntity(final IdentifierQuery query) throws DataStoreException;
+
+    /**
+     * Return the complete list of entity identifiers.
+     *
+     * @param query a query to filter the entities to list.
+     * @return A list of identifier.
+     */
+    Set<String> getEntityNames(AbstractObservationQuery query) throws DataStoreException;
+
+    /**
+     * Execute the current query and return the matching count.
+     *
+     * @param query a query to filter the entities to list.
+     *
+     * @return The matching count of the query.
+     */
+    long getCount(AbstractObservationQuery query) throws DataStoreException;
 
     /**
      * Return the complete list of sensor description.
      *
+     * @param query A query to filter the data extraction.
      * @return A list of sensor description.
      */
-    List<ProcedureTree> getProcedures() throws DataStoreException;
+    List<ProcedureDataset> getProcedureDatasets(DatasetQuery query) throws DataStoreException;
 
     /**
-     * Return the complete list of phenomons identifiers.
+     * return the locations list of sensors over the time.
      *
-     * @return A list of sensor identifier.
+     * @param query A query to filter the data extraction.
+     *
+     * @return A map of procedure/time-location.
      */
-    Set<String> getPhenomenonNames() throws DataStoreException;
+    Map<String, Map<Date, Geometry>> getHistoricalSensorLocations(HistoricalLocationQuery query) throws DataStoreException;
+
+    /**
+     * return the times location list of sensors over the time.
+     * this a lighter version of getHistoricalSensorLocations() wih no geometry extractions.
+     *
+     * @param query A query to filter the data extraction.
+     *
+     * @return A map of procedure/time-location.
+     */
+    Map<String, Set<Date>> getHistoricalSensorTimes(HistoricalLocationQuery query) throws DataStoreException;
+
+    /**
+     * return the locations list of sensors last position.
+     *
+     * @param query A query to filter the data extraction.
+     *
+     * @return A map of procedure/location.
+     */
+    Map<String, Geometry> getSensorLocations(LocationQuery query) throws DataStoreException;
+
+    /**
+     * Return a list of Sampling feature matching the query.
+     *
+     * @param query A query to filter the data extraction.
+     *
+     * @return A list of Sampling feature matching the query.
+     */
+    List<SamplingFeature> getFeatureOfInterest(SamplingFeatureQuery query) throws DataStoreException;
+
+    /**
+     * Return a list of Phenomenon matching the query.
+     *
+     * @param query A query to filter the data extraction.
+     *
+     * @return A list of Phenomenon matching the builded filter.
+     */
+    List<Phenomenon> getPhenomenons(ObservedPropertyQuery query) throws DataStoreException;
+
+    /**
+     * Return a list of Observation matching the query.
+     *
+     * @param query A query to filter the data extraction.
+     *
+     * @return A list of Observation matching the query.
+     */
+    List<Observation> getObservations(ObservationQuery query) throws DataStoreException;
+
+    /**
+     * Return a list of procedure matching the query.
+     *
+     * @param query A query to filter the data extraction.
+     *
+     * @return A list of procedure matching the query.
+     */
+    List<Process> getProcedures(ProcedureQuery query) throws DataStoreException;
+
+    /**
+     * Return a list of offering matching the query.
+     *
+     * @param query A query to filter the data extraction.
+     *
+     * @return A list of offering matching the query.
+     */
+    List<Offering> getOfferings(OfferingQuery query) throws DataStoreException;
+
+    /**
+     * Return direct observations results.
+     * Object type depends on the response Mode, response formats, etc/
+     *
+     * @param query A query to filter the data extraction.
+     *
+     * @return observation results.
+     */
+    Object getResults(ResultQuery query) throws DataStoreException;
 
     /**
      * Return the Global time span of the observations data.
@@ -91,32 +204,32 @@ public interface ObservationStore {
     TemporalGeometricPrimitive getTemporalBounds() throws DataStoreException;
 
     /**
+     * Return the time span of the identified entity;
+     *
+     * @param query A query to filter the data extraction.
+     *
+     * @return A time period or instant.
+     */
+    TemporalGeometricPrimitive getEntityTemporalBounds(IdentifierQuery query) throws DataStoreException;
+
+    /**
      * Extract All the procedures / observations / features of interest /
      * phenomenon / spatial informations in this store.
      *
+     * @param query A query to filter the dataset extraction.
      * @return
      * @throws DataStoreException
      */
-    ExtractionResult getResults() throws DataStoreException;
+    ObservationDataset getDataset(DatasetQuery query) throws DataStoreException;
 
     /**
-     * Extract All the procedures / observations / features of interest /
-     * phenomenon / spatial informations in this store. Allow to filter by
-     * specifying a list of accepted sensor identifiers.
+     * Return an Observation template for the specified sensor.
      *
-     * @param sensorIds a filter on sensor identifiers or {@code null}.
-     */
-    ExtractionResult getResults(final List<String> sensorIds) throws DataStoreException;
-
-    /**
-     * Extract All the procedures / observations / features of interest / phenoemenon / spatial informations in this store.
-     * Allow to filter by specifying a list of accepted sensor identifiers.
-     * If specified the results will be asigned to a new/existing sensor.
+     * @param sensorId A sensor identifier.
      *
-     * @param affectedSensorID a assigned sensor identifier or {@code null}.
-     * @param sensorIds a filter on sensor identifiers or {@code null}.
+     * @return 1n Observation template.
      */
-    ExtractionResult getResults(final String affectedSensorID, final List<String> sensorIds) throws DataStoreException;
+    Observation getTemplate(String sensorId) throws DataStoreException;
 
     /**
      * Return an Observation Reader on the data.

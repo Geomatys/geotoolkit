@@ -22,8 +22,8 @@ import java.util.UUID;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.tiling.TileStatus;
 import org.apache.sis.storage.tiling.TileMatrixSet;
+import org.apache.sis.storage.tiling.TileStatus;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.iso.Names;
 import org.opengis.geometry.DirectPosition;
@@ -38,17 +38,17 @@ import org.opengis.util.GenericName;
 public abstract class AbstractTileMatrix implements TileMatrix {
 
     private final GenericName id;
-    private final TileMatrixSet pyramid;
+    private final TileMatrixSet tileMatrixSet;
     private final GridGeometry tilingScheme;
     private final int[] tileSize;
 
-    public AbstractTileMatrix(GenericName id, TileMatrixSet pyramid, DirectPosition upperLeft, Dimension gridSize,
+    public AbstractTileMatrix(GenericName id, TileMatrixSet tileMatrixSet, DirectPosition upperLeft, Dimension gridSize,
             int[] tileSize, double scale) {
-        this(id, pyramid, TileMatrices.toTilingScheme(upperLeft, gridSize, scale, tileSize), tileSize);
+        this(id, tileMatrixSet, TileMatrices.toTilingScheme(upperLeft, gridSize, scale, tileSize), tileSize);
     }
 
-    public AbstractTileMatrix(GenericName id, TileMatrixSet pyramid, GridGeometry tilingScheme, int[] tileSize) {
-        this.pyramid = pyramid;
+    public AbstractTileMatrix(GenericName id, TileMatrixSet tileMatrixSet, GridGeometry tilingScheme, int[] tileSize) {
+        this.tileMatrixSet = tileMatrixSet;
         this.tilingScheme = tilingScheme;
         this.tileSize = tileSize.clone();
         if (tileSize.length != tilingScheme.getExtent().getDimension()) {
@@ -79,7 +79,7 @@ public abstract class AbstractTileMatrix implements TileMatrix {
      * {@inheritDoc}
      */
     public TileMatrixSet getTileMatrixSet() {
-        return pyramid;
+        return tileMatrixSet;
     }
 
     /**

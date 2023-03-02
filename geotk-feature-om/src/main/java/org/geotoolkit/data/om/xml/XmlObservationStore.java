@@ -44,21 +44,28 @@ import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.Resource;
-import org.geotoolkit.data.om.OMFeatureTypes;
 import static org.geotoolkit.data.om.xml.XmlObservationStoreFactory.FILE_PATH;
-import org.geotoolkit.storage.feature.GenericNameIndex;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.observation.AbstractObservationStore;
 import static org.geotoolkit.observation.OMUtils.RESPONSE_FORMAT_V100;
 import static org.geotoolkit.observation.OMUtils.RESPONSE_FORMAT_V200;
 import org.geotoolkit.observation.ObservationReader;
+import org.geotoolkit.observation.ObservationStore;
 import org.geotoolkit.observation.ObservationStoreCapabilities;
-import org.geotoolkit.sos.xml.ResponseModeType;
+import org.geotoolkit.observation.model.ObservationDataset;
+import org.geotoolkit.observation.model.Phenomenon;
+import org.geotoolkit.observation.model.Procedure;
+import org.geotoolkit.observation.model.ProcedureDataset;
+import org.geotoolkit.observation.feature.OMFeatureTypes;
+import org.geotoolkit.observation.model.ResponseMode;
+import org.geotoolkit.observation.model.SamplingFeature;
+import static org.geotoolkit.observation.model.ObservationTransformUtils.toModel;
+import org.geotoolkit.observation.query.DatasetQuery;
 import org.geotoolkit.sos.xml.SOSMarshallerPool;
 import org.geotoolkit.storage.DataStores;
+import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
-import org.opengis.metadata.Metadata;
 import org.opengis.observation.Observation;
 import org.opengis.observation.ObservationCollection;
 import org.opengis.parameter.ParameterValueGroup;
@@ -70,28 +77,15 @@ import org.opengis.util.GenericName;
  */
 public class XmlObservationStore extends AbstractObservationStore implements Aggregate, ResourceOnFileSystem {
 
-    protected final GenericNameIndex<FeatureType> types;
     private final Path xmlFile;
-    private final List<Resource> components = new ArrayList<>();
 
     public XmlObservationStore(final ParameterValueGroup params) throws IOException {
         super(params);
         xmlFile = Paths.get((URI) params.parameter(FILE_PATH.getName().toString()).getValue());
-        types = OMFeatureTypes.getFeatureTypes(IOUtilities.filenameWithoutExtension(xmlFile));
-
-        for (GenericName name : types.getNames()) {
-            components.add(new FeatureView(name));
-        }
     }
 
-    public XmlObservationStore(final Path xmlFile) {
-        super(toParams(xmlFile));
-        this.xmlFile = xmlFile;
-        types = OMFeatureTypes.getFeatureTypes(IOUtilities.filenameWithoutExtension(xmlFile));
-
-        for (GenericName name : types.getNames()) {
-            components.add(new FeatureView(name));
-        }
+    public XmlObservationStore(final Path xmlFile) throws IOException {
+        this(toParams(xmlFile));
     }
 
     private static ParameterValueGroup toParams(final Path xmlFile) {
@@ -112,24 +106,29 @@ public class XmlObservationStore extends AbstractObservationStore implements Agg
      * {@inheritDoc }
      */
     @Override
-    public Metadata getMetadata() throws DataStoreException {
-        return buildMetadata("xml-observation");
+    protected String getStoreIdentifier() {
+        return "xml-observation";
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public Collection<? extends Resource> components() throws DataStoreException {
-        return components;
+    public synchronized Collection<? extends Resource> components() throws DataStoreException {
+        if (featureSets == null) {
+            featureSets = new ArrayList<>();
+            GenericName name = NamesExt.create(OMFeatureTypes.OM_NAMESPACE, IOUtilities.filenameWithoutExtension(xmlFile));
+            featureSets.add(new FeatureView(this, OMFeatureTypes.buildSamplingFeatureFeatureType(name)));
+        }
+        return featureSets;
     }
 
     static Object unmarshallObservationFile(final Path f) throws JAXBException, IOException {
         try (InputStream in = Files.newInputStream(f)) {
             final Unmarshaller um = SOSMarshallerPool.getInstance().acquireUnmarshaller();
             Object obj = um.unmarshal(in);
-            if (obj instanceof JAXBElement) {
-                obj = ((JAXBElement) obj).getValue();
+            if (obj instanceof JAXBElement jb) {
+                obj = jb.getValue();
             }
             if (obj != null) {
                 return obj;
@@ -147,23 +146,45 @@ public class XmlObservationStore extends AbstractObservationStore implements Agg
      * {@inheritDoc }
      */
     @Override
-    protected List<Observation> getAllObservations(final List<String> sensorIDs) throws DataStoreException {
+    public ObservationDataset getDataset(DatasetQuery query) throws DataStoreException {
+        final List<org.geotoolkit.observation.model.Observation> observations = new ArrayList<>();
         final Object obj = readFile();
-        if (obj instanceof ObservationCollection) {
-            final ObservationCollection collection = (ObservationCollection)obj;
-            return collection.getMember();
-        } else if (obj instanceof Observation) {
-            return Arrays.asList((Observation)obj);
+        if (obj instanceof ObservationCollection collection) {
+            observations.addAll(collection.getMember().stream().map(obs -> toModel(obs)).toList());
+        } else if (obj instanceof Observation obs) {
+            observations.add(toModel(obs));
         }
-        return new ArrayList<>();
+
+        final ObservationDataset result = new ObservationDataset();
+        result.spatialBound.initBoundary();
+
+        final List<String> sensorIDs = query.getSensorIds();
+        for (org.geotoolkit.observation.model.Observation obs : observations) {
+            final Procedure proc =  obs.getProcedure();
+            final ProcedureDataset procedure = new ProcedureDataset(proc.getId(), proc.getName(), proc.getDescription(), "Component", "timeseries", new ArrayList<>(), null);
+            if (sensorIDs.isEmpty() || sensorIDs.contains(procedure.getId())) {
+                if (!result.procedures.contains(procedure)) {
+                    result.procedures.add(procedure);
+                }
+                final Phenomenon phen = obs.getObservedProperty();
+                if (!result.phenomenons.contains(phen)) {
+                    result.phenomenons.add(phen);
+                }
+                SamplingFeature foi = obs.getFeatureOfInterest();
+                result.spatialBound.appendLocation(obs.getSamplingTime(), foi);
+                procedure.spatialBound.appendLocation(obs.getSamplingTime(), foi);
+                result.observations.add(obs);
+            }
+        }
+       return result;
     }
 
     private Object readFile() {
         try (InputStream fileStream = Files.newInputStream(xmlFile)){
             final Unmarshaller um = SOSMarshallerPool.getInstance().acquireUnmarshaller();
             Object obj = um.unmarshal(fileStream);
-            if (obj instanceof JAXBElement) {
-                obj = ((JAXBElement)obj).getValue();
+            if (obj instanceof JAXBElement jb) {
+                obj = jb.getValue();
             }
             SOSMarshallerPool.getInstance().recycle(um);
             return obj;
@@ -203,34 +224,35 @@ public class XmlObservationStore extends AbstractObservationStore implements Agg
         final Map<String, List<String>> responseFormats = new HashMap<>();
         responseFormats.put("1.0.0", Arrays.asList(RESPONSE_FORMAT_V100));
         responseFormats.put("2.0.0", Arrays.asList(RESPONSE_FORMAT_V200));
-        final List<String> responseMode = Arrays.asList(ResponseModeType.INLINE.value());
+        final List<ResponseMode> responseMode = Arrays.asList(ResponseMode.INLINE);
         return new ObservationStoreCapabilities(false, false, false, new ArrayList<>(), responseFormats, responseMode, false);
     }
 
     private final class FeatureView extends AbstractFeatureSet implements StoreResource {
 
-        private final GenericName name;
+        private final FeatureType type;
+        private final ObservationStore store;
 
-        FeatureView(GenericName name) {
+        FeatureView(ObservationStore originator, FeatureType type) {
             super(null, false);
-            this.name = name;
+            this.type = type;
+            this.store = originator;
         }
 
         @Override
         public FeatureType getType() throws DataStoreException {
-            return types.get(XmlObservationStore.this, name.toString());
+            return type;
         }
 
         @Override
         public DataStore getOriginator() {
-            return XmlObservationStore.this;
+            return (DataStore) store;
         }
 
         @Override
         public Stream<Feature> features(boolean parallel) throws DataStoreException {
-            final FeatureType sft = getType();
             try {
-                final XmlFeatureReader reader = new XmlFeatureReader(xmlFile,sft);
+                final XmlFeatureReader reader = new XmlFeatureReader(xmlFile, type);
                 final Spliterator<Feature> spliterator = Spliterators.spliteratorUnknownSize(reader, Spliterator.ORDERED);
                 final Stream<Feature> stream = StreamSupport.stream(spliterator, false);
                 return stream.onClose(reader::close);

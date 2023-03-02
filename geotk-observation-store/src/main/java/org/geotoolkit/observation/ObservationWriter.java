@@ -17,31 +17,19 @@
 
 package org.geotoolkit.observation;
 
-import org.geotoolkit.observation.model.ExtractionResult;
 import java.util.List;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.gml.xml.AbstractGeometry;
-import org.geotoolkit.sos.xml.ObservationOffering;
-import org.geotoolkit.observation.model.ObservationTemplate;
-import org.opengis.observation.Observation;
-import org.opengis.observation.Phenomenon;
+import org.geotoolkit.observation.model.Observation;
+import org.geotoolkit.observation.model.Offering;
+import org.geotoolkit.observation.model.Phenomenon;
+import org.geotoolkit.observation.model.ProcedureDataset;
+import org.locationtech.jts.geom.Geometry;
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
 public interface ObservationWriter {
-
-    /**
-     * Write a new Observation template into the database
-     *
-     * @param template An O&M observation
-     *
-     * @return The new identifiers of the observation
-     *
-     * @throws org.apache.sis.storage.DataStoreException
-     */
-    String writeObservationTemplate(final ObservationTemplate template) throws DataStoreException;
 
     /**
      * Write a new Observation into the database
@@ -108,25 +96,7 @@ public interface ObservationWriter {
      * @return
      * @throws org.apache.sis.storage.DataStoreException
      */
-    String writeOffering(final ObservationOffering offering) throws DataStoreException;
-
-    /**
-     * Update an offering after the add of a new Observation.
-     * The field updated are offering.procedure, offering.phenomenon, offering.samplingFeature
-     *
-     * @param offeringID The offering identifier.
-     * @param offProc A mapping between an offering and a procedure.
-     * @param offPheno A mapping between an offering and a phenomenon.
-     * @param offSF A mapping between an offering and a samplingFeature.
-     *
-     * @throws org.apache.sis.storage.DataStoreException
-     */
-    void updateOffering(final String offeringID, final String offProc, final List<String> offPheno, final String offSF) throws DataStoreException;
-
-    /**
-     * Refresh the cached offerings.
-     */
-    void updateOfferings();
+    void writeOffering(final Offering offering) throws DataStoreException;
 
     /**
      * Record a procedure with its location and parent.
@@ -134,7 +104,7 @@ public interface ObservationWriter {
      * @param procedure
      * @throws org.apache.sis.storage.DataStoreException
      */
-    void writeProcedure(final ExtractionResult.ProcedureTree procedure) throws DataStoreException;
+    void writeProcedure(final ProcedureDataset procedure) throws DataStoreException;
 
     /**
      * Record the location of a sensor.
@@ -143,7 +113,7 @@ public interface ObservationWriter {
      * @param position The GML position of the sensor.
      * @throws org.apache.sis.storage.DataStoreException
      */
-    void recordProcedureLocation(final String physicalID, final AbstractGeometry position) throws DataStoreException;
+    void recordProcedureLocation(final String physicalID, final Geometry position) throws DataStoreException;
 
     /**
      * Free all the resources and close dataSource connections.

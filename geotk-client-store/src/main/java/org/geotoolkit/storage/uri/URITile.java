@@ -83,7 +83,7 @@ public final class URITile {
               && "image/tiff".equalsIgnoreCase(format.getMimeType())
               && TileFormat.Compression.NONE.equals(compression)
               && security == DefaultClientSecurity.NO_SECURITY
-              && tilematrix.toPath(path) != null) {
+              && tilematrix.getResolver().toPath(path) != null) {
                 //if we are using a tiff image format, with no compression or security and on local file system
                 //use apache sis geotiff provider instead
                 return new DataSet(GEOTIFFPROVIDER, path, security, position, compression);

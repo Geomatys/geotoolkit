@@ -9,19 +9,15 @@ import java.util.logging.Logger;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.geotoolkit.storage.feature.FeatureReader;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
-import org.geotoolkit.data.om.OMFeatureTypes;
 import org.geotoolkit.feature.ReprojectMapper;
-import org.geotoolkit.gml.AxisResolve;
-import org.geotoolkit.gml.GeometrytoJTS;
-import org.geotoolkit.gml.xml.AbstractGeometry;
-import org.geotoolkit.gml.xml.FeatureProperty;
-import org.geotoolkit.sampling.xml.SamplingFeature;
-import org.geotoolkit.observation.model.ExtractionResult;
+import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.observation.feature.OMFeatureTypes;
+import org.geotoolkit.observation.model.ObservationDataset;
+import org.geotoolkit.observation.model.Observation;
+import org.geotoolkit.observation.model.SamplingFeature;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
-import org.opengis.observation.AnyFeature;
-import org.opengis.observation.Observation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 
@@ -39,7 +35,7 @@ class NetcdfFeatureReader implements FeatureReader {
 
     NetcdfFeatureReader(final Path source, final FeatureType type) throws NetCDFParsingException {
         this.type = type;
-        ExtractionResult result = NetCDFExtractor.getObservationFromNetCDF(source, "temp");
+        ObservationDataset result = NetCDFExtractor.getObservationFromNetCDF(source, "temp");
         for (Observation obs : result.observations) {
             final Feature feat = getFeatureFromFOI(obs.getFeatureOfInterest());
             if (feat != null) {
@@ -65,46 +61,34 @@ class NetcdfFeatureReader implements FeatureReader {
         return cpt < features.size();
     }
 
-    protected final Feature getFeatureFromFOI(final AnyFeature foi) {
-        if (foi instanceof SamplingFeature) {
-            final SamplingFeature feature = (SamplingFeature) foi;
+    protected final Feature getFeatureFromFOI(final SamplingFeature feature) {
+        try {
+            final Geometry geom = feature.getGeometry();
 
-            final org.opengis.geometry.Geometry isoGeom = feature.getGeometry();
-            try {
-                final Geometry geom;
-                if (isoGeom instanceof AbstractGeometry) {
-                    geom = GeometrytoJTS.toJTS((AbstractGeometry) isoGeom, AxisResolve.STRICT);
-                } else {
-                    geom = null;
-                }
-                if (firstCRS && isoGeom != null) {
-                    //configure crs in the feature type
-                    final CoordinateReferenceSystem crs = ((AbstractGeometry) isoGeom).getCoordinateReferenceSystem(false);
-                    type = new ReprojectMapper(type, crs).getMappedType();
-                    firstCRS = false;
-                }
-                final Feature f = type.newInstance();
-                f.setPropertyValue(AttributeConvention.IDENTIFIER, feature.getId());
-                f.setPropertyValue(OMFeatureTypes.ATT_DESC.toString(), feature.getDescription());
-                f.setPropertyValue(OMFeatureTypes.ATT_NAME.toString(), feature.getName());
-                f.setPropertyValue(OMFeatureTypes.ATT_POSITION.toString(),geom);
-
-                final List<String> sampleds = new ArrayList<>();
-                for (FeatureProperty featProp : feature.getSampledFeatures()) {
-                    if (featProp.getHref() != null) {
-                        sampleds.add(featProp.getHref());
-                    }
-                }
-                f.setPropertyValue(OMFeatureTypes.ATT_SAMPLED.toString(),sampleds);
-                return f;
-            } catch (FactoryException ex) {
-                LOGGER.log(Level.WARNING, "error while transforming GML geometry to JTS", ex);
+            if (firstCRS && geom != null) {
+                //configure crs in the feature type
+                final CoordinateReferenceSystem crs = JTS.findCoordinateReferenceSystem(geom);
+                type = new ReprojectMapper(type, crs).getMappedType();
+                firstCRS = false;
             }
-        } else {
-            LOGGER.warning("unable to find a valid feature of interest in the observation");
+            final Feature f = type.newInstance();
+            f.setPropertyValue(AttributeConvention.IDENTIFIER, feature.getId());
+            f.setPropertyValue(OMFeatureTypes.SF_ATT_DESC.toString(), feature.getDescription());
+            f.setPropertyValue(OMFeatureTypes.SF_ATT_NAME.toString(), feature.getName());
+            f.setPropertyValue(OMFeatureTypes.SF_ATT_POSITION.toString(),geom);
+
+            final List<String> sampleds = new ArrayList<>();
+            if (feature.getSampledFeatureId() != null) {
+                sampleds.add(feature.getSampledFeatureId());
+            }
+            f.setPropertyValue(OMFeatureTypes.SF_ATT_SAMPLED.toString(),sampleds);
+            return f;
+        } catch (FactoryException ex) {
+            LOGGER.log(Level.WARNING, "error while transforming GML geometry to JTS", ex);
         }
         return null;
     }
+
 
     @Override
     public void close() {

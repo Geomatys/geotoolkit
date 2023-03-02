@@ -1,0 +1,20 @@
+{
+    "id": "compo-phen",
+    "name": "urn:phen:compo",
+    "definition": "urn:phen:compo",
+    "properties": {},
+    "description": "composite phenomenon number 1",
+    "component": [{
+            "id": "phen-1",
+            "name": "urn:phen:1",
+            "description": "phenomenon number 1",
+            "properties": {},
+            "definition": "urn:phen:1"
+        }, {
+            "id": "phen-2",
+            "name": "urn:phen:2",
+            "description": "phenomenon number 2",
+            "properties": {},
+            "definition": "urn:phen:2"
+        }]
+}

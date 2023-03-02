@@ -63,6 +63,11 @@ public class DefiningTileMatrix implements WritableTileMatrix, ImageTileMatrix {
     }
 
     @Override
+    public Stream<Tile> getTiles(GridExtent indicesRanges, boolean parallel) throws DataStoreException {
+        return Stream.empty();
+    }
+
+    @Override
     public Optional<Tile> getTile(long... indices) throws DataStoreException {
         return Optional.empty();
     }

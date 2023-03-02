@@ -971,6 +971,7 @@
     <module>geotk-maven-report</module>
     <module>geotk-utility-jdbc</module>
     <module>geotk-analytics</module>
+    <module>geotk-nio-zipfs</module>
 
     <module>geotk-geometry</module>
     <module>geotk-jtswrapper</module>

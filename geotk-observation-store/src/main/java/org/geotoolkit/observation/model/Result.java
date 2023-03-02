@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2021, Geomatys
+ *    (C) 2022, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,29 +16,10 @@
  */
 package org.geotoolkit.observation.model;
 
-import org.opengis.observation.Phenomenon;
-
 /**
- * A model object representing a field in an Observation result along with the
- * (simple) phenomenon associated.
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class FieldPhenomenon {
+public interface Result {
 
-    private final Phenomenon phenomenon;
-    private final Field field;
-
-    public FieldPhenomenon(Phenomenon phenomenon, Field field) {
-        this.field = field;
-        this.phenomenon = phenomenon;
-    }
-
-    public Phenomenon getPhenomenon() {
-        return phenomenon;
-    }
-
-    public Field getField() {
-        return field;
-    }
 }

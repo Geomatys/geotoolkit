@@ -16,69 +16,78 @@
  */
 package org.geotoolkit.observation;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.UUID;
+import java.util.logging.Logger;
+import javax.measure.format.MeasurementParseException;
 import javax.xml.namespace.QName;
+import org.apache.sis.geometry.AbstractEnvelope;
+import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.internal.feature.Geometries;
+import org.apache.sis.internal.feature.GeometryWrapper;
+import org.apache.sis.internal.metadata.RecordSchemaSIS;
+import static org.apache.sis.internal.metadata.RecordSchemaSIS.INSTANCE;
+import org.apache.sis.measure.Units;
+import org.apache.sis.metadata.ModifiableMetadata;
+import org.apache.sis.metadata.iso.DefaultIdentifier;
+import org.apache.sis.metadata.iso.DefaultMetadata;
+import org.apache.sis.metadata.iso.citation.DefaultCitation;
+import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
+import org.apache.sis.metadata.iso.quality.DefaultQuantitativeAttributeAccuracy;
+import org.apache.sis.metadata.iso.quality.DefaultQuantitativeResult;
+import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.gml.xml.AbstractFeature;
-import org.geotoolkit.gml.xml.BoundingShape;
-import org.geotoolkit.gml.xml.Envelope;
-import org.geotoolkit.gml.xml.FeatureProperty;
-import org.geotoolkit.gml.xml.LineString;
-import org.geotoolkit.gml.xml.Point;
+import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.SimpleInternationalString;
+import org.apache.sis.util.iso.DefaultRecord;
+import org.apache.sis.util.iso.DefaultRecordType;
+import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.observation.model.ComplexResult;
 import org.geotoolkit.observation.model.Field;
-import org.geotoolkit.observation.model.OMEntity;
 import org.geotoolkit.observation.result.ResultBuilder;
-import org.geotoolkit.observation.xml.AbstractObservation;
-import org.geotoolkit.observation.xml.OMXmlFactory;
-import static org.geotoolkit.ows.xml.OWSExceptionCode.INVALID_PARAMETER_VALUE;
-import static org.geotoolkit.ows.xml.OWSExceptionCode.MISSING_PARAMETER_VALUE;
-import org.geotoolkit.sampling.xml.SamplingFeature;
-import org.geotoolkit.sml.xml.AbstractIdentification;
-import org.geotoolkit.sml.xml.AbstractIdentifier;
-import org.geotoolkit.sml.xml.AbstractProcess;
-import org.geotoolkit.sml.xml.AbstractSensorML;
-import org.geotoolkit.sos.MeasureStringBuilder;
-import org.geotoolkit.sos.xml.SOSXmlFactory;
-import static org.geotoolkit.sos.xml.SOSXmlFactory.buildDataArrayProperty;
-import static org.geotoolkit.sos.xml.SOSXmlFactory.buildSimpleDatarecord;
-import org.geotoolkit.swe.xml.AbstractDataComponent;
-import org.geotoolkit.swe.xml.AbstractDataRecord;
-import org.geotoolkit.swe.xml.AnyScalar;
-import org.geotoolkit.swe.xml.DataArrayProperty;
-import org.geotoolkit.swe.xml.Phenomenon;
-import org.geotoolkit.swe.xml.PhenomenonProperty;
-import org.geotoolkit.swe.xml.TextBlock;
-import org.geotoolkit.swe.xml.UomProperty;
-import org.geotoolkit.swe.xml.v101.CompositePhenomenonType;
-import org.geotoolkit.swe.xml.v101.PhenomenonType;
-import static org.geotoolkit.swe.xml.v200.TextEncodingType.DEFAULT_ENCODING;
+import org.geotoolkit.observation.model.Phenomenon;
+import org.geotoolkit.observation.model.CompositePhenomenon;
+import org.geotoolkit.observation.model.FieldType;
+import org.geotoolkit.observation.model.MeasureResult;
+import org.geotoolkit.observation.model.Observation;
+import org.geotoolkit.observation.model.TextEncoderProperties;
+import org.geotoolkit.temporal.object.DefaultInstant;
+import org.geotoolkit.temporal.object.DefaultPeriod;
 import org.geotoolkit.temporal.object.ISODateParser;
-import org.opengis.geometry.DirectPosition;
-import org.opengis.observation.CompositePhenomenon;
-import org.opengis.observation.Observation;
+import org.locationtech.jts.geom.Geometry;
+import org.opengis.geometry.Envelope;
+import org.opengis.metadata.Metadata;
+import org.opengis.metadata.quality.Element;
+import org.opengis.parameter.ParameterDescriptor;
+import org.opengis.parameter.ParameterNotFoundException;
+import org.opengis.parameter.ParameterValueGroup;
+import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.temporal.Instant;
 import org.opengis.temporal.TemporalGeometricPrimitive;
-import org.opengis.observation.Process;
+import org.opengis.util.FactoryException;
+import org.opengis.util.RecordType;
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
 public class OMUtils {
+
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.observation");
 
     public static final String EVENT_TIME = "eventTime";
 
@@ -89,135 +98,26 @@ public class OMUtils {
     public static final String RESPONSE_FORMAT_V100 = "text/xml; subtype=\"om/1.0.0\"";
     public static final String RESPONSE_FORMAT_V200 = "http://www.opengis.net/om/2.0";
 
-    public static final Map<String, TextBlock> TEXT_ENCODING = new HashMap<>();
+    public static final Field PRESSION_FIELD  = new Field(-1, FieldType.QUANTITY, "Zlevel", null, "http://mmisw.org/ont/cf/parameter/sea_water_pressure", "dbar");
+    public static final Field TIME_FIELD      = new Field(-1, FieldType.TIME,     "time",   null, "http://www.opengis.net/def/property/OGC/0/SamplingTime", null);
+    public static final Field LATITUDE_FIELD  = new Field(-1, FieldType.QUANTITY, "lat",    null, "http://mmisw.org/ont/cf/parameter/latitude", "deg");
+    public static final Field LONGITUDE_FIELD = new Field(-1, FieldType.QUANTITY, "lon",    null, "http://mmisw.org/ont/cf/parameter/longitude", "deg");
 
-    static {
-        TEXT_ENCODING.put("1.0.0", SOSXmlFactory.buildTextBlock("1.0.0", "text-1", ",", "@@", "."));
-        TEXT_ENCODING.put("2.0.0", SOSXmlFactory.buildTextBlock("2.0.0", "text-1", ",", "@@", "."));
-    }
-
-    public static final Map<String, AnyScalar> PRESSION_FIELD = new HashMap<>();
-
-    static {
-        final UomProperty uomv100 = SOSXmlFactory.buildUomProperty("1.0.0", "dbar", "--to be completed--");
-        final AbstractDataComponent compv100 = SOSXmlFactory.buildQuantity("1.0.0", "http://mmisw.org/ont/cf/parameter/sea_water_pressure", uomv100, null);
-        final AnyScalar pressionv100 = SOSXmlFactory.buildAnyScalar("1.0.0", null, "Zlevel", compv100);
-        PRESSION_FIELD.put("1.0.0", pressionv100);
-
-        final UomProperty uomv200 = SOSXmlFactory.buildUomProperty("2.0.0", "dbar", "--to be completed--");
-        final AbstractDataComponent compv200 = SOSXmlFactory.buildQuantity("2.0.0", "http://mmisw.org/ont/cf/parameter/sea_water_pressure", uomv200, null);
-        final AnyScalar pressionv200 = SOSXmlFactory.buildAnyScalar("2.0.0", null, "Zlevel", compv200);
-        PRESSION_FIELD.put("2.0.0", pressionv200);
-    }
-
-    public static final Map<String, AnyScalar> TIME_FIELD = new HashMap<>();
-
-    static {
-        final UomProperty uomv100 = SOSXmlFactory.buildUomProperty("1.0.0", "gregorian", "http://www.opengis.net/def/uom/ISO-8601/0/Gregorian");
-        final AbstractDataComponent compv100 = SOSXmlFactory.buildTime("1.0.0", "http://www.opengis.net/def/property/OGC/0/SamplingTime", uomv100);
-        final AnyScalar timev100 = SOSXmlFactory.buildAnyScalar("1.0.0", null, "time", compv100);
-        TIME_FIELD.put("1.0.0", timev100);
-
-        final UomProperty uomv200 = SOSXmlFactory.buildUomProperty("2.0.0", "gregorian", "http://www.opengis.net/def/uom/ISO-8601/0/Gregorian");
-        final AbstractDataComponent compv200 = SOSXmlFactory.buildTime("2.0.0", "http://www.opengis.net/def/property/OGC/0/SamplingTime", uomv200);
-        final AnyScalar timev200 = SOSXmlFactory.buildAnyScalar("2.0.0", null, "time", compv200);
-        TIME_FIELD.put("2.0.0", timev200);
-    }
-
-    public static final Map<String, AnyScalar> LATITUDE_FIELD = new HashMap<>();
-
-    static {
-        final UomProperty uomv100 = SOSXmlFactory.buildUomProperty("1.0.0", "deg", null);
-        final AbstractDataComponent compv100 = SOSXmlFactory.buildQuantity("1.0.0", "http://mmisw.org/ont/cf/parameter/latitude", uomv100, null);
-        final AnyScalar latv100 = SOSXmlFactory.buildAnyScalar("1.0.0", null, "lat", compv100);
-        LATITUDE_FIELD.put("1.0.0", latv100);
-
-        final UomProperty uomv200 = SOSXmlFactory.buildUomProperty("2.0.0", "deg", null);
-        final AbstractDataComponent compv200 = SOSXmlFactory.buildQuantity("2.0.0", "http://mmisw.org/ont/cf/parameter/latitude", uomv200, null);
-        final AnyScalar latv200 = SOSXmlFactory.buildAnyScalar("2.0.0", null, "lat", compv200);
-        LATITUDE_FIELD.put("2.0.0", latv200);
-    }
-
-    public static final Map<String, AnyScalar> LONGITUDE_FIELD = new HashMap<>();
-
-    static {
-        final UomProperty uomv100 = SOSXmlFactory.buildUomProperty("1.0.0", "deg", null);
-        final AbstractDataComponent compv100 = SOSXmlFactory.buildQuantity("1.0.0", "http://mmisw.org/ont/cf/parameter/longitude", uomv100, null);
-        final AnyScalar lonv100 = SOSXmlFactory.buildAnyScalar("1.0.0", null, "lon", compv100);
-        LONGITUDE_FIELD.put("1.0.0", lonv100);
-
-        final UomProperty uomv200 = SOSXmlFactory.buildUomProperty("2.0.0", "deg", null);
-        final AbstractDataComponent compv200 = SOSXmlFactory.buildQuantity("2.0.0", "http://mmisw.org/ont/cf/parameter/longitude", uomv200, null);
-        final AnyScalar lonv200 = SOSXmlFactory.buildAnyScalar("2.0.0", null, "lon", compv200);
-        LONGITUDE_FIELD.put("2.0.0", lonv200);
-    }
-
-    public static AbstractDataRecord getDataRecordProfile(final String version, final List<? extends Field> phenomenons) {
-
-        final List<AnyScalar> fields = new ArrayList<>();
-        fields.add(PRESSION_FIELD.get(version));
-        for (Field phenomenon : phenomenons) {
-            fields.add(phenomenon.getScalar(version));
-        }
-        return SOSXmlFactory.buildSimpleDatarecord(version, null, null, null, true, fields);
-    }
-
-    public static AbstractDataRecord getDataRecordTimeSeries(final String version, final List<? extends Field> phenomenons) {
-        final List<AnyScalar> fields = new ArrayList<>();
-        fields.add(TIME_FIELD.get(version));
-        for (Field phenomenon : phenomenons) {
-            fields.add(phenomenon.getScalar(version));
-        }
-        return SOSXmlFactory.buildSimpleDatarecord(version, null, null, null, true, fields);
-    }
-
-    public static AbstractDataRecord getDataRecordTrajectory(final String version, final List<? extends Field> phenomenons) {
-        final List<AnyScalar> fields = new ArrayList<>();
-        fields.add(TIME_FIELD.get(version));
-        fields.add(LATITUDE_FIELD.get(version));
-        fields.add(LONGITUDE_FIELD.get(version));
-        for (Field phenomenon : phenomenons) {
-            fields.add(phenomenon.getScalar(version));
-        }
-        return SOSXmlFactory.buildSimpleDatarecord(version, null, null, null, true, fields);
-    }
-
-    public static AnyScalar buildSimpleAnyScalar(String version, String uom, String name, String definition) {
-        UomProperty uomProp = null;
-        if (uom != null) {
-            uomProp = SOSXmlFactory.buildUomProperty(version, uom, null);
-        }
-        final AbstractDataComponent compo = SOSXmlFactory.buildQuantity(version, definition, uomProp, null);
-        return SOSXmlFactory.buildAnyScalar(version, null, name, compo);
-    }
-
-    public static Phenomenon getPhenomenon(final String version, final List<? extends Field> phenomenons) {
-        return getPhenomenon(version, phenomenons, "urn:ogc:phenomenon:", new HashSet<>());
-    }
-
-    public static Phenomenon getPhenomenon(final String version, final List<? extends Field> phenomenons, final Set<org.opengis.observation.Phenomenon> existingPhens) {
-        return getPhenomenon(version, phenomenons, "urn:ogc:phenomenon:", existingPhens);
-    }
-
-    public static Phenomenon getPhenomenon(final String version, final List<? extends Field> phenomenons, final String phenomenonIdBase, final Set<org.opengis.observation.Phenomenon> existingPhens) {
-        return getPhenomenon(version, null, phenomenons, phenomenonIdBase, existingPhens);
-    }
-
-    public static Phenomenon getPhenomenon(final String version, String name, final List<? extends Field> phenomenons, final String phenomenonIdBase, final Set<org.opengis.observation.Phenomenon> existingPhens) {
+    public static Phenomenon getPhenomenonModels(String name, final List<? extends Field> phenomenons, final String phenomenonIdBase, final Set<Phenomenon> existingPhens) {
         final Phenomenon phenomenon;
         if (phenomenons.size() == 1) {
-            phenomenon = SOSXmlFactory.buildPhenomenon(version, phenomenons.get(0).name, phenomenons.get(0).label, phenomenons.get(0).name, phenomenons.get(0).description);
+            phenomenon = new Phenomenon(phenomenons.get(0).name, phenomenons.get(0).label, phenomenons.get(0).name, phenomenons.get(0).description, null);
         } else {
-            final Set<PhenomenonType> types = new LinkedHashSet<>();
+            final List<Phenomenon> types = new ArrayList<>();
             for (Field phen : phenomenons) {
-                types.add(new PhenomenonType(phen.name, phen.label, phen.name, phen.description));
+                types.add(new Phenomenon(phen.name, phen.label, phen.name, phen.description, null));
             }
 
             // look for an already existing (composite) phenomenon to use instead of creating a new one
-            for (org.opengis.observation.Phenomenon existingPhen : existingPhens) {
+            for (Phenomenon existingPhen : existingPhens) {
                 if (existingPhen instanceof CompositePhenomenon cphen) {
-                    if (componentsEquals(cphen.getComponent(), types)) {
-                        return (Phenomenon) cphen;
+                    if (Objects.equals(cphen.getComponent(), types)) {
+                        return cphen;
                     }
                 }
             }
@@ -227,276 +127,14 @@ public class OMUtils {
             if (name == null) {
                 name = definition;
             }
-            phenomenon = new CompositePhenomenonType(compositeId, name, definition, null, null, types);
+            phenomenon = new CompositePhenomenon(compositeId, name, definition, null, null, types);
         }
         return phenomenon;
-    }
-
-    public static boolean componentsEquals(Collection as, Collection bs) {
-        if (as.size() == bs.size()) {
-            Iterator i1 = as.iterator();
-            Iterator i2 = bs.iterator();
-            while (i1.hasNext()) {
-                if (!Objects.equals(i1.next(), i2.next())) {
-                    return false;
-                }
-            }
-            return true;
-        }
-        return false;
-    }
-
-    public static SamplingFeature buildSamplingPoint(final String identifier, final double latitude, final double longitude) {
-        final DirectPosition position = SOSXmlFactory.buildDirectPosition("2.0.0", "EPSG:4326", 2, Arrays.asList(latitude, longitude));
-        final Point geom              = SOSXmlFactory.buildPoint("2.0.0", "SamplingPoint", position);
-        geom.setSrsName("EPSG:4326");
-        final SamplingFeature sp      = SOSXmlFactory.buildSamplingPoint("2.0.0", identifier, null, null, null, geom);
-        return sp;
-    }
-
-    public static SamplingFeature buildSamplingCurve(final String identifier, final List<DirectPosition> positions) {
-        final LineString geom         = SOSXmlFactory.buildLineString("2.0.0", null, "EPSG:4326", positions);
-        final SamplingFeature sp      = SOSXmlFactory.buildSamplingCurve("2.0.0", identifier, null, null, null, geom, null, null, null);
-        return sp;
-    }
-
-    public static Process buildProcess(final String procedureId) {
-        return SOSXmlFactory.buildProcess("2.0.0", procedureId);
-    }
-
-    public static AbstractObservation buildObservation(final String obsid, final SamplingFeature sf,
-            final Phenomenon phenomenon, final Process procedure, final int count , final AbstractDataRecord datarecord, final MeasureStringBuilder sb, final TemporalGeometricPrimitive time) {
-
-        final DataArrayProperty result = SOSXmlFactory.buildDataArrayProperty("2.0.0", "array-1", count, "SimpleDataArray", datarecord, DEFAULT_ENCODING, sb.getString(), null);
-        final FeatureProperty foi = SOSXmlFactory.buildFeatureProperty("2.0.0", sf);
-        return OMXmlFactory.buildObservation("2.0.0",       // version
-                                             obsid,         // id
-                                             obsid,         // name
-                                             null,          // description
-                                             foi,           // foi
-                                             phenomenon,    // phenomenon
-                                             procedure,     // procedure
-                                             result,        // result
-                                             time,
-                                             null);
-    }
-
-    public static AbstractObservation buildObservation(final String obsid, final SamplingFeature sf,
-            final Phenomenon phenomenon, final Process procedure, final int count , final AbstractDataRecord datarecord, final List<Object> dataValues, final TemporalGeometricPrimitive time) {
-
-        final DataArrayProperty result = SOSXmlFactory.buildDataArrayProperty("2.0.0", "array-1", count, "SimpleDataArray", datarecord, DEFAULT_ENCODING, null, dataValues);
-        final FeatureProperty foi = SOSXmlFactory.buildFeatureProperty("2.0.0", sf);
-        return OMXmlFactory.buildObservation("2.0.0",       // version
-                                             obsid,         // id
-                                             obsid,         // name
-                                             null,          // description
-                                             foi,           // foi
-                                             phenomenon,    // phenomenon
-                                             procedure,     // procedure
-                                             result,        // result
-                                             time,
-                                             null);
-    }
-
-    /**
-     * Return the physical ID of a sensor.
-     * This ID is found into a "Identifier" mark with the name 'supervisorCode'
-     *
-     * @param sensor A SML sensor decription.
-     * @return
-     */
-    public static String getPhysicalID(final AbstractSensorML sensor) {
-        if (sensor != null && !sensor.getMember().isEmpty()) {
-            final AbstractProcess process = sensor.getMember().get(0).getRealProcess();
-            final List<? extends AbstractIdentification> idents = process.getIdentification();
-
-            for(AbstractIdentification ident : idents) {
-                if (ident.getIdentifierList() != null) {
-                    for (AbstractIdentifier identifier: ident.getIdentifierList().getIdentifier()) {
-                        if ("supervisorCode".equals(identifier.getName()) && identifier.getTerm() != null) {
-                            return identifier.getTerm().getValue();
-                        }
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
-    /**
-     * return a SQL formatted timestamp
-     *
-     * @param time a GML time position object.
-     * @return time representation.
-     * @throws org.geotoolkit.observation.ObservationStoreException If the date is {@code null} or if time parse fails.
-     */
-    public static String getTimeValue(final Date time) throws ObservationStoreException {
-        if (time != null) {
-             try {
-                 DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SS");
-                 final String value = df.format(time);
-
-                 //here t is not used but it allow to verify the syntax of the timestamp
-                 final ISODateParser parser = new ISODateParser();
-                 final Date d = parser.parseToDate(value);
-                 final Timestamp t = new Timestamp(d.getTime());
-                 return t.toString();
-
-             } catch(IllegalArgumentException e) {
-                throw new ObservationStoreException("Unable to parse the value: " + time.toString() + '\n' +
-                                               "Bad format of timestamp:\n" + e.getMessage(),
-                                               INVALID_PARAMETER_VALUE, "eventTime");
-             }
-          } else {
-            String locator;
-            if (time == null) {
-                locator = "Timeposition";
-            } else {
-                locator = "TimePosition value";
-            }
-            throw new ObservationStoreException("bad format of time, " + locator + " mustn't be null",
-                                              MISSING_PARAMETER_VALUE, "eventTime");
-          }
-    }
-
-    /**
-     * Return an envelope containing all the observation member of the collection.
-     *
-     * @param version SOS version.
-     * @param observations A list of complex observations.
-     * @param srsName srs name of the result envelope.
-     *
-     * @return an envelope.
-     */
-    public static Envelope getCollectionBound(final String version, final List<Observation> observations, final String srsName) {
-        double minx = Double.MAX_VALUE;
-        double miny = Double.MAX_VALUE;
-        double maxx = -Double.MAX_VALUE;
-        double maxy = -Double.MAX_VALUE;
-
-        for (Observation observation: observations) {
-            final AbstractFeature feature = (AbstractFeature) observation.getFeatureOfInterest();
-            if (feature != null) {
-                if (feature.getBoundedBy() != null) {
-                    final BoundingShape bound = feature.getBoundedBy();
-                    if (bound.getEnvelope() != null) {
-                        if (bound.getEnvelope().getLowerCorner() != null
-                            && bound.getEnvelope().getLowerCorner().getCoordinate() != null
-                            && bound.getEnvelope().getLowerCorner().getCoordinate().length == 2 ) {
-                            final double[] lower = bound.getEnvelope().getLowerCorner().getCoordinate();
-                            if (lower[0] < minx) {
-                                minx = lower[0];
-                            }
-                            if (lower[1] < miny) {
-                                miny = lower[1];
-                            }
-                        }
-                        if (bound.getEnvelope().getUpperCorner() != null
-                            && bound.getEnvelope().getUpperCorner().getCoordinate() != null
-                            && bound.getEnvelope().getUpperCorner().getCoordinate().length == 2 ) {
-                            final double[] upper = bound.getEnvelope().getUpperCorner().getCoordinate();
-                            if (upper[0] > maxx) {
-                                maxx = upper[0];
-                            }
-                            if (upper[1] > maxy) {
-                                maxy = upper[1];
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        if (minx == Double.MAX_VALUE) {
-            minx = -180.0;
-        }
-        if (miny == Double.MAX_VALUE) {
-            miny = -90.0;
-        }
-        if (maxx == (-Double.MAX_VALUE)) {
-            maxx = 180.0;
-        }
-        if (maxy == (-Double.MAX_VALUE)) {
-            maxy = 90.0;
-        }
-
-        final Envelope env = SOSXmlFactory.buildEnvelope(version, null, minx, miny, maxx, maxy, srsName);
-        env.setSrsDimension(2);
-        env.setAxisLabels(Arrays.asList("Y X"));
-        return env;
     }
 
     public static Date dateFromTS(Timestamp t) {
         if (t != null) {
             return new Date(t.getTime());
-        }
-        return null;
-    }
-
-    public static String getVersionFromHints(Map<String, Object> hints) {
-        if (hints != null && hints.containsKey("version")) {
-            Object value = hints.get("version");
-            if (value instanceof String) {
-                return(String) value;
-            } else {
-                throw new IllegalArgumentException("unexpected type for hints param version");
-            }
-        }
-        return "2.0.0";
-    }
-
-    public static boolean getBooleanHint(Map<String, Object> hints, String key, boolean defaultValue) {
-        if (hints != null && hints.containsKey(key)) {
-            Object value = hints.get(key);
-            if (value instanceof Boolean) {
-                return (boolean) value;
-            } else if (value instanceof String s) {
-                return Boolean.parseBoolean(s);
-            } else {
-                throw new IllegalArgumentException("unexpected type for hints param:" + key);
-            }
-        }
-        return defaultValue;
-    }
-
-    public static Integer getIntegerHint(Map<String, Object> hints, String key, Integer fallback) {
-        if (hints != null && hints.containsKey(key)) {
-            Object value = hints.get(key);
-            if (value instanceof Integer) {
-                return (Integer) value;
-            } else if (value instanceof String s) {
-                return Integer.parseInt(s);
-            } else {
-                throw new IllegalArgumentException("unexpected type for hints param:" + key);
-            }
-        }
-        return fallback;
-    }
-
-    public static Long getLongHint(Map<String, Object> hints, String key) {
-        if (hints != null && hints.containsKey(key)) {
-            Object value = hints.get(key);
-            if (value instanceof Long) {
-                return (Long) value;
-            } else if (value instanceof String s) {
-                return Long.parseLong(s);
-            } else {
-                throw new IllegalArgumentException("unexpected type for hints param:" + key);
-            }
-        }
-        return null;
-    }
-
-    public static OMEntity getObjectTypeHint(Map<String, Object> hints, String key) {
-        if (hints != null && hints.containsKey(key)) {
-            Object value = hints.get(key);
-            if (value instanceof OMEntity) {
-                return (OMEntity) value;
-            } else if (value instanceof String s) {
-                return OMEntity.fromName(s);
-            } else {
-                throw new IllegalArgumentException("unexpected type for hints param:" + key);
-            }
         }
         return null;
     }
@@ -510,7 +148,7 @@ public class OMUtils {
      * @return
      */
     public static boolean isACompositeSubSet(CompositePhenomenon composite, CompositePhenomenon fullComposite) {
-        for (org.opengis.observation.Phenomenon component : composite.getComponent()) {
+        for (Phenomenon component : composite.getComponent()) {
             if (!fullComposite.getComponent().contains(component)) {
                 return false;
             }
@@ -518,11 +156,11 @@ public class OMUtils {
         return true;
     }
 
-    public static CompositePhenomenon getOverlappingComposite(List<CompositePhenomenon> composites) throws DataStoreException {
+    public static CompositePhenomenon getOverlappingComposite(List<? extends CompositePhenomenon> composites) throws DataStoreException {
         a:for (CompositePhenomenon composite : composites) {
-            String compoId = getId(composite);
+            String compoId = composite.getId();
             for (CompositePhenomenon sub : composites) {
-                if (!getId(sub).equals(compoId) && !isACompositeSubSet(sub, composite)) {
+                if (!sub.getId().equals(compoId) && !isACompositeSubSet(sub, composite)) {
                     continue a;
                 }
             }
@@ -531,26 +169,9 @@ public class OMUtils {
         throw new DataStoreException("No composite has all other as subset");
     }
 
-    public static String getId(org.opengis.observation.Phenomenon phen) {
-        if (phen instanceof org.geotoolkit.swe.xml.Phenomenon swePhen) {
-            return swePhen.getId();
-        }
-        throw new IllegalArgumentException("Unable to get an id from the phenomenon");
-    }
-
-    public static boolean hasComponent(org.opengis.observation.Phenomenon phen, CompositePhenomenon composite) {
-        String phenId = getId(phen);
-        for (org.opengis.observation.Phenomenon component : composite.getComponent()) {
-            if (phenId.equals(getId(component))) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public static boolean hasComponent(String phenId, CompositePhenomenon composite) {
-        for (org.opengis.observation.Phenomenon component : composite.getComponent()) {
-            if (phenId.equals(getId(component))) {
+        for (Phenomenon component : composite.getComponent()) {
+            if (phenId.equals(component.getId())) {
                 return true;
             }
         }
@@ -567,55 +188,329 @@ public class OMUtils {
         return result;
     }
 
-    public static List<String> getPhenomenonsFields(final PhenomenonProperty phenProp) {
-        final List<String> results = new ArrayList<>();
-        if (phenProp.getHref() != null) {
-            results.add(phenProp.getHref());
-        } else if (phenProp.getPhenomenon() instanceof CompositePhenomenon comp) {
-            for (org.opengis.observation.Phenomenon phen : comp.getComponent()) {
-                if (phen instanceof org.geotoolkit.swe.xml.Phenomenon) {
-                    final org.geotoolkit.swe.xml.Phenomenon p = (org.geotoolkit.swe.xml.Phenomenon) phen;
-                    results.add((p.getName() != null) ? p.getName().getCode() : "");
-                }
+    public static List<Field> getPhenomenonsFields(final Phenomenon phen) {
+        final List<Field> results = new ArrayList<>();
+         if (phen instanceof CompositePhenomenon comp) {
+
+            for (int i = 0; i < comp.getComponent().size(); i++) {
+                Phenomenon component = comp.getComponent().get(i);
+                String id = component.getId();
+                results.add(new Field(i + 2, FieldType.QUANTITY, component.getName(), null, component.getDefinition(), null));
             }
-        } else if (phenProp.getPhenomenon() instanceof org.geotoolkit.swe.xml.Phenomenon) {
-            final org.geotoolkit.swe.xml.Phenomenon p = (org.geotoolkit.swe.xml.Phenomenon) phenProp.getPhenomenon();
-            results.add((p.getName() != null) ? p.getName().getCode() : "");
+        } else if (phen != null) {
+            results.add(new Field(2, FieldType.QUANTITY, phen.getName(), null, phen.getDefinition(), null));
         }
         return results;
     }
 
-    public static Phenomenon getPhenomenon(final PhenomenonProperty phenProp) {
-        if (phenProp.getHref() != null) {
-            return new PhenomenonType(phenProp.getHref(), phenProp.getHref());
-        } else if (phenProp.getPhenomenon() != null) {
-            return phenProp.getPhenomenon();
+     public static List<String> getPhenomenonsFieldIdentifiers(final Phenomenon phen) {
+        final List<String> results = new ArrayList<>();
+         if (phen instanceof CompositePhenomenon comp) {
+            for (Phenomenon component : comp.getComponent()) {
+                results.add(component.getId());
+            }
+        } else if (phen != null) {
+            results.add(phen.getId());
+        }
+        return results;
+    }
 
+    public static ComplexResult buildComplexResult(final List<Field> fields, final int nbValue, final TextEncoderProperties encoding, final ResultBuilder values) {
+        return switch (values.getMode()) {
+            case CSV        -> new ComplexResult(fields, encoding, values.getStringValues(), nbValue);
+            case DATA_ARRAY -> new ComplexResult(fields, values.getDataArray(), nbValue);
+            case COUNT      -> new ComplexResult(nbValue);
+        };
+    }
+
+    public static TemporalGeometricPrimitive buildTime(String id, Date start, Date end) {
+        if (start != null && end != null) {
+            if (start.equals(end)) {
+                return new DefaultInstant(Collections.singletonMap(NAME_KEY, id + "time"), start);
+            } else {
+                return new DefaultPeriod(Collections.singletonMap(NAME_KEY, id + "-time"),
+                        new DefaultInstant(Collections.singletonMap(NAME_KEY, id + "-st-time"), start),
+                        new DefaultInstant(Collections.singletonMap(NAME_KEY, id + "-en-time"), end));
+            }
+        } else if (start != null) {
+            return new DefaultInstant(Collections.singletonMap(NAME_KEY, id + "-st-time"), start);
+        } else if (end != null) {
+            return new DefaultInstant(Collections.singletonMap(NAME_KEY, id + "-st-time"), end);
         }
         return null;
     }
 
-    public static String getFOIId(final FeatureProperty foiProp) {
-        if (foiProp.getHref() != null) {
-            return foiProp.getHref();
-        } else if (foiProp.getAbstractFeature() != null) {
-            final AbstractFeature feat = (AbstractFeature) foiProp.getAbstractFeature();
-            return feat.getId();
+    public static List<Observation> splitComplexTemplateIntoMeasurement(Observation obs, List<Integer> fieldFilters) {
+         String obsType = (String) obs.getProperties().get("type");
+        boolean timeseries = "timeseries".equals(obsType);
+
+        List<Observation> results = new ArrayList<>();
+        if (obs.getResult() instanceof ComplexResult cr) {
+
+            for (Field f : cr.getFields()) {
+
+                final String idSuffix = "-" + f.index;
+
+                // no measure for main time field + exclude observation by field
+                if ((timeseries && f.index == 1) || (!fieldFilters.isEmpty() && !fieldFilters.contains(f.index))) {
+                    continue;
+                }
+                MeasureResult result = new MeasureResult(f, null);
+                Observation measObs = new Observation(obs.getId() + idSuffix,
+                                                      obs.getName().getCode() + idSuffix,
+                                                      obs.getDescription(),
+                                                      obs.getDefinition(),
+                                                      getOmTypeFromFieldType(f.type),
+                                                      obs.getProcedure(),
+                                                      obs.getSamplingTime(),
+                                                      obs.getFeatureOfInterest(),
+                                                      obs.getObservedProperty(), // TODO split phenomenon
+                                                      obs.getResultQuality(),
+                                                      result,
+                                                      obs.getProperties());
+                results.add(measObs);
+            }
+        } else {
+            results.add(obs);
         }
-        return null;
+        return results;
     }
 
-    public static DataArrayProperty buildComplexResult(final String version, final Collection<AnyScalar> fields, final int nbValue,
-            final TextBlock encoding, final ResultBuilder values, final int cpt) {
-        final String arrayID     = "dataArray-" + cpt;
-        final String recordID    = "datarecord-" + cpt;
-        final AbstractDataRecord record = buildSimpleDatarecord(version, null, recordID, null, null, new ArrayList<>(fields));
-        String stringValues = null;
-        List<Object> dataValues = null;
-        if (values != null) {
-            stringValues = values.getStringValues();
-            dataValues   = values.getDataArray();
+    public static List<Observation> splitComplexObservationIntoMeasurement(Observation obs, List<Integer> fieldFilters, List<Integer> measureIdFilters) {
+        String obsType = (String) obs.getProperties().get("type");
+        boolean timeseries = "timeseries".equals(obsType);
+
+        List<Observation> results = new ArrayList<>();
+        if (obs.getResult() instanceof ComplexResult cr) {
+            final StringTokenizer blockTokenizer = new StringTokenizer(cr.getValues(), cr.getTextEncodingProperties().getBlockSeparator());
+            int mid = 1;
+            while (blockTokenizer.hasMoreTokens()) {
+                final String block = blockTokenizer.nextToken();
+                final StringTokenizer tokenizer = new StringTokenizer(block, cr.getTextEncodingProperties().getTokenSeparator());
+
+                TemporalGeometricPrimitive measureTime = null;
+                for (Field f : cr.getFields()) {
+
+                    final String idSuffix = "-" + f.index + '-' + mid;
+                    final String token = tokenizer.nextToken();
+                    final Object value = switch (f.type) {
+                        case BOOLEAN  -> Boolean.valueOf(token);
+                        case QUANTITY -> Double.valueOf(token);
+                        case TEXT     -> token;
+                        case TIME     ->  new ISODateParser().parseToDate(token);
+                    };
+                    if (timeseries)  {
+                        if (f.index == 1) {
+                            measureTime = buildTime("time" + idSuffix, (Date) value, null);
+                            continue;
+                        }
+                    } else {
+                        measureTime = obs.getSamplingTime();
+                    }
+
+                    // exclude observation by field or measure id
+                    if ((!fieldFilters.isEmpty() && !fieldFilters.contains(f.index)) || (!measureIdFilters.isEmpty() && !measureIdFilters.contains(mid))) {
+                        continue;
+                    }
+
+                    MeasureResult result = new MeasureResult(f, value);
+                    Observation measObs = new Observation(obs.getId() + idSuffix,
+                                                          obs.getName().getCode() + idSuffix,
+                                                          obs.getDescription(),
+                                                          obs.getDefinition(),
+                                                          getOmTypeFromFieldType(f.type),
+                                                          obs.getProcedure(),
+                                                          measureTime,
+                                                          obs.getFeatureOfInterest(),
+                                                          obs.getObservedProperty(), // TODO split phenomenon
+                                                          obs.getResultQuality(),
+                                                          result,
+                                                          obs.getProperties());
+                    results.add(measObs);
+                }
+                mid++;
+            }
+        } else {
+            results.add(obs);
         }
-        return buildDataArrayProperty(version, arrayID, nbValue, arrayID, record, encoding, stringValues, dataValues);
+        return results;
+    }
+
+    public static String getOmTypeFromClass(Class c) {
+        if (Double.class.isAssignableFrom(c)) {
+            return "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement";
+        } else if (Date.class.isAssignableFrom(c) || Instant.class.isAssignableFrom(c)) {
+            return "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_TemporalObservation";
+        } else if (Integer.class.isAssignableFrom(c)) {
+            return "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_CountObservation";
+        } else if (Boolean.class.isAssignableFrom(c)) {
+            return "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_TruthObservation";
+        } else if (String.class.isAssignableFrom(c)) {
+            return "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_CategoryObservation";
+        } else {
+            return "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Observation";
+        }
+    }
+
+    public static String getOmTypeFromFieldType(FieldType ft) {
+        return switch(ft) {
+            case BOOLEAN  -> "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_TruthObservation";
+            case TIME     -> "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_TemporalObservation";
+            case QUANTITY -> "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement";
+            //case INT     -> "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_CountObservation";
+            case TEXT -> "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_CategoryObservation";
+        };
+    }
+
+
+    /**
+     * Return true if the samplingPoint entry is strictly inside the specified envelope.
+     *
+     * @param geometry A JTS geometry station.
+     * @param e An envelope (2D).
+     * @return True if the sampling point is strictly inside the specified envelope.
+     * @throws org.apache.sis.storage.DataStoreException If a crs opertation fails.
+     */
+    public static boolean samplingFeatureMatchEnvelope(final Geometry geometry, final Envelope e) throws DataStoreException {
+
+        final Envelope regionOfInterest;
+        if (e.getCoordinateReferenceSystem() == null) {
+            regionOfInterest = e;
+        } else {
+            try {
+                final CoordinateReferenceSystem spCRS = JTS.findCoordinateReferenceSystem(geometry);
+                regionOfInterest = spCRS == null ? e : Envelopes.transform(e, spCRS);
+            } catch (TransformException | FactoryException ex) {
+                throw new DataStoreException(ex);
+            }
+        }
+
+        final AbstractEnvelope intersectableRegionOfInterest = AbstractEnvelope.castOrCopy(regionOfInterest);
+        return Geometries.wrap(geometry)
+                .map(GeometryWrapper::getEnvelope)
+                .map(intersectableRegionOfInterest::intersects)
+                .orElse(false);
+    }
+
+    /**
+     * Utility method to extract a a parameter value (if its present) and put it
+     * in a Map.
+     *
+     * @param params Configuration parameters.
+     * @param param The param descriptor to look for.
+     * @param properties The trget map where to put the value.
+     */
+    public static void extractParameter(final ParameterValueGroup params, ParameterDescriptor param, final Map<String,Object> properties) {
+        try {
+            String name = param.getName().getCode();
+            final Object value = params.parameter(name).getValue();
+            if (value != null) {
+                properties.put(name, value);
+            }
+        } catch (ParameterNotFoundException ex) {}
+    }
+
+    public static Metadata buildMetadata(final String name) {
+        final DefaultMetadata metadata = new DefaultMetadata();
+        final DefaultDataIdentification identification = new DefaultDataIdentification();
+        final NamedIdentifier identifier = new NamedIdentifier(new DefaultIdentifier(name));
+        final DefaultCitation citation = new DefaultCitation(name);
+        citation.setIdentifiers(Collections.singleton(identifier));
+        identification.setCitation(citation);
+        metadata.setIdentificationInfo(Collections.singleton(identification));
+        metadata.transitionTo(ModifiableMetadata.State.FINAL);
+        return metadata;
+    }
+
+    public static <T> List<T> applyPostPagination(List<T> full, Long offset, Long limit) {
+        var slice = computeRange(full.size(), offset, limit);
+        return slice.isEmpty()
+                ? Collections.emptyList()
+                : new ArrayList<>(full.subList(slice.from, slice.to));
+    }
+
+    private static IntRange computeRange(int maxSize, Long offset, Long limit) {
+        final int from = offset == null ? 0 : Math.toIntExact(offset);
+        final int to = limit == null ? maxSize : Math.min(Math.toIntExact(from + limit), maxSize);
+        return new IntRange(from, to);
+    }
+
+    private record IntRange(int from, int to) {
+        boolean isEmpty() { return from >= to; }
+    }
+
+    public static <K, V> Map<K, V> applyPostPagination(Map<K, V> full, Long offset, Long limit) {
+        var slice = computeRange(full.size(), offset, limit);
+        if (slice.isEmpty()) return Collections.EMPTY_MAP;
+
+        var result = new LinkedHashMap<K, V>();
+        var it = full.entrySet().iterator();
+        int i = 0;
+        while (it.hasNext() && i < slice.to) {
+             var e = it.next();
+            if (i >= slice.from) {
+                result.put(e.getKey(), e.getValue());
+            }
+            i++;
+        }
+        return result;
+    }
+
+    public static Element createQualityElement(Field field, Object value) {
+        DefaultQuantitativeAttributeAccuracy element = new DefaultQuantitativeAttributeAccuracy();
+        element.setNamesOfMeasure(Arrays.asList(new SimpleInternationalString(field.name)));
+        if (value != null) {
+            DefaultQuantitativeResult res      = new DefaultQuantitativeResult();
+
+            RecordType rt = INSTANCE.createRecordType("global", Collections.singletonMap("CharacterString", String.class));
+
+            DefaultRecord r = new DefaultRecord(rt);
+            r.set(rt.getMembers().iterator().next(), value);
+            res.setValues(Arrays.asList(r));
+            res.setValueType(rt);
+            if (field.uom != null) {
+                res.setValueUnit(Units.valueOf(field.uom));
+            }
+            element.setResults(Arrays.asList(res));
+        }
+        return element;
+    }
+
+    /**
+     * Temporary until SIS version is updated
+     */
+    public static Element createQualityElement2(Field field, Object value) throws ReflectiveOperationException {
+        return createQualityElement2(field.name, field.uom, value);
+    }
+
+    /**
+     * Temporary until SIS version is updated
+     */
+    public static Element createQualityElement2(String name, String uom, Object value) throws ReflectiveOperationException {
+        ArgumentChecks.ensureNonNull("name", name);
+        DefaultQuantitativeAttributeAccuracy element = new DefaultQuantitativeAttributeAccuracy();
+        element.setNamesOfMeasure(Collections.singleton(new SimpleInternationalString(name)));
+        if (value != null) {
+            DefaultQuantitativeResult res = new DefaultQuantitativeResult();
+            Constructor<DefaultRecordType> c = DefaultRecordType.class.getDeclaredConstructor();
+            c.setAccessible(true);
+            DefaultRecordType rt = c.newInstance();
+            Method m = DefaultRecordType.class.getDeclaredMethod("setValue", String.class);
+            m.setAccessible(true);
+            m.invoke(rt, "CharacterString");
+            DefaultRecord r = new DefaultRecord(RecordSchemaSIS.STRING);
+            r.set(RecordSchemaSIS.STRING.getMembers().iterator().next(), value);
+            res.setValues(Collections.singletonList(r));
+            res.setValueType(rt);
+            if (uom != null) {
+                try {
+                    res.setValueUnit(Units.valueOf(uom));
+                } catch (MeasurementParseException ex) {
+                    LOGGER.warning("Error while parsing uom : " + uom);
+                }
+            }
+            element.setResults(Collections.singleton(res));
+        }
+        return element;
     }
 }

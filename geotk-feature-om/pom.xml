@@ -50,22 +50,7 @@
     <dependencies>
         <dependency>
             <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-feature-sql</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-xml-sos</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-observation-store</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-jaxp-gml</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
