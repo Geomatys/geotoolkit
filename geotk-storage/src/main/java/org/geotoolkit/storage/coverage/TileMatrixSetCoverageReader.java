@@ -67,7 +67,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
 /**
- * GridCoverage reader on top of a Pyramidal object.
+ * GridCoverageResource on top of TiledResource.
  *
  * @author Johann Sorel (Geomatys)
  * @param <T>
@@ -86,8 +86,8 @@ public class TileMatrixSetCoverageReader <T extends TiledResource & org.apache.s
     public GridGeometry getGridGeometry() throws DataStoreException, CancellationException {
         final Collection<? extends TileMatrixSet> models = ref.getTileMatrixSets();
 
-        //search for a pyramid
-        //-- we use the first pyramid as default
+        //search for a TileMatrixSet
+        //-- we use the first TileMatrixSet as default
         TileMatrixSet pyramid = null;
         for (TileMatrixSet model : models) {
             pyramid = model;
@@ -97,33 +97,33 @@ public class TileMatrixSetCoverageReader <T extends TiledResource & org.apache.s
         return getGridGeometry(pyramid);
     }
 
-    private static GridGeometry getGridGeometry(TileMatrixSet pyramid) {
+    private static GridGeometry getGridGeometry(TileMatrixSet tileMatrixSet) {
 
-        if (pyramid == null) {
-            //-- empty pyramid set
+        if (tileMatrixSet == null) {
+            //-- empty TileMatrixSet
             return GridGeometry.UNDEFINED;
         }
 
-        final List<TileMatrix> matrices = new ArrayList<>(pyramid.getTileMatrices().values());
+        final List<TileMatrix> matrices = new ArrayList<>(tileMatrixSet.getTileMatrices().values());
         if (matrices.isEmpty()) {
-            //no mosaics
+            //no TileMatrix
             return GridGeometry.UNDEFINED;
         }
 
         Collections.sort(matrices, CoverageFinder.SCALE_COMPARATOR);
         final GridGeometry gridGeom;
 
-        final CoordinateReferenceSystem crs = pyramid.getCoordinateReferenceSystem();
+        final CoordinateReferenceSystem crs = tileMatrixSet.getCoordinateReferenceSystem();
         final CoordinateSystem cs           = crs.getCoordinateSystem();
         final int nbdim                     = cs.getDimension();
 
-        //-- use the first mosaic informations, most accurate
+        //-- use the first TileMatrix informations, most accurate
         final TileMatrix matrix  = matrices.get(0);
 
         //-- we expect no rotation
         final MathTransform gridToCRS = TileMatrices.getTileGridToCRS2D(matrix, new long[]{0, 0}, PixelInCell.CELL_CORNER);
 
-        //-- get all mosaics with same scale
+        //-- get all TileMatrix with same scale
         final double scal = matrix.getResolution()[0];
         for (int m = matrices.size() - 1; m >= 0; m--) {
             if (matrices.get(m).getResolution()[0] != scal) matrices.remove(m);

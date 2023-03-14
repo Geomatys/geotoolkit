@@ -33,6 +33,7 @@ import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.tiling.Tile;
 import org.apache.sis.storage.tiling.WritableTileMatrix;
 import org.apache.sis.storage.tiling.WritableTileMatrixSet;
+import org.apache.sis.util.Utilities;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.coordinatesequence.GridAlignedFilter;
@@ -127,8 +128,15 @@ public class FeatureSetTileGenerator extends AbstractTileGenerator {
 
         final Polygon tileBound = JTS.toGeometry(tileEnv);
 
-        final FeatureQuery query = Query.reproject(source.getType(), tileCrs);
-        query.setSelection(filter);
+        final CoordinateReferenceSystem baseCrs = FeatureExt.getCRS(source.getType());
+        final FeatureQuery query;
+        if (!Utilities.equalsIgnoreMetadata(baseCrs, tileCrs)) {
+            query = Query.reproject(source.getType(), tileCrs);
+            query.setSelection(filter);
+        } else {
+            query = new FeatureQuery();
+            query.setSelection(filter);
+        }
 
         final FeatureSet subset = source.subset(query);
         final List<Feature> features = new ArrayList<>();
