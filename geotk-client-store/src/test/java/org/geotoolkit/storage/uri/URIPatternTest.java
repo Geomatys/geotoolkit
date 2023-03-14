@@ -61,6 +61,8 @@ public class URIPatternTest {
         Assert.assertTrue(tilePath.endsWith("/tm/63/31.png"));
         tilePath = format(URIPattern.resolve(base, mosaic, "{reversey}/{x}.png", 7, 18));
         Assert.assertTrue(tilePath.endsWith("/tm/13/7.png"));
+        tilePath = format(URIPattern.resolve(base, mosaic, "{y}/{x}.terrain.gz", 7, 18));
+        Assert.assertTrue(tilePath.endsWith("/tm/18/7.terrain.gz"));
     }
 
     private static String format(Path path) {

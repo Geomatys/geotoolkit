@@ -47,7 +47,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
                resourceTypes = Resource.class)
 public class HDF5Provider extends DataStoreProvider implements ProviderOnFileSystem  {
 
-    public static final String NAME = "gsmap";
+    public static final String NAME = "hdf5";
     public static final String MIME_TYPE = "application/x-hdf5";
 
     public static final ParameterDescriptor<URI> PATH = new ParameterBuilder()

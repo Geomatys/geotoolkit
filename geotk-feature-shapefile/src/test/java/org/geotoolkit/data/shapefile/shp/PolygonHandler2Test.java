@@ -18,17 +18,17 @@ package org.geotoolkit.data.shapefile.shp;
 
 import org.junit.Test;
 import java.awt.Dimension;
-import java.io.IOException;
 import java.util.ArrayList;
 
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LinearRing;
 import org.locationtech.jts.geom.PrecisionModel;
 import java.util.List;
 
 import static org.junit.Assert.*;
+import org.locationtech.jts.geom.CoordinateSequence;
+import org.locationtech.jts.geom.impl.PackedCoordinateSequence;
 
 /**
  * @version $Id$
@@ -43,12 +43,13 @@ public class PolygonHandler2Test extends org.geotoolkit.data.shapefile.AbstractT
         c[0] = new Coordinate(0, 0, 0);
         c[1] = new Coordinate(1, 1, Double.NaN);
         c[2] = new Coordinate(1, 2, 3);
+        CoordinateSequence cs = new PackedCoordinateSequence.Double(c);
 
         PolygonHandler handler = new PolygonHandler(true);
         assertTrue(handler.getShapeType() == ShapeType.POLYGON);
 
         for (int i = 0, ii = c.length; i < ii; i++) {
-            assertTrue(handler.pointInList(c[i], c));
+            assertTrue(handler.pointInList(c[i], cs));
         }
     }
 
