@@ -115,6 +115,7 @@ public final class GlobalHeap extends IOStructure {
         information about each heap object).
         */
         final long collectionSize = channel.readLength();
+        final long startPosition = channel.getStreamPosition();
         final long endPosition = channel.getStreamPosition() + collectionSize - 8;
 
         while ((endPosition - channel.getStreamPosition()) >= 16) {
@@ -126,7 +127,7 @@ public final class GlobalHeap extends IOStructure {
             if (gho.heapObjectIndex == 0) {
                 break;
             }
-            channel.realign(8);
+            channel.realign(startPosition, 8);
         }
 
     }
