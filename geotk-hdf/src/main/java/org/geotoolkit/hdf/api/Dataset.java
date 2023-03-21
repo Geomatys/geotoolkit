@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
 import java.text.ParseException;
-import java.time.Instant;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,48 +27,39 @@ import java.util.Calendar;
 import java.util.Collections;
 import static java.util.Collections.singletonMap;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.concurrent.Callable;
-import java.util.function.Function;
 import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.stream.Stream;
 import javax.measure.Unit;
 import javax.measure.format.MeasurementParseException;
 import org.apache.sis.coverage.grid.DisjointExtentException;
 import org.apache.sis.coverage.grid.GridExtent;
-import org.apache.sis.feature.builder.AttributeRole;
-import org.apache.sis.feature.builder.AttributeTypeBuilder;
-import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.storage.io.ChannelDataInput;
 import org.apache.sis.measure.Units;
-import org.apache.sis.referencing.CRS;
-import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.NamedIdentifier;
+import org.apache.sis.referencing.crs.DefaultEngineeringCRS;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.apache.sis.referencing.cs.DefaultCoordinateSystemAxis;
+import org.apache.sis.referencing.cs.DefaultLinearCS;
 import org.apache.sis.referencing.cs.DefaultTimeCS;
+import org.apache.sis.referencing.datum.DefaultEngineeringDatum;
 import org.apache.sis.referencing.datum.DefaultTemporalDatum;
 import org.apache.sis.storage.AbstractResource;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.netcdf.AttributeNames;
 import org.apache.sis.util.ArraysExt;
 import static org.apache.sis.util.ArraysExt.swap;
-import org.apache.sis.util.collection.BackingStoreException;
 import org.apache.sis.util.iso.Names;
 import org.apache.sis.util.resources.Vocabulary;
+import org.geotoolkit.hdf.HDF5Provider;
 import org.geotoolkit.hdf.ObjectHeader;
 import org.geotoolkit.hdf.SymbolTableEntry;
 import static org.geotoolkit.hdf.api.Group.prettyPrint;
 import org.geotoolkit.hdf.btree.BTreeV1;
 import org.geotoolkit.hdf.btree.BTreeV1Chunk;
-import org.geotoolkit.hdf.datatype.Compound;
-import org.geotoolkit.hdf.datatype.Compound.Member;
 import org.geotoolkit.hdf.datatype.DataType;
 import org.geotoolkit.hdf.heap.LocalHeap;
 import org.geotoolkit.hdf.io.ChunkSeekableByteChannel;
@@ -88,17 +78,15 @@ import org.geotoolkit.hdf.message.Message;
 import org.geotoolkit.hdf.message.NillMessage;
 import org.geotoolkit.hdf.message.ObjectHeaderContinuationMessage;
 import org.geotoolkit.hdf.message.ObjectModificationTimeMessage;
-import org.geotoolkit.storage.multires.TileMatrices;
 import org.geotoolkit.temporal.object.TemporalUtilities;
-import org.opengis.feature.Feature;
-import org.opengis.feature.FeatureType;
 import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.TemporalCRS;
 import org.opengis.referencing.cs.AxisDirection;
+import org.opengis.referencing.cs.CoordinateSystem;
+import org.opengis.referencing.cs.CoordinateSystemAxis;
+import org.opengis.referencing.datum.EngineeringDatum;
 import org.opengis.referencing.datum.TemporalDatum;
-import org.opengis.referencing.operation.MathTransform1D;
-import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
 
@@ -110,10 +98,25 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public final class Dataset extends AbstractResource implements Node, FeatureSet {
+public final class Dataset extends AbstractResource implements Node {
 
-    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.hdf");
-    private static final String HDF_INDEX = "hdf-index";
+    public static final CoordinateReferenceSystem LATITUDE;
+    public static final CoordinateReferenceSystem LONGITUDE;
+
+    static {
+        {
+            final EngineeringDatum datum = new DefaultEngineeringDatum(Collections.singletonMap("name", "Datum"));
+            final CoordinateSystemAxis axis = new DefaultCoordinateSystemAxis(Collections.singletonMap("name", "Axis"), "unnamed", AxisDirection.NORTH, Units.UNITY);
+            final CoordinateSystem cs = new DefaultLinearCS(Collections.singletonMap("name", "CS"), axis);
+            LATITUDE = new DefaultEngineeringCRS(Collections.singletonMap("name", "LATITUDE"), datum, cs);
+        }
+        {
+            final EngineeringDatum datum = new DefaultEngineeringDatum(Collections.singletonMap("name", "Datum"));
+            final CoordinateSystemAxis axis = new DefaultCoordinateSystemAxis(Collections.singletonMap("name", "Axis"), "unnamed", AxisDirection.EAST, Units.UNITY);
+            final CoordinateSystem cs = new DefaultLinearCS(Collections.singletonMap("name", "CS"), axis);
+            LONGITUDE = new DefaultEngineeringCRS(Collections.singletonMap("name", "LONGITUDE"), datum, cs);
+        }
+    }
 
     private final Group parent;
     private final Connector connector;
@@ -135,12 +138,6 @@ public final class Dataset extends AbstractResource implements Node, FeatureSet 
     //decoding informations
     private final int cellByteSize;
     private List<BTreeV1Chunk> chunks = null;
-
-    //featureset
-    private FeatureType featureType;
-    private boolean is1D;
-    private boolean isEmpty;
-    private final Map<String,MathTransform1D> timeAttributes = new HashMap<>();
 
     public Dataset(Group parent, Connector connector, SymbolTableEntry entry, String name) throws IOException, DataStoreException {
         super(null, false);
@@ -246,187 +243,67 @@ public final class Dataset extends AbstractResource implements Node, FeatureSet 
         return null;
     }
 
-    public Entry<Unit,CoordinateReferenceSystem> getAttributeUnit(String attributeName) {
-        final Object units = attributes.get(attributeName + ":units");
-        final String unitStr = String.valueOf(units);
+    /**
+     *
+     * @param attributeName null if datatype is not compund.
+     * @return
+     */
+    public Entry<Unit,CoordinateReferenceSystem> getAttributeUnit(String attributeName) throws FactoryException {
+        final Object units = attributes.get(attributeName == null ? "units" : (attributeName + ":units"));
+        final Object standardName = attributes.get(attributeName == null ? "standard_name" : (attributeName + ":standard_name"));
+        final Object shortName = attributes.get(attributeName == null ? "short_name" : (attributeName + ":short_name"));
+        final Object longName = attributes.get(attributeName == null ? "long_name" : (attributeName + ":long_name"));
+        final String unitStr = units == null ? null : String.valueOf(units);
         Unit unit = null;
         CoordinateReferenceSystem crs = null;
-        try {
-            unit = Units.valueOf(unitStr);
-        } catch (MeasurementParseException ex) {
-            int idx = unitStr.indexOf("since");
-            if (idx > 0) {
-                try {
-                    final String baseUnitStr = unitStr.substring(0, idx).trim();
-                    unit = Units.valueOf(baseUnitStr);
-                    final String originStr = unitStr.substring(idx+5).trim();
-                    final Calendar epoch = TemporalUtilities.parseDateCal(originStr);
+        if (unitStr != null) {
+            try {
+                unit = Units.valueOf(unitStr);
+            } catch (MeasurementParseException ex) {
+                int idx = unitStr.indexOf("since");
+                if (idx > 0) {
+                    try {
+                        final String baseUnitStr = unitStr.substring(0, idx).trim();
+                        unit = Units.valueOf(baseUnitStr);
+                        final String originStr = unitStr.substring(idx+5).trim();
+                        final Calendar epoch = TemporalUtilities.parseDateCal(originStr);
 
-                    final Map<String,?> props = singletonMap(NAME_KEY, new NamedIdentifier(null, "attributeName"));
-                    final TemporalDatum datum = new DefaultTemporalDatum(props, epoch.getTime());
-                    final Map<String,Object> properties = new HashMap<>();
-                    properties.put(TemporalCRS.IDENTIFIERS_KEY, new NamedIdentifier(Names.createLocalName(null, null, attributeName)));
-                    final Map<String,?> cs   = singletonMap(NAME_KEY, new NamedIdentifier(null, Vocabulary.formatInternational(Vocabulary.Keys.Temporal)));
-                    final Map<String,?> axis = singletonMap(NAME_KEY, new NamedIdentifier(null, Vocabulary.formatInternational(Vocabulary.Keys.Time)));
-                    final DefaultTimeCS timeCs = new DefaultTimeCS(cs, new DefaultCoordinateSystemAxis(axis, "t", AxisDirection.FUTURE, unit));
-                    crs = new DefaultTemporalCRS(properties, datum, timeCs);
+                        final Map<String,?> props = singletonMap(NAME_KEY, new NamedIdentifier(null, "attributeName"));
+                        final TemporalDatum datum = new DefaultTemporalDatum(props, epoch.getTime());
+                        final Map<String,Object> properties = new HashMap<>();
+                        final String crsName = attributeName == null ? getName() : attributeName;
+                        properties.put(TemporalCRS.NAME_KEY, new NamedIdentifier(Names.createLocalName(null, null, crsName)));
+                        final Map<String,?> cs   = singletonMap(NAME_KEY, new NamedIdentifier(null, Vocabulary.formatInternational(Vocabulary.Keys.Temporal)));
+                        final Map<String,?> axis = singletonMap(NAME_KEY, new NamedIdentifier(null, Vocabulary.formatInternational(Vocabulary.Keys.Time)));
+                        final DefaultTimeCS timeCs = new DefaultTimeCS(cs, new DefaultCoordinateSystemAxis(axis, "t", AxisDirection.FUTURE, unit));
+                        crs = new DefaultTemporalCRS(properties, datum, timeCs);
 
-                } catch (MeasurementParseException | ParseException e) {
-                    LOGGER.log(Level.WARNING, "Failed to parse unit {0}", unitStr);
+                    } catch (MeasurementParseException | ParseException e) {
+                        HDF5Provider.LOGGER.log(Level.WARNING, "Failed to parse unit {0}", unitStr);
+                    }
+                } else {
+                    HDF5Provider.LOGGER.log(Level.WARNING, "Failed to parse unit {0}", unitStr);
                 }
-            } else {
-                LOGGER.log(Level.WARNING, "Failed to parse unit {0}", unitStr);
             }
         }
+
+        if (crs == null) {
+            if (standardName != null) {
+                final String stdName = String.valueOf(standardName);
+                if ("latitude".equalsIgnoreCase(stdName)) {
+                    crs = LATITUDE;
+                    unit = crs.getCoordinateSystem().getAxis(0).getUnit();
+                } else if ("longitude".equalsIgnoreCase(stdName)) {
+                    crs = LONGITUDE;
+                    unit = crs.getCoordinateSystem().getAxis(0).getUnit();
+                }
+            }
+        }
+
         if (unit != null) {
             return new AbstractMap.SimpleImmutableEntry<>(unit, crs);
         }
         return null;
-    }
-
-    @Override
-    public synchronized FeatureType getType() throws DataStoreException {
-        if (featureType == null) {
-            final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-            ftb.setName(getIdentifier().get());
-
-            final int[] dimensionSizes = dataspace.getDimensionSizes();
-            if (dimensionSizes == null) {
-                isEmpty = true;
-                is1D = true;
-            } else {
-                for (int i = 0; i < dimensionSizes.length; i++) {
-                    if (dimensionSizes[i] == 0) {
-                        isEmpty = true;
-                        break;
-                    }
-                }
-                is1D = dimensionSizes.length == 1;
-            }
-
-            if (is1D) {
-                ftb.addAttribute(Long.class).setName(HDF_INDEX).addRole(AttributeRole.IDENTIFIER_COMPONENT);
-            } else {
-                ftb.addAttribute(long[].class).setName(HDF_INDEX).addRole(AttributeRole.IDENTIFIER_COMPONENT);
-            }
-
-            if (datatype instanceof Compound cmp) {
-                for (Member member : cmp.members) {
-                    final Entry<Unit,CoordinateReferenceSystem> unitAndCrs = getAttributeUnit(member.name);
-                    final String description = getAttributeDescription(member.name);
-
-                    final AttributeTypeBuilder atb = ftb.addAttribute(member.memberType.getValueClass()).setName(member.name);
-                    if (description != null) {
-                        atb.setDescription(description);
-                    }
-                    if (unitAndCrs != null) {
-                        atb.setUnit(unitAndCrs.getKey());
-                        if (unitAndCrs.getValue() != null) {
-                            CoordinateReferenceSystem crs = unitAndCrs.getValue();
-                            atb.setCRS(crs);
-                            if (crs instanceof TemporalCRS) {
-                                atb.setValueClass(Instant.class);
-                                final MathTransform1D mt;
-                                try {
-                                    mt = (MathTransform1D) CRS.findOperation(crs, CommonCRS.Temporal.JAVA.crs(), null).getMathTransform();
-                                } catch (FactoryException ex) {
-                                    throw new DataStoreException(ex);
-                                }
-                                timeAttributes.put(member.name, mt);
-                            }
-                        }
-                    }
-                }
-            } else {
-                ftb.addAttribute(datatype.getValueClass()).setName("value");
-            }
-            featureType = ftb.build();
-        }
-        return featureType;
-    }
-
-    @Override
-    public Stream<Feature> features(boolean bln) throws DataStoreException {
-        if (isEmpty) return Stream.empty();
-
-        //limited to 1D dataset
-        final int[] dimensionSizes = getDataspace().getDimensionSizes();
-        final GridExtent area = getDataspace().getDimensionExtent();
-
-        //read by blocks of 1000
-        final int blockSize = 1000;
-        final int[] sub = new int[dimensionSizes.length];
-        Arrays.fill(sub, blockSize);
-        final GridExtent points = area.subsample(sub);
-
-        Stream<GridExtent> streamExtent = TileMatrices.pointStream(points).map(new Function<long[],GridExtent>() {
-            @Override
-            public GridExtent apply(long[] value) {
-                final long[] low = new long[dimensionSizes.length];
-                final long[] high = new long[dimensionSizes.length];
-                for (int i=0;i<low.length;i++) {
-                    low[i] = value[i] * blockSize;
-                    high[i] = (value[i]+1) * blockSize -1; //inclusive
-                }
-                //ensure we do not got out of data range
-                return area.intersect(new GridExtent(null, low, high, true));
-            }
-        });
-
-        return streamExtent.flatMap(new Function<GridExtent, Stream<Feature>>() {
-            @Override
-            public Stream<Feature> apply(GridExtent t) {
-                try {
-                    return toFeatures(t);
-                } catch (IOException | DataStoreException | TransformException ex) {
-                    throw new BackingStoreException(ex.getMessage(), ex);
-                }
-            }
-        });
-    }
-
-    private Stream<Feature> toFeatures(GridExtent extent) throws DataStoreException, IOException, TransformException {
-        final FeatureType type = getType();
-        final Object rawData = read(extent);
-
-        final long[] low = extent.getLow().getCoordinateValues();
-        final List<Feature> features = new ArrayList<>();
-
-        final Iterator<long[]> iterator = TileMatrices.pointStream(extent).iterator();
-        while (iterator.hasNext()) {
-            final long[] location = iterator.next();
-            Object rawRecord = Array.get(rawData, Math.toIntExact(location[0] - low[0]));
-            if (!is1D) {
-                for (int i = 1; i < low.length; i++) {
-                    rawRecord = Array.get(rawRecord, Math.toIntExact(location[i] - low[i]));
-                }
-            }
-
-            final Feature feature = type.newInstance();
-            if (is1D) {
-                feature.setPropertyValue(HDF_INDEX, location[0]);
-            } else {
-                feature.setPropertyValue(HDF_INDEX, location);
-            }
-            if (datatype instanceof Compound cmp) {
-                for (int k = 0; k < cmp.members.length; k++) {
-                    final String name = cmp.members[k].name;
-                    Object value = Array.get(rawRecord, k);
-                    MathTransform1D trs1d = timeAttributes.get(name);
-                    if (trs1d != null) {
-                        //convert value to Instant
-                        final double timeMs = trs1d.transform(((Number) value).doubleValue());
-                        value = Instant.ofEpochMilli((long) timeMs);
-                    }
-                    feature.setPropertyValue(name, value);
-                }
-            } else {
-                feature.setPropertyValue("value", rawRecord);
-            }
-            features.add(feature);
-        }
-
-        return features.stream();
     }
 
     public DataType getDataType() {
@@ -570,7 +447,7 @@ public final class Dataset extends AbstractResource implements Node, FeatureSet 
         try {
             intersection = chunkExtent.intersect(queryExtent);
         } catch (DisjointExtentException e) {
-            LOGGER.log(Level.FINER, () -> String.format("Chunk extent does not intersect queried one:%nChunk: %s%nQueried: %s%n", chunkExtent, queryExtent));
+            HDF5Provider.LOGGER.log(Level.FINER, () -> String.format("Chunk extent does not intersect queried one:%nChunk: %s%nQueried: %s%n", chunkExtent, queryExtent));
             return;
         }
         final long[] chunkTranslate = chunkExtent.getLow().getCoordinateValues();

@@ -19,8 +19,8 @@ package org.geotoolkit.hdf.message;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.hdf.HDF5Provider;
 import org.geotoolkit.hdf.datatype.DataType;
 import org.geotoolkit.hdf.io.HDF5DataInput;
 
@@ -52,8 +52,6 @@ import org.geotoolkit.hdf.io.HDF5DataInput;
  * @author Johann Sorel (Geomatys)
  */
 public final class AttributeMessage extends Message {
-
-    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.hdf");
 
     /**
      * Attribute name.
@@ -219,7 +217,7 @@ public final class AttributeMessage extends Message {
                 data = dataType.readData(channel, dataspace.getDimensionSizes(), null);
             } catch (DataStoreException ex) {
                 //decoding error, caused by a bad or broken file
-                LOGGER.log(Level.WARNING, "Failed to read attribute " + name + " message data", ex);
+                HDF5Provider.LOGGER.log(Level.WARNING, "Failed to read attribute " + name + " message data", ex);
                 dataException = ex;
                 data = null;
             }
