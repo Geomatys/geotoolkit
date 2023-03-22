@@ -30,7 +30,7 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public interface Node extends Resource {
+public sealed interface Node extends Resource permits Group, Dataset{
 
     Group getParent();
 

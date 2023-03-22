@@ -64,6 +64,7 @@ import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.ResampleBorderComportement;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
+import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.coverage.resample.ResampleDescriptor;
 import org.geotoolkit.processing.coverage.resample.ResampleProcess;
@@ -241,8 +242,10 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
 
         //at this point, we want a single slice in 2D
         //we remove all other dimension to simplify any following operation
-        if (coverage.getCoordinateReferenceSystem().getCoordinateSystem().getDimension() > 2) {
-            coverage = new ReducedGridCoverage(coverage, 0, 1);
+        CoordinateReferenceSystem coverageCrs = coverage.getCoordinateReferenceSystem();
+        if (coverageCrs.getCoordinateSystem().getDimension() > 2) {
+            int idx = CRSUtilities.firstHorizontalAxis(coverageCrs);
+            coverage = new ReducedGridCoverage(coverage, idx, idx+1);
         }
 
         final CoordinateReferenceSystem crs2d = CRS.getHorizontalComponent(canvasGrid.getCoordinateReferenceSystem());

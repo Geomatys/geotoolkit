@@ -19,7 +19,9 @@ package org.geotoolkit.hdf;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Optional;
+import java.util.logging.Level;
 import org.apache.sis.internal.storage.ResourceOnFileSystem;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.parameter.Parameters;
@@ -27,10 +29,17 @@ import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
+import org.apache.sis.storage.StorageConnector;
+import org.geotoolkit.hdf.api.Dataset;
 import org.geotoolkit.hdf.api.Group;
+import org.geotoolkit.hdf.api.Node;
+import org.geotoolkit.hdf.convention.CFCoverageResource;
+import org.geotoolkit.hdf.convention.DatasetAsFeatureSet;
+import org.geotoolkit.hdf.convention.GroupAsAggregate;
 import org.geotoolkit.hdf.io.Connector;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
 
 /**
@@ -41,10 +50,13 @@ public final class HDF5Store extends DataStore implements Aggregate, ResourceOnF
 
     private final Connector cnx;
     private final Group root;
+    private final Resource decorate;
 
-    public HDF5Store(Path path) throws IllegalArgumentException, DataStoreException, IOException {
+    public HDF5Store(HDF5Provider provider, Path path) throws IllegalArgumentException, DataStoreException, IOException {
+        super(provider, new StorageConnector(path));
         cnx = new Connector(path);
         root = new Group(null, cnx, cnx.getSuperblock().rootGroupSymbolTableEntry, path.getFileName().toString());
+        decorate = decorate(root);
     }
 
     @Override
@@ -74,12 +86,12 @@ public final class HDF5Store extends DataStore implements Aggregate, ResourceOnF
 
     @Override
     public Optional<GenericName> getIdentifier() throws DataStoreException {
-        return root.getIdentifier();
+        return Optional.empty();
     }
 
     @Override
     public Collection<? extends Resource> components() throws DataStoreException {
-        return root.components();
+        return Collections.singletonList(decorate);
     }
 
     @Override
@@ -90,6 +102,31 @@ public final class HDF5Store extends DataStore implements Aggregate, ResourceOnF
     @Override
     public String toString() {
         return getRootGroup().toString();
+    }
+
+    /**
+     * Decorate HDF nodes to Resources.
+     */
+    private Resource decorate(Node node) {
+        if (node instanceof Group group) {
+            final String conventions = String.valueOf(group.getAttributes().get("Conventions"));
+            if (conventions.startsWith("CF")) {
+                try {
+                    return new CFCoverageResource(group);
+                } catch (DataStoreException | FactoryException ex) {
+                    HDF5Provider.LOGGER.log(Level.WARNING, "Failed to intepret " + group.getName() + " as a CF grid coverage.\n" + ex.getMessage(), ex);
+                }
+            }
+            final GroupAsAggregate gaa = new GroupAsAggregate(group);
+            for (Node n : group.components()) {
+                gaa.resources().add(decorate(n));
+            }
+            return gaa;
+        } else if (node instanceof Dataset ds) {
+            return new DatasetAsFeatureSet(ds);
+        } else {
+            throw new IllegalArgumentException("Unexpected node type " + node);
+        }
     }
 
 }

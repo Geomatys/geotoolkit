@@ -21,6 +21,7 @@ import java.net.URI;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.logging.Logger;
 import org.apache.sis.internal.storage.Capability;
 import org.apache.sis.internal.storage.StoreMetadata;
 import org.apache.sis.parameter.ParameterBuilder;
@@ -46,6 +47,11 @@ import org.opengis.parameter.ParameterDescriptorGroup;
                capabilities = Capability.READ,
                resourceTypes = Resource.class)
 public class HDF5Provider extends DataStoreProvider implements ProviderOnFileSystem  {
+
+    /**
+     * HDF-5 format logger.
+     */
+    public static final Logger LOGGER = Logger.getLogger("org.geotoolkit.hdf");
 
     public static final String NAME = "hdf5";
     public static final String MIME_TYPE = "application/x-hdf5";
@@ -105,7 +111,7 @@ public class HDF5Provider extends DataStoreProvider implements ProviderOnFileSys
     public DataStore open(StorageConnector connector) throws DataStoreException {
         final Path path = connector.getStorageAs(Path.class);
         try {
-            return new HDF5Store(path);
+            return new HDF5Store(this, path);
         } catch (IllegalArgumentException | IOException ex) {
             throw new DataStoreException(ex.getMessage(), ex);
         }
