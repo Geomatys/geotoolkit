@@ -291,15 +291,15 @@ public final class CFCoverageResource extends AbstractGridCoverageResource {
         if (reverse) {
             stepSizes[dimensions.length-1] = 1;
             for (int i = dimensions.length-2; i >= 0; i--) {
-                stepSizes[i] = stepSizes[i+1] * dimensions[i+1];
+                stepSizes[i] = Math.multiplyExact(stepSizes[i+1], dimensions[i+1]);
             }
-            sizeLong = dimensions[0] * stepSizes[0];
+            sizeLong = Math.multiplyExact(dimensions[0],stepSizes[0]);
         } else {
             stepSizes[0] = 1;
             for (int i = 0; i < dimensions.length; i++) {
-                sizeLong *= dimensions[i];
+                sizeLong = Math.multiplyExact(sizeLong, dimensions[i]);
                 if (i > 0) {
-                    stepSizes[i] = stepSizes[i-1] * dimensions[i-1];
+                    stepSizes[i] = Math.multiplyExact(stepSizes[i-1], dimensions[i-1]);
                 }
             }
         }
