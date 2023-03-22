@@ -90,6 +90,10 @@ public final class CFCoverageResource extends AbstractGridCoverageResource {
             }
         }
 
+        if (variables.isEmpty()) {
+            throw new DataStoreException("No dataset usable as coverage");
+        }
+
         //build sample dimensions
         for (Dataset ds : variables) {
             final Map.Entry<Unit, CoordinateReferenceSystem> unit = ds.getAttributeUnit(null);
@@ -263,6 +267,10 @@ public final class CFCoverageResource extends AbstractGridCoverageResource {
             for (int i = 0; i < ints.length; i++) ints[i] = i;
         }
 
+        if (ints.length != 1) {
+            throw new DataStoreException("Multiple band coverage not supported yet");
+        }
+
         final GridExtent innerExtent = innerReadGridGeom.getExtent();
 
         final Dataset ds = variables.get(ints[0]);
@@ -270,7 +278,7 @@ public final class CFCoverageResource extends AbstractGridCoverageResource {
             Object datas = ds.read(innerExtent);
             return new BufferedGridCoverage(outerReadGridGeometry, sampleDimensions, toDataBuffer(datas, true));
         } catch (IOException ex) {
-            throw new DataStoreException(ex.getMessage(), ex);
+            throw new DataStoreException("Cannot extract values from dataset " + ds.getName(), ex);
         }
 
     }
@@ -298,7 +306,7 @@ public final class CFCoverageResource extends AbstractGridCoverageResource {
 
         final int size = Math.toIntExact(sizeLong);
 
-        DataBuffer db = null;
+        final DataBuffer db;
         if (Double.class.equals(componentType)) {
             db = new DataBufferDouble(size);
         } else if (Float.class.equals(componentType)) {
@@ -356,11 +364,9 @@ public final class CFCoverageResource extends AbstractGridCoverageResource {
     }
 
     private static Class<?> getComponentType(Object array) {
-        Object cdt = array;
-        while (cdt.getClass().isArray()) {
-            cdt = Array.get(cdt, 0);
-        }
-        return cdt.getClass();
+        Class<?> type = array.getClass();
+        while (type.getComponentType() != null) type = type.getComponentType();
+        return type;
     }
 
 }

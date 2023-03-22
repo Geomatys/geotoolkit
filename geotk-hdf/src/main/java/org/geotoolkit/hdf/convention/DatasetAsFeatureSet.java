@@ -33,8 +33,7 @@ import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.referencing.CRS;
-import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.apache.sis.storage.AbstractFeatureSet;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.collection.BackingStoreException;
@@ -48,7 +47,6 @@ import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.TemporalCRS;
-import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
@@ -67,7 +65,7 @@ public final class DatasetAsFeatureSet extends AbstractFeatureSet {
     private FeatureType featureType;
     private boolean is1D;
     private boolean isEmpty;
-    private final Map<String,MathTransform1D> timeAttributes = new HashMap<>();
+    private final Map<String,Function<Object, Instant>> timeAttributes = new HashMap<>();
 
     public DatasetAsFeatureSet(Dataset dataset) {
         super(null, false);
@@ -84,10 +82,10 @@ public final class DatasetAsFeatureSet extends AbstractFeatureSet {
         final DataspaceMessage dataspace = dataset.getDataspace();
         if (featureType == null) {
             final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-            ftb.setName(dataset.getIdentifier().get());
+            ftb.setName(dataset.getIdentifier().orElseThrow(() -> new IllegalStateException("Dataset name should never be null")));
 
             final int[] dimensionSizes = dataspace.getDimensionSizes();
-            if (dimensionSizes == null) {
+            if (dimensionSizes == null || dimensionSizes.length < 1) {
                 isEmpty = true;
                 is1D = true;
             } else {
@@ -112,7 +110,7 @@ public final class DatasetAsFeatureSet extends AbstractFeatureSet {
                     try {
                         unitAndCrs = dataset.getAttributeUnit(member.name);
                     } catch (FactoryException ex) {
-                        throw new DataStoreException("Failed to parse unit and crs.\n" + ex.getMessage(), ex);
+                        throw new DataStoreException("Failed to parse unit and crs.", ex);
                     }
                     final String description = dataset.getAttributeDescription(member.name);
 
@@ -125,15 +123,20 @@ public final class DatasetAsFeatureSet extends AbstractFeatureSet {
                         if (unitAndCrs.getValue() != null) {
                             CoordinateReferenceSystem crs = unitAndCrs.getValue();
                             atb.setCRS(crs);
-                            if (crs instanceof TemporalCRS) {
+                            if (crs instanceof TemporalCRS tcrs) {
                                 atb.setValueClass(Instant.class);
-                                final MathTransform1D mt;
-                                try {
-                                    mt = (MathTransform1D) CRS.findOperation(crs, CommonCRS.Temporal.JAVA.crs(), null).getMathTransform();
-                                } catch (FactoryException ex) {
-                                    throw new DataStoreException(ex);
-                                }
-                                timeAttributes.put(member.name, mt);
+
+                                final var defaultTemporalCrs = DefaultTemporalCRS.castOrCopy(tcrs);
+                                final Function<Object, Instant> converter = obj -> {
+                                    if (obj == null) return null;
+                                    else if (obj instanceof Number value) {
+                                        double decimalValue = value.doubleValue();
+                                        return defaultTemporalCrs.toInstant(decimalValue);
+                                    } else {
+                                        throw new IllegalStateException("Input value is not a number, but a "+obj.getClass().getCanonicalName());
+                                    }
+                                };
+                                timeAttributes.put(member.name, converter);
                             }
                         }
                     }
@@ -213,11 +216,9 @@ public final class DatasetAsFeatureSet extends AbstractFeatureSet {
                 for (int k = 0; k < cmp.members.length; k++) {
                     final String name = cmp.members[k].name;
                     Object value = Array.get(rawRecord, k);
-                    MathTransform1D trs1d = timeAttributes.get(name);
-                    if (trs1d != null) {
-                        //convert value to Instant
-                        final double timeMs = trs1d.transform(((Number) value).doubleValue());
-                        value = Instant.ofEpochMilli((long) timeMs);
+                    if (value != null) {
+                        Function<Object, Instant> converter = timeAttributes.get(name);
+                        if (converter != null) value = converter.apply(value);
                     }
                     feature.setPropertyValue(name, value);
                 }
