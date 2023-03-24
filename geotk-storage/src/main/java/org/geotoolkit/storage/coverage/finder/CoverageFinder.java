@@ -31,7 +31,6 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.tiling.TileMatrix;
 import org.apache.sis.storage.tiling.TileMatrixSet;
-import org.apache.sis.storage.tiling.TiledResource;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.storage.multires.TileMatrices;
@@ -138,8 +137,7 @@ public abstract class CoverageFinder {
      * @param crs searched crs
      * @return Pyramid, never null except if the pyramid set is empty
      */
-    public final TileMatrixSet findPyramid(final TiledResource set, final CoordinateReferenceSystem crs) throws FactoryException, DataStoreException {
-        final Collection<? extends TileMatrixSet> pyramids = set.getTileMatrixSets();
+    public final TileMatrixSet findPyramid(final Collection<? extends TileMatrixSet> pyramids, final CoordinateReferenceSystem crs) throws FactoryException, DataStoreException {
         if (pyramids.isEmpty()) {
             return null;
         } else if (pyramids.size() == 1) {
