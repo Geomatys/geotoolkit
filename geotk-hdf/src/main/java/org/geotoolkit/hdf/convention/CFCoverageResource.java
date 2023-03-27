@@ -44,6 +44,7 @@ import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.AbstractGridCoverageResource;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArraysExt;
+import org.apache.sis.util.Numbers;
 import org.geotoolkit.hdf.api.Dataset;
 import org.geotoolkit.hdf.api.Group;
 import org.geotoolkit.hdf.api.Node;
@@ -244,7 +245,6 @@ public final class CFCoverageResource extends AbstractGridCoverageResource {
     private static DataBuffer toDataBuffer(Object array, boolean reverse) throws DataStoreException {
         final int[] dimensions = getDimension(array);
         final int[] stepSizes = new int[dimensions.length];
-        final Class<?> componentType = getComponentType(array);
         long sizeLong = 1;
         if (reverse) {
             stepSizes[dimensions.length-1] = 1;
@@ -265,6 +265,8 @@ public final class CFCoverageResource extends AbstractGridCoverageResource {
         final int size = Math.toIntExact(sizeLong);
 
         final DataBuffer db;
+
+        final Class<?> componentType = Numbers.primitiveToWrapper(getComponentType(array));
         if (Double.class.equals(componentType)) {
             db = new DataBufferDouble(size);
         } else if (Float.class.equals(componentType)) {
