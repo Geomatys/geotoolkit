@@ -29,7 +29,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.StringJoiner;
 import javax.measure.Unit;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.BufferedGridCoverage;
@@ -106,74 +105,33 @@ public final class CFCoverageResource extends AbstractGridCoverageResource {
             sampleDimensions.add(sdb.build());
         }
 
-        //find coverage axes
-        Object coordinates = variables.get(0).getAttributes().get("coordinates");
-        if (coordinates == null) {
-            coordinates = variables.get(0).getAttributes().get("DIMENSION_LIST");
-        }
+        // TODO: verify that all variables use the same dimensions, or create one resource per variable (it might be a better choice).
+        final Dataset firstVariable = variables.get(0);
+        List<Dataset> dimensionDatasets = searchForDimensions(firstVariable, group);
 
-        if (coordinates == null) {
-            //try to find axes in the group
-            final StringJoiner sb = new StringJoiner(" ");
-            for (int i = 0; i < dimension.length; i++) {
-                for (Node n : group.components()) {
-                    if (n instanceof Dataset ds && !variables.contains(ds)) {
-                        final int[] dimensionSizes = ds.getDataspace().getDimensionSizes();
-                        if (dimensionSizes.length == 1 && dimensionSizes[0] == dimension[i]) {
-                            sb.add(ds.getName());
-                        }
-                    }
-                }
-            }
-            coordinates = sb.toString();
-        }
+        if (dimensionDatasets.isEmpty()) throw new DataStoreException("No dimension found for variable " + firstVariable.getName());
+        else if (dimensionDatasets.size() != dimension.length) throw new DataStoreException(String.format(
+                "Expect %d dimensions, but %d were found",
+                dimension.length, dimensionDatasets.size()
+        ));
 
-        if (coordinates == null) {
-            throw new DataStoreException("Could not find datasets defining axes of the grid coverage resource");
+        for (int i = 0; i < dimension.length; i++) {
+            final Dataset dim = dimensionDatasets.get(i);
+            final int[] dimSizes = dim.getDataspace().getDimensionSizes();
+            if (dimSizes.length != 1) throw new DataStoreException(String.format(
+                    "Dimension %d (%s) is not a 1D variable, but a %dD variable",
+                    i, dim.getName(), dimSizes.length
+            ));
+            if (dimension[i] != dimSizes[0]) throw new DataStoreException(String.format(
+                    "Mismatch size for dimension %d. Expected %d, but was %d.",
+                    i, dimension[i], dimSizes[0]
+            ));
         }
 
         final List<CoordinateReferenceSystem> axecrs = new ArrayList<>();
-        final List<Dataset> axeDatasets = new ArrayList<>();
-
-        if (coordinates instanceof String str) {
-            if (str.isBlank()) {
-                throw new DataStoreException("Could not find datasets defining axes of the grid coverage resource");
-            }
-            final String[] axesNames = str.split(" ");
-            if (axesNames.length != dimension.length) {
-                throw new DataStoreException("Coordinates attribute '" + coordinates + "' has a size different from declared dimensions " + dimension.length);
-            }
-            for (int k = 0; k < axesNames.length; k++) {
-                final Dataset axeDataset = (Dataset) group.getComponent(axesNames[k]);
-                if (axeDataset == null) {
-                    throw new DataStoreException("Axe dataset for name '" + axesNames[k] + "' do not exist");
-                }
-                if (axeDataset.getDataspace().getDimensionSizes().length != 1) {
-                    throw new DataStoreException("Axe dataset for name '" + axesNames[k] + "'must have one dimension");
-                }
-                axeDatasets.add(axeDataset);
-            }
-        } else if (coordinates instanceof Object[] array){
-            for (Object obj : array) {
-                if (obj instanceof Reference.Object ref) {
-                    Node link = group.findNode(ref.address);
-                    if (link instanceof Dataset ds) {
-                        axeDatasets.add(ds);
-                    } else {
-                        throw new DataStoreException("Unsupported coordinates type " + coordinates.getClass().getSimpleName());
-                    }
-                } else {
-                    throw new DataStoreException("Unsupported coordinates type " + coordinates.getClass().getSimpleName());
-                }
-            }
-        } else {
-            throw new DataStoreException("Unsupported coordinates type " + coordinates.getClass().getSimpleName());
-        }
-
-
-        final MathTransform[] axetrs = new MathTransform[axeDatasets.size()];
+        final MathTransform[] axetrs = new MathTransform[dimensionDatasets.size()];
         for (int k = 0; k < axetrs.length; k++) {
-            final Dataset axeDataset = axeDatasets.get(k);
+            final Dataset axeDataset = dimensionDatasets.get(k);
             //build axe transform
             try {
                 Object array = axeDataset.read(null);
@@ -369,4 +327,31 @@ public final class CFCoverageResource extends AbstractGridCoverageResource {
         return type;
     }
 
+    /**
+     * Try to identify input dataset dimensions by analyzing its "coordinates" or "DIMENSION_LIST" attribute.
+     *
+     * @param target The dataset to find dimensions for.
+     * @return An empty list if neither "coordinates" nor "DIMENSION_LIST" attribute is found, or they're empty.
+     *         Otherwise, return the list of datasets referenced by dimension list.
+     * @throws DataStoreException If one of the attribute contains unsupported value or type.
+     */
+    private static List<Dataset> searchForDimensions(Dataset target, Group parent) throws DataStoreException {
+        final Map<String, Object> attributes = target.getAttributes();
+        Object coordinates = attributes.getOrDefault("coordinates", attributes.get("DIMENSION_LIST"));
+        if (coordinates == null) return Collections.emptyList();
+
+        if (coordinates instanceof String s) coordinates = s.split("\\s+");
+        if (coordinates instanceof Object[] objs) coordinates = Arrays.asList(objs);
+        if (coordinates instanceof List<?> objs) {
+            List<Dataset> dimensions = new ArrayList<>(objs.size());
+            for (Object obj : objs) {
+                if (obj instanceof String name && parent.getComponent(name) instanceof Dataset dim) dimensions.add(dim);
+                else if (obj instanceof Reference.Object ref && parent.findNode(ref.address) instanceof Dataset ds) dimensions.add(ds);
+                else throw new DataStoreException("Cannot find dimension Dataset for coordinate "+obj);
+            }
+            return dimensions;
+        }
+
+        throw new DataStoreException("Unsupported coordinates/dimension list. Expect a list of names or dataset references.");
+    }
 }
