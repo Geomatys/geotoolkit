@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import java.io.IOException;
 import org.geotoolkit.observation.OMUtils;
 import static org.geotoolkit.observation.json.ObservationJsonUtils.getFieldValue;
+import org.geotoolkit.observation.model.FieldType;
 import org.opengis.metadata.quality.Element;
 
 /**
@@ -34,19 +35,31 @@ public class ElementDeserializer extends JsonDeserializer<Element> {
 
     @Override
     public Element deserialize(JsonParser parser, DeserializationContext ctxt) throws IOException {
-        try {
-            final JsonNode rootNode = ctxt.readTree(parser);
+        final JsonNode rootNode = ctxt.readTree(parser);
 
-            if (rootNode == null || !rootNode.isObject()) {
-                throw new JsonMappingException(parser, "Invalid JSON : Expecting JSON object as root node");
-            }
-            String name  = getFieldValue(rootNode, "name").orElseThrow(() -> new JsonMappingException(parser, "No name available"));
-            String uom   = getFieldValue(rootNode, "uom").orElse(null);
-            String value = getFieldValue(rootNode, "value").orElse(null);
-            return OMUtils.createQualityElement2(name, uom, value);
-        } catch (ReflectiveOperationException ex) {
-            throw new JsonMappingException(parser, "Cannot create Element object due to SIS metadata binding problem", ex);
+        if (rootNode == null || !rootNode.isObject()) {
+            throw new JsonMappingException(parser, "Invalid JSON : Expecting JSON object as root node");
         }
+        String name  = getFieldValue(rootNode, "name").orElseThrow(() -> new JsonMappingException(parser, "No name available"));
+        String uom   = getFieldValue(rootNode, "uom").orElse(null);
+        FieldType ft = null;
+        Object value = null;
+        if (rootNode.hasNonNull("value")) {
+            JsonNode vNode = rootNode.get("value");
+            if (vNode.isDouble()) {
+                ft = FieldType.QUANTITY;
+                value = vNode.asDouble();
+            } else if (vNode.isBoolean()) {
+                ft = FieldType.BOOLEAN;
+                value = vNode.asBoolean();
+
+            // TODO time?
+            }  else {
+                ft = FieldType.TEXT;
+                value = vNode.asText();
+            }
+        }
+        return OMUtils.createQualityElement(name, uom, ft, value);
     }
 
 }
