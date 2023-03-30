@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.observation;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,7 +29,6 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.UUID;
 import java.util.logging.Logger;
-import javax.measure.format.MeasurementParseException;
 import javax.xml.namespace.QName;
 import org.apache.sis.geometry.AbstractEnvelope;
 import org.apache.sis.geometry.Envelopes;
@@ -49,10 +46,8 @@ import org.apache.sis.metadata.iso.quality.DefaultQuantitativeAttributeAccuracy;
 import org.apache.sis.metadata.iso.quality.DefaultQuantitativeResult;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.SimpleInternationalString;
 import org.apache.sis.util.iso.DefaultRecord;
-import org.apache.sis.util.iso.DefaultRecordType;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.observation.model.ComplexResult;
 import org.geotoolkit.observation.model.Field;
@@ -60,6 +55,10 @@ import org.geotoolkit.observation.result.ResultBuilder;
 import org.geotoolkit.observation.model.Phenomenon;
 import org.geotoolkit.observation.model.CompositePhenomenon;
 import org.geotoolkit.observation.model.FieldType;
+import static org.geotoolkit.observation.model.FieldType.BOOLEAN;
+import static org.geotoolkit.observation.model.FieldType.QUANTITY;
+import static org.geotoolkit.observation.model.FieldType.TEXT;
+import static org.geotoolkit.observation.model.FieldType.TIME;
 import org.geotoolkit.observation.model.MeasureResult;
 import org.geotoolkit.observation.model.Observation;
 import org.geotoolkit.observation.model.TextEncoderProperties;
@@ -456,60 +455,50 @@ public class OMUtils {
         return result;
     }
 
+    /**
+     * Create a Data quality element for the specified field.
+     * It is used to add quality element into an observation.
+     *
+     * @param field An observation field.
+     * @param value element value.
+     * @return A Data quality element.
+     */
     public static Element createQualityElement(Field field, Object value) {
+        return createQualityElement(field.name, field.uom, field.type, value);
+    }
+
+    /**
+     * Create a Data quality element for the specified field attributes. It is
+     * used to add quality element into an observation.
+     *
+     * @param name Field name.
+     * @param uom Unit of measure of the specified value. Can be {@code null}
+     * @param ft Data type of the element.
+     * @param value element value.
+     *
+     * @return A Data quality element.
+     */
+    public static Element createQualityElement(String name, String uom, FieldType ft, Object value) {
         DefaultQuantitativeAttributeAccuracy element = new DefaultQuantitativeAttributeAccuracy();
-        element.setNamesOfMeasure(Arrays.asList(new SimpleInternationalString(field.name)));
+        element.setNamesOfMeasure(Arrays.asList(new SimpleInternationalString(name)));
         if (value != null) {
             DefaultQuantitativeResult res      = new DefaultQuantitativeResult();
 
-            RecordType rt = INSTANCE.createRecordType("global", Collections.singletonMap("CharacterString", String.class));
+            RecordType rt = switch (ft) {
+                case TEXT      -> INSTANCE.createRecordType(RecordSchemaSIS.MULTILINE.toInternationalString(), Collections.singletonMap("CharacterString", String.class));
+                case BOOLEAN   -> INSTANCE.createRecordType(RecordSchemaSIS.MULTILINE.toInternationalString(), Collections.singletonMap("Boolean", Boolean.class));
+                case QUANTITY -> INSTANCE.createRecordType(RecordSchemaSIS.MULTILINE.toInternationalString(), Collections.singletonMap("Real", Double.class));
+                case TIME     -> INSTANCE.createRecordType(RecordSchemaSIS.MULTILINE.toInternationalString(), Collections.singletonMap("Date", Date.class));
+            };
 
             DefaultRecord r = new DefaultRecord(rt);
             r.set(rt.getMembers().iterator().next(), value);
             res.setValues(Arrays.asList(r));
             res.setValueType(rt);
-            if (field.uom != null) {
-                res.setValueUnit(Units.valueOf(field.uom));
+            if (uom != null) {
+                res.setValueUnit(Units.valueOf(uom));
             }
             element.setResults(Arrays.asList(res));
-        }
-        return element;
-    }
-
-    /**
-     * Temporary until SIS version is updated
-     */
-    public static Element createQualityElement2(Field field, Object value) throws ReflectiveOperationException {
-        return createQualityElement2(field.name, field.uom, value);
-    }
-
-    /**
-     * Temporary until SIS version is updated
-     */
-    public static Element createQualityElement2(String name, String uom, Object value) throws ReflectiveOperationException {
-        ArgumentChecks.ensureNonNull("name", name);
-        DefaultQuantitativeAttributeAccuracy element = new DefaultQuantitativeAttributeAccuracy();
-        element.setNamesOfMeasure(Collections.singleton(new SimpleInternationalString(name)));
-        if (value != null) {
-            DefaultQuantitativeResult res = new DefaultQuantitativeResult();
-            Constructor<DefaultRecordType> c = DefaultRecordType.class.getDeclaredConstructor();
-            c.setAccessible(true);
-            DefaultRecordType rt = c.newInstance();
-            Method m = DefaultRecordType.class.getDeclaredMethod("setValue", String.class);
-            m.setAccessible(true);
-            m.invoke(rt, "CharacterString");
-            DefaultRecord r = new DefaultRecord(RecordSchemaSIS.STRING);
-            r.set(RecordSchemaSIS.STRING.getMembers().iterator().next(), value);
-            res.setValues(Collections.singletonList(r));
-            res.setValueType(rt);
-            if (uom != null) {
-                try {
-                    res.setValueUnit(Units.valueOf(uom));
-                } catch (MeasurementParseException ex) {
-                    LOGGER.warning("Error while parsing uom : " + uom);
-                }
-            }
-            element.setResults(Collections.singleton(res));
         }
         return element;
     }
