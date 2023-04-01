@@ -208,7 +208,7 @@ public final class SampleDimensionUtils {
             }
             ranges.put(range, colors);
         }
-        return ColorModelFactory.piecewise(ranges).createColorModel(type, numBands, visibleBand);
+        return ColorModelFactory.piecewise(ranges.entrySet()).createColorModel(type, numBands, visibleBand);
     }
 
     /**
