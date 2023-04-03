@@ -54,7 +54,7 @@ public final class GetFeatureInfo extends GetMap implements org.geotoolkit.ows.x
     /**
      * Layers to request.
      */
-    private final UnmodifiableArrayList<GenericName> queryLayers;
+    private final UnmodifiableArrayList<String> queryLayers;
 
     /**
      * Format of the returned information.
@@ -72,13 +72,13 @@ public final class GetFeatureInfo extends GetMap implements org.geotoolkit.ows.x
         super(getMap);
         this.x = x;
         this.y = y;
-        this.queryLayers = UnmodifiableArrayList.wrap(queryLayers.toArray(new GenericName[queryLayers.size()]));
+        this.queryLayers = UnmodifiableArrayList.wrap(queryLayers.toArray(String[]::new));
         this.infoFormat  = infoFormat;
         this.featureCount = featureCount;
     }
 
     public GetFeatureInfo(final Envelope envelope, final Version version,
-                  final String format, final List<GenericName> layers, final List<String> styles,
+                  final String format, final List<String> layers, final List<String> styles,
                   final StyledLayerDescriptor sld, final Double elevation, final List<Date> dates,
                   final Dimension size, final Color background,
                   final Boolean transparent, final String exceptions, final int x, final int y,
@@ -89,7 +89,7 @@ public final class GetFeatureInfo extends GetMap implements org.geotoolkit.ows.x
                 background, transparent, 0,exceptions, parameters);
         this.x = x;
         this.y = y;
-        this.queryLayers = UnmodifiableArrayList.wrap(queryLayers.toArray(new GenericName[queryLayers.size()]));
+        this.queryLayers = UnmodifiableArrayList.wrap(queryLayers.toArray(String[]::new));
         this.infoFormat  = infoFormat;
         this.featureCount = featureCount;
     }
@@ -111,7 +111,7 @@ public final class GetFeatureInfo extends GetMap implements org.geotoolkit.ows.x
     /**
      * Returns an immutable list of layers to request.
      */
-    public List<GenericName> getQueryLayers() {
+    public List<String> getQueryLayers() {
         return queryLayers;
     }
 
