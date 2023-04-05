@@ -25,7 +25,6 @@ import java.util.Map;
 import org.apache.sis.util.Version;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 
-import org.opengis.util.GenericName;
 import org.opengis.geometry.Envelope;
 import org.opengis.sld.StyledLayerDescriptor;
 
@@ -67,7 +66,7 @@ public final class GetFeatureInfo extends GetMap implements org.geotoolkit.ows.x
     private final Integer featureCount;
 
     public GetFeatureInfo(final GetMap getMap, final int x, final int y,
-                          final List<GenericName> queryLayers, final String infoFormat,
+                          final List<String> queryLayers, final String infoFormat,
                           final Integer featureCount) {
         super(getMap);
         this.x = x;
@@ -82,7 +81,7 @@ public final class GetFeatureInfo extends GetMap implements org.geotoolkit.ows.x
                   final StyledLayerDescriptor sld, final Double elevation, final List<Date> dates,
                   final Dimension size, final Color background,
                   final Boolean transparent, final String exceptions, final int x, final int y,
-                  final List<GenericName> queryLayers, final String infoFormat, final Integer featureCount,
+                  final List<String> queryLayers, final String infoFormat, final Integer featureCount,
                   final Map<String, Object> parameters)
     {
         super(envelope, version, format, layers, styles, sld, elevation, dates, size,
