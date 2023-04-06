@@ -121,6 +121,11 @@ public final class VariableLength extends DataType {
 
         final GlobalHeapId globalheapId = new GlobalHeapId();
         globalheapId.read(channel);
+        if (globalheapId.collectionAddress <= 0) {
+            //no data or corrupted ? specification do no say.
+            return null;
+        }
+
         final GlobalHeapObject globalHeapObject = channel.getGlobalHeapObject(globalheapId);
         if (globalHeapObject == null) {
             channel.getGlobalHeapObject(globalheapId);
