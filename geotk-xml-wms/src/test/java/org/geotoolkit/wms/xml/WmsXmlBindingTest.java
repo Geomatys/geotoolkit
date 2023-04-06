@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.wms.xml;
 
+import java.awt.Color;
+import java.awt.Dimension;
 import org.geotoolkit.wms.xml.v111.VendorSpecificCapabilities;
 import java.io.StringReader;
 import java.util.List;
@@ -27,6 +29,7 @@ import java.net.URI;
 import org.opengis.util.NameFactory;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
@@ -36,6 +39,7 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.xml.LegacyNamespaces;
 import org.apache.sis.util.DefaultInternationalString;
 
@@ -52,6 +56,7 @@ import org.apache.sis.metadata.iso.extent.DefaultExtent;
 import org.apache.sis.metadata.iso.extent.DefaultTemporalExtent;
 import org.apache.sis.metadata.iso.identification.DefaultKeywords;
 import org.apache.sis.metadata.iso.quality.DefaultConformanceResult;
+import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.iso.DefaultNameFactory;
 import org.geotoolkit.service.ServiceType;
 import org.geotoolkit.temporal.object.DefaultPeriod;
@@ -77,6 +82,7 @@ import org.opengis.referencing.IdentifiedObject;
 
 import static org.apache.sis.test.MetadataAssert.*;
 import static org.apache.sis.test.TestUtilities.getSingleton;
+import org.apache.sis.util.Version;
 
 
 /**
@@ -685,5 +691,22 @@ public class WmsXmlBindingTest extends org.geotoolkit.test.TestBase {
             assertEquals(expCapabilities,   capabilities);
             assertEquals(expResult,         result);
         }
+    }
+
+    @Test
+    public void requestTest() throws Exception {
+        GeneralEnvelope env = new GeneralEnvelope(CommonCRS.defaultGeographic());
+        env.setRange(0, -180.0, 180.0);
+        env.setRange(0, -90.0, 90.0);
+        List<String> layers = Arrays.asList("layer1", "layer2");
+        List<String> styles = Arrays.asList("style1", "style2");
+
+        GetMap gm = new GetMap(env, new Version(WMSVersion.v130.getCode()), "image/png", layers, styles, new Dimension(500, 500), Collections.EMPTY_MAP);
+
+        assertEquals(layers, gm.getLayers());
+
+        List<String> queryLayers = layers;
+        GetFeatureInfo gfi = new GetFeatureInfo(gm, 4, 5, queryLayers, "application/json", 10);
+        assertEquals(queryLayers, gfi.getQueryLayers());
     }
 }
