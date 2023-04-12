@@ -124,19 +124,21 @@ public abstract class AbstractFilteredObservationStore extends AbstractObservati
             LOGGER.warning("This ObservationStore does not allow to override sensor ID");
         }
 
-        final ObservationFilterReader currentFilter = (ObservationFilterReader) getFilter();
+        ObservationFilterReader currentFilter = (ObservationFilterReader) getFilter();
         final List<String> sensorIDs = query.getSensorIds();
         currentFilter.init(new ObservationQuery(OBSERVATION_QNAME, ResponseMode.INLINE, null));
         currentFilter.setProcedure(sensorIDs);
         List<Observation> observations = currentFilter.getObservations().stream().map(obs -> (Observation)obs).toList();
-
 
         final ObservationDataset result = new ObservationDataset();
         result.spatialBound.initBoundary();
 
         for (Observation obs : observations) {
             final Procedure proc =  obs.getProcedure();
-            final ProcedureDataset procedure = new ProcedureDataset(proc.getId(), proc.getName(), proc.getDescription(), "Component", "timeseries", new ArrayList<>(), null);
+            String type = obs.getProperties().getOrDefault("type", "timeseries").toString();
+            String sensorType = obs.getProperties().getOrDefault("sensorType", "Component").toString();
+
+            final ProcedureDataset procedure = new ProcedureDataset(proc.getId(), proc.getName(), proc.getDescription(), sensorType, type, new ArrayList<>(), null);
             if (sensorIDs.isEmpty() || sensorIDs.contains(procedure.getId())) {
                 if (!result.procedures.contains(procedure)) {
                     result.procedures.add(procedure);
@@ -146,6 +148,9 @@ public abstract class AbstractFilteredObservationStore extends AbstractObservati
                     result.phenomenons.add(phen);
                 }
                 SamplingFeature foi = obs.getFeatureOfInterest();
+                if (!result.featureOfInterest.contains(foi)) {
+                    result.featureOfInterest.add(foi);
+                }
                 result.spatialBound.appendLocation(obs.getSamplingTime(), foi);
                 procedure.spatialBound.appendLocation(obs.getSamplingTime(), foi);
 
@@ -157,6 +162,13 @@ public abstract class AbstractFilteredObservationStore extends AbstractObservati
                 result.observations.add(obs);
             }
         }
+
+        // fill also offerings
+        currentFilter = (ObservationFilterReader) getFilter();
+        currentFilter.init(new OfferingQuery());
+        currentFilter.setProcedure(sensorIDs);
+        result.offerings.addAll(currentFilter.getOfferings());
+
         return result;
     }
 
