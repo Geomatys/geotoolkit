@@ -20,6 +20,7 @@ package org.geotoolkit.observation;
 import java.util.List;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.observation.model.Observation;
+import org.geotoolkit.observation.model.ObservationDataset;
 import org.geotoolkit.observation.model.Offering;
 import org.geotoolkit.observation.model.Phenomenon;
 import org.geotoolkit.observation.model.ProcedureDataset;
@@ -79,6 +80,14 @@ public interface ObservationWriter {
      * @throws org.apache.sis.storage.DataStoreException
      */
     void removeObservationForProcedure(final String procedureID) throws DataStoreException;
+
+    /**
+     * Remove an observation dataset.
+     *
+     * @param dataset An complete observation dataset.
+     * @return The list of sensor identifier removed.
+     */
+    List<String> removeDataSet(ObservationDataset dataset) throws DataStoreException;
 
     /**
      * Remove a procedure from the O&M datasource.
