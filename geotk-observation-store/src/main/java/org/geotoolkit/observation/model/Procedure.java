@@ -25,7 +25,7 @@ import java.util.Map;
 public class Procedure extends AbstractOMEntity implements org.opengis.observation.Process {
 
     // for JSON
-    private Procedure() {}
+    protected Procedure() {}
 
     public Procedure(String id) {
         super(id, null, null, null);

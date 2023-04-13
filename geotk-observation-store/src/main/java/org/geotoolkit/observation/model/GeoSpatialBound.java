@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.observation.model;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -43,6 +45,13 @@ import org.opengis.temporal.TemporalObject;
  *
  * @author Guilhem Legal (Geomatys)
  */
+@JsonAutoDetect(
+    fieldVisibility = Visibility.DEFAULT,
+    setterVisibility = Visibility.NONE,
+    getterVisibility = Visibility.NONE,
+    isGetterVisibility = Visibility.NONE,
+    creatorVisibility = Visibility.NONE
+)
 public class GeoSpatialBound {
 
     public Date dateStart;
