@@ -49,7 +49,6 @@ import org.apache.sis.storage.Query;
 import org.apache.sis.storage.UnsupportedQueryException;
 import org.apache.sis.util.SimpleInternationalString;
 import org.apache.sis.xml.MarshallerPool;
-import org.geotoolkit.storage.feature.query.QueryFeatureSet;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.kml.xml.KMLMarshallerPool;
@@ -69,6 +68,7 @@ import org.geotoolkit.kml.xml.v220.PlacemarkType;
 import org.geotoolkit.kml.xml.v220.PointType;
 import org.geotoolkit.kml.xml.v220.PolygonType;
 import org.geotoolkit.storage.DataStores;
+import org.geotoolkit.storage.feature.query.QueryFeatureSet;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.CoordinateSequence;
 import org.locationtech.jts.geom.Geometry;
@@ -159,7 +159,7 @@ public class KMLStore extends DataStore implements FeatureSet, ResourceOnFileSys
 
     @Override
     public Stream<Feature> features(boolean parallel) throws DataStoreException {
-        final KmlType kml = read();
+        final KmlType kml = getKml();
 
         final List<PlacemarkType> placemarks = new ArrayList<>();
         extractPlacemarks(kml.getAbstractFeatureGroup(), placemarks);
@@ -180,7 +180,10 @@ public class KMLStore extends DataStore implements FeatureSet, ResourceOnFileSys
         return FeatureSet.super.subset(query);
     }
 
-    private KmlType read() throws DataStoreException {
+    /**
+     * Get the original KML object.
+     */
+    public KmlType getKml() throws DataStoreException {
         final KmlType kml;
         final MarshallerPool pool = KMLMarshallerPool.getINSTANCE();
         try {
