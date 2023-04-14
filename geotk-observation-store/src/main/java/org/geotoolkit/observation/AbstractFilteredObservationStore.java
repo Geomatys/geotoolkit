@@ -126,7 +126,10 @@ public abstract class AbstractFilteredObservationStore extends AbstractObservati
 
         ObservationFilterReader currentFilter = (ObservationFilterReader) getFilter();
         final List<String> sensorIDs = query.getSensorIds();
-        currentFilter.init(new ObservationQuery(OBSERVATION_QNAME, ResponseMode.INLINE, null));
+        ObservationQuery observationQuery = new ObservationQuery(query.getResultModel(), query.getResponseMode(), query.getResponseFormat());
+        observationQuery.setIncludeTimeForProfile(query.isIncludeTimeForProfile());
+        observationQuery.setSeparatedProfileObservation(query.isSeparatedProfileObservation());
+        currentFilter.init(observationQuery);
         currentFilter.setProcedure(sensorIDs);
         List<Observation> observations = currentFilter.getObservations().stream().map(obs -> (Observation)obs).toList();
 

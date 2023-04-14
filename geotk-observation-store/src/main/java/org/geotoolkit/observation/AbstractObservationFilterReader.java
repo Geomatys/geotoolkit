@@ -58,7 +58,8 @@ public abstract class AbstractObservationFilterReader implements ObservationFilt
     protected boolean includeIDInDataBlock;
     protected boolean includeTimeForProfile;
     protected boolean includeQualityFields;
-    protected boolean separatedObs;
+    protected boolean separatedMeasure;
+    protected boolean separatedProfileObs;
 
     protected String responseFormat;
 
@@ -108,7 +109,8 @@ public abstract class AbstractObservationFilterReader implements ObservationFilt
             this.includeTimeForProfile = query.isIncludeTimeForProfile();
             this.includeIDInDataBlock  = query.isIncludeIdInDataBlock();
             this.includeQualityFields  = query.isIncludeQualityFields();
-            this.separatedObs          = query.isSeparatedObservation();
+            this.separatedMeasure      = query.isSeparatedMeasure();
+            this.separatedProfileObs   = query.isSeparatedProfileObservation();
             this.resultMode            = query.getResultMode();
             this.responseFormat        = query.getResponseFormat();
             this.decimationSize        = query.getDecimationSize();

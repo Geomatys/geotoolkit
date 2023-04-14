@@ -28,10 +28,29 @@ import org.opengis.filter.Filter;
  */
 public class ObservationQuery extends AbstractObservationQuery {
 
+    /**
+     * Result model of the output.
+     * Can be {@link org.geotoolkit.observation.OMUtils#OBSERVATION_QNAME} for complex observation output,
+     * or {@link org.geotoolkit.observation.OMUtils#MEASUREMENT_QNAME} for single measurement observation output.
+     */
     private final QName resultModel;
 
+    /**
+     * Response mode (inspired by SOS standard).
+     * - INLINE: list of complete observation.
+     * - ATTACHED: mostly not implemented but specify that we want the observation in a separed attachment.
+     * - OUT_OF_BAND: used for other format export like netcdf for example.
+     * - RESULT_TEMPLATE: return only the observation template for each sensor matching the query.
+     */
     private final ResponseMode responseMode;
 
+    /**
+     * special format reponse to change the result values.
+     * example:
+     * - 'resultArray': values will not be transmitted in a string datablock, but as an Object array.
+     * - 'text/csv': default behavior values will be transmitted in a string datablock.
+     * - 'count': special case to count the number of values.
+     */
     private final String responseFormat;
 
     private boolean includeTimeInTemplate = false;
@@ -40,11 +59,23 @@ public class ObservationQuery extends AbstractObservationQuery {
 
     private boolean includeIdInDataBlock = false;
 
+    /**
+     * profile values in observation results does not include by default.
+     * A time field with the date of each profile will be added to complex result if set.
+     */
     private boolean includeTimeForProfile = false;
 
     private boolean includeQualityFields = true;
 
-    private boolean separatedObservation = false;
+    /**
+     * if set to true, each measure will be separated in its own observation.
+     */
+    private boolean separatedMeasure = false;
+
+    /**
+     * if set to false, each profile of a procedure will be merged in one observation.
+     */
+    private boolean separatedProfileObservation = true;
 
     private Integer decimationSize;
 
@@ -105,12 +136,20 @@ public class ObservationQuery extends AbstractObservationQuery {
         this.includeTimeForProfile = includeTimeForProfile;
     }
 
-    public boolean isSeparatedObservation() {
-        return separatedObservation;
+    public boolean isSeparatedMeasure() {
+        return separatedMeasure;
     }
 
-    public void setSeparatedObservation(boolean separatedObservation) {
-        this.separatedObservation = separatedObservation;
+    public void setSeparatedMeasure(boolean separatedMeasure) {
+        this.separatedMeasure = separatedMeasure;
+    }
+
+    public boolean isSeparatedProfileObservation() {
+        return separatedProfileObservation;
+    }
+
+    public void setSeparatedProfileObservation(boolean separatedProfileObservation) {
+        this.separatedProfileObservation = separatedProfileObservation;
     }
 
     public Integer getDecimationSize() {
@@ -146,7 +185,7 @@ public class ObservationQuery extends AbstractObservationQuery {
         query.setIncludeQualityFields(includeQualityFields);
         query.setIncludeTimeForProfile(includeTimeForProfile);
         query.setIncludeTimeInTemplate(includeTimeInTemplate);
-        query.setSeparatedObservation(separatedObservation);
+        query.setSeparatedMeasure(separatedMeasure);
         query.setResultMode(resultMode);
         applyFeatureAttributes(query);
         return query;

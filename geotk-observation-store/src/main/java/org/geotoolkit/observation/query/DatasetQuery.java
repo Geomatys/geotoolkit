@@ -18,7 +18,10 @@ package org.geotoolkit.observation.query;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.xml.namespace.QName;
 import org.apache.sis.storage.FeatureQuery;
+import static org.geotoolkit.observation.OMUtils.OBSERVATION_QNAME;
+import org.geotoolkit.observation.model.ResponseMode;
 
 /**
  *
@@ -36,6 +39,48 @@ public class DatasetQuery extends FeatureQuery {
      */
     private final List<String> sensorIds;
 
+    /**
+     * Used in observation Extraction.
+     * profile values in observation results does not include by default.
+     * A time field with the date of each profile will be added to complex result if set.
+     */
+    private boolean includeTimeForProfile = false;
+
+    /**
+     * Used in observation Extraction.
+     * if set to false, each profile of a procedure will be merged in one observation.
+     * Be careful if includeTimeForProfile is not set as well,
+     * it will not be possible to distinguish the original profile time.
+     */
+    private boolean separatedProfileObservation = true;
+
+    /**
+     * Used in observation Extraction.
+     * Result model of the output.
+     * Can be {@link org.geotoolkit.observation.OMUtils#OBSERVATION_QNAME} for complex observation output,
+     * or {@link org.geotoolkit.observation.OMUtils#MEASUREMENT_QNAME} for single measurement observation output.
+     */
+    private QName resultModel = OBSERVATION_QNAME;
+
+    /**
+     * Used in observation Extraction.
+     * Response mode (inspired by SOS standard).
+     * - INLINE: list of complete observation.
+     * - ATTACHED: mostly not implemented but specify that we want the observation in a separed attachment.
+     * - OUT_OF_BAND: used for other format export like netcdf for example.
+     * - RESULT_TEMPLATE: return only the observation template for each sensor matching the query.
+     */
+    private ResponseMode responseMode = ResponseMode.INLINE;
+
+    /**
+     * Used in observation Extraction.
+     * special format reponse to change the result values.
+     * example:
+     * - 'resultArray': values will not be transmitted in a string datablock, but as an Object array.
+     * - 'text/csv': default behavior values will be transmitted in a string datablock.
+     * - 'count': special case to count the number of values.
+     */
+    private String responseFormat = null;
 
     public DatasetQuery() {
         this(null, null);
@@ -64,5 +109,45 @@ public class DatasetQuery extends FeatureQuery {
 
     public List<String> getSensorIds() {
         return sensorIds;
+    }
+
+    public boolean isIncludeTimeForProfile() {
+        return includeTimeForProfile;
+    }
+
+    public void setIncludeTimeForProfile(boolean includeTimeForProfile) {
+        this.includeTimeForProfile = includeTimeForProfile;
+    }
+
+    public boolean isSeparatedProfileObservation() {
+        return separatedProfileObservation;
+    }
+
+    public void setSeparatedProfileObservation(boolean separatedProfileObservation) {
+        this.separatedProfileObservation = separatedProfileObservation;
+    }
+
+    public QName getResultModel() {
+        return resultModel;
+    }
+
+    public void setResultModel(QName resultModel) {
+        this.resultModel = resultModel;
+    }
+
+    public ResponseMode getResponseMode() {
+        return responseMode;
+    }
+
+    public void setResponseMode(ResponseMode responseMode) {
+        this.responseMode = responseMode;
+    }
+
+    public String getResponseFormat() {
+        return responseFormat;
+    }
+
+    public void setResponseFormat(String responseFormat) {
+        this.responseFormat = responseFormat;
     }
 }
