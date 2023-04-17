@@ -139,7 +139,7 @@ public final class CoverageIO extends Static {
             });
             try (DataStore ds = new WorldFileStoreProvider().open(c)) {
                 WritableAggregate wr = (WritableAggregate) ds;
-                wr.add(new MemoryGridResource(null, coverage));
+                wr.add(new MemoryGridResource(null, coverage, null));
             }
             return;
         }
