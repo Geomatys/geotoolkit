@@ -18,6 +18,7 @@ package org.geotoolkit.hdf.convention;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
+import java.nio.file.Path;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,10 +34,14 @@ import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.internal.storage.ResourceOnFileSystem;
+import org.apache.sis.internal.storage.StoreResource;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.apache.sis.storage.AbstractFeatureSet;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.collection.BackingStoreException;
+import org.geotoolkit.hdf.HDF5Store;
 import org.geotoolkit.hdf.api.Dataset;
 import org.geotoolkit.hdf.datatype.Compound;
 import org.geotoolkit.hdf.datatype.Compound.Member;
@@ -55,10 +60,11 @@ import org.opengis.util.FactoryException;
  *
  * @author Johann Sorel (Geomatys)
  */
-public final class DatasetAsFeatureSet extends AbstractFeatureSet {
+public final class DatasetAsFeatureSet extends AbstractFeatureSet implements ResourceOnFileSystem, StoreResource{
 
     private static final String HDF_INDEX = "hdf-index";
 
+    private final HDF5Store store;
     private final Dataset dataset;
 
     //featureset
@@ -67,8 +73,9 @@ public final class DatasetAsFeatureSet extends AbstractFeatureSet {
     private boolean isEmpty;
     private final Map<String,Function<Object, Instant>> timeAttributes = new HashMap<>();
 
-    public DatasetAsFeatureSet(Dataset dataset) {
+    public DatasetAsFeatureSet(HDF5Store store, Dataset dataset) {
         super(null, false);
+        this.store = store;
         this.dataset = dataset;
     }
 
@@ -231,4 +238,13 @@ public final class DatasetAsFeatureSet extends AbstractFeatureSet {
         return features.stream();
     }
 
+    @Override
+    public DataStore getOriginator() {
+        return store;
+    }
+
+    @Override
+    public Path[] getComponentFiles() throws DataStoreException {
+        return store.getComponentFiles();
+    }
 }
