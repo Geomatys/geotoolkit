@@ -112,18 +112,18 @@ public final class HDF5Store extends DataStore implements Aggregate, ResourceOnF
             final String conventions = String.valueOf(group.getAttributes().get("Conventions"));
             if (conventions.startsWith("CF")) {
                 try {
-                    return new CFCoverageResource(group);
+                    return new CFCoverageResource(this, group);
                 } catch (DataStoreException | FactoryException ex) {
                     HDF5Provider.LOGGER.log(Level.WARNING, "Failed to intepret " + group.getName() + " as a CF grid coverage.\n" + ex.getMessage(), ex);
                 }
             }
-            final GroupAsAggregate gaa = new GroupAsAggregate(group);
+            final GroupAsAggregate gaa = new GroupAsAggregate(this, group);
             for (Node n : group.components()) {
                 gaa.resources().add(decorate(n));
             }
             return gaa;
         } else if (node instanceof Dataset ds) {
-            return new DatasetAsFeatureSet(ds);
+            return new DatasetAsFeatureSet(this, ds);
         } else {
             throw new IllegalArgumentException("Unexpected node type " + node);
         }

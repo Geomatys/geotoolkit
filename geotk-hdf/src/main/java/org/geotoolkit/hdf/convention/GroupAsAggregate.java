@@ -16,16 +16,21 @@
  */
 package org.geotoolkit.hdf.convention;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import org.apache.sis.internal.storage.ResourceOnFileSystem;
+import org.apache.sis.internal.storage.StoreResource;
 import org.apache.sis.storage.Aggregate;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
+import org.geotoolkit.hdf.HDF5Store;
 import org.geotoolkit.hdf.api.Group;
 import org.opengis.metadata.Metadata;
 import org.opengis.util.GenericName;
@@ -35,12 +40,14 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public final class GroupAsAggregate implements Aggregate {
+public final class GroupAsAggregate implements Aggregate, ResourceOnFileSystem, StoreResource{
 
+    private final HDF5Store store;
     private final Group group;
     private final List<Resource> components = new ArrayList<>();
 
-    public GroupAsAggregate(Group group) {
+    public GroupAsAggregate(HDF5Store store, Group group) {
+        this.store = store;
         this.group = group;
     }
 
@@ -72,6 +79,16 @@ public final class GroupAsAggregate implements Aggregate {
 
     @Override
     public <T extends StoreEvent> void removeListener(Class<T> type, StoreListener<? super T> sl) {
+    }
+
+    @Override
+    public DataStore getOriginator() {
+        return store;
+    }
+
+    @Override
+    public Path[] getComponentFiles() throws DataStoreException {
+        return store.getComponentFiles();
     }
 
 }

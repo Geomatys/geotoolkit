@@ -23,6 +23,7 @@ import java.awt.image.DataBufferInt;
 import java.awt.image.DataBufferShort;
 import java.io.IOException;
 import java.lang.reflect.Array;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -36,15 +37,19 @@ import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridRoundingMode;
+import org.apache.sis.internal.storage.ResourceOnFileSystem;
+import org.apache.sis.internal.storage.StoreResource;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.matrix.Matrices;
 import org.apache.sis.referencing.operation.matrix.MatrixSIS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.AbstractGridCoverageResource;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.Numbers;
+import org.geotoolkit.hdf.HDF5Store;
 import org.geotoolkit.hdf.api.Dataset;
 import org.geotoolkit.hdf.api.Group;
 import org.geotoolkit.hdf.api.Node;
@@ -60,24 +65,26 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public final class CFCoverageResource extends AbstractGridCoverageResource {
+public final class CFCoverageResource extends AbstractGridCoverageResource implements ResourceOnFileSystem, StoreResource{
 
+    private final HDF5Store store;
     private final Group group;
     private final List<Dataset> variables = new ArrayList<>();
     private final List<SampleDimension> sampleDimensions = new ArrayList<>();
     private final GridGeometry innerGridGeometry;
     private final GridGeometry outerGridGeometry;
 
-    public CFCoverageResource(Group group) throws DataStoreException, FactoryException {
+    public CFCoverageResource(HDF5Store store, Group group) throws DataStoreException, FactoryException {
         super(null, false);
+        this.store = store;
         this.group = group;
 
         //find usable variables
         int[] dimension = null;
         for (Node n : group.components()) {
             if (n instanceof Dataset ds) {
-                DataspaceMessage dataspace = ds.getDataspace();
-                if (dataspace.getDimensionSizes().length > 1) {
+                if (isCoverage(ds, group)) {
+                    DataspaceMessage dataspace = ds.getDataspace();
                     if (dimension == null) {
                         dimension = dataspace.getDimensionSizes();
                         variables.add(ds);
@@ -355,5 +362,31 @@ public final class CFCoverageResource extends AbstractGridCoverageResource {
         }
 
         throw new DataStoreException("Unsupported coordinates/dimension list. Expect a list of names or dataset references.");
+    }
+
+    /**
+     * Test if given dataset is a CF coverage.
+     * @param dataset
+     */
+    private static boolean isCoverage(Dataset dataset, Group parent) {
+        if (dataset.getDataspace().getDimensionSizes().length > 1) {
+            try {
+                final List<Dataset> dimensions = searchForDimensions(dataset, parent);
+            } catch (DataStoreException ex) {
+                return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public DataStore getOriginator() {
+        return store;
+    }
+
+    @Override
+    public Path[] getComponentFiles() throws DataStoreException {
+        return store.getComponentFiles();
     }
 }
