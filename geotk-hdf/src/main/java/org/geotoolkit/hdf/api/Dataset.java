@@ -35,7 +35,6 @@ import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import javax.measure.Unit;
 import javax.measure.format.MeasurementParseException;
-import org.apache.sis.coverage.grid.DisjointExtentException;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.internal.storage.io.ChannelDataInput;
 import org.apache.sis.measure.Units;
@@ -409,6 +408,7 @@ public final class Dataset extends AbstractResource implements Node {
                 }
                 final Object results = java.lang.reflect.Array.newInstance(datatype.getValueClass(), dimensions);
 
+                // TODO: chunks matching query should be retrieved using an index, instead of using a full-scan strategy.
                 for (BTreeV1Chunk chunk : chunks) {
                     appendChunkDatas(results, () -> {
                         channel.seek(chunk.address);
@@ -443,13 +443,12 @@ public final class Dataset extends AbstractResource implements Node {
             GridExtent chunkExtent, GridExtent queryExtent, int ... compoundindexes) throws IOException {
 
 
-        final GridExtent intersection;
-        try {
-            intersection = chunkExtent.intersect(queryExtent);
-        } catch (DisjointExtentException e) {
+        final GridExtent intersection = safeIntersection(chunkExtent, queryExtent);
+        if (intersection == null) {
             HDF5Provider.LOGGER.log(Level.FINER, () -> String.format("Chunk extent does not intersect queried one:%nChunk: %s%nQueried: %s%n", chunkExtent, queryExtent));
             return;
         }
+
         final long[] chunkTranslate = chunkExtent.getLow().getCoordinateValues();
 
         final long[] intersectionlow = intersection.getLow().getCoordinateValues();
@@ -595,5 +594,23 @@ public final class Dataset extends AbstractResource implements Node {
                 swap(values, i, j++);
             }
         }
+    }
+
+    /**
+     * @return {@code null} if extents do <em>not</em> intersect. Otherwise, the result of their intersection.
+     */
+    private static GridExtent safeIntersection(GridExtent first, GridExtent second) {
+        var dim = first.getDimension();
+        assert dim == second.getDimension();
+        final long[] newLow = new long[dim];
+        final long[] newHigh = new long[dim];
+        for (int i = 0; i < dim ; i++) {
+            var low = Math.max(first.getLow(i), second.getLow(i));
+            var high = Math.min(first.getHigh(i), second.getHigh(i));
+            if (high < low) return null;
+            newLow[i] = low;
+            newHigh[i] = high;
+        }
+        return new GridExtent(null, newLow, newHigh, true);
     }
 }
