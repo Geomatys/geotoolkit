@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.storage.feature;
 
-import org.geotoolkit.storage.event.FeatureStoreContentEvent;
-import org.geotoolkit.storage.event.FeatureStoreManagementEvent;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Optional;
@@ -41,11 +39,13 @@ import org.apache.sis.storage.WritableFeatureSet;
 import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.storage.feature.query.Query;
-import org.geotoolkit.storage.feature.query.QueryUtilities;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.storage.AbstractResource;
+import org.geotoolkit.storage.event.FeatureStoreContentEvent;
+import org.geotoolkit.storage.event.FeatureStoreManagementEvent;
 import org.geotoolkit.storage.event.StorageListener;
+import org.geotoolkit.storage.feature.query.Query;
+import org.geotoolkit.storage.feature.query.QueryUtilities;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;

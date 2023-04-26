@@ -26,6 +26,7 @@ import java.awt.geom.Area;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.BiFunction;
@@ -53,6 +54,8 @@ import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.storage.multires.AbstractTileGenerator;
 import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.simplify.DouglasPeuckerSimplifier;
 import org.opengis.feature.Feature;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
@@ -197,8 +200,10 @@ public final class FeatureSetToCoverageTileGenerator extends AbstractTileGenerat
             In this cas we can aggregate all geometries as a single one before painting.
             This approach is more efficient and avoid aliasing problem on geometry shared edges.
             */
-            final Area shape = new Area();
+            Geometry paintShape = JTS.fromAWT(new GeometryFactory(), paintArea, 1.0);
+            Geometry geometry = null;
             try (Stream<Feature> stream = subset.features(false)) {
+                final List<Geometry> all = new ArrayList<>();
                 final Iterator<Feature> iterator = stream.iterator();
                 while (iterator.hasNext()) {
                     final Feature feature = iterator.next();
@@ -215,20 +220,28 @@ public final class FeatureSetToCoverageTileGenerator extends AbstractTileGenerat
                         } catch (TransformException | FactoryException ex) {
                             throw new DataStoreException(ex);
                         }
-                        Area s = new Area(JTS.asShape(g));
-                        s.intersect(paintArea);
-                        shape.add(s);
+
+                        g = paintShape.intersection(g);
+                        g = DouglasPeuckerSimplifier.simplify(g, 0.5);
+                        if (g.isEmpty()) continue;
+
+                        all.add(g);
                     }
                 }
+                if (!all.isEmpty()) {
+                    geometry = all.get(0).getFactory().createGeometryCollection(GeometryFactory.toGeometryArray(all));
+                    geometry = geometry.buffer(0);
+                }
             }
-
-            //fill the mask
-            final Graphics2D graphics = mask.createGraphics();
-            graphics.setColor(Color.WHITE);
-            graphics.setStroke(new BasicStroke(1));
-            graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, antiAliasing ? RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);
-            graphics.fill(shape);
-            graphics.dispose();
+            if (geometry != null) {
+                //fill the mask
+                final Graphics2D graphics = mask.createGraphics();
+                graphics.setColor(Color.WHITE);
+                graphics.setStroke(new BasicStroke(1));
+                graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, antiAliasing ? RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);
+                graphics.fill(JTS.asShape(geometry));
+                graphics.dispose();
+            }
 
             result = mask;
         } else {
