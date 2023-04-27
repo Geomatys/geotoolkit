@@ -154,8 +154,8 @@ public class FeatureSetToCoverageTileGeneratorTest {
         final var image = coverage.render(null).getData();
 
         //feature 2 overlaps (pixel rounding...)
-        final Rectangle inFeature1 = new Rectangle(180, 80, 9, 10);
-        final Rectangle inFeature2 = new Rectangle(189, 80, 11, 10);
+        final Rectangle inFeature1 = new Rectangle(180, 80, 10, 10);
+        final Rectangle inFeature2 = new Rectangle(190, 80, 10, 10);
         for (int y=0;y<180;y++) {
             for (int x=0;x<360;x++) {
                 final double s = image.getSampleDouble(x, y, 0);

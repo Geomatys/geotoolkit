@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.image;
 
-import com.sun.media.jai.util.ImageUtil;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -43,6 +42,7 @@ import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.PlanarImage;
 import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.internal.coverage.j2d.ColorModelFactory;
+import org.apache.sis.internal.coverage.j2d.FillValues;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Static;
 import org.geotoolkit.image.internal.ImageUtilities;
@@ -340,13 +340,17 @@ public class BufferedImages extends Static {
 
         for (int y = minTileY, yn = minTileY + numYTiles; y < yn; y++) {
             for (int x = minTileX, xn = minTileX + numXTiles; x < xn; x++) {
-                setAll(img.getWritableTile(x, y), pixel);
+                WritableRaster raster = img.getWritableTile(x, y);
+                setAll(raster, pixel);
+                img.releaseWritableTile(x, y);
             }
         }
     }
 
     public static void setAll(WritableRaster raster, double[] pixel) {
-        ImageUtil.fillBackground(raster, raster.getBounds(), pixel);
+        final Number[] values = new Number[pixel.length];
+        for (int i = 0; i < values.length; i++) values[i] = pixel[i];
+        new FillValues(raster.getSampleModel(), values, true).fill(raster);
     }
 
     /**

@@ -108,7 +108,6 @@ public final class FeatureSetToCoverageTileGenerator extends AbstractTileGenerat
      * @param sampleDimensions not null, must contains at least one entry.
      */
     public void setSampleDimensions(List<SampleDimension> sampleDimensions) {
-        ArgumentChecks.ensureNonNull("sample dimensions", sampleDimensions);
         ArgumentChecks.ensureNonEmpty("sample dimensions", sampleDimensions);
         this.outputSampleDimensions = sampleDimensions;
     }
@@ -131,8 +130,8 @@ public final class FeatureSetToCoverageTileGenerator extends AbstractTileGenerat
     }
 
     /**
-     * Set coverage image template with it's SampleModel and ColorModel.
-     * It is not guarantee that both or any of the moels will be preserved, it is a best effort to do so.
+     * Set coverage image template with its SampleModel and ColorModel.
+     * It is not guarantee that both or any of the models will be preserved, it is a best effort to do so.
      * If the template is null then default models will be used.
      * @param template can be null.
      */
@@ -263,67 +262,65 @@ public final class FeatureSetToCoverageTileGenerator extends AbstractTileGenerat
 
             double[] noData = featureToSamples.apply(null, 0);
             BufferedImages.setAll(image, noData);
-            final WritablePixelIterator writer = WritablePixelIterator.create(image);
-
             final Graphics2D graphics = mask.createGraphics();
             graphics.setColor(Color.WHITE);
             graphics.setStroke(new BasicStroke(1));
             graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, antiAliasing ? RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);
 
-            try (Stream<Feature> stream = subset.features(false)) {
-                final Iterator<Feature> iterator = stream.iterator();
-                while (iterator.hasNext()) {
-                    final Feature feature = iterator.next();
-                    Object geom = feature.getPropertyValue(AttributeConvention.GEOMETRY);
-                    if (geom instanceof Geometry g) {
-                        try {
-                            final CoordinateReferenceSystem cdtcrs = Geometries.wrap(geom).get().getCoordinateReferenceSystem();
-                            if (geomcrs != cdtcrs) {
-                                geomcrs = cdtcrs;
-                                geomCrsToGridCrs = CRS.findOperation(geomcrs, targetCrs, null).getMathTransform();
-                                geomCrsToDisplay = MathTransforms.concatenate(geomCrsToGridCrs, crsToGrid);
+            try (final WritablePixelIterator writer = WritablePixelIterator.create(image)) {
+
+                try (Stream<Feature> stream = subset.features(false)) {
+                    final Iterator<Feature> iterator = stream.iterator();
+                    while (iterator.hasNext()) {
+                        final Feature feature = iterator.next();
+                        Object geom = feature.getPropertyValue(AttributeConvention.GEOMETRY);
+                        if (geom instanceof Geometry g) {
+                            try {
+                                final CoordinateReferenceSystem cdtcrs = Geometries.wrap(geom).get().getCoordinateReferenceSystem();
+                                if (geomcrs != cdtcrs) {
+                                    geomcrs = cdtcrs;
+                                    geomCrsToGridCrs = CRS.findOperation(geomcrs, targetCrs, null).getMathTransform();
+                                    geomCrsToDisplay = MathTransforms.concatenate(geomCrsToGridCrs, crsToGrid);
+                                }
+                                g = JTS.transform(g, geomCrsToDisplay);
+                            } catch (TransformException | FactoryException ex) {
+                                throw new DataStoreException(ex);
                             }
-                            g = JTS.transform(g, geomCrsToDisplay);
-                        } catch (TransformException | FactoryException ex) {
-                            throw new DataStoreException(ex);
-                        }
-                        Area s = new Area(JTS.asShape(g));
-                        s.intersect(paintArea);
+                            Area s = new Area(JTS.asShape(g));
+                            s.intersect(paintArea);
 
-                        graphics.fill(s);
+                            graphics.fill(s);
 
-                        //fill result image
-                        Rectangle area = s.getBounds();
-                        if (antiAliasing) {
-                            area.x -=1;
-                            area.y -=1;
-                            area.width +=2;
-                            area.height +=2;
-                        }
-                        area = area.intersection(new Rectangle(0, 0, width, height));
-                        if (!area.isEmpty()) {
-                            PixelIterator ite = new PixelIterator.Builder().setRegionOfInterest(area).create(mask);
-                            int lastPixel = -1;
-                            double[] samples = null;
-                            while (ite.next()) {
-                                int pixel = ite.getSample(0);
-                                if (pixel == lastPixel) {
-                                    //copy previous value
+                            //fill result image
+                            Rectangle area = s.getBounds();
+                            if (antiAliasing) {
+                                area.x -=1;
+                                area.y -=1;
+                                area.width +=2;
+                                area.height +=2;
+                            }
+                            area = area.intersection(new Rectangle(0, 0, width, height));
+                            if (!area.isEmpty()) {
+                                PixelIterator ite = new PixelIterator.Builder().setRegionOfInterest(area).create(mask);
+                                int lastPixel = -1;
+                                double[] samples = null;
+                                while (ite.next()) {
+                                    final int pixel = ite.getSample(0);
+                                    if (pixel <= 0) continue;
+
                                     final Point position = ite.getPosition();
-                                    writer.moveTo(position.x, position.y);
-                                    writer.setPixel(samples);
-                                } else if (pixel > 0) {
-                                    final Point position = ite.getPosition();
-                                    lastPixel = pixel;
-                                    samples = featureToSamples.apply(feature, pixel);
+                                    if (pixel != lastPixel) {
+                                        lastPixel = pixel;
+                                        samples = featureToSamples.apply(feature, pixel);
+                                    }
                                     writer.moveTo(position.x, position.y);
                                     writer.setPixel(samples);
                                 }
                             }
-                        }
 
-                        //reset mask
-                        BufferedImages.setAll(mask, new double[]{0});
+                            //reset mask
+                            BufferedImages.setAll(mask, new double[]{0});
+                        }
                     }
                 }
             }
