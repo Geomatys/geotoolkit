@@ -36,10 +36,9 @@ import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.filter.DefaultFilterFactory;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
-import org.apache.sis.internal.feature.AttributeConvention;
-import org.apache.sis.internal.feature.Geometries;
 import org.apache.sis.internal.feature.jts.JTS;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
@@ -50,6 +49,7 @@ import org.apache.sis.storage.tiling.Tile;
 import org.apache.sis.storage.tiling.WritableTileMatrix;
 import org.apache.sis.storage.tiling.WritableTileMatrixSet;
 import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.storage.multires.AbstractTileGenerator;
@@ -57,6 +57,8 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.simplify.DouglasPeuckerSimplifier;
 import org.opengis.feature.Feature;
+import org.opengis.feature.PropertyType;
+import org.opengis.filter.FilterFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
@@ -167,6 +169,7 @@ public final class FeatureSetToCoverageTileGenerator extends AbstractTileGenerat
             throw new IllegalArgumentException("Only 2D GridGeometry supported");
         }
 
+        //TODO : we should preserve the original gridgeometry translation
         gridGeometry = CoverageUtilities.forceLowerToZero(gridGeometry);
 
         final GridExtent extent = gridGeometry.getExtent();
@@ -174,9 +177,16 @@ public final class FeatureSetToCoverageTileGenerator extends AbstractTileGenerat
         final int height = Math.toIntExact(extent.getSize(1));
         final Area paintArea = new Area(new Rectangle(0, 0, width, height));
 
+        final PropertyType geomProperty = FeatureExt.getDefaultGeometry(featureSet.getType());
+        // IMPORTANT: Get string representation of the geometry name outside of loop.
+        // The reason is that AbstractName.toString() is synchronized, therefore it could hurt performance a lot.
+        final String geometryName = geomProperty.getName().toString();
+        final CoordinateReferenceSystem defaultGeomCrs = FeatureExt.getCRS(geomProperty);
+        final FilterFactory ff = DefaultFilterFactory.forFeatures();
+
         //reduce feature set to wanted envelope
         final FeatureQuery query = new FeatureQuery();
-        query.setSelection(gridGeometry.getEnvelope());
+        query.setSelection(ff.bbox(ff.property(geometryName), gridGeometry.getEnvelope()));
         final FeatureSet subset = featureSet.subset(query);
         final CoordinateReferenceSystem targetCrs = gridGeometry.getCoordinateReferenceSystem();
 
@@ -190,10 +200,34 @@ public final class FeatureSetToCoverageTileGenerator extends AbstractTileGenerat
             throw new DataStoreException(ex);
         }
 
-        CoordinateReferenceSystem geomcrs = null;
-        MathTransform geomCrsToGridCrs = null;
-        MathTransform geomCrsToDisplay = null;
         RenderedImage result;
+
+        interface CheckedFunction<T, R> {R apply(T t) throws DataStoreException;}
+        final CheckedFunction<Feature, Geometry> toGridGeometry = new CheckedFunction<Feature, Geometry>() {
+            CoordinateReferenceSystem geomcrs = null;
+            MathTransform geomCrsToGridCrs = null;
+            MathTransform geomCrsToDisplay = null;
+            @Override
+            public Geometry apply(Feature feature) throws DataStoreException {
+                Object geom = feature.getPropertyValue(geometryName);
+                if (geom instanceof Geometry g) {
+                    try {
+                        CoordinateReferenceSystem cdtcrs = JTS.getCoordinateReferenceSystem(g);
+                        if (cdtcrs == null) cdtcrs = defaultGeomCrs;
+                        if (geomcrs != cdtcrs) {
+                            geomcrs = cdtcrs;
+                            geomCrsToGridCrs = CRS.findOperation(geomcrs, targetCrs, null).getMathTransform();
+                            geomCrsToDisplay = MathTransforms.concatenate(geomCrsToGridCrs, crsToGrid);
+                        }
+                        g = JTS.transform(g, geomCrsToDisplay);
+                    } catch (TransformException | FactoryException ex) {
+                        throw new DataStoreException(ex);
+                    }
+                    return g;
+                }
+                return null;
+            }
+        };
         if (featureToSamples == null) {
             /*
             In this cas we can aggregate all geometries as a single one before painting.
@@ -206,24 +240,11 @@ public final class FeatureSetToCoverageTileGenerator extends AbstractTileGenerat
                 final Iterator<Feature> iterator = stream.iterator();
                 while (iterator.hasNext()) {
                     final Feature feature = iterator.next();
-                    Object geom = feature.getPropertyValue(AttributeConvention.GEOMETRY);
-                    if (geom instanceof Geometry g) {
-                        try {
-                            final CoordinateReferenceSystem cdtcrs = Geometries.wrap(geom).get().getCoordinateReferenceSystem();
-                            if (geomcrs != cdtcrs) {
-                                geomcrs = cdtcrs;
-                                geomCrsToGridCrs = CRS.findOperation(geomcrs, targetCrs, null).getMathTransform();
-                                geomCrsToDisplay = MathTransforms.concatenate(geomCrsToGridCrs, crsToGrid);
-                            }
-                            g = JTS.transform(g, geomCrsToDisplay);
-                        } catch (TransformException | FactoryException ex) {
-                            throw new DataStoreException(ex);
-                        }
-
+                    Geometry g = toGridGeometry.apply(feature);
+                    if (g != null) {
                         g = paintShape.intersection(g);
                         g = DouglasPeuckerSimplifier.simplify(g, 0.5);
                         if (g.isEmpty()) continue;
-
                         all.add(g);
                     }
                 }
@@ -273,19 +294,8 @@ public final class FeatureSetToCoverageTileGenerator extends AbstractTileGenerat
                     final Iterator<Feature> iterator = stream.iterator();
                     while (iterator.hasNext()) {
                         final Feature feature = iterator.next();
-                        Object geom = feature.getPropertyValue(AttributeConvention.GEOMETRY);
-                        if (geom instanceof Geometry g) {
-                            try {
-                                final CoordinateReferenceSystem cdtcrs = Geometries.wrap(geom).get().getCoordinateReferenceSystem();
-                                if (geomcrs != cdtcrs) {
-                                    geomcrs = cdtcrs;
-                                    geomCrsToGridCrs = CRS.findOperation(geomcrs, targetCrs, null).getMathTransform();
-                                    geomCrsToDisplay = MathTransforms.concatenate(geomCrsToGridCrs, crsToGrid);
-                                }
-                                g = JTS.transform(g, geomCrsToDisplay);
-                            } catch (TransformException | FactoryException ex) {
-                                throw new DataStoreException(ex);
-                            }
+                        Geometry g = toGridGeometry.apply(feature);
+                        if (g != null) {
                             Area s = new Area(JTS.asShape(g));
                             s.intersect(paintArea);
 
