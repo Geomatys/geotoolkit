@@ -28,6 +28,7 @@ import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.filter.FilterUtilities;
+import org.opengis.feature.Feature;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.SortBy;
@@ -46,7 +47,7 @@ public class QueryUtilities {
 
     public static boolean queryAll(final Query query){
         return     query.retrieveAllProperties()
-                && (query.getSelection() == null || query.getSelection() == Filter.include())
+                && (query.getSelection() == null || query.getSelection() == Filter.<Feature>include())
                 && !query.getLimit().isPresent()
                 && query.getSortBy() == null
                 && query.getOffset() == 0;
