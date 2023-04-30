@@ -27,23 +27,23 @@ import javax.measure.Unit;
 import javax.measure.quantity.Length;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.Envelopes;
-import org.apache.sis.storage.AbstractFeatureSet;
 import org.apache.sis.measure.Quantities;
 import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CRS;
+import org.apache.sis.storage.AbstractFeatureSet;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureQuery;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.NoSuchDataException;
 import org.apache.sis.storage.Resource;
-import org.apache.sis.util.collection.BackingStoreException;
-import org.geotoolkit.filter.visitor.ExtractBoundsFilterVisitor;
-import org.geotoolkit.geometry.jts.JTSEnvelope2D;
-import org.geotoolkit.referencing.ReferencingUtilities;
 import org.apache.sis.storage.tiling.Tile;
 import org.apache.sis.storage.tiling.TileMatrix;
 import org.apache.sis.storage.tiling.TileMatrixSet;
 import org.apache.sis.storage.tiling.TiledResource;
+import org.apache.sis.util.collection.BackingStoreException;
+import org.geotoolkit.filter.visitor.ExtractBoundsFilterVisitor;
+import org.geotoolkit.geometry.jts.JTSEnvelope2D;
+import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.storage.multires.TileMatrices;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -167,15 +167,17 @@ public class TileMatrixSetFeatureReader {
     private static class TileIterator implements Iterator<Feature> {
 
         private final TileMatrix mosaic;
-        private final Iterator<long[]> pointIte;
+        private final Stream<Tile> stream;
+        private final Iterator<Tile> streamIte;
         private Stream<Feature> subStream;
         private Iterator<Feature> subIte;
         private Feature next;
 
 
-        public TileIterator(TileMatrix tileMatrix, GridExtent extent) {
+        public TileIterator(TileMatrix tileMatrix, GridExtent extent) throws DataStoreException {
             this.mosaic = tileMatrix;
-            pointIte = TileMatrices.pointStream(extent).iterator();
+            stream = tileMatrix.getTiles(extent, false);
+            streamIte = stream.iterator();
         }
 
         @Override
@@ -210,25 +212,22 @@ public class TileMatrixSetFeatureReader {
             }
 
             try {
-                while (pointIte.hasNext()) {
-                    final long[] pt = pointIte.next();
-                    final Tile tile = mosaic.getTile(pt).orElse(null);
-                    if (tile != null) {
-                        Resource resource = tile.getResource();
-                        if (resource instanceof FeatureSet) {
-                            subStream = ((FeatureSet) resource).features(false);
-                            subIte = subStream.iterator();
-                        }
+                while (streamIte.hasNext()) {
+                    final Tile tile = streamIte.next();
+                    Resource resource = tile.getResource();
+                    if (resource instanceof FeatureSet) {
+                        subStream = ((FeatureSet) resource).features(false);
+                        subIte = subStream.iterator();
+                    }
 
-                        if (subStream != null) {
-                            if (subIte.hasNext()) {
-                                next = subIte.next();
-                                return;
-                            } else {
-                                subStream.close();
-                                subIte = null;
-                                subStream = null;
-                            }
+                    if (subStream != null) {
+                        if (subIte.hasNext()) {
+                            next = subIte.next();
+                            return;
+                        } else {
+                            subStream.close();
+                            subIte = null;
+                            subStream = null;
                         }
                     }
                 }
@@ -238,6 +237,7 @@ public class TileMatrixSetFeatureReader {
         }
 
         public void close() {
+            stream.close();
             if (subStream != null) {
                 subStream.close();
                 subIte = null;

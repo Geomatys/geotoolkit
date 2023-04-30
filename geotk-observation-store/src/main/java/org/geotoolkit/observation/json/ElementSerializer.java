@@ -56,7 +56,13 @@ public class ElementSerializer extends JsonSerializer<Element> {
                         RecordType rt = rec.getRecordType();
                         Object recValue = rec.getFields().get(rt.getMembers().iterator().next());
                         writer.writeFieldName("value");
-                        writer.writeString(recValue.toString());
+                        if (recValue instanceof Boolean bVal) {
+                            writer.writeBoolean(bVal);
+                        } else if (recValue instanceof Number num) {
+                            writer.writeNumber(num.toString());
+                        } else if (recValue != null) {
+                            writer.writeString(recValue.toString());
+                        }
                     }
                 }
             }

@@ -49,27 +49,37 @@ public class OMFeatureTypes {
     public static final String XSI_NAMESPACE = "http://www.w3.org/2001/XMLSchema-instance";
 
     public static FeatureType buildSensorFeatureType() {
-         return buildSensorFeatureType(SENSOR_TN);
+        return buildSensorFeatureType(SENSOR_TN, null);
     }
+
     public static FeatureType buildSensorFeatureType(String name) {
-        return buildSensorFeatureType(NamesExt.create(name));
+        return buildSensorFeatureType(NamesExt.create(name), null);
     }
 
     public static FeatureType buildSensorFeatureType(GenericName name) {
+        return buildSamplingFeatureFeatureType(name, null);
+    }
+
+    public static FeatureType buildSensorFeatureType(GenericName name, CoordinateReferenceSystem crs) {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(name);
         ftb.addAttribute(String.class).setName(SENSOR_ATT_ID).addRole(AttributeRole.IDENTIFIER_COMPONENT);
-        ftb.addAttribute(Geometry.class).setName(SENSOR_ATT_POSITION).setCRS(CommonCRS.defaultGeographic()).addRole(AttributeRole.DEFAULT_GEOMETRY);
+        if (crs != null) {
+            ftb.addAttribute(Geometry.class).setName(SENSOR_ATT_POSITION).setCRS(crs).addRole(AttributeRole.DEFAULT_GEOMETRY);
+        } else {
+            ftb.addAttribute(Geometry.class).setName(SENSOR_ATT_POSITION).addRole(AttributeRole.DEFAULT_GEOMETRY);
+        }
         return ftb.build();
     }
 
     public static FeatureType buildSamplingFeatureFeatureType() {
-        return buildSamplingFeatureFeatureType(SAMPLINGPOINT_TN);
+        return buildSamplingFeatureFeatureType(SAMPLINGPOINT_TN, null);
     }
 
     public static FeatureType buildSamplingFeatureFeatureType(String name) {
-        return buildSamplingFeatureFeatureType(NamesExt.create(name));
+        return buildSamplingFeatureFeatureType(NamesExt.create(name), null);
     }
+
     public static FeatureType buildSamplingFeatureFeatureType(final GenericName name) {
         return buildSamplingFeatureFeatureType(name, null);
     }

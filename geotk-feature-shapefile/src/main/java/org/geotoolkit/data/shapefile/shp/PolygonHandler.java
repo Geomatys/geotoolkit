@@ -23,17 +23,17 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.geometry.jts.JTS;
-import org.locationtech.jts.algorithm.CGAlgorithms;
+import static org.locationtech.jts.algorithm.Orientation.COUNTERCLOCKWISE;
+import static org.locationtech.jts.algorithm.Orientation.index;
+import org.locationtech.jts.algorithm.RayCrossingCounter;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.CoordinateSequence;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.LinearRing;
+import org.locationtech.jts.geom.Location;
 import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Polygon;
-
-import static org.locationtech.jts.algorithm.Orientation.COUNTERCLOCKWISE;
-import static org.locationtech.jts.algorithm.Orientation.index;
 
 
 /**
@@ -61,11 +61,11 @@ public class PolygonHandler extends AbstractShapeHandler {
     }
 
     // returns true if testPoint is a point in the pointList list.
-    protected boolean pointInList(final Coordinate testPoint, final Coordinate[] pointList) {
+    protected boolean pointInList(final Coordinate testPoint, final CoordinateSequence pointList) {
         Coordinate p;
 
-        for (int t = pointList.length - 1; t >= 0; t--) {
-            p = pointList[t];
+        for (int t = pointList.size() - 1; t >= 0; t--) {
+            p = pointList.getCoordinate(t);
 
             if ((testPoint.x == p.x)
               && (testPoint.y == p.y)
@@ -315,12 +315,13 @@ public class PolygonHandler extends AbstractShapeHandler {
                 }
 
                 boolean isContained = false;
-                final Coordinate[] coordList = tryRing.getCoordinates();
 
-                if (tryEnv.contains(testEnv)
-                        && (CGAlgorithms.isPointInRing(testPt, coordList) || (pointInList(
-                                testPt, coordList)))) {
-                    isContained = true;
+                if (tryEnv.contains(testEnv)) {
+                    CoordinateSequence cs = tryRing.getCoordinateSequence();
+                    if ( (RayCrossingCounter.locatePointInRing(testPt, cs) != Location.EXTERIOR)
+                      || (pointInList(testPt, cs))) {
+                        isContained = true;
+                    }
                 }
 
                 // check if this new containing ring is smaller than the current

@@ -93,7 +93,7 @@ public class JsonBindingTest {
 
         Phenomenon phen = new Phenomenon("phen-1", "urn:phen:1", "urn:phen:1", "phenomenon number 1", Collections.EMPTY_MAP);
 
-        Element quality = OMUtils.createQualityElement2("qFlag", null, "ok");
+        Element quality = OMUtils.createQualityElement("qFlag", null, FieldType.TEXT, "ok");
         List<Element> qualities = Arrays.asList(quality);
 
         Field field = new Field(1, FieldType.QUANTITY, "field_1", "field 1", "first field", "m");
@@ -151,7 +151,7 @@ public class JsonBindingTest {
 
         Phenomenon phen = new Phenomenon("phen-1", "urn:phen:1", "urn:phen:1", "phenomenon number 1", Collections.EMPTY_MAP);
 
-        Element quality = OMUtils.createQualityElement2("qFlag", null, "ok");
+        Element quality = OMUtils.createQualityElement("qFlag", null, FieldType.QUANTITY, 2.3);
         List<Element> qualities = Arrays.asList(quality);
 
         Field field1 = new Field(1, FieldType.TIME,     "field_1", "field 1", "first field", null);
