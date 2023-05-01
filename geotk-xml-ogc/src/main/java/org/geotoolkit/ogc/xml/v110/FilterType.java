@@ -347,6 +347,11 @@ public class FilterType implements Filter, XMLFilter {
         return false;
     }
 
+    @Override
+    public Class getResourceClass() {
+        return null;
+    }
+
     public static JAXBElement<? extends ComparisonOpsType> createComparisonOps(final ComparisonOpsType operator) {
         if (operator instanceof PropertyIsLessThanOrEqualToType) {
             return FACTORY.createPropertyIsLessThanOrEqualTo((PropertyIsLessThanOrEqualToType) operator);

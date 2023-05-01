@@ -51,6 +51,11 @@ public abstract class TemporalOpsType implements Filter, TemporalOperator {
     protected static final Logger LOGGER = Logger.getLogger("org.geotoolkit.ogc.xml.v200");
 
     @Override
+    public Class getResourceClass() {
+        return null;
+    }
+
+    @Override
     public boolean test(final Object object) {
         throw new UnsupportedOperationException("Not supported yet.");
     }

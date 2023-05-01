@@ -238,6 +238,11 @@ public class DefaultJenks extends AbstractExpression implements Jenks {
         }
 
         @Override
+        public Class<Object> getResourceClass() {
+            return null;        // Actually unspecified.
+        }
+
+        @Override
         public List<Expression<Object,?>> getParameters() {
             return Collections.emptyList();
         }

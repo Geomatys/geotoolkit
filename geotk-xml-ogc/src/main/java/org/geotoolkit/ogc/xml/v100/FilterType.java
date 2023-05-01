@@ -307,6 +307,11 @@ public class FilterType implements Filter, XMLFilter {
     }
 
     @Override
+    public Class getResourceClass() {
+        return null;
+    }
+
+    @Override
     public List getExpressions() {
         if (logicOps != null) return logicOps.getValue().getExpressions();
         return null;

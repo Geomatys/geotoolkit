@@ -27,6 +27,11 @@ public abstract class AbstractExpression implements Expression {
     }
 
     @Override
+    public Class getResourceClass() {
+        return null;
+    }
+
+    @Override
     public List<Expression> getParameters() {
         throw new UnsupportedOperationException("Not supported yet.");
     }

@@ -43,6 +43,11 @@ import org.geotoolkit.ogc.xml.SpatialOperator;
 public abstract class SpatialOpsType implements SpatialOperator {
 
     @Override
+    public Class getResourceClass() {
+        return null;
+    }
+
+    @Override
     public boolean test(Object o) {
         throw new UnsupportedOperationException("Not supported yet.");
     }

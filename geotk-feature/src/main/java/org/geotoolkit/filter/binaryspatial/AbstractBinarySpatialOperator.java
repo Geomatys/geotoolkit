@@ -91,6 +91,10 @@ public abstract class AbstractBinarySpatialOperator<E extends Expression,F exten
         return right;
     }
 
+    public Class<Object> getResourceClass() {
+        return null;        // Actually undetermined.
+    }
+
     protected static Unit toUnit(final String str){
         return Units.valueOf(str);
     }

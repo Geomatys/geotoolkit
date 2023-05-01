@@ -404,6 +404,11 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
     }
 
     @Override
+    public Class getResourceClass() {
+        return null;        // Undetermined class.
+    }
+
+    @Override
     public List<Expression> getParameters() {
         throw new UnsupportedOperationException("Not supported yet.");
     }

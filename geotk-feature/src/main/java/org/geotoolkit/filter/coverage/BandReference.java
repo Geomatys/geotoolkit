@@ -76,6 +76,11 @@ final class BandReference implements ValueReference<GeometryValuePair,GeometryVa
         return WILDCARD;
     }
 
+    @Override
+    public Class<GeometryValuePair> getResourceClass() {
+        return GeometryValuePair.class;
+    }
+
     /**
      * Returns the given cell geometry-value pair with only the bands selected by this reference.
      */

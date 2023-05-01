@@ -44,6 +44,11 @@ import org.opengis.filter.Filter;
 public abstract class TemporalOpsType implements Filter, TemporalOperator {
 
     @Override
+    public Class getResourceClass() {
+        return null;
+    }
+
+    @Override
     public boolean test(Object o) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
