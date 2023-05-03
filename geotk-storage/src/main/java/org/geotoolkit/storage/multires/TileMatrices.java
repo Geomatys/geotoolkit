@@ -19,7 +19,6 @@ package org.geotoolkit.storage.multires;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
@@ -478,7 +477,7 @@ public final class TileMatrices extends Static {
     }
 
     /**
-     * Create Google Pseudo-Mercator (EPSG:3857) World pyramid.
+     * Create Google Pseudo-Mercator (EPSG:3857) World tile matrix set.
      *
      * @param maxDepth
      * @return
@@ -502,7 +501,7 @@ public final class TileMatrices extends Static {
     }
 
     /**
-     * Create Mercator (EPSG:33950 )World pyramid.
+     * Create Mercator (EPSG:3395) World tile matrix set.
      *
      * @param maxDepth
      * @return
