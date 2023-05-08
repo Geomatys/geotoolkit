@@ -34,7 +34,7 @@ import org.junit.*;
 
 import static org.junit.Assert.*;
 import static org.apache.sis.referencing.IdentifiedObjects.getIdentifier;
-import static org.geotoolkit.referencing.Assert.assertEqualsIgnoreMetadata;
+import static org.geotoolkit.test.Assert.assertEqualsIgnoreMetadata;
 
 
 /**

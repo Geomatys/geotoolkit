@@ -17,21 +17,18 @@
  */
 package org.geotoolkit.test;
 
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
-import java.awt.geom.RectangularShape;
 import java.awt.image.RenderedImage;
-import javax.measure.Unit;
 import javax.media.jai.iterator.RectIter;
 import javax.media.jai.iterator.RectIterFactory;
-import static org.geotoolkit.test.image.ImageTestBase.SAMPLE_TOLERANCE;
-import org.opengis.coverage.Coverage;
-import org.opengis.parameter.GeneralParameterValue;
-import org.opengis.parameter.ParameterDescriptor;
-import org.opengis.parameter.ParameterValue;
-import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.Matrix;
+import org.apache.sis.referencing.operation.transform.LinearTransform;
+import org.apache.sis.util.ComparisonMode;
+import org.apache.sis.util.Utilities;
+
+import static java.lang.StrictMath.min;
 import static org.junit.Assert.*;
-import static org.opengis.test.Assert.assertBetween;
+import static org.geotoolkit.test.image.ImageTestBase.SAMPLE_TOLERANCE;
 
 
 /**
@@ -41,74 +38,65 @@ import static org.opengis.test.Assert.assertBetween;
  */
 public final class Assert {
     /**
+     * Small tolerance for comparisons of floating point values.
+     */
+    private static final double EPS = 1E-7;
+
+    /**
      * Do not allow instantiation.
      */
     private Assert() {
     }
 
     /**
-     * Asserts that the given parameter values are equal to the expected ones within a
-     * positive delta. Only the elements in the given descriptor are compared, and the
-     * comparisons are done in the units declared in the descriptor.
+     * Asserts that the two given objects are equal ignoring metadata.
+     * See {@link ComparisonMode#IGNORE_METADATA} for more information.
      *
-     * @param expected  The expected parameter values.
-     * @param actual    The actual parameter values.
-     * @param tolerance The tolerance threshold for comparison of numerical values.
-     *
-     * @since 3.19
+     * @param expected  The expected object.
+     * @param actual    The actual object.
+     * @param strictlyDifferent {@code true} if the objects should not be strictly equal.
      */
-    public static void assertParameterEquals(final ParameterValueGroup expected,
-            final ParameterValueGroup actual, final double tolerance)
-    {
-        for (final GeneralParameterValue candidate : expected.values()) {
-            if (!(candidate instanceof ParameterValue<?>)) {
-                throw new UnsupportedOperationException("Not yet implemented.");
-            }
-            final ParameterValue<?> value = (ParameterValue<?>) candidate;
-            final ParameterDescriptor<?> descriptor = value.getDescriptor();
-            final String   name       = descriptor.getName().getCode();
-            final Unit<?>  unit       = descriptor.getUnit();
-            final Class<?> valueClass = descriptor.getValueClass();
-            final ParameterValue<?> e = expected.parameter(name);
-            final ParameterValue<?> a = actual  .parameter(name);
-            if (unit != null) {
-                final double f = e.doubleValue(unit);
-                assertEquals(name, f, a.doubleValue(unit), tolerance);
-            } else if (valueClass == Float.class || valueClass == Double.class) {
-                final double f = e.doubleValue();
-                assertEquals(name, f, a.doubleValue(), tolerance);
-            } else {
-                assertEquals(name, e.getValue(), a.getValue());
-            }
+    public static void assertEqualsIgnoreMetadata(final Object expected, final Object actual, final boolean strictlyDifferent) {
+        assertTrue("Should be approximatively equals",    Utilities.deepEquals(expected, actual, ComparisonMode.DEBUG));
+        assertTrue("DEBUG inconsistent with APPROXIMATE", Utilities.deepEquals(expected, actual, ComparisonMode.APPROXIMATE));
+        assertTrue("Should be equals, ignoring metadata", Utilities.deepEquals(expected, actual, ComparisonMode.IGNORE_METADATA));
+        if (strictlyDifferent) {
+            assertFalse("Should not be strictly equals",  Utilities.deepEquals(expected, actual, ComparisonMode.STRICT));
         }
     }
 
     /**
-     * Compares two affine transforms for equality.
+     * Asserts that the given transform is represented by diagonal matrix where every elements
+     * on the diagonal have the given values. The matrix doesn't need to be square. The last
+     * row is handled especially if the {@code affine} argument is {@code true}.
      *
-     * @param expected The expected affine transform.
-     * @param actual   The actual affine transform.
-     */
-    public static void assertTransformEquals(final AffineTransform expected, final AffineTransform actual) {
-        assertEquals("scaleX",     expected.getScaleX(),     actual.getScaleX(),     SAMPLE_TOLERANCE);
-        assertEquals("scaleY",     expected.getScaleY(),     actual.getScaleY(),     SAMPLE_TOLERANCE);
-        assertEquals("shearX",     expected.getShearX(),     actual.getShearX(),     SAMPLE_TOLERANCE);
-        assertEquals("shearY",     expected.getShearY(),     actual.getShearY(),     SAMPLE_TOLERANCE);
-        assertEquals("translateX", expected.getTranslateX(), actual.getTranslateX(), SAMPLE_TOLERANCE);
-        assertEquals("translateY", expected.getTranslateY(), actual.getTranslateY(), SAMPLE_TOLERANCE);
-    }
-
-    /**
-     * Asserts that two images have the same origin and the same size.
+     * @param tr     The transform.
+     * @param affine If {@code true}, then the last row is expected to contains the value 1
+     *               in the last column, and all other columns set to 0.
+     * @param values The values which are expected on the diagonal. If this array length is
+     *               smaller than the diagonal length, then the last element in the array
+     *               is repeated for all remaining diagonal elements.
      *
-     * @param expected The image having the expected size.
-     * @param actual   The image to compare with the expected one.
+     * @since 3.07
      */
-    public static void assertBoundEquals(final RenderedImage expected, final RenderedImage actual) {
-        assertEquals("Min X",  expected.getMinX(),   actual.getMinX());
-        assertEquals("Min Y",  expected.getMinY(),   actual.getMinY());
-        assertEquals("Width",  expected.getWidth(),  actual.getWidth());
-        assertEquals("Height", expected.getHeight(), actual.getHeight());
+    public static void assertDiagonalMatrix(final MathTransform tr, final boolean affine, final double... values) {
+        assertTrue("The transform shall be linear.", tr instanceof LinearTransform);
+        final Matrix matrix = ((LinearTransform) tr).getMatrix();
+        final int numRows = matrix.getNumRow();
+        final int numCols = matrix.getNumCol();
+        for (int j=0; j<numRows; j++) {
+            for (int i=0; i<numCols; i++) {
+                final double expected;
+                if (affine && j == numRows-1) {
+                    expected = (i == numCols-1) ? 1 : 0;
+                } else if (i == j) {
+                    expected = values[min(values.length-1, i)];
+                } else {
+                    expected = 0;
+                }
+                assertEquals("matrix(" + j + ',' + i + ')', expected, matrix.getElement(j, i), EPS);
+            }
+        }
     }
 
     /**
@@ -147,100 +135,5 @@ public final class Assert {
             e.startPixels();
         } while (!e.nextLineDone());
         assertTrue(a.finishedLines());
-    }
-
-    /**
-     * Compares the rendered view of two coverages for equality.
-     *
-     * @param expected The coverage containing the expected pixel values.
-     * @param actual   The coverage containing the actual pixel values.
-     */
-    public static void assertRasterEquals(final Coverage expected, final Coverage actual) {
-        assertRasterEquals(expected.getRenderableImage(0,1).createDefaultRendering(),
-                             actual.getRenderableImage(0,1).createDefaultRendering());
-    }
-
-    /**
-     * Ensures that all sample values in every bands are either inside the given range,
-     * or {@link Double#NaN}.
-     *
-     * @param minimum The lower bound of the range, inclusive.
-     * @param maximum The upper bound of the range, inclusive.
-     * @param image   The image to test.
-     *
-     * @since 3.19
-     */
-    public static void assertSampleValuesInRange(final double minimum, final double maximum,
-            final RenderedImage image)
-    {
-        final RectIter it = RectIterFactory.create(image, null);
-        if (!it.finishedLines()) do {
-            if (!it.finishedPixels()) do {
-                if (!it.finishedBands()) do {
-                    final double value = it.getSampleDouble();
-                    assertBetween("Sample value", minimum, maximum, value);
-                } while (!it.nextBandDone());
-                it.startBands();
-            } while (!it.nextPixelDone());
-            it.startPixels();
-        } while (!it.nextLineDone());
-    }
-
-    /**
-     * Tests if the given {@code outer} shape contains the given {@code inner} rectangle.
-     * This method will also verify class consistency by invoking the {@code intersects}
-     * method, and by interchanging the arguments. This method can be used for testing
-     * the {@code outer} implementation - it should not be needed for standard implementations.
-     *
-     * @param outer The shape which is expected to contains the given rectangle.
-     * @param inner The rectangle which should be contained by the shape.
-     *
-     * @since 3.20
-     */
-    public static void assertContains(final RectangularShape outer, final Rectangle2D inner) {
-        assertTrue("outer.contains(inner)",   outer.contains  (inner));
-        assertTrue("outer.intersects(inner)", outer.intersects(inner));
-        if (outer instanceof Rectangle2D) {
-            assertTrue ("inner.intersects(outer)", inner.intersects((Rectangle2D) outer));
-            assertFalse("inner.contains(outer)",   inner.contains  ((Rectangle2D) outer));
-        }
-        assertTrue("outer.contains(centerX, centerY)",
-                outer.contains(inner.getCenterX(), inner.getCenterY()));
-    }
-
-    /**
-     * Tests if the given {@code r1} shape is disjoint with the given {@code r2} rectangle.
-     * This method will also verify class consistency by invoking the {@code contains}
-     * method, and by interchanging the arguments. This method can be used for testing
-     * the {@code r1} implementation - it should not be needed for standard implementations.
-     *
-     * @param r1 The first shape to test.
-     * @param r2 The second rectangle to test.
-     *
-     * @since 3.20
-     */
-    public static void assertDisjoint(final RectangularShape r1, final Rectangle2D r2) {
-        assertFalse("r1.intersects(r2)", r1.intersects(r2));
-        assertFalse("r1.contains(r2)",   r1.contains(r2));
-        if (r1 instanceof Rectangle2D) {
-            assertFalse("r2.intersects(r1)", r2.intersects((Rectangle2D) r1));
-            assertFalse("r2.contains(r1)",   r2.contains  ((Rectangle2D) r1));
-        }
-        for (int i=0; i<9; i++) {
-            final double x, y;
-            switch (i % 3) {
-                case 0: x = r2.getMinX();    break;
-                case 1: x = r2.getCenterX(); break;
-                case 2: x = r2.getMaxX();    break;
-                default: throw new AssertionError(i);
-            }
-            switch (i / 3) {
-                case 0: y = r2.getMinY();    break;
-                case 1: y = r2.getCenterY(); break;
-                case 2: y = r2.getMaxY();    break;
-                default: throw new AssertionError(i);
-            }
-            assertFalse("r1.contains(" + x + ", " + y + ')', r1.contains(x, y));
-        }
     }
 }

@@ -52,7 +52,7 @@ import static org.junit.Assume.assumeTrue;
 import static org.junit.Assert.*;
 import static org.apache.sis.test.Assertions.assertMultilinesEquals;
 import static org.apache.sis.test.Assertions.assertNotDeepEquals;
-import static org.geotoolkit.referencing.Assert.assertDiagonalMatrix;
+import static org.geotoolkit.test.Assert.assertDiagonalMatrix;
 import static org.geotoolkit.test.Commons.*;
 import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
 import static java.util.Collections.singletonMap;
