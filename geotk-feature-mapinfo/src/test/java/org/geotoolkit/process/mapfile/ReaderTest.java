@@ -27,7 +27,7 @@ import java.util.Iterator;
 import org.geotoolkit.filter.FilterUtilities;
 import org.junit.Test;
 
-import static org.geotoolkit.test.Assert.*;
+import static org.junit.Assert.*;
 import org.opengis.feature.Feature;
 
 /**

@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
-import static org.geotoolkit.test.Assert.*;
 
 import org.geotoolkit.nio.IOUtilities;
 import org.apache.sis.util.UnconvertibleObjectException;
@@ -30,8 +29,11 @@ import org.geotoolkit.wps.converters.WPSConverterRegistry;
 import org.geotoolkit.wps.converters.WPSObjectConverter;
 import org.geotoolkit.wps.xml.v200.Data;
 import org.geotoolkit.wps.xml.v200.Format;
-import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
+
+import static org.junit.Assert.assertNotNull;
+import static org.geotoolkit.test.Assert.assertRasterEquals;
+
 
 /**
  *

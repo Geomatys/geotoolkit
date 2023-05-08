@@ -30,7 +30,8 @@ import javax.imageio.IIOImage;
 import org.junit.Test;
 import org.junit.Ignore;
 
-import static org.geotoolkit.test.Assert.*;
+import static org.junit.Assert.*;
+import static org.apache.sis.test.Assertions.assertMultilinesEquals;
 
 
 /**

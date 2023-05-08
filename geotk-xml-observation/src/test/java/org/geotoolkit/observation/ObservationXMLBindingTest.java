@@ -55,7 +55,6 @@ import org.apache.sis.metadata.iso.quality.DefaultQuantitativeResult;
 import org.apache.sis.xml.MarshallerPool;
 import org.junit.*;
 
-import static org.apache.sis.test.MetadataAssert.*;
 import org.apache.sis.util.SimpleInternationalString;
 import org.apache.sis.util.iso.DefaultRecord;
 import org.apache.sis.util.iso.DefaultRecordSchema;
@@ -75,6 +74,9 @@ import org.geotoolkit.swe.xml.v200.TextType;
 import org.opengis.metadata.quality.Element;
 import org.opengis.util.RecordType;
 import org.opengis.util.TypeName;
+
+import static org.junit.Assert.*;
+import static org.apache.sis.metadata.Assertions.assertXmlEquals;
 
 
 /**

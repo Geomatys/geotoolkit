@@ -16,9 +16,6 @@
  */
 package org.geotoolkit.wps.client;
 
-import org.geotoolkit.wps.client.WPSVersion;
-import org.geotoolkit.wps.client.WebProcessingClient;
-import org.geotoolkit.wps.client.DescribeProcessRequest;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -26,10 +23,10 @@ import java.util.Arrays;
 import javax.xml.bind.Marshaller;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
 import org.junit.Test;
-
-import static org.apache.sis.test.Assert.*;
 import org.geotoolkit.wps.xml.v200.DescribeProcess;
-import static org.apache.sis.test.MetadataAssert.*;
+
+import static org.junit.Assert.*;
+import static org.apache.sis.metadata.Assertions.assertXmlEquals;
 
 
 /**

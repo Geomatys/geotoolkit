@@ -19,8 +19,7 @@
 /**
  * Tools for Geotk test suites. This package defines a base class, {@link org.geotoolkit.test.TestBase}, which
  * is extended by many Geotk test suite. This package defines also an {@link org.geotoolkit.test.Assert} class
- * which extends {@link org.junit.Assert} with the addition of assertion methods commonly used in Geotk test
- * suite.
+ * with a few assertion methods sometimes used in Geotk test suite.
  * <p>
  * By default, successful tests do not produce any output. However it is possible to ask for verbose
  * output, which is sometime useful for debugging purpose. The following properties can be set to

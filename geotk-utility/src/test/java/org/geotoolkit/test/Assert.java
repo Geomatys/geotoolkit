@@ -30,6 +30,8 @@ import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
+import static org.junit.Assert.*;
+import static org.opengis.test.Assert.assertBetween;
 
 
 /**
@@ -37,11 +39,11 @@ import org.opengis.parameter.ParameterValueGroup;
  *
  * @author Martin Desruisseaux (Geomatys)
  */
-public strictfp class Assert extends org.apache.sis.test.Assert {
+public final class Assert {
     /**
-     * For subclass constructor only.
+     * Do not allow instantiation.
      */
-    protected Assert() {
+    private Assert() {
     }
 
     /**

@@ -8,7 +8,6 @@ import java.util.function.UnaryOperator;
 import java.util.stream.StreamSupport;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.test.Assert;
 import org.junit.Test;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.CoordinateSequence;
@@ -17,6 +16,9 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.CoordinateOperation;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.util.FactoryException;
+
+import static org.junit.Assert.*;
+
 
 /**
  *
@@ -56,15 +58,15 @@ public class DistanceSpliteratorTest {
                 pointTransformer.apply(s.end)
             }, 2));
             final Spliterator.OfDouble ds = isOrthodromic? builder.buildOrthodromic() : builder.buildLoxodromic();
-            Assert.assertEquals("Returned spliterator is not of expected type", DistanceSpliterator.class, ds.getClass());
+            assertEquals("Returned spliterator is not of expected type", DistanceSpliterator.class, ds.getClass());
 
             boolean segmentComputed = ds.tryAdvance((double val)
                     -> EngineTest.assertDistance(s, isOrthodromic, val));
 
-            Assert.assertTrue("Segment length has not been computed", segmentComputed);
+            assertTrue("Segment length has not been computed", segmentComputed);
 
             ds.tryAdvance((double val)
-                    -> org.junit.Assert.fail("A second computing has been done, despite the fact that we've got only one segment."));
+                    -> fail("A second computing has been done, despite the fact that we've got only one segment."));
         }
     }
 
@@ -81,9 +83,9 @@ public class DistanceSpliteratorTest {
         final double totalDistance = StreamSupport.doubleStream(ds, parallel)
                 .peek(whatever -> count.incrementAndGet())
                 .sum();
-        Assert.assertEquals("Number of treated segments", ptNumber - 1, count.get());
+        assertEquals("Number of treated segments", ptNumber - 1, count.get());
 
-        org.junit.Assert.assertEquals(
+        assertEquals(
                 "Computed distance",
                 isOrthodromic? t.orthodromicDistance : t.loxodromicDistance,
                 totalDistance / 1000, // meter to kilometer

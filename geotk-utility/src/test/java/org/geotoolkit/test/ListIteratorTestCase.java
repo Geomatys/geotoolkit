@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import org.apache.sis.test.TestCase;
 
-import static org.opengis.test.Assert.*;
+import static org.junit.Assert.*;
 
 
 /**

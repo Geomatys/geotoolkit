@@ -30,7 +30,8 @@ import org.opengis.coverage.grid.RectifiedGrid;
 import org.junit.*;
 
 import org.apache.sis.test.DependsOn;
-import static org.geotoolkit.test.Assert.*;
+import static org.junit.Assert.*;
+import static org.apache.sis.test.Assertions.assertMultilinesEquals;
 import static org.geotoolkit.test.Commons.*;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
 

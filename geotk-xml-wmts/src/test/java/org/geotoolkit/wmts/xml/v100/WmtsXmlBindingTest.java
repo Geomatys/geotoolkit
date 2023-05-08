@@ -30,7 +30,8 @@ import org.geotoolkit.wmts.xml.WMTSMarshallerPool;
 import org.apache.sis.xml.MarshallerPool;
 import org.junit.*;
 
-import static org.apache.sis.test.MetadataAssert.*;
+import static org.junit.Assert.*;
+import static org.apache.sis.metadata.Assertions.assertXmlEquals;
 
 
 /**

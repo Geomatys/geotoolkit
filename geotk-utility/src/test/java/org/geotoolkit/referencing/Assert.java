@@ -25,15 +25,16 @@ import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 
 import static java.lang.StrictMath.*;
+import static org.junit.Assert.*;
 
 
 /**
- * Inherits JUnit assertions methods, and adds Geotk-specific assertion methods. The methods
+ * Adds Geotk-specific assertion methods. The methods
  * defined in this class requires Geotk-specific API.
  *
  * @author Martin Desruisseaux (Geomatys)
  */
-public strictfp final class Assert extends org.geotoolkit.test.Assert {
+public final class Assert {
     /**
      * Small tolerance for comparisons of floating point values.
      */

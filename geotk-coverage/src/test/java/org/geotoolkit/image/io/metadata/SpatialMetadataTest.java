@@ -36,7 +36,8 @@ import org.apache.sis.metadata.iso.content.DefaultImageDescription;
 
 import org.junit.*;
 
-import static org.geotoolkit.test.Assert.*;
+import static org.junit.Assert.*;
+import static org.apache.sis.test.Assertions.assertMultilinesEquals;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
 
 

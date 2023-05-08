@@ -21,7 +21,7 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 
 import org.junit.*;
-import static org.apache.sis.test.Assert.*;
+import static org.junit.Assert.*;
 
 
 /**

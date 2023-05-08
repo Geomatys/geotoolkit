@@ -67,9 +67,7 @@ import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
 import static org.geotoolkit.style.StyleConstants.*;
-import org.geotoolkit.test.Assert;
 import org.junit.AfterClass;
-import static org.junit.Assert.*;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.locationtech.jts.geom.Coordinate;
@@ -83,6 +81,10 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.GraphicalSymbol;
 import org.opengis.style.PointSymbolizer;
 import org.opengis.util.FactoryException;
+
+import static org.junit.Assert.*;
+import static org.opengis.test.Assert.assertBetween;
+
 
 /**
  * Testing color model optimisations.
@@ -389,10 +391,10 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
             for(int y=0; y<img.getHeight(); y++){
                 //jpeg can't encode a perfect white image, CMY to RGB conversion lost I guess.
                 Color c = new Color(img.getRGB(x, y));
-                Assert.assertBetween("color is not white", 250, 255, c.getRed());
-                Assert.assertBetween("color is not white", 250, 255, c.getGreen());
-                Assert.assertBetween("color is not white", 250, 255, c.getBlue());
-                Assert.assertBetween("color is not white", 250, 255, c.getAlpha());
+                assertBetween("color is not white", 250, 255, c.getRed());
+                assertBetween("color is not white", 250, 255, c.getGreen());
+                assertBetween("color is not white", 250, 255, c.getBlue());
+                assertBetween("color is not white", 250, 255, c.getAlpha());
             }
         }
     }

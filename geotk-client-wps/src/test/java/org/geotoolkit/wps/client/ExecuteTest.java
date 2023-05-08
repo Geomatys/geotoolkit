@@ -16,9 +16,6 @@
  */
 package org.geotoolkit.wps.client;
 
-import org.geotoolkit.wps.client.WPSVersion;
-import org.geotoolkit.wps.client.WebProcessingClient;
-import org.geotoolkit.wps.client.ExecuteRequest;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.URL;
@@ -28,9 +25,6 @@ import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
 import org.junit.Test;
-
-import static org.apache.sis.test.Assert.*;
-import static org.apache.sis.test.MetadataAssert.*;
 import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.io.WPSSchema;
 import org.apache.sis.referencing.CommonCRS;
@@ -44,6 +38,9 @@ import org.geotoolkit.wps.xml.v200.LiteralValue;
 import org.geotoolkit.wps.xml.v200.OutputDefinition;
 import org.geotoolkit.wps.xml.v200.Reference;
 import org.opengis.referencing.crs.GeographicCRS;
+
+import static org.junit.Assert.*;
+import static org.apache.sis.metadata.Assertions.assertXmlEquals;
 
 
 /**

@@ -7,10 +7,10 @@ package org.geotoolkit.util.grid;
 
 import java.util.stream.DoubleStream;
 import java.util.stream.StreamSupport;
-
-import org.geotoolkit.test.Assert;
-
 import org.junit.Test;
+
+import static org.junit.Assert.*;
+
 
 /**
  *
@@ -62,7 +62,7 @@ public class MonoDimensionMoveTest {
                 .flatMapToDouble(pt -> DoubleStream.of(pt))
                 .toArray();
 
-        Assert.assertArrayEquals("Segment populated with crossed grid points", expectedValues, values, 1e-11);
+        assertArrayEquals("Segment populated with crossed grid points", expectedValues, values, 1e-11);
 
         // Rewind
         final int length = values.length;
@@ -80,6 +80,6 @@ public class MonoDimensionMoveTest {
                 .flatMapToDouble(pt -> DoubleStream.of(pt))
                 .toArray();
 
-        Assert.assertArrayEquals("Segment populated with crossed grid points", inverseValues, values, 1e-11);
+        assertArrayEquals("Segment populated with crossed grid points", inverseValues, values, 1e-11);
     }
 }

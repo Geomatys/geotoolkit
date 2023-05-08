@@ -32,7 +32,7 @@ import org.apache.sis.referencing.operation.transform.MathTransforms;
 
 import static java.lang.StrictMath.*;
 import static java.util.Collections.singletonMap;
-import static org.opengis.test.Assert.*;
+import static org.junit.Assert.*;
 
 
 /**

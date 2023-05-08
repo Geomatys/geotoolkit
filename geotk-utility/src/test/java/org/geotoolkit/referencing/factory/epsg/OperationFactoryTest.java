@@ -27,7 +27,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.junit.*;
 
 import static org.junit.Assume.*;
-import static org.geotoolkit.test.Assert.*;
+import static org.junit.Assert.*;
+import static org.apache.sis.test.Assertions.assertMultilinesEquals;
 import static org.geotoolkit.test.Commons.decodeQuotes;
 
 

@@ -19,7 +19,8 @@ package org.geotoolkit.filter.function.string;
 
 import org.junit.Test;
 
-import static org.apache.sis.test.Assert.*;
+import static org.junit.Assert.*;
+import static org.apache.sis.test.Assertions.assertSerializedEquals;
 import static org.geotoolkit.filter.FilterTestConstants.*;
 import static org.geotoolkit.filter.function.string.StringFunctionFactory.CONCAT;
 
