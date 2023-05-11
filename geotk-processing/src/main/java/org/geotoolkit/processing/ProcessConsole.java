@@ -47,7 +47,7 @@ import org.apache.sis.util.collection.Containers;
 import org.geotoolkit.lang.Setup;
 import org.geotoolkit.process.*;
 import org.geotoolkit.processing.util.converter.StringToAffineTransformConverter;
-import org.geotoolkit.processing.util.converter.StringToFeatureCollectionConverter;
+import org.geotoolkit.processing.util.converter.StringToFeatureSetConverter;
 import org.geotoolkit.processing.util.converter.StringToGeometryConverter;
 import org.geotoolkit.processing.util.converter.StringToMapConverter;
 import org.geotoolkit.processing.util.converter.StringToSortByConverter;
@@ -72,8 +72,7 @@ import org.opengis.util.NoSuchIdentifierException;
 public final class ProcessConsole {
 
     private static final boolean X364_SUPPORTED = X364.isAnsiSupported();
-    private static final List LIST_CONVERTERS = Containers.unmodifiableList(
-                StringToFeatureCollectionConverter.getInstance(),
+    private static final List LIST_CONVERTERS = Containers.unmodifiableList(StringToFeatureSetConverter.getInstance(),
                 StringToGeometryConverter.getInstance(),
                 StringToAffineTransformConverter.getInstance(),
                 StringToSortByConverter.getInstance(),
