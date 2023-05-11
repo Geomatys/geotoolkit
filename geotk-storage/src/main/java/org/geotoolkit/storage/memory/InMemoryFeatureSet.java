@@ -25,17 +25,38 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
+import org.apache.sis.feature.Features;
+import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.storage.AbstractFeatureSet;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureQuery;
+import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.storage.Query;
+import org.apache.sis.storage.UnsupportedQueryException;
 import org.apache.sis.storage.WritableFeatureSet;
+import org.apache.sis.storage.event.StoreEvent;
+import org.apache.sis.storage.event.StoreListener;
 import org.geotoolkit.feature.FeatureExt;
+import org.geotoolkit.geometry.jts.JTSEnvelope2D;
+import org.geotoolkit.storage.feature.query.QueryUtilities;
 import org.geotoolkit.util.NamesExt;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.index.quadtree.Quadtree;
+import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyNotFoundException;
+import org.opengis.feature.PropertyType;
+import org.opengis.filter.Filter;
+import org.opengis.geometry.Envelope;
+import org.opengis.metadata.Metadata;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.GenericName;
 
 /**
  * FeatureSet implementation stored in memory.
+ * A spatial index is automaticaly created if the FeatureType has a default geometry.
  *
  * @author Johann Sorel (Geomatys)
  */
@@ -44,6 +65,10 @@ public class InMemoryFeatureSet extends AbstractFeatureSet implements WritableFe
     private final FeatureType type;
     private final List<Feature> features;
     private GenericName id;
+    //keep an index if there is a geometry property
+    private String geometryAttribute;
+    private CoordinateReferenceSystem geometryCrs;
+    private Quadtree tree;
 
     public InMemoryFeatureSet(FeatureType type) {
         this(type.getName(), type, new ArrayList<>());
@@ -68,9 +93,7 @@ public class InMemoryFeatureSet extends AbstractFeatureSet implements WritableFe
      * @param features collection of stored features, this list will not be copied.
      */
     public InMemoryFeatureSet(FeatureType type, List<Feature> features) {
-        super(null, false);
-        this.type = type;
-        this.features = features;
+        this(null, type, features);
     }
 
     /**
@@ -84,6 +107,31 @@ public class InMemoryFeatureSet extends AbstractFeatureSet implements WritableFe
         this.id = id;
         this.type = type;
         this.features = features;
+
+        //build an index if we have a geometry with a crs
+        try {
+            PropertyType defaultGeometry = FeatureExt.getDefaultGeometry(type);
+            Optional<String> linkTarget = Features.getLinkTarget(defaultGeometry);
+            if (linkTarget.isPresent()) {
+                defaultGeometry = type.getProperty(linkTarget.get());
+            }
+
+            if (defaultGeometry instanceof AttributeType) {
+                geometryAttribute = ((AttributeType) defaultGeometry).getName().toString();
+                geometryCrs = FeatureExt.getCRS(defaultGeometry);
+                if (geometryCrs != null) {
+                    tree = new Quadtree();
+                }
+            }
+        } catch (PropertyNotFoundException | IllegalStateException ex) {
+            //no index
+        }
+
+        if (tree != null) {
+            for (Feature f : features) {
+                tree.insert(getEnvelope(f),f);
+            }
+        }
     }
 
     @Override
@@ -98,10 +146,40 @@ public class InMemoryFeatureSet extends AbstractFeatureSet implements WritableFe
     }
 
     @Override
-    public Stream<Feature> features(boolean bln) throws DataStoreException {
-        Stream<Feature> str = bln ? features.parallelStream() : features.stream();
+    public Stream<Feature> features(boolean parallal) throws DataStoreException {
+        Stream<Feature> str = parallal ? features.parallelStream() : features.stream();
         str = str.map(FeatureExt::deepCopy);
         return str;
+    }
+
+    private Stream<Feature> features(boolean parallal, Envelope env) throws DataStoreException {
+        if (env == null || tree == null) {
+            Stream<Feature> str = parallal ? features.parallelStream() : features.stream();
+            str = str.map(FeatureExt::deepCopy);
+            return str;
+        } else {
+            try {
+                env = Envelopes.transform(env, geometryCrs);
+            } catch (TransformException ex) {
+                throw new DataStoreException("Could not transform query envelope", ex);
+            }
+            final JTSEnvelope2D jtsenv = new JTSEnvelope2D(env);
+            final List<Feature> lst = tree.query(jtsenv);
+            return parallal ? lst.parallelStream() : lst.stream();
+        }
+    }
+
+    @Override
+    public FeatureSet subset(Query query) throws UnsupportedQueryException, DataStoreException {
+        if (query instanceof FeatureQuery && tree != null) {
+            final FeatureQuery fq = (FeatureQuery) query;
+            final Filter<? super Feature> selection = fq.getSelection();
+            final Envelope env = QueryUtilities.extractEnvelope(selection);
+            if (env != null && env != QueryUtilities.NO_EVAL) {
+                return new SubSet(env).subset(query);
+            }
+        }
+        return super.subset(query);
     }
 
     @Override
@@ -110,19 +188,34 @@ public class InMemoryFeatureSet extends AbstractFeatureSet implements WritableFe
     }
 
     @Override
-    public void add(Iterator<? extends Feature> features) {
+    public synchronized void add(Iterator<? extends Feature> features) {
         while (features.hasNext()) {
-            this.features.add(features.next());
+            final Feature feature = features.next();
+            this.features.add(feature);
+            if (tree != null) {
+                tree.insert(getEnvelope(feature),feature);
+            }
         }
     }
 
     @Override
-    public boolean removeIf(Predicate<? super Feature> filter) {
-        return features.removeIf(filter);
+    public synchronized boolean removeIf(Predicate<? super Feature> filter) {
+        boolean removed = false;
+        for (int i = features.size()-1; i >= 0; i--) {
+            Feature feature = features.get(i);
+            if (filter.test(feature)) {
+                removed = true;
+                features.remove(i);
+                if (tree != null) {
+                    tree.remove(getEnvelope(feature), feature);
+                }
+            }
+        }
+        return removed;
     }
 
     @Override
-    public void replaceIf(Predicate<? super Feature> filter, UnaryOperator<Feature> updater) {
+    public synchronized void replaceIf(Predicate<? super Feature> filter, UnaryOperator<Feature> updater) {
         final ListIterator<Feature> iterator = features.listIterator();
         while (iterator.hasNext()) {
             Feature feature = iterator.next();
@@ -130,10 +223,65 @@ public class InMemoryFeatureSet extends AbstractFeatureSet implements WritableFe
                 Feature changed = updater.apply(feature);
                 if (changed == null) {
                     iterator.remove();
+                    if (tree != null) {
+                        tree.remove(getEnvelope(feature), feature);
+                    }
                 } else {
                     iterator.set(changed);
+                    if (tree != null) {
+                        tree.remove(getEnvelope(feature), feature);
+                        tree.insert(getEnvelope(changed), changed);
+                    }
                 }
             }
+        }
+    }
+
+    private JTSEnvelope2D getEnvelope(Feature feature) {
+        return new JTSEnvelope2D(((Geometry)feature.getPropertyValue(geometryAttribute)).getEnvelopeInternal(), geometryCrs);
+    }
+
+    private final class SubSet implements FeatureSet {
+
+        private final Envelope env;
+
+        public SubSet(Envelope env) {
+            this.env = env;
+        }
+
+        @Override
+        public FeatureType getType() throws DataStoreException {
+            return InMemoryFeatureSet.this.getType();
+        }
+
+        @Override
+        public Stream<Feature> features(boolean parallel) throws DataStoreException {
+            return InMemoryFeatureSet.this.features(parallel, env);
+        }
+
+        @Override
+        public Optional<Envelope> getEnvelope() throws DataStoreException {
+            return InMemoryFeatureSet.this.getEnvelope();
+        }
+
+        @Override
+        public Optional<GenericName> getIdentifier() throws DataStoreException {
+            return InMemoryFeatureSet.this.getIdentifier();
+        }
+
+        @Override
+        public Metadata getMetadata() throws DataStoreException {
+            return InMemoryFeatureSet.this.getMetadata();
+        }
+
+        @Override
+        public <T extends StoreEvent> void addListener(Class<T> eventType, StoreListener<? super T> listener) {
+            InMemoryFeatureSet.this.addListener(eventType, listener);
+        }
+
+        @Override
+        public <T extends StoreEvent> void removeListener(Class<T> eventType, StoreListener<? super T> listener) {
+            InMemoryFeatureSet.this.removeListener(eventType, listener);
         }
     }
 

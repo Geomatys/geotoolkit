@@ -23,15 +23,23 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.measure.Quantity;
 import javax.measure.quantity.Length;
-import org.apache.sis.storage.FeatureQuery;
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.ImmutableEnvelope;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
+import org.apache.sis.storage.FeatureQuery;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.filter.FilterUtilities;
+import org.opengis.feature.Feature;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
+import org.opengis.filter.LogicalOperator;
+import org.opengis.filter.LogicalOperatorName;
 import org.opengis.filter.SortBy;
 import org.opengis.filter.SortProperty;
+import org.opengis.filter.SpatialOperatorName;
+import org.opengis.geometry.Envelope;
+import org.opengis.util.CodeList;
 
 /**
  *
@@ -41,6 +49,11 @@ import org.opengis.filter.SortProperty;
 public class QueryUtilities {
 
     private static final FilterFactory FF = FilterUtilities.FF;
+    /**
+     * Flag envelope used to indicate filter envelope is irrevelant.
+     * This can be caused by expressions such as 'BBOX(...) OR att1 = value'.
+     */
+    public static final ImmutableEnvelope NO_EVAL = ImmutableEnvelope.castOrCopy(new GeneralEnvelope(2));
 
     private QueryUtilities(){}
 
@@ -253,5 +266,67 @@ public class QueryUtilities {
         }
         List<? extends SortProperty<R>> p = sortBy.getSortProperties();
         return p.toArray(new SortProperty[p.size()]);
+    }
+
+
+    /**
+     * Extract query filter envelope.
+     *
+     * @param filter can be null
+     * @return Envelope, or null if filter is null or no envelope is defined.
+     *         NO_EVAL if envelope information is irrevelant.
+     */
+    public static Envelope extractEnvelope(Filter<? super Feature> filter) {
+        if (filter == null) return null;
+        final CodeList<?> type = filter.getOperatorType();
+
+        if (SpatialOperatorName.BBOX.equals(type)) {
+            return (Envelope) filter.getExpressions().get(1).apply(null);
+        } else if (LogicalOperatorName.AND.equals(type)) {
+            //compute the intersection of all envelopes
+            final LogicalOperator<Feature> lo = (LogicalOperator) filter;
+            Envelope env = null;
+            for (Filter<? super Feature> operand : lo.getOperands()) {
+                final Envelope e = extractEnvelope(operand);
+                if (e != null) {
+                    if (e == NO_EVAL) {
+                        continue;
+                    } else if (env == null) {
+                        env = e;
+                    } else {
+                        final GeneralEnvelope diff = new GeneralEnvelope(env);
+                        diff.intersect(e);
+                        env = diff;
+                    }
+                }
+            }
+            return env;
+        } else if (LogicalOperatorName.OR.equals(type)) {
+            //combine all envelopes if all expressions are envelopes
+            final LogicalOperator<Feature> lo = (LogicalOperator) filter;
+            Envelope env = null;
+            for (Filter<? super Feature> operand : lo.getOperands()) {
+                final Envelope e = extractEnvelope(operand);
+                if (e != null) {
+                    if (e == NO_EVAL) {
+                        return NO_EVAL;
+                    } else if (env == null) {
+                        env = e;
+                    } else {
+                        GeneralEnvelope diff = new GeneralEnvelope(env);
+                        diff.add(e);
+                        env = diff;
+                    }
+                } else {
+                    //an OR component that could be anything
+                    return NO_EVAL;
+                }
+            }
+            return env;
+        }  else if (LogicalOperatorName.NOT.equals(type)) {
+            final LogicalOperator<Feature> lo = (LogicalOperator) filter;
+            return NO_EVAL;
+        }
+        return null;
     }
 }
