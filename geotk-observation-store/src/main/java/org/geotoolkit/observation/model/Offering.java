@@ -114,7 +114,7 @@ public class Offering extends AbstractOMEntity {
      * If the new date is before or after the current sampling time, the period will be expanded.
      * If no time is currently set, a time instant with the supplied date will be set as the new time span.
      *
-     * @param newDate a date to intagrate into the time span of the offering.
+     * @param newDate a date to integrate into the time span of the offering.
      */
     public void extendSamplingTime(final Date newDate) {
         if (newDate != null) {

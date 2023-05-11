@@ -208,25 +208,43 @@ public class Observation implements org.opengis.observation.Observation {
     }
 
     /**
+     * Extend the current observation time span by adding a new date.
+     * If the new date is before or after the current sampling time, the period will be expanded.
+     * If no time is currently set, a time instant with the supplied date will be set as the new time span.
      *
-     * @param newEndBound
+     * @param newDate a date to integrate into the time span of the offering.
      */
-    public void extendSamplingTime(final Date newEndBound) {
-        if (newEndBound != null) {
+    public void extendSamplingTime(final Date newDate) {
+        if (newDate != null) {
             if (samplingTime instanceof Period p) {
-                samplingTime = new DefaultPeriod(Collections.singletonMap(NAME_KEY, id + "-time"),
-                                                 p.getBeginning(),
-                                                 new DefaultInstant(Collections.singletonMap(NAME_KEY, id + "-en-time"), newEndBound));
-            } else if (samplingTime instanceof Instant i) {
-                if (!newEndBound.equals(i.getDate())) {
-                    samplingTime = new DefaultPeriod(Collections.singletonMap(NAME_KEY, id + "-time"),
-                                                     i,
-                                                     new DefaultInstant(Collections.singletonMap(NAME_KEY, id + "-en-time"), newEndBound));
+                Date currentStDate = p.getBeginning().getDate();
+                Date currentEnDate = p.getEnding().getDate();
+                if (newDate.before(currentStDate)) {
+                    samplingTime = new DefaultPeriod(Collections.singletonMap(NAME_KEY, getId() + "-time"),
+                                                     new DefaultInstant(Collections.singletonMap(NAME_KEY, getId() + "-st-time"), newDate),
+                                                     new DefaultInstant(Collections.singletonMap(NAME_KEY, getId() + "-en-time"), currentEnDate));
+                } else if (newDate.after(currentEnDate)) {
+                    samplingTime = new DefaultPeriod(Collections.singletonMap(NAME_KEY, getId() + "-time"),
+                                                     new DefaultInstant(Collections.singletonMap(NAME_KEY, getId() + "-st-time"), currentStDate),
+                                                     new DefaultInstant(Collections.singletonMap(NAME_KEY, getId() + "-en-time"), newDate));
                 }
+                // date is within to the current period so no changes are applied
+            } else if (samplingTime instanceof Instant i) {
+                Date currentDate = i.getDate();
+                if (newDate.before(currentDate)) {
+                    samplingTime = new DefaultPeriod(Collections.singletonMap(NAME_KEY, getId() + "-time"),
+                                                     new DefaultInstant(Collections.singletonMap(NAME_KEY, getId() + "-st-time"), newDate),
+                                                     new DefaultInstant(Collections.singletonMap(NAME_KEY, getId() + "-en-time"), currentDate));
+                } else if (newDate.after(currentDate)) {
+                    samplingTime = new DefaultPeriod(Collections.singletonMap(NAME_KEY, getId() + "-time"),
+                                            new DefaultInstant(Collections.singletonMap(NAME_KEY, getId() + "-st-time"), currentDate),
+                                            new DefaultInstant(Collections.singletonMap(NAME_KEY, getId() + "-en-time"), newDate));
+                }
+                // date is equals to the current date so no changes are applied
             } else if (samplingTime == null) {
-                samplingTime = new DefaultInstant(Collections.singletonMap(NAME_KEY, id + "-time"), newEndBound);
+                samplingTime = new DefaultInstant(Collections.singletonMap(NAME_KEY, getId() + "-time"), newDate);
             } else {
-                throw new IllegalStateException("Unknow time implementeation:" + samplingTime.getClass().getName());
+                throw new IllegalStateException("Unknown time implementeation: " + samplingTime.getClass().getName());
             }
         }
     }
