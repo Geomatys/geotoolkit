@@ -6,12 +6,11 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
-import org.apache.sis.storage.FeatureQuery;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureQuery;
 import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.data.shapefile.ShapefileProvider;
-import org.geotoolkit.db.postgres.PostgresProvider;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.storage.DataStores;
@@ -75,7 +74,6 @@ public class FeatureStoreReadingDemo {
 
         //find out how to describe things
         System.out.println(ShapefileProvider.PARAMETERS_DESCRIPTOR);
-        System.out.println(PostgresProvider.PARAMETERS_DESCRIPTOR);
 
         final ParameterValueGroup parameters = ShapefileProvider.PARAMETERS_DESCRIPTOR.createValue();
         String pathId = ShapefileProvider.PATH.getName().getCode();

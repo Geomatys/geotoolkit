@@ -44,6 +44,12 @@ public class ProcedureDataset extends Procedure {
 
     public final List<String> fields = new ArrayList<>();
 
+    // for JSON
+    protected ProcedureDataset() {
+        this.type = null;
+        this.omType = null;
+    }
+
     public ProcedureDataset(final String id, final String name, final String description, final String type, final String omType, final Collection<String> fields , Map<String, Object> properties) {
         super(id, name, description, properties);
         this.type = type;

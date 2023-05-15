@@ -449,7 +449,7 @@ public class TileMatrixSetCoverageReader <T extends TiledResource & org.apache.s
         CoordinateReferenceSystem crs = domain.getCoordinateReferenceSystem();
         TileMatrixSet pyramid;
         try {
-             pyramid = coverageFinder.findPyramid(mrr, crs);
+             pyramid = coverageFinder.findPyramid(mrr.getTileMatrixSets(), crs);
         } catch (FactoryException ex) {
             throw new DataStoreException(ex);
         }

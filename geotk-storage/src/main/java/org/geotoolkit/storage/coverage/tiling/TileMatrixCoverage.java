@@ -145,5 +145,4 @@ final class TileMatrixCoverage extends GridCoverage {
                 minX, minY
         );
     }
-
 }
