@@ -23,8 +23,8 @@ import org.geotoolkit.gml.xml.v311.EnvelopeType;
 import org.junit.Test;
 import org.w3._2005.atom.*;
 
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Marshaller;
 import java.io.StringWriter;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;

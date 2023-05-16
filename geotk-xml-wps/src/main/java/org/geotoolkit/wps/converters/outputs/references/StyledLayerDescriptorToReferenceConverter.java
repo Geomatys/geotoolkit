@@ -19,7 +19,7 @@ package org.geotoolkit.wps.converters.outputs.references;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.UUID;
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.sld.xml.Specification;
 import org.geotoolkit.sld.xml.StyleXmlIO;

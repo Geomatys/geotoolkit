@@ -3,9 +3,9 @@
 package org.geotoolkit.internal.jaxb;
 
 import org.opengis.geometry.Geometry;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.annotation.XmlElementRef;
-import javax.xml.bind.annotation.adapters.XmlAdapter;
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.annotation.XmlElementRef;
+import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSEnvelope;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate.JTSMultiCurve;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate.JTSMultiPoint;

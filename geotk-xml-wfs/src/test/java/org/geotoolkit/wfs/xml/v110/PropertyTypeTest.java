@@ -21,9 +21,9 @@ import java.io.StringReader;
 //Junit dependencies
 import java.io.StringWriter;
 import java.util.Arrays;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Marshaller;
+import jakarta.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
 import org.geotoolkit.gml.xml.v311.DirectPositionType;
 import org.geotoolkit.gml.xml.v311.PointType;
@@ -63,7 +63,7 @@ public class PropertyTypeTest extends org.geotoolkit.test.TestBase {
     /**
      * Test simple Record Marshalling.
      *
-     * @throws javax.xml.bind.JAXBException
+     * @throws jakarta.xml.bind.JAXBException
      */
     @Test
     public void getValueStringTest() throws JAXBException {
@@ -120,7 +120,7 @@ public class PropertyTypeTest extends org.geotoolkit.test.TestBase {
     /**
      * Test simple Record Marshalling.
      *
-     * @throws javax.xml.bind.JAXBException
+     * @throws jakarta.xml.bind.JAXBException
      */
     @Test
     public void getValueGeometryNewTest() throws JAXBException {
@@ -159,7 +159,7 @@ public class PropertyTypeTest extends org.geotoolkit.test.TestBase {
     /**
      * Test simple Record Marshalling.
      *
-     * @throws javax.xml.bind.JAXBException
+     * @throws jakarta.xml.bind.JAXBException
      */
     @Test
     public void setValueGeometryNewTest() throws JAXBException {

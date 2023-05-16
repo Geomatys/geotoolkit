@@ -15,8 +15,8 @@
  */
 package org.geotoolkit.ops.xml.v110;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlSchemaType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlSchemaType;
 
 /**
  * Manually created class adding the extension parameters geo/time

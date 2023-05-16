@@ -9,7 +9,7 @@
  * {@code <gmd:MD_CharacterSetCode codeList="http://www.tc211.org/ISO19139/resources/codeList.xml#utf8" codeListValue="utf8"/>}
  * </p>
  *
- * @see javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter
+ * @see jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter
  * @see org.opengis.util.CodeList
  * @author Cédric Briançon
  * @author Guilhem Legal
@@ -23,6 +23,6 @@ xmlns = {
 })
 package org.geotoolkit.resources.jaxb.feature.catalog.code;
 
-import javax.xml.bind.annotation.XmlNs;
-import javax.xml.bind.annotation.XmlNsForm;
-import javax.xml.bind.annotation.XmlSchema;
+import jakarta.xml.bind.annotation.XmlNs;
+import jakarta.xml.bind.annotation.XmlNsForm;
+import jakarta.xml.bind.annotation.XmlSchema;

@@ -14,5 +14,5 @@
  *    Lesser General Public License for more details.
  */
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://a9.com/-/spec/opensearch/extensions/parameters/1.0/")
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://a9.com/-/spec/opensearch/extensions/parameters/1.0/")
 package org.geotoolkit.opsp.xml.v100;

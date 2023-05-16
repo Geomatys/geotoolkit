@@ -16,8 +16,8 @@
  */
 package org.geotoolkit.resources.jaxb.feature.catalog;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlSchemaType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlSchemaType;
 import org.apache.sis.internal.jaxb.gco.PropertyType;
 
 

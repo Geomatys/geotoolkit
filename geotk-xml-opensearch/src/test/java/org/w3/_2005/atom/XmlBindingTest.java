@@ -18,9 +18,9 @@ package org.w3._2005.atom;
 
 import java.io.StringReader;
 import java.io.StringWriter;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.Marshaller;
+import jakarta.xml.bind.Unmarshaller;
 import org.geotoolkit.ops.xml.OpenSearchMarshallerPool;
 import org.geotoolkit.ops.xml.OpenSearchXmlFactory;
 import org.junit.Assert;

@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.wfs.xml.v200;
 
-import javax.xml.bind.annotation.*;
+import jakarta.xml.bind.annotation.*;
 
 /**
  * <p>Java class for anonymous complex type.

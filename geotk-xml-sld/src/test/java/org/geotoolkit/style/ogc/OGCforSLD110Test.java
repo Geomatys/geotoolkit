@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.style.ogc;
 
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 import org.apache.sis.geometry.Envelope2D;
 import org.geotoolkit.sld.xml.StyleXmlIO;
 import org.junit.Test;

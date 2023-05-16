@@ -21,7 +21,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.UUID;
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeWriter;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.xml.v200.Reference;

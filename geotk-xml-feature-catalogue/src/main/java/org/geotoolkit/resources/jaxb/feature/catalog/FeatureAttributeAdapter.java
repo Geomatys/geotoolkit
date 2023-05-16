@@ -16,8 +16,8 @@
  */
 package org.geotoolkit.resources.jaxb.feature.catalog;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.adapters.XmlAdapter;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 import org.geotoolkit.feature.catalog.FeatureAttributeImpl;
 import org.opengis.feature.catalog.FeatureAttribute;
 

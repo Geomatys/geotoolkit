@@ -18,8 +18,8 @@ package org.geotoolkit.sml.v101;
 
 import java.io.InputStream;
 import java.util.Map;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.Unmarshaller;
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.Unmarshaller;
 import org.apache.sis.metadata.KeyNamePolicy;
 import org.apache.sis.metadata.ValueExistencePolicy;
 import org.geotoolkit.sml.xml.SensorMLMarshallerPool;

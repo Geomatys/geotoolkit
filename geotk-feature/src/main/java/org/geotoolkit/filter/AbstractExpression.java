@@ -19,7 +19,7 @@ package org.geotoolkit.filter;
 
 import java.io.Serializable;
 import java.util.List;
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlTransient;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.iso.Names;

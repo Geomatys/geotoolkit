@@ -22,7 +22,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.measure.quantity.Length;
 import javax.measure.Unit;
-import javax.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
 import org.geotoolkit.ogc.xml.v100.PropertyNameType;
 import org.geotoolkit.sld.xml.v100.CssParameter;

@@ -15,8 +15,8 @@
  *    Lesser General Public License for more details.
  */
 @XmlAccessorType(XmlAccessType.NONE)
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.opengis.net/ogc", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://www.opengis.net/ogc", elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package org.geotoolkit.ogc.xml.v110;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;

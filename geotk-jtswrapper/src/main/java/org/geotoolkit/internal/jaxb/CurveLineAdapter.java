@@ -2,9 +2,9 @@
 
 package org.geotoolkit.internal.jaxb;
 
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.annotation.XmlElementRef;
-import javax.xml.bind.annotation.adapters.XmlAdapter;
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.annotation.XmlElementRef;
+import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSLineString;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSCurve;
 import org.opengis.geometry.primitive.OrientableCurve;

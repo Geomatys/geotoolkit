@@ -17,9 +17,9 @@
 
 package org.geotoolkit.gmlcov.xml.v100;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v321.RangeSetType;
 import org.geotoolkit.wcs.xml.v200.CoverageDescriptionType;
 

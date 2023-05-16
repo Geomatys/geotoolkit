@@ -18,10 +18,10 @@ import org.opengis.geometry.primitive.SurfaceInterpolation;
 import org.opengis.geometry.primitive.SurfacePatch;
 
 import java.util.Objects;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.AbstractJTSGenericSurface;
 import org.geotoolkit.internal.jaxb.SurfaceBoundaryAdapter;
 

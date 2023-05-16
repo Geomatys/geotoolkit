@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.thw.model;
 
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 /**
  *

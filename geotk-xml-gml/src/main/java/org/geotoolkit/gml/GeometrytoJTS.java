@@ -22,9 +22,9 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.util.logging.Level;
 
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Unmarshaller;
 
 import org.geotoolkit.gml.xml.*;
 import static org.geotoolkit.internal.sql.DefaultDataSource.LOGGER;

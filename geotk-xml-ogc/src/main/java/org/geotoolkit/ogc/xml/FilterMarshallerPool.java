@@ -17,9 +17,9 @@
 
 package org.geotoolkit.ogc.xml;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBException;
 import org.apache.sis.xml.MarshallerPool;
 import org.opengis.filter.Filter;
 

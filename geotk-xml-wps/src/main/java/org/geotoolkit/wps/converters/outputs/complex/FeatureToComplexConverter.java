@@ -20,7 +20,7 @@ package org.geotoolkit.wps.converters.outputs.complex;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.UnconvertibleObjectException;

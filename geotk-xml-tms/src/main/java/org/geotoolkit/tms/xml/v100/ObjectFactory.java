@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.tms.xml.v100;
 
-import javax.xml.bind.annotation.XmlRegistry;
+import jakarta.xml.bind.annotation.XmlRegistry;
 
 
 /**

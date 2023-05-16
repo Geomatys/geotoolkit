@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.UUID;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
-import javax.xml.bind.annotation.*;
+import jakarta.xml.bind.annotation.*;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.image.io.XImageIO;

@@ -16,8 +16,8 @@
  */
 package org.geotoolkit.xsd.xml.v2001;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
 import org.apache.sis.xml.MarshallerPool;
 
 /**

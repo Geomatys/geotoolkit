@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.sml.xml;
 
-import javax.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBElement;
 import org.geotoolkit.swe.xml.AbstractCategory;
 import org.geotoolkit.swe.xml.AbstractCount;
 import org.geotoolkit.swe.xml.AbstractCountRange;

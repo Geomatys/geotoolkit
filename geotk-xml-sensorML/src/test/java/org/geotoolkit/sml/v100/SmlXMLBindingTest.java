@@ -88,9 +88,9 @@ import org.geotoolkit.swe.xml.v100.TimeRange;
 import org.geotoolkit.swe.xml.v100.UomPropertyType;
 
 // JAXB dependencies
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.Marshaller;
+import jakarta.xml.bind.Unmarshaller;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 
 // Constellation dependencies

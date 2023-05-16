@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import javax.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBElement;
 
 import org.geotoolkit.ogc.xml.v100.BinaryOperatorType;
 import org.geotoolkit.ogc.xml.v100.FunctionType;

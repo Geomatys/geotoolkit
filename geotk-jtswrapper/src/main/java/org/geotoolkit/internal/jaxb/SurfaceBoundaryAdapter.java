@@ -2,7 +2,7 @@
 
 package org.geotoolkit.internal.jaxb;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
+import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSSurfaceBoundary;
 import org.opengis.geometry.primitive.SurfaceBoundary;
 

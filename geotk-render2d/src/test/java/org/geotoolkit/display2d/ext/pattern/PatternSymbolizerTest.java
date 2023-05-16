@@ -24,7 +24,7 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.sld.xml.Specification;

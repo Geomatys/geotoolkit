@@ -19,8 +19,8 @@ package org.geotoolkit.wmts.xml.v100;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Unmarshaller;
 import org.geotoolkit.wmts.xml.WMTSMarshallerPool;
 
 import org.apache.sis.xml.MarshallerPool;

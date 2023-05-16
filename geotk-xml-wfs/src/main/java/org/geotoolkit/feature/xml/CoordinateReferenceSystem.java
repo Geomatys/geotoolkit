@@ -18,8 +18,8 @@
 package org.geotoolkit.feature.xml;
 
 import java.io.Serializable;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
 
 /**
  * Simple DTO that expose a CoorinateReferenceSystem code and description.

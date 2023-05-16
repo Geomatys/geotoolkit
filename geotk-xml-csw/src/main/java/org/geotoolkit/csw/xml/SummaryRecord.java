@@ -17,7 +17,7 @@
 package org.geotoolkit.csw.xml;
 
 import java.util.List;
-import javax.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBElement;
 import org.geotoolkit.dublincore.xml.AbstractSimpleLiteral;
 import org.geotoolkit.ows.xml.v100.BoundingBoxType;
 

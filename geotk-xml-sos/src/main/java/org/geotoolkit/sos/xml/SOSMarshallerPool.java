@@ -17,7 +17,7 @@
 
 package org.geotoolkit.sos.xml;
 
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 import org.apache.sis.xml.MarshallerPool;
 
 import static org.geotoolkit.gml.xml.GMLMarshallerPool.createJAXBContext;
