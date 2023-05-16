@@ -21,5 +21,5 @@
 // Generated on: 2014.04.20 at 07:08:32 PM CEST
 //
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.opengis.net/owc/1.0", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://www.opengis.net/owc/1.0", elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package org.geotoolkit.owc.xml.v10;

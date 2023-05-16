@@ -18,7 +18,7 @@ package org.geotoolkit.wps.converters.inputs.references;
 
 import java.io.InputStream;
 import java.util.Map;
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.geotoolkit.storage.feature.GenericNameIndex;

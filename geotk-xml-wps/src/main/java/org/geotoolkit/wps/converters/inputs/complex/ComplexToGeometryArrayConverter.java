@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import javax.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBElement;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.gml.GeometrytoJTS;
 import org.geotoolkit.gml.xml.AbstractGeometry;

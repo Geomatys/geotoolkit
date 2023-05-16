@@ -23,8 +23,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import static org.geotoolkit.sos.AbstractSOSRequest.POOL;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Marshaller;
 import javax.xml.namespace.QName;
 import org.geotoolkit.sos.xml.v100.DescribeResultModel;
 

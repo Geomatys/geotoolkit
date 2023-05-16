@@ -24,10 +24,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.UnmarshalException;
-import javax.xml.bind.Unmarshaller;
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.UnmarshalException;
+import jakarta.xml.bind.Unmarshaller;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.UnconvertibleObjectException;
@@ -215,7 +215,7 @@ final class WPS2Process extends AbstractProcess implements WPSProcess {
      *
      * @return StatusInfo
      * @throws org.geotoolkit.process.ProcessException
-     * @throws javax.xml.bind.UnmarshalException
+     * @throws jakarta.xml.bind.UnmarshalException
      * @throws java.io.IOException
      */
     private StatusInfo getStatus() throws ProcessException, JAXBException, IOException {

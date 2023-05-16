@@ -10,14 +10,14 @@ import java.io.UncheckedIOException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.PropertyException;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.UnmarshallerHandler;
-import javax.xml.bind.ValidationEventHandler;
-import javax.xml.bind.annotation.adapters.XmlAdapter;
-import javax.xml.bind.attachment.AttachmentUnmarshaller;
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.PropertyException;
+import jakarta.xml.bind.Unmarshaller;
+import jakarta.xml.bind.UnmarshallerHandler;
+import jakarta.xml.bind.ValidationEventHandler;
+import jakarta.xml.bind.annotation.adapters.XmlAdapter;
+import jakarta.xml.bind.attachment.AttachmentUnmarshaller;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
@@ -129,16 +129,6 @@ public class UnmarshallerProxy  implements Unmarshaller {
     }
 
     @Override
-    public void setValidating(boolean validating) throws JAXBException {
-        source.setValidating(validating);
-    }
-
-    @Override
-    public boolean isValidating() throws JAXBException {
-        return source.isValidating();
-    }
-
-    @Override
     public void setEventHandler(ValidationEventHandler handler) throws JAXBException {
         source.setEventHandler(handler);
     }
@@ -174,12 +164,12 @@ public class UnmarshallerProxy  implements Unmarshaller {
     }
 
     @Override
-    public <A extends XmlAdapter> void setAdapter(Class<A> type, A adapter) {
+    public <A extends XmlAdapter<?,?>> void setAdapter(Class<A> type, A adapter) {
         source.setAdapter(adapter);
     }
 
     @Override
-    public <A extends XmlAdapter> A getAdapter(Class<A> type) {
+    public <A extends XmlAdapter<?,?>> A getAdapter(Class<A> type) {
         return source.getAdapter(type);
     }
 

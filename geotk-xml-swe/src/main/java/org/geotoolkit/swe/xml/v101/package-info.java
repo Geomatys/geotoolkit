@@ -14,16 +14,16 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.opengis.net/swe/1.0.1", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED,
-xmlns = { @javax.xml.bind.annotation.XmlNs(prefix = "gml", namespaceURI= "http://www.opengis.net/gml"),
-          @javax.xml.bind.annotation.XmlNs(prefix = "om", namespaceURI= "http://www.opengis.net/om/1.0"),
-          @javax.xml.bind.annotation.XmlNs(prefix = "swe", namespaceURI= "http://www.opengis.net/swe/1.0.1"),
-          @javax.xml.bind.annotation.XmlNs(prefix = "xlink", namespaceURI= "http://www.w3.org/1999/xlink")})
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://www.opengis.net/swe/1.0.1", elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED,
+xmlns = { @jakarta.xml.bind.annotation.XmlNs(prefix = "gml", namespaceURI= "http://www.opengis.net/gml"),
+          @jakarta.xml.bind.annotation.XmlNs(prefix = "om", namespaceURI= "http://www.opengis.net/om/1.0"),
+          @jakarta.xml.bind.annotation.XmlNs(prefix = "swe", namespaceURI= "http://www.opengis.net/swe/1.0.1"),
+          @jakarta.xml.bind.annotation.XmlNs(prefix = "xlink", namespaceURI= "http://www.w3.org/1999/xlink")})
 @XmlJavaTypeAdapters({
     @XmlJavaTypeAdapter(RS_Identifier.class)
 })
 package org.geotoolkit.swe.xml.v101;
 
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
 import org.apache.sis.internal.jaxb.referencing.RS_Identifier;

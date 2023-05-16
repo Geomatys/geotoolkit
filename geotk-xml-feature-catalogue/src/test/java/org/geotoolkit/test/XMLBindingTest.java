@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import javax.xml.bind.Marshaller;
+import jakarta.xml.bind.Marshaller;
 import org.geotoolkit.feature.catalog.AssociationRoleImpl;
 import org.geotoolkit.feature.catalog.BoundFeatureAttributeImpl;
 import org.geotoolkit.feature.catalog.ConstraintImpl;

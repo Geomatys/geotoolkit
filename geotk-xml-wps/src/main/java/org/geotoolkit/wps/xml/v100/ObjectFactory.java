@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.wps.xml.v100;
 
-import javax.xml.bind.annotation.XmlRegistry;
+import jakarta.xml.bind.annotation.XmlRegistry;
 import org.geotoolkit.wps.xml.v200.Reference;
 
 

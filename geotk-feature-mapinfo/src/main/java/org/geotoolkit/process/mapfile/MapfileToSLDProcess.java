@@ -22,7 +22,7 @@ import java.util.Collection;
 import java.io.IOException;
 import java.io.File;
 import java.util.ArrayList;
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 import javax.measure.Unit;
 
 import org.geotoolkit.processing.AbstractProcess;

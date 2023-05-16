@@ -11,7 +11,7 @@ package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.complex;
 
 import java.util.Set;
 
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlType;
 import org.opengis.geometry.complex.Complex;
 import org.opengis.geometry.complex.CompositeSurface;
 import org.opengis.geometry.primitive.Curve;

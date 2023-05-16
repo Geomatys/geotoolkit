@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.measure.Quantity;
-import javax.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBElement;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.IdentifiedObjects;

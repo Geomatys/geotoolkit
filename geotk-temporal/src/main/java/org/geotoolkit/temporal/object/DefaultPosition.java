@@ -22,10 +22,10 @@
 //import java.text.SimpleDateFormat;
 //import java.util.Date;
 //import java.util.Objects;
-//import javax.xml.bind.annotation.XmlElement;
-//import javax.xml.bind.annotation.XmlRootElement;
-//import javax.xml.bind.annotation.XmlType;
-//import javax.xml.bind.annotation.XmlValue;
+//import jakarta.xml.bind.annotation.XmlElement;
+//import jakarta.xml.bind.annotation.XmlRootElement;
+//import jakarta.xml.bind.annotation.XmlType;
+//import jakarta.xml.bind.annotation.XmlValue;
 //import org.apache.sis.util.SimpleInternationalString;
 //import org.opengis.temporal.CalendarDate;
 //import org.opengis.temporal.DateAndTime;

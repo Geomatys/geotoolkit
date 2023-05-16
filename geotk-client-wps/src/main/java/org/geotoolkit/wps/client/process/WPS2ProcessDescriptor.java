@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.measure.Unit;
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 import org.apache.sis.measure.Units;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.util.UnconvertibleObjectException;

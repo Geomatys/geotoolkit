@@ -17,9 +17,9 @@
 
 package org.geotoolkit.wms.xml;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Unmarshaller;
 import org.apache.sis.xml.MarshallerPool;
 
 import static org.geotoolkit.gml.xml.GMLMarshallerPool.createJAXBContext;

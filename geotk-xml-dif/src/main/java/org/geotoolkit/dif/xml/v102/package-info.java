@@ -15,5 +15,5 @@
  *    Lesser General Public License for more details.
  */
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://gcmd.gsfc.nasa.gov/Aboutus/xml/dif/", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://gcmd.gsfc.nasa.gov/Aboutus/xml/dif/", elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package org.geotoolkit.dif.xml.v102;

@@ -19,8 +19,8 @@ package org.geotoolkit.ncwms;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Unmarshaller;
 import org.geotoolkit.wms.xml.AbstractWMSCapabilities;
 import org.geotoolkit.wms.xml.WMSMarshallerPool;
 import org.geotoolkit.wms.xml.WMSVersion;

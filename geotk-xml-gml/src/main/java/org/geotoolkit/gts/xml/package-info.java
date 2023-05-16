@@ -15,5 +15,5 @@
  *    Lesser General Public License for more details.
  */
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.isotc211.org/2005/gts", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://www.isotc211.org/2005/gts", elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package org.geotoolkit.gts.xml;

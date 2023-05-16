@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.temporal.reference.xmlAdapter;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
+import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 import org.geotoolkit.temporal.reference.DefaultTemporalReferenceSystem;
 import org.opengis.temporal.TemporalReferenceSystem;
 

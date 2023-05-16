@@ -7,12 +7,12 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UncheckedIOException;
 import java.io.Writer;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.PropertyException;
-import javax.xml.bind.ValidationEventHandler;
-import javax.xml.bind.annotation.adapters.XmlAdapter;
-import javax.xml.bind.attachment.AttachmentMarshaller;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Marshaller;
+import jakarta.xml.bind.PropertyException;
+import jakarta.xml.bind.ValidationEventHandler;
+import jakarta.xml.bind.annotation.adapters.XmlAdapter;
+import jakarta.xml.bind.attachment.AttachmentMarshaller;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -119,12 +119,12 @@ public class MarshallerProxy implements Marshaller {
     }
 
     @Override
-    public <A extends XmlAdapter> void setAdapter(Class<A> type, A adapter) {
+    public <A extends XmlAdapter<?,?>> void setAdapter(Class<A> type, A adapter) {
         wrapped.setAdapter(type, adapter);
     }
 
     @Override
-    public <A extends XmlAdapter> A getAdapter(Class<A> type) {
+    public <A extends XmlAdapter<?,?>> A getAdapter(Class<A> type) {
         return wrapped.getAdapter(type);
     }
 

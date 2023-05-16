@@ -15,5 +15,5 @@
  *    Lesser General Public License for more details.
  */
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.georss.org/georss", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://www.georss.org/georss", elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package org.geotoolkit.georss.xml.v100;

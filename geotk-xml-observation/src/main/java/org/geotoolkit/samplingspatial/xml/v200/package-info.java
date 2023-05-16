@@ -15,5 +15,5 @@
  *    Lesser General Public License for more details.
  */
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.opengis.net/samplingSpatial/2.0", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://www.opengis.net/samplingSpatial/2.0", elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package org.geotoolkit.samplingspatial.xml.v200;

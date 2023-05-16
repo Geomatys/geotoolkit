@@ -40,9 +40,9 @@ import org.geotoolkit.swe.xml.v101.QuantityType;
 import org.geotoolkit.swe.xml.v101.UomPropertyType;
 
 // JAXB dependencies
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.Marshaller;
+import jakarta.xml.bind.Unmarshaller;
 import org.apache.sis.test.xml.DocumentComparator;
 
 //Junit dependencies

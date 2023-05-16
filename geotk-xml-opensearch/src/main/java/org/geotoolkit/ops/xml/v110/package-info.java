@@ -15,5 +15,5 @@
  */
 
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://a9.com/-/spec/opensearch/1.1/", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://a9.com/-/spec/opensearch/1.1/", elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package org.geotoolkit.ops.xml.v110;

@@ -25,7 +25,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlTransient;
 import org.geotoolkit.temporal.object.ISODateParser;
 import org.opengis.temporal.TemporalPosition;
 

@@ -18,8 +18,8 @@
 package org.geotoolkit.temporal.object;
 
 import java.util.Map;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
 import org.opengis.temporal.Duration;
 import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;

@@ -24,8 +24,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Arrays;
 import static org.geotoolkit.sos.AbstractSOSRequest.POOL;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Marshaller;
 import org.geotoolkit.sos.xml.v100.EventTime;
 import org.geotoolkit.sos.xml.v100.GetResult;
 

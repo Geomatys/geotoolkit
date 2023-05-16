@@ -23,9 +23,9 @@ import java.util.List;
 import java.util.ServiceLoader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Marshaller;
+import jakarta.xml.bind.Unmarshaller;
 import org.geotoolkit.sld.MutableSLDFactory;
 import org.geotoolkit.sld.MutableStyledLayerDescriptor;
 import org.geotoolkit.style.MutableStyleFactory;
@@ -33,7 +33,7 @@ import org.apache.sis.xml.MarshallerPool;
 import org.geotoolkit.filter.FilterFactory2;
 import org.opengis.sld.StyledLayerDescriptor;
 import org.opengis.util.FactoryException;
-import javax.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBContext;
 
 /**
  * Utility class to read and write XML OGC SLD files.

@@ -14,8 +14,8 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.opengis.net/wms", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED,
-xmlns = { @javax.xml.bind.annotation.XmlNs(prefix = "",    namespaceURI= "http://www.opengis.net/wms"),
-          @javax.xml.bind.annotation.XmlNs(prefix = "sld", namespaceURI= "http://www.opengis.net/sld"),
-          @javax.xml.bind.annotation.XmlNs(prefix = "se",  namespaceURI= "http://www.opengis.net/se")})
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://www.opengis.net/wms", elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED,
+xmlns = { @jakarta.xml.bind.annotation.XmlNs(prefix = "",    namespaceURI= "http://www.opengis.net/wms"),
+          @jakarta.xml.bind.annotation.XmlNs(prefix = "sld", namespaceURI= "http://www.opengis.net/sld"),
+          @jakarta.xml.bind.annotation.XmlNs(prefix = "se",  namespaceURI= "http://www.opengis.net/se")})
 package org.geotoolkit.wms.xml.v130;

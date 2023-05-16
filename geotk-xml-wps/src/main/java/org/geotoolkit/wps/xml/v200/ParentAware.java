@@ -1,6 +1,6 @@
 package org.geotoolkit.wps.xml.v200;
 
-import javax.xml.bind.Unmarshaller;
+import jakarta.xml.bind.Unmarshaller;
 import org.apache.sis.util.ArgumentChecks;
 
 /**

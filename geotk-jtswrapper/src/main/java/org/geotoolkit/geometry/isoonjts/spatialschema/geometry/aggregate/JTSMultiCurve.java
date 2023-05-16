@@ -3,9 +3,9 @@
 package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate;
 
 import java.util.Set;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSLineString;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSCurve;
 import org.geotoolkit.internal.jaxb.CurveLineAdapter;

@@ -25,7 +25,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.xml.bind.annotation.*;
+import jakarta.xml.bind.annotation.*;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.ComparisonMode;

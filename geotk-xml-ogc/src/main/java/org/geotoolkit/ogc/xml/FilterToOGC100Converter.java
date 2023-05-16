@@ -18,7 +18,7 @@ package org.geotoolkit.ogc.xml;
 
 import java.awt.Color;
 import java.util.List;
-import javax.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBElement;
 import org.apache.sis.internal.referencing.AxisDirections;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;

@@ -16,8 +16,8 @@
  */
 package org.geotoolkit.wmc.xml.v110;
 
-import javax.xml.bind.annotation.XmlEnum;
-import javax.xml.bind.annotation.XmlEnumValue;
+import jakarta.xml.bind.annotation.XmlEnum;
+import jakarta.xml.bind.annotation.XmlEnumValue;
 
 
 /**

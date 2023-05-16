@@ -3,9 +3,9 @@
 package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate;
 
 import java.util.Set;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.internal.jaxb.GeometryAdapter;
 import org.opengis.geometry.aggregate.MultiSurface;
 import org.opengis.geometry.primitive.OrientableSurface;

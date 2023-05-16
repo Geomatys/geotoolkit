@@ -16,8 +16,8 @@
  */
 package org.geotoolkit.se.xml.vext;
 
-import javax.xml.bind.annotation.*;
-import javax.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.*;
+import jakarta.xml.bind.annotation.XmlElement;
 
 import org.geotoolkit.se.xml.v110.FunctionType;
 

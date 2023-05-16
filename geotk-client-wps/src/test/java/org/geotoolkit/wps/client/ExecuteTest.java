@@ -20,7 +20,7 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.URL;
 import java.util.List;
-import javax.xml.bind.Marshaller;
+import jakarta.xml.bind.Marshaller;
 import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;

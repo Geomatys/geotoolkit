@@ -18,9 +18,9 @@ package org.geotoolkit.wmts.xml.v100;
 
 import java.io.StringReader;
 import java.io.StringWriter;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Marshaller;
+import jakarta.xml.bind.Unmarshaller;
 
 import org.geotoolkit.gml.xml.v311.DirectPositionType;
 import org.geotoolkit.gml.xml.v311.PointType;

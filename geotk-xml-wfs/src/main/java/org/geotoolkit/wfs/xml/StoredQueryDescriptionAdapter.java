@@ -15,8 +15,8 @@
  */
 package org.geotoolkit.wfs.xml;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.adapters.XmlAdapter;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 import org.geotoolkit.wfs.xml.v200.StoredQueryDescriptionType;
 
 /**

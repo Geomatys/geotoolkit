@@ -13,9 +13,9 @@ import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.internal.system.DefaultFactories;

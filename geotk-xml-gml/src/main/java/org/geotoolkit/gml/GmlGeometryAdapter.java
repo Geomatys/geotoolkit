@@ -18,8 +18,8 @@ package org.geotoolkit.gml;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
+import jakarta.xml.bind.Marshaller;
+import jakarta.xml.bind.Unmarshaller;
 import org.geotoolkit.gml.xml.v311.*;
 
 import org.apache.sis.internal.jaxb.geometry.GM_Object;

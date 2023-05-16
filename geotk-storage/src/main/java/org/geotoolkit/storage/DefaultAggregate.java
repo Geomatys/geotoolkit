@@ -21,7 +21,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlTransient;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.event.StoreEvent;

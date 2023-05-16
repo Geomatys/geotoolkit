@@ -14,5 +14,5 @@
  *    Lesser General Public License for more details.
  */
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://earth.esa.int/eop", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://earth.esa.int/eop", elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package org.geotoolkit.eop.xml.v100;

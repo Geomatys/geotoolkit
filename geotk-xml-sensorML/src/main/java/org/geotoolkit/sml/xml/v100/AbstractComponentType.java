@@ -17,10 +17,10 @@
 package org.geotoolkit.sml.xml.v100;
 
 import java.util.Objects;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlSeeAlso;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlSeeAlso;
+import jakarta.xml.bind.annotation.XmlType;
 import org.geotoolkit.sml.xml.AbstractComponent;
 import org.geotoolkit.sml.xml.AbstractInputs;
 import org.geotoolkit.sml.xml.AbstractOutputs;

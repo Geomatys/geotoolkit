@@ -19,7 +19,7 @@ package org.geotoolkit.ebrim.xml;
 
 import java.util.HashMap;
 import java.util.Map;
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 import org.apache.sis.internal.xml.LegacyNamespaces;
 import org.geotoolkit.xml.AnchoredMarshallerPool;
 import org.apache.sis.xml.MarshallerPool;

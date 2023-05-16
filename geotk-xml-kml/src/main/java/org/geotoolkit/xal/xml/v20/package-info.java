@@ -14,5 +14,5 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-@javax.xml.bind.annotation.XmlSchema(namespace = "urn:oasis:names:tc:ciq:xsdschema:xAL:2.0", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "urn:oasis:names:tc:ciq:xsdschema:xAL:2.0", elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package org.geotoolkit.xal.xml.v20;

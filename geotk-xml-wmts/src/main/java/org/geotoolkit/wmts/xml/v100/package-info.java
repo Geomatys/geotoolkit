@@ -14,15 +14,15 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-@javax.xml.bind.annotation.XmlSchema(
+@jakarta.xml.bind.annotation.XmlSchema(
         namespace = "http://www.opengis.net/wmts/1.0",
-        elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED,
+        elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED,
         xmlns = {
-            @javax.xml.bind.annotation.XmlNs(prefix="",      namespaceURI="http://www.opengis.net/wmts/1.0"),
-            @javax.xml.bind.annotation.XmlNs(prefix="xsi",   namespaceURI="http://www.w3.org/2001/XMLSchema-instance"),
-            @javax.xml.bind.annotation.XmlNs(prefix="xlink", namespaceURI="http://www.w3.org/1999/xlink"),
-            @javax.xml.bind.annotation.XmlNs(prefix="gml",   namespaceURI="http://www.opengis.net/gml/3.2"),
-            @javax.xml.bind.annotation.XmlNs(prefix="ows",   namespaceURI="http://www.opengis.net/ows/1.1")
+            @jakarta.xml.bind.annotation.XmlNs(prefix="",      namespaceURI="http://www.opengis.net/wmts/1.0"),
+            @jakarta.xml.bind.annotation.XmlNs(prefix="xsi",   namespaceURI="http://www.w3.org/2001/XMLSchema-instance"),
+            @jakarta.xml.bind.annotation.XmlNs(prefix="xlink", namespaceURI="http://www.w3.org/1999/xlink"),
+            @jakarta.xml.bind.annotation.XmlNs(prefix="gml",   namespaceURI="http://www.opengis.net/gml/3.2"),
+            @jakarta.xml.bind.annotation.XmlNs(prefix="ows",   namespaceURI="http://www.opengis.net/ows/1.1")
         }
 )
 package org.geotoolkit.wmts.xml.v100;

@@ -2,8 +2,8 @@ package org.geotoolkit.wps.xml.v200;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
 import org.apache.sis.util.Version;
 import org.geotoolkit.util.Versioned;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;

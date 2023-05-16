@@ -25,6 +25,6 @@ xmlns = { @XmlNs(prefix = "sos", namespaceURI= "http://www.opengis.net/sos/2.0")
           @XmlNs(prefix = "sml", namespaceURI= "http://www.opengis.net/sensorML/1.0")})
 package org.geotoolkit.sos.xml.v200;
 
-import javax.xml.bind.annotation.XmlNs;
-import javax.xml.bind.annotation.XmlNsForm;
-import javax.xml.bind.annotation.XmlSchema;
+import jakarta.xml.bind.annotation.XmlNs;
+import jakarta.xml.bind.annotation.XmlNsForm;
+import jakarta.xml.bind.annotation.XmlSchema;

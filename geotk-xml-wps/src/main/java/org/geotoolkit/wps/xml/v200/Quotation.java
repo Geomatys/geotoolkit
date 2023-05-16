@@ -18,7 +18,7 @@ package org.geotoolkit.wps.xml.v200;
 
 import java.util.Date;
 import java.util.List;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import org.geotoolkit.wps.xml.WPSResponse;
 
 /**

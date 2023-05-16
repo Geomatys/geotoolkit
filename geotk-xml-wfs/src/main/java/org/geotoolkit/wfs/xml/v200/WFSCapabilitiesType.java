@@ -18,7 +18,7 @@
 
 package org.geotoolkit.wfs.xml.v200;
 
-import javax.xml.bind.annotation.*;
+import jakarta.xml.bind.annotation.*;
 import org.geotoolkit.ogc.xml.v200.FilterCapabilities;
 import org.geotoolkit.ows.xml.AbstractCapabilitiesBase;
 import org.geotoolkit.ows.xml.Sections;

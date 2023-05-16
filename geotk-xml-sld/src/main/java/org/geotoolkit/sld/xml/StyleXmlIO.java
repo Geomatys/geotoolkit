@@ -26,10 +26,10 @@ import java.util.Map;
 import java.util.logging.Level;
 
 // JAXB dependencies
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Marshaller;
+import jakarta.xml.bind.Unmarshaller;
 
 // JAXP dependencies
 import javax.xml.stream.XMLEventReader;
@@ -359,7 +359,7 @@ public final class StyleXmlIO {
      * Target can be : File, ContentHandler, OutputStream, Node, Writer, Result,
      * XMLEventWriter, XMLStreamWriter
      *
-     * @throws javax.xml.bind.JAXBException
+     * @throws jakarta.xml.bind.JAXBException
      */
     public void writeSLD(final Object target, final StyledLayerDescriptor sld,
             final Specification.StyledLayerDescriptor version, final boolean isformatted) throws JAXBException{
