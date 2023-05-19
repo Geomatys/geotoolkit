@@ -22,11 +22,9 @@ import org.geotoolkit.storage.event.FeatureStoreManagementEvent;
 import java.util.AbstractCollection;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -41,9 +39,7 @@ import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.storage.feature.session.Session;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.feature.FeatureTypeExt;
-import org.geotoolkit.feature.ReprojectMapper;
 import org.geotoolkit.feature.TransformMapper;
 import org.geotoolkit.feature.ViewMapper;
 import org.geotoolkit.geometry.jts.transform.GeometryScaleTransformer;
@@ -52,16 +48,13 @@ import org.geotoolkit.storage.event.StorageListener.Weak;
 import org.geotoolkit.storage.feature.query.QueryUtilities;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.util.collection.CloseableIterator;
-import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.MismatchedFeatureException;
-import org.opengis.feature.PropertyType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.ResourceId;
 import org.opengis.filter.SortProperty;
 import org.opengis.geometry.Envelope;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.GenericName;
 
 /**
@@ -204,19 +197,6 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
     @Override
     public String toString() {
         return "FeatureCollection\n"+String.valueOf(getType());
-    }
-
-    @Override
-    public void update(Feature feature) throws DataStoreException {
-        if(feature == null) return;
-        ResourceId filter = FeatureExt.getId(feature);
-        final Map<String,Object> map = new HashMap<>();
-        for(PropertyType pt : feature.getType().getProperties(true)){
-            if(pt instanceof AttributeType){
-                map.put(pt.getName().toString(), feature.getPropertyValue(pt.getName().toString()));
-            }
-        }
-        update(filter, map);
     }
 
     @Override

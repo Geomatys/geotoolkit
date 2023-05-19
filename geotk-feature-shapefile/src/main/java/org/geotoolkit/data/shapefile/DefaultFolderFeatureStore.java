@@ -32,13 +32,11 @@ import org.apache.sis.storage.UnsupportedQueryException;
 import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.event.StorageEvent;
 import org.geotoolkit.storage.feature.AbstractFeatureStore;
 import org.geotoolkit.storage.feature.FeatureReader;
 import org.geotoolkit.storage.feature.FeatureStore;
 import org.geotoolkit.storage.feature.FeatureWriter;
-import org.geotoolkit.storage.feature.FileFeatureStoreFactory;
 import org.geotoolkit.storage.feature.GenericNameIndex;
 import org.geotoolkit.storage.feature.query.DefaultQueryCapabilities;
 import org.geotoolkit.storage.feature.query.QueryCapabilities;
@@ -61,7 +59,7 @@ import org.opengis.util.GenericName;
  * @author Cédric Briançon (Geomatys)
  * @module
  */
-public class DefaultFolderFeatureStore<T extends DataStoreFactory & FileFeatureStoreFactory> extends AbstractFeatureStore implements ResourceOnFileSystem {
+public class DefaultFolderFeatureStore extends AbstractFeatureStore implements ResourceOnFileSystem {
 
     /**
      * Listen to changes in sub stores and propagate them.

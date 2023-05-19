@@ -31,7 +31,7 @@ import org.apache.sis.storage.StorageConnector;
 import org.geotoolkit.storage.ProviderOnFileSystem;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
-import org.geotoolkit.storage.feature.FileFeatureStoreFactory;
+import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 
@@ -77,7 +77,7 @@ public class TiffProvider extends DataStoreProvider implements ProviderOnFileSys
 
     @Override
     public ProbeResult probeContent(StorageConnector connector) throws DataStoreException {
-        return FileFeatureStoreFactory.probe(this, connector, MIME_TYPE);
+        return FeatureStoreUtilities.probe(this, connector, MIME_TYPE);
     }
 
     @Override

@@ -28,13 +28,13 @@ import java.util.stream.StreamSupport;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
-import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import org.apache.sis.storage.FeatureSet;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.FeatureSetMapper;
 import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.storage.feature.query.SortByComparator;
 import org.geotoolkit.storage.feature.session.Session;
-import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.FeatureSetMapper;
 import org.geotoolkit.storage.memory.WrapFeatureIterator;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.Feature;
@@ -627,20 +627,6 @@ public final class FeatureStreams {
         @Override
         public boolean isWritable() {
             return false;
-        }
-
-        @Override
-        public void update(final Filter filter, final Map values) throws DataStoreException {
-            for(FeatureCollection c : wrapped){
-                c.update(filter, values);
-            }
-        }
-
-        @Override
-        public void remove(final Filter filter) throws DataStoreException {
-            for(FeatureCollection c : wrapped){
-                c.remove(filter);
-            }
         }
 
         @Override
