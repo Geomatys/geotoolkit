@@ -19,7 +19,6 @@ package org.geotoolkit.storage.feature;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Spliterator;
 import java.util.Spliterators;
@@ -32,12 +31,11 @@ import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.WritableFeatureSet;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.storage.feature.session.Session;
-import org.geotoolkit.factory.Hints;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
-import org.opengis.filter.Filter;
 import org.opengis.metadata.Metadata;
 import org.opengis.util.GenericName;
 
@@ -151,29 +149,6 @@ public interface FeatureCollection extends Collection<Feature>, WritableFeatureS
         final Stream<Feature> stream = StreamSupport.stream(spliterator, false);
         return stream.onClose(reader::close);
     }
-
-    /**
-     * Convenient method to update a single feature.
-     * @see #update(org.opengis.feature.type.Name, org.opengis.filter.Filter, java.util.Map)
-     */
-    void update(Feature feature) throws DataStoreException;
-
-    /**
-     * Update all features that match the given filter and update there attributes values
-     * with the values from the given map.
-     *
-     * @param filter : updating filter
-     * @param values : new attributes values
-     * @throws DataStoreException
-     */
-    void update(Filter filter, Map<String, ?> values) throws DataStoreException;
-
-    /**
-     * Remove all features from this collection that match the given filter.
-     * @param filter : removing filter
-     * @throws DataStoreException
-     */
-    void remove(Filter filter) throws DataStoreException;
 
     @Override
     default boolean removeIf(Predicate<? super Feature> predicate) {

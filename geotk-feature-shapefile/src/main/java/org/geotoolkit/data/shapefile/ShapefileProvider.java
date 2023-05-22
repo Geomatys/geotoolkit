@@ -42,10 +42,11 @@ import org.geotoolkit.data.shapefile.lock.ShpFiles;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.DataStores;
+import org.geotoolkit.storage.ProviderOnFileSystem;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
 import org.geotoolkit.storage.feature.FeatureStore;
-import org.geotoolkit.storage.feature.FileFeatureStoreFactory;
+import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.locationtech.jts.geom.MultiLineString;
 import org.locationtech.jts.geom.MultiPoint;
 import org.locationtech.jts.geom.MultiPolygon;
@@ -85,7 +86,7 @@ import org.opengis.parameter.ParameterValueGroup;
                         MultiPoint.class,
                         MultiLineString.class,
                         MultiPolygon.class})
-public class ShapefileProvider extends DataStoreProvider implements FileFeatureStoreFactory {
+public class ShapefileProvider extends DataStoreProvider implements ProviderOnFileSystem {
 
     /** factory identification **/
     public static final String NAME = "shapefile";
@@ -218,7 +219,6 @@ public class ShapefileProvider extends DataStoreProvider implements FileFeatureS
      * {@inheritDoc }
      * @param uri
      */
-    @Override
     public FeatureStore createDataStore(final URI uri) throws DataStoreException {
         FeatureStore result;
         final  Map params = Collections.singletonMap(PATH.getName().toString(), uri);
@@ -232,7 +232,7 @@ public class ShapefileProvider extends DataStoreProvider implements FileFeatureS
 
     @Override
     public ProbeResult probeContent(StorageConnector connector) throws DataStoreException {
-        ProbeResult result = FileFeatureStoreFactory.probe(this, connector, MIME_TYPE);
+        ProbeResult result = FeatureStoreUtilities.probe(this, connector, MIME_TYPE);
         if (result.isSupported()) {
             //SHP and SHX files have the same signature, we only want to match on the SHP file.
             final Path path = connector.getStorageAs(Path.class);

@@ -33,6 +33,7 @@ import org.apache.sis.storage.NoSuchDataException;
 import org.apache.sis.storage.tiling.TileMatrix;
 import org.apache.sis.storage.tiling.TileMatrixSet;
 import org.apache.sis.storage.tiling.TiledResource;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.storage.coverage.finder.DefaultCoverageFinder;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
@@ -54,6 +55,9 @@ public final class TileMatrixSetCoverageResource extends AbstractGridCoverageRes
 
     public TileMatrixSetCoverageResource(GenericName identifier, Collection<? extends TileMatrixSet> tms, int[] tileSize, List<SampleDimension> sampleDimensions) {
         super(null, false);
+        ArgumentChecks.ensureNonNull("tms", tms);
+        ArgumentChecks.ensureNonNull("tileSize", tileSize);
+        ArgumentChecks.ensureNonNull("sampleDimensions", sampleDimensions);
         this.identifier = identifier;
         this.sets.addAll(tms);
         this.tileSize = tileSize;

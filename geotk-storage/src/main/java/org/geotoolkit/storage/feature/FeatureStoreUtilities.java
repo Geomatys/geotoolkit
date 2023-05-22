@@ -18,6 +18,8 @@ package org.geotoolkit.storage.feature;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -33,16 +35,21 @@ import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.feature.builder.PropertyTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.internal.storage.io.IOUtilities;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataSet;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.storage.ProbeResult;
+import org.apache.sis.storage.StorageConnector;
 import org.apache.sis.util.ArgumentChecks;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.filter.FilterUtilities;
+import org.geotoolkit.storage.ProviderOnFileSystem;
 import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.storage.feature.session.Session;
 import org.geotoolkit.storage.memory.GenericMappingFeatureCollection;
@@ -542,6 +549,60 @@ public class FeatureStoreUtilities {
         }
 
         return cols;
+    }
+
+    public static <T extends DataStoreProvider & ProviderOnFileSystem> ProbeResult probe(T provider, StorageConnector connector, String mimeType) throws DataStoreException {
+        return probe(provider, connector, mimeType, false);
+    }
+
+    public static <T extends DataStoreProvider & ProviderOnFileSystem> ProbeResult probe(T provider, StorageConnector connector, String mimeType, boolean alwaysCheckExtension) throws DataStoreException {
+
+        final Collection<byte[]> signatures = provider.getSignature();
+        if (signatures.isEmpty()) alwaysCheckExtension = true;
+
+        boolean extValid = false;
+        if (alwaysCheckExtension) {
+            //we don't have any signature, check file extensions
+            final Collection<String> suffix = provider.getSuffix();
+            if (!suffix.isEmpty()) {
+                final Path path = connector.getStorageAs(Path.class);
+                if (path != null) {
+                    final String extension = IOUtilities.extension(path).toLowerCase();
+                    extValid = suffix.contains(extension);
+                }
+            }
+        }
+
+        if (alwaysCheckExtension) {
+            if (!extValid) {
+                return ProbeResult.UNSUPPORTED_STORAGE;
+            }
+        }
+        if (signatures.isEmpty()) {
+            return extValid ? new ProbeResult(true, mimeType, null) : ProbeResult.UNSUPPORTED_STORAGE;
+        }
+
+        final ByteBuffer buffer = connector.getStorageAs(ByteBuffer.class);
+        if (buffer != null) {
+            for (byte[] signature : signatures) {
+                try {
+                    buffer.mark();
+                    if (buffer.remaining() < signature.length) {
+                        continue;
+                    }
+                    final byte[] candidate = new byte[signature.length];
+                    buffer.get(candidate);
+
+                    //compare signatures
+                    if (Arrays.equals(signature, candidate)) {
+                        return new ProbeResult(true, mimeType, null);
+                    }
+                } finally {
+                    buffer.rewind();
+                }
+            }
+        }
+        return ProbeResult.UNSUPPORTED_STORAGE;
     }
 
 }

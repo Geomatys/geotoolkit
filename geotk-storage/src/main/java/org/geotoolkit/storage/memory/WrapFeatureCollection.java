@@ -16,9 +16,7 @@
  */
 package org.geotoolkit.storage.memory;
 
-import java.util.Map;
 import org.apache.sis.referencing.NamedIdentifier;
-import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.feature.AbstractFeatureCollection;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.geotoolkit.storage.feature.FeatureCollection;
@@ -27,7 +25,6 @@ import org.geotoolkit.factory.Hints;
 import org.apache.sis.util.Classes;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
-import org.opengis.filter.Filter;
 
 /**
  * Encapsulate FeatureCollection.
@@ -90,27 +87,6 @@ public abstract class WrapFeatureCollection extends AbstractFeatureCollection {
             empty = !ite.hasNext();
         }
         return empty;
-    }
-
-    /**
-     * Useless because current FeatureCollection can't be modified
-     * @param filter
-     * @param values
-     * @throws DataStoreException
-     */
-    @Override
-    public void update(final Filter filter, final Map<String, ?> values) throws DataStoreException {
-        throw new DataStoreException("Unmodifiable collection");
-    }
-
-    /**
-     * Useless because current FeatureCollection can't be modified
-     * @param filter
-     * @throws DataStoreException
-     */
-    @Override
-    public void remove(final Filter filter) throws DataStoreException {
-        throw new DataStoreException("Unmodifiable collection");
     }
 
     /**

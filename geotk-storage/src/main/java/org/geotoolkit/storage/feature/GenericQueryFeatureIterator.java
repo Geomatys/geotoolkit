@@ -16,23 +16,20 @@
  */
 package org.geotoolkit.storage.feature;
 
-import java.util.Map;
 import java.util.stream.Stream;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureTypeExt;
-import org.geotoolkit.feature.ReprojectMapper;
 import org.geotoolkit.feature.TransformMapper;
 import org.geotoolkit.feature.ViewMapper;
 import org.geotoolkit.geometry.jts.transform.GeometryScaleTransformer;
+import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.storage.feature.query.QueryUtilities;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.MismatchedFeatureException;
 import org.opengis.filter.Filter;
 import org.opengis.filter.SortProperty;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  *
@@ -154,15 +151,6 @@ public class GenericQueryFeatureIterator {
                 }
             }
 
-            @Override
-            public void update(Filter filter, Map values) throws DataStoreException {
-                throw new DataStoreException("Not supported.");
-            }
-
-            @Override
-            public void remove(Filter filter) throws DataStoreException {
-                throw new DataStoreException("Not supported.");
-            }
         };
     }
 
