@@ -548,7 +548,7 @@ public class XmlFeatureTest extends org.geotoolkit.test.TestBase {
         f4.setPropertyValue("link", f1);
         f4.setPropertyValue("linkedTo", Arrays.asList(f2,f3));
 
-        final InMemoryFeatureSet fs = new InMemoryFeatureSet(NamesExt.create("one-of-a-kind-ID"), typeReference, Arrays.asList(f1, f2, f3, f4));
+        final InMemoryFeatureSet fs = new InMemoryFeatureSet(NamesExt.create("one-of-a-kind-ID"), typeReference, Arrays.asList(f1, f2, f3, f4), false);
 
         writer.write(fs, temp);
 
