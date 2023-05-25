@@ -38,8 +38,6 @@ import org.geotoolkit.storage.feature.FeatureReader;
 import org.geotoolkit.storage.feature.FeatureStore;
 import org.geotoolkit.storage.feature.FeatureWriter;
 import org.geotoolkit.storage.feature.GenericNameIndex;
-import org.geotoolkit.storage.feature.query.DefaultQueryCapabilities;
-import org.geotoolkit.storage.feature.query.QueryCapabilities;
 import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
 import org.opengis.feature.Feature;
@@ -286,14 +284,6 @@ public class DefaultFolderFeatureStore extends AbstractFeatureStore implements R
         typeCheck(typeName);
         final FeatureStore store = stores.get(this, typeName);
         return store.isWritable(typeName);
-    }
-
-    /**
-     * Unsupported, throws a {@link DataStoreException}.
-     */
-    @Override
-    public QueryCapabilities getQueryCapabilities() {
-        return new DefaultQueryCapabilities(false, false);
     }
 
     /**

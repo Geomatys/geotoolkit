@@ -20,9 +20,7 @@ import java.util.stream.Stream;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureTypeExt;
-import org.geotoolkit.feature.TransformMapper;
 import org.geotoolkit.feature.ViewMapper;
-import org.geotoolkit.geometry.jts.transform.GeometryScaleTransformer;
 import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.storage.feature.query.QueryUtilities;
 import org.opengis.feature.Feature;
@@ -46,7 +44,6 @@ public class GenericQueryFeatureIterator {
         if (filter == null) filter = Filter.include();
         final String[] properties = remainingParameters.getPropertyNames();
         final SortProperty[] sorts = QueryUtilities.getSortProperties(remainingParameters.getSortBy());
-        final double[] resampling = remainingParameters.getResolution();
         final Hints hints = remainingParameters.getHints();
 
         //we should take care of wrapping the reader in a correct order to avoid
@@ -102,13 +99,6 @@ public class GenericQueryFeatureIterator {
             } catch (MismatchedFeatureException | IllegalStateException ex) {
                 throw new DataStoreException(ex);
             }
-        }
-
-        //wrap resampling ------------------------------------------------------
-        if(resampling != null){
-            final GeometryScaleTransformer trs = new GeometryScaleTransformer(resampling[0], resampling[1]);
-            final TransformMapper ttype = new TransformMapper(reader.getFeatureType(), trs);
-            reader = FeatureStreams.decorate(reader, ttype, hints);
         }
 
         return reader;

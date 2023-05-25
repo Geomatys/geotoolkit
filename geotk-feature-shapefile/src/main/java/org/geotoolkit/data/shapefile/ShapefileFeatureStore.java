@@ -79,8 +79,6 @@ import org.geotoolkit.storage.feature.FeatureReader;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.geotoolkit.storage.feature.FeatureStreams;
 import org.geotoolkit.storage.feature.FeatureWriter;
-import org.geotoolkit.storage.feature.query.DefaultQueryCapabilities;
-import org.geotoolkit.storage.feature.query.QueryCapabilities;
 import org.geotoolkit.storage.feature.query.QueryUtilities;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.AttributeType;
@@ -105,7 +103,6 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements Resou
     // This is the default character as specified by the DBF specification
     public static final Charset DEFAULT_STRING_CHARSET = DbaseFileReader.DEFAULT_STRING_CHARSET;
 
-    private final QueryCapabilities capabilities = new DefaultQueryCapabilities(false);
     protected final ShpFiles shpFiles;
     protected final boolean useMemoryMappedBuffer;
     protected final Charset dbfCharset;
@@ -233,14 +230,6 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements Resou
     }
 
     /**
-     * {@inheritDoc }
-     */
-    @Override
-    public QueryCapabilities getQueryCapabilities() {
-        return capabilities;
-    }
-
-    /**
      * Gets the bounding box of the file represented by this data store as a
      * whole (that is, off all of the features in the shapefile)
      *
@@ -315,7 +304,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements Resou
         final String        queryTypeName = gquery.getTypeName();
         final String[]      queryPropertyNames = gquery.getPropertyNames();
         final Hints         queryHints = gquery.getHints();
-        final double[]      queryRes = gquery.getResolution();
+        final double[]      queryRes = null;
         Filter              queryFilter = gquery.getSelection();
 
         final String typeName = baseType.getName().tip().toString();

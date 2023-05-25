@@ -21,9 +21,9 @@ package org.geotoolkit.storage.feature.query;
 import java.util.Collections;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.storage.FeatureQuery;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureQuery;
 import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.storage.memory.InMemoryFeatureSet;
@@ -38,8 +38,8 @@ import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
-import org.opengis.filter.SortProperty;
 import org.opengis.filter.SortOrder;
+import org.opengis.filter.SortProperty;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.GenericName;
 
@@ -81,7 +81,6 @@ public class QueryTest {
         //all-------------------------------------------------------------------
         query = new Query(name);
         assertEquals(query.getTypeName(), name.toString());
-        assertEquals(query.getResolution(), null);
         assertEquals(query.getSelection(), Filter.include());
         assertFalse(query.getLimit().isPresent());
         assertArrayEquals(query.getPropertyNames(), null);
@@ -91,7 +90,6 @@ public class QueryTest {
         //only filter-----------------------------------------------------------
         query = Query.filtered(name.toString(), Filter.exclude());
         assertEquals(query.getTypeName(), name.toString());
-        assertEquals(query.getResolution(), null);
         assertEquals(query.getSelection(), Filter.exclude());
         assertFalse(query.getLimit().isPresent());
         assertArrayEquals(query.getPropertyNames(), null);
@@ -113,7 +111,6 @@ public class QueryTest {
 
         //test all parameters---------------------------------------------------
         qb.setTypeName(name);
-        qb.setResolution(new double[]{45,31});
         qb.setSelection(Filter.exclude());
         qb.setLimit(10);
         qb.setProperties(new String[]{"att1","att2"});
@@ -122,8 +119,6 @@ public class QueryTest {
         query = qb;
 
         assertEquals(query.getTypeName(), name.toString());
-        assertEquals(query.getResolution()[0], 45d,DELTA);
-        assertEquals(query.getResolution()[1], 31d,DELTA);
         assertEquals(query.getSelection(), Filter.exclude());
         assertEquals(query.getLimit().getAsLong(), 10l);
         assertEquals(query.getPropertyNames()[0], "att1");

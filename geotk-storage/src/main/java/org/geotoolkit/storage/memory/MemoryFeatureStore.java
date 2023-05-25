@@ -37,17 +37,15 @@ import org.apache.sis.storage.Query;
 import org.apache.sis.storage.UnsupportedQueryException;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.Utilities;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.FeatureExt;
+import org.geotoolkit.filter.FilterUtilities;
+import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.storage.feature.AbstractFeatureStore;
 import org.geotoolkit.storage.feature.FeatureReader;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.geotoolkit.storage.feature.FeatureStreams;
 import org.geotoolkit.storage.feature.FeatureWriter;
-import org.geotoolkit.storage.feature.query.DefaultQueryCapabilities;
-import org.geotoolkit.storage.feature.query.QueryCapabilities;
-import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.FeatureExt;
-import org.geotoolkit.filter.FilterUtilities;
-import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.storage.feature.GenericNameIndex;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.Feature;
@@ -175,7 +173,6 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
         }
     }
 
-    private final QueryCapabilities capabilities = new DefaultQueryCapabilities(false);
     private final boolean singleTypeLock;
     private final GenericNameIndex<Group> groups = new GenericNameIndex<>();
     private Set<GenericName> nameCache = null;
@@ -305,14 +302,6 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
 
         //fire event
         fireSchemaDeleted(grp.getFeatureType().getName(), grp.getFeatureType());
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public QueryCapabilities getQueryCapabilities() {
-        return capabilities;
     }
 
     /**
