@@ -53,51 +53,6 @@ public final class FeatureStreams {
     private FeatureStreams(){}
 
     /**
-     * Wrap a FeatureIterator with a cache size.
-     * A separate thread is created to load the cache buffer.
-     *
-     * @param reader source reader
-     * @param cacheSize number of features to keep in cache
-     * @return cached iterator
-     */
-    public static FeatureIterator cached(final FeatureIterator reader, final int cacheSize){
-        return GenericCachedFeatureIterator.wrap(reader, cacheSize);
-    }
-
-    /**
-     * Wrap a FeatureReader with a cache size.
-     * A separate thread is created to load the cache buffer.
-     *
-     * @param reader source reader
-     * @param cacheSize number of features to keep in cache
-     * @return cached reader
-     */
-    public static FeatureReader cached(final FeatureReader reader, final int cacheSize){
-        return GenericCachedFeatureIterator.wrap(reader, cacheSize);
-    }
-
-    /**
-     * Create an caching FeatureCollection wrapping the given collection.
-     * A separate thread is created to load the cache buffer.
-     *
-     * @param col source collection
-     * @param cacheSize number of features to keep in cache
-     * @return cached collection
-     */
-    public static FeatureCollection cached(final FeatureCollection col, final int cacheSize){
-        return GenericCachedFeatureIterator.wrap(col, cacheSize);
-    }
-
-    /**
-     * Create an empty FeatureIterator of the given type.
-     *
-     * @return empty iterator
-     */
-    public static FeatureIterator emptyIterator(){
-        return GenericEmptyFeatureIterator.createIterator();
-    }
-
-    /**
      * Create an empty FeatureReader of the given type.
      *
      * @param type FeatureType can be null
@@ -105,16 +60,6 @@ public final class FeatureStreams {
      */
     public static FeatureReader emptyReader(final FeatureType type){
         return GenericEmptyFeatureIterator.createReader(type);
-    }
-
-    /**
-     * Create an empty FeatureWriter of the given type.
-     *
-     * @param type FeatureType can be null
-     * @return empty writer
-     */
-    public static FeatureWriter emptyWriter(final FeatureType type){
-        return GenericEmptyFeatureIterator.createWriter(type);
     }
 
     /**
@@ -148,18 +93,6 @@ public final class FeatureStreams {
      */
     public static FeatureCollection decorate(final FeatureCollection col, final FeatureSetMapper mask){
         return GenericMappedFeatureIterator.wrap(col, mask);
-    }
-
-    /**
-     * Wrap an Iterator with a filter.
-     * @param <F>
-     * @param iterator source iterator
-     * @param filter filter used to select matching features
-     * @return filtered iterator
-     */
-    public static <F> Iterator<F> filter(final Iterator<F> iterator, final Filter filter){
-        if (filter==null || Filter.include().equals(filter)) return iterator;
-        return GenericFilterIterator.wrap(iterator, filter);
     }
 
     /**
@@ -206,17 +139,6 @@ public final class FeatureStreams {
     public static FeatureCollection filter(final FeatureCollection col, final Filter filter){
         if (filter==null || Filter.include().equals(filter)) return col;
         return GenericFilterFeatureIterator.wrap(col, filter);
-    }
-
-    /**
-     * Wrap a FeatureReader with a max limit.
-     *
-     * @param iterator source iterator
-     * @param limit maximum number of features to return
-     * @return reduced iterator
-     */
-    public static FeatureIterator limit(final FeatureIterator iterator, final int limit){
-        return GenericMaxFeatureIterator.wrap(iterator, limit);
     }
 
     /**

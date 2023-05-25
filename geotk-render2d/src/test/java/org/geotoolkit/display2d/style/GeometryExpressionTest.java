@@ -22,11 +22,13 @@ import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import javax.imageio.ImageIO;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.filter.sqlmm.SQLMM;
+import org.apache.sis.internal.storage.MemoryFeatureSet;
 import org.apache.sis.measure.Units;
 import org.apache.sis.portrayal.MapLayer;
 import org.apache.sis.portrayal.MapLayers;
@@ -40,7 +42,6 @@ import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.filter.FilterFactory2;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.map.MapBuilder;
-import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import static org.geotoolkit.style.StyleConstants.*;
@@ -91,7 +92,7 @@ public class GeometryExpressionTest extends org.geotoolkit.test.TestBase {
         final MutableStyle style = SF.style(symbolizer);
 
         final MapLayers context = MapBuilder.createContext();
-        final MapLayer fml = MapBuilder.createLayer(FeatureStoreUtilities.collection(feature));
+        final MapLayer fml = MapBuilder.createLayer(new MemoryFeatureSet(null, type, Arrays.asList(feature)));
         fml.setStyle(style);
         context.getComponents().add(fml);
 
@@ -162,7 +163,7 @@ public class GeometryExpressionTest extends org.geotoolkit.test.TestBase {
         final MutableStyle style = SF.style(symbolizer);
 
         final MapLayers context = MapBuilder.createContext();
-        final MapLayer fml = MapBuilder.createLayer(FeatureStoreUtilities.collection(feature));
+        final MapLayer fml = MapBuilder.createLayer(new MemoryFeatureSet(null, type, Arrays.asList(feature)));
         fml.setStyle(style);
         context.getComponents().add(fml);
 

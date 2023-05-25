@@ -38,7 +38,6 @@ import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.storage.feature.query.Query;
-import org.geotoolkit.storage.feature.session.DefaultSession;
 import org.geotoolkit.storage.feature.session.Session;
 import org.geotoolkit.util.collection.CloseableIterator;
 import org.opengis.feature.Feature;
@@ -227,7 +226,7 @@ public class FeatureSetWrapper  extends AbstractCollection<Feature> implements F
 
     @Override
     public Session getSession() {
-        return new DefaultSession(new FeatureStoreWrapper(store.getOpenParameters().orElse(null), featureSet), false);
+        return new Session(new FeatureStoreWrapper(store.getOpenParameters().orElse(null), featureSet), false);
     }
 
     @Override

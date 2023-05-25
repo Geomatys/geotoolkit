@@ -36,7 +36,6 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
@@ -46,12 +45,13 @@ import org.geotoolkit.data.shapefile.ShapefileFeatureStore;
 import org.geotoolkit.data.shapefile.lock.ShpFileType;
 import org.geotoolkit.factory.FactoryRegistryException;
 import org.geotoolkit.feature.FeatureExt;
+import org.geotoolkit.filter.FilterFactory2;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.storage.feature.FeatureCollection;
 import org.geotoolkit.storage.feature.FeatureIterator;
 import org.geotoolkit.storage.feature.FeatureReader;
 import org.geotoolkit.storage.feature.FeatureStore;
-import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.geotoolkit.storage.feature.FeatureWriter;
 import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.storage.feature.session.Session;
@@ -68,8 +68,6 @@ import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;
 import org.opengis.filter.Filter;
-import org.geotoolkit.filter.FilterFactory2;
-import org.geotoolkit.filter.FilterUtilities;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.GenericName;
 
@@ -499,30 +497,6 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
             assertEquals(--idx, loadFeatures(sds).size());
         }
         sds.close();
-    }
-
-    @Test
-    public void testTestTransaction() throws Exception {
-        final IndexedShapefileFeatureStore sds = createDataStore();
-        final long idx = sds.getCount(new Query(sds.getName()));
-        final Session session = sds.createSession(true);
-
-        Feature[] newFeatures1 = new Feature[1];
-        Feature[] newFeatures2 = new Feature[2];
-        GeometryFactory fac = org.geotoolkit.geometry.jts.JTS.getFactory();
-        newFeatures1[0] = sds.getFeatureType().newInstance();
-        newFeatures1[0].setPropertyValue("a",fac.createPoint(new Coordinate(0, 0)));
-        newFeatures2[0] = sds.getFeatureType().newInstance();
-        newFeatures2[0].setPropertyValue("a",fac.createPoint(new Coordinate(0, 0)));
-        newFeatures2[1] = sds.getFeatureType().newInstance();
-        newFeatures2[1].setPropertyValue("a",fac.createPoint(new Coordinate(0, 0)));
-
-        session.addFeatures(sds.getName().toString(),FeatureStoreUtilities.collection(newFeatures1));
-        session.addFeatures(sds.getName().toString(),FeatureStoreUtilities.collection(newFeatures2));
-        session.commit();
-        assertEquals(idx + 3, sds.getCount(new Query(sds.getName())));
-        sds.close();
-
     }
 
     private FeatureType createExampleSchema() {

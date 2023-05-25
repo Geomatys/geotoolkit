@@ -93,12 +93,6 @@ public class FeatureStoreUtilities {
     private FeatureStoreUtilities() {
     }
 
-    public static FeatureCollection collection(final Feature ... features){
-        final FeatureCollection col = collection(new NamedIdentifier(NamesExt.create("noid")), features[0].getType());
-        col.addAll(Arrays.asList(features));
-        return col;
-    }
-
     public static FeatureCollection collection(final String id, final FeatureType type) {
         ArgumentChecks.ensureNonNull("Collection id", id);
         ArgumentChecks.ensureNonEmpty("Collection id", id);

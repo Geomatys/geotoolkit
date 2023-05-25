@@ -1,17 +1,18 @@
 
 package org.geotoolkit.pending.demo.filter;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.internal.storage.MemoryFeatureSet;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.filter.FilterFactory2;
 import org.geotoolkit.filter.FilterUtilities;
-import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.geotoolkit.pending.demo.Demos;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -122,6 +123,6 @@ public class FilterDemo {
         feature4.setPropertyValue("job","manager");
         feature4.setPropertyValue("localisation",gf.createPoint(new Coordinate(22, 7)));
 
-        return FeatureStoreUtilities.collection(feature1,feature2,feature3,feature4);
+        return new MemoryFeatureSet(null, type, Arrays.asList(feature1,feature2,feature3,feature4));
     }
 }

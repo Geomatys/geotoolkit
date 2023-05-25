@@ -18,13 +18,8 @@
 package org.geotoolkit.storage.feature;
 
 import java.util.NoSuchElementException;
-import org.geotoolkit.storage.feature.FeatureCollection;
-import org.geotoolkit.storage.feature.FeatureIterator;
-import org.geotoolkit.storage.feature.FeatureReader;
-import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
-import org.geotoolkit.storage.feature.FeatureWriter;
-import org.geotoolkit.storage.memory.WrapFeatureCollection;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.storage.memory.WrapFeatureCollection;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 
@@ -93,32 +88,6 @@ public class GenericEmptyFeatureIterator implements FeatureIterator {
 
     }
 
-    /**
-     * An empty FeatureWriter of the given type.
-     *
-     * @param <T> extends FeatureType
-     * @param <F> extends Feature
-     * @param <R> extends FeatureWriter<T,F>
-     */
-    private static final class GenericEmptyFeatureWriter extends GenericEmptyFeatureIterator implements FeatureWriter{
-
-        private final FeatureType type;
-
-        private GenericEmptyFeatureWriter(final FeatureType type){
-            this.type = type;
-        }
-
-        @Override
-        public FeatureType getFeatureType() {
-            return type;
-        }
-
-        @Override
-        public void write() throws FeatureStoreRuntimeException {
-            throw new FeatureStoreRuntimeException("FeatureWriter is empty and does not support write()");
-        }
-    }
-
     private static final class GenericEmptyFeatureCollection extends WrapFeatureCollection{
 
         private GenericEmptyFeatureCollection(final FeatureCollection original){
@@ -143,21 +112,6 @@ public class GenericEmptyFeatureIterator implements FeatureIterator {
      */
     public static FeatureReader createReader(final FeatureType type){
         return new GenericEmptyFeatureReader(type);
-    }
-
-    /**
-     * Create an empty FeatureWriter of the given type.
-     * @param type FeatureType can be null
-     */
-    public static FeatureWriter createWriter(final FeatureType type){
-        return new GenericEmptyFeatureWriter(type);
-    }
-
-    /**
-     * Create an empty FeatureIterator of the given type.
-     */
-    public static FeatureIterator createIterator(){
-        return new GenericEmptyFeatureIterator();
     }
 
     /**

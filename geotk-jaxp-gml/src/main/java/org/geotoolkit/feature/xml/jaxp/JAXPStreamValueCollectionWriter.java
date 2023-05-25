@@ -19,6 +19,7 @@ package org.geotoolkit.feature.xml.jaxp;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
@@ -28,10 +29,10 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.stream.XMLStreamException;
+import org.apache.sis.internal.storage.MemoryFeatureSet;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.xml.MarshallerPool;
-import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.feature.model.FeatureSetWrapper;
 import org.geotoolkit.feature.xml.Utils;
@@ -41,6 +42,7 @@ import org.geotoolkit.gml.JTStoGeometry;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.gml.xml.GMLMarshallerPool;
 import org.geotoolkit.gml.xml.v321.ObjectFactory;
+import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.xml.StaxStreamWriter;
 import org.opengis.feature.Attribute;
@@ -101,8 +103,8 @@ public class JAXPStreamValueCollectionWriter extends StaxStreamWriter implements
             }
         }
         FeatureSet collection;
-        if (candidate instanceof Feature) {
-           collection =  FeatureStoreUtilities.collection((Feature)candidate);
+        if (candidate instanceof Feature f) {
+           collection = new MemoryFeatureSet(null, f.getType(), Arrays.asList(f));
         } else if (candidate instanceof FeatureSet) {
             collection = (FeatureSet) candidate;
         } else {

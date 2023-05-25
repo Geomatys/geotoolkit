@@ -9,6 +9,7 @@ import java.awt.Font;
 import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 import net.sf.jasperreports.engine.JasperReport;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.internal.storage.MemoryFeatureSet;
 import org.apache.sis.portrayal.MapLayer;
 import org.apache.sis.portrayal.MapLayers;
 import org.apache.sis.referencing.CRS;
@@ -100,9 +102,9 @@ public class ReportDemo {
                 final Feature modified = type.newInstance();
 
                 //create the main map with a single feature ------------------
-                final FeatureCollection col = FeatureStoreUtilities.collection(feature);
+                final FeatureSet col = new MemoryFeatureSet(null, feature.getType(), Arrays.asList(feature));
                 final MapLayers context = MapBuilder.createContext();
-                final MutableStyle style = RandomStyleBuilder.createRandomVectorStyle(col.getType());
+                final MutableStyle style = RandomStyleBuilder.createRandomVectorStyle(feature.getType());
                 final MapLayer layer = MapBuilder.createLayer(col);
                 layer.setStyle(style);
                 context.getComponents().add(layer);
