@@ -55,6 +55,7 @@ import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.storage.multires.AbstractTileGenerator;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.TopologyException;
 import org.locationtech.jts.simplify.DouglasPeuckerSimplifier;
 import org.opengis.feature.Feature;
 import org.opengis.feature.PropertyType;
@@ -242,7 +243,12 @@ public final class FeatureSetToCoverageTileGenerator extends AbstractTileGenerat
                     final Feature feature = iterator.next();
                     Geometry g = toGridGeometry.apply(feature);
                     if (g != null) {
-                        g = paintShape.intersection(g);
+                        try {
+                            g = paintShape.intersection(g);
+                        } catch (TopologyException ex) {
+                            //this may happen for many reason
+                            //we can ignore it, the geometry might be bigger but that's all.
+                        }
                         g = DouglasPeuckerSimplifier.simplify(g, 0.5);
                         if (g.isEmpty()) continue;
                         all.add(g);

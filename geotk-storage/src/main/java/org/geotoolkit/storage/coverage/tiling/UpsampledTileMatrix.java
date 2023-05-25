@@ -22,7 +22,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.SortedMap;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.concurrent.CountDownLatch;
+import java.util.function.Function;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridClippingMode;
 import org.apache.sis.coverage.grid.GridCoverage;
@@ -30,6 +35,7 @@ import org.apache.sis.coverage.grid.GridCoverageProcessor;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridRoundingMode;
+import org.apache.sis.internal.util.AbstractIterator;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.tiling.Tile;
 import org.apache.sis.storage.tiling.TileMatrix;
@@ -37,6 +43,7 @@ import org.apache.sis.storage.tiling.TileMatrixSet;
 import org.apache.sis.storage.tiling.TileStatus;
 import org.geotoolkit.storage.coverage.CoverageResourceTile;
 import org.geotoolkit.storage.coverage.mosaic.AggregatedCoverageResource;
+import org.geotoolkit.storage.coverage.mosaic.BitSetND;
 import org.geotoolkit.storage.multires.TileInError;
 import org.geotoolkit.storage.multires.TileMatrices;
 import org.opengis.referencing.operation.TransformException;
@@ -97,20 +104,56 @@ public final class UpsampledTileMatrix implements TileMatrix {
 
     @Override
     public Stream<Tile> getTiles(GridExtent indicesRanges, boolean parallel) throws DataStoreException {
+
+        //original tile stream
+        final Stream<Tile> baseStream = base.getTiles(indicesRanges, parallel);
+
         if (indicesRanges == null) {
             indicesRanges = getTilingScheme().getExtent();
         }
-        Stream<long[]> stream = TileMatrices.pointStream(indicesRanges);
-        if (parallel) {
-            stream = stream.parallel();
-        }
-        return stream.map((long[] t) -> {
+
+        //keep track of available tiles
+        final CountDownLatch latch = new CountDownLatch(1);
+        final BitSetND bset = new BitSetND(indicesRanges);
+        final Stream<Tile> stream = baseStream.map((Tile t) -> {
+            bset.set(t.getIndices());
+            return t;
+        }).onClose(latch::countDown);
+
+        //create a stream of all missing tiles positions
+        final long[] position = indicesRanges.getLow().getCoordinateValues();
+        final Iterator<long[]> ite = new AbstractIterator<long[]>() {
+            @Override
+            public synchronized boolean hasNext() {
+                if (next == null) {
+                    next = bset.nextClear(position);
+                    position[0]++;
+                }
+                return next != null;
+            }
+        };
+        //create stream of all upscaled tiles
+        final Spliterator<long[]> split = Spliterators.spliterator(ite, Long.MAX_VALUE, Spliterator.DISTINCT);
+        final Stream<Tile> upscaledStream = StreamSupport.stream(split, parallel).map((long[] t) -> {
             try {
+                if (latch.getCount() != 0) {
+                    throw new DataStoreException("base stream should have been fully processed");
+                }
                 return getTile(t).orElse(null);
             } catch (DataStoreException ex) {
                 return TileInError.create(t, ex);
             }
         }).filter(Objects::nonNull);
+
+        /*
+        Ensure the first stream is fully processed before we start the upscaled tile stream.
+        */
+        return Stream.of(new Object()).flatMap(new Function<Object,Stream<Stream<Tile>>>() {
+            @Override
+            public Stream<Stream<Tile>> apply(Object t) {
+                return Stream.of(stream, upscaledStream);
+            }
+        }).flatMap((Stream<Tile> t1) -> t1);
     }
 
     /**
