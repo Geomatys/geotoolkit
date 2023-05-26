@@ -16,36 +16,30 @@
  */
 package org.geotoolkit.processing.vector.maxlimit;
 
-import org.geotoolkit.process.ProcessException;
-import org.opengis.util.NoSuchIdentifierException;
+import java.util.stream.Stream;
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.storage.FeatureSet;
+import org.geotoolkit.process.ProcessDescriptor;
+import org.geotoolkit.process.ProcessFinder;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
+import org.geotoolkit.processing.vector.AbstractProcessTest;
+import org.geotoolkit.storage.feature.FeatureCollection;
+import org.geotoolkit.storage.feature.FeatureStoreUtilities;
+import static org.junit.Assert.*;
+import org.junit.Test;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LinearRing;
 import org.locationtech.jts.geom.Polygon;
-import org.apache.sis.feature.builder.AttributeRole;
-import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.internal.feature.AttributeConvention;
-
-
-import org.geotoolkit.storage.feature.FeatureStoreUtilities;
-import org.apache.sis.referencing.CRS;
-import org.geotoolkit.storage.feature.FeatureCollection;
-import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.process.ProcessFinder;
-import org.geotoolkit.processing.GeotkProcessingRegistry;
-import org.geotoolkit.processing.vector.AbstractProcessTest;
-
-
-import org.opengis.referencing.NoSuchAuthorityCodeException;
-import org.opengis.util.FactoryException;
-import org.opengis.parameter.ParameterValueGroup;
-
-
-import org.junit.Test;
-import static org.junit.Assert.*;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
+import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.opengis.util.FactoryException;
 
 /**
  * JUnit test of MaxLimit process
@@ -63,7 +57,7 @@ public class MaxLimitTest extends AbstractProcessTest {
     }
 
     @Test
-    public void testLimit() throws ProcessException, NoSuchIdentifierException, FactoryException {
+    public void testLimit() throws Exception {
 
         // Inputs
         final FeatureCollection featureList = buildFeatureList();
@@ -77,9 +71,11 @@ public class MaxLimitTest extends AbstractProcessTest {
         org.geotoolkit.process.Process proc = desc.createProcess(in);
 
         //Features out
-        final FeatureCollection featureListOut = (FeatureCollection) proc.call().parameter("feature_out").getValue();
+        final FeatureSet featureListOut = (FeatureSet) proc.call().parameter("feature_out").getValue();
 
-        assertEquals(5, featureListOut.size());
+        try (Stream<Feature> stream = featureListOut.features(true)) {
+            assertEquals(5, stream.count());
+        }
     }
 
     private static FeatureType createSimpleResultType() throws NoSuchAuthorityCodeException, FactoryException {
