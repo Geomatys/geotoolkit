@@ -30,10 +30,10 @@ import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
-import org.geotoolkit.storage.feature.FileFeatureStoreFactory;
 import org.geotoolkit.storage.ProviderOnFileSystem;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
+import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.locationtech.jts.geom.Point;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -87,7 +87,7 @@ public class NMEAProvider extends DataStoreProvider implements ProviderOnFileSys
 
     @Override
     public ProbeResult probeContent(StorageConnector connector) throws DataStoreException {
-        return FileFeatureStoreFactory.probe(this, connector, MIME_TYPE);
+        return FeatureStoreUtilities.probe(this, connector, MIME_TYPE);
     }
 
     @Override

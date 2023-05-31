@@ -28,11 +28,11 @@ import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.FeatureSet;
-import static org.geotoolkit.storage.feature.AbstractFeatureStore.GML_32_NAMESPACE;
-import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import static org.geotoolkit.feature.xml.GMLConvention.*;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.geometry.jts.JTS;
+import static org.geotoolkit.storage.feature.AbstractFeatureStore.GML_32_NAMESPACE;
+import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import org.geotoolkit.util.NamesExt;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
@@ -350,7 +350,7 @@ public class XmlTestData {
 
         //sorted by attDouble ascending
         collectionSimple = new InMemoryFeatureSet(NamesExt.create("one-of-a-kind-ID"),
-                simpleTypeBasic, Arrays.asList(simpleFeature3, simpleFeature2, simpleFeature1));
+                simpleTypeBasic, Arrays.asList(simpleFeature3, simpleFeature2, simpleFeature1), false);
 
         Feature s1 = simpleTypeBasic2.newInstance();
         s1.setPropertyValue(AttributeConvention.IDENTIFIER,"id90");
@@ -368,7 +368,7 @@ public class XmlTestData {
         s3.setPropertyValue("attDouble2",12.31d);
 
         collectionSimple2 = new InMemoryFeatureSet(NamesExt.create("one-of-a-kind-ID-2"),
-                simpleTypeBasic2, Arrays.asList(s3, s2, s1));
+                simpleTypeBasic2, Arrays.asList(s3, s2, s1), false);
 
         featureComplex = complexType.newInstance();
         featureComplex.setPropertyValue(AttributeConvention.IDENTIFIER, "id-0");

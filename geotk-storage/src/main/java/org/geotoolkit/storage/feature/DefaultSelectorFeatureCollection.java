@@ -21,26 +21,25 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.referencing.NamedIdentifier;
-import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.FeatureExt;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.storage.feature.query.QueryUtilities;
 import org.geotoolkit.storage.feature.session.Session;
-import org.geotoolkit.factory.Hints;
-import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.util.collection.CloseableIterator;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 import org.opengis.feature.MismatchedFeatureException;
 import org.opengis.filter.Filter;
 import org.opengis.filter.ResourceId;
 import org.opengis.geometry.Envelope;
-import org.opengis.feature.Feature;
-import org.opengis.feature.FeatureType;
 
 /**
  * Feature collection that takes it's source from a single selector.
@@ -245,27 +244,4 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection{
         }
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void update(final Filter filter, final Map<String,?> values) throws DataStoreException {
-        if (filter == Filter.include()) {
-            getSession().updateFeatures(query.getTypeName(), getSelection(), values);
-        }else{
-            getSession().updateFeatures(query.getTypeName(), FilterUtilities.FF.and(getSelection(), filter),values);
-        }
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void remove(final Filter filter) throws DataStoreException {
-        if (filter == Filter.include()) {
-            getSession().removeFeatures(query.getTypeName(), getSelection());
-        }else{
-            getSession().removeFeatures(query.getTypeName(), FilterUtilities.FF.and(getSelection(), filter));
-        }
-    }
 }

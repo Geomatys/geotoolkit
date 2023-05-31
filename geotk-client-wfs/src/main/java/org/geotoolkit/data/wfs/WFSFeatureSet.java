@@ -261,7 +261,7 @@ public class WFSFeatureSet implements WritableFeatureSet {
         insert.setInputFormat("text/xml; subtype=\"gml/3.1.1\"");
 
         final FeatureType featureType = getType();
-        final FeatureSet col = new InMemoryFeatureSet(NamesExt.create("id"), featureType, features);
+        final FeatureSet col = new InMemoryFeatureSet(NamesExt.create("id"), featureType, features, false);
         insert.setFeatures(col);
 
         request.elements().add(insert);

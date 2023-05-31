@@ -8,11 +8,14 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.io.File;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
+import java.util.stream.Collectors;
 import net.sf.jasperreports.engine.JasperReport;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.Envelopes;
@@ -20,7 +23,10 @@ import org.apache.sis.portrayal.MapLayer;
 import org.apache.sis.portrayal.MapLayers;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.storage.Aggregate;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.ext.grid.DefaultGridTemplate;
@@ -41,12 +47,9 @@ import org.geotoolkit.report.graphic.northarrow.NorthArrowDef;
 import org.geotoolkit.report.graphic.scalebar.ScaleBarDef;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.feature.FeatureCollection;
-import org.geotoolkit.storage.feature.FeatureIterator;
-import org.geotoolkit.storage.feature.FeatureStore;
 import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.geotoolkit.storage.feature.FeatureWriter;
 import org.geotoolkit.storage.feature.query.Query;
-import org.geotoolkit.storage.memory.GenericMappingFeatureIterator;
 import org.geotoolkit.storage.memory.mapping.FeatureMapper;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.RandomStyleBuilder;
@@ -56,7 +59,6 @@ import org.jfree.data.general.DefaultPieDataset;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
-import org.opengis.util.GenericName;
 
 public class ReportDemo {
 
@@ -72,22 +74,20 @@ public class ReportDemo {
 
 
         //source to make an atlas ----------------------------------------------------
-        final FeatureStore store = (FeatureStore) DataStores.open(
+        final DataStore store = DataStores.open(
                 (Map)Collections.singletonMap("path",ReportDemo.class.getResource("/data/world/Countries.shp").toURI()));
-        final GenericName name = store.getNames().iterator().next();
-        final FeatureCollection countries =  store.createSession(true).getFeatureCollection(new Query(name));
+        final FeatureSet countries = (FeatureSet) ((Aggregate)store).components().iterator().next();
 
 
         //Iterator over all the countries --------------------------------------------
-        final FeatureIterator ite = countries.iterator();
-
+        final List<Feature> features = countries.features(false).collect(Collectors.toList());
 
         //We map the feature type to the report type ---------------------------------
-        final GenericMappingFeatureIterator mapped = new GenericMappingFeatureIterator(ite, new FeatureMapper(){
+        FeatureMapper mapper = new FeatureMapper(){
 
             @Override
             public FeatureType getSourceType() {
-                return countries.getType();
+                return null;
             }
 
             @Override
@@ -191,8 +191,12 @@ public class ReportDemo {
 
                 return modified;
             }
-        });
+        };
 
+        final List<Feature> mapped = new ArrayList<>();
+        for (Feature f : features) {
+            mapped.add(mapper.transform(f));
+        }
 
         //Generate the report --------------------------------------------------------
         final OutputDef output = new OutputDef(JasperReportService.MIME_PDF, new File("atlas.pdf"));

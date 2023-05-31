@@ -30,18 +30,17 @@ import org.apache.sis.storage.IllegalFeatureTypeException;
 import org.apache.sis.storage.ReadOnlyStorageException;
 import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.storage.feature.FeatureCollection;
 import org.geotoolkit.storage.feature.FeatureIterator;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
-import org.geotoolkit.storage.memory.mapping.DefaultFeatureMapper;
-import org.geotoolkit.storage.memory.mapping.FeatureMapper;
 import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.storage.feature.session.Session;
-import org.geotoolkit.factory.Hints;
+import org.geotoolkit.storage.memory.mapping.DefaultFeatureMapper;
+import org.geotoolkit.storage.memory.mapping.FeatureMapper;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;
-import org.opengis.filter.Filter;
 import org.opengis.geometry.Envelope;
 import org.opengis.util.GenericName;
 
@@ -152,21 +151,6 @@ public class GenericMappingFeatureCollection extends AbstractCollection<Feature>
     ////////////////////////////////////////////////////////////////////////////
     // not writable ////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
-
-    @Override
-    public void update(Feature feature) throws DataStoreException {
-        throw new DataStoreException("Not writable");
-    }
-
-    @Override
-    public void update(final Filter filter, final Map<String, ?> values) throws DataStoreException {
-        throw new DataStoreException("Not writable");
-    }
-
-    @Override
-    public void remove(final Filter filter) throws DataStoreException {
-        throw new DataStoreException("Not writable");
-    }
 
     @Override
     public boolean add(final Feature e) {

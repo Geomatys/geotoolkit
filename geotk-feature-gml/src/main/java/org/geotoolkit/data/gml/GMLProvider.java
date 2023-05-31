@@ -34,7 +34,7 @@ import org.apache.sis.storage.StorageConnector;
 import org.geotoolkit.storage.ProviderOnFileSystem;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
-import org.geotoolkit.storage.feature.FileFeatureStoreFactory;
+import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.MultiLineString;
@@ -137,7 +137,7 @@ public class GMLProvider extends DataStoreProvider implements ProviderOnFileSyst
 
     @Override
     public ProbeResult probeContent(StorageConnector connector) throws DataStoreException {
-        return FileFeatureStoreFactory.probe(this, connector, MIME_TYPE);
+        return FeatureStoreUtilities.probe(this, connector, MIME_TYPE);
     }
 
     @Override

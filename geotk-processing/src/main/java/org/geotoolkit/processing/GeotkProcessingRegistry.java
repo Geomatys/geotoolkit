@@ -61,8 +61,6 @@ public class GeotkProcessingRegistry extends AbstractProcessingRegistry {
                 org.geotoolkit.processing.coverage.straighten.StraightenDescriptor.INSTANCE,
                 org.geotoolkit.processing.coverage.volume.ComputeVolumeDescriptor.INSTANCE,
                 org.geotoolkit.processing.coverage.kriging.KrigingDescriptor.INSTANCE,
-                //datastore
-                org.geotoolkit.processing.datastore.copy.CopyDescriptor.INSTANCE,
                 //groovy
                 org.geotoolkit.processing.groovy.GroovyDescriptor.INSTANCE,
                 //image

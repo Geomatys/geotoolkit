@@ -40,11 +40,9 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.storage.feature.session.DefaultSession;
 import org.geotoolkit.storage.feature.session.Session;
-import org.geotoolkit.storage.memory.WrapFeatureIterator;
 import org.geotoolkit.util.collection.CloseableIterator;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
-import org.opengis.filter.Filter;
 import org.opengis.geometry.Envelope;
 import org.opengis.util.GenericName;
 
@@ -193,46 +191,11 @@ public class FeatureSetWrapper  extends AbstractCollection<Feature> implements F
         }
     }
 
-    @Override
-    public void update(Feature feature) throws DataStoreException {
-        if (featureSet instanceof WritableFeatureSet) {
-            WritableFeatureSet wfs = (WritableFeatureSet) featureSet;
-            Object name = feature.getPropertyValue(AttributeConvention.IDENTIFIER);
-            if (name != null) {
-                wfs.replaceIf((f)-> name.equals(f.getProperty(AttributeConvention.IDENTIFIER)), UnaryOperator.identity());
-            } else {
-                throw new DataStoreException("The feature has no identifier.");
-            }
-        } else {
-            throw new DataStoreException("The feature set is not writable.");
-        }
-    }
-
-    @Override
-    public void update(Filter filter, Map<String, ?> values) throws DataStoreException {
-        if (featureSet instanceof WritableFeatureSet) {
-            WritableFeatureSet wfs = (WritableFeatureSet) featureSet;
-            wfs.replaceIf((f)-> filter.test(f), (f) -> updateFeatureProperty(f, values));
-        } else {
-            throw new DataStoreException("The feature set is not writable.");
-        }
-    }
-
     private static Feature updateFeatureProperty(Feature feat, Map<String, ?> values) {
         for (Entry<String, ?> entry : values.entrySet()) {
             feat.setPropertyValue(entry.getKey(), entry.getValue());
         }
         return feat;
-    }
-
-    @Override
-    public void remove(Filter filter) throws DataStoreException {
-        if (featureSet instanceof WritableFeatureSet) {
-            WritableFeatureSet wfs = (WritableFeatureSet) featureSet;
-            wfs.removeIf((f)-> filter.test(f));
-        } else {
-            throw new DataStoreException("The feature set is not writable.");
-        }
     }
 
     @Override

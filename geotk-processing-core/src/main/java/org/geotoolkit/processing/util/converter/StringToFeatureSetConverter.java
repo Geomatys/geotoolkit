@@ -18,16 +18,16 @@ package org.geotoolkit.processing.util.converter;
 
 import java.io.Serializable;
 import java.net.URI;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
+import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.feature.util.converter.SimpleConverter;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.feature.FeatureCollection;
-import org.geotoolkit.storage.feature.FeatureStore;
-import org.geotoolkit.storage.feature.query.Query;
 
 /**
  * Implementation of ObjectConverter to convert a path to a file in a String to a
@@ -35,16 +35,16 @@ import org.geotoolkit.storage.feature.query.Query;
  * @author Quentin Boileau
  * @module
  */
-public class StringToFeatureCollectionConverter extends SimpleConverter<String, FeatureCollection> {
+public class StringToFeatureSetConverter extends SimpleConverter<String, FeatureSet> {
 
-    private static StringToFeatureCollectionConverter INSTANCE;
+    private static StringToFeatureSetConverter INSTANCE;
 
-    private StringToFeatureCollectionConverter(){
+    private StringToFeatureSetConverter(){
     }
 
-    public static StringToFeatureCollectionConverter getInstance(){
+    public static StringToFeatureSetConverter getInstance(){
         if(INSTANCE == null){
-            INSTANCE = new StringToFeatureCollectionConverter();
+            INSTANCE = new StringToFeatureSetConverter();
         }
         return INSTANCE;
     }
@@ -55,12 +55,12 @@ public class StringToFeatureCollectionConverter extends SimpleConverter<String, 
     }
 
     @Override
-    public Class<FeatureCollection> getTargetClass() {
-        return FeatureCollection.class;
+    public Class<FeatureSet> getTargetClass() {
+        return FeatureSet.class;
     }
 
     @Override
-    public FeatureCollection apply(final String s) throws UnconvertibleObjectException {
+    public FeatureSet apply(final String s) throws UnconvertibleObjectException {
         if(s == null) throw new UnconvertibleObjectException("Empty FeatureCollection");
         try {
             String url;
@@ -73,17 +73,19 @@ public class StringToFeatureCollectionConverter extends SimpleConverter<String, 
             final Map<String, Serializable> parameters = new HashMap<String, Serializable>();
             parameters.put(DataStoreProvider.LOCATION, URI.create(url));
 
-            final FeatureStore store = (FeatureStore) DataStores.open(parameters);
+            final DataStore store = DataStores.open(parameters);
 
             if(store == null){
                 throw new UnconvertibleObjectException("Invalid URL");
             }
 
-            if(store.getNames().size() != 1){
+            Collection<FeatureSet> flatten = DataStores.flatten(store, true, FeatureSet.class);
+
+            if(flatten.size() != 1){
                 throw new UnconvertibleObjectException("More than one FeatureCollection in the file");
             }
 
-            final FeatureCollection collection = store.createSession(true).getFeatureCollection(new Query(store.getNames().iterator().next()));
+            final FeatureSet collection = flatten.iterator().next();
 
             if(collection != null){
                 return collection;
