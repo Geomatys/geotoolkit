@@ -17,8 +17,6 @@
  */
 package org.geotoolkit.data.shapefile.indexed;
 
-import org.locationtech.jts.geom.Envelope;
-import org.locationtech.jts.geom.Geometry;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -33,10 +31,6 @@ import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Query;
 import org.apache.sis.storage.UnsupportedQueryException;
-import org.geotoolkit.storage.feature.FeatureReader;
-import org.geotoolkit.storage.feature.FeatureStreams;
-import org.geotoolkit.storage.feature.FeatureWriter;
-import org.geotoolkit.storage.feature.query.QueryUtilities;
 import org.geotoolkit.data.shapefile.FeatureIDReader;
 import org.geotoolkit.data.shapefile.ShapefileFeatureReader;
 import org.geotoolkit.data.shapefile.ShapefileFeatureStore;
@@ -46,8 +40,9 @@ import org.geotoolkit.data.shapefile.fix.IndexedFidWriter;
 import org.geotoolkit.data.shapefile.indexed.IndexDataReader.ShpData;
 import org.geotoolkit.data.shapefile.lock.AccessManager;
 import org.geotoolkit.data.shapefile.lock.ShpFileType;
-import org.geotoolkit.data.shapefile.shp.ShapefileReader.Record;
+import static org.geotoolkit.data.shapefile.lock.ShpFileType.*;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader;
+import org.geotoolkit.data.shapefile.shp.ShapefileReader.Record;
 import org.geotoolkit.data.shapefile.shx.ShxReader;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureExt;
@@ -61,16 +56,21 @@ import org.geotoolkit.index.CloseableCollection;
 import org.geotoolkit.index.Data;
 import org.geotoolkit.index.TreeException;
 import org.geotoolkit.index.quadtree.*;
+import org.geotoolkit.storage.feature.FeatureReader;
+import org.geotoolkit.storage.feature.FeatureStreams;
+import org.geotoolkit.storage.feature.FeatureWriter;
+import org.geotoolkit.storage.feature.query.QueryUtilities;
 import org.geotoolkit.util.NullProgressListener;
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.MismatchedFeatureException;
 import org.opengis.feature.PropertyType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.ResourceId;
-import org.opengis.util.GenericName;
-import static org.geotoolkit.data.shapefile.lock.ShpFileType.*;
 import org.opengis.filter.SpatialOperatorName;
+import org.opengis.util.GenericName;
 
 
 /**
@@ -177,7 +177,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
         final String        queryTypeName = gquery.getTypeName();
         final String[]      queryPropertyNames = gquery.getPropertyNames();
         final Hints         queryHints = gquery.getHints();
-        final double[]      queryRes = gquery.getResolution();
+        final double[]      queryRes = null;
         Filter              queryFilter = gquery.getSelection();
 
         //check if we must read the 3d values

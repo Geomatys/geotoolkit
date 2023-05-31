@@ -17,8 +17,6 @@
 
 package org.geotoolkit.storage.feature;
 
-import org.geotoolkit.storage.event.FeatureStoreContentEvent;
-import org.geotoolkit.storage.event.FeatureStoreManagementEvent;
 import java.util.AbstractCollection;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -36,16 +34,16 @@ import org.apache.sis.storage.ReadOnlyStorageException;
 import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
 import static org.apache.sis.util.ArgumentChecks.*;
-import org.geotoolkit.storage.feature.query.Query;
-import org.geotoolkit.storage.feature.session.Session;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureTypeExt;
-import org.geotoolkit.feature.TransformMapper;
 import org.geotoolkit.feature.ViewMapper;
-import org.geotoolkit.geometry.jts.transform.GeometryScaleTransformer;
+import org.geotoolkit.storage.event.FeatureStoreContentEvent;
+import org.geotoolkit.storage.event.FeatureStoreManagementEvent;
 import org.geotoolkit.storage.event.StorageListener;
 import org.geotoolkit.storage.event.StorageListener.Weak;
+import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.storage.feature.query.QueryUtilities;
+import org.geotoolkit.storage.feature.session.Session;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.util.collection.CloseableIterator;
 import org.opengis.feature.Feature;
@@ -210,7 +208,6 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
         if (filter == null) filter = Filter.include();
         final String[] properties = remainingParameters.getPropertyNames();
         final SortProperty[] sorts = QueryUtilities.getSortProperties(remainingParameters.getSortBy());
-        final double[] resampling = remainingParameters.getResolution();
         final Hints hints = remainingParameters.getHints();
 
         //we should take care of wrapping the reader in a correct order to avoid
@@ -262,13 +259,6 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
             } catch (MismatchedFeatureException | IllegalStateException ex) {
                 throw new DataStoreException(ex);
             }
-        }
-
-        //wrap resampling ------------------------------------------------------
-        if(resampling != null){
-            final GeometryScaleTransformer trs = new GeometryScaleTransformer(resampling[0], resampling[1]);
-            final TransformMapper ttype = new TransformMapper(result.getType(), trs);
-            result = FeatureStreams.decorate(result, ttype);
         }
 
         return result;

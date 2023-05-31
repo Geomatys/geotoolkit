@@ -148,10 +148,11 @@ public class GeotkProcessingRegistry extends AbstractProcessingRegistry {
                 org.geotoolkit.processing.vector.merge.MergeDescriptor.INSTANCE,
                 org.geotoolkit.processing.vector.union.UnionDescriptor.INSTANCE,
                 org.geotoolkit.processing.vector.retype.RetypeDescriptor.INSTANCE,
-                org.geotoolkit.processing.vector.filter.FilterDescriptor.INSTANCE,
-                org.geotoolkit.processing.vector.maxlimit.MaxLimitDescriptor.INSTANCE,
-                org.geotoolkit.processing.vector.sort.SortByDescriptor.INSTANCE,
-                org.geotoolkit.processing.vector.startoffset.StartOffsetDescriptor.INSTANCE
+                //query like processes
+                org.geotoolkit.processing.vector.QueryProcess.Offset.DESCRIPTOR,
+                org.geotoolkit.processing.vector.QueryProcess.SortBy.DESCRIPTOR,
+                org.geotoolkit.processing.vector.QueryProcess.Limit.DESCRIPTOR,
+                org.geotoolkit.processing.vector.QueryProcess.Selection.DESCRIPTOR
               );
     }
 
