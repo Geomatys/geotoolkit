@@ -355,7 +355,7 @@ public class MapContextTileGenerator extends AbstractTileGenerator {
     }
 
     @Override
-    protected boolean isEmpty(Tile tile) throws DataStoreException {
+    public boolean isEmpty(Tile tile) throws DataStoreException {
         final GridCoverageResource resource = (GridCoverageResource) tile.getResource();
         final RenderedImage img = resource.read(null).render(null);
         return BufferedImages.isAll(img, empty);
