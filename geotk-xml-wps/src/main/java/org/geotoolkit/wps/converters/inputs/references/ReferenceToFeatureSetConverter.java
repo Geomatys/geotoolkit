@@ -22,12 +22,13 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.Map;
 import javax.xml.stream.XMLStreamException;
+import org.apache.sis.internal.storage.MemoryFeatureSet;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.geotoolkit.feature.xml.XmlFeatureReader;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import org.geotoolkit.wps.io.WPSIO;
@@ -112,8 +113,8 @@ public final class ReferenceToFeatureSetConverter extends AbstractReferenceInput
     public static FeatureSet castOrWrap(final Object in) {
         if (in instanceof FeatureSet) {
             return (FeatureSet) in;
-        } else if (in instanceof Feature) {
-            return FeatureStoreUtilities.collection((Feature) in);
+        } else if (in instanceof Feature f) {
+            return new MemoryFeatureSet(null, f.getType(), Arrays.asList(f));
         } else
             throw new UnconvertibleObjectException("Read data is of unexpected type: " + (in == null ? "null" : in.getClass()));
     }

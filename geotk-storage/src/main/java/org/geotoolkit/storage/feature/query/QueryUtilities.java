@@ -210,16 +210,6 @@ public class QueryUtilities {
         //hints of the second query---------------------------------------------
         qb.setHints(second.getHints());
 
-        //copy the resolution parameter-----------------------------------------
-        final double[] resFirst = original.getResolution();
-        final double[] resSecond = second.getResolution();
-        if(resFirst == null || Double.isNaN(resFirst[0])){
-            qb.setResolution(resSecond);
-        }else{
-            qb.setResolution(resFirst);
-        }
-
-
         //mix versions, second query version takes precedence.
         if(original.getVersionDate()!=null) qb.setVersionDate(original.getVersionDate());
         if(original.getVersionLabel()!=null) qb.setVersionLabel(original.getVersionLabel());

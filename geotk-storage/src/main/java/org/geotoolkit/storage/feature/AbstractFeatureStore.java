@@ -17,9 +17,6 @@
 
 package org.geotoolkit.storage.feature;
 
-import java.util.stream.Stream;
-import org.geotoolkit.storage.event.FeatureStoreContentEvent;
-import org.geotoolkit.storage.event.FeatureStoreManagementEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -32,6 +29,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.storage.MetadataBuilder;
 import org.apache.sis.parameter.Parameters;
@@ -47,14 +45,15 @@ import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.collection.BackingStoreException;
-import org.geotoolkit.storage.memory.GenericFeatureWriter;
-import org.geotoolkit.storage.feature.session.DefaultSession;
-import org.geotoolkit.storage.feature.session.Session;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.feature.FeatureTypeExt;
 import org.geotoolkit.feature.ViewMapper;
+import org.geotoolkit.storage.event.FeatureStoreContentEvent;
+import org.geotoolkit.storage.event.FeatureStoreManagementEvent;
 import org.geotoolkit.storage.event.StorageEvent;
+import org.geotoolkit.storage.feature.session.Session;
+import org.geotoolkit.storage.memory.GenericFeatureWriter;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.version.VersionControl;
@@ -210,7 +209,7 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
      */
     @Override
     public Session createSession(final boolean async, Version version) {
-        return new DefaultSession(this, async,version);
+        return new Session(this, async,version);
     }
 
     @Override

@@ -36,8 +36,8 @@ import org.opengis.filter.Expression;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.Literal;
-import org.opengis.filter.ValueReference;
 import org.opengis.filter.SortProperty;
+import org.opengis.filter.ValueReference;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.GenericName;
 
@@ -75,7 +75,6 @@ public final class Query extends FeatureQuery {
 
     private String typeName;
     private Hints hints;
-    private double[] resolution;
     private Object version;
 
 
@@ -118,13 +117,11 @@ public final class Query extends FeatureQuery {
                 -1,
                 null,
                 null,
-                null,
                 null);
     }
 
     Query(final String typeName, Filter filter, final String[] attributs, final SortProperty[] sort,
-            final long startIndex, final long maxFeatures,
-            final double[] resolution, Quantity<Length> linearResolution, final Object version, final Hints hints){
+            final long startIndex, final long maxFeatures, Quantity<Length> linearResolution, final Object version, final Hints hints){
 
         ensureNonNull("query source", typeName);
         if (filter == null) {
@@ -147,7 +144,6 @@ public final class Query extends FeatureQuery {
             setProjection(columns.toArray(new NamedExpression[0]));
         }
         this.typeName = typeName;
-        this.resolution = resolution;
         this.version = version;
 
         if (hints == null) {
@@ -168,7 +164,6 @@ public final class Query extends FeatureQuery {
              QueryUtilities.getSortProperties(query.getSortBy()),
              query.getOffset(),
              query.getLimit().orElse(-1),
-             (query.getResolution()==null)?null:query.getResolution().clone(),
              query.getLinearResolution(),
              (query.getVersionDate()!=null)? query.getVersionDate() : query.getVersionLabel(),
              query.getHints());
@@ -279,23 +274,6 @@ public final class Query extends FeatureQuery {
     }
 
     /**
-     * Set The wished resolution of the geometries.
-     * Since there is no Envelope provided in the query like in CoverageReadParam
-     * this resolution must be expressed in the native data coordinate reference system.
-     *
-     * @return resolution or null if no resolution provided.
-     */
-    @Deprecated
-    public double[] getResolution() {
-        return resolution;
-    }
-
-    @Deprecated
-    public void setResolution(final double[] resolution) {
-        this.resolution = resolution;
-    }
-
-    /**
      * Requested version label of the features.
      * If the value is null the latest version is returned.
      * Mutualy excludive with VersionDate.
@@ -391,7 +369,6 @@ public final class Query extends FeatureQuery {
         setProjection(query.getProjection());
         setSortBy(query.getSortBy());
         setOffset(query.getOffset());
-        this.resolution = (query.getResolution()==null)?null:query.getResolution().clone();
         this.hints = query.getHints();
         this.typeName = query.getTypeName();
         this.version = query.getVersionDate();

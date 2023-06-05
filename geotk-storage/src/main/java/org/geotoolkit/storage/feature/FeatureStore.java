@@ -27,9 +27,8 @@ import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.Query;
 import org.apache.sis.storage.ReadOnlyStorageException;
 import org.apache.sis.storage.Resource;
-import org.geotoolkit.storage.feature.query.QueryCapabilities;
-import org.geotoolkit.storage.feature.session.Session;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.storage.feature.session.Session;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
@@ -192,16 +191,6 @@ public interface FeatureStore extends AutoCloseable, Resource {
      * @throws DataStoreException if typeName doesn't exist or feature store internal error.
      */
     boolean isWritable(String typeName) throws DataStoreException;
-
-    /**
-     * Retrieve informations about the query capabilites of this feature store.
-     * Some feature store may not be enough "intelligent" to support all
-     * parameters in the query.
-     * This capabilities can be used to fetch the list of what it can handle.
-     *
-     * @todo move query capabilities from old feature store model
-     */
-    QueryCapabilities getQueryCapabilities();
 
     /**
      * Get the number of features that match the query.

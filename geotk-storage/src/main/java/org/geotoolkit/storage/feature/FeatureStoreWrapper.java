@@ -5,14 +5,11 @@
  */
 package org.geotoolkit.storage.feature;
 
-import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.Query;
-import org.geotoolkit.storage.feature.query.QueryCapabilities;
 import org.opengis.feature.FeatureType;
 import org.opengis.parameter.ParameterValueGroup;
-import org.apache.sis.storage.FeatureSet;
-import org.geotoolkit.storage.feature.query.DefaultQueryCapabilities;
 
 /**
  *
@@ -34,11 +31,6 @@ public class FeatureStoreWrapper extends AbstractFeatureStore implements Feature
             return featureSet.getType();
         }
         return null;
-    }
-
-    @Override
-    public QueryCapabilities getQueryCapabilities() {
-        return new DefaultQueryCapabilities(false, false);
     }
 
     @Override

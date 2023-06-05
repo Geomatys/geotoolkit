@@ -34,14 +34,13 @@ import org.apache.sis.storage.UnsupportedQueryException;
 import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
 import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.storage.feature.AbstractFeatureStore;
 import org.geotoolkit.storage.feature.FeatureReader;
 import org.geotoolkit.storage.feature.FeatureStore;
 import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.geotoolkit.storage.feature.FeatureStreams;
 import org.geotoolkit.storage.feature.FeatureWriter;
-import org.geotoolkit.storage.feature.query.QueryCapabilities;
-import org.geotoolkit.factory.Hints;
 import org.geotoolkit.storage.feature.GenericNameIndex;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.Feature;
@@ -172,11 +171,6 @@ public final class ExtendedFeatureStore extends AbstractFeatureStore {
             return false;
         }
         return wrapped.isWritable(typeName);
-    }
-
-    @Override
-    public QueryCapabilities getQueryCapabilities() {
-        return wrapped.getQueryCapabilities();
     }
 
     @Override

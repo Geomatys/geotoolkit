@@ -34,12 +34,12 @@ import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.feature.AttributeConvention;
-import org.apache.sis.storage.FeatureQuery;
 import org.apache.sis.measure.Quantities;
 import org.apache.sis.measure.Units;
 import org.apache.sis.portrayal.MapLayer;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureQuery;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.Query;
 import org.apache.sis.util.Utilities;
@@ -68,8 +68,8 @@ import org.opengis.feature.FeatureType;
 import org.opengis.feature.MismatchedFeatureException;
 import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
-import org.opengis.filter.Filter;
 import org.opengis.filter.Expression;
+import org.opengis.filter.Filter;
 import org.opengis.filter.Literal;
 import org.opengis.filter.ValueReference;
 import org.opengis.geometry.Envelope;
@@ -381,7 +381,6 @@ public final class RenderingRoutines {
                 }
                 res[0] *= factor;
                 res[1] *= factor;
-                qb.setResolution(res);
 
                 try {
                     res = renderingContext.getResolution(CRS.forCode("EPSG:3395"));

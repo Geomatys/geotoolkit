@@ -45,8 +45,6 @@ import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.FeatureSet;
-import org.apache.sis.storage.Query;
-import org.apache.sis.storage.UnsupportedQueryException;
 import org.apache.sis.util.SimpleInternationalString;
 import org.apache.sis.xml.MarshallerPool;
 import org.geotoolkit.display2d.GO2Utilities;
@@ -68,7 +66,6 @@ import org.geotoolkit.kml.xml.v220.PlacemarkType;
 import org.geotoolkit.kml.xml.v220.PointType;
 import org.geotoolkit.kml.xml.v220.PolygonType;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.feature.query.QueryFeatureSet;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.CoordinateSequence;
 import org.locationtech.jts.geom.Geometry;
@@ -170,14 +167,6 @@ public class KMLStore extends DataStore implements FeatureSet, ResourceOnFileSys
         }
 
         return parallel ? features.parallelStream() : features.stream();
-    }
-
-    @Override
-    public FeatureSet subset(Query query) throws UnsupportedQueryException, DataStoreException {
-        if (query instanceof org.geotoolkit.storage.feature.query.Query) {
-            return QueryFeatureSet.apply(this, (org.geotoolkit.storage.feature.query.Query)query);
-        }
-        return FeatureSet.super.subset(query);
     }
 
     /**
