@@ -417,10 +417,15 @@ public class AmendedCoverageResource implements Resource, GridCoverageResource, 
             }
 
             //change the crs to original one
-            if (overrideCRS!=null) {
+            if (overrideCRS != null) {
                 coverageEnv = new GeneralEnvelope(coverageEnv);
-                ((GeneralEnvelope) coverageEnv).setCoordinateReferenceSystem(
+                if (originalGridGeometry.isDefined(GridGeometry.CRS)) {
+                    ((GeneralEnvelope) coverageEnv).setCoordinateReferenceSystem(
                         originalGridGeometry.getCoordinateReferenceSystem());
+
+                } else {
+                    ((GeneralEnvelope) coverageEnv).setCoordinateReferenceSystem(null);
+                }
             }
 
             //change the queried envelope
@@ -461,7 +466,7 @@ public class AmendedCoverageResource implements Resource, GridCoverageResource, 
             //fix coverage transform and crs
             final GridCoverageBuilder gcb = new GridCoverageBuilder();
 
-            CoordinateReferenceSystem crs = coverage.getCoordinateReferenceSystem();
+            CoordinateReferenceSystem crs = coverage.getGridGeometry().isDefined(GridGeometry.CRS) ? coverage.getCoordinateReferenceSystem() : null;
             GridExtent extent = coverage.getGridGeometry().getExtent();
             MathTransform gridToCRS = coverage.getGridGeometry().getGridToCRS(PixelInCell.CELL_CENTER);
 

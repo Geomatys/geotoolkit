@@ -76,6 +76,28 @@ public interface BandedCoverageResource extends DataSet {
     List<SampleDimension> getSampleDimensions() throws DataStoreException;
 
     /**
+     * Returns the preferred resolutions (in units of CRS axes) for read operations in this data store.
+     * If the storage supports pyramid, then the list should contain the resolution at each pyramid level
+     * ordered from finest (smallest numbers) to coarsest (largest numbers) resolution.
+     * Otherwise the list contains a single element which is the TIN usage resolution,
+     * or an empty list if no resolution is not known.
+     *
+     * <p>Each element shall be an array with a length equals to the number of CRS dimensions.
+     * In each array, value at index <var>i</var> is the cell size along CRS dimension <var>i</var>
+     * in units of the CRS axis <var>i</var>.</p>
+     *
+     * <p>Note that arguments given to {@link #subset(CoverageQuery) subset(…)} or {@link #read read(…)} methods
+     * are <em>not</em> constrained to the resolutions returned by this method. Those resolutions are only hints
+     * about resolution values where read operations are likely to be more efficient.</p>
+     *
+     * @return preferred resolutions for read operations in this data store, or an empty array if none.
+     * @throws DataStoreException if an error occurred while reading definitions from the underlying data store.
+     */
+    default List<double[]> getResolutions() throws DataStoreException {
+        return List.of();
+    }
+
+    /**
      * Requests a subset of the coverage.
      *
      * No standard queries are defined for {@code BandedCoverageResource} yet.
@@ -133,6 +155,10 @@ public interface BandedCoverageResource extends DataSet {
             final BandedCoverage coverage = resource.read(domain, range);
             if (coverage.getSampleDimensions().size() != 1) {
                 throw new CannotEvaluateException("Only single band sampling supported in current implementation.");
+            }
+
+            if (coverage instanceof BandedCoverageExt bce) {
+                return bce.sample(domain, domain);
             }
 
             final GridExtent extent = domain.getExtent();
