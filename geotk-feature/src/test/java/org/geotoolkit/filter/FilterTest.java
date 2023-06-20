@@ -27,10 +27,12 @@ import org.opengis.filter.Filter;
 import org.opengis.filter.Expression;
 import org.opengis.filter.Literal;
 import org.opengis.filter.ValueReference;
-import static org.apache.sis.test.Assert.*;
 import static org.geotoolkit.filter.FilterTestConstants.*;
 import org.opengis.feature.Feature;
 import org.opengis.filter.LogicalOperator;
+import static org.junit.Assert.*;
+import static org.apache.sis.test.Assertions.assertSerializedEquals;
+
 
 /**
  *

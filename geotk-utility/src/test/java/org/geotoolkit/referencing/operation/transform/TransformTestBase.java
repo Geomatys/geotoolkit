@@ -26,7 +26,7 @@ import org.opengis.referencing.operation.MathTransformFactory;
 import org.geotoolkit.factory.Hints;
 import org.apache.sis.referencing.operation.transform.MathTransformTestCase;
 
-import static org.geotoolkit.test.Assert.*;
+import static org.junit.Assert.*;
 
 
 /**

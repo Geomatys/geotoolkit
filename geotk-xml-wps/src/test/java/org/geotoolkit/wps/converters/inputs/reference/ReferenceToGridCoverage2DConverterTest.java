@@ -23,7 +23,6 @@ import java.util.Map;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.Utilities;
-import org.geotoolkit.test.Assert;
 import org.geotoolkit.wps.converters.AbstractWPSConverterTest;
 import org.geotoolkit.wps.converters.ConvertersTestUtils;
 import org.geotoolkit.wps.converters.WPSConverterRegistry;
@@ -31,10 +30,12 @@ import org.geotoolkit.wps.converters.WPSObjectConverter;
 import org.geotoolkit.wps.converters.inputs.references.AbstractReferenceInputConverter;
 import org.geotoolkit.wps.io.WPSIO;
 import org.geotoolkit.wps.xml.v200.Reference;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.opengis.geometry.Envelope;
+
+import static org.junit.Assert.*;
+import static org.geotoolkit.test.Assert.assertRasterEquals;
+
 
 /**
  *
@@ -72,7 +73,7 @@ public class ReferenceToGridCoverage2DConverterTest extends AbstractWPSConverter
         assertTrue(expectedEnvelope.getMinimum(1) == convertedEnvelope.getMinimum(1));
         assertTrue(expectedEnvelope.getMaximum(0) == convertedEnvelope.getMaximum(0));
         assertTrue(expectedEnvelope.getMaximum(1) == convertedEnvelope.getMaximum(1));
-        Assert.assertRasterEquals(expectedCvg.render(null), convertedCvg.render(null));
+        assertRasterEquals(expectedCvg.render(null), convertedCvg.render(null));
     }
 
     @Test
@@ -105,7 +106,7 @@ public class ReferenceToGridCoverage2DConverterTest extends AbstractWPSConverter
         assertTrue(expectedEnvelope.getMinimum(1) == convertedEnvelope.getMinimum(1));
         assertTrue(expectedEnvelope.getMaximum(0) == convertedEnvelope.getMaximum(0));
         assertTrue(expectedEnvelope.getMaximum(1) == convertedEnvelope.getMaximum(1));
-        Assert.assertRasterEquals(expectedCvg.render(null), convertedCvg.render(null));
+        assertRasterEquals(expectedCvg.render(null), convertedCvg.render(null));
     }
 
 }

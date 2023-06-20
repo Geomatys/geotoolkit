@@ -105,7 +105,7 @@ public final class ResourceProcessorTest extends TestCase {
                 .addQuantitative("1-based row-major order pixel number", 1, 5, 1, 0, Units.UNITY)
                 .build();
         DataBuffer values = new DataBufferInt(new int[] {1, 2, 3, 4}, 4);
-        return new MemoryGridResource(null, new BufferedGridCoverage(domain, Collections.singletonList(band), values));
+        return new MemoryGridResource(null, new BufferedGridCoverage(domain, Collections.singletonList(band), values), null);
     }
 
     private static ResourceProcessor nearestInterpol() {

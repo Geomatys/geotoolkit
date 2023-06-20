@@ -58,6 +58,11 @@ final class FilterByIdentifier extends Node implements ResourceId<Object> {
         return identifier;
     }
 
+    @Override
+    public Class<Object> getResourceClass() {
+        return null;        // Actually undetermined.
+    }
+
     /**
      * Returns the parameters of this filter.
      */

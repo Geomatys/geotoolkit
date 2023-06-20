@@ -46,6 +46,11 @@ import org.geotoolkit.ogc.xml.ComparisonOperator;
 public abstract class ComparisonOpsType implements ComparisonOperator {
 
     @Override
+    public Class getResourceClass() {
+        return null;
+    }
+
+    @Override
     public String toString() {
         return "class: " + this.getClass().getSimpleName() + '\n';
     }

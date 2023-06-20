@@ -23,10 +23,12 @@ import java.util.Map;
 import org.opengis.referencing.IdentifiedObject;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.junit.Test;
-import static org.geotoolkit.test.Assert.*;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.geometry.MismatchedDimensionException;
+
+import static org.junit.Assert.*;
+
 
 /**
  * Referencing utilities tests.

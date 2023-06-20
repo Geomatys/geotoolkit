@@ -568,6 +568,11 @@ public class FilterType extends AbstractSelectionClauseType implements Filter, X
     }
 
     @Override
+    public Class getResourceClass() {
+        return null;
+    }
+
+    @Override
     public String toString() {
         final StringBuilder s = new StringBuilder("[").append(this.getClass().getSimpleName()).append(']').append('\n');
         if (spatialOps != null) {

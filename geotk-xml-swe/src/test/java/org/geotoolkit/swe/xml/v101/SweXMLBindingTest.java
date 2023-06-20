@@ -29,7 +29,8 @@ import javax.xml.bind.JAXBContext;
 import org.apache.sis.xml.MarshallerPool;
 import org.junit.*;
 
-import static org.apache.sis.test.MetadataAssert.*;
+import static org.junit.Assert.*;
+import static org.apache.sis.metadata.Assertions.assertXmlEquals;
 
 
 /**
@@ -88,7 +89,7 @@ public class SweXMLBindingTest extends org.geotoolkit.test.TestBase {
                              <ns6:description>some description</ns6:description>
                              <ns6:name>urn:ogc:id-001</ns6:name>
                              <swe:value>some value</swe:value>
-                           </swe:Text> 
+                           </swe:Text>
                            """;
         assertEquals(expResult.trim(), result.trim());
 

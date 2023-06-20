@@ -50,7 +50,7 @@ import org.geotoolkit.storage.multires.TileMatrix;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class TileMatrixImage extends ComputedImage implements RenderedImage {
+public class TileMatrixImage extends ComputedImage {
 
     private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.storage.coverage");
 
@@ -67,10 +67,6 @@ public class TileMatrixImage extends ComputedImage implements RenderedImage {
      * The color model of the TileMatrix rendered image
      */
     private final ColorModel colorModel;
-    /**
-     * The sample model of the TileMatrix rendered image
-     */
-    private final SampleModel sampleModel;
     /**
      * The raster model of the TileMatrix rendered image
      */
@@ -112,9 +108,7 @@ public class TileMatrixImage extends ComputedImage implements RenderedImage {
             if (sampleDimensions != null) {
                 //use a fake tile created from sample dimensions
                 final int[] tileSize = matrix.getTileSize();
-                sample = BufferedImages.createImage((int) tileSize[0], (int) tileSize[1], sampleDimensions.size(), DataBuffer.TYPE_DOUBLE);
-            } else if (ex instanceof DataStoreException) {
-                throw (DataStoreException) ex;
+                sample = BufferedImages.createImage(tileSize[0], tileSize[1], sampleDimensions.size(), DataBuffer.TYPE_DOUBLE);
             } else {
                 throw new DataStoreException(ex.getMessage(), ex);
             }
@@ -129,7 +123,7 @@ public class TileMatrixImage extends ComputedImage implements RenderedImage {
         }
 
         final int[] tileSize = matrix.getTileSize();
-        final SampleModel sm = sample.getSampleModel().createCompatibleSampleModel((int) tileSize[0], (int) tileSize[1]);
+        final SampleModel sm = sample.getSampleModel().createCompatibleSampleModel(tileSize[0], tileSize[1]);
         final ColorModel cm = sample.getColorModel();
         final Raster rm = sample.getTile(sample.getMinTileX(), sample.getMinTileY());
         return new TileMatrixImage(matrix, gridRange, sm, cm, rm, fillPixel);
@@ -145,7 +139,6 @@ public class TileMatrixImage extends ComputedImage implements RenderedImage {
         super(sampleModel);
         this.matrix = matrix;
         this.gridRange = gridRange;
-        this.sampleModel = sampleModel;
         this.colorModel = colorModel;
         this.rasterModel = rasterModel;
         this.fillPixel = fillPixel;
@@ -179,16 +172,8 @@ public class TileMatrixImage extends ComputedImage implements RenderedImage {
      * {@inheritDoc}
      */
     @Override
-    public SampleModel getSampleModel() {
-        return this.sampleModel;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public int getWidth() {
-        return gridRange.width * (int) this.matrix.getTileSize()[0];
+        return gridRange.width * this.matrix.getTileSize()[0];
     }
 
     /**
@@ -196,7 +181,7 @@ public class TileMatrixImage extends ComputedImage implements RenderedImage {
      */
     @Override
     public int getHeight() {
-        return gridRange.height * (int) this.matrix.getTileSize()[1];
+        return gridRange.height * this.matrix.getTileSize()[1];
     }
 
     /**
@@ -213,22 +198,6 @@ public class TileMatrixImage extends ComputedImage implements RenderedImage {
     @Override
     public int getNumYTiles() {
         return  gridRange.height;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int getTileWidth() {
-        return (int) this.matrix.getTileSize()[0];
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int getTileHeight() {
-        return (int) this.matrix.getTileSize()[1];
     }
 
     @Override

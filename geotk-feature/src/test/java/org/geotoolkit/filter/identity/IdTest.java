@@ -20,7 +20,8 @@ package org.geotoolkit.filter.identity;
 import org.junit.Test;
 import org.opengis.filter.ResourceId;
 
-import static org.apache.sis.test.Assert.*;
+import static org.junit.Assert.*;
+import static org.apache.sis.test.Assertions.assertSerializedEquals;
 import static org.geotoolkit.filter.FilterTestConstants.*;
 
 /**

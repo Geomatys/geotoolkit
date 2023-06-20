@@ -23,16 +23,17 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import static org.apache.sis.test.MetadataAssert.assertXmlEquals;
 import org.apache.sis.xml.MarshallerPool;
 import org.geotoolkit.util.StringUtilities;
 import org.junit.After;
 import org.junit.AfterClass;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
+import static org.apache.sis.metadata.Assertions.assertXmlEquals;
+
 
 /**
  *
@@ -203,7 +204,7 @@ public class SweXMLBindingTest extends org.geotoolkit.test.TestBase {
         elementType.addField(new Field("salinity", q3));
 
         DataArrayType expected = new DataArrayType(null, 5, encoding, values, "point", elementType, null);
-        
+
         assertEquals(expected, result);
     }
 }

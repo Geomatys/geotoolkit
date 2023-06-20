@@ -146,7 +146,7 @@ final class CompiledFilter {
         private Parser() {
             super(true, false);
             final BiConsumer<Filter<GeometryValuePair>, CompiledFilter> mask = (f,p) -> {
-                final List<Expression<? super GeometryValuePair, ?>> expressions = f.getExpressions();
+                final List<Expression<GeometryValuePair, ?>> expressions = f.getExpressions();
                 int ci = 0;
                 do {
                     /*

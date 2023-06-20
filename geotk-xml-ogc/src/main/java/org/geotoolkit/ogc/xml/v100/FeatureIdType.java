@@ -90,6 +90,11 @@ public class FeatureIdType implements ResourceId, ID {
     }
 
     @Override
+    public Class getResourceClass() {
+        return null;
+    }
+
+    @Override
     public List getExpressions() {
         throw new UnsupportedOperationException("Not supported yet.");
     }

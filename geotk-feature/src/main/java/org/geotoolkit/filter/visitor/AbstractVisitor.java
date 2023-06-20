@@ -168,6 +168,7 @@ public abstract class AbstractVisitor<R,V> {
      * For use with {@link #setFilterHandler(CodeList, Function)}.
      */
     public static final CodeList<?> RESOURCEID_NAME = new ResourceId<Object>() {
+            @Override  public Class<Object> getResourceClass() {return null;}
             @Override  public String getIdentifier()  {return null;}
             @Override  public List   getExpressions() {return null;}
             @Override  public boolean test(Object o)  {return false;}

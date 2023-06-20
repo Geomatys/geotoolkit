@@ -30,7 +30,9 @@ import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.operation.transform.AbstractMathTransform2D;
 
-import static org.geotoolkit.test.Assert.*;
+import static org.junit.Assert.*;
+import static org.opengis.test.Assert.assertInstanceOf;
+import static org.apache.sis.test.Assertions.assertMultilinesEquals;
 import static org.geotoolkit.test.Commons.*;
 
 

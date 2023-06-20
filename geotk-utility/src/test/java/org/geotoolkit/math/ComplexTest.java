@@ -18,7 +18,8 @@
 package org.geotoolkit.math;
 
 import org.junit.*;
-import static org.apache.sis.test.Assert.*;
+import static org.junit.Assert.*;
+import static org.apache.sis.test.Assertions.assertSerializedEquals;
 import static java.lang.StrictMath.*;
 
 

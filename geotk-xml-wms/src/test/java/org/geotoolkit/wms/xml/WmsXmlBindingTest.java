@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.wms.xml;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import org.geotoolkit.wms.xml.v111.VendorSpecificCapabilities;
 import java.io.StringReader;
@@ -80,7 +79,8 @@ import org.apache.sis.xml.XML;
 import org.geotoolkit.temporal.object.DefaultInstant;
 import org.opengis.referencing.IdentifiedObject;
 
-import static org.apache.sis.test.MetadataAssert.*;
+import static org.junit.Assert.*;
+import static org.apache.sis.metadata.Assertions.assertXmlEquals;
 import static org.apache.sis.test.TestUtilities.getSingleton;
 import org.apache.sis.util.Version;
 

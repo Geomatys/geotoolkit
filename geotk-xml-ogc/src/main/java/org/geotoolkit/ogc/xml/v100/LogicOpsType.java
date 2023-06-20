@@ -41,5 +41,10 @@ import org.opengis.filter.LogicalOperator;
 @XmlType(name = "LogicOpsType")
 public abstract class LogicOpsType implements LogicalOperator, LogicOperator {
 
+    @Override
+    public Class getResourceClass() {
+        return null;
+    }
+
     public abstract LogicOpsType getClone();
 }

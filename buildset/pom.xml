@@ -15,8 +15,8 @@
     <name>Build configuration for Geotoolkit</name>
 
     <properties>
-        <geoapi.version>4.0-M21</geoapi.version>
-        <sis.version>2.0-M0118</sis.version>
+        <geoapi.version>4.0-M23</geoapi.version>
+        <sis.version>2.0-M0119</sis.version>
         <sis.build.helper.version>1.3</sis.build.helper.version>
         <sis.non-free.version>1.3</sis.non-free.version>
         <geotoolkit.version>5.0-SNAPSHOT</geotoolkit.version>

@@ -47,6 +47,11 @@ import org.opengis.filter.LogicalOperator;
 public abstract class LogicOpsType implements LogicalOperator, LogicOperator {
 
     @Override
+    public Class getResourceClass() {
+        return null;
+    }
+
+    @Override
     public boolean test(Object o) {
         throw new UnsupportedOperationException("Not supported yet.");
     }

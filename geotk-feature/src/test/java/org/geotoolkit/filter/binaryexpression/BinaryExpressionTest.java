@@ -22,7 +22,8 @@ import org.opengis.filter.Expression;
 import org.opengis.filter.Literal;
 import org.opengis.filter.ValueReference;
 
-import static org.apache.sis.test.Assert.*;
+import static org.junit.Assert.*;
+import static org.apache.sis.test.Assertions.assertSerializedEquals;
 import static org.geotoolkit.filter.FilterTestConstants.*;
 
 /**

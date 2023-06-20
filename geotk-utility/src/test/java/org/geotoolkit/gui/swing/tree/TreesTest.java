@@ -23,7 +23,8 @@ import java.util.AbstractMap;
 import org.geotoolkit.resources.Vocabulary;
 
 import org.junit.*;
-import static org.geotoolkit.test.Assert.*;
+import static org.junit.Assert.*;
+import static org.apache.sis.test.Assertions.assertMultilinesEquals;
 
 
 /**
