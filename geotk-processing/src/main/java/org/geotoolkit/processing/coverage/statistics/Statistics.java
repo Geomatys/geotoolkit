@@ -20,7 +20,6 @@ import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import java.util.Arrays;
-import java.util.EnumMap;
 import java.util.function.DoublePredicate;
 import java.util.stream.DoubleStream;
 import javax.annotation.Nullable;
@@ -177,7 +176,7 @@ public class Statistics extends AbstractProcess {
         int step = 1;
         for (long y = startY; y < endY; y++) {
             for (long x = startX; x < endX; x++) {
-                tile = image.getTile(Math.toIntExact(x-startX), Math.toIntExact(y-startY));
+                tile = image.getTile(Math.toIntExact(x), Math.toIntExact(y));
                 pix = new PixelIterator.Builder().create(tile);
 
                 analyseRange(pix, stats, bands, excludeNoData);
