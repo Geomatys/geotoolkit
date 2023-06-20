@@ -17,19 +17,23 @@
 
 package org.geotoolkit.internal.coverage;
 
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Optional;
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.measure.NumberRange;
-import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
-import java.util.Arrays;
-import java.util.Map;
+import static org.opengis.referencing.datum.PixelInCell.CELL_CENTER;
 
 /**
  * Date: 01/10/14
@@ -150,6 +154,33 @@ public strictfp class CoverageUtilitiesTest extends org.geotoolkit.test.TestBase
             Assert.assertTrue("Computed scale is outside input limits. Expected between : ["+minExpectedResolution+"; "+maxLimit+"[, found : "+scale, scale >= minExpectedResolution && scale < maxLimit);
             ensureAlmostContains(scale, DEGREE_SCALES);
         }
+    }
+
+    /**
+     * Test tryAggregate method.
+     */
+    @Test
+    public void tryAggregateTest() {
+        final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
+
+        { //valid aggregation
+            final GridGeometry grid1 = new GridGeometry(new GridExtent(1, 1), CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 0, 0), crs);
+            final GridGeometry grid2 = new GridGeometry(new GridExtent(1, 1), CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 2, 0), crs);
+            final GridGeometry grid = new GridGeometry(new GridExtent(3, 1), CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 0, 0), crs);
+
+            Optional<GridGeometry> agg = CoverageUtilities.tryAggregate(grid1, grid2);
+            Assert.assertTrue(agg.isPresent());
+            Assert.assertEquals(grid, agg.get());
+        }
+
+        { //incorrect aggregation
+            final GridGeometry grid1 = new GridGeometry(new GridExtent(1, 1), CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 0, 0), crs);
+            final GridGeometry grid2 = new GridGeometry(new GridExtent(1, 1), CELL_CENTER, new AffineTransform2D(1, 0, 0, 1.1, 2, 0), crs);
+
+            Optional<GridGeometry> agg = CoverageUtilities.tryAggregate(grid1, grid2);
+            Assert.assertFalse(agg.isPresent());
+        }
+
     }
 
     /**

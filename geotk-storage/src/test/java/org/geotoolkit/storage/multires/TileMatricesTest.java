@@ -17,6 +17,8 @@
 package org.geotoolkit.storage.multires;
 
 import java.awt.Dimension;
+import java.util.Map;
+import java.util.Optional;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.DirectPosition2D;
@@ -37,6 +39,7 @@ import org.junit.Test;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
+import static org.opengis.referencing.datum.PixelInCell.CELL_CENTER;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
@@ -148,6 +151,22 @@ public class TileMatricesTest {
         } catch (NoSuchDataException ex) {
             //ok
         }
+    }
+
+    @Test
+    public void testToTilingScheme() {
+        final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
+
+        final GridGeometry grid1 = new GridGeometry(new GridExtent(256, 256), CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 0, 0), crs);
+        final GridGeometry grid2 = new GridGeometry(new GridExtent(256, 256), CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 512, 0), crs);
+        final GridGeometry grid = new GridGeometry(new GridExtent(null, null, new long[]{3, 1}, false), CELL_CENTER, new AffineTransform2D(256, 0, 0, 256, 127.5, 127.5), crs);
+
+        final Optional<Map.Entry<GridGeometry, Map<GridGeometry, long[]>>> opt = TileMatrices.toTilingScheme(grid1, grid2);
+        Assert.assertTrue(opt.isPresent());
+        final Map.Entry<GridGeometry, Map<GridGeometry, long[]>> map = opt.get();
+        Assert.assertEquals(grid, map.getKey());
+        Assert.assertArrayEquals(new long[]{0,0} , map.getValue().get(grid1));
+        Assert.assertArrayEquals(new long[]{2,0} , map.getValue().get(grid2));
     }
 
 }
