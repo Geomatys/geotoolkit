@@ -24,6 +24,7 @@ import java.util.Objects;
 import java.util.function.IntConsumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import javax.measure.IncommensurableException;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridClippingMode;
 import org.apache.sis.coverage.grid.GridCoverage;
@@ -32,7 +33,7 @@ import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.apache.sis.coverage.grid.IllegalGridGeometryException;
-import org.apache.sis.internal.coverage.CoverageCombiner;
+import org.apache.sis.coverage.CoverageCombiner;
 import org.apache.sis.storage.AbstractGridCoverageResource;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
@@ -41,6 +42,7 @@ import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.opengis.referencing.operation.TransformException;
+
 
 /**
  * View a aggregation of GridCoverageResource as single continous coverage.
@@ -141,11 +143,11 @@ public final class AlignedCoverageResources extends AbstractGridCoverageResource
             gcb.setValues(target);
             result = gcb.build();
 
-            CoverageCombiner combiner = new CoverageCombiner(result, 0, 1);
-            combiner.apply(coverages.toArray(GridCoverage[]::new));
+            CoverageCombiner combiner = new CoverageCombiner(result);
+            combiner.acceptAll(coverages.toArray(GridCoverage[]::new));
 
             return result;
-        } catch (TransformException ex) {
+        } catch (TransformException | IncommensurableException ex) {
             throw new DataStoreException("Faild to combine coverages", ex);
         } catch (IllegalGridGeometryException ex) {
             throw new NoSuchDataException();
