@@ -173,7 +173,7 @@ public class TileMatrixImage extends ComputedImage {
      */
     @Override
     public int getWidth() {
-        return gridRange.width * this.matrix.getTileSize()[0];
+        return Math.multiplyExact(gridRange.width, matrix.getTileSize()[0]);
     }
 
     /**
@@ -181,7 +181,7 @@ public class TileMatrixImage extends ComputedImage {
      */
     @Override
     public int getHeight() {
-        return gridRange.height * this.matrix.getTileSize()[1];
+        return Math.multiplyExact(gridRange.height, matrix.getTileSize()[1]);
     }
 
     /**
