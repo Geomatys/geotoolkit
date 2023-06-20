@@ -53,14 +53,22 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public final class UpsampledTileMatrix implements TileMatrix {
+public class UpsampledTileMatrix implements TileMatrix {
 
-    private final TileMatrixSet tms;
-    private final int[] tileSize;
-    private final List<SampleDimension> sampleDimensions;
-    private final TileMatrix base;
+    protected final TileMatrixSet tms;
+    protected final int[] tileSize;
+    protected final List<SampleDimension> sampleDimensions;
+    protected final TileMatrix base;
 
-    public UpsampledTileMatrix(TileMatrixSet tms, TileMatrix base, List<SampleDimension> sampleDimensions, int[] tileSize) {
+    public static UpsampledTileMatrix create(TileMatrixSet tms, TileMatrix base, List<SampleDimension> sampleDimensions, int[] tileSize) {
+        if (base instanceof org.geotoolkit.storage.multires.TileMatrix gtm) {
+            return new GeotkUpsampledTileMatrix(tms, gtm, sampleDimensions, tileSize);
+        } else {
+            return new UpsampledTileMatrix(tms, base, sampleDimensions, tileSize);
+        }
+    }
+
+    private UpsampledTileMatrix(TileMatrixSet tms, TileMatrix base, List<SampleDimension> sampleDimensions, int[] tileSize) {
         this.tms = tms;
         this.base = base;
         this.sampleDimensions = sampleDimensions;
@@ -226,5 +234,25 @@ public final class UpsampledTileMatrix implements TileMatrix {
         final GridExtent extent = new GridExtent(null, indices, indices, true);
         final GridGeometry tileGeom = base.getTilingScheme().derive().subgrid(extent).build();
         return parent.getTilingScheme().derive().clipping(GridClippingMode.STRICT).rounding(GridRoundingMode.ENCLOSING).subgrid(tileGeom).getIntersection();
+    }
+
+    /**
+     * TODO temporary hack until we find a solution to remove the anyTile function.
+     */
+    private static class GeotkUpsampledTileMatrix extends UpsampledTileMatrix implements org.geotoolkit.storage.multires.TileMatrix {
+
+        public GeotkUpsampledTileMatrix(TileMatrixSet tms, TileMatrix base, List<SampleDimension> sampleDimensions, int[] tileSize) {
+            super(tms,base, sampleDimensions, tileSize);
+        }
+
+        @Override
+        public int[] getTileSize() {
+            return ((org.geotoolkit.storage.multires.TileMatrix) base).getTileSize();
+        }
+
+        @Override
+        public Tile anyTile() throws DataStoreException {
+            return ((org.geotoolkit.storage.multires.TileMatrix) base).anyTile();
+        }
     }
 }

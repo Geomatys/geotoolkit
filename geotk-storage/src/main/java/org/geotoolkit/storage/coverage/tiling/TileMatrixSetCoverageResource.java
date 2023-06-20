@@ -68,7 +68,7 @@ public final class TileMatrixSetCoverageResource extends AbstractGridCoverageRes
         TileMatrix tm = tms.getTileMatrices().get(name);
         if (!name.equals(tms.getTileMatrices().firstKey())) {
             //use upscaling for all matrices not at the top level
-            tm = new UpsampledTileMatrix(tms, tm, sampleDimensions, tileSize);
+            tm = UpsampledTileMatrix.create(tms, tm, sampleDimensions, tileSize);
         }
         return new TileMatrixCoverageResource(tm, tileSize, sampleDimensions);
     }
