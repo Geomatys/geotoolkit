@@ -40,5 +40,12 @@ import org.geotoolkit.ogc.xml.ComparisonOperator;
 @XmlType(name = "ComparisonOpsType")
 public abstract class ComparisonOpsType implements ComparisonOperator {
 
+    /**
+     * Implementation of a method from filter and expression interfaces.
+     */
+    public Class getResourceClass() {
+        return null;        // Undefined class.
+    }
+
     public abstract ComparisonOpsType getClone();
 }

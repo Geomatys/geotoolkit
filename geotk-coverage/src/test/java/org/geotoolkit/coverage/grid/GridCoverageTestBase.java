@@ -27,12 +27,13 @@ import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverageBuilder;
-import static org.apache.sis.measure.Units.*;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.test.Assert;
 import org.geotoolkit.test.image.ImageTestBase;
-import static org.junit.Assert.*;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+
+import static org.junit.Assert.*;
+import org.geotoolkit.test.Assert;
+import static org.apache.sis.measure.Units.*;
 
 
 /**

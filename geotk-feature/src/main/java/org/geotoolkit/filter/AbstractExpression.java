@@ -42,6 +42,11 @@ public abstract class AbstractExpression implements Expression<Object,Object>, S
         return Names.createScopedName(ns, null, name);
     }
 
+    @Override
+    public Class<Object> getResourceClass() {
+        return null;        // Actually undetermined.
+    }
+
     /**
      * Use the converters utility class to convert the default result object
      * to the wished class.
@@ -81,6 +86,11 @@ public abstract class AbstractExpression implements Expression<Object,Object>, S
         @Override
         public ScopedName getFunctionName() {
             return AbstractExpression.this.getFunctionName();
+        }
+
+        @Override
+        public Class<Object> getResourceClass() {
+            return AbstractExpression.this.getResourceClass();
         }
 
         @Override

@@ -17,23 +17,22 @@
 package org.geotoolkit.owc.xml.v10;
 
 import java.io.IOException;
-import org.apache.sis.xml.MarshallerPool;
 import org.geotoolkit.georss.xml.v100.WhereType;
 import org.geotoolkit.gml.xml.v311.DirectPositionType;
 import org.geotoolkit.gml.xml.v311.EnvelopeType;
 import org.junit.Test;
 import org.w3._2005.atom.*;
 
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import java.io.StringWriter;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
-
-import static org.apache.sis.test.MetadataAssert.*;
 import org.geotoolkit.owc.xml.OwcMarshallerPool;
+
+import static org.apache.sis.metadata.Assertions.assertXmlEquals;
+
 
 
 public class OWCTest extends org.geotoolkit.test.TestBase {

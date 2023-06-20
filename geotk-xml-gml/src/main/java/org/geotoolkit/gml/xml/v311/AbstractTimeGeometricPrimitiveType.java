@@ -113,6 +113,11 @@ public abstract class AbstractTimeGeometricPrimitiveType extends AbstractTimePri
     }
 
     @Override
+    public Class getResourceClass() {
+        return null;        // Undetermined class.
+    }
+
+    @Override
     public List<Expression> getParameters() {
         throw new UnsupportedOperationException("Not supported yet.");
     }

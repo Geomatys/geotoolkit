@@ -23,7 +23,8 @@ import org.junit.Test;
 
 import org.opengis.filter.Filter;
 
-import static org.apache.sis.test.Assert.*;
+import static org.junit.Assert.*;
+import static org.apache.sis.test.Assertions.assertSerializedEquals;
 import static org.geotoolkit.filter.FilterTestConstants.*;
 
 /**

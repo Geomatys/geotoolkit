@@ -59,7 +59,7 @@ public class QueryUtilities {
 
     public static boolean queryAll(final Query query){
         return     query.retrieveAllProperties()
-                && (query.getSelection() == null || query.getSelection() == Filter.include())
+                && (query.getSelection() == null || query.getSelection() == Filter.<Feature>include())
                 && !query.getLimit().isPresent()
                 && query.getSortBy() == null
                 && query.getOffset() == 0;

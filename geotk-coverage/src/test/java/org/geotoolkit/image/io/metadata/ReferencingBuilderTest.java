@@ -37,7 +37,8 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.Utilities;
 import org.junit.*;
 
-import static org.geotoolkit.test.Assert.*;
+import static org.junit.Assert.*;
+import static org.apache.sis.test.Assertions.assertMultilinesEquals;
 import static org.geotoolkit.test.Commons.*;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
 

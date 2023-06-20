@@ -30,7 +30,7 @@ import org.opengis.filter.FilterFactory;
 import org.opengis.filter.Expression;
 import org.opengis.util.NoSuchIdentifierException;
 
-import static org.geotoolkit.test.Assert.*;
+import static org.junit.Assert.*;
 import static org.geotoolkit.process.mapfile.MapfileFilterToOGCFilterDescriptor.*;
 
 /**

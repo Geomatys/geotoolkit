@@ -9,7 +9,8 @@ import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.UUID;
 
-import static org.apache.sis.test.Assert.assertTrue;
+import static org.junit.Assert.assertTrue;
+
 
 /**
  * A test class to ensure recursive survey mechanism of {@link DirectoryWatcher} is working properly.

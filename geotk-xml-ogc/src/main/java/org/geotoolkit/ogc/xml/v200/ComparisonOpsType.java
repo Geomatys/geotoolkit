@@ -51,6 +51,11 @@ import org.geotoolkit.ogc.xml.ComparisonOperator;
 public abstract class ComparisonOpsType implements ComparisonOperator {
 
     @Override
+    public Class getResourceClass() {
+        return null;
+    }
+
+    @Override
     public boolean test(final Object object) {
         throw new UnsupportedOperationException("Not supported yet.");
     }

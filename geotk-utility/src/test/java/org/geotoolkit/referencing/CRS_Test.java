@@ -36,7 +36,7 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.transform.AbstractMathTransform;
 import org.junit.*;
 
-import static org.geotoolkit.referencing.Assert.*;
+import static org.junit.Assert.*;
 import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
 import static java.util.Collections.singletonMap;
 

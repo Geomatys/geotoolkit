@@ -48,6 +48,11 @@ import org.geotoolkit.ogc.xml.LogicOperator;
 public abstract class LogicOpsType implements LogicOperator {
 
     @Override
+    public Class getResourceClass() {
+        return null;
+    }
+
+    @Override
     public boolean test(final Object object) {
         throw new UnsupportedOperationException("Not supported yet.");
     }

@@ -47,9 +47,11 @@ import org.geotoolkit.gmlcov.xml.v100.AbstractDiscreteCoverageType;
 import org.geotoolkit.wcs.xml.v200.CoverageDescriptionType;
 import org.geotoolkit.wcs.xml.v200.ExtensionType;
 
-import static org.apache.sis.test.MetadataAssert.*;
 import org.geotoolkit.wcs.xml.v200.CapabilitiesType;
 import org.geotoolkit.wcs.xml.v200.ServiceMetadataType;
+
+import static org.junit.Assert.*;
+import static org.apache.sis.metadata.Assertions.assertXmlEquals;
 
 
 /**

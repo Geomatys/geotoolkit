@@ -37,10 +37,10 @@ import org.geotoolkit.gml.xml.v311.TimePositionType;
 import org.geotoolkit.gml.xml.v311.TimeInstantType;
 import org.apache.sis.xml.MarshallerPool;
 
-//Junit dependencies
 import org.junit.*;
+import static org.junit.Assert.*;
+import static org.apache.sis.metadata.Assertions.assertXmlEquals;
 
-import static org.apache.sis.test.MetadataAssert.*;
 import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
 

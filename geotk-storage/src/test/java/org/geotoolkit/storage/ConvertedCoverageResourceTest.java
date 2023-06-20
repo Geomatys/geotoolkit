@@ -54,7 +54,7 @@ public final class ConvertedCoverageResourceTest extends TestCase {
         final BufferedImage data = new BufferedImage(360, 180, BufferedImage.TYPE_BYTE_GRAY);
         final GridGeometry grid = new GridGeometry(new GridExtent(360,180), CRS.getDomainOfValidity(CommonCRS.WGS84.normalizedGeographic()), GridOrientation.HOMOTHETY);
         final GridCoverage2D coverage = new GridCoverage2D(grid, null, data);
-        final GridCoverageResource source = new MemoryGridResource(null, coverage);
+        final GridCoverageResource source = new MemoryGridResource(null, coverage, null);
 
         //converted coverage
         final MathTransform1D converter = (MathTransform1D) MathTransforms.linear(2, 10);

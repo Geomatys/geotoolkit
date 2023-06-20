@@ -34,7 +34,7 @@ import org.apache.sis.util.ComparisonMode;
 
 import org.junit.*;
 import static org.junit.Assume.assumeNotNull;
-import static org.geotoolkit.referencing.Assert.*;
+import static org.junit.Assert.*;
 
 
 /**

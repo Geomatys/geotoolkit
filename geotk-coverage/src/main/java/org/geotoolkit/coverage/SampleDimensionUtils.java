@@ -31,6 +31,7 @@ import org.apache.sis.measure.MeasurementRange;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.collection.Containers;
+import org.apache.sis.internal.coverage.j2d.ColorModelFactory;
 import org.geotoolkit.resources.Vocabulary;
 import org.opengis.util.InternationalString;
 
@@ -207,8 +208,7 @@ public final class SampleDimensionUtils {
             }
             ranges.put(range, colors);
         }
-        return org.apache.sis.internal.coverage.j2d.ColorModelFactory.createPiecewise(
-                type, numBands, visibleBand, ranges);
+        return ColorModelFactory.piecewise(ranges.entrySet()).createColorModel(type, numBands, visibleBand);
     }
 
     /**

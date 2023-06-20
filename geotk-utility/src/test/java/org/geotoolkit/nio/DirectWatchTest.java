@@ -7,7 +7,8 @@ import org.junit.Test;
 import java.io.IOException;
 import java.nio.file.*;
 
-import static org.apache.sis.test.Assert.assertTrue;
+import static org.junit.Assert.assertTrue;
+
 
 /**
  * Test the {@link DirectoryWatcher} component in NON-recursive mode.

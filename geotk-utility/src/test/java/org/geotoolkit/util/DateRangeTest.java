@@ -27,7 +27,7 @@ import org.apache.sis.measure.Range;
 import org.geotoolkit.test.TestBase;
 
 import org.junit.*;
-import static org.geotoolkit.test.Assert.*;
+import static org.junit.Assert.*;
 
 
 /**

@@ -40,5 +40,12 @@ import org.geotoolkit.ogc.xml.SpatialOperator;
 @XmlType(name = "SpatialOpsType")
 public abstract class SpatialOpsType implements SpatialOperator {
 
+    /**
+     * Implementation of a method from filter and expression interfaces.
+     */
+    public Class getResourceClass() {
+        return null;        // Undefined class.
+    }
+
     public abstract SpatialOpsType getClone();
 }

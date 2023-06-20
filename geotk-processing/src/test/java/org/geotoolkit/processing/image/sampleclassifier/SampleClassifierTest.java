@@ -14,9 +14,11 @@ import java.awt.image.WritableRaster;
 import org.apache.sis.image.PlanarImage;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.process.ProcessException;
-import org.geotoolkit.test.Assert;
 import org.junit.Test;
 import org.opengis.parameter.ParameterValueGroup;
+
+import static org.junit.Assert.*;
+
 
 /**
  * TODO : add test for multi-tiled images
@@ -208,14 +210,14 @@ public class SampleClassifierTest {
         final ParameterValueGroup output = preparedProcess.call();
 
         final Object value = output.parameter(SampleClassifierDescriptor.IMAGE.getName().getCode()).getValue();
-        Assert.assertTrue("Output image should be an image, but is "+value, value instanceof RenderedImage);
+        assertTrue("Output image should be an image, but is "+value, value instanceof RenderedImage);
 
         final RenderedImage outImage = (RenderedImage) value;
-        Assert.assertEquals("Output image width differs from input", source.getWidth(), outImage.getWidth());
-        Assert.assertEquals("Output image height differs from input", source.getHeight(), outImage.getHeight());
+        assertEquals("Output image width differs from input", source.getWidth(), outImage.getWidth());
+        assertEquals("Output image height differs from input", source.getHeight(), outImage.getHeight());
 
         int[] pixels = outImage.getData().getPixels(0, 0, outImage.getWidth(), outImage.getHeight(), (int[])null);
-        Assert.assertArrayEquals("Classification differs from expected result", expectedClassif, pixels);
+        assertArrayEquals("Classification differs from expected result", expectedClassif, pixels);
     }
 
     public static BufferedImage createGrayScale(final int width, final int height, final double[] samples) {

@@ -51,7 +51,7 @@ import org.geotoolkit.storage.multires.TileInError;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-final class TileMatrixImage extends ComputedImage implements RenderedImage {
+final class TileMatrixImage extends ComputedImage {
 
     private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.storage.coverage");
 
@@ -88,10 +88,6 @@ final class TileMatrixImage extends ComputedImage implements RenderedImage {
      * The color model of the TileMatrix rendered image
      */
     private final ColorModel colorModel;
-    /**
-     * The sample model of the TileMatrix rendered image
-     */
-    private final SampleModel sampleModel;
     /**
      * The raster model of the TileMatrix rendered image
      */
@@ -142,7 +138,6 @@ final class TileMatrixImage extends ComputedImage implements RenderedImage {
         this.gridRange = gridRange;
         this.readGeometry = readGeometry;
         this.tileSize = tileSize;
-        this.sampleModel = sampleModel;
         this.colorModel = colorModel;
         this.rasterModel = rasterModel;
         this.sampleRange = sampleRange;
@@ -208,14 +203,6 @@ final class TileMatrixImage extends ComputedImage implements RenderedImage {
         return this.colorModel;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public SampleModel getSampleModel() {
-        return this.sampleModel;
-    }
-
     @Override
     public int getMinX() {
         return minX;
@@ -272,22 +259,6 @@ final class TileMatrixImage extends ComputedImage implements RenderedImage {
     @Override
     public int getMinTileY() {
         return Math.toIntExact(gridRange.getLow(yAxisIndex));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int getTileWidth() {
-        return Math.toIntExact(tileSize[xAxisIndex]);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int getTileHeight() {
-        return Math.toIntExact(tileSize[yAxisIndex]);
     }
 
     @Override
@@ -404,11 +375,8 @@ final class TileMatrixImage extends ComputedImage implements RenderedImage {
     }
 
     /**
-     * @param matrix
      * @param x tile X coordinate in the image range
      * @param y tile Y coordinate in the image range
-     * @return
-     * @throws DataStoreException
      */
     private boolean isTileMissing(long x, long y) throws DataStoreException{
         final long[] indices = toTileIndices(x, y);

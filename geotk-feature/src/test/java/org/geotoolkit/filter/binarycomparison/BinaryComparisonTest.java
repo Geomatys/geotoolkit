@@ -21,12 +21,14 @@ import java.util.Date;
 import org.junit.Test;
 import org.opengis.filter.Literal;
 
-import static org.apache.sis.test.Assert.*;
 import static org.geotoolkit.filter.FilterTestConstants.*;
 import org.opengis.filter.Expression;
 import org.opengis.filter.Filter;
-
 import org.opengis.filter.MatchAction;
+
+import static org.junit.Assert.*;
+import static org.apache.sis.test.Assertions.assertSerializedEquals;
+
 
 /**
  *

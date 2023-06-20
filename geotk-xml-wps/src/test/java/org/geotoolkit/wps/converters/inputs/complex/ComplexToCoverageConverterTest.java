@@ -15,6 +15,7 @@
  *    Lesser General Public License for more details.
  */
 package org.geotoolkit.wps.converters.inputs.complex;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -23,17 +24,18 @@ import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.test.Assert;
 import org.geotoolkit.wps.converters.AbstractWPSConverterTest;
 import org.geotoolkit.wps.converters.ConvertersTestUtils;
 import org.geotoolkit.wps.converters.WPSConverterRegistry;
 import org.geotoolkit.wps.converters.WPSObjectConverter;
 import org.geotoolkit.wps.xml.v200.Data;
 import org.geotoolkit.wps.xml.v200.Format;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.opengis.geometry.Envelope;
+
+import static org.junit.Assert.*;
+import static org.geotoolkit.test.Assert.assertRasterEquals;
+
 
 /**
  *
@@ -73,7 +75,7 @@ public class ComplexToCoverageConverterTest extends AbstractWPSConverterTest {
         assertTrue(expectedEnvelope.getMinimum(1) == convertedEnvelope.getMinimum(1));
         assertTrue(expectedEnvelope.getMaximum(0) == convertedEnvelope.getMaximum(0));
         assertTrue(expectedEnvelope.getMaximum(1) == convertedEnvelope.getMaximum(1));
-        Assert.assertRasterEquals(expectedCoverage.render(null),
+        assertRasterEquals(expectedCoverage.render(null),
                              convertedCoverage.render(null));
     }
 }

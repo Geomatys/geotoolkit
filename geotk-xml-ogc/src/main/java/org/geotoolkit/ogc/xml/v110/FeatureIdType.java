@@ -131,6 +131,11 @@ public class FeatureIdType extends AbstractIdType implements ResourceId {
     }
 
     @Override
+    public Class getResourceClass() {
+        return null;
+    }
+
+    @Override
     public List getExpressions() {
         throw new UnsupportedOperationException("Not supported yet.");
     }

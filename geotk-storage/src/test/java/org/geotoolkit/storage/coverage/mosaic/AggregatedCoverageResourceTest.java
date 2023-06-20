@@ -79,9 +79,6 @@ public class AggregatedCoverageResourceTest {
 
     /**
      * Test aggregation user order is preserved.
-     *
-     * @throws DataStoreException
-     * @throws TransformException
      */
     @Test
     public void testModeOrder() throws DataStoreException, TransformException {
@@ -156,14 +153,10 @@ public class AggregatedCoverageResourceTest {
         reader.moveTo(0, 0); assertEquals(1, reader.getSample(0));
         reader.moveTo(1, 0); assertEquals(2, reader.getSample(0));
         reader.moveTo(2, 0); assertEquals(3, reader.getSample(0));
-
     }
 
     /**
      * Test aggregation user order is preserved with RGB images.
-     *
-     * @throws DataStoreException
-     * @throws TransformException
      */
     @Test
     public void testModeOrderRGB() throws DataStoreException, TransformException {
@@ -242,9 +235,6 @@ public class AggregatedCoverageResourceTest {
 
     /**
      * Test aggregation user order is preserved.
-     *
-     * @throws DataStoreException
-     * @throws TransformException
      */
     @Test
     public void testModeScale() throws DataStoreException, TransformException {
@@ -506,9 +496,6 @@ public class AggregatedCoverageResourceTest {
 
     /**
      * Test aggregation add a NaN value to fill spaces.
-     *
-     * @throws DataStoreException
-     * @throws TransformException
      */
     @Test
     public void testNoDataAdded() throws DataStoreException, TransformException {
@@ -531,7 +518,6 @@ public class AggregatedCoverageResourceTest {
                 +---+
                 | 2 |
                 +---+
-
         */
 
         final GridGeometry grid1 = new GridGeometry(new GridExtent(1, 1), CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 0, 0), crs);
@@ -841,9 +827,6 @@ public class AggregatedCoverageResourceTest {
 
     /**
      * Test aggregation generates a NaN between coverages
-     *
-     * @throws DataStoreException
-     * @throws TransformException
      */
     @Test
     public void testNaNAdded() throws DataStoreException, TransformException {
@@ -902,15 +885,11 @@ public class AggregatedCoverageResourceTest {
         reader.moveTo(0, 0); assertEquals(1, reader.getSample(0));
         reader.moveTo(1, 0); assertEquals(Double.NaN, reader.getSampleDouble(0), 0.0);
         reader.moveTo(2, 0); assertEquals(3, reader.getSample(0));
-
     }
 
     /**
      * Test aggregation generates a NaN between coverages.
      * One coverage has a special no data value.
-     *
-     * @throws DataStoreException
-     * @throws TransformException
      */
     @Test
     public void testDefinedNaNAdded() throws DataStoreException, TransformException {
@@ -1069,9 +1048,6 @@ public class AggregatedCoverageResourceTest {
 
     /**
      * Test fail safe when a resource fails a read operation.
-     *
-     * @throws DataStoreException
-     * @throws TransformException
      */
     @Test
     public void testResourceReadInError() throws DataStoreException, TransformException {
@@ -1157,9 +1133,6 @@ public class AggregatedCoverageResourceTest {
 
     /**
      * Test fail safe when a resource fails on metadatas and read operation.
-     *
-     * @throws DataStoreException
-     * @throws TransformException
      */
     @Test
     public void testResourceMetaInError() throws DataStoreException, TransformException {
@@ -1396,5 +1369,4 @@ public class AggregatedCoverageResourceTest {
                 new AffineTransform2D(1, 0, 0, -1, 0, 5), crs);
         assertEquals(expected, result);
     }
-
 }

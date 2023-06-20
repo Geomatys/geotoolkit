@@ -14,12 +14,14 @@ import org.apache.sis.storage.WritableGridCoverageResource;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.image.sampleclassifier.SampleClassifierTest;
 import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
-import org.geotoolkit.test.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
+
+import static org.junit.Assert.*;
+
 
 /**
  *
@@ -82,10 +84,10 @@ public class CategorizeTest {
         final GridCoverage outCvg = output.read(null);
 
         final Envelope outEnvelope = outCvg.getGridGeometry().getEnvelope();
-        Assert.assertEquals("Output envelope is not conform to source data.", GeneralEnvelope.castOrCopy(roi), GeneralEnvelope.castOrCopy(outEnvelope));
+        assertEquals("Output envelope is not conform to source data.", GeneralEnvelope.castOrCopy(roi), GeneralEnvelope.castOrCopy(outEnvelope));
         final RenderedImage outImage = outCvg.render(null);
         final int[] pixels = outImage.getData().getPixels(0, 0, outImage.getWidth(), outImage.getHeight(), (int[]) null);
-        Assert.assertArrayEquals("Classification result", expectedClassif, pixels);
+        assertArrayEquals("Classification result", expectedClassif, pixels);
     }
 
     /**
@@ -159,10 +161,10 @@ public class CategorizeTest {
         for (int i = 0; i < expectedClassifs.length; i++) {
             readEnv.setRange(2, i, i);
             final GridCoverage outCvg = output.read(null);
-            Assert.assertEquals("Output envelope is not conform to source data.", readEnv, outCvg.getGridGeometry().getEnvelope());
+            assertEquals("Output envelope is not conform to source data.", readEnv, outCvg.getGridGeometry().getEnvelope());
             final RenderedImage outImage = outCvg.render(null);
             final int[] pixels = outImage.getData().getPixels(0, 0, outImage.getWidth(), outImage.getHeight(), (int[]) null);
-            Assert.assertArrayEquals("Classification result", expectedClassifs[i], pixels);
+            assertArrayEquals("Classification result", expectedClassifs[i], pixels);
         }
     }
 

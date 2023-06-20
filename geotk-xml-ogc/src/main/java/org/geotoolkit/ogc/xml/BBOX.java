@@ -64,6 +64,7 @@ public interface BBOX extends SpatialOperator {
                 return envelope;
             }
 
+            @Override public Class getResourceClass() {return null;}
             @Override public SpatialOperatorName getOperatorType() {return SpatialOperatorName.BBOX;}
             @Override public List getExpressions() {return Arrays.asList(getOperand1(), getOperand2());}
             @Override public boolean test(Object object) {throw new UnsupportedOperationException();}

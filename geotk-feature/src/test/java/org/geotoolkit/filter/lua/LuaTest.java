@@ -20,8 +20,6 @@ package org.geotoolkit.filter.lua;
 import java.util.List;
 import javax.script.ScriptException;
 
-import static org.apache.sis.test.Assert.*;
-
 import org.geotoolkit.filter.FilterTestConstants;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.filter.function.lua.LuaFunctionFactory;
@@ -29,6 +27,9 @@ import org.junit.Test;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.Expression;
 import org.opengis.filter.ValueReference;
+
+import static org.junit.Assert.*;
+import static org.apache.sis.test.Assertions.assertSerializedEquals;
 
 
 /**

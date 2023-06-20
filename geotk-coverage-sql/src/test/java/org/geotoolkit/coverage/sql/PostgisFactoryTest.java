@@ -32,8 +32,9 @@ import org.apache.sis.referencing.CommonCRS;
 
 import org.junit.*;
 
-import static org.geotoolkit.referencing.Assert.*;
+import static org.junit.Assert.*;
 import static org.apache.sis.referencing.IdentifiedObjects.getIdentifier;
+import static org.geotoolkit.test.Assert.assertEqualsIgnoreMetadata;
 
 
 /**

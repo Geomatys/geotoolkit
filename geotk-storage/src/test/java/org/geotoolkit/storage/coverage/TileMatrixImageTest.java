@@ -23,8 +23,10 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.storage.multires.DefiningTileMatrixSet;
 import org.geotoolkit.storage.multires.TileMatrices;
-import org.geotoolkit.test.Assert;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
+
 
 /**
  *
@@ -48,7 +50,7 @@ public class TileMatrixImageTest {
 
         final TileMatrixImage image = TileMatrixImage.create(tileMatrisSet.getTileMatrices().values().iterator().next(), null, Arrays.asList(sampleDimension));
 
-        Assert.assertTrue(BufferedImages.isAll(image, new double[]{35.7}));
+        assertTrue(BufferedImages.isAll(image, new double[]{35.7}));
 
 
     }
