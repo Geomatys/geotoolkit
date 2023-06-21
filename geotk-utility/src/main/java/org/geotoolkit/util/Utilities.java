@@ -44,7 +44,7 @@ public final class Utilities extends Static {
     /**
      * The version of this Geotoolkit.org distribution.
      */
-    public static final Version VERSION = new Version("4.00-SNAPSHOT");
+    public static final Version VERSION = new Version("5.0-SNAPSHOT");
 
     /**
      * Forbid object creation.

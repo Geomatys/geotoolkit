@@ -565,7 +565,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
             final GridGeometry componentGrid = entry.getValue();
 
             //try combining grid geometries
-            sharedGrid = tryAggregate(sharedGrid, componentGrid).orElse(null);
+            sharedGrid = CoverageUtilities.tryAggregate(sharedGrid, componentGrid).orElse(null);
 
             Envelope envelope = componentGrid.getEnvelope();
             try {
@@ -1380,98 +1380,6 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
         final String name = getIdentifier().orElse(NamesExt.create("Unnamed")).toString();
 
         return StringUtilities.toStringTree(name + " aggregated coverage resource", texts);
-    }
-
-    private static Optional<GridGeometry> tryAggregate(GridGeometry grid1, GridGeometry grid2) {
-        if (grid1 == null || grid2 == null) {
-            return Optional.empty();
-        }
-
-        //check we have enough informations to try a merge
-        if (!grid1.isDefined(GridGeometry.EXTENT | GridGeometry.CRS | GridGeometry.GRID_TO_CRS)
-          ||!grid2.isDefined(GridGeometry.EXTENT | GridGeometry.CRS | GridGeometry.GRID_TO_CRS)) {
-            return Optional.empty();
-        }
-
-        //crs must be identical
-        final CoordinateReferenceSystem crs1 = grid1.getCoordinateReferenceSystem();
-        final CoordinateReferenceSystem crs2 = grid2.getCoordinateReferenceSystem();
-        if (!Utilities.equalsIgnoreMetadata(crs1, crs2)) {
-            return Optional.empty();
-        }
-
-        //both grid to crs must be linear
-        final MathTransform gridToCRS1 = grid1.getGridToCRS(PixelInCell.CELL_CENTER);
-        final MathTransform gridToCRS2 = grid2.getGridToCRS(PixelInCell.CELL_CENTER);
-        if (!(gridToCRS1 instanceof LinearTransform && gridToCRS2 instanceof LinearTransform)) {
-            return Optional.empty();
-        }
-
-        //both grid to crs must be affine
-        final LinearTransform linear1 = (LinearTransform) gridToCRS1;
-        final LinearTransform linear2 = (LinearTransform) gridToCRS2;
-        if (!linear1.isAffine() || !linear2.isAffine()) {
-            return Optional.empty();
-        }
-
-        //matrices must differ only by the last column (translation)
-        final Matrix matrix1 = linear1.getMatrix();
-        final Matrix matrix2 = linear2.getMatrix();
-        for (int x = 0, xn = matrix1.getNumCol() - 1, yn = matrix1.getNumRow(); x < xn; x++) {
-            for (int y = 0; y < yn; y++) {
-                if (matrix1.getElement(y, x) != matrix2.getElement(y, x)) {
-                    return Optional.empty();
-                }
-            }
-        }
-
-        //create new GridToCrs, we use the lowest translation parameters
-        final MatrixSIS matrix = Matrices.copy(matrix1);
-        for (int y = 0, yn = matrix1.getNumRow() - 1, x = matrix1.getNumCol() - 1; y < yn; y++) {
-            matrix.setElement(y, x, Math.min(matrix1.getElement(y, x), matrix2.getElement(y, x)));
-        }
-
-        //compute the global extent
-        final GridExtent extent1 = grid1.getExtent();
-        final GridExtent extent2 = grid2.getExtent();
-        final GridExtent extent;
-        try {
-            final MatrixSIS crsToGrid1 = Matrices.inverse(matrix1);
-            final MatrixSIS crsToGrid2 = Matrices.inverse(matrix2);
-            final MatrixSIS crsToGrid = Matrices.inverse(matrix);
-
-            final long[] trs1 = new long[crsToGrid1.getNumRow()-1];
-            final long[] trs2 = new long[trs1.length];
-
-            for (int y = 0, yn = matrix1.getNumRow() - 1, x = matrix1.getNumCol() - 1; y < yn; y++) {
-                trs1[y] = (long) (crsToGrid.getElement(y, x) - crsToGrid1.getElement(y, x));
-                trs2[y] = (long) (crsToGrid.getElement(y, x) - crsToGrid2.getElement(y, x));
-            }
-
-            final GridExtent translated1 = extent1.translate(trs1);
-            final GridExtent translated2 = extent2.translate(trs2);
-
-            final long[] low1 = translated1.getLow().getCoordinateValues();
-            final long[] low2 = translated2.getLow().getCoordinateValues();
-            final long[] high1 = translated1.getHigh().getCoordinateValues();
-            final long[] high2 = translated2.getHigh().getCoordinateValues();
-
-            final long[] low = new long[low1.length];
-            final long[] high = new long[low.length];
-            final DimensionNameType[] dnt = new DimensionNameType[low.length];
-            for (int i = 0; i < low.length; i++) {
-                low[i] = Math.min(low1[i], low2[i]);
-                high[i] = Math.max(high1[i], high2[i]);
-                dnt[i] = extent1.getAxisType(i).orElse(null);
-            }
-
-            extent = new GridExtent(dnt, low, high, true);
-
-        } catch (NoninvertibleMatrixException ex) {
-            return Optional.empty();
-        }
-
-        return Optional.of(new GridGeometry(extent, PixelInCell.CELL_CENTER, MathTransforms.linear(matrix), crs1));
     }
 
     public static MathTransform createTransform(GridGeometry source, RenderedImage sourceImg, GridGeometry target, RenderedImage targetImg) throws FactoryException, NoninvertibleTransformException {
