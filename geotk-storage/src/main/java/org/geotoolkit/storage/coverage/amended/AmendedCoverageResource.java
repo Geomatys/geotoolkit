@@ -112,13 +112,6 @@ public class AmendedCoverageResource implements Resource, GridCoverageResource, 
         return Optional.of(getGridGeometry().getEnvelope());
     }
 
-    private void loadRefData() throws DataStoreException {
-        if (refGridGeom == null) {
-            refGridGeom = ref.getGridGeometry();
-            refDims = ref.getSampleDimensions();
-        }
-    }
-
     /**
      * Get decorated coverage reference.
      *
@@ -139,15 +132,18 @@ public class AmendedCoverageResource implements Resource, GridCoverageResource, 
             || overridePixelInCell!=null;
     }
 
-    /**
-     *
-     * @param index
-     * @return
-     * @throws CoverageStoreException
-     */
-    public GridGeometry getOriginalGridGeometry() throws DataStoreException {
-        loadRefData();
+    public synchronized GridGeometry getOriginalGridGeometry() throws DataStoreException {
+        if (refGridGeom == null) {
+            refGridGeom = ref.getGridGeometry();
+        }
         return refGridGeom;
+    }
+
+    public synchronized List<SampleDimension> getOriginalSampleDimensions() throws DataStoreException {
+        if (refDims == null) {
+            refDims = ref.getSampleDimensions();
+        }
+        return refDims;
     }
 
     /**
@@ -240,20 +236,19 @@ public class AmendedCoverageResource implements Resource, GridCoverageResource, 
      * Get overriden grid geometry.
      *
      * @return overridden grid geometry or original one is there are no overrides.
-     * @throws CoverageStoreException
      */
     @Override
     public GridGeometry getGridGeometry() throws DataStoreException {
-        loadRefData();
+        final GridGeometry originalGridGeometry = getOriginalGridGeometry();
         if (isGridGeometryOverriden()) {
-            final GridExtent extent = refGridGeom.getExtent();
+            final GridExtent extent = originalGridGeometry.getExtent();
             return new GridGeometry(
                     extent,
                     overridePixelInCell!=null ? overridePixelInCell : PixelInCell.CELL_CENTER,
-                    overrideGridToCrs!=null ? overrideGridToCrs : refGridGeom.getGridToCRS(PixelInCell.CELL_CENTER),
-                    overrideCRS!=null ? overrideCRS : refGridGeom.getCoordinateReferenceSystem());
+                    overrideGridToCrs!=null ? overrideGridToCrs : originalGridGeometry.getGridToCRS(PixelInCell.CELL_CENTER),
+                    overrideCRS!=null ? overrideCRS : originalGridGeometry.getCoordinateReferenceSystem());
         } else {
-            return refGridGeom;
+            return originalGridGeometry;
         }
     }
 
@@ -261,15 +256,13 @@ public class AmendedCoverageResource implements Resource, GridCoverageResource, 
      * Get overriden sample dimensions
      *
      * @return overridden sample dimensions or original ones is there are no overrides.
-     * @throws CoverageStoreException
      */
     @Override
     public List<SampleDimension> getSampleDimensions() throws DataStoreException {
-        loadRefData();
-        if(overrideDims!=null){
+        if (overrideDims != null) {
             return overrideDims;
         }else{
-            return refDims;
+            return getOriginalSampleDimensions();
         }
     }
 
