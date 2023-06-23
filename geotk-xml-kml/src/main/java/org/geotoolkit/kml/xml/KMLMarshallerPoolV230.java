@@ -26,23 +26,22 @@ import org.apache.sis.xml.MarshallerPool;
  *
  * @author Johann Sorel (Geomatys)
  */
-public final class KMLMarshallerPool {
+public final class KMLMarshallerPoolV230 {
 
     private static final MarshallerPool INSTANCE;
     static {
         try {
-            INSTANCE = new MarshallerPool(createJAXBContext(
-                    "org.geotoolkit.ogc.xml.exception:" +
-                    "org.geotoolkit.kml.xml.v220:" +
+            INSTANCE = new MarshallerPool(createJAXBContext("org.geotoolkit.ogc.xml.exception:" +
+                    "org.geotoolkit.kml.xml.v230:" +
                     "org.geotoolkit.xal.xml.v20:" +
                     "org.geotoolkit.atom.xml:",
-                    KMLMarshallerPool.class.getClassLoader()), null);
+                    KMLMarshallerPoolV230.class.getClassLoader()), null);
         } catch (JAXBException ex) {
             throw new AssertionError(ex); // Should never happen, unless we have a build configuration problem.
         }
     }
 
-    private KMLMarshallerPool() {}
+    private KMLMarshallerPoolV230() {}
 
     public static MarshallerPool getINSTANCE() {
         return INSTANCE;
