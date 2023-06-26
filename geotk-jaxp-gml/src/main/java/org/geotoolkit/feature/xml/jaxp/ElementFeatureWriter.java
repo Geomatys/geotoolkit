@@ -229,10 +229,13 @@ public class ElementFeatureWriter {
         if (!fragment) {
             rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:gml", "http://www.opengis.net/gml");
         }
-        final Attr idAttr = document.createAttributeNS(GML, "id");
-        idAttr.setValue(feature.getPropertyValue(AttributeConvention.IDENTIFIER).toString());
-        idAttr.setPrefix("gml");
-        rootElement.setAttributeNodeNS(idAttr);
+        final Object idValue = feature.getValueOrFallback(AttributeConvention.IDENTIFIER, null);
+        if (idValue != null) {
+            final Attr idAttr = document.createAttributeNS(GML, "id");
+            idAttr.setValue(idValue.toString());
+            idAttr.setPrefix("gml");
+            rootElement.setAttributeNodeNS(idAttr);
+        }
 
         if (rootDocument == null) {
             document.appendChild(rootElement);
