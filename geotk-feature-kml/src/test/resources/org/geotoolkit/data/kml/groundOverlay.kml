@@ -5,17 +5,17 @@
    <color>7fffffff</color>
    <drawOrder>1</drawOrder>
    <Icon>
-      <href>http://www.google.com/intl/en/images/logo.gif</href>
+      <href>icon.png</href>
       <refreshMode>onInterval</refreshMode>
       <refreshInterval>86400.0</refreshInterval>
       <viewBoundScale>0.75</viewBoundScale>
    </Icon>
    <LatLonBox>
-      <north>37.83234</north>
-      <south>37.832122</south>
-      <east>-122.373033</east>
-      <west>-122.373724</west>
-      <rotation>45.0</rotation>
+      <north>90</north>
+      <south>-90</south>
+      <east>180</east>
+      <west>-180</west>
+      <rotation>0.0</rotation>
    </LatLonBox>
 </GroundOverlay>
 </kml>
