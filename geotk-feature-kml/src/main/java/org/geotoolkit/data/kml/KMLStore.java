@@ -23,11 +23,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.FileSystem;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.AbstractMap;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Stream;
 import javax.imageio.ImageIO;
@@ -41,24 +44,25 @@ import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridOrientation;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.internal.storage.ResourceOnFileSystem;
 import org.apache.sis.metadata.iso.DefaultMetadata;
-import org.apache.sis.metadata.iso.citation.DefaultCitation;
-import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.apache.sis.storage.AbstractFeatureSet;
+import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.StorageConnector;
-import org.apache.sis.util.SimpleInternationalString;
+import org.apache.sis.util.iso.Names;
 import org.apache.sis.xml.MarshallerPool;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.geometry.jts.JTS;
@@ -88,6 +92,7 @@ import org.geotoolkit.kml.xml.v230.ScreenOverlayType;
 import org.geotoolkit.kml.xml.v230.TourType;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.DataStores;
+import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.CoordinateSequence;
 import org.locationtech.jts.geom.Geometry;
@@ -103,6 +108,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.GenericName;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -113,7 +119,7 @@ import org.xml.sax.SAXException;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class KMLStore extends DataStore implements FeatureSet, ResourceOnFileSystem {
+public class KMLStore extends DataStore implements Aggregate, ResourceOnFileSystem {
 
     private static final GeometryFactory GF = GO2Utilities.JTS_FACTORY;
     private static final CoordinateReferenceSystem CRS = CommonCRS.WGS84.normalizedGeographic(); //CRS:84 , longitude/latitude
@@ -198,7 +204,9 @@ public class KMLStore extends DataStore implements FeatureSet, ResourceOnFileSys
     }
 
     private final URI path;
+    private final GenericName name;
     private final ParameterValueGroup params;
+    private final List<FeatureSet> components;
 
     public KMLStore(URI path) {
         this(toParameters(path));
@@ -207,6 +215,10 @@ public class KMLStore extends DataStore implements FeatureSet, ResourceOnFileSys
     public KMLStore(ParameterValueGroup params){
         this.params = params;
         this.path = Parameters.castOrWrap(params).getValue(KMLProvider.LOCATION_PARAM);
+        this.components = List.of(
+                new KmlFeatureSet(PLACEMARK_TYPE, PlacemarkType.class),
+                new KmlFeatureSet(GROUNDOVERLAY_TYPE, GroundOverlayType.class));
+        this.name = Names.createLocalName(null, null, IOUtilities.filename(path));
     }
 
     private static ParameterValueGroup toParameters(final URI f) {
@@ -217,7 +229,7 @@ public class KMLStore extends DataStore implements FeatureSet, ResourceOnFileSys
 
     @Override
     public Optional<GenericName> getIdentifier() {
-        return Optional.empty();
+        return Optional.of(name);
     }
 
     @Override
@@ -232,48 +244,38 @@ public class KMLStore extends DataStore implements FeatureSet, ResourceOnFileSys
 
     @Override
     public Metadata getMetadata() throws DataStoreException {
-        final FeatureType type = getType();
-        final DefaultMetadata metadata = new DefaultMetadata();
-        final DefaultDataIdentification ident = new DefaultDataIdentification();
-        final DefaultCitation citation = new DefaultCitation();
-        citation.setTitle(new SimpleInternationalString(type.getName().toString()));
-        citation.setIdentifiers(Arrays.asList(new NamedIdentifier(type.getName())));
-        ident.setCitation(citation);
-        metadata.setIdentificationInfo(Arrays.asList(ident));
-        return metadata;
+        return new DefaultMetadata();
     }
 
     @Override
-    public FeatureType getType() throws DataStoreException {
-        return PLACEMARK_TYPE;
+    public Collection<? extends Resource> components() throws DataStoreException {
+        return components;
     }
 
-    @Override
-    public Optional<Envelope> getEnvelope() throws DataStoreException {
-        return Optional.empty();
-    }
-
-    @Override
-    public Stream<Feature> features(boolean parallel) throws DataStoreException {
-        final KmlType kml = getKml();
+    private Stream<Feature> features(boolean parallel, Class<? extends AbstractFeatureType> clazz) throws DataStoreException {
+        final Entry<KmlType, FileSystem> entry = getKml();
+        FileSystem rootPath = entry.getValue();
+        final KmlType kml = entry.getKey();
 
         final List<AbstractFeatureType> kmlFeatures = new ArrayList<>();
         extractKmlFeatures(kml.getAbstractFeatureGroup(), kmlFeatures);
 
         final List<Feature> features = new ArrayList<>();
         for (AbstractFeatureType candidate : kmlFeatures) {
-            if (candidate instanceof PlacemarkType cdt) {
-                features.add(convert(cdt));
-            } else if(candidate instanceof PhotoOverlayType cdt) {
-                features.add(convert(cdt));
-            } else if(candidate instanceof GroundOverlayType cdt) {
-                features.add(convert(cdt));
-            } else if(candidate instanceof ScreenOverlayType cdt) {
-                features.add(convert(cdt));
-            } else if(candidate instanceof TourType cdt) {
-                features.add(convert(cdt));
-            } else if(candidate instanceof NetworkLinkType cdt) {
-                features.add(convert(cdt));
+            if (clazz.isInstance(candidate)) {
+                if (candidate instanceof PlacemarkType cdt) {
+                    features.add(convert(cdt, rootPath));
+                } else if(candidate instanceof PhotoOverlayType cdt) {
+                    features.add(convert(cdt, rootPath));
+                } else if(candidate instanceof GroundOverlayType cdt) {
+                    features.add(convert(cdt, rootPath));
+                } else if(candidate instanceof ScreenOverlayType cdt) {
+                    features.add(convert(cdt, rootPath));
+                } else if(candidate instanceof TourType cdt) {
+                    features.add(convert(cdt, rootPath));
+                } else if(candidate instanceof NetworkLinkType cdt) {
+                    features.add(convert(cdt, rootPath));
+                }
             }
         }
 
@@ -283,26 +285,41 @@ public class KMLStore extends DataStore implements FeatureSet, ResourceOnFileSys
     /**
      * Get the original KML object.
      */
-    public KmlType getKml() throws DataStoreException {
+    public Entry<KmlType,FileSystem> getKml() throws DataStoreException {
+        if (path.toString().toLowerCase().endsWith(".kmz")) {
+            throw new DataStoreException("todo");
+        } else {
+            final KmlType kml = readKml(path);
+            return new AbstractMap.SimpleImmutableEntry<>(kml, null);
+        }
+    }
+
+    /**
+     * Get the original KML object.
+     */
+    private KmlType readKml(Object input) throws DataStoreException {
         final KmlType kml;
         final MarshallerPool pool = KMLMarshallerPoolV230.getINSTANCE();
         try {
-            //fix old google namespace
-            final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            factory.setNamespaceAware(true);
-            final DocumentBuilder builder = factory.newDocumentBuilder();
-            final Document doc = builder.parse(path.toString());
-            renameNamespaceRecursive(doc, doc.getDocumentElement(), "http://earth.google.com/kml/2.2", "http://www.opengis.net/kml/2.2");
+            final StorageConnector cnx = new StorageConnector(input);
+            try (final InputStream stream = cnx.commit(InputStream.class, "kml")) {
+                //fix old google namespace
+                final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                factory.setNamespaceAware(true);
+                final DocumentBuilder builder = factory.newDocumentBuilder();
+                final Document doc = builder.parse(stream);
+                renameNamespaceRecursive(doc, doc.getDocumentElement(), "http://earth.google.com/kml/2.2", "http://www.opengis.net/kml/2.2");
 
-            //unmarshall file
-            final Unmarshaller unmarshaller = pool.acquireUnmarshaller();
-            Object cdt = unmarshaller.unmarshal(doc);
-            if (cdt instanceof JAXBElement) cdt = ((JAXBElement)cdt).getValue();
-            kml = (KmlType) cdt;
-            pool.recycle(unmarshaller);
-        } catch(FileNotFoundException ex){
+                //unmarshall file
+                final Unmarshaller unmarshaller = pool.acquireUnmarshaller();
+                Object cdt = unmarshaller.unmarshal(doc);
+                if (cdt instanceof JAXBElement) cdt = ((JAXBElement)cdt).getValue();
+                kml = (KmlType) cdt;
+                pool.recycle(unmarshaller);
+            }
+        } catch (FileNotFoundException ex) {
             throw new DataStoreException(ex.getMessage(), ex);
-        } catch(JAXBException | ParserConfigurationException | SAXException | IOException ex) {
+        } catch (JAXBException | ParserConfigurationException | SAXException | IOException ex) {
             throw new DataStoreException(ex.getMessage(), ex);
         }
         return kml;
@@ -342,7 +359,7 @@ public class KMLStore extends DataStore implements FeatureSet, ResourceOnFileSys
         }
     }
 
-    private Feature convert(PlacemarkType candidate) throws DataStoreException {
+    private Feature convert(PlacemarkType candidate, FileSystem rootPath) throws DataStoreException {
         final Feature feature = PLACEMARK_TYPE.newInstance();
         fillFeature(candidate, feature);
         //convert geometry to JTS
@@ -353,14 +370,14 @@ public class KMLStore extends DataStore implements FeatureSet, ResourceOnFileSys
         return feature;
     }
 
-    private Feature convert(PhotoOverlayType candidate) throws DataStoreException {
+    private Feature convert(PhotoOverlayType candidate, FileSystem rootPath) throws DataStoreException {
         final Feature feature = PHOTOOVERLAY_TYPE.newInstance();
         fillFeature(candidate, feature);
         //todo
         return feature;
     }
 
-    private Feature convert(GroundOverlayType candidate) throws DataStoreException {
+    private Feature convert(GroundOverlayType candidate, FileSystem rootPath) throws DataStoreException {
         final Feature feature = GROUNDOVERLAY_TYPE.newInstance();
         fillFeature(candidate, feature);
         final LinkType icon = candidate.getIcon();
@@ -373,6 +390,8 @@ public class KMLStore extends DataStore implements FeatureSet, ResourceOnFileSys
                 final StorageConnector cnx = new StorageConnector(uri);
                 try (InputStream in = cnx.getStorageAs(InputStream.class)) {
                     final BufferedImage image = ImageIO.read(in);
+                    final int width = image.getWidth();
+                    final int height = image.getHeight();
 
                     final GeneralEnvelope env = new GeneralEnvelope(CRS);
                     final AbstractExtentType extent = abs.getValue();
@@ -383,7 +402,7 @@ public class KMLStore extends DataStore implements FeatureSet, ResourceOnFileSys
                         final Double north = llb.getNorth();
                         final Double south = llb.getSouth();
                         env.setRange(0, west == null ? -180.0 : west, east == null ? 180.0 : east);
-                        env.setRange(1, south, north);
+                        env.setRange(1, south == null ? -90.0 : south, north == null ? 90 : north);
                         rotation = llb.getRotation();
 
                     } else if (extent instanceof LatLonAltBoxType llb) {
@@ -398,9 +417,10 @@ public class KMLStore extends DataStore implements FeatureSet, ResourceOnFileSys
                         throw new DataStoreException("Unsupported");
                     }
 
+                    final GridGeometry grid = new GridGeometry(new GridExtent(width, height), env, GridOrientation.REFLECTION_Y);
                     final GridCoverageBuilder gcb = new GridCoverageBuilder();
                     gcb.setValues(image);
-                    gcb.setDomain(env);
+                    gcb.setDomain(grid);
                     GridCoverage coverage = gcb.build();
 
                     if (rotation != 0) {
@@ -413,17 +433,31 @@ public class KMLStore extends DataStore implements FeatureSet, ResourceOnFileSys
                         MathTransform gridToCRS = gridGeometry.getGridToCRS(PixelInCell.CELL_CENTER);
                         final GridExtent extent1 = gridGeometry.getExtent();
                         final MathTransform rotateTrs = new AffineTransform2D(AffineTransform.getRotateInstance(
-                                Math.toRadians(rotation),
+                                Math.toRadians(-rotation),//counterclockwise, image is in reverse, y down
                                 extent1.getSize(0) / 2.0,
                                 extent1.getSize(1) / 2.0));
-                        gridToCRS = MathTransforms.concatenate(gridToCRS, rotateTrs);
+                        gridToCRS = MathTransforms.concatenate(rotateTrs, gridToCRS);
                         gridGeometry = new GridGeometry(extent1, PixelInCell.CELL_CENTER, gridToCRS, env.getCoordinateReferenceSystem());
                         gcb.setDomain(gridGeometry);
                         coverage = gcb.build();
                     }
 
+                    MathTransform gridToCRS = coverage.getGridGeometry().getGridToCRS(PixelInCell.CELL_CORNER);
+                    Geometry polygon = new GeometryFactory().createPolygon(new Coordinate[]{
+                        new Coordinate(0, 0),
+                        new Coordinate(width, 0),
+                        new Coordinate(width, height),
+                        new Coordinate(0, height),
+                        new Coordinate(0, 0)
+                    });
+                    polygon = org.apache.sis.internal.feature.jts.JTS.transform(polygon, gridToCRS);
+                    polygon.setUserData(CRS);
+
                     feature.setPropertyValue("icon", coverage);
+                    feature.setPropertyValue("geometry", polygon);
                 }
+            } catch (TransformException  ex) {
+                ex.printStackTrace();
             } catch (URISyntaxException ex) {
                 ex.printStackTrace();
             } catch (IOException ex) {
@@ -434,21 +468,21 @@ public class KMLStore extends DataStore implements FeatureSet, ResourceOnFileSys
         return feature;
     }
 
-    private Feature convert(ScreenOverlayType candidate) throws DataStoreException {
+    private Feature convert(ScreenOverlayType candidate, FileSystem rootPath) throws DataStoreException {
         final Feature feature = SCREENOVERLAY_TYPE.newInstance();
         fillFeature(candidate, feature);
         //todo
         return feature;
     }
 
-    private Feature convert(TourType candidate) throws DataStoreException {
+    private Feature convert(TourType candidate, FileSystem rootPath) throws DataStoreException {
         final Feature feature = TOUR_TYPE.newInstance();
         fillFeature(candidate, feature);
         //todo
         return feature;
     }
 
-    private Feature convert(NetworkLinkType candidate) throws DataStoreException {
+    private Feature convert(NetworkLinkType candidate, FileSystem rootPath) throws DataStoreException {
         final Feature feature = NETWORKLINK_TYPE.newInstance();
         fillFeature(candidate, feature);
         //todo
@@ -557,5 +591,32 @@ public class KMLStore extends DataStore implements FeatureSet, ResourceOnFileSys
 
     @Override
     public void close() throws DataStoreException {
+    }
+
+    private final class KmlFeatureSet extends AbstractFeatureSet {
+
+        private final Class<? extends AbstractFeatureType> entityType;
+        private final FeatureType featureType;
+
+        private KmlFeatureSet(FeatureType featureType, Class<? extends AbstractFeatureType> entityType) {
+            super(null, false);
+            this.featureType = featureType;
+            this.entityType = entityType;
+        }
+
+        @Override
+        public FeatureType getType() throws DataStoreException {
+            return featureType;
+        }
+
+        @Override
+        public Optional<Envelope> getEnvelope() throws DataStoreException {
+            return Optional.ofNullable(FeatureStoreUtilities.getEnvelope(this, true));
+        }
+
+        @Override
+        public Stream<Feature> features(boolean bln) throws DataStoreException {
+            return KMLStore.this.features(bln, entityType);
+        }
     }
 }

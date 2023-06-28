@@ -23,6 +23,7 @@ import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.storage.FeatureSet;
 import static org.geotoolkit.data.kml.KMLStore.PLACEMARK_NAME;
 import static org.junit.Assert.*;
 import org.junit.Test;
@@ -41,27 +42,28 @@ public class KMLStoreTest {
     public void testReadPlacemark() throws Exception {
 
         final URL path = KMLStoreTest.class.getResource("/org/geotoolkit/data/kml/placemark.kml");
-        final KMLStore store = new KMLStore(path.toURI());
+        try (final KMLStore store = new KMLStore(path.toURI())) {
+            final FeatureSet featureSet = (FeatureSet) store.findResource("Placemark");
+            final FeatureType type = featureSet.getType();
+            assertEquals(PLACEMARK_NAME, type.getName().toString());
 
-        final FeatureType type = store.getType();
-        assertEquals(PLACEMARK_NAME, type.getName().toString());
+            try (Stream<Feature> stream = featureSet.features(false)) {
+                final Iterator<Feature> ite = stream.iterator();
+                assertTrue(ite.hasNext());
+                final Feature feature = ite.next();
+                assertEquals(KMLStore.PLACEMARK_TYPE, feature.getType());
+                assertEquals("Google Earth - New Placemark", feature.getPropertyValue("name"));
+                assertEquals("Some Descriptive text.", feature.getPropertyValue("description"));
+                final Geometry geom = (Geometry) feature.getPropertyValue("geometry");
+                assertTrue(geom instanceof Point);
+                final Point pt = (Point) geom;
+                assertEquals(CommonCRS.WGS84.normalizedGeographic(), pt.getUserData());
+                assertEquals(-90.86948943473118, pt.getX(), 0.0);
+                assertEquals(48.25450093195546, pt.getY(), 0.0);
+                assertEquals(0.0, pt.getCoordinate().getZ(), 0.0);
 
-        try (Stream<Feature> stream = store.features(false)) {
-            final Iterator<Feature> ite = stream.iterator();
-            assertTrue(ite.hasNext());
-            final Feature feature = ite.next();
-            assertEquals(KMLStore.PLACEMARK_TYPE, feature.getType());
-            assertEquals("Google Earth - New Placemark", feature.getPropertyValue("name"));
-            assertEquals("Some Descriptive text.", feature.getPropertyValue("description"));
-            final Geometry geom = (Geometry) feature.getPropertyValue("geometry");
-            assertTrue(geom instanceof Point);
-            final Point pt = (Point) geom;
-            assertEquals(CommonCRS.WGS84.normalizedGeographic(), pt.getUserData());
-            assertEquals(-90.86948943473118, pt.getX(), 0.0);
-            assertEquals(48.25450093195546, pt.getY(), 0.0);
-            assertEquals(0.0, pt.getCoordinate().getZ(), 0.0);
-
-            assertFalse(ite.hasNext());
+                assertFalse(ite.hasNext());
+            }
         }
     }
 
@@ -69,26 +71,27 @@ public class KMLStoreTest {
     public void testReadGroundOverlay() throws Exception {
 
         final URL path = KMLStoreTest.class.getResource("/org/geotoolkit/data/kml/groundOverlay.kml");
-        final KMLStore store = new KMLStore(path.toURI());
+        try (final KMLStore store = new KMLStore(path.toURI())) {
+            final FeatureSet featureSet = (FeatureSet) store.findResource("GroundOverlay");
+            final FeatureType type = featureSet.getType();
+            assertEquals(KMLStore.GROUNDOVERLAY_NAME, type.getName().toString());
 
-        final FeatureType type = store.getType();
-        assertEquals(PLACEMARK_NAME, type.getName().toString());
+            try (Stream<Feature> stream = featureSet.features(false)) {
+                final Iterator<Feature> ite = stream.iterator();
+                assertTrue(ite.hasNext());
+                final Feature feature = ite.next();
+                assertEquals(KMLStore.GROUNDOVERLAY_TYPE, feature.getType());
+                assertEquals("GroundOverlay.kml", feature.getPropertyValue("name"));
 
-        try (Stream<Feature> stream = store.features(false)) {
-            final Iterator<Feature> ite = stream.iterator();
-            assertTrue(ite.hasNext());
-            final Feature feature = ite.next();
-            assertEquals(KMLStore.GROUNDOVERLAY_TYPE, feature.getType());
-            assertEquals("GroundOverlay.kml", feature.getPropertyValue("name"));
+                final GridCoverage icon = (GridCoverage) feature.getPropertyValue("icon");
+                assertNotNull(icon);
+                final GridGeometry gridGeometry = icon.getGridGeometry();
+                final GridExtent extent = gridGeometry.getExtent();
+                assertEquals(36, extent.getSize(0));
+                assertEquals(18,extent.getSize(1));
 
-            final GridCoverage icon = (GridCoverage) feature.getPropertyValue("icon");
-            assertNotNull(icon);
-            final GridGeometry gridGeometry = icon.getGridGeometry();
-            final GridExtent extent = gridGeometry.getExtent();
-            assertEquals(36, extent.getSize(0));
-            assertEquals(18,extent.getSize(1));
-
-            assertFalse(ite.hasNext());
+                assertFalse(ite.hasNext());
+            }
         }
     }
 }
