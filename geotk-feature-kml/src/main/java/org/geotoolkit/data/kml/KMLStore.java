@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2017, Geomatys
+ *    (C) 2017-2023, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -24,6 +24,8 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.AbstractMap;
@@ -32,6 +34,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
 import javax.imageio.ImageIO;
 import javax.xml.bind.JAXBElement;
@@ -119,17 +123,10 @@ import org.xml.sax.SAXException;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class KMLStore extends DataStore implements Aggregate, ResourceOnFileSystem {
+public final class KMLStore extends DataStore implements Aggregate, ResourceOnFileSystem {
 
     private static final GeometryFactory GF = GO2Utilities.JTS_FACTORY;
     private static final CoordinateReferenceSystem CRS = CommonCRS.WGS84.normalizedGeographic(); //CRS:84 , longitude/latitude
-    static final String ABSTRACT_FEATURE_NAME = "AbstractFeatureType";
-    static final String PLACEMARK_NAME = "Placemark";
-    static final String NETWORKLINK_NAME = "NetworkLink";
-    static final String PHOTOOVERLAY_NAME = "PhotoOverlay";
-    static final String SCREENOVERLAY_NAME = "ScreenOverlay";
-    static final String GROUNDOVERLAY_NAME = "GroundOverlay";
-    static final String TOUR_NAME = "Tour";
 
     public static final FeatureType ABSTRACT_FEATURE_TYPE;
     public static final FeatureType PLACEMARK_TYPE;
@@ -142,7 +139,7 @@ public class KMLStore extends DataStore implements Aggregate, ResourceOnFileSyst
     static {
         { //Abstract type
             final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-            ftb.setName(ABSTRACT_FEATURE_NAME);
+            ftb.setName("AbstractFeature");
             ftb.addAttribute(String.class).setName("id");
             ftb.addAttribute(String.class).setName("name");
             ftb.addAttribute(String.class).setName("address");
@@ -159,7 +156,7 @@ public class KMLStore extends DataStore implements Aggregate, ResourceOnFileSyst
 
         { // Placemark type
             final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-            ftb.setName(PLACEMARK_NAME);
+            ftb.setName("Placemark");
             ftb.setSuperTypes(ABSTRACT_FEATURE_TYPE);
             ftb.addAttribute(Geometry.class).setName("geometry").setCRS(CRS).addRole(AttributeRole.DEFAULT_GEOMETRY);
             PLACEMARK_TYPE = ftb.build();
@@ -167,28 +164,28 @@ public class KMLStore extends DataStore implements Aggregate, ResourceOnFileSyst
 
         { // NetworkLink type
             final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-            ftb.setName(NETWORKLINK_NAME);
+            ftb.setName("NetworkLink");
             ftb.setSuperTypes(ABSTRACT_FEATURE_TYPE);
             NETWORKLINK_TYPE = ftb.build();
         }
 
         { // PhotoOverlay type
             final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-            ftb.setName(PHOTOOVERLAY_NAME);
+            ftb.setName("PhotoOverlay");
             ftb.setSuperTypes(ABSTRACT_FEATURE_TYPE);
             PHOTOOVERLAY_TYPE = ftb.build();
         }
 
         { // ScreenOverlay type
             final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-            ftb.setName(SCREENOVERLAY_NAME);
+            ftb.setName("ScreenOverlay");
             ftb.setSuperTypes(ABSTRACT_FEATURE_TYPE);
             SCREENOVERLAY_TYPE = ftb.build();
         }
 
         { // GroundOverlay type
             final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-            ftb.setName(GROUNDOVERLAY_NAME);
+            ftb.setName("GroundOverlay");
             ftb.setSuperTypes(ABSTRACT_FEATURE_TYPE);
             ftb.addAttribute(Polygon.class).setName("geometry").setCRS(CRS).addRole(AttributeRole.DEFAULT_GEOMETRY);
             ftb.addAttribute(GridCoverage.class).setName("icon");
@@ -197,7 +194,7 @@ public class KMLStore extends DataStore implements Aggregate, ResourceOnFileSyst
 
         { // Tour type
             final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-            ftb.setName(TOUR_NAME);
+            ftb.setName("Tour");
             ftb.setSuperTypes(ABSTRACT_FEATURE_TYPE);
             TOUR_TYPE = ftb.build();
         }
@@ -252,10 +249,27 @@ public class KMLStore extends DataStore implements Aggregate, ResourceOnFileSyst
         return components;
     }
 
+    /**
+     * Extract and transform to features all kml features of requested type.
+     */
     private Stream<Feature> features(boolean parallel, Class<? extends AbstractFeatureType> clazz) throws DataStoreException {
-        final Entry<KmlType, FileSystem> entry = getKml();
-        FileSystem rootPath = entry.getValue();
-        final KmlType kml = entry.getKey();
+        final Entry<Object, FileSystem> entry = openKmlResource();
+        final Object kmlPath = entry.getKey();
+        final FileSystem kmzFs = entry.getValue();
+
+        final KmlType kml;
+        try {
+            kml = readKml(kmlPath);
+        } catch (DataStoreException ex) {
+            if (kmzFs != null) {
+                try {
+                    kmzFs.close();
+                } catch (IOException e) {
+                    ex.addSuppressed(e);
+                }
+            }
+            throw ex;
+        }
 
         final List<AbstractFeatureType> kmlFeatures = new ArrayList<>();
         extractKmlFeatures(kml.getAbstractFeatureGroup(), kmlFeatures);
@@ -264,40 +278,78 @@ public class KMLStore extends DataStore implements Aggregate, ResourceOnFileSyst
         for (AbstractFeatureType candidate : kmlFeatures) {
             if (clazz.isInstance(candidate)) {
                 if (candidate instanceof PlacemarkType cdt) {
-                    features.add(convert(cdt, rootPath));
+                    features.add(convert(cdt, kmzFs));
                 } else if(candidate instanceof PhotoOverlayType cdt) {
-                    features.add(convert(cdt, rootPath));
+                    features.add(convert(cdt, kmzFs));
                 } else if(candidate instanceof GroundOverlayType cdt) {
-                    features.add(convert(cdt, rootPath));
+                    features.add(convert(cdt, kmzFs));
                 } else if(candidate instanceof ScreenOverlayType cdt) {
-                    features.add(convert(cdt, rootPath));
+                    features.add(convert(cdt, kmzFs));
                 } else if(candidate instanceof TourType cdt) {
-                    features.add(convert(cdt, rootPath));
+                    features.add(convert(cdt, kmzFs));
                 } else if(candidate instanceof NetworkLinkType cdt) {
-                    features.add(convert(cdt, rootPath));
+                    features.add(convert(cdt, kmzFs));
                 }
             }
         }
 
-        return parallel ? features.parallelStream() : features.stream();
+        Stream<Feature> stream = parallel ? features.parallelStream() : features.stream();
+        return stream.onClose(new Runnable() {
+            @Override
+            public void run() {
+                if (kmzFs != null) {
+                    try {
+                        kmzFs.close();
+                    } catch (IOException ex) {
+                        Logger.getLogger(KMLStore.class.getName()).log(Level.WARNING, "Failed to close KMZ zip filesystem", ex);
+                    }
+                }
+            }
+        });
     }
 
     /**
      * Get the original KML object.
      */
-    public Entry<KmlType,FileSystem> getKml() throws DataStoreException {
+    public Entry<Object,FileSystem> openKmlResource() throws DataStoreException {
         if (path.toString().toLowerCase().endsWith(".kmz")) {
-            throw new DataStoreException("todo");
+
+            try {
+                final FileSystem fs = FileSystems.newFileSystem(Paths.get(path));
+                final Path root = fs.getPath("/");
+                Path kmlPath;
+                try (Stream<Path> stream = Files.list(root)) {
+                    /*
+                    https://developers.google.com/kml/documentation/kmzarchives
+                    Put the default KML file (doc.kml, or whatever name you want to give it) at the top level within this folder.
+                    Include only one .kml file. (When Google Earth opens a KMZ file, it scans the file, looking for the first .kml
+                    file in this list. It ignores all subsequent .kml files, if any, in the archive. If the archive contains
+                    multiple .kml files, you cannot be sure which one will be found first, so you need to include only one.)
+                    */
+                    kmlPath = stream.filter((Path t) -> t.getFileName().toString().toLowerCase().endsWith(".kml")).findFirst().orElse(null);
+                } catch (IOException ex) {
+                    fs.close();
+                    throw new DataStoreException(ex.getMessage(), ex);
+                }
+
+                if (kmlPath == null) {
+                    fs.close();
+                    throw new DataStoreException("No KML file found in root directory of KMZ : " + path.toString());
+                }
+
+                return new AbstractMap.SimpleImmutableEntry<>(kmlPath, fs);
+            } catch (IOException ex) {
+                throw new DataStoreException(ex.getMessage(), ex);
+            }
         } else {
-            final KmlType kml = readKml(path);
-            return new AbstractMap.SimpleImmutableEntry<>(kml, null);
+            return new AbstractMap.SimpleImmutableEntry<>(path,null);
         }
     }
 
     /**
      * Get the original KML object.
      */
-    private KmlType readKml(Object input) throws DataStoreException {
+    public KmlType readKml(Object input) throws DataStoreException {
         final KmlType kml;
         final MarshallerPool pool = KMLMarshallerPoolV230.getINSTANCE();
         try {
@@ -359,7 +411,7 @@ public class KMLStore extends DataStore implements Aggregate, ResourceOnFileSyst
         }
     }
 
-    private Feature convert(PlacemarkType candidate, FileSystem rootPath) throws DataStoreException {
+    private Feature convert(PlacemarkType candidate, FileSystem kmzFs) throws DataStoreException {
         final Feature feature = PLACEMARK_TYPE.newInstance();
         fillFeature(candidate, feature);
         //convert geometry to JTS
@@ -370,14 +422,14 @@ public class KMLStore extends DataStore implements Aggregate, ResourceOnFileSyst
         return feature;
     }
 
-    private Feature convert(PhotoOverlayType candidate, FileSystem rootPath) throws DataStoreException {
+    private Feature convert(PhotoOverlayType candidate, FileSystem kmzFs) throws DataStoreException {
         final Feature feature = PHOTOOVERLAY_TYPE.newInstance();
         fillFeature(candidate, feature);
         //todo
         return feature;
     }
 
-    private Feature convert(GroundOverlayType candidate, FileSystem rootPath) throws DataStoreException {
+    private Feature convert(GroundOverlayType candidate, FileSystem kmzFs) throws DataStoreException {
         final Feature feature = GROUNDOVERLAY_TYPE.newInstance();
         fillFeature(candidate, feature);
         final LinkType icon = candidate.getIcon();
@@ -386,8 +438,20 @@ public class KMLStore extends DataStore implements Aggregate, ResourceOnFileSyst
         if (icon != null && abs != null) {
             final String str = icon.getHref();
             try {
-                final URI uri = IOUtilities.resolve(path, new URI(str));
-                final StorageConnector cnx = new StorageConnector(uri);
+                final StorageConnector cnx;
+                URI iconUri = new URI(str);
+                if (iconUri.isAbsolute()) {
+                    cnx = new StorageConnector(iconUri);
+                } else {
+                    if (kmzFs != null) {
+                        Path root = kmzFs.getPath("/");
+                        cnx = new StorageConnector(root.resolve(iconUri.toString()));
+                    } else {
+                        iconUri = IOUtilities.resolve(path, iconUri);
+                        cnx = new StorageConnector(iconUri);
+                    }
+                }
+
                 try (InputStream in = cnx.getStorageAs(InputStream.class)) {
                     final BufferedImage image = ImageIO.read(in);
                     final int width = image.getWidth();
@@ -468,21 +532,21 @@ public class KMLStore extends DataStore implements Aggregate, ResourceOnFileSyst
         return feature;
     }
 
-    private Feature convert(ScreenOverlayType candidate, FileSystem rootPath) throws DataStoreException {
+    private Feature convert(ScreenOverlayType candidate, FileSystem kmzFs) throws DataStoreException {
         final Feature feature = SCREENOVERLAY_TYPE.newInstance();
         fillFeature(candidate, feature);
         //todo
         return feature;
     }
 
-    private Feature convert(TourType candidate, FileSystem rootPath) throws DataStoreException {
+    private Feature convert(TourType candidate, FileSystem kmzFs) throws DataStoreException {
         final Feature feature = TOUR_TYPE.newInstance();
         fillFeature(candidate, feature);
         //todo
         return feature;
     }
 
-    private Feature convert(NetworkLinkType candidate, FileSystem rootPath) throws DataStoreException {
+    private Feature convert(NetworkLinkType candidate, FileSystem kmzFs) throws DataStoreException {
         final Feature feature = NETWORKLINK_TYPE.newInstance();
         fillFeature(candidate, feature);
         //todo

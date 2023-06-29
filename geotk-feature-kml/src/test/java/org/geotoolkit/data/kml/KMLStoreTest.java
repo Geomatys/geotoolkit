@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2017, Geomatys
+ *    (C) 2017-2023, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -24,7 +24,6 @@ import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.FeatureSet;
-import static org.geotoolkit.data.kml.KMLStore.PLACEMARK_NAME;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.locationtech.jts.geom.Geometry;
@@ -43,15 +42,15 @@ public class KMLStoreTest {
 
         final URL path = KMLStoreTest.class.getResource("/org/geotoolkit/data/kml/placemark.kml");
         try (final KMLStore store = new KMLStore(path.toURI())) {
+            assertEquals("placemark.kml", store.getIdentifier().get().toString());
             final FeatureSet featureSet = (FeatureSet) store.findResource("Placemark");
             final FeatureType type = featureSet.getType();
-            assertEquals(PLACEMARK_NAME, type.getName().toString());
+            assertEquals(KMLStore.PLACEMARK_TYPE, type);
 
             try (Stream<Feature> stream = featureSet.features(false)) {
                 final Iterator<Feature> ite = stream.iterator();
                 assertTrue(ite.hasNext());
                 final Feature feature = ite.next();
-                assertEquals(KMLStore.PLACEMARK_TYPE, feature.getType());
                 assertEquals("Google Earth - New Placemark", feature.getPropertyValue("name"));
                 assertEquals("Some Descriptive text.", feature.getPropertyValue("description"));
                 final Geometry geom = (Geometry) feature.getPropertyValue("geometry");
@@ -72,15 +71,43 @@ public class KMLStoreTest {
 
         final URL path = KMLStoreTest.class.getResource("/org/geotoolkit/data/kml/groundOverlay.kml");
         try (final KMLStore store = new KMLStore(path.toURI())) {
+            assertEquals("groundOverlay.kml", store.getIdentifier().get().toString());
             final FeatureSet featureSet = (FeatureSet) store.findResource("GroundOverlay");
             final FeatureType type = featureSet.getType();
-            assertEquals(KMLStore.GROUNDOVERLAY_NAME, type.getName().toString());
+            assertEquals(KMLStore.GROUNDOVERLAY_TYPE, type);
 
             try (Stream<Feature> stream = featureSet.features(false)) {
                 final Iterator<Feature> ite = stream.iterator();
                 assertTrue(ite.hasNext());
                 final Feature feature = ite.next();
-                assertEquals(KMLStore.GROUNDOVERLAY_TYPE, feature.getType());
+                assertEquals("GroundOverlay.kml", feature.getPropertyValue("name"));
+
+                final GridCoverage icon = (GridCoverage) feature.getPropertyValue("icon");
+                assertNotNull(icon);
+                final GridGeometry gridGeometry = icon.getGridGeometry();
+                final GridExtent extent = gridGeometry.getExtent();
+                assertEquals(36, extent.getSize(0));
+                assertEquals(18,extent.getSize(1));
+
+                assertFalse(ite.hasNext());
+            }
+        }
+    }
+
+    @Test
+    public void testReadGroundOverlayKmz() throws Exception {
+
+        final URL path = KMLStoreTest.class.getResource("/org/geotoolkit/data/kmz/groundOverlay.kmz");
+        try (final KMLStore store = new KMLStore(path.toURI())) {
+            assertEquals("groundOverlay.kmz", store.getIdentifier().get().toString());
+            final FeatureSet featureSet = (FeatureSet) store.findResource("GroundOverlay");
+            final FeatureType type = featureSet.getType();
+            assertEquals(KMLStore.GROUNDOVERLAY_TYPE, type);
+
+            try (Stream<Feature> stream = featureSet.features(false)) {
+                final Iterator<Feature> ite = stream.iterator();
+                assertTrue(ite.hasNext());
+                final Feature feature = ite.next();
                 assertEquals("GroundOverlay.kml", feature.getPropertyValue("name"));
 
                 final GridCoverage icon = (GridCoverage) feature.getPropertyValue("icon");

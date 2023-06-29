@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2017, Geomatys
+ *    (C) 2017-2023, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,13 +17,6 @@
 
 package org.geotoolkit.data.kml;
 
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.LineString;
-import org.locationtech.jts.geom.MultiLineString;
-import org.locationtech.jts.geom.MultiPoint;
-import org.locationtech.jts.geom.MultiPolygon;
-import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.geom.Polygon;
 import java.net.URI;
 import java.util.Collections;
 import java.util.HashMap;
@@ -36,6 +29,13 @@ import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.StorageConnector;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.MultiLineString;
+import org.locationtech.jts.geom.MultiPoint;
+import org.locationtech.jts.geom.MultiPolygon;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.Polygon;
 
 /**
  *
@@ -54,10 +54,11 @@ import org.geotoolkit.storage.StoreMetadataExt;
                         MultiPoint.class,
                         MultiLineString.class,
                         MultiPolygon.class})
-public class KMLProvider extends AbstractProvider {
+public final class KMLProvider extends AbstractProvider {
 
     public static final String NAME = "kml";
-    public static final String MIME_TYPE = "application/vnd.google-earth.kml+xml";
+    public static final String MIME_TYPE_KML = "application/vnd.google-earth.kml+xml";
+    public static final String MIME_TYPE_KMZ = "application/vnd.google-earth.kmz";
 
     private static KMLProvider INSTANCE;
 
