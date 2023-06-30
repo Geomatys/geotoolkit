@@ -620,6 +620,7 @@ public class RasterSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer
             if (dataImage == null) return Stream.empty();
             final RasterPresentation rasterPresentation = new RasterPresentation(layer, ref, dataImage);
             rasterPresentation.forGrid(renderingContext);
+            rasterPresentation.setCandidate(feature);
 
             return Stream.concat(Stream.of(rasterPresentation), outline(layer, dataImage.getGridGeometry()));
         } catch (NoSuchDataException | DisjointExtentException e) {
