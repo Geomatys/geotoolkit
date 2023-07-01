@@ -67,7 +67,7 @@ public class ProjectedGeometryTest extends org.geotoolkit.test.TestBase {
     private static final double DELTA = 0.0000000001;
 
     private static final GeometryFactory GF = JTS.getFactory();
-    private static final DefaultStyleFactory SF = new DefaultStyleFactory();
+    private static final DefaultStyleFactory SF = DefaultStyleFactory.provider();
     private static final FilterFactory2 FF = FilterUtilities.FF;
 
     /**

@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.measure.Unit;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.measure.Units;
 import org.apache.sis.portrayal.MapLayer;
 import org.apache.sis.portrayal.MapLayers;
@@ -26,6 +25,7 @@ import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.sld.DefaultSLDFactory;
 import org.geotoolkit.sld.MutableSLDFactory;
+import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
@@ -63,7 +63,6 @@ import org.opengis.style.PolygonSymbolizer;
 import org.opengis.style.RasterSymbolizer;
 import org.opengis.style.ShadedRelief;
 import org.opengis.style.Stroke;
-import org.opengis.style.StyleFactory;
 import org.opengis.style.Symbolizer;
 import org.opengis.style.TextSymbolizer;
 
@@ -78,7 +77,7 @@ public class Styles {
      */
     protected static final FilterFactory<Object,Object,Object> FF = FilterUtilities.FF;
     protected static final MutableSLDFactory SLDF = new DefaultSLDFactory();
-    protected static final MutableStyleFactory SF = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
+    protected static final MutableStyleFactory SF = DefaultStyleFactory.provider();
 
     //////////////////////////////////////////////////////////////////////
     // POINT SYMBOLIZER //////////////////////////////////////////////////

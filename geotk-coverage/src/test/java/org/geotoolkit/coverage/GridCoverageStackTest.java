@@ -28,8 +28,8 @@ import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.operation.matrix.Matrices;
+import org.apache.sis.referencing.operation.transform.DefaultMathTransformFactory;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.opengis.metadata.spatial.DimensionNameType;
@@ -187,7 +187,7 @@ public class GridCoverageStackTest extends org.geotoolkit.test.TestBase {
         final Matrix matrix = Matrices.createIdentity(4);
         matrix.setElement(2, 3, z);
 
-        final MathTransformFactory mf = DefaultFactories.forBuildin(MathTransformFactory.class);
+        final MathTransformFactory mf = DefaultMathTransformFactory.provider();
         final MathTransform gridtoCrs = mf.createAffineTransform(matrix);
 
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
@@ -206,7 +206,7 @@ public class GridCoverageStackTest extends org.geotoolkit.test.TestBase {
         matrix.setElement(2, 4, z);
         matrix.setElement(3, 4, t);
 
-        final MathTransformFactory mf = DefaultFactories.forBuildin(MathTransformFactory.class);
+        final MathTransformFactory mf = DefaultMathTransformFactory.provider();
         final MathTransform gridtoCrs = mf.createAffineTransform(matrix);
 
         final GridCoverageBuilder gcb = new GridCoverageBuilder();

@@ -19,7 +19,6 @@ package org.geotoolkit.filter;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.sis.internal.system.DefaultFactories;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import org.geotoolkit.filter.visitor.IsStaticExpressionVisitor;
 import org.geotoolkit.filter.visitor.PrepareFilterVisitor;
@@ -40,7 +39,7 @@ import org.opengis.filter.ValueReference;
  * @author Johann Sorel (Geomatys)
  */
 public final class FilterUtilities extends Static {
-    public static final FilterFactory2 FF = DefaultFactories.forBuildin(FilterFactory.class, FilterFactory2.class);
+    public static final FilterFactory2 FF = new FilterFactory2();
 
     /**
      * Avoid instanciation.

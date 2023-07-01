@@ -19,7 +19,7 @@ import org.geotoolkit.tms.TMSProvider;
 
 public class TMSClientDemo {
 
-    public static final MutableStyleFactory SF = new DefaultStyleFactory();
+    public static final MutableStyleFactory SF = DefaultStyleFactory.provider();
 
     public static void main(String[] args) throws Exception {
         Demos.init();

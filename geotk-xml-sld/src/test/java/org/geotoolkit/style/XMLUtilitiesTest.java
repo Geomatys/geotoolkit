@@ -27,7 +27,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.measure.Unit;
 import jakarta.xml.bind.JAXBException;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.measure.Units;
 import org.geotoolkit.sld.MutableNamedLayer;
 import org.geotoolkit.sld.MutableNamedStyle;
@@ -70,7 +69,6 @@ import org.opengis.filter.FilterFactory;
 import org.geotoolkit.filter.FilterFactory2;
 import org.geotoolkit.filter.FilterUtilities;
 import org.opengis.filter.BetweenComparisonOperator;
-import org.opengis.style.StyleFactory;
 
 /**
  * Test class for XMLUtilities.
@@ -85,7 +83,7 @@ public class XMLUtilitiesTest {
     private static final MutableSLDFactory SLD_FACTORY;
 
     static{
-        STYLE_FACTORY = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
+        STYLE_FACTORY = DefaultStyleFactory.provider();
         FILTER_FACTORY = FilterUtilities.FF;
         SLD_FACTORY = new DefaultSLDFactory();
     }

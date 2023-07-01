@@ -20,7 +20,7 @@ import org.geotoolkit.storage.multires.TiledResource;
 
 public class WMTSClientDemo {
 
-    public static final MutableStyleFactory SF = new DefaultStyleFactory();
+    public static final MutableStyleFactory SF = DefaultStyleFactory.provider();
 
     public static void main(String[] args) throws Exception {
         Demos.init();
@@ -44,7 +44,7 @@ public class WMTSClientDemo {
 
             final MapLayer layer = MapBuilder.createCoverageLayer(
                     ref,
-                    new DefaultStyleFactory().style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER));
+                    SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER));
 
             TiledResource model = (TiledResource) ref;
             System.out.println(model);

@@ -67,7 +67,7 @@ import org.apache.sis.metadata.iso.citation.DefaultResponsibility;
 
 import static javax.media.jai.registry.RenderedRegistryMode.MODE_NAME;
 import org.apache.sis.internal.simple.SimpleCitation;
-import org.apache.sis.internal.system.DefaultFactories;
+import org.apache.sis.util.iso.DefaultNameFactory;
 
 
 /**
@@ -348,7 +348,7 @@ public class ImagingParameterDescriptors extends DefaultParameterDescriptorGroup
              * the end result is fully-qualified name like "JAI:Add" and one alias like
              * "com.sun.media.jai.Add".
              */
-            final NameFactory factory = DefaultFactories.forBuildin(NameFactory.class);
+            final NameFactory factory = DefaultNameFactory.provider();
             final NameSpace scope = factory.createNameSpace(factory.createLocalName(null,
                     new ImagingParameterDescription(op, "Vendor", null)),
                     Collections.singletonMap("separator", "."));

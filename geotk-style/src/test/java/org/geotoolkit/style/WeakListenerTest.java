@@ -35,7 +35,7 @@ import org.opengis.util.GenericName;
  */
 public class WeakListenerTest extends org.geotoolkit.test.TestBase {
 
-    private static final MutableStyleFactory SF = new DefaultStyleFactory();
+    private static final MutableStyleFactory SF = DefaultStyleFactory.provider();
 
     public WeakListenerTest() {
     }

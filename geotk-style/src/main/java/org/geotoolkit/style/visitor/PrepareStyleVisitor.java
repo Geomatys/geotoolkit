@@ -63,7 +63,7 @@ import org.opengis.style.TextSymbolizer;
  */
 public class PrepareStyleVisitor extends PrepareFilterVisitor implements StyleVisitor{
 
-    private static final MutableStyleFactory SF = new DefaultStyleFactory();
+    private static final MutableStyleFactory SF = DefaultStyleFactory.provider();
 
     public PrepareStyleVisitor(final Class clazz,final FeatureType expectedType){
         super(clazz, expectedType);

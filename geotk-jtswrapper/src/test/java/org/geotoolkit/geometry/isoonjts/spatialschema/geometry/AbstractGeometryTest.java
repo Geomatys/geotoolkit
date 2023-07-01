@@ -22,7 +22,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.sis.internal.system.DefaultFactories;
+import org.apache.sis.referencing.factory.GeodeticObjectFactory;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSGeometryFactory;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSPrimitiveFactory;
 import org.opengis.geometry.DirectPosition;
@@ -63,7 +63,7 @@ public abstract class AbstractGeometryTest {
      * @throws FactoryException
      */
     static {
-        CRSFactory crsFact = DefaultFactories.forBuildin(CRSFactory.class);
+        CRSFactory crsFact = GeodeticObjectFactory.provider();
         try {
             crs = crsFact.createFromWKT(WGS84_WKT);
         } catch (FactoryException ex) {

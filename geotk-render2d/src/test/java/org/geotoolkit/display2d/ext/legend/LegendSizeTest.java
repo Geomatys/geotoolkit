@@ -47,7 +47,7 @@ public class LegendSizeTest extends org.geotoolkit.test.TestBase {
             new DefaultBackgroundTemplate(new BasicStroke(0), Color.BLACK, Color.RED, new Insets(0, 0, 0, 0), 0),
             2, null, new Font("arial", Font.PLAIN, 10), false, new Font("arial", Font.PLAIN, 10));
 
-    private static final MutableStyleFactory SF = new DefaultStyleFactory();
+    private static final MutableStyleFactory SF = DefaultStyleFactory.provider();
 
     public LegendSizeTest() {
     }

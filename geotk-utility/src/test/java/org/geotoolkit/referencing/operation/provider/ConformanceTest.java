@@ -18,7 +18,6 @@
 package org.geotoolkit.referencing.operation.provider;
 
 import java.util.*;
-import org.apache.sis.internal.system.DefaultFactories;
 
 import org.opengis.util.GenericName;
 import org.opengis.util.FactoryException;
@@ -31,6 +30,7 @@ import org.opengis.referencing.operation.CoordinateOperationAuthorityFactory;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.Deprecable;
 import org.apache.sis.metadata.iso.citation.Citations;
+import org.apache.sis.referencing.operation.transform.DefaultMathTransformFactory;
 import org.geotoolkit.factory.Factories;
 import org.geotoolkit.test.TestBase;
 import org.junit.*;
@@ -99,7 +99,7 @@ public final strictfp class ConformanceTest extends TestBase {
          */
         final Map<String, OperationMethod> codes = new LinkedHashMap<>();
         final Map<String, Map<OperationMethod,OperationMethod>> names = new LinkedHashMap<>();
-        final MathTransformFactory mtFactory = DefaultFactories.forBuildin(MathTransformFactory.class);
+        final MathTransformFactory mtFactory = DefaultMathTransformFactory.provider();
 skip:   for (final OperationMethod method : mtFactory.getAvailableMethods(SingleOperation.class)) {
             if (method.getClass().getName().endsWith("Mock")) {
                 continue;  // Skip mock providers defined in sis-referencing test jar.

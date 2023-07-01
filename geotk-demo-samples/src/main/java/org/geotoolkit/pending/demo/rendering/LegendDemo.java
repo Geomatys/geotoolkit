@@ -14,7 +14,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import jakarta.xml.bind.JAXBException;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.portrayal.MapLayer;
 import org.apache.sis.portrayal.MapLayers;
 import org.geotoolkit.display.PortrayalException;
@@ -27,15 +26,15 @@ import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.pending.demo.symbology.Styles;
 import org.geotoolkit.sld.xml.Specification.SymbologyEncoding;
 import org.geotoolkit.sld.xml.StyleXmlIO;
+import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
-import org.opengis.style.StyleFactory;
 import org.opengis.util.FactoryException;
 
 
 public class LegendDemo {
 
-    private static final MutableStyleFactory SF = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
+    private static final MutableStyleFactory SF = DefaultStyleFactory.provider();
 
     public static void main(String[] args) throws PortrayalException, JAXBException, FactoryException, URISyntaxException {
         Demos.init();

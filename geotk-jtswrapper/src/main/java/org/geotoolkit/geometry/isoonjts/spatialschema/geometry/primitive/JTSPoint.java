@@ -18,13 +18,13 @@ import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.apache.sis.geometry.GeneralDirectPosition;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.AbstractJTSGeometry;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
 import org.geotoolkit.internal.jaxb.DirectPositionAdapter;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.operation.DefaultCoordinateOperationFactory;
 
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -117,7 +117,7 @@ public class JTSPoint extends AbstractJTSGeometry implements Point {
             if ((myCRS != null) && (pointCRS != null) && (!myCRS.equals(pointCRS))) {
                 // Do the conversion.
                 try {
-                    CoordinateOperationFactory cof = DefaultFactories.forBuildin(CoordinateOperationFactory.class);
+                    CoordinateOperationFactory cof = DefaultCoordinateOperationFactory.provider();
                     CoordinateOperation coordOp = cof.createOperation(pointCRS, myCRS);
                     MathTransform mt = coordOp.getMathTransform();
                     mt.transform(position, copy);

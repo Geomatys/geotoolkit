@@ -50,10 +50,10 @@ import org.apache.sis.measure.MeasurementRange;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.geotoolkit.internal.InternalUtilities;
 import org.apache.sis.coverage.Category;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.geotoolkit.image.io.ImageMetadataException;
 import org.apache.sis.referencing.operation.matrix.Matrix2;
 import org.apache.sis.referencing.operation.matrix.Matrices;
+import org.apache.sis.referencing.operation.transform.DefaultMathTransformFactory;
 
 import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 
@@ -119,7 +119,7 @@ public class MetadataHelper implements Localized {
      */
     private MathTransformFactory getMathTransformFactory() {
         if (mtFactory == null) {
-            mtFactory = DefaultFactories.forBuildin(MathTransformFactory.class);
+            mtFactory = DefaultMathTransformFactory.provider();
         }
         return mtFactory;
     }

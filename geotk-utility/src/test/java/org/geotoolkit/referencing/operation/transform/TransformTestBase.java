@@ -17,7 +17,8 @@
  */
 package org.geotoolkit.referencing.operation.transform;
 
-import org.apache.sis.internal.system.DefaultFactories;
+import org.apache.sis.referencing.factory.GeodeticObjectFactory;
+import org.apache.sis.referencing.operation.transform.DefaultMathTransformFactory;
 import org.opengis.referencing.crs.CRSFactory;
 import org.opengis.referencing.datum.DatumFactory;
 import org.opengis.referencing.operation.MathTransform;
@@ -53,9 +54,9 @@ public abstract strictfp class TransformTestBase extends MathTransformTestCase {
      * @param hints The hints to use for fetching factories, or {@code null} for the default ones.
      */
     protected TransformTestBase(final Class<? extends MathTransform> type, final Hints hints) {
-        this(DefaultFactories.forBuildin(DatumFactory.class),
-             DefaultFactories.forBuildin(CRSFactory.class),
-             DefaultFactories.forBuildin(MathTransformFactory.class));
+        this(GeodeticObjectFactory.provider(),
+             GeodeticObjectFactory.provider(),
+             DefaultMathTransformFactory.provider());
         assertTrue("Tests should be run with assertions enabled.", type.desiredAssertionStatus());
     }
 

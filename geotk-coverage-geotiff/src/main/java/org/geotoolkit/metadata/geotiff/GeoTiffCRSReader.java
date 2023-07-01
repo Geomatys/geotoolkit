@@ -56,7 +56,6 @@ import org.apache.sis.internal.referencing.provider.PolarStereographicA;
 import org.apache.sis.internal.referencing.provider.PolarStereographicB;
 import org.apache.sis.internal.referencing.provider.PolarStereographicC;
 import org.apache.sis.internal.referencing.provider.TransverseMercator;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.measure.Latitude;
 import org.apache.sis.measure.Units;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
@@ -82,6 +81,9 @@ import org.geotoolkit.referencing.operation.provider.Krovak;
 import org.apache.sis.internal.referencing.provider.LambertAzimuthalEqualArea;
 import org.geotoolkit.referencing.operation.provider.NewZealandMapGrid;
 import org.apache.sis.internal.referencing.provider.Orthographic;
+import org.apache.sis.referencing.factory.GeodeticObjectFactory;
+import org.apache.sis.referencing.operation.DefaultCoordinateOperationFactory;
+import org.apache.sis.referencing.operation.transform.DefaultMathTransformFactory;
 import org.geotoolkit.referencing.operation.provider.Stereographic;
 import org.geotoolkit.resources.Vocabulary;
 import org.opengis.parameter.GeneralParameterDescriptor;
@@ -99,7 +101,6 @@ import org.opengis.referencing.datum.Ellipsoid;
 import org.opengis.referencing.datum.GeodeticDatum;
 import org.opengis.referencing.datum.PrimeMeridian;
 import org.opengis.referencing.operation.Conversion;
-import org.opengis.referencing.operation.CoordinateOperationFactory;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.OperationMethod;
 import org.opengis.util.FactoryException;
@@ -120,7 +121,7 @@ final class GeoTiffCRSReader {
      * Cached {@link MathTransformFactory} for building {@link MathTransform}
      * objects.
      */
-    private final static MathTransformFactory mtFactory = DefaultFactories.forBuildin(MathTransformFactory.class);
+    private final static MathTransformFactory mtFactory = DefaultMathTransformFactory.provider();
 
     /**
      * Logger to diffuse no blocking error message.
@@ -146,8 +147,8 @@ final class GeoTiffCRSReader {
         }
 
         // factory = new ThreadedEpsgFactory(hints);
-        datumObjFactory = DefaultFactories.forBuildin(DatumFactory.class);
-        crsFactory = DefaultFactories.forBuildin(CRSFactory.class);;
+        datumObjFactory = GeodeticObjectFactory.provider();
+        crsFactory = GeodeticObjectFactory.provider();
         factories = new ReferencingFactoryContainer();
     }
 
@@ -853,7 +854,7 @@ final class GeoTiffCRSReader {
 
                 if (Double.isNaN(standardParallel)) {
                     //-- no standard parallele : PolarStereoGraphic VARIANT A
-                    final OperationMethod method = DefaultFactories.forBuildin(CoordinateOperationFactory.class)
+                    final OperationMethod method = DefaultCoordinateOperationFactory.provider()
                     .getOperationMethod("Polar Stereographic (variant A)");
 
                     parameters = method.getParameters().createValue();
@@ -870,7 +871,7 @@ final class GeoTiffCRSReader {
                     final double falseOriginEasting = metadata.getAsDouble(ProjFalseOriginEastingGeoKey);
                     if (Double.isNaN(falseOriginEasting)) {
                         //-- no false Origin Easting : PolarStereoGraphic VARIANT B
-                        final OperationMethod method = DefaultFactories.forBuildin(CoordinateOperationFactory.class)
+                        final OperationMethod method = DefaultCoordinateOperationFactory.provider()
                               .getOperationMethod("Polar Stereographic (variant B)");
 
                         parameters = method.getParameters().createValue();
@@ -880,7 +881,7 @@ final class GeoTiffCRSReader {
                         parameters.parameter(code(PolarStereographicB.FALSE_NORTHING)).setValue(metadata.getAsDouble(ProjFalseNorthingGeoKey));
                     } else {
                         //-- PolarStereoGraphic VARIANT C
-                        final OperationMethod method = DefaultFactories.forBuildin(CoordinateOperationFactory.class)
+                        final OperationMethod method = DefaultCoordinateOperationFactory.provider()
                               .getOperationMethod("Polar Stereographic (variant C)");
 
                         parameters = method.getParameters().createValue();

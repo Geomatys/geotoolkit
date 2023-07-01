@@ -55,7 +55,6 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.map.coverage.RenderingWorkaround;
 import org.apache.sis.internal.referencing.AxisDirections;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.measure.Units;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CRS;
@@ -120,6 +119,7 @@ import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
 import org.geotoolkit.filter.FilterFactory2;
 import org.geotoolkit.filter.FilterUtilities;
+import org.geotoolkit.style.DefaultStyleFactory;
 import org.opengis.filter.Expression;
 import org.opengis.filter.ValueReference;
 import org.opengis.geometry.Envelope;
@@ -189,7 +189,7 @@ public final class GO2Utilities {
             RENDERERS.put(renderer.getCachedSymbolizerClass(), renderer);
         }
 
-        STYLE_FACTORY = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
+        STYLE_FACTORY = DefaultStyleFactory.provider();
         FILTER_FACTORY = FilterUtilities.FF;
 
         //LINE -----------------------------------------------------------------

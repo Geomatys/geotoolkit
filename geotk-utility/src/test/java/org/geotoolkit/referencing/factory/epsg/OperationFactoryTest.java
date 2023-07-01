@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.referencing.factory.epsg;
 
-import org.apache.sis.internal.system.DefaultFactories;
+import org.apache.sis.referencing.operation.DefaultCoordinateOperationFactory;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.operation.Transformation;
 import org.opengis.referencing.operation.CoordinateOperation;
@@ -50,7 +50,7 @@ public final strictfp class OperationFactoryTest extends EpsgFactoryTestBase {
      * Creates a test suite.
      */
     public OperationFactoryTest() {
-        opFactory = DefaultFactories.forBuildin(CoordinateOperationFactory.class);
+        opFactory = DefaultCoordinateOperationFactory.provider();
     }
 
     /**

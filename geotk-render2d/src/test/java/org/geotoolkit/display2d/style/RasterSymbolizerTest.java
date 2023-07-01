@@ -90,7 +90,7 @@ import org.opengis.util.FactoryException;
  */
 public class RasterSymbolizerTest extends org.geotoolkit.test.TestBase {
 
-    private static final MutableStyleFactory SF = new DefaultStyleFactory();
+    private static final MutableStyleFactory SF = DefaultStyleFactory.provider();
     protected static final FilterFactory FF = FilterUtilities.FF;
 
     /**

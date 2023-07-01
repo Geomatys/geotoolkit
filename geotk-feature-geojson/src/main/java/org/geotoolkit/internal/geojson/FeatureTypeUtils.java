@@ -35,12 +35,12 @@ import java.util.Optional;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Static;
 import org.apache.sis.util.iso.Names;
 import org.apache.sis.util.SimpleInternationalString;
+import org.apache.sis.util.iso.DefaultNameFactory;
 import org.geotoolkit.feature.FeatureExt;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.AttributeType;
@@ -51,7 +51,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
 import org.opengis.util.InternationalString;
-import org.opengis.util.NameFactory;
 
 /**
  * An utility class to handle read/write of FeatureType into a JSON schema file.
@@ -584,9 +583,9 @@ public final class FeatureTypeUtils extends Static {
 
         // WARNING: DefaultFactories.NAMES is not a public API and may change in any future SIS version.
         if (namespace == null || namespace.isEmpty()) {
-            return DefaultFactories.forBuildin(NameFactory.class).createGenericName(null, local);
+            return DefaultNameFactory.provider().createGenericName(null, local);
         } else {
-            return DefaultFactories.forBuildin(NameFactory.class).createGenericName(null, namespace, local);
+            return DefaultNameFactory.provider().createGenericName(null, namespace, local);
         }
     }
 }

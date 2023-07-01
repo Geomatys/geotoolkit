@@ -63,7 +63,7 @@ import org.opengis.feature.FeatureType;
  */
 public class JasperReportServiceTest extends org.geotoolkit.test.TestBase {
 
-    private static final MutableStyleFactory SF = new DefaultStyleFactory();
+    private static final MutableStyleFactory SF = DefaultStyleFactory.provider();
 
     public JasperReportServiceTest() {
     }

@@ -29,6 +29,7 @@ import org.apache.sis.referencing.operation.projection.ProjectionException;
 
 import org.apache.sis.referencing.operation.transform.ContextualParameters.MatrixRole;
 import static java.lang.Math.*;
+import org.apache.sis.referencing.operation.transform.DefaultMathTransformFactory;
 
 
 /**
@@ -120,8 +121,7 @@ public class NewZealandMapGrid extends UnitaryProjection {
         final NewZealandMapGrid projection = new NewZealandMapGrid(descriptor, parameters);
         try {
             return (MathTransform2D) projection.createMapProjection(
-                    org.apache.sis.internal.system.DefaultFactories.forBuildin(
-                            org.opengis.referencing.operation.MathTransformFactory.class));
+                    DefaultMathTransformFactory.provider());
         } catch (org.opengis.util.FactoryException e) {
             throw new IllegalArgumentException(e); // TODO
         }

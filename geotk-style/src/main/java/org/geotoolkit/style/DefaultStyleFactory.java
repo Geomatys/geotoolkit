@@ -104,6 +104,12 @@ public class DefaultStyleFactory implements MutableStyleFactory {
 
     private static final FilterFactory FF = FilterUtilities.FF;
 
+    private static final DefaultStyleFactory INSTANCE = new DefaultStyleFactory();
+
+    public static DefaultStyleFactory provider() {
+        return INSTANCE;
+    }
+
     // TEMPORARY FIX ///////////////////////////////////////////////////////////
 
     @Override

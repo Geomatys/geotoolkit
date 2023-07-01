@@ -69,7 +69,7 @@ public class VisitorTest extends org.geotoolkit.test.TestBase {
      */
     @Test
     public void intersectionFeatureTest() throws Exception {
-        final MutableStyleFactory sf = new DefaultStyleFactory();
+        final MutableStyleFactory sf = DefaultStyleFactory.provider();
         final GeographicCRS crs = CommonCRS.WGS84.normalizedGeographic();
 
         final FeatureTypeBuilder sftb = new FeatureTypeBuilder();

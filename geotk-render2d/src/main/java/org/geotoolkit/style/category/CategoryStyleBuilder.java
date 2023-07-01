@@ -26,7 +26,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 import org.apache.sis.feature.Features;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.portrayal.MapLayer;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
@@ -35,6 +34,7 @@ import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.geotoolkit.storage.feature.query.Query;
+import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyleFactory;
@@ -68,7 +68,6 @@ import org.opengis.style.PolygonSymbolizer;
 import org.opengis.style.Rule;
 import org.opengis.style.Stroke;
 import org.opengis.style.Style;
-import org.opengis.style.StyleFactory;
 import org.opengis.style.Symbolizer;
 
 /**
@@ -101,7 +100,7 @@ public class CategoryStyleBuilder {
 
     public CategoryStyleBuilder(final MutableStyleFactory styleFactory, final FilterFactory filterFactory){
         if(styleFactory == null){
-             sf = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
+             sf = DefaultStyleFactory.provider();
         }else{
             sf = styleFactory;
         }

@@ -67,14 +67,13 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import static java.nio.file.StandardOpenOption.*;
 import java.util.logging.Logger;
-import org.apache.sis.internal.system.DefaultFactories;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.ogc.xml.FilterMarshallerPool;
 import org.geotoolkit.ogc.xml.FilterToOGC200Converter;
 import org.geotoolkit.ogc.xml.FilterVersion;
 import org.geotoolkit.ogc.xml.v200.ObjectFactory;
-import org.opengis.style.StyleFactory;
+import org.geotoolkit.style.DefaultStyleFactory;
 
 /**
  * Utility class to handle XML reading and writing for OGC SLD, SE and Filter.
@@ -99,7 +98,7 @@ public final class StyleXmlIO {
     private GTtoSLD110Transformer transformerXMLv110 = null;
 
     public StyleXmlIO() {
-        this.styleFactory = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
+        this.styleFactory = DefaultStyleFactory.provider();
         this.filterFactory = FilterUtilities.FF;
         this.sldFactory = new DefaultSLDFactory();
     }

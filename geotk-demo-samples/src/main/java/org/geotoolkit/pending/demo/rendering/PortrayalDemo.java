@@ -2,7 +2,6 @@
 package org.geotoolkit.pending.demo.rendering;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.io.Serializable;
@@ -10,7 +9,6 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.*;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.portrayal.MapLayer;
 import org.apache.sis.portrayal.MapLayers;
 import org.apache.sis.storage.DataStore;
@@ -25,14 +23,14 @@ import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.storage.DataStores;
+import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
-import org.opengis.style.StyleFactory;
 
 public class PortrayalDemo {
 
-    private static final MutableStyleFactory SF = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
+    private static final MutableStyleFactory SF = DefaultStyleFactory.provider();
 
     public static void main(String[] args) throws DataStoreException, IOException, PortrayalException, URISyntaxException {
         Demos.init();

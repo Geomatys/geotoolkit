@@ -48,7 +48,7 @@ import org.opengis.feature.PropertyType;
  */
 public class MapfileReader {
 
-    private static final MutableStyleFactory SF = new DefaultStyleFactory();
+    private static final MutableStyleFactory SF = DefaultStyleFactory.provider();
     private static final FilterFactory FF = FilterUtilities.FF;
 
     private Object in = null;

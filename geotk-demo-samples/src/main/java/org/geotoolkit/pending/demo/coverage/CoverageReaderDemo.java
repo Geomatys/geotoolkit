@@ -22,7 +22,7 @@ import org.geotoolkit.style.MutableStyleFactory;
 
 public class CoverageReaderDemo {
 
-    public static final MutableStyleFactory SF = new DefaultStyleFactory();
+    public static final MutableStyleFactory SF = DefaultStyleFactory.provider();
 
     public static void main(String[] args) throws Exception {
         Demos.init();

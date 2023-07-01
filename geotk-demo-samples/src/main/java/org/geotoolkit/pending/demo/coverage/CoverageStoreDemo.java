@@ -13,7 +13,7 @@ import org.geotoolkit.style.MutableStyleFactory;
 
 public class CoverageStoreDemo {
 
-    private static final MutableStyleFactory SF = new DefaultStyleFactory();
+    private static final MutableStyleFactory SF = DefaultStyleFactory.provider();
 
     public static void main(String[] args) throws Exception {
         URL dataResources = CoverageStoreDemo.class.getClassLoader().getResource("data.coverage/clouds.jpg");

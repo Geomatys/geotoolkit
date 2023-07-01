@@ -94,7 +94,7 @@ import static org.opengis.test.Assert.assertBetween;
 public class ColorModelTest extends org.geotoolkit.test.TestBase {
 
     private static final GeometryFactory GF = org.geotoolkit.geometry.jts.JTS.getFactory();
-    private static final MutableStyleFactory SF = new DefaultStyleFactory();
+    private static final MutableStyleFactory SF = DefaultStyleFactory.provider();
 
     private final List<FeatureSet> featureColls = new ArrayList<>();
     private final List<GridCoverage> coverages = new ArrayList<>();

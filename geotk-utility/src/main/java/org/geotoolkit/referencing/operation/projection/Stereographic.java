@@ -26,7 +26,6 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.OperationMethod;
-import org.opengis.referencing.operation.MathTransformFactory;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.util.ComparisonMode;
@@ -36,7 +35,6 @@ import org.apache.sis.referencing.operation.projection.ProjectionException;
 import org.apache.sis.referencing.operation.projection.NormalizedProjection;
 import org.apache.sis.referencing.operation.projection.PolarStereographic;
 import org.apache.sis.internal.referencing.provider.PolarStereographicA;
-import org.apache.sis.internal.system.DefaultFactories;
 
 import org.apache.sis.referencing.operation.transform.ContextualParameters.MatrixRole;
 import static java.lang.Math.*;
@@ -123,7 +121,7 @@ public class Stereographic extends UnitaryProjection {
     {
         final Parameters parameters = Parameters.castOrWrap(values);
         final double latitudeOfOrigin = toRadians(parameters.doubleValue(org.geotoolkit.referencing.operation.provider.Stereographic.LATITUDE_OF_ORIGIN));
-        final DefaultMathTransformFactory factory = DefaultFactories.forBuildin(MathTransformFactory.class, DefaultMathTransformFactory.class);
+        final DefaultMathTransformFactory factory = DefaultMathTransformFactory.provider();
         try {
             final NormalizedProjection projection;
             if (abs(latitudeOfOrigin - PI/2) < ANGLE_TOLERANCE) {

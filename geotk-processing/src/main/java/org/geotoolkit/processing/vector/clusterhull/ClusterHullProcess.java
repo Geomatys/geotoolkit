@@ -42,6 +42,8 @@ import org.opengis.util.FactoryException;
 import javax.measure.Unit;
 import javax.measure.UnitConverter;
 import javax.measure.quantity.Length;
+import org.apache.sis.referencing.factory.GeodeticObjectFactory;
+import org.apache.sis.referencing.operation.transform.DefaultMathTransformFactory;
 import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import org.locationtech.jts.geom.Coordinate;
 
@@ -459,7 +461,7 @@ public class ClusterHullProcess extends AbstractProcess {
     }
 
     private static ProjectedCRS getLocalLambertCRS(final double central_meridian, final double latitude_of_origin) throws FactoryException {
-        final MathTransformFactory mtFactory = DefaultFactories.forBuildin(MathTransformFactory.class);;
+        final MathTransformFactory mtFactory = DefaultMathTransformFactory.provider();
         final ParameterValueGroup parameters = mtFactory.getDefaultParameters("Lambert_Conformal_Conic_1SP");
         parameters.parameter("central_meridian").setValue(central_meridian);
         parameters.parameter("latitude_of_origin").setValue(latitude_of_origin);
@@ -469,7 +471,7 @@ public class ClusterHullProcess extends AbstractProcess {
         final Map<String,?> nameConversion = Collections.singletonMap("name", "My conversion");
         final Conversion conversion = coFactory.createDefiningConversion(nameConversion, operationMethod, parameters);
 
-        final CRSFactory crsFactory = DefaultFactories.forBuildin(CRSFactory.class);
+        final CRSFactory crsFactory = GeodeticObjectFactory.provider();
         final Map<String, Object> properties = new HashMap<>();
         final String name = String.format("LambertCC_%d_%d", (int) latitude_of_origin, (int) central_meridian);
         properties.put(ProjectedCRS.NAME_KEY, name);

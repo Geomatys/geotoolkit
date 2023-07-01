@@ -20,11 +20,9 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
-import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
 import jakarta.xml.bind.Unmarshaller;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.measure.Units;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.se.xml.v110.ParameterValueType;
@@ -44,6 +42,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 import org.geotoolkit.filter.FilterFactory2;
 import org.geotoolkit.filter.FilterUtilities;
+import org.geotoolkit.style.DefaultStyleFactory;
 import org.opengis.style.TextSymbolizer;
 import org.opengis.util.FactoryException;
 import org.opengis.sld.Extent;
@@ -53,7 +52,6 @@ import org.opengis.sld.NamedLayer;
 import org.opengis.sld.NamedStyle;
 import org.opengis.sld.RemoteOWS;
 import org.opengis.sld.UserLayer;
-import org.opengis.style.StyleFactory;
 
 /**
  * Test class for sld jaxb marshelling and unmarshelling.
@@ -71,7 +69,7 @@ public class SLD110Test {
         final Hints hints = new Hints();
         hints.put(Hints.STYLE_FACTORY, MutableStyleFactory.class);
         hints.put(Hints.FILTER_FACTORY, FilterFactory2.class);
-        STYLE_FACTORY = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
+        STYLE_FACTORY = DefaultStyleFactory.provider();
         FILTER_FACTORY = FilterUtilities.FF;
         SLD_FACTORY = new DefaultSLDFactory();
     }

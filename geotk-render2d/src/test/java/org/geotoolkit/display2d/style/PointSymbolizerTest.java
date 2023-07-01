@@ -49,7 +49,7 @@ import org.opengis.style.PointSymbolizer;
 public class PointSymbolizerTest {
 
     private static final GeometryFactory GF = org.geotoolkit.geometry.jts.JTS.getFactory();
-    private static final MutableStyleFactory SF = new DefaultStyleFactory();
+    private static final MutableStyleFactory SF = DefaultStyleFactory.provider();
     protected static final FilterFactory FF = FilterUtilities.FF;
 
     /**

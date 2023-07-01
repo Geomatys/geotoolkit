@@ -19,7 +19,7 @@ import org.geotoolkit.style.StyleConstants;
 
 public class CustomCoverage1SDemo {
 
-    public static final MutableStyleFactory SF = new DefaultStyleFactory();
+    public static final MutableStyleFactory SF = DefaultStyleFactory.provider();
 
     public static void main(String[] args) throws Exception {
         Demos.init();

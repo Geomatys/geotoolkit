@@ -36,8 +36,8 @@ import org.apache.sis.geometry.Envelopes;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.internal.metadata.NameMeaning;
 import org.apache.sis.internal.referencing.VerticalDatumTypes;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.crs.DefaultCompoundCRS;
+import org.apache.sis.referencing.operation.DefaultCoordinateOperationFactory;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
@@ -93,7 +93,7 @@ public final class CRS extends Static {
      */
     @Deprecated
     public static CoordinateOperationFactory getCoordinateOperationFactory() {
-        return DefaultFactories.forBuildin(CoordinateOperationFactory.class);
+        return DefaultCoordinateOperationFactory.provider();
     }
 
     /**

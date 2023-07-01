@@ -18,13 +18,12 @@ package org.geotoolkit.util;
 
 import java.util.UUID;
 import javax.xml.namespace.QName;
-import org.apache.sis.internal.system.DefaultFactories;
+import org.apache.sis.util.iso.DefaultNameFactory;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.lang.Static;
 import org.opengis.metadata.Identifier;
 import org.opengis.util.GenericName;
 import org.opengis.util.LocalName;
-import org.opengis.util.NameFactory;
 import org.opengis.util.ScopedName;
 
 
@@ -60,9 +59,9 @@ public final class NamesExt extends Static {
 
         // WARNING: DefaultFactories.NAMES is not a public API and may change in any future SIS version.
         if(namespace==null || namespace.isEmpty()){
-            return DefaultFactories.forBuildin(NameFactory.class).createGenericName(null, local);
+            return DefaultNameFactory.provider().createGenericName(null, local);
         }else{
-            return DefaultFactories.forBuildin(NameFactory.class).createGenericName(null, namespace, local);
+            return DefaultNameFactory.provider().createGenericName(null, namespace, local);
         }
     }
 

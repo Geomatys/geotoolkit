@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
 import org.geotoolkit.gui.swing.tree.MutableTreeNode;
 import org.geotoolkit.lang.Static;
@@ -49,7 +48,7 @@ import org.opengis.style.*;
  */
 public final class StyleUtilities extends Static {
 
-    private static final MutableStyleFactory SF = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
+    private static final MutableStyleFactory SF = DefaultStyleFactory.provider();
     private static final FilterFactory FF = FilterUtilities.FF;
     private static final MutableSLDFactory SLDF = new DefaultSLDFactory();
 
@@ -324,7 +323,6 @@ public final class StyleUtilities extends Static {
             colormap = reader.read(fileContent);
         }
         if (colormap != null) {
-            final MutableStyleFactory SF = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
             RasterSymbolizer symbol = SF.rasterSymbolizer(null, null, null, null, colormap, null, null, null);
             return SF.style(symbol);
         }

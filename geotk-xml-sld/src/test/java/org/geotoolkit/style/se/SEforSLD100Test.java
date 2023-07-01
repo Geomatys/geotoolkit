@@ -24,7 +24,6 @@ import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
 import jakarta.xml.bind.Unmarshaller;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.sld.xml.v100.FeatureTypeStyle;
 import org.geotoolkit.sld.xml.v100.Rule;
@@ -44,6 +43,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 import org.geotoolkit.filter.FilterFactory2;
 import org.geotoolkit.filter.FilterUtilities;
+import org.geotoolkit.style.DefaultStyleFactory;
 import org.opengis.filter.Expression;
 import org.opengis.filter.ValueReference;
 import org.opengis.style.ContrastMethod;
@@ -54,7 +54,6 @@ import org.opengis.style.PointSymbolizer;
 import org.opengis.style.PolygonSymbolizer;
 import org.opengis.style.RasterSymbolizer;
 import org.opengis.style.SemanticType;
-import org.opengis.style.StyleFactory;
 import org.opengis.style.TextSymbolizer;
 
 /**
@@ -73,7 +72,7 @@ public class SEforSLD100Test {
         final Hints hints = new Hints();
         hints.put(Hints.STYLE_FACTORY, MutableStyleFactory.class);
         hints.put(Hints.FILTER_FACTORY, FilterFactory2.class);
-        STYLE_FACTORY = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
+        STYLE_FACTORY = DefaultStyleFactory.provider();
         FILTER_FACTORY = FilterUtilities.FF;
         SLD_FACTORY = new DefaultSLDFactory();
     }

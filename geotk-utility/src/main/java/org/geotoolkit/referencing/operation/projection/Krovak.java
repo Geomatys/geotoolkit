@@ -32,6 +32,7 @@ import org.apache.sis.parameter.Parameters;
 
 import org.apache.sis.referencing.operation.transform.ContextualParameters.MatrixRole;
 import static java.lang.Math.*;
+import org.apache.sis.referencing.operation.transform.DefaultMathTransformFactory;
 import static org.geotoolkit.util.Utilities.hash;
 import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
 import static org.geotoolkit.referencing.operation.provider.Krovak.*;
@@ -150,8 +151,7 @@ public class Krovak extends UnitaryProjection {
         projection = new Krovak(descriptor, parameters);
         try {
             return (MathTransform2D) projection.createMapProjection(
-                    org.apache.sis.internal.system.DefaultFactories.forBuildin(
-                            org.opengis.referencing.operation.MathTransformFactory.class));
+                    DefaultMathTransformFactory.provider());
         } catch (org.opengis.util.FactoryException e) {
             throw new IllegalArgumentException(e); // TODO
         }

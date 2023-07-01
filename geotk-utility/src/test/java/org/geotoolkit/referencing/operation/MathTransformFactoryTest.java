@@ -26,7 +26,6 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.geometry.DirectPosition;
 
 import org.apache.sis.geometry.DirectPosition2D;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.referencing.operation.transform.AbstractMathTransform;
 import org.geotoolkit.test.TestBase;
@@ -34,6 +33,7 @@ import org.geotoolkit.test.TestBase;
 import org.junit.*;
 import static org.junit.Assert.*;
 import static java.lang.StrictMath.*;
+import org.apache.sis.referencing.operation.transform.DefaultMathTransformFactory;
 
 
 /**
@@ -49,7 +49,7 @@ import static java.lang.StrictMath.*;
  *
  * @since 2.1
  */
-public final strictfp class MathTransformFactoryTest extends TestBase {
+public final class MathTransformFactoryTest extends TestBase {
     /**
      * Tolerance for test when units are degrees.
      */
@@ -70,7 +70,7 @@ public final strictfp class MathTransformFactoryTest extends TestBase {
      */
     @Before
     public void setUp() {
-        mtFactory = DefaultFactories.forBuildin(MathTransformFactory.class);
+        mtFactory = DefaultMathTransformFactory.provider();
     }
 
     /**

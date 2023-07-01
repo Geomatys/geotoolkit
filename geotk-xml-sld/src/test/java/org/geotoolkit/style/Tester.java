@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.measure.Unit;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.measure.Units;
 
 import org.geotoolkit.factory.Hints;
@@ -67,7 +66,6 @@ import org.opengis.style.PolygonSymbolizer;
 import org.opengis.style.RasterSymbolizer;
 import org.opengis.style.ShadedRelief;
 import org.opengis.style.Stroke;
-import org.opengis.style.StyleFactory;
 import org.opengis.style.Symbolizer;
 import org.opengis.style.TextSymbolizer;
 
@@ -86,7 +84,7 @@ public class Tester {
         final Hints hints = new Hints();
         hints.put(Hints.STYLE_FACTORY, MutableStyleFactory.class);
         hints.put(Hints.FILTER_FACTORY, FilterFactory2.class);
-        STYLE_FACTORY = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
+        STYLE_FACTORY = DefaultStyleFactory.provider();
         FILTER_FACTORY = FilterUtilities.FF;
         SLD_FACTORY = new DefaultSLDFactory();
         SLD_UTILITIES = new JAXBSLDUtilities(FILTER_FACTORY, STYLE_FACTORY, SLD_FACTORY);

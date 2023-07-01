@@ -41,7 +41,7 @@ public class ColorTest extends org.geotoolkit.test.TestBase {
         assertNotNull(result);
 
         final Color c = new Color(120,112,52,210);
-        final MutableStyleFactory SF = new DefaultStyleFactory();
+        final MutableStyleFactory SF = DefaultStyleFactory.provider();
         final Literal l = SF.literal(c);
 
         assertTrue(l.getValue() instanceof Color);
