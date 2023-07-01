@@ -25,7 +25,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.ServiceLoader;
 import org.apache.sis.internal.filter.FunctionRegister;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.opengis.filter.Expression;
 import org.opengis.filter.Literal;
 
@@ -40,7 +39,7 @@ public class Functions {
     private static final Map<String,FunctionRegister> MAPPING = new HashMap<>();
 
     static {
-        final ServiceLoader sl = DefaultFactories.createServiceLoader(FunctionRegister.class);
+        final ServiceLoader sl = ServiceLoader.load(FunctionRegister.class);
         final Iterator<FunctionRegister> factories = sl.iterator();
 
         while (factories.hasNext()) {

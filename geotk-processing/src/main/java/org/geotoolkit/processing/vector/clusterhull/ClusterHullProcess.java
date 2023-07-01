@@ -2,7 +2,6 @@ package org.geotoolkit.processing.vector.clusterhull;
 
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
@@ -43,6 +42,7 @@ import javax.measure.Unit;
 import javax.measure.UnitConverter;
 import javax.measure.quantity.Length;
 import org.apache.sis.referencing.factory.GeodeticObjectFactory;
+import org.apache.sis.referencing.operation.DefaultCoordinateOperationFactory;
 import org.apache.sis.referencing.operation.transform.DefaultMathTransformFactory;
 import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import org.locationtech.jts.geom.Coordinate;
@@ -466,7 +466,7 @@ public class ClusterHullProcess extends AbstractProcess {
         parameters.parameter("central_meridian").setValue(central_meridian);
         parameters.parameter("latitude_of_origin").setValue(latitude_of_origin);
 
-        final CoordinateOperationFactory coFactory = DefaultFactories.forClass(CoordinateOperationFactory.class);
+        final CoordinateOperationFactory coFactory = DefaultCoordinateOperationFactory.provider();
         final OperationMethod operationMethod = coFactory.getOperationMethod("Lambert_Conformal_Conic_1SP");
         final Map<String,?> nameConversion = Collections.singletonMap("name", "My conversion");
         final Conversion conversion = coFactory.createDefiningConversion(nameConversion, operationMethod, parameters);

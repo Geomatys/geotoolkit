@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
-import org.apache.sis.internal.system.DefaultFactories;
+import java.util.ServiceLoader;
 import org.apache.sis.internal.system.Modules;
 import org.apache.sis.internal.system.SystemListener;
 
@@ -134,7 +134,7 @@ public abstract class TypeRegistration {
         final ArrayList<Class<?>> types = new ArrayList<>();
         final ArrayList<TypeRegistration> toImpl = (converters == null) ? new ArrayList<>() : null;
         if (toImpl != null || getTypes) {
-            for (final TypeRegistration t : DefaultFactories.createServiceLoader(TypeRegistration.class)) {
+            for (final TypeRegistration t : ServiceLoader.load(TypeRegistration.class)) {
                 if (getTypes) {
                     t.getTypes(types);
                 }

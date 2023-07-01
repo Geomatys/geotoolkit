@@ -22,7 +22,6 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ServiceLoader;
-import org.apache.sis.internal.system.DefaultFactories;
 
 /**
  * Utility class to access bindings.
@@ -36,7 +35,7 @@ public final class Bindings {
     private Bindings() {}
 
     static{
-        final ServiceLoader<Binding> sl = DefaultFactories.createServiceLoader(Binding.class);
+        final ServiceLoader<Binding> sl = ServiceLoader.load(Binding.class);
         final Iterator<Binding> factories = sl.iterator();
 
         final List<Binding> lst = new ArrayList<>();
