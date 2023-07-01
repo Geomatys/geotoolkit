@@ -67,6 +67,7 @@ import org.opengis.style.PointSymbolizer;
 import org.opengis.style.PolygonSymbolizer;
 import org.opengis.style.Rule;
 import org.opengis.style.Stroke;
+import org.opengis.style.Style;
 import org.opengis.style.StyleFactory;
 import org.opengis.style.Symbolizer;
 
@@ -176,7 +177,7 @@ public class CategoryStyleBuilder {
 
 
             //try to rebuild the previous analyze if it was one
-            List<? extends FeatureTypeStyle> ftss = layer.getStyle().featureTypeStyles();
+            List<? extends FeatureTypeStyle> ftss = ((Style) layer.getStyle()).featureTypeStyles();
 
             if(ftss.size() == 1){
                 FeatureTypeStyle fts = ftss.get(0);

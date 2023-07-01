@@ -179,7 +179,7 @@ public class IntervalStyleBuilder extends AbstractTableModel{
         this.layer = layer;
         genericAnalyze = false;
         reset();
-        isIntervalStyle(layer.getStyle());
+        isIntervalStyle((Style) layer.getStyle());
     }
 
     public boolean isIntervalStyle(final Style style){

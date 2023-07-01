@@ -316,7 +316,7 @@ public class J2DCanvasBuffered extends J2DCanvas{
 
     private static SortedSet<Integer> extractColors(final MapLayer layer, final SortedSet<Integer> buffer){
 
-        final Style style = layer.getStyle();
+        final Style style = (Style) layer.getStyle();
         final ListingColorVisitor visitor = new ListingColorVisitor();
         style.accept(visitor, null);
         final Set<Integer> colors = visitor.getColors();

@@ -114,7 +114,7 @@ public class KmzContextInterpreter {
         for (final MapItem item : context.getComponents()) {
             if (item instanceof MapLayer) {
                 final MapLayer layer = (MapLayer) item;
-                this.writeStyle(layer.getStyle(), folder);
+                this.writeStyle((org.opengis.style.Style) layer.getStyle(), folder);
                 if (layer.getData() instanceof GridCoverageResource) {
                     fs.add(writeCoverageMapLayer(layer));
                 } else if (layer.getData() instanceof FeatureSet) {

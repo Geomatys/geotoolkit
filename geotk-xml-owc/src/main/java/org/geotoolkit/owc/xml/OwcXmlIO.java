@@ -199,7 +199,7 @@ public class OwcXmlIO {
             //store styles
             if (offering != null) {
                 if (layer.getStyle() != null) {
-                    final StyleSetType styleBase = toStyleSet(layer.getStyle(), true);
+                    final StyleSetType styleBase = toStyleSet((Style) layer.getStyle(), true);
                     offering.getOperationOrContentOrStyleSet().add(OWC_FACTORY.createOfferingTypeStyleSet(styleBase));
                 }
             }

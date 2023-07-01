@@ -30,7 +30,7 @@ import org.opengis.style.Symbolizer;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public interface MutableStyle extends MutableLayerStyle,Style{
+public interface MutableStyle extends MutableLayerStyle, Style, org.apache.sis.style.Style {
 
     public static final String NAME_PROPERTY = "name";
     public static final String DESCRIPTION_PROPERTY = "description";

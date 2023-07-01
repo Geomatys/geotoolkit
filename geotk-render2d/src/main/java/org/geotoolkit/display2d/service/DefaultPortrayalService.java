@@ -590,7 +590,7 @@ public final class DefaultPortrayalService implements PortrayalService{
         if(!sceneDef.extensions().isEmpty()) return false;
 
         //style must be a default raster style = native original style
-        final List<? extends FeatureTypeStyle> ftss = layer.getStyle().featureTypeStyles();
+        final List<? extends FeatureTypeStyle> ftss = ((Style) layer.getStyle()).featureTypeStyles();
         if(ftss.size() != 1) return false;
         final List<? extends Rule> rules = ftss.get(0).rules();
         if(rules.size() != 1) return false;
@@ -813,7 +813,7 @@ public final class DefaultPortrayalService implements PortrayalService{
 
     public static Stream<Presentation> present(MapLayer layer, Resource resource, RenderingContext2D renderContext) {
 
-        final Style style = layer.getStyle();
+        final Style style = (Style) layer.getStyle();
 
         Stream<Presentation> stream = Stream.empty();
 

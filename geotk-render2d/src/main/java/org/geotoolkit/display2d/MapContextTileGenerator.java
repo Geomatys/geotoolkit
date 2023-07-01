@@ -176,7 +176,7 @@ public class MapContextTileGenerator extends AbstractTileGenerator {
 
         search:
         for (MapLayer layer : MapBuilder.getLayers(sceneDef.getContext())) {
-            final Style style = layer.getStyle();
+            final Style style = (Style) layer.getStyle();
             for (FeatureTypeStyle fts : style.featureTypeStyles()) {
                 for (Rule rule : fts.rules()) {
                     double scaleMin = rule.getMinScaleDenominator();
