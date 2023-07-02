@@ -61,7 +61,7 @@ public abstract strictfp class ProjectionTestBase extends TransformTestBase {
     }
 
     static OperationMethod wrap(final ParameterDescriptorGroup descriptor) {
-        return new DefaultOperationMethod(singletonMap(DefaultOperationMethod.NAME_KEY, "Test"), 2, 2, descriptor);
+        return new DefaultOperationMethod(singletonMap(DefaultOperationMethod.NAME_KEY, "Test"), descriptor);
     }
 
     /**

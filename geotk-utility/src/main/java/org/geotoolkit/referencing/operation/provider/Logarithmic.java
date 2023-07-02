@@ -140,7 +140,7 @@ public class Logarithmic extends MathTransformProvider {
      * Creates a provider for logarithmic transforms.
      */
     public Logarithmic() {
-        super(1, 1, PARAMETERS);
+        super(PARAMETERS);
     }
 
     /**
