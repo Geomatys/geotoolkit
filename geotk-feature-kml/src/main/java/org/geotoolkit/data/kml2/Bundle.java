@@ -16,12 +16,14 @@
  */
 package org.geotoolkit.data.kml2;
 
+import java.io.InputStream;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.MissingResourceException;
 import org.opengis.util.InternationalString;
 import org.apache.sis.util.ResourceInternationalString;
 import org.apache.sis.util.resources.IndexedResourceBundle;
+import org.apache.sis.util.resources.KeyConstants;
 
 
 /**
@@ -29,7 +31,7 @@ import org.apache.sis.util.resources.IndexedResourceBundle;
  *
  * @author Martin Desruisseaux (Geomatys)
  */
-public final class Bundle extends IndexedResourceBundle {
+public class Bundle extends IndexedResourceBundle {
     /**
      * Resource keys. This class is used when compiling sources, but no dependencies to
      * {@code Keys} should appear in any resulting class files. Since the Java compiler
@@ -38,7 +40,10 @@ public final class Bundle extends IndexedResourceBundle {
      *
      * @author Martin Desruisseaux (IRD)
      */
-    public static final class Keys {
+    public static final class Keys extends KeyConstants {
+        /** The unique instance of key constants handler. */
+        static final Keys INSTANCE = new Keys();
+
         private Keys() {
         }
 
@@ -64,23 +69,40 @@ public final class Bundle extends IndexedResourceBundle {
     }
 
     /**
-     * Constructs a new resource bundle loading data from the given UTF file.
-     *
-     * @param filename The file or the JAR entry containing resources.
+     * Constructs a new resource bundle loading data from
+     * the resource file of the same name than this class.
      */
-    public Bundle(final java.net.URL filename) {
-        super(filename);
+    public Bundle() {
+    }
+
+    /**
+     * Opens the binary file containing the localized resources to load.
+     * This method delegates to {@link Class#getResourceAsStream(String)},
+     * but this delegation must be done from the same module than the one
+     * that provides the binary file.
+     */
+    @Override
+    protected InputStream getResourceAsStream(final String name) {
+        return getClass().getResourceAsStream(name);
+     }
+
+    /**
+     * Returns the handle for the {@code Keys} constants.
+     */
+    @Override
+    protected KeyConstants getKeyConstants() {
+        return Keys.INSTANCE;
     }
 
     /**
      * Returns resources in the given locale.
      *
-     * @param  locale The locale, or {@code null} for the default locale.
-     * @return Resources in the given locale.
+     * @param  locale  the locale, or {@code null} for the default locale.
+     * @return resources in the given locale.
      * @throws MissingResourceException if resources can't be found.
      */
     public static Bundle getResources(Locale locale) throws MissingResourceException {
-        return getBundle(Bundle.class, locale);
+        return (Bundle) getBundle(Bundle.class.getName(), nonNull(locale));
     }
 
     /**
