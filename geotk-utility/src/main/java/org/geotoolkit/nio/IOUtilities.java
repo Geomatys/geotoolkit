@@ -17,26 +17,24 @@
  */
 package org.geotoolkit.nio;
 
-import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.Exceptions;
-import org.geotoolkit.io.ContentFormatException;
-import org.geotoolkit.lang.Static;
-import org.geotoolkit.resources.Errors;
-
 import java.io.*;
 import java.net.*;
 import java.nio.charset.Charset;
 import java.nio.file.*;
+import static java.nio.file.Files.*;
+import static java.nio.file.StandardOpenOption.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.spi.FileSystemProvider;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import static java.nio.file.Files.*;
-import static java.nio.file.StandardOpenOption.*;
 import java.util.zip.GZIPInputStream;
+import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.Exceptions;
+import org.geotoolkit.io.ContentFormatException;
+import org.geotoolkit.lang.Static;
+import org.geotoolkit.resources.Errors;
 
 
 /**
@@ -555,6 +553,165 @@ public final class IOUtilities extends Static {
         }
         final String siblingName = filenameWithoutExtension(path) +'.'+ extension;
         return path.resolveSibling(siblingName);
+    }
+
+    /**
+     * Improved version of URI relativize function which is limited.
+     */
+    public static URI relativize(URI source, URI target) {
+        source = reformat(source);
+        target = reformat(target);
+        URI relativePath = source.relativize(target);
+        if (relativePath.equals(target)) {
+            String filename = org.apache.sis.internal.storage.io.IOUtilities.filename(source);
+            if (filename != null) {
+                String str = source.toString();
+                URI r;
+                try {
+                    r = new URI(str.substring(0, str.length() - filename.length()));
+                    relativePath = r.relativize(target);
+                } catch (URISyntaxException ex) {
+                    //we have try
+                }
+            }
+        }
+        if (relativePath != null && !relativePath.isAbsolute()) {
+            return relativePath;
+        }
+
+
+        //remove file name
+        String filename = org.apache.sis.internal.storage.io.IOUtilities.filename(source);
+        if (filename != null) {
+            String str = source.toString();
+            try {
+                source = new URI(str.substring(0, str.length() - filename.length()));
+            } catch (URISyntaxException ex) {
+                //we have try
+            }
+        }
+
+        //try to resolve it with progressively
+        String[] sourceParts = source.toString().split("/");
+        String[] targetParts = target.toString().split("/");
+
+        //find first diverging segments
+        int div = 0;
+        for (;;div++) {
+            if (sourceParts.length <= div && targetParts.length <= div) {
+                //same paths
+                try {
+                    return new URI(".");
+                } catch (URISyntaxException ex) {
+                    throw new IllegalStateException("should not happen");
+                }
+            } else if (sourceParts.length <= div) {
+                //target path is a child path
+                final String str = String.join("/", Arrays.copyOfRange(targetParts, div, targetParts.length));
+                try {
+                    return new URI("./" + str);
+                } catch (URISyntaxException ex) {
+                    throw new IllegalStateException("should not happen");
+                }
+            } else if (targetParts.length <= div) {
+                //target path is a parent path
+                final StringBuilder sb = new StringBuilder();
+                for (int i = div; i < sourceParts.length; i++) {
+                    sb.append("../");
+                }
+                try {
+                    return new URI(sb.toString());
+                } catch (URISyntaxException ex) {
+                    throw new IllegalStateException("should not happen");
+                }
+            }
+
+            if (!sourceParts[div].equals(targetParts[div])) {
+                break;
+            }
+        }
+
+        if (div == 0) {
+            //paths are completely different
+            return null;
+        }
+
+        //move from source to first common ancestor
+        final StringBuilder sb = new StringBuilder();
+        for (int i = div; i < sourceParts.length; i++) {
+            sb.append("../");
+        }
+        //move from common ancestor to target
+        sb.append(String.join("/", Arrays.copyOfRange(targetParts, div, targetParts.length)));
+
+        try {
+            return new URI(sb.toString());
+        } catch (URISyntaxException ex) {
+            throw new IllegalStateException("should not happen");
+        }
+    }
+
+    /**
+     * Improved version of URI resolve function which is limited.
+     */
+    public static URI resolve(URI source, URI target) {
+        source = reformat(source);
+        target = reformat(target);
+        URI resolvedPath = source.resolve(target);
+        if (resolvedPath.equals(target)) {
+            String filename = org.apache.sis.internal.storage.io.IOUtilities.filename(source);
+            if (filename != null) {
+                String str = source.toString();
+                URI base;
+                try {
+                    base = new URI(str.substring(0, str.length() - filename.length()));
+                    resolvedPath = base.resolve(target);
+
+                    if (resolvedPath.equals(target)) {
+                        //try to resolve it ourself
+                        resolvedPath = new URI(stringResolve(base.toString(), target.toString()));
+                    }
+                } catch (URISyntaxException ex) {
+                    //we have try
+                }
+            }
+        }
+        return resolvedPath.isAbsolute() ? resolvedPath : null;
+    }
+
+    private static URI reformat(URI uri) {
+        try {
+            if (uri.isOpaque()) {
+                return new URI(uri.getScheme(), uri.getSchemeSpecificPart(), uri.getFragment());
+            } else {
+                //removes any duplicated / or empty elements in the uri
+                return new URI(uri.getScheme(), uri.getUserInfo(), uri.getHost(), uri.getPort(), uri.getPath(), uri.getQuery(), uri.getFragment());
+            }
+        } catch (URISyntaxException ex) {
+            throw new RuntimeException("Unsupported URI " + uri.toString(), ex);
+        }
+    }
+
+    private static String stringResolve(String base, String target) {
+        String resolvedPath = base;
+        String[] parts = target.toString().split("/");
+        for (String part : parts) {
+            if (".".equals(part)) {
+                //do nothing
+            } else if ("..".equals(part)) {
+                final String bstr = base.toString();
+                int sep = resolvedPath.substring(0, resolvedPath.length()-1).lastIndexOf('/');
+                if (sep > 0) {
+                    resolvedPath = base.toString().substring(0, sep+1);
+                } else {
+                    resolvedPath = "./";
+                }
+            } else {
+                resolvedPath = resolvedPath + part;
+            }
+        }
+
+        return resolvedPath;
     }
 
     /**
