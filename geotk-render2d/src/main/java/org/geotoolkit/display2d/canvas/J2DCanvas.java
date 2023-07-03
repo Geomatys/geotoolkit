@@ -46,7 +46,7 @@ import org.geotoolkit.display2d.style.labeling.LabelRenderer;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.renderer.GroupPresentation;
-import org.opengis.display.primitive.Graphic;
+import org.geotoolkit.display.primitive.Graphic;
 import org.opengis.geometry.Geometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;

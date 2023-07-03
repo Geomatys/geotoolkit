@@ -91,7 +91,7 @@ import org.apache.sis.portrayal.MapLayer;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.coverage.resample.ResampleProcess;
 import org.locationtech.jts.geom.Geometry;
-import org.opengis.display.primitive.Graphic;
+import org.geotoolkit.display.primitive.Graphic;
 import org.opengis.feature.Feature;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;

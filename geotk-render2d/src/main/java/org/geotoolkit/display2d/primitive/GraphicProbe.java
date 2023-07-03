@@ -22,7 +22,7 @@ import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.SearchArea;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.opengis.display.primitive.Graphic;
+import org.geotoolkit.display.primitive.Graphic;
 import org.opengis.geometry.Envelope;
 
 /**

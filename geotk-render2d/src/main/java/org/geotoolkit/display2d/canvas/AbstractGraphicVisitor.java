@@ -29,7 +29,7 @@ import org.opengis.feature.Feature;
 
 /**
  * A visitor which can be applied to the
- * {@link org.opengis.display.primitive.Graphic} objects of a scene and through
+ * {@link org.geotoolkit.display.primitive.Graphic} objects of a scene and through
  * the {@code Graphic} objects, to the underlying
  * {@link org.opengis.feature.Feature} or
  * {@link GridCoverage}.

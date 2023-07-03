@@ -19,7 +19,6 @@ package org.geotoolkit.display.canvas;
 import org.geotoolkit.display.DisplayElement;
 import org.geotoolkit.display.container.GraphicContainer;
 import org.geotoolkit.factory.Hints;
-import org.opengis.display.canvas.CanvasController;
 
 /**
  *
