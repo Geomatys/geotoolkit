@@ -22,7 +22,7 @@ import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List
+import java.util.List;
 import jakarta.xml.bind.JAXBException;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
