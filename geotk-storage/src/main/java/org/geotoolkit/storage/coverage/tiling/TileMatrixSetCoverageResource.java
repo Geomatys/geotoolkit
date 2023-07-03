@@ -42,7 +42,7 @@ import org.opengis.util.GenericName;
 /**
  * View a tile matrix set composed of GridCoverageResource tiles as a continous multi-resolution GridCoverageResource.
  *
- * If a matrix contain holes, tiles from higher level matrices will be used to fill them.
+ * If a matrix contain holes, tiles from higher level matrices may be used to fill them.
  *
  * @author Johann Sorel (Geomatys)
  */
@@ -52,6 +52,7 @@ public final class TileMatrixSetCoverageResource extends AbstractGridCoverageRes
     private final List<TileMatrixSet> sets = new ArrayList<>();
     private final int[] tileSize;
     private final List<SampleDimension> sampleDimensions;
+    private boolean sparse = false;
 
     public TileMatrixSetCoverageResource(GenericName identifier, Collection<? extends TileMatrixSet> tms, int[] tileSize, List<SampleDimension> sampleDimensions) {
         super(null, false);
@@ -64,9 +65,26 @@ public final class TileMatrixSetCoverageResource extends AbstractGridCoverageRes
         this.sampleDimensions = UnmodifiableArrayList.wrap(sampleDimensions.toArray(SampleDimension[]::new));
     }
 
+    /**
+     * If set to true, upper lods will be used to fill holes in lower level matrices
+     * when creating coverages.
+     * @param sparse set to True if tile matrix set has irregular filling.
+     */
+    public void setSparse(boolean sparse) {
+        this.sparse = sparse;
+    }
+
+    /**
+     * @return true if tile matrix set has irregular filling which requires upper lods to be tested
+     *        when creating coverages.
+     */
+    public boolean isSparse() {
+        return sparse;
+    }
+
     private TileMatrixCoverageResource getTileMatrixResource(TileMatrixSet tms, GenericName name) {
         TileMatrix tm = tms.getTileMatrices().get(name);
-        if (!name.equals(tms.getTileMatrices().firstKey())) {
+        if (sparse && !name.equals(tms.getTileMatrices().firstKey())) {
             //use upscaling for all matrices not at the top level
             tm = UpsampledTileMatrix.create(tms, tm, sampleDimensions, tileSize);
         }

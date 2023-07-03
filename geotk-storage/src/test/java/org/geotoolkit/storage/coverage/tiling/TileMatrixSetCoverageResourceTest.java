@@ -74,6 +74,7 @@ public class TileMatrixSetCoverageResourceTest {
         tms.getMosaicsInternal().insertByScale(wtm2);
 
         final TileMatrixSetCoverageResource res = new TileMatrixSetCoverageResource(null, Arrays.asList(tms), tileSize, sampleDimensions);
+        res.setSparse(true);
 
         { //read without any data
             final GridCoverage coverage = res.read(wtm2.getTilingScheme());
