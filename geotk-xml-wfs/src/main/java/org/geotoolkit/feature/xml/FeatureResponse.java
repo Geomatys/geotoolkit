@@ -17,7 +17,7 @@
 package org.geotoolkit.feature.xml;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import javax.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlAttribute;
 import org.geotoolkit.wfs.xml.WFSResponse;
 
 /**

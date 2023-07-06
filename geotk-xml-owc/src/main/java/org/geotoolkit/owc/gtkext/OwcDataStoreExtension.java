@@ -19,7 +19,7 @@ package org.geotoolkit.owc.gtkext;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBElement;
 import org.apache.sis.internal.storage.StoreResource;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStore;

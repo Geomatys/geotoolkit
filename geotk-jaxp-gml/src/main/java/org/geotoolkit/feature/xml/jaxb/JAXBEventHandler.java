@@ -18,8 +18,8 @@
 
 package org.geotoolkit.feature.xml.jaxb;
 
-import javax.xml.bind.ValidationEvent;
-import javax.xml.bind.ValidationEventHandler;
+import jakarta.xml.bind.ValidationEvent;
+import jakarta.xml.bind.ValidationEventHandler;
 
 /**
  * A JAXB Validation Handler allowing not to lost the Exception throw by the CoordinateReferenceSystemAdapter

@@ -17,10 +17,10 @@
 
 package org.geotoolkit.csw.xml.v300;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import org.geotoolkit.csw.xml.GetCapabilities;
 import org.geotoolkit.ows.xml.v200.AcceptFormatsType;
 import org.geotoolkit.ows.xml.v200.AcceptVersionsType;

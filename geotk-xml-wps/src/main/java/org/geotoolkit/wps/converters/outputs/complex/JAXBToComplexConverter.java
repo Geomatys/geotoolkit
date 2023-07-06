@@ -19,7 +19,7 @@ package org.geotoolkit.wps.converters.outputs.complex;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.xml.TypeRegistration;
 import org.geotoolkit.wps.xml.v200.Data;

@@ -14,10 +14,10 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.opengis.net/sensorML/1.0", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED,
-xmlns = { @javax.xml.bind.annotation.XmlNs(prefix = "gml",   namespaceURI= "http://www.opengis.net/gml"),
-          @javax.xml.bind.annotation.XmlNs(prefix = "swe",   namespaceURI= "http://www.opengis.net/swe/1.0"),
-          @javax.xml.bind.annotation.XmlNs(prefix = "xlink", namespaceURI= "http://www.w3.org/1999/xlink"),
-          @javax.xml.bind.annotation.XmlNs(prefix = "sml",   namespaceURI= "http://www.opengis.net/sensorML/1.0"),
-          @javax.xml.bind.annotation.XmlNs(prefix = "ism",   namespaceURI= "urn:us:gov:ic:ism:v2" )})
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://www.opengis.net/sensorML/1.0", elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED,
+xmlns = { @jakarta.xml.bind.annotation.XmlNs(prefix = "gml",   namespaceURI= "http://www.opengis.net/gml"),
+          @jakarta.xml.bind.annotation.XmlNs(prefix = "swe",   namespaceURI= "http://www.opengis.net/swe/1.0"),
+          @jakarta.xml.bind.annotation.XmlNs(prefix = "xlink", namespaceURI= "http://www.w3.org/1999/xlink"),
+          @jakarta.xml.bind.annotation.XmlNs(prefix = "sml",   namespaceURI= "http://www.opengis.net/sensorML/1.0"),
+          @jakarta.xml.bind.annotation.XmlNs(prefix = "ism",   namespaceURI= "urn:us:gov:ic:ism:v2" )})
 package org.geotoolkit.sml.xml.v100;

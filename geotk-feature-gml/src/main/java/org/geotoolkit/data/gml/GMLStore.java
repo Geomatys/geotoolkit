@@ -40,7 +40,7 @@ import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
 import org.apache.sis.storage.aggregate.ConcatenatedFeatureSet;
 import org.apache.sis.internal.storage.ResourceOnFileSystem;

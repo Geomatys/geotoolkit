@@ -20,7 +20,7 @@ package org.geotoolkit.ncwms;
 import java.awt.Dimension;
 import java.awt.geom.NoninvertibleTransformException;
 import java.net.MalformedURLException;
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.wms.xml.WMSVersion;

@@ -133,7 +133,7 @@
             <artifactId>jaxb-runtime</artifactId>
             <scope>compile</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>org.apache.sis.core</groupId>
             <artifactId>sis-utility</artifactId>

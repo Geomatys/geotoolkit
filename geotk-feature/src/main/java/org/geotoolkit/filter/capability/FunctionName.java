@@ -18,7 +18,7 @@
 package org.geotoolkit.filter.capability;
 
 import java.util.List;
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 /**
  * Immutable function name.

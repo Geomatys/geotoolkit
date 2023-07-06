@@ -7,7 +7,7 @@
  * in order to do the same process, but on the implementing class.
  * </p>
  *
- * @see javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter
+ * @see jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter
  * @author Cédric Briançon
  */
 @XmlSchema(elementFormDefault= XmlNsForm.QUALIFIED,
@@ -21,8 +21,8 @@ xmlns = {
 @XmlAccessorType(XmlAccessType.NONE)
 package org.geotoolkit.resources.jaxb.feature.catalog;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlNs;
-import javax.xml.bind.annotation.XmlNsForm;
-import javax.xml.bind.annotation.XmlSchema;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlNs;
+import jakarta.xml.bind.annotation.XmlNsForm;
+import jakarta.xml.bind.annotation.XmlSchema;

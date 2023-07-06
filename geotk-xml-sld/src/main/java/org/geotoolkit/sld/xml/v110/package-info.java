@@ -17,5 +17,5 @@
 @XmlSchema(elementFormDefault= XmlNsForm.QUALIFIED, namespace="http://www.opengis.net/sld")
 package org.geotoolkit.sld.xml.v110;
 
-import javax.xml.bind.annotation.XmlNsForm;
-import javax.xml.bind.annotation.XmlSchema;
+import jakarta.xml.bind.annotation.XmlNsForm;
+import jakarta.xml.bind.annotation.XmlSchema;

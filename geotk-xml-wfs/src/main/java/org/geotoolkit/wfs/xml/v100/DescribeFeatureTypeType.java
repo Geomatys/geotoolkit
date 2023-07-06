@@ -19,7 +19,7 @@ package org.geotoolkit.wfs.xml.v100;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import javax.xml.bind.annotation.*;
+import jakarta.xml.bind.annotation.*;
 import javax.xml.namespace.QName;
 import org.apache.sis.util.Version;
 import org.geotoolkit.wfs.xml.DescribeFeatureType;

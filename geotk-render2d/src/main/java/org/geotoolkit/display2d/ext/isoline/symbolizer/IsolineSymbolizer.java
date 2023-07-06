@@ -32,7 +32,7 @@ import org.opengis.style.*;
 import org.apache.sis.measure.Units;
 import javax.measure.quantity.Length;
 import javax.measure.Unit;
-import javax.xml.bind.annotation.*;
+import jakarta.xml.bind.annotation.*;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;

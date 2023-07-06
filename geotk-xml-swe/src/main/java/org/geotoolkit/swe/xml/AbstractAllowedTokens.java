@@ -17,7 +17,7 @@
 package org.geotoolkit.swe.xml;
 
 import java.util.List;
-import javax.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBElement;
 
 /**
  *

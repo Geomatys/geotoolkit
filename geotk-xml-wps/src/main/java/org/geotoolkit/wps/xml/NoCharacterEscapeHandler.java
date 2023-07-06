@@ -18,7 +18,7 @@
  */
 package org.geotoolkit.wps.xml;
 
-import com.sun.xml.bind.marshaller.CharacterEscapeHandler;
+import org.glassfish.jaxb.core.marshaller.CharacterEscapeHandler;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Arrays;

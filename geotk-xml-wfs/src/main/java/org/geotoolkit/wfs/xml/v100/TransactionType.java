@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import javax.xml.bind.annotation.*;
+import jakarta.xml.bind.annotation.*;
 import org.geotoolkit.util.Utilities;
 import org.apache.sis.util.Version;
 import org.geotoolkit.wfs.xml.AllSomeType;

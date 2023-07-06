@@ -18,7 +18,7 @@
 package org.geotoolkit.dif.xml.v102;
 
 import org.geotoolkit.dif.xml.v102.ISOTopicCategoryType;
-import javax.xml.bind.annotation.XmlRegistry;
+import jakarta.xml.bind.annotation.XmlRegistry;
 
 
 /**

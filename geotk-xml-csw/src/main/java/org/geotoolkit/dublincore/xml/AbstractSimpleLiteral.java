@@ -17,7 +17,7 @@
 package org.geotoolkit.dublincore.xml;
 
 import java.util.List;
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 
 /**

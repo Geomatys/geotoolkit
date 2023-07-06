@@ -18,7 +18,7 @@ package org.geotoolkit.se.xml;
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-import javax.xml.bind.annotation.adapters.XmlAdapter;
+import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 import org.apache.sis.util.SimpleInternationalString;
 import org.opengis.util.InternationalString;
 

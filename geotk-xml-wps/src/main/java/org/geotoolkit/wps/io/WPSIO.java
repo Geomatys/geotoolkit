@@ -30,7 +30,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.measure.Unit;
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.FeatureSet;

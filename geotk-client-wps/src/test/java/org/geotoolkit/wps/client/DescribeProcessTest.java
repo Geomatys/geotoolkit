@@ -20,7 +20,7 @@ import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
-import javax.xml.bind.Marshaller;
+import jakarta.xml.bind.Marshaller;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
 import org.junit.Test;
 import org.geotoolkit.wps.xml.v200.DescribeProcess;

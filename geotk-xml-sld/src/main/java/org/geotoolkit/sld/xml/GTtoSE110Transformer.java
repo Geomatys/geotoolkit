@@ -35,7 +35,7 @@ import javax.measure.Unit;
 import javax.measure.quantity.Length;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
 import org.apache.sis.measure.Units;
 import org.geotoolkit.ogc.xml.FilterToOGC110Converter;

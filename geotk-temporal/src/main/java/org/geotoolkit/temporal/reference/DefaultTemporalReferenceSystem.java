@@ -18,9 +18,9 @@
 package org.geotoolkit.temporal.reference;
 
 import java.util.Map;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import org.apache.sis.referencing.AbstractReferenceSystem;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.apache.sis.xml.Namespaces;

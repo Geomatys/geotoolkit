@@ -16,12 +16,11 @@
  */
 package org.geotoolkit.wps.xml;
 
-import com.sun.xml.bind.marshaller.CharacterEscapeHandler;
 import java.util.Map;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Marshaller;
+import jakarta.xml.bind.Unmarshaller;
 import org.apache.sis.xml.MarshallerPool;
 import org.geotoolkit.wps.xml.v200.WPSMarshaller;
 import org.geotoolkit.wps.xml.v200.WPSUnmarshaller;
@@ -63,7 +62,7 @@ public final class WPSMarshallerPool {
         @Override
         protected Marshaller createMarshaller() throws JAXBException {
             final Marshaller marshaller = super.createMarshaller();
-            marshaller.setProperty(CharacterEscapeHandler.class.getName(), new NoCharacterEscapeHandler());
+            marshaller.setProperty("org.glassfish.jaxb.characterEscapeHandler", new NoCharacterEscapeHandler());
             return new WPSMarshaller(marshaller);
         }
 

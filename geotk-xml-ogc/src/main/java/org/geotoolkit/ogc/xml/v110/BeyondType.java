@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.ogc.xml.v110;
 
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import org.geotoolkit.gml.xml.v311.AbstractGeometryType;
 import org.opengis.filter.DistanceOperatorName;
 

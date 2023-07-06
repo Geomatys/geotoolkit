@@ -18,8 +18,8 @@ package org.geotoolkit.gml.v321;
 
 import java.util.Date;
 import java.io.StringReader;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.Unmarshaller;
+import jakarta.xml.bind.JAXBException;
 import org.opengis.temporal.Period;
 import org.opengis.metadata.extent.Extent;
 import org.geotoolkit.gml.xml.GMLMarshallerPool;

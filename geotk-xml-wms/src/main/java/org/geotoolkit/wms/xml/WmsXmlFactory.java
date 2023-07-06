@@ -19,7 +19,7 @@ package org.geotoolkit.wms.xml;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBElement;
 import org.opengis.metadata.extent.GeographicBoundingBox;
 
 /**

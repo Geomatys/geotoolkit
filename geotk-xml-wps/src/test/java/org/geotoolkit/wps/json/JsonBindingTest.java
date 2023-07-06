@@ -26,7 +26,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 import org.geotoolkit.gml.xml.v321.CoordinatesType;
 import org.geotoolkit.gml.xml.v321.PointType;
 import org.geotoolkit.nio.IOUtilities;

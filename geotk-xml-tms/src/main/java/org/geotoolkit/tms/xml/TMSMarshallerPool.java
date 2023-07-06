@@ -17,8 +17,8 @@
 
 package org.geotoolkit.tms.xml;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
 import org.apache.sis.xml.MarshallerPool;
 import org.geotoolkit.tms.xml.v100.ObjectFactory;
 

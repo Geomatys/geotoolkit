@@ -18,7 +18,7 @@
 package org.geotoolkit.sml.xml;
 
 import java.util.Arrays;
-import javax.xml.bind.Unmarshaller;
+import jakarta.xml.bind.Unmarshaller;
 import org.apache.sis.xml.MarshallerPool;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.gml.xml.v311.DirectPositionType;
