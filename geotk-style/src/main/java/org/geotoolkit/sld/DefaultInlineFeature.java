@@ -21,16 +21,14 @@ import java.util.Collection;
 import java.util.Collections;
 
 import org.opengis.feature.Feature;
-import org.opengis.sld.InlineFeature;
-import org.opengis.sld.SLDVisitor;
+
 
 /**
  * Default immutable inline feature, thread safe.
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
-class DefaultInlineFeature implements InlineFeature{
+class DefaultInlineFeature implements InlineFeature {
 
     private final Collection<Collection<Feature>> features;
 

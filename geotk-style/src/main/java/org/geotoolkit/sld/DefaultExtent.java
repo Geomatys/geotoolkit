@@ -16,16 +16,13 @@
  */
 package org.geotoolkit.sld;
 
-import org.opengis.sld.Extent;
-import org.opengis.sld.SLDVisitor;
-
 import static org.apache.sis.util.ArgumentChecks.*;
+
 
 /**
  * Default imumutable extent, thread safe.
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
 class DefaultExtent implements Extent{
 

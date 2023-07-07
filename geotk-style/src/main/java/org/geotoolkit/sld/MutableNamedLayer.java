@@ -17,15 +17,14 @@
 package org.geotoolkit.sld;
 
 import java.util.List;
-import org.opengis.sld.NamedLayer;
+
 
 /**
  * Mutable named layer.
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
-public interface MutableNamedLayer extends MutableLayer, NamedLayer{
+public interface MutableNamedLayer extends MutableLayer, NamedLayer {
 
     @Override
     List<MutableLayerStyle> styles();

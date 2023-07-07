@@ -58,7 +58,7 @@ import org.opengis.filter.ValueReference;
 import org.opengis.filter.SortProperty;
 import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.util.FactoryException;
-import org.opengis.sld.StyledLayerDescriptor;
+import org.geotoolkit.sld.StyledLayerDescriptor;
 import org.opengis.style.FeatureTypeStyle;
 import org.opengis.style.Rule;
 import org.opengis.style.Style;

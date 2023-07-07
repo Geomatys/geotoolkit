@@ -17,14 +17,13 @@
 package org.geotoolkit.sld;
 
 import java.util.List;
-import org.opengis.sld.Layer;
 import org.opengis.style.Description;
+
 
 /**
  * Common mutable interface for MutableNamedLayer and MutableUserLayer
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
 public interface MutableLayer extends Layer{
 

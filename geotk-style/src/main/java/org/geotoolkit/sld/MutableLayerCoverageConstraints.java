@@ -17,15 +17,12 @@
 package org.geotoolkit.sld;
 
 import java.util.List;
-import org.opengis.sld.CoverageConstraint;
-import org.opengis.sld.LayerCoverageConstraints;
+
 
 /**
  * Mutable layer coverage constraints
  *
  * @author Johann Sorel (Geomatys)
- * @module
- * @since Types 2.2
  */
 public interface MutableLayerCoverageConstraints extends MutableConstraints, LayerCoverageConstraints {
 

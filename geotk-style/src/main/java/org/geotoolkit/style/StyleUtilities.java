@@ -33,11 +33,11 @@ import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.style.io.PaletteReader;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.Expression;
-import org.opengis.sld.Layer;
-import org.opengis.sld.LayerStyle;
-import org.opengis.sld.NamedLayer;
-import org.opengis.sld.StyledLayerDescriptor;
-import org.opengis.sld.UserLayer;
+import org.geotoolkit.sld.Layer;
+import org.geotoolkit.sld.LayerStyle;
+import org.geotoolkit.sld.NamedLayer;
+import org.geotoolkit.sld.StyledLayerDescriptor;
+import org.geotoolkit.sld.UserLayer;
 import org.opengis.style.*;
 
 /**

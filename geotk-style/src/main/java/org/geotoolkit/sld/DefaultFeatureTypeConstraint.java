@@ -22,16 +22,13 @@ import java.util.List;
 import java.util.Objects;
 
 import org.opengis.filter.Filter;
-import org.opengis.sld.Extent;
-import org.opengis.sld.FeatureTypeConstraint;
-import org.opengis.sld.SLDVisitor;
 import org.opengis.util.GenericName;
+
 
 /**
  * Default imumutable feature type constraint, thread safe.
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
 class DefaultFeatureTypeConstraint implements FeatureTypeConstraint{
 

@@ -39,7 +39,7 @@ import org.apache.sis.util.SimpleInternationalString;
 import org.opengis.filter.Expression;
 import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.util.FactoryException;
-import org.opengis.sld.SLDLibrary;
+import org.geotoolkit.sld.SLDLibrary;
 import org.opengis.style.AnchorPoint;
 import org.opengis.style.ChannelSelection;
 import org.opengis.style.ColorMap;

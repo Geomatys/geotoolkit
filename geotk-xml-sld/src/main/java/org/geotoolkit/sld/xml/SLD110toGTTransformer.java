@@ -47,14 +47,14 @@ import org.opengis.filter.Filter;
 import org.geotoolkit.filter.FilterFactory2;
 import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.util.FactoryException;
-import org.opengis.sld.CoverageConstraint;
-import org.opengis.sld.CoverageExtent;
-import org.opengis.sld.Extent;
-import org.opengis.sld.FeatureTypeConstraint;
-import org.opengis.sld.RangeAxis;
-import org.opengis.sld.RemoteOWS;
-import org.opengis.sld.SLDLibrary;
-import org.opengis.sld.Source;
+import org.geotoolkit.sld.CoverageConstraint;
+import org.geotoolkit.sld.CoverageExtent;
+import org.geotoolkit.sld.Extent;
+import org.geotoolkit.sld.FeatureTypeConstraint;
+import org.geotoolkit.sld.RangeAxis;
+import org.geotoolkit.sld.RemoteOWS;
+import org.geotoolkit.sld.SLDLibrary;
+import org.geotoolkit.sld.Source;
 
 /**
  * Transform a SLD v1.1.0 in GT classes.

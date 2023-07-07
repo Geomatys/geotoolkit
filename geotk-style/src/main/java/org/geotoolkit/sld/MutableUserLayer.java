@@ -18,14 +18,12 @@ package org.geotoolkit.sld;
 
 import java.util.List;
 import org.geotoolkit.style.MutableStyle;
-import org.opengis.sld.Source;
-import org.opengis.sld.UserLayer;
+
 
 /**
  * @author Johann Sorel (Geomatys)
- * @module
  */
-public interface MutableUserLayer extends MutableLayer, UserLayer{
+public interface MutableUserLayer extends MutableLayer, UserLayer {
 
     public static final String SOURCE_PROPERTY = "source";
     public static final String CONSTRAINTS_PROPERTY = "constraints";

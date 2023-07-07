@@ -37,13 +37,13 @@ import org.junit.Test;
 import org.geotoolkit.filter.FilterFactory2;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.style.DefaultStyleFactory;
-import org.opengis.sld.Extent;
-import org.opengis.sld.FeatureTypeConstraint;
-import org.opengis.sld.LayerFeatureConstraints;
-import org.opengis.sld.NamedLayer;
-import org.opengis.sld.NamedStyle;
-import org.opengis.sld.RemoteOWS;
-import org.opengis.sld.UserLayer;
+import org.geotoolkit.sld.Extent;
+import org.geotoolkit.sld.FeatureTypeConstraint;
+import org.geotoolkit.sld.LayerFeatureConstraints;
+import org.geotoolkit.sld.NamedLayer;
+import org.geotoolkit.sld.NamedStyle;
+import org.geotoolkit.sld.RemoteOWS;
+import org.geotoolkit.sld.UserLayer;
 
 /**
  * Test class for sld jaxb marshelling and unmarshelling.

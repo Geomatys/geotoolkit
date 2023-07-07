@@ -44,9 +44,9 @@ import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
 import org.geotoolkit.filter.FilterFactory2;
 import org.opengis.metadata.citation.OnlineResource;
-import org.opengis.sld.Extent;
-import org.opengis.sld.FeatureTypeConstraint;
-import org.opengis.sld.RemoteOWS;
+import org.geotoolkit.sld.Extent;
+import org.geotoolkit.sld.FeatureTypeConstraint;
+import org.geotoolkit.sld.RemoteOWS;
 import org.opengis.util.InternationalString;
 
 /**

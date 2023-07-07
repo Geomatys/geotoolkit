@@ -25,7 +25,7 @@ import org.geotoolkit.sld.xml.Specification;
 import org.geotoolkit.sld.xml.StyleXmlIO;
 import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.v200.Reference;
-import org.opengis.sld.StyledLayerDescriptor;
+import org.geotoolkit.sld.StyledLayerDescriptor;
 
 /**
  * Implementation of ObjectConverter to convert a {@link StyledLayerDescriptor sld} into a {@link OutputReferenceType reference}.
