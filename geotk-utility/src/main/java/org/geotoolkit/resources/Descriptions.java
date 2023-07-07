@@ -166,7 +166,7 @@ public class Descriptions extends IndexedResourceBundle {
         private static final long serialVersionUID = -2152214649387449859L;
 
         International(final int key) {
-            super(Descriptions.class.getName(), String.valueOf(key));
+            super(String.valueOf(key));
         }
 
         @Override

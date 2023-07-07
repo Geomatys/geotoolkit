@@ -13,25 +13,22 @@ import org.opengis.parameter.ParameterValueGroup;
 
 public class AddDescriptor extends AbstractProcessDescriptor{
 
-    //bundle path
-    private static final String BUNDLE = "org/geotoolkit/pending/demo/processing/bundle";
-
     /**Process name : addition */
     public static final String NAME = "addition";
-    public static final ResourceInternationalString ABSRACT = new ResourceInternationalString(BUNDLE, "addProcess");
+    public static final ResourceInternationalString ABSRACT = new Description("addProcess");
 
     /**
      * Input parameters with translation bundle.
      */
     public static final ParameterDescriptor<Double> FIRST_NUMBER = new ParameterBuilder()
                 .addName("first")
-                .setRemarks(new ResourceInternationalString(BUNDLE, "addFirst"))
+                .setRemarks(new Description("addFirst"))
                 .setRequired(true)
                 .create(Double.class, null);
 
     public static final ParameterDescriptor<Double> SECOND_NUMBER = new ParameterBuilder()
                 .addName("second")
-                .setRemarks(new ResourceInternationalString(BUNDLE, "addSecond"))
+                .setRemarks(new Description("addSecond"))
                 .setRequired(true)
                 .create(Double.class, null);
 
@@ -43,7 +40,7 @@ public class AddDescriptor extends AbstractProcessDescriptor{
      */
     public static final ParameterDescriptor<Double> RESULT_NUMBER  = new ParameterBuilder()
                 .addName("result")
-                .setRemarks(new ResourceInternationalString(BUNDLE, "addResult"))
+                .setRemarks(new Description("addResult"))
                 .setRequired(true)
                 .create(Double.class, null);
 

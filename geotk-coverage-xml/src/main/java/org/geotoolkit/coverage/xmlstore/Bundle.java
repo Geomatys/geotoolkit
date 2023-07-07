@@ -119,7 +119,7 @@ public class Bundle extends IndexedResourceBundle {
         private static final long serialVersionUID = -9199238559657784488L;
 
         International(final int key) {
-            super(Bundle.class.getName(), String.valueOf(key));
+            super(String.valueOf(key));
         }
 
         @Override

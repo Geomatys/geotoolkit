@@ -1185,7 +1185,7 @@ public class Errors extends IndexedResourceBundle {
         private static final long serialVersionUID = -229348959712294902L;
 
         International(final int key) {
-            super(Errors.class.getName(), String.valueOf(key));
+            super(String.valueOf(key));
         }
 
         @Override
