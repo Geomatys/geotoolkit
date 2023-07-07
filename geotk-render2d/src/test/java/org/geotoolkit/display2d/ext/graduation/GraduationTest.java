@@ -22,8 +22,8 @@ import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import jakarta.xml.bind.JAXBException;
-import java.util.Arrays;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.storage.MemoryFeatureSet;
@@ -82,7 +82,7 @@ public class GraduationTest extends org.geotoolkit.test.TestBase {
         f.setPropertyValue("geom", geom);
 
 
-        final MapLayer layer = MapBuilder.createLayer(new MemoryFeatureSet(null, type, Arrays.asList(f)));
+        final MapLayer layer = MapBuilder.createLayer(new MemoryFeatureSet(null, type, List.of(f)));
         layer.setStyle(style);
         final MapLayers context = MapBuilder.createContext();
         context.getComponents().add(layer);

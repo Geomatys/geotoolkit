@@ -27,9 +27,8 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.*;
 import java.util.*;
-
-import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Test;
 
 
 /**
@@ -449,6 +448,60 @@ public final strictfp class IOUtilitiesTest {
             if (tmpWorkspace != null) {
                 IOUtilities.deleteSilently(tmpWorkspace);
             }
+        }
+    }
+
+    /**
+     * Test relative path creation.
+     */
+    @Test
+    public void testRelativize() throws URISyntaxException {
+
+        { // test sibling file
+            URI source = new URI("file:///home/user/f1/f2/source.json");
+            URI target = new URI("file:///home/user/f1/f2/target.png");
+
+            URI relative = IOUtilities.relativize(source, target);
+
+            // same as ./target.png
+            assertEquals("target.png", relative.toString());
+        }
+
+        { // test target is a child
+            URI source = new URI("file:///home/user/f1/f2/source.json");
+            URI target = new URI("file:///home/user/f1/f2/f3/f4/f5/target.png");
+
+            URI relative = IOUtilities.relativize(source, target);
+
+            // same as ./f3/f4/f5/target.png
+            assertEquals("f3/f4/f5/target.png", relative.toString());
+        }
+
+        { // test source is a child
+            URI source = new URI("file:///home/user/f1/f2/source.json");
+            URI target = new URI("file:///home/user/target.png");
+
+            URI relative = IOUtilities.relativize(source, target);
+
+            assertEquals("../../target.png", relative.toString());
+        }
+
+        { // test file with common ancestor
+            URI source = new URI("file:///home/user/f1/f2/source.json");
+            URI target = new URI("file:///home/user/f3/f4/f5/target.png");
+
+            URI relative = IOUtilities.relativize(source, target);
+
+            assertEquals("../../f3/f4/f5/target.png", relative.toString());
+        }
+
+        { // test nothing in common
+            URI source = new URI("file:///home/user/f1/f2/source.json");
+            URI target = new URI("http:///site.com/target.png");
+
+            URI relative = IOUtilities.relativize(source, target);
+
+            assertNull(relative);
         }
     }
 

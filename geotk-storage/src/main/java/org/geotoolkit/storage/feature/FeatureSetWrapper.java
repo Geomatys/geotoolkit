@@ -226,7 +226,8 @@ public class FeatureSetWrapper  extends AbstractCollection<Feature> implements F
 
     @Override
     public Session getSession() {
-        return new Session(new FeatureStoreWrapper(store.getOpenParameters().orElse(null), featureSet), false);
+        var storeParameters = store == null ? null : store.getOpenParameters().orElse(null);
+        return new Session(new FeatureStoreWrapper(storeParameters, featureSet), false);
     }
 
     @Override

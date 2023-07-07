@@ -22,7 +22,7 @@
   <parent>
     <groupId>com.geomatys</groupId>
     <artifactId>geomatys-bom</artifactId>
-    <version>2023.1-SNAPSHOT</version>
+    <version>2023.1</version>
   </parent>
 
   <groupId>org.geotoolkit</groupId>
@@ -174,6 +174,10 @@
     <!-- associated projects dependencies -->
     <geoapi.version>4.0-SNAPSHOT</geoapi.version>
     <sis.version>2.0-SNAPSHOT</sis.version>
+    <!--
+    SIS build helper version freezed to official release.
+    It ensures we can import it after SIS will migrate to Gradle build system.
+    -->
     <sis.build.helper.version>1.3</sis.build.helper.version>
     <sis.non-free.version>1.3</sis.non-free.version>
 
