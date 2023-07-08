@@ -44,11 +44,6 @@
         <artifactId>geotk-xml-sos</artifactId>
         <version>${project.version}</version>
     </dependency>
-    <dependency>
-        <groupId>junit</groupId>
-        <artifactId>junit</artifactId>
-        <scope>test</scope>
-    </dependency>
     <!-- for json comporator in test -->
     <dependency>
         <groupId>org.geotoolkit</groupId>
