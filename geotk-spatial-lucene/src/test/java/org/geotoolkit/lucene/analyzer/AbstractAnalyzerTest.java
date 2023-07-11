@@ -59,8 +59,6 @@ import org.geotoolkit.lucene.DocumentIndexer.DocumentEnvelope;
 import org.geotoolkit.lucene.LuceneUtils;
 
 import static org.junit.Assert.assertEquals;
-import org.junit.runner.RunWith;
-import org.junit.runners.BlockJUnit4ClassRunner;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Polygon;
 import org.opengis.referencing.operation.TransformException;
@@ -70,7 +68,6 @@ import org.opengis.util.FactoryException;
  *
  * @author Guilhem Legal (Geomatys)
  */
-@RunWith(BlockJUnit4ClassRunner.class)
 public abstract class AbstractAnalyzerTest {
 
     protected static final FilterFactory2 FF = FilterUtilities.FF;
