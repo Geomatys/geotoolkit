@@ -303,16 +303,22 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
                     }
                     if (!schemaExists(metadata, "metadata")) {
                         // Following is a modified copy of org.apache.sis.metadata.sql.Installer.run().
+                        // TODO: will not work anymore in a JPMS context. We need to clarify why this code has been added.
+                        final String[] scripts = {
+                            "Citations.sql",
+                            "Contents.sql",
+                            "Metadata.sql",
+                            "Referencing.sql"
+                        };
                         try (ScriptRunner runner = new ScriptRunner(cnx, 100)) {
-                            runner.run(MetadataSource.class, "Citations.sql");
-                            runner.run(MetadataSource.class, "Contents.sql");
-                            runner.run(MetadataSource.class, "Metadata.sql");
-                            runner.run(MetadataSource.class, "Referencing.sql");
+                            for (final String source : scripts) {
+                                runner.run(source, MetadataSource.class.getResourceAsStream(source));
+                            }
                         }
                     }
                     if (!schemaExists(metadata, "rasters")) {
                         try (ScriptRunner runner = new ScriptRunner(cnx, 100)) {
-                            runner.run(DatabaseStore.class, "Create.sql");
+                            runner.run("Create.sql", DatabaseStore.class.getResourceAsStream("Create.sql"));
                         }
                     }
                 }
