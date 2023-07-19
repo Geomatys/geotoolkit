@@ -21,7 +21,7 @@ package org.geotoolkit.observation.model;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public enum FeatureType {
+public enum ObservationType {
 
     PROFILE,
     TIMESERIES,

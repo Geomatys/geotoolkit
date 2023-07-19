@@ -35,6 +35,10 @@ public class Procedure extends AbstractOMEntity implements org.opengis.observati
         super(id, name, description, properties);
     }
 
+    public Procedure(Procedure proc) {
+        super(proc);
+    }
+
     @Override
     public String toString() {
         return super.toString();

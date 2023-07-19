@@ -25,6 +25,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.UUID;
@@ -155,7 +156,7 @@ public class OMUtils {
         return true;
     }
 
-    public static CompositePhenomenon getOverlappingComposite(List<? extends CompositePhenomenon> composites) throws DataStoreException {
+    public static Optional<CompositePhenomenon> getOverlappingComposite(List<? extends CompositePhenomenon> composites) throws DataStoreException {
         a:for (CompositePhenomenon composite : composites) {
             String compoId = composite.getId();
             for (CompositePhenomenon sub : composites) {
@@ -163,9 +164,9 @@ public class OMUtils {
                     continue a;
                 }
             }
-            return composite;
+            return Optional.of(composite);
         }
-        throw new DataStoreException("No composite has all other as subset");
+        return Optional.empty();
     }
 
     public static boolean hasComponent(String phenId, CompositePhenomenon composite) {

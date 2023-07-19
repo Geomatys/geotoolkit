@@ -28,7 +28,6 @@ import java.util.logging.Level;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Query;
 import static org.geotoolkit.observation.AbstractObservationStore.LOGGER;
-import static org.geotoolkit.observation.OMUtils.OBSERVATION_QNAME;
 import static org.geotoolkit.observation.OMUtils.samplingFeatureMatchEnvelope;
 import org.geotoolkit.observation.model.OMEntity;
 import static org.geotoolkit.observation.model.OMEntity.FEATURE_OF_INTEREST;
@@ -44,7 +43,6 @@ import org.geotoolkit.observation.model.Offering;
 import org.geotoolkit.observation.model.Phenomenon;
 import org.geotoolkit.observation.model.Procedure;
 import org.geotoolkit.observation.model.ProcedureDataset;
-import org.geotoolkit.observation.model.ResponseMode;
 import org.geotoolkit.observation.model.SamplingFeature;
 import org.geotoolkit.observation.query.AbstractObservationQuery;
 import org.geotoolkit.observation.query.DatasetQuery;
@@ -138,8 +136,8 @@ public abstract class AbstractFilteredObservationStore extends AbstractObservati
 
         for (Observation obs : observations) {
             final Procedure proc =  obs.getProcedure();
-            String type = obs.getProperties().getOrDefault("type", "timeseries").toString();
-            String sensorType = obs.getProperties().getOrDefault("sensorType", "Component").toString();
+            String type         = obs.getProperties().getOrDefault("type", "timeseries").toString();
+            String sensorType   = obs.getProperties().getOrDefault("sensorType", "Component").toString();
 
             final ProcedureDataset procedure = new ProcedureDataset(proc.getId(), proc.getName(), proc.getDescription(), sensorType, type, new ArrayList<>(), null);
             if (sensorIDs.isEmpty() || sensorIDs.contains(procedure.getId())) {
@@ -320,7 +318,7 @@ public abstract class AbstractFilteredObservationStore extends AbstractObservati
         return reader.getEventTime();
     }
 
-    private ObservationFilterReader handleQuery(Query q) throws DataStoreException {
+    protected ObservationFilterReader handleQuery(Query q) throws DataStoreException {
         if (q == null) throw new DataStoreException("Query must no be null");
 
         final ObservationFilterReader localOmFilter = getFilter();
@@ -345,7 +343,7 @@ public abstract class AbstractFilteredObservationStore extends AbstractObservati
         return localOmFilter;
     }
 
-    private void handleFilter(OMEntity mode, Filter filter, final ObservationFilterReader localOmFilter, List<String> observedProperties, List<String> procedures, List<String> fois, List<String> offerings) throws DataStoreException {
+    protected void handleFilter(OMEntity mode, Filter filter, final ObservationFilterReader localOmFilter, List<String> observedProperties, List<String> procedures, List<String> fois, List<String> offerings) throws DataStoreException {
         if (Filter.include().equals(filter) || filter == null) {
             return;
         }
@@ -432,17 +430,10 @@ public abstract class AbstractFilteredObservationStore extends AbstractObservati
                 localOmFilter.setProcedureType((String) value.getValue());
             } else if (pNameStr.contains("properties/")) {
                 localOmFilter.setPropertiesFilter((BinaryComparisonOperator) filter);
-            // other properties must probably be result filter
+            }  else if (pNameStr.startsWith("result")) {
+                localOmFilter.setResultFilter((BinaryComparisonOperator) filter);
             } else {
-                String cleanPname = pNameStr;
-                if (pNameStr.contains("[")) {
-                    cleanPname = pNameStr.substring(0, pNameStr.indexOf('['));
-                }
-                if (getCapabilities().queryableResultProperties.contains(cleanPname)) {
-                    localOmFilter.setResultFilter((BinaryComparisonOperator) filter);
-                } else {
-                    throw new DataStoreException("Unsuported property for filtering:" + pNameStr);
-                }
+                throw new DataStoreException("Unsuported property for filtering:" + pNameStr);
             }
         } else if (filter instanceof BinaryComparisonOperator binC) {
             final ValueReference name    = (ValueReference) binC.getOperand1();
@@ -450,24 +441,17 @@ public abstract class AbstractFilteredObservationStore extends AbstractObservati
 
             if (pNameStr.contains("properties/")) {
                 localOmFilter.setPropertiesFilter((BinaryComparisonOperator) filter);
-            // other properties must probably be result filter
+            } else if (pNameStr.startsWith("result")) {
+                localOmFilter.setResultFilter((BinaryComparisonOperator) filter);
             } else {
-                String cleanPname = pNameStr;
-                if (pNameStr.contains("[")) {
-                    cleanPname = pNameStr.substring(0, pNameStr.indexOf('['));
-                }
-                if (getCapabilities().queryableResultProperties.contains(cleanPname)) {
-                    localOmFilter.setResultFilter((BinaryComparisonOperator) filter);
-                } else {
-                    throw new DataStoreException("Unsuported property for filtering:" + pNameStr);
-                }
+                throw new DataStoreException("Unsuported property for filtering:" + pNameStr);
             }
         } else {
             throw new DataStoreException("Unknown filter operation.\nAnother possibility is that the content of your time filter is empty or unrecognized.");
         }
     }
 
-    private List<String> getFeaturesOfInterestForBBOX(final Envelope env) throws DataStoreException {
+    protected List<String> getFeaturesOfInterestForBBOX(final Envelope env) throws DataStoreException {
         List<String> results = new ArrayList<>();
         SamplingFeatureQuery query = new SamplingFeatureQuery();
         final List<org.opengis.observation.sampling.SamplingFeature> stations = getFeatureOfInterest(query);

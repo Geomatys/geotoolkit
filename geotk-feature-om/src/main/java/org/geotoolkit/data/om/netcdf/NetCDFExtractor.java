@@ -33,7 +33,7 @@ import org.apache.sis.measure.Longitude;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.sos.MeasureStringBuilder;
 import org.geotoolkit.observation.OMUtils;
-import static org.geotoolkit.observation.model.FeatureType.*;
+import static org.geotoolkit.observation.model.ObservationType.*;
 import static org.geotoolkit.data.om.netcdf.NetCDFUtils.*;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.observation.model.ComplexResult;

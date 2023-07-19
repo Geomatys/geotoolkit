@@ -57,6 +57,13 @@ public class ProcedureDataset extends Procedure {
         this.fields.addAll(fields);
     }
 
+    public ProcedureDataset(final Procedure proc, final String type, final String omType, final Collection<String> fields) {
+        super(proc);
+        this.type = type;
+        this.omType = omType;
+        this.fields.addAll(fields);
+    }
+
     @Override
     public boolean equals(final Object obj) {
         if (obj == this) {
@@ -73,5 +80,27 @@ public class ProcedureDataset extends Procedure {
     @Override
     public int hashCode() {
         return super.hashCode() + 79* Objects.hash(type, omType, children, fields);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(super.toString());
+
+        if (type != null) {
+            sb.append("type:").append(type).append("\n");
+        }
+        if (omType != null) {
+            sb.append("omType:").append(omType).append("\n");
+        }
+        sb.append("children:\n");
+        for (ProcedureDataset child : children) {
+            sb.append(child).append("\n");
+        }
+        sb.append("spatialBound:").append(spatialBound).append('\n');
+        sb.append("fields:\n");
+        for (String f : fields) {
+            sb.append(f).append("\n");
+        }
+        return sb.toString();
     }
 }
