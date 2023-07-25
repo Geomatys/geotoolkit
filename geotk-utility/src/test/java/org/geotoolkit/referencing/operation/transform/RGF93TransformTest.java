@@ -31,6 +31,7 @@ import org.junit.Test;
 
 import static org.apache.sis.test.Assume.*;
 import static java.lang.StrictMath.*;
+import static org.junit.Assume.assumeTrue;
 
 
 /**

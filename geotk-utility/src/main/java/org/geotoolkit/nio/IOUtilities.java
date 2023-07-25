@@ -212,7 +212,7 @@ public final class IOUtilities extends Static {
         } else if (path instanceof URL) {
             final URL url = (URL) path;
             if (url.getProtocol().equalsIgnoreCase("file")) {
-                return org.apache.sis.internal.storage.io.IOUtilities.toFile(url, null);
+                return org.apache.sis.internal.storage.io.IOUtilities.toFile(url);
             }
         } else if (path instanceof URI) {
             final URI uri = (URI) path;

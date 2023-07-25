@@ -105,7 +105,7 @@ public class IndexedFidReader implements FeatureIDReader, Closeable {
         this.removes = buffer.getInt();
         if (removes > count/2 ) {
             try {
-                IOUtilities.toFile(fixUrl.toURL(), ENCODING).deleteOnExit();
+                IOUtilities.toFile(fixUrl.toURL()).deleteOnExit();
             } finally {
             }
         }

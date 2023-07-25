@@ -583,9 +583,9 @@ public class PaletteFactory {
         File dir = (directory != null) ? directory : new File(".");
         try {
             if (classloader != null) {
-                dir = IOUtilities.toFile(classloader.getResource(dir.getPath()), null);
+                dir = IOUtilities.toFile(classloader.getResource(dir.getPath()));
             } else if (loader != null) {
-                dir = IOUtilities.toFile(loader.getResource(dir.getPath()), null);
+                dir = IOUtilities.toFile(loader.getResource(dir.getPath()));
             }
         } catch (IOException e) {
             /*
