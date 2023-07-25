@@ -25,7 +25,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.observation.model.OMEntity;
 import org.geotoolkit.observation.model.Offering;
 import org.geotoolkit.observation.model.ResponseMode;
-import org.geotoolkit.observation.model.Result;
 import org.geotoolkit.observation.query.IdentifierQuery;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.observation.Observation;
@@ -148,17 +147,6 @@ public interface ObservationReader {
      * @throws DataStoreException If an error occurs during retrieval.
      */
     Observation getTemplateForProcedure(final String procedure) throws DataStoreException;
-
-    /**
-     * Return a result for the specified identifier.
-     *
-     * @param identifier Observation identifier.
-     * @param resultModel Result model , like Measurements or complex observations.
-     *
-     * @return a result for the specified identifier.
-     * @throws org.apache.sis.storage.DataStoreException If an error occurs during retrieval.
-     */
-    Result getResult(final String identifier, final QName resultModel) throws DataStoreException;
 
     /**
      * Return the minimal/maximal value for the offering event Time

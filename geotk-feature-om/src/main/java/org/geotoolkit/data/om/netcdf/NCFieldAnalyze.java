@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import org.geotoolkit.observation.model.FeatureType;
+import org.geotoolkit.observation.model.ObservationType;
 import ucar.ma2.Array;
 import ucar.nc2.NetcdfFile;
 import ucar.nc2.Variable;
@@ -45,7 +45,7 @@ public class NCFieldAnalyze {
         public NCField timeField                  = null;
         public NetcdfFile file                  = null;
         public final List<NCField> phenfields     = new ArrayList<>();
-        public FeatureType featureType          = null;
+        public ObservationType featureType          = null;
         public final List<NCField> skippedFields  = new ArrayList<>();
         public final Map<String, Variable> vars = new HashMap<>();
 

@@ -288,4 +288,8 @@ public class ResultBuilder {
     public ResultMode getMode() {
         return mode;
     }
+
+    public TextEncoderProperties getEncoding(){
+        return encoding;
+    }
 }
