@@ -50,6 +50,19 @@ public abstract class AbstractOMEntity {
         }
     }
 
+    public AbstractOMEntity(AbstractOMEntity entity) {
+        if (entity != null) {
+            this.id = entity.id;
+            this.name = entity.name;
+            this.description = entity.description;
+            if (entity.properties == null) {
+                this.properties = new HashMap<>();
+            } else {
+                this.properties = new HashMap<>(entity.properties);
+            }
+        }
+    }
+
     public String getId() {
         return id;
     }

@@ -35,7 +35,6 @@ import org.geotoolkit.observation.model.ObservationDataset;
 import org.geotoolkit.observation.model.Offering;
 import org.geotoolkit.observation.model.Procedure;
 import org.geotoolkit.observation.model.ResponseMode;
-import org.geotoolkit.observation.model.Result;
 import static org.geotoolkit.observation.model.ObservationTransformUtils.toModel;
 import org.geotoolkit.observation.query.IdentifierQuery;
 import org.geotoolkit.sos.xml.OMXMLUtils;
@@ -249,11 +248,6 @@ public class XmlObservationReader implements ObservationReader {
             }
         }
         return null;
-    }
-
-    @Override
-    public Result getResult(final String identifier, final QName resultModel) throws DataStoreException {
-        throw new DataStoreException("Not supported yet in this implementation.");
     }
 
     @Override

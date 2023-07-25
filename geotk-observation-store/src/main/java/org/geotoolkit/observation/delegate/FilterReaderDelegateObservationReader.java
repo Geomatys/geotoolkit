@@ -31,7 +31,6 @@ import org.geotoolkit.observation.model.OMEntity;
 import org.geotoolkit.observation.model.Offering;
 import org.geotoolkit.observation.model.ResponseMode;
 import static org.geotoolkit.observation.model.ResponseMode.RESULT_TEMPLATE;
-import org.geotoolkit.observation.model.Result;
 import org.geotoolkit.observation.query.HistoricalLocationQuery;
 import org.geotoolkit.observation.query.IdentifierQuery;
 import org.geotoolkit.observation.query.LocationQuery;
@@ -40,7 +39,6 @@ import org.geotoolkit.observation.query.ObservationQueryUtilities;
 import org.geotoolkit.observation.query.ObservedPropertyQuery;
 import org.geotoolkit.observation.query.OfferingQuery;
 import org.geotoolkit.observation.query.ProcedureQuery;
-import org.geotoolkit.observation.query.ResultQuery;
 import org.geotoolkit.observation.query.SamplingFeatureQuery;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.observation.Observation;
@@ -157,13 +155,6 @@ public class FilterReaderDelegateObservationReader implements ObservationReader 
             return results.get(0);
         }
         return null;
-    }
-
-    @Override
-    public Result getResult(String identifier, QName resultModel) throws DataStoreException {
-        ObservationFilterReader filter = filterSupplier.get();
-        filter.init(new ResultQuery(resultModel, ResponseMode.INLINE, identifier, null));
-        return (Result) filter.getResults();
     }
 
     @Override

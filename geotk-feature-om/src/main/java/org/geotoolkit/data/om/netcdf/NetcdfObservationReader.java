@@ -33,7 +33,6 @@ import org.geotoolkit.observation.model.Offering;
 import org.geotoolkit.observation.model.Phenomenon;
 import org.geotoolkit.observation.model.Procedure;
 import org.geotoolkit.observation.model.ResponseMode;
-import org.geotoolkit.observation.model.Result;
 import org.geotoolkit.observation.model.SamplingFeature;
 import org.geotoolkit.observation.query.IdentifierQuery;
 import org.locationtech.jts.geom.Geometry;
@@ -189,11 +188,6 @@ public class NetcdfObservationReader implements ObservationReader {
             throw new DataStoreException(ex);
         }
         return null;
-    }
-
-    @Override
-    public Result getResult(final String identifier, final QName resultModel) throws DataStoreException {
-        throw new DataStoreException("Not supported yet in this this implementation.");
     }
 
     private boolean existProcedure(final String href) throws DataStoreException {

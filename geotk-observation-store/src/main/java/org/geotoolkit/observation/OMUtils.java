@@ -25,6 +25,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.UUID;
@@ -155,7 +156,7 @@ public class OMUtils {
         return true;
     }
 
-    public static CompositePhenomenon getOverlappingComposite(List<? extends CompositePhenomenon> composites) throws DataStoreException {
+    public static Optional<CompositePhenomenon> getOverlappingComposite(List<? extends CompositePhenomenon> composites) throws DataStoreException {
         a:for (CompositePhenomenon composite : composites) {
             String compoId = composite.getId();
             for (CompositePhenomenon sub : composites) {
@@ -163,9 +164,9 @@ public class OMUtils {
                     continue a;
                 }
             }
-            return composite;
+            return Optional.of(composite);
         }
-        throw new DataStoreException("No composite has all other as subset");
+        return Optional.empty();
     }
 
     public static boolean hasComponent(String phenId, CompositePhenomenon composite) {
@@ -193,11 +194,10 @@ public class OMUtils {
 
             for (int i = 0; i < comp.getComponent().size(); i++) {
                 Phenomenon component = comp.getComponent().get(i);
-                String id = component.getId();
-                results.add(new Field(i + 2, FieldType.QUANTITY, component.getName(), null, component.getDefinition(), null));
+                results.add(new Field(i + 2, FieldType.QUANTITY, component.getId(), component.getName(), component.getDefinition(), null));
             }
         } else if (phen != null) {
-            results.add(new Field(2, FieldType.QUANTITY, phen.getName(), null, phen.getDefinition(), null));
+            results.add(new Field(2, FieldType.QUANTITY, phen.getId(), phen.getName(), phen.getDefinition(), null));
         }
         return results;
     }
@@ -214,9 +214,29 @@ public class OMUtils {
         return results;
     }
 
+     /**
+      * @deprecated Use buildComplexResult(field, nbValue, values) because encoding is either the one use for resultBuilder or {@code null}
+      */
+    @Deprecated
     public static ComplexResult buildComplexResult(final List<Field> fields, final int nbValue, final TextEncoderProperties encoding, final ResultBuilder values) {
         return switch (values.getMode()) {
             case CSV        -> new ComplexResult(fields, encoding, values.getStringValues(), nbValue);
+            case DATA_ARRAY -> new ComplexResult(fields, values.getDataArray(), nbValue);
+            case COUNT      -> new ComplexResult(nbValue);
+        };
+    }
+
+    /**
+      * Build a complex result.
+      *
+      * @param fields List of field involved.
+      * @param nbValue Number of values in the result.
+      * @param values Result values.
+      * @return
+      */
+    public static ComplexResult buildComplexResult(final List<Field> fields, final int nbValue, final ResultBuilder values) {
+        return switch (values.getMode()) {
+            case CSV        -> new ComplexResult(fields, values.getEncoding(), values.getStringValues(), nbValue);
             case DATA_ARRAY -> new ComplexResult(fields, values.getDataArray(), nbValue);
             case COUNT      -> new ComplexResult(nbValue);
         };

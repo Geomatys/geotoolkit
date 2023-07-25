@@ -20,11 +20,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import static org.geotoolkit.sos.xml.SOSXmlFactory.*;
-import org.geotoolkit.swe.xml.AbstractDataComponent;
-import org.geotoolkit.swe.xml.AbstractQualityProperty;
-import org.geotoolkit.swe.xml.AnyScalar;
-import org.geotoolkit.swe.xml.UomProperty;
 
 /**
  * A model object representing a field in an Observation result.
@@ -114,6 +109,25 @@ public class Field {
     }
 
     /**
+     * Duplicate  a field.
+     *
+     * @param that The field to duplicate
+     */
+    public Field(Field that) {
+        if (that == null) throw new IllegalArgumentException("Null field param");
+        this.index = that.index;
+        this.description = that.description;
+        this.name = that.name;
+        this.type = that.type;
+        this.uom = that.uom;
+        this.label = that.label;
+        this.qualityFields = new ArrayList<>();
+        for (Field qualField : that.qualityFields) {
+            this.qualityFields.add(new Field(qualField));
+        }
+    }
+
+    /**
      * Return the SQL type asociated with this field.
      *
      * @param isPostgres if not, return a derby SQL type.
@@ -180,37 +194,4 @@ public class Field {
         }
         return sb.toString();
     }
-
-    // TODO remove
-    @Deprecated
-    public AnyScalar getScalar(final String version) {
-        final AbstractDataComponent compo = getComponent(version, false);
-        return buildAnyScalar(version, null, name, compo);
-    }
-
-    // TODO remove
-    @Deprecated
-    private AbstractDataComponent getComponent(final String version, boolean nameAsId) {
-        final List<AbstractQualityProperty> quality = new ArrayList<>();
-        if (qualityFields != null) {
-            for (Field qField : qualityFields) {
-                quality.add(buildQualityProperty(version, qField.getComponent(version, true)));
-            }
-        }
-        final AbstractDataComponent compo;
-        if (FieldType.QUANTITY.equals(type)) {
-            final UomProperty uomCode = buildUomProperty(version, uom, null);
-            compo = buildQuantity(version, nameAsId ? name : null, description, uomCode, null, quality);
-        } else if (FieldType.TEXT.equals(type)) {
-            compo = buildText(version, nameAsId ? name : null, description, null, quality);
-        } else if (FieldType.TIME.equals(type)) {
-            compo = buildTime(version, nameAsId ? name : null, description, null, quality);
-        } else if (FieldType.BOOLEAN.equals(type)) {
-            compo = buildBoolean(version, nameAsId ? name : null, description, null, quality);
-        } else {
-            throw new IllegalArgumentException("Unexpected field Type:" + type);
-        }
-        return compo;
-    }
-
 }
