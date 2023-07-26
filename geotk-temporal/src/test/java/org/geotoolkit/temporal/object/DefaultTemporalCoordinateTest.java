@@ -37,7 +37,7 @@ import static org.junit.Assert.*;
  * @author Mehdi Sidhoum (Geomatys)
  * @module
  */
-public class DefaultTemporalCoordinateTest extends org.geotoolkit.test.TestBase {
+public class DefaultTemporalCoordinateTest {
 
     private TemporalCoordinate temporalCoordinate1;
     private TemporalCoordinate temporalCoordinate2;

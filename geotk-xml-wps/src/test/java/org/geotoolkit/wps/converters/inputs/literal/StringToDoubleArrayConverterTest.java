@@ -29,7 +29,7 @@ import org.junit.Test;
  *
  * @author Quentin Boileau (Geomatys).
  */
-public class StringToDoubleArrayConverterTest extends org.geotoolkit.test.TestBase {
+public class StringToDoubleArrayConverterTest {
 
     final WPSObjectConverter<String, double[]> converter = WPSConverterRegistry.getInstance().getConverter(String.class, double[].class);
 

@@ -40,7 +40,7 @@ import org.geotoolkit.wps.xml.v200.Reference;
 import org.opengis.referencing.crs.GeographicCRS;
 
 import static org.junit.Assert.*;
-import static org.apache.sis.metadata.Assertions.assertXmlEquals;
+import static org.geotoolkit.test.Assertions.assertXmlEquals;
 
 
 /**
@@ -48,7 +48,7 @@ import static org.apache.sis.metadata.Assertions.assertXmlEquals;
  *
  * @author Quentin Boileau
  */
-public class ExecuteTest extends org.geotoolkit.test.TestBase {
+public class ExecuteTest {
 
     private static String EPSG_VERSION;
 

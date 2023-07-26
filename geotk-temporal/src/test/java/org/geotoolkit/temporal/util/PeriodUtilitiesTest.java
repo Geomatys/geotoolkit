@@ -36,7 +36,7 @@ import static org.junit.Assert.*;
  *
  * @author legal
  */
-public class PeriodUtilitiesTest extends org.geotoolkit.test.TestBase {
+public class PeriodUtilitiesTest {
 
     public PeriodUtilitiesTest() {
     }

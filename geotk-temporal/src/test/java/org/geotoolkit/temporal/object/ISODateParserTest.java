@@ -36,7 +36,7 @@ import java.util.logging.Logger;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class ISODateParserTest extends org.geotoolkit.test.TestBase {
+public class ISODateParserTest {
 
     public ISODateParserTest() {
     }

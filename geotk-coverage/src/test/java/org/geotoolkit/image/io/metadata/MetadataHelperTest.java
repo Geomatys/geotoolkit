@@ -41,7 +41,7 @@ import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMA
  *
  * @since 3.09
  */
-public final strictfp class MetadataHelperTest implements Localized {
+public final class MetadataHelperTest implements Localized {
     /**
      * Small number for floating point comparisons.
      */

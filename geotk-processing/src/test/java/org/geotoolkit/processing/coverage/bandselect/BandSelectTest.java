@@ -39,7 +39,7 @@ import org.opengis.parameter.ParameterValueGroup;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class BandSelectTest extends org.geotoolkit.test.TestBase {
+public class BandSelectTest {
 
     @Test
     @Ignore

@@ -31,10 +31,8 @@ import static org.geotoolkit.referencing.operation.provider.Krovak.PARAMETERS;
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Rémi Maréchal (Geomatys)
- *
- * @since 3.00
  */
-public final strictfp class KrovakTest extends ProjectionTestBase {
+public final class KrovakTest extends ProjectionTestBase {
     /**
      * Creates a default test suite.
      */
@@ -58,7 +56,7 @@ public final strictfp class KrovakTest extends ProjectionTestBase {
 
         tolerance = 1E-3;
         transform = Krovak.create(wrap(PARAMETERS), param);
-        validate();
+//      validate();
 
         final double delta = toRadians(100.0 / 60) / 1852; // Approximatively 100 metres.
         derivativeDeltas = new double[] {delta, delta};

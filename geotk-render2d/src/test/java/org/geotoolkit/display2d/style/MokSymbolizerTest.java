@@ -55,7 +55,7 @@ import org.opengis.feature.FeatureType;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class MokSymbolizerTest extends org.geotoolkit.test.TestBase {
+public class MokSymbolizerTest {
 
     private static final GeometryFactory GF = org.geotoolkit.geometry.jts.JTS.getFactory();
     private static final MutableStyleFactory SF = new DefaultStyleFactory();

@@ -30,7 +30,7 @@ import org.opengis.util.FactoryException;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class GetTileTest extends org.geotoolkit.test.TestBase {
+public class GetTileTest {
     public GetTileTest() {}
 
     /**

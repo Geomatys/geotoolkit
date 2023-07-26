@@ -35,7 +35,7 @@ import org.opengis.util.FactoryException;
  * @author Olivier Terral (Geomatys)
  * @module
  */
-public class NcWMSMapLayerTest extends org.geotoolkit.test.TestBase {
+public class NcWMSMapLayerTest {
 
     private final NcWebMapClient SERVER_111;
     private final NcWebMapClient SERVER_130;

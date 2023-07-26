@@ -19,7 +19,7 @@ package org.geotoolkit.math;
 
 import org.junit.*;
 import static org.junit.Assert.*;
-import static org.apache.sis.test.Assertions.assertSerializedEquals;
+import static org.geotoolkit.test.Assertions.assertSerializedEquals;
 import static java.lang.StrictMath.*;
 
 
@@ -27,11 +27,8 @@ import static java.lang.StrictMath.*;
  * Tests the {@link Complex} class.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
- *
- * @since 3.00
  */
-public final strictfp class ComplexTest extends org.geotoolkit.test.TestBase {
+public final class ComplexTest {
     /**
      * Tolerance factor for comparisons.
      */

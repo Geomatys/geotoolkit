@@ -33,7 +33,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @see #readNode(int)
  * @see #writeNode(org.geotoolkit.index.tree.Node)
  */
-abstract strictfp class HilbertChannelTreeAccess extends ChannelTreeAccess {
+abstract class HilbertChannelTreeAccess extends ChannelTreeAccess {
 
     /**
      * Hilbert Node attributs Number.<br/>

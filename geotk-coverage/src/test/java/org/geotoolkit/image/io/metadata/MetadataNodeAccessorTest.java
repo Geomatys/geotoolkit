@@ -29,9 +29,8 @@ import org.opengis.coverage.grid.RectifiedGrid;
 
 import org.junit.*;
 
-import org.apache.sis.test.DependsOn;
 import static org.junit.Assert.*;
-import static org.apache.sis.test.Assertions.assertMultilinesEquals;
+import static org.geotoolkit.test.Assertions.assertMultilinesEquals;
 import static org.geotoolkit.test.Commons.*;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
 
@@ -44,8 +43,7 @@ import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMA
  *
  * @since 3.06
  */
-@DependsOn(SpatialMetadataFormatTest.class)
-public final strictfp class MetadataNodeAccessorTest extends org.geotoolkit.test.TestBase {
+public final class MetadataNodeAccessorTest {
     /**
      * Tests the accessor with some properties defined under the {@code "ImageDescription"} node.
      */

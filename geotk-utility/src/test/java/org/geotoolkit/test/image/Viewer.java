@@ -35,7 +35,7 @@ import static java.lang.StrictMath.*;
  *
  * @since 3.19
  */
-final strictfp class Viewer extends WindowAdapter {
+final class Viewer extends WindowAdapter {
     /**
      * A lock used for waiting that at least one frame has been closed.
      */

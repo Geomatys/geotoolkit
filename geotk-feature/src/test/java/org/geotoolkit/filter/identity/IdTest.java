@@ -21,7 +21,7 @@ import org.junit.Test;
 import org.opengis.filter.ResourceId;
 
 import static org.junit.Assert.*;
-import static org.apache.sis.test.Assertions.assertSerializedEquals;
+import static org.geotoolkit.test.Assertions.assertSerializedEquals;
 import static org.geotoolkit.filter.FilterTestConstants.*;
 
 /**
@@ -29,7 +29,7 @@ import static org.geotoolkit.filter.FilterTestConstants.*;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class IdTest extends org.geotoolkit.test.TestBase {
+public class IdTest {
     @Test
     public void testFeatureId() {
         String strid = "testFeatureType.1";

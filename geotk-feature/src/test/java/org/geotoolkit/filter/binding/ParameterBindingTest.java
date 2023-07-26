@@ -30,7 +30,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class ParameterBindingTest extends org.geotoolkit.test.TestBase {
+public class ParameterBindingTest {
 
     @Test
     public void testGetter(){

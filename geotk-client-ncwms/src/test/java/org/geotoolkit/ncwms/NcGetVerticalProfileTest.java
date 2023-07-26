@@ -27,7 +27,7 @@ import static org.junit.Assert.*;
  *
  * @author Olivier Terral (Geomatys)
  */
-public class NcGetVerticalProfileTest extends org.geotoolkit.test.TestBase {
+public class NcGetVerticalProfileTest {
     public NcGetVerticalProfileTest() {}
 
     /**

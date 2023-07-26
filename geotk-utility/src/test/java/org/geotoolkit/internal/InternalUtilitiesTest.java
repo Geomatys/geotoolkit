@@ -28,15 +28,10 @@ import static org.geotoolkit.internal.InternalUtilities.*;
  * Tests {@link InternalUtilities} methods.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.19
- *
- * @since 3.18 (derived from 3.00)
  */
-public final strictfp class InternalUtilitiesTest extends org.geotoolkit.test.TestBase {
+public final class InternalUtilitiesTest {
     /**
      * Tests the {@link InternalUtilities#parseColor(String)} method.
-     *
-     * @since 3.19
      */
     @Test
     public void testParseColor() {

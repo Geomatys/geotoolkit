@@ -43,7 +43,7 @@ import org.geotoolkit.swe.xml.v101.UomPropertyType;
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.Marshaller;
 import jakarta.xml.bind.Unmarshaller;
-import org.apache.sis.test.xml.DocumentComparator;
+import org.geotoolkit.test.xml.DocumentComparator;
 
 //Junit dependencies
 import org.geotoolkit.gml.xml.v311.CodeType;
@@ -88,7 +88,7 @@ import org.w3c.dom.Node;
  * @author guilhem
  * @module
  */
-public class SmlXMLBindingTest extends org.geotoolkit.test.TestBase {
+public class SmlXMLBindingTest {
 
     private ObjectFactory sml101Factory = new ObjectFactory();
     private org.geotoolkit.swe.xml.v101.ObjectFactory swe101Factory = new org.geotoolkit.swe.xml.v101.ObjectFactory();

@@ -28,7 +28,6 @@ import org.opengis.metadata.acquisition.Instrument;
 import org.opengis.metadata.content.ImageDescription;
 import org.opengis.metadata.content.ImagingCondition;
 
-import org.apache.sis.test.DependsOn;
 import org.apache.sis.util.SimpleInternationalString;
 import org.apache.sis.metadata.iso.acquisition.DefaultInstrument;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
@@ -37,7 +36,7 @@ import org.apache.sis.metadata.iso.content.DefaultImageDescription;
 import org.junit.*;
 
 import static org.junit.Assert.*;
-import static org.apache.sis.test.Assertions.assertMultilinesEquals;
+import static org.geotoolkit.test.Assertions.assertMultilinesEquals;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
 
 
@@ -49,8 +48,7 @@ import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMA
  *
  * @since 3.06
  */
-@DependsOn(MetadataProxyTest.class)
-public final strictfp class SpatialMetadataTest extends org.geotoolkit.test.TestBase {
+public final class SpatialMetadataTest {
     /**
      * The warning level to use in this test. We set them to FINE in order to avoid
      * polluting the console output during Maven build. In order to see the warnings,

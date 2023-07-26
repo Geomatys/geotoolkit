@@ -74,7 +74,7 @@ import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.GDAL_NODATA_KEY;
  * @author Johann Sorel  (Geomatys)
  * @author Marechal Remi (Geomatys).
  */
-public strictfp class ThirdPartyMetaDataReader {
+public class ThirdPartyMetaDataReader {
 
     /**
      * Logger to diffuse no blocking error message.

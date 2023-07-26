@@ -48,7 +48,7 @@ import org.opengis.parameter.ParameterValueGroup;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class ChainProcessTest extends org.geotoolkit.test.TestBase {
+public class ChainProcessTest {
 
     private Chain createSimpleChain(){
         //produce a chain equivalent to :  ($1 + 10) / $2

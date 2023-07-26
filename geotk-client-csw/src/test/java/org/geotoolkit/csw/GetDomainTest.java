@@ -28,7 +28,7 @@ import static org.junit.Assert.*;
  *
  * @author Cédric Briançon (Geomatys)
  */
-public class GetDomainTest extends org.geotoolkit.test.TestBase {
+public class GetDomainTest {
     public GetDomainTest() {}
 
     /**

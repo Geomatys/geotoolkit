@@ -46,7 +46,7 @@ import static org.opengis.test.Assert.assertInstanceOf;
  *
  * @since 2.1
  */
-public final strictfp class WarpTransformTest extends TransformTestCase {
+public final class WarpTransformTest extends TransformTestCase {
     /**
      * Width and height of a pseudo-image source image.
      */

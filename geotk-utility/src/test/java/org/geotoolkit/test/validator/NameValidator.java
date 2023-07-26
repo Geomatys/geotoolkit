@@ -35,7 +35,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.20
  */
-final strictfp class NameValidator extends org.opengis.test.util.NameValidator {
+final class NameValidator extends org.opengis.test.util.NameValidator {
     /**
      * Creates a new validator instance.
      *

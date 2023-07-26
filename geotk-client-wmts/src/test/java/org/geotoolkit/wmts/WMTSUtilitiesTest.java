@@ -37,7 +37,7 @@ import static org.junit.Assert.*;
  *
  * @author Rémi Marechal (Geomatys).
  */
-public class WMTSUtilitiesTest extends org.geotoolkit.test.TestBase {
+public class WMTSUtilitiesTest {
 
     CoordinateReferenceSystem crs1, crs2, crs3, crs84, crsGeo, crsLambertZ1, crsLambertZ2;
     GeneralEnvelope envelop;

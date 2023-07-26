@@ -30,7 +30,7 @@ import org.opengis.coverage.grid.SequenceType;
  *
  * @author Rémi Marechal (Geomatys).
  */
-public class ReliefShadowTest extends org.geotoolkit.test.TestBase {
+public class ReliefShadowTest {
 
     /**
      * Source image.

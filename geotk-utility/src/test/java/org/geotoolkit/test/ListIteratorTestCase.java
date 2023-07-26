@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.ArrayList;
 import java.util.Collection;
-import org.apache.sis.test.TestCase;
 
 import static org.junit.Assert.*;
 
@@ -32,11 +31,8 @@ import static org.junit.Assert.*;
  * @param <E> The type of elements in the iterator to test.
  *
  * @author  Martin Desruisseaux (Geomatys)
- * @since   3.22
- * @version 3.22
- * @module
  */
-public abstract strictfp class ListIteratorTestCase<E> extends TestCase {
+public abstract class ListIteratorTestCase<E> {
     /**
      * The iterator to test, which must be supplied by the sub-class.
      */
@@ -50,12 +46,7 @@ public abstract strictfp class ListIteratorTestCase<E> extends TestCase {
     protected Collection<E> data;
 
     /**
-     * A random number generator. This generator shall be initialized (if needed) by the subclass
-     * as below:
-     *
-     * {@preformat java
-     *   random = TestUtilities.createRandomNumberGenerator("myTestMethod");
-     * }
+     * A random number generator.
      */
     protected Random random;
 

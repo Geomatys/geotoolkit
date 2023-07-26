@@ -45,7 +45,7 @@ import static org.junit.Assert.*;
  * @author Samuel Andrés
  * @module
  */
-public class AtomAuthorTest extends org.geotoolkit.test.TestBase {
+public class AtomAuthorTest {
 
 
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/atom/author.atom";

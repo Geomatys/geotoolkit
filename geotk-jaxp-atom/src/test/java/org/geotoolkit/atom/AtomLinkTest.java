@@ -42,7 +42,7 @@ import static org.junit.Assert.*;
  * @author Samuel Andrés
  * @module
  */
-public class AtomLinkTest extends org.geotoolkit.test.TestBase {
+public class AtomLinkTest {
 
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/atom/link.atom";
 

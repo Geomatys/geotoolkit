@@ -21,7 +21,7 @@ package org.geotoolkit.filter.function;
 import org.junit.Test;
 
 import static org.opengis.test.Assert.assertInstanceOf;
-import static org.apache.sis.test.Assertions.assertSerializedEquals;
+import static org.geotoolkit.test.Assertions.assertSerializedEquals;
 import static org.geotoolkit.filter.FilterTestConstants.*;
 import org.geotoolkit.filter.function.string.LengthFunction;
 import org.geotoolkit.filter.function.string.StringFunctionFactory;
@@ -33,7 +33,7 @@ import org.opengis.filter.Expression;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class FunctionTest extends org.geotoolkit.test.TestBase {
+public class FunctionTest {
     @Test
     public void testFunctionLenght() {
         Expression f = FF.function(StringFunctionFactory.LENGTH, FF.property("."));

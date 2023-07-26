@@ -40,7 +40,7 @@ import org.junit.Assert;
  * @author Johann Sorel (Geomatys)
  * @author Benjamin Garcia (Geomatys)
  */
-public class MetadataProcessTest extends org.geotoolkit.test.TestBase {
+public class MetadataProcessTest {
 
     @Test
     public void mergeTest() throws NoSuchIdentifierException, ProcessException, URISyntaxException, IOException, JAXBException {

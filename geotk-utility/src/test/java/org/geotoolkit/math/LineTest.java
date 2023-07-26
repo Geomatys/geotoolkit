@@ -28,11 +28,8 @@ import static org.junit.Assert.*;
  * Tests the {@link Line} class.
  *
  * @author Martin Desruisseaux (MPO, IRD)
- * @version 3.00
- *
- * @since 2.0
  */
-public final strictfp class LineTest extends org.geotoolkit.test.TestBase {
+public final class LineTest {
     /**
      * Tolerance factor for comparisons.
      */

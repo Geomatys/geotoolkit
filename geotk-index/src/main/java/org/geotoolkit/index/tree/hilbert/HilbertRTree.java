@@ -42,7 +42,7 @@ import org.geotoolkit.index.tree.TreeElementMapper;
  * @author Remi Marechal (Geomatys).
  * @see HilbertNode
  */
-public strictfp class HilbertRTree<E> extends AbstractTree<E> {
+public class HilbertRTree<E> extends AbstractTree<E> {
 
     /**
      * Create a Hilbert RTree implementation.

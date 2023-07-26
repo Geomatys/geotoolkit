@@ -91,7 +91,7 @@ import static org.opengis.test.Assert.assertBetween;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class ColorModelTest extends org.geotoolkit.test.TestBase {
+public class ColorModelTest {
 
     private static final GeometryFactory GF = org.geotoolkit.geometry.jts.JTS.getFactory();
     private static final MutableStyleFactory SF = new DefaultStyleFactory();

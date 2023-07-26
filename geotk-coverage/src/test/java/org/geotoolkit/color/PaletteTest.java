@@ -26,7 +26,7 @@ import org.junit.Test;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class PaletteTest extends org.geotoolkit.test.TestBase {
+public class PaletteTest {
 
     @Test
     public void interpolateSingleTest() {

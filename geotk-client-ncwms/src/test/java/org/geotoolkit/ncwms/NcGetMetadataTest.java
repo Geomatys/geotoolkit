@@ -28,7 +28,7 @@ import static org.junit.Assert.*;
  *
  * @author Olivier Terral (Geomatys)
  */
-public class NcGetMetadataTest extends org.geotoolkit.test.TestBase {
+public class NcGetMetadataTest {
     public NcGetMetadataTest() {}
 
     /**

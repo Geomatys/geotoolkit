@@ -44,7 +44,7 @@ import org.opengis.referencing.IdentifiedObject;
  *
  * @since 2.3
  */
-public final strictfp class GridToEnvelopeMapperTest extends org.geotoolkit.test.TestBase {
+public final class GridToEnvelopeMapperTest {
     /**
      * Tolerance factor for the comparison of floating point numbers.
      */

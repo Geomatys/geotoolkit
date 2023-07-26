@@ -52,7 +52,7 @@ import org.opengis.util.GenericName;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public abstract class PyramidalModelStoreNDTest <T extends WritableTiledResource & org.apache.sis.storage.GridCoverageResource> extends org.geotoolkit.test.TestBase {
+public abstract class PyramidalModelStoreNDTest <T extends WritableTiledResource & org.apache.sis.storage.GridCoverageResource> {
 
     private static final double DELTA = 0.00000001;
 

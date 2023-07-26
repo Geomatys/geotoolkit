@@ -42,7 +42,7 @@ import org.junit.Test;
  *
  * @author Guilhem Legal
  */
-public class JsonBindingTest extends org.geotoolkit.test.TestBase {
+public class JsonBindingTest {
 
     @Test
     public void testUnmarshallingExecute() throws JAXBException, IOException, URISyntaxException {

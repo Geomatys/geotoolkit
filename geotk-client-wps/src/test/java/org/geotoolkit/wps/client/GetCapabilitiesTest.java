@@ -27,7 +27,7 @@ import org.geotoolkit.wps.xml.v200.GetCapabilities;
 import org.geotoolkit.test.URLComparator;
 
 import static org.junit.Assert.*;
-import static org.apache.sis.metadata.Assertions.assertXmlEquals;
+import static org.geotoolkit.test.Assertions.assertXmlEquals;
 
 
 /**
@@ -35,7 +35,7 @@ import static org.apache.sis.metadata.Assertions.assertXmlEquals;
  *
  * @author Quentin Boileau
  */
-public class GetCapabilitiesTest extends org.geotoolkit.test.TestBase {
+public class GetCapabilitiesTest {
     public GetCapabilitiesTest() {}
 
     /**

@@ -40,7 +40,7 @@ import org.junit.Test;
  *
  * @since 3.00
  */
-public final strictfp class IOUtilitiesTest {
+public final class IOUtilitiesTest {
     /**
      * Tests the {@link IOUtilities#commonParent} method.
      */

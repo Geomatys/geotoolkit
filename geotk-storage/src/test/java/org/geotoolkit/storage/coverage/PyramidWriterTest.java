@@ -56,7 +56,7 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class PyramidWriterTest <T extends InMemoryTiledGridCoverageResource> extends org.geotoolkit.test.TestBase {
+public class PyramidWriterTest <T extends InMemoryTiledGridCoverageResource> {
 
     private static final GenericName NAME = NamesExt.create("test");
     private static final CoordinateReferenceSystem CRS84 = CommonCRS.WGS84.normalizedGeographic();

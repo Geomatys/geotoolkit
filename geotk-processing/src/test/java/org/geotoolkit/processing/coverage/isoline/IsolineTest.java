@@ -66,7 +66,7 @@ import org.opengis.util.NoSuchIdentifierException;
  * Alternatively, we could create a small buffer from one of the lines, and check that it contains the second one.
  * @author Johann Sorel (Geomatys)
  */
-public class IsolineTest extends org.geotoolkit.test.TestBase {
+public class IsolineTest {
 
     private static final GeometryFactory GEOM_FACTORY = Factory.INSTANCE.factory(false);
 

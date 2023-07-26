@@ -25,7 +25,7 @@ import org.junit.Test;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class HyperCubeIteratorTest extends org.geotoolkit.test.TestBase {
+public class HyperCubeIteratorTest {
 
     @Test
     public void iterate2DTest(){

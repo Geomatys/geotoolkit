@@ -35,7 +35,7 @@ import static org.junit.Assert.*;
  * @author Alexis Manin (Geomatys)
  * @module
  */
-public class CBERSTest extends org.geotoolkit.test.TestBase {
+public class CBERSTest {
 
     @Test
     public void CBERSTest() throws URISyntaxException, ParserConfigurationException, IOException, SAXException {

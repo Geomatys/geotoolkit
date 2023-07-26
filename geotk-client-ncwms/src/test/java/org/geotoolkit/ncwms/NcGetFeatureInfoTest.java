@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
  *
  * @author Olivier Terral (Geomatys)
  */
-public class NcGetFeatureInfoTest extends org.geotoolkit.test.TestBase {
+public class NcGetFeatureInfoTest {
     public NcGetFeatureInfoTest() {}
 
     /**

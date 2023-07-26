@@ -24,7 +24,7 @@ import static org.junit.Assert.*;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class QueryParserTest extends org.geotoolkit.test.TestBase {
+public class QueryParserTest {
 
 
     @Test

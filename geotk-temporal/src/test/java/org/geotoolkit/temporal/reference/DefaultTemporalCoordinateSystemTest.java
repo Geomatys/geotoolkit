@@ -38,7 +38,7 @@ import org.opengis.temporal.TemporalCoordinateSystem;
  * @author Mehdi Sidhoum (Geomatys)
  * @module
  */
-public class DefaultTemporalCoordinateSystemTest extends org.geotoolkit.test.TestBase {
+public class DefaultTemporalCoordinateSystemTest {
 
     private TemporalCoordinateSystem temporalCoordinateSystem1;
     private TemporalCoordinateSystem temporalCoordinateSystem2;

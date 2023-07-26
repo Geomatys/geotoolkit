@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
  * @author Martin Desruisseaux (Geomatys)
  * @since 3.00
  */
-public strictfp class Commons {
+public class Commons {
     /**
      * The character to be substituted to {@code '"'} in {@link #printAsJavaCode}.
      */

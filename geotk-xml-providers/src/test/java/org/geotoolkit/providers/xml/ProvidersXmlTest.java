@@ -30,7 +30,7 @@ import org.geotoolkit.sld.xml.v110.StyledLayerDescriptor;
 import org.geotoolkit.sld.xml.v110.UserLayer;
 import org.geotoolkit.sld.xml.v110.UserStyle;
 import jakarta.xml.bind.JAXBContext;
-import org.apache.sis.test.xml.DocumentComparator;
+import org.geotoolkit.test.xml.DocumentComparator;
 import org.apache.sis.xml.MarshallerPool;
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -40,7 +40,7 @@ import static org.junit.Assert.*;
  *
  * @author Cédric Briançon
  */
-public class ProvidersXmlTest extends org.geotoolkit.test.TestBase {
+public class ProvidersXmlTest {
     private MarshallerPool pool;
     private Unmarshaller unmarshaller;
     private Marshaller marshaller;

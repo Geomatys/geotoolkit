@@ -37,7 +37,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.20
  */
-final strictfp class ParameterValidator extends org.opengis.test.referencing.ParameterValidator {
+final class ParameterValidator extends org.opengis.test.referencing.ParameterValidator {
     /**
      * Creates a new validator instance.
      *

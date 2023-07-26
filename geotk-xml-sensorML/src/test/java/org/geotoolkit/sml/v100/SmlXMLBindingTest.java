@@ -126,7 +126,7 @@ import static org.junit.Assert.*;
  * @author Guilhem Legal (Geomatys)
  * @module
  */
-public class SmlXMLBindingTest extends org.geotoolkit.test.TestBase {
+public class SmlXMLBindingTest {
 
     private ObjectFactory sml100Factory = new ObjectFactory();
     private org.geotoolkit.swe.xml.v100.ObjectFactory swe100Factory = new org.geotoolkit.swe.xml.v100.ObjectFactory();

@@ -28,7 +28,7 @@ import org.opengis.feature.Feature;
  *
  * @author Theo Zozime
  */
-public class ComplexToFeatureConverterTest extends org.geotoolkit.test.TestBase {
+public class ComplexToFeatureConverterTest {
 
 
     /**

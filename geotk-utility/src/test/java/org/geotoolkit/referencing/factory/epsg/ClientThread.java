@@ -50,7 +50,7 @@ import static org.apache.sis.util.collection.Containers.hashMapCapacity;
  *
  * @since 2.4
  */
-final strictfp class ClientThread extends Thread {
+final class ClientThread extends Thread {
     /**
      * The tolerance (in decimal degrees) between the results of transformation
      * to geographic coordinates.

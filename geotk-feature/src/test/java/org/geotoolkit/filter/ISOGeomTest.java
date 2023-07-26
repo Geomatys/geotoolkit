@@ -37,7 +37,7 @@ import static org.geotoolkit.filter.FilterTestConstants.*;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class ISOGeomTest extends org.geotoolkit.test.TestBase {
+public class ISOGeomTest {
     @Test
     public void hello() throws NoSuchAuthorityCodeException, FactoryException {
         GeometryFactory factory = org.geotoolkit.geometry.jts.JTS.getFactory();

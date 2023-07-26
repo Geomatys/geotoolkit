@@ -56,7 +56,7 @@ import org.geotoolkit.image.palette.PaletteFactory;
  * The writers should use the {@link Locale#CANADA}.
  * This arbitrary locale is fixed in order to keep the build locale-independent.
  */
-abstract strictfp class TextImageWriterTestBase extends ImageWriterTestCase {
+abstract class TextImageWriterTestBase extends ImageWriterTestCase {
     /**
      * Creates a new test suite.
      */

@@ -31,7 +31,7 @@ import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
-import static org.apache.sis.test.Assertions.assertMultilinesEquals;
+import static org.geotoolkit.test.Assertions.assertMultilinesEquals;
 import static org.geotoolkit.test.Commons.*;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
 
@@ -44,7 +44,7 @@ import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMA
  *
  * @since 3.06
  */
-public final strictfp class TextRecordImageReaderTest extends TextImageReaderTestBase {
+public final class TextRecordImageReaderTest extends TextImageReaderTestBase {
     /**
      * The provider for the format to be tested.
      */

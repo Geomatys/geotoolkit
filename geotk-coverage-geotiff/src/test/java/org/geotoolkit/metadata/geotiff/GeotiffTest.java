@@ -58,7 +58,7 @@ import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.TAG_GEOTIFF_IFD;
  *
  * @author Remi Marechal (Geomatys).
  */
-public class GeotiffTest extends org.geotoolkit.test.TestBase {
+public class GeotiffTest {
 
     /**
      * Temporary directory where test file are written.

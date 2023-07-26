@@ -31,7 +31,7 @@ import org.opengis.feature.Feature;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class CPGFileTest extends org.geotoolkit.test.TestBase {
+public class CPGFileTest {
 
     /**
      * Test reading a shapefile with an UTF-8 cpg file.

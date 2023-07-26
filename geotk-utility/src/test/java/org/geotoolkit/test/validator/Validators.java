@@ -29,7 +29,7 @@ import org.opengis.test.ValidatorContainer;
  *
  * @since 3.20
  */
-public final strictfp class Validators extends org.opengis.test.Validators {
+public final class Validators extends org.opengis.test.Validators {
     /**
      * Do not allow instantiation of this class.
      */

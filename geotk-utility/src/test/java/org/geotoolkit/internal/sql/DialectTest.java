@@ -28,11 +28,8 @@ import static org.junit.Assert.*;
  * Tests the {@link Dialect} class.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.20
- *
- * @since 3.20 (derived from 3.10)
  */
-public final strictfp class DialectTest extends org.geotoolkit.test.TestBase {
+public final class DialectTest {
     /**
      * Tests the {@link Dialect#createURL(File)} method for the HSQL database.
      *

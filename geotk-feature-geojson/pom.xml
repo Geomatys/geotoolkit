@@ -64,12 +64,6 @@
             <version>${sis.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.sis.core</groupId>
-            <artifactId>sis-feature</artifactId>
-            <version>${sis.version}</version>
-            <type>test-jar</type>
-        </dependency>
-        <dependency>
             <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-utility</artifactId>
             <version>${project.version}</version>
@@ -87,13 +81,6 @@
             <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-xml-wfs</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.sis.core</groupId>
-            <artifactId>sis-utility</artifactId>
-            <version>${sis.version}</version>
-            <type>test-jar</type>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.geotoolkit</groupId>

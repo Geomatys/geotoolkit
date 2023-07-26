@@ -23,13 +23,12 @@ import static org.junit.Assert.*;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class HistogramTest extends org.geotoolkit.test.TestBase {
+public class HistogramTest {
 
     private static final double DELTA = 0.000001;
 
     @Test
     public void histogramTest(){
-
         final Histogram histo = new Histogram(new long[]{1,2,3,4,5,5,4,3,2,1}, 2.0, 12.0);
         assertEquals(2.0, histo.getStart(), DELTA);
         assertEquals(12.0, histo.getEnd(), DELTA);
@@ -41,7 +40,5 @@ public class HistogramTest extends org.geotoolkit.test.TestBase {
         assertEquals(12.0, histo.getValueAt(1),DELTA);
         assertEquals(7.0, histo.getValueAt(0.5),DELTA);
         assertEquals(3.5, histo.getValueAt(2.0/30.0),DELTA);
-
     }
-
 }

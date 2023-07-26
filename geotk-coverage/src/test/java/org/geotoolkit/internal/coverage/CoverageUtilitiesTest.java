@@ -41,7 +41,7 @@ import static org.opengis.referencing.datum.PixelInCell.CELL_CENTER;
  *
  * @author Alexis Manin (Geomatys)
  */
-public strictfp class CoverageUtilitiesTest extends org.geotoolkit.test.TestBase {
+public class CoverageUtilitiesTest {
 
     private static final double EPSI = 1E-8;
 

@@ -30,7 +30,7 @@ import org.junit.Test;
  *
  * @author Quentin Boileau (Geomatys)
  */
-public class WPSIOTest extends org.geotoolkit.test.TestBase {
+public class WPSIOTest {
 
     @Test
     public void isSupportedClass() throws UnconvertibleObjectException {

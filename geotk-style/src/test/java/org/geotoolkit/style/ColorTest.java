@@ -28,7 +28,7 @@ import static org.junit.Assert.*;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class ColorTest extends org.geotoolkit.test.TestBase {
+public class ColorTest {
 
     public ColorTest() {
     }

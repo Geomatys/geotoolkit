@@ -28,7 +28,7 @@ import static org.geotoolkit.filter.FilterTestConstants.*;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FIDFixVisitorTest extends org.geotoolkit.test.TestBase {
+public class FIDFixVisitorTest {
 
     @Test
     public void testReplacement1(){

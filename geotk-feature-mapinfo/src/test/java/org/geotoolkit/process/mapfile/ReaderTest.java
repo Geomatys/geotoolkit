@@ -36,7 +36,7 @@ import org.opengis.feature.Feature;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class ReaderTest extends org.geotoolkit.test.TestBase {
+public class ReaderTest {
 
     private static final MutableStyleFactory SF = new DefaultStyleFactory();
     private static final FilterFactory FF = FilterUtilities.FF;

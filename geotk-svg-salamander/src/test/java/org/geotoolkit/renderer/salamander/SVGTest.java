@@ -29,7 +29,7 @@ import org.junit.Test;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class SVGTest extends org.geotoolkit.test.TestBase {
+public class SVGTest {
 
     @Test
     public void testRenderingImage() throws URISyntaxException, Exception{

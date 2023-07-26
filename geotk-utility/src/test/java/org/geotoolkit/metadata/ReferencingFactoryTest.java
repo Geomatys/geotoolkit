@@ -28,7 +28,6 @@ import org.opengis.util.FactoryException;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.crs.DefaultVerticalCRS;
 
-import org.apache.sis.test.DependsOn;
 import org.junit.*;
 
 import static org.junit.Assert.*;
@@ -40,12 +39,8 @@ import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
  * Tests the {@link MetadataFactory} class.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.03
- *
- * @since 3.03
  */
-@DependsOn(FactoryMethodTest.class)
-public final strictfp class ReferencingFactoryTest extends org.geotoolkit.test.TestBase {
+public final class ReferencingFactoryTest {
     /**
      * The metadata factory.
      */

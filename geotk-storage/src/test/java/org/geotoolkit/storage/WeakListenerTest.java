@@ -33,7 +33,7 @@ import org.opengis.feature.FeatureType;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class WeakListenerTest extends org.geotoolkit.test.TestBase {
+public class WeakListenerTest {
 
 
     public WeakListenerTest() {

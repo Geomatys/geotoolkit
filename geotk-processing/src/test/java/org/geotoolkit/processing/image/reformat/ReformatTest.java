@@ -40,7 +40,7 @@ import org.opengis.parameter.ParameterValueGroup;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class ReformatTest extends org.geotoolkit.test.TestBase {
+public class ReformatTest {
 
     private static final double DELTA = 0.00000001;
 

@@ -30,7 +30,7 @@ import org.opengis.util.InternationalString;
  * @author Mehdi Sidhoum (Geomatys)
  * @module
  */
-public class DefaultPeriodDurationTest extends org.geotoolkit.test.TestBase {
+public class DefaultPeriodDurationTest {
 
     private PeriodDuration periodDuration1;
     private PeriodDuration periodDuration2;

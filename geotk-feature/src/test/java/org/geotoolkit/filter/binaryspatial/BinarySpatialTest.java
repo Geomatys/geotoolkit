@@ -46,7 +46,7 @@ import org.opengis.filter.ValueReference;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class BinarySpatialTest extends org.geotoolkit.test.TestBase {
+public class BinarySpatialTest {
 
     private final Geometry GEOM_DISTANCE_1;
     private final Geometry GEOM_DISTANCE_3;

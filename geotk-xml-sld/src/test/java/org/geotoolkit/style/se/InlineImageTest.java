@@ -28,7 +28,7 @@ import org.opengis.style.StyleFactory;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class InlineImageTest extends org.geotoolkit.test.TestBase {
+public class InlineImageTest {
 
     public static final FilterFactory2 FF = FilterUtilities.FF;
     public static final MutableStyleFactory SF = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);

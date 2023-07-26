@@ -34,7 +34,6 @@ import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.StorageConnector;
-import org.apache.sis.test.DependsOnMethod;
 import org.junit.AfterClass;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -54,7 +53,7 @@ import org.opengis.referencing.operation.MathTransform;
  *
  * @author Alexis Manin (Geomatys)
  */
-public class HGTReaderTest extends org.geotoolkit.test.TestBase {
+public class HGTReaderTest {
 
     private static Path TEMP_DIR;
     private static Path TEMP_IMG;
@@ -118,7 +117,6 @@ public class HGTReaderTest extends org.geotoolkit.test.TestBase {
      * Test the capacity of the reader to decode a rectangle of source image, at full resolution.
      * @throws DataStoreException If temporary image file has been corrupted.
      */
-    @DependsOnMethod("readFullyTest")
     @Test
     public void readRegion() throws DataStoreException {
 
@@ -146,7 +144,6 @@ public class HGTReaderTest extends org.geotoolkit.test.TestBase {
      * Test the capacity of the reader to decode entire source image, at a degraded resolution.
      * @throws DataStoreException If temporary image file has been corrupted.
      */
-    @DependsOnMethod("readFullyTest")
     @Test
     public void readSubsampled() throws DataStoreException {
 
@@ -202,7 +199,6 @@ public class HGTReaderTest extends org.geotoolkit.test.TestBase {
      * Test the capacity of the reader to decode entire source image, at a degraded resolution.
      * @throws DataStoreException If temporary image file has been corrupted.
      */
-    @DependsOnMethod({"readRegion", "readSubsampled"})
     @Test
     public void readSubSampledRegion() throws DataStoreException {
 

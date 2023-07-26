@@ -34,11 +34,8 @@ import static org.geotoolkit.test.Assert.assertEqualsIgnoreMetadata;
  * Tests the {@link PrjFiles} class.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.15
- *
- * @since 3.05
  */
-public final strictfp class PrjFilesTest extends org.geotoolkit.test.TestBase {
+public final class PrjFilesTest {
     /**
      * The {@code WGS84} CRS as WKT on a single line.
      */

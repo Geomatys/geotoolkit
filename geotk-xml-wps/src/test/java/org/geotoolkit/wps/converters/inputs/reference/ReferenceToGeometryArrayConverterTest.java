@@ -28,7 +28,7 @@ import org.junit.Test;
  *
  * @author Theo Zozime
  */
-public class ReferenceToGeometryArrayConverterTest extends org.geotoolkit.test.TestBase {
+public class ReferenceToGeometryArrayConverterTest {
 
     @Test
     public void testJSONConversion() throws IOException {

@@ -29,7 +29,7 @@ import org.junit.Test;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class WFSClientFactoryTest extends org.geotoolkit.test.TestBase {
+public class WFSClientFactoryTest {
     @Test
     public void testFactory() {
 

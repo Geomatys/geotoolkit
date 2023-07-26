@@ -28,14 +28,14 @@ import org.opengis.filter.Expression;
 import org.opengis.filter.ValueReference;
 
 import static org.junit.Assert.*;
-import static org.apache.sis.test.Assertions.assertSerializedEquals;
+import static org.geotoolkit.test.Assertions.assertSerializedEquals;
 
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public class GroovyTest extends org.geotoolkit.test.TestBase {
+public class GroovyTest {
     @Test
     public void simpleScriptTest() throws ScriptException{
         final FilterFactory ff = FilterUtilities.FF;

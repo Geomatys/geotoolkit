@@ -30,7 +30,7 @@ import org.opengis.filter.LogicalOperator;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class SimplifyFilterVisitorTest extends org.geotoolkit.test.TestBase {
+public class SimplifyFilterVisitorTest {
 
     @Test
     public void testIdRegroup(){

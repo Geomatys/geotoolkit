@@ -35,11 +35,8 @@ import static org.junit.Assert.*;
  * by the {@link ReferencingFactoryTest} defined in the referencing module.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.03
- *
- * @since 3.03
  */
-public final strictfp class MetadataFactoryTest extends org.geotoolkit.test.TestBase {
+public final class MetadataFactoryTest {
     /**
      * The metadata factory.
      */

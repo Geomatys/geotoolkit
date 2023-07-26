@@ -42,7 +42,7 @@ import static org.junit.Assert.*;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class PathIteratorTest extends org.geotoolkit.test.TestBase {
+public class PathIteratorTest {
 
     private static double DELTA = 0.000000001d;
     public static final GeometryFactory GF = org.geotoolkit.geometry.jts.JTS.getFactory();

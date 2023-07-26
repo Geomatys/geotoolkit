@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
  *
  * @author Martin Desruisseaux (Geomatys)
  */
-public final strictfp class DatabaseTest extends org.geotoolkit.test.TestBase {
+public final class DatabaseTest {
     /**
      * Gets the connection parameters to the coverage database.
      */

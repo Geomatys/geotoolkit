@@ -65,7 +65,7 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class PGPyramidTest extends org.geotoolkit.test.TestBase {
+public class PGPyramidTest {
 
     private PGCoverageStore store;
 

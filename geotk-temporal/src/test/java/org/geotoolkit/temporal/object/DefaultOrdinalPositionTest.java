@@ -40,7 +40,7 @@ import org.opengis.temporal.TemporalReferenceSystem;
  * @author Mehdi Sidhoum (Geomatys)
  * @module
  */
-public class DefaultOrdinalPositionTest extends org.geotoolkit.test.TestBase {
+public class DefaultOrdinalPositionTest {
 
     private OrdinalPosition ordinalPosition1;
     private OrdinalPosition ordinalPosition2;

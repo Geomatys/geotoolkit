@@ -54,7 +54,7 @@ import static org.geotoolkit.style.StyleConstants.*;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class StyleCacheTest extends org.geotoolkit.test.TestBase {
+public class StyleCacheTest {
 
     private final MutableStyleFactory SF = new DefaultStyleFactory();
     private final FilterFactory FF = FilterUtilities.FF;

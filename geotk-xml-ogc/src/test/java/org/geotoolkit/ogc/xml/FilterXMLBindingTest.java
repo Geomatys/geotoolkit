@@ -57,7 +57,7 @@ import org.junit.*;
 import org.xml.sax.SAXException;
 
 import static org.junit.Assert.*;
-import static org.apache.sis.metadata.Assertions.assertXmlEquals;
+import static org.geotoolkit.test.Assertions.assertXmlEquals;
 
 
 /**
@@ -66,7 +66,7 @@ import static org.apache.sis.metadata.Assertions.assertXmlEquals;
  * @author Guilhem Legal (Geomatys)
  * @module
  */
-public class FilterXMLBindingTest extends org.geotoolkit.test.TestBase {
+public class FilterXMLBindingTest {
 
     private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.filter");
 

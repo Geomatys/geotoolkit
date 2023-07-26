@@ -16,21 +16,19 @@
  */
 package org.geotoolkit.util;
 
-import org.geotoolkit.util.NamesExt;
 import javax.xml.namespace.QName;
-import static org.junit.Assert.*;
-import org.junit.Test;
 import org.opengis.util.GenericName;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public class NamesExtTest extends org.geotoolkit.test.TestBase {
+public class NamesExtTest {
 
     @Test
     public void createFromQName(){
-
         GenericName gn = NamesExt.create(new QName(null, "test"));
         assertEquals(null,NamesExt.getNamespace(gn));
         assertEquals("test",gn.tip().toString());
@@ -42,7 +40,5 @@ public class NamesExtTest extends org.geotoolkit.test.TestBase {
         gn = NamesExt.create(new QName("ns", "test"));
         assertEquals("ns",NamesExt.getNamespace(gn));
         assertEquals("test",gn.tip().toString());
-
     }
-
 }

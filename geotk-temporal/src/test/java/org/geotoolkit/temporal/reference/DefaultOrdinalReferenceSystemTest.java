@@ -39,7 +39,7 @@ import org.opengis.temporal.OrdinalReferenceSystem;
  * @author Mehdi Sidhoum (Geomatys)
  * @module
  */
-public class DefaultOrdinalReferenceSystemTest extends org.geotoolkit.test.TestBase {
+public class DefaultOrdinalReferenceSystemTest {
 
     private OrdinalReferenceSystem ordinalReferenceSystem1;
     private OrdinalReferenceSystem ordinalReferenceSystem2;

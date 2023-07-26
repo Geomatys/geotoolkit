@@ -34,7 +34,7 @@ import org.opengis.parameter.ParameterValueGroup;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class DynamicRangeStretchTest extends org.geotoolkit.test.TestBase {
+public class DynamicRangeStretchTest {
 
     private static final double DELTA = 0.1;
 
