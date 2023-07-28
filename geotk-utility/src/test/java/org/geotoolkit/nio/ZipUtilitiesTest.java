@@ -41,7 +41,7 @@ import static org.junit.Assert.*;
  *
  * @author Samuel Andrés
  */
-public class ZipUtilitiesTest extends org.geotoolkit.test.TestBase {
+public class ZipUtilitiesTest {
 
     private final static Checksum CHECKSUM = new Adler32();
 

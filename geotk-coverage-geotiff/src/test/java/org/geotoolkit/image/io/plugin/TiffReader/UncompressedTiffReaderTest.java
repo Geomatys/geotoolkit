@@ -23,7 +23,7 @@ import java.io.IOException;
  *
  * @author Remi Marechal (Geomatys).
  */
-public strictfp class UncompressedTiffReaderTest extends TestTiffImageReader {
+public class UncompressedTiffReaderTest extends TestTiffImageReader {
 
     public UncompressedTiffReaderTest() throws IOException {
         super(null); //-- if no compression is setted the default implementation works with strips

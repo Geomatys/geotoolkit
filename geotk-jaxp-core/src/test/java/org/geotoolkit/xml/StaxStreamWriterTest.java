@@ -42,7 +42,7 @@ import static org.junit.Assert.*;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class StaxStreamWriterTest extends org.geotoolkit.test.TestBase {
+public class StaxStreamWriterTest {
 
     public StaxStreamWriterTest() {
     }

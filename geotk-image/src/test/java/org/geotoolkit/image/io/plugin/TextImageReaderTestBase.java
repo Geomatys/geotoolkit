@@ -38,7 +38,7 @@ import static org.junit.Assert.*;
 /**
  * The base class for {@link TextImageReader} tests.
  */
-abstract strictfp class TextImageReaderTestBase extends ImageReaderTestCase {
+abstract class TextImageReaderTestBase extends ImageReaderTestCase {
     /**
      * The precision for comparison of sample values. The values in the test files provided
      * in this package have 3 significant digits, so the precision is set to the next digit.

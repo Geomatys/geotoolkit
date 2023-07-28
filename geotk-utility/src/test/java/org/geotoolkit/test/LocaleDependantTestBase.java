@@ -30,11 +30,8 @@ import org.junit.*;
  * and restores the default locale after the test.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.17
- *
- * @since 3.17
  */
-public abstract strictfp class LocaleDependantTestBase extends TestBase {
+public abstract class LocaleDependantTestBase {
     /**
      * The previous locale before the test is run.
      * This is usually the default locale.

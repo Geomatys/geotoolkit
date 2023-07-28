@@ -31,7 +31,7 @@ import static org.geotoolkit.referencing.operation.provider.NewZealandMapGrid.PA
  *
  * @since 2.2
  */
-public final strictfp class NewZealandMapGridTest extends ProjectionTestBase {
+public final class NewZealandMapGridTest extends ProjectionTestBase {
     /**
      * Sets of geographic coordinates to project.
      */

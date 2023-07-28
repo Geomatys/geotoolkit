@@ -43,7 +43,7 @@ import org.opengis.util.InternationalString;
  * @author Mehdi Sidhoum (Geomatys)
  * @module
  */
-public class DefaultCalendarEraTest extends org.geotoolkit.test.TestBase {
+public class DefaultCalendarEraTest {
 
     private CalendarEra calendarEra1;
     private CalendarEra calendarEra2;

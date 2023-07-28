@@ -49,7 +49,7 @@ import org.opengis.util.FactoryException;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class TileDebugTest extends org.geotoolkit.test.TestBase {
+public class TileDebugTest {
 
     /**
      * Sanity test, only ensure the rendering is successfull without errors not the final result.

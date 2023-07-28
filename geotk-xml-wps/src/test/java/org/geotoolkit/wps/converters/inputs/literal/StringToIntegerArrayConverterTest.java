@@ -31,7 +31,7 @@ import org.junit.Test;
  *
  * @author Quentin Boileau (Geomatys).
  */
-public class StringToIntegerArrayConverterTest extends org.geotoolkit.test.TestBase {
+public class StringToIntegerArrayConverterTest {
 
 
     @Test

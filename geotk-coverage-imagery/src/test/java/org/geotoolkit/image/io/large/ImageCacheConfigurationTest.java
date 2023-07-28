@@ -8,7 +8,7 @@ import static org.junit.Assert.*;
 /**
  * @author Quentin Boileau (Geomatys)
  */
-public class ImageCacheConfigurationTest extends org.geotoolkit.test.TestBase {
+public class ImageCacheConfigurationTest {
 
     @Test
     public void readMemorySize() {

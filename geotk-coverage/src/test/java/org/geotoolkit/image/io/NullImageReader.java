@@ -38,7 +38,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.5
  */
-public strictfp class NullImageReader extends SpatialImageReader {
+public class NullImageReader extends SpatialImageReader {
     /**
      * The data type to be returned by {@link #getRawDataType}.
      */
@@ -157,7 +157,7 @@ public strictfp class NullImageReader extends SpatialImageReader {
     /**
      * A dummy provider for the dummy reader.
      */
-    private static final strictfp class Spi extends SpatialImageReader.Spi {
+    private static final class Spi extends SpatialImageReader.Spi {
         public Spi() {
             inputTypes = new Class<?>[] {String.class};
         }

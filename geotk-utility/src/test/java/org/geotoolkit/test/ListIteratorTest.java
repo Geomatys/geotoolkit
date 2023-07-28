@@ -17,20 +17,16 @@
 package org.geotoolkit.test;
 
 import java.util.ArrayList;
+import java.util.Random;
 import org.junit.Test;
-
-import static org.apache.sis.test.TestUtilities.createRandomNumberGenerator;
 
 
 /**
  * Tests the {@link ListIteratorTestCase} class.
  *
  * @author  Martin Desruisseaux (Geomatys)
- * @since   3.22
- * @version 3.22
- * @module
  */
-public final strictfp class ListIteratorTest extends ListIteratorTestCase<Integer> {
+public final class ListIteratorTest extends ListIteratorTestCase<Integer> {
     /**
      * Tests using {@link ArrayList} as the reference implementation.
      */
@@ -42,7 +38,7 @@ public final strictfp class ListIteratorTest extends ListIteratorTestCase<Intege
         }
         data         = list;
         iterator     = list.listIterator();
-        random       = createRandomNumberGenerator();
+        random       = new Random();
         testForward  = true;
         testBackward = true;
         testRemove   = true;

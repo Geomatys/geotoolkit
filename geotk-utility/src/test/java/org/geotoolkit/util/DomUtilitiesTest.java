@@ -31,9 +31,8 @@ import org.w3c.dom.Element;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
-public class DomUtilitiesTest extends org.geotoolkit.test.TestBase {
+public class DomUtilitiesTest {
 
     @Test
     public void writeTest() throws ParserConfigurationException, IOException, TransformerException{

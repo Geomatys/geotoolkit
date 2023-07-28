@@ -82,7 +82,7 @@ import org.geotoolkit.index.tree.manager.postgres.PGDataSource;
  * @author Guilhem Legal
  * @module
  */
-public class LuceneSearcherTest extends org.geotoolkit.test.TestBase {
+public class LuceneSearcherTest {
 
     private static final GeometryFactory GF = JTS.getFactory();
     private static final FilterFactory2 FF = FilterUtilities.FF;

@@ -59,14 +59,14 @@ import org.opengis.geometry.primitive.Ring;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import static org.junit.Assert.*;
-import static org.apache.sis.metadata.Assertions.assertXmlEquals;
+import static org.geotoolkit.test.Assertions.assertXmlEquals;
 
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class JTSGeometryBindingTest extends org.geotoolkit.test.TestBase {
+public class JTSGeometryBindingTest {
 
     private static final Logger LOGGER = Logger.getAnonymousLogger();
 

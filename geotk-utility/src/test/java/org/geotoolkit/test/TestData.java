@@ -69,7 +69,7 @@ import java.util.zip.ZipFile;
  *
  * @since 2.4
  */
-public final strictfp class TestData implements Runnable {
+public final class TestData implements Runnable {
     /**
      * The test data directory.
      */

@@ -27,7 +27,7 @@ import java.io.IOException;
  * @author Remi Marechal (Geomatys).
  * @see TiffImageWriteParam#compressionTypes
  */
-public strictfp class PackBitsTiffWriterTest extends TestTiffImageWriter {
+public class PackBitsTiffWriterTest extends TestTiffImageWriter {
 
     public PackBitsTiffWriterTest() throws IOException {
         super("PackBits");

@@ -62,7 +62,7 @@ import org.opengis.style.Stroke;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class GeometryExpressionTest extends org.geotoolkit.test.TestBase {
+public class GeometryExpressionTest {
 
     private static final FilterFactory2 FF = GO2Utilities.FILTER_FACTORY;
     private static final MutableStyleFactory SF = GO2Utilities.STYLE_FACTORY;

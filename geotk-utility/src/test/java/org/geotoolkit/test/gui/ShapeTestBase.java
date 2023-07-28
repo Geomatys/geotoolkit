@@ -35,7 +35,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.20 (derived from 3.00)
  */
-public strictfp class ShapeTestBase {
+public class ShapeTestBase {
     /** The bounds of the shape to test. */
     protected static final int SHAPE_X=25, SHAPE_Y=25, SHAPE_WIDTH=150, SHAPE_HEIGHT=125;
 

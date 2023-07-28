@@ -67,7 +67,7 @@ import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
 import static org.junit.Assert.*;
-import static org.apache.sis.metadata.Assertions.assertXmlEquals;
+import static org.geotoolkit.test.Assertions.assertXmlEquals;
 
 
 /**
@@ -75,7 +75,7 @@ import static org.apache.sis.metadata.Assertions.assertXmlEquals;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class XmlFeatureTest extends org.geotoolkit.test.TestBase {
+public class XmlFeatureTest {
 
     @Test
     public void testReadSimpleFeature() throws JAXBException, IOException, XMLStreamException{

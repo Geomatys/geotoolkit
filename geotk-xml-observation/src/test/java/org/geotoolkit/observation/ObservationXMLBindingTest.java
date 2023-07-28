@@ -76,7 +76,7 @@ import org.opengis.util.RecordType;
 import org.opengis.util.TypeName;
 
 import static org.junit.Assert.*;
-import static org.apache.sis.metadata.Assertions.assertXmlEquals;
+import static org.geotoolkit.test.Assertions.assertXmlEquals;
 
 
 /**
@@ -84,7 +84,7 @@ import static org.apache.sis.metadata.Assertions.assertXmlEquals;
  * @author Guilhem Legal (Geomatys)
  * @module
  */
-public class ObservationXMLBindingTest extends org.geotoolkit.test.TestBase {
+public class ObservationXMLBindingTest {
 
     private MarshallerPool pool;
     private Unmarshaller unmarshaller;

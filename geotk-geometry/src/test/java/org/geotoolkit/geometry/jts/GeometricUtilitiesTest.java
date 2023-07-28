@@ -31,7 +31,7 @@ import org.junit.Test;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class GeometricUtilitiesTest extends org.geotoolkit.test.TestBase {
+public class GeometricUtilitiesTest {
 
     private static final GeometryFactory GF = GeometricUtilities.getFactory();
 

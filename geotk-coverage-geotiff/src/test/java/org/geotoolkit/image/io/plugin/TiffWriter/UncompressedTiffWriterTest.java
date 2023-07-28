@@ -38,7 +38,7 @@ import org.opengis.coverage.grid.SequenceType;
  *
  * @author Remi Marechal (Geomatys).
  */
-public strictfp class UncompressedTiffWriterTest extends TestTiffImageWriter {
+public class UncompressedTiffWriterTest extends TestTiffImageWriter {
 
     public UncompressedTiffWriterTest() throws IOException {
         super(null);

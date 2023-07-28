@@ -43,7 +43,7 @@ import org.apache.sis.metadata.iso.citation.DefaultResponsibleParty;
 import org.apache.sis.metadata.iso.citation.DefaultTelephone;
 import org.apache.sis.internal.jaxb.gco.Multiplicity;
 import org.apache.sis.measure.NumberRange;
-import org.apache.sis.test.xml.DocumentComparator;
+import org.geotoolkit.test.xml.DocumentComparator;
 import org.apache.sis.util.iso.DefaultNameFactory;
 import org.apache.sis.util.SimpleInternationalString;
 import org.apache.sis.xml.MarshallerPool;

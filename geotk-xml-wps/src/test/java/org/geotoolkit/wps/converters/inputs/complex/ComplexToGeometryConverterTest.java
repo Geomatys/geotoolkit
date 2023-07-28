@@ -28,7 +28,7 @@ import org.junit.Test;
  *
  * @author Théo Zozime
  */
-public class ComplexToGeometryConverterTest extends org.geotoolkit.test.TestBase {
+public class ComplexToGeometryConverterTest {
 
     @Test
     public void testJSONConversion() throws IOException {

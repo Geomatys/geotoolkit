@@ -51,7 +51,7 @@ import org.geotoolkit.wcs.xml.v200.CapabilitiesType;
 import org.geotoolkit.wcs.xml.v200.ServiceMetadataType;
 
 import static org.junit.Assert.*;
-import static org.apache.sis.metadata.Assertions.assertXmlEquals;
+import static org.geotoolkit.test.Assertions.assertXmlEquals;
 
 
 /**
@@ -59,7 +59,7 @@ import static org.apache.sis.metadata.Assertions.assertXmlEquals;
  * @author Guilhem Legal (Geomatys)
  * @module
  */
-public class WcsXMLBindingTest extends org.geotoolkit.test.TestBase {
+public class WcsXMLBindingTest {
 
     private static final MarshallerPool pool = WCSMarshallerPool.getInstance();
     private Marshaller   marshaller;

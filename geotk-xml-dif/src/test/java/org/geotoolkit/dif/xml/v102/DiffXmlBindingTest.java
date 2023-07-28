@@ -26,7 +26,7 @@ import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
 import jakarta.xml.bind.Unmarshaller;
-import org.apache.sis.test.xml.DocumentComparator;
+import org.geotoolkit.test.xml.DocumentComparator;
 import org.apache.sis.xml.MarshallerPool;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -38,7 +38,7 @@ import org.junit.Test;
  *
  * @author guilhem
  */
-public class DiffXmlBindingTest extends org.geotoolkit.test.TestBase {
+public class DiffXmlBindingTest {
 
     private static MarshallerPool pool;
     private Marshaller   marshaller;

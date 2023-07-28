@@ -82,7 +82,7 @@ import org.geotoolkit.index.tree.manager.postgres.PGDataSource;
  * @author Guilhem Legal
  * @module
  */
-public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
+public class LuceneEnvelopeOnlyTest {
 
     private static final Logger LOGGER = Logger.getLogger("org.constellation.lucene");
     private static final GeometryFactory GF = JTS.getFactory();

@@ -44,7 +44,7 @@ import static org.junit.Assert.*;
  * @author Samuel Andrés
  * @module
  */
-public class AdministrativeAreaTest extends org.geotoolkit.test.TestBase {
+public class AdministrativeAreaTest {
 
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/xal/administrativeArea.xml";
 

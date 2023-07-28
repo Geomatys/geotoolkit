@@ -71,7 +71,7 @@ import org.opengis.style.RasterSymbolizer;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class MeridianTest extends org.geotoolkit.test.TestBase {
+public class MeridianTest {
 
     private static final GeometryFactory GF = JTS.getFactory();
     private static final DefaultStyleFactory SF = new DefaultStyleFactory();

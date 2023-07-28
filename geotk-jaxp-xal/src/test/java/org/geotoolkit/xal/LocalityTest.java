@@ -56,7 +56,7 @@ import static org.junit.Assert.*;
  * @author Samuel Andrés
  * @module
  */
-public class LocalityTest extends org.geotoolkit.test.TestBase {
+public class LocalityTest {
 
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/xal/locality.xml";
 

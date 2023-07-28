@@ -39,7 +39,7 @@ import org.opengis.filter.ValueReference;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class XPathBindingTest extends org.geotoolkit.test.TestBase {
+public class XPathBindingTest {
 
     @Ignore
     @Test

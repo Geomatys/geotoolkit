@@ -44,7 +44,7 @@ import org.opengis.util.FactoryException;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class WMSMapLayerTest extends org.geotoolkit.test.TestBase {
+public class WMSMapLayerTest {
 
     private final WebMapClient SERVER_111;
     private final WebMapClient SERVER_130;

@@ -32,13 +32,12 @@ import org.opengis.metadata.identification.Resolution;
 import org.opengis.metadata.identification.DataIdentification;
 import org.opengis.coverage.grid.RectifiedGrid;
 
-import org.apache.sis.test.DependsOn;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.util.SimpleInternationalString;
 
 import org.junit.*;
 import static org.junit.Assert.*;
-import static org.apache.sis.test.Assertions.assertMultilinesEquals;
+import static org.geotoolkit.test.Assertions.assertMultilinesEquals;
 import static org.geotoolkit.test.Commons.*;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
 
@@ -51,8 +50,7 @@ import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMA
  *
  * @since 3.06
  */
-@DependsOn(MetadataNodeAccessorTest.class)
-public final strictfp class MetadataProxyTest extends org.geotoolkit.test.TestBase {
+public final class MetadataProxyTest {
     /**
      * Tests the proxy with some properties defined under the {@code "ImageDescription"} node
      * without children.

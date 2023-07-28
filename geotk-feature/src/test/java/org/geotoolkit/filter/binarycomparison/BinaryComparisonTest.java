@@ -27,14 +27,14 @@ import org.opengis.filter.Filter;
 import org.opengis.filter.MatchAction;
 
 import static org.junit.Assert.*;
-import static org.apache.sis.test.Assertions.assertSerializedEquals;
+import static org.geotoolkit.test.Assertions.assertSerializedEquals;
 
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public class BinaryComparisonTest extends org.geotoolkit.test.TestBase {
+public class BinaryComparisonTest {
     @Test
     public void testIsEqualTo() {
         Filter filter;

@@ -29,7 +29,7 @@ import static java.lang.StrictMath.*;
  *
  * @author Remi Marechal (Geomatys).
  */
-public class LineStringTranslatorTest extends org.geotoolkit.test.TestBase {
+public class LineStringTranslatorTest {
 
     /**
      * Accepted test tolerance.

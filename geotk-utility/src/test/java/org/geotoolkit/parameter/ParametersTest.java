@@ -36,11 +36,8 @@ import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
  * Tests the static method in the {@link Parameters} utility class.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.18
- *
- * @since 3.05
  */
-public final strictfp class ParametersTest extends org.geotoolkit.test.TestBase {
+public final class ParametersTest {
     /**
      * Constructs a descriptor for a mandatory parameter in a range of integer values.
      *

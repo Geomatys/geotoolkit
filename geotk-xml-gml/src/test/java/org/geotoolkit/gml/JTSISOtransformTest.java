@@ -30,7 +30,7 @@ import org.junit.Test;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class JTSISOtransformTest extends org.geotoolkit.test.TestBase {
+public class JTSISOtransformTest {
 
     @Test
     public void polygonToISOTest() throws Exception {

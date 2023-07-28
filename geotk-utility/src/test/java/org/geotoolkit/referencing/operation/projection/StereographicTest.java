@@ -34,7 +34,7 @@ import static org.geotoolkit.referencing.operation.provider.Stereographic.PARAME
  *
  * @since 3.19
  */
-public final strictfp class StereographicTest extends ProjectionTestBase {
+public final class StereographicTest extends ProjectionTestBase {
     /**
      * Creates a default test suite.
      */

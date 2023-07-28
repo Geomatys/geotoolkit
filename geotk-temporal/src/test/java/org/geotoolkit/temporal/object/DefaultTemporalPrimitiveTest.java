@@ -37,7 +37,7 @@ import org.opengis.temporal.TemporalPrimitive;
  * @author Mehdi Sidhoum (Geomatys)
  * @module
  */
-public class DefaultTemporalPrimitiveTest extends org.geotoolkit.test.TestBase {
+public class DefaultTemporalPrimitiveTest {
 
     private TemporalPrimitive temporalPrimitive1;
     private TemporalPrimitive temporalPrimitive2;

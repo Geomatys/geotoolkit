@@ -33,7 +33,7 @@ import org.junit.Test;
  *
  * @author Theo Zozime
  */
-public class FeatureCollectionToComplexConverterTest extends org.geotoolkit.test.TestBase {
+public class FeatureCollectionToComplexConverterTest {
 
     @Test
     public void testJSONConversion() throws Exception {

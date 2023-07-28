@@ -37,7 +37,7 @@ import org.opengis.util.FactoryException;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class J2DCanvasTest extends org.geotoolkit.test.TestBase {
+public class J2DCanvasTest {
 
     public J2DCanvasTest() {
     }

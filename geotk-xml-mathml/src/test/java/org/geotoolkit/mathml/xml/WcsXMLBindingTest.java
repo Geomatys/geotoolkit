@@ -31,7 +31,7 @@ import static org.junit.Assert.*;
  * @author Guilhem Legal (Geomatys)
  * @module
  */
-public class WcsXMLBindingTest extends org.geotoolkit.test.TestBase {
+public class WcsXMLBindingTest {
 
     private static MarshallerPool pool;
     private Marshaller   marshaller;

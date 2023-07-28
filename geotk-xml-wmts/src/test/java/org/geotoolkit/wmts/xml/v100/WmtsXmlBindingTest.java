@@ -31,7 +31,7 @@ import org.apache.sis.xml.MarshallerPool;
 import org.junit.*;
 
 import static org.junit.Assert.*;
-import static org.apache.sis.metadata.Assertions.assertXmlEquals;
+import static org.geotoolkit.test.Assertions.assertXmlEquals;
 
 
 /**
@@ -39,7 +39,7 @@ import static org.apache.sis.metadata.Assertions.assertXmlEquals;
  * @author Guilhem Legal (Geomatys)
  * @module
  */
-public class WmtsXmlBindingTest extends org.geotoolkit.test.TestBase {
+public class WmtsXmlBindingTest {
 
     private MarshallerPool pool;
     private Unmarshaller unmarshaller;

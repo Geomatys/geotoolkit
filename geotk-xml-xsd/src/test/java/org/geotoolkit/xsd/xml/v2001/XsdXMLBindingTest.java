@@ -31,7 +31,7 @@ import static org.junit.Assert.*;
  * @author Guilhem Legal (Geomatys)
  * @module
  */
-public class XsdXMLBindingTest extends org.geotoolkit.test.TestBase {
+public class XsdXMLBindingTest {
 
     private Logger logger = Logger.getLogger("org.geotoolkit.wfs.xml");
     private static MarshallerPool pool;

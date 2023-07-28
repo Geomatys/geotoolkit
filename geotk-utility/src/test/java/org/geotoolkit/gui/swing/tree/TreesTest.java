@@ -24,18 +24,15 @@ import org.geotoolkit.resources.Vocabulary;
 
 import org.junit.*;
 import static org.junit.Assert.*;
-import static org.apache.sis.test.Assertions.assertMultilinesEquals;
+import static org.geotoolkit.test.Assertions.assertMultilinesEquals;
 
 
 /**
  * Tests the {@link Trees} implementation.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.18
- *
- * @since 3.00
  */
-public final strictfp class TreesTest extends org.geotoolkit.test.TestBase {
+public final class TreesTest {
     /**
      * Tests the formatting as a tree.
      */

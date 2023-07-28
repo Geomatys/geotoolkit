@@ -47,7 +47,7 @@ import org.opengis.util.FactoryException;
  *
  * @author Johann Sorel (geomatys)
  */
-public class CachedPointSymbolizerTest extends org.geotoolkit.test.TestBase {
+public class CachedPointSymbolizerTest {
 
     private static final float DELTA = 0.0000001f;
 

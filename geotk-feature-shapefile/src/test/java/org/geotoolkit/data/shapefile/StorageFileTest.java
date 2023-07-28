@@ -36,7 +36,7 @@ import static org.junit.Assert.*;
 import static org.geotoolkit.data.shapefile.lock.ShpFileType.*;
 import org.junit.After;
 
-public class StorageFileTest extends org.geotoolkit.test.TestBase {
+public class StorageFileTest {
 
     private ShpFiles shpFiles1;
     private ShpFiles shpFiles2;

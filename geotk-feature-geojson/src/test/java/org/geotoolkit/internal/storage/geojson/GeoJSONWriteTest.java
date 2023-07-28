@@ -30,14 +30,13 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Stream;
 import org.apache.sis.coverage.grid.GridCoverage;
-import org.apache.sis.test.feature.FeatureComparator;
+import org.geotoolkit.test.feature.FeatureComparator;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.WritableFeatureSet;
-import org.apache.sis.test.TestCase;
 import org.apache.sis.util.SimpleInternationalString;
 import org.geotoolkit.internal.geojson.binding.GeoJSONGeometry;
 import org.geotoolkit.storage.geojson.GeoJSONProvider;
@@ -64,7 +63,7 @@ import org.opengis.feature.PropertyType;
  * @since   2.0
  * @module
  */
-public class GeoJSONWriteTest extends TestCase {
+public class GeoJSONWriteTest {
 
     private static final GeometryFactory GF = org.geotoolkit.geometry.jts.JTS.getFactory();
     private static final WKTReader WKT_READER = new WKTReader();

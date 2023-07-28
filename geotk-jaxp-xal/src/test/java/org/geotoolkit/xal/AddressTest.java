@@ -42,7 +42,7 @@ import static org.junit.Assert.*;
  * @author Samuel Andrés
  * @module
  */
-public class AddressTest extends org.geotoolkit.test.TestBase {
+public class AddressTest {
 
 
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/xal/address.xml";

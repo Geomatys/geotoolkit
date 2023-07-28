@@ -43,7 +43,7 @@ import static org.junit.Assert.*;
  *
  * @author Martin Desruisseaux (Geomatys)
  */
-public final strictfp class XImageIOTest extends ImageTestBase {
+public final class XImageIOTest extends ImageTestBase {
     /**
      * Creates a new test suite.
      */

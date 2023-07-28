@@ -28,7 +28,7 @@ import org.junit.Test;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class SOSClientFactoryTest extends org.geotoolkit.test.TestBase {
+public class SOSClientFactoryTest {
 
     public SOSClientFactoryTest() {
     }

@@ -37,7 +37,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class ShpFilesTest extends org.geotoolkit.test.TestBase {
+public class ShpFilesTest {
 
     @Test
     public void testCaseURL() throws Exception {

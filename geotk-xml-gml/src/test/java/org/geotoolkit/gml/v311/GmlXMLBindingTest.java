@@ -39,7 +39,7 @@ import org.apache.sis.xml.MarshallerPool;
 
 import org.junit.*;
 import static org.junit.Assert.*;
-import static org.apache.sis.metadata.Assertions.assertXmlEquals;
+import static org.geotoolkit.test.Assertions.assertXmlEquals;
 
 import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
@@ -49,7 +49,7 @@ import org.opengis.temporal.Period;
  * @author Guilhem Legal (Geomatys)
  * @module
  */
-public class GmlXMLBindingTest extends org.geotoolkit.test.TestBase {
+public class GmlXMLBindingTest {
 
     /**
      * GML namespace for this class.

@@ -31,7 +31,7 @@ import org.junit.Test;
 import org.junit.Ignore;
 
 import static org.junit.Assert.*;
-import static org.apache.sis.test.Assertions.assertMultilinesEquals;
+import static org.geotoolkit.test.Assertions.assertMultilinesEquals;
 
 
 /**
@@ -48,7 +48,7 @@ import static org.apache.sis.test.Assertions.assertMultilinesEquals;
  *
  * @see <a href="http://jira.geotoolkit.org/browse/GEOTK-232">GEOTK-232</a>
  */
-public final strictfp class TextMatrixImageWriterTest extends TextImageWriterTestBase {
+public final class TextMatrixImageWriterTest extends TextImageWriterTestBase {
     /**
      * Creates a new test suite.
      */

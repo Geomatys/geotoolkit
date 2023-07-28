@@ -34,7 +34,7 @@ import org.opengis.temporal.OrdinalEra;
  * @author Mehdi Sidhoum (Geomatys)
  * @module
  */
-public class DefaultOrdinalEraTest extends org.geotoolkit.test.TestBase {
+public class DefaultOrdinalEraTest {
 
     private OrdinalEra ordinalEra1;
     private OrdinalEra ordinalEra2;

@@ -46,7 +46,7 @@ import org.opengis.util.FactoryException;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class GridCoverageStackTest extends org.geotoolkit.test.TestBase {
+public class GridCoverageStackTest {
 
     private static final double DELTA = 0.00000001;
 

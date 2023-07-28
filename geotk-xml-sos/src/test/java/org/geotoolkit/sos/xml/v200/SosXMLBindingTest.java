@@ -25,7 +25,7 @@ import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
 import javax.xml.parsers.ParserConfigurationException;
-import org.apache.sis.test.xml.DocumentComparator;
+import org.geotoolkit.test.xml.DocumentComparator;
 import org.geotoolkit.sos.xml.SOSMarshallerPool;
 
 import org.apache.sis.xml.MarshallerPool;
@@ -44,7 +44,7 @@ import org.xml.sax.SAXException;
  * @author Guilhem Legal (Geomatys)
  * @module
  */
-public class SosXMLBindingTest extends org.geotoolkit.test.TestBase {
+public class SosXMLBindingTest {
 
     private static MarshallerPool pool;
     private Marshaller   marshaller;

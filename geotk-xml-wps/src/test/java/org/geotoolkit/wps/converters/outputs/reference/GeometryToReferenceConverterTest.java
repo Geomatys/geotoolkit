@@ -35,7 +35,7 @@ import org.opengis.util.FactoryException;
  *
  * @author Theo Zozime
  */
-public class GeometryToReferenceConverterTest extends org.geotoolkit.test.TestBase {
+public class GeometryToReferenceConverterTest {
 
     @Test
     public void testJSONConversion() throws DataStoreException, IOException, URISyntaxException, FactoryException {

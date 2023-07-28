@@ -21,6 +21,6 @@ package org.geotoolkit.wps.converters;
  *
  * @author Quentin Boileau (Geomatys)
  */
-public abstract class AbstractWPSConverterTest extends org.geotoolkit.test.TestBase {
+public abstract class AbstractWPSConverterTest {
 
 }

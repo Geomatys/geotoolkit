@@ -28,7 +28,7 @@ import org.geotoolkit.image.io.plugin.TestTiffImageReaderWriter;
  *
  * @author remi Marechal (geomatys).
  */
-public abstract strictfp class TestTiffImageReader extends TestTiffImageReaderWriter {
+public abstract class TestTiffImageReader extends TestTiffImageReaderWriter {
 
     public TestTiffImageReader(String compression) throws IOException {
         super(compression);

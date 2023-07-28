@@ -28,7 +28,7 @@ import static org.junit.Assert.*;
  *
  * @author Legal Guilhem (Geomatys)
  */
-public class RequestsUtilitiesTest extends org.geotoolkit.test.TestBase {
+public class RequestsUtilitiesTest {
     /**
      * @throws java.lang.Exception
      */

@@ -28,7 +28,7 @@ import org.opengis.feature.Feature;
  *
  * @author Theo Zozime
  */
-public class ReferenceToFeatureConverterTest extends org.geotoolkit.test.TestBase {
+public class ReferenceToFeatureConverterTest {
 
     @Test
     public void testJSONConversion() throws IOException {

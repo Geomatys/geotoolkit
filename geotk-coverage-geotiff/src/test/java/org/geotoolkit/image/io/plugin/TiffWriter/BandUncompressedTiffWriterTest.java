@@ -37,7 +37,7 @@ import org.junit.Test;
  *
  * @author Remi Marechal (Geomatys)
  */
-public strictfp class BandUncompressedTiffWriterTest extends UncompressedTiffWriterTest {
+public class BandUncompressedTiffWriterTest extends UncompressedTiffWriterTest {
 
     public BandUncompressedTiffWriterTest() throws IOException {
     }

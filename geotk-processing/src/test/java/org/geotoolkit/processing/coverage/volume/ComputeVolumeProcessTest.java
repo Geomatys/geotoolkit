@@ -49,7 +49,7 @@ import org.opengis.referencing.cs.CoordinateSystem;
  *
  * @author Remi Marechal (Geomatys).
  */
-public strictfp class ComputeVolumeProcessTest extends org.geotoolkit.test.TestBase {
+public class ComputeVolumeProcessTest {
 
     /**
      * Test tolerance relative to the expected value.

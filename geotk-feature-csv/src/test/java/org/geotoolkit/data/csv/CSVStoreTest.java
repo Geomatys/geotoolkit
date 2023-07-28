@@ -48,7 +48,7 @@ import org.opengis.util.GenericName;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class CSVStoreTest extends org.geotoolkit.test.TestBase {
+public class CSVStoreTest {
 
     public CSVStoreTest() {
     }

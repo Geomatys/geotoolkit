@@ -43,7 +43,6 @@ import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
-import org.apache.sis.test.TestUtilities;
 import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.image.internal.ImageUtils;
 import org.geotoolkit.image.internal.PhotometricInterpretation;
@@ -126,7 +125,7 @@ public strictfp abstract class TestTiffImageReaderWriter {
             writerParam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
             writerParam.setCompressionType(compression);
         }
-        random = TestUtilities.createRandomNumberGenerator();
+        random = new Random();
     }
 
     @After

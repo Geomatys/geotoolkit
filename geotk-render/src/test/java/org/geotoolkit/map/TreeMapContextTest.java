@@ -35,7 +35,7 @@ import org.opengis.style.StyleFactory;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class TreeMapContextTest extends org.geotoolkit.test.TestBase {
+public class TreeMapContextTest {
 
     private static final MutableStyleFactory SF = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
 

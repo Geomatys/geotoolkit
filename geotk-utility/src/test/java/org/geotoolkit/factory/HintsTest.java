@@ -21,7 +21,7 @@ import java.awt.RenderingHints;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
-import static org.apache.sis.test.Assertions.assertSerializedEquals;
+import static org.geotoolkit.test.Assertions.assertSerializedEquals;
 
 
 
@@ -31,7 +31,7 @@ import static org.apache.sis.test.Assertions.assertSerializedEquals;
  * @author Jody Garnett (Refractions)
  * @author Martin Desruisseaux (IRD)
  */
-public final strictfp class HintsTest extends org.geotoolkit.test.TestBase {
+public final class HintsTest {
     /**
      * Makes sure that J2SE 1.4 assertions are enabled.
      */

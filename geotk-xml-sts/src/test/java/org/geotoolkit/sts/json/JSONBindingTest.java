@@ -33,7 +33,7 @@ import org.junit.Test;
  *
  * @author guilhem
  */
-public class JSONBindingTest extends org.geotoolkit.test.TestBase {
+public class JSONBindingTest {
 
     @Test
     public void testMarshallingDataArray() throws Exception {

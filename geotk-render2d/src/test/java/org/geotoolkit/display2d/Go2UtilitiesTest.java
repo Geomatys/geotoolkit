@@ -25,7 +25,6 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
-import org.geotoolkit.test.TestBase;
 import org.junit.Test;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -38,9 +37,8 @@ import static org.junit.Assert.assertTrue;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
-public class Go2UtilitiesTest extends TestBase {
+public class Go2UtilitiesTest {
 
     private static final double DELTA = 0.0000001d;
 

@@ -48,7 +48,7 @@ import org.opengis.temporal.TemporalReferenceSystem;
  * @author Mehdi Sidhoum (Geomatys)
  * @module
  */
-public class DefaultCalendarTest extends org.geotoolkit.test.TestBase {
+public class DefaultCalendarTest {
 
     private Calendar calendar1;
     private Calendar calendar2;

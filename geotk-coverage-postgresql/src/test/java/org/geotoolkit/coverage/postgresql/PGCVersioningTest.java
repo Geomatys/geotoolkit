@@ -64,7 +64,7 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class PGCVersioningTest extends org.geotoolkit.test.TestBase {
+public class PGCVersioningTest {
 
     private static final TimeZone GMT0 = TimeZone.getTimeZone("GMT+0");
 

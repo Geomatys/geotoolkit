@@ -33,7 +33,7 @@ import org.opengis.util.FactoryException;
  * @author Quentin Boileau
  * @module
  */
-public class SortByConverterTest extends org.geotoolkit.test.TestBase {
+public class SortByConverterTest {
 
 
     @Test

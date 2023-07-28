@@ -32,7 +32,7 @@ import static org.junit.Assert.assertTrue;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class SMLStandardTest extends org.geotoolkit.test.TestBase {
+public class SMLStandardTest {
 
     @Test
     public void systemAsMapTest() throws Exception {

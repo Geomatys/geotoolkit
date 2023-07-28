@@ -34,7 +34,7 @@ import static java.lang.StrictMath.*;
  * @since 3.19
  */
 @SuppressWarnings("serial")
-final strictfp class ImagePanel extends JPanel {
+final class ImagePanel extends JPanel {
     /**
      * The image to show.
      */

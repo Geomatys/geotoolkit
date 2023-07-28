@@ -26,7 +26,7 @@ import static org.junit.Assert.*;
  *
  * @author Olivier Terral (Geomatys)
  */
-public class AbstractNcGetLegendTest extends org.geotoolkit.test.TestBase {
+public class AbstractNcGetLegendTest {
     public AbstractNcGetLegendTest() {}
 
     /**

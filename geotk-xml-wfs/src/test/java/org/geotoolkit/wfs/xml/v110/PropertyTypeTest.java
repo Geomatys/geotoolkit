@@ -37,7 +37,7 @@ import static org.junit.Assert.*;
  * @author Guilhem Legal (Geomatys)
  * @module
  */
-public class PropertyTypeTest extends org.geotoolkit.test.TestBase {
+public class PropertyTypeTest {
 
     private MarshallerPool pool;
     private Unmarshaller unmarshaller;

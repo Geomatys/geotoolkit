@@ -70,7 +70,7 @@ import static org.junit.Assert.*;
  * @author Guilhem Legal
  * @module
  */
-public class LuceneTest extends org.geotoolkit.test.TestBase {
+public class LuceneTest {
 
     private static final GeometryFactory GF = JTS.getFactory();
     private static final Logger LOGGER = Logger.getLogger("org.constellation.lucene");

@@ -46,7 +46,7 @@ import org.geotoolkit.ows.xml.v200.CodeType;
 import org.geotoolkit.ows.xml.v200.ObjectFactory;
 
 import static org.junit.Assert.*;
-import static org.apache.sis.metadata.Assertions.assertXmlEquals;
+import static org.geotoolkit.test.Assertions.assertXmlEquals;
 
 
 /**
@@ -55,7 +55,7 @@ import static org.apache.sis.metadata.Assertions.assertXmlEquals;
  * @author Guilhem Legal
  * @module
  */
-public class OWSXmlBindingTest extends org.geotoolkit.test.TestBase {
+public class OWSXmlBindingTest {
 
     private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.ows.xml");
 

@@ -31,7 +31,7 @@ import static org.junit.Assert.*;
  * @author Mehdi Sidhoum (Geomatys)
  * @module
  */
-public class DefaultIntervalLengthTest extends org.geotoolkit.test.TestBase {
+public class DefaultIntervalLengthTest {
 
     private IntervalLength intervalLength1;
     private IntervalLength intervalLength2;

@@ -26,7 +26,7 @@ import org.junit.Test;
  *
  * @author Quentin Boileau (Geomatys).
  */
-public class IntegeArrayToStringConverterTest extends org.geotoolkit.test.TestBase {
+public class IntegeArrayToStringConverterTest {
 
     @Test
     public void testConversion() throws UnconvertibleObjectException  {

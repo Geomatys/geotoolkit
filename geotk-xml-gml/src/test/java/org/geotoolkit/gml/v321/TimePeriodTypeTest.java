@@ -36,7 +36,7 @@ import static org.junit.Assert.*;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class TimePeriodTypeTest extends org.geotoolkit.test.TestBase {
+public class TimePeriodTypeTest {
 
     @Test
     public void getTimeTest() throws Exception {

@@ -29,7 +29,7 @@ import java.util.Collection;
 import java.util.List;
 import jakarta.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
-import org.apache.sis.test.feature.FeatureComparator;
+import org.geotoolkit.test.feature.FeatureComparator;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
@@ -57,7 +57,7 @@ import org.xml.sax.SAXException;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class XmlFeatureTypeTest extends org.geotoolkit.test.TestBase {
+public class XmlFeatureTypeTest {
 
     private static void removeGMLBaseTypes(List<FeatureType> types){
         for(int i=types.size()-1;i>=0;i--){

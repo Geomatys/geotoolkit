@@ -28,7 +28,7 @@ import org.junit.*;
 
 import static org.junit.Assume.*;
 import static org.junit.Assert.*;
-import static org.apache.sis.test.Assertions.assertMultilinesEquals;
+import static org.geotoolkit.test.Assertions.assertMultilinesEquals;
 import static org.geotoolkit.test.Commons.decodeQuotes;
 
 
@@ -40,7 +40,7 @@ import static org.geotoolkit.test.Commons.decodeQuotes;
  *
  * @since 2.4
  */
-public final strictfp class OperationFactoryTest extends EpsgFactoryTestBase {
+public final class OperationFactoryTest extends EpsgFactoryTestBase {
     /**
      * The operation factory being tested.
      */

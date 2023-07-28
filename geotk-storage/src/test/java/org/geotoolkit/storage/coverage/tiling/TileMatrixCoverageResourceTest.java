@@ -32,7 +32,7 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.tiling.Tile;
-import org.apache.sis.test.storage.CoverageReadConsistency;
+import org.geotoolkit.test.storage.CoverageReadConsistency;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;

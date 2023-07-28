@@ -22,7 +22,6 @@ import org.opengis.util.FactoryException;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.factory.sql.EPSGFactory;
 import org.apache.sis.referencing.factory.GeodeticAuthorityFactory;
-import org.geotoolkit.test.TestBase;
 
 import org.junit.*;
 
@@ -31,11 +30,8 @@ import org.junit.*;
  * Base class for the tests which will require a connection to an EPSG database.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
- *
- * @since 3.00
  */
-public abstract strictfp class EpsgFactoryTestBase extends TestBase {
+public abstract class EpsgFactoryTestBase {
     /**
      * The factory to test, or {@code null} if we can't connect to the
      * database for the platform the test are running on.

@@ -29,14 +29,13 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.sis.internal.feature.AttributeConvention;
-import org.apache.sis.test.feature.FeatureComparator;
+import org.geotoolkit.test.feature.FeatureComparator;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStores;
 import org.apache.sis.storage.WritableFeatureSet;
-import org.apache.sis.test.TestCase;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.internal.geojson.GeoJSONParser;
 import org.geotoolkit.internal.geojson.binding.GeoJSONFeature;
@@ -74,7 +73,7 @@ import static org.junit.Assert.fail;
  * @since   2.0
  * @module
  */
-public class GeoJSONReadTest extends TestCase {
+public class GeoJSONReadTest {
 
     @Test
     public void readPointTest() throws DataStoreException, URISyntaxException {

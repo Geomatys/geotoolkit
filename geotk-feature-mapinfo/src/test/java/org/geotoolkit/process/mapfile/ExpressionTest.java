@@ -39,7 +39,7 @@ import static org.geotoolkit.process.mapfile.MapfileFilterToOGCFilterDescriptor.
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class ExpressionTest extends org.geotoolkit.test.TestBase {
+public class ExpressionTest {
 
     private static final FilterFactory FF = FilterUtilities.FF;
 

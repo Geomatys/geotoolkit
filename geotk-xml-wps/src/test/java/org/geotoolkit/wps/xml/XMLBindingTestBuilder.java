@@ -16,7 +16,7 @@ import jakarta.xml.bind.Unmarshaller;
 import jakarta.xml.bind.ValidationEvent;
 import jakarta.xml.bind.ValidationEventHandler;
 import javax.xml.parsers.ParserConfigurationException;
-import org.apache.sis.test.xml.DocumentComparator;
+import org.geotoolkit.test.xml.DocumentComparator;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.xml.MarshallerPool;
 import org.junit.Assert;
