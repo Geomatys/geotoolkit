@@ -32,7 +32,7 @@ import org.opengis.filter.FilterFactory;
  * @author Quentin Boileau
  * @module
  */
-public class FilterConverterTest extends org.geotoolkit.test.TestBase {
+public class FilterConverterTest {
 
 
     @Test

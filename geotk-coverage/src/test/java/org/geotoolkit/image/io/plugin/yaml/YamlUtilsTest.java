@@ -46,7 +46,7 @@ import org.opengis.referencing.operation.MathTransform1D;
  * @see YamlSampleCategory
  * @see YamlSampleDimension
  */
-public class YamlUtilsTest extends org.geotoolkit.test.TestBase {
+public class YamlUtilsTest {
 
     /**
      * Simply yaml binding of only one {@link SampleDimension}.

@@ -37,7 +37,7 @@ import org.opengis.util.NoSuchIdentifierException;
  * @author Quentin Boileau
  * @module
  */
-public abstract class AbstractProcessTest extends org.geotoolkit.test.TestBase {
+public abstract class AbstractProcessTest {
 
     private static final String factory = GeotkProcessingRegistry.NAME;
     private String process;

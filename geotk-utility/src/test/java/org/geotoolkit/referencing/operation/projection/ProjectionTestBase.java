@@ -40,11 +40,8 @@ import static org.junit.Assert.*;
  * Base class for tests of {@link UnitaryProjection} implementations.
  *
  * @author Martin Desruisseaux (Geomatys)
- *
- * @since 3.00
  */
-//@DependsOn({ProjectiveTransformTest.class, ConcatenatedTransformTest.class})
-public abstract strictfp class ProjectionTestBase extends TransformTestBase {
+public abstract class ProjectionTestBase extends TransformTestBase {
     /**
      * The radius of the sphere used in sphere test cases.
      */

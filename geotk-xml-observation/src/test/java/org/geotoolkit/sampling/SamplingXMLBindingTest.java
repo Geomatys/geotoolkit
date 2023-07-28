@@ -41,7 +41,7 @@ import org.junit.*;
 import org.xml.sax.SAXException;
 
 import static org.junit.Assert.*;
-import static org.apache.sis.metadata.Assertions.assertXmlEquals;
+import static org.geotoolkit.test.Assertions.assertXmlEquals;
 
 
 /**
@@ -49,7 +49,7 @@ import static org.apache.sis.metadata.Assertions.assertXmlEquals;
  * @author Guilhem Legal (Geomatys)
  * @module
  */
-public class SamplingXMLBindingTest extends org.geotoolkit.test.TestBase {
+public class SamplingXMLBindingTest {
 
     private MarshallerPool pool;
     private Unmarshaller unmarshaller;

@@ -88,7 +88,7 @@ import org.opengis.util.FactoryException;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class RasterSymbolizerTest extends org.geotoolkit.test.TestBase {
+public class RasterSymbolizerTest {
 
     private static final MutableStyleFactory SF = DefaultStyleFactory.provider();
     protected static final FilterFactory FF = FilterUtilities.FF;

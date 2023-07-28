@@ -24,7 +24,7 @@ import static org.junit.Assert.*;
  *
  * @author jsorel
  */
-public class FileSystemNodeTest extends org.geotoolkit.test.TestBase {
+public class FileSystemNodeTest {
 
     public static final DataDefinition DATA_DEFINITION = new DataDefinition("US-ASCII", Integer.class, Long.class);
 

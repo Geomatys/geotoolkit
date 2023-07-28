@@ -38,8 +38,6 @@ import java.util.logging.Logger;
 import javax.net.ssl.HttpsURLConnection;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import org.apache.sis.test.DependsOnMethod;
-import org.apache.sis.test.TestCase;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Assume;
@@ -54,7 +52,7 @@ import org.w3c.dom.NodeList;
  *
  * @author Alexis Manin (Geomatys)
  */
-public class HtmlBuilderTest extends TestCase {
+public class HtmlBuilderTest {
 
     private static URL W3C_VALIDATOR;
     private static Path TEMP_DIR;
@@ -97,7 +95,6 @@ public class HtmlBuilderTest extends TestCase {
     }
 
     @Test
-    @DependsOnMethod("testAppendChild")
     public void testNewHtmlDocument() throws Exception {
         final String title = "myHtml";
         Document htmlDoc = HtmlBuilder.newHtmlDocument(DocumentBuilderFactory.newInstance().newDocumentBuilder(), title);
@@ -106,7 +103,6 @@ public class HtmlBuilderTest extends TestCase {
     }
 
     @Test
-    @DependsOnMethod("testNewHtmlDocument")
     public void testWriteDocument() throws Exception {
         final String title = "TEST";
         final DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -169,7 +165,6 @@ public class HtmlBuilderTest extends TestCase {
     }
 
     @Test
-    @DependsOnMethod("testWriteDocument")
     public void testBuild() throws Exception {
         final Path myDir = Files.createTempDirectory(TEMP_DIR, "myDear");
         final Connection con = createMockConnection();

@@ -38,7 +38,7 @@ import org.opengis.util.InternationalString;
  * @author Mehdi Sidhoum (Geomatys)
  * @module
  */
-public class DefaultTemporalReferenceSystemTest extends org.geotoolkit.test.TestBase {
+public class DefaultTemporalReferenceSystemTest {
 
     private TemporalReferenceSystem temporalReferenceSystem1;
     private TemporalReferenceSystem temporalReferenceSystem2;

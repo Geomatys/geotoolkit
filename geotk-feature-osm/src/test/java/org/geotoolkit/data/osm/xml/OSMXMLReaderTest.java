@@ -44,7 +44,7 @@ import org.opengis.feature.Feature;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class OSMXMLReaderTest extends org.geotoolkit.test.TestBase {
+public class OSMXMLReaderTest {
 
     private static final double DELTA = 0.000000001;
 

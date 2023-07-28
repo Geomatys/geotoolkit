@@ -29,7 +29,7 @@ import org.apache.sis.util.ArgumentChecks;
  *
  * @author Remi Marechal (Geomatys).
  */
-public strictfp class SeekableByteArrayChannel implements SeekableByteChannel {
+public class SeekableByteArrayChannel implements SeekableByteChannel {
 
     /**
      * Bytes array where to write the data.

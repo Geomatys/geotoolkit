@@ -41,8 +41,6 @@ import org.apache.sis.referencing.datum.BursaWolfParameters;
 import org.apache.sis.referencing.datum.DefaultGeodeticDatum;
 import org.apache.sis.referencing.IdentifiedObjects;
 
-import org.apache.sis.test.DependsOn;
-import org.geotoolkit.test.TestBase;
 
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
@@ -50,8 +48,8 @@ import org.apache.sis.referencing.cs.AxesConvention;
 import org.junit.*;
 import static org.junit.Assume.assumeTrue;
 import static org.junit.Assert.*;
-import static org.apache.sis.test.Assertions.assertMultilinesEquals;
-import static org.apache.sis.test.Assertions.assertNotDeepEquals;
+import static org.geotoolkit.test.Assertions.assertMultilinesEquals;
+import static org.geotoolkit.test.Assertions.assertNotDeepEquals;
 import static org.geotoolkit.test.Assert.assertDiagonalMatrix;
 import static org.geotoolkit.test.Commons.*;
 import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
@@ -65,12 +63,8 @@ import org.geotoolkit.factory.Factories;
  * @author Jody Garnett (Refractions)
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Andrea Aime (TOPP)
- * @version 3.16
- *
- * @since 2.4
  */
-@DependsOn(CRS_Test.class)
-public final strictfp class CRS_WithEpsgTest extends TestBase {
+public final class CRS_WithEpsgTest {
     /**
      * Ensures that the EPSG database is available. If no EPSG database is installed,
      * then the tests will be skipped. We do not cause a test failure because the EPSG

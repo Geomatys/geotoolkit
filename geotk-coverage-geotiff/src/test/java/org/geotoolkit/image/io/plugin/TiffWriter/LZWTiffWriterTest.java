@@ -26,7 +26,7 @@ import java.io.IOException;
  * @author Remi Marechal (Geomatys).
  * @see TiffImageWriteParam#compressionTypes
  */
-public strictfp class LZWTiffWriterTest extends TestTiffImageWriter {
+public class LZWTiffWriterTest extends TestTiffImageWriter {
 
     public LZWTiffWriterTest() throws IOException {
         super("LZW");

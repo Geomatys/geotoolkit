@@ -23,9 +23,9 @@ import org.opengis.referencing.crs.CRSFactory;
 import org.opengis.referencing.datum.DatumFactory;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransformFactory;
+import org.opengis.test.referencing.TransformTestCase;
 
 import org.geotoolkit.factory.Hints;
-import org.apache.sis.referencing.operation.transform.MathTransformTestCase;
 
 import static org.junit.Assert.*;
 
@@ -36,7 +36,7 @@ import static org.junit.Assert.*;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  */
-public abstract strictfp class TransformTestBase extends MathTransformTestCase {
+public abstract class TransformTestBase extends TransformTestCase {
     /**
      * The coordinate reference system factory to use for testing.
      */

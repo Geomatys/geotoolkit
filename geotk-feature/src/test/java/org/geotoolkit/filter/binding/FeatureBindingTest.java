@@ -39,7 +39,7 @@ import static org.geotoolkit.filter.FilterTestConstants.*;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FeatureBindingTest extends org.geotoolkit.test.TestBase {
+public class FeatureBindingTest {
 
     @Test
     public void testFactories(){

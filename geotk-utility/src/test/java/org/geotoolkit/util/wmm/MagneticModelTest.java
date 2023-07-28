@@ -19,7 +19,6 @@ package org.geotoolkit.util.wmm;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import org.geotoolkit.test.TestBase;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -27,7 +26,7 @@ import org.junit.Test;
  *
  * @author Hasdenteufel Eric (Geomatys)
  */
-public final class MagneticModelTest extends TestBase {
+public final class MagneticModelTest {
 
      @Test
      public void testRead() throws IOException, URISyntaxException {
@@ -35,7 +34,5 @@ public final class MagneticModelTest extends TestBase {
          Assert.assertNotNull(magneticModel);
          Assert.assertEquals(12,magneticModel.nMax);
          Assert.assertEquals("WMM-2015",magneticModel.ModelName);
-
      }
-
 }

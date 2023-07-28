@@ -34,7 +34,7 @@ import org.junit.Test;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class TreeMapContextTest extends org.geotoolkit.test.TestBase {
+public class TreeMapContextTest {
 
     private static final MutableStyleFactory SF = DefaultStyleFactory.provider();
 

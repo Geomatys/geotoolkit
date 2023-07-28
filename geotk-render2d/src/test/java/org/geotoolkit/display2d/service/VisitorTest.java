@@ -63,7 +63,7 @@ import org.opengis.referencing.datum.PixelInCell;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class VisitorTest extends org.geotoolkit.test.TestBase {
+public class VisitorTest {
     /**
      * Feature visitor test.
      */

@@ -41,11 +41,8 @@ import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
  * than the metadata module in order to include the {@link CRSFactory} implementation in the test.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.03
- *
- * @since 3.03
  */
-public final strictfp class FactoryMethodTest extends org.geotoolkit.test.TestBase {
+public final class FactoryMethodTest {
     /**
      * Tests the obtention of a factory method.
      */

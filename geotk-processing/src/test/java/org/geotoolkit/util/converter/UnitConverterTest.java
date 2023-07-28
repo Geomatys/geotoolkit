@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
  * @author Quentin Boileau
  * @module
  */
-public class UnitConverterTest extends org.geotoolkit.test.TestBase {
+public class UnitConverterTest {
 
 
     @Test

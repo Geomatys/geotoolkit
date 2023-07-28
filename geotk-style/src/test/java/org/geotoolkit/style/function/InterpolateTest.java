@@ -39,7 +39,7 @@ import org.opengis.feature.FeatureType;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class InterpolateTest extends org.geotoolkit.test.TestBase {
+public class InterpolateTest {
 
     public InterpolateTest() {
     }

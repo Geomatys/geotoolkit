@@ -62,7 +62,7 @@ import org.opengis.util.FactoryException;
  *
  * TODO : Debug ignored tests.
  */
-public class GeoTiffRWTest extends org.geotoolkit.test.TestBase {    // LGPL
+public class GeoTiffRWTest {    // LGPL
 
     private final File tempDir;
 

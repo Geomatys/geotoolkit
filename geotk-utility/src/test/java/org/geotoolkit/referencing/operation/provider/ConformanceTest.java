@@ -32,7 +32,6 @@ import org.apache.sis.util.Deprecable;
 import org.apache.sis.metadata.iso.citation.Citations;
 import org.apache.sis.referencing.operation.transform.DefaultMathTransformFactory;
 import org.geotoolkit.factory.Factories;
-import org.geotoolkit.test.TestBase;
 import org.junit.*;
 import static org.junit.Assert.*;
 import static org.junit.Assume.*;
@@ -44,11 +43,8 @@ import static org.junit.Assume.*;
  * declared in the EPSG database, but this could be extended to other authorities as well.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.20
- *
- * @since 3.03
  */
-public final strictfp class ConformanceTest extends TestBase {
+public final class ConformanceTest {
     /**
      * Deprecated method names to ignore.
      */

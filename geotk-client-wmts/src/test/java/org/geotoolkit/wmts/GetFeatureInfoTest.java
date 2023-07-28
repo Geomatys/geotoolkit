@@ -33,7 +33,7 @@ import org.opengis.util.FactoryException;
  *
  * @author Cédric Briançon (Geomatys)
  */
-public class GetFeatureInfoTest extends org.geotoolkit.test.TestBase {
+public class GetFeatureInfoTest {
     public GetFeatureInfoTest() {}
 
     /**

@@ -38,7 +38,7 @@ import org.opengis.util.InternationalString;
  * @author Mehdi Sidhoum (Geomatys)
  * @module
  */
-public class DefaultClockTest extends org.geotoolkit.test.TestBase {
+public class DefaultClockTest {
 
     private Clock clock1;
     private Clock clock2;

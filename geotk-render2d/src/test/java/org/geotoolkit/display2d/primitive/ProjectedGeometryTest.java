@@ -62,7 +62,7 @@ import org.opengis.util.FactoryException;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class ProjectedGeometryTest extends org.geotoolkit.test.TestBase {
+public class ProjectedGeometryTest {
 
     private static final double DELTA = 0.0000000001;
 

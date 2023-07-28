@@ -45,7 +45,7 @@ import static org.apache.sis.measure.Units.*;
  *
  * @since 2.1
  */
-public abstract strictfp class GridCoverageTestBase extends ImageTestBase {
+public abstract class GridCoverageTestBase extends ImageTestBase {
     /**
      * Random number generator for this test.
      */

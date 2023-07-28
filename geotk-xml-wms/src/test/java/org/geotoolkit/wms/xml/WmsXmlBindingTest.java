@@ -39,6 +39,8 @@ import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
 import jakarta.xml.bind.Unmarshaller;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.util.Constants;
+import org.apache.sis.internal.util.URLs;
 import org.apache.sis.internal.xml.LegacyNamespaces;
 import org.apache.sis.util.DefaultInternationalString;
 
@@ -49,8 +51,9 @@ import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.citation.DefaultContact;
 import org.apache.sis.metadata.iso.citation.DefaultOnlineResource;
+import org.apache.sis.metadata.iso.citation.DefaultOrganisation;
+import org.apache.sis.metadata.iso.citation.DefaultResponsibility;
 import org.apache.sis.metadata.iso.citation.DefaultResponsibleParty;
-import org.apache.sis.metadata.iso.citation.HardCodedCitations;
 import org.apache.sis.metadata.iso.extent.DefaultExtent;
 import org.apache.sis.metadata.iso.extent.DefaultTemporalExtent;
 import org.apache.sis.metadata.iso.identification.DefaultKeywords;
@@ -80,8 +83,8 @@ import org.geotoolkit.temporal.object.DefaultInstant;
 import org.opengis.referencing.IdentifiedObject;
 
 import static org.junit.Assert.*;
-import static org.apache.sis.metadata.Assertions.assertXmlEquals;
-import static org.apache.sis.test.TestUtilities.getSingleton;
+import static org.geotoolkit.test.Assertions.assertXmlEquals;
+import static org.geotoolkit.test.TestUtilities.getSingleton;
 import org.apache.sis.util.Version;
 
 
@@ -90,11 +93,27 @@ import org.apache.sis.util.Version;
  * @author Guilhem Legal (Geomatys)
  * @module
  */
-public class WmsXmlBindingTest extends org.geotoolkit.test.TestBase {
-   @BeforeClass
-   public static void setTimeZone() {
-       TimeZone.setDefault(TimeZone.getTimeZone("CET"));
-   }
+public class WmsXmlBindingTest {
+    private static final DefaultCitation EPSG;
+    static {
+        final DefaultOnlineResource r = new DefaultOnlineResource(URI.create(URLs.EPSG));
+        r.setFunction(OnLineFunction.INFORMATION);
+
+        final DefaultResponsibility p = new DefaultResponsibility(Role.PRINCIPAL_INVESTIGATOR, null,
+                new DefaultOrganisation("International Association of Oil & Gas Producers", null, null, new DefaultContact(r)));
+
+        final DefaultCitation c = new DefaultCitation("EPSG Geodetic Parameter Dataset");
+        c.getPresentationForms().add(PresentationForm.TABLE_DIGITAL);
+        c.getIdentifiers().add(new DefaultIdentifier(Constants.EPSG));
+        c.getCitedResponsibleParties().add(p);
+        c.transitionTo(DefaultCitation.State.FINAL);
+        EPSG = c;
+    }
+
+    @BeforeClass
+    public static void setTimeZone() {
+        TimeZone.setDefault(TimeZone.getTimeZone("CET"));
+    }
 
     private MarshallerPool pool;
     private Unmarshaller unmarshaller;
@@ -284,10 +303,10 @@ public class WmsXmlBindingTest extends org.geotoolkit.test.TestBase {
         extent.setTemporalElements(Arrays.asList(tempExt));
         ext.setTemporalRefererence(extent);
 
-        DefaultConformanceResult cresult = new DefaultConformanceResult(HardCodedCitations.EPSG, new DefaultInternationalString("see the referenced specification"), true);
+        DefaultConformanceResult cresult = new DefaultConformanceResult(EPSG, new DefaultInternationalString("see the referenced specification"), true);
         ext.setConformity(cresult);
 
-        ResponsibleParty party = DefaultResponsibleParty.castOrCopy(HardCodedCitations.EPSG.getCitedResponsibleParties().iterator().next());
+        ResponsibleParty party = DefaultResponsibleParty.castOrCopy(EPSG.getCitedResponsibleParties().iterator().next());
         ext.setMetadataPointOfContact(party);
 
         ext.setMetadataDate(new Date(82800000));
@@ -624,7 +643,7 @@ public class WmsXmlBindingTest extends org.geotoolkit.test.TestBase {
         DefaultConformanceResult cresult =  new DefaultConformanceResult(citation, new DefaultInternationalString("see the referenced specification"), true);
         ext.setConformity(cresult);
 
-        ResponsibleParty party = DefaultResponsibleParty.castOrCopy(HardCodedCitations.EPSG.getCitedResponsibleParties().iterator().next());
+        ResponsibleParty party = DefaultResponsibleParty.castOrCopy(EPSG.getCitedResponsibleParties().iterator().next());
         ext.setMetadataPointOfContact(party);
 
         ext.setMetadataDate(new Date(82800000));

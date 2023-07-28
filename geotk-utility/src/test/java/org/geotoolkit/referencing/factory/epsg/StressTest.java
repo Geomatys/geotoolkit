@@ -41,7 +41,7 @@ import static org.junit.Assume.assumeNotNull;
  *
  * @since 2.4
  */
-public final strictfp class StressTest extends EpsgFactoryTestBase {
+public final class StressTest extends EpsgFactoryTestBase {
     /**
      * Number of thread running concurrently. This number must be greater than the default
      * number of workers in {@link ThreadedEpsgFactory}, which is currently {@value #MAX_WORKERS}.
@@ -125,7 +125,7 @@ public final strictfp class StressTest extends EpsgFactoryTestBase {
         /*
          * Reports the metric.
          */
-        final PrintWriter out = StressTest.out;
+        final PrintWriter out = null;
         if (out != null) {
             final int cumulativeIteration = statistics.count();
             final double averageTime    = statistics.mean() / 1E+6;

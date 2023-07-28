@@ -24,7 +24,6 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import org.apache.sis.measure.Range;
-import org.geotoolkit.test.TestBase;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -34,11 +33,8 @@ import static org.junit.Assert.*;
  * Tests {@link DateRange}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.20
- *
- * @since 3.20
  */
-public final strictfp class DateRangeTest extends TestBase {
+public final class DateRangeTest {
     /**
      * Date parser, created when first needed.
      */

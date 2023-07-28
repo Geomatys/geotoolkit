@@ -38,7 +38,7 @@ import org.opengis.feature.FeatureType;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class CategorizeTest extends org.geotoolkit.test.TestBase {
+public class CategorizeTest {
 
     public CategorizeTest() {
     }

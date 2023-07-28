@@ -33,7 +33,7 @@ import org.junit.*;
  *
  * @since 3.00
  */
-public final strictfp class ShapeTest extends ShapeTestBase {
+public final class ShapeTest extends ShapeTestBase {
     /**
      * Tests the {@link Arrow2D} shape.
      */

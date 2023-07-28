@@ -27,7 +27,6 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import org.apache.sis.test.TestCase;
 import org.geotoolkit.internal.geojson.GeoJSONParser;
 import org.geotoolkit.internal.geojson.GeoJSONUtils;
 import org.geotoolkit.internal.geojson.LiteJsonLocation;
@@ -41,7 +40,7 @@ import org.junit.Test;
  * @since   2.0
  * @module
  */
-public class LiteJsonLocationTest extends TestCase {
+public class LiteJsonLocationTest {
 
     @Test
     public void testEquality () throws URISyntaxException, IOException {

@@ -53,7 +53,7 @@ import org.opengis.util.FactoryException;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class GraduationTest extends org.geotoolkit.test.TestBase {
+public class GraduationTest {
 
     /**
      * Sanity test, only ensure the rendering is successfull without errors not the final result.

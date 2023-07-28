@@ -23,7 +23,6 @@ import org.opengis.metadata.extent.Extent;
 import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.apache.sis.metadata.iso.extent.DefaultTemporalExtent;
 import org.apache.sis.metadata.iso.extent.DefaultExtent;
-import org.apache.sis.test.TestCase;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -32,7 +31,7 @@ import static org.junit.Assert.*;
 /**
  * Copy of {@code ExtentSelectorTest} from Apache SIS but with temporal tests enabled.
  */
-public final strictfp class ExtentSelectorTest extends TestCase {
+public final class ExtentSelectorTest {
     /**
      * Whether to test an alternate ordering where distance to TOI is tested last.
      *

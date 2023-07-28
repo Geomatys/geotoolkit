@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
  * @author Cédric Briançon
  * @module
  */
-public class XacmlAnnotationsTest extends org.geotoolkit.test.TestBase {
+public class XacmlAnnotationsTest {
     private Logger logger = Logger.getLogger("org.geotoolkit.xacml.xml");
 
     private MarshallerPool pool;

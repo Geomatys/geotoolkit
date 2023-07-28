@@ -61,7 +61,7 @@ import org.opengis.feature.FeatureType;
  * @author Johann Sorel (Geomatys)
  * @modul pending
  */
-public class JasperReportServiceTest extends org.geotoolkit.test.TestBase {
+public class JasperReportServiceTest {
 
     private static final MutableStyleFactory SF = DefaultStyleFactory.provider();
 

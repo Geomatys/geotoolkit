@@ -50,7 +50,7 @@ import org.opengis.filter.BinarySpatialOperator;
 /**
  * Testing filters used on ISO/JTS geometries.
  */
-public class FeatureFilterSpatialTest extends org.geotoolkit.test.TestBase {
+public class FeatureFilterSpatialTest {
 
     private static final FilterFactory<Object,Object,Object> FF = FilterUtilities.FF;
 

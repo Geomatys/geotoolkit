@@ -25,7 +25,7 @@ import org.geotoolkit.image.io.plugin.TestTiffImageReaderWriter;
  *
  * @author Remi Marechal (Geomatys).
  */
-public strictfp class PackBitsTiffReaderTest extends TestTiffImageReader {
+public class PackBitsTiffReaderTest extends TestTiffImageReader {
 
     public PackBitsTiffReaderTest() throws IOException {
         super("PackBits");

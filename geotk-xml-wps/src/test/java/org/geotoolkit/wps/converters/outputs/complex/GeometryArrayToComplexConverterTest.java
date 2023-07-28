@@ -34,7 +34,7 @@ import org.opengis.util.FactoryException;
  *
  * @author Theo Zozime
  */
-public class GeometryArrayToComplexConverterTest extends org.geotoolkit.test.TestBase {
+public class GeometryArrayToComplexConverterTest {
 
     @Test
     public void testJSONConversion() throws IOException, FactoryException, DataStoreException, URISyntaxException {

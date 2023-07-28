@@ -49,7 +49,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Quentin Boileau
  * @module
  */
-public class JTSTest extends org.geotoolkit.test.TestBase {
+public class JTSTest {
 
     private static final GeometryFactory GF = org.geotoolkit.geometry.jts.JTS.getFactory();
 

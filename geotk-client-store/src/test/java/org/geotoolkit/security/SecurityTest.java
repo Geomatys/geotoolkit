@@ -29,7 +29,7 @@ import static org.junit.Assert.*;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class SecurityTest extends org.geotoolkit.test.TestBase {
+public class SecurityTest {
 
     public static AtomicInteger INC = new AtomicInteger();
 

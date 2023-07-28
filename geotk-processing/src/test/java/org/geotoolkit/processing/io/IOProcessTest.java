@@ -44,7 +44,7 @@ import org.xeustechnologies.jtar.TarOutputStream;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class IOProcessTest extends org.geotoolkit.test.TestBase {
+public class IOProcessTest {
 
     @Test
     public void createTempFileTest() throws NoSuchIdentifierException, ProcessException, URISyntaxException{

@@ -45,7 +45,7 @@ import static org.junit.Assert.*;
  *
  * @author jsorel
  */
-public class ReprojectTest extends org.geotoolkit.test.TestBase {
+public class ReprojectTest {
 
     @Test
     public void testReproject() throws FactoryException, TransformException{

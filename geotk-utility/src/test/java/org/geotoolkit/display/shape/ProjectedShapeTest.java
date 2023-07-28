@@ -46,7 +46,7 @@ import org.junit.*;
  *
  * @since 3.20
  */
-public final strictfp class ProjectedShapeTest extends ShapeTestBase {
+public final class ProjectedShapeTest extends ShapeTestBase {
     /**
      * The projection to use for testing purpose.
      * This field is computed by {@link #createReferenceShape(Shape, MathTransform2D)}.

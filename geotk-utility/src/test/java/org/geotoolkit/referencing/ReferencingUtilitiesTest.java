@@ -16,11 +16,9 @@
  */
 package org.geotoolkit.referencing;
 
-import java.util.Collections;
 import java.awt.geom.AffineTransform;
 import java.util.HashMap;
 import java.util.Map;
-import org.opengis.referencing.IdentifiedObject;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.junit.Test;
 import org.opengis.referencing.operation.MathTransform;
@@ -36,13 +34,9 @@ import static org.junit.Assert.*;
  * @author Johann Sorel  (Geomatys)
  * @author Marechal Remi (Geomatys)
  */
-public class ReferencingUtilitiesTest extends org.geotoolkit.test.TestBase {
+public class ReferencingUtilitiesTest {
 
     private static final double DELTA = 0.0000001;
-
-    private static Map<String,String> name(final String name) {
-        return Collections.singletonMap(IdentifiedObject.NAME_KEY, name);
-    }
 
     /**
      * Test {@link ReferencingUtilities#toTransform(int, org.opengis.referencing.operation.MathTransform, java.util.Map, int) }.

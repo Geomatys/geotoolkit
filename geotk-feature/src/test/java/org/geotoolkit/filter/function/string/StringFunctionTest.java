@@ -20,7 +20,7 @@ package org.geotoolkit.filter.function.string;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
-import static org.apache.sis.test.Assertions.assertSerializedEquals;
+import static org.geotoolkit.test.Assertions.assertSerializedEquals;
 import static org.geotoolkit.filter.FilterTestConstants.*;
 import static org.geotoolkit.filter.function.string.StringFunctionFactory.CONCAT;
 
@@ -31,7 +31,7 @@ import org.opengis.filter.Expression;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class StringFunctionTest extends org.geotoolkit.test.TestBase {
+public class StringFunctionTest {
     @Test
     public void testTruncateFirst() {
         Expression f = FF.function(StringFunctionFactory.TRUNCATE_FIRST, FF.literal(1112),FF.literal(3));

@@ -28,7 +28,7 @@ import org.opengis.filter.ResourceId;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class IdTest extends org.geotoolkit.test.TestBase {
+public class IdTest {
     @Test
     public void testFeatureId() {
         String strid = "testFeatureType.1";

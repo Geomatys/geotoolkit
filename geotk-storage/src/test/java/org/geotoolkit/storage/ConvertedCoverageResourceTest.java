@@ -30,7 +30,6 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
-import org.apache.sis.test.TestCase;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -43,7 +42,7 @@ import static org.junit.Assert.*;
  * @version 1.4
  * @since   1.4
  */
-public final class ConvertedCoverageResourceTest extends TestCase {
+public final class ConvertedCoverageResourceTest {
     /**
      * Tests {@link ConvertedCoverageResource}.
      */

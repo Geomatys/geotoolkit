@@ -34,7 +34,7 @@ import org.junit.Test;
  * @author Guilhem Legal (Geomatys)
  * @module
  */
-public class CityGMLXMLBindingTest extends org.geotoolkit.test.TestBase {
+public class CityGMLXMLBindingTest {
 
     private Unmarshaller   Unmarshaller;
     private Marshaller     Marshaller;

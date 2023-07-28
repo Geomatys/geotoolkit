@@ -35,7 +35,7 @@ import org.xml.sax.SAXException;
  * @author Samuel Andrés
  * @module
  */
-public class PremiseTest extends org.geotoolkit.test.TestBase {
+public class PremiseTest {
 
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/xal/premise.xml";
 

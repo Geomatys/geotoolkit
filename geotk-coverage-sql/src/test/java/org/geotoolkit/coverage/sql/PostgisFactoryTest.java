@@ -43,7 +43,7 @@ import static org.geotoolkit.test.Assert.assertEqualsIgnoreMetadata;
  *
  * @author Martin Desruisseaux (Geomatys)
  */
-public final strictfp class PostgisFactoryTest extends org.geotoolkit.test.TestBase {
+public final class PostgisFactoryTest {
     /**
      * Tests a few CRS using the test database of the {@code geotk-coverage-sql} module,
      * if this database is found.

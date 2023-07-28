@@ -26,11 +26,8 @@ import static org.junit.Assert.*;
  * Tests the {@link VectorPair} class.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
- *
- * @since 3.00
  */
-public final strictfp class VectorPairTest extends org.geotoolkit.test.TestBase {
+public final class VectorPairTest {
     /**
      * Tests the {@link VectorPair#omitColinearPoints} method.
      */

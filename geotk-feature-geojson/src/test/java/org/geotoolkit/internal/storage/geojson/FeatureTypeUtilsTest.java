@@ -19,12 +19,11 @@ package org.geotoolkit.internal.storage.geojson;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Date;
-import org.apache.sis.test.feature.FeatureComparator;
+import org.geotoolkit.test.feature.FeatureComparator;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.test.TestCase;
 import org.apache.sis.util.SimpleInternationalString;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.internal.geojson.FeatureTypeUtils;
@@ -43,7 +42,7 @@ import org.opengis.util.FactoryException;
  * @since   2.0
  * @module
  */
-public class FeatureTypeUtilsTest extends TestCase {
+public class FeatureTypeUtilsTest {
 
     public static void main(String[] args) throws Exception {
        new FeatureTypeUtilsTest().writeReadFTTest();

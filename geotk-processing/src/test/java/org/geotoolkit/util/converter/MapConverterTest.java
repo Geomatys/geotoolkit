@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class MapConverterTest extends org.geotoolkit.test.TestBase {
+public class MapConverterTest {
 
 
     @Test

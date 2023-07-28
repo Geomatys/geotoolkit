@@ -33,7 +33,6 @@ import java.nio.file.Path;
 import javax.imageio.IIOException;
 import javax.imageio.ImageIO;
 import org.geotoolkit.test.Commons;
-import org.geotoolkit.test.TestBase;
 import org.geotoolkit.test.gui.SwingTestBase;
 import org.junit.AfterClass;
 import static org.junit.Assert.*;
@@ -47,11 +46,8 @@ import org.opengis.coverage.Coverage;
  * the {@link #view(String)} method will show the {@linkplain #image}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.19
- *
- * @since 3.16 (derived from 3.00)
  */
-public abstract strictfp class ImageTestBase extends TestBase {
+public abstract class ImageTestBase {
     /**
      * Small value for comparison of sample values. Since most grid coverage implementations in
      * Geotk 2 store geophysics values as {@code float} numbers, this {@code SAMPLE_TOLERANCE}

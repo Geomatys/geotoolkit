@@ -40,7 +40,7 @@ import org.opengis.feature.Feature;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class OpenStreetMapClientTest extends org.geotoolkit.test.TestBase {
+public class OpenStreetMapClientTest {
 
     private final OpenStreetMapClient server;
 

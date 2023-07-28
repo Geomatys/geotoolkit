@@ -31,7 +31,7 @@ import static org.junit.Assert.*;
  *
  * @author Cédric Briançon (Geomatys)
  */
-public class DescribeFeatureTypeTest extends org.geotoolkit.test.TestBase {
+public class DescribeFeatureTypeTest {
     public DescribeFeatureTypeTest() {}
 
     /**

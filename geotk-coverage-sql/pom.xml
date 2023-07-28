@@ -100,12 +100,6 @@
       <groupId>edu.ucar</groupId>
       <artifactId>cdm-core</artifactId>
       <scope>test</scope>
-    </dependency><dependency>
-      <groupId>org.apache.sis.core</groupId>
-      <artifactId>sis-utility</artifactId>
-      <version>${sis.version}</version>
-      <type>test-jar</type>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.geotoolkit</groupId>

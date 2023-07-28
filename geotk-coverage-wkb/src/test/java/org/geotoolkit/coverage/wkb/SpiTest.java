@@ -25,7 +25,7 @@ import static org.junit.Assert.*;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class SpiTest extends org.geotoolkit.test.TestBase {
+public class SpiTest {
 
     @Test
     public void readerSpiTest(){

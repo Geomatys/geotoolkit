@@ -37,7 +37,7 @@ import org.opengis.referencing.datum.PixelInCell;
  *
  * @author Martin Desruisseaux (Geomatys)
  */
-public final strictfp class CoverageIOTest extends ImageTestBase {
+public final class CoverageIOTest extends ImageTestBase {
     /**
      * Creates a new test suite.
      */

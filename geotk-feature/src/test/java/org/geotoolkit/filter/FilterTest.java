@@ -31,14 +31,14 @@ import static org.geotoolkit.filter.FilterTestConstants.*;
 import org.opengis.feature.Feature;
 import org.opengis.filter.LogicalOperator;
 import static org.junit.Assert.*;
-import static org.apache.sis.test.Assertions.assertSerializedEquals;
+import static org.geotoolkit.test.Assertions.assertSerializedEquals;
 
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FilterTest extends org.geotoolkit.test.TestBase {
+public class FilterTest {
     @Test
     public void testId() {
         List<Filter<Object>> ids = new ArrayList<>();

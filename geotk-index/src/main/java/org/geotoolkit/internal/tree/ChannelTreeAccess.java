@@ -37,7 +37,7 @@ import static org.geotoolkit.internal.tree.TreeUtilities.intersects;
  *
  * @author Remi Marechal (Geomatys).
  */
-public abstract strictfp class ChannelTreeAccess extends TreeAccess {
+public abstract class ChannelTreeAccess extends TreeAccess {
 
     /**
      * Position in the tree file where CRS description should begin.

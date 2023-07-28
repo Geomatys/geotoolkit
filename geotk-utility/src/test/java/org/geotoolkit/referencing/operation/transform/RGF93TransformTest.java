@@ -24,12 +24,10 @@ import org.opengis.referencing.operation.TransformException;
 import org.apache.sis.referencing.CRS;
 import org.opengis.test.CalculationType;
 import org.opengis.test.referencing.TransformTestCase;
-import org.apache.sis.internal.system.DataDirectory;
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
 import org.junit.Test;
 
-import static org.apache.sis.test.Assume.*;
 import static java.lang.StrictMath.*;
 import static org.junit.Assume.assumeTrue;
 
@@ -40,7 +38,7 @@ import static org.junit.Assume.assumeTrue;
  * @author Simon Reynard (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
  */
-public final strictfp class RGF93TransformTest extends TransformTestCase {
+public final class RGF93TransformTest extends TransformTestCase {
     /**
      * The test points, as (Easting, Northing) coordinates.
      * <ol>
@@ -132,7 +130,7 @@ public final strictfp class RGF93TransformTest extends TransformTestCase {
     @Test
     @org.junit.Ignore
     public void testTransform() throws FactoryException, TransformException {
-        assumeDataExists(DataDirectory.DATUM_CHANGES, "gr3df97a.txt");
+//      assumeDataExists(DataDirectory.DATUM_CHANGES, "gr3df97a.txt");
         assumeTrue(false /*Commons.isEpsgFactoryAvailable()*/);
         /*
          * Get the transform, which will use the NTv2 grid since

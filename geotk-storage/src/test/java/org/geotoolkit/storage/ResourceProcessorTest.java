@@ -33,7 +33,6 @@ import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.internal.storage.MemoryGridResource;
 import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.test.TestCase;
 import org.apache.sis.util.iso.Names;
 import org.junit.Test;
 import org.opengis.referencing.datum.PixelInCell;
@@ -48,7 +47,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
 
-public final class ResourceProcessorTest extends TestCase {
+public final class ResourceProcessorTest {
     /**
      * Verify that resampling is activated as ordered when inverting CRS axes.
      *

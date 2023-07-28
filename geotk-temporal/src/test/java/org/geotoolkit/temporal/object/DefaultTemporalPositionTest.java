@@ -34,7 +34,7 @@ import org.opengis.temporal.TemporalReferenceSystem;
  * @author Mehdi Sidhoum (Geomatys)
  * @module
  */
-public class DefaultTemporalPositionTest extends org.geotoolkit.test.TestBase {
+public class DefaultTemporalPositionTest {
 
     private TemporalPosition temporalPosition1;
     private TemporalPosition temporalPosition2;

@@ -24,14 +24,14 @@ import org.junit.Test;
 import org.opengis.filter.Filter;
 
 import static org.junit.Assert.*;
-import static org.apache.sis.test.Assertions.assertSerializedEquals;
+import static org.geotoolkit.test.Assertions.assertSerializedEquals;
 import static org.geotoolkit.filter.FilterTestConstants.*;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public class BinaryLogicTest extends org.geotoolkit.test.TestBase {
+public class BinaryLogicTest {
     @Test
     public void testAnd() {
         Filter filter1 = FF.equal(FF.property("testInteger"), FF.literal(101));

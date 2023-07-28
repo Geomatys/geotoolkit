@@ -29,7 +29,7 @@ import org.geotoolkit.image.io.metadata.SpatialMetadata;
 
 import org.junit.*;
 import static org.junit.Assert.*;
-import static org.apache.sis.test.Assertions.assertMultilinesEquals;
+import static org.geotoolkit.test.Assertions.assertMultilinesEquals;
 import static org.geotoolkit.test.Commons.*;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
 
@@ -42,11 +42,11 @@ import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMA
  *
  * @since 3.06
  */
-public final strictfp class TextMatrixImageReaderTest extends TextImageReaderTestBase {
+public final class TextMatrixImageReaderTest extends TextImageReaderTestBase {
     /**
      * The provider for the format to be tested.
      */
-    public static final strictfp class Spi extends TextMatrixImageReader.Spi {
+    public static final class Spi extends TextMatrixImageReader.Spi {
         public Spi() {
             padValue = -9999;
             locale   = Locale.CANADA;

@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class DBFEncodingTest extends org.geotoolkit.test.TestBase {
+public class DBFEncodingTest {
 
     @Test
     public void testEncoding() throws Exception {

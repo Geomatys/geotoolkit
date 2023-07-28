@@ -51,7 +51,7 @@ import org.junit.Test;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class GeometrytoJTSTest extends org.geotoolkit.test.TestBase {
+public class GeometrytoJTSTest {
 
     static final GeometryFactory GF = org.geotoolkit.geometry.jts.JTS.getFactory();
 

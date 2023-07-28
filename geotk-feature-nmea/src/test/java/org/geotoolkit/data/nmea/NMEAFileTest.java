@@ -46,7 +46,7 @@ import static org.junit.Assert.assertTrue;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class NMEAFileTest extends org.geotoolkit.test.TestBase {
+public class NMEAFileTest {
     
     @BeforeClass
     public static void setTimeZone() {

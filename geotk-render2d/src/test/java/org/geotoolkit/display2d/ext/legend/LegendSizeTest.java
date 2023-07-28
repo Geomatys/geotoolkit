@@ -41,7 +41,7 @@ import org.opengis.style.Symbolizer;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class LegendSizeTest extends org.geotoolkit.test.TestBase {
+public class LegendSizeTest {
 
     private static final LegendTemplate NO_MARGIN_TEMPLATE = new DefaultLegendTemplate(
             new DefaultBackgroundTemplate(new BasicStroke(0), Color.BLACK, Color.RED, new Insets(0, 0, 0, 0), 0),

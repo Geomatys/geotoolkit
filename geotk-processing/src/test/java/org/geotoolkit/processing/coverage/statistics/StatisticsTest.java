@@ -43,7 +43,7 @@ import org.apache.sis.coverage.grid.GridOrientation;
  * @author bgarcia (Geomatys)
  * @author Quentin Boileau (Geomatys)
  */
-public class StatisticsTest extends org.geotoolkit.test.TestBase {
+public class StatisticsTest {
 
     private GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
     private GridCoverage coverage;

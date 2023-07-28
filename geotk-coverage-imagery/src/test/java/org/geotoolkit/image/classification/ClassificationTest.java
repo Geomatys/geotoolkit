@@ -26,7 +26,7 @@ import org.junit.Test;
  *
  * @author Rémi Marechal (Geomatys).
  */
-public class ClassificationTest extends org.geotoolkit.test.TestBase {
+public class ClassificationTest {
 
     /**
      * Tested classification object.

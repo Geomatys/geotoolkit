@@ -25,7 +25,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class ShpFileTypesTest extends org.geotoolkit.test.TestBase {
+public class ShpFileTypesTest {
 
     @Test
     public void testToFileBase() {

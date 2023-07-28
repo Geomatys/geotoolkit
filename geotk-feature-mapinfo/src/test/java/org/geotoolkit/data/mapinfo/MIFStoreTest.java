@@ -65,7 +65,7 @@ import org.opengis.util.GenericName;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class MIFStoreTest extends org.geotoolkit.test.TestBase {
+public class MIFStoreTest {
 
     private static final GeometryFactory GF = org.geotoolkit.geometry.jts.JTS.getFactory();
     private static final FilterFactory FF = FilterUtilities.FF;

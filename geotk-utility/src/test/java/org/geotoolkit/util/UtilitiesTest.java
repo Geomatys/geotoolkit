@@ -26,11 +26,8 @@ import static java.lang.Double.NaN;
  * Tests the {@link Utilities} static methods.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.20
- *
- * @since 2.5
  */
-public final strictfp class UtilitiesTest extends org.geotoolkit.test.TestBase {
+public final class UtilitiesTest {
     /**
      * Tests {@link Utilities#equals(double, double)}.
      */

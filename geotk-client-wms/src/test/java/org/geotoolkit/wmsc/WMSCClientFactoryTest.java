@@ -28,7 +28,7 @@ import org.junit.Test;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class WMSCClientFactoryTest extends org.geotoolkit.test.TestBase {
+public class WMSCClientFactoryTest {
 
     public WMSCClientFactoryTest() {
     }

@@ -56,7 +56,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  *
  * @author Remi Marechal (Geomatys).
  */
-public class CoverageImageTest extends org.geotoolkit.test.TestBase {
+public class CoverageImageTest {
 
     public static final MutableStyleFactory SF = DefaultStyleFactory.provider();
     private static final double EPSILON = 1E-9;

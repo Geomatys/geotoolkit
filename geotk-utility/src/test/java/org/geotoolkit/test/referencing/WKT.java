@@ -30,7 +30,7 @@ import static org.geotoolkit.test.Commons.decodeQuotes;
  *
  * @since 2.4
  */
-public final strictfp class WKT {
+public final class WKT {
     /**
      * Do not allow instantiation of this class.
      */

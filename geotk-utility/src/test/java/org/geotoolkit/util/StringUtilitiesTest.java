@@ -26,7 +26,7 @@ import static org.junit.Assert.*;
  * @author Johann Sorel (Geomatys)
  * @author Cédric Briançon (Geomatys)
  */
-public class StringUtilitiesTest extends org.geotoolkit.test.TestBase {
+public class StringUtilitiesTest {
 
     @Test
     public void positionsTest() {

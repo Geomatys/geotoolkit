@@ -35,7 +35,7 @@ import org.xml.sax.SAXException;
  * @author Samuel Andrés
  * @module
  */
-public class ThoroughfareTest extends org.geotoolkit.test.TestBase {
+public class ThoroughfareTest {
 
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/xal/thoroughfare.xml";
 

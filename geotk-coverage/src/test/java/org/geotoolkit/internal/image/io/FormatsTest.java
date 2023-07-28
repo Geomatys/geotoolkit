@@ -31,7 +31,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.10
  */
-public final strictfp class FormatsTest extends org.geotoolkit.test.TestBase {
+public final class FormatsTest {
     /**
      * Tests {@link Formats#simplify(String[])}.
      */

@@ -33,7 +33,7 @@ import org.opengis.util.GenericName;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class WeakListenerTest extends org.geotoolkit.test.TestBase {
+public class WeakListenerTest {
 
     private static final MutableStyleFactory SF = DefaultStyleFactory.provider();
 

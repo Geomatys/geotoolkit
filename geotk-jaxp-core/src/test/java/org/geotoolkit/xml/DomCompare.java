@@ -20,7 +20,7 @@ package org.geotoolkit.xml;
 
 import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
-import org.apache.sis.test.xml.DocumentComparator;
+import org.geotoolkit.test.xml.DocumentComparator;
 import org.xml.sax.SAXException;
 
 

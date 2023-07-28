@@ -13,7 +13,7 @@ import org.junit.Test;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class ConverterTest extends org.geotoolkit.test.TestBase {
+public class ConverterTest {
     @Test
     public void testDate(){
         final String date1 = "2006-10-01";

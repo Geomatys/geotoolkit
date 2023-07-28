@@ -26,7 +26,7 @@ import org.junit.Test;
  *
  * @author Quentin Boileau (Geomatys).
  */
-public class DoubleArrayToStringConverterTest extends org.geotoolkit.test.TestBase {
+public class DoubleArrayToStringConverterTest {
 
     @Test
     public void testConversion() throws UnconvertibleObjectException  {

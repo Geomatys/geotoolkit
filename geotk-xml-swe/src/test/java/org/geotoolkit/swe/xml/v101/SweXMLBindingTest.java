@@ -30,14 +30,14 @@ import org.apache.sis.xml.MarshallerPool;
 import org.junit.*;
 
 import static org.junit.Assert.*;
-import static org.apache.sis.metadata.Assertions.assertXmlEquals;
+import static org.geotoolkit.test.Assertions.assertXmlEquals;
 
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class SweXMLBindingTest extends org.geotoolkit.test.TestBase {
+public class SweXMLBindingTest {
 
     private static MarshallerPool pool;
     private Marshaller   marshaller;

@@ -27,7 +27,7 @@ import org.junit.Assert;
  *
  * @author Remi Marechal (Geomatys)
  */
-public class TreeUtilitiesTest extends org.geotoolkit.test.TestBase {
+public class TreeUtilitiesTest {
 
     private static final double EPSILON = 1E-12;
 

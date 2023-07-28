@@ -41,7 +41,7 @@ import org.opengis.util.NoSuchIdentifierException;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class BandCombineTest extends org.geotoolkit.test.TestBase {
+public class BandCombineTest {
 
     @Test
     public void combineTest() throws Exception{

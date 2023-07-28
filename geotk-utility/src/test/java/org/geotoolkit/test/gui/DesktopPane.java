@@ -50,7 +50,7 @@ import static org.junit.Assert.*;
  * @since 3.05
  */
 @SuppressWarnings("serial")
-final strictfp class DesktopPane extends JDesktopPane {
+final class DesktopPane extends JDesktopPane {
     /**
      * The key for screenshot directory in the user preferences.
      */

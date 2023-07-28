@@ -28,7 +28,7 @@ import org.junit.Test;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class WMTSProviderTest extends org.geotoolkit.test.TestBase {
+public class WMTSProviderTest {
 
     public WMTSProviderTest() {
     }

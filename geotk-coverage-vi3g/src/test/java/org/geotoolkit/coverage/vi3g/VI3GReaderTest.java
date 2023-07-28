@@ -30,7 +30,6 @@ import java.nio.file.Path;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.StorageConnector;
-import org.apache.sis.test.DependsOnMethod;
 import org.geotoolkit.image.io.SpatialImageReadParam;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -46,7 +45,7 @@ import org.opengis.coverage.grid.SequenceType;
  *
  * @author Alexis Manin (Geomatys)
  */
-public class VI3GReaderTest extends org.geotoolkit.test.TestBase {
+public class VI3GReaderTest {
 
     private static final short MAX_VALUE = 10000;
     private static final int SIZE = VI3GStore.WIDTH * VI3GStore.HEIGHT;
@@ -103,7 +102,6 @@ public class VI3GReaderTest extends org.geotoolkit.test.TestBase {
      * @throws DataStoreException If temporary image file has been corrupted.
      */
     @Ignore
-    @DependsOnMethod("readFullyTest")
     @Test
     public void readRegion() throws DataStoreException {
         final VI3GStore store = new VI3GStore(new StorageConnector(TEMP_IMG));
@@ -133,7 +131,6 @@ public class VI3GReaderTest extends org.geotoolkit.test.TestBase {
      * @throws DataStoreException If temporary image file has been corrupted.
      */
     @Ignore
-    @DependsOnMethod("readFullyTest")
     @Test
     public void readSubsampled() throws DataStoreException {
         final VI3GStore store = new VI3GStore(new StorageConnector(TEMP_IMG));
@@ -189,7 +186,6 @@ public class VI3GReaderTest extends org.geotoolkit.test.TestBase {
      * @throws DataStoreException If temporary image file has been corrupted.
      */
     @Ignore
-    @DependsOnMethod({"readRegion", "readSubsampled"})
     @Test
     public void readSubSampledRegion() throws DataStoreException {
         final VI3GStore store = new VI3GStore(new StorageConnector(TEMP_IMG));

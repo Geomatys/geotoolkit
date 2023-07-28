@@ -39,7 +39,7 @@ import org.opengis.geometry.Envelope;
  *
  * @author Rémi Maréchal (Géomatys).
  */
-public abstract class TreeTest extends org.geotoolkit.test.TestBase {
+public abstract class TreeTest {
 
     protected Logger LOGGER = Logger.getLogger("org.geotoolkit.index.tree");
 

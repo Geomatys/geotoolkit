@@ -40,7 +40,7 @@ import org.opengis.util.FactoryException;
  * @version 5.0
  * @since   5.0
  */
-public strictfp class GridGeometryIteratorTest extends org.geotoolkit.test.TestBase {
+public class GridGeometryIteratorTest {
 
     /**
      * Test iterator for 2D envelopes. It's a special case, as the iterator should

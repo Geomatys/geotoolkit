@@ -34,7 +34,7 @@ import org.opengis.referencing.IdentifiedObject;
  * @author Mehdi Sidhoum (Geomatys)
  * @module
  */
-public class DefaultInstantTest extends org.geotoolkit.test.TestBase {
+public class DefaultInstantTest {
 
     private Instant instant1;
     private Instant instant2;

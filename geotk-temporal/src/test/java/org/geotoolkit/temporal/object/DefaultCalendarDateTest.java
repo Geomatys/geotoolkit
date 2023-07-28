@@ -40,7 +40,7 @@ import org.opengis.util.InternationalString;
  * @author Mehdi Sidhoum (Geomatys)
  * @module
  */
-public class DefaultCalendarDateTest extends org.geotoolkit.test.TestBase {
+public class DefaultCalendarDateTest {
 
     private CalendarDate calendarDate1;
     private CalendarDate calendarDate2;

@@ -57,7 +57,7 @@ import org.opengis.referencing.operation.MathTransform;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class PyramidReaderTest extends org.geotoolkit.test.TestBase {
+public class PyramidReaderTest {
 
     private static final float DELTA = 0.000000001f;
 

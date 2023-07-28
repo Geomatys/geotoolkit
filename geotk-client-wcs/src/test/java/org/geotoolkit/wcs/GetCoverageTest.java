@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
  *
  * @author Cédric Briançon (Geomatys)
  */
-public class GetCoverageTest extends org.geotoolkit.test.TestBase {
+public class GetCoverageTest {
     public GetCoverageTest() {}
 
     /**

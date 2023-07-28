@@ -36,7 +36,7 @@ import org.opengis.referencing.IdentifiedObject;
  * @author Mehdi Sidhoum (Geomatys)
  * @module
  */
-public class DefaultClockTimeTest extends org.geotoolkit.test.TestBase {
+public class DefaultClockTimeTest {
 
     private ClockTime clockTime1;
     private ClockTime clockTime2;

@@ -42,9 +42,8 @@ import static org.junit.Assert.*;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Vadim Semenov
- * @version 3.18
  */
-public final strictfp class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase {
+public final class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase {
     /**
      * Creates a test suite for the MS-Access database.
      */
@@ -217,7 +216,7 @@ public final strictfp class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase 
                 valid++;
             }
         }
-        final PrintWriter out = ThreadedEpsgFactoryTest.out;
+        final PrintWriter out = null;
         if (out != null) {
             out.print("Number of coordinate operations:    "); out.println(identifiers.size());
             out.print("Number of tested operations:        "); out.println(count);
