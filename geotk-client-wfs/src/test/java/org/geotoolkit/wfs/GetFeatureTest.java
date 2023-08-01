@@ -19,10 +19,12 @@ package org.geotoolkit.wfs;
 import java.net.MalformedURLException;
 import java.net.URL;
 import javax.xml.namespace.QName;
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.data.wfs.v110.GetFeature110;
 import static org.geotoolkit.filter.FilterUtilities.FF;
-import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Test;
 
 
 /**
@@ -41,7 +43,10 @@ public class GetFeatureTest {
     public void testGetFeature110() {
         final GetFeature110 getFeat110 = new GetFeature110("http://test.com",null);
         getFeat110.setTypeName(new QName("http://myqnametest.com", "value", "ut"));
-        getFeat110.setFilter(FF.bbox("propGeom", -180.0, -90.0, 180.0, 90.0, "CRS:84"));
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
+        env.setRange(0, -180, 180);
+        env.setRange(1, -90, 90);
+        getFeat110.setFilter(FF.bbox(FF.property("propGeom"), env));
         final URL url;
         try {
             url = getFeat110.getURL();

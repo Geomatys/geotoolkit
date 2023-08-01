@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.data.shapefile;
 
-import org.junit.Test;
 import java.io.File;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -25,19 +24,31 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.util.Utilities;
 import org.geotoolkit.ShapeTestData;
-import org.geotoolkit.util.NamesExt;
+import org.geotoolkit.feature.FeatureExt;
+import org.geotoolkit.filter.FilterUtilities;
+import org.geotoolkit.geometry.jts.JTSEnvelope2D;
+import org.geotoolkit.io.wkt.PrjFiles;
+import org.geotoolkit.storage.feature.FeatureCollection;
+import org.geotoolkit.storage.feature.FeatureIterator;
 import org.geotoolkit.storage.feature.FeatureReader;
 import org.geotoolkit.storage.feature.FeatureWriter;
 import org.geotoolkit.storage.feature.query.Query;
-import org.geotoolkit.storage.feature.FeatureCollection;
-import org.geotoolkit.storage.feature.FeatureIterator;
-import org.geotoolkit.geometry.jts.JTSEnvelope2D;
-import org.opengis.filter.Filter;
-import org.geotoolkit.filter.FilterFactory2;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.geotoolkit.test.TestData;
+import org.geotoolkit.util.NamesExt;
+import static org.junit.Assert.*;
+import org.junit.Assume;
+import org.junit.Test;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryCollection;
@@ -46,23 +57,12 @@ import org.locationtech.jts.geom.LinearRing;
 import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import org.geotoolkit.feature.FeatureExt;
-import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.io.wkt.PrjFiles;
-import org.geotoolkit.test.TestData;
-import static org.junit.Assert.*;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;
-import org.apache.sis.feature.builder.AttributeRole;
-import org.apache.sis.referencing.CRS;
-import org.apache.sis.util.Utilities;
-import org.geotoolkit.filter.FilterUtilities;
-import org.junit.Assume;
+import org.opengis.filter.Filter;
+import org.opengis.filter.FilterFactory;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  *
@@ -75,7 +75,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
     static final String STREAM = "shapes/stream.shp";
     static final String DANISH = "shapes/danish_point.shp";
     static final String CHINESE = "shapes/chinese_poly.shp";
-    static final FilterFactory2 ff = FilterUtilities.FF;
+    static final FilterFactory ff = FilterUtilities.FF;
 
     protected FeatureCollection loadFeatures(final String resource, Query query)
             throws Exception {

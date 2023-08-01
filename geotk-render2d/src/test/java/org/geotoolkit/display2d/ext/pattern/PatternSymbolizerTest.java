@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.display2d.ext.pattern;
 
+import jakarta.xml.bind.JAXBException;
 import java.awt.Color;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -24,7 +25,6 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import jakarta.xml.bind.JAXBException;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.sld.xml.Specification;
@@ -33,8 +33,8 @@ import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.function.ThreshholdsBelongTo;
 import org.junit.Test;
-import org.geotoolkit.filter.FilterFactory2;
 import org.opengis.filter.Expression;
+import org.opengis.filter.FilterFactory;
 import org.opengis.style.Symbolizer;
 
 /**
@@ -48,7 +48,7 @@ public class PatternSymbolizerTest {
     @Test
     public void testXml() throws JAXBException, IOException {
         final MutableStyleFactory SF = GO2Utilities.STYLE_FACTORY;
-        final FilterFactory2 FF = GO2Utilities.FILTER_FACTORY;
+        final FilterFactory FF = GO2Utilities.FILTER_FACTORY;
 
         final Map<Expression,List<Symbolizer>> ranges = new LinkedHashMap<>();
         ranges.put(FF.literal(-1000), Arrays.asList(SF.polygonSymbolizer(null, SF.fill(Color.BLUE), null)));

@@ -16,17 +16,20 @@
  */
 package org.geotoolkit.ogc.xml;
 
+import jakarta.xml.bind.JAXBElement;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import jakarta.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
-
-import org.geotoolkit.util.NamesExt;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.measure.Quantities;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.util.ObjectConverters;
+import org.apache.sis.util.UnconvertibleObjectException;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.gml.GeometrytoJTS;
 import org.geotoolkit.gml.xml.v311.AbstractGeometryType;
 import org.geotoolkit.gml.xml.v311.DirectPositionType;
@@ -43,21 +46,18 @@ import org.geotoolkit.ogc.xml.v110.PropertyNameType;
 import org.geotoolkit.ogc.xml.v110.SortByType;
 import org.geotoolkit.ogc.xml.v110.SortPropertyType;
 import org.geotoolkit.ogc.xml.v110.SpatialOpsType;
-import org.apache.sis.referencing.CRS;
-import org.apache.sis.util.ObjectConverters;
-
-import org.opengis.util.GenericName;
-import org.opengis.filter.Filter;
-import org.geotoolkit.filter.FilterFactory2;
-import org.opengis.filter.MatchAction;
+import org.geotoolkit.util.NamesExt;
 import org.opengis.filter.Expression;
-import org.opengis.filter.ValueReference;
-import org.opengis.util.FactoryException;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
-import org.apache.sis.util.UnconvertibleObjectException;
-import org.apache.sis.util.logging.Logging;
+import org.opengis.filter.Filter;
+import org.opengis.filter.FilterFactory;
 import org.opengis.filter.Literal;
+import org.opengis.filter.MatchAction;
 import org.opengis.filter.SortProperty;
+import org.opengis.filter.ValueReference;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.FactoryException;
+import org.opengis.util.GenericName;
 
 /**
  * Transform OGC jaxb xml in GT classes.
@@ -67,16 +67,16 @@ import org.opengis.filter.SortProperty;
  */
 public class OGC110toGTTransformer {
 
-    protected final FilterFactory2 filterFactory;
+    protected final FilterFactory filterFactory;
 
     private final Map<String, String> namespaceMapping;
 
-    public OGC110toGTTransformer(final FilterFactory2 factory) {
+    public OGC110toGTTransformer(final FilterFactory factory) {
         this.filterFactory   = factory;
         this.namespaceMapping = null;
     }
 
-    public OGC110toGTTransformer(final FilterFactory2 factory, final Map<String, String> namespaceMapping) {
+    public OGC110toGTTransformer(final FilterFactory factory, final Map<String, String> namespaceMapping) {
         this.filterFactory = factory;
         this.namespaceMapping = namespaceMapping;
     }
@@ -163,9 +163,9 @@ public class OGC110toGTTransformer {
             final String units = dt.getUnits();
 
             if (OGCJAXBStatics.FILTER_SPATIAL_DWITHIN.equalsIgnoreCase(OpName)) {
-                return filterFactory.dwithin(geom1, geom2, distance, units);
+                return filterFactory.within(geom1, geom2, Quantities.create(distance, units));
             } else if (OGCJAXBStatics.FILTER_SPATIAL_BEYOND.equalsIgnoreCase(OpName)) {
-                return filterFactory.beyond(geom1, geom2, distance, units);
+                return filterFactory.beyond(geom1, geom2, Quantities.create(distance, units));
             }
             throw new IllegalArgumentException("Illegal filter element" + OpName + " : " + ops);
 
@@ -192,7 +192,16 @@ public class OGC110toGTTransformer {
             final String srs =  box.getSrsName();
 
             if (OGCJAXBStatics.FILTER_SPATIAL_BBOX.equalsIgnoreCase(OpName)) {
-                return filterFactory.bbox(geom, minx, miny, maxx, maxy, srs);
+                final CoordinateReferenceSystem crs;
+                try {
+                    crs = CRS.forCode(srs);
+                } catch (FactoryException ex) {
+                    throw new IllegalArgumentException("Cannot decode bbox CRS : "+srs, ex);
+                }
+                final GeneralEnvelope env = new GeneralEnvelope(crs);
+                env.setRange(0, minx, maxx);
+                env.setRange(1, miny, maxy);
+                return filterFactory.bbox(geom, env);
             }
             throw new IllegalArgumentException("Illegal filter element" + OpName + " : " + ops);
         }

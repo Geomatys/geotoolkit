@@ -19,18 +19,18 @@ package org.geotoolkit.processing.vector.regroup;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
+import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.storage.feature.FeatureCollection;
 import org.geotoolkit.storage.feature.FeatureIterator;
-import org.geotoolkit.factory.Hints;
-import org.geotoolkit.storage.memory.WrapFeatureCollection;
+import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.geotoolkit.storage.feature.query.Query;
-import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.storage.memory.WrapFeatureCollection;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
-import org.geotoolkit.filter.FilterFactory2;
-import org.geotoolkit.filter.FilterUtilities;
+import org.opengis.filter.FilterFactory;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
@@ -123,7 +123,7 @@ public class RegroupFeatureCollection extends WrapFeatureCollection {
     private Query filter(final Object attributeValue)
             throws FactoryException, MismatchedDimensionException, TransformException {
 
-        final FilterFactory2 ff = FilterUtilities.FF;
+        final FilterFactory ff = FilterUtilities.FF;
 
         final Filter filter = ff.equal(ff.property(regroupAttribute), ff.literal(attributeValue));
         return Query.filtered("filter", filter);

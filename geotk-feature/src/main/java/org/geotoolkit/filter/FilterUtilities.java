@@ -25,9 +25,9 @@ import org.geotoolkit.filter.visitor.IsStaticExpressionVisitor;
 import org.geotoolkit.filter.visitor.PrepareFilterVisitor;
 import org.geotoolkit.lang.Static;
 import org.opengis.feature.FeatureType;
+import org.opengis.filter.Expression;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
-import org.opengis.filter.Expression;
 import org.opengis.filter.LogicalOperator;
 import org.opengis.filter.LogicalOperatorName;
 import org.opengis.filter.SortOrder;
@@ -40,7 +40,7 @@ import org.opengis.filter.ValueReference;
  * @author Johann Sorel (Geomatys)
  */
 public final class FilterUtilities extends Static {
-    public static final FilterFactory2 FF = DefaultFactories.forBuildin(FilterFactory.class, FilterFactory2.class);
+    public static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
 
     /**
      * Avoid instanciation.

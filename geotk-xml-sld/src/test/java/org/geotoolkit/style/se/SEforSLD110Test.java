@@ -16,20 +16,22 @@
  */
 package org.geotoolkit.style.se;
 
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Marshaller;
+import jakarta.xml.bind.Unmarshaller;
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Iterator;
-import jakarta.xml.bind.JAXBElement;
-import jakarta.xml.bind.JAXBException;
-import jakarta.xml.bind.Marshaller;
-import jakarta.xml.bind.Unmarshaller;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.measure.Units;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.xml.MarshallerPool;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.filter.FilterFactory2;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.ogc.xml.v110.PropertyNameType;
 import org.geotoolkit.se.xml.v110.CoverageStyleType;
 import org.geotoolkit.se.xml.v110.ObjectFactory;
@@ -45,9 +47,8 @@ import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.function.Interpolate;
 import static org.junit.Assert.*;
 import org.junit.Test;
-import org.geotoolkit.filter.FilterFactory2;
-import org.geotoolkit.filter.FilterUtilities;
 import org.opengis.filter.Expression;
+import org.opengis.filter.FilterFactory;
 import org.opengis.style.ContrastMethod;
 import org.opengis.style.Graphic;
 import org.opengis.style.LineSymbolizer;
@@ -68,7 +69,7 @@ import org.opengis.util.FactoryException;
  */
 public class SEforSLD110Test {
 
-    private static final FilterFactory2 FILTER_FACTORY;
+    private static final FilterFactory FILTER_FACTORY;
     private static final MutableStyleFactory STYLE_FACTORY;
     private static final double DELTA = 0.00001;
 

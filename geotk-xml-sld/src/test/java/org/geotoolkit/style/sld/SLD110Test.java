@@ -16,36 +16,34 @@
  */
 package org.geotoolkit.style.sld;
 
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Marshaller;
+import jakarta.xml.bind.Unmarshaller;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
-import jakarta.xml.bind.JAXBElement;
-import jakarta.xml.bind.JAXBException;
-import jakarta.xml.bind.Marshaller;
-import jakarta.xml.bind.Unmarshaller;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.measure.Units;
+import org.apache.sis.xml.MarshallerPool;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.filter.FilterFactory2;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.se.xml.v110.ParameterValueType;
 import org.geotoolkit.se.xml.v110.TextSymbolizerType;
-import org.geotoolkit.sld.xml.GTtoSE110Transformer;
-import org.geotoolkit.sld.xml.SE110toGTTransformer;
-import org.geotoolkit.sld.xml.v110.StyledLayerDescriptor;
 import org.geotoolkit.sld.DefaultSLDFactory;
 import org.geotoolkit.sld.MutableSLDFactory;
 import org.geotoolkit.sld.MutableStyledLayerDescriptor;
-import org.geotoolkit.style.MutableStyleFactory;
+import org.geotoolkit.sld.xml.GTtoSE110Transformer;
 import org.geotoolkit.sld.xml.GTtoSLD110Transformer;
 import org.geotoolkit.sld.xml.JAXBSLDUtilities;
+import org.geotoolkit.sld.xml.SE110toGTTransformer;
 import org.geotoolkit.sld.xml.SLD110toGTTransformer;
-import org.apache.sis.xml.MarshallerPool;
+import org.geotoolkit.sld.xml.v110.StyledLayerDescriptor;
+import org.geotoolkit.style.MutableStyleFactory;
 import static org.junit.Assert.*;
 import org.junit.Test;
-import org.geotoolkit.filter.FilterFactory2;
-import org.geotoolkit.filter.FilterUtilities;
-import org.opengis.style.TextSymbolizer;
-import org.opengis.util.FactoryException;
+import org.opengis.filter.FilterFactory;
 import org.opengis.sld.Extent;
 import org.opengis.sld.FeatureTypeConstraint;
 import org.opengis.sld.LayerFeatureConstraints;
@@ -54,6 +52,8 @@ import org.opengis.sld.NamedStyle;
 import org.opengis.sld.RemoteOWS;
 import org.opengis.sld.UserLayer;
 import org.opengis.style.StyleFactory;
+import org.opengis.style.TextSymbolizer;
+import org.opengis.util.FactoryException;
 
 /**
  * Test class for sld jaxb marshelling and unmarshelling.
@@ -63,7 +63,7 @@ import org.opengis.style.StyleFactory;
  */
 public class SLD110Test {
 
-    private static final FilterFactory2 FILTER_FACTORY;
+    private static final FilterFactory FILTER_FACTORY;
     private static final MutableStyleFactory STYLE_FACTORY;
     private static final MutableSLDFactory SLD_FACTORY;
 

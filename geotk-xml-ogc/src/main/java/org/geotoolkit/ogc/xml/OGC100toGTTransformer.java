@@ -16,23 +16,26 @@
  */
 package org.geotoolkit.ogc.xml;
 
+import jakarta.xml.bind.JAXBElement;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import jakarta.xml.bind.JAXBElement;
-
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.measure.Quantities;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.ogc.xml.v100.BinaryOperatorType;
 import org.geotoolkit.ogc.xml.v100.FunctionType;
 import org.geotoolkit.ogc.xml.v100.LiteralType;
 import org.geotoolkit.ogc.xml.v100.PropertyNameType;
-
-import org.opengis.filter.Filter;
-import org.geotoolkit.filter.FilterFactory2;
-import org.opengis.filter.MatchAction;
 import org.opengis.filter.Expression;
+import org.opengis.filter.Filter;
+import org.opengis.filter.FilterFactory;
 import org.opengis.filter.Literal;
+import org.opengis.filter.MatchAction;
 import org.opengis.filter.ValueReference;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.FactoryException;
 
 /**
  * Transform OGC v1.0 jaxb xml in GT classes.
@@ -42,9 +45,9 @@ import org.opengis.filter.ValueReference;
  */
 public class OGC100toGTTransformer {
 
-    protected final FilterFactory2 filterFactory;
+    protected final FilterFactory filterFactory;
 
-    public OGC100toGTTransformer(final FilterFactory2 factory){
+    public OGC100toGTTransformer(final FilterFactory factory){
         this.filterFactory = factory;
     }
 
@@ -116,9 +119,9 @@ public class OGC100toGTTransformer {
             final String units = dt.getUnits();
 
             if (OGCJAXBStatics.FILTER_SPATIAL_DWITHIN.equalsIgnoreCase(OpName)) {
-                return filterFactory.dwithin(geom1, geom2, distance, units);
+                return filterFactory.within(geom1, geom2, Quantities.create(distance, units));
             } else if (OGCJAXBStatics.FILTER_SPATIAL_BEYOND.equalsIgnoreCase(OpName)) {
-                return filterFactory.beyond(geom1, geom2, distance, units);
+                return filterFactory.beyond(geom1, geom2, Quantities.create(distance, units));
             }
             throw new IllegalArgumentException("Illegal filter element" + OpName + " : " + ops);
 
@@ -135,7 +138,16 @@ public class OGC100toGTTransformer {
             final String srs =  box.getSrsName();
 
             if (OGCJAXBStatics.FILTER_SPATIAL_BBOX.equalsIgnoreCase(OpName)) {
-                return filterFactory.bbox(geom, minx, miny, maxx, maxy, srs);
+                final CoordinateReferenceSystem crs;
+                try {
+                    crs = CRS.forCode(srs);
+                } catch (FactoryException ex) {
+                    throw new IllegalArgumentException("Cannot decode bbox CRS : "+srs, ex);
+                }
+                final GeneralEnvelope env = new GeneralEnvelope(crs);
+                env.setRange(0, minx, maxx);
+                env.setRange(1, miny, maxy);
+                return filterFactory.bbox(geom, env);
             }
             throw new IllegalArgumentException("Illegal filter element" + OpName + " : " + ops);
         }

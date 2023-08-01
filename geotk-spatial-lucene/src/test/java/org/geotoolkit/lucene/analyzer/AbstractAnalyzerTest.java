@@ -16,17 +16,6 @@
  */
 package org.geotoolkit.lucene.analyzer;
 
-import org.apache.lucene.search.Sort;
-import org.apache.lucene.search.SortField;
-import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.index.LogicalFilterType;
-import org.geotoolkit.lucene.filter.LuceneOGCSpatialQuery;
-import org.geotoolkit.lucene.filter.SpatialQuery;
-import org.geotoolkit.lucene.index.LuceneIndexSearcher;
-import org.geotoolkit.filter.FilterFactory2;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -47,22 +36,32 @@ import org.apache.lucene.index.IndexOptions;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.Sort;
+import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TermRangeQuery;
 import org.apache.lucene.util.BytesRef;
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.CRS;
-import org.geotoolkit.filter.FilterUtilities;
+import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.filter.FilterFactory2;
 import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.index.LogicalFilterType;
 import org.geotoolkit.index.tree.manager.NamedEnvelope;
 import org.geotoolkit.io.wkb.WKBUtils;
 import org.geotoolkit.lucene.DocumentIndexer.DocumentEnvelope;
 import org.geotoolkit.lucene.LuceneUtils;
-
+import org.geotoolkit.lucene.filter.LuceneOGCSpatialQuery;
+import org.geotoolkit.lucene.filter.SpatialQuery;
+import org.geotoolkit.lucene.index.LuceneIndexSearcher;
 import static org.junit.Assert.assertEquals;
 import org.junit.runner.RunWith;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Polygon;
+import org.opengis.filter.FilterFactory;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
@@ -73,7 +72,7 @@ import org.opengis.util.FactoryException;
 @RunWith(BlockJUnit4ClassRunner.class)
 public abstract class AbstractAnalyzerTest {
 
-    protected static final FilterFactory2 FF = FilterUtilities.FF;
+    protected static final FilterFactory2 FF = DefaultFactories.forBuildin(FilterFactory.class, FilterFactory2.class);
 
     protected static final Logger LOGGER = Logger.getLogger("org.constellation.metadata.index.generic");
 

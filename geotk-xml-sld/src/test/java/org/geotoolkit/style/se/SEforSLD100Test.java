@@ -16,35 +16,36 @@
  */
 package org.geotoolkit.style.se;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.Iterator;
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
 import jakarta.xml.bind.Unmarshaller;
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.Iterator;
 import org.apache.sis.internal.system.DefaultFactories;
+import org.apache.sis.measure.Units;
+import org.apache.sis.xml.MarshallerPool;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.filter.FilterFactory2;
+import org.geotoolkit.filter.FilterUtilities;
+import org.geotoolkit.sld.DefaultSLDFactory;
+import org.geotoolkit.sld.MutableSLDFactory;
+import org.geotoolkit.sld.xml.GTtoSE100Transformer;
+import org.geotoolkit.sld.xml.JAXBSLDUtilities;
+import org.geotoolkit.sld.xml.SE100toGTTransformer;
 import org.geotoolkit.sld.xml.v100.FeatureTypeStyle;
 import org.geotoolkit.sld.xml.v100.Rule;
 import org.geotoolkit.sld.xml.v100.UserStyle;
-import org.geotoolkit.sld.DefaultSLDFactory;
-import org.geotoolkit.sld.MutableSLDFactory;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
-import org.geotoolkit.sld.xml.GTtoSE100Transformer;
-import org.geotoolkit.sld.xml.JAXBSLDUtilities;
-import org.geotoolkit.sld.xml.SE100toGTTransformer;
-import org.apache.sis.xml.MarshallerPool;
-import org.apache.sis.measure.Units;
 import static org.junit.Assert.*;
 import org.junit.Test;
-import org.geotoolkit.filter.FilterFactory2;
-import org.geotoolkit.filter.FilterUtilities;
 import org.opengis.filter.Expression;
+import org.opengis.filter.FilterFactory;
 import org.opengis.filter.ValueReference;
 import org.opengis.style.ContrastMethod;
 import org.opengis.style.LineSymbolizer;
@@ -65,7 +66,7 @@ import org.opengis.style.TextSymbolizer;
 public class SEforSLD100Test {
 
     private static final double DELTA = 0.000001;
-    private static final FilterFactory2 FILTER_FACTORY;
+    private static final FilterFactory FILTER_FACTORY;
     private static final MutableStyleFactory STYLE_FACTORY;
     private static final MutableSLDFactory SLD_FACTORY;
 

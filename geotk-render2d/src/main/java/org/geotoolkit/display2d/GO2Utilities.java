@@ -78,6 +78,7 @@ import org.geotoolkit.display2d.style.CachedRule;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.geotoolkit.feature.FeatureExt;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.filter.visitor.IsStaticExpressionVisitor;
 import org.geotoolkit.filter.visitor.ListingPropertyVisitor;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
@@ -118,9 +119,8 @@ import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
-import org.geotoolkit.filter.FilterFactory2;
-import org.geotoolkit.filter.FilterUtilities;
 import org.opengis.filter.Expression;
+import org.opengis.filter.FilterFactory;
 import org.opengis.filter.ValueReference;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
@@ -149,7 +149,7 @@ public final class GO2Utilities {
     private static final double SE_EPSILON = 1e-6;
 
     public static final MutableStyleFactory STYLE_FACTORY;
-    public static final FilterFactory2 FILTER_FACTORY;
+    public static final FilterFactory FILTER_FACTORY;
     public static final float SELECTION_LOWER_ALPHA = 0.09f;
     public static final int SELECTION_PIXEL_MARGIN = 2;
     public static final AlphaComposite ALPHA_COMPOSITE_0F = AlphaComposite.getInstance(AlphaComposite.CLEAR, 0.0f);

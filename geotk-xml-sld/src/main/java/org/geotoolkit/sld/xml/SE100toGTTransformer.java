@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.sld.xml;
 
+import jakarta.xml.bind.JAXBElement;
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -27,23 +28,19 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.measure.Unit;
 import javax.swing.Icon;
-import jakarta.xml.bind.JAXBElement;
-
-import org.geotoolkit.util.NamesExt;
-
+import org.apache.sis.measure.Units;
+import org.apache.sis.util.SimpleInternationalString;
 import org.geotoolkit.ogc.xml.OGC100toGTTransformer;
-
 import org.geotoolkit.sld.xml.v100.CssParameter;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
-import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.style.MutableStyleFactory;
-import org.apache.sis.util.SimpleInternationalString;
+import org.geotoolkit.style.StyleConstants;
+import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.util.StringUtilities;
-
-import org.geotoolkit.filter.FilterFactory2;
 import org.opengis.filter.Expression;
+import org.opengis.filter.FilterFactory;
 import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.style.AnchorPoint;
 import org.opengis.style.ChannelSelection;
@@ -78,7 +75,6 @@ import org.opengis.style.Stroke;
 import org.opengis.style.Symbolizer;
 import org.opengis.style.TextSymbolizer;
 import org.opengis.util.InternationalString;
-import org.apache.sis.measure.Units;
 
 /**
  * Transform old SLD v1.0.0 symbology in GT classes.
@@ -97,7 +93,7 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
 
     protected final MutableStyleFactory styleFactory;
 
-    public SE100toGTTransformer(final FilterFactory2 filterFactory, final MutableStyleFactory styleFactory) {
+    public SE100toGTTransformer(final FilterFactory filterFactory, final MutableStyleFactory styleFactory) {
         super(filterFactory);
         this.styleFactory = styleFactory;
     }
