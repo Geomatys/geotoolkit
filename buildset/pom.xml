@@ -62,11 +62,6 @@
         Deployment to public servers
     ==================================================== -->
     <distributionManagement>
-        <site>
-            <id>geotoolkit</id>
-            <name>Geotoolkit.org web site</name>
-            <url>file:///var/www/www.geotoolkit.org</url>
-        </site>
         <repository>
             <id>geotoolkit</id>
             <name>Geotoolkit.org binaries</name>

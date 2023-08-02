@@ -175,13 +175,14 @@
     <geoapi.version>4.0-SNAPSHOT</geoapi.version>
     <sis.version>2.0-SNAPSHOT</sis.version>
     <!--
-    SIS build helper version freezed to official release.
+    SIS build helper version froozen to official release.
     It ensures we can import it after SIS will migrate to Gradle build system.
     -->
     <sis.build.helper.version>1.3</sis.build.helper.version>
     <sis.non-free.version>1.3</sis.non-free.version>
 
     <!-- third party dependencies versions -->
+    <esri.geometry>2.2.4</esri.geometry>
     <batik.version>1.14</batik.version>
     <commons-beanutils.version>1.9.4</commons-beanutils.version>
     <commons-compress.version>1.22</commons-compress.version>
@@ -217,19 +218,6 @@
        =========================================================== -->
   <dependencyManagement>
     <dependencies>
-      <dependency>
-        <groupId>org.apache.sis</groupId>
-        <artifactId>parent</artifactId>
-        <version>${sis.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-
-      <dependency>
-          <groupId>org.opengis</groupId>
-          <artifactId>geoapi-pending</artifactId>
-          <version>${geoapi.version}</version>
-      </dependency>
       <dependency>
           <groupId>org.opengis</groupId>
           <artifactId>geoapi-conformance</artifactId>
@@ -307,6 +295,12 @@
           </exclusions>
       </dependency>
 
+      <!-- Geometries -->
+      <dependency>
+        <groupId>com.esri.geometry</groupId>
+        <artifactId>esri-geometry-api</artifactId>
+        <version>${esri.geometry}</version>
+      </dependency>
 
       <!-- Miscellaneous utilities -->
       <dependency>
@@ -615,24 +609,12 @@
         <artifactId>maven-jar-plugin</artifactId>
         <configuration>
           <archive>
-            <index>false</index>
-            <!-- Note: A previous Geotk version set <index> to "true" in order to generate
-                 the META-INF/INDEX.LIST file. However that index file has precedence over
-                 the "Class-Path" entry in the META-INF/MANIFEST.MF file: the later class-
-                 path is then totally ignored.   Unfortunately, for an unknown raison, the
-                 INDEX.LIST file does not contain any GeoAPI-SNAPSHOT package declaration,
-                 which cause java.lang.NoClassDefFoundError to be thrown at runtime.
-                 Consequently we have to forget about INDEX.LIST for now. -->
             <manifest>
               <addClasspath>true</addClasspath>
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
             </manifest>
             <manifestEntries>
               <Built-On>${maven.build.timestamp}</Built-On>
-              <Implementation-URL>http://www.geotoolkit.org</Implementation-URL>
-              <Specification-Title>GeoAPI</Specification-Title>
-              <Specification-Version>${geoapi.version}</Specification-Version>
-              <Specification-Vendor>Open Geospatial Consortium</Specification-Vendor>
             </manifestEntries>
           </archive>
         </configuration>
