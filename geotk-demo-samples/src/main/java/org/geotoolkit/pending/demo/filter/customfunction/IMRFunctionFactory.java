@@ -8,6 +8,7 @@ import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.filter.function.FunctionFactory;
 import org.opengis.filter.Expression;
 import org.opengis.filter.Literal;
+import org.opengis.filter.capability.AvailableFunction;
 import org.opengis.parameter.ParameterDescriptorGroup;
 
 public class IMRFunctionFactory implements FunctionFactory{
@@ -33,7 +34,7 @@ public class IMRFunctionFactory implements FunctionFactory{
     @Override
     public Expression createFunction(String name, Literal fallback, Expression... parameters) throws IllegalArgumentException {
         if(DENSITY.equalsIgnoreCase(name)) return new DensityFunction(parameters, fallback);
-        else throw new IllegalArgumentException("Unknowned function : " + name);
+        else throw new IllegalArgumentException("Unknown function : " + name);
     }
 
     @Override
@@ -44,6 +45,11 @@ public class IMRFunctionFactory implements FunctionFactory{
     @Override
     public Expression create(String name, Expression... parameters) throws IllegalArgumentException {
         if(DENSITY.equalsIgnoreCase(name)) return new DensityFunction(parameters, null);
-        else throw new IllegalArgumentException("Unknowned function : " + name);
+        else throw new IllegalArgumentException("Unknown function : " + name);
+    }
+
+    @Override
+    public AvailableFunction describe(String string) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

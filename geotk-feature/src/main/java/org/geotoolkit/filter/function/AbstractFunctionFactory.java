@@ -10,12 +10,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.apache.sis.parameter.ParameterBuilder;
+import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.util.SimpleInternationalString;
+import org.apache.sis.util.iso.Names;
 import org.opengis.filter.Expression;
 import org.opengis.filter.Literal;
+import org.opengis.filter.capability.Argument;
+import org.opengis.filter.capability.AvailableFunction;
 import org.opengis.parameter.GeneralParameterDescriptor;
+import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.util.InternationalString;
+import org.opengis.util.LocalName;
+import org.opengis.util.TypeName;
 
 /**
  * Abstract function factory.
@@ -57,13 +64,17 @@ public class AbstractFunctionFactory implements FunctionFactory{
         return createFunction(name, null, parameters);
     }
 
+    private Class<?> find(final String name) {
+        final Class<?> type = functions.get(name);
+        if (type == null) {
+            throw new IllegalArgumentException("Unknown function name: " + name);
+        }
+        return type;
+    }
+
     @Override
     public Expression createFunction(String name, Literal fallback, Expression... parameters) throws IllegalArgumentException {
-        final Class clazz = functions.get(name);
-        if(clazz == null){
-            throw new IllegalArgumentException("Unknowed function name : "+ name);
-        }
-
+        final Class clazz = find(name);
         final Constructor construct = clazz.getConstructors()[0];
         final Object[] cstParams = new Object[construct.getParameterTypes().length];
         for(int i=0;i<cstParams.length && i<parameters.length;i++){
@@ -79,12 +90,7 @@ public class AbstractFunctionFactory implements FunctionFactory{
 
     @Override
     public ParameterDescriptorGroup describeFunction(String name) throws IllegalArgumentException {
-
-        final Class clazz = functions.get(name);
-        if(clazz == null){
-            throw new IllegalArgumentException("Unknowed function name : "+ name);
-        }
-
+        final Class clazz = find(name);
         return getDescription(name,clazz);
     }
 
@@ -136,5 +142,37 @@ public class AbstractFunctionFactory implements FunctionFactory{
         }catch(Exception ex){
             return new ParameterBuilder().addName(name).createGroup();
         }
+    }
+
+    @Override
+    public AvailableFunction describe(final String name) {
+        final ParameterDescriptorGroup p = describeFunction(name);
+        return new AvailableFunction() {
+            @Override
+            public LocalName getName() {
+                return NamedIdentifier.castOrCopy(p.getName()).tip();
+            }
+
+            @Override
+            public TypeName getReturnType() {
+                return Names.createTypeName(find(name));
+            }
+
+            @Override
+            public List<? extends Argument> getArguments() {
+                final List<GeneralParameterDescriptor> args = p.descriptors();
+                return args.stream().map((a) -> new Argument() {
+                    @Override
+                    public LocalName getName() {
+                        return NamedIdentifier.castOrCopy(a.getName()).tip();
+                    }
+
+                    @Override
+                    public TypeName getValueType() {
+                        return ((ParameterDescriptor<?>) a).getValueType();
+                    }
+                }).toList();
+            }
+        };
     }
 }
