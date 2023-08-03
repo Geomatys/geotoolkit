@@ -15,10 +15,8 @@ import org.apache.sis.util.SimpleInternationalString;
 import org.apache.sis.util.iso.Names;
 import org.opengis.filter.Expression;
 import org.opengis.filter.Literal;
-import org.opengis.filter.capability.Argument;
 import org.opengis.filter.capability.AvailableFunction;
 import org.opengis.parameter.GeneralParameterDescriptor;
-import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.util.InternationalString;
 import org.opengis.util.LocalName;
@@ -159,19 +157,8 @@ public class AbstractFunctionFactory implements FunctionFactory{
             }
 
             @Override
-            public List<? extends Argument> getArguments() {
-                final List<GeneralParameterDescriptor> args = p.descriptors();
-                return args.stream().map((a) -> new Argument() {
-                    @Override
-                    public LocalName getName() {
-                        return NamedIdentifier.castOrCopy(a.getName()).tip();
-                    }
-
-                    @Override
-                    public TypeName getValueType() {
-                        return ((ParameterDescriptor<?>) a).getValueType();
-                    }
-                }).toList();
+            public List getArguments() {
+                return p.descriptors();
             }
         };
     }
