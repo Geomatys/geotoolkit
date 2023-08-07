@@ -21,7 +21,15 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
+import org.geotoolkit.sld.MutableLayer;
+import org.geotoolkit.sld.MutableLayerCoverageConstraints;
+import org.geotoolkit.sld.MutableLayerFeatureConstraints;
+import org.geotoolkit.sld.MutableLayerStyle;
+import org.geotoolkit.sld.MutableNamedLayer;
+import org.geotoolkit.sld.MutableNamedStyle;
+import org.geotoolkit.sld.MutableSLDFactory;
+import org.geotoolkit.sld.MutableStyledLayerDescriptor;
+import org.geotoolkit.sld.MutableUserLayer;
 import org.geotoolkit.sld.xml.v110.InlineFeature;
 import org.geotoolkit.sld.xml.v110.LayerCoverageConstraints;
 import org.geotoolkit.sld.xml.v110.LayerFeatureConstraints;
@@ -30,23 +38,11 @@ import org.geotoolkit.sld.xml.v110.StyledLayerDescriptor;
 import org.geotoolkit.sld.xml.v110.UseSLDLibrary;
 import org.geotoolkit.sld.xml.v110.UserLayer;
 import org.geotoolkit.sld.xml.v110.UserStyle;
-import org.geotoolkit.sld.MutableLayer;
-import org.geotoolkit.sld.MutableLayerCoverageConstraints;
-import org.geotoolkit.sld.MutableLayerFeatureConstraints;
-import org.geotoolkit.sld.MutableLayerStyle;
-import org.geotoolkit.sld.MutableNamedLayer;
-import org.geotoolkit.sld.MutableNamedStyle;
-import org.geotoolkit.sld.MutableStyledLayerDescriptor;
-import org.geotoolkit.sld.MutableUserLayer;
-import org.geotoolkit.sld.MutableSLDFactory;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
-
-import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
-import org.geotoolkit.filter.FilterFactory2;
+import org.opengis.filter.FilterFactory;
 import org.opengis.metadata.citation.OnlineResource;
-import org.opengis.util.FactoryException;
 import org.opengis.sld.CoverageConstraint;
 import org.opengis.sld.CoverageExtent;
 import org.opengis.sld.Extent;
@@ -55,6 +51,8 @@ import org.opengis.sld.RangeAxis;
 import org.opengis.sld.RemoteOWS;
 import org.opengis.sld.SLDLibrary;
 import org.opengis.sld.Source;
+import org.opengis.util.FactoryException;
+import org.opengis.util.GenericName;
 
 /**
  * Transform a SLD v1.1.0 in GT classes.
@@ -66,13 +64,13 @@ public class SLD110toGTTransformer extends SE110toGTTransformer{
 
     protected final MutableSLDFactory sldFactory;
 
-    public SLD110toGTTransformer(final FilterFactory2 filterFactory, final MutableStyleFactory styleFactory,
+    public SLD110toGTTransformer(final FilterFactory filterFactory, final MutableStyleFactory styleFactory,
             final MutableSLDFactory sldFactory) {
         super(filterFactory,styleFactory);
         this.sldFactory = sldFactory;
     }
 
-    public SLD110toGTTransformer(final FilterFactory2 filterFactory, final MutableStyleFactory styleFactory,
+    public SLD110toGTTransformer(final FilterFactory filterFactory, final MutableStyleFactory styleFactory,
             final MutableSLDFactory sldFactory, final Map<String, String> namespaceMapping) {
         super(filterFactory,styleFactory, namespaceMapping);
         this.sldFactory = sldFactory;

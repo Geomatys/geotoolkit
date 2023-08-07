@@ -39,7 +39,6 @@ import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.service.SceneDef;
-import org.geotoolkit.filter.FilterFactory2;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.style.MutableStyle;
@@ -53,6 +52,7 @@ import org.locationtech.jts.geom.Point;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.Expression;
+import org.opengis.filter.FilterFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.style.Fill;
 import org.opengis.style.PolygonSymbolizer;
@@ -64,7 +64,7 @@ import org.opengis.style.Stroke;
  */
 public class GeometryExpressionTest {
 
-    private static final FilterFactory2 FF = GO2Utilities.FILTER_FACTORY;
+    private static final FilterFactory FF = GO2Utilities.FILTER_FACTORY;
     private static final MutableStyleFactory SF = GO2Utilities.STYLE_FACTORY;
 
     /**

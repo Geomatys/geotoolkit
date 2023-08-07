@@ -26,7 +26,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.WritableGridCoverageResource;
 import org.apache.sis.util.Utilities;
-import org.geotoolkit.filter.FilterFactory2;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
@@ -76,7 +75,7 @@ public class MathCalcProcess extends AbstractProcess {
         }
 
         //create expression
-        final FilterFactory2 ff = FilterUtilities.FF;
+        final FilterFactory ff = FilterUtilities.FF;
         final Expression exp;
         try {
             exp = CQL.parseExpression(inFormula, (FilterFactory) ff);

@@ -113,6 +113,9 @@ public class InMemoryFeatureSet extends AbstractFeatureSet implements WritableFe
 
     private final ReentrantReadWriteLock stateLock = new ReentrantReadWriteLock();
 
+    //configuration flags
+    private boolean deepCopy = true;
+
     public InMemoryFeatureSet(FeatureType type) {
         this(null, type, null, true);
     }
@@ -169,6 +172,21 @@ public class InMemoryFeatureSet extends AbstractFeatureSet implements WritableFe
             defaultGeometryCrs = null;
             tree = null;
         }
+    }
+
+    /**
+     * @return true if features are copied on read
+     */
+    public boolean isCopyOnRead() {
+        return deepCopy;
+    }
+
+    /**
+     * @param deepCopy set to true to copy features on read operation.
+     *          Default is true.
+     */
+    public void setCopyOnRead(boolean deepCopy) {
+        this.deepCopy = deepCopy;
     }
 
     private void write(Runnable writeAction) {
@@ -235,7 +253,7 @@ public class InMemoryFeatureSet extends AbstractFeatureSet implements WritableFe
         var dataStream = Arrays.stream(snapshot);
         if (parallel) dataStream = dataStream.parallel();
         // TODO: verify if deep-copy is needed.
-        return dataStream.map(FeatureExt::deepCopy);
+        return deepCopy ? dataStream.map(FeatureExt::deepCopy) : dataStream;
     }
 
     private Stream<Feature> features(boolean parallel, Envelope env) throws DataStoreException {
@@ -251,7 +269,7 @@ public class InMemoryFeatureSet extends AbstractFeatureSet implements WritableFe
         final JTSEnvelope2D jtsenv = new JTSEnvelope2D(env);
         final List<Feature> lst = read(() -> tree.query(jtsenv));
         var datastream = parallel ? lst.parallelStream() : lst.stream();
-        return datastream.map(FeatureExt::deepCopy);
+        return deepCopy ? datastream.map(FeatureExt::deepCopy) : datastream;
     }
 
     @Override

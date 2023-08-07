@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.style;
 
+import jakarta.xml.bind.JAXBException;
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
@@ -26,20 +27,25 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.measure.Unit;
-import jakarta.xml.bind.JAXBException;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.measure.Units;
+import org.apache.sis.util.SimpleInternationalString;
+import org.geotoolkit.filter.FilterUtilities;
+import org.geotoolkit.sld.DefaultSLDFactory;
 import org.geotoolkit.sld.MutableNamedLayer;
 import org.geotoolkit.sld.MutableNamedStyle;
+import org.geotoolkit.sld.MutableSLDFactory;
 import org.geotoolkit.sld.MutableStyledLayerDescriptor;
 import org.geotoolkit.sld.MutableUserLayer;
-import org.geotoolkit.sld.MutableSLDFactory;
-import org.geotoolkit.sld.DefaultSLDFactory;
+import org.geotoolkit.sld.xml.Specification;
 import org.geotoolkit.sld.xml.StyleXmlIO;
-import org.apache.sis.util.SimpleInternationalString;
+import static org.junit.Assert.*;
+import org.junit.Test;
+import org.opengis.filter.BetweenComparisonOperator;
 import org.opengis.filter.Expression;
+import org.opengis.filter.Filter;
+import org.opengis.filter.FilterFactory;
 import org.opengis.metadata.citation.OnlineResource;
-import org.opengis.util.FactoryException;
 import org.opengis.sld.SLDLibrary;
 import org.opengis.style.AnchorPoint;
 import org.opengis.style.ChannelSelection;
@@ -60,17 +66,10 @@ import org.opengis.style.PolygonSymbolizer;
 import org.opengis.style.RasterSymbolizer;
 import org.opengis.style.ShadedRelief;
 import org.opengis.style.Stroke;
+import org.opengis.style.StyleFactory;
 import org.opengis.style.Symbolizer;
 import org.opengis.style.TextSymbolizer;
-import org.geotoolkit.sld.xml.Specification;
-import static org.junit.Assert.*;
-import org.junit.Test;
-import org.opengis.filter.Filter;
-import org.opengis.filter.FilterFactory;
-import org.geotoolkit.filter.FilterFactory2;
-import org.geotoolkit.filter.FilterUtilities;
-import org.opengis.filter.BetweenComparisonOperator;
-import org.opengis.style.StyleFactory;
+import org.opengis.util.FactoryException;
 
 /**
  * Test class for XMLUtilities.
@@ -80,7 +79,7 @@ import org.opengis.style.StyleFactory;
  */
 public class XMLUtilitiesTest {
 
-    private static final FilterFactory2 FILTER_FACTORY;
+    private static final FilterFactory FILTER_FACTORY;
     private static final MutableStyleFactory STYLE_FACTORY;
     private static final MutableSLDFactory SLD_FACTORY;
 

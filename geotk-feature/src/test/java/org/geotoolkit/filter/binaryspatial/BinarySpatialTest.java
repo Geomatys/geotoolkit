@@ -25,20 +25,19 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.apache.sis.geometry.Envelope2D;
+import org.apache.sis.measure.Quantities;
+import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
+import static org.geotoolkit.filter.FilterTestConstants.*;
+import static org.junit.Assert.*;
+import org.junit.Test;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.LinearRing;
-
-import org.junit.Test;
-
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
-import static org.junit.Assert.*;
-import static org.geotoolkit.filter.FilterTestConstants.*;
 import org.opengis.filter.Filter;
 import org.opengis.filter.ValueReference;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 
 /**
@@ -106,22 +105,13 @@ public class BinarySpatialTest {
     }
 
     @Test
-    public void testBBOX() {
-        Filter bbox = FF.bbox("testGeometry", 1, 1, 6, 6, "EPSG:4326");
-        assertTrue(bbox.test(CANDIDATE_1));
-
-        bbox = FF.bbox("testGeometry", -3, -2, 4, 1, "EPSG:4326");
-        assertFalse(bbox.test(CANDIDATE_1));
-    }
-
-    @Test
     public void testBeyond() {
         //we can not test units while using jts geometries
 
-        Filter beyond = FF.beyond(FF.property("testGeometry"), FF.literal(GEOM_DISTANCE_1), 1.5d, "m");
+        Filter beyond = FF.beyond(FF.property("testGeometry"), FF.literal(GEOM_DISTANCE_1), Quantities.create(1.5d, Units.METRE));
         assertFalse(beyond.test(CANDIDATE_1));
 
-        beyond = FF.beyond(FF.property("testGeometry"), FF.literal(GEOM_DISTANCE_3), 1.5d, "m");
+        beyond = FF.beyond(FF.property("testGeometry"), FF.literal(GEOM_DISTANCE_3), Quantities.create(1.5d, Units.METRE));
         assertTrue(beyond.test(CANDIDATE_1));
     }
 
@@ -151,10 +141,10 @@ public class BinarySpatialTest {
     public void testDWithin() {
         //we can not test units while using jts geometries
 
-        Filter within = FF.dwithin(FF.property("testGeometry"), FF.literal(GEOM_DISTANCE_1), 1.5d, "m");
+        Filter within = FF.within(FF.property("testGeometry"), FF.literal(GEOM_DISTANCE_1), Quantities.create(1.5d, Units.METRE));
         assertTrue(within.test(CANDIDATE_1));
 
-        within = FF.dwithin(FF.property("testGeometry"), FF.literal(GEOM_DISTANCE_3), 1.5d, "m");
+        within = FF.within(FF.property("testGeometry"), FF.literal(GEOM_DISTANCE_3), Quantities.create(1.5d, Units.METRE));
         assertFalse(within.test(CANDIDATE_1));
     }
 

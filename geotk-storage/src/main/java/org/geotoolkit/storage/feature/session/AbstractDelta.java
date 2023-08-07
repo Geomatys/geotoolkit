@@ -21,9 +21,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 import static org.apache.sis.util.ArgumentChecks.*;
-import org.geotoolkit.filter.FilterFactory2;
 import org.geotoolkit.filter.FilterUtilities;
 import org.opengis.filter.Filter;
+import org.opengis.filter.FilterFactory;
 import org.opengis.filter.LogicalOperator;
 import org.opengis.filter.LogicalOperatorName;
 
@@ -34,7 +34,7 @@ import org.opengis.filter.LogicalOperatorName;
  */
 abstract class AbstractDelta implements Delta{
 
-    protected static final FilterFactory2 FF = FilterUtilities.FF;
+    protected static final FilterFactory FF = FilterUtilities.FF;
 
     private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.data.session");
 

@@ -18,7 +18,6 @@ package org.geotoolkit.style;
 
 import java.awt.Color;
 import java.io.File;
-
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -28,23 +27,21 @@ import java.util.logging.Logger;
 import javax.measure.Unit;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.measure.Units;
-
-import org.geotoolkit.factory.Hints;
-import org.geotoolkit.sld.MutableNamedLayer;
-import org.geotoolkit.sld.MutableNamedStyle;
-import org.geotoolkit.sld.MutableStyledLayerDescriptor;
-import org.geotoolkit.sld.MutableUserLayer;
-import org.geotoolkit.sld.MutableSLDFactory;
-import org.geotoolkit.sld.DefaultSLDFactory;
-import org.geotoolkit.sld.xml.JAXBSLDUtilities;
 import org.apache.sis.util.SimpleInternationalString;
-
-import org.junit.Test;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.filter.FilterFactory2;
 import org.geotoolkit.filter.FilterUtilities;
+import org.geotoolkit.sld.DefaultSLDFactory;
+import org.geotoolkit.sld.MutableNamedLayer;
+import org.geotoolkit.sld.MutableNamedStyle;
+import org.geotoolkit.sld.MutableSLDFactory;
+import org.geotoolkit.sld.MutableStyledLayerDescriptor;
+import org.geotoolkit.sld.MutableUserLayer;
+import org.geotoolkit.sld.xml.JAXBSLDUtilities;
+import org.junit.Test;
 import org.opengis.filter.Expression;
+import org.opengis.filter.FilterFactory;
 import org.opengis.metadata.citation.OnlineResource;
-import org.opengis.util.FactoryException;
 import org.opengis.sld.Layer;
 import org.opengis.sld.SLDLibrary;
 import org.opengis.sld.StyledLayerDescriptor;
@@ -70,6 +67,7 @@ import org.opengis.style.Stroke;
 import org.opengis.style.StyleFactory;
 import org.opengis.style.Symbolizer;
 import org.opengis.style.TextSymbolizer;
+import org.opengis.util.FactoryException;
 
 /**
  * @author Johann Sorel (Geomatys)
@@ -77,7 +75,7 @@ import org.opengis.style.TextSymbolizer;
  */
 public class Tester {
 
-    private static final FilterFactory2 FILTER_FACTORY;
+    private static final FilterFactory FILTER_FACTORY;
     private static final MutableStyleFactory STYLE_FACTORY;
     private static final MutableSLDFactory SLD_FACTORY;
     private static final JAXBSLDUtilities SLD_UTILITIES;

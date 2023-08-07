@@ -24,6 +24,7 @@ import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.feature.FeatureExt;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
@@ -34,8 +35,7 @@ import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.Feature;
 import org.opengis.feature.PropertyType;
 import org.opengis.filter.Filter;
-import org.geotoolkit.filter.FilterFactory2;
-import org.geotoolkit.filter.FilterUtilities;
+import org.opengis.filter.FilterFactory;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -49,7 +49,7 @@ import org.opengis.util.FactoryException;
  */
 public class NearestProcess extends AbstractProcess {
 
-    private static final FilterFactory2 FF = FilterUtilities.FF;
+    private static final FilterFactory FF = FilterUtilities.FF;
 
     /**
      * Default constructor

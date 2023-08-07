@@ -37,7 +37,6 @@ import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import org.geotoolkit.feature.FeatureExt;
-import org.geotoolkit.filter.FilterFactory2;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.filter.visitor.DuplicatingFilterVisitor;
 import org.geotoolkit.filter.visitor.SimplifyingFilterVisitor;
@@ -58,6 +57,7 @@ import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
+import org.opengis.filter.FilterFactory;
 import org.opengis.filter.Literal;
 import org.opengis.filter.ResourceId;
 import org.opengis.geometry.Envelope;
@@ -80,7 +80,7 @@ import org.opengis.util.GenericName;
 @Deprecated
 public final class Session implements Resource, StoreListener<StoreEvent> {
 
-    protected static final FilterFactory2 FF = FilterUtilities.FF;
+    protected static final FilterFactory FF = FilterUtilities.FF;
 
     private final StorageListener.Weak weakListener = new StorageListener.Weak(this);
     protected final FeatureStore store;
