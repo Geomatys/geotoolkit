@@ -19,6 +19,18 @@ package org.geotoolkit.nio.zip;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.FileTime;
+import java.util.Iterator;
+import java.util.concurrent.TimeUnit;
+
+import static org.junit.Assert.*;
+
 /**
  *
  * @author Johann Sorel (Geomatys)
@@ -29,27 +41,33 @@ public class ZipAttributesTest {
     }
 
     /**
-     * Test of name method, of class ZipAttributes.
+     * Test file attributes method, of class ZipAttributes.
      */
-    @Ignore
     @Test
-    public void testName() {
-    }
+    public void testAttributes() throws IOException, URISyntaxException {
 
-    /**
-     * Test of readAttributes method, of class ZipAttributes.
-     */
-    @Ignore
-    @Test
-    public void testReadAttributes() throws Exception {
-    }
+        final Path path = Files.createTempFile("fs", ".zip");
+        try (InputStream in = ZipFileSystemProviderTest.class.getResourceAsStream("test.zip")) {
+            Files.copy(in, path, StandardCopyOption.REPLACE_EXISTING);
+        }
+        final URI uri = new URI("zip:"+path.toUri().toString());
 
-    /**
-     * Test of setTimes method, of class ZipAttributes.
-     */
-    @Ignore
-    @Test
-    public void testSetTimes() throws Exception {
+        try (FileSystem fs = FileSystems.newFileSystem(uri,null)) {
+            final Path filePath = fs.getPath("/test/2/3.txt");
+            BasicFileAttributes att = fs.provider().readAttributes(filePath, BasicFileAttributes.class);
+            assertFalse(att.isDirectory());
+            FileTime ft = FileTime.from(1448574150, TimeUnit.MILLISECONDS);
+            assertEquals(ft, att.creationTime());
+            assertEquals(ft, att.lastAccessTime());
+            assertEquals(ft, att.lastModifiedTime());
+            assertNull(att.fileKey());
+            assertFalse(att.isOther());
+            assertTrue(att.isRegularFile());
+            assertFalse(att.isSymbolicLink());
+            assertEquals(0,att.size());
+        } finally {
+            Files.deleteIfExists(path);
+        }
     }
 
 }
