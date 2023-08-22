@@ -17,7 +17,7 @@
 package org.geotoolkit.renderer;
 
 import java.util.List;
-import org.apache.sis.internal.map.Presentation;
+import org.apache.sis.map.Presentation;
 
 /**
  *

@@ -32,7 +32,7 @@ import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.feature.internal.AttributeConvention;
 import org.apache.sis.referencing.CommonCRS;
 
 

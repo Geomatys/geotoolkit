@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.internal.simple.SimpleCitation;
+import org.apache.sis.metadata.simple.SimpleCitation;
 import org.apache.sis.metadata.iso.citation.Citations;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.referencing.NamedIdentifier;

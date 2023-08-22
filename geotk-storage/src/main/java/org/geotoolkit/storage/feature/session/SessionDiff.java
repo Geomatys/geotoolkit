@@ -25,7 +25,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.geotoolkit.storage.feature.FeatureStore;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.internal.util.UnmodifiableArrayList;
+import org.apache.sis.util.internal.UnmodifiableArrayList;
 
 /**
  * Contain a list of all modification, ensure concurrency when accesing

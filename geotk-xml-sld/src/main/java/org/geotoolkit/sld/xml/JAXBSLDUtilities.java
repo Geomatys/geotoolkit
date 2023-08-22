@@ -93,7 +93,7 @@ public class JAXBSLDUtilities {
     public static List<Class> getSLD110PoolClasses(){
         final List<Class> classes = new ArrayList<>();
         classes.add(org.geotoolkit.sld.xml.v110.StyledLayerDescriptor.class);
-        classes.add(org.apache.sis.internal.jaxb.geometry.ObjectFactory.class);
+        classes.add(org.apache.sis.xml.bind.metadata.geometry.ObjectFactory.class);
 
         final ServiceLoader<org.geotoolkit.se.xml.v110.SymbolizerType> additionalTypes = ServiceLoader.load(org.geotoolkit.se.xml.v110.SymbolizerType.class);
         final Iterator<org.geotoolkit.se.xml.v110.SymbolizerType> ite = additionalTypes.iterator();

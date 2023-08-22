@@ -11,8 +11,8 @@ import java.util.Map;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import java.util.ServiceLoader;
-import org.apache.sis.internal.system.Modules;
-import org.apache.sis.internal.system.SystemListener;
+import org.apache.sis.system.Modules;
+import org.apache.sis.system.SystemListener;
 
 
 /**
@@ -26,7 +26,7 @@ import org.apache.sis.internal.system.SystemListener;
  *     META-INF/services/org.geotoolkit.wps.xml.TypeRegistration
  * }
  *
- * Note : copied from Apache SIS org.apache.sis.internal.jaxb.TypeRegistration
+ * Note : copied from Apache SIS org.apache.sis.xml.bind.TypeRegistration
  *
  * @author  Martin Desruisseaux (Geomatys)
  */

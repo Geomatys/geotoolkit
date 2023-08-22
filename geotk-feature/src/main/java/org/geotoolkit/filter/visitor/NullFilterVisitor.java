@@ -19,7 +19,7 @@ package org.geotoolkit.filter.visitor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.Expression;
 import org.opengis.util.CodeList;
-import org.apache.sis.internal.filter.Visitor;
+import org.apache.sis.filter.internal.Visitor;
 import org.opengis.filter.LogicalOperator;
 
 /**

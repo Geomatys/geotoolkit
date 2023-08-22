@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.sis.util.Version;
-import org.apache.sis.internal.util.UnmodifiableArrayList;
+import org.apache.sis.util.internal.UnmodifiableArrayList;
 
 import org.opengis.geometry.Envelope;
 import org.geotoolkit.sld.StyledLayerDescriptor;

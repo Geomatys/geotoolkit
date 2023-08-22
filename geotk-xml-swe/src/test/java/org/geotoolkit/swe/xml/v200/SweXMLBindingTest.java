@@ -47,7 +47,7 @@ public class SweXMLBindingTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
-        pool = new MarshallerPool(JAXBContext.newInstance("org.geotoolkit.swe.xml.v101:org.geotoolkit.swe.xml.v200:org.apache.sis.internal.jaxb.geometry"), null);
+        pool = new MarshallerPool(JAXBContext.newInstance("org.geotoolkit.swe.xml.v101:org.geotoolkit.swe.xml.v200:org.apache.sis.xml.bind.metadata.geometry"), null);
     }
 
     @AfterClass

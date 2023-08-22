@@ -31,7 +31,7 @@ import org.geotoolkit.gml.xml.v321.EnvelopeType;
 import org.geotoolkit.gml.xml.v321.FeaturePropertyType;
 import org.geotoolkit.gml.xml.v321.ReferenceType;
 import org.geotoolkit.sampling.xml.SamplingFeature;
-import org.apache.sis.internal.jaxb.metadata.LI_Lineage;
+import org.apache.sis.xml.bind.metadata.LI_Lineage;
 import org.geotoolkit.observation.xml.v200.NamedValuePropertyType;
 import org.geotoolkit.observation.xml.v200.OMObservationPropertyType;
 import org.apache.sis.util.ComparisonMode;

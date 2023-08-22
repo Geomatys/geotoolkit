@@ -48,7 +48,7 @@ import org.geotoolkit.swe.xml.v101.SimpleDataRecordType;
 import org.geotoolkit.swe.xml.v101.Text;
 import org.geotoolkit.swe.xml.v101.TextBlockType;
 import jakarta.xml.bind.JAXBContext;
-import org.apache.sis.internal.xml.LegacyNamespaces;
+import org.apache.sis.xml.util.LegacyNamespaces;
 import org.apache.sis.measure.Units;
 import org.apache.sis.metadata.iso.quality.DefaultQuantitativeAttributeAccuracy;
 import org.apache.sis.metadata.iso.quality.DefaultQuantitativeResult;
@@ -103,7 +103,7 @@ public class ObservationXMLBindingTest {
                 "org.geotoolkit.sampling.xml.v100:" +
                 "org.geotoolkit.sampling.xml.v200:" +
                 "org.geotoolkit.samplingspatial.xml.v200:" +
-                "org.apache.sis.internal.jaxb.geometry"), properties);
+                "org.apache.sis.xml.bind.metadata.geometry"), properties);
         unmarshaller = pool.acquireUnmarshaller();
         marshaller   = pool.acquireMarshaller();
         marshaller.setProperty(XML.METADATA_VERSION, LegacyNamespaces.VERSION_2007);

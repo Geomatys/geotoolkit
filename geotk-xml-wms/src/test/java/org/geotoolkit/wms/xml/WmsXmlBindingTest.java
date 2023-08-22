@@ -39,9 +39,9 @@ import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
 import jakarta.xml.bind.Unmarshaller;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.internal.util.Constants;
-import org.apache.sis.internal.util.URLs;
-import org.apache.sis.internal.xml.LegacyNamespaces;
+import org.apache.sis.util.internal.Constants;
+import org.apache.sis.util.internal.URLs;
+import org.apache.sis.xml.util.LegacyNamespaces;
 import org.apache.sis.util.DefaultInternationalString;
 
 import org.geotoolkit.inspire.xml.vs.ExtendedCapabilitiesType;
@@ -127,7 +127,7 @@ public class WmsXmlBindingTest {
                 "org.geotoolkit.wms.xml.v111:" +
                 "org.geotoolkit.wms.xml.v130:" +
                 "org.geotoolkit.inspire.xml.vs:" +
-                "org.apache.sis.internal.jaxb.geometry"), properties);
+                "org.apache.sis.xml.bind.metadata.geometry"), properties);
         unmarshaller = pool.acquireUnmarshaller();
         marshaller   = pool.acquireMarshaller();
     }
@@ -298,7 +298,7 @@ public class WmsXmlBindingTest {
 //        period.setBegining(new DefaultInstant(properties, new DefaultPosition(new Date(120000000))));
 //        period.setEnding(new DefaultInstant(properties, new DefaultPosition(new Date(120000001))));
 
-//      org.apache.sis.internal.jaxb.gml.GMLAdapter.IDs.setUUID(period, "extent");
+//      org.apache.sis.xml.bind.gml.GMLAdapter.IDs.setUUID(period, "extent");
         tempExt.setExtent(period);
         extent.setTemporalElements(Arrays.asList(tempExt));
         ext.setTemporalRefererence(extent);
@@ -460,7 +460,7 @@ public class WmsXmlBindingTest {
         "    </inspire_vs:ExtendedCapabilities>" + '\n' +
         "</wms:Capability>" + '\n';
 
-//      org.apache.sis.internal.jaxb.gml.GMLAdapter.IDs.removeUUID(period);
+//      org.apache.sis.xml.bind.gml.GMLAdapter.IDs.removeUUID(period);
 
         assertXmlEquals(expResult, result, "http://www.w3.org/2000/xmlns:*");
     }

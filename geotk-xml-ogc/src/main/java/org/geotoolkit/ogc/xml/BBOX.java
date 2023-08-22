@@ -18,7 +18,7 @@ package org.geotoolkit.ogc.xml;
 
 import java.util.Arrays;
 import java.util.List;
-import org.apache.sis.internal.feature.jts.JTS;
+import org.apache.sis.geometry.wrapper.jts.JTS;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.geotoolkit.gml.xml.Envelope;
 import org.locationtech.jts.geom.Geometry;

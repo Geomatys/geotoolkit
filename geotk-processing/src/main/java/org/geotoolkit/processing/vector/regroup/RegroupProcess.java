@@ -27,7 +27,7 @@ import org.apache.sis.feature.AbstractOperation;
 
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.feature.internal.AttributeConvention;
 
 import org.geotoolkit.storage.feature.FeatureCollection;
 import org.geotoolkit.storage.feature.FeatureIterator;

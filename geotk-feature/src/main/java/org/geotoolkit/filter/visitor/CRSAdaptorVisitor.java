@@ -62,7 +62,7 @@ public class CRSAdaptorVisitor extends DuplicatingFilterVisitor {
                             final CoordinateReferenceSystem sourceCRS = JTS.findCoordinateReferenceSystem(geom);
                             if (Utilities.equalsIgnoreMetadata(sourceCRS, targetCrs)) break out;
                             final MathTransform trs = CRS.findOperation(sourceCRS, targetCrs, null).getMathTransform();
-                            geom = org.apache.sis.internal.feature.jts.JTS.transform(geom, trs);
+                            geom = org.apache.sis.geometry.wrapper.jts.JTS.transform(geom, trs);
                             l = ff.literal(geom);
                         } else if (lo instanceof Envelope) {
                             Envelope env = Envelopes.transform((Envelope) lo, targetCrs);

@@ -31,7 +31,7 @@ import org.apache.sis.measure.MeasurementRange;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.collection.Containers;
-import org.apache.sis.internal.coverage.j2d.ColorModelFactory;
+import org.apache.sis.coverage.grid.j2d.ColorModelFactory;
 import org.geotoolkit.resources.Vocabulary;
 import org.opengis.util.InternationalString;
 

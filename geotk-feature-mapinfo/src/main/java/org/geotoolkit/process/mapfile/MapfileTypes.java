@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 import org.geotoolkit.util.NamesExt;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.internal.util.UnmodifiableArrayList;
+import org.apache.sis.util.internal.UnmodifiableArrayList;
 
 import org.opengis.feature.FeatureType;
 import org.opengis.util.GenericName;

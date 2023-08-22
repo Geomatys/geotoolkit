@@ -28,7 +28,7 @@ import org.opengis.metadata.Identifier;
 
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.metadata.iso.citation.Citations;
-import org.apache.sis.internal.referencing.provider.Mercator2SP;
+import org.apache.sis.referencing.operation.provider.Mercator2SP;
 
 
 /**

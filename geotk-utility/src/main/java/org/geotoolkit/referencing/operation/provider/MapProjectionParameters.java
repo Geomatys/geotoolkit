@@ -30,7 +30,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.parameter.Parameter;
 import org.geotoolkit.parameter.ParameterGroup;
 import org.geotoolkit.parameter.FloatParameter;
-import org.apache.sis.internal.referencing.Formulas;
+import org.apache.sis.referencing.util.Formulas;
 import org.apache.sis.parameter.Parameters;
 
 import org.geotoolkit.parameter.AbstractParameterValue;

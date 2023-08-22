@@ -33,7 +33,7 @@ import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.feature.internal.AttributeConvention;
 import org.apache.sis.util.Utilities;
 
 
@@ -155,7 +155,7 @@ public class DefaultFeatureMapper implements FeatureMapper {
                 if(!Utilities.equalsIgnoreMetadata(sourceCRS,targetCRS)){
                     //crs are different, reproject source geometry
                     try {
-                        candidateGeom = org.apache.sis.internal.feature.jts.JTS.transform(candidateGeom, CRS.findOperation(sourceCRS, targetCRS, null).getMathTransform());
+                        candidateGeom = org.apache.sis.geometry.wrapper.jts.JTS.transform(candidateGeom, CRS.findOperation(sourceCRS, targetCRS, null).getMathTransform());
                     } catch (Exception ex) {
                         ex.printStackTrace();
                         return null;

@@ -19,7 +19,7 @@ package org.geotoolkit.hdf.io;
 import java.io.IOException;
 import java.nio.ByteOrder;
 import java.nio.file.Path;
-import org.apache.sis.internal.storage.io.ChannelDataInput;
+import org.apache.sis.io.stream.ChannelDataInput;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.StorageConnector;
 import org.geotoolkit.hdf.SuperBlock;

@@ -30,9 +30,9 @@ import java.util.List;
 import java.util.stream.Stream;
 import javax.measure.Unit;
 import javax.measure.UnitConverter;
-import org.apache.sis.internal.map.ExceptionPresentation;
-import org.apache.sis.internal.map.Presentation;
-import org.apache.sis.internal.referencing.ReferencingUtilities;
+import org.apache.sis.map.ExceptionPresentation;
+import org.apache.sis.map.Presentation;
+import org.apache.sis.referencing.util.ReferencingUtilities;
 import org.apache.sis.measure.Units;
 import org.apache.sis.portrayal.MapLayer;
 import org.geotoolkit.display2d.GO2Utilities;
@@ -138,7 +138,7 @@ public class GraduationSymbolizerRenderer extends AbstractSymbolizerRenderer<Cac
         renderingContext.switchToDisplayCRS();
         try {
             final Geometry geom = projGeom.getDataGeometryJTS();
-            final Geometry displayGeom = org.apache.sis.internal.feature.jts.JTS.transform(geom,projGeom.getDataToDisplay());
+            final Geometry displayGeom = org.apache.sis.geometry.wrapper.jts.JTS.transform(geom,projGeom.getDataToDisplay());
 
             if (!forwardCandidates.isEmpty()) {
                 final Shape dispShape = new JTSGeometryJ2D(displayGeom);

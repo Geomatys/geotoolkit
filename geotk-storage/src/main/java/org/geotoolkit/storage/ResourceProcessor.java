@@ -30,7 +30,7 @@ import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
 import org.apache.sis.image.DataType;
 import org.apache.sis.image.ImageProcessor;
-import org.apache.sis.internal.system.Loggers;
+import org.apache.sis.system.Loggers;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.apache.sis.referencing.CRS;

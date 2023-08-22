@@ -21,7 +21,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import java.io.IOException;
-import org.apache.sis.internal.feature.jts.JTS;
+import org.apache.sis.geometry.wrapper.jts.JTS;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;

@@ -21,7 +21,7 @@ import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
 import org.opengis.filter.ValueReference;
-import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.feature.internal.AttributeConvention;
 import org.opengis.filter.BinarySpatialOperator;
 import org.opengis.filter.Filter;
 import org.opengis.filter.Expression;

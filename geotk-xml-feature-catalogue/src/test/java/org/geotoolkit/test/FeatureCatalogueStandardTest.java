@@ -21,7 +21,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import org.apache.sis.internal.jaxb.gco.Multiplicity;
+import org.apache.sis.xml.bind.gco.Multiplicity;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.metadata.KeyNamePolicy;
 import org.apache.sis.metadata.MetadataStandard;

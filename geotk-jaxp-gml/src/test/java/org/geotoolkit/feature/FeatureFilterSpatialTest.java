@@ -43,7 +43,7 @@ import org.apache.sis.referencing.CommonCRS;
 import static org.junit.Assert.*;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
-import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.feature.internal.AttributeConvention;
 import org.geotoolkit.filter.FilterUtilities;
 import org.opengis.filter.BinarySpatialOperator;
 

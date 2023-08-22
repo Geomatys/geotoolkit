@@ -22,7 +22,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Rectangle2D;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.referencing.util.j2d.AffineTransform2D;
 import org.apache.sis.referencing.CommonCRS;
 import org.junit.Assert;
 import static org.junit.Assert.assertEquals;

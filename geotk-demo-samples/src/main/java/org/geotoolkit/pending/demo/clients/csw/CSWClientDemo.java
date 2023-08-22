@@ -12,7 +12,7 @@ import java.util.List;
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
-import org.apache.sis.internal.storage.io.IOUtilities;
+import org.apache.sis.io.stream.IOUtilities;
 import org.apache.sis.xml.MarshalContext;
 import org.geotoolkit.csw.CatalogServicesClient;
 import org.geotoolkit.csw.GetCapabilitiesRequest;

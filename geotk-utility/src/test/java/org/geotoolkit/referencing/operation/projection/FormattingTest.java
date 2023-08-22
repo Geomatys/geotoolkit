@@ -27,7 +27,7 @@ import org.opengis.referencing.operation.NoninvertibleTransformException;
 
 import org.junit.*;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.referencing.util.j2d.AffineTransform2D;
 import org.apache.sis.referencing.operation.transform.AbstractMathTransform2D;
 
 import static org.junit.Assert.*;

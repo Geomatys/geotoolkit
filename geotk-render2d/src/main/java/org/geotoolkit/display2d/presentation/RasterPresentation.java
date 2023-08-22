@@ -36,7 +36,7 @@ import javax.media.jai.OpImage;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.image.ImageProcessor;
-import org.apache.sis.internal.map.coverage.RenderingWorkaround;
+import org.apache.sis.map.coverage.RenderingWorkaround;
 import org.apache.sis.portrayal.MapLayer;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
@@ -155,7 +155,7 @@ public class RasterPresentation extends Grid2DPresentation {
 
         Geometry coverageShape;
         try {
-            coverageShape = org.apache.sis.internal.feature.jts.JTS.transform(polygon, renderingContext.getDisplayCRS());
+            coverageShape = org.apache.sis.geometry.wrapper.jts.JTS.transform(polygon, renderingContext.getDisplayCRS());
             final Geometry area = search.getDisplayGeometryJTS();
 
             if (coverageShape.intersects(area)) {
@@ -164,7 +164,7 @@ public class RasterPresentation extends Grid2DPresentation {
 
             //test with wrap around split
             coverageShape = GeometricUtilities.toJTSGeometry(envelope, GeometricUtilities.WrapResolution.SPLIT);
-            coverageShape = org.apache.sis.internal.feature.jts.JTS.transform(polygon, renderingContext.getDisplayCRS());
+            coverageShape = org.apache.sis.geometry.wrapper.jts.JTS.transform(polygon, renderingContext.getDisplayCRS());
             if (coverageShape.intersects(area)) {
                 return true;
             }

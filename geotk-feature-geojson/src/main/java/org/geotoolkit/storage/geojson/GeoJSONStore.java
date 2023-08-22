@@ -33,7 +33,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.internal.storage.ResourceOnFileSystem;
+import org.apache.sis.storage.base.ResourceOnFileSystem;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStore;

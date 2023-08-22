@@ -32,7 +32,7 @@ import org.apache.sis.feature.AbstractOperation;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.feature.builder.PropertyTypeBuilder;
-import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.feature.internal.AttributeConvention;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.DefaultMathTransformFactory;
@@ -265,7 +265,7 @@ public final class VectorProcessUtils extends Static {
     {
         if (!(wantedCRS.equals(geometryCRS))) {
             final MathTransform transform = CRS.findOperation(geometryCRS, wantedCRS, null).getMathTransform();
-            return org.apache.sis.internal.feature.jts.JTS.transform(inputGeom, transform);
+            return org.apache.sis.geometry.wrapper.jts.JTS.transform(inputGeom, transform);
         } else {
             return inputGeom;
         }

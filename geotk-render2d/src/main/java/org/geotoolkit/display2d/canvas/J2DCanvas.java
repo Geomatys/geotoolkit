@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
-import org.apache.sis.internal.map.Presentation;
+import org.apache.sis.map.Presentation;
 import org.apache.sis.storage.DataStoreException;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import org.geotoolkit.display.PortrayalException;

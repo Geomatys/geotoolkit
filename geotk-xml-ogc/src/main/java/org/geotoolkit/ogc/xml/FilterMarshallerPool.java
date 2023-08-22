@@ -35,7 +35,7 @@ public final class FilterMarshallerPool {
             DEFAULT = new MarshallerPool(JAXBContext.newInstance(
                     "org.geotoolkit.ogc.xml.v110:"           +
                     "org.geotoolkit.ogc.xml.v200:"           +
-                    "org.apache.sis.internal.jaxb.geometry:" +
+                    "org.apache.sis.xml.bind.metadata.geometry:" +
                     "org.geotoolkit.gml.xml.v311:"           +
                     "org.geotoolkit.gml.xml.v321"), null);
         } catch (JAXBException ex) {
@@ -48,7 +48,7 @@ public final class FilterMarshallerPool {
         try {
             V100 = new MarshallerPool(JAXBContext.newInstance(
                     "org.geotoolkit.ogc.xml.v100:"           +
-                    "org.apache.sis.internal.jaxb.geometry:" +
+                    "org.apache.sis.xml.bind.metadata.geometry:" +
                     "org.geotoolkit.gml.xml.v212:"
             ), null);
         } catch (JAXBException ex) {

@@ -27,7 +27,7 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.logging.Level;
 import org.apache.sis.feature.AbstractOperation;
-import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.feature.internal.AttributeConvention;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Query;
 import org.apache.sis.storage.UnsupportedQueryException;

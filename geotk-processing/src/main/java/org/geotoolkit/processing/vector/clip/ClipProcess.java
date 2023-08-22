@@ -37,7 +37,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.geotoolkit.feature.FeatureExt;
-import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.feature.internal.AttributeConvention;
 
 import static org.geotoolkit.processing.vector.clip.ClipDescriptor.*;
 import org.opengis.feature.AttributeType;

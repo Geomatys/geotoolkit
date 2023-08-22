@@ -26,7 +26,7 @@ import java.util.List;
 import jakarta.xml.bind.JAXBException;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.internal.storage.MemoryFeatureSet;
+import org.apache.sis.storage.base.MemoryFeatureSet;
 import org.apache.sis.portrayal.MapLayer;
 import org.apache.sis.portrayal.MapLayers;
 import org.apache.sis.referencing.CRS;

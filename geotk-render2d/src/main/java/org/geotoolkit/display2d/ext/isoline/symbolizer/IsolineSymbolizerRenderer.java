@@ -19,8 +19,8 @@ package org.geotoolkit.display2d.ext.isoline.symbolizer;
 
 import java.util.stream.Stream;
 import org.apache.sis.coverage.grid.GridCoverage;
-import org.apache.sis.internal.map.ExceptionPresentation;
-import org.apache.sis.internal.map.Presentation;
+import org.apache.sis.map.ExceptionPresentation;
+import org.apache.sis.map.Presentation;
 import org.apache.sis.storage.CoverageQuery;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.portrayal.MapLayer;

@@ -35,8 +35,8 @@ import java.util.Map;
 import java.util.stream.Stream;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.internal.map.ExceptionPresentation;
-import org.apache.sis.internal.map.Presentation;
+import org.apache.sis.map.ExceptionPresentation;
+import org.apache.sis.map.Presentation;
 import org.apache.sis.portrayal.MapLayer;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
@@ -114,7 +114,7 @@ public final class TileDebugSymbolizerRenderer extends AbstractCoverageSymbolize
                         final GridGeometry gridgeom = TileMatrices.getTileGridGeometry2D(m, indice, TileMatrices.getTileSize(m));
                         Geometry geom = GeometricUtilities.toJTSGeometry(gridgeom.getEnvelope(), GeometricUtilities.WrapResolution.NONE);
                         geom.setUserData(crs2d);
-                        geom = org.apache.sis.internal.feature.jts.JTS.transform(geom, renderingContext.getDisplayCRS());
+                        geom = org.apache.sis.geometry.wrapper.jts.JTS.transform(geom, renderingContext.getDisplayCRS());
 
                         Shape shp = new JTSGeometryJ2D(geom);
 

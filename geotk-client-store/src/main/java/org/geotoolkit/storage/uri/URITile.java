@@ -29,7 +29,7 @@ import java.util.zip.GZIPInputStream;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
 import org.apache.commons.compress.compressors.lz4.FramedLZ4CompressorInputStream;
-import org.apache.sis.internal.storage.ResourceOnFileSystem;
+import org.apache.sis.storage.base.ResourceOnFileSystem;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.FeatureSet;

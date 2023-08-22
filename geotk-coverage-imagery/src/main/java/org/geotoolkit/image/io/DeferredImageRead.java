@@ -32,7 +32,7 @@ import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
 import org.apache.sis.image.ComputedImage;
-import org.apache.sis.internal.coverage.j2d.ImageLayout;
+import org.apache.sis.coverage.grid.j2d.ImageLayout;
 import org.apache.sis.util.ArgumentChecks;
 
 

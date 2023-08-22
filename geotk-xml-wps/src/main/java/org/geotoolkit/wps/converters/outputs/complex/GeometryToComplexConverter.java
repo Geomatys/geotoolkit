@@ -21,13 +21,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
-import org.apache.sis.internal.feature.Geometries;
+import org.apache.sis.geometry.wrapper.Geometries;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
 import org.apache.sis.referencing.factory.IdentifiedObjectFinder;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.gml.JTStoGeometry;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.internal.geojson.binding.GeoJSONGeometry;
@@ -152,7 +151,7 @@ public final class GeometryToComplexConverter extends AbstractComplexOutputConve
                         //force geometry in longitude first
                         final CoordinateReferenceSystem crs2 = ((AbstractCRS)crs).forConvention(AxesConvention.RIGHT_HANDED);
                         if (crs2 != crs) {
-                            geom = org.apache.sis.internal.feature.jts.JTS.transform(geom, crs2);
+                            geom = org.apache.sis.geometry.wrapper.jts.JTS.transform(geom, crs2);
                         }
                     }
                 }

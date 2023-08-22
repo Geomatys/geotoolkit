@@ -32,7 +32,7 @@ import org.opengis.metadata.content.TransferFunctionType;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.coverage.SampleDimension;
-import org.apache.sis.internal.coverage.j2d.ImageUtilities;
+import org.apache.sis.coverage.grid.j2d.ImageUtilities;
 import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.image.io.metadata.MetadataNodeAccessor;
 

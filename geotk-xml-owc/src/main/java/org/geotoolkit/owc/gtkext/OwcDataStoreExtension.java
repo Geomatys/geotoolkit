@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import jakarta.xml.bind.JAXBElement;
-import org.apache.sis.internal.storage.StoreResource;
+import org.apache.sis.storage.base.StoreResource;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;

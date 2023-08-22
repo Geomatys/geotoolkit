@@ -24,7 +24,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.logging.Level;
-import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.feature.internal.AttributeConvention;
 
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;

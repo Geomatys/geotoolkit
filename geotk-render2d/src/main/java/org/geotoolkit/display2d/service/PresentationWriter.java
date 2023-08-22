@@ -19,7 +19,7 @@ package org.geotoolkit.display2d.service;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.stream.Stream;
-import org.apache.sis.internal.map.Presentation;
+import org.apache.sis.map.Presentation;
 import org.geotoolkit.display.PortrayalException;
 
 /**

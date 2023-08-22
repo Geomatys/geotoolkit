@@ -79,9 +79,9 @@ public final class IOUtilitiesTest {
         final Path pngFile = Paths.get("image.png");
         final Path png2File = Paths.get("image.test.png");
 
-        assertEquals("tiff",  org.apache.sis.internal.storage.io.IOUtilities.extension(tiffFile));
-        assertEquals("png",  org.apache.sis.internal.storage.io.IOUtilities.extension(pngFile));
-        assertEquals("png",  org.apache.sis.internal.storage.io.IOUtilities.extension(png2File));
+        assertEquals("tiff",  org.apache.sis.io.stream.IOUtilities.extension(tiffFile));
+        assertEquals("png",  org.apache.sis.io.stream.IOUtilities.extension(pngFile));
+        assertEquals("png",  org.apache.sis.io.stream.IOUtilities.extension(png2File));
 
         assertEquals("Picture", IOUtilities.filenameWithoutExtension(tiffFile));
         assertEquals("image", IOUtilities.filenameWithoutExtension(pngFile));

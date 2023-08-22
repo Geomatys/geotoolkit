@@ -25,7 +25,7 @@ import java.awt.Dimension;
 import javax.media.jai.ImageLayout;
 
 import org.geotoolkit.lang.Static;
-import org.apache.sis.internal.coverage.j2d.FillValues;
+import org.apache.sis.coverage.grid.j2d.FillValues;
 
 
 
@@ -104,7 +104,7 @@ public final class ImageUtilities extends Static {
             // If the bounds changed, adjust the tile size.
             if (result != layout) {
                 source = sources.get(0);
-                final Dimension tileSize = org.apache.sis.internal.coverage.j2d.ImageLayout.DEFAULT.suggestTileSize(source, null, false);
+                final Dimension tileSize = org.apache.sis.coverage.grid.j2d.ImageLayout.DEFAULT.suggestTileSize(source, null, false);
                 if (result.isValid(ImageLayout.TILE_WIDTH_MASK)) {
                     final int oldSize = result.getTileWidth(source);
                     final int newSize = tileSize.width;

@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.function.Supplier;
 import javax.measure.Unit;
 import org.apache.sis.feature.Features;
-import org.apache.sis.internal.filter.sqlmm.SQLMM;
+import org.apache.sis.filter.sqlmm.SQLMM;
 import org.apache.sis.measure.Units;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.filter.FilterUtilities;

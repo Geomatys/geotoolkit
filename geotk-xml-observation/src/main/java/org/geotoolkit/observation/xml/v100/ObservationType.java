@@ -34,7 +34,7 @@ import jakarta.xml.bind.annotation.XmlSeeAlso;
 import jakarta.xml.bind.annotation.XmlTransient;
 import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.apache.sis.internal.jaxb.metadata.DQ_Element;
+import org.apache.sis.xml.bind.metadata.DQ_Element;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 
 // openGis dependencies

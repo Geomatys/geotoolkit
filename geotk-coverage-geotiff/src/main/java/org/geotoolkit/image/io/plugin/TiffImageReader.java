@@ -66,7 +66,7 @@ import javax.imageio.spi.ServiceRegistry;
 import javax.imageio.stream.ImageInputStream;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.image.WritablePixelIterator;
-import org.apache.sis.internal.storage.io.ChannelImageInputStream;
+import org.apache.sis.io.stream.ChannelImageInputStream;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.logging.Logging;

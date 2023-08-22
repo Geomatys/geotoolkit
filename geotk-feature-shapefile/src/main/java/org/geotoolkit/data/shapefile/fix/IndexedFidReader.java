@@ -26,7 +26,7 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.util.NoSuchElementException;
 import java.util.logging.Level;
-import org.apache.sis.internal.storage.io.IOUtilities;
+import org.apache.sis.io.stream.IOUtilities;
 import org.geotoolkit.data.dbf.Closeable;
 import org.geotoolkit.data.shapefile.FeatureIDReader;
 import static org.geotoolkit.data.shapefile.ShapefileProvider.*;

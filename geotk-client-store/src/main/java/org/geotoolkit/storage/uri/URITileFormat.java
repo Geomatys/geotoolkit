@@ -19,7 +19,7 @@ package org.geotoolkit.storage.uri;
 import java.util.Objects;
 import java.util.Properties;
 import javax.imageio.spi.ImageReaderSpi;
-import org.apache.sis.internal.storage.StoreMetadata;
+import org.apache.sis.storage.base.StoreMetadata;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.util.ArgumentChecks;

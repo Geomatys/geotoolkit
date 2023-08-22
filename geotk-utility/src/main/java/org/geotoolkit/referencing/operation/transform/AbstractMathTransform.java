@@ -46,7 +46,7 @@ import org.apache.sis.util.Classes;
 import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
-import org.apache.sis.internal.referencing.WKTUtilities;
+import org.apache.sis.referencing.util.WKTUtilities;
 import org.apache.sis.referencing.operation.matrix.MatrixSIS;
 import org.apache.sis.referencing.operation.transform.AbstractMathTransform2D;
 

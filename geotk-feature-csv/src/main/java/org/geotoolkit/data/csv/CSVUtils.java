@@ -23,7 +23,7 @@ import java.util.Scanner;
 import org.apache.sis.util.Static;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
-import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.feature.internal.AttributeConvention;
 
 /**
  *

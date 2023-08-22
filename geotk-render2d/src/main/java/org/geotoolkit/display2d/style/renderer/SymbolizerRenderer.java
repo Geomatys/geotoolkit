@@ -18,8 +18,8 @@ package org.geotoolkit.display2d.style.renderer;
 
 import java.util.function.Function;
 import java.util.stream.Stream;
-import org.apache.sis.internal.map.ExceptionPresentation;
-import org.apache.sis.internal.map.Presentation;
+import org.apache.sis.map.ExceptionPresentation;
+import org.apache.sis.map.Presentation;
 import org.apache.sis.portrayal.MapLayer;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStoreException;

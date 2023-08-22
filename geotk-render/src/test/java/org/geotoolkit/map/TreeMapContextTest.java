@@ -20,7 +20,7 @@ package org.geotoolkit.map;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.EventObject;
-import org.apache.sis.internal.map.ListChangeEvent;
+import org.apache.sis.map.ListChangeEvent;
 import org.apache.sis.portrayal.MapItem;
 import org.apache.sis.portrayal.MapLayer;
 import org.apache.sis.portrayal.MapLayers;

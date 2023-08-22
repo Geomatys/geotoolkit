@@ -50,7 +50,7 @@ public class AbstractSOSRequest extends AbstractRequest {
                     "org.geotoolkit.sampling.xml.v100:" +
                     "org.geotoolkit.sml.xml.v100:" +
                     "org.geotoolkit.sml.xml.v101:" +
-                    "org.apache.sis.internal.jaxb.geometry"), null);
+                    "org.apache.sis.xml.bind.metadata.geometry"), null);
         } catch (JAXBException ex) {
             LOGGER.log(Level.SEVERE, ex.getLocalizedMessage(), ex);
         }

@@ -18,7 +18,7 @@
 package org.geotoolkit.temporal.reference.xmlAdapter;
 
 import jakarta.xml.bind.annotation.XmlElement;
-import org.apache.sis.internal.jaxb.gco.PropertyType;
+import org.apache.sis.xml.bind.gco.PropertyType;
 import org.apache.sis.xml.Namespaces;
 import org.geotoolkit.temporal.object.DefaultPeriod;
 import org.opengis.temporal.Period;

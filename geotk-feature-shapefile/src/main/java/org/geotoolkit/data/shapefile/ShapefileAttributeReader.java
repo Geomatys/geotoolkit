@@ -18,7 +18,7 @@ package org.geotoolkit.data.shapefile;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
-import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.feature.internal.AttributeConvention;
 import org.geotoolkit.data.dbf.DbaseFileHeader;
 import org.geotoolkit.data.dbf.DbaseFileReader;
 import org.geotoolkit.data.shapefile.lock.AccessManager;

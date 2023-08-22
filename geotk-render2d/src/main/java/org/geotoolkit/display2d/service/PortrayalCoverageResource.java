@@ -27,7 +27,7 @@ import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.apache.sis.geometry.Envelopes;
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.referencing.util.j2d.AffineTransform2D;
 import org.apache.sis.storage.AbstractGridCoverageResource;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Utilities;

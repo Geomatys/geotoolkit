@@ -53,7 +53,7 @@ public class CityGMLXMLBindingTest {
         pool = new MarshallerPool(JAXBContext.newInstance(
                 "org.geotoolkit.citygml.xml.v100:" +
                 "org.geotoolkit.gml.xml.v311:" +
-                ":org.apache.sis.internal.jaxb.geometry:"+
+                ":org.apache.sis.xml.bind.metadata.geometry:"+
                 "org.geotoolkit.citygml.xml.v100.building"), null);
         Unmarshaller = pool.acquireUnmarshaller();
         Marshaller   = pool.acquireMarshaller();

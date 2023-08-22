@@ -31,7 +31,7 @@ import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.internal.referencing.AxisDirections;
+import org.apache.sis.referencing.util.AxisDirections;
 import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.apache.sis.metadata.iso.extent.Extents;
 import org.apache.sis.referencing.CRS;
@@ -888,7 +888,7 @@ public final class ReferencingUtilities {
                  */
                 int tmpOffset = 0;
                 for (CoordinateReferenceSystem tmpSubCRS : toFind) {
-                    final int srcOffset = org.apache.sis.internal.referencing.AxisDirections.indexOfColinear(
+                    final int srcOffset = org.apache.sis.referencing.util.AxisDirections.indexOfColinear(
                             inputCRS.getCoordinateSystem(), tmpSubCRS.getCoordinateSystem());
                     if(srcOffset>=0){
                         int tmpDimNumber = tmpSubCRS.getCoordinateSystem().getDimension();

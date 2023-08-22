@@ -29,7 +29,7 @@ import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.gml.xml.v321.AbstractGeometryType;
 import org.geotoolkit.gml.xml.v321.EnvelopeType;
 import org.geotoolkit.gml.xml.v321.FeaturePropertyType;
-import org.apache.sis.internal.jaxb.metadata.DQ_Element;
+import org.apache.sis.xml.bind.metadata.DQ_Element;
 import org.geotoolkit.observation.xml.v200.OMProcessPropertyType;
 import org.geotoolkit.sampling.xml.v200.SFSamplingFeatureType;
 import org.apache.sis.util.ComparisonMode;

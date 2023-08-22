@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import static org.apache.sis.util.ArgumentChecks.*;
-import org.apache.sis.internal.util.UnmodifiableArrayList;
+import org.apache.sis.util.internal.UnmodifiableArrayList;
 import org.apache.sis.util.iso.Names;
 import org.opengis.filter.TemporalOperatorName;
 import org.opengis.filter.capability.TemporalCapabilities;

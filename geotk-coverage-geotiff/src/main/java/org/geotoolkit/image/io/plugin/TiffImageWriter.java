@@ -49,7 +49,7 @@ import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageOutputStream;
-import org.apache.sis.internal.storage.io.ChannelImageOutputStream;
+import org.apache.sis.io.stream.ChannelImageOutputStream;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.NullArgumentException;

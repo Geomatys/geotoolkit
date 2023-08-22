@@ -20,7 +20,7 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.sis.image.PixelIterator;
-import org.apache.sis.internal.processing.isoline.Isolines;
+import org.apache.sis.image.processing.isoline.Isolines;
 import org.apache.sis.util.Static;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;

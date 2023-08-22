@@ -30,7 +30,7 @@ import org.geotoolkit.image.io.ImageMetadataException;
 import org.geotoolkit.image.io.metadata.MetadataHelper;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.apache.sis.coverage.grid.PixelTranslation;
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.referencing.util.j2d.AffineTransform2D;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;

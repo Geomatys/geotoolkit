@@ -46,7 +46,7 @@ public class JAXBContextTest {
     public void contextTest() {
 
         try {
-            JAXBContext ctx = JAXBContext.newInstance("org.geotoolkit.csw.xml.v202:org.apache.sis.internal.jaxb.geometry");
+            JAXBContext ctx = JAXBContext.newInstance("org.geotoolkit.csw.xml.v202:org.apache.sis.xml.bind.metadata.geometry");
         } catch (Exception ex) {
             ex.printStackTrace();
             fail("error while creating CSW context:" + ex.getMessage());
@@ -54,7 +54,7 @@ public class JAXBContextTest {
 
         try {
             JAXBContext ctx = JAXBContext.newInstance(org.geotoolkit.csw.xml.v202.ObjectFactory.class,
-                                                      org.apache.sis.internal.jaxb.geometry.ObjectFactory.class);
+                                                      org.apache.sis.xml.bind.metadata.geometry.ObjectFactory.class);
         } catch (Exception ex) {
             ex.printStackTrace();
             fail("error while creating CSW context:" + ex.getMessage());
@@ -62,7 +62,7 @@ public class JAXBContextTest {
 
         try {
             JAXBContext ctx = JAXBContext.newInstance(org.geotoolkit.csw.xml.v202.LimitedObjectFactory.class,
-                                                      org.apache.sis.internal.jaxb.geometry.ObjectFactory.class);
+                                                      org.apache.sis.xml.bind.metadata.geometry.ObjectFactory.class);
         } catch (Exception ex) {
             ex.printStackTrace();
             fail("error while creating CSW context:" + ex.getMessage());
@@ -72,7 +72,7 @@ public class JAXBContextTest {
         try {
             JAXBContext ctx = JAXBContext.newInstance(org.geotoolkit.csw.xml.v202.ObjectFactory.class,
                                                       org.geotoolkit.csw.xml.v202.LimitedObjectFactory.class,
-                                                      org.apache.sis.internal.jaxb.geometry.ObjectFactory.class);
+                                                      org.apache.sis.xml.bind.metadata.geometry.ObjectFactory.class);
         } catch (Exception ex) {
             ex.printStackTrace();
             fail("error while creating CSW context:" + ex.getMessage());

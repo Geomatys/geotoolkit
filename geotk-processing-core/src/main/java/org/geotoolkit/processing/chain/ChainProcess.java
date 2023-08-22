@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.cql.CQL;
-import org.apache.sis.internal.feature.FeatureUtilities;
+import org.apache.sis.feature.internal.FeatureUtilities;
 import org.apache.sis.parameter.DefaultParameterValue;
 import org.apache.sis.util.ObjectConverter;
 import org.apache.sis.util.ObjectConverters;

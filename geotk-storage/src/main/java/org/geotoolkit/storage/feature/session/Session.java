@@ -28,7 +28,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.internal.filter.FunctionNames;
+import org.apache.sis.filter.internal.FunctionNames;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
@@ -424,7 +424,7 @@ public final class Session implements Resource, StoreListener<StoreEvent> {
                             } else if (replace) {
                                 //reproject geometry
                                 final MathTransform trs = CRS.findOperation(cdtcrs, crs, null).getMathTransform();
-                                geom = org.apache.sis.internal.feature.jts.JTS.transform(geom, trs);
+                                geom = org.apache.sis.geometry.wrapper.jts.JTS.transform(geom, trs);
                                 JTS.setCRS(geom, crs);
                                 return FF.literal(geom);
                             }

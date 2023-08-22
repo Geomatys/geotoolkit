@@ -17,9 +17,9 @@
 package org.geotoolkit.coverage.sql;
 
 import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.internal.metadata.sql.ScriptRunner;
-import org.apache.sis.internal.util.Constants;
-import org.apache.sis.internal.util.UnmodifiableArrayList;
+import org.apache.sis.metadata.sql.util.ScriptRunner;
+import org.apache.sis.util.internal.Constants;
+import org.apache.sis.util.internal.UnmodifiableArrayList;
 import org.apache.sis.measure.MeasurementRange;
 import org.apache.sis.measure.Units;
 import org.apache.sis.metadata.sql.MetadataSource;
@@ -51,8 +51,8 @@ import java.util.*;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-import org.apache.sis.internal.storage.Capability;
-import org.apache.sis.internal.storage.StoreMetadata;
+import org.apache.sis.storage.base.Capability;
+import org.apache.sis.storage.base.StoreMetadata;
 
 import static org.geotoolkit.coverage.sql.UpgradableLock.Stamp;
 

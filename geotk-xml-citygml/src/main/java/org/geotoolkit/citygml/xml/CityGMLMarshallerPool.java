@@ -31,7 +31,7 @@ public final class CityGMLMarshallerPool {
     static {
         try {
             instance = new MarshallerPool(JAXBContext.newInstance(
-                    "org.apache.sis.internal.jaxb.geometry:" +
+                    "org.apache.sis.xml.bind.metadata.geometry:" +
                     "org.geotoolkit.gml.xml.v311:" +
                     "org.geotoolkit.citygml.xml.v100:" +
                     "org.geotoolkit.citygml.xml.v100.appearance:" +

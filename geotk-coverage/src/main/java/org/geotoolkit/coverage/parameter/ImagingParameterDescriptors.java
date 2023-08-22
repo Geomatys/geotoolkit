@@ -58,7 +58,7 @@ import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.resources.Errors;
-import org.apache.sis.internal.storage.io.IOUtilities;
+import org.apache.sis.io.stream.IOUtilities;
 import org.apache.sis.referencing.AbstractIdentifiedObject;
 import org.apache.sis.metadata.iso.citation.Citations;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
@@ -66,7 +66,7 @@ import org.apache.sis.metadata.iso.citation.DefaultOnlineResource;
 import org.apache.sis.metadata.iso.citation.DefaultResponsibility;
 
 import static javax.media.jai.registry.RenderedRegistryMode.MODE_NAME;
-import org.apache.sis.internal.simple.SimpleCitation;
+import org.apache.sis.metadata.simple.SimpleCitation;
 import org.apache.sis.util.iso.DefaultNameFactory;
 
 

@@ -44,12 +44,12 @@ public class CSWClassesContext {
 
     static {
         FRA_CLASSES.addAll(Arrays.asList(
-                org.apache.sis.internal.profile.fra.Constraints.class,
-                org.apache.sis.internal.profile.fra.DataIdentification.class,
-                org.apache.sis.internal.profile.fra.DirectReferenceSystem.class,
-                org.apache.sis.internal.profile.fra.IndirectReferenceSystem.class,
-                org.apache.sis.internal.profile.fra.LegalConstraints.class,
-                org.apache.sis.internal.profile.fra.SecurityConstraints.class));
+                org.apache.sis.xml.bind.fra.Constraints.class,
+                org.apache.sis.xml.bind.fra.DataIdentification.class,
+                org.apache.sis.xml.bind.fra.DirectReferenceSystem.class,
+                org.apache.sis.xml.bind.fra.IndirectReferenceSystem.class,
+                org.apache.sis.xml.bind.fra.LegalConstraints.class,
+                org.apache.sis.xml.bind.fra.SecurityConstraints.class));
     }
 
     /**
@@ -88,7 +88,7 @@ public class CSWClassesContext {
                                         org.geotoolkit.dublincore.xml.v1.terms.ObjectFactory.class));
 
         // GML base factory
-        classeList.add(org.apache.sis.internal.jaxb.geometry.ObjectFactory.class);
+        classeList.add(org.apache.sis.xml.bind.metadata.geometry.ObjectFactory.class);
         classeList.add(org.geotoolkit.gml.xml.v311.ObjectFactory.class);
         classeList.add(org.geotoolkit.gml.xml.v321.ObjectFactory.class);
 
@@ -114,7 +114,7 @@ public class CSWClassesContext {
                                         org.geotoolkit.feature.catalog.InheritanceRelationImpl.class,
                                         org.geotoolkit.feature.catalog.ListedValueImpl.class,
                                         org.geotoolkit.feature.catalog.PropertyTypeImpl.class,
-                                        org.apache.sis.internal.jaxb.gco.Multiplicity.class));
+                                        org.apache.sis.xml.bind.gco.Multiplicity.class));
 
 
 
@@ -154,7 +154,7 @@ public class CSWClassesContext {
                                         org.geotoolkit.dublincore.xml.v1.terms.ObjectFactory.class));
 
         // GML base factory
-        classeList.add(org.apache.sis.internal.jaxb.geometry.ObjectFactory.class);
+        classeList.add(org.apache.sis.xml.bind.metadata.geometry.ObjectFactory.class);
         return classeList;
     }
 

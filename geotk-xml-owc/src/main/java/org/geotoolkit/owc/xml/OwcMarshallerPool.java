@@ -39,7 +39,7 @@ public class OwcMarshallerPool {
     static {
         try {
             final List<Class> classes = new ArrayList<>();
-            classes.add(org.apache.sis.internal.jaxb.geometry.ObjectFactory.class);
+            classes.add(org.apache.sis.xml.bind.metadata.geometry.ObjectFactory.class);
             classes.add(org.geotoolkit.owc.gtkext.ObjectFactory.class);
             classes.add(org.geotoolkit.wms.xml.v130.ObjectFactory.class);
             classes.add(org.geotoolkit.gml.xml.v311.ObjectFactory.class);

@@ -133,7 +133,7 @@ public class DifferenceTest extends AbstractProcessTest {
 
 
         final MathTransform mt = CRS.findOperation(crs2, crs1, null).getMathTransform();
-        geom2 = org.apache.sis.internal.feature.jts.JTS.transform(geom2, mt);
+        geom2 = org.apache.sis.geometry.wrapper.jts.JTS.transform(geom2, mt);
         final Geometry expected = geom1.difference(geom2);
         JTS.setCRS(expected, crs1);
 

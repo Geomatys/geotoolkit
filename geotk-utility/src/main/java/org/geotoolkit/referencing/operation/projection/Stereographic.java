@@ -34,7 +34,7 @@ import org.apache.sis.referencing.operation.transform.DefaultMathTransformFactor
 import org.apache.sis.referencing.operation.projection.ProjectionException;
 import org.apache.sis.referencing.operation.projection.NormalizedProjection;
 import org.apache.sis.referencing.operation.projection.PolarStereographic;
-import org.apache.sis.internal.referencing.provider.PolarStereographicA;
+import org.apache.sis.referencing.operation.provider.PolarStereographicA;
 
 import org.apache.sis.referencing.operation.transform.ContextualParameters.MatrixRole;
 import static java.lang.Math.*;

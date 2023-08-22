@@ -48,7 +48,7 @@ import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.storage.AbstractGridCoverageResource;
-import org.apache.sis.internal.storage.StoreResource;
+import org.apache.sis.storage.base.StoreResource;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;

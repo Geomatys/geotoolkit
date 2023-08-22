@@ -58,9 +58,9 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.internal.referencing.AxisDirections;
-import org.apache.sis.internal.coverage.j2d.ColorModelFactory;
-import org.apache.sis.internal.util.UnmodifiableArrayList;
+import org.apache.sis.referencing.util.AxisDirections;
+import org.apache.sis.coverage.grid.j2d.ColorModelFactory;
+import org.apache.sis.util.internal.UnmodifiableArrayList;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.Localized;
@@ -441,7 +441,7 @@ abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCoverage im
             /*
              * Computes some properties of the image to be created.
              */
-            final Dimension tileSize = org.apache.sis.internal.coverage.j2d.ImageLayout.DEFAULT.suggestTileSize(
+            final Dimension tileSize = org.apache.sis.coverage.grid.j2d.ImageLayout.DEFAULT.suggestTileSize(
                     gridBounds.width, gridBounds.height, true);
             SampleDimension band = getSampleDimensions().get(VISIBLE_BAND);
             if (band == null)

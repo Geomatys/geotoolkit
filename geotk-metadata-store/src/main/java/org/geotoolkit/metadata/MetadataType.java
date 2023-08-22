@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javax.xml.namespace.QName;
-import org.apache.sis.internal.xml.LegacyNamespaces;
+import org.apache.sis.xml.util.LegacyNamespaces;
 import org.apache.sis.xml.Namespaces;
 
 /**

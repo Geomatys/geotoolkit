@@ -17,11 +17,11 @@
 package org.geotoolkit.coverage.sql;
 
 import java.util.List;
-import org.apache.sis.internal.storage.MetadataBuilder;
+import org.apache.sis.storage.base.MetadataBuilder;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.internal.util.UnmodifiableArrayList;
+import org.apache.sis.util.internal.UnmodifiableArrayList;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.geotoolkit.storage.AbstractResource;
 

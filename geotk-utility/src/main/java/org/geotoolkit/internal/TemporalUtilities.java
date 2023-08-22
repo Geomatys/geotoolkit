@@ -18,7 +18,7 @@
 package org.geotoolkit.internal;
 
 import java.util.Date;
-import org.apache.sis.internal.temporal.DefaultTemporalFactory;
+import org.apache.sis.pending.temporal.DefaultTemporalFactory;
 
 import org.opengis.temporal.Period;
 import org.opengis.temporal.Instant;

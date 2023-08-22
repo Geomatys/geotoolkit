@@ -37,7 +37,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 import org.apache.sis.feature.Features;
-import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.feature.internal.AttributeConvention;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.feature.FeatureExt;

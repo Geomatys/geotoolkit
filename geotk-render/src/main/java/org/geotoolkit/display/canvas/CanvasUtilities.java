@@ -26,7 +26,7 @@ import javax.measure.Unit;
 import org.apache.sis.measure.Units;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.referencing.GeodeticCalculator;
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.referencing.util.j2d.AffineTransform2D;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;

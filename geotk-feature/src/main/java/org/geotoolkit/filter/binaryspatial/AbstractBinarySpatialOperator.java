@@ -25,7 +25,7 @@ import java.util.logging.Logger;
 import javax.measure.Unit;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.feature.internal.AttributeConvention;
 import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
@@ -163,7 +163,7 @@ public abstract class AbstractBinarySpatialOperator<E extends Expression,F exten
         //perhaps there could be a way to determine a the best crs ?
         final MathTransform trs = CRS.findOperation(rightCRS, leftCRS, null).getMathTransform();
 
-        return new Geometry[]{leftGeom, org.apache.sis.internal.feature.jts.JTS.transform(rightGeom, trs)};
+        return new Geometry[]{leftGeom, org.apache.sis.geometry.wrapper.jts.JTS.transform(rightGeom, trs)};
     }
 
     /**
@@ -196,8 +196,8 @@ public abstract class AbstractBinarySpatialOperator<E extends Expression,F exten
                     final MathTransform trs = CRS.findOperation(geomCRS, MERCATOR, null).getMathTransform();
 
                     return new Object[]{
-                        org.apache.sis.internal.feature.jts.JTS.transform(leftGeom,trs),
-                        org.apache.sis.internal.feature.jts.JTS.transform(rightGeom,trs),
+                        org.apache.sis.geometry.wrapper.jts.JTS.transform(leftGeom,trs),
+                        org.apache.sis.geometry.wrapper.jts.JTS.transform(rightGeom,trs),
                         MERCATOR};
                 }else{
                     //we can not find a matching projection in this case
@@ -214,12 +214,12 @@ public abstract class AbstractBinarySpatialOperator<E extends Expression,F exten
             if(leftCRS.getCoordinateSystem().getAxis(0).getUnit().isCompatible(unit)){
                 matchingCRS = leftCRS;
                 final MathTransform trs = CRS.findOperation(rightCRS, matchingCRS, null).getMathTransform();
-                rightMatch = org.apache.sis.internal.feature.jts.JTS.transform(rightGeom, trs);
+                rightMatch = org.apache.sis.geometry.wrapper.jts.JTS.transform(rightGeom, trs);
                 leftMatch = leftGeom;
             }else if(rightCRS.getCoordinateSystem().getAxis(0).getUnit().isCompatible(unit)){
                 matchingCRS = rightCRS;
                 final MathTransform trs = CRS.findOperation(leftCRS, matchingCRS, null).getMathTransform();
-                leftMatch = org.apache.sis.internal.feature.jts.JTS.transform(leftGeom, trs);
+                leftMatch = org.apache.sis.geometry.wrapper.jts.JTS.transform(leftGeom, trs);
                 rightMatch = rightGeom;
             }else{
                 //the crs unit is not compatible, we must reproject both geometries to a more appropriate crs
@@ -228,9 +228,9 @@ public abstract class AbstractBinarySpatialOperator<E extends Expression,F exten
                     matchingCRS = MERCATOR;
 
                     MathTransform trs = CRS.findOperation(leftCRS, matchingCRS, null).getMathTransform();
-                    leftMatch = org.apache.sis.internal.feature.jts.JTS.transform(leftGeom, trs);
+                    leftMatch = org.apache.sis.geometry.wrapper.jts.JTS.transform(leftGeom, trs);
                     trs = CRS.findOperation(rightCRS, matchingCRS, null).getMathTransform();
-                    rightMatch = org.apache.sis.internal.feature.jts.JTS.transform(rightGeom, trs);
+                    rightMatch = org.apache.sis.geometry.wrapper.jts.JTS.transform(rightGeom, trs);
                 }else{
                     //we can not find a matching projection in this case
                     throw new TransformException("Could not find a matching CRS for both geometries for unit :" + unit);

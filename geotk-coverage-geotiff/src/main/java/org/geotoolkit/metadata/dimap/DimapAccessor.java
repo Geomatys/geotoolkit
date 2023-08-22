@@ -36,7 +36,7 @@ import javax.measure.Unit;
 import javax.media.jai.Warp;
 import javax.media.jai.WarpAffine;
 import org.apache.sis.coverage.grid.GridExtent;
-import org.apache.sis.internal.jaxb.gmi.MI_Metadata;
+import org.apache.sis.xml.bind.gmi.MI_Metadata;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.measure.Units;
 import org.apache.sis.metadata.iso.DefaultIdentifier;

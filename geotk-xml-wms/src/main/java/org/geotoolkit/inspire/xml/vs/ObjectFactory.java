@@ -22,7 +22,7 @@ import jakarta.xml.bind.annotation.XmlElementDecl;
 import jakarta.xml.bind.annotation.XmlRegistry;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.namespace.QName;
-import org.apache.sis.internal.jaxb.code.MD_ScopeCode;
+import org.apache.sis.xml.bind.metadata.code.MD_ScopeCode;
 import org.opengis.metadata.maintenance.ScopeCode;
 
 /**

@@ -25,8 +25,8 @@ import javax.measure.Unit;
 import javax.measure.quantity.Angle;
 import javax.measure.quantity.Length;
 import org.apache.sis.geometry.GeneralDirectPosition;
-import org.apache.sis.internal.jaxb.gml.Measure;
-import org.apache.sis.internal.referencing.AxisDirections;
+import org.apache.sis.xml.bind.gml.Measure;
+import org.apache.sis.referencing.util.AxisDirections;
 import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.GeodeticCalculator;
@@ -297,7 +297,7 @@ public class GeometryTransformer implements Supplier<Geometry> {
                 values = (Map) userData;
             } else if (userData instanceof CoordinateReferenceSystem) {
                 values = new HashMap();
-                values.put(org.apache.sis.internal.feature.jts.JTS.CRS_KEY, userData);
+                values.put(org.apache.sis.geometry.wrapper.jts.JTS.CRS_KEY, userData);
             } else if (userData == null) {
                 values = new HashMap();
             } else {

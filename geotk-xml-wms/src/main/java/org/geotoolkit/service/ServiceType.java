@@ -24,7 +24,7 @@ import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.apache.sis.internal.jaxb.gco.GO_GenericName;
+import org.apache.sis.xml.bind.gco.GO_GenericName;
 import org.opengis.util.LocalName;
 
 

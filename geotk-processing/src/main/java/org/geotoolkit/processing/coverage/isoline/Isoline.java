@@ -29,9 +29,9 @@ import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.image.PixelIterator;
-import org.apache.sis.internal.feature.AttributeConvention;
-import org.apache.sis.internal.feature.jts.Factory;
-import org.apache.sis.internal.processing.isoline.Isolines;
+import org.apache.sis.feature.internal.AttributeConvention;
+import org.apache.sis.geometry.wrapper.jts.Factory;
+import org.apache.sis.image.processing.isoline.Isolines;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
@@ -175,7 +175,7 @@ public class Isoline extends AbstractProcess {
                 .mapToObj(idx -> {
                     try {
                         final Geometry geometryN = isolines.getGeometryN(idx);
-                        return org.apache.sis.internal.feature.jts.JTS.transform(geometryN, input.imageToIsolineCoordinateTransform);
+                        return org.apache.sis.geometry.wrapper.jts.JTS.transform(geometryN, input.imageToIsolineCoordinateTransform);
                     } catch (TransformException e) {
                         throw new BackingStoreException(e);
                     }

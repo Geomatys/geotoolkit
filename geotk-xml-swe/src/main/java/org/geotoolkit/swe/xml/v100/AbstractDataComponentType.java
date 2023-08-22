@@ -23,7 +23,7 @@ import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlSchemaType;
 import jakarta.xml.bind.annotation.XmlSeeAlso;
 import jakarta.xml.bind.annotation.XmlType;
-import org.apache.sis.internal.simple.SimpleCitation;
+import org.apache.sis.metadata.simple.SimpleCitation;
 import org.apache.sis.metadata.MetadataStandard;
 import org.geotoolkit.gml.xml.v311.AbstractGMLType;
 import org.geotoolkit.swe.xml.AbstractDataComponent;

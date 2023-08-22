@@ -19,7 +19,7 @@ package org.geotoolkit.internal.feature;
 import org.locationtech.jts.geom.Geometry;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.feature.internal.AttributeConvention;
 import org.apache.sis.util.iso.Names;
 import org.opengis.feature.FeatureType;
 import org.opengis.util.LocalName;

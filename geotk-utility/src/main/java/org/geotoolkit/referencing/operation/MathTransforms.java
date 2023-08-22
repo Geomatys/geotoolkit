@@ -23,7 +23,7 @@ import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform;
 import org.geotoolkit.lang.Static;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.referencing.util.j2d.AffineTransform2D;
 
 import static org.apache.sis.util.ArgumentChecks.*;
 

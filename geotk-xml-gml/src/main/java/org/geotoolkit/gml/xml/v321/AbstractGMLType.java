@@ -36,7 +36,7 @@ import jakarta.xml.bind.annotation.XmlTransient;
 import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.apache.sis.internal.jaxb.ModifiableIdentifierMap;
+import org.apache.sis.xml.bind.ModifiableIdentifierMap;
 import org.geotoolkit.gml.xml.AbstractGML;
 import org.geotoolkit.internal.sql.Entry;
 import org.apache.sis.metadata.AbstractMetadata;
