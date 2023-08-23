@@ -183,7 +183,7 @@
 
     <!-- third party dependencies versions -->
     <esri.geometry>2.2.4</esri.geometry>
-    <batik.version>1.14</batik.version>
+    <batik.version>1.17</batik.version>
     <commons-beanutils.version>1.9.4</commons-beanutils.version>
     <commons-compress.version>1.22</commons-compress.version>
     <commons-dbcp.version>1.4</commons-dbcp.version>
