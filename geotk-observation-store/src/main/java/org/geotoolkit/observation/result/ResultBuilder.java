@@ -53,77 +53,71 @@ public class ResultBuilder {
         this.csvHack = csvHack;
         this.encoding = encoding;
         switch (mode) {
-            case DATA_ARRAY:
-                dataArray = new ArrayList<>();
-                break;
-            case CSV:
-                values = new StringBuilder();
-                break;
+            case DATA_ARRAY -> dataArray = new ArrayList<>();
+            case CSV        -> values = new StringBuilder();
         }
     }
 
     public void clear() {
         switch (mode) {
-            case DATA_ARRAY:
-                dataArray = new ArrayList<>();
-                break;
-            case CSV:
-                values = new StringBuilder();
-                break;
+            case DATA_ARRAY -> dataArray = new ArrayList<>();
+            case CSV        -> values = new StringBuilder();
         }
     }
 
     public void newBlock() {
         switch (getMode()) {
-            case DATA_ARRAY:
-                currentArrayLine = new ArrayList<>();
-                break;
-            case CSV:
-                currentLine = new StringBuilder();
-                break;
+            case DATA_ARRAY -> currentArrayLine = new ArrayList<>();
+            case CSV        -> currentLine = new StringBuilder();
         }
         this.emptyLine = true;
     }
 
     public void appendTime(Date t) {
         switch (getMode()) {
-            case DATA_ARRAY:
-                currentArrayLine.add(t);
-                break;
-            case CSV:
-                DateFormat df;
-                if (csvHack) {
-                    df = format;
-                } else {
-                    df = format2;
+            case DATA_ARRAY -> currentArrayLine.add(t);
+            case CSV -> {
+                String value = "";
+                if (t != null) {
+                    DateFormat df;
+                    if (csvHack) {
+                        df = format;
+                    } else {
+                        df = format2;
+                    }
+                    synchronized (df) {
+                        value = df.format(t);
+                    }
                 }
-                synchronized (df) {
-                    currentLine.append(df.format(t)).append(encoding.getTokenSeparator());
-                }
-                break;
+                currentLine.append(value).append(encoding.getTokenSeparator());
+            }
         }
+    }
+
+    public void appendTime(Long t) {
+        Date d = null;
+        if (t != null) {
+            d = new Date(t);
+        }
+        appendTime(d);
     }
 
     public void appendNumber(Number value) {
         if (value != null) {
             emptyLine = false;
         }
-        if (value instanceof Double) {
-            appendDouble((Double) value);
-        } else if (value instanceof Float) {
-            appendFloat((Float) value);
-        } else if (value instanceof Integer) {
-            appendInteger((Integer) value);
-        } else if (value instanceof Long) {
-            appendLong((Long) value);
+        if (value instanceof Double d) {
+            appendDouble(d);
+        } else if (value instanceof Float f) {
+            appendFloat(f);
+        } else if (value instanceof Integer i) {
+            appendInteger(i);
+        } else if (value instanceof Long l) {
+            appendLong(l);
         } else if (value == null) {
             switch (getMode()) {
-                case DATA_ARRAY:
-                    currentArrayLine.add(null);
-                    break;
-                case CSV:
-                    currentLine.append(encoding.getTokenSeparator());
-                    break;
+                case DATA_ARRAY -> currentArrayLine.add(null);
+                case CSV        -> currentLine.append(encoding.getTokenSeparator());
             }
         } else {
             throw new IllegalArgumentException("Unexpected number type:" + value.getClass().getSimpleName());
@@ -135,15 +129,13 @@ public class ResultBuilder {
             emptyLine = false;
         }
         switch (getMode()) {
-            case DATA_ARRAY:
-                currentArrayLine.add(d);
-                break;
-            case CSV:
+            case DATA_ARRAY -> currentArrayLine.add(d);
+            case CSV -> {
                 if (d != null) {
                     currentLine.append(Boolean.toString(d));
                 }
                 currentLine.append(encoding.getTokenSeparator());
-                break;
+            }
         }
     }
 
@@ -152,15 +144,13 @@ public class ResultBuilder {
             emptyLine = false;
         }
         switch (getMode()) {
-            case DATA_ARRAY:
-                currentArrayLine.add(d);
-                break;
-            case CSV:
+            case DATA_ARRAY -> currentArrayLine.add(d);
+            case CSV -> {
                 if (!d.isNaN()) {
                     currentLine.append(Double.toString(d));
                 }
                 currentLine.append(encoding.getTokenSeparator());
-                break;
+            }
         }
     }
 
@@ -169,15 +159,13 @@ public class ResultBuilder {
             emptyLine = false;
         }
         switch (getMode()) {
-            case DATA_ARRAY:
-                currentArrayLine.add(d);
-                break;
-            case CSV:
+            case DATA_ARRAY -> currentArrayLine.add(d);
+            case CSV -> {
                 if (!d.isNaN()) {
                     currentLine.append(Double.toString(d));
                 }
                 currentLine.append(encoding.getTokenSeparator());
-                break;
+            }
         }
     }
 
@@ -186,15 +174,13 @@ public class ResultBuilder {
             emptyLine = false;
         }
         switch (getMode()) {
-            case DATA_ARRAY:
-                currentArrayLine.add(d);
-                break;
-            case CSV:
+            case DATA_ARRAY -> currentArrayLine.add(d);
+            case CSV -> {
                 if (d != null) {
                     currentLine.append(Integer.toString(d));
                 }
                 currentLine.append(encoding.getTokenSeparator());
-                break;
+            }
         }
     }
 
@@ -203,15 +189,13 @@ public class ResultBuilder {
             emptyLine = false;
         }
         switch (getMode()) {
-            case DATA_ARRAY:
-                currentArrayLine.add(value);
-                break;
-            case CSV:
+            case DATA_ARRAY -> currentArrayLine.add(value);
+            case CSV -> {
                 if (value != null && !value.isEmpty()) {
                     currentLine.append(value);
                 }
                 currentLine.append(encoding.getTokenSeparator());
-                break;
+            }
         }
     }
 
@@ -220,33 +204,43 @@ public class ResultBuilder {
             emptyLine = false;
         }
         switch (getMode()) {
-            case DATA_ARRAY:
-                currentArrayLine.add(value);
-                break;
-            case CSV:
+            case DATA_ARRAY -> currentArrayLine.add(value);
+            case CSV -> {
                 if (value != null) {
                     currentLine.append(value);
                 }
                 currentLine.append(encoding.getTokenSeparator());
-                break;
+            }
+        }
+    }
+
+    public void appendValue(Object value) {
+        if (value instanceof Number d) {
+            appendNumber(d);
+        } else if (value instanceof String s) {
+            appendString(s);
+        } else if (value instanceof Date d) {
+            appendTime(d);
+        } else if (value instanceof Boolean b) {
+            appendBoolean(b);
+        } else if (value == null) {
+            appendString((String) null);
+        } else {
+            throw new IllegalArgumentException("Unssuported value type:" + value);
         }
     }
 
     public int endBlock() {
         if (!emptyLine) {
             switch (getMode()) {
-                case DATA_ARRAY:
-                    dataArray.add(currentArrayLine);
-                    break;
-                case CSV:
+                case DATA_ARRAY -> dataArray.add(currentArrayLine);
+                case CSV -> {
                     values.append(currentLine);
                     // remove last token separator
                     values.deleteCharAt(values.length() - 1);
                     values.append(encoding.getBlockSeparator());
-                    break;
-                case COUNT:
-                    count++;
-                    break;
+                }
+                case COUNT -> count++;
             }
             return 1;
         }
@@ -270,7 +264,7 @@ public class ResultBuilder {
 
     public void appendHeaders(List<Field> fields) {
         switch (getMode()) {
-            case CSV:
+            case CSV -> {
                 boolean first = true;
                 for (Field pheno : fields) {
                     // hack for the current graph in examind you only work when the main field is named "time"
@@ -282,6 +276,7 @@ public class ResultBuilder {
                     first = false;
                 }
                 values.setCharAt(values.length() - 1, '\n');
+            }
         }
     }
 

@@ -44,7 +44,6 @@ import org.geotoolkit.ows.xml.AcceptVersions;
 import org.geotoolkit.ows.xml.OWSXmlFactory;
 import org.geotoolkit.ows.xml.Range;
 import org.geotoolkit.ows.xml.Sections;
-import org.geotoolkit.sos.MeasureStringBuilder;
 import org.geotoolkit.swe.xml.AbstractBoolean;
 import org.geotoolkit.swe.xml.AbstractDataComponent;
 import org.geotoolkit.swe.xml.AbstractDataRecord;
@@ -62,7 +61,6 @@ import org.geotoolkit.swe.xml.SweXmlFactory;
 import org.geotoolkit.swe.xml.TextBlock;
 import org.geotoolkit.swe.xml.UomProperty;
 import org.geotoolkit.swe.xml.v101.PhenomenonPropertyType;
-import static org.geotoolkit.swe.xml.v200.TextEncodingType.DEFAULT_ENCODING;
 import org.geotoolkit.swes.xml.DeleteSensor;
 import org.geotoolkit.swes.xml.DeleteSensorResponse;
 import org.geotoolkit.swes.xml.DescribeSensor;
@@ -329,24 +327,7 @@ public class SOSXmlFactory {
         }
     }
 
-    public static AbstractObservation buildObservation(final String version, final String obsid, final org.geotoolkit.sampling.xml.SamplingFeature sf,
-            final org.opengis.observation.Phenomenon phenomenon, final Process procedure, final int count , final AbstractDataRecord datarecord, final MeasureStringBuilder sb, final TemporalGeometricPrimitive time) {
-
-        final DataArrayProperty result = SOSXmlFactory.buildDataArrayProperty(version, "array-1", count, "SimpleDataArray", datarecord, DEFAULT_ENCODING, sb.getString(), null);
-        final FeatureProperty foi = SOSXmlFactory.buildFeatureProperty(version, sf);
-        return OMXmlFactory.buildObservation(version,       // version
-                                             obsid,         // id
-                                             obsid,         // name
-                                             null,          // description
-                                             foi,           // foi
-                                             phenomenon,    // phenomenon
-                                             procedure,     // procedure
-                                             result,        // result
-                                             time,
-                                             null);
-    }
-
-    public static ObservationCollection buildObservationCollection(final String version, final String nillValue) {
+     public static ObservationCollection buildObservationCollection(final String version, final String nillValue) {
         if ("2.0.0".equals(version)) {
             return new org.geotoolkit.sos.xml.v200.GetObservationResponseType();
         } else if ("1.0.0".equals(version)) {
