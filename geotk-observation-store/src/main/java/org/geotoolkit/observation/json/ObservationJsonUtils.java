@@ -22,10 +22,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.node.JsonNodeType;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.StreamSupport;
 import org.geotoolkit.observation.model.Phenomenon;
 import org.geotoolkit.observation.model.Result;
 import org.locationtech.jts.geom.Geometry;
@@ -87,9 +92,25 @@ public class ObservationJsonUtils {
             Iterator<Map.Entry<String, JsonNode>> fields = propNode.fields();
             while (fields.hasNext()) {
                 Map.Entry<String, JsonNode> next = fields.next();
-                properties.put(next.getKey(), next.getValue().asText());
+                Object value = readNodeValue(next.getValue());
+                properties.put(next.getKey(), value);
             }
         }
         return properties;
+    }
+
+    private static Object readNodeValue(JsonNode node) {
+        JsonNodeType nodeType = Objects.requireNonNull(node, "Json node to read").getNodeType();
+        return switch (nodeType) {
+            case BOOLEAN          -> node.asBoolean();
+            case MISSING, NULL    -> null;
+            case STRING           -> node.asText();
+            case NUMBER           -> node.asDouble();
+            case ARRAY            -> StreamSupport.stream(node.spliterator(), false)
+                                       .map(ObservationJsonUtils::readNodeValue)
+                                       .toList();
+            case OBJECT, POJO     -> throw new UnsupportedOperationException("Not supported yet: object node");
+            case BINARY           -> throw new UnsupportedOperationException("Not supported yet: binary data");
+        };
     }
 }
