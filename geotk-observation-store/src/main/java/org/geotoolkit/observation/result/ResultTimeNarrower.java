@@ -27,7 +27,6 @@ import org.opengis.temporal.Period;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
-import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotoolkit.observation.model.ComplexResult;
@@ -193,9 +192,8 @@ public class ResultTimeNarrower {
      */
     private static Values parseDataBlock(final String brutValues, final TextEncoderProperties encoding, final Timestamp boundBegin, final Timestamp boundEnd, final Timestamp boundEquals) {
         final Values values = new Values();
-        final StringTokenizer tokenizer = new StringTokenizer(brutValues, encoding.getBlockSeparator());
-        while (tokenizer.hasMoreTokens()) {
-            final String block = tokenizer.nextToken();
+        final String[] blocks = brutValues.split(encoding.getBlockSeparator());
+        for (String block : blocks) {
             final String samplingTimeValue = block.substring(0, block.indexOf(encoding.getTokenSeparator()));
             Date d = null;
             try {
