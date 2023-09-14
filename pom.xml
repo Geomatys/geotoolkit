@@ -185,7 +185,7 @@
     <esri.geometry>2.2.4</esri.geometry>
     <batik.version>1.14</batik.version>
     <commons-beanutils.version>1.9.4</commons-beanutils.version>
-    <commons-compress.version>1.22</commons-compress.version>
+    <commons-compress.version>1.24.0</commons-compress.version>
     <commons-dbcp.version>1.4</commons-dbcp.version>
     <commons-logging.version>1.2</commons-logging.version>
     <jasperreports.version>6.18.1</jasperreports.version>
