@@ -48,8 +48,6 @@ import static org.geotoolkit.observation.OMUtils.RESPONSE_FORMAT_V200;
 import org.geotoolkit.observation.ObservationReader;
 import org.geotoolkit.observation.ObservationStore;
 import org.geotoolkit.observation.ObservationStoreCapabilities;
-import org.geotoolkit.observation.model.ObservationDataset;
-import org.geotoolkit.observation.model.ProcedureDataset;
 import org.geotoolkit.observation.feature.OMFeatureTypes;
 import org.geotoolkit.observation.model.ObservationDataset;
 import org.geotoolkit.observation.model.ProcedureDataset;
@@ -140,7 +138,7 @@ public class NetcdfObservationStore extends AbstractObservationStore implements 
     public ObservationDataset getDataset(final DatasetQuery query) throws DataStoreException {
         String affectedSensorID = query.getAffectedSensorID() != null ? query.getAffectedSensorID() : getProcedureID();
         try {
-            return NetCDFExtractor.getObservationFromNetCDF(analyze, affectedSensorID, query.getSensorIds(), new HashSet<>());
+            return NetCDFExtractor.getObservationFromNetCDF(analyze, affectedSensorID, query.getSensorIds(), query.getResponseFormat(), new HashSet<>());
         } catch (NetCDFParsingException ex) {
             throw new DataStoreException(ex);
         }
@@ -166,7 +164,7 @@ public class NetcdfObservationStore extends AbstractObservationStore implements 
     @Override
     public TemporalGeometricPrimitive getTemporalBounds() throws DataStoreException {
         try {
-            final ObservationDataset result = NetCDFExtractor.getObservationFromNetCDF(analyze, getProcedureID(), null, new HashSet<>());
+            final ObservationDataset result = NetCDFExtractor.getObservationFromNetCDF(analyze, getProcedureID(), null, null, new HashSet<>());
             if (result != null && result.spatialBound != null) {
                 return result.spatialBound.getTimeObject();
             }

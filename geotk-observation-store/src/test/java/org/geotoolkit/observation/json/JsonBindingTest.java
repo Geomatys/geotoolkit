@@ -91,7 +91,10 @@ public class JsonBindingTest {
                                                                 "urn:-sandre:object:bdrhf:123X", 
                                                                 pt);
 
-        Phenomenon phen = new Phenomenon("phen-1", "urn:phen:1", "urn:phen:1", "phenomenon number 1", Collections.EMPTY_MAP);
+        Map<String, Object> phenProperties = new HashMap<>();
+        phenProperties.put("number", 1.2);
+        phenProperties.put("names", Arrays.asList("p1", "phen1"));
+        Phenomenon phen = new Phenomenon("phen-1", "urn:phen:1", "urn:phen:1", "phenomenon number 1", phenProperties);
 
         Element quality = OMUtils.createQualityElement("qFlag", null, FieldType.TEXT, "ok");
         List<Element> qualities = Arrays.asList(quality);
@@ -100,6 +103,7 @@ public class JsonBindingTest {
         Result mresult = new MeasureResult(field, 2.0);
         Map<String, Object> properties = new HashMap<>();
         properties.put("type", "timeseries");
+        properties.put("names", Arrays.asList("n1", "n2"));
 
         Observation expected = new Observation("obs-001",
                                           "urn:obs:001",

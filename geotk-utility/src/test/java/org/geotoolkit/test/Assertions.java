@@ -22,13 +22,17 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import static java.lang.StrictMath.abs;
 import javax.xml.parsers.ParserConfigurationException;
+import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.CharSequences;
 import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.test.xml.DocumentComparator;
 
 import static org.junit.Assert.*;
+import org.opengis.geometry.DirectPosition;
+import org.opengis.geometry.Envelope;
 import org.xml.sax.SAXException;
 
 
@@ -130,5 +134,39 @@ public final class Assertions {
             }
         }
         comparator.compare();
+    }
+
+    /**
+     * Asserts that two envelopes have the same minimum and maximum coordinates.
+     * This method ignores the envelope type (i.e. the implementation class) and
+     * the CRS.
+     *
+     * @param expected the expected envelope.
+     * @param actual the envelope to compare with the expected one.
+     * @param tolerances the tolerance threshold on location along each axis. If
+     *                   this array length is shorter than the number of dimensions, then the last
+     *                   tolerance is reused for all remaining axes. If this array is empty, then
+     *                   the tolerance threshold is zero.
+     */
+    public static void assertEnvelopeEquals(final Envelope expected, final Envelope actual, final double... tolerances) {
+       final int dimension = expected.getDimension();
+       assertEquals("dimension", dimension, actual.getDimension());
+       final DirectPosition expectedLower = expected.getLowerCorner();
+       final DirectPosition expectedUpper = expected.getUpperCorner();
+       final DirectPosition actualLower   = actual  .getLowerCorner();
+       final DirectPosition actualUpper   = actual  .getUpperCorner();
+       double tolerance = 0;
+       for (int i=0; i<dimension; i++) {
+           if (i < tolerances.length) {
+                tolerance = tolerances[i];
+           }
+           if (abs(expectedLower.getOrdinate(i) - actualLower.getOrdinate(i)) > tolerance ||
+               abs(expectedUpper.getOrdinate(i) - actualUpper.getOrdinate(i)) > tolerance)
+               {
+                fail("Envelopes are not equal in dimension " + i + ":\n"
+                       + "expected " + Envelopes.toString(expected) + "\n"
+                       + " but got " + Envelopes.toString(actual));
+               }
+       }
     }
 }

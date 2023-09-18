@@ -127,7 +127,7 @@ public class NetcdfObservationReader implements ObservationReader {
     @Override
     public TemporalGeometricPrimitive getProcedureTime(final String sensorID) throws DataStoreException {
         try {
-            final ObservationDataset result = NetCDFExtractor.getObservationFromNetCDF(analyze, getProcedureID(), null, new HashSet<>());
+            final ObservationDataset result = NetCDFExtractor.getObservationFromNetCDF(analyze, getProcedureID(), null, null, new HashSet<>());
             if (result != null && result.spatialBound != null) {
                 return result.spatialBound.getTimeObject();
             }
@@ -148,7 +148,7 @@ public class NetcdfObservationReader implements ObservationReader {
 
     private Collection<String> getFeatureOfInterestNames() throws DataStoreException {
         try {
-            final ObservationDataset result = NetCDFExtractor.getObservationFromNetCDF(analyze, getProcedureID(), null, new HashSet<>());
+            final ObservationDataset result = NetCDFExtractor.getObservationFromNetCDF(analyze, getProcedureID(), null, null, new HashSet<>());
             return result.featureOfInterest.stream().map(foi -> foi.getId()).toList();
         } catch (NetCDFParsingException ex) {
             throw new DataStoreException(ex);
@@ -158,7 +158,7 @@ public class NetcdfObservationReader implements ObservationReader {
     @Override
     public SamplingFeature getFeatureOfInterest(final String identifier) throws DataStoreException {
         try {
-            final ObservationDataset result = NetCDFExtractor.getObservationFromNetCDF(analyze, getProcedureID(), null, new HashSet<>());
+            final ObservationDataset result = NetCDFExtractor.getObservationFromNetCDF(analyze, getProcedureID(), null, null, new HashSet<>());
             for (org.geotoolkit.observation.model.SamplingFeature feature : result.featureOfInterest) {
                 if (feature.getId().equals(identifier)) {
                     return feature;
@@ -178,7 +178,7 @@ public class NetcdfObservationReader implements ObservationReader {
     @Override
     public Observation getObservation(final String identifier, final QName resultModel, final ResponseMode mode) throws DataStoreException {
        try {
-            final ObservationDataset result = NetCDFExtractor.getObservationFromNetCDF(analyze, getProcedureID(), null, new HashSet<>());
+            final ObservationDataset result = NetCDFExtractor.getObservationFromNetCDF(analyze, getProcedureID(), null, null, new HashSet<>());
             for (Observation obs : result.observations) {
                 if (obs.getId().equals(identifier)) {
                     return obs;
