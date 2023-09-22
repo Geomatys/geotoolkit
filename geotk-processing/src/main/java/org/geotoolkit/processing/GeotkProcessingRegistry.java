@@ -61,8 +61,8 @@ public class GeotkProcessingRegistry extends AbstractProcessingRegistry {
                 org.geotoolkit.processing.coverage.straighten.StraightenDescriptor.INSTANCE,
                 org.geotoolkit.processing.coverage.volume.ComputeVolumeDescriptor.INSTANCE,
                 org.geotoolkit.processing.coverage.kriging.KrigingDescriptor.INSTANCE,
-                //groovy
-                org.geotoolkit.processing.groovy.GroovyDescriptor.INSTANCE,
+                //script
+                org.geotoolkit.processing.script.ScriptProcess.Descriptor.INSTANCE,
                 //image
                 org.geotoolkit.processing.image.bandselect.BandSelectDescriptor.INSTANCE,
                 org.geotoolkit.processing.image.bandcombine.BandCombineDescriptor.INSTANCE,
