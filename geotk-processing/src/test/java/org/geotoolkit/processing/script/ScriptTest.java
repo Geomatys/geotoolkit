@@ -14,31 +14,28 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.processing.groovy;
+package org.geotoolkit.processing.script;
 
+import java.util.HashMap;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
+import org.geotoolkit.processing.AbstractProcessTest;
+import static org.junit.Assert.*;
 import org.junit.Test;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.NoSuchIdentifierException;
-
-import java.util.HashMap;
-import org.geotoolkit.processing.AbstractProcessTest;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  * JUnit test of groovy condition process
  * @author Christophe Mourette
  * @module
  */
-public class GroovyTest extends AbstractProcessTest {
+public class ScriptTest extends AbstractProcessTest {
 
 
-    public GroovyTest() {
-        super("groovy:condition");
+    public ScriptTest() {
+        super("script:evaluate");
     }
 
     @Test
@@ -47,11 +44,12 @@ public class GroovyTest extends AbstractProcessTest {
         // Inputs first
         final HashMap<String,Object> variables = new HashMap<String, Object>();
         final String  expression = "(i>2)";
-        variables.put("i",new Integer(3)) ;
+        variables.put("i",3) ;
         // Process
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(FACTORY, "groovy:condition");
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(FACTORY, "script:evaluate");
 
         final ParameterValueGroup in = desc.getInputDescriptor().createValue();
+        in.parameter("language").setValue("GROOVY");
         in.parameter("variables").setValue(variables);
         in.parameter("expression").setValue(expression);
         final org.geotoolkit.process.Process proc = desc.createProcess(in);
@@ -60,6 +58,28 @@ public class GroovyTest extends AbstractProcessTest {
         final Boolean result = (Boolean) proc.call().parameter("result").getValue();
 
         assertTrue(result);
+    }
+
+    @Test
+    public void testLua() throws NoSuchIdentifierException, ProcessException{
+
+        // Inputs first
+        final HashMap<String,Object> variables = new HashMap<String, Object>();
+        final String  expression = "return 2 + i";
+        variables.put("i", 6) ;
+        // Process
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(FACTORY, "script:evaluate");
+
+        final ParameterValueGroup in = desc.getInputDescriptor().createValue();
+        in.parameter("language").setValue("LUA");
+        in.parameter("variables").setValue(variables);
+        in.parameter("expression").setValue(expression);
+        final org.geotoolkit.process.Process proc = desc.createProcess(in);
+
+        //result
+        final Integer result = (Integer) proc.call().parameter("result").getValue();
+
+        assertEquals(8, result.intValue());
     }
 
 }
