@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.Spliterator;
 import java.util.Spliterators;
-import java.util.function.Predicate;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import org.apache.sis.metadata.iso.DefaultMetadata;
@@ -30,7 +29,7 @@ import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.WritableFeatureSet;
+import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.storage.feature.session.Session;
@@ -53,7 +52,7 @@ import org.opengis.util.GenericName;
  * @module
  * @deprecated replaced by Apache SIS FeatureSet
  */
-public interface FeatureCollection extends Collection<Feature>, WritableFeatureSet {
+public interface FeatureCollection extends Collection<Feature>, FeatureSet {
 
     @Override
     default Metadata getMetadata() throws DataStoreException {
@@ -150,8 +149,4 @@ public interface FeatureCollection extends Collection<Feature>, WritableFeatureS
         return stream.onClose(reader::close);
     }
 
-    @Override
-    default boolean removeIf(Predicate<? super Feature> predicate) {
-        return Collection.super.removeIf(predicate);
-    }
 }

@@ -375,19 +375,16 @@ public final class GeoJSONStore extends DataStore implements ResourceOnFileSyste
     }
 
     @Override
-    public boolean removeIf(Predicate<? super Feature> filter) throws DataStoreException {
-        boolean modified = false;
+    public void removeIf(Predicate<? super Feature> filter) throws DataStoreException {
         try (GeoJSONFileWriter writer = getFeatureWriter()) {
             //rewrite existing features
             while (writer.hasNext()) {
                 Feature feature = writer.next();
                 if (filter.test(feature)) {
                     writer.remove();
-                    modified = true;
                 }
             }
         }
-        return modified;
     }
 
     @Override

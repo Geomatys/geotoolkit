@@ -241,20 +241,17 @@ public class GMLSparseStore extends DataStore implements WritableFeatureSet, Res
     }
 
     @Override
-    public boolean removeIf(Predicate<? super Feature> filter) throws DataStoreException {
-        boolean changed = false;
+    public void removeIf(Predicate<? super Feature> filter) throws DataStoreException {
         try (WriterIterator writer = new WriterIterator(featureType, file)) {
             while (writer.hasNext()) {
                 final Feature f = writer.next();
                 if (filter.test(f)) {
-                    changed = true;
                     writer.remove();
                 }
             }
         } catch (FeatureStoreRuntimeException ex) {
             throw new DataStoreException(ex);
         }
-        return changed;
     }
 
     @Override

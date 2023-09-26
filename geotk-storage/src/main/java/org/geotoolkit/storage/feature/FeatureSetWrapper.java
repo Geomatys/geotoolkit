@@ -29,11 +29,11 @@ import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 import org.apache.sis.feature.internal.AttributeConvention;
-import org.apache.sis.storage.base.StoreResource;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.WritableFeatureSet;
+import org.apache.sis.storage.base.StoreResource;
 import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
 import org.geotoolkit.factory.Hints;
@@ -145,7 +145,6 @@ public class FeatureSetWrapper  extends AbstractCollection<Feature> implements F
         return featureSet instanceof WritableFeatureSet;
     }
 
-    @Override
     public void updateType(FeatureType newType) throws DataStoreException {
         if (featureSet instanceof WritableFeatureSet) {
             WritableFeatureSet wfs = (WritableFeatureSet) featureSet;
@@ -155,7 +154,6 @@ public class FeatureSetWrapper  extends AbstractCollection<Feature> implements F
         }
     }
 
-    @Override
     public void add(Iterator<? extends Feature> features) throws DataStoreException {
         if (featureSet instanceof WritableFeatureSet) {
             WritableFeatureSet wfs = (WritableFeatureSet) featureSet;
@@ -180,7 +178,6 @@ public class FeatureSetWrapper  extends AbstractCollection<Feature> implements F
         }
     }
 
-    @Override
     public void replaceIf(Predicate<? super Feature> filter, UnaryOperator<Feature> updater) throws DataStoreException {
         if (featureSet instanceof WritableFeatureSet) {
             WritableFeatureSet wfs = (WritableFeatureSet) featureSet;
