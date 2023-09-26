@@ -16,6 +16,10 @@
  */
 package org.geotoolkit.sld.xml;
 
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Marshaller;
+import jakarta.xml.bind.Unmarshaller;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -23,17 +27,13 @@ import java.util.List;
 import java.util.ServiceLoader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import jakarta.xml.bind.JAXBException;
-import jakarta.xml.bind.Marshaller;
-import jakarta.xml.bind.Unmarshaller;
+import org.apache.sis.xml.MarshallerPool;
 import org.geotoolkit.sld.MutableSLDFactory;
 import org.geotoolkit.sld.MutableStyledLayerDescriptor;
-import org.geotoolkit.style.MutableStyleFactory;
-import org.apache.sis.xml.MarshallerPool;
-import org.geotoolkit.filter.FilterFactory2;
 import org.geotoolkit.sld.StyledLayerDescriptor;
+import org.geotoolkit.style.MutableStyleFactory;
+import org.opengis.filter.FilterFactory;
 import org.opengis.util.FactoryException;
-import jakarta.xml.bind.JAXBContext;
 
 /**
  * Utility class to read and write XML OGC SLD files.
@@ -45,7 +45,7 @@ public class JAXBSLDUtilities {
 
     private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.sld.xml");
 
-    private final FilterFactory2 filterFactory;
+    private final FilterFactory filterFactory;
     private final MutableStyleFactory styleFactory;
     private final MutableSLDFactory sldFactory;
 
@@ -113,7 +113,7 @@ public class JAXBSLDUtilities {
         return classes;
     }
 
-    public JAXBSLDUtilities(final FilterFactory2 filterFactory, final MutableStyleFactory styleFactory, final MutableSLDFactory sldFactory) {
+    public JAXBSLDUtilities(final FilterFactory filterFactory, final MutableStyleFactory styleFactory, final MutableSLDFactory sldFactory) {
         this.filterFactory = filterFactory;
         this.styleFactory = styleFactory;
         this.sldFactory = sldFactory;

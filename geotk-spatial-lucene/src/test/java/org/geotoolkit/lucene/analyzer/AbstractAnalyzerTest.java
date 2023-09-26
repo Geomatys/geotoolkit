@@ -16,17 +16,6 @@
  */
 package org.geotoolkit.lucene.analyzer;
 
-import org.apache.lucene.search.Sort;
-import org.apache.lucene.search.SortField;
-import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.index.LogicalFilterType;
-import org.geotoolkit.lucene.filter.LuceneOGCSpatialQuery;
-import org.geotoolkit.lucene.filter.SpatialQuery;
-import org.geotoolkit.lucene.index.LuceneIndexSearcher;
-import org.geotoolkit.filter.FilterFactory2;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -47,20 +36,29 @@ import org.apache.lucene.index.IndexOptions;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.Sort;
+import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TermRangeQuery;
 import org.apache.lucene.util.BytesRef;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.index.LogicalFilterType;
 import org.geotoolkit.index.tree.manager.NamedEnvelope;
 import org.geotoolkit.io.wkb.WKBUtils;
 import org.geotoolkit.lucene.DocumentIndexer.DocumentEnvelope;
 import org.geotoolkit.lucene.LuceneUtils;
-
+import org.geotoolkit.lucene.filter.LuceneOGCSpatialQuery;
+import org.geotoolkit.lucene.filter.SpatialQuery;
+import org.geotoolkit.lucene.index.LuceneIndexSearcher;
 import static org.junit.Assert.assertEquals;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Polygon;
+import org.opengis.filter.FilterFactory;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
@@ -70,7 +68,7 @@ import org.opengis.util.FactoryException;
  */
 public abstract class AbstractAnalyzerTest {
 
-    protected static final FilterFactory2 FF = FilterUtilities.FF;
+    protected static final FilterFactory FF = FilterUtilities.FF;;
 
     protected static final Logger LOGGER = Logger.getLogger("org.constellation.metadata.index.generic");
 
@@ -2935,7 +2933,7 @@ public abstract class AbstractAnalyzerTest {
         GeneralEnvelope bbox = new GeneralEnvelope(min1, max1);
         CoordinateReferenceSystem crs = CommonCRS.defaultGeographic();
         bbox.setCoordinateReferenceSystem(crs);
-        LuceneOGCSpatialQuery sf = LuceneOGCSpatialQuery.wrap(FF.bbox(LuceneOGCSpatialQuery.GEOMETRY_PROPERTY, -20, -20, 20, 20, "EPSG:4326"));
+        LuceneOGCSpatialQuery sf = LuceneOGCSpatialQuery.wrap(FF.bbox(LuceneOGCSpatialQuery.GEOMETRY_PROPERTY, bbox));
         SpatialQuery spatialQuery = new SpatialQuery("metafile:doc", sf, LogicalFilterType.AND);
 
         Set<String> result = indexSearcher.doSearch(spatialQuery);
@@ -2953,7 +2951,7 @@ public abstract class AbstractAnalyzerTest {
          */
 
         //sf           = new BBOXFilter(bbox, "urn:x-ogc:def:crs:EPSG:6.11:4326");
-        sf = LuceneOGCSpatialQuery.wrap(FF.bbox(LuceneOGCSpatialQuery.GEOMETRY_PROPERTY, -20, -20, 20, 20, "EPSG:4326"));
+        sf = LuceneOGCSpatialQuery.wrap(FF.bbox(LuceneOGCSpatialQuery.GEOMETRY_PROPERTY, bbox));
 
         BooleanQuery query = new BooleanQuery.Builder()
                                 .add(sf, BooleanClause.Occur.MUST_NOT)

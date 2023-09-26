@@ -45,7 +45,6 @@ import org.geotoolkit.data.shapefile.ShapefileFeatureStore;
 import org.geotoolkit.data.shapefile.lock.ShpFileType;
 import org.geotoolkit.factory.FactoryRegistryException;
 import org.geotoolkit.feature.FeatureExt;
-import org.geotoolkit.filter.FilterFactory2;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.storage.feature.FeatureCollection;
@@ -68,6 +67,7 @@ import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;
 import org.opengis.filter.Filter;
+import org.opengis.filter.FilterFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.GenericName;
 
@@ -255,7 +255,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         Set<String> expectedFids = new HashSet<>();
         final Filter fidFilter;
         try {
-            FilterFactory2 ff = FilterUtilities.FF;
+            FilterFactory ff = FilterUtilities.FF;
             Set<Filter<Object>> fids = new HashSet<>();
             while (indexIter.hasNext()) {
                 Feature newFeature = indexIter.next();
@@ -303,7 +303,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
             IOException, DataStoreException {
         FeatureCollection features;
         FeatureIterator indexIter;
-        FilterFactory2 fac = FilterUtilities.FF;
+        FilterFactory fac = FilterUtilities.FF;
         String geometryName = FeatureExt.getDefaultGeometry(indexedDS.getFeatureType()).getName().tip().toString();
 
         Filter filter = fac.bbox(fac.property(geometryName), newBounds);
@@ -708,7 +708,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
             invalidFid1 = "_" + FeatureExt.getId(features.next()).getIdentifier();
             invalidFid2 = FeatureExt.getId(features.next()).getIdentifier() + "abc";
         }
-        FilterFactory2 ff = FilterUtilities.FF;
+        FilterFactory ff = FilterUtilities.FF;
         Set<Filter<Object>> ids = new HashSet<>();
         ids.add(ff.resourceId(validFid1));
         ids.add(ff.resourceId(validFid2));

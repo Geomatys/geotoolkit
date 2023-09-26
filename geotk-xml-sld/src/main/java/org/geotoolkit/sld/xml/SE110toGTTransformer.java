@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.sld.xml;
 
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBException;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -38,8 +40,6 @@ import javax.measure.Unit;
 import javax.measure.quantity.Length;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import jakarta.xml.bind.JAXBElement;
-import jakarta.xml.bind.JAXBException;
 import org.apache.sis.measure.Units;
 import org.geotoolkit.ogc.xml.OGC110toGTTransformer;
 import org.geotoolkit.se.xml.v110.AnchorPointType;
@@ -114,8 +114,8 @@ import org.geotoolkit.style.function.Mode;
 import org.geotoolkit.style.function.RecolorFunction;
 import org.geotoolkit.style.function.ThreshholdsBelongTo;
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.filter.FilterFactory2;
 import org.opengis.filter.Expression;
+import org.opengis.filter.FilterFactory;
 import org.opengis.filter.Literal;
 import org.opengis.filter.ValueReference;
 import org.opengis.metadata.citation.OnlineResource;
@@ -175,12 +175,12 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
     protected final MutableStyleFactory styleFactory;
     protected final StyleXmlIO xmlUtilities = new StyleXmlIO();
 
-    public SE110toGTTransformer(final FilterFactory2 filterFactory,final MutableStyleFactory styleFactory){
+    public SE110toGTTransformer(final FilterFactory filterFactory,final MutableStyleFactory styleFactory){
         super(filterFactory);
         this.styleFactory = styleFactory;
     }
 
-    public SE110toGTTransformer(final FilterFactory2 filterFactory,final MutableStyleFactory styleFactory, final Map<String, String> namespaceMapping){
+    public SE110toGTTransformer(final FilterFactory filterFactory,final MutableStyleFactory styleFactory, final Map<String, String> namespaceMapping){
         super(filterFactory, namespaceMapping);
         this.styleFactory = styleFactory;
     }

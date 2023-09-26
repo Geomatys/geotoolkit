@@ -11,17 +11,17 @@ import org.geotoolkit.sld.xml.StyleXmlIO;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import static org.geotoolkit.style.StyleConstants.*;
+import static org.junit.Assert.*;
 import org.junit.Test;
-import org.geotoolkit.filter.FilterFactory2;
+import org.opengis.filter.FilterFactory;
 import org.opengis.style.ExternalGraphic;
 import org.opengis.style.Graphic;
 import org.opengis.style.GraphicalSymbol;
 import org.opengis.style.PointSymbolizer;
-import org.opengis.style.Symbolizer;
 import org.apache.sis.measure.Units;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.style.DefaultStyleFactory;
-import static org.junit.Assert.*;
+import org.opengis.style.Symbolizer;
 
 /**
  *
@@ -29,7 +29,7 @@ import static org.junit.Assert.*;
  */
 public class InlineImageTest {
 
-    public static final FilterFactory2 FF = FilterUtilities.FF;
+    public static final FilterFactory FF = FilterUtilities.FF;
     public static final MutableStyleFactory SF = DefaultStyleFactory.provider();
 
     @Test

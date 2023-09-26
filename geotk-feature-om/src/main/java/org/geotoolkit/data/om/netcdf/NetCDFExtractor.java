@@ -31,7 +31,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.measure.Longitude;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.sos.MeasureStringBuilder;
 import org.geotoolkit.observation.OMUtils;
 import static org.geotoolkit.observation.model.ObservationType.*;
 import static org.geotoolkit.data.om.netcdf.NetCDFUtils.*;
@@ -44,8 +43,10 @@ import org.geotoolkit.observation.model.GeoSpatialBound;
 import org.geotoolkit.observation.model.Observation;
 import org.geotoolkit.observation.model.Phenomenon;
 import org.geotoolkit.observation.model.Procedure;
+import org.geotoolkit.observation.model.ResultMode;
 import org.geotoolkit.observation.model.SamplingFeature;
-import org.geotoolkit.observation.model.TextEncoderProperties;
+import static org.geotoolkit.observation.model.TextEncoderProperties.DEFAULT_ENCODING;
+import org.geotoolkit.observation.result.ResultBuilder;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
@@ -73,16 +74,17 @@ public class NetCDFExtractor {
 
     public static ObservationDataset getObservationFromNetCDF(final Path netCDFFile, final String procedureID) throws NetCDFParsingException {
         final NCFieldAnalyze analyze = analyzeResult(netCDFFile, null);
-        return getObservationFromNetCDF(analyze, procedureID, null, new HashSet<>());
+        return getObservationFromNetCDF(analyze, procedureID, null, null, new HashSet<>());
     }
 
-    public static ObservationDataset getObservationFromNetCDF(final NCFieldAnalyze analyze, final String procedureID, final List<String> acceptedProcedureIDs, Set<Phenomenon> phenomenons) throws NetCDFParsingException {
+    public static ObservationDataset getObservationFromNetCDF(final NCFieldAnalyze analyze, final String procedureID, final List<String> acceptedProcedureIDs, final String responseFormat,
+            Set<Phenomenon> phenomenons) throws NetCDFParsingException {
         if (analyze.featureType == null) throw new NetCDFParsingException("Field analyse feature type must not be null");
         return switch (analyze.featureType) {
-            case TIMESERIES -> parseDataBlockTS(analyze,   procedureID, acceptedProcedureIDs, phenomenons);
-            case PROFILE    -> parseDataBlockXY(analyze,   procedureID, acceptedProcedureIDs, phenomenons);
-            case TRAJECTORY -> parseDataBlockTraj(analyze, procedureID, acceptedProcedureIDs, phenomenons);
-            case GRID       -> parseDataBlockGrid(analyze, procedureID, acceptedProcedureIDs, phenomenons);
+            case TIMESERIES -> parseDataBlockTS(analyze,   procedureID, acceptedProcedureIDs, responseFormat, phenomenons);
+            case PROFILE    -> parseDataBlockXY(analyze,   procedureID, acceptedProcedureIDs, responseFormat, phenomenons);
+            case TRAJECTORY -> parseDataBlockTraj(analyze, procedureID, acceptedProcedureIDs, responseFormat, phenomenons);
+            case GRID       -> parseDataBlockGrid(analyze, procedureID, acceptedProcedureIDs, responseFormat, phenomenons);
         };
     }
 
@@ -94,6 +96,14 @@ public class NetCDFExtractor {
             case TRAJECTORY -> getProcedureTraj(analyze, procedureID, acceptedProcedureIDs);
             case GRID       -> getProcedureGrid(analyze, procedureID, acceptedProcedureIDs);
         };
+    }
+
+    private static ResultBuilder initResultBuilder(String responseFormat) {
+        if ("resultArray".equalsIgnoreCase(responseFormat)) {
+            return new ResultBuilder(ResultMode.DATA_ARRAY, null, false);
+        } else {
+            return new ResultBuilder(ResultMode.CSV, DEFAULT_ENCODING, false);
+        }
     }
 
     /**
@@ -306,7 +316,7 @@ public class NetCDFExtractor {
         return false;
     }
 
-    private static ObservationDataset parseDataBlockTS(final NCFieldAnalyze analyze, final String procedureID, final List<String> acceptedSensorID, Set<Phenomenon> phenomenons) throws NetCDFParsingException {
+    private static ObservationDataset parseDataBlockTS(final NCFieldAnalyze analyze, final String procedureID, final List<String> acceptedSensorID, final String responseFormat, Set<Phenomenon> phenomenons) throws NetCDFParsingException {
         final ObservationDataset results = new ObservationDataset();
         if (analyze.mainField == null) {
             LOGGER.warning("No main field found");
@@ -348,7 +358,7 @@ public class NetCDFExtractor {
                     final ProcedureDataset compo = new ProcedureDataset(proc.getId(), proc.getName(), proc.getDescription(), "Component", "timeseries", new ArrayList<>(), null);
                     results.procedures.add(compo);
 
-                    final MeasureStringBuilder sb = new MeasureStringBuilder();
+                    final ResultBuilder sb        = initResultBuilder(responseFormat);
                     final int count               = timeVar.getDimension(0).getLength();
                     final GeoSpatialBound gb      = new GeoSpatialBound();
                     final String identifier       = UUID.randomUUID().toString();
@@ -370,23 +380,23 @@ public class NetCDFExtractor {
 
                     // iterating over time
                     for (int i = 0; i < count; i++) {
-
                         final long millis = getTimeValue(timeUnits, timeArray, i);
 
                         if (millis == 0 || millis == LIMIT) {
                             continue;
                         }
+                        sb.newBlock();
                         gb.addDate(millis);
-                        sb.appendDate(millis);
+                        sb.appendTime(millis);
 
                         for (NCField field : analyze.phenfields) {
                             final Array phenArray = phenArrays.get(field.name);
                             final Double value    = getDoubleValue(phenArray, i, field.fillValue);
                             sb.appendValue(value);
                         }
-                        sb.closeBlock();
+                        sb.endBlock();
                     }
-                    ComplexResult result = new ComplexResult(fields, TextEncoderProperties.DEFAULT_ENCODING, sb.getString(), count);
+                    ComplexResult result = OMUtils.buildComplexResult(fields, count, sb);
                     results.observations.add(new Observation(identifier,
                                                              identifier,
                                                              null, null,
@@ -409,7 +419,7 @@ public class NetCDFExtractor {
                 for (int j = 0; j < separators.size(); j++) {
 
                     final String identifier       = separators.get(j);
-                    final MeasureStringBuilder sb = new MeasureStringBuilder();
+                    final ResultBuilder sb        = initResultBuilder(responseFormat);
                     final int count               = getGoodTimeDimension(timeVar, analyze.dimensionSeparator).getLength();
                     final GeoSpatialBound gb      = new GeoSpatialBound();
                     final String currentProcID    = procedureID + '-' + identifier;
@@ -440,8 +450,9 @@ public class NetCDFExtractor {
                             if (millis == 0 || millis == LIMIT) {
                                 continue;
                             }
+                            sb.newBlock();
                             gb.addDate(millis);
-                            sb.appendDate(millis);
+                            sb.appendTime(millis);
                             for (NCField field : analyze.phenfields) {
                                 final Array phenArray   = phenArrays.get(field.name);
                                 final boolean mainFirst = field.mainVariableFirst;
@@ -449,14 +460,14 @@ public class NetCDFExtractor {
                                 sb.appendValue(value);
                             }
                             // remove the last token separator
-                            sb.closeBlock();
+                            sb.endBlock();
                         }
 
                         compo.spatialBound.merge(gb);
                         system.children.add(compo);
 
                         final String obsid = UUID.randomUUID().toString();
-                        ComplexResult result = new ComplexResult(fields, TextEncoderProperties.DEFAULT_ENCODING, sb.getString(), count);
+                        ComplexResult result = OMUtils.buildComplexResult(fields, count, sb);
                         results.observations.add(new Observation(obsid,
                                                                  obsid,
                                                                  null, null,
@@ -584,7 +595,7 @@ public class NetCDFExtractor {
         return results;
     }
 
-    private static ObservationDataset parseDataBlockXY(final NCFieldAnalyze analyze, final String procedureID, final List<String> acceptedSensorID, Set<Phenomenon> phenomenons) throws NetCDFParsingException {
+    private static ObservationDataset parseDataBlockXY(final NCFieldAnalyze analyze, final String procedureID, final List<String> acceptedSensorID, final String responseFormat, Set<Phenomenon> phenomenons) throws NetCDFParsingException {
         final ObservationDataset results = new ObservationDataset();
         if (analyze.mainField == null) {
             LOGGER.warning("No main field found");
@@ -630,7 +641,7 @@ public class NetCDFExtractor {
                     final ProcedureDataset compo = new ProcedureDataset(proc.getId(), proc.getName(), proc.getDescription(), "profile", "Component", new ArrayList<>(), null);
                     results.procedures.add(compo);
 
-                    final MeasureStringBuilder sb = new MeasureStringBuilder();
+                    final ResultBuilder sb        = initResultBuilder(responseFormat);
                     final int count               = zVar.getDimension(0).getLength();
                     final GeoSpatialBound gb      = new GeoSpatialBound();
                     final String identifier       = UUID.randomUUID().toString();
@@ -663,6 +674,7 @@ public class NetCDFExtractor {
                         if (zLevel == 0 || zLevel == FILL_VALUE) {
                             continue;
                         }
+                        sb.newBlock();
                         sb.appendValue(zLevel);
 
                         for (NCField field : analyze.phenfields) {
@@ -670,9 +682,9 @@ public class NetCDFExtractor {
                             final double value    = getDoubleValue(phenArray, zIndex, field.fillValue);
                             sb.appendValue(value);
                         }
-                        sb.closeBlock();
+                        sb.endBlock();
                     }
-                    ComplexResult result = new ComplexResult(fields, TextEncoderProperties.DEFAULT_ENCODING, sb.getString(), count);
+                    ComplexResult result = OMUtils.buildComplexResult(fields, count, sb);
                     results.observations.add(new Observation(identifier,
                                                              identifier,
                                                              null, null,
@@ -725,13 +737,14 @@ public class NetCDFExtractor {
                             }
                         }
 
-                        final MeasureStringBuilder sb = new MeasureStringBuilder();
+                        final ResultBuilder sb = initResultBuilder(responseFormat);
                         for (int zIndex = 0; zIndex < zVar.getDimension(0).getLength(); zIndex++) {
 
                             double zLevel = getZValue(Zfirst, constantZ, zArray, zIndex, profileIndex, analyze.mainField.fillValue);
                             if (zLevel == 0 || zLevel == FILL_VALUE) {
                                 continue;
                             }
+                            sb.newBlock();
                             sb.appendValue(zLevel);
 
                             for (NCField field : analyze.phenfields) {
@@ -740,13 +753,13 @@ public class NetCDFExtractor {
                                 final double value      = getDoubleValue(mainFirst, phenArray, zIndex, profileIndex, field.fillValue);
                                 sb.appendValue(value);
                             }
-                            sb.closeBlock();
+                            sb.endBlock();
                         }
                         compo.spatialBound.merge(gb);
                         system.children.add(compo);
 
                         final String obsid = UUID.randomUUID().toString();
-                        ComplexResult result = new ComplexResult(fields, TextEncoderProperties.DEFAULT_ENCODING, sb.getString(), count);
+                        ComplexResult result = OMUtils.buildComplexResult(fields, count, sb);
                         results.observations.add(new Observation(obsid,
                                                                  obsid,
                                                                  null, null,
@@ -865,7 +878,7 @@ public class NetCDFExtractor {
         return results;
     }
 
-    private static ObservationDataset parseDataBlockTraj(final NCFieldAnalyze analyze, final String procedureID, final List<String> acceptedSensorID, Set<Phenomenon> phenomenons) throws NetCDFParsingException {
+    private static ObservationDataset parseDataBlockTraj(final NCFieldAnalyze analyze, final String procedureID, final List<String> acceptedSensorID, final String responseFormat, Set<Phenomenon> phenomenons) throws NetCDFParsingException {
         final ObservationDataset results = new ObservationDataset();
         if (analyze.mainField == null) {
             LOGGER.warning("No main field found");
@@ -908,7 +921,7 @@ public class NetCDFExtractor {
                     final ProcedureDataset compo = new ProcedureDataset(proc.getId(), proc.getName(), proc.getDescription(), "trajectory", "Component", new ArrayList<>(), null);
                     results.procedures.add(compo);
 
-                    final MeasureStringBuilder sb = new MeasureStringBuilder();
+                    final ResultBuilder sb        = initResultBuilder(responseFormat);
                     final int count               = timeVar.getDimension(0).getLength();
                     final GeoSpatialBound gb      = new GeoSpatialBound();
                     final String identifier       = UUID.randomUUID().toString();
@@ -924,8 +937,9 @@ public class NetCDFExtractor {
                         if (millis == 0 || millis == LIMIT) {
                             continue;
                         }
+                        sb.newBlock();
                         gb.addDate(millis);
-                        sb.appendDate(millis);
+                        sb.appendTime(millis);
 
                         final double latitude         = getDoubleValue(latArray, i, analyze.latField.fillValue);
                         sb.appendValue(latitude);
@@ -945,17 +959,17 @@ public class NetCDFExtractor {
                             final Double value    = getDoubleValue(phenArray, i, field.fillValue);
                             sb.appendValue(value);
                         }
-                        sb.closeBlock();
+                        sb.endBlock();
                     }
 
-                    final LineString line = GF.createLineString(positions.toArray(new Coordinate[positions.size()]));
+                    final LineString line = GF.createLineString(positions.toArray(Coordinate[]::new));
                     JTS.setCRS(line, defaultCRS);
                     final SamplingFeature sp = new SamplingFeature("foi-" + identifier, identifier, null, null, null, line);
 
                     results.featureOfInterest.add(sp);
                     gb.addGeometry(line);
 
-                    ComplexResult result = new ComplexResult(fields, TextEncoderProperties.DEFAULT_ENCODING, sb.getString(), count);
+                    ComplexResult result = OMUtils.buildComplexResult(fields, count, sb);
                     results.observations.add(new Observation(identifier,
                                                              identifier,
                                                              null, null,
@@ -979,7 +993,7 @@ public class NetCDFExtractor {
                 for (int j = 0; j < separators.size(); j++) {
 
                     final String identifier       = separators.get(j);
-                    final MeasureStringBuilder sb = new MeasureStringBuilder();
+                    final ResultBuilder sb        = initResultBuilder(responseFormat);
                     int count                     = timeVar.getDimension(0).getLength();
                     final GeoSpatialBound gb      = new GeoSpatialBound();
                     final String currentProcID    = procedureID + '-' + identifier;
@@ -997,8 +1011,9 @@ public class NetCDFExtractor {
                             if (millis == 0 || millis == LIMIT) {
                                 continue;
                             }
+                            sb.newBlock();
                             gb.addDate(millis);
-                            sb.appendDate(millis);
+                            sb.appendTime(millis);
 
                             final double latitude  = getDoubleValue(true, latArray, i, j, analyze.latField.fillValue);
                             final double longitude = Longitude.normalize(getDoubleValue(true, lonArray, i, j, analyze.lonField.fillValue));
@@ -1019,7 +1034,7 @@ public class NetCDFExtractor {
                                 final Double value      = getDoubleValue(mainFirst, phenArray, i, j, field.fillValue);
                                 sb.appendValue(value);
                             }
-                            sb.closeBlock();
+                            sb.endBlock();
                         }
 
                         final LineString line =  GF.createLineString(positions.toArray(new Coordinate[positions.size()]));
@@ -1032,7 +1047,7 @@ public class NetCDFExtractor {
                         system.children.add(compo);
 
                         final String obsid = UUID.randomUUID().toString();
-                        ComplexResult result = new ComplexResult(fields, TextEncoderProperties.DEFAULT_ENCODING, sb.getString(), count);
+                        ComplexResult result = OMUtils.buildComplexResult(fields, count, sb);
                         results.observations.add(new Observation(obsid,
                                                                  obsid,
                                                                  null, null,
@@ -1159,7 +1174,7 @@ public class NetCDFExtractor {
         return results;
     }
 
-    private static ObservationDataset parseDataBlockGrid(final NCFieldAnalyze analyze, final String procedureID, final List<String> acceptedSensorID, Set<Phenomenon> phenomenons) throws NetCDFParsingException {
+    private static ObservationDataset parseDataBlockGrid(final NCFieldAnalyze analyze, final String procedureID, final List<String> acceptedSensorID, final String responseFormat, Set<Phenomenon> phenomenons) throws NetCDFParsingException {
         final ObservationDataset results = new ObservationDataset();
         if (acceptedSensorID == null || acceptedSensorID.contains(procedureID)) {
             final Procedure proc = new Procedure(procedureID);
@@ -1200,7 +1215,7 @@ public class NetCDFExtractor {
                     for (int lonIndex = 0; lonIndex < lonSize; lonIndex++) {
 
                         final String identifier       = UUID.randomUUID().toString();
-                        final MeasureStringBuilder sb = new MeasureStringBuilder();
+                        final ResultBuilder sb        = initResultBuilder(responseFormat);
                         final int count               = timeVar.getDimension(0).getLength();
                         final GeoSpatialBound gb      = new GeoSpatialBound();
 
@@ -1222,17 +1237,18 @@ public class NetCDFExtractor {
                             if (millis == 0 || millis == LIMIT) {
                                 continue;
                             }
+                            sb.newBlock();
                             gb.addDate(millis);
-                            sb.appendDate(millis);
+                            sb.appendTime(millis);
 
                             for (NCField field : analyze.phenfields) {
                                 final Array phenArray   = phenArrays.get(field.name);
                                 final Double value      = getDoubleValue(phenArray, i, latIndex, lonIndex, field.fillValue);
                                 sb.appendValue(value);
                             }
-                            sb.closeBlock();
+                            sb.endBlock();
                         }
-                        ComplexResult result = new ComplexResult(fields, TextEncoderProperties.DEFAULT_ENCODING, sb.getString(), count);
+                        ComplexResult result = OMUtils.buildComplexResult(fields, count, sb);
                         results.observations.add(new Observation(identifier,
                                                                  identifier,
                                                                  null, null,

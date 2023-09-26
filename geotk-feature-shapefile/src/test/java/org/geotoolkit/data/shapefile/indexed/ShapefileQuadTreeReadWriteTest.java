@@ -28,6 +28,7 @@ import org.geotoolkit.ShapeTestData;
 import org.geotoolkit.data.shapefile.AbstractTestCaseSupport;
 import org.geotoolkit.data.shapefile.ShapefileProvider;
 import org.geotoolkit.feature.FeatureExt;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.storage.feature.FeatureCollection;
 import org.geotoolkit.storage.feature.FeatureIterator;
@@ -42,8 +43,7 @@ import org.junit.Test;
 import org.locationtech.jts.geom.Envelope;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
-import org.geotoolkit.filter.FilterFactory2;
-import org.geotoolkit.filter.FilterUtilities;
+import org.opengis.filter.FilterFactory;
 import org.opengis.filter.ResourceId;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.GenericName;
@@ -197,7 +197,7 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
         params.parameter(ShapefileProvider.CREATE_SPATIAL_INDEX.getName().toString()).setValue(Boolean.TRUE);
         IndexedShapefileFeatureStore ds = (IndexedShapefileFeatureStore) fac.open(params);
 
-        FilterFactory2 ff = FilterUtilities.FF;
+        FilterFactory ff = FilterUtilities.FF;
 
         ResourceId filter = ff.resourceId("streams.84");
 

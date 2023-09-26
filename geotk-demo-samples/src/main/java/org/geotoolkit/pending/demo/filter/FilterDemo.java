@@ -7,11 +7,10 @@ import java.util.Iterator;
 import java.util.Set;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.storage.base.MemoryFeatureSet;
-import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
-import org.geotoolkit.filter.FilterFactory2;
+import org.apache.sis.storage.base.MemoryFeatureSet;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.pending.demo.Demos;
 import org.locationtech.jts.geom.Coordinate;
@@ -20,13 +19,14 @@ import org.locationtech.jts.geom.Point;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
+import org.opengis.filter.FilterFactory;
 import org.opengis.filter.Literal;
 import org.opengis.filter.ValueReference;
 
 
 public class FilterDemo {
 
-    private static final FilterFactory2 FF = FilterUtilities.FF;
+    private static final FilterFactory FF = FilterUtilities.FF;
 
     public static void main(String[] args) throws DataStoreException {
         Demos.init();
@@ -78,7 +78,10 @@ public class FilterDemo {
     }
 
     private static Filter bboxFilter(){
-        final Filter bbox = FF.bbox("localisation", 10, 0, 30, 50, null);
+        final GeneralEnvelope env = new GeneralEnvelope(2);
+        env.setRange(0, 10, 30);
+        env.setRange(1, 0, 50);
+        final Filter bbox = FF.bbox(FF.property("localisation"), env);
         return bbox;
     }
 

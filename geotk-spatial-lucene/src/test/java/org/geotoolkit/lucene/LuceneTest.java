@@ -16,7 +16,15 @@
  */
 package org.geotoolkit.lucene;
 
-import org.locationtech.jts.geom.*;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
@@ -29,40 +37,29 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.*;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.crs.AbstractCRS;
+import org.apache.sis.referencing.cs.AxesConvention;
 import org.geotoolkit.filter.FilterFactory2;
+import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.index.tree.manager.NamedEnvelope;
 import org.geotoolkit.index.tree.manager.postgres.LucenePostgresSQLTreeEltMapper;
+import org.geotoolkit.index.tree.manager.postgres.PGDataSource;
 import org.geotoolkit.io.wkb.WKBUtils;
 import org.geotoolkit.lucene.DocumentIndexer.DocumentEnvelope;
 import org.geotoolkit.lucene.analysis.standard.ClassicAnalyzer;
 import org.geotoolkit.lucene.filter.LuceneOGCSpatialQuery;
-import org.geotoolkit.lucene.filter.SpatialQuery;
-import org.geotoolkit.nio.IOUtilities;
-import org.apache.sis.referencing.CRS;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.geotoolkit.geometry.jts.JTS;
-
-import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.referencing.crs.AbstractCRS;
-import org.apache.sis.referencing.cs.AxesConvention;
-import org.geotoolkit.filter.FilterUtilities;
-import org.geotoolkit.index.tree.manager.postgres.PGDataSource;
 import static org.geotoolkit.lucene.filter.LuceneOGCSpatialQuery.GEOMETRY_PROPERTY;
 import static org.geotoolkit.lucene.filter.LuceneOGCSpatialQuery.wrap;
+import org.geotoolkit.lucene.filter.SpatialQuery;
+import org.geotoolkit.nio.IOUtilities;
+import org.junit.AfterClass;
 import static org.junit.Assert.*;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.locationtech.jts.geom.*;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * A Test classes testing the different spatial filters.
@@ -74,7 +71,7 @@ public class LuceneTest {
 
     private static final GeometryFactory GF = JTS.getFactory();
     private static final Logger LOGGER = Logger.getLogger("org.constellation.lucene");
-    private static final FilterFactory2 FF = FilterUtilities.FF;
+    private static final FilterFactory2 FF = new FilterFactory2();
     private static final double TOLERANCE = 0.001;
 
     private static final Path directory = Paths.get("luceneTest");

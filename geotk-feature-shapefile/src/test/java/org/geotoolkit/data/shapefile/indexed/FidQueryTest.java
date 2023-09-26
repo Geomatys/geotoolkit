@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.feature.FeatureExt;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.storage.feature.FeatureIterator;
 import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.geotoolkit.storage.feature.FeatureWriter;
@@ -43,8 +44,7 @@ import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;
 import org.opengis.filter.Filter;
-import org.geotoolkit.filter.FilterFactory2;
-import org.geotoolkit.filter.FilterUtilities;
+import org.opengis.filter.FilterFactory;
 import org.opengis.filter.ResourceId;
 import org.opengis.filter.SpatialOperator;
 import org.opengis.util.GenericName;
@@ -54,7 +54,7 @@ public class FidQueryTest extends FIDTestCase {
 
     private IndexedShapefileFeatureStore ds;
 
-    private static final FilterFactory2 fac = FilterUtilities.FF;
+    private static final FilterFactory fac = FilterUtilities.FF;
     private Map<String, Feature> fids = new HashMap<>();
 
     private GenericName name;

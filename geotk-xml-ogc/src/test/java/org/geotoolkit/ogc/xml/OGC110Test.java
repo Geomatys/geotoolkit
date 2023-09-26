@@ -16,15 +16,15 @@
  */
 package org.geotoolkit.ogc.xml;
 
-import org.locationtech.jts.geom.Polygon;
-import java.awt.Color;
-import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
 import jakarta.xml.bind.Unmarshaller;
+import java.awt.Color;
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import org.apache.sis.xml.MarshallerPool;
 import org.geotoolkit.ogc.xml.v110.BinaryComparisonOpType;
 import org.geotoolkit.ogc.xml.v110.BinaryLogicOpType;
 import org.geotoolkit.ogc.xml.v110.BinaryOperatorType;
@@ -37,22 +37,22 @@ import org.geotoolkit.ogc.xml.v110.PropertyIsLikeType;
 import org.geotoolkit.ogc.xml.v110.PropertyIsNullType;
 import org.geotoolkit.ogc.xml.v110.PropertyNameType;
 import org.geotoolkit.ogc.xml.v110.UnaryLogicOpType;
-import org.apache.sis.xml.MarshallerPool;
-import org.junit.Test;
-import org.opengis.filter.BinaryComparisonOperator;
-import org.opengis.filter.Filter;
-import org.geotoolkit.filter.FilterFactory2;
-import org.opengis.filter.BetweenComparisonOperator;
-import org.opengis.filter.LikeOperator;
-import org.opengis.filter.NullOperator;
-import org.opengis.filter.LogicalOperator;
-import org.opengis.filter.Literal;
-import org.opengis.filter.ValueReference;
-import org.opengis.filter.Expression;
-import org.opengis.filter.BinarySpatialOperator;
-import org.opengis.util.FactoryException;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
 import static org.junit.Assert.*;
+import org.junit.Test;
+import org.locationtech.jts.geom.Polygon;
+import org.opengis.filter.BetweenComparisonOperator;
+import org.opengis.filter.BinaryComparisonOperator;
+import org.opengis.filter.BinarySpatialOperator;
+import org.opengis.filter.Expression;
+import org.opengis.filter.Filter;
+import org.opengis.filter.FilterFactory;
+import org.opengis.filter.LikeOperator;
+import org.opengis.filter.Literal;
+import org.opengis.filter.LogicalOperator;
+import org.opengis.filter.NullOperator;
+import org.opengis.filter.ValueReference;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.opengis.util.FactoryException;
 
 /**
  * Test class for Filter and Expression jaxb marshelling and unmarshelling.
@@ -63,7 +63,7 @@ public class OGC110Test {
 
     private static final double DELTA = 0.00000001;
 
-    private static final FilterFactory2 FILTER_FACTORY = org.geotoolkit.filter.FilterUtilities.FF;
+    private static final FilterFactory FILTER_FACTORY = org.geotoolkit.filter.FilterUtilities.FF;
 
     private static final MarshallerPool POOL;
     private static final OGC110toGTTransformer TRANSFORMER_GT;

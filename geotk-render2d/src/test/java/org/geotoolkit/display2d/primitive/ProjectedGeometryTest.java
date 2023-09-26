@@ -35,7 +35,6 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.display2d.canvas.J2DCanvasBuffered;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.filter.FilterFactory2;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.map.MapBuilder;
@@ -51,6 +50,7 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Polygon;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
+import org.opengis.filter.FilterFactory;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.Graphic;
@@ -68,7 +68,7 @@ public class ProjectedGeometryTest {
 
     private static final GeometryFactory GF = JTS.getFactory();
     private static final DefaultStyleFactory SF = DefaultStyleFactory.provider();
-    private static final FilterFactory2 FF = FilterUtilities.FF;
+    private static final FilterFactory FF = FilterUtilities.FF;
 
     /**
      * Sanity test.

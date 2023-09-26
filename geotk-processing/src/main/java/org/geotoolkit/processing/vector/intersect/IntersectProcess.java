@@ -19,9 +19,10 @@ package org.geotoolkit.processing.vector.intersect;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.sis.feature.internal.AttributeConvention;
-import org.apache.sis.storage.FeatureQuery;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureQuery;
 import org.apache.sis.storage.FeatureSet;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.processing.vector.VectorDescriptor;
@@ -29,8 +30,7 @@ import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;
 import org.opengis.filter.Filter;
-import org.geotoolkit.filter.FilterFactory2;
-import org.geotoolkit.filter.FilterUtilities;
+import org.opengis.filter.FilterFactory;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
@@ -40,7 +40,7 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class IntersectProcess extends AbstractProcess {
 
-    private static final FilterFactory2 FF = FilterUtilities.FF;
+    private static final FilterFactory FF = FilterUtilities.FF;
 
     /**
      * Default constructor
@@ -79,7 +79,7 @@ public class IntersectProcess extends AbstractProcess {
         final List<Filter<Object>> filterList = new ArrayList<>();
         for (final PropertyType property : ft.getProperties(true)) {
             if (AttributeConvention.isGeometryAttribute(property)) {
-                final Filter filter = FF.intersects(FF.property(property.getName()), FF.literal(interGeom));
+                final Filter filter = FF.intersects(FF.property(property.getName().toString()), FF.literal(interGeom));
                 filterList.add(filter);
             }
         }

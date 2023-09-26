@@ -26,7 +26,10 @@
         "id": "phen-1",
         "name": "urn:phen:1",
         "description": "phenomenon number 1",
-        "properties": {},
+        "properties": {
+            "number": 1.2,
+            "names": ["p1", "phen1"]
+        },
         "definition": "urn:phen:1"
     },
     "result": {
@@ -43,7 +46,8 @@
     },
     "type": "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_ComplexObservation",
     "properties": {
-        "type": "timeseries"
+        "type": "timeseries",
+        "names": ["n1", "n2"]
     },
     "resultQuality": [
         {

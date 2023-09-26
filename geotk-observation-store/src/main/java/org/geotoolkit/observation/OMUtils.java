@@ -27,7 +27,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.StringTokenizer;
 import java.util.UUID;
 import java.util.logging.Logger;
 import javax.xml.namespace.QName;
@@ -62,7 +61,6 @@ import static org.geotoolkit.observation.model.FieldType.TEXT;
 import static org.geotoolkit.observation.model.FieldType.TIME;
 import org.geotoolkit.observation.model.MeasureResult;
 import org.geotoolkit.observation.model.Observation;
-import org.geotoolkit.observation.model.TextEncoderProperties;
 import org.geotoolkit.temporal.object.DefaultInstant;
 import org.geotoolkit.temporal.object.DefaultPeriod;
 import org.geotoolkit.temporal.object.ISODateParser;
@@ -214,18 +212,6 @@ public class OMUtils {
         return results;
     }
 
-     /**
-      * @deprecated Use buildComplexResult(field, nbValue, values) because encoding is either the one use for resultBuilder or {@code null}
-      */
-    @Deprecated
-    public static ComplexResult buildComplexResult(final List<Field> fields, final int nbValue, final TextEncoderProperties encoding, final ResultBuilder values) {
-        return switch (values.getMode()) {
-            case CSV        -> new ComplexResult(fields, encoding, values.getStringValues(), nbValue);
-            case DATA_ARRAY -> new ComplexResult(fields, values.getDataArray(), nbValue);
-            case COUNT      -> new ComplexResult(nbValue);
-        };
-    }
-
     /**
       * Build a complex result.
       *
@@ -301,23 +287,17 @@ public class OMUtils {
 
         List<Observation> results = new ArrayList<>();
         if (obs.getResult() instanceof ComplexResult cr) {
-            final StringTokenizer blockTokenizer = new StringTokenizer(cr.getValues(), cr.getTextEncodingProperties().getBlockSeparator());
+            final String[] blocks = cr.getValues().split(cr.getTextEncodingProperties().getBlockSeparator());
             int mid = 1;
-            while (blockTokenizer.hasMoreTokens()) {
-                final String block = blockTokenizer.nextToken();
-                final StringTokenizer tokenizer = new StringTokenizer(block, cr.getTextEncodingProperties().getTokenSeparator());
-
+            for (String block : blocks) {
+                final String[] lines = block.split(cr.getTextEncodingProperties().getTokenSeparator(), -1);
                 TemporalGeometricPrimitive measureTime = null;
+                int j = 0;
                 for (Field f : cr.getFields()) {
-
+                    String token = lines[j];
+                    j++;
                     final String idSuffix = "-" + f.index + '-' + mid;
-                    final String token = tokenizer.nextToken();
-                    final Object value = switch (f.type) {
-                        case BOOLEAN  -> Boolean.valueOf(token);
-                        case QUANTITY -> Double.valueOf(token);
-                        case TEXT     -> token;
-                        case TIME     ->  new ISODateParser().parseToDate(token);
-                    };
+                    final Object value    = readField(f, token);
                     if (timeseries)  {
                         if (f.index == 1) {
                             measureTime = buildTime("time" + idSuffix, (Date) value, null);
@@ -325,6 +305,13 @@ public class OMUtils {
                         }
                     } else {
                         measureTime = obs.getSamplingTime();
+                    }
+                    List<Element> quality = new ArrayList<>();
+                    for (Field qf : f.qualityFields) {
+                        token = lines[j];
+                        j++;
+                        final Object qvalue = readField(qf, token);
+                        quality.add(createQualityElement(qf, qvalue));
                     }
 
                     // exclude observation by field or measure id
@@ -342,7 +329,7 @@ public class OMUtils {
                                                           measureTime,
                                                           obs.getFeatureOfInterest(),
                                                           obs.getObservedProperty(), // TODO split phenomenon
-                                                          obs.getResultQuality(),
+                                                          quality,
                                                           result,
                                                           obs.getProperties());
                     results.add(measObs);
@@ -353,6 +340,51 @@ public class OMUtils {
             results.add(obs);
         }
         return results;
+    }
+
+    /**
+     * Transform a Complex result in String datablock mode into a data Array.
+     *
+     * @param cr An observation complex result.
+     * @return A complex result data array.
+     */
+    public static List<Object> toDataArray(ComplexResult cr) {
+        List<Object> dataArray = new ArrayList<>();
+        final String[] blocks = cr.getValues().split(cr.getTextEncodingProperties().getBlockSeparator());
+        for (String block : blocks) {
+            final String[] lines = block.split(cr.getTextEncodingProperties().getTokenSeparator(), -1);
+            final List<Object> line = new ArrayList<>();
+            int j = 0;
+            for (Field f : cr.getFields()) {
+                String token = lines[j];
+                j++;
+                final Object value = readField(f, token);
+                line.add(value);
+                for (Field qf : f.qualityFields) {
+                    token = lines[j];
+                    j++;
+                    final Object qvalue = readField(qf, token);
+                    line.add(qvalue);
+                }
+            }
+            dataArray.add(line);
+        }
+        return dataArray;
+    }
+
+    private static Object readField(Field f, final String token) {
+        final Object value;
+        if (token.isEmpty()) {
+            value = null;
+        } else {
+            value = switch (f.type) {
+                case BOOLEAN  -> Boolean.valueOf(token);
+                case QUANTITY -> Double.valueOf(token);
+                case TEXT     -> token;
+                case TIME     ->  new ISODateParser().parseToDate(token);
+            };
+        }
+        return value;
     }
 
     public static String getOmTypeFromClass(Class c) {

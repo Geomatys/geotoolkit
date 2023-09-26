@@ -35,12 +35,11 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.referencing.util.j2d.AffineTransform2D;
 import org.apache.sis.portrayal.MapLayer;
 import org.apache.sis.portrayal.MapLayers;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.util.j2d.AffineTransform2D;
 import org.apache.sis.storage.FeatureSet;
-import org.geotoolkit.filter.FilterFactory2;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.geometry.GeometricUtilities;
 import org.geotoolkit.geometry.jts.JTS;
@@ -58,6 +57,7 @@ import org.locationtech.jts.geom.MultiPoint;
 import org.locationtech.jts.geom.Polygon;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
+import org.opengis.filter.FilterFactory;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.style.Graphic;
@@ -75,7 +75,7 @@ public class MeridianTest {
 
     private static final GeometryFactory GF = JTS.getFactory();
     private static final DefaultStyleFactory SF = DefaultStyleFactory.provider();
-    private static final FilterFactory2 FF = FilterUtilities.FF;
+    private static final FilterFactory FF = FilterUtilities.FF;
 
     /**
      * Sanity test.

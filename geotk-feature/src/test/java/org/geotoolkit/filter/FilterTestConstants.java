@@ -17,20 +17,21 @@
 package org.geotoolkit.filter;
 
 import java.sql.Timestamp;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LinearRing;
 import org.locationtech.jts.geom.Polygon;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import org.apache.sis.feature.builder.AttributeRole;
-import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
+import org.opengis.filter.FilterFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.apache.sis.feature.internal.AttributeConvention;
 import org.apache.sis.referencing.CommonCRS;
@@ -43,7 +44,7 @@ import org.apache.sis.referencing.CommonCRS;
  * @module
  */
 public class FilterTestConstants {
-    public static final FilterFactory2 FF = FilterUtilities.FF;
+    public static final FilterFactory FF = FilterUtilities.FF;
     public static final GeometryFactory GF = org.geotoolkit.geometry.jts.JTS.getFactory();
 
     public static final Geometry RIGHT_GEOMETRY;

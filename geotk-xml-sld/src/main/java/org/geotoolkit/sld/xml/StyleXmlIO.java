@@ -16,30 +16,28 @@
  */
 package org.geotoolkit.sld.xml;
 
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Map;
-import java.util.logging.Level;
-
-// JAXB dependencies
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
 import jakarta.xml.bind.Unmarshaller;
-
-// JAXP dependencies
+import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import static java.nio.file.StandardOpenOption.*;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
-
-// Geotoolkit dependencies
+import static org.apache.sis.util.ArgumentChecks.*;
+import org.apache.sis.xml.MarshallerPool;
+import org.geotoolkit.filter.FilterFactory2;
 import org.geotoolkit.ogc.xml.OGC200toGTTransformer;
 import org.geotoolkit.ogc.xml.v110.PropertyNameType;
 import org.geotoolkit.sld.DefaultSLDFactory;
@@ -49,25 +47,20 @@ import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
-import org.apache.sis.xml.MarshallerPool;
-
-// Types dependencies
 import org.opengis.filter.Filter;
-import org.geotoolkit.filter.FilterFactory2;
-import org.opengis.filter.ValueReference;
+import org.opengis.filter.FilterFactory;
 import org.opengis.filter.SortProperty;
+import org.opengis.filter.ValueReference;
 import org.opengis.metadata.citation.OnlineResource;
-import org.opengis.util.FactoryException;
 import org.geotoolkit.sld.StyledLayerDescriptor;
 import org.opengis.style.FeatureTypeStyle;
 import org.opengis.style.Rule;
 import org.opengis.style.Style;
+import org.opengis.util.FactoryException;
 import org.w3c.dom.Node;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
-import static java.nio.file.StandardOpenOption.*;
 import java.util.logging.Logger;
-import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.ogc.xml.FilterMarshallerPool;
 import org.geotoolkit.ogc.xml.FilterToOGC200Converter;
@@ -83,7 +76,7 @@ import org.geotoolkit.style.DefaultStyleFactory;
  */
 public final class StyleXmlIO {
 
-    private final FilterFactory2 filterFactory;
+    private final FilterFactory filterFactory;
     private final MutableStyleFactory styleFactory;
     private final MutableSLDFactory sldFactory;
 
