@@ -6,7 +6,7 @@
     xmlns:gml="http://www.opengis.net/gml"
     uom="http://www.opengeospatial.org/se/units/foot">
         
-    <Geometry><ogc:PropertyName></ogc:PropertyName></Geometry>
+    <Geometry><ogc:PropertyName>geom</ogc:PropertyName></Geometry>
     
     <Fill>
         <SvgParameter name="fill"><ogc:Literal>#0000FF</ogc:Literal></SvgParameter>

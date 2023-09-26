@@ -6,7 +6,7 @@
     xmlns:gml="http://www.opengis.net/gml"
     uom="http://www.opengeospatial.org/se/units/metre">
         
-    <Geometry><ogc:PropertyName></ogc:PropertyName></Geometry>
+    <Geometry><ogc:PropertyName>geom</ogc:PropertyName></Geometry>
     
     <Opacity><ogc:Literal>0.32</ogc:Literal></Opacity>
     

@@ -87,7 +87,7 @@ public class SEforSLD100Test {
     private final String valueTitle = "title";
     private final String valueAbstract = "abstract";
     private final String valueFTN = "A feature type name";
-    private final String valueGeom = null;
+    private final String valueGeom = "geom";
 
     //FILES -------------------------------------
     private static File FILE_SE_SYMBOL_POINT = null;
@@ -361,7 +361,7 @@ public class SEforSLD100Test {
         JAXBElement<org.geotoolkit.sld.xml.v100.PointSymbolizer> pvt = TRANSFORMER_OGC.visit(pointSymbol,null);
         assertNotNull(pvt);
 
-        assertEquals(pvt.getValue().getGeometry().getPropertyName().getContent() , "");
+        assertEquals(pvt.getValue().getGeometry().getPropertyName().getContent() , "geom");
         org.geotoolkit.sld.xml.v100.Graphic gra = pvt.getValue().getGraphic();
 
         assertNotNull(gra.getOpacity());
@@ -370,7 +370,7 @@ public class SEforSLD100Test {
         assertEquals(gra.getExternalGraphicOrMark().size() , 1);
 
         assertNotNull(pvt.getValue().getGraphic());
-        assertEquals(pvt.getValue().getGeometry().getPropertyName().getContent(), "");
+        assertEquals(pvt.getValue().getGeometry().getPropertyName().getContent(), "geom");
 
         MARSHALLER.marshal(pvt, TEST_FILE_SE_SYMBOL_POINT);
 
@@ -407,7 +407,7 @@ public class SEforSLD100Test {
         JAXBElement<org.geotoolkit.sld.xml.v100.LineSymbolizer> pvt = TRANSFORMER_OGC.visit(lineSymbol,null);
         assertNotNull(pvt);
 
-        assertEquals(pvt.getValue().getGeometry().getPropertyName().getContent() , "");
+        assertEquals(pvt.getValue().getGeometry().getPropertyName().getContent() , "geom");
         assertNotNull(pvt.getValue().getStroke());
 
         MARSHALLER.marshal(pvt, TEST_FILE_SE_SYMBOL_LINE);
@@ -448,7 +448,7 @@ public class SEforSLD100Test {
         JAXBElement<org.geotoolkit.sld.xml.v100.PolygonSymbolizer> pvt = TRANSFORMER_OGC.visit(polySymbol,null);
         assertNotNull(pvt);
 
-        assertEquals(pvt.getValue().getGeometry().getPropertyName().getContent() , "");
+        assertEquals(pvt.getValue().getGeometry().getPropertyName().getContent() , "geom");
         assertNotNull(pvt.getValue().getStroke());
         assertNotNull(pvt.getValue().getFill());
 
@@ -494,7 +494,7 @@ public class SEforSLD100Test {
         JAXBElement<org.geotoolkit.sld.xml.v100.TextSymbolizer> pvt = TRANSFORMER_OGC.visit(textSymbol,null);
         assertNotNull(pvt);
 
-        assertEquals(pvt.getValue().getGeometry().getPropertyName().getContent() , "");
+        assertEquals(pvt.getValue().getGeometry().getPropertyName().getContent() , "geom");
         assertNotNull(pvt.getValue().getFill());
 
         MARSHALLER.marshal(pvt, TEST_FILE_SE_SYMBOL_TEXT);
@@ -551,7 +551,7 @@ public class SEforSLD100Test {
 
         org.geotoolkit.sld.xml.v100.RasterSymbolizer rs = pvt.getValue();
 
-        assertEquals(rs.getGeometry().getPropertyName().getContent() , "");
+        assertEquals(rs.getGeometry().getPropertyName().getContent() , "geom");
 
         assertNotNull(rs.getChannelSelection());
         assertEquals(rs.getChannelSelection().getRedChannel().getSourceChannelName(), "band_1");

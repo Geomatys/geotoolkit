@@ -44,6 +44,7 @@ import org.geotoolkit.style.function.Interpolate;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.geotoolkit.filter.FilterUtilities;
+import org.geotoolkit.se.xml.v110.ParameterValueType;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.opengis.filter.Expression;
 import org.opengis.filter.FilterFactory;
@@ -83,7 +84,7 @@ public class SEforSLD110Test {
     private static final String valueTitle = "title";
     private static final String valueAbstract = "abstract";
     private static final String valueFTN = "A feature type name";
-    private static final String valueGeom = null;
+    private static final String valueGeom = "geom";
 
     //FILES -------------------------------------
     private static File FILE_SE_SYMBOL_POINT;
@@ -365,7 +366,7 @@ public class SEforSLD110Test {
         JAXBElement<org.geotoolkit.se.xml.v110.PointSymbolizerType> pvt = TRANSFORMER_OGC.visit(pointSymbol,null);
         assertNotNull(pvt);
 
-        assertEquals(pvt.getValue().getGeometry() , null);
+        assertEquals(((JAXBElement)pvt.getValue().getGeometry().getContent().get(0)).getValue() , new PropertyNameType(valueGeom));
         org.geotoolkit.se.xml.v110.GraphicType gra = pvt.getValue().getGraphic();
 
         assertNotNull(gra.getOpacity());
@@ -395,7 +396,7 @@ public class SEforSLD110Test {
         LineSymbolizer lineSymbol = TRANSFORMER_GT.visit(jax.getValue());
         assertNotNull(lineSymbol);
 
-        assertEquals("the_geom",lineSymbol.getGeometryPropertyName());
+        assertEquals("geom",lineSymbol.getGeometryPropertyName());
         assertEquals(Units.METRE, lineSymbol.getUnitOfMeasure());
         assertNotNull(lineSymbol.getStroke());
 
@@ -410,7 +411,7 @@ public class SEforSLD110Test {
         JAXBElement<org.geotoolkit.se.xml.v110.LineSymbolizerType> pvt = TRANSFORMER_OGC.visit(lineSymbol,null);
         assertNotNull(pvt);
 
-        assertEquals(new PropertyNameType("the_geom"), ((JAXBElement)pvt.getValue().getGeometry().getContent().get(0)).getValue());
+        assertEquals(new PropertyNameType("geom"), ((JAXBElement)pvt.getValue().getGeometry().getContent().get(0)).getValue());
         assertNotNull(pvt.getValue().getStroke());
 
         MARSHALLER.marshal(pvt, TEST_FILE_SE_SYMBOL_LINE);
@@ -451,7 +452,7 @@ public class SEforSLD110Test {
         JAXBElement<org.geotoolkit.se.xml.v110.PolygonSymbolizerType> pvt = TRANSFORMER_OGC.visit(polySymbol,null);
         assertNotNull(pvt);
 
-        assertEquals(pvt.getValue().getGeometry() , null);
+        assertEquals(((JAXBElement)pvt.getValue().getGeometry().getContent().get(0)).getValue() , new PropertyNameType(valueGeom));
         assertNotNull(pvt.getValue().getStroke());
         assertNotNull(pvt.getValue().getFill());
 
@@ -497,7 +498,7 @@ public class SEforSLD110Test {
         JAXBElement<org.geotoolkit.se.xml.v110.TextSymbolizerType> pvt = TRANSFORMER_OGC.visit(textSymbol,null);
         assertNotNull(pvt);
 
-        assertEquals(pvt.getValue().getGeometry() , null);
+        assertEquals(((JAXBElement)pvt.getValue().getGeometry().getContent().get(0)).getValue() , new PropertyNameType(valueGeom));
         assertNotNull(pvt.getValue().getFill());
 
         MARSHALLER.marshal(pvt, TEST_FILE_SE_SYMBOL_TEXT);
@@ -554,7 +555,7 @@ public class SEforSLD110Test {
 
         org.geotoolkit.se.xml.v110.RasterSymbolizerType rs = pvt.getValue();
 
-        assertEquals(rs.getGeometry() , null);
+        assertEquals(((JAXBElement)pvt.getValue().getGeometry().getContent().get(0)).getValue() , new PropertyNameType(valueGeom));
 
         assertNotNull(rs.getChannelSelection());
         assertEquals(rs.getChannelSelection().getRedChannel().getSourceChannelName(), "band_1");
@@ -606,7 +607,7 @@ public class SEforSLD110Test {
         PointSymbolizer pointSymbol = TRANSFORMER_GT.visit(jax.getValue());
         assertNotNull(pointSymbol);
 
-        assertEquals(pointSymbol.getGeometryPropertyName(), valueGeom);
+        assertEquals(pointSymbol.getGeometryPropertyName(), null);
         assertEquals(Units.POINT, pointSymbol.getUnitOfMeasure());
         assertNotNull(pointSymbol.getGraphic());
 

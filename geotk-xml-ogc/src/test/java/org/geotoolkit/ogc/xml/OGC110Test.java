@@ -51,6 +51,7 @@ import org.opengis.filter.Literal;
 import org.opengis.filter.LogicalOperator;
 import org.opengis.filter.NullOperator;
 import org.opengis.filter.ValueReference;
+import org.opengis.geometry.Envelope;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
 
@@ -1126,8 +1127,8 @@ public class OGC110Test {
         ValueReference left = (ValueReference) subfilter.getOperand1();
         Literal right = (Literal) subfilter.getOperand2();
         assertEquals( left.getXPath() , valueStr);
-        assertTrue( right.apply(null) instanceof Polygon);
-        assertEquals( right.apply(null).toString().trim() , "POLYGON ((48 18, 48 21, 52 21, 52 18, 48 18))");
+        assertTrue( right.apply(null) instanceof Envelope);
+        assertEquals( right.apply(null).toString().trim() , "BOX(48 18, 52 21)");
         POOL.recycle(MARSHALLER);
         POOL.recycle(UNMARSHALLER);
     }

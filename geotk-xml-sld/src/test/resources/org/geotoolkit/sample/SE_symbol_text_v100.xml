@@ -5,7 +5,7 @@
     xmlns:ogc="http://www.opengis.net/ogc" 
     xmlns:gml="http://www.opengis.net/gml">
         
-    <Geometry><ogc:PropertyName></ogc:PropertyName></Geometry>
+    <Geometry><ogc:PropertyName>geom</ogc:PropertyName></Geometry>
     
     <Label><ogc:PropertyName>aField</ogc:PropertyName></Label>
     
