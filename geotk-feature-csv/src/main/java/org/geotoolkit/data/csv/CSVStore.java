@@ -435,19 +435,15 @@ public class CSVStore extends DataStore implements WritableFeatureSet, ResourceO
     }
 
     @Override
-    public boolean removeIf(Predicate<? super Feature> filter) throws DataStoreException {
-        boolean changed = false;
+    public void removeIf(Predicate<? super Feature> filter) throws DataStoreException {
         try (final CSVWriter writer = new CSVWriter(this, featureType, fileLock)) {
             while (writer.hasNext()) {
                 Feature candidate = writer.next();
                 if (filter.test(candidate)) {
-                    changed = true;
                     writer.remove();
                 }
             }
         }
-
-        return changed;
     }
 
     @Override

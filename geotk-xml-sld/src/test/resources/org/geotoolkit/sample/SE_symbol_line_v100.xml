@@ -6,7 +6,7 @@
     xmlns:gml="http://www.opengis.net/gml">
         
     <Geometry>
-        <ogc:PropertyName></ogc:PropertyName>
+        <ogc:PropertyName>geom</ogc:PropertyName>
     </Geometry>
     
     <Stroke>

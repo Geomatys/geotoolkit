@@ -107,7 +107,7 @@ final class MIFFeatureSet extends AbstractFeatureSet implements WritableFeatureS
     }
 
     @Override
-    public boolean removeIf(Predicate<? super Feature> filter) throws DataStoreException {
+    public void removeIf(Predicate<? super Feature> filter) throws DataStoreException {
         throw new UnsupportedOperationException("Remove operation is not supported yet.");
     }
 

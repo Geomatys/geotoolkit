@@ -44,7 +44,7 @@ import org.apache.sis.referencing.CommonCRS;
  * @module
  */
 public class FilterTestConstants {
-    public static final FilterFactory FF = FilterUtilities.FF;
+    public static final FilterFactory FF = new FilterFactory2();
     public static final GeometryFactory GF = org.geotoolkit.geometry.jts.JTS.getFactory();
 
     public static final Geometry RIGHT_GEOMETRY;

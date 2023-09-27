@@ -314,7 +314,7 @@ public class GMLStore extends DataStore implements WritableFeatureSet, ResourceO
     }
 
     @Override
-    public boolean removeIf(Predicate<? super Feature> filter) throws DataStoreException {
+    public void removeIf(Predicate<? super Feature> filter) throws DataStoreException {
         throw new DataStoreException("Not supported yet.");
     }
 

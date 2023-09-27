@@ -302,7 +302,7 @@ public class WFSFeatureSet implements WritableFeatureSet {
     }
 
     @Override
-    public boolean removeIf(Predicate<? super Feature> filter) throws DataStoreException {
+    public void removeIf(Predicate<? super Feature> filter) throws DataStoreException {
         if (!(filter instanceof Filter)) {
             throw new DataStoreException("Predicate filter must be an instance of org.opengis.filter.Filter");
         }
@@ -324,7 +324,6 @@ public class WFSFeatureSet implements WritableFeatureSet {
         } catch (IOException ex) {
             throw new DataStoreException(ex);
         }
-        return true;
     }
 
     @Override

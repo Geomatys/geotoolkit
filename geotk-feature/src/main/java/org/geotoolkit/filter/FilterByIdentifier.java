@@ -96,4 +96,14 @@ final class FilterByIdentifier extends Node implements ResourceId<Object> {
         }
         return (id != null) && identifier.equals(id.toString());
     }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other instanceof ResourceId rid) {
+            return getExpressions().equals(rid.getExpressions());
+        }
+        return false;
+    }
+
+
 }

@@ -23,6 +23,7 @@ import org.apache.lucene.search.ScoreMode;
 import org.apache.lucene.search.Weight;
 import org.geotoolkit.filter.SpatialFilterType;
 import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.filter.FilterFactory2;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.index.tree.Tree;
 import static org.geotoolkit.lucene.LuceneUtils.*;
@@ -38,7 +39,7 @@ import org.opengis.filter.ValueReference;
 public class LuceneOGCSpatialQuery extends org.apache.lucene.search.Query implements  org.geotoolkit.lucene.filter.Filter {
 
     public static final String GEOMETRY_FIELD_NAME     = "idx_lucene_geometry";
-    public static final ValueReference GEOMETRY_PROPERTY = FilterUtilities.FF.property(GEOMETRY_FIELD_NAME);
+    public static final ValueReference GEOMETRY_PROPERTY = new FilterFactory2().property(GEOMETRY_FIELD_NAME);
 
     private final SpatialFilterType filterType;
 
