@@ -26,6 +26,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import org.apache.sis.feature.internal.AttributeConvention;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.filter.FilterUtilities;
@@ -47,6 +49,7 @@ import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.ResourceId;
 import org.opengis.filter.SpatialOperator;
+import org.opengis.geometry.Envelope;
 import org.opengis.util.GenericName;
 
 public class FidQueryTest extends FIDTestCase {
@@ -216,8 +219,11 @@ public class FidQueryTest extends FIDTestCase {
         // String geom = ds.getSchema().getDefaultGeometryValue().getLocalName();
         //
         // bboxFilter.addLeftGeometry(factory.createAttributeExpression(geom));
+        GeneralEnvelope envelope = new GeneralEnvelope(FeatureExt.getEnvelope(feature));
+        envelope.setRange(0, envelope.getMinimum(0)-1, envelope.getMinimum(0)+1);
+        envelope.setRange(1, envelope.getMinimum(1)-1, envelope.getMinimum(1)+1);
 
-        SpatialOperator bbox = fac.bbox(fac.property(""), FeatureExt.getEnvelope(feature));
+        SpatialOperator bbox = fac.bbox(fac.property(AttributeConvention.GEOMETRY), envelope);
         features = ds.getFeatureReader(Query.filtered(name.toString(), bbox));
         try {
             while (features.hasNext()) {
