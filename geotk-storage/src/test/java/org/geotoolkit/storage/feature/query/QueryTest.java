@@ -70,27 +70,11 @@ public class QueryTest {
             //ok
         }
 
-        try{
-            Query.filtered(null, Filter.exclude());
-            throw new Exception("We can not build a query without at least the type name.");
-        }catch(NullPointerException ex){
-            //ok
-        }
-
 
         //all-------------------------------------------------------------------
         query = new Query(name);
         assertEquals(query.getTypeName(), name.toString());
         assertEquals(query.getSelection(), Filter.include());
-        assertFalse(query.getLimit().isPresent());
-        assertArrayEquals(query.getPropertyNames(), null);
-        assertArrayEquals(QueryUtilities.getSortProperties(query.getSortBy()), new SortProperty[0]);
-        assertEquals(query.getOffset(), 0);
-
-        //only filter-----------------------------------------------------------
-        query = Query.filtered(name.toString(), Filter.exclude());
-        assertEquals(query.getTypeName(), name.toString());
-        assertEquals(query.getSelection(), Filter.exclude());
         assertFalse(query.getLimit().isPresent());
         assertArrayEquals(query.getPropertyNames(), null);
         assertArrayEquals(QueryUtilities.getSortProperties(query.getSortBy()), new SortProperty[0]);

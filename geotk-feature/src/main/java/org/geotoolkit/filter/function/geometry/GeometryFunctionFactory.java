@@ -34,6 +34,7 @@ public class GeometryFunctionFactory extends AbstractFunctionFactory {
     public static final String ALLPOINTS    = "allPoints";
     public static final String STARTANGLE   = "startAngle";
     public static final String ENDANGLE     = "endAngle";
+    public static final String COVERAGE_BOUNDINGBOX     = "coverageBoundingBox";
 
     private static final Map<String,Class> FUNCTIONS = new HashMap<>();
 
@@ -42,6 +43,7 @@ public class GeometryFunctionFactory extends AbstractFunctionFactory {
         FUNCTIONS.put(ALLPOINTS,    AllPointsFunction.class);
         FUNCTIONS.put(STARTANGLE,   StartAngleFunction.class);
         FUNCTIONS.put(ENDANGLE,     EndAngleFunction.class);
+        FUNCTIONS.put(COVERAGE_BOUNDINGBOX,     CoverageBoundingBox.class);
     }
 
     public GeometryFunctionFactory() {

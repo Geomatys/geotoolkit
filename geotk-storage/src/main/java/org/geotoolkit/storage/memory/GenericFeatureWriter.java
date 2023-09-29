@@ -62,7 +62,9 @@ public class GenericFeatureWriter implements FeatureWriter {
     private GenericFeatureWriter(final FeatureStore store, final String typeName, final Filter filter) throws DataStoreException {
         this.store = store;
         this.typeName = typeName;
-        reader = store.getFeatureReader(Query.filtered(typeName, filter));
+        Query query = new Query(typeName);
+        query.setSelection(filter);
+        reader = store.getFeatureReader(query);
         type = store.getFeatureType(typeName);
     }
 
