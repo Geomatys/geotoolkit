@@ -164,7 +164,7 @@ public final class RenderingRoutines {
         }
         // Note: do not use layer boundary to define the target bbox, because it can be expensive.
         // Anyway, the target resource will be better to determine clipping between rendering boundaries and its own.
-        final Envelope bbox                      = optimizeBBox(renderingContext, fs, symbolsMargin);
+        final Envelope bbox                      = renderingContext.getCanvasObjectiveBounds2D(); //optimizeBBox(renderingContext, fs, symbolsMargin);
         final CoordinateReferenceSystem layerCRS = FeatureExt.getCRS(schema);
         final RenderingHints hints               = renderingContext.getRenderingHints();
 
