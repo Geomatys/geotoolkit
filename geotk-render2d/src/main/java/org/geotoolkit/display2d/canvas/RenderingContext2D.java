@@ -24,6 +24,8 @@ import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -32,12 +34,16 @@ import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.concurrent.Callable;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.measure.Unit;
 import javax.measure.quantity.Length;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelope2D;
+import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.internal.referencing.provider.Affine;
@@ -45,7 +51,9 @@ import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.crs.DefaultDerivedCRS;
 import org.apache.sis.referencing.operation.DefaultConversion;
+import org.apache.sis.referencing.operation.builder.LinearTransformBuilder;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
+import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.display.canvas.CanvasUtilities;
@@ -79,6 +87,9 @@ import org.opengis.util.FactoryException;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import static org.geotoolkit.display.canvas.AbstractCanvas2D.toRectangle;
+import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.referencing.operation.MathTransform2D;
+import org.opengis.referencing.operation.Matrix;
 
 
 /**
@@ -243,6 +254,10 @@ public class RenderingContext2D implements RenderingContext{
      * but symbolizer may need to enlarge it because of symbols size.
      */
     public org.locationtech.jts.geom.Envelope objectiveJTSEnvelope = null;
+
+    private final Map<CoordinateReferenceSystem, MathTransform> dataToDisplay = new HashMap<>();
+    private final Map<CoordinateReferenceSystem, MathTransform> dataToObjective = new HashMap<>();
+
 
     /**
      * Constructs a new {@code RenderingContext} for the specified canvas.
@@ -802,6 +817,37 @@ public class RenderingContext2D implements RenderingContext{
                                           final CoordinateReferenceSystem targetCRS)
             throws FactoryException {
         return CRS.findOperation(sourceCRS, targetCRS, null).getMathTransform();
+    }
+
+    public synchronized MathTransform getDataToObjective(final CoordinateReferenceSystem dataCrs) throws FactoryException, NoninvertibleTransformException {
+        MathTransform trs = dataToObjective.get(dataCrs);
+        if (trs == null) {
+            //trs = MathTransforms.concatenate(getDataToDisplay(dataCrs), displayToObjective);
+            trs = getMathTransform(dataCrs, objectiveCRS2D);
+            dataToObjective.put(dataCrs, trs);
+        }
+        return trs;
+    }
+
+    public synchronized MathTransform getDataToDisplay(final CoordinateReferenceSystem dataCrs) throws FactoryException, NoninvertibleTransformException {
+        MathTransform trs = dataToDisplay.get(dataCrs);
+        if (trs == null) {
+            final MathTransform unoptimized = getMathTransform(dataCrs, displayCRS);
+            trs = unoptimized;
+            dataToDisplay.put(dataCrs, unoptimized);
+
+            /*
+            TODO : does not work as expected, provides exellent performance improvements
+            especialy in reprojection but an offset appears with zooming in.
+            try {
+                trs = new GridOptimizedTransform(unoptimized, gridGeometry2d);
+                dataToDisplay.put(dataCrs, trs);
+            } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException ex) {
+                Logger.getLogger(RenderingContext2D.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            */
+        }
+        return trs;
     }
 
     /**
