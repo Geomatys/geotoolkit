@@ -133,16 +133,4 @@ public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSuppor
         assertTrue(ext.contains("shp"));
     }
 
-    /*
-     * Test method for
-     * 'org.geotoolkit.data.shapefile.indexed.IndexedShapefileDataStoreFactory.createDataStore(URL)'
-     */
-    @Test
-    public void testCreateDataStoreURL() throws DataStoreException, IOException, URISyntaxException {
-        copyShapefiles(IndexedShapefileDataStoreTest.STATE_POP);
-        FeatureStore ds = factory.createDataStore(TestData.url(AbstractTestCaseSupport.class,
-                IndexedShapefileDataStoreTest.STATE_POP).toURI());
-        testDataStore(IndexType.QIX, true, (IndexedShapefileFeatureStore) ds);
-    }
-
 }

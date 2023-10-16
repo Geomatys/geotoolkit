@@ -125,7 +125,7 @@ public class ShapefileProvider extends DataStoreProvider implements ProviderOnFi
             .addName(Bundle.formatInternational(Bundle.Keys.create_spatial_index))
             .setRemarks(Bundle.formatInternational(Bundle.Keys.create_spatial_index_remarks))
             .setRequired(false)
-            .create(Boolean.class, Boolean.TRUE);
+            .create(Boolean.class, Boolean.FALSE);
 
     /**
      * Optional - character used to decode strings from the DBF file
@@ -257,8 +257,8 @@ public class ShapefileProvider extends DataStoreProvider implements ProviderOnFi
         Boolean isCreateSpatialIndex = (Boolean) params.parameter(CREATE_SPATIAL_INDEX.getName().toString()).getValue();
 
         if (isCreateSpatialIndex == null) {
-            // should not be needed as default is TRUE
-            isCreateSpatialIndex = Boolean.TRUE;
+            // should not be needed as default is FALSE
+            isCreateSpatialIndex = Boolean.FALSE;
         }
         if (dbfCharset == null) {
             // this should not happen as Charset.forName("ISO-8859-1") was used
