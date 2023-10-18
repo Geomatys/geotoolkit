@@ -112,7 +112,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
      */
     public IndexedShapefileFeatureStore(final URI uri)
             throws MalformedURLException,DataStoreException {
-        this(uri, false, true, IndexType.QIX,null);
+        this(uri, false, false, IndexType.QIX,null);
     }
 
     /**
