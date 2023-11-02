@@ -197,7 +197,7 @@
     <netty3.version>3.9.4.Final</netty3.version> <!-- Can not upgrade to 3.10.6 because it breaks Geotk build. -->
     <postgis.version>2.3.0</postgis.version>
     <quartz.version>2.3.1</quartz.version>
-    <woodstox.version>6.0.0</woodstox.version>
+    <woodstox.version>6.4.0</woodstox.version>
     <!-- ErrorProne 2.11.0 has a knwon bug on JDK-17 : https://giters.com/google/error-prone/issues/2926 -->
     <error-prone.version>2.10.0</error-prone.version>
     <!-- @{argLine} necessary for jacoco generation, we must declare
