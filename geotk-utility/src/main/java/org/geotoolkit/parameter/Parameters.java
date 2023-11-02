@@ -598,7 +598,7 @@ public final class Parameters extends Static {
         if (force) {
             parameter.setValue(value, unit);
         } else {
-            Logging.log(Parameters.class, "ensureSet", new LogRecord(Level.FINE,
+            Logging.completeAndLog(null, Parameters.class, "ensureSet", new LogRecord(Level.FINE,
                     Errors.format(Errors.Keys.ValueAlreadyDefined_1, name)));
         }
         return true;

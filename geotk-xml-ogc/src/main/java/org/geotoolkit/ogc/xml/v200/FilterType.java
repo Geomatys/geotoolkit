@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.Objects;
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.annotation.*;
-import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.ogc.xml.XMLFilter;
 import org.opengis.filter.Filter;
 import org.opengis.util.CodeList;
@@ -135,7 +134,7 @@ public class FilterType extends AbstractSelectionClauseType implements Filter, X
                     } else if (aid != null) {
                         throw new IllegalArgumentException("Unexpected ID type in filter:" + aid.getClass().getName());
                     } else {
-                        throw new NullArgumentException("ID Filter object must be specified");
+                        throw new NullPointerException("ID Filter object must be specified");
                     }
                 }
             }
@@ -157,7 +156,7 @@ public class FilterType extends AbstractSelectionClauseType implements Filter, X
         } else if (obj != null) {
             throw new IllegalArgumentException("This kind of object is not allowed:" + obj.getClass().getSimpleName());
         } else {
-            throw new NullArgumentException("Filter object must be specified");
+            throw new NullPointerException("Filter object must be specified");
         }
     }
 

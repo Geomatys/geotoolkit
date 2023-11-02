@@ -44,7 +44,6 @@ import org.apache.sis.util.ArgumentChecks;
 
 import static java.lang.StrictMath.*;
 import static org.apache.sis.util.Characters.NO_BREAK_SPACE;
-import static org.apache.sis.util.CharSequences.trimWhitespaces;
 
 
 /**
@@ -552,7 +551,7 @@ public class CswNodeComparator {
 
                     // For text node, continue the search if the node is empty.
                     case Node.TEXT_NODE: {
-                        final String text = trimWhitespaces(node.getTextContent());
+                        final String text = node.getTextContent().strip();
                         if (text == null || text.isEmpty()) {
                             continue;
                         }
@@ -621,7 +620,7 @@ public class CswNodeComparator {
      * if it is actually a {@link String} object.
      */
     private static Comparable<?> trim(final Comparable<?> property) {
-        return (property instanceof String) ? trimWhitespaces(((String) property)) : property;
+        return (property instanceof String) ? ((String) property).strip() : property;
     }
 
     /**

@@ -175,8 +175,8 @@ class LZWMap extends HashMap<byte[], Short> {
      *
      * @param key
      * @return short value which is LZW code in relation with specified key.
-     * @throws {@link NullArgumentException} if key is {@code null}.
-     * @throws {@link IllegalArgumentException} if key is not instance of {@code byte[]}.
+     * @throws NullPointerException if key is {@code null}.
+     * @throws IllegalArgumentException if key is not instance of {@code byte[]}.
      */
     @Override
     public Short get(Object key) {

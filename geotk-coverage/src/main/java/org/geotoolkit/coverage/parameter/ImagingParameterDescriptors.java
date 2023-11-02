@@ -56,7 +56,6 @@ import org.opengis.util.NameSpace;
 
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.ComparisonMode;
-import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.io.stream.IOUtilities;
 import org.apache.sis.referencing.AbstractIdentifiedObject;
@@ -379,7 +378,7 @@ public class ImagingParameterDescriptors extends DefaultParameterDescriptorGroup
          * Note that this map will be modified again in the remaining of this method.
          */
         if (descriptor == null) {
-            throw new NullArgumentException(Errors.format(Errors.Keys.NullArgument_1, "descriptor"));
+            throw new NullPointerException(Errors.format(Errors.Keys.NullArgument_1, "descriptor"));
         }
         final Map<String,ParameterDescriptor<?>> replacements = new LinkedHashMap<>();
         if (extension != null) {

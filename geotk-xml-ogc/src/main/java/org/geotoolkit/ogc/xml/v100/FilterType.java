@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.annotation.*;
-import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.ogc.xml.XMLFilter;
 import org.opengis.filter.Filter;
 import org.opengis.util.CodeList;
@@ -138,7 +137,7 @@ public class FilterType implements Filter, XMLFilter {
         } else if (obj != null) {
             throw new IllegalArgumentException("This kind of object is not allowed:" + obj.getClass().getSimpleName());
         } else {
-            throw new NullArgumentException("Filter object must be specified");
+            throw new NullPointerException("Filter object must be specified");
         }
     }
 

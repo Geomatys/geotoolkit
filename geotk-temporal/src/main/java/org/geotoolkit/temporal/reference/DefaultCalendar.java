@@ -105,7 +105,7 @@ public class DefaultCalendar extends DefaultTemporalReferenceSystem implements C
      * @param object The Calendar to copy values from, or {@code null} if none.
      *
      * @see #castOrCopy(Calendar)
-     * @throws NullArgumentException if referenceFrame is {@code null}.
+     * @throws NullPointerException if referenceFrame is {@code null}.
      */
     private DefaultCalendar(final Calendar object) {
         super(object);

@@ -21,8 +21,6 @@ import java.util.Map;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
-import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.NullArgumentException;
 import org.opengis.temporal.Instant;
 import org.opengis.temporal.TemporalEdge;
 import org.opengis.temporal.TemporalNode;
@@ -93,9 +91,9 @@ public class DefaultTemporalNode extends DefaultTemporalTopologicalPrimitive imp
      * @param realization association that may link this {@link TemporalNode} to its corresponding {@link Instant}, should be {@code null}.
      * @param previousEdge {@link TemporalEdge} for which it is the {@link TemporalNode} start, should be {@code null}.
      * @param nextEdge {@link TemporalEdge} for which it is the {@link TemporalNode} end, should be {@code null}.
-     * @throws NullArgumentException if properties, start or end are {@code null}.
+     * @throws NullPointerException if properties, start or end are {@code null}.
      */
-    public DefaultTemporalNode(final Map<String, ?> properties, final Instant realization, final TemporalEdge previousEdge, final TemporalEdge nextEdge) throws NullArgumentException {
+    public DefaultTemporalNode(final Map<String, ?> properties, final Instant realization, final TemporalEdge previousEdge, final TemporalEdge nextEdge) throws NullPointerException {
         super(properties);
         this.realization  = realization;
         this.previousEdge = previousEdge;

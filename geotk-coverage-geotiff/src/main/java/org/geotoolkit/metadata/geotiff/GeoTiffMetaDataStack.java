@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.TimeZone;
 
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.NullArgumentException;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -129,7 +128,7 @@ public final class GeoTiffMetaDataStack {
      * Set Nodata values into this {@link GeoTiffMetaDataStack} in aim of build or write metadata.
      *
      * @param noDataValue expected setted nodata.
-     * @throws NullArgumentException if noDataValue is {@code null}.
+     * @throws NullPointerException if noDataValue is {@code null}.
      * @throws IllegalArgumentException if noDataValue is empty.
      */
     void setNoData(final String noDataValue) {
@@ -146,7 +145,7 @@ public final class GeoTiffMetaDataStack {
      * Set minimum sample values into this {@link GeoTiffMetaDataStack} in aim of build or write metadata.
      *
      * @param minimumSampleValues minimum sample value for each image bands.
-     * @throws NullArgumentException if maximumSampleValues array is {@code null}.
+     * @throws NullPointerException if maximumSampleValues array is {@code null}.
      */
     void setMinSampleValue(final int ...minimumSampleValues) {
         minSampleValue = createTiffField(GeoTiffConstants.MinSampleValue, "minSampleValue");
@@ -157,7 +156,7 @@ public final class GeoTiffMetaDataStack {
      * Set maximum sample values into this {@link GeoTiffMetaDataStack} in aim of build or write metadata.
      *
      * @param maximumSampleValues maximum sample value for each image bands.
-     * @throws NullArgumentException if maximumSampleValues array is {@code null}.
+     * @throws NullPointerException if maximumSampleValues array is {@code null}.
      */
     void setMaxSampleValue(final int ...maximumSampleValues) {
         maxSampleValue = createTiffField(GeoTiffConstants.MaxSampleValue, "maxSampleValue");
@@ -168,7 +167,7 @@ public final class GeoTiffMetaDataStack {
      * Set date into this {@link GeoTiffMetaDataStack} in aim of build or write metadata.
      *
      * @param date which be set into metadata node.
-     * @throws NullArgumentException if date is {@code null}.
+     * @throws NullPointerException if date is {@code null}.
      */
     synchronized void setDate(final Date date) {
         ArgumentChecks.ensureNonNull("date", date);

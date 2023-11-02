@@ -230,7 +230,7 @@ public final class TemporaryFile extends PhantomReference<Path> implements Dispo
              * Logs the message at the WARNING level because execution of this code
              * means that the application failed to delete itself the temporary file.
              */
-            Logging.log(TemporaryFile.class, "delete",
+            Logging.completeAndLog(null, TemporaryFile.class, "delete",
                     Loggings.format(Level.WARNING, Loggings.Keys.TemporaryFileGc_1, this));
         }
     }

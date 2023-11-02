@@ -61,7 +61,6 @@ import org.apache.sis.referencing.util.AxisDirections;
 import org.apache.sis.referencing.util.j2d.AffineTransform2D;
 import org.apache.sis.util.ArgumentChecks;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
-import org.apache.sis.util.NullArgumentException;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.collection.Cache;
@@ -267,7 +266,7 @@ public final class GO2Utilities {
         }
 
         if(coverage == null){
-            monitor.exceptionOccured(new NullArgumentException("GO2Utilities : Reprojected coverage is null."),Level.WARNING);
+            monitor.exceptionOccured(new NullPointerException("GO2Utilities : Reprojected coverage is null."),Level.WARNING);
             return false;
         }
 

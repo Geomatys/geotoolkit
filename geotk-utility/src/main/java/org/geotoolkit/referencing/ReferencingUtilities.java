@@ -47,7 +47,6 @@ import org.apache.sis.referencing.operation.transform.PassThroughTransform;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.NullArgumentException;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.nio.IOUtilities;
@@ -181,7 +180,7 @@ public final class ReferencingUtilities {
      *
      * @return a new resolution array compute from oldResolution exprimate into targetCRS.
      * @throws TransformException if problem during Envelope transformation into targetCrs.
-     * @throws NullArgumentException if one of these parameter is {@code null} : srcEnvelope, oldResolution or targetCRS.
+     * @throws NullPointerException if one of these parameter is {@code null} : srcEnvelope, oldResolution or targetCRS.
      * @throws MismatchedDimensionException if oldResolution array have length different than 2.
      * @throws MismatchedDimensionException if newResolution array length and target CRS dimension are differents.
      */
@@ -621,7 +620,7 @@ public final class ReferencingUtilities {
      * @param axisValues the list of mathmatical function for each other dimensions than already present subtransform dimensions.
      * @param expectedTargetDimension the expected target {@link PassThroughTransform} dimension.
      * @return {@code true} if all needed dimension are informed else {@code false}.
-     * @throws NullArgumentException if subtransform or axisValues are {@code null}.
+     * @throws NullPointerException if subtransform or axisValues are {@code null}.
      * @throws MismatchedDimensionException if expected targetDimension is lesser than subtransform dimension.
      * @throws IllegalArgumentException if firstBaseOrdinate is out of target dimension boundary [0 ---> targetDim - subtransform target dim]
      */

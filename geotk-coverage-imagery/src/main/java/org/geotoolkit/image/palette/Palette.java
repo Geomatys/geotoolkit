@@ -33,7 +33,6 @@ import javax.imageio.ImageTypeSpecifier;
 
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.NullArgumentException;
 
 
 /**
@@ -115,7 +114,7 @@ public abstract class Palette {
     {
         ArgumentChecks.ensureNonNull("factory", factory); // Can't use factory.getErrorResources() here.
         if (name == null) {
-            throw new NullArgumentException(factory.getErrorResources().getString(
+            throw new NullPointerException(factory.getErrorResources().getString(
                     Errors.Keys.NullArgument_1, "name"));
         }
         ensureInsideBounds(numBands, 0, 255); // This maximal value is somewhat arbitrary.

@@ -61,7 +61,7 @@ final class TileMatrixCoverage extends GridCoverage {
         ArgumentChecks.ensureNonNull("resource", resource);
         ArgumentChecks.ensureNonNull("tileSize", tileSize);
         ArgumentChecks.ensureNonNull("range", range);
-        ArgumentChecks.ensureExpectedCount("sample dimensions size", range.length, sampleDimensions.size());
+        ArgumentChecks.ensureCountBetween("sample dimensions size", false, range.length, range.length, sampleDimensions.size());
         this.resource = resource;
         this.tileSize = tileSize.clone();
         this.range = range.clone();

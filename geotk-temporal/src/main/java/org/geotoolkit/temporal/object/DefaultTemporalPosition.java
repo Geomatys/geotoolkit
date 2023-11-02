@@ -23,7 +23,6 @@ import java.util.Objects;
 import org.apache.sis.util.SimpleInternationalString;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.temporal.reference.DefaultTemporalReferenceSystem;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.temporal.IndeterminateValue;
@@ -79,7 +78,7 @@ public class DefaultTemporalPosition implements TemporalPosition {
      * @param frame the associated {@link TemporalReferenceSystem}.
      * @param indeterminatePosition Provide the only value for {@link TemporalPosition}
      * unless a subtype of {@link TemporalPosition} is used as the data type, or {@code null} if none.
-     * @throws NullArgumentException if frame is {@code null}.
+     * @throws NullPointerException if frame is {@code null}.
      */
     public DefaultTemporalPosition(final TemporalReferenceSystem frame, final IndeterminateValue indeterminatePosition) {
         ArgumentChecks.ensureNonNull("frame", frame);

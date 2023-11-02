@@ -5,7 +5,6 @@
 package org.geotoolkit.util.collection;
 
 import java.util.Map;
-import org.apache.sis.util.NullArgumentException;
 import static org.junit.Assert.*;
 import org.junit.Test;
 
@@ -36,7 +35,7 @@ public class MapUtilitiesTest {
         try {
             MapUtilities.buildMap((Object[])null);
             fail("Should have raised an exception");
-        } catch (NullArgumentException e) {
+        } catch (NullPointerException e) {
         }
 
         try {

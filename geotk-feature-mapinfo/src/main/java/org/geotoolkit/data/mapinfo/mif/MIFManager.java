@@ -42,7 +42,6 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.NullArgumentException;
 
 import org.apache.sis.util.Utilities;
 import static java.nio.file.StandardOpenOption.*;
@@ -128,19 +127,19 @@ public class MIFManager {
     /**
      *
      * @param mifFile MIF File to read or modify.
-     * @throws NullArgumentException If the given file is null.
+     * @throws NullPointerException If the given file is null.
      * @throws DataStoreException If there's a problem with file naming.
      * @throws IOException If we cannot reach input file.
      * @throws URISyntaxException If we cannot make an URI from the file.
      * @deprecated Use {@link #MIFManager(java.net.URI) } instead.
      */
-    public MIFManager(File mifFile) throws NullArgumentException, DataStoreException, IOException, URISyntaxException {
+    public MIFManager(File mifFile) throws NullPointerException, DataStoreException, IOException, URISyntaxException {
         ArgumentChecks.ensureNonNull("Input file", mifFile);
         mifPath = mifFile.toURI();
         init();
     }
 
-    public MIFManager(URI mifFilePath) throws NullArgumentException, DataStoreException, IOException, URISyntaxException {
+    public MIFManager(URI mifFilePath) throws NullPointerException, DataStoreException, IOException, URISyntaxException {
         ArgumentChecks.ensureNonNull("Input file path", mifFilePath);
         mifPath = mifFilePath;
         init();

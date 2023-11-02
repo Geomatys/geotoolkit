@@ -431,7 +431,7 @@ public class ThirdPartyMetaDataReader {
      * @param nodataValues {@link Set} which contain all nodata, organize in ascending order, for current band.
      * @return {@link Category} list for current band.
      *
-     * @throws NullArgumentException if nodataValues {@link Set} or typeClass is {@code null}.
+     * @throws NullPointerException if nodataValues {@link Set} or typeClass is {@code null}.
      */
     public static List<Category> buildCategories(final double minSampleValue, final double maxSampleValue,
                                                  Double scale, Double offset, final Class typeClass,

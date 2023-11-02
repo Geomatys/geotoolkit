@@ -20,7 +20,6 @@ package org.geotoolkit.gml.xml;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.gml.xml.v311.CoordinatesType;
 import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
@@ -404,7 +403,7 @@ public class GMLXmlFactory {
 
     public static Period createTimePeriod(final String version, final TimeIndeterminateValueType dateBegin, final Date dateEnd) {
         if (dateEnd == null)
-            throw new NullArgumentException("dateEnd");
+            throw new NullPointerException("dateEnd");
         if ("3.2.1".equals(version)) {
 //            if (dateEnd != null && !(dateEnd instanceof org.geotoolkit.gml.xml.v321.TimePositionType)) {
 //                    throw new IllegalArgumentException("unexpected gml version for date end.");
@@ -423,7 +422,7 @@ public class GMLXmlFactory {
 
     public static Period createTimePeriod(final String version, final Date dateBegin, final TimeIndeterminateValueType dateEnd) {
         if (dateBegin == null)
-            throw new NullArgumentException("dateBegin");
+            throw new NullPointerException("dateBegin");
         if ("3.2.1".equals(version)) {
 //            if (dateBegin != null && !(dateBegin instanceof org.geotoolkit.gml.xml.v321.TimePositionType)) {
 //                throw new IllegalArgumentException("unexpected gml version for date begin.");

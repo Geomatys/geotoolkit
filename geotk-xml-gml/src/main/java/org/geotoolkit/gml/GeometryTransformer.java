@@ -1004,7 +1004,7 @@ public class GeometryTransformer implements Supplier<Geometry> {
          */
         public CoordinateSpliterator(List<? extends Number> source, int dimension) {
             ArgumentChecks.ensureNonNull("Source data", source);
-            ArgumentChecks.ensureSizeBetween("Batch size", 2, 3, dimension);
+            ArgumentChecks.ensureBetween("Batch size", 2, 3, dimension);
             if (source.size() % dimension != 0) {
                 throw new IllegalArgumentException(String.format(
                         "Source list size is not a multiple of queried dimension.%nSource size: %d%nQueried dimension: %d",

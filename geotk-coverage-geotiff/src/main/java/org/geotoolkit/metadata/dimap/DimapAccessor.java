@@ -612,8 +612,7 @@ public final class DimapAccessor extends Static {
         //<Data_Strip/>                     - Mandatory
 
         //Default values
-        metadata.setCharacterSets(Collections.singleton(StandardCharsets.UTF_8));
-        metadata.setLanguage(Locale.ENGLISH);
+        metadata.getLocalesAndCharsets().put(Locale.ENGLISH, StandardCharsets.UTF_8);
         metadata.setDateStamp(new Date());
 
         //<xsd:element minOccurs="1" maxOccurs="1" ref="Dataset_Id"/> ----------
