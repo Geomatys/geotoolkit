@@ -53,6 +53,7 @@ import org.opengis.filter.Literal;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.Ellipsoid;
 import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
 
 /**
  * Graduation symbolizer renderer.
@@ -152,7 +153,7 @@ public class GraduationSymbolizerRenderer extends AbstractSymbolizerRenderer<Cac
                 final GeodeticPathWalker walker = new GeodeticPathWalker(dispShape.getPathIterator(null), displayCrs);
                 portray(layer, walker, gradInfos, presentations);
             }
-        } catch (TransformException ex) {
+        } catch (TransformException | FactoryException ex) {
             ExceptionPresentation ep = new ExceptionPresentation(ex);
             ep.setLayer(layer);
             ep.setResource(layer.getData());

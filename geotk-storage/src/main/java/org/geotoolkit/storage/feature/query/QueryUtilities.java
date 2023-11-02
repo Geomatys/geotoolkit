@@ -215,6 +215,21 @@ public class QueryUtilities {
         if(second.getVersionDate()!=null) qb.setVersionDate(second.getVersionDate());
         if(second.getVersionLabel()!=null) qb.setVersionLabel(second.getVersionLabel());
 
+        // preserve the original resolution or the new one if it's less precise
+        final Quantity<Length> originalLinearResolution = original.getLinearResolution();
+        final Quantity<Length> secondLinearResolution = second.getLinearResolution();
+        if (originalLinearResolution != null && secondLinearResolution != null) {
+            if ( ((Comparable) originalLinearResolution).compareTo(secondLinearResolution) > 0) {
+                qb.setLinearResolution(originalLinearResolution);
+            } else {
+                qb.setLinearResolution(secondLinearResolution);
+            }
+        } else if (originalLinearResolution != null) {
+            qb.setLinearResolution(originalLinearResolution);
+        } else if (secondLinearResolution != null) {
+            qb.setLinearResolution(secondLinearResolution);
+        }
+
         return qb;
     }
 

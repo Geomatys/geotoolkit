@@ -83,7 +83,13 @@ public final class ShapefileReader implements Closeable{
             if (shape == null) {
                 buffer.position(start);
                 buffer.order(ByteOrder.LITTLE_ENDIAN);
-                shape = handler.read(buffer, type);
+
+                //protection against bad shapefile which have geometries full of NaN but not declared as NULL
+                if (type != ShapeType.NULL && (Double.isNaN(minX) || Double.isNaN(minY) || Double.isNaN(maxX) || Double.isNaN(maxY))) {
+                    shape = handler.read(buffer, ShapeType.NULL);
+                } else {
+                    shape = handler.read(buffer, type);
+                }
             }
             return shape;
         }

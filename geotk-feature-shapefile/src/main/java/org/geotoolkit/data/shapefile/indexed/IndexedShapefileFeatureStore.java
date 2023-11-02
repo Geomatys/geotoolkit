@@ -26,8 +26,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.logging.Level;
+import javax.measure.Quantity;
+import javax.measure.quantity.Length;
 import org.apache.sis.feature.AbstractOperation;
 import org.apache.sis.feature.internal.AttributeConvention;
+import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.measure.Units;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Query;
 import org.apache.sis.storage.UnsupportedQueryException;
@@ -56,6 +61,7 @@ import org.geotoolkit.index.CloseableCollection;
 import org.geotoolkit.index.Data;
 import org.geotoolkit.index.TreeException;
 import org.geotoolkit.index.quadtree.*;
+import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.storage.feature.FeatureReader;
 import org.geotoolkit.storage.feature.FeatureStreams;
 import org.geotoolkit.storage.feature.FeatureWriter;
@@ -64,12 +70,15 @@ import org.geotoolkit.util.NullProgressListener;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.AttributeType;
+import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.MismatchedFeatureException;
 import org.opengis.feature.PropertyType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.ResourceId;
 import org.opengis.filter.SpatialOperatorName;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
 
 
@@ -102,7 +111,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
      */
     public IndexedShapefileFeatureStore(final URI uri)
             throws MalformedURLException,DataStoreException {
-        this(uri, false, true, IndexType.QIX,null);
+        this(uri, false, false, IndexType.QIX,null);
     }
 
     /**
@@ -173,12 +182,39 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
 
         final org.geotoolkit.storage.feature.query.Query gquery = (org.geotoolkit.storage.feature.query.Query) query;
 
+
+
         final FeatureType   baseType = getFeatureType();
         final String        queryTypeName = gquery.getTypeName();
         final String[]      queryPropertyNames = gquery.getPropertyNames();
         final Hints         queryHints = gquery.getHints();
-        final double[]      queryRes = null;
+        double[]      queryRes = null;
         Filter              queryFilter = gquery.getSelection();
+
+        //convert resolution
+        Quantity<Length> linearResolution = gquery.getLinearResolution();
+        if (linearResolution != null && linearResolution.getUnit().isCompatible(Units.METRE)) {
+
+            //find the envelope we are working on
+            org.opengis.geometry.Envelope srcEnvelope = null;
+            final Filter<? super Feature> selection = gquery.getSelection();
+            if (selection != null) {
+                final Envelope base = new JTSEnvelope2D(getHeaderEnvelope().getCoordinateReferenceSystem());
+                Envelope bbox = ExtractBoundsFilterVisitor.bbox(selection, base);
+                if (bbox != null) srcEnvelope = new JTSEnvelope2D(bbox, FeatureExt.getCRS(getFeatureType()));
+            } else {
+                srcEnvelope = getHeaderEnvelope();
+            }
+
+            try {
+                //create a fake envelope in metric crs
+                double r = linearResolution.to(Units.METRE).getValue().doubleValue();
+                org.opengis.geometry.Envelope env = Envelopes.transform(srcEnvelope, CRS.forCode("EPSG:3395"));
+                queryRes = ReferencingUtilities.convertResolution(env, new double[]{r,r}, srcEnvelope.getCoordinateReferenceSystem());
+            } catch (TransformException | FactoryException ex) {
+                throw new DataStoreException("Failed to convert requested resolution", ex);
+            }
+        }
 
         //check if we must read the 3d values
         final boolean read3D = true;
@@ -239,7 +275,8 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
             if (queryFilter.getOperatorType() == SpatialOperatorName.BBOX) {
                 //in case we have a BBOX filter only, which is very commun, we can speed
                 //the process by relying on the quadtree estimations
-                final Envelope bbox = ExtractBoundsFilterVisitor.bbox(queryFilter, null);
+                final Envelope base = new JTSEnvelope2D(getHeaderEnvelope().getCoordinateReferenceSystem());
+                final Envelope bbox = ExtractBoundsFilterVisitor.bbox(queryFilter, base);
                 final boolean loose = (queryFilter instanceof LooseBBox);
                 queryFilter = Filter.include();
                 final List<AttributeType> attsProperties = new ArrayList<>(readProperties);
