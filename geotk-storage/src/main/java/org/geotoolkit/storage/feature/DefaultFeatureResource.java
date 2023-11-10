@@ -97,7 +97,7 @@ public class DefaultFeatureResource extends AbstractResource implements Writable
 
     @Override
     public FeatureType getType() throws DataStoreException {
-        return store.getFeatureType(query.getTypeName());
+        return store.getFeatureType(query);
     }
 
     @Override
