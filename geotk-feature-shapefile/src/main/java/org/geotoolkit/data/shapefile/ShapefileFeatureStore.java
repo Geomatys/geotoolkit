@@ -312,7 +312,22 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements Resou
         //check if we must read the 3d values
         final boolean read3D = true;
 
-        final ShapefileAttributeReader attReader = getAttributesReader(true, read3D, queryRes);
+        boolean readDbf = false;
+        if (queryPropertyNames == null) {
+            readDbf = true;
+        } else {
+            for (String proName : queryPropertyNames) {
+                if (!(AttributeConvention.GEOMETRY.equals(proName)
+                  || AttributeConvention.ENVELOPE.equals(proName)
+                  || AttributeConvention.IDENTIFIER.equals(proName)
+                  || "the_geom".equals(proName))) {
+                    readDbf = true;
+                    break;
+                }
+            }
+        }
+
+        final ShapefileAttributeReader attReader = getAttributesReader(readDbf, read3D, queryRes);
         final FeatureIDReader idReader = new DefaultFeatureIDReader(typeName);
         FeatureReader reader = ShapefileFeatureReader.create(attReader,idReader, baseType, queryHints);
 
