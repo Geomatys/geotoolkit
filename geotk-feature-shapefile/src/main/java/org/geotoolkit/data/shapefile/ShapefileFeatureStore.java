@@ -320,7 +320,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements Resou
                 if (!(AttributeConvention.GEOMETRY.equals(proName)
                   || AttributeConvention.ENVELOPE.equals(proName)
                   || AttributeConvention.IDENTIFIER.equals(proName)
-                  || "the_geom".equals(proName))) {
+                  || ShapefileHeader.ATTRIBUTE_NAME.equals(proName))) {
                     readDbf = true;
                     break;
                 }
@@ -523,7 +523,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements Resou
         //we still preserve the original type name and attribute classes which may be more restricted
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder(getFeatureType());
         ftb.setName(typeName);
-        final AttributeTypeBuilder gtb = (AttributeTypeBuilder)ftb.getProperty("the_geom");
+        final AttributeTypeBuilder gtb = (AttributeTypeBuilder)ftb.getProperty(ShapefileHeader.ATTRIBUTE_NAME);
         if (Geometry.class.equals(gtb.getValueClass())) {
             gtb.setValueClass(shapeType.bestJTSClass());
         }
