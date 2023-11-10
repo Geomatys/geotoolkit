@@ -44,6 +44,7 @@ import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.multires.TileInError;
+import org.opengis.referencing.datum.PixelInCell;
 
 /**
  * Implementation of RenderedImage over a TileMatrix composed of GriCoverages.
@@ -348,7 +349,13 @@ final class TileMatrixImage extends ComputedImage {
     private GridGeometry getTileGeometry(int tileX, int tileY) throws DataStoreException {
         final long[] indices = toTileIndices(tileX, tileY);
         //grid geometry of the tile in the tiling scheme
-        GridGeometry geom = matrix.getTilingScheme().derive().subgrid(new GridExtent(null, indices, indices, true)).build();
+        final GridGeometry tilingScheme = matrix.getTilingScheme();
+        //avoid GridGeometry.derivate().subgrid making a lot of expensive verifications we do not need here
+        GridGeometry geom = new GridGeometry(
+                new GridExtent(null, indices, indices, true),
+                PixelInCell.CELL_CENTER,
+                tilingScheme.getGridToCRS(PixelInCell.CELL_CENTER),
+                tilingScheme.getCoordinateReferenceSystem());
         //grid geometry of the tile in pixels
         geom = geom.upsample(tileSize);
         final GridExtent tileExtentNd = geom.getExtent();
@@ -371,7 +378,11 @@ final class TileMatrixImage extends ComputedImage {
             }
         }
         final GridExtent slice = new GridExtent(null, low, high, true);
-        return geom.derive().subgrid(slice).build();
+        return new GridGeometry(
+                slice,
+                PixelInCell.CELL_CENTER,
+                geom.getGridToCRS(PixelInCell.CELL_CENTER),
+                geom.getCoordinateReferenceSystem());
     }
 
     /**
