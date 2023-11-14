@@ -18,10 +18,12 @@ package org.geotoolkit.display2d.style.renderer;
 
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -43,8 +45,11 @@ import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.UndefinedCRSException;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
+import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyType;
 import org.opengis.filter.Expression;
 import org.opengis.geometry.Envelope;
 import org.opengis.style.Rule;
@@ -71,7 +76,10 @@ public abstract class AbstractSymbolizerRenderer<C extends CachedSymbolizer<? ex
     protected final Unit symbolUnit;
     protected final float coeff;
     protected final boolean dispGeom;
-    protected final Expression geomPropertyName;
+    /**
+     * If null, might be replaced by the first layer resource processed.
+     */
+    protected Expression geomPropertyName;
 
     public AbstractSymbolizerRenderer(final SymbolizerRendererService service, final C symbol, final RenderingContext2D context){
         this.service = service;
@@ -153,33 +161,51 @@ public abstract class AbstractSymbolizerRenderer<C extends CachedSymbolizer<? ex
                 return Stream.of(ep);
             }
 
+
             final AtomicInteger inc = new AtomicInteger();
             final UndefinedCRSException[] firstException = new UndefinedCRSException[1];
             try {
-                return fs.subset(query)
-                        .features(false)
-                        .onClose(new Runnable() {
+                FeatureSet subset = fs.subset(query);
+
+                if (this.geomPropertyName == null) {
+                    //try to find the geometry property from type
+                    //it might remain null if type is abstract
+                    try {
+                        FeatureType type = subset.getType();
+                        FeatureExt.getDefaultGeometrySafe(type).ifPresent(new Consumer<PropertyType>() {
                             @Override
-                            public void run() {
-                                final int nb = inc.get();
-                                if (nb > 0) {
-                                    LOGGER.log(Level.INFO, "Several ("+nb+") undefined crs geometries have been detected on layer : " + layer.getIdentifier() + "/" + layer.getTitle()+ " : " + firstException[0].getMessage(), firstException[0]);
-                                }
+                            public void accept(PropertyType t) {
+                                geomPropertyName = GO2Utilities.FILTER_FACTORY.property(t.getName().toString());
                             }
-                        })
-                        .flatMap(new Function<Feature, Stream<Presentation>>() {
-                            @Override
-                            public Stream<Presentation> apply(Feature t) {
-                                try {
-                                    return presentations(layer, t);
-                                } catch (UndefinedCRSException ex) {
-                                    inc.incrementAndGet();
-                                    firstException[0] = ex;
-                                    return Stream.empty();
-                                }
+                        });
+                    } catch (DataStoreException ex) {
+                        //do nothing
+                    }
+                }
+
+                return subset.features(false)
+                    .onClose(new Runnable() {
+                        @Override
+                        public void run() {
+                            final int nb = inc.get();
+                            if (nb > 0) {
+                                LOGGER.log(Level.INFO, "Several ("+nb+") undefined crs geometries have been detected on layer : " + layer.getIdentifier() + "/" + layer.getTitle()+ " : " + firstException[0].getMessage(), firstException[0]);
                             }
-                        })
-                        ;
+                        }
+                    })
+                    .flatMap(new Function<Feature, Stream<Presentation>>() {
+                        @Override
+                        public Stream<Presentation> apply(Feature t) {
+                            try {
+                                return presentations(layer, t);
+                            } catch (UndefinedCRSException ex) {
+                                inc.incrementAndGet();
+                                firstException[0] = ex;
+                                return Stream.empty();
+                            }
+                        }
+                    })
+                    ;
             } catch (DataStoreException ex) {
                 ExceptionPresentation ep = new ExceptionPresentation(ex);
                 ep.setLayer(layer);

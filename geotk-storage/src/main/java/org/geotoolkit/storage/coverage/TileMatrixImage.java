@@ -42,8 +42,8 @@ import org.geotoolkit.storage.multires.TileMatrices;
 import org.geotoolkit.storage.multires.TileMatrix;
 
 /**
- * Implementation of RenderedImage using GridMosaic.
- * With this a GridMosaic can be see as a RenderedImage.
+ * Implementation of RenderedImage using TileMatrix.
+ * With this a TileMatrix can be see as a RenderedImage.
  *
  * @author Thomas Rouby (Geomatys)
  * @author Quentin Boileau (Geomatys)

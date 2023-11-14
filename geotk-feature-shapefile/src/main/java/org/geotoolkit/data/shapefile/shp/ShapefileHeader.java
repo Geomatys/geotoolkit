@@ -40,6 +40,8 @@ public class ShapefileHeader {
     public static final int MAGIC = 9994;
     public static final int VERSION = 1000;
 
+    public static final String ATTRIBUTE_NAME = "the_geom";
+
     private final int fileLength;
     private final int version;
     private final ShapeType shapeType;
@@ -97,7 +99,7 @@ public class ShapefileHeader {
         buildAtt.setName(Classes.getShortName(geometryClass));
         buildAtt.setCRS(crs);
         buildAtt.setValueClass(geometryClass);
-        buildAtt.setName("the_geom");
+        buildAtt.setName(ShapefileHeader.ATTRIBUTE_NAME);
         return buildAtt.build();
     }
 
