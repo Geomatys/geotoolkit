@@ -220,7 +220,7 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
 
         FeatureType ft = getFeatureType(gquery.getTypeName());
         final String[] properties = gquery.getPropertyNames();
-        if (properties!=null && FeatureTypeExt.isAllProperties(ft, properties)) {
+        if (properties!=null && !FeatureTypeExt.isAllProperties(ft, properties)) {
             ft = new ViewMapper(ft, properties).getMappedType();
         }
         return ft;

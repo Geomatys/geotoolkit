@@ -35,6 +35,7 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.ShapeTestData;
+import org.geotoolkit.data.shapefile.shp.ShapefileHeader;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
@@ -515,12 +516,12 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         Query builder = new Query();
         builder.setTypeName(s.getNames().iterator().next());
         builder.setSelection(Filter.include());
-        builder.setProperties(new String[]{"the_geom"});
+        builder.setProperties(new String[]{ShapefileHeader.ATTRIBUTE_NAME});
         Query query = builder;
 
          FeatureReader reader = s.getFeatureReader(query);
         assertEquals(1, reader.getFeatureType().getProperties(true).size());
-        assertEquals("the_geom", reader.getFeatureType().getProperties(true).iterator().next().getName().tip().toString());
+        assertEquals(ShapefileHeader.ATTRIBUTE_NAME, reader.getFeatureType().getProperties(true).iterator().next().getName().tip().toString());
 
         // here too, the filter is using the geometry only
         GeometryFactory gc = org.geotoolkit.geometry.jts.JTS.getFactory();
@@ -532,18 +533,18 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
 
         JTSEnvelope2D bounds = new JTSEnvelope2D(polygon
                 .getEnvelopeInternal(), null);
-        Filter gf = ff.bbox(ff.property("the_geom"), bounds);
+        Filter gf = ff.bbox(ff.property(ShapefileHeader.ATTRIBUTE_NAME), bounds);
 
         builder = new Query();
         builder.setTypeName(s.getNames().iterator().next());
         builder.setSelection(gf);
-        builder.setProperties(new String[]{"the_geom"});
+        builder.setProperties(new String[]{ShapefileHeader.ATTRIBUTE_NAME});
         query = builder;
 
         reader.close();
         reader = s.getFeatureReader(query);
         assertEquals(1, reader.getFeatureType().getProperties(true).size());
-        assertEquals("the_geom", reader.getFeatureType().getProperties(true).iterator().next().getName().tip().toString());
+        assertEquals(ShapefileHeader.ATTRIBUTE_NAME, reader.getFeatureType().getProperties(true).iterator().next().getName().tip().toString());
 
         reader.close();
 
@@ -554,12 +555,12 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         builder = new Query();
         builder.setTypeName(s.getNames().iterator().next());
         builder.setSelection(cf);
-        builder.setProperties(new String[]{"the_geom"});
+        builder.setProperties(new String[]{ShapefileHeader.ATTRIBUTE_NAME});
         query = builder;
 
         reader = s.getFeatureReader(query);
         assertEquals(1, reader.getFeatureType().getProperties(true).size());
-        assertEquals("the_geom", reader.getFeatureType().getProperties(true).iterator().next().getName().tip().toString());
+        assertEquals(ShapefileHeader.ATTRIBUTE_NAME, reader.getFeatureType().getProperties(true).iterator().next().getName().tip().toString());
         reader.close();
     }
 

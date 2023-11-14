@@ -172,7 +172,7 @@ public final class RenderingRoutines {
         }
         // Note: do not use layer boundary to define the target bbox, because it can be expensive.
         // Anyway, the target resource will be better to determine clipping between rendering boundaries and its own.
-        final Envelope bbox                      = renderingContext.getCanvasObjectiveBounds2D(); //optimizeBBox(renderingContext, fs, symbolsMargin);
+        final Envelope bbox                      = optimizeBBox(renderingContext, fs, 0/*symbolsMargin*/); //TODO symbol margin cause bug for envelope close to their limit, it needs a fix
         final CoordinateReferenceSystem layerCRS = FeatureExt.getCRS(schema);
         final RenderingHints hints               = renderingContext.getRenderingHints();
 
@@ -515,6 +515,11 @@ public final class RenderingRoutines {
             env = new GeneralEnvelope(env);
             ((GeneralEnvelope)env).setCoordinateReferenceSystem(layerCRS);
 
+            bbox = env;
+        } else if (layerCRS != null && layerCRS != bboxCRS) {
+            //replace by data crs to avoid any further not exact equality tests which can be expensive
+            final GeneralEnvelope env = new GeneralEnvelope(bbox);
+            env.setCoordinateReferenceSystem(layerCRS);
             bbox = env;
         }
         return bbox;
