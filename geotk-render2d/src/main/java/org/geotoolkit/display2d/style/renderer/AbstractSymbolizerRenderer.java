@@ -96,6 +96,10 @@ public abstract class AbstractSymbolizerRenderer<C extends CachedSymbolizer<? ex
         this.geomPropertyName = symbolizer.getGeometry();
     }
 
+    public void setDefaultGeomPropertyName(Expression geomPropertyName) {
+        if (this.geomPropertyName == null) this.geomPropertyName = geomPropertyName;
+    }
+
     @Override
     public SymbolizerRendererService getService() {
         return service;

@@ -44,6 +44,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -63,10 +64,11 @@ import org.apache.sis.coverage.grid.DisjointExtentException;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
+import org.apache.sis.feature.Features;
 import org.apache.sis.internal.map.ExceptionPresentation;
 import org.apache.sis.internal.map.Presentation;
 import org.apache.sis.internal.map.coverage.RenderingWorkaround;
-import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.portrayal.MapLayer;
 import org.apache.sis.portrayal.MapLayers;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
@@ -102,6 +104,7 @@ import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.renderer.RenderingRoutines;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.nio.IOUtilities;
@@ -110,6 +113,8 @@ import org.geotoolkit.processing.coverage.bandselect.BandSelectProcess;
 import org.geotoolkit.storage.coverage.BandedCoverageResource;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyType;
+import org.opengis.filter.Expression;
 import org.opengis.filter.Filter;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -818,9 +823,18 @@ public final class DefaultPortrayalService implements PortrayalService{
         Stream<Presentation> stream = Stream.empty();
 
         FeatureType type = null;
+        Expression defaultGeomPropertyName = null;
         if (resource instanceof FeatureSet) {
             try {
                 type = ((FeatureSet) resource).getType();
+
+                Optional<PropertyType> opt = FeatureExt.getDefaultGeometrySafe(type);
+                if (opt.isPresent()) {
+                    PropertyType defaultGeometry = opt.get();
+                    String geomName = Features.getLinkTarget(defaultGeometry)
+                        .orElseGet(() -> defaultGeometry.getName().toString());
+                    defaultGeomPropertyName = GO2Utilities.FILTER_FACTORY.property(geomName);
+                }
             } catch (DataStoreException ex) {
                 ExceptionPresentation ep = new ExceptionPresentation(ex);
                 ep.setLayer(layer);
@@ -855,7 +869,7 @@ public final class DefaultPortrayalService implements PortrayalService{
 
             //prepare the renderers
             final CachedRule[] cachedRules = toCachedRules(rules, type);
-            final RenderingRules renderers = new RenderingRules(cachedRules, renderContext);
+            final RenderingRules renderers = new RenderingRules(cachedRules, renderContext, defaultGeomPropertyName);
 
             {   //special case for group symbolizers
                 //group symbolizers must be alone in a FTS
