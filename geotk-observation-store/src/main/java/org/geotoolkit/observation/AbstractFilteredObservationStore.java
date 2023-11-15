@@ -182,6 +182,8 @@ public abstract class AbstractFilteredObservationStore extends AbstractObservati
 
         final ObservationFilterReader procFilter = getFilter();
         procFilter.init(new ProcedureQuery());
+        procFilter.setProcedure(query.getSensorIds());
+        
         // TODO apply filter
 
         for (org.opengis.observation.Process p : procFilter.getProcesses()) {
