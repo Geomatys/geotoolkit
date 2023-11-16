@@ -20,7 +20,9 @@ package org.geotoolkit.display2d.container;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.CachedRule;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
+import org.geotoolkit.display2d.style.renderer.AbstractSymbolizerRenderer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
+import org.opengis.filter.Expression;
 
 /**
  *
@@ -33,7 +35,7 @@ public final class RenderingRules {
     public final SymbolizerRenderer renderers[][];
     public final int elseRuleIndex;
 
-    public RenderingRules(final CachedRule[] rules, final RenderingContext2D context) {
+    public RenderingRules(final CachedRule[] rules, final RenderingContext2D context, Expression defaultGeomPropertyName) {
 
         //sort the rules
         elseRuleIndex = sortByElseRule(rules);
@@ -46,6 +48,9 @@ public final class RenderingRules {
             renderers[i] = new SymbolizerRenderer[symbols.length];
             for(int k=0; k<symbols.length; k++){
                 renderers[i][k] = symbols[k].getRenderer().createRenderer(symbols[k], context);
+                if (defaultGeomPropertyName != null && renderers[i][k] instanceof AbstractSymbolizerRenderer abs) {
+                    abs.setDefaultGeomPropertyName(defaultGeomPropertyName);
+                }
             }
         }
     }
