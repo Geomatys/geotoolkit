@@ -85,9 +85,9 @@ public class SweXMLBindingTest {
         result = StringUtilities.removeXmlns(result);
 
         String expResult = """
-                           <swe:Text definition="urn:ogc:def:id-001" ns6:id="id-001" >
-                             <ns6:description>some description</ns6:description>
-                             <ns6:name>urn:ogc:id-001</ns6:name>
+                           <swe:Text definition="urn:ogc:def:id-001" ns7:id="id-001" >
+                             <ns7:description>some description</ns7:description>
+                             <ns7:name>urn:ogc:id-001</ns7:name>
                              <swe:value>some value</swe:value>
                            </swe:Text>
                            """;
@@ -149,7 +149,7 @@ public class SweXMLBindingTest {
 
         String expected = """
                           <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                          <swe:DataBlockDefinition xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:swe="http://www.opengis.net/swe/1.0.1" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:om="http://www.opengis.net/om/1.0" xmlns:ns6="http://www.opengis.net/gml" xmlns:ns7="http://www.opengis.net/swe/2.0">
+                          <swe:DataBlockDefinition xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:swe="http://www.opengis.net/swe/1.0.1" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:om="http://www.opengis.net/om/1.0" xmlns:ns7="http://www.opengis.net/gml" xmlns:ns8="http://www.opengis.net/swe/2.0">
                             <swe:DataRecord>
                               <swe:field name="Latitude">
                                 <swe:Quantity definition="urn:ogc:phenomenon:latitude:wgs84">
@@ -177,14 +177,14 @@ public class SweXMLBindingTest {
 
         expected = """
                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                   <ns7:DataArray xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:swe="http://www.opengis.net/swe/1.0.1" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:om="http://www.opengis.net/om/1.0" xmlns:ns6="http://www.opengis.net/gml" xmlns:ns7="http://www.opengis.net/swe/2.0" id="test-id">
-                     <ns7:elementCount>
-                       <ns7:Count>
-                         <ns7:value>2</ns7:value>
-                       </ns7:Count>
-                     </ns7:elementCount>
-                     <ns7:values>balbbla</ns7:values>
-                   </ns7:DataArray>
+                   <ns8:DataArray xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:swe="http://www.opengis.net/swe/1.0.1" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:om="http://www.opengis.net/om/1.0" xmlns:ns7="http://www.opengis.net/gml" xmlns:ns8="http://www.opengis.net/swe/2.0" id="test-id">
+                     <ns8:elementCount>
+                       <ns8:Count>
+                         <ns8:value>2</ns8:value>
+                       </ns8:Count>
+                     </ns8:elementCount>
+                     <ns8:values>balbbla</ns8:values>
+                   </ns8:DataArray>
                    """;
         org.geotoolkit.swe.xml.v200.ObjectFactory factoryV200 = new org.geotoolkit.swe.xml.v200.ObjectFactory();
         org.geotoolkit.swe.xml.v200.DataArrayType arrayV200 = new org.geotoolkit.swe.xml.v200.DataArrayType("test-id", 2, null, "balbbla", "test-id", null, null);
