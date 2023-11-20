@@ -89,11 +89,11 @@ public class SweXMLBindingTest {
         result = StringUtilities.removeXmlns(result);
 
         String expResult = """
-                           <ns8:Text definition="urn:ogc:def:id-001" id="id-001" >
-                             <ns8:identifier>urn:ogc:id-001</ns8:identifier>
-                             <ns8:description>some description</ns8:description>
-                             <ns8:value>some value</ns8:value>
-                           </ns8:Text>
+                           <ns7:Text definition="urn:ogc:def:id-001" id="id-001" >
+                             <ns7:identifier>urn:ogc:id-001</ns7:identifier>
+                             <ns7:description>some description</ns7:description>
+                             <ns7:value>some value</ns7:value>
+                           </ns7:Text>
                            """;
         assertEquals(expResult.trim(), result.trim());
 
@@ -112,28 +112,28 @@ public class SweXMLBindingTest {
 
         expResult = """
                     <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                    <ns8:DataArray id="array-id-1" xmlns:swe="http://www.opengis.net/swe/1.0.1" xmlns:ns6="http://www.opengis.net/gml" xmlns:ns8="http://www.opengis.net/swe/2.0" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:om="http://www.opengis.net/om/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/1999/xlink">
-                      <ns8:elementCount>
-                        <ns8:Count>
-                          <ns8:value>0</ns8:value>
-                        </ns8:Count>
-                      </ns8:elementCount>
-                      <ns8:elementType name="somes values">
-                        <ns8:DataRecord>
-                          <ns8:field name="any name">
-                            <ns8:Text definition="urn:ogc:def:id-001" id="id-001">
-                              <ns8:identifier>urn:ogc:id-001</ns8:identifier>
-                              <ns8:description>some description</ns8:description>
-                              <ns8:value>some value</ns8:value>
-                            </ns8:Text>
-                          </ns8:field>
-                        </ns8:DataRecord>
-                      </ns8:elementType>
-                      <ns8:encoding>
-                        <ns8:TextEncoding decimalSeparator="," tokenSeparator="@@" blockSeparator="." id="encoding-1"/>
-                      </ns8:encoding>
-                      <ns8:values>array-id-1</ns8:values>
-                    </ns8:DataArray>
+                    <ns7:DataArray id="array-id-1" xmlns:swe="http://www.opengis.net/swe/1.0.1" xmlns:ns6="http://www.opengis.net/gml" xmlns:ns7="http://www.opengis.net/swe/2.0" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:om="http://www.opengis.net/om/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/1999/xlink">
+                      <ns7:elementCount>
+                        <ns7:Count>
+                          <ns7:value>0</ns7:value>
+                        </ns7:Count>
+                      </ns7:elementCount>
+                      <ns7:elementType name="somes values">
+                        <ns7:DataRecord>
+                          <ns7:field name="any name">
+                            <ns7:Text definition="urn:ogc:def:id-001" id="id-001">
+                              <ns7:identifier>urn:ogc:id-001</ns7:identifier>
+                              <ns7:description>some description</ns7:description>
+                              <ns7:value>some value</ns7:value>
+                            </ns7:Text>
+                          </ns7:field>
+                        </ns7:DataRecord>
+                      </ns7:elementType>
+                      <ns7:encoding>
+                        <ns7:TextEncoding decimalSeparator="," tokenSeparator="@@" blockSeparator="." id="encoding-1"/>
+                      </ns7:encoding>
+                      <ns7:values>array-id-1</ns7:values>
+                    </ns7:DataArray>
                     """;
 
         assertXmlEquals(expResult, result, "xmlns:*");
