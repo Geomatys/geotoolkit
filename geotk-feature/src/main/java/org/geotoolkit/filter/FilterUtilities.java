@@ -70,7 +70,10 @@ public final class FilterUtilities extends Static {
      * @return prepared property name expression.
      */
     public static ValueReference prepare(final ValueReference exp, final Class objectClazz, final FeatureType expectedType){
-        return new CachedPropertyName(exp.getXPath(), objectClazz,expectedType);
+        String xPath = exp.getXPath();
+        //TODO : to remove when sis contains better xpath support then geotk
+        if (xPath.contains("/")) return new CachedPropertyName(exp.getXPath(), objectClazz,expectedType);
+        else return exp;
     }
 
     /**
