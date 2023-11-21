@@ -83,19 +83,14 @@ public class SweXMLBindingTest {
         marshaller.marshal(factory.createText(text), sw);
 
         String result = sw.toString();
-        //we remove the first line
-        result = result.substring(result.indexOf("?>") + 2).trim();
-        //we remove the xmlmns
-        result = StringUtilities.removeXmlns(result);
-
         String expResult = """
-                           <ns7:Text definition="urn:ogc:def:id-001" id="id-001" >
+                           <ns7:Text definition="urn:ogc:def:id-001" id="id-001" xmlns:ns7="http://www.opengis.net/swe/2.0">
                              <ns7:identifier>urn:ogc:id-001</ns7:identifier>
                              <ns7:description>some description</ns7:description>
                              <ns7:value>some value</ns7:value>
                            </ns7:Text>
                            """;
-        assertEquals(expResult.trim(), result.trim());
+        assertXmlEquals(expResult, result, "xmlns:*");
 
         DataRecordType elementType = new DataRecordType();
         TextEncodingType encoding = new TextEncodingType("encoding-1", ",", "@@", ".");

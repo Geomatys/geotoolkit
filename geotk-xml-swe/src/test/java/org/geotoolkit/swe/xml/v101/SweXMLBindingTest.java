@@ -31,6 +31,7 @@ import org.junit.*;
 
 import static org.junit.Assert.*;
 import static org.geotoolkit.test.Assertions.assertXmlEquals;
+import org.geotoolkit.test.xml.DocumentComparator;
 
 
 /**
@@ -79,19 +80,15 @@ public class SweXMLBindingTest {
         marshaller.marshal(text, sw);
 
         String result = sw.toString();
-        //we remove the first line
-        result = result.substring(result.indexOf("?>") + 2).trim();
-        //we remove the xmlmns
-        result = StringUtilities.removeXmlns(result);
-
         String expResult = """
-                           <swe:Text definition="urn:ogc:def:id-001" ns6:id="id-001" >
-                             <ns6:description>some description</ns6:description>
-                             <ns6:name>urn:ogc:id-001</ns6:name>
+                           <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                           <swe:Text definition="urn:ogc:def:id-001" gml:id="id-001" xmlns:swe="http://www.opengis.net/swe/1.0.1" xmlns:gml="http://www.opengis.net/gml">
+                             <gml:description>some description</gml:description>
+                             <gml:name>urn:ogc:id-001</gml:name>
                              <swe:value>some value</swe:value>
                            </swe:Text>
                            """;
-        assertEquals(expResult.trim(), result.trim());
+        assertXmlEquals(expResult, result, "xmlns:*");
 
         SimpleDataRecordType elementType = new SimpleDataRecordType();
         AnyScalarPropertyType any = new AnyScalarPropertyType("id-1", "any name", text);
