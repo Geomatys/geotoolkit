@@ -1233,7 +1233,7 @@ public class TiffImageWriter extends SpatialImageWriter {
         final SampleModel sm = imageType.getSampleModel();
         //sample per pixel
         samplePerPixel = (short) sm.getNumBands();
-        assert samplePerPixel <= 0xFFFF : "SamplePerPixel exceed short max value"; // -- should never append
+        //assert samplePerPixel <= 0xFFFF : "SamplePerPixel exceed short max value"; // -- should never append // samplePerPixel is a short it always < 0xFFFF
         addProperty(SamplesPerPixel, TYPE_USHORT, 1, new short[]{samplePerPixel}, properties);
 
         // bitpersamples
@@ -1372,7 +1372,7 @@ public class TiffImageWriter extends SpatialImageWriter {
         final SampleModel sm = image.getSampleModel();
         //sample per pixel
         samplePerPixel = (short) sm.getNumBands();
-        assert samplePerPixel <= 0xFFFF : "SamplePerPixel exceed short max value"; //-- should never append
+        //assert samplePerPixel <= 0xFFFF : "SamplePerPixel exceed short max value"; //-- should never append // samplePerPixel is a short it always < 0xFFFF
         addProperty(SamplesPerPixel, TYPE_USHORT, 1, new short[]{(short) samplePerPixel}, properties);
 
         //-- planar configuration

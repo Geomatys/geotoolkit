@@ -274,8 +274,8 @@ public class PyramidWriterTest <T extends InMemoryTiledGridCoverageResource> {
         }
 
         //the higher tiles------------------------------------------------------
-        final RenderedImage top1 = ((GridCoverageResource) tileMatrix2.getTile(0, 0).orElse(null).getResource()).read(null).render(null);
-        final RenderedImage top2 = ((GridCoverageResource) tileMatrix2.getTile(1, 0).orElse(null).getResource()).read(null).render(null);
+        final RenderedImage top1 = ((GridCoverageResource) tileMatrix2.getTile(0, 0).orElseThrow().getResource()).read(null).render(null);
+        final RenderedImage top2 = ((GridCoverageResource) tileMatrix2.getTile(1, 0).orElseThrow().getResource()).read(null).render(null);
 
         data = top1.getData();
         for(int y=0;y<9;y++){
@@ -368,8 +368,8 @@ public class PyramidWriterTest <T extends InMemoryTiledGridCoverageResource> {
         }
 
         //the higher tiles------------------------------------------------------
-        final RenderedImage top1 = ((GridCoverageResource) tileMatrix2.getTile(0, 0).orElse(null).getResource()).read(null).render(null);
-        final RenderedImage top2 = ((GridCoverageResource) tileMatrix2.getTile(0, 1).orElse(null).getResource()).read(null).render(null);
+        final RenderedImage top1 = ((GridCoverageResource) tileMatrix2.getTile(0, 0).orElseThrow().getResource()).read(null).render(null);
+        final RenderedImage top2 = ((GridCoverageResource) tileMatrix2.getTile(0, 1).orElseThrow().getResource()).read(null).render(null);
 
         data = top1.getData();
         for(int y=0;y<9;y++){
@@ -462,8 +462,8 @@ public class PyramidWriterTest <T extends InMemoryTiledGridCoverageResource> {
         }
 
         //the higher tiles------------------------------------------------------
-        final RenderedImage top1 = ((GridCoverageResource) tileMatrix2.getTile(0, 0).orElse(null).getResource()).read(null).render(null);
-        final RenderedImage top2 = ((GridCoverageResource) tileMatrix2.getTile(1, 0).orElse(null).getResource()).read(null).render(null);
+        final RenderedImage top1 = ((GridCoverageResource) tileMatrix2.getTile(0, 0).orElseThrow().getResource()).read(null).render(null);
+        final RenderedImage top2 = ((GridCoverageResource) tileMatrix2.getTile(1, 0).orElseThrow().getResource()).read(null).render(null);
 
         data = top1.getData();
         for(int y=0;y<9;y++){

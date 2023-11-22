@@ -199,7 +199,7 @@
     <quartz.version>2.3.1</quartz.version>
     <woodstox.version>6.0.0</woodstox.version>
     <!-- ErrorProne 2.11.0 has a knwon bug on JDK-17 : https://giters.com/google/error-prone/issues/2926 -->
-    <error-prone.version>2.10.0</error-prone.version>
+    <error-prone.version>2.23.0</error-prone.version>
     <!-- @{argLine} necessary for jacoco generation, we must declare
          an empty property to avoid a surefire exception if we run any other
          maven phase which doesn't activate jacoco -->
@@ -564,17 +564,18 @@
           <showDeprecation>true</showDeprecation>
           <useIncrementalCompilation>false</useIncrementalCompilation> <!-- https://jira.codehaus.org/browse/MCOMPILER-209 -->
           <compilerArgs>
-            <arg>-XDcompilePolicy=simple</arg>
             <!-- UnicodeInCode : do not consider unicode chars in code as an error, used in maths and projections -->
             <!-- TODO : when upgrading ErrorProne to 2.11+ add -Xep:UnicodeInCode:WARN -->
-            <arg>-Xplugin:ErrorProne</arg>
+            <!--arg>-XDcompilePolicy=simple</arg>
+            <arg>-Xplugin:ErrorProne -Xep:UnicodeInCode:WARN -Xep:BanJNDI:WARN</arg-->
           </compilerArgs>
           <annotationProcessorPaths>
-            <path>
+            <!-- disable errorprone : crash with jdk 21 and plugin version 2.23.0 in storage module -->
+            <!--path>
               <groupId>com.google.errorprone</groupId>
               <artifactId>error_prone_core</artifactId>
               <version>${error-prone.version}</version>
-            </path>
+            </path-->
             <!-- Other annotation processors go here.
 
             If 'annotationProcessorPaths' is set, processors will no longer be
