@@ -259,11 +259,8 @@ final class ProductEntry extends Entry {
         ensureValid();
         metadata.addIdentifier(null, name, MetadataBuilder.Scope.RESOURCE);
         metadata.addSpatialRepresentation(null, exportedGrid, true);
-        if (exportedGrid != null) try {
-            metadata.addExtent(exportedGrid.getEnvelope());
-        } catch (TransformException e) {
-            throw new DataStoreReferencingException(e);
-
+        if (exportedGrid != null) {
+            metadata.addExtent(exportedGrid.getEnvelope(), null);
         }
         if (temporalResolution != null) {
             metadata.addTemporalResolution(temporalResolution.getSeconds() / (24*60*60d));
