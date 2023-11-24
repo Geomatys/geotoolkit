@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import jakarta.xml.bind.annotation.*;
-import org.geotoolkit.util.Utilities;
+import java.util.HashMap;
 import org.apache.sis.util.Version;
 import org.geotoolkit.wfs.xml.AllSomeType;
 import org.geotoolkit.wfs.xml.Transaction;
@@ -98,7 +98,7 @@ public class TransactionType implements Transaction {
         this.version = version;
         this.handle  = handle;
         this.releaseAction = releaseAction;
-        this.insertOrUpdateOrDelete = new ArrayList<Object>();
+        this.insertOrUpdateOrDelete = new ArrayList<>();
         if (delete != null) {
             this.insertOrUpdateOrDelete.add(delete);
         }
@@ -109,7 +109,7 @@ public class TransactionType implements Transaction {
         this.version = version;
         this.handle  = handle;
         this.releaseAction = releaseAction;
-        this.insertOrUpdateOrDelete = new ArrayList<Object>();
+        this.insertOrUpdateOrDelete = new ArrayList<>();
         if (insert != null) {
             this.insertOrUpdateOrDelete.add(insert);
         }
@@ -120,7 +120,7 @@ public class TransactionType implements Transaction {
         this.version = version;
         this.handle  = handle;
         this.releaseAction = releaseAction;
-        this.insertOrUpdateOrDelete = new ArrayList<Object>();
+        this.insertOrUpdateOrDelete = new ArrayList<>();
         if (udpate != null) {
             this.insertOrUpdateOrDelete.add(udpate);
         }
@@ -172,11 +172,12 @@ public class TransactionType implements Transaction {
      */
     public List<Object> getInsertOrUpdateOrDelete() {
         if (insertOrUpdateOrDelete == null) {
-            insertOrUpdateOrDelete = new ArrayList<Object>();
+            insertOrUpdateOrDelete = new ArrayList<>();
         }
         return this.insertOrUpdateOrDelete;
     }
 
+    @Override
     public List<Object> getTransactionAction() {
         return getInsertOrUpdateOrDelete();
     }
@@ -189,6 +190,7 @@ public class TransactionType implements Transaction {
      *     {@link String }
      *
      */
+    @Override
     public Version getVersion() {
         if (version == null) {
             return new Version("1.0.0");
@@ -205,6 +207,7 @@ public class TransactionType implements Transaction {
      *     {@link String }
      *
      */
+    @Override
     public void setVersion(String value) {
         this.version = value;
     }
@@ -217,6 +220,7 @@ public class TransactionType implements Transaction {
      *     {@link String }
      *
      */
+    @Override
     public String getService() {
         if (service == null) {
             return "WFS";
@@ -233,6 +237,7 @@ public class TransactionType implements Transaction {
      *     {@link String }
      *
      */
+    @Override
     public void setService(String value) {
         this.service = value;
     }
@@ -245,6 +250,7 @@ public class TransactionType implements Transaction {
      *     {@link String }
      *
      */
+    @Override
     public String getHandle() {
         return handle;
     }
@@ -257,6 +263,7 @@ public class TransactionType implements Transaction {
      *     {@link String }
      *
      */
+    @Override
     public void setHandle(String value) {
         this.handle = value;
     }
@@ -286,6 +293,22 @@ public class TransactionType implements Transaction {
     }
 
     @Override
+    public Map<String, String> getPrefixMapping() {
+        if (prefixMapping == null) {
+            prefixMapping = new HashMap<>();
+        }
+        return prefixMapping;
+    }
+
+    /**
+     * @param prefixMapping the prefixMapping to set
+     */
+    @Override
+    public void setPrefixMapping(Map<String, String> prefixMapping) {
+        this.prefixMapping = prefixMapping;
+    }
+
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("[transactionType]").append('\n');
         if (lockId != null) {
@@ -308,8 +331,7 @@ public class TransactionType implements Transaction {
         if (object == this) {
             return true;
         }
-        if (object instanceof TransactionType) {
-            final TransactionType that = (TransactionType) object;
+        if (object instanceof TransactionType that) {
             return  Objects.equals(this.insertOrUpdateOrDelete, that.insertOrUpdateOrDelete) &&
                     Objects.equals(this.lockId, that.lockId) &&
                     Objects.equals(this.releaseAction, that.releaseAction);
@@ -324,16 +346,5 @@ public class TransactionType implements Transaction {
         hash = 37 * hash + (this.insertOrUpdateOrDelete != null ? this.insertOrUpdateOrDelete.hashCode() : 0);
         hash = 37 * hash + (this.releaseAction != null ? this.releaseAction.hashCode() : 0);
         return hash;
-    }
-
-    public Map<String, String> getPrefixMapping() {
-        return prefixMapping;
-    }
-
-    /**
-     * @param prefixMapping the prefixMapping to set
-     */
-    public void setPrefixMapping(Map<String, String> prefixMapping) {
-        this.prefixMapping = prefixMapping;
     }
 }

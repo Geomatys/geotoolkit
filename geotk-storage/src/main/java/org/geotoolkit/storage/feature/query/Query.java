@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.List;
 import javax.measure.Quantity;
 import javax.measure.quantity.Length;
+import org.apache.sis.filter.internal.XPath;
 import org.apache.sis.storage.FeatureQuery;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import org.geotoolkit.factory.Hints;
@@ -398,7 +399,7 @@ public final class Query extends FeatureQuery {
 
         for (PropertyType pt : type.getProperties(true)) {
             final GenericName name = pt.getName();
-            Expression property = ff.property(name.toString());
+            Expression property = ff.property(XPath.toString(null, null, name.toString()));
 
             //unroll operation
             IdentifiedType result = pt;

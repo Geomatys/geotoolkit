@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import jakarta.xml.bind.annotation.*;
+import java.util.HashMap;
 import org.apache.sis.util.Version;
 import org.geotoolkit.wfs.xml.AllSomeType;
 import org.geotoolkit.wfs.xml.LockFeature;
@@ -99,7 +100,7 @@ public class LockFeatureType implements LockFeature {
      */
     public List<LockType> getLock() {
         if (lock == null) {
-            lock = new ArrayList<LockType>();
+            lock = new ArrayList<>();
         }
         return this.lock;
     }
@@ -112,6 +113,7 @@ public class LockFeatureType implements LockFeature {
      *     {@link String }
      *
      */
+    @Override
     public Version getVersion() {
         if (version == null) {
             return new Version("1.0.0");
@@ -128,6 +130,7 @@ public class LockFeatureType implements LockFeature {
      *     {@link String }
      *
      */
+    @Override
     public void setVersion(String value) {
         this.version = value;
     }
@@ -140,6 +143,7 @@ public class LockFeatureType implements LockFeature {
      *     {@link String }
      *
      */
+    @Override
     public String getService() {
         if (service == null) {
             return "WFS";
@@ -156,6 +160,7 @@ public class LockFeatureType implements LockFeature {
      *     {@link String }
      *
      */
+    @Override
     public void setService(String value) {
         this.service = value;
     }
@@ -208,21 +213,28 @@ public class LockFeatureType implements LockFeature {
         this.lockAction = value;
     }
 
+    @Override
     public String getHandle() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public void setHandle(String value) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public Map<String, String> getPrefixMapping() {
+        if (prefixMapping == null) {
+            prefixMapping = new HashMap<>();
+        }
         return prefixMapping;
     }
 
     /**
      * @param prefixMapping the prefixMapping to set
      */
+    @Override
     public void setPrefixMapping(Map<String, String> prefixMapping) {
         this.prefixMapping = prefixMapping;
     }
