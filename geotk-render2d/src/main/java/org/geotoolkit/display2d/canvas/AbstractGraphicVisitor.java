@@ -18,7 +18,7 @@ package org.geotoolkit.display2d.canvas;
 
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.map.Presentation;
-import org.apache.sis.portrayal.MapLayer;
+import org.apache.sis.map.MapLayer;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
 import org.geotoolkit.display.SearchArea;

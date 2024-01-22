@@ -37,7 +37,7 @@ import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.map.ExceptionPresentation;
 import org.apache.sis.map.Presentation;
-import org.apache.sis.portrayal.MapLayer;
+import org.apache.sis.map.MapLayer;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.NoSuchDataException;

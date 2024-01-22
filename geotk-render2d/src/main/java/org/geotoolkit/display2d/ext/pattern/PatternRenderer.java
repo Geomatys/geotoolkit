@@ -23,7 +23,7 @@ import java.util.stream.Stream;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.map.ExceptionPresentation;
 import org.apache.sis.map.Presentation;
-import org.apache.sis.portrayal.MapLayer;
+import org.apache.sis.map.MapLayer;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;

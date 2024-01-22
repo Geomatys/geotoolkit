@@ -2,8 +2,8 @@
 package org.geotoolkit.pending.demo.clients.wmts;
 
 import java.net.URL;
-import org.apache.sis.portrayal.MapLayer;
-import org.apache.sis.portrayal.MapLayers;
+import org.apache.sis.map.MapLayer;
+import org.apache.sis.map.MapLayers;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.Resource;
 import org.geotoolkit.map.MapBuilder;

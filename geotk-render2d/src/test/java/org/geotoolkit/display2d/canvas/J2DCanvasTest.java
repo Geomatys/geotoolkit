@@ -21,7 +21,7 @@ import java.awt.Dimension;
 import java.util.Date;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.util.GeodeticObjectBuilder;
-import org.apache.sis.portrayal.MapLayers;
+import org.apache.sis.map.MapLayers;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;

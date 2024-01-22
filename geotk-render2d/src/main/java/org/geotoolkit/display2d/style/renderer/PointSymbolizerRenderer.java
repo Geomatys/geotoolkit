@@ -22,7 +22,7 @@ import java.util.stream.Stream;
 import org.apache.sis.map.ExceptionPresentation;
 import org.apache.sis.map.Presentation;
 import org.apache.sis.measure.Units;
-import org.apache.sis.portrayal.MapLayer;
+import org.apache.sis.map.MapLayer;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;

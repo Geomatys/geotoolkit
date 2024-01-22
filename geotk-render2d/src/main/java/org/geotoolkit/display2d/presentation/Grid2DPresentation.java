@@ -17,7 +17,7 @@
 package org.geotoolkit.display2d.presentation;
 
 import org.apache.sis.map.Presentation;
-import org.apache.sis.portrayal.MapLayer;
+import org.apache.sis.map.MapLayer;
 import org.apache.sis.storage.Resource;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;

@@ -19,7 +19,7 @@ package org.geotoolkit.map;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.lang.ref.WeakReference;
-import org.apache.sis.portrayal.MapItem;
+import org.apache.sis.map.MapItem;
 
 /**
  * Weak MapItem listener implementation.

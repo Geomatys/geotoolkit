@@ -53,7 +53,7 @@
       </dependency>
       <dependency>
           <groupId>org.apache.sis.core</groupId>
-          <artifactId>sis-portrayal</artifactId>
+          <artifactId>sis-portrayal-map</artifactId>
           <version>${sis.version}</version>
       </dependency>
       <dependency>

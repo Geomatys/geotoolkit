@@ -22,7 +22,7 @@ import java.awt.Dimension;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.image.BufferedImage;
 import java.util.List;
-import org.apache.sis.portrayal.MapLayers;
+import org.apache.sis.map.MapLayers;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;

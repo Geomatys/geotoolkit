@@ -4,7 +4,7 @@
  */
 package org.geotoolkit.wmc;
 
-import org.apache.sis.portrayal.MapLayers;
+import org.apache.sis.map.MapLayers;
 import org.junit.AfterClass;
 import static org.junit.Assert.*;
 import org.junit.BeforeClass;

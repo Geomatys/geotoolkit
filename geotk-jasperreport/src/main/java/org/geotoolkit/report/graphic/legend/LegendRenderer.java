@@ -28,7 +28,7 @@ import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperReportsContext;
 import net.sf.jasperreports.renderers.Graphics2DRenderable;
 import net.sf.jasperreports.renderers.Renderable;
-import org.apache.sis.portrayal.MapLayers;
+import org.apache.sis.map.MapLayers;
 import org.geotoolkit.display2d.ext.BackgroundTemplate;
 import org.geotoolkit.display2d.ext.DefaultBackgroundTemplate;
 import org.geotoolkit.display2d.ext.legend.DefaultLegendTemplate;

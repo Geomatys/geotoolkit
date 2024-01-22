@@ -34,7 +34,7 @@ import net.sf.jasperreports.engine.JasperReport;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.portrayal.MapLayers;
+import org.apache.sis.map.MapLayers;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.display2d.service.CanvasDef;

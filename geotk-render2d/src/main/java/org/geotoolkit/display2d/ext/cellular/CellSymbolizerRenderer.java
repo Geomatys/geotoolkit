@@ -35,7 +35,7 @@ import org.apache.sis.map.ExceptionPresentation;
 import org.apache.sis.map.Presentation;
 import org.apache.sis.referencing.util.j2d.AffineTransform2D;
 import org.apache.sis.math.Statistics;
-import org.apache.sis.portrayal.MapLayer;
+import org.apache.sis.map.MapLayer;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;

@@ -41,7 +41,7 @@ import org.apache.sis.feature.internal.AttributeConvention;
 import org.apache.sis.feature.internal.FeatureExpression;
 import org.apache.sis.measure.Quantities;
 import org.apache.sis.measure.Units;
-import org.apache.sis.portrayal.MapLayer;
+import org.apache.sis.map.MapLayer;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureQuery;

@@ -23,7 +23,7 @@ import org.apache.sis.map.ExceptionPresentation;
 import org.apache.sis.map.Presentation;
 import org.apache.sis.storage.CoverageQuery;
 import org.apache.sis.parameter.Parameters;
-import org.apache.sis.portrayal.MapLayer;
+import org.apache.sis.map.MapLayer;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.GridCoverageResource;

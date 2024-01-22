@@ -27,7 +27,7 @@ import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.container.ContextContainer2D;
 import org.geotoolkit.display2d.ext.PositionedGraphic2D;
-import org.apache.sis.portrayal.MapLayers;
+import org.apache.sis.map.MapLayers;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
 

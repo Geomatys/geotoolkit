@@ -30,7 +30,7 @@ import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.ObjectConverters;
 import org.geotoolkit.map.MapBuilder;
-import org.apache.sis.portrayal.MapLayer;
+import org.apache.sis.map.MapLayer;
 import org.geotoolkit.owc.xml.OwcExtension;
 import org.geotoolkit.owc.xml.v10.OfferingType;
 import org.geotoolkit.storage.DataStores;
