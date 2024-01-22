@@ -113,6 +113,7 @@ import org.geotoolkit.processing.coverage.bandselect.BandSelectProcess;
 import org.geotoolkit.storage.coverage.BandedCoverageResource;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
 import org.opengis.filter.Expression;
 import org.opengis.filter.Filter;
@@ -967,10 +968,15 @@ public final class DefaultPortrayalService implements PortrayalService{
                 }
 
                 //optimize
-                final Query query;
+                Query query = null;
                 try {
-                    query = RenderingRoutines.prepareQuery(renderContext, fs, layer, names, rules, symbolsMargin);
-                    final Stream<Presentation> s = fs.subset(query).features(false).flatMap(new Function<Feature, Stream<Presentation>>() {
+                    try {
+                        query = RenderingRoutines.prepareQuery(renderContext, fs, layer, names, rules, symbolsMargin);
+                    } catch (PropertyNotFoundException ex) {
+                        //can happen if the type has subtypes and properties are only on the subtype
+                        query = null;
+                    }
+                    final Stream<Presentation> s = (query == null ? fs : fs.subset(query)).features(false).flatMap(new Function<Feature, Stream<Presentation>>() {
                         @Override
                         public Stream<Presentation> apply(Feature feature) {
 
