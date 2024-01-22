@@ -19,9 +19,9 @@ package org.geotoolkit.display2d.primitive;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
-import org.apache.sis.storage.FeatureQuery;
 import org.apache.sis.portrayal.MapLayer;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureQuery;
 import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
@@ -32,8 +32,8 @@ import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
 import org.opengis.filter.Expression;
-import org.opengis.filter.ValueReference;
 import org.opengis.filter.ResourceId;
+import org.opengis.filter.ValueReference;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -90,7 +90,12 @@ public class ProjectedFeature extends DefaultProjectedObject<Feature> {
 
             if (!isNullorEmpty(geomExp)) {
                 if (geomExp instanceof ValueReference) {
-                    prop = featuretype.getProperty(((ValueReference)geomExp).getXPath());
+                    try {
+                        prop = featuretype.getProperty(((ValueReference)geomExp).getXPath());
+                    } catch (PropertyNotFoundException ex) {
+                        //style may be used on various feature types
+                        //do nothing, be tolerant
+                    }
                 } else {
                     //calculated geometry
                 }

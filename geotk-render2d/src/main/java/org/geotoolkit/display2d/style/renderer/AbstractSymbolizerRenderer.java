@@ -49,6 +49,7 @@ import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
 import org.opengis.filter.Expression;
 import org.opengis.geometry.Envelope;
@@ -155,9 +156,13 @@ public abstract class AbstractSymbolizerRenderer<C extends CachedSymbolizer<? ex
 
             //optimize
             final Rule rule = GO2Utilities.STYLE_FACTORY.rule(symbol.getSource());
-            final Query query;
+            Query query;
             try {
                 query = RenderingRoutines.prepareQuery(getRenderingContext(), fs, layer, names, Arrays.asList(rule), symbolsMargin);
+            } catch (PropertyNotFoundException ex) {
+                //can happen if the type has subtypes and properties are only on the subtype
+                //we can not optimize such case
+                query = null;
             } catch (PortrayalException ex) {
                 ExceptionPresentation ep = new ExceptionPresentation(ex);
                 ep.setLayer(layer);
@@ -169,7 +174,7 @@ public abstract class AbstractSymbolizerRenderer<C extends CachedSymbolizer<? ex
             final AtomicInteger inc = new AtomicInteger();
             final UndefinedCRSException[] firstException = new UndefinedCRSException[1];
             try {
-                FeatureSet subset = fs.subset(query);
+                FeatureSet subset = query == null ? fs : fs.subset(query);
 
                 if (this.geomPropertyName == null) {
                     //try to find the geometry property from type
