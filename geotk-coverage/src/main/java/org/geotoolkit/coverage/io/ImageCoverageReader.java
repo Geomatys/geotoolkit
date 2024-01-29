@@ -507,7 +507,7 @@ public class ImageCoverageReader extends GridCoverageStore {
         if (IOUtilities.canProcessAsPath(input)) {
             return IOUtilities.filename(input);
         } else {
-            return Vocabulary.getResources(locale).getString(Vocabulary.Keys.Untitled);
+            return Vocabulary.forLocale(locale).getString(Vocabulary.Keys.Untitled);
         }
     }
 
