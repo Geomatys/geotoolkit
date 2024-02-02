@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import javax.measure.Unit;
@@ -44,7 +43,6 @@ import org.opengis.metadata.Identifier;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Descriptions;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.metadata.iso.quality.DefaultConformanceResult;
@@ -100,17 +98,6 @@ public final class Parameters extends Static {
      */
     private static final InternationalString EXPLAIN =
             Descriptions.formatInternational(Descriptions.Keys.ConformanceMeansValidParameters);
-
-    /**
-     * An empty parameter group. This group contains no parameters.
-     *
-     * @deprecated Will be removed.
-     */
-    @Deprecated
-    public static final ParameterDescriptorGroup EMPTY_GROUP =
-            new org.apache.sis.parameter.DefaultParameterDescriptorGroup(
-                    Collections.singletonMap(ParameterDescriptorGroup.NAME_KEY,
-                    Vocabulary.format(Vocabulary.Keys.Empty)), 1, 1);
 
     /**
      * Do not allow instantiation of this utility class.

@@ -18,8 +18,6 @@
 package org.geotoolkit.referencing.operation.provider;
 
 import javax.measure.Unit;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterDescriptor;
@@ -27,13 +25,11 @@ import org.opengis.parameter.ParameterNotFoundException;
 
 import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.parameter.Parameter;
-import org.geotoolkit.parameter.ParameterGroup;
-import org.geotoolkit.parameter.FloatParameter;
 import org.apache.sis.referencing.util.Formulas;
 import org.apache.sis.parameter.Parameters;
+import org.apache.sis.parameter.DefaultParameterValue;
+import org.apache.sis.parameter.DefaultParameterValueGroup;
 
-import org.geotoolkit.parameter.AbstractParameterValue;
 import static org.geotoolkit.referencing.operation.provider.UniversalParameters.*;
 import static org.geotoolkit.referencing.operation.provider.MapProjectionDescriptor.ADD_EARTH_RADIUS;
 import static org.geotoolkit.referencing.operation.provider.MapProjectionDescriptor.ADD_STANDARD_PARALLEL;
@@ -50,7 +46,7 @@ import static org.geotoolkit.referencing.operation.provider.MapProjectionDescrip
  * @deprecated Moved to Apache SIS.
  */
 @Deprecated
-final class MapProjectionParameters extends ParameterGroup {
+final class MapProjectionParameters extends DefaultParameterValueGroup {
     /**
      * For cross-version compatibility.
      */
@@ -63,7 +59,7 @@ final class MapProjectionParameters extends ParameterGroup {
      *
      * @see org.apache.sis.referencing.datum.DefaultEllipsoid#getAuthalicRadius()
      */
-    private final class EarthRadius extends FloatParameter {
+    private final class EarthRadius extends DefaultParameterValue<Double> {
         /**
          * For cross-version compatibility. Actually instances of this class
          * are not expected to be serialized, but we try to be a bit safer here.
@@ -107,7 +103,7 @@ final class MapProjectionParameters extends ParameterGroup {
      *
      * @see org.apache.sis.referencing.datum.DefaultEllipsoid#getInverseFlattening()
      */
-    private final class InverseFlattening extends FloatParameter implements ChangeListener {
+    private final class InverseFlattening extends DefaultParameterValue<Double> {
         /**
          * For cross-version compatibility. Actually instances of this class
          * are not expected to be serialized, but we try to be a bit safer here.
@@ -144,21 +140,8 @@ final class MapProjectionParameters extends ParameterGroup {
          */
         @Override
         public void setValue(final double value, final Unit<?> unit) {
-            final boolean wasNull = Double.isNaN(super.doubleValue());
             super.setValue(value, unit); // Perform argument check.
-            final ParameterValue<?> semiMajor = parameter("semi_major");
-            if (Double.isNaN(value)) {
-                if (!wasNull) {
-                    if (semiMajor instanceof AbstractParameterValue<?>) {
-                        ((AbstractParameterValue<?>) semiMajor).removeChangeListener(this);
-                    }
-                }
-            } else {
-                if (wasNull) {
-                    if (semiMajor instanceof AbstractParameterValue<?>) {
-                        ((AbstractParameterValue<?>) semiMajor).addChangeListener(this);
-                    }
-                }
+            if (!Double.isNaN(value)) {
                 update(value);
             }
         }
@@ -177,15 +160,6 @@ final class MapProjectionParameters extends ParameterGroup {
             }
             set(SEMI_MINOR, semiMajor.doubleValue()*(1 - 1/value), semiMajor.getUnit());
         }
-
-        /**
-         * Invoked when the semi-major axis value changed. This method recomputes
-         * the semi-minor axis length from the ellipsoid.
-         */
-        @Override
-        public void stateChanged(final ChangeEvent event) {
-            update(super.doubleValue());
-        }
     }
 
     /**
@@ -194,7 +168,7 @@ final class MapProjectionParameters extends ParameterGroup {
      * parameters. When explicitely set, the parameter elements are given to the above-cited
      * parameters.
      */
-    private final class StandardParallel extends Parameter<double[]> {
+    private final class StandardParallel extends DefaultParameterValue<double[]> {
         /**
          * For cross-version compatibility. Actually instances of this class
          * are not expected to be serialized, but we try to be a bit safer here.
@@ -228,7 +202,7 @@ final class MapProjectionParameters extends ParameterGroup {
          */
         @Override
         @SuppressWarnings("fallthrough")
-        protected void setSafeValue(final double[] value, final Unit<?> unit) {
+        public void setValue(final double[] value, final Unit<?> unit) {
             double standardParallel1 = Double.NaN;
             double standardParallel2 = Double.NaN;
             if (value != null) {

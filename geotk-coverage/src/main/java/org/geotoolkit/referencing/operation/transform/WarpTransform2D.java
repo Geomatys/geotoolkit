@@ -28,7 +28,6 @@ import javax.media.jai.WarpOpImage;
 import javax.media.jai.WarpPolynomial;
 import javax.media.jai.operator.WarpDescriptor;
 
-import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.Matrix;
@@ -37,11 +36,9 @@ import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
 
 import org.geotoolkit.lang.Workaround;
-import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.parameter.Parameter;
-import org.geotoolkit.parameter.ParameterGroup;
+import org.apache.sis.parameter.DefaultParameterValueGroup;
 import org.apache.sis.referencing.operation.transform.AbstractMathTransform2D;
 import org.apache.sis.referencing.operation.transform.IterationStrategy;
 
@@ -325,18 +322,17 @@ public class WarpTransform2D extends AbstractMathTransform2D implements Serializ
     @Override
     public ParameterValueGroup getParameterValues() {
         if (warp instanceof WarpPolynomial) {
+            var p = new DefaultParameterValueGroup(getParameterDescriptors());
             final WarpPolynomial poly = (WarpPolynomial) warp;
-            final ParameterValue<?>[] p = new ParameterValue<?>[7];
-            int c = 0;
-            p[c++] = new Parameter<>(DEGREE,   poly.getDegree());
-            p[c++] = new Parameter<>(X_COEFFS, poly.getXCoeffs());
-            p[c++] = new Parameter<>(Y_COEFFS, poly.getYCoeffs());
+            p.getOrCreate(DEGREE).setValue(poly.getDegree());
+            p.getOrCreate(X_COEFFS).setValue(poly.getXCoeffs());
+            p.getOrCreate(Y_COEFFS).setValue(poly.getYCoeffs());
             float s;
-            if ((s=poly.getPreScaleX ()) != 1) p[c++] = new Parameter<>(PRE_SCALE_X,  s);
-            if ((s=poly.getPreScaleY ()) != 1) p[c++] = new Parameter<>(PRE_SCALE_Y,  s);
-            if ((s=poly.getPostScaleX()) != 1) p[c++] = new Parameter<>(POST_SCALE_X, s);
-            if ((s=poly.getPostScaleY()) != 1) p[c++] = new Parameter<>(POST_SCALE_Y, s);
-            return new ParameterGroup(getParameterDescriptors(), ArraysExt.resize(p, c));
+            if ((s=poly.getPreScaleX ()) != 1) p.getOrCreate(PRE_SCALE_X).setValue(s);
+            if ((s=poly.getPreScaleY ()) != 1) p.getOrCreate(PRE_SCALE_Y).setValue(s);
+            if ((s=poly.getPostScaleX()) != 1) p.getOrCreate(POST_SCALE_X).setValue(s);
+            if ((s=poly.getPostScaleY()) != 1) p.getOrCreate(POST_SCALE_Y).setValue(s);
+            return p;
         } else {
             return null;
         }

@@ -20,20 +20,15 @@
  */
 package org.geotoolkit.parameter;
 
-import java.util.Set;
 import java.util.Objects;
 import java.io.Serializable;
-import javax.measure.Unit;
 
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.parameter.GeneralParameterDescriptor;
-import org.opengis.parameter.InvalidParameterValueException;
 
 import org.geotoolkit.util.Cloneable;
-import org.apache.sis.measure.Units;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.io.wkt.Formatter;
 import org.apache.sis.io.wkt.FormattableObject;
@@ -84,70 +79,6 @@ public abstract class AbstractParameter extends FormattableObject
     }
 
     /**
-     * Ensures that the given value is valid according the specified parameter descriptor.
-     * This convenience method ensures that {@code value} is assignable to the
-     * {@linkplain ParameterDescriptor#getValueClass() expected class}, is between the
-     * {@linkplain ParameterDescriptor#getMinimumValue() minimum} and
-     * {@linkplain ParameterDescriptor#getMaximumValue() maximum} values and is one of the
-     * {@linkplain ParameterDescriptor#getValidValues() set of valid values}.
-     * If the value fails any of those tests, then an exception is thrown.
-     * <p>
-     * This method is similar to {@link Parameters#isValid(ParameterValue)} except that the
-     * exception contains an error message formatted with a description of the failure raison.
-     *
-     * @param  <T> The type of parameter value. The given {@code value} should typically be an
-     *         instance of this class. This is not required by this method signature but is
-     *         checked by this method implementation.
-     * @param  descriptor The parameter descriptor to check against.
-     * @param  value The value to check, or {@code null}.
-     * @return The value casted to the descriptor parameterized type, or the
-     *         {@linkplain ParameterDescriptor#getDefaultValue() default value}
-     *         if the given value was null while the parameter is mandatory.
-     * @throws InvalidParameterValueException if the parameter value is invalid.
-     */
-    static <T> T ensureValidValue(final ParameterDescriptor<T> descriptor, final Object value)
-            throws InvalidParameterValueException
-    {
-        if (value == null) {
-            if (descriptor.getMinimumOccurs() != 0) {
-                return descriptor.getDefaultValue();
-            }
-            return null;
-        }
-        final String error;
-        /*
-         * Note: the implementation below is similar (except for different error message) to the
-         * one in Parameters.isValidValue(ParameterDescriptor, Object). If one implementation is
-         * modified, the other should be updated accordingly. The main difference is that null
-         * values are replaced by the default value instead than being a conformance error.
-         */
-        final Class<T> type = descriptor.getValueClass();
-        if (!type.isInstance(value)) {
-            error = Errors.format(Errors.Keys.IllegalOperationForValueClass_1, value.getClass());
-        } else {
-            final T typedValue = type.cast(value);
-            final Comparable<T> minimum = descriptor.getMinimumValue();
-            final Comparable<T> maximum = descriptor.getMaximumValue();
-            if ((minimum != null && minimum.compareTo(typedValue) > 0) ||
-                (maximum != null && maximum.compareTo(typedValue) < 0))
-            {
-                error = Errors.format(Errors.Keys.ValueOutOfBounds_3, value, minimum, maximum);
-            } else {
-                final Set<T> validValues = descriptor.getValidValues();
-                if (validValues!=null && !validValues.contains(value)) {
-                    error = Errors.format(Errors.Keys.IllegalArgument_2, getName(descriptor), value);
-                } else {
-                    /*
-                     * Passed every tests - the value is valid.
-                     */
-                    return typedValue;
-                }
-            }
-        }
-        throw new InvalidParameterValueException(error, getName(descriptor), value);
-    }
-
-    /**
      * Returns an exception initialized with a "Unitless parameter" error message for the
      * specified descriptor.
      */
@@ -166,22 +97,10 @@ public abstract class AbstractParameter extends FormattableObject
     }
 
     /**
-     * Returns the unit type as one of error message code. Used for checking unit with a better
-     * error message formatting if needed.
-     */
-    static short getUnitMessageID(final Unit<?> unit) {
-        if (Units.isLinear  (unit)) return Errors.Keys.NonLinearUnit_1;
-        if (Units.isAngular (unit)) return Errors.Keys.NonAngularUnit_1;
-        if (Units.isTemporal(unit)) return Errors.Keys.NonTemporalUnit_1;
-        if (Units.isScale   (unit)) return Errors.Keys.NonScaleUnit_1;
-        return Errors.Keys.IncompatibleUnit_1;
-    }
-
-    /**
      * Returns a copy of this parameter value or group.
      */
     @Override
-    public AbstractParameter clone() {
+    public GeneralParameterValue clone() {
         try {
             return (AbstractParameter) super.clone();
         } catch (CloneNotSupportedException exception) {

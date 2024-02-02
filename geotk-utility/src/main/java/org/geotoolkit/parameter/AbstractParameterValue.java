@@ -99,7 +99,7 @@ public abstract class AbstractParameterValue<T> extends AbstractParameter implem
      * Returns a clone of this parameter. The clone does not include any change listener.
      */
     @Override
-    public AbstractParameterValue<T> clone() {
+    public ParameterValue<T> clone() {
         @SuppressWarnings("unchecked")
         final AbstractParameterValue<T> copy = (AbstractParameterValue<T>) super.clone();
         copy.listeners = null;
