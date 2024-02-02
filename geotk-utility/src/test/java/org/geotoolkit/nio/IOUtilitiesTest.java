@@ -273,29 +273,6 @@ public final class IOUtilitiesTest {
     }
 
     @Test
-    public void tryToFileTest() throws IOException, URISyntaxException {
-
-        Path pathObj = Files.createTempFile("path", ".tmp");
-        File fileObj = File.createTempFile("file", ".tmp");
-        URI uriObj = URI.create("file:/tmp");
-        URL urlFileObj = new URL("file:/tmp");
-        URL urlObj = new URL("http://some/url");
-        String strObj = "/tmp";
-        Integer intObj = 1;
-
-        //try file conversion
-        assertNull(IOUtilities.tryToFile(null));
-        assertEquals(pathObj.toFile(), IOUtilities.tryToFile(pathObj));
-        assertSame(fileObj, IOUtilities.tryToFile(fileObj));
-        assertEquals(new File(uriObj), IOUtilities.tryToFile(uriObj));
-        assertEquals(new File(uriObj), IOUtilities.tryToFile(urlFileObj));
-        assertEquals(new File(strObj), IOUtilities.tryToFile(strObj));
-        assertEquals(urlObj, IOUtilities.tryToFile(urlObj)); // not converted
-        assertEquals(1, IOUtilities.tryToFile(intObj)); // not converted
-    }
-
-
-    @Test
     public void uriFSTests() throws IOException, URISyntaxException {
         URI uriUnixFile = URI.create("file:/tmp");
         URI uriUnixFile2 = URI.create("/tmp");

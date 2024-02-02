@@ -25,11 +25,11 @@ import java.text.ParseException;
 import java.awt.Color;
 import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;
+import java.net.URISyntaxException;
 import javax.imageio.IIOException;
 
 import org.geotoolkit.io.LineFormat;
 import org.geotoolkit.io.DefaultFileFilter;
-import org.apache.sis.io.stream.IOUtilities;
 import org.apache.sis.util.collection.WeakHashSet;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.resources.Errors;
@@ -583,11 +583,11 @@ public class PaletteFactory {
         File dir = (directory != null) ? directory : new File(".");
         try {
             if (classloader != null) {
-                dir = IOUtilities.toFile(classloader.getResource(dir.getPath()));
+                dir = new File(classloader.getResource(dir.getPath()).toURI());
             } else if (loader != null) {
-                dir = IOUtilities.toFile(loader.getResource(dir.getPath()));
+                dir = new File(loader.getResource(dir.getPath()).toURI());
             }
-        } catch (IOException e) {
+        } catch (IllegalArgumentException | URISyntaxException e) {
             /*
              * The URL to the palette files can not be converted to a File object.
              * Consequently we can not scan the list of files in the directory.

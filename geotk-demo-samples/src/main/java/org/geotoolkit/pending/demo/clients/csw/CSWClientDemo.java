@@ -12,7 +12,6 @@ import java.util.List;
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
-import org.apache.sis.io.stream.IOUtilities;
 import org.apache.sis.xml.MarshalContext;
 import org.geotoolkit.csw.CatalogServicesClient;
 import org.geotoolkit.csw.GetCapabilitiesRequest;
@@ -194,10 +193,7 @@ public class CSWClientDemo {
         public URI toURI(final MarshalContext context, String value) throws URISyntaxException {
             if (value != null && !(value = value.trim()).isEmpty()) {
                 try {
-                    value = IOUtilities.encodeURI(value);
-                    if (value.contains("\\")) {
-                        value = value.replace("\\", "%5C");
-                    }
+                    value = value.replace("\\", "%5C");
                     return new URI(value);
                 } catch (URISyntaxException e) {
                     if (!exceptionOccured(context, value, String.class, URI.class, e)) {

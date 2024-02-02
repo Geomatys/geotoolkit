@@ -57,7 +57,6 @@ import org.opengis.util.NameSpace;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.resources.Errors;
-import org.apache.sis.io.stream.IOUtilities;
 import org.apache.sis.referencing.AbstractIdentifiedObject;
 import org.apache.sis.metadata.iso.citation.Citations;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
@@ -313,7 +312,7 @@ public class ImagingParameterDescriptors extends DefaultParameterDescriptorGroup
             final InternationalString description;
             description = new ImagingParameterDescription(op, "Description", null);
             if (authority != null) try {
-                final URI uri = new URI(IOUtilities.encodeURI(bundle.getString("DocURL")));
+                final URI uri = new URI(bundle.getString("DocURL"));
                 final DefaultOnlineResource resource = new DefaultOnlineResource(uri);
                 resource.setFunction(OnLineFunction.INFORMATION);
                 resource.setDescription(description);
