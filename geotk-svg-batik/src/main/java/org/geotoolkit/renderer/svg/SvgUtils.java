@@ -139,49 +139,8 @@ public class SvgUtils {
             throw new IllegalArgumentException("Height and width must be superior to 0");
         }
 
-        final String parser = XMLResourceDescriptor.getXMLParserClassName();
-        final SAXSVGDocumentFactory factory = new SAXSVGDocumentFactory(parser);
-        final SVGDocument doc = (SVGDocument)factory.createDocument(in.toString());
-        final RenderableSVG svg = new RenderableSVG(doc);
+        final BatikSVG svg = new BatikSVG(in.toString());
         svg.paint(g, dim);
-    }
-
-    /**
-     * @see http://wiki.apache.org/xmlgraphics-batik/DynamicSvgOffscreen
-     */
-    private static class RenderableSVG {
-        private final GraphicsNode node;
-        private Rectangle2D bounds;
-
-        public RenderableSVG(final SVGDocument doc) {
-            final UserAgent userAgent   = new UserAgentAdapter();
-            final DocumentLoader loader = new DocumentLoader(userAgent);
-            final BridgeContext ctx     = new BridgeContext(userAgent, loader);
-            ctx.setDynamic(true);
-            final GVTBuilder builder = new GVTBuilder();
-            this.node = builder.build(ctx, doc);
-
-            final float docWidth  = (float)ctx.getDocumentSize().getWidth();
-            final float docHeight = (float)ctx.getDocumentSize().getHeight();
-            bounds = new Rectangle2D.Float(0, 0, docWidth, docHeight);
-
-            if (bounds == null){
-                bounds = node.getBounds();
-            }
-        }
-
-        public void paint(final Graphics2D g, final Point2D dim) {
-            final double scaleX = dim.getX() / bounds.getWidth();
-            final double scaleY = dim.getY() / bounds.getHeight();
-            g.scale(scaleX, scaleY);
-
-            try {
-                node.paint(g);
-            } finally {
-                g.scale(1/scaleX, 1/scaleY);
-            }
-        }
-
     }
 
 }
