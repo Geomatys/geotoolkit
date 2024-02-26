@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="style1.css" type="text/css"?>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.2" baseProfile="tiny" xml:space="preserve" style="shape-rendering:geometricPrecision; fill-rule:evenodd;" width="20mm" height="20mm" viewBox="-10 -10 20 20">
+  <path d=" M -10,-10 L 10,-10 L 10,10 L -10,10 L -10,-10 Z" class="squarestyle1"/>
+  <path d=" M -0,-10 L 10,-10 L 10,10 L -0,10 L 0,-10 Z" class="squarestyle2"/>
+</svg>
