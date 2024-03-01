@@ -74,6 +74,13 @@ public final class BatikSVG implements AutoCloseable {
     }
 
     /**
+     * @return file URI
+     */
+    public String getURI() {
+        return uri;
+    }
+
+    /**
      * Set pixels per millimeters factor.
      * This method must be called before getGraphicsNode or it won't have any effect.
      *
@@ -91,8 +98,6 @@ public final class BatikSVG implements AutoCloseable {
      */
     public void setStyleSheetPath(String css) {
         this.cssPath = css;
-        this.cssData = null;
-        this.inheritCss = false;
     }
 
     /**
@@ -104,7 +109,6 @@ public final class BatikSVG implements AutoCloseable {
      *        An import instruction will be added at the begining of CSS content
      */
     public void setStyleSheetContent(String css, boolean inherit) {
-        this.cssPath = null;
         this.cssData = css;
         this.inheritCss = inherit;
     }
@@ -142,7 +146,9 @@ public final class BatikSVG implements AutoCloseable {
                     throw new IOException("SVG do not declare an external CSS file");
                 }
 
-            } else if (cssData != null) {
+            }
+
+            if (cssData != null) {
                 final Node node = document.getFirstChild();
                 if (node instanceof SVGStyleSheetProcessingInstruction cssdef) {
                     cssFileSystem = Jimfs.newFileSystem(UUID.randomUUID().toString(), Configuration.unix());
