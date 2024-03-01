@@ -95,10 +95,15 @@ public class PathWalker {
         return remaining;
     }
 
-    public void walk(float distance) {
+    /**
+     * @param distance distance to walk
+     * @return the remaining distance that could not be walked.
+     */
+    public float walk(float distance) {
 
         if (remaining > distance) {
             remaining -= distance;
+            distance = 0;
         } else {
             distance -= remaining;
             remaining = 0;
@@ -139,7 +144,7 @@ public class PathWalker {
                 if (remaining >= distance) {
                     remaining -= distance;
                     distance = 0;
-                    return;
+                    return distance;
                 } else {
                     distance -= remaining;
                     remaining = 0;
@@ -151,6 +156,7 @@ public class PathWalker {
             finished = true;
         }
 
+        return distance;
     }
 
     public Point2D getPosition(final Point2D pt) {
