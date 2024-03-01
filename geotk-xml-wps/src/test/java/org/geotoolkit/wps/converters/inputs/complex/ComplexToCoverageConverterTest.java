@@ -34,7 +34,6 @@ import org.junit.Test;
 import org.opengis.geometry.Envelope;
 
 import static org.junit.Assert.*;
-import static org.geotoolkit.test.Assert.assertRasterEquals;
 
 
 /**
@@ -42,8 +41,6 @@ import static org.geotoolkit.test.Assert.assertRasterEquals;
  * @author Quentin Boileau (Geomatys)
  */
 public class ComplexToCoverageConverterTest extends AbstractWPSConverterTest {
-
-
     @Test
     @org.junit.Ignore("Fails randomly because of GeoTIFF reader not found.")
     public void testConversion() throws UnconvertibleObjectException, IOException, InterruptedException  {
@@ -75,7 +72,6 @@ public class ComplexToCoverageConverterTest extends AbstractWPSConverterTest {
         assertTrue(expectedEnvelope.getMinimum(1) == convertedEnvelope.getMinimum(1));
         assertTrue(expectedEnvelope.getMaximum(0) == convertedEnvelope.getMaximum(0));
         assertTrue(expectedEnvelope.getMaximum(1) == convertedEnvelope.getMaximum(1));
-        assertRasterEquals(expectedCoverage.render(null),
-                             convertedCoverage.render(null));
+        assertRasterEquals(expectedCoverage, convertedCoverage);
     }
 }

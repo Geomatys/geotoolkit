@@ -16,11 +16,30 @@
  */
 package org.geotoolkit.wps.converters;
 
+import java.awt.image.RenderedImage;
+import org.apache.sis.coverage.grid.GridCoverage;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.geotoolkit.test.image.ImageTestBase.SAMPLE_TOLERANCE;
+
 
 /**
  *
  * @author Quentin Boileau (Geomatys)
  */
 public abstract class AbstractWPSConverterTest {
+    /**
+     * Compares the rendered view of two coverages for equality.
+     *
+     * @param expected The coverage containing the expected pixel values.
+     * @param actual   The coverage containing the actual pixel values.
+     */
+    protected static void assertRasterEquals(final GridCoverage expected, final GridCoverage actual) {
+        assertNotNull(expected, "Expected coverage");
+        assertNotNull(actual, "Actual coverage");
+        org.opengis.test.Assertions.assertSampleValuesEqual(expected.render(null), actual.render(null), SAMPLE_TOLERANCE, null);
+    }
 
+    protected static void assertRasterEquals(final RenderedImage expected, final RenderedImage actual) {
+        org.opengis.test.Assertions.assertSampleValuesEqual(expected, actual, SAMPLE_TOLERANCE, null);
+    }
 }

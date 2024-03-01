@@ -32,7 +32,6 @@ import org.geotoolkit.test.image.ImageTestBase;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import static org.junit.Assert.*;
-import org.geotoolkit.test.Assert;
 import static org.apache.sis.measure.Units.*;
 
 
@@ -150,19 +149,6 @@ public abstract class GridCoverageTestBase extends ImageTestBase {
         assertFalse(coverage.getSampleDimensions().get(0).getTransferFunction().get().isIdentity());
 
         this.coverage = coverage;
-    }
-
-    /**
-     * Compares the rendered view of two coverages for equality.
-     *
-     * @param expected The coverage containing the expected pixel values.
-     * @param actual   The coverage containing the actual pixel values.
-     */
-    public static void assertRasterEquals(final GridCoverage expected, final GridCoverage actual) {
-        assertNotNull("Expected coverage", expected);
-        assertNotNull("Actual coverage", actual);
-        Assert.assertRasterEquals(expected.render(null),
-                             actual.render(null));
     }
 
     /**
