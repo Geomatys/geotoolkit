@@ -27,7 +27,6 @@ import javax.media.jai.WarpAffine;
 import javax.media.jai.WarpQuadratic;
 import javax.media.jai.WarpPolynomial;
 
-import org.opengis.util.Factory;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
@@ -35,7 +34,7 @@ import org.opengis.test.referencing.TransformTestCase;
 
 import org.junit.*;
 import static org.junit.Assert.*;
-import static org.opengis.test.Assert.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 
 /**
@@ -56,7 +55,6 @@ public final class WarpTransformTest extends TransformTestCase {
      * Creates a new test case without factory.
      */
     public WarpTransformTest() {
-        super(new Factory[0]);
     }
 
     /**
@@ -107,7 +105,7 @@ public final class WarpTransformTest extends TransformTestCase {
          * Checks Warp properties.
          */
         final Warp warp = ((WarpTransform2D) transform).getWarp();
-        assertInstanceOf("Expected a polynomial warp.", WarpPolynomial.class, warp);
+        assertInstanceOf(WarpPolynomial.class, warp, "Expected a polynomial warp.");
         final WarpPolynomial poly = (WarpPolynomial) warp;
         /*
          * Compares transformations to the expected points.
@@ -174,7 +172,7 @@ public final class WarpTransformTest extends TransformTestCase {
                     point.y *= scaleY;
                 }
             }, 1);
-            assertInstanceOf("Expected an affine warp.", WarpAffine.class, warp);
+            assertInstanceOf(WarpAffine.class, warp, "Expected an affine warp.");
         }
     }
 
@@ -201,7 +199,7 @@ public final class WarpTransformTest extends TransformTestCase {
                     point.y *= scaleY;
                 }
             }, 2);
-            assertInstanceOf("Expected a quatratic warp.", WarpQuadratic.class, warp);
+            assertInstanceOf(WarpQuadratic.class, warp, "Expected a quatratic warp.");
         }
     }
 }

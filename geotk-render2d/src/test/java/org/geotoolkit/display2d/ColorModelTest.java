@@ -83,7 +83,7 @@ import org.opengis.style.PointSymbolizer;
 import org.opengis.util.FactoryException;
 
 import static org.junit.Assert.*;
-import static org.opengis.test.Assert.assertBetween;
+import static org.opengis.test.Assertions.assertBetween;
 
 
 /**
@@ -391,10 +391,10 @@ public class ColorModelTest {
             for(int y=0; y<img.getHeight(); y++){
                 //jpeg can't encode a perfect white image, CMY to RGB conversion lost I guess.
                 Color c = new Color(img.getRGB(x, y));
-                assertBetween("color is not white", 250, 255, c.getRed());
-                assertBetween("color is not white", 250, 255, c.getGreen());
-                assertBetween("color is not white", 250, 255, c.getBlue());
-                assertBetween("color is not white", 250, 255, c.getAlpha());
+                assertBetween(250, 255, c.getRed(),   "color is not white");
+                assertBetween(250, 255, c.getGreen(), "color is not white");
+                assertBetween(250, 255, c.getBlue(),  "color is not white");
+                assertBetween(250, 255, c.getAlpha(), "color is not white");
             }
         }
     }

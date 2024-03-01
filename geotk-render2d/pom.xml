@@ -82,6 +82,11 @@
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.opengis</groupId>
+            <artifactId>geoapi-conformance</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
 </project>

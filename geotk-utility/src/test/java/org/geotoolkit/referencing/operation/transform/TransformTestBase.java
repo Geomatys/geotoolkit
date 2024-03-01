@@ -20,7 +20,6 @@ package org.geotoolkit.referencing.operation.transform;
 import org.apache.sis.referencing.factory.GeodeticObjectFactory;
 import org.apache.sis.referencing.operation.transform.DefaultMathTransformFactory;
 import org.opengis.referencing.crs.CRSFactory;
-import org.opengis.referencing.datum.DatumFactory;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.test.referencing.TransformTestCase;
@@ -54,23 +53,8 @@ public abstract class TransformTestBase extends TransformTestCase {
      * @param hints The hints to use for fetching factories, or {@code null} for the default ones.
      */
     protected TransformTestBase(final Class<? extends MathTransform> type, final Hints hints) {
-        this(GeodeticObjectFactory.provider(),
-             GeodeticObjectFactory.provider(),
-             DefaultMathTransformFactory.provider());
+        crsFactory = GeodeticObjectFactory.provider();
+        mtFactory  = DefaultMathTransformFactory.provider();
         assertTrue("Tests should be run with assertions enabled.", type.desiredAssertionStatus());
-    }
-
-    /**
-     * Work around for RFE #4093999 in Sun's bug database
-     * ("Relax constraint on placement of this()/super() call in constructors").
-     */
-    private TransformTestBase(
-            final DatumFactory            datumFactory,
-            final CRSFactory                crsFactory,
-            final MathTransformFactory       mtFactory)
-    {
-        super(datumFactory, crsFactory, mtFactory);
-        this.mtFactory    = mtFactory;
-        this.crsFactory   = crsFactory;
     }
 }

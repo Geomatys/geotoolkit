@@ -25,6 +25,7 @@ import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import org.opengis.util.GenericName;
 import org.apache.sis.util.internal.CollectionsExt;
@@ -32,7 +33,7 @@ import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Deprecable;
 
 import static org.junit.Assert.*;
-import static org.opengis.test.Assert.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 // Branch-dependent imports
 import org.opengis.feature.Feature;
@@ -87,13 +88,14 @@ public class FeatureComparator {
 
     private void compareType(final IdentifiedType expected, final IdentifiedType actual) {
         boolean recognized = false;
+        final Supplier<String> message = () -> path();
         if (expected instanceof FeatureType) {
-            assertInstanceOf(path(), FeatureType.class, actual);
+            assertInstanceOf(FeatureType.class, actual, message);
             compareFeatureType((FeatureType) expected, (FeatureType) actual);
             recognized = true;
         }
         if (expected instanceof PropertyType) {
-            assertInstanceOf(path(), PropertyType.class, actual);
+            assertInstanceOf(PropertyType.class, actual, message);
             comparePropertyType((PropertyType) expected, (PropertyType) actual);
             recognized = true;
         }
@@ -154,15 +156,15 @@ public class FeatureComparator {
 
     private void comparePropertyType(final PropertyType expected, final PropertyType actual) {
         if (expected instanceof AttributeType) {
-            assertInstanceOf(path(), AttributeType.class, actual);
+            assertInstanceOf(AttributeType.class, actual, () -> path());
             compareAttribute((AttributeType) expected, (AttributeType) actual);
         }
         if (expected instanceof FeatureAssociationRole) {
-            assertInstanceOf(path(), FeatureAssociationRole.class, actual);
+            assertInstanceOf(FeatureAssociationRole.class, actual, () -> path());
             compareFeatureAssociationRole((FeatureAssociationRole) expected, (FeatureAssociationRole) actual);
         }
         if (expected instanceof Operation) {
-            assertInstanceOf(path(), Operation.class, actual);
+            assertInstanceOf(Operation.class, actual, () -> path());
             compareOperation((Operation) expected, (Operation) actual);
         }
     }

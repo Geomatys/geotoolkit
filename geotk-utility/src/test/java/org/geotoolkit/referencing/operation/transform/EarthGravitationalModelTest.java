@@ -21,7 +21,6 @@ import java.util.Arrays;
 import java.io.IOException;
 import java.text.ParseException;
 
-import org.opengis.util.Factory;
 import org.opengis.util.FactoryException;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.parameter.ParameterValueGroup;
@@ -52,7 +51,6 @@ public final class EarthGravitationalModelTest extends TransformTestCase {
      * Creates a new test case without factory.
      */
     public EarthGravitationalModelTest() {
-        super(new Factory[0]);
     }
 
     /**

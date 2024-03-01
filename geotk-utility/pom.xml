@@ -121,6 +121,11 @@
       <artifactId>jai_core</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.opengis</groupId>
+      <artifactId>geoapi-conformance</artifactId>
+      <scope>test</scope>
+    </dependency>
 
   </dependencies>
 </project>
