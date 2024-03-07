@@ -67,7 +67,7 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.map.ExceptionPresentation;
 import org.apache.sis.map.Presentation;
 import org.apache.sis.map.coverage.RenderingWorkaround;
-import org.apache.sis.util.internal.UnmodifiableArrayList;
+import org.apache.sis.util.privy.UnmodifiableArrayList;
 import org.apache.sis.feature.Features;
 import org.apache.sis.map.MapLayer;
 import org.apache.sis.map.MapLayers;

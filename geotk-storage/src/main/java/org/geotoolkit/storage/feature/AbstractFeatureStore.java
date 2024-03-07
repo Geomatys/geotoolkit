@@ -30,7 +30,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.apache.sis.feature.internal.AttributeConvention;
+import org.apache.sis.feature.privy.AttributeConvention;
 import org.apache.sis.storage.base.MetadataBuilder;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.Aggregate;

@@ -47,7 +47,7 @@ import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.referencing.IdentifiedObjects;
 
-import org.apache.sis.util.internal.UnmodifiableArrayList;
+import org.apache.sis.util.privy.UnmodifiableArrayList;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 

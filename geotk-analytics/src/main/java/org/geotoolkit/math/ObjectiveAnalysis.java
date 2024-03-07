@@ -29,7 +29,7 @@ import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
 import javax.media.jai.RasterFactory;
 import org.apache.sis.coverage.grid.PixelTranslation;
-import org.apache.sis.coverage.grid.j2d.ColorModelFactory;
+import org.apache.sis.coverage.privy.ColorModelFactory;
 import org.apache.sis.math.Plane;
 import org.apache.sis.referencing.operation.matrix.Matrices;
 import org.apache.sis.referencing.operation.matrix.MatrixSIS;

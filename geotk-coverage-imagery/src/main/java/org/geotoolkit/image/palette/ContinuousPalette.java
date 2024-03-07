@@ -24,7 +24,7 @@ import java.awt.color.ColorSpace;
 import javax.imageio.ImageTypeSpecifier;
 
 import org.geotoolkit.util.Utilities;
-import org.apache.sis.coverage.grid.j2d.ColorModelFactory;
+import org.apache.sis.coverage.privy.ColorModelFactory;
 
 
 /**

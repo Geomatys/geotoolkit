@@ -30,7 +30,7 @@ import java.awt.image.Raster;
 import java.awt.image.SampleModel;
 import java.util.Arrays;
 import javax.imageio.ImageTypeSpecifier;
-import org.apache.sis.coverage.grid.j2d.ColorModelFactory;
+import org.apache.sis.coverage.privy.ColorModelFactory;
 import org.geotoolkit.lang.Static;
 
 import static org.geotoolkit.image.internal.PlanarConfiguration.INTERLEAVED;

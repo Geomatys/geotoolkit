@@ -33,7 +33,7 @@ import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.FilterFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.apache.sis.feature.internal.AttributeConvention;
+import org.apache.sis.feature.privy.AttributeConvention;
 import org.apache.sis.referencing.CommonCRS;
 
 

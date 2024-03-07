@@ -29,7 +29,7 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.coverage.grid.BufferedGridCoverage;
-import org.apache.sis.referencing.util.j2d.AffineTransform2D;
+import org.apache.sis.referencing.privy.AffineTransform2D;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;

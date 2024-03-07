@@ -45,7 +45,7 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.referencing.util.j2d.AffineTransform2D;
+import org.apache.sis.referencing.privy.AffineTransform2D;
 import org.apache.sis.referencing.operation.provider.Affine;
 import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CRS;

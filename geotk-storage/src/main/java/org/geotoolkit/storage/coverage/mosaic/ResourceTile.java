@@ -31,7 +31,7 @@ import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
-import org.apache.sis.referencing.util.j2d.Tile;
+import org.apache.sis.referencing.operation.gridded.Tile;
 
 
 /**

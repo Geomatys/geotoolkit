@@ -27,7 +27,7 @@ import java.util.TimeZone;
 import org.opengis.metadata.Identifier;
 import javax.measure.Unit;
 import javax.sql.DataSource;
-import org.apache.sis.referencing.util.GeodeticObjectBuilder;
+import org.apache.sis.referencing.privy.GeodeticObjectBuilder;
 import org.geotoolkit.coverage.postgresql.PGCoverageStore;
 import org.opengis.referencing.crs.CompoundCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;

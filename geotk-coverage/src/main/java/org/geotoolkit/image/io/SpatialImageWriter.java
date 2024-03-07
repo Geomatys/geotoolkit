@@ -42,7 +42,7 @@ import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.Disposable;
 import org.apache.sis.util.Locales;
 import org.geotoolkit.resources.Loggings;
-import org.apache.sis.coverage.grid.j2d.ImageUtilities;
+import org.apache.sis.coverage.privy.ImageUtilities;
 import org.apache.sis.util.logging.Logging;
 
 import static org.geotoolkit.image.io.SpatialImageReader.Spi.getMetadataFormatCode;

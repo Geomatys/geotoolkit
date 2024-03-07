@@ -38,7 +38,7 @@ import org.opengis.parameter.ParameterValueGroup;
 
 import org.geotoolkit.feature.util.converter.SimpleConverter;
 import org.geotoolkit.feature.FeatureExt;
-import org.apache.sis.feature.internal.AttributeConvention;
+import org.apache.sis.feature.privy.AttributeConvention;
 
 import static org.geotoolkit.processing.vector.merge.MergeDescriptor.*;
 

@@ -22,7 +22,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.referencing.util.GeodeticObjectBuilder;
+import org.apache.sis.referencing.privy.GeodeticObjectBuilder;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.junit.Test;

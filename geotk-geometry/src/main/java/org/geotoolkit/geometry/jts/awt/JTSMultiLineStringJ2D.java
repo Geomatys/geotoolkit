@@ -19,7 +19,7 @@ package org.geotoolkit.geometry.jts.awt;
 import org.locationtech.jts.geom.MultiLineString;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
-import org.apache.sis.referencing.util.j2d.AffineTransform2D;
+import org.apache.sis.referencing.privy.AffineTransform2D;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.opengis.referencing.operation.MathTransform;
 

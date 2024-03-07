@@ -43,7 +43,7 @@ import java.util.Optional;
 import java.util.Set;
 import org.apache.sis.feature.Features;
 import org.geotoolkit.feature.FeatureExt;
-import org.apache.sis.feature.internal.AttributeConvention;
+import org.apache.sis.feature.privy.AttributeConvention;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.event.FeatureStoreContentEvent;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;

@@ -26,7 +26,7 @@ import javax.measure.Quantity;
 import javax.measure.quantity.Length;
 import org.apache.sis.filter.DefaultFilterFactory;
 import org.apache.sis.geometry.Envelopes;
-import org.apache.sis.feature.internal.AttributeConvention;
+import org.apache.sis.feature.privy.AttributeConvention;
 import org.apache.sis.geometry.wrapper.Geometries;
 import org.apache.sis.measure.Quantities;
 import org.apache.sis.storage.DataStoreException;

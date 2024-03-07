@@ -17,9 +17,9 @@
 package org.geotoolkit.coverage.sql;
 
 import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.metadata.sql.util.ScriptRunner;
-import org.apache.sis.util.internal.Constants;
-import org.apache.sis.util.internal.UnmodifiableArrayList;
+import org.apache.sis.metadata.sql.privy.ScriptRunner;
+import org.apache.sis.util.privy.Constants;
+import org.apache.sis.util.privy.UnmodifiableArrayList;
 import org.apache.sis.measure.MeasurementRange;
 import org.apache.sis.measure.Units;
 import org.apache.sis.metadata.sql.MetadataSource;

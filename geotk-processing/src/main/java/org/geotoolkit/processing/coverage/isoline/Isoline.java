@@ -29,7 +29,7 @@ import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.image.PixelIterator;
-import org.apache.sis.feature.internal.AttributeConvention;
+import org.apache.sis.feature.privy.AttributeConvention;
 import org.apache.sis.geometry.wrapper.jts.Factory;
 import org.apache.sis.image.processing.isoline.Isolines;
 import org.apache.sis.referencing.operation.transform.MathTransforms;

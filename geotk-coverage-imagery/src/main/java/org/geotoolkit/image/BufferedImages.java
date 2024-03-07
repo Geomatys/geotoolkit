@@ -41,9 +41,9 @@ import javax.media.jai.RasterFactory;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.PlanarImage;
 import org.apache.sis.image.WritablePixelIterator;
-import org.apache.sis.coverage.grid.j2d.ColorModelFactory;
-import org.apache.sis.coverage.grid.j2d.ObservableImage;
-import org.apache.sis.coverage.grid.j2d.FillValues;
+import org.apache.sis.coverage.privy.ColorModelFactory;
+import org.apache.sis.coverage.privy.ObservableImage;
+import org.apache.sis.coverage.privy.FillValues;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Static;
 import org.geotoolkit.image.internal.ImageUtilities;
@@ -180,7 +180,7 @@ public class BufferedImages extends Static {
                 }
                 final int[] zero = new int[1];
                 //TODO create our own raster factory to avoid JAI
-                raster = org.apache.sis.coverage.grid.j2d.RasterFactory.createRaster(buffer, width, height, 1, width, zero, zero, upperLeft);
+                raster = org.apache.sis.coverage.privy.RasterFactory.createRaster(buffer, width, height, 1, width, zero, zero, upperLeft);
                 //raster = RasterFactory.createBandedRaster(buffer, width, height, width, zero, zero, upperLeft);
             }
 

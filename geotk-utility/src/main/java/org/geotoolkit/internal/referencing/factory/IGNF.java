@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.TreeMap;
 import java.util.Collections;
-import org.apache.sis.referencing.util.ReferencingFactoryContainer;
+import org.apache.sis.referencing.privy.ReferencingFactoryContainer;
 
 import org.opengis.util.FactoryException;
 import org.opengis.util.InternationalString;

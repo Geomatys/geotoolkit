@@ -39,7 +39,7 @@ import java.util.logging.Logger;
 import org.apache.sis.feature.Features;
 import org.geotoolkit.feature.SingleAttributeTypeBuilder;
 import org.geotoolkit.feature.FeatureExt;
-import org.apache.sis.feature.internal.AttributeConvention;
+import org.apache.sis.feature.privy.AttributeConvention;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;

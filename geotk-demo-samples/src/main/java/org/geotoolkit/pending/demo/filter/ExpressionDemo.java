@@ -4,7 +4,7 @@ package org.geotoolkit.pending.demo.filter;
 
 import java.util.Collection;
 import java.util.Iterator;
-import org.apache.sis.filter.internal.FunctionRegister;
+import org.apache.sis.filter.FunctionRegister;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.Classes;

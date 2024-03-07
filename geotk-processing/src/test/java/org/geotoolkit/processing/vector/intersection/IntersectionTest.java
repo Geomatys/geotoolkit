@@ -18,7 +18,7 @@ package org.geotoolkit.processing.vector.intersection;
 
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.feature.internal.AttributeConvention;
+import org.apache.sis.feature.privy.AttributeConvention;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.process.ProcessDescriptor;

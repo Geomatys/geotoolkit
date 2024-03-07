@@ -56,7 +56,7 @@ public final class ShapeUtilities extends Static {
      */
     @Deprecated
     public static Point2D.Double intersectionPoint(final Line2D a, final Line2D b) {
-        return org.apache.sis.referencing.util.j2d.ShapeUtilities.intersectionPoint(
+        return org.apache.sis.referencing.privy.ShapeUtilities.intersectionPoint(
                 a.getX1(), a.getY1(), a.getX2(), a.getY2(),
                 b.getX1(), b.getY1(), b.getX2(), b.getY2());
     }
@@ -85,7 +85,7 @@ public final class ShapeUtilities extends Static {
      */
     @Deprecated
     public static Point2D.Double nearestColinearPoint(final Line2D segment, final Point2D point) {
-        return org.apache.sis.referencing.util.j2d.ShapeUtilities.nearestColinearPoint(
+        return org.apache.sis.referencing.privy.ShapeUtilities.nearestColinearPoint(
                 segment.getX1(), segment.getY1(),
                 segment.getX2(), segment.getY2(),
                   point.getX(),    point.getY());
@@ -119,7 +119,7 @@ public final class ShapeUtilities extends Static {
      */
     @Deprecated
     public static Point2D.Double colinearPoint(Line2D line, Point2D point, double distance) {
-        return org.apache.sis.referencing.util.j2d.ShapeUtilities.colinearPoint(
+        return org.apache.sis.referencing.privy.ShapeUtilities.colinearPoint(
                 line.getX1(), line.getY1(), line.getX2(), line.getY2(),
                 point.getX(), point.getY(), distance);
     }
@@ -155,7 +155,7 @@ public final class ShapeUtilities extends Static {
     public static QuadCurve2D.Double fitParabol(
             final Point2D P0, final Point2D P1, final Point2D P2, final boolean horizontal)
     {
-        return org.apache.sis.referencing.util.j2d.ShapeUtilities.fitParabol(
+        return org.apache.sis.referencing.privy.ShapeUtilities.fitParabol(
                 P0.getX(), P0.getY(),
                 P1.getX(), P1.getY(),
                 P2.getX(), P2.getY(), horizontal);
@@ -193,7 +193,7 @@ public final class ShapeUtilities extends Static {
     public static Point2D.Double parabolicControlPoint(
             final Point2D P0, final Point2D P1, final Point2D P2, final boolean horizontal)
     {
-        return org.apache.sis.referencing.util.j2d.ShapeUtilities.parabolicControlPoint(
+        return org.apache.sis.referencing.privy.ShapeUtilities.parabolicControlPoint(
                 P0.getX(), P0.getY(),
                 P1.getX(), P1.getY(),
                 P2.getX(), P2.getY(), horizontal);
@@ -211,7 +211,7 @@ public final class ShapeUtilities extends Static {
      */
     @Deprecated
     public static Ellipse2D.Double fitCircle(final Point2D P1, final Point2D P2, final Point2D P3) {
-        final Point2D center = org.apache.sis.referencing.util.j2d.ShapeUtilities.circleCentre(
+        final Point2D center = org.apache.sis.referencing.privy.ShapeUtilities.circleCentre(
                 P1.getX(), P1.getY(),
                 P2.getX(), P2.getY(),
                 P3.getX(), P3.getY());
@@ -232,7 +232,7 @@ public final class ShapeUtilities extends Static {
      * @return A simpler Java construct, or {@code path} if no better construct is proposed.
      */
     public static Shape toPrimitive(final Shape path) {
-        return org.apache.sis.referencing.util.j2d.ShapeUtilities.toPrimitive(path);
+        return org.apache.sis.referencing.privy.ShapeUtilities.toPrimitive(path);
     }
 
     /**

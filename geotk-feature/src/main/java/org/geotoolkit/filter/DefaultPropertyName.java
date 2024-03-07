@@ -20,7 +20,7 @@ package org.geotoolkit.filter;
 
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.feature.builder.PropertyTypeBuilder;
-import org.apache.sis.feature.internal.FeatureExpression;
+import org.apache.sis.feature.privy.FeatureExpression;
 import org.apache.sis.referencing.CRS;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.logging.Logging;

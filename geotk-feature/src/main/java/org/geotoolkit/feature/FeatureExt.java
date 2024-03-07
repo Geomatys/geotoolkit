@@ -44,7 +44,7 @@ import org.apache.sis.feature.DefaultFeatureType;
 import org.apache.sis.feature.Features;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.feature.internal.AttributeConvention;
+import org.apache.sis.feature.privy.AttributeConvention;
 import org.apache.sis.geometry.wrapper.Geometries;
 import org.apache.sis.parameter.Parameters;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;

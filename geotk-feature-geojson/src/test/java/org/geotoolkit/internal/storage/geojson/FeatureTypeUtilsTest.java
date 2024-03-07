@@ -22,7 +22,7 @@ import java.util.Date;
 import org.geotoolkit.test.feature.FeatureComparator;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.feature.internal.AttributeConvention;
+import org.apache.sis.feature.privy.AttributeConvention;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.SimpleInternationalString;
 import org.geotoolkit.feature.FeatureExt;

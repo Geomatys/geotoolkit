@@ -25,7 +25,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.sis.util.internal.UnmodifiableArrayList;
+import org.apache.sis.util.privy.UnmodifiableArrayList;
 import org.apache.sis.io.TableAppender;
 import org.opengis.feature.Feature;
 import org.opengis.geometry.Envelope;

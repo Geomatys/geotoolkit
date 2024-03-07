@@ -26,7 +26,7 @@ import java.util.Objects;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
-import org.apache.sis.referencing.util.NilReferencingObject;
+import org.apache.sis.referencing.privy.NilReferencingObject;
 import org.apache.sis.referencing.AbstractIdentifiedObject;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ComparisonMode;

@@ -27,7 +27,7 @@ import org.opengis.referencing.datum.*;
 import org.opengis.referencing.IdentifiedObject;
 
 import org.geotoolkit.lang.Static;
-import org.apache.sis.util.internal.UnmodifiableArrayList;
+import org.apache.sis.util.privy.UnmodifiableArrayList;
 
 
 /**

@@ -20,7 +20,7 @@ package org.geotoolkit.filter.visitor;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import org.apache.sis.filter.internal.FunctionNames;
+import org.apache.sis.filter.privy.FunctionNames;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;

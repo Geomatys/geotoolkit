@@ -29,7 +29,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 
 import org.apache.sis.geometry.GeneralDirectPosition;
-import org.apache.sis.referencing.util.GeodeticObjectBuilder;
+import org.apache.sis.referencing.privy.GeodeticObjectBuilder;
 import org.apache.sis.referencing.CRS;
 
 import org.geotoolkit.image.io.metadata.ReferencingBuilder;

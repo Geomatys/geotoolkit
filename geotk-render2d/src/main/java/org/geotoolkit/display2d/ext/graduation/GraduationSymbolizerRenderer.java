@@ -32,7 +32,7 @@ import javax.measure.Unit;
 import javax.measure.UnitConverter;
 import org.apache.sis.map.ExceptionPresentation;
 import org.apache.sis.map.Presentation;
-import org.apache.sis.referencing.util.ReferencingUtilities;
+import org.apache.sis.referencing.privy.ReferencingUtilities;
 import org.apache.sis.measure.Units;
 import org.apache.sis.map.MapLayer;
 import org.geotoolkit.display2d.GO2Utilities;

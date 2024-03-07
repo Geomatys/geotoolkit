@@ -27,7 +27,7 @@ import java.net.URI;
 import java.util.Collection;
 import javax.imageio.ImageIO;
 
-import org.apache.sis.util.internal.UnmodifiableArrayList;
+import org.apache.sis.util.privy.UnmodifiableArrayList;
 
 /**
  * External graphic factory accepting an Expression that can be evaluated to a

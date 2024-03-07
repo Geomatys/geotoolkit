@@ -25,7 +25,7 @@ import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.stream.Collectors;
-import org.apache.sis.feature.internal.AttributeConvention;
+import org.apache.sis.feature.privy.AttributeConvention;
 import org.apache.sis.math.MathFunctions;
 import org.apache.sis.util.Numbers;
 import org.geotoolkit.storage.feature.FeatureCollection;

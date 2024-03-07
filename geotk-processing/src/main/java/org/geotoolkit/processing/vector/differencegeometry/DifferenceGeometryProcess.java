@@ -28,7 +28,7 @@ import org.opengis.feature.PropertyType;
 import org.geotoolkit.processing.vector.VectorDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
 import org.geotoolkit.feature.FeatureExt;
-import org.apache.sis.feature.internal.AttributeConvention;
+import org.apache.sis.feature.privy.AttributeConvention;
 
 import org.opengis.feature.AttributeType;
 

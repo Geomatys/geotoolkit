@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.function.Function;
 import org.opengis.util.CodeList;
 import org.apache.sis.feature.internal.Resources;
-import org.apache.sis.filter.internal.FunctionNames;
+import org.apache.sis.filter.privy.FunctionNames;
 
 // Branch-dependent imports
 import org.opengis.filter.Filter;

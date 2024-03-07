@@ -29,7 +29,7 @@ import java.util.logging.Level;
 import javax.measure.Quantity;
 import javax.measure.quantity.Length;
 import org.apache.sis.feature.AbstractOperation;
-import org.apache.sis.feature.internal.AttributeConvention;
+import org.apache.sis.feature.privy.AttributeConvention;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CRS;

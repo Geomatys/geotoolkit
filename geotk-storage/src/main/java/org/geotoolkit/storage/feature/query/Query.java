@@ -22,7 +22,7 @@ import java.util.Date;
 import java.util.List;
 import javax.measure.Quantity;
 import javax.measure.quantity.Length;
-import org.apache.sis.filter.internal.XPath;
+import org.apache.sis.filter.privy.XPath;
 import org.apache.sis.storage.FeatureQuery;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import org.geotoolkit.factory.Hints;

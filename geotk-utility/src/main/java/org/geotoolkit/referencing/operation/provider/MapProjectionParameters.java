@@ -25,7 +25,7 @@ import org.opengis.parameter.ParameterNotFoundException;
 
 import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.resources.Errors;
-import org.apache.sis.referencing.util.Formulas;
+import org.apache.sis.referencing.privy.Formulas;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.parameter.DefaultParameterValue;
 import org.apache.sis.parameter.DefaultParameterValueGroup;

@@ -34,7 +34,7 @@ import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.GeodeticCalculator;
 import org.geotoolkit.geometry.jts.JTS;
-import org.apache.sis.referencing.util.ReferencingUtilities;
+import org.apache.sis.referencing.privy.ReferencingUtilities;
 import org.apache.sis.referencing.operation.transform.DefaultMathTransformFactory;
 
 import org.opengis.geometry.MismatchedDimensionException;

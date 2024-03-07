@@ -22,7 +22,7 @@ import java.util.Collections;
 import java.util.Map;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.filter.internal.Node;
-import org.apache.sis.feature.internal.AttributeConvention;
+import org.apache.sis.feature.privy.AttributeConvention;
 import org.opengis.feature.Feature;
 import org.opengis.filter.Expression;
 import org.opengis.filter.ResourceId;

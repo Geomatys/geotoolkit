@@ -32,7 +32,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import jakarta.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
-import org.apache.sis.feature.internal.AttributeConvention;
+import org.apache.sis.feature.privy.AttributeConvention;
 import org.apache.sis.storage.base.ResourceOnFileSystem;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;

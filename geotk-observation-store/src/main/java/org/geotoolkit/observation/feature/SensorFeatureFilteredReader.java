@@ -17,7 +17,7 @@
 package org.geotoolkit.observation.feature;
 
 import java.util.Map;
-import org.apache.sis.feature.internal.AttributeConvention;
+import org.apache.sis.feature.privy.AttributeConvention;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.observation.ObservationFilterReader;
 import static org.geotoolkit.observation.feature.OMFeatureTypes.*;

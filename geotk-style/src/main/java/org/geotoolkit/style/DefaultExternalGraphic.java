@@ -21,7 +21,7 @@ import java.util.Collections;
 import java.util.Objects;
 import javax.swing.Icon;
 
-import org.apache.sis.util.internal.UnmodifiableArrayList;
+import org.apache.sis.util.privy.UnmodifiableArrayList;
 
 import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.style.ColorReplacement;

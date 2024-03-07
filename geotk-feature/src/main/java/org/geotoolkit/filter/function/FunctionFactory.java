@@ -18,7 +18,7 @@
 package org.geotoolkit.filter.function;
 
 import java.util.Set;
-import org.apache.sis.filter.internal.FunctionRegister;
+import org.apache.sis.filter.FunctionRegister;
 import org.opengis.filter.Expression;
 import org.opengis.filter.Literal;
 import org.opengis.parameter.ParameterDescriptorGroup;

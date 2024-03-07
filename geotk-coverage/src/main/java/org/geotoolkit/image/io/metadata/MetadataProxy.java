@@ -40,7 +40,7 @@ import org.opengis.coverage.grid.GridEnvelope;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.iso.Types;
-import org.apache.sis.util.internal.UnmodifiableArrayList;
+import org.apache.sis.util.privy.UnmodifiableArrayList;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.resources.Errors;

@@ -29,7 +29,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.sis.feature.internal.AttributeConvention;
+import org.apache.sis.feature.privy.AttributeConvention;
 import org.apache.sis.util.Numbers;
 import org.apache.sis.util.ObjectConverter;
 import org.apache.sis.util.ObjectConverters;

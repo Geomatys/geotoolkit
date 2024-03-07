@@ -34,7 +34,7 @@ import org.apache.sis.util.Utilities;
 import org.geotoolkit.factory.FactoryRegistryException;
 import org.apache.sis.geometry.Envelopes;
 import org.geotoolkit.resources.Errors;
-import org.apache.sis.metadata.internal.NameMeaning;
+import org.apache.sis.metadata.privy.NameMeaning;
 import org.apache.sis.referencing.internal.VerticalDatumTypes;
 import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.apache.sis.referencing.operation.DefaultCoordinateOperationFactory;

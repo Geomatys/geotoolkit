@@ -39,9 +39,9 @@ import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
 import jakarta.xml.bind.Unmarshaller;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.util.internal.Constants;
-import org.apache.sis.util.internal.URLs;
-import org.apache.sis.xml.util.LegacyNamespaces;
+import org.apache.sis.util.privy.Constants;
+import org.apache.sis.util.privy.URLs;
+import org.apache.sis.xml.privy.LegacyNamespaces;
 import org.apache.sis.util.DefaultInternationalString;
 
 import org.geotoolkit.inspire.xml.vs.ExtendedCapabilitiesType;

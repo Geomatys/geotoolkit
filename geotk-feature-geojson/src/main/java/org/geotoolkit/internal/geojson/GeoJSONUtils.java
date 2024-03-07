@@ -43,7 +43,7 @@ import java.util.function.Predicate;
 import java.util.logging.Level;
 import org.apache.sis.feature.AbstractOperation;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.feature.internal.AttributeConvention;
+import org.apache.sis.feature.privy.AttributeConvention;
 import org.apache.sis.io.stream.IOUtilities;
 import org.apache.sis.io.wkt.Convention;
 import org.apache.sis.io.wkt.WKTFormat;

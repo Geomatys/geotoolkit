@@ -26,7 +26,7 @@ import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import java.util.logging.Level;
 import org.apache.sis.geometry.Envelopes;
-import org.apache.sis.filter.internal.FunctionNames;
+import org.apache.sis.filter.privy.FunctionNames;
 import org.apache.sis.util.Utilities;
 import org.opengis.filter.Filter;
 import org.opengis.filter.SpatialOperator;
