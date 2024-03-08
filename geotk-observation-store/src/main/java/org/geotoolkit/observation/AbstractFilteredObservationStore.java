@@ -139,14 +139,15 @@ public abstract class AbstractFilteredObservationStore extends AbstractObservati
             String type         = obs.getProperties().getOrDefault("type", "timeseries").toString();
             String sensorType   = obs.getProperties().getOrDefault("sensorType", "Component").toString();
 
-            final ProcedureDataset procedure = new ProcedureDataset(proc.getId(), proc.getName(), proc.getDescription(), sensorType, type, new ArrayList<>(), null);
-            if (sensorIDs.isEmpty() || sensorIDs.contains(procedure.getId())) {
-                if (!result.procedures.contains(procedure)) {
-                    result.procedures.add(procedure);
-                }
+            if (sensorIDs.isEmpty() || sensorIDs.contains(proc.getId())) {
                 final Phenomenon phen = obs.getObservedProperty();
                 if (!result.phenomenons.contains(phen)) {
                     result.phenomenons.add(phen);
+                }
+                List<String> fields = OMUtils.getPhenomenonsFieldIdentifiers(phen);
+                final ProcedureDataset procedure = new ProcedureDataset(proc.getId(), proc.getName(), proc.getDescription(), sensorType, type, fields, null);
+                if (!result.procedures.contains(procedure)) {
+                    result.procedures.add(procedure);
                 }
                 SamplingFeature foi = obs.getFeatureOfInterest();
                 if (!result.featureOfInterest.contains(foi)) {
@@ -183,9 +184,8 @@ public abstract class AbstractFilteredObservationStore extends AbstractObservati
         final ObservationFilterReader procFilter = getFilter();
         procFilter.init(new ProcedureQuery());
         procFilter.setProcedure(query.getSensorIds());
-        
-        // TODO apply filter
 
+        // TODO apply filter
         for (org.opengis.observation.Process p : procFilter.getProcesses()) {
 
             final Procedure proc  =  (Procedure) p;
