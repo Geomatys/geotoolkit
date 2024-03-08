@@ -109,8 +109,8 @@ public class VisitorTest {
         ListVisitor visitor = new ListVisitor();
 
         //ensure we can paint image
-        DefaultPortrayalService.portray(context, env, dim, true);
-        DefaultPortrayalService.visit(context, env, dim, true, null, shparea, visitor);
+        DefaultPortrayalService.portray(new CanvasDef(dim, env),  new SceneDef(context));
+        DefaultPortrayalService.visit(new CanvasDef(dim, env),  new SceneDef(context), new VisitDef(shparea, visitor));
 
         assertEquals(1, visitor.features.size());
         assertEquals("id-0", FeatureExt.getId(visitor.features.get(0)).getIdentifier());
@@ -119,8 +119,8 @@ public class VisitorTest {
         visitor = new ListVisitor();
 
         //ensure we can paint image
-        DefaultPortrayalService.portray(context, env, dim, true);
-        DefaultPortrayalService.visit(context, env, dim, true, null, shparea, visitor);
+        DefaultPortrayalService.portray(new CanvasDef(dim, env),  new SceneDef(context));
+        DefaultPortrayalService.visit(new CanvasDef(dim, env),  new SceneDef(context), new VisitDef(shparea, visitor));
 
         assertTrue(visitor.features.size() == 0);
     }
@@ -153,7 +153,7 @@ public class VisitorTest {
         final Shape shparea = new Rectangle(195, 75, 2, 2); //starting at top left corner
         final ListVisitor visitor = new ListVisitor();
 
-        DefaultPortrayalService.visit(context, env, dim, true, null, shparea, visitor);
+        DefaultPortrayalService.visit(new CanvasDef(dim, env),  new SceneDef(context), new VisitDef(shparea, visitor));
 
         assertTrue(visitor.coverages.size() != 0);
     }
