@@ -71,6 +71,11 @@ public final class StylePainter implements org.apache.sis.map.service.StylePaint
     }
 
     @Override
+    public Stream<Presentation> present(Scene2D sd, MapLayer ml) {
+        return new SEPortrayer().present(sd.grid, ml);
+    }
+
+    @Override
     public Stream<Presentation> intersects(Scene2D scene, MapLayer layer, Shape mask) {
         return Stream.empty();
     }

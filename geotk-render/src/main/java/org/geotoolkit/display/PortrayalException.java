@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.display;
 
+import org.apache.sis.map.service.RenderingException;
+
 /**
  * Exception that may be thrown by a portraying operation.
  *
@@ -23,7 +25,7 @@ package org.geotoolkit.display;
  * @author Cédric Briançon (Geomatys)
  * @module
  */
-public final class PortrayalException extends Exception{
+public final class PortrayalException extends RenderingException {
 
     private static final String ERROR = "Portrayal exception : ";
     private static final long serialVersionUID = 3200411272785006830L;

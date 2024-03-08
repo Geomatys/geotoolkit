@@ -594,17 +594,6 @@ public final class DefaultPortrayalService implements PortrayalService{
     // VISITING A CONTEXT //////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
 
-    public static void visit( final MapLayers context, final Envelope contextEnv,
-            final Dimension canvasDimension, final boolean strechImage, final Hints hints,
-            final Shape selectedArea, final GraphicVisitor visitor)
-            throws PortrayalException {
-        final CanvasDef canvasDef = new CanvasDef();
-        canvasDef.setDimension(canvasDimension);
-        canvasDef.setStretchImage(strechImage);
-        canvasDef.setEnvelope(contextEnv);
-        visit(canvasDef, new SceneDef(context,hints), new VisitDef(selectedArea, visitor));
-    }
-
     public static void visit(final CanvasDef canvasDef, final SceneDef sceneDef, final VisitDef visitDef)
             throws PortrayalException {
 
