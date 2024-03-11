@@ -63,6 +63,7 @@ import javax.imageio.spi.ImageWriterSpi;
 import org.apache.sis.coverage.grid.DisjointExtentException;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverageBuilder;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.map.ExceptionPresentation;
 import org.apache.sis.map.Presentation;
@@ -71,6 +72,8 @@ import org.apache.sis.util.privy.UnmodifiableArrayList;
 import org.apache.sis.feature.Features;
 import org.apache.sis.map.MapLayer;
 import org.apache.sis.map.MapLayers;
+import org.apache.sis.map.service.GraphicsPortrayer;
+import org.apache.sis.map.service.RenderingException;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStoreException;
@@ -176,39 +179,45 @@ public final class DefaultPortrayalService implements PortrayalService{
 
     public static RenderedImage portray(final CanvasDef canvasDef, final SceneDef sceneDef) throws PortrayalException{
 
-        final Envelope contextEnv = canvasDef.getEnvelope();
-        final CoordinateReferenceSystem crs = contextEnv.getCoordinateReferenceSystem();
-        final Graphics2D graphics = canvasDef.getGraphics();
+        final Hints hints = sceneDef.getHints();
+        ColorModel cm = (ColorModel) hints.get(GO2Hints.KEY_COLOR_MODEL);
 
-        final J2DCanvas canvas;
-        if (graphics == null) {
-            //render in image
-            canvas = new J2DCanvasBuffered(
-                crs,
-                canvasDef.getDimension(),
-                sceneDef.getHints());
+        final GridGeometry grid = canvasDef.getOrCreateGridGeometry();
+        final CanvasMonitor monitor = canvasDef.getMonitor();
+        final Color background = canvasDef.getBackground();
+        if (cm == null && background != null && background.getAlpha() == 255) {
+            //opaque background, we can remove the alpha channel
+            cm = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB).getColorModel();
+        }
+
+        final GridExtent extent = grid.getExtent();
+        final int width = Math.toIntExact(extent.getSize(0));
+        final int height = Math.toIntExact(extent.getSize(1));
+        final BufferedImage image;
+        if (cm != null) {
+            image = new BufferedImage(cm,
+                    cm.createCompatibleWritableRaster(width, height),
+                    cm.isAlphaPremultiplied(), null);
         } else {
-            //render to provided graphics2D
-            canvas = new J2DCanvasDirect(crs, sceneDef.getHints());
-            ((J2DCanvasDirect) canvas).setGraphics2D(graphics);
-            canvas.setDisplayBounds(new Rectangle(canvasDef.getDimension()));
+            image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        }
+        final Graphics2D g = image.createGraphics();
+        if (sceneDef.getHints() != null) {
+            g.setRenderingHints(sceneDef.getHints());
+        }
+        if (background != null) {
+            g.fillRect(0, 0, width, height);
         }
 
-        prepareCanvas(canvas, canvasDef, sceneDef);
-        canvas.repaint();
-
-        RenderedImage buffer = null;
-        if (graphics == null) {
-            buffer = (RenderedImage) canvas.getSnapShot();
-            try {
-                canvas.dispose();
-            } catch (RuntimeException e) {
-                LOGGER.warning("Error on resource disposal. Might cause memory leak.");
-                LOGGER.log(Level.FINE, "Error on resource disposal. Might cause memory leak.", e);
-            }
+        final GraphicsPortrayer portrayer = new GraphicsPortrayer();
+        portrayer.setCanvas(g);
+        portrayer.setDomain(grid);
+        try {
+            portrayer.portray(sceneDef.getContext());
+        } catch (RenderingException ex) {
+            throw new PortrayalException(ex);
         }
-
-        return buffer;
+        return image;
     }
 
     public static void prepareCanvas(final J2DCanvas canvas, final CanvasDef canvasDef, final SceneDef sceneDef) throws PortrayalException{

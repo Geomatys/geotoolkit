@@ -20,6 +20,7 @@ import java.awt.Image;
 import java.awt.Shape;
 import java.util.stream.Stream;
 import org.apache.sis.map.MapLayer;
+import org.apache.sis.map.MapLayers;
 import org.apache.sis.map.Presentation;
 import org.apache.sis.map.service.RenderingException;
 import org.apache.sis.map.service.Scene2D;
@@ -27,7 +28,9 @@ import org.apache.sis.style.Style;
 import org.geotoolkit.display.container.GraphicContainer;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
+import org.geotoolkit.display2d.container.ContextContainer2D;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.style.DefaultMutableStyle;
 import org.geotoolkit.style.MutableStyle;
 import org.opengis.util.FactoryException;
 
@@ -40,7 +43,7 @@ public final class StylePainter implements org.apache.sis.map.service.StylePaint
 
     @Override
     public Class<? extends Style> getStyleClass() {
-        return MutableStyle.class;
+        return DefaultMutableStyle.class;
     }
 
     @Override
@@ -64,6 +67,11 @@ public final class StylePainter implements org.apache.sis.map.service.StylePaint
         };
         try {
             canvas.setGridGeometry(scene.grid);
+            final ContextContainer2D container = new ContextContainer2D(canvas);
+            final MapLayers mls = new MapLayers();
+            mls.getComponents().add(layer);
+            container.setContext(mls);
+            canvas.setContainer(container);
             canvas.repaint();
         } catch (FactoryException ex) {
             throw new RenderingException(ex);

@@ -203,47 +203,6 @@ public class ColorModelTest {
     }
 
     @Test
-    public void testNoDataCM() throws NoSuchAuthorityCodeException, FactoryException, PortrayalException {
-        final MapLayers context = MapBuilder.createContext();
-        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.geographic());
-        env.setRange(0, -180, 180);
-        env.setRange(1, -90, 90);
-
-        final RenderedImage img = DefaultPortrayalService.portray(
-                new CanvasDef(new Dimension(800, 600), env),
-                new SceneDef(context));
-
-        assertTrue( img.getColorModel() instanceof IndexColorModel);
-
-        final IndexColorModel icm = (IndexColorModel) img.getColorModel();
-
-        //we should have only two value
-        assertEquals(2, icm.getMapSize());
-        //with one being transparent
-        assertTrue(icm.getTransparentPixel() >= 0);
-    }
-
-    @Test
-    public void testSolidColorBackground() throws NoSuchAuthorityCodeException, FactoryException, PortrayalException {
-        final MapLayers context = MapBuilder.createContext();
-        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.geographic());
-        env.setRange(0, -180, 180);
-        env.setRange(1, -90, 90);
-
-        final CanvasDef cdef = new CanvasDef(new Dimension(800, 600), env);
-        cdef.setBackground(Color.GREEN);
-        final RenderedImage img = DefaultPortrayalService.portray(cdef, new SceneDef(context));
-
-        assertTrue( img.getColorModel() instanceof IndexColorModel);
-
-        final IndexColorModel icm = (IndexColorModel) img.getColorModel();
-
-        //we should have only two value
-        assertEquals(2, icm.getMapSize());
-        assertTrue(Color.GREEN.getRGB() == icm.getRGB(0) || Color.GREEN.getRGB() == icm.getRGB(1));
-    }
-
-    @Test
     public void testSolidColorBackgroundWithAA() throws NoSuchAuthorityCodeException, FactoryException, PortrayalException {
         final MapLayers context = MapBuilder.createContext();
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.geographic());
@@ -303,43 +262,6 @@ public class ColorModelTest {
         assertEquals(ColorSpace.TYPE_RGB, img.getColorModel().getColorSpace().getType());
         assertEquals(3, img.getColorModel().getNumComponents());
         assertEquals(3, img.getColorModel().getNumColorComponents());
-    }
-
-    @Test
-    public void testOpaqueStyleDatas() throws NoSuchAuthorityCodeException, FactoryException, PortrayalException {
-        final MapLayers context = MapBuilder.createContext();
-        context.getComponents().add(createLayer(Color.BLUE,Color.RED,Color.YELLOW));
-        context.getComponents().add(createLayer(Color.BLUE,Color.GREEN,Color.GRAY));
-
-        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.geographic());
-        env.setRange(0, -180, 180);
-        env.setRange(1, -90, 90);
-
-        final CanvasDef cdef = new CanvasDef(new Dimension(800, 600), env);
-        cdef.setBackground(Color.WHITE);
-        final RenderedImage img = DefaultPortrayalService.portray(cdef, new SceneDef(context));
-
-        assertTrue( img.getColorModel() instanceof IndexColorModel);
-        final IndexColorModel icm = (IndexColorModel) img.getColorModel();
-        assertEquals(Transparency.OPAQUE, icm.getTransparency());
-        assertEquals(-1, icm.getTransparentPixel());
-        assertFalse(icm.hasAlpha());
-
-        //we should have only six value
-        assertEquals(6, icm.getMapSize());
-
-        final Set<Integer> colors = new HashSet<Integer>();
-        colors.add(Color.WHITE.getRGB());
-        colors.add(Color.BLUE.getRGB());
-        colors.add(Color.RED.getRGB());
-        colors.add(Color.YELLOW.getRGB());
-        colors.add(Color.GREEN.getRGB());
-        colors.add(Color.GRAY.getRGB());
-
-        for(int i=0;i<icm.getMapSize();i++){
-            assertTrue(colors.contains(icm.getRGB(i)));
-        }
-
     }
 
     @Test
