@@ -24,6 +24,7 @@ import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.XmlValue;
 import org.geotoolkit.ows.xml.ExceptionType;
+import org.geotoolkit.ows.xml.OWSExceptionCode;
 import org.opengis.util.CodeList;
 
 
@@ -129,7 +130,7 @@ public final class ServiceExceptionType implements ExceptionType {
      * Returns the exception code, or {@code null} if none.
      */
     public CodeList getCode() {
-        return CodeList.valueOf(CodeList.class, code);
+        return CodeList.valueOf(OWSExceptionCode.class, code, null).orElse(null);
     }
 
     /**

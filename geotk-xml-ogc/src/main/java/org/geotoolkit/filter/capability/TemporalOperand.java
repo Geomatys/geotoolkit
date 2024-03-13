@@ -54,11 +54,6 @@ public final class TemporalOperand extends CodeList<TemporalOperand> {
      */
     private static final long serialVersionUID = 8576126878446037604L;
 
-    /**
-     * List of all enumerations of this type.
-     * Must be declared before any enum declaration.
-     */
-    private static final List<TemporalOperand> VALUES = new ArrayList<TemporalOperand>(19);
 
     /**
      * Creates an operand in the {@code "http://www.opengis.net/fes/2.0"} namespace.
@@ -66,30 +61,17 @@ public final class TemporalOperand extends CodeList<TemporalOperand> {
      * @param  name  the name of the new element. This name must not be in use by an other element of this type.
      */
     private TemporalOperand(final String name) {
-        super(name, VALUES);
-    }
-
-    /**
-     * Returns the list of {@code TemporalOperand}s.
-     *
-     * @return the list of codes declared in the current JVM.
-     */
-    public static TemporalOperand[] values() {
-        synchronized (VALUES) {
-            return VALUES.toArray(new TemporalOperand[VALUES.size()]);
-        }
+        super(name);
     }
 
     /**
      * Returns the list of codes of the same kind than this code list element.
-     * Invoking this method is equivalent to invoking {@link #values()}, except that
-     * this method can be invoked on an instance of the parent {@code CodeList} class.
      *
      * @return all code {@linkplain #values() values} for this code list.
      */
     @Override
     public TemporalOperand[] family() {
-        return values();
+        return values(TemporalOperand.class);
     }
 
     /**
@@ -103,6 +85,6 @@ public final class TemporalOperand extends CodeList<TemporalOperand> {
      * @return a code matching the given name.
      */
     public static TemporalOperand valueOf(final String code) {
-        return valueOf(TemporalOperand.class, code);
+        return valueOf(TemporalOperand.class, code, TemporalOperand::new).get();
     }
 }

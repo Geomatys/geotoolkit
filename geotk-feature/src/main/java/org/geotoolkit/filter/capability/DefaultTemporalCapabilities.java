@@ -76,8 +76,12 @@ public class DefaultTemporalCapabilities implements TemporalCapabilities {
         final Map<TemporalOperatorName, List<? extends ScopedName>> names = new HashMap<>();
         for (final TemporalOperator op : operators.getOperators()) {
             final String name = op.getName();
-            final TemporalOperatorName key = TemporalOperatorName.valueOf(TemporalOperatorName.class,
-                    (c) -> name.equalsIgnoreCase(c.identifier()), null);
+            TemporalOperatorName key = null;
+            for (TemporalOperatorName spn : TemporalOperatorName.values()) {
+                if (name.equalsIgnoreCase(spn.identifier())) {
+                    key = spn;
+                }
+            }
             if (key != null) {
                 names.put(key, getTemporalOperands(op.getTemporalOperands()));
             }
