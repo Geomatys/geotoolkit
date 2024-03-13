@@ -26,6 +26,10 @@ public class JobControlOptions extends CodeList<JobControlOptions> {
         super(value);
     }
 
+    public static JobControlOptions[] values() {
+        return CodeList.values(JobControlOptions.class);
+    }
+
     @Override
     public JobControlOptions[] family() {
         return values(JobControlOptions.class);
