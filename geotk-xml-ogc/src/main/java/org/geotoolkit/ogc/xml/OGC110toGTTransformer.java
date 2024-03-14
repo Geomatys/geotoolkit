@@ -180,15 +180,15 @@ public class OGC110toGTTransformer {
             } else {
                 geom = null;
             }
-            final double minx = box.getLowerCorner().getOrdinate(0);
-            final double maxx = box.getUpperCorner().getOrdinate(0);
-            final double miny = box.getLowerCorner().getOrdinate(1);
-            final double maxy = box.getUpperCorner().getOrdinate(1);
+            final double minx = box.getLowerCorner().getCoordinate(0);
+            final double maxx = box.getUpperCorner().getCoordinate(0);
+            final double miny = box.getLowerCorner().getCoordinate(1);
+            final double maxy = box.getUpperCorner().getCoordinate(1);
 
-//            final double minx = box.getPos().get(0).getOrdinate(0);
-//            final double maxx = box.getPos().get(0).getOrdinate(1);
-//            final double miny = box.getPos().get(1).getOrdinate(0);
-//            final double maxy = box.getPos().get(1).getOrdinate(1);
+//            final double minx = box.getPos().get(0).getCoordinate(0);
+//            final double maxx = box.getPos().get(0).getCoordinate(1);
+//            final double miny = box.getPos().get(1).getCoordinate(0);
+//            final double maxy = box.getPos().get(1).getCoordinate(1);
             final String srs =  box.getSrsName();
 
             if (OGCJAXBStatics.FILTER_SPATIAL_BBOX.equalsIgnoreCase(OpName)) {
@@ -401,8 +401,8 @@ public class OGC110toGTTransformer {
         DirectPositionType upper = entry.getUpperCorner();
 
         GeneralEnvelope genv = new GeneralEnvelope(CRS.forCode(srs));
-        genv.setRange(0, lower.getOrdinate(0), upper.getOrdinate(0));
-        genv.setRange(1, lower.getOrdinate(1), upper.getOrdinate(1));
+        genv.setRange(0, lower.getCoordinate(0), upper.getOrdinate(0));
+        genv.setRange(1, lower.getCoordinate(1), upper.getOrdinate(1));
 
         return filterFactory.literal(genv);
     }

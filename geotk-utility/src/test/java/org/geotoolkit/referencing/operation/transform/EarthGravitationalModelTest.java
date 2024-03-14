@@ -112,9 +112,9 @@ public final class EarthGravitationalModelTest extends TransformTestCase {
         final MathTransform mt = mtFactory.createParameterizedTransform(p);
         DirectPosition pos = new GeneralDirectPosition(new double[] {45, 45, 1000});
         pos = mt.transform(pos, pos);
-        assertEquals(  45.000, pos.getOrdinate(0), 0.001);
-        assertEquals(  45.000, pos.getOrdinate(1), 0.001);
-        assertEquals(1001.515, pos.getOrdinate(2), 0.001);
+        assertEquals(  45.000, pos.getCoordinate(0), 0.001);
+        assertEquals(  45.000, pos.getCoordinate(1), 0.001);
+        assertEquals(1001.515, pos.getCoordinate(2), 0.001);
         /*
          * Fetch again the model. It should be cached.
          */
@@ -127,8 +127,8 @@ public final class EarthGravitationalModelTest extends TransformTestCase {
         final MathTransform mt = (MathTransform) parser.parseObject("Param_MT[\"Ellipsoid_To_Geoid\"]");
         DirectPosition pos = new GeneralDirectPosition(new double[] {45, 45, 1000});
         pos = mt.transform(pos, pos);
-        assertEquals(  45.000, pos.getOrdinate(0), 0.001);
-        assertEquals(  45.000, pos.getOrdinate(1), 0.001);
-        assertEquals(1001.515, pos.getOrdinate(2), 0.001);
+        assertEquals(  45.000, pos.getCoordinate(0), 0.001);
+        assertEquals(  45.000, pos.getCoordinate(1), 0.001);
+        assertEquals(1001.515, pos.getCoordinate(2), 0.001);
     }
 }

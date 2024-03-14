@@ -128,8 +128,8 @@ public class TileMatricesTest {
 
         final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
         final GeneralDirectPosition corner = new GeneralDirectPosition(crs);
-        corner.setOrdinate(0, 0);
-        corner.setOrdinate(1, 0);
+        corner.setCoordinate(0, 0);
+        corner.setCoordinate(1, 0);
         final int[] tileSize = new int[]{10, 10};
         TileMatrix matrix = new DefiningTileMatrix(
                 NamesExt.createRandomUUID(),

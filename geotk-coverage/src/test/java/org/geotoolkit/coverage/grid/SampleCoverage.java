@@ -215,7 +215,7 @@ public strictfp enum SampleCoverage {
     void verifyGridGeometry(final GridCoverage coverage, final double eps) {
         assertSame(crs, coverage.getCoordinateReferenceSystem());
         final Envelope envelope = coverage.getGridGeometry().getEnvelope();
-        assertArrayEquals(new double[] {bounds.getMinX(), bounds.getMinY()}, envelope.getLowerCorner().getCoordinate(), eps);
-        assertArrayEquals(new double[] {bounds.getMaxX(), bounds.getMaxY()}, envelope.getUpperCorner().getCoordinate(), eps);
+        assertArrayEquals(new double[] {bounds.getMinX(), bounds.getMinY()}, envelope.getLowerCorner().getCoordinates(), eps);
+        assertArrayEquals(new double[] {bounds.getMaxX(), bounds.getMaxY()}, envelope.getUpperCorner().getCoordinates(), eps);
     }
 }

@@ -322,7 +322,7 @@ public final class TileMatrixSetBuilder {
                 final int horizontalOrdinate = CRSUtilities.firstHorizontalAxis(crs);
                 for (int d = 0; d < crs.getCoordinateSystem().getDimension(); d++) {
                     final double v = (d == horizontalOrdinate+1) ? envelope.getMaximum(d) : envelope.getMinimum(d);
-                    upperLeft.setOrdinate(d, v);
+                    upperLeft.setCoordinate(d, v);
                 }
 
                 final double spanX = envelope.getSpan(horizontalOrdinate);

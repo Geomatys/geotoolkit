@@ -185,7 +185,7 @@ public class PyramidReaderTest {
 
         for(double[] slice : geovalues){
             final GeneralDirectPosition upperLeft = new GeneralDirectPosition(crs);
-            upperLeft.setCoordinate(-50,60,slice[0],slice[1]);
+            upperLeft.setCoordinates(-50,60,slice[0],slice[1]);
             final WritableTileMatrix mosaic = pyramid.createTileMatrix(new DefiningTileMatrix(null,
                     TileMatrices.toTilingScheme(upperLeft, gridSize, 1.0, tilePixelSize),
                     tilePixelSize));

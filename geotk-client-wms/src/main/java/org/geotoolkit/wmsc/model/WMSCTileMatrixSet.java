@@ -48,8 +48,8 @@ public class WMSCTileMatrixSet extends AbstractTileMatrixSet {
         this.tileset = tileset;
 
         this.upperleft = new GeneralDirectPosition(getCoordinateReferenceSystem());
-        this.upperleft.setOrdinate(0, tileset.getBoundingBox().getMinx());
-        this.upperleft.setOrdinate(1, tileset.getBoundingBox().getMiny());
+        this.upperleft.setCoordinate(0, tileset.getBoundingBox().getMinx());
+        this.upperleft.setCoordinate(1, tileset.getBoundingBox().getMiny());
 
         List<Double> ress = tileset.getResolutions();
         if (ress == null) ress = Collections.EMPTY_LIST;

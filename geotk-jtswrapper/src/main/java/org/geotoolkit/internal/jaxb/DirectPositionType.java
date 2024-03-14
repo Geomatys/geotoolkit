@@ -143,7 +143,7 @@ public class DirectPositionType implements DirectPosition {
     public DirectPositionType(final Position position) {
         if (position != null) {
             this.value = new ArrayList<Double>();
-            for (double d : position.getDirectPosition().getCoordinate()) {
+            for (double d : position.getDirectPosition().getCoordinates()) {
                 value.add(d);
             }
             /*
@@ -243,7 +243,7 @@ public class DirectPositionType implements DirectPosition {
     }
 
     @Override
-    public double[] getCoordinate() {
+    public double[] getCoordinates() {
         double[] coords = new double[value.size()];
         for(int i = 0, n = value.size(); i < n; i++){
             coords[i] = value.get(i);
@@ -252,12 +252,12 @@ public class DirectPositionType implements DirectPosition {
     }
 
     @Override
-    public double getOrdinate(final int dimension) throws IndexOutOfBoundsException {
+    public double getCoordinate(final int dimension) throws IndexOutOfBoundsException {
         return value.get(dimension);
     }
 
     @Override
-    public void setOrdinate(final int dimension, final double value) throws IndexOutOfBoundsException, UnsupportedOperationException {
+    public void setCoordinate(final int dimension, final double value) throws IndexOutOfBoundsException, UnsupportedOperationException {
         this.value.remove(dimension);
         this.value.add(dimension, value);
     }

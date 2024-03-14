@@ -156,9 +156,9 @@ public class GeometricUtilities {
      */
     public static double lineToPointDistance(final Line2D line, final GeneralDirectPosition point, final String units) {
 
-        final Point2D pt = ShapeUtilities.nearestColinearPoint(line, new Point2D.Double(point.getOrdinate(0), point.getOrdinate(1)));
+        final Point2D pt = ShapeUtilities.nearestColinearPoint(line, new Point2D.Double(point.getCoordinate(0), point.getOrdinate(1)));
 
-        return getOrthodromicDistance(point.getOrdinate(0), point.getOrdinate(1),
+        return getOrthodromicDistance(point.getCoordinate(0), point.getOrdinate(1),
                                       pt.getX(), pt.getY(), units);
     }
 
@@ -356,8 +356,8 @@ public class GeometricUtilities {
         if (point == null || boundingBox == null)
             return false;
 
-        final Line2D pointLine = new Line2D.Double(point.getOrdinate(0), point.getOrdinate(1),
-                                             point.getOrdinate(0), point.getOrdinate(1));
+        final Line2D pointLine = new Line2D.Double(point.getCoordinate(0), point.getOrdinate(1),
+                                             point.getCoordinate(0), point.getOrdinate(1));
         final List<Line2D> border = getBorder(boundingBox);
         for (Line2D l: border) {
             if (l.intersectsLine(pointLine))
@@ -533,7 +533,7 @@ public class GeometricUtilities {
      */
     public static boolean crosses(final GeneralEnvelope boundingBox, final GeneralDirectPosition point) {
         for (Line2D l : getBorder(boundingBox)) {
-            if (l.intersectsLine(point.getOrdinate(0), point.getOrdinate(1), point.getOrdinate(0), point.getOrdinate(1))) {
+            if (l.intersectsLine(point.getCoordinate(0), point.getOrdinate(1), point.getOrdinate(0), point.getOrdinate(1))) {
                 return true;
             }
         }
@@ -665,7 +665,7 @@ public class GeometricUtilities {
             final MathTransform mt = operation.getMathTransform();
             mt.transform(pt1, pt1);
             mt.transform(pt2, pt2);
-            return new Line2D.Double(pt1.getOrdinate(0), pt1.getOrdinate(1), pt2.getOrdinate(0), pt2.getOrdinate(1));
+            return new Line2D.Double(pt1.getCoordinate(0), pt1.getOrdinate(1), pt2.getOrdinate(0), pt2.getOrdinate(1));
         } else {
             throw new IllegalArgumentException("Unknow geometry types: allowed ones are: GeneralEnvelope, Line2D, GeneralDirectPosition");
         }
@@ -692,8 +692,8 @@ public class GeometricUtilities {
       GeneralEnvelope env = new GeneralEnvelope(lowerCorner,upperCorner);
       env.setCoordinateReferenceSystem(AbstractCRS.castOrCopy(CRS.forCode(sourceCRSName)).forConvention(AxesConvention.RIGHT_HANDED));
       env = (GeneralEnvelope) reprojectGeometry(targetCRSName, sourceCRSName, env);
-      lowerCorner = env.getLowerCorner().getCoordinate();
-      upperCorner = env.getUpperCorner().getCoordinate();
+      lowerCorner = env.getLowerCorner().getCoordinates();
+      upperCorner = env.getUpperCorner().getCoordinates();
       return lowerCorner[0]+","+lowerCorner[1]+","+upperCorner[0]+","+upperCorner[1];
     }
 
@@ -778,8 +778,8 @@ public class GeometricUtilities {
             return builEnvelopePiece(minX,minY,maxX,maxY,crs,insertMedianPoints, gf);
         }
 
-        final boolean wrapOnX = genv.getLowerCorner().getOrdinate(0) > genv.getUpperCorner().getOrdinate(0);
-        final boolean wrapOnY = genv.getLowerCorner().getOrdinate(1) > genv.getUpperCorner().getOrdinate(1);
+        final boolean wrapOnX = genv.getLowerCorner().getCoordinate(0) > genv.getUpperCorner().getOrdinate(0);
+        final boolean wrapOnY = genv.getLowerCorner().getCoordinate(1) > genv.getUpperCorner().getOrdinate(1);
 
         if(!wrapOnX && !wrapOnY){
             //no need for corrections
@@ -806,26 +806,26 @@ public class GeometricUtilities {
 
             if(wrapOnX){
                 minX = axisMin;
-                minY = lowerCorner.getOrdinate(1);
-                maxX = upperCorner.getOrdinate(0);
-                maxY = upperCorner.getOrdinate(1);
+                minY = lowerCorner.getCoordinate(1);
+                maxX = upperCorner.getCoordinate(0);
+                maxY = upperCorner.getCoordinate(1);
             }else{
-                minX = lowerCorner.getOrdinate(0);
+                minX = lowerCorner.getCoordinate(0);
                 minY = axisMin;
-                maxX = upperCorner.getOrdinate(0);
-                maxY = upperCorner.getOrdinate(1);
+                maxX = upperCorner.getCoordinate(0);
+                maxY = upperCorner.getCoordinate(1);
             }
             final Polygon leftpoly = builEnvelopePiece(minX,minY,maxX,maxY,crs,insertMedianPoints, gf);
 
             if(wrapOnX){
-                minX = lowerCorner.getOrdinate(0);
-                minY = lowerCorner.getOrdinate(1);
+                minX = lowerCorner.getCoordinate(0);
+                minY = lowerCorner.getCoordinate(1);
                 maxX = axisMax;
-                maxY = upperCorner.getOrdinate(1);
+                maxY = upperCorner.getCoordinate(1);
             }else{
-                minX = lowerCorner.getOrdinate(0);
-                minY = lowerCorner.getOrdinate(1);
-                maxX = upperCorner.getOrdinate(0);
+                minX = lowerCorner.getCoordinate(0);
+                minY = lowerCorner.getCoordinate(1);
+                maxX = upperCorner.getCoordinate(0);
                 maxY = axisMax;
             }
             final Polygon rightpoly = builEnvelopePiece(minX,minY,maxX,maxY,crs,insertMedianPoints, gf);
@@ -839,15 +839,15 @@ public class GeometricUtilities {
             final double maxX;
             final double maxY;
             if(wrapOnX){
-                minX = lowerCorner.getOrdinate(0);
-                minY = lowerCorner.getOrdinate(1);
-                maxX = upperCorner.getOrdinate(0) + wrapRange;
-                maxY = upperCorner.getOrdinate(1);
+                minX = lowerCorner.getCoordinate(0);
+                minY = lowerCorner.getCoordinate(1);
+                maxX = upperCorner.getCoordinate(0) + wrapRange;
+                maxY = upperCorner.getCoordinate(1);
             }else{
-                minX = lowerCorner.getOrdinate(0);
-                minY = lowerCorner.getOrdinate(1);
-                maxX = upperCorner.getOrdinate(0);
-                maxY = upperCorner.getOrdinate(1) + wrapRange;
+                minX = lowerCorner.getCoordinate(0);
+                minY = lowerCorner.getCoordinate(1);
+                maxX = upperCorner.getCoordinate(0);
+                maxY = upperCorner.getCoordinate(1) + wrapRange;
             }
 
             return builEnvelopePiece(minX,minY,maxX,maxY,crs,insertMedianPoints, gf);
@@ -874,9 +874,9 @@ public class GeometricUtilities {
         }
 
         //check if we need to insert points
-        final boolean wrapOnX = wrapPoints[0].getOrdinate(0) != 0 || wrapPoints[1].getOrdinate(0) != 0;
+        final boolean wrapOnX = wrapPoints[0].getCoordinate(0) != 0 || wrapPoints[1].getOrdinate(0) != 0;
         if(wrapOnX){
-            final double wrapRange = wrapPoints[1].getOrdinate(0) - wrapPoints[0].getOrdinate(0);
+            final double wrapRange = wrapPoints[1].getCoordinate(0) - wrapPoints[0].getOrdinate(0);
             final double envRange = maxX-minX;
             final int nbPoint = (int)((envRange) / (wrapRange/2));
 
@@ -899,7 +899,7 @@ public class GeometricUtilities {
             return gf.createPolygon(gf.createLinearRing(coordinates), new LinearRing[0]);
 
         }else{
-            final double wrapRange = wrapPoints[1].getOrdinate(1) - wrapPoints[0].getOrdinate(1);
+            final double wrapRange = wrapPoints[1].getCoordinate(1) - wrapPoints[0].getOrdinate(1);
             final double envRange = maxY-minY;
             final int nbPoint = (int)((envRange) / wrapRange);
 

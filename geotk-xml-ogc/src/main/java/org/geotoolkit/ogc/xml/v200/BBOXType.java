@@ -281,8 +281,8 @@ public class BBOXType extends SpatialOpsType implements BinarySpatialOperator, o
         if (candidate instanceof Envelope) {
             final Envelope env = (Envelope) candidate;
             final DirectPosition pos = env.getLowerCorner();
-            if (pos != null && pos.getCoordinate() != null && pos.getCoordinate().length > 1) {
-                return pos.getCoordinate()[0];
+            if (pos != null && pos.getDimension() > 1) {
+                return pos.getCoordinate(0);
             }
         }
         return -1;
@@ -297,8 +297,8 @@ public class BBOXType extends SpatialOpsType implements BinarySpatialOperator, o
         if (candidate instanceof Envelope) {
             final Envelope env = (Envelope) candidate;
             final DirectPosition pos = env.getLowerCorner();
-            if (pos != null && pos.getCoordinate() != null && pos.getCoordinate().length > 1) {
-                return pos.getCoordinate()[1];
+            if (pos != null && pos.getDimension() > 1) {
+                return pos.getCoordinate(1);
             }
         }
         return -1;
@@ -313,8 +313,8 @@ public class BBOXType extends SpatialOpsType implements BinarySpatialOperator, o
         if (candidate instanceof Envelope) {
             final Envelope env = (Envelope) candidate;
             final DirectPosition pos = env.getUpperCorner();
-            if (pos != null && pos.getCoordinate() != null && pos.getCoordinate().length > 1) {
-                return pos.getCoordinate()[0];
+            if (pos != null && pos.getDimension() > 1) {
+                return pos.getCoordinate(0);
             }
         }
         return -1;
@@ -329,8 +329,8 @@ public class BBOXType extends SpatialOpsType implements BinarySpatialOperator, o
         if (candidate instanceof Envelope) {
             final Envelope env = (Envelope) candidate;
             final DirectPosition pos = env.getUpperCorner();
-            if (pos != null && pos.getCoordinate() != null && pos.getCoordinate().length > 1) {
-                return pos.getCoordinate()[1];
+            if (pos != null && pos.getDimension() > 1) {
+                return pos.getCoordinate(1);
             }
         }
         return -1;

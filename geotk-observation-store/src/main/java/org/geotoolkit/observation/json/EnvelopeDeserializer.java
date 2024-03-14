@@ -69,7 +69,7 @@ public class EnvelopeDeserializer extends JsonDeserializer<Envelope> {
         GeneralDirectPosition pos = new GeneralDirectPosition(crs);
         int i = 0;
         for (JsonNode c : posNode) {
-            pos.setOrdinate(i, c.asDouble());
+            pos.setCoordinate(i, c.asDouble());
         }
         return pos;
     }

@@ -156,7 +156,7 @@ public abstract class PyramidalModelStoreNDTest <T extends WritableTiledResource
     private GeneralDirectPosition createCorner(double... values) {
         final GeneralDirectPosition corner = new GeneralDirectPosition(crs);
         for (int i = 0; i < values.length; i++) {
-            corner.setOrdinate(i, values[i]);
+            corner.setCoordinate(i, values[i]);
         }
         return corner;
     }

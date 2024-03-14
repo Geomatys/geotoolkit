@@ -24,6 +24,7 @@ import org.geotoolkit.gml.xml.BoundingShape;
 import org.geotoolkit.gml.xml.Envelope;
 import org.geotoolkit.gml.xml.FeatureProperty;
 import org.geotoolkit.swe.xml.PhenomenonProperty;
+import org.opengis.geometry.DirectPosition;
 import org.opengis.observation.Observation;
 
 /**
@@ -96,11 +97,11 @@ public class OMXMLUtils {
             if (feature != null) {
                 if (feature.getBoundedBy() != null) {
                     final BoundingShape bound = feature.getBoundedBy();
-                    if (bound.getEnvelope() != null) {
-                        if (bound.getEnvelope().getLowerCorner() != null
-                            && bound.getEnvelope().getLowerCorner().getCoordinate() != null
-                            && bound.getEnvelope().getLowerCorner().getCoordinate().length == 2 ) {
-                            final double[] lower = bound.getEnvelope().getLowerCorner().getCoordinate();
+                    final Envelope env = bound.getEnvelope();
+                    if (env != null) {
+                        DirectPosition corner = env.getLowerCorner();
+                        if (corner != null && corner.getDimension() == 2 ) {
+                            final double[] lower = corner.getCoordinates();
                             if (lower[0] < minx) {
                                 minx = lower[0];
                             }
@@ -108,10 +109,9 @@ public class OMXMLUtils {
                                 miny = lower[1];
                             }
                         }
-                        if (bound.getEnvelope().getUpperCorner() != null
-                            && bound.getEnvelope().getUpperCorner().getCoordinate() != null
-                            && bound.getEnvelope().getUpperCorner().getCoordinate().length == 2 ) {
-                            final double[] upper = bound.getEnvelope().getUpperCorner().getCoordinate();
+                        corner = env.getUpperCorner();
+                        if (corner != null && corner.getDimension() == 2 ) {
+                            final double[] upper = corner.getCoordinates();
                             if (upper[0] > maxx) {
                                 maxx = upper[0];
                             }

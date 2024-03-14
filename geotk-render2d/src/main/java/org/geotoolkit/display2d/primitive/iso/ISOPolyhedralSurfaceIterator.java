@@ -96,14 +96,14 @@ public final  class ISOPolyhedralSurfaceIterator extends ISOGeometryIterator<Pol
             return SEG_CLOSE;
         } else if (currentCoord == 0) {
             DirectPosition pos = coordinate.get(0).getDirectPosition();
-            coords[0] = pos.getOrdinate(0);
-            coords[1] = pos.getOrdinate(1);
+            coords[0] = pos.getCoordinate(0);
+            coords[1] = pos.getCoordinate(1);
             transform.transform(coords, 0, coords, 0, 1);
             return SEG_MOVETO;
         } else {
             DirectPosition pos = coordinate.get(currentCoord).getDirectPosition();
-            coords[0] = pos.getOrdinate(0);
-            coords[1] = pos.getOrdinate(1);
+            coords[0] = pos.getCoordinate(0);
+            coords[1] = pos.getCoordinate(1);
             transform.transform(coords, 0, coords, 0, 1);
             return SEG_LINETO;
         }

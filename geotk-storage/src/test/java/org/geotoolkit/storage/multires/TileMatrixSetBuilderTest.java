@@ -291,9 +291,9 @@ public class TileMatrixSetBuilderTest {
         DefiningTileMatrixSet tms = tmsBuilder.build();
 
         final GeneralDirectPosition upperleft = new GeneralDirectPosition(crs);
-        upperleft.setOrdinate(0, 1);
-        upperleft.setOrdinate(1, 50);
-        upperleft.setOrdinate(2, 1000);
+        upperleft.setCoordinate(0, 1);
+        upperleft.setCoordinate(1, 50);
+        upperleft.setCoordinate(2, 1000);
 
         assertEquals(crs, tms.getCoordinateReferenceSystem());
         assertEquals(1, tms.getTileMatrices().size());

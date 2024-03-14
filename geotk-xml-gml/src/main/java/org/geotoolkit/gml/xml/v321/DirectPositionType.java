@@ -14,8 +14,6 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-
-
 package org.geotoolkit.gml.xml.v321;
 
 import java.util.ArrayList;
@@ -164,7 +162,7 @@ public class DirectPositionType implements org.geotoolkit.gml.xml.DirectPosition
     public DirectPositionType(final DirectPosition position, final boolean srsInfo) {
         if (position != null) {
             this.value = new ArrayList<>();
-            for (double d : position.getCoordinate()) {
+            for (double d : position.getCoordinates()) {
                 value.add(d);
             }
             if (srsInfo) {
@@ -326,7 +324,7 @@ public class DirectPositionType implements org.geotoolkit.gml.xml.DirectPosition
     }
 
     @Override
-    public double[] getCoordinate() {
+    public double[] getCoordinates() {
         double[] coords = new double[value.size()];
         for(int i=0,n=value.size(); i<n; i++){
             coords[i] = value.get(i);
@@ -335,12 +333,12 @@ public class DirectPositionType implements org.geotoolkit.gml.xml.DirectPosition
     }
 
     @Override
-    public double getOrdinate(final int dimension) throws IndexOutOfBoundsException {
+    public double getCoordinate(final int dimension) throws IndexOutOfBoundsException {
         return value.get(dimension);
     }
 
     @Override
-    public void setOrdinate(final int dimension, final double value) throws IndexOutOfBoundsException, UnsupportedOperationException {
+    public void setCoordinate(final int dimension, final double value) throws IndexOutOfBoundsException, UnsupportedOperationException {
         this.value.remove(dimension);
         this.value.add(dimension, value);
     }

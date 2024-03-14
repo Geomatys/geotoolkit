@@ -60,8 +60,8 @@ public class WMTSTileMatrix implements TileMatrix {
         this.scale = WMTSUtilities.unitsByPixel(pyramid.getMatrixset(), pyramid.getCoordinateReferenceSystem(), matrix);
 
         final GeneralDirectPosition ul = new GeneralDirectPosition(pyramid.getCoordinateReferenceSystem());
-        ul.setOrdinate(0, matrix.getTopLeftCorner().get(0));
-        ul.setOrdinate(1, matrix.getTopLeftCorner().get(1));
+        ul.setCoordinate(0, matrix.getTopLeftCorner().get(0));
+        ul.setCoordinate(1, matrix.getTopLeftCorner().get(1));
         this.tilingScheme = TileMatrices.toTilingScheme(ul,
                 new Dimension(matrix.getMatrixWidth(), matrix.getMatrixHeight()), scale,
                 new int[]{matrix.getTileWidth(), matrix.getTileHeight()});

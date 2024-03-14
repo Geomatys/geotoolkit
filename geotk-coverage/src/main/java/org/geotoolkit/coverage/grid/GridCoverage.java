@@ -784,7 +784,7 @@ abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCoverage im
             if (i != 0) {
                 buffer.append(", ");
             }
-            format.format(point.getOrdinate(i), buffer, dummy);
+            format.format(point.getCoordinate(i), buffer, dummy);
         }
         return buffer.toString();
     }

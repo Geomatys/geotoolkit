@@ -346,7 +346,7 @@ public class MetadataHelper implements Localized {
             }
         }
         for (int j=0; j<dimTarget; j++) {
-            matrix.setElement(j, dimSource, origin.getOrdinate(j));
+            matrix.setElement(j, dimSource, origin.getCoordinate(j));
         }
         final MathTransformFactory mtFactory = getMathTransformFactory();
         try {
@@ -394,7 +394,7 @@ public class MetadataHelper implements Localized {
             ensureMetadataExists("OffsetVector", i, v);
             ensureDimensionMatch("OffsetVector", i, v.length, dimTarget);
             System.arraycopy(v, 0, matrix, i*2, 2);
-            matrix[i+4] = origin.getOrdinate(i);
+            matrix[i+4] = origin.getCoordinate(i);
         }
         for (int i=0; i<matrix.length; i++) {
             matrix[i] = adjustForRoundingError(matrix[i]);

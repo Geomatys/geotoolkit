@@ -361,13 +361,13 @@ public class RenderingContext2D implements RenderingContext{
 //            if (wrapPoints != null) {
 //
 //                //east-west wrapaound axis index, this is the none zero axis
-//                final int horizontalIdx = (wrapPoints[0].getOrdinate(1) != 0 || wrapPoints[1].getOrdinate(1) != 0) ? 1 : 0;
-//                final double wrapMin = wrapPoints[0].getOrdinate(horizontalIdx);
-//                final double wrapMax = wrapPoints[1].getOrdinate(horizontalIdx);
+//                final int horizontalIdx = (wrapPoints[0].getCoordinate(1) != 0 || wrapPoints[1].getOrdinate(1) != 0) ? 1 : 0;
+//                final double wrapMin = wrapPoints[0].getCoordinate(horizontalIdx);
+//                final double wrapMax = wrapPoints[1].getCoordinate(horizontalIdx);
 //
 //                final Envelope envelope = gridGeometry2d.getEnvelope();
-//                final double[] lower = envelope.getLowerCorner().getCoordinate();
-//                final double[] upper = envelope.getUpperCorner().getCoordinate();
+//                final double[] lower = envelope.getLowerCorner().getCoordinates();
+//                final double[] upper = envelope.getUpperCorner().getCoordinates();
 //
 //                if (lower[horizontalIdx] > upper[horizontalIdx]) {
 //                    //crossing anti-meridian, reversed envelope
@@ -396,10 +396,10 @@ public class RenderingContext2D implements RenderingContext{
                 projs[6] = canvasDisplaybounds.x;                           projs[7] = canvasDisplaybounds.y+canvasDisplaybounds.height;
                 displayToObjective.transform(projs, 0, projs, 0, 4);
 
-                final double x1 = wrapPoints[0].getOrdinate(0);
-                final double y1 = wrapPoints[0].getOrdinate(1);
-                final double x2 = wrapPoints[1].getOrdinate(0);
-                final double y2 = wrapPoints[1].getOrdinate(1);
+                final double x1 = wrapPoints[0].getCoordinate(0);
+                final double y1 = wrapPoints[0].getCoordinate(1);
+                final double x2 = wrapPoints[1].getCoordinate(0);
+                final double y2 = wrapPoints[1].getCoordinate(1);
                 nearestColinearPoint(x1, y1, x2, y2, projs, 0);
                 nearestColinearPoint(x1, y1, x2, y2, projs, 2);
                 nearestColinearPoint(x1, y1, x2, y2, projs, 4);

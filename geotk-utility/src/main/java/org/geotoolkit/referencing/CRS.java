@@ -393,7 +393,7 @@ compare:    for (final SingleCRS component : actualComponents) {
              */
             final double[] coordinates = new double[2 * Math.max(sourceDim, targetDim)];
             for (int i=0; i<sourceDim; i++) {
-                final double c = origin.getOrdinate(i);
+                final double c = origin.getCoordinate(i);
                 final double d = vector[i] * 0.5;
                 coordinates[i] = c - d;
                 coordinates[i + sourceDim] = c + d;

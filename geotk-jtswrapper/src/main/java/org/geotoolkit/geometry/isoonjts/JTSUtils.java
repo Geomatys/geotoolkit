@@ -216,11 +216,11 @@ public final class JTSUtils {
         double x = Double.NaN, y = Double.NaN, z = Double.NaN;
         final int d = dp.getDimension();
         if (d >= 1) {
-            x = dp.getOrdinate(0);
+            x = dp.getCoordinate(0);
             if (d >= 2) {
-                y = dp.getOrdinate(1);
+                y = dp.getCoordinate(1);
                 if (d >= 3) {
-                    z = dp.getOrdinate(2);
+                    z = dp.getCoordinate(2);
                 }
             }
         }
@@ -236,11 +236,11 @@ public final class JTSUtils {
     public static void directPositionToCoordinate(final DirectPosition dp, final org.locationtech.jts.geom.Coordinate result) {
         final int d = dp.getDimension();
         if (d >= 1) {
-            result.x = dp.getOrdinate(0);
+            result.x = dp.getCoordinate(0);
             if (d >= 2) {
-                result.y = dp.getOrdinate(1);
+                result.y = dp.getCoordinate(1);
                 if (d >= 3) {
-                    result.z = dp.getOrdinate(3);
+                    result.z = dp.getCoordinate(3);
                 } else {
                     result.z = Double.NaN;
                 }
@@ -315,19 +315,19 @@ public final class JTSUtils {
 
         if (d >= 1) {
             int xIndex = GeometryUtils.getDirectedAxisIndex(cs, AxisDirection.EAST);
-            result.setOrdinate(xIndex, c.x);//0
+            result.setCoordinate(xIndex, c.x);//0
             if (d >= 2) {
                 int yIndex = GeometryUtils.getDirectedAxisIndex(cs, AxisDirection.NORTH);
-                result.setOrdinate(yIndex, c.y);//1
+                result.setCoordinate(yIndex, c.y);//1
                 if (d >= 3) {
                     int zIndex = GeometryUtils.getDirectedAxisIndex(cs, AxisDirection.UP);
-                    result.setOrdinate(zIndex, c.z);//2
+                    result.setCoordinate(zIndex, c.z);//2
                     // If d > 3, then the remaining coordinates of the DP are
                     // (so far) left with their original values.  So we init
                     // them to zero here.
                     if (d > 3) {
                         for (int i = 3; i < d; i++) {
-                            result.setOrdinate(i, 0.0);
+                            result.setCoordinate(i, 0.0);
                         }
                     }
                 }
@@ -513,8 +513,8 @@ public final class JTSUtils {
         topCorner).getLon(Units.DEGREE), Units.DEGREE);
         } else {*/
 
-        topLeft.setOrdinate(1, botCorner.getOrdinate(1));
-        botRight.setOrdinate(1, topCorner.getOrdinate(1));
+        topLeft.setCoordinate(1, botCorner.getCoordinate(1));
+        botRight.setCoordinate(1, topCorner.getCoordinate(1));
 
         //}//end of else statment associated with above LatLongAlt stuff
         // Create a JTS Envelope

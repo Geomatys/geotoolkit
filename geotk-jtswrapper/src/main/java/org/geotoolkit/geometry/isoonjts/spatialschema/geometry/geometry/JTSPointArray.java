@@ -149,7 +149,7 @@ public class JTSPointArray extends NotifyingArrayList<Position> implements Point
             }
         }
         for (int i = 0; i < position.getDimension(); i++) {
-            dest.setOrdinate(i, position.getOrdinate(i));
+            dest.setCoordinate(i, position.getCoordinate(i));
         }
         return dest;
     }
@@ -171,7 +171,7 @@ public class JTSPointArray extends NotifyingArrayList<Position> implements Point
         DirectPosition thisPosition = (DirectPosition) get(column);
         DirectPosition otherPosition = position.getDirectPosition();
         for (int i = 0; i < thisPosition.getDimension(); i++) {
-            thisPosition.setOrdinate(i, otherPosition.getOrdinate(i));
+            thisPosition.setCoordinate(i, otherPosition.getCoordinate(i));
         }
         invalidateCachedJTSPeer();
     }

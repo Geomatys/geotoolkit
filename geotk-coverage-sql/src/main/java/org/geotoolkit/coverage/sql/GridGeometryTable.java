@@ -446,7 +446,7 @@ final class GridGeometryTable extends CachedTable<Integer,GridGeometryEntry> {
                     if (!isLinear) {
                         final GeneralDirectPosition center = new GeneralDirectPosition(AFFINE_DIMENSION);
                         for (int i=0; i<AFFINE_DIMENSION; i++) {
-                            center.setOrdinate(i, 0.5*(extent.getLow(i) + (double) extent.getHigh(i)));
+                            center.setCoordinate(i, 0.5*(extent.getLow(i) + (double) extent.getHigh(i)));
                         }
                         gridToCRS = MathTransforms.getMatrix(gridToCRS2D, center);
                         /*
@@ -468,7 +468,7 @@ final class GridGeometryTable extends CachedTable<Integer,GridGeometryEntry> {
                             for (int i=0; i<AFFINE_DIMENSION; i++) {
                                 double c = gridToCRS.getElement(j, i);
                                 gridToCRS.setElement(j, i, c * scale);
-                                s += c * center.getOrdinate(i);
+                                s += c * center.getCoordinate(i);
                             }
                             s *= (1 - scale);
                             s += gridToCRS.getElement(j, AFFINE_DIMENSION);

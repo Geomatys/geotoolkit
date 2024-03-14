@@ -227,8 +227,8 @@ public class LineStringType extends AbstractCurveType implements LineString {
 
         if (pos != null && !pos.isEmpty()) {
             for (DirectPositionType p : pos) {
-                final double x = p.getOrdinate(0);
-                final double y = p.getOrdinate(1);
+                final double x = p.getCoordinate(0);
+                final double y = p.getCoordinate(1);
                 if (x < minx) { minx = x; }
                 if (x > maxx) { maxx = x; }
                 if (y < miny) { miny = y; }

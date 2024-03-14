@@ -123,9 +123,9 @@ public final class ReferencingUtilities {
                 final CoordinateSystemAxis axis = cs.getAxis(i);
                 if(RangeMeaning.WRAPAROUND.equals(axis.getRangeMeaning())){
                     final DirectPosition start = new GeneralDirectPosition(crs);
-                    start.setOrdinate(i, axis.getMinimumValue());
+                    start.setCoordinate(i, axis.getMinimumValue());
                     final DirectPosition end = new DirectPosition2D(crs);
-                    end.setOrdinate(i, axis.getMaximumValue());
+                    end.setCoordinate(i, axis.getMaximumValue());
                     return new DirectPosition[]{start,end};
                 }
             }
@@ -216,8 +216,8 @@ public final class ReferencingUtilities {
             final CoordinateReferenceSystem targetCRS2D = CRSUtilities.getCRS2D(targetCrs);
 
             final DirectPosition center = new GeneralDirectPosition(srcCRS2D);
-            center.setOrdinate(0, srcEnvelope.getMedian(srcMinOrdi));
-            center.setOrdinate(1, srcEnvelope.getMedian(srcMinOrdi+1));
+            center.setCoordinate(0, srcEnvelope.getMedian(srcMinOrdi));
+            center.setCoordinate(1, srcEnvelope.getMedian(srcMinOrdi+1));
 
             try {
                 final MathTransform trs = CRS.findOperation(srcCRS2D, targetCRS2D, null).getMathTransform();
@@ -269,8 +269,8 @@ public final class ReferencingUtilities {
         final DirectPosition p0 = warp[0];
         final DirectPosition p1 = warp[1];
         for (int i = 0, n = p0.getDimension(); i < n; i++) {
-            final double minimum = p0.getOrdinate(i);
-            final double maximum = p1.getOrdinate(i);
+            final double minimum = p0.getCoordinate(i);
+            final double maximum = p1.getCoordinate(i);
             if(minimum == maximum){
                 //not the wrap axis
                 continue;

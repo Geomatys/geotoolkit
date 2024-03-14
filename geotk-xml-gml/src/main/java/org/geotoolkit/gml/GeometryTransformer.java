@@ -562,7 +562,7 @@ public class GeometryTransformer implements Supplier<Geometry> {
     }
 
     private static Coordinate convertDirectPosition(final org.opengis.geometry.DirectPosition dp) {
-        return toCoordinate(dp.getCoordinate());
+        return toCoordinate(dp.getCoordinates());
     }
 
     private static Coordinate toCoordinate(final double[] values) {
@@ -1112,8 +1112,8 @@ public class GeometryTransformer implements Supplier<Geometry> {
             gc.setGeodesicDistance(r);
             final DirectPosition pt = gc.getEndPoint();
             return new Coordinate(
-                pt.getOrdinate(xAxis),
-                pt.getOrdinate(yAxis)
+                pt.getCoordinate(xAxis),
+                pt.getCoordinate(yAxis)
             );
         };
 

@@ -160,8 +160,8 @@ public final class Assertions {
            if (i < tolerances.length) {
                 tolerance = tolerances[i];
            }
-           if (abs(expectedLower.getOrdinate(i) - actualLower.getOrdinate(i)) > tolerance ||
-               abs(expectedUpper.getOrdinate(i) - actualUpper.getOrdinate(i)) > tolerance)
+           if (abs(expectedLower.getCoordinate(i) - actualLower.getOrdinate(i)) > tolerance ||
+               abs(expectedUpper.getCoordinate(i) - actualUpper.getOrdinate(i)) > tolerance)
                {
                 fail("Envelopes are not equal in dimension " + i + ":\n"
                        + "expected " + Envelopes.toString(expected) + "\n"

@@ -739,7 +739,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
         final Point2D center = getDisplayCenter();
         getObjectiveToDisplay().inverseTransform(center, center);
         final GeneralDirectPosition pt = new GeneralDirectPosition(getObjectiveCRS2D());
-        pt.setCoordinate(center.getX(), center.getY());
+        pt.setCoordinates(center.getX(), center.getY());
         return pt;
     }
 
@@ -834,7 +834,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
     public final void translateObjective(final double x, final double y) throws NoninvertibleTransformException, TransformException {
         final Point2D dispCenter = getDisplayCenter();
         final DirectPosition center = getObjectiveCenter();
-        Point2D objCenter = new Point2D.Double(center.getOrdinate(0) + x, center.getOrdinate(1) + y);
+        Point2D objCenter = new Point2D.Double(center.getCoordinate(0) + x, center.getOrdinate(1) + y);
         objCenter = getObjectiveToDisplay().transform(objCenter, objCenter);
         translateDisplay(dispCenter.getX() - objCenter.getX(), dispCenter.getY() - objCenter.getY());
     }

@@ -1085,7 +1085,7 @@ public class GridCoverageStack extends org.geotoolkit.coverage.grid.GridCoverage
      * @throws IOException if an I/O operation was required but failed.
      */
     public void snap(final DirectPosition point) throws IOException { // No synchronization needed.
-        double z = point.getOrdinate(zDimension);
+        double z = point.getCoordinate(zDimension);
         int index;
         try {
             index = Arrays.binarySearch(elements, Double.valueOf(z), COMPARATOR);
@@ -1116,7 +1116,7 @@ public class GridCoverageStack extends org.geotoolkit.coverage.grid.GridCoverage
                     z = upperZ;
                 }
             }
-            point.setOrdinate(zDimension, z);
+            point.setCoordinate(zDimension, z);
         }
         /*
          * Now that we know the coverage element,
@@ -1131,19 +1131,19 @@ public class GridCoverageStack extends org.geotoolkit.coverage.grid.GridCoverage
             DirectPosition position = new GeneralDirectPosition(dimension);
             for (int i=dimension; --i>=0;) {
                 // Copy only the first dimensions (may not be up to crs.dimension)
-                position.setOrdinate(i, point.getOrdinate(i));
+                position.setCoordinate(i, point.getCoordinate(i));
             }
             try {
                 position = transform.inverse().transform(position, position);
                 for (int i=dimension; --i>=0;) {
-                    position.setOrdinate(i, Math.max(range.getLow(i),
+                    position.setCoordinate(i, Math.max(range.getLow(i),
                                             Math.min(range.getHigh(i),
-                                       (int)Math.rint(position.getOrdinate(i)))));
+                                       (int)Math.rint(position.getCoordinate(i)))));
                 }
                 position = transform.transform(position, position);
                 for (int i=Math.min(dimension, zDimension); --i>=0;) {
                     // Do not touch the z-value, copy the other coordinates.
-                    point.setOrdinate(i, position.getOrdinate(i));
+                    point.setCoordinate(i, position.getCoordinate(i));
                 }
             } catch (TransformException exception) {
                 throw new CannotEvaluateException(cannotEvaluate(point), exception);
@@ -1346,7 +1346,7 @@ public class GridCoverageStack extends org.geotoolkit.coverage.grid.GridCoverage
                 reducedPosition = new GeneralDirectPosition(zDimension);
             }
             for (int i=0; i<dimension; i++) {
-                reducedPosition.coordinates[i] = coord.getOrdinate(i);
+                reducedPosition.coordinates[i] = coord.getCoordinate(i);
             }
             coord = reducedPosition;
         } else {
@@ -1370,7 +1370,7 @@ public class GridCoverageStack extends org.geotoolkit.coverage.grid.GridCoverage
     public synchronized double[] evaluate(final DirectPosition coord, double[] dest)
             throws PointOutsideCoverageException, CannotEvaluateException
     {
-        final double z = coord.getOrdinate(zDimension);
+        final double z = coord.getCoordinate(zDimension);
         if (!seek(z)) {
             // Missing data
             final int numSampleDimensions = getSampleDimensions().size();

@@ -60,10 +60,10 @@ public abstract class ResolutionCRSTest extends ResolutionTest {
      */
     @Test
     public void testA() throws MismatchedDimensionException, TransformException {
-        lowerCorner.setOrdinate(0, -50);
-        lowerCorner.setOrdinate(1, 70);
-        upperCorner.setOrdinate(0, 50);
-        upperCorner.setOrdinate(1, 89.9);
+        lowerCorner.setCoordinate(0, -50);
+        lowerCorner.setCoordinate(1, 70);
+        upperCorner.setCoordinate(0, 50);
+        upperCorner.setCoordinate(1, 89.9);
         this.testFractEnvelope(new GeneralEnvelope(lowerCorner, upperCorner));
     }
 
@@ -75,10 +75,10 @@ public abstract class ResolutionCRSTest extends ResolutionTest {
      */
     @Test
     public void testB() throws MismatchedDimensionException, TransformException {
-        lowerCorner.setOrdinate(0, -50);
-        lowerCorner.setOrdinate(1, -10);
-        upperCorner.setOrdinate(0, 20);
-        upperCorner.setOrdinate(1, 25);
+        lowerCorner.setCoordinate(0, -50);
+        lowerCorner.setCoordinate(1, -10);
+        upperCorner.setCoordinate(0, 20);
+        upperCorner.setCoordinate(1, 25);
         this.testFractEnvelope(new GeneralEnvelope(lowerCorner, upperCorner));
     }
 
@@ -90,10 +90,10 @@ public abstract class ResolutionCRSTest extends ResolutionTest {
      */
     @Test
     public void testC() throws MismatchedDimensionException, TransformException {
-        lowerCorner.setOrdinate(0, -50);
-        lowerCorner.setOrdinate(1, -89.9);
-        upperCorner.setOrdinate(0, 20);
-        upperCorner.setOrdinate(1, -80);
+        lowerCorner.setCoordinate(0, -50);
+        lowerCorner.setCoordinate(1, -89.9);
+        upperCorner.setCoordinate(0, 20);
+        upperCorner.setCoordinate(1, -80);
         this.testFractEnvelope(new GeneralEnvelope(lowerCorner, upperCorner));
     }
 
@@ -105,10 +105,10 @@ public abstract class ResolutionCRSTest extends ResolutionTest {
      */
      @Test
     public void testD() throws MismatchedDimensionException, TransformException {
-        lowerCorner.setOrdinate(0, -179.9);
-        lowerCorner.setOrdinate(1, -89.9);
-        upperCorner.setOrdinate(0, -130);
-        upperCorner.setOrdinate(1, -40);
+        lowerCorner.setCoordinate(0, -179.9);
+        lowerCorner.setCoordinate(1, -89.9);
+        upperCorner.setCoordinate(0, -130);
+        upperCorner.setCoordinate(1, -40);
         this.testFractEnvelope(new GeneralEnvelope(lowerCorner, upperCorner));
     }
 
@@ -120,10 +120,10 @@ public abstract class ResolutionCRSTest extends ResolutionTest {
      */
     @Test
     public void testE() throws MismatchedDimensionException, TransformException {
-        lowerCorner.setOrdinate(0, -179.9);
-        lowerCorner.setOrdinate(1, -10);
-        upperCorner.setOrdinate(0, -150);
-        upperCorner.setOrdinate(1, 40);
+        lowerCorner.setCoordinate(0, -179.9);
+        lowerCorner.setCoordinate(1, -10);
+        upperCorner.setCoordinate(0, -150);
+        upperCorner.setCoordinate(1, 40);
         this.testFractEnvelope(new GeneralEnvelope(lowerCorner, upperCorner));
     }
 
@@ -135,10 +135,10 @@ public abstract class ResolutionCRSTest extends ResolutionTest {
      */
     @Test
     public void testF() throws MismatchedDimensionException, TransformException {
-        lowerCorner.setOrdinate(0, -179.9);
-        lowerCorner.setOrdinate(1, 70);
-        upperCorner.setOrdinate(0, -160);
-        upperCorner.setOrdinate(1, 89.9);
+        lowerCorner.setCoordinate(0, -179.9);
+        lowerCorner.setCoordinate(1, 70);
+        upperCorner.setCoordinate(0, -160);
+        upperCorner.setCoordinate(1, 89.9);
         this.testFractEnvelope(new GeneralEnvelope(lowerCorner, upperCorner));
     }
 
@@ -150,10 +150,10 @@ public abstract class ResolutionCRSTest extends ResolutionTest {
      */
      @Test
     public void testG() throws MismatchedDimensionException, TransformException {
-        lowerCorner.setOrdinate(0, 170);
-        lowerCorner.setOrdinate(1, -89.9);
-        upperCorner.setOrdinate(0, 189.9);
-        upperCorner.setOrdinate(1, -40);
+        lowerCorner.setCoordinate(0, 170);
+        lowerCorner.setCoordinate(1, -89.9);
+        upperCorner.setCoordinate(0, 189.9);
+        upperCorner.setCoordinate(1, -40);
         this.testFractEnvelope(new GeneralEnvelope(lowerCorner, upperCorner));
     }
 
@@ -165,10 +165,10 @@ public abstract class ResolutionCRSTest extends ResolutionTest {
      */
     @Test
     public void testH() throws MismatchedDimensionException, TransformException {
-        lowerCorner.setOrdinate(0, 160);
-        lowerCorner.setOrdinate(1, -10);
-        upperCorner.setOrdinate(0, 189.9);
-        upperCorner.setOrdinate(1, 40);
+        lowerCorner.setCoordinate(0, 160);
+        lowerCorner.setCoordinate(1, -10);
+        upperCorner.setCoordinate(0, 189.9);
+        upperCorner.setCoordinate(1, 40);
         this.testFractEnvelope(new GeneralEnvelope(lowerCorner, upperCorner));
     }
 
@@ -180,10 +180,10 @@ public abstract class ResolutionCRSTest extends ResolutionTest {
      */
     @Test
     public void testI() throws MismatchedDimensionException, TransformException {
-        lowerCorner.setOrdinate(0, 160);
-        lowerCorner.setOrdinate(1, 60);
-        upperCorner.setOrdinate(0, 189.9);
-        upperCorner.setOrdinate(1, 89.9);
+        lowerCorner.setCoordinate(0, 160);
+        lowerCorner.setCoordinate(1, 60);
+        upperCorner.setCoordinate(0, 189.9);
+        upperCorner.setCoordinate(1, 89.9);
         this.testFractEnvelope(new GeneralEnvelope(lowerCorner, upperCorner));
     }
 }

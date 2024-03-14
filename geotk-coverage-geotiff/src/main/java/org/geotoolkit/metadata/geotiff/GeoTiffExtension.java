@@ -158,9 +158,9 @@ public abstract class GeoTiffExtension {
                 final DirectPosition oldOrigin = rectifiedGrid.getOrigin();
                     final GeneralDirectPosition newOrigin = new GeneralDirectPosition(crs);
                     for (int i = 0, n = oldOrigin.getDimension(); i < n; i++) {
-                        newOrigin.setOrdinate(i, oldOrigin.getOrdinate(i));
+                        newOrigin.setCoordinate(i, oldOrigin.getCoordinate(i));
                     }
-                    newOrigin.setOrdinate(oldOrigin.getDimension(), value);
+                    newOrigin.setCoordinate(oldOrigin.getDimension(), value);
 
                     //new limits
                     final int[][] limits = acc.getLimits();
@@ -169,7 +169,7 @@ public abstract class GeoTiffExtension {
         //            limits[1][limits[1].length-1] = 1;
 
                     //set new values
-                    acc.setOrigin(newOrigin.getCoordinate());
+                    acc.setOrigin(newOrigin.getCoordinates());
                     acc.setLimits(limits[0], limits[1]);
                     acc.clearOffsetVectors();
                     for (double[] ov : offsetVectors) {
@@ -182,10 +182,10 @@ public abstract class GeoTiffExtension {
             //new origin
             final DirectPosition oldOrigin = rectifiedGrid.getOrigin();
             final GeneralDirectPosition newOrigin = new GeneralDirectPosition(oldOrigin);
-            newOrigin.setOrdinate(axisIndex, value);
+            newOrigin.setCoordinate(axisIndex, value);
 
             //set new values
-            acc.setOrigin(newOrigin.getCoordinate());
+            acc.setOrigin(newOrigin.getCoordinates());
         }
 
         //metadata keeps a cache of object likes crs, rectifiedgrid and so on ...

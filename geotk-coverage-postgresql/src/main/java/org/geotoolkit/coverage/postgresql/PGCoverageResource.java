@@ -213,8 +213,8 @@ public class PGCoverageResource extends AbstractPyramidalCoverageResource implem
                 final int tileHeight = rs.getInt(8);
 
                 final GeneralDirectPosition position = new GeneralDirectPosition(crs);
-                position.setOrdinate(0, cornerX);
-                position.setOrdinate(1, cornerY);
+                position.setCoordinate(0, cornerX);
+                position.setCoordinate(1, cornerY);
 
 
                 if(crs.getCoordinateSystem().getDimension() > 2){
@@ -230,7 +230,7 @@ public class PGCoverageResource extends AbstractPyramidalCoverageResource implem
                         query.append(mosaicId);
                         rs2 = stmt2.executeQuery(query.toString());
                         while(rs2.next()){
-                            position.setOrdinate(rs2.getInt(1), rs2.getDouble(2));
+                            position.setCoordinate(rs2.getInt(1), rs2.getDouble(2));
                         }
                     }finally{
                         store.closeSafe(null, stmt2, rs2);

@@ -353,10 +353,10 @@ public class WPSConvertersUtils {
                 crsCode = 3857;
             }
 
-            final double xMin = env.getLowerCorner().getOrdinate(0);
-            final double xMax = env.getUpperCorner().getOrdinate(0);
-            final double yMin = env.getLowerCorner().getOrdinate(1);
-            final double yMax = env.getUpperCorner().getOrdinate(1);
+            final double xMin = env.getLowerCorner().getCoordinate(0);
+            final double xMax = env.getUpperCorner().getCoordinate(0);
+            final double yMin = env.getLowerCorner().getCoordinate(1);
+            final double yMax = env.getUpperCorner().getCoordinate(1);
             final Map<String,String> bboxMap = new HashMap<>();
             bboxMap.put("bounds", xMin+","+yMin+","+xMax+","+yMax);
             bboxMap.put("crs", "EPSG:4326");

@@ -124,10 +124,10 @@ public final class TileMatrices extends Static {
     public static DirectPosition getUpperLeftCorner(TileMatrix tileMatrix) {
         final GeneralEnvelope envelope = new GeneralEnvelope(tileMatrix.getTilingScheme().getEnvelope());
         final GeneralDirectPosition upperLeft = new GeneralDirectPosition(envelope.getCoordinateReferenceSystem());
-        upperLeft.setOrdinate(0, envelope.getMinimum(0));
-        upperLeft.setOrdinate(1, envelope.getMaximum(1));
+        upperLeft.setCoordinate(0, envelope.getMinimum(0));
+        upperLeft.setCoordinate(1, envelope.getMaximum(1));
         for (int i = 2, n = envelope.getDimension(); i < n; i++) {
-            upperLeft.setOrdinate(i, envelope.getMedian(i));
+            upperLeft.setCoordinate(i, envelope.getMedian(i));
         }
         return upperLeft;
     }
@@ -175,8 +175,8 @@ public final class TileMatrices extends Static {
         high[1] = gridSize.height-1;
         final GridExtent extent = new GridExtent(null, low, high, true);
 
-        final double offsetX  = upperleft.getOrdinate(0);
-        final double offsetY = upperleft.getOrdinate(1);
+        final double offsetX  = upperleft.getCoordinate(0);
+        final double offsetY = upperleft.getCoordinate(1);
         MatrixSIS matrix = Matrices.createDiagonal(dimension+1, dimension+1);
         matrix.setElement(0, 0, scale * tileSize[0]);
         matrix.setElement(1, 1, -scale * tileSize[1]);
@@ -186,7 +186,7 @@ public final class TileMatrices extends Static {
             // this shoud normaly be zero, but it causes exception a many places, 0.0 is not handle well yet in the library
             double span = 1.0;
             matrix.setElement(i, i, span);
-            matrix.setElement(i, dimension, upperleft.getOrdinate(i) - span/2.0);
+            matrix.setElement(i, dimension, upperleft.getCoordinate(i) - span/2.0);
         }
         final MathTransform gridToCrs = MathTransforms.linear(matrix);
         return new GridGeometry(extent, PixelInCell.CELL_CORNER, gridToCrs, crs);
@@ -552,7 +552,7 @@ public final class TileMatrices extends Static {
             gm.setElement(1, dim-1, trs2d.getTranslateY());
             for(int i=2;i<dim-1;i++){
                 gm.setElement(i, i, 1);
-                gm.setElement(i, dim-1, upperleft.getOrdinate(i));
+                gm.setElement(i, dim-1, upperleft.getCoordinate(i));
             }
             return MathTransforms.linear(gm);
         }
@@ -572,8 +572,8 @@ public final class TileMatrices extends Static {
         final DirectPosition upperleft = getUpperLeftCorner(tileMatrix);
         final double scale = tileMatrix.getResolution()[0];
 
-        final double offsetX  = upperleft.getOrdinate(0) + location[0] * (scale * tileSize[0]) ;
-        final double offsetY = upperleft.getOrdinate(1) - location[1] * (scale * tileSize[1]);
+        final double offsetX  = upperleft.getCoordinate(0) + location[0] * (scale * tileSize[0]) ;
+        final double offsetY = upperleft.getCoordinate(1) - location[1] * (scale * tileSize[1]);
         AffineTransform2D transform2D = new AffineTransform2D(scale, 0, 0, -scale, offsetX, offsetY);
         if (orientation.equals(PixelInCell.CELL_CENTER)) {
             return (AffineTransform2D) PixelTranslation.translate(transform2D, PixelInCell.CELL_CORNER, PixelInCell.CELL_CENTER);
@@ -642,8 +642,8 @@ public final class TileMatrices extends Static {
 
         final int[] tileSize = new int[]{256, 256};
         final GeneralDirectPosition corner = new GeneralDirectPosition(crs);
-        corner.setOrdinate(0, -180.0);
-        corner.setOrdinate(1, 90.0);
+        corner.setCoordinate(0, -180.0);
+        corner.setCoordinate(1, 90.0);
 
         final List<org.geotoolkit.storage.multires.TileMatrix> mosaics = new ArrayList<>();
 

@@ -158,8 +158,8 @@ public abstract class AbstractFeatureType extends AbstractGMLType implements Abs
                 boundedBy = new BoundingShapeType(gEnv);
             } else {
                 final GeneralEnvelope gEnv = new GeneralEnvelope(pt.getCoordinateReferenceSystem(true));
-                gEnv.setRange(0, pt.getPos().getOrdinate(1),  pt.getPos().getOrdinate(1));
-                gEnv.setRange(1, pt.getPos().getOrdinate(0),  pt.getPos().getOrdinate(0));
+                gEnv.setRange(0, pt.getPos().getCoordinate(1),  pt.getPos().getOrdinate(1));
+                gEnv.setRange(1, pt.getPos().getCoordinate(0),  pt.getPos().getOrdinate(0));
                 boundedBy = new BoundingShapeType(gEnv);
             }
         } else {

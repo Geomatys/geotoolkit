@@ -44,12 +44,12 @@ public class EnvelopeSerializer extends JsonSerializer<Envelope> {
             DirectPosition uc = env.getUpperCorner();
             if (uc != null) {
                 writer.writeFieldName("upperCorner");
-                writer.writeArray(uc.getCoordinate(), 0, uc.getCoordinate().length);
+                writer.writeArray(uc.getCoordinates(), 0, uc.getDimension());
             }
             DirectPosition lc = env.getLowerCorner();
             if (lc != null) {
                 writer.writeFieldName("lowerCorner");
-                writer.writeArray(lc.getCoordinate(), 0, lc.getCoordinate().length);
+                writer.writeArray(lc.getCoordinates(), 0, lc.getDimension());
             }
             writer.writeEndObject();
         } catch (FactoryException ex) {

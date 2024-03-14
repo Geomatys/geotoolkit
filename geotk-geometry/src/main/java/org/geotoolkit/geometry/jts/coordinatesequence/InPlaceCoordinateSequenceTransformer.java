@@ -127,16 +127,8 @@ public class InPlaceCoordinateSequenceTransformer implements CoordinateSequenceT
         /**
          * {@inheritDoc }
          */
-        @Deprecated
-        public double[] getCoordinates() {
-            return getCoordinate();
-        }
-
-        /**
-         * {@inheritDoc }
-         */
         @Override
-        public double[] getCoordinate() {
+        public double[] getCoordinates() {
             return new double[]{ sequence.getX(offset), sequence.getY(offset), sequence.getOrdinate(offset, CoordinateSequence.Z)};
         }
 
@@ -144,7 +136,7 @@ public class InPlaceCoordinateSequenceTransformer implements CoordinateSequenceT
          * {@inheritDoc }
          */
         @Override
-        public double getOrdinate( final int arg0 ) throws IndexOutOfBoundsException {
+        public double getCoordinate( final int arg0 ) throws IndexOutOfBoundsException {
             return sequence.getOrdinate(offset, arg0);
         }
 
@@ -152,7 +144,7 @@ public class InPlaceCoordinateSequenceTransformer implements CoordinateSequenceT
          * {@inheritDoc }
          */
         @Override
-        public void setOrdinate( final int arg0, final double arg1 ) throws IndexOutOfBoundsException {
+        public void setCoordinate( final int arg0, final double arg1 ) throws IndexOutOfBoundsException {
             sequence.setOrdinate(offset, arg0, arg1);
         }
 

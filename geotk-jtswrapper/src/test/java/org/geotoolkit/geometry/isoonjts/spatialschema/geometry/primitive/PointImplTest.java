@@ -46,8 +46,8 @@ public class PointImplTest {
     @Test
     public void testNewPointHere() {
         DirectPosition here = new GeneralDirectPosition(CommonCRS.WGS84.normalizedGeographic());
-        here.setOrdinate(0, 48.44);
-        here.setOrdinate(1, -123.37); // 48.44,-123.37
+        here.setCoordinate(0, 48.44);
+        here.setCoordinate(1, -123.37); // 48.44,-123.37
 
         Point point = new JTSPoint(here);
         assertNotNull(point.getCoordinateReferenceSystem());

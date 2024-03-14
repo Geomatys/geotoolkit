@@ -47,7 +47,7 @@ public class LineStringPosListType {
         List<Double> value = new ArrayList<Double>();
         for (Position p : lineString.getPositions()) {
             for (int i = 0; i < p.getDirectPosition().getDimension(); i++) {
-                value.add(p.getDirectPosition().getOrdinate(i));
+                value.add(p.getDirectPosition().getCoordinate(i));
             }
         }
         posList = new PosListType(value);

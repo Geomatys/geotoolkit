@@ -156,7 +156,7 @@ class SimpleUVSource implements UVSource {
                 .orElseThrow(() -> new IllegalStateException("Source dataset has no temporal axis"));
 
         final DefaultTemporalCRS timeCrs = DefaultTemporalCRS.castOrCopy((TemporalCRS) timeEnv.getCoordinateReferenceSystem());
-        timeEnv.getLowerCorner().setOrdinate(0, timeCrs.toValue(time));
+        timeEnv.getLowerCorner().setCoordinate(0, timeCrs.toValue(time));
 
         final GridDerivation subgrid = gg.derive()
                 .rounding(GridRoundingMode.ENCLOSING)
@@ -177,7 +177,7 @@ class SimpleUVSource implements UVSource {
                         -> getSubCrs(userOrigin::getCoordinateReferenceSystem, VERTICAL_EXTRACTOR)
                         .map(component -> {
                             final DirectPosition1D elevation = new DirectPosition1D(component.crs);
-                            elevation.coordinate = userOrigin.getOrdinate(component.idx);
+                            elevation.coordinate = userOrigin.getCoordinate(component.idx);
                             return (DirectPosition) elevation;
                         })
                         .orElseGet(() -> {

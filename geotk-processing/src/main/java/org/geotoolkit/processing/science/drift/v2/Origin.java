@@ -37,8 +37,8 @@ public class Origin {
         final DirectPosition tmpGeo = CRS.findOperation(sourceCrs, CommonCRS.WGS84.geographic(), null)
                 .getMathTransform()
                 .transform(source, null);
-        final double lat = tmpGeo.getOrdinate(0);
-        final double lon = tmpGeo.getOrdinate(1);
+        final double lat = tmpGeo.getCoordinate(0);
+        final double lon = tmpGeo.getCoordinate(1);
         final ProjectedCRS utmCrs = CommonCRS.WGS84.universal(lat, lon);
         // TODO : get utm extent instead of crappy hard-coded extent.
         final DirectPosition tmpUtm = CRS.findOperation(sourceCrs, utmCrs, new DefaultGeographicBoundingBox(lon-3, lon+3, lat-3, lat+3))

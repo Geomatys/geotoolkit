@@ -324,15 +324,15 @@ public final class CoverageUtilities extends Static {
         final GeneralDirectPosition center = new GeneralDirectPosition(env.getCoordinateReferenceSystem());
         final GeneralDirectPosition vec = new GeneralDirectPosition(env.getCoordinateReferenceSystem());
         for (int i = 0; i < dim; i++) {
-            center.setOrdinate(i, env.getMedian(i));
-            vec.setOrdinate(i, env.getMedian(i) + res[i]);
+            center.setCoordinate(i, env.getMedian(i));
+            vec.setCoordinate(i, env.getMedian(i) + res[i]);
         }
         final MathTransform trs = CRS.findOperation(env.getCoordinateReferenceSystem(), crs, null).getMathTransform();
         DirectPosition center2 = trs.transform(center, null);
         DirectPosition vec2 = trs.transform(vec, null);
         double[] res2 = new double[center2.getDimension()];
         for (int i = 0; i < res2.length; i++) {
-            res2[i] = Math.abs(vec2.getOrdinate(i) - center2.getOrdinate(i));
+            res2[i] = Math.abs(vec2.getCoordinate(i) - center2.getOrdinate(i));
         }
         return res2;
     }

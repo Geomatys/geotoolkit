@@ -139,7 +139,7 @@ public class GridCrsType {
         if (grid != null) {
             if (grid.getOrigin() != null) {
                 this.gridOrigin = new ArrayList<>();
-                for (double d : grid.getOrigin().getCoordinate()) {
+                for (double d : grid.getOrigin().getCoordinates()) {
                     this.gridOrigin.add(d);
                 }
             }
@@ -169,7 +169,7 @@ public class GridCrsType {
        if (gg != null) {
            MathTransform gridToCRS = gg.getGridToCRS(PixelInCell.CELL_CORNER);
            DirectPosition ori = gridToCRS.transform(new GeneralDirectPosition(gridToCRS.getSourceDimensions()), null);
-           this.gridOrigin = DoubleStream.of(ori.getCoordinate()).boxed().collect(Collectors.toList());
+           this.gridOrigin = DoubleStream.of(ori.getCoordinates()).boxed().collect(Collectors.toList());
 
            Matrix m = MathTransforms.getMatrix(gridToCRS);
            if (m == null) {

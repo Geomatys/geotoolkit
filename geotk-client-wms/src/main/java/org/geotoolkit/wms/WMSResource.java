@@ -684,13 +684,13 @@ public class WMSResource extends AbstractGridCoverageResource implements StoreRe
             beforeTrs.transform(pickCoord, pickCoord);
 
             final DirectPosition pos = new GeneralDirectPosition(env.getCoordinateReferenceSystem());
-            pos.setOrdinate(0, pickCoord.getX());
-            pos.setOrdinate(1, pickCoord.getY());
+            pos.setCoordinate(0, pickCoord.getX());
+            pos.setCoordinate(1, pickCoord.getY());
 
             final MathTransform trs = CRS.findOperation(beforeEnv.getCoordinateReferenceSystem(), env.getCoordinateReferenceSystem(), null).getMathTransform();
             trs.transform(pos, pos);
 
-            pickCoord.setLocation(pos.getOrdinate(0), pos.getOrdinate(1));
+            pickCoord.setLocation(pos.getCoordinate(0), pos.getOrdinate(1));
             afterTrs.transform(pickCoord, pickCoord);
         }
 

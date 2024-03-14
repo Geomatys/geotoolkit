@@ -497,8 +497,8 @@ public class Geometries {
      */
     public static MatrixSIS centeredScaled(GeneralEnvelope source, GeneralEnvelope target, double scale){
 
-        final double[] sourceCenter = source.getMedian().getCoordinate();
-        final double[] targetCenter = target.getMedian().getCoordinate();
+        final double[] sourceCenter = source.getMedian().getCoordinates();
+        final double[] targetCenter = target.getMedian().getCoordinates();
         Vectors.scale(sourceCenter, scale, sourceCenter);
         final double[] trs = Vectors.subtract(targetCenter, sourceCenter);
 

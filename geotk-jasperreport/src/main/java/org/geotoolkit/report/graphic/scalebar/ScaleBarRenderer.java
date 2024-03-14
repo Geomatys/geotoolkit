@@ -78,7 +78,7 @@ public class ScaleBarRenderer implements Graphics2DRenderable, Renderable {
             AbstractCanvas2D c2d = (AbstractCanvas2D) canvas;
 
             try {
-                final double[] center = c2d.getObjectiveCenter().getCoordinate();
+                final double[] center = c2d.getObjectiveCenter().getCoordinates();
                 final Point2D centerPoint = new Point2D.Double(center[0], center[1]);
                 J2DScaleBarUtilities.paint(c2d.getObjectiveCRS(), c2d.getDisplayCRS(), centerPoint, g2d, area.x,area.y, template);
             } catch ( PortrayalException | NoninvertibleTransformException | TransformException ex) {

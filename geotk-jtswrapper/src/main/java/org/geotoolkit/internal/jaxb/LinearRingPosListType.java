@@ -66,7 +66,7 @@ public class LinearRingPosListType {
 
                     for (Position p : line.getPositions()) {
                         for (int i = 0; i < p.getDirectPosition().getDimension(); i++) {
-                            value.add(p.getDirectPosition().getOrdinate(i));
+                            value.add(p.getDirectPosition().getCoordinate(i));
                         }
                     }
                 }

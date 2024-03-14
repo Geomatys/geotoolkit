@@ -109,7 +109,7 @@ public class JTSPointGrid implements PointGrid {
             return target;
         }
         for (int i = 0; i < target.getDimension(); i++) {
-            dest.setOrdinate(i, target.getOrdinate(i));
+            dest.setCoordinate(i, target.getCoordinate(i));
         }
         return dest;
     }
@@ -146,7 +146,7 @@ public class JTSPointGrid implements PointGrid {
 
         if (position.getCoordinateReferenceSystem().equals(target.getCoordinateReferenceSystem())) {
             for (int i = 0; i < position.getDimension(); i++) {
-                target.setOrdinate(i, position.getOrdinate(i));
+                target.setCoordinate(i, position.getCoordinate(i));
             }
         }
     }

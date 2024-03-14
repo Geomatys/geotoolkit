@@ -115,10 +115,10 @@ public class ProjectionUtils {
         StringBuilder builder = new StringBuilder();
         Envelope bounds = CRS.getDomainOfValidity(source);
         if(bounds != null) {
-            double minX = bounds.getLowerCorner().getOrdinate(0);
-            double minY = bounds.getLowerCorner().getOrdinate(1);
-            double maxX = bounds.getUpperCorner().getOrdinate(0);
-            double maxY = bounds.getUpperCorner().getOrdinate(1);
+            double minX = bounds.getLowerCorner().getCoordinate(0);
+            double minY = bounds.getLowerCorner().getCoordinate(1);
+            double maxX = bounds.getUpperCorner().getCoordinate(0);
+            double maxY = bounds.getUpperCorner().getCoordinate(1);
             builder.append(BOUNDS_NAME).append(' ')
                     .append('(').append(minX).append(',').append(minY).append(')')
                     .append('(').append(maxX).append(',').append(maxY).append(')');

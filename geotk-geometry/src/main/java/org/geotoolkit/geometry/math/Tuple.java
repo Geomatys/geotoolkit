@@ -54,17 +54,17 @@ public interface Tuple extends DirectPosition{
     void toArrayDouble(double[] buffer, int offset);
 
     @Override
-    public default double getOrdinate(int dimension) throws IndexOutOfBoundsException {
+    public default double getCoordinate(int dimension) throws IndexOutOfBoundsException {
         return get(dimension);
     }
 
     @Override
-    public default void setOrdinate(int dimension, double value) throws IndexOutOfBoundsException, UnsupportedOperationException {
+    public default void setCoordinate(int dimension, double value) throws IndexOutOfBoundsException, UnsupportedOperationException {
         set(dimension,value);
     }
 
     @Override
-    public default double[] getCoordinate() {
+    public default double[] getCoordinates() {
         return toArrayDouble();
     }
 
