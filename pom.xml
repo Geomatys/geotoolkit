@@ -172,8 +172,8 @@
     <ucar.repository.url>https://artifacts.unidata.ucar.edu/repository/unidata-releases</ucar.repository.url>
 
     <!-- associated projects dependencies -->
-    <geoapi.version>4.0-SNAPSHOT</geoapi.version>
-    <sis.version>2.0-SNAPSHOT</sis.version>
+    <geoapi.version>4.0-M26</geoapi.version>
+    <sis.version>2.0-M0123</sis.version>
     <!--
     SIS build helper version froozen to official release.
     It ensures we can import it after SIS will migrate to Gradle build system.

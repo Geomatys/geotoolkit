@@ -102,13 +102,32 @@ public class OMUtils {
     public static final Field LONGITUDE_FIELD = new Field(-1, FieldType.QUANTITY, "lon",    null, "http://mmisw.org/ont/cf/parameter/longitude", "deg");
 
     public static Phenomenon getPhenomenonModels(String name, final List<? extends Field> phenomenons, final String phenomenonIdBase, final Set<Phenomenon> existingPhens) {
-        final Phenomenon phenomenon;
         if (phenomenons.size() == 1) {
-            phenomenon = new Phenomenon(phenomenons.get(0).name, phenomenons.get(0).label, phenomenons.get(0).name, phenomenons.get(0).description, null);
+            Field single = phenomenons.get(0);
+            // look for an existing phenomenon
+            for (Phenomenon exisiting : existingPhens) {
+                if (!(exisiting instanceof CompositePhenomenon) && exisiting.getId().equals(single.name)) {
+                    return exisiting;
+                }
+            }
+            // build a new single phenomenon
+            return new Phenomenon(single.name, single.label, single.name, single.description, null);
         } else {
             final List<Phenomenon> types = new ArrayList<>();
             for (Field phen : phenomenons) {
-                types.add(new Phenomenon(phen.name, phen.label, phen.name, phen.description, null));
+                // try to use existing components because if not, previous properties will be lost by overwritting
+                boolean found = false;
+                for (Phenomenon exisiting : existingPhens) {
+                    if (!(exisiting instanceof CompositePhenomenon) && exisiting.getId().equals(phen.name)) {
+                        types.add(exisiting);
+                        found = true;
+                        break;
+                    }
+                }
+                // build a new phenomenon
+                if (!found)  {
+                    types.add(new Phenomenon(phen.name, phen.label, phen.name, phen.description, null));
+                }
             }
 
             // look for an already existing (composite) phenomenon to use instead of creating a new one
@@ -125,9 +144,8 @@ public class OMUtils {
             if (name == null) {
                 name = definition;
             }
-            phenomenon = new CompositePhenomenon(compositeId, name, definition, null, null, types);
+            return new CompositePhenomenon(compositeId, name, definition, null, null, types);
         }
-        return phenomenon;
     }
 
     public static Date dateFromTS(Timestamp t) {
@@ -152,6 +170,37 @@ public class OMUtils {
             }
         }
         return true;
+    }
+
+    /**
+     * Return true id the candidate phenomenon is equals, or if is a composite and all the components are present in the second phenomenon.
+     *
+     * @param candidate
+     * @param phenomenon
+     * @return
+     */
+    public static boolean isEqualsOrSubset(Phenomenon candidate, Phenomenon phenomenon) {
+        if (Objects.equals(candidate, phenomenon)) {
+            return true;
+        } else if (phenomenon instanceof CompositePhenomenon composite) {
+            if (candidate instanceof CompositePhenomenon compositeCdt) {
+                return isACompositeSubSet(compositeCdt, composite);
+            } else if (candidate != null) {
+                return hasComponent(candidate.getId(), composite);
+            }
+        }
+        return false;
+    }
+
+    public static boolean isPartOf(Phenomenon candidate, Phenomenon phenomenon) {
+        if (candidate instanceof CompositePhenomenon compositeCdt) {
+            if (phenomenon instanceof CompositePhenomenon composite) {
+                return OMUtils.isACompositeSubSet(composite, compositeCdt);
+            } else if (phenomenon != null) {
+                return OMUtils.hasComponent(phenomenon.getId(), compositeCdt);
+            }
+        }
+        return false;
     }
 
     public static Optional<CompositePhenomenon> getOverlappingComposite(List<? extends CompositePhenomenon> composites) throws DataStoreException {
