@@ -28,7 +28,7 @@ import jakarta.xml.bind.annotation.XmlSeeAlso;
 import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.apache.sis.internal.simple.SimpleIdentifier;
+import org.apache.sis.metadata.simple.SimpleIdentifier;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.gml.xml.v321.CodeType;
 import org.opengis.metadata.Identifier;

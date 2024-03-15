@@ -7,7 +7,7 @@ package org.geotoolkit.pending.demo.bindings;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jakarta.xml.bind.JAXBException;
-import org.apache.sis.portrayal.MapLayers;
+import org.apache.sis.map.MapLayers;
 import org.geotoolkit.wmc.WMCUtilities;
 
 /**

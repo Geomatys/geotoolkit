@@ -38,7 +38,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.VerticalCRS;
 
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
+import org.apache.sis.referencing.privy.GeodeticObjectBuilder;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.Version;
 import org.apache.sis.referencing.CommonCRS;

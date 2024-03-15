@@ -21,7 +21,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.sis.internal.storage.io.ChannelDataInput;
+import org.apache.sis.io.stream.ChannelDataInput;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.StorageConnector;
 import org.apache.sis.util.ArgumentChecks;

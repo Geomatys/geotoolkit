@@ -42,7 +42,7 @@ import org.opengis.util.GenericName;
  */
 public class ListenerTest {
 
-    private static final MutableStyleFactory SF = new DefaultStyleFactory();
+    private static final MutableStyleFactory SF = DefaultStyleFactory.provider();
     private static final FilterFactory FF = FilterUtilities.FF;
     private static double DELTA = 0d;
 

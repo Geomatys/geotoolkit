@@ -17,8 +17,8 @@
 package org.geotoolkit.display2d.canvas;
 
 import org.apache.sis.coverage.grid.GridCoverage;
-import org.apache.sis.internal.map.Presentation;
-import org.apache.sis.portrayal.MapLayer;
+import org.apache.sis.map.Presentation;
+import org.apache.sis.map.MapLayer;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
 import org.geotoolkit.display.SearchArea;
@@ -29,7 +29,7 @@ import org.opengis.feature.Feature;
 
 /**
  * A visitor which can be applied to the
- * {@link org.opengis.display.primitive.Graphic} objects of a scene and through
+ * {@link org.geotoolkit.display.primitive.Graphic} objects of a scene and through
  * the {@code Graphic} objects, to the underlying
  * {@link org.opengis.feature.Feature} or
  * {@link GridCoverage}.

@@ -22,9 +22,9 @@ import jakarta.xml.bind.Marshaller;
 import jakarta.xml.bind.Unmarshaller;
 import org.geotoolkit.gml.xml.v311.*;
 
-import org.apache.sis.internal.jaxb.geometry.GM_Object;
+import org.apache.sis.xml.bind.metadata.geometry.GM_Object;
 import org.opengis.geometry.Geometry;
-import org.apache.sis.internal.jaxb.AdapterReplacement;
+import org.apache.sis.xml.bind.AdapterReplacement;
 
 
 /**

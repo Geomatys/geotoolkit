@@ -27,11 +27,11 @@ import org.opengis.referencing.operation.NoninvertibleTransformException;
 
 import org.junit.*;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.referencing.privy.AffineTransform2D;
 import org.apache.sis.referencing.operation.transform.AbstractMathTransform2D;
 
 import static org.junit.Assert.*;
-import static org.opengis.test.Assert.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.geotoolkit.test.Assertions.assertMultilinesEquals;
 import static org.geotoolkit.test.Commons.*;
 
@@ -377,7 +377,7 @@ public final class FormattingTest extends ProjectionTestBase {
         transform = mtFactory.createParameterizedTransform(parameters);
         transform = MathTransforms.concatenate(swap, transform, convert);
         transform = MathTransforms.concatenate(first.inverse(), transform);
-        assertInstanceOf("Concatenation should have been optimized.", AffineTransform.class, transform);
+        assertInstanceOf(AffineTransform.class, transform, "Concatenation should have been optimized.");
         final AffineTransform at = (AffineTransform) transform;
         tolerance = 1E-10;
         assertEquals(0.0,             at.getShearX(),     tolerance);

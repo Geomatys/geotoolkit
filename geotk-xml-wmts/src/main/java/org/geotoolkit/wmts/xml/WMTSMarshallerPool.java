@@ -34,7 +34,7 @@ public final class WMTSMarshallerPool {
             instance = new MarshallerPool(JAXBContext.newInstance(
                  "org.geotoolkit.wmts.xml.v100:" +
                  "org.geotoolkit.gml.xml.v311:" +
-                 "org.apache.sis.internal.jaxb.geometry:" +
+                 "org.apache.sis.xml.bind.metadata.geometry:" +
                  "org.geotoolkit.ows.xml.v110"), null);
         } catch (JAXBException ex) {
             throw new AssertionError(ex); // Should never happen, unless we have a build configuration problem.

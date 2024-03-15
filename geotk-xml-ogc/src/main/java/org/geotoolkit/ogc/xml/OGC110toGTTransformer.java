@@ -19,6 +19,7 @@ package org.geotoolkit.ogc.xml;
 import jakarta.xml.bind.JAXBElement;
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -72,13 +73,12 @@ public class OGC110toGTTransformer {
     private final Map<String, String> namespaceMapping;
 
     public OGC110toGTTransformer(final FilterFactory factory) {
-        this.filterFactory   = factory;
-        this.namespaceMapping = null;
+        this(factory, null);
     }
 
     public OGC110toGTTransformer(final FilterFactory factory, final Map<String, String> namespaceMapping) {
         this.filterFactory = factory;
-        this.namespaceMapping = namespaceMapping;
+        this.namespaceMapping = namespaceMapping != null ? namespaceMapping : new HashMap<>();
     }
 
     /**
@@ -426,14 +426,15 @@ public class OGC110toGTTransformer {
                 sb.append("/");
             }
             int pos = pname.indexOf(':');
-            if (pos != -1 && namespaceMapping != null) {
+            if (pos != -1) {
                 String prefix = pname.substring(0, pos);
-                String namespace = namespaceMapping.get(prefix);
-                if (namespace == null) {
-                    throw new IllegalArgumentException("Prefix " + prefix + " is nor bounded.");
-                } else {
-                    sb.append('{').append(namespace).append('}').append(pname.substring(pos +1));
-                }
+                boolean isAtt = prefix.startsWith("@");
+                if(isAtt) prefix = prefix.substring(1);
+                // if not in mapping, we assume that the namespace is fully present
+                String namespace = namespaceMapping.getOrDefault(prefix, prefix);
+                sb.append("Q{").append(namespace).append('}');
+                if(isAtt) sb.append('@');
+                sb.append(pname.substring(pos +1));
             } else {
                 sb.append(pname);
             }

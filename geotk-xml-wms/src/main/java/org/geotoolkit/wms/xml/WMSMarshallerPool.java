@@ -44,7 +44,7 @@ public final class WMSMarshallerPool {
                     createJAXBContext(
                             "org.geotoolkit.ogc.xml.exception:" +
                             "org.geotoolkit.wms.xml.v100:" +
-                            "org.apache.sis.internal.jaxb.geometry",
+                            "org.apache.sis.xml.bind.metadata.geometry",
                             WMSMarshallerPool.class.getClassLoader())
             );
         } catch (JAXBException ex) {
@@ -60,7 +60,7 @@ public final class WMSMarshallerPool {
                             "org.geotoolkit.ogc.xml.exception:" +
                             "org.geotoolkit.wms.xml.v111:" +
                             //"org.geotoolkit.sld.xml.v110:" + TODO : find a way to active it back without being annoyed by namespaces.
-                            "org.apache.sis.internal.jaxb.geometry",
+                            "org.apache.sis.xml.bind.metadata.geometry",
                             WMSMarshallerPool.class.getClassLoader())
             );
         } catch (JAXBException ex) {
@@ -79,7 +79,7 @@ public final class WMSMarshallerPool {
                     "org.geotoolkit.wms.xml.v130:" +
                     "org.geotoolkit.sld.xml.v110:" +
                     "org.geotoolkit.inspire.xml.vs:" +
-                    "org.apache.sis.internal.jaxb.geometry",
+                    "org.apache.sis.xml.bind.metadata.geometry",
                     WMSMarshallerPool.class.getClassLoader()), null);
         } catch (JAXBException ex) {
             throw new AssertionError(ex); // Should never happen, unless we have a build configuration problem.
@@ -95,7 +95,7 @@ public final class WMSMarshallerPool {
                     "org.geotoolkit.wms.xml.v130:" +
                     "org.geotoolkit.sld.xml.v110:" +
                     "org.geotoolkit.inspire.xml.vs:" +
-                    "org.apache.sis.internal.jaxb.geometry",
+                    "org.apache.sis.xml.bind.metadata.geometry",
                     WMSMarshallerPool.class.getClassLoader()));
         } catch (JAXBException ex) {
             throw new AssertionError(ex); // Should never happen, unless we have a build configuration problem.

@@ -26,6 +26,8 @@ import jakarta.xml.bind.annotation.XmlElementRef;
 import jakarta.xml.bind.annotation.XmlMixed;
 import jakarta.xml.bind.annotation.XmlSeeAlso;
 import jakarta.xml.bind.annotation.XmlType;
+import java.util.Arrays;
+import java.util.Objects;
 
 
 /**
@@ -66,6 +68,17 @@ public class ParameterValueType {
     @XmlElementRef(name = "expression", namespace = "http://www.opengis.net/ogc", type = JAXBElement.class)
     @XmlMixed
     protected List<Serializable> content;
+
+    public ParameterValueType() {
+    }
+
+    public ParameterValueType(List<Serializable> content) {
+        this.content = content;
+    }
+
+    public ParameterValueType(Serializable content) {
+        this.content = Arrays.asList(content);
+    }
 
     /**
      *
@@ -120,6 +133,28 @@ public class ParameterValueType {
             content = new ArrayList<Serializable>();
         }
         return this.content;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 67 * hash + Objects.hashCode(this.content);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ParameterValueType other = (ParameterValueType) obj;
+        return Objects.equals(this.content, other.content);
     }
 
 }

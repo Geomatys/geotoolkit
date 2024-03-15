@@ -52,17 +52,15 @@ import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.feature.Features;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.internal.map.coverage.RenderingWorkaround;
-import org.apache.sis.internal.referencing.AxisDirections;
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.apache.sis.internal.system.DefaultFactories;
+import org.apache.sis.map.coverage.RenderingWorkaround;
 import org.apache.sis.measure.Units;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
+import org.apache.sis.referencing.privy.AxisDirections;
+import org.apache.sis.referencing.privy.AffineTransform2D;
 import org.apache.sis.util.ArgumentChecks;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
-import org.apache.sis.util.NullArgumentException;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.collection.Cache;
@@ -94,6 +92,7 @@ import org.geotoolkit.processing.coverage.resample.CannotReprojectException;
 import org.geotoolkit.processing.coverage.resample.ResampleDescriptor;
 import org.geotoolkit.renderer.style.WKMMarkFactory;
 import org.geotoolkit.storage.coverage.ImageStatistics;
+import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
@@ -189,7 +188,7 @@ public final class GO2Utilities {
             RENDERERS.put(renderer.getCachedSymbolizerClass(), renderer);
         }
 
-        STYLE_FACTORY = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
+        STYLE_FACTORY = DefaultStyleFactory.provider();
         FILTER_FACTORY = FilterUtilities.FF;
 
         //LINE -----------------------------------------------------------------
@@ -267,7 +266,7 @@ public final class GO2Utilities {
         }
 
         if(coverage == null){
-            monitor.exceptionOccured(new NullArgumentException("GO2Utilities : Reprojected coverage is null."),Level.WARNING);
+            monitor.exceptionOccured(new NullPointerException("GO2Utilities : Reprojected coverage is null."),Level.WARNING);
             return false;
         }
 

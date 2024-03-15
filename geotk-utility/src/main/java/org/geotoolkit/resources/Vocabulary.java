@@ -17,24 +17,22 @@
  */
 package org.geotoolkit.resources;
 
+import java.io.InputStream;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.MissingResourceException;
 import org.opengis.util.InternationalString;
 import org.apache.sis.util.ResourceInternationalString;
 import org.apache.sis.util.resources.IndexedResourceBundle;
+import org.apache.sis.util.resources.KeyConstants;
 
 
 /**
  * Locale-dependent resources for words or simple sentences.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
- *
- * @since 2.2
- * @module
  */
-public final class Vocabulary extends IndexedResourceBundle {
+public class Vocabulary extends IndexedResourceBundle {
     /**
      * Resource keys. This class is used when compiling sources, but no dependencies to
      * {@code Keys} should appear in any resulting class files. Since the Java compiler
@@ -42,11 +40,11 @@ public final class Vocabulary extends IndexedResourceBundle {
      * pools of compiled classes.
      *
      * @author Martin Desruisseaux (IRD)
-     * @version 3.00
-     *
-     * @since 2.2
      */
-    public static final class Keys {
+    public static final class Keys extends KeyConstants {
+        /** The unique instance of key constants handler. */
+        static final Keys INSTANCE = new Keys();
+
         private Keys() {
         }
 
@@ -1532,12 +1530,29 @@ public final class Vocabulary extends IndexedResourceBundle {
     }
 
     /**
-     * Constructs a new resource bundle loading data from the given UTF file.
-     *
-     * @param filename The file or the JAR entry containing resources.
+     * Constructs a new resource bundle loading data from
+     * the resource file of the same name than this class.
      */
-    public Vocabulary(final java.net.URL filename) {
-        super(filename);
+    public Vocabulary() {
+    }
+
+    /**
+     * Opens the binary file containing the localized resources to load.
+     * This method delegates to {@link Class#getResourceAsStream(String)},
+     * but this delegation must be done from the same module than the one
+     * that provides the binary file.
+     */
+    @Override
+    protected InputStream getResourceAsStream(final String name) {
+        return getClass().getResourceAsStream(name);
+     }
+
+    /**
+     * Returns the handle for the {@code Keys} constants.
+     */
+    @Override
+    protected KeyConstants getKeyConstants() {
+        return Keys.INSTANCE;
     }
 
     /**
@@ -1548,7 +1563,7 @@ public final class Vocabulary extends IndexedResourceBundle {
      * @throws MissingResourceException if resources can't be found.
      */
     public static Vocabulary getResources(Locale locale) throws MissingResourceException {
-        return getBundle(Vocabulary.class, locale);
+        return (Vocabulary) getBundle(Vocabulary.class.getName(), nonNull(locale));
     }
 
     /**
@@ -1558,7 +1573,7 @@ public final class Vocabulary extends IndexedResourceBundle {
         private static final long serialVersionUID = -9199238559657784488L;
 
         International(final int key) {
-            super(Vocabulary.class.getName(), String.valueOf(key));
+            super(String.valueOf(key));
         }
 
         @Override

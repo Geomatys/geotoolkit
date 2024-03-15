@@ -32,8 +32,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.datum.GeodeticDatum;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.parameter.Parameter;
-import org.geotoolkit.parameter.ParameterGroup;
+import org.apache.sis.parameter.DefaultParameterValueGroup;
 import org.apache.sis.referencing.datum.DefaultGeodeticDatum;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.collection.WeakValueHashMap;
@@ -392,9 +391,10 @@ public class EarthGravitationalModel extends VerticalTransform {
      */
     @Override
     public ParameterValueGroup getParameterValues() {
-        return new ParameterGroup(getParameterDescriptors(),
-                new Parameter<>(DATUM, isWGS84 ? "WGS84" : "WGS72"),
-                new Parameter<>(ORDER, nmax));
+        var p = new DefaultParameterValueGroup(getParameterDescriptors());
+        p.getOrCreate(DATUM).setValue(isWGS84 ? "WGS84" : "WGS72");
+        p.getOrCreate(ORDER).setValue(nmax);
+        return p;
     }
 
     /**

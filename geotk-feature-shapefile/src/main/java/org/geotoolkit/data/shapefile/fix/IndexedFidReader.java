@@ -18,15 +18,16 @@
 package org.geotoolkit.data.shapefile.fix;
 
 
+import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.util.NoSuchElementException;
 import java.util.logging.Level;
-import org.apache.sis.internal.storage.io.IOUtilities;
 import org.geotoolkit.data.dbf.Closeable;
 import org.geotoolkit.data.shapefile.FeatureIDReader;
 import static org.geotoolkit.data.shapefile.ShapefileProvider.*;
@@ -105,8 +106,9 @@ public class IndexedFidReader implements FeatureIDReader, Closeable {
         this.removes = buffer.getInt();
         if (removes > count/2 ) {
             try {
-                IOUtilities.toFile(fixUrl.toURL(), ENCODING).deleteOnExit();
-            } finally {
+                new File(fixUrl.toURL().toURI()).deleteOnExit();
+            } catch (IllegalArgumentException | URISyntaxException e) {
+                throw new IOException(e.getMessage(), e);
             }
         }
     }

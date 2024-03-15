@@ -36,9 +36,9 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridOrientation;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.apache.sis.portrayal.MapLayer;
-import org.apache.sis.portrayal.MapLayers;
+import org.apache.sis.referencing.privy.AffineTransform2D;
+import org.apache.sis.map.MapLayer;
+import org.apache.sis.map.MapLayers;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.GridCoverageResource;
@@ -90,7 +90,7 @@ import org.opengis.util.FactoryException;
  */
 public class RasterSymbolizerTest {
 
-    private static final MutableStyleFactory SF = new DefaultStyleFactory();
+    private static final MutableStyleFactory SF = DefaultStyleFactory.provider();
     protected static final FilterFactory FF = FilterUtilities.FF;
 
     /**

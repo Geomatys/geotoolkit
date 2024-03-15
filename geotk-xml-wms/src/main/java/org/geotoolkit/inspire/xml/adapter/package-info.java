@@ -17,7 +17,7 @@
 
 /**
  * JAXB adapters for metadata objects without their wrapper. This package contains adapters for
- * the same objects than the ones handled by {@link org.apache.sis.internal.jaxb.metadata},
+ * the same objects than the ones handled by {@link org.apache.sis.xml.bind.metadata},
  * except that the XML is formatted in a "direct" way, without wrappers.
  *
  * <p><b>Example:</b> given an attribute named {@code "myAttribute"} of type

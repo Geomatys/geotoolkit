@@ -34,7 +34,7 @@ public final class SensorMLMarshallerPool {
                     "org.geotoolkit.sml.xml.v100:"  +
                     "org.geotoolkit.swe.xml.v100:"  +
                     "org.geotoolkit.swe.xml.v101:"  +
-                    "org.apache.sis.internal.jaxb.geometry"), null);
+                    "org.apache.sis.xml.bind.metadata.geometry"), null);
         } catch (JAXBException ex) {
             throw new AssertionError(ex); // Should never happen, unless we have a build configuration problem.
         }

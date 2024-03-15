@@ -40,9 +40,9 @@ import org.geotoolkit.display2d.container.MapItemJ2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.image.color.ColorUtilities;
-import org.apache.sis.portrayal.MapLayers;
-import org.apache.sis.portrayal.MapItem;
-import org.apache.sis.portrayal.MapLayer;
+import org.apache.sis.map.MapLayers;
+import org.apache.sis.map.MapItem;
+import org.apache.sis.map.MapLayer;
 import org.geotoolkit.style.visitor.ListingColorVisitor;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.style.Style;
@@ -316,7 +316,7 @@ public class J2DCanvasBuffered extends J2DCanvas{
 
     private static SortedSet<Integer> extractColors(final MapLayer layer, final SortedSet<Integer> buffer){
 
-        final Style style = layer.getStyle();
+        final Style style = (Style) layer.getStyle();
         final ListingColorVisitor visitor = new ListingColorVisitor();
         style.accept(visitor, null);
         final Set<Integer> colors = visitor.getColors();

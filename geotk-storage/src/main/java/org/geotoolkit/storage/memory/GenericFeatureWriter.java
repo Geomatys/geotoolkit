@@ -35,7 +35,7 @@ import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
-import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.feature.privy.AttributeConvention;
 import org.geotoolkit.filter.FilterUtilities;
 import org.opengis.filter.ResourceId;
 
@@ -62,7 +62,9 @@ public class GenericFeatureWriter implements FeatureWriter {
     private GenericFeatureWriter(final FeatureStore store, final String typeName, final Filter filter) throws DataStoreException {
         this.store = store;
         this.typeName = typeName;
-        reader = store.getFeatureReader(Query.filtered(typeName, filter));
+        Query query = new Query(typeName);
+        query.setSelection(filter);
+        reader = store.getFeatureReader(query);
         type = store.getFeatureType(typeName);
     }
 

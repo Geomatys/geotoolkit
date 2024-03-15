@@ -32,7 +32,6 @@ import org.geotoolkit.wps.xml.v200.Format;
 import org.junit.Test;
 
 import static org.junit.Assert.assertNotNull;
-import static org.geotoolkit.test.Assert.assertRasterEquals;
 
 
 /**
@@ -40,7 +39,6 @@ import static org.geotoolkit.test.Assert.assertRasterEquals;
  * @author Quentin Boileau (Geomatys)
  */
 public class ComplexToRenderedImageConvereterTest extends AbstractWPSConverterTest {
-
     @Test
     public void testConversion() throws UnconvertibleObjectException, IOException  {
         final WPSObjectConverter<Data, RenderedImage> converter = WPSConverterRegistry.getInstance().getConverter(Data.class, RenderedImage.class);

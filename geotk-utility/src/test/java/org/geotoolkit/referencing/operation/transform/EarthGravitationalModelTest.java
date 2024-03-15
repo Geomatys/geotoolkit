@@ -21,7 +21,6 @@ import java.util.Arrays;
 import java.io.IOException;
 import java.text.ParseException;
 
-import org.opengis.util.Factory;
 import org.opengis.util.FactoryException;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.parameter.ParameterValueGroup;
@@ -31,9 +30,9 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.test.referencing.TransformTestCase;
 
 import org.apache.sis.geometry.GeneralDirectPosition;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.io.wkt.WKTFormat;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.operation.transform.DefaultMathTransformFactory;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -52,7 +51,6 @@ public final class EarthGravitationalModelTest extends TransformTestCase {
      * Creates a new test case without factory.
      */
     public EarthGravitationalModelTest() {
-        super(new Factory[0]);
     }
 
     /**
@@ -109,7 +107,7 @@ public final class EarthGravitationalModelTest extends TransformTestCase {
      */
     @Test
     public void testMathTransform() throws FactoryException, TransformException {
-        final MathTransformFactory mtFactory = DefaultFactories.forBuildin(MathTransformFactory.class);
+        final MathTransformFactory mtFactory = DefaultMathTransformFactory.provider();
         final ParameterValueGroup p = mtFactory.getDefaultParameters("Ellipsoid_To_Geoid");
         final MathTransform mt = mtFactory.createParameterizedTransform(p);
         DirectPosition pos = new GeneralDirectPosition(new double[] {45, 45, 1000});

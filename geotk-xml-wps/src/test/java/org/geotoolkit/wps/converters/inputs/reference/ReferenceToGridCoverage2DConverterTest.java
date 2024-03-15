@@ -34,7 +34,6 @@ import org.junit.Test;
 import org.opengis.geometry.Envelope;
 
 import static org.junit.Assert.*;
-import static org.geotoolkit.test.Assert.assertRasterEquals;
 
 
 /**
@@ -42,8 +41,6 @@ import static org.geotoolkit.test.Assert.assertRasterEquals;
  * @author Quentin Boileau (Geomatys)
  */
 public class ReferenceToGridCoverage2DConverterTest extends AbstractWPSConverterTest {
-
-
     @Test
     @org.junit.Ignore("Fails randomly because of GeoTIFF reader not found.")
     public void testConversion() throws UnconvertibleObjectException, IOException  {
@@ -73,13 +70,12 @@ public class ReferenceToGridCoverage2DConverterTest extends AbstractWPSConverter
         assertTrue(expectedEnvelope.getMinimum(1) == convertedEnvelope.getMinimum(1));
         assertTrue(expectedEnvelope.getMaximum(0) == convertedEnvelope.getMaximum(0));
         assertTrue(expectedEnvelope.getMaximum(1) == convertedEnvelope.getMaximum(1));
-        assertRasterEquals(expectedCvg.render(null), convertedCvg.render(null));
+        assertRasterEquals(expectedCvg, convertedCvg);
     }
 
     @Test
     @org.junit.Ignore("Fails randomly because of GeoTIFF reader not found.")
     public void testConversionBase64() throws UnconvertibleObjectException, IOException  {
-
         final WPSObjectConverter<Reference, GridCoverage> converter = WPSConverterRegistry.getInstance().getConverter(Reference.class, GridCoverage.class);
 
         final URL coverageBase64 = ReferenceToRenderedImageConverterTest.class.getResource("/inputs/coverage_geotiff_base64");
@@ -106,7 +102,6 @@ public class ReferenceToGridCoverage2DConverterTest extends AbstractWPSConverter
         assertTrue(expectedEnvelope.getMinimum(1) == convertedEnvelope.getMinimum(1));
         assertTrue(expectedEnvelope.getMaximum(0) == convertedEnvelope.getMaximum(0));
         assertTrue(expectedEnvelope.getMaximum(1) == convertedEnvelope.getMaximum(1));
-        assertRasterEquals(expectedCvg.render(null), convertedCvg.render(null));
+        assertRasterEquals(expectedCvg, convertedCvg);
     }
-
 }

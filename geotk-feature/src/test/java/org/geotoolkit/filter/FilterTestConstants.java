@@ -24,8 +24,6 @@ import java.util.HashMap;
 import java.util.Map;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.internal.feature.AttributeConvention;
-import org.apache.sis.referencing.CommonCRS;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -35,6 +33,8 @@ import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.FilterFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.apache.sis.feature.privy.AttributeConvention;
+import org.apache.sis.referencing.CommonCRS;
 
 
 /**
@@ -44,7 +44,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @module
  */
 public class FilterTestConstants {
-    public static final FilterFactory FF = FilterUtilities.FF;
+    public static final FilterFactory FF = new FilterFactory2();
     public static final GeometryFactory GF = org.geotoolkit.geometry.jts.JTS.getFactory();
 
     public static final Geometry RIGHT_GEOMETRY;

@@ -32,9 +32,9 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.operation.matrix.Matrices;
 import org.apache.sis.referencing.operation.matrix.MatrixSIS;
+import org.apache.sis.referencing.operation.transform.DefaultMathTransformFactory;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.WritableGridCoverageResource;
@@ -122,7 +122,7 @@ public class FillCoverage {
         final HyperCubeIterator ite = new HyperCubeIterator(mins, maxs, maxSize);
 
         //loop on all slices pieces
-        final MathTransformFactory mathFactory = DefaultFactories.forBuildin(MathTransformFactory.class);
+        final MathTransformFactory mathFactory = DefaultMathTransformFactory.provider();
         while (ite.hasNext()) {
             final HyperCubeIterator.HyperCube cube = ite.next();
             final long[] hcubeLower = cube.getLower();

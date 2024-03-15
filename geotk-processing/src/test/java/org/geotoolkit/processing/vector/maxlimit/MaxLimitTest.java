@@ -19,7 +19,7 @@ package org.geotoolkit.processing.vector.maxlimit;
 import java.util.stream.Stream;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.feature.privy.AttributeConvention;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.process.ProcessDescriptor;

@@ -45,7 +45,7 @@ public final class SOSMarshallerPool {
                     "org.geotoolkit.sampling.xml.v100:" +
                     "org.geotoolkit.sampling.xml.v200:" +
                     "org.geotoolkit.samplingspatial.xml.v200:" +
-                    "org.apache.sis.internal.jaxb.geometry",
+                    "org.apache.sis.xml.bind.metadata.geometry",
                     SOSMarshallerPool.class.getClassLoader()), null);
         } catch (JAXBException ex) {
             throw new AssertionError(ex); // Should never happen, unless we have a build configuration problem.

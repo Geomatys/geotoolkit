@@ -6,8 +6,8 @@ import javax.swing.plaf.metal.MetalLookAndFeel;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.portrayal.MapLayer;
-import org.apache.sis.portrayal.MapLayers;
+import org.apache.sis.map.MapLayer;
+import org.apache.sis.map.MapLayers;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.map.MapBuilder;
@@ -19,7 +19,7 @@ import org.geotoolkit.style.StyleConstants;
 
 public class CustomCoverage1SDemo {
 
-    public static final MutableStyleFactory SF = new DefaultStyleFactory();
+    public static final MutableStyleFactory SF = DefaultStyleFactory.provider();
 
     public static void main(String[] args) throws Exception {
         Demos.init();

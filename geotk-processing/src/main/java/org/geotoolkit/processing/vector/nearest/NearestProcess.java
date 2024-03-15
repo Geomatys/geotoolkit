@@ -20,8 +20,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.stream.Stream;
-import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.feature.privy.AttributeConvention;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureQuery;
 import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.filter.FilterUtilities;
@@ -79,7 +80,7 @@ public class NearestProcess extends AbstractProcess {
      *
      * @return nearest query filter
      */
-    private Query nearestQuery(final FeatureSet original, final Geometry geom)
+    private FeatureQuery nearestQuery(final FeatureSet original, final Geometry geom)
             throws FactoryException, MismatchedDimensionException, TransformException, DataStoreException
     {
         CoordinateReferenceSystem geomCrs = JTS.findCoordinateReferenceSystem(geom);
@@ -113,7 +114,8 @@ public class NearestProcess extends AbstractProcess {
                 }
             }
         }
-        final Filter filter = FF.or(listID);
-        return Query.filtered("nearest", filter);
+        final FeatureQuery query = new FeatureQuery();
+        query.setSelection(FF.or(listID));
+        return query;
     }
 }

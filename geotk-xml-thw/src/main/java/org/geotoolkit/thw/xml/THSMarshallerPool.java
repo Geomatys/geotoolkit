@@ -40,7 +40,7 @@ public class THSMarshallerPool {
                                           org.geotoolkit.ows.xml.v110.ObjectFactory.class,
                                           org.geotoolkit.skos.xml.ObjectFactory.class,
                                           org.geotoolkit.gml.xml.v311.ObjectFactory.class,
-                                          org.apache.sis.internal.jaxb.geometry.ObjectFactory.class),
+                                          org.apache.sis.xml.bind.metadata.geometry.ObjectFactory.class),
                                           properties());
         } catch (JAXBException ex) {
             Logger.getLogger(THSMarshallerPool.class.getName()).log(Level.SEVERE, null, ex);

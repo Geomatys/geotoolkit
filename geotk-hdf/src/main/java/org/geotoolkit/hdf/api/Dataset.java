@@ -36,7 +36,7 @@ import java.util.logging.Level;
 import javax.measure.Unit;
 import javax.measure.format.MeasurementParseException;
 import org.apache.sis.coverage.grid.GridExtent;
-import org.apache.sis.internal.storage.io.ChannelDataInput;
+import org.apache.sis.io.stream.ChannelDataInput;
 import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.referencing.crs.DefaultEngineeringCRS;

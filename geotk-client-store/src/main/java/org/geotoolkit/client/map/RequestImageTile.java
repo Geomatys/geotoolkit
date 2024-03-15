@@ -18,11 +18,9 @@ package org.geotoolkit.client.map;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.ByteBuffer;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.stream.ImageInputStream;
-import org.apache.sis.setup.OptionKey;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.StorageConnector;
 import org.apache.sis.storage.tiling.TileMatrix;
@@ -48,7 +46,6 @@ public class RequestImageTile extends DefaultImageTile {
             //try to find reader
             final InputStream in = ((Request)input).getResponseStream();
             final StorageConnector cnx = new StorageConnector(in);
-            cnx.setOption(OptionKey.BYTE_BUFFER, ByteBuffer.allocate(8196));
 
             try {
                 final ImageInputStream imin = cnx.getStorageAs(ImageInputStream.class);

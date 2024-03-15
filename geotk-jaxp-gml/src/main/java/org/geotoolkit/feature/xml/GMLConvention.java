@@ -21,8 +21,8 @@ import javax.xml.namespace.QName;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.internal.feature.AttributeConvention;
-import org.apache.sis.internal.system.DefaultFactories;
+import org.apache.sis.feature.privy.AttributeConvention;
+import org.apache.sis.util.iso.DefaultNameFactory;
 import org.geotoolkit.feature.xml.jaxb.mapping.XSDMapping;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.xsd.xml.v2001.Annotated;
@@ -101,7 +101,7 @@ public class GMLConvention {
     public static final String MAPPING = "mapping";
 
     static {
-        final NameFactory factory = DefaultFactories.forBuildin(NameFactory.class);
+        final NameFactory factory = DefaultNameFactory.provider();
         NAMESPACE               = factory.createGenericName(null, "Geotk", "GML");
         NameSpace ns            = factory.createNameSpace(NAMESPACE, null);
         XSD_TYPE_ID_PROPERTY    = factory.createLocalName(ns, "xsdTypeId");

@@ -136,7 +136,7 @@ abstract class UnitaryProjection extends NormalizedProjection {
         final double value = parameters.doubleValue(descriptor);    // Apply a unit conversion if needed.
         final Double defaultValue = descriptor.getDefaultValue();
         if (defaultValue == null || !defaultValue.equals(value)) {
-            org.apache.sis.internal.referencing.provider.MapProjection.validate(descriptor, value);
+            org.apache.sis.referencing.operation.provider.MapProjection.validate(descriptor, value);
             String name = IdentifiedObjects.getName(descriptor, parameters.getDescriptor().getName().getAuthority());
             if (name == null) {
                 name = descriptor.getName().getCode();

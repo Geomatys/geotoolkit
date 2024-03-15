@@ -32,10 +32,10 @@ import org.apache.sis.feature.AbstractOperation;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.feature.builder.PropertyTypeBuilder;
-import org.apache.sis.internal.feature.AttributeConvention;
-import org.apache.sis.internal.system.DefaultFactories;
+import org.apache.sis.feature.privy.AttributeConvention;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.operation.transform.DefaultMathTransformFactory;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.ArgumentChecks;
@@ -170,7 +170,7 @@ public final class VectorProcessUtils extends Static {
             semiMinorAxis = converter.convert(semiMinorAxis);
         }
 
-        final MathTransformFactory f = DefaultFactories.forBuildin(MathTransformFactory.class);
+        final MathTransformFactory f = DefaultMathTransformFactory.provider();
         ParameterValueGroup p;
         if (conicProjection) {
             p = f.getDefaultParameters("Albers_Conic_Equal_Area");
@@ -265,7 +265,7 @@ public final class VectorProcessUtils extends Static {
     {
         if (!(wantedCRS.equals(geometryCRS))) {
             final MathTransform transform = CRS.findOperation(geometryCRS, wantedCRS, null).getMathTransform();
-            return org.apache.sis.internal.feature.jts.JTS.transform(inputGeom, transform);
+            return org.apache.sis.geometry.wrapper.jts.JTS.transform(inputGeom, transform);
         } else {
             return inputGeom;
         }

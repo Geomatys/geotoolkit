@@ -19,7 +19,7 @@ package org.geotoolkit.filter.capability;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import org.apache.sis.internal.util.UnmodifiableArrayList;
+import org.apache.sis.util.privy.UnmodifiableArrayList;
 import org.opengis.util.CodeList;
 
 /**

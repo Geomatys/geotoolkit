@@ -20,10 +20,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import org.apache.sis.coverage.grid.GridCoverage;
-import org.apache.sis.internal.system.DefaultFactories;
-import org.apache.sis.portrayal.MapItem;
-import org.apache.sis.portrayal.MapLayer;
-import org.apache.sis.portrayal.MapLayers;
+import org.apache.sis.map.MapItem;
+import org.apache.sis.map.MapLayer;
+import org.apache.sis.map.MapLayers;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStore;
@@ -34,13 +33,12 @@ import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.Static;
 import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
+import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyle;
-import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.RandomStyleBuilder;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.FeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.style.StyleFactory;
 
 /**
  * Utility class to create MapLayers, MapContexts and Elevation models from different sources.
@@ -149,7 +147,7 @@ public final class MapBuilder extends Static {
             abstrat = type.getName().toString();
             style = RandomStyleBuilder.createDefaultVectorStyle(type);
         } catch (DataStoreException ex) {
-            style = ((MutableStyleFactory)DefaultFactories.forBuildin(StyleFactory.class)).style(RandomStyleBuilder.createRandomPointSymbolizer());
+            style = DefaultStyleFactory.provider().style(RandomStyleBuilder.createRandomPointSymbolizer());
         }
         final MapLayer maplayer = new MapLayer();
         maplayer.setData(collection);

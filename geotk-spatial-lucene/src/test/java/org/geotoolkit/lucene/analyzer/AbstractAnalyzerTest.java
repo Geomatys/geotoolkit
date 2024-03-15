@@ -42,10 +42,9 @@ import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TermRangeQuery;
 import org.apache.lucene.util.BytesRef;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.filter.FilterFactory2;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.index.LogicalFilterType;
 import org.geotoolkit.index.tree.manager.NamedEnvelope;
@@ -56,8 +55,6 @@ import org.geotoolkit.lucene.filter.LuceneOGCSpatialQuery;
 import org.geotoolkit.lucene.filter.SpatialQuery;
 import org.geotoolkit.lucene.index.LuceneIndexSearcher;
 import static org.junit.Assert.assertEquals;
-import org.junit.runner.RunWith;
-import org.junit.runners.BlockJUnit4ClassRunner;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Polygon;
 import org.opengis.filter.FilterFactory;
@@ -69,10 +66,9 @@ import org.opengis.util.FactoryException;
  *
  * @author Guilhem Legal (Geomatys)
  */
-@RunWith(BlockJUnit4ClassRunner.class)
 public abstract class AbstractAnalyzerTest {
 
-    protected static final FilterFactory2 FF = DefaultFactories.forBuildin(FilterFactory.class, FilterFactory2.class);
+    protected static final FilterFactory FF = FilterUtilities.FF;;
 
     protected static final Logger LOGGER = Logger.getLogger("org.constellation.metadata.index.generic");
 
@@ -2937,7 +2933,7 @@ public abstract class AbstractAnalyzerTest {
         GeneralEnvelope bbox = new GeneralEnvelope(min1, max1);
         CoordinateReferenceSystem crs = CommonCRS.defaultGeographic();
         bbox.setCoordinateReferenceSystem(crs);
-        LuceneOGCSpatialQuery sf = LuceneOGCSpatialQuery.wrap(FF.bbox(LuceneOGCSpatialQuery.GEOMETRY_PROPERTY, -20, -20, 20, 20, "EPSG:4326"));
+        LuceneOGCSpatialQuery sf = LuceneOGCSpatialQuery.wrap(FF.bbox(LuceneOGCSpatialQuery.GEOMETRY_PROPERTY, bbox));
         SpatialQuery spatialQuery = new SpatialQuery("metafile:doc", sf, LogicalFilterType.AND);
 
         Set<String> result = indexSearcher.doSearch(spatialQuery);
@@ -2955,7 +2951,7 @@ public abstract class AbstractAnalyzerTest {
          */
 
         //sf           = new BBOXFilter(bbox, "urn:x-ogc:def:crs:EPSG:6.11:4326");
-        sf = LuceneOGCSpatialQuery.wrap(FF.bbox(LuceneOGCSpatialQuery.GEOMETRY_PROPERTY, -20, -20, 20, 20, "EPSG:4326"));
+        sf = LuceneOGCSpatialQuery.wrap(FF.bbox(LuceneOGCSpatialQuery.GEOMETRY_PROPERTY, bbox));
 
         BooleanQuery query = new BooleanQuery.Builder()
                                 .add(sf, BooleanClause.Occur.MUST_NOT)

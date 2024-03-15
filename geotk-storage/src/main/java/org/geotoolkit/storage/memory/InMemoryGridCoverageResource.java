@@ -29,9 +29,7 @@ import org.apache.sis.storage.AbstractGridCoverageResource;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.WritableGridCoverageResource;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
-import org.geotoolkit.util.NamesExt;
 import org.opengis.util.GenericName;
-import org.opengis.util.InternationalString;
 
 /**
  *
@@ -58,12 +56,7 @@ public class InMemoryGridCoverageResource extends AbstractGridCoverageResource i
 
     public InMemoryGridCoverageResource(GenericName name, GridCoverage coverage) {
         super(null, false);
-        if (name == null) {
-            InternationalString in = CoverageUtilities.getName(coverage);
-            this.name = (in == null) ? null : NamesExt.create(in.toString());
-        } else {
-            this.name = name;
-        }
+        this.name = name;
         this.coverage = coverage;
     }
 

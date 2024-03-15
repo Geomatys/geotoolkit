@@ -108,7 +108,7 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
 import org.apache.sis.xml.Namespaces;
-import org.apache.sis.internal.jaxb.gco.*;
+import org.apache.sis.xml.bind.gco.*;
 import org.geotoolkit.temporal.reference.xmlAdapter.CalendarAdapter;
 import org.geotoolkit.temporal.reference.xmlAdapter.CalendarEraAdapter;
 import org.geotoolkit.temporal.reference.xmlAdapter.ClockAdapter;

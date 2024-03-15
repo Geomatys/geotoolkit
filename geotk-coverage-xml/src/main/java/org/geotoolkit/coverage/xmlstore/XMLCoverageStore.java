@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import jakarta.xml.bind.JAXBException;
-import org.apache.sis.internal.storage.ResourceOnFileSystem;
+import org.apache.sis.storage.base.ResourceOnFileSystem;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;

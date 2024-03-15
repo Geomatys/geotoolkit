@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.TreeMap;
 import java.util.Collections;
-import org.apache.sis.internal.referencing.ReferencingFactoryContainer;
+import org.apache.sis.referencing.privy.ReferencingFactoryContainer;
 
 import org.opengis.util.FactoryException;
 import org.opengis.util.InternationalString;
@@ -42,7 +42,7 @@ import org.apache.sis.metadata.iso.citation.DefaultContact;
 import org.apache.sis.metadata.iso.citation.DefaultOnlineResource;
 import org.apache.sis.metadata.iso.citation.DefaultResponsibleParty;
 import org.apache.sis.referencing.NamedIdentifier;
-import org.apache.sis.internal.simple.SimpleCitation;
+import org.apache.sis.metadata.simple.SimpleCitation;
 import org.geotoolkit.referencing.cs.PredefinedCS;
 import org.apache.sis.referencing.crs.DefaultGeographicCRS;
 import org.apache.sis.referencing.datum.DefaultGeodeticDatum;

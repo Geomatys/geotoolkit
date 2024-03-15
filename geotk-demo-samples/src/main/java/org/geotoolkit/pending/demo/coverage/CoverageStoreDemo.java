@@ -2,8 +2,8 @@
 package org.geotoolkit.pending.demo.coverage;
 
 import java.net.URL;
-import org.apache.sis.portrayal.MapLayer;
-import org.apache.sis.portrayal.MapLayers;
+import org.apache.sis.map.MapLayer;
+import org.apache.sis.map.MapLayers;
 import org.apache.sis.storage.DataStore;
 import org.geotoolkit.map.MapBuilder;
 import org.apache.sis.storage.DataStores;
@@ -13,7 +13,7 @@ import org.geotoolkit.style.MutableStyleFactory;
 
 public class CoverageStoreDemo {
 
-    private static final MutableStyleFactory SF = new DefaultStyleFactory();
+    private static final MutableStyleFactory SF = DefaultStyleFactory.provider();
 
     public static void main(String[] args) throws Exception {
         URL dataResources = CoverageStoreDemo.class.getClassLoader().getResource("data.coverage/clouds.jpg");

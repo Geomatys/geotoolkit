@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.resources.jaxb.feature.catalog.code;
 
-import org.apache.sis.internal.jaxb.cat.*;
+import org.apache.sis.xml.bind.cat.*;
 import jakarta.xml.bind.annotation.XmlElement;
 import org.opengis.feature.catalog.RoleType;
 

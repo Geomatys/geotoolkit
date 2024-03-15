@@ -21,6 +21,7 @@ package org.geotoolkit.wfs.xml.v200;
 import java.util.Map;
 import java.util.Objects;
 import jakarta.xml.bind.annotation.*;
+import java.util.HashMap;
 import org.geotoolkit.util.Utilities;
 import org.apache.sis.util.Version;
 import org.geotoolkit.wfs.xml.BaseRequest;
@@ -170,6 +171,9 @@ public abstract class BaseRequestType implements BaseRequest {
      */
     @Override
     public Map<String, String> getPrefixMapping() {
+        if (prefixMapping == null) {
+            prefixMapping = new HashMap<>();
+        }
         return prefixMapping;
     }
 

@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import static org.apache.sis.util.ArgumentChecks.*;
-import org.apache.sis.internal.util.UnmodifiableArrayList;
+import org.apache.sis.util.privy.UnmodifiableArrayList;
 import org.apache.sis.util.iso.Names;
 import org.opengis.filter.TemporalOperatorName;
 import org.opengis.filter.capability.TemporalCapabilities;
@@ -76,8 +76,12 @@ public class DefaultTemporalCapabilities implements TemporalCapabilities {
         final Map<TemporalOperatorName, List<? extends ScopedName>> names = new HashMap<>();
         for (final TemporalOperator op : operators.getOperators()) {
             final String name = op.getName();
-            final TemporalOperatorName key = TemporalOperatorName.valueOf(TemporalOperatorName.class,
-                    (c) -> name.equalsIgnoreCase(c.identifier()), null);
+            TemporalOperatorName key = null;
+            for (TemporalOperatorName spn : TemporalOperatorName.values()) {
+                if (name.equalsIgnoreCase(spn.identifier())) {
+                    key = spn;
+                }
+            }
             if (key != null) {
                 names.put(key, getTemporalOperands(op.getTemporalOperands()));
             }

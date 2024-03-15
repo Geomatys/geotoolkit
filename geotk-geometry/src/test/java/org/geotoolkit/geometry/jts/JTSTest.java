@@ -77,13 +77,13 @@ public class JTSTest {
         //user data contained a Map with another CRS
         final Point geom3 = GF.createPoint(new Coordinate(50, 27));
         Map<String,CoordinateReferenceSystem> dataMap = new HashMap<String,CoordinateReferenceSystem>();
-        dataMap.put(org.apache.sis.internal.feature.jts.JTS.CRS_KEY, CommonCRS.SPHERE.normalizedGeographic());
+        dataMap.put(org.apache.sis.geometry.wrapper.jts.JTS.CRS_KEY, CommonCRS.SPHERE.normalizedGeographic());
         geom3.setUserData(dataMap);
 
         JTS.setCRS(geom3, crs);
         final Object userData3 = geom3.getUserData();
         Map values = (Map) userData3;
-        assertEquals(crs, values.get(org.apache.sis.internal.feature.jts.JTS.CRS_KEY));
+        assertEquals(crs, values.get(org.apache.sis.geometry.wrapper.jts.JTS.CRS_KEY));
 
     }
 

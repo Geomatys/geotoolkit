@@ -29,17 +29,15 @@ import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.internal.feature.AttributeConvention;
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.feature.privy.AttributeConvention;
+import org.apache.sis.referencing.privy.AffineTransform2D;
 import org.apache.sis.storage.AbstractGridCoverageResource;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
-import org.apache.sis.util.iso.Names;
 import org.geotoolkit.image.io.metadata.ReferencingBuilder;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
-import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -64,7 +62,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
-import org.opengis.util.InternationalString;
 
 
 /**
@@ -245,24 +242,21 @@ public class CoverageToFeatureTest extends AbstractProcessTest {
 
         private final GridCoverage coverage;
         private final PixelInCell pixPos;
-        private final GenericName name;
 
         public SimpleCoverageReader(final GridCoverage coverage, PixelInCell pixPos) {
             super(null, false);
             this.coverage = coverage;
             this.pixPos = pixPos;
-            InternationalString nam = CoverageUtilities.getName(coverage);
-            this.name = nam == null ? null : Names.createLocalName(null, null, nam);
         }
 
         @Override
         public Optional<GenericName> getIdentifier() throws DataStoreException {
-            return Optional.ofNullable(name);
+            return Optional.empty();
         }
 
         @Override
         public GridGeometry getGridGeometry() throws DataStoreException, CancellationException {
-            return (GridGeometry) coverage.getGridGeometry();
+            return coverage.getGridGeometry();
         }
 
         @Override

@@ -35,7 +35,7 @@ import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.geotoolkit.util.collection.CollectionChangeListener;
 import org.geotoolkit.util.collection.NotifiedCheckedList;
-import org.opengis.display.primitive.Graphic;
+import org.geotoolkit.display.primitive.Graphic;
 
 /**
  * A scene node is an element in the graphic container.

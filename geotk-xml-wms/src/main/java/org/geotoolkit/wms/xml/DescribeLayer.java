@@ -20,7 +20,7 @@ import java.util.List;
 import org.geotoolkit.ows.xml.RequestBase;
 
 import org.apache.sis.util.Version;
-import org.apache.sis.internal.util.UnmodifiableArrayList;
+import org.apache.sis.util.privy.UnmodifiableArrayList;
 
 
 /**

@@ -27,7 +27,6 @@ import org.geotoolkit.storage.feature.GenericModifyFeatureIterator;
 import org.geotoolkit.storage.memory.WrapFeatureIterator;
 import org.geotoolkit.storage.feature.query.Query;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.NullArgumentException;
 import org.opengis.feature.Feature;
 import org.opengis.geometry.Envelope;
 import static org.apache.sis.util.ArgumentChecks.*;
@@ -50,7 +49,7 @@ public class ModifyDelta extends AbstractDelta{
         super(session,typeName);
         ensureNonNull("type name", typeName);
         if(filter == null){
-            throw new NullArgumentException("Filter can not be null. Did you mean Filter.include()?");
+            throw new NullPointerException("Filter can not be null. Did you mean Filter.include()?");
         }
         if(values == null || values.isEmpty()){
             throw new IllegalArgumentException("Modified values can not be null or empty. A modify delta is useless in this case.");

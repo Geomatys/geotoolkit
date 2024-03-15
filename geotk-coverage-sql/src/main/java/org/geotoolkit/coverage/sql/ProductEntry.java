@@ -20,8 +20,8 @@ package org.geotoolkit.coverage.sql;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.internal.storage.MetadataBuilder;
-import org.apache.sis.internal.util.CollectionsExt;
+import org.apache.sis.storage.base.MetadataBuilder;
+import org.apache.sis.util.privy.CollectionsExt;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreReferencingException;
@@ -259,11 +259,8 @@ final class ProductEntry extends Entry {
         ensureValid();
         metadata.addIdentifier(null, name, MetadataBuilder.Scope.RESOURCE);
         metadata.addSpatialRepresentation(null, exportedGrid, true);
-        if (exportedGrid != null) try {
-            metadata.addExtent(exportedGrid.getEnvelope());
-        } catch (TransformException e) {
-            throw new DataStoreReferencingException(e);
-
+        if (exportedGrid != null) {
+            metadata.addExtent(exportedGrid.getEnvelope(), null);
         }
         if (temporalResolution != null) {
             metadata.addTemporalResolution(temporalResolution.getSeconds() / (24*60*60d));

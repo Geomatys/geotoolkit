@@ -20,7 +20,7 @@ package org.geotoolkit.filter.function;
 
 import org.junit.Test;
 
-import static org.opengis.test.Assert.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.geotoolkit.test.Assertions.assertSerializedEquals;
 import static org.geotoolkit.filter.FilterTestConstants.*;
 import org.geotoolkit.filter.function.string.LengthFunction;
@@ -37,7 +37,7 @@ public class FunctionTest {
     @Test
     public void testFunctionLenght() {
         Expression f = FF.function(StringFunctionFactory.LENGTH, FF.property("."));
-        assertInstanceOf("EXPRESSION_VALUE_LENGHT", LengthFunction.class, f);
+        assertInstanceOf(LengthFunction.class, f, "EXPRESSION_VALUE_LENGHT");
         assertSerializedEquals(f); //test serialize
     }
 }

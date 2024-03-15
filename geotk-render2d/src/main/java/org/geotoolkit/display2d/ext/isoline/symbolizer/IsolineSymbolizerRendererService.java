@@ -23,7 +23,7 @@ import org.geotoolkit.display2d.service.DefaultGlyphService;
 import org.geotoolkit.display2d.style.renderer.AbstractSymbolizerRendererService;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
-import org.apache.sis.portrayal.MapLayer;
+import org.apache.sis.map.MapLayer;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;

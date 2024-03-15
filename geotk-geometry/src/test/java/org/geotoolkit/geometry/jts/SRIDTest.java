@@ -106,7 +106,7 @@ public class SRIDTest {
         assertNull(crs);
 
         final Map<String,Object> map = new HashMap<>();
-        map.put(org.apache.sis.internal.feature.jts.JTS.CRS_KEY, epsg4326);
+        map.put(org.apache.sis.geometry.wrapper.jts.JTS.CRS_KEY, epsg4326);
 
         geom.setUserData(map);
         crs = JTS.findCoordinateReferenceSystem(geom);

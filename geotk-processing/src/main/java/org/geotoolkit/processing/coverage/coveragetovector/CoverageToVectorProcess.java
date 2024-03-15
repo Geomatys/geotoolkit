@@ -192,7 +192,7 @@ public class CoverageToVectorProcess extends AbstractProcess {
         for (int i=0; i<ranges.length; i++) {
             final NumberRange range = ranges[i];
             for(Polygon poly : polygons.get(range)) {
-                polygones.add(org.apache.sis.internal.feature.jts.JTS.transform(poly, gridToCRS));
+                polygones.add(org.apache.sis.geometry.wrapper.jts.JTS.transform(poly, gridToCRS));
             }
             //we dont merge them in a single polygon to avoid to complexe geometries
         }

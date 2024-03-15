@@ -19,7 +19,7 @@ package org.geotoolkit.referencing;
 import java.awt.geom.AffineTransform;
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.referencing.privy.AffineTransform2D;
 import org.junit.Test;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;

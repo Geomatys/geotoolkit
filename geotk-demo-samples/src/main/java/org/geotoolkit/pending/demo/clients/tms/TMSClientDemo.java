@@ -3,8 +3,8 @@ package org.geotoolkit.pending.demo.clients.tms;
 
 import java.net.URL;
 import org.apache.sis.parameter.Parameters;
-import org.apache.sis.portrayal.MapLayer;
-import org.apache.sis.portrayal.MapLayers;
+import org.apache.sis.map.MapLayer;
+import org.apache.sis.map.MapLayers;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.GridCoverageResource;
@@ -19,7 +19,7 @@ import org.geotoolkit.tms.TMSProvider;
 
 public class TMSClientDemo {
 
-    public static final MutableStyleFactory SF = new DefaultStyleFactory();
+    public static final MutableStyleFactory SF = DefaultStyleFactory.provider();
 
     public static void main(String[] args) throws Exception {
         Demos.init();

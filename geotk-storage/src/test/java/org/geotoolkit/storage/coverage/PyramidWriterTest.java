@@ -31,7 +31,7 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.Interpolation;
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.referencing.privy.AffineTransform2D;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
@@ -274,8 +274,8 @@ public class PyramidWriterTest <T extends InMemoryTiledGridCoverageResource> {
         }
 
         //the higher tiles------------------------------------------------------
-        final RenderedImage top1 = ((GridCoverageResource) tileMatrix2.getTile(0, 0).orElse(null).getResource()).read(null).render(null);
-        final RenderedImage top2 = ((GridCoverageResource) tileMatrix2.getTile(1, 0).orElse(null).getResource()).read(null).render(null);
+        final RenderedImage top1 = ((GridCoverageResource) tileMatrix2.getTile(0, 0).orElseThrow().getResource()).read(null).render(null);
+        final RenderedImage top2 = ((GridCoverageResource) tileMatrix2.getTile(1, 0).orElseThrow().getResource()).read(null).render(null);
 
         data = top1.getData();
         for(int y=0;y<9;y++){
@@ -368,8 +368,8 @@ public class PyramidWriterTest <T extends InMemoryTiledGridCoverageResource> {
         }
 
         //the higher tiles------------------------------------------------------
-        final RenderedImage top1 = ((GridCoverageResource) tileMatrix2.getTile(0, 0).orElse(null).getResource()).read(null).render(null);
-        final RenderedImage top2 = ((GridCoverageResource) tileMatrix2.getTile(0, 1).orElse(null).getResource()).read(null).render(null);
+        final RenderedImage top1 = ((GridCoverageResource) tileMatrix2.getTile(0, 0).orElseThrow().getResource()).read(null).render(null);
+        final RenderedImage top2 = ((GridCoverageResource) tileMatrix2.getTile(0, 1).orElseThrow().getResource()).read(null).render(null);
 
         data = top1.getData();
         for(int y=0;y<9;y++){
@@ -462,8 +462,8 @@ public class PyramidWriterTest <T extends InMemoryTiledGridCoverageResource> {
         }
 
         //the higher tiles------------------------------------------------------
-        final RenderedImage top1 = ((GridCoverageResource) tileMatrix2.getTile(0, 0).orElse(null).getResource()).read(null).render(null);
-        final RenderedImage top2 = ((GridCoverageResource) tileMatrix2.getTile(1, 0).orElse(null).getResource()).read(null).render(null);
+        final RenderedImage top1 = ((GridCoverageResource) tileMatrix2.getTile(0, 0).orElseThrow().getResource()).read(null).render(null);
+        final RenderedImage top2 = ((GridCoverageResource) tileMatrix2.getTile(1, 0).orElseThrow().getResource()).read(null).render(null);
 
         data = top1.getData();
         for(int y=0;y<9;y++){

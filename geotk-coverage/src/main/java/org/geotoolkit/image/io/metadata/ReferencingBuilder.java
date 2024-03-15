@@ -38,8 +38,8 @@ import org.opengis.util.FactoryException;
 
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.referencing.ImmutableIdentifier;
-import org.apache.sis.internal.referencing.ReferencingFactoryContainer;
-import org.apache.sis.internal.referencing.ReferencingUtilities;
+import org.apache.sis.referencing.privy.ReferencingFactoryContainer;
+import org.apache.sis.referencing.privy.ReferencingUtilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;
@@ -48,7 +48,6 @@ import org.apache.sis.metadata.iso.citation.Citations;
 import org.apache.sis.util.iso.Types;
 import org.geotoolkit.internal.image.io.DataTypes;
 import org.apache.sis.util.CharSequences;
-import org.apache.sis.util.NullArgumentException;
 import org.apache.sis.util.iso.DefaultNameSpace;
 import org.geotoolkit.lang.Builder;
 
@@ -273,7 +272,7 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
             return getCoordinateReferenceSystem(CoordinateReferenceSystem.class);
         } catch (FactoryException       |
                  NoSuchElementException | // Throws by MetadataNodeParser if an element is absents and IIOMetadata is read only.
-                 NullArgumentException e) // Throws by 'isNonNull' (in this class) if a mandatory element is absents.
+                 NullPointerException e)  // Throws by 'isNonNull' (in this class) if a mandatory element is absents.
         {
             failure = e;
         }

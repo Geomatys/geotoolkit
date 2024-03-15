@@ -20,11 +20,13 @@ package org.geotoolkit.display2d.canvas;
 import java.awt.Dimension;
 import java.util.Date;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
-import org.apache.sis.portrayal.MapLayers;
+import org.apache.sis.referencing.privy.GeodeticObjectBuilder;
+import org.apache.sis.map.MapLayers;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.display.PortrayalException;
+import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
+import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.map.MapBuilder;
 import static org.junit.Assert.*;
 import org.junit.Test;
@@ -99,7 +101,7 @@ public class J2DCanvasTest {
 
         //was raising an error since we asked a 4D envelope with a 2D context
         //the canvas should change the crs to 2D to pass this test
-        DefaultPortrayalService.portray(context, env, new Dimension(800, 600), true);
+        DefaultPortrayalService.portray(new CanvasDef(new Dimension(800, 600), env),  new SceneDef(context));
      }
 
 }

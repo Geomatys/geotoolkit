@@ -27,8 +27,8 @@ import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.measure.Units;
-import org.apache.sis.portrayal.MapLayer;
-import org.apache.sis.portrayal.MapLayers;
+import org.apache.sis.map.MapLayer;
+import org.apache.sis.map.MapLayers;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.display2d.GO2Hints;
@@ -68,7 +68,7 @@ import org.opengis.style.TextSymbolizer;
 public class TextSymbolizerTest {
 
     private static final GeometryFactory GF = org.geotoolkit.geometry.jts.JTS.getFactory();
-    private static final MutableStyleFactory SF = new DefaultStyleFactory();
+    private static final MutableStyleFactory SF = DefaultStyleFactory.provider();
     protected static final FilterFactory FF = FilterUtilities.FF;
 
     /**

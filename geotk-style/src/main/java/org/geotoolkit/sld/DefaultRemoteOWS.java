@@ -17,8 +17,6 @@
 package org.geotoolkit.sld;
 
 import org.opengis.metadata.citation.OnlineResource;
-import org.opengis.sld.RemoteOWS;
-import org.opengis.sld.SLDVisitor;
 
 import static org.apache.sis.util.ArgumentChecks.*;
 
@@ -27,7 +25,6 @@ import static org.apache.sis.util.ArgumentChecks.*;
  * Default immutable implementation of remoteOWS. thread safe.
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
 class DefaultRemoteOWS implements RemoteOWS{
 

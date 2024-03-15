@@ -37,7 +37,7 @@ import static org.geotoolkit.process.mapfile.MapfileFilterToOGCFilterDescriptor.
  */
 public class MapfileFilterToOGCFilterProcess extends AbstractProcess{
 
-    private static final MutableStyleFactory SF = new DefaultStyleFactory();
+    private static final MutableStyleFactory SF = DefaultStyleFactory.provider();
     private static final FilterFactory FF = FilterUtilities.FF;
 
     public MapfileFilterToOGCFilterProcess(final ParameterValueGroup input){

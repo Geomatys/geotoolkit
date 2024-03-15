@@ -35,9 +35,9 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.apache.sis.cql.CQL;
 import org.apache.sis.cql.CQLException;
-import org.apache.sis.internal.cql.AntlrCQL;
-import org.apache.sis.internal.cql.CQLLexer;
-import org.apache.sis.internal.cql.CQLParser;
+import org.apache.sis.cql.internal.AntlrCQL;
+import org.apache.sis.cql.internal.CQLLexer;
+import org.apache.sis.cql.internal.CQLParser;
 import org.opengis.filter.Filter;
 import org.opengis.filter.Expression;
 

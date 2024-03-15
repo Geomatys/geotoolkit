@@ -25,7 +25,6 @@ import javax.swing.event.EventListenerList;
 import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.style.StyleListener;
 
-import org.opengis.sld.SLDVisitor;
 import org.opengis.style.Description;
 
 import static org.apache.sis.util.ArgumentChecks.*;
@@ -34,7 +33,6 @@ import static org.apache.sis.util.ArgumentChecks.*;
  * Default mutable named Style, thread safe.
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
 class DefaultMutableNamedStyle implements MutableNamedStyle{
 

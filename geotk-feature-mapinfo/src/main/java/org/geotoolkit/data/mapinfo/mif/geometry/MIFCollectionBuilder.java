@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Scanner;
 import org.apache.sis.feature.DefaultFeatureType;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.feature.privy.AttributeConvention;
 import org.geotoolkit.feature.FeatureExt;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;

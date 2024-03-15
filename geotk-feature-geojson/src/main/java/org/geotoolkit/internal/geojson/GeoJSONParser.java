@@ -29,7 +29,7 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.sis.internal.storage.io.IOUtilities;
+import org.apache.sis.io.stream.IOUtilities;
 import org.apache.sis.util.Numbers;
 import org.geotoolkit.internal.geojson.binding.GeoJSONCRS;
 import org.geotoolkit.internal.geojson.binding.GeoJSONFeature;

@@ -25,7 +25,6 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ComparisonMode;
-import org.apache.sis.util.NullArgumentException;
 import static org.geotoolkit.temporal.object.TemporalUtilities.dateEquals;
 import org.opengis.temporal.Instant;
 import org.opengis.temporal.TemporalPosition;
@@ -94,7 +93,7 @@ public class DefaultInstant extends DefaultTemporalGeometricPrimitive implements
      *
      * @param properties The properties to be given to this object.
      * @param date the {@link Date} of this {@linkplain Instant TM_Instant}.
-     * @throws NullArgumentException if date is {@code null}.
+     * @throws NullPointerException if date is {@code null}.
      */
     public DefaultInstant(Map<String, ?> properties,  Date date) throws IllegalArgumentException {
         super(properties);
@@ -133,7 +132,7 @@ public class DefaultInstant extends DefaultTemporalGeometricPrimitive implements
      * @param properties The properties to be given to this object.
      * @param temporalPosition the {@link TemporalPosition} of this {@link Instant},
      * it shall be associated with a single {@link TemporalReferenceSystem}.
-     * @throws NullArgumentException if temporalPosition is {@code null}.
+     * @throws NullPointerException if temporalPosition is {@code null}.
      */
     public DefaultInstant(final Map<String, ?> properties, final TemporalPosition temporalPosition) throws IllegalArgumentException {
         super(properties);

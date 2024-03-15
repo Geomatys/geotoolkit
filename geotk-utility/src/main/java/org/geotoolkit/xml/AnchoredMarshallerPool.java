@@ -29,7 +29,7 @@ import org.apache.sis.xml.XLink;
 import org.apache.sis.xml.MarshalContext;
 import org.apache.sis.xml.MarshallerPool;
 import org.apache.sis.xml.ReferenceResolver;
-import org.apache.sis.internal.jaxb.TypeRegistration;
+import org.apache.sis.xml.bind.TypeRegistration;
 
 
 /**

@@ -49,10 +49,9 @@ import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageOutputStream;
-import org.apache.sis.internal.storage.io.ChannelImageOutputStream;
+import org.apache.sis.io.stream.ChannelDataOutput;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ArraysExt;
-import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.image.internal.ImageUtils;
 import static org.geotoolkit.image.internal.ImageUtils.*;
 import org.geotoolkit.image.io.SpatialImageWriteParam;
@@ -149,7 +148,7 @@ public class TiffImageWriter extends SpatialImageWriter {
     /**
      * The channel to the TIFF file. Will be created from the {@linkplain #output} when first needed.
      */
-    private ChannelImageOutputStream channel;
+    private ChannelDataOutput channel;
 
     /**
      * Position in tiff file where to write byte count array.
@@ -440,7 +439,7 @@ public class TiffImageWriter extends SpatialImageWriter {
     *
     * @param param properties to write image or null.
     * @throws IOException if problem during image writing.
-    * @throws NullArgumentException if streamMetadata or image is null.
+    * @throws NullPointerException if streamMetadata or image is null.
     */
     @Override
     public void write(final IIOMetadata streamMetadata, final IIOImage image, final ImageWriteParam param) throws IOException {
@@ -501,7 +500,7 @@ public class TiffImageWriter extends SpatialImageWriter {
      *
      * @param image image will be write.
      * @throws IOException if problem during writing.
-     * @throws NullArgumentException if image is null.
+     * @throws NullPointerException if image is null.
      */
     @Override
     public void write(final IIOImage image) throws IOException {
@@ -599,7 +598,7 @@ public class TiffImageWriter extends SpatialImageWriter {
      * @param image image which will be write.
      * @param param properties to write image or null.
      * @throws IOException if problem during writing.
-     * @throws NullArgumentException if image is null.
+     * @throws NullPointerException if image is null.
      */
     public void write(final RenderedImage image, final ImageWriteParam param) throws IOException {
         ArgumentChecks.ensureNonNull("RenderedImage image", image);
@@ -614,7 +613,7 @@ public class TiffImageWriter extends SpatialImageWriter {
      *
      * @param image image which will be written.
      * @throws IOException if problem during writing.
-     * @throws NullArgumentException if image is null.
+     * @throws NullPointerException if image is null.
      */
     @Override
     public void write(final RenderedImage image) throws IOException {
@@ -1234,7 +1233,7 @@ public class TiffImageWriter extends SpatialImageWriter {
         final SampleModel sm = imageType.getSampleModel();
         //sample per pixel
         samplePerPixel = (short) sm.getNumBands();
-        assert samplePerPixel <= 0xFFFF : "SamplePerPixel exceed short max value"; // -- should never append
+        //assert samplePerPixel <= 0xFFFF : "SamplePerPixel exceed short max value"; // -- should never append // samplePerPixel is a short it always < 0xFFFF
         addProperty(SamplesPerPixel, TYPE_USHORT, 1, new short[]{samplePerPixel}, properties);
 
         // bitpersamples
@@ -1373,7 +1372,7 @@ public class TiffImageWriter extends SpatialImageWriter {
         final SampleModel sm = image.getSampleModel();
         //sample per pixel
         samplePerPixel = (short) sm.getNumBands();
-        assert samplePerPixel <= 0xFFFF : "SamplePerPixel exceed short max value"; //-- should never append
+        //assert samplePerPixel <= 0xFFFF : "SamplePerPixel exceed short max value"; //-- should never append // samplePerPixel is a short it always < 0xFFFF
         addProperty(SamplesPerPixel, TYPE_USHORT, 1, new short[]{(short) samplePerPixel}, properties);
 
         //-- planar configuration
@@ -3558,7 +3557,7 @@ public class TiffImageWriter extends SpatialImageWriter {
             currentBO = ByteOrder.nativeOrder();
             final ByteBuffer buff = ByteBuffer.allocateDirect(8196);
             buff.order(currentBO);
-            channel = new ChannelImageOutputStream("TiffWriter", wBC, buff);
+            channel = new ChannelDataOutput("TiffWriter", wBC, buff);
 
             if (currentBO.equals(ByteOrder.BIG_ENDIAN)) {//MM
                 channel.writeByte((byte) 'M');
@@ -3631,7 +3630,7 @@ public class TiffImageWriter extends SpatialImageWriter {
                     ((WritableImageByteChannel) channel.channel).flushAll();
                 }
                 if (IOUtilities.canProcessAsPath(output)) {
-                    channel.close();
+                    channel.channel.close();
                 }
             }
         } catch (IOException ex) {

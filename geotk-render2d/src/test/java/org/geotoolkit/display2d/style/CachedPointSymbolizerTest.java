@@ -22,13 +22,13 @@ import java.util.List;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridOrientation;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.filter.FilterUtilities;
+import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import static org.geotoolkit.style.StyleConstants.*;
 import static org.junit.Assert.*;
@@ -40,7 +40,6 @@ import org.opengis.style.GraphicalSymbol;
 import org.opengis.style.Mark;
 import org.opengis.style.PointSymbolizer;
 import org.opengis.style.Stroke;
-import org.opengis.style.StyleFactory;
 import org.opengis.util.FactoryException;
 
 /**
@@ -52,7 +51,7 @@ public class CachedPointSymbolizerTest {
     private static final float DELTA = 0.0000001f;
 
     private static final FilterFactory FF = FilterUtilities.FF;
-    private static final MutableStyleFactory SF = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
+    private static final MutableStyleFactory SF = DefaultStyleFactory.provider();
 
     @Test
     public void testMargin() throws FactoryException{

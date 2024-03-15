@@ -17,9 +17,9 @@
 package org.geotoolkit.coverage.sql;
 
 import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.internal.metadata.sql.ScriptRunner;
-import org.apache.sis.internal.util.Constants;
-import org.apache.sis.internal.util.UnmodifiableArrayList;
+import org.apache.sis.metadata.sql.privy.ScriptRunner;
+import org.apache.sis.util.privy.Constants;
+import org.apache.sis.util.privy.UnmodifiableArrayList;
 import org.apache.sis.measure.MeasurementRange;
 import org.apache.sis.measure.Units;
 import org.apache.sis.metadata.sql.MetadataSource;
@@ -51,8 +51,8 @@ import java.util.*;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-import org.apache.sis.internal.storage.Capability;
-import org.apache.sis.internal.storage.StoreMetadata;
+import org.apache.sis.storage.base.Capability;
+import org.apache.sis.storage.base.StoreMetadata;
 
 import static org.geotoolkit.coverage.sql.UpgradableLock.Stamp;
 
@@ -303,16 +303,22 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
                     }
                     if (!schemaExists(metadata, "metadata")) {
                         // Following is a modified copy of org.apache.sis.metadata.sql.Installer.run().
+                        // TODO: will not work anymore in a JPMS context. We need to clarify why this code has been added.
+                        final String[] scripts = {
+                            "Citations.sql",
+                            "Contents.sql",
+                            "Metadata.sql",
+                            "Referencing.sql"
+                        };
                         try (ScriptRunner runner = new ScriptRunner(cnx, 100)) {
-                            runner.run(MetadataSource.class, "Citations.sql");
-                            runner.run(MetadataSource.class, "Contents.sql");
-                            runner.run(MetadataSource.class, "Metadata.sql");
-                            runner.run(MetadataSource.class, "Referencing.sql");
+                            for (final String source : scripts) {
+                                runner.run(source, MetadataSource.class.getResourceAsStream(source));
+                            }
                         }
                     }
                     if (!schemaExists(metadata, "rasters")) {
                         try (ScriptRunner runner = new ScriptRunner(cnx, 100)) {
-                            runner.run(DatabaseStore.class, "Create.sql");
+                            runner.run("Create.sql", DatabaseStore.class.getResourceAsStream("Create.sql"));
                         }
                     }
                 }

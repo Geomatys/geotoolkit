@@ -43,8 +43,8 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.measure.NumberRange;
-import org.apache.sis.portrayal.MapLayer;
-import org.apache.sis.portrayal.MapLayers;
+import org.apache.sis.map.MapLayer;
+import org.apache.sis.map.MapLayers;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
@@ -176,7 +176,7 @@ public class MapContextTileGenerator extends AbstractTileGenerator {
 
         search:
         for (MapLayer layer : MapBuilder.getLayers(sceneDef.getContext())) {
-            final Style style = layer.getStyle();
+            final Style style = (Style) layer.getStyle();
             for (FeatureTypeStyle fts : style.featureTypeStyles()) {
                 for (Rule rule : fts.rules()) {
                     double scaleMin = rule.getMinScaleDenominator();

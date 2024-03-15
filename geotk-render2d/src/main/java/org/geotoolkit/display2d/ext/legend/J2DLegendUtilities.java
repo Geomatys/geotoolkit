@@ -32,9 +32,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
-import org.apache.sis.portrayal.MapItem;
-import org.apache.sis.portrayal.MapLayer;
-import org.apache.sis.portrayal.MapLayers;
+import org.apache.sis.map.MapItem;
+import org.apache.sis.map.MapLayer;
+import org.apache.sis.map.MapLayers;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.util.ArgumentChecks;
@@ -132,7 +132,7 @@ public class J2DLegendUtilities {
             final MapLayers mc = (MapLayers) item;
             for (MapItem layer : mc.getComponents()) {
                 if (layer instanceof MapLayer) {
-                    DefaultGlyphService.render(((MapLayer) layer).getStyle(), bounds, g2d, (MapLayer) layer);
+                    DefaultGlyphService.render((Style) ((MapLayer) layer).getStyle(), bounds, g2d, (MapLayer) layer);
                 } else {
                     paintNoTemplate(layer, g2d, bounds);
                 }
@@ -247,7 +247,7 @@ public class J2DLegendUtilities {
                 continue;
             }
 
-            final Style style = layer.getStyle();
+            final Style style = (Style) layer.getStyle();
 
             if (style == null) {
                 continue;
@@ -430,7 +430,7 @@ public class J2DLegendUtilities {
                 if (childItem instanceof MapLayer) {
                     final MapLayer ml = (MapLayer) childItem;
                     final Dimension preferred = new Dimension(0, 0);
-                    DefaultGlyphService.glyphPreferredSize(ml.getStyle(), preferred, ml);
+                    DefaultGlyphService.glyphPreferredSize((Style) ml.getStyle(), preferred, ml);
                     if (preferred != null) {
                         if (preferred.width > toSet.width) {
                             toSet.width = preferred.width;
@@ -507,7 +507,7 @@ public class J2DLegendUtilities {
 
             final MapLayer layer = (MapLayer) currentItem;
 
-            final Style style = layer.getStyle();
+            final Style style = (Style) layer.getStyle();
             if (style == null) {
                 continue;
             }

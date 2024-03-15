@@ -44,14 +44,14 @@ import org.apache.sis.feature.DefaultFeatureType;
 import org.apache.sis.feature.Features;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.internal.feature.AttributeConvention;
-import org.apache.sis.internal.feature.Geometries;
-import org.apache.sis.internal.system.DefaultFactories;
+import org.apache.sis.feature.privy.AttributeConvention;
+import org.apache.sis.geometry.wrapper.Geometries;
 import org.apache.sis.parameter.Parameters;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.Static;
 import org.apache.sis.util.collection.BackingStoreException;
+import org.apache.sis.util.iso.DefaultNameFactory;
 import org.apache.sis.util.iso.DefaultNameSpace;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.geometry.jts.JTS;
@@ -80,7 +80,6 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
-import org.opengis.util.NameFactory;
 
 /**
  * NOTE : merge with Apache SIS 'org.apache.sis.feature.Features' class.
@@ -110,7 +109,7 @@ public final class FeatureExt extends Static {
      * Convention name of the feature symbolizers.
      * Some features may have self defined symbology, this is the case of kml,dwg,...
      */
-    public static final GenericName ATTRIBUTE_SYMBOLIZERS = DefaultFactories.forBuildin(NameFactory.class)
+    public static final GenericName ATTRIBUTE_SYMBOLIZERS = DefaultNameFactory.provider()
             .createLocalName(AttributeConvention.IDENTIFIER_PROPERTY.scope(), "@symbolizers");
 
     /**

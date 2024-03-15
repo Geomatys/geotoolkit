@@ -95,15 +95,10 @@ public abstract class MathTransformProvider extends DefaultOperationMethod
      * {@linkplain #getIdentifiers identifiers} will be the same than the parameter
      * ones.
      *
-     * @param sourceDimension Number of dimensions in the source CRS of this operation method.
-     * @param targetDimension Number of dimensions in the target CRS of this operation method.
      * @param parameters The set of parameters (never {@code null}).
      */
-    public MathTransformProvider(final int sourceDimension,
-                                 final int targetDimension,
-                                 final ParameterDescriptorGroup parameters)
-    {
-        super(toMap(parameters), sourceDimension, targetDimension, parameters);
+    public MathTransformProvider(final ParameterDescriptorGroup parameters) {
+        super(toMap(parameters), parameters);
     }
 
     /**

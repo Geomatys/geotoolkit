@@ -17,17 +17,15 @@
 package org.geotoolkit.sld;
 
 import java.util.List;
-import org.opengis.sld.SLDLibrary;
-import org.opengis.sld.StyledLayerDescriptor;
 import org.opengis.style.Description;
 import org.geotoolkit.util.Cloneable;
+
 
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
-public interface MutableStyledLayerDescriptor extends StyledLayerDescriptor, Cloneable{
+public interface MutableStyledLayerDescriptor extends StyledLayerDescriptor, Cloneable {
 
     public static final String NAME_PROPERTY = "name";
     public static final String DESCRIPTION_PROPERTY = "description";

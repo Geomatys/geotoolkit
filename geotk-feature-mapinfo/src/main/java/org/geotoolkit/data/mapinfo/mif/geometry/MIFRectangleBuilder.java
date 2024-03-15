@@ -39,7 +39,6 @@ import org.apache.sis.feature.DefaultAttributeType;
 import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.data.mapinfo.mif.MIFUtils;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
@@ -196,7 +195,7 @@ public class MIFRectangleBuilder extends MIFGeometryBuilder {
                     .append(env.getMaxX()).append(' ')
                     .append(env.getMaxY());
         } else if (sourceEnvelope == null) {
-            throw new NullArgumentException("Input envelope is null !");
+            throw new NullPointerException("Input envelope is null !");
         } else {
             throw new DataStoreException("Unable to build a rectangle with the current geometry (Non compatible type" + sourceEnvelope.getClass() + ").");
         }

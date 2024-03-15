@@ -36,7 +36,6 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.crs.AbstractCRS;
@@ -64,7 +63,6 @@ import static org.junit.Assert.*;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
-import org.opengis.filter.FilterFactory;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
@@ -79,7 +77,7 @@ import org.opengis.util.FactoryException;
 public class LuceneSearcherEnvelopeOnlyTest {
 
     private static final GeometryFactory GF = JTS.getFactory();
-    private static final FilterFactory2 FF = DefaultFactories.forBuildin(FilterFactory.class, FilterFactory2.class);
+    private static final FilterFactory2 FF = new FilterFactory2();
     private static final Logger LOGGER = Logger.getLogger("org.constellation.lucene");
     private static final double TOLERANCE = 0.001;
 

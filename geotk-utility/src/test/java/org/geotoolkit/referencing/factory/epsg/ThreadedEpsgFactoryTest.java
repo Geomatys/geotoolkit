@@ -20,7 +20,6 @@ package org.geotoolkit.referencing.factory.epsg;
 import java.io.*;
 import java.util.*;
 import java.sql.SQLException;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.opengis.referencing.cs.*;
 import org.opengis.referencing.crs.*;
 import org.opengis.referencing.operation.*;
@@ -30,6 +29,7 @@ import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.AbstractCoordinateOperation;
+import org.apache.sis.referencing.operation.DefaultCoordinateOperationFactory;
 import org.apache.sis.util.ComparisonMode;
 
 import org.junit.*;
@@ -60,7 +60,7 @@ public final class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase {
     public final void testCreationOperations() throws FactoryException {
         assumeNotNull(factory);
 
-        final CoordinateOperationFactory opf = DefaultFactories.forBuildin(CoordinateOperationFactory.class);
+        final CoordinateOperationFactory opf = DefaultCoordinateOperationFactory.provider();
         CoordinateReferenceSystem sourceCRS, targetCRS;
         CoordinateOperation operation;
 
@@ -124,7 +124,7 @@ public final class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase {
 
         CoordinateReferenceSystem crs1 = factory.createCoordinateReferenceSystem("4326");
         CoordinateReferenceSystem crs2 = factory.createCoordinateReferenceSystem("4322");
-        CoordinateOperationFactory opf = DefaultFactories.forBuildin(CoordinateOperationFactory.class);
+        CoordinateOperationFactory opf = DefaultCoordinateOperationFactory.provider();
         CoordinateOperation cop = opf.createOperation(crs1, crs2);
         serialize(cop);
 

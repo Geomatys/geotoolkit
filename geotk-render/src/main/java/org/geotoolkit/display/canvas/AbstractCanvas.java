@@ -26,7 +26,7 @@ import static org.apache.sis.util.ArgumentChecks.*;
 /**
  * Manages the display and user manipulation of {@link Graphic} instances. A newly constructed
  * {@code Canvas} is initial empty. To make something appears, {@link Graphic}s must be added
- * using the {@link AbstractContainer#add(org.opengis.display.primitive.Graphic) } method.
+ * using the {@link AbstractContainer#add(org.geotoolkit.display.primitive.Graphic) } method.
  * The visual content depends of the {@code Graphic}
  * subclass. The contents are usually symbols, features or images, but some implementations
  * can also manage non-geographic elements like a map scale.

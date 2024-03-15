@@ -21,8 +21,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.internal.filter.Node;
-import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.filter.internal.Node;
+import org.apache.sis.feature.privy.AttributeConvention;
 import org.opengis.feature.Feature;
 import org.opengis.filter.Expression;
 import org.opengis.filter.ResourceId;
@@ -96,4 +96,14 @@ final class FilterByIdentifier extends Node implements ResourceId<Object> {
         }
         return (id != null) && identifier.equals(id.toString());
     }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other instanceof ResourceId rid) {
+            return getExpressions().equals(rid.getExpressions());
+        }
+        return false;
+    }
+
+
 }

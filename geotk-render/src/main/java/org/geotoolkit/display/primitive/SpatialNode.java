@@ -22,7 +22,7 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.display.SearchArea;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.canvas.Canvas;
-import org.opengis.display.primitive.Graphic;
+import org.geotoolkit.display.primitive.Graphic;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;

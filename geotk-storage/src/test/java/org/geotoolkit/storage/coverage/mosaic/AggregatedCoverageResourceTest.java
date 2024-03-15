@@ -36,13 +36,13 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.Interpolation;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.apache.sis.internal.system.DefaultFactories;
+import org.apache.sis.referencing.privy.AffineTransform2D;
 import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.cs.DefaultCartesianCS;
 import org.apache.sis.referencing.cs.DefaultCoordinateSystemAxis;
 import org.apache.sis.referencing.datum.DefaultImageDatum;
+import org.apache.sis.referencing.factory.GeodeticObjectFactory;
 import org.apache.sis.referencing.operation.transform.AbstractMathTransform1D;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
@@ -57,7 +57,6 @@ import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
 import org.junit.Assert;
 import org.junit.Test;
 import org.opengis.geometry.Envelope;
-import org.opengis.referencing.crs.CRSFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.operation.MathTransform1D;
@@ -1246,7 +1245,7 @@ public class AggregatedCoverageResourceTest {
         | 3 | 3 | 3 |
         +---+---+---+
          */
-        final CoordinateReferenceSystem imgcrs = DefaultFactories.forBuildin(CRSFactory.class).createImageCRS(
+        final CoordinateReferenceSystem imgcrs = GeodeticObjectFactory.provider().createImageCRS(
                     Collections.singletonMap(CoordinateReferenceSystem.NAME_KEY,"ImageCRS"),
                     new DefaultImageDatum(
                             Collections.singletonMap(CoordinateReferenceSystem.NAME_KEY,"ImageDatum"),

@@ -22,7 +22,6 @@ import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.MultiLineString;
 import org.apache.sis.util.ArgumentChecks;
 import static java.lang.StrictMath.*;
-import org.apache.sis.util.NullArgumentException;
 
 /**
  * Contain method to translate any {@code LineString}.
@@ -91,7 +90,7 @@ public class LineStringTranslator {
      * @param line {@link LineString} which will be translate.
      * @param offset define length and sens of translation (+ for right and - for left).
      * @return the translated {@link LineString}.
-     * @throws NullArgumentException if line is {@code null}.
+     * @throws NullPointerException if line is {@code null}.
      */
     public static LineString translateLineString(final LineString line, final double offset) {
         ArgumentChecks.ensureNonNull("linestring", line);

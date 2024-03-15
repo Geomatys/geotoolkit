@@ -108,7 +108,7 @@ public class ProvidersXmlTest {
 
     @Before
     public void setUp() throws JAXBException {
-        pool =   new MarshallerPool(JAXBContext.newInstance(MapContext.class, org.apache.sis.internal.jaxb.geometry.ObjectFactory.class), null);
+        pool =   new MarshallerPool(JAXBContext.newInstance(MapContext.class, org.apache.sis.xml.bind.metadata.geometry.ObjectFactory.class), null);
         unmarshaller = pool.acquireUnmarshaller();
         marshaller   = pool.acquireMarshaller();
     }

@@ -21,7 +21,7 @@ import java.util.HashSet;
 import java.util.Set;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.feature.builder.PropertyTypeBuilder;
-import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.feature.privy.AttributeConvention;
 import org.apache.sis.util.Deprecable;
 import org.geotoolkit.geometry.jts.transform.GeometryTransformer;
 import org.opengis.feature.Feature;

@@ -19,7 +19,7 @@ package org.geotoolkit.filter.visitor;
 import org.opengis.filter.Filter;
 import org.junit.Test;
 import org.opengis.filter.ResourceId;
-import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.feature.privy.AttributeConvention;
 import static org.junit.Assert.*;
 import static org.geotoolkit.filter.FilterTestConstants.*;
 

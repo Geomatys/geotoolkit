@@ -96,6 +96,11 @@
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.opengis</groupId>
+      <artifactId>geoapi-conformance</artifactId>
+      <scope>test</scope>
+    </dependency>
 
     <dependency>
         <groupId>com.fasterxml.jackson.core</groupId>

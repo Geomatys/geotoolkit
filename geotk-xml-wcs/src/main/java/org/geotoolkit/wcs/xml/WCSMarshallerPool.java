@@ -35,7 +35,7 @@ public final class WCSMarshallerPool {
                     + "org.geotoolkit.wcs.xml.v111:"
                     + "org.geotoolkit.wcs.xml.v200:"
                     + "org.geotoolkit.wcs.xml.v200.crs:"
-                    + "org.apache.sis.internal.jaxb.geometry:"
+                    + "org.apache.sis.xml.bind.metadata.geometry:"
                     + "org.geotoolkit.gmlcov.geotiff.xml.v100:"
                     + "org.geotoolkit.ogc.xml.exception"), null);
         } catch (JAXBException ex) {

@@ -21,11 +21,9 @@
 package org.geotoolkit.parameter;
 
 import java.util.Map;
-import java.util.Set;
 import java.util.List;
 import java.util.Arrays;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Objects;
 import java.lang.reflect.Field;
@@ -75,12 +73,6 @@ public class ParameterGroup extends AbstractParameter implements ParameterValueG
     private static final long serialVersionUID = -1985309386356545126L;
 
     /**
-     * An empty parameter value group. This group contains no parameter value.
-     */
-    public static final ParameterValueGroup EMPTY = new ParameterGroup(
-            Collections.singletonMap(ParameterDescriptorGroup.NAME_KEY, "Void"));
-
-    /**
      * The {@linkplain #values() parameter values} for this group.
      */
     private final ArrayList<GeneralParameterValue> values;
@@ -94,26 +86,6 @@ public class ParameterGroup extends AbstractParameter implements ParameterValueG
      * }
      */
     private transient List<GeneralParameterValue> asList;
-
-    /**
-     * Constructs a parameter group from the specified descriptor.
-     * All {@linkplain #values parameter values} will be initialized
-     * to their default value.
-     *
-     * @param descriptor The descriptor for this group.
-     */
-    public ParameterGroup(final ParameterDescriptorGroup descriptor) {
-        super(descriptor);
-        final List<GeneralParameterDescriptor> parameters = descriptor.descriptors();
-        values = new ArrayList<>(parameters.size());
-        for (final GeneralParameterDescriptor element : parameters) {
-            for (int count=element.getMinimumOccurs(); --count>=0;) {
-                final GeneralParameterValue value = element.createValue();
-                ensureNonNull("createValue", value);
-                values.add(value);
-            }
-        }
-    }
 
     /**
      * Constructs a parameter group from the specified descriptor and list of parameters.
@@ -137,43 +109,6 @@ public class ParameterGroup extends AbstractParameter implements ParameterValueG
             occurrences.put(param, 0);
         }
         ensureValidOccurs(values, occurrences);
-    }
-
-    /**
-     * Constructs a parameter group from the specified list of parameters.
-     *
-     * @param  properties The properties for the {@linkplain DefaultParameterDescriptorGroup
-     *         operation parameter group} to construct from the list of parameters.
-     * @param  values The list of parameter values.
-     * @throws IllegalStateException If the number of parameter values is not in the
-     *         range of minimum and maximum occurrences declared in the descriptor.
-     */
-    public ParameterGroup(final Map<String,?> properties, final GeneralParameterValue... values) {
-        super(createDescriptor(properties, values));
-        this.values = new ArrayList<>(Arrays.asList(values));
-    }
-
-    /**
-     * Work around for RFE #4093999 in Sun's bug database
-     * ("Relax constraint on placement of this()/super() call in constructors").
-     *
-     * @throws IllegalStateException If the number of parameter values is not in the
-     *         range of minimum and maximum occurrences declared in the descriptor.
-     */
-    private static ParameterDescriptorGroup createDescriptor(
-            final Map<String,?> properties, final GeneralParameterValue[] values)
-    {
-        ensureNonNull("values", values);
-        final Map<GeneralParameterDescriptor,Integer> occurrences =
-                new LinkedHashMap<>(hashMapCapacity(values.length));
-        for (int i=0; i<values.length; i++) {
-            ensureNonNullElement("values", i, values);
-            occurrences.put(values[i].getDescriptor(), 0);
-        }
-        ensureValidOccurs(values, occurrences);
-        final Set<GeneralParameterDescriptor> descriptors = occurrences.keySet();
-        return new DefaultParameterDescriptorGroup(properties, 1, 1,
-                descriptors.toArray(new GeneralParameterDescriptor[descriptors.size()]));
     }
 
     /**
@@ -241,17 +176,6 @@ public class ParameterGroup extends AbstractParameter implements ParameterValueG
             asList = new ParameterValueList((ParameterDescriptorGroup) descriptor, values);
         }
         return asList;
-    }
-
-    /**
-     * Returns the parameter value at the specified index.
-     *
-     * @param  index The zero-based index.
-     * @return The parameter value at the specified index.
-     * @throws IndexOutOfBoundsException if the specified index is out of bounds.
-     */
-    final GeneralParameterValue parameter(final int index) throws IndexOutOfBoundsException {
-        return values.get(index);
     }
 
     /**

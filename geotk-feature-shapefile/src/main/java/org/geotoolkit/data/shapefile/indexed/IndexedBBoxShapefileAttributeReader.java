@@ -27,7 +27,7 @@ import org.locationtech.jts.geom.prep.PreparedGeometryFactory;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
-import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.feature.privy.AttributeConvention;
 
 import org.geotoolkit.data.shapefile.lock.AccessManager;
 import org.geotoolkit.data.shapefile.indexed.IndexDataReader.ShpData;

@@ -17,15 +17,13 @@
 package org.geotoolkit.sld;
 
 import org.geotoolkit.util.collection.CollectionChangeListener;
-import org.opengis.sld.Constraint;
-import org.opengis.sld.Constraints;
+
 
 /**
  * Super class for mutable constraints : MutableLayerFeatureConstraints and
  * MutableLayerCoverageConstraints
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
 public interface MutableConstraints extends Constraints{
 

@@ -19,7 +19,7 @@ package org.geotoolkit.filter.function.feature;
 import java.util.ArrayList;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.internal.storage.MemoryFeatureSet;
+import org.apache.sis.storage.base.MemoryFeatureSet;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.FeatureQuery;
 import org.apache.sis.storage.FeatureSet;

@@ -21,7 +21,7 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.apache.sis.internal.jaxb.gco.InternationalStringAdapter;
+import org.apache.sis.xml.bind.gco.InternationalStringAdapter;
 import org.geotoolkit.se.xml.DirectStringAdapter;
 import org.apache.sis.util.SimpleInternationalString;
 import org.opengis.style.Description;

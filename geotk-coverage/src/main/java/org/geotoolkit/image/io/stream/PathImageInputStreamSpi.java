@@ -27,7 +27,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.spi.ImageInputStreamSpi;
 import javax.imageio.stream.ImageInputStream;
-import org.apache.sis.internal.storage.io.ChannelImageInputStream;
+import org.apache.sis.io.stream.ChannelImageInputStream;
 
 
 /**

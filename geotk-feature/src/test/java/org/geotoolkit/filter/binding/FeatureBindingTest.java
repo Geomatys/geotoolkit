@@ -29,7 +29,7 @@ import org.opengis.feature.FeatureAssociationRole;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.Property;
 import org.opengis.feature.PropertyType;
-import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.feature.privy.AttributeConvention;
 
 import static org.junit.Assert.*;
 import static org.geotoolkit.filter.FilterTestConstants.*;

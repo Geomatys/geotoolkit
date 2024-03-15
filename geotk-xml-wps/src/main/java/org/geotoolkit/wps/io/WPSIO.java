@@ -56,7 +56,7 @@ import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.SortBy;
 import org.opengis.geometry.Envelope;
-import org.opengis.sld.StyledLayerDescriptor;
+import org.geotoolkit.sld.StyledLayerDescriptor;
 
 /**
  *

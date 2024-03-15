@@ -23,7 +23,6 @@ import java.awt.image.RenderedImage;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.NullArgumentException;
 import org.opengis.coverage.grid.SequenceType;
 import org.opengis.referencing.cs.AxisDirection;
 
@@ -244,7 +243,7 @@ public final class ReliefShadow {
      * @param dem {@link RenderedImage} which contain all pixel elevations values (Digital Elevation Model).
      * @param scaleZ elevation value of a pixel.
      * @param Define positive altitude value sens.
-     * @throws NullArgumentException if imgSource or mnt is {@code null}.
+     * @throws NullPointerException if imgSource or mnt is {@code null}.
      * @throws IllegalArgumentException if scaleZ is lesser or equal to zero.
      * @throws IllegalArgumentException if source image width and mnt image have a differente width.
      * @throws IllegalArgumentException if source image width and mnt image have a differente height.
@@ -264,7 +263,7 @@ public final class ReliefShadow {
      * @param imgSource {@link RenderedImage} with no relief shadow.
      * @param dem {@link RenderedImage} which contain all pixel elevations values (Digital Elevation Model).
      * @param scaleZ elevation value of a pixel.
-     * @throws NullArgumentException if imgSource or mnt is {@code null}.
+     * @throws NullPointerException if imgSource or mnt is {@code null}.
      * @throws IllegalArgumentException if scaleZ is lesser or equal to zero.
      * @throws IllegalArgumentException if source image width and mnt image have a differente width.
      * @throws IllegalArgumentException if source image width and mnt image have a differente height.

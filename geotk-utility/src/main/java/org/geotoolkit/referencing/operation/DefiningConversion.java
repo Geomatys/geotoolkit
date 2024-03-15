@@ -22,10 +22,8 @@ package org.geotoolkit.referencing.operation;
 
 import java.util.Collections;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.OperationMethod;
 import org.opengis.util.NoSuchIdentifierException;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.operation.DefaultConversion;
 
 import org.apache.sis.referencing.operation.transform.DefaultMathTransformFactory;
@@ -65,7 +63,7 @@ public class DefiningConversion extends DefaultConversion {
      */
     private static OperationMethod getOperationMethod(final ParameterValueGroup parameters) throws NoSuchIdentifierException {
         ensureNonNull("parameters", parameters);
-        return DefaultFactories.forBuildin(MathTransformFactory.class, DefaultMathTransformFactory.class)
+        return DefaultMathTransformFactory.provider()
                 .getOperationMethod(parameters.getDescriptor().getName().getCode());
     }
 }

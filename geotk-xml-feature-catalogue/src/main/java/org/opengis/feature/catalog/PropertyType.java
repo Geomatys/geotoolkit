@@ -11,7 +11,7 @@
 package org.opengis.feature.catalog;
 
 import java.util.List;
-import org.apache.sis.internal.jaxb.gco.Multiplicity;
+import org.apache.sis.xml.bind.gco.Multiplicity;
 
 import org.opengis.util.LocalName;
 

@@ -20,14 +20,13 @@ import java.util.stream.Collectors;
 import net.sf.jasperreports.engine.JasperReport;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.Envelopes;
-import org.apache.sis.internal.storage.MemoryFeatureSet;
-import org.apache.sis.portrayal.MapLayer;
-import org.apache.sis.portrayal.MapLayers;
+import org.apache.sis.storage.base.MemoryFeatureSet;
+import org.apache.sis.map.MapLayer;
+import org.apache.sis.map.MapLayers;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStore;
-import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
@@ -48,10 +47,6 @@ import org.geotoolkit.report.graphic.map.MapDef;
 import org.geotoolkit.report.graphic.northarrow.NorthArrowDef;
 import org.geotoolkit.report.graphic.scalebar.ScaleBarDef;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.feature.FeatureCollection;
-import org.geotoolkit.storage.feature.FeatureStoreUtilities;
-import org.geotoolkit.storage.feature.FeatureWriter;
-import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.storage.memory.mapping.FeatureMapper;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.RandomStyleBuilder;
@@ -60,7 +55,6 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.data.general.DefaultPieDataset;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
-import org.opengis.filter.Filter;
 
 public class ReportDemo {
 
@@ -174,22 +168,17 @@ public class ReportDemo {
                 ftb.addAttribute(Integer.class).setName("women");
                 ftb.addAttribute(String.class).setName("desc");
                 final FeatureType subType = ftb.build();
-                final FeatureCollection subcol = FeatureStoreUtilities.collection("sub", subType);
-                try {
-                    FeatureWriter fw = subcol.getSession().getFeatureStore().getFeatureWriter(Query.filtered(subType.getName().toString(), Filter.exclude()));
-                    for(int i=0,n=new Random().nextInt(20);i<n;i++){
-                        Feature f =fw.next();
-                        f.setPropertyValue("men",new Random().nextInt());
-                        f.setPropertyValue("women",new Random().nextInt());
-                        f.setPropertyValue("desc","some text from attribut");
-                        fw.write();
-                    }
-                    fw.close();
 
-                } catch (DataStoreException ex) {
-                    ex.printStackTrace();
+                final List<Feature> features = new ArrayList<>();
+                for(int i=0,n=new Random().nextInt(20);i<n;i++){
+                    Feature f = subType.newInstance();
+                    f.setPropertyValue("men",new Random().nextInt());
+                    f.setPropertyValue("women",new Random().nextInt());
+                    f.setPropertyValue("desc","some text from attribut");
+                    features.add(f);
                 }
-                modified.setPropertyValue("table8",new CollectionDataSource(subcol));
+
+                modified.setPropertyValue("table8",new CollectionDataSource(features));
 
                 return modified;
             }

@@ -29,7 +29,7 @@ import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
 import javax.xml.stream.XMLStreamException;
-import org.apache.sis.internal.storage.MemoryFeatureSet;
+import org.apache.sis.storage.base.MemoryFeatureSet;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.xml.MarshallerPool;

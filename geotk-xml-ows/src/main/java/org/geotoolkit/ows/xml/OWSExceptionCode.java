@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.ows.xml;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.opengis.util.CodeList;
 
 
@@ -36,139 +34,124 @@ public class OWSExceptionCode extends CodeList<OWSExceptionCode> {
     private static final long serialVersionUID = 7234996844680200818L;
 
     /**
-     * List of all enumerations of this type.
-     * Must be declared before any enum declaration.
-     */
-    private static final List<OWSExceptionCode> VALUES = new ArrayList<OWSExceptionCode>(16);
-
-    /**
      * Invalid format.
      */
-    public static final OWSExceptionCode INVALID_FORMAT = new OWSExceptionCode("InvalidFormat");
+    public static final OWSExceptionCode INVALID_FORMAT = valueOf("InvalidFormat");
 
     /**
      * Invalid request.
      */
-    public static final OWSExceptionCode INVALID_REQUEST = new OWSExceptionCode("InvalidRequest");
+    public static final OWSExceptionCode INVALID_REQUEST = valueOf("InvalidRequest");
 
     /**
      * Current update sequence.
      */
-    public static final OWSExceptionCode CURRENT_UPDATE_SEQUENCE = new OWSExceptionCode("CurrentUpdateSequence");
+    public static final OWSExceptionCode CURRENT_UPDATE_SEQUENCE = valueOf("CurrentUpdateSequence");
 
     /**
      * Invalid update sequence.
      */
-    public static final OWSExceptionCode INVALID_UPDATE_SEQUENCE = new OWSExceptionCode("InvalidUpdateSequence");
+    public static final OWSExceptionCode INVALID_UPDATE_SEQUENCE = valueOf("InvalidUpdateSequence");
 
     /**
      * Missing parameter value.
      */
-    public static final OWSExceptionCode MISSING_PARAMETER_VALUE = new OWSExceptionCode("MissingParameterValue");
+    public static final OWSExceptionCode MISSING_PARAMETER_VALUE = valueOf("MissingParameterValue");
 
     /**
      * Invalid parameter value.
      */
-    public static final OWSExceptionCode INVALID_PARAMETER_VALUE = new OWSExceptionCode("InvalidParameterValue");
+    public static final OWSExceptionCode INVALID_PARAMETER_VALUE = valueOf("InvalidParameterValue");
 
     /**
      * Invalid parameter value.
      */
-    public static final OWSExceptionCode INVALID_VALUE = new OWSExceptionCode("InvalidValue");
+    public static final OWSExceptionCode INVALID_VALUE = valueOf("InvalidValue");
 
     /**
      * Operation not supported.
      */
-    public static final OWSExceptionCode OPERATION_NOT_SUPPORTED = new OWSExceptionCode("OperationNotSupported");
+    public static final OWSExceptionCode OPERATION_NOT_SUPPORTED = valueOf("OperationNotSupported");
 
     /**
      * Version negotiation failed.
      */
-    public static final OWSExceptionCode VERSION_NEGOTIATION_FAILED = new OWSExceptionCode("VersionNegotiationFailed");
+    public static final OWSExceptionCode VERSION_NEGOTIATION_FAILED = valueOf("VersionNegotiationFailed");
 
     /**
      * No applicable code.
      */
-    public static final OWSExceptionCode NO_APPLICABLE_CODE = new OWSExceptionCode("NoApplicableCode");
+    public static final OWSExceptionCode NO_APPLICABLE_CODE = valueOf("NoApplicableCode");
 
     /**
      * Invalid CRS.
      */
-    public static final OWSExceptionCode INVALID_CRS = new OWSExceptionCode("InvalidCRS");
+    public static final OWSExceptionCode INVALID_CRS = valueOf("InvalidCRS");
 
     /**
      * Layer not defined.
      */
-    public static final OWSExceptionCode LAYER_NOT_DEFINED = new OWSExceptionCode("LayerNotDefined");
+    public static final OWSExceptionCode LAYER_NOT_DEFINED = valueOf("LayerNotDefined");
 
     /**
      * Style not defined.
      */
-    public static final OWSExceptionCode STYLE_NOT_DEFINED = new OWSExceptionCode("StyleNotDefined");
+    public static final OWSExceptionCode STYLE_NOT_DEFINED = valueOf("StyleNotDefined");
 
     /**
      * Layer not queryable.
      */
-    public static final OWSExceptionCode LAYER_NOT_QUERYABLE = new OWSExceptionCode("LayerNotQueryable");
+    public static final OWSExceptionCode LAYER_NOT_QUERYABLE = valueOf("LayerNotQueryable");
 
     /**
      * Invalid point.
      */
-    public static final OWSExceptionCode INVALID_POINT = new OWSExceptionCode("InvalidPoint");
+    public static final OWSExceptionCode INVALID_POINT = valueOf("InvalidPoint");
 
     /**
      * Missing dimension value.
      */
-    public static final OWSExceptionCode MISSING_DIMENSION_VALUE = new OWSExceptionCode("MissingDimensionValue");
+    public static final OWSExceptionCode MISSING_DIMENSION_VALUE = valueOf("MissingDimensionValue");
 
     /**
      * Invalid dimension value.
      */
-    public static final OWSExceptionCode INVALID_DIMENSION_VALUE = new OWSExceptionCode("InvalidDimensionValue");
+    public static final OWSExceptionCode INVALID_DIMENSION_VALUE = valueOf("InvalidDimensionValue");
 
     /**
      * Not Enough Storage.
      */
-    public static final OWSExceptionCode NOT_ENOUGH_STORAGE = new OWSExceptionCode("NotEnoughStorage");
+    public static final OWSExceptionCode NOT_ENOUGH_STORAGE = valueOf("NotEnoughStorage");
 
     /**
      * Server Busy.
      */
-    public static final OWSExceptionCode SERVER_BUSY = new OWSExceptionCode("ServerBusy");
+    public static final OWSExceptionCode SERVER_BUSY = valueOf("ServerBusy");
 
     /**
      * File Size Exceeded.
      */
-    public static final OWSExceptionCode FILE_SIZE_EXCEEDED = new OWSExceptionCode("FileSizeExceeded");
+    public static final OWSExceptionCode FILE_SIZE_EXCEEDED = valueOf("FileSizeExceeded");
 
     /**
      * Storage Not Supported.
      */
-    public static final OWSExceptionCode STORAGE_NOT_SUPPORTED = new OWSExceptionCode("StorageNotSupported");
+    public static final OWSExceptionCode STORAGE_NOT_SUPPORTED = valueOf("StorageNotSupported");
 
     /**
      * Tile out of range.
      */
-    public static final OWSExceptionCode TILE_OUT_OF_RANGE = new OWSExceptionCode("TileOutOfRange");
+    public static final OWSExceptionCode TILE_OUT_OF_RANGE = valueOf("TileOutOfRange");
 
-    public static final OWSExceptionCode DUPLICATE_STORED_QUERY_ID_VALUE = new OWSExceptionCode("DuplicateStoredQueryIdValue");
+    public static final OWSExceptionCode DUPLICATE_STORED_QUERY_ID_VALUE = valueOf("DuplicateStoredQueryIdValue");
 
     /**
-     * Constructs an enum with the given name. The new enum is automatically added to the list returned by {@link #values}.
+     * Constructs an enum with the given name.
      *
      * @param name The enum name. This name must not be in use by an other enum of this type.
      */
     private OWSExceptionCode(final String name) {
-        super(name, VALUES);
-    }
-
-    /**
-     * Returns the list of exception codes.
-     */
-    public static OWSExceptionCode[] values() {
-        synchronized (VALUES) {
-            return VALUES.toArray(new OWSExceptionCode[VALUES.size()]);
-        }
+        super(name);
     }
 
     /**
@@ -176,7 +159,7 @@ public class OWSExceptionCode extends CodeList<OWSExceptionCode> {
      */
     @Override
     public OWSExceptionCode[] family() {
-        return values();
+        return values(OWSExceptionCode.class);
     }
 
     /**
@@ -184,7 +167,7 @@ public class OWSExceptionCode extends CodeList<OWSExceptionCode> {
      * new one if none match it.
      */
     public static OWSExceptionCode valueOf(final String code) {
-        return valueOf(OWSExceptionCode.class, code);
+        return valueOf(OWSExceptionCode.class, code, OWSExceptionCode::new).get();
     }
 }
 

@@ -25,7 +25,6 @@ import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-import org.apache.sis.internal.storage.StoreResource;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
@@ -36,6 +35,7 @@ import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.IllegalFeatureTypeException;
 import org.apache.sis.storage.ReadOnlyStorageException;
 import org.apache.sis.storage.WritableFeatureSet;
+import org.apache.sis.storage.base.StoreResource;
 import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
 import org.apache.sis.util.ArgumentChecks;
@@ -144,7 +144,7 @@ public class DefaultFeatureResource extends AbstractResource implements Writable
     }
 
     @Override
-    public boolean removeIf(Predicate<? super Feature> filter) throws ReadOnlyStorageException, DataStoreException {
+    public void removeIf(Predicate<? super Feature> filter) throws ReadOnlyStorageException, DataStoreException {
         ArgumentChecks.ensureNonNull("predicate", filter);
         boolean removed = false;
         try (final FeatureWriter writer = store.getFeatureWriter(query)) {
@@ -156,7 +156,6 @@ public class DefaultFeatureResource extends AbstractResource implements Writable
                 }
             }
         }
-        return removed;
     }
 
     @Override

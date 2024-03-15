@@ -24,10 +24,9 @@ import java.util.Map;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
-import org.apache.sis.internal.referencing.NilReferencingObject;
+import org.apache.sis.referencing.privy.NilReferencingObject;
 import org.apache.sis.referencing.AbstractIdentifiedObject;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.NullArgumentException;
 import org.opengis.temporal.TemporalEdge;
 import org.opengis.temporal.TemporalNode;
 import org.opengis.temporal.TemporalTopologicalComplex;
@@ -88,7 +87,7 @@ public class DefaultTemporalTopologicalComplex extends AbstractIdentifiedObject 
      *
      * @param properties The properties to be given to this object.
      * @param primitives the set of {@link TemporalTopologicalPrimitive} that its includes
-     * @throws NullArgumentException if primitives is {@code null}.
+     * @throws NullPointerException if primitives is {@code null}.
      */
     public DefaultTemporalTopologicalComplex(final Map<String, ?> properties, final Collection<TemporalTopologicalPrimitive> primitives) throws IllegalArgumentException {
         super(properties);

@@ -25,14 +25,6 @@ import org.geotoolkit.style.MutableStyle;
 import org.opengis.feature.Feature;
 import org.opengis.filter.Filter;
 import org.opengis.metadata.citation.OnlineResource;
-import org.opengis.sld.CoverageConstraint;
-import org.opengis.sld.CoverageExtent;
-import org.opengis.sld.Extent;
-import org.opengis.sld.FeatureTypeConstraint;
-import org.opengis.sld.InlineFeature;
-import org.opengis.sld.RangeAxis;
-import org.opengis.sld.RemoteOWS;
-import org.opengis.sld.SLDLibrary;
 import org.opengis.util.GenericName;
 
 
@@ -40,7 +32,6 @@ import org.opengis.util.GenericName;
  * Default immplementation of SLD Factory.
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
 public class DefaultSLDFactory implements MutableSLDFactory{
 

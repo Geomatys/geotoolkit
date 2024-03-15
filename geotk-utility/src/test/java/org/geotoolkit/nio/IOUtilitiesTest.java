@@ -79,9 +79,9 @@ public final class IOUtilitiesTest {
         final Path pngFile = Paths.get("image.png");
         final Path png2File = Paths.get("image.test.png");
 
-        assertEquals("tiff",  org.apache.sis.internal.storage.io.IOUtilities.extension(tiffFile));
-        assertEquals("png",  org.apache.sis.internal.storage.io.IOUtilities.extension(pngFile));
-        assertEquals("png",  org.apache.sis.internal.storage.io.IOUtilities.extension(png2File));
+        assertEquals("tiff",  org.apache.sis.io.stream.IOUtilities.extension(tiffFile));
+        assertEquals("png",  org.apache.sis.io.stream.IOUtilities.extension(pngFile));
+        assertEquals("png",  org.apache.sis.io.stream.IOUtilities.extension(png2File));
 
         assertEquals("Picture", IOUtilities.filenameWithoutExtension(tiffFile));
         assertEquals("image", IOUtilities.filenameWithoutExtension(pngFile));
@@ -271,29 +271,6 @@ public final class IOUtilitiesTest {
             fileObj.delete();
         }
     }
-
-    @Test
-    public void tryToFileTest() throws IOException, URISyntaxException {
-
-        Path pathObj = Files.createTempFile("path", ".tmp");
-        File fileObj = File.createTempFile("file", ".tmp");
-        URI uriObj = URI.create("file:/tmp");
-        URL urlFileObj = new URL("file:/tmp");
-        URL urlObj = new URL("http://some/url");
-        String strObj = "/tmp";
-        Integer intObj = 1;
-
-        //try file conversion
-        assertNull(IOUtilities.tryToFile(null));
-        assertEquals(pathObj.toFile(), IOUtilities.tryToFile(pathObj));
-        assertSame(fileObj, IOUtilities.tryToFile(fileObj));
-        assertEquals(new File(uriObj), IOUtilities.tryToFile(uriObj));
-        assertEquals(new File(uriObj), IOUtilities.tryToFile(urlFileObj));
-        assertEquals(new File(strObj), IOUtilities.tryToFile(strObj));
-        assertEquals(urlObj, IOUtilities.tryToFile(urlObj)); // not converted
-        assertEquals(1, IOUtilities.tryToFile(intObj)); // not converted
-    }
-
 
     @Test
     public void uriFSTests() throws IOException, URISyntaxException {

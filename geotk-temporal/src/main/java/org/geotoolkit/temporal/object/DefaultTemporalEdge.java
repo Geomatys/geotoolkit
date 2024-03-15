@@ -92,7 +92,7 @@ public class DefaultTemporalEdge extends DefaultTemporalTopologicalPrimitive imp
      * @param realization Association that may link this {@link TemporalEdge} to its corresponding {@link Period}, should be {@code null}.
      * @param start {@link TemporalNode} for which it is the {@link TemporalEdge} start.
      * @param end {@link TemporalNode} for which it is the {@link TemporalEdge} end.
-     * @throws NullArgumentException if properties, start or end are {@code null}.
+     * @throws NullPointerException if properties, start or end are {@code null}.
      * @throws IllegalArgumentException if remarks is not null.
      */
     public DefaultTemporalEdge(final Map<String, ?> properties, final Period realization, final TemporalNode start, final TemporalNode end) {

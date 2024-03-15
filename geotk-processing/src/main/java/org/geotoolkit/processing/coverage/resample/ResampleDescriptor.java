@@ -20,14 +20,14 @@ import java.util.HashMap;
 import java.util.Map;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.internal.simple.SimpleCitation;
+import org.apache.sis.metadata.simple.SimpleCitation;
 import org.apache.sis.metadata.iso.citation.Citations;
 import org.apache.sis.parameter.ParameterBuilder;
+import org.apache.sis.parameter.DefaultParameterDescriptor;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.util.SimpleInternationalString;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.ResampleBorderComportement;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
@@ -192,8 +192,7 @@ public class ResampleDescriptor extends AbstractProcessDescriptor {
         final Map<String,Object> properties = new HashMap<>(4);
         properties.put(IdentifiedObject.NAME_KEY,  new NamedIdentifier(Citations.OGC, "Source"));
         properties.put(IdentifiedObject.ALIAS_KEY, new NamedIdentifier(new SimpleCitation("JAI"), "source0"));
-        IN_COVERAGE = new DefaultParameterDescriptor<>(properties, GridCoverage.class,
-                        null, null, null, null, null, true);
+        IN_COVERAGE = new DefaultParameterDescriptor<>(properties, 1, 1, GridCoverage.class, null, null, null);
 
         INPUT_DESC = new ParameterBuilder().addName(NAME + "InputParameters").createGroup(
                 IN_COVERAGE, IN_INTERPOLATION_TYPE, IN_BORDER_COMPORTEMENT_TYPE, IN_COORDINATE_REFERENCE_SYSTEM, IN_GRID_GEOMETRY, IN_BACKGROUND);
@@ -202,8 +201,7 @@ public class ResampleDescriptor extends AbstractProcessDescriptor {
         propertiesOut.put(IdentifiedObject.NAME_KEY, "result");
         propertiesOut.put(IdentifiedObject.ALIAS_KEY, ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_resample_outCoverage));
         propertiesOut.put(IdentifiedObject.REMARKS_KEY, ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_resample_outCoverageDesc));
-        OUT_COVERAGE = new DefaultParameterDescriptor<>(
-                propertiesOut, GridCoverage.class, null, null, null, null, null, true);
+        OUT_COVERAGE = new DefaultParameterDescriptor<>(propertiesOut, 1, 1, GridCoverage.class, null, null, null);
 
         OUTPUT_DESC  = new ParameterBuilder().addName(NAME + "OutputParameters").createGroup(OUT_COVERAGE);
     }

@@ -134,7 +134,7 @@ public class EllipsoidToGeoid extends MathTransformProvider {
      * Constructs a provider.
      */
     public EllipsoidToGeoid() {
-        super(3, 3, PARAMETERS);
+        super(PARAMETERS);
     }
 
     /**

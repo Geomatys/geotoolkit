@@ -25,10 +25,9 @@ import javax.measure.Quantity;
 import javax.measure.quantity.Length;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.geometry.ImmutableEnvelope;
-import org.apache.sis.internal.util.UnmodifiableArrayList;
+import org.apache.sis.util.privy.UnmodifiableArrayList;
 import org.apache.sis.storage.FeatureQuery;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.filter.FilterUtilities;
 import org.opengis.feature.Feature;
 import org.opengis.filter.Filter;
@@ -151,7 +150,7 @@ public class QueryUtilities {
      */
     public static Query subQuery(final Query original, final Query second){
         if ( original==null || second==null ) {
-            throw new NullArgumentException("Both query must not be null.");
+            throw new NullPointerException("Both query must not be null.");
         }
 
         final Query qb = new Query();

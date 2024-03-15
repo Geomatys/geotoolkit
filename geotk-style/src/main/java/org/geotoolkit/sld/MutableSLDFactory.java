@@ -22,9 +22,8 @@ import org.geotoolkit.style.MutableStyle;
  * SLD factory.
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
-public interface MutableSLDFactory extends org.opengis.sld.SLDFactory {
+public interface MutableSLDFactory extends SLDFactory {
 
     @Override
     MutableStyledLayerDescriptor createSLD();

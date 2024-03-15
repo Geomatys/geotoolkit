@@ -35,10 +35,10 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.apache.sis.portrayal.MapLayer;
-import org.apache.sis.portrayal.MapLayers;
+import org.apache.sis.map.MapLayer;
+import org.apache.sis.map.MapLayers;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.privy.AffineTransform2D;
 import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.geometry.GeometricUtilities;
@@ -74,7 +74,7 @@ import org.opengis.style.RasterSymbolizer;
 public class MeridianTest {
 
     private static final GeometryFactory GF = JTS.getFactory();
-    private static final DefaultStyleFactory SF = new DefaultStyleFactory();
+    private static final DefaultStyleFactory SF = DefaultStyleFactory.provider();
     private static final FilterFactory FF = FilterUtilities.FF;
 
     /**

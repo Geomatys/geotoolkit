@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.referencing.operation.provider;
 
-import org.apache.sis.internal.referencing.provider.Equirectangular;
+import org.apache.sis.referencing.operation.provider.Equirectangular;
 
 import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.ParameterValueGroup;

@@ -255,7 +255,7 @@ public class WarpPolynomial extends MathTransformProvider {
      * Creates a provider for warp transforms.
      */
     public WarpPolynomial() {
-        super(2, 2, PARAMETERS);
+        super(PARAMETERS);
     }
 
     /**

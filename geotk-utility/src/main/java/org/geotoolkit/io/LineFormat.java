@@ -35,7 +35,6 @@ import org.apache.sis.util.Classes;
 import org.apache.sis.util.ObjectConverter;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.resources.Errors;
 
 
@@ -169,7 +168,7 @@ public class LineFormat extends Format {
      */
     public LineFormat(final Format format) {
         if (format == null) {
-            throw new NullArgumentException(Errors.format(Errors.Keys.NullFormat_2, 0, 1));
+            throw new NullPointerException(Errors.format(Errors.Keys.NullFormat_2, 0, 1));
         }
         this.data    = new Object[16];
         this.limits  = new int[data.length + 1];
@@ -193,7 +192,7 @@ public class LineFormat extends Format {
         this.limits  = new int   [formats.length + 1];
         for (int i=0; i<formats.length; i++) {
             if (formats[i] == null) {
-                throw new NullArgumentException(Errors.format(
+                throw new NullPointerException(Errors.format(
                         Errors.Keys.NullFormat_2, i+1, formats.length));
             }
         }
@@ -366,7 +365,7 @@ load:   while (true) {
             throw new ArrayIndexOutOfBoundsException(index);
         }
         if (value == null) {
-            throw new NullArgumentException(Errors.format(Errors.Keys.NullArgument_1, "value"));
+            throw new NullPointerException(Errors.format(Errors.Keys.NullArgument_1, "value"));
         }
         if (index == count) {
             if (index == data.length) {

@@ -48,9 +48,10 @@ import java.util.regex.Pattern;
 import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.IdentifiedObjects;
+import org.apache.sis.referencing.factory.GeodeticObjectFactory;
+import org.apache.sis.referencing.operation.DefaultCoordinateOperationFactory;
 import org.apache.sis.util.ArgumentChecks;
 
 import static org.geotoolkit.data.mapinfo.ProjectionParameters.PARAMETER_LIST;
@@ -70,9 +71,9 @@ public class ProjectionUtils {
 
     private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.data.mapinfo");
 
-    private static final CRSFactory CRS_FACTORY = DefaultFactories.forBuildin(CRSFactory.class);
-    private static final CSFactory CS_FACTORY = DefaultFactories.forBuildin(CSFactory.class);
-    private static final CoordinateOperationFactory PROJ_FACTORY = DefaultFactories.forBuildin(CoordinateOperationFactory.class);
+    private static final CRSFactory CRS_FACTORY = GeodeticObjectFactory.provider();
+    private static final CSFactory CS_FACTORY = GeodeticObjectFactory.provider();
+    private static final CoordinateOperationFactory PROJ_FACTORY = DefaultCoordinateOperationFactory.provider();
 
     private static final String BOUNDS_NAME = "Bounds";
     private static final String AFFINE_UNITS = "Affine Units";

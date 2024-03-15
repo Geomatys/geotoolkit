@@ -20,18 +20,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-
 import org.geotoolkit.util.StringUtilities;
 
-import org.opengis.sld.CoverageExtent;
-import org.opengis.sld.RangeAxis;
-import org.opengis.sld.SLDVisitor;
 
 /**
  * Default imumutable coverage extent, thread safe.
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
 class DefaultCoverageExtent implements CoverageExtent{
 

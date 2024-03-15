@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.display2d;
 
-import org.apache.sis.internal.map.Presentation;
+import org.apache.sis.map.Presentation;
 import org.geotoolkit.display.SearchArea;
 import org.geotoolkit.display.canvas.RenderingContext;
 

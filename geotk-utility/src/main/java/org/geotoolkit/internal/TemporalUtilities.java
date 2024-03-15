@@ -18,7 +18,7 @@
 package org.geotoolkit.internal;
 
 import java.util.Date;
-import org.apache.sis.internal.system.DefaultFactories;
+import org.apache.sis.pending.temporal.DefaultTemporalFactory;
 
 import org.opengis.temporal.Period;
 import org.opengis.temporal.Instant;
@@ -68,7 +68,7 @@ public final class TemporalUtilities extends Static {
      * @return The instant.
      */
     public static Instant createInstant(final Date time) {
-        return createInstant(DefaultFactories.forBuildin(TemporalFactory.class), time);
+        return createInstant(DefaultTemporalFactory.provider(), time);
     }
 
     /**
@@ -81,7 +81,7 @@ public final class TemporalUtilities extends Static {
      * @return The period.
      */
     public static Period createPeriod(final Date begin, final Date end) {
-        final TemporalFactory factory = DefaultFactories.forBuildin(TemporalFactory.class);
+        final TemporalFactory factory = DefaultTemporalFactory.provider();
         return factory.createPeriod(createInstant(factory, begin), createInstant(factory, end));
     }
 
@@ -104,7 +104,7 @@ public final class TemporalUtilities extends Static {
     public static PeriodDuration createPeriodDuration(final InternationalString years, final InternationalString months, final InternationalString weeks,
             final InternationalString days, final InternationalString hours, final InternationalString minutes, final InternationalString seconds)
     {
-        final TemporalFactory factory = DefaultFactories.forBuildin(TemporalFactory.class);
+        final TemporalFactory factory = DefaultTemporalFactory.provider();
         return factory.createPeriodDuration(years, months, weeks, days, hours, minutes, seconds);
     }
 }

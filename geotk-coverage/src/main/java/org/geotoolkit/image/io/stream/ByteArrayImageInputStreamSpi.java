@@ -24,8 +24,8 @@ import java.nio.channels.ReadableByteChannel;
 import java.util.Locale;
 import javax.imageio.spi.ImageInputStreamSpi;
 import javax.imageio.stream.ImageInputStream;
-import org.apache.sis.internal.storage.io.ChannelDataInput;
-import org.apache.sis.internal.storage.io.ChannelImageInputStream;
+import org.apache.sis.io.stream.ChannelDataInput;
+import org.apache.sis.io.stream.ChannelImageInputStream;
 
 
 /**

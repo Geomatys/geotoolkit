@@ -25,7 +25,7 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
-import org.apache.sis.internal.jaxb.gco.Multiplicity;
+import org.apache.sis.xml.bind.gco.Multiplicity;
 import org.apache.sis.util.ComparisonMode;
 import org.opengis.feature.catalog.AssociationRole;
 import org.opengis.feature.catalog.Constraint;

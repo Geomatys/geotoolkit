@@ -19,15 +19,14 @@ package org.geotoolkit.sld;
 import java.beans.PropertyChangeListener;
 import java.util.EventListener;
 import org.geotoolkit.style.StyleListener;
-import org.opengis.sld.LayerStyle;
+
 
 /**
  * Mutable style.
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
-public interface MutableLayerStyle extends LayerStyle{
+public interface MutableLayerStyle extends LayerStyle {
 
     //--------------------------------------------------------------------------
     // listeners management ----------------------------------------------------

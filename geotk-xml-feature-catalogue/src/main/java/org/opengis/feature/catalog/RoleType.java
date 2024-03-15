@@ -2,9 +2,6 @@
 
 package org.opengis.feature.catalog;
 
-import java.util.ArrayList;
-import java.util.List;
-import org.opengis.annotation.UML;
 import org.opengis.util.CodeList;
 import static org.opengis.annotation.Obligation.*;
 import static org.opengis.annotation.Specification.*;
@@ -33,30 +30,24 @@ import static org.opengis.annotation.Specification.*;
 //@UML(identifier="FC_RoleType", specification=ISO_19110)
 public class RoleType extends CodeList<RoleType> {
 
-    /**
-     * List of all enumerations of this type.
-     * Must be declared before any enum declaration.
-     */
-    private static final List<RoleType> VALUES = new ArrayList<RoleType>(3);
 
     /**
      * indicates an ordinary association
      */
     //@UML(identifier="ordinary", obligation=CONDITIONAL, specification=ISO_19119)
-    public static final RoleType ORDINARY = new RoleType("ORDINARY");
+    public static final RoleType ORDINARY = valueOf("ORDINARY");
 
     /**
      * indicates a UML aggragation (part role)
      */
     //@UML(identifier="aggregation", obligation=CONDITIONAL, specification=ISO_19119)
-    public static final RoleType AGGREGATION = new RoleType("AGGREGATION");
+    public static final RoleType AGGREGATION = valueOf("AGGREGATION");
 
     /**
      * indicates a UML composition (member role)
      */
     //@UML(identifier="composition", obligation=CONDITIONAL, specification=ISO_19119)
-    public static final RoleType COMPOSITION = new RoleType("COMPOSITION");
-
+    public static final RoleType COMPOSITION = valueOf("COMPOSITION");
 
 
     /**
@@ -66,23 +57,14 @@ public class RoleType extends CodeList<RoleType> {
      * @param name The enum name. This name must not be in use by an other enum of this type.
      */
     private RoleType(final String name) {
-        super(name, VALUES);
-    }
-
-    /**
-     * Returns the list of {@code FCRoleType}s.
-     */
-    public static RoleType[] values() {
-        synchronized (VALUES) {
-            return VALUES.toArray(new RoleType[VALUES.size()]);
-        }
+        super(name);
     }
 
     /**
      * Returns the list of enumerations of the same kind than this enum.
      */
     public RoleType[] family() {
-        return values();
+        return values(RoleType.class);
     }
 
     /**
@@ -90,9 +72,7 @@ public class RoleType extends CodeList<RoleType> {
      * new one if none match it.
      */
     public static RoleType valueOf(final String code) {
-        return valueOf(RoleType.class, code);
+        return valueOf(RoleType.class, code, RoleType::new).get();
     }
-
-
 
 }

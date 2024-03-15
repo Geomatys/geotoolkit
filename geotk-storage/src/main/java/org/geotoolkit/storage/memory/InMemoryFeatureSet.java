@@ -33,8 +33,8 @@ import java.util.stream.Stream;
 import org.apache.sis.feature.Features;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.internal.feature.Geometries;
-import org.apache.sis.internal.feature.GeometryWrapper;
+import org.apache.sis.geometry.wrapper.Geometries;
+import org.apache.sis.geometry.wrapper.GeometryWrapper;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.AbstractFeatureSet;
@@ -318,8 +318,11 @@ public class InMemoryFeatureSet extends AbstractFeatureSet implements WritableFe
     }
 
     @Override
-    public boolean removeIf(Predicate<? super Feature> filter) {
-        if (tree == null) return write(() -> features.removeIf(filter));
+    public void removeIf(Predicate<? super Feature> filter) {
+        if (tree == null) {
+            write(() -> features.removeIf(filter));
+            return;
+        }
 
         Map<Feature, org.locationtech.jts.geom.Envelope> toRemove = new HashMap<>();
         for (Feature f : features) {
@@ -328,13 +331,12 @@ public class InMemoryFeatureSet extends AbstractFeatureSet implements WritableFe
             }
         }
 
-        if (toRemove.isEmpty()) return false;
+        if (toRemove.isEmpty()) return;
 
         write(() -> {
             toRemove.forEach((f, env) -> tree.remove(env, f));
             features.removeAll(toRemove.keySet());
         });
-        return true;
     }
 
     @Override

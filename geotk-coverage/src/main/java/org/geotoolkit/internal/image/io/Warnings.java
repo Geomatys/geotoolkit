@@ -110,7 +110,7 @@ public final class Warnings extends Static {
             record.setSourceMethodName(method);
             plugin.warningOccurred(record);
         } else {
-            Logging.log(caller, method, record);
+            Logging.completeAndLog(null, caller, method, record);
         }
     }
 
@@ -139,7 +139,7 @@ public final class Warnings extends Static {
             record.setSourceMethodName(method);
             plugin.warningOccurred(record);
         } else {
-            Logging.log(caller, method, record);
+            Logging.completeAndLog(null, caller, method, record);
         }
     }
 

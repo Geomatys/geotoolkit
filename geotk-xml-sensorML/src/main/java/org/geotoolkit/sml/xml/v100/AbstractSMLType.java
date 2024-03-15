@@ -19,7 +19,7 @@ package org.geotoolkit.sml.xml.v100;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlType;
-import org.apache.sis.internal.simple.SimpleCitation;
+import org.apache.sis.metadata.simple.SimpleCitation;
 import org.apache.sis.metadata.MetadataStandard;
 import org.geotoolkit.gml.xml.v311.AbstractFeatureType;
 import org.geotoolkit.sml.xml.AbstractSML;

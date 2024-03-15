@@ -19,7 +19,7 @@ package org.geotoolkit.display2d.style.renderer;
 
 import java.awt.geom.Rectangle2D;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.portrayal.MapLayer;
+import org.apache.sis.map.MapLayer;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.Resource;

@@ -24,7 +24,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.internal.referencing.ExtentSelector;
+import org.apache.sis.referencing.privy.ExtentSelector;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.AbstractGridCoverageResource;
 import org.apache.sis.metadata.iso.extent.DefaultExtent;

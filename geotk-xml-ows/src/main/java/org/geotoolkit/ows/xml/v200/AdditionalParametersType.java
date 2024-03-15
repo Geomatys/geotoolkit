@@ -26,7 +26,7 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlType;
-import org.apache.sis.internal.util.UnmodifiableArrayList;
+import org.apache.sis.util.privy.UnmodifiableArrayList;
 import org.geotoolkit.ows.xml.AbstractAdditionalParameters;
 import static org.geotoolkit.ows.xml.v200.ObjectFactory._AdditionalParameter_QNAME;
 

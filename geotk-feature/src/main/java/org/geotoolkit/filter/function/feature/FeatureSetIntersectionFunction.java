@@ -26,8 +26,8 @@ import javax.measure.Quantity;
 import javax.measure.quantity.Length;
 import org.apache.sis.filter.DefaultFilterFactory;
 import org.apache.sis.geometry.Envelopes;
-import org.apache.sis.internal.feature.AttributeConvention;
-import org.apache.sis.internal.feature.Geometries;
+import org.apache.sis.feature.privy.AttributeConvention;
+import org.apache.sis.geometry.wrapper.Geometries;
 import org.apache.sis.measure.Quantities;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureQuery;
@@ -82,7 +82,7 @@ public class FeatureSetIntersectionFunction extends AbstractFunction {
                         final Feature feature = iterator.next();
                         Object igeom = feature.getValueOrFallback(AttributeConvention.GEOMETRY, null);
                         if (igeom != null) {
-                            igeom = org.apache.sis.internal.feature.jts.JTS.transform((Geometry) igeom, geomCrs);
+                            igeom = org.apache.sis.geometry.wrapper.jts.JTS.transform((Geometry) igeom, geomCrs);
                             try {
                                 Geometry intersection = geom.intersection((Geometry) igeom);
                                 if (!intersection.isEmpty()) {

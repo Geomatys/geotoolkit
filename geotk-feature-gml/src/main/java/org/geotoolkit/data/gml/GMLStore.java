@@ -43,7 +43,7 @@ import java.util.stream.StreamSupport;
 import jakarta.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
 import org.apache.sis.storage.aggregate.ConcatenatedFeatureSet;
-import org.apache.sis.internal.storage.ResourceOnFileSystem;
+import org.apache.sis.storage.base.ResourceOnFileSystem;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
@@ -314,7 +314,7 @@ public class GMLStore extends DataStore implements WritableFeatureSet, ResourceO
     }
 
     @Override
-    public boolean removeIf(Predicate<? super Feature> filter) throws DataStoreException {
+    public void removeIf(Predicate<? super Feature> filter) throws DataStoreException {
         throw new DataStoreException("Not supported yet.");
     }
 

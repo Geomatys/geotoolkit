@@ -355,7 +355,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
 
             throw new IllegalArgumentException(String.format(
                     "Unknown expression: Name=%s ; Value-type=%s",
-                    expName, obj == null ? null : obj.getClass().getCanonicalName()));
+                    expName, obj == null ? null : obj.getClass().getCanonicalName()), ex);
         }
     }
 

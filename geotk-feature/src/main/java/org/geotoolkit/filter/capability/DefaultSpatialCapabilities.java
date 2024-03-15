@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import static org.apache.sis.util.ArgumentChecks.*;
-import org.apache.sis.internal.util.UnmodifiableArrayList;
+import org.apache.sis.util.privy.UnmodifiableArrayList;
 import org.apache.sis.util.iso.Names;
 import org.opengis.filter.SpatialOperatorName;
 import org.opengis.filter.capability.GeometryOperand;
@@ -77,8 +77,12 @@ public class DefaultSpatialCapabilities implements SpatialCapabilities {
         final Map<SpatialOperatorName, List<? extends ScopedName>> names = new HashMap<>();
         for (final SpatialOperator op : operators.getOperators()) {
             final String name = op.getName();
-            final SpatialOperatorName key = SpatialOperatorName.valueOf(SpatialOperatorName.class,
-                    (c) -> name.equalsIgnoreCase(c.identifier()), null);
+            SpatialOperatorName key = null;
+            for (SpatialOperatorName spn : SpatialOperatorName.values()) {
+                if (name.equalsIgnoreCase(spn.identifier())) {
+                    key = spn;
+                }
+            }
             if (key != null) {
                 names.put(key, getGeometryOperands(op.getGeometryOperands()));
             }

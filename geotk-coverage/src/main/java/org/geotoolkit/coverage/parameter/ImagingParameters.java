@@ -47,7 +47,7 @@ import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.referencing.IdentifiedObjects;
 
-import org.apache.sis.internal.util.UnmodifiableArrayList;
+import org.apache.sis.util.privy.UnmodifiableArrayList;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 
@@ -63,12 +63,8 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
  * method.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
- *
- * @since 2.2
- * @module
  */
-public class ImagingParameters extends AbstractParameter implements ParameterValueGroup {
+final class ImagingParameters extends AbstractParameter implements ParameterValueGroup {
     /**
      * Serial number for inter-operability with different versions.
      */

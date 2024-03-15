@@ -4,7 +4,7 @@ package org.geotoolkit.pending.demo.clients.wms;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import org.apache.sis.portrayal.MapLayers;
+import org.apache.sis.map.MapLayers;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.wms.GetCapabilitiesRequest;

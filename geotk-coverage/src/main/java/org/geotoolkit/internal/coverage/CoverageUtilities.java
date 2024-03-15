@@ -41,7 +41,6 @@ import org.apache.sis.referencing.operation.matrix.MatrixSIS;
 import org.apache.sis.referencing.operation.matrix.NoninvertibleMatrixException;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
-import org.apache.sis.util.SimpleInternationalString;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.lang.Static;
@@ -58,7 +57,6 @@ import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
-import org.opengis.util.InternationalString;
 
 
 /**
@@ -293,15 +291,6 @@ public final class CoverageUtilities extends Static {
             }
         }
         return gg;
-    }
-
-    /**
-     * @deprecated This method now only return an empty text, as name is not part of coverage API anymore. Do not use
-     * this anymore please.
-     */
-    @Deprecated
-    public static InternationalString getName(GridCoverage coverage) {
-        return new SimpleInternationalString("");
     }
 
     /**

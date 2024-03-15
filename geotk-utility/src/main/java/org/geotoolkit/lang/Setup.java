@@ -23,8 +23,8 @@ import java.util.Properties;
 import java.util.ServiceLoader;
 import javax.imageio.spi.IIORegistry;
 import javax.sql.DataSource;
-import org.apache.sis.internal.metadata.sql.Initializer;
-import org.apache.sis.internal.system.DefaultFactories;
+import org.apache.sis.metadata.sql.privy.Initializer;
+import org.apache.sis.system.SystemListener;
 import org.apache.sis.util.logging.MonolineFormatter;
 import org.geotoolkit.internal.SetupService;
 import org.geotoolkit.internal.Threads;
@@ -213,7 +213,7 @@ public final class Setup extends Static {
          * during the shutdown process, so we need to scan the classpath to re-register them.
          */
         if (reinit) {
-            DefaultFactories.fireClasspathChanged();
+            SystemListener.fireClasspathChanged();
         }
         /*
          * Now performs every module-specific initialization.

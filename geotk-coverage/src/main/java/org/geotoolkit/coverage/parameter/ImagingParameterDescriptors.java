@@ -56,9 +56,7 @@ import org.opengis.util.NameSpace;
 
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.ComparisonMode;
-import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.resources.Errors;
-import org.apache.sis.internal.storage.io.IOUtilities;
 import org.apache.sis.referencing.AbstractIdentifiedObject;
 import org.apache.sis.metadata.iso.citation.Citations;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
@@ -66,8 +64,8 @@ import org.apache.sis.metadata.iso.citation.DefaultOnlineResource;
 import org.apache.sis.metadata.iso.citation.DefaultResponsibility;
 
 import static javax.media.jai.registry.RenderedRegistryMode.MODE_NAME;
-import org.apache.sis.internal.simple.SimpleCitation;
-import org.apache.sis.internal.system.DefaultFactories;
+import org.apache.sis.metadata.simple.SimpleCitation;
+import org.apache.sis.util.iso.DefaultNameFactory;
 
 
 /**
@@ -314,7 +312,7 @@ public class ImagingParameterDescriptors extends DefaultParameterDescriptorGroup
             final InternationalString description;
             description = new ImagingParameterDescription(op, "Description", null);
             if (authority != null) try {
-                final URI uri = new URI(IOUtilities.encodeURI(bundle.getString("DocURL")));
+                final URI uri = new URI(bundle.getString("DocURL"));
                 final DefaultOnlineResource resource = new DefaultOnlineResource(uri);
                 resource.setFunction(OnLineFunction.INFORMATION);
                 resource.setDescription(description);
@@ -348,7 +346,7 @@ public class ImagingParameterDescriptors extends DefaultParameterDescriptorGroup
              * the end result is fully-qualified name like "JAI:Add" and one alias like
              * "com.sun.media.jai.Add".
              */
-            final NameFactory factory = DefaultFactories.forBuildin(NameFactory.class);
+            final NameFactory factory = DefaultNameFactory.provider();
             final NameSpace scope = factory.createNameSpace(factory.createLocalName(null,
                     new ImagingParameterDescription(op, "Vendor", null)),
                     Collections.singletonMap("separator", "."));
@@ -379,7 +377,7 @@ public class ImagingParameterDescriptors extends DefaultParameterDescriptorGroup
          * Note that this map will be modified again in the remaining of this method.
          */
         if (descriptor == null) {
-            throw new NullArgumentException(Errors.format(Errors.Keys.NullArgument_1, "descriptor"));
+            throw new NullPointerException(Errors.format(Errors.Keys.NullArgument_1, "descriptor"));
         }
         final Map<String,ParameterDescriptor<?>> replacements = new LinkedHashMap<>();
         if (extension != null) {

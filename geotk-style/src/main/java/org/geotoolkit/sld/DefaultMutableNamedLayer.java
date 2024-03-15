@@ -32,19 +32,16 @@ import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.util.collection.NotifiedCheckedList;
 import org.apache.sis.util.Classes;
 
-import org.opengis.sld.Constraint;
-import org.opengis.sld.FeatureTypeConstraint;
-import org.opengis.sld.SLDVisitor;
 import org.opengis.style.Description;
 
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.util.StringUtilities;
 
+
 /**
  * Default mutable named layer, thread safe.
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
 class DefaultMutableNamedLayer implements MutableNamedLayer,StyleListener{
 

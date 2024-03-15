@@ -24,9 +24,13 @@ import org.apache.sis.util.ResourceInternationalString;
  * Subclass of ResourceInternationalString with a configurable ClassLoader.
  *
  * @author Johann Sorel (Geomatys)
+ *
+ * @deprecated This class will not work anymore in a JPMS context.
  */
+@Deprecated
 public class ClassLoaderInternationalString extends ResourceInternationalString{
 
+    private final String resources;
     private final ClassLoader classLoader;
 
     public ClassLoaderInternationalString(Class clazz, String resources, String key) {
@@ -34,7 +38,8 @@ public class ClassLoaderInternationalString extends ResourceInternationalString{
     }
 
     public ClassLoaderInternationalString(ClassLoader classloder, String resources, String key) {
-        super(resources, key);
+        super(key);
+        this.resources = resources;
         this.classLoader = classloder;
     }
 

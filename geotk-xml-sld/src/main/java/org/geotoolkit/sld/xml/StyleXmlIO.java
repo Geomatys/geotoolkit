@@ -29,24 +29,17 @@ import static java.nio.file.StandardOpenOption.*;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
-import org.apache.sis.internal.system.DefaultFactories;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.xml.MarshallerPool;
 import org.geotoolkit.filter.FilterFactory2;
-import org.geotoolkit.filter.FilterUtilities;
-import org.geotoolkit.ogc.xml.FilterMarshallerPool;
-import org.geotoolkit.ogc.xml.FilterToOGC200Converter;
-import org.geotoolkit.ogc.xml.FilterVersion;
 import org.geotoolkit.ogc.xml.OGC200toGTTransformer;
 import org.geotoolkit.ogc.xml.v110.PropertyNameType;
-import org.geotoolkit.ogc.xml.v200.ObjectFactory;
 import org.geotoolkit.sld.DefaultSLDFactory;
 import org.geotoolkit.sld.MutableSLDFactory;
 import org.geotoolkit.sld.MutableStyledLayerDescriptor;
@@ -59,15 +52,21 @@ import org.opengis.filter.FilterFactory;
 import org.opengis.filter.SortProperty;
 import org.opengis.filter.ValueReference;
 import org.opengis.metadata.citation.OnlineResource;
-import org.opengis.sld.StyledLayerDescriptor;
+import org.geotoolkit.sld.StyledLayerDescriptor;
 import org.opengis.style.FeatureTypeStyle;
 import org.opengis.style.Rule;
 import org.opengis.style.Style;
-import org.opengis.style.StyleFactory;
 import org.opengis.util.FactoryException;
 import org.w3c.dom.Node;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
+import java.util.logging.Logger;
+import org.geotoolkit.filter.FilterUtilities;
+import org.geotoolkit.ogc.xml.FilterMarshallerPool;
+import org.geotoolkit.ogc.xml.FilterToOGC200Converter;
+import org.geotoolkit.ogc.xml.FilterVersion;
+import org.geotoolkit.ogc.xml.v200.ObjectFactory;
+import org.geotoolkit.style.DefaultStyleFactory;
 
 /**
  * Utility class to handle XML reading and writing for OGC SLD, SE and Filter.
@@ -92,7 +91,7 @@ public final class StyleXmlIO {
     private GTtoSLD110Transformer transformerXMLv110 = null;
 
     public StyleXmlIO() {
-        this.styleFactory = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
+        this.styleFactory = DefaultStyleFactory.provider();
         this.filterFactory = FilterUtilities.FF;
         this.sldFactory = new DefaultSLDFactory();
     }

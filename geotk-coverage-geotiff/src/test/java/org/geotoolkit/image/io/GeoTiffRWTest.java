@@ -30,11 +30,11 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
 import org.apache.sis.coverage.grid.GridCoverage;
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.apache.sis.internal.system.DefaultFactories;
+import org.apache.sis.referencing.privy.AffineTransform2D;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
+import org.apache.sis.referencing.factory.GeodeticObjectFactory;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.coverage.io.CoverageIO;
@@ -92,7 +92,7 @@ public class GeoTiffRWTest {    // LGPL
         });
     }
 
-    private final CRSFactory longlatFactory = DefaultFactories.forBuildin(CRSFactory.class);
+    private final CRSFactory longlatFactory = GeodeticObjectFactory.provider();
 
     @Test
     public void test1() throws Exception {

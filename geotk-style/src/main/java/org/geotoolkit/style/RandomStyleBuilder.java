@@ -23,8 +23,7 @@ import java.util.List;
 import java.util.function.Supplier;
 import javax.measure.Unit;
 import org.apache.sis.feature.Features;
-import org.apache.sis.internal.filter.sqlmm.SQLMM;
-import org.apache.sis.internal.system.DefaultFactories;
+import org.apache.sis.filter.sqlmm.SQLMM;
 import org.apache.sis.measure.Units;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.filter.FilterUtilities;
@@ -67,7 +66,7 @@ public class RandomStyleBuilder {
         Color.ORANGE, Color.RED, Color.YELLOW.darker()
     };
 
-    private static final MutableStyleFactory SF = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
+    private static final MutableStyleFactory SF = DefaultStyleFactory.provider();
     private static final FilterFactory FF = FilterUtilities.FF;
 
     private RandomStyleBuilder() {}

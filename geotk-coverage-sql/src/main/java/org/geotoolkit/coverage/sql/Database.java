@@ -32,8 +32,8 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.collection.Cache;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;
-import org.apache.sis.internal.system.DefaultFactories;
-import org.apache.sis.internal.referencing.ReferencingFactoryContainer;
+import org.apache.sis.referencing.privy.ReferencingFactoryContainer;
+import org.apache.sis.util.iso.DefaultNameFactory;
 
 
 /**
@@ -109,7 +109,7 @@ final class Database extends ReferencingFactoryContainer {
         timezone          = TimeZone.getTimeZone("UTC");
         root              = directory;
         locale            = Locale.getDefault(Locale.Category.DISPLAY);
-        nameFactory       = DefaultFactories.forBuildin(NameFactory.class);
+        nameFactory       = DefaultNameFactory.provider();
         unitFormat        = new UnitFormat(locale);
         caches            = new EnumMap<>(CachedTable.Target.class);
     }

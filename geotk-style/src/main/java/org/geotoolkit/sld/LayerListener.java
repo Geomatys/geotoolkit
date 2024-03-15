@@ -25,13 +25,12 @@ import org.geotoolkit.internal.ReferenceQueueConsumer;
 import org.apache.sis.util.Disposable;
 
 import org.geotoolkit.util.collection.CollectionChangeEvent;
-import org.opengis.sld.Constraint;
+
 
 /**
  * Listener for user layer.
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
 public interface LayerListener extends PropertyChangeListener{
 

@@ -17,7 +17,7 @@
 
 package org.geotoolkit.display.container;
 
-import org.apache.sis.portrayal.MapLayers;
+import org.apache.sis.map.MapLayers;
 
 /**
  *

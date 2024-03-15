@@ -61,7 +61,7 @@ public class SamplingXMLBindingTest {
                 "org.geotoolkit.sampling.xml.v100:" +
                 "org.geotoolkit.observation.xml.v100:" +
                 "org.geotoolkit.gml.xml.v311:" +
-                "org.apache.sis.internal.jaxb.geometry"), null);
+                "org.apache.sis.xml.bind.metadata.geometry"), null);
         unmarshaller = pool.acquireUnmarshaller();
         marshaller   = pool.acquireMarshaller();
     }

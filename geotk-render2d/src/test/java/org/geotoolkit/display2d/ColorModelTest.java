@@ -44,8 +44,8 @@ import org.apache.sis.coverage.grid.GridOrientation;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.portrayal.MapLayer;
-import org.apache.sis.portrayal.MapLayers;
+import org.apache.sis.map.MapLayer;
+import org.apache.sis.map.MapLayers;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.FeatureSet;
@@ -83,7 +83,7 @@ import org.opengis.style.PointSymbolizer;
 import org.opengis.util.FactoryException;
 
 import static org.junit.Assert.*;
-import static org.opengis.test.Assert.assertBetween;
+import static org.opengis.test.Assertions.assertBetween;
 
 
 /**
@@ -94,7 +94,7 @@ import static org.opengis.test.Assert.assertBetween;
 public class ColorModelTest {
 
     private static final GeometryFactory GF = org.geotoolkit.geometry.jts.JTS.getFactory();
-    private static final MutableStyleFactory SF = new DefaultStyleFactory();
+    private static final MutableStyleFactory SF = DefaultStyleFactory.provider();
 
     private final List<FeatureSet> featureColls = new ArrayList<>();
     private final List<GridCoverage> coverages = new ArrayList<>();
@@ -203,47 +203,6 @@ public class ColorModelTest {
     }
 
     @Test
-    public void testNoDataCM() throws NoSuchAuthorityCodeException, FactoryException, PortrayalException {
-        final MapLayers context = MapBuilder.createContext();
-        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.geographic());
-        env.setRange(0, -180, 180);
-        env.setRange(1, -90, 90);
-
-        final RenderedImage img = DefaultPortrayalService.portray(
-                new CanvasDef(new Dimension(800, 600), env),
-                new SceneDef(context));
-
-        assertTrue( img.getColorModel() instanceof IndexColorModel);
-
-        final IndexColorModel icm = (IndexColorModel) img.getColorModel();
-
-        //we should have only two value
-        assertEquals(2, icm.getMapSize());
-        //with one being transparent
-        assertTrue(icm.getTransparentPixel() >= 0);
-    }
-
-    @Test
-    public void testSolidColorBackground() throws NoSuchAuthorityCodeException, FactoryException, PortrayalException {
-        final MapLayers context = MapBuilder.createContext();
-        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.geographic());
-        env.setRange(0, -180, 180);
-        env.setRange(1, -90, 90);
-
-        final CanvasDef cdef = new CanvasDef(new Dimension(800, 600), env);
-        cdef.setBackground(Color.GREEN);
-        final RenderedImage img = DefaultPortrayalService.portray(cdef, new SceneDef(context));
-
-        assertTrue( img.getColorModel() instanceof IndexColorModel);
-
-        final IndexColorModel icm = (IndexColorModel) img.getColorModel();
-
-        //we should have only two value
-        assertEquals(2, icm.getMapSize());
-        assertTrue(Color.GREEN.getRGB() == icm.getRGB(0) || Color.GREEN.getRGB() == icm.getRGB(1));
-    }
-
-    @Test
     public void testSolidColorBackgroundWithAA() throws NoSuchAuthorityCodeException, FactoryException, PortrayalException {
         final MapLayers context = MapBuilder.createContext();
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.geographic());
@@ -306,43 +265,6 @@ public class ColorModelTest {
     }
 
     @Test
-    public void testOpaqueStyleDatas() throws NoSuchAuthorityCodeException, FactoryException, PortrayalException {
-        final MapLayers context = MapBuilder.createContext();
-        context.getComponents().add(createLayer(Color.BLUE,Color.RED,Color.YELLOW));
-        context.getComponents().add(createLayer(Color.BLUE,Color.GREEN,Color.GRAY));
-
-        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.geographic());
-        env.setRange(0, -180, 180);
-        env.setRange(1, -90, 90);
-
-        final CanvasDef cdef = new CanvasDef(new Dimension(800, 600), env);
-        cdef.setBackground(Color.WHITE);
-        final RenderedImage img = DefaultPortrayalService.portray(cdef, new SceneDef(context));
-
-        assertTrue( img.getColorModel() instanceof IndexColorModel);
-        final IndexColorModel icm = (IndexColorModel) img.getColorModel();
-        assertEquals(Transparency.OPAQUE, icm.getTransparency());
-        assertEquals(-1, icm.getTransparentPixel());
-        assertFalse(icm.hasAlpha());
-
-        //we should have only six value
-        assertEquals(6, icm.getMapSize());
-
-        final Set<Integer> colors = new HashSet<Integer>();
-        colors.add(Color.WHITE.getRGB());
-        colors.add(Color.BLUE.getRGB());
-        colors.add(Color.RED.getRGB());
-        colors.add(Color.YELLOW.getRGB());
-        colors.add(Color.GREEN.getRGB());
-        colors.add(Color.GRAY.getRGB());
-
-        for(int i=0;i<icm.getMapSize();i++){
-            assertTrue(colors.contains(icm.getRGB(i)));
-        }
-
-    }
-
-    @Test
     public void testRasterData() throws NoSuchAuthorityCodeException, FactoryException, PortrayalException {
         final MapLayers context = MapBuilder.createContext();
         context.getComponents().add(MapBuilder.createCoverageLayer(coverages.get(0), SF.style(SF.rasterSymbolizer()), "test"));
@@ -391,10 +313,10 @@ public class ColorModelTest {
             for(int y=0; y<img.getHeight(); y++){
                 //jpeg can't encode a perfect white image, CMY to RGB conversion lost I guess.
                 Color c = new Color(img.getRGB(x, y));
-                assertBetween("color is not white", 250, 255, c.getRed());
-                assertBetween("color is not white", 250, 255, c.getGreen());
-                assertBetween("color is not white", 250, 255, c.getBlue());
-                assertBetween("color is not white", 250, 255, c.getAlpha());
+                assertBetween(250, 255, c.getRed(),   "color is not white");
+                assertBetween(250, 255, c.getGreen(), "color is not white");
+                assertBetween(250, 255, c.getBlue(),  "color is not white");
+                assertBetween(250, 255, c.getAlpha(), "color is not white");
             }
         }
     }

@@ -21,10 +21,10 @@ import java.net.URI;
 import java.util.Objects;
 import javax.measure.Unit;
 import javax.media.jai.ParameterList;
+import org.apache.sis.parameter.DefaultParameterValue;
 
 import org.geotoolkit.parameter.AbstractParameter;
 import org.geotoolkit.parameter.AbstractParameterValue;
-import org.geotoolkit.parameter.Parameter;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.InvalidParameterTypeException;
 import org.opengis.parameter.InvalidParameterValueException;
@@ -37,12 +37,8 @@ import org.geotoolkit.resources.Errors;
  * A particular parameter in a JAI's {@link ParameterList}.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.20
- *
- * @since 2.2
- * @module
  */
-public final class ImagingParameter<T> extends AbstractParameterValue<T> {
+final class ImagingParameter<T> extends AbstractParameterValue<T> {
     /**
      * Serial number for inter-operability with different versions.
      */
@@ -357,8 +353,8 @@ public final class ImagingParameter<T> extends AbstractParameterValue<T> {
      * parameter is not really cloneable (it would requires a clone of {@link #parameters} first).
      */
     @Override
-    public Parameter<T> clone() {
-        final Parameter<T> parameter = new Parameter<>(getDescriptor());
+    public DefaultParameterValue<T> clone() {
+        final DefaultParameterValue<T> parameter = new DefaultParameterValue<>(getDescriptor());
         parameter.setValue(getValue());
         return parameter;
     }

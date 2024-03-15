@@ -19,7 +19,7 @@ package org.geotoolkit.display2d.service;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.sis.portrayal.MapLayers;
+import org.apache.sis.map.MapLayers;
 import org.geotoolkit.factory.Hints;
 
 /**

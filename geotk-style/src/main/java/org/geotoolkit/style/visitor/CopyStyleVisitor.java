@@ -17,7 +17,7 @@
 
 package org.geotoolkit.style.visitor;
 
-import org.apache.sis.internal.system.DefaultFactories;
+import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
@@ -25,7 +25,6 @@ import org.geotoolkit.style.MutableStyleFactory;
 import org.opengis.style.FeatureTypeStyle;
 import org.opengis.style.Rule;
 import org.opengis.style.Style;
-import org.opengis.style.StyleFactory;
 import org.opengis.style.Symbolizer;
 
 /**
@@ -37,7 +36,7 @@ import org.opengis.style.Symbolizer;
  */
 public class CopyStyleVisitor extends DefaultStyleVisitor{
 
-    private static final MutableStyleFactory SF = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
+    private static final MutableStyleFactory SF = DefaultStyleFactory.provider();
 
     public static final CopyStyleVisitor INSTANCE = new CopyStyleVisitor();
 

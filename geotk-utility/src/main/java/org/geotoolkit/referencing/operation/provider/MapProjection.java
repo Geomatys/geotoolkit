@@ -154,7 +154,7 @@ public abstract class MapProjection extends MathTransformProvider {
      * @param parameters The set of parameters (never {@code null}).
      */
     protected MapProjection(final ParameterDescriptorGroup parameters) {
-        super(2, 2, parameters);
+        super(parameters);
     }
 
     /**

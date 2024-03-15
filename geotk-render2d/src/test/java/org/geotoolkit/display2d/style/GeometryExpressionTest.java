@@ -27,11 +27,11 @@ import javax.imageio.ImageIO;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.internal.filter.sqlmm.SQLMM;
-import org.apache.sis.internal.storage.MemoryFeatureSet;
+import org.apache.sis.filter.sqlmm.SQLMM;
+import org.apache.sis.storage.base.MemoryFeatureSet;
 import org.apache.sis.measure.Units;
-import org.apache.sis.portrayal.MapLayer;
-import org.apache.sis.portrayal.MapLayers;
+import org.apache.sis.map.MapLayer;
+import org.apache.sis.map.MapLayers;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.display.PortrayalException;
@@ -168,7 +168,7 @@ public class GeometryExpressionTest {
         context.getComponents().add(fml);
 
         final GeneralEnvelope env = new GeneralEnvelope(crs3857);
-        final Point pt = (Point) org.apache.sis.internal.feature.jts.JTS.transform(point, CRS.findOperation(crs2154, crs3857, null).getMathTransform());
+        final Point pt = (Point) org.apache.sis.geometry.wrapper.jts.JTS.transform(point, CRS.findOperation(crs2154, crs3857, null).getMathTransform());
         env.setRange(0, pt.getX()-500, pt.getX()+500);
         env.setRange(1, pt.getY()-500, pt.getY()+500);
         final CanvasDef canvasDef = new CanvasDef();

@@ -27,11 +27,11 @@ import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.apache.sis.geometry.Envelopes;
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.referencing.privy.AffineTransform2D;
 import org.apache.sis.storage.AbstractGridCoverageResource;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Utilities;
+import org.apache.sis.util.iso.DefaultNameFactory;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.opengis.geometry.Envelope;
@@ -65,7 +65,7 @@ final class PortrayalCoverageResource extends AbstractGridCoverageResource {
             contextName = "portrayal";
         }
 
-        final NameFactory dnf = DefaultFactories.forBuildin(NameFactory.class);
+        final NameFactory dnf = DefaultNameFactory.provider();
         final NameSpace ns = dnf.createNameSpace(dnf.createGenericName(null, contextName), null);
         name = dnf.createLocalName(ns, contextName);
     }

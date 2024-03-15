@@ -47,8 +47,8 @@ import java.util.stream.StreamSupport;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.internal.feature.AttributeConvention;
-import org.apache.sis.internal.storage.ResourceOnFileSystem;
+import org.apache.sis.feature.privy.AttributeConvention;
+import org.apache.sis.storage.base.ResourceOnFileSystem;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
@@ -435,19 +435,15 @@ public class CSVStore extends DataStore implements WritableFeatureSet, ResourceO
     }
 
     @Override
-    public boolean removeIf(Predicate<? super Feature> filter) throws DataStoreException {
-        boolean changed = false;
+    public void removeIf(Predicate<? super Feature> filter) throws DataStoreException {
         try (final CSVWriter writer = new CSVWriter(this, featureType, fileLock)) {
             while (writer.hasNext()) {
                 Feature candidate = writer.next();
                 if (filter.test(candidate)) {
-                    changed = true;
                     writer.remove();
                 }
             }
         }
-
-        return changed;
     }
 
     @Override

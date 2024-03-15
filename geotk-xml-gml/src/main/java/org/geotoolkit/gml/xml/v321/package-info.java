@@ -31,5 +31,5 @@ import jakarta.xml.bind.annotation.XmlNsForm;
 import jakarta.xml.bind.annotation.XmlSchema;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
-import org.apache.sis.internal.jaxb.referencing.RS_Identifier;
+import org.apache.sis.xml.bind.referencing.RS_Identifier;
 

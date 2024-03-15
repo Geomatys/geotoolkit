@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import jakarta.xml.bind.annotation.*;
+import java.util.HashMap;
 import org.apache.sis.util.Version;
 import org.geotoolkit.wfs.xml.GetFeature;
 import org.geotoolkit.wfs.xml.ResolveValueType;
@@ -267,6 +268,9 @@ public class GetFeatureType implements GetFeature {
      */
     @Override
     public Map<String, String> getPrefixMapping() {
+        if (prefixMapping == null) {
+            prefixMapping = new HashMap<>();
+        }
         return prefixMapping;
     }
 

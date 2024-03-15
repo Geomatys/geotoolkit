@@ -1,7 +1,7 @@
 package org.geotoolkit.wps.xml.v200;
 
 import jakarta.xml.bind.annotation.adapters.XmlAdapter;
-import org.apache.sis.internal.jaxb.Context;
+import org.apache.sis.xml.bind.Context;
 
 /**
  *

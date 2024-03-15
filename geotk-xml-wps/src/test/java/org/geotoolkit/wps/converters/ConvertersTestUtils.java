@@ -135,7 +135,7 @@ public final class ConvertersTestUtils {
      * @return an instance of TargetType which is the result of a call to the converter
      * @throws IOException on reading the test resource
      * @throws IllegalArgumentException when one of the String arguments is null
-     * @throws NullArgumentException when one of the arguments is null
+     * @throws NullPointerException when one of the arguments is null
      */
     public static <SourceType, TargetType> TargetType initAndRunInputConversion(
                                                  Class sourceClass, Class targetClass,
@@ -190,7 +190,7 @@ public final class ConvertersTestUtils {
      * @throws java.net.URISyntaxException when reading errors occur
      * @throws java.io.IOException when reading errors occur
      * @throws org.opengis.util.FactoryException when reading errors occur
-     * @throws NullArgumentException when resourcePath is null
+     * @throws NullPointerException when resourcePath is null
      * @throws IllegalArgumentException when resourcePath is empty
      */
     public static Object loadTestResource(String resourcePath) throws DataStoreException, URISyntaxException, IOException, FactoryException {
@@ -244,7 +244,7 @@ public final class ConvertersTestUtils {
      *
      * @throws IOException on reading the test resource
      * @throws IllegalArgumentException when mimeType or encoding is empty
-     * @throws NullArgumentException when an argument is null
+     * @throws NullPointerException when an argument is null
      */
     public static <SourceType, TargetType> TargetType initAndRunOutputConversion(
                                                  Class sourceClass, Class targetClass,

@@ -28,7 +28,7 @@ import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.RasterLoadingStrategy;
-import org.apache.sis.internal.util.Numerics;
+import org.apache.sis.util.privy.Numerics;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.util.ArraysExt;
 import org.junit.Test;

@@ -213,7 +213,7 @@ public final class StyleConstants {
     public static final RasterSymbolizer    DEFAULT_RASTER_SYMBOLIZER;
 
     static {
-        final MutableStyleFactory SF = new DefaultStyleFactory();
+        final MutableStyleFactory SF = DefaultStyleFactory.provider();
         final FilterFactory FF = FilterUtilities.FF;
         LITERAL_ZERO_FLOAT = FF.literal(0);
         LITERAL_HALF_FLOAT = FF.literal(0.5f);

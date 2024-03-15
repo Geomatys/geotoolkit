@@ -8,8 +8,8 @@ import java.nio.file.Path;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.image.PixelIterator;
-import org.apache.sis.portrayal.MapLayer;
-import org.apache.sis.portrayal.MapLayers;
+import org.apache.sis.map.MapLayer;
+import org.apache.sis.map.MapLayers;
 import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
@@ -22,7 +22,7 @@ import org.geotoolkit.style.MutableStyleFactory;
 
 public class CoverageReaderDemo {
 
-    public static final MutableStyleFactory SF = new DefaultStyleFactory();
+    public static final MutableStyleFactory SF = DefaultStyleFactory.provider();
 
     public static void main(String[] args) throws Exception {
         Demos.init();

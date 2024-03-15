@@ -78,7 +78,7 @@ import org.opengis.feature.Feature;
 public class MapfileToSLDProcess extends AbstractProcess{
 
     private static final MutableSLDFactory SLDF = new DefaultSLDFactory();
-    private static final MutableStyleFactory SF = new DefaultStyleFactory();
+    private static final MutableStyleFactory SF = DefaultStyleFactory.provider();
     private static final FilterFactory FF = FilterUtilities.FF;
 
     private Feature mapfileFeature = null;

@@ -20,6 +20,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureQuery;
+import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.storage.feature.FeatureCollection;
@@ -49,7 +51,7 @@ public class RegroupFeatureCollection extends WrapFeatureCollection {
     /**
      * Connect to the original FeatureConnection
      * @param originalFC FeatureCollection
-     * @param intersList FeatureCollection
+     * @param regroupAttribute
      * @param geometryName String
      */
     public RegroupFeatureCollection(final FeatureCollection originalFC, final String regroupAttribute,
@@ -85,7 +87,7 @@ public class RegroupFeatureCollection extends WrapFeatureCollection {
     private Feature modify2(final Object attributeValue) {
         try {
             if(attributeValue != null){
-                final FeatureCollection fiteredFC = super.getOriginalFeatureCollection().subset(filter(attributeValue));
+                final FeatureSet fiteredFC = super.getOriginalFeatureCollection().subset(filter(attributeValue));
                 return RegroupProcess.regroupFeature(regroupAttribute, attributeValue, newFeatureType, geometryName, fiteredFC);
             }else{
                 //In this case the request is Regroup.regroupFeature(null, null, newFeatureType, geometryName, originalFC);
@@ -120,13 +122,15 @@ public class RegroupFeatureCollection extends WrapFeatureCollection {
         return new RegroupFeatureIterator(getOriginalFeatureCollection().iterator());
     }
 
-    private Query filter(final Object attributeValue)
+    private FeatureQuery filter(final Object attributeValue)
             throws FactoryException, MismatchedDimensionException, TransformException {
 
         final FilterFactory ff = FilterUtilities.FF;
 
         final Filter filter = ff.equal(ff.property(regroupAttribute), ff.literal(attributeValue));
-        return Query.filtered("filter", filter);
+        final FeatureQuery query = new FeatureQuery();
+        query.setSelection(filter);
+        return query;
     }
 
     /**

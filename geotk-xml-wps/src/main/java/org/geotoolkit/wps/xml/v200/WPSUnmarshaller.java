@@ -13,7 +13,7 @@ import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamSource;
-import org.apache.sis.internal.jaxb.Context;
+import org.apache.sis.xml.bind.Context;
 import org.geotoolkit.wps.xml.UnmarshallerProxy;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;

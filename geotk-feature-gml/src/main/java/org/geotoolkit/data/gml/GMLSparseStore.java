@@ -32,8 +32,8 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import jakarta.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
-import org.apache.sis.internal.feature.AttributeConvention;
-import org.apache.sis.internal.storage.ResourceOnFileSystem;
+import org.apache.sis.feature.privy.AttributeConvention;
+import org.apache.sis.storage.base.ResourceOnFileSystem;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
@@ -241,20 +241,17 @@ public class GMLSparseStore extends DataStore implements WritableFeatureSet, Res
     }
 
     @Override
-    public boolean removeIf(Predicate<? super Feature> filter) throws DataStoreException {
-        boolean changed = false;
+    public void removeIf(Predicate<? super Feature> filter) throws DataStoreException {
         try (WriterIterator writer = new WriterIterator(featureType, file)) {
             while (writer.hasNext()) {
                 final Feature f = writer.next();
                 if (filter.test(f)) {
-                    changed = true;
                     writer.remove();
                 }
             }
         } catch (FeatureStoreRuntimeException ex) {
             throw new DataStoreException(ex);
         }
-        return changed;
     }
 
     @Override

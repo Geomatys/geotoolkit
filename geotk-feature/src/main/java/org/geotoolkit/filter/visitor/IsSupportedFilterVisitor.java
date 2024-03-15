@@ -86,7 +86,7 @@ public class IsSupportedFilterVisitor extends AbstractVisitor<Object,Boolean> {
 
     @Override
     protected Boolean typeNotFound(final String name, final Expression<Object,?> expression) {
-        for (final AvailableFunction f : capabilities.getFunctions()) {
+        for (final AvailableFunction f : capabilities.getFunctions().values()) {
             if (name.equals(f.getName().toString())) {
                 return Boolean.TRUE;
             }

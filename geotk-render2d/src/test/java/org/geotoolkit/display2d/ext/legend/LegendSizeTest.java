@@ -25,8 +25,8 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.image.BufferedImage;
-import org.apache.sis.portrayal.MapLayer;
-import org.apache.sis.portrayal.MapLayers;
+import org.apache.sis.map.MapLayer;
+import org.apache.sis.map.MapLayers;
 import org.geotoolkit.display2d.ext.DefaultBackgroundTemplate;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.style.DefaultStyleFactory;
@@ -47,7 +47,7 @@ public class LegendSizeTest {
             new DefaultBackgroundTemplate(new BasicStroke(0), Color.BLACK, Color.RED, new Insets(0, 0, 0, 0), 0),
             2, null, new Font("arial", Font.PLAIN, 10), false, new Font("arial", Font.PLAIN, 10));
 
-    private static final MutableStyleFactory SF = new DefaultStyleFactory();
+    private static final MutableStyleFactory SF = DefaultStyleFactory.provider();
 
     public LegendSizeTest() {
     }

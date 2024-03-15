@@ -115,17 +115,14 @@ public class GenericMappingFeatureCollection extends AbstractCollection<Feature>
         return new GenericMappingFeatureIterator(original.iterator(), mapper);
     }
 
-    @Override
     public void updateType(FeatureType newType) throws IllegalFeatureTypeException, DataStoreException {
         throw new ReadOnlyStorageException();
     }
 
-    @Override
     public void add(Iterator<? extends Feature> features) throws DataStoreException {
         throw new ReadOnlyStorageException();
     }
 
-    @Override
     public void replaceIf(Predicate<? super Feature> filter, UnaryOperator<Feature> updater) throws DataStoreException {
         throw new ReadOnlyStorageException();
     }

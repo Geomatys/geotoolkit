@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Set;
 import javax.measure.Quantity;
 import jakarta.xml.bind.JAXBElement;
+import java.util.HashMap;
 import javax.xml.namespace.QName;
 
 import org.geotoolkit.util.NamesExt;
@@ -38,7 +39,6 @@ import org.apache.sis.referencing.CRS;
 import org.opengis.filter.FilterFactory;
 import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
-import org.geotoolkit.filter.FilterFactory2;
 import org.opengis.filter.MatchAction;
 import org.opengis.filter.Expression;
 import org.opengis.filter.SortProperty;
@@ -60,13 +60,12 @@ public class OGC200toGTTransformer {
     private final Map<String, String> namespaceMapping;
 
     public OGC200toGTTransformer(final FilterFactory factory) {
-        this.filterFactory   = factory;
-        this.namespaceMapping = null;
+        this(factory, null);
     }
 
     public OGC200toGTTransformer(final FilterFactory factory, final Map<String, String> namespaceMapping) {
         this.filterFactory = factory;
-        this.namespaceMapping = namespaceMapping;
+        this.namespaceMapping = namespaceMapping != null ? namespaceMapping : new HashMap<>();
     }
 
     /**
@@ -419,18 +418,15 @@ public class OGC200toGTTransformer {
                 sb.append("/");
             }
             int pos = pname.indexOf(':');
-            if (pos != -1 && namespaceMapping != null) {
+            if (pos != -1) {
                 String prefix = pname.substring(0, pos);
                 boolean isAtt = prefix.startsWith("@");
                 if(isAtt) prefix = prefix.substring(1);
-                String namespace = namespaceMapping.get(prefix);
-                if (namespace == null) {
-                    throw new IllegalArgumentException("Prefix " + prefix + " is nor bounded.");
-                } else {
-                    sb.append('{').append(namespace).append('}');
-                    if(isAtt) sb.append('@');
-                    sb.append(pname.substring(pos +1));
-                }
+                // if not in mapping, we assume that the namespace is fully present
+                String namespace = namespaceMapping.getOrDefault(prefix, prefix);
+                sb.append("Q{").append(namespace).append('}');
+                if(isAtt) sb.append('@');
+                sb.append(pname.substring(pos +1));
             } else {
                 sb.append(pname);
             }

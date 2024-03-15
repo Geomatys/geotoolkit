@@ -24,7 +24,6 @@ import org.apache.sis.image.Interpolation;
 import org.apache.sis.parameter.Parameters;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.ResampleBorderComportement;
-import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
 import static org.geotoolkit.processing.coverage.resample.ResampleDescriptor.*;
@@ -97,10 +96,10 @@ public class ResampleProcess extends AbstractProcess {
             target = reproject(source, targetCRS, targetGG, interpolation, border, background);
         } catch (FactoryException exception) {
             throw new CannotReprojectException(Errors.format(
-                    Errors.Keys.CantReprojectCoverage_1, CoverageUtilities.getName(source)), exception);
+                    Errors.Keys.CantReprojectCoverage_1, "source"), exception);
         } catch (TransformException exception) {
             throw new CannotReprojectException(Errors.format(
-                    Errors.Keys.CantReprojectCoverage_1, CoverageUtilities.getName(source)), exception);
+                    Errors.Keys.CantReprojectCoverage_1, "source"), exception);
         }
         outputParameters.getOrCreate(OUT_COVERAGE).setValue(target);
     }

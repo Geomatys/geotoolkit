@@ -26,15 +26,13 @@ import org.geotoolkit.internal.ReferenceQueueConsumer;
 import org.apache.sis.util.Disposable;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 
-import org.opengis.sld.SLDLibrary;
 
 /**
  * Listener for style layer descriptor.
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
-public interface SLDListener extends EventListener{
+public interface SLDListener extends EventListener {
 
     /**
      * Called when a property change.

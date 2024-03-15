@@ -19,7 +19,6 @@ package org.geotoolkit.metadata.cbers;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -142,11 +141,8 @@ public class CBERS {
         fileName = fileName.substring(0, fileName.lastIndexOf('.'));
         isoData.setFileIdentifier(fileName);
 
-        //MI_Metadata/language : (default value) english
-        isoData.setLanguage(Locale.ENGLISH);
-
         //MI_Metadata/characterSet : (default value) utf8
-        isoData.setCharacterSets(Collections.singleton(StandardCharsets.UTF_8));
+        isoData.getLocalesAndCharsets().put(Locale.ENGLISH, StandardCharsets.UTF_8);
 
         //MI_Metadata/dateStamp : get current date
         isoData.setDateStamp(new Date());

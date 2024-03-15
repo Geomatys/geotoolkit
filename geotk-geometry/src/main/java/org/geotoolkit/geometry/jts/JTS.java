@@ -431,7 +431,7 @@ public final class JTS {
             final MathTransform transform = jtsgeom.getTransform();
             if (!transform.isIdentity()) {
                 try {
-                    geometry = org.apache.sis.internal.feature.jts.JTS.transform(geometry, transform);
+                    geometry = org.apache.sis.geometry.wrapper.jts.JTS.transform(geometry, transform);
                 } catch (MismatchedDimensionException | TransformException ex) {
                     throw new BackingStoreException(ex.getMessage(), ex);
                 }
@@ -704,7 +704,7 @@ public final class JTS {
         } else {
             if (userData instanceof Map) {
                 Map values = (Map) userData;
-                values.put(org.apache.sis.internal.feature.jts.JTS.CRS_KEY, crs);
+                values.put(org.apache.sis.geometry.wrapper.jts.JTS.CRS_KEY, crs);
                 userData = values;
             }
         }
@@ -745,7 +745,7 @@ public final class JTS {
             crs = (CoordinateReferenceSystem) userData;
         } else if (userData instanceof Map) {
             final Map values = (Map) userData;
-            final Object candidate = values.get(org.apache.sis.internal.feature.jts.JTS.CRS_KEY);
+            final Object candidate = values.get(org.apache.sis.geometry.wrapper.jts.JTS.CRS_KEY);
             if (candidate instanceof CoordinateReferenceSystem) {
                 crs = (CoordinateReferenceSystem) candidate;
             }
@@ -942,7 +942,7 @@ public final class JTS {
 
         //convert geometry
         final MathTransform mt = CRS.findOperation(crsGeom, crsTarget, null).getMathTransform();
-        final Geometry result = org.apache.sis.internal.feature.jts.JTS.transform(geom, mt);
+        final Geometry result = org.apache.sis.geometry.wrapper.jts.JTS.transform(geom, mt);
         setCRS(result, crsTarget);
 
         return result;
@@ -1110,6 +1110,6 @@ public final class JTS {
      * @return the JTS geometry library used in Geotk.
      */
     public static GeometryFactory getFactory() {
-        return org.apache.sis.internal.feature.jts.Factory.INSTANCE.factory(false);
+        return org.apache.sis.geometry.wrapper.jts.Factory.INSTANCE.factory(false);
     }
 }

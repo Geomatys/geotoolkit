@@ -139,7 +139,7 @@ public class Exponential extends MathTransformProvider {
      * Creates a provider for logarithmic transforms.
      */
     public Exponential() {
-        super(1, 1, PARAMETERS);
+        super(PARAMETERS);
     }
 
     /**

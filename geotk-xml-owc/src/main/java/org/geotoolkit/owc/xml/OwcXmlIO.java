@@ -38,9 +38,9 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
-import org.apache.sis.portrayal.MapItem;
-import org.apache.sis.portrayal.MapLayer;
-import org.apache.sis.portrayal.MapLayers;
+import org.apache.sis.map.MapItem;
+import org.apache.sis.map.MapLayer;
+import org.apache.sis.map.MapLayers;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.xml.MarshallerPool;
@@ -199,7 +199,7 @@ public class OwcXmlIO {
             //store styles
             if (offering != null) {
                 if (layer.getStyle() != null) {
-                    final StyleSetType styleBase = toStyleSet(layer.getStyle(), true);
+                    final StyleSetType styleBase = toStyleSet((Style) layer.getStyle(), true);
                     offering.getOperationOrContentOrStyleSet().add(OWC_FACTORY.createOfferingTypeStyleSet(styleBase));
                 }
             }

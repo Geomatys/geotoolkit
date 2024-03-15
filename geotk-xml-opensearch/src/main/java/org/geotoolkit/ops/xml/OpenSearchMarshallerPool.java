@@ -35,7 +35,7 @@ public class OpenSearchMarshallerPool {
     static {
         try {
             final List<Class> classes = new ArrayList<>();
-            classes.add(org.apache.sis.internal.jaxb.geometry.ObjectFactory.class);
+            classes.add(org.apache.sis.xml.bind.metadata.geometry.ObjectFactory.class);
             classes.add(org.geotoolkit.gml.xml.v311.ObjectFactory.class);
             classes.add(org.geotoolkit.georss.xml.v100.ObjectFactory.class);
             classes.add(org.w3._2005.atom.ObjectFactory.class);

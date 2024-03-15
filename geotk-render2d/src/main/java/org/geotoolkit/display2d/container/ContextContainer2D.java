@@ -19,7 +19,7 @@ package org.geotoolkit.display2d.container;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.sis.portrayal.MapLayers;
+import org.apache.sis.map.MapLayers;
 import org.geotoolkit.display.container.DefaultGraphicContainer;
 import org.geotoolkit.display.container.MapContextContainer;
 import org.geotoolkit.display.primitive.SceneNode;

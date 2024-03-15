@@ -26,8 +26,8 @@ import java.util.List;
 import java.util.stream.Stream;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverageBuilder;
-import org.apache.sis.internal.map.Presentation;
-import org.apache.sis.portrayal.MapLayer;
+import org.apache.sis.map.Presentation;
+import org.apache.sis.map.MapLayer;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
@@ -38,7 +38,7 @@ import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.presentation.RasterPresentation;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
-import org.opengis.display.primitive.Graphic;
+import org.geotoolkit.display.primitive.Graphic;
 
 
 /**

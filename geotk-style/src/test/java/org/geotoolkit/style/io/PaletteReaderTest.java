@@ -22,8 +22,8 @@ import java.util.AbstractMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.geotoolkit.filter.FilterUtilities;
+import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.style.function.Categorize;
@@ -35,7 +35,6 @@ import org.junit.Test;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.Expression;
 import org.opengis.style.ColorMap;
-import org.opengis.style.StyleFactory;
 
 
 /**
@@ -45,7 +44,7 @@ import org.opengis.style.StyleFactory;
 public class PaletteReaderTest {
 
     protected static final FilterFactory FF = FilterUtilities.FF;
-    protected static final MutableStyleFactory SF = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
+    protected static final MutableStyleFactory SF = DefaultStyleFactory.provider();
 
     @Test
     public void readCLR() throws IOException {

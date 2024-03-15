@@ -26,13 +26,13 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.geometry.DirectPosition;
 
 import org.apache.sis.geometry.DirectPosition2D;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.referencing.operation.transform.AbstractMathTransform;
 
 import org.junit.*;
 import static org.junit.Assert.*;
 import static java.lang.StrictMath.*;
+import org.apache.sis.referencing.operation.transform.DefaultMathTransformFactory;
 
 
 /**
@@ -66,7 +66,7 @@ public final class MathTransformFactoryTest {
      */
     @Before
     public void setUp() {
-        mtFactory = DefaultFactories.forBuildin(MathTransformFactory.class);
+        mtFactory = DefaultMathTransformFactory.provider();
     }
 
     /**

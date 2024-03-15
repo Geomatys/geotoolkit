@@ -21,9 +21,7 @@ import java.awt.Shape;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.sis.internal.feature.jts.JTS;
-import org.apache.sis.referencing.CRS;
-import org.apache.sis.referencing.operation.builder.LinearTransformBuilder;
+import org.apache.sis.geometry.wrapper.jts.JTS;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.geometry.jts.transform.CoordinateSequenceWrapTransformer;
@@ -32,7 +30,6 @@ import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.locationtech.jts.geom.Envelope;
 import org.opengis.geometry.Geometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
@@ -246,7 +243,7 @@ public class ProjectedGeometry  {
                         //check that the futur geometry will intersect the visible area
                         final org.locationtech.jts.geom.Envelope candidate = org.geotoolkit.geometry.jts.JTS.transform(objBounds, context.wraps.wrapIncObj[i]);
                         if (candidate.intersects(context.objectiveJTSEnvelope)) {
-                            org.locationtech.jts.geom.Geometry trsGeom = org.apache.sis.internal.feature.jts.JTS.transform(objBase, context.wraps.wrapIncObj[i]);
+                            org.locationtech.jts.geom.Geometry trsGeom = org.apache.sis.geometry.wrapper.jts.JTS.transform(objBase, context.wraps.wrapIncObj[i]);
                             trsGeom.setUserData(objCrs);
                             objectiveGeometryJTS[n++] = trsGeom;
                         }

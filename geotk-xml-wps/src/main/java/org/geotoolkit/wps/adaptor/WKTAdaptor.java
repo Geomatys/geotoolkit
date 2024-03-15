@@ -16,13 +16,12 @@
  */
 package org.geotoolkit.wps.adaptor;
 
-import org.apache.sis.internal.feature.Geometries;
+import org.apache.sis.geometry.wrapper.Geometries;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
 import org.apache.sis.referencing.factory.IdentifiedObjectFinder;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.wps.xml.ReferenceProxy;
 import org.geotoolkit.wps.xml.v200.ComplexData;
 import org.geotoolkit.wps.xml.v200.Data;
@@ -100,7 +99,7 @@ public class WKTAdaptor extends ComplexAdaptor {
                     //force geometry in longitude first
                     final CoordinateReferenceSystem crs2 = ((AbstractCRS)crs).forConvention(AxesConvention.RIGHT_HANDED);
                     if (crs2 != crs) {
-                        geom = org.apache.sis.internal.feature.jts.JTS.transform(geom, crs2);
+                        geom = org.apache.sis.geometry.wrapper.jts.JTS.transform(geom, crs2);
                     }
                     if (crs2 != null)
                         dimension = crs2.getCoordinateSystem().getDimension();

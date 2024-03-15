@@ -28,7 +28,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-import org.apache.sis.internal.referencing.WKTKeywords;
+import org.apache.sis.referencing.privy.WKTKeywords;
 
 import org.opengis.util.FactoryException;
 import org.opengis.util.InternationalString;
@@ -38,7 +38,7 @@ import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 
-import org.apache.sis.internal.simple.SimpleCitation;
+import org.apache.sis.metadata.simple.SimpleCitation;
 import org.apache.sis.io.wkt.WKTDictionary;
 import org.apache.sis.util.iso.DefaultNameSpace;
 import org.apache.sis.io.TableAppender;

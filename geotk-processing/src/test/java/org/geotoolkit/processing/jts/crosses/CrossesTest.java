@@ -126,7 +126,7 @@ public class CrossesTest extends AbstractProcessTest {
         final Boolean result = (Boolean) proc.call().parameter("result").getValue();
 
         final MathTransform mt = CRS.findOperation(crs2, crs1, null).getMathTransform();
-        geom2 = org.apache.sis.internal.feature.jts.JTS.transform(geom2, mt);
+        geom2 = org.apache.sis.geometry.wrapper.jts.JTS.transform(geom2, mt);
         final Boolean expected = geom1.crosses(geom2);
 
         assertTrue(expected.equals(result));

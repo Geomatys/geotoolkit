@@ -26,7 +26,7 @@ import java.util.Map;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.internal.feature.jts.JTS;
+import org.apache.sis.geometry.wrapper.jts.JTS;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.process.ProcessException;

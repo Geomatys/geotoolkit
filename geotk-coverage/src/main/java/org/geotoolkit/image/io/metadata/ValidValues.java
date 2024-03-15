@@ -18,7 +18,7 @@
 package org.geotoolkit.image.io.metadata;
 
 import javax.imageio.metadata.IIOMetadataFormat;
-import org.apache.sis.internal.util.CollectionsExt;
+import org.apache.sis.util.privy.CollectionsExt;
 
 import org.apache.sis.util.CharSequences;
 import org.apache.sis.measure.NumberRange;

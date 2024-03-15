@@ -17,15 +17,12 @@
 package org.geotoolkit.sld;
 
 import java.util.List;
-import org.opengis.sld.FeatureTypeConstraint;
-import org.opengis.sld.LayerFeatureConstraints;
+
 
 /**
  * Mutable layer feature constraints
  *
  * @author Johann Sorel (Geomatys)
- * @module
- * @since Types 2.2
  */
 public interface MutableLayerFeatureConstraints extends MutableConstraints, LayerFeatureConstraints {
 

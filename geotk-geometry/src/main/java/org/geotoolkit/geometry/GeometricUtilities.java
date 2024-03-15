@@ -116,7 +116,7 @@ public class GeometricUtilities {
      * @return the JTS geometry library used in Geotk.
      */
     public static GeometryFactory getFactory() {
-        return org.apache.sis.internal.feature.jts.Factory.INSTANCE.factory(false);
+        return org.apache.sis.geometry.wrapper.jts.Factory.INSTANCE.factory(false);
     }
 
     /**

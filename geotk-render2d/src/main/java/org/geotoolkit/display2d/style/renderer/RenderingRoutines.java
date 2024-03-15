@@ -25,18 +25,23 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.feature.Features;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.feature.builder.PropertyTypeBuilder;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.feature.privy.AttributeConvention;
+import org.apache.sis.feature.privy.FeatureExpression;
 import org.apache.sis.measure.Quantities;
 import org.apache.sis.measure.Units;
-import org.apache.sis.portrayal.MapLayer;
+import org.apache.sis.map.MapLayer;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureQuery;
@@ -57,12 +62,15 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.feature.ViewMapper;
 import org.geotoolkit.filter.FilterUtilities;
+import org.geotoolkit.filter.function.geometry.GeometryFunctionFactory;
 import org.geotoolkit.storage.feature.FeatureIterator;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.StyleUtilities;
+import org.opengis.coverage.Coverage;
+import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.MismatchedFeatureException;
@@ -220,9 +228,30 @@ public final class RenderingRoutines {
             LOGGER.fine("A style rule uses complex geometric properties. It can severly affect performance");
         }
 
+        /*
+         * We may have coverage properties for geometry
+         * add an expression to convert them to geometries for the filter.
+         */
+        Stream<Expression> geomStream = geomProperties.stream().map(FILTER_FACTORY::property).map((Expression t) -> {
+            final Expression<? super Feature,?> expression = t;
+            final FeatureExpression<?,?> fex = FeatureExpression.castOrCopy(expression);
+            final PropertyTypeBuilder resultType = fex.expectedType(schema, new FeatureTypeBuilder());
+            if (resultType != null) {
+                PropertyType pt = resultType.build();
+                if (pt instanceof AttributeType at) {
+                    final Class valueClass = at.getValueClass();
+                    if (GridCoverage.class.isAssignableFrom(valueClass)) {
+                        t = FILTER_FACTORY.function(GeometryFunctionFactory.COVERAGE_BOUNDINGBOX, t);
+                    }
+                }
+            }
+            return t;
+        });
+
+
         final Optional<Filter> spatialFilter =
                 Stream.concat(
-                        geomProperties.stream().map(FILTER_FACTORY::property),
+                        geomStream,
                         complexProperties.stream()
                 )
                         .<Filter>map(expression -> FILTER_FACTORY.bbox(expression, bbox))

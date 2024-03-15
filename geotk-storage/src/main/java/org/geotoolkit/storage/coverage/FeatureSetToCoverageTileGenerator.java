@@ -39,7 +39,7 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.filter.DefaultFilterFactory;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
-import org.apache.sis.internal.feature.jts.JTS;
+import org.apache.sis.geometry.wrapper.jts.JTS;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;

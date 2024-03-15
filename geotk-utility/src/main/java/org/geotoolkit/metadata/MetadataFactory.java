@@ -21,18 +21,15 @@ import java.util.Set;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.ObjectFactory;
 import org.apache.sis.metadata.MetadataStandard;
 import org.apache.sis.metadata.KeyNamePolicy;
 import org.apache.sis.metadata.ValueExistencePolicy;
+import org.apache.sis.referencing.factory.GeodeticObjectFactory;
 import org.geotoolkit.resources.Errors;
 
 import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
-import org.opengis.referencing.crs.CRSFactory;
-import org.opengis.referencing.cs.CSFactory;
-import org.opengis.referencing.datum.DatumFactory;
 
 
 /**
@@ -132,9 +129,9 @@ public class MetadataFactory {
                  * implementation, CRS and CS factories are also Datum factory and we don't
                  * want them to hide the default DatumFactory.
                  */
-                case 0: factory = DefaultFactories.forBuildin(DatumFactory.class); break;
-                case 1: factory = DefaultFactories.forBuildin(CSFactory.class); break;
-                case 2: factory = DefaultFactories.forBuildin(CRSFactory.class); break;
+                case 0:
+                case 1:
+                case 2: factory = GeodeticObjectFactory.provider(); break;
                 default: return factories;
             }
             factories.add(factory);

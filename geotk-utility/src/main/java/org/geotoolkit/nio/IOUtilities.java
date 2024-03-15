@@ -187,56 +187,6 @@ public final class IOUtilities extends Static {
     }
 
     /**
-     * Tries to convert the given path to a {@link File} object if possible, or returns
-     * the path unchanged otherwise. Conversion attempts are performed for paths of class
-     * {@link CharSequence}, {@link URL}, {@link URI} or {@link Path}.
-     * <p>
-     * If a conversion from a {@link URL} object was necessary, then the URL is assumed
-     * to <strong>not</strong> be encoded.
-     *
-     * @param  path The path to convert to a {@link File} if possible.
-     * @return The path as a {@link File} if this conversion was possible.
-     * @throws IOException If an error occurred while converting the path to a file.
-     *
-     * @since 3.07
-     * @deprecated prefer using {@link #tryToPath(Object)} method to deal with Path instead of File
-     */
-    public static Object tryToFile(Object path) throws IOException {
-        if (path == null) {
-            return null;
-        }
-        if (path instanceof File) {
-            return (File) path;
-        } else if (path instanceof CharSequence) {
-            return org.apache.sis.internal.storage.io.IOUtilities.toFileOrURL(path.toString(), null);
-        } else if (path instanceof URL) {
-            final URL url = (URL) path;
-            if (url.getProtocol().equalsIgnoreCase("file")) {
-                return org.apache.sis.internal.storage.io.IOUtilities.toFile(url, null);
-            }
-        } else if (path instanceof URI) {
-            final URI uri = (URI) path;
-            final String scheme = uri.getScheme();
-            if (scheme != null && scheme.equalsIgnoreCase("file")) try {
-                return new File(uri);
-            } catch (IllegalArgumentException cause) {
-                /*
-                 * Typically because the URI contains a fragment (for example a query part)
-                 * that can not be represented as a File. We consider that as an error
-                 * because the scheme pretended that we had a file URI.
-                 */
-                final IOException e = new MalformedURLException(concatenate(
-                        Errors.format(Errors.Keys.IllegalArgument_2, "URI", path), cause));
-                e.initCause(cause);
-                throw e;
-            }
-        } else if (path instanceof Path) {
-            return ((Path) path).toFile();
-        }
-        return path;
-    }
-
-    /**
      * Tries to convert the given object to a {@link Path} object if possible, or returns
      * the path unchanged otherwise. Conversion attempts are performed for objects of class
      * {@link CharSequence}, {@link URL}, {@link URI} or {@link File}.
@@ -292,9 +242,11 @@ public final class IOUtilities extends Static {
                 //assume on local filesystem
                 return Paths.get(candidate.toString());
             }
-        } else if (candidate instanceof URL) {
+        } else if (candidate instanceof URL) try {
             final URL url = (URL) candidate;
-            return org.apache.sis.internal.storage.io.IOUtilities.toPath(url, null);
+            return Path.of(url.toURI());
+        } catch (URISyntaxException | IllegalArgumentException | FileSystemNotFoundException e) {
+            throw (IOException) new MalformedURLException(e.getMessage()).initCause(e);
         } else if (candidate instanceof File) {
             return ((File) candidate).toPath();
         } else if (candidate instanceof URI) {
@@ -392,8 +344,8 @@ public final class IOUtilities extends Static {
         URI uri = null;
         if (path instanceof URL) {
             try {
-                uri = org.apache.sis.internal.storage.io.IOUtilities.toURI((URL) path, "UTF-8");
-            } catch (IOException e) {
+                uri = ((URL) path).toURI();
+            } catch (URISyntaxException e) {
                 //unable to create URI from URL
                 return false;
             }
@@ -425,7 +377,7 @@ public final class IOUtilities extends Static {
     }
 
     /**
-     * Wrap of {@link org.apache.sis.internal.storage.io.IOUtilities#filename(Object)} (Object)} to avoid double import.
+     * Wrap of {@link org.apache.sis.io.stream.IOUtilities#filename(Object)} (Object)} to avoid double import.
      * Returns the filename from a {@link Path}, {@link File}, {@link URL}, {@link URI} or {@link CharSequence}
      * instance. If the given argument is specialized type like {@code Path} or {@code File}, then this method uses
      * dedicated API like {@link Path#getFileName()}. Otherwise this method gets a string representation of the path
@@ -435,11 +387,11 @@ public final class IOUtilities extends Static {
      * @return The filename in the given input, or {@code null} if the given object is null or of unknown type.
      */
     public static String filename(Object input) {
-        return org.apache.sis.internal.storage.io.IOUtilities.filename(input);
+        return org.apache.sis.io.stream.IOUtilities.filename(input);
     }
 
     /**
-     * Wrap of {@link org.apache.sis.internal.storage.io.IOUtilities#extension(Object)} (Object)} to avoid double import.
+     * Wrap of {@link org.apache.sis.io.stream.IOUtilities#extension(Object)} (Object)} to avoid double import.
      * Returns the filename extension from a {@link Path}, {@link File}, {@link URL}, {@link URI} or
      * {@link CharSequence} instance. If no extension is found, returns an empty string. If the given
      * object is of unknown type, return {@code null}.
@@ -449,7 +401,7 @@ public final class IOUtilities extends Static {
      *         if the given object is null or of unknown type.
      */
     public static String extension(Object input) {
-        return org.apache.sis.internal.storage.io.IOUtilities.extension(input);
+        return org.apache.sis.io.stream.IOUtilities.extension(input);
     }
 
     /**
@@ -547,7 +499,7 @@ public final class IOUtilities extends Static {
      * @return The path with the new extension.
      */
     public static Path changeExtension(final Path path, final String extension) {
-        final String previousExt = org.apache.sis.internal.storage.io.IOUtilities.extension(path);
+        final String previousExt = org.apache.sis.io.stream.IOUtilities.extension(path);
         if ((previousExt == null && extension == null) || (previousExt != null && previousExt.equals(extension))) {
             return path;
         }
@@ -563,7 +515,7 @@ public final class IOUtilities extends Static {
         target = reformat(target);
         URI relativePath = source.relativize(target);
         if (relativePath.equals(target)) {
-            String filename = org.apache.sis.internal.storage.io.IOUtilities.filename(source);
+            String filename = org.apache.sis.io.stream.IOUtilities.filename(source);
             if (filename != null) {
                 String str = source.toString();
                 URI r;
@@ -581,7 +533,7 @@ public final class IOUtilities extends Static {
 
 
         //remove file name
-        String filename = org.apache.sis.internal.storage.io.IOUtilities.filename(source);
+        String filename = org.apache.sis.io.stream.IOUtilities.filename(source);
         if (filename != null) {
             String str = source.toString();
             try {
@@ -659,7 +611,7 @@ public final class IOUtilities extends Static {
         target = reformat(target);
         URI resolvedPath = source.resolve(target);
         if (resolvedPath.equals(target)) {
-            String filename = org.apache.sis.internal.storage.io.IOUtilities.filename(source);
+            String filename = org.apache.sis.io.stream.IOUtilities.filename(source);
             if (filename != null) {
                 String str = source.toString();
                 URI base;
@@ -1304,7 +1256,7 @@ public final class IOUtilities extends Static {
     public static Path getResourceAsPath(String resource, ClassLoader classLoader) throws URISyntaxException, IOException {
 
         //change package based location to path based
-        final String extension = org.apache.sis.internal.storage.io.IOUtilities.extension(resource);
+        final String extension = org.apache.sis.io.stream.IOUtilities.extension(resource);
         int lastDotIdx = resource.lastIndexOf('.');
         if (lastDotIdx > 0) {
             resource = resource.substring(0, lastDotIdx);

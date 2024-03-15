@@ -17,9 +17,6 @@
  package org.geotoolkit.sld;
 
 import org.opengis.metadata.citation.OnlineResource;
-import org.opengis.sld.SLDLibrary;
-import org.opengis.sld.SLDVisitor;
-import org.opengis.sld.StyledLayerDescriptor;
 
 import static org.apache.sis.util.ArgumentChecks.*;
 
@@ -27,7 +24,6 @@ import static org.apache.sis.util.ArgumentChecks.*;
  * Default immutable implementation of SLD library. thread safe.
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
 class DefaultSLDLibrary implements SLDLibrary{
 

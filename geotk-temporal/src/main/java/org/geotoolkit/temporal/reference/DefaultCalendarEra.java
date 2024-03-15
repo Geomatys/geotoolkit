@@ -26,12 +26,10 @@ import java.util.Objects;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
-import org.apache.sis.internal.referencing.NilReferencingObject;
+import org.apache.sis.referencing.privy.NilReferencingObject;
 import org.apache.sis.referencing.AbstractIdentifiedObject;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ComparisonMode;
-import org.apache.sis.util.NullArgumentException;
-import org.opengis.referencing.IdentifiedObject;
 import org.opengis.temporal.Calendar;
 import org.opengis.temporal.CalendarDate;
 import org.opengis.temporal.CalendarEra;
@@ -159,7 +157,7 @@ public class DefaultCalendarEra extends AbstractIdentifiedObject implements Cale
      * @param object The CalendarEra to copy values from, or {@code null} if none.
      *
      * @see #castOrCopy(CalendarEra)
-     * @throws NullArgumentException if referenceEvent, referenceDate, julianReference or epochOfUse is {@code null}.
+     * @throws NullPointerException if referenceEvent, referenceDate, julianReference or epochOfUse is {@code null}.
      */
     private DefaultCalendarEra(final CalendarEra object) {
         super(object);

@@ -26,8 +26,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 import javax.swing.table.AbstractTableModel;
-import org.apache.sis.internal.system.DefaultFactories;
-import org.apache.sis.portrayal.MapLayer;
+import org.apache.sis.map.MapLayer;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.display2d.GO2Utilities;
@@ -35,6 +34,7 @@ import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.geotoolkit.storage.feature.query.Query;
+import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
@@ -68,7 +68,6 @@ import org.opengis.style.PolygonSymbolizer;
 import org.opengis.style.Rule;
 import org.opengis.style.Stroke;
 import org.opengis.style.Style;
-import org.opengis.style.StyleFactory;
 import org.opengis.style.Symbolizer;
 
 /**
@@ -116,7 +115,7 @@ public class IntervalStyleBuilder extends AbstractTableModel{
 
     public IntervalStyleBuilder(final MutableStyleFactory styleFactory, final FilterFactory filterFactory){
         if(styleFactory == null){
-             sf = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
+             sf = DefaultStyleFactory.provider();
         }else{
             sf = styleFactory;
         }
@@ -179,7 +178,7 @@ public class IntervalStyleBuilder extends AbstractTableModel{
         this.layer = layer;
         genericAnalyze = false;
         reset();
-        isIntervalStyle(layer.getStyle());
+        isIntervalStyle((Style) layer.getStyle());
     }
 
     public boolean isIntervalStyle(final Style style){

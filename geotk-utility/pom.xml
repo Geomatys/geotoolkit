@@ -117,8 +117,8 @@
 
     <!-- TEST DEPENDENCIES-->
     <dependency>
-      <groupId>javax.media</groupId>
-      <artifactId>jai_core</artifactId>
+      <groupId>org.opengis</groupId>
+      <artifactId>geoapi-conformance</artifactId>
       <scope>test</scope>
     </dependency>
 

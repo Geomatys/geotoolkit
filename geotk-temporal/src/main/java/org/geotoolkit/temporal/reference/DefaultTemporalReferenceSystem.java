@@ -81,7 +81,7 @@ public class DefaultTemporalReferenceSystem extends AbstractReferenceSystem impl
      * Empty constructor only use for XML marshalling.
      */
     protected DefaultTemporalReferenceSystem() {
-        super(org.apache.sis.internal.referencing.NilReferencingObject.INSTANCE);
+        super(org.apache.sis.referencing.privy.NilReferencingObject.INSTANCE);
     }
 
     /**

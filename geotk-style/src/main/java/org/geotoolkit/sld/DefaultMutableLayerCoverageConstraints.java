@@ -26,15 +26,11 @@ import org.geotoolkit.util.collection.CollectionChangeListener;
 import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.util.collection.NotifiedCheckedList;
 
-import org.opengis.sld.Constraint;
-import org.opengis.sld.CoverageConstraint;
-import org.opengis.sld.SLDVisitor;
 
 /**
  * Default mutable coverage constraints, thread safe.
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
 class DefaultMutableLayerCoverageConstraints implements MutableLayerCoverageConstraints{
 

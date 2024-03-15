@@ -37,7 +37,6 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.*;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.crs.AbstractCRS;
@@ -60,7 +59,6 @@ import static org.junit.Assert.*;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.locationtech.jts.geom.*;
-import org.opengis.filter.FilterFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -73,7 +71,7 @@ public class LuceneTest {
 
     private static final GeometryFactory GF = JTS.getFactory();
     private static final Logger LOGGER = Logger.getLogger("org.constellation.lucene");
-    private static final FilterFactory2 FF = DefaultFactories.forBuildin(FilterFactory.class, FilterFactory2.class);
+    private static final FilterFactory2 FF = new FilterFactory2();
     private static final double TOLERANCE = 0.001;
 
     private static final Path directory = Paths.get("luceneTest");

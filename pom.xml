@@ -172,8 +172,8 @@
     <ucar.repository.url>https://artifacts.unidata.ucar.edu/repository/unidata-releases</ucar.repository.url>
 
     <!-- associated projects dependencies -->
-    <geoapi.version>4.0-M23</geoapi.version>
-    <sis.version>2.0-M0120</sis.version>
+    <geoapi.version>4.0-M26</geoapi.version>
+    <sis.version>2.0-M0123</sis.version>
     <!--
     SIS build helper version froozen to official release.
     It ensures we can import it after SIS will migrate to Gradle build system.
@@ -443,8 +443,8 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.opengis</groupId>
-      <artifactId>geoapi-conformance</artifactId>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
       <scope>test</scope>
     </dependency>
     <!-- Force database drivers in tests for all modules -->
@@ -564,13 +564,13 @@
           <showDeprecation>true</showDeprecation>
           <useIncrementalCompilation>false</useIncrementalCompilation> <!-- https://jira.codehaus.org/browse/MCOMPILER-209 -->
           <compilerArgs>
-            <arg>-XDcompilePolicy=simple</arg>
             <!-- UnicodeInCode : do not consider unicode chars in code as an error, used in maths and projections -->
             <!-- TODO : when upgrading ErrorProne to 2.11+ add -Xep:UnicodeInCode:WARN -->
-            <!--arg>-Xplugin:ErrorProne -Xep:UnicodeInCode:WARN -Xep:BanJNDI:WARN</arg-->
+            <!--arg>-XDcompilePolicy=simple</arg>
+            <arg>-Xplugin:ErrorProne -Xep:UnicodeInCode:WARN -Xep:BanJNDI:WARN</arg-->
           </compilerArgs>
           <annotationProcessorPaths>
-            <!-- reactivate error-prone when it will be updated and working with JDK-17+ -->
+            <!-- disable errorprone : crash with jdk 21 and plugin version 2.23.0 in storage module -->
             <!--path>
               <groupId>com.google.errorprone</groupId>
               <artifactId>error_prone_core</artifactId>

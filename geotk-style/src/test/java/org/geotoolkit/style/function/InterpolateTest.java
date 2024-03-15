@@ -49,7 +49,7 @@ public class InterpolateTest {
         final String attribut = "att_value";
 
         final FilterFactory ff = FilterUtilities.FF;
-        final MutableStyleFactory sf = new DefaultStyleFactory();
+        final MutableStyleFactory sf = DefaultStyleFactory.provider();
 
         final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
         sftb.setName("test");

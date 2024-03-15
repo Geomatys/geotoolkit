@@ -1,22 +1,44 @@
+/*
+ *    Geotoolkit.org - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2023, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
 package org.geotoolkit.jdbc.html;
 
+import java.io.InputStream;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import org.apache.sis.util.resources.IndexedResourceBundle;
+import org.apache.sis.util.resources.KeyConstants;
+
 
 /**
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Alexis Manin (Geomatys)
  */
-public final class Bundle extends IndexedResourceBundle {
+public class Bundle extends IndexedResourceBundle {
     /**
      * Resource keys. This class is used when compiling sources, but no dependencies to
      * {@code Keys} should appear in any resulting class files. Since the Java compiler
      * inlines final integer values, using long identifiers will not bloat the constant
      * pools of compiled classes.
      */
-    public static final class Keys {
+    public static final class Keys extends KeyConstants {
+        /** The unique instance of key constants handler. */
+        static final Keys INSTANCE = new Keys();
+
         private Keys() {
         }
 
@@ -97,22 +119,39 @@ public final class Bundle extends IndexedResourceBundle {
     }
 
     /**
-     * Constructs a new resource bundle loading data from the given UTF file.
-     *
-     * @param filename The file or the JAR entry containing resources.
+     * Constructs a new resource bundle loading data from
+     * the resource file of the same name than this class.
      */
-    public Bundle(final java.net.URL filename) {
-        super(filename);
+    public Bundle() {
+    }
+
+    /**
+     * Opens the binary file containing the localized resources to load.
+     * This method delegates to {@link Class#getResourceAsStream(String)},
+     * but this delegation must be done from the same module than the one
+     * that provides the binary file.
+     */
+    @Override
+    protected InputStream getResourceAsStream(final String name) {
+        return getClass().getResourceAsStream(name);
+     }
+
+    /**
+     * Returns the handle for the {@code Keys} constants.
+     */
+    @Override
+    protected KeyConstants getKeyConstants() {
+        return Keys.INSTANCE;
     }
 
     /**
      * Returns resources in the given locale.
      *
-     * @param  locale The locale, or {@code null} for the default locale.
-     * @return Resources in the given locale.
+     * @param  locale  the locale, or {@code null} for the default locale.
+     * @return resources in the given locale.
      * @throws MissingResourceException if resources can't be found.
      */
     public static Bundle getResources(Locale locale) throws MissingResourceException {
-        return getBundle(Bundle.class, locale);
+        return (Bundle) getBundle(Bundle.class.getName(), nonNull(locale));
     }
 }

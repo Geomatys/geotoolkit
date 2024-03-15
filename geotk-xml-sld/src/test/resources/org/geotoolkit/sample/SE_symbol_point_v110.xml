@@ -7,7 +7,7 @@
     uom="http://www.opengeospatial.org/se/units/pixel">
         
     <se:Geometry>
-        <ogc:PropertyName></ogc:PropertyName>
+        <ogc:PropertyName>geom</ogc:PropertyName>
     </se:Geometry>
     
     <se:Graphic>

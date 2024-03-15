@@ -23,6 +23,7 @@ import org.opengis.geometry.TransfiniteSet;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Objects;
 
 /**
  * @author Jody Garnett
@@ -150,7 +151,7 @@ public class GeometryTestOperation {
             Geometry geom1 = setGeomArg(arg1, a, b);
             Geometry geom2 = setGeomArg(arg2, a, b);
             Boolean result = Boolean.valueOf( geom1.contains(geom2) );
-            return result == expected;
+            return Objects.equals(result, expected);
         }
     }
 
@@ -169,7 +170,7 @@ public class GeometryTestOperation {
             Geometry geom1 = setGeomArg(arg1, a, b);
             Geometry geom2 = setGeomArg(arg2, a, b);
             Boolean result = Boolean.valueOf( geom1.intersects(geom2) );
-            return result == expected;
+            return Objects.equals(result, expected);
         }
     }
 
@@ -187,7 +188,7 @@ public class GeometryTestOperation {
             Boolean expected = (Boolean)expectedResult;
             Geometry geom1 = setGeomArg(arg1, a, b);
             Boolean result = Boolean.valueOf( geom1.isSimple() );
-            return result == expected;
+            return Objects.equals(result, expected);
         }
     }
 

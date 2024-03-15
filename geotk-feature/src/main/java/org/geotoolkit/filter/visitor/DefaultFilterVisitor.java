@@ -17,8 +17,8 @@
  */
 package org.geotoolkit.filter.visitor;
 
-import org.apache.sis.internal.filter.FunctionNames;
-import org.apache.sis.internal.filter.Visitor;
+import org.apache.sis.filter.privy.FunctionNames;
+import org.apache.sis.filter.privy.Visitor;
 import org.opengis.filter.BetweenComparisonOperator;
 import org.opengis.filter.BinaryComparisonOperator;
 import org.opengis.filter.Filter;

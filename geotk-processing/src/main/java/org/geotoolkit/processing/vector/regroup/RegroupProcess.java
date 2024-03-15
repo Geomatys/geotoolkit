@@ -16,23 +16,18 @@
  */
 package org.geotoolkit.processing.vector.regroup;
 
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.util.collection.BackingStoreException;
 import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Stream;
 import org.apache.sis.feature.AbstractOperation;
-
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.internal.feature.AttributeConvention;
-
+import org.apache.sis.feature.privy.AttributeConvention;
 import org.geotoolkit.storage.feature.FeatureCollection;
-import org.geotoolkit.storage.feature.FeatureIterator;
 import org.geotoolkit.processing.AbstractProcess;
-
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -109,16 +104,17 @@ public class RegroupProcess extends AbstractProcess {
      * same attribute value.
      *
      * @param regroupAttribute attribute specified in process input
-     * @param attrubuteValue one value of the specified attribute
+     * @param attributeValue one value of the specified attribute
      * @param newFeatureType the new FeatureTYpe
      * @param geometryName if null we use the default Feature geometry
      * @param filtredList the input FeatureCollection filtered on attribute value
      */
     static Feature regroupFeature(final String regroupAttribute, final Object attributeValue,
-            final FeatureType newFeatureType, String geometryName, final FeatureCollection filtredList)
+            final FeatureType newFeatureType, String geometryName, final FeatureSet filtredList)
     {
         final List<Geometry> geoms = new ArrayList<>();
-        try (final FeatureIterator featureIter = filtredList.iterator()) {
+        try (final Stream<Feature> stream = filtredList.features(false)) {
+            final Iterator<Feature> featureIter = stream.iterator();
             while (featureIter.hasNext()) {
                 final Feature feature = featureIter.next();
                 if (geometryName == null) {
@@ -136,6 +132,8 @@ public class RegroupProcess extends AbstractProcess {
                     }
                 }
             }
+        } catch (DataStoreException ex) {
+            throw new BackingStoreException(ex);
         }
         Geometry regroupGeometry = org.geotoolkit.geometry.jts.JTS.getFactory().buildGeometry(geoms);
         Feature resultFeature;
@@ -158,10 +156,11 @@ public class RegroupProcess extends AbstractProcess {
      * Browse in input FeatureCollection all different values of the specified attribute
      * If regroupAttribute is null, we return an empty Collection.
      */
-    static Collection<Object> getAttributeValues(final String regroupAttribute, final FeatureCollection featureList) {
+    static Collection<Object> getAttributeValues(final String regroupAttribute, final FeatureSet featureList) {
         final Collection<Object> values = new ArrayList<>();
         if (regroupAttribute != null) {
-            try (final FeatureIterator featureIter = featureList.iterator()) {
+            try (final Stream<Feature> stream = featureList.features(false)) {
+                final Iterator<Feature> featureIter = stream.iterator();
                 while (featureIter.hasNext()) {
                     final Feature feature = featureIter.next();
                     final Object value = feature.getPropertyValue(regroupAttribute);
@@ -169,6 +168,8 @@ public class RegroupProcess extends AbstractProcess {
                         values.add(value);
                     }
                 }
+            } catch (DataStoreException ex) {
+                throw new BackingStoreException(ex);
             }
         }
         return values;

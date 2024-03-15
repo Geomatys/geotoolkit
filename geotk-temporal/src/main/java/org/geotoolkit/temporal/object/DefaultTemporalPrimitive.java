@@ -45,7 +45,7 @@ public abstract class DefaultTemporalPrimitive extends AbstractIdentifiedObject 
     }
 
     protected DefaultTemporalPrimitive() {
-        super(org.apache.sis.internal.referencing.NilReferencingObject.INSTANCE);
+        super(org.apache.sis.referencing.privy.NilReferencingObject.INSTANCE);
     }
 
     /**

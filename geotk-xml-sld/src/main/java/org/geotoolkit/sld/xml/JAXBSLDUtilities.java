@@ -30,9 +30,9 @@ import java.util.logging.Logger;
 import org.apache.sis.xml.MarshallerPool;
 import org.geotoolkit.sld.MutableSLDFactory;
 import org.geotoolkit.sld.MutableStyledLayerDescriptor;
+import org.geotoolkit.sld.StyledLayerDescriptor;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.opengis.filter.FilterFactory;
-import org.opengis.sld.StyledLayerDescriptor;
 import org.opengis.util.FactoryException;
 
 /**
@@ -93,7 +93,7 @@ public class JAXBSLDUtilities {
     public static List<Class> getSLD110PoolClasses(){
         final List<Class> classes = new ArrayList<>();
         classes.add(org.geotoolkit.sld.xml.v110.StyledLayerDescriptor.class);
-        classes.add(org.apache.sis.internal.jaxb.geometry.ObjectFactory.class);
+        classes.add(org.apache.sis.xml.bind.metadata.geometry.ObjectFactory.class);
 
         final ServiceLoader<org.geotoolkit.se.xml.v110.SymbolizerType> additionalTypes = ServiceLoader.load(org.geotoolkit.se.xml.v110.SymbolizerType.class);
         final Iterator<org.geotoolkit.se.xml.v110.SymbolizerType> ite = additionalTypes.iterator();

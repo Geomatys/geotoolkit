@@ -49,11 +49,11 @@ import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.internal.map.Presentation;
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.map.Presentation;
+import org.apache.sis.referencing.privy.AffineTransform2D;
 import org.apache.sis.measure.Units;
-import org.apache.sis.portrayal.MapLayer;
-import org.apache.sis.portrayal.MapLayers;
+import org.apache.sis.map.MapLayer;
+import org.apache.sis.map.MapLayers;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.crs.AbstractCRS;
@@ -115,7 +115,7 @@ import org.opengis.util.FactoryException;
 public class PortrayalServiceTest {
     private static final FilterFactory FF = FilterUtilities.FF;
     private static final GeometryFactory GF = JTS.getFactory();
-    private static final MutableStyleFactory SF = new DefaultStyleFactory();
+    private static final MutableStyleFactory SF = DefaultStyleFactory.provider();
 
     private final List<FeatureSet> featureColls = new ArrayList<>();
     private final List<GridCoverage> coverages = new ArrayList<>();

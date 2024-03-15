@@ -56,7 +56,7 @@ import static org.geotoolkit.style.StyleConstants.*;
  */
 public class StyleCacheTest {
 
-    private final MutableStyleFactory SF = new DefaultStyleFactory();
+    private final MutableStyleFactory SF = DefaultStyleFactory.provider();
     private final FilterFactory FF = FilterUtilities.FF;
 
     public StyleCacheTest() {

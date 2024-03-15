@@ -17,11 +17,13 @@
 
 package org.geotoolkit.filter.visitor;
 
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyNotFoundException;
-import org.opengis.feature.PropertyType;
 import org.opengis.filter.ValueReference;
-import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.feature.privy.AttributeConvention;
+import org.apache.sis.feature.privy.FeatureExpression;
+import org.opengis.feature.AttributeType;
 import org.opengis.filter.BinarySpatialOperator;
 import org.opengis.filter.Filter;
 import org.opengis.filter.Expression;
@@ -39,11 +41,10 @@ public class IsValidSpatialFilterVisitor extends AbstractVisitor<Object,Boolean>
         setBinarySpatialHandlers((f) -> {
             final BinarySpatialOperator<Object> filter = (BinarySpatialOperator<Object>) f;
             final Expression<Object,?> e = filter.getOperand1();
-            if (e instanceof ValueReference<?,?>) {
-                final ValueReference<Object,?> pt = (ValueReference<Object,?>) e;
+             if (e instanceof FeatureExpression property && e instanceof ValueReference pt) {
                 //for the bbox filter the propertyName can be empty
                 if (!pt.getXPath().isEmpty()) try {
-                    final PropertyType desc = (PropertyType) pt.apply(ft);
+                    final AttributeType desc = (AttributeType) property.expectedType(ft, new FeatureTypeBuilder()).build();
                     return AttributeConvention.isGeometryAttribute(desc);
                 } catch (PropertyNotFoundException ex) {
                     return Boolean.FALSE;

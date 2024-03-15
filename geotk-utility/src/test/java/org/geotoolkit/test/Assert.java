@@ -17,9 +17,6 @@
  */
 package org.geotoolkit.test;
 
-import java.awt.image.RenderedImage;
-import javax.media.jai.iterator.RectIter;
-import javax.media.jai.iterator.RectIterFactory;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.Matrix;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
@@ -28,7 +25,6 @@ import org.apache.sis.util.Utilities;
 
 import static java.lang.StrictMath.min;
 import static org.junit.Assert.*;
-import static org.geotoolkit.test.image.ImageTestBase.SAMPLE_TOLERANCE;
 
 
 /**
@@ -76,8 +72,6 @@ public final class Assert {
      * @param values The values which are expected on the diagonal. If this array length is
      *               smaller than the diagonal length, then the last element in the array
      *               is repeated for all remaining diagonal elements.
-     *
-     * @since 3.07
      */
     public static void assertDiagonalMatrix(final MathTransform tr, final boolean affine, final double... values) {
         assertTrue("The transform shall be linear.", tr instanceof LinearTransform);
@@ -97,43 +91,5 @@ public final class Assert {
                 assertEquals("matrix(" + j + ',' + i + ')', expected, matrix.getElement(j, i), EPS);
             }
         }
-    }
-
-    /**
-     * Compares two rasters for equality. The sample values are compared with {@code float}
-     * precision, because this is the format used by the majority of geophysics raster data.
-     * <p>
-     * This method does not test if {@linkplain #assertBoundEquals bounds are equal} (actually,
-     * it ensures that the image are of the same size but doesn't check if the origin is the
-     * same). It is user responsibility to invoke the above method if desired.
-     *
-     * @param expected The image containing the expected pixel values.
-     * @param actual   The image containing the actual pixel values.
-     */
-    public static void assertRasterEquals(final RenderedImage expected, final RenderedImage actual) {
-        final RectIter e = RectIterFactory.create(expected, null);
-        final RectIter a = RectIterFactory.create(actual,   null);
-        if (!e.finishedLines()) do {
-            assertFalse(a.finishedLines());
-            if (!e.finishedPixels()) do {
-                assertFalse(a.finishedPixels());
-                if (!e.finishedBands()) do {
-                    assertFalse(a.finishedBands());
-                    final float pe = e.getSampleFloat();
-                    final float pa = a.getSampleFloat();
-                    assertEquals(pe, pa, SAMPLE_TOLERANCE);
-                    a.nextBand();
-                } while (!e.nextBandDone());
-                assertTrue(a.finishedBands());
-                a.nextPixel();
-                a.startBands();
-                e.startBands();
-            } while (!e.nextPixelDone());
-            assertTrue(a.finishedPixels());
-            a.nextLine();
-            a.startPixels();
-            e.startPixels();
-        } while (!e.nextLineDone());
-        assertTrue(a.finishedLines());
     }
 }

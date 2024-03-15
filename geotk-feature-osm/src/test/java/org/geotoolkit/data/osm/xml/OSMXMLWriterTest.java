@@ -30,7 +30,7 @@ import org.geotoolkit.data.osm.model.ChangeSet;
 import org.geotoolkit.data.osm.model.MemberType;
 import org.geotoolkit.data.osm.model.Transaction;
 import org.geotoolkit.data.osm.model.TransactionType;
-import org.apache.sis.internal.util.UnmodifiableArrayList;
+import org.apache.sis.util.privy.UnmodifiableArrayList;
 import org.geotoolkit.data.osm.model.OSMModelConstants;
 import org.junit.After;
 import org.junit.AfterClass;

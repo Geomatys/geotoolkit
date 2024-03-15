@@ -23,9 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.xml.MarshallerPool;
-import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.sld.DefaultSLDFactory;
 import org.geotoolkit.sld.MutableSLDFactory;
 import org.geotoolkit.sld.MutableStyledLayerDescriptor;
@@ -36,15 +34,16 @@ import org.geotoolkit.sld.xml.v100.StyledLayerDescriptor;
 import org.geotoolkit.style.MutableStyleFactory;
 import static org.junit.Assert.*;
 import org.junit.Test;
+import org.geotoolkit.filter.FilterUtilities;
+import org.geotoolkit.style.DefaultStyleFactory;
+import org.geotoolkit.sld.Extent;
+import org.geotoolkit.sld.FeatureTypeConstraint;
+import org.geotoolkit.sld.LayerFeatureConstraints;
+import org.geotoolkit.sld.NamedLayer;
+import org.geotoolkit.sld.NamedStyle;
+import org.geotoolkit.sld.RemoteOWS;
+import org.geotoolkit.sld.UserLayer;
 import org.opengis.filter.FilterFactory;
-import org.opengis.sld.Extent;
-import org.opengis.sld.FeatureTypeConstraint;
-import org.opengis.sld.LayerFeatureConstraints;
-import org.opengis.sld.NamedLayer;
-import org.opengis.sld.NamedStyle;
-import org.opengis.sld.RemoteOWS;
-import org.opengis.sld.UserLayer;
-import org.opengis.style.StyleFactory;
 
 /**
  * Test class for sld jaxb marshelling and unmarshelling.
@@ -59,7 +58,7 @@ public class SLD100Test {
     private static final MutableSLDFactory SLD_FACTORY;
 
     static{
-        STYLE_FACTORY = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
+        STYLE_FACTORY = DefaultStyleFactory.provider();
         FILTER_FACTORY = FilterUtilities.FF;
         SLD_FACTORY = new DefaultSLDFactory();
     }
