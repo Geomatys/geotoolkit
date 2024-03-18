@@ -8,6 +8,8 @@ variables:
   MAVEN_OPTS: "-Dmaven.repo.local=$MAVEN_LOCAL -Djava.awt.headless=true"
   SONAR_HOST_URL: "https://sonar.geomatys.com"
   DEPLOY_SERVER: "releases::https://nexus.geomatys.com/repository/releases/"
+  TAG_VERSION:
+    description: "When filled, a tag with this value will be created on the project"
 
 # Cache dependencies globally. Project snapshot are removed with below after script to avoid caching nightly artifact.
 cache: &global_cache
