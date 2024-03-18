@@ -20,6 +20,7 @@ stages:
   - build
   - quality
   - release
+  - publish
 
 image: images.geomatys.com/examind-server/build-deps:jdk17
 
