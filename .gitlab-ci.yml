@@ -11,6 +11,10 @@ variables:
   TAG_VERSION:
     description: "When filled, a tag with this value will be created on the project"
 
+workflow:
+  rules:
+    - if: ($CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH || $CI_PIPELINE_SOURCE == 'merge_request_event' || $CI_COMMIT_TAG || $TAG_VERSION)
+
 # Cache dependencies globally. Project snapshot are removed with below after script to avoid caching nightly artifact.
 cache: &global_cache
   policy: pull
