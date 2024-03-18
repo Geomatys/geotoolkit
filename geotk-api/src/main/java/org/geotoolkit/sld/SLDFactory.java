@@ -20,6 +20,7 @@ package org.geotoolkit.sld;
 import java.util.Collection;
 
 import java.util.List;
+import org.geotoolkit.sld.UserLayer;
 
 import org.opengis.feature.Feature;
 import org.opengis.util.GenericName;

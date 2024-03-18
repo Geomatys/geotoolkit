@@ -17,21 +17,22 @@
  */
 package org.geotoolkit.sld;
 
+import java.util.List;
 
 /**
- * When used in a UserLayer, the Extent reference defines what features are to be included
- * in the layer and when used in a NamedLayer, it filters the features that are part of the
- * named layer.
+ * The LayerFeatureConstraints element is used to specify what features of what feature
+ * types are to be included in a layer.
  *
  * @version <A HREF="http://www.opengeospatial.org/standards/sld">Implementation specification 1.1.0</A>
  * @author Open Geospatial Consortium
  * @author Johann Sorel (Geomatys)
  */
-public interface Extent {
+public interface LayerFeatureConstraints extends Constraints {
 
-    String getName();
-
-    String getValue();
+    /**
+     * List of constraints.
+     */
+    List<? extends FeatureTypeConstraint> constraints();
 
     /**
      * calls the visit method of a SLDVisitor

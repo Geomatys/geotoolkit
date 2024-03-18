@@ -43,6 +43,11 @@
   <dependencies>
       <dependency>
           <groupId>org.geotoolkit</groupId>
+          <artifactId>geotk-api</artifactId>
+          <version>${project.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>org.geotoolkit</groupId>
           <artifactId>geotk-coverage</artifactId>
           <version>${project.version}</version>
       </dependency>

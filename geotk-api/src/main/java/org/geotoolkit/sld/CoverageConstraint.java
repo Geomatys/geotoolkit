@@ -17,23 +17,23 @@
  */
 package org.geotoolkit.sld;
 
-import java.util.List;
-
-
 /**
- * The LayerFeatureConstraints element is used to specify what features of what feature
- * types are to be included in a layer.
+ * A CoverageConstraint element is used to identify a coverage offering by a well-known
+ * name, using the CoverageName element. Any positive number of CoverageConstraints
+ * may be used to define the coverage data of a layer, though all CoverageConstraints in a
+ * UserLayer must come from the same WCS source.
  *
  * @version <A HREF="http://www.opengeospatial.org/standards/sld">Implementation specification 1.1.0</A>
  * @author Open Geospatial Consortium
  * @author Johann Sorel (Geomatys)
  */
-public interface LayerFeatureConstraints extends Constraints {
-
+public interface CoverageConstraint extends Constraint {
     /**
-     * List of constraints.
+     * Get the coverage name.
      */
-    List<? extends FeatureTypeConstraint> constraints();
+    String getCoverageName();
+
+    CoverageExtent getCoverageExtent();
 
     /**
      * calls the visit method of a SLDVisitor

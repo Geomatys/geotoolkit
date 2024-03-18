@@ -17,24 +17,25 @@
  */
 package org.geotoolkit.sld;
 
+import java.util.List;
+import org.geotoolkit.sld.SLDVisitor;
+
 
 /**
  * A CoverageConstraint element is used to identify a coverage offering by a well-known
- * name, using the CoverageName element. Any positive number of CoverageConstraints
- * may be used to define the coverage data of a layer, though all CoverageConstraints in a
- * UserLayer must come from the same WCS source.
+ * name, using the CoverageName element.
  *
  * @version <A HREF="http://www.opengeospatial.org/standards/sld">Implementation specification 1.1.0</A>
  * @author Open Geospatial Consortium
  * @author Johann Sorel (Geomatys)
  */
-public interface CoverageConstraint extends Constraint {
+public interface LayerCoverageConstraints extends Constraints {
     /**
-     * Get the coverage name.
+     * Any positive number of CoverageConstraints
+     * may be used to define the coverage data of a layer, though all CoverageConstraints in a
+     * UserLayer must come from the same WCS source.
      */
-    String getCoverageName();
-
-    CoverageExtent getCoverageExtent();
+    public List<? extends CoverageConstraint> constraints();
 
     /**
      * calls the visit method of a SLDVisitor
