@@ -42,3 +42,28 @@ between two tags of the project.
 
 Any tag from 4.0 to 22.02.16 are compatible with JDK 8.
 Moving forward, any new release will require Java 17 as minimal requirement.
+
+== Create a tag
+
+Launch A Gitlab CI manually. Set `TAG_VERSION` parameter to the wanted version (Ex: `24-03-17`).
+
+If all works well, the CI should:
+
+. Create a first pipeline to push a tag to the project
+. Once the tag is pushed, another pipeline should run with a "publish" stage performing "mvn-deploy" job, to push maven artifacts to Geomatys release repository.
+
+[NOTE]
+====
+Gitlab only supports running pipeline on branch heads or on existing tags.
+If you want to create a tag on a specific commit, you have to:
+
+. Create a temporary branch from desired commit:
++
+[source,sh]
+----
+git branch ${TMP_BRANCH_NAME} ${TARGET_COMMIT_REF}
+git push ${TMP_BRANCH_NAME}:${TMP_BRANCH_NAME}
+----
+
+. Ask Gitlab to run a pipeline on it.
+====
