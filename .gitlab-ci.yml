@@ -8,6 +8,12 @@ variables:
   MAVEN_OPTS: "-Dmaven.repo.local=$MAVEN_LOCAL -Djava.awt.headless=true"
   SONAR_HOST_URL: "https://sonar.geomatys.com"
   DEPLOY_SERVER: "releases::https://nexus.geomatys.com/repository/releases/"
+  TAG_VERSION:
+    description: "When filled, a tag with this value will be created on the project"
+
+workflow:
+  rules:
+    - if: ($CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH || $CI_PIPELINE_SOURCE == 'merge_request_event' || $CI_COMMIT_TAG || $TAG_VERSION)
 
 # Cache dependencies globally. Project snapshot are removed with below after script to avoid caching nightly artifact.
 cache: &global_cache
@@ -20,6 +26,7 @@ stages:
   - build
   - quality
   - release
+  - publish
 
 image: images.geomatys.com/examind-server/build-deps:jdk17
 

@@ -23,6 +23,7 @@ import org.geotoolkit.observation.model.Observation;
 import org.geotoolkit.observation.model.ObservationDataset;
 import org.geotoolkit.observation.model.Offering;
 import org.geotoolkit.observation.model.Phenomenon;
+import org.geotoolkit.observation.model.Procedure;
 import org.geotoolkit.observation.model.ProcedureDataset;
 import org.locationtech.jts.geom.Geometry;
 
@@ -99,6 +100,15 @@ public interface ObservationWriter {
     void removeProcedure(String procedureID) throws DataStoreException;
 
     /**
+     * Remove a phenomenon from the O&M datasource.
+     *
+     * @param phenomenonID
+     *
+     * @throws org.apache.sis.storage.DataStoreException
+     */
+    void removePhenomenon(String phenomenonID) throws DataStoreException;
+
+    /**
      * Write a new Observation offering into the database
      *
      * @param offering
@@ -110,10 +120,18 @@ public interface ObservationWriter {
     /**
      * Record a procedure with its location and parent.
      *
-     * @param procedure
+     * @param procedure A full sensor entity.
      * @throws org.apache.sis.storage.DataStoreException
      */
     void writeProcedure(final ProcedureDataset procedure) throws DataStoreException;
+
+    /**
+     * Update basic information of an existing procedure.
+     * If you supply a full {@link ProcedureDataset} this will delegate to {@link #writeProcedure(ProcedureDataset)}.
+     *
+     * @param procedure A sensor entity.
+     */
+    void updateProcedure(final Procedure procedure) throws DataStoreException;
 
     /**
      * Record the location of a sensor.

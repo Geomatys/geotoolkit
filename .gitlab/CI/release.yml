@@ -1,14 +1,34 @@
-# TODO: use mvn release:prepare or any tool wanted to freeze versions on tag, then push the tag.
-# WARNING: before adding a job that push, we have to verify that mvn release is well-done. Specifically, we have to
-# handle buildset/pom.xml update.
-
-deploy:
+create-tag:
   stage: release
   needs:
     - build
-  # TODO: remove manual activation once release pipeline is fully migrated from Jenkins to Gitlab
-  when: manual
+  rules:
+    - if: $TAG_VERSION != ""
+  before_script:
+    # Setup authorization through access token, so CI can push Git Tag
+    - git remote add project "https://project_33_bot:${BOT_ACCESS_TOKEN}@${CI_DEPENDENCY_PROXY_SERVER}/${CI_PROJECT_PATH}"
+  script:
+    # Create a temporary branch for the tag
+    - git checkout -b "tmp/$TAG_VERSION"
+    # Update versions in project files
+    - mvn versions:set -DnewVersion="$TAG_VERSION" -s $MAVEN_SETTINGS
+    # WARNING: additional commands to properly manage buildset module
+    - mvn versions:set -pl buildset -DnewVersion="$TAG_VERSION" -s $MAVEN_SETTINGS
+    - mvn versions:set-property -pl buildset -Dproperty=geotoolkit.version -DnewVersion="$TAG_VERSION" -s $MAVEN_SETTINGS
+    # Ensure there's no problem with version modification
+    - mvn clean install -DskipTests -s $MAVEN_SETTINGS
+    # Once OK, we can commit
+    - mvn versions:commit -s $MAVEN_SETTINGS
+    - find . -type f -name "pom.xml"|xargs git add
+    - git commit -m "Release $TAG_VERSION"
+    - git tag "$TAG_VERSION"
+    - git push project "$TAG_VERSION"
+
+mvn-deploy:
+  stage: publish
+  needs:
+    - build
   only:
     - tags
   script:
-    - mvn package source:jar javadoc:jar deploy -DaltDeploymentRepository=$DEPLOY_SERVER
+    - mvn package source:jar javadoc:jar deploy -s $MAVEN_SETTINGS -DaltDeploymentRepository=$DEPLOY_SERVER
