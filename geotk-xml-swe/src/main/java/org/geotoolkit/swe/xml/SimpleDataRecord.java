@@ -17,9 +17,6 @@
 package org.geotoolkit.swe.xml;
 
 import java.util.Collection;
-import org.opengis.annotation.UML;
-import static org.opengis.annotation.Specification.*;
-import static org.opengis.annotation.Obligation.*;
 
 
 /**
@@ -30,12 +27,10 @@ import static org.opengis.annotation.Obligation.*;
  * @author Guilhem Legal (Geomatys)
  * @module
  */
-@UML(identifier="SimpleDataRecord", specification=UNSPECIFIED)
+//@UML(identifier="SimpleDataRecord", specification=UNSPECIFIED)
 public interface SimpleDataRecord extends AbstractDataRecord {
-
     /**
      * this field is restricted to AnyScalar value.
      */
     Collection<? extends AnyScalar> getField();
-
 }

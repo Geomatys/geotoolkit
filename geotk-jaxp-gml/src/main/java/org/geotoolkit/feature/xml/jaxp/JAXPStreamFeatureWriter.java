@@ -914,13 +914,13 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
 
         // lower corner
         streamWriter.writeStartElement("gml", "lowerCorner", gmlNamespace);
-        String lowValue = bounds.getLowerCorner().getCoordinate(0) + " " + bounds.getLowerCorner().getOrdinate(1);
+        String lowValue = bounds.getLowerCorner().getCoordinate(0) + " " + bounds.getLowerCorner().getCoordinate(1);
         streamWriter.writeCharacters(lowValue);
         streamWriter.writeEndElement();
 
         // upper corner
         streamWriter.writeStartElement("gml", "upperCorner", gmlNamespace);
-        String uppValue = bounds.getUpperCorner().getCoordinate(0) + " " + bounds.getUpperCorner().getOrdinate(1);
+        String uppValue = bounds.getUpperCorner().getCoordinate(0) + " " + bounds.getUpperCorner().getCoordinate(1);
         streamWriter.writeCharacters(uppValue);
         streamWriter.writeEndElement();
 

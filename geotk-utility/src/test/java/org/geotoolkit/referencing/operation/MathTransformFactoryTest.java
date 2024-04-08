@@ -89,7 +89,7 @@ public final class MathTransformFactoryTest {
                 expected.getDimension(), dimension);
         for (int i=0; i<dimension; i++) {
             assertEquals("Mismatch for ordinate "+i+" (zero-based):",
-                    expected.getCoordinate(i), actual.getOrdinate(i),
+                    expected.getCoordinate(i), actual.getCoordinate(i),
                     tolerance[min(i, lastToleranceIndex)]);
         }
     }

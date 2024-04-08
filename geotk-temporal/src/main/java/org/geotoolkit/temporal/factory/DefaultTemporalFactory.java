@@ -47,6 +47,7 @@ import org.opengis.metadata.Identifier;
 
 import org.opengis.metadata.extent.Extent;
 import org.opengis.referencing.IdentifiedObject;
+import org.opengis.referencing.ObjectDomain;
 import org.opengis.temporal.Calendar;
 import org.opengis.temporal.CalendarDate;
 import org.opengis.temporal.CalendarEra;
@@ -72,7 +73,6 @@ import org.opengis.util.InternationalString;
 /**
  *
  * @author Guilhem Legal (Geomatys)
- * @module
  */
 public class DefaultTemporalFactory implements TemporalFactory {
 
@@ -140,7 +140,7 @@ public class DefaultTemporalFactory implements TemporalFactory {
     public Calendar createCalendar(Identifier name, Extent domainOfValidity, Collection<CalendarEra> referenceFrame, Clock timeBasis) {
         final Map<String, Object> prop = new HashMap<>();
         prop.put(IdentifiedObject.NAME_KEY, name);
-        prop.put(TemporalReferenceSystem.DOMAIN_OF_VALIDITY_KEY, domainOfValidity);
+        prop.put(ObjectDomain.DOMAIN_OF_VALIDITY_KEY, domainOfValidity);
         return new DefaultCalendar(prop, referenceFrame, timeBasis);
     }
 
@@ -175,7 +175,7 @@ public class DefaultTemporalFactory implements TemporalFactory {
         final Map<String, Object> calendarEraProperties = new HashMap<>();
         calendarEraProperties.put(IdentifiedObject.NAME_KEY, name);
         calendarEraProperties.put(Calendar.REFERENCE_EVENT_KEY, referenceEvent);
-        calendarEraProperties.put(TemporalReferenceSystem.DOMAIN_OF_VALIDITY_KEY, domainOfValidity);
+        calendarEraProperties.put(ObjectDomain.DOMAIN_OF_VALIDITY_KEY, domainOfValidity);
         return new DefaultClock(calendarEraProperties, referenceTime, utcReference, null);
     }
 
@@ -243,7 +243,7 @@ public class DefaultTemporalFactory implements TemporalFactory {
         final Map<String, Object> ordinalEraProp = new HashMap<>();
         ordinalEraProp.put(IdentifiedObject.NAME_KEY, name.getCode());
         ordinalEraProp.put(IdentifiedObject.IDENTIFIERS_KEY, name);
-        ordinalEraProp.put(TemporalReferenceSystem.DOMAIN_OF_VALIDITY_KEY, domainOfValidity);
+        ordinalEraProp.put(ObjectDomain.DOMAIN_OF_VALIDITY_KEY, domainOfValidity);
         return new DefaultOrdinalReferenceSystem(ordinalEraProp, ordinalEraSequence);
     }
 
@@ -275,7 +275,7 @@ public class DefaultTemporalFactory implements TemporalFactory {
         final Map<String, Object> coordSystemProp = new HashMap<>();
         coordSystemProp.put(IdentifiedObject.NAME_KEY, name.getCode());
         coordSystemProp.put(IdentifiedObject.IDENTIFIERS_KEY, name);
-        coordSystemProp.put(TemporalReferenceSystem.DOMAIN_OF_VALIDITY_KEY, domainOfValidity);
+        coordSystemProp.put(ObjectDomain.DOMAIN_OF_VALIDITY_KEY, domainOfValidity);
         return new DefaultTemporalCoordinateSystem(coordSystemProp, interval, origin);
     }
 
@@ -297,7 +297,7 @@ public class DefaultTemporalFactory implements TemporalFactory {
         final Map<String, Object> tempRefSystemProp = new HashMap<>();
         tempRefSystemProp.put(IdentifiedObject.NAME_KEY, name.getCode());
         tempRefSystemProp.put(IdentifiedObject.IDENTIFIERS_KEY, name);
-        tempRefSystemProp.put(TemporalReferenceSystem.DOMAIN_OF_VALIDITY_KEY, domainOfValidity);
+        tempRefSystemProp.put(ObjectDomain.DOMAIN_OF_VALIDITY_KEY, domainOfValidity);
         return new DefaultTemporalReferenceSystem(tempRefSystemProp);
     }
 }

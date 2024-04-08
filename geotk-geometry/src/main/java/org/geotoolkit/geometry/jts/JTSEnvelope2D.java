@@ -317,7 +317,7 @@ public class JTSEnvelope2D extends Envelope implements org.opengis.geometry.Enve
      * @since 2.4
      */
     public boolean contains(final DirectPosition pos) {
-        return super.contains(pos.getCoordinate(0), pos.getOrdinate(1));
+        return super.contains(pos.getCoordinate(0), pos.getCoordinate(1));
     }
 
     /**

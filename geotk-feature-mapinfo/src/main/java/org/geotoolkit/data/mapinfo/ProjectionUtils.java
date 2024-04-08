@@ -56,6 +56,7 @@ import org.apache.sis.util.ArgumentChecks;
 
 import static org.geotoolkit.data.mapinfo.ProjectionParameters.PARAMETER_LIST;
 import static org.geotoolkit.data.mapinfo.ProjectionParameters.getProjectionParameters;
+import org.opengis.referencing.ObjectDomain;
 import org.opengis.referencing.datum.DatumAuthorityFactory;
 
 /**
@@ -256,7 +257,7 @@ public class ProjectionUtils {
                         bbox.setBounds(bounds);
                         final DefaultExtent ext = new DefaultExtent();
                         ext.setGeographicElements(Collections.singleton(bbox));
-                        crsIdentifiers.put(ReferenceSystem.DOMAIN_OF_VALIDITY_KEY, ext);
+                        crsIdentifiers.put(ObjectDomain.DOMAIN_OF_VALIDITY_KEY, ext);
                     }
                     // The case for Projected crs is managed below, after we've defined the needed conversion.
                 }
@@ -356,7 +357,7 @@ public class ProjectionUtils {
                     final DefaultExtent ext = new DefaultExtent();
                     ext.addElements(new Envelope2D(newLower, newUpper));
 //                    ext.setGeographicElements(Collections.singleton(bbox));
-                    crsIdentifiers.put(ReferenceSystem.DOMAIN_OF_VALIDITY_KEY, ext);
+                    crsIdentifiers.put(ObjectDomain.DOMAIN_OF_VALIDITY_KEY, ext);
                 } catch (Exception e) {
                     LOGGER.log(Level.WARNING, "MIF CoordSys clause : Bounds can't be read.", e);
                 }

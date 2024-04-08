@@ -65,7 +65,7 @@ public final class PostgisFactoryTest {
             /*
              * Test fetching a few CRS.
              */
-            assertEquals("WGS 84", String.valueOf(factory.getDescriptionText("EPSG:4326")));
+            assertEquals("WGS 84", String.valueOf(factory.getDescriptionText(GeographicCRS.class, "EPSG:4326")));
 
             final GeographicCRS geoCRS = factory.createGeographicCRS("EPSG:4326");
             assertEquals("EPSG:4326",    getIdentifier(geoCRS, Citations.EPSG).toString());

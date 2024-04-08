@@ -196,8 +196,8 @@ public class ProjectedGeometry  {
             if (context.wraps != null) {
 
                 org.locationtech.jts.geom.Envelope objBounds = objBase.getEnvelopeInternal();
-                final double dx = context.wraps.wrapPoints[1].getCoordinate(0) - context.wraps.wrapPoints[0].getOrdinate(0);
-                final double dy = context.wraps.wrapPoints[1].getCoordinate(1) - context.wraps.wrapPoints[0].getOrdinate(1);
+                final double dx = context.wraps.wrapPoints[1].getCoordinate(0) - context.wraps.wrapPoints[0].getCoordinate(0);
+                final double dy = context.wraps.wrapPoints[1].getCoordinate(1) - context.wraps.wrapPoints[0].getCoordinate(1);
                 // fix the geometry if some points wrap around the meridian
                 // we expect the warp points to be axis aligned, TODO handle other cases
                 if (dx != 0 && dy != 0) {

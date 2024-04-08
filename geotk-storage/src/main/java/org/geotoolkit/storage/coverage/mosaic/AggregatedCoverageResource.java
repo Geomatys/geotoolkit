@@ -54,10 +54,7 @@ import org.apache.sis.storage.base.ResourceOnFileSystem;
 import org.apache.sis.measure.Quantities;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.referencing.CRS;
-import org.apache.sis.referencing.operation.matrix.Matrices;
-import org.apache.sis.referencing.operation.matrix.MatrixSIS;
-import org.apache.sis.referencing.operation.matrix.NoninvertibleMatrixException;
-import org.apache.sis.referencing.operation.transform.LinearTransform;
+import org.apache.sis.referencing.crs.DefaultImageCRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
@@ -89,14 +86,11 @@ import org.opengis.coverage.grid.SequenceType;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.metadata.Metadata;
-import org.opengis.metadata.spatial.DimensionNameType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.crs.ImageCRS;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.CoordinateOperation;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
-import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
@@ -502,7 +496,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
                         throw new DataStoreException("Resource has no defined CRS and Envelope.");
                     }
                     final CoordinateReferenceSystem crs = gridGeometry.getCoordinateReferenceSystem();
-                    if (crs instanceof ImageCRS) {
+                    if (crs instanceof DefaultImageCRS) {
                         throw new DataStoreException("CRS " + crs.getClass() + " can not be used in aggregation, resource will be ignored.");
                     } else if (crs != null && crs.getCoordinateSystem().getDimension() != 2) {
                         throw new DataStoreException("CRS " + crs.getName()+ " can not be used in aggregation it is not 2D, resource will be ignored.");

@@ -96,7 +96,7 @@ public class JTSEnvelope implements Envelope {
      */
     @Override
     public final double getMedian(final int dimension) {
-        return 0.5 * (upperCorner.getCoordinate(dimension) + lowerCorner.getOrdinate(dimension));
+        return 0.5 * (upperCorner.getCoordinate(dimension) + lowerCorner.getCoordinate(dimension));
     }
 
     /**
@@ -104,7 +104,7 @@ public class JTSEnvelope implements Envelope {
      */
     @Override
     public final double getSpan(final int dimension) {
-        return upperCorner.getCoordinate(dimension) - lowerCorner.getOrdinate(dimension);
+        return upperCorner.getCoordinate(dimension) - lowerCorner.getCoordinate(dimension);
     }
 
     /**

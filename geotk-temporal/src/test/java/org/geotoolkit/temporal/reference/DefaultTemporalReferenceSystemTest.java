@@ -28,6 +28,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import org.opengis.metadata.extent.Extent;
 import org.opengis.metadata.Identifier;
+import org.opengis.referencing.ObjectDomain;
 import org.opengis.temporal.TemporalReferenceSystem;
 import org.opengis.util.GenericName;
 import org.opengis.util.InternationalString;
@@ -36,7 +37,6 @@ import org.opengis.util.InternationalString;
 /**
  *
  * @author Mehdi Sidhoum (Geomatys)
- * @module
  */
 public class DefaultTemporalReferenceSystemTest {
 
@@ -67,13 +67,29 @@ public class DefaultTemporalReferenceSystemTest {
         assertFalse(temporalReferenceSystem2.getName().equals(result));
     }
 
+    private static Extent getDomainOfValidity(TemporalReferenceSystem t) {
+        for (ObjectDomain domain : t.getDomains()) {
+            var v = domain.getDomainOfValidity();
+            if (v != null) return v;
+        }
+        return null;
+    }
+
     /**
      * Test of getDomainOfValidity method, of class DefaultTemporalReferenceSystem.
      */
     @Test
     public void testGetDomainOfValidity() {
-        Extent result = temporalReferenceSystem1.getDomainOfValidity();
-        assertEquals(temporalReferenceSystem2.getDomainOfValidity(), result);
+        Extent result = getDomainOfValidity(temporalReferenceSystem1);
+        assertEquals(getDomainOfValidity(temporalReferenceSystem2), result);
+    }
+
+    private static InternationalString getScope(TemporalReferenceSystem t) {
+        for (ObjectDomain domain : t.getDomains()) {
+            var v = domain.getScope();
+            if (v != null) return v;
+        }
+        return null;
     }
 
     /**
@@ -81,8 +97,8 @@ public class DefaultTemporalReferenceSystemTest {
      */
     @Test
     public void testGetScope() {
-        InternationalString result = temporalReferenceSystem1.getScope();
-        assertEquals(temporalReferenceSystem2.getScope(), result);
+        InternationalString result = getScope(temporalReferenceSystem1);
+        assertEquals(getScope(temporalReferenceSystem2), result);
     }
 
     /**
@@ -133,8 +149,8 @@ public class DefaultTemporalReferenceSystemTest {
      */
     @Test
     public void testSetScope() {
-        InternationalString result = ((DefaultTemporalReferenceSystem) temporalReferenceSystem1).getScope();
-        assertEquals(((DefaultTemporalReferenceSystem) temporalReferenceSystem1).getScope(), result);
+        InternationalString result = getScope(temporalReferenceSystem1);
+        assertEquals(getScope(temporalReferenceSystem1), result);
     }
 
     /**

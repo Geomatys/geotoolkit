@@ -44,16 +44,12 @@ import org.opengis.temporal.ClockTime;
 import org.opengis.temporal.JulianDate;
 import org.opengis.temporal.DateAndTime;
 import org.opengis.temporal.TemporalCoordinateSystem;
-import org.opengis.temporal.TemporalReferenceSystem;
 
 /**
  * A discrete temporal reference system that provides a
  * basis for defining temporal position to a resolution of one day.
  *
  * @author Mehdi Sidhoum (Geomatys)
- * @version 4.0
- * @since   4.0
- * @see TemporalReferenceSystem
  */
 @XmlType(name = "TimeCalendar_Type", propOrder = {
     "referenceFrame"
@@ -362,7 +358,7 @@ public class DefaultCalendar extends DefaultTemporalReferenceSystem implements C
             final Calendar that = (Calendar) object;
 
             return Objects.equals(this.getName(), that.getName())
-                    && Objects.equals(this.getDomainOfValidity(), that.getDomainOfValidity())
+                    && Objects.equals(this.getDomains(), that.getDomains())
                     && Objects.equals(this.referenceFrame, that.getReferenceFrame())
                     &&Objects.equals(this.timeBasis, that.getTimeBasis());
         }
@@ -374,7 +370,7 @@ public class DefaultCalendar extends DefaultTemporalReferenceSystem implements C
      */
     @Override
     protected long computeHashCode() {
-        int hash = this.getName().hashCode() + this.getDomainOfValidity().hashCode();
+        int hash = this.getName().hashCode() + this.getDomains().hashCode();
         hash = 42 * hash + (this.timeBasis != null ? this.timeBasis.hashCode() : 0);
         hash = 37 * hash + (this.referenceFrame != null ? this.referenceFrame.hashCode() : 0);
         return hash;

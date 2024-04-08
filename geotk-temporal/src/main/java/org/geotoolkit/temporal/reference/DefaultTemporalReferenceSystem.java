@@ -25,9 +25,7 @@ import org.apache.sis.referencing.AbstractReferenceSystem;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.apache.sis.xml.Namespaces;
 import org.opengis.metadata.extent.Extent;
-import org.opengis.referencing.ReferenceSystem;
-import org.opengis.referencing.cs.TimeCS;
-import org.opengis.referencing.datum.TemporalDatum;
+import org.opengis.referencing.ObjectDomain;
 import org.opengis.temporal.TemporalReferenceSystem;
 import org.opengis.util.InternationalString;
 
@@ -35,9 +33,6 @@ import org.opengis.util.InternationalString;
  * Information about a temporal reference system.
  *
  * @author Mehdi Sidhoum (Geomatys)
- * @module
- * @version 4.0
- * @since   4.0
  */
 @XmlType(name = "TimeReferenceSystem_Type", propOrder = {
     "scope",
@@ -45,7 +40,6 @@ import org.opengis.util.InternationalString;
 })
 @XmlRootElement(name = "TimeReferenceSystem", namespace = Namespaces.GML)
 public class DefaultTemporalReferenceSystem extends AbstractReferenceSystem implements TemporalReferenceSystem {
-
     /**
      * Creates a default {@link TemporalReferenceSystem} implementation from the given properties, datum and coordinate system.
      * The properties given in argument follow the same rules than for the
@@ -130,6 +124,10 @@ public class DefaultTemporalReferenceSystem extends AbstractReferenceSystem impl
      */
     @XmlElement(name = "domainOfValidity", required = true)
     protected InternationalString getdomaineOfValidity() {
-        return super.getDomainOfValidity().getDescription();
+        for (ObjectDomain domain : getDomains()) {
+            var v = domain.getDomainOfValidity();
+            if (v != null) return v.getDescription();
+        }
+        return null;
     }
 }

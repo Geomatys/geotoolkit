@@ -16,16 +16,11 @@
  */
 package org.geotoolkit.swe.xml;
 
-import org.opengis.annotation.UML;
-import static org.opengis.annotation.Specification.*;
-
 /**
  * Abstract type for Data record type.
  *
  * @author Guilhel Legal
- * @module
  */
-@UML(identifier="AbstractDataRecord", specification=UNSPECIFIED)
+//@UML(identifier="AbstractDataRecord", specification=UNSPECIFIED)
 public interface AbstractDataRecord extends AbstractDataComponent {
-
 }

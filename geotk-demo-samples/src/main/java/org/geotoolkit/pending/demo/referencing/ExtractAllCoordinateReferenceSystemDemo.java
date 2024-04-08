@@ -81,7 +81,7 @@ public class ExtractAllCoordinateReferenceSystemDemo {
         for(final String code : codes){
 
             try{
-                final IdentifiedObject obj = factory.createObject(code);
+                final IdentifiedObject obj = factory.createCoordinateReferenceSystem(code);
                 final String wkt = format.format(obj);
                 map.put(code, wkt);
             }catch(Exception ex){

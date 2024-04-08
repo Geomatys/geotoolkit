@@ -332,7 +332,7 @@ public final class CoverageUtilities extends Static {
         DirectPosition vec2 = trs.transform(vec, null);
         double[] res2 = new double[center2.getDimension()];
         for (int i = 0; i < res2.length; i++) {
-            res2[i] = Math.abs(vec2.getCoordinate(i) - center2.getOrdinate(i));
+            res2[i] = Math.abs(vec2.getCoordinate(i) - center2.getCoordinate(i));
         }
         return res2;
     }

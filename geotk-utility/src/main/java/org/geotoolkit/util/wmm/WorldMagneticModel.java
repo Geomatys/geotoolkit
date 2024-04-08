@@ -599,7 +599,7 @@ public final class WorldMagneticModel {
         MagneticResults MagneticResultsGeo = new MagneticResults();
 
         /* Difference between the spherical and Geodetic latitudes */
-        final double Psi = Math.toRadians(coordSpherical.getCoordinate(0) - coordGeodetic.getOrdinate(0));
+        final double Psi = Math.toRadians(coordSpherical.getCoordinate(0) - coordGeodetic.getCoordinate(0));
 
         /* Rotate spherical field components to the Geodetic system */
         MagneticResultsGeo.Bz = magneticResultsSph.Bx * Math.sin(Psi) + magneticResultsSph.Bz * Math.cos(Psi);
