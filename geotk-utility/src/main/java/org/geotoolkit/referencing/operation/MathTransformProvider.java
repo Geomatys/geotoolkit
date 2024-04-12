@@ -26,6 +26,9 @@ import org.opengis.referencing.operation.MathTransform;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.referencing.operation.DefaultOperationMethod;
 import org.opengis.metadata.Identifier;
+import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.operation.MathTransformFactory;
+import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
 
 
@@ -112,5 +115,14 @@ public abstract class MathTransformProvider extends DefaultOperationMethod
         properties.put(IDENTIFIERS_KEY, parameters.getIdentifiers().toArray(EMPTY_IDENTIFIER_ARRAY));
         properties.put(ALIAS_KEY,       parameters.getAlias()      .toArray(EMPTY_ALIAS_ARRAY));
         return properties;
+    }
+
+    @Override
+    public abstract MathTransform createMathTransform(MathTransformFactory factory, ParameterValueGroup values)
+            throws FactoryException;
+
+    @Override
+    public MathTransform createMathTransform(Context context) throws FactoryException {
+        return createMathTransform(context.getFactory(), context.getCompletedParameters());
     }
 }
