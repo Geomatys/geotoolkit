@@ -1006,7 +1006,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
             object = PredefinedCS.CARTESIAN_2D;
         } else if (GeographicCRS.class.isAssignableFrom(type)) {
             object = CommonCRS.WGS84.normalizedGeographic();
-        } else if (GeocentricCRS.class.isAssignableFrom(type)) {
+        } else if (GeodeticCRS.class.isAssignableFrom(type)) {
             object = CommonCRS.WGS84.geocentric();
         } else {
             object = null;

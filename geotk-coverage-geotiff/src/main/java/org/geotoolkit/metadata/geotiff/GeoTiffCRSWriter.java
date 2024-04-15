@@ -32,7 +32,7 @@ import org.opengis.referencing.datum.PrimeMeridian;
 import org.opengis.referencing.datum.Ellipsoid;
 import org.opengis.metadata.Identifier;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.crs.GeocentricCRS;
+import org.opengis.referencing.crs.GeodeticCRS;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.datum.GeodeticDatum;
@@ -93,12 +93,12 @@ public final class GeoTiffCRSWriter {
         if (crs instanceof ProjectedCRS) {
             crsType = ModelTypeProjected;
             fillProjectedCRSMetaDatas(stack, (ProjectedCRS) crs);
-        } else if(crs instanceof GeocentricCRS) {
-            crsType = ModelTypeGeocentric;
-            fillGeocentricCRSMetaDatas(stack, (GeocentricCRS) crs);
         } else if(crs instanceof GeographicCRS) {
             crsType = ModelTypeGeographic;
             fillGeographicCRSMetaDatas(stack, (GeographicCRS) crs);
+        } else if(crs instanceof GeodeticCRS) {
+            crsType = ModelTypeGeocentric;
+            fillGeocentricCRSMetaDatas(stack, (GeodeticCRS) crs);
         } else {
             throw new IOException("GeoTiff only handle ProjectedCRS, GeocentricCRS or GeographicCRS. Can not support CRS : " + crs);
         }
@@ -174,7 +174,7 @@ public final class GeoTiffCRSWriter {
      * Fill a geocentric CRS metadatas in geotiff tags.
      */
     private static void fillGeocentricCRSMetaDatas(final GeoTiffMetaDataStack stack,
-            final GeocentricCRS crs) throws IOException {
+            final GeodeticCRS crs) throws IOException {
         throw new IOException("Not implemented.");
     }
 
