@@ -387,12 +387,12 @@ public class NetCDFExtractor {
                         }
                         sb.newBlock();
                         gb.addDate(millis);
-                        sb.appendTime(millis);
+                        sb.appendTime(millis, false, OMUtils.TIME_FIELD);
 
                         for (NCField field : analyze.phenfields) {
                             final Array phenArray = phenArrays.get(field.name);
                             final Double value    = getDoubleValue(phenArray, i, field.fillValue);
-                            sb.appendValue(value);
+                            sb.appendValue(value, true, field);
                         }
                         sb.endBlock();
                     }
@@ -452,12 +452,12 @@ public class NetCDFExtractor {
                             }
                             sb.newBlock();
                             gb.addDate(millis);
-                            sb.appendTime(millis);
+                            sb.appendTime(millis, false, OMUtils.TIME_FIELD);
                             for (NCField field : analyze.phenfields) {
                                 final Array phenArray   = phenArrays.get(field.name);
                                 final boolean mainFirst = field.mainVariableFirst;
                                 final Double value      = getDoubleValue(mainFirst, phenArray, i, j, field.fillValue);
-                                sb.appendValue(value);
+                                sb.appendValue(value, true, field);
                             }
                             // remove the last token separator
                             sb.endBlock();
@@ -675,12 +675,12 @@ public class NetCDFExtractor {
                             continue;
                         }
                         sb.newBlock();
-                        sb.appendValue(zLevel);
+                        sb.appendValue(zLevel, false, OMUtils.PRESSION_FIELD);
 
                         for (NCField field : analyze.phenfields) {
                             final Array phenArray = phenArrays.get(field.name);
                             final double value    = getDoubleValue(phenArray, zIndex, field.fillValue);
-                            sb.appendValue(value);
+                            sb.appendValue(value, true, field);
                         }
                         sb.endBlock();
                     }
@@ -745,13 +745,13 @@ public class NetCDFExtractor {
                                 continue;
                             }
                             sb.newBlock();
-                            sb.appendValue(zLevel);
+                            sb.appendValue(zLevel, false, OMUtils.PRESSION_FIELD);
 
                             for (NCField field : analyze.phenfields) {
                                 final Array phenArray   = phenArrays.get(field.name);
                                 final boolean mainFirst = field.mainVariableFirst;
                                 final double value      = getDoubleValue(mainFirst, phenArray, zIndex, profileIndex, field.fillValue);
-                                sb.appendValue(value);
+                                sb.appendValue(value, true, field);
                             }
                             sb.endBlock();
                         }
@@ -939,12 +939,12 @@ public class NetCDFExtractor {
                         }
                         sb.newBlock();
                         gb.addDate(millis);
-                        sb.appendTime(millis);
+                        sb.appendTime(millis, false, OMUtils.TIME_FIELD);
 
                         final double latitude         = getDoubleValue(latArray, i, analyze.latField.fillValue);
-                        sb.appendValue(latitude);
+                        sb.appendValue(latitude, false, OMUtils.LATITUDE_FIELD);
                         final double longitude        = Longitude.normalize(getDoubleValue(lonArray, i, analyze.lonField.fillValue));
-                        sb.appendValue(longitude);
+                        sb.appendValue(longitude, false, OMUtils.LONGITUDE_FIELD);
                         if (!Double.isNaN(latitude) && !Double.isNaN(longitude)) {
                             final Coordinate position = new Coordinate(latitude, longitude);
                             if (!position.equals(previousPosition)) {
@@ -957,7 +957,7 @@ public class NetCDFExtractor {
                         for (NCField field : analyze.phenfields) {
                             final Array phenArray = phenArrays.get(field.name);
                             final Double value    = getDoubleValue(phenArray, i, field.fillValue);
-                            sb.appendValue(value);
+                            sb.appendValue(value, true, field);
                         }
                         sb.endBlock();
                     }
@@ -1013,12 +1013,12 @@ public class NetCDFExtractor {
                             }
                             sb.newBlock();
                             gb.addDate(millis);
-                            sb.appendTime(millis);
+                            sb.appendTime(millis, false, OMUtils.TIME_FIELD);
 
                             final double latitude  = getDoubleValue(true, latArray, i, j, analyze.latField.fillValue);
                             final double longitude = Longitude.normalize(getDoubleValue(true, lonArray, i, j, analyze.lonField.fillValue));
-                            sb.appendValue(latitude);
-                            sb.appendValue(longitude);
+                            sb.appendValue(latitude,  false, OMUtils.LATITUDE_FIELD);
+                            sb.appendValue(longitude, false, OMUtils.LONGITUDE_FIELD);
                             if (!Double.isNaN(latitude) && !Double.isNaN(longitude)) {
                                 final Coordinate position = new Coordinate(latitude, longitude);
                                 if (!position.equals(previousPosition)) {
@@ -1032,7 +1032,7 @@ public class NetCDFExtractor {
                                 final Array phenArray   = phenArrays.get(field.name);
                                 final boolean mainFirst = field.mainVariableFirst;
                                 final Double value      = getDoubleValue(mainFirst, phenArray, i, j, field.fillValue);
-                                sb.appendValue(value);
+                                sb.appendValue(value, true, field);
                             }
                             sb.endBlock();
                         }
@@ -1239,12 +1239,12 @@ public class NetCDFExtractor {
                             }
                             sb.newBlock();
                             gb.addDate(millis);
-                            sb.appendTime(millis);
+                            sb.appendTime(millis, false, OMUtils.TIME_FIELD);
 
                             for (NCField field : analyze.phenfields) {
                                 final Array phenArray   = phenArrays.get(field.name);
                                 final Double value      = getDoubleValue(phenArray, i, latIndex, lonIndex, field.fillValue);
-                                sb.appendValue(value);
+                                sb.appendValue(value, true, field);
                             }
                             sb.endBlock();
                         }

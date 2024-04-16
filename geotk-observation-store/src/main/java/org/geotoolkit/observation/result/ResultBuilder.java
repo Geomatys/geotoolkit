@@ -24,6 +24,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import org.geotoolkit.observation.model.FieldType;
+import static org.geotoolkit.observation.model.ResultMode.COUNT;
+import static org.geotoolkit.observation.model.ResultMode.CSV;
+import static org.geotoolkit.observation.model.ResultMode.DATA_ARRAY;
 import org.geotoolkit.observation.model.TextEncoderProperties;
 
 /**
@@ -58,6 +61,9 @@ public class ResultBuilder {
         }
     }
 
+    /**
+     * Reset all values.
+     */
     public void clear() {
         switch (mode) {
             case DATA_ARRAY -> dataArray = new ArrayList<>();
@@ -65,6 +71,9 @@ public class ResultBuilder {
         }
     }
 
+    /**
+     * Start a new measure line.
+     */
     public void newBlock() {
         switch (getMode()) {
             case DATA_ARRAY -> currentArrayLine = new ArrayList<>();
@@ -73,47 +82,67 @@ public class ResultBuilder {
         this.emptyLine = true;
     }
 
-    public void appendTime(Date t) {
+    /**
+     * Append a date to the current data line.
+     *
+     * @param value Date value.
+     * @param measureField if set to {@code false} this will not change the status of empty line.
+     * @param f The current field.
+     */
+    public void appendTime(Date value, boolean measureField, Field f) {
+        if (value != null && measureField) {
+            emptyLine = false;
+        }
         switch (getMode()) {
-            case DATA_ARRAY -> currentArrayLine.add(t);
+            case DATA_ARRAY -> currentArrayLine.add(value);
             case CSV -> {
-                String value = "";
-                if (t != null) {
+                String strValue = "";
+                if (value!= null) {
                     DateFormat df;
-                    if (csvHack) {
-                        df = format;
-                    } else {
-                        df = format2;
-                    }
+                    df = csvHack ? format : format2;
                     synchronized (df) {
-                        value = df.format(t);
+                        strValue = df.format(value);
                     }
                 }
-                currentLine.append(value).append(encoding.getTokenSeparator());
+                currentLine.append(strValue).append(encoding.getTokenSeparator());
             }
         }
     }
 
-    public void appendTime(Long t) {
+    /**
+     * Append a date in millisecond to the current data line.
+     *
+     * @param value Date value in millisecond.
+     * @param measureField if set to {@code false} this will not change the status of empty line.
+     * @param f The current field.
+     */
+    public void appendTime(Long value, boolean measureField, Field f) {
         Date d = null;
-        if (t != null) {
-            d = new Date(t);
+        if (value != null) {
+            d = new Date(value);
         }
-        appendTime(d);
+        appendTime(d, measureField, f);
     }
 
-    public void appendNumber(Number value) {
-        if (value != null) {
+    /**
+     * Append a number value to the current data line.
+     *
+     * @param value Number value.
+     * @param measureField if set to {@code false} this will not change the status of empty line.
+     * @param field The current field.
+     */
+    public void appendNumber(Number value, boolean measureField, Field field) {
+        if (value != null && measureField) {
             emptyLine = false;
         }
         if (value instanceof Double d) {
-            appendDouble(d);
+            appendDouble(d, measureField, field);
         } else if (value instanceof Float f) {
-            appendFloat(f);
+            appendFloat(f, measureField, field);
         } else if (value instanceof Integer i) {
-            appendInteger(i);
+            appendInteger(i, measureField, field);
         } else if (value instanceof Long l) {
-            appendLong(l);
+            appendLong(l, measureField, field);
         } else if (value == null) {
             switch (getMode()) {
                 case DATA_ARRAY -> currentArrayLine.add(null);
@@ -124,68 +153,107 @@ public class ResultBuilder {
         }
     }
 
-    public void appendBoolean(Boolean d) {
-        if (d != null) {
+    /**
+     * Append a boolean value to the current data line.
+     *
+     * @param value Boolean value.
+     * @param measureField if set to {@code false} this will not change the status of empty line.
+     * @param field The current field.
+     */
+    public void appendBoolean(Boolean value, boolean measureField, Field field) {
+        if (value != null && measureField) {
             emptyLine = false;
         }
         switch (getMode()) {
-            case DATA_ARRAY -> currentArrayLine.add(d);
+            case DATA_ARRAY -> currentArrayLine.add(value);
             case CSV -> {
-                if (d != null) {
-                    currentLine.append(Boolean.toString(d));
+                if (value != null) {
+                    currentLine.append(Boolean.toString(value));
                 }
                 currentLine.append(encoding.getTokenSeparator());
             }
+
         }
     }
 
-    public void appendDouble(Double d) {
-        if (!d.isNaN()) {
+    /**
+     * Append a Double value to the current data line.
+     *
+     * @param value Double value.
+     * @param measureField if set to {@code false} this will not change the status of empty line.
+     * @param field The current field.
+     */
+    public void appendDouble(Double value, boolean measureField, Field field) {
+        if (value != null && !value.isNaN() && measureField) {
             emptyLine = false;
         }
         switch (getMode()) {
-            case DATA_ARRAY -> currentArrayLine.add(d);
+            case DATA_ARRAY -> currentArrayLine.add(value);
             case CSV -> {
-                if (!d.isNaN()) {
-                    currentLine.append(Double.toString(d));
+                if (!value.isNaN()) {
+                    currentLine.append(Double.toString(value));
                 }
                 currentLine.append(encoding.getTokenSeparator());
             }
+
         }
     }
 
-    public void appendFloat(Float d) {
-        if (!d.isNaN()) {
+    /**
+     * Append a Float value to the current data line.
+     *
+     * @param value Float value.
+     * @param measureField if set to {@code false} this will not change the status of empty line.
+     * @param field The current field.
+     */
+    public void appendFloat(Float value, boolean measureField, Field field) {
+        if (value != null && !value.isNaN() && measureField) {
             emptyLine = false;
         }
         switch (getMode()) {
-            case DATA_ARRAY -> currentArrayLine.add(d);
+            case DATA_ARRAY -> currentArrayLine.add(value);
             case CSV -> {
-                if (!d.isNaN()) {
-                    currentLine.append(Double.toString(d));
+                if (value != null && !value.isNaN()) {
+                    currentLine.append(Double.toString(value));
                 }
                 currentLine.append(encoding.getTokenSeparator());
             }
+
         }
     }
 
-    public void appendInteger(Integer d) {
-        if (d != null) {
+    /**
+     * Append a Integer value to the current data line.
+     *
+     * @param value Integer value.
+     * @param measureField if set to {@code false} this will not change the status of empty line.
+     * @param field The current field.
+     */
+    public void appendInteger(Integer value, boolean measureField, Field field) {
+        if (value != null && measureField) {
             emptyLine = false;
         }
         switch (getMode()) {
-            case DATA_ARRAY -> currentArrayLine.add(d);
+            case DATA_ARRAY -> currentArrayLine.add(value);
             case CSV -> {
-                if (d != null) {
-                    currentLine.append(Integer.toString(d));
+                if (value != null) {
+                    currentLine.append(Integer.toString(value));
                 }
                 currentLine.append(encoding.getTokenSeparator());
             }
+
         }
     }
 
-    public void appendString(String value) {
-        if (value != null && !value.isEmpty()) {
+    /**
+     * Append a Integer value to the current data line.
+     *
+     * @param value String value.
+     * @param measureField if set to {@code false} this will not change the status of empty line.
+     * @param field The current field.
+     */
+    public void appendString(String value, boolean measureField, Field field) {
+        if (value != null && !value.isEmpty() && measureField) {
             emptyLine = false;
         }
         switch (getMode()) {
@@ -199,8 +267,15 @@ public class ResultBuilder {
         }
     }
 
-    public void appendLong(Long value) {
-        if (value != null) {
+    /**
+     * Append a Long value to the current data line.
+     *
+     * @param value String value.
+     * @param measureField if set to {@code false} this will not change the status of empty line.
+     * @param field The current field.
+     */
+    public void appendLong(Long value, boolean measureField, Field field) {
+        if (value != null && measureField) {
             emptyLine = false;
         }
         switch (getMode()) {
@@ -214,17 +289,24 @@ public class ResultBuilder {
         }
     }
 
-    public void appendValue(Object value) {
+    /**
+     * Append a value to the current data line.
+     *
+     * @param value value.
+     * @param measureField if set to {@code false} this will not change the status of empty line.
+     * @param f The current field.
+     */
+    public void appendValue(Object value, boolean measureField, Field f) {
         if (value instanceof Number d) {
-            appendNumber(d);
+            appendNumber(d, measureField, f);
         } else if (value instanceof String s) {
-            appendString(s);
+            appendString(s, measureField, f);
         } else if (value instanceof Date d) {
-            appendTime(d);
+            appendTime(d, measureField, f);
         } else if (value instanceof Boolean b) {
-            appendBoolean(b);
+            appendBoolean(b, measureField, f);
         } else if (value == null) {
-            appendString((String) null);
+            appendString((String) null, measureField, f);
         } else {
             throw new IllegalArgumentException("Unssuported value type:" + value);
         }
