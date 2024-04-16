@@ -77,7 +77,7 @@ import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.crs.CompoundCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.crs.GeneralDerivedCRS;
+import org.opengis.referencing.crs.DerivedCRS;
 import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;
@@ -685,8 +685,8 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
          * (transformations from 'displayCRS' to 'objectiveCRS') is less frequent and can be
          * handled by the 'transform' cache, which is why we let the factory check for it.
          */
-        if (targetCRS instanceof GeneralDerivedCRS) {
-            final GeneralDerivedCRS derivedCRS = (GeneralDerivedCRS) targetCRS;
+        if (targetCRS instanceof DerivedCRS) {
+            final var derivedCRS = (DerivedCRS) targetCRS;
             if (Utilities.equalsIgnoreMetadata(sourceCRS, derivedCRS.getBaseCRS())) {
                 return derivedCRS.getConversionFromBase().getMathTransform();
             }

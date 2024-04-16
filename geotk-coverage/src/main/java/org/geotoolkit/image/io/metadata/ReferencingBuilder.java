@@ -400,8 +400,8 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
          * For ProjectedCRS, the baseCRS is implicitly a GeographicCRS with the same datum.
          * For other kind of DerivedCRS, we need to declare the baseCRS (TODO).
          */
-        if (crs instanceof GeneralDerivedCRS) {
-            final Conversion conversion = ((GeneralDerivedCRS) crs).getConversionFromBase();
+        if (crs instanceof DerivedCRS) {
+            final Conversion conversion = ((DerivedCRS) crs).getConversionFromBase();
             final MetadataNodeAccessor opAccessor = createNodeWriter(accessor, "Conversion", null);
             setName(conversion, opAccessor);
             setName(conversion.getMethod(), false, opAccessor, "method");
