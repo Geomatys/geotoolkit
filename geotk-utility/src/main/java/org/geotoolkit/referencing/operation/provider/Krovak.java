@@ -23,7 +23,6 @@ import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
-import org.opengis.referencing.operation.ConicProjection;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.metadata.Identifier;
@@ -438,14 +437,6 @@ public class Krovak extends MapProjection {
      */
     public Krovak() {
         super(PARAMETERS);
-    }
-
-    /**
-     * Returns the operation type for this map projection.
-     */
-    @Override
-    public Class<ConicProjection> getOperationType() {
-        return ConicProjection.class;
     }
 
     /**

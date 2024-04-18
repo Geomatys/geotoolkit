@@ -23,7 +23,7 @@ import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.datum.Datum;
 import org.opengis.referencing.datum.Ellipsoid;
 import org.opengis.referencing.datum.PrimeMeridian;
-import org.opengis.referencing.operation.Projection;
+import org.opengis.referencing.operation.Conversion;
 import org.opengis.util.FactoryException;
 
 /**
@@ -69,7 +69,7 @@ public interface EPSGWriter {
      * @return integer, allocated epsg code
      * @throws FactoryException
      */
-    int getOrCreateProjection(final Projection candidate) throws FactoryException;
+    int getOrCreateProjection(final Conversion candidate) throws FactoryException;
 
     /**
      * Store given object and return it's allocated epsg code.

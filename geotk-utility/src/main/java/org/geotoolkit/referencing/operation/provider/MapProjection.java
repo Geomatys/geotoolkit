@@ -28,7 +28,7 @@ import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.MathTransformFactory;
-import org.opengis.referencing.operation.Projection;
+import org.opengis.referencing.operation.Conversion;
 
 import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.operation.MathTransformProvider;
@@ -161,8 +161,8 @@ public abstract class MapProjection extends MathTransformProvider {
      * Returns the operation type for this map projection.
      */
     @Override
-    public Class<? extends Projection> getOperationType() {
-        return Projection.class;
+    public Class<? extends Conversion> getOperationType() {
+        return Conversion.class;
     }
 
     /**

@@ -26,7 +26,7 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.OperationMethod;
-import org.opengis.referencing.operation.Projection;
+import org.opengis.referencing.operation.Conversion;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.datum.PrimeMeridian;
 import org.opengis.referencing.datum.Ellipsoid;
@@ -188,7 +188,7 @@ public final class GeoTiffCRSWriter {
     private static void fillProjection(final GeoTiffMetaDataStack stack,
             final ProjectedCRS projectedCRS) throws FactoryException, IOException {
 
-        final Projection projection = projectedCRS.getConversionFromBase();
+        final Conversion projection = projectedCRS.getConversionFromBase();
 
         //first see if it is an EPSG Projection
         final Integer code = getEPSGCode(projection);
@@ -233,7 +233,7 @@ public final class GeoTiffCRSWriter {
      * </code></blockquote>
      */
     private static void fillGeoGCS(final GeoTiffMetaDataStack stack,
-            final GeographicCRS geographicCRS) throws FactoryException {
+            final GeodeticCRS geographicCRS) throws FactoryException {
 
         //first see if it is an EPSG geographic CRS
         final Integer code = getEPSGCode(geographicCRS);

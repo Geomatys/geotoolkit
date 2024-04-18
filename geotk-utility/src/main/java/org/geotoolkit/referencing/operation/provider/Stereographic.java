@@ -25,7 +25,6 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.metadata.Identifier;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.MathTransformFactory;
-import org.opengis.referencing.operation.PlanarProjection;
 
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.metadata.iso.citation.Citations;
@@ -307,14 +306,6 @@ public class Stereographic extends MapProjection {
      */
     Stereographic(final ParameterDescriptorGroup parameters) {
         super(parameters);
-    }
-
-    /**
-     * Returns the operation type for this map projection.
-     */
-    @Override
-    public Class<PlanarProjection> getOperationType() {
-        return PlanarProjection.class;
     }
 
     /**

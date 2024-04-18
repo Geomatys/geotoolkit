@@ -37,9 +37,7 @@ import org.apache.sis.referencing.operation.transform.DefaultMathTransformFactor
 
 /**
  * Tests projection equations as well as the integration with {@link MathTransformFactory}.
- * Projections are tested through creation and testing of {@link MathTransform} objects;
- * no {@link org.opengis.referencing.operation.Projection} are created here.
- * <p>
+ * Projections are tested through creation and testing of {@link MathTransform} objects.
  * The spherical tests here tests real spheres (tests in {@code "Simple"} test scripts are
  * not exactly spherical).
  *
