@@ -122,6 +122,22 @@ public final class NamesExt extends Static {
     }
 
     /**
+     * Transform a Generic name into an XPath form used in filter property.
+     * Example: Q{my-namespace}my_property
+     *
+     * @param name A generic name.
+     * @return A String with XPath form.
+     */
+    public static String toXpathForm(final GenericName name) {
+        String ns = getNamespace(name);
+        if (ns == null) {
+            return name.tip().toString();
+        } else {
+            return new StringBuilder("Q{").append(ns).append('}').append(name.tip()).toString();
+        }
+    }
+
+    /**
      * Tests that the given string representation matches the given name.
      * String can be written with only the local part or in extendedform or JCR
      * extended form.

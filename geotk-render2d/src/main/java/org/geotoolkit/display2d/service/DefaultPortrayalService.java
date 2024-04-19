@@ -114,8 +114,11 @@ import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.coverage.bandselect.BandSelectProcess;
 import org.geotoolkit.storage.coverage.BandedCoverageResource;
+import org.geotoolkit.storage.feature.FeatureStoreUtilities;
+import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
+import org.opengis.feature.Operation;
 import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
 import org.opengis.filter.Expression;
@@ -129,6 +132,7 @@ import org.opengis.style.Style;
 import org.opengis.style.Symbolizer;
 import org.opengis.style.portrayal.PortrayalService;
 import org.opengis.util.FactoryException;
+import org.opengis.util.GenericName;
 
 /**
  * Default implementation of portrayal service.
@@ -700,8 +704,7 @@ public final class DefaultPortrayalService implements PortrayalService{
                 Optional<PropertyType> opt = FeatureExt.getDefaultGeometrySafe(type);
                 if (opt.isPresent()) {
                     PropertyType defaultGeometry = opt.get();
-                    String geomName = Features.getLinkTarget(defaultGeometry)
-                        .orElseGet(() -> defaultGeometry.getName().toString());
+                    String geomName = FeatureStoreUtilities.defaultGeometryPropertyNameToXpathForm(defaultGeometry);
                     defaultGeomPropertyName = GO2Utilities.FILTER_FACTORY.property(geomName);
                 }
             } catch (DataStoreException ex) {
