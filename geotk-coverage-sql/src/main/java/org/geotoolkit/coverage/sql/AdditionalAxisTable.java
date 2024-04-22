@@ -41,7 +41,7 @@ import org.opengis.referencing.cs.ParametricCS;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
-import org.opengis.referencing.datum.VerticalDatumType;
+import org.opengis.referencing.datum.RealizationMethod;
 import org.opengis.referencing.datum.ParametricDatum;
 import org.opengis.referencing.datum.TemporalDatum;
 import org.opengis.referencing.datum.VerticalDatum;
@@ -247,30 +247,26 @@ final class AdditionalAxisTable extends CachedTable<String,AdditionalAxisEntry> 
          * create a new datum.
          */
         if (AxisDirections.isVertical(direction)) {
-            VerticalDatumType type = VerticalDatumTypes.guess(name, null, null);
+            RealizationMethod type = VerticalDatumTypes.guess(name, null, null);
             if (type == null) {
                 if (Units.isPressure(units)) {
-                    type = VerticalDatumType.BAROMETRIC;
+                    type = RealizationMethod.valueOf("BAROMETRIC");
                 } else if (Units.isLinear(units)) {
-                    if (AxisDirection.UP.equals(direction)) {
-                        type = VerticalDatumType.GEOIDAL;
-                    } else {
-                        type = VerticalDatumType.DEPTH;
-                    }
+                    type = RealizationMethod.GEOID;
                 } else {
                     return null;                // Can not build CRS with unknown vertical datum type.
                 }
             }
             CommonCRS.Vertical candidate = null;
-            if (VerticalDatumType.GEOIDAL.equals(type) || VerticalDatumType.DEPTH.equals(type)) {
+            if (RealizationMethod.GEOID.equals(type) || RealizationMethod.TIDAL.equals(type)) {
                 if (AxisDirection.UP.equals(direction)) {
                     candidate = CommonCRS.Vertical.MEAN_SEA_LEVEL;
                 } else if (AxisDirection.DOWN.equals(direction)) {
                     candidate = CommonCRS.Vertical.DEPTH;
                 }
-            } else if (VerticalDatumTypes.ELLIPSOIDAL.equals(type)) {
+            } else if (VerticalDatumTypes.ellipsoidal(type)) {
                 candidate = CommonCRS.Vertical.ELLIPSOIDAL;
-            } else if (VerticalDatumType.BAROMETRIC.equals(type)) {
+            } else if ("BAROMETRIC".equalsIgnoreCase(type.name())) {
                 candidate = CommonCRS.Vertical.BAROMETRIC;
             }
             final VerticalDatum datum;

@@ -253,7 +253,7 @@ public final class WMSUtilities {
                 } else {
                     final DefaultEngineeringDatum dimDatum = new DefaultEngineeringDatum(Collections.singletonMap("name", dimName));
                     final CoordinateSystemAxis csAxis = new DefaultCoordinateSystemAxis(
-                            Collections.singletonMap("name", dimName), dimName.substring(0, 1), AxisDirection.OTHER, unit);
+                            Collections.singletonMap("name", dimName), dimName.substring(0, 1), AxisDirection.UNSPECIFIED, unit);
                     final AbstractCS dimCs = new AbstractCS(Collections.singletonMap("name", dimName), csAxis);
                     dimCRS = new DefaultEngineeringCRS(Collections.singletonMap("name", dimName), dimDatum, dimCs);
                 }

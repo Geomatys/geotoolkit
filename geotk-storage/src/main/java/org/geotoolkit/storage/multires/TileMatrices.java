@@ -358,7 +358,7 @@ public final class TileMatrices extends Static {
             for (int i=0;i<nbDim;i++) {
                 final EngineeringDatum datum = new DefaultEngineeringDatum(Collections.singletonMap("name", name + i + "D Datum"));
                 final CoordinateSystemAxis axis = new DefaultCoordinateSystemAxis(Collections.singletonMap("name", name + i + "Axis"),
-                        name, AxisDirection.OTHER, Units.UNITY);
+                        name, AxisDirection.UNSPECIFIED, Units.UNITY);
                 final CoordinateSystem cs = new DefaultLinearCS(Collections.singletonMap("name", name + i + "CS"), axis);
                 DefaultEngineeringCRS crs = new DefaultEngineeringCRS(Collections.singletonMap("name", name), datum, cs);
                 crss.add(crs);

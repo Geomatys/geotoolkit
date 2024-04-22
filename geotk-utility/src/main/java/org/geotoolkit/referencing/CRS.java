@@ -346,7 +346,7 @@ compare:    for (final SingleCRS component : actualComponents) {
      */
     private static boolean isGeodetic3D(final Datum geodetic, final Datum vertical) {
         return (geodetic instanceof GeodeticDatum) && (vertical instanceof VerticalDatum) &&
-                VerticalDatumTypes.ELLIPSOIDAL.equals(((VerticalDatum) vertical).getVerticalDatumType());
+                org.apache.sis.referencing.privy.ReferencingUtilities.isEllipsoidalHeight((VerticalDatum) vertical);
     }
 
 

@@ -642,7 +642,7 @@ public class Axis2D extends Line2D implements Cloneable, Serializable {
     public synchronized DefaultCoordinateSystemAxis toCoordinateSystemAxis() {
         if (information == null) {
             String abbreviation = "z";
-            AxisDirection direction = AxisDirection.OTHER;
+            AxisDirection direction = AxisDirection.UNSPECIFIED;
             if (x1 == x2) {
                 if (y1 < y2) {
                     direction = AxisDirection.DISPLAY_DOWN;
