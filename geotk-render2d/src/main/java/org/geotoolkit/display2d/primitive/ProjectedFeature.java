@@ -19,6 +19,7 @@ package org.geotoolkit.display2d.primitive;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
+import org.apache.sis.filter.privy.XPath;
 import org.apache.sis.map.MapLayer;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureQuery;
@@ -91,7 +92,8 @@ public class ProjectedFeature extends DefaultProjectedObject<Feature> {
             if (!isNullorEmpty(geomExp)) {
                 if (geomExp instanceof ValueReference) {
                     try {
-                        prop = featuretype.getProperty(((ValueReference)geomExp).getXPath());
+                        String xPath = ((ValueReference)geomExp).getXPath();
+                        prop = featuretype.getProperty(XPath.toPropertyName(xPath));
                     } catch (PropertyNotFoundException ex) {
                         //style may be used on various feature types
                         //do nothing, be tolerant
