@@ -140,7 +140,7 @@ public class Stereographic extends UnitaryProjection {
                     projection = new Stereographic(descriptor, parameters);
                 }
             }
-            return (MathTransform2D) projection.createMapProjection(factory);
+            return (MathTransform2D) projection.createMapProjection(() -> values);
         } catch (FactoryException e) {
             throw new IllegalArgumentException(e); // TODO
         }

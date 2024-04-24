@@ -32,7 +32,6 @@ import org.apache.sis.referencing.operation.transform.MathTransforms;
 
 import static java.lang.StrictMath.*;
 import static java.util.Collections.singletonMap;
-import org.apache.sis.referencing.operation.transform.DefaultMathTransformFactory;
 import static org.junit.Assert.*;
 
 
@@ -94,8 +93,7 @@ public abstract class ProjectionTestBase extends TransformTestBase {
      */
     static MathTransform concatenated(final UnitaryProjection projection) {
         try {
-            return projection.createMapProjection(
-                    DefaultMathTransformFactory.provider());
+            return projection.createMapProjection(() -> null);
         } catch (org.opengis.util.FactoryException e) {
             throw new AssertionError(e); // TODO
         }
