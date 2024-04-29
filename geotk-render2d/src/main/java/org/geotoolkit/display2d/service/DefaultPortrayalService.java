@@ -21,7 +21,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
 import java.awt.RenderingHints.Key;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
@@ -69,7 +68,6 @@ import org.apache.sis.map.ExceptionPresentation;
 import org.apache.sis.map.Presentation;
 import org.apache.sis.map.coverage.RenderingWorkaround;
 import org.apache.sis.util.privy.UnmodifiableArrayList;
-import org.apache.sis.feature.Features;
 import org.apache.sis.map.MapLayer;
 import org.apache.sis.map.MapLayers;
 import org.apache.sis.map.service.GraphicsPortrayer;
@@ -90,13 +88,11 @@ import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GO2Utilities;
 
-import static org.geotoolkit.display2d.GO2Utilities.LOGGER;
 import static org.geotoolkit.display2d.GO2Utilities.getCached;
 import static org.geotoolkit.display2d.GO2Utilities.mergeColors;
 import org.geotoolkit.display2d.GraphicVisitor;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.J2DCanvasBuffered;
-import org.geotoolkit.display2d.canvas.J2DCanvasDirect;
 import org.geotoolkit.display2d.canvas.J2DCanvasSVG;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.canvas.painter.SolidColorPainter;
@@ -115,10 +111,8 @@ import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.coverage.bandselect.BandSelectProcess;
 import org.geotoolkit.storage.coverage.BandedCoverageResource;
 import org.geotoolkit.storage.feature.FeatureStoreUtilities;
-import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
-import org.opengis.feature.Operation;
 import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
 import org.opengis.filter.Expression;
@@ -132,7 +126,6 @@ import org.opengis.style.Style;
 import org.opengis.style.Symbolizer;
 import org.opengis.style.portrayal.PortrayalService;
 import org.opengis.util.FactoryException;
-import org.opengis.util.GenericName;
 
 /**
  * Default implementation of portrayal service.
@@ -210,6 +203,7 @@ public final class DefaultPortrayalService implements PortrayalService{
             g.setRenderingHints(sceneDef.getHints());
         }
         if (background != null) {
+            g.setColor(background);
             g.fillRect(0, 0, width, height);
         }
 
