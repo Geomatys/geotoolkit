@@ -65,6 +65,7 @@ import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.filter.function.geometry.GeometryFunctionFactory;
 import org.geotoolkit.storage.feature.FeatureIterator;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
+import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
@@ -206,8 +207,7 @@ public final class RenderingRoutines {
         if (isDefaultGeometryNeeded) {
             try {
                 final PropertyType defaultGeometry = FeatureExt.getDefaultGeometry(schema);
-                final String geomName = Features.getLinkTarget(defaultGeometry)
-                        .orElseGet(() -> defaultGeometry.getName().toString());
+                final String geomName = FeatureStoreUtilities.defaultGeometryPropertyNameToXpathForm(defaultGeometry);
                 geomProperties.add(geomName);
             } catch (PropertyNotFoundException e) {
                 throw new PortrayalException("Default geometry cannot be determined. " +

@@ -128,7 +128,7 @@ public class DefaultImageTile implements Tile {
      * @throws IOException if the image reader can't be initialized.
      */
     protected ImageReader getImageReader() throws IOException {
-        ImageReaderSpi spi = this.spi;
+        ImageReaderSpi spi = this.getImageReaderSpi();
         ImageReader reader = null;
 
         if (spi == null && input != null) {

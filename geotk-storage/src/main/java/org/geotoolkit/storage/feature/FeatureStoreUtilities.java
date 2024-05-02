@@ -25,10 +25,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.feature.Features;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
@@ -559,4 +561,22 @@ public class FeatureStoreUtilities {
         return ProbeResult.UNSUPPORTED_STORAGE;
     }
 
+    /**
+     * Return a Xpath form for the specified property.
+     *
+     * @param defaultGeometry a feature property.
+     * @return The name of the property in XPath form.
+     */
+    public static String defaultGeometryPropertyNameToXpathForm(final PropertyType defaultGeometry) {
+        GenericName geomName;
+        // LinkOperation is private so we have no other option to do this until a correction is applied on SIS.
+        Optional<String> tmp = Features.getLinkTarget(defaultGeometry);
+        if (tmp.isPresent()) {
+            Operation op = (Operation) defaultGeometry;
+            geomName = op.getResult().getName();
+        } else {
+            geomName = defaultGeometry.getName();
+        }
+        return NamesExt.toXpathForm(geomName);
+    }
 }

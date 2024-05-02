@@ -33,6 +33,9 @@ import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 import org.apache.sis.io.wkt.*;
+import org.apache.sis.metadata.iso.DefaultMetadata;
+import org.apache.sis.metadata.iso.citation.DefaultCitation;
+import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
@@ -41,8 +44,11 @@ import org.geotoolkit.storage.multires.AbstractTileMatrixSet;
 import org.geotoolkit.storage.multires.ScaleSortedMap;
 import org.geotoolkit.storage.multires.TileMatrices;
 import org.geotoolkit.storage.multires.TileMatrix;
+import org.geotoolkit.storage.multires.TileMatrixSet;
 import org.geotoolkit.storage.multires.WritableTileMatrix;
 import org.geotoolkit.storage.multires.WritableTileMatrixSet;
+import org.opengis.metadata.Metadata;
+import org.opengis.metadata.distribution.Format;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.GenericName;
 
@@ -77,6 +83,32 @@ public class XMLPyramid implements WritableTileMatrixSet {
 
     XMLPyramid(CoordinateReferenceSystem pyramidCRS) throws DataStoreException {
         setCoordinateReferenceSystem(pyramidCRS);
+    }
+
+    @Override
+    public Metadata getMetaData() throws DataStoreException {
+        final GenericName identifier = getIdentifier();
+        final String formatName = set.getFormatName().toLowerCase();
+        final DefaultMetadata metadata = new DefaultMetadata();
+
+        String longName = formatName;
+        String shortName = formatName;
+        String mimeType = formatName;
+        String extension = formatName;
+        switch (formatName) {
+            case "geotiff" :
+            case "tiff" : longName = "Tag Image File Format"; mimeType = "image/tiff"; break;
+            case "jpeg" : longName = "Joint Photographic Experts Group"; mimeType = "image/jpeg"; break;
+            case "png" : longName = "Portable Network Graphics"; mimeType = "image/png"; break;
+        }
+
+        final DefaultDataIdentification dataId = new DefaultDataIdentification();
+        if (identifier != null) dataId.setCitation(new DefaultCitation(identifier.toString()));
+
+        final Format format = TileMatrixSet.createFormat(longName, shortName, mimeType, extension);
+        dataId.setResourceFormats(Collections.singletonList(format));
+        metadata.getIdentificationInfo().add(dataId);
+        return metadata;
     }
 
     /**
