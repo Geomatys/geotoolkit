@@ -19,7 +19,6 @@ package org.geotoolkit.temporal.object;
 
 import java.util.Objects;
 import org.apache.sis.util.SimpleInternationalString;
-import org.opengis.temporal.PeriodDuration;
 import org.opengis.util.InternationalString;
 
 import static org.geotoolkit.temporal.object.TemporalConstants.*;
@@ -29,11 +28,8 @@ import static org.geotoolkit.temporal.object.TemporalConstants.*;
  * about the duration of a period.
  *
  * @author Mehdi Sidhoum (Geomatys)
- * @module
- * @since   4.0
- * @version 4.0
  */
-public class DefaultPeriodDuration extends DefaultDuration implements PeriodDuration {
+public class DefaultPeriodDuration extends DefaultDuration {
 
     /**
      * {@literal P} is a mandatory element which designates that the following characters represent the duration of a period.
@@ -56,14 +52,6 @@ public class DefaultPeriodDuration extends DefaultDuration implements PeriodDura
 
     /**
      * Creates a new instances of PeriodDuration.
-     *
-     * @param years
-     * @param months
-     * @param weeks
-     * @param days
-     * @param hours
-     * @param minutes
-     * @param seconds
      */
     public DefaultPeriodDuration(final InternationalString years, final InternationalString months, final InternationalString weeks, final InternationalString days,
             final InternationalString hours, final InternationalString minutes, final InternationalString seconds) {
@@ -81,8 +69,6 @@ public class DefaultPeriodDuration extends DefaultDuration implements PeriodDura
      * Creates a new instance of PeriodDuration from a long value passed in parameter.
      * if the long contains milliseconds, this will be ignored because there is no
      * MilliSeconds specified in the string format PnYnMnDTnHnMnS, see ISO 8601.
-     *
-     * @param durationInMilliSeconds
      */
     public DefaultPeriodDuration(long durationInMilliSeconds) {
         InternationalString _years   = null;
@@ -155,7 +141,6 @@ public class DefaultPeriodDuration extends DefaultDuration implements PeriodDura
      * @return {@literal P} is a mandatory element which designates that the
      * following characters represent the duration of a period.
      */
-    @Override
     public InternationalString getDesignator() {
         return DESIGNATOR;
     }
@@ -167,7 +152,6 @@ public class DefaultPeriodDuration extends DefaultDuration implements PeriodDura
      * @return a positive integer, followed by the character "Y",
      * which indicated the number of years in the period.
      */
-    @Override
     public InternationalString getYears() {
         return years;
     }
@@ -179,7 +163,6 @@ public class DefaultPeriodDuration extends DefaultDuration implements PeriodDura
      * @return a positive integer, followed by the character "M",
      * which indicated the number of months in the period.
      */
-    @Override
     public InternationalString getMonths() {
         return months;
     }
@@ -191,7 +174,6 @@ public class DefaultPeriodDuration extends DefaultDuration implements PeriodDura
      * @return a positive integer, followed by the character "D",
      * which indicated the number of days in the period.
      */
-    @Override
     public InternationalString getDays() {
         return days;
     }
@@ -203,7 +185,6 @@ public class DefaultPeriodDuration extends DefaultDuration implements PeriodDura
      * @return {@code T} which shall be included whenever the sequence includes values for
      * units less than a day.
      */
-    @Override
     public InternationalString getTimeIndicator() {
         return TIME_INDICATOR;
     }
@@ -215,7 +196,6 @@ public class DefaultPeriodDuration extends DefaultDuration implements PeriodDura
      * @return A positive integer, followed by the character "H",
      * which indicated the number of hours in the period.
      */
-    @Override
     public InternationalString getHours() {
         return hours;
     }
@@ -227,7 +207,6 @@ public class DefaultPeriodDuration extends DefaultDuration implements PeriodDura
      * @return A positive integer, followed by the character "M",
      * which indicated the number of minutes in the period.
      */
-    @Override
     public InternationalString getMinutes() {
         return minutes;
     }
@@ -239,7 +218,6 @@ public class DefaultPeriodDuration extends DefaultDuration implements PeriodDura
      * @return a positive integer, followed by the character "S",
      * which indicated the number of seconds in the period.
      */
-    @Override
     public InternationalString getSeconds() {
         return seconds;
     }

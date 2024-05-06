@@ -28,11 +28,9 @@ import org.geotoolkit.temporal.object.DefaultCalendarDate;
 import org.geotoolkit.temporal.object.DefaultClockTime;
 import org.geotoolkit.temporal.object.DefaultDateAndTime;
 import org.geotoolkit.temporal.object.DefaultInstant;
-import org.geotoolkit.temporal.object.DefaultIntervalLength;
 import org.geotoolkit.temporal.object.DefaultJulianDate;
 import org.geotoolkit.temporal.object.DefaultOrdinalPosition;
 import org.geotoolkit.temporal.object.DefaultPeriod;
-import org.geotoolkit.temporal.object.DefaultPeriodDuration;
 //import org.geotoolkit.temporal.object.DefaultPosition;
 import org.geotoolkit.temporal.object.DefaultTemporalCoordinate;
 import org.geotoolkit.temporal.object.DefaultTemporalPosition;
@@ -56,13 +54,11 @@ import org.opengis.temporal.ClockTime;
 import org.opengis.temporal.DateAndTime;
 import org.opengis.temporal.IndeterminateValue;
 import org.opengis.temporal.Instant;
-import org.opengis.temporal.IntervalLength;
 import org.opengis.temporal.JulianDate;
 import org.opengis.temporal.OrdinalEra;
 import org.opengis.temporal.OrdinalPosition;
 import org.opengis.temporal.OrdinalReferenceSystem;
 import org.opengis.temporal.Period;
-import org.opengis.temporal.PeriodDuration;
 import org.opengis.temporal.TemporalCoordinate;
 import org.opengis.temporal.TemporalCoordinateSystem;
 import org.opengis.temporal.TemporalFactory;
@@ -116,14 +112,6 @@ public class DefaultTemporalFactory implements TemporalFactory {
             return new DefaultInstant(prop, position);
         }
     }
-
-//    /**
-//     * {@inheritDoc }
-//     */
-//    @Override
-//    public Position createPosition(final Date position) {
-//        return new DefaultPosition(position);
-//    }
 
     /**
      * {@inheritDoc }
@@ -201,14 +189,6 @@ public class DefaultTemporalFactory implements TemporalFactory {
      * {@inheritDoc }
      */
     @Override
-    public IntervalLength createIntervalLenght(final Unit unit, final int radix, final int factor, final int value) {
-        return new DefaultIntervalLength(unit, radix, factor, value);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
     public JulianDate createJulianDate(final TemporalReferenceSystem frame, final IndeterminateValue indeterminatePosition,
             final Number coordinateValue) {
         return new DefaultJulianDate(frame, indeterminatePosition, coordinateValue);
@@ -245,16 +225,6 @@ public class DefaultTemporalFactory implements TemporalFactory {
         ordinalEraProp.put(IdentifiedObject.IDENTIFIERS_KEY, name);
         ordinalEraProp.put(ObjectDomain.DOMAIN_OF_VALIDITY_KEY, domainOfValidity);
         return new DefaultOrdinalReferenceSystem(ordinalEraProp, ordinalEraSequence);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public PeriodDuration createPeriodDuration(final InternationalString years, final InternationalString months,
-            final InternationalString week, final InternationalString days, final InternationalString hours,
-            final InternationalString minutes, final InternationalString seconds) {
-        return new DefaultPeriodDuration(years, months, week, days, hours, minutes, seconds);
     }
 
     /**

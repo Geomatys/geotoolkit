@@ -21,19 +21,17 @@ import org.apache.sis.util.SimpleInternationalString;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.opengis.temporal.PeriodDuration;
 import static org.junit.Assert.*;
 import org.opengis.util.InternationalString;
 
 /**
  *
  * @author Mehdi Sidhoum (Geomatys)
- * @module
  */
 public class DefaultPeriodDurationTest {
 
-    private PeriodDuration periodDuration1;
-    private PeriodDuration periodDuration2;
+    private DefaultPeriodDuration periodDuration1;
+    private DefaultPeriodDuration periodDuration2;
 
     @Before
     public void setUp() {

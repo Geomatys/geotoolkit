@@ -22,16 +22,14 @@ import javax.measure.UnitConverter;
 import javax.measure.Unit;
 import org.apache.sis.measure.Units;
 import org.apache.sis.util.ArgumentChecks;
-import org.opengis.temporal.IntervalLength;
 
 /**
  *A data type for intervals of time which supports the expression of duration in
  * terms of a specified multiple of a single unit of time.
  *
  * @author Mehdi Sidhoum (Geomatys)
- * @module
  */
-public class DefaultIntervalLength extends DefaultDuration implements IntervalLength {
+public class DefaultIntervalLength extends DefaultDuration {
 
     /**
      * Milli second unit.
@@ -90,7 +88,6 @@ public class DefaultIntervalLength extends DefaultDuration implements IntervalLe
      *
      * @return the {@link Unit} of measure used to express the length of the interval.
      */
-    @Override
     public Unit getUnit() {
         return unit;
     }
@@ -100,7 +97,6 @@ public class DefaultIntervalLength extends DefaultDuration implements IntervalLe
      *
      * @return positive {@code integer} that is the base of the mulitplier of the {@link Unit}.
      */
-    @Override
     public int getRadix() {
         return radix;
     }
@@ -110,7 +106,6 @@ public class DefaultIntervalLength extends DefaultDuration implements IntervalLe
      *
      * @return {@code integer} that is the exponent of the base.
      */
-    @Override
     public int getFactor() {
         return factor;
     }
@@ -120,7 +115,6 @@ public class DefaultIntervalLength extends DefaultDuration implements IntervalLe
      *
      * @return the length of the time interval as an {@code integer} multiple of one radix^(-factor) of the specified {@link unit}.
      */
-    @Override
     public int getValue() {
         return value;
     }

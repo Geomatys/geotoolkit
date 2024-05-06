@@ -24,7 +24,6 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ComparisonMode;
-import org.opengis.temporal.Duration;
 import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
 import org.opengis.temporal.RelativePosition;
@@ -193,7 +192,7 @@ public class DefaultPeriod extends DefaultTemporalGeometricPrimitive implements 
      */
     @XmlElement(name = "duration")
     private String getDuration() {
-        Duration dur = super.length();
+        DefaultDuration dur = super.length();
         if (dur != null && (dur instanceof DefaultDuration)) {
             final DefaultPeriodDuration defPerDur = (dur instanceof DefaultPeriodDuration) ? (DefaultPeriodDuration) dur : new DefaultPeriodDuration(((DefaultDuration)dur).getTimeInMillis());
             return defPerDur.toString();

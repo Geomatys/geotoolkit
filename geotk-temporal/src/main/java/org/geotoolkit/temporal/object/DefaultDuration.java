@@ -17,22 +17,49 @@
  */
 package org.geotoolkit.temporal.object;
 
-import org.opengis.temporal.Duration;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.Temporal;
+import java.time.temporal.TemporalAmount;
+import java.time.temporal.TemporalUnit;
+import java.time.temporal.UnsupportedTemporalTypeException;
+import java.util.List;
+
 
 /**
  * A data type to be used for describing length or distance in the temporal dimension.
  *
  * @author Mehdi Sidhoum (Geomatys)
  * @author Remi Marechal (Geomatys)
- * @version 4.0
- * @since   4.0
  */
-public abstract class DefaultDuration implements Duration {
-
+public abstract class DefaultDuration implements TemporalAmount {
     /**
      * Return the current length {@link Duration} exprimate in milli seconds.
      *
      * @return the current length {@link Duration} exprimate in milli seconds.
      */
     public abstract long getTimeInMillis();
+
+    @Override
+    public List<TemporalUnit> getUnits() {
+        return List.of(ChronoUnit.MILLIS);
+    }
+
+    @Override
+    public long get(TemporalUnit unit) {
+        if (unit == ChronoUnit.MILLIS) {
+            return getTimeInMillis();
+        }
+        throw new UnsupportedTemporalTypeException("The only supported unit is ChronoUnit.MILLIS.");
+    }
+
+    @Override
+    public Temporal addTo(Temporal temporal) {
+        return ((Instant) temporal).plusMillis(getTimeInMillis());
+    }
+
+    @Override
+    public Temporal subtractFrom(Temporal temporal) {
+        return ((Instant) temporal).minusMillis(getTimeInMillis());
+    }
 }

@@ -20,7 +20,6 @@ package org.geotoolkit.temporal.object;
 import java.util.Map;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
-import org.opengis.temporal.Duration;
 import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
 import org.opengis.temporal.RelativePosition;
@@ -99,8 +98,8 @@ import org.opengis.temporal.TemporalGeometricPrimitive;
      * @return Duration between this geometry and the given one.
      */
     @Override
-    public Duration distance(final TemporalGeometricPrimitive other) {
-        Duration response = null;
+    public DefaultDuration distance(final TemporalGeometricPrimitive other) {
+        DefaultDuration response = null;
         long diff = 0L;
 
 //        if (this instanceof Instant && other instanceof Instant) {
@@ -178,8 +177,8 @@ import org.opengis.temporal.TemporalGeometricPrimitive;
      * @return the length of this TM_GeometricPrimitive
      */
     @Override
-    public Duration length() {
-        Duration response = null;
+    public DefaultDuration length() {
+        DefaultDuration response = null;
         long diff = 0L;
         if (this instanceof Instant) {
             response = new DefaultPeriodDuration(Math.abs(diff));

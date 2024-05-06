@@ -33,7 +33,7 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.Duration;
 import org.apache.sis.util.SimpleInternationalString;
-import org.opengis.temporal.PeriodDuration;
+import org.geotoolkit.temporal.object.DefaultPeriodDuration;
 import org.opengis.util.InternationalString;
 
 
@@ -61,7 +61,7 @@ import org.opengis.util.InternationalString;
 @XmlType(name = "TM_PeriodDuration_PropertyType", propOrder = {
     "tmPeriodDuration"
 })
-public class PeriodDurationType implements PeriodDuration {
+public class PeriodDurationType extends DefaultPeriodDuration {
 
     @XmlElement(name = "TM_PeriodDuration")
     protected Duration tmPeriodDuration;
@@ -69,10 +69,11 @@ public class PeriodDurationType implements PeriodDuration {
     protected List<String> nilReason;
 
     public PeriodDurationType() {
-
+        super(null, null, null, null, null, null, null);
     }
 
     public PeriodDurationType(final String s) {
+        this();
         try {
             final DatatypeFactory factory = DatatypeFactory.newInstance();
             this.tmPeriodDuration = factory.newDuration(s);
@@ -84,6 +85,7 @@ public class PeriodDurationType implements PeriodDuration {
 
     public PeriodDurationType(final boolean isPositive, final int years, final int months, final int days, final int hours, final int minutes,
         final int seconds) {
+        this();
         try {
             final DatatypeFactory factory = DatatypeFactory.newInstance();
             this.tmPeriodDuration = factory.newDuration(isPositive, years, months, days, hours, minutes, seconds);
@@ -95,6 +97,7 @@ public class PeriodDurationType implements PeriodDuration {
 
     public PeriodDurationType(final boolean isPositive, final BigInteger years, final BigInteger months, final BigInteger days, final BigInteger hours, final BigInteger minutes,
         final BigDecimal seconds) {
+        this();
         try {
             final DatatypeFactory factory = DatatypeFactory.newInstance();
             this.tmPeriodDuration = factory.newDuration(isPositive, years, months, days, hours, minutes, seconds);

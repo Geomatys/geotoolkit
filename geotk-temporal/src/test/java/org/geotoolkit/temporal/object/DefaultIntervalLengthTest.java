@@ -22,19 +22,17 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.apache.sis.measure.Units;
-import org.opengis.temporal.IntervalLength;
 import static org.junit.Assert.*;
 
 
 /**
  *
  * @author Mehdi Sidhoum (Geomatys)
- * @module
  */
 public class DefaultIntervalLengthTest {
 
-    private IntervalLength intervalLength1;
-    private IntervalLength intervalLength2;
+    private DefaultIntervalLength intervalLength1;
+    private DefaultIntervalLength intervalLength2;
 
     @Before
     public void setUp() {

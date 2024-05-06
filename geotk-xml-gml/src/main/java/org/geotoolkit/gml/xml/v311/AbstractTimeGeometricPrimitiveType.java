@@ -23,8 +23,8 @@ import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlSchemaType;
 import jakarta.xml.bind.annotation.XmlSeeAlso;
 import jakarta.xml.bind.annotation.XmlType;
+import java.time.temporal.TemporalAmount;
 import org.opengis.filter.Expression;
-import org.opengis.temporal.Duration;
 import org.opengis.temporal.TemporalGeometricPrimitive;
 import org.opengis.util.ScopedName;
 
@@ -98,12 +98,12 @@ public abstract class AbstractTimeGeometricPrimitiveType extends AbstractTimePri
     }
 
     @Override
-    public Duration distance(final TemporalGeometricPrimitive tgp) {
+    public TemporalAmount distance(final TemporalGeometricPrimitive tgp) {
         return null;
     }
 
     @Override
-    public Duration length() {
+    public TemporalAmount length() {
         return null;
     }
 

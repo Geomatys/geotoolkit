@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.temporal.object;
 
+import java.time.temporal.TemporalAmount;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -25,7 +26,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import org.opengis.temporal.Duration;
 import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
 import org.opengis.temporal.TemporalGeometricPrimitive;
@@ -69,7 +69,7 @@ public class DefaultTemporalGeometricPrimitiveTest {
         Calendar cal = Calendar.getInstance();
         cal.set(2000, 0, 1);
         other = new DefaultInstant(Collections.singletonMap(NAME_KEY, "id1"), cal.getTime());
-        Duration result = temporalGeomericPrimitive1.distance(other);
+        TemporalAmount result = temporalGeomericPrimitive1.distance(other);
         assertFalse(temporalGeomericPrimitive2.distance(other).equals(result));
 
         //calcul Distance with instant and period
@@ -98,7 +98,7 @@ public class DefaultTemporalGeometricPrimitiveTest {
         cal.set(2033, 0, 1);
         Period tp1 = new DefaultPeriod(Collections.singletonMap(NAME_KEY, "tp1"), temporalGeomericPrimitive1, temporalGeomericPrimitive2);
         Period tp2 = new DefaultPeriod(Collections.singletonMap(NAME_KEY, "tp2"), temporalGeomericPrimitive2, new DefaultInstant(Collections.singletonMap(NAME_KEY, "id1"), cal.getTime()));
-        Duration result = tp1.length();
+        TemporalAmount result = tp1.length();
         assertFalse(tp2.length().equals(result));
     }
 }

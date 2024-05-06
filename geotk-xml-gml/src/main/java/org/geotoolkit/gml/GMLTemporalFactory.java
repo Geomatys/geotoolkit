@@ -27,13 +27,11 @@ import org.geotoolkit.gts.xml.PeriodDurationType;
 import org.geotoolkit.temporal.factory.DefaultTemporalFactory;
 import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
-import org.opengis.temporal.PeriodDuration;
 import org.opengis.util.InternationalString;
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
- * @module
  */
 public class GMLTemporalFactory extends DefaultTemporalFactory {
 
@@ -66,8 +64,7 @@ public class GMLTemporalFactory extends DefaultTemporalFactory {
         return null;
     }
 
-    @Override
-    public PeriodDuration createPeriodDuration(final InternationalString years, final InternationalString months,
+    public PeriodDurationType createPeriodDuration(final InternationalString years, final InternationalString months,
         final InternationalString week, final InternationalString days, final InternationalString hours,
         final InternationalString minutes, final InternationalString seconds) {
         BigInteger iyears = null;
@@ -96,6 +93,4 @@ public class GMLTemporalFactory extends DefaultTemporalFactory {
         }
         return new PeriodDurationType(true, iyears, imonths, idays, ihours, iminutes, iseconds);
     }
-
-
 }

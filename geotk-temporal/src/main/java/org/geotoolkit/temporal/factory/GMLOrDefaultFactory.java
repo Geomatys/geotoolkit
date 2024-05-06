@@ -29,13 +29,11 @@ import org.opengis.temporal.ClockTime;
 import org.opengis.temporal.DateAndTime;
 import org.opengis.temporal.IndeterminateValue;
 import org.opengis.temporal.Instant;
-import org.opengis.temporal.IntervalLength;
 import org.opengis.temporal.JulianDate;
 import org.opengis.temporal.OrdinalEra;
 import org.opengis.temporal.OrdinalPosition;
 import org.opengis.temporal.OrdinalReferenceSystem;
 import org.opengis.temporal.Period;
-import org.opengis.temporal.PeriodDuration;
 import org.opengis.temporal.TemporalCoordinate;
 import org.opengis.temporal.TemporalCoordinateSystem;
 import org.opengis.temporal.TemporalFactory;
@@ -109,11 +107,6 @@ public final class GMLOrDefaultFactory implements TemporalFactory {
     }
 
     @Override
-    public IntervalLength createIntervalLenght(Unit unit, int radix, int factor, int value) {
-        return delegate.createIntervalLenght(unit, radix, factor, value);
-    }
-
-    @Override
     public JulianDate createJulianDate(TemporalReferenceSystem frame, IndeterminateValue indeterminatePosition, Number coordinateValue) {
         return delegate.createJulianDate(frame, indeterminatePosition, coordinateValue);
     }
@@ -136,11 +129,6 @@ public final class GMLOrDefaultFactory implements TemporalFactory {
     @Override
     public Period createPeriod(Instant begin, Instant end) {
         return delegate.createPeriod(begin, end);
-    }
-
-    @Override
-    public PeriodDuration createPeriodDuration(InternationalString years, InternationalString months, InternationalString week, InternationalString days, InternationalString hours, InternationalString minutes, InternationalString seconds) {
-        return delegate.createPeriodDuration(years, months, week, days, hours, minutes, seconds);
     }
 
     @Override
