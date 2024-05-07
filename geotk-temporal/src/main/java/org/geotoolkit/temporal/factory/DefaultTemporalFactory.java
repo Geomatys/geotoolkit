@@ -40,12 +40,12 @@ public class DefaultTemporalFactory implements TemporalFactory {
     /**
      * Count to ensure period unicity.
      */
-    long periodCount;
+    private long periodCount;
 
     /**
      * Count to ensure instant unicity.
      */
-    long instantCount;
+    private long instantCount;
 
     public DefaultTemporalFactory() {
     }
