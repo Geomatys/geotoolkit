@@ -23,6 +23,7 @@ import java.util.Objects;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
+import java.time.temporal.TemporalAmount;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ComparisonMode;
 import static org.geotoolkit.temporal.object.TemporalUtilities.dateEquals;
@@ -36,14 +37,12 @@ import org.opengis.temporal.TemporalReferenceSystem;
  *
  * @author Mehdi Sidhoum (Geomatys)
  * @author Remi Marechal (Geomatys)
- * @module
  */
 @XmlType(name = "TimeInstant_Type", propOrder = {
     "date"
 })
 @XmlRootElement(name = "TimeInstant")
 public class DefaultInstant extends DefaultTemporalGeometricPrimitive implements Instant {
-
     /**
      * This is the position of this {@linkplain Instant TM_Instant},
      * it shall be associated with a single {@link TemporalReferenceSystem}.
@@ -65,31 +64,7 @@ public class DefaultInstant extends DefaultTemporalGeometricPrimitive implements
     }
 
     /**
-     * Creates a default {@link Instant} implementation from the given properties, {@link Date}.
-     * The properties given in argument follow the same rules than for the
-     * {@linkplain DefaultTemporalGeometricPrimitive#DefaultTemporalGeometricPrimitive(java.util.Map) )  super-class constructor}.
-     *
-     * <table class="referencingTemporal">
-     *   <caption>Recognized properties (non exhaustive list)</caption>
-     *   <tr>
-     *     <th>Property name</th>
-     *     <th>Value type</th>
-     *     <th>Returned by</th>
-     *   </tr>
-     *   <tr>
-     *     <th colspan="3" class="hsep">Defined in parent class (reminder)</th>
-     *   </tr>
-     *   <tr>
-     *     <td>{@value org.opengis.referencing.IdentifiedObject#NAME_KEY}</td>
-     *     <td>{@link ReferenceIdentifier} or {@link String}</td>
-     *     <td>{@link #getName()}</td>
-     *   </tr>
-     *   <tr>
-     *     <td>{@value org.opengis.referencing.IdentifiedObject#IDENTIFIERS_KEY}</td>
-     *     <td>{@link ReferenceIdentifier} (optionally as array)</td>
-     *     <td>{@link #getIdentifiers()}</td>
-     *   </tr>
-     * </table>
+     * Creates a default {@link Instant} implementation from the given properties.
      *
      * @param properties The properties to be given to this object.
      * @param date the {@link Date} of this {@linkplain Instant TM_Instant}.
@@ -103,31 +78,7 @@ public class DefaultInstant extends DefaultTemporalGeometricPrimitive implements
     }
 
     /**
-     * Creates a default {@link Instant} implementation from the given properties, {@link TemporalPosition}.
-     * The properties given in argument follow the same rules than for the
-     * {@linkplain DefaultTemporalGeometricPrimitive#DefaultTemporalGeometricPrimitive(java.util.Map) )  super-class constructor}.
-     *
-     * <table class="referencingTemporal">
-     *   <caption>Recognized properties (non exhaustive list)</caption>
-     *   <tr>
-     *     <th>Property name</th>
-     *     <th>Value type</th>
-     *     <th>Returned by</th>
-     *   </tr>
-     *   <tr>
-     *     <th colspan="3" class="hsep">Defined in parent class (reminder)</th>
-     *   </tr>
-     *   <tr>
-     *     <td>{@value org.opengis.referencing.IdentifiedObject#NAME_KEY}</td>
-     *     <td>{@link ReferenceIdentifier} or {@link String}</td>
-     *     <td>{@link #getName()}</td>
-     *   </tr>
-     *   <tr>
-     *     <td>{@value org.opengis.referencing.IdentifiedObject#IDENTIFIERS_KEY}</td>
-     *     <td>{@link ReferenceIdentifier} (optionally as array)</td>
-     *     <td>{@link #getIdentifiers()}</td>
-     *   </tr>
-     * </table>
+     * Creates a default {@link Instant} implementation from the given properties.
      *
      * @param properties The properties to be given to this object.
      * @param temporalPosition the {@link TemporalPosition} of this {@link Instant},
@@ -186,8 +137,7 @@ public class DefaultInstant extends DefaultTemporalGeometricPrimitive implements
     }
 
     /**
-     * {@inheritDoc }
-     * <br/>
+     * {@inheritDoc}.
      * May returns {@code null} if {@link Instant} was create from
      * {@link DefaultInstant#DefaultInstant(java.util.Map, org.opengis.temporal.TemporalPosition) }.
      */
@@ -198,14 +148,22 @@ public class DefaultInstant extends DefaultTemporalGeometricPrimitive implements
     }
 
     /**
-     * {@inheritDoc }
-     * <br/>
+     * {@inheritDoc}.
      * May returns {@code null} if {@link Instant} was create from
      * {@link DefaultInstant#DefaultInstant(java.util.Map, java.util.Date)}.
      */
     @Override
     public TemporalPosition getTemporalPosition() {
         return temporalPosition;
+    }
+
+    /**
+     * Returns the length of this TM_GeometricPrimitive
+     * @return the length of this TM_GeometricPrimitive
+     */
+    @Override
+    public TemporalAmount length() {
+        return TemporalUtilities.durationFromMillis(Math.abs(date.getTime()));
     }
 
     /**

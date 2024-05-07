@@ -17,12 +17,9 @@
  */
 package org.geotoolkit.temporal.object;
 
-import org.apache.sis.util.SimpleInternationalString;
-import org.junit.After;
-import org.junit.Before;
+import java.time.temporal.ChronoUnit;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import org.opengis.util.InternationalString;
 
 /**
  *
@@ -30,193 +27,75 @@ import org.opengis.util.InternationalString;
  */
 public class DefaultPeriodDurationTest {
 
-    private DefaultPeriodDuration periodDuration1;
-    private DefaultPeriodDuration periodDuration2;
+    private DefaultDuration periodDuration1;
+    private DefaultDuration periodDuration2;
 
-    @Before
-    public void setUp() {
-        periodDuration1 = new DefaultPeriodDuration(new SimpleInternationalString("5"),
-                new SimpleInternationalString("2"),
-                new SimpleInternationalString("1"),
-                new SimpleInternationalString("12"),
-                new SimpleInternationalString("15"),
-                new SimpleInternationalString("5"),
-                new SimpleInternationalString("23"));
-        periodDuration2 = new DefaultPeriodDuration(1535148449548L);
-    }
-
-    @After
-    public void tearDown() {
-        periodDuration1 = null;
-        periodDuration2 = null;
+    public DefaultPeriodDurationTest() {
+        periodDuration1 = new DefaultDuration();
+        periodDuration1.set(ChronoUnit.YEARS, 48);
+        periodDuration1.set(ChronoUnit.MONTHS, 8);
+    //  periodDuration1.set(ChronoUnit.WEEKS, 0);
+        periodDuration1.set(ChronoUnit.DAYS, 4);
+        periodDuration1.set(ChronoUnit.HOURS, 14);
+        periodDuration1.set(ChronoUnit.MINUTES, 7);
+        periodDuration1.set(ChronoUnit.SECONDS, 29);
+        periodDuration1.set(ChronoUnit.MILLIS, 548);
+        periodDuration2 = new DefaultDuration();
+        periodDuration2.setTimeInMillis(1535148449548L);
     }
 
     /**
-     * Test of getDesignator method, of class DefaultPeriodDuration.
+     * Test of get method.
      */
     @Test
-    public void testGetDesignator() {
-        InternationalString result = periodDuration1.getDesignator();
-        assertEquals(periodDuration2.getDesignator(), result);
+    public void testGet() {
+        assertEquals(periodDuration1.get(ChronoUnit.YEARS),
+                     periodDuration2.get(ChronoUnit.YEARS));
+        assertEquals(periodDuration1.get(ChronoUnit.MONTHS),
+                     periodDuration2.get(ChronoUnit.MONTHS));
+        assertEquals(periodDuration1.get(ChronoUnit.WEEKS),
+                     periodDuration2.get(ChronoUnit.WEEKS));
+        assertEquals(periodDuration1.get(ChronoUnit.DAYS),
+                     periodDuration2.get(ChronoUnit.DAYS));
+        assertEquals(periodDuration1.get(ChronoUnit.HOURS),
+                     periodDuration2.get(ChronoUnit.HOURS));
+        assertEquals(periodDuration1.get(ChronoUnit.MINUTES),
+                     periodDuration2.get(ChronoUnit.MINUTES));
+        assertEquals(periodDuration1.get(ChronoUnit.SECONDS),
+                     periodDuration2.get(ChronoUnit.SECONDS));
     }
 
     /**
-     * Test of getYears method, of class DefaultPeriodDuration.
-     */
-    @Test
-    public void testGetYears() {
-        InternationalString result = periodDuration1.getYears();
-        assertFalse(periodDuration2.getYears().equals(result));
-    }
-
-    /**
-     * Test of getMonths method, of class DefaultPeriodDuration.
-     */
-    @Test
-    public void testGetMonths() {
-        InternationalString result = periodDuration1.getMonths();
-        assertFalse(periodDuration2.getMonths().equals(result));
-    }
-
-    /**
-     * Test of getDays method, of class DefaultPeriodDuration.
-     */
-    @Test
-    public void testGetDays() {
-        InternationalString result = periodDuration1.getDays();
-        assertFalse(periodDuration2.getDays().equals(result));
-    }
-
-    /**
-     * Test of getTimeIndicator method, of class DefaultPeriodDuration.
-     */
-    @Test
-    public void testGetTimeIndicator() {
-        InternationalString result = periodDuration1.getTimeIndicator();
-        assertEquals(periodDuration2.getTimeIndicator(), result);
-    }
-
-    /**
-     * Test of getHours method, of class DefaultPeriodDuration.
-     */
-    @Test
-    public void testGetHours() {
-        InternationalString result = periodDuration1.getHours();
-        assertFalse(periodDuration2.getHours().equals(result));
-    }
-
-    /**
-     * Test of getMinutes method, of class DefaultPeriodDuration.
-     */
-    @Test
-    public void testGetMinutes() {
-        InternationalString result = periodDuration1.getMinutes();
-        assertFalse(periodDuration2.getMinutes().equals(result));
-    }
-
-    /**
-     * Test of getSeconds method, of class DefaultPeriodDuration.
-     */
-    @Test
-    public void testGetSeconds() {
-        InternationalString result = periodDuration1.getSeconds();
-        assertFalse(periodDuration2.getSeconds().equals(result));
-    }
-
-    /**
-     * Test of setYears method, of class DefaultPeriodDuration.
-     */
-    @Test
-    public void testSetYears() {
-        InternationalString result = periodDuration1.getYears();
-        ((DefaultPeriodDuration) periodDuration1).setYears(new SimpleInternationalString("12"));
-        assertFalse(periodDuration1.getYears().equals(result));
-    }
-
-    /**
-     * Test of setMonths method, of class DefaultPeriodDuration.
-     */
-    @Test
-    public void testSetMonths() {
-        InternationalString result = periodDuration1.getMonths();
-        ((DefaultPeriodDuration) periodDuration1).setMonths(new SimpleInternationalString("13"));
-        assertFalse(periodDuration1.getMonths().equals(result));
-    }
-
-    /**
-     * Test of setDays method, of class DefaultPeriodDuration.
-     */
-    @Test
-    public void testSetDays() {
-        InternationalString result = periodDuration1.getDays();
-        ((DefaultPeriodDuration) periodDuration1).setDays(new SimpleInternationalString("14"));
-        assertFalse(periodDuration1.getDays().equals(result));
-    }
-
-    /**
-     * Test of setHours method, of class DefaultPeriodDuration.
-     */
-    @Test
-    public void testSetHours() {
-        InternationalString result = periodDuration1.getHours();
-        ((DefaultPeriodDuration) periodDuration1).setHours(new SimpleInternationalString("1"));
-        assertFalse(periodDuration1.getHours().equals(result));
-    }
-
-    /**
-     * Test of setMinutes method, of class DefaultPeriodDuration.
-     */
-    @Test
-    public void testSetMinutes() {
-        InternationalString result = periodDuration1.getMinutes();
-        ((DefaultPeriodDuration) periodDuration1).setMinutes(new SimpleInternationalString("4"));
-        assertFalse(periodDuration1.getMinutes().equals(result));
-    }
-
-    /**
-     * Test of setSeconds method, of class DefaultPeriodDuration.
-     */
-    @Test
-    public void testSetSeconds() {
-        InternationalString result = periodDuration1.getSeconds();
-        ((DefaultPeriodDuration) periodDuration1).setSeconds(new SimpleInternationalString("3"));
-        assertFalse(periodDuration1.getSeconds().equals(result));
-    }
-
-    /**
-     * Test of getTimeInMillis method, of class DefaultPeriodDuration.
+     * Test of getTimeInMillis method.
      */
     @Test
     public void testGetTimeInMillis() {
-        long result = ((DefaultPeriodDuration) periodDuration1).getTimeInMillis();
-        assertFalse(((DefaultPeriodDuration) periodDuration2).getTimeInMillis() == result);
+        assertEquals(periodDuration2.getTimeInMillis(),
+                     periodDuration1.getTimeInMillis());
     }
 
     /**
-     * Test of equals method, of class DefaultPeriodDuration.
+     * Test of equals method.
      */
     @Test
     public void testEquals() {
-        assertNotNull(periodDuration1);
         assertEquals(periodDuration1, periodDuration1);
-        assertFalse(periodDuration1.equals(periodDuration2));
+        assertEquals(periodDuration1, periodDuration2);
     }
 
     /**
-     * Test of hashCode method, of class DefaultPeriodDuration.
+     * Test of hashCode method.
      */
     @Test
     public void testHashCode() {
-        int result = periodDuration1.hashCode();
-        assertFalse(periodDuration2.hashCode() == result);
+        assertEquals(periodDuration1.hashCode(), periodDuration2.hashCode());
     }
 
     /**
-     * Test of toString method, of class DefaultPeriodDuration.
+     * Test of toString method.
      */
     @Test
     public void testToString() {
-        String result = periodDuration1.toString();
-        assertFalse(periodDuration2.toString().equals(result));
+        assertEquals(periodDuration1.toString(), periodDuration2.toString());
     }
 }

@@ -59,7 +59,7 @@ public class DefaultTemporalGeometricPrimitiveTest {
     }
 
     /**
-     * Test of distance method, of class DefaultTemporalGeometricPrimitive.
+     * Test of distance method.
      */
     @Test
     public void testDistance() {
@@ -90,7 +90,7 @@ public class DefaultTemporalGeometricPrimitiveTest {
     }
 
     /**
-     * Test of length method, of class DefaultTemporalGeometricPrimitive.
+     * Test of length method.
      */
     @Test
     public void testLength() {

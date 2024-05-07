@@ -57,36 +57,7 @@ public class DefaultTemporalEdge extends DefaultTemporalTopologicalPrimitive imp
     private TemporalNode end;
 
     /**
-     * Creates a default {@link TemporalNode} implementation from the given properties and {@link Instant}.
-     * The properties given in argument follow the same rules than for the
-     * {@linkplain DefaultTemporalGeometricPrimitive#DefaultTemporalGeometricPrimitive(java.util.Map) )  super-class constructor}.
-     *
-     * <table class="referencingTemporal">
-     *   <caption>Recognized properties (non exhaustive list)</caption>
-     *   <tr>
-     *     <th>Property name</th>
-     *     <th>Value type</th>
-     *     <th>Returned by</th>
-     *   </tr>
-     *   <tr>
-     *     <th colspan="3" class="hsep">Defined in parent class (reminder)</th>
-     *   </tr>
-     *   <tr>
-     *     <td>{@value org.opengis.referencing.IdentifiedObject#NAME_KEY}</td>
-     *     <td>{@link Identifier} or {@link String}</td>
-     *     <td>{@link #getName()}</td>
-     *   </tr>
-     *   <tr>
-     *     <td>{@value org.opengis.referencing.IdentifiedObject#IDENTIFIERS_KEY}</td>
-     *     <td>{@link Identifier} (optionally as array)</td>
-     *     <td>{@link #getIdentifiers()}</td>
-     *   </tr>
-     *   <tr>
-     *     <td>{@value org.opengis.referencing.IdentifiedObject#REMARKS_KEY}</td>
-     *     <td>{@link InternationalString} (optionally as array)</td>
-     *     <td>{@link #getRemarks() }</td>
-     *   </tr>
-     * </table>
+     * Creates a default {@link TemporalNode} implementation from the given properties.
      *
      * @param properties The properties to be given to this object.
      * @param realization Association that may link this {@link TemporalEdge} to its corresponding {@link Period}, should be {@code null}.

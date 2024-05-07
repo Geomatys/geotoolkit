@@ -22,6 +22,7 @@ import java.util.Objects;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
+import java.time.temporal.TemporalAmount;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ComparisonMode;
 import org.opengis.temporal.Instant;
@@ -33,9 +34,6 @@ import org.opengis.temporal.RelativePosition;
  *
  * @author Mehdi Sidhoum (Geomatys)
  * @author Remi Marechal (Geomatys)
- * @module
- * @version 4.0
- * @since   4.0
  */
 @XmlType(name = "TimePeriod_Type", propOrder = {
     "beginning",
@@ -44,7 +42,6 @@ import org.opengis.temporal.RelativePosition;
 })
 @XmlRootElement(name = "TimePeriod")
 public class DefaultPeriod extends DefaultTemporalGeometricPrimitive implements Period {
-
     /**
      * This is the {@link Instant} at which this Period starts.
      */
@@ -62,38 +59,14 @@ public class DefaultPeriod extends DefaultTemporalGeometricPrimitive implements 
     }
 
     /**
-     * Creates a default {@link Period} implementation from the given properties and {@link Instant}.
-     * The properties given in argument follow the same rules than for the
-     * {@linkplain DefaultTemporalGeometricPrimitive#DefaultTemporalGeometricPrimitive(java.util.Map) )  super-class constructor}.
-     *
-     * <table class="referencingTemporal">
-     *   <caption>Recognized properties (non exhaustive list)</caption>
-     *   <tr>
-     *     <th>Property name</th>
-     *     <th>Value type</th>
-     *     <th>Returned by</th>
-     *   </tr>
-     *   <tr>
-     *     <th colspan="3" class="hsep">Defined in parent class (reminder)</th>
-     *   </tr>
-     *   <tr>
-     *     <td>{@value org.opengis.referencing.IdentifiedObject#NAME_KEY}</td>
-     *     <td>{@link Identifier} or {@link String}</td>
-     *     <td>{@link #getName()}</td>
-     *   </tr>
-     *   <tr>
-     *     <td>{@value org.opengis.referencing.IdentifiedObject#IDENTIFIERS_KEY}</td>
-     *     <td>{@link Identifier} (optionally as array)</td>
-     *     <td>{@link #getIdentifiers()}</td>
-     *   </tr>
-     * </table>
+     * Creates a default {@link Period} implementation from the given properties.
      *
      * @param properties The properties to be given to this object.
      * @param begining begin instant of the period.
      * @param ending end instant of the period.
      * @throws IllegalArgumentException
      */
-    public DefaultPeriod(final Map<String , ?> properties, final Instant begining, final Instant ending) {
+    public DefaultPeriod(final Map<String,?> properties, final Instant begining, final Instant ending) {
         super(properties);
         ArgumentChecks.ensureNonNull("begining", begining);
         ArgumentChecks.ensureNonNull("ending", ending);
@@ -122,7 +95,6 @@ public class DefaultPeriod extends DefaultTemporalGeometricPrimitive implements 
         if (object != null) {
             begining = object.getBeginning();
             ending = object.getEnding();
-
             if (object instanceof DefaultPeriod) {
                 //--- voir pour get duration
             }
@@ -186,27 +158,31 @@ public class DefaultPeriod extends DefaultTemporalGeometricPrimitive implements 
     }
 
     /**
-     * Duration only use for XML binding.
-     *
-     * @return {@link String} which represent duration for XML binding format.
-     */
-    @XmlElement(name = "duration")
-    private String getDuration() {
-        DefaultDuration dur = super.length();
-        if (dur != null && (dur instanceof DefaultDuration)) {
-            final DefaultPeriodDuration defPerDur = (dur instanceof DefaultPeriodDuration) ? (DefaultPeriodDuration) dur : new DefaultPeriodDuration(((DefaultDuration)dur).getTimeInMillis());
-            return defPerDur.toString();
-        }
-        return null;
-    }
-
-    /**
      * Set {@link Period} to the {@link Instant} at which it ends.
      *
      * @param ending ending {@link Instant} of the {@link Period}.
      */
     public void setEnding(final Instant ending) {
         this.ending = ending;
+    }
+
+    /**
+     * {@return the length of this TM_GeometricPrimitive}.
+     */
+    @Override
+    public TemporalAmount length() {
+        return (begining != null && ending != null) ? begining.distance(ending) : null;
+    }
+
+    /**
+     * Duration only use for XML binding.
+     *
+     * @return {@link String} which represent duration for XML binding format.
+     */
+    @XmlElement(name = "duration")
+    private String getDuration() {
+        TemporalAmount dur = length();
+        return (dur != null) ? dur.toString() : null;
     }
 
     /**
@@ -249,7 +225,6 @@ public class DefaultPeriod extends DefaultTemporalGeometricPrimitive implements 
         if (ending != null) {
             s.append("end:").append(ending).append('\n');
         }
-
         return s.toString();
     }
 }

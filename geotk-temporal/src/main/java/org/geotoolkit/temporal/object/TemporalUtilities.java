@@ -22,6 +22,8 @@ import java.util.List;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.temporal.TemporalAmount;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -30,7 +32,6 @@ import java.util.SimpleTimeZone;
 import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.sis.util.SimpleInternationalString;
 
 import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.util.collection.UnSynchronizedCache;
@@ -233,86 +234,36 @@ public final class TemporalUtilities {
     }
 
     /**
-     * Returns a DefaultPeriodDuration instance parsed from a string that
-     * respect ISO8601 format ie: PnYnMnDTnHnMnS where n is an integer
+     * Returns the given duration as a standard Java object if possible.
+     *
+     * @param millis the duration in milliseconds.
+     * @return an object for the given duration, as a standard type if possible.
+     */
+    public static TemporalAmount durationFromMillis(long millis) {
+        if (millis < TemporalConstants.DAY_MS) {
+            return Duration.ofMillis(millis);
+        }
+        var d = new DefaultDuration();
+        d.setTimeInMillis(millis);
+        return d.tryToPeriod();
+    }
+
+    /**
+     * Returns a duration instance parsed from a string in ISO 8601 format.
+     * Pattern is PnYnMnDTnHnMnS where n is an integer.
      *
      * @TODO maybe should check by Pattern of string before and should throw an
      *       exception when it is bad format
      *
-     * @param periodDuration
      * @return duration in millisenconds represented by this string duration.
      */
-    public static DefaultDuration getDurationFromString(String periodDuration) {
+    public static TemporalAmount getDurationFromString(String periodDuration) {
         if (periodDuration == null) {
             return null;
         }
-        String nbYear = null, nbMonth = null, nbWeek = null, nbDay = null, nbHour = null, nbMin = null, nbSec = null;
-
-        // remove first char 'P'
-        periodDuration = periodDuration.substring(1);
-
-        // looking for the period years
-        if (periodDuration.indexOf('Y') != -1) {
-            nbYear = periodDuration.substring(0, periodDuration.indexOf('Y'));
-            periodDuration = periodDuration.substring(periodDuration
-                    .indexOf('Y') + 1);
-        }
-        // looking for the period months
-        if (periodDuration.indexOf('M') != -1
-                && (periodDuration.indexOf('T') == -1 || periodDuration
-                        .indexOf('T') > periodDuration.indexOf('M'))) {
-            nbMonth = periodDuration.substring(0, periodDuration.indexOf('M'));
-            periodDuration = periodDuration.substring(periodDuration
-                    .indexOf('M') + 1);
-        }
-        // looking for the period weeks
-        if (periodDuration.indexOf('W') != -1) {
-            nbWeek = periodDuration.substring(0, periodDuration.indexOf('W'));
-            periodDuration = periodDuration.substring(periodDuration
-                    .indexOf('W') + 1);
-        }
-        // looking for the period days
-        if (periodDuration.indexOf('D') != -1) {
-            nbDay = periodDuration.substring(0, periodDuration.indexOf('D'));
-            periodDuration = periodDuration.substring(periodDuration
-                    .indexOf('D') + 1);
-        }
-        // if the periodDuration is not over we pass to the hours by removing
-        // 'T'
-        if (periodDuration.indexOf('T') != -1) {
-            periodDuration = periodDuration.substring(1);
-        }
-        // looking for the period hours
-        if (periodDuration.indexOf('H') != -1) {
-            nbHour = periodDuration.substring(0, periodDuration.indexOf('H'));
-            periodDuration = periodDuration.substring(periodDuration
-                    .indexOf('H') + 1);
-        }
-        // looking for the period minutes
-        if (periodDuration.indexOf('M') != -1) {
-            nbMin = periodDuration.substring(0, periodDuration.indexOf('M'));
-            periodDuration = periodDuration.substring(periodDuration
-                    .indexOf('M') + 1);
-        }
-        // looking for the period seconds
-        if (periodDuration.indexOf('S') != -1) {
-            nbSec = periodDuration.substring(0, periodDuration.indexOf('S'));
-            periodDuration = periodDuration.substring(periodDuration
-                    .indexOf('S') + 1);
-        }
-        if (periodDuration.length() != 0) {
-            throw new IllegalArgumentException(
-                    "The period descritpion is malformed, should not respect ISO8601 : "
-                            + periodDuration);
-        }
-        return new DefaultPeriodDuration(
-                nbYear!=null?new SimpleInternationalString(nbYear):null,
-                nbMonth!=null?new SimpleInternationalString(nbMonth):null,
-                nbWeek!=null?new SimpleInternationalString(nbWeek):null,
-                nbDay!=null?new SimpleInternationalString(nbDay):null,
-                nbHour!=null?new SimpleInternationalString(nbHour):null,
-                nbMin!=null?new SimpleInternationalString(nbMin):null,
-                nbSec!=null?new SimpleInternationalString(nbSec):null);
+        var d = new DefaultDuration();
+        d.parse(periodDuration.trim());
+        return d.tryToPeriod();
     }
 
     /**
@@ -329,10 +280,8 @@ public final class TemporalUtilities {
      * @deprecated use parseDateCal
      */
     @Deprecated
-    public static Date parseDate(final String date) throws ParseException,
-            NullPointerException {
+    public static Date parseDate(final String date) throws ParseException {
         return parseDate(date, false);
-
     }
 
     /**
@@ -364,21 +313,14 @@ public final class TemporalUtilities {
      *
      * @param date
      *            String to parse
-     * @return Calendar
-     * @throws ParseException
-     * @throws NullPointerException
      */
-    public static Calendar parseDateCal(final String date) throws ParseException,
-            NullPointerException {
-
+    public static Calendar parseDateCal(final String date) throws ParseException {
         if (date.endsWith("BC")) {
             throw new ParseException(
                     "Date is marked as Before Christ, not possible to parse it",
                     date.length());
         }
-
         final int[] slashOccurences = StringUtilities.getIndexes(date, '/');
-
         if (slashOccurences.length == 1) {
             // date is like : 11/2050
             final int month = parseInt(date.substring(0, slashOccurences[0])) - 1;
@@ -520,7 +462,6 @@ public final class TemporalUtilities {
             cal.set(Calendar.MILLISECOND, 0);
             return cal;
         }
-
         throw new ParseException("Invalid date format : " + date, 0);
     }
 

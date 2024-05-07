@@ -20,6 +20,7 @@ package org.geotoolkit.temporal.object;
 import java.util.Map;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
+import java.time.temporal.TemporalAmount;
 import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
 import org.opengis.temporal.RelativePosition;
@@ -31,11 +32,9 @@ import org.opengis.temporal.TemporalGeometricPrimitive;
  * a temporal instant and a temporal period.
  *
  * @author Mehdi Sidhoum (Geomatys)
- * @module
  */
 @XmlAccessorType(XmlAccessType.NONE)
-//@XmlSeeAlso({DefaultInstant.class, DefaultPeriod.class})
- public abstract class DefaultTemporalGeometricPrimitive extends DefaultTemporalPrimitive implements TemporalGeometricPrimitive, Separation {
+public abstract class DefaultTemporalGeometricPrimitive extends DefaultTemporalPrimitive implements TemporalGeometricPrimitive, Separation {
     public DefaultTemporalGeometricPrimitive(Map<String, ?> properties) throws IllegalArgumentException {
         super(properties);
     }
@@ -50,88 +49,19 @@ import org.opengis.temporal.TemporalGeometricPrimitive;
      * given object are not recursively copied.
      *
      * @param object The Instant to copy values from, or {@code null} if none.
-     *
-     * @see #castOrCopy(TemporalGeometricPrimitive)
      */
     protected DefaultTemporalGeometricPrimitive(final TemporalGeometricPrimitive object) {
         super(object);
-//        if (object != null) {
-//            this.referenceEvent = object.getReferenceEvent();
-//            ArgumentChecks.ensureNonNull("referenceEvent", referenceEvent);
-//            this.referenceTime  = object.getReferenceTime();
-//            this.utcReference   = object.getUTCReference();
-//            if (object instanceof DefaultPeriod) {
-//                this.dateBasis = ((DefaultClock) object).getDateBasis();
-//            }
-//        }
     }
-
-//    /**
-//     * Returns a Geotk implementation with the values of the given arbitrary implementation.
-//     * This method performs the first applicable action in the following choices:
-//     *
-//     * <ul>
-//     *   <li>If the given object is {@code null}, then this method returns {@code null}.</li>
-//     *   <li>Otherwise if the given object is already an instance of
-//     *       {@code DefaultTemporalGeometricPrimitive}, then it is returned unchanged.</li>
-//     *   <li>Otherwise a new {@code DefaultTemporalGeometricPrimitive} instance is created using the
-//     *       {@linkplain #DefaultTemporalGeometricPrimitive(TemporalGeometricPrimitive) copy constructor}
-//     *       and returned. Note that this is a <cite>shallow</cite> copy operation, since the other
-//     *       metadata contained in the given object are not recursively copied.</li>
-//     * </ul>
-//     *
-//     * @param  object The object to get as a Geotk implementation, or {@code null} if none.
-//     * @return A Geotk implementation containing the values of the given object (may be the
-//     *         given object itself), or {@code null} if the argument was null.
-//     */
-//    public static DefaultTemporalGeometricPrimitive castOrCopy(final TemporalGeometricPrimitive object) {
-//        if (object == null || object instanceof DefaultTemporalGeometricPrimitive) {
-//            return (DefaultTemporalGeometricPrimitive) object;
-//        }
-//        return new DefaultTemporalGeometricPrimitive(object);
-//    }
 
     /**
      * Returns the distance from this TM_GeometricPrimitive to another TM_GeometricPrimitive,
      * i.e. the absolute value of the difference between their temporal positions.
-     * @param other
      * @return Duration between this geometry and the given one.
      */
     @Override
-    public DefaultDuration distance(final TemporalGeometricPrimitive other) {
-        DefaultDuration response = null;
+    public TemporalAmount distance(final TemporalGeometricPrimitive other) {
         long diff = 0L;
-
-//        if (this instanceof Instant && other instanceof Instant) {
-//            if (((Instant) this).getPosition().anyOther() != null && ((Instant) other).getPosition().anyOther() != null) {
-//                if (!((DefaultTemporalPosition) ((Instant) this).getPosition().anyOther()).getFrame().equals(((DefaultTemporalPosition) ((Instant) other).getPosition().anyOther()).getFrame())) {
-//                    try {
-//                        throw new Exception("the TM_TemporalPositions are not both associated with the same TM_ReferenceSystem !");
-//                    } catch (Exception ex) {
-//                        LOGGER.log(Level.WARNING, null, ex);
-//                    }
-//                }
-//            } else if (((Instant) this).getPosition().anyOther() != null) {
-//                if (((Instant) this).getPosition().anyOther().getIndeterminatePosition() != null ||
-//                        ((DefaultTemporalPosition) ((Instant) this).getPosition().anyOther()).getFrame() instanceof OrdinalReferenceSystem) {
-//                    try {
-//                        throw new Exception("either of the two TM_TemporalPositions is indeterminate or is associated with a TM_OrdinalReferenceSystem !");
-//                    } catch (Exception ex) {
-//                        LOGGER.log(Level.WARNING, null, ex);
-//                    }
-//                }
-//            } else if (((Instant) other).getPosition().anyOther() != null) {
-//                if (((Instant) other).getPosition().anyOther().getIndeterminatePosition() != null ||
-//                        ((DefaultTemporalPosition) ((Instant) other).getPosition().anyOther()).getFrame() instanceof OrdinalReferenceSystem) {
-//                    try {
-//                        throw new Exception("either of the two TM_TemporalPositions is indeterminate or is associated with a TM_OrdinalReferenceSystem !");
-//                    } catch (Exception ex) {
-//                        LOGGER.log(Level.WARNING, null, ex);
-//                    }
-//                }
-//            }
-//        }
-
         if (this.relativePosition(other).equals(RelativePosition.BEFORE) || this.relativePosition(other).equals(RelativePosition.AFTER)) {
             if (this instanceof Instant && other instanceof Instant) {
                 diff = Math.min(Math.abs(((Instant) other).getDate().getTime() - ((Instant) this).getDate().getTime()),
@@ -167,31 +97,6 @@ import org.opengis.temporal.TemporalGeometricPrimitive;
                 diff = 0L;
             }
         }
-
-        response = new DefaultPeriodDuration(Math.abs(diff));
-        return response;
-    }
-
-    /**
-     * Returns the length of this TM_GeometricPrimitive
-     * @return the length of this TM_GeometricPrimitive
-     */
-    @Override
-    public DefaultDuration length() {
-        DefaultDuration response = null;
-        long diff = 0L;
-        if (this instanceof Instant) {
-            response = new DefaultPeriodDuration(Math.abs(diff));
-            return response;
-        } else {
-            if (this instanceof Period) {
-                if (((Period) this).getBeginning() != null &&
-                        ((Period) this).getEnding() != null) {
-                    response = ((DefaultInstant) ((Period) this).getBeginning()).distance(((DefaultInstant) ((Period) this).getEnding()));
-                    return response;
-                }
-            }
-            return null;
-        }
+        return TemporalUtilities.durationFromMillis(Math.abs(diff));
     }
 }

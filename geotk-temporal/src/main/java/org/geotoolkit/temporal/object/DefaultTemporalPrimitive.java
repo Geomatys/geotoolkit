@@ -19,7 +19,6 @@ package org.geotoolkit.temporal.object;
 
 import java.util.Map;
 import org.apache.sis.referencing.AbstractIdentifiedObject;
-import org.opengis.referencing.ReferenceSystem;
 import org.opengis.temporal.IndeterminateValue;
 import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
@@ -31,15 +30,8 @@ import org.opengis.temporal.TemporalPrimitive;
  * An abstract class that represents a non-decomposed element of geometry or topology of time.
  *
  * @author Mehdi Sidhoum (Geomatys)
- * @module
  */
 public abstract class DefaultTemporalPrimitive extends AbstractIdentifiedObject implements TemporalPrimitive, TemporalOrder {
-
-    /**
-     *
-     * @param properties
-     * @throws IllegalArgumentException
-     */
     public DefaultTemporalPrimitive(Map<String, ?> properties) throws IllegalArgumentException {
         super(properties);
     }
@@ -115,7 +107,6 @@ public abstract class DefaultTemporalPrimitive extends AbstractIdentifiedObject 
             } else {
                 return (timeobject.getDate().compareTo(instantOther.getDate()) == 0) ? RelativePosition.EQUALS : RelativePosition.AFTER;
             }
-
         } else {
             if (this instanceof Period && other instanceof Instant) {
                 Period timeobject = (Period) this;
@@ -131,7 +122,6 @@ public abstract class DefaultTemporalPrimitive extends AbstractIdentifiedObject 
                 } else {
                      return (timeobject.getBeginning().getDate().compareTo(instantarg.getDate()) == 0) ? RelativePosition.BEGUN_BY : RelativePosition.AFTER;
                 }
-
             } else {
                 if (this instanceof Instant && other instanceof Period) {
                     Instant timeobject = (Instant) this;
@@ -147,8 +137,6 @@ public abstract class DefaultTemporalPrimitive extends AbstractIdentifiedObject 
                     } else {
                         return (instantarg.getBeginning().getDate().compareTo(timeobject.getDate()) == 0) ? RelativePosition.BEGINS : RelativePosition.BEFORE;
                     }
-
-
                 } else {
                     if (this instanceof Period && other instanceof Period) {
                         Period timeobject = (Period) this;
