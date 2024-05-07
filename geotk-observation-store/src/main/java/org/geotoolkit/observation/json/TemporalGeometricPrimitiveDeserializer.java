@@ -27,6 +27,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
+import org.apache.sis.referencing.CommonCRS;
 import static org.geotoolkit.observation.json.ObservationJsonUtils.getFieldValue;
 import org.geotoolkit.temporal.object.DefaultInstant;
 import org.geotoolkit.temporal.object.DefaultPeriod;
@@ -86,7 +87,8 @@ public class TemporalGeometricPrimitiveDeserializer extends JsonDeserializer<Tem
             return new DefaultInstant(Collections.singletonMap(IdentifiedObject.NAME_KEY, id), d);
         } else if (instantNode.hasNonNull("indeterminatePosition")) {
             IndeterminateValue iValue = IndeterminateValue.valueOf(instantNode.get("indeterminatePosition").asText());
-            return new DefaultInstant(Collections.singletonMap(IdentifiedObject.NAME_KEY, id), new DefaultTemporalPosition(iValue));
+            return new DefaultInstant(Collections.singletonMap(IdentifiedObject.NAME_KEY, id),
+                    new DefaultTemporalPosition(CommonCRS.Temporal.JULIAN.crs(), iValue));
         } else {
             throw new JsonMappingException(parser, "Invalid JSON : missing date or indeterminatePosition for Instant");
         }

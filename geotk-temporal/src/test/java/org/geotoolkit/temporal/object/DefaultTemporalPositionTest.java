@@ -17,16 +17,15 @@
  */
 package org.geotoolkit.temporal.object;
 
-import org.apache.sis.metadata.iso.extent.DefaultExtent;
+import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.temporal.factory.DefaultTemporalFactory;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.opengis.referencing.crs.TemporalCRS;
 import org.opengis.temporal.IndeterminateValue;
 import org.opengis.temporal.TemporalPosition;
-import org.opengis.temporal.TemporalReferenceSystem;
 
 
 /**
@@ -45,16 +44,10 @@ public class DefaultTemporalPositionTest {
         NamedIdentifier name1 = new NamedIdentifier(null, "Gregorian calendar");
         NamedIdentifier name2 = new NamedIdentifier(null, "Julian calendar");
 
-        TemporalReferenceSystem frame1 = FACTORY.createTemporalReferenceSystem(name1, new DefaultExtent());
-        TemporalReferenceSystem frame2 = FACTORY.createTemporalReferenceSystem(name2, new DefaultExtent());
+        TemporalCRS frame1 = CommonCRS.Temporal.JULIAN.crs();
+        TemporalCRS frame2 = CommonCRS.Temporal.TRUNCATED_JULIAN.crs();
         temporalPosition1 = FACTORY.createTemporalPosition(frame1, IndeterminateValue.UNKNOWN);
         temporalPosition2 = FACTORY.createTemporalPosition(frame2, IndeterminateValue.NOW);
-    }
-
-    @After
-    public void tearDown() {
-        temporalPosition1 = null;
-        temporalPosition2 = null;
     }
 
     /**
@@ -62,7 +55,7 @@ public class DefaultTemporalPositionTest {
      */
     @Test
     public void testGetIndeterminatePosition() {
-        IndeterminateValue result = temporalPosition1.getIndeterminatePosition();
+        IndeterminateValue result = temporalPosition1.getIndeterminatePosition().orElse(null);
         assertFalse(temporalPosition2.getIndeterminatePosition().equals(result));
     }
 
@@ -71,7 +64,7 @@ public class DefaultTemporalPositionTest {
      */
     @Test
     public void testGetFrame() {
-        TemporalReferenceSystem result = ((DefaultTemporalPosition) temporalPosition1).getFrame();
+        TemporalCRS result = ((DefaultTemporalPosition) temporalPosition1).getFrame();
         assertFalse(((DefaultTemporalPosition) temporalPosition2).getFrame().equals(result));
     }
 

@@ -67,7 +67,7 @@ public abstract class DefaultTemporalPrimitive extends AbstractIdentifiedObject 
             // test the relative position when the other paramter has an indeterminate value.
             if (timeobject.getDate() == null || instantOther.getDate() == null) {
                 if (timeobject.getDate() != null && instantOther.getTemporalPosition() != null && instantOther.getTemporalPosition().getIndeterminatePosition() != null) {
-                    IndeterminateValue indeterminatePosition = instantOther.getTemporalPosition().getIndeterminatePosition();
+                    IndeterminateValue indeterminatePosition = instantOther.getTemporalPosition().getIndeterminatePosition().orElse(null);
                     if (indeterminatePosition == IndeterminateValue.AFTER) {
                        return RelativePosition.AFTER;
                     } else if (indeterminatePosition == IndeterminateValue.BEFORE) {
@@ -84,7 +84,7 @@ public abstract class DefaultTemporalPrimitive extends AbstractIdentifiedObject 
                        }
                     }
                 } else if (instantOther.getDate() != null && timeobject.getTemporalPosition() != null && timeobject.getTemporalPosition().getIndeterminatePosition() != null) {
-                    IndeterminateValue indeterminatePosition =  timeobject.getTemporalPosition().getIndeterminatePosition();
+                    IndeterminateValue indeterminatePosition =  timeobject.getTemporalPosition().getIndeterminatePosition().orElse(null);
                     if (indeterminatePosition == IndeterminateValue.AFTER) {
                        return RelativePosition.AFTER;
                     } else if (indeterminatePosition == IndeterminateValue.BEFORE) {

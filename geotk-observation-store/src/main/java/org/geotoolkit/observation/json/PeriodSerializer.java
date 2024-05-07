@@ -60,9 +60,9 @@ public class PeriodSerializer extends JsonSerializer<Period> {
             writer.writeFieldName("date");
             DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.S'Z'");
             writer.writeString(sdf.format(i.getDate()));
-        } else if (i.getTemporalPosition() != null &&  i.getTemporalPosition().getIndeterminatePosition() != null) {
+        } else if (i.getTemporalPosition() != null && i.getTemporalPosition().getIndeterminatePosition().isPresent()) {
             writer.writeFieldName("indeterminatePosition");
-            writer.writeString(i.getTemporalPosition().getIndeterminatePosition().name());
+            writer.writeString(i.getTemporalPosition().getIndeterminatePosition().get().name());
         } else {
             throw new JsonMappingException(writer, "Instant must contains at least a date or an indeterminate position.");
         }

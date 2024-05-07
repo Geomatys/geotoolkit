@@ -88,7 +88,7 @@ public class JsonBindingTest {
                                                                 "10972X0137-PONT",
                                                                 "Point d'eau BSSS",
                                                                 Collections.EMPTY_MAP,
-                                                                "urn:-sandre:object:bdrhf:123X", 
+                                                                "urn:-sandre:object:bdrhf:123X",
                                                                 pt);
 
         Map<String, Object> phenProperties = new HashMap<>();
@@ -242,7 +242,10 @@ public class JsonBindingTest {
 
         DefaultPeriod p = new DefaultPeriod(Collections.singletonMap(NAME_KEY, "p-time"),
                                             new DefaultInstant(Collections.singletonMap(NAME_KEY, "st-time"), sdf.parse("2001-01-01T02:00:00Z")),
-                                            new DefaultInstant(Collections.singletonMap(NAME_KEY, "en-time"), new DefaultTemporalPosition(IndeterminateValue.NOW)));
+                                            new DefaultInstant(Collections.singletonMap(NAME_KEY, "en-time"),
+                                                    new DefaultTemporalPosition(
+                                                            CommonCRS.Temporal.JULIAN.crs(),
+                                                            IndeterminateValue.NOW)));
 
         GeneralEnvelope area =  new GeneralEnvelope(CommonCRS.defaultGeographic());
         area.setRange(0, 5, 10);

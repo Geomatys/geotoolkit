@@ -21,6 +21,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import static org.apache.sis.feature.AbstractIdentifiedType.NAME_KEY;
+import org.apache.sis.referencing.CommonCRS;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -90,7 +91,8 @@ public class DefaultTemporalPrimitiveTest {
 
 
         // relative position with undeterminate value
-        Instant now = new DefaultInstant(Collections.singletonMap(NAME_KEY, "id3"), new DefaultTemporalPosition(IndeterminateValue.NOW));
+        Instant now = new DefaultInstant(Collections.singletonMap(NAME_KEY, "id3"),
+                new DefaultTemporalPosition(CommonCRS.Temporal.JULIAN.crs(), IndeterminateValue.NOW));
         result = temporalPrimitive1.relativePosition(now);
         assertEquals(RelativePosition.BEFORE, result);
 

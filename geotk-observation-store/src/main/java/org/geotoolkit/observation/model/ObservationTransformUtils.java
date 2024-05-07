@@ -45,7 +45,6 @@ import org.geotoolkit.swe.xml.PhenomenonProperty;
 import org.geotoolkit.swe.xml.Quantity;
 import org.geotoolkit.swe.xml.SimpleDataRecord;
 import org.geotoolkit.swe.xml.TextBlock;
-import org.geotoolkit.swe.xml.UomProperty;
 import org.geotoolkit.temporal.object.DefaultInstant;
 import org.geotoolkit.temporal.object.DefaultPeriod;
 import org.geotoolkit.temporal.object.DefaultTemporalGeometricPrimitive;
@@ -560,7 +559,9 @@ public class ObservationTransformUtils {
         if (gmlTime instanceof org.geotoolkit.gml.xml.GMLInstant gmi) {
             String name = gmi.getId() != null ? gmi.getId() : UUID.randomUUID().toString() + "-time";
             if (gmi.getTimePosition() != null && gmi.getTimePosition().getIndeterminatePosition() != null) {
-                TemporalPosition tp = new DefaultTemporalPosition(IndeterminateValue.valueOf(gmi.getTimePosition().getIndeterminatePosition().value().toUpperCase()));
+                TemporalPosition tp = new DefaultTemporalPosition(
+                        CommonCRS.Temporal.JULIAN.crs(),
+                        IndeterminateValue.valueOf(gmi.getTimePosition().getIndeterminatePosition().value().toUpperCase()));
                 return new DefaultInstant(Collections.singletonMap(NAME_KEY, name), tp);
             }
             return new DefaultInstant(Collections.singletonMap(NAME_KEY, name), gmi.getDate());

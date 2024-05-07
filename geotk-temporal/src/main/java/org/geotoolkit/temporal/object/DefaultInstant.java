@@ -29,7 +29,6 @@ import org.apache.sis.util.ComparisonMode;
 import static org.geotoolkit.temporal.object.TemporalUtilities.dateEquals;
 import org.opengis.temporal.Instant;
 import org.opengis.temporal.TemporalPosition;
-import org.opengis.temporal.TemporalReferenceSystem;
 
 /**
  * A zero-dimensional geometric primitive that represents position in time, equivalent to a point
