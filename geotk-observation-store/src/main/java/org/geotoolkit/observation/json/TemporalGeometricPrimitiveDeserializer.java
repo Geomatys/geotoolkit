@@ -34,7 +34,6 @@ import org.geotoolkit.temporal.object.DefaultPeriod;
 import org.geotoolkit.temporal.object.DefaultTemporalPosition;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.temporal.IndeterminateValue;
-import org.opengis.temporal.Instant;
 import org.opengis.temporal.TemporalGeometricPrimitive;
 
 /**
@@ -58,8 +57,8 @@ public class TemporalGeometricPrimitiveDeserializer extends JsonDeserializer<Tem
             JsonNode beginNode = rootNode.get("beginning");
             JsonNode endNode   = rootNode.get("ending");
             try {
-                Instant begin = readInstant(parser, sdf, beginNode);
-                Instant end   = readInstant(parser, sdf, endNode);
+                DefaultInstant begin = readInstant(parser, sdf, beginNode);
+                DefaultInstant end   = readInstant(parser, sdf, endNode);
                 return new DefaultPeriod(Collections.singletonMap(IdentifiedObject.NAME_KEY, id), begin, end);
 
             } catch (ParseException ex) {
@@ -70,7 +69,7 @@ public class TemporalGeometricPrimitiveDeserializer extends JsonDeserializer<Tem
             String dateStr = rootNode.get("date").textValue();
             try {
                 Date d = sdf.parse(dateStr);
-                return new DefaultInstant(Collections.singletonMap(IdentifiedObject.NAME_KEY, id), d);
+                return new DefaultInstant(Collections.singletonMap(IdentifiedObject.NAME_KEY, id), d.toInstant());
             } catch (ParseException ex) {
                 throw new JsonMappingException(parser, "Date parsing exception", ex);
             }
@@ -79,12 +78,12 @@ public class TemporalGeometricPrimitiveDeserializer extends JsonDeserializer<Tem
         }
     }
 
-    private Instant readInstant(JsonParser parser, DateFormat sdf, JsonNode instantNode) throws ParseException, IOException {
+    private DefaultInstant readInstant(JsonParser parser, DateFormat sdf, JsonNode instantNode) throws ParseException, IOException {
         String id = getFieldValue(instantNode, "id").orElseThrow(() -> new JsonMappingException(parser, "No instant id available"));
         if (instantNode.hasNonNull("date")) {
             String dateStr    = instantNode.get("date").textValue();
             Date d = sdf.parse(dateStr);
-            return new DefaultInstant(Collections.singletonMap(IdentifiedObject.NAME_KEY, id), d);
+            return new DefaultInstant(Collections.singletonMap(IdentifiedObject.NAME_KEY, id), d.toInstant());
         } else if (instantNode.hasNonNull("indeterminatePosition")) {
             IndeterminateValue iValue = IndeterminateValue.valueOf(instantNode.get("indeterminatePosition").asText());
             return new DefaultInstant(Collections.singletonMap(IdentifiedObject.NAME_KEY, id),

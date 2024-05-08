@@ -25,6 +25,7 @@ import javax.xml.datatype.Duration;
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
+import java.time.Instant;
 
 import org.geotoolkit.gml.xml.GMLMarshallerPool;
 import org.geotoolkit.gml.xml.v311.DirectPositionListType;
@@ -41,7 +42,6 @@ import org.junit.*;
 import static org.junit.Assert.*;
 import static org.geotoolkit.test.Assertions.assertXmlEquals;
 
-import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
 
 /**
@@ -203,7 +203,7 @@ public class GmlXMLBindingTest {
     public void timePeriodUmarshallingTest() throws Exception {
         TimePositionType begin = new TimePositionType("2002-08-01");
         TimePositionType end = new TimePositionType("2003-08-01");
-        TimePeriodType expResult = new TimePeriodType(new TimeInstantType(begin), new TimeInstantType(end));
+        TimePeriodType expResult = new TimePeriodType(null, new TimeInstantType(begin), new TimeInstantType(end));
 
 
         String xml = "<gml:TimePeriod xmlns:gml=\"http://www.opengis.net/gml\">" + '\n' +
@@ -219,7 +219,7 @@ public class GmlXMLBindingTest {
         assertPeriodEquals(expResult, (Period) result);
 
         end       = null;
-        expResult = new TimePeriodType(new TimeInstantType(begin), new TimeInstantType(end));
+        expResult = new TimePeriodType(null, new TimeInstantType(begin), new TimeInstantType(end));
 
 
         xml = "<gml:TimePeriod xmlns:gml=\"http://www.opengis.net/gml\">" + '\n' +
@@ -240,6 +240,6 @@ public class GmlXMLBindingTest {
     }
 
     private static Date getDate(Instant ins) {
-        return (ins != null) ? ins.getDate() : null;
+        return (ins != null) ? Date.from(ins) : null;
     }
 }

@@ -23,7 +23,9 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import org.opengis.temporal.Instant;
+import java.time.Instant;
+import org.geotoolkit.temporal.object.DefaultInstant;
+import org.geotoolkit.temporal.object.DefaultPeriod;
 import org.opengis.temporal.Period;
 
 /**
@@ -38,12 +40,20 @@ public class PeriodSerializer extends JsonSerializer<Period> {
         writer.writeFieldName("id");
         writer.writeString(p.getName().getCode());
 
-        Instant begin = p.getBeginning();
+        DefaultInstant begin = null, end = null;
+        if (p instanceof DefaultPeriod dp) {
+            begin = dp.beginning;
+            end = dp.ending;
+        } else {
+            Instant i = p.getBeginning();
+            if (i != null) begin = new DefaultInstant(i);
+            i = p.getEnding();
+            if (i != null) end = new DefaultInstant(i);
+        }
         if (begin != null) {
             writer.writeFieldName("beginning");
             writeInstant(writer, begin);
         }
-        Instant end = p.getEnding();
         if (end != null) {
             writer.writeFieldName("ending");
             writeInstant(writer, end);
@@ -51,8 +61,7 @@ public class PeriodSerializer extends JsonSerializer<Period> {
         writer.writeEndObject();
     }
 
-
-    private static void writeInstant(JsonGenerator writer, Instant i) throws IOException {
+    private static void writeInstant(JsonGenerator writer, DefaultInstant i) throws IOException {
         writer.writeStartObject();
         writer.writeFieldName("id");
         writer.writeString(i.getName().getCode());

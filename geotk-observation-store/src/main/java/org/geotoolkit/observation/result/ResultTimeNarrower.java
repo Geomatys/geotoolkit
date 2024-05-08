@@ -21,7 +21,6 @@ package org.geotoolkit.observation.result;
 
 import org.geotoolkit.temporal.object.ISODateParser;
 import org.opengis.filter.Filter;
-import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
 
 import java.sql.Timestamp;
@@ -31,6 +30,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotoolkit.observation.model.ComplexResult;
 import org.geotoolkit.observation.model.TextEncoderProperties;
+import org.geotoolkit.temporal.object.DefaultInstant;
 import org.opengis.filter.Literal;
 import org.opengis.filter.TemporalOperator;
 import org.opengis.filter.TemporalOperatorName;
@@ -56,19 +56,18 @@ public class ResultTimeNarrower {
      *
      * @param observation An observation.
      * @param timeFilters A list of time fiters.
-     *
      */
     public static void applyTimeConstraint(final Observation observation, final List<Filter> timeFilters) {
         if (observation.getSamplingTime() instanceof Period p) {
             final Timestamp tbegin;
             final Timestamp tend;
-            if (p.getBeginning() != null && p.getBeginning().getDate() != null) {
-                tbegin = new Timestamp(p.getBeginning().getDate().getTime());
+            if (p.getBeginning() != null) {
+                tbegin = new Timestamp(p.getBeginning().toEpochMilli());
             } else {
                 tbegin = null;
             }
-            if (p.getEnding() != null && p.getEnding().getDate() != null) {
-                tend = new Timestamp(p.getEnding().getDate().getTime());
+            if (p.getEnding() != null) {
+                tend = new Timestamp(p.getEnding().toEpochMilli());
             } else {
                 tend = null;
             }
@@ -103,8 +102,8 @@ public class ResultTimeNarrower {
             if (type == TemporalOperatorName.EQUALS) {
                 final TemporalOperator<?> filter = (TemporalOperator) bound;
                 final TemporalPrimitive time = rmLiteral(filter.getExpressions().get(1));
-                if (time instanceof Instant ti) {
-                    final Timestamp boundEquals = new Timestamp(ti.getDate().getTime());
+                if (time instanceof DefaultInstant ti) {
+                    final Timestamp boundEquals = new Timestamp(ti.getInstant().toEpochMilli());
 
                     LOGGER.finer("TE case 1");
                     //case 1 the periods contains a matching values
@@ -114,8 +113,8 @@ public class ResultTimeNarrower {
             } else if (type == TemporalOperatorName.AFTER) {
                 final TemporalOperator filter = (TemporalOperator) bound;
                 final TemporalPrimitive time = rmLiteral(filter.getExpressions().get(1));
-                if (time instanceof Instant ti) {
-                    final Timestamp boundBegin = new Timestamp(ti.getDate().getTime());
+                if (time instanceof DefaultInstant ti) {
+                    final Timestamp boundBegin = new Timestamp(ti.getInstant().toEpochMilli());
 
                     // case 1 the period overlaps the bound
                     if (tBegin.before(boundBegin) && tEnd.after(boundBegin)) {
@@ -127,8 +126,8 @@ public class ResultTimeNarrower {
             } else if (type == TemporalOperatorName.BEFORE) {
                 final TemporalOperator filter = (TemporalOperator) bound;
                 final TemporalPrimitive time = rmLiteral(filter.getExpressions().get(1));
-                if (time instanceof Instant ti) {
-                    final Timestamp boundEnd = new Timestamp(ti.getDate().getTime());
+                if (time instanceof DefaultInstant ti) {
+                    final Timestamp boundEnd = new Timestamp(ti.getInstant().toEpochMilli());
 
                     // case 1 the period overlaps the bound
                     if (tBegin.before(boundEnd) && tEnd.after(boundEnd)) {
@@ -141,8 +140,8 @@ public class ResultTimeNarrower {
                 final TemporalOperator filter = (TemporalOperator) bound;
                 final TemporalPrimitive time = rmLiteral(filter.getExpressions().get(1));
                 if (time instanceof Period tp) {
-                    final Timestamp boundBegin = new Timestamp(tp.getBeginning().getDate().getTime());
-                    final Timestamp boundEnd   = new Timestamp(tp.getEnding().getDate().getTime());
+                    final Timestamp boundBegin = new Timestamp(tp.getBeginning().toEpochMilli());
+                    final Timestamp boundEnd   = new Timestamp(tp.getEnding().toEpochMilli());
 
                     // case 1 the period overlaps the first bound
                     if (tBegin.before(boundBegin) && tEnd.before(boundEnd) && tEnd.after(boundBegin)) {

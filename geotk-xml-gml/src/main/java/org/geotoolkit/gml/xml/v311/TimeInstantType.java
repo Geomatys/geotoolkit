@@ -24,12 +24,11 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
+import java.time.Instant;
 import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.gml.xml.GMLInstant;
 import org.geotoolkit.gml.xml.AbstractTimePosition;
 import org.opengis.filter.Literal;
-import org.opengis.temporal.Instant;
-import org.opengis.temporal.TemporalPosition;
 
 
 /**
@@ -85,11 +84,11 @@ public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implemen
         }
     }
 
-    public TimeInstantType(final Date timePosition) {
+    public TimeInstantType(final Instant timePosition) {
         this.timePosition = new TimePositionType(timePosition);
     }
 
-    public TimeInstantType(final String id, final Date timePosition) {
+    public TimeInstantType(final String id, final Instant timePosition) {
         super(id);
         this.timePosition = new TimePositionType(timePosition);
     }
@@ -103,13 +102,6 @@ public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implemen
         this.timePosition = new TimePositionType(timePosition);
     }
 
-    public TimeInstantType(final Instant instant) {
-        super(instant);
-        if (instant != null/* && instant.getPosition() != null*/) {
-            this.timePosition = new TimePositionType(instant.getDate());
-        }
-    }
-
     /**
      * Gets the value of the timePosition property.
      *
@@ -120,7 +112,7 @@ public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implemen
      */
     @Override
     public TimePositionType getTimePosition() {
-        return new TimePositionType(timePosition);
+        return timePosition;
     }
 
     /**
@@ -135,27 +127,15 @@ public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implemen
         this.timePosition = value;
     }
 
-    @Override
-    public Date getDate() {
-        return (timePosition != null) ? timePosition.getDate() : null;
-    }
-
     public void setDate(final Date value) {
 //        timePosition = value;
 //        if (value instanceof TimePositionType) {
 //            this.timePosition = (TimePositionType)value;
         /*} else*/ if (value != null) {
-            this.timePosition = new TimePositionType(value);
+            this.timePosition = new TimePositionType(value.toInstant());
         } else {
             this.timePosition = null;
         }
-    }
-
-    public long getTime() {
-//        if (this.timePosition != null && this.timePosition.getDate() != null) {
-//            return this.timePosition.getDate().getTime();
-//        }
-        return (timePosition.getDate() != null ? timePosition.getDate().getTime() : -1);
     }
 
 //    @Override
@@ -204,10 +184,5 @@ public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implemen
         int hash = 5;
         hash = 37 * hash + (this.timePosition != null ? this.timePosition.hashCode() : 0);
         return hash;
-    }
-
-    @Override
-    public TemporalPosition getTemporalPosition() {
-        return null;
     }
 }

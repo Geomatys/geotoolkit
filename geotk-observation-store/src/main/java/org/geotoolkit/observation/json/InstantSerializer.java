@@ -22,16 +22,16 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import org.opengis.temporal.Instant;
+import org.geotoolkit.temporal.object.DefaultInstant;
 
 /**
  *
  * @author Guilhem Legal (geomatys)
  */
-public class InstantSerializer extends JsonSerializer<Instant> {
+public class InstantSerializer extends JsonSerializer<DefaultInstant> {
 
     @Override
-    public void serialize(Instant i, JsonGenerator writer, SerializerProvider serializerProvider) throws IOException {
+    public void serialize(DefaultInstant i, JsonGenerator writer, SerializerProvider serializerProvider) throws IOException {
         writer.writeStartObject();
         writer.writeFieldName("id");
         writer.writeString(i.getName().getCode());

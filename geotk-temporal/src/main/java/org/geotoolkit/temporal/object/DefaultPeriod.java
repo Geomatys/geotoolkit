@@ -22,12 +22,15 @@ import java.util.Objects;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
+import java.time.Instant;
 import java.time.temporal.TemporalAmount;
+import java.util.concurrent.atomic.AtomicLong;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ComparisonMode;
-import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
 import org.opengis.temporal.RelativePosition;
+import org.opengis.temporal.TemporalGeometricPrimitive;
+import org.opengis.temporal.TemporalPrimitive;
 
 /**
  * A one-dimensional geometric primitive that represent extent in time.
@@ -41,89 +44,53 @@ import org.opengis.temporal.RelativePosition;
     "duration"
 })
 @XmlRootElement(name = "TimePeriod")
-public class DefaultPeriod extends DefaultTemporalGeometricPrimitive implements Period {
+public class DefaultPeriod extends DefaultTemporalPrimitive implements Period {
+    private static final AtomicLong COUNT = new AtomicLong();
+
     /**
      * This is the {@link Instant} at which this Period starts.
      */
-    private Instant begining;
+    @XmlElement(name = "begin", required = true)
+    public final DefaultInstant beginning;
 
     /**
      * This is the {@link Instant} at which this Period ends.
      */
-    private Instant ending;
+    @XmlElement(name = "end", required = true)
+    public final DefaultInstant ending;
 
     /**
      * Empty constructor only use for XML binding.
      */
     private DefaultPeriod() {
+        beginning = ending = null;
+    }
+
+    public DefaultPeriod(final DefaultInstant beginning, final DefaultInstant ending) {
+        this(Map.of(NAME_KEY, "period" + COUNT.incrementAndGet()), beginning, ending);
     }
 
     /**
      * Creates a default {@link Period} implementation from the given properties.
      *
      * @param properties The properties to be given to this object.
-     * @param begining begin instant of the period.
+     * @param beginning begin instant of the period.
      * @param ending end instant of the period.
      * @throws IllegalArgumentException
      */
-    public DefaultPeriod(final Map<String,?> properties, final Instant begining, final Instant ending) {
+    public DefaultPeriod(final Map<String,?> properties, final DefaultInstant beginning, final DefaultInstant ending) {
         super(properties);
-        ArgumentChecks.ensureNonNull("begining", begining);
+        ArgumentChecks.ensureNonNull("begining", beginning);
         ArgumentChecks.ensureNonNull("ending", ending);
         //-- begining must be before or equals to ending
-        if (begining != null &&
-           (RelativePosition.BEFORE.equals(begining.relativePosition(ending)) ||
-            RelativePosition.EQUALS.equals(begining.relativePosition(ending)))) {
-             this.begining = begining;
+        if (beginning != null &&
+           (RelativePosition.BEFORE.equals(beginning.relativePosition(ending)) ||
+            RelativePosition.EQUALS.equals(beginning.relativePosition(ending)))) {
+             this.beginning = beginning;
              this.ending = ending;
         } else {
             throw new IllegalArgumentException("begining must be before or equals ending");
         }
-     }
-
-    /**
-     * Constructs a new instance initialized with the values from the specified metadata object.
-     * This is a <cite>shallow</cite> copy constructor, since the other metadata contained in the
-     * given object are not recursively copied.
-     *
-     * @param object The Instant to copy values from, or {@code null} if none.
-     *
-     * @see #castOrCopy(Period)
-     */
-    private DefaultPeriod(final Period object) {
-        super(object);
-        if (object != null) {
-            begining = object.getBeginning();
-            ending = object.getEnding();
-            if (object instanceof DefaultPeriod) {
-                //--- voir pour get duration
-            }
-        }
-    }
-
-    /**
-     * Returns a Geotk implementation with the values of the given arbitrary implementation.
-     * This method performs the first applicable action in the following choices:
-     *
-     * <ul>
-     *   <li>If the given object is {@code null}, then this method returns {@code null}.</li>
-     *   <li>Otherwise if the given object is already an instance of
-     *       {@code DefaultPeriod}, then it is returned unchanged.</li>
-     *   <li>Otherwise a new {@code DefaultPeriod} instance is created using the
-     *       {@linkplain #DefaultPeriod(Period) copy constructor}
-     *       and returned. Note that this is a <cite>shallow</cite> copy operation, since the other
-     *       metadata contained in the given object are not recursively copied.</li>
-     * </ul>
-     *
-     * @param  object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return A Geotk implementation containing the values of the given object (may be the
-     *         given object itself), or {@code null} if the argument was null.
-     */
-    public static DefaultPeriod castOrCopy(final Period object) {
-        if (object == null || object instanceof DefaultPeriod) {
-            return (DefaultPeriod) object;
-        }
-        return new DefaultPeriod(object);
     }
 
     /**
@@ -132,18 +99,8 @@ public class DefaultPeriod extends DefaultTemporalGeometricPrimitive implements 
      * @return {@link Period} to the {@link Instant} at which it starts.
      */
     @Override
-    @XmlElement(name = "begin", required = true)
-    public Instant getBeginning() {
-        return begining;
-    }
-
-    /**
-     * Set {@link Period} to the {@link Instant} at which it starts.
-     *
-     * @param begining start {@link Instant} of the {@link Period}.
-     */
-    public void setBegining(final Instant begining) {
-        this.begining = begining;
+    public final Instant getBeginning() {
+        return beginning.date;
     }
 
     /**
@@ -152,18 +109,8 @@ public class DefaultPeriod extends DefaultTemporalGeometricPrimitive implements 
      * @return {@link Period} to the {@link Instant} at which it ends.
      */
     @Override
-    @XmlElement(name = "end", required = true)
-    public Instant getEnding() {
-        return ending;
-    }
-
-    /**
-     * Set {@link Period} to the {@link Instant} at which it ends.
-     *
-     * @param ending ending {@link Instant} of the {@link Period}.
-     */
-    public void setEnding(final Instant ending) {
-        this.ending = ending;
+    public final Instant getEnding() {
+        return ending.date;
     }
 
     /**
@@ -171,7 +118,7 @@ public class DefaultPeriod extends DefaultTemporalGeometricPrimitive implements 
      */
     @Override
     public TemporalAmount length() {
-        return (begining != null && ending != null) ? begining.distance(ending) : null;
+        return (beginning != null && ending != null) ? beginning.distance(ending) : null;
     }
 
     /**
@@ -186,6 +133,78 @@ public class DefaultPeriod extends DefaultTemporalGeometricPrimitive implements 
     }
 
     /**
+     * @deprecated Not correctly implemented.
+     */
+    @Override
+    @Deprecated
+    public TemporalAmount distance(final TemporalGeometricPrimitive other) {
+        long diff = 0L;
+        final var start = getBeginning();
+        final var end = getEnding();
+        final var pos = relativePosition(other);
+        if (pos.equals(RelativePosition.BEFORE) || pos.equals(RelativePosition.AFTER)) {
+            if (other instanceof DefaultInstant t) {
+                diff = Math.min(Math.abs(t.date.toEpochMilli() - end.toEpochMilli()),
+                        Math.abs(t.date.toEpochMilli() - start.toEpochMilli()));
+            } else {
+                if (other instanceof Period p) {
+                    diff = Math.min(Math.abs(p.getEnding().toEpochMilli() - start.toEpochMilli()),
+                            Math.abs(p.getBeginning().toEpochMilli() - end.toEpochMilli()));
+                }
+            }
+        }
+        return TemporalUtilities.durationFromMillis(Math.abs(diff));
+    }
+
+    @Override
+    public RelativePosition relativePosition(final TemporalPrimitive other) {
+        final var start = getBeginning();
+        final var end = getEnding();
+        if (other instanceof DefaultInstant instantarg) {
+            if (end.isBefore(instantarg.date)) {
+                return RelativePosition.BEFORE;
+            } else if (end.compareTo(instantarg.date) == 0) {
+                return RelativePosition.ENDED_BY;
+            } else if (start.isBefore(instantarg.date) &&
+                end.isAfter(instantarg.date)) {
+                return RelativePosition.CONTAINS;
+            } else {
+                 return (start.compareTo(instantarg.date) == 0) ? RelativePosition.BEGUN_BY : RelativePosition.AFTER;
+            }
+        } else if (other instanceof Period instantarg) {
+            final var otherStart = instantarg.getBeginning();
+            final var otherEnd = instantarg.getEnding();
+            if (end.isBefore(otherStart)) {
+                return RelativePosition.BEFORE;
+            } else if (end.compareTo(otherStart) == 0) {
+                return RelativePosition.MEETS;
+            } else if (start.isBefore(otherStart) && end.isAfter(otherStart) && end.isBefore(otherEnd)) {
+                return RelativePosition.OVERLAPS;
+            } else if (start.compareTo(otherStart) == 0 && end.isBefore(otherEnd)) {
+                return RelativePosition.BEGINS;
+            } else if (start.compareTo(otherStart) == 0 && end.isAfter(otherEnd)) {
+                return RelativePosition.BEGUN_BY;
+            } else if (start.isAfter(otherStart) && end.isBefore(otherEnd)) {
+                return RelativePosition.DURING;
+            } else if (start.isBefore(otherStart) && end.isAfter(otherEnd)) {
+                return RelativePosition.CONTAINS;
+            } else if (start.compareTo(otherStart) == 0 && end.compareTo(otherEnd) == 0) {
+                return RelativePosition.EQUALS;
+            } else if (start.isAfter(otherStart) && start.isBefore(otherEnd) && end.isAfter(otherEnd)) {
+                return RelativePosition.OVERLAPPED_BY;
+            } else if (start.isAfter(otherStart) && end.compareTo(otherEnd) == 0) {
+                return RelativePosition.ENDS;
+            } else if (start.isBefore(otherStart) && end.compareTo(otherEnd) == 0) {
+                return RelativePosition.ENDED_BY;
+            } else {
+                return (start.compareTo(otherEnd) == 0) ? RelativePosition.MET_BY : RelativePosition.AFTER;
+            }
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * Verify if this entry is identical to the specified object.
      */
     @Override
@@ -196,8 +215,8 @@ public class DefaultPeriod extends DefaultTemporalGeometricPrimitive implements 
         if (object instanceof DefaultPeriod) {
             final DefaultPeriod that = (DefaultPeriod) object;
 
-            return Objects.equals(this.begining, that.begining) &&
-                   Objects.equals(this.ending, that.ending);
+            return Objects.equals(beginning, that.beginning) &&
+                   Objects.equals(ending, that.ending);
         }
         return false;
     }
@@ -208,8 +227,8 @@ public class DefaultPeriod extends DefaultTemporalGeometricPrimitive implements 
     @Override
     protected long computeHashCode() {
         int hash = 5;
-        hash = 37 * hash + (this.begining != null ? this.begining.hashCode() : 0);
-        hash = 37 * hash + (this.ending != null ? this.ending.hashCode() : 0);
+        hash = 37 * hash + Objects.hashCode(beginning);
+        hash = 37 * hash + Objects.hashCode(ending);
         return hash;
     }
 
@@ -219,8 +238,8 @@ public class DefaultPeriod extends DefaultTemporalGeometricPrimitive implements 
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder("Period:").append('\n');
-        if (begining != null) {
-            s.append("begin:").append(begining).append('\n');
+        if (beginning != null) {
+            s.append("begin:").append(beginning).append('\n');
         }
         if (ending != null) {
             s.append("end:").append(ending).append('\n');

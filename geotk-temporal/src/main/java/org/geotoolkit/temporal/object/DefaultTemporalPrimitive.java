@@ -18,11 +18,11 @@
 package org.geotoolkit.temporal.object;
 
 import java.util.Map;
+import java.time.temporal.Temporal;
+import java.time.temporal.TemporalField;
+import java.time.temporal.TemporalUnit;
+import java.time.temporal.UnsupportedTemporalTypeException;
 import org.apache.sis.referencing.AbstractIdentifiedObject;
-import org.opengis.temporal.IndeterminateValue;
-import org.opengis.temporal.Instant;
-import org.opengis.temporal.Period;
-import org.opengis.temporal.RelativePosition;
 import org.opengis.temporal.TemporalOrder;
 import org.opengis.temporal.TemporalPrimitive;
 
@@ -31,7 +31,7 @@ import org.opengis.temporal.TemporalPrimitive;
  *
  * @author Mehdi Sidhoum (Geomatys)
  */
-public abstract class DefaultTemporalPrimitive extends AbstractIdentifiedObject implements TemporalPrimitive, TemporalOrder {
+public abstract class DefaultTemporalPrimitive extends AbstractIdentifiedObject implements TemporalPrimitive, TemporalOrder, Temporal {
     public DefaultTemporalPrimitive(Map<String, ?> properties) throws IllegalArgumentException {
         super(properties);
     }
@@ -53,136 +53,33 @@ public abstract class DefaultTemporalPrimitive extends AbstractIdentifiedObject 
         super(object);
     }
 
-    /**
-     * Returns a value for relative position which are provided by the enumerated data type TM_RelativePosition
-     * and are based on the 13 temporal relationships identified by Allen (1983).
-     * @param other TemporalPrimitive
-     */
     @Override
-    public RelativePosition relativePosition(final TemporalPrimitive other) {
-        if (this instanceof Instant && other instanceof Instant) {
-            Instant timeobject = (Instant) this;
-            Instant instantOther = (Instant) other;
+    public boolean isSupported(TemporalUnit unit) {
+        return false;   // TODO
+    }
 
-            // test the relative position when the other paramter has an indeterminate value.
-            if (timeobject.getDate() == null || instantOther.getDate() == null) {
-                if (timeobject.getDate() != null && instantOther.getTemporalPosition() != null && instantOther.getTemporalPosition().getIndeterminatePosition() != null) {
-                    IndeterminateValue indeterminatePosition = instantOther.getTemporalPosition().getIndeterminatePosition().orElse(null);
-                    if (indeterminatePosition == IndeterminateValue.AFTER) {
-                       return RelativePosition.AFTER;
-                    } else if (indeterminatePosition == IndeterminateValue.BEFORE) {
-                       return RelativePosition.BEFORE;
-                    } else if (indeterminatePosition == IndeterminateValue.NOW) {
-                       long currentMillis = System.currentTimeMillis();
-                       long toMillis      = timeobject.getDate().getTime();
-                       if (toMillis > currentMillis) {
-                           return RelativePosition.AFTER;
-                       } else if (toMillis < currentMillis) {
-                           return RelativePosition.BEFORE;
-                       } else {
-                           return RelativePosition.EQUALS;
-                       }
-                    }
-                } else if (instantOther.getDate() != null && timeobject.getTemporalPosition() != null && timeobject.getTemporalPosition().getIndeterminatePosition() != null) {
-                    IndeterminateValue indeterminatePosition =  timeobject.getTemporalPosition().getIndeterminatePosition().orElse(null);
-                    if (indeterminatePosition == IndeterminateValue.AFTER) {
-                       return RelativePosition.AFTER;
-                    } else if (indeterminatePosition == IndeterminateValue.BEFORE) {
-                       return RelativePosition.BEFORE;
-                    } else if (indeterminatePosition == IndeterminateValue.NOW) {
-                       long currentMillis = System.currentTimeMillis();
-                       long toMillis      = instantOther.getDate().getTime();
-                       if (toMillis > currentMillis) {
-                           return RelativePosition.BEFORE;
-                       } else if (toMillis < currentMillis) {
-                           return RelativePosition.AFTER;
-                       } else {
-                           return RelativePosition.EQUALS;
-                       }
-                    }
-                }
-                return null;
-            } else if (timeobject.getDate().before(instantOther.getDate())) {
-                return RelativePosition.BEFORE;
-            } else {
-                return (timeobject.getDate().compareTo(instantOther.getDate()) == 0) ? RelativePosition.EQUALS : RelativePosition.AFTER;
-            }
-        } else {
-            if (this instanceof Period && other instanceof Instant) {
-                Period timeobject = (Period) this;
-                Instant instantarg = (Instant) other;
+    @Override
+    public boolean isSupported(TemporalField field) {
+        return false;   // TODO
+    }
 
-                if (timeobject.getEnding().getDate().before(instantarg.getDate())) {
-                    return RelativePosition.BEFORE;
-                } else if (timeobject.getEnding().getDate().compareTo(instantarg.getDate()) == 0) {
-                    return RelativePosition.ENDED_BY;
-                } else if (timeobject.getBeginning().getDate().before(instantarg.getDate()) &&
-                    timeobject.getEnding().getDate().after(instantarg.getDate())) {
-                    return RelativePosition.CONTAINS;
-                } else {
-                     return (timeobject.getBeginning().getDate().compareTo(instantarg.getDate()) == 0) ? RelativePosition.BEGUN_BY : RelativePosition.AFTER;
-                }
-            } else {
-                if (this instanceof Instant && other instanceof Period) {
-                    Instant timeobject = (Instant) this;
-                    Period instantarg = (Period) other;
+    @Override
+    public long getLong(TemporalField field) {
+         throw new UnsupportedTemporalTypeException("Not yet implemented.");
+    }
 
-                    if (instantarg.getEnding().getDate().before(timeobject.getDate())) {
-                        return RelativePosition.AFTER;
-                    } else if (instantarg.getEnding().getDate().compareTo(timeobject.getDate()) == 0) {
-                        return RelativePosition.ENDS;
-                    } else if (instantarg.getBeginning().getDate().before(timeobject.getDate()) &&
-                            instantarg.getEnding().getDate().after(timeobject.getDate())) {
-                        return RelativePosition.DURING;
-                    } else {
-                        return (instantarg.getBeginning().getDate().compareTo(timeobject.getDate()) == 0) ? RelativePosition.BEGINS : RelativePosition.BEFORE;
-                    }
-                } else {
-                    if (this instanceof Period && other instanceof Period) {
-                        Period timeobject = (Period) this;
-                        Period instantarg = (Period) other;
+    @Override
+    public Temporal with(TemporalField field, long newValue) {
+         throw new UnsupportedTemporalTypeException("Not yet implemented.");
+    }
 
-                        if (timeobject.getEnding().getDate().before(instantarg.getBeginning().getDate())) {
-                            return RelativePosition.BEFORE;
-                        } else if (timeobject.getEnding().getDate().compareTo(instantarg.getBeginning().getDate()) == 0) {
-                            return RelativePosition.MEETS;
-                        } else if (timeobject.getBeginning().getDate().before(instantarg.getBeginning().getDate()) &&
-                                timeobject.getEnding().getDate().after(instantarg.getBeginning().getDate()) &&
-                                timeobject.getEnding().getDate().before(instantarg.getEnding().getDate())) {
-                            return RelativePosition.OVERLAPS;
-                        } else if (timeobject.getBeginning().getDate().compareTo(instantarg.getBeginning().getDate()) == 0 &&
-                                timeobject.getEnding().getDate().before(instantarg.getEnding().getDate())) {
-                            return RelativePosition.BEGINS;
-                        } else if (timeobject.getBeginning().getDate().compareTo(instantarg.getBeginning().getDate()) == 0 &&
-                                timeobject.getEnding().getDate().after(instantarg.getEnding().getDate())) {
-                            return RelativePosition.BEGUN_BY;
-                        } else if (timeobject.getBeginning().getDate().after(instantarg.getBeginning().getDate()) &&
-                                timeobject.getEnding().getDate().before(instantarg.getEnding().getDate())) {
-                            return RelativePosition.DURING;
-                        } else if (timeobject.getBeginning().getDate().before(instantarg.getBeginning().getDate()) &&
-                                timeobject.getEnding().getDate().after(instantarg.getEnding().getDate())) {
-                            return RelativePosition.CONTAINS;
-                        } else if (timeobject.getBeginning().getDate().compareTo(instantarg.getBeginning().getDate()) == 0 &&
-                                timeobject.getEnding().getDate().compareTo(instantarg.getEnding().getDate()) == 0) {
-                            return RelativePosition.EQUALS;
-                        } else if (timeobject.getBeginning().getDate().after(instantarg.getBeginning().getDate()) &&
-                                timeobject.getBeginning().getDate().before(instantarg.getEnding().getDate()) &&
-                                timeobject.getEnding().getDate().after(instantarg.getEnding().getDate())) {
-                            return RelativePosition.OVERLAPPED_BY;
-                        } else if (timeobject.getBeginning().getDate().after(instantarg.getBeginning().getDate()) &&
-                                timeobject.getEnding().getDate().compareTo(instantarg.getEnding().getDate()) == 0) {
-                            return RelativePosition.ENDS;
-                        } else if (timeobject.getBeginning().getDate().before(instantarg.getBeginning().getDate()) &&
-                                timeobject.getEnding().getDate().compareTo(instantarg.getEnding().getDate()) == 0) {
-                            return RelativePosition.ENDED_BY;
-                        } else {
-                            return (timeobject.getBeginning().getDate().compareTo(instantarg.getEnding().getDate()) == 0) ? RelativePosition.MET_BY : RelativePosition.AFTER;
-                        }
-                    } else {
-                        return null;
-                    }
-                }
-            }
-        }
+    @Override
+    public Temporal plus(long amountToAdd, TemporalUnit unit) {
+         throw new UnsupportedTemporalTypeException("Not yet implemented.");
+    }
+
+    @Override
+    public long until(Temporal endExclusive, TemporalUnit unit) {
+         throw new UnsupportedTemporalTypeException("Not yet implemented.");
     }
 }

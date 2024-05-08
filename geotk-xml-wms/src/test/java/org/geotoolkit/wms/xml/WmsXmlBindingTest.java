@@ -38,6 +38,7 @@ import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
 import jakarta.xml.bind.Unmarshaller;
+import java.time.Instant;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.util.privy.Constants;
 import org.apache.sis.util.privy.URLs;
@@ -293,8 +294,9 @@ public class WmsXmlBindingTest {
         final Map<String, Object> properties = new HashMap<>();
         properties.put(IdentifiedObject.NAME_KEY, name);
 
-        DefaultPeriod period = new DefaultPeriod(periodProp, new DefaultInstant(properties, new Date(120000000)),
-                                                             new DefaultInstant(properties, new Date(120000001)));
+        DefaultPeriod period = new DefaultPeriod(periodProp,
+                new DefaultInstant(properties, Instant.ofEpochMilli(120000000)),
+                new DefaultInstant(properties, Instant.ofEpochMilli(120000001)));
 //        period.setBegining(new DefaultInstant(properties, new DefaultPosition(new Date(120000000))));
 //        period.setEnding(new DefaultInstant(properties, new DefaultPosition(new Date(120000001))));
 
@@ -622,7 +624,9 @@ public class WmsXmlBindingTest {
         final Map<String, Object> properties = new HashMap<>();
         properties.put(IdentifiedObject.NAME_KEY, instantName);
 
-        DefaultPeriod period = new DefaultPeriod(periodProp, new DefaultInstant(properties, new Date(120000000)), new DefaultInstant(properties, new Date(120001000)));
+        DefaultPeriod period = new DefaultPeriod(periodProp,
+                new DefaultInstant(properties, Instant.ofEpochMilli(120000000)),
+                new DefaultInstant(properties, Instant.ofEpochMilli(120001000)));
 
         tempExt.setExtent(period);
         extent.setTemporalElements(Arrays.asList(tempExt));
@@ -696,8 +700,8 @@ public class WmsXmlBindingTest {
         assertEquals(expConformity,                                          conformity);
         assertEquals(expCapabilities.getResourceType(),                      capabilities.getResourceType());
         assertEquals(expTemporal.getDescription(),                           temporal.getDescription());
-        assertEquals(expExtentPeriod.getBeginning().getDate(), extentPeriod.getBeginning().getDate());
-        assertEquals(expExtentPeriod.getEnding().getDate(),    extentPeriod.getEnding().getDate());
+        assertEquals(expExtentPeriod.getBeginning(), extentPeriod.getBeginning());
+        assertEquals(expExtentPeriod.getEnding(),    extentPeriod.getEnding());
         if (expExtentPeriod.getClass() == extentPeriod.getClass()) {
             /*
              * The time period created by this test case is an instance of org.geotoolkit.temporal.object.DefaultPeriod

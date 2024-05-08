@@ -20,7 +20,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.StringWriter;
-import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -74,11 +74,8 @@ public class JsonBindingTest {
 
     @Test
     public void readWriteMeasurementTest() throws Exception {
-
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-
         Procedure procedure = new Procedure("proc-001");
-        DefaultInstant i = new DefaultInstant(Collections.singletonMap(NAME_KEY, "st-time"), sdf.parse("2001-01-01T02:00:00Z"));
+        DefaultInstant i = new DefaultInstant(Collections.singletonMap(NAME_KEY, "st-time"), Instant.parse("2001-01-01T01:00:00Z"));
 
         GeometryFactory gf = new GeometryFactory();
         Point pt = gf.createPoint(new Coordinate(65400.0, 1731368.0));
@@ -134,13 +131,10 @@ public class JsonBindingTest {
 
     @Test
     public void readWriteObservationTest() throws Exception {
-
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-
         Procedure procedure = new Procedure("proc-001");
         DefaultPeriod p = new DefaultPeriod(Collections.singletonMap(NAME_KEY, "p-time"),
-                                            new DefaultInstant(Collections.singletonMap(NAME_KEY, "st-time"), sdf.parse("2001-01-01T02:00:00Z")),
-                                            new DefaultInstant(Collections.singletonMap(NAME_KEY, "en-time"), sdf.parse("2001-01-01T03:00:00Z")));
+                new DefaultInstant(Collections.singletonMap(NAME_KEY, "st-time"), Instant.parse("2001-01-01T01:00:00Z")),
+                new DefaultInstant(Collections.singletonMap(NAME_KEY, "en-time"), Instant.parse("2001-01-01T02:00:00Z")));
 
         GeometryFactory gf = new GeometryFactory();
         Point pt = gf.createPoint(new Coordinate(65400.0, 1731368.0));
@@ -237,15 +231,12 @@ public class JsonBindingTest {
 
     @Test
     public void readWriteOfferingTest() throws Exception {
-
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-
         DefaultPeriod p = new DefaultPeriod(Collections.singletonMap(NAME_KEY, "p-time"),
-                                            new DefaultInstant(Collections.singletonMap(NAME_KEY, "st-time"), sdf.parse("2001-01-01T02:00:00Z")),
-                                            new DefaultInstant(Collections.singletonMap(NAME_KEY, "en-time"),
-                                                    new DefaultTemporalPosition(
-                                                            CommonCRS.Temporal.JULIAN.crs(),
-                                                            IndeterminateValue.NOW)));
+                new DefaultInstant(Collections.singletonMap(NAME_KEY, "st-time"), Instant.parse("2001-01-01T01:00:00Z")),
+                new DefaultInstant(Collections.singletonMap(NAME_KEY, "en-time"),
+                        new DefaultTemporalPosition(
+                                CommonCRS.Temporal.JULIAN.crs(),
+                                IndeterminateValue.NOW)));
 
         GeneralEnvelope area =  new GeneralEnvelope(CommonCRS.defaultGeographic());
         area.setRange(0, 5, 10);

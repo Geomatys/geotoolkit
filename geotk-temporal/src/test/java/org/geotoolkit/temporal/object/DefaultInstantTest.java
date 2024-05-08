@@ -22,43 +22,32 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.sis.referencing.NamedIdentifier;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-import org.opengis.temporal.Instant;
 import static org.junit.Assert.*;
 import org.opengis.referencing.IdentifiedObject;
 
 /**
  *
  * @author Mehdi Sidhoum (Geomatys)
- * @module
  */
 public class DefaultInstantTest {
 
-    private Instant instant1;
-    private Instant instant2;
+    private DefaultInstant instant1;
+    private DefaultInstant instant2;
     private final Calendar cal = Calendar.getInstance();
 
-    @Before
-    public void setUp() {
+    public DefaultInstantTest() {
         NamedIdentifier name1 = new NamedIdentifier(null, "position 1");
         final Map<String, Object> properties1 = new HashMap<>();
         properties1.put(IdentifiedObject.NAME_KEY, name1);
         cal.set(2000, 1, 1);
-        instant1  = new DefaultInstant(properties1, cal.getTime());
+        instant1  = new DefaultInstant(properties1, cal.getTime().toInstant());
 
         NamedIdentifier name2 = new NamedIdentifier(null, "position 2");
         final Map<String, Object> properties2 = new HashMap<>();
         properties2.put(IdentifiedObject.NAME_KEY, name2);
         cal.set(1998, 1, 1);
-        instant2  = new DefaultInstant(properties2, cal.getTime());
-    }
-
-    @After
-    public void tearDown() {
-        instant1 = null;
-        instant2 = null;
+        instant2  = new DefaultInstant(properties2, cal.getTime().toInstant());
     }
 
     /**
@@ -76,7 +65,6 @@ public class DefaultInstantTest {
     @Test
     public void testEquals() {
         cal.set(2000, 1, 1);
-
         assertNotNull(instant1);
         assertEquals(cal.getTime().getTime(), instant1.getDate().getTime());
         assertFalse(instant1.equals(instant2));

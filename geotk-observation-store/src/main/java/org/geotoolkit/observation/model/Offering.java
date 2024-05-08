@@ -17,6 +17,7 @@
 
 package org.geotoolkit.observation.model;
 
+import java.time.Instant;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -25,7 +26,6 @@ import org.geotoolkit.temporal.object.DefaultInstant;
 import org.geotoolkit.temporal.object.DefaultPeriod;
 import org.opengis.geometry.Envelope;
 import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
-import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
 import org.opengis.temporal.TemporalGeometricPrimitive;
 
@@ -109,6 +109,11 @@ public class Offering extends AbstractOMEntity {
         this.srsNames = srsNames;
     }
 
+    @Deprecated
+    public void extendSamplingTime(final Date newDate) {
+        extendSamplingTime((newDate != null) ? newDate.toInstant() : null);
+    }
+
     /**
      * Extend the current offering time span by adding a new date.
      * If the new date is before or after the current sampling time, the period will be expanded.
@@ -116,28 +121,28 @@ public class Offering extends AbstractOMEntity {
      *
      * @param newDate a date to integrate into the time span of the offering.
      */
-    public void extendSamplingTime(final Date newDate) {
+    public void extendSamplingTime(final Instant newDate) {
         if (newDate != null) {
             if (time instanceof Period p) {
-                Date currentStDate = p.getBeginning().getDate();
-                Date currentEnDate = p.getEnding().getDate();
-                if (newDate.before(currentStDate)) {
+                Instant currentStDate = p.getBeginning();
+                Instant currentEnDate = p.getEnding();
+                if (newDate.isBefore(currentStDate)) {
                     time = new DefaultPeriod(Collections.singletonMap(NAME_KEY, getId() + "-time"),
                                                      new DefaultInstant(Collections.singletonMap(NAME_KEY, getId() + "-st-time"), newDate),
                                                      new DefaultInstant(Collections.singletonMap(NAME_KEY, getId() + "-en-time"), currentEnDate));
-                } else if (newDate.after(currentEnDate)) {
+                } else if (newDate.isAfter(currentEnDate)) {
                     time = new DefaultPeriod(Collections.singletonMap(NAME_KEY, getId() + "-time"),
                                                      new DefaultInstant(Collections.singletonMap(NAME_KEY, getId() + "-st-time"), currentStDate),
                                                      new DefaultInstant(Collections.singletonMap(NAME_KEY, getId() + "-en-time"), newDate));
                 }
                 // date is within to the current period so no changes are applied
-            } else if (time instanceof Instant i) {
-                Date currentDate = i.getDate();
-                if (newDate.before(currentDate)) {
+            } else if (time instanceof DefaultInstant i) {
+                Instant currentDate = i.getInstant();
+                if (newDate.isBefore(currentDate)) {
                     time = new DefaultPeriod(Collections.singletonMap(NAME_KEY, getId() + "-time"),
                                                      new DefaultInstant(Collections.singletonMap(NAME_KEY, getId() + "-st-time"), newDate),
                                                      new DefaultInstant(Collections.singletonMap(NAME_KEY, getId() + "-en-time"), currentDate));
-                } else if (newDate.after(currentDate)) {
+                } else if (newDate.isAfter(currentDate)) {
                     time = new DefaultPeriod(Collections.singletonMap(NAME_KEY, getId() + "-time"),
                                             new DefaultInstant(Collections.singletonMap(NAME_KEY, getId() + "-st-time"), currentDate),
                                             new DefaultInstant(Collections.singletonMap(NAME_KEY, getId() + "-en-time"), newDate));

@@ -16,10 +16,10 @@
  */
 package org.geotoolkit.gml.v321;
 
-import java.util.Date;
 import java.io.StringReader;
 import jakarta.xml.bind.Unmarshaller;
 import jakarta.xml.bind.JAXBException;
+import java.time.Instant;
 import org.opengis.temporal.Period;
 import org.opengis.metadata.extent.Extent;
 import org.geotoolkit.gml.xml.GMLMarshallerPool;
@@ -161,8 +161,8 @@ public class TimePeriodTypeTest {
         GMLMarshallerPool.getInstance().recycle(um);
 
         Period period = (Period) extent.getTemporalElements().iterator().next().getExtent();
-        final Date start = period.getBeginning().getDate();
-        final Date end = period.getEnding().getDate();
-        assertTrue(end.after(start)); // A lazy test for now. Needs to be improved.
+        final Instant start = period.getBeginning();
+        final Instant end = period.getEnding();
+        assertTrue(end.isAfter(start)); // A lazy test for now. Needs to be improved.
     }
 }

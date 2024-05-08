@@ -27,12 +27,12 @@ import org.geotoolkit.gml.xml.GMLXmlFactory;
 import org.geotoolkit.swe.xml.AbstractDataValueProperty;
 import org.geotoolkit.swe.xml.v101.PhenomenonType;
 import org.geotoolkit.swe.xml.v200.EncodedValuesPropertyType;
+import org.geotoolkit.temporal.object.DefaultInstant;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.quality.Element;
 import org.opengis.observation.Measurement;
 import org.opengis.observation.Observation;
 import org.opengis.observation.sampling.SamplingFeature;
-import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
 import org.opengis.temporal.TemporalGeometricPrimitive;
 
@@ -66,18 +66,18 @@ public class OMXmlFactory {
         final org.geotoolkit.gml.xml.v311.AbstractTimeGeometricPrimitiveType time;
         if (observation.getSamplingTime() instanceof Period p) {
             String dateBegin = null;
-            if (p.getBeginning() != null && p.getBeginning().getDate() != null) {
-                dateBegin = p.getBeginning().getDate().toString();
+            if (p.getBeginning() != null) {
+                dateBegin = p.getBeginning().toString();
             }
             String dateEnd = null;
-            if (p.getEnding() != null && p.getEnding().getDate() != null) {
-                dateEnd = p.getEnding().getDate().toString();
+            if (p.getEnding() != null) {
+                dateEnd = p.getEnding().toString();
             }
             time = (org.geotoolkit.gml.xml.v311.AbstractTimeGeometricPrimitiveType) GMLXmlFactory.createTimePeriod("3.1.1", null, dateBegin, dateEnd);
-        } else if (observation.getSamplingTime() instanceof Instant inst) {
+        } else if (observation.getSamplingTime() instanceof DefaultInstant inst) {
             String date = null;
             if (inst.getDate() != null) {
-                date = inst.getDate().toString();
+                date = inst.getInstant().toString();
             }
             time = (org.geotoolkit.gml.xml.v311.AbstractTimeGeometricPrimitiveType) GMLXmlFactory.createTimeInstant("3.1.1", null, date);
         } else if (observation.getSamplingTime() != null) {
@@ -149,18 +149,18 @@ public class OMXmlFactory {
         final org.geotoolkit.gml.xml.v321.AbstractTimeObjectType time;
         if (observation.getSamplingTime() instanceof Period p) {
             String dateBegin = null;
-            if (p.getBeginning() != null && p.getBeginning().getDate() != null) {
-                dateBegin = p.getBeginning().getDate().toString();
+            if (p.getBeginning() != null) {
+                dateBegin = p.getBeginning().toString();
             }
             String dateEnd = null;
-            if (p.getEnding() != null && p.getEnding().getDate() != null) {
-                dateEnd = p.getEnding().getDate().toString();
+            if (p.getEnding() != null) {
+                dateEnd = p.getEnding().toString();
             }
             time = (org.geotoolkit.gml.xml.v321.AbstractTimeObjectType) GMLXmlFactory.createTimePeriod("3.2.1", null, dateBegin, dateEnd);
-        } else if (observation.getSamplingTime() instanceof Instant inst) {
+        } else if (observation.getSamplingTime() instanceof DefaultInstant inst) {
             String date = null;
             if (inst.getDate() != null) {
-                date = inst.getDate().toString();
+                date = inst.getInstant().toString();
             }
             time = (org.geotoolkit.gml.xml.v321.AbstractTimeObjectType) GMLXmlFactory.createTimeInstant("3.2.1", null, date);
         } else if (observation.getSamplingTime() != null) {

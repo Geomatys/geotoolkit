@@ -568,25 +568,25 @@ public class ObservationType implements Entry, AbstractObservation {
     public void extendSamplingTime(final Date newEndBound) {
         if (newEndBound != null) {
             if (samplingTime != null && samplingTime.getTimeGeometricPrimitive() instanceof TimePeriodType) {
-                ((TimePeriodType)samplingTime.getTimeGeometricPrimitive()).setEndPosition(new TimePositionType(newEndBound));
+                ((TimePeriodType)samplingTime.getTimeGeometricPrimitive()).setEndPosition(new TimePositionType(newEndBound.toInstant()));
             } else if (samplingTime != null && samplingTime.getTimeGeometricPrimitive() instanceof TimeInstantType) {
                 final TimeInstantType instant = (TimeInstantType) samplingTime.getTimeGeometricPrimitive();
                 if (!newEndBound.equals(instant.getTimePosition().getValue())) {
-                    final TimePeriodType period = new TimePeriodType(instant.getId(), instant.getTimePosition().getDate(), newEndBound);
+                    final TimePeriodType period = new TimePeriodType(instant.getId(), instant.getTimePosition().getInstant(), newEndBound.toInstant());
                     samplingTime.setTimeGeometricPrimitive(period);
                 }
             } else if (samplingTime == null) {
-                samplingTime = new TimeGeometricPrimitivePropertyType(new TimeInstantType(new TimePositionType(newEndBound)));
+                samplingTime = new TimeGeometricPrimitivePropertyType(new TimeInstantType(new TimePositionType(newEndBound.toInstant())));
             }
         }
     }
 
     @Override
     public void setSamplingTimePeriod(final Period period) {
-        if (period instanceof TimePeriodType) {
-            this.samplingTime = new TimeGeometricPrimitivePropertyType((TimePeriodType)period);
+        if (period instanceof TimePeriodType p) {
+            this.samplingTime = new TimeGeometricPrimitivePropertyType(p);
         } else if (period != null) {
-            final TimePeriodType pt = new TimePeriodType(period.getBeginning(), period.getEnding());
+            final TimePeriodType pt = new TimePeriodType(null, period.getBeginning(), period.getEnding());
             this.samplingTime = new TimeGeometricPrimitivePropertyType(pt);
         }
     }

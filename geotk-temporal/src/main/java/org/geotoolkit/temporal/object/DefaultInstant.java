@@ -23,12 +23,16 @@ import java.util.Objects;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
+import java.time.Instant;
 import java.time.temporal.TemporalAmount;
-import org.apache.sis.util.ArgumentChecks;
+import java.util.concurrent.atomic.AtomicLong;
 import org.apache.sis.util.ComparisonMode;
-import static org.geotoolkit.temporal.object.TemporalUtilities.dateEquals;
-import org.opengis.temporal.Instant;
+import org.opengis.temporal.IndeterminateValue;
+import org.opengis.temporal.Period;
+import org.opengis.temporal.RelativePosition;
+import org.opengis.temporal.TemporalGeometricPrimitive;
 import org.opengis.temporal.TemporalPosition;
+import org.opengis.temporal.TemporalPrimitive;
 
 /**
  * A zero-dimensional geometric primitive that represents position in time, equivalent to a point
@@ -41,12 +45,10 @@ import org.opengis.temporal.TemporalPosition;
     "date"
 })
 @XmlRootElement(name = "TimeInstant")
-public class DefaultInstant extends DefaultTemporalGeometricPrimitive implements Instant {
-    /**
-     * This is the position of this {@linkplain Instant TM_Instant},
-     * it shall be associated with a single {@link TemporalReferenceSystem}.
-     */
-    private final Date date;
+public class DefaultInstant extends DefaultTemporalPrimitive implements TemporalGeometricPrimitive {
+    private static final AtomicLong COUNT = new AtomicLong();
+
+    final Instant date;
 
     /**
      * Describing internal {@link TemporalPosition temporal positions} referenced
@@ -62,17 +64,18 @@ public class DefaultInstant extends DefaultTemporalGeometricPrimitive implements
         this.temporalPosition = null;
     }
 
+    public DefaultInstant(Instant date) throws IllegalArgumentException {
+        this(Map.of(NAME_KEY, "period" + COUNT.incrementAndGet()), date);
+    }
+
     /**
      * Creates a default {@link Instant} implementation from the given properties.
      *
      * @param properties The properties to be given to this object.
-     * @param date the {@link Date} of this {@linkplain Instant TM_Instant}.
-     * @throws NullPointerException if date is {@code null}.
      */
-    public DefaultInstant(Map<String, ?> properties,  Date date) throws IllegalArgumentException {
+    public DefaultInstant(Map<String, ?> properties, Instant date) throws IllegalArgumentException {
         super(properties);
-        ArgumentChecks.ensureNonNull("position", date);
-        this.date             = date;
+        this.date = Objects.requireNonNull(date);
         this.temporalPosition = null;
     }
 
@@ -86,63 +89,24 @@ public class DefaultInstant extends DefaultTemporalGeometricPrimitive implements
      */
     public DefaultInstant(final Map<String, ?> properties, final TemporalPosition temporalPosition) throws IllegalArgumentException {
         super(properties);
-        ArgumentChecks.ensureNonNull("position", temporalPosition);
-        this.date             = null;
-        this.temporalPosition = temporalPosition;
-    }
-
-    /**
-     * Constructs a new instance initialized with the values from the specified metadata object.
-     * This is a <cite>shallow</cite> copy constructor, since the other metadata contained in the
-     * given object are not recursively copied.
-     *
-     * @param object The Instant to copy values from, or {@code null} if none.
-     *
-     * @see #castOrCopy(Instant)
-     */
-    private DefaultInstant(final Instant object) {
-        if (object != null) {
-            this.date             = object.getDate();
-            this.temporalPosition = object.getTemporalPosition();
-        } else {
-            this.date             = null;
-            this.temporalPosition = null;
-        }
-    }
-
-    /**
-     * Returns a Geotk implementation with the values of the given arbitrary implementation.
-     * This method performs the first applicable action in the following choices:
-     *
-     * <ul>
-     *   <li>If the given object is {@code null}, then this method returns {@code null}.</li>
-     *   <li>Otherwise if the given object is already an instance of
-     *       {@code DefaultInstant}, then it is returned unchanged.</li>
-     *   <li>Otherwise a new {@code DefaultInstant} instance is created using the
-     *       {@linkplain #DefaultInstant(Instant) copy constructor}
-     *       and returned. Note that this is a <cite>shallow</cite> copy operation, since the other
-     *       metadata contained in the given object are not recursively copied.</li>
-     * </ul>
-     *
-     * @param  object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return A Geotk implementation containing the values of the given object (may be the
-     *         given object itself), or {@code null} if the argument was null.
-     */
-    public static DefaultInstant castOrCopy(final Instant object) {
-        if (object == null || object instanceof DefaultInstant) {
-            return (DefaultInstant) object;
-        }
-        return new DefaultInstant(object);
+        this.date = null;
+        this.temporalPosition = Objects.requireNonNull(temporalPosition);
     }
 
     /**
      * {@inheritDoc}.
      * May returns {@code null} if {@link Instant} was create from
      * {@link DefaultInstant#DefaultInstant(java.util.Map, org.opengis.temporal.TemporalPosition) }.
+     *
+     * @deprecated Use {@link #getInstant()} instead.
      */
-    @Override
+    @Deprecated
     @XmlElement(name = "timePosition", required = true)
     public Date getDate() {
+        return (date != null) ? Date.from(date) : null;
+    }
+
+    public Instant getInstant() {
         return date;
     }
 
@@ -151,7 +115,6 @@ public class DefaultInstant extends DefaultTemporalGeometricPrimitive implements
      * May returns {@code null} if {@link Instant} was create from
      * {@link DefaultInstant#DefaultInstant(java.util.Map, java.util.Date)}.
      */
-    @Override
     public TemporalPosition getTemporalPosition() {
         return temporalPosition;
     }
@@ -162,7 +125,91 @@ public class DefaultInstant extends DefaultTemporalGeometricPrimitive implements
      */
     @Override
     public TemporalAmount length() {
-        return TemporalUtilities.durationFromMillis(Math.abs(date.getTime()));
+        return TemporalUtilities.durationFromMillis(Math.abs(date.toEpochMilli()));
+    }
+
+    /**
+     * @deprecated Not correctly implemented.
+     */
+    @Override
+    @Deprecated
+    public TemporalAmount distance(final TemporalGeometricPrimitive other) {
+        long diff = 0L;
+        var pos = relativePosition(other);
+        if (pos.equals(RelativePosition.BEFORE) || pos.equals(RelativePosition.AFTER)) {
+            if (other instanceof DefaultInstant t) {
+                diff = Math.min(Math.abs(t.date.toEpochMilli() - date.toEpochMilli()),
+                        Math.abs(date.toEpochMilli() - t.date.toEpochMilli()));
+            } else {
+                if (other instanceof Period) {
+                    diff = Math.min(Math.abs(((Period) other).getBeginning().toEpochMilli() - date.toEpochMilli()),
+                            Math.abs(((Period) other).getEnding().toEpochMilli() - date.toEpochMilli()));
+                }
+            }
+        }
+        return TemporalUtilities.durationFromMillis(Math.abs(diff));
+    }
+
+    @Override
+    public RelativePosition relativePosition(final TemporalPrimitive other) {
+        if (other instanceof DefaultInstant instantOther) {
+            // test the relative position when the other paramter has an indeterminate value.
+            if (date == null || instantOther.date == null) {
+                if (date != null && instantOther.temporalPosition != null && instantOther.temporalPosition.getIndeterminatePosition() != null) {
+                    IndeterminateValue indeterminatePosition = instantOther.temporalPosition.getIndeterminatePosition().orElse(null);
+                    if (indeterminatePosition == IndeterminateValue.AFTER) {
+                       return RelativePosition.AFTER;
+                    } else if (indeterminatePosition == IndeterminateValue.BEFORE) {
+                       return RelativePosition.BEFORE;
+                    } else if (indeterminatePosition == IndeterminateValue.NOW) {
+                       long currentMillis = System.currentTimeMillis();
+                       long toMillis = date.toEpochMilli();
+                       if (toMillis > currentMillis) {
+                           return RelativePosition.AFTER;
+                       } else if (toMillis < currentMillis) {
+                           return RelativePosition.BEFORE;
+                       } else {
+                           return RelativePosition.EQUALS;
+                       }
+                    }
+                } else if (instantOther.date != null && temporalPosition != null && temporalPosition.getIndeterminatePosition() != null) {
+                    IndeterminateValue indeterminatePosition =  temporalPosition.getIndeterminatePosition().orElse(null);
+                    if (indeterminatePosition == IndeterminateValue.AFTER) {
+                       return RelativePosition.AFTER;
+                    } else if (indeterminatePosition == IndeterminateValue.BEFORE) {
+                       return RelativePosition.BEFORE;
+                    } else if (indeterminatePosition == IndeterminateValue.NOW) {
+                       long currentMillis = System.currentTimeMillis();
+                       long toMillis = instantOther.date.toEpochMilli();
+                       if (toMillis > currentMillis) {
+                           return RelativePosition.BEFORE;
+                       } else if (toMillis < currentMillis) {
+                           return RelativePosition.AFTER;
+                       } else {
+                           return RelativePosition.EQUALS;
+                       }
+                    }
+                }
+                return null;
+            } else if (date.isBefore(instantOther.date)) {
+                return RelativePosition.BEFORE;
+            } else {
+                return (date.compareTo(instantOther.date) == 0) ? RelativePosition.EQUALS : RelativePosition.AFTER;
+            }
+        } else if (other instanceof Period instantarg) {
+            if (instantarg.getEnding().isBefore(date)) {
+                return RelativePosition.AFTER;
+            } else if (instantarg.getEnding().compareTo(date) == 0) {
+                return RelativePosition.ENDS;
+            } else if (instantarg.getBeginning().isBefore(date) &&
+                    instantarg.getEnding().isAfter(date)) {
+                return RelativePosition.DURING;
+            } else {
+                return (instantarg.getBeginning().compareTo(date) == 0) ? RelativePosition.BEGINS : RelativePosition.BEFORE;
+            }
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -173,11 +220,9 @@ public class DefaultInstant extends DefaultTemporalGeometricPrimitive implements
         if (object == this) {
             return true;
         }
-        if (object instanceof DefaultInstant) {
-            final DefaultInstant that = (DefaultInstant) object;
-
-            return dateEquals(this.date, that.date) &&
-                   Objects.equals(this.temporalPosition, that.temporalPosition);
+        if (object instanceof DefaultInstant that) {
+            return Objects.equals(date, that.date) &&
+                   Objects.equals(temporalPosition, that.temporalPosition);
         }
         return false;
     }
@@ -188,7 +233,7 @@ public class DefaultInstant extends DefaultTemporalGeometricPrimitive implements
     @Override
     protected long computeHashCode() {
         int hash = 5;
-        hash = 37 * hash + (this.date != null ? this.date.hashCode() : 0);
+        hash = 37 * hash + (date != null ? date.hashCode() : 0);
         return hash;
     }
 

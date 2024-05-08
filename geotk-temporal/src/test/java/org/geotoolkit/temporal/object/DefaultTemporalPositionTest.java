@@ -18,8 +18,6 @@
 package org.geotoolkit.temporal.object;
 
 import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.referencing.NamedIdentifier;
-import org.geotoolkit.temporal.factory.DefaultTemporalFactory;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -37,17 +35,13 @@ public class DefaultTemporalPositionTest {
 
     private TemporalPosition temporalPosition1;
     private TemporalPosition temporalPosition2;
-    private final static DefaultTemporalFactory FACTORY = new DefaultTemporalFactory();
 
     @Before
     public void setUp() {
-        NamedIdentifier name1 = new NamedIdentifier(null, "Gregorian calendar");
-        NamedIdentifier name2 = new NamedIdentifier(null, "Julian calendar");
-
         TemporalCRS frame1 = CommonCRS.Temporal.JULIAN.crs();
         TemporalCRS frame2 = CommonCRS.Temporal.TRUNCATED_JULIAN.crs();
-        temporalPosition1 = FACTORY.createTemporalPosition(frame1, IndeterminateValue.UNKNOWN);
-        temporalPosition2 = FACTORY.createTemporalPosition(frame2, IndeterminateValue.NOW);
+        temporalPosition1 = new DefaultTemporalPosition(frame1, IndeterminateValue.UNKNOWN);
+        temporalPosition2 = new DefaultTemporalPosition(frame2, IndeterminateValue.NOW);
     }
 
     /**

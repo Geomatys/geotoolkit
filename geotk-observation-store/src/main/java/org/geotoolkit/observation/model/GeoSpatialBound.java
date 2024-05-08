@@ -36,8 +36,6 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
 import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
-import org.opengis.temporal.Instant;
-import org.opengis.temporal.Period;
 import org.opengis.temporal.TemporalGeometricPrimitive;
 import org.opengis.temporal.TemporalObject;
 
@@ -100,13 +98,13 @@ public class GeoSpatialBound {
      * @return
      */
     public Date addTime(final TemporalObject time) {
-        if (time instanceof Instant i) {
+        if (time instanceof DefaultInstant i) {
             if (i.getDate() != null) {
                 return addDate(i.getDate());
             }
-        } else if (time instanceof Period p) {
-            addTime(p.getEnding());
-            return addTime(p.getBeginning());
+        } else if (time instanceof DefaultPeriod p) {
+            addTime(p.ending);
+            return addTime(p.beginning);
         }
         return null;
     }
@@ -228,11 +226,11 @@ public class GeoSpatialBound {
         if (dateStart != null && dateEnd != null) {
             String id = UUID.randomUUID().toString();
             if (dateStart.getTime() == dateEnd.getTime()) {
-                return new DefaultInstant(Collections.singletonMap(NAME_KEY, id + "time"), dateStart);
+                return new DefaultInstant(Collections.singletonMap(NAME_KEY, id + "time"), dateStart.toInstant());
             } else {
                 return new DefaultPeriod(Collections.singletonMap(NAME_KEY, id + "-time"),
-                                         new DefaultInstant(Collections.singletonMap(NAME_KEY, id + "-st-time"), dateStart),
-                                         new DefaultInstant(Collections.singletonMap(NAME_KEY, id + "-en-time"), dateEnd));
+                                         new DefaultInstant(Collections.singletonMap(NAME_KEY, id + "-st-time"), dateStart.toInstant()),
+                                         new DefaultInstant(Collections.singletonMap(NAME_KEY, id + "-en-time"), dateEnd.toInstant()));
             }
         }
         return null;

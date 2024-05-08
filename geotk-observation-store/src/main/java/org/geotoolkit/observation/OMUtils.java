@@ -17,6 +17,7 @@
 package org.geotoolkit.observation;
 
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -74,7 +75,6 @@ import org.opengis.parameter.ParameterValueGroup;
 import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
-import org.opengis.temporal.Instant;
 import org.opengis.temporal.TemporalGeometricPrimitive;
 import org.opengis.util.FactoryException;
 import org.opengis.util.RecordType;
@@ -277,7 +277,13 @@ public class OMUtils {
         };
     }
 
+    @Deprecated
     public static TemporalGeometricPrimitive buildTime(String id, Date start, Date end) {
+        return buildTime(id, (start != null) ? start.toInstant() : null,
+                (end != null) ? end.toInstant() : null);
+    }
+
+    public static TemporalGeometricPrimitive buildTime(String id, Instant start, Instant end) {
         if (start != null && end != null) {
             if (start.equals(end)) {
                 return new DefaultInstant(Collections.singletonMap(NAME_KEY, id + "time"), start);

@@ -333,15 +333,15 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
     public void extendSamplingTime(final Date newEndBound) {
         if (newEndBound != null) {
             if (phenomenonTime != null && phenomenonTime.getTimeObject() instanceof TimePeriodType) {
-                ((TimePeriodType)phenomenonTime.getTimeObject()).setEndPosition(new TimePositionType(newEndBound));
+                ((TimePeriodType)phenomenonTime.getTimeObject()).setEndPosition(new TimePositionType(newEndBound.toInstant()));
             } else if (phenomenonTime != null && phenomenonTime.getTimeObject() instanceof TimeInstantType) {
                 final TimeInstantType instant = (TimeInstantType) phenomenonTime.getTimeObject();
                 if (!newEndBound.equals(instant.getTimePosition().getValue())) {
-                    final TimePeriodType period = new TimePeriodType(instant.getId(), instant.getTimePosition().getDate(), newEndBound);
+                    final TimePeriodType period = new TimePeriodType(instant.getId(), instant.getTimePosition().getInstant(), newEndBound.toInstant());
                     phenomenonTime.setTimeObject(period);
                 }
             } else if (phenomenonTime == null) {
-                phenomenonTime = new TimeObjectPropertyType(new TimeInstantType(new TimePositionType(newEndBound)));
+                phenomenonTime = new TimeObjectPropertyType(new TimeInstantType(new TimePositionType(newEndBound.toInstant())));
             }
         }
     }

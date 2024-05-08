@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jakarta.xml.bind.annotation.XmlTransient;
+import java.time.Instant;
 import org.geotoolkit.temporal.object.ISODateParser;
 import org.opengis.temporal.TemporalPosition;
 
@@ -50,6 +51,11 @@ public abstract class AbstractTimePosition {
 
     public TemporalPosition anyOther() {
         return null;
+    }
+
+    public Instant getInstant() {
+        Date date = getDate();
+        return (date != null) ? date.toInstant() : null;
     }
 
     public abstract Date getDate();

@@ -16,10 +16,10 @@
  */
 package org.geotoolkit.observation.xml;
 
+import java.time.Instant;
 import java.util.Comparator;
-import java.util.Date;
+import org.geotoolkit.temporal.object.DefaultInstant;
 import org.opengis.observation.Observation;
-import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
 
 /**
@@ -31,19 +31,19 @@ public class ObservationComparator implements Comparator<Observation> {
     @Override
     public int compare(Observation o1, Observation o2) {
         if (o1.getSamplingTime() != null && o2.getSamplingTime() != null) {
-            final Date timeBegin1;
+            final Instant timeBegin1;
             if (o1.getSamplingTime() instanceof Period) {
-                timeBegin1 = ((Period)o1.getSamplingTime()).getBeginning().getDate();
-            } else if (o1.getSamplingTime() instanceof Instant) {
-                timeBegin1 = ((Instant)o1.getSamplingTime()).getDate();
+                timeBegin1 = ((Period)o1.getSamplingTime()).getBeginning();
+            } else if (o1.getSamplingTime() instanceof DefaultInstant d) {
+                timeBegin1 = d.getInstant();
             } else {
                 throw new IllegalArgumentException("Unexpected time Object:" + o1.getSamplingTime());
             }
-            final Date timeBegin2;
+            final Instant timeBegin2;
             if (o2.getSamplingTime() instanceof Period) {
-                timeBegin2 = ((Period)o2.getSamplingTime()).getBeginning().getDate();
-            } else if (o2.getSamplingTime() instanceof Instant) {
-                timeBegin2 = ((Instant)o2.getSamplingTime()).getDate();
+                timeBegin2 = ((Period)o2.getSamplingTime()).getBeginning();
+            } else if (o2.getSamplingTime() instanceof DefaultInstant d) {
+                timeBegin2 = d.getInstant();
             } else {
                 throw new IllegalArgumentException("Unexpected time Object:" + o2.getSamplingTime());
             }

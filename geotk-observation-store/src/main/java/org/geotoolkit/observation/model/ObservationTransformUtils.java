@@ -47,7 +47,7 @@ import org.geotoolkit.swe.xml.SimpleDataRecord;
 import org.geotoolkit.swe.xml.TextBlock;
 import org.geotoolkit.temporal.object.DefaultInstant;
 import org.geotoolkit.temporal.object.DefaultPeriod;
-import org.geotoolkit.temporal.object.DefaultTemporalGeometricPrimitive;
+import org.geotoolkit.temporal.object.DefaultTemporalPrimitive;
 import org.geotoolkit.temporal.object.DefaultTemporalPosition;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.LineString;
@@ -58,7 +58,6 @@ import org.opengis.observation.Measure;
 import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.temporal.IndeterminateValue;
-import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
 import org.opengis.temporal.TemporalGeometricPrimitive;
 import org.opengis.temporal.TemporalPosition;
@@ -172,9 +171,9 @@ public class ObservationTransformUtils {
         if (time instanceof GMLInstant || time instanceof GMLPeriod) {
             return time;
         } else  if (time instanceof Period model) {
-            return SOSXmlFactory.buildTimePeriod(version, model.getBeginning().getDate(), model.getEnding().getDate());
-        } else if(time instanceof Instant model) {
-            return SOSXmlFactory.buildTimeInstant(version, model.getDate());
+            return SOSXmlFactory.buildTimePeriod(version, null, model.getBeginning(), model.getEnding());
+        } else if(time instanceof DefaultInstant model) {
+            return SOSXmlFactory.buildTimeInstant(version, null, model.getInstant());
         } else if (time == null) {
             return null;
         }
@@ -313,7 +312,7 @@ public class ObservationTransformUtils {
             }
             List<Phenomenon> components = new ArrayList<>();
             for (org.opengis.observation.Phenomenon compo : xmlPhen.getComponent()) {
-                components.add(ObservationTransformUtils.toModel(compo));
+                components.add(toModel(compo));
             }
             return new CompositePhenomenon(xmlPhen.getId(), name, xmlPhen.getDefinition(), xmlPhen.getDescription(), null, components);
         }
@@ -341,7 +340,7 @@ public class ObservationTransformUtils {
         if (phenProp.getHref() != null) {
             return new Phenomenon(phenProp.getHref(), phenProp.getHref(), null, null, null);
         } else if (phenProp.getPhenomenon() != null) {
-            return ObservationTransformUtils.toModel(phenProp.getPhenomenon());
+            return toModel(phenProp.getPhenomenon());
         }
         return null;
     }
@@ -350,7 +349,7 @@ public class ObservationTransformUtils {
         if (foiProp.getHref() != null) {
             return new SamplingFeature(foiProp.getHref(), foiProp.getHref(), null, null, null, null);
         } else if (foiProp.getAbstractFeature() != null) {
-            return ObservationTransformUtils.toModel((org.opengis.observation.sampling.SamplingFeature) foiProp.getAbstractFeature());
+            return toModel((org.opengis.observation.sampling.SamplingFeature) foiProp.getAbstractFeature());
         }
         return null;
     }
@@ -398,7 +397,7 @@ public class ObservationTransformUtils {
             if (aobs.getName() != null) {
                 name = aobs.getName().getCode();
             }
-            Phenomenon phenModel = ObservationTransformUtils.toModel(aobs.getObservedProperty());
+            Phenomenon phenModel = toModel(aobs.getObservedProperty());
 
             // try to guess the observation type
             Map<String, Object> properties = new HashMap<>();
@@ -444,9 +443,9 @@ public class ObservationTransformUtils {
                                    null,
                                    aobs.getDefinition(),
                                    aobs.getObservationType(),
-                                   ObservationTransformUtils.toModel(aobs.getProcedure()),
-                                   ObservationTransformUtils.toModel((TemporalGeometricPrimitive)aobs.getSamplingTime()),
-                                   ObservationTransformUtils.toModel(aobs.getPropertyFeatureOfInterest()),
+                                   toModel(aobs.getProcedure()),
+                                   toModel((TemporalGeometricPrimitive)aobs.getSamplingTime()),
+                                   toModel(aobs.getPropertyFeatureOfInterest()),
                                    phenModel,
                                    aobs.getResultQuality(),
                                    result,
@@ -564,13 +563,13 @@ public class ObservationTransformUtils {
                         IndeterminateValue.valueOf(gmi.getTimePosition().getIndeterminatePosition().value().toUpperCase()));
                 return new DefaultInstant(Collections.singletonMap(NAME_KEY, name), tp);
             }
-            return new DefaultInstant(Collections.singletonMap(NAME_KEY, name), gmi.getDate());
+            return new DefaultInstant(Collections.singletonMap(NAME_KEY, name), gmi.getInstant());
         } else if (gmlTime instanceof org.geotoolkit.gml.xml.GMLPeriod gmp) {
             String name = gmp.getId() != null ? gmp.getId() : UUID.randomUUID().toString() + "-time";
             return new DefaultPeriod(Collections.singletonMap(NAME_KEY, name),
-                                    (Instant)ObservationTransformUtils.toModel(gmp.getBeginning()),
-                                    (Instant)ObservationTransformUtils.toModel(gmp.getEnding()));
-        } else if (gmlTime instanceof DefaultTemporalGeometricPrimitive) {
+                                    new DefaultInstant(gmp.getBeginning()),
+                                    new DefaultInstant(gmp.getEnding()));
+        } else if (gmlTime instanceof DefaultTemporalPrimitive) {
             return gmlTime;
         } else if (gmlTime == null) {
             return null;
@@ -594,7 +593,7 @@ public class ObservationTransformUtils {
                                 null,
                                 off.getObservedArea(),
                                 off.getSrsName(),
-                                ObservationTransformUtils.toModel(off.getTime()),
+                                toModel(off.getTime()),
                                 procedure,
                                 off.getObservedProperties(),
                                 off.getFeatureOfInterestIds());
