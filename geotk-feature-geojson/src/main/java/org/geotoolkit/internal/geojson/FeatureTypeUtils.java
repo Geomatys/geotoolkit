@@ -115,8 +115,8 @@ public final class FeatureTypeUtils extends Static {
             writer.writeStringField(TITLE, ft.getName().tip().toString());
             writer.writeStringField(TYPE, OBJECT);
             writer.writeStringField(JAVA_TYPE, "FeatureType");
-            if (ft.getDescription() != null) {
-                writer.writeStringField(DESCRIPTION, ft.getDescription().toString());
+            if (ft.getDescription().isPresent()) {
+                writer.writeStringField(DESCRIPTION, ft.getDescription().get().toString());
             }
 
             if (geom.isPresent()) {
@@ -174,8 +174,8 @@ public final class FeatureTypeUtils extends Static {
         writer.writeStringField(TITLE, ft.getName().tip().toString());
         writer.writeStringField(TYPE, OBJECT);
         writer.writeStringField(JAVA_TYPE, "FeatureType");
-        if (ft.getDescription() != null) {
-            writer.writeStringField(DESCRIPTION, ft.getDescription().toString());
+        if (ft.getDescription().isPresent()) {
+            writer.writeStringField(DESCRIPTION, ft.getDescription().get().toString());
         }
 
         final Optional<AttributeType<?>> geom = GeoJSONUtils.castOrUnwrap(FeatureExt.getDefaultGeometrySafe(ft));
@@ -228,8 +228,8 @@ public final class FeatureTypeUtils extends Static {
         writer.writeObjectFieldStart(descriptor.getName().tip().toString());
         writer.writeStringField(TYPE, OBJECT);
         writer.writeStringField(JAVA_TYPE, "ComplexType");
-        if (complex.getDescription() != null) {
-            writer.writeStringField(DESCRIPTION, complex.getDescription().toString());
+        if (complex.getDescription().isPresent()) {
+            writer.writeStringField(DESCRIPTION, complex.getDescription().get().toString());
         }
         writer.writeNumberField(MIN_ITEMS, descriptor.getMinimumOccurs());
         writer.writeNumberField(MAX_ITEMS, descriptor.getMaximumOccurs());
@@ -248,8 +248,8 @@ public final class FeatureTypeUtils extends Static {
 
         writer.writeStringField(TYPE, findType(binding));
         writer.writeStringField(JAVA_TYPE, binding.getName());
-        if (att.getDescription() != null) {
-            writer.writeStringField(DESCRIPTION, att.getDescription().toString());
+        if (att.getDescription().isPresent()) {
+            writer.writeStringField(DESCRIPTION, att.getDescription().get().toString());
         }
         if (GeoJSONUtils.isPartOfPrimaryKey(featureType, att.getName().toString())) {
             writer.writeBooleanField(PRIMARY_KEY, true);
@@ -286,8 +286,8 @@ public final class FeatureTypeUtils extends Static {
             throws IOException {
         writer.writeObjectFieldStart(GEOMETRY);
         writer.writeStringField(TYPE, OBJECT);
-        if (geometryType.getDescription() != null) {
-            writer.writeStringField(DESCRIPTION, geometryType.getDescription().toString());
+        if (geometryType.getDescription().isPresent()) {
+            writer.writeStringField(DESCRIPTION, geometryType.getDescription().get().toString());
         }
         writer.writeStringField(JAVA_TYPE, geometryType.getValueClass().getCanonicalName());
         CoordinateReferenceSystem crs = FeatureExt.getCRS(geometryType);

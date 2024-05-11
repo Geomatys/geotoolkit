@@ -17,6 +17,7 @@
 package org.geotoolkit.feature.xml.jaxb;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.Set;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.feature.builder.PropertyTypeBuilder;
@@ -111,12 +112,12 @@ public class XSDFeatureType implements FeatureType {
     }
 
     @Override
-    public InternationalString getDesignation() {
+    public Optional<InternationalString> getDesignation() {
         return builder.build().getDesignation();
     }
 
     @Override
-    public InternationalString getDescription() {
+    public Optional<InternationalString> getDescription() {
         return builder.build().getDescription();
     }
 

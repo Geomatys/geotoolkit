@@ -31,6 +31,7 @@ import jakarta.xml.bind.annotation.XmlTransient;
 import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.util.Optional;
 import org.apache.sis.xml.bind.ModifiableIdentifierMap;
 import org.geotoolkit.gml.xml.AbstractGML;
 import org.geotoolkit.internal.sql.Entry;
@@ -290,11 +291,11 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
         return null;
     }
 
-    public InternationalString getRemarks() {
+    public Optional<InternationalString> getRemarks() {
         if (description != null) {
-            return new SimpleInternationalString(description);
+            return Optional.of(new SimpleInternationalString(description));
         }
-        return null;
+        return Optional.empty();
     }
 
     public String toWKT() throws UnsupportedOperationException {

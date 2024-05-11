@@ -14,14 +14,13 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-
-
 package org.geotoolkit.gml.xml.v321;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlSeeAlso;
 import jakarta.xml.bind.annotation.XmlType;
+import java.util.Optional;
 import org.apache.sis.util.SimpleInternationalString;
 import org.opengis.util.InternationalString;
 
@@ -73,8 +72,8 @@ public class DefinitionType
      *
      */
     @Override
-    public InternationalString getRemarks() {
-        return new SimpleInternationalString(remarks);
+    public Optional<InternationalString> getRemarks() {
+        return Optional.of(new SimpleInternationalString(remarks));
     }
 
     /**

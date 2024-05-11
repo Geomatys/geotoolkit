@@ -20,6 +20,7 @@ import java.util.Objects;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlType;
+import java.util.Optional;
 import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.util.SimpleInternationalString;
 import org.opengis.util.InternationalString;
@@ -90,11 +91,11 @@ public class DefinitionType extends DefinitionBaseType {
      * Gets the value of the remarks property.
      */
     @Override
-    public InternationalString getRemarks() {
+    public Optional<InternationalString> getRemarks() {
         if (remarks != null) {
-            return new SimpleInternationalString(remarks);
+            return Optional.of(new SimpleInternationalString(remarks));
         }
-        return null;
+        return Optional.empty();
     }
 
      /**

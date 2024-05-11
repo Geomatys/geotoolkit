@@ -66,11 +66,11 @@ public class ReprojectMapper extends FeatureSetMapper {
     public ReprojectMapper(FeatureType base, final CoordinateReferenceSystem targetCRS) {
         this.targetCRS = targetCRS;
 
-        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+        final var ftb = new FeatureTypeBuilder();
         ftb.setName(base.getName());
         ftb.setDefinition(base.getDefinition());
-        ftb.setDescription(base.getDescription());
-        ftb.setDesignation(base.getDesignation());
+        base.getDescription().ifPresent(ftb::setDescription);
+        base.getDesignation().ifPresent(ftb::setDesignation);
         ftb.setDeprecated(base instanceof Deprecable && ((Deprecable)base).isDeprecated());
 
         for (PropertyType property : base.getProperties(true)) {

@@ -39,7 +39,6 @@ import org.opengis.util.FactoryException;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
 public abstract class FeatureSetMapper implements Function<Feature,Feature> {
 
@@ -48,8 +47,8 @@ public abstract class FeatureSetMapper implements Function<Feature,Feature> {
         final Map<String,Object> p = new HashMap<>(8);
         p.put(DefaultFeatureType.NAME_KEY,        type.getName());
         p.put(DefaultFeatureType.DEFINITION_KEY,  type.getDefinition());
-        p.put(DefaultFeatureType.DESCRIPTION_KEY, type.getDescription());
-        p.put(DefaultFeatureType.DESIGNATION_KEY, type.getDesignation());
+        type.getDescription().ifPresent((t) -> p.put(DefaultFeatureType.DESCRIPTION_KEY, t));
+        type.getDesignation().ifPresent((t) -> p.put(DefaultFeatureType.DESIGNATION_KEY, t));
         return p;
     }
 
