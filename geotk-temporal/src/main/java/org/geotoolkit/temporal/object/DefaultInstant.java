@@ -45,10 +45,10 @@ import org.opengis.temporal.TemporalPrimitive;
     "date"
 })
 @XmlRootElement(name = "TimeInstant")
-public class DefaultInstant extends DefaultTemporalPrimitive implements TemporalGeometricPrimitive {
+public class DefaultInstant extends DefaultTemporalPrimitive implements TemporalGeometricPrimitive, InstantWrapper {
     private static final AtomicLong COUNT = new AtomicLong();
 
-    final Instant date;
+    private final Instant date;
 
     /**
      * Describing internal {@link TemporalPosition temporal positions} referenced
@@ -106,6 +106,7 @@ public class DefaultInstant extends DefaultTemporalPrimitive implements Temporal
         return (date != null) ? Date.from(date) : null;
     }
 
+    @Override
     public Instant getInstant() {
         return date;
     }
@@ -137,9 +138,9 @@ public class DefaultInstant extends DefaultTemporalPrimitive implements Temporal
         long diff = 0L;
         var pos = relativePosition(other);
         if (pos.equals(RelativePosition.BEFORE) || pos.equals(RelativePosition.AFTER)) {
-            if (other instanceof DefaultInstant t) {
-                diff = Math.min(Math.abs(t.date.toEpochMilli() - date.toEpochMilli()),
-                        Math.abs(date.toEpochMilli() - t.date.toEpochMilli()));
+            if (other instanceof InstantWrapper t) {
+                diff = Math.min(Math.abs(t.getInstant().toEpochMilli() - date.toEpochMilli()),
+                        Math.abs(date.toEpochMilli() - t.getInstant().toEpochMilli()));
             } else {
                 if (other instanceof Period) {
                     diff = Math.min(Math.abs(((Period) other).getBeginning().toEpochMilli() - date.toEpochMilli()),

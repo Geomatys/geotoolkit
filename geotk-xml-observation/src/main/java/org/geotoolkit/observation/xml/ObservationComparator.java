@@ -18,7 +18,7 @@ package org.geotoolkit.observation.xml;
 
 import java.time.Instant;
 import java.util.Comparator;
-import org.geotoolkit.temporal.object.DefaultInstant;
+import org.geotoolkit.temporal.object.InstantWrapper;
 import org.opengis.observation.Observation;
 import org.opengis.temporal.Period;
 
@@ -34,7 +34,7 @@ public class ObservationComparator implements Comparator<Observation> {
             final Instant timeBegin1;
             if (o1.getSamplingTime() instanceof Period) {
                 timeBegin1 = ((Period)o1.getSamplingTime()).getBeginning();
-            } else if (o1.getSamplingTime() instanceof DefaultInstant d) {
+            } else if (o1.getSamplingTime() instanceof InstantWrapper d) {
                 timeBegin1 = d.getInstant();
             } else {
                 throw new IllegalArgumentException("Unexpected time Object:" + o1.getSamplingTime());
@@ -42,7 +42,7 @@ public class ObservationComparator implements Comparator<Observation> {
             final Instant timeBegin2;
             if (o2.getSamplingTime() instanceof Period) {
                 timeBegin2 = ((Period)o2.getSamplingTime()).getBeginning();
-            } else if (o2.getSamplingTime() instanceof DefaultInstant d) {
+            } else if (o2.getSamplingTime() instanceof InstantWrapper d) {
                 timeBegin2 = d.getInstant();
             } else {
                 throw new IllegalArgumentException("Unexpected time Object:" + o2.getSamplingTime());

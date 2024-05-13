@@ -30,6 +30,7 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.temporal.object.DefaultInstant;
 import org.geotoolkit.temporal.object.DefaultPeriod;
+import org.geotoolkit.temporal.object.InstantWrapper;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
@@ -98,7 +99,7 @@ public class GeoSpatialBound {
      * @return
      */
     public Date addTime(final TemporalObject time) {
-        if (time instanceof DefaultInstant i) {
+        if (time instanceof InstantWrapper i) {
             if (i.getDate() != null) {
                 return addDate(i.getDate());
             }

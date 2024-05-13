@@ -100,7 +100,7 @@ public class DefaultPeriod extends DefaultTemporalPrimitive implements Period {
      */
     @Override
     public final Instant getBeginning() {
-        return beginning.date;
+        return beginning.getInstant();
     }
 
     /**
@@ -110,7 +110,7 @@ public class DefaultPeriod extends DefaultTemporalPrimitive implements Period {
      */
     @Override
     public final Instant getEnding() {
-        return ending.date;
+        return ending.getInstant();
     }
 
     /**
@@ -143,9 +143,9 @@ public class DefaultPeriod extends DefaultTemporalPrimitive implements Period {
         final var end = getEnding();
         final var pos = relativePosition(other);
         if (pos.equals(RelativePosition.BEFORE) || pos.equals(RelativePosition.AFTER)) {
-            if (other instanceof DefaultInstant t) {
-                diff = Math.min(Math.abs(t.date.toEpochMilli() - end.toEpochMilli()),
-                        Math.abs(t.date.toEpochMilli() - start.toEpochMilli()));
+            if (other instanceof InstantWrapper t) {
+                diff = Math.min(Math.abs(t.getInstant().toEpochMilli() - end.toEpochMilli()),
+                        Math.abs(t.getInstant().toEpochMilli() - start.toEpochMilli()));
             } else {
                 if (other instanceof Period p) {
                     diff = Math.min(Math.abs(p.getEnding().toEpochMilli() - start.toEpochMilli()),
@@ -160,16 +160,17 @@ public class DefaultPeriod extends DefaultTemporalPrimitive implements Period {
     public RelativePosition relativePosition(final TemporalPrimitive other) {
         final var start = getBeginning();
         final var end = getEnding();
-        if (other instanceof DefaultInstant instantarg) {
-            if (end.isBefore(instantarg.date)) {
+        if (other instanceof InstantWrapper instantarg) {
+            Instant t = instantarg.getInstant();
+            if (end.isBefore(t)) {
                 return RelativePosition.BEFORE;
-            } else if (end.compareTo(instantarg.date) == 0) {
+            } else if (end.compareTo(t) == 0) {
                 return RelativePosition.ENDED_BY;
-            } else if (start.isBefore(instantarg.date) &&
-                end.isAfter(instantarg.date)) {
+            } else if (start.isBefore(t) &&
+                end.isAfter(t)) {
                 return RelativePosition.CONTAINS;
             } else {
-                 return (start.compareTo(instantarg.date) == 0) ? RelativePosition.BEGUN_BY : RelativePosition.AFTER;
+                 return (start.compareTo(t) == 0) ? RelativePosition.BEGUN_BY : RelativePosition.AFTER;
             }
         } else if (other instanceof Period instantarg) {
             final var otherStart = instantarg.getBeginning();

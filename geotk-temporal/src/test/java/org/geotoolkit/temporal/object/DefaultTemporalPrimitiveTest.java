@@ -26,7 +26,6 @@ import org.apache.sis.referencing.CommonCRS;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.opengis.temporal.IndeterminateValue;
-import org.opengis.temporal.Period;
 import org.opengis.temporal.RelativePosition;
 import org.opengis.temporal.TemporalPrimitive;
 
@@ -70,10 +69,11 @@ public class DefaultTemporalPrimitiveTest {
         assertFalse(temporalPrimitive2.relativePosition(other).equals(result));
 
         //relative position between Period onbjects
-        Period temporalPeriod1 = new DefaultPeriod(Collections.singletonMap(NAME_KEY, "idp"), (DefaultInstant) temporalPrimitive1, instant1);
+        var temporalPeriod1 = new DefaultPeriod(Collections.singletonMap(NAME_KEY, "idp"), (DefaultInstant) temporalPrimitive1, instant1);
         cal.setTime(instant2.getDate());
         cal.roll(Calendar.YEAR, true); // add one year to instant2 which is current date
-        Period temporalPeriod2 = new DefaultPeriod(Collections.singletonMap(NAME_KEY, "idp"), instant2, new DefaultInstant(Collections.singletonMap(NAME_KEY, "id3"), cal.getTime().toInstant()));
+        var temporalPeriod2 = new DefaultPeriod(Collections.singletonMap(NAME_KEY, "idp"), instant2,
+                new DefaultInstant(Collections.singletonMap(NAME_KEY, "id3"), cal.getTime().toInstant()));
         result = temporalPeriod1.relativePosition(other);
         assertFalse(temporalPeriod2.relativePosition(other).equals(result));
 

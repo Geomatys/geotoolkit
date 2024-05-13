@@ -27,6 +27,7 @@ import java.util.Objects;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.temporal.object.DefaultInstant;
 import org.geotoolkit.temporal.object.DefaultPeriod;
+import org.geotoolkit.temporal.object.InstantWrapper;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.Metadata;
@@ -234,7 +235,7 @@ public class Observation implements org.opengis.observation.Observation {
                                                      new DefaultInstant(Collections.singletonMap(NAME_KEY, getId() + "-en-time"), newDate));
                 }
                 // date is within to the current period so no changes are applied
-            } else if (samplingTime instanceof DefaultInstant i) {
+            } else if (samplingTime instanceof InstantWrapper i) {
                 Instant currentDate = i.getInstant();
                 if (newDate.isBefore(currentDate)) {
                     samplingTime = new DefaultPeriod(Collections.singletonMap(NAME_KEY, getId() + "-time"),

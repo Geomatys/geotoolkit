@@ -75,7 +75,7 @@ public class JsonBindingTest {
     @Test
     public void readWriteMeasurementTest() throws Exception {
         Procedure procedure = new Procedure("proc-001");
-        DefaultInstant i = new DefaultInstant(Collections.singletonMap(NAME_KEY, "st-time"), Instant.parse("2001-01-01T01:00:00Z"));
+        var i = new DefaultInstant(Collections.singletonMap(NAME_KEY, "st-time"), Instant.parse("2001-01-01T01:00:00Z"));
 
         GeometryFactory gf = new GeometryFactory();
         Point pt = gf.createPoint(new Coordinate(65400.0, 1731368.0));

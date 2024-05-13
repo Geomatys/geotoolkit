@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import org.geotoolkit.temporal.object.DefaultInstant;
 import org.geotoolkit.temporal.object.DefaultPeriod;
+import org.geotoolkit.temporal.object.InstantWrapper;
 import org.opengis.geometry.Envelope;
 import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
 import org.opengis.temporal.Period;
@@ -136,7 +137,7 @@ public class Offering extends AbstractOMEntity {
                                                      new DefaultInstant(Collections.singletonMap(NAME_KEY, getId() + "-en-time"), newDate));
                 }
                 // date is within to the current period so no changes are applied
-            } else if (time instanceof DefaultInstant i) {
+            } else if (time instanceof InstantWrapper i) {
                 Instant currentDate = i.getInstant();
                 if (newDate.isBefore(currentDate)) {
                     time = new DefaultPeriod(Collections.singletonMap(NAME_KEY, getId() + "-time"),

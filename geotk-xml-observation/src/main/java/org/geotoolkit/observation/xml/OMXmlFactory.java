@@ -27,7 +27,7 @@ import org.geotoolkit.gml.xml.GMLXmlFactory;
 import org.geotoolkit.swe.xml.AbstractDataValueProperty;
 import org.geotoolkit.swe.xml.v101.PhenomenonType;
 import org.geotoolkit.swe.xml.v200.EncodedValuesPropertyType;
-import org.geotoolkit.temporal.object.DefaultInstant;
+import org.geotoolkit.temporal.object.InstantWrapper;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.quality.Element;
 import org.opengis.observation.Measurement;
@@ -74,7 +74,7 @@ public class OMXmlFactory {
                 dateEnd = p.getEnding().toString();
             }
             time = (org.geotoolkit.gml.xml.v311.AbstractTimeGeometricPrimitiveType) GMLXmlFactory.createTimePeriod("3.1.1", null, dateBegin, dateEnd);
-        } else if (observation.getSamplingTime() instanceof DefaultInstant inst) {
+        } else if (observation.getSamplingTime() instanceof InstantWrapper inst) {
             String date = null;
             if (inst.getDate() != null) {
                 date = inst.getInstant().toString();
@@ -157,7 +157,7 @@ public class OMXmlFactory {
                 dateEnd = p.getEnding().toString();
             }
             time = (org.geotoolkit.gml.xml.v321.AbstractTimeObjectType) GMLXmlFactory.createTimePeriod("3.2.1", null, dateBegin, dateEnd);
-        } else if (observation.getSamplingTime() instanceof DefaultInstant inst) {
+        } else if (observation.getSamplingTime() instanceof InstantWrapper inst) {
             String date = null;
             if (inst.getDate() != null) {
                 date = inst.getInstant().toString();

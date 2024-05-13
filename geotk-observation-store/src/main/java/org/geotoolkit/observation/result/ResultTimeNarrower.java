@@ -30,7 +30,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotoolkit.observation.model.ComplexResult;
 import org.geotoolkit.observation.model.TextEncoderProperties;
-import org.geotoolkit.temporal.object.DefaultInstant;
+import org.geotoolkit.temporal.object.InstantWrapper;
 import org.opengis.filter.Literal;
 import org.opengis.filter.TemporalOperator;
 import org.opengis.filter.TemporalOperatorName;
@@ -102,7 +102,7 @@ public class ResultTimeNarrower {
             if (type == TemporalOperatorName.EQUALS) {
                 final TemporalOperator<?> filter = (TemporalOperator) bound;
                 final TemporalPrimitive time = rmLiteral(filter.getExpressions().get(1));
-                if (time instanceof DefaultInstant ti) {
+                if (time instanceof InstantWrapper ti) {
                     final Timestamp boundEquals = new Timestamp(ti.getInstant().toEpochMilli());
 
                     LOGGER.finer("TE case 1");
@@ -113,7 +113,7 @@ public class ResultTimeNarrower {
             } else if (type == TemporalOperatorName.AFTER) {
                 final TemporalOperator filter = (TemporalOperator) bound;
                 final TemporalPrimitive time = rmLiteral(filter.getExpressions().get(1));
-                if (time instanceof DefaultInstant ti) {
+                if (time instanceof InstantWrapper ti) {
                     final Timestamp boundBegin = new Timestamp(ti.getInstant().toEpochMilli());
 
                     // case 1 the period overlaps the bound
@@ -126,7 +126,7 @@ public class ResultTimeNarrower {
             } else if (type == TemporalOperatorName.BEFORE) {
                 final TemporalOperator filter = (TemporalOperator) bound;
                 final TemporalPrimitive time = rmLiteral(filter.getExpressions().get(1));
-                if (time instanceof DefaultInstant ti) {
+                if (time instanceof InstantWrapper ti) {
                     final Timestamp boundEnd = new Timestamp(ti.getInstant().toEpochMilli());
 
                     // case 1 the period overlaps the bound

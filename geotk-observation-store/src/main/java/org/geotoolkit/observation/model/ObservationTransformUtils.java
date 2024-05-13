@@ -49,6 +49,7 @@ import org.geotoolkit.temporal.object.DefaultInstant;
 import org.geotoolkit.temporal.object.DefaultPeriod;
 import org.geotoolkit.temporal.object.DefaultTemporalPrimitive;
 import org.geotoolkit.temporal.object.DefaultTemporalPosition;
+import org.geotoolkit.temporal.object.InstantWrapper;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.Point;
@@ -172,7 +173,7 @@ public class ObservationTransformUtils {
             return time;
         } else  if (time instanceof Period model) {
             return SOSXmlFactory.buildTimePeriod(version, null, model.getBeginning(), model.getEnding());
-        } else if(time instanceof DefaultInstant model) {
+        } else if (time instanceof InstantWrapper model) {
             return SOSXmlFactory.buildTimeInstant(version, null, model.getInstant());
         } else if (time == null) {
             return null;
