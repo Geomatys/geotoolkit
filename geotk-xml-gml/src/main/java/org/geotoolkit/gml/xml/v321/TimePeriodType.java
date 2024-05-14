@@ -227,6 +227,7 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
      *     possible object is
      *     {@link TimePositionType }
      */
+    @Override
     public TimePositionType getBeginPosition() {
         return beginPosition;
     }
@@ -292,6 +293,7 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
      *     possible object is
      *     {@link TimePositionType }
      */
+    @Override
     public TimePositionType getEndPosition() {
         return endPosition;
     }

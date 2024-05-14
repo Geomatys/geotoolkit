@@ -29,6 +29,8 @@ public interface GMLInstant extends TemporalGeometricPrimitive, InstantWrapper {
 
     public String getId();
 
+    @Override
+    @Deprecated
     public default Date getDate() {
         AbstractTimePosition timePosition = getTimePosition();
         return (timePosition != null) ? timePosition.getDate() : null;

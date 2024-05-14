@@ -57,9 +57,6 @@ import org.opengis.temporal.Period;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TimePeriodType", propOrder = {
@@ -217,8 +214,8 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
      * @return
      *     possible object is
      *     {@link TimePositionType }
-     *
      */
+    @Override
     public TimePositionType getBeginPosition() {
         return beginPosition;
     }
@@ -297,6 +294,7 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
      *     {@link TimePositionType }
      *
      */
+    @Override
     public TimePositionType getEndPosition() {
         return endPosition;
     }

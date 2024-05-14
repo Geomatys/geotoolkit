@@ -28,6 +28,7 @@ import java.util.logging.Logger;
 import jakarta.xml.bind.annotation.XmlTransient;
 import java.time.Instant;
 import org.geotoolkit.temporal.object.ISODateParser;
+import org.geotoolkit.temporal.object.InstantWrapper;
 import org.opengis.temporal.TemporalPosition;
 
 /**
@@ -35,7 +36,7 @@ import org.opengis.temporal.TemporalPosition;
  * @author Guilhem Legal (Geomatys)
  */
 @XmlTransient
-public abstract class AbstractTimePosition {
+public abstract class AbstractTimePosition implements InstantWrapper {
 
     protected static final Logger LOGGER = Logger.getLogger("org.geotoolkit.gml.xml");
 
@@ -53,11 +54,13 @@ public abstract class AbstractTimePosition {
         return null;
     }
 
+    @Override
     public Instant getInstant() {
         Date date = getDate();
         return (date != null) ? date.toInstant() : null;
     }
 
+    @Override
     public abstract Date getDate();
 
     protected Date parseDate(final String value) {

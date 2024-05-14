@@ -20,14 +20,17 @@ package org.geotoolkit.gml.xml.v321;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.time.Instant;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlSchemaType;
 import jakarta.xml.bind.annotation.XmlType;
+import org.geotoolkit.temporal.object.InstantWrapper;
 
 
 /**
@@ -50,14 +53,12 @@ import jakarta.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TimeInstantPropertyType", propOrder = {
     "timeInstant"
 })
-public class TimeInstantPropertyType implements Serializable{
+public class TimeInstantPropertyType implements InstantWrapper, Serializable{
 
     @XmlElement(name = "TimeInstant")
     private TimeInstantType timeInstant;
@@ -110,6 +111,17 @@ public class TimeInstantPropertyType implements Serializable{
                 this.timeInstant = new TimeInstantType(that.timeInstant);
             }
         }
+    }
+
+    @Override
+    @Deprecated
+    public Date getDate() {
+        return (timeInstant != null) ? timeInstant.getDate() : null;
+    }
+
+    @Override
+    public Instant getInstant() {
+        return (timeInstant != null) ? timeInstant.getInstant() : null;
     }
 
     /**

@@ -26,4 +26,7 @@ public interface GMLPeriod extends Period {
 
     public String getId();
 
+    AbstractTimePosition getBeginPosition();
+
+    AbstractTimePosition getEndPosition();
 }
