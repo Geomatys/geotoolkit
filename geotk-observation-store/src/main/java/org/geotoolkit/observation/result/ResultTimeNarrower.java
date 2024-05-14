@@ -30,6 +30,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotoolkit.observation.model.ComplexResult;
 import org.geotoolkit.observation.model.TextEncoderProperties;
+import org.geotoolkit.temporal.object.DefaultInstant;
 import org.geotoolkit.temporal.object.InstantWrapper;
 import org.opengis.filter.Literal;
 import org.opengis.filter.TemporalOperator;
@@ -169,13 +170,14 @@ public class ResultTimeNarrower {
         if (obj instanceof TemporalPrimitive tp) {
             return tp;
         }
-        if (obj instanceof Literal lit) {
+        if (obj instanceof Literal<?,?> lit) {
             obj = lit.getValue();
+            if (obj instanceof TemporalPrimitive tp) {
+                return tp;
+            }
         }
-        if (!(obj instanceof TemporalPrimitive)) {
-            throw new IllegalArgumentException("Expecting a temporal primitive in a temporal filter.");
-        }
-        return (TemporalPrimitive) obj;
+        return new DefaultInstant(InstantWrapper.unwrap(obj).orElseThrow(
+                () -> new IllegalArgumentException("Expecting a temporal primitive in a temporal filter.")));
     }
 
     /**

@@ -88,4 +88,20 @@ public abstract class AbstractTimePosition implements InstantWrapper {
     }
 
     public abstract TimeIndeterminateValueType getIndeterminatePosition();
+
+    static AbstractTimePosition of(final Instant instant) {
+        return new AbstractTimePosition() {
+            @Override public Instant getInstant() {
+                return instant;
+            }
+
+            @Override public Date getDate() {
+                return (instant != null) ? Date.from(instant) : null;
+            }
+
+            @Override public TimeIndeterminateValueType getIndeterminatePosition() {
+                return null;
+            }
+        };
+    }
 }

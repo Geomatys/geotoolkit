@@ -19,9 +19,11 @@ import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.gml.GeometrytoJTS;
 import org.geotoolkit.gml.JTStoGeometry;
 import org.geotoolkit.gml.xml.AbstractGeometry;
+import org.geotoolkit.gml.xml.AbstractTimePosition;
 import org.geotoolkit.gml.xml.FeatureProperty;
 import org.geotoolkit.gml.xml.GMLPeriod;
 import org.geotoolkit.gml.xml.GMLInstant;
+import org.geotoolkit.gml.xml.TimeIndeterminateValueType;
 import org.geotoolkit.observation.OMUtils;
 import org.geotoolkit.observation.xml.AbstractObservation;
 import org.geotoolkit.observation.xml.OMXmlFactory;
@@ -61,7 +63,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.temporal.IndeterminateValue;
 import org.opengis.temporal.Period;
 import org.opengis.temporal.TemporalGeometricPrimitive;
-import org.opengis.temporal.TemporalPosition;
 import org.opengis.util.FactoryException;
 
 /**
@@ -556,17 +557,22 @@ public class ObservationTransformUtils {
     }
 
     public static TemporalGeometricPrimitive toModel(final TemporalGeometricPrimitive gmlTime) {
-        if (gmlTime instanceof org.geotoolkit.gml.xml.GMLInstant gmi) {
-            String name = gmi.getId() != null ? gmi.getId() : UUID.randomUUID().toString() + "-time";
-            if (gmi.getTimePosition() != null && gmi.getTimePosition().getIndeterminatePosition() != null) {
-                TemporalPosition tp = new DefaultTemporalPosition(
+        GMLPeriod gmp;
+        if (gmlTime instanceof GMLInstant gmi) {
+            String name = gmi.getId();
+            if (name == null) name = UUID.randomUUID().toString() + "-time";
+            AbstractTimePosition p = gmi.getTimePosition();
+            TimeIndeterminateValueType ip;
+            if (p != null && (ip = p.getIndeterminatePosition()) != null) {
+                var tp = new DefaultTemporalPosition(
                         CommonCRS.Temporal.JULIAN.crs(),
-                        IndeterminateValue.valueOf(gmi.getTimePosition().getIndeterminatePosition().value().toUpperCase()));
+                        IndeterminateValue.valueOf(ip.value().toUpperCase()));
                 return new DefaultInstant(Collections.singletonMap(NAME_KEY, name), tp);
             }
             return new DefaultInstant(Collections.singletonMap(NAME_KEY, name), gmi.getInstant());
-        } else if (gmlTime instanceof org.geotoolkit.gml.xml.GMLPeriod gmp) {
-            String name = gmp.getId() != null ? gmp.getId() : UUID.randomUUID().toString() + "-time";
+        } else if ((gmp = GMLPeriod.castOrWrap(gmlTime).orElse(null)) != null) {
+            String name = gmp.getId();
+            if (name == null) name = UUID.randomUUID().toString() + "-time";
             return new DefaultPeriod(Collections.singletonMap(NAME_KEY, name),
                                     new DefaultInstant(gmp.getBeginning()),
                                     new DefaultInstant(gmp.getEnding()));

@@ -21,8 +21,10 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import org.geotoolkit.gml.xml.v311.CoordinatesType;
 import org.opengis.temporal.Period;
+import org.opengis.temporal.TemporalGeometricPrimitive;
 
 /**
  *
@@ -239,6 +241,16 @@ public class GMLXmlFactory {
         } else {
             throw new IllegalArgumentException("unexpected gml version number:" + version);
         }
+    }
+
+    public static TemporalGeometricPrimitive createPeriodOrInstant(final String version, final String id, final Period p) {
+        if (p != null) {
+            Instant instant = p.getBeginning();
+            if (Objects.equals(instant, p.getEnding())) {
+                return createTimeInstant(version, id, instant);
+            }
+        }
+        return createTimePeriod(version, id, p);
     }
 
     public static GMLPeriod createTimePeriod(final String version, final String id, final Period p) {

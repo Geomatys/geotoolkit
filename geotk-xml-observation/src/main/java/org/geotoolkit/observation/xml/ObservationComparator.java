@@ -32,16 +32,16 @@ public class ObservationComparator implements Comparator<Observation> {
     public int compare(Observation o1, Observation o2) {
         if (o1.getSamplingTime() != null && o2.getSamplingTime() != null) {
             final Instant timeBegin1;
-            if (o1.getSamplingTime() instanceof Period) {
-                timeBegin1 = ((Period)o1.getSamplingTime()).getBeginning();
+            if (o1.getSamplingTime() instanceof Period p) {
+                timeBegin1 = p.getBeginning();
             } else if (o1.getSamplingTime() instanceof InstantWrapper d) {
                 timeBegin1 = d.getInstant();
             } else {
                 throw new IllegalArgumentException("Unexpected time Object:" + o1.getSamplingTime());
             }
             final Instant timeBegin2;
-            if (o2.getSamplingTime() instanceof Period) {
-                timeBegin2 = ((Period)o2.getSamplingTime()).getBeginning();
+            if (o2.getSamplingTime() instanceof Period p) {
+                timeBegin2 = p.getBeginning();
             } else if (o2.getSamplingTime() instanceof InstantWrapper d) {
                 timeBegin2 = d.getInstant();
             } else {

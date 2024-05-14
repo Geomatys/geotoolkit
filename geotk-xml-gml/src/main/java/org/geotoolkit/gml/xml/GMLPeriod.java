@@ -16,7 +16,14 @@
  */
 package org.geotoolkit.gml.xml;
 
+import java.time.Instant;
+import java.time.temporal.TemporalAmount;
+import java.util.Optional;
+import org.opengis.metadata.Identifier;
 import org.opengis.temporal.Period;
+import org.opengis.temporal.RelativePosition;
+import org.opengis.temporal.TemporalGeometricPrimitive;
+import org.opengis.temporal.TemporalPrimitive;
 
 /**
  *
@@ -29,4 +36,28 @@ public interface GMLPeriod extends Period {
     AbstractTimePosition getBeginPosition();
 
     AbstractTimePosition getEndPosition();
+
+    public static Optional<GMLPeriod> castOrWrap(Object period) {
+        if (period instanceof GMLPeriod p) {
+            return Optional.of(p);
+        }
+        if (period instanceof Period p) {
+            return Optional.of(new GMLPeriod() {
+                @Override public String               getId()            {return null;}
+                @Override public Identifier           getName()          {return p.getName();}
+                @Override public TemporalAmount       length()           {return p.length();}
+                @Override public Instant              getBeginning()     {return p.getBeginning();}
+                @Override public Instant              getEnding()        {return p.getEnding();}
+                @Override public AbstractTimePosition getBeginPosition() {return AbstractTimePosition.of(getBeginning());}
+                @Override public AbstractTimePosition getEndPosition()   {return AbstractTimePosition.of(getEnding());}
+                @Override public RelativePosition relativePosition(TemporalPrimitive other) {
+                    return p.relativePosition(other);
+                }
+                @Override public TemporalAmount distance(TemporalGeometricPrimitive other) {
+                    return p.distance(other);
+                }
+            });
+        }
+        return Optional.empty();
+    }
 }

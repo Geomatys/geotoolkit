@@ -129,24 +129,24 @@ public class Offering extends AbstractOMEntity {
                 Instant currentEnDate = p.getEnding();
                 if (newDate.isBefore(currentStDate)) {
                     time = new DefaultPeriod(Collections.singletonMap(NAME_KEY, getId() + "-time"),
-                                                     new DefaultInstant(Collections.singletonMap(NAME_KEY, getId() + "-st-time"), newDate),
-                                                     new DefaultInstant(Collections.singletonMap(NAME_KEY, getId() + "-en-time"), currentEnDate));
+                            new DefaultInstant(Collections.singletonMap(NAME_KEY, getId() + "-st-time"), newDate),
+                            new DefaultInstant(Collections.singletonMap(NAME_KEY, getId() + "-en-time"), currentEnDate));
                 } else if (newDate.isAfter(currentEnDate)) {
                     time = new DefaultPeriod(Collections.singletonMap(NAME_KEY, getId() + "-time"),
-                                                     new DefaultInstant(Collections.singletonMap(NAME_KEY, getId() + "-st-time"), currentStDate),
-                                                     new DefaultInstant(Collections.singletonMap(NAME_KEY, getId() + "-en-time"), newDate));
+                            new DefaultInstant(Collections.singletonMap(NAME_KEY, getId() + "-st-time"), currentStDate),
+                            new DefaultInstant(Collections.singletonMap(NAME_KEY, getId() + "-en-time"), newDate));
                 }
                 // date is within to the current period so no changes are applied
             } else if (time instanceof InstantWrapper i) {
                 Instant currentDate = i.getInstant();
                 if (newDate.isBefore(currentDate)) {
                     time = new DefaultPeriod(Collections.singletonMap(NAME_KEY, getId() + "-time"),
-                                                     new DefaultInstant(Collections.singletonMap(NAME_KEY, getId() + "-st-time"), newDate),
-                                                     new DefaultInstant(Collections.singletonMap(NAME_KEY, getId() + "-en-time"), currentDate));
+                            new DefaultInstant(Collections.singletonMap(NAME_KEY, getId() + "-st-time"), newDate),
+                            new DefaultInstant(Collections.singletonMap(NAME_KEY, getId() + "-en-time"), currentDate));
                 } else if (newDate.isAfter(currentDate)) {
                     time = new DefaultPeriod(Collections.singletonMap(NAME_KEY, getId() + "-time"),
-                                            new DefaultInstant(Collections.singletonMap(NAME_KEY, getId() + "-st-time"), currentDate),
-                                            new DefaultInstant(Collections.singletonMap(NAME_KEY, getId() + "-en-time"), newDate));
+                            new DefaultInstant(Collections.singletonMap(NAME_KEY, getId() + "-st-time"), currentDate),
+                            new DefaultInstant(Collections.singletonMap(NAME_KEY, getId() + "-en-time"), newDate));
                 }
                 // date is equals to the current date so no changes are applied
             } else if (time == null) {

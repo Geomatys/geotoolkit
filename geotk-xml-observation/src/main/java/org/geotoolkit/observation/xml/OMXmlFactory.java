@@ -65,15 +65,7 @@ public class OMXmlFactory {
         final String definition = observation.getDefinition();
         final org.geotoolkit.gml.xml.v311.AbstractTimeGeometricPrimitiveType time;
         if (observation.getSamplingTime() instanceof Period p) {
-            String dateBegin = null;
-            if (p.getBeginning() != null) {
-                dateBegin = p.getBeginning().toString();
-            }
-            String dateEnd = null;
-            if (p.getEnding() != null) {
-                dateEnd = p.getEnding().toString();
-            }
-            time = (org.geotoolkit.gml.xml.v311.AbstractTimeGeometricPrimitiveType) GMLXmlFactory.createTimePeriod("3.1.1", null, dateBegin, dateEnd);
+            time = (org.geotoolkit.gml.xml.v311.AbstractTimeGeometricPrimitiveType) GMLXmlFactory.createPeriodOrInstant("3.1.1", null, p);
         } else if (observation.getSamplingTime() instanceof InstantWrapper inst) {
             String date = null;
             if (inst.getDate() != null) {
@@ -148,15 +140,7 @@ public class OMXmlFactory {
         }
         final org.geotoolkit.gml.xml.v321.AbstractTimeObjectType time;
         if (observation.getSamplingTime() instanceof Period p) {
-            String dateBegin = null;
-            if (p.getBeginning() != null) {
-                dateBegin = p.getBeginning().toString();
-            }
-            String dateEnd = null;
-            if (p.getEnding() != null) {
-                dateEnd = p.getEnding().toString();
-            }
-            time = (org.geotoolkit.gml.xml.v321.AbstractTimeObjectType) GMLXmlFactory.createTimePeriod("3.2.1", null, dateBegin, dateEnd);
+            time = (org.geotoolkit.gml.xml.v321.AbstractTimeObjectType) GMLXmlFactory.createPeriodOrInstant("3.2.1", null, p);
         } else if (observation.getSamplingTime() instanceof InstantWrapper inst) {
             String date = null;
             if (inst.getDate() != null) {

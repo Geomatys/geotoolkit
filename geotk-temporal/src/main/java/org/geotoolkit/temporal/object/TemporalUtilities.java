@@ -27,7 +27,6 @@ import java.time.temporal.TemporalAmount;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Objects;
 import java.util.SimpleTimeZone;
 import java.util.TimeZone;
 import java.util.logging.Level;
@@ -652,7 +651,6 @@ public final class TemporalUtilities {
         if (d1 != null && d2 != null) {
             return d1.getTime() == d2.getTime();
         }
-        return Objects.equals(d1, d2);
+        return d1 == d2;
     }
-
 }
