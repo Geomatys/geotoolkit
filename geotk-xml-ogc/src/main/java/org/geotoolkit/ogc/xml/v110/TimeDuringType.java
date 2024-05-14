@@ -17,6 +17,7 @@
 
 package org.geotoolkit.ogc.xml.v110;
 
+import org.opengis.filter.Expression;
 import org.opengis.filter.TemporalOperatorName;
 
 /**
@@ -30,7 +31,7 @@ public class TimeDuringType extends BinaryTemporalOpType {
     public TimeDuringType() {
     }
 
-    public TimeDuringType(final String propertyName, final Object temporal) {
+    public TimeDuringType(final String propertyName, final Expression<?,?> temporal) {
         super(propertyName, temporal);
     }
 

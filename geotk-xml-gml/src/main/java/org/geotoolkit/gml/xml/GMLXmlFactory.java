@@ -241,7 +241,7 @@ public class GMLXmlFactory {
         }
     }
 
-    public static Period createTimePeriod(final String version, final String id, final Period p) {
+    public static GMLPeriod createTimePeriod(final String version, final String id, final Period p) {
         if ("3.2.1".equals(version)) {
             return new org.geotoolkit.gml.xml.v321.TimePeriodType(id, p);
         } else if ("3.1.1".equals(version)) {
@@ -251,7 +251,7 @@ public class GMLXmlFactory {
         }
     }
 
-    public static Period createTimePeriod(final String version, final String id, final String dateBegin, final String dateEnd) {
+    public static GMLPeriod createTimePeriod(final String version, final String id, final String dateBegin, final String dateEnd) {
         if ("3.2.1".equals(version)) {
             if (dateEnd == null) {
                 return new org.geotoolkit.gml.xml.v321.TimePeriodType(id, dateBegin);
@@ -270,12 +270,12 @@ public class GMLXmlFactory {
     }
 
     @Deprecated
-    public static Period createTimePeriod(final String version, final Date dateBegin, final Date dateEnd) {
+    public static GMLPeriod createTimePeriod(final String version, final Date dateBegin, final Date dateEnd) {
         return createTimePeriod(version, null, dateBegin, dateEnd);
     }
 
     @Deprecated
-    public static Period createTimePeriod(final String version, final String id, final Date dateBegin, final Date dateEnd) {
+    public static GMLPeriod createTimePeriod(final String version, final String id, final Date dateBegin, final Date dateEnd) {
         return createTimePeriod(version, id, instant(dateBegin), instant(dateEnd));
     }
 
@@ -284,7 +284,7 @@ public class GMLXmlFactory {
         return (date != null) ? date.toInstant() : null;
     }
 
-    public static Period createTimePeriod(final String version, final String id, final Instant dateBegin, final Instant dateEnd) {
+    public static GMLPeriod createTimePeriod(final String version, final String id, final Instant dateBegin, final Instant dateEnd) {
         if ("3.2.1".equals(version)) {
             if (dateEnd == null) {
                 return new org.geotoolkit.gml.xml.v321.TimePeriodType(id, dateBegin);
@@ -302,7 +302,7 @@ public class GMLXmlFactory {
         }
     }
 
-    public static Period createTimePeriod(final String version, final AbstractTimePosition dateBegin, final AbstractTimePosition dateEnd) {
+    public static GMLPeriod createTimePeriod(final String version, final AbstractTimePosition dateBegin, final AbstractTimePosition dateEnd) {
         if ("3.2.1".equals(version)) {
             if (dateEnd != null && !(dateEnd instanceof org.geotoolkit.gml.xml.v321.TimePositionType)) {
                 throw new IllegalArgumentException("unexpected gml version for date end.");
@@ -383,7 +383,7 @@ public class GMLXmlFactory {
         }
     }
 
-    public static Period createTimePeriod(final String version, final TimeIndeterminateValueType dateBegin, final AbstractTimePosition dateEnd) {
+    public static GMLPeriod createTimePeriod(final String version, final TimeIndeterminateValueType dateBegin, final AbstractTimePosition dateEnd) {
         if ("3.2.1".equals(version)) {
             if (dateEnd != null && !(dateEnd instanceof org.geotoolkit.gml.xml.v321.TimePositionType)) {
                     throw new IllegalArgumentException("unexpected gml version for date end.");
@@ -400,7 +400,7 @@ public class GMLXmlFactory {
         }
     }
 
-    public static Period createTimePeriod(final String version, final AbstractTimePosition dateBegin, final TimeIndeterminateValueType dateEnd) {
+    public static GMLPeriod createTimePeriod(final String version, final AbstractTimePosition dateBegin, final TimeIndeterminateValueType dateEnd) {
         if ("3.2.1".equals(version)) {
             if (dateBegin != null && !(dateBegin instanceof org.geotoolkit.gml.xml.v321.TimePositionType)) {
                 throw new IllegalArgumentException("unexpected gml version for date begin.");
@@ -418,11 +418,11 @@ public class GMLXmlFactory {
     }
 
     @Deprecated
-    public static Period createTimePeriod(final String version, final TimeIndeterminateValueType dateBegin, final Date dateEnd) {
+    public static GMLPeriod createTimePeriod(final String version, final TimeIndeterminateValueType dateBegin, final Date dateEnd) {
         return createTimePeriod(version, dateBegin, dateEnd.toInstant());
     }
 
-    public static Period createTimePeriod(final String version, final TimeIndeterminateValueType dateBegin, final Instant dateEnd) {
+    public static GMLPeriod createTimePeriod(final String version, final TimeIndeterminateValueType dateBegin, final Instant dateEnd) {
         if (dateEnd == null)
             throw new NullPointerException("dateEnd");
         if ("3.2.1".equals(version)) {
@@ -442,11 +442,11 @@ public class GMLXmlFactory {
     }
 
     @Deprecated
-    public static Period createTimePeriod(final String version, final Date dateBegin, final TimeIndeterminateValueType dateEnd) {
+    public static GMLPeriod createTimePeriod(final String version, final Date dateBegin, final TimeIndeterminateValueType dateEnd) {
         return createTimePeriod(version, dateBegin.toInstant(), dateEnd);
     }
 
-    public static Period createTimePeriod(final String version, final Instant dateBegin, final TimeIndeterminateValueType dateEnd) {
+    public static GMLPeriod createTimePeriod(final String version, final Instant dateBegin, final TimeIndeterminateValueType dateEnd) {
         if (dateBegin == null)
             throw new NullPointerException("dateBegin");
         if ("3.2.1".equals(version)) {

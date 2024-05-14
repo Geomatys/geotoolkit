@@ -968,7 +968,7 @@ public class FilterFactoryImpl extends FilterFactory2 {
 
     @Override
     public TemporalOperator<Object>after(final Expression<Object,?> expr1, final Expression<Object,?> expr2) {
-        Object temporal           = null;
+        Expression<?,?> temporal  = null;
         PropertyNameType propName = null;
         if (expr1 instanceof PropertyNameType) {
             propName = (PropertyNameType) expr1;
@@ -982,7 +982,7 @@ public class FilterFactoryImpl extends FilterFactory2 {
 
     @Override
     public TemporalOperator<Object> anyInteracts(final Expression<Object,?> expr1, final Expression<Object,?> expr2) {
-        Object temporal           = null;
+        Expression<?,?> temporal  = null;
         PropertyNameType propName = null;
         if (expr1 instanceof PropertyNameType) {
             propName = (PropertyNameType) expr1;
@@ -996,7 +996,7 @@ public class FilterFactoryImpl extends FilterFactory2 {
 
     @Override
     public TemporalOperator<Object> before(final Expression<Object,?> expr1, final  Expression<Object,?> expr2) {
-        Object temporal           = null;
+        Expression<?,?> temporal  = null;
         PropertyNameType propName = null;
         if (expr1 instanceof PropertyNameType) {
             propName = (PropertyNameType) expr1;
@@ -1010,7 +1010,7 @@ public class FilterFactoryImpl extends FilterFactory2 {
 
     @Override
     public TemporalOperator<Object> begins(final Expression<Object,?> expr1, final  Expression<Object,?> expr2) {
-        Object temporal           = null;
+        Expression<?,?> temporal  = null;
         PropertyNameType propName = null;
         if (expr1 instanceof PropertyNameType) {
             propName = (PropertyNameType) expr1;
@@ -1024,7 +1024,7 @@ public class FilterFactoryImpl extends FilterFactory2 {
 
     @Override
     public TemporalOperator<Object> begunBy(final Expression<Object,?> expr1, final  Expression<Object,?> expr2) {
-        Object temporal           = null;
+        Expression<?,?> temporal  = null;
         PropertyNameType propName = null;
         if (expr1 instanceof PropertyNameType) {
             propName = (PropertyNameType) expr1;
@@ -1038,7 +1038,7 @@ public class FilterFactoryImpl extends FilterFactory2 {
 
     @Override
     public TemporalOperator<Object> during(final Expression<Object,?> expr1, final  Expression<Object,?> expr2) {
-        Object temporal           = null;
+        Expression<?,?> temporal  = null;
         PropertyNameType propName = null;
         if (expr1 instanceof PropertyNameType) {
             propName = (PropertyNameType) expr1;
@@ -1052,7 +1052,7 @@ public class FilterFactoryImpl extends FilterFactory2 {
 
     @Override
     public TemporalOperator<Object> ends(final Expression<Object,?> expr1, final  Expression<Object,?> expr2) {
-        Object temporal           = null;
+        Expression<?,?> temporal  = null;
         PropertyNameType propName = null;
         if (expr1 instanceof PropertyNameType) {
             propName = (PropertyNameType) expr1;
@@ -1066,7 +1066,7 @@ public class FilterFactoryImpl extends FilterFactory2 {
 
     @Override
     public TemporalOperator<Object> endedBy(final Expression<Object,?> expr1, final  Expression<Object,?> expr2) {
-        Object temporal           = null;
+        Expression<?,?> temporal  = null;
         PropertyNameType propName = null;
         if (expr1 instanceof PropertyNameType) {
             propName = (PropertyNameType) expr1;
@@ -1080,7 +1080,7 @@ public class FilterFactoryImpl extends FilterFactory2 {
 
     @Override
     public TemporalOperator<Object> meets(final Expression<Object,?> expr1, final  Expression<Object,?> expr2) {
-        Object temporal           = null;
+        Expression<?,?> temporal  = null;
         PropertyNameType propName = null;
         if (expr1 instanceof PropertyNameType) {
             propName = (PropertyNameType) expr1;
@@ -1094,7 +1094,7 @@ public class FilterFactoryImpl extends FilterFactory2 {
 
     @Override
     public TemporalOperator<Object> metBy(final Expression<Object,?> expr1, final  Expression<Object,?> expr2) {
-        Object temporal           = null;
+        Expression<?,?> temporal  = null;
         PropertyNameType propName = null;
         if (expr1 instanceof PropertyNameType) {
             propName = (PropertyNameType) expr1;
@@ -1108,7 +1108,7 @@ public class FilterFactoryImpl extends FilterFactory2 {
 
     @Override
     public TemporalOperator<Object> overlappedBy(final Expression<Object,?> expr1, final  Expression<Object,?> expr2) {
-        Object temporal           = null;
+        Expression<?,?> temporal  = null;
         PropertyNameType propName = null;
         if (expr1 instanceof PropertyNameType) {
             propName = (PropertyNameType) expr1;
@@ -1122,7 +1122,7 @@ public class FilterFactoryImpl extends FilterFactory2 {
 
     @Override
     public TemporalOperator<Object> tcontains(final Expression<Object,?> expr1, final  Expression<Object,?> expr2) {
-        Object temporal           = null;
+        Expression<?,?> temporal  = null;
         PropertyNameType propName = null;
         if (expr1 instanceof PropertyNameType) {
             propName = (PropertyNameType) expr1;
@@ -1136,7 +1136,7 @@ public class FilterFactoryImpl extends FilterFactory2 {
 
     @Override
     public TemporalOperator<Object> tequals(final Expression<Object,?> expr1, final  Expression<Object,?> expr2) {
-        Object temporal           = null;
+        Expression<?,?> temporal  = null;
         PropertyNameType propName = null;
         if (expr1 instanceof PropertyNameType) {
             propName = (PropertyNameType) expr1;
@@ -1150,7 +1150,7 @@ public class FilterFactoryImpl extends FilterFactory2 {
 
     @Override
     public TemporalOperator<Object> toverlaps(final Expression<Object,?> expr1, final  Expression<Object,?> expr2) {
-        Object temporal           = null;
+        Expression<?,?> temporal  = null;
         PropertyNameType propName = null;
         if (expr1 instanceof PropertyNameType) {
             propName = (PropertyNameType) expr1;
