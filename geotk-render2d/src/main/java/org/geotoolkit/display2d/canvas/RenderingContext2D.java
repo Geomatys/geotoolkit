@@ -87,7 +87,7 @@ import org.opengis.util.FactoryException;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import static org.geotoolkit.display.canvas.AbstractCanvas2D.toRectangle;
-import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.coordinate.MismatchedDimensionException;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.Matrix;
 

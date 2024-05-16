@@ -25,8 +25,8 @@ import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSSurf
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
-import org.opengis.geometry.MismatchedDimensionException;
-import org.opengis.geometry.MismatchedReferenceSystemException;
+import org.opengis.coordinate.MismatchedDimensionException;
+import org.opengis.coordinate.MismatchedCoordinateMetadataException;
 import org.opengis.geometry.aggregate.MultiPrimitive;
 import org.opengis.geometry.coordinate.Arc;
 import org.opengis.geometry.coordinate.ArcByBulge;
@@ -234,7 +234,7 @@ public class JTSGeometryFactory implements GeometryFactory {
      */
     @Override
     public BSplineCurve createBSplineCurve(final int arg0, final PointArray arg1, final List arg2, final KnotType arg3)
-            throws MismatchedReferenceSystemException, MismatchedDimensionException {
+            throws MismatchedCoordinateMetadataException, MismatchedDimensionException {
         // TODO Auto-generated method stub
         return null;
     }
@@ -243,7 +243,7 @@ public class JTSGeometryFactory implements GeometryFactory {
      * {@inheritDoc }
      */
     @Override
-    public Polygon createPolygon(final SurfaceBoundary boundary) throws MismatchedReferenceSystemException,
+    public Polygon createPolygon(final SurfaceBoundary boundary) throws MismatchedCoordinateMetadataException,
             MismatchedDimensionException {
         JTSPolygon result = new JTSPolygon(boundary);
         return result;
@@ -254,7 +254,7 @@ public class JTSGeometryFactory implements GeometryFactory {
      */
     @Override
     public Polygon createPolygon(final SurfaceBoundary boundary, final Surface spanningSurface)
-            throws MismatchedReferenceSystemException, MismatchedDimensionException {
+            throws MismatchedCoordinateMetadataException, MismatchedDimensionException {
         JTSPolygon result = new JTSPolygon(boundary, Collections.singletonList(spanningSurface));
         return result;
     }
@@ -264,7 +264,7 @@ public class JTSGeometryFactory implements GeometryFactory {
      */
     @Override
     public Tin createTin(final Set arg0, final Set arg1, final Set arg2, final double arg3)
-            throws MismatchedReferenceSystemException, MismatchedDimensionException {
+            throws MismatchedCoordinateMetadataException, MismatchedDimensionException {
         // TODO Auto-generated method stub
         return null;
     }
@@ -273,10 +273,10 @@ public class JTSGeometryFactory implements GeometryFactory {
      * @param exterior
      * @param interiors
      * @return SurfaceBoundary
-     * @throws MismatchedReferenceSystemException
+     * @throws MismatchedCoordinateMetadataException
      * @see org.opengis.geometry.coordinate.Factory#createSurfaceBoundary(org.opengis.geometry.primitive.Ring, java.util.List)
      */
-    public SurfaceBoundary createSurfaceBoundary(final Ring exterior, final List interiors) throws MismatchedReferenceSystemException {
+    public SurfaceBoundary createSurfaceBoundary(final Ring exterior, final List interiors) throws MismatchedCoordinateMetadataException {
         return new JTSSurfaceBoundary(crs, exterior, (Ring []) interiors.toArray(new Ring[interiors.size()]));
     }
 
@@ -293,7 +293,7 @@ public class JTSGeometryFactory implements GeometryFactory {
      */
     @Override
     public PolyhedralSurface createPolyhedralSurface(final List<Polygon> polygons)
-            throws MismatchedReferenceSystemException, MismatchedDimensionException {
+            throws MismatchedCoordinateMetadataException, MismatchedDimensionException {
         JTSPolyhedralSurface result = new JTSPolyhedralSurface(crs);
         List<?> cast = (List<?>) polygons;
         result.getPatches().addAll( (List<JTSPolygon>) cast);
@@ -304,7 +304,7 @@ public class JTSGeometryFactory implements GeometryFactory {
      * {@inheritDoc }
      */
     @Override
-    public BSplineSurface createBSplineSurface( final List arg0, final int[] arg1, final List[] arg2, final KnotType arg3 ) throws MismatchedReferenceSystemException, MismatchedDimensionException {
+    public BSplineSurface createBSplineSurface( final List arg0, final int[] arg1, final List[] arg2, final KnotType arg3 ) throws MismatchedCoordinateMetadataException, MismatchedDimensionException {
         throw new UnsupportedOperationException(
             "This is the JTS Wrapper Factory which only supports implementations that align with the Simple Feature for SQL Specification.");
     }

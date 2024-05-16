@@ -41,7 +41,7 @@ import org.opengis.filter.BinarySpatialOperator;
 import org.opengis.filter.Literal;
 import org.opengis.filter.SpatialOperatorName;
 import org.opengis.geometry.Envelope;
-import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.coordinate.MismatchedDimensionException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;

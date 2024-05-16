@@ -26,7 +26,7 @@ import javax.measure.Quantity;
 
 import org.opengis.referencing.cs.*;
 import org.opengis.util.InternationalString;
-import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.coordinate.MismatchedDimensionException;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Errors;

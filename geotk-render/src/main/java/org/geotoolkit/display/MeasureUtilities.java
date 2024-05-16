@@ -37,7 +37,7 @@ import org.geotoolkit.geometry.jts.JTS;
 import org.apache.sis.referencing.privy.ReferencingUtilities;
 import org.apache.sis.referencing.operation.transform.DefaultMathTransformFactory;
 
-import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.coordinate.MismatchedDimensionException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;

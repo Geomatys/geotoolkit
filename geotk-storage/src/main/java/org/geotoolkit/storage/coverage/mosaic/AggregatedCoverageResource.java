@@ -84,7 +84,7 @@ import org.geotoolkit.util.TriFunction;
 import org.locationtech.jts.index.quadtree.Quadtree;
 import org.opengis.coverage.grid.SequenceType;
 import org.opengis.geometry.Envelope;
-import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.coordinate.MismatchedDimensionException;
 import org.opengis.metadata.Metadata;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;

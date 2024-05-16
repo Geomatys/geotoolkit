@@ -32,7 +32,7 @@ import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.geotoolkit.referencing.cs.Axes;
 import org.junit.*;
 import static org.junit.Assert.*;
-import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.coordinate.MismatchedDimensionException;
 import org.opengis.referencing.IdentifiedObject;
 
 

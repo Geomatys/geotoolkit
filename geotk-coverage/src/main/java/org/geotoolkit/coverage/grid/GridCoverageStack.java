@@ -64,7 +64,7 @@ import org.opengis.coverage.CannotEvaluateException;
 import org.opengis.coverage.PointOutsideCoverageException;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
-import org.opengis.geometry.MismatchedReferenceSystemException;
+import org.opengis.coordinate.MismatchedCoordinateMetadataException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.TemporalCRS;
 import org.opengis.referencing.datum.PixelInCell;
@@ -968,13 +968,13 @@ public class GridCoverageStack extends org.geotoolkit.coverage.grid.GridCoverage
                             operation = factory.createOperation(sourceCRS, reducedCRS);
                         }
                     } catch (FactoryException e) {
-                        throw new MismatchedReferenceSystemException(Errors.format(errorCode, e));
+                        throw new MismatchedCoordinateMetadataException(Errors.format(errorCode, e));
                     }
                 }
                 try {
                     candidate = Envelopes.transform(operation, candidate);
                 } catch (TransformException exception) {
-                    throw new MismatchedReferenceSystemException(Errors.format(errorCode, exception));
+                    throw new MismatchedCoordinateMetadataException(Errors.format(errorCode, exception));
                 }
             }
             /*

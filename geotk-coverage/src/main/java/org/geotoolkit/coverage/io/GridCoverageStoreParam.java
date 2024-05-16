@@ -23,9 +23,9 @@ import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 
 import org.opengis.geometry.Envelope;
-import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.coordinate.MismatchedDimensionException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.geometry.MismatchedReferenceSystemException;
+import org.opengis.coordinate.MismatchedCoordinateMetadataException;
 
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.geometry.Envelope2D;
@@ -124,12 +124,12 @@ public abstract class GridCoverageStoreParam implements Serializable {
      * to the given CRS.
      */
     private static void ensureCompatibleCRS(final Envelope envelope, final CoordinateReferenceSystem crs)
-            throws MismatchedReferenceSystemException
+            throws MismatchedCoordinateMetadataException
     {
         if (crs != null && envelope != null) {
             final CoordinateReferenceSystem envelopeCRS = envelope.getCoordinateReferenceSystem();
             if (envelopeCRS != null && !Utilities.equalsIgnoreMetadata(crs, envelopeCRS)) {
-                throw new MismatchedReferenceSystemException(Errors.format(
+                throw new MismatchedCoordinateMetadataException(Errors.format(
                         Errors.Keys.MismatchedCoordinateReferenceSystem));
             }
         }
@@ -185,16 +185,16 @@ public abstract class GridCoverageStoreParam implements Serializable {
     /**
      * Sets the CRS of the {@linkplain #getEnvelope() envelope} and {@linkplain #getResolution()
      * resolution} parameters. If the envelope parameter is already defined with a different
-     * CRS, then this method throws a {@link MismatchedReferenceSystemException}.
+     * CRS, then this method throws a {@link MismatchedCoordinateMetadataException}.
      *
      * @param  crs The new CRS for the envelope and resolution parameters.
-     * @throws MismatchedReferenceSystemException If the {@linkplain #getEnvelope() envelope}
+     * @throws MismatchedCoordinateMetadataException If the {@linkplain #getEnvelope() envelope}
      *         parameter is already defined with a different CRS.
      * @throws MismatchedDimensionException If the {@linkplain #getResolution() resolution}
      *         parameter is already defined with a different dimension.
      */
     public void setCoordinateReferenceSystem(final CoordinateReferenceSystem crs)
-            throws MismatchedReferenceSystemException, MismatchedDimensionException
+            throws MismatchedCoordinateMetadataException, MismatchedDimensionException
     {
         ensureCompatibleCRS(envelope, crs);
         ensureCompatibleDimension(resolution, crs);
@@ -281,7 +281,7 @@ public abstract class GridCoverageStoreParam implements Serializable {
      * the full coverage extent in its native CRS.
      *
      * @param  envelope The region to read from the source, or {@code null}.
-     * @throws MismatchedReferenceSystemException If the given CRS is not equal
+     * @throws MismatchedCoordinateMetadataException If the given CRS is not equal
      *         (ignoring metadata) to the CRS defined by the last call to
      *         {@link #setCoordinateReferenceSystem setCoordinateReferenceSystem}.
      * @throws MismatchedDimensionException If the dimension of the given envelope is not
@@ -326,7 +326,7 @@ public abstract class GridCoverageStoreParam implements Serializable {
      *
      * @param  bounds The region to read from the source, or {@code null}.
      * @param  crs The two-dimensional coordinate reference system of the region.
-     * @throws MismatchedReferenceSystemException If the given CRS is not equal
+     * @throws MismatchedCoordinateMetadataException If the given CRS is not equal
      *         (ignoring metadata) to the CRS defined by the last call to
      *         {@link #setCoordinateReferenceSystem setCoordinateReferenceSystem}.
      * @throws MismatchedDimensionException If dimension of the current
@@ -337,7 +337,7 @@ public abstract class GridCoverageStoreParam implements Serializable {
      * @since 3.10
      */
     public void setEnvelope(final Rectangle2D bounds, final CoordinateReferenceSystem crs)
-            throws MismatchedReferenceSystemException, MismatchedDimensionException
+            throws MismatchedCoordinateMetadataException, MismatchedDimensionException
     {
         setEnvelope(bounds != null ? new Envelope2D(crs, bounds) : null);
     }

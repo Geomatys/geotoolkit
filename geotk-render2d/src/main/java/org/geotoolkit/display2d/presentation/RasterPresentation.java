@@ -64,7 +64,7 @@ import org.locationtech.jts.geom.Polygon;
 import org.opengis.filter.Expression;
 import org.opengis.filter.Literal;
 import org.opengis.geometry.Envelope;
-import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.coordinate.MismatchedDimensionException;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;

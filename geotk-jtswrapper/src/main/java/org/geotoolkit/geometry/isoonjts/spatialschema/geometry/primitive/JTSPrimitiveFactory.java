@@ -16,8 +16,8 @@ import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSPolyg
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
-import org.opengis.geometry.MismatchedDimensionException;
-import org.opengis.geometry.MismatchedReferenceSystemException;
+import org.opengis.coordinate.MismatchedDimensionException;
+import org.opengis.coordinate.MismatchedCoordinateMetadataException;
 import org.opengis.geometry.coordinate.GeometryFactory;
 import org.opengis.geometry.coordinate.Polygon;
 import org.opengis.geometry.coordinate.PolyhedralSurface;
@@ -173,7 +173,7 @@ public class JTSPrimitiveFactory implements PrimitiveFactory {
      */
     @Override
     public SurfaceBoundary createSurfaceBoundary(final Ring exterior, final List interiors)
-            throws MismatchedReferenceSystemException, MismatchedDimensionException {
+            throws MismatchedCoordinateMetadataException, MismatchedDimensionException {
         return new JTSSurfaceBoundary(crs, exterior, (Ring []) interiors.toArray(new Ring[interiors.size()]));
     }
 
@@ -204,7 +204,7 @@ public class JTSPrimitiveFactory implements PrimitiveFactory {
 
 
     public PolyhedralSurface createPolyhedralSurface(final List<Polygon> patches)
-            throws MismatchedReferenceSystemException, MismatchedDimensionException {
+            throws MismatchedCoordinateMetadataException, MismatchedDimensionException {
         JTSPolyhedralSurface result = new JTSPolyhedralSurface(crs);
         List<?> cast = (List<?>) patches;
         result.getPatches().addAll((List<JTSPolygon>) cast );

@@ -24,7 +24,7 @@ import static org.geotoolkit.processing.vector.intersection.IntersectionDescript
 import org.geotoolkit.storage.feature.FeatureCollection;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
-import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.coordinate.MismatchedDimensionException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;

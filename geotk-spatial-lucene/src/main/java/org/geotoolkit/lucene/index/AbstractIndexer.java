@@ -53,7 +53,7 @@ import org.geotoolkit.lucene.filter.LuceneOGCSpatialQuery;
 
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.util.collection.CloseableIterator;
-import org.opengis.geometry.MismatchedReferenceSystemException;
+import org.opengis.coordinate.MismatchedCoordinateMetadataException;
 
 // Types dependencies
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -484,7 +484,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
             rTree.insert(namedBound);
             rTree.getTreeElementMapper().flush();
             rTree.flush();
-        } catch (TransformException | FactoryException | MismatchedReferenceSystemException | StoreIndexException | IOException ex) {
+        } catch (TransformException | FactoryException | MismatchedCoordinateMetadataException | StoreIndexException | IOException ex) {
             LOGGER.log(Level.WARNING, "Unable to insert envelope in R-Tree.", ex);
         }
         doc.add(new StoredField(LuceneOGCSpatialQuery.GEOMETRY_FIELD_NAME,WKBUtils.toWKBwithSRID(geom)));
