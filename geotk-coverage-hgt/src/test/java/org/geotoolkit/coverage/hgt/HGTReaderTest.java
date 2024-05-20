@@ -43,7 +43,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opengis.coverage.grid.SequenceType;
 import org.opengis.geometry.Envelope;
-import org.opengis.referencing.datum.PixelInCell;
+import org.apache.sis.coverage.grid.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 
 /**

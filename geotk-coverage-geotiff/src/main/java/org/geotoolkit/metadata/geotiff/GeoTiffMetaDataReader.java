@@ -28,7 +28,7 @@ import javax.imageio.metadata.IIOMetadata;
 import org.opengis.metadata.spatial.CellGeometry;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
-import org.opengis.referencing.datum.PixelInCell;
+import org.apache.sis.coverage.grid.PixelInCell;
 import org.opengis.util.FactoryException;
 
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;

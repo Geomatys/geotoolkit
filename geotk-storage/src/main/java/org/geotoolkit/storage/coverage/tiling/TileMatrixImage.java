@@ -44,7 +44,7 @@ import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.multires.TileInError;
-import org.opengis.referencing.datum.PixelInCell;
+import org.apache.sis.coverage.grid.PixelInCell;
 
 /**
  * Implementation of RenderedImage over a TileMatrix composed of GriCoverages.

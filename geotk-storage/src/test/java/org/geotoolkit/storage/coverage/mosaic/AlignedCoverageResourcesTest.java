@@ -31,7 +31,7 @@ import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
 import org.junit.Assert;
 import org.junit.Test;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import static org.opengis.referencing.datum.PixelInCell.CELL_CENTER;
+import static org.apache.sis.coverage.grid.PixelInCell.CELL_CENTER;
 
 /**
  *

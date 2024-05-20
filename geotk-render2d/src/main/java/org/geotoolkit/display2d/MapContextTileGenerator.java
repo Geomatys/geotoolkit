@@ -74,7 +74,7 @@ import org.geotoolkit.util.NamesExt;
 import org.opengis.filter.Expression;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.datum.PixelInCell;
+import org.apache.sis.coverage.grid.PixelInCell;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.Displacement;
 import org.opengis.style.FeatureTypeStyle;

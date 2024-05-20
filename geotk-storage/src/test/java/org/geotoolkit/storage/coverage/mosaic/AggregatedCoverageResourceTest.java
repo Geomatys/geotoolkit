@@ -65,8 +65,8 @@ import org.opengis.util.FactoryException;
 
 import static org.junit.Assert.assertEquals;
 import org.opengis.metadata.spatial.DimensionNameType;
-import org.opengis.referencing.datum.PixelInCell;
-import static org.opengis.referencing.datum.PixelInCell.CELL_CENTER;
+import org.apache.sis.coverage.grid.PixelInCell;
+import static org.apache.sis.coverage.grid.PixelInCell.CELL_CENTER;
 
 
 /**
@@ -1249,7 +1249,7 @@ public class AggregatedCoverageResourceTest {
                     Collections.singletonMap(CoordinateReferenceSystem.NAME_KEY,"ImageCRS"),
                     new DefaultImageDatum(
                             Collections.singletonMap(CoordinateReferenceSystem.NAME_KEY,"ImageDatum"),
-                            PixelInCell.CELL_CENTER),
+                            "cell center"),
                     new DefaultCartesianCS(
                             Collections.singletonMap(CoordinateReferenceSystem.NAME_KEY,"ImageCS"),
                             new DefaultCoordinateSystemAxis(

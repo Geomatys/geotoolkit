@@ -55,7 +55,7 @@ import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.util.StringUtilities;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.datum.PixelInCell;
+import org.apache.sis.coverage.grid.PixelInCell;
 import org.opengis.util.GenericName;
 
 /**

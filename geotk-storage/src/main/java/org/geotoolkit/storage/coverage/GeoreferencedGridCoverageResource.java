@@ -35,7 +35,7 @@ import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.event.StoreListeners;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.opengis.coverage.CannotEvaluateException;
-import org.opengis.referencing.datum.PixelInCell;
+import org.apache.sis.coverage.grid.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.TransformException;

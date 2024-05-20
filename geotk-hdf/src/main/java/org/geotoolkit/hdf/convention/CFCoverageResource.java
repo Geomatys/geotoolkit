@@ -56,7 +56,7 @@ import org.geotoolkit.hdf.api.Node;
 import org.geotoolkit.hdf.datatype.Reference;
 import org.geotoolkit.hdf.message.DataspaceMessage;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.datum.PixelInCell;
+import org.apache.sis.coverage.grid.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;

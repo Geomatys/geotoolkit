@@ -38,8 +38,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.datum.PixelInCell;
-import static org.opengis.referencing.datum.PixelInCell.CELL_CENTER;
+import org.apache.sis.coverage.grid.PixelInCell;
+import static org.apache.sis.coverage.grid.PixelInCell.CELL_CENTER;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 

@@ -65,7 +65,7 @@ import org.opengis.filter.Expression;
 import org.opengis.filter.Literal;
 import org.opengis.geometry.Envelope;
 import org.opengis.coordinate.MismatchedDimensionException;
-import org.opengis.referencing.datum.PixelInCell;
+import org.apache.sis.coverage.grid.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
