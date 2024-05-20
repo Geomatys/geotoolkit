@@ -26,7 +26,6 @@ import org.opengis.geometry.coordinate.LineString;
 import org.opengis.geometry.coordinate.Position;
 import org.opengis.geometry.primitive.Curve;
 import org.opengis.geometry.primitive.Point;
-import org.opengis.geometry.primitive.PrimitiveFactory;
 import org.opengis.geometry.primitive.Ring;
 import org.opengis.geometry.primitive.SurfaceBoundary;
 import org.opengis.geometry.primitive.Surface;
@@ -41,6 +40,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSGeometryFactory;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSPrimitiveFactory;
 import org.opengis.geometry.primitive.CurveSegment;
 import org.opengis.geometry.primitive.OrientableCurve;
 
@@ -87,9 +87,6 @@ import org.opengis.geometry.primitive.OrientableCurve;
  * @author Jody Garnett
  * @author Joel Skelton
  * @author Johann Sorel (Geomatys)
- * @module
- * @since 2.5
- * @version $Id$
  */
 public class GeometryParser {
 
@@ -99,7 +96,7 @@ public class GeometryParser {
     private static final String R_PAREN = ")";
 
     private JTSGeometryFactory geometryFactory;
-    private PrimitiveFactory primitiveFactory;
+    private JTSPrimitiveFactory primitiveFactory;
     private PositionFactory positionFactory;
     private AggregateFactory aggregateFactory;
 
@@ -114,7 +111,9 @@ public class GeometryParser {
      * @param positionFactory A <code>PositionFactory</code> created with the same crs and precision as above
      * @param aggregateFactory A <Code>AggregateFactory</code> created with the same crs and precision as above
      */
-    public GeometryParser(final JTSGeometryFactory geometryFactory, final PrimitiveFactory primitiveFactory, final PositionFactory positionFactory, final AggregateFactory aggregateFactory) {
+    public GeometryParser(final JTSGeometryFactory geometryFactory, final JTSPrimitiveFactory primitiveFactory,
+            final PositionFactory positionFactory, final AggregateFactory aggregateFactory)
+    {
         this.geometryFactory = geometryFactory;
         this.primitiveFactory = primitiveFactory;
         this.positionFactory = positionFactory;
@@ -132,7 +131,7 @@ public class GeometryParser {
      * Provide a PrimitiveFactory for the parser.
      * Should be called prior to use.
      */
-    public void setFactory(final PrimitiveFactory factory){
+    public void setFactory(final JTSPrimitiveFactory factory){
         this.primitiveFactory = factory;
     }
     /**

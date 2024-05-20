@@ -37,6 +37,7 @@ import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSPrim
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryCollection;
+import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.MultiLineString;
 import org.locationtech.jts.geom.MultiPoint;
 import org.locationtech.jts.geom.MultiPolygon;
@@ -44,13 +45,11 @@ import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.Geometry;
 import org.opengis.geometry.PositionFactory;
-import org.opengis.geometry.coordinate.GeometryFactory;
 import org.opengis.geometry.coordinate.LineString;
 import org.opengis.geometry.coordinate.PointArray;
 import org.opengis.geometry.coordinate.Polygon;
 import org.opengis.geometry.coordinate.Position;
 import org.opengis.geometry.primitive.Curve;
-import org.opengis.geometry.primitive.PrimitiveFactory;
 import org.opengis.geometry.primitive.Ring;
 import org.opengis.geometry.primitive.SurfaceBoundary;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -69,7 +68,7 @@ public final class JTSUtils {
      * Common instance of GEOMETRY_FACTORY with the default JTS precision model
      * that can be used to make new geometries.
      */
-    public static final org.locationtech.jts.geom.GeometryFactory GEOMETRY_FACTORY = new org.locationtech.jts.geom.GeometryFactory();
+    public static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory();
 
     /**
      * This class has only static methods, so we make the constructor private
@@ -102,8 +101,8 @@ public final class JTSUtils {
         }
 
         //TODO use factory finder when primitive factory and geometry factory are ready.
-        final PrimitiveFactory pf = new JTSPrimitiveFactory(crs);//FactoryFinder.getPrimitiveFactory(hints);
-        final GeometryFactory gf  = new JTSGeometryFactory(crs); //FactoryFinder.getGeometryFactory(hints);
+        final var pf = new JTSPrimitiveFactory(crs);//FactoryFinder.getPrimitiveFactory(hints);
+        final var gf  = new JTSGeometryFactory(crs); //FactoryFinder.getGeometryFactory(hints);
 
         if (jtsGeom instanceof org.locationtech.jts.geom.Point) {
             org.locationtech.jts.geom.Point candidate = (org.locationtech.jts.geom.Point) jtsGeom;
@@ -350,8 +349,8 @@ public final class JTSUtils {
             throw new IllegalArgumentException("LineString must be a ring");
         }
 
-        PrimitiveFactory pf = new JTSPrimitiveFactory(crs); //FactoryFinder.getPrimitiveFactory(hints);
-        GeometryFactory gf = new JTSGeometryFactory(crs); //FactoryFinder.getGeometryFactory(hints);
+        var pf = new JTSPrimitiveFactory(crs); //FactoryFinder.getPrimitiveFactory(hints);
+        var gf = new JTSGeometryFactory(crs); //FactoryFinder.getGeometryFactory(hints);
 
         LineString ls = gf.createLineString(new ArrayList());
         List pointList = ls.getControlPoints();

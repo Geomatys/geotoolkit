@@ -45,14 +45,12 @@ import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.coordinate.MismatchedDimensionException;
 import org.opengis.geometry.complex.CompositeCurve;
-import org.opengis.geometry.coordinate.GeometryFactory;
 import org.opengis.geometry.coordinate.LineString;
 import org.opengis.geometry.coordinate.PointArray;
 import org.opengis.geometry.coordinate.Polygon;
 import org.opengis.geometry.coordinate.PolyhedralSurface;
 import org.opengis.geometry.primitive.Curve;
 import org.opengis.geometry.primitive.CurveSegment;
-import org.opengis.geometry.primitive.PrimitiveFactory;
 import org.opengis.geometry.primitive.Ring;
 import org.opengis.geometry.primitive.SurfaceBoundary;
 import org.apache.sis.geometry.Envelopes;
@@ -682,7 +680,7 @@ public final class GeometryUtils {
     public static PolyhedralSurface createPolyhedralSurface(final DirectPosition[][] patchPoints) {
         // get the crs and factories
         final CoordinateReferenceSystem crs = patchPoints[0][0].getCoordinateReferenceSystem();
-        final GeometryFactory geometryFactory = new JTSGeometryFactory(crs);
+        final var geometryFactory = new JTSGeometryFactory(crs);
 
         // create polygons from each of the arrays of directPositions
         final List polygons = new ArrayList(patchPoints.length);
@@ -703,8 +701,8 @@ public final class GeometryUtils {
             final DirectPosition[][] interiorRingsPoints) {
 
         final CoordinateReferenceSystem crs = exteriorRingPoints[0].getCoordinateReferenceSystem();
-        final GeometryFactory geometryFactory = new JTSGeometryFactory(crs);
-        final PrimitiveFactory primitiveFactory = new JTSPrimitiveFactory(crs);
+        final var geometryFactory = new JTSGeometryFactory(crs);
+        final var primitiveFactory = new JTSPrimitiveFactory(crs);
 
         final Ring exteriorRing = createRing(primitiveFactory, exteriorRingPoints);
 
@@ -726,12 +724,12 @@ public final class GeometryUtils {
             final DirectPosition[] exteriorRingPoints,
             final DirectPosition[][] interiorRingsPoints) {
         final CoordinateReferenceSystem crs = exteriorRingPoints[0].getCoordinateReferenceSystem();
-        final PrimitiveFactory primitiveFactory = new JTSPrimitiveFactory(crs);
+        final JTSPrimitiveFactory primitiveFactory = new JTSPrimitiveFactory(crs);
         return createSurfaceBoundary(primitiveFactory, exteriorRingPoints, interiorRingsPoints);
     }
 
     private static SurfaceBoundary createSurfaceBoundary(
-            final PrimitiveFactory primitiveFactory,
+            final JTSPrimitiveFactory primitiveFactory,
             final DirectPosition[] exteriorRingPoints,
             final DirectPosition[][] interiorRingsPoints) {
 
@@ -751,12 +749,12 @@ public final class GeometryUtils {
 
     public static Ring createRing(final DirectPosition[] points) {
         final CoordinateReferenceSystem crs = points[0].getCoordinateReferenceSystem();
-        final PrimitiveFactory primitiveFactory = new JTSPrimitiveFactory(crs);
+        final JTSPrimitiveFactory primitiveFactory = new JTSPrimitiveFactory(crs);
         return createRing(primitiveFactory, points);
     }
 
     private static Ring createRing(
-            final PrimitiveFactory primitiveFactory,
+            final JTSPrimitiveFactory primitiveFactory,
             final DirectPosition[] points) {
 
         final List curveList = Collections.singletonList(createCurve(primitiveFactory, points));
@@ -767,15 +765,15 @@ public final class GeometryUtils {
 
     public static Curve createCurve(final DirectPosition[] points) {
         final CoordinateReferenceSystem crs = points[0].getCoordinateReferenceSystem();
-        final PrimitiveFactory primitiveFactory = new JTSPrimitiveFactory(crs);
+        final var primitiveFactory = new JTSPrimitiveFactory(crs);
         return createCurve(primitiveFactory, points);
     }
 
     private static Curve createCurve(
-            final PrimitiveFactory primitiveFactory,
+            final JTSPrimitiveFactory primitiveFactory,
             final DirectPosition[] points) {
 
-        final GeometryFactory geometryFactory = new JTSGeometryFactory(primitiveFactory.getCoordinateReferenceSystem());
+        final var geometryFactory = new JTSGeometryFactory(primitiveFactory.getCoordinateReferenceSystem());
 
         final List curveSegmentList = Collections.singletonList(createLineString(geometryFactory, points));
 
@@ -785,12 +783,12 @@ public final class GeometryUtils {
 
     public static LineString createLineString(final DirectPosition[] points) {
         final CoordinateReferenceSystem crs = points[0].getCoordinateReferenceSystem();
-        final GeometryFactory geometryFactory = new JTSGeometryFactory(crs);
+        final var geometryFactory = new JTSGeometryFactory(crs);
         return createLineString(geometryFactory, points);
     }
 
     private static LineString createLineString(
-            final GeometryFactory geometryFactory,
+            final JTSGeometryFactory geometryFactory,
             final DirectPosition[] points) {
 
         final LineString lineString = geometryFactory.createLineString(new ArrayList(Arrays.asList(points)));

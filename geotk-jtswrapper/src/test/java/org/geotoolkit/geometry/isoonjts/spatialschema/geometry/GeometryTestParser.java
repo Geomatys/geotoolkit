@@ -34,7 +34,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.xml.sax.SAXException;
 import org.xml.sax.InputSource;
-import org.opengis.geometry.primitive.PrimitiveFactory;
 import org.opengis.geometry.Geometry;
 import org.opengis.geometry.PositionFactory;
 import org.apache.sis.referencing.CommonCRS;
@@ -66,8 +65,8 @@ public class GeometryTestParser {
             throw new RuntimeException("", e);
         }
 
-        JTSGeometryFactory geomFact = new JTSGeometryFactory(CommonCRS.WGS84.normalizedGeographic());
-        PrimitiveFactory primFact = new JTSPrimitiveFactory(CommonCRS.WGS84.normalizedGeographic());
+        var geomFact = new JTSGeometryFactory(CommonCRS.WGS84.normalizedGeographic());
+        var primFact = new JTSPrimitiveFactory(CommonCRS.WGS84.normalizedGeographic());
         PositionFactory posFact = null;
         wktFactory = new GeometryParser(geomFact, primFact, posFact, null );
     }

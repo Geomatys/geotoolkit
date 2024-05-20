@@ -14,7 +14,6 @@ import org.apache.sis.referencing.CommonCRS;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSEnvelope;
@@ -28,23 +27,12 @@ import org.opengis.geometry.Envelope;
 import org.opengis.coordinate.MismatchedDimensionException;
 import org.opengis.coordinate.MismatchedCoordinateMetadataException;
 import org.opengis.geometry.aggregate.MultiPrimitive;
-import org.opengis.geometry.coordinate.Arc;
-import org.opengis.geometry.coordinate.ArcByBulge;
-import org.opengis.geometry.coordinate.ArcString;
-import org.opengis.geometry.coordinate.ArcStringByBulge;
-import org.opengis.geometry.coordinate.BSplineCurve;
-import org.opengis.geometry.coordinate.BSplineSurface;
-import org.opengis.geometry.coordinate.Geodesic;
-import org.opengis.geometry.coordinate.GeodesicString;
-import org.opengis.geometry.coordinate.GeometryFactory;
-import org.opengis.geometry.coordinate.KnotType;
 import org.opengis.geometry.coordinate.LineSegment;
 import org.opengis.geometry.coordinate.LineString;
 import org.opengis.geometry.coordinate.PointArray;
 import org.opengis.geometry.coordinate.Polygon;
 import org.opengis.geometry.coordinate.PolyhedralSurface;
 import org.opengis.geometry.coordinate.Position;
-import org.opengis.geometry.coordinate.Tin;
 import org.opengis.geometry.primitive.Ring;
 import org.opengis.geometry.primitive.Surface;
 import org.opengis.geometry.primitive.SurfaceBoundary;
@@ -55,10 +43,8 @@ import org.opengis.geometry.primitive.SurfaceBoundary;
  *
  * @author SYS Technologies
  * @author crossley
- * @version $Revision $
- * @module
  */
-public class JTSGeometryFactory implements GeometryFactory {
+public class JTSGeometryFactory {
 
     private final CoordinateReferenceSystem crs;
 
@@ -80,49 +66,30 @@ public class JTSGeometryFactory implements GeometryFactory {
     //  implement the GeometryFactory interface
     //*************************************************************************
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
     public CoordinateReferenceSystem getCoordinateReferenceSystem() {
         return crs;
     }
-
 
     public Position createPosition( final DirectPosition point ) {
         return new GeneralDirectPosition( point );
     }
 
-    /**
-     * {@inheritDoc }
-     */
     public DirectPosition createDirectPosition() {
         return new GeneralDirectPosition(crs);
     }
 
-    /**
-     * {@inheritDoc }
-     */
     public DirectPosition createDirectPosition(final double[] coordinates) {
         GeneralDirectPosition pos = new GeneralDirectPosition(coordinates);
         pos.setCoordinateReferenceSystem(crs);
         return pos;
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
     public Envelope createEnvelope(
             final DirectPosition lowerCorner,
             final DirectPosition upperCorner) {
         return new JTSEnvelope(lowerCorner, upperCorner);
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
     public LineSegment createLineSegment(final Position startPoint, final Position endPoint) {
         JTSLineSegment line = new JTSLineSegment();
         line.getControlPoints().add( startPoint );
@@ -131,10 +98,6 @@ public class JTSGeometryFactory implements GeometryFactory {
         return line;
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
     public LineString createLineString(final List/*<Position>*/ points) {
         LineString result = new JTSLineString(crs);
         PointArray pa = result.getControlPoints();
@@ -159,139 +122,26 @@ public class JTSGeometryFactory implements GeometryFactory {
         return result;
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Geodesic createGeodesic(final Position startPoint, final Position endPoint) {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public GeodesicString createGeodesicString(final List/*<Position>*/ points) {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Arc createArc(
-            final Position startPoint,
-            final Position midPoint,
-            final Position endPoint) {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Arc createArc(
-            final Position startPoint,
-            final Position endPoint,
-            final double bulge,
-            final double[] normal) {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public ArcString createArcString(final List/*<Position>*/ points) {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public ArcByBulge createArcByBulge(
-            final Position startPoint,
-            final Position endPoint,
-            final double bulge,
-            final double[] normal) {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public ArcStringByBulge createArcStringByBulge(
-            final List/*<Position>*/ points,
-            final double[] bulges,
-            final List/*<double[]>*/ normals) {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public BSplineCurve createBSplineCurve(final int arg0, final PointArray arg1, final List arg2, final KnotType arg3)
-            throws MismatchedCoordinateMetadataException, MismatchedDimensionException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
     public Polygon createPolygon(final SurfaceBoundary boundary) throws MismatchedCoordinateMetadataException,
             MismatchedDimensionException {
         JTSPolygon result = new JTSPolygon(boundary);
         return result;
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
     public Polygon createPolygon(final SurfaceBoundary boundary, final Surface spanningSurface)
             throws MismatchedCoordinateMetadataException, MismatchedDimensionException {
         JTSPolygon result = new JTSPolygon(boundary, Collections.singletonList(spanningSurface));
         return result;
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Tin createTin(final Set arg0, final Set arg1, final Set arg2, final double arg3)
-            throws MismatchedCoordinateMetadataException, MismatchedDimensionException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /**
-     * @param exterior
-     * @param interiors
-     * @return SurfaceBoundary
-     * @throws MismatchedCoordinateMetadataException
-     * @see org.opengis.geometry.coordinate.Factory#createSurfaceBoundary(org.opengis.geometry.primitive.Ring, java.util.List)
-     */
     public SurfaceBoundary createSurfaceBoundary(final Ring exterior, final List interiors) throws MismatchedCoordinateMetadataException {
         return new JTSSurfaceBoundary(crs, exterior, (Ring []) interiors.toArray(new Ring[interiors.size()]));
     }
 
-    /**
-     * {@inheritDoc }
-     */
     public MultiPrimitive createMultiPrimitive() {
         return new JTSMultiPrimitive();
     }
 
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
     public PolyhedralSurface createPolyhedralSurface(final List<Polygon> polygons)
             throws MismatchedCoordinateMetadataException, MismatchedDimensionException {
         JTSPolyhedralSurface result = new JTSPolyhedralSurface(crs);
@@ -299,14 +149,4 @@ public class JTSGeometryFactory implements GeometryFactory {
         result.getPatches().addAll( (List<JTSPolygon>) cast);
         return result;
     }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public BSplineSurface createBSplineSurface( final List arg0, final int[] arg1, final List[] arg2, final KnotType arg3 ) throws MismatchedCoordinateMetadataException, MismatchedDimensionException {
-        throw new UnsupportedOperationException(
-            "This is the JTS Wrapper Factory which only supports implementations that align with the Simple Feature for SQL Specification.");
-    }
-
 }

@@ -9,7 +9,6 @@
  *************************************************************************************************/
 package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry;
 
-import org.opengis.geometry.coordinate.GeometryFactory;
 import org.opengis.geometry.coordinate.LineSegment;
 
 
@@ -38,10 +37,6 @@ import org.opengis.geometry.coordinate.LineSegment;
  *
  * @author ISO/DIS 19107
  * @author <A HREF="http://www.opengis.org">OpenGIS&reg; consortium</A>
- * @version 2.0
- *
- * @see GeometryFactory#createLineString(java.util.List)
- * @module
  */
 public class JTSLineSegment extends JTSLineString implements LineSegment {
 

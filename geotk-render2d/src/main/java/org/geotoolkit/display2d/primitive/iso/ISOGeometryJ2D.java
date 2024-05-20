@@ -31,14 +31,12 @@ import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSPrim
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.Geometry;
 import org.opengis.geometry.aggregate.MultiPrimitive;
-import org.opengis.geometry.coordinate.GeometryFactory;
 import org.opengis.geometry.coordinate.PolyhedralSurface;
 import org.opengis.geometry.coordinate.Position;
 import org.opengis.geometry.primitive.Curve;
 import org.opengis.geometry.primitive.CurveSegment;
 import org.opengis.geometry.primitive.OrientableCurve;
 import org.opengis.geometry.primitive.Point;
-import org.opengis.geometry.primitive.PrimitiveFactory;
 import org.opengis.geometry.primitive.Ring;
 import org.opengis.geometry.primitive.SurfaceBoundary;
 
@@ -213,8 +211,8 @@ public class ISOGeometryJ2D implements Shape, Cloneable {
      * @return a rectangle with the specified position and size
      */
     private Geometry createRectangle(final double x, final double y, final double w, final double h) {
-        final GeometryFactory gf = new JTSGeometryFactory(geometry.getCoordinateReferenceSystem());
-        final PrimitiveFactory pf = new JTSPrimitiveFactory(geometry.getCoordinateReferenceSystem());
+        final var gf = new JTSGeometryFactory(geometry.getCoordinateReferenceSystem());
+        final var pf = new JTSPrimitiveFactory(geometry.getCoordinateReferenceSystem());
 
         final List<Position> points = new ArrayList<Position>();
         points.add(new DirectPosition2D(x,   y));
