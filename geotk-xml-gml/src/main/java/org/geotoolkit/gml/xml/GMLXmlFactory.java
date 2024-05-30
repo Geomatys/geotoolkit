@@ -17,7 +17,7 @@
 
 package org.geotoolkit.gml.xml;
 
-import java.time.Instant;
+import java.time.temporal.Temporal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -25,6 +25,7 @@ import java.util.Objects;
 import org.geotoolkit.gml.xml.v311.CoordinatesType;
 import org.opengis.temporal.Period;
 import org.opengis.temporal.TemporalGeometricPrimitive;
+import static org.apache.sis.util.privy.TemporalDate.toTemporal;
 
 /**
  *
@@ -245,7 +246,7 @@ public class GMLXmlFactory {
 
     public static TemporalGeometricPrimitive createPeriodOrInstant(final String version, final String id, final Period p) {
         if (p != null) {
-            Instant instant = p.getBeginning();
+            Temporal instant = p.getBeginning();
             if (Objects.equals(instant, p.getEnding())) {
                 return createTimeInstant(version, id, instant);
             }
@@ -288,15 +289,10 @@ public class GMLXmlFactory {
 
     @Deprecated
     public static GMLPeriod createTimePeriod(final String version, final String id, final Date dateBegin, final Date dateEnd) {
-        return createTimePeriod(version, id, instant(dateBegin), instant(dateEnd));
+        return createTimePeriod(version, id, toTemporal(dateBegin), toTemporal(dateEnd));
     }
 
-    @Deprecated
-    private static Instant instant(Date date) {
-        return (date != null) ? date.toInstant() : null;
-    }
-
-    public static GMLPeriod createTimePeriod(final String version, final String id, final Instant dateBegin, final Instant dateEnd) {
+    public static GMLPeriod createTimePeriod(final String version, final String id, final Temporal dateBegin, final Temporal dateEnd) {
         if ("3.2.1".equals(version)) {
             if (dateEnd == null) {
                 return new org.geotoolkit.gml.xml.v321.TimePeriodType(id, dateBegin);
@@ -382,10 +378,10 @@ public class GMLXmlFactory {
 
     @Deprecated
     public static GMLInstant createTimeInstant(final String version, final String id, final Date date) {
-        return createTimeInstant(version, id, instant(date));
+        return createTimeInstant(version, id, toTemporal(date));
     }
 
-    public static GMLInstant createTimeInstant(final String version, final String id, final Instant date) {
+    public static GMLInstant createTimeInstant(final String version, final String id, final Temporal date) {
         if ("3.2.1".equals(version)) {
             return new org.geotoolkit.gml.xml.v321.TimeInstantType(id, date);
         } else if ("3.1.1".equals(version)) {
@@ -434,7 +430,7 @@ public class GMLXmlFactory {
         return createTimePeriod(version, dateBegin, dateEnd.toInstant());
     }
 
-    public static GMLPeriod createTimePeriod(final String version, final TimeIndeterminateValueType dateBegin, final Instant dateEnd) {
+    public static GMLPeriod createTimePeriod(final String version, final TimeIndeterminateValueType dateBegin, final Temporal dateEnd) {
         if (dateEnd == null)
             throw new NullPointerException("dateEnd");
         if ("3.2.1".equals(version)) {
@@ -458,7 +454,7 @@ public class GMLXmlFactory {
         return createTimePeriod(version, dateBegin.toInstant(), dateEnd);
     }
 
-    public static GMLPeriod createTimePeriod(final String version, final Instant dateBegin, final TimeIndeterminateValueType dateEnd) {
+    public static GMLPeriod createTimePeriod(final String version, final Temporal dateBegin, final TimeIndeterminateValueType dateEnd) {
         if (dateBegin == null)
             throw new NullPointerException("dateBegin");
         if ("3.2.1".equals(version)) {

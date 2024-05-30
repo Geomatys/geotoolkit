@@ -30,7 +30,6 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlType;
-import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
 import java.time.temporal.TemporalAmount;
@@ -39,6 +38,7 @@ import java.time.temporal.UnsupportedTemporalTypeException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.Duration;
+import org.geotoolkit.temporal.object.InstantWrapper;
 
 
 /**
@@ -154,12 +154,12 @@ public class PeriodDurationType implements TemporalAmount {
 
     @Override
     public Temporal addTo(Temporal temporal) {
-        return ((Instant) temporal).plusMillis(getTimeInMillis());
+        return InstantWrapper.toInstant(temporal).plusMillis(getTimeInMillis());
     }
 
     @Override
     public Temporal subtractFrom(Temporal temporal) {
-        return ((Instant) temporal).minusMillis(getTimeInMillis());
+        return InstantWrapper.toInstant(temporal).minusMillis(getTimeInMillis());
     }
 
     @Override

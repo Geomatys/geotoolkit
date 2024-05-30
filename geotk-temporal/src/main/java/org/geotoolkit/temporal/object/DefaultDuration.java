@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.temporal.object;
 
-import java.time.Instant;
 import java.time.Period;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
@@ -131,12 +130,12 @@ public class DefaultDuration implements TemporalAmount {
 
     @Override
     public Temporal addTo(Temporal temporal) {
-        return ((Instant) temporal).plusMillis(getTimeInMillis());
+        return InstantWrapper.toInstant(temporal).plusMillis(getTimeInMillis());
     }
 
     @Override
     public Temporal subtractFrom(Temporal temporal) {
-        return ((Instant) temporal).minusMillis(getTimeInMillis());
+        return InstantWrapper.toInstant(temporal).minusMillis(getTimeInMillis());
     }
 
     @Override

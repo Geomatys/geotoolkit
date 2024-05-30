@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import jakarta.xml.bind.Marshaller;
+import java.time.LocalDate;
 import org.geotoolkit.feature.catalog.AssociationRoleImpl;
 import org.geotoolkit.feature.catalog.BoundFeatureAttributeImpl;
 import org.geotoolkit.feature.catalog.ConstraintImpl;
@@ -115,7 +116,7 @@ public class XMLBindingTest {
         source.setTitle(new SimpleInternationalString("International Hydrographic Organization (IHO) Hydrographic Dictionnary, Part I, Volume I English"));
         List<CitationDate> dates = new ArrayList<>();
         DefaultCitationDate date = new DefaultCitationDate();
-        date.setDate(new Date(1994,1,1));
+        date.setDate(LocalDate.of(1994, 2, 1));
         date.setDateType(DateType.PUBLICATION);
         dates.add(date);
         source.setDates(dates);

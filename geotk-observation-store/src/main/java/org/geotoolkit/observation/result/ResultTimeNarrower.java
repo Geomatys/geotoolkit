@@ -63,12 +63,12 @@ public class ResultTimeNarrower {
             final Timestamp tbegin;
             final Timestamp tend;
             if (p.getBeginning() != null) {
-                tbegin = new Timestamp(p.getBeginning().toEpochMilli());
+                tbegin = new Timestamp(InstantWrapper.toInstant(p.getBeginning()).toEpochMilli());
             } else {
                 tbegin = null;
             }
             if (p.getEnding() != null) {
-                tend = new Timestamp(p.getEnding().toEpochMilli());
+                tend = new Timestamp(InstantWrapper.toInstant(p.getEnding()).toEpochMilli());
             } else {
                 tend = null;
             }
@@ -104,7 +104,7 @@ public class ResultTimeNarrower {
                 final TemporalOperator<?> filter = (TemporalOperator) bound;
                 final TemporalPrimitive time = rmLiteral(filter.getExpressions().get(1));
                 if (time instanceof InstantWrapper ti) {
-                    final Timestamp boundEquals = new Timestamp(ti.getInstant().toEpochMilli());
+                    final Timestamp boundEquals = new Timestamp(InstantWrapper.toInstant(ti.getTemporal()).toEpochMilli());
 
                     LOGGER.finer("TE case 1");
                     //case 1 the periods contains a matching values
@@ -115,7 +115,7 @@ public class ResultTimeNarrower {
                 final TemporalOperator filter = (TemporalOperator) bound;
                 final TemporalPrimitive time = rmLiteral(filter.getExpressions().get(1));
                 if (time instanceof InstantWrapper ti) {
-                    final Timestamp boundBegin = new Timestamp(ti.getInstant().toEpochMilli());
+                    final Timestamp boundBegin = new Timestamp(InstantWrapper.toInstant(ti.getTemporal()).toEpochMilli());
 
                     // case 1 the period overlaps the bound
                     if (tBegin.before(boundBegin) && tEnd.after(boundBegin)) {
@@ -128,7 +128,7 @@ public class ResultTimeNarrower {
                 final TemporalOperator filter = (TemporalOperator) bound;
                 final TemporalPrimitive time = rmLiteral(filter.getExpressions().get(1));
                 if (time instanceof InstantWrapper ti) {
-                    final Timestamp boundEnd = new Timestamp(ti.getInstant().toEpochMilli());
+                    final Timestamp boundEnd = new Timestamp(InstantWrapper.toInstant(ti.getTemporal()).toEpochMilli());
 
                     // case 1 the period overlaps the bound
                     if (tBegin.before(boundEnd) && tEnd.after(boundEnd)) {
@@ -141,8 +141,8 @@ public class ResultTimeNarrower {
                 final TemporalOperator filter = (TemporalOperator) bound;
                 final TemporalPrimitive time = rmLiteral(filter.getExpressions().get(1));
                 if (time instanceof Period tp) {
-                    final Timestamp boundBegin = new Timestamp(tp.getBeginning().toEpochMilli());
-                    final Timestamp boundEnd   = new Timestamp(tp.getEnding().toEpochMilli());
+                    final Timestamp boundBegin = new Timestamp(InstantWrapper.toInstant(tp.getBeginning()).toEpochMilli());
+                    final Timestamp boundEnd   = new Timestamp(InstantWrapper.toInstant(tp.getEnding()).toEpochMilli());
 
                     // case 1 the period overlaps the first bound
                     if (tBegin.before(boundBegin) && tEnd.before(boundEnd) && tEnd.after(boundBegin)) {

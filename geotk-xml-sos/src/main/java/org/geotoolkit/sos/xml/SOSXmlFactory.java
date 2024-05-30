@@ -17,7 +17,7 @@
 
 package org.geotoolkit.sos.xml;
 
-import java.time.Instant;
+import java.time.temporal.Temporal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -80,6 +80,7 @@ import org.opengis.observation.sampling.SamplingFeature;
 import org.opengis.observation.Process;
 import org.opengis.temporal.Period;
 import org.opengis.temporal.TemporalGeometricPrimitive;
+import static org.apache.sis.util.privy.TemporalDate.toTemporal;
 
 /**
  *
@@ -91,7 +92,9 @@ public class SOSXmlFactory {
         return buildGetCapabilities(version, null, null, null, null, service);
     }
 
-    public static GetCapabilities buildGetCapabilities(final String version, final AcceptVersions versions, final Sections sections, final AcceptFormats formats, final String updateSequence, final String service) {
+    public static GetCapabilities buildGetCapabilities(final String version, final AcceptVersions versions,
+            final Sections sections, final AcceptFormats formats, final String updateSequence, final String service)
+    {
         if (versions != null && !(versions instanceof org.geotoolkit.ows.xml.v110.AcceptVersionsType)) {
             throw new IllegalArgumentException("unexpected object version for AcceptVersion element");
         }
@@ -605,21 +608,16 @@ public class SOSXmlFactory {
     }
 
     @Deprecated
-    private static Instant instant(Date date) {
-        return (date != null) ? date.toInstant() : null;
-    }
-
-    @Deprecated
     public static GMLPeriod buildTimePeriod(final String version, final Date dateBegin, final Date dateEnd) {
         return buildTimePeriod(version, null, dateBegin, dateEnd);
     }
 
     @Deprecated
     public static GMLPeriod buildTimePeriod(final String version, final String id, final Date dateBegin, final Date dateEnd) {
-        return buildTimePeriod(version, id, instant(dateBegin), instant(dateEnd));
+        return buildTimePeriod(version, id, toTemporal(dateBegin), toTemporal(dateEnd));
     }
 
-    public static GMLPeriod buildTimePeriod(final String version, final String id, final Instant dateBegin, final Instant dateEnd) {
+    public static GMLPeriod buildTimePeriod(final String version, final String id, final Temporal dateBegin, final Temporal dateEnd) {
         if ("2.0.0".equals(version)) {
             return GMLXmlFactory.createTimePeriod("3.2.1", id, dateBegin, dateEnd);
         } else if ("1.0.0".equals(version)) {
@@ -631,10 +629,10 @@ public class SOSXmlFactory {
 
     @Deprecated
     public static GMLPeriod buildTimePeriod(final String version, final TimeIndeterminateValueType value, final Date dateEnd) {
-        return buildTimePeriod(version, value, instant(dateEnd));
+        return buildTimePeriod(version, value, toTemporal(dateEnd));
     }
 
-    public static GMLPeriod buildTimePeriod(final String version, final TimeIndeterminateValueType value, final Instant dateEnd) {
+    public static GMLPeriod buildTimePeriod(final String version, final TimeIndeterminateValueType value, final Temporal dateEnd) {
         if ("2.0.0".equals(version)) {
             return GMLXmlFactory.createTimePeriod("3.2.1", value, dateEnd);
         } else if ("1.0.0".equals(version)) {
@@ -646,10 +644,10 @@ public class SOSXmlFactory {
 
     @Deprecated
     public static GMLPeriod buildTimePeriod(final String version, final Date dateBegin, final TimeIndeterminateValueType value) {
-        return buildTimePeriod(version, instant(dateBegin), value);
+        return buildTimePeriod(version, toTemporal(dateBegin), value);
     }
 
-    public static GMLPeriod buildTimePeriod(final String version, final Instant dateBegin, final TimeIndeterminateValueType value) {
+    public static GMLPeriod buildTimePeriod(final String version, final Temporal dateBegin, final TimeIndeterminateValueType value) {
         if ("2.0.0".equals(version)) {
             return GMLXmlFactory.createTimePeriod("3.2.1", dateBegin, value);
         } else if ("1.0.0".equals(version)) {
@@ -707,10 +705,10 @@ public class SOSXmlFactory {
 
     @Deprecated
     public static GMLInstant buildTimeInstant(final String version, final String id, final Date date) {
-        return buildTimeInstant(version, id, instant(date));
+        return buildTimeInstant(version, id, toTemporal(date));
     }
 
-    public static GMLInstant buildTimeInstant(final String version, final String id, final Instant date) {
+    public static GMLInstant buildTimeInstant(final String version, final String id, final Temporal date) {
         if ("2.0.0".equals(version)) {
             return GMLXmlFactory.createTimeInstant("3.2.1", id, date);
         } else if ("1.0.0".equals(version)) {

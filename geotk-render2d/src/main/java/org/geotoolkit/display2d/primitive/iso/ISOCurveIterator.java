@@ -98,7 +98,7 @@ public final class ISOCurveIterator extends ISOGeometryIterator<Curve> {
     @Override
     public int currentSegment(final double[] coords) {
         if (currentCoord == 0) {
-            DirectPosition pos = coordinates.get(0).getDirectPosition();
+            DirectPosition pos = coordinates.get(0);
             coords[0] = pos.getCoordinate(0);
             coords[1] = pos.getCoordinate(1);
             transform.transform(coords, 0, coords, 0, 1);
@@ -106,7 +106,7 @@ public final class ISOCurveIterator extends ISOGeometryIterator<Curve> {
         } else if ((currentCoord == coordinateCount) && isClosed) {
             return SEG_CLOSE;
         } else {
-            DirectPosition pos = coordinates.get(currentCoord).getDirectPosition();
+            DirectPosition pos = coordinates.get(currentCoord);
             coords[0] = pos.getCoordinate(0);
             coords[1] = pos.getCoordinate(1);
             transform.transform(coords, 0, coords, 0, 1);

@@ -343,11 +343,6 @@ public class DirectPositionType implements org.geotoolkit.gml.xml.DirectPosition
         this.value.add(dimension, value);
     }
 
-    @Override
-    public DirectPosition getDirectPosition() {
-        return this;
-    }
-
     /**
      * Return a description of the object.
      */

@@ -572,7 +572,7 @@ public class ObservationType implements Entry, AbstractObservation {
             } else if (samplingTime != null && samplingTime.getTimeGeometricPrimitive() instanceof TimeInstantType) {
                 final TimeInstantType instant = (TimeInstantType) samplingTime.getTimeGeometricPrimitive();
                 if (!newEndBound.equals(instant.getTimePosition().getValue())) {
-                    final TimePeriodType period = new TimePeriodType(instant.getId(), instant.getTimePosition().getInstant(), newEndBound.toInstant());
+                    final TimePeriodType period = new TimePeriodType(instant.getId(), instant.getTimePosition().getTemporal(), newEndBound.toInstant());
                     samplingTime.setTimeGeometricPrimitive(period);
                 }
             } else if (samplingTime == null) {

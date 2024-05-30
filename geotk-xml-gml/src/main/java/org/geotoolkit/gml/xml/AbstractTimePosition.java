@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jakarta.xml.bind.annotation.XmlTransient;
-import java.time.Instant;
+import java.time.temporal.Temporal;
 import org.geotoolkit.temporal.object.ISODateParser;
 import org.geotoolkit.temporal.object.InstantWrapper;
 import org.opengis.temporal.TemporalPosition;
@@ -55,9 +55,8 @@ public abstract class AbstractTimePosition implements InstantWrapper {
     }
 
     @Override
-    public Instant getInstant() {
-        Date date = getDate();
-        return (date != null) ? date.toInstant() : null;
+    public Temporal getTemporal() {
+        return org.apache.sis.util.privy.TemporalDate.toTemporal(getDate());
     }
 
     @Override
@@ -89,14 +88,14 @@ public abstract class AbstractTimePosition implements InstantWrapper {
 
     public abstract TimeIndeterminateValueType getIndeterminatePosition();
 
-    static AbstractTimePosition of(final Instant instant) {
+    static AbstractTimePosition of(final Temporal instant) {
         return new AbstractTimePosition() {
-            @Override public Instant getInstant() {
+            @Override public Temporal getTemporal() {
                 return instant;
             }
 
             @Override public Date getDate() {
-                return (instant != null) ? Date.from(instant) : null;
+                return org.apache.sis.util.privy.TemporalDate.toDate(instant);
             }
 
             @Override public TimeIndeterminateValueType getIndeterminatePosition() {

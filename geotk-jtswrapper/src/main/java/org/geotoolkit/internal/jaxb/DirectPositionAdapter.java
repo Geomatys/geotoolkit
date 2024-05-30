@@ -20,13 +20,13 @@ package org.geotoolkit.internal.jaxb;
 
 import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 import org.apache.sis.geometry.GeneralDirectPosition;
-import org.opengis.geometry.coordinate.Position;
+import org.opengis.geometry.DirectPosition;
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class DirectPositionAdapter extends XmlAdapter<DirectPositionType, Position>{
+public class DirectPositionAdapter extends XmlAdapter<DirectPositionType, DirectPosition> {
 
     /**
      * Empty constructor for JAXB only.
@@ -42,14 +42,12 @@ public class DirectPositionAdapter extends XmlAdapter<DirectPositionType, Positi
      * @return A code list which represents the metadata value.
      */
     @Override
-    public Position unmarshal(final DirectPositionType v) throws Exception {
+    public DirectPosition unmarshal(final DirectPositionType v) throws Exception {
         return new GeneralDirectPosition(v);
     }
 
     @Override
-    public DirectPositionType marshal(final Position v) throws Exception {
+    public DirectPositionType marshal(final DirectPosition v) throws Exception {
         return new DirectPositionType(v);
     }
-
-
 }

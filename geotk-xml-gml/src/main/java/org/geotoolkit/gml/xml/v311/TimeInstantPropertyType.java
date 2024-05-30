@@ -19,13 +19,13 @@ package org.geotoolkit.gml.xml.v311;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
-import java.time.Instant;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlSchemaType;
 import jakarta.xml.bind.annotation.XmlType;
+import java.time.temporal.Temporal;
 import org.geotoolkit.temporal.object.InstantWrapper;
 
 
@@ -90,8 +90,8 @@ public class TimeInstantPropertyType implements InstantWrapper, Serializable {
     }
 
     @Override
-    public Instant getInstant() {
-        return (timeInstant != null) ? timeInstant.getInstant() : null;
+    public Temporal getTemporal() {
+        return (timeInstant != null) ? timeInstant.getTemporal() : null;
     }
 
     /**

@@ -19,13 +19,11 @@ package org.geotoolkit.gml.v311;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Arrays;
-import java.util.Date;
 import jakarta.xml.bind.Unmarshaller;
 import javax.xml.datatype.Duration;
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
-import java.time.Instant;
 
 import org.geotoolkit.gml.xml.GMLMarshallerPool;
 import org.geotoolkit.gml.xml.v311.DirectPositionListType;
@@ -235,11 +233,7 @@ public class GmlXMLBindingTest {
     }
 
     private static void assertPeriodEquals(Period p1, Period p2) {
-        assertEquals(getDate(p1.getBeginning()), getDate(p2.getBeginning()));
-        assertEquals(getDate(p1.getEnding()),    getDate(p2.getEnding()));
-    }
-
-    private static Date getDate(Instant ins) {
-        return (ins != null) ? Date.from(ins) : null;
+        assertEquals(p1.getBeginning(), p2.getBeginning());
+        assertEquals(p1.getEnding(),    p2.getEnding());
     }
 }

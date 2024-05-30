@@ -17,7 +17,6 @@
 package org.geotoolkit.coverage.sql;
 
 import java.util.Collections;
-import java.util.Date;
 import java.util.Map;
 import java.sql.Array;
 import java.sql.ResultSet;
@@ -131,7 +130,7 @@ final class AdditionalAxisTable extends CachedTable<String,AdditionalAxisEntry> 
         final CoordinateSystemAxis axis = new DefaultCoordinateSystemAxis(
                 properties("Relative time"), "Δt", AxisDirection.FUTURE, cs.getAxis(0).getUnit());
         cs = new DefaultTimeCS(properties(cs.getName()), axis);
-        final DefaultTemporalDatum datum = new DefaultTemporalDatum(properties(RELATIVE_TIME_DATUM), new Date(0));
+        final var datum = new DefaultTemporalDatum(properties(RELATIVE_TIME_DATUM), Instant.EPOCH);
         RELATIVE_TIME = new DefaultTemporalCRS(properties(datum.getName()), datum, cs);
     }
 
@@ -326,7 +325,7 @@ final class AdditionalAxisTable extends CachedTable<String,AdditionalAxisEntry> 
                 }
             }
             if (datum == null) {
-                datum = factories.getDatumFactory().createTemporalDatum(properties(name), new Date(0));
+                datum = factories.getDatumFactory().createTemporalDatum(properties(name), Instant.EPOCH);
                 // TODO: actually we should throw an exception instead (we don't know time origin).
             }
             final CSFactory csFactory = factories.getCSFactory();
@@ -355,7 +354,7 @@ final class AdditionalAxisTable extends CachedTable<String,AdditionalAxisEntry> 
         }
         final CoordinateSystemAxis axis = csFactory.createCoordinateSystemAxis(properties(axisName), abbreviation, direction, units);
         final ParametricCS cs = csFactory.createParametricCS(properties(axis.getName()), axis);
-        return factories.getCRSFactory().createParametricCRS(properties(datum.getName()), datum, cs);
+        return factories.getCRSFactory().createParametricCRS(properties(datum.getName()), datum, null, cs);
     }
 
     /**

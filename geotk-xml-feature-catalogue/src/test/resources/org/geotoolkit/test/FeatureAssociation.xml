@@ -209,7 +209,7 @@
                                                             <gmd:date>
                                                                 <gmd:CI_Date>
                                                                     <gmd:date>
-                                                                        <gco:Date>3894-02-01</gco:Date>
+                                                                        <gco:Date>1994-02-01</gco:Date>
                                                                     </gmd:date>
                                                                     <gmd:dateType>
                                                                         <gmd:CI_DateTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="publication">Publication</gmd:CI_DateTypeCode>
@@ -263,7 +263,7 @@
                                                             <gmd:date>
                                                                 <gmd:CI_Date>
                                                                     <gmd:date>
-                                                                        <gco:Date>3894-02-01</gco:Date>
+                                                                        <gco:Date>1994-02-01</gco:Date>
                                                                     </gmd:date>
                                                                     <gmd:dateType>
                                                                         <gmd:CI_DateTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="publication">Publication</gmd:CI_DateTypeCode>
@@ -317,7 +317,7 @@
                                                             <gmd:date>
                                                                 <gmd:CI_Date>
                                                                     <gmd:date>
-                                                                        <gco:Date>3894-02-01</gco:Date>
+                                                                        <gco:Date>1994-02-01</gco:Date>
                                                                     </gmd:date>
                                                                     <gmd:dateType>
                                                                         <gmd:CI_DateTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="publication">Publication</gmd:CI_DateTypeCode>
@@ -408,7 +408,7 @@
                             <gmd:date>
                                 <gmd:CI_Date>
                                     <gmd:date>
-                                        <gco:Date>3894-02-01</gco:Date>
+                                        <gco:Date>1994-02-01</gco:Date>
                                     </gmd:date>
                                     <gmd:dateType>
                                         <gmd:CI_DateTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="publication">Publication</gmd:CI_DateTypeCode>

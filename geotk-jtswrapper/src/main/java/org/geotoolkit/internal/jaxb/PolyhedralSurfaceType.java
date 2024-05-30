@@ -17,8 +17,8 @@ import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSCurv
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSPolyhedralSurface;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSRing;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSSurfaceBoundary;
+import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.coordinate.PointArray;
-import org.opengis.geometry.coordinate.Position;
 import org.opengis.geometry.primitive.CurveSegment;
 import org.opengis.geometry.primitive.Primitive;
 import org.opengis.geometry.primitive.Ring;
@@ -99,8 +99,8 @@ public class PolyhedralSurfaceType {
                         if (cv instanceof JTSLineString) {
                             JTSLineString line = (JTSLineString) cv;
                             PointArray pa = line.getControlPoints();
-                            List<Position> newPositions = new ArrayList<Position>();
-                            for (Position pos : pa) {
+                            var newPositions = new ArrayList<DirectPosition>();
+                            for (DirectPosition pos : pa) {
                                 if (pos instanceof GeneralDirectPosition) {
                                     ((GeneralDirectPosition)pos).setCoordinateReferenceSystem(coordinateReferenceSystem);
                                     newPositions.add(pos);
@@ -124,8 +124,8 @@ public class PolyhedralSurfaceType {
                                 if (cv instanceof JTSLineString) {
                                     JTSLineString line = (JTSLineString) cv;
                                     PointArray pa = line.getControlPoints();
-                                    List<Position> newPositions = new ArrayList<Position>();
-                                    for (Position pos : pa) {
+                                    var newPositions = new ArrayList<DirectPosition>();
+                                    for (DirectPosition pos : pa) {
                                         if (pos instanceof GeneralDirectPosition) {
                                             ((GeneralDirectPosition)pos).setCoordinateReferenceSystem(coordinateReferenceSystem);
                                             newPositions.add(pos);

@@ -19,7 +19,6 @@ import org.opengis.coordinate.MismatchedDimensionException;
 import org.opengis.coordinate.MismatchedCoordinateMetadataException;
 import org.opengis.geometry.coordinate.Polygon;
 import org.opengis.geometry.coordinate.PolyhedralSurface;
-import org.opengis.geometry.coordinate.Position;
 import org.opengis.geometry.primitive.Curve;
 import org.opengis.geometry.primitive.CurveSegment;
 import org.opengis.geometry.primitive.Point;
@@ -93,8 +92,8 @@ public class JTSPrimitiveFactory {
     /**
      * Creates a point at the specified position.
      */
-    public Point createPoint(final Position position) {
-        return new JTSPoint(position.getDirectPosition(), crs);
+    public Point createPoint(final DirectPosition position) {
+        return new JTSPoint(position, crs);
     }
 
     /**

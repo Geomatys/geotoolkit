@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.gml.xml;
 
-import java.time.Instant;
+import java.time.temporal.Temporal;
 import java.time.temporal.TemporalAmount;
 import java.util.Optional;
 import org.opengis.metadata.Identifier;
@@ -46,8 +46,8 @@ public interface GMLPeriod extends Period {
                 @Override public String               getId()            {return null;}
                 @Override public Identifier           getName()          {return p.getName();}
                 @Override public TemporalAmount       length()           {return p.length();}
-                @Override public Instant              getBeginning()     {return p.getBeginning();}
-                @Override public Instant              getEnding()        {return p.getEnding();}
+                @Override public Temporal             getBeginning()     {return p.getBeginning();}
+                @Override public Temporal             getEnding()        {return p.getEnding();}
                 @Override public AbstractTimePosition getBeginPosition() {return AbstractTimePosition.of(getBeginning());}
                 @Override public AbstractTimePosition getEndPosition()   {return AbstractTimePosition.of(getEnding());}
                 @Override public RelativePosition relativePosition(TemporalPrimitive other) {

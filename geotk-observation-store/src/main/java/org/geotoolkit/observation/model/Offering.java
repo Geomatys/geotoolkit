@@ -18,6 +18,7 @@
 package org.geotoolkit.observation.model;
 
 import java.time.Instant;
+import java.time.temporal.Temporal;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -122,28 +123,30 @@ public class Offering extends AbstractOMEntity {
      *
      * @param newDate a date to integrate into the time span of the offering.
      */
-    public void extendSamplingTime(final Instant newDate) {
+    public void extendSamplingTime(final Temporal newDate) {
         if (newDate != null) {
+            final Instant newInstant = InstantWrapper.toInstant(newDate);
             if (time instanceof Period p) {
-                Instant currentStDate = p.getBeginning();
-                Instant currentEnDate = p.getEnding();
-                if (newDate.isBefore(currentStDate)) {
+                Temporal currentStDate = p.getBeginning();
+                Temporal currentEnDate = p.getEnding();
+                if (newInstant.isBefore(InstantWrapper.toInstant(currentStDate))) {
                     time = new DefaultPeriod(Collections.singletonMap(NAME_KEY, getId() + "-time"),
                             new DefaultInstant(Collections.singletonMap(NAME_KEY, getId() + "-st-time"), newDate),
                             new DefaultInstant(Collections.singletonMap(NAME_KEY, getId() + "-en-time"), currentEnDate));
-                } else if (newDate.isAfter(currentEnDate)) {
+                } else if (newInstant.isAfter(InstantWrapper.toInstant(currentEnDate))) {
                     time = new DefaultPeriod(Collections.singletonMap(NAME_KEY, getId() + "-time"),
                             new DefaultInstant(Collections.singletonMap(NAME_KEY, getId() + "-st-time"), currentStDate),
                             new DefaultInstant(Collections.singletonMap(NAME_KEY, getId() + "-en-time"), newDate));
                 }
                 // date is within to the current period so no changes are applied
             } else if (time instanceof InstantWrapper i) {
-                Instant currentDate = i.getInstant();
-                if (newDate.isBefore(currentDate)) {
+                Temporal currentDate = i.getTemporal();
+                Instant currentInstant = InstantWrapper.toInstant(currentDate);
+                if (newInstant.isBefore(currentInstant)) {
                     time = new DefaultPeriod(Collections.singletonMap(NAME_KEY, getId() + "-time"),
                             new DefaultInstant(Collections.singletonMap(NAME_KEY, getId() + "-st-time"), newDate),
                             new DefaultInstant(Collections.singletonMap(NAME_KEY, getId() + "-en-time"), currentDate));
-                } else if (newDate.isAfter(currentDate)) {
+                } else if (newInstant.isAfter(currentInstant)) {
                     time = new DefaultPeriod(Collections.singletonMap(NAME_KEY, getId() + "-time"),
                             new DefaultInstant(Collections.singletonMap(NAME_KEY, getId() + "-st-time"), currentDate),
                             new DefaultInstant(Collections.singletonMap(NAME_KEY, getId() + "-en-time"), newDate));

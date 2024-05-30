@@ -168,15 +168,5 @@ public class InPlaceCoordinateSequenceTransformer implements CoordinateSequenceT
         public DirectPosition getPosition() {
             return this;
         }
-
-        /**
-         * {@inheritDoc }
-         */
-        @Override
-        public DirectPosition getDirectPosition() {
-            return this;
-        }
-
     }
-
 }

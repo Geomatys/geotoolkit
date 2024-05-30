@@ -32,7 +32,6 @@ import org.opengis.geometry.complex.Composite;
 import org.opengis.geometry.coordinate.LineString;
 import org.opengis.geometry.coordinate.ParamForPoint;
 import org.opengis.geometry.coordinate.PointArray;
-import org.opengis.geometry.coordinate.Position;
 import org.opengis.geometry.primitive.Curve;
 import org.opengis.geometry.primitive.CurveBoundary;
 import org.opengis.geometry.primitive.CurveInterpolation;
@@ -169,7 +168,7 @@ public class JTSLineString extends AbstractJTSGenericCurve
         List list = pa;
         int n = controlPoints.size();
         for (int i=n-1; i>=0; i--) {
-            list.add(new GeneralDirectPosition(controlPoints.get(i).getDirectPosition()));
+            list.add(new GeneralDirectPosition(controlPoints.get(i)));
         }
         return result;
     }
@@ -324,8 +323,8 @@ public class JTSLineString extends AbstractJTSGenericCurve
 
     public void applyCRSOnChild() {
         if (controlPoints != null) {
-            List<Position> newPositions = new ArrayList<Position>();
-            for (Position pos : controlPoints) {
+            var newPositions = new ArrayList<DirectPosition>();
+            for (DirectPosition pos : controlPoints) {
                 if (pos instanceof GeneralDirectPosition) {
                     ((GeneralDirectPosition) pos).setCoordinateReferenceSystem(getCoordinateReferenceSystem());
                     newPositions.add(pos);
@@ -338,7 +337,7 @@ public class JTSLineString extends AbstractJTSGenericCurve
 
     @XmlElement(name="pos", namespace="http://www.opengis.net/gml")
     @XmlJavaTypeAdapter(DirectPositionAdapter.class)
-    public List<Position> getPositions() {
+    public List<DirectPosition> getPositions() {
         return controlPoints;
     }
 
@@ -348,7 +347,7 @@ public class JTSLineString extends AbstractJTSGenericCurve
         sb.append("JTSLineString{");
         if(!controlPoints.isEmpty()){
             sb.append("\n");
-            for(Position pos : controlPoints){
+            for(DirectPosition pos : controlPoints){
                 sb.append("\t").append(pos.toString()).append("\n");
             }
         }

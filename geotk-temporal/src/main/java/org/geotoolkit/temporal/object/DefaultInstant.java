@@ -24,6 +24,7 @@ import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
 import java.time.Instant;
+import java.time.temporal.Temporal;
 import java.time.temporal.TemporalAmount;
 import java.util.concurrent.atomic.AtomicLong;
 import org.apache.sis.util.ComparisonMode;
@@ -48,7 +49,7 @@ import org.opengis.temporal.TemporalPrimitive;
 public class DefaultInstant extends DefaultTemporalPrimitive implements TemporalGeometricPrimitive, InstantWrapper {
     private static final AtomicLong COUNT = new AtomicLong();
 
-    private final Instant date;
+    private final Temporal date;
 
     /**
      * Describing internal {@link TemporalPosition temporal positions} referenced
@@ -64,7 +65,7 @@ public class DefaultInstant extends DefaultTemporalPrimitive implements Temporal
         this.temporalPosition = null;
     }
 
-    public DefaultInstant(Instant date) throws IllegalArgumentException {
+    public DefaultInstant(Temporal date) throws IllegalArgumentException {
         this(Map.of(NAME_KEY, "period" + COUNT.incrementAndGet()), date);
     }
 
@@ -73,7 +74,7 @@ public class DefaultInstant extends DefaultTemporalPrimitive implements Temporal
      *
      * @param properties The properties to be given to this object.
      */
-    public DefaultInstant(Map<String, ?> properties, Instant date) throws IllegalArgumentException {
+    public DefaultInstant(Map<String, ?> properties, Temporal date) throws IllegalArgumentException {
         super(properties);
         this.date = Objects.requireNonNull(date);
         this.temporalPosition = null;
@@ -103,11 +104,11 @@ public class DefaultInstant extends DefaultTemporalPrimitive implements Temporal
     @Deprecated
     @XmlElement(name = "timePosition", required = true)
     public Date getDate() {
-        return (date != null) ? Date.from(date) : null;
+        return InstantWrapper.super.getDate();
     }
 
     @Override
-    public Instant getInstant() {
+    public Temporal getTemporal() {
         return date;
     }
 
@@ -121,12 +122,12 @@ public class DefaultInstant extends DefaultTemporalPrimitive implements Temporal
     }
 
     /**
-     * Returns the length of this TM_GeometricPrimitive
-     * @return the length of this TM_GeometricPrimitive
+     * @deprecated Not correctly implemented.
      */
     @Override
+    @Deprecated
     public TemporalAmount length() {
-        return TemporalUtilities.durationFromMillis(Math.abs(date.toEpochMilli()));
+        return TemporalUtilities.durationFromMillis(Math.abs(InstantWrapper.toInstant(date).toEpochMilli()));
     }
 
     /**
@@ -138,13 +139,13 @@ public class DefaultInstant extends DefaultTemporalPrimitive implements Temporal
         long diff = 0L;
         var pos = relativePosition(other);
         if (pos.equals(RelativePosition.BEFORE) || pos.equals(RelativePosition.AFTER)) {
+            final long t0 = InstantWrapper.toInstant(date).toEpochMilli();
             if (other instanceof InstantWrapper t) {
-                diff = Math.min(Math.abs(t.getInstant().toEpochMilli() - date.toEpochMilli()),
-                        Math.abs(date.toEpochMilli() - t.getInstant().toEpochMilli()));
+                diff = Math.abs(t0 - InstantWrapper.toInstant(t.getTemporal()).toEpochMilli());
             } else {
                 if (other instanceof Period) {
-                    diff = Math.min(Math.abs(((Period) other).getBeginning().toEpochMilli() - date.toEpochMilli()),
-                            Math.abs(((Period) other).getEnding().toEpochMilli() - date.toEpochMilli()));
+                    diff = Math.min(Math.abs(InstantWrapper.toInstant(((Period) other).getBeginning()).toEpochMilli() - t0),
+                            Math.abs(InstantWrapper.toInstant(((Period) other).getEnding()).toEpochMilli() - t0));
                 }
             }
         }
@@ -153,9 +154,11 @@ public class DefaultInstant extends DefaultTemporalPrimitive implements Temporal
 
     @Override
     public RelativePosition relativePosition(final TemporalPrimitive other) {
+        final Instant date = InstantWrapper.toInstant(this.date);
         if (other instanceof DefaultInstant instantOther) {
+            final Instant otherDate = InstantWrapper.toInstant(instantOther.date);
             // test the relative position when the other paramter has an indeterminate value.
-            if (date == null || instantOther.date == null) {
+            if (date == null || otherDate == null) {
                 if (date != null && instantOther.temporalPosition != null && instantOther.temporalPosition.getIndeterminatePosition() != null) {
                     IndeterminateValue indeterminatePosition = instantOther.temporalPosition.getIndeterminatePosition().orElse(null);
                     if (indeterminatePosition == IndeterminateValue.AFTER) {
@@ -173,7 +176,7 @@ public class DefaultInstant extends DefaultTemporalPrimitive implements Temporal
                            return RelativePosition.EQUALS;
                        }
                     }
-                } else if (instantOther.date != null && temporalPosition != null && temporalPosition.getIndeterminatePosition() != null) {
+                } else if (otherDate != null && temporalPosition != null && temporalPosition.getIndeterminatePosition() != null) {
                     IndeterminateValue indeterminatePosition =  temporalPosition.getIndeterminatePosition().orElse(null);
                     if (indeterminatePosition == IndeterminateValue.AFTER) {
                        return RelativePosition.AFTER;
@@ -181,7 +184,7 @@ public class DefaultInstant extends DefaultTemporalPrimitive implements Temporal
                        return RelativePosition.BEFORE;
                     } else if (indeterminatePosition == IndeterminateValue.NOW) {
                        long currentMillis = System.currentTimeMillis();
-                       long toMillis = instantOther.date.toEpochMilli();
+                       long toMillis = otherDate.toEpochMilli();
                        if (toMillis > currentMillis) {
                            return RelativePosition.BEFORE;
                        } else if (toMillis < currentMillis) {
@@ -192,21 +195,23 @@ public class DefaultInstant extends DefaultTemporalPrimitive implements Temporal
                     }
                 }
                 return null;
-            } else if (date.isBefore(instantOther.date)) {
+            } else if (date.isBefore(otherDate)) {
                 return RelativePosition.BEFORE;
             } else {
-                return (date.compareTo(instantOther.date) == 0) ? RelativePosition.EQUALS : RelativePosition.AFTER;
+                return (date.compareTo(otherDate) == 0) ? RelativePosition.EQUALS : RelativePosition.AFTER;
             }
         } else if (other instanceof Period instantarg) {
-            if (instantarg.getEnding().isBefore(date)) {
+            final Instant ending = InstantWrapper.toInstant(instantarg.getEnding());
+            final Instant beginning = InstantWrapper.toInstant(instantarg.getBeginning());
+            if (ending.isBefore(date)) {
                 return RelativePosition.AFTER;
-            } else if (instantarg.getEnding().compareTo(date) == 0) {
+            } else if (ending.compareTo(date) == 0) {
                 return RelativePosition.ENDS;
-            } else if (instantarg.getBeginning().isBefore(date) &&
-                    instantarg.getEnding().isAfter(date)) {
+            } else if (beginning.isBefore(date) &&
+                    ending.isAfter(date)) {
                 return RelativePosition.DURING;
             } else {
-                return (instantarg.getBeginning().compareTo(date) == 0) ? RelativePosition.BEGINS : RelativePosition.BEFORE;
+                return (beginning.compareTo(date) == 0) ? RelativePosition.BEGINS : RelativePosition.BEFORE;
             }
         } else {
             return null;

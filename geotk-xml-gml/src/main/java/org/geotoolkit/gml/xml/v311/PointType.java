@@ -23,7 +23,6 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
 import org.apache.sis.util.ComparisonMode;
 import org.opengis.geometry.DirectPosition;
-import org.opengis.geometry.coordinate.Position;
 import org.opengis.geometry.primitive.Bearing;
 import org.opengis.geometry.primitive.OrientablePrimitive;
 import org.opengis.geometry.primitive.Point;
@@ -203,7 +202,7 @@ public class PointType extends AbstractGeometricPrimitiveType implements Point, 
     }
 
     @Override
-    public Bearing getBearing(final Position toPoint) {
+    public Bearing getBearing(final DirectPosition toPoint) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

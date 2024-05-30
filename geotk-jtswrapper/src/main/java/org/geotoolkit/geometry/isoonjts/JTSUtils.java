@@ -48,7 +48,6 @@ import org.opengis.geometry.PositionFactory;
 import org.opengis.geometry.coordinate.LineString;
 import org.opengis.geometry.coordinate.PointArray;
 import org.opengis.geometry.coordinate.Polygon;
-import org.opengis.geometry.coordinate.Position;
 import org.opengis.geometry.primitive.Curve;
 import org.opengis.geometry.primitive.Ring;
 import org.opengis.geometry.primitive.SurfaceBoundary;
@@ -111,7 +110,7 @@ public final class JTSUtils {
 
         } else if (jtsGeom instanceof org.locationtech.jts.geom.LineString) {
             org.locationtech.jts.geom.LineString candidate = (org.locationtech.jts.geom.LineString) jtsGeom;
-            LineString ls = gf.createLineString(new ArrayList<Position>());
+            LineString ls = gf.createLineString(new ArrayList<DirectPosition>());
             PointArray pointList = ls.getControlPoints();
             for (int i = 0, n = candidate.getNumPoints(); i < n; i++) {
                 pointList.add(coordinateToDirectPosition(candidate.getCoordinateN(i), crs));

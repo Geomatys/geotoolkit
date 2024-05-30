@@ -67,10 +67,4 @@ public interface Tuple extends DirectPosition{
     public default double[] getCoordinates() {
         return toArrayDouble();
     }
-
-    @Override
-    public default DirectPosition getDirectPosition() {
-        return this;
-    }
-
 }

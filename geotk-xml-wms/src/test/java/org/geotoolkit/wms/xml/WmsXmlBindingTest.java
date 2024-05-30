@@ -63,6 +63,7 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.iso.DefaultNameFactory;
 import org.geotoolkit.service.ServiceType;
 import org.geotoolkit.temporal.object.DefaultPeriod;
+import org.geotoolkit.temporal.object.InstantWrapper;
 import org.apache.sis.util.SimpleInternationalString;
 import org.geotoolkit.wms.xml.v111.BoundingBox;
 import org.geotoolkit.wms.xml.v130.Capability;
@@ -111,11 +112,6 @@ public class WmsXmlBindingTest {
         EPSG = c;
     }
 
-    @BeforeClass
-    public static void setTimeZone() {
-        TimeZone.setDefault(TimeZone.getTimeZone("CET"));
-    }
-
     private MarshallerPool pool;
     private Unmarshaller unmarshaller;
     private Marshaller   marshaller;
@@ -124,6 +120,7 @@ public class WmsXmlBindingTest {
     public void setUp() throws JAXBException {
         final Map<String, Object> properties = new HashMap<>();
         properties.put(XML.METADATA_VERSION, LegacyNamespaces.VERSION_2007);
+        properties.put(XML.TIMEZONE, TimeZone.getTimeZone("CET"));
         pool = new MarshallerPool(JAXBContext.newInstance(
                 "org.geotoolkit.wms.xml.v111:" +
                 "org.geotoolkit.wms.xml.v130:" +
@@ -700,8 +697,8 @@ public class WmsXmlBindingTest {
         assertEquals(expConformity,                                          conformity);
         assertEquals(expCapabilities.getResourceType(),                      capabilities.getResourceType());
         assertEquals(expTemporal.getDescription(),                           temporal.getDescription());
-        assertEquals(expExtentPeriod.getBeginning(), extentPeriod.getBeginning());
-        assertEquals(expExtentPeriod.getEnding(),    extentPeriod.getEnding());
+        assertEquals(expExtentPeriod.getBeginning(), InstantWrapper.toInstant(extentPeriod.getBeginning()));
+        assertEquals(expExtentPeriod.getEnding(),    InstantWrapper.toInstant(extentPeriod.getEnding()));
         if (expExtentPeriod.getClass() == extentPeriod.getClass()) {
             /*
              * The time period created by this test case is an instance of org.geotoolkit.temporal.object.DefaultPeriod

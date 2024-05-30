@@ -34,7 +34,7 @@ import jakarta.xml.bind.annotation.XmlSchemaType;
 import jakarta.xml.bind.annotation.XmlTransient;
 import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.XmlValue;
-import java.time.Instant;
+import java.time.temporal.Temporal;
 import org.apache.sis.util.SimpleInternationalString;
 import org.geotoolkit.gml.xml.AbstractTimePosition;
 import org.geotoolkit.gml.xml.TimeIndeterminateValueType;
@@ -117,12 +117,12 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
     }
 
     /**
-     * build a simple Timposition with only a value from a timestamp.
+     * build a simple Timposition with only a value from a temporal.
      *
      * @param time a date.
      */
-    public TimePositionType(final Instant time) {
-        setValue(Date.from(time));
+    public TimePositionType(final Temporal time) {
+        setValue(org.apache.sis.util.privy.TemporalDate.toDate(time));
     }
 
     /**

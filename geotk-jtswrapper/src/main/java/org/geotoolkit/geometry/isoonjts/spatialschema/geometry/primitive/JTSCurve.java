@@ -27,7 +27,6 @@ import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.complex.CompositeCurve;
 import org.opengis.geometry.coordinate.LineString;
 import org.opengis.geometry.coordinate.ParamForPoint;
-import org.opengis.geometry.coordinate.Position;
 import org.opengis.geometry.primitive.Curve;
 import org.opengis.geometry.primitive.CurveSegment;
 import org.opengis.geometry.primitive.OrientableCurve;
@@ -305,7 +304,7 @@ public class JTSCurve extends AbstractJTSGeometry implements Curve {
         for (CurveSegment c : array.getCurveSegments())  {
             JTSLineString line = (JTSLineString) c;
             JTSLineString newLine = new JTSLineString(getCoordinateReferenceSystem());
-            for (Position p : line.getPositions()) {
+            for (DirectPosition p : line.getPositions()) {
                 if (p instanceof GeneralDirectPosition) {
                     ((GeneralDirectPosition) p).setCoordinateReferenceSystem(getCoordinateReferenceSystem());
                     newLine.getPositions().add(p);

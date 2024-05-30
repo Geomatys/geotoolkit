@@ -23,7 +23,7 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
-import java.time.Instant;
+import java.time.temporal.Temporal;
 import javax.xml.datatype.Duration;
 import org.geotoolkit.gml.xml.TimeIndeterminateValueType;
 import org.apache.sis.util.ComparisonMode;
@@ -101,16 +101,16 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
         if (beginPosition instanceof TimePositionType) {
             this.beginPosition = (TimePositionType) beginPosition;
         } else if (beginPosition != null && beginPosition.getDate() != null) {
-            this.beginPosition = new TimePositionType(beginPosition.getInstant());
+            this.beginPosition = new TimePositionType(beginPosition.getTemporal());
         }
         if (endPosition instanceof TimePositionType) {
             this.endPosition = (TimePositionType) endPosition;
         } else if (endPosition != null && endPosition.getDate() != null) {
-            this.endPosition = new TimePositionType(endPosition.getInstant());
+            this.endPosition = new TimePositionType(endPosition.getTemporal());
         }
     }
 
-    public TimePeriodType(final String id, final Instant beginPosition, final Instant endPosition){
+    public TimePeriodType(final String id, final Temporal beginPosition, final Temporal endPosition){
         super(id);
         if (beginPosition != null) {
             this.beginPosition = new TimePositionType(beginPosition);
@@ -160,7 +160,7 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
         this.endPosition   = new TimePositionType(TimeIndeterminateValueType.NOW);
     }
 
-    public TimePeriodType(final String id, final Instant beginValue){
+    public TimePeriodType(final String id, final Temporal beginValue){
         super(id);
         this.beginPosition = new TimePositionType(beginValue);
         this.endPosition   = new TimePositionType(TimeIndeterminateValueType.NOW);
@@ -174,7 +174,7 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
         if (endPosition instanceof TimePositionType) {
             this.endPosition = (TimePositionType) endPosition;
         } else if (endPosition != null) {
-            this.endPosition = new TimePositionType(endPosition.getInstant());
+            this.endPosition = new TimePositionType(endPosition.getTemporal());
         }
     }
 
@@ -183,7 +183,7 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
         if (beginPosition instanceof TimePositionType) {
             this.beginPosition = (TimePositionType) beginPosition;
         } else if (beginPosition != null) {
-            this.beginPosition = new TimePositionType(beginPosition.getInstant());
+            this.beginPosition = new TimePositionType(beginPosition.getTemporal());
         }
     }
 
@@ -366,32 +366,32 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
     }
 
     @Override
-    public Instant getBeginning() {
+    public Temporal getBeginning() {
         if (begin != null) {
-            return begin.getTimeInstant().getInstant();
+            return begin.getTimeInstant().getTemporal();
         } else if (beginPosition != null) {
-            return new TimeInstantType(beginPosition).getInstant();
+            return new TimeInstantType(beginPosition).getTemporal();
         }
         return null;
     }
 
-    public void setBeginning(final Instant instant) {
+    public void setBeginning(final Temporal instant) {
         if (instant != null) {
             this.beginPosition = new TimePositionType(instant);
         }
     }
 
     @Override
-    public Instant getEnding() {
+    public Temporal getEnding() {
         if (end != null) {
-            return end.getTimeInstant().getInstant();
+            return end.getTimeInstant().getTemporal();
         } else if (endPosition != null) {
-            return new TimeInstantType(endPosition).getInstant();
+            return new TimeInstantType(endPosition).getTemporal();
         }
         return null;
     }
 
-    public void setEnding(final Instant instant) {
+    public void setEnding(final Temporal instant) {
         if (instant != null) {
             this.endPosition = new TimePositionType(instant);
         }

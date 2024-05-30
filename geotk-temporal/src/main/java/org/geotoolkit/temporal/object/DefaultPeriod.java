@@ -23,6 +23,7 @@ import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
 import java.time.Instant;
+import java.time.temporal.Temporal;
 import java.time.temporal.TemporalAmount;
 import java.util.concurrent.atomic.AtomicLong;
 import org.apache.sis.util.ArgumentChecks;
@@ -99,8 +100,8 @@ public class DefaultPeriod extends DefaultTemporalPrimitive implements Period {
      * @return {@link Period} to the {@link Instant} at which it starts.
      */
     @Override
-    public final Instant getBeginning() {
-        return beginning.getInstant();
+    public final Temporal getBeginning() {
+        return beginning.getTemporal();
     }
 
     /**
@@ -109,27 +110,17 @@ public class DefaultPeriod extends DefaultTemporalPrimitive implements Period {
      * @return {@link Period} to the {@link Instant} at which it ends.
      */
     @Override
-    public final Instant getEnding() {
-        return ending.getInstant();
+    public final Temporal getEnding() {
+        return ending.getTemporal();
     }
 
     /**
-     * {@return the length of this TM_GeometricPrimitive}.
+     * @deprecated Not correctly implemented.
      */
     @Override
+    @Deprecated
     public TemporalAmount length() {
         return (beginning != null && ending != null) ? beginning.distance(ending) : null;
-    }
-
-    /**
-     * Duration only use for XML binding.
-     *
-     * @return {@link String} which represent duration for XML binding format.
-     */
-    @XmlElement(name = "duration")
-    private String getDuration() {
-        TemporalAmount dur = length();
-        return (dur != null) ? dur.toString() : null;
     }
 
     /**
@@ -139,17 +130,17 @@ public class DefaultPeriod extends DefaultTemporalPrimitive implements Period {
     @Deprecated
     public TemporalAmount distance(final TemporalGeometricPrimitive other) {
         long diff = 0L;
-        final var start = getBeginning();
-        final var end = getEnding();
-        final var pos = relativePosition(other);
+        final long start = InstantWrapper.toInstant(getBeginning()).toEpochMilli();
+        final long end   = InstantWrapper.toInstant(getEnding()).toEpochMilli();
+        final RelativePosition pos = relativePosition(other);
         if (pos.equals(RelativePosition.BEFORE) || pos.equals(RelativePosition.AFTER)) {
             if (other instanceof InstantWrapper t) {
-                diff = Math.min(Math.abs(t.getInstant().toEpochMilli() - end.toEpochMilli()),
-                        Math.abs(t.getInstant().toEpochMilli() - start.toEpochMilli()));
+                final long t0 = InstantWrapper.toInstant(t.getTemporal()).toEpochMilli();
+                diff = Math.min(Math.abs(t0 - end), Math.abs(t0 - start));
             } else {
                 if (other instanceof Period p) {
-                    diff = Math.min(Math.abs(p.getEnding().toEpochMilli() - start.toEpochMilli()),
-                            Math.abs(p.getBeginning().toEpochMilli() - end.toEpochMilli()));
+                    diff = Math.min(Math.abs(InstantWrapper.toInstant(p.getEnding()).toEpochMilli() - start),
+                            Math.abs(InstantWrapper.toInstant(p.getBeginning()).toEpochMilli() - end));
                 }
             }
         }
@@ -158,10 +149,10 @@ public class DefaultPeriod extends DefaultTemporalPrimitive implements Period {
 
     @Override
     public RelativePosition relativePosition(final TemporalPrimitive other) {
-        final var start = getBeginning();
-        final var end = getEnding();
+        final Instant start = InstantWrapper.toInstant(getBeginning());
+        final Instant end = InstantWrapper.toInstant(getEnding());
         if (other instanceof InstantWrapper instantarg) {
-            Instant t = instantarg.getInstant();
+            Instant t = InstantWrapper.toInstant(instantarg.getTemporal());
             if (end.isBefore(t)) {
                 return RelativePosition.BEFORE;
             } else if (end.compareTo(t) == 0) {
@@ -173,8 +164,8 @@ public class DefaultPeriod extends DefaultTemporalPrimitive implements Period {
                  return (start.compareTo(t) == 0) ? RelativePosition.BEGUN_BY : RelativePosition.AFTER;
             }
         } else if (other instanceof Period instantarg) {
-            final var otherStart = instantarg.getBeginning();
-            final var otherEnd = instantarg.getEnding();
+            final var otherStart = InstantWrapper.toInstant(instantarg.getBeginning());
+            final var otherEnd = InstantWrapper.toInstant(instantarg.getEnding());
             if (end.isBefore(otherStart)) {
                 return RelativePosition.BEFORE;
             } else if (end.compareTo(otherStart) == 0) {

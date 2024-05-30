@@ -23,7 +23,7 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
+import java.time.temporal.Temporal;
 import org.geotoolkit.temporal.object.DefaultInstant;
 import org.geotoolkit.temporal.object.DefaultPeriod;
 import org.opengis.temporal.Period;
@@ -45,7 +45,7 @@ public class PeriodSerializer extends JsonSerializer<Period> {
             begin = dp.beginning;
             end = dp.ending;
         } else {
-            Instant i = p.getBeginning();
+            Temporal i = p.getBeginning();
             if (i != null) begin = new DefaultInstant(i);
             i = p.getEnding();
             if (i != null) end = new DefaultInstant(i);

@@ -34,7 +34,6 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.OperationNotFoundException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.geometry.DirectPosition;
-import org.opengis.geometry.coordinate.Position;
 import org.opengis.geometry.primitive.Bearing;
 import org.opengis.geometry.primitive.OrientablePrimitive;
 import org.opengis.geometry.primitive.Point;
@@ -154,7 +153,7 @@ public class JTSPoint extends AbstractJTSGeometry implements Point {
      * Not supported in this implementation.
      */
     @Override
-    public Bearing getBearing(final Position toPoint) {
+    public Bearing getBearing(final DirectPosition toPoint) {
         throw new UnsupportedOperationException("Bearing calculation is not supported");
     }
 

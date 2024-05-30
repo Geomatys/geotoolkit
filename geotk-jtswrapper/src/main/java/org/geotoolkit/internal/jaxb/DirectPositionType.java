@@ -29,7 +29,6 @@ import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.XmlValue;
 import org.apache.sis.referencing.CRS;
 import org.opengis.geometry.DirectPosition;
-import org.opengis.geometry.coordinate.Position;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
@@ -140,10 +139,10 @@ public class DirectPositionType implements DirectPosition {
      *
      * @param values a List of coordinates.
      */
-    public DirectPositionType(final Position position) {
+    public DirectPositionType(final DirectPosition position) {
         if (position != null) {
             this.value = new ArrayList<Double>();
-            for (double d : position.getDirectPosition().getCoordinates()) {
+            for (double d : position.getCoordinates()) {
                 value.add(d);
             }
             /*
@@ -260,11 +259,6 @@ public class DirectPositionType implements DirectPosition {
     public void setCoordinate(final int dimension, final double value) throws IndexOutOfBoundsException, UnsupportedOperationException {
         this.value.remove(dimension);
         this.value.add(dimension, value);
-    }
-
-    @Override
-    public DirectPosition getDirectPosition() {
-        return this;
     }
 
 

@@ -175,7 +175,7 @@ public class ObservationTransformUtils {
         } else  if (time instanceof Period model) {
             return SOSXmlFactory.buildTimePeriod(version, null, model.getBeginning(), model.getEnding());
         } else if (time instanceof InstantWrapper model) {
-            return SOSXmlFactory.buildTimeInstant(version, null, model.getInstant());
+            return SOSXmlFactory.buildTimeInstant(version, null, model.getTemporal());
         } else if (time == null) {
             return null;
         }
@@ -569,7 +569,7 @@ public class ObservationTransformUtils {
                         IndeterminateValue.valueOf(ip.value().toUpperCase()));
                 return new DefaultInstant(Collections.singletonMap(NAME_KEY, name), tp);
             }
-            return new DefaultInstant(Collections.singletonMap(NAME_KEY, name), gmi.getInstant());
+            return new DefaultInstant(Collections.singletonMap(NAME_KEY, name), gmi.getTemporal());
         } else if ((gmp = GMLPeriod.castOrWrap(gmlTime).orElse(null)) != null) {
             String name = gmp.getId();
             if (name == null) name = UUID.randomUUID().toString() + "-time";

@@ -24,7 +24,7 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
-import java.time.Instant;
+import java.time.temporal.Temporal;
 import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.gml.xml.GMLInstant;
 import org.geotoolkit.gml.xml.AbstractTimePosition;
@@ -84,11 +84,11 @@ public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implemen
         }
     }
 
-    public TimeInstantType(final Instant timePosition) {
+    public TimeInstantType(final Temporal timePosition) {
         this.timePosition = new TimePositionType(timePosition);
     }
 
-    public TimeInstantType(final String id, final Instant timePosition) {
+    public TimeInstantType(final String id, final Temporal timePosition) {
         super(id);
         this.timePosition = new TimePositionType(timePosition);
     }

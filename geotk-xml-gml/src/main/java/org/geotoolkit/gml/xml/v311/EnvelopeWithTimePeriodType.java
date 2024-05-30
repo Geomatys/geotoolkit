@@ -71,10 +71,10 @@ public class EnvelopeWithTimePeriodType extends EnvelopeType implements Envelope
         super(that);
         if (that != null) {
             if (that.getBeginPosition() != null) {
-                this.beginPosition = new TimePositionType(that.getBeginPosition().getInstant());
+                this.beginPosition = new TimePositionType(that.getBeginPosition().getTemporal());
             }
             if (that.getEndPosition() != null) {
-                this.endPosition = new TimePositionType(that.getEndPosition().getInstant());
+                this.endPosition = new TimePositionType(that.getEndPosition().getTemporal());
             }
             this.frame = that.getFrame();
         }

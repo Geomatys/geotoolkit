@@ -32,7 +32,6 @@ import org.opengis.geometry.coordinate.LineString;
 import org.opengis.geometry.coordinate.PointArray;
 import org.opengis.geometry.coordinate.Polygon;
 import org.opengis.geometry.coordinate.PolyhedralSurface;
-import org.opengis.geometry.coordinate.Position;
 import org.opengis.geometry.primitive.Ring;
 import org.opengis.geometry.primitive.Surface;
 import org.opengis.geometry.primitive.SurfaceBoundary;
@@ -70,7 +69,7 @@ public class JTSGeometryFactory {
         return crs;
     }
 
-    public Position createPosition( final DirectPosition point ) {
+    public DirectPosition createPosition( final DirectPosition point ) {
         return new GeneralDirectPosition( point );
     }
 
@@ -90,7 +89,7 @@ public class JTSGeometryFactory {
         return new JTSEnvelope(lowerCorner, upperCorner);
     }
 
-    public LineSegment createLineSegment(final Position startPoint, final Position endPoint) {
+    public LineSegment createLineSegment(final DirectPosition startPoint, final DirectPosition endPoint) {
         JTSLineSegment line = new JTSLineSegment();
         line.getControlPoints().add( startPoint );
         line.getControlPoints().add( endPoint );
@@ -98,7 +97,7 @@ public class JTSGeometryFactory {
         return line;
     }
 
-    public LineString createLineString(final List/*<Position>*/ points) {
+    public LineString createLineString(final List/*<DirectPosition>*/ points) {
         LineString result = new JTSLineString(crs);
         PointArray pa = result.getControlPoints();
         List list = pa;
@@ -107,17 +106,16 @@ public class JTSGeometryFactory {
 //            Object o = it.next();
 //            if (o instanceof DirectPosition) {
 //                list.add(o);
-//            } else if (o instanceof Position) {
-//                Position p = (Position) o;
+//            } else if (o instanceof DirectPosition) {
+//                DirectPosition p = (DirectPosition) o;
 //                DirectPosition dp = p.getPosition();
 //                /*if (dp == null) {
 //                    dp = p.getIndirect().getPosition();
 //                }*/
 //                list.add(dp);
 //            }
-            Position position = (Position) it.next();
-            DirectPosition directPosition = position.getDirectPosition();
-            list.add(directPosition);
+            DirectPosition position = (DirectPosition) it.next();
+            list.add(position);
         }
         return result;
     }

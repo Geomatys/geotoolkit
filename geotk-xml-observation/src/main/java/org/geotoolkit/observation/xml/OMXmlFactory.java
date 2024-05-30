@@ -68,8 +68,8 @@ public class OMXmlFactory {
             time = (org.geotoolkit.gml.xml.v311.AbstractTimeGeometricPrimitiveType) GMLXmlFactory.createPeriodOrInstant("3.1.1", null, p);
         } else if (observation.getSamplingTime() instanceof InstantWrapper inst) {
             String date = null;
-            if (inst.getDate() != null) {
-                date = inst.getInstant().toString();
+            if (inst.getTemporal() != null) {
+                date = inst.getTemporal().toString();
             }
             time = (org.geotoolkit.gml.xml.v311.AbstractTimeGeometricPrimitiveType) GMLXmlFactory.createTimeInstant("3.1.1", null, date);
         } else if (observation.getSamplingTime() != null) {
@@ -143,8 +143,8 @@ public class OMXmlFactory {
             time = (org.geotoolkit.gml.xml.v321.AbstractTimeObjectType) GMLXmlFactory.createPeriodOrInstant("3.2.1", null, p);
         } else if (observation.getSamplingTime() instanceof InstantWrapper inst) {
             String date = null;
-            if (inst.getDate() != null) {
-                date = inst.getInstant().toString();
+            if (inst.getTemporal() != null) {
+                date = inst.getTemporal().toString();
             }
             time = (org.geotoolkit.gml.xml.v321.AbstractTimeObjectType) GMLXmlFactory.createTimeInstant("3.2.1", null, date);
         } else if (observation.getSamplingTime() != null) {
