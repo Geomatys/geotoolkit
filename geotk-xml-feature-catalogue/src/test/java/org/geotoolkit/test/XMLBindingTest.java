@@ -116,7 +116,7 @@ public class XMLBindingTest {
         source.setTitle(new SimpleInternationalString("International Hydrographic Organization (IHO) Hydrographic Dictionnary, Part I, Volume I English"));
         List<CitationDate> dates = new ArrayList<>();
         DefaultCitationDate date = new DefaultCitationDate();
-        date.setDate(LocalDate.of(1994, 2, 1));
+        date.setReferenceDate(LocalDate.of(1994, 2, 1));
         date.setDateType(DateType.PUBLICATION);
         dates.add(date);
         source.setDates(dates);
