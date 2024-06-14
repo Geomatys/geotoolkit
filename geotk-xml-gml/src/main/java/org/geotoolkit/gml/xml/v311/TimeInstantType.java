@@ -28,6 +28,7 @@ import java.time.temporal.Temporal;
 import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.gml.xml.GMLInstant;
 import org.geotoolkit.gml.xml.AbstractTimePosition;
+import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.opengis.filter.Literal;
 
 
@@ -102,13 +103,13 @@ public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implemen
         this.timePosition = new TimePositionType(timePosition);
     }
 
+    @Override
+    public Temporal getPosition() {
+        return TemporalUtilities.toTemporal(timePosition);
+    }
+
     /**
      * Gets the value of the timePosition property.
-     *
-     * @return
-     *     possible object is
-     *     {@link TimePositionType }
-     *
      */
     @Override
     public TimePositionType getTimePosition() {
@@ -117,11 +118,6 @@ public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implemen
 
     /**
      * Sets the value of the timePosition property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link TimePositionType }
-     *
      */
     public void setTimePosition(final TimePositionType value) {
         this.timePosition = value;
@@ -132,7 +128,7 @@ public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implemen
 //        if (value instanceof TimePositionType) {
 //            this.timePosition = (TimePositionType)value;
         /*} else*/ if (value != null) {
-            this.timePosition = new TimePositionType(value.toInstant());
+            this.timePosition = new TimePositionType(TemporalUtilities.toTemporal(value));
         } else {
             this.timePosition = null;
         }

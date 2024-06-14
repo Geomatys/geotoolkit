@@ -32,9 +32,10 @@ import jakarta.xml.bind.annotation.XmlValue;
 import java.time.temporal.Temporal;
 import org.apache.sis.util.SimpleInternationalString;
 import org.geotoolkit.gml.xml.AbstractTimePosition;
-import org.geotoolkit.gml.xml.GMLInstant;
 import org.geotoolkit.gml.xml.TimeIndeterminateValueType;
+import org.geotoolkit.temporal.object.TemporalUtilities;
 import static org.geotoolkit.temporal.object.TemporalUtilities.dateEquals;
+import org.opengis.temporal.Instant;
 import org.opengis.util.InternationalString;
 
 
@@ -99,12 +100,11 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
 
     public TimePositionType(final AbstractTimePosition value){
         setValue(value.getDate());
-        this.indeterminatePosition = value.getIndeterminatePosition();
+        this.indeterminatePosition = value.getIndeterminateValue();
     }
 
     /**
      * build a simple Timposition with an indeterminate value.
-     *
      */
     public TimePositionType(final TimeIndeterminateValueType indeterminatePosition) {
         this.indeterminatePosition = indeterminatePosition;
@@ -116,8 +116,8 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
      *
      * @param time a date.
      */
-    public TimePositionType(final GMLInstant time){
-        setValue(time.getDate());
+    public TimePositionType(final Instant time) {
+        setValue(TemporalUtilities.toDate(time));
     }
 
     /**
@@ -125,8 +125,8 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
      *
      * @param time a date.
      */
-    public TimePositionType(final Temporal time){
-        setValue(org.apache.sis.util.privy.TemporalDate.toDate(time));
+    public TimePositionType(final Temporal time) {
+        setValue(TemporalUtilities.toDate(time));
     }
 
     /**
@@ -138,7 +138,6 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
      * Finally, calendar and clock forms that support the representation of time in systems based on years,
      * months, days, hours, minutes and seconds, in a notation following ISO 8601,
      * are assembled by gml:CalDate Gets the value of the value property.
-     *
      */
     @XmlValue
     public String getValue() {
@@ -227,7 +226,7 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
      *
      */
     @Override
-    public TimeIndeterminateValueType getIndeterminatePosition() {
+    public TimeIndeterminateValueType getIndeterminateValue() {
         return indeterminatePosition;
     }
 

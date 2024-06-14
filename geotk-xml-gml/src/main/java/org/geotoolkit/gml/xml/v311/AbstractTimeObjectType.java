@@ -21,7 +21,6 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlSeeAlso;
 import jakarta.xml.bind.annotation.XmlType;
 import org.apache.sis.metadata.MetadataStandard;
-import org.opengis.temporal.TemporalObject;
 import org.apache.sis.metadata.simple.SimpleCitation;
 import org.geotoolkit.gml.xml.AbstractGML;
 
@@ -51,7 +50,7 @@ import org.geotoolkit.gml.xml.AbstractGML;
     AbstractTimePrimitiveType.class,
     AbstractTimeComplexType.class
 })
-public abstract class AbstractTimeObjectType extends AbstractGMLType implements TemporalObject {
+public abstract class AbstractTimeObjectType extends AbstractGMLType {
 
     public AbstractTimeObjectType() {
 
@@ -61,8 +60,8 @@ public abstract class AbstractTimeObjectType extends AbstractGMLType implements 
         super(id);
     }
 
-    public AbstractTimeObjectType(final TemporalObject that) {
-        super((AbstractGML)that);// unsafe
+    public AbstractTimeObjectType(final AbstractGML that) {
+        super(that);
     }
 
     @Override

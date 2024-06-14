@@ -59,7 +59,7 @@ import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.temporal.TemporalGeometricPrimitive;
+import org.opengis.temporal.TemporalPrimitive;
 import org.opengis.util.GenericName;
 
 /**
@@ -162,7 +162,7 @@ public class NetcdfObservationStore extends AbstractObservationStore implements 
      * {@inheritDoc }
      */
     @Override
-    public TemporalGeometricPrimitive getTemporalBounds() throws DataStoreException {
+    public TemporalPrimitive getTemporalBounds() throws DataStoreException {
         try {
             final ObservationDataset result = NetCDFExtractor.getObservationFromNetCDF(analyze, getProcedureID(), null, null, new HashSet<>());
             if (result != null && result.spatialBound != null) {

@@ -19,6 +19,7 @@ package org.geotoolkit.observation.model;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import org.opengis.temporal.Period;
 
 /**
  *
@@ -93,6 +94,14 @@ public abstract class AbstractOMEntity {
 
     public void setProperties(Map<String, Object> properties) {
         this.properties = properties;
+    }
+
+    protected final void addIdentifier(org.opengis.temporal.Instant i) {
+        ObservationTransformUtils.setIdentifier(i, getId() + "-time");
+    }
+
+    protected final void addIdentifiers(Period p) {
+        ObservationTransformUtils.setIdentifiers(p, getId());
     }
 
     @Override

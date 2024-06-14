@@ -105,7 +105,7 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
 
     public TimePositionType(final AbstractTimePosition value){
         setValue(value.getDate());
-        this.indeterminatePosition = value.getIndeterminatePosition();
+        this.indeterminatePosition = value.getIndeterminateValue();
     }
 
     /**
@@ -122,7 +122,7 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
      * @param time a date.
      */
     public TimePositionType(final Temporal time) {
-        setValue(org.apache.sis.util.privy.TemporalDate.toDate(time));
+        setValue(org.apache.sis.temporal.TemporalDate.toDate(time));
     }
 
     /**
@@ -238,7 +238,7 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
      *
      */
     @Override
-    public TimeIndeterminateValueType getIndeterminatePosition() {
+    public TimeIndeterminateValueType getIndeterminateValue() {
         return indeterminatePosition;
     }
 

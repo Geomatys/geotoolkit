@@ -28,14 +28,15 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.sis.temporal.TemporalObjects;
 import org.geotoolkit.observation.model.ComplexResult;
 import org.geotoolkit.observation.model.TextEncoderProperties;
-import org.geotoolkit.temporal.object.DefaultInstant;
-import org.geotoolkit.temporal.object.InstantWrapper;
+import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.opengis.filter.Literal;
 import org.opengis.filter.TemporalOperator;
 import org.opengis.filter.TemporalOperatorName;
 import org.opengis.observation.Observation;
+import org.opengis.temporal.Instant;
 import org.opengis.temporal.TemporalPrimitive;
 import org.opengis.util.CodeList;
 
@@ -63,12 +64,12 @@ public class ResultTimeNarrower {
             final Timestamp tbegin;
             final Timestamp tend;
             if (p.getBeginning() != null) {
-                tbegin = new Timestamp(InstantWrapper.toInstant(p.getBeginning()).toEpochMilli());
+                tbegin = new Timestamp(TemporalUtilities.toInstant(p.getBeginning()).toEpochMilli());
             } else {
                 tbegin = null;
             }
             if (p.getEnding() != null) {
-                tend = new Timestamp(InstantWrapper.toInstant(p.getEnding()).toEpochMilli());
+                tend = new Timestamp(TemporalUtilities.toInstant(p.getEnding()).toEpochMilli());
             } else {
                 tend = null;
             }
@@ -103,8 +104,8 @@ public class ResultTimeNarrower {
             if (type == TemporalOperatorName.EQUALS) {
                 final TemporalOperator<?> filter = (TemporalOperator) bound;
                 final TemporalPrimitive time = rmLiteral(filter.getExpressions().get(1));
-                if (time instanceof InstantWrapper ti) {
-                    final Timestamp boundEquals = new Timestamp(InstantWrapper.toInstant(ti.getTemporal()).toEpochMilli());
+                if (time instanceof Instant ti) {
+                    final Timestamp boundEquals = new Timestamp(TemporalUtilities.toInstant(ti.getPosition()).toEpochMilli());
 
                     LOGGER.finer("TE case 1");
                     //case 1 the periods contains a matching values
@@ -114,8 +115,8 @@ public class ResultTimeNarrower {
             } else if (type == TemporalOperatorName.AFTER) {
                 final TemporalOperator filter = (TemporalOperator) bound;
                 final TemporalPrimitive time = rmLiteral(filter.getExpressions().get(1));
-                if (time instanceof InstantWrapper ti) {
-                    final Timestamp boundBegin = new Timestamp(InstantWrapper.toInstant(ti.getTemporal()).toEpochMilli());
+                if (time instanceof Instant ti) {
+                    final Timestamp boundBegin = new Timestamp(TemporalUtilities.toInstant(ti.getPosition()).toEpochMilli());
 
                     // case 1 the period overlaps the bound
                     if (tBegin.before(boundBegin) && tEnd.after(boundBegin)) {
@@ -127,8 +128,8 @@ public class ResultTimeNarrower {
             } else if (type == TemporalOperatorName.BEFORE) {
                 final TemporalOperator filter = (TemporalOperator) bound;
                 final TemporalPrimitive time = rmLiteral(filter.getExpressions().get(1));
-                if (time instanceof InstantWrapper ti) {
-                    final Timestamp boundEnd = new Timestamp(InstantWrapper.toInstant(ti.getTemporal()).toEpochMilli());
+                if (time instanceof Instant ti) {
+                    final Timestamp boundEnd = new Timestamp(TemporalUtilities.toInstant(ti.getPosition()).toEpochMilli());
 
                     // case 1 the period overlaps the bound
                     if (tBegin.before(boundEnd) && tEnd.after(boundEnd)) {
@@ -141,8 +142,8 @@ public class ResultTimeNarrower {
                 final TemporalOperator filter = (TemporalOperator) bound;
                 final TemporalPrimitive time = rmLiteral(filter.getExpressions().get(1));
                 if (time instanceof Period tp) {
-                    final Timestamp boundBegin = new Timestamp(InstantWrapper.toInstant(tp.getBeginning()).toEpochMilli());
-                    final Timestamp boundEnd   = new Timestamp(InstantWrapper.toInstant(tp.getEnding()).toEpochMilli());
+                    final Timestamp boundBegin = new Timestamp(TemporalUtilities.toInstant(tp.getBeginning()).toEpochMilli());
+                    final Timestamp boundEnd   = new Timestamp(TemporalUtilities.toInstant(tp.getEnding()).toEpochMilli());
 
                     // case 1 the period overlaps the first bound
                     if (tBegin.before(boundBegin) && tEnd.before(boundEnd) && tEnd.after(boundBegin)) {
@@ -176,7 +177,7 @@ public class ResultTimeNarrower {
                 return tp;
             }
         }
-        return new DefaultInstant(InstantWrapper.unwrap(obj).orElseThrow(
+        return TemporalObjects.createInstant(TemporalUtilities.toTemporal(obj).orElseThrow(
                 () -> new IllegalArgumentException("Expecting a temporal primitive in a temporal filter.")));
     }
 

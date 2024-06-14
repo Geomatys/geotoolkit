@@ -27,16 +27,17 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import jakarta.xml.bind.annotation.XmlTransient;
 import java.time.temporal.Temporal;
+import java.util.Optional;
 import org.geotoolkit.temporal.object.ISODateParser;
-import org.geotoolkit.temporal.object.InstantWrapper;
-import org.opengis.temporal.TemporalPosition;
+import org.opengis.temporal.IndeterminateValue;
+import org.opengis.temporal.Instant;
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
 @XmlTransient
-public abstract class AbstractTimePosition implements InstantWrapper {
+public abstract class AbstractTimePosition implements Instant {
 
     protected static final Logger LOGGER = Logger.getLogger("org.geotoolkit.gml.xml");
 
@@ -50,16 +51,11 @@ public abstract class AbstractTimePosition implements InstantWrapper {
         FORMATTERS.add(new SimpleDateFormat("yyyy"));
     }
 
-    public TemporalPosition anyOther() {
-        return null;
+    @Override
+    public Temporal getPosition() {
+        return org.apache.sis.temporal.TemporalDate.toTemporal(getDate());
     }
 
-    @Override
-    public Temporal getTemporal() {
-        return org.apache.sis.util.privy.TemporalDate.toTemporal(getDate());
-    }
-
-    @Override
     public abstract Date getDate();
 
     protected Date parseDate(final String value) {
@@ -86,19 +82,35 @@ public abstract class AbstractTimePosition implements InstantWrapper {
         return null;
     }
 
-    public abstract TimeIndeterminateValueType getIndeterminatePosition();
+    @Override
+    public Optional<IndeterminateValue> getIndeterminatePosition() {
+        var v = getIndeterminateValue();
+        if (v == null) {
+            return Optional.empty();
+        }
+        IndeterminateValue c;
+        switch (v) {
+            case BEFORE: c = IndeterminateValue.BEFORE;  break;
+            case AFTER:  c = IndeterminateValue.AFTER;   break;
+            case NOW:    c = IndeterminateValue.NOW;     break;
+            default:     c = IndeterminateValue.UNKNOWN; break;
+        }
+        return Optional.of(c);
+    }
+
+    public abstract TimeIndeterminateValueType getIndeterminateValue();
 
     static AbstractTimePosition of(final Temporal instant) {
         return new AbstractTimePosition() {
-            @Override public Temporal getTemporal() {
+            @Override public Temporal getPosition() {
                 return instant;
             }
 
             @Override public Date getDate() {
-                return org.apache.sis.util.privy.TemporalDate.toDate(instant);
+                return org.apache.sis.temporal.TemporalDate.toDate(instant);
             }
 
-            @Override public TimeIndeterminateValueType getIndeterminatePosition() {
+            @Override public TimeIndeterminateValueType getIndeterminateValue() {
                 return null;
             }
         };

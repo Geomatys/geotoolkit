@@ -20,7 +20,7 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlSeeAlso;
 import jakarta.xml.bind.annotation.XmlType;
-import org.opengis.temporal.TemporalObject;
+import org.opengis.temporal.TemporalPrimitive;
 
 
 /**
@@ -43,7 +43,7 @@ import org.opengis.temporal.TemporalObject;
     AbstractTimeComplexType.class,
     AbstractTimePrimitiveType.class
 })
-public abstract class AbstractTimeObjectType extends AbstractGMLType implements TemporalObject {
+public abstract class AbstractTimeObjectType extends AbstractGMLType implements TemporalPrimitive {
 
     public AbstractTimeObjectType() {
     }

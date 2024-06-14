@@ -29,6 +29,7 @@ import java.time.temporal.Temporal;
 import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.gml.xml.AbstractTimePosition;
 import org.geotoolkit.gml.xml.GMLInstant;
+import org.geotoolkit.temporal.object.TemporalUtilities;
 
 
 /**
@@ -99,6 +100,11 @@ public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implemen
         if (that != null && that.timePosition != null) {
             this.timePosition = new TimePositionType(that.timePosition);
         }
+    }
+
+    @Override
+    public Temporal getPosition() {
+        return TemporalUtilities.toTemporal(timePosition);
     }
 
     /**

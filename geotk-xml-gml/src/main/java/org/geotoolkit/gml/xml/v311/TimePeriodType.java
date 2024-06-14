@@ -30,6 +30,8 @@ import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.gml.xml.AbstractTimePosition;
 import org.geotoolkit.gml.xml.GMLInstant;
 import org.geotoolkit.gml.xml.GMLPeriod;
+import org.geotoolkit.temporal.object.TemporalUtilities;
+import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
 
 
@@ -101,12 +103,12 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
         if (beginPosition instanceof TimePositionType) {
             this.beginPosition = (TimePositionType) beginPosition;
         } else if (beginPosition != null && beginPosition.getDate() != null) {
-            this.beginPosition = new TimePositionType(beginPosition.getTemporal());
+            this.beginPosition = new TimePositionType(beginPosition);
         }
         if (endPosition instanceof TimePositionType) {
             this.endPosition = (TimePositionType) endPosition;
         } else if (endPosition != null && endPosition.getDate() != null) {
-            this.endPosition = new TimePositionType(endPosition.getTemporal());
+            this.endPosition = new TimePositionType(endPosition);
         }
     }
 
@@ -174,7 +176,7 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
         if (endPosition instanceof TimePositionType) {
             this.endPosition = (TimePositionType) endPosition;
         } else if (endPosition != null) {
-            this.endPosition = new TimePositionType(endPosition.getTemporal());
+            this.endPosition = new TimePositionType(endPosition);
         }
     }
 
@@ -183,7 +185,7 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
         if (beginPosition instanceof TimePositionType) {
             this.beginPosition = (TimePositionType) beginPosition;
         } else if (beginPosition != null) {
-            this.beginPosition = new TimePositionType(beginPosition.getTemporal());
+            this.beginPosition = new TimePositionType(beginPosition);
         }
     }
 
@@ -241,7 +243,7 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
      *
      */
     public void setBeginPosition(final Date value) {
-        this.beginPosition = new TimePositionType(value.toInstant());
+        this.beginPosition = new TimePositionType(TemporalUtilities.toTemporal(value));
     }
 
     /**
@@ -320,7 +322,7 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
      *
      */
     public void setEndPosition(final Date value) {
-        this.endPosition = new TimePositionType(value.toInstant());
+        this.endPosition = new TimePositionType(TemporalUtilities.toTemporal(value));
     }
 
     /**
@@ -366,11 +368,11 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
     }
 
     @Override
-    public Temporal getBeginning() {
+    public Instant getBeginning() {
         if (begin != null) {
-            return begin.getTimeInstant().getTemporal();
+            return begin.getTimeInstant();
         } else if (beginPosition != null) {
-            return new TimeInstantType(beginPosition).getTemporal();
+            return new TimeInstantType(beginPosition);
         }
         return null;
     }
@@ -382,11 +384,11 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
     }
 
     @Override
-    public Temporal getEnding() {
+    public Instant getEnding() {
         if (end != null) {
-            return end.getTimeInstant().getTemporal();
+            return end.getTimeInstant();
         } else if (endPosition != null) {
-            return new TimeInstantType(endPosition).getTemporal();
+            return new TimeInstantType(endPosition);
         }
         return null;
     }
@@ -423,11 +425,6 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
 
     /**
      * Gets the value of the duration property.
-     *
-     * @return
-     *     possible object is
-     *     {@link Duration }
-     *
      */
     public Duration getDuration() {
         return duration;
@@ -435,11 +432,6 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
 
     /**
      * Sets the value of the duration property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link Duration }
-     *
      */
     public void setDuration(final Duration value) {
         this.duration = value;
@@ -447,11 +439,6 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
 
     /**
      * Gets the value of the timeInterval property.
-     *
-     * @return
-     *     possible object is
-     *     {@link TimeIntervalLengthType }
-     *
      */
     public TimeIntervalLengthType getTimeInterval() {
         return timeInterval;
@@ -459,11 +446,6 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
 
     /**
      * Sets the value of the timeInterval property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link TimeIntervalLengthType }
-     *
      */
     public void setTimeInterval(final TimeIntervalLengthType value) {
         this.timeInterval = value;
@@ -524,7 +506,6 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
         if (timeInterval != null) {
             s.append(lineSeparator).append("timeInterval:").append(timeInterval).append(lineSeparator);
         }
-
         return s.toString();
     }
 }

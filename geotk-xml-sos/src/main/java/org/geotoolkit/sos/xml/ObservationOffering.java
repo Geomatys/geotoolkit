@@ -23,7 +23,7 @@ import javax.xml.namespace.QName;
 import org.geotoolkit.gml.xml.Envelope;
 import org.opengis.metadata.Identifier;
 import org.opengis.observation.Phenomenon;
-import org.opengis.temporal.TemporalGeometricPrimitive;
+import org.opengis.temporal.TemporalPrimitive;
 
 /**
  *
@@ -41,7 +41,7 @@ public interface ObservationOffering {
      */
     List<String> getSrsName();
 
-    TemporalGeometricPrimitive getTime();
+    TemporalPrimitive getTime();
 
     Envelope getObservedArea();
     /*

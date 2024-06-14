@@ -20,18 +20,17 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ContainerNode;
 import com.fasterxml.jackson.databind.node.NumericNode;
 import java.util.Comparator;
+import org.apache.sis.util.Utilities;
 import org.junit.Assert;
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class JSONComparator implements Comparator<JsonNode>
-{
-
+public class JSONComparator implements Comparator<JsonNode> {
     @Override
     public int compare(JsonNode o1, JsonNode o2) {
-        if (o1.equals(o2)) {
+        if (Utilities.equalsIgnoreMetadata(o1, o2)) {
             return 0;
         }
         if ((o1 instanceof NumericNode) && (o2 instanceof NumericNode)){
@@ -48,4 +47,3 @@ public class JSONComparator implements Comparator<JsonNode>
         throw new AssertionError("expected:" + o1 +" but was " + o2);
     }
 }
-

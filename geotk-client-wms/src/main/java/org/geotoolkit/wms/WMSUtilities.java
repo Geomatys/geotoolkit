@@ -18,6 +18,7 @@ package org.geotoolkit.wms;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -40,12 +41,12 @@ import org.apache.sis.referencing.crs.DefaultEngineeringCRS;
 import org.apache.sis.referencing.cs.AbstractCS;
 import org.apache.sis.referencing.cs.DefaultCoordinateSystemAxis;
 import org.apache.sis.referencing.datum.DefaultEngineeringDatum;
+import org.apache.sis.temporal.LenientDateFormat;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.coverage.grid.EstimatedGridGeometry;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.temporal.object.ISODateParser;
-import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.geotoolkit.temporal.util.PeriodUtilities;
 import org.geotoolkit.wms.xml.AbstractDimension;
 import org.geotoolkit.wms.xml.AbstractLayer;
@@ -295,10 +296,10 @@ public final class WMSUtilities {
 
                             //try to parse a single date
                             try {
-                                final Date date = TemporalUtilities.parseDate(candidate);
+                                final Date date = Date.from(LenientDateFormat.parseInstantUTC(candidate));
                                 dblValues.add((double)date.getTime());
                                 continue;
-                            } catch (ParseException ex) {
+                            } catch (DateTimeParseException ex) {
                                 LOGGER.log(Level.FINER, "Value : {0} is not a date", candidate);
                             }
                         }

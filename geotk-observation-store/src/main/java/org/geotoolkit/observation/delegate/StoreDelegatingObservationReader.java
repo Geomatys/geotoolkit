@@ -38,7 +38,7 @@ import org.geotoolkit.observation.query.DatasetQuery;
 import org.geotoolkit.observation.query.IdentifierQuery;
 import org.geotoolkit.observation.query.ObservationQueryUtilities;
 import org.locationtech.jts.geom.Geometry;
-import org.opengis.temporal.TemporalGeometricPrimitive;
+import org.opengis.temporal.TemporalPrimitive;
 
 /**
  *
@@ -90,7 +90,7 @@ public class StoreDelegatingObservationReader implements ObservationReader {
     }
 
     @Override
-    public TemporalGeometricPrimitive getProcedureTime(String sensorID) throws DataStoreException {
+    public TemporalPrimitive getProcedureTime(String sensorID) throws DataStoreException {
         DatasetQuery query = new DatasetQuery(Arrays.asList(sensorID));
         ObservationDataset results = store.getDataset(query);
         return results.spatialBound.getTimeObject();
@@ -108,7 +108,7 @@ public class StoreDelegatingObservationReader implements ObservationReader {
     }
 
     @Override
-    public TemporalGeometricPrimitive getFeatureOfInterestTime(String samplingFeatureName) throws DataStoreException {
+    public TemporalPrimitive getFeatureOfInterestTime(String samplingFeatureName) throws DataStoreException {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
@@ -123,7 +123,7 @@ public class StoreDelegatingObservationReader implements ObservationReader {
     }
 
     @Override
-    public TemporalGeometricPrimitive getEventTime() throws DataStoreException {
+    public TemporalPrimitive getEventTime() throws DataStoreException {
         ObservationDataset results = store.getDataset(new DatasetQuery());
         return results.spatialBound.getTimeObject();
     }
@@ -154,5 +154,4 @@ public class StoreDelegatingObservationReader implements ObservationReader {
     public void destroy() {
         // do nothing
     }
-
 }

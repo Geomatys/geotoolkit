@@ -22,7 +22,7 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlSeeAlso;
 import jakarta.xml.bind.annotation.XmlType;
-import org.opengis.temporal.RelativePosition;
+import org.geotoolkit.gml.xml.AbstractGML;
 import org.opengis.temporal.TemporalPrimitive;
 
 
@@ -44,9 +44,6 @@ import org.opengis.temporal.TemporalPrimitive;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractTimePrimitiveType", propOrder = {
@@ -66,7 +63,7 @@ public abstract class AbstractTimePrimitiveType extends AbstractTimeObjectType i
     }
 
     public AbstractTimePrimitiveType(final TemporalPrimitive tp) {
-        super(tp);
+        super((AbstractGML) tp);
         if (tp instanceof AbstractTimePrimitiveType) {
             final AbstractTimePrimitiveType that = (AbstractTimePrimitiveType) tp;
             this.relatedTime = new ArrayList<>();
@@ -92,10 +89,4 @@ public abstract class AbstractTimePrimitiveType extends AbstractTimeObjectType i
         }
         return this.relatedTime;
     }
-
-    @Override
-    public RelativePosition relativePosition(final TemporalPrimitive tp) {
-        return null;
-    }
-
 }

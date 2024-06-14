@@ -44,7 +44,7 @@ import org.opengis.observation.Observation;
 import org.opengis.observation.ObservationCollection;
 import org.opengis.observation.Phenomenon;
 import org.opengis.observation.sampling.SamplingFeature;
-import org.opengis.temporal.TemporalGeometricPrimitive;
+import org.opengis.temporal.TemporalPrimitive;
 
 /**
  *
@@ -163,7 +163,7 @@ public class XmlObservationReader implements ObservationReader {
     }
 
     @Override
-    public TemporalGeometricPrimitive getProcedureTime(final String sensorID) throws DataStoreException {
+    public TemporalPrimitive getProcedureTime(final String sensorID) throws DataStoreException {
         final ObservationDataset result = new ObservationDataset();
         for (Object xmlObject : xmlObjects) {
             if (xmlObject instanceof ObservationCollection collection) {
@@ -226,7 +226,7 @@ public class XmlObservationReader implements ObservationReader {
     }
 
     @Override
-    public TemporalGeometricPrimitive getFeatureOfInterestTime(final String samplingFeatureName) throws DataStoreException {
+    public TemporalPrimitive getFeatureOfInterestTime(final String samplingFeatureName) throws DataStoreException {
         throw new DataStoreException("Not supported yet in this implementation.");
     }
 
@@ -274,7 +274,7 @@ public class XmlObservationReader implements ObservationReader {
     }
 
     @Override
-    public TemporalGeometricPrimitive getEventTime() throws DataStoreException {
+    public TemporalPrimitive getEventTime() throws DataStoreException {
         throw new DataStoreException("Not supported yet in this implementation.");
     }
 

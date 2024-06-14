@@ -52,7 +52,6 @@ import org.geotoolkit.util.collection.UnSynchronizedCache;
  *
  * @author Johann Sorel (Geomatys)
  * @author Olivier Terral (Geomatys)
- * @module
  */
 public class ISODateParser {
 

@@ -25,25 +25,22 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Collections;
 import java.util.Date;
-import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.temporal.TemporalObjects;
 import static org.geotoolkit.observation.json.ObservationJsonUtils.getFieldValue;
-import org.geotoolkit.temporal.object.DefaultInstant;
-import org.geotoolkit.temporal.object.DefaultPeriod;
-import org.geotoolkit.temporal.object.DefaultTemporalPosition;
-import org.opengis.referencing.IdentifiedObject;
+import org.geotoolkit.observation.model.ObservationTransformUtils;
 import org.opengis.temporal.IndeterminateValue;
-import org.opengis.temporal.TemporalGeometricPrimitive;
+import org.opengis.temporal.Instant;
+import org.opengis.temporal.TemporalPrimitive;
 
 /**
  *
  * @author Guilhem Legal (geomatys)
  */
-public class TemporalGeometricPrimitiveDeserializer extends JsonDeserializer<TemporalGeometricPrimitive> {
+public class TemporalGeometricPrimitiveDeserializer extends JsonDeserializer<TemporalPrimitive> {
 
     @Override
-    public TemporalGeometricPrimitive deserialize(JsonParser parser, DeserializationContext ctxt) throws IOException {
+    public TemporalPrimitive deserialize(JsonParser parser, DeserializationContext ctxt) throws IOException {
         final JsonNode rootNode = ctxt.readTree(parser);
 
         if (rootNode == null || !rootNode.isObject()) {
@@ -57,9 +54,9 @@ public class TemporalGeometricPrimitiveDeserializer extends JsonDeserializer<Tem
             JsonNode beginNode = rootNode.get("beginning");
             JsonNode endNode   = rootNode.get("ending");
             try {
-                DefaultInstant begin = readInstant(parser, sdf, beginNode);
-                DefaultInstant end   = readInstant(parser, sdf, endNode);
-                return new DefaultPeriod(Collections.singletonMap(IdentifiedObject.NAME_KEY, id), begin, end);
+                var begin = readInstant(parser, sdf, beginNode);
+                var end   = readInstant(parser, sdf, endNode);
+                return TemporalObjects.createPeriod(begin, end);
 
             } catch (ParseException ex) {
                 throw new JsonMappingException(parser, "Date parsing exception", ex);
@@ -69,7 +66,9 @@ public class TemporalGeometricPrimitiveDeserializer extends JsonDeserializer<Tem
             String dateStr = rootNode.get("date").textValue();
             try {
                 Date d = sdf.parse(dateStr);
-                return new DefaultInstant(Collections.singletonMap(IdentifiedObject.NAME_KEY, id), d.toInstant());
+                var t = TemporalObjects.createInstant(d.toInstant());
+                ObservationTransformUtils.setIdentifier(t, id);
+                return t;
             } catch (ParseException ex) {
                 throw new JsonMappingException(parser, "Date parsing exception", ex);
             }
@@ -78,16 +77,19 @@ public class TemporalGeometricPrimitiveDeserializer extends JsonDeserializer<Tem
         }
     }
 
-    private DefaultInstant readInstant(JsonParser parser, DateFormat sdf, JsonNode instantNode) throws ParseException, IOException {
+    private Instant readInstant(JsonParser parser, DateFormat sdf, JsonNode instantNode) throws ParseException, IOException {
         String id = getFieldValue(instantNode, "id").orElseThrow(() -> new JsonMappingException(parser, "No instant id available"));
         if (instantNode.hasNonNull("date")) {
             String dateStr    = instantNode.get("date").textValue();
             Date d = sdf.parse(dateStr);
-            return new DefaultInstant(Collections.singletonMap(IdentifiedObject.NAME_KEY, id), d.toInstant());
+            var t = TemporalObjects.createInstant(d.toInstant());
+            ObservationTransformUtils.setIdentifier(t, id);
+            return t;
         } else if (instantNode.hasNonNull("indeterminatePosition")) {
             IndeterminateValue iValue = IndeterminateValue.valueOf(instantNode.get("indeterminatePosition").asText());
-            return new DefaultInstant(Collections.singletonMap(IdentifiedObject.NAME_KEY, id),
-                    new DefaultTemporalPosition(CommonCRS.Temporal.JULIAN.crs(), iValue));
+            var t = TemporalObjects.createInstant(iValue);
+            ObservationTransformUtils.setIdentifier(t, id);
+            return t;
         } else {
             throw new JsonMappingException(parser, "Invalid JSON : missing date or indeterminatePosition for Instant");
         }

@@ -22,7 +22,6 @@ import org.geotoolkit.observation.query.ObservedPropertyQuery;
 import org.geotoolkit.observation.query.ResultQuery;
 import static org.geotoolkit.ows.xml.OWSExceptionCode.INVALID_PARAMETER_VALUE;
 import static org.geotoolkit.observation.AbstractObservationStoreFactory.*;
-import org.geotoolkit.temporal.object.InstantWrapper;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.opengis.filter.BinaryComparisonOperator;
@@ -35,8 +34,9 @@ import org.opengis.observation.Phenomenon;
 import org.opengis.observation.Process;
 import org.opengis.observation.sampling.SamplingFeature;
 import org.opengis.temporal.Period;
-import org.opengis.temporal.TemporalGeometricPrimitive;
-import static org.apache.sis.util.privy.TemporalDate.toDate;
+import org.opengis.temporal.TemporalPrimitive;
+import static org.apache.sis.temporal.TemporalDate.toDate;
+import org.geotoolkit.temporal.object.TemporalUtilities;
 
 /**
  *
@@ -213,16 +213,16 @@ public abstract class AbstractObservationFilterReader implements ObservationFilt
         if (tFilter == null) return;
 
         Object time = tFilter.getExpressions().get(1);
-        if (time instanceof Literal && !(time instanceof TemporalGeometricPrimitive)) {
+        if (time instanceof Literal && !(time instanceof TemporalPrimitive)) {
             time = ((Literal)time).getValue();
         }
         TemporalOperatorName type = tFilter.getOperatorType();
         if (type == TemporalOperatorName.EQUALS || type == TemporalOperatorName.DURING) {
             Optional<Temporal> ti;
             if (time instanceof Period tp) {
-                startTime = toDate(tp.getBeginning());
-                endTime   = toDate(tp.getEnding());
-            } else if ((ti = InstantWrapper.unwrap(time)).isPresent()) {
+                startTime = toDate(tp.getBeginning().getPosition());
+                endTime   = toDate(tp.getEnding().getPosition());
+            } else if ((ti = TemporalUtilities.toTemporal(time)).isPresent()) {
                 startTime = toDate(ti.get());
                 endTime   = startTime;
             } else {
@@ -231,7 +231,7 @@ public abstract class AbstractObservationFilterReader implements ObservationFilt
         } else if (type == TemporalOperatorName.BEFORE) {
 
             // for the operation before the temporal object must be an timeInstant
-            Optional<Temporal> ti = InstantWrapper.unwrap(time);
+            Optional<Temporal> ti = TemporalUtilities.toTemporal(time);
             if (ti.isPresent()) {
                 endTime = toDate(ti.get());
             } else {
@@ -240,7 +240,7 @@ public abstract class AbstractObservationFilterReader implements ObservationFilt
         } else if (type == TemporalOperatorName.AFTER) {
 
             // for the operation after the temporal object must be an timeInstant
-            Optional<Temporal> ti = InstantWrapper.unwrap(time);
+            Optional<Temporal> ti = TemporalUtilities.toTemporal(time);
             if (ti.isPresent()) {
                 startTime = toDate(ti.get());
             } else {

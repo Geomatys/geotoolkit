@@ -161,8 +161,8 @@ public class TimePeriodTypeTest {
         GMLMarshallerPool.getInstance().recycle(um);
 
         Period period = (Period) extent.getTemporalElements().iterator().next().getExtent();
-        final var start = (OffsetDateTime) period.getBeginning();
-        final var end   = (OffsetDateTime) period.getEnding();
+        final var start = (OffsetDateTime) period.getBeginning().getPosition();
+        final var end   = (OffsetDateTime) period.getEnding().getPosition();
         assertTrue(end.isAfter(start)); // A lazy test for now. Needs to be improved.
     }
 }

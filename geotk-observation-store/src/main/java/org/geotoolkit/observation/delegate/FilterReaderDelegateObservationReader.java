@@ -45,7 +45,7 @@ import org.opengis.observation.Observation;
 import org.opengis.observation.Phenomenon;
 import org.opengis.observation.Process;
 import org.opengis.observation.sampling.SamplingFeature;
-import org.opengis.temporal.TemporalGeometricPrimitive;
+import org.opengis.temporal.TemporalPrimitive;
 
 /**
  * An {@linkplain ObservationReader} delegating all its methods on a {@linkplain ObservationFilterReader}
@@ -112,7 +112,7 @@ public class FilterReaderDelegateObservationReader implements ObservationReader 
     }
 
     @Override
-    public TemporalGeometricPrimitive getProcedureTime(String sensorID) throws DataStoreException {
+    public TemporalPrimitive getProcedureTime(String sensorID) throws DataStoreException {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
@@ -129,7 +129,7 @@ public class FilterReaderDelegateObservationReader implements ObservationReader 
     }
 
     @Override
-    public TemporalGeometricPrimitive getFeatureOfInterestTime(String samplingFeatureName) throws DataStoreException {
+    public TemporalPrimitive getFeatureOfInterestTime(String samplingFeatureName) throws DataStoreException {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
@@ -158,7 +158,7 @@ public class FilterReaderDelegateObservationReader implements ObservationReader 
     }
 
     @Override
-    public TemporalGeometricPrimitive getEventTime() throws DataStoreException {
+    public TemporalPrimitive getEventTime() throws DataStoreException {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
@@ -184,5 +184,4 @@ public class FilterReaderDelegateObservationReader implements ObservationReader 
     public void destroy() {
         // do nothing.
     }
-
 }

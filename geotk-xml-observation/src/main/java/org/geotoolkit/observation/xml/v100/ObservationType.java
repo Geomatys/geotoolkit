@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.observation.xml.v100;
 
-// jaxb import
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -37,7 +36,6 @@ import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.apache.sis.xml.bind.metadata.DQ_Element;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 
-// openGis dependencies
 import org.geotoolkit.gml.xml.v311.*;
 import org.opengis.metadata.quality.Element;
 import org.opengis.metadata.Metadata;
@@ -45,7 +43,6 @@ import org.opengis.observation.Observation;
 import org.opengis.observation.Phenomenon;
 import org.opengis.observation.sampling.SamplingFeature;
 
-// GeotoolKit dependencies
 import org.geotoolkit.internal.sql.Entry;
 import org.geotoolkit.sampling.xml.v100.SamplingFeatureType;
 import org.geotoolkit.sampling.xml.v100.SamplingPointType;
@@ -65,7 +62,7 @@ import org.geotoolkit.gml.xml.BoundingShape;
 import org.geotoolkit.swe.xml.v101.CompositePhenomenonType;
 import org.opengis.metadata.Identifier;
 import org.opengis.temporal.Period;
-import org.opengis.temporal.TemporalGeometricPrimitive;
+import org.opengis.temporal.TemporalPrimitive;
 
 
 /**
@@ -295,7 +292,7 @@ public class ObservationType implements Entry, AbstractObservation {
      * On y rajoute un samplingTime et un id temporaire.
      */
     @Override
-    public ObservationType getTemporaryTemplate(final String temporaryName, TemporalGeometricPrimitive time) {
+    public ObservationType getTemporaryTemplate(final String temporaryName, TemporalPrimitive time) {
         if (time == null) {
             TimePositionType begin = new  TimePositionType("1900-01-01T00:00:00");
             time = new TimePeriodType(begin);
@@ -572,7 +569,7 @@ public class ObservationType implements Entry, AbstractObservation {
             } else if (samplingTime != null && samplingTime.getTimeGeometricPrimitive() instanceof TimeInstantType) {
                 final TimeInstantType instant = (TimeInstantType) samplingTime.getTimeGeometricPrimitive();
                 if (!newEndBound.equals(instant.getTimePosition().getValue())) {
-                    final TimePeriodType period = new TimePeriodType(instant.getId(), instant.getTimePosition().getTemporal(), newEndBound.toInstant());
+                    final TimePeriodType period = new TimePeriodType(instant.getId(), instant.getTimePosition().getPosition(), newEndBound.toInstant());
                     samplingTime.setTimeGeometricPrimitive(period);
                 }
             } else if (samplingTime == null) {
@@ -586,7 +583,7 @@ public class ObservationType implements Entry, AbstractObservation {
         if (period instanceof TimePeriodType p) {
             this.samplingTime = new TimeGeometricPrimitivePropertyType(p);
         } else if (period != null) {
-            final TimePeriodType pt = new TimePeriodType(null, period.getBeginning(), period.getEnding());
+            final TimePeriodType pt = new TimePeriodType(null, period.getBeginning().getPosition(), period.getEnding().getPosition());
             this.samplingTime = new TimeGeometricPrimitivePropertyType(pt);
         }
     }

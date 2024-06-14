@@ -21,11 +21,10 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.time.temporal.Temporal;
-import org.geotoolkit.temporal.object.DefaultInstant;
-import org.geotoolkit.temporal.object.DefaultPeriod;
+import org.apache.sis.temporal.TemporalObjects;
+import org.apache.sis.xml.IdentifiedObject;
+import org.apache.sis.xml.IdentifierSpace;
+import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
 
 /**
@@ -38,18 +37,13 @@ public class PeriodSerializer extends JsonSerializer<Period> {
     public void serialize(Period p, JsonGenerator writer, SerializerProvider serializerProvider) throws IOException {
         writer.writeStartObject();
         writer.writeFieldName("id");
-        writer.writeString(p.getName().getCode());
+        writer.writeString(InstantSerializer.getIdentifier(p));
 
-        DefaultInstant begin = null, end = null;
-        if (p instanceof DefaultPeriod dp) {
-            begin = dp.beginning;
-            end = dp.ending;
-        } else {
-            Temporal i = p.getBeginning();
-            if (i != null) begin = new DefaultInstant(i);
-            i = p.getEnding();
-            if (i != null) end = new DefaultInstant(i);
-        }
+        Instant begin = null, end = null;
+        Instant i = p.getBeginning();
+        if (i != null) begin = copy(i);
+        i = p.getEnding();
+        if (i != null) end = copy(i);
         if (begin != null) {
             writer.writeFieldName("beginning");
             writeInstant(writer, begin);
@@ -61,17 +55,28 @@ public class PeriodSerializer extends JsonSerializer<Period> {
         writer.writeEndObject();
     }
 
-    private static void writeInstant(JsonGenerator writer, DefaultInstant i) throws IOException {
+    private static Instant copy(Instant i) {
+        var t = TemporalObjects.createInstant(i.getPosition());
+        if (t != null) {
+            if (i instanceof IdentifiedObject m) {
+                ((IdentifiedObject) t).getIdentifierMap().putAll(m.getIdentifierMap());
+            } else if (i instanceof org.opengis.referencing.IdentifiedObject m) {
+                ((IdentifiedObject) t).getIdentifierMap().putSpecialized(IdentifierSpace.ID, m.getName().getCode());
+            }
+        }
+        return t;
+    }
+
+    private static void writeInstant(JsonGenerator writer, Instant i) throws IOException {
         writer.writeStartObject();
         writer.writeFieldName("id");
-        writer.writeString(i.getName().getCode());
-        if (i.getDate() != null) {
+        writer.writeString(InstantSerializer.getIdentifier(i));
+        if (i.getPosition() != null) {
             writer.writeFieldName("date");
-            DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.S'Z'");
-            writer.writeString(sdf.format(i.getDate()));
-        } else if (i.getTemporalPosition() != null && i.getTemporalPosition().getIndeterminatePosition().isPresent()) {
+            writer.writeString(i.getPosition().toString());
+        } else if (i.getIndeterminatePosition().isPresent()) {
             writer.writeFieldName("indeterminatePosition");
-            writer.writeString(i.getTemporalPosition().getIndeterminatePosition().get().name());
+            writer.writeString(i.getIndeterminatePosition().get().name());
         } else {
             throw new JsonMappingException(writer, "Instant must contains at least a date or an indeterminate position.");
         }

@@ -24,8 +24,8 @@ import java.util.List;
 import java.util.Objects;
 import org.geotoolkit.gml.xml.v311.CoordinatesType;
 import org.opengis.temporal.Period;
-import org.opengis.temporal.TemporalGeometricPrimitive;
-import static org.apache.sis.util.privy.TemporalDate.toTemporal;
+import org.opengis.temporal.TemporalPrimitive;
+import static org.apache.sis.temporal.TemporalDate.toTemporal;
 
 /**
  *
@@ -244,11 +244,11 @@ public class GMLXmlFactory {
         }
     }
 
-    public static TemporalGeometricPrimitive createPeriodOrInstant(final String version, final String id, final Period p) {
+    public static TemporalPrimitive createPeriodOrInstant(final String version, final String id, final Period p) {
         if (p != null) {
-            Temporal instant = p.getBeginning();
+            var instant = p.getBeginning();
             if (Objects.equals(instant, p.getEnding())) {
-                return createTimeInstant(version, id, instant);
+                return createTimeInstant(version, id, instant.getPosition());
             }
         }
         return createTimePeriod(version, id, p);

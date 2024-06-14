@@ -31,13 +31,13 @@ import java.util.Optional;
 import java.util.stream.StreamSupport;
 import org.geotoolkit.observation.model.Phenomenon;
 import org.geotoolkit.observation.model.Result;
-import org.geotoolkit.temporal.object.DefaultInstant;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.quality.Element;
+import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
-import org.opengis.temporal.TemporalGeometricPrimitive;
+import org.opengis.temporal.TemporalPrimitive;
 
 /**
  *
@@ -53,12 +53,12 @@ public class ObservationJsonUtils {
         final SimpleModule module = new SimpleModule();
         module.addSerializer(Identifier.class, new IdentifierSerializer());
         module.addSerializer(Geometry.class, new GeometrySerializer());
-        module.addSerializer(DefaultInstant.class, new InstantSerializer());
+        module.addSerializer(Instant.class, new InstantSerializer());
         module.addSerializer(Period.class, new PeriodSerializer());
         module.addSerializer(Element.class, new ElementSerializer());
         module.addSerializer(Envelope.class, new EnvelopeSerializer());
 
-        module.addDeserializer(TemporalGeometricPrimitive.class, new TemporalGeometricPrimitiveDeserializer());
+        module.addDeserializer(TemporalPrimitive.class, new TemporalGeometricPrimitiveDeserializer());
         module.addDeserializer(Geometry.class, new GeometryDeserializer());
         module.addDeserializer(Result.class, new ResultDeserializer());
         module.addDeserializer(Element.class, new ElementDeserializer());

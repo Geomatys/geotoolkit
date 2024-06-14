@@ -64,8 +64,7 @@ import org.opengis.observation.Observation;
 import org.opengis.observation.Phenomenon;
 import org.opengis.observation.sampling.SamplingFeature;
 import org.opengis.temporal.Period;
-import org.opengis.temporal.TemporalGeometricPrimitive;
-import org.opengis.temporal.TemporalObject;
+import org.opengis.temporal.TemporalPrimitive;
 
 
 /**
@@ -308,7 +307,7 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
     }
 
     @Override
-    public TemporalObject getSamplingTime() {
+    public TemporalPrimitive getSamplingTime() {
         if (phenomenonTime != null) {
             return phenomenonTime.getTimeObject();
         }
@@ -337,7 +336,7 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
             } else if (phenomenonTime != null && phenomenonTime.getTimeObject() instanceof TimeInstantType) {
                 final TimeInstantType instant = (TimeInstantType) phenomenonTime.getTimeObject();
                 if (!newEndBound.equals(instant.getTimePosition().getValue())) {
-                    final TimePeriodType period = new TimePeriodType(instant.getId(), instant.getTimePosition().getTemporal(), newEndBound.toInstant());
+                    final TimePeriodType period = new TimePeriodType(instant.getId(), instant.getTimePosition().getPosition(), newEndBound.toInstant());
                     phenomenonTime.setTimeObject(period);
                 }
             } else if (phenomenonTime == null) {
@@ -347,7 +346,7 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
     }
 
     @Override
-    public TemporalObject getProcedureTime() {
+    public TemporalPrimitive getProcedureTime() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -638,7 +637,7 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
     }
 
     @Override
-    public OMObservationType getTemporaryTemplate(final String temporaryName, final TemporalGeometricPrimitive time) {
+    public OMObservationType getTemporaryTemplate(final String temporaryName, final TemporalPrimitive time) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

@@ -28,7 +28,7 @@ import org.opengis.metadata.citation.ResponsibleParty;
 import org.opengis.observation.Measure;
 import org.opengis.observation.sampling.SurveyProcedure;
 import org.opengis.referencing.datum.Datum;
-import org.opengis.temporal.TemporalObject;
+import org.opengis.temporal.TemporalPrimitive;
 import org.opengis.util.GenericName;
 
 /**
@@ -143,8 +143,8 @@ public class SurveyProcedureType implements SurveyProcedure, Entry {
         //return projection;
     }
 
-    public TemporalObject getSurveyTime() {
-        return (TemporalObject) surveyTime;
+    public TemporalPrimitive getSurveyTime() {
+        return (TemporalPrimitive) surveyTime;
     }
 
      /**

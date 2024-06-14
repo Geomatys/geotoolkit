@@ -2,7 +2,6 @@
 package org.geotoolkit.observation.model;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -14,6 +13,9 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.namespace.QName;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.temporal.TemporalObjects;
+import org.apache.sis.xml.IdentifiedObject;
+import org.apache.sis.xml.IdentifierSpace;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.gml.GeometrytoJTS;
@@ -47,22 +49,17 @@ import org.geotoolkit.swe.xml.PhenomenonProperty;
 import org.geotoolkit.swe.xml.Quantity;
 import org.geotoolkit.swe.xml.SimpleDataRecord;
 import org.geotoolkit.swe.xml.TextBlock;
-import org.geotoolkit.temporal.object.DefaultInstant;
-import org.geotoolkit.temporal.object.DefaultPeriod;
-import org.geotoolkit.temporal.object.DefaultTemporalPrimitive;
-import org.geotoolkit.temporal.object.DefaultTemporalPosition;
-import org.geotoolkit.temporal.object.InstantWrapper;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.Point;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.quality.Element;
 import org.opengis.observation.Measure;
-import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.temporal.IndeterminateValue;
+import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
-import org.opengis.temporal.TemporalGeometricPrimitive;
+import org.opengis.temporal.TemporalPrimitive;
 import org.opengis.util.FactoryException;
 
 /**
@@ -169,13 +166,13 @@ public class ObservationTransformUtils {
     }
 
 
-    public static TemporalGeometricPrimitive toXML(TemporalGeometricPrimitive time, String version) {
+    public static TemporalPrimitive toXML(TemporalPrimitive time, String version) {
         if (time instanceof GMLInstant || time instanceof GMLPeriod) {
             return time;
         } else  if (time instanceof Period model) {
             return SOSXmlFactory.buildTimePeriod(version, null, model.getBeginning(), model.getEnding());
-        } else if (time instanceof InstantWrapper model) {
-            return SOSXmlFactory.buildTimeInstant(version, null, model.getTemporal());
+        } else if (time instanceof Instant model) {
+            return SOSXmlFactory.buildTimeInstant(version, null, model.getPosition());
         } else if (time == null) {
             return null;
         }
@@ -446,7 +443,7 @@ public class ObservationTransformUtils {
                                    aobs.getDefinition(),
                                    aobs.getObservationType(),
                                    toModel(aobs.getProcedure()),
-                                   toModel((TemporalGeometricPrimitive)aobs.getSamplingTime()),
+                                   toModel((TemporalPrimitive)aobs.getSamplingTime()),
                                    toModel(aobs.getPropertyFeatureOfInterest()),
                                    phenModel,
                                    aobs.getResultQuality(),
@@ -556,27 +553,26 @@ public class ObservationTransformUtils {
         return new Field(index, ft, id, component.getLabel(), component.getDefinition(), uom, qualityFields);
     }
 
-    public static TemporalGeometricPrimitive toModel(final TemporalGeometricPrimitive gmlTime) {
+    public static TemporalPrimitive toModel(final TemporalPrimitive gmlTime) {
         GMLPeriod gmp;
         if (gmlTime instanceof GMLInstant gmi) {
             String name = gmi.getId();
             if (name == null) name = UUID.randomUUID().toString() + "-time";
             AbstractTimePosition p = gmi.getTimePosition();
             TimeIndeterminateValueType ip;
-            if (p != null && (ip = p.getIndeterminatePosition()) != null) {
-                var tp = new DefaultTemporalPosition(
-                        CommonCRS.Temporal.JULIAN.crs(),
-                        IndeterminateValue.valueOf(ip.value().toUpperCase()));
-                return new DefaultInstant(Collections.singletonMap(NAME_KEY, name), tp);
+            Instant t;
+            if (p != null && (ip = p.getIndeterminateValue()) != null) {
+                t = TemporalObjects.createInstant(IndeterminateValue.valueOf(ip.value().toUpperCase()));
+            } else {
+                t = TemporalObjects.createInstant(gmi.getPosition());
             }
-            return new DefaultInstant(Collections.singletonMap(NAME_KEY, name), gmi.getTemporal());
+            setIdentifier(t, name);
+            return t;
         } else if ((gmp = GMLPeriod.castOrWrap(gmlTime).orElse(null)) != null) {
-            String name = gmp.getId();
-            if (name == null) name = UUID.randomUUID().toString() + "-time";
-            return new DefaultPeriod(Collections.singletonMap(NAME_KEY, name),
-                                    new DefaultInstant(gmp.getBeginning()),
-                                    new DefaultInstant(gmp.getEnding()));
-        } else if (gmlTime instanceof DefaultTemporalPrimitive) {
+            var p = TemporalObjects.createPeriod(gmp.getBeginning(), gmp.getEnding());
+            setIdentifier(p, UUID.randomUUID().toString() + "-time");
+            return p;
+        } else if (gmlTime instanceof TemporalPrimitive) {
             return gmlTime;
         } else if (gmlTime == null) {
             return null;
@@ -606,5 +602,15 @@ public class ObservationTransformUtils {
                                 off.getFeatureOfInterestIds());
         }
         return null;
+    }
+
+    public static void setIdentifiers(Period p, String id) {
+        setIdentifier(p.getBeginning(), id + "-st-time");
+        setIdentifier(p.getEnding(), id + "-en-time");
+        setIdentifier(p, id + "-time");
+    }
+
+    public static void setIdentifier(TemporalPrimitive t, String id) {
+        ((IdentifiedObject) t).getIdentifierMap().putSpecialized(IdentifierSpace.ID, id);
     }
 }

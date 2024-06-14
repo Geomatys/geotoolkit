@@ -19,20 +19,17 @@ package org.geotoolkit.observation;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import org.apache.sis.temporal.TemporalObjects;
 import static org.geotoolkit.filter.FilterUtilities.FF;
 import org.geotoolkit.observation.model.ComplexResult;
 import org.geotoolkit.observation.model.Field;
 import org.geotoolkit.observation.model.FieldType;
 import static org.geotoolkit.observation.model.TextEncoderProperties.DEFAULT_ENCODING;
 import org.geotoolkit.observation.result.ResultTimeNarrower;
-import org.geotoolkit.temporal.object.DefaultInstant;
-import org.geotoolkit.temporal.object.DefaultPeriod;
 import org.junit.Assert;
 import org.junit.Test;
 import org.opengis.filter.Filter;
-import org.opengis.referencing.IdentifiedObject;
 
 /**
  *
@@ -86,8 +83,7 @@ public class ResultTimeNarrowerTest {
                           "2007-05-01T21:59:00.0,6.55@@";
 
         eventTimes.add(FF.after(FF.property("result_time"), FF.literal(
-                new DefaultInstant(Collections.singletonMap(IdentifiedObject.NAME_KEY, "name"),
-                        Instant.parse("2007-05-01T07:59:00.0Z")))));
+                TemporalObjects.createInstant(Instant.parse("2007-05-01T07:59:00.0Z")))));
         ResultTimeNarrower.applyTimeConstraint(obsBegin, obsEnd, array, eventTimes);
 
         Assert.assertEquals(expected, array.getValues());
@@ -106,8 +102,7 @@ public class ResultTimeNarrowerTest {
 
         eventTimes.clear();
         eventTimes.add(FF.before(FF.property("result_time"), FF.literal(
-                new DefaultInstant(Collections.singletonMap(IdentifiedObject.NAME_KEY, "name"),
-                        Instant.parse("2007-05-01T08:59:00.0Z")))));
+                TemporalObjects.createInstant(Instant.parse("2007-05-01T08:59:00.0Z")))));
         array = new ComplexResult(fields, DEFAULT_ENCODING, values, 15);
         ResultTimeNarrower.applyTimeConstraint(obsBegin, obsEnd, array, eventTimes);
 
@@ -122,9 +117,9 @@ public class ResultTimeNarrowerTest {
 
         eventTimes.clear();
         eventTimes.add(FF.during(FF.property("result_time"),
-                FF.literal(new DefaultPeriod(Collections.singletonMap(IdentifiedObject.NAME_KEY, "name"),
-                        new DefaultInstant(Collections.singletonMap(IdentifiedObject.NAME_KEY, "name"), Instant.parse("2007-05-01T04:59:00.0Z")),
-                        new DefaultInstant(Collections.singletonMap(IdentifiedObject.NAME_KEY, "name"), Instant.parse("2007-05-01T08:59:00.0Z"))))));
+                FF.literal(TemporalObjects.createPeriod(
+                        Instant.parse("2007-05-01T04:59:00.0Z"),
+                        Instant.parse("2007-05-01T08:59:00.0Z")))));
         array = new ComplexResult(fields, DEFAULT_ENCODING, values, 15);
         ResultTimeNarrower.applyTimeConstraint(obsBegin, obsEnd, array, eventTimes);
 

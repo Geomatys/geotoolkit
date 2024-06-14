@@ -17,16 +17,21 @@
  */
 package org.geotoolkit.temporal.util;
 
-import org.geotoolkit.temporal.object.ISODateParser;
 import java.text.DateFormat;
 import java.text.FieldPosition;
 import java.text.ParseException;
+import java.time.Instant;
 import java.util.Date;
 import java.util.SortedSet;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
+import org.opengis.filter.TemporalOperatorName;
+import org.opengis.temporal.Period;
+import org.opengis.temporal.TemporalPrimitive;
+import org.geotoolkit.temporal.object.ISODateParser;
 
 import static org.geotoolkit.temporal.object.TemporalConstants.*;
+import org.geotoolkit.temporal.object.TemporalUtilities;
 
 
 /**
@@ -348,5 +353,53 @@ public class PeriodUtilities {
             throw new IllegalArgumentException("The period descritpion is malformed");
         }
         return time;
+    }
+
+    public static TemporalOperatorName relativePosition(final Period self, final TemporalPrimitive other) {
+        final Instant start = TemporalUtilities.toInstant(self.getBeginning());
+        final Instant end = TemporalUtilities.toInstant(self.getEnding());
+        if (other instanceof org.opengis.temporal.Instant instantarg) {
+            Instant t = TemporalUtilities.toInstant(instantarg);
+            if (end.isBefore(t)) {
+                return TemporalOperatorName.BEFORE;
+            } else if (end.compareTo(t) == 0) {
+                return TemporalOperatorName.ENDED_BY;
+            } else if (start.isBefore(t) &&
+                end.isAfter(t)) {
+                return TemporalOperatorName.CONTAINS;
+            } else {
+                 return (start.compareTo(t) == 0) ? TemporalOperatorName.BEGUN_BY : TemporalOperatorName.AFTER;
+            }
+        } else if (other instanceof Period instantarg) {
+            final var otherStart = TemporalUtilities.toInstant(instantarg.getBeginning());
+            final var otherEnd = TemporalUtilities.toInstant(instantarg.getEnding());
+            if (end.isBefore(otherStart)) {
+                return TemporalOperatorName.BEFORE;
+            } else if (end.compareTo(otherStart) == 0) {
+                return TemporalOperatorName.MEETS;
+            } else if (start.isBefore(otherStart) && end.isAfter(otherStart) && end.isBefore(otherEnd)) {
+                return TemporalOperatorName.OVERLAPS;
+            } else if (start.compareTo(otherStart) == 0 && end.isBefore(otherEnd)) {
+                return TemporalOperatorName.BEGINS;
+            } else if (start.compareTo(otherStart) == 0 && end.isAfter(otherEnd)) {
+                return TemporalOperatorName.BEGUN_BY;
+            } else if (start.isAfter(otherStart) && end.isBefore(otherEnd)) {
+                return TemporalOperatorName.DURING;
+            } else if (start.isBefore(otherStart) && end.isAfter(otherEnd)) {
+                return TemporalOperatorName.CONTAINS;
+            } else if (start.compareTo(otherStart) == 0 && end.compareTo(otherEnd) == 0) {
+                return TemporalOperatorName.EQUALS;
+            } else if (start.isAfter(otherStart) && start.isBefore(otherEnd) && end.isAfter(otherEnd)) {
+                return TemporalOperatorName.OVERLAPPED_BY;
+            } else if (start.isAfter(otherStart) && end.compareTo(otherEnd) == 0) {
+                return TemporalOperatorName.ENDS;
+            } else if (start.isBefore(otherStart) && end.compareTo(otherEnd) == 0) {
+                return TemporalOperatorName.ENDED_BY;
+            } else {
+                return (start.compareTo(otherEnd) == 0) ? TemporalOperatorName.MET_BY : TemporalOperatorName.AFTER;
+            }
+        } else {
+            return null;
+        }
     }
 }

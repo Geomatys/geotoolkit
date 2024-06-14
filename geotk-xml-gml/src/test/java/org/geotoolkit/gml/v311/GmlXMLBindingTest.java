@@ -24,6 +24,7 @@ import javax.xml.datatype.Duration;
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
+import java.time.temporal.Temporal;
 
 import org.geotoolkit.gml.xml.GMLMarshallerPool;
 import org.geotoolkit.gml.xml.v311.DirectPositionListType;
@@ -39,16 +40,15 @@ import org.apache.sis.xml.MarshallerPool;
 import org.junit.*;
 import static org.junit.Assert.*;
 import static org.geotoolkit.test.Assertions.assertXmlEquals;
+import org.opengis.temporal.Instant;
 
 import org.opengis.temporal.Period;
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
- * @module
  */
 public class GmlXMLBindingTest {
-
     /**
      * GML namespace for this class.
      */
@@ -113,7 +113,6 @@ public class GmlXMLBindingTest {
 
         marshaller.marshal(FACTORY.createTimePeriod(tp), sw);
 
-
         TimePositionType tpos = new TimePositionType("2002-08-15");
         tp = new TimePeriodType(tpos);
 
@@ -155,7 +154,6 @@ public class GmlXMLBindingTest {
                     "  <gml:pos>2.3 48.1</gml:pos>" + '\n' +
                     "</gml:LineStringSegment>" + '\n' ;
         assertXmlEquals(expResult, result, "xmlns:*");
-
     }
 
     @Test
@@ -176,13 +174,11 @@ public class GmlXMLBindingTest {
         }
         assertEquals(expResult, result);
 
-
         expResult = new LineStringSegmentType();
         DirectPositionType pos1 = new DirectPositionType(Arrays.asList(1.1, 1.2));
         DirectPositionType pos2 = new DirectPositionType(Arrays.asList(2.3, 48.1));
         expResult.getPos().add(pos1);
         expResult.getPos().add(pos2);
-
 
         xml       = "<gml:LineStringSegment xmlns:gml=\"http://www.opengis.net/gml\">" + '\n' +
                     "  <gml:pos>1.1 1.2</gml:pos>" + '\n' +
@@ -201,8 +197,7 @@ public class GmlXMLBindingTest {
     public void timePeriodUmarshallingTest() throws Exception {
         TimePositionType begin = new TimePositionType("2002-08-01");
         TimePositionType end = new TimePositionType("2003-08-01");
-        TimePeriodType expResult = new TimePeriodType(null, new TimeInstantType(begin), new TimeInstantType(end));
-
+        TimePeriodType expResult = new TimePeriodType(null, begin, end);
 
         String xml = "<gml:TimePeriod xmlns:gml=\"http://www.opengis.net/gml\">" + '\n' +
                      "  <gml:beginPosition>2002-08-01</gml:beginPosition>" + '\n' +
@@ -233,7 +228,11 @@ public class GmlXMLBindingTest {
     }
 
     private static void assertPeriodEquals(Period p1, Period p2) {
-        assertEquals(p1.getBeginning(), p2.getBeginning());
-        assertEquals(p1.getEnding(),    p2.getEnding());
+        assertEquals(getTemporal(p1.getBeginning()), getTemporal(p2.getBeginning()));
+        assertEquals(getTemporal(p1.getEnding()),    getTemporal(p2.getEnding()));
+    }
+
+    private static Temporal getTemporal(Instant i) {
+        return (i != null) ? i.getPosition() : null;
     }
 }

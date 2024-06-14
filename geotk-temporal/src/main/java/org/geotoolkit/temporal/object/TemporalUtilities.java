@@ -17,39 +17,31 @@
  */
 package org.geotoolkit.temporal.object;
 
-import java.util.Map;
 import java.util.List;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.Duration;
-import java.time.temporal.TemporalAmount;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.temporal.Temporal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.SimpleTimeZone;
-import java.util.TimeZone;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.geotoolkit.util.StringUtilities;
-import org.geotoolkit.util.collection.UnSynchronizedCache;
-
-
 import static org.geotoolkit.temporal.object.TemporalConstants.*;
 
 /**
  * This is a tool class to convert DateTime from ISO8601 to Date object.
  *
  * @author Mehdi Sidhoum (Geomatys)
- * @module
  */
 public final class TemporalUtilities {
 
     private static final Logger LOGGER = Logger
             .getLogger("org.geotoolkit.temporal.object");
-    private static final String DEFAULT_TIMEZONE = TimeZone.getDefault()
-            .getID();
 
     /**
      * Hack for french datas, must find another way to do so. handle all local ?
@@ -73,44 +65,6 @@ public final class TemporalUtilities {
      * Caution : those objects are not thread safe, take care to synchronize
      * when you use them.
      */
-    private static final SimpleDateFormat sdf1 = new java.text.SimpleDateFormat(
-            "yyyy-MM-dd'T'HH:mm:ssZ");
-    private static final SimpleDateFormat sdf2 = new java.text.SimpleDateFormat(
-            "yyyy-MM-dd");
-    static {
-        // we don't hour here so we put the timeZone to GMT+0
-        // 02/04/2012  why GMT+0 ? adding additional dateFormat sdf6
-        sdf2.setTimeZone(TimeZone.getTimeZone("GMT+0"));
-    }
-    private static final SimpleDateFormat sdf3 = new java.text.SimpleDateFormat(
-            "yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-    private static final SimpleDateFormat sdf4 = new java.text.SimpleDateFormat(
-            "yyyy-MM-dd'T'HH:mm:ss");
-    private static final SimpleDateFormat sdf5 = new java.text.SimpleDateFormat(
-            "yyyy-MM-dd'T'HH:mm:ssZ");
-
-    private static final SimpleDateFormat sdf6 = new java.text.SimpleDateFormat(
-            "yyyy-MM-dd");
-    private static final SimpleDateFormat sdf7 = new java.text.SimpleDateFormat(
-            "yyyy-MM-dd'T'HH:mm:ss'Z'");
-    static {
-        sdf6.setTimeZone(TimeZone.getDefault());
-    }
-
-    private static final Map<String, TimeZone> TIME_ZONES = new UnSynchronizedCache<String, TimeZone>(
-            50) {
-        @Override
-        public TimeZone get(Object o) {
-            @SuppressWarnings("element-type-mismatch")
-            TimeZone tz = super.get(o);
-            if (tz == null) {
-                tz = TimeZone.getTimeZone((String) o);
-                put((String) o, tz);
-            }
-            return tz;
-        }
-    };
-
     static {
         FR_POOL.add("janvier");
         FR_POOL.add("février");
@@ -129,181 +83,41 @@ public final class TemporalUtilities {
     private TemporalUtilities() {
     }
 
-    /**
-     * Returns a Date object from an ISO-8601 representation string. (String
-     * defined with pattern yyyy-MM-dd'T'HH:mm:ss.SSSZ or yyyy-MM-dd).
-     *
-     * @param dateString
-     *
-     * @return Date result of parsing the given string
-     * @throws ParseException
-     */
-    public static Date getDateFromString(final String dateString) throws ParseException {
-       return getDateFromString(dateString, false);
+    public static Optional<Temporal> toTemporal(Object value) {
+        if (value instanceof Instant t) {
+            return Optional.of(t);
+        }
+        if (value instanceof Date t) {
+            return Optional.of(t.toInstant());
+        }
+        if (value instanceof org.opengis.temporal.Instant t) {
+            return Optional.ofNullable(t.getPosition());
+        }
+        return Optional.empty();
     }
 
-    /**
-     * Returns a Date object from an ISO-8601 representation string. (String
-     * defined with pattern yyyy-MM-dd'T'HH:mm:ss.SSSZ or yyyy-MM-dd).
-     *
-     * @param dateString
-     * @param noGMTO
-     *            : will use date parser with default timezone for input with no time
-     *            (dd-MM-yyyy) instead of GMT+0.
-     * @return Date result of parsing the given string
-     * @throws ParseException
-     */
-    public static Date getDateFromString(String dateString, final boolean noGMTO)
-            throws ParseException {
-
-        boolean defaultTimezone = false;
-        final int indexT = dateString.indexOf('T');
-        if (indexT > 0) {
-            int tzIndex = dateString.lastIndexOf('+');
-            if (tzIndex == -1) {
-                tzIndex = dateString.lastIndexOf('-');
-            }
-            if (tzIndex > indexT) {
-                String timezoneStr = dateString.substring(tzIndex + 1);
-
-                if (timezoneStr.indexOf(':') > 0) {
-                    // e.g : 1985-04-12T10:15:30+04:00
-                    timezoneStr = timezoneStr.replace(":", "");
-                    dateString = dateString.substring(0, tzIndex + 1).concat(
-                            timezoneStr);
-                } else if (timezoneStr.length() == 2) {
-                    // e.g : 1985-04-12T10:15:30-04
-                    dateString = dateString.concat("00");
-                }
-            } else if (dateString.charAt(dateString.length() - 1) == 'Z') {
-                // e.g : 1985-04-12T10:15:30Z
-                dateString = dateString.substring(0, dateString.length() - 1)
-                        .concat("+0000");
-            } else {
-                // e.g : 1985-04-12T10:15:30
-                defaultTimezone = true;
-            }
-            if (dateString.indexOf('.') > 0) {
-                // simple date format is not thread safe
-                synchronized (sdf3) {
-                    return sdf3.parse(dateString);
-                }
-            }
-            if (defaultTimezone) {
-                // applying default timezone
-                // simple date format is not thread safe
-                synchronized (sdf4) {
-                    return sdf4.parse(dateString);
-                }
-            } else {
-                final String timezone = getTimeZone(dateString);
-                // simple date format is not thread safe
-                synchronized (sdf1) {
-                    sdf1.setTimeZone(TIME_ZONES.get(timezone));
-                    return sdf1.parse(dateString);
-                }
-            }
-        } else if (dateString.indexOf('-') > 0) {
-            // simple date format is not thread safe
-            if (noGMTO) {
-                synchronized (sdf6) {
-                    return sdf6.parse(dateString);
-                }
-            } else {
-                synchronized (sdf2) {
-                    return sdf2.parse(dateString);
-                }
-            }
-        }
-        throw new ParseException("Unable to parse given string as a date with regular date formats", 0);
+    public static Temporal toTemporal(Date t) {
+        return org.apache.sis.temporal.TemporalDate.toTemporal(t);
     }
 
-    private static String getTimeZone(final String dateString) {
-        if (dateString.charAt(dateString.length() - 1) == 'Z') {
-            return "GMT+0";
-        }
-        int index = dateString.lastIndexOf('+');
-        if (index == -1) {
-            index = dateString.lastIndexOf('-');
-        }
-        if (index > dateString.indexOf('T')) {
-            return "GMT" + dateString.substring(index);
-        }
-        return DEFAULT_TIMEZONE;
+    public static Temporal toTemporal(org.opengis.temporal.Instant t) {
+        return (t != null) ? t.getPosition() : null;
     }
 
-    /**
-     * Returns the given duration as a standard Java object if possible.
-     *
-     * @param millis the duration in milliseconds.
-     * @return an object for the given duration, as a standard type if possible.
-     */
-    public static TemporalAmount durationFromMillis(long millis) {
-        if (millis < TemporalConstants.DAY_MS) {
-            return Duration.ofMillis(millis);
-        }
-        var d = new DefaultDuration();
-        d.setTimeInMillis(millis);
-        return d.tryToPeriod();
+    public static Instant toInstant(Temporal t) {
+        return org.apache.sis.temporal.TemporalDate.toInstant(t, ZoneOffset.UTC);
     }
 
-    /**
-     * Returns a duration instance parsed from a string in ISO 8601 format.
-     * Pattern is PnYnMnDTnHnMnS where n is an integer.
-     *
-     * @TODO maybe should check by Pattern of string before and should throw an
-     *       exception when it is bad format
-     *
-     * @return duration in millisenconds represented by this string duration.
-     */
-    public static TemporalAmount getDurationFromString(String periodDuration) {
-        if (periodDuration == null) {
-            return null;
-        }
-        var d = new DefaultDuration();
-        d.parse(periodDuration.trim());
-        return d.tryToPeriod();
+    public static Instant toInstant(org.opengis.temporal.Instant t) {
+        return toInstant(toTemporal(t));
     }
 
-    /**
-     * Try to parse a date from different well knowed writing types.
-     * CAUTION : time zone will be local TimeZone unless the date string specify it.
-     *
-     * @param date
-     *            String to parse
-     * @return resulting parsed Date.
-     * @throws ParseException
-     *             if String is not valid.
-     * @throws NullPointerException
-     *             if String is null.
-     * @deprecated use parseDateCal
-     */
-    @Deprecated
-    public static Date parseDate(final String date) throws ParseException {
-        return parseDate(date, false);
+    public static Date toDate(Temporal t) {
+        return org.apache.sis.temporal.TemporalDate.toDate(t);
     }
 
-    /**
-     * Try to parse a date from different well knowed writing types.
-     * CAUTION : time zone will be local TimeZone unless the date string specify it.
-     *
-     * @param date
-     *            String to parse
-     * @param noGMTO
-     *            : will use date parser with default timezone for input with no time
-     *            (dd-MM-yyyy) instead of GMT+0.
-     * @return resulting parsed Date.
-     * @throws ParseException
-     *             if String is not valid.
-     * @throws NullPointerException
-     *             if String is null.
-     * @deprecated use parseDateCal
-     */
-    @Deprecated
-    public static Date parseDate(final String date, final boolean noGMTO) throws ParseException,
-            NullPointerException {
-        final Calendar cal = parseDateCal(date);
-        return cal.getTime();
+    public static Date toDate(org.opengis.temporal.Instant t) {
+        return toDate(toInstant(t));
     }
 
     /**
@@ -464,9 +278,7 @@ public final class TemporalUtilities {
         throw new ParseException("Invalid date format : " + date, 0);
     }
 
-
     /**
-     * @see TemporalUtilities#parseDate(java.lang.String)
      * CAUTION : time zone will be local TimeZone unless the date string specify it.
      *
      * @param date
@@ -478,28 +290,9 @@ public final class TemporalUtilities {
      *         is false.
      */
     public static Date parseDateSafe(final String date, final boolean neverNull) {
-        return parseDateSafe(date, neverNull, false);
-    }
-
-    /**
-     * @see TemporalUtilities#parseDate(java.lang.String)
-     * CAUTION : time zone will be local TimeZone unless the date string specify it.
-     *
-     * @param date
-     *            : string to parse.
-     * @param neverNull
-     *            : will return today's date if parsing fail, otherwise return
-     *            null if parsing fails.
-     * @param noGMTO
-     *            : will use date parser with default timezone for input with no time
-     *            (dd-MM-yyyy) instead of GMT+0.
-     * @return result of the parsed string or today's date or null if neverNull
-     *         is false.
-     */
-    public static Date parseDateSafe(final String date, final boolean neverNull, final boolean noGMTO) {
         if (date != null) {
             try {
-                return parseDate(date, noGMTO);
+                return parseDateCal(date).getTime();
             } catch (ParseException ex) {
                 // do nothing
             }
@@ -565,78 +358,6 @@ public final class TemporalUtilities {
         } else {
             return sb.toString();
         }
-    }
-
-    /**
-     * Format date using pattern yyyy-MM-dd'T'HH:mm:ss
-     *
-     * @param date
-     *            : date to format
-     * @return ISO 8601 string or empty string if date is null
-     */
-    public static String toISO8601(final Date date) {
-        if (date != null) {
-            synchronized (sdf4) {
-                return sdf4.format(date);
-            }
-        }
-        LOGGER.log(Level.INFO,
-                "ISO 8601 format can not proceed because date is null.");
-        return "";
-    }
-
-    /**
-     * Format date with TimeZone using pattern yyyy-MM-dd'T'HH:mm:ss
-     *
-     * @param date
-     *            : date to format
-     * @param timezone
-     *            : timezone for date
-     * @return ISO 8601 string or empty string if date is null
-     */
-    public static String toISO8601(final Date date, TimeZone timezone) {
-        if (date != null) {
-            synchronized (sdf5) {
-                if (timezone != null) {
-                    sdf5.setTimeZone(timezone);
-                } else {
-                    SimpleTimeZone tz = new SimpleTimeZone(0, "Out Timezone");
-                    sdf5.setTimeZone(tz);
-                }
-
-                return sdf5.format(date);
-            }
-        }
-        LOGGER.log(Level.INFO,
-                "ISO 8601 format can not proceed because date is null.");
-        return "";
-    }
-
-    /**
-     * Format date with TimeZone using pattern yyyy-MM-dd'T'HH:mm:ssZ
-     *
-     * @param date
-     *            : date to format
-     * @param timezone
-     *            : timezone for date
-     * @return ISO 8601 string or empty string if date is null
-     */
-    public static String toISO8601Z(final Date date, TimeZone timezone) {
-        if (date != null) {
-            synchronized (sdf7) {
-                if (timezone != null) {
-                    sdf7.setTimeZone(timezone);
-                } else {
-                    SimpleTimeZone tz = new SimpleTimeZone(0, "Out Timezone");
-                    sdf7.setTimeZone(tz);
-                }
-
-                return sdf7.format(date);
-            }
-        }
-        LOGGER.log(Level.INFO,
-                "ISO 8601 format can not proceed because date is null.");
-        return "";
     }
 
     /**

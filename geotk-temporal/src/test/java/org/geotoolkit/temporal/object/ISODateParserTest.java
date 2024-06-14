@@ -21,10 +21,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.TimeZone;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -34,27 +30,10 @@ import java.util.logging.Logger;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
 public class ISODateParserTest {
 
     public ISODateParserTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
     }
 
     @Test
@@ -392,9 +371,7 @@ public class ISODateParserTest {
         assertEquals(min,   calendar.get(MINUTE));
         assertEquals(sec,   calendar.get(SECOND));
         assertEquals(mil,   calendar.get(MILLISECOND));
-
     }
-
 
     @Test
     public void testSpeed() throws ParseException {
@@ -497,7 +474,5 @@ public class ISODateParserTest {
         if (fdpPart >= sdfPart) {
             Logger.getLogger("org.geotoolkit.temporal.object").warning("ISODateParser is slower than expected.");
         }
-
     }
-
 }

@@ -21,12 +21,9 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.io.WKTWriter;
 import java.util.Date;
 import java.util.List;
-import java.util.SimpleTimeZone;
-import java.util.TimeZone;
 import java.util.regex.Pattern;
 import org.apache.sis.filter.privy.FunctionNames;
 import org.apache.sis.filter.privy.Visitor;
-import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.opengis.filter.BetweenComparisonOperator;
 import org.opengis.filter.BinarySpatialOperator;
 import org.opengis.filter.ComparisonOperator;
@@ -57,7 +54,6 @@ import org.opengis.geometry.Envelope;
 public final class FilterToCQLVisitor extends Visitor<Object,StringBuilder> {
 
     public static final FilterToCQLVisitor INSTANCE = new FilterToCQLVisitor();
-    private static final TimeZone TZ = new SimpleTimeZone(0, "Out Timezone");
 
     /**
      * Pattern to check for property name to escape against regExp
@@ -396,7 +392,7 @@ public final class FilterToCQLVisitor extends Visitor<Object,StringBuilder> {
                 sb.append(num.toString());
             } else if (value instanceof Date) {
                 final Date date = (Date) value;
-                sb.append(TemporalUtilities.toISO8601Z(date,TZ));
+                sb.append(date.toInstant());
             } else if (value instanceof Geometry) {
                 final Geometry geometry = (Geometry) value;
                 final WKTWriter writer = new WKTWriter();

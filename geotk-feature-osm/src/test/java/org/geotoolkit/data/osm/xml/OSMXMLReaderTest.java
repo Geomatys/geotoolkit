@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.stream.XMLStreamException;
@@ -29,7 +30,6 @@ import org.geotoolkit.data.osm.model.MemberType;
 import org.geotoolkit.data.osm.model.Transaction;
 import org.geotoolkit.data.osm.model.TransactionType;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -104,7 +104,7 @@ public class OSMXMLReaderTest {
         assertEquals(1, n1.getPropertyValue("version"));
         assertEquals(6871, user.getPropertyValue("uid"));
         assertEquals("smsm1", user.getPropertyValue("user"));
-        assertEquals(TemporalUtilities.parseDate("2008-12-17T01:18:42Z").getTime(), n1.getPropertyValue("timestamp"));
+        assertEquals(Instant.parse("2008-12-17T01:18:42Z").toEpochMilli(), n1.getPropertyValue("timestamp"));
         assertEquals(51.5074089d, ((Point)n1.getPropertyValue("point")).getCoordinate().y, DELTA);
         assertEquals(-0.1080108d,((Point)n1.getPropertyValue("point")).getCoordinate().x, DELTA);
         assertEquals(0, tags.size());
@@ -118,7 +118,7 @@ public class OSMXMLReaderTest {
         assertEquals(3, n2.getPropertyValue("version"));
         assertEquals(1697, user.getPropertyValue("uid"));
         assertEquals("nickb", user.getPropertyValue("user"));
-        assertEquals(TemporalUtilities.parseDate("2009-10-29T12:14:35Z").getTime(), n2.getPropertyValue("timestamp"));
+        assertEquals(Instant.parse("2009-10-29T12:14:35Z").toEpochMilli(), n2.getPropertyValue("timestamp"));
         assertEquals(51.5075933d, ((Point)n2.getPropertyValue("point")).getCoordinate().y, DELTA);
         assertEquals(-0.1076186d,((Point)n2.getPropertyValue("point")).getCoordinate().x, DELTA);
         assertEquals(2, tags.size());
@@ -137,7 +137,7 @@ public class OSMXMLReaderTest {
         assertEquals(3, way.getPropertyValue("version"));
         assertEquals(70, user.getPropertyValue("uid"));
         assertEquals("Matt", user.getPropertyValue("user"));
-        assertEquals(TemporalUtilities.parseDate("2009-05-31T13:39:15Z").getTime(), way.getPropertyValue("timestamp"));
+        assertEquals(Instant.parse("2009-05-31T13:39:15Z").toEpochMilli(), way.getPropertyValue("timestamp"));
         assertEquals(2, tags.size());
         assertEquals("access",tags.get(0).getPropertyValue("k"));
         assertEquals("private",tags.get(0).getPropertyValue("v"));
@@ -157,7 +157,7 @@ public class OSMXMLReaderTest {
         assertEquals(3, rel.getPropertyValue("version"));
         assertEquals(77, user.getPropertyValue("uid"));
         assertEquals("Georges", user.getPropertyValue("user"));
-        assertEquals(TemporalUtilities.parseDate("2009-05-31T13:39:15Z").getTime(), rel.getPropertyValue("timestamp"));
+        assertEquals(Instant.parse("2009-05-31T13:39:15Z").toEpochMilli(), rel.getPropertyValue("timestamp"));
         assertEquals(1, tags.size());
         assertEquals("space",tags.get(0).getPropertyValue("k"));
         assertEquals("garden",tags.get(0).getPropertyValue("v"));
@@ -209,7 +209,7 @@ public class OSMXMLReaderTest {
         assertEquals(3, way.getPropertyValue("version"));
         assertEquals(70, user.getPropertyValue("uid"));
         assertEquals("Matt", user.getPropertyValue("user"));
-        assertEquals(TemporalUtilities.parseDate("2009-05-31T13:39:15Z").getTime(), way.getPropertyValue("timestamp"));
+        assertEquals(Instant.parse("2009-05-31T13:39:15Z").toEpochMilli(), way.getPropertyValue("timestamp"));
         assertEquals(2, tags.size());
         assertEquals("access",tags.get(0).getPropertyValue("k"));
         assertEquals("private",tags.get(0).getPropertyValue("v"));
@@ -229,7 +229,7 @@ public class OSMXMLReaderTest {
         assertEquals(3, rel.getPropertyValue("version"));
         assertEquals(77, user.getPropertyValue("uid"));
         assertEquals("Georges", user.getPropertyValue("user"));
-        assertEquals(TemporalUtilities.parseDate("2009-05-31T13:39:15Z").getTime(), rel.getPropertyValue("timestamp"));
+        assertEquals(Instant.parse("2009-05-31T13:39:15Z").toEpochMilli(), rel.getPropertyValue("timestamp"));
         assertEquals(1, tags.size());
         assertEquals("space",tags.get(0).getPropertyValue("k"));
         assertEquals("garden",tags.get(0).getPropertyValue("v"));
@@ -294,7 +294,7 @@ public class OSMXMLReaderTest {
         assertEquals(1, n1.getPropertyValue("version"));
         assertEquals(6871, user.getPropertyValue("uid"));
         assertEquals("smsm1", user.getPropertyValue("user"));
-        assertEquals(TemporalUtilities.parseDate("2008-12-17T01:18:42Z").getTime(), n1.getPropertyValue("timestamp"));
+        assertEquals(Instant.parse("2008-12-17T01:18:42Z").toEpochMilli(), n1.getPropertyValue("timestamp"));
         assertEquals(51.5074089d, ((Point)n1.getPropertyValue("point")).getCoordinate().y, DELTA);
         assertEquals(-0.1080108d,((Point)n1.getPropertyValue("point")).getCoordinate().x, DELTA);
         assertEquals(0, tags.size());
@@ -308,7 +308,7 @@ public class OSMXMLReaderTest {
         assertEquals(3, n2.getPropertyValue("version"));
         assertEquals(1697, user.getPropertyValue("uid"));
         assertEquals("nickb", user.getPropertyValue("user"));
-        assertEquals(TemporalUtilities.parseDate("2009-10-29T12:14:35Z").getTime(), n2.getPropertyValue("timestamp"));
+        assertEquals(Instant.parse("2009-10-29T12:14:35Z").toEpochMilli(), n2.getPropertyValue("timestamp"));
         assertEquals(51.5075933d, ((Point)n2.getPropertyValue("point")).getCoordinate().y, DELTA);
         assertEquals(-0.1076186d,((Point)n2.getPropertyValue("point")).getCoordinate().x, DELTA);
         assertEquals(2, tags.size());
@@ -327,7 +327,7 @@ public class OSMXMLReaderTest {
         assertEquals(3, way.getPropertyValue("version"));
         assertEquals(70, user.getPropertyValue("uid"));
         assertEquals("Matt", user.getPropertyValue("user"));
-        assertEquals(TemporalUtilities.parseDate("2009-05-31T13:39:15Z").getTime(), way.getPropertyValue("timestamp"));
+        assertEquals(Instant.parse("2009-05-31T13:39:15Z").toEpochMilli(), way.getPropertyValue("timestamp"));
         assertEquals(2,tags.size());
         assertEquals("access",tags.get(0).getPropertyValue("k"));
         assertEquals("private",tags.get(0).getPropertyValue("v"));
@@ -347,7 +347,7 @@ public class OSMXMLReaderTest {
         assertEquals(3, rel.getPropertyValue("version"));
         assertEquals(77, user.getPropertyValue("uid"));
         assertEquals("Georges", user.getPropertyValue("user"));
-        assertEquals(TemporalUtilities.parseDate("2009-05-31T13:39:15Z").getTime(), rel.getPropertyValue("timestamp"));
+        assertEquals(Instant.parse("2009-05-31T13:39:15Z").toEpochMilli(), rel.getPropertyValue("timestamp"));
         assertEquals(1, tags.size());
         assertEquals("space",tags.get(0).getPropertyValue("k"));
         assertEquals("garden",tags.get(0).getPropertyValue("v"));

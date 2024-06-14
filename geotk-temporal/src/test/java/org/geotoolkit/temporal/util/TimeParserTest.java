@@ -81,7 +81,6 @@ public class TimeParserTest {
 
     @Test
     public void testParse() throws ParseException {
-
         final DateFormat fullFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         fullFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 
@@ -168,6 +167,5 @@ public class TimeParserTest {
 
         assertEquals(fullFormat.parse("2007-01-01T00:00:00Z"), dates.get(0));
         assertEquals(fullFormat.parse("2007-12-31T23:59:59Z"), dates.get(1));
-        
     }
 }

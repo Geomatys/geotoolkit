@@ -17,28 +17,20 @@
 package org.geotoolkit.gml.xml;
 
 import java.time.temporal.Temporal;
-import java.util.Date;
-import org.geotoolkit.temporal.object.InstantWrapper;
-import org.opengis.temporal.TemporalGeometricPrimitive;
+import org.geotoolkit.temporal.object.TemporalUtilities;
+import org.opengis.temporal.Instant;
 
 /**
  *
  * @author rmarechal
  */
-public interface GMLInstant extends TemporalGeometricPrimitive, InstantWrapper {
+public interface GMLInstant extends Instant {
 
     public String getId();
 
     @Override
-    @Deprecated
-    public default Date getDate() {
-        AbstractTimePosition timePosition = getTimePosition();
-        return (timePosition != null) ? timePosition.getDate() : null;
-    }
-
-    @Override
-    public default Temporal getTemporal() {
-        return org.apache.sis.util.privy.TemporalDate.toTemporal(getDate());
+    public default Temporal getPosition() {
+        return TemporalUtilities.toTemporal(getTimePosition());
     }
 
     public AbstractTimePosition getTimePosition();

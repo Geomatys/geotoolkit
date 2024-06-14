@@ -31,10 +31,10 @@ import java.time.temporal.TemporalAmount;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.Duration;
+import org.apache.sis.temporal.GeneralDuration;
 import org.geotoolkit.csw.xml.CswXmlFactory;
 import org.geotoolkit.csw.xml.Harvest;
 import org.geotoolkit.security.ClientSecurity;
-import org.geotoolkit.temporal.object.TemporalUtilities;
 
 
 /**
@@ -178,7 +178,7 @@ public class AbstractHarvest extends AbstractCSWRequest implements HarvestReques
         try {
             final Marshaller marsh = POOL.acquireMarshaller();
             final TemporalAmount periodDuration = (harvestInterval == null) ? null :
-                    TemporalUtilities.getDurationFromString(harvestInterval);
+                    GeneralDuration.parse(harvestInterval);
             final Duration duration = (periodDuration == null) ? null :
                     DatatypeFactory.newInstance().newDuration(true,
                         BigInteger.valueOf(periodDuration.get(ChronoUnit.YEARS)),

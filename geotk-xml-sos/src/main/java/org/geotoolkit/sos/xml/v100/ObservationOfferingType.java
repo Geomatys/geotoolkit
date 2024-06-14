@@ -49,7 +49,6 @@ import org.opengis.observation.Phenomenon;
 /**
  *
  * @author Guilhem Legal
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ObservationOfferingType", propOrder = {
@@ -215,7 +214,7 @@ public class ObservationOfferingType extends AbstractFeatureType implements Obse
             } else if (time != null && time.getTimeGeometricPrimitive() instanceof TimeInstantType) {
                 final TimeInstantType instant = (TimeInstantType) time.getTimeGeometricPrimitive();
                 if (!newEndBound.equals(instant.getTimePosition().getValue())) {
-                    final TimePeriodType period = new TimePeriodType(instant.getId(), instant.getTimePosition().getTemporal(), newEndBound.toInstant());
+                    final TimePeriodType period = new TimePeriodType(instant.getId(), instant.getTimePosition().getPosition(), newEndBound.toInstant());
                     time.setTimeGeometricPrimitive(period);
                 }
             } else if (time == null) {

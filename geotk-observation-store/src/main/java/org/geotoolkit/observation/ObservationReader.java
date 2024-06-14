@@ -31,7 +31,7 @@ import org.opengis.observation.Observation;
 import org.opengis.observation.Phenomenon;
 import org.opengis.observation.Process;
 import org.opengis.observation.sampling.SamplingFeature;
-import org.opengis.temporal.TemporalGeometricPrimitive;
+import org.opengis.temporal.TemporalPrimitive;
 
 /**
  *
@@ -105,7 +105,7 @@ public interface ObservationReader {
      * @return the temporal bounds for the specified procedure.
      * @throws org.apache.sis.storage.DataStoreException If an error occurs during retrieval.
      */
-    TemporalGeometricPrimitive getProcedureTime(final String sensorID) throws DataStoreException;
+    TemporalPrimitive getProcedureTime(final String sensorID) throws DataStoreException;
 
     /**
      * Return a sampling feature for the specified sampling feature.
@@ -125,7 +125,7 @@ public interface ObservationReader {
      * @return the time span a sampling feature.
      * @throws org.apache.sis.storage.DataStoreException If an error occurs during retrieval.
      */
-    TemporalGeometricPrimitive getFeatureOfInterestTime(final String samplingFeatureName) throws DataStoreException;
+    TemporalPrimitive getFeatureOfInterestTime(final String samplingFeatureName) throws DataStoreException;
 
     /**
      * Return an observation for the specified identifier.
@@ -154,7 +154,7 @@ public interface ObservationReader {
      * @return A time span.
      * @throws org.apache.sis.storage.DataStoreException If an error occurs during retrieval.
      */
-    TemporalGeometricPrimitive getEventTime() throws DataStoreException;
+    TemporalPrimitive getEventTime() throws DataStoreException;
 
     /**
      * Extract the geometry for a procedure.

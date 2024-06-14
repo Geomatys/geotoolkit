@@ -20,24 +20,32 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import org.geotoolkit.temporal.object.DefaultInstant;
+import org.apache.sis.xml.IdentifiedObject;
+import org.apache.sis.xml.IdentifierSpace;
+import org.opengis.temporal.Instant;
+import org.opengis.temporal.TemporalPrimitive;
 
 /**
  *
  * @author Guilhem Legal (geomatys)
  */
-public class InstantSerializer extends JsonSerializer<DefaultInstant> {
+public class InstantSerializer extends JsonSerializer<Instant> {
 
     @Override
-    public void serialize(DefaultInstant i, JsonGenerator writer, SerializerProvider serializerProvider) throws IOException {
+    public void serialize(Instant i, JsonGenerator writer, SerializerProvider serializerProvider) throws IOException {
         writer.writeStartObject();
         writer.writeFieldName("id");
-        writer.writeString(i.getName().getCode());
+        writer.writeString(getIdentifier(i));
         writer.writeFieldName("date");
-        DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.S'Z'");
-        writer.writeString(sdf.format(i.getDate()));
+        writer.writeString(i.toString());
         writer.writeEndObject();
+    }
+
+    static String getIdentifier(final TemporalPrimitive t) {
+        if (t instanceof IdentifiedObject i) {
+            String id = i.getIdentifierMap().getSpecialized(IdentifierSpace.ID);
+            if (id != null) return id;
+        }
+        return "unnamed";
     }
 }

@@ -28,17 +28,16 @@ import java.util.Optional;
 import java.util.UUID;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.temporal.object.DefaultInstant;
-import org.geotoolkit.temporal.object.DefaultPeriod;
-import org.geotoolkit.temporal.object.InstantWrapper;
+import org.apache.sis.temporal.TemporalObjects;
+import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
-import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
-import org.opengis.temporal.TemporalGeometricPrimitive;
-import org.opengis.temporal.TemporalObject;
+import org.opengis.temporal.Instant;
+import org.opengis.temporal.Period;
+import org.opengis.temporal.TemporalPrimitive;
 
 /**
  *
@@ -67,7 +66,7 @@ public class GeoSpatialBound {
 
     private static final GeometryFactory GF = new GeometryFactory();
 
-    public void appendLocation(final TemporalObject time, final SamplingFeature feature) {
+    public void appendLocation(final TemporalPrimitive time, final SamplingFeature feature) {
         Date d = addTime(time);
         Geometry geom = null;
         if (feature != null) {
@@ -96,16 +95,17 @@ public class GeoSpatialBound {
      * Return then the first date.
      *
      * @param time a temporal object
-     * @return
      */
-    public Date addTime(final TemporalObject time) {
-        if (time instanceof InstantWrapper i) {
-            if (i.getDate() != null) {
-                return addDate(i.getDate());
+    public Date addTime(final TemporalPrimitive time) {
+        if (time instanceof Instant i) {
+            Date p = TemporalUtilities.toDate(i);
+            if (p != null) {
+                return addDate(p);
             }
-        } else if (time instanceof DefaultPeriod p) {
-            addTime(p.ending);
-            return addTime(p.beginning);
+        }
+        if (time instanceof Period p) {
+            addTime(p.getEnding());
+            return addTime(p.getBeginning());
         }
         return null;
     }
@@ -223,15 +223,17 @@ public class GeoSpatialBound {
         this.historicalLocation.putAll(other.historicalLocation);
     }
 
-    public TemporalGeometricPrimitive getTimeObject() {
+    public TemporalPrimitive getTimeObject() {
         if (dateStart != null && dateEnd != null) {
             String id = UUID.randomUUID().toString();
             if (dateStart.getTime() == dateEnd.getTime()) {
-                return new DefaultInstant(Collections.singletonMap(NAME_KEY, id + "time"), dateStart.toInstant());
+                var t = TemporalObjects.createInstant(dateStart.toInstant());
+                ObservationTransformUtils.setIdentifier(t, id + "-time");
+                return t;
             } else {
-                return new DefaultPeriod(Collections.singletonMap(NAME_KEY, id + "-time"),
-                                         new DefaultInstant(Collections.singletonMap(NAME_KEY, id + "-st-time"), dateStart.toInstant()),
-                                         new DefaultInstant(Collections.singletonMap(NAME_KEY, id + "-en-time"), dateEnd.toInstant()));
+                var p = TemporalObjects.createPeriod(dateStart.toInstant(), dateEnd.toInstant());
+                ObservationTransformUtils.setIdentifiers(p, id);
+                return p;
             }
         }
         return null;

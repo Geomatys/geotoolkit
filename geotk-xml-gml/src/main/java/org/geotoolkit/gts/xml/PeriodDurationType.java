@@ -38,7 +38,7 @@ import java.time.temporal.UnsupportedTemporalTypeException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.Duration;
-import org.geotoolkit.temporal.object.InstantWrapper;
+import org.geotoolkit.temporal.object.TemporalUtilities;
 
 
 /**
@@ -154,12 +154,12 @@ public class PeriodDurationType implements TemporalAmount {
 
     @Override
     public Temporal addTo(Temporal temporal) {
-        return InstantWrapper.toInstant(temporal).plusMillis(getTimeInMillis());
+        return TemporalUtilities.toInstant(temporal).plusMillis(getTimeInMillis());
     }
 
     @Override
     public Temporal subtractFrom(Temporal temporal) {
-        return InstantWrapper.toInstant(temporal).minusMillis(getTimeInMillis());
+        return TemporalUtilities.toInstant(temporal).minusMillis(getTimeInMillis());
     }
 
     @Override

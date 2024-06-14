@@ -31,6 +31,7 @@ import org.geotoolkit.gml.xml.TimeIndeterminateValueType;
 import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.gml.xml.AbstractTimePosition;
 import org.geotoolkit.gml.xml.GMLPeriod;
+import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
 
 
@@ -90,14 +91,18 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
         this(null, beginPosition, endPosition);
     }
 
+    public TimePeriodType(final Instant beginPosition, final Instant endPosition) {
+        this(beginPosition.getPosition(), endPosition.getPosition());
+    }
+
     public TimePeriodType(final String id, final Period period) {
         super(id);
         if (period != null) {
             if (period.getBeginning() != null) {
-                this.beginPosition = new TimePositionType(period.getBeginning());
+                this.beginPosition = new TimePositionType(period.getBeginning().getPosition());
             }
             if (period.getEnding() != null) {
-                this.endPosition = new TimePositionType(period.getEnding());
+                this.endPosition = new TimePositionType(period.getEnding().getPosition());
             }
         }
     }
@@ -404,21 +409,21 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
     }
 
     @Override
-    public Temporal getBeginning() {
+    public Instant getBeginning() {
         if (begin != null) {
-            return begin.getTimeInstant().getTemporal();
+            return begin.getTimeInstant();
         } else if (beginPosition != null) {
-            return new TimeInstantType(beginPosition).getTemporal();
+            return new TimeInstantType(beginPosition);
         }
         return null;
     }
 
     @Override
-    public Temporal getEnding() {
+    public Instant getEnding() {
         if (end != null) {
-            return end.getTimeInstant().getTemporal();
+            return end.getTimeInstant();
         } else if (endPosition != null) {
-            return new TimeInstantType(endPosition).getTemporal();
+            return new TimeInstantType(endPosition);
         }
         return null;
     }

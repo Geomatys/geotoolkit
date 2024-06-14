@@ -23,7 +23,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.List;
-import java.util.TimeZone;
 import org.opengis.metadata.Identifier;
 import javax.measure.Unit;
 import javax.sql.DataSource;
@@ -43,7 +42,6 @@ import static org.geotoolkit.coverage.postgresql.epsg.PGEPSGQueries.*;
 import org.geotoolkit.referencing.EPSGWriter;
 import org.apache.sis.referencing.datum.AbstractDatum;
 import org.apache.sis.referencing.factory.IdentifiedObjectFinder;
-import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.opengis.metadata.extent.Extent;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.crs.SingleCRS;
@@ -448,7 +446,7 @@ public class PGEPSGWriter implements EPSGWriter {
 
         }else if(candidate instanceof TemporalDatum){
             final TemporalDatum td = (TemporalDatum) candidate;
-            origin_description = TemporalUtilities.toISO8601Z(td.getOrigin(), TimeZone.getTimeZone("GMT+0"));
+            origin_description = td.toString();
             datum_type = "temporal";
             ellipsoid_code = null;
             prime_meridian_code = null;

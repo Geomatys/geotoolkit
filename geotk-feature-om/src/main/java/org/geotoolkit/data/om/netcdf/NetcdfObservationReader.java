@@ -36,7 +36,7 @@ import org.geotoolkit.observation.model.ResponseMode;
 import org.geotoolkit.observation.model.SamplingFeature;
 import org.geotoolkit.observation.query.IdentifierQuery;
 import org.locationtech.jts.geom.Geometry;
-import org.opengis.temporal.TemporalGeometricPrimitive;
+import org.opengis.temporal.TemporalPrimitive;
 
 /**
  *
@@ -125,7 +125,7 @@ public class NetcdfObservationReader implements ObservationReader {
     }
 
     @Override
-    public TemporalGeometricPrimitive getProcedureTime(final String sensorID) throws DataStoreException {
+    public TemporalPrimitive getProcedureTime(final String sensorID) throws DataStoreException {
         try {
             final ObservationDataset result = NetCDFExtractor.getObservationFromNetCDF(analyze, getProcedureID(), null, null, new HashSet<>());
             if (result != null && result.spatialBound != null) {
@@ -171,7 +171,7 @@ public class NetcdfObservationReader implements ObservationReader {
     }
 
     @Override
-    public TemporalGeometricPrimitive getFeatureOfInterestTime(String samplingFeatureName) throws DataStoreException {
+    public TemporalPrimitive getFeatureOfInterestTime(String samplingFeatureName) throws DataStoreException {
         throw new DataStoreException("Not supported yet in this this implementation.");
     }
 
@@ -195,7 +195,7 @@ public class NetcdfObservationReader implements ObservationReader {
     }
 
     @Override
-    public TemporalGeometricPrimitive getEventTime() throws DataStoreException {
+    public TemporalPrimitive getEventTime() throws DataStoreException {
         throw new DataStoreException("Not supported yet in this this implementation.");
     }
 

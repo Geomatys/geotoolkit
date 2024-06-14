@@ -33,7 +33,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
-import java.util.TimeZone;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import javax.measure.Unit;
@@ -58,7 +57,6 @@ import org.geotoolkit.storage.coverage.AbstractPyramidalCoverageResource;
 import org.geotoolkit.storage.coverage.CoverageStoreContentEvent;
 import org.geotoolkit.storage.coverage.CoverageStoreManagementEvent;
 import org.geotoolkit.storage.coverage.PyramidalModelWriter;
-import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.version.Version;
 import org.opengis.metadata.content.TransferFunctionType;
@@ -123,7 +121,7 @@ public class PGCoverageResource extends AbstractPyramidalCoverageResource implem
                 query.append(" AND pp.value IS NULL");
             }else{
                 query.append(" AND pp.value = '");
-                query.append(TemporalUtilities.toISO8601Z(version.getDate(), PGVersionControl.GMT0));
+                query.append(version.getDate().toInstant());
                 query.append("'");
             }
 
@@ -352,7 +350,7 @@ public class PGCoverageResource extends AbstractPyramidalCoverageResource implem
                 query.append("(\"pyramidId\",\"key\",\"type\",\"value\") VALUES (");
                 query.append(pyramidId);
                 query.append(",'version','date','");
-                query.append(TemporalUtilities.toISO8601Z(version.getDate(), TimeZone.getTimeZone("GMT+0")));
+                query.append(version.getDate().toInstant());
                 query.append("')");
                 stmt.executeUpdate(query.toString());
             }
@@ -395,7 +393,7 @@ public class PGCoverageResource extends AbstractPyramidalCoverageResource implem
             final int layerId = pgstore.getLayerId(cnx,getIdentifier().get().tip().toString());
             String versionStr;
             if (version != null && !version.getLabel().equals(PGVersionControl.UNSET)) {
-                versionStr = TemporalUtilities.toISO8601Z(version.getDate(), TimeZone.getTimeZone("GMT+0"));
+                versionStr = version.getDate().toInstant().toString();
             } else {
                 versionStr = PGVersionControl.UNSET;
             }
@@ -542,7 +540,7 @@ public class PGCoverageResource extends AbstractPyramidalCoverageResource implem
                     final SampleDimension dim = dimensions.get(i);
                     String versionStr;
                     if (version != null && !version.getLabel().equals(PGVersionControl.UNSET)) {
-                        versionStr = TemporalUtilities.toISO8601Z(version.getDate(), TimeZone.getTimeZone("GMT+0"));
+                        versionStr = version.getDate().toInstant().toString();
                     } else {
                         versionStr = PGVersionControl.UNSET;
                     }

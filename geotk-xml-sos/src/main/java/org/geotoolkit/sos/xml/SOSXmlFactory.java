@@ -79,8 +79,9 @@ import org.opengis.observation.ObservationCollection;
 import org.opengis.observation.sampling.SamplingFeature;
 import org.opengis.observation.Process;
 import org.opengis.temporal.Period;
-import org.opengis.temporal.TemporalGeometricPrimitive;
-import static org.apache.sis.util.privy.TemporalDate.toTemporal;
+import org.opengis.temporal.TemporalPrimitive;
+import static org.apache.sis.temporal.TemporalDate.toTemporal;
+import org.opengis.temporal.Instant;
 
 /**
  *
@@ -588,7 +589,7 @@ public class SOSXmlFactory {
         }
     }
 
-    public static TemporalGeometricPrimitive buildTimeObject(final String version, final String id, final TemporalGeometricPrimitive temp) {
+    public static TemporalPrimitive buildTimeObject(final String version, final String id, final TemporalPrimitive temp) {
         String gmlVersion;
         if ("2.0.0".equals(version)) {
             gmlVersion = "3.2.1";
@@ -600,7 +601,7 @@ public class SOSXmlFactory {
         if (temp instanceof Period p) {
             return GMLXmlFactory.createTimePeriod(gmlVersion, id, p);
         } else if (temp instanceof GMLInstant i) {
-            return GMLXmlFactory.createTimeInstant(gmlVersion, id, i.getDate());
+            return GMLXmlFactory.createTimeInstant(gmlVersion, id, i.getPosition());
         } else if (temp != null) {
             throw new IllegalArgumentException("unexpected temporal type:" + temp.getClass().getName());
         }
@@ -615,6 +616,10 @@ public class SOSXmlFactory {
     @Deprecated
     public static GMLPeriod buildTimePeriod(final String version, final String id, final Date dateBegin, final Date dateEnd) {
         return buildTimePeriod(version, id, toTemporal(dateBegin), toTemporal(dateEnd));
+    }
+
+    public static GMLPeriod buildTimePeriod(final String version, final String id, final Instant dateBegin, final Instant dateEnd) {
+        return buildTimePeriod(version, id, dateBegin.getPosition(), dateEnd.getPosition());
     }
 
     public static GMLPeriod buildTimePeriod(final String version, final String id, final Temporal dateBegin, final Temporal dateEnd) {
@@ -729,7 +734,7 @@ public class SOSXmlFactory {
     }
 
     public static ObservationOffering buildOffering(final String version, final String id, final String name, final String description, final List<String> srsName,
-            final TemporalGeometricPrimitive time,  final String procedure, final List<PhenomenonProperty> observedProperties, final List<String> observedPropertiesv200,
+            final TemporalPrimitive time,  final String procedure, final List<PhenomenonProperty> observedProperties, final List<String> observedPropertiesv200,
             final List<String> featureOfInterest, final List<String> responseFormat, final List<QName> resultModel, final List<String> resultModelV200, final List<ResponseModeType> responseMode,
             final List<String> procedureDescriptionFormat) {
         if ("2.0.0".equals(version)) {

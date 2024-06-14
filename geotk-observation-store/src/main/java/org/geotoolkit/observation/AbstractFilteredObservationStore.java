@@ -73,7 +73,7 @@ import org.opengis.filter.ValueReference;
 import org.opengis.geometry.Envelope;
 import org.opengis.observation.Process;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.temporal.TemporalGeometricPrimitive;
+import org.opengis.temporal.TemporalPrimitive;
 import org.opengis.util.CodeList;
 
 /**
@@ -222,7 +222,7 @@ public abstract class AbstractFilteredObservationStore extends AbstractObservati
      * Implementations notes: only supported for procedure and feature of interest for now
      */
     @Override
-    public TemporalGeometricPrimitive getEntityTemporalBounds(IdentifierQuery query) throws DataStoreException {
+    public TemporalPrimitive getEntityTemporalBounds(IdentifierQuery query) throws DataStoreException {
         if (query == null) throw new DataStoreException("Query must no be null");
         switch (query.getEntityType()) {
             case FEATURE_OF_INTEREST: return getReader().getFeatureOfInterestTime(query.getIdentifier());
@@ -315,7 +315,7 @@ public abstract class AbstractFilteredObservationStore extends AbstractObservati
      * {@inheritDoc }
      */
     @Override
-    public TemporalGeometricPrimitive getTemporalBounds() throws DataStoreException {
+    public TemporalPrimitive getTemporalBounds() throws DataStoreException {
         ObservationReader reader = getReader();
         return reader.getEventTime();
     }
