@@ -26,8 +26,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.cql.CQL;
 import org.apache.sis.cql.CQLException;
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.referencing.CRS;
 import org.opengis.filter.Filter;
+import org.opengis.geometry.Envelope;
 import org.opengis.metadata.Metadata;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.FactoryException;
 
 /**
  * Convenient methods to transform possible constant value from and to String.
@@ -110,6 +115,20 @@ public final class ConstantUtilities {
         }else if(value instanceof Filter){
             final Filter filter = (Filter) value;
             return CQL.write(filter);
+
+        }else if(value instanceof Envelope){
+            final StringBuilder sb = new StringBuilder();
+            final Envelope envelope = (Envelope) value;
+            sb.append(valueToString(envelope.getDimension()).length()).append(':').append(envelope.getDimension());
+            for(int i = 0; i<envelope.getDimension(); i++) {
+                String minimum = valueToString(envelope.getMinimum(i));
+                String maximum = valueToString(envelope.getMaximum(i));
+                sb.append(minimum.length()).append(':').append(minimum);
+                sb.append(maximum.length()).append(':').append(maximum);
+            }
+            String crsWkt = envelope.getCoordinateReferenceSystem().toWKT();
+            sb.append(crsWkt.length()).append(':').append(crsWkt);
+            return sb.toString();
         }
 
         throw new IllegalArgumentException("Object class not supported : " +value);
@@ -179,6 +198,29 @@ public final class ConstantUtilities {
                 LOGGER.log(Level.INFO, ex.getMessage(), ex);
             }
             return null;
+
+        }else if(Envelope.class.isAssignableFrom(clazz)){
+            final List<String> parts = split(value);
+            int index = 0;
+            int dimensions = Integer.parseInt(parts.get(index));
+            index++;
+            double[] dimensionsValues = new double[dimensions*2];
+            for(int i=0; i<dimensions*2; i++){
+                dimensionsValues[i] = Double.parseDouble(parts.get(index));
+                index++;
+            }
+            String crsWkt = parts.get(index);
+            try {
+                CoordinateReferenceSystem crs = CRS.fromWKT(crsWkt);
+
+                GeneralEnvelope envelope = new GeneralEnvelope(crs);
+                envelope.setEnvelope(dimensionsValues);
+
+                return (T) envelope;
+
+            } catch (FactoryException e) {
+                throw new IllegalArgumentException("CRS (fromWkt) specified for the Envelope is not correct / supported : " + crsWkt + " (object : " + value + ")");
+            }
         }
 
         throw new IllegalArgumentException("Object class not supported : " +value);
