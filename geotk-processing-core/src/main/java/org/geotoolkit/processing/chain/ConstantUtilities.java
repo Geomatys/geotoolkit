@@ -119,18 +119,18 @@ public final class ConstantUtilities {
         }else if(value instanceof Envelope){
             final StringBuilder sb = new StringBuilder();
             final Envelope envelope = (Envelope) value;
-            sb.append(valueToString(envelope.getDimension()).length()).append(':').append(envelope.getDimension());
+            sb.append(Integer.toString(envelope.getDimension()).length()).append(':').append(envelope.getDimension());
             if (value instanceof GeneralEnvelope generalEnvelope) {
                 for(int i = 0; i<envelope.getDimension(); i++) {
-                    String minimum = valueToString(generalEnvelope.getLower(i));
-                    String maximum = valueToString(generalEnvelope.getUpper(i));
+                    String minimum = Double.toString(generalEnvelope.getLower(i));
+                    String maximum = Double.toString(generalEnvelope.getUpper(i));
                     sb.append(minimum.length()).append(':').append(minimum);
                     sb.append(maximum.length()).append(':').append(maximum);
                 }
             } else {
                 for (int i = 0; i < envelope.getDimension(); i++) {
-                    String minimum = valueToString(envelope.getMinimum(i));
-                    String maximum = valueToString(envelope.getMaximum(i));
+                    String minimum = Double.toString(envelope.getMinimum(i));
+                    String maximum = Double.toString(envelope.getMaximum(i));
                     sb.append(minimum.length()).append(':').append(minimum);
                     sb.append(maximum.length()).append(':').append(maximum);
                 }

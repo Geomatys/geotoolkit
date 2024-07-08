@@ -84,13 +84,18 @@ public class ChainProcessTest {
         return chain;
     }
 
-    private Chain createSimpleEnvelopeChain(){
+    private Chain createSimpleEnvelopeChain() throws FactoryException {
         final Chain chain = new Chain("myEnvelopeChain");
         int id = 1;
 
         //input/out/constants parameters
-        final Parameter e = chain.addInputParameter("e", Envelope.class, "title", "desc", 1, 1, null);
+
+        GeneralEnvelope envelope = new GeneralEnvelope(CRS.forCode("urn:ogc:def:crs:OGC:2:84"));
+        envelope.setEnvelope(10.2d, 12.3d, 52d, 55.4d);
+
+        final Constant c = chain.addConstant(id++, Envelope.class, envelope);
         final Parameter r = chain.addOutputParameter("r", String.class, "title", "desc",1,1,null);
+
 
         //chain blocks
         final ElementProcess envelopeToString = chain.addProcessElement(id++, "demo", "envelopeToString");
@@ -100,7 +105,7 @@ public class ChainProcessTest {
         chain.addFlowLink(envelopeToString.getId(), END.getId());
 
         //data flow links
-        chain.addDataLink(BEGIN.getId(), e.getCode(), envelopeToString.getId(), "envelope");
+        chain.addDataLink(c.getId(), "", envelopeToString.getId(), "envelope");
         chain.addDataLink(envelopeToString.getId(), "result", END.getId(), r.getCode());
 
         return chain;
@@ -186,7 +191,6 @@ public class ChainProcessTest {
 
         //input params
         final ParameterValueGroup input = desc.getInputDescriptor().createValue();
-        input.parameter("e").setValue(envelope);
 
         final Process process = desc.createProcess(input);
         final ParameterValueGroup result = process.call();
