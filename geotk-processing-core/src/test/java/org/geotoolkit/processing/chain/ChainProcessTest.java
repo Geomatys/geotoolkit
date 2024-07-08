@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import jakarta.xml.bind.JAXBException;
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessException;
@@ -42,7 +44,9 @@ import static org.geotoolkit.processing.chain.model.Element.*;
 import org.geotoolkit.processing.chain.model.StringList;
 import org.geotoolkit.processing.chain.model.StringMap;
 import org.geotoolkit.processing.chain.model.StringMapList;
+import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.util.FactoryException;
 
 /**
  *
@@ -76,6 +80,33 @@ public class ChainProcessTest {
         chain.addDataLink(add.getId(), "result", divide.getId(), "first");
         chain.addDataLink(BEGIN.getId(), b.getCode(), divide.getId(), "second");
         chain.addDataLink(divide.getId(), "result", END.getId(), r.getCode());
+
+        return chain;
+    }
+
+    private Chain createSimpleEnvelopeChain() throws FactoryException {
+        final Chain chain = new Chain("myEnvelopeChain");
+        int id = 1;
+
+        //input/out/constants parameters
+
+        GeneralEnvelope envelope = new GeneralEnvelope(CRS.forCode("urn:ogc:def:crs:OGC:2:84"));
+        envelope.setEnvelope(10.2d, 12.3d, 52d, 55.4d);
+
+        final Constant c = chain.addConstant(id++, Envelope.class, envelope);
+        final Parameter r = chain.addOutputParameter("r", String.class, "title", "desc",1,1,null);
+
+
+        //chain blocks
+        final ElementProcess envelopeToString = chain.addProcessElement(id++, "demo", "envelopeToString");
+
+        //execution flow links
+        chain.addFlowLink(BEGIN.getId(), envelopeToString.getId());
+        chain.addFlowLink(envelopeToString.getId(), END.getId());
+
+        //data flow links
+        chain.addDataLink(c.getId(), "", envelopeToString.getId(), "envelope");
+        chain.addDataLink(envelopeToString.getId(), "result", END.getId(), r.getCode());
 
         return chain;
     }
@@ -141,6 +172,38 @@ public class ChainProcessTest {
         final ParameterValueGroup result = process.call();
 
         assertEquals(12.5d, result.parameter("r").doubleValue(),0.000001);
+
+    }
+
+    @Test
+    public void testSimpleEnvelopeChain() throws ProcessException, FactoryException {
+
+        final Chain chain = createSimpleEnvelopeChain();
+
+        //process registries to use
+        final Set<MockProcessRegistry> registries = Collections.singleton(new MockProcessRegistry());
+
+        //create a process descriptor to use it like any process.
+        final ProcessDescriptor desc = new ChainProcessDescriptor(chain, MockProcessRegistry.IDENTIFICATION, registries);
+
+        GeneralEnvelope envelope = new GeneralEnvelope(CRS.forCode("urn:ogc:def:crs:OGC:2:84"));
+        envelope.setEnvelope(10.2d, 12.3d, 52d, 55.4d);
+
+        //input params
+        final ParameterValueGroup input = desc.getInputDescriptor().createValue();
+
+        final Process process = desc.createProcess(input);
+        final ParameterValueGroup result = process.call();
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(envelope.getDimension()).append(':');
+        for(int i=0; i<envelope.getDimension(); i++) {
+            sb.append(envelope.getMinimum(i)).append(':');
+            sb.append(envelope.getMaximum(i)).append(':');
+        }
+        sb.append(envelope.getCoordinateReferenceSystem().toWKT());
+
+        assertEquals(sb.toString(), result.parameter("r").stringValue());
 
     }
 
