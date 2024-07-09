@@ -235,7 +235,7 @@ public class GTtoSE100Transformer extends FilterToOGC100Converter implements Sty
             }else if(SemanticType.RASTER.equals(semantic)){
                 ftst.getSemanticTypeIdentifier().add(GENERIC_RASTER);
             }else{
-                ftst.getSemanticTypeIdentifier().add(semantic.identifier());
+                ftst.getSemanticTypeIdentifier().add(semantic.identifier().orElseThrow());
             }
         }
 

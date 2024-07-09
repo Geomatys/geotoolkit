@@ -52,6 +52,7 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.referencing.factory.GeodeticObjectFactory;
 import org.apache.sis.referencing.operation.DefaultCoordinateOperationFactory;
+import org.apache.sis.referencing.operation.transform.DefaultMathTransformFactory;
 import org.apache.sis.util.ArgumentChecks;
 
 import static org.geotoolkit.data.mapinfo.ProjectionParameters.PARAMETER_LIST;
@@ -74,7 +75,6 @@ public class ProjectionUtils {
 
     private static final CRSFactory CRS_FACTORY = GeodeticObjectFactory.provider();
     private static final CSFactory CS_FACTORY = GeodeticObjectFactory.provider();
-    private static final CoordinateOperationFactory PROJ_FACTORY = DefaultCoordinateOperationFactory.provider();
 
     private static final String BOUNDS_NAME = "Bounds";
     private static final String AFFINE_UNITS = "Affine Units";
@@ -290,7 +290,8 @@ public class ProjectionUtils {
              */
             final OperationMethod method;
             try {
-                method = PROJ_FACTORY.getOperationMethod(MAP_INFO_NAMESPACE+NAMESPACE_SEPARATOR+projCode);
+                method = DefaultMathTransformFactory.provider()
+                        .getOperationMethod(MAP_INFO_NAMESPACE+NAMESPACE_SEPARATOR+projCode);
             } catch (Exception e) {
                 throw new DataStoreException("No projection can be found for code : "+projCode, e);
             }
@@ -345,7 +346,8 @@ public class ProjectionUtils {
                     Collections.singletonMap(DefaultCoordinateSystemAxis.NAME_KEY, "North"), "N", AxisDirection.NORTH, unit);
             CartesianCS cs = CS_FACTORY.createCartesianCS(properties, east, north);
 
-            Conversion conversion = PROJ_FACTORY.createDefiningConversion(properties, method, projParams);
+            Conversion conversion = DefaultCoordinateOperationFactory.provider()
+                    .createDefiningConversion(properties, method, projParams);
             // now that we've got conversion, we can check for bounds.
             if (bounds != null) {
                 try {
@@ -401,7 +403,8 @@ public class ProjectionUtils {
                 // If we get a lambert conformal 1SP, we must convert it into 2P to use it.
                 if(IdentifiedObjects.lookupEPSG(proj.getMethod()).equals(9801)) {
                     projCode = "3";
-                    OperationMethod method = PROJ_FACTORY.getOperationMethod(MAP_INFO_NAMESPACE+NAMESPACE_SEPARATOR+projCode);
+                    OperationMethod method = DefaultMathTransformFactory.provider()
+                            .getOperationMethod(MAP_INFO_NAMESPACE+NAMESPACE_SEPARATOR+projCode);
                     Map<String, Object> properties = new HashMap<>();
                     properties.put("name", "Lambert Conformal Conic (2SP)");
                     properties.put("authority", Citations.MAP_INFO);
@@ -415,10 +418,12 @@ public class ProjectionUtils {
                     values.parameter(stParallel1).setValue(proj.getParameterValues().parameter(originLat).getValue());
                     values.parameter(stParallel2).setValue(proj.getParameterValues().parameter(originLat).getValue());
 
-                    proj = PROJ_FACTORY.createDefiningConversion(properties, method, values);
+                    proj = DefaultCoordinateOperationFactory.provider()
+                            .createDefiningConversion(properties, method, values);
 
                 } else {
-                    OperationMethod method = PROJ_FACTORY.getOperationMethod(proj.getMethod().getName().getCode());
+                    OperationMethod method = DefaultMathTransformFactory.provider()
+                            .getOperationMethod(proj.getMethod().getName().getCode());
                     projCode = IdentifiedObjects.toString(IdentifiedObjects.getIdentifier(method, Citations.MAP_INFO));
                 }
                 if (projCode == null) {

@@ -18,8 +18,7 @@ public class SurfaceInterpolationAdapter  extends XmlAdapter<String, SurfaceInte
     @Override
     public String marshal(final SurfaceInterpolation v) throws Exception {
         if (v != null)
-            return v.identifier();
+            return v.identifier().orElse(null);
         return null;
     }
-
 }

@@ -32,7 +32,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.measure.Unit;
-import javax.measure.quantity.Length;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import jakarta.xml.bind.JAXBElement;
@@ -360,7 +359,7 @@ public class GTtoSE110Transformer extends FilterToOGC110Converter implements Sty
                     } else if (SemanticType.RASTER.equals(semantic)) {
                         cst.getSemanticTypeIdentifier().add(GENERIC_RASTER);
                     } else {
-                        cst.getSemanticTypeIdentifier().add(semantic.identifier());
+                        cst.getSemanticTypeIdentifier().add(semantic.identifier().orElseThrow());
                     }
 
                 }
@@ -399,7 +398,7 @@ public class GTtoSE110Transformer extends FilterToOGC110Converter implements Sty
                     } else if (SemanticType.RASTER.equals(semantic)) {
                         ftst.getSemanticTypeIdentifier().add(GENERIC_RASTER);
                     } else {
-                        ftst.getSemanticTypeIdentifier().add(semantic.identifier());
+                        ftst.getSemanticTypeIdentifier().add(semantic.identifier().orElseThrow());
                     }
 
                 }

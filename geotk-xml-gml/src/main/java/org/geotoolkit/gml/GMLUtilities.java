@@ -162,7 +162,7 @@ public class GMLUtilities {
             List<? extends CurveSegment> segments = curve.getSegments();
             List<LineStringSegmentType> gmlSegments = new ArrayList<LineStringSegmentType>();
             for (CurveSegment segment : segments) {
-                CurveInterpolationType interpolation = CurveInterpolationType.fromValue(segment.getInterpolation().identifier());
+                CurveInterpolationType interpolation = CurveInterpolationType.fromValue(segment.getInterpolation().identifier().orElseThrow());
                 PointArray array = GeometricUtilities.getSamplePoints(segment);
                 var positions = new ArrayList<DirectPosition>();
                 for (int i =0; i < array.size(); i++) {
@@ -217,7 +217,7 @@ public class GMLUtilities {
            List<? extends Polygon> patches = polySurface.getPatches();
            for (Polygon polygon : patches) {
 
-               SurfaceInterpolationType interpolation = SurfaceInterpolationType.fromValue(polygon.getInterpolation().identifier());
+               SurfaceInterpolationType interpolation = SurfaceInterpolationType.fromValue(polygon.getInterpolation().identifier().orElseThrow());
                SurfaceBoundary boundary               = polygon.getBoundary();
                Ring exterior                          = boundary.getExterior();
 

@@ -467,7 +467,7 @@ public class ClusterHullProcess extends AbstractProcess {
         parameters.parameter("latitude_of_origin").setValue(latitude_of_origin);
 
         final CoordinateOperationFactory coFactory = DefaultCoordinateOperationFactory.provider();
-        final OperationMethod operationMethod = coFactory.getOperationMethod("Lambert_Conformal_Conic_1SP");
+        final OperationMethod operationMethod = DefaultMathTransformFactory.provider().getOperationMethod("Lambert_Conformal_Conic_1SP");
         final Map<String,?> nameConversion = Collections.singletonMap("name", "My conversion");
         final Conversion conversion = coFactory.createDefiningConversion(nameConversion, operationMethod, parameters);
 

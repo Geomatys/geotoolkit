@@ -120,7 +120,7 @@ public class CoordinateSystemAxisType extends CoordinateSystemAxisBaseType {
     }
 
     public void setAxisDirection(AxisDirection axisDirection) {
-        this.axisDirection = new CodeType(axisDirection.identifier());
+        this.axisDirection = new CodeType(axisDirection.identifier().orElse(null));
     }
 
     /**

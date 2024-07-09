@@ -849,7 +849,7 @@
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
         <!-- TODO: remove version definition after Geotk/BOM upgrade. It will be inherited from parent. -->
-        <version>0.8.9</version>
+        <version>0.8.12</version>
         <executions>
           <execution>
             <goals>

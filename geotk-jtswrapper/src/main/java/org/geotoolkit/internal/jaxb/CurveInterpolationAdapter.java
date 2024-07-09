@@ -19,8 +19,7 @@ public class CurveInterpolationAdapter extends XmlAdapter<String, CurveInterpola
     @Override
     public String marshal(final CurveInterpolation v) throws Exception {
         if (v != null)
-            return v.identifier();
+            return v.identifier().orElse(null);
         return null;
     }
-
 }
