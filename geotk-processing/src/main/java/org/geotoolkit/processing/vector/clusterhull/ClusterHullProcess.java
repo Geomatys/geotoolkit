@@ -462,7 +462,8 @@ public class ClusterHullProcess extends AbstractProcess {
 
     private static ProjectedCRS getLocalLambertCRS(final double central_meridian, final double latitude_of_origin) throws FactoryException {
         final MathTransformFactory mtFactory = DefaultMathTransformFactory.provider();
-        final ParameterValueGroup parameters = mtFactory.getDefaultParameters("Lambert_Conformal_Conic_1SP");
+        final var builder = mtFactory.builder("Lambert_Conformal_Conic_1SP");
+        final ParameterValueGroup parameters = builder.parameters();
         parameters.parameter("central_meridian").setValue(central_meridian);
         parameters.parameter("latitude_of_origin").setValue(latitude_of_origin);
 

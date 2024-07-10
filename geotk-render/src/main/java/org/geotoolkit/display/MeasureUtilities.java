@@ -50,7 +50,6 @@ import org.opengis.referencing.operation.TransformException;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
 public class MeasureUtilities {
 
@@ -117,8 +116,8 @@ public class MeasureUtilities {
 
             MathTransformFactory f = DefaultMathTransformFactory.provider();
 
-            ParameterValueGroup p;
-            p = f.getDefaultParameters("Albers_Conic_Equal_Area");
+            var builder = f.builder("Albers_Conic_Equal_Area");
+            ParameterValueGroup p = builder.parameters();
             p.parameter("semi_major").setValue(ellipsoid.getSemiMajorAxis());
             p.parameter("semi_minor").setValue(ellipsoid.getSemiMinorAxis());
             p.parameter("central_meridian").setValue(centerMeridian);
@@ -126,7 +125,7 @@ public class MeasureUtilities {
             p.parameter("standard_parallel_2").setValue(southParallal);
 
             MathTransform step1 = CRS.findOperation(geomCRS, geoCRS, null).getMathTransform();
-            MathTransform step2 = f.createParameterizedTransform(p);
+            MathTransform step2 = builder.create();
             MathTransform trs = f.createConcatenatedTransform(step1, step2);
 
             Geometry calculatedGeom = org.apache.sis.geometry.wrapper.jts.JTS.transform(geom, trs);
@@ -136,9 +135,7 @@ public class MeasureUtilities {
                 UnitConverter converter = Units.SQUARE_METRE.getConverterTo(unit);
                 area = converter.convert(area);
             }
-
             return area;
-
         } catch (FactoryException ex) {
             LOGGER.log(Level.WARNING, null, ex);
         } catch (MismatchedDimensionException ex) {
@@ -146,9 +143,6 @@ public class MeasureUtilities {
         } catch (TransformException ex) {
             LOGGER.log(Level.WARNING, null, ex);
         }
-
         return 0;
     }
-
-
 }

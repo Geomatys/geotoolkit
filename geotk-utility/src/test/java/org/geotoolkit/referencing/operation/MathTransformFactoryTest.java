@@ -137,16 +137,18 @@ public final class MathTransformFactoryTest {
         ///////////////////////////////////////
         MathTransform transform;
         ParameterValueGroup params;
+        MathTransform.Builder builder;
 
         // Approx bristol UK
-        params = mtFactory.getDefaultParameters("Equidistant Cylindrical (Spherical)");
+        builder = mtFactory.builder("Equidistant Cylindrical (Spherical)");
+        params = builder.parameters();
         params.parameter("semi_major")         .setValue(6378137);
         params.parameter("semi_minor")         .setValue(6378137);
         params.parameter("central_meridian")   .setValue(  0.000);
         params.parameter("standard_parallel_1").setValue(  0.000);
         params.parameter("false_easting")      .setValue(  0.0  );
         params.parameter("false_northing")     .setValue(  0.0  );
-        transform = mtFactory.createParameterizedTransform(params);
+        transform = builder.create();
         doTransform(new DirectPosition2D(-2.5, 51.37),
                     new DirectPosition2D(-278298.73, 5718482.24), transform);
     }
@@ -165,16 +167,18 @@ public final class MathTransformFactoryTest {
         ///////////////////////////////////////
         MathTransform transform;
         ParameterValueGroup params;
+        MathTransform.Builder builder;
 
         // EPSG example (p. 26)
-        params = mtFactory.getDefaultParameters("Mercator_1SP");
+        builder = mtFactory.builder("Mercator_1SP");
+        params = builder.parameters();
         params.parameter("semi_major")      .setValue(6377397.155);
         params.parameter("semi_minor")      .setValue(6356078.963);
         params.parameter("central_meridian").setValue(    110.000);
         params.parameter("scale_factor")    .setValue(      0.997);
         params.parameter("false_easting")   .setValue(3900000.0  );
         params.parameter("false_northing")  .setValue( 900000.0  );
-        transform = mtFactory.createParameterizedTransform(params);
+        transform = builder.create();
         doTransform(new DirectPosition2D(120.0, -3.0),
                     new DirectPosition2D(5009726.58, 569150.82), transform);
 
@@ -185,7 +189,7 @@ public final class MathTransformFactoryTest {
         params.parameter("scale_factor")    .setValue(   1.0);
         params.parameter("false_easting")   .setValue(   0.0);
         params.parameter("false_northing")  .setValue(   0.0);
-        transform = mtFactory.createParameterizedTransform(params);
+        transform = builder.create();
         doTransform(new DirectPosition2D(-75.0, 35.0),
                     new DirectPosition2D(1.8325957, 0.6528366), transform);
 
@@ -196,7 +200,7 @@ public final class MathTransformFactoryTest {
         params.parameter("scale_factor")    .setValue(      1.0);
         params.parameter("false_easting")   .setValue(      0.0);
         params.parameter("false_northing")  .setValue(      0.0);
-        transform = mtFactory.createParameterizedTransform(params);
+        transform = builder.create();
         doTransform(new DirectPosition2D(-123.1, 49.2166666666),
                     new DirectPosition2D(-13688089.02443480, 6304639.84599441), transform);
 
@@ -209,7 +213,7 @@ public final class MathTransformFactoryTest {
         params.parameter("scale_factor")      .setValue(      1.0);
         params.parameter("false_easting")     .setValue(      0.0);
         params.parameter("false_northing")    .setValue(      0.0);
-        transform = mtFactory.createParameterizedTransform(params);
+        transform = builder.create();
 //      printTransform(transform);
 //      doTransform(new DirectPosition2D(5.0, 26.996561536844165),
 //                  new DirectPosition2D(173029.94823812644, 2448819.342941506), transform);
@@ -219,26 +223,28 @@ public final class MathTransformFactoryTest {
         // Mercator_2SP tests                //
         ///////////////////////////////////////
         // EPSG p25. Note FE and FN are wrong in guide 7. Correct in epsg database v6.3.
-        params = mtFactory.getDefaultParameters("Mercator_2SP");
+        builder = mtFactory.builder("Mercator_2SP");
+        params = builder.parameters();
         params.parameter("semi_major")         .setValue(6378245.000);
         params.parameter("semi_minor")         .setValue(6356863.019);
         params.parameter("central_meridian")   .setValue(     51.0);
         params.parameter("standard_parallel_1").setValue(     42.0);
         params.parameter("false_easting")      .setValue(      0.0);
         params.parameter("false_northing")     .setValue(      0.0);
-        transform = mtFactory.createParameterizedTransform(params);
+        transform = builder.create();
         doTransform(new DirectPosition2D(53.0, 53.0),
                     new DirectPosition2D(165704.29, 5171848.07), transform);
 
         // A spherical case (me)
-        params = mtFactory.getDefaultParameters("Mercator_2SP");
+        builder = mtFactory.builder("Mercator_2SP");
+        params = builder.parameters();
         params.parameter("semi_major")         .setValue( 6370997.0);
         params.parameter("semi_minor")         .setValue( 6370997.0);
         params.parameter("central_meridian")   .setValue(     180.0);
         params.parameter("standard_parallel_1").setValue(      60.0);
         params.parameter("false_easting")      .setValue( -500000.0);
         params.parameter("false_northing")     .setValue(-1000000.0);
-        transform = mtFactory.createParameterizedTransform(params);
+        transform = builder.create();
 //      printTransform(transform);
 //      TODO: point too far from central meridian.
 //      doTransform(new DirectPosition2D(-123.1, 49.2166666666),
@@ -255,18 +261,21 @@ public final class MathTransformFactoryTest {
     public void testObliqueMercator() throws FactoryException, TransformException {
         MathTransform transform;
         ParameterValueGroup params;
+        MathTransform.Builder builder;
 
-        params = mtFactory.getDefaultParameters("Oblique Mercator");
+        builder = mtFactory.builder("Oblique Mercator");
+        params = builder.parameters();
         setObliqueMercatorParameter(params);
-        transform = mtFactory.createParameterizedTransform(params);
+        transform = builder.create();
         ParameterDescriptorGroup descriptor = ((AbstractMathTransform) transform).getParameterDescriptors();
         assertTrue (IdentifiedObjects.isHeuristicMatchForName(descriptor, "Oblique Mercator"));
         assertFalse(IdentifiedObjects.isHeuristicMatchForName(descriptor, "Hotine Oblique Mercator"));
         final MathTransform standard = transform;
 
-        params = mtFactory.getDefaultParameters("Hotine Oblique Mercator");
+        builder = mtFactory.builder("Hotine Oblique Mercator");
+        params = builder.parameters();
         setObliqueMercatorParameter(params);
-        transform = mtFactory.createParameterizedTransform(params);
+        transform = builder.create();
         descriptor = ((AbstractMathTransform) transform).getParameterDescriptors();
         assertFalse(IdentifiedObjects.isHeuristicMatchForName(descriptor, "Oblique Mercator"));
         assertTrue (IdentifiedObjects.isHeuristicMatchForName(descriptor, "Hotine Oblique Mercator"));
@@ -302,9 +311,11 @@ public final class MathTransformFactoryTest {
         ///////////////////////////////////////
         MathTransform transform;
         ParameterValueGroup params;
+        MathTransform.Builder builder;
 
         // EPGS p. 18
-        params = mtFactory.getDefaultParameters("Lambert_Conformal_Conic_1SP");
+        builder = mtFactory.builder("Lambert_Conformal_Conic_1SP");
+        params = builder.parameters();
         params.parameter("semi_major")        .setValue(6378206.4);
         params.parameter("semi_minor")        .setValue(6356583.8);
         params.parameter("central_meridian")  .setValue(    -77.0);
@@ -312,7 +323,7 @@ public final class MathTransformFactoryTest {
         params.parameter("scale_factor")      .setValue(      1.0);
         params.parameter("false_easting")     .setValue( 250000.0);
         params.parameter("false_northing")    .setValue( 150000.0);
-        transform = mtFactory.createParameterizedTransform(params);
+        transform = builder.create();
         doTransform(new DirectPosition2D(-76.943683333, 17.932166666),
                     new DirectPosition2D(255966.58, 142493.51), transform);
 
@@ -324,7 +335,7 @@ public final class MathTransformFactoryTest {
         params.parameter("scale_factor")      .setValue(      1.0);
         params.parameter("false_easting")     .setValue( 500000.0);
         params.parameter("false_northing")    .setValue(1000000.0);
-        transform = mtFactory.createParameterizedTransform(params);
+        transform = builder.create();
         doTransform(new DirectPosition2D(151.283333333, -33.916666666),
                     new DirectPosition2D(4232963.1816, 2287639.9866), transform);
 
@@ -333,7 +344,8 @@ public final class MathTransformFactoryTest {
         // Lambert_Conformal_Conic_2SP tests //
         ///////////////////////////////////////
         // EPSG p. 17
-        params = mtFactory.getDefaultParameters("Lambert_Conformal_Conic_2SP");
+        builder = mtFactory.builder("Lambert_Conformal_Conic_2SP");
+        params = builder.parameters();
         params.parameter("semi_major")         .setValue(6378206.4);
         params.parameter("semi_minor")         .setValue(6356583.8);
         params.parameter("central_meridian")   .setValue(    -99.0);
@@ -342,7 +354,7 @@ public final class MathTransformFactoryTest {
         params.parameter("standard_parallel_2").setValue(     30.283333333);
         params.parameter("false_easting")      .setValue( 609601.218);        //metres
         params.parameter("false_northing")     .setValue(      0.0);
-        transform = mtFactory.createParameterizedTransform(params);
+        transform = builder.create();
         doTransform(new DirectPosition2D(-96.0, 28.5),
                     new DirectPosition2D(903277.7965, 77650.94219), transform);
 
@@ -355,7 +367,7 @@ public final class MathTransformFactoryTest {
         params.parameter("standard_parallel_2").setValue(     60.0);
         params.parameter("false_easting")      .setValue(      0.0);
         params.parameter("false_northing")     .setValue(      0.0);
-        transform = mtFactory.createParameterizedTransform(params);
+        transform = builder.create();
 //      printTransform(transform);
 //      TODO: test point below is too far from central meridian.
 //      doTransform(new DirectPosition2D(139.733333333, 35.6833333333),
@@ -370,7 +382,7 @@ public final class MathTransformFactoryTest {
         params.parameter("standard_parallel_2").setValue(    -40.0);
         params.parameter("false_easting")      .setValue( 100000.0);
         params.parameter("false_northing")     .setValue(      0.0);
-        transform = mtFactory.createParameterizedTransform(params);
+        transform = builder.create();
         doTransform(new DirectPosition2D(18.45, -33.9166666666),
                     new DirectPosition2D(1803288.3324, 1616657.7846), transform);
 
@@ -379,7 +391,8 @@ public final class MathTransformFactoryTest {
         // Lambert_Conformal_Conic_2SP_Belgium test  //
         ///////////////////////////////////////////////
         // EPSG p. 19
-        params = mtFactory.getDefaultParameters("Lambert_Conformal_Conic_2SP_Belgium");
+        builder = mtFactory.builder("Lambert_Conformal_Conic_2SP_Belgium");
+        params = builder.parameters();
         params.parameter("semi_major")         .setValue(6378388.0);
         params.parameter("semi_minor")         .setValue(6356911.946);
         params.parameter("central_meridian")   .setValue(      4.356939722);
@@ -388,7 +401,7 @@ public final class MathTransformFactoryTest {
         params.parameter("standard_parallel_2").setValue(     51.166666666);
         params.parameter("false_easting")      .setValue( 150000.01);
         params.parameter("false_northing")     .setValue(5400088.44);
-        transform = mtFactory.createParameterizedTransform(params);
+        transform = builder.create();
         doTransform(new DirectPosition2D(5.807370277, 50.6795725),
                     new DirectPosition2D(251763.20, 153034.13), transform);
     }
@@ -407,8 +420,10 @@ public final class MathTransformFactoryTest {
         ///////////////////////////////////////
         MathTransform transform;
         ParameterValueGroup params;
+        MathTransform.Builder builder;
 
-        params = mtFactory.getDefaultParameters("Krovak");
+        builder = mtFactory.builder("Krovak");
+        params = builder.parameters();
         params.parameter("semi_major")                .setValue(6377397.155);
         params.parameter("semi_minor")                .setValue(6356078.963);
         params.parameter("latitude_of_center")        .setValue(49.5);
@@ -416,7 +431,7 @@ public final class MathTransformFactoryTest {
         params.parameter("azimuth")                   .setValue(30.28813972222222);
         params.parameter("pseudo_standard_parallel_1").setValue(78.5);
         params.parameter("scale_factor")              .setValue(0.9999);
-        transform = mtFactory.createParameterizedTransform(params);
+        transform = builder.create();
         doTransform(new DirectPosition2D(14.370530947, 50.071153856),
                     new DirectPosition2D(-746742.6075, -1044389.4516), transform);
     }
@@ -435,11 +450,13 @@ public final class MathTransformFactoryTest {
         ///////////////////////////////////////
         MathTransform transform;
         ParameterValueGroup params;
+        MathTransform.Builder builder;
 
         //
         // http://jira.codehaus.org/browse/GEOS-1037
         //
-        params = mtFactory.getDefaultParameters("Polar_Stereographic");
+        builder = mtFactory.builder("Polar_Stereographic");
+        params = builder.parameters();
         params.parameter("semi_major")         .setValue(6378137.0);
         params.parameter("semi_minor")         .setValue(6356752.31424518);
         params.parameter("latitude_of_origin") .setValue(-90);
@@ -447,7 +464,7 @@ public final class MathTransformFactoryTest {
         params.parameter("scale_factor")       .setValue(0.97276901289);
         params.parameter("false_easting")      .setValue(0);
         params.parameter("false_northing")     .setValue(0);
-        transform = mtFactory.createParameterizedTransform(params);
+        transform = builder.create();
         final double[] tolerance = new double[] {0.1, 0.1};
         doTransform(new DirectPosition2D(10, -85),
                     new DirectPosition2D(94393.99, 535334.89), transform);

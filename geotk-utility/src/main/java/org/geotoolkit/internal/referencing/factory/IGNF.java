@@ -175,7 +175,8 @@ public final class IGNF extends GeodeticAuthorityFactory implements CRSAuthority
                 CommonCRS.ETRS89.ellipsoid(), CommonCRS.ETRS89.primeMeridian());
 
         // Creates the projection.
-        final ParameterValueGroup param = factories.getMathTransformFactory().getDefaultParameters((String) value);
+        final var builder = factories.getMathTransformFactory().builder((String) value);
+        final ParameterValueGroup param = builder.parameters();
         param.parameter("semi_major").setValue(6378137);
         param.parameter("semi_minor").setValue(6378137);
         final Identifier[] identifiers = {

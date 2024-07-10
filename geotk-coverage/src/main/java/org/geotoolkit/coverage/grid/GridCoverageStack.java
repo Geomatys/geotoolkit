@@ -68,8 +68,8 @@ import org.opengis.coordinate.MismatchedCoordinateMetadataException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.TemporalCRS;
 import org.apache.sis.coverage.grid.PixelInCell;
+import org.apache.sis.referencing.operation.DefaultCoordinateOperationFactory;
 import org.opengis.referencing.operation.CoordinateOperation;
-import org.opengis.referencing.operation.CoordinateOperationFactory;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.OperationNotFoundException;
 import org.opengis.referencing.operation.TransformException;
@@ -957,15 +957,15 @@ public class GridCoverageStack extends org.geotoolkit.coverage.grid.GridCoverage
             {
                 // A transformation is required. Reuse the previous operation if possible.
                 if (operation==null || !equalsIgnoreMetadata(sourceCRS, operation.getSourceCRS())) {
-                    CoordinateOperationFactory factory = CRS.getCoordinateOperationFactory();
+                    var factory = DefaultCoordinateOperationFactory.provider();
                     try {
                         try {
                             // Try a transformation to the full target CRS including z dimension.
-                            operation = factory.createOperation(sourceCRS, crs);
+                            operation = factory.createOperation(sourceCRS, crs, null);
                         } catch (OperationNotFoundException e) {
                             // Try a transformation to the target CRS without z dimension.
                             assert !equalsIgnoreMetadata(reducedCRS, crs) : reducedCRS;
-                            operation = factory.createOperation(sourceCRS, reducedCRS);
+                            operation = factory.createOperation(sourceCRS, reducedCRS, null);
                         }
                     } catch (FactoryException e) {
                         throw new MismatchedCoordinateMetadataException(Errors.format(errorCode, e));

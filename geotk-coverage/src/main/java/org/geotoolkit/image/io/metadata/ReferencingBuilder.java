@@ -342,7 +342,8 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
         if (isNonNull("getBaseToCRS", "method", method)) {
             final Map<String,?>       properties = getName(cvAccessor);
             final MathTransformFactory   factory = factories().getMathTransformFactory();
-            final ParameterValueGroup parameters = factory.getDefaultParameters(method);
+            final MathTransform.Builder  builder = factory.builder(method);
+            final ParameterValueGroup parameters = builder.parameters();
             try {
                 final MetadataNodeParser paramAccessor = createNodeReader(cvAccessor, "Parameters", "ParameterValue");
                 final int numParam = paramAccessor.childCount();
@@ -363,8 +364,10 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
                 // example because all parameters have their default value.
                 accessor.warning(null, getClass(), "getConversionFromBase", e);
             }
-            final MathTransform tr = factory.createBaseToDerived(baseCRS, parameters, derivedCS);
-            return new DefaultConversion(properties, factory.getLastMethodUsed(), tr, parameters);
+            builder.setSourceAxes(baseCRS.getCoordinateSystem(), ReferencingUtilities.getEllipsoid(baseCRS));
+            builder.setTargetAxes(derivedCS, null);
+            final MathTransform tr = builder.create();
+            return new DefaultConversion(properties, builder.getMethod().orElseThrow(), tr, parameters);
         }
         return getDefault("getBaseToCRS", cvAccessor, Conversion.class);
     }

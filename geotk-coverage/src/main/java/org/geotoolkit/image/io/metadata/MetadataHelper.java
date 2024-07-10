@@ -33,7 +33,6 @@ import org.opengis.geometry.DirectPosition;
 import org.opengis.util.FactoryException;
 import org.opengis.util.InternationalString;
 import org.opengis.coverage.grid.RectifiedGrid;
-import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform;
@@ -639,9 +638,9 @@ public class MetadataHelper implements Localized {
                             if (type != null && !type.equals(TransferFunctionType.LINEAR)) {
                                 if (type.equals(TransferFunctionType.EXPONENTIAL)) {
                                     if (exponential == null) {
-                                        final ParameterValueGroup param = mtFactory.getDefaultParameters("Exponential");
-                                        param.parameter("base").setValue(10d); // Must be a 'double'
-                                        exponential = mtFactory.createParameterizedTransform(param);
+                                        final var builder = mtFactory.builder("Exponential");
+                                        builder.parameters().parameter("base").setValue(10d); // Must be a 'double'
+                                        exponential = builder.create();
                                     }
                                     tr = mtFactory.createConcatenatedTransform(tr, exponential);
                                 } else {

@@ -23,7 +23,6 @@ import java.text.ParseException;
 
 import org.opengis.util.FactoryException;
 import org.opengis.geometry.DirectPosition;
-import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.TransformException;
@@ -42,9 +41,6 @@ import static org.junit.Assert.*;
  * Tests the {@link EarthGravitationalModel} class.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.00
- *
- * @since 2.3
  */
 public final class EarthGravitationalModelTest extends TransformTestCase {
     /**
@@ -108,17 +104,12 @@ public final class EarthGravitationalModelTest extends TransformTestCase {
     @Test
     public void testMathTransform() throws FactoryException, TransformException {
         final MathTransformFactory mtFactory = DefaultMathTransformFactory.provider();
-        final ParameterValueGroup p = mtFactory.getDefaultParameters("Ellipsoid_To_Geoid");
-        final MathTransform mt = mtFactory.createParameterizedTransform(p);
+        final MathTransform mt = mtFactory.builder("Ellipsoid_To_Geoid").create();
         DirectPosition pos = new GeneralDirectPosition(new double[] {45, 45, 1000});
         pos = mt.transform(pos, pos);
         assertEquals(  45.000, pos.getCoordinate(0), 0.001);
         assertEquals(  45.000, pos.getCoordinate(1), 0.001);
         assertEquals(1001.515, pos.getCoordinate(2), 0.001);
-        /*
-         * Fetch again the model. It should be cached.
-         */
-        assertSame(mt, mtFactory.createParameterizedTransform(p));
     }
 
     @Test

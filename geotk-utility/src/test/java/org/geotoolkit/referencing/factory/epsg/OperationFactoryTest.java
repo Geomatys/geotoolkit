@@ -44,7 +44,7 @@ public final class OperationFactoryTest extends EpsgFactoryTestBase {
     /**
      * The operation factory being tested.
      */
-    private final CoordinateOperationFactory opFactory;
+    private final DefaultCoordinateOperationFactory opFactory;
 
     /**
      * Creates a test suite.
@@ -62,18 +62,16 @@ public final class OperationFactoryTest extends EpsgFactoryTestBase {
     @Test
     @Ignore("CachingCoordinateOperationFactory is (for now) hidden by SIS factory.")
     public final void testGeographicBacked() throws FactoryException {
-        assumeNotNull(factory);
-
         final CoordinateReferenceSystem  sourceCRS;
         final CoordinateReferenceSystem  targetCRS;
         final CoordinateOperation        operation;
         sourceCRS = factory.createCoordinateReferenceSystem("4230");
         targetCRS = factory.createCoordinateReferenceSystem("4326");
-        operation = opFactory.createOperation(sourceCRS, targetCRS);
+        operation = opFactory.createOperation(sourceCRS, targetCRS, null);
 
         assertSame(sourceCRS, operation.getSourceCRS());
         assertSame(targetCRS, operation.getTargetCRS());
-        assertSame(operation, opFactory.createOperation(sourceCRS, targetCRS));
+        assertSame(operation, opFactory.createOperation(sourceCRS, targetCRS, null));
         assertEquals("1133", getIdentifier(operation)); // See comment in DefaultDataSourceTest.
         assertEquals(10.0, org.apache.sis.referencing.operation.AbstractCoordinateOperation.castOrCopy(operation).getLinearAccuracy(), 1E-6);
         assertTrue(operation instanceof Transformation);
@@ -88,14 +86,12 @@ public final class OperationFactoryTest extends EpsgFactoryTestBase {
      */
     @Test
     public final void testGeographicUnbacked() throws FactoryException {
-        assumeNotNull(factory);
-
         final CoordinateReferenceSystem  sourceCRS;
         final CoordinateReferenceSystem  targetCRS;
         final CoordinateOperation        operation;
         sourceCRS  = factory.createCoordinateReferenceSystem("4326");
         targetCRS  = factory.createCoordinateReferenceSystem("2995");
-        operation  = opFactory.createOperation(sourceCRS, targetCRS);
+        operation  = opFactory.createOperation(sourceCRS, targetCRS, null);
         assertTrue("This test needs an operation not backed by the EPSG factory.",
                 operation.getIdentifiers().isEmpty());
         /*
@@ -122,18 +118,16 @@ public final class OperationFactoryTest extends EpsgFactoryTestBase {
     @Test
     @Ignore
     public final void testProjected() throws FactoryException {
-        assumeNotNull(factory);
-
         final CoordinateReferenceSystem  sourceCRS;
         final CoordinateReferenceSystem  targetCRS;
         final CoordinateOperation        operation;
         sourceCRS = factory.createCoordinateReferenceSystem("27572");
         targetCRS = factory.createCoordinateReferenceSystem("4326");
-        operation = opFactory.createOperation(sourceCRS, targetCRS);
+        operation = opFactory.createOperation(sourceCRS, targetCRS, null);
 
         assertSame(sourceCRS, operation.getSourceCRS());
         assertSame(targetCRS, operation.getTargetCRS());
-        assertSame(operation, opFactory.createOperation(sourceCRS, targetCRS));
+        assertSame(operation, opFactory.createOperation(sourceCRS, targetCRS, null));
 
         String wkt = operation.getMathTransform().toString();
         assertMultilinesEquals(decodeQuotes(
@@ -205,7 +199,7 @@ public final class OperationFactoryTest extends EpsgFactoryTestBase {
             final String expectedOp = Integer.toString(codes[i++]);
             final CoordinateReferenceSystem  sourceCRS = factory.createCoordinateReferenceSystem(sourceCode);
             final CoordinateReferenceSystem  targetCRS = factory.createCoordinateReferenceSystem(targetCode);
-            final CoordinateOperation        operation = opFactory.createOperation(sourceCRS, targetCRS);
+            final CoordinateOperation        operation = opFactory.createOperation(sourceCRS, targetCRS, null);
             final Transformation            datumShift = getTransformation(operation);
             assertNotNull(expectedOp, datumShift);
             assertEquals(expectedOp, getIdentifier(datumShift));

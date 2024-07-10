@@ -29,7 +29,6 @@ import org.apache.sis.referencing.operation.DefaultCoordinateOperationFactory;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.CoordinateOperation;
-import org.opengis.referencing.operation.CoordinateOperationFactory;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.OperationNotFoundException;
 import org.opengis.referencing.operation.TransformException;
@@ -116,8 +115,8 @@ public class JTSPoint extends AbstractJTSGeometry implements Point {
             if ((myCRS != null) && (pointCRS != null) && (!myCRS.equals(pointCRS))) {
                 // Do the conversion.
                 try {
-                    CoordinateOperationFactory cof = DefaultCoordinateOperationFactory.provider();
-                    CoordinateOperation coordOp = cof.createOperation(pointCRS, myCRS);
+                    var cof = DefaultCoordinateOperationFactory.provider();
+                    CoordinateOperation coordOp = cof.createOperation(pointCRS, myCRS, null);
                     MathTransform mt = coordOp.getMathTransform();
                     mt.transform(position, copy);
                 }

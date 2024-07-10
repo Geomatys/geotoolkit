@@ -82,7 +82,6 @@ import org.apache.sis.referencing.operation.provider.LambertAzimuthalEqualArea;
 import org.geotoolkit.referencing.operation.provider.NewZealandMapGrid;
 import org.apache.sis.referencing.operation.provider.Orthographic;
 import org.apache.sis.referencing.factory.GeodeticObjectFactory;
-import org.apache.sis.referencing.operation.DefaultCoordinateOperationFactory;
 import org.apache.sis.referencing.operation.transform.DefaultMathTransformFactory;
 import org.geotoolkit.referencing.operation.provider.Stereographic;
 import org.geotoolkit.resources.Vocabulary;
@@ -101,6 +100,7 @@ import org.opengis.referencing.datum.Ellipsoid;
 import org.opengis.referencing.datum.GeodeticDatum;
 import org.opengis.referencing.datum.PrimeMeridian;
 import org.opengis.referencing.operation.Conversion;
+import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.OperationMethod;
 import org.opengis.util.FactoryException;
@@ -436,11 +436,11 @@ final class GeoTiffCRSReader {
             // with the values found
             // inside the geokeys list.
             // //
-            parameters = createUserDefinedProjectionParameter(projectionName,metadata);
-            if (parameters == null) {
+            var builder = createUserDefinedProjectionParameter(projectionName,metadata);
+            if (builder == null) {
                 throw new IOException("Projection is not supported.");
             }
-
+            parameters = builder.parameters();
             projection = new DefiningConversion(projectionName, parameters);
 
         } else {
@@ -646,19 +646,11 @@ final class GeoTiffCRSReader {
      *
      * @param name indicates the name for the projection.
      * @param metadata to use for building this {@link ParameterValueGroup}.
-     * @return a {@link ParameterValueGroup} that can be used to trigger this
-     *         projection.
-     * @throws IOException
-     * @throws FactoryException
      */
-    private ParameterValueGroup createUserDefinedProjectionParameter(
-            final String name, final ValueMap metadata)
-            throws IOException, FactoryException {
-        // //
-        //
+    private MathTransform.Builder createUserDefinedProjectionParameter(String name, final ValueMap metadata)
+            throws IOException, FactoryException
+    {
         // Trying to get the name for the coordinate transformation involved.
-        //
-        // ///
         final String coordTrans = metadata.getAsString(ProjCoordTransGeoKey);
 
         // throw descriptive exception if ProjCoordTransGeoKey not defined
@@ -667,93 +659,63 @@ final class GeoTiffCRSReader {
             throw new IOException(
                     "User defined projections must specify coordinate transformation code in ProjCoordTransGeoKey");
         }
-
-        // getting math transform factory
-        return setParametersForProjection(name, coordTrans, metadata);
-    }
-
-    /**
-     * Set the projection parameters basing its decision on the projection name.
-     * I found a complete list of projections on the geotiff website at address
-     * http://www.remotesensing.org/geotiff/proj_list.
-     *
-     * I had no time to implement support for all of them therefore you will not
-     * find all of them. If you want go ahead and add support for the missing
-     * ones. I have tested this code against some geotiff files you can find on
-     * the geotiff website under the ftp sample directory but I can say that
-     * they are a real mess! I am respecting the specification strictly while
-     * many of those fields do not! I could make this method trickier and use
-     * workarounds in order to be less strict but I will not do this, since I
-     * believe it is may lead us just on a very dangerous path.
-     *
-     *
-     * @param name
-     * @param metadata to use fo building this {@link ParameterValueGroup}.
-     * @param coordTrans
-     *            a {@link ParameterValueGroup} that can be used to trigger this
-     *            projection.
-     *
-     * @return
-     * @throws GeoTiffException
-     */
-    private ParameterValueGroup setParametersForProjection(String name,
-            final String coordTransCode,
-            final ValueMap metadata) throws IOException {
-        ParameterValueGroup parameters = null;
+        MathTransform.Builder builder = null;
+        ParameterValueGroup parameters;
         try {
             int code = 0;
-            if (coordTransCode != null) {
-                code = Integer.parseInt(coordTransCode);
+            if (coordTrans != null) {
+                code = Integer.parseInt(coordTrans);
             }
             if (name == null) {
                 name = "unnamed";
             }
-
-            /**
+            /*
              * Transverse Mercator
              */
             if (name.equalsIgnoreCase("transverse_mercator")
-                    || code == CT_TransverseMercator) {
-                parameters = mtFactory.getDefaultParameters(code(new TransverseMercator().getParameters()));    // TODO: avoid creation of temporary object.
+                    || code == CT_TransverseMercator)
+            {
+                builder = mtFactory.builder(code(new TransverseMercator().getParameters()));    // TODO: avoid creation of temporary object.
+                parameters = builder.parameters();
                 parameters.parameter(code(TransverseMercator.LONGITUDE_OF_ORIGIN)).setValue(getOriginLong(metadata));
                 parameters.parameter(code(TransverseMercator.LATITUDE_OF_ORIGIN)).setValue(getOriginLat(metadata));
                 parameters.parameter(code(TransverseMercator.SCALE_FACTOR)).setValue(metadata.getAsDouble(ProjScaleAtNatOriginGeoKey));
                 parameters.parameter(code(TransverseMercator.FALSE_EASTING)).setValue(getFalseEasting(metadata));
                 parameters.parameter(code(TransverseMercator.FALSE_NORTHING)).setValue(getFalseNorthing(metadata));
-                return parameters;
+                return builder;
             }
-
-            /**
+            /*
              * Equidistant Cylindrical - Plate Caree - Equirectangular
              */
             if (name.equalsIgnoreCase("Equidistant_Cylindrical")
                     || name.equalsIgnoreCase("Plate_Carree")
                     || name.equalsIgnoreCase("Equidistant_Cylindrical")
                     || code == CT_Equirectangular) {
-                parameters = mtFactory.getDefaultParameters("Equirectangular");
+                builder = mtFactory.builder("Equirectangular");
+                parameters = builder.parameters();
                 parameters.parameter(code(Equirectangular.STANDARD_PARALLEL)).setValue(getOriginLat(metadata));
                 parameters.parameter(code(Equirectangular.LONGITUDE_OF_ORIGIN)).setValue(getOriginLong(metadata));
                 parameters.parameter(code(Equirectangular.FALSE_EASTING)).setValue(getFalseEasting(metadata));
                 parameters.parameter(code(Equirectangular.FALSE_NORTHING)).setValue(getFalseNorthing(metadata));
-                return parameters;
+                return builder;
             }
-            /**
+            /*
              * Mercator_1SP
              * Mercator_2SP
              */
             if (name.equalsIgnoreCase("mercator_1SP")
                     || name.equalsIgnoreCase("Mercator_2SP")
-                    || code == CT_Mercator) {
-
+                    || code == CT_Mercator)
+            {
                 final double standard_parallel_1 = metadata.getAsDouble(ProjStdParallel1GeoKey);
                 boolean isMercator2SP = false;
                 if (!Double.isNaN(standard_parallel_1)) {
-                    parameters = mtFactory.getDefaultParameters("Mercator_2SP");
+                    builder = mtFactory.builder("Mercator_2SP");
                     isMercator2SP = true;
                 } else {
-                    parameters = mtFactory.getDefaultParameters("Mercator_1SP");
+                    builder = mtFactory.builder("Mercator_1SP");
                 }
-
+                parameters = builder.parameters();
                 parameters.parameter(code(Mercator1SP.LONGITUDE_OF_ORIGIN)).setValue(getOriginLong(metadata));
                 parameters.parameter(code(Mercator1SP.LATITUDE_OF_ORIGIN)).setValue(getOriginLat(metadata));
                 parameters.parameter(code(Mercator2SP.FALSE_EASTING)).setValue(getFalseEasting(metadata));
@@ -763,78 +725,75 @@ final class GeoTiffCRSReader {
                 } else {
                     parameters.parameter(code(Mercator1SP.SCALE_FACTOR)).setValue(getScaleFactor(metadata));
                 }
-                return parameters;
+                return builder;
             }
-
-            /**
+            /*
              * Lambert_conformal_conic_1SP
              */
             if (name.equalsIgnoreCase("lambert_conformal_conic_1SP")
                     || code == CT_LambertConfConic_Helmert) {
-                parameters = mtFactory.getDefaultParameters("Lambert_Conformal_Conic_1SP");
+                builder = mtFactory.builder("Lambert_Conformal_Conic_1SP");
+                parameters = builder.parameters();
                 parameters.parameter(code(LambertConformal1SP.LONGITUDE_OF_ORIGIN)).setValue(getOriginLong(metadata));
                 parameters.parameter(code(LambertConformal1SP.LATITUDE_OF_ORIGIN)).setValue(getOriginLat(metadata));
                 parameters.parameter(code(LambertConformal1SP.SCALE_FACTOR)).setValue(metadata.getAsDouble(ProjScaleAtNatOriginGeoKey));
                 parameters.parameter(code(LambertConformal1SP.FALSE_EASTING)).setValue(getFalseEasting(metadata));
                 parameters.parameter(code(LambertConformal1SP.FALSE_NORTHING)).setValue(getFalseNorthing(metadata));
-                return parameters;
+                return builder;
             }
-
-            /**
+            /*
              * Lambert_conformal_conic_2SP
              */
             if (name.equalsIgnoreCase("lambert_conformal_conic_2SP")
                     || code == CT_LambertConfConic_2SP) {
-                parameters = mtFactory.getDefaultParameters("Lambert_Conformal_Conic_2SP");
+                builder = mtFactory.builder("Lambert_Conformal_Conic_2SP");
+                parameters = builder.parameters();
                 parameters.parameter(code(LambertConformal2SP.LONGITUDE_OF_FALSE_ORIGIN)).setValue(getOriginLong(metadata));
                 parameters.parameter(code(LambertConformal2SP.LATITUDE_OF_FALSE_ORIGIN)).setValue(getOriginLat(metadata));
                 parameters.parameter(code(LambertConformal2SP.STANDARD_PARALLEL_1)).setValue(metadata.getAsDouble(ProjStdParallel1GeoKey));
                 parameters.parameter(code(LambertConformal2SP.STANDARD_PARALLEL_2)).setValue(metadata.getAsDouble(ProjStdParallel2GeoKey));
                 parameters.parameter(code(LambertConformal2SP.FALSE_EASTING)).setValue(getFalseEasting(metadata));
                 parameters.parameter(code(LambertConformal2SP.FALSE_NORTHING)).setValue(getFalseNorthing(metadata));
-                return parameters;
+                return builder;
             }
-
-            /**
+            /*
              * Krovak
              */
             if (name.equalsIgnoreCase("Krovak")) {
-                parameters = mtFactory.getDefaultParameters(code(Krovak.PARAMETERS));
+                builder = mtFactory.builder(code(Krovak.PARAMETERS));
+                parameters = builder.parameters();
                 parameters.parameter(code(Krovak.LONGITUDE_OF_CENTRE)).setValue(getOriginLong(metadata));
                 parameters.parameter(code(Krovak.LATITUDE_OF_CENTRE)).setValue(getOriginLat(metadata));
                 parameters.parameter(code(Krovak.AZIMUTH)).setValue(metadata.getAsDouble(ProjStdParallel1GeoKey));
                 parameters.parameter(code(Krovak.PSEUDO_STANDARD_PARALLEL)).setValue(metadata.getAsDouble(ProjStdParallel2GeoKey));
                 parameters.parameter(code(Krovak.SCALE_FACTOR)).setValue(getFalseEasting(metadata));
-                return parameters;
+                return builder;
             }
-
-            /**
+            /*
              * STEREOGRAPHIC
              */
             if (name.equalsIgnoreCase("stereographic")
                     || code == CT_Stereographic) {
-                parameters = mtFactory.getDefaultParameters(code(Stereographic.PARAMETERS));
+                builder = mtFactory.builder(code(Stereographic.PARAMETERS));
+                parameters = builder.parameters();
                 parameters.parameter(code(Stereographic.CENTRAL_MERIDIAN)).setValue(this.getOriginLong(metadata));
                 parameters.parameter(code(Stereographic.LATITUDE_OF_ORIGIN)).setValue(this.getOriginLat(metadata));
                 parameters.parameter(code(Stereographic.SCALE_FACTOR)).setValue(metadata.getAsDouble(ProjScaleAtNatOriginGeoKey));
                 parameters.parameter(code(Stereographic.FALSE_EASTING)).setValue(getFalseEasting(metadata));
                 parameters.parameter(code(Stereographic.FALSE_NORTHING)).setValue(getFalseNorthing(metadata));
-                return parameters;
+                return builder;
             }
-
-            /**
+            /*
              * POLAR_STEREOGRAPHIC variant A B and C
              */
             if (code == CT_PolarStereographic) {
-
-                /**
+                /*
                  * They exist 3 kind of polar StereoGraphic projections,define the case
                  * relative to existing needed attributs
                  */
                 //-- set the mutual projection attributs
                 //-- all polar stereographic formulas share LONGITUDE_OF_ORIGIN
                 final double longitudeOfOrigin = metadata.getAsDouble(ProjStraightVertPoleLongGeoKey);
-
                 /*
                 * For polar Stereographic variant A only latitudeOfNaturalOrigin expected values are {-90; +90}.
                 * In some case, standard parallele is stipulate into latitudeOfNaturalOrigin tiff tag by error.
@@ -851,29 +810,21 @@ final class GeoTiffCRSReader {
                             + "Switch latitudeOfNaturalOrigin by Latitude of standard parallel to try building of Polar Stereographic Variant B or C.");
                     standardParallel = latitudeOfNaturalOrigin;
                 }
-
                 if (Double.isNaN(standardParallel)) {
                     //-- no standard parallele : PolarStereoGraphic VARIANT A
-                    final OperationMethod method = DefaultCoordinateOperationFactory.provider()
-                    .getOperationMethod("Polar Stereographic (variant A)");
-
+                    final OperationMethod method = DefaultMathTransformFactory.provider().getOperationMethod("Polar Stereographic (variant A)");
                     parameters = method.getParameters().createValue();
                     parameters.parameter(code(PolarStereographicA.LONGITUDE_OF_ORIGIN)).setValue(longitudeOfOrigin);
                     parameters.parameter(code(PolarStereographicA.LATITUDE_OF_ORIGIN)).setValue(latitudeOfNaturalOrigin);
                     parameters.parameter(code(PolarStereographicA.SCALE_FACTOR)).setValue(metadata.getAsDouble(ProjScaleAtNatOriginGeoKey));
                     parameters.parameter(code(PolarStereographicA.FALSE_EASTING)).setValue(metadata.getAsDouble(ProjFalseEastingGeoKey));
                     parameters.parameter(code(PolarStereographicA.FALSE_NORTHING)).setValue(metadata.getAsDouble(ProjFalseNorthingGeoKey));
-
                 } else {
-
                     //-- Variant B and C share STANDARD_PARALLEL
-
                     final double falseOriginEasting = metadata.getAsDouble(ProjFalseOriginEastingGeoKey);
                     if (Double.isNaN(falseOriginEasting)) {
                         //-- no false Origin Easting : PolarStereoGraphic VARIANT B
-                        final OperationMethod method = DefaultCoordinateOperationFactory.provider()
-                              .getOperationMethod("Polar Stereographic (variant B)");
-
+                        final OperationMethod method = DefaultMathTransformFactory.provider().getOperationMethod("Polar Stereographic (variant B)");
                         parameters = method.getParameters().createValue();
                         parameters.parameter(code(PolarStereographicB.STANDARD_PARALLEL)).setValue(standardParallel);
                         parameters.parameter(code(PolarStereographicB.LONGITUDE_OF_ORIGIN)).setValue(longitudeOfOrigin);
@@ -881,9 +832,7 @@ final class GeoTiffCRSReader {
                         parameters.parameter(code(PolarStereographicB.FALSE_NORTHING)).setValue(metadata.getAsDouble(ProjFalseNorthingGeoKey));
                     } else {
                         //-- PolarStereoGraphic VARIANT C
-                        final OperationMethod method = DefaultCoordinateOperationFactory.provider()
-                              .getOperationMethod("Polar Stereographic (variant C)");
-
+                        final OperationMethod method = DefaultMathTransformFactory.provider().getOperationMethod("Polar Stereographic (variant C)");
                         parameters = method.getParameters().createValue();
                         parameters.parameter(code(PolarStereographicB.STANDARD_PARALLEL)).setValue(standardParallel);
                         parameters.parameter(code(PolarStereographicB.LONGITUDE_OF_ORIGIN)).setValue(longitudeOfOrigin);
@@ -892,96 +841,95 @@ final class GeoTiffCRSReader {
                     }
                 }
             }
-
-            /**
+            /*
              * Oblique Stereographic
              */
             if (name.equalsIgnoreCase("oblique_stereographic")
-                    || code == CT_ObliqueStereographic) {
-                parameters = mtFactory.getDefaultParameters(code(new ObliqueStereographic().getParameters()));  // TODO: use a more efficient way.
+                    || code == CT_ObliqueStereographic)
+            {
+                builder = mtFactory.builder(code(new ObliqueStereographic().getParameters()));  // TODO: use a more efficient way.
+                parameters = builder.parameters();
                 parameters.parameter(code(ObliqueStereographic.LONGITUDE_OF_ORIGIN)).setValue(getOriginLong(metadata));
                 parameters.parameter(code(ObliqueStereographic.LATITUDE_OF_ORIGIN)).setValue(getOriginLat(metadata));
                 parameters.parameter(code(ObliqueStereographic.SCALE_FACTOR)).setValue(metadata.getAsDouble(ProjScaleAtNatOriginGeoKey));
                 parameters.parameter(code(ObliqueStereographic.FALSE_EASTING)).setValue(getFalseEasting(metadata));
                 parameters.parameter(code(ObliqueStereographic.FALSE_NORTHING)).setValue(getFalseNorthing(metadata));
-                return parameters;
+                return builder;
             }
-
-            /**
+            /*
              * OBLIQUE_MERCATOR.
              */
             if (name.equalsIgnoreCase("oblique_mercator")
                     || name.equalsIgnoreCase("hotine_oblique_mercator")
                     || code == CT_ObliqueMercator) {
-                parameters = mtFactory.getDefaultParameters(code(new ObliqueMercator().getParameters()));   // TODO: use a more efficient way.
+                builder = mtFactory.builder(code(new ObliqueMercator().getParameters()));   // TODO: use a more efficient way.
+                parameters = builder.parameters();
                 parameters.parameter(code(ObliqueMercator.SCALE_FACTOR)).setValue(getScaleFactor(metadata));
                 parameters.parameter(code(ObliqueMercator.AZIMUTH)).setValue(metadata.getAsDouble(ProjAzimuthAngleGeoKey));
                 parameters.parameter(code(ObliqueMercator.FALSE_EASTING)).setValue(getFalseEasting(metadata));
                 parameters.parameter(code(ObliqueMercator.FALSE_NORTHING)).setValue(getFalseNorthing(metadata));
                 parameters.parameter(code(ObliqueMercator.LONGITUDE_OF_CENTRE)).setValue(getOriginLong(metadata));
                 parameters.parameter(code(ObliqueMercator.LATITUDE_OF_CENTRE)).setValue(getOriginLat(metadata));
-                return parameters;
+                return builder;
             }
-
-            /**
+            /*
              * albers_Conic_Equal_Area
              */
             if (name.equalsIgnoreCase("albers_Conic_Equal_Area")
                     || code == CT_AlbersEqualArea) {
-                parameters = mtFactory.getDefaultParameters("Albers Equal Area");
+                builder = mtFactory.builder("Albers Equal Area");
+                parameters = builder.parameters();
                 parameters.parameter(code(AlbersEqualArea.STANDARD_PARALLEL_1)).setValue(metadata.getAsDouble(ProjStdParallel1GeoKey));
                 parameters.parameter(code(AlbersEqualArea.STANDARD_PARALLEL_2)).setValue(metadata.getAsDouble(ProjStdParallel2GeoKey));
                 parameters.parameter(code(AlbersEqualArea.LATITUDE_OF_FALSE_ORIGIN)).setValue(getOriginLat(metadata)); //TODO what is the correct match ?
                 parameters.parameter(code(AlbersEqualArea.LONGITUDE_OF_FALSE_ORIGIN)).setValue(getOriginLong(metadata)); //TODO what is the correct match ?
                 parameters.parameter(code(AlbersEqualArea.EASTING_AT_FALSE_ORIGIN)).setValue(getFalseEasting(metadata));
                 parameters.parameter(code(AlbersEqualArea.NORTHING_AT_FALSE_ORIGIN)).setValue(getFalseNorthing(metadata));
-                return parameters;
+                return builder;
             }
-
-            /**
+            /*
              * Orthographic
              */
             if (name.equalsIgnoreCase("Orthographic")
                     || code == CT_Orthographic) {
-                parameters = mtFactory.getDefaultParameters(code(new Orthographic().getParameters()));
+                builder = mtFactory.builder(code(new Orthographic().getParameters()));
+                parameters = builder.parameters();
                 parameters.parameter(code(Orthographic.LATITUDE_OF_ORIGIN)).setValue(getOriginLat(metadata));
                 parameters.parameter(code(Orthographic.LONGITUDE_OF_ORIGIN)).setValue(getOriginLong(metadata));
                 parameters.parameter(code(Orthographic.FALSE_EASTING)).setValue(getFalseEasting(metadata));
                 parameters.parameter(code(Orthographic.FALSE_NORTHING)).setValue(getFalseNorthing(metadata));
-                return parameters;
+                return builder;
             }
-
-            /**
+            /*
              * Lambert Azimuthal Equal Area
              */
             if (name.equalsIgnoreCase("Lambert_Azimuthal_Equal_Area")
                     || code == CT_LambertAzimEqualArea) {
-                parameters = mtFactory.getDefaultParameters(code(new LambertAzimuthalEqualArea().getParameters()));
+                builder = mtFactory.builder(code(new LambertAzimuthalEqualArea().getParameters()));
+                parameters = builder.parameters();
                 parameters.parameter(code(LambertAzimuthalEqualArea.LATITUDE_OF_ORIGIN)).setValue(getOriginLat(metadata));
                 parameters.parameter(code(LambertAzimuthalEqualArea.LONGITUDE_OF_ORIGIN)).setValue(getOriginLong(metadata));
                 parameters.parameter(code(LambertAzimuthalEqualArea.FALSE_EASTING)).setValue(getFalseEasting(metadata));
                 parameters.parameter(code(LambertAzimuthalEqualArea.FALSE_NORTHING)).setValue(getFalseNorthing(metadata));
-                return parameters;
+                return builder;
             }
-
-            /**
+            /*
              * New Zealand Map Grid
              */
             if (name.equalsIgnoreCase("New_Zealand_Map_Grid")
                     || code == CT_NewZealandMapGrid) {
-                parameters = mtFactory.getDefaultParameters(code(NewZealandMapGrid.PARAMETERS));
+                builder = mtFactory.builder(code(NewZealandMapGrid.PARAMETERS));
+                parameters = builder.parameters();
                 parameters.parameter(code(NewZealandMapGrid.LATITUDE_OF_ORIGIN)).setValue(this.getOriginLat(metadata));
                 parameters.parameter(code(NewZealandMapGrid.CENTRAL_MERIDIAN)).setValue(getOriginLong(metadata));
                 parameters.parameter(code(NewZealandMapGrid.FALSE_EASTING)).setValue(getFalseEasting(metadata));
                 parameters.parameter(code(NewZealandMapGrid.FALSE_NORTHING)).setValue(getFalseNorthing(metadata));
-                return parameters;
+                return builder;
             }
-
         } catch (FactoryException e) {
             throw new IOException(e.getLocalizedMessage(), e);
         }
-
-        return parameters;
+        return builder;
     }
 
     /**

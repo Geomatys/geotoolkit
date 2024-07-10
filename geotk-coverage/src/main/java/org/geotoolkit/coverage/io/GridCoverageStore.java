@@ -73,6 +73,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.logging.LogProducer;
 
 import static java.lang.Math.abs;
+import org.apache.sis.referencing.operation.DefaultCoordinateOperationFactory;
 import static org.geotoolkit.internal.InternalUtilities.adjustForRoundingError;
 
 
@@ -856,7 +857,7 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
             final CoordinateReferenceSystem sourceCRS,
             final CoordinateReferenceSystem targetCRS) throws FactoryException
     {
-        return CRS.getCoordinateOperationFactory().createOperation(sourceCRS, targetCRS);
+        return DefaultCoordinateOperationFactory.provider().createOperation(sourceCRS, targetCRS, null);
     }
 
     /**
