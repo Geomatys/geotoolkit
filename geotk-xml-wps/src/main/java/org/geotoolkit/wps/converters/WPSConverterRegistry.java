@@ -69,6 +69,7 @@ public class WPSConverterRegistry {
         register(ComplexToRendredImageConverter             .getInstance());
         register(ComplexToCoverageConverter                 .getInstance());
         register(ComplexToFileConverter                     .getInstance());
+        register(ComplexToPathConverter                     .getInstance());
 
         //ReferenceType -> Object Converters
         register(ReferenceToAffineTransformConverter        .getInstance());
@@ -77,6 +78,7 @@ public class WPSConverterRegistry {
         register(ReferenceToFeatureConverter                .getInstance());
         register(ReferenceToFeatureTypeConverter            .getInstance());
         register(ReferenceToFileConverter                   .getInstance());
+        register(ReferenceToPathConverter                   .getInstance());
         register(ReferenceToGeometryConverter               .getInstance());
         register(ReferenceToGridCoverage2DConverter         .getInstance());
         register(ReferenceToGridCoverageReaderConverter     .getInstance());
@@ -98,6 +100,7 @@ public class WPSConverterRegistry {
         register(RenderedImageToComplexConverter            .getInstance());
         register(CoverageToComplexConverter                 .getInstance());
         register(FileToComplexConverter                     .getInstance());
+        register(PathToComplexConverter                     .getInstance());
 
         //Object -> Reference converters
         register(CoverageToReferenceConverter               .getInstance());
@@ -111,6 +114,7 @@ public class WPSConverterRegistry {
         register(NumberToReferenceConverter                 .getInstance());
         register(BooleanToReferenceConverter                .getInstance());
         register(FileToReferenceConverter                   .getInstance());
+        register(PathToReferenceConverter                   .getInstance());
         register(GeometryArrayToReferenceConverter          .getInstance());
         register(StyledLayerDescriptorToReferenceConverter  .getInstance());
         register(UrlToReferenceConverter                    .getInstance());
