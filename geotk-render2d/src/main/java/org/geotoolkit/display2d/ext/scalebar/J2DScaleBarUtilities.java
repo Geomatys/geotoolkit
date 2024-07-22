@@ -175,7 +175,7 @@ public class J2DScaleBarUtilities {
             throw new NullPointerException("no unit for one axi.");
         }
         double logicalLength;
-        final Ellipsoid ellipsoid = ReferencingUtilities.getEllipsoidOfGeographicCRS(mapCRS);
+        final Ellipsoid ellipsoid = ReferencingUtilities.getEllipsoid(mapCRS);
         try {
 
             if (ellipsoid != null) {
