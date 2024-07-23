@@ -70,7 +70,7 @@
         <repository>
             <id>UCAR</id>
             <name>UCAR repository</name>
-            <url>${ucar.repository.url}</url>
+            <url>https://artifacts.unidata.ucar.edu/repository/unidata-releases</url>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
