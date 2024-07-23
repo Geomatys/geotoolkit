@@ -169,7 +169,6 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <website.encoding>UTF-8</website.encoding>
     <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss</maven.build.timestamp.format>
-    <ucar.repository.url>https://artifacts.unidata.ucar.edu/repository/unidata-releases</ucar.repository.url>
 
     <!-- associated projects dependencies -->
     <geoapi.version>4.0-M26</geoapi.version>
@@ -849,7 +848,7 @@
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
         <!-- TODO: remove version definition after Geotk/BOM upgrade. It will be inherited from parent. -->
-        <version>0.8.9</version>
+        <version>0.8.12</version>
         <executions>
           <execution>
             <goals>
