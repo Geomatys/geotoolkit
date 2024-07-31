@@ -17,6 +17,7 @@
 package org.geotoolkit.observation.query;
 
 import org.geotoolkit.observation.model.OMEntity;
+import org.opengis.filter.Filter;
 
 /**
  *
@@ -26,6 +27,10 @@ public class LocationQuery extends AbstractObservationQuery {
 
     public LocationQuery() {
         super(OMEntity.LOCATION);
+    }
+
+    public LocationQuery(Filter filter) {
+        super(OMEntity.LOCATION, filter);
     }
 
     @Override
