@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.temporal.object;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.text.DateFormat;
 import java.text.ParseException;
