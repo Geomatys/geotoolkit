@@ -13,4 +13,17 @@ build:
   stage: build
   script:
     - mvn clean install -s $MAVEN_SETTINGS
+    - mvn jacoco:report-aggregate
     - mvn javadoc:jar
+  artifacts:
+    paths:
+      - "target/"
+      - "*/target/"
+    # We want to get test reports even on failure, to quickly find problems
+    when: always
+    reports:
+      junit: "*/target/surefire-reports/TEST-*.xml"
+      # TODO: uncomment once our Gitlab instance support Jacoco instance (requires 17.3 with experimental flag)
+      # coverage_report:
+      #   coverage_format: jacoco
+      #   path: "target/site/jacoco-aggregate/jacoco.xml"
