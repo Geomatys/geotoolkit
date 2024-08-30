@@ -17,8 +17,8 @@
 package org.geotoolkit.gml;
 
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.sis.util.ArgumentChecks;
-import static org.geotoolkit.internal.sql.DefaultDataSource.LOGGER;
 
 /**
  *
@@ -38,6 +38,8 @@ public enum AxisResolve {
      * definition on proper URN source, but force longitude on ambiguous codes
      */
     AUTO;
+
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.gml");
 
     public static AxisResolve forName(final String name) {
         ArgumentChecks.ensureNonNull("Assessed name", name);

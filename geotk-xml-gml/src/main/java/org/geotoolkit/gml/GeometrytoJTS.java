@@ -20,14 +20,12 @@ package org.geotoolkit.gml;
 import org.locationtech.jts.geom.Geometry;
 import java.io.Reader;
 import java.io.StringReader;
-import java.util.logging.Level;
 
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
 
 import org.geotoolkit.gml.xml.*;
-import static org.geotoolkit.internal.sql.DefaultDataSource.LOGGER;
 
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -35,7 +33,6 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 /**
  *
  * @author Johann sorel (Geomatys)
- * @module
  */
 public class GeometrytoJTS {
 
@@ -44,11 +41,6 @@ public class GeometrytoJTS {
 
     /**
      * Unmarshall given GML String and transform it in a JTS geometry.
-     *
-     * @param gmlString
-     * @return
-     * @throws JAXBException
-     * @throws FactoryException
      */
     public static Geometry toJTS(String gmlString) throws JAXBException, FactoryException {
         final Reader reader = new StringReader(gmlString);
@@ -78,10 +70,6 @@ public class GeometrytoJTS {
      *
      * (Note : input forceMultiPolygon was set in non instinctive first position
      * to differentiate this method from a {@linkplain #toJTS(org.geotoolkit.gml.xml.AbstractGeometry, boolean) deprecated one})
-
-     * @param forceMultiPolygon
-     * @param gml
-     * @return
      */
     public static Geometry toJTS(final boolean forceMultiPolygon, final AbstractGeometry gml ) {
 
@@ -101,13 +89,6 @@ public class GeometrytoJTS {
     /**
      * Use this constructor if you really want to manage the AxisResolve strategy.
      * Else use {@linkplain
-     *
-     * @param gml
-     * @param axisResolve
-     * @param forceMultiPolygon
-     * @return
-     * @throws NoSuchAuthorityCodeException
-     * @throws FactoryException
      */
     public static Geometry toJTS(final AbstractGeometry gml, final AxisResolve axisResolve, boolean forceMultiPolygon)
             throws NoSuchAuthorityCodeException, FactoryException {
@@ -123,11 +104,6 @@ public class GeometrytoJTS {
      * Deprecated, use {@linkplain #toJTS(org.geotoolkit.gml.xml.AbstractGeometry, org.geotoolkit.gml.AxisResolve) toJTS}
      * insteed.
      *
-     * @param gml
-     * @param longitudeFirst
-     * @return
-     * @throws NoSuchAuthorityCodeException
-     * @throws FactoryException
      * @deprecated
      */
     @Deprecated
@@ -140,12 +116,6 @@ public class GeometrytoJTS {
      * Deprecated, use {@linkplain #toJTS(org.geotoolkit.gml.xml.AbstractGeometry, org.geotoolkit.gml.AxisResolve, boolean)  toJTS}
      * insteed.
      *
-     * @param gml
-     * @param longitudefirst
-     * @param forceMultiPolygon
-     * @return
-     * @throws NoSuchAuthorityCodeException
-     * @throws FactoryException
      * @deprecated
      */
     @Deprecated
@@ -153,5 +123,4 @@ public class GeometrytoJTS {
             throws NoSuchAuthorityCodeException, FactoryException {
         return toJTS(gml, (longitudefirst)? AxisResolve.RIGHT_HANDED: AxisResolve.STRICT,forceMultiPolygon);
     }
-
 }
