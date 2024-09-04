@@ -23,6 +23,7 @@ import static org.geotoolkit.observation.AbstractObservationStoreFactory.*;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.opengis.filter.BinaryComparisonOperator;
+import org.opengis.filter.BinarySpatialOperator;
 import org.opengis.filter.Literal;
 import org.opengis.filter.TemporalOperator;
 import org.opengis.filter.TemporalOperatorName;
@@ -249,8 +250,8 @@ public abstract class AbstractObservationFilterReader implements ObservationFilt
     }
 
     @Override
-    public void setBoundingBox(Envelope e) throws DataStoreException {
-        this.boundingbox = e;
+    public void setBoundingBox(BinarySpatialOperator box) throws DataStoreException {
+        this.boundingbox = OMUtils.getEnvelopeFromBBOXFilter(box);
     }
 
     @Override

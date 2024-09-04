@@ -26,6 +26,7 @@ import org.geotoolkit.observation.model.Offering;
 import org.geotoolkit.observation.query.AbstractObservationQuery;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.filter.BinaryComparisonOperator;
+import org.opengis.filter.BinarySpatialOperator;
 import org.opengis.filter.TemporalOperator;
 import org.opengis.geometry.Envelope;
 import org.opengis.observation.Observation;
@@ -85,7 +86,7 @@ public interface ObservationFilterReader {
      * Add a BBOX filter to the current request.
      * ( this method is implemented only if isBoundedObservation() return true)
      */
-    void setBoundingBox(Envelope e) throws DataStoreException;
+    void setBoundingBox(BinarySpatialOperator boxFilter) throws DataStoreException;
 
     /**
      * Set the offering for the current request
