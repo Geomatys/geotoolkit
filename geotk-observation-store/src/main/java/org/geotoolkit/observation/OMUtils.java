@@ -45,6 +45,7 @@ import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
 import org.apache.sis.metadata.iso.quality.DefaultQuantitativeAttributeAccuracy;
 import org.apache.sis.metadata.iso.quality.DefaultQuantitativeResult;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.temporal.TemporalObjects;
@@ -66,6 +67,9 @@ import org.geotoolkit.observation.model.Observation;
 import org.geotoolkit.observation.model.ObservationTransformUtils;
 import org.geotoolkit.temporal.object.ISODateParser;
 import org.locationtech.jts.geom.Geometry;
+import org.opengis.filter.BinarySpatialOperator;
+import org.opengis.filter.Expression;
+import org.opengis.filter.Literal;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.Metadata;
 import org.opengis.metadata.quality.Element;
@@ -478,19 +482,23 @@ public class OMUtils {
      * Return true if the samplingPoint entry is strictly inside the specified envelope.
      *
      * @param geometry A JTS geometry station.
-     * @param e An envelope (2D).
+     * @param bbox An envelope (2D).
      * @return True if the sampling point is strictly inside the specified envelope.
      * @throws org.apache.sis.storage.DataStoreException If a crs opertation fails.
      */
-    public static boolean samplingFeatureMatchEnvelope(final Geometry geometry, final Envelope e) throws DataStoreException {
+    public static boolean geometryMatchEnvelope(Geometry geometry, final Envelope bbox) throws DataStoreException {
 
         final Envelope regionOfInterest;
-        if (e.getCoordinateReferenceSystem() == null) {
-            regionOfInterest = e;
+        if (bbox.getCoordinateReferenceSystem() == null) {
+            regionOfInterest = bbox;
         } else {
             try {
                 final CoordinateReferenceSystem spCRS = JTS.findCoordinateReferenceSystem(geometry);
-                regionOfInterest = spCRS == null ? e : Envelopes.transform(e, spCRS);
+                final CoordinateReferenceSystem eCrs = bbox.getCoordinateReferenceSystem();
+                final CoordinateReferenceSystem commonCRS = CRS.suggestCommonTarget(null, spCRS, eCrs);
+
+                regionOfInterest = Envelopes.transform(bbox, commonCRS);
+                geometry = JTS.convertToCRS(geometry, commonCRS);
             } catch (TransformException | FactoryException ex) {
                 throw new DataStoreException(ex);
             }
@@ -499,7 +507,7 @@ public class OMUtils {
         final AbstractEnvelope intersectableRegionOfInterest = AbstractEnvelope.castOrCopy(regionOfInterest);
         return Geometries.wrap(geometry)
                 .map(GeometryWrapper::getEnvelope)
-                .map(intersectableRegionOfInterest::intersects)
+                .map( e -> intersectableRegionOfInterest.intersects(e, true))
                 .orElse(false);
     }
 
@@ -613,5 +621,31 @@ public class OMUtils {
             element.setResults(Arrays.asList(res));
         }
         return element;
+    }
+
+    /**
+     * Extract the envelope from a bbox spatial filter.
+     *
+     * @param box A BBOW spatial filter.
+     *
+     * @return An envelope.
+     * @throws DataStoreException if the secnd operand does not contains an
+     * envelope.
+     */
+    public static Envelope getEnvelopeFromBBOXFilter(BinarySpatialOperator box) throws DataStoreException {
+        final Envelope env;
+        Expression e2 = box.getOperand2();
+        if (e2 instanceof Envelope geoEnv) {
+            env = geoEnv;
+        } else if (e2 instanceof Literal lit) {
+            if (lit.getValue() instanceof Envelope geoEnv) {
+                env = geoEnv;
+            } else {
+                throw new DataStoreException("Unexpected bbox expression type for geometry");
+            }
+        } else {
+            throw new DataStoreException("Unexpected bbox expression type for geometry");
+        }
+        return env;
     }
 }

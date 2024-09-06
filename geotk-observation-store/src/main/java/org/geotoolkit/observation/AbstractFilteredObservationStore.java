@@ -28,7 +28,7 @@ import java.util.logging.Level;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Query;
 import static org.geotoolkit.observation.AbstractObservationStore.LOGGER;
-import static org.geotoolkit.observation.OMUtils.samplingFeatureMatchEnvelope;
+import static org.geotoolkit.observation.OMUtils.geometryMatchEnvelope;
 import org.geotoolkit.observation.model.OMEntity;
 import static org.geotoolkit.observation.model.OMEntity.FEATURE_OF_INTEREST;
 import static org.geotoolkit.observation.model.OMEntity.HISTORICAL_LOCATION;
@@ -56,12 +56,10 @@ import org.geotoolkit.observation.query.OfferingQuery;
 import org.geotoolkit.observation.query.ProcedureQuery;
 import org.geotoolkit.observation.query.ResultQuery;
 import org.geotoolkit.observation.query.SamplingFeatureQuery;
-import org.geotoolkit.ogc.xml.BBOX;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.filter.BinaryComparisonOperator;
 import org.opengis.filter.BinarySpatialOperator;
 import org.opengis.filter.ComparisonOperatorName;
-import org.opengis.filter.Expression;
 import org.opengis.filter.Filter;
 import org.opengis.filter.Literal;
 import org.opengis.filter.LogicalOperator;
@@ -189,10 +187,12 @@ public abstract class AbstractFilteredObservationStore extends AbstractObservati
         for (org.opengis.observation.Process p : procFilter.getProcesses()) {
 
             final Procedure proc  =  (Procedure) p;
-            final ProcedureDataset procedure = new ProcedureDataset(proc.getId(), proc.getName(), proc.getDescription(), "Component", "timeseries", new ArrayList<>(), null);
+            final String omType = (String) proc.getProperties().getOrDefault("type", "timeseries");
+            final ProcedureDataset procedure = new ProcedureDataset(proc.getId(), proc.getName(), proc.getDescription(), "Component", omType, new ArrayList<>(), null);
 
             Observation template = (Observation) getReader().getTemplateForProcedure(proc.getId());
 
+            // complete fields and location
             if (template != null) {
                 final Phenomenon phenProp = template.getObservedProperty();
                 if (phenProp != null) {
@@ -205,12 +205,12 @@ public abstract class AbstractFilteredObservationStore extends AbstractObservati
                 }
                 SamplingFeature foim = template.getFeatureOfInterest();
                 procedure.spatialBound.appendLocation(template.getSamplingTime(), foim);
+            }
 
                 // get historical locations for sensor
-                HistoricalLocationQuery hquery = (HistoricalLocationQuery) buildQueryForSensor(OMEntity.HISTORICAL_LOCATION, proc.getId());
-                Map<Date, Geometry> sensorLocations = getHistoricalSensorLocations(hquery).getOrDefault(proc.getId(), Collections.EMPTY_MAP);
-                procedure.spatialBound.getHistoricalLocations().putAll(sensorLocations);
-            }
+            HistoricalLocationQuery hquery = (HistoricalLocationQuery) buildQueryForSensor(OMEntity.HISTORICAL_LOCATION, proc.getId());
+            Map<Date, Geometry> sensorLocations = getHistoricalSensorLocations(hquery).getOrDefault(proc.getId(), Collections.EMPTY_MAP);
+            procedure.spatialBound.getHistoricalLocations().putAll(sensorLocations);
             results.add(procedure);
         }
         return results;
@@ -320,6 +320,14 @@ public abstract class AbstractFilteredObservationStore extends AbstractObservati
         return reader.getEventTime();
     }
 
+    /**
+     * Handle an observation query, and return an Observation filter reader with
+     * all filter set.
+     *
+     * @param q An observation query.
+     *
+     * @return An Observation filter reader with all filter set.
+     */
     protected ObservationFilterReader handleQuery(Query q) throws DataStoreException {
         if (q == null) throw new DataStoreException("Query must no be null");
 
@@ -345,6 +353,22 @@ public abstract class AbstractFilteredObservationStore extends AbstractObservati
         return localOmFilter;
     }
 
+    /**
+     * Handle a filter, extract all observed properties / procedures / feature
+     * of interest / offering filters. It also sets some filter on the
+     * ObservationFilterReader.
+     *
+     * In long term this method should be removed, and its code should move into
+     * the observation filter.
+     *
+     * @param mode Entity type of the query.
+     * @param filter The query filter to apply.
+     * @param localOmFilter An observation filter.
+     * @param observedProperties A list of observed property ids to populate.
+     * @param procedures A list of procedure ids to populate.
+     * @param fois A list of feature of interest ids to populate.
+     * @param offerings A list of offering ids to populate.
+     */
     protected void handleFilter(OMEntity mode, Filter filter, final ObservationFilterReader localOmFilter, List<String> observedProperties, List<String> procedures, List<String> fois, List<String> offerings) throws DataStoreException {
         if (Filter.include().equals(filter) || filter == null) {
             return;
@@ -381,37 +405,8 @@ public abstract class AbstractFilteredObservationStore extends AbstractObservati
                 default                            -> {}
             }
 
-        } else if (type == SpatialOperatorName.BBOX) {
-            final BBOX bbox = BBOX.wrap((BinarySpatialOperator) filter);
-            final Envelope env;
-            Expression e2 = bbox.getOperand2();
-            if (e2 instanceof Envelope geoEnv) {
-                env = geoEnv;
-            } else if (e2 instanceof Literal lit) {
-                if (lit.getValue() instanceof Envelope geoEnv) {
-                    env = geoEnv;
-                } else {
-                    throw new DataStoreException("Unexpected bbox expression type for geometry");
-                }
-            } else {
-                throw new DataStoreException("Unexpected bbox expression type for geometry");
-            }
-
-            switch (mode) {
-                case LOCATION ->  localOmFilter.setBoundingBox(env);
-                default       -> {
-                    if (getCapabilities().isBoundedObservation) {
-                        localOmFilter.setBoundingBox(env);
-                    } else {
-                        Collection<String> allfoi = getFeaturesOfInterestForBBOX(env);
-                        if (!allfoi.isEmpty()) {
-                            fois.addAll(allfoi);
-                        } else {
-                           fois.add("unexisting-foi");
-                        }
-                    }
-                }
-            }
+        } else if (type == SpatialOperatorName.BBOX && filter instanceof BinarySpatialOperator bbox) {
+            handleBBOXFilter(mode, localOmFilter, fois, procedures, bbox);
 
         } else if (type == ComparisonOperatorName.PROPERTY_IS_EQUAL_TO) {
             final BinaryComparisonOperator ef = (BinaryComparisonOperator) filter;
@@ -453,7 +448,50 @@ public abstract class AbstractFilteredObservationStore extends AbstractObservati
         }
     }
 
-    protected List<String> getFeaturesOfInterestForBBOX(final Envelope env) throws DataStoreException {
+    /**
+     * Handle BBOX filter in a query.
+     *
+     * Currently, if the entity type is LOCATION or HISTORICAL_LOCATION, the bbox will be set on the
+     * observation filter. Otherwise, this method will perform a
+     * featureOfInterest query to determine the matching fois, and the foi ids
+     * list ill be set on the observation filter.
+     *
+     * This method is separated from handleFilter to allow sub-classes to
+     * override its behavior.
+     *
+     * @param mode Entity type of the query.
+     * @param localOmFilter An observation filter.
+     * @param fois A list of feature of interest ids to populate.
+     * @param procedures A list of procedure ids to populate.
+     * @param bbox The spatial filter to apply.
+     */
+    protected void handleBBOXFilter(OMEntity mode, final ObservationFilterReader localOmFilter, List<String> fois, List<String> procedures, BinarySpatialOperator bbox) throws DataStoreException {
+        switch (mode) {
+            case LOCATION, HISTORICAL_LOCATION ->  localOmFilter.setBoundingBox(bbox);
+            default       -> {
+                if (getCapabilities().isBoundedObservation) {
+                    localOmFilter.setBoundingBox(bbox);
+                } else {
+                    Collection<String> allfoi = getFeaturesOfInterestForBBOX(bbox);
+                    if (!allfoi.isEmpty()) {
+                        fois.addAll(allfoi);
+                    } else {
+                       fois.add("unexisting-foi");
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Peform a Feature of intrest query on the specified bbox.
+     *
+     * @param box A bbox filter.
+     *
+     * @return A list of feature of interest ids.
+     */
+    protected List<String> getFeaturesOfInterestForBBOX(final BinarySpatialOperator box) throws DataStoreException {
+        final Envelope env = OMUtils.getEnvelopeFromBBOXFilter(box);
         List<String> results = new ArrayList<>();
         SamplingFeatureQuery query = new SamplingFeatureQuery();
         final List<org.opengis.observation.sampling.SamplingFeature> stations = getFeatureOfInterest(query);
@@ -467,7 +505,7 @@ public abstract class AbstractFilteredObservationStore extends AbstractObservati
             }
             Geometry geom = station.getGeometry();
             if (geom != null) {
-                if (samplingFeatureMatchEnvelope(geom, env)) {
+                if (geometryMatchEnvelope(geom, env)) {
                     results.add(station.getId());
                 } else {
                     LOGGER.log(Level.FINER, " the feature of interest {0} is not in the BBOX", station.getId());

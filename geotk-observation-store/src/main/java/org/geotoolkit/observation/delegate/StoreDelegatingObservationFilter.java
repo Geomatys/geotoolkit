@@ -33,6 +33,7 @@ import org.geotoolkit.observation.query.AbstractObservationQuery;
 import org.geotoolkit.observation.query.DatasetQuery;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.filter.BinaryComparisonOperator;
+import org.opengis.filter.BinarySpatialOperator;
 import org.opengis.filter.TemporalOperator;
 import org.opengis.geometry.Envelope;
 import org.opengis.observation.Observation;
@@ -90,7 +91,7 @@ public class StoreDelegatingObservationFilter implements ObservationFilterReader
     }
 
     @Override
-    public void setBoundingBox(Envelope e) throws DataStoreException {
+    public void setBoundingBox(BinarySpatialOperator e) throws DataStoreException {
          if (e != null) throw new UnsupportedOperationException("BBOX filtering is not supported yet.");
     }
 
