@@ -56,6 +56,7 @@ import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.apache.sis.coverage.grid.PixelInCell;
+import org.apache.sis.util.ArraysExt;
 import org.opengis.util.GenericName;
 
 /**
@@ -261,7 +262,7 @@ public class VI3GStore extends DataStore implements GridCoverageResource, Resour
                         new long[]{extent.getSize(0),extent.getSize(1)},
                         new long[]{areaLower[0], areaLower[1]},
                         new long[]{areaUpper[0], areaUpper[1]},
-                        subsampling));
+                        ArraysExt.copyAsLongs(subsampling)));
 
 
             } catch (IOException ex) {

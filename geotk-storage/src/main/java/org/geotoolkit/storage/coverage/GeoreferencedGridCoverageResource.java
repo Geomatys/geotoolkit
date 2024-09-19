@@ -57,7 +57,7 @@ public abstract class GeoreferencedGridCoverageResource extends AbstractGridCove
         final GridGeometry gg = getGridGeometry();
         final GridGeometry resultGrid;
         final GridExtent extent;
-        final int[] subsampling;
+        final long[] subsampling;
         try {
             if (domain != null) {
                 GridDerivation derived = gg.derive()
@@ -76,8 +76,12 @@ public abstract class GeoreferencedGridCoverageResource extends AbstractGridCove
             throw new DisjointCoverageDomainException(ex.getMessage(), ex);
         }
 
+        final int[] s = new int[subsampling.length];
+        for (int i=0; i<s.length; i++) {
+            s[i] = Math.toIntExact(subsampling[i]);
+        }
         try {
-            return readInGridCRS(resultGrid, extent, subsampling, range);
+            return readInGridCRS(resultGrid, extent, s, range);
         } catch (TransformException ex) {
             throw new DataStoreException(ex.getMessage(), ex);
         }
@@ -112,14 +116,14 @@ public abstract class GeoreferencedGridCoverageResource extends AbstractGridCove
     private static int[] getLow(GridExtent extent) {
         long[] values = extent.getLow().getCoordinateValues();
         final int[] array = new int[values.length];
-        for(int i=0;i<values.length;i++) array[i] = (int) values[i];
+        for (int i=0; i<values.length; i++) array[i] = Math.toIntExact(values[i]);
         return array;
     }
 
     private static int[] getHigh(GridExtent extent) {
         long[] values = extent.getHigh().getCoordinateValues();
         final int[] array = new int[values.length];
-        for(int i=0;i<values.length;i++) array[i] = (int) (values[i]+1);
+        for (int i=0; i<values.length; i++) array[i] = Math.toIntExact(values[i] + 1);
         return array;
     }
 
