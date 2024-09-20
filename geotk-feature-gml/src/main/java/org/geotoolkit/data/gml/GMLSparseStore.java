@@ -33,7 +33,6 @@ import java.util.stream.StreamSupport;
 import jakarta.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
 import org.apache.sis.feature.privy.AttributeConvention;
-import org.apache.sis.storage.base.ResourceOnFileSystem;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
@@ -67,7 +66,7 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class GMLSparseStore extends DataStore implements WritableFeatureSet, ResourceOnFileSystem, FeatureCatalogue {
+public class GMLSparseStore extends DataStore implements WritableFeatureSet, FeatureCatalogue {
 
     private final Parameters parameters;
     private final Path file;
@@ -193,8 +192,8 @@ public class GMLSparseStore extends DataStore implements WritableFeatureSet, Res
     }
 
     @Override
-    public Path[] getComponentFiles() throws DataStoreException {
-        return new Path[]{file};
+    public Optional<FileSet> getFileSet() throws DataStoreException {
+        return Optional.of(new FileSet(file));
     }
 
     @Override

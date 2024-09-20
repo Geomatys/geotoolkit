@@ -48,7 +48,6 @@ import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.feature.privy.AttributeConvention;
-import org.apache.sis.storage.base.ResourceOnFileSystem;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
@@ -91,7 +90,7 @@ import org.opengis.util.GenericName;
  * @author Johann Sorel (Geomatys)
  * @author Alexis Manin (Geomatys)
  */
-public class CSVStore extends DataStore implements WritableFeatureSet, ResourceOnFileSystem {
+public class CSVStore extends DataStore implements WritableFeatureSet {
 
     public static final String COMMENT_STRING = "#";
     public static final Charset UTF8_ENCODING = Charset.forName("UTF-8");
@@ -305,8 +304,8 @@ public class CSVStore extends DataStore implements WritableFeatureSet, ResourceO
     }
 
     @Override
-    public Path[] getComponentFiles() throws DataStoreException {
-        return new Path[] { this.file };
+    public Optional<FileSet> getFileSet() throws DataStoreException {
+        return Optional.of(new FileSet(file));
     }
 
     @Override

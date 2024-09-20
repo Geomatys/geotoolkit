@@ -25,7 +25,6 @@ import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.storage.AbstractGridCoverageResource;
-import org.apache.sis.storage.base.ResourceOnFileSystem;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
@@ -53,7 +52,7 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-final class TiffStore extends DataStore implements ResourceOnFileSystem, WritableGridCoverageResource {
+final class TiffStore extends DataStore implements WritableGridCoverageResource {
 
     private final Path path;
     private final Resource resource = new Resource();
@@ -85,8 +84,8 @@ final class TiffStore extends DataStore implements ResourceOnFileSystem, Writabl
     }
 
     @Override
-    public Path[] getComponentFiles() throws DataStoreException {
-        return new Path[]{path};
+    public Optional<FileSet> getFileSet() throws DataStoreException {
+        return Optional.of(new FileSet(path));
     }
 
     @Override

@@ -34,7 +34,6 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.feature.privy.AttributeConvention;
-import org.apache.sis.storage.base.ResourceOnFileSystem;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
@@ -62,7 +61,7 @@ import org.opengis.util.GenericName;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class DbaseFileStore extends DataStore implements FeatureSet, ResourceOnFileSystem {
+public class DbaseFileStore extends DataStore implements FeatureSet {
 
     private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.data.dbf");
     private final ReadWriteLock RWLock = new ReentrantReadWriteLock();
@@ -182,8 +181,8 @@ public class DbaseFileStore extends DataStore implements FeatureSet, ResourceOnF
     }
 
     @Override
-    public Path[] getComponentFiles() throws DataStoreException {
-        return new Path[] { this.file };
+    public Optional<FileSet> getFileSet() throws DataStoreException {
+        return Optional.of(new FileSet(file));
     }
 
     private class DBFFeatureReader implements Iterator<Feature>, AutoCloseable {

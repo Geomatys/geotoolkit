@@ -27,13 +27,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import org.apache.sis.storage.AbstractFeatureSet;
-import org.apache.sis.storage.base.ResourceOnFileSystem;
 import org.apache.sis.storage.base.StoreResource;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStore;
@@ -66,7 +66,7 @@ import org.opengis.util.GenericName;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class NetcdfObservationStore extends AbstractObservationStore implements Aggregate, ResourceOnFileSystem,ObservationStore {
+public class NetcdfObservationStore extends AbstractObservationStore implements Aggregate,ObservationStore {
 
     private final Path dataFile;
     private final NCFieldAnalyze analyze;
@@ -178,8 +178,8 @@ public class NetcdfObservationStore extends AbstractObservationStore implements 
      * {@inheritDoc }
      */
     @Override
-    public Path[] getComponentFiles() throws DataStoreException {
-        return new Path[]{dataFile};
+    public Optional<FileSet> getFileSet() throws DataStoreException {
+        return Optional.of(new FileSet(dataFile));
     }
 
     /**

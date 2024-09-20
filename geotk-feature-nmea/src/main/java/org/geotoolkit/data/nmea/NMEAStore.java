@@ -42,7 +42,6 @@ import org.opengis.util.GenericName;
 
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.storage.base.ResourceOnFileSystem;
 import org.apache.sis.measure.Units;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.parameter.Parameters;
@@ -67,7 +66,7 @@ import org.locationtech.jts.geom.Point;
  * @author Alexis Manin (Geomatys)
  * @author Johann Sorel (Geomatys)
  */
-public class NMEAStore extends DataStore implements FeatureSet, ResourceOnFileSystem {
+public class NMEAStore extends DataStore implements FeatureSet {
 
     static final Logger LOGGER = Logger.getLogger("org.geotoolkit.data.nmea");
 
@@ -198,8 +197,8 @@ public class NMEAStore extends DataStore implements FeatureSet, ResourceOnFileSy
     }
 
     @Override
-    public Path[] getComponentFiles() {
-        return new Path[]{file};
+    public Optional<FileSet> getFileSet() {
+        return Optional.of(new FileSet(file));
     }
 
     @Override

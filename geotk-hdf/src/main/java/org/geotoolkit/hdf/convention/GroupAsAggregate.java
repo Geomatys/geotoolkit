@@ -16,13 +16,11 @@
  */
 package org.geotoolkit.hdf.convention;
 
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import org.apache.sis.storage.base.ResourceOnFileSystem;
 import org.apache.sis.storage.base.StoreResource;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStore;
@@ -40,7 +38,7 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public final class GroupAsAggregate implements Aggregate, ResourceOnFileSystem, StoreResource{
+public final class GroupAsAggregate implements Aggregate, StoreResource{
 
     private final HDF5Store store;
     private final Group group;
@@ -87,8 +85,7 @@ public final class GroupAsAggregate implements Aggregate, ResourceOnFileSystem, 
     }
 
     @Override
-    public Path[] getComponentFiles() throws DataStoreException {
-        return store.getComponentFiles();
+    public Optional<FileSet> getFileSet() throws DataStoreException {
+        return store.getFileSet();
     }
-
 }

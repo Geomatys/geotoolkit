@@ -53,7 +53,6 @@ import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.privy.AffineTransform2D;
-import org.apache.sis.storage.base.ResourceOnFileSystem;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CommonCRS;
@@ -123,7 +122,7 @@ import org.xml.sax.SAXException;
  *
  * @author Johann Sorel (Geomatys)
  */
-public final class KMLStore extends DataStore implements Aggregate, ResourceOnFileSystem {
+public final class KMLStore extends DataStore implements Aggregate {
 
     private static final GeometryFactory GF = GO2Utilities.JTS_FACTORY;
     private static final CoordinateReferenceSystem CRS = CommonCRS.WGS84.normalizedGeographic(); //CRS:84 , longitude/latitude
@@ -649,8 +648,8 @@ public final class KMLStore extends DataStore implements Aggregate, ResourceOnFi
     }
 
     @Override
-    public Path[] getComponentFiles() throws DataStoreException {
-        return new Path[]{Paths.get(path)};
+    public Optional<FileSet> getFileSet() throws DataStoreException {
+        return Optional.of(new FileSet(Paths.get(path)));
     }
 
     @Override

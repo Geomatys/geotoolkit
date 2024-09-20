@@ -34,7 +34,6 @@ import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.referencing.privy.AffineTransform2D;
-import org.apache.sis.storage.base.ResourceOnFileSystem;
 import org.apache.sis.io.stream.ChannelImageInputStream;
 import org.apache.sis.io.stream.HyperRectangleReader;
 import org.apache.sis.io.stream.Region;
@@ -66,7 +65,7 @@ import org.opengis.util.GenericName;
  * @author Johann Sorel (Geomatys)
  * @author Alexis Manin (Geomatys)
  */
-public class HGTStore extends DataStore implements GridCoverageResource, ResourceOnFileSystem {
+public class HGTStore extends DataStore implements GridCoverageResource {
 
     /**
      * HGT file name pattern. Give lower-left geographic position (CRS:84) of the current tile.
@@ -106,8 +105,8 @@ public class HGTStore extends DataStore implements GridCoverageResource, Resourc
     }
 
     @Override
-    public Path[] getComponentFiles() throws DataStoreException {
-        return new Path[]{fileInput};
+    public Optional<FileSet> getFileSet() throws DataStoreException {
+        return Optional.of(new FileSet(fileInput));
     }
 
     @Override

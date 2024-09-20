@@ -43,7 +43,6 @@ import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.feature.privy.AttributeConvention;
-import org.apache.sis.storage.base.ResourceOnFileSystem;
 import org.apache.sis.io.wkt.Convention;
 import org.apache.sis.io.wkt.WKTFormat;
 import org.apache.sis.metadata.iso.citation.Citations;
@@ -98,7 +97,7 @@ import org.opengis.util.GenericName;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class ShapefileFeatureStore extends AbstractFeatureStore implements ResourceOnFileSystem {
+public class ShapefileFeatureStore extends AbstractFeatureStore {
 
     // This is the default character as specified by the DBF specification
     public static final Charset DEFAULT_STRING_CHARSET = DbaseFileReader.DEFAULT_STRING_CHARSET;
@@ -642,15 +641,15 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements Resou
     }
 
     @Override
-    public Path[] getComponentFiles() throws DataStoreException {
-        final List<Path> files = new ArrayList<>();
+    public Optional<FileSet> getFileSet() throws DataStoreException {
+        final var files = new ArrayList<Path>();
         for (final ShpFileType type : ShpFileType.values()) {
             final Path f = shpFiles.getPath(type);
             if (f != null && Files.exists(f)) {
                 files.add(f);
             }
         }
-        return files.toArray(new Path[files.size()]);
+        return Optional.of(new FileSet(files));
     }
 
     protected List<AttributeType> getAttributes(FeatureType type, boolean includeIdentifier){

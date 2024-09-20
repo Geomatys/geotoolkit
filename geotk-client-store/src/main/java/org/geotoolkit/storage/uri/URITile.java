@@ -23,13 +23,12 @@ import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.FileSystemNotFoundException;
-import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Optional;
 import java.util.zip.GZIPInputStream;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
 import org.apache.commons.compress.compressors.lz4.FramedLZ4CompressorInputStream;
-import org.apache.sis.storage.base.ResourceOnFileSystem;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.FeatureSet;
@@ -202,13 +201,13 @@ public final class URITile {
             return new DataOnFile();
         }
 
-        private final class DataOnFile extends Data implements ResourceOnFileSystem {
+        private final class DataOnFile extends Data {
             @Override
-            public Path[] getComponentFiles() throws DataStoreException {
+            public Optional<FileSet> getFileSet() throws DataStoreException {
                 try {
-                    return new Path[]{Paths.get((URI) input)};
+                    return Optional.of(new FileSet(Paths.get((URI) input)));
                 } catch (FileSystemNotFoundException | SecurityException | IllegalArgumentException ex) {
-                    return new Path[0];
+                    return Optional.empty();
                 }
             }
         }

@@ -23,7 +23,6 @@ import java.awt.image.DataBufferInt;
 import java.awt.image.DataBufferShort;
 import java.io.IOException;
 import java.lang.reflect.Array;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -37,7 +36,6 @@ import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridRoundingMode;
-import org.apache.sis.storage.base.ResourceOnFileSystem;
 import org.apache.sis.storage.base.StoreResource;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
@@ -65,7 +63,7 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public final class CFCoverageResource extends AbstractGridCoverageResource implements ResourceOnFileSystem, StoreResource{
+public final class CFCoverageResource extends AbstractGridCoverageResource implements StoreResource {
 
     private final HDF5Store store;
     private final Group group;
@@ -386,7 +384,7 @@ public final class CFCoverageResource extends AbstractGridCoverageResource imple
     }
 
     @Override
-    public Path[] getComponentFiles() throws DataStoreException {
-        return store.getComponentFiles();
+    public Optional<FileSet> getFileSet() throws DataStoreException {
+        return store.getFileSet();
     }
 }

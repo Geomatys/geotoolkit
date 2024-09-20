@@ -26,7 +26,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import org.apache.sis.storage.base.ResourceOnFileSystem;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStore;
@@ -51,7 +50,7 @@ import org.opengis.util.GenericName;
  * @author Alexis Manin (Geomatys)
  *         Date : 21/02/13
  */
-public class MIFStore extends DataStore implements WritableAggregate, ResourceOnFileSystem {
+public class MIFStore extends DataStore implements WritableAggregate {
 
     private final Parameters parameters;
     final MIFManager manager;
@@ -169,15 +168,15 @@ public class MIFStore extends DataStore implements WritableAggregate, ResourceOn
     }
 
     @Override
-    public Path[] getComponentFiles() throws DataStoreException {
-        List<Path> results = new ArrayList<>();
+    public Optional<FileSet> getFileSet() throws DataStoreException {
+        var results = new ArrayList<Path>();
         if (manager.getMIFPath() != null) {
             results.add(Paths.get(manager.getMIFPath()));
         }
         if (manager.getMIDPath() != null) {
             results.add(Paths.get(manager.getMIDPath()));
         }
-        return results.toArray(new Path[results.size()]);
+        return Optional.of(new FileSet(results));
     }
 
     @Override

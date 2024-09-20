@@ -36,8 +36,8 @@ import java.util.stream.StreamSupport;
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
+import java.util.Optional;
 import org.apache.sis.storage.AbstractFeatureSet;
-import org.apache.sis.storage.base.ResourceOnFileSystem;
 import org.apache.sis.storage.base.StoreResource;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStore;
@@ -75,7 +75,7 @@ import org.opengis.util.GenericName;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class XmlObservationStore extends AbstractObservationStore implements Aggregate, ResourceOnFileSystem {
+public class XmlObservationStore extends AbstractObservationStore implements Aggregate {
 
     private final Path xmlFile;
 
@@ -206,8 +206,8 @@ public class XmlObservationStore extends AbstractObservationStore implements Agg
      * {@inheritDoc }
      */
     @Override
-    public Path[] getComponentFiles() throws DataStoreException {
-        return new Path[]{xmlFile};
+    public Optional<FileSet> getFileSet() throws DataStoreException {
+        return Optional.of(new FileSet(xmlFile));
     }
 
     /**

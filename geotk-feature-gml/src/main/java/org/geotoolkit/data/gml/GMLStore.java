@@ -43,7 +43,6 @@ import java.util.stream.StreamSupport;
 import jakarta.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
 import org.apache.sis.storage.aggregate.ConcatenatedFeatureSet;
-import org.apache.sis.storage.base.ResourceOnFileSystem;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
@@ -78,7 +77,7 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class GMLStore extends DataStore implements WritableFeatureSet, ResourceOnFileSystem, FeatureCatalogue {
+public class GMLStore extends DataStore implements WritableFeatureSet, FeatureCatalogue {
 
     private final ReadWriteLock MAINLOCK = new ReentrantReadWriteLock();
     private final ReadWriteLock UPDATELOCK = new ReentrantReadWriteLock();
@@ -190,8 +189,8 @@ public class GMLStore extends DataStore implements WritableFeatureSet, ResourceO
     }
 
     @Override
-    public Path[] getComponentFiles() throws DataStoreException {
-        return new Path[]{file};
+    public Optional<FileSet> getFileSet() throws DataStoreException {
+        return Optional.of(new FileSet(file));
     }
 
     @Override
