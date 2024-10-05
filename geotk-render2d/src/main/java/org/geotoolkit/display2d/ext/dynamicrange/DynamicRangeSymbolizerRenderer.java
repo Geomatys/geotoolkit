@@ -181,7 +181,7 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
                 }
                 GridCoverage dataCoverage;
                 try {
-                    dataCoverage = covref.read(renderingContext.getGridGeometry(), toRead);
+                    dataCoverage = getObjectiveCoverage(covref, renderingContext.getGridGeometry(), false, toRead);
                 } catch (NoSuchDataException ex) {
                     return Stream.empty();
                 }
