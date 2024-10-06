@@ -204,7 +204,7 @@ public final class IGNF extends GeodeticAuthorityFactory implements CRSAuthority
      * @return An exception initialized with an error message built
      *         from the specified information.
      */
-    private NoSuchAuthorityCodeException noSuchAuthorityCode(final Class<?> type, final String code) {
+    private NoSuchAuthorityCodeException noSuchAuthorityCode(final Class<?> type, final String code) throws FactoryException {
         final InternationalString authority = getAuthority().getTitle();
         return new NoSuchAuthorityCodeException(Errors.format(Errors.Keys.NoSuchAuthorityCode_3,
                    code, authority, type), authority.toString(), trimNamespace(code), code);

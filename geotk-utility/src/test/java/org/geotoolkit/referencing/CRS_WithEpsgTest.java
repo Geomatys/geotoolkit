@@ -196,7 +196,7 @@ public final class CRS_WithEpsgTest {
      * Makes sure that the authority factory has the proper name.
      */
     @Test
-    public void testAuthority() {
+    public void testAuthority() throws FactoryException {
         CRSAuthorityFactory factory;
         Citation authority;
 
