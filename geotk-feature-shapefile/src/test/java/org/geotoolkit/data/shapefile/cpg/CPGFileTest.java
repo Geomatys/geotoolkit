@@ -20,6 +20,8 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.StorageConnector;
+import org.geotoolkit.data.shapefile.ShapefileProvider;
 import org.geotoolkit.storage.feature.FeatureReader;
 import org.geotoolkit.data.shapefile.ShapefileFeatureStore;
 import org.geotoolkit.storage.feature.query.Query;
@@ -42,14 +44,23 @@ public class CPGFileTest {
     public void testReadUTF8() throws DataStoreException, MalformedURLException, URISyntaxException {
 
         final URL url = CPGFileTest.class.getResource("/org/geotoolkit/test-data/shapes/utf8.shp");
-        final ShapefileFeatureStore store = new ShapefileFeatureStore(url.toURI());
 
-        try(final FeatureReader reader = store.getFeatureReader(new Query(store.getName()))){
+        try (final ShapefileFeatureStore store = new ShapefileFeatureStore(url.toURI())) {
+            assertUtf8Text(store);
+        }
+
+        // Test using another opening method, because until 2024-10-08,
+        // CPG was not properly handled when opening a datastore using ShapefileProvider#open(StorageConnector)
+        try (var store = new ShapefileProvider().open(new StorageConnector(url.toURI()))) {
+            assertUtf8Text((ShapefileFeatureStore) store);
+        }
+    }
+
+    static void assertUtf8Text(ShapefileFeatureStore store) throws DataStoreException {
+        try(final FeatureReader reader = store.getFeatureReader(new Query(store.getName()))) {
             Assert.assertTrue(reader.hasNext());
             final Feature feature = reader.next();
             Assert.assertEquals("&éè\"'(-_çà)=@%$*:test",feature.getProperty("text").getValue());
         }
-
     }
-
 }
