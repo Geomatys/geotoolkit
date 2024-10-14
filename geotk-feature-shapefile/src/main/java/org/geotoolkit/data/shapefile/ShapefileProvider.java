@@ -260,11 +260,7 @@ public class ShapefileProvider extends DataStoreProvider implements ProviderOnFi
             // should not be needed as default is FALSE
             isCreateSpatialIndex = Boolean.FALSE;
         }
-        if (dbfCharset == null) {
-            // this should not happen as Charset.forName("ISO-8859-1") was used
-            // as the param default?
-            dbfCharset = Charset.forName("ISO-8859-1");
-        }
+
         if (isMemoryMapped == null) {
             isMemoryMapped = Boolean.FALSE;
         }
