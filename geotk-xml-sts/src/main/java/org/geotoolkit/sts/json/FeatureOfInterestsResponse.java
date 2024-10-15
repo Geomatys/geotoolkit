@@ -86,6 +86,7 @@ public class FeatureOfInterestsResponse implements STSPagedResponse {
      * @return value
      *
      */
+    @Override
     public List<FeatureOfInterest> getValue() {
         return value;
     }

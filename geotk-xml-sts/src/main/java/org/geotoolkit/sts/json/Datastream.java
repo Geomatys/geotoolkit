@@ -27,7 +27,7 @@ import org.geotoolkit.util.DeltaComparable;
  * way. The one constraint is that the observations in a datastream must measure
  * the same observed property (i.e., one phenomenon).
  */
-public class Datastream implements STSResponse, DeltaComparable {
+public class Datastream implements STSEntityResponse, DeltaComparable {
 
     @JsonProperty("@iot.id")
     private String iotId = null;
@@ -85,6 +85,7 @@ public class Datastream implements STSResponse, DeltaComparable {
      * @return iotId
   *
      */
+    @Override
     public String getIotId() {
         return iotId;
     }
@@ -105,6 +106,7 @@ public class Datastream implements STSResponse, DeltaComparable {
      * @return iotSelfLink
   *
      */
+    @Override
     public String getIotSelfLink() {
         return iotSelfLink;
     }

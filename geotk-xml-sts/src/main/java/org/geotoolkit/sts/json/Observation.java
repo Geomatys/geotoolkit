@@ -24,7 +24,7 @@ import org.geotoolkit.util.DeltaComparable;
  * An Observation is act of measuring or otherwise determining the value of a
  * property [OGC and ISO 19156:2011]
  */
-public class Observation implements STSResponse, DeltaComparable {
+public class Observation implements STSEntityResponse, DeltaComparable {
 
     @JsonProperty("@iot.id")
     private String iotId = null;
@@ -73,8 +73,9 @@ public class Observation implements STSResponse, DeltaComparable {
      * the entities of the same entity type.
      *
      * @return iotId
-  *
+     *
      */
+    @Override
     public String getIotId() {
         return iotId;
     }
@@ -95,6 +96,7 @@ public class Observation implements STSResponse, DeltaComparable {
      * @return iotSelfLink
   *
      */
+    @Override
     public String getIotSelfLink() {
         return iotSelfLink;
     }

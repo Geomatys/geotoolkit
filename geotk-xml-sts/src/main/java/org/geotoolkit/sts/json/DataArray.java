@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.sts.json;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ import java.util.Objects;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class DataArray {
+public class DataArray implements STSEntityResponse {
 
     @JsonProperty("Datastream@iot.navigationLink")
     private String datastreamIotNavigationLink = null;
@@ -40,6 +41,18 @@ public class DataArray {
     private List<String> components;
 
     private List<Object> dataArray;
+
+    @Override
+    @JsonIgnore
+    public String getIotId() {
+        return null;
+    }
+
+    @Override
+    @JsonIgnore
+    public String getIotSelfLink() {
+        return null;
+    }
 
     /**
      * @return the iotCount
