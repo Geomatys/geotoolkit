@@ -26,7 +26,7 @@ import org.geotoolkit.util.DeltaComparable;
 /**
  * HistoricalLocation
  */
-public class HistoricalLocation implements STSResponse, Comparable<HistoricalLocation>, DeltaComparable {
+public class HistoricalLocation implements STSEntityResponse, Comparable<HistoricalLocation>, DeltaComparable {
 
     @JsonProperty("@iot.id")
     private String iotId = null;
@@ -59,8 +59,9 @@ public class HistoricalLocation implements STSResponse, Comparable<HistoricalLoc
      * the entities of the same entity type.
      *
      * @return iotId
-  *
+     *
      */
+    @Override
     public String getIotId() {
         return iotId;
     }
@@ -79,8 +80,9 @@ public class HistoricalLocation implements STSResponse, Comparable<HistoricalLoc
      * other entities.
      *
      * @return iotSelfLink
-  *
+     *
      */
+    @Override
     public String getIotSelfLink() {
         return iotSelfLink;
     }

@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2019, Geomatys
+ *    (C) 2024, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,22 +16,13 @@
  */
 package org.geotoolkit.sts.json;
 
-import java.math.BigDecimal;
-import java.util.List;
-
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
-public interface STSPagedResponse extends STSResponse {
+public interface STSEntityResponse {
 
-    List<? extends STSEntityResponse> getValue();
+    String getIotId();
 
-    BigDecimal getIotCount();
-
-    void setIotCount(BigDecimal iotCount);
-
-    String getIotNextLink();
-
-    void setIotNextLink(String iotNextLink);
+    String getIotSelfLink();
 }

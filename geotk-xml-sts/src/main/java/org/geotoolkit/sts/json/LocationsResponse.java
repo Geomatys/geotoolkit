@@ -77,6 +77,7 @@ public class LocationsResponse implements STSPagedResponse {
      * @return value
      *
      */
+    @Override
     public List<Location> getValue() {
         return value;
     }

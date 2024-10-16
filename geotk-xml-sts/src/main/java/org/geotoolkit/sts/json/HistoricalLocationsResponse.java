@@ -78,6 +78,7 @@ public class HistoricalLocationsResponse implements STSPagedResponse {
      * @return value
      *
      */
+    @Override
     public List<HistoricalLocation> getValue() {
         return value;
     }

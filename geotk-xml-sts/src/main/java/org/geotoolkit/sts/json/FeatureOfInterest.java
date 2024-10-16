@@ -25,7 +25,7 @@ import org.geotoolkit.util.DeltaComparable;
 /**
  * FeatureOfInterest
  */
-public class FeatureOfInterest implements STSResponse, DeltaComparable {
+public class FeatureOfInterest implements STSEntityResponse, DeltaComparable {
 
     @JsonProperty("@iot.id")
     private String iotId = null;
@@ -83,6 +83,7 @@ public class FeatureOfInterest implements STSResponse, DeltaComparable {
      * @return iotId
      *
      */
+    @Override
     public String getIotId() {
         return iotId;
     }

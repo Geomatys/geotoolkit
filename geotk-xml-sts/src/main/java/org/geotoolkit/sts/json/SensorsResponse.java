@@ -85,6 +85,7 @@ public class SensorsResponse implements STSPagedResponse {
      * @return value
   *
      */
+    @Override
     public List<Sensor> getValue() {
         return value;
     }

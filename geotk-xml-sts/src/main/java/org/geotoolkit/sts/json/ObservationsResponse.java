@@ -89,8 +89,9 @@ public class ObservationsResponse implements STSPagedResponse {
      * Get value
      *
      * @return value
-  *
+     *
      */
+    @Override
     public List<Observation> getValue() {
         return value;
     }
