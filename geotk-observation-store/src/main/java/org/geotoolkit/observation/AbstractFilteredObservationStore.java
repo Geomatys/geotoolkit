@@ -148,7 +148,7 @@ public abstract class AbstractFilteredObservationStore extends AbstractObservati
                     result.procedures.add(procedure);
                 }
                 SamplingFeature foi = obs.getFeatureOfInterest();
-                if (!result.featureOfInterest.contains(foi)) {
+                if (foi != null && !result.featureOfInterest.contains(foi)) {
                     result.featureOfInterest.add(foi);
                 }
                 result.spatialBound.appendLocation(obs.getSamplingTime(), foi);
