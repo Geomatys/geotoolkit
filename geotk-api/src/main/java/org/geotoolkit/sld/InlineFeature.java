@@ -17,29 +17,28 @@
  */
 package org.geotoolkit.sld;
 
-import org.opengis.style.Description;
+import java.util.Collection;
+import org.geotoolkit.sld.SLDVisitor;
+import org.geotoolkit.sld.Source;
+import org.opengis.feature.Feature;
 
 
 /**
- * A named style, similar to a named layer, is referenced by a well-known name. A
- * particular named style only has meaning when used in conjunction with a particular
- * named layer. All available styles for each available layer are normally named in a
- * capabilities document.
+ * Inline Features.
+ * Features are stored under a GML format.
  *
  * @version <A HREF="http://www.opengeospatial.org/standards/sld">Implementation specification 1.1.0</A>
  * @author Open Geospatial Consortium
  * @author Johann Sorel (Geomatys)
  */
-public interface NamedStyle extends LayerStyle {
-    /**
-     * The Name element simply identifies the well-known style name.
-     */
-    String getName();
+public interface InlineFeature extends Source {
 
     /**
-     * The Description is informative.
+     * Collection of features.
+     * Caution : the return type of this method may change.
      */
-    Description getDescription();
+    //TODO : replace the Collection<Feature> by something else when possible.
+    public Collection<Collection<Feature>> features();
 
     /**
      * calls the visit method of a SLDVisitor

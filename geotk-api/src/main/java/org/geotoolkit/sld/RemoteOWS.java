@@ -17,24 +17,29 @@
  */
 package org.geotoolkit.sld;
 
-import java.util.List;
+import org.geotoolkit.sld.SLDVisitor;
+import org.geotoolkit.sld.Source;
+import org.opengis.metadata.citation.OnlineResource;
 
 
 /**
- * A CoverageConstraint element is used to identify a coverage offering by a well-known
- * name, using the CoverageName element.
+ * OGC Web Service. Information about the remove server.
  *
  * @version <A HREF="http://www.opengeospatial.org/standards/sld">Implementation specification 1.1.0</A>
  * @author Open Geospatial Consortium
  * @author Johann Sorel (Geomatys)
  */
-public interface LayerCoverageConstraints extends Constraints {
+public interface RemoteOWS extends Source {
     /**
-     * Any positive number of CoverageConstraints
-     * may be used to define the coverage data of a layer, though all CoverageConstraints in a
-     * UserLayer must come from the same WCS source.
+     * The provided service type name.
+     * @return WFS or WCS
      */
-    public List<? extends CoverageConstraint> constraints();
+    public String getService();
+
+    /**
+     * Online resource of the service.
+     */
+    public OnlineResource getOnlineResource();
 
     /**
      * calls the visit method of a SLDVisitor

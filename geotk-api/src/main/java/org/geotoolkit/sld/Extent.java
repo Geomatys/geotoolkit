@@ -17,27 +17,20 @@
  */
 package org.geotoolkit.sld;
 
-import org.opengis.metadata.citation.OnlineResource;
-
-
 /**
- * OGC Web Service. Information about the remove server.
+ * When used in a UserLayer, the Extent reference defines what features are to be included
+ * in the layer and when used in a NamedLayer, it filters the features that are part of the
+ * named layer.
  *
  * @version <A HREF="http://www.opengeospatial.org/standards/sld">Implementation specification 1.1.0</A>
  * @author Open Geospatial Consortium
  * @author Johann Sorel (Geomatys)
  */
-public interface RemoteOWS extends Source {
-    /**
-     * The provided service type name.
-     * @return WFS or WCS
-     */
-    public String getService();
+public interface Extent {
 
-    /**
-     * Online resource of the service.
-     */
-    public OnlineResource getOnlineResource();
+    String getName();
+
+    String getValue();
 
     /**
      * calls the visit method of a SLDVisitor
