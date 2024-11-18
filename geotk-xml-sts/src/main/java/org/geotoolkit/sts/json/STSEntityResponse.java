@@ -20,7 +20,7 @@ package org.geotoolkit.sts.json;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public interface STSEntityResponse {
+public interface STSEntityResponse extends STSResponse {
 
     String getIotId();
 

@@ -128,6 +128,26 @@ public class Field {
     }
 
     /**
+     * Duplicate a field but change the index.
+     *
+     * @param index Overriding field index.
+     * @param that The field to duplicate
+     */
+    public Field(int index, Field that) {
+        if (that == null) throw new IllegalArgumentException("Null field param");
+        this.index = index;
+        this.description = that.description;
+        this.name = that.name;
+        this.type = that.type;
+        this.uom = that.uom;
+        this.label = that.label;
+        this.qualityFields = new ArrayList<>();
+        for (Field qualField : that.qualityFields) {
+            this.qualityFields.add(new Field(qualField));
+        }
+    }
+
+    /**
      * Return the SQL type asociated with this field.
      *
      * @param isPostgres if not, return a derby SQL type.
