@@ -59,8 +59,6 @@ public interface AbstractObservation extends Observation {
 
     void extendBoundingShape(final AbstractGeometry newGeom);
 
-    boolean matchTemplate(final Observation template);
-
     PhenomenonProperty getPropertyObservedProperty();
 
     FeatureProperty getPropertyFeatureOfInterest();

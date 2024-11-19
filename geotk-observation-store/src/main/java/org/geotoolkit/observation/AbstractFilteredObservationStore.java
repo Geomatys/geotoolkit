@@ -29,6 +29,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Query;
 import static org.geotoolkit.observation.AbstractObservationStore.LOGGER;
 import static org.geotoolkit.observation.OMUtils.geometryMatchEnvelope;
+import org.geotoolkit.observation.model.Field;
 import org.geotoolkit.observation.model.OMEntity;
 import static org.geotoolkit.observation.model.OMEntity.FEATURE_OF_INTEREST;
 import static org.geotoolkit.observation.model.OMEntity.HISTORICAL_LOCATION;
@@ -142,13 +143,13 @@ public abstract class AbstractFilteredObservationStore extends AbstractObservati
                 if (!result.phenomenons.contains(phen)) {
                     result.phenomenons.add(phen);
                 }
-                List<String> fields = OMUtils.getPhenomenonsFieldIdentifiers(phen);
+                List<Field> fields = OMUtils.getPhenomenonsFields(phen);
                 final ProcedureDataset procedure = new ProcedureDataset(proc.getId(), proc.getName(), proc.getDescription(), sensorType, type, fields, null);
                 if (!result.procedures.contains(procedure)) {
                     result.procedures.add(procedure);
                 }
                 SamplingFeature foi = obs.getFeatureOfInterest();
-                if (!result.featureOfInterest.contains(foi)) {
+                if (foi != null && !result.featureOfInterest.contains(foi)) {
                     result.featureOfInterest.add(foi);
                 }
                 result.spatialBound.appendLocation(obs.getSamplingTime(), foi);
@@ -196,8 +197,9 @@ public abstract class AbstractFilteredObservationStore extends AbstractObservati
             if (template != null) {
                 final Phenomenon phenProp = template.getObservedProperty();
                 if (phenProp != null) {
-                    final List<String> fields = OMUtils.getPhenomenonsFieldIdentifiers(phenProp);
-                    for (String field : fields) {
+                    final List<Field> fields = OMUtils.getPhenomenonsFields(phenProp);
+                    for (Field field : fields) {
+                        // is this needed?
                         if (!procedure.fields.contains(field)) {
                             procedure.fields.add(field);
                         }

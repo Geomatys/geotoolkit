@@ -42,7 +42,7 @@ public class ProcedureDataset extends Procedure {
 
     public final GeoSpatialBound spatialBound = new GeoSpatialBound();
 
-    public final List<String> fields = new ArrayList<>();
+    public final List<Field> fields = new ArrayList<>();
 
     // for JSON
     protected ProcedureDataset() {
@@ -50,14 +50,14 @@ public class ProcedureDataset extends Procedure {
         this.omType = null;
     }
 
-    public ProcedureDataset(final String id, final String name, final String description, final String type, final String omType, final Collection<String> fields , Map<String, Object> properties) {
+    public ProcedureDataset(final String id, final String name, final String description, final String type, final String omType, final Collection<Field> fields , Map<String, Object> properties) {
         super(id, name, description, properties);
         this.type = type;
         this.omType = omType;
         this.fields.addAll(fields);
     }
 
-    public ProcedureDataset(final Procedure proc, final String type, final String omType, final Collection<String> fields) {
+    public ProcedureDataset(final Procedure proc, final String type, final String omType, final Collection<Field> fields) {
         super(proc);
         this.type = type;
         this.omType = omType;
@@ -98,7 +98,7 @@ public class ProcedureDataset extends Procedure {
         }
         sb.append("spatialBound:").append(spatialBound).append('\n');
         sb.append("fields:\n");
-        for (String f : fields) {
+        for (Field f : fields) {
             sb.append(f).append("\n");
         }
         return sb.toString();
