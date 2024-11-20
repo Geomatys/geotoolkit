@@ -59,7 +59,6 @@ import org.geotoolkit.sampling.xml.v100.SamplingSolidType;
 import org.geotoolkit.sampling.xml.v100.SamplingSurfaceType;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.gml.xml.BoundingShape;
-import org.geotoolkit.swe.xml.v101.CompositePhenomenonType;
 import org.opengis.metadata.Identifier;
 import org.opengis.temporal.Period;
 import org.opengis.temporal.TemporalPrimitive;
@@ -302,8 +301,8 @@ public class ObservationType implements Entry, AbstractObservation {
 
         if (this.result != null) {
             res = this.result.getValue();
-            if (this.result.getValue() instanceof DataArrayPropertyType) {
-                DataArrayType d = ((DataArrayPropertyType)this.result.getValue()).getDataArray();
+            if (this.result.getValue() instanceof DataArrayPropertyType dap) {
+                DataArrayType d = dap.getDataArray();
                 d.setElementCount(0);
                 d.setValues("");
             }
@@ -636,93 +635,6 @@ public class ObservationType implements Entry, AbstractObservation {
     @Override
     public void extendBoundingShape(AbstractGeometry newGeom) {
         // not bounds in this version
-    }
-
-    /**
-     * Return true if the observation match the specified template.
-     * @param abstractTemplate
-     */
-    @Override
-    public boolean matchTemplate(final Observation abstractTemplate) {
-        if (abstractTemplate == null) {
-            throw new IllegalArgumentException("cannot match null template");
-        } else if (!(abstractTemplate instanceof ObservationType)) {
-            throw new IllegalArgumentException("Unexpected object version");
-        }
-        final ObservationType template = (ObservationType) abstractTemplate;
-        final boolean obsProperty;
-        if (this.observedProperty != null && template.observedProperty != null) {
-            obsProperty = matchPhenomenon(this.observedProperty.getPhenomenon(), template.observedProperty.getPhenomenon());
-            if (!obsProperty) {
-                LOGGER.info("\ncomparing observed property:\nTHIS     => " +  this.observedProperty.getPhenomenon() +
-                            "\nTEMPLATE => "                               + template.observedProperty.getPhenomenon() + '\n');
-            }
-        } else {
-            obsProperty = this.observedProperty == null && template.observedProperty == null;
-        }
-
-        final boolean obsFoi;
-        if (this.featureOfInterest != null && template.featureOfInterest != null) {
-            obsFoi = Objects.equals(this.featureOfInterest.getAbstractFeature(),    template.featureOfInterest.getAbstractFeature());
-            if (!obsFoi) {
-                LOGGER.info("\ncomparing feature of interest:\nTHIS    => "+  this.featureOfInterest.getAbstractFeature() +
-                            "\nTEMPLATE => " + template.featureOfInterest.getAbstractFeature() + '\n');
-            }
-        } else {
-            obsFoi = this.featureOfInterest == null && template.featureOfInterest == null;
-        }
-
-        final boolean obsProc;
-        if (this.procedure != null && template.procedure != null) {
-            obsProc = Objects.equals(this.procedure.getHref(),    template.procedure.getHref());
-        } else {
-            obsProc = this.procedure == null && template.procedure == null;
-        }
-
-        boolean match = obsFoi                                                                 &&
-                        obsProc                                                                &&
-                        Objects.equals(this.resultQuality,       template.resultQuality)       &&
-                        Objects.equals(this.observationMetadata, template.observationMetadata) &&
-                        Objects.equals(this.procedureTime,       template.procedureTime)       &&
-                        Objects.equals(this.procedureParameter,  template.procedureParameter)  &&
-                        obsProperty;
-        if (!match) {
-            LOGGER.severe("error matching template report:" +
-                   "\nFOI  =>" + obsFoi                                                                 +
-                   "\nPROC =>" + obsProc                                                                +
-                   "\nQUAL =>" + Objects.equals(this.resultQuality,       template.resultQuality)       +
-                   "\nMETA =>" + Objects.equals(this.observationMetadata, template.observationMetadata) +
-                   "\nPTI  =>" + Objects.equals(this.procedureTime,       template.procedureTime)       +
-                   "\nPPAM =>" + Objects.equals(this.procedureParameter,  template.procedureParameter)  +
-                   "\nPHEN =>" + obsProperty);
-        }
-        return match;
-    }
-
-    private boolean matchPhenomenon(PhenomenonType phen, PhenomenonType templatePhen) {
-        if (Objects.equals(phen.getName().getCode(), templatePhen.getName().getCode())) {
-
-            // due to transient field observed properties name will not be equals. so if the code is equals, we assume that its correct
-            if (phen instanceof CompositePhenomenonType &&
-                templatePhen instanceof CompositePhenomenonType) {
-
-                CompositePhenomenonType copyCompo = new CompositePhenomenonType((CompositePhenomenonType) phen);
-                CompositePhenomenonType tempCompo = (CompositePhenomenonType) templatePhen;
-                if (copyCompo.getComponent().size() == tempCompo.getComponent().size()) {
-                    for (int i = 0; i < copyCompo.getComponent().size(); i++) {
-                        if (!matchPhenomenon(copyCompo.getComponent().get(i), tempCompo.getComponent().get(i))) {
-                            return false;
-                        }
-                    }
-                    return true;
-                }
-            } else {
-                PhenomenonType copyPhen = new PhenomenonType(phen);
-                copyPhen.setName(templatePhen.getName());
-                return Objects.equals(copyPhen, templatePhen);
-            }
-        }
-        return false;
     }
 
     /**

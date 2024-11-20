@@ -87,6 +87,7 @@ public class MultiDatastreamsResponse implements STSPagedResponse {
      * @return value
      *
      */
+    @Override
     public List<MultiDatastream> getValue() {
         return value;
     }

@@ -59,8 +59,9 @@ public class DataArrayResponse implements STSPagedResponse {
      * Get value
      *
      * @return value
-  *
+     *
      */
+    @Override
     public List<DataArray> getValue() {
         return value;
     }

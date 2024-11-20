@@ -632,11 +632,6 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
     }
 
     @Override
-    public boolean matchTemplate(final Observation abstractTemplate) {
-        return true;
-    }
-
-    @Override
     public OMObservationType getTemporaryTemplate(final String temporaryName, final TemporalPrimitive time) {
         throw new UnsupportedOperationException("Not supported yet.");
     }

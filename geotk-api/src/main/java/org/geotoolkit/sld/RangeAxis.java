@@ -17,32 +17,24 @@
  */
 package org.geotoolkit.sld;
 
-import java.util.List;
+import org.geotoolkit.sld.SLDVisitor;
 
 
 /**
- * A named layer is a layer that can be accessed from an OGC Web Server
- * using a well-known name.
+ * RangeAxis describes a range subset defined by a constraining parameter.
+ * The name of that parameter matches the name of an AxisDescription element in the range set
+ * description of the selected coverage offering. The value is one of the acceptable values
+ * defined in the corresponding AxisDescription element.
  *
  * @version <A HREF="http://www.opengeospatial.org/standards/sld">Implementation specification 1.1.0</A>
  * @author Open Geospatial Consortium
  * @author Johann Sorel (Geomatys)
  */
-public interface NamedLayer extends Layer {
-    /**
-     * The LayerFeatureConstraints element is optional in a NamedLayer and allows the
-     * user to specify constraints on what features of what feature types are to be selected by the
-     * named-layer reference. It is essentially a filter that allows the selection of fewer features
-     * than are present in the named layer.
-     */
-    LayerFeatureConstraints getConstraints();
+public interface RangeAxis {
 
-    /**
-     * A named styled layer can include any number of named styles and user-defined styles,
-     * including zero, mixed in any order. If zero styles are specified, then the default styling for
-     * the specified named layer is to be used.
-     */
-    List<? extends LayerStyle> styles();
+    String getName();
+
+    String getValue();
 
     /**
      * calls the visit method of a SLDVisitor

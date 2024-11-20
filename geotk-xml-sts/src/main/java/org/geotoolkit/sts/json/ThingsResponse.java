@@ -75,8 +75,9 @@ public class ThingsResponse implements STSPagedResponse {
      * Get value
      *
      * @return value
-  *
+     *
      */
+    @Override
     public List<Thing> getValue() {
         return value;
     }

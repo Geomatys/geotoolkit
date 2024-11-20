@@ -517,8 +517,8 @@ public class NetCDFExtractor {
             final Array timeArray   = analyze.file.readArrays(Arrays.asList(timeVar)).get(0);
             final boolean constantT = analyze.mainField.dimension == 1;
             final boolean timeFirst = analyze.mainField.mainVariableFirst;
-
-            final Set<String> fields = analyze.getPhenomenonArrayMap().keySet();
+            final List<Field> fields = new ArrayList<>(analyze.phenfields);
+            fields.add(0, OMUtils.TIME_FIELD);
 
             if (single) {
                 if (acceptedSensorID == null || acceptedSensorID.contains(procedureID)) {
@@ -809,7 +809,8 @@ public class NetCDFExtractor {
                 timeArray        = analyze.getArrayFromField(analyze.timeField);
             }
 
-            final Set<String> fields = analyze.getPhenomenonArrayMap().keySet();
+            final List<Field> fields = new ArrayList<>(analyze.phenfields);
+            fields.add(0, OMUtils.PRESSION_FIELD);
 
             if (single) {
                 if (acceptedSensorID == null || acceptedSensorID.contains(procedureID)) {
@@ -1098,7 +1099,10 @@ public class NetCDFExtractor {
             final boolean constantT = analyze.mainField.dimension == 1;
             final boolean timeFirst = analyze.mainField.mainVariableFirst;
 
-            final Set<String> fields = analyze.getPhenomenonArrayMap().keySet();
+            final List<Field> fields = new ArrayList<>(analyze.phenfields);
+            fields.add(0, OMUtils.TIME_FIELD);
+            fields.add(1, OMUtils.LATITUDE_FIELD);
+            fields.add(2, OMUtils.LONGITUDE_FIELD);
 
             if (single) {
                 if (acceptedSensorID == null || acceptedSensorID.contains(procedureID)) {
@@ -1304,7 +1308,9 @@ public class NetCDFExtractor {
                 final String timeUnits  = analyze.mainField.uom;
                 final Array timeArray   = analyze.file.readArrays(Arrays.asList(timeVar)).get(0);
 
-                compo.fields.addAll(analyze.getPhenomenonArrayMap().keySet());
+                final List<Field> fields = new ArrayList<>(analyze.phenfields);
+                fields.add(0, OMUtils.TIME_FIELD);
+                compo.fields.addAll(fields);
 
                 final int latSize = latVar.getDimension(0).getLength();
                 for (int latIndex = 0; latIndex < latSize; latIndex++) {

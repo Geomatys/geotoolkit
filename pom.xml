@@ -942,6 +942,8 @@
            Modules for the build in approximate dependency order
        =========================================================== -->
   <modules>
+    <module>geotk-api</module>
+  
     <module>geotk-utility</module>
     <module>geotk-temporal</module>
     <module>geotk-maven-report</module>

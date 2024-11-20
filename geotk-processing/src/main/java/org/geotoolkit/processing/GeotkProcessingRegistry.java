@@ -42,6 +42,9 @@ public class GeotkProcessingRegistry extends AbstractProcessingRegistry {
 
     public GeotkProcessingRegistry(){
         super(
+                //arrays
+                org.geotoolkit.processing.arrays.CreateArrayDoubleValuesDescriptor.INSTANCE,
+                org.geotoolkit.processing.arrays.CreateArrayGridCoverageValuesDescriptor.INSTANCE,
                 //coverage
                 org.geotoolkit.processing.coverage.bandcombine.BandCombineDescriptor.INSTANCE,
                 org.geotoolkit.processing.coverage.bandselect.BandSelectDescriptor.INSTANCE,
@@ -61,6 +64,14 @@ public class GeotkProcessingRegistry extends AbstractProcessingRegistry {
                 org.geotoolkit.processing.coverage.straighten.StraightenDescriptor.INSTANCE,
                 org.geotoolkit.processing.coverage.volume.ComputeVolumeDescriptor.INSTANCE,
                 org.geotoolkit.processing.coverage.kriging.KrigingDescriptor.INSTANCE,
+                org.geotoolkit.processing.coverage.math.divide.CoverageDivideDescriptor.INSTANCE,
+                org.geotoolkit.processing.coverage.math.divide.CoverageDivideWithValueDescriptor.INSTANCE,
+                org.geotoolkit.processing.coverage.math.multiply.CoverageMultiplyDescriptor.INSTANCE,
+                org.geotoolkit.processing.coverage.math.multiply.CoverageMultiplyWithValueDescriptor.INSTANCE,
+                org.geotoolkit.processing.coverage.math.sum.CoverageSumDescriptor.INSTANCE,
+                org.geotoolkit.processing.coverage.math.sum.CoverageSumWithValueDescriptor.INSTANCE,
+                org.geotoolkit.processing.coverage.math.substract.CoverageSubstractDescriptor.INSTANCE,
+                org.geotoolkit.processing.coverage.math.substract.CoverageSubstractWithValueDescriptor.INSTANCE,
                 //script
                 org.geotoolkit.processing.script.ScriptProcess.Descriptor.INSTANCE,
                 //image

@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.sld;
 
+import org.geotoolkit.sld.UserLayer;
 import org.opengis.style.Style;
 
 

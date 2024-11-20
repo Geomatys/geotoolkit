@@ -68,7 +68,7 @@ public class CompositePhenomenonType extends CompoundPhenomenonType implements C
 
     public CompositePhenomenonType(final CompositePhenomenonType compo) {
         super(compo);
-        this.base = new PhenomenonType(base);
+        if (compo.base != null) this.base = new PhenomenonType(compo.base);
         this.component = new ArrayList<>();
         for (PhenomenonType pheno: compo.getComponent()) {
             this.component.add(new PhenomenonPropertyType(new PhenomenonType(pheno)));

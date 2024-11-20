@@ -84,7 +84,9 @@ public class DefinitionType extends DefinitionBaseType {
 
     public DefinitionType(final DefinitionType def)  {
         super(def);
-        this.remarks = def.remarks;
+        if (def != null) {
+            this.remarks = def.remarks;
+        }
     }
 
     /**

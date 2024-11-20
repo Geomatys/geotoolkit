@@ -12,3 +12,6 @@ sonar:
       - $SONAR_TOKEN
   script:
     - mvn install sonar:sonar -s $MAVEN_SETTINGS -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.login=$SONAR_TOKEN
+
+include:
+  - component: $CI_SERVER_FQDN/amanin/qodana-inspection/qodana-inspection@0.1.1

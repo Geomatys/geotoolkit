@@ -133,7 +133,6 @@ public class MeasurementType extends ObservationType implements Measurement {
        return (Measure)result;
     }
 
-
     /**
      * Construit un nouveau template temporaire d'observation a partir d'un template fournit en argument.
      * On y rajoute un samplingTime et un id temporaire.

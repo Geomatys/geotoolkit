@@ -25,7 +25,7 @@ import org.geotoolkit.util.DeltaComparable;
 /**
  * Sensor
  */
-public class Sensor implements STSResponse, DeltaComparable {
+public class Sensor implements STSEntityResponse, DeltaComparable {
 
     @JsonProperty("@iot.id")
     private String iotId = null;
@@ -87,8 +87,9 @@ public class Sensor implements STSResponse, DeltaComparable {
      * the entities of the same entity type.
      *
      * @return iotId
-  *
+     *
      */
+    @Override
     public String getIotId() {
         return iotId;
     }
@@ -107,8 +108,9 @@ public class Sensor implements STSResponse, DeltaComparable {
      * other entities.
      *
      * @return iotSelfLink
-  *
+     *
      */
+    @Override
     public String getIotSelfLink() {
         return iotSelfLink;
     }

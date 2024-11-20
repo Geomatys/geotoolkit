@@ -17,12 +17,15 @@
 package org.geotoolkit.sts.json;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
 public interface STSPagedResponse extends STSResponse {
+
+    List<? extends STSEntityResponse> getValue();
 
     BigDecimal getIotCount();
 

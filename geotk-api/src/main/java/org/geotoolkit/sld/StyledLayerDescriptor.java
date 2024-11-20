@@ -18,6 +18,9 @@
 package org.geotoolkit.sld;
 
 import java.util.List;
+import org.geotoolkit.sld.Layer;
+import org.geotoolkit.sld.SLDLibrary;
+import org.geotoolkit.sld.SLDVisitor;
 import org.opengis.style.Description;
 
 
