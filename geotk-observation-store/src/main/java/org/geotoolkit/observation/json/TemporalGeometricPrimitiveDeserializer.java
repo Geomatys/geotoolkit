@@ -29,6 +29,7 @@ import java.util.Date;
 import org.apache.sis.temporal.TemporalObjects;
 import static org.geotoolkit.observation.json.ObservationJsonUtils.getFieldValue;
 import org.geotoolkit.observation.model.ObservationTransformUtils;
+import org.geotoolkit.observation.model.ObservationUtils;
 import org.opengis.temporal.IndeterminateValue;
 import org.opengis.temporal.Instant;
 import org.opengis.temporal.TemporalPrimitive;
@@ -67,7 +68,7 @@ public class TemporalGeometricPrimitiveDeserializer extends JsonDeserializer<Tem
             try {
                 Date d = sdf.parse(dateStr);
                 var t = TemporalObjects.createInstant(d.toInstant());
-                ObservationTransformUtils.setIdentifier(t, id);
+                ObservationUtils.setIdentifier(t, id);
                 return t;
             } catch (ParseException ex) {
                 throw new JsonMappingException(parser, "Date parsing exception", ex);
@@ -83,12 +84,12 @@ public class TemporalGeometricPrimitiveDeserializer extends JsonDeserializer<Tem
             String dateStr    = instantNode.get("date").textValue();
             Date d = sdf.parse(dateStr);
             var t = TemporalObjects.createInstant(d.toInstant());
-            ObservationTransformUtils.setIdentifier(t, id);
+            ObservationUtils.setIdentifier(t, id);
             return t;
         } else if (instantNode.hasNonNull("indeterminatePosition")) {
             IndeterminateValue iValue = IndeterminateValue.valueOf(instantNode.get("indeterminatePosition").asText());
             var t = TemporalObjects.createInstant(iValue);
-            ObservationTransformUtils.setIdentifier(t, id);
+            ObservationUtils.setIdentifier(t, id);
             return t;
         } else {
             throw new JsonMappingException(parser, "Invalid JSON : missing date or indeterminatePosition for Instant");

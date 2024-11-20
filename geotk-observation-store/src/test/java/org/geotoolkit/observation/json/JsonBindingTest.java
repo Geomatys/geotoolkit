@@ -41,7 +41,7 @@ import org.geotoolkit.observation.model.Field;
 import org.geotoolkit.observation.model.FieldType;
 import org.geotoolkit.observation.model.MeasureResult;
 import org.geotoolkit.observation.model.Observation;
-import static org.geotoolkit.observation.model.ObservationTransformUtils.setIdentifier;
+import static org.geotoolkit.observation.model.ObservationUtils.setIdentifier;
 import org.geotoolkit.observation.model.Offering;
 import org.geotoolkit.observation.model.Phenomenon;
 import org.geotoolkit.observation.model.Procedure;

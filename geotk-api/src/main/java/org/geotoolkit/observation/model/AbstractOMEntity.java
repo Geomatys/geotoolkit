@@ -97,11 +97,11 @@ public abstract class AbstractOMEntity {
     }
 
     protected final void addIdentifier(org.opengis.temporal.Instant i) {
-        ObservationTransformUtils.setIdentifier(i, getId() + "-time");
+        ObservationUtils.setIdentifier(i, getId() + "-time");
     }
 
     protected final void addIdentifiers(Period p) {
-        ObservationTransformUtils.setIdentifiers(p, getId());
+        ObservationUtils.setIdentifiers(p, getId());
     }
 
     @Override

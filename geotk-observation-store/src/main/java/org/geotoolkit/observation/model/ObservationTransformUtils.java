@@ -14,8 +14,6 @@ import javax.xml.namespace.QName;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.temporal.TemporalObjects;
-import org.apache.sis.xml.IdentifiedObject;
-import org.apache.sis.xml.IdentifierSpace;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.gml.GeometrytoJTS;
@@ -27,6 +25,7 @@ import org.geotoolkit.gml.xml.GMLPeriod;
 import org.geotoolkit.gml.xml.GMLInstant;
 import org.geotoolkit.gml.xml.TimeIndeterminateValueType;
 import org.geotoolkit.observation.OMUtils;
+import static org.geotoolkit.observation.model.ObservationUtils.setIdentifier;
 import org.geotoolkit.observation.xml.AbstractObservation;
 import org.geotoolkit.observation.xml.OMXmlFactory;
 import org.geotoolkit.sos.xml.ObservationOffering;
@@ -156,7 +155,7 @@ public class ObservationTransformUtils {
        };
     }
 
-    public static DataArrayProperty buildComplexResult(final String version, final List<AnyScalar> fields, final Integer nbValue,
+    private static DataArrayProperty buildComplexResult(final String version, final List<AnyScalar> fields, final Integer nbValue,
             final TextBlock encoding, final String values) {
         final String arrayID     = "dataArray-0" ;
         final String recordID    = "datarecord-0";
@@ -602,15 +601,5 @@ public class ObservationTransformUtils {
                                 off.getFeatureOfInterestIds());
         }
         return null;
-    }
-
-    public static void setIdentifiers(Period p, String id) {
-        setIdentifier(p.getBeginning(), id + "-st-time");
-        setIdentifier(p.getEnding(), id + "-en-time");
-        setIdentifier(p, id + "-time");
-    }
-
-    public static void setIdentifier(TemporalPrimitive t, String id) {
-        ((IdentifiedObject) t).getIdentifierMap().putSpecialized(IdentifierSpace.ID, id);
     }
 }

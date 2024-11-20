@@ -228,11 +228,11 @@ public class GeoSpatialBound {
             String id = UUID.randomUUID().toString();
             if (dateStart.getTime() == dateEnd.getTime()) {
                 var t = TemporalObjects.createInstant(dateStart.toInstant());
-                ObservationTransformUtils.setIdentifier(t, id + "-time");
+                ObservationUtils.setIdentifier(t, id + "-time");
                 return t;
             } else {
                 var p = TemporalObjects.createPeriod(dateStart.toInstant(), dateEnd.toInstant());
-                ObservationTransformUtils.setIdentifiers(p, id);
+                ObservationUtils.setIdentifiers(p, id);
                 return p;
             }
         }

@@ -64,7 +64,7 @@ import static org.geotoolkit.observation.model.FieldType.TEXT;
 import static org.geotoolkit.observation.model.FieldType.TIME;
 import org.geotoolkit.observation.model.MeasureResult;
 import org.geotoolkit.observation.model.Observation;
-import org.geotoolkit.observation.model.ObservationTransformUtils;
+import org.geotoolkit.observation.model.ObservationUtils;
 import org.geotoolkit.temporal.object.ISODateParser;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.filter.BinarySpatialOperator;
@@ -290,20 +290,20 @@ public class OMUtils {
         if (start != null && end != null) {
             if (start.equals(end)) {
                 var t = TemporalObjects.createInstant(start);
-                ObservationTransformUtils.setIdentifier(t, id + "-time");
+                ObservationUtils.setIdentifier(t, id + "-time");
                 return t;
             } else {
                 var p = TemporalObjects.createPeriod(start, end);
-                ObservationTransformUtils.setIdentifiers(p, id);
+                ObservationUtils.setIdentifiers(p, id);
                 return p;
             }
         } else if (start != null) {
             var t = TemporalObjects.createInstant(start);
-            ObservationTransformUtils.setIdentifier(t, id + "-st-time");
+            ObservationUtils.setIdentifier(t, id + "-st-time");
             return t;
         } else if (end != null) {
             var t = TemporalObjects.createInstant(end);
-            ObservationTransformUtils.setIdentifier(t, id + "-en-time");
+            ObservationUtils.setIdentifier(t, id + "-en-time");
             return t;
         }
         return null;
