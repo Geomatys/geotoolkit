@@ -28,7 +28,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import org.apache.sis.temporal.TemporalObjects;
 import static org.geotoolkit.observation.json.ObservationJsonUtils.getFieldValue;
-import org.geotoolkit.observation.model.ObservationTransformUtils;
 import org.geotoolkit.observation.model.ObservationUtils;
 import org.opengis.temporal.IndeterminateValue;
 import org.opengis.temporal.Instant;
@@ -57,7 +56,9 @@ public class TemporalGeometricPrimitiveDeserializer extends JsonDeserializer<Tem
             try {
                 var begin = readInstant(parser, sdf, beginNode);
                 var end   = readInstant(parser, sdf, endNode);
-                return TemporalObjects.createPeriod(begin, end);
+                var p     = TemporalObjects.createPeriod(begin, end);
+                ObservationUtils.setIdentifier(p, id);
+                return p;
 
             } catch (ParseException ex) {
                 throw new JsonMappingException(parser, "Date parsing exception", ex);

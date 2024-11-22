@@ -46,11 +46,11 @@ public class PeriodSerializer extends JsonSerializer<Period> {
         if (i != null) end = copy(i);
         if (begin != null) {
             writer.writeFieldName("beginning");
-            writeInstant(writer, begin);
+            ObservationJsonUtils.writeInstant(writer, begin);
         }
         if (end != null) {
             writer.writeFieldName("ending");
-            writeInstant(writer, end);
+            ObservationJsonUtils.writeInstant(writer, end);
         }
         writer.writeEndObject();
     }
@@ -66,20 +66,5 @@ public class PeriodSerializer extends JsonSerializer<Period> {
         }
         return t;
     }
-
-    private static void writeInstant(JsonGenerator writer, Instant i) throws IOException {
-        writer.writeStartObject();
-        writer.writeFieldName("id");
-        writer.writeString(InstantSerializer.getIdentifier(i));
-        if (i.getPosition() != null) {
-            writer.writeFieldName("date");
-            writer.writeString(i.getPosition().toString());
-        } else if (i.getIndeterminatePosition().isPresent()) {
-            writer.writeFieldName("indeterminatePosition");
-            writer.writeString(i.getIndeterminatePosition().get().name());
-        } else {
-            throw new JsonMappingException(writer, "Instant must contains at least a date or an indeterminate position.");
-        }
-        writer.writeEndObject();
-    }
 }
+

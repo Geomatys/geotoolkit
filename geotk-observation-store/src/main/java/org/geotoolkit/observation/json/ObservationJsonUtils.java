@@ -17,18 +17,24 @@
 package org.geotoolkit.observation.json;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
+import org.apache.sis.temporal.TemporalDate;
 import org.geotoolkit.observation.model.Phenomenon;
 import org.geotoolkit.observation.model.Result;
 import org.locationtech.jts.geom.Geometry;
@@ -49,6 +55,7 @@ public class ObservationJsonUtils {
         ObjectMapper mapper = new JsonMapper();
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
+        mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.S'Z'"));
 
         final SimpleModule module = new SimpleModule();
         module.addSerializer(Identifier.class, new IdentifierSerializer());
@@ -110,5 +117,22 @@ public class ObservationJsonUtils {
             case OBJECT, POJO     -> throw new UnsupportedOperationException("Not supported yet: object node");
             case BINARY           -> throw new UnsupportedOperationException("Not supported yet: binary data");
         };
+    }
+
+    protected static void writeInstant(JsonGenerator writer, Instant i) throws IOException {
+        writer.writeStartObject();
+        writer.writeFieldName("id");
+        writer.writeString(InstantSerializer.getIdentifier(i));
+        if (i.getPosition() != null) {
+            writer.writeFieldName("date");
+            DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.S'Z'");
+            writer.writeString(sdf.format(TemporalDate.toDate(i.getPosition())));
+        } else if (i.getIndeterminatePosition().isPresent()) {
+            writer.writeFieldName("indeterminatePosition");
+            writer.writeString(i.getIndeterminatePosition().get().name());
+        } else {
+            throw new JsonMappingException(writer, "Instant must contains at least a date or an indeterminate position.");
+        }
+        writer.writeEndObject();
     }
 }

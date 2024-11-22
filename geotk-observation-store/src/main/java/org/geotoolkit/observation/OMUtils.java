@@ -299,11 +299,11 @@ public class OMUtils {
             }
         } else if (start != null) {
             var t = TemporalObjects.createInstant(start);
-            ObservationUtils.setIdentifier(t, id + "-st-time");
+            ObservationUtils.setIdentifier(t, id + "-time");
             return t;
         } else if (end != null) {
             var t = TemporalObjects.createInstant(end);
-            ObservationUtils.setIdentifier(t, id + "-en-time");
+            ObservationUtils.setIdentifier(t, id + "-time");
             return t;
         }
         return null;

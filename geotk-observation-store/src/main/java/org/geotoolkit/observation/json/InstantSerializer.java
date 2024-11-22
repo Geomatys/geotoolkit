@@ -33,12 +33,7 @@ public class InstantSerializer extends JsonSerializer<Instant> {
 
     @Override
     public void serialize(Instant i, JsonGenerator writer, SerializerProvider serializerProvider) throws IOException {
-        writer.writeStartObject();
-        writer.writeFieldName("id");
-        writer.writeString(getIdentifier(i));
-        writer.writeFieldName("date");
-        writer.writeString(i.toString());
-        writer.writeEndObject();
+        ObservationJsonUtils.writeInstant(writer, i);
     }
 
     static String getIdentifier(final TemporalPrimitive t) {

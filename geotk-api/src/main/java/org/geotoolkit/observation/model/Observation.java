@@ -36,7 +36,7 @@ import org.opengis.temporal.TemporalPrimitive;
 
 /**
  * TODO : remove the opengis implements and add the AbstractOMEntity extends
- * 
+ *
  * @author Guilhem Legal (Geomatys)
  */
 public class Observation implements org.opengis.observation.Observation {
@@ -259,7 +259,7 @@ public class Observation implements org.opengis.observation.Observation {
     protected final void addIdentifiers(Period p) {
         ObservationUtils.setIdentifiers(p, getId());
     }
-    
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("[").append(this.getClass().getName()).append("]");

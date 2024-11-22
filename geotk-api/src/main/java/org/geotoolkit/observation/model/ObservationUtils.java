@@ -26,7 +26,7 @@ import org.opengis.temporal.TemporalPrimitive;
  * @author glegal
  */
 public class ObservationUtils {
-    
+
     public static void setIdentifiers(Period p, String id) {
         setIdentifier(p.getBeginning(), id + "-st-time");
         setIdentifier(p.getEnding(), id + "-en-time");
