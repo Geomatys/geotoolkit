@@ -54,10 +54,10 @@ import org.geotoolkit.observation.query.ResultQuery;
 import org.geotoolkit.observation.query.SamplingFeatureQuery;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.metadata.Metadata;
-import org.opengis.observation.Observation;
-import org.opengis.observation.Phenomenon;
-import org.opengis.observation.Process;
-import org.opengis.observation.sampling.SamplingFeature;
+import org.geotoolkit.observation.model.Observation;
+import org.geotoolkit.observation.model.Phenomenon;
+import org.geotoolkit.observation.model.Procedure;
+import org.geotoolkit.observation.model.SamplingFeature;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.temporal.TemporalGeometricPrimitive;
 
@@ -254,7 +254,7 @@ public abstract class AbstractObservationStore extends DataStore implements Obse
     @Override
     public List<SamplingFeature> getFeatureOfInterest(SamplingFeatureQuery query) throws DataStoreException {
         final ObservationDataset fullDs = getDataset(new DatasetQuery());
-        return fullDs.featureOfInterest.stream().map(foi -> (SamplingFeature) foi).toList();
+        return fullDs.featureOfInterest;
     }
 
     /**
@@ -263,16 +263,16 @@ public abstract class AbstractObservationStore extends DataStore implements Obse
     @Override
     public List<Observation> getObservations(ObservationQuery query) throws DataStoreException {
         final ObservationDataset fullDs = getDataset(new DatasetQuery());
-        return fullDs.observations.stream().map(obs -> (Observation) obs).toList();
+        return fullDs.observations;
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public List<Process> getProcedures(ProcedureQuery query) throws DataStoreException {
+    public List<Procedure> getProcedures(ProcedureQuery query) throws DataStoreException {
         final ObservationDataset fullDs = getDataset(new DatasetQuery());
-        return fullDs.procedures.stream().map(proc -> (Process) proc).toList();
+        return fullDs.procedures.stream().map(proc -> (Procedure) proc).toList();
     }
 
     @Override
