@@ -114,7 +114,6 @@ public class WMTSTileMatrix implements TileMatrix {
 
     public Optional<Tile> getTile(long[] indices, Map hints) throws DataStoreException {
         if (hints == null) hints = new HashMap();
-        if (!hints.containsKey(TileMatrices.HINT_FORMAT)) hints.put(TileMatrices.HINT_FORMAT,"image/png");
 
         return pyramid.getPyramidSet().getTile(pyramid, this, indices, hints);
     }
@@ -122,7 +121,6 @@ public class WMTSTileMatrix implements TileMatrix {
     @Override
     public Stream<Tile> getTiles(GridExtent indicesRanges, boolean parallel) throws DataStoreException {
         final HashMap hints = new HashMap();
-        hints.put(TileMatrices.HINT_FORMAT,"image/png");
         if (indicesRanges == null) indicesRanges = getTilingScheme().getExtent();
         final java.util.List<long[]> points = TileMatrices.pointStream(indicesRanges).collect(Collectors.toList());
         return pyramid.getPyramidSet().getTiles(pyramid, this, points, hints);

@@ -44,6 +44,8 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Guilhem Legal (Geomatys)
  */
 @StoreMetadata(
+        // This store is dedicated to a specific case for NetCDF data, and should not take priority over a generalist NetCDF datastore
+        yieldPriority = true,
         formatName = NetcdfObservationStoreFactory.NAME,
         capabilities = {Capability.READ},
         resourceTypes = {})
