@@ -94,10 +94,11 @@ public final class WMTSResource extends AbstractGridCoverageResource implements 
         final List<LayerType> layers = ps.getCapabilities().getContents().getLayers();
         for(LayerType lt : layers){
             final String name = lt.getIdentifier().getValue();
-            if(this.name.tip().equals(name)){
+            if(this.name.tip().toString().equals(name)){
                 final List<String> formats = lt.getFormat();
                 if(formats != null && !formats.isEmpty()){
                     format = formats.get(0);
+                    break;
                 }
             }
         }
