@@ -28,7 +28,7 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.display.shape.ShapeUtilities;
+import org.apache.sis.geometry.Shapes2D;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
@@ -156,7 +156,7 @@ public class GeometricUtilities {
      */
     public static double lineToPointDistance(final Line2D line, final GeneralDirectPosition point, final String units) {
 
-        final Point2D pt = ShapeUtilities.nearestColinearPoint(line, new Point2D.Double(point.getCoordinate(0), point.getCoordinate(1)));
+        final Point2D pt = Shapes2D.nearestColinearPoint(line, new Point2D.Double(point.getCoordinate(0), point.getCoordinate(1)));
 
         return getOrthodromicDistance(point.getCoordinate(0), point.getCoordinate(1),
                                       pt.getX(), pt.getY(), units);
@@ -177,22 +177,22 @@ public class GeometricUtilities {
             return 0;
         }
 
-        Point2D pt = ShapeUtilities.nearestColinearPoint(line2, line1.getP1());
+        Point2D pt = Shapes2D.nearestColinearPoint(line2, line1.getP1());
         double tempDistance = getOrthodromicDistance(pt.getX(), pt.getY(), line1.getX1(), line1.getY1(), units);
         if (tempDistance < distance)
             distance = tempDistance;
 
-        pt = ShapeUtilities.nearestColinearPoint(line2, line1.getP2());
+        pt = Shapes2D.nearestColinearPoint(line2, line1.getP2());
         tempDistance = getOrthodromicDistance(pt.getX(), pt.getY(), line1.getX2(), line1.getY2(), units);
         if (tempDistance < distance)
             distance = tempDistance;
 
-        pt = ShapeUtilities.nearestColinearPoint(line1, line2.getP1());
+        pt = Shapes2D.nearestColinearPoint(line1, line2.getP1());
         tempDistance = getOrthodromicDistance(pt.getX(), pt.getY(), line2.getX1(), line2.getY1(), units);
         if (tempDistance < distance)
             distance = tempDistance;
 
-        pt = ShapeUtilities.nearestColinearPoint(line1, line2.getP2());
+        pt = Shapes2D.nearestColinearPoint(line1, line2.getP2());
         tempDistance = getOrthodromicDistance(pt.getX(), pt.getY(), line2.getX2(), line2.getY2(), units);
         if (tempDistance < distance)
             distance = tempDistance;
