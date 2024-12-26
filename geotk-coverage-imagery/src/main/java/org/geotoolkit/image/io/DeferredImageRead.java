@@ -32,7 +32,7 @@ import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
 import org.apache.sis.image.ComputedImage;
-import org.apache.sis.coverage.privy.ImageLayout;
+import org.apache.sis.image.ImageLayout;
 import org.apache.sis.util.ArgumentChecks;
 
 
@@ -60,7 +60,7 @@ public final class DeferredImageRead extends ComputedImage {
      * {@link ImageLayout} will search for a size close to the preferred size which is a divisor of the
      * image size.</p>
      */
-    private static final ImageLayout COSTLY_ACCESS = new ImageLayout(new Dimension(4000, 4000), false);
+    private static final ImageLayout COSTLY_ACCESS = ImageLayout.DEFAULT.withPreferredTileSize(new Dimension(4000, 4000));
 
     /**
      * Preferred tile size for image that are untiled but still capable to provide random accesses easily.
@@ -68,7 +68,7 @@ public final class DeferredImageRead extends ComputedImage {
      * {@link ImageLayout} will search for a size close to the preferred size which is a divisor of
      * the image size.
      */
-    private static final ImageLayout EASY_ACCESS = new ImageLayout(new Dimension(1000, 1000), false);
+    private static final ImageLayout EASY_ACCESS = ImageLayout.DEFAULT.withPreferredTileSize(new Dimension(1000, 1000));
 
     /**
      * The reader to use for reading tiles.
@@ -146,7 +146,7 @@ public final class DeferredImageRead extends ComputedImage {
                     }
                 }
                 final ImageLayout layout = reader.isRandomAccessEasy(imageIndex) ? EASY_ACCESS : COSTLY_ACCESS;
-                final Dimension size = layout.suggestTileSize(tileWidth, tileHeight, supportTransparency);
+                final Dimension size = layout.allowPartialTiles(supportTransparency).suggestTileSize(tileWidth, tileHeight);
                 tileWidth  = size.width;
                 tileHeight = size.height;
             }

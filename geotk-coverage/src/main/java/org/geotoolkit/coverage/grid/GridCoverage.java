@@ -441,8 +441,8 @@ abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCoverage im
             /*
              * Computes some properties of the image to be created.
              */
-            final Dimension tileSize = org.apache.sis.coverage.privy.ImageLayout.DEFAULT.suggestTileSize(
-                    gridBounds.width, gridBounds.height, true);
+            final Dimension tileSize = org.apache.sis.image.ImageLayout.DEFAULT.allowPartialTiles(true)
+                    .suggestTileSize(gridBounds.width, gridBounds.height);
             SampleDimension band = getSampleDimensions().get(VISIBLE_BAND);
             if (band == null)
                 throw new IllegalStateException("Sample dimensions are undetermined.");
