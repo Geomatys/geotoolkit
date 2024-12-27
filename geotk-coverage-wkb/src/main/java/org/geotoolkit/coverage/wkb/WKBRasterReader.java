@@ -34,7 +34,7 @@ import javax.media.jai.RasterFactory;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.coverage.privy.ColorModelFactory;
+import org.apache.sis.image.privy.ColorModelFactory;
 import org.apache.sis.referencing.privy.AffineTransform2D;
 import org.apache.sis.referencing.CRS;
 import static org.geotoolkit.coverage.wkb.WKBRasterConstants.*;

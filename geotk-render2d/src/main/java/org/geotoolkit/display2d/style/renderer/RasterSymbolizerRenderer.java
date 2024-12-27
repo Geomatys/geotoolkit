@@ -54,7 +54,7 @@ import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
-import org.apache.sis.coverage.privy.TiledImage;
+import org.apache.sis.image.privy.TiledImage;
 import org.apache.sis.feature.privy.AttributeConvention;
 import org.apache.sis.map.ExceptionPresentation;
 import org.apache.sis.map.Presentation;

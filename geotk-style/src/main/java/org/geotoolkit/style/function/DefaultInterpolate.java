@@ -23,7 +23,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import org.apache.sis.coverage.privy.ColorModelFactory;
+import org.apache.sis.image.privy.ColorModelFactory;
 import org.apache.sis.util.privy.UnmodifiableArrayList;
 import org.apache.sis.util.ObjectConverters;
 import org.geotoolkit.filter.AbstractExpression;
