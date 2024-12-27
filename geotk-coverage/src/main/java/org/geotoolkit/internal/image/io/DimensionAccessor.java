@@ -32,7 +32,7 @@ import org.opengis.metadata.content.TransferFunctionType;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.coverage.SampleDimension;
-import org.apache.sis.image.privy.ImageUtilities;
+import org.apache.sis.image.DataType;
 import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.image.io.metadata.MetadataNodeAccessor;
 
@@ -352,7 +352,7 @@ nextPixel:          do {
                      * one band, do the scan. If we don't have float type, we don't need to continue
                      * since this method will never returns 'true' in such case.
                      */
-                    return !ImageUtilities.isIntegerType(reader.getRawImageType(imageIndex).getSampleModel());
+                    return !DataType.isInteger(reader.getRawImageType(imageIndex).getSampleModel());
                 }
             }
         }
