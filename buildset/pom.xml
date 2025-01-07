@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.geomatys</groupId>
         <artifactId>geomatys-bom</artifactId>
-        <version>2023.3</version>
+        <version>2024.5</version>
     </parent>
 
     <groupId>org.geotoolkit</groupId>
