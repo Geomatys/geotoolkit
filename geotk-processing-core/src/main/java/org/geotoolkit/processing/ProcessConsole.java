@@ -126,7 +126,10 @@ public final class ProcessConsole {
 
             final long currentTimeMs = System.currentTimeMillis();
             final long etd = currentTimeMs - startTimeMs;
-            final long eta = (long) (((100.0 * etd) / event.getProgress()) - etd);
+            final float progress = event.getProgress();
+            final long eta = (Float.isFinite(progress) && progress > 0)
+                             ? (long) (((100.0 * etd) / progress) - etd)
+                             : 0L;
 
             final StringBuilder sb = new StringBuilder();
             sb.append(color);
@@ -135,10 +138,12 @@ public final class ProcessConsole {
             sb.append("%\t");
             sb.append(RESET.sequence());
             sb.append(color);
-            if (eta > 0 && etd > 0) {
+            if (etd > 0) {
                 sb.append("Elapsed: ");
                 sb.append(TemporalUtilities.durationToString(etd));
                 sb.append("\t");
+            }
+            if (progress > 0 && eta > 0) {
                 sb.append("Remaining: ~");
                 sb.append(TemporalUtilities.durationToString(eta));
                 sb.append("\t");
