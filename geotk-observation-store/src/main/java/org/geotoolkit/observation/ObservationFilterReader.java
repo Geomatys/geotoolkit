@@ -29,10 +29,10 @@ import org.opengis.filter.BinaryComparisonOperator;
 import org.opengis.filter.BinarySpatialOperator;
 import org.opengis.filter.TemporalOperator;
 import org.opengis.geometry.Envelope;
-import org.opengis.observation.Observation;
-import org.opengis.observation.Phenomenon;
-import org.opengis.observation.sampling.SamplingFeature;
-import org.opengis.observation.Process;
+import org.geotoolkit.observation.model.Observation;
+import org.geotoolkit.observation.model.Phenomenon;
+import org.geotoolkit.observation.model.SamplingFeature;
+import org.geotoolkit.observation.model.Procedure;
 
 /**
  *
@@ -136,16 +136,12 @@ public interface ObservationFilterReader {
     /**
      * Return a list of Observation matching the builded filter.
      *
-     * Implementation should always return instanceof {@linkplain org.geotoolkit.observation.model.Observation}
-     *
      * @return A list of Observation matching the builded filter.
      */
     List<Observation> getObservations() throws DataStoreException;
 
     /**
      * Return a list of Sampling feature matching the builded filter.
-     *
-     * Implementation should always return instanceof {@linkplain org.geotoolkit.observation.model.SamplingFeature}
      *
      * @return A list of Sampling feature matching the builded filter.
      */
@@ -154,8 +150,6 @@ public interface ObservationFilterReader {
     /**
      * Return a list of Phenomenon matching the builded filter.
      *
-     * Implementation should always return instanceof {@linkplain org.geotoolkit.observation.model.Phenomenon}
-     *
      * @return A list of Phenomenon matching the builded filter.
      */
     List<Phenomenon> getPhenomenons() throws DataStoreException;
@@ -163,11 +157,9 @@ public interface ObservationFilterReader {
     /**
      *  Return a list of Procedure matching the builded filter.
      *
-     * Implementation should always return instanceof {@linkplain org.geotoolkit.observation.model.Procedure}
-     *
      * @return A list of Procedure matching the builded filter.
      */
-    List<Process> getProcesses() throws DataStoreException;
+    List<Procedure> getProcesses() throws DataStoreException;
 
     /**
      *  Return a list of Offering matching the builded filter.

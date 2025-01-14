@@ -36,10 +36,10 @@ import org.opengis.filter.BinaryComparisonOperator;
 import org.opengis.filter.BinarySpatialOperator;
 import org.opengis.filter.TemporalOperator;
 import org.opengis.geometry.Envelope;
-import org.opengis.observation.Observation;
-import org.opengis.observation.Phenomenon;
-import org.opengis.observation.Process;
-import org.opengis.observation.sampling.SamplingFeature;
+import org.geotoolkit.observation.model.Observation;
+import org.geotoolkit.observation.model.Phenomenon;
+import org.geotoolkit.observation.model.Procedure;
+import org.geotoolkit.observation.model.SamplingFeature;
 
 /**
  *
@@ -157,8 +157,8 @@ public class StoreDelegatingObservationFilter implements ObservationFilterReader
     }
 
     @Override
-    public List<Process> getProcesses() throws DataStoreException {
-        List<Process> results = new ArrayList<>();
+    public List<Procedure> getProcesses() throws DataStoreException {
+        List<Procedure> results = new ArrayList<>();
         //TODO add filters
         List<ProcedureDataset> procedures = store.getProcedureDatasets(new DatasetQuery());
         long limit;

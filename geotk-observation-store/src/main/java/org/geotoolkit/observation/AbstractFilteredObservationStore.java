@@ -70,7 +70,6 @@ import org.opengis.filter.SpatialOperatorName;
 import org.opengis.filter.TemporalOperator;
 import org.opengis.filter.ValueReference;
 import org.opengis.geometry.Envelope;
-import org.opengis.observation.Process;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.temporal.TemporalPrimitive;
 import org.opengis.util.CodeList;
@@ -253,7 +252,7 @@ public abstract class AbstractFilteredObservationStore extends AbstractObservati
      * {@inheritDoc }
      */
     @Override
-    public List<org.opengis.observation.sampling.SamplingFeature> getFeatureOfInterest(SamplingFeatureQuery query) throws DataStoreException {
+    public List<SamplingFeature> getFeatureOfInterest(SamplingFeatureQuery query) throws DataStoreException {
         return handleQuery(query).getFeatureOfInterests();
     }
 
@@ -269,7 +268,7 @@ public abstract class AbstractFilteredObservationStore extends AbstractObservati
      * {@inheritDoc }
      */
     @Override
-    public List<org.opengis.observation.Observation> getObservations(ObservationQuery query) throws DataStoreException {
+    public List<Observation> getObservations(ObservationQuery query) throws DataStoreException {
        return handleQuery(query).getObservations();
     }
 
@@ -277,7 +276,7 @@ public abstract class AbstractFilteredObservationStore extends AbstractObservati
      * {@inheritDoc }
      */
     @Override
-    public org.opengis.observation.Observation getTemplate(String sensorId) throws DataStoreException {
+    public Observation getTemplate(String sensorId) throws DataStoreException {
         return getReader().getTemplateForProcedure(sensorId);
     }
 
@@ -285,7 +284,7 @@ public abstract class AbstractFilteredObservationStore extends AbstractObservati
      * {@inheritDoc }
      */
     @Override
-    public List<org.opengis.observation.Phenomenon> getPhenomenons(ObservedPropertyQuery query) throws DataStoreException {
+    public List<Phenomenon> getPhenomenons(ObservedPropertyQuery query) throws DataStoreException {
         return handleQuery(query).getPhenomenons();
     }
 
@@ -293,7 +292,7 @@ public abstract class AbstractFilteredObservationStore extends AbstractObservati
      * {@inheritDoc }
      */
     @Override
-    public List<Process> getProcedures(ProcedureQuery query) throws DataStoreException {
+    public List<Procedure> getProcedures(ProcedureQuery query) throws DataStoreException {
         return handleQuery(query).getProcesses();
     }
 
@@ -496,10 +495,9 @@ public abstract class AbstractFilteredObservationStore extends AbstractObservati
         final Envelope env = OMUtils.getEnvelopeFromBBOXFilter(box);
         List<String> results = new ArrayList<>();
         SamplingFeatureQuery query = new SamplingFeatureQuery();
-        final List<org.opengis.observation.sampling.SamplingFeature> stations = getFeatureOfInterest(query);
-        for (org.opengis.observation.sampling.SamplingFeature offStation : stations) {
+        final List<SamplingFeature> stations = getFeatureOfInterest(query);
+        for (SamplingFeature station : stations) {
             // TODO for SOS 2.0 use observed area
-            final org.geotoolkit.observation.model.SamplingFeature station = (org.geotoolkit.observation.model.SamplingFeature) offStation;
 
             // should not happen
             if (station == null) {

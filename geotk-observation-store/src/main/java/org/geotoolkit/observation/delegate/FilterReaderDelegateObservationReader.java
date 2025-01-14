@@ -41,10 +41,10 @@ import org.geotoolkit.observation.query.OfferingQuery;
 import org.geotoolkit.observation.query.ProcedureQuery;
 import org.geotoolkit.observation.query.SamplingFeatureQuery;
 import org.locationtech.jts.geom.Geometry;
-import org.opengis.observation.Observation;
-import org.opengis.observation.Phenomenon;
-import org.opengis.observation.Process;
-import org.opengis.observation.sampling.SamplingFeature;
+import org.geotoolkit.observation.model.Observation;
+import org.geotoolkit.observation.model.Phenomenon;
+import org.geotoolkit.observation.model.Procedure;
+import org.geotoolkit.observation.model.SamplingFeature;
 import org.opengis.temporal.TemporalPrimitive;
 
 /**
@@ -100,11 +100,11 @@ public class FilterReaderDelegateObservationReader implements ObservationReader 
     }
 
     @Override
-    public Process getProcess(String identifier) throws DataStoreException {
+    public Procedure getProcess(String identifier) throws DataStoreException {
         ObservationFilterReader filter = filterSupplier.get();
         filter.init(new ProcedureQuery());
         filter.setProcedure(Arrays.asList(identifier));
-        List<Process> results = filter.getProcesses();
+        List<Procedure> results = filter.getProcesses();
         if (!results.isEmpty()) {
             return results.get(0);
         }

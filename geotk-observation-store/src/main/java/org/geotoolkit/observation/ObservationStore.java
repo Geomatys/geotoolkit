@@ -39,10 +39,10 @@ import org.geotoolkit.observation.query.ResultQuery;
 import org.geotoolkit.observation.query.SamplingFeatureQuery;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.metadata.Metadata;
-import org.opengis.observation.Observation;
-import org.opengis.observation.Phenomenon;
-import org.opengis.observation.Process;
-import org.opengis.observation.sampling.SamplingFeature;
+import org.geotoolkit.observation.model.Observation;
+import org.geotoolkit.observation.model.Phenomenon;
+import org.geotoolkit.observation.model.Procedure;
+import org.geotoolkit.observation.model.SamplingFeature;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.temporal.TemporalPrimitive;
 
@@ -175,7 +175,7 @@ public interface ObservationStore {
      *
      * @return A list of procedure matching the query.
      */
-    List<Process> getProcedures(ProcedureQuery query) throws DataStoreException;
+    List<Procedure> getProcedures(ProcedureQuery query) throws DataStoreException;
 
     /**
      * Return a list of offering matching the query.

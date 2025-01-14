@@ -27,10 +27,10 @@ import org.geotoolkit.observation.model.Offering;
 import org.geotoolkit.observation.model.ResponseMode;
 import org.geotoolkit.observation.query.IdentifierQuery;
 import org.locationtech.jts.geom.Geometry;
-import org.opengis.observation.Observation;
-import org.opengis.observation.Phenomenon;
-import org.opengis.observation.Process;
-import org.opengis.observation.sampling.SamplingFeature;
+import org.geotoolkit.observation.model.Observation;
+import org.geotoolkit.observation.model.Phenomenon;
+import org.geotoolkit.observation.model.Procedure;
+import org.geotoolkit.observation.model.SamplingFeature;
 import org.opengis.temporal.TemporalPrimitive;
 
 /**
@@ -96,7 +96,7 @@ public interface ObservationReader {
      * @throws org.apache.sis.storage.DataStoreException If an error occurs
      * during retrieval.
      */
-    Process getProcess(final String identifier) throws DataStoreException;
+    Procedure getProcess(final String identifier) throws DataStoreException;
 
     /**
      * Return the temporal bounds for the specified procedure.

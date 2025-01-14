@@ -40,10 +40,10 @@ import org.geotoolkit.observation.query.IdentifierQuery;
 import org.geotoolkit.sos.xml.OMXMLUtils;
 import org.geotoolkit.swe.xml.PhenomenonProperty;
 import org.locationtech.jts.geom.Geometry;
-import org.opengis.observation.Observation;
+import org.geotoolkit.observation.model.Observation;
 import org.opengis.observation.ObservationCollection;
-import org.opengis.observation.Phenomenon;
-import org.opengis.observation.sampling.SamplingFeature;
+import org.geotoolkit.observation.model.Phenomenon;
+import org.geotoolkit.observation.model.SamplingFeature;
 import org.opengis.temporal.TemporalPrimitive;
 
 /**
@@ -84,12 +84,12 @@ public class XmlObservationReader implements ObservationReader {
         final Set<String> names = new HashSet<>();
         for (Object xmlObject : xmlObjects) {
             if (xmlObject instanceof ObservationCollection collection) {
-                for (Observation obs : collection.getMember()) {
+                for (org.opengis.observation.Observation obs : collection.getMember()) {
                     final org.geotoolkit.observation.xml.Process process = (Process)obs.getProcedure();
                     names.add(process.getHref());
                 }
 
-            } else if (xmlObject instanceof Observation obs) {
+            } else if (xmlObject instanceof AbstractObservation obs) {
                 final Process process = (Process)obs.getProcedure();
                 names.add(process.getHref());
             }
@@ -101,7 +101,7 @@ public class XmlObservationReader implements ObservationReader {
         final Set<String> phenomenons = new HashSet<>();
         for (Object xmlObject : xmlObjects) {
             if (xmlObject instanceof ObservationCollection collection) {
-                for (Observation obs : collection.getMember()) {
+                for (org.opengis.observation.Observation obs : collection.getMember()) {
                     final AbstractObservation o = (AbstractObservation)obs;
                     final PhenomenonProperty phenProp = o.getPropertyObservedProperty();
                     phenomenons.addAll(OMXMLUtils.getPhenomenonsFields(phenProp));
@@ -142,7 +142,7 @@ public class XmlObservationReader implements ObservationReader {
     public Phenomenon getPhenomenon(final String identifier) throws DataStoreException {
         for (Object xmlObject : xmlObjects) {
             if (xmlObject instanceof ObservationCollection collection) {
-                for (Observation obs : collection.getMember()) {
+                for (org.opengis.observation.Observation obs : collection.getMember()) {
                     final AbstractObservation o = (AbstractObservation)obs;
                     final PhenomenonProperty phenProp = o.getPropertyObservedProperty();
                     final org.geotoolkit.observation.model.Phenomenon ph = toModel(phenProp);
@@ -167,7 +167,7 @@ public class XmlObservationReader implements ObservationReader {
         final ObservationDataset result = new ObservationDataset();
         for (Object xmlObject : xmlObjects) {
             if (xmlObject instanceof ObservationCollection collection) {
-                for (Observation obs : collection.getMember()) {
+                for (org.opengis.observation.Observation obs : collection.getMember()) {
                     final AbstractObservation o = (AbstractObservation) obs;
                     if (sensorID.equals(o.getProcedure().getHref())) {
                         result.spatialBound.addTime(obs.getSamplingTime());
@@ -187,7 +187,7 @@ public class XmlObservationReader implements ObservationReader {
         final Set<String> featureOfInterest = new HashSet<>();
         for (Object xmlObject : xmlObjects) {
             if (xmlObject instanceof ObservationCollection collection) {
-                for (Observation obs : collection.getMember()) {
+                for (org.opengis.observation.Observation obs : collection.getMember()) {
                     final AbstractObservation o = (AbstractObservation)obs;
                     final FeatureProperty foiProp = o.getPropertyFeatureOfInterest();
                     featureOfInterest.add(OMXMLUtils.getFOIId(foiProp));
@@ -205,12 +205,12 @@ public class XmlObservationReader implements ObservationReader {
     public SamplingFeature getFeatureOfInterest(final String identifier) throws DataStoreException {
         for (Object xmlObject : xmlObjects) {
             if (xmlObject instanceof ObservationCollection collection) {
-                for (Observation obs : collection.getMember()) {
+                for (org.opengis.observation.Observation obs : collection.getMember()) {
                     final AbstractObservation o = (AbstractObservation)obs;
                     final FeatureProperty foiProp = o.getPropertyFeatureOfInterest();
                     if (foiProp != null && foiProp.getAbstractFeature() != null && foiProp.getAbstractFeature().getId() != null &&
                             foiProp.getAbstractFeature().getId().equals(identifier)) {
-                        return toModel((SamplingFeature) foiProp.getAbstractFeature());
+                        return toModel((org.opengis.observation.sampling.SamplingFeature) foiProp.getAbstractFeature());
                     }
                 }
 
@@ -218,7 +218,7 @@ public class XmlObservationReader implements ObservationReader {
                 final FeatureProperty foiProp = obs.getPropertyFeatureOfInterest();
                 if (foiProp != null && foiProp.getAbstractFeature() != null && foiProp.getAbstractFeature().getId() != null &&
                         foiProp.getAbstractFeature().getId().equals(identifier)) {
-                    return toModel((SamplingFeature) foiProp.getAbstractFeature());
+                    return toModel((org.opengis.observation.sampling.SamplingFeature) foiProp.getAbstractFeature());
                 }
             }
         }
@@ -234,7 +234,7 @@ public class XmlObservationReader implements ObservationReader {
     public Observation getObservation(final String identifier, final QName resultModel, final ResponseMode mode) throws DataStoreException {
         for (Object xmlObject : xmlObjects) {
             if (xmlObject instanceof ObservationCollection collection) {
-                for (Observation obs : collection.getMember()) {
+                for (org.opengis.observation.Observation obs : collection.getMember()) {
                     final AbstractObservation o = (AbstractObservation)obs;
                     if (o.getId().equals(identifier)) {
                         return toModel(o);
@@ -251,10 +251,10 @@ public class XmlObservationReader implements ObservationReader {
     }
 
     @Override
-    public org.opengis.observation.Process getProcess(String identifier) throws DataStoreException {
+    public Procedure getProcess(String identifier) throws DataStoreException {
         for (Object xmlObject : xmlObjects) {
             if (xmlObject instanceof ObservationCollection collection) {
-                for (Observation obs : collection.getMember()) {
+                for (org.opengis.observation.Observation obs : collection.getMember()) {
                     if (obs.getProcedure() instanceof org.geotoolkit.observation.xml.Process proc) {
                         if (identifier.equals(proc.getHref())) {
                             return new Procedure(proc.getHref());
