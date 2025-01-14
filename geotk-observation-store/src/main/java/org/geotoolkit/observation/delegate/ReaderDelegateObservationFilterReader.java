@@ -32,10 +32,10 @@ import org.geotoolkit.observation.ObservationResult;
 import org.geotoolkit.observation.model.Offering;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.geometry.Envelope;
-import org.opengis.observation.Observation;
-import org.opengis.observation.Phenomenon;
-import org.opengis.observation.Process;
-import org.opengis.observation.sampling.SamplingFeature;
+import org.geotoolkit.observation.model.Observation;
+import org.geotoolkit.observation.model.Phenomenon;
+import org.geotoolkit.observation.model.Procedure;
+import org.geotoolkit.observation.model.SamplingFeature;
 
 /**
  * An {@linkplain ObservationFilterReader} delegating all its methods on a {@linkplain ObservationReader}
@@ -101,7 +101,7 @@ public class ReaderDelegateObservationFilterReader extends AbstractObservationFi
     }
 
     @Override
-    public List<Process> getProcesses() throws DataStoreException {
+    public List<Procedure> getProcesses() throws DataStoreException {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
