@@ -25,11 +25,13 @@ import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
 import java.time.temporal.Temporal;
+import java.util.Optional;
 import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.gml.xml.GMLInstant;
 import org.geotoolkit.gml.xml.AbstractTimePosition;
 import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.opengis.filter.Literal;
+import org.opengis.temporal.IndeterminateValue;
 
 
 /**
@@ -108,6 +110,15 @@ public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implemen
         return TemporalUtilities.toTemporal(timePosition);
     }
 
+    @Override
+    public Optional<IndeterminateValue> getIndeterminatePosition() {
+        if (this.timePosition != null) {
+            return this.timePosition.getIndeterminatePosition();
+        }
+        return Optional.empty();
+    }
+
+    
     /**
      * Gets the value of the timePosition property.
      */

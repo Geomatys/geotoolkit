@@ -28,6 +28,9 @@ import java.util.logging.Logger;
 import jakarta.xml.bind.annotation.XmlTransient;
 import java.time.temporal.Temporal;
 import java.util.Optional;
+import static org.geotoolkit.gml.xml.TimeIndeterminateValueType.AFTER;
+import static org.geotoolkit.gml.xml.TimeIndeterminateValueType.BEFORE;
+import static org.geotoolkit.gml.xml.TimeIndeterminateValueType.NOW;
 import org.geotoolkit.temporal.object.ISODateParser;
 import org.opengis.temporal.IndeterminateValue;
 import org.opengis.temporal.Instant;
@@ -100,18 +103,27 @@ public abstract class AbstractTimePosition implements Instant {
 
     public abstract TimeIndeterminateValueType getIndeterminateValue();
 
-    static AbstractTimePosition of(final Temporal instant) {
+    static AbstractTimePosition of(final Instant instant) {
         return new AbstractTimePosition() {
             @Override public Temporal getPosition() {
-                return instant;
+                return instant.getPosition();
             }
 
             @Override public Date getDate() {
-                return org.apache.sis.temporal.TemporalDate.toDate(instant);
+                return org.apache.sis.temporal.TemporalDate.toDate(instant.getPosition());
             }
 
             @Override public TimeIndeterminateValueType getIndeterminateValue() {
-                return null;
+                IndeterminateValue v = instant.getIndeterminatePosition().orElse(null);
+                if (v == null) {
+                    return null;
+                }
+                TimeIndeterminateValueType c;
+                if (v.equals(IndeterminateValue.BEFORE)) c = TimeIndeterminateValueType.BEFORE;
+                else if (v.equals(IndeterminateValue.AFTER)) c = TimeIndeterminateValueType.AFTER;
+                else if (v.equals(IndeterminateValue.NOW)) c = TimeIndeterminateValueType.NOW;
+                else  c = TimeIndeterminateValueType.UNKNOWN;
+                return c;
             }
         };
     }

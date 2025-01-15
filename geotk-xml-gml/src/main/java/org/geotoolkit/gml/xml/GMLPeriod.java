@@ -45,8 +45,8 @@ public interface GMLPeriod extends Period {
                 @Override public TemporalAmount       length()           {return p.length();}
                 @Override public Instant              getBeginning()     {return p.getBeginning();}
                 @Override public Instant              getEnding()        {return p.getEnding();}
-                @Override public AbstractTimePosition getBeginPosition() {return AbstractTimePosition.of(getBeginning().getPosition());}
-                @Override public AbstractTimePosition getEndPosition()   {return AbstractTimePosition.of(getEnding().getPosition());}
+                @Override public AbstractTimePosition getBeginPosition() {return AbstractTimePosition.of(getBeginning());}
+                @Override public AbstractTimePosition getEndPosition()   {return AbstractTimePosition.of(getEnding());}
                 @Override public TemporalOperatorName findRelativePosition(TemporalPrimitive other) {
                     return p.findRelativePosition(other);
                 }
