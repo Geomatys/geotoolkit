@@ -143,7 +143,7 @@ public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implemen
     public void setTimePosition(TimePositionType value) {
         this.timePosition = value;
     }
-    
+
     @Override
     public Optional<IndeterminateValue> getIndeterminatePosition() {
         if (this.timePosition != null) {

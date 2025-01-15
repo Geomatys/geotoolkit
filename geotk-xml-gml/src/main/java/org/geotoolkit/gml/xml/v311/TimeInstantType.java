@@ -118,7 +118,7 @@ public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implemen
         return Optional.empty();
     }
 
-    
+
     /**
      * Gets the value of the timePosition property.
      */
