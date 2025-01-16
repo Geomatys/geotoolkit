@@ -187,8 +187,8 @@ public class GeodeticPathWalker {
     }
 
     private float distance(final float x1, final float y1, final float x2, final float y2) throws TransformException {
-        startPos.setCoordinate(x1,y1);
-        endPos.setCoordinate(x2,y2);
+        startPos.setCoordinates(x1,y1);
+        endPos.setCoordinates(x2,y2);
         calculator.setStartPoint(startPos);
         calculator.setEndPoint(endPos);
         return (float) calculator.getGeodesicDistance();

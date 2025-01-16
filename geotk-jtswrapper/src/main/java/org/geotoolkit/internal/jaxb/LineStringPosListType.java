@@ -13,7 +13,7 @@ import jakarta.xml.bind.annotation.XmlType;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.referencing.CRS;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSLineString;
-import org.opengis.geometry.coordinate.Position;
+import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 
@@ -45,9 +45,9 @@ public class LineStringPosListType {
     public LineStringPosListType(final JTSLineString lineString) {
         this.srsName = CoordinateReferenceSystemAdapter.getSrsName(lineString.getCoordinateReferenceSystem());
         List<Double> value = new ArrayList<Double>();
-        for (Position p : lineString.getPositions()) {
-            for (int i = 0; i < p.getDirectPosition().getDimension(); i++) {
-                value.add(p.getDirectPosition().getOrdinate(i));
+        for (DirectPosition p : lineString.getPositions()) {
+            for (int i = 0; i < p.getDimension(); i++) {
+                value.add(p.getCoordinate(i));
             }
         }
         posList = new PosListType(value);

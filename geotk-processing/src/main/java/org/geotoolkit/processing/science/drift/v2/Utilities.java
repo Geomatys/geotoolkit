@@ -53,7 +53,7 @@ class Utilities {
         return getSubCrs(source::getCoordinateReferenceSystem, CRS::getTemporalComponent)
                 .map(component -> {
                     double value = DefaultTemporalCRS.castOrCopy(component.crs).toValue(time);
-                    source.setOrdinate(component.idx, value);
+                    source.setCoordinate(component.idx, value);
                     return source;
                 })
                 .orElseGet(() -> addTime(source, time));
@@ -67,17 +67,17 @@ class Utilities {
         );
 
         final GeneralDirectPosition pos = new GeneralDirectPosition(newCrs);
-        final double[] newCoord = Arrays.copyOf(source.getCoordinate(), newCrs.getCoordinateSystem().getDimension());
+        final double[] newCoord = Arrays.copyOf(source.getCoordinates(), newCrs.getCoordinateSystem().getDimension());
         newCoord[newCoord.length - 1] = time.getEpochSecond();
 
-        pos.setCoordinate(newCoord);
+        pos.setCoordinates(newCoord);
         return pos;
     }
 
     static Optional<Instant> getTime(final DirectPosition source) {
         return getSubCrs(source::getCoordinateReferenceSystem, CRS::getTemporalComponent)
                 .map(component -> {
-                    final double value = source.getOrdinate(component.idx);
+                    final double value = source.getCoordinate(component.idx);
                     return DefaultTemporalCRS.castOrCopy(component.crs).toInstant(value);
                 });
     }

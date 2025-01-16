@@ -28,7 +28,7 @@ import org.opengis.observation.Observation;
 import org.opengis.observation.Phenomenon;
 import org.opengis.observation.sampling.SamplingFeature;
 import org.opengis.temporal.Period;
-import org.opengis.temporal.TemporalGeometricPrimitive;
+import org.opengis.temporal.TemporalPrimitive;
 
 /**
  *
@@ -67,7 +67,7 @@ public interface AbstractObservation extends Observation {
 
     void setFullFeatureOfInterest(SamplingFeature foi);
 
-    AbstractObservation getTemporaryTemplate(final String temporaryName, TemporalGeometricPrimitive time);
+    AbstractObservation getTemporaryTemplate(final String temporaryName, TemporalPrimitive time);
 
     List<Element> getResultQuality();
 

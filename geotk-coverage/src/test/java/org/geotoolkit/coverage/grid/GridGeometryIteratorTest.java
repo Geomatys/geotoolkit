@@ -29,7 +29,7 @@ import org.apache.sis.referencing.operation.transform.MathTransforms;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.datum.PixelInCell;
+import org.apache.sis.coverage.grid.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.util.FactoryException;
 

@@ -29,12 +29,10 @@ import org.apache.sis.referencing.operation.DefaultCoordinateOperationFactory;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.CoordinateOperation;
-import org.opengis.referencing.operation.CoordinateOperationFactory;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.OperationNotFoundException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.geometry.DirectPosition;
-import org.opengis.geometry.coordinate.Position;
 import org.opengis.geometry.primitive.Bearing;
 import org.opengis.geometry.primitive.OrientablePrimitive;
 import org.opengis.geometry.primitive.Point;
@@ -117,8 +115,8 @@ public class JTSPoint extends AbstractJTSGeometry implements Point {
             if ((myCRS != null) && (pointCRS != null) && (!myCRS.equals(pointCRS))) {
                 // Do the conversion.
                 try {
-                    CoordinateOperationFactory cof = DefaultCoordinateOperationFactory.provider();
-                    CoordinateOperation coordOp = cof.createOperation(pointCRS, myCRS);
+                    var cof = DefaultCoordinateOperationFactory.provider();
+                    CoordinateOperation coordOp = cof.createOperation(pointCRS, myCRS, null);
                     MathTransform mt = coordOp.getMathTransform();
                     mt.transform(position, copy);
                 }
@@ -154,7 +152,7 @@ public class JTSPoint extends AbstractJTSGeometry implements Point {
      * Not supported in this implementation.
      */
     @Override
-    public Bearing getBearing(final Position toPoint) {
+    public Bearing getBearing(final DirectPosition toPoint) {
         throw new UnsupportedOperationException("Bearing calculation is not supported");
     }
 

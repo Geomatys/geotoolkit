@@ -48,7 +48,7 @@ import org.geotoolkit.storage.coverage.*;
 import org.geotoolkit.storage.multires.TileMatrices;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
-import org.opengis.referencing.datum.PixelInCell;
+import org.apache.sis.coverage.grid.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.TransformException;
@@ -128,7 +128,7 @@ public class FillCoverage {
             final long[] hcubeLower = cube.getLower();
             final long[] hcubeUpper = cube.getUpper();
             for(int i=2;i<nbDim;i++){
-                positionGrid.setOrdinate(i, hcubeLower[i]);
+                positionGrid.setCoordinate(i, hcubeLower[i]);
             }
 
             //create the slice coverage
@@ -144,8 +144,8 @@ public class FillCoverage {
             try{
                 for(long x=hcubeLower[0],xn=hcubeUpper[0];x<xn;x++){
                     for(long y=hcubeLower[1],yn=hcubeUpper[1];y<yn;y++){
-                        positionGrid.setOrdinate(0, x);
-                        positionGrid.setOrdinate(1, y);
+                        positionGrid.setCoordinate(0, x);
+                        positionGrid.setCoordinate(1, y);
                         gridToCrs.transform(positionGrid, positionGeo);
                         evaluator.evaluate(positionGeo, sampleData);
                         raster.setSample(Math.toIntExact(x-hcubeLower[0]), Math.toIntExact(y-hcubeLower[1]), 0, sampleData[0]);
@@ -194,7 +194,7 @@ public class FillCoverage {
         for(WritableTileMatrixSet matrixset : outRef.getTileMatrixSets()){
             for(WritableTileMatrix matrix : matrixset.getTileMatrices().values()){
                 final int[] tileSize = TileMatrices.getTileSize(matrix);
-                final double[] upperLeftGeo = TileMatrices.getUpperLeftCorner(matrix).getCoordinate();
+                final double[] upperLeftGeo = TileMatrices.getUpperLeftCorner(matrix).getCoordinates();
 
                 final Dimension gridSize = TileMatrices.getGridSize(matrix);
                 for(int y=0;y<gridSize.height;y++){

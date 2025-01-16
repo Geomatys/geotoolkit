@@ -59,7 +59,7 @@ import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.privy.AxisDirections;
-import org.apache.sis.coverage.privy.ColorModelFactory;
+import org.apache.sis.image.privy.ColorModelFactory;
 import org.apache.sis.util.privy.UnmodifiableArrayList;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.apache.sis.util.Classes;
@@ -441,8 +441,8 @@ abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCoverage im
             /*
              * Computes some properties of the image to be created.
              */
-            final Dimension tileSize = org.apache.sis.coverage.privy.ImageLayout.DEFAULT.suggestTileSize(
-                    gridBounds.width, gridBounds.height, true);
+            final Dimension tileSize = org.apache.sis.image.ImageLayout.DEFAULT.allowPartialTiles(true)
+                    .suggestTileSize(gridBounds.width, gridBounds.height);
             SampleDimension band = getSampleDimensions().get(VISIBLE_BAND);
             if (band == null)
                 throw new IllegalStateException("Sample dimensions are undetermined.");
@@ -784,7 +784,7 @@ abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCoverage im
             if (i != 0) {
                 buffer.append(", ");
             }
-            format.format(point.getOrdinate(i), buffer, dummy);
+            format.format(point.getCoordinate(i), buffer, dummy);
         }
         return buffer.toString();
     }

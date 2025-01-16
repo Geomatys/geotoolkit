@@ -25,7 +25,7 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.util.ArgumentChecks;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
-import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.coordinate.MismatchedDimensionException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.Matrix;
@@ -224,16 +224,16 @@ public class Resolution {
 
                         for (int ord = 0; ord < 2; ord++) {
                             ord2 = dim-1-ord;
-                            v2 = dpLowDest.getOrdinate(ord);
+                            v2 = dpLowDest.getCoordinate(ord);
                             s2 = envelope.getSpan(ord);
-                            val = dpLowDest.getOrdinate(ord2);
+                            val = dpLowDest.getCoordinate(ord2);
                             span = envelope.getSpan(ord2);
                             for (v3 = v2; v3 <= v2+s2; v3 += s2/2) {
                                 for (v = val; v <= val + span; v += span/2) {
-                                    dpADest.setOrdinate(ord, v3);
-                                    dpADest.setOrdinate(ord2, v);
-                                    dpBDest.setOrdinate(ord, v3 + s2/2);
-                                    dpBDest.setOrdinate(ord2, v);
+                                    dpADest.setCoordinate(ord, v3);
+                                    dpADest.setCoordinate(ord2, v);
+                                    dpBDest.setCoordinate(ord, v3 + s2/2);
+                                    dpBDest.setCoordinate(ord2, v);
                                     matA = invertMathTransform.derivative(dpADest);
                                     matB = invertMathTransform.derivative(dpBDest);
                                     ordinateA = getAxis(matA);
@@ -247,11 +247,11 @@ public class Resolution {
                                         //split
                                         dpLowA = new GeneralDirectPosition(dpLowDest);
                                         dpUppA = new GeneralDirectPosition(dpUppDest);
-                                        dpUppA.setOrdinate(ord, v2 + s2/2);
+                                        dpUppA.setCoordinate(ord, v2 + s2/2);
                                         envelopeFifo.addFirst(new GeneralEnvelope(dpLowA, dpUppA));
 
                                         dpLowB = new GeneralDirectPosition(dpLowDest);
-                                        dpLowB.setOrdinate(ord, v2 + s2/2);
+                                        dpLowB.setCoordinate(ord, v2 + s2/2);
                                         dpUppB = new GeneralDirectPosition(dpUppDest);
                                         envelopeFifo.addFirst(new GeneralEnvelope(dpLowB, dpUppB));
                                         continue next;

@@ -20,9 +20,10 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import org.apache.sis.xml.IdentifiedObject;
+import org.apache.sis.xml.IdentifierSpace;
 import org.opengis.temporal.Instant;
+import org.opengis.temporal.TemporalPrimitive;
 
 /**
  *
@@ -32,12 +33,14 @@ public class InstantSerializer extends JsonSerializer<Instant> {
 
     @Override
     public void serialize(Instant i, JsonGenerator writer, SerializerProvider serializerProvider) throws IOException {
-        writer.writeStartObject();
-        writer.writeFieldName("id");
-        writer.writeString(i.getName().getCode());
-        writer.writeFieldName("date");
-        DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.S'Z'");
-        writer.writeString(sdf.format(i.getDate()));
-        writer.writeEndObject();
+        ObservationJsonUtils.writeInstant(writer, i);
+    }
+
+    static String getIdentifier(final TemporalPrimitive t) {
+        if (t instanceof IdentifiedObject i) {
+            String id = i.getIdentifierMap().getSpecialized(IdentifierSpace.ID);
+            if (id != null) return id;
+        }
+        return "unnamed";
     }
 }

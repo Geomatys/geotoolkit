@@ -82,9 +82,9 @@ public class KrigingProcess extends AbstractProcess {
         final double[] z = new double[s];
 
         for (int i=0;i<s;i++) {
-            final double cx = coords[i].getOrdinate(0);
-            final double cy = coords[i].getOrdinate(1);
-            final double cz = coords[i].getOrdinate(2);
+            final double cx = coords[i].getCoordinate(0);
+            final double cy = coords[i].getCoordinate(1);
+            final double cz = coords[i].getCoordinate(2);
             x[i] = cx;
             y[i] = cy;
             z[i] = cz;

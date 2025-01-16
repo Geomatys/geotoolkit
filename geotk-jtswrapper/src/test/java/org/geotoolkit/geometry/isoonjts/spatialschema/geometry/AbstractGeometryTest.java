@@ -28,7 +28,6 @@ import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSPrim
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.coordinate.LineString;
 import org.opengis.geometry.primitive.Curve;
-import org.opengis.geometry.primitive.PrimitiveFactory;
 import org.opengis.geometry.primitive.Ring;
 import org.opengis.geometry.primitive.Surface;
 import org.opengis.geometry.primitive.SurfaceBoundary;
@@ -47,7 +46,7 @@ public abstract class AbstractGeometryTest {
 
     protected static final JTSGeometryFactory GEOMETRY_FACTORY;
 
-    protected static final PrimitiveFactory PRIMITIVE_FACTORY;
+    protected static final JTSPrimitiveFactory PRIMITIVE_FACTORY;
 
     protected static CoordinateReferenceSystem crs;
 

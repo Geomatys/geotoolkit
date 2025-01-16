@@ -17,17 +17,16 @@
 
 package org.geotoolkit.observation.model;
 
-import java.util.Collections;
+import java.time.Instant;
+import java.time.temporal.Temporal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import org.geotoolkit.temporal.object.DefaultInstant;
-import org.geotoolkit.temporal.object.DefaultPeriod;
+import org.apache.sis.temporal.TemporalObjects;
+import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.opengis.geometry.Envelope;
-import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
-import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
-import org.opengis.temporal.TemporalGeometricPrimitive;
+import org.opengis.temporal.TemporalPrimitive;
 
 /**
  *
@@ -35,7 +34,7 @@ import org.opengis.temporal.TemporalGeometricPrimitive;
  */
 public class Offering extends AbstractOMEntity {
 
-    private TemporalGeometricPrimitive time;
+    private TemporalPrimitive time;
 
     private Envelope bounds;
 
@@ -51,7 +50,7 @@ public class Offering extends AbstractOMEntity {
     private Offering() {}
 
     public Offering(String id, String name, String description, Map<String, Object> properties, Envelope bounds, List<String> srsNames,
-            TemporalGeometricPrimitive time, String procedure, List<String> observedProperties, List<String> featureOfInterestIds) {
+            TemporalPrimitive time, String procedure, List<String> observedProperties, List<String> featureOfInterestIds) {
         super(id, name, description, properties);
         this.bounds = bounds;
         this.srsNames = srsNames;
@@ -61,11 +60,11 @@ public class Offering extends AbstractOMEntity {
         this.featureOfInterestIds = featureOfInterestIds;
     }
 
-    public TemporalGeometricPrimitive getTime() {
+    public TemporalPrimitive getTime() {
         return time;
     }
 
-    public void setTime(TemporalGeometricPrimitive time) {
+    public void setTime(TemporalPrimitive time) {
         this.time = time;
     }
 
@@ -109,6 +108,11 @@ public class Offering extends AbstractOMEntity {
         this.srsNames = srsNames;
     }
 
+    @Deprecated
+    public void extendSamplingTime(final Date newDate) {
+        extendSamplingTime((newDate != null) ? newDate.toInstant() : null);
+    }
+
     /**
      * Extend the current offering time span by adding a new date.
      * If the new date is before or after the current sampling time, the period will be expanded.
@@ -116,35 +120,34 @@ public class Offering extends AbstractOMEntity {
      *
      * @param newDate a date to integrate into the time span of the offering.
      */
-    public void extendSamplingTime(final Date newDate) {
+    public void extendSamplingTime(final Temporal newDate) {
         if (newDate != null) {
+            final Instant newInstant = TemporalUtilities.toInstant(newDate);
             if (time instanceof Period p) {
-                Date currentStDate = p.getBeginning().getDate();
-                Date currentEnDate = p.getEnding().getDate();
-                if (newDate.before(currentStDate)) {
-                    time = new DefaultPeriod(Collections.singletonMap(NAME_KEY, getId() + "-time"),
-                                                     new DefaultInstant(Collections.singletonMap(NAME_KEY, getId() + "-st-time"), newDate),
-                                                     new DefaultInstant(Collections.singletonMap(NAME_KEY, getId() + "-en-time"), currentEnDate));
-                } else if (newDate.after(currentEnDate)) {
-                    time = new DefaultPeriod(Collections.singletonMap(NAME_KEY, getId() + "-time"),
-                                                     new DefaultInstant(Collections.singletonMap(NAME_KEY, getId() + "-st-time"), currentStDate),
-                                                     new DefaultInstant(Collections.singletonMap(NAME_KEY, getId() + "-en-time"), newDate));
+                Temporal currentStDate = p.getBeginning().getPosition();
+                Temporal currentEnDate = p.getEnding().getPosition();
+                if (newInstant.isBefore(TemporalUtilities.toInstant(currentStDate))) {
+                    time = TemporalObjects.createPeriod(newDate, currentEnDate);
+                    addIdentifiers((Period) time);
+                } else if (newInstant.isAfter(TemporalUtilities.toInstant(currentEnDate))) {
+                    time = TemporalObjects.createPeriod(currentStDate, newDate);
+                    addIdentifiers((Period) time);
                 }
                 // date is within to the current period so no changes are applied
-            } else if (time instanceof Instant i) {
-                Date currentDate = i.getDate();
-                if (newDate.before(currentDate)) {
-                    time = new DefaultPeriod(Collections.singletonMap(NAME_KEY, getId() + "-time"),
-                                                     new DefaultInstant(Collections.singletonMap(NAME_KEY, getId() + "-st-time"), newDate),
-                                                     new DefaultInstant(Collections.singletonMap(NAME_KEY, getId() + "-en-time"), currentDate));
-                } else if (newDate.after(currentDate)) {
-                    time = new DefaultPeriod(Collections.singletonMap(NAME_KEY, getId() + "-time"),
-                                            new DefaultInstant(Collections.singletonMap(NAME_KEY, getId() + "-st-time"), currentDate),
-                                            new DefaultInstant(Collections.singletonMap(NAME_KEY, getId() + "-en-time"), newDate));
+            } else if (time instanceof org.opengis.temporal.Instant i) {
+                Temporal currentDate = i.getPosition();
+                Instant currentInstant = TemporalUtilities.toInstant(currentDate);
+                if (newInstant.isBefore(currentInstant)) {
+                    time = TemporalObjects.createPeriod(newDate, currentDate);
+                    addIdentifiers((Period) time);
+                } else if (newInstant.isAfter(currentInstant)) {
+                    time = TemporalObjects.createPeriod(currentDate, newDate);
+                    addIdentifiers((Period) time);
                 }
                 // date is equals to the current date so no changes are applied
             } else if (time == null) {
-                time = new DefaultInstant(Collections.singletonMap(NAME_KEY, getId() + "-time"), newDate);
+                time = TemporalObjects.createInstant(newDate);
+                addIdentifier((org.opengis.temporal.Instant) time);
             } else {
                 throw new IllegalStateException("Unknown time implementeation: " + time.getClass().getName());
             }

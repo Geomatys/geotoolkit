@@ -23,13 +23,12 @@ import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.FileSystemNotFoundException;
-import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Optional;
 import java.util.zip.GZIPInputStream;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
 import org.apache.commons.compress.compressors.lz4.FramedLZ4CompressorInputStream;
-import org.apache.sis.storage.base.ResourceOnFileSystem;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.FeatureSet;
@@ -43,7 +42,6 @@ import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.security.DefaultClientSecurity;
-import org.geotoolkit.storage.AbstractResource;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.coverage.DefaultImageTile;
 import org.geotoolkit.storage.multires.TileFormat;
@@ -98,7 +96,7 @@ public final class URITile {
     /**
      * Image format tile.
      */
-    private static class Image extends DefaultImageTile implements ResourceOnFileSystem {
+    private static class Image extends DefaultImageTile {
 
         private final URITileFormat.Compression compression;
         private final ClientSecurity security;
@@ -199,11 +197,18 @@ public final class URITile {
         }
 
         @Override
-        public Path[] getComponentFiles() throws DataStoreException {
-            try {
-                return new Path[]{Paths.get((URI) input)};
-            } catch (FileSystemNotFoundException | SecurityException | IllegalArgumentException ex) {
-                return new Path[0];
+        public Resource getResource() throws DataStoreException {
+            return new DataOnFile();
+        }
+
+        private final class DataOnFile extends Data {
+            @Override
+            public Optional<FileSet> getFileSet() throws DataStoreException {
+                try {
+                    return Optional.of(new FileSet(Paths.get((URI) input)));
+                } catch (FileSystemNotFoundException | SecurityException | IllegalArgumentException ex) {
+                    return Optional.empty();
+                }
             }
         }
     }
@@ -211,7 +216,7 @@ public final class URITile {
     /**
      * Dataset format tile.
      */
-    private static class DataSet extends AbstractResource implements Tile, ResourceOnFileSystem {
+    private static class DataSet implements Tile {
 
         private final URITileFormat.Compression compression;
         private final DataStoreProvider provider;
@@ -238,15 +243,6 @@ public final class URITile {
         }
 
         @Override
-        public Path[] getComponentFiles() throws DataStoreException {
-            try {
-                return new Path[]{Paths.get(input)};
-            } catch (FileSystemNotFoundException | SecurityException | IllegalArgumentException ex) {
-                return new Path[0];
-            }
-        }
-
-        @Override
         public Resource getResource() throws DataStoreException {
             //TODO security is ignored here, how to transmit security to the tile datastore ?
             final StorageConnector sc = new StorageConnector(input);
@@ -259,5 +255,4 @@ public final class URITile {
             return resource;
         }
     }
-
 }

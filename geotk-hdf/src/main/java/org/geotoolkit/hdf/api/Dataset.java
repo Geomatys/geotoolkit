@@ -268,7 +268,7 @@ public final class Dataset extends AbstractResource implements Node {
                         final Calendar epoch = TemporalUtilities.parseDateCal(originStr);
 
                         final Map<String,?> props = singletonMap(NAME_KEY, new NamedIdentifier(null, "attributeName"));
-                        final TemporalDatum datum = new DefaultTemporalDatum(props, epoch.getTime());
+                        final TemporalDatum datum = new DefaultTemporalDatum(props, epoch.getTime().toInstant());
                         final Map<String,Object> properties = new HashMap<>();
                         final String crsName = attributeName == null ? getName() : attributeName;
                         properties.put(TemporalCRS.NAME_KEY, new NamedIdentifier(Names.createLocalName(null, null, crsName)));

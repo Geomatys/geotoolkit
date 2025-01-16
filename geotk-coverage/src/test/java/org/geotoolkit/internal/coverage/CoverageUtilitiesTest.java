@@ -33,7 +33,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import static org.opengis.referencing.datum.PixelInCell.CELL_CENTER;
+import static org.apache.sis.coverage.grid.PixelInCell.CELL_CENTER;
 
 /**
  * Date: 01/10/14

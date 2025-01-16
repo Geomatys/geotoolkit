@@ -17,28 +17,20 @@
 package org.geotoolkit.swe.xml;
 
 import java.util.Collection;
-import org.opengis.annotation.UML;
-import static org.opengis.annotation.Specification.*;
-import static org.opengis.annotation.Obligation.*;
 
 /**
  * Schema allowing definition of structure and encoding of sensor data.
  *
- * @version $Id:
  * @author legal
- * @module
  */
-@UML(identifier="DataBlockDefinition", specification=UNSPECIFIED)
+//@UML(identifier="DataBlockDefinition", specification=UNSPECIFIED)
 public interface DataBlockDefinition {
 
-    @UML(identifier="id", obligation=OPTIONAL, specification=UNSPECIFIED)
+    //@UML(identifier="id", obligation=OPTIONAL, specification=UNSPECIFIED)
     String getId();
 
-    @UML(identifier="components", obligation=MANDATORY, specification=UNSPECIFIED)
+    //@UML(identifier="components", obligation=MANDATORY, specification=UNSPECIFIED)
     Collection<? extends AbstractDataComponent> getComponents();
 
     AbstractEncodingProperty getEncoding();
-
-
-
 }

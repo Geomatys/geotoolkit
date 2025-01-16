@@ -28,6 +28,9 @@ import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlSchemaType;
 import jakarta.xml.bind.annotation.XmlType;
+import java.time.temporal.Temporal;
+import org.geotoolkit.temporal.object.TemporalUtilities;
+import org.opengis.temporal.Instant;
 
 
 /**
@@ -50,14 +53,12 @@ import jakarta.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TimeInstantPropertyType", propOrder = {
     "timeInstant"
 })
-public class TimeInstantPropertyType implements Serializable{
+public class TimeInstantPropertyType implements Instant, Serializable{
 
     @XmlElement(name = "TimeInstant")
     private TimeInstantType timeInstant;
@@ -110,6 +111,11 @@ public class TimeInstantPropertyType implements Serializable{
                 this.timeInstant = new TimeInstantType(that.timeInstant);
             }
         }
+    }
+
+    @Override
+    public Temporal getPosition() {
+        return TemporalUtilities.toTemporal(timeInstant);
     }
 
     /**

@@ -72,7 +72,7 @@ import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.datum.PixelInCell;
+import org.apache.sis.coverage.grid.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.Rule;

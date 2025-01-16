@@ -112,10 +112,10 @@ public class BoundingBoxType implements BoundingBox {
 
     public BoundingBoxType(final Envelope envelope) {
         if (envelope != null) {
-            for (Double d : envelope.getLowerCorner().getCoordinate()) {
+            for (Double d : envelope.getLowerCorner().getCoordinates()) {
                 this.lowerCorner.add(d);
             }
-            for (Double d : envelope.getUpperCorner().getCoordinate()) {
+            for (Double d : envelope.getUpperCorner().getCoordinates()) {
                 this.upperCorner.add(d);
             }
             final CoordinateReferenceSystem crss = envelope.getCoordinateReferenceSystem();

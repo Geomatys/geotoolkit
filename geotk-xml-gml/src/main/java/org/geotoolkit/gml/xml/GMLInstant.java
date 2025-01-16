@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.gml.xml;
 
+import java.time.temporal.Temporal;
+import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.opengis.temporal.Instant;
 
 /**
@@ -25,6 +27,11 @@ import org.opengis.temporal.Instant;
 public interface GMLInstant extends Instant {
 
     public String getId();
+
+    @Override
+    public default Temporal getPosition() {
+        return TemporalUtilities.toTemporal(getTimePosition());
+    }
 
     public AbstractTimePosition getTimePosition();
 }

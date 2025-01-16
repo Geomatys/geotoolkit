@@ -24,14 +24,17 @@ import java.net.URLConnection;
 import static org.geotoolkit.csw.AbstractCSWRequest.POOL;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalAmount;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.Duration;
+import org.apache.sis.temporal.GeneralDuration;
 import org.geotoolkit.csw.xml.CswXmlFactory;
 import org.geotoolkit.csw.xml.Harvest;
 import org.geotoolkit.security.ClientSecurity;
-import org.geotoolkit.temporal.object.DefaultPeriodDuration;
-import org.geotoolkit.temporal.object.TemporalUtilities;
 
 
 /**
@@ -174,16 +177,16 @@ public class AbstractHarvest extends AbstractCSWRequest implements HarvestReques
 
         try {
             final Marshaller marsh = POOL.acquireMarshaller();
-            final DefaultPeriodDuration periodDuration = (harvestInterval == null) ? null :
-                    (DefaultPeriodDuration) TemporalUtilities.getDurationFromString(harvestInterval);
+            final TemporalAmount periodDuration = (harvestInterval == null) ? null :
+                    GeneralDuration.parse(harvestInterval);
             final Duration duration = (periodDuration == null) ? null :
                     DatatypeFactory.newInstance().newDuration(true,
-                        Integer.parseInt(periodDuration.getYears().toString()),
-                        Integer.parseInt(periodDuration.getMonths().toString()),
-                        Integer.parseInt(periodDuration.getDays().toString()),
-                        Integer.parseInt(periodDuration.getHours().toString()),
-                        Integer.parseInt(periodDuration.getMinutes().toString()),
-                        Integer.parseInt(periodDuration.getSeconds().toString()));
+                        BigInteger.valueOf(periodDuration.get(ChronoUnit.YEARS)),
+                        BigInteger.valueOf(periodDuration.get(ChronoUnit.MONTHS)),
+                        BigInteger.valueOf(periodDuration.get(ChronoUnit.DAYS)),
+                        BigInteger.valueOf(periodDuration.get(ChronoUnit.HOURS)),
+                        BigInteger.valueOf(periodDuration.get(ChronoUnit.MINUTES)),
+                        BigDecimal.valueOf(periodDuration.get(ChronoUnit.SECONDS)));
             final Harvest harvestXml = CswXmlFactory.createHarvest(version, "CSW", source, resourceType,
                     resourceFormat, responseHandler, duration);
             marsh.marshal(harvestXml, stream);

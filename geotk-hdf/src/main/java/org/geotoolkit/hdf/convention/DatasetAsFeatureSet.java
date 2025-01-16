@@ -18,7 +18,6 @@ package org.geotoolkit.hdf.convention;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
-import java.nio.file.Path;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,6 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Stream;
 import javax.measure.Unit;
@@ -34,7 +34,6 @@ import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.storage.base.ResourceOnFileSystem;
 import org.apache.sis.storage.base.StoreResource;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.apache.sis.storage.AbstractFeatureSet;
@@ -60,7 +59,7 @@ import org.opengis.util.FactoryException;
  *
  * @author Johann Sorel (Geomatys)
  */
-public final class DatasetAsFeatureSet extends AbstractFeatureSet implements ResourceOnFileSystem, StoreResource{
+public final class DatasetAsFeatureSet extends AbstractFeatureSet implements StoreResource{
 
     private static final String HDF_INDEX = "hdf-index";
 
@@ -244,7 +243,7 @@ public final class DatasetAsFeatureSet extends AbstractFeatureSet implements Res
     }
 
     @Override
-    public Path[] getComponentFiles() throws DataStoreException {
-        return store.getComponentFiles();
+    public Optional<FileSet> getFileSet() throws DataStoreException {
+        return store.getFileSet();
     }
 }

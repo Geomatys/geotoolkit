@@ -42,7 +42,7 @@ import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.spatial.DimensionNameType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.datum.PixelInCell;
+import org.apache.sis.coverage.grid.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
@@ -322,7 +322,7 @@ public final class TileMatrixSetBuilder {
                 final int horizontalOrdinate = CRSUtilities.firstHorizontalAxis(crs);
                 for (int d = 0; d < crs.getCoordinateSystem().getDimension(); d++) {
                     final double v = (d == horizontalOrdinate+1) ? envelope.getMaximum(d) : envelope.getMinimum(d);
-                    upperLeft.setOrdinate(d, v);
+                    upperLeft.setCoordinate(d, v);
                 }
 
                 final double spanX = envelope.getSpan(horizontalOrdinate);

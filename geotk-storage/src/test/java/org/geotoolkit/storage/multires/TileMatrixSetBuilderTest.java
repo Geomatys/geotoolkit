@@ -30,7 +30,7 @@ import org.apache.sis.util.ComparisonMode;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.datum.PixelInCell;
+import org.apache.sis.coverage.grid.PixelInCell;
 import org.opengis.util.FactoryException;
 
 /**
@@ -291,9 +291,9 @@ public class TileMatrixSetBuilderTest {
         DefiningTileMatrixSet tms = tmsBuilder.build();
 
         final GeneralDirectPosition upperleft = new GeneralDirectPosition(crs);
-        upperleft.setOrdinate(0, 1);
-        upperleft.setOrdinate(1, 50);
-        upperleft.setOrdinate(2, 1000);
+        upperleft.setCoordinate(0, 1);
+        upperleft.setCoordinate(1, 50);
+        upperleft.setCoordinate(2, 1000);
 
         assertEquals(crs, tms.getCoordinateReferenceSystem());
         assertEquals(1, tms.getTileMatrices().size());

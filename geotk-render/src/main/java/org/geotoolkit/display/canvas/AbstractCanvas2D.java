@@ -74,15 +74,15 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
-import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.coordinate.MismatchedDimensionException;
 import org.opengis.referencing.crs.CompoundCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.crs.GeneralDerivedCRS;
+import org.opengis.referencing.crs.DerivedCRS;
 import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
-import org.opengis.referencing.datum.PixelInCell;
+import org.apache.sis.coverage.grid.PixelInCell;
 import org.opengis.referencing.operation.CoordinateOperationFactory;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
@@ -685,8 +685,8 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
          * (transformations from 'displayCRS' to 'objectiveCRS') is less frequent and can be
          * handled by the 'transform' cache, which is why we let the factory check for it.
          */
-        if (targetCRS instanceof GeneralDerivedCRS) {
-            final GeneralDerivedCRS derivedCRS = (GeneralDerivedCRS) targetCRS;
+        if (targetCRS instanceof DerivedCRS) {
+            final var derivedCRS = (DerivedCRS) targetCRS;
             if (Utilities.equalsIgnoreMetadata(sourceCRS, derivedCRS.getBaseCRS())) {
                 return derivedCRS.getConversionFromBase().getMathTransform();
             }
@@ -739,7 +739,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
         final Point2D center = getDisplayCenter();
         getObjectiveToDisplay().inverseTransform(center, center);
         final GeneralDirectPosition pt = new GeneralDirectPosition(getObjectiveCRS2D());
-        pt.setCoordinate(center.getX(), center.getY());
+        pt.setCoordinates(center.getX(), center.getY());
         return pt;
     }
 
@@ -834,7 +834,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
     public final void translateObjective(final double x, final double y) throws NoninvertibleTransformException, TransformException {
         final Point2D dispCenter = getDisplayCenter();
         final DirectPosition center = getObjectiveCenter();
-        Point2D objCenter = new Point2D.Double(center.getOrdinate(0) + x, center.getOrdinate(1) + y);
+        Point2D objCenter = new Point2D.Double(center.getCoordinate(0) + x, center.getCoordinate(1) + y);
         objCenter = getObjectiveToDisplay().transform(objCenter, objCenter);
         translateDisplay(dispCenter.getX() - objCenter.getX(), dispCenter.getY() - objCenter.getY());
     }

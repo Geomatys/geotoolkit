@@ -49,7 +49,6 @@ import org.opengis.observation.Phenomenon;
 /**
  *
  * @author Guilhem Legal
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ObservationOfferingType", propOrder = {
@@ -211,15 +210,15 @@ public class ObservationOfferingType extends AbstractFeatureType implements Obse
     public void updateEndTime(final Date newEndBound) {
         if (newEndBound != null) {
             if (time != null && time.getTimeGeometricPrimitive() instanceof TimePeriodType) {
-                ((TimePeriodType)time.getTimeGeometricPrimitive()).setEndPosition(new TimePositionType(newEndBound));
+                ((TimePeriodType)time.getTimeGeometricPrimitive()).setEndPosition(new TimePositionType(newEndBound.toInstant()));
             } else if (time != null && time.getTimeGeometricPrimitive() instanceof TimeInstantType) {
                 final TimeInstantType instant = (TimeInstantType) time.getTimeGeometricPrimitive();
                 if (!newEndBound.equals(instant.getTimePosition().getValue())) {
-                    final TimePeriodType period = new TimePeriodType(instant.getId(), instant.getTimePosition().getDate(), newEndBound);
+                    final TimePeriodType period = new TimePeriodType(instant.getId(), instant.getTimePosition().getPosition(), newEndBound.toInstant());
                     time.setTimeGeometricPrimitive(period);
                 }
             } else if (time == null) {
-                time = new TimeGeometricPrimitivePropertyType(new TimeInstantType(new TimePositionType(newEndBound)));
+                time = new TimeGeometricPrimitivePropertyType(new TimeInstantType(new TimePositionType(newEndBound.toInstant())));
             }
         }
     }

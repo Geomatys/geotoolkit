@@ -39,10 +39,10 @@ import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.referencing.privy.AffineTransform2D;
 import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.crs.DefaultImageCRS;
 import org.apache.sis.referencing.cs.DefaultCartesianCS;
 import org.apache.sis.referencing.cs.DefaultCoordinateSystemAxis;
 import org.apache.sis.referencing.datum.DefaultImageDatum;
-import org.apache.sis.referencing.factory.GeodeticObjectFactory;
 import org.apache.sis.referencing.operation.transform.AbstractMathTransform1D;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
@@ -65,8 +65,8 @@ import org.opengis.util.FactoryException;
 
 import static org.junit.Assert.assertEquals;
 import org.opengis.metadata.spatial.DimensionNameType;
-import org.opengis.referencing.datum.PixelInCell;
-import static org.opengis.referencing.datum.PixelInCell.CELL_CENTER;
+import org.apache.sis.coverage.grid.PixelInCell;
+import static org.apache.sis.coverage.grid.PixelInCell.CELL_CENTER;
 
 
 /**
@@ -1245,11 +1245,11 @@ public class AggregatedCoverageResourceTest {
         | 3 | 3 | 3 |
         +---+---+---+
          */
-        final CoordinateReferenceSystem imgcrs = GeodeticObjectFactory.provider().createImageCRS(
+        final CoordinateReferenceSystem imgcrs = new DefaultImageCRS(
                     Collections.singletonMap(CoordinateReferenceSystem.NAME_KEY,"ImageCRS"),
                     new DefaultImageDatum(
                             Collections.singletonMap(CoordinateReferenceSystem.NAME_KEY,"ImageDatum"),
-                            PixelInCell.CELL_CENTER),
+                            "cell center"),
                     new DefaultCartesianCS(
                             Collections.singletonMap(CoordinateReferenceSystem.NAME_KEY,"ImageCS"),
                             new DefaultCoordinateSystemAxis(

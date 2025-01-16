@@ -392,8 +392,8 @@ public class OGC200toGTTransformer {
         final DirectPositionType upper = entry.getUpperCorner();
 
         GeneralEnvelope genv = new GeneralEnvelope(CRS.forCode(srs));
-        genv.setRange(0, lower.getOrdinate(0), upper.getOrdinate(0));
-        genv.setRange(1, lower.getOrdinate(1), upper.getOrdinate(1));
+        genv.setRange(0, lower.getCoordinate(0), upper.getCoordinate(0));
+        genv.setRange(1, lower.getCoordinate(1), upper.getCoordinate(1));
 
         return filterFactory.literal(genv);
     }

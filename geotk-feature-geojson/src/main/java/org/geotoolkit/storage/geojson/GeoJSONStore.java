@@ -33,7 +33,6 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.storage.base.ResourceOnFileSystem;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStore;
@@ -72,7 +71,7 @@ import org.opengis.util.GenericName;
  * @since   2.0
  * @module
  */
-public final class GeoJSONStore extends DataStore implements ResourceOnFileSystem, WritableFeatureSet {
+public final class GeoJSONStore extends DataStore implements WritableFeatureSet {
 
     private static final Logger LOGGER = Logger.getLogger("org.apache.sis.storage.geojson");
     private static final String DESC_FILE_SUFFIX = "_Type.json";
@@ -457,15 +456,14 @@ public final class GeoJSONStore extends DataStore implements ResourceOnFileSyste
      * {@inheritDoc }
      */
     @Override
-    public Path[] getComponentFiles() throws DataStoreException {
-        List<Path> files = new ArrayList<>();
+    public Optional<FileSet> getFileSet() throws DataStoreException {
+        var files = new ArrayList<Path>();
         if (Files.exists(jsonFile)) {
             files.add(jsonFile);
         }
         if (Files.exists(descFile)) {
             files.add(descFile);
         }
-        return files.toArray(new Path[files.size()]);
+        return Optional.of(new FileSet(files));
     }
-
 }

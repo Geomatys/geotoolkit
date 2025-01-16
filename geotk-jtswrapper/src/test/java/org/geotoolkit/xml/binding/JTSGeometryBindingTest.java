@@ -171,8 +171,8 @@ public class JTSGeometryBindingTest {
         assertTrue(crs != null);
 
         DirectPosition dp = new GeneralDirectPosition(crs);
-        dp.setOrdinate(0, 2.1);
-        dp.setOrdinate(1, 12.6);
+        dp.setCoordinate(0, 2.1);
+        dp.setCoordinate(1, 12.6);
         JTSPoint point = new JTSPoint(dp, crs);
 
         StringWriter sw = new StringWriter();
@@ -210,8 +210,8 @@ public class JTSGeometryBindingTest {
         assertTrue(crs != null);
 
         DirectPosition dp = new GeneralDirectPosition(crs);
-        dp.setOrdinate(0, 2.1);
-        dp.setOrdinate(1, 12.6);
+        dp.setCoordinate(0, 2.1);
+        dp.setCoordinate(1, 12.6);
         JTSPoint expResult = new JTSPoint(dp, crs);
 
         assertEquals(expResult.getDirectPosition(), result.getValue().getDirectPosition());
@@ -230,14 +230,14 @@ public class JTSGeometryBindingTest {
         JTSCurve curve = new JTSCurve(crs);
         JTSLineString line1 = new JTSLineString();
         DirectPosition p1 = new GeneralDirectPosition(crs);
-        p1.setOrdinate(0, 401500);
-        p1.setOrdinate(1, 3334500);
+        p1.setCoordinate(0, 401500);
+        p1.setCoordinate(1, 3334500);
         DirectPosition p2 = new GeneralDirectPosition(crs);
-        p2.setOrdinate(0, 401700);
-        p2.setOrdinate(1, 3334850);
+        p2.setCoordinate(0, 401700);
+        p2.setCoordinate(1, 3334850);
         DirectPosition p3 = new GeneralDirectPosition(crs);
-        p3.setOrdinate(0, 402200);
-        p3.setOrdinate(1, 3335200);
+        p3.setCoordinate(0, 402200);
+        p3.setCoordinate(1, 3335200);
 
         line1.getControlPoints().add(p1);
         line1.getControlPoints().add(p2);
@@ -247,11 +247,11 @@ public class JTSGeometryBindingTest {
 
         JTSLineString line2 = new JTSLineString();
         DirectPosition p21 = new GeneralDirectPosition(crs);
-        p21.setOrdinate(0, 402320);
-        p21.setOrdinate(1, 3334850);
+        p21.setCoordinate(0, 402320);
+        p21.setCoordinate(1, 3334850);
         DirectPosition p22 = new GeneralDirectPosition(crs);
-        p22.setOrdinate(0, 402200);
-        p22.setOrdinate(1, 3335200);
+        p22.setCoordinate(0, 402200);
+        p22.setCoordinate(1, 3335200);
 
         line2.getControlPoints().add(p21);
         line2.getControlPoints().add(p22);
@@ -314,14 +314,14 @@ public class JTSGeometryBindingTest {
         JTSCurve expResult = new JTSCurve(crs);
         JTSLineString line1 = new JTSLineString(crs);
         DirectPosition p1 = new GeneralDirectPosition(crs);
-        p1.setOrdinate(0, 401500);
-        p1.setOrdinate(1, 3334500);
+        p1.setCoordinate(0, 401500);
+        p1.setCoordinate(1, 3334500);
         DirectPosition p2 = new GeneralDirectPosition(crs);
-        p2.setOrdinate(0, 401700);
-        p2.setOrdinate(1, 3334850);
+        p2.setCoordinate(0, 401700);
+        p2.setCoordinate(1, 3334850);
         DirectPosition p3 = new GeneralDirectPosition(crs);
-        p3.setOrdinate(0, 402200);
-        p3.setOrdinate(1, 3335200);
+        p3.setCoordinate(0, 402200);
+        p3.setCoordinate(1, 3335200);
 
         line1.getControlPoints().add(p1);
         line1.getControlPoints().add(p2);
@@ -331,11 +331,11 @@ public class JTSGeometryBindingTest {
 
         JTSLineString line2 = new JTSLineString(crs);
         DirectPosition p21 = new GeneralDirectPosition(crs);
-        p21.setOrdinate(0, 402320);
-        p21.setOrdinate(1, 3334850);
+        p21.setCoordinate(0, 402320);
+        p21.setCoordinate(1, 3334850);
         DirectPosition p22 = new GeneralDirectPosition(crs);
-        p22.setOrdinate(0, 402200);
-        p22.setOrdinate(1, 3335200);
+        p22.setCoordinate(0, 402200);
+        p22.setCoordinate(1, 3335200);
 
         line2.getControlPoints().add(p21);
         line2.getControlPoints().add(p22);
@@ -362,11 +362,11 @@ public class JTSGeometryBindingTest {
         assertTrue(crs != null);
 
         DirectPosition p1 = new GeneralDirectPosition(crs);
-        p1.setOrdinate(0, 402320);
-        p1.setOrdinate(1, 3334850);
+        p1.setCoordinate(0, 402320);
+        p1.setCoordinate(1, 3334850);
         DirectPosition p2 = new GeneralDirectPosition(crs);
-        p2.setOrdinate(0, 402200);
-        p2.setOrdinate(1, 3335200);
+        p2.setCoordinate(0, 402200);
+        p2.setCoordinate(1, 3335200);
 
         JTSEnvelope envelope = new JTSEnvelope(p1, p2);
 
@@ -395,11 +395,11 @@ public class JTSGeometryBindingTest {
         assertTrue(crs != null);
 
         DirectPosition p1 = new GeneralDirectPosition(crs);
-        p1.setOrdinate(0, 402000);
-        p1.setOrdinate(1, 3334850);
+        p1.setCoordinate(0, 402000);
+        p1.setCoordinate(1, 3334850);
         DirectPosition p2 = new GeneralDirectPosition(crs);
-        p2.setOrdinate(0, 402200);
-        p2.setOrdinate(1, 3335200);
+        p2.setCoordinate(0, 402200);
+        p2.setCoordinate(1, 3335200);
 
         JTSEnvelope expResult = new JTSEnvelope(p1, p2);
 
@@ -425,13 +425,13 @@ public class JTSGeometryBindingTest {
         assertTrue(crs != null);
 
         DirectPosition p1 = new GeneralDirectPosition(crs);
-        p1.setOrdinate(0, 402000);
-        p1.setOrdinate(1, 3334850);
+        p1.setCoordinate(0, 402000);
+        p1.setCoordinate(1, 3334850);
         JTSPoint pt1 = new JTSPoint(p1);
 
         DirectPosition p2 = new GeneralDirectPosition(crs);
-        p2.setOrdinate(0, 402200);
-        p2.setOrdinate(1, 3335200);
+        p2.setCoordinate(0, 402200);
+        p2.setCoordinate(1, 3335200);
         JTSPoint pt2 = new JTSPoint(p2);
 
         JTSMultiPoint multiPoint = new JTSMultiPoint(crs);
@@ -472,13 +472,13 @@ public class JTSGeometryBindingTest {
         assertTrue(crs != null);
 
         DirectPosition p1 = new GeneralDirectPosition(crs);
-        p1.setOrdinate(0, 402000);
-        p1.setOrdinate(1, 3334850);
+        p1.setCoordinate(0, 402000);
+        p1.setCoordinate(1, 3334850);
         JTSPoint pt1 = new JTSPoint(p1);
 
         DirectPosition p2 = new GeneralDirectPosition(crs);
-        p2.setOrdinate(0, 402200);
-        p2.setOrdinate(1, 3335200);
+        p2.setCoordinate(0, 402200);
+        p2.setCoordinate(1, 3335200);
         JTSPoint pt2 = new JTSPoint(p2);
 
         JTSMultiPoint expResult = new JTSMultiPoint(crs);
@@ -515,13 +515,13 @@ public class JTSGeometryBindingTest {
         assertTrue(crs != null);
 
         DirectPosition p1 = new GeneralDirectPosition(crs);
-        p1.setOrdinate(0, 402000);
-        p1.setOrdinate(1, 3334850);
+        p1.setCoordinate(0, 402000);
+        p1.setCoordinate(1, 3334850);
 
 
         DirectPosition p2 = new GeneralDirectPosition(crs);
-        p2.setOrdinate(0, 402200);
-        p2.setOrdinate(1, 3335200);
+        p2.setCoordinate(0, 402200);
+        p2.setCoordinate(1, 3335200);
 
 
         JTSLineString l1 = new JTSLineString();
@@ -534,14 +534,14 @@ public class JTSGeometryBindingTest {
         JTSCurve c1 = new JTSCurve(crs);
         JTSLineString l2 = new JTSLineString();
         DirectPosition p21 = new GeneralDirectPosition(crs);
-        p21.setOrdinate(0, 401500);
-        p21.setOrdinate(1, 3334500);
+        p21.setCoordinate(0, 401500);
+        p21.setCoordinate(1, 3334500);
         DirectPosition p22 = new GeneralDirectPosition(crs);
-        p22.setOrdinate(0, 401700);
-        p22.setOrdinate(1, 3334850);
+        p22.setCoordinate(0, 401700);
+        p22.setCoordinate(1, 3334850);
         DirectPosition p23 = new GeneralDirectPosition(crs);
-        p23.setOrdinate(0, 402200);
-        p23.setOrdinate(1, 3335200);
+        p23.setCoordinate(0, 402200);
+        p23.setCoordinate(1, 3335200);
 
         l2.getControlPoints().add(p21);
         l2.getControlPoints().add(p22);
@@ -551,11 +551,11 @@ public class JTSGeometryBindingTest {
 
         JTSLineString l3 = new JTSLineString();
         DirectPosition p31 = new GeneralDirectPosition(crs);
-        p31.setOrdinate(0, 402320);
-        p31.setOrdinate(1, 3334850);
+        p31.setCoordinate(0, 402320);
+        p31.setCoordinate(1, 3334850);
         DirectPosition p32 = new GeneralDirectPosition(crs);
-        p32.setOrdinate(0, 402200);
-        p32.setOrdinate(1, 3335200);
+        p32.setCoordinate(0, 402200);
+        p32.setCoordinate(1, 3335200);
 
         l3.getControlPoints().add(p31);
         l3.getControlPoints().add(p32);
@@ -615,13 +615,13 @@ public class JTSGeometryBindingTest {
         assertTrue(crs != null);
 
         DirectPosition p1 = new GeneralDirectPosition(crs);
-        p1.setOrdinate(0, 35.840973);
-        p1.setOrdinate(1, 0.14967346);
+        p1.setCoordinate(0, 35.840973);
+        p1.setCoordinate(1, 0.14967346);
 
 
         DirectPosition p2 = new GeneralDirectPosition(crs);
-        p2.setOrdinate(0, 44.11891);
-        p2.setOrdinate(1, 3.6755037);
+        p2.setCoordinate(0, 44.11891);
+        p2.setCoordinate(1, 3.6755037);
 
 
         JTSLineString l1 = new JTSLineString();
@@ -634,14 +634,14 @@ public class JTSGeometryBindingTest {
         JTSCurve c1 = new JTSCurve(crs);
         JTSLineString l2 = new JTSLineString();
         DirectPosition p21 = new GeneralDirectPosition(crs);
-        p21.setOrdinate(0, 51.174034);
-        p21.setOrdinate(1, 12.365124);
+        p21.setCoordinate(0, 51.174034);
+        p21.setCoordinate(1, 12.365124);
         DirectPosition p22 = new GeneralDirectPosition(crs);
-        p22.setOrdinate(0, 55.288635);
-        p22.setOrdinate(1, 7.583888);
+        p22.setCoordinate(0, 55.288635);
+        p22.setCoordinate(1, 7.583888);
         DirectPosition p23 = new GeneralDirectPosition(crs);
-        p23.setOrdinate(0, 56.534782);
-        p23.setOrdinate(1, 4.1457024);
+        p23.setCoordinate(0, 56.534782);
+        p23.setCoordinate(1, 4.1457024);
 
         l2.getControlPoints().add(p21);
         l2.getControlPoints().add(p22);
@@ -687,13 +687,13 @@ public class JTSGeometryBindingTest {
         assertTrue(crs != null);
 
         DirectPosition p1 = new GeneralDirectPosition(crs);
-        p1.setOrdinate(0, 35.840973);
-        p1.setOrdinate(1, 0.14967346);
+        p1.setCoordinate(0, 35.840973);
+        p1.setCoordinate(1, 0.14967346);
 
 
         DirectPosition p2 = new GeneralDirectPosition(crs);
-        p2.setOrdinate(0, 44.11891);
-        p2.setOrdinate(1, 3.6755037);
+        p2.setCoordinate(0, 44.11891);
+        p2.setCoordinate(1, 3.6755037);
 
 
         JTSLineString l1 = new JTSLineString(crs);
@@ -706,14 +706,14 @@ public class JTSGeometryBindingTest {
         JTSCurve c1 = new JTSCurve(crs);
         JTSLineString l2 = new JTSLineString(crs);
         DirectPosition p21 = new GeneralDirectPosition(crs);
-        p21.setOrdinate(0, 51.174034);
-        p21.setOrdinate(1, 12.365124);
+        p21.setCoordinate(0, 51.174034);
+        p21.setCoordinate(1, 12.365124);
         DirectPosition p22 = new GeneralDirectPosition(crs);
-        p22.setOrdinate(0, 55.288635);
-        p22.setOrdinate(1, 7.583888);
+        p22.setCoordinate(0, 55.288635);
+        p22.setCoordinate(1, 7.583888);
         DirectPosition p23 = new GeneralDirectPosition(crs);
-        p23.setOrdinate(0, 56.534782);
-        p23.setOrdinate(1, 4.1457024);
+        p23.setCoordinate(0, 56.534782);
+        p23.setCoordinate(1, 4.1457024);
 
         l2.getControlPoints().add(p21);
         l2.getControlPoints().add(p22);
@@ -745,7 +745,7 @@ public class JTSGeometryBindingTest {
 
         assertEquals(expResult.getElements().iterator().next().getCoordinateReferenceSystem(), result.getElements().iterator().next().getCoordinateReferenceSystem());
         assertEquals(((JTSLineString)((JTSCurve)expResult.getElements().iterator().next()).getSegments().get(0)).getControlPoints().getCoordinateReferenceSystem(), ((JTSLineString)((JTSCurve)result.getElements().iterator().next()).getSegments().get(0)).getControlPoints().getCoordinateReferenceSystem());
-        assertEquals(((JTSLineString)((JTSCurve)expResult.getElements().iterator().next()).getSegments().get(0)).getControlPoints().get(0).getDirectPosition().getCoordinateReferenceSystem(), ((JTSLineString)((JTSCurve)result.getElements().iterator().next()).getSegments().get(0)).getControlPoints().get(0).getDirectPosition().getCoordinateReferenceSystem());
+        assertEquals(((JTSLineString)((JTSCurve)expResult.getElements().iterator().next()).getSegments().get(0)).getControlPoints().get(0).getCoordinateReferenceSystem(), ((JTSLineString)((JTSCurve)result.getElements().iterator().next()).getSegments().get(0)).getControlPoints().get(0).getCoordinateReferenceSystem());
         assertEquals(((JTSLineString)((JTSCurve)expResult.getElements().iterator().next()).getSegments().get(0)).getControlPoints().get(0), ((JTSLineString)((JTSCurve)result.getElements().iterator().next()).getSegments().get(0)).getControlPoints().get(0));
         assertEquals(((JTSLineString)((JTSCurve)expResult.getElements().iterator().next()).getSegments().get(0)).getControlPoints(), ((JTSLineString)((JTSCurve)result.getElements().iterator().next()).getSegments().get(0)).getControlPoints());
         assertEquals(((JTSCurve)expResult.getElements().iterator().next()).getSegments().get(0), ((JTSCurve)result.getElements().iterator().next()).getSegments().get(0));
@@ -765,13 +765,13 @@ public class JTSGeometryBindingTest {
         assertTrue(crs != null);
 
         DirectPosition p1 = new GeneralDirectPosition(crs);
-        p1.setOrdinate(0, 402000);
-        p1.setOrdinate(1, 3334850);
+        p1.setCoordinate(0, 402000);
+        p1.setCoordinate(1, 3334850);
 
 
         DirectPosition p2 = new GeneralDirectPosition(crs);
-        p2.setOrdinate(0, 402200);
-        p2.setOrdinate(1, 3335200);
+        p2.setCoordinate(0, 402200);
+        p2.setCoordinate(1, 3335200);
 
 
         JTSLineString l1 = new JTSLineString(crs);
@@ -784,14 +784,14 @@ public class JTSGeometryBindingTest {
         JTSCurve c1 = new JTSCurve(crs);
         JTSLineString l2 = new JTSLineString(crs);
         DirectPosition p21 = new GeneralDirectPosition(crs);
-        p21.setOrdinate(0, 401500);
-        p21.setOrdinate(1, 3334500);
+        p21.setCoordinate(0, 401500);
+        p21.setCoordinate(1, 3334500);
         DirectPosition p22 = new GeneralDirectPosition(crs);
-        p22.setOrdinate(0, 401700);
-        p22.setOrdinate(1, 3334850);
+        p22.setCoordinate(0, 401700);
+        p22.setCoordinate(1, 3334850);
         DirectPosition p23 = new GeneralDirectPosition(crs);
-        p23.setOrdinate(0, 402200);
-        p23.setOrdinate(1, 3335200);
+        p23.setCoordinate(0, 402200);
+        p23.setCoordinate(1, 3335200);
 
         l2.getControlPoints().add(p21);
         l2.getControlPoints().add(p22);
@@ -801,11 +801,11 @@ public class JTSGeometryBindingTest {
 
         JTSLineString l3 = new JTSLineString(crs);
         DirectPosition p31 = new GeneralDirectPosition(crs);
-        p31.setOrdinate(0, 402320);
-        p31.setOrdinate(1, 3334850);
+        p31.setCoordinate(0, 402320);
+        p31.setCoordinate(1, 3334850);
         DirectPosition p32 = new GeneralDirectPosition(crs);
-        p32.setOrdinate(0, 402200);
-        p32.setOrdinate(1, 3335200);
+        p32.setCoordinate(0, 402200);
+        p32.setCoordinate(1, 3335200);
 
         l3.getControlPoints().add(p31);
         l3.getControlPoints().add(p32);
@@ -875,14 +875,14 @@ public class JTSGeometryBindingTest {
         JTSCurve c1 = new JTSCurve(crs);
         JTSLineString c1l1 = new JTSLineString();
         DirectPosition c1l1p1 = new GeneralDirectPosition(crs);
-        c1l1p1.setOrdinate(0, 401500);
-        c1l1p1.setOrdinate(1, 3334500);
+        c1l1p1.setCoordinate(0, 401500);
+        c1l1p1.setCoordinate(1, 3334500);
         DirectPosition c1l1p2 = new GeneralDirectPosition(crs);
-        c1l1p2.setOrdinate(0, 401700);
-        c1l1p2.setOrdinate(1, 3334850);
+        c1l1p2.setCoordinate(0, 401700);
+        c1l1p2.setCoordinate(1, 3334850);
         DirectPosition c1l1p3 = new GeneralDirectPosition(crs);
-        c1l1p3.setOrdinate(0, 402200);
-        c1l1p3.setOrdinate(1, 3335200);
+        c1l1p3.setCoordinate(0, 402200);
+        c1l1p3.setCoordinate(1, 3335200);
 
         c1l1.getControlPoints().add(c1l1p1);
         c1l1.getControlPoints().add(c1l1p2);
@@ -892,11 +892,11 @@ public class JTSGeometryBindingTest {
 
         JTSLineString c1l2 = new JTSLineString();
         DirectPosition c1l2p1 = new GeneralDirectPosition(crs);
-        c1l2p1.setOrdinate(0, 402320);
-        c1l2p1.setOrdinate(1, 3334850);
+        c1l2p1.setCoordinate(0, 402320);
+        c1l2p1.setCoordinate(1, 3334850);
         DirectPosition c1l2p2 = new GeneralDirectPosition(crs);
-        c1l2p2.setOrdinate(0, 402200);
-        c1l2p2.setOrdinate(1, 3335200);
+        c1l2p2.setCoordinate(0, 402200);
+        c1l2p2.setCoordinate(1, 3335200);
 
         c1l2.getControlPoints().add(c1l2p1);
         c1l2.getControlPoints().add(c1l2p2);
@@ -911,14 +911,14 @@ public class JTSGeometryBindingTest {
         JTSCurve c2 = new JTSCurve(crs);
         JTSLineString c2l1 = new JTSLineString();
         DirectPosition c2l1p1 = new GeneralDirectPosition(crs);
-        c2l1p1.setOrdinate(0, 401500);
-        c2l1p1.setOrdinate(1, 3334500);
+        c2l1p1.setCoordinate(0, 401500);
+        c2l1p1.setCoordinate(1, 3334500);
         DirectPosition c2l1p2 = new GeneralDirectPosition(crs);
-        c2l1p2.setOrdinate(0, 401700);
-        c2l1p2.setOrdinate(1, 3334850);
+        c2l1p2.setCoordinate(0, 401700);
+        c2l1p2.setCoordinate(1, 3334850);
         DirectPosition c2l1p3 = new GeneralDirectPosition(crs);
-        c2l1p3.setOrdinate(0, 402200);
-        c2l1p3.setOrdinate(1, 3335200);
+        c2l1p3.setCoordinate(0, 402200);
+        c2l1p3.setCoordinate(1, 3335200);
 
         c2l1.getControlPoints().add(c2l1p1);
         c2l1.getControlPoints().add(c2l1p2);
@@ -944,14 +944,14 @@ public class JTSGeometryBindingTest {
         JTSCurve c3 = new JTSCurve(crs);
         JTSLineString c3l1 = new JTSLineString();
         DirectPosition c3l1p1 = new GeneralDirectPosition(crs);
-        c3l1p1.setOrdinate(0, 401500);
-        c3l1p1.setOrdinate(1, 3334500);
+        c3l1p1.setCoordinate(0, 401500);
+        c3l1p1.setCoordinate(1, 3334500);
         DirectPosition c3l1p2 = new GeneralDirectPosition(crs);
-        c3l1p2.setOrdinate(0, 401700);
-        c3l1p2.setOrdinate(1, 3334850);
+        c3l1p2.setCoordinate(0, 401700);
+        c3l1p2.setCoordinate(1, 3334850);
         DirectPosition c3l1p3 = new GeneralDirectPosition(crs);
-        c3l1p3.setOrdinate(0, 402200);
-        c3l1p3.setOrdinate(1, 3335200);
+        c3l1p3.setCoordinate(0, 402200);
+        c3l1p3.setCoordinate(1, 3335200);
 
         c3l1.getControlPoints().add(c3l1p1);
         c3l1.getControlPoints().add(c3l1p2);
@@ -968,14 +968,14 @@ public class JTSGeometryBindingTest {
         JTSCurve c4 = new JTSCurve(crs);
         JTSLineString c4l1 = new JTSLineString();
         DirectPosition c4l1p1 = new GeneralDirectPosition(crs);
-        c4l1p1.setOrdinate(0, 401500);
-        c4l1p1.setOrdinate(1, 3334500);
+        c4l1p1.setCoordinate(0, 401500);
+        c4l1p1.setCoordinate(1, 3334500);
         DirectPosition c4l1p2 = new GeneralDirectPosition(crs);
-        c4l1p2.setOrdinate(0, 401700);
-        c4l1p2.setOrdinate(1, 3334850);
+        c4l1p2.setCoordinate(0, 401700);
+        c4l1p2.setCoordinate(1, 3334850);
         DirectPosition c4l1p3 = new GeneralDirectPosition(crs);
-        c4l1p3.setOrdinate(0, 402200);
-        c4l1p3.setOrdinate(1, 3335200);
+        c4l1p3.setCoordinate(0, 402200);
+        c4l1p3.setCoordinate(1, 3335200);
 
         c4l1.getControlPoints().add(c4l1p1);
         c4l1.getControlPoints().add(c4l1p2);
@@ -1055,21 +1055,21 @@ public class JTSGeometryBindingTest {
         JTSCurve c1 = new JTSCurve(crs);
         JTSLineString c1l1 = new JTSLineString();
         DirectPosition c1l1p1 = new GeneralDirectPosition(crs);
-        c1l1p1.setOrdinate(0, 401500);
-        c1l1p1.setOrdinate(1, 3334500);
+        c1l1p1.setCoordinate(0, 401500);
+        c1l1p1.setCoordinate(1, 3334500);
         DirectPosition c1l1p2 = new GeneralDirectPosition(crs);
-        c1l1p2.setOrdinate(0, 401700);
-        c1l1p2.setOrdinate(1, 3334850);
+        c1l1p2.setCoordinate(0, 401700);
+        c1l1p2.setCoordinate(1, 3334850);
         DirectPosition c1l1p3 = new GeneralDirectPosition(crs);
-        c1l1p3.setOrdinate(0, 402200);
-        c1l1p3.setOrdinate(1, 3335200);
+        c1l1p3.setCoordinate(0, 402200);
+        c1l1p3.setCoordinate(1, 3335200);
 
         DirectPosition c1l2p1 = new GeneralDirectPosition(crs);
-        c1l2p1.setOrdinate(0, 402320);
-        c1l2p1.setOrdinate(1, 3334850);
+        c1l2p1.setCoordinate(0, 402320);
+        c1l2p1.setCoordinate(1, 3334850);
         DirectPosition c1l2p2 = new GeneralDirectPosition(crs);
-        c1l2p2.setOrdinate(0, 402200);
-        c1l2p2.setOrdinate(1, 3335200);
+        c1l2p2.setCoordinate(0, 402200);
+        c1l2p2.setCoordinate(1, 3335200);
 
         c1l1.getControlPoints().add(c1l1p1);
         c1l1.getControlPoints().add(c1l1p2);
@@ -1089,14 +1089,14 @@ public class JTSGeometryBindingTest {
         JTSCurve c2 = new JTSCurve(crs);
         JTSLineString c2l1 = new JTSLineString();
         DirectPosition c2l1p1 = new GeneralDirectPosition(crs);
-        c2l1p1.setOrdinate(0, 401500);
-        c2l1p1.setOrdinate(1, 3334500);
+        c2l1p1.setCoordinate(0, 401500);
+        c2l1p1.setCoordinate(1, 3334500);
         DirectPosition c2l1p2 = new GeneralDirectPosition(crs);
-        c2l1p2.setOrdinate(0, 401700);
-        c2l1p2.setOrdinate(1, 3334850);
+        c2l1p2.setCoordinate(0, 401700);
+        c2l1p2.setCoordinate(1, 3334850);
         DirectPosition c2l1p3 = new GeneralDirectPosition(crs);
-        c2l1p3.setOrdinate(0, 402200);
-        c2l1p3.setOrdinate(1, 3335200);
+        c2l1p3.setCoordinate(0, 402200);
+        c2l1p3.setCoordinate(1, 3335200);
 
         c2l1.getControlPoints().add(c2l1p1);
         c2l1.getControlPoints().add(c2l1p2);
@@ -1122,14 +1122,14 @@ public class JTSGeometryBindingTest {
         JTSCurve c3 = new JTSCurve(crs);
         JTSLineString c3l1 = new JTSLineString();
         DirectPosition c3l1p1 = new GeneralDirectPosition(crs);
-        c3l1p1.setOrdinate(0, 401500);
-        c3l1p1.setOrdinate(1, 3334500);
+        c3l1p1.setCoordinate(0, 401500);
+        c3l1p1.setCoordinate(1, 3334500);
         DirectPosition c3l1p2 = new GeneralDirectPosition(crs);
-        c3l1p2.setOrdinate(0, 401700);
-        c3l1p2.setOrdinate(1, 3334850);
+        c3l1p2.setCoordinate(0, 401700);
+        c3l1p2.setCoordinate(1, 3334850);
         DirectPosition c3l1p3 = new GeneralDirectPosition(crs);
-        c3l1p3.setOrdinate(0, 402200);
-        c3l1p3.setOrdinate(1, 3335200);
+        c3l1p3.setCoordinate(0, 402200);
+        c3l1p3.setCoordinate(1, 3335200);
 
         c3l1.getControlPoints().add(c3l1p1);
         c3l1.getControlPoints().add(c3l1p2);
@@ -1146,14 +1146,14 @@ public class JTSGeometryBindingTest {
         JTSCurve c4 = new JTSCurve(crs);
         JTSLineString c4l1 = new JTSLineString();
         DirectPosition c4l1p1 = new GeneralDirectPosition(crs);
-        c4l1p1.setOrdinate(0, 401500);
-        c4l1p1.setOrdinate(1, 3334500);
+        c4l1p1.setCoordinate(0, 401500);
+        c4l1p1.setCoordinate(1, 3334500);
         DirectPosition c4l1p2 = new GeneralDirectPosition(crs);
-        c4l1p2.setOrdinate(0, 401700);
-        c4l1p2.setOrdinate(1, 3334850);
+        c4l1p2.setCoordinate(0, 401700);
+        c4l1p2.setCoordinate(1, 3334850);
         DirectPosition c4l1p3 = new GeneralDirectPosition(crs);
-        c4l1p3.setOrdinate(0, 402200);
-        c4l1p3.setOrdinate(1, 3335200);
+        c4l1p3.setCoordinate(0, 402200);
+        c4l1p3.setCoordinate(1, 3335200);
 
         c4l1.getControlPoints().add(c4l1p1);
         c4l1.getControlPoints().add(c4l1p2);
@@ -1246,14 +1246,14 @@ public class JTSGeometryBindingTest {
         JTSCurve c1 = new JTSCurve(crs);
         JTSLineString c1l1 = new JTSLineString();
         DirectPosition c1l1p1 = new GeneralDirectPosition(crs);
-        c1l1p1.setOrdinate(0, 401500);
-        c1l1p1.setOrdinate(1, 3334500);
+        c1l1p1.setCoordinate(0, 401500);
+        c1l1p1.setCoordinate(1, 3334500);
         DirectPosition c1l1p2 = new GeneralDirectPosition(crs);
-        c1l1p2.setOrdinate(0, 401700);
-        c1l1p2.setOrdinate(1, 3334850);
+        c1l1p2.setCoordinate(0, 401700);
+        c1l1p2.setCoordinate(1, 3334850);
         DirectPosition c1l1p3 = new GeneralDirectPosition(crs);
-        c1l1p3.setOrdinate(0, 402200);
-        c1l1p3.setOrdinate(1, 3335200);
+        c1l1p3.setCoordinate(0, 402200);
+        c1l1p3.setCoordinate(1, 3335200);
 
         c1l1.getControlPoints().add(c1l1p1);
         c1l1.getControlPoints().add(c1l1p2);
@@ -1263,11 +1263,11 @@ public class JTSGeometryBindingTest {
 
         JTSLineString c1l2 = new JTSLineString();
         DirectPosition c1l2p1 = new GeneralDirectPosition(crs);
-        c1l2p1.setOrdinate(0, 402320);
-        c1l2p1.setOrdinate(1, 3334850);
+        c1l2p1.setCoordinate(0, 402320);
+        c1l2p1.setCoordinate(1, 3334850);
         DirectPosition c1l2p2 = new GeneralDirectPosition(crs);
-        c1l2p2.setOrdinate(0, 402200);
-        c1l2p2.setOrdinate(1, 3335200);
+        c1l2p2.setCoordinate(0, 402200);
+        c1l2p2.setCoordinate(1, 3335200);
 
         c1l2.getControlPoints().add(c1l2p1);
         c1l2.getControlPoints().add(c1l2p2);
@@ -1316,14 +1316,14 @@ public class JTSGeometryBindingTest {
         JTSCurve c1 = new JTSCurve(crs);
         JTSLineString c1l1 = new JTSLineString(crs);
         DirectPosition c1l1p1 = new GeneralDirectPosition(crs);
-        c1l1p1.setOrdinate(0, 401500);
-        c1l1p1.setOrdinate(1, 3334500);
+        c1l1p1.setCoordinate(0, 401500);
+        c1l1p1.setCoordinate(1, 3334500);
         DirectPosition c1l1p2 = new GeneralDirectPosition(crs);
-        c1l1p2.setOrdinate(0, 401700);
-        c1l1p2.setOrdinate(1, 3334850);
+        c1l1p2.setCoordinate(0, 401700);
+        c1l1p2.setCoordinate(1, 3334850);
         DirectPosition c1l1p3 = new GeneralDirectPosition(crs);
-        c1l1p3.setOrdinate(0, 402200);
-        c1l1p3.setOrdinate(1, 3335200);
+        c1l1p3.setCoordinate(0, 402200);
+        c1l1p3.setCoordinate(1, 3335200);
 
         c1l1.getControlPoints().add(c1l1p1);
         c1l1.getControlPoints().add(c1l1p2);
@@ -1333,11 +1333,11 @@ public class JTSGeometryBindingTest {
 
         JTSLineString c1l2 = new JTSLineString(crs);
         DirectPosition c1l2p1 = new GeneralDirectPosition(crs);
-        c1l2p1.setOrdinate(0, 402320);
-        c1l2p1.setOrdinate(1, 3334850);
+        c1l2p1.setCoordinate(0, 402320);
+        c1l2p1.setCoordinate(1, 3334850);
         DirectPosition c1l2p2 = new GeneralDirectPosition(crs);
-        c1l2p2.setOrdinate(0, 402200);
-        c1l2p2.setOrdinate(1, 3335200);
+        c1l2p2.setCoordinate(0, 402200);
+        c1l2p2.setCoordinate(1, 3335200);
 
         c1l2.getControlPoints().add(c1l2p1);
         c1l2.getControlPoints().add(c1l2p2);
@@ -1387,21 +1387,21 @@ public class JTSGeometryBindingTest {
         JTSCurve c1 = new JTSCurve(crs);
         JTSLineString c1l1 = new JTSLineString();
         DirectPosition c1l1p1 = new GeneralDirectPosition(crs);
-        c1l1p1.setOrdinate(0, 401500);
-        c1l1p1.setOrdinate(1, 3334500);
+        c1l1p1.setCoordinate(0, 401500);
+        c1l1p1.setCoordinate(1, 3334500);
         DirectPosition c1l1p2 = new GeneralDirectPosition(crs);
-        c1l1p2.setOrdinate(0, 401700);
-        c1l1p2.setOrdinate(1, 3334850);
+        c1l1p2.setCoordinate(0, 401700);
+        c1l1p2.setCoordinate(1, 3334850);
         DirectPosition c1l1p3 = new GeneralDirectPosition(crs);
-        c1l1p3.setOrdinate(0, 402200);
-        c1l1p3.setOrdinate(1, 3335200);
+        c1l1p3.setCoordinate(0, 402200);
+        c1l1p3.setCoordinate(1, 3335200);
 
         DirectPosition c1l2p1 = new GeneralDirectPosition(crs);
-        c1l2p1.setOrdinate(0, 402320);
-        c1l2p1.setOrdinate(1, 3334850);
+        c1l2p1.setCoordinate(0, 402320);
+        c1l2p1.setCoordinate(1, 3334850);
         DirectPosition c1l2p2 = new GeneralDirectPosition(crs);
-        c1l2p2.setOrdinate(0, 402200);
-        c1l2p2.setOrdinate(1, 3335200);
+        c1l2p2.setCoordinate(0, 402200);
+        c1l2p2.setCoordinate(1, 3335200);
 
         c1l1.getControlPoints().add(c1l1p1);
         c1l1.getControlPoints().add(c1l1p2);
@@ -1421,14 +1421,14 @@ public class JTSGeometryBindingTest {
         JTSCurve c2 = new JTSCurve(crs);
         JTSLineString c2l1 = new JTSLineString();
         DirectPosition c2l1p1 = new GeneralDirectPosition(crs);
-        c2l1p1.setOrdinate(0, 401500);
-        c2l1p1.setOrdinate(1, 3334500);
+        c2l1p1.setCoordinate(0, 401500);
+        c2l1p1.setCoordinate(1, 3334500);
         DirectPosition c2l1p2 = new GeneralDirectPosition(crs);
-        c2l1p2.setOrdinate(0, 401700);
-        c2l1p2.setOrdinate(1, 3334850);
+        c2l1p2.setCoordinate(0, 401700);
+        c2l1p2.setCoordinate(1, 3334850);
         DirectPosition c2l1p3 = new GeneralDirectPosition(crs);
-        c2l1p3.setOrdinate(0, 402200);
-        c2l1p3.setOrdinate(1, 3335200);
+        c2l1p3.setCoordinate(0, 402200);
+        c2l1p3.setCoordinate(1, 3335200);
 
         c2l1.getControlPoints().add(c2l1p1);
         c2l1.getControlPoints().add(c2l1p2);
@@ -1482,14 +1482,14 @@ public class JTSGeometryBindingTest {
         JTSCurve c1 = new JTSCurve(crs);
         JTSLineString c1l1 = new JTSLineString(crs);
         DirectPosition c1l1p1 = new GeneralDirectPosition(crs);
-        c1l1p1.setOrdinate(0, 401500);
-        c1l1p1.setOrdinate(1, 3334500);
+        c1l1p1.setCoordinate(0, 401500);
+        c1l1p1.setCoordinate(1, 3334500);
         DirectPosition c1l1p2 = new GeneralDirectPosition(crs);
-        c1l1p2.setOrdinate(0, 401700);
-        c1l1p2.setOrdinate(1, 3334850);
+        c1l1p2.setCoordinate(0, 401700);
+        c1l1p2.setCoordinate(1, 3334850);
         DirectPosition c1l1p3 = new GeneralDirectPosition(crs);
-        c1l1p3.setOrdinate(0, 402200);
-        c1l1p3.setOrdinate(1, 3335200);
+        c1l1p3.setCoordinate(0, 402200);
+        c1l1p3.setCoordinate(1, 3335200);
 
         c1l1.getControlPoints().add(c1l1p1);
         c1l1.getControlPoints().add(c1l1p2);
@@ -1498,11 +1498,11 @@ public class JTSGeometryBindingTest {
 
 
         DirectPosition c1l2p1 = new GeneralDirectPosition(crs);
-        c1l2p1.setOrdinate(0, 402320);
-        c1l2p1.setOrdinate(1, 3334850);
+        c1l2p1.setCoordinate(0, 402320);
+        c1l2p1.setCoordinate(1, 3334850);
         DirectPosition c1l2p2 = new GeneralDirectPosition(crs);
-        c1l2p2.setOrdinate(0, 402200);
-        c1l2p2.setOrdinate(1, 3335200);
+        c1l2p2.setCoordinate(0, 402200);
+        c1l2p2.setCoordinate(1, 3335200);
 
         c1l1.getControlPoints().add(c1l2p1);
         c1l1.getControlPoints().add(c1l2p2);
@@ -1519,14 +1519,14 @@ public class JTSGeometryBindingTest {
         JTSCurve c2 = new JTSCurve(crs);
         JTSLineString c2l1 = new JTSLineString(crs);
         DirectPosition c2l1p1 = new GeneralDirectPosition(crs);
-        c2l1p1.setOrdinate(0, 401500);
-        c2l1p1.setOrdinate(1, 3334500);
+        c2l1p1.setCoordinate(0, 401500);
+        c2l1p1.setCoordinate(1, 3334500);
         DirectPosition c2l1p2 = new GeneralDirectPosition(crs);
-        c2l1p2.setOrdinate(0, 401700);
-        c2l1p2.setOrdinate(1, 3334850);
+        c2l1p2.setCoordinate(0, 401700);
+        c2l1p2.setCoordinate(1, 3334850);
         DirectPosition c2l1p3 = new GeneralDirectPosition(crs);
-        c2l1p3.setOrdinate(0, 402200);
-        c2l1p3.setOrdinate(1, 3335200);
+        c2l1p3.setCoordinate(0, 402200);
+        c2l1p3.setCoordinate(1, 3335200);
 
         c2l1.getControlPoints().add(c2l1p1);
         c2l1.getControlPoints().add(c2l1p2);
@@ -1598,21 +1598,21 @@ public class JTSGeometryBindingTest {
         JTSCurve c1 = new JTSCurve(crs);
         JTSLineString c1l1 = new JTSLineString();
         DirectPosition c1l1p1 = new GeneralDirectPosition(crs);
-        c1l1p1.setOrdinate(0, 401500);
-        c1l1p1.setOrdinate(1, 3334500);
+        c1l1p1.setCoordinate(0, 401500);
+        c1l1p1.setCoordinate(1, 3334500);
         DirectPosition c1l1p2 = new GeneralDirectPosition(crs);
-        c1l1p2.setOrdinate(0, 401700);
-        c1l1p2.setOrdinate(1, 3334850);
+        c1l1p2.setCoordinate(0, 401700);
+        c1l1p2.setCoordinate(1, 3334850);
         DirectPosition c1l1p3 = new GeneralDirectPosition(crs);
-        c1l1p3.setOrdinate(0, 402200);
-        c1l1p3.setOrdinate(1, 3335200);
+        c1l1p3.setCoordinate(0, 402200);
+        c1l1p3.setCoordinate(1, 3335200);
 
         DirectPosition c1l2p1 = new GeneralDirectPosition(crs);
-        c1l2p1.setOrdinate(0, 402320);
-        c1l2p1.setOrdinate(1, 3334850);
+        c1l2p1.setCoordinate(0, 402320);
+        c1l2p1.setCoordinate(1, 3334850);
         DirectPosition c1l2p2 = new GeneralDirectPosition(crs);
-        c1l2p2.setOrdinate(0, 402200);
-        c1l2p2.setOrdinate(1, 3335200);
+        c1l2p2.setCoordinate(0, 402200);
+        c1l2p2.setCoordinate(1, 3335200);
 
         c1l1.getControlPoints().add(c1l1p1);
         c1l1.getControlPoints().add(c1l1p2);
@@ -1632,14 +1632,14 @@ public class JTSGeometryBindingTest {
         JTSCurve c2 = new JTSCurve(crs);
         JTSLineString c2l1 = new JTSLineString();
         DirectPosition c2l1p1 = new GeneralDirectPosition(crs);
-        c2l1p1.setOrdinate(0, 401500);
-        c2l1p1.setOrdinate(1, 3334500);
+        c2l1p1.setCoordinate(0, 401500);
+        c2l1p1.setCoordinate(1, 3334500);
         DirectPosition c2l1p2 = new GeneralDirectPosition(crs);
-        c2l1p2.setOrdinate(0, 401700);
-        c2l1p2.setOrdinate(1, 3334850);
+        c2l1p2.setCoordinate(0, 401700);
+        c2l1p2.setCoordinate(1, 3334850);
         DirectPosition c2l1p3 = new GeneralDirectPosition(crs);
-        c2l1p3.setOrdinate(0, 402200);
-        c2l1p3.setOrdinate(1, 3335200);
+        c2l1p3.setCoordinate(0, 402200);
+        c2l1p3.setCoordinate(1, 3335200);
 
         c2l1.getControlPoints().add(c2l1p1);
         c2l1.getControlPoints().add(c2l1p2);
@@ -1699,14 +1699,14 @@ public class JTSGeometryBindingTest {
         JTSCurve c1 = new JTSCurve(crs);
         JTSLineString c1l1 = new JTSLineString(crs);
         DirectPosition c1l1p1 = new GeneralDirectPosition(crs);
-        c1l1p1.setOrdinate(0, 401500);
-        c1l1p1.setOrdinate(1, 3334500);
+        c1l1p1.setCoordinate(0, 401500);
+        c1l1p1.setCoordinate(1, 3334500);
         DirectPosition c1l1p2 = new GeneralDirectPosition(crs);
-        c1l1p2.setOrdinate(0, 401700);
-        c1l1p2.setOrdinate(1, 3334850);
+        c1l1p2.setCoordinate(0, 401700);
+        c1l1p2.setCoordinate(1, 3334850);
         DirectPosition c1l1p3 = new GeneralDirectPosition(crs);
-        c1l1p3.setOrdinate(0, 402200);
-        c1l1p3.setOrdinate(1, 3335200);
+        c1l1p3.setCoordinate(0, 402200);
+        c1l1p3.setCoordinate(1, 3335200);
 
         c1l1.getControlPoints().add(c1l1p1);
         c1l1.getControlPoints().add(c1l1p2);
@@ -1715,11 +1715,11 @@ public class JTSGeometryBindingTest {
 
 
         DirectPosition c1l2p1 = new GeneralDirectPosition(crs);
-        c1l2p1.setOrdinate(0, 402320);
-        c1l2p1.setOrdinate(1, 3334850);
+        c1l2p1.setCoordinate(0, 402320);
+        c1l2p1.setCoordinate(1, 3334850);
         DirectPosition c1l2p2 = new GeneralDirectPosition(crs);
-        c1l2p2.setOrdinate(0, 402200);
-        c1l2p2.setOrdinate(1, 3335200);
+        c1l2p2.setCoordinate(0, 402200);
+        c1l2p2.setCoordinate(1, 3335200);
 
         c1l1.getControlPoints().add(c1l2p1);
         c1l1.getControlPoints().add(c1l2p2);
@@ -1736,14 +1736,14 @@ public class JTSGeometryBindingTest {
         JTSCurve c2 = new JTSCurve(crs);
         JTSLineString c2l1 = new JTSLineString(crs);
         DirectPosition c2l1p1 = new GeneralDirectPosition(crs);
-        c2l1p1.setOrdinate(0, 401500);
-        c2l1p1.setOrdinate(1, 3334500);
+        c2l1p1.setCoordinate(0, 401500);
+        c2l1p1.setCoordinate(1, 3334500);
         DirectPosition c2l1p2 = new GeneralDirectPosition(crs);
-        c2l1p2.setOrdinate(0, 401700);
-        c2l1p2.setOrdinate(1, 3334850);
+        c2l1p2.setCoordinate(0, 401700);
+        c2l1p2.setCoordinate(1, 3334850);
         DirectPosition c2l1p3 = new GeneralDirectPosition(crs);
-        c2l1p3.setOrdinate(0, 402200);
-        c2l1p3.setOrdinate(1, 3335200);
+        c2l1p3.setCoordinate(0, 402200);
+        c2l1p3.setCoordinate(1, 3335200);
 
         c2l1.getControlPoints().add(c2l1p1);
         c2l1.getControlPoints().add(c2l1p2);
@@ -1798,13 +1798,13 @@ public class JTSGeometryBindingTest {
         assertTrue(crs != null);
 
         DirectPosition p1 = new GeneralDirectPosition(crs);
-        p1.setOrdinate(0, 402000);
-        p1.setOrdinate(1, 3334850);
+        p1.setCoordinate(0, 402000);
+        p1.setCoordinate(1, 3334850);
 
 
         DirectPosition p2 = new GeneralDirectPosition(crs);
-        p2.setOrdinate(0, 402200);
-        p2.setOrdinate(1, 3335200);
+        p2.setCoordinate(0, 402200);
+        p2.setCoordinate(1, 3335200);
 
 
         JTSLineString l1 = new JTSLineString();
@@ -1817,14 +1817,14 @@ public class JTSGeometryBindingTest {
         JTSCurve c1 = new JTSCurve(crs);
         JTSLineString l2 = new JTSLineString();
         DirectPosition p21 = new GeneralDirectPosition(crs);
-        p21.setOrdinate(0, 401500);
-        p21.setOrdinate(1, 3334500);
+        p21.setCoordinate(0, 401500);
+        p21.setCoordinate(1, 3334500);
         DirectPosition p22 = new GeneralDirectPosition(crs);
-        p22.setOrdinate(0, 401700);
-        p22.setOrdinate(1, 3334850);
+        p22.setCoordinate(0, 401700);
+        p22.setCoordinate(1, 3334850);
         DirectPosition p23 = new GeneralDirectPosition(crs);
-        p23.setOrdinate(0, 402200);
-        p23.setOrdinate(1, 3335200);
+        p23.setCoordinate(0, 402200);
+        p23.setCoordinate(1, 3335200);
 
         l2.getControlPoints().add(p21);
         l2.getControlPoints().add(p22);
@@ -1834,11 +1834,11 @@ public class JTSGeometryBindingTest {
 
         JTSLineString l3 = new JTSLineString();
         DirectPosition p31 = new GeneralDirectPosition(crs);
-        p31.setOrdinate(0, 402320);
-        p31.setOrdinate(1, 3334850);
+        p31.setCoordinate(0, 402320);
+        p31.setCoordinate(1, 3334850);
         DirectPosition p32 = new GeneralDirectPosition(crs);
-        p32.setOrdinate(0, 402200);
-        p32.setOrdinate(1, 3335200);
+        p32.setCoordinate(0, 402200);
+        p32.setCoordinate(1, 3335200);
 
         l3.getControlPoints().add(p31);
         l3.getControlPoints().add(p32);
@@ -1901,12 +1901,12 @@ public class JTSGeometryBindingTest {
         JTSLineString c1l1 = new JTSLineString();
 
         DirectPosition dp1 = new GeneralDirectPosition(crs);
-        dp1.setOrdinate(0, 656216.1977884835);
-        dp1.setOrdinate(1, 38574.31079256255);
+        dp1.setCoordinate(0, 656216.1977884835);
+        dp1.setCoordinate(1, 38574.31079256255);
 
         DirectPosition dp2 = new GeneralDirectPosition(crs);
-        dp2.setOrdinate(0, 656209.434300029);
-        dp2.setOrdinate(1, 38569.570186997764);
+        dp2.setCoordinate(0, 656209.434300029);
+        dp2.setCoordinate(1, 38569.570186997764);
 
         c1l1.getControlPoints().add(dp1);
         c1l1.getControlPoints().add(dp2);
@@ -1963,24 +1963,24 @@ public class JTSGeometryBindingTest {
         c1l1 = new JTSLineString();
 
         dp1 = new GeneralDirectPosition(crs);
-        dp1.setOrdinate(0, -1.0);
-        dp1.setOrdinate(1, 0.0);
+        dp1.setCoordinate(0, -1.0);
+        dp1.setCoordinate(1, 0.0);
 
         dp2 = new GeneralDirectPosition(crs);
-        dp2.setOrdinate(0, 0.0);
-        dp2.setOrdinate(1, 1.0);
+        dp2.setCoordinate(0, 0.0);
+        dp2.setCoordinate(1, 1.0);
 
         GeneralDirectPosition dp3 = new GeneralDirectPosition(crs);
-        dp3.setOrdinate(0, 1.0);
-        dp3.setOrdinate(1, 0.0);
+        dp3.setCoordinate(0, 1.0);
+        dp3.setCoordinate(1, 0.0);
 
         GeneralDirectPosition dp4 = new GeneralDirectPosition(crs);
-        dp4.setOrdinate(0, 0.0);
-        dp4.setOrdinate(1, -1.0);
+        dp4.setCoordinate(0, 0.0);
+        dp4.setCoordinate(1, -1.0);
 
         GeneralDirectPosition dp5 = new GeneralDirectPosition(crs);
-        dp5.setOrdinate(0, -1.0);
-        dp5.setOrdinate(1, 0.0);
+        dp5.setCoordinate(0, -1.0);
+        dp5.setCoordinate(1, 0.0);
 
         c1l1.getControlPoints().add(dp1);
         c1l1.getControlPoints().add(dp2);
@@ -2034,13 +2034,13 @@ public class JTSGeometryBindingTest {
         assertTrue(crs != null);
 
         DirectPosition p1 = new GeneralDirectPosition(crs);
-        p1.setOrdinate(0, 402000);
-        p1.setOrdinate(1, 3334850);
+        p1.setCoordinate(0, 402000);
+        p1.setCoordinate(1, 3334850);
 
 
         DirectPosition p2 = new GeneralDirectPosition(crs);
-        p2.setOrdinate(0, 402200);
-        p2.setOrdinate(1, 3335200);
+        p2.setCoordinate(0, 402200);
+        p2.setCoordinate(1, 3335200);
 
 
         JTSLineString l1 = new JTSLineString(crs);
@@ -2053,14 +2053,14 @@ public class JTSGeometryBindingTest {
         JTSCurve c1 = new JTSCurve(crs);
         JTSLineString l2 = new JTSLineString(crs);
         DirectPosition p21 = new GeneralDirectPosition(crs);
-        p21.setOrdinate(0, 401500);
-        p21.setOrdinate(1, 3334500);
+        p21.setCoordinate(0, 401500);
+        p21.setCoordinate(1, 3334500);
         DirectPosition p22 = new GeneralDirectPosition(crs);
-        p22.setOrdinate(0, 401700);
-        p22.setOrdinate(1, 3334850);
+        p22.setCoordinate(0, 401700);
+        p22.setCoordinate(1, 3334850);
         DirectPosition p23 = new GeneralDirectPosition(crs);
-        p23.setOrdinate(0, 402200);
-        p23.setOrdinate(1, 3335200);
+        p23.setCoordinate(0, 402200);
+        p23.setCoordinate(1, 3335200);
 
         l2.getControlPoints().add(p21);
         l2.getControlPoints().add(p22);
@@ -2070,11 +2070,11 @@ public class JTSGeometryBindingTest {
 
         JTSLineString l3 = new JTSLineString(crs);
         DirectPosition p31 = new GeneralDirectPosition(crs);
-        p31.setOrdinate(0, 402320);
-        p31.setOrdinate(1, 3334850);
+        p31.setCoordinate(0, 402320);
+        p31.setCoordinate(1, 3334850);
         DirectPosition p32 = new GeneralDirectPosition(crs);
-        p32.setOrdinate(0, 402200);
-        p32.setOrdinate(1, 3335200);
+        p32.setCoordinate(0, 402200);
+        p32.setCoordinate(1, 3335200);
 
         l3.getControlPoints().add(p31);
         l3.getControlPoints().add(p32);
@@ -2165,12 +2165,12 @@ public class JTSGeometryBindingTest {
         JTSLineString c1l1 = new JTSLineString();
 
         DirectPosition dp1 = new GeneralDirectPosition(crs);
-        dp1.setOrdinate(0, 656216.1977884835);
-        dp1.setOrdinate(1, 38574.31079256255);
+        dp1.setCoordinate(0, 656216.1977884835);
+        dp1.setCoordinate(1, 38574.31079256255);
 
         DirectPosition dp2 = new GeneralDirectPosition(crs);
-        dp2.setOrdinate(0, 656209.434300029);
-        dp2.setOrdinate(1, 38569.570186997764);
+        dp2.setCoordinate(0, 656209.434300029);
+        dp2.setCoordinate(1, 38569.570186997764);
 
         c1l1.getControlPoints().add(dp1);
         c1l1.getControlPoints().add(dp2);
@@ -2233,24 +2233,24 @@ public class JTSGeometryBindingTest {
         c1l1 = new JTSLineString(crs);
 
         dp1 = new GeneralDirectPosition(crs);
-        dp1.setOrdinate(0, -1.0);
-        dp1.setOrdinate(1, 0.0);
+        dp1.setCoordinate(0, -1.0);
+        dp1.setCoordinate(1, 0.0);
 
         dp2 = new GeneralDirectPosition(crs);
-        dp2.setOrdinate(0, 0.0);
-        dp2.setOrdinate(1, 1.0);
+        dp2.setCoordinate(0, 0.0);
+        dp2.setCoordinate(1, 1.0);
 
         GeneralDirectPosition dp3 = new GeneralDirectPosition(crs);
-        dp3.setOrdinate(0, 1.0);
-        dp3.setOrdinate(1, 0.0);
+        dp3.setCoordinate(0, 1.0);
+        dp3.setCoordinate(1, 0.0);
 
         GeneralDirectPosition dp4 = new GeneralDirectPosition(crs);
-        dp4.setOrdinate(0, 0.0);
-        dp4.setOrdinate(1, -1.0);
+        dp4.setCoordinate(0, 0.0);
+        dp4.setCoordinate(1, -1.0);
 
         GeneralDirectPosition dp5 = new GeneralDirectPosition(crs);
-        dp5.setOrdinate(0, -1.0);
-        dp5.setOrdinate(1, 0.0);
+        dp5.setCoordinate(0, -1.0);
+        dp5.setCoordinate(1, 0.0);
 
         c1l1.getControlPoints().add(dp1);
         c1l1.getControlPoints().add(dp2);

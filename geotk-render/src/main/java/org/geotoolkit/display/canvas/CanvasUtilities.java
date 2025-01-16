@@ -109,11 +109,11 @@ public final class CanvasUtilities {
             }
             final GeodeticCalculator gc = GeodeticCalculator.create(crs);
             final GeneralDirectPosition pos1 = new GeneralDirectPosition(crs);
-            pos1.setOrdinate(0, P1[0]);
-            pos1.setOrdinate(1, P1[1]);
+            pos1.setCoordinate(0, P1[0]);
+            pos1.setCoordinate(1, P1[1]);
             final GeneralDirectPosition pos2 = new GeneralDirectPosition(crs);
-            pos2.setOrdinate(0, P2[0]);
-            pos2.setOrdinate(1, P2[1]);
+            pos2.setCoordinate(0, P2[0]);
+            pos2.setCoordinate(1, P2[1]);
             try {
                 gc.setStartPoint(pos1);
                 gc.setEndPoint(pos2);

@@ -32,7 +32,7 @@ import org.geotoolkit.processing.AbstractProcessTest;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.datum.PixelInCell;
+import org.apache.sis.coverage.grid.PixelInCell;
 
 /**
  *

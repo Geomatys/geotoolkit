@@ -72,8 +72,8 @@ public class TMSTileMatrixSets extends CachedTileMatrixSets {
         final Envelope extent = MERCATOR_EXTEND;
 
         final GeneralDirectPosition upperLeft = new GeneralDirectPosition(GOOGLE_MERCATOR);
-        upperLeft.setOrdinate(0, extent.getMinimum(0));
-        upperLeft.setOrdinate(1, extent.getMaximum(1));
+        upperLeft.setCoordinate(0, extent.getMinimum(0));
+        upperLeft.setCoordinate(1, extent.getMaximum(1));
 
         final double scale0Resolution = extent.getSpan(0) / BASE_TILE_SIZE;
 

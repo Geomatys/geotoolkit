@@ -23,11 +23,14 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
+import java.time.temporal.Temporal;
 import javax.xml.datatype.Duration;
 import org.geotoolkit.gml.xml.TimeIndeterminateValueType;
 import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.gml.xml.AbstractTimePosition;
+import org.geotoolkit.gml.xml.GMLInstant;
 import org.geotoolkit.gml.xml.GMLPeriod;
+import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
 
@@ -56,9 +59,6 @@ import org.opengis.temporal.Period;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TimePeriodType", propOrder = {
@@ -84,28 +84,14 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
      */
     public TimePeriodType(){}
 
-    /**
-     * Build a new Time period bounded by the begin and end time specified.
-     */
-    public TimePeriodType(final AbstractTimePosition beginPosition, final AbstractTimePosition endPosition) {
-        this(null, beginPosition, endPosition);
-    }
-
-    /**
-     * Build a new Time period bounded by the begin and end time specified.
-     */
-    public TimePeriodType(final Instant beginPosition, final Instant endPosition) {
-        this(null, beginPosition, endPosition);
-    }
-
     public TimePeriodType(final String id, final Period period) {
         super(id);
         if (period != null) {
             if (period.getBeginning() != null) {
-                this.beginPosition = new TimePositionType(period.getBeginning().getDate());
+                this.beginPosition = new TimePositionType(period.getBeginning());
             }
             if (period.getEnding() != null) {
-                this.endPosition = new TimePositionType(period.getEnding().getDate());
+                this.endPosition = new TimePositionType(period.getEnding());
             }
         }
     }
@@ -117,26 +103,32 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
         if (beginPosition instanceof TimePositionType) {
             this.beginPosition = (TimePositionType) beginPosition;
         } else if (beginPosition != null && beginPosition.getDate() != null) {
-            this.beginPosition = new TimePositionType(beginPosition.getDate());
+            this.beginPosition = new TimePositionType(beginPosition);
         }
         if (endPosition instanceof TimePositionType) {
             this.endPosition = (TimePositionType) endPosition;
         } else if (endPosition != null && endPosition.getDate() != null) {
-            this.endPosition = new TimePositionType(endPosition.getDate());
+            this.endPosition = new TimePositionType(endPosition);
         }
     }
 
-    public TimePeriodType(final String id, final Instant beginPosition, final Instant endPosition){
+    public TimePeriodType(final String id, final Temporal beginPosition, final Temporal endPosition){
         super(id);
-        if (beginPosition instanceof TimePositionType) {
-            this.beginPosition = (TimePositionType) beginPosition;
-        } else if (beginPosition != null && beginPosition.getDate() != null) {
-            this.beginPosition = new TimePositionType(beginPosition.getDate());
+        if (beginPosition != null) {
+            this.beginPosition = new TimePositionType(beginPosition);
         }
-        if (endPosition instanceof TimePositionType) {
-            this.endPosition = (TimePositionType) endPosition;
-        } else if (endPosition != null && endPosition.getDate() != null) {
-            this.endPosition = new TimePositionType(endPosition.getDate());
+        if (endPosition != null) {
+            this.endPosition = new TimePositionType(endPosition);
+        }
+    }
+
+    public TimePeriodType(final String id, final GMLInstant beginPosition, final GMLInstant endPosition){
+        super(id);
+        if (beginPosition != null) {
+            this.beginPosition = new TimePositionType(beginPosition);
+        }
+        if (endPosition != null) {
+            this.endPosition = new TimePositionType(endPosition);
         }
     }
 
@@ -149,12 +141,6 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
         this.endPosition   = new TimePositionType(endValue);
     }
 
-    public TimePeriodType(final String id, final Date beginValue, final Date endValue){
-        super(id);
-        this.beginPosition = new TimePositionType(beginValue);
-        this.endPosition   = new TimePositionType(endValue);
-    }
-
     /**
      * Build a new Time period bounded by the begin and with the end position "now".
      */
@@ -162,7 +148,7 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
         if (beginPosition instanceof TimePositionType) {
             this.beginPosition = (TimePositionType) beginPosition;
         } else if (beginPosition != null) {
-            this.beginPosition = new TimePositionType(beginPosition.getDate());
+            this.beginPosition = new TimePositionType(beginPosition);
         }
         this.endPosition   = new TimePositionType(TimeIndeterminateValueType.NOW);
     }
@@ -176,7 +162,7 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
         this.endPosition   = new TimePositionType(TimeIndeterminateValueType.NOW);
     }
 
-    public TimePeriodType(final String id, final Date beginValue){
+    public TimePeriodType(final String id, final Temporal beginValue){
         super(id);
         this.beginPosition = new TimePositionType(beginValue);
         this.endPosition   = new TimePositionType(TimeIndeterminateValueType.NOW);
@@ -190,7 +176,7 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
         if (endPosition instanceof TimePositionType) {
             this.endPosition = (TimePositionType) endPosition;
         } else if (endPosition != null) {
-            this.endPosition = new TimePositionType(endPosition.getDate());
+            this.endPosition = new TimePositionType(endPosition);
         }
     }
 
@@ -199,7 +185,7 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
         if (beginPosition instanceof TimePositionType) {
             this.beginPosition = (TimePositionType) beginPosition;
         } else if (beginPosition != null) {
-            this.beginPosition = new TimePositionType(beginPosition.getDate());
+            this.beginPosition = new TimePositionType(beginPosition);
         }
     }
 
@@ -215,11 +201,11 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
      */
     public TimePeriodType(final Period period) {
         if (period != null) {
-            if (period.getBeginning() != null && period.getBeginning().getDate() != null) {
-                this.beginPosition = new TimePositionType(period.getBeginning().getDate());
+            if (period.getBeginning() != null) {
+                this.beginPosition = new TimePositionType(period.getBeginning());
             }
-            if (period.getEnding() != null && period.getEnding().getDate() != null) {
-                this.endPosition = new TimePositionType(period.getEnding().getDate());
+            if (period.getEnding() != null) {
+                this.endPosition = new TimePositionType(period.getEnding());
             }
         }
     }
@@ -230,8 +216,8 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
      * @return
      *     possible object is
      *     {@link TimePositionType }
-     *
      */
+    @Override
     public TimePositionType getBeginPosition() {
         return beginPosition;
     }
@@ -257,7 +243,7 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
      *
      */
     public void setBeginPosition(final Date value) {
-        this.beginPosition = new TimePositionType(value);
+        this.beginPosition = new TimePositionType(TemporalUtilities.toTemporal(value));
     }
 
     /**
@@ -310,6 +296,7 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
      *     {@link TimePositionType }
      *
      */
+    @Override
     public TimePositionType getEndPosition() {
         return endPosition;
     }
@@ -335,7 +322,7 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
      *
      */
     public void setEndPosition(final Date value) {
-        this.endPosition = new TimePositionType(value);
+        this.endPosition = new TimePositionType(TemporalUtilities.toTemporal(value));
     }
 
     /**
@@ -390,9 +377,9 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
         return null;
     }
 
-    public void setBeginning(final Instant instant) {
-        if (instant != null/* && instant.getPosition() != null*/) {
-            this.beginPosition = new TimePositionType(instant.getDate());
+    public void setBeginning(final Temporal instant) {
+        if (instant != null) {
+            this.beginPosition = new TimePositionType(instant);
         }
     }
 
@@ -406,9 +393,9 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
         return null;
     }
 
-    public void setEnding(final Instant instant) {
-        if (instant != null/* && instant.getPosition() != null*/) {
-            this.endPosition = new TimePositionType(instant.getDate());
+    public void setEnding(final Temporal instant) {
+        if (instant != null) {
+            this.endPosition = new TimePositionType(instant);
         }
     }
 
@@ -438,11 +425,6 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
 
     /**
      * Gets the value of the duration property.
-     *
-     * @return
-     *     possible object is
-     *     {@link Duration }
-     *
      */
     public Duration getDuration() {
         return duration;
@@ -450,11 +432,6 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
 
     /**
      * Sets the value of the duration property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link Duration }
-     *
      */
     public void setDuration(final Duration value) {
         this.duration = value;
@@ -462,11 +439,6 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
 
     /**
      * Gets the value of the timeInterval property.
-     *
-     * @return
-     *     possible object is
-     *     {@link TimeIntervalLengthType }
-     *
      */
     public TimeIntervalLengthType getTimeInterval() {
         return timeInterval;
@@ -474,11 +446,6 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
 
     /**
      * Sets the value of the timeInterval property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link TimeIntervalLengthType }
-     *
      */
     public void setTimeInterval(final TimeIntervalLengthType value) {
         this.timeInterval = value;
@@ -539,7 +506,6 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
         if (timeInterval != null) {
             s.append(lineSeparator).append("timeInterval:").append(timeInterval).append(lineSeparator);
         }
-
         return s.toString();
     }
 }

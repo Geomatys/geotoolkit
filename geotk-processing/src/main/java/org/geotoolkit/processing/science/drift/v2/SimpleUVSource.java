@@ -39,7 +39,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.crs.TemporalCRS;
 import org.opengis.referencing.crs.VerticalCRS;
-import org.opengis.referencing.datum.PixelInCell;
+import org.apache.sis.coverage.grid.PixelInCell;
 import org.opengis.referencing.operation.*;
 import org.opengis.util.FactoryException;
 
@@ -156,7 +156,7 @@ class SimpleUVSource implements UVSource {
                 .orElseThrow(() -> new IllegalStateException("Source dataset has no temporal axis"));
 
         final DefaultTemporalCRS timeCrs = DefaultTemporalCRS.castOrCopy((TemporalCRS) timeEnv.getCoordinateReferenceSystem());
-        timeEnv.getLowerCorner().setOrdinate(0, timeCrs.toValue(time));
+        timeEnv.getLowerCorner().setCoordinate(0, timeCrs.toValue(time));
 
         final GridDerivation subgrid = gg.derive()
                 .rounding(GridRoundingMode.ENCLOSING)
@@ -177,7 +177,7 @@ class SimpleUVSource implements UVSource {
                         -> getSubCrs(userOrigin::getCoordinateReferenceSystem, VERTICAL_EXTRACTOR)
                         .map(component -> {
                             final DirectPosition1D elevation = new DirectPosition1D(component.crs);
-                            elevation.coordinate = userOrigin.getOrdinate(component.idx);
+                            elevation.coordinate = userOrigin.getCoordinate(component.idx);
                             return (DirectPosition) elevation;
                         })
                         .orElseGet(() -> {

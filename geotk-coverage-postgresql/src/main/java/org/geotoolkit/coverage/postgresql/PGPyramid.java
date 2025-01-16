@@ -78,8 +78,8 @@ public class PGPyramid extends AbstractPyramid {
             query.append(pgstore.encodeTableName("Mosaic"));
             query.append("(\"pyramidId\",\"upperCornerX\",\"upperCornerY\",\"gridWidth\",\"gridHeight\",\"scale\",\"tileWidth\",\"tileHeight\") VALUES (");
             query.append(id           ).append(',');
-            query.append(upperleft.getOrdinate(0)).append(',');
-            query.append(upperleft.getOrdinate(1)).append(',');
+            query.append(upperleft.getCoordinate(0)).append(',');
+            query.append(upperleft.getCoordinate(1)).append(',');
             query.append(gridSize.width         ).append(',');
             query.append(gridSize.height        ).append(',');
             query.append(pixelscale             ).append(',');
@@ -97,7 +97,7 @@ public class PGPyramid extends AbstractPyramid {
             final CoordinateReferenceSystem crs = upperleft.getCoordinateReferenceSystem();
             final CoordinateSystem cs = crs.getCoordinateSystem();
             for(int i=2,n=cs.getDimension();i<n;i++){
-                final double value = upperleft.getOrdinate(i);
+                final double value = upperleft.getCoordinate(i);
                 query = new StringBuilder();
                 query.append("INSERT INTO ");
                 query.append(pgstore.encodeTableName("MosaicAxis"));

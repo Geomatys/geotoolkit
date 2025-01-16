@@ -31,7 +31,7 @@ import org.opengis.geometry.Boundary;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.Geometry;
-import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.coordinate.MismatchedDimensionException;
 import org.opengis.geometry.TransfiniteSet;
 import org.opengis.geometry.complex.Complex;
 import org.opengis.geometry.primitive.Ring;

@@ -41,9 +41,8 @@ import org.geotoolkit.storage.multires.TileMatrices;
  * Default implementation of a TileReference
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
-public class DefaultImageTile extends AbstractGridCoverageResource implements Tile {
+public class DefaultImageTile implements Tile {
 
     protected final org.geotoolkit.storage.multires.TileMatrix matrix;
     protected final ImageReaderSpi spi;
@@ -53,7 +52,6 @@ public class DefaultImageTile extends AbstractGridCoverageResource implements Ti
 
 
     public DefaultImageTile(TileMatrix matrix, RenderedImage image, long... position) {
-        super(null,false);
         ArgumentChecks.ensureNonNull("matrix", matrix);
         ArgumentChecks.ensureCanCast("matrix", org.geotoolkit.storage.multires.TileMatrix.class, matrix);
         if (position.length != matrix.getTilingScheme().getDimension()) {
@@ -70,7 +68,6 @@ public class DefaultImageTile extends AbstractGridCoverageResource implements Ti
     }
 
     public DefaultImageTile(TileMatrix matrix, ImageReaderSpi spi, Object input, int imageIndex, long... position) {
-        super(null,false);
         ArgumentChecks.ensureNonNull("matrix", matrix);
         ArgumentChecks.ensureCanCast("matrix", org.geotoolkit.storage.multires.TileMatrix.class, matrix);
         if (position.length != matrix.getTilingScheme().getDimension()) {
@@ -88,7 +85,7 @@ public class DefaultImageTile extends AbstractGridCoverageResource implements Ti
 
     @Override
     public Resource getResource() throws DataStoreException {
-        return this;
+        return new Data();
     }
 
     @Override
@@ -99,9 +96,6 @@ public class DefaultImageTile extends AbstractGridCoverageResource implements Ti
     /**
      * Default implementation check if input is an image.
      * If not a reader is used to read the image.
-     *
-     * @return RenderedImage
-     * @throws java.io.IOException
      */
     public RenderedImage getImage() throws IOException {
         final Object input = getInput();
@@ -211,25 +205,35 @@ public class DefaultImageTile extends AbstractGridCoverageResource implements Ti
         return position.clone();
     }
 
-    @Override
-    public GridGeometry getGridGeometry() throws DataStoreException {
-        return TileMatrices.getTileGridGeometry2D(matrix, position, matrix.getTileSize());
-    }
-
-    @Override
-    public List<SampleDimension> getSampleDimensions() throws DataStoreException {
-        return read(null).getSampleDimensions();
-    }
-
-    @Override
-    public GridCoverage read(GridGeometry domain, int... range) throws DataStoreException {
-        final RenderedImage image;
-        try {
-            image = getImage();
-        } catch (IOException ex) {
-            throw new DataStoreException(ex.getMessage(), ex);
+    /**
+     * The tile data as a resource.
+     *
+     * @see #getResource()
+     */
+    protected class Data extends AbstractGridCoverageResource {
+        protected Data() {
+            super(null,false);
         }
-        return new GridCoverage2D(getGridGeometry(), null, image);
-    }
 
+        @Override
+        public GridGeometry getGridGeometry() throws DataStoreException {
+            return TileMatrices.getTileGridGeometry2D(matrix, position, matrix.getTileSize());
+        }
+
+        @Override
+        public List<SampleDimension> getSampleDimensions() throws DataStoreException {
+            return read(null).getSampleDimensions();
+        }
+
+        @Override
+        public GridCoverage read(GridGeometry domain, int... range) throws DataStoreException {
+            final RenderedImage image;
+            try {
+                image = getImage();
+            } catch (IOException ex) {
+                throw new DataStoreException(ex.getMessage(), ex);
+            }
+            return new GridCoverage2D(getGridGeometry(), null, image);
+        }
+    }
 }

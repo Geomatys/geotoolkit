@@ -480,7 +480,7 @@ public class EnvelopeType implements org.opengis.geometry.Envelope, org.geotoolk
     @Override
     public double getMinimum(final int i) throws IndexOutOfBoundsException {
         if (lowerCorner != null) {
-            return lowerCorner.getOrdinate(i);
+            return lowerCorner.getCoordinate(i);
         }
         return -1;
     }
@@ -488,7 +488,7 @@ public class EnvelopeType implements org.opengis.geometry.Envelope, org.geotoolk
     @Override
     public double getMaximum(final int i) throws IndexOutOfBoundsException {
         if (upperCorner != null) {
-            return upperCorner.getOrdinate(i);
+            return upperCorner.getCoordinate(i);
         }
         return -1;
     }
@@ -497,14 +497,14 @@ public class EnvelopeType implements org.opengis.geometry.Envelope, org.geotoolk
     public double getMedian(final int i) throws IndexOutOfBoundsException {
         // Note: do not support wrap-around. This implementation is very limited, avoid if possible
         if (upperCorner == null || lowerCorner == null) return Double.NaN;
-        else return 0.5 * (upperCorner.getOrdinate(i) + lowerCorner.getOrdinate(i));
+        else return 0.5 * (upperCorner.getCoordinate(i) + lowerCorner.getCoordinate(i));
     }
 
     @Override
     public double getSpan(final int i) throws IndexOutOfBoundsException {
         // Note: do not support wrap-around. This implementation is very limited, avoid if possible
         if (upperCorner == null || lowerCorner == null) return Double.NaN;
-        else return upperCorner.getOrdinate(i) - lowerCorner.getOrdinate(i);
+        else return upperCorner.getCoordinate(i) - lowerCorner.getCoordinate(i);
     }
 
     @Override

@@ -29,8 +29,7 @@ import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.v200.Reference;
-;
-import org.geotoolkit.wps.xml.WPSMarshallerPool;import org.geotoolkit.wps.xml.WPSMarshallerPool;
+import org.geotoolkit.wps.xml.WPSMarshallerPool;
 
 /**
  *

@@ -21,7 +21,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.geometry.DirectPosition;
-import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.coordinate.MismatchedDimensionException;
 
 import org.locationtech.jts.geom.CoordinateSequence;
 import org.locationtech.jts.geom.impl.PackedCoordinateSequence;
@@ -127,16 +127,8 @@ public class InPlaceCoordinateSequenceTransformer implements CoordinateSequenceT
         /**
          * {@inheritDoc }
          */
-        @Deprecated
-        public double[] getCoordinates() {
-            return getCoordinate();
-        }
-
-        /**
-         * {@inheritDoc }
-         */
         @Override
-        public double[] getCoordinate() {
+        public double[] getCoordinates() {
             return new double[]{ sequence.getX(offset), sequence.getY(offset), sequence.getOrdinate(offset, CoordinateSequence.Z)};
         }
 
@@ -144,7 +136,7 @@ public class InPlaceCoordinateSequenceTransformer implements CoordinateSequenceT
          * {@inheritDoc }
          */
         @Override
-        public double getOrdinate( final int arg0 ) throws IndexOutOfBoundsException {
+        public double getCoordinate( final int arg0 ) throws IndexOutOfBoundsException {
             return sequence.getOrdinate(offset, arg0);
         }
 
@@ -152,7 +144,7 @@ public class InPlaceCoordinateSequenceTransformer implements CoordinateSequenceT
          * {@inheritDoc }
          */
         @Override
-        public void setOrdinate( final int arg0, final double arg1 ) throws IndexOutOfBoundsException {
+        public void setCoordinate( final int arg0, final double arg1 ) throws IndexOutOfBoundsException {
             sequence.setOrdinate(offset, arg0, arg1);
         }
 
@@ -176,15 +168,5 @@ public class InPlaceCoordinateSequenceTransformer implements CoordinateSequenceT
         public DirectPosition getPosition() {
             return this;
         }
-
-        /**
-         * {@inheritDoc }
-         */
-        @Override
-        public DirectPosition getDirectPosition() {
-            return this;
-        }
-
     }
-
 }

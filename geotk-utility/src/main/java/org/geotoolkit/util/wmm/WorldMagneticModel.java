@@ -165,11 +165,11 @@ public final class WorldMagneticModel {
 
     private static SphericalHarmonicVariables ComputeSphericalHarmonicVariables(DirectPosition coordSpherical, int nMax) {
         SphericalHarmonicVariables sphVariables = new SphericalHarmonicVariables(nMax);
-        final double cos_lambda = Math.cos(Math.toRadians(coordSpherical.getOrdinate(1)));
-        final double sin_lambda = Math.sin(Math.toRadians(coordSpherical.getOrdinate(1)));
+        final double cos_lambda = Math.cos(Math.toRadians(coordSpherical.getCoordinate(1)));
+        final double sin_lambda = Math.sin(Math.toRadians(coordSpherical.getCoordinate(1)));
         /* for n = 0 ... model_order, compute (Radius of Earth / Spherical radius r)^(n+2)
         for n  1..nMax-1 (this is much faster than calling pow MAX_N+1 times).      */
-        final double radiusRatio = MEAN_RADIUS / (coordSpherical.getOrdinate(2) / 1000);
+        final double radiusRatio = MEAN_RADIUS / (coordSpherical.getCoordinate(2) / 1000);
         sphVariables.RelativeRadiusPower[0] = Math.pow(radiusRatio, 2);
         for(int n = 1; n <= nMax; n++)
         {
@@ -204,7 +204,7 @@ public final class WorldMagneticModel {
      * @return Calculated Legendre variables in the data structure
      */
     private static LegendreFunction computeLegendreFunction(DirectPosition coordSpherical, int nMax) {
-        final double sin_phi = Math.sin(Math.toRadians(coordSpherical.getOrdinate(0))); /* sin  (geocentric latitude) */
+        final double sin_phi = Math.sin(Math.toRadians(coordSpherical.getCoordinate(0))); /* sin  (geocentric latitude) */
         return (nMax <= 16 || (1.0 - Math.abs(sin_phi)) < 1.0e-10)? computePcupLow(sin_phi,nMax) : computePcupHigh(sin_phi,nMax);
     }
 
@@ -442,7 +442,7 @@ public final class WorldMagneticModel {
             }
         }
 
-        final double cos_phi = Math.cos(Math.toRadians(coordSpherical.getOrdinate(0)));
+        final double cos_phi = Math.cos(Math.toRadians(coordSpherical.getCoordinate(0)));
         if (Math.abs(cos_phi) > 1.0e-10) {
             magneticResults.By = magneticResults.By / cos_phi;
         } else /* Special calculation for component - By - at Geographic poles.
@@ -468,7 +468,7 @@ public final class WorldMagneticModel {
         PcupS[0] = 1;
         double schmidtQuasiNorm1 = 1.0;
         magneticResults.By = 0.0;
-        final double sin_phi = Math.sin(Math.toRadians(coordSpherical.getOrdinate(0)));
+        final double sin_phi = Math.sin(Math.toRadians(coordSpherical.getCoordinate(0)));
 
         for (int n = 1; n <= magneticModel.nMax; n++) {
 
@@ -539,7 +539,7 @@ public final class WorldMagneticModel {
                         * legendreFunction.dPcup[index];
             }
         }
-        final double cos_phi = Math.cos(Math.toRadians(coordSpherical.getOrdinate(0)));
+        final double cos_phi = Math.cos(Math.toRadians(coordSpherical.getCoordinate(0)));
         if (Math.abs(cos_phi) > 1.0e-10) {
             magneticResults.By = magneticResults.By / cos_phi;
         } else /* Special calculation for component By at Geographic poles */ {
@@ -562,7 +562,7 @@ public final class WorldMagneticModel {
         PcupS[0] = 1.0;
         double schmidtQuasiNorm1 = 1.0;
         magneticResults.By = 0.0;
-        final double sin_phi = Math.sin(Math.toRadians(coordSpherical.getOrdinate(0)));
+        final double sin_phi = Math.sin(Math.toRadians(coordSpherical.getCoordinate(0)));
 
         for (int n = 1; n <= magneticModel.nMaxSecVar; n++) {
             final int index = (n * (n + 1) / 2 + 1);
@@ -599,7 +599,7 @@ public final class WorldMagneticModel {
         MagneticResults MagneticResultsGeo = new MagneticResults();
 
         /* Difference between the spherical and Geodetic latitudes */
-        final double Psi = Math.toRadians(coordSpherical.getOrdinate(0) - coordGeodetic.getOrdinate(0));
+        final double Psi = Math.toRadians(coordSpherical.getCoordinate(0) - coordGeodetic.getCoordinate(0));
 
         /* Rotate spherical field components to the Geodetic system */
         MagneticResultsGeo.Bz = magneticResultsSph.Bx * Math.sin(Psi) + magneticResultsSph.Bz * Math.cos(Psi);
@@ -670,13 +670,13 @@ public final class WorldMagneticModel {
      */
     private static void calculateGridVariation(DirectPosition location, GeoMagneticElements elements) {
 
-        if(location.getOrdinate(0) >= MAG_PS_MAX_LAT_DEGREE)
+        if(location.getCoordinate(0) >= MAG_PS_MAX_LAT_DEGREE)
         {
-            elements.GV = elements.Decl - location.getOrdinate(1);
+            elements.GV = elements.Decl - location.getCoordinate(1);
 
-        } else if(location.getOrdinate(0) <= MAG_PS_MIN_LAT_DEGREE)
+        } else if(location.getCoordinate(0) <= MAG_PS_MIN_LAT_DEGREE)
         {
-            elements.GV = elements.Decl + location.getOrdinate(1);
+            elements.GV = elements.Decl + location.getCoordinate(1);
 
         } else
         {
@@ -692,8 +692,8 @@ public final class WorldMagneticModel {
      */
     private static UTMParameters getTransverseMercator(DirectPosition DirectPosition) {
 
-        final double Lambda = Math.toRadians(DirectPosition.getOrdinate(1));
-        final double Phi = Math.toRadians(DirectPosition.getOrdinate(0));
+        final double Lambda = Math.toRadians(DirectPosition.getCoordinate(1));
+        final double Phi = Math.toRadians(DirectPosition.getCoordinate(0));
 
         UTMParameters utmParameters = getUTMParameters(Phi, Lambda);
         final double K0 = 0.9996;

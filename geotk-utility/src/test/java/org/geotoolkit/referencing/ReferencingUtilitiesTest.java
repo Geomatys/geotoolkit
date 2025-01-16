@@ -23,7 +23,7 @@ import org.apache.sis.referencing.privy.AffineTransform2D;
 import org.junit.Test;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
-import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.coordinate.MismatchedDimensionException;
 
 import static org.junit.Assert.*;
 

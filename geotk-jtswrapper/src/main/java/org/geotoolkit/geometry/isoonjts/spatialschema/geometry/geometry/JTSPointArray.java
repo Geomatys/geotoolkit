@@ -19,7 +19,6 @@ import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.NotifyingArrayLis
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.coordinate.PointArray;
-import org.opengis.geometry.coordinate.Position;
 
 
 
@@ -42,7 +41,7 @@ import org.opengis.geometry.coordinate.Position;
  * @version 2.0
  * @module
  */
-public class JTSPointArray extends NotifyingArrayList<Position> implements PointArray, JTSGeometry {
+public class JTSPointArray extends NotifyingArrayList<DirectPosition> implements PointArray, JTSGeometry {
     private static final long serialVersionUID = -9202900942004287122L;
 
     //*************************************************************************
@@ -121,7 +120,7 @@ public class JTSPointArray extends NotifyingArrayList<Position> implements Point
      *          to this array, or should we left the decision to the implementor?
      */
     @Override
-    public Position get(final int column) throws IndexOutOfBoundsException {
+    public DirectPosition get(final int column) throws IndexOutOfBoundsException {
         return new GeneralDirectPosition((DirectPosition)super.get(column));
     }
 
@@ -149,7 +148,7 @@ public class JTSPointArray extends NotifyingArrayList<Position> implements Point
             }
         }
         for (int i = 0; i < position.getDimension(); i++) {
-            dest.setOrdinate(i, position.getOrdinate(i));
+            dest.setCoordinate(i, position.getCoordinate(i));
         }
         return dest;
     }
@@ -168,10 +167,9 @@ public class JTSPointArray extends NotifyingArrayList<Position> implements Point
      * @see List#set
      */
     public void setDirectPosition(final int column, final DirectPosition position) throws IndexOutOfBoundsException {
-        DirectPosition thisPosition = (DirectPosition) get(column);
-        DirectPosition otherPosition = position.getDirectPosition();
+        DirectPosition thisPosition = get(column);
         for (int i = 0; i < thisPosition.getDimension(); i++) {
-            thisPosition.setOrdinate(i, otherPosition.getOrdinate(i));
+            thisPosition.setCoordinate(i, position.getCoordinate(i));
         }
         invalidateCachedJTSPeer();
     }

@@ -5,7 +5,7 @@ package org.geotoolkit.processing.science.drift.v2;
 
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.util.ArgumentChecks;
-import org.opengis.referencing.datum.PixelInCell;
+import org.apache.sis.coverage.grid.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.NoninvertibleTransformException;

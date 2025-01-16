@@ -33,7 +33,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
-import java.util.TimeZone;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import javax.measure.Unit;
@@ -58,7 +57,6 @@ import org.geotoolkit.storage.coverage.AbstractPyramidalCoverageResource;
 import org.geotoolkit.storage.coverage.CoverageStoreContentEvent;
 import org.geotoolkit.storage.coverage.CoverageStoreManagementEvent;
 import org.geotoolkit.storage.coverage.PyramidalModelWriter;
-import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.version.Version;
 import org.opengis.metadata.content.TransferFunctionType;
@@ -123,7 +121,7 @@ public class PGCoverageResource extends AbstractPyramidalCoverageResource implem
                 query.append(" AND pp.value IS NULL");
             }else{
                 query.append(" AND pp.value = '");
-                query.append(TemporalUtilities.toISO8601Z(version.getDate(), PGVersionControl.GMT0));
+                query.append(version.getDate().toInstant());
                 query.append("'");
             }
 
@@ -213,8 +211,8 @@ public class PGCoverageResource extends AbstractPyramidalCoverageResource implem
                 final int tileHeight = rs.getInt(8);
 
                 final GeneralDirectPosition position = new GeneralDirectPosition(crs);
-                position.setOrdinate(0, cornerX);
-                position.setOrdinate(1, cornerY);
+                position.setCoordinate(0, cornerX);
+                position.setCoordinate(1, cornerY);
 
 
                 if(crs.getCoordinateSystem().getDimension() > 2){
@@ -230,7 +228,7 @@ public class PGCoverageResource extends AbstractPyramidalCoverageResource implem
                         query.append(mosaicId);
                         rs2 = stmt2.executeQuery(query.toString());
                         while(rs2.next()){
-                            position.setOrdinate(rs2.getInt(1), rs2.getDouble(2));
+                            position.setCoordinate(rs2.getInt(1), rs2.getDouble(2));
                         }
                     }finally{
                         store.closeSafe(null, stmt2, rs2);
@@ -352,7 +350,7 @@ public class PGCoverageResource extends AbstractPyramidalCoverageResource implem
                 query.append("(\"pyramidId\",\"key\",\"type\",\"value\") VALUES (");
                 query.append(pyramidId);
                 query.append(",'version','date','");
-                query.append(TemporalUtilities.toISO8601Z(version.getDate(), TimeZone.getTimeZone("GMT+0")));
+                query.append(version.getDate().toInstant());
                 query.append("')");
                 stmt.executeUpdate(query.toString());
             }
@@ -395,7 +393,7 @@ public class PGCoverageResource extends AbstractPyramidalCoverageResource implem
             final int layerId = pgstore.getLayerId(cnx,getIdentifier().get().tip().toString());
             String versionStr;
             if (version != null && !version.getLabel().equals(PGVersionControl.UNSET)) {
-                versionStr = TemporalUtilities.toISO8601Z(version.getDate(), TimeZone.getTimeZone("GMT+0"));
+                versionStr = version.getDate().toInstant().toString();
             } else {
                 versionStr = PGVersionControl.UNSET;
             }
@@ -542,7 +540,7 @@ public class PGCoverageResource extends AbstractPyramidalCoverageResource implem
                     final SampleDimension dim = dimensions.get(i);
                     String versionStr;
                     if (version != null && !version.getLabel().equals(PGVersionControl.UNSET)) {
-                        versionStr = TemporalUtilities.toISO8601Z(version.getDate(), TimeZone.getTimeZone("GMT+0"));
+                        versionStr = version.getDate().toInstant().toString();
                     } else {
                         versionStr = PGVersionControl.UNSET;
                     }

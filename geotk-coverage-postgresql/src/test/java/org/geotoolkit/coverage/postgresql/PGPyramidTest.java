@@ -110,8 +110,8 @@ public class PGPyramidTest {
 
         final GeneralDirectPosition upperLeft = new GeneralDirectPosition(CommonCRS.WGS84.geographic());
         final Dimension dimension = new Dimension(20, 20);
-        upperLeft.setOrdinate(0, -90);
-        upperLeft.setOrdinate(1, +180);
+        upperLeft.setCoordinate(0, -90);
+        upperLeft.setCoordinate(1, +180);
         PyramidalCoverageResource cref;
         Pyramid pyramid;
         Mosaic mosaic;
@@ -178,8 +178,8 @@ public class PGPyramidTest {
 
         final GeneralDirectPosition upperLeft = new GeneralDirectPosition(CommonCRS.WGS84.geographic());
         final Dimension dimension = new Dimension(20, 20);
-        upperLeft.setOrdinate(0, -90);
-        upperLeft.setOrdinate(1, +180);
+        upperLeft.setCoordinate(0, -90);
+        upperLeft.setCoordinate(1, +180);
         PyramidalCoverageResource cref;
         Pyramid pyramid;
         Mosaic mosaic;

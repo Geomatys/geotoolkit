@@ -26,15 +26,21 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jakarta.xml.bind.annotation.XmlTransient;
+import java.time.temporal.Temporal;
+import java.util.Optional;
+import static org.geotoolkit.gml.xml.TimeIndeterminateValueType.AFTER;
+import static org.geotoolkit.gml.xml.TimeIndeterminateValueType.BEFORE;
+import static org.geotoolkit.gml.xml.TimeIndeterminateValueType.NOW;
 import org.geotoolkit.temporal.object.ISODateParser;
-import org.opengis.temporal.TemporalPosition;
+import org.opengis.temporal.IndeterminateValue;
+import org.opengis.temporal.Instant;
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
 @XmlTransient
-public abstract class AbstractTimePosition {
+public abstract class AbstractTimePosition implements Instant {
 
     protected static final Logger LOGGER = Logger.getLogger("org.geotoolkit.gml.xml");
 
@@ -48,8 +54,9 @@ public abstract class AbstractTimePosition {
         FORMATTERS.add(new SimpleDateFormat("yyyy"));
     }
 
-    public TemporalPosition anyOther() {
-        return null;
+    @Override
+    public Temporal getPosition() {
+        return org.apache.sis.temporal.TemporalDate.toTemporal(getDate());
     }
 
     public abstract Date getDate();
@@ -78,5 +85,46 @@ public abstract class AbstractTimePosition {
         return null;
     }
 
-    public abstract TimeIndeterminateValueType getIndeterminatePosition();
+    @Override
+    public Optional<IndeterminateValue> getIndeterminatePosition() {
+        var v = getIndeterminateValue();
+        if (v == null) {
+            return Optional.empty();
+        }
+        IndeterminateValue c;
+        switch (v) {
+            case BEFORE: c = IndeterminateValue.BEFORE;  break;
+            case AFTER:  c = IndeterminateValue.AFTER;   break;
+            case NOW:    c = IndeterminateValue.NOW;     break;
+            default:     c = IndeterminateValue.UNKNOWN; break;
+        }
+        return Optional.of(c);
+    }
+
+    public abstract TimeIndeterminateValueType getIndeterminateValue();
+
+    static AbstractTimePosition of(final Instant instant) {
+        return new AbstractTimePosition() {
+            @Override public Temporal getPosition() {
+                return instant.getPosition();
+            }
+
+            @Override public Date getDate() {
+                return org.apache.sis.temporal.TemporalDate.toDate(instant.getPosition());
+            }
+
+            @Override public TimeIndeterminateValueType getIndeterminateValue() {
+                IndeterminateValue v = instant.getIndeterminatePosition().orElse(null);
+                if (v == null) {
+                    return null;
+                }
+                TimeIndeterminateValueType c;
+                if (v.equals(IndeterminateValue.BEFORE)) c = TimeIndeterminateValueType.BEFORE;
+                else if (v.equals(IndeterminateValue.AFTER)) c = TimeIndeterminateValueType.AFTER;
+                else if (v.equals(IndeterminateValue.NOW)) c = TimeIndeterminateValueType.NOW;
+                else  c = TimeIndeterminateValueType.UNKNOWN;
+                return c;
+            }
+        };
+    }
 }

@@ -27,7 +27,6 @@ import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSLineS
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSCurve;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSRing;
 import org.opengis.geometry.DirectPosition;
-import org.opengis.geometry.coordinate.Position;
 import org.opengis.geometry.primitive.Curve;
 import org.opengis.geometry.primitive.CurveSegment;
 
@@ -64,9 +63,9 @@ public class LinearRingPosListType {
                 for (CurveSegment cv : curve.getSegments()) {
                     JTSLineString line = (JTSLineString) cv;
 
-                    for (Position p : line.getPositions()) {
-                        for (int i = 0; i < p.getDirectPosition().getDimension(); i++) {
-                            value.add(p.getDirectPosition().getOrdinate(i));
+                    for (DirectPosition p : line.getPositions()) {
+                        for (int i = 0; i < p.getDimension(); i++) {
+                            value.add(p.getCoordinate(i));
                         }
                     }
                 }

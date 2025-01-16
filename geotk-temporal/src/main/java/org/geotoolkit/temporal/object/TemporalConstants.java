@@ -14,17 +14,16 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-
 package org.geotoolkit.temporal.object;
 
 /**
  * Temporal constants.
  *
+ * Note: consider using {@link java.time.temporal.ChronoUnit#getDuration()} instead.
+ *
  * @author Johann sorel (Geomatys)
- * @modules pending
  */
 public final class TemporalConstants {
-
     /**
      * The number of millisecond in one year.
      */
@@ -54,19 +53,6 @@ public final class TemporalConstants {
      */
     public static final long SECOND_MS = 1000L;
 
-
-    public static final String YEAR_STR = "year";
-    public static final String MONTH_STR = "month";
-    public static final String WEEK_STR = "week";
-    public static final String DAY_STR = "day";
-    public static final String HOUR_STR = "hour";
-    public static final String MINUTE_STR = "minute";
-    public static final String SECOND_STR = "second";
-    public static final String MILLISECOND_STR = "millisecond";
-
-
-
-    private TemporalConstants(){}
-
-
+    private TemporalConstants() {
+    }
 }

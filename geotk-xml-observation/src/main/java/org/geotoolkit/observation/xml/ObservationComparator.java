@@ -16,8 +16,8 @@
  */
 package org.geotoolkit.observation.xml;
 
+import java.time.temporal.Temporal;
 import java.util.Comparator;
-import java.util.Date;
 import org.opengis.observation.Observation;
 import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
@@ -31,23 +31,23 @@ public class ObservationComparator implements Comparator<Observation> {
     @Override
     public int compare(Observation o1, Observation o2) {
         if (o1.getSamplingTime() != null && o2.getSamplingTime() != null) {
-            final Date timeBegin1;
-            if (o1.getSamplingTime() instanceof Period) {
-                timeBegin1 = ((Period)o1.getSamplingTime()).getBeginning().getDate();
-            } else if (o1.getSamplingTime() instanceof Instant) {
-                timeBegin1 = ((Instant)o1.getSamplingTime()).getDate();
+            final Temporal timeBegin1;
+            if (o1.getSamplingTime() instanceof Period p) {
+                timeBegin1 = p.getBeginning().getPosition();
+            } else if (o1.getSamplingTime() instanceof Instant d) {
+                timeBegin1 = d.getPosition();
             } else {
                 throw new IllegalArgumentException("Unexpected time Object:" + o1.getSamplingTime());
             }
-            final Date timeBegin2;
-            if (o2.getSamplingTime() instanceof Period) {
-                timeBegin2 = ((Period)o2.getSamplingTime()).getBeginning().getDate();
-            } else if (o2.getSamplingTime() instanceof Instant) {
-                timeBegin2 = ((Instant)o2.getSamplingTime()).getDate();
+            final Temporal timeBegin2;
+            if (o2.getSamplingTime() instanceof Period p) {
+                timeBegin2 = p.getBeginning().getPosition();
+            } else if (o2.getSamplingTime() instanceof Instant d) {
+                timeBegin2 = d.getPosition();
             } else {
                 throw new IllegalArgumentException("Unexpected time Object:" + o2.getSamplingTime());
             }
-            return timeBegin1.compareTo(timeBegin2);
+            return ((Comparable) timeBegin1).compareTo(timeBegin2);     // TODO: does not work if not the same class.
         } else if (o1.getSamplingTime() != null) {
             return -1;
         } else if (o2.getSamplingTime() != null) {

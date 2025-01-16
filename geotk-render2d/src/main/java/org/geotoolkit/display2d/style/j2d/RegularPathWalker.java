@@ -7,7 +7,7 @@ import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
-import org.geotoolkit.display.shape.ShapeUtilities;
+import org.apache.sis.geometry.Shapes2D;
 
 /**
  *
@@ -89,7 +89,7 @@ public class RegularPathWalker {
     public void addValuesOn(final Line2D.Double line, final Point2D closePoint) {
         double distance = resolution;
         Point2D position;
-        while ((position = ShapeUtilities.colinearPoint(line, closePoint, distance)) != null) {
+        while ((position = Shapes2D.colinearPoint(line, closePoint, distance)) != null) {
             points.add(position);
             line.x1 = position.getX();
             line.y1 = position.getY();

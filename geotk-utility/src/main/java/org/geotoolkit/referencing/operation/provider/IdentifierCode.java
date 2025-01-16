@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.referencing.operation.provider;
 
-
+import java.util.Optional;
 import org.opengis.util.InternationalString;
 import org.opengis.metadata.citation.Citation;
 
@@ -31,10 +31,6 @@ import org.apache.sis.util.Deprecable;
  * A reference identifier for EPSG or GeoTiff codes.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.03
- *
- * @since 3.03
- * @module
  */
 final class IdentifierCode extends ImmutableIdentifier implements Deprecable {
     /**
@@ -102,7 +98,7 @@ final class IdentifierCode extends ImmutableIdentifier implements Deprecable {
     }
 
     @Override
-    public InternationalString getRemarks() {
-        return super.getDescription();
+    public Optional<InternationalString> getRemarks() {
+        return Optional.ofNullable(super.getDescription());
     }
 }

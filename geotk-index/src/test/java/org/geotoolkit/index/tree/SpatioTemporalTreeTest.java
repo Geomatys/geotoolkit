@@ -66,11 +66,11 @@
 //        GeneralDirectPosition dpTemp = new GeneralDirectPosition(crs);
 //        final int dim = crs.getCoordinateSystem().getDimension();
 //        for(int temp = 0; temp < 100; temp += 10){
-//            dpTemp.setOrdinate(indexTemp, temp);
+//            dpTemp.setCoordinate(indexTemp, temp);
 //            final List<GeneralEnvelope> lgeT = new ArrayList<GeneralEnvelope>();
 //            for (int i = 0; i < 300; i++) {
 //                for (int o = 0; o < dim; o++){
-//                    if (o != indexTemp) dpTemp.setOrdinate(o, Math.random()*10);
+//                    if (o != indexTemp) dpTemp.setCoordinate(o, Math.random()*10);
 //                }
 //                lgeT.add(new GeneralEnvelope(dpTemp, dpTemp));
 //            }

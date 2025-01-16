@@ -14,8 +14,6 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-
-
 package org.geotoolkit.gml.xml.v321;
 
 import java.util.ArrayList;
@@ -24,7 +22,6 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlSeeAlso;
 import jakarta.xml.bind.annotation.XmlType;
-import org.opengis.temporal.RelativePosition;
 import org.opengis.temporal.TemporalPrimitive;
 
 
@@ -79,18 +76,11 @@ public abstract class AbstractTimePrimitiveType extends AbstractTimeObjectType i
      *
      * Objects of the following type(s) are allowed in the list
      * {@link RelatedTimeType }
-     *
-     *
      */
     public List<RelatedTimeType> getRelatedTime() {
         if (relatedTime == null) {
             relatedTime = new ArrayList<RelatedTimeType>();
         }
         return this.relatedTime;
-    }
-
-    @Override
-    public RelativePosition relativePosition(final TemporalPrimitive tp) {
-        return null;
     }
 }

@@ -25,7 +25,7 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.operation.builder.LinearTransformBuilder;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.opengis.geometry.DirectPosition;
-import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.coordinate.MismatchedDimensionException;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.Matrix;

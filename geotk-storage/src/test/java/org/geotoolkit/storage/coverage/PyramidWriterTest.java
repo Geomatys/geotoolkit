@@ -47,7 +47,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.datum.PixelInCell;
+import org.apache.sis.coverage.grid.PixelInCell;
 import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
 
@@ -65,12 +65,12 @@ public class PyramidWriterTest <T extends InMemoryTiledGridCoverageResource> {
     private static final GeneralDirectPosition UL4326;
     static {
         UL84 = new GeneralDirectPosition(CRS84);
-        UL84.setOrdinate(0, -180);
-        UL84.setOrdinate(1, 90);
+        UL84.setCoordinate(0, -180);
+        UL84.setCoordinate(1, 90);
 
         UL4326 = new GeneralDirectPosition(EPSG4326);
-        UL4326.setOrdinate(0, -90);
-        UL4326.setOrdinate(1, 180);
+        UL4326.setCoordinate(0, -90);
+        UL4326.setCoordinate(1, 180);
     }
 
     /**

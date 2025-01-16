@@ -63,8 +63,8 @@ public class ViewMapper extends FeatureSetMapper {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(base.getName());
         ftb.setDefinition(base.getDefinition());
-        ftb.setDescription(base.getDescription());
-        ftb.setDesignation(base.getDesignation());
+        base.getDescription().ifPresent(ftb::setDescription);
+        base.getDesignation().ifPresent(ftb::setDesignation);
         ftb.setDeprecated(base instanceof Deprecable && ((Deprecable)base).isDeprecated());
 
         for (String pname : propertyNames) {

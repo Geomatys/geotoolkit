@@ -33,7 +33,6 @@ import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.referencing.privy.AffineTransform2D;
-import org.apache.sis.storage.base.ResourceOnFileSystem;
 import org.apache.sis.io.stream.ChannelImageInputStream;
 import org.apache.sis.io.stream.HyperRectangleReader;
 import org.apache.sis.io.stream.Region;
@@ -55,7 +54,8 @@ import org.opengis.geometry.Envelope;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.GeographicCRS;
-import org.opengis.referencing.datum.PixelInCell;
+import org.apache.sis.coverage.grid.PixelInCell;
+import org.apache.sis.util.ArraysExt;
 import org.opengis.util.GenericName;
 
 /**
@@ -136,7 +136,7 @@ import org.opengis.util.GenericName;
  * @author Alexis Manin (Geomatys)
  * @author Johann Sorel (Geomatys)
  */
-public class VI3GStore extends DataStore implements GridCoverageResource, ResourceOnFileSystem {
+public class VI3GStore extends DataStore implements GridCoverageResource {
 
     private static final SampleDimension SAMPLE_DIMENSION;
     static {
@@ -169,8 +169,8 @@ public class VI3GStore extends DataStore implements GridCoverageResource, Resour
     }
 
     @Override
-    public Path[] getComponentFiles() throws DataStoreException {
-        return new Path[]{fileInput};
+    public Optional<FileSet> getFileSet() throws DataStoreException {
+        return Optional.of(new FileSet(fileInput));
     }
 
     @Override
@@ -261,7 +261,7 @@ public class VI3GStore extends DataStore implements GridCoverageResource, Resour
                         new long[]{extent.getSize(0),extent.getSize(1)},
                         new long[]{areaLower[0], areaLower[1]},
                         new long[]{areaUpper[0], areaUpper[1]},
-                        subsampling));
+                        ArraysExt.copyAsLongs(subsampling)));
 
 
             } catch (IOException ex) {

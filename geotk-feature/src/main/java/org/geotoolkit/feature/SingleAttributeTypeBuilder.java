@@ -62,8 +62,8 @@ public class SingleAttributeTypeBuilder {
     public SingleAttributeTypeBuilder copy(AttributeType base){
         setName(base.getName());
         setDefinition(base.getDefinition());
-        setDescription(base.getDescription());
-        setDesignation(base.getDesignation());
+        base.getDescription().ifPresent(this::setDescription);
+        base.getDesignation().ifPresent(this::setDesignation);
         atts.addAll(base.characteristics().values());
         valueClass = base.getValueClass();
         minimumOccurs = base.getMinimumOccurs();

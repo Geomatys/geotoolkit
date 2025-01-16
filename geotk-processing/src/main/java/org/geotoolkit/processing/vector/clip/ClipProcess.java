@@ -31,7 +31,7 @@ import org.geotoolkit.processing.vector.VectorProcessUtils;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;
-import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.coordinate.MismatchedDimensionException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;

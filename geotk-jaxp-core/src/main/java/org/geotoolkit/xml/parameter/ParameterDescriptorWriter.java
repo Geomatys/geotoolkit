@@ -334,7 +334,7 @@ public class ParameterDescriptorWriter extends StaxStreamWriter {
     private void writeAnnotations(final GeneralParameterDescriptor parameterDescriptor)
             throws XMLStreamException {
 
-        if (parameterDescriptor.getRemarks() != null
+        if (parameterDescriptor.getRemarks().isPresent()
                 || parameterDescriptor.getName().getCodeSpace() != null
                 || parameterDescriptor.getName().getVersion() != null
                 || parameterDescriptor instanceof ParameterDescriptor) {
@@ -351,8 +351,8 @@ public class ParameterDescriptorWriter extends StaxStreamWriter {
 //                this.writeAppInfo("version",parameterDescriptor.getName().getVersion());
 //            }
             // Remarks are written as documentation.
-            if (parameterDescriptor.getRemarks() != null) {
-                this.writeRemarks(parameterDescriptor.getRemarks());
+            if (parameterDescriptor.getRemarks().isPresent()) {
+                this.writeRemarks(parameterDescriptor.getRemarks().orElse(null));
             }
             writer.writeEndElement();
         }

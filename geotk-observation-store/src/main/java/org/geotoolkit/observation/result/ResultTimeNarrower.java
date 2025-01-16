@@ -21,7 +21,6 @@ package org.geotoolkit.observation.result;
 
 import org.geotoolkit.temporal.object.ISODateParser;
 import org.opengis.filter.Filter;
-import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
 
 import java.sql.Timestamp;
@@ -29,12 +28,15 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.sis.temporal.TemporalObjects;
 import org.geotoolkit.observation.model.ComplexResult;
 import org.geotoolkit.observation.model.TextEncoderProperties;
+import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.opengis.filter.Literal;
 import org.opengis.filter.TemporalOperator;
 import org.opengis.filter.TemporalOperatorName;
 import org.opengis.observation.Observation;
+import org.opengis.temporal.Instant;
 import org.opengis.temporal.TemporalPrimitive;
 import org.opengis.util.CodeList;
 
@@ -56,19 +58,18 @@ public class ResultTimeNarrower {
      *
      * @param observation An observation.
      * @param timeFilters A list of time fiters.
-     *
      */
     public static void applyTimeConstraint(final Observation observation, final List<Filter> timeFilters) {
         if (observation.getSamplingTime() instanceof Period p) {
             final Timestamp tbegin;
             final Timestamp tend;
-            if (p.getBeginning() != null && p.getBeginning().getDate() != null) {
-                tbegin = new Timestamp(p.getBeginning().getDate().getTime());
+            if (p.getBeginning() != null) {
+                tbegin = new Timestamp(TemporalUtilities.toInstant(p.getBeginning()).toEpochMilli());
             } else {
                 tbegin = null;
             }
-            if (p.getEnding() != null && p.getEnding().getDate() != null) {
-                tend = new Timestamp(p.getEnding().getDate().getTime());
+            if (p.getEnding() != null) {
+                tend = new Timestamp(TemporalUtilities.toInstant(p.getEnding()).toEpochMilli());
             } else {
                 tend = null;
             }
@@ -76,6 +77,13 @@ public class ResultTimeNarrower {
                 applyTimeConstraint(tbegin, tend, cr, timeFilters);
             }
         }
+    }
+
+    @Deprecated
+    public static void applyTimeConstraint(final Timestamp tBegin, final Timestamp tEnd, final ComplexResult array, final List<Filter> timeFilters) {
+        final java.time.Instant begin = tBegin.toInstant();
+        final java.time.Instant end = tEnd.toInstant();
+        applyTimeConstraint(begin, end, array, timeFilters);
     }
 
     /**
@@ -89,7 +97,7 @@ public class ResultTimeNarrower {
      * @param timeFilters A list of time fiters.
      *
      */
-    public static void applyTimeConstraint(final Timestamp tBegin, final Timestamp tEnd, final ComplexResult array, final List<Filter> timeFilters) {
+    public static void applyTimeConstraint(final java.time.Instant tBegin, final java.time.Instant tEnd, final ComplexResult array, final List<Filter> timeFilters) {
 
         if (tBegin == null || tEnd == null) return;
 
@@ -104,7 +112,7 @@ public class ResultTimeNarrower {
                 final TemporalOperator<?> filter = (TemporalOperator) bound;
                 final TemporalPrimitive time = rmLiteral(filter.getExpressions().get(1));
                 if (time instanceof Instant ti) {
-                    final Timestamp boundEquals = new Timestamp(ti.getDate().getTime());
+                    final java.time.Instant boundEquals = TemporalUtilities.toInstant(ti.getPosition());
 
                     LOGGER.finer("TE case 1");
                     //case 1 the periods contains a matching values
@@ -115,10 +123,10 @@ public class ResultTimeNarrower {
                 final TemporalOperator filter = (TemporalOperator) bound;
                 final TemporalPrimitive time = rmLiteral(filter.getExpressions().get(1));
                 if (time instanceof Instant ti) {
-                    final Timestamp boundBegin = new Timestamp(ti.getDate().getTime());
+                    final java.time.Instant boundBegin = TemporalUtilities.toInstant(ti.getPosition());
 
                     // case 1 the period overlaps the bound
-                    if (tBegin.before(boundBegin) && tEnd.after(boundBegin)) {
+                    if (tBegin.isBefore(boundBegin) && tEnd.isAfter(boundBegin)) {
                         LOGGER.finer("TA case 1");
                         values = parseDataBlock(values.values.toString(), array.getTextEncodingProperties(), boundBegin, null, null);
                     }
@@ -128,10 +136,10 @@ public class ResultTimeNarrower {
                 final TemporalOperator filter = (TemporalOperator) bound;
                 final TemporalPrimitive time = rmLiteral(filter.getExpressions().get(1));
                 if (time instanceof Instant ti) {
-                    final Timestamp boundEnd = new Timestamp(ti.getDate().getTime());
+                    final java.time.Instant boundEnd = TemporalUtilities.toInstant(ti.getPosition());
 
                     // case 1 the period overlaps the bound
-                    if (tBegin.before(boundEnd) && tEnd.after(boundEnd)) {
+                    if (tBegin.isBefore(boundEnd) && tEnd.isAfter(boundEnd)) {
                         LOGGER.finer("TB case 1");
                         values = parseDataBlock(values.values.toString(), array.getTextEncodingProperties(), null, boundEnd, null);
                     }
@@ -141,21 +149,21 @@ public class ResultTimeNarrower {
                 final TemporalOperator filter = (TemporalOperator) bound;
                 final TemporalPrimitive time = rmLiteral(filter.getExpressions().get(1));
                 if (time instanceof Period tp) {
-                    final Timestamp boundBegin = new Timestamp(tp.getBeginning().getDate().getTime());
-                    final Timestamp boundEnd   = new Timestamp(tp.getEnding().getDate().getTime());
+                    final java.time.Instant boundBegin = TemporalUtilities.toInstant(tp.getBeginning());
+                    final java.time.Instant boundEnd   = TemporalUtilities.toInstant(tp.getEnding());
 
                     // case 1 the period overlaps the first bound
-                    if (tBegin.before(boundBegin) && tEnd.before(boundEnd) && tEnd.after(boundBegin)) {
+                    if (tBegin.isBefore(boundBegin) && tEnd.isBefore(boundEnd) && tEnd.isAfter(boundBegin)) {
                         LOGGER.finer("TD case 1");
                         values = parseDataBlock(values.values.toString(), array.getTextEncodingProperties(), boundBegin, boundEnd, null);
 
                     // case 2 the period overlaps the second bound
-                    } else if (tBegin.after(boundBegin) && tEnd.after(boundEnd) && tBegin.before(boundEnd)) {
+                    } else if (tBegin.isAfter(boundBegin) && tEnd.isAfter(boundEnd) && tBegin.isBefore(boundEnd)) {
                         LOGGER.finer("TD case 2");
                         values = parseDataBlock(values.values.toString(), array.getTextEncodingProperties(), boundBegin, boundEnd, null);
 
                     // case 3 the period totaly overlaps the bounds
-                    } else if (tBegin.before(boundBegin) && tEnd.after(boundEnd)) {
+                    } else if (tBegin.isBefore(boundBegin) && tEnd.isAfter(boundEnd)) {
                         LOGGER.finer("TD case 3");
                         values = parseDataBlock(values.values.toString(), array.getTextEncodingProperties(), boundBegin, boundEnd, null);
                     }
@@ -170,13 +178,14 @@ public class ResultTimeNarrower {
         if (obj instanceof TemporalPrimitive tp) {
             return tp;
         }
-        if (obj instanceof Literal lit) {
+        if (obj instanceof Literal<?,?> lit) {
             obj = lit.getValue();
+            if (obj instanceof TemporalPrimitive tp) {
+                return tp;
+            }
         }
-        if (!(obj instanceof TemporalPrimitive)) {
-            throw new IllegalArgumentException("Expecting a temporal primitive in a temporal filter.");
-        }
-        return (TemporalPrimitive) obj;
+        return TemporalObjects.createInstant(TemporalUtilities.toTemporal(obj).orElseThrow(
+                () -> new IllegalArgumentException("Expecting a temporal primitive in a temporal filter.")));
     }
 
     /**
@@ -190,7 +199,7 @@ public class ResultTimeNarrower {
      *
      * @return a datablock containing only the matching observations.
      */
-    private static Values parseDataBlock(final String brutValues, final TextEncoderProperties encoding, final Timestamp boundBegin, final Timestamp boundEnd, final Timestamp boundEquals) {
+    private static Values parseDataBlock(final String brutValues, final TextEncoderProperties encoding, final java.time.Instant boundBegin, final java.time.Instant boundEnd, final java.time.Instant boundEquals) {
         final Values values = new Values();
         final String[] blocks = brutValues.split(encoding.getBlockSeparator());
         for (String block : blocks) {
@@ -206,25 +215,25 @@ public class ResultTimeNarrower {
                 LOGGER.log(Level.WARNING, "unable to parse the value: {0}", samplingTimeValue);
                 continue;
             }
-            final Timestamp t = new Timestamp(d.getTime());
+            final java.time.Instant t = d.toInstant();
 
             // time during case
             if (boundBegin != null && boundEnd != null) {
-                if (t.after(boundBegin) && t.before(boundEnd)) {
+                if (t.isAfter(boundBegin) && t.isBefore(boundEnd)) {
                     values.values.append(block).append(encoding.getBlockSeparator());
                     values.nbBlock++;
                 }
 
             //time after case
             } else if (boundBegin != null && boundEnd == null) {
-                if (t.after(boundBegin)) {
+                if (t.isAfter(boundBegin)) {
                     values.values.append(block).append(encoding.getBlockSeparator());
                     values.nbBlock++;
                 }
 
             //time before case
             } else if (boundBegin == null && boundEnd != null) {
-                if (t.before(boundEnd)) {
+                if (t.isBefore(boundEnd)) {
                     values.values.append(block).append(encoding.getBlockSeparator());
                     values.nbBlock++;
                 }

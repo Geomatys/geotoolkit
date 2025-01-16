@@ -174,9 +174,9 @@ public class ObservationOfferingType extends AbstractOfferingType implements Obs
     public void updateEndTime(final Date newEndBound) {
         if (newEndBound != null) {
             if (phenomenonTime != null && phenomenonTime.timePeriod != null) {
-                phenomenonTime.timePeriod.setEndPosition(new TimePositionType(newEndBound));
+                phenomenonTime.timePeriod.setEndPosition(new TimePositionType(newEndBound.toInstant()));
             }  else if (phenomenonTime == null) {
-                phenomenonTime = new PhenomenonTime(new TimePeriodType(new TimePositionType(newEndBound)));
+                phenomenonTime = new PhenomenonTime(new TimePeriodType(new TimePositionType(newEndBound.toInstant())));
             }
         }
     }

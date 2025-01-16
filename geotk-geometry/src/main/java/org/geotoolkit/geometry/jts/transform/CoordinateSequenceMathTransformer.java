@@ -22,7 +22,7 @@ import org.locationtech.jts.geom.CoordinateSequenceFactory;
 import org.locationtech.jts.geom.impl.CoordinateArraySequenceFactory;
 import java.util.Arrays;
 
-import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.coordinate.MismatchedDimensionException;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 

@@ -29,7 +29,7 @@ import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.resources.Errors;
 import org.opengis.geometry.Envelope;
-import org.opengis.geometry.MismatchedReferenceSystemException;
+import org.opengis.coordinate.MismatchedCoordinateMetadataException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.GenericName;
 import org.opengis.util.NameSpace;
@@ -334,7 +334,7 @@ final class ProductEntry extends Entry {
         } catch (DataStoreException exception) {
             throw exception;
         } catch (TransformException exception) {
-            throw new MismatchedReferenceSystemException(Errors.getResources(database.locale)
+            throw new MismatchedCoordinateMetadataException(Errors.getResources(database.locale)
                     .getString(Errors.Keys.IllegalCoordinateReferenceSystem, exception));
         } catch (Exception exception) {
             throw new CatalogException(exception);

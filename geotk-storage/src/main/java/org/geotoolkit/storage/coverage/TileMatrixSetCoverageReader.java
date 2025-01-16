@@ -58,10 +58,10 @@ import org.geotoolkit.storage.multires.GeneralProgressiveResource;
 import org.geotoolkit.storage.multires.TileMatrices;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
-import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.coordinate.MismatchedDimensionException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CoordinateSystem;
-import org.opengis.referencing.datum.PixelInCell;
+import org.apache.sis.coverage.grid.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
@@ -137,7 +137,7 @@ public class TileMatrixSetCoverageReader <T extends TiledResource & org.apache.s
                 //-- pass by TreeSet to avoid duplicate
                 final SortedSet<Double> axisValues = new TreeSet();
                 for (final TileMatrix gridMos : matrices) {
-                   axisValues.add(TileMatrices.getUpperLeftCorner(gridMos).getOrdinate(i));
+                   axisValues.add(TileMatrices.getUpperLeftCorner(gridMos).getCoordinate(i));
                 }
                 //-- convert Double[] -> double[]
                 final double[] axVals = new double[axisValues.size()];
@@ -335,7 +335,7 @@ public class TileMatrixSetCoverageReader <T extends TiledResource & org.apache.s
 
         //regroup them by inverse axis order so we can rebuild stacks always adding dimensions at the end
         for (int i=upperLeft.getDimension()-1; i>=2; i--) {
-            final double d = upperLeft.getOrdinate(i);
+            final double d = upperLeft.getCoordinate(i);
             final Object obj = groups.get(d);
             if (obj == null) {
                 groups.put(d, mosaic);

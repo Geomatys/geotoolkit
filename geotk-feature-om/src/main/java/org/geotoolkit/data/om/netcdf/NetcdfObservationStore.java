@@ -27,13 +27,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import org.apache.sis.storage.AbstractFeatureSet;
-import org.apache.sis.storage.base.ResourceOnFileSystem;
 import org.apache.sis.storage.base.StoreResource;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStore;
@@ -59,14 +59,14 @@ import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.temporal.TemporalGeometricPrimitive;
+import org.opengis.temporal.TemporalPrimitive;
 import org.opengis.util.GenericName;
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class NetcdfObservationStore extends AbstractObservationStore implements Aggregate, ResourceOnFileSystem,ObservationStore {
+public class NetcdfObservationStore extends AbstractObservationStore implements Aggregate,ObservationStore {
 
     private final Path dataFile;
     private final NCFieldAnalyze analyze;
@@ -162,7 +162,7 @@ public class NetcdfObservationStore extends AbstractObservationStore implements 
      * {@inheritDoc }
      */
     @Override
-    public TemporalGeometricPrimitive getTemporalBounds() throws DataStoreException {
+    public TemporalPrimitive getTemporalBounds() throws DataStoreException {
         try {
             final ObservationDataset result = NetCDFExtractor.getObservationFromNetCDF(analyze, getProcedureID(), null, null, new HashSet<>());
             if (result != null && result.spatialBound != null) {
@@ -178,8 +178,8 @@ public class NetcdfObservationStore extends AbstractObservationStore implements 
      * {@inheritDoc }
      */
     @Override
-    public Path[] getComponentFiles() throws DataStoreException {
-        return new Path[]{dataFile};
+    public Optional<FileSet> getFileSet() throws DataStoreException {
+        return Optional.of(new FileSet(dataFile));
     }
 
     /**

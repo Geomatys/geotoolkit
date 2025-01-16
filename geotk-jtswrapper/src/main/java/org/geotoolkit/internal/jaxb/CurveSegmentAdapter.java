@@ -24,7 +24,7 @@ import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.geometry.GeometricUtilities;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSLineString;
-import org.opengis.geometry.coordinate.Position;
+import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.primitive.CurveInterpolation;
 import org.opengis.geometry.primitive.CurveSegment;
 
@@ -40,7 +40,7 @@ public class CurveSegmentAdapter extends XmlAdapter<CurveSegmentAdapter, CurveSe
 
     @XmlElement(name="pos", namespace="http://www.opengis.net/gml")
     @XmlJavaTypeAdapter(DirectPositionAdapter.class)
-    private List<Position> positions;
+    private List<DirectPosition> positions;
 
     public CurveSegmentAdapter() {
 
@@ -53,7 +53,7 @@ public class CurveSegmentAdapter extends XmlAdapter<CurveSegmentAdapter, CurveSe
     @Override
     public CurveSegment unmarshal(final CurveSegmentAdapter v) throws Exception {
        JTSLineString line = new JTSLineString();
-       for (Position p : v.positions) {
+       for (DirectPosition p : v.positions) {
             line.getPositions().add(p);
        }
        return line;

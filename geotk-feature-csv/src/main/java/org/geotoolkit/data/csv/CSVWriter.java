@@ -34,7 +34,6 @@ import org.apache.sis.util.ObjectConverters;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import static org.geotoolkit.data.csv.CSVStore.UTF8_ENCODING;
 import org.geotoolkit.feature.FeatureExt;
-import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.io.WKTWriter;
 import org.opengis.feature.Feature;
@@ -122,7 +121,8 @@ class CSVWriter extends CSVReader {
                     str = wktWriter.write((Geometry) value);
                 } else {
                     if (value instanceof Date) {
-                        str = TemporalUtilities.toISO8601((Date) value);
+                        str = ((Date) value).toInstant().toString();
+                        str = str.substring(0, str.length() - 1);       // Remove the trailing 'Z'.
                     } else if (value instanceof Boolean) {
                         str = value.toString();
                     } else if (value instanceof CharSequence) {

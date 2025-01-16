@@ -94,6 +94,21 @@ public final class ProjectedShapeTest extends ShapeTestBase {
     }
 
     /**
+     * Returns a suggested value for the {@code flatness} argument in
+     * {@link Shape#getPathIterator(AffineTransform,double)} for the specified shape.
+     *
+     * @param shape the shape for which to compute a flatness factor.
+     * @return the suggested flatness factor.
+     */
+    private static double getFlatness(final Shape shape) {
+        final Rectangle2D bounds = shape.getBounds2D();
+        final double dx = bounds.getWidth();
+        final double dy = bounds.getHeight();
+        return Math.max(0.025 * Math.min(dx, dy),
+                        0.001 * Math.max(dx, dy));
+    }
+
+    /**
      * Creates a transformed shape by sampling an arbitrary amount of point on each line segment.
      * This shape is used as a reference for comparison with clever shapes, computed from cubic
      * approximation or other formulas. This method is not intended to be efficient.
@@ -102,8 +117,8 @@ public final class ProjectedShapeTest extends ShapeTestBase {
      * @param  mt The math transform to apply on the shape.
      * @return The transformed shape.
      */
-    public static Path2D transform(final Shape shape, final MathTransform2D mt) {
-        final double flatness = ShapeUtilities.getFlatness(shape);
+    private static Path2D transform(final Shape shape, final MathTransform2D mt) {
+        final double flatness = getFlatness(shape);
         final Path2D.Double path = new Path2D.Double();
         final PathIterator it = shape.getPathIterator(null, flatness);
         final double[] coords = new double[6];

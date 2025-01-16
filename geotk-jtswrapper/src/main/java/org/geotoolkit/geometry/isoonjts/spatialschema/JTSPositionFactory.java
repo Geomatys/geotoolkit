@@ -22,10 +22,9 @@ import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSPointArray;
 import org.apache.sis.referencing.CommonCRS;
 import org.opengis.geometry.DirectPosition;
-import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.coordinate.MismatchedDimensionException;
 import org.opengis.geometry.PositionFactory;
 import org.opengis.geometry.coordinate.PointArray;
-import org.opengis.geometry.coordinate.Position;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 public class JTSPositionFactory implements PositionFactory {
@@ -48,11 +47,6 @@ public class JTSPositionFactory implements PositionFactory {
         GeneralDirectPosition position = new GeneralDirectPosition(coordinates);
         position.setCoordinateReferenceSystem(crs);
         return position;
-    }
-
-    @Override
-    public Position createPosition(final Position position) {
-        return new GeneralDirectPosition(position.getDirectPosition());
     }
 
     public List createPositionList() {

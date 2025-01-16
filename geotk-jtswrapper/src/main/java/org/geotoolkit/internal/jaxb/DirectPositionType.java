@@ -29,7 +29,6 @@ import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.XmlValue;
 import org.apache.sis.referencing.CRS;
 import org.opengis.geometry.DirectPosition;
-import org.opengis.geometry.coordinate.Position;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
@@ -140,10 +139,10 @@ public class DirectPositionType implements DirectPosition {
      *
      * @param values a List of coordinates.
      */
-    public DirectPositionType(final Position position) {
+    public DirectPositionType(final DirectPosition position) {
         if (position != null) {
             this.value = new ArrayList<Double>();
-            for (double d : position.getDirectPosition().getCoordinate()) {
+            for (double d : position.getCoordinates()) {
                 value.add(d);
             }
             /*
@@ -243,7 +242,7 @@ public class DirectPositionType implements DirectPosition {
     }
 
     @Override
-    public double[] getCoordinate() {
+    public double[] getCoordinates() {
         double[] coords = new double[value.size()];
         for(int i = 0, n = value.size(); i < n; i++){
             coords[i] = value.get(i);
@@ -252,19 +251,14 @@ public class DirectPositionType implements DirectPosition {
     }
 
     @Override
-    public double getOrdinate(final int dimension) throws IndexOutOfBoundsException {
+    public double getCoordinate(final int dimension) throws IndexOutOfBoundsException {
         return value.get(dimension);
     }
 
     @Override
-    public void setOrdinate(final int dimension, final double value) throws IndexOutOfBoundsException, UnsupportedOperationException {
+    public void setCoordinate(final int dimension, final double value) throws IndexOutOfBoundsException, UnsupportedOperationException {
         this.value.remove(dimension);
         this.value.add(dimension, value);
-    }
-
-    @Override
-    public DirectPosition getDirectPosition() {
-        return this;
     }
 
 

@@ -24,12 +24,14 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
+import java.time.temporal.Temporal;
+import java.util.Optional;
 import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.gml.xml.GMLInstant;
 import org.geotoolkit.gml.xml.AbstractTimePosition;
+import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.opengis.filter.Literal;
-import org.opengis.temporal.Instant;
-import org.opengis.temporal.TemporalPosition;
+import org.opengis.temporal.IndeterminateValue;
 
 
 /**
@@ -85,11 +87,11 @@ public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implemen
         }
     }
 
-    public TimeInstantType(final Date timePosition) {
+    public TimeInstantType(final Temporal timePosition) {
         this.timePosition = new TimePositionType(timePosition);
     }
 
-    public TimeInstantType(final String id, final Date timePosition) {
+    public TimeInstantType(final String id, final Temporal timePosition) {
         super(id);
         this.timePosition = new TimePositionType(timePosition);
     }
@@ -103,41 +105,33 @@ public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implemen
         this.timePosition = new TimePositionType(timePosition);
     }
 
-    public TimeInstantType(final Instant instant) {
-        super(instant);
-        if (instant != null/* && instant.getPosition() != null*/) {
-            this.timePosition = new TimePositionType(instant.getDate());
-        }
+    @Override
+    public Temporal getPosition() {
+        return TemporalUtilities.toTemporal(timePosition);
     }
+
+    @Override
+    public Optional<IndeterminateValue> getIndeterminatePosition() {
+        if (this.timePosition != null) {
+            return this.timePosition.getIndeterminatePosition();
+        }
+        return Optional.empty();
+    }
+
 
     /**
      * Gets the value of the timePosition property.
-     *
-     * @return
-     *     possible object is
-     *     {@link TimePositionType }
-     *
      */
     @Override
     public TimePositionType getTimePosition() {
-        return new TimePositionType(timePosition);
+        return timePosition;
     }
 
     /**
      * Sets the value of the timePosition property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link TimePositionType }
-     *
      */
     public void setTimePosition(final TimePositionType value) {
         this.timePosition = value;
-    }
-
-    @Override
-    public Date getDate() {
-        return (timePosition != null) ? timePosition.getDate() : null;
     }
 
     public void setDate(final Date value) {
@@ -145,17 +139,10 @@ public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implemen
 //        if (value instanceof TimePositionType) {
 //            this.timePosition = (TimePositionType)value;
         /*} else*/ if (value != null) {
-            this.timePosition = new TimePositionType(value);
+            this.timePosition = new TimePositionType(TemporalUtilities.toTemporal(value));
         } else {
             this.timePosition = null;
         }
-    }
-
-    public long getTime() {
-//        if (this.timePosition != null && this.timePosition.getDate() != null) {
-//            return this.timePosition.getDate().getTime();
-//        }
-        return (timePosition.getDate() != null ? timePosition.getDate().getTime() : -1);
     }
 
 //    @Override
@@ -204,10 +191,5 @@ public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implemen
         int hash = 5;
         hash = 37 * hash + (this.timePosition != null ? this.timePosition.hashCode() : 0);
         return hash;
-    }
-
-    @Override
-    public TemporalPosition getTemporalPosition() {
-        return null;
     }
 }

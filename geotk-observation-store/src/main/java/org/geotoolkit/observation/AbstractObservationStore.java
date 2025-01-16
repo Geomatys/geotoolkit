@@ -59,7 +59,7 @@ import org.geotoolkit.observation.model.Phenomenon;
 import org.geotoolkit.observation.model.Procedure;
 import org.geotoolkit.observation.model.SamplingFeature;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.temporal.TemporalGeometricPrimitive;
+import org.opengis.temporal.TemporalPrimitive;
 
 /**
  * Basic implementation of Observation store.
@@ -151,7 +151,7 @@ public abstract class AbstractObservationStore extends DataStore implements Obse
      * Implementations notes: only supported for procedure for now
      */
     @Override
-    public TemporalGeometricPrimitive getEntityTemporalBounds(IdentifierQuery query) throws DataStoreException {
+    public TemporalPrimitive getEntityTemporalBounds(IdentifierQuery query) throws DataStoreException {
         if (query == null) throw new DataStoreException("Query must no be null");
 
         if (query.getEntityType() != OMEntity.PROCEDURE) throw new DataStoreException("temporal bound not implemented yet for entity: " + query.getEntityType());
@@ -194,7 +194,7 @@ public abstract class AbstractObservationStore extends DataStore implements Obse
      * {@inheritDoc }
      */
     @Override
-    public TemporalGeometricPrimitive getTemporalBounds() throws DataStoreException {
+    public TemporalPrimitive getTemporalBounds() throws DataStoreException {
         final ObservationDataset fullDs = getDataset(new DatasetQuery());
         return fullDs.spatialBound.getTimeObject();
     }
@@ -320,5 +320,4 @@ public abstract class AbstractObservationStore extends DataStore implements Obse
     }
 
     protected abstract String getStoreIdentifier();
-
 }

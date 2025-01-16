@@ -19,7 +19,6 @@ package org.geotoolkit.temporal.object;
 
 import java.text.ParseException;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.TimeZone;
 import org.junit.Test;
 
@@ -29,7 +28,6 @@ import static java.util.Calendar.*;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
 public class TemporalUtilitiesTest {
 
@@ -41,7 +39,6 @@ public class TemporalUtilitiesTest {
         } catch (ParseException ex) {
             // ok
         }
-
         try {
             TemporalUtilities.parseDateCal(null);
             fail("Parsing should have raise a null pointer exception.");
@@ -50,7 +47,6 @@ public class TemporalUtilitiesTest {
         } catch (ParseException ex) {
             fail("Parsing should have raise a null pointer exception.");
         }
-
     }
 
     @Test
@@ -287,58 +283,13 @@ public class TemporalUtilitiesTest {
         assertEquals(min, date.get(MINUTE));
         assertEquals(sec, date.get(SECOND));
         assertEquals(0, date.get(MILLISECOND));
-
     }
 
     @Test
     public void durationFormatingTest() {
-
         assertEquals("0ms", TemporalUtilities.durationToString(0));
         assertEquals("15ms", TemporalUtilities.durationToString(15));
         assertEquals("1s 25ms", TemporalUtilities.durationToString(1025));
         assertEquals("1min 35ms", TemporalUtilities.durationToString(60035));
-
-    }
-
-    @Test
-    public void iso8601Test() {
-
-        final Date date = new Date();
-        String str = TemporalUtilities.toISO8601(date);
-        assertNotNull(str);
-        assertFalse(str.isEmpty());
-
-        // should not raise an error
-        str = TemporalUtilities.toISO8601(null);
-        assertNotNull(str);
-        assertTrue(str.isEmpty());
-
-    }
-
-    @Test
-    public void toIso8601XWithTimeZoneTest() {
-
-        final Date date = new Date();
-        String str = TemporalUtilities.toISO8601(date,
-                TimeZone.getTimeZone("GMT-8"));
-        assertNotNull(str);
-        assertFalse(str.isEmpty());
-        assertTrue(str.endsWith("-0800"));
-
-        str = TemporalUtilities.toISO8601(date, TimeZone.getTimeZone("GMT+1"));
-        assertNotNull(str);
-        assertFalse(str.isEmpty());
-        assertTrue(str.endsWith("+0100"));
-        // if timezone is null set +0000 to date format
-        str = TemporalUtilities.toISO8601(date, null);
-        assertNotNull(str);
-        assertFalse(str.isEmpty());
-        assertTrue(str.endsWith("+0000"));
-
-        // should not raise an error
-        str = TemporalUtilities.toISO8601(null, TimeZone.getTimeZone("GMT-8"));
-        assertNotNull(str);
-        assertTrue(str.isEmpty());
-
     }
 }

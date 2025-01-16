@@ -177,7 +177,7 @@ public abstract class DataStoreFactory extends DataStoreProvider {
         return new ParameterBuilder()
                     .addName(IDENTIFIER.getName().getCode())
                     .addName(IDENTIFIER.getAlias().iterator().next())
-                    .setRemarks(IDENTIFIER.getRemarks())
+                    .setRemarks(IDENTIFIER.getRemarks().orElse(null))
                     .setRequired(true)
                     .createEnumerated(String.class, new String[]{idValue}, idValue);
     }

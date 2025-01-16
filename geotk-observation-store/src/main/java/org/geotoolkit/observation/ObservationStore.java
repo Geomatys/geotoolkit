@@ -44,7 +44,7 @@ import org.geotoolkit.observation.model.Phenomenon;
 import org.geotoolkit.observation.model.Procedure;
 import org.geotoolkit.observation.model.SamplingFeature;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.temporal.TemporalGeometricPrimitive;
+import org.opengis.temporal.TemporalPrimitive;
 
 /**
  *
@@ -201,7 +201,7 @@ public interface ObservationStore {
      *
      * @return A time period or instant.
      */
-    TemporalGeometricPrimitive getTemporalBounds() throws DataStoreException;
+    TemporalPrimitive getTemporalBounds() throws DataStoreException;
 
     /**
      * Return the time span of the identified entity;
@@ -210,7 +210,7 @@ public interface ObservationStore {
      *
      * @return A time period or instant.
      */
-    TemporalGeometricPrimitive getEntityTemporalBounds(IdentifierQuery query) throws DataStoreException;
+    TemporalPrimitive getEntityTemporalBounds(IdentifierQuery query) throws DataStoreException;
 
     /**
      * Extract All the procedures / observations / features of interest /
@@ -258,5 +258,4 @@ public interface ObservationStore {
     ObservationStoreCapabilities getCapabilities();
 
     void close() throws DataStoreException;
-
 }

@@ -14,7 +14,6 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-
 package org.geotoolkit.observation.xml;
 
 import java.util.ArrayList;
@@ -34,7 +33,7 @@ import org.opengis.observation.Observation;
 import org.opengis.observation.sampling.SamplingFeature;
 import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
-import org.opengis.temporal.TemporalGeometricPrimitive;
+import org.opengis.temporal.TemporalPrimitive;
 
 /**
  *
@@ -65,19 +64,11 @@ public class OMXmlFactory {
         final String definition = observation.getDefinition();
         final org.geotoolkit.gml.xml.v311.AbstractTimeGeometricPrimitiveType time;
         if (observation.getSamplingTime() instanceof Period p) {
-            String dateBegin = null;
-            if (p.getBeginning() != null && p.getBeginning().getDate() != null) {
-                dateBegin = p.getBeginning().getDate().toString();
-            }
-            String dateEnd = null;
-            if (p.getEnding() != null && p.getEnding().getDate() != null) {
-                dateEnd = p.getEnding().getDate().toString();
-            }
-            time = (org.geotoolkit.gml.xml.v311.AbstractTimeGeometricPrimitiveType) GMLXmlFactory.createTimePeriod("3.1.1", null, dateBegin, dateEnd);
+            time = (org.geotoolkit.gml.xml.v311.AbstractTimeGeometricPrimitiveType) GMLXmlFactory.createPeriodOrInstant("3.1.1", null, p);
         } else if (observation.getSamplingTime() instanceof Instant inst) {
             String date = null;
-            if (inst.getDate() != null) {
-                date = inst.getDate().toString();
+            if (inst.getPosition() != null) {
+                date = inst.getPosition().toString();
             }
             time = (org.geotoolkit.gml.xml.v311.AbstractTimeGeometricPrimitiveType) GMLXmlFactory.createTimeInstant("3.1.1", null, date);
         } else if (observation.getSamplingTime() != null) {
@@ -148,19 +139,11 @@ public class OMXmlFactory {
         }
         final org.geotoolkit.gml.xml.v321.AbstractTimeObjectType time;
         if (observation.getSamplingTime() instanceof Period p) {
-            String dateBegin = null;
-            if (p.getBeginning() != null && p.getBeginning().getDate() != null) {
-                dateBegin = p.getBeginning().getDate().toString();
-            }
-            String dateEnd = null;
-            if (p.getEnding() != null && p.getEnding().getDate() != null) {
-                dateEnd = p.getEnding().getDate().toString();
-            }
-            time = (org.geotoolkit.gml.xml.v321.AbstractTimeObjectType) GMLXmlFactory.createTimePeriod("3.2.1", null, dateBegin, dateEnd);
+            time = (org.geotoolkit.gml.xml.v321.AbstractTimeObjectType) GMLXmlFactory.createPeriodOrInstant("3.2.1", null, p);
         } else if (observation.getSamplingTime() instanceof Instant inst) {
             String date = null;
-            if (inst.getDate() != null) {
-                date = inst.getDate().toString();
+            if (inst.getPosition() != null) {
+                date = inst.getPosition().toString();
             }
             time = (org.geotoolkit.gml.xml.v321.AbstractTimeObjectType) GMLXmlFactory.createTimeInstant("3.2.1", null, date);
         } else if (observation.getSamplingTime() != null) {
@@ -382,12 +365,12 @@ public class OMXmlFactory {
     }
 
     public static AbstractObservation buildObservation(final String version, final String id, final String name, final String definition, final FeatureProperty sampledFeature, final org.opengis.observation.Phenomenon phen,
-            final org.opengis.observation.Process procedure, final Object result, final TemporalGeometricPrimitive time, BoundingShape bound) {
+            final org.opengis.observation.Process procedure, final Object result, final TemporalPrimitive time, BoundingShape bound) {
         return buildObservation(version, id, name, definition, sampledFeature, phen, procedure, result, time, bound, null);
     }
 
     public static AbstractObservation buildObservation(final String version, final String id, final String name, final String definition, final FeatureProperty sampledFeature, final org.opengis.observation.Phenomenon phen,
-            final org.opengis.observation.Process procedure, final Object result, final TemporalGeometricPrimitive time, BoundingShape bound, List<Element> resultQuality) {
+            final org.opengis.observation.Process procedure, final Object result, final TemporalPrimitive time, BoundingShape bound, List<Element> resultQuality) {
         if ("1.0.0".equals(version)) {
             if (sampledFeature != null && !(sampledFeature instanceof org.geotoolkit.gml.xml.v311.FeaturePropertyType)) {
                 throw new IllegalArgumentException("unexpected object version for sampled feature element");
@@ -455,17 +438,17 @@ public class OMXmlFactory {
     }
 
     public static AbstractObservation buildMeasurement(final String version, final String id, final String name, final String definition, final FeatureProperty sampledFeature, final org.opengis.observation.Phenomenon phen,
-            final org.opengis.observation.Process procedure, final Object result, final TemporalGeometricPrimitive time, BoundingShape bound) {
+            final org.opengis.observation.Process procedure, final Object result, final TemporalPrimitive time, BoundingShape bound) {
         return buildMeasurement(version, id, name, definition, sampledFeature, phen, procedure, result, time, bound, null);
     }
 
      public static AbstractObservation buildMeasurement(final String version, final String id, final String name, final String definition, final FeatureProperty sampledFeature, final org.opengis.observation.Phenomenon phen,
-            final org.opengis.observation.Process procedure, final Object result, final TemporalGeometricPrimitive time, BoundingShape bound, List<Element> resultQuality) {
+            final org.opengis.observation.Process procedure, final Object result, final TemporalPrimitive time, BoundingShape bound, List<Element> resultQuality) {
          return buildMeasurement(version, id, name, definition, sampledFeature, phen, procedure, result, time, bound, resultQuality, "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement");
      }
 
     public static AbstractObservation buildMeasurement(final String version, final String id, final String name, final String definition, final FeatureProperty sampledFeature, final org.opengis.observation.Phenomenon phen,
-            final org.opengis.observation.Process procedure, final Object result, final TemporalGeometricPrimitive time, BoundingShape bound, List<Element> resultQuality, final String observationType) {
+            final org.opengis.observation.Process procedure, final Object result, final TemporalPrimitive time, BoundingShape bound, List<Element> resultQuality, final String observationType) {
         if ("1.0.0".equals(version)) {
             if (sampledFeature != null && !(sampledFeature instanceof org.geotoolkit.gml.xml.v311.FeaturePropertyType)) {
                 throw new IllegalArgumentException("unexpected object version for sampled feature element");

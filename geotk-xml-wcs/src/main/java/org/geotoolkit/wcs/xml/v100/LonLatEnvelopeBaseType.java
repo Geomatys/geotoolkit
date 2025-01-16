@@ -85,12 +85,12 @@ public class LonLatEnvelopeBaseType extends EnvelopeType implements Envelope{
 
     @Override
     public double getMinimum(final int dimension) throws IndexOutOfBoundsException {
-        return getPos().get(0).getOrdinate(dimension);
+        return getPos().get(0).getCoordinate(dimension);
     }
 
     @Override
     public double getMaximum(final int dimension) throws IndexOutOfBoundsException {
-        return getPos().get(1).getOrdinate(dimension);
+        return getPos().get(1).getCoordinate(dimension);
     }
 
     @Override

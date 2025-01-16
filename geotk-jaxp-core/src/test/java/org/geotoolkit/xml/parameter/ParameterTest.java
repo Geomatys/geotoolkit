@@ -135,7 +135,7 @@ public class ParameterTest {
         assertTrue(globalDescritorGroup.descriptors().get(0) instanceof ParameterDescriptorGroup);
         final ParameterDescriptorGroup descriptorGroup = (ParameterDescriptorGroup) globalDescritorGroup.descriptors().get(0);
         assertEquals("nameDG",descriptorGroup.getName().getCode());
-        assertEquals("yokoyoko",descriptorGroup.getRemarks().toString());
+        assertEquals("yokoyoko",descriptorGroup.getRemarks().orElseThrow().toString());
 
         assertEquals(8, descriptorGroup.descriptors().size());
 
@@ -151,7 +151,7 @@ public class ParameterTest {
 
         assertTrue(descriptorGroup.descriptors().get(1) instanceof ParameterDescriptor);
         final ParameterDescriptor descriptor2 = (ParameterDescriptor) descriptorGroup.descriptors().get(1);
-        assertEquals("remarks", descriptor2.getRemarks().toString());
+        assertEquals("remarks", descriptor2.getRemarks().orElseThrow().toString());
         assertEquals(null, descriptor2.getValidValues());
         assertEquals("sauce", descriptor2.getDefaultValue());
         assertEquals(String.class, descriptor2.getValueClass());
@@ -213,7 +213,7 @@ public class ParameterTest {
 
         assertTrue(descriptorGroup.descriptors().get(7) instanceof ParameterDescriptor);
         final ParameterDescriptor descriptor8 = (ParameterDescriptor) descriptorGroup.descriptors().get(7);
-        assertEquals("remarks", descriptor8.getRemarks().toString());
+        assertEquals("remarks", descriptor8.getRemarks().orElseThrow().toString());
         assertEquals(null, descriptor8.getValidValues());
         assertEquals(null, descriptor8.getDefaultValue());
         assertEquals(String.class, descriptor8.getValueClass());

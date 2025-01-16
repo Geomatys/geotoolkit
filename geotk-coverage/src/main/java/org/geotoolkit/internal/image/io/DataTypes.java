@@ -85,7 +85,7 @@ public final class DataTypes extends Static {
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
     private static final Class<? extends Datum>[] DATUM_INTERFACES = new Class[] {
-        GeodeticDatum.class, VerticalDatum.class, TemporalDatum.class, ImageDatum.class, EngineeringDatum.class
+        GeodeticDatum.class, VerticalDatum.class, TemporalDatum.class, EngineeringDatum.class
     };
 
     /**

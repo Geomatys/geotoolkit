@@ -23,7 +23,6 @@ import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 import java.util.logging.Level;
-import org.apache.sis.storage.base.ResourceOnFileSystem;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.IllegalNameException;
@@ -57,7 +56,7 @@ import org.opengis.util.GenericName;
  * @author Cédric Briançon (Geomatys)
  * @module
  */
-public class DefaultFolderFeatureStore extends AbstractFeatureStore implements ResourceOnFileSystem {
+public class DefaultFolderFeatureStore extends AbstractFeatureStore {
 
     /**
      * Listen to changes in sub stores and propagate them.
@@ -243,17 +242,18 @@ public class DefaultFolderFeatureStore extends AbstractFeatureStore implements R
             throw new DataStoreException("There's no data with the following type name : "+typeName);
         }
         // We should get a file feature store.
-        final Path[] sourceFiles;
+        final Collection<Path> sourceFiles;
         try {
-            if (store instanceof ResourceOnFileSystem) {
-                sourceFiles = ((ResourceOnFileSystem) store).getComponentFiles();
+            var fileset = store.getFileSet();
+            if (fileset.isPresent()) {
+                sourceFiles = fileset.get().getPaths();
             } else {
                 // Not a file store ? We try to find an url parameter and see if it's a file one.
                 final URI fileURI = Parameters.castOrWrap(store.getOpenParameters().get()).getValue(ShapefileProvider.PATH);
                 if (fileURI == null) {
                     throw new DataStoreException("Source data cannot be reached for type name : " + typeName);
                 }
-                sourceFiles = new Path[]{Paths.get(fileURI)};
+                sourceFiles = List.of(Paths.get(fileURI));
             }
 
             for (Path path : sourceFiles) {
@@ -359,9 +359,9 @@ public class DefaultFolderFeatureStore extends AbstractFeatureStore implements R
     /**
      * {@inheritDoc}
      */
-    public Path[] getComponentFiles() throws DataStoreException {
+    public Optional<FileSet> getFileSet() throws DataStoreException {
         final Path folder = getFolder(folderParameters);
-        return new Path[]{ folder };
+        return Optional.of(new FileSet(folder));
     }
 
     @Override

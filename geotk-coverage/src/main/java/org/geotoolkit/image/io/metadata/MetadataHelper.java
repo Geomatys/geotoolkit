@@ -33,7 +33,6 @@ import org.opengis.geometry.DirectPosition;
 import org.opengis.util.FactoryException;
 import org.opengis.util.InternationalString;
 import org.opengis.coverage.grid.RectifiedGrid;
-import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform;
@@ -346,7 +345,7 @@ public class MetadataHelper implements Localized {
             }
         }
         for (int j=0; j<dimTarget; j++) {
-            matrix.setElement(j, dimSource, origin.getOrdinate(j));
+            matrix.setElement(j, dimSource, origin.getCoordinate(j));
         }
         final MathTransformFactory mtFactory = getMathTransformFactory();
         try {
@@ -394,7 +393,7 @@ public class MetadataHelper implements Localized {
             ensureMetadataExists("OffsetVector", i, v);
             ensureDimensionMatch("OffsetVector", i, v.length, dimTarget);
             System.arraycopy(v, 0, matrix, i*2, 2);
-            matrix[i+4] = origin.getOrdinate(i);
+            matrix[i+4] = origin.getCoordinate(i);
         }
         for (int i=0; i<matrix.length; i++) {
             matrix[i] = adjustForRoundingError(matrix[i]);
@@ -639,9 +638,9 @@ public class MetadataHelper implements Localized {
                             if (type != null && !type.equals(TransferFunctionType.LINEAR)) {
                                 if (type.equals(TransferFunctionType.EXPONENTIAL)) {
                                     if (exponential == null) {
-                                        final ParameterValueGroup param = mtFactory.getDefaultParameters("Exponential");
-                                        param.parameter("base").setValue(10d); // Must be a 'double'
-                                        exponential = mtFactory.createParameterizedTransform(param);
+                                        final var builder = mtFactory.builder("Exponential");
+                                        builder.parameters().parameter("base").setValue(10d); // Must be a 'double'
+                                        exponential = builder.create();
                                     }
                                     tr = mtFactory.createConcatenatedTransform(tr, exponential);
                                 } else {

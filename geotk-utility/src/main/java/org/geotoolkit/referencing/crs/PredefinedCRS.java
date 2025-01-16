@@ -23,7 +23,7 @@ package org.geotoolkit.referencing.crs;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Locale;
-import org.opengis.referencing.datum.PixelInCell;
+import org.apache.sis.coverage.grid.PixelInCell;
 import org.opengis.util.InternationalString;
 import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.crs.DefaultImageCRS;
@@ -100,9 +100,10 @@ public final class PredefinedCRS {
      * The {@link PixelInCell} attribute of the associated {@link ImageDatum}
      * is set to {@link PixelInCell#CELL_CENTER CELL_CENTER}.
      */
+    @Deprecated(forRemoval = true)
     public static final DefaultImageCRS GRID_2D;
     static {
         final Map<String,?> properties = name(Vocabulary.Keys.Grid);
-        GRID_2D = new DefaultImageCRS(properties, new DefaultImageDatum(properties, PixelInCell.CELL_CENTER), PredefinedCS.GRID);
+        GRID_2D = new DefaultImageCRS(properties, new DefaultImageDatum(properties, "cell center"), PredefinedCS.GRID);
     }
 }

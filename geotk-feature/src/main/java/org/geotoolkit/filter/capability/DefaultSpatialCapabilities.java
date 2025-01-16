@@ -57,7 +57,7 @@ public class DefaultSpatialCapabilities implements SpatialCapabilities {
         final LocalName scope = Names.createLocalName(null, null, "geotk");
         final List<ScopedName> names = new ArrayList<>(operands.size());
         for (final GeometryOperand op : operands) {
-            names.add(Names.createScopedName(scope, ":", op.identifier()));
+            names.add(Names.createScopedName(scope, ":", op.identifier().orElseThrow()));
         }
         return names;
     }
@@ -79,7 +79,7 @@ public class DefaultSpatialCapabilities implements SpatialCapabilities {
             final String name = op.getName();
             SpatialOperatorName key = null;
             for (SpatialOperatorName spn : SpatialOperatorName.values()) {
-                if (name.equalsIgnoreCase(spn.identifier())) {
+                if (name.equalsIgnoreCase(spn.identifier().orElse(null))) {
                     key = spn;
                 }
             }

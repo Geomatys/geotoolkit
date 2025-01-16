@@ -510,14 +510,14 @@ public class ElementFeatureWriter {
 
             // lower corner
             final Element lower = document.createElementNS(GML, "lowerCorner");
-            String lowValue = bounds.getLowerCorner().getOrdinate(0) + " " + bounds.getLowerCorner().getOrdinate(1);
+            String lowValue = bounds.getLowerCorner().getCoordinate(0) + " " + bounds.getLowerCorner().getCoordinate(1);
             lower.setTextContent(lowValue);
             lower.setPrefix("gml");
             envElement.appendChild(lower);
 
             // upper corner
             final Element upper = document.createElementNS(GML, "upperCorner");
-            String uppValue = bounds.getUpperCorner().getOrdinate(0) + " " + bounds.getUpperCorner().getOrdinate(1);
+            String uppValue = bounds.getUpperCorner().getCoordinate(0) + " " + bounds.getUpperCorner().getCoordinate(1);
             upper.setTextContent(uppValue);
             upper.setPrefix("gml");
             envElement.appendChild(upper);

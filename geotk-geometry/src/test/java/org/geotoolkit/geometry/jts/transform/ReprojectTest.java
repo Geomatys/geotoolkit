@@ -128,15 +128,16 @@ public class ReprojectTest {
     public static ProjectedCRS getLocalLambertCRS(double central_meridan, double latitude_of_origin) {
         try {
             MathTransformFactory mtFactory = DefaultMathTransformFactory.provider();
-            ParameterValueGroup parameters = mtFactory.getDefaultParameters("Lambert_Conformal_Conic_1SP");
+            var builder = mtFactory.builder("Lambert_Conformal_Conic_1SP");
+            ParameterValueGroup parameters = builder.parameters();
             parameters.parameter("central_meridian").setValue(central_meridan);
             parameters.parameter("latitude_of_origin").setValue(latitude_of_origin);
-            String scentralMeridian = ((Integer) ((int) (Math.floor(central_meridan)))).toString();
-            String slatitudeOfOrigin = ((Integer) ((int) (Math.floor(latitude_of_origin)))).toString();
+            int centralMeridian  = (int) Math.floor(central_meridan);
+            int latitudeOfOrigin = (int) Math.floor(latitude_of_origin);
             DefiningConversion conversion = new DefiningConversion("My conversion", parameters);
             CRSFactory crsFactory = GeodeticObjectFactory.provider();
             final Map<String, Object> properties = new HashMap<>();
-            properties.put(ProjectedCRS.NAME_KEY, "LambertCC_" + slatitudeOfOrigin + "_" + scentralMeridian);
+            properties.put(ProjectedCRS.NAME_KEY, "LambertCC_" + latitudeOfOrigin + "_" + centralMeridian);
             ProjectedCRS targetCRS = crsFactory.createProjectedCRS(properties, CommonCRS.WGS84.normalizedGeographic(), conversion, PredefinedCS.PROJECTED);
             return targetCRS;
         } catch (Exception ex) {

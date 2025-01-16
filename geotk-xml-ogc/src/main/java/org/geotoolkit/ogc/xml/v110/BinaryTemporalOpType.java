@@ -88,7 +88,7 @@ public class BinaryTemporalOpType extends TemporalOpsType implements TemporalOpe
     /**
      * Build a new temporal operator with the specified objects.
      */
-    public BinaryTemporalOpType(final String propertyName, final Object... elements){
+    public BinaryTemporalOpType(final String propertyName, final Expression<?,?>... elements){
         this.propertyName = propertyName;
         rest = new ArrayList<Object>();
         for (Object obj: elements){

@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.TreeMap;
 import java.util.Collections;
+import java.util.Optional;
 import org.apache.sis.referencing.privy.ReferencingFactoryContainer;
 
 import org.opengis.util.FactoryException;
@@ -130,8 +131,10 @@ public final class IGNF extends GeodeticAuthorityFactory implements CRSAuthority
      * Returns the CRS name for the given code.
      */
     @Override
-    public InternationalString getDescriptionText(String code) throws FactoryException {
-        return new SimpleInternationalString(createObject(code).getName().getCode());
+    public Optional<InternationalString> getDescriptionText(Class<? extends IdentifiedObject> type, String code)
+            throws FactoryException
+    {
+        return Optional.of(new SimpleInternationalString(createObject(code).getName().getCode()));
     }
 
     /**
@@ -172,7 +175,8 @@ public final class IGNF extends GeodeticAuthorityFactory implements CRSAuthority
                 CommonCRS.ETRS89.ellipsoid(), CommonCRS.ETRS89.primeMeridian());
 
         // Creates the projection.
-        final ParameterValueGroup param = factories.getMathTransformFactory().getDefaultParameters((String) value);
+        final var builder = factories.getMathTransformFactory().builder((String) value);
+        final ParameterValueGroup param = builder.parameters();
         param.parameter("semi_major").setValue(6378137);
         param.parameter("semi_minor").setValue(6378137);
         final Identifier[] identifiers = {
@@ -200,7 +204,7 @@ public final class IGNF extends GeodeticAuthorityFactory implements CRSAuthority
      * @return An exception initialized with an error message built
      *         from the specified information.
      */
-    private NoSuchAuthorityCodeException noSuchAuthorityCode(final Class<?> type, final String code) {
+    private NoSuchAuthorityCodeException noSuchAuthorityCode(final Class<?> type, final String code) throws FactoryException {
         final InternationalString authority = getAuthority().getTitle();
         return new NoSuchAuthorityCodeException(Errors.format(Errors.Keys.NoSuchAuthorityCode_3,
                    code, authority, type), authority.toString(), trimNamespace(code), code);

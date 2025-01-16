@@ -16,27 +16,26 @@
  */
 package org.geotoolkit.observation.model;
 
+import java.time.Instant;
+import java.time.temporal.Temporal;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
-import org.geotoolkit.temporal.object.DefaultInstant;
-import org.geotoolkit.temporal.object.DefaultPeriod;
+import org.apache.sis.temporal.TemporalObjects;
+import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.Metadata;
 import org.opengis.metadata.quality.Element;
-import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
-import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
-import org.opengis.temporal.TemporalGeometricPrimitive;
-import org.opengis.temporal.TemporalObject;
+import org.opengis.temporal.TemporalPrimitive;
 
 /**
+ * TODO : remove the opengis implements and add the AbstractOMEntity extends
  *
  * @author Guilhem Legal (Geomatys)
  */
@@ -48,7 +47,7 @@ public class Observation implements org.opengis.observation.Observation {
     private String definition;
 
     private Procedure procedure;
-    private TemporalGeometricPrimitive samplingTime;
+    private TemporalPrimitive samplingTime;
     private SamplingFeature featureOfInterest;
     private Phenomenon observedProperty;
     private List<Element> quality = new ArrayList<>();
@@ -64,7 +63,7 @@ public class Observation implements org.opengis.observation.Observation {
     private Observation() {}
 
     public Observation(String id, String name, String description, String definition, String type,
-            Procedure procedure, TemporalGeometricPrimitive samplingTime, SamplingFeature featureOfInterest,
+            Procedure procedure, TemporalPrimitive samplingTime, SamplingFeature featureOfInterest,
             Phenomenon observedProperty, List<Element> quality, Result result, Map<String, Object> properties) {
         this.id = id;
         this.name = name;
@@ -140,11 +139,11 @@ public class Observation implements org.opengis.observation.Observation {
     }
 
     @Override
-    public TemporalGeometricPrimitive getSamplingTime() {
+    public TemporalPrimitive getSamplingTime() {
         return samplingTime;
     }
 
-    public void setSamplingTime(TemporalGeometricPrimitive samplingTime) {
+    public void setSamplingTime(TemporalPrimitive samplingTime) {
         this.samplingTime = samplingTime;
     }
 
@@ -207,6 +206,11 @@ public class Observation implements org.opengis.observation.Observation {
         this.bounds = bounds;
     }
 
+    @Deprecated
+    public void extendSamplingTime(final Date newDate) {
+        extendSamplingTime((newDate != null) ? newDate.toInstant() : null);
+    }
+
     /**
      * Extend the current observation time span by adding a new date.
      * If the new date is before or after the current sampling time, the period will be expanded.
@@ -214,39 +218,46 @@ public class Observation implements org.opengis.observation.Observation {
      *
      * @param newDate a date to integrate into the time span of the offering.
      */
-    public void extendSamplingTime(final Date newDate) {
+    public void extendSamplingTime(final Temporal newDate) {
         if (newDate != null) {
+            final Instant newInstant = TemporalUtilities.toInstant(newDate);
             if (samplingTime instanceof Period p) {
-                Date currentStDate = p.getBeginning().getDate();
-                Date currentEnDate = p.getEnding().getDate();
-                if (newDate.before(currentStDate)) {
-                    samplingTime = new DefaultPeriod(Collections.singletonMap(NAME_KEY, getId() + "-time"),
-                                                     new DefaultInstant(Collections.singletonMap(NAME_KEY, getId() + "-st-time"), newDate),
-                                                     new DefaultInstant(Collections.singletonMap(NAME_KEY, getId() + "-en-time"), currentEnDate));
-                } else if (newDate.after(currentEnDate)) {
-                    samplingTime = new DefaultPeriod(Collections.singletonMap(NAME_KEY, getId() + "-time"),
-                                                     new DefaultInstant(Collections.singletonMap(NAME_KEY, getId() + "-st-time"), currentStDate),
-                                                     new DefaultInstant(Collections.singletonMap(NAME_KEY, getId() + "-en-time"), newDate));
+                Temporal currentStDate = p.getBeginning().getPosition();
+                Temporal currentEnDate = p.getEnding().getPosition();
+                if (newInstant.isBefore(TemporalUtilities.toInstant(currentStDate))) {
+                    samplingTime = TemporalObjects.createPeriod(newDate, currentEnDate);
+                    addIdentifiers((Period) samplingTime);
+                } else if (newInstant.isAfter(TemporalUtilities.toInstant(currentEnDate))) {
+                    samplingTime = TemporalObjects.createPeriod(currentStDate, newDate);
+                    addIdentifiers((Period) samplingTime);
                 }
                 // date is within to the current period so no changes are applied
-            } else if (samplingTime instanceof Instant i) {
-                Date currentDate = i.getDate();
-                if (newDate.before(currentDate)) {
-                    samplingTime = new DefaultPeriod(Collections.singletonMap(NAME_KEY, getId() + "-time"),
-                                                     new DefaultInstant(Collections.singletonMap(NAME_KEY, getId() + "-st-time"), newDate),
-                                                     new DefaultInstant(Collections.singletonMap(NAME_KEY, getId() + "-en-time"), currentDate));
-                } else if (newDate.after(currentDate)) {
-                    samplingTime = new DefaultPeriod(Collections.singletonMap(NAME_KEY, getId() + "-time"),
-                                            new DefaultInstant(Collections.singletonMap(NAME_KEY, getId() + "-st-time"), currentDate),
-                                            new DefaultInstant(Collections.singletonMap(NAME_KEY, getId() + "-en-time"), newDate));
+            } else if (samplingTime instanceof org.opengis.temporal.Instant i) {
+                Temporal currentDate = i.getPosition();
+                Instant currentInstant = TemporalUtilities.toInstant(currentDate);
+                if (newInstant.isBefore(currentInstant)) {
+                    samplingTime = TemporalObjects.createPeriod(newDate, currentDate);
+                    addIdentifiers((Period) samplingTime);
+                } else if (newInstant.isAfter(currentInstant)) {
+                    samplingTime = TemporalObjects.createPeriod(currentDate, newDate);
+                    addIdentifiers((Period) samplingTime);
                 }
                 // date is equals to the current date so no changes are applied
             } else if (samplingTime == null) {
-                samplingTime = new DefaultInstant(Collections.singletonMap(NAME_KEY, getId() + "-time"), newDate);
+                samplingTime = TemporalObjects.createInstant(newDate);
+                addIdentifier((org.opengis.temporal.Instant) samplingTime);
             } else {
                 throw new IllegalStateException("Unknown time implementeation: " + samplingTime.getClass().getName());
             }
         }
+    }
+
+    protected final void addIdentifier(org.opengis.temporal.Instant i) {
+        ObservationUtils.setIdentifier(i, getId() + "-time");
+    }
+
+    protected final void addIdentifiers(Period p) {
+        ObservationUtils.setIdentifiers(p, getId());
     }
 
     @Override
@@ -320,7 +331,7 @@ public class Observation implements org.opengis.observation.Observation {
     }
 
     @Override
-    public TemporalObject getProcedureTime() {
+    public TemporalPrimitive getProcedureTime() {
         return null;
     }
 

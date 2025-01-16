@@ -58,15 +58,13 @@ public final class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase {
      */
     @Test
     public final void testCreationOperations() throws FactoryException {
-        assumeNotNull(factory);
-
-        final CoordinateOperationFactory opf = DefaultCoordinateOperationFactory.provider();
+        final var opf = DefaultCoordinateOperationFactory.provider();
         CoordinateReferenceSystem sourceCRS, targetCRS;
         CoordinateOperation operation;
 
         sourceCRS = factory.createCoordinateReferenceSystem("4273");
         targetCRS = factory.createCoordinateReferenceSystem("4979");
-        operation = opf.createOperation(sourceCRS, targetCRS);
+        operation = opf.createOperation(sourceCRS, targetCRS, null);
         assertNotSame(sourceCRS, targetCRS);
         assertFalse(operation.getMathTransform().isIdentity());
 
@@ -80,7 +78,7 @@ public final class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase {
          */
         sourceCRS = factory.createCoordinateReferenceSystem("EPSG:32661");
         targetCRS = factory.createCoordinateReferenceSystem("4326");
-        operation = opf.createOperation(sourceCRS, targetCRS);
+        operation = opf.createOperation(sourceCRS, targetCRS, null);
         final MathTransform    transform = operation.getMathTransform();
         final CoordinateSystem  sourceCS = sourceCRS.getCoordinateSystem();
         final CoordinateSystemAxis axis0 = sourceCS.getAxis(0);
@@ -120,12 +118,10 @@ public final class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase {
     @Test
     @Ignore
     public final void testSerialization() throws FactoryException, IOException, ClassNotFoundException {
-        assumeNotNull(factory);
-
         CoordinateReferenceSystem crs1 = factory.createCoordinateReferenceSystem("4326");
         CoordinateReferenceSystem crs2 = factory.createCoordinateReferenceSystem("4322");
-        CoordinateOperationFactory opf = DefaultCoordinateOperationFactory.provider();
-        CoordinateOperation cop = opf.createOperation(crs1, crs2);
+        var opf = DefaultCoordinateOperationFactory.provider();
+        CoordinateOperation cop = opf.createOperation(crs1, crs2, null);
         serialize(cop);
 
         crs1 = crs2 = null;
@@ -148,7 +144,7 @@ public final class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase {
                 }
                 String crs2_name = Integer.toString(isystem2);
                 crs2 = factory.createCoordinateReferenceSystem(crs2_name);
-                cop = opf.createOperation(crs1, crs2);
+                cop = opf.createOperation(crs1, crs2, null);
                 serialize(cop);
             }
         }

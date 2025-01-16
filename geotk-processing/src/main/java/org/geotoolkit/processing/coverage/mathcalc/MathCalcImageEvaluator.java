@@ -62,7 +62,7 @@ public class MathCalcImageEvaluator implements ProcessedRenderedImage.Evaluator 
             //we should use NoData value
             Arrays.fill(sampleBuffer, Double.NaN);
         }
-        geoPos.setCoordinate(crsCoord);
+        geoPos.setCoordinates(crsCoord);
         coverageEvaluator.evaluate(geoPos, sampleBuffer);
     }
 

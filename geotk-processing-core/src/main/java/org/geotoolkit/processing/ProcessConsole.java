@@ -449,7 +449,7 @@ public final class ProcessConsole {
             final String code = id.getCode();
             final int minOcc = pdesc.getMinimumOccurs();
             final int maxOcc = pdesc.getMaximumOccurs();
-            final InternationalString remark = pdesc.getRemarks();
+            final InternationalString remark = pdesc.getRemarks().orElse(null);
 
             print(BOLD,(input)?"-":"",code,RESET,"\t");
             print("(",minOcc,",",maxOcc,")\t");

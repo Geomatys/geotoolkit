@@ -22,7 +22,6 @@ import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.complex.CompositeSurface;
 import org.opengis.geometry.primitive.OrientableSurface;
 import org.opengis.geometry.primitive.Primitive;
-import org.opengis.geometry.primitive.PrimitiveFactory;
 import org.opengis.geometry.primitive.Surface;
 import org.opengis.geometry.primitive.SurfacePatch;
 import org.opengis.geometry.primitive.SurfaceBoundary;
@@ -47,11 +46,6 @@ import org.opengis.geometry.primitive.SurfaceBoundary;
  *
  * @author ISO/DIS 19107
  * @author <A HREF="http://www.opengis.org">OpenGIS&reg; consortium</A>
- * @version 2.0
- *
- * @see PrimitiveFactory#createSurface(List)
- * @see PrimitiveFactory#createSurface(SurfaceBoundary)
- * @module
  */
 public class JTSSurface extends AbstractJTSGeometry implements Surface {
     protected List<JTSSurfacePatch> patches;

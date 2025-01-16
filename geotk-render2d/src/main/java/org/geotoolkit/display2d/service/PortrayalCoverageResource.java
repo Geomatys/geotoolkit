@@ -36,7 +36,7 @@ import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.datum.PixelInCell;
+import org.apache.sis.coverage.grid.PixelInCell;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.GenericName;
 import org.opengis.util.NameFactory;

@@ -65,7 +65,7 @@ public abstract class AbstractClientProvider extends DataStoreProvider {
         return new ParameterBuilder()
                     .addName(VERSION.getName().getCode())
                     .addName(VERSION.getAlias().iterator().next())
-                    .setRemarks(VERSION.getRemarks())
+                    .setRemarks(VERSION.getRemarks().orElse(null))
                     .setRequired(true)
                     .createEnumerated(String.class, values,defaultValue);
     }

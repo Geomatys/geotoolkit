@@ -403,7 +403,7 @@ public class PostgisFactory extends WKTDictionary implements CRSAuthorityFactory
      * @param  code  the unknown authority code.
      * @return An exception initialized with an error message built from the specified information.
      */
-    private NoSuchAuthorityCodeException noSuchAuthorityCode(final String code) {
+    private NoSuchAuthorityCodeException noSuchAuthorityCode(final String code) throws FactoryException {
         final Class<?> type = IdentifiedObject.class;
         final InternationalString authority = getAuthority().getTitle();
         return new NoSuchAuthorityCodeException(Errors.format(Errors.Keys.NoSuchAuthorityCode_3,

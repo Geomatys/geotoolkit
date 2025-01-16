@@ -37,6 +37,7 @@ import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSPrim
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryCollection;
+import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.MultiLineString;
 import org.locationtech.jts.geom.MultiPoint;
 import org.locationtech.jts.geom.MultiPolygon;
@@ -44,13 +45,10 @@ import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.Geometry;
 import org.opengis.geometry.PositionFactory;
-import org.opengis.geometry.coordinate.GeometryFactory;
 import org.opengis.geometry.coordinate.LineString;
 import org.opengis.geometry.coordinate.PointArray;
 import org.opengis.geometry.coordinate.Polygon;
-import org.opengis.geometry.coordinate.Position;
 import org.opengis.geometry.primitive.Curve;
-import org.opengis.geometry.primitive.PrimitiveFactory;
 import org.opengis.geometry.primitive.Ring;
 import org.opengis.geometry.primitive.SurfaceBoundary;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -69,7 +67,7 @@ public final class JTSUtils {
      * Common instance of GEOMETRY_FACTORY with the default JTS precision model
      * that can be used to make new geometries.
      */
-    public static final org.locationtech.jts.geom.GeometryFactory GEOMETRY_FACTORY = new org.locationtech.jts.geom.GeometryFactory();
+    public static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory();
 
     /**
      * This class has only static methods, so we make the constructor private
@@ -102,8 +100,8 @@ public final class JTSUtils {
         }
 
         //TODO use factory finder when primitive factory and geometry factory are ready.
-        final PrimitiveFactory pf = new JTSPrimitiveFactory(crs);//FactoryFinder.getPrimitiveFactory(hints);
-        final GeometryFactory gf  = new JTSGeometryFactory(crs); //FactoryFinder.getGeometryFactory(hints);
+        final var pf = new JTSPrimitiveFactory(crs);//FactoryFinder.getPrimitiveFactory(hints);
+        final var gf  = new JTSGeometryFactory(crs); //FactoryFinder.getGeometryFactory(hints);
 
         if (jtsGeom instanceof org.locationtech.jts.geom.Point) {
             org.locationtech.jts.geom.Point candidate = (org.locationtech.jts.geom.Point) jtsGeom;
@@ -112,7 +110,7 @@ public final class JTSUtils {
 
         } else if (jtsGeom instanceof org.locationtech.jts.geom.LineString) {
             org.locationtech.jts.geom.LineString candidate = (org.locationtech.jts.geom.LineString) jtsGeom;
-            LineString ls = gf.createLineString(new ArrayList<Position>());
+            LineString ls = gf.createLineString(new ArrayList<DirectPosition>());
             PointArray pointList = ls.getControlPoints();
             for (int i = 0, n = candidate.getNumPoints(); i < n; i++) {
                 pointList.add(coordinateToDirectPosition(candidate.getCoordinateN(i), crs));
@@ -216,11 +214,11 @@ public final class JTSUtils {
         double x = Double.NaN, y = Double.NaN, z = Double.NaN;
         final int d = dp.getDimension();
         if (d >= 1) {
-            x = dp.getOrdinate(0);
+            x = dp.getCoordinate(0);
             if (d >= 2) {
-                y = dp.getOrdinate(1);
+                y = dp.getCoordinate(1);
                 if (d >= 3) {
-                    z = dp.getOrdinate(2);
+                    z = dp.getCoordinate(2);
                 }
             }
         }
@@ -236,11 +234,11 @@ public final class JTSUtils {
     public static void directPositionToCoordinate(final DirectPosition dp, final org.locationtech.jts.geom.Coordinate result) {
         final int d = dp.getDimension();
         if (d >= 1) {
-            result.x = dp.getOrdinate(0);
+            result.x = dp.getCoordinate(0);
             if (d >= 2) {
-                result.y = dp.getOrdinate(1);
+                result.y = dp.getCoordinate(1);
                 if (d >= 3) {
-                    result.z = dp.getOrdinate(3);
+                    result.z = dp.getCoordinate(3);
                 } else {
                     result.z = Double.NaN;
                 }
@@ -315,19 +313,19 @@ public final class JTSUtils {
 
         if (d >= 1) {
             int xIndex = GeometryUtils.getDirectedAxisIndex(cs, AxisDirection.EAST);
-            result.setOrdinate(xIndex, c.x);//0
+            result.setCoordinate(xIndex, c.x);//0
             if (d >= 2) {
                 int yIndex = GeometryUtils.getDirectedAxisIndex(cs, AxisDirection.NORTH);
-                result.setOrdinate(yIndex, c.y);//1
+                result.setCoordinate(yIndex, c.y);//1
                 if (d >= 3) {
                     int zIndex = GeometryUtils.getDirectedAxisIndex(cs, AxisDirection.UP);
-                    result.setOrdinate(zIndex, c.z);//2
+                    result.setCoordinate(zIndex, c.z);//2
                     // If d > 3, then the remaining coordinates of the DP are
                     // (so far) left with their original values.  So we init
                     // them to zero here.
                     if (d > 3) {
                         for (int i = 3; i < d; i++) {
-                            result.setOrdinate(i, 0.0);
+                            result.setCoordinate(i, 0.0);
                         }
                     }
                 }
@@ -350,8 +348,8 @@ public final class JTSUtils {
             throw new IllegalArgumentException("LineString must be a ring");
         }
 
-        PrimitiveFactory pf = new JTSPrimitiveFactory(crs); //FactoryFinder.getPrimitiveFactory(hints);
-        GeometryFactory gf = new JTSGeometryFactory(crs); //FactoryFinder.getGeometryFactory(hints);
+        var pf = new JTSPrimitiveFactory(crs); //FactoryFinder.getPrimitiveFactory(hints);
+        var gf = new JTSGeometryFactory(crs); //FactoryFinder.getGeometryFactory(hints);
 
         LineString ls = gf.createLineString(new ArrayList());
         List pointList = ls.getControlPoints();
@@ -513,8 +511,8 @@ public final class JTSUtils {
         topCorner).getLon(Units.DEGREE), Units.DEGREE);
         } else {*/
 
-        topLeft.setOrdinate(1, botCorner.getOrdinate(1));
-        botRight.setOrdinate(1, topCorner.getOrdinate(1));
+        topLeft.setCoordinate(1, botCorner.getCoordinate(1));
+        botRight.setCoordinate(1, topCorner.getCoordinate(1));
 
         //}//end of else statment associated with above LatLongAlt stuff
         // Create a JTS Envelope

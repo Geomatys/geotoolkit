@@ -14,8 +14,6 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-
-
 package org.geotoolkit.gml.xml.v321;
 
 import java.io.Serializable;
@@ -36,6 +34,7 @@ import jakarta.xml.bind.annotation.XmlTransient;
 import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.util.Optional;
 import org.apache.sis.xml.bind.ModifiableIdentifierMap;
 import org.geotoolkit.gml.xml.AbstractGML;
 import org.geotoolkit.internal.sql.Entry;
@@ -381,11 +380,11 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
         return null;
     }
 
-    public InternationalString getRemarks() {
+    public Optional<InternationalString> getRemarks() {
         if (description != null && description.getValue() != null) {
-            return new SimpleInternationalString(description.getValue());
+            return Optional.of(new SimpleInternationalString(description.getValue()));
         }
-        return null;
+        return Optional.empty();
     }
 
     public String toWKT() throws UnsupportedOperationException {

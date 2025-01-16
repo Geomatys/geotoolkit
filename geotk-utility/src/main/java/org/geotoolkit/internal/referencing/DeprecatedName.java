@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.internal.referencing;
 
+import java.util.Optional;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.Identifier;
 import org.opengis.util.InternationalString;
@@ -28,10 +29,6 @@ import org.apache.sis.util.Deprecable;
  * A name which is deprecated (when associated to a given object) in the EPSG database.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.20
- *
- * @since 3.16
- * @module
  */
 public final class DeprecatedName extends NamedIdentifier implements Deprecable {
     /**
@@ -68,7 +65,7 @@ public final class DeprecatedName extends NamedIdentifier implements Deprecable 
     }
 
     @Override
-    public InternationalString getRemarks() {
-        return super.getDescription();
+    public Optional<InternationalString> getRemarks() {
+        return Optional.ofNullable(super.getDescription());
     }
 }

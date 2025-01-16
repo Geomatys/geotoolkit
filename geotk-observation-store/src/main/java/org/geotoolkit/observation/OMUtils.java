@@ -17,6 +17,7 @@
 package org.geotoolkit.observation;
 
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -34,8 +35,8 @@ import org.apache.sis.geometry.AbstractEnvelope;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.wrapper.Geometries;
 import org.apache.sis.geometry.wrapper.GeometryWrapper;
-import org.apache.sis.metadata.internal.RecordSchemaSIS;
-import static org.apache.sis.metadata.internal.RecordSchemaSIS.INSTANCE;
+import org.apache.sis.metadata.privy.RecordSchemaSIS;
+import static org.apache.sis.metadata.privy.RecordSchemaSIS.INSTANCE;
 import org.apache.sis.measure.Units;
 import org.apache.sis.metadata.ModifiableMetadata;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
@@ -47,6 +48,7 @@ import org.apache.sis.metadata.iso.quality.DefaultQuantitativeResult;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.temporal.TemporalObjects;
 import org.apache.sis.util.SimpleInternationalString;
 import org.apache.sis.util.iso.DefaultRecord;
 import org.geotoolkit.geometry.jts.JTS;
@@ -62,8 +64,7 @@ import static org.geotoolkit.observation.model.FieldType.TEXT;
 import static org.geotoolkit.observation.model.FieldType.TIME;
 import org.geotoolkit.observation.model.MeasureResult;
 import org.geotoolkit.observation.model.Observation;
-import org.geotoolkit.temporal.object.DefaultInstant;
-import org.geotoolkit.temporal.object.DefaultPeriod;
+import org.geotoolkit.observation.model.ObservationUtils;
 import org.geotoolkit.temporal.object.ISODateParser;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.filter.BinarySpatialOperator;
@@ -75,11 +76,9 @@ import org.opengis.metadata.quality.Element;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValueGroup;
-import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
-import org.opengis.temporal.Instant;
-import org.opengis.temporal.TemporalGeometricPrimitive;
+import org.opengis.temporal.TemporalPrimitive;
 import org.opengis.util.FactoryException;
 import org.opengis.util.RecordType;
 
@@ -281,19 +280,31 @@ public class OMUtils {
         };
     }
 
-    public static TemporalGeometricPrimitive buildTime(String id, Date start, Date end) {
+    @Deprecated
+    public static TemporalPrimitive buildTime(String id, Date start, Date end) {
+        return buildTime(id, (start != null) ? start.toInstant() : null,
+                (end != null) ? end.toInstant() : null);
+    }
+
+    public static TemporalPrimitive buildTime(String id, Instant start, Instant end) {
         if (start != null && end != null) {
             if (start.equals(end)) {
-                return new DefaultInstant(Collections.singletonMap(NAME_KEY, id + "time"), start);
+                var t = TemporalObjects.createInstant(start);
+                ObservationUtils.setIdentifier(t, id + "-time");
+                return t;
             } else {
-                return new DefaultPeriod(Collections.singletonMap(NAME_KEY, id + "-time"),
-                        new DefaultInstant(Collections.singletonMap(NAME_KEY, id + "-st-time"), start),
-                        new DefaultInstant(Collections.singletonMap(NAME_KEY, id + "-en-time"), end));
+                var p = TemporalObjects.createPeriod(start, end);
+                ObservationUtils.setIdentifiers(p, id);
+                return p;
             }
         } else if (start != null) {
-            return new DefaultInstant(Collections.singletonMap(NAME_KEY, id + "-st-time"), start);
+            var t = TemporalObjects.createInstant(start);
+            ObservationUtils.setIdentifier(t, id + "-time");
+            return t;
         } else if (end != null) {
-            return new DefaultInstant(Collections.singletonMap(NAME_KEY, id + "-st-time"), end);
+            var t = TemporalObjects.createInstant(end);
+            ObservationUtils.setIdentifier(t, id + "-time");
+            return t;
         }
         return null;
     }
@@ -344,7 +355,7 @@ public class OMUtils {
             int mid = 1;
             for (String block : blocks) {
                 final String[] lines = block.split(cr.getTextEncodingProperties().getTokenSeparator(), -1);
-                TemporalGeometricPrimitive measureTime = null;
+                TemporalPrimitive measureTime = null;
                 int j = 0;
                 for (Field f : cr.getFields()) {
                     String token = lines[j];

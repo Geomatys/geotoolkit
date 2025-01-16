@@ -48,7 +48,7 @@ public class URIResolverTest {
             final URI dirUri = dir.toUri();
             final URIResolver resolver = new URIResolver(dirUri);
             final GeneralDirectPosition corner = new GeneralDirectPosition(CommonCRS.WGS84.normalizedGeographic());
-            corner.setCoordinate(0,0);
+            corner.setCoordinates(0,0);
             final URITileMatrix matrix = new URITileMatrix(null, dirUri, resolver,
                     DefaultClientSecurity.NO_SECURITY, URITileFormat.PNG,
                     NamesExt.create("test"),
@@ -83,7 +83,7 @@ public class URIResolverTest {
             final URI dirUri = new URI(zip.toUri().toString()+"!/");
             final URIResolver resolver = new URIResolver(dirUri);
             final GeneralDirectPosition corner = new GeneralDirectPosition(CommonCRS.WGS84.normalizedGeographic());
-            corner.setCoordinate(0,0);
+            corner.setCoordinates(0,0);
             final URITileMatrix matrix = new URITileMatrix(null, dirUri, resolver,
                     DefaultClientSecurity.NO_SECURITY, URITileFormat.PNG,
                     NamesExt.create("test"),
@@ -119,7 +119,7 @@ public class URIResolverTest {
             final URI dirUri = new URI("jar:"+zip.toUri().toString()+"!/");
             final URIResolver resolver = new URIResolver(dirUri);
             final GeneralDirectPosition corner = new GeneralDirectPosition(CommonCRS.WGS84.normalizedGeographic());
-            corner.setCoordinate(0,0);
+            corner.setCoordinates(0,0);
             final URITileMatrix matrix = new URITileMatrix(null, dirUri, resolver,
                     DefaultClientSecurity.NO_SECURITY, URITileFormat.PNG,
                     NamesExt.create("test"),

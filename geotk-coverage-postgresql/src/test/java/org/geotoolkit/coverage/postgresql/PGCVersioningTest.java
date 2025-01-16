@@ -112,8 +112,8 @@ public class PGCVersioningTest {
         final GeneralDirectPosition upperLeft = new GeneralDirectPosition(CommonCRS.WGS84.geographic());
         final Dimension dimension = new Dimension(20, 20);
         final Calendar calendar = Calendar.getInstance(GMT0);
-        upperLeft.setOrdinate(0, -90);
-        upperLeft.setOrdinate(1, +180);
+        upperLeft.setCoordinate(0, -90);
+        upperLeft.setCoordinate(1, +180);
         List<Version> versions;
         Version version;
         PyramidalCoverageResource cref;

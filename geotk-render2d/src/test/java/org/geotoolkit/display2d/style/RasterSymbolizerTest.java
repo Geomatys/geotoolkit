@@ -76,7 +76,7 @@ import org.locationtech.jts.geom.Polygon;
 import org.opengis.filter.Expression;
 import org.opengis.filter.FilterFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.datum.PixelInCell;
+import org.apache.sis.coverage.grid.PixelInCell;
 import org.opengis.style.ColorMap;
 import org.opengis.style.RasterSymbolizer;
 import org.opengis.style.Symbolizer;

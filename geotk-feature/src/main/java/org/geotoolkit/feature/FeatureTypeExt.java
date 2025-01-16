@@ -237,7 +237,7 @@ public final class FeatureTypeExt extends Static {
 
             final SingleAttributeTypeBuilder atb = new SingleAttributeTypeBuilder();
             atb.setName(NamesExt.valueOf(desc.getName().getCode()));
-            atb.setDescription(desc.getRemarks());
+            desc.getRemarks().ifPresent(atb::setDescription);
             atb.setValueClass(desc.getValueClass());
             atb.setMinimumOccurs(desc.getMinimumOccurs());
             atb.setMaximumOccurs(desc.getMaximumOccurs());

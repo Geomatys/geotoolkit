@@ -43,7 +43,7 @@ public class TiffStoreTest {
 
     @Test
     public void testFileRead() throws Exception {
-        final Path file    = IOUtilities.getResourceAsPath("org/geotoolkit/image/io/test-data/002025_0100_010722_l7_01_utm2.tiff");
+        final Path file = IOUtilities.getResourceAsPath("org/geotoolkit/image/io/test-data/002025_0100_010722_l7_01_utm2.tiff");
 
         Assert.assertEquals(true, Files.exists(file));
         final StorageConnector cnx = new StorageConnector(file);
@@ -57,17 +57,15 @@ public class TiffStoreTest {
         try (DataStore store = provider.open(cnx)) {
             Assert.assertTrue("Unexpected implementation for file coverage data store", store instanceof TiffStore);
             final TiffStore tStore = (TiffStore) store;
-            final Path[] cFiles = tStore.getComponentFiles();
-            Assert.assertArrayEquals("We should detect the tiff file", new Path[]{file}, cFiles);
-            
+
             final Resource res = tStore.findResource("002025_0100_010722_l7_01_utm2");
             Assert.assertNotNull("Datastore resource should not be null", res);
-            
+
             Assert.assertTrue(res instanceof GridCoverageResource);
 
             GridCoverageResource gcr = (GridCoverageResource) res;
             GridCoverage gc = gcr.read(null, 0);
-            
+
             Assert.assertNotNull(gc);
         }
     }
@@ -90,7 +88,7 @@ public class TiffStoreTest {
                     baseEnv.getMinimum(0) - baseEnv.getSpan(0) / 10,
                     baseEnv.getMaximum(0) + baseEnv.getSpan(0) / 10);
             final GridGeometry resampleGeom = new GridGeometry(
-                    new GridExtent(256, 256),
+                    new GridExtent(null, null, new long[] {256, 256, 1}, false),
                     resampleEnvelope,
                     GridOrientation.HOMOTHETY);
             GridCoverage dataImage = processor.resample(store.read(null), resampleGeom);

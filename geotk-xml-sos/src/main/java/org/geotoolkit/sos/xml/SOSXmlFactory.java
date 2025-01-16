@@ -17,6 +17,7 @@
 
 package org.geotoolkit.sos.xml;
 
+import java.time.temporal.Temporal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -26,6 +27,8 @@ import org.geotoolkit.gml.xml.AbstractTimePosition;
 import org.geotoolkit.gml.xml.Envelope;
 import org.geotoolkit.gml.xml.FeatureCollection;
 import org.geotoolkit.gml.xml.FeatureProperty;
+import org.geotoolkit.gml.xml.GMLInstant;
+import org.geotoolkit.gml.xml.GMLPeriod;
 import org.geotoolkit.gml.xml.GMLXmlFactory;
 import org.geotoolkit.gml.xml.LineString;
 import org.geotoolkit.gml.xml.Point;
@@ -65,6 +68,7 @@ import org.geotoolkit.swes.xml.DeleteSensor;
 import org.geotoolkit.swes.xml.DeleteSensorResponse;
 import org.geotoolkit.swes.xml.DescribeSensor;
 import org.geotoolkit.swes.xml.InsertSensorResponse;
+import org.opengis.filter.Expression;
 import org.opengis.filter.Filter;
 import org.opengis.filter.SpatialOperator;
 import org.opengis.filter.TemporalOperator;
@@ -74,9 +78,10 @@ import org.opengis.observation.Observation;
 import org.opengis.observation.ObservationCollection;
 import org.opengis.observation.sampling.SamplingFeature;
 import org.opengis.observation.Process;
-import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
-import org.opengis.temporal.TemporalGeometricPrimitive;
+import org.opengis.temporal.TemporalPrimitive;
+import static org.apache.sis.temporal.TemporalDate.toTemporal;
+import org.opengis.temporal.Instant;
 
 /**
  *
@@ -88,7 +93,9 @@ public class SOSXmlFactory {
         return buildGetCapabilities(version, null, null, null, null, service);
     }
 
-    public static GetCapabilities buildGetCapabilities(final String version, final AcceptVersions versions, final Sections sections, final AcceptFormats formats, final String updateSequence, final String service) {
+    public static GetCapabilities buildGetCapabilities(final String version, final AcceptVersions versions,
+            final Sections sections, final AcceptFormats formats, final String updateSequence, final String service)
+    {
         if (versions != null && !(versions instanceof org.geotoolkit.ows.xml.v110.AcceptVersionsType)) {
             throw new IllegalArgumentException("unexpected object version for AcceptVersion element");
         }
@@ -572,7 +579,7 @@ public class SOSXmlFactory {
         }
     }
 
-    public static Period buildTimePeriod(final String version, final String id, final String dateBegin, final String dateEnd) {
+    public static GMLPeriod buildTimePeriod(final String version, final String id, final String dateBegin, final String dateEnd) {
         if ("2.0.0".equals(version)) {
             return GMLXmlFactory.createTimePeriod("3.2.1", id, dateBegin, dateEnd);
         } else if ("1.0.0".equals(version)) {
@@ -582,7 +589,7 @@ public class SOSXmlFactory {
         }
     }
 
-    public static TemporalGeometricPrimitive buildTimeObject(final String version, final String id, final TemporalGeometricPrimitive temp) {
+    public static TemporalPrimitive buildTimeObject(final String version, final String id, final TemporalPrimitive temp) {
         String gmlVersion;
         if ("2.0.0".equals(version)) {
             gmlVersion = "3.2.1";
@@ -593,19 +600,29 @@ public class SOSXmlFactory {
         }
         if (temp instanceof Period p) {
             return GMLXmlFactory.createTimePeriod(gmlVersion, id, p);
-        } else if (temp instanceof Instant i) {
-            return GMLXmlFactory.createTimeInstant(gmlVersion, id, i.getDate());
+        } else if (temp instanceof GMLInstant i) {
+            return GMLXmlFactory.createTimeInstant(gmlVersion, id, i.getPosition());
         } else if (temp != null) {
             throw new IllegalArgumentException("unexpected temporal type:" + temp.getClass().getName());
         }
         return null;
     }
 
-    public static Period buildTimePeriod(final String version, final Date dateBegin, final Date dateEnd) {
+    @Deprecated
+    public static GMLPeriod buildTimePeriod(final String version, final Date dateBegin, final Date dateEnd) {
         return buildTimePeriod(version, null, dateBegin, dateEnd);
     }
 
-    public static Period buildTimePeriod(final String version, final String id, final Date dateBegin, final Date dateEnd) {
+    @Deprecated
+    public static GMLPeriod buildTimePeriod(final String version, final String id, final Date dateBegin, final Date dateEnd) {
+        return buildTimePeriod(version, id, toTemporal(dateBegin), toTemporal(dateEnd));
+    }
+
+    public static GMLPeriod buildTimePeriod(final String version, final String id, final Instant dateBegin, final Instant dateEnd) {
+        return buildTimePeriod(version, id, dateBegin.getPosition(), dateEnd.getPosition());
+    }
+
+    public static GMLPeriod buildTimePeriod(final String version, final String id, final Temporal dateBegin, final Temporal dateEnd) {
         if ("2.0.0".equals(version)) {
             return GMLXmlFactory.createTimePeriod("3.2.1", id, dateBegin, dateEnd);
         } else if ("1.0.0".equals(version)) {
@@ -615,7 +632,12 @@ public class SOSXmlFactory {
         }
     }
 
-    public static Period buildTimePeriod(final String version, final TimeIndeterminateValueType value, final Date dateEnd) {
+    @Deprecated
+    public static GMLPeriod buildTimePeriod(final String version, final TimeIndeterminateValueType value, final Date dateEnd) {
+        return buildTimePeriod(version, value, toTemporal(dateEnd));
+    }
+
+    public static GMLPeriod buildTimePeriod(final String version, final TimeIndeterminateValueType value, final Temporal dateEnd) {
         if ("2.0.0".equals(version)) {
             return GMLXmlFactory.createTimePeriod("3.2.1", value, dateEnd);
         } else if ("1.0.0".equals(version)) {
@@ -625,7 +647,12 @@ public class SOSXmlFactory {
         }
     }
 
-    public static Period buildTimePeriod(final String version, final Date dateBegin, final TimeIndeterminateValueType value) {
+    @Deprecated
+    public static GMLPeriod buildTimePeriod(final String version, final Date dateBegin, final TimeIndeterminateValueType value) {
+        return buildTimePeriod(version, toTemporal(dateBegin), value);
+    }
+
+    public static GMLPeriod buildTimePeriod(final String version, final Temporal dateBegin, final TimeIndeterminateValueType value) {
         if ("2.0.0".equals(version)) {
             return GMLXmlFactory.createTimePeriod("3.2.1", dateBegin, value);
         } else if ("1.0.0".equals(version)) {
@@ -635,7 +662,7 @@ public class SOSXmlFactory {
         }
     }
 
-    public static Period buildTimePeriod(final String version, final TimeIndeterminateValueType value, final AbstractTimePosition dateEnd) {
+    public static GMLPeriod buildTimePeriod(final String version, final TimeIndeterminateValueType value, final AbstractTimePosition dateEnd) {
         if ("2.0.0".equals(version)) {
             return GMLXmlFactory.createTimePeriod("3.2.1", value, dateEnd);
         } else if ("1.0.0".equals(version)) {
@@ -645,7 +672,7 @@ public class SOSXmlFactory {
         }
     }
 
-    public static Period buildTimePeriod(final String version, final AbstractTimePosition dateBegin, final TimeIndeterminateValueType value) {
+    public static GMLPeriod buildTimePeriod(final String version, final AbstractTimePosition dateBegin, final TimeIndeterminateValueType value) {
         if ("2.0.0".equals(version)) {
             return GMLXmlFactory.createTimePeriod("3.2.1", dateBegin, value);
         } else if ("1.0.0".equals(version)) {
@@ -655,7 +682,7 @@ public class SOSXmlFactory {
         }
     }
 
-    public static Period buildTimePeriod(final String version, final AbstractTimePosition dateBegin, final AbstractTimePosition dateEnd) {
+    public static GMLPeriod buildTimePeriod(final String version, final AbstractTimePosition dateBegin, final AbstractTimePosition dateEnd) {
         if ("2.0.0".equals(version)) {
             return GMLXmlFactory.createTimePeriod("3.2.1", dateBegin, dateEnd);
         } else if ("1.0.0".equals(version)) {
@@ -666,7 +693,7 @@ public class SOSXmlFactory {
     }
 
 
-    public static Instant buildTimeInstant(final String version, final AbstractTimePosition date) {
+    public static GMLInstant buildTimeInstant(final String version, final AbstractTimePosition date) {
         if ("2.0.0".equals(version)) {
             return GMLXmlFactory.createTimeInstant("3.2.1", date);
         } else if ("1.0.0".equals(version)) {
@@ -676,11 +703,17 @@ public class SOSXmlFactory {
         }
     }
 
-    public static Instant buildTimeInstant(final String version, final Date date) {
+    @Deprecated
+    public static GMLInstant buildTimeInstant(final String version, final Date date) {
         return buildTimeInstant(version, null, date);
     }
 
-    public static Instant buildTimeInstant(final String version, final String id, final Date date) {
+    @Deprecated
+    public static GMLInstant buildTimeInstant(final String version, final String id, final Date date) {
+        return buildTimeInstant(version, id, toTemporal(date));
+    }
+
+    public static GMLInstant buildTimeInstant(final String version, final String id, final Temporal date) {
         if ("2.0.0".equals(version)) {
             return GMLXmlFactory.createTimeInstant("3.2.1", id, date);
         } else if ("1.0.0".equals(version)) {
@@ -690,7 +723,7 @@ public class SOSXmlFactory {
         }
     }
 
-    public static Instant buildTimeInstant(final String version, final String id, final String date) {
+    public static GMLInstant buildTimeInstant(final String version, final String id, final String date) {
         if ("2.0.0".equals(version)) {
             return GMLXmlFactory.createTimeInstant("3.2.1", id, date);
         } else if ("1.0.0".equals(version)) {
@@ -701,7 +734,7 @@ public class SOSXmlFactory {
     }
 
     public static ObservationOffering buildOffering(final String version, final String id, final String name, final String description, final List<String> srsName,
-            final TemporalGeometricPrimitive time,  final String procedure, final List<PhenomenonProperty> observedProperties, final List<String> observedPropertiesv200,
+            final TemporalPrimitive time,  final String procedure, final List<PhenomenonProperty> observedProperties, final List<String> observedPropertiesv200,
             final List<String> featureOfInterest, final List<String> responseFormat, final List<QName> resultModel, final List<String> resultModelV200, final List<ResponseModeType> responseMode,
             final List<String> procedureDescriptionFormat) {
         if ("2.0.0".equals(version)) {
@@ -1017,7 +1050,7 @@ public class SOSXmlFactory {
         }
     }
 
-    public static TemporalOperator buildTimeAfter(final String currentVersion, final String propertyName, final Object temporal) {
+    public static TemporalOperator buildTimeAfter(final String currentVersion, final String propertyName, final Expression temporal) {
         if ("2.0.0".equals(currentVersion)) {
             return new org.geotoolkit.ogc.xml.v200.TimeAfterType(propertyName, temporal);
         } else if ("1.0.0".equals(currentVersion)) {
@@ -1027,7 +1060,7 @@ public class SOSXmlFactory {
         }
     }
 
-    public static TemporalOperator buildTimeDuring(final String currentVersion, final String propertyName, final Object temporal) {
+    public static TemporalOperator buildTimeDuring(final String currentVersion, final String propertyName, final Expression temporal) {
         if ("2.0.0".equals(currentVersion)) {
             return new org.geotoolkit.ogc.xml.v200.TimeDuringType(propertyName, temporal);
         } else if ("1.0.0".equals(currentVersion)) {
@@ -1037,7 +1070,7 @@ public class SOSXmlFactory {
         }
     }
 
-    public static TemporalOperator buildTimeBefore(final String currentVersion, final String propertyName, final Object temporal) {
+    public static TemporalOperator buildTimeBefore(final String currentVersion, final String propertyName, final Expression temporal) {
         if ("2.0.0".equals(currentVersion)) {
             return new org.geotoolkit.ogc.xml.v200.TimeBeforeType(propertyName, temporal);
         } else if ("1.0.0".equals(currentVersion)) {
@@ -1047,7 +1080,7 @@ public class SOSXmlFactory {
         }
     }
 
-    public static TemporalOperator buildTimeEquals(final String currentVersion, final String propertyName, final Object temporal) {
+    public static TemporalOperator buildTimeEquals(final String currentVersion, final String propertyName, final Expression temporal) {
         if ("2.0.0".equals(currentVersion)) {
             return new org.geotoolkit.ogc.xml.v200.TimeEqualsType(propertyName, temporal);
         } else if ("1.0.0".equals(currentVersion)) {
@@ -1345,7 +1378,7 @@ public class SOSXmlFactory {
         final org.geotoolkit.gml.xml.v311.TimePeriodType period;
         if (off.getTime() != null) {
             final org.geotoolkit.gml.xml.v321.TimePeriodType pv200 = (org.geotoolkit.gml.xml.v321.TimePeriodType) off.getTime();
-            period = new org.geotoolkit.gml.xml.v311.TimePeriodType(pv200.getBeginPosition(), pv200.getEndPosition());
+            period = new org.geotoolkit.gml.xml.v311.TimePeriodType(null, pv200.getBeginPosition(), pv200.getEndPosition());
         } else {
             period = null;
         }

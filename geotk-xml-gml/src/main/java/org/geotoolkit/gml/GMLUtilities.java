@@ -90,13 +90,10 @@ public class GMLUtilities {
      * </ol>
      */
     public static AbstractGeometryType getGMLFromISO(final org.opengis.geometry.Geometry geometry) {
-       if (geometry instanceof Point) {
-           Point point     = (Point) geometry;
+       if (geometry instanceof Point point) {
            PointType gmlPoint = new PointType(null, point.getDirectPosition());
            return gmlPoint;
-       } else if (geometry instanceof OrientableSurface) {
-            OrientableSurface surface           = (OrientableSurface) geometry;
-
+       } else if (geometry instanceof OrientableSurface surface) {
             SurfaceBoundary boundary               = surface.getBoundary();
             Ring exterior                          = boundary.getExterior();
 
@@ -121,8 +118,7 @@ public class GMLUtilities {
             PolygonType poly  = new PolygonType(gmlExterior, gmlInteriors);
             return poly;
 
-       } else if (geometry instanceof MultiSurface) {
-           MultiSurface multiPrim           = (MultiSurface) geometry;
+       } else if (geometry instanceof MultiSurface multiPrim) {
            List<PolygonPropertyType> geometries = new ArrayList<PolygonPropertyType>();
            for (Geometry prim : multiPrim.getElements()) {
                PolygonType element = (PolygonType)getGMLFromISO(prim);
@@ -132,8 +128,7 @@ public class GMLUtilities {
            MultiPolygonType gmlMulti = new MultiPolygonType(null, geometries);
            return gmlMulti;
 
-       } else if (geometry instanceof MultiCurve) {
-           MultiCurve multiPrim           = (MultiCurve) geometry;
+       } else if (geometry instanceof MultiCurve multiPrim) {
            List<CurvePropertyType> geometries = new ArrayList<CurvePropertyType>();
            for (OrientableCurve prim : multiPrim.getElements()) {
                AbstractCurveType element = (AbstractCurveType)getGMLFromISO(prim);
@@ -143,8 +138,7 @@ public class GMLUtilities {
            MultiCurveType gmlMulti = new MultiCurveType(geometries);
            return gmlMulti;
 
-       } else if (geometry instanceof MultiPoint) {
-           MultiPoint multiPrim           = (MultiPoint) geometry;
+       } else if (geometry instanceof MultiPoint multiPrim) {
            List<PointPropertyType> geometries = new ArrayList<PointPropertyType>();
            for (Point prim : multiPrim.getElements()) {
                PointType element = (PointType)getGMLFromISO(prim);
@@ -154,8 +148,7 @@ public class GMLUtilities {
            MultiPointType gmlMulti = new MultiPointType(null, geometries);
            return gmlMulti;
 
-       } else if (geometry instanceof MultiPrimitive) {
-           MultiPrimitive multiPrim           = (MultiPrimitive) geometry;
+       } else if (geometry instanceof MultiPrimitive multiPrim) {
            List<GeometryPropertyType> geometries = new ArrayList<GeometryPropertyType>();
            for (Primitive prim : multiPrim.getElements()) {
                AbstractGMLType element = getGMLFromISO(prim);
@@ -165,14 +158,13 @@ public class GMLUtilities {
            MultiGeometryType gmlMulti = new MultiGeometryType(geometries);
            return gmlMulti;
 
-       } else if (geometry instanceof Curve) {
-            Curve curve = (Curve) geometry;
+       } else if (geometry instanceof Curve curve) {
             List<? extends CurveSegment> segments = curve.getSegments();
             List<LineStringSegmentType> gmlSegments = new ArrayList<LineStringSegmentType>();
             for (CurveSegment segment : segments) {
-                CurveInterpolationType interpolation = CurveInterpolationType.fromValue(segment.getInterpolation().identifier());
+                CurveInterpolationType interpolation = CurveInterpolationType.fromValue(segment.getInterpolation().identifier().orElseThrow());
                 PointArray array = GeometricUtilities.getSamplePoints(segment);
-                List<DirectPosition> positions = new ArrayList<DirectPosition>();
+                var positions = new ArrayList<DirectPosition>();
                 for (int i =0; i < array.size(); i++) {
                     positions.add(array.getDirectPosition(i, null));
                 }
@@ -186,11 +178,9 @@ public class GMLUtilities {
             CurveType gmlCurve = new CurveType(gmlSegments);
             return gmlCurve;
 
-       } else if (geometry instanceof LineString) {
-            LineString line = (LineString) geometry;
-
+       } else if (geometry instanceof LineString line) {
             PointArray array = GeometricUtilities.getSamplePoints(line);
-            List<DirectPosition> positions = new ArrayList<DirectPosition>();
+            var positions = new ArrayList<DirectPosition>();
             for (int i =0; i < array.size(); i++) {
                 positions.add(array.getDirectPosition(i, null));
             }
@@ -198,8 +188,7 @@ public class GMLUtilities {
 
             return gmlLine;
 
-       } else if (geometry instanceof Polygon) {
-           Polygon polygon          = (Polygon) geometry;
+       } else if (geometry instanceof Polygon polygon) {
            SurfaceBoundary boundary = polygon.getBoundary();
            Ring exterior            = boundary.getExterior();
 
@@ -223,13 +212,12 @@ public class GMLUtilities {
            }
            PolygonType gmlPolygon = new PolygonType(gmlExterior, gmlInteriors);
            return gmlPolygon;
-       } else if (geometry instanceof PolyhedralSurface) {
-           PolyhedralSurface polySurface = (PolyhedralSurface) geometry;
+       } else if (geometry instanceof PolyhedralSurface polySurface) {
            List<PolygonPatchType> gmlPatches = new ArrayList<PolygonPatchType>();
            List<? extends Polygon> patches = polySurface.getPatches();
            for (Polygon polygon : patches) {
 
-               SurfaceInterpolationType interpolation = SurfaceInterpolationType.fromValue(polygon.getInterpolation().identifier());
+               SurfaceInterpolationType interpolation = SurfaceInterpolationType.fromValue(polygon.getInterpolation().identifier().orElseThrow());
                SurfaceBoundary boundary               = polygon.getBoundary();
                Ring exterior                          = boundary.getExterior();
 

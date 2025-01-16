@@ -57,7 +57,7 @@ public class DefaultTemporalCapabilities implements TemporalCapabilities {
         final LocalName scope = Names.createLocalName(null, null, "geotk");
         final List<ScopedName> names = new ArrayList<>(operands.size());
         for (final CodeList<?> op : operands) {
-            names.add(Names.createScopedName(scope, ":", op.identifier()));
+            names.add(Names.createScopedName(scope, ":", op.identifier().orElseThrow()));
         }
         return names;
     }
@@ -78,7 +78,7 @@ public class DefaultTemporalCapabilities implements TemporalCapabilities {
             final String name = op.getName();
             TemporalOperatorName key = null;
             for (TemporalOperatorName spn : TemporalOperatorName.values()) {
-                if (name.equalsIgnoreCase(spn.identifier())) {
+                if (name.equalsIgnoreCase(spn.identifier().orElse(null))) {
                     key = spn;
                 }
             }

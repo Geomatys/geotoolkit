@@ -33,6 +33,7 @@ import org.opengis.filter.Literal;
 import org.opengis.filter.SortOrder;
 import org.opengis.filter.BinarySpatialOperator;
 import org.opengis.filter.DistanceOperator;
+import org.opengis.filter.Expression;
 import org.opengis.filter.LikeOperator;
 import org.opengis.filter.LogicalOperator;
 import org.opengis.filter.NullOperator;
@@ -214,7 +215,7 @@ public class FilterXmlFactory {
         }
     }
 
-    public static TemporalOperator buildTimeAfter(final String currentVersion, final String propertyName, final Object temporal) {
+    public static TemporalOperator<?> buildTimeAfter(final String currentVersion, final String propertyName, final Expression<?,?> temporal) {
         if ("2.0.0".equals(currentVersion)) {
             return new org.geotoolkit.ogc.xml.v200.TimeAfterType(propertyName, temporal);
         } else if ("1.1.0".equals(currentVersion)) {
@@ -226,7 +227,7 @@ public class FilterXmlFactory {
         }
     }
 
-    public static TemporalOperator buildTimeDuring(final String currentVersion, final String propertyName, final Object temporal) {
+    public static TemporalOperator<?> buildTimeDuring(final String currentVersion, final String propertyName, final Expression<?,?> temporal) {
         if ("2.0.0".equals(currentVersion)) {
             return new org.geotoolkit.ogc.xml.v200.TimeDuringType(propertyName, temporal);
         } else if ("1.1.0".equals(currentVersion)) {
@@ -238,7 +239,7 @@ public class FilterXmlFactory {
         }
     }
 
-    public static TemporalOperator buildTimeBefore(final String currentVersion, final String propertyName, final Object temporal) {
+    public static TemporalOperator<?> buildTimeBefore(final String currentVersion, final String propertyName, final Expression<?,?> temporal) {
         if ("2.0.0".equals(currentVersion)) {
             return new org.geotoolkit.ogc.xml.v200.TimeBeforeType(propertyName, temporal);
         } else if ("1.1.0".equals(currentVersion)) {
@@ -250,7 +251,7 @@ public class FilterXmlFactory {
         }
     }
 
-    public static TemporalOperator buildTimeEquals(final String currentVersion, final String propertyName, final Object temporal) {
+    public static TemporalOperator<?> buildTimeEquals(final String currentVersion, final String propertyName, final Expression<?,?> temporal) {
         if ("2.0.0".equals(currentVersion)) {
             return new org.geotoolkit.ogc.xml.v200.TimeEqualsType(propertyName, temporal);
         } else if ("1.1.0".equals(currentVersion)) {
@@ -262,7 +263,7 @@ public class FilterXmlFactory {
         }
     }
 
-    public static TemporalOperator buildBynaryTemporal(final String currentVersion, final String operator, final String propertyName, final Object temporal) {
+    public static TemporalOperator<?> buildBynaryTemporal(final String currentVersion, final String operator, final String propertyName, final Expression<?,?> temporal) {
         if ("2.0.0".equals(currentVersion)) {
             switch (operator) {
                 case "After"  : return new org.geotoolkit.ogc.xml.v200.TimeAfterType(propertyName, temporal);

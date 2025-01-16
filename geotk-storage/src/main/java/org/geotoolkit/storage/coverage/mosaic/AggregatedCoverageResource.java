@@ -22,7 +22,6 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
-import java.nio.file.Path;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -50,14 +49,10 @@ import org.apache.sis.image.ImageCombiner;
 import org.apache.sis.image.Interpolation;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
-import org.apache.sis.storage.base.ResourceOnFileSystem;
 import org.apache.sis.measure.Quantities;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.referencing.CRS;
-import org.apache.sis.referencing.operation.matrix.Matrices;
-import org.apache.sis.referencing.operation.matrix.MatrixSIS;
-import org.apache.sis.referencing.operation.matrix.NoninvertibleMatrixException;
-import org.apache.sis.referencing.operation.transform.LinearTransform;
+import org.apache.sis.referencing.crs.DefaultImageCRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
@@ -87,16 +82,13 @@ import org.geotoolkit.util.TriFunction;
 import org.locationtech.jts.index.quadtree.Quadtree;
 import org.opengis.coverage.grid.SequenceType;
 import org.opengis.geometry.Envelope;
-import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.coordinate.MismatchedDimensionException;
 import org.opengis.metadata.Metadata;
-import org.opengis.metadata.spatial.DimensionNameType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.crs.ImageCRS;
-import org.opengis.referencing.datum.PixelInCell;
+import org.apache.sis.coverage.grid.PixelInCell;
 import org.opengis.referencing.operation.CoordinateOperation;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
-import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
@@ -502,7 +494,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
                         throw new DataStoreException("Resource has no defined CRS and Envelope.");
                     }
                     final CoordinateReferenceSystem crs = gridGeometry.getCoordinateReferenceSystem();
-                    if (crs instanceof ImageCRS) {
+                    if (crs instanceof DefaultImageCRS) {
                         throw new DataStoreException("CRS " + crs.getClass() + " can not be used in aggregation, resource will be ignored.");
                     } else if (crs != null && crs.getCoordinateSystem().getDimension() != 2) {
                         throw new DataStoreException("CRS " + crs.getName()+ " can not be used in aggregation it is not 2D, resource will be ignored.");
@@ -1491,16 +1483,16 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
             //do nothing
         }
 
-        if (r instanceof ResourceOnFileSystem) {
-            final ResourceOnFileSystem rfs = (ResourceOnFileSystem) r;
-            try {
-                final Path[] paths = rfs.getComponentFiles();
-                if (paths != null && paths.length > 0 && paths[0] != null) {
-                    name += " " + paths[0].toUri().toString();
+        try {
+            var fileset = r.getFileSet();
+            if (fileset.isPresent()) {
+                final var paths = fileset.get().getPaths();
+                if (!paths.isEmpty()) {
+                    name += " " + paths.iterator().next().toUri().toString();
                 }
-            } catch (Exception ex) {
-                //do nothing
             }
+        } catch (Exception ex) {
+            //do nothing
         }
         return name;
     }

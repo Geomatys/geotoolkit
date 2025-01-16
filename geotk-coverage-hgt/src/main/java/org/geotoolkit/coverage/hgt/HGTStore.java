@@ -34,7 +34,6 @@ import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.referencing.privy.AffineTransform2D;
-import org.apache.sis.storage.base.ResourceOnFileSystem;
 import org.apache.sis.io.stream.ChannelImageInputStream;
 import org.apache.sis.io.stream.HyperRectangleReader;
 import org.apache.sis.io.stream.Region;
@@ -55,7 +54,8 @@ import org.geotoolkit.util.NamesExt;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.datum.PixelInCell;
+import org.apache.sis.coverage.grid.PixelInCell;
+import org.apache.sis.util.ArraysExt;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.util.GenericName;
 
@@ -65,7 +65,7 @@ import org.opengis.util.GenericName;
  * @author Johann Sorel (Geomatys)
  * @author Alexis Manin (Geomatys)
  */
-public class HGTStore extends DataStore implements GridCoverageResource, ResourceOnFileSystem {
+public class HGTStore extends DataStore implements GridCoverageResource {
 
     /**
      * HGT file name pattern. Give lower-left geographic position (CRS:84) of the current tile.
@@ -105,8 +105,8 @@ public class HGTStore extends DataStore implements GridCoverageResource, Resourc
     }
 
     @Override
-    public Path[] getComponentFiles() throws DataStoreException {
-        return new Path[]{fileInput};
+    public Optional<FileSet> getFileSet() throws DataStoreException {
+        return Optional.of(new FileSet(fileInput));
     }
 
     @Override
@@ -202,7 +202,7 @@ public class HGTStore extends DataStore implements GridCoverageResource, Resourc
                         new long[]{extent.getSize(0),extent.getSize(1)},
                         new long[]{areaLower[0], areaLower[1]},
                         new long[]{areaUpper[0], areaUpper[1]},
-                        subsampling));
+                        ArraysExt.copyAsLongs(subsampling)));
 
 
             } catch (IOException ex) {

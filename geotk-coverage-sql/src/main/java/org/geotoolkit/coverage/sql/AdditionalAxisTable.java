@@ -17,7 +17,6 @@
 package org.geotoolkit.coverage.sql;
 
 import java.util.Collections;
-import java.util.Date;
 import java.util.Map;
 import java.sql.Array;
 import java.sql.ResultSet;
@@ -41,7 +40,7 @@ import org.opengis.referencing.cs.ParametricCS;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
-import org.opengis.referencing.datum.VerticalDatumType;
+import org.opengis.referencing.datum.RealizationMethod;
 import org.opengis.referencing.datum.ParametricDatum;
 import org.opengis.referencing.datum.TemporalDatum;
 import org.opengis.referencing.datum.VerticalDatum;
@@ -131,7 +130,7 @@ final class AdditionalAxisTable extends CachedTable<String,AdditionalAxisEntry> 
         final CoordinateSystemAxis axis = new DefaultCoordinateSystemAxis(
                 properties("Relative time"), "Δt", AxisDirection.FUTURE, cs.getAxis(0).getUnit());
         cs = new DefaultTimeCS(properties(cs.getName()), axis);
-        final DefaultTemporalDatum datum = new DefaultTemporalDatum(properties(RELATIVE_TIME_DATUM), new Date(0));
+        final var datum = new DefaultTemporalDatum(properties(RELATIVE_TIME_DATUM), Instant.EPOCH);
         RELATIVE_TIME = new DefaultTemporalCRS(properties(datum.getName()), datum, cs);
     }
 
@@ -247,30 +246,26 @@ final class AdditionalAxisTable extends CachedTable<String,AdditionalAxisEntry> 
          * create a new datum.
          */
         if (AxisDirections.isVertical(direction)) {
-            VerticalDatumType type = VerticalDatumTypes.guess(name, null, null);
+            RealizationMethod type = VerticalDatumTypes.guess(name, null, null);
             if (type == null) {
                 if (Units.isPressure(units)) {
-                    type = VerticalDatumType.BAROMETRIC;
+                    type = RealizationMethod.valueOf("BAROMETRIC");
                 } else if (Units.isLinear(units)) {
-                    if (AxisDirection.UP.equals(direction)) {
-                        type = VerticalDatumType.GEOIDAL;
-                    } else {
-                        type = VerticalDatumType.DEPTH;
-                    }
+                    type = RealizationMethod.GEOID;
                 } else {
                     return null;                // Can not build CRS with unknown vertical datum type.
                 }
             }
             CommonCRS.Vertical candidate = null;
-            if (VerticalDatumType.GEOIDAL.equals(type) || VerticalDatumType.DEPTH.equals(type)) {
+            if (RealizationMethod.GEOID.equals(type) || RealizationMethod.TIDAL.equals(type)) {
                 if (AxisDirection.UP.equals(direction)) {
                     candidate = CommonCRS.Vertical.MEAN_SEA_LEVEL;
                 } else if (AxisDirection.DOWN.equals(direction)) {
                     candidate = CommonCRS.Vertical.DEPTH;
                 }
-            } else if (VerticalDatumTypes.ELLIPSOIDAL.equals(type)) {
+            } else if (VerticalDatumTypes.ellipsoidal(type)) {
                 candidate = CommonCRS.Vertical.ELLIPSOIDAL;
-            } else if (VerticalDatumType.BAROMETRIC.equals(type)) {
+            } else if ("BAROMETRIC".equalsIgnoreCase(type.name())) {
                 candidate = CommonCRS.Vertical.BAROMETRIC;
             }
             final VerticalDatum datum;
@@ -330,7 +325,7 @@ final class AdditionalAxisTable extends CachedTable<String,AdditionalAxisEntry> 
                 }
             }
             if (datum == null) {
-                datum = factories.getDatumFactory().createTemporalDatum(properties(name), new Date(0));
+                datum = factories.getDatumFactory().createTemporalDatum(properties(name), Instant.EPOCH);
                 // TODO: actually we should throw an exception instead (we don't know time origin).
             }
             final CSFactory csFactory = factories.getCSFactory();
@@ -359,7 +354,7 @@ final class AdditionalAxisTable extends CachedTable<String,AdditionalAxisEntry> 
         }
         final CoordinateSystemAxis axis = csFactory.createCoordinateSystemAxis(properties(axisName), abbreviation, direction, units);
         final ParametricCS cs = csFactory.createParametricCS(properties(axis.getName()), axis);
-        return factories.getCRSFactory().createParametricCRS(properties(datum.getName()), datum, cs);
+        return factories.getCRSFactory().createParametricCRS(properties(datum.getName()), datum, null, cs);
     }
 
     /**

@@ -27,8 +27,8 @@ import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.Warmup;
 
-import static org.opengis.referencing.datum.PixelInCell.CELL_CENTER;
-import static org.opengis.referencing.datum.PixelInCell.CELL_CORNER;
+import static org.apache.sis.coverage.grid.PixelInCell.CELL_CENTER;
+import static org.apache.sis.coverage.grid.PixelInCell.CELL_CORNER;
 
 @Warmup(iterations = 2, time = 2)
 @Fork(value = 2)

@@ -59,7 +59,7 @@ import org.opengis.metadata.spatial.CellGeometry;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.datum.PixelInCell;
+import org.apache.sis.coverage.grid.PixelInCell;
 import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
 

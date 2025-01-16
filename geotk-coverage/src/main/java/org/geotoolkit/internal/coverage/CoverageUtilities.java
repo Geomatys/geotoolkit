@@ -47,11 +47,11 @@ import org.geotoolkit.lang.Static;
 import org.geotoolkit.referencing.OutOfDomainOfValidityException;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
-import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.coordinate.MismatchedDimensionException;
 import org.opengis.metadata.spatial.DimensionNameType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeographicCRS;
-import org.opengis.referencing.datum.PixelInCell;
+import org.apache.sis.coverage.grid.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.Matrix;
@@ -324,15 +324,15 @@ public final class CoverageUtilities extends Static {
         final GeneralDirectPosition center = new GeneralDirectPosition(env.getCoordinateReferenceSystem());
         final GeneralDirectPosition vec = new GeneralDirectPosition(env.getCoordinateReferenceSystem());
         for (int i = 0; i < dim; i++) {
-            center.setOrdinate(i, env.getMedian(i));
-            vec.setOrdinate(i, env.getMedian(i) + res[i]);
+            center.setCoordinate(i, env.getMedian(i));
+            vec.setCoordinate(i, env.getMedian(i) + res[i]);
         }
         final MathTransform trs = CRS.findOperation(env.getCoordinateReferenceSystem(), crs, null).getMathTransform();
         DirectPosition center2 = trs.transform(center, null);
         DirectPosition vec2 = trs.transform(vec, null);
         double[] res2 = new double[center2.getDimension()];
         for (int i = 0; i < res2.length; i++) {
-            res2[i] = Math.abs(vec2.getOrdinate(i) - center2.getOrdinate(i));
+            res2[i] = Math.abs(vec2.getCoordinate(i) - center2.getCoordinate(i));
         }
         return res2;
     }

@@ -24,6 +24,7 @@ import java.awt.geom.PathIterator;
 import static java.awt.geom.PathIterator.SEG_CLOSE;
 import static java.awt.geom.PathIterator.SEG_LINETO;
 import static java.awt.geom.PathIterator.SEG_MOVETO;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -42,7 +43,6 @@ import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.collection.BackingStoreException;
-import org.geotoolkit.display.shape.ShapeUtilities;
 import org.geotoolkit.geometry.jts.awt.JTSGeometryJ2D;
 import org.geotoolkit.resources.Errors;
 import org.locationtech.jts.algorithm.Orientation;
@@ -60,7 +60,7 @@ import org.locationtech.jts.geom.MultiPoint;
 import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
-import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.coordinate.MismatchedDimensionException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
@@ -416,6 +416,21 @@ public final class JTS {
     }
 
     /**
+     * Returns a suggested value for the {@code flatness} argument in
+     * {@link Shape#getPathIterator(AffineTransform,double)} for the specified shape.
+     *
+     * @param shape the shape for which to compute a flatness factor.
+     * @return the suggested flatness factor.
+     */
+    private static double getFlatness(final Shape shape) {
+        final Rectangle2D bounds = shape.getBounds2D();
+        final double dx = bounds.getWidth();
+        final double dy = bounds.getHeight();
+        return Math.max(0.025 * Math.min(dx, dy),
+                        0.001 * Math.max(dx, dy));
+    }
+
+    /**
      * Converts an arbitrary Java2D shape into a JTS geometry. The created JTS
      * geometry may be any of {@link LineString}, {@link LinearRing} or
      * {@link MultiLineString}.
@@ -441,7 +456,7 @@ public final class JTS {
         ensureNonNull("shape", shape);
         ensureNonNull("factory", factory);
 
-        final PathIterator iterator = shape.getPathIterator(null, ShapeUtilities.getFlatness(shape));
+        final PathIterator iterator = shape.getPathIterator(null, getFlatness(shape));
         final double[] buffer = new double[6];
         final List<Coordinate> coords = new ArrayList<Coordinate>();
         final List<LineString> lines = new ArrayList<LineString>();

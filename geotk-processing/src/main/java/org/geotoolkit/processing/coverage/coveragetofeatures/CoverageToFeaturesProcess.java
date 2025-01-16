@@ -38,7 +38,7 @@ import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.datum.PixelInCell;
+import org.apache.sis.coverage.grid.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 

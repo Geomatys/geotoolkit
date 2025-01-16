@@ -41,7 +41,7 @@ import org.opengis.geometry.DirectPosition;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.SingleCRS;
-import org.opengis.referencing.datum.PixelInCell;
+import org.apache.sis.coverage.grid.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
@@ -216,7 +216,7 @@ public class Predictor extends AbstractProcess {
             final PredictionContext ctx = new PredictionContext(
                     initGrid(origin2d), initWeights(), Duration.ofSeconds(timestep), maxPts
             );
-            ctx.points.add(origin2d.getCoordinate(), 1);
+            ctx.points.add(origin2d.getCoordinates(), 1);
             return ctx;
         } catch (NoninvertibleTransformException ex) {
             throw new ProcessException("Cannot initialize output grid", this, ex);
@@ -334,7 +334,7 @@ public class Predictor extends AbstractProcess {
                 move.y = wind.y + current.y;
                 move.scale(ctx.timestep.getSeconds());
 
-                final double[] movedLocation = location.getCoordinate();
+                final double[] movedLocation = location.getCoordinates();
                 movedLocation[0] += move.x;
                 movedLocation[1] += move.y;
 
@@ -365,15 +365,15 @@ public class Predictor extends AbstractProcess {
             ctx.points.remove(origin);
 
             // TODO : check order of grid axes
-            final double xStart = location.getOrdinate(xAxis);
-            final double yStart = location.getOrdinate(yAxis);
+            final double xStart = location.getCoordinate(xAxis);
+            final double yStart = location.getCoordinate(yAxis);
             double Δxi = Double.NaN;
             double Δyi = Double.NaN;
             // TODO : this code has been copied without proper understanding. We should review it and make it more lisible.
             for (PointReference child : entry.getValue()) {
                 child.readInGrid(location);
-                final double x1 = location.getOrdinate(xAxis);
-                final double y1 = location.getOrdinate(yAxis);
+                final double x1 = location.getCoordinate(xAxis);
+                final double y1 = location.getCoordinate(yAxis);
                 double xi = xStart;
                 double yi = yStart;
                 boolean isValid;        // is (xi,yi) on (x₀,y₀)-(x₁,y₁) line and inside (x₀, y₀, x₀+1, y₀+1) cell?

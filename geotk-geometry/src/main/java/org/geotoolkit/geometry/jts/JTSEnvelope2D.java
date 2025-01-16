@@ -23,19 +23,18 @@ import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 import java.util.Objects;
 import org.opengis.geometry.DirectPosition;
-import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.coordinate.MismatchedDimensionException;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.CoordinateOperation;
-import org.opengis.referencing.operation.CoordinateOperationFactory;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.referencing.CRS;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.referencing.operation.DefaultCoordinateOperationFactory;
 
 /**
  * A JTS envelope associated with a
@@ -317,7 +316,7 @@ public class JTSEnvelope2D extends Envelope implements org.opengis.geometry.Enve
      * @since 2.4
      */
     public boolean contains(final DirectPosition pos) {
-        return super.contains(pos.getOrdinate(0), pos.getOrdinate(1));
+        return super.contains(pos.getCoordinate(0), pos.getCoordinate(1));
     }
 
     /**
@@ -377,9 +376,8 @@ public class JTSEnvelope2D extends Envelope implements org.opengis.geometry.Enve
          * Gets a first estimation using an algorithm capable to take singularity in account
          * (North pole, South pole, 180ï¿½ longitude). We will expand this initial box later.
          */
-        CoordinateOperationFactory coordinateOperationFactory = CRS.getCoordinateOperationFactory();
-
-        final CoordinateOperation operation = coordinateOperationFactory.createOperation(crs, targetCRS);
+        var coordinateOperationFactory = DefaultCoordinateOperationFactory.provider();
+        final CoordinateOperation operation = coordinateOperationFactory.createOperation(crs, targetCRS, null);
         final GeneralEnvelope transformed = Envelopes.transform(operation, this);
         transformed.setCoordinateReferenceSystem(targetCRS);
 

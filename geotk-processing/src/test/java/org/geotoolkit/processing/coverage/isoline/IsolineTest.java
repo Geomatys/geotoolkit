@@ -28,7 +28,7 @@ import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridOrientation;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.coverage.privy.WritableTiledImage;
+import org.apache.sis.image.privy.WritableTiledImage;
 import org.apache.sis.feature.privy.AttributeConvention;
 import org.apache.sis.geometry.wrapper.jts.Factory;
 import org.apache.sis.referencing.privy.AffineTransform2D;
@@ -52,7 +52,7 @@ import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKTReader;
 import org.opengis.feature.Feature;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.datum.PixelInCell;
+import org.apache.sis.coverage.grid.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.util.NoSuchIdentifierException;
 

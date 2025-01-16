@@ -284,7 +284,7 @@ public final class MetadataProxyTest {
         assertEquals(2, grid.getOffsetVectors().size());
         assertTrue(Arrays.equals(new double[] { 0.5,    0}, grid.getOffsetVectors().get(0)));
         assertTrue(Arrays.equals(new double[] { 0.0, -0.5}, grid.getOffsetVectors().get(1)));
-        assertTrue(Arrays.equals(new double[] {-180,   90}, grid.getOrigin().getCoordinate()));
+        assertTrue(Arrays.equals(new double[] {-180,   90}, grid.getOrigin().getCoordinates()));
 //      assertArrayEquals(new int[] {0,     0}, grid.getExtent().getLow ().getCoordinateValues());
 //      assertArrayEquals(new int[] {719, 359}, grid.getExtent().getHigh().getCoordinateValues());
         assertEquals(0,   grid.getExtent().getLow (1));

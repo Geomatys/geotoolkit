@@ -20,6 +20,7 @@ package org.geotoolkit.gts.xml;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
@@ -29,12 +30,15 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlType;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.Temporal;
+import java.time.temporal.TemporalAmount;
+import java.time.temporal.TemporalUnit;
+import java.time.temporal.UnsupportedTemporalTypeException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.Duration;
-import org.apache.sis.util.SimpleInternationalString;
-import org.opengis.temporal.PeriodDuration;
-import org.opengis.util.InternationalString;
+import org.geotoolkit.temporal.object.TemporalUtilities;
 
 
 /**
@@ -61,7 +65,7 @@ import org.opengis.util.InternationalString;
 @XmlType(name = "TM_PeriodDuration_PropertyType", propOrder = {
     "tmPeriodDuration"
 })
-public class PeriodDurationType implements PeriodDuration {
+public class PeriodDurationType implements TemporalAmount {
 
     @XmlElement(name = "TM_PeriodDuration")
     protected Duration tmPeriodDuration;
@@ -69,7 +73,6 @@ public class PeriodDurationType implements PeriodDuration {
     protected List<String> nilReason;
 
     public PeriodDurationType() {
-
     }
 
     public PeriodDurationType(final String s) {
@@ -79,18 +82,6 @@ public class PeriodDurationType implements PeriodDuration {
         } catch (DatatypeConfigurationException ex) {
             Logger.getLogger("org.geotoolkit.gts.xml").log(Level.WARNING, "Error while initializing the TM_PeriodDuration", ex);
         }
-
-    }
-
-    public PeriodDurationType(final boolean isPositive, final int years, final int months, final int days, final int hours, final int minutes,
-        final int seconds) {
-        try {
-            final DatatypeFactory factory = DatatypeFactory.newInstance();
-            this.tmPeriodDuration = factory.newDuration(isPositive, years, months, days, hours, minutes, seconds);
-        } catch (DatatypeConfigurationException ex) {
-            Logger.getLogger("org.geotoolkit.gts.xml").log(Level.WARNING, "Error while initializing the TM_PeriodDuration", ex);
-        }
-
     }
 
     public PeriodDurationType(final boolean isPositive, final BigInteger years, final BigInteger months, final BigInteger days, final BigInteger hours, final BigInteger minutes,
@@ -101,7 +92,25 @@ public class PeriodDurationType implements PeriodDuration {
         } catch (DatatypeConfigurationException ex) {
             Logger.getLogger("org.geotoolkit.gts.xml").log(Level.WARNING, "Error while initializing the TM_PeriodDuration", ex);
         }
+    }
+    @Override
+    public List<TemporalUnit> getUnits() {
+        return List.of(ChronoUnit.YEARS, ChronoUnit.MONTHS, ChronoUnit.DAYS, ChronoUnit.HOURS, ChronoUnit.MINUTES, ChronoUnit.SECONDS);
+    }
 
+    @Override
+    public long get(TemporalUnit unit) {
+        if (unit instanceof ChronoUnit c) {
+            switch (c) {
+                case YEARS:   return tmPeriodDuration.getYears();
+                case MONTHS:  return tmPeriodDuration.getMonths();
+                case DAYS:    return tmPeriodDuration.getDays();
+                case HOURS:   return tmPeriodDuration.getHours();
+                case MINUTES: return tmPeriodDuration.getMinutes();
+                case SECONDS: return tmPeriodDuration.getSeconds();
+            }
+        }
+        throw new UnsupportedTemporalTypeException("Unsupported temporal unit: " + unit);
     }
 
     /**
@@ -110,7 +119,6 @@ public class PeriodDurationType implements PeriodDuration {
      * @return
      *     possible object is
      *     {@link Duration }
-     *
      */
     public Duration getTMPeriodDuration() {
         return tmPeriodDuration;
@@ -122,7 +130,6 @@ public class PeriodDurationType implements PeriodDuration {
      * @param value
      *     allowed object is
      *     {@link Duration }
-     *
      */
     public void setTMPeriodDuration(Duration value) {
         this.tmPeriodDuration = value;
@@ -133,7 +140,6 @@ public class PeriodDurationType implements PeriodDuration {
      *
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     *
      */
     public List<String> getNilReason() {
         if (nilReason == null) {
@@ -142,67 +148,23 @@ public class PeriodDurationType implements PeriodDuration {
         return this.nilReason;
     }
 
-    @Override
-    public InternationalString getDesignator() {
-        return new SimpleInternationalString("P");
+    private long getTimeInMillis() {
+        return tmPeriodDuration.getTimeInMillis(new Date(0));
     }
 
     @Override
-    public InternationalString getYears() {
-        if (tmPeriodDuration != null) {
-            return new SimpleInternationalString(Integer.toString(tmPeriodDuration.getYears()));
-        }
-        return null;
+    public Temporal addTo(Temporal temporal) {
+        return TemporalUtilities.toInstant(temporal).plusMillis(getTimeInMillis());
     }
 
     @Override
-    public InternationalString getMonths() {
-        if (tmPeriodDuration != null) {
-            return new SimpleInternationalString(Integer.toString(tmPeriodDuration.getMonths()));
-        }
-        return null;
-    }
-
-    @Override
-    public InternationalString getDays() {
-        if (tmPeriodDuration != null) {
-            return new SimpleInternationalString(Integer.toString(tmPeriodDuration.getDays()));
-        }
-        return null;
-    }
-
-    @Override
-    public InternationalString getTimeIndicator() {
-        return new SimpleInternationalString("T");
-    }
-
-    @Override
-    public InternationalString getHours() {
-        if (tmPeriodDuration != null) {
-            return new SimpleInternationalString(Integer.toString(tmPeriodDuration.getHours()));
-        }
-        return null;
-    }
-
-    @Override
-    public InternationalString getMinutes() {
-        if (tmPeriodDuration != null) {
-            return new SimpleInternationalString(Integer.toString(tmPeriodDuration.getMinutes()));
-        }
-        return null;
-    }
-
-    @Override
-    public InternationalString getSeconds() {
-        if (tmPeriodDuration != null) {
-            return new SimpleInternationalString(Integer.toString(tmPeriodDuration.getSeconds()));
-        }
-        return null;
+    public Temporal subtractFrom(Temporal temporal) {
+        return TemporalUtilities.toInstant(temporal).minusMillis(getTimeInMillis());
     }
 
     @Override
     public String toString() {
-        return tmPeriodDuration + "";
+        return String.valueOf(tmPeriodDuration);
     }
 
     @Override
@@ -210,8 +172,7 @@ public class PeriodDurationType implements PeriodDuration {
         if (this == obj) {
             return true;
         }
-        if (obj instanceof PeriodDurationType) {
-            final PeriodDurationType that = (PeriodDurationType) obj;
+        if (obj instanceof PeriodDurationType that) {
             return Objects.equals(this.nilReason,        that.nilReason) &&
                    Objects.equals(this.tmPeriodDuration, that.tmPeriodDuration);
         }

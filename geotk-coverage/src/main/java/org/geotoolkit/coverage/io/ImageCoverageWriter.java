@@ -69,7 +69,7 @@ import org.opengis.coverage.InterpolationMethod;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.datum.PixelInCell;
+import org.apache.sis.coverage.grid.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
@@ -743,7 +743,7 @@ public class ImageCoverageWriter extends GridCoverageStore {
                 final GridDomainAccessor accessor = new GridDomainAccessor(imageMetadata);
                 final Dimension size = getImageSize(image, imageParam);
                 final double ymax = env.getMaximum(Y_DIMENSION);
-                final double[] origin = env.getLowerCorner().getCoordinate();
+                final double[] origin = env.getLowerCorner().getCoordinates();
                 final int dim = origin.length;
                 origin[Y_DIMENSION] = ymax;
 
@@ -772,7 +772,7 @@ public class ImageCoverageWriter extends GridCoverageStore {
                     accessor.setLimits(new int[dim], maxGrid);
                 } else {
 
-                    final double[] envBounds = env.getUpperCorner().getCoordinate();
+                    final double[] envBounds = env.getUpperCorner().getCoordinates();
                     envBounds[Y_DIMENSION] = env.getMinimum(Y_DIMENSION);
 
                     final int[] high = new int[dim];

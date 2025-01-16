@@ -25,10 +25,6 @@ import java.util.SortedSet;
 import java.util.TimeZone;
 import java.util.TreeSet;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -41,22 +37,6 @@ public class PeriodUtilitiesTest {
     public PeriodUtilitiesTest() {
     }
 
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
-
     /**
      * Test of getDatesRespresentation method, of class PeriodUtilities.
      */
@@ -66,9 +46,7 @@ public class PeriodUtilitiesTest {
         df.setTimeZone(TimeZone.getTimeZone("GMT+0"));
         PeriodUtilities instance = new PeriodUtilities(df);
         SortedSet<Date> dates;
-
-
-        /**
+        /*
          * Test 1: isolated Date
          */
         dates    = new TreeSet<>();
@@ -77,8 +55,7 @@ public class PeriodUtilitiesTest {
         String expResult = "2003-01-07T00:00:00Z";
         String result = instance.getDatesRespresentation(dates);
         assertEquals(expResult, result);
-
-        /**
+        /*
          * Test 2: isolated Date
          */
         dates    = new TreeSet<>();
@@ -88,8 +65,7 @@ public class PeriodUtilitiesTest {
         expResult = "2003-01-07T00:00:00Z,2003-01-21T00:00:00Z";
         result = instance.getDatesRespresentation(dates);
         assertEquals(expResult, result);
-
-        /**
+        /*
          * Test 3: three isolated date
          */
         dates = new TreeSet<>();
@@ -100,8 +76,7 @@ public class PeriodUtilitiesTest {
         expResult = "2007-06-06T14:00:00Z/2007-06-20T14:00:00Z/P1W";
         result = instance.getDatesRespresentation(dates);
         assertEquals(expResult, result);
-
-        /**
+        /*
          * Test 4: one period
          */
         dates    = new TreeSet<>();
@@ -117,8 +92,7 @@ public class PeriodUtilitiesTest {
         expResult = "2004-01-28T00:00:00Z/2004-03-17T00:00:00Z/P1W";
         result = instance.getDatesRespresentation(dates);
         assertEquals(expResult, result);
-
-        /**
+        /*
          * Test 5: two period not joined
          */
         dates    = new TreeSet<>();
@@ -142,9 +116,7 @@ public class PeriodUtilitiesTest {
         expResult = "2004-01-28T00:00:00Z/2004-03-17T00:00:00Z/P1W,2005-11-09T00:00:00Z/2005-11-30T00:00:00Z/P1W";
         result = instance.getDatesRespresentation(dates);
         assertEquals(expResult, result);
-
-
-        /**
+        /*
          * Test 6: two period joined
          */
         dates    = new TreeSet<>();
@@ -160,17 +132,13 @@ public class PeriodUtilitiesTest {
         dates.add(df.parse("2004-03-12T00:00:00Z"));
         dates.add(df.parse("2004-03-20T00:00:00Z"));
 
-
-
-
         //expResult = "2004-01-28T00:00:00Z/2004-02-25T00:00:00Z/P1W,2004-02-25T00:00:00Z/2004-03-20T00:00:00Z/P1W1D";
         expResult = "2004-01-28T00:00:00Z/2004-02-25T00:00:00Z/P1W,2004-03-04T00:00:00Z/2004-03-20T00:00:00Z/P1W1D";
         result = instance.getDatesRespresentation(dates);
         System.out.println("expected =" + expResult + '\n' +
                            "result   =" + result);
         assertEquals(expResult, result);
-
-        /**
+        /*
          * Test 7: isolated dates + period1 + isolated dates + period2 + isolated dates
          */
         dates    = new TreeSet<>();
@@ -221,14 +189,12 @@ public class PeriodUtilitiesTest {
         result = instance.getDatesRespresentation(dates);
         assertEquals(expResult, result);
 
-
         dates    = new TreeSet<>();
         dates.add(df.parse("2018-08-16T11:59:30Z"));
         dates.add(df.parse("2018-09-15T23:59:30Z"));
         dates.add(df.parse("2018-10-16T11:59:30Z"));
         dates.add(df.parse("2018-11-15T23:59:30Z"));
         dates.add(df.parse("2018-12-16T11:59:30Z"));
-
 
         expResult = "2018-08-16T11:59:30Z/2018-12-16T11:59:30Z/P1MT2H";
         result    = instance.getDatesRespresentation(dates, true);
@@ -251,8 +217,7 @@ public class PeriodUtilitiesTest {
         PeriodUtilities instance = new PeriodUtilities(df);
 
         SortedSet<Date> dates;
-
-        /**
+        /*
          * Test 1: one hour period
          */
         dates    = new TreeSet<>();
@@ -269,8 +234,7 @@ public class PeriodUtilitiesTest {
         String expResult = "2004-01-28T00:00:00Z/2004-01-28T07:00:00Z/PT1H";
         String result = instance.getPeriodDescription(dates, gap);
         assertEquals(expResult, result);
-
-        /**
+        /*
          * Test 2: one week period
          */
         dates    = new TreeSet<>();
@@ -287,8 +251,7 @@ public class PeriodUtilitiesTest {
         expResult = "2004-01-28T00:00:00Z/2004-03-17T00:00:00Z/P1W";
         result = instance.getPeriodDescription(dates, gap);
         assertEquals(expResult, result);
-
-        /**
+        /*
          * Test 3: one week and one day period
          */
         dates    = new TreeSet<>();
@@ -301,8 +264,7 @@ public class PeriodUtilitiesTest {
         expResult = "2004-02-25T00:00:00Z/2004-03-20T00:00:00Z/P1W1D";
         result = instance.getDatesRespresentation(dates);
         assertEquals(expResult, result);
-
-        /**
+        /*
          * Test 4: one week and one day period one second
          */
         dates    = new TreeSet<>();
@@ -315,8 +277,7 @@ public class PeriodUtilitiesTest {
         expResult = "2004-02-25T00:00:01Z/2004-03-20T00:00:04Z/P1W1DT1S";
         result = instance.getDatesRespresentation(dates);
         assertEquals(expResult, result);
-
-        /**
+        /*
          * Test 5: one week and one day period one second 250 millisecond
          */
         instance = new PeriodUtilities(df2);
@@ -330,7 +291,6 @@ public class PeriodUtilitiesTest {
         expResult = "2004-02-25T00:00:01.250Z/2004-03-20T00:00:05.000Z/P1W1DT1.250S";
         result = instance.getDatesRespresentation(dates);
         assertEquals(expResult, result);
-
     }
 
     /**
@@ -338,16 +298,13 @@ public class PeriodUtilitiesTest {
      */
     @Test
     public void getDatesFromPeriodDescription() throws Exception {
-
-
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         DateFormat df2 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         df.setTimeZone(TimeZone.getTimeZone("GMT+0"));
         df2.setTimeZone(TimeZone.getTimeZone("GMT+0"));
         PeriodUtilities instance = new PeriodUtilities(df);
         SortedSet<Date> expResult;
-
-        /**
+        /*
          * Test 1: isolated Date
          */
         expResult    = new TreeSet<>();
@@ -356,8 +313,7 @@ public class PeriodUtilitiesTest {
         String periods = "2003-01-07T00:00:00Z";
         SortedSet<Date> result = instance.getDatesFromPeriodDescription(periods);
         assertEquals(expResult, result);
-
-        /**
+        /*
          * Test 2: one period
          */
         expResult    = new TreeSet<>();
@@ -373,8 +329,7 @@ public class PeriodUtilitiesTest {
         periods = "2004-01-28T00:00:00Z/2004-03-17T00:00:00Z/P1W";
         result = instance.getDatesFromPeriodDescription(periods);
         assertEquals(expResult, result);
-
-        /**
+        /*
          * Test 3: two period not joined
          */
         expResult    = new TreeSet<>();
@@ -398,9 +353,7 @@ public class PeriodUtilitiesTest {
         periods = "2004-01-28T00:00:00Z/2004-03-17T00:00:00Z/P1W,2005-11-09T00:00:00Z/2005-11-30T00:00:00Z/P1W";
         result = instance.getDatesFromPeriodDescription(periods);
         assertEquals(expResult, result);
-
-
-        /**
+        /*
          * Test 3: two period joined
          */
         expResult    = new TreeSet<>();
@@ -416,8 +369,6 @@ public class PeriodUtilitiesTest {
         expResult.add(df.parse("2004-03-12T00:00:00Z"));
         expResult.add(df.parse("2004-03-20T00:00:00Z"));
 
-
-
         // old format with redundance in end_period / start_period
         periods = "2004-01-28T00:00:00Z/2004-02-25T00:00:00Z/P1W,2004-02-25T00:00:00Z/2004-03-20T00:00:00Z/P1W1D";
         result = instance.getDatesFromPeriodDescription(periods);
@@ -432,8 +383,7 @@ public class PeriodUtilitiesTest {
         System.out.println("expected =" + expResult + '\n' +
                            "result   =" + result);
         assertEquals(expResult, result);
-
-        /**
+        /*
          * Test 5: isolated dates + period1 + isolated dates + period2 + isolated dates
          */
         expResult    = new TreeSet<>();
@@ -478,8 +428,7 @@ public class PeriodUtilitiesTest {
         periods = "2003-01-07T00:00:00Z,2004-01-07T00:00:00Z,2004-01-28T00:00:00Z/2004-03-17T00:00:00Z/P1W,2005-03-02T00:00:00Z,2005-07-20T00:00:00Z,2005-11-09T00:00:00Z/2005-11-30T00:00:00Z/P1W,2009-10-31T00:00:00Z,2010-10-31T00:00:00Z,2011-10-31T00:00:00Z";
         result = instance.getDatesFromPeriodDescription(periods);
         assertEquals(expResult, result);
-
-        /**
+        /*
          * Test 4: one week and one day period one second
          */
         periods = "2004-02-25T00:00:01Z/2004-03-20T00:00:04Z/P1W1DT1S";
@@ -492,9 +441,7 @@ public class PeriodUtilitiesTest {
 
         result = instance.getDatesFromPeriodDescription(periods);
         assertEquals(expResult, result);
-
-
-        /**
+        /*
          * Test 5: one week and one day period one second 250 millisecond
          */
         instance = new PeriodUtilities(df2);
@@ -509,8 +456,7 @@ public class PeriodUtilitiesTest {
 
         result = instance.getDatesFromPeriodDescription(periods);
         assertEquals(expResult, result);
-
-        /**
+        /*
          * Test 6
          */
         expResult    = new TreeSet<>();
@@ -519,7 +465,6 @@ public class PeriodUtilitiesTest {
         expResult.add(df2.parse("2018-10-16T11:59:30.000Z"));
         expResult.add(df2.parse("2018-11-15T23:59:30.000Z"));
         expResult.add(df2.parse("2018-12-16T11:59:30.000Z"));
-
 
         periods = "2018-08-16T11:59:30.000Z/2018-12-16T11:59:30.000Z/P1MT2H";
         result = instance.getDatesFromPeriodDescription(periods);
@@ -537,15 +482,13 @@ public class PeriodUtilitiesTest {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         df.setTimeZone(TimeZone.getTimeZone("GMT+0"));
         PeriodUtilities instance = new PeriodUtilities(df);
-
-        /**
+        /*
          * test 1 : period of one week and one day
          */
         String periodDescription = "P1W1D";
         long expResult = 604800000L + 86400000L;
         long result = instance.getTimeFromPeriodDescription(periodDescription);
         assertEquals(expResult, result);
-
     }
 
     private static void printResults(SortedSet<Date> dates) {

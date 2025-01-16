@@ -32,8 +32,8 @@ import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.image.ComputedImage;
 import org.apache.sis.image.Interpolation;
-import org.apache.sis.coverage.privy.FillValues;
-import org.apache.sis.coverage.privy.TilePlaceholder;
+import org.apache.sis.image.privy.FillValues;
+import org.apache.sis.image.privy.TilePlaceholder;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
@@ -44,7 +44,7 @@ import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.multires.TileInError;
-import org.opengis.referencing.datum.PixelInCell;
+import org.apache.sis.coverage.grid.PixelInCell;
 
 /**
  * Implementation of RenderedImage over a TileMatrix composed of GriCoverages.

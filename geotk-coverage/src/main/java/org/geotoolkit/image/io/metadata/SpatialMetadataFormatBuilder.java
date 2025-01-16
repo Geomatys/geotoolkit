@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.Collection;
 import java.util.Collections;
 import java.nio.charset.Charset;
+import java.time.temporal.TemporalAmount;
 import javax.imageio.metadata.IIOMetadataFormatImpl;
 
 import org.opengis.util.CodeList;
@@ -62,7 +63,6 @@ import org.opengis.coverage.grid.RectifiedGrid;
 import org.opengis.coverage.grid.GridCoordinates;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.primitive.Point;
-import org.opengis.temporal.Duration;
 import org.opengis.util.ControlledVocabulary;
 import org.opengis.util.InternationalString;
 import org.opengis.util.GenericName;
@@ -780,7 +780,7 @@ public class SpatialMetadataFormatBuilder extends Builder<SpatialMetadataFormat>
         /*
          * Metadata excluded because not yet implemented.
          */
-        substitutions.put(Duration.class,       null);  // MD_DataIdentification.temporalResolution
+        substitutions.put(TemporalAmount.class, null);  // MD_DataIdentification.temporalResolution
         substitutions.put(TemporalExtent.class, null);
         /*
          * Metadata simplification, where elements are replaced by attributes. The simplification

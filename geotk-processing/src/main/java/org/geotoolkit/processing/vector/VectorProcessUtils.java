@@ -171,22 +171,25 @@ public final class VectorProcessUtils extends Static {
         }
 
         final MathTransformFactory f = DefaultMathTransformFactory.provider();
+        final MathTransform.Builder builder;
         ParameterValueGroup p;
         if (conicProjection) {
-            p = f.getDefaultParameters("Albers_Conic_Equal_Area");
+            builder = f.builder("Albers_Conic_Equal_Area");
+            p = builder.parameters();
             p.parameter("semi_major").setValue(semiMajorAxis);
             p.parameter("semi_minor").setValue(semiMinorAxis);
             p.parameter("central_meridian").setValue(centerMeridian);
             p.parameter("standard_parallel_1").setValue(northParallal);
             p.parameter("standard_parallel_2").setValue(southParallal);
         } else {
-            p = f.getDefaultParameters("Mercator_2SP");
+            builder = f.builder("Mercator_2SP");
+            p = builder.parameters();
             p.parameter("semi_major").setValue(semiMajorAxis);
             p.parameter("semi_minor").setValue(semiMinorAxis);
             p.parameter("central_meridian").setValue(centerMeridian);
             p.parameter("standard_parallel_1").setValue(centerParallal);
         }
-        return f.createParameterizedTransform(p);
+        return builder.create();
     }
 
     /**

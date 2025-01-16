@@ -32,7 +32,7 @@ import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.ext.PositionedGraphic2D;
 import org.opengis.geometry.Envelope;
-import org.opengis.referencing.datum.PixelInCell;
+import org.apache.sis.coverage.grid.PixelInCell;
 
 /**
  * Java2D graphic object displaying a scalebar.

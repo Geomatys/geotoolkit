@@ -188,8 +188,8 @@ public class CoverageReadConsistency {
             }
             if (allowSubsampling && full != null) {
                 final GridDerivation change = full.getGridGeometry().derive().subgrid(subset.getGridGeometry());
-                System.arraycopy(change.getSubsampling(),        0, subsampling, 0, dimension);
-                System.arraycopy(change.getSubsamplingOffsets(), 0, subOffsets,  0, dimension);
+                cast(change.getSubsampling(),        subsampling, dimension);
+                cast(change.getSubsamplingOffsets(), subOffsets,  dimension);
             }
             final long[] sliceMin = actualReadExtent.getLow() .getCoordinateValues();
             final long[] sliceMax = actualReadExtent.getHigh().getCoordinateValues();
@@ -233,6 +233,12 @@ nextSlice:  for (;;) {
                 }
                 break;
             }
+        }
+    }
+
+    private static void cast(long[] source, int[] dest, int n) {
+        for (int i=0; i<n; i++) {
+            dest[i] = Math.toIntExact(source[i]);
         }
     }
 

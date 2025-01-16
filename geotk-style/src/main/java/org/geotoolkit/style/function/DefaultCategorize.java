@@ -35,7 +35,7 @@ import java.util.TreeMap;
 import javax.media.jai.ImageLayout;
 import javax.media.jai.NullOpImage;
 import javax.media.jai.OpImage;
-import org.apache.sis.coverage.privy.ColorModelFactory;
+import org.apache.sis.image.privy.ColorModelFactory;
 import org.apache.sis.util.ObjectConverters;
 import org.geotoolkit.filter.AbstractExpression;
 import static org.geotoolkit.filter.FilterUtilities.FF;

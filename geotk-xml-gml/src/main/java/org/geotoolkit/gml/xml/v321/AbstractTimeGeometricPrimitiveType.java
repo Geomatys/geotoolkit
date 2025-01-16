@@ -26,8 +26,7 @@ import jakarta.xml.bind.annotation.XmlSchemaType;
 import jakarta.xml.bind.annotation.XmlSeeAlso;
 import jakarta.xml.bind.annotation.XmlType;
 import org.opengis.filter.Expression;
-import org.opengis.temporal.Duration;
-import org.opengis.temporal.TemporalGeometricPrimitive;
+import org.opengis.temporal.TemporalPrimitive;
 import org.opengis.util.ScopedName;
 
 
@@ -52,7 +51,7 @@ import org.opengis.util.ScopedName;
     TimeInstantType.class,
     TimePeriodType.class
 })
-public abstract class AbstractTimeGeometricPrimitiveType extends AbstractTimePrimitiveType implements TemporalGeometricPrimitive, Expression {
+public abstract class AbstractTimeGeometricPrimitiveType extends AbstractTimePrimitiveType implements TemporalPrimitive, Expression {
 
     @XmlAttribute
     @XmlSchemaType(name = "anyURI")
@@ -96,16 +95,6 @@ public abstract class AbstractTimeGeometricPrimitiveType extends AbstractTimePri
      */
     public void setFrame(String value) {
         this.frame = value;
-    }
-
-    @Override
-    public Duration distance(final TemporalGeometricPrimitive tgp) {
-        return null;
-    }
-
-    @Override
-    public Duration length() {
-        return null;
     }
 
     @Override

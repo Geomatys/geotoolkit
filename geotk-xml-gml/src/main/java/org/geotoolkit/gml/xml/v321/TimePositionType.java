@@ -34,6 +34,7 @@ import jakarta.xml.bind.annotation.XmlSchemaType;
 import jakarta.xml.bind.annotation.XmlTransient;
 import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.XmlValue;
+import java.time.temporal.Temporal;
 import org.apache.sis.util.SimpleInternationalString;
 import org.geotoolkit.gml.xml.AbstractTimePosition;
 import org.geotoolkit.gml.xml.TimeIndeterminateValueType;
@@ -103,8 +104,8 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
     }
 
     public TimePositionType(final AbstractTimePosition value){
-        this(value.getDate());
-        this.indeterminatePosition = value.getIndeterminatePosition();
+        setValue(value.getDate());
+        this.indeterminatePosition = value.getIndeterminateValue();
     }
 
     /**
@@ -116,12 +117,12 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
     }
 
     /**
-     * build a simple Timposition with only a value from a timestamp.
+     * build a simple Timposition with only a value from a temporal.
      *
      * @param time a date.
      */
-    public TimePositionType(final Date time) {
-        setValue(time);
+    public TimePositionType(final Temporal time) {
+        setValue(org.apache.sis.temporal.TemporalDate.toDate(time));
     }
 
     /**
@@ -237,7 +238,7 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
      *
      */
     @Override
-    public TimeIndeterminateValueType getIndeterminatePosition() {
+    public TimeIndeterminateValueType getIndeterminateValue() {
         return indeterminatePosition;
     }
 

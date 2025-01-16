@@ -31,7 +31,7 @@ import java.util.Hashtable;
 import javax.media.jai.RasterFactory;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
-import org.apache.sis.coverage.privy.ColorModelFactory;
+import org.apache.sis.image.privy.ColorModelFactory;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 import org.opengis.parameter.ParameterValueGroup;

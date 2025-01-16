@@ -52,10 +52,12 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.referencing.factory.GeodeticObjectFactory;
 import org.apache.sis.referencing.operation.DefaultCoordinateOperationFactory;
+import org.apache.sis.referencing.operation.transform.DefaultMathTransformFactory;
 import org.apache.sis.util.ArgumentChecks;
 
 import static org.geotoolkit.data.mapinfo.ProjectionParameters.PARAMETER_LIST;
 import static org.geotoolkit.data.mapinfo.ProjectionParameters.getProjectionParameters;
+import org.opengis.referencing.ObjectDomain;
 import org.opengis.referencing.datum.DatumAuthorityFactory;
 
 /**
@@ -73,7 +75,6 @@ public class ProjectionUtils {
 
     private static final CRSFactory CRS_FACTORY = GeodeticObjectFactory.provider();
     private static final CSFactory CS_FACTORY = GeodeticObjectFactory.provider();
-    private static final CoordinateOperationFactory PROJ_FACTORY = DefaultCoordinateOperationFactory.provider();
 
     private static final String BOUNDS_NAME = "Bounds";
     private static final String AFFINE_UNITS = "Affine Units";
@@ -115,10 +116,10 @@ public class ProjectionUtils {
         StringBuilder builder = new StringBuilder();
         Envelope bounds = CRS.getDomainOfValidity(source);
         if(bounds != null) {
-            double minX = bounds.getLowerCorner().getOrdinate(0);
-            double minY = bounds.getLowerCorner().getOrdinate(1);
-            double maxX = bounds.getUpperCorner().getOrdinate(0);
-            double maxY = bounds.getUpperCorner().getOrdinate(1);
+            double minX = bounds.getLowerCorner().getCoordinate(0);
+            double minY = bounds.getLowerCorner().getCoordinate(1);
+            double maxX = bounds.getUpperCorner().getCoordinate(0);
+            double maxY = bounds.getUpperCorner().getCoordinate(1);
             builder.append(BOUNDS_NAME).append(' ')
                     .append('(').append(minX).append(',').append(minY).append(')')
                     .append('(').append(maxX).append(',').append(maxY).append(')');
@@ -256,7 +257,7 @@ public class ProjectionUtils {
                         bbox.setBounds(bounds);
                         final DefaultExtent ext = new DefaultExtent();
                         ext.setGeographicElements(Collections.singleton(bbox));
-                        crsIdentifiers.put(ReferenceSystem.DOMAIN_OF_VALIDITY_KEY, ext);
+                        crsIdentifiers.put(ObjectDomain.DOMAIN_OF_VALIDITY_KEY, ext);
                     }
                     // The case for Projected crs is managed below, after we've defined the needed conversion.
                 }
@@ -289,7 +290,8 @@ public class ProjectionUtils {
              */
             final OperationMethod method;
             try {
-                method = PROJ_FACTORY.getOperationMethod(MAP_INFO_NAMESPACE+NAMESPACE_SEPARATOR+projCode);
+                method = DefaultMathTransformFactory.provider()
+                        .getOperationMethod(MAP_INFO_NAMESPACE+NAMESPACE_SEPARATOR+projCode);
             } catch (Exception e) {
                 throw new DataStoreException("No projection can be found for code : "+projCode, e);
             }
@@ -344,7 +346,8 @@ public class ProjectionUtils {
                     Collections.singletonMap(DefaultCoordinateSystemAxis.NAME_KEY, "North"), "N", AxisDirection.NORTH, unit);
             CartesianCS cs = CS_FACTORY.createCartesianCS(properties, east, north);
 
-            Conversion conversion = PROJ_FACTORY.createDefiningConversion(properties, method, projParams);
+            Conversion conversion = DefaultCoordinateOperationFactory.provider()
+                    .createDefiningConversion(properties, method, projParams);
             // now that we've got conversion, we can check for bounds.
             if (bounds != null) {
                 try {
@@ -356,7 +359,7 @@ public class ProjectionUtils {
                     final DefaultExtent ext = new DefaultExtent();
                     ext.addElements(new Envelope2D(newLower, newUpper));
 //                    ext.setGeographicElements(Collections.singleton(bbox));
-                    crsIdentifiers.put(ReferenceSystem.DOMAIN_OF_VALIDITY_KEY, ext);
+                    crsIdentifiers.put(ObjectDomain.DOMAIN_OF_VALIDITY_KEY, ext);
                 } catch (Exception e) {
                     LOGGER.log(Level.WARNING, "MIF CoordSys clause : Bounds can't be read.", e);
                 }
@@ -400,7 +403,8 @@ public class ProjectionUtils {
                 // If we get a lambert conformal 1SP, we must convert it into 2P to use it.
                 if(IdentifiedObjects.lookupEPSG(proj.getMethod()).equals(9801)) {
                     projCode = "3";
-                    OperationMethod method = PROJ_FACTORY.getOperationMethod(MAP_INFO_NAMESPACE+NAMESPACE_SEPARATOR+projCode);
+                    OperationMethod method = DefaultMathTransformFactory.provider()
+                            .getOperationMethod(MAP_INFO_NAMESPACE+NAMESPACE_SEPARATOR+projCode);
                     Map<String, Object> properties = new HashMap<>();
                     properties.put("name", "Lambert Conformal Conic (2SP)");
                     properties.put("authority", Citations.MAP_INFO);
@@ -414,10 +418,12 @@ public class ProjectionUtils {
                     values.parameter(stParallel1).setValue(proj.getParameterValues().parameter(originLat).getValue());
                     values.parameter(stParallel2).setValue(proj.getParameterValues().parameter(originLat).getValue());
 
-                    proj = PROJ_FACTORY.createDefiningConversion(properties, method, values);
+                    proj = DefaultCoordinateOperationFactory.provider()
+                            .createDefiningConversion(properties, method, values);
 
                 } else {
-                    OperationMethod method = PROJ_FACTORY.getOperationMethod(proj.getMethod().getName().getCode());
+                    OperationMethod method = DefaultMathTransformFactory.provider()
+                            .getOperationMethod(proj.getMethod().getName().getCode());
                     projCode = IdentifiedObjects.toString(IdentifiedObjects.getIdentifier(method, Citations.MAP_INFO));
                 }
                 if (projCode == null) {

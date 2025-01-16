@@ -31,7 +31,7 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 
 /**
- * A conversion used for the definition of a {@linkplain org.opengis.referencing.crs.GeneralDerivedCRS
+ * A conversion used for the definition of a {@linkplain org.opengis.referencing.crs.DerivedCRS
  * derived CRS} (including projections). This conversion has no source and target CRS, and no math
  * transform. Those elements are created by the derived CRS itself.
  *

@@ -44,7 +44,7 @@ import org.opengis.coverage.grid.RectifiedGrid;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CoordinateSystem;
-import org.opengis.referencing.datum.PixelInCell;
+import org.apache.sis.coverage.grid.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.TransformException;
@@ -139,7 +139,7 @@ public class GridCrsType {
         if (grid != null) {
             if (grid.getOrigin() != null) {
                 this.gridOrigin = new ArrayList<>();
-                for (double d : grid.getOrigin().getCoordinate()) {
+                for (double d : grid.getOrigin().getCoordinates()) {
                     this.gridOrigin.add(d);
                 }
             }
@@ -169,7 +169,7 @@ public class GridCrsType {
        if (gg != null) {
            MathTransform gridToCRS = gg.getGridToCRS(PixelInCell.CELL_CORNER);
            DirectPosition ori = gridToCRS.transform(new GeneralDirectPosition(gridToCRS.getSourceDimensions()), null);
-           this.gridOrigin = DoubleStream.of(ori.getCoordinate()).boxed().collect(Collectors.toList());
+           this.gridOrigin = DoubleStream.of(ori.getCoordinates()).boxed().collect(Collectors.toList());
 
            Matrix m = MathTransforms.getMatrix(gridToCRS);
            if (m == null) {

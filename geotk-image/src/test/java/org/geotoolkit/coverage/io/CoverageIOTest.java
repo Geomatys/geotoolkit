@@ -29,7 +29,7 @@ import org.geotoolkit.test.image.ImageTestBase;
 import org.junit.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import org.opengis.referencing.datum.PixelInCell;
+import org.apache.sis.coverage.grid.PixelInCell;
 
 
 /**

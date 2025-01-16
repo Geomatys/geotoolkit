@@ -166,7 +166,7 @@ public abstract class AbstractObservationStoreFactory extends DataStoreProvider 
     public static ParameterDescriptor<String> createFixedIdentifier(String idValue) {
         return new ParameterBuilder()
                     .addName(IDENTIFIER.getName().getCode())
-                    .setRemarks(IDENTIFIER.getRemarks())
+                    .setRemarks(IDENTIFIER.getRemarks().orElse(null))
                     .setRequired(true)
                     .createEnumerated(String.class, new String[]{idValue}, idValue);
     }

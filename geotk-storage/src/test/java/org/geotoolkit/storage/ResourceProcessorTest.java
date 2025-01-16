@@ -35,7 +35,7 @@ import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.iso.Names;
 import org.junit.Test;
-import org.opengis.referencing.datum.PixelInCell;
+import org.apache.sis.coverage.grid.PixelInCell;
 import org.opengis.util.GenericName;
 import org.opengis.util.LocalName;
 

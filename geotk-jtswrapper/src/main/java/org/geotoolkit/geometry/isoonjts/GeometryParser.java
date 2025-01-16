@@ -23,10 +23,8 @@ import org.opengis.geometry.PositionFactory;
 import org.opengis.geometry.aggregate.AggregateFactory;
 import org.opengis.geometry.aggregate.MultiPrimitive;
 import org.opengis.geometry.coordinate.LineString;
-import org.opengis.geometry.coordinate.Position;
 import org.opengis.geometry.primitive.Curve;
 import org.opengis.geometry.primitive.Point;
-import org.opengis.geometry.primitive.PrimitiveFactory;
 import org.opengis.geometry.primitive.Ring;
 import org.opengis.geometry.primitive.SurfaceBoundary;
 import org.opengis.geometry.primitive.Surface;
@@ -41,6 +39,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSGeometryFactory;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSPrimitiveFactory;
 import org.opengis.geometry.primitive.CurveSegment;
 import org.opengis.geometry.primitive.OrientableCurve;
 
@@ -87,9 +86,6 @@ import org.opengis.geometry.primitive.OrientableCurve;
  * @author Jody Garnett
  * @author Joel Skelton
  * @author Johann Sorel (Geomatys)
- * @module
- * @since 2.5
- * @version $Id$
  */
 public class GeometryParser {
 
@@ -99,7 +95,7 @@ public class GeometryParser {
     private static final String R_PAREN = ")";
 
     private JTSGeometryFactory geometryFactory;
-    private PrimitiveFactory primitiveFactory;
+    private JTSPrimitiveFactory primitiveFactory;
     private PositionFactory positionFactory;
     private AggregateFactory aggregateFactory;
 
@@ -114,7 +110,9 @@ public class GeometryParser {
      * @param positionFactory A <code>PositionFactory</code> created with the same crs and precision as above
      * @param aggregateFactory A <Code>AggregateFactory</code> created with the same crs and precision as above
      */
-    public GeometryParser(final JTSGeometryFactory geometryFactory, final PrimitiveFactory primitiveFactory, final PositionFactory positionFactory, final AggregateFactory aggregateFactory) {
+    public GeometryParser(final JTSGeometryFactory geometryFactory, final JTSPrimitiveFactory primitiveFactory,
+            final PositionFactory positionFactory, final AggregateFactory aggregateFactory)
+    {
         this.geometryFactory = geometryFactory;
         this.primitiveFactory = primitiveFactory;
         this.positionFactory = positionFactory;
@@ -132,7 +130,7 @@ public class GeometryParser {
      * Provide a PrimitiveFactory for the parser.
      * Should be called prior to use.
      */
-    public void setFactory(final PrimitiveFactory factory){
+    public void setFactory(final JTSPrimitiveFactory factory){
         this.primitiveFactory = factory;
     }
     /**
@@ -238,10 +236,10 @@ public class GeometryParser {
      *
      * @return a <code>List\<DirectPosition\></code>
      */
-    private List<Position> getCoordinates(final StreamTokenizer tokenizer)
+    private List<DirectPosition> getCoordinates(final StreamTokenizer tokenizer)
             throws IOException, ParseException {
         String nextToken = getNextEmptyOrOpener(tokenizer);
-        List<Position> coordinates = new ArrayList<Position>();
+        var coordinates = new ArrayList<DirectPosition>();
         if (!nextToken.equals(EMPTY)) {
             coordinates.add(getPreciseCoordinate(tokenizer));
             nextToken = getNextCloserOrComma(tokenizer);
@@ -457,7 +455,7 @@ public class GeometryParser {
      * @throws ParseException if an unexpected token was encountered
      */
     private Curve readLineStringText(final StreamTokenizer tokenizer) throws IOException, ParseException {
-        final List<Position> coordList = getCoordinates(tokenizer);
+        final List<DirectPosition> coordList = getCoordinates(tokenizer);
         final LineString lineString = geometryFactory.createLineString(coordList);
         final List<CurveSegment> curveSegmentList = Collections.singletonList((CurveSegment)lineString);
         return primitiveFactory.createCurve(curveSegmentList);
@@ -477,26 +475,10 @@ public class GeometryParser {
      */
     private Curve readLinearRingText(final StreamTokenizer tokenizer)
             throws IOException, ParseException {
-        List<Position> coordList = getCoordinates(tokenizer);
+        List<DirectPosition> coordList = getCoordinates(tokenizer);
         LineString lineString = geometryFactory.createLineString(coordList);
         List<CurveSegment> curveSegmentList = Collections.singletonList((CurveSegment)lineString);
         return primitiveFactory.createCurve(curveSegmentList);
-    }
-
-    /**
-     * Creates an array of <code>Point</code>s having the given <code>Coordinate</code>s.
-     *
-     * @param coordinates the <code>Coordinate</code>s with which to create the
-     *                    <code>Point</code>s
-     * @return <code>Point</code>s created using this <code>WKTReader</code>
-     *         s <code>GeometryFactory</code>
-     */
-    private List toPoints(final List coordinates) {
-        List<Position> points = new ArrayList<Position>();
-        for (int i=0,n=coordinates.size(); i<n; i++) {
-            points.add(positionFactory.createPosition((Point)coordinates.get(i)));
-        }
-        return points;
     }
 
     /**

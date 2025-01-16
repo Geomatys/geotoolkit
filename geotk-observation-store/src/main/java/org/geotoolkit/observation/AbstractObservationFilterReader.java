@@ -1,10 +1,12 @@
 
 package org.geotoolkit.observation;
 
+import java.time.temporal.Temporal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import javax.xml.namespace.QName;
 import org.apache.sis.storage.DataStoreException;
@@ -32,9 +34,10 @@ import org.geotoolkit.observation.model.Observation;
 import org.geotoolkit.observation.model.Phenomenon;
 import org.geotoolkit.observation.model.Procedure;
 import org.geotoolkit.observation.model.SamplingFeature;
-import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
-import org.opengis.temporal.TemporalGeometricPrimitive;
+import org.opengis.temporal.TemporalPrimitive;
+import static org.apache.sis.temporal.TemporalDate.toDate;
+import org.geotoolkit.temporal.object.TemporalUtilities;
 
 /**
  *
@@ -211,36 +214,36 @@ public abstract class AbstractObservationFilterReader implements ObservationFilt
         if (tFilter == null) return;
 
         Object time = tFilter.getExpressions().get(1);
-        if (time instanceof Literal && !(time instanceof TemporalGeometricPrimitive)) {
+        if (time instanceof Literal && !(time instanceof TemporalPrimitive)) {
             time = ((Literal)time).getValue();
         }
         TemporalOperatorName type = tFilter.getOperatorType();
         if (type == TemporalOperatorName.EQUALS || type == TemporalOperatorName.DURING) {
-
+            Optional<Temporal> ti;
             if (time instanceof Period tp) {
-                startTime = tp.getBeginning().getDate();
-                endTime   = tp.getEnding().getDate();
-
-
-            } else if (time instanceof Instant ti) {
-                startTime        = ti.getDate();
-                endTime          = startTime;
+                startTime = toDate(tp.getBeginning().getPosition());
+                endTime   = toDate(tp.getEnding().getPosition());
+            } else if ((ti = TemporalUtilities.toTemporal(time)).isPresent()) {
+                startTime = toDate(ti.get());
+                endTime   = startTime;
             } else {
                 throw new ObservationStoreException("TM_Equals/TM_During operation require timeInstant or TimePeriod!", INVALID_PARAMETER_VALUE, EVENT_TIME);
             }
         } else if (type == TemporalOperatorName.BEFORE) {
 
             // for the operation before the temporal object must be an timeInstant
-            if (time instanceof Instant ti) {
-                endTime          =  ti.getDate();
+            Optional<Temporal> ti = TemporalUtilities.toTemporal(time);
+            if (ti.isPresent()) {
+                endTime = toDate(ti.get());
             } else {
                 throw new ObservationStoreException("TM_Before operation require timeInstant!",  INVALID_PARAMETER_VALUE, EVENT_TIME);
             }
         } else if (type == TemporalOperatorName.AFTER) {
 
             // for the operation after the temporal object must be an timeInstant
-            if (time instanceof Instant ti) {
-                startTime        = ti.getDate();
+            Optional<Temporal> ti = TemporalUtilities.toTemporal(time);
+            if (ti.isPresent()) {
+                startTime = toDate(ti.get());
             } else {
                 throw new ObservationStoreException("TM_After operation require timeInstant!", INVALID_PARAMETER_VALUE, EVENT_TIME);
             }

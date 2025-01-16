@@ -22,7 +22,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.logging.Level;
-import org.apache.sis.storage.base.ResourceOnFileSystem;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.Aggregate;
@@ -46,7 +45,7 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public final class HDF5Store extends DataStore implements Aggregate, ResourceOnFileSystem {
+public final class HDF5Store extends DataStore implements Aggregate {
 
     private final Connector cnx;
     private final Group root;
@@ -95,8 +94,8 @@ public final class HDF5Store extends DataStore implements Aggregate, ResourceOnF
     }
 
     @Override
-    public Path[] getComponentFiles() throws DataStoreException {
-        return new Path[]{cnx.getPath()};
+    public Optional<FileSet> getFileSet() throws DataStoreException {
+        return Optional.of(new FileSet(cnx.getPath()));
     }
 
     @Override
