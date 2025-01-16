@@ -16,8 +16,9 @@
  */
 package org.geotoolkit.observation;
 
-import java.sql.Timestamp;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.sis.temporal.TemporalObjects;
@@ -39,7 +40,7 @@ public class ResultTimeNarrowerTest {
 
     @Test
     public void applyTimeConstraintTest() throws Exception {
-
+        
         String values = "2007-05-01T02:59:00.0,6.56@@" +
                         "2007-05-01T03:59:00.0,6.56@@" +
                         "2007-05-01T04:59:00.0,6.56@@" +
@@ -62,8 +63,8 @@ public class ResultTimeNarrowerTest {
         ComplexResult array = new ComplexResult(fields, DEFAULT_ENCODING, values, 15);
 
         List<Filter> eventTimes = new ArrayList<>();
-        Timestamp obsBegin = new Timestamp(Instant.parse("2007-05-01T01:59:00.0Z").toEpochMilli());
-        Timestamp obsEnd   = new Timestamp(Instant.parse("2007-05-01T20:59:00.0Z").toEpochMilli());
+        Instant obsBegin = toInstant("2007-05-01T01:59:00.0");
+        Instant obsEnd   = toInstant("2007-05-01T20:59:00.0");
 
         // no filter
         ResultTimeNarrower.applyTimeConstraint(obsBegin, obsEnd, array, eventTimes);
@@ -82,8 +83,7 @@ public class ResultTimeNarrowerTest {
                           "2007-05-01T20:59:00.0,6.55@@" +
                           "2007-05-01T21:59:00.0,6.55@@";
 
-        eventTimes.add(FF.after(FF.property("result_time"), FF.literal(
-                TemporalObjects.createInstant(Instant.parse("2007-05-01T07:59:00.0Z")))));
+        eventTimes.add(FF.after(FF.property("result_time"), FF.literal(toOGCInstant("2007-05-01T09:59:00.0"))));
         ResultTimeNarrower.applyTimeConstraint(obsBegin, obsEnd, array, eventTimes);
 
         Assert.assertEquals(expected, array.getValues());
@@ -101,8 +101,7 @@ public class ResultTimeNarrowerTest {
                    "2007-05-01T09:59:00.0,6.56@@";
 
         eventTimes.clear();
-        eventTimes.add(FF.before(FF.property("result_time"), FF.literal(
-                TemporalObjects.createInstant(Instant.parse("2007-05-01T08:59:00.0Z")))));
+        eventTimes.add(FF.before(FF.property("result_time"), FF.literal(toOGCInstant("2007-05-01T10:59:00.0"))));
         array = new ComplexResult(fields, DEFAULT_ENCODING, values, 15);
         ResultTimeNarrower.applyTimeConstraint(obsBegin, obsEnd, array, eventTimes);
 
@@ -118,11 +117,19 @@ public class ResultTimeNarrowerTest {
         eventTimes.clear();
         eventTimes.add(FF.during(FF.property("result_time"),
                 FF.literal(TemporalObjects.createPeriod(
-                        Instant.parse("2007-05-01T04:59:00.0Z"),
-                        Instant.parse("2007-05-01T08:59:00.0Z")))));
+                        toInstant("2007-05-01T06:59:00.0"),
+                        toInstant("2007-05-01T10:59:00.0")))));
         array = new ComplexResult(fields, DEFAULT_ENCODING, values, 15);
         ResultTimeNarrower.applyTimeConstraint(obsBegin, obsEnd, array, eventTimes);
 
         Assert.assertEquals(expected, array.getValues());
+    }
+    
+    private static Instant toInstant(String value) {
+        return LocalDateTime.parse(value).atZone(ZoneOffset.systemDefault()).toInstant();
+    }
+    
+    private static org.opengis.temporal.Instant toOGCInstant(String value) {
+        return TemporalObjects.createInstant(toInstant(value));
     }
 }
