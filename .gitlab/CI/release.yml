@@ -7,6 +7,8 @@ create-tag:
   before_script:
     # Setup authorization through access token, so CI can push Git Tag
     - git remote add project "https://project_33_bot:${BOT_ACCESS_TOKEN}@${CI_DEPENDENCY_PROXY_SERVER}/${CI_PROJECT_PATH}"
+    - git config --global user.email "admin@geomatys.com"
+    - git config --global user.name "Gitlab Runner"
   script:
     # Create a temporary branch for the tag
     - git checkout -b "tmp/$TAG_VERSION"
