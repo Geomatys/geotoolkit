@@ -164,6 +164,7 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
         this.value = value;
     }
 
+    @Override
     public final void setValue(final Date value) {
         this.cachedDate = value;
         this.value = null;
