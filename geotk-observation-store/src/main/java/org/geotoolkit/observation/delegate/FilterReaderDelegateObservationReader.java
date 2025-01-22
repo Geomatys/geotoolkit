@@ -79,7 +79,7 @@ public class FilterReaderDelegateObservationReader implements ObservationReader 
     public Offering getObservationOffering(String identifier) throws DataStoreException {
         ObservationFilterReader filter = filterSupplier.get();
         filter.init(new OfferingQuery());
-        filter.setObservedProperties(Arrays.asList(identifier));
+        filter.setObservedProperty(identifier);
         List<Offering> results = filter.getOfferings();
         if (!results.isEmpty()) {
             return results.get(0);
@@ -91,7 +91,7 @@ public class FilterReaderDelegateObservationReader implements ObservationReader 
     public Phenomenon getPhenomenon(String identifier) throws DataStoreException {
         ObservationFilterReader filter = filterSupplier.get();
         filter.init(new ObservedPropertyQuery());
-        filter.setObservedProperties(Arrays.asList(identifier));
+        filter.setObservedProperty(identifier);
         List<Phenomenon> results = filter.getPhenomenons();
         if (!results.isEmpty()) {
             return results.get(0);
@@ -103,7 +103,7 @@ public class FilterReaderDelegateObservationReader implements ObservationReader 
     public Procedure getProcess(String identifier) throws DataStoreException {
         ObservationFilterReader filter = filterSupplier.get();
         filter.init(new ProcedureQuery());
-        filter.setProcedure(Arrays.asList(identifier));
+        filter.setProcedure(identifier);
         List<Procedure> results = filter.getProcesses();
         if (!results.isEmpty()) {
             return results.get(0);
@@ -120,7 +120,7 @@ public class FilterReaderDelegateObservationReader implements ObservationReader 
     public SamplingFeature getFeatureOfInterest(String identifier) throws DataStoreException {
         ObservationFilterReader filter = filterSupplier.get();
         filter.init(new SamplingFeatureQuery());
-        filter.setProcedure(Arrays.asList(identifier));
+        filter.setProcedure(identifier);
         List<SamplingFeature> results = filter.getFeatureOfInterests();
         if (!results.isEmpty()) {
             return results.get(0);
@@ -137,7 +137,7 @@ public class FilterReaderDelegateObservationReader implements ObservationReader 
     public Observation getObservation(String identifier, QName resultModel, ResponseMode mode) throws DataStoreException {
         ObservationFilterReader filter = filterSupplier.get();
         filter.init(new ObservationQuery(resultModel, mode, null));
-        filter.setObservationIds(Arrays.asList(identifier));
+        filter.setObservationId(identifier);
         List<Observation> results = filter.getObservations();
         if (!results.isEmpty()) {
             return results.get(0);
@@ -149,7 +149,7 @@ public class FilterReaderDelegateObservationReader implements ObservationReader 
     public Observation getTemplateForProcedure(String procedure) throws DataStoreException {
         ObservationFilterReader filter = filterSupplier.get();
         filter.init(new ObservationQuery(OBSERVATION_QNAME, RESULT_TEMPLATE, null));
-        filter.setProcedure(Arrays.asList(procedure));
+        filter.setProcedure(procedure);
         List<Observation> results = filter.getObservations();
         if (!results.isEmpty()) {
             return results.get(0);
@@ -166,7 +166,7 @@ public class FilterReaderDelegateObservationReader implements ObservationReader 
     public Geometry getSensorLocation(String sensorID) throws DataStoreException {
         ObservationFilterReader filter = filterSupplier.get();
         filter.init(new LocationQuery());
-        filter.setProcedure(Arrays.asList(sensorID));
+        filter.setProcedure(sensorID);
         Map<String, Geometry> sensorLocations = filter.getSensorLocations();
         return sensorLocations.getOrDefault(sensorID, null);
     }
@@ -175,7 +175,7 @@ public class FilterReaderDelegateObservationReader implements ObservationReader 
     public Map<Date, Geometry> getSensorLocations(String sensorID) throws DataStoreException {
         ObservationFilterReader filter = filterSupplier.get();
         filter.init(new HistoricalLocationQuery());
-        filter.setProcedure(Arrays.asList(sensorID));
+        filter.setProcedure(sensorID);
         Map<String, Map<Date, Geometry>> sensorHistoricalLocations = filter.getSensorHistoricalLocations();
         return sensorHistoricalLocations.getOrDefault(sensorID, null);
     }

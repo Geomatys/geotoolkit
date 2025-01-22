@@ -17,8 +17,6 @@
 package org.geotoolkit.observation;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -126,7 +124,7 @@ public abstract class AbstractFilteredObservationStore extends AbstractObservati
         observationQuery.setIncludeTimeForProfile(query.isIncludeTimeForProfile());
         observationQuery.setSeparatedProfileObservation(query.isSeparatedProfileObservation());
         currentFilter.init(observationQuery);
-        currentFilter.setProcedure(sensorIDs);
+        addProcedureFilters(sensorIDs, currentFilter);
         List<Observation> observations = currentFilter.getObservations().stream().map(obs -> (Observation)obs).toList();
 
         final ObservationDataset result = new ObservationDataset();
@@ -166,10 +164,29 @@ public abstract class AbstractFilteredObservationStore extends AbstractObservati
         // fill also offerings
         currentFilter = (ObservationFilterReader) getFilter();
         currentFilter.init(new OfferingQuery());
-        currentFilter.setProcedure(sensorIDs);
+        addProcedureFilters(sensorIDs, currentFilter);
         result.offerings.addAll(currentFilter.getOfferings());
 
         return result;
+    }
+
+    private void addProcedureFilters(List<String> sensorIDs, ObservationFilterReader currentFilter) throws DataStoreException {
+        if (!sensorIDs.isEmpty()) {
+            FilterAppend result = createNewFilterAppend();
+            currentFilter.startFilterBlock();
+            for (int i = 0; i < sensorIDs.size(); i++) {
+                String sensorID = sensorIDs.get(i);
+
+                // if not first we append the logical operator
+                if (i > 0) currentFilter.appendFilterOperator(LogicalOperatorName.OR, result);
+                FilterAppend fa = currentFilter.setProcedure(sensorID);
+
+                // we may have to remove it
+                if (i > 0) currentFilter.removeFilterOperator(LogicalOperatorName.OR, result, fa);
+                result = result.merge(fa);
+            }
+            currentFilter.endFilterBlock(LogicalOperatorName.OR, result);
+        }
     }
 
     /**
@@ -181,7 +198,7 @@ public abstract class AbstractFilteredObservationStore extends AbstractObservati
 
         final ObservationFilterReader procFilter = getFilter();
         procFilter.init(new ProcedureQuery());
-        procFilter.setProcedure(query.getSensorIds());
+        addProcedureFilters(query.getSensorIds(), procFilter);
 
         // TODO apply filter
         for (org.opengis.observation.Process p : procFilter.getProcesses()) {
@@ -225,11 +242,11 @@ public abstract class AbstractFilteredObservationStore extends AbstractObservati
     @Override
     public TemporalPrimitive getEntityTemporalBounds(IdentifierQuery query) throws DataStoreException {
         if (query == null) throw new DataStoreException("Query must no be null");
-        switch (query.getEntityType()) {
-            case FEATURE_OF_INTEREST: return getReader().getFeatureOfInterestTime(query.getIdentifier());
-            case PROCEDURE:           return getReader().getProcedureTime(query.getIdentifier());
-            default:                  throw new DataStoreException("temporal bound not implemented yet for entity: " + query.getEntityType());
-        }
+        return switch (query.getEntityType()) {
+            case FEATURE_OF_INTEREST -> getReader().getFeatureOfInterestTime(query.getIdentifier());
+            case PROCEDURE           -> getReader().getProcedureTime(query.getIdentifier());
+            default                  -> throw new DataStoreException("temporal bound not implemented yet for entity: " + query.getEntityType());
+        };
     }
 
     /**
@@ -333,24 +350,16 @@ public abstract class AbstractFilteredObservationStore extends AbstractObservati
         if (q == null) throw new DataStoreException("Query must no be null");
 
         final ObservationFilterReader localOmFilter = getFilter();
-        List<String> observedProperties = new ArrayList<>();
-        List<String> procedures         = new ArrayList<>();
-        List<String> fois               = new ArrayList<>();
-        List<String> offerings          = new ArrayList<>();
 
         if (q instanceof AbstractObservationQuery query) {
             localOmFilter.init(query);
-            handleFilter(query.getEntityType(), query.getSelection(), localOmFilter, observedProperties, procedures, fois, offerings);
+            handleFilter(query.getEntityType(), query.getSelection(), localOmFilter);
 
         } else {
             throw new DataStoreException("Only ObservationQuery are supported for now");
         }
 
         // TODO Spatial BBOX
-        localOmFilter.setObservedProperties(observedProperties);
-        localOmFilter.setProcedure(procedures);
-        localOmFilter.setFeatureOfInterest(fois);
-        localOmFilter.setOfferings(offerings);
         return localOmFilter;
     }
 
@@ -362,52 +371,43 @@ public abstract class AbstractFilteredObservationStore extends AbstractObservati
      * In long term this method should be removed, and its code should move into
      * the observation filter.
      *
-     * @param mode Entity type of the query.
+     * @param entityType Entity type of the query.
      * @param filter The query filter to apply.
      * @param localOmFilter An observation filter.
-     * @param observedProperties A list of observed property ids to populate.
-     * @param procedures A list of procedure ids to populate.
-     * @param fois A list of feature of interest ids to populate.
-     * @param offerings A list of offering ids to populate.
+     *
+     * @return informations about if the filter has been append or not.
      */
-    protected void handleFilter(OMEntity mode, Filter filter, final ObservationFilterReader localOmFilter, List<String> observedProperties, List<String> procedures, List<String> fois, List<String> offerings) throws DataStoreException {
+    protected FilterAppend handleFilter(OMEntity entityType, Filter filter, final ObservationFilterReader localOmFilter) throws DataStoreException {
         if (Filter.include().equals(filter) || filter == null) {
-            return;
+            return createNewFilterAppend();
         }
 
-        // actually there is no OR or AND filter properly supported
         CodeList type = filter.getOperatorType();
-        if (type == LogicalOperatorName.AND) {
-            for (Filter f : ((LogicalOperator<?>) filter).getOperands()) {
-                handleFilter(mode, f, localOmFilter, observedProperties, procedures, fois, offerings);
-            }
 
-        } else if (type == LogicalOperatorName.OR) {
-            for (Filter f : ((LogicalOperator<?>) filter).getOperands()) {
-                handleFilter(mode, f, localOmFilter, observedProperties, procedures, fois, offerings);
-            }
+        // Logical filter
+        if (filter instanceof LogicalOperator<?> logFilter) {
+            return handleLogicalFilter(entityType, localOmFilter, logFilter);
 
-            // Temoral filter
+            // Temporal filter
         } else if (filter instanceof TemporalOperator tFilter) {
-
-            localOmFilter.setTimeFilter(tFilter);
+            return localOmFilter.setTimeFilter(tFilter);
 
         } else if (filter instanceof ResourceId idf) {
-            List<String> ids = new ArrayList<>();
-            ids.add(idf.getIdentifier());
+            String id = idf.getIdentifier();
 
-            switch (mode) {
-                case FEATURE_OF_INTEREST           -> localOmFilter.setFeatureOfInterest(ids);
-                case OBSERVATION                   -> localOmFilter.setObservationIds(ids);
-                case OBSERVED_PROPERTY             -> localOmFilter.setObservedProperties(ids);
-                case PROCEDURE                     -> localOmFilter.setProcedure(ids);
-                case OFFERING                      -> localOmFilter.setOfferings(ids);
-                case LOCATION, HISTORICAL_LOCATION -> localOmFilter.setProcedure(ids);
-                default                            -> {}
-            }
+            return switch (entityType) {
+
+                case FEATURE_OF_INTEREST           -> localOmFilter.setFeatureOfInterest(id);
+                case OBSERVATION                   -> localOmFilter.setObservationId(id);
+                case OBSERVED_PROPERTY             -> localOmFilter.setObservedProperty(id);
+                case PROCEDURE                     -> localOmFilter.setProcedure(id);
+                case OFFERING                      -> localOmFilter.setOffering(id);
+                case LOCATION, HISTORICAL_LOCATION -> localOmFilter.setProcedure(id);
+                default                            ->  throw new DataStoreException("Unknown entity type for resource id filter.");
+            };
 
         } else if (type == SpatialOperatorName.BBOX && filter instanceof BinarySpatialOperator bbox) {
-            handleBBOXFilter(mode, localOmFilter, fois, procedures, bbox);
+            return handleBBOXFilter(entityType, localOmFilter, bbox);
 
         } else if (type == ComparisonOperatorName.PROPERTY_IS_EQUAL_TO) {
             final BinaryComparisonOperator ef = (BinaryComparisonOperator) filter;
@@ -415,21 +415,21 @@ public abstract class AbstractFilteredObservationStore extends AbstractObservati
             final String pNameStr      = name.getXPath();
             final Literal value        = (Literal) ef.getOperand2();
             if (pNameStr.equals("observedProperty")) {
-                observedProperties.add((String) value.getValue());
+                return localOmFilter.setObservedProperty((String) value.getValue());
             } else if (pNameStr.equals("procedure")) {
-                procedures.add((String) value.getValue());
+                return localOmFilter.setProcedure((String) value.getValue());
             } else if (pNameStr.equals("featureOfInterest")) {
-                fois.add((String) value.getValue());
+                return localOmFilter.setFeatureOfInterest((String) value.getValue());
             } else if (pNameStr.equals("observationId")) {
-                localOmFilter.setObservationIds(Arrays.asList((String) value.getValue()));
+                return localOmFilter.setObservationId((String) value.getValue());
             } else if (pNameStr.equals("offering")) {
-                offerings.add((String) value.getValue());
+                return localOmFilter.setOffering((String) value.getValue());
             } else if (pNameStr.equals("sensorType")) {
-                localOmFilter.setProcedureType((String) value.getValue());
+                return localOmFilter.setProcedureType((String) value.getValue());
             } else if (pNameStr.contains("properties/")) {
-                localOmFilter.setPropertiesFilter((BinaryComparisonOperator) filter);
+                return localOmFilter.setPropertiesFilter((BinaryComparisonOperator) filter);
             }  else if (pNameStr.startsWith("result")) {
-                localOmFilter.setResultFilter((BinaryComparisonOperator) filter);
+                return localOmFilter.setResultFilter((BinaryComparisonOperator) filter);
             } else {
                 throw new DataStoreException("Unsuported property for filtering:" + pNameStr);
             }
@@ -438,15 +438,37 @@ public abstract class AbstractFilteredObservationStore extends AbstractObservati
             final String pNameStr      = name.getXPath();
 
             if (pNameStr.contains("properties/")) {
-                localOmFilter.setPropertiesFilter((BinaryComparisonOperator) filter);
+                return localOmFilter.setPropertiesFilter((BinaryComparisonOperator) filter);
             } else if (pNameStr.startsWith("result")) {
-                localOmFilter.setResultFilter((BinaryComparisonOperator) filter);
+                return localOmFilter.setResultFilter((BinaryComparisonOperator) filter);
             } else {
                 throw new DataStoreException("Unsuported property for filtering:" + pNameStr);
             }
         } else {
             throw new DataStoreException("Unknown filter operation.\nAnother possibility is that the content of your time filter is empty or unrecognized.");
         }
+    }
+
+    protected FilterAppend handleLogicalFilter(final OMEntity entityType, final ObservationFilterReader localOmFilter, LogicalOperator<?> logFilter) throws DataStoreException {
+        FilterAppend result = createNewFilterAppend();
+        LogicalOperatorName type = logFilter.getOperatorType();
+        localOmFilter.startFilterBlock(type);
+        int nbFilter = logFilter.getOperands().size();
+        for (int i = 0; i < nbFilter; i++) {
+            Filter f = logFilter.getOperands().get(i);
+
+            // if not first we append the logical operator
+            if (i > 0) localOmFilter.appendFilterOperator(type, result);
+
+            FilterAppend fa = handleFilter(entityType, f, localOmFilter);
+
+            // we may have to remove it
+            if (i > 0) localOmFilter.removeFilterOperator(type, result, fa);
+
+            result = result.merge(fa);
+        }
+        localOmFilter.endFilterBlock(type, result);
+        return result;
     }
 
     /**
@@ -460,24 +482,46 @@ public abstract class AbstractFilteredObservationStore extends AbstractObservati
      * This method is separated from handleFilter to allow sub-classes to
      * override its behavior.
      *
-     * @param mode Entity type of the query.
+     * @param entityType Entity type of the query.
      * @param localOmFilter An observation filter.
-     * @param fois A list of feature of interest ids to populate.
-     * @param procedures A list of procedure ids to populate.
      * @param bbox The spatial filter to apply.
+     *
+     * @return informations about if the filter has been append or not.
      */
-    protected void handleBBOXFilter(OMEntity mode, final ObservationFilterReader localOmFilter, List<String> fois, List<String> procedures, BinarySpatialOperator bbox) throws DataStoreException {
-        switch (mode) {
-            case LOCATION, HISTORICAL_LOCATION ->  localOmFilter.setBoundingBox(bbox);
+    protected FilterAppend handleBBOXFilter(OMEntity entityType, final ObservationFilterReader localOmFilter, BinarySpatialOperator bbox) throws DataStoreException {
+        switch (entityType) {
+
+            case LOCATION, HISTORICAL_LOCATION ->  {
+                return localOmFilter.setBoundingBox(bbox);
+            }
             default       -> {
                 if (getCapabilities().isBoundedObservation) {
-                    localOmFilter.setBoundingBox(bbox);
+                    return localOmFilter.setBoundingBox(bbox);
                 } else {
-                    Collection<String> allfoi = getFeaturesOfInterestForBBOX(bbox);
-                    if (!allfoi.isEmpty()) {
-                        fois.addAll(allfoi);
+                    List<String> fois = getFeaturesOfInterestForBBOX(bbox);
+                    if (!fois.isEmpty()) {
+                        if (fois.size() == 1) {
+                            return localOmFilter.setFeatureOfInterest(fois.get(0));
+                        } else {
+                            FilterAppend result = createNewFilterAppend();
+                            localOmFilter.startFilterBlock();
+                            for (int i = 0; i < fois.size(); i++) {
+                                // if not first we append the logical operator
+                                if (i > 0) localOmFilter.appendFilterOperator(LogicalOperatorName.OR, result);
+
+                                FilterAppend fa = localOmFilter.setFeatureOfInterest(fois.get(i));
+
+                                // we may have to remove it
+                                if (i > 0) localOmFilter.removeFilterOperator(LogicalOperatorName.OR, result, fa);
+
+                                result = result.merge(fa);
+                            }
+                            localOmFilter.endFilterBlock(LogicalOperatorName.OR, result);
+                            return result;
+                        }
                     } else {
-                       fois.add("unexisting-foi");
+                        // invalid the results
+                        return localOmFilter.setFeatureOfInterest("unexisting-foi");
                     }
                 }
             }
@@ -485,7 +529,7 @@ public abstract class AbstractFilteredObservationStore extends AbstractObservati
     }
 
     /**
-     * Peform a Feature of intrest query on the specified bbox.
+     * Perform a Feature of intrest query on the specified bbox.
      *
      * @param box A bbox filter.
      *
@@ -516,5 +560,15 @@ public abstract class AbstractFilteredObservationStore extends AbstractObservati
             }
         }
         return results;
+    }
+
+    /**
+     * Create a new FilterAppend. This simple method allow sub-implementation to
+     * create specific objects.
+     *
+     * @return A filterAppend.
+     */
+    protected FilterAppend createNewFilterAppend() {
+        return new FilterAppend();
     }
 }
