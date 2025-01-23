@@ -44,7 +44,7 @@ public abstract class AbstractTimePosition implements Instant {
 
     protected static final Logger LOGGER = Logger.getLogger("org.geotoolkit.gml.xml");
 
-    protected static final List<DateFormat> FORMATTERS = new ArrayList<DateFormat>();
+    protected static final List<DateFormat> FORMATTERS = new ArrayList<>();
 
     static {
         FORMATTERS.add(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS"));
@@ -59,7 +59,13 @@ public abstract class AbstractTimePosition implements Instant {
         return org.apache.sis.temporal.TemporalDate.toTemporal(getDate());
     }
 
+    public void setPosition(Temporal pos) {
+        setValue(org.apache.sis.temporal.TemporalDate.toDate(pos));
+    }
+
     public abstract Date getDate();
+
+    public abstract void setValue(Date d);
 
     protected Date parseDate(final String value) {
         if (value != null && !value.isEmpty()) {
@@ -124,6 +130,12 @@ public abstract class AbstractTimePosition implements Instant {
                 else if (v.equals(IndeterminateValue.NOW)) c = TimeIndeterminateValueType.NOW;
                 else  c = TimeIndeterminateValueType.UNKNOWN;
                 return c;
+            }
+            @Override public void setPosition(Temporal pos)   {
+                throw new UnsupportedOperationException("Not supported. immutable implementation");
+            }
+            @Override public void setValue(Date pos)   {
+                throw new UnsupportedOperationException("Not supported. immutable implementation");
             }
         };
     }
