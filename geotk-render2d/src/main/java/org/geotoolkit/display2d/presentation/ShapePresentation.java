@@ -72,7 +72,7 @@ public class ShapePresentation extends Grid2DPresentation {
 
     @Override
     public boolean hit(RenderingContext2D renderingContext, SearchAreaJ2D search) {
-        if (!shape.intersects(search.getDisplayShape().getBounds2D())) {
+        if (shape == null || !shape.intersects(search.getDisplayShape().getBounds2D())) {
             return false;
         }
         final Shape mask = search.getDisplayShape();
