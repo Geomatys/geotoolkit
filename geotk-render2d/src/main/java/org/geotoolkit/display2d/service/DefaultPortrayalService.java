@@ -105,6 +105,7 @@ import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.image.io.XImageIO;
+import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.process.ProcessException;
@@ -209,7 +210,7 @@ public final class DefaultPortrayalService implements PortrayalService{
 
         final GraphicsPortrayer portrayer = new GraphicsPortrayer();
         portrayer.setCanvas(g);
-        portrayer.setDomain(grid);
+        portrayer.setDomain(CoverageUtilities.forceLowerToZero(grid));
         try {
             portrayer.portray(sceneDef.getContext());
         } catch (RenderingException ex) {
