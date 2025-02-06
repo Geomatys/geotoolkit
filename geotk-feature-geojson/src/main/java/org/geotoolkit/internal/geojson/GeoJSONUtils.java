@@ -247,7 +247,7 @@ public final class GeoJSONUtils extends Static {
      * @return String
      */
     public static String getNameWithoutExt(Path file) {
-        return IOUtilities.filenameWithoutExtension(file.toUri().toString());
+        return IOUtilities.filenameWithoutExtension(file.getFileName().toString());
     }
 
     /**
