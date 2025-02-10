@@ -17,6 +17,7 @@
 package org.geotoolkit.observation.model;
 
 import java.util.Date;
+import java.util.Map;
 
 /**
  *
@@ -27,7 +28,8 @@ public enum FieldType {
     QUANTITY("Quantity"),
     TEXT("Text"),
     BOOLEAN("Boolean"),
-    TIME("Time");
+    TIME("Time"),
+    JSON("Json");
 
     public final String label;
 
@@ -42,6 +44,7 @@ public enum FieldType {
             case "Text": return TEXT;
             case "Boolean": return BOOLEAN;
             case "Time": return TIME;
+            case "Json": return JSON;
             default: throw new IllegalArgumentException("Unexpected value for field type enum:" + label);
         }
     }
@@ -52,6 +55,7 @@ public enum FieldType {
             case TEXT: return String.class;
             case BOOLEAN: return Boolean.class;
             case TIME: return Date.class;
+            case JSON: return Map.class;
             default: throw new IllegalArgumentException("Unexpected value for field type enum:" + this);
         }
     }

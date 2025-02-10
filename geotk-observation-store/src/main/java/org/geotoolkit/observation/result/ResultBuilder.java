@@ -23,6 +23,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import org.geotoolkit.observation.OMUtils;
 import org.geotoolkit.observation.model.FieldType;
 import static org.geotoolkit.observation.model.ResultMode.COUNT;
 import static org.geotoolkit.observation.model.ResultMode.CSV;
@@ -169,6 +171,22 @@ public class ResultBuilder {
             case CSV -> {
                 if (value != null) {
                     currentLine.append(Boolean.toString(value));
+                }
+                currentLine.append(encoding.getTokenSeparator());
+            }
+
+        }
+    }
+
+    public void appendMap(Map value, boolean measureField, Field field) {
+        if (value != null && measureField) {
+            emptyLine = false;
+        }
+        switch (getMode()) {
+            case DATA_ARRAY -> currentArrayLine.add(value);
+            case CSV -> {
+                if (value != null) {
+                    currentLine.append(OMUtils.writeJsonMap(value));
                 }
                 currentLine.append(encoding.getTokenSeparator());
             }

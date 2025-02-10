@@ -152,6 +152,7 @@ public class ObservationTransformUtils {
            case TEXT     -> buildText(version,     nameAsId ? field.name : null, field.description, null, quality);
            case TIME     -> buildTime(version,     nameAsId ? field.name : null, field.description, null, quality);
            case BOOLEAN  -> buildBoolean(version,  nameAsId ? field.name : null, field.description, null, quality);
+           case JSON     -> throw new UnsupportedOperationException("This field type is nope supported in SOS binding");
        };
     }
 
