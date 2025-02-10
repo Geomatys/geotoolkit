@@ -134,8 +134,8 @@ public final class ProcessConsole {
             final StringBuilder sb = new StringBuilder();
             sb.append(color);
             sb.append(BOLD.sequence());
-            sb.append(event.getProgress());
-            sb.append("%\t");
+            sb.append(String.format("% 8.3f", event.getProgress()));
+            sb.append("%  ");
             sb.append(RESET.sequence());
             sb.append(color);
             if (etd > 0) {
