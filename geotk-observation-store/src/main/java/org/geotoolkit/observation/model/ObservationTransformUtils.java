@@ -448,7 +448,8 @@ public class ObservationTransformUtils {
                                    phenModel,
                                    aobs.getResultQuality(),
                                    result,
-                                   properties);
+                                   properties,
+                                   new HashMap<>());
         } else if (obs instanceof Observation model) {
             return model;
         } else if (obs == null) {
@@ -550,7 +551,7 @@ public class ObservationTransformUtils {
         } else {
             throw new IllegalArgumentException("Only Quantity, Text Boolean AND Time are supported for now");
         }
-        return new Field(index, ft, id, component.getLabel(), component.getDefinition(), uom, qualityFields);
+        return new Field(index, ft, id, component.getLabel(), component.getDefinition(), uom, qualityFields, new ArrayList<>());
     }
 
     public static TemporalPrimitive toModel(final TemporalPrimitive gmlTime) {

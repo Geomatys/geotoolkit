@@ -75,5 +75,8 @@
   "resultQuality" : [ {
     "name" : "qFlag",
     "value" : 2.3
-  } ]
+  } ],
+  "parameters": {
+    "param1": "value1"
+  }
 }

@@ -339,7 +339,8 @@ public class OMUtils {
                                                       obs.getObservedProperty(), // TODO split phenomenon
                                                       obs.getResultQuality(),
                                                       result,
-                                                      obs.getProperties());
+                                                      obs.getProperties(),
+                                                      obs.getParameters());
                 results.add(measObs);
             }
         } else {
@@ -398,7 +399,8 @@ public class OMUtils {
                                                           obs.getObservedProperty(), // TODO split phenomenon
                                                           quality,
                                                           result,
-                                                          obs.getProperties());
+                                                          obs.getProperties(),
+                                                          obs.getParameters());
                     results.add(measObs);
                 }
                 mid++;
