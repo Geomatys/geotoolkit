@@ -102,6 +102,9 @@ public class JsonBindingTest {
         Map<String, Object> properties = new HashMap<>();
         properties.put("type", "timeseries");
         properties.put("names", Arrays.asList("n1", "n2"));
+        
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("param1", "value1");
 
         Observation expected = new Observation("obs-001",
                                           "urn:obs:001",
@@ -114,7 +117,8 @@ public class JsonBindingTest {
                                           phen,
                                           qualities,
                                           mresult,
-                                          properties);
+                                          properties,
+                                          parameters);
 
         StringWriter sw = new StringWriter();
         mapper.writeValue(sw, expected);
@@ -167,6 +171,9 @@ public class JsonBindingTest {
                                            2);
         Map<String, Object> properties = new HashMap<>();
         properties.put("type", "timeseries");
+        
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("param1", "value1");
 
         Observation expected = new Observation("obs-001",
                                           "urn:obs:001",
@@ -179,7 +186,8 @@ public class JsonBindingTest {
                                           phen,
                                           qualities,
                                           mresult,
-                                          properties);
+                                          properties,
+                                          parameters);
 
         StringWriter sw = new StringWriter();
         mapper.writeValue(sw, expected);

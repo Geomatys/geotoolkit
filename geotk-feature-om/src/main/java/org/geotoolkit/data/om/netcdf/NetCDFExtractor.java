@@ -407,7 +407,8 @@ public class NetCDFExtractor {
                                                              phenomenon,
                                                              null,
                                                              result,
-                                                             properties));
+                                                             properties,
+                                                             new HashMap<>()));
                     results.spatialBound.merge(gb);
                     compo.spatialBound.merge(gb);
                 }
@@ -478,7 +479,8 @@ public class NetCDFExtractor {
                                                                  phenomenon,
                                                                  null,
                                                                  result,
-                                                                 properties));
+                                                                 properties,
+                                                             new HashMap<>()));
                         results.spatialBound.merge(gb);
                     }
                 }
@@ -695,7 +697,8 @@ public class NetCDFExtractor {
                                                              phenomenon,
                                                              null,
                                                              result,
-                                                             properties));
+                                                             properties,
+                                                             new HashMap<>()));
                     results.spatialBound.merge(gb);
                     compo.spatialBound.merge(gb);
                 }
@@ -770,7 +773,8 @@ public class NetCDFExtractor {
                                                                  phenomenon,
                                                                  null,
                                                                  result,
-                                                                 properties));
+                                                                 properties,
+                                                             new HashMap<>()));
                         results.spatialBound.merge(gb);
                     }
                 }
@@ -981,7 +985,8 @@ public class NetCDFExtractor {
                                                              phenomenon,
                                                              null,
                                                              result,
-                                                             properties));
+                                                             properties,
+                                                             new HashMap<>()));
                     results.spatialBound.merge(gb);
                     compo.spatialBound.merge(gb);
                 }
@@ -1059,7 +1064,8 @@ public class NetCDFExtractor {
                                                                  phenomenon,
                                                                  null,
                                                                  result,
-                                                                 properties));
+                                                                 properties,
+                                                             new HashMap<>()));
                         results.spatialBound.merge(gb);
                     }
                 }
@@ -1263,7 +1269,8 @@ public class NetCDFExtractor {
                                                                  phenomenon,
                                                                  null,
                                                                  result,
-                                                                 properties));
+                                                                 properties,
+                                                             new HashMap<>()));
                         results.spatialBound.merge(gb);
                     }
                 }

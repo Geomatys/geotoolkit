@@ -65,7 +65,17 @@ public class ObservationQuery extends AbstractObservationQuery {
      */
     private boolean includeTimeForProfile = false;
 
+    /**
+     * Set to false if you don't want to include the quality fields in the
+     * results.
+     */
     private boolean includeQualityFields = true;
+
+    /**
+     * Set to false if you don't want to include the parameters fields in the
+     * results.
+     */
+    private boolean includeParameterFields = true;
 
     /**
      * if set to true, each measure will be separated in its own observation.
@@ -176,6 +186,14 @@ public class ObservationQuery extends AbstractObservationQuery {
         this.includeQualityFields = includeQualityFields;
     }
 
+    public boolean isIncludeParameterFields() {
+        return includeParameterFields;
+    }
+
+    public void setIncludeParameterFields(boolean includeParameterFields) {
+        this.includeParameterFields = includeParameterFields;
+    }
+
     @Override
     public ObservationQuery noPaging() {
         ObservationQuery query = new ObservationQuery(resultModel, responseMode, responseFormat);
@@ -183,6 +201,7 @@ public class ObservationQuery extends AbstractObservationQuery {
         query.setIncludeFoiInTemplate(includeFoiInTemplate);
         query.setIncludeIdInDataBlock(includeIdInDataBlock);
         query.setIncludeQualityFields(includeQualityFields);
+        query.setIncludeParameterFields(includeParameterFields);
         query.setIncludeTimeForProfile(includeTimeForProfile);
         query.setIncludeTimeInTemplate(includeTimeInTemplate);
         query.setSeparatedMeasure(separatedMeasure);

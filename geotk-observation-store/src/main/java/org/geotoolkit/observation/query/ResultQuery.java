@@ -39,7 +39,17 @@ public class ResultQuery extends AbstractObservationQuery {
 
     private boolean includeIdInDataBlock = false;
 
+    /**
+     * Set to false if you don't want to include the quality fields in the
+     * results.
+     */
     private boolean includeQualityFields = true;
+
+    /**
+     * Set to false if you don't want to include the parameters fields in the
+     * results.
+     */
+    private boolean includeParameterFields = true;
 
     private Integer decimationSize;
 
@@ -111,12 +121,21 @@ public class ResultQuery extends AbstractObservationQuery {
         this.includeQualityFields = includeQualityFields;
     }
 
+    public boolean isIncludeParameterFields() {
+        return includeParameterFields;
+    }
+
+    public void setIncludeParameterFields(boolean includeParameterFields) {
+        this.includeParameterFields = includeParameterFields;
+    }
+
     @Override
     public ResultQuery noPaging() {
         ResultQuery query = new ResultQuery(resultModel, responseMode, procedure, responseFormat);
         query.setDecimationSize(decimationSize);
         query.setIncludeIdInDataBlock(includeIdInDataBlock);
         query.setIncludeQualityFields(includeQualityFields);
+        query.setIncludeParameterFields(includeParameterFields);
         query.setIncludeTimeForProfile(includeTimeForProfile);
         applyFeatureAttributes(query);
         return query;
