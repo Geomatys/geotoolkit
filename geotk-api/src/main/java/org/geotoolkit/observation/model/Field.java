@@ -62,6 +62,11 @@ public class Field {
      */
     public final List<Field> qualityFields;
 
+    /**
+     * Associated parameter fields.
+     */
+    public final List<Field> parameterFields;
+
     // for JSON
     private Field() {
         this.index = null;
@@ -71,6 +76,7 @@ public class Field {
         this.description = null;
         this.uom = null;
         this.qualityFields = new ArrayList<>();
+        this.parameterFields = new ArrayList<>();
     }
 
     /**
@@ -84,7 +90,7 @@ public class Field {
      * @param uom Unit of measure of the associated data.
      */
     public Field(final Integer index, final FieldType type, final String name, final String label, final String description, final String uom) {
-        this(index, type, name, label, description, uom, new ArrayList<>());
+        this(index, type, name, label, description, uom, new ArrayList<>(), new ArrayList<>());
     }
 
     /**
@@ -97,8 +103,9 @@ public class Field {
      * @param description An URN describing the field.
      * @param uom Unit of measure of the associated data.
      * @param qualityFields Associated quality fields.
+     * @param parameterFields Associated arameter fields.
      */
-    public Field(final Integer index, final FieldType type, final String name, final String label, final String description, final String uom, List<Field> qualityFields) {
+    public Field(final Integer index, final FieldType type, final String name, final String label, final String description, final String uom, List<Field> qualityFields, List<Field> parameterFields) {
         this.index = index;
         this.description = description;
         this.name = name;
@@ -106,6 +113,7 @@ public class Field {
         this.uom = uom;
         this.label = label;
         this.qualityFields = qualityFields;
+        this.parameterFields = parameterFields;
     }
 
     /**
@@ -124,6 +132,10 @@ public class Field {
         this.qualityFields = new ArrayList<>();
         for (Field qualField : that.qualityFields) {
             this.qualityFields.add(new Field(qualField));
+        }
+        this.parameterFields = new ArrayList<>();
+        for (Field parField : that.parameterFields) {
+            this.parameterFields.add(new Field(parField));
         }
     }
 
@@ -144,6 +156,10 @@ public class Field {
         this.qualityFields = new ArrayList<>();
         for (Field qualField : that.qualityFields) {
             this.qualityFields.add(new Field(qualField));
+        }
+        this.parameterFields = new ArrayList<>();
+        for (Field parField : that.parameterFields) {
+            this.parameterFields.add(new Field(parField));
         }
     }
 

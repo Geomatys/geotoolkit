@@ -60,11 +60,14 @@ public class Observation implements org.opengis.observation.Observation {
 
     private Map<String, Object> properties = new HashMap<>();
 
+    private Map<String, Object> parameters = new HashMap<>();
+
     private Observation() {}
 
     public Observation(String id, String name, String description, String definition, String type,
             Procedure procedure, TemporalPrimitive samplingTime, SamplingFeature featureOfInterest,
-            Phenomenon observedProperty, List<Element> quality, Result result, Map<String, Object> properties) {
+            Phenomenon observedProperty, List<Element> quality, Result result, Map<String, Object> properties,
+            Map<String, Object> parameters) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -89,6 +92,11 @@ public class Observation implements org.opengis.observation.Observation {
             this.properties = new HashMap<>();
         } else {
             this.properties = properties;
+        }
+        if (parameters == null) {
+            this.parameters = new HashMap<>();
+        } else {
+            this.parameters = parameters;
         }
     }
 
@@ -301,6 +309,7 @@ public class Observation implements org.opengis.observation.Observation {
                    Objects.equals(this.result,            that.result) &&
                    Objects.equals(this.quality,           that.quality) &&
                    Objects.equals(this.samplingTime,      that.samplingTime) &&
+                   Objects.equals(this.parameters,        that.parameters) &&
                    Objects.equals(this.properties,        that.properties);
         }
         return false;
@@ -322,6 +331,7 @@ public class Observation implements org.opengis.observation.Observation {
         hash = 89 * hash + Objects.hashCode(this.quality);
         hash = 89 * hash + Objects.hashCode(this.result);
         hash = 89 * hash + Objects.hashCode(this.properties);
+        hash = 89 * hash + Objects.hashCode(this.parameters);
         return hash;
     }
 
@@ -343,5 +353,13 @@ public class Observation implements org.opengis.observation.Observation {
     @Override
     public Element getQuality() {
         return null;
+    }
+
+    public Map<String, Object> getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(Map<String, Object> parameters) {
+        this.parameters = parameters;
     }
 }

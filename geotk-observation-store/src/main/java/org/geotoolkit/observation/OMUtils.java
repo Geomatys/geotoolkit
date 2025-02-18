@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.observation;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -29,6 +31,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.namespace.QName;
 import org.apache.sis.geometry.AbstractEnvelope;
@@ -336,7 +339,8 @@ public class OMUtils {
                                                       obs.getObservedProperty(), // TODO split phenomenon
                                                       obs.getResultQuality(),
                                                       result,
-                                                      obs.getProperties());
+                                                      obs.getProperties(),
+                                                      obs.getParameters());
                 results.add(measObs);
             }
         } else {
@@ -395,7 +399,8 @@ public class OMUtils {
                                                           obs.getObservedProperty(), // TODO split phenomenon
                                                           quality,
                                                           result,
-                                                          obs.getProperties());
+                                                          obs.getProperties(),
+                                                          obs.getParameters());
                     results.add(measObs);
                 }
                 mid++;
@@ -446,9 +451,28 @@ public class OMUtils {
                 case QUANTITY -> Double.valueOf(token);
                 case TEXT     -> token;
                 case TIME     ->  new ISODateParser().parseToDate(token);
+                case JSON    ->  readJsonMap(token);
             };
         }
         return value;
+    }
+
+    public static Map readJsonMap(String value) {
+        try {
+            return new ObjectMapper().readValue(value, Map.class);
+        } catch (JsonProcessingException ex) {
+            LOGGER.log(Level.WARNING, "Error while reading json field: " + ex.getMessage());
+        }
+        return Map.of();
+    }
+
+    public static String writeJsonMap(Map value) {
+        try {
+            return new ObjectMapper().writeValueAsString(value);
+        } catch (JsonProcessingException ex) {
+            LOGGER.log(Level.WARNING, "Error while writing json field: " + ex.getMessage());
+        }
+        return null;
     }
 
     public static String getOmTypeFromClass(Class c) {
@@ -473,7 +497,8 @@ public class OMUtils {
             case TIME     -> "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_TemporalObservation";
             case QUANTITY -> "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement";
             //case INT     -> "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_CountObservation";
-            case TEXT -> "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_CategoryObservation";
+            case TEXT     -> "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_CategoryObservation";
+            case JSON     -> "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_ComplexObservation";
         };
     }
 
@@ -609,6 +634,7 @@ public class OMUtils {
                 case BOOLEAN   -> INSTANCE.createRecordType(RecordSchemaSIS.MULTILINE.toInternationalString(), Collections.singletonMap("Boolean", Boolean.class));
                 case QUANTITY -> INSTANCE.createRecordType(RecordSchemaSIS.MULTILINE.toInternationalString(), Collections.singletonMap("Real", Double.class));
                 case TIME     -> INSTANCE.createRecordType(RecordSchemaSIS.MULTILINE.toInternationalString(), Collections.singletonMap("Date", Date.class));
+                case JSON     -> INSTANCE.createRecordType(RecordSchemaSIS.MULTILINE.toInternationalString(), Collections.singletonMap("Object", Map.class));
             };
 
             DefaultRecord r = new DefaultRecord(rt);

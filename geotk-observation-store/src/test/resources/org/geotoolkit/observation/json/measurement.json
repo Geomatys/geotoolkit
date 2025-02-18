@@ -54,5 +54,8 @@
             "name": "qFlag",
             "value": "ok"
         }
-    ]
+    ],
+    "parameters": {
+        "param1": "value1"
+    }
 }
