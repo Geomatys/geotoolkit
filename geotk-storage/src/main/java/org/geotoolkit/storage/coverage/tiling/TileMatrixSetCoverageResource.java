@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.SortedMap;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.DisjointExtentException;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridRoundingMode;
@@ -34,6 +35,7 @@ import org.apache.sis.storage.tiling.TileMatrix;
 import org.apache.sis.storage.tiling.TileMatrixSet;
 import org.apache.sis.storage.tiling.TiledResource;
 import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.storage.coverage.finder.DefaultCoverageFinder;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
@@ -144,6 +146,8 @@ public final class TileMatrixSetCoverageResource extends AbstractGridCoverageRes
         } else {
             try {
                 readLocal = getGridGeometry().derive().rounding(GridRoundingMode.ENCLOSING).subgrid(domain).build();
+            } catch (DisjointExtentException ex) {
+                throw new DisjointCoverageDomainException(ex);
             } catch (IllegalArgumentException ex) {
                 throw new DataStoreException(ex.getMessage(), ex);
             }

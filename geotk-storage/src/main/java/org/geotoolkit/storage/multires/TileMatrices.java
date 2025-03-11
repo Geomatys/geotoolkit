@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.SortedMap;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import org.apache.sis.coverage.grid.DisjointExtentException;
@@ -77,6 +78,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+import org.opengis.util.GenericName;
 
 /**
  *
@@ -370,6 +372,24 @@ public final class TileMatrices extends Static {
         }
     }
 
+    /**
+     * Convert a level of detail (LOD) range to resolution range.
+     *
+     * @param highLod highest resolution LOD, inclusive, highest is 0.
+     * @param lowLod lowest resolution LOD, inclusive, lowest is the tilematrixset size minus one.
+     * @return resolution range
+     */
+    public static NumberRange<Double> convertToResolution(TileMatrixSet tms, int highLod, int lowLod) {
+
+        final SortedMap<GenericName, ? extends TileMatrix> tileMatrices = tms.getTileMatrices();
+        final Map.Entry<GenericName,? extends TileMatrix>[] array = tileMatrices.entrySet().toArray(Map.Entry[]::new);
+        ArgumentChecks.ensureBetween("highResLod", 0, array.length-1, highLod);
+        ArgumentChecks.ensureBetween("lowResLod", highLod, array.length-1, lowLod);
+
+        return NumberRange.create(
+                Math.nextDown(getScale(array[lowLod].getValue())), true,
+                Math.nextUp(getScale(array[highLod].getValue())), true);
+    }
 
     /**
      * @return the different scales available in the pyramid.
