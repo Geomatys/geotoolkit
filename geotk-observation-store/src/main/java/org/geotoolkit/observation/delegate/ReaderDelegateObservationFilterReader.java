@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Set;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.observation.AbstractObservationFilterReader;
+import org.geotoolkit.observation.FilterAppend;
 import org.geotoolkit.observation.OMUtils;
 
 import org.geotoolkit.observation.ObservationFilterReader;
@@ -36,6 +37,7 @@ import org.geotoolkit.observation.model.Observation;
 import org.geotoolkit.observation.model.Phenomenon;
 import org.geotoolkit.observation.model.Procedure;
 import org.geotoolkit.observation.model.SamplingFeature;
+import org.opengis.filter.LogicalOperatorName;
 
 /**
  * An {@linkplain ObservationFilterReader} delegating all its methods on a {@linkplain ObservationReader}
@@ -143,5 +145,25 @@ public class ReaderDelegateObservationFilterReader extends AbstractObservationFi
     @Override
     public void destroy() {
         reader.destroy();
+    }
+
+    @Override
+    public void startFilterBlock(LogicalOperatorName operator) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void appendFilterOperator(LogicalOperatorName operator, FilterAppend merged) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void endFilterBlock(LogicalOperatorName operator, FilterAppend merged) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void removeFilterOperator(LogicalOperatorName operator, FilterAppend merged, FilterAppend fa) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

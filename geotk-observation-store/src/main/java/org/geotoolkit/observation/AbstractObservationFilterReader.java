@@ -137,35 +137,33 @@ public abstract class AbstractObservationFilterReader implements ObservationFilt
     }
 
     @Override
-    public void setProcedure(List<String> procedures) throws DataStoreException {
-        if (procedures != null) {
-            this.procedures.addAll(procedures);
-        }
+    public FilterAppend setProcedure(String procedure) throws DataStoreException {
+        if (procedure != null) this.procedures.add(procedure);
+        return new FilterAppend(true);
     }
 
     @Override
-    public void setProcedureType(String type) throws DataStoreException {
+    public FilterAppend setProcedureType(String type) throws DataStoreException {
         this.procedureType = type;
+        return new FilterAppend(true);
     }
 
     @Override
-    public void setObservedProperties(List<String> phenomenon) {
-        if (phenomenon != null) {
-            this.observedPhenomenons.addAll(phenomenon);
-        }
+    public FilterAppend setObservedProperty(String phenomenon) {
+        if (phenomenon != null) this.observedPhenomenons.add(phenomenon);
+        return new FilterAppend(true);
     }
 
     @Override
-    public void setFeatureOfInterest(List<String> fois) {
-        if (fois != null) {
-            this.featureOfInterests.addAll(fois);
-        }
+    public FilterAppend setFeatureOfInterest(String foi) {
+        if (foi != null) this.featureOfInterests.add(foi);
+        return new FilterAppend(true);
     }
 
     @Override
-    public void setObservationIds(List<String> ids) {
-        if (!ids.isEmpty()) {
-            this.observationIds.addAll(ids);
+    public FilterAppend setObservationId(String oid) {
+        if (oid != null) {
+            this.observationIds.add(oid);
             /*
              *   2 possibility :
              *   1) observation template:
@@ -175,43 +173,42 @@ public abstract class AbstractObservationFilterReader implements ObservationFilt
              *       -> <observation base>  <proc id> - <measure id>
              *       -> <observation base>  <proc id> - <phen id> - <measure id>
              */
-            for (String oid : ids) {
-                if (oid.contains(observationTemplateIdBase)) {
-                    String[] component = oid.substring(observationTemplateIdBase.length()).split("-");
+            if (oid.contains(observationTemplateIdBase)) {
+                String[] component = oid.substring(observationTemplateIdBase.length()).split("-");
 
-                    if (component.length == 2) {
-                        this.procedures.add(component[0]);
-                        this.observedPhenomenons.add(component[1]);
-                    } else if (component.length == 1) {
-                        this.procedures.add(component[0]);
-                    } else {
-                        throw new IllegalArgumentException("Invalid observation id supplied");
-                    }
-
-                } else if (oid.startsWith(observationIdBase)) {
-                    String[] component = oid.substring(observationIdBase.length()).split("-");
-                    if (component.length == 3) {
-                        this.procedures.add(component[0]);
-                        this.observedPhenomenons.add(component[1]);
-                        this.measureIdFilter.add(component[2]);
-
-                    } else if (component.length == 2) {
-                        this.procedures.add(component[0]);
-                        this.measureIdFilter.add(component[1]);
-                    } else {
-                        throw new IllegalArgumentException("Invalid observation id supplied");
-                    }
-
+                if (component.length == 2) {
+                    this.procedures.add(component[0]);
+                    this.observedPhenomenons.add(component[1]);
+                } else if (component.length == 1) {
+                    this.procedures.add(component[0]);
                 } else {
                     throw new IllegalArgumentException("Invalid observation id supplied");
                 }
+
+            } else if (oid.startsWith(observationIdBase)) {
+                String[] component = oid.substring(observationIdBase.length()).split("-");
+                if (component.length == 3) {
+                    this.procedures.add(component[0]);
+                    this.observedPhenomenons.add(component[1]);
+                    this.measureIdFilter.add(component[2]);
+
+                } else if (component.length == 2) {
+                    this.procedures.add(component[0]);
+                    this.measureIdFilter.add(component[1]);
+                } else {
+                    throw new IllegalArgumentException("Invalid observation id supplied");
+                }
+
+            } else {
+                throw new IllegalArgumentException("Invalid observation id supplied");
             }
         }
+        return new FilterAppend(true);
     }
 
     @Override
-    public void setTimeFilter(TemporalOperator tFilter) throws DataStoreException {
-        if (tFilter == null) return;
+    public FilterAppend setTimeFilter(TemporalOperator tFilter) throws DataStoreException {
+        if (tFilter == null) return new FilterAppend();
 
         Object time = tFilter.getExpressions().get(1);
         if (time instanceof Literal && !(time instanceof TemporalPrimitive)) {
@@ -250,28 +247,31 @@ public abstract class AbstractObservationFilterReader implements ObservationFilt
         } else {
             throw new ObservationStoreException("This operation is not take in charge by the Web Service, supported one are: TM_Equals, TM_After, TM_Before, TM_During");
         }
+        return new FilterAppend(true);
     }
 
     @Override
-    public void setBoundingBox(BinarySpatialOperator box) throws DataStoreException {
+    public FilterAppend setBoundingBox(BinarySpatialOperator box) throws DataStoreException {
         this.boundingbox = OMUtils.getEnvelopeFromBBOXFilter(box);
+        return new FilterAppend(true);
     }
 
     @Override
-    public void setOfferings(List<String> offerings) throws DataStoreException {
-        if (offerings != null) {
-            this.offerings.addAll(offerings);
-        }
+    public FilterAppend setOffering(String offering) throws DataStoreException {
+        if (offering != null) this.offerings.add(offering);
+        return new FilterAppend(true);
     }
 
     @Override
-    public void setResultFilter(BinaryComparisonOperator filter) throws DataStoreException {
+    public FilterAppend setResultFilter(BinaryComparisonOperator filter) throws DataStoreException {
         this.resultFilter = filter;
+        return new FilterAppend(true);
     }
 
     @Override
-    public void setPropertiesFilter(BinaryComparisonOperator filter) throws DataStoreException {
+    public FilterAppend setPropertiesFilter(BinaryComparisonOperator filter) throws DataStoreException {
         this.propertiesFilter = filter;
+        return new FilterAppend(true);
     }
 
     @Override

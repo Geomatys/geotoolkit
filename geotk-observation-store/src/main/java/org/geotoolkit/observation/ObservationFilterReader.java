@@ -33,6 +33,7 @@ import org.geotoolkit.observation.model.Observation;
 import org.geotoolkit.observation.model.Phenomenon;
 import org.geotoolkit.observation.model.SamplingFeature;
 import org.geotoolkit.observation.model.Procedure;
+import org.opengis.filter.LogicalOperatorName;
 
 /**
  *
@@ -42,72 +43,104 @@ public interface ObservationFilterReader {
 
     void init(AbstractObservationQuery query) throws DataStoreException;
 
+    default void startFilterBlock() {
+        startFilterBlock(null);
+    }
+
+    void startFilterBlock(LogicalOperatorName operator);
+
+    void appendFilterOperator(LogicalOperatorName operator, FilterAppend merged);
+
+    void removeFilterOperator(LogicalOperatorName operator, FilterAppend merged, FilterAppend previous);
+
+    void endFilterBlock(LogicalOperatorName operator, FilterAppend merged);
+
     /**
      * Add some procedure filter to the request.
      *
-     * @param procedures A list of procedure identifiers.
+     * @param procedure A procedure identifier.
+     *
+     * @return informations about if the filter has been append or not
      */
-    void setProcedure(final List<String> procedures) throws DataStoreException;
+    FilterAppend setProcedure(final String procedure) throws DataStoreException;
 
     /**
      * Add some filter ont procedure type to the request.
      *
      * @param type procedure type like 'System' or 'component'.
+     *
+     * @return informations about if the filter has been append or not
      */
-    void setProcedureType(final String type) throws DataStoreException;
+    FilterAppend setProcedureType(final String type) throws DataStoreException;
 
     /**
      * Add some phenomenon filter to the request.
      *
-     * @param phenomenon A list of phenomenon identifiers.
+     * @param phenomenon A phenomenon identifiers.
+     *
+     * @return informations about if the filter has been append or not
      */
-    void setObservedProperties(final List<String> phenomenon);
+    FilterAppend setObservedProperty(final String phenomenon);
 
     /**
      * Add some feature of interest filter to the request.
      *
-     * @param fois the feature of interest identifiers.
+     * @param foiId A feature of interest identifier.
+     *
+     * @return informations about if the filter has been append or not
      */
-    void setFeatureOfInterest(final List<String> fois);
+    FilterAppend setFeatureOfInterest(final String foiId);
 
     /**
      * Add some observation identifier filter to the request.
      *
-     * @param ids the observations identifiers.
+     * @param id the observation identifier.
+     *
+     * @return informations about if the filter has been append or not
      */
-    void setObservationIds(final List<String> ids);
+    FilterAppend setObservationId(final String id);
 
     /**
      * Add a Temporal filter to the current request.
+     *
+     * @return informations about if the filter has been append or not
      */
-    void setTimeFilter(TemporalOperator tFilter) throws DataStoreException;
+    FilterAppend setTimeFilter(TemporalOperator tFilter) throws DataStoreException;
 
     /**
-     * Add a BBOX filter to the current request.
-     * ( this method is implemented only if isBoundedObservation() return true)
+     * Add a BBOX filter to the current request. ( this method is implemented
+     * only if isBoundedObservation() return true)
+     *
+     * @return informations about if the filter has been append or not
      */
-    void setBoundingBox(BinarySpatialOperator boxFilter) throws DataStoreException;
+    FilterAppend setBoundingBox(BinarySpatialOperator boxFilter) throws DataStoreException;
 
     /**
      * Set the offering for the current request
      *
-     * @param offerings A list of offering identifiers.
+     * @param offering An offering identifier.
+     *
+     * @return informations about if the filter has been append or not
      */
-    void setOfferings(final List<String> offerings) throws DataStoreException;
+    FilterAppend setOffering(final String offering) throws DataStoreException;
 
     /**
      * Add a filter on the result.
      *
      * @param filter a comparison filter the result.
+     *
+     * @return informations about if the filter has been append or not
      */
-    void setResultFilter(final BinaryComparisonOperator filter) throws DataStoreException;
+    FilterAppend setResultFilter(final BinaryComparisonOperator filter) throws DataStoreException;
 
     /**
      * Add a filter on the entity properties.
      *
      * @param filter a comparison filter the property.
+     *
+     * @return informations about if the filter has been append or not
      */
-    void setPropertiesFilter(final BinaryComparisonOperator filter) throws DataStoreException;
+    FilterAppend setPropertiesFilter(final BinaryComparisonOperator filter) throws DataStoreException;
 
     /**
      * Execute the current query and return a list of observation result.
