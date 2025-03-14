@@ -15,8 +15,8 @@
     <name>Build configuration for Geotoolkit</name>
 
     <properties>
-        <geoapi.version>4.0-M27</geoapi.version>
-    	<sis.version>2.0-M0125</sis.version>
+        <geoapi.version>4.0-SNAPSHOT</geoapi.version>
+        <sis.version>2.0-SNAPSHOT</sis.version>
         <!--
         SIS build helper version freezed to official release.
         It ensures we can import it after SIS will migrate to Gradle build system.
