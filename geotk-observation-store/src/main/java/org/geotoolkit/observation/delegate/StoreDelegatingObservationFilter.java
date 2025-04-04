@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.observation.FilterAppend;
 import org.geotoolkit.observation.ObservationFilterReader;
 import org.geotoolkit.observation.ObservationResult;
 import org.geotoolkit.observation.ObservationStore;
@@ -40,6 +41,7 @@ import org.geotoolkit.observation.model.Observation;
 import org.geotoolkit.observation.model.Phenomenon;
 import org.geotoolkit.observation.model.Procedure;
 import org.geotoolkit.observation.model.SamplingFeature;
+import org.opengis.filter.LogicalOperatorName;
 
 /**
  *
@@ -61,53 +63,63 @@ public class StoreDelegatingObservationFilter implements ObservationFilterReader
     }
 
     @Override
-    public void setProcedure(List<String> procedures) throws DataStoreException {
-        if (!procedures.isEmpty()) throw new UnsupportedOperationException("Procedure filtering is not supported yet.");
+    public FilterAppend setProcedure(String procedure) throws DataStoreException {
+        if (procedure != null) throw new UnsupportedOperationException("Procedure filtering is not supported yet.");
+        return new FilterAppend();
     }
 
     @Override
-    public void setProcedureType(String type) throws DataStoreException {
+    public FilterAppend setProcedureType(String type) throws DataStoreException {
         if (type != null) throw new UnsupportedOperationException("Procedure type filtering is not supported yet.");
+        return new FilterAppend();
     }
 
     @Override
-    public void setObservedProperties(List<String> phenomenons) {
-        if (!phenomenons.isEmpty()) throw new UnsupportedOperationException("Observed properties filtering is not supported yet.");
+    public FilterAppend setObservedProperty(String phenomenon) {
+        if (phenomenon != null) throw new UnsupportedOperationException("Observed properties filtering is not supported yet.");
+        return new FilterAppend();
     }
 
     @Override
-    public void setFeatureOfInterest(List<String> fois) {
-        if (!fois.isEmpty()) throw new UnsupportedOperationException("Feature of interest filtering is not supported yet.");
+    public FilterAppend setFeatureOfInterest(String foi) {
+        if (foi != null) throw new UnsupportedOperationException("Feature of interest filtering is not supported yet.");
+        return new FilterAppend();
     }
 
     @Override
-    public void setObservationIds(List<String> ids) {
-        if (!ids.isEmpty()) throw new UnsupportedOperationException("Observed id filtering is not supported yet.");
+    public FilterAppend setObservationId(String id) {
+        if (id != null) throw new UnsupportedOperationException("Observed id filtering is not supported yet.");
+        return new FilterAppend();
     }
 
     @Override
-    public void setTimeFilter(TemporalOperator tFilter) throws DataStoreException {
+    public FilterAppend setTimeFilter(TemporalOperator tFilter) throws DataStoreException {
         if (tFilter != null) throw new UnsupportedOperationException("Time filtering is not supported yet.");
+        return new FilterAppend();
     }
 
     @Override
-    public void setBoundingBox(BinarySpatialOperator e) throws DataStoreException {
-         if (e != null) throw new UnsupportedOperationException("BBOX filtering is not supported yet.");
+    public FilterAppend setBoundingBox(BinarySpatialOperator e) throws DataStoreException {
+        if (e != null) throw new UnsupportedOperationException("BBOX filtering is not supported yet.");
+        return new FilterAppend();
     }
 
     @Override
-    public void setOfferings(List<String> offerings) throws DataStoreException {
-        if (!offerings.isEmpty()) throw new UnsupportedOperationException("Offering filtering is not supported yet.");
+    public FilterAppend setOffering(String offering) throws DataStoreException {
+        if (offering != null) throw new UnsupportedOperationException("Offering filtering is not supported yet.");
+        return new FilterAppend();
     }
 
     @Override
-    public void setResultFilter(BinaryComparisonOperator filter) throws DataStoreException {
+    public FilterAppend setResultFilter(BinaryComparisonOperator filter) throws DataStoreException {
         if (filter != null) throw new UnsupportedOperationException("Result filtering is not supported yet.");
+        return new FilterAppend();
     }
 
     @Override
-    public void setPropertiesFilter(BinaryComparisonOperator filter) throws DataStoreException {
+    public FilterAppend setPropertiesFilter(BinaryComparisonOperator filter) throws DataStoreException {
         if (filter != null) throw new UnsupportedOperationException("Properties filtering is not supported yet.");
+        return new FilterAppend();
     }
 
     @Override
@@ -228,5 +240,25 @@ public class StoreDelegatingObservationFilter implements ObservationFilterReader
     @Override
     public List<Offering> getOfferings() throws DataStoreException {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void startFilterBlock(LogicalOperatorName operator) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void appendFilterOperator(LogicalOperatorName operator, FilterAppend fa) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void endFilterBlock(LogicalOperatorName operator, FilterAppend merged) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void removeFilterOperator(LogicalOperatorName operator, FilterAppend merged, FilterAppend fa) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }
