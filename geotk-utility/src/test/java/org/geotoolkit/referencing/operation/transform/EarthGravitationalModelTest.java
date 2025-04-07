@@ -20,7 +20,6 @@ package org.geotoolkit.referencing.operation.transform;
 import java.util.Arrays;
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.TimeZone;
 
 import org.opengis.util.FactoryException;
 import org.opengis.geometry.DirectPosition;
@@ -115,7 +114,7 @@ public final class EarthGravitationalModelTest extends TransformTestCase {
 
     @Test
     public void testFromWKT() throws ParseException, TransformException {
-        final WKTFormat parser = new WKTFormat(null, (TimeZone)null);
+        final WKTFormat parser = new WKTFormat();
         final MathTransform mt = (MathTransform) parser.parseObject("Param_MT[\"Ellipsoid_To_Geoid\"]");
         DirectPosition pos = new GeneralDirectPosition(new double[] {45, 45, 1000});
         pos = mt.transform(pos, pos);
