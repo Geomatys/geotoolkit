@@ -21,6 +21,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.ParseException;
+import java.util.TimeZone;
 import org.apache.sis.util.privy.Constants;
 import org.apache.sis.io.wkt.Convention;
 import org.apache.sis.io.wkt.WKTFormat;
@@ -225,7 +226,7 @@ public class SpatialReferencingTable extends Table {
 
     private WKTFormat getWKTFormat() {
         if (wktFormat == null) {
-            wktFormat = new WKTFormat(null, null);
+            wktFormat = new WKTFormat(null, (TimeZone)null);
             wktFormat.setIndentation(WKTFormat.SINGLE_LINE);
             wktFormat.setConvention(Convention.WKT1_COMMON_UNITS);
         }

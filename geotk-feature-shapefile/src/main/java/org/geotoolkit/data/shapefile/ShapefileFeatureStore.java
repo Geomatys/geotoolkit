@@ -37,6 +37,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TimeZone;
 import java.util.logging.Level;
 import org.apache.sis.feature.Features;
 import org.apache.sis.feature.builder.AttributeRole;
@@ -490,7 +491,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore {
             if (crs != null) {
                 // .prj files should have no carriage returns in them, this messes up
                 // ESRI's ArcXXX software, so we'll be compatible
-                final WKTFormat format = new WKTFormat(Locale.ENGLISH, null);
+                final WKTFormat format = new WKTFormat(Locale.ENGLISH, (TimeZone) null);
                 format.setConvention(Convention.WKT1_COMMON_UNITS);
                 format.setNameAuthority(Citations.ESRI);
                 format.setIndentation(WKTFormat.SINGLE_LINE);

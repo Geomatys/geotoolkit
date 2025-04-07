@@ -188,7 +188,7 @@ public class XMLPyramid implements WritableTileMatrixSet {
         this.serializedCrs = null;
 
         //-- try wkt2 writing
-        final WKTFormat f = new WKTFormat(null, null);
+        final WKTFormat f = new WKTFormat(null, (TimeZone) null);
         f.setConvention(Convention.WKT2);
         this.crs = f.format(crs);
 

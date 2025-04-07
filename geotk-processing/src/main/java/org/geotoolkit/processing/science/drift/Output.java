@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.TimeZone;
 import javax.imageio.ImageIO;
 import org.apache.sis.io.wkt.Convention;
 import org.apache.sis.io.wkt.WKTFormat;
@@ -138,7 +139,7 @@ public final class Output {
         file.addVariableAttribute(yvar, new Attribute("_CoordinateAxisType", "GeoY"));
         file.addVariableAttribute(tvar, new Attribute("_CoordinateAxisType", "Time"));
 
-        final WKTFormat f = new WKTFormat(null, null);
+        final WKTFormat f = new WKTFormat(null, (TimeZone) null);
         f.setIndentation(WKTFormat.SINGLE_LINE);
         f.setConvention(Convention.WKT2);
 

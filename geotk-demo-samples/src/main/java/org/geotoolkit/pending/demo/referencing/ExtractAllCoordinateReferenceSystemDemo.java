@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.TimeZone;
 import org.apache.sis.io.wkt.Convention;
 import org.apache.sis.io.wkt.WKTFormat;
 import org.geotoolkit.factory.Factories;
@@ -73,7 +74,7 @@ public class ExtractAllCoordinateReferenceSystemDemo {
     }
 
     private static Map<String,String> toWKTMap(final CRSAuthorityFactory factory, final Collection<String> codes){
-        final WKTFormat format = new WKTFormat(null,null);
+        final WKTFormat format = new WKTFormat(null, (TimeZone)null);
         format.setConvention(Convention.WKT1);
         format.setIndentation(WKTFormat.SINGLE_LINE);
         final Map<String,String> map = new HashMap<String, String>();
