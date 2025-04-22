@@ -19,7 +19,7 @@ package org.geotoolkit.data.om.netcdf;
 import java.io.Serializable;
 import java.util.Objects;
 import org.geotoolkit.observation.model.Field;
-import org.geotoolkit.observation.model.FieldType;
+import org.geotoolkit.observation.model.FieldDataType;
 
 /**
  *
@@ -28,26 +28,26 @@ import org.geotoolkit.observation.model.FieldType;
 public class NCField extends Field implements Serializable {
 
     public final Number fillValue;
-    public final Type dataType;
+    public final Type ncDataType;
     public final int dimension;
     public final String dimensionLabel;
     public boolean mainVariableFirst = true;
 
-    public NCField(final String id, final String label, final Type dataType, final int dimension, final String dimensionLabel, final Number fillValue, final String unit) {
-        super(-1, getTypeFromDataType(dataType), id, label, null, unit);
-        this.dataType = dataType;
+    public NCField(final String id, final String label, final Type ncDataType, final int dimension, final String dimensionLabel, final Number fillValue, final String unit) {
+        super(-1, getTypeFromDataType(ncDataType), id, label, null, unit);
+        this.ncDataType = ncDataType;
         this.dimensionLabel = dimensionLabel;
         this.dimension = dimension;
         this.fillValue = fillValue;
     }
 
-    private static FieldType getTypeFromDataType(Type dataType) {
-        switch (dataType) {
-            case BOOLEAN: return FieldType.BOOLEAN;
-            case DATE : return FieldType.TIME;
+    private static FieldDataType getTypeFromDataType(Type ncDataType) {
+        switch (ncDataType) {
+            case BOOLEAN: return FieldDataType.BOOLEAN;
+            case DATE : return FieldDataType.TIME;
             case DOUBLE:
-            case INT: return FieldType.QUANTITY;
-            case STRING: return FieldType.TEXT;
+            case INT: return FieldDataType.QUANTITY;
+            case STRING: return FieldDataType.TEXT;
             case UNSUPPORTED:
             default: return null;
         }
@@ -77,7 +77,7 @@ public class NCField extends Field implements Serializable {
         if (obj instanceof NCField) {
             final NCField that = (NCField) obj;
             return Objects.equals(this.label, that.label)
-                && Objects.equals(this.type,  that.type);
+                && Objects.equals(this.ncDataType,  that.ncDataType);
         }
         return false;
     }
@@ -86,7 +86,7 @@ public class NCField extends Field implements Serializable {
     public int hashCode() {
         int hash = 5;
         hash = 29 * hash + (this.label != null ? this.label.hashCode() : 0);
-        hash = 29 * hash + (this.type != null ? this.type.hashCode() : 0);
+        hash = 29 * hash + (this.ncDataType != null ? this.ncDataType.hashCode() : 0);
         return hash;
     }
 }

@@ -24,7 +24,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import java.io.IOException;
 import org.geotoolkit.observation.OMUtils;
 import static org.geotoolkit.observation.json.ObservationJsonUtils.getFieldValue;
-import org.geotoolkit.observation.model.FieldType;
+import org.geotoolkit.observation.model.FieldDataType;
 import org.opengis.metadata.quality.Element;
 
 /**
@@ -42,20 +42,20 @@ public class ElementDeserializer extends JsonDeserializer<Element> {
         }
         String name  = getFieldValue(rootNode, "name").orElseThrow(() -> new JsonMappingException(parser, "No name available"));
         String uom   = getFieldValue(rootNode, "uom").orElse(null);
-        FieldType ft = null;
+        FieldDataType ft = null;
         Object value = null;
         if (rootNode.hasNonNull("value")) {
             JsonNode vNode = rootNode.get("value");
             if (vNode.isDouble()) {
-                ft = FieldType.QUANTITY;
+                ft = FieldDataType.QUANTITY;
                 value = vNode.asDouble();
             } else if (vNode.isBoolean()) {
-                ft = FieldType.BOOLEAN;
+                ft = FieldDataType.BOOLEAN;
                 value = vNode.asBoolean();
 
             // TODO time?
             }  else {
-                ft = FieldType.TEXT;
+                ft = FieldDataType.TEXT;
                 value = vNode.asText();
             }
         }

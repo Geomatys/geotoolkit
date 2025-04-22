@@ -23,7 +23,7 @@ import java.util.Map;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public enum FieldType {
+public enum FieldDataType {
 
     QUANTITY("Quantity"),
     TEXT("Text"),
@@ -33,11 +33,11 @@ public enum FieldType {
 
     public final String label;
 
-    private FieldType(String label) {
+    private FieldDataType(String label) {
         this.label = label;
     }
 
-    public static FieldType fromLabel(String label) {
+    public static FieldDataType fromLabel(String label) {
         if (label == null) return null;
         switch (label) {
             case "Quantity": return QUANTITY;
