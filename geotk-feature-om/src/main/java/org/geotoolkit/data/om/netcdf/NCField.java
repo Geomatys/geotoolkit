@@ -20,6 +20,7 @@ import java.io.Serializable;
 import java.util.Objects;
 import org.geotoolkit.observation.model.Field;
 import org.geotoolkit.observation.model.FieldDataType;
+import org.geotoolkit.observation.model.FieldType;
 
 /**
  *
@@ -33,8 +34,8 @@ public class NCField extends Field implements Serializable {
     public final String dimensionLabel;
     public boolean mainVariableFirst = true;
 
-    public NCField(final String id, final String label, final Type ncDataType, final int dimension, final String dimensionLabel, final Number fillValue, final String unit) {
-        super(-1, getTypeFromDataType(ncDataType), id, label, null, unit);
+    public NCField(final String id, final String label, final Type ncDataType, final int dimension, final String dimensionLabel, final Number fillValue, final String unit, FieldType type) {
+        super(-1, getTypeFromDataType(ncDataType), id, label, null, unit, type);
         this.ncDataType = ncDataType;
         this.dimensionLabel = dimensionLabel;
         this.dimension = dimension;

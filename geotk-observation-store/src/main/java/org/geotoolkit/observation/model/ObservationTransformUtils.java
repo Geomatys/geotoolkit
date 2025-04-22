@@ -425,11 +425,11 @@ public class ObservationTransformUtils {
                     throw new IllegalArgumentException("Unexpected result type: " + aobs.getResult().getClass());
                 }
                 // todo extract descriptions from phenomenon?
-                Field f = new Field(-1, ft, phenModel.getId(), phenModel.getId(), phenModel.getName(), uom);
+                Field f = new Field(-1, ft, phenModel.getId(), phenModel.getId(), phenModel.getName(), uom, FieldType.MEASURE);
                 result = new MeasureResult(f, value);
             } else {
                 // we can't know the field type here
-                Field f = new Field(-1, FieldDataType.QUANTITY, phenModel.getId(), phenModel.getId(), phenModel.getName(), null);
+                Field f = new Field(-1, FieldDataType.QUANTITY, phenModel.getId(), phenModel.getId(), phenModel.getName(), null, FieldType.MEASURE);
                 result = new MeasureResult(f, null);
             }
             if (timeSeries) {
@@ -467,7 +467,7 @@ public class ObservationTransformUtils {
                 int i = 1;
                 for (DataComponentProperty dcp : dr.getField()) {
                     AbstractDataComponent component = dcp.getValue();
-                    fields.add(toModel(i, dcp.getName(), component));
+                    fields.add(toModel(i, dcp.getName(), component, FieldType.MEASURE));
                     i++;
                 }
             } else if (da.getPropertyElementType().getAbstractRecord() instanceof SimpleDataRecord dr) {
@@ -475,7 +475,7 @@ public class ObservationTransformUtils {
                 int i = 1;
                 for (AnyScalar dcp : dr.getField()) {
                     AbstractDataComponent component = dcp.getValue();
-                    fields.add(toModel(i, dcp.getName(), component));
+                    fields.add(toModel(i, dcp.getName(), component, FieldType.MEASURE));
                     i++;
                 }
             } else {
@@ -522,7 +522,7 @@ public class ObservationTransformUtils {
         return null;
     }
 
-    private static Field toModel(int index, String id, AbstractDataComponent component) {
+    private static Field toModel(int index, String id, AbstractDataComponent component, FieldType type) {
         List<Field> qualityFields = new ArrayList<>();
         String uom = null;
         FieldDataType ft = null;
@@ -535,7 +535,7 @@ public class ObservationTransformUtils {
                 for (AbstractQualityProperty aqp : q.getQuality()) {
                     AbstractDataComponent dc = aqp.getDataComponent();
                     if (dc != null) {
-                        qualityFields.add(toModel(index, dc.getId(), dc));
+                        qualityFields.add(toModel(index, dc.getId(), dc, FieldType.QUALITY));
                     }
                 }
             }
@@ -551,7 +551,7 @@ public class ObservationTransformUtils {
         } else {
             throw new IllegalArgumentException("Only Quantity, Text Boolean AND Time are supported for now");
         }
-        return new Field(index, ft, id, component.getLabel(), component.getDefinition(), uom, qualityFields, new ArrayList<>());
+        return new Field(index, ft, id, component.getLabel(), component.getDefinition(), uom, type, qualityFields, new ArrayList<>());
     }
 
     public static TemporalPrimitive toModel(final TemporalPrimitive gmlTime) {

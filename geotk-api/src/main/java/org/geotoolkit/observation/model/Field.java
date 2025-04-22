@@ -33,7 +33,7 @@ public class Field {
      */
     public final Integer index;
     /**
-     * The data type of the field. Can be : - Quantity - Text - Boolean - Time
+     * The data type of the field. Can be : Quantity, Text, Boolean, Time, ...
      */
     public final FieldDataType dataType;
     /**
@@ -58,6 +58,11 @@ public class Field {
     public final String uom;
 
     /**
+     * The type of the field. Can be : MAIN, MEASURE, QUALITY, PARAMETER
+     */
+    public final FieldType type;
+
+    /**
      * Associated quality fields.
      */
     public final List<Field> qualityFields;
@@ -70,6 +75,7 @@ public class Field {
     // for JSON
     private Field() {
         this.index = null;
+        this.type = null;
         this.dataType = null;
         this.name = null;
         this.label = null;
@@ -88,9 +94,10 @@ public class Field {
      * @param label Field label, used as an human description for the field.
      * @param description An URN describing the field.
      * @param uom Unit of measure of the associated data.
+     * @param type The type of the field.
      */
-    public Field(final Integer index, final FieldDataType dataType, final String name, final String label, final String description, final String uom) {
-        this(index, dataType, name, label, description, uom, new ArrayList<>(), new ArrayList<>());
+    public Field(final Integer index, final FieldDataType dataType, final String name, final String label, final String description, final String uom, final FieldType type) {
+        this(index, dataType, name, label, description, uom, type, new ArrayList<>(), new ArrayList<>());
     }
 
     /**
@@ -102,16 +109,19 @@ public class Field {
      * @param label Field label, used as an human description for the field.
      * @param description An URN describing the field.
      * @param uom Unit of measure of the associated data.
+     * @param type The type of the field.
      * @param qualityFields Associated quality fields.
      * @param parameterFields Associated arameter fields.
      */
-    public Field(final Integer index, final FieldDataType dataType, final String name, final String label, final String description, final String uom, List<Field> qualityFields, List<Field> parameterFields) {
+    public Field(final Integer index, final FieldDataType dataType, final String name, final String label, final String description, final String uom, final FieldType type,
+            List<Field> qualityFields, List<Field> parameterFields) {
         this.index = index;
         this.description = description;
         this.name = name;
         this.dataType = dataType;
         this.uom = uom;
         this.label = label;
+        this.type = type;
         this.qualityFields = qualityFields;
         this.parameterFields = parameterFields;
     }
@@ -129,6 +139,7 @@ public class Field {
         this.dataType = that.dataType;
         this.uom = that.uom;
         this.label = that.label;
+        this.type = that.type;
         this.qualityFields = new ArrayList<>();
         for (Field qualField : that.qualityFields) {
             this.qualityFields.add(new Field(qualField));
@@ -153,6 +164,7 @@ public class Field {
         this.dataType = that.dataType;
         this.uom = that.uom;
         this.label = that.label;
+        this.type = that.type;
         this.qualityFields = new ArrayList<>();
         for (Field qualField : that.qualityFields) {
             this.qualityFields.add(new Field(qualField));
@@ -225,6 +237,7 @@ public class Field {
         StringBuilder sb = new StringBuilder(name).append("(").append(dataType).append(") \n");
         sb.append("index:").append(index).append('\n');
         sb.append("description:").append(description).append('\n');
+        sb.append("type:").append(type).append('\n');
         if (uom != null) {
             sb.append("uom:").append(uom).append('\n');
         }

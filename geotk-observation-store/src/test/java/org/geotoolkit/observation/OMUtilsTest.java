@@ -27,6 +27,7 @@ import java.util.UUID;
 import org.geotoolkit.observation.model.CompositePhenomenon;
 import org.geotoolkit.observation.model.Field;
 import org.geotoolkit.observation.model.FieldDataType;
+import org.geotoolkit.observation.model.FieldType;
 import org.geotoolkit.observation.model.Phenomenon;
 import org.junit.Assert;
 import org.junit.Test;
@@ -41,9 +42,9 @@ public class OMUtilsTest {
     @Test
     public void getPhenomenonTest() throws Exception {
 
-        Field PRES = new Field(1, FieldDataType.QUANTITY, "PRES", "Pression",    "urn:ogc:def:phenomenon:GEOM:pres", "Pa");
-        Field PSAL = new Field(2, FieldDataType.QUANTITY, "PSAL", "Salinity",    "urn:ogc:def:phenomenon:GEOM:psal", "mg/l");
-        Field TEMP = new Field(3, FieldDataType.QUANTITY, "TEMP", "Temperature", "urn:ogc:def:phenomenon:GEOM:TEMP", "°c");
+        Field PRES = new Field(1, FieldDataType.QUANTITY, "PRES", "Pression",    "urn:ogc:def:phenomenon:GEOM:pres", "Pa", FieldType.MEASURE);
+        Field PSAL = new Field(2, FieldDataType.QUANTITY, "PSAL", "Salinity",    "urn:ogc:def:phenomenon:GEOM:psal", "mg/l", FieldType.MEASURE);
+        Field TEMP = new Field(3, FieldDataType.QUANTITY, "TEMP", "Temperature", "urn:ogc:def:phenomenon:GEOM:TEMP", "°c", FieldType.MEASURE);
 
         List<Field> phenomenons = Arrays.asList(PRES, PSAL, TEMP);
         var components = phenomenons.stream().map( phen -> new Phenomenon(phen.name, phen.label, phen.name, phen.description, null)).toList();
