@@ -109,13 +109,8 @@ public final class VirtualTileMatrixSet implements TileMatrixSet {
     }
 
     private SortedMap<GenericName, ? extends TileMatrix> regroup(List<TileMatrix> matrices) {
-        final Map<Double, List<TileMatrix>> sorted = new TreeMap(new Comparator<Double>() {
-            @Override
-            public int compare(Double o1, Double o2) {
-                //we want sorting by higest resolution first, so LOD 0 is the highest level in the set
-                return Double.compare(o2, o1);
-            }
-        });
+        //we want sorting by higest resolution first, so LOD 0 is the highest level in the set
+        final Map<Double, List<TileMatrix>> sorted = new TreeMap<>(Comparator.reverseOrder());
         for (TileMatrix tm : matrices) {
             final double res = tm.getResolution()[0];
             List<TileMatrix> lst = sorted.get(res);
@@ -137,7 +132,7 @@ public final class VirtualTileMatrixSet implements TileMatrixSet {
             }
         }
 
-        final ScaleSortedMap sm = new ScaleSortedMap();
+        final ScaleSortedMap<TileMatrix> sm = new ScaleSortedMap<>();
         int lod = 0;
         for (List<TileMatrix> tm : sorted.values()) {
             final TileMatrix result = new CombineTileMatrix(Names.createLocalName(null, null, ""+lod), tm);
