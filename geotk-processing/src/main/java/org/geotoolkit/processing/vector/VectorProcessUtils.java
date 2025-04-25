@@ -25,9 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
-import javax.measure.Unit;
-import javax.measure.UnitConverter;
-import javax.measure.quantity.Length;
 import org.apache.sis.feature.AbstractOperation;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
@@ -35,7 +32,6 @@ import org.apache.sis.feature.builder.PropertyTypeBuilder;
 import org.apache.sis.feature.privy.AttributeConvention;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CRS;
-import org.apache.sis.referencing.operation.transform.DefaultMathTransformFactory;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.ArgumentChecks;
@@ -49,7 +45,6 @@ import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.geotoolkit.processing.vector.intersect.IntersectDescriptor;
 import org.geotoolkit.storage.feature.FeatureCollection;
 import org.geotoolkit.storage.feature.FeatureStoreUtilities;
-import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryCollection;
 import org.locationtech.jts.geom.LineString;
@@ -63,12 +58,8 @@ import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;
-import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.crs.GeographicCRS;
-import org.opengis.referencing.datum.Ellipsoid;
 import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
@@ -131,65 +122,6 @@ public final class VectorProcessUtils extends Static {
         }
 
         return ftb.build();
-    }
-
-    /**
-     * Create a custom projection (Conic or Mercator) for the geometry using the
-     * geometry envelope.
-     *
-     * @param geomEnvelope Geometry bounding envelope
-     * @param longLatCRS WGS84 projection
-     * @param unit unit wanted for the geometry
-     */
-    public static MathTransform changeProjection(final Envelope geomEnvelope, final GeographicCRS longLatCRS,
-            final Unit<Length> unit) throws FactoryException {
-
-        //collect data to create the projection
-        final double centerMeridian = geomEnvelope.getWidth() / 2 + geomEnvelope.getMinX();
-        final double centerParallal = geomEnvelope.getHeight() / 2 + geomEnvelope.getMinY();
-        final double northParallal = geomEnvelope.getMaxY() - geomEnvelope.getHeight() / 3;
-        final double southParallal = geomEnvelope.getMinY() + geomEnvelope.getHeight() / 3;
-
-        boolean conicProjection = true;
-        //if the geomery is near the equator we use the mercator projection
-        if (geomEnvelope.getMaxY() > 0 && geomEnvelope.getMinY() < 0) {
-            conicProjection = false;
-        }
-        //conicProjection = true;
-
-        //create geometry lambert projection or mercator projection
-        final Ellipsoid ellipsoid = longLatCRS.getDatum().getEllipsoid();
-        double semiMajorAxis = ellipsoid.getSemiMajorAxis();
-        double semiMinorAxis = ellipsoid.getSemiMinorAxis();
-
-        final Unit<Length> projectionUnit = ellipsoid.getAxisUnit();
-        //check for unit conversion
-        if (unit != projectionUnit) {
-            final UnitConverter converter = projectionUnit.getConverterTo(unit);
-            semiMajorAxis = converter.convert(semiMajorAxis);
-            semiMinorAxis = converter.convert(semiMinorAxis);
-        }
-
-        final MathTransformFactory f = DefaultMathTransformFactory.provider();
-        final MathTransform.Builder builder;
-        ParameterValueGroup p;
-        if (conicProjection) {
-            builder = f.builder("Albers_Conic_Equal_Area");
-            p = builder.parameters();
-            p.parameter("semi_major").setValue(semiMajorAxis);
-            p.parameter("semi_minor").setValue(semiMinorAxis);
-            p.parameter("central_meridian").setValue(centerMeridian);
-            p.parameter("standard_parallel_1").setValue(northParallal);
-            p.parameter("standard_parallel_2").setValue(southParallal);
-        } else {
-            builder = f.builder("Mercator_2SP");
-            p = builder.parameters();
-            p.parameter("semi_major").setValue(semiMajorAxis);
-            p.parameter("semi_minor").setValue(semiMinorAxis);
-            p.parameter("central_meridian").setValue(centerMeridian);
-            p.parameter("standard_parallel_1").setValue(centerParallal);
-        }
-        return builder.create();
     }
 
     /**
@@ -273,30 +205,6 @@ public final class VectorProcessUtils extends Static {
             return inputGeom;
         }
     }
-
-//
-//    public static Geometry convertToPolygon(Geometry intersectGeom) {
-//        GeometryFactory geomFact = JTS.getFactory();
-//        LinearRing ring;
-//
-//        if(intersectGeom instanceof Point){
-//            Point pt = (Point) intersectGeom;
-//            ring = geomFact.createLinearRing(new Coordinate[]{
-//                new Coordinate(pt.getX(),              pt.getY()),
-//                new Coordinate(pt.getX(),              pt.getY()+0.0000000001),
-//                new Coordinate(pt.getX()+0.0000000001, pt.getY()+0.0000000001),
-//                new Coordinate(pt.getX()+0.0000000001, pt.getY()),
-//                new Coordinate(pt.getX(),              pt.getY())
-//            });
-//            return geomFact.createPolygon(ring, null);
-//        }else if(intersectGeom instanceof LineString){
-//            LineString line = (LineString) intersectGeom;
-//
-//            return geomFact.createPolygon(ring, null);
-//        }
-//
-//    }
-
 
     /**
      * Compute the intersection geometry between two Features.

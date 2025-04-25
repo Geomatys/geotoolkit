@@ -55,7 +55,6 @@ import org.apache.sis.util.iso.DefaultNameFactory;
 import org.apache.sis.util.iso.DefaultNameSpace;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.internal.feature.ArrayFeature;
 import org.geotoolkit.internal.feature.FeatureLoop;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.Attribute;
@@ -133,29 +132,6 @@ public final class FeatureExt extends Static {
         // optimization, since the UID toString uses only ":" and converts long and integers
         // to strings for the rest, so the only non word character is really ":"
         return "fid-" + new UID().toString().replace(':', '_');
-    }
-
-    /**
-     * Validate feature state.
-     * This method is a shortcut to loop on feature dataquality results.
-     * If one ConformanceResult is false then an IllegalArgumentException is throw.
-     * Otherwise the function return doing nothing.
-     *
-     * @deprecated Moved to {@link org.apache.sis.feature.Features#validate(Feature)}.
-     */
-    @Deprecated
-    public static void isValid(Feature feature) throws IllegalArgumentException {
-        org.apache.sis.feature.Features.validate(feature);
-    }
-
-    /**
-     * Create a new array feature.
-     *
-     * @param type simple FeatureType
-     * @return ArrayFeature
-     */
-    public static ArrayFeature newArrayInstance(FeatureType type){
-        return new DefaultArrayFeature((DefaultFeatureType) type);
     }
 
     /**
