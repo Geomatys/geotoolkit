@@ -62,6 +62,8 @@ public class Field {
      */
     public final FieldType type;
 
+    protected Field parent;
+
     /**
      * Associated quality fields.
      */
@@ -81,6 +83,7 @@ public class Field {
         this.label = null;
         this.description = null;
         this.uom = null;
+        this.parent = null;
         this.qualityFields = new ArrayList<>();
         this.parameterFields = new ArrayList<>();
     }
@@ -123,7 +126,19 @@ public class Field {
         this.label = label;
         this.type = type;
         this.qualityFields = qualityFields;
+        //update parent
+        if (qualityFields != null) {
+            for (Field qf : qualityFields) {
+                qf.parent = this;
+            }
+        }
         this.parameterFields = parameterFields;
+        //update parent
+        if (parameterFields != null) {
+            for (Field pf : parameterFields) {
+                pf.parent = this;
+            }
+        }
     }
 
     /**
@@ -206,6 +221,10 @@ public class Field {
         } else {
             throw new SQLException("Only Quantity, Text AND Time is supported for now");
         }
+    }
+
+    public Field getParent() {
+        return parent;
     }
 
     @Override
