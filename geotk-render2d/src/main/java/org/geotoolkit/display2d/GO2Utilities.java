@@ -1481,20 +1481,15 @@ public final class GO2Utilities {
 
             }
 
-            //-- if difference between band minimum statistic and palette minimum,
-            //-- define values between them as transparency
-            values.add(STYLE_FACTORY.interpolationPoint(bmin, STYLE_FACTORY.literal(colorsPal[0])));
-
             assert colorsPal.length >= 4;
 
-            final double step = (palMax - palMin) / (colorsPal.length - 3);//-- min and max transparency
-            double currentVal = palMin;
-            for (int c = 1; c <= colorsPal.length - 2; c++) {
-                values.add(STYLE_FACTORY.interpolationPoint(currentVal, STYLE_FACTORY.literal(colorsPal[c])));
-                currentVal += step;
+            //-- if difference between band minimum statistic and palette minimum,
+            //-- define values between them as transparency
+            for (int i = 0; i < colorsPal.length; i++) {
+                final double ratio = ((double)i) / ((double)colorsPal.length-1);
+                final double value = bmin + (bmax-bmin) * ratio;
+                values.add(STYLE_FACTORY.interpolationPoint(value, STYLE_FACTORY.literal(colorsPal[i])));
             }
-            assert StrictMath.abs(currentVal - step - palMax) < 1E-9;
-            values.add(STYLE_FACTORY.interpolationPoint(bmax, STYLE_FACTORY.literal(colorsPal[colorsPal.length - 1])));
 
             final Expression function = STYLE_FACTORY.interpolateFunction(DEFAULT_CATEGORIZE_LOOKUP, values, Method.COLOR, Mode.LINEAR, DEFAULT_FALLBACK);
             final ColorMap colorMap = STYLE_FACTORY.colorMap(function);

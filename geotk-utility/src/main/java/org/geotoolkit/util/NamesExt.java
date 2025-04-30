@@ -69,6 +69,7 @@ public final class NamesExt extends Static {
      * Parse a string value that can be expressed in 2 different forms :
      * JSR-283 extended form : {uri}localpart
      * Separator form : uri:localpart
+     * QName XPath form : Q{uri}localpart
      *
      * if the given string do not match any, then a Name with no namespace will be
      * created and the localpart will be the given string.
@@ -78,6 +79,9 @@ public final class NamesExt extends Static {
         if(candidate.startsWith("{")){
             //name is in extended form
             return toSessionNamespaceFromExtended(candidate);
+        } else if(candidate.startsWith("Q{")){
+            //name is in extended form
+            return toSessionNamespaceFromExtended(candidate.substring(1));
         }
 
         int index = candidate.lastIndexOf(':');

@@ -32,6 +32,7 @@ import java.util.logging.Logger;
 import org.apache.sis.coverage.grid.DisjointExtentException;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverage2D;
+import org.apache.sis.coverage.grid.GridCoverageProcessor;
 import org.apache.sis.coverage.grid.GridDerivation;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
@@ -73,6 +74,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.crs.SingleCRS;
 import org.apache.sis.coverage.grid.PixelInCell;
+import org.apache.sis.util.collection.BackingStoreException;
 import org.opengis.referencing.operation.CoordinateOperation;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.Matrix;
@@ -248,8 +250,14 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         //we remove all other dimension to simplify any following operation
         CoordinateReferenceSystem coverageCrs = coverage.getCoordinateReferenceSystem();
         if (coverageCrs.getCoordinateSystem().getDimension() > 2) {
-            int idx = CRSUtilities.firstHorizontalAxis(coverageCrs);
-            coverage = new ReducedGridCoverage(coverage, idx, idx+1);
+            //TODO index is wrong, it ignores grid to crs transform
+            //to be fixed when moved to SIS
+            final int idx = CRSUtilities.firstHorizontalAxis(coverageCrs);
+            try {
+                coverage = new ReducedGridCoverage(coverage, idx, idx+1);
+            } catch (BackingStoreException ex) {
+                coverage = new GridCoverageProcessor().resample(coverage, CRS.getHorizontalComponent(coverageCrs));
+            }
         }
 
         final CoordinateReferenceSystem crs2d = CRS.getHorizontalComponent(canvasGrid.getCoordinateReferenceSystem());
@@ -463,11 +471,18 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         try {
             GridDerivation derivation = fullArea.derive()
                     .rounding(GridRoundingMode.ENCLOSING);
-            if (margin != null && margin.length > 0)
+            if (margin != null && margin.length > 0) {
                 derivation = derivation.margin(margin);
+            }
+            //TODO index is wrong, it ignores grid to crs transform
+            //to be fixed when moved to SIS
+            final int xAxis = CRSUtilities.firstHorizontalAxis(fullArea.getCoordinateReferenceSystem());
+            //slice and subgrid must be called separately
             slice = derivation
+                    .sliceByRatio(1, xAxis, xAxis+1)
+                    .build();
+            slice = slice.derive()
                     .subgrid(canvasEnv, resolution)
-                    .sliceByRatio(1, 0, 1)
                     .build();
         } catch (DisjointExtentException ex) {
             throw new DisjointCoverageDomainException(ex.getMessage(), ex);

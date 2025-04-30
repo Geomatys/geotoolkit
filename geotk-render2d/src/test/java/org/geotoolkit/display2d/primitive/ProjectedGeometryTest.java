@@ -51,7 +51,6 @@ import org.locationtech.jts.geom.Polygon;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.FilterFactory;
-import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.Graphic;
 import org.opengis.style.GraphicalSymbol;
@@ -265,10 +264,6 @@ public class ProjectedGeometryTest {
 
         final ProjectedGeometry pg = new ProjectedGeometry(context);
         pg.setDataGeometry(geometry, CommonCRS.WGS84.normalizedGeographic());
-
-        Envelope env = canvas.getVisibleEnvelope();
-        System.out.println(env.getMinimum(0)+" "+env.getMaximum(0));
-        System.out.println(env.getMinimum(1)+" "+env.getMaximum(1));
 
         return pg;
     }

@@ -25,7 +25,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -58,7 +57,6 @@ import static org.geotoolkit.display2d.GO2Utilities.STYLE_FACTORY;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.primitive.ProjectedObject;
-import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.feature.ViewMapper;
 import org.geotoolkit.filter.FilterUtilities;
@@ -70,7 +68,7 @@ import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.StyleUtilities;
-import org.opengis.coverage.Coverage;
+import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -161,9 +159,10 @@ public final class RenderingRoutines {
     /**
      * Creates an optimal query to send to the datastore, knowing which properties are knowned and
      * the appropriate bounding box to filter.
+     * @param styleAttsXpath Set of XPath.
      */
     public static Query prepareQuery(final RenderingContext2D renderingContext, FeatureSet fs, final MapLayer layer,
-            final Set<String> styleRequieredAtts, final List<Rule> rules, double symbolsMargin) throws PortrayalException{
+            final Set<String> styleAttsXpath, final List<Rule> rules, double symbolsMargin) throws PortrayalException{
 
         final FeatureType schema;
         try {
@@ -191,14 +190,16 @@ public final class RenderingRoutines {
          *   distance. But would it do more good than harm ?
          */
         boolean isDefaultGeometryNeeded = rules == null || rules.isEmpty();
-        final Set<String> geomProperties = new HashSet<>();
+        final Set<Expression> geomProperties = new HashSet<>();
         final Set<Expression> complexProperties = new HashSet<>();
         if (rules != null) {
             for (Rule r : rules) {
                 for (Symbolizer s : r.symbolizers()) {
                     final Expression expGeom = s.getGeometry();
                     if (isNil(expGeom)) isDefaultGeometryNeeded = true;
-                    else if (expGeom instanceof ValueReference) geomProperties.add( ((ValueReference)expGeom).getXPath() );
+                    else if (expGeom instanceof ValueReference) {
+                        geomProperties.add((ValueReference)expGeom);
+                    }
                     else complexProperties.add(expGeom);
                 }
             }
@@ -208,7 +209,7 @@ public final class RenderingRoutines {
             try {
                 final PropertyType defaultGeometry = FeatureExt.getDefaultGeometry(schema);
                 final String geomName = FeatureStoreUtilities.defaultGeometryPropertyNameToXpathForm(defaultGeometry);
-                geomProperties.add(geomName);
+                geomProperties.add(FILTER_FACTORY.property(geomName));
             } catch (PropertyNotFoundException e) {
                 throw new PortrayalException("Default geometry cannot be determined. " +
                         "However, it is needed to properly define filtering rules.");
@@ -220,6 +221,7 @@ public final class RenderingRoutines {
                         .filter(p -> !Features.getLinkTarget(p).isPresent())
                         .filter(AttributeConvention::isGeometryAttribute)
                         .map(p -> p.getName().toString())
+                        .map(FILTER_FACTORY::property)
                         .forEach(geomProperties::add);
             }
         }
@@ -232,7 +234,9 @@ public final class RenderingRoutines {
          * We may have coverage properties for geometry
          * add an expression to convert them to geometries for the filter.
          */
-        Stream<Expression> geomStream = geomProperties.stream().map(FILTER_FACTORY::property).map((Expression t) -> {
+        Stream<Expression> geomStream = geomProperties
+                .stream()
+                .map((Expression t) -> {
             final Expression<? super Feature,?> expression = t;
             final FeatureExpression<?,?> fex = FeatureExpression.castOrCopy(expression);
             final PropertyTypeBuilder resultType = fex.expectedType(schema, new FeatureTypeBuilder());
@@ -280,32 +284,39 @@ public final class RenderingRoutines {
             filter = userFilter;
         }
 
-        final Set<String> copy = new HashSet<>();
 
         final FeatureType expected;
-        final String[] atts;
-        if (styleRequieredAtts == null) {
+        final String[] projection;
+        if (styleAttsXpath == null) {
             //all properties are requiered
             expected = schema;
-            atts = null;
+            projection = null;
         } else {
-            final Set<String> attributs = styleRequieredAtts;
-            copy.addAll(attributs);
-            copy.addAll(geomProperties);
+            final Set<String> attsXpath = styleAttsXpath;
+            final Set<String> copyXPath = new HashSet<>(attsXpath);
+            for (Expression exp : geomProperties) {
+                String xPath = ((ValueReference)exp).getXPath();
+                copyXPath.add(xPath);
+            }
 
             try {
                 //always include the identifier if it exist
                 schema.getProperty(AttributeConvention.IDENTIFIER);
-                copy.add(AttributeConvention.IDENTIFIER);
+                copyXPath.add(AttributeConvention.IDENTIFIER);
             } catch (PropertyNotFoundException ex) {
                 //no id, ignore it
             }
 
-            atts = copy.toArray(new String[copy.size()]);
+            final String[] atts = copyXPath.toArray(String[]::new);
+            //`projection` is composed of XPath elements which may contain
+            //sub properties and namespaces
+            //`atts` in the following loop is converted to plain property names
+            // without any depth (path), this is what expect the ViewMapper class.
+            projection = atts.clone();
 
             //check that properties names does not hold sub properties values, if one is found
             //then we reduce it to the first parent property.
-            for (int i=0; i<atts.length; i++) {
+            for (int i = 0; i < atts.length; i++) {
                 String attName = atts[i];
                 int index = attName.indexOf('/');
                 if (index == 0) {
@@ -326,15 +337,21 @@ public final class RenderingRoutines {
                             //we don't query precisely sub elements
                             position = attName.length();
                             break;
-                        } else if(match.charAt(0) == '{') {
+                        } else if (match.charAt(0) == '{') {
                             sb.append(match);
-                        } else if(match.charAt(0) == '[') {
+                        } else if (match.charAt(0) == '[') {
                             //strip indexes or xpath searches
                         }
                     }
                     sb.append(attName.substring(position));
                     atts[i] = sb.toString();
                 }
+
+                if (attName.startsWith("Q{")) {
+                    //single xpath name, replace it by a name
+                    atts[i] = NamesExt.valueOf(attName).toString();
+                }
+
             }
             try {
                 expected = new ViewMapper(schema, atts).getMappedType();
@@ -386,11 +403,10 @@ public final class RenderingRoutines {
         //optimize the filter---------------------------------------------------
         filter = FilterUtilities.prepare(filter, Feature.class, expected);
 
-        final Hints queryHints = new Hints();
         final org.geotoolkit.storage.feature.query.Query qb = new org.geotoolkit.storage.feature.query.Query();
         qb.setTypeName(schema.getName());
         qb.setSelection(filter);
-        qb.setProperties(atts);
+        qb.setProjection(projection);
 
         //resampling and ignore flag only works when we know the layer crs
         if (layerCRS != null) {
@@ -438,8 +454,6 @@ public final class RenderingRoutines {
         //TODO wait for a new geometry implementation
         //qb.setCRS(renderingContext.getObjectiveCRS2D());
 
-        //set the acumulated hints
-        qb.setHints(queryHints);
         return qb;
     }
 
