@@ -23,8 +23,11 @@ import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.FileSystemNotFoundException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
@@ -54,6 +57,7 @@ import org.geotoolkit.storage.multires.TileMatrix;
  */
 public final class URITile {
 
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.storage.uri");
     private static final DataStoreProvider GEOTIFFPROVIDER;
     static {
         GEOTIFFPROVIDER = DataStores.getProviderById("GeoTIFF");
@@ -207,8 +211,18 @@ public final class URITile {
                 try {
                     return Optional.of(new FileSet(Paths.get((URI) input)));
                 } catch (FileSystemNotFoundException | SecurityException | IllegalArgumentException ex) {
+                    LOGGER.log(Level.FINER, "URI is not a file or not available.", ex);
                     return Optional.empty();
                 }
+            }
+        }
+
+        @Override
+        public Optional<Path> getContentPath() throws DataStoreException {
+            try {
+                return Optional.of(Paths.get((URI)input));
+            } catch (FileSystemNotFoundException ex) {
+                return Optional.empty();
             }
         }
     }
@@ -253,6 +267,15 @@ public final class URITile {
             candidate = DataStores.flatten(resource, true, FeatureSet.class).stream().findFirst().orElse(null);
             if (candidate != null) return candidate;
             return resource;
+        }
+
+        @Override
+        public Optional<Path> getContentPath() throws DataStoreException {
+            try {
+                return Optional.of(Paths.get((URI)input));
+            } catch (FileSystemNotFoundException ex) {
+                return Optional.empty();
+            }
         }
     }
 }
