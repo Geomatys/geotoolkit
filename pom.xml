@@ -1035,6 +1035,7 @@
     <module>geotk-metadata-store</module>
     <module>geotk-hdf</module>
 
+    <module>geotk-ogcapi</module>
     <module>geotk-client-store</module>
     <module>geotk-client-csw</module>
     <module>geotk-client-osm</module>
