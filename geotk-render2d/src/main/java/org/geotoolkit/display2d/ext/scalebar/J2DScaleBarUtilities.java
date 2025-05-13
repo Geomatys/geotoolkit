@@ -178,7 +178,7 @@ public class J2DScaleBarUtilities {
         final Ellipsoid ellipsoid = ReferencingUtilities.getEllipsoid(mapCRS);
         try {
 
-            if (ellipsoid != null) {
+            if (!Units.METRE.isCompatible(mapUnitX)) {
                 final UnitConverter xConverter = mapUnitX.getConverterToAny(Units.DEGREE);
                 final UnitConverter yConverter = mapUnitY.getConverterToAny(Units.DEGREE);
                 P1.setLocation(xConverter.convert(P1.getX()), yConverter.convert(P1.getY()));
