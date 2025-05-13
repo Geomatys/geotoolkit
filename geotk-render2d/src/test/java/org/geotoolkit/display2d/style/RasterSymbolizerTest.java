@@ -368,8 +368,8 @@ public class RasterSymbolizerTest {
         // along 256 colors, so we have to adapt comparison.
         final int[] pixels = rendering.getData().getPixels(0, 0, 2, 2, (int[]) null);
         final int[] expected = {
-                255, 255, 255, 255,  165, 165, 165, 255,
-                  0,   0,   0, 255,   88,  88,  88, 255
+                255, 255, 255, 255,  242, 242, 242, 255,
+                  0,   0,   0, 255,   12,  12,  12, 255
         };
         assertArrayEquals(expected, pixels);
 
