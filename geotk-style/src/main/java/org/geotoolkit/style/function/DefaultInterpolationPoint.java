@@ -26,7 +26,7 @@ import static org.apache.sis.util.ArgumentChecks.*;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class DefaultInterpolationPoint implements InterpolationPoint{
+public final class DefaultInterpolationPoint implements InterpolationPoint{
 
     private final Expression value;
     private final Number data;

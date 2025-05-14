@@ -274,8 +274,8 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
         final int[] ARGB;
         final ColorModel model;
 
-        // As index color model cannot manage negative values, we must use our own in this case.
-        if (points.length == 0 || (points[0].getData().doubleValue() < 0 || candidate==null)) {
+        // As index color model cannot manage negative or NaN values, we must use our own in this case.
+        if (points.length == 0 || (points[0].getData().doubleValue() < 0 || !Double.isFinite(points[0].getData().doubleValue()) || candidate==null)) {
             final int pixelSize;
             if(candidate!=null){
                 pixelSize = candidate.getPixelSize();
