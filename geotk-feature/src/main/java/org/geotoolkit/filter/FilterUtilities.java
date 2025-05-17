@@ -40,6 +40,12 @@ import org.opengis.filter.ValueReference;
  * @author Johann Sorel (Geomatys)
  */
 public final class FilterUtilities extends Static {
+    /**
+     * Default filter factory for features.
+     *
+     * @todo parameterized type should be {@code <Feature, Object, Object>}, but it breaks some Geotk code.
+     * The problem is in Geotk, which uses raw types in too many places.
+     */
     public static final FilterFactory FF = DefaultFilterFactory.forFeatures();
 
     /**

@@ -14,8 +14,6 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-
-
 package org.geotoolkit.storage.feature.query;
 
 import java.util.Collections;
@@ -63,13 +61,12 @@ public class QueryTest {
         GenericName name = NamesExt.create("http://test.org", "testLocal");
 
         //test null values------------------------------------------------------
-        try{
+        try {
             new Query((GenericName) null);
-            throw new Exception("We can not build a query without at least the type name.");
-        }catch(NullPointerException ex){
+            fail("We can not build a query without at least the type name.");
+        } catch(NullPointerException ex) {
             //ok
         }
-
 
         //all-------------------------------------------------------------------
         query = new Query(name);
@@ -79,7 +76,6 @@ public class QueryTest {
         assertArrayEquals(query.getPropertyNames(), null);
         assertArrayEquals(QueryUtilities.getSortProperties(query.getSortBy()), new SortProperty[0]);
         assertEquals(query.getOffset(), 0);
-
     }
 
     /**

@@ -20,9 +20,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.feature.builder.PropertyTypeBuilder;
 import org.apache.sis.feature.privy.FeatureExpression;
+import org.apache.sis.feature.privy.FeatureProjectionBuilder;
 import org.apache.sis.util.privy.CollectionsExt;
 import org.geotoolkit.filter.function.AbstractFunction;
 import org.opengis.feature.FeatureType;
@@ -68,22 +67,22 @@ public class ListFunction extends AbstractFunction implements FeatureExpression<
     }
 
     @Override
-    public PropertyTypeBuilder expectedType(FeatureType valueType, FeatureTypeBuilder addTo) {
-        PropertyTypeBuilder type;
+    public FeatureProjectionBuilder.Item expectedType(final FeatureProjectionBuilder addTo) {
+        final FeatureType valueType = addTo.source();
+        final FeatureProjectionBuilder.Item item;
         if (parameters.isEmpty()) {
-            type = addTo.addAssociation(valueType);
+            item = addTo.addComputedProperty(addTo.addAssociation(valueType), false);
         } else {
             Expression<?,?> expression = parameters.get(0);
             if (expression instanceof FeatureExpression<?,?>) {
-                type = ((FeatureExpression<?,?>) expression).expectedType(valueType, addTo);
+                item = ((FeatureExpression<?,?>) expression).expectedType(addTo);
             } else {
                 final PropertyType pt = CollectionsExt.singletonOrNull(valueType.getProperties(true));
                 if (pt == null) return null;
-                type = addTo.addProperty(pt);
+                item = addTo.addSourceProperty(pt, false);
             }
         }
-        return type.setMinimumOccurs(0)
-                   .setMaximumOccurs(Integer.MAX_VALUE)
-                   .setName(OtherFunctionFactory.LIST);
+        item.builder().setMinimumOccurs(0).setMaximumOccurs(Integer.MAX_VALUE);
+        return item;
     }
 }

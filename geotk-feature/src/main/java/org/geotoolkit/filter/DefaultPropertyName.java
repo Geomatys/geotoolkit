@@ -17,10 +17,9 @@
  */
 package org.geotoolkit.filter;
 
-
-import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.feature.builder.PropertyTypeBuilder;
 import org.apache.sis.feature.privy.FeatureExpression;
+import org.apache.sis.feature.privy.FeatureProjectionBuilder;
 import org.apache.sis.referencing.CRS;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.logging.Logging;
@@ -148,24 +147,30 @@ public class DefaultPropertyName extends AbstractExpression implements ValueRefe
     }
 
     @Override
-    public PropertyTypeBuilder expectedType(FeatureType valueType, FeatureTypeBuilder addTo) {
-        PropertyType pt = (PropertyType) apply(valueType);
-        if (pt != null) return addTo.addProperty(pt);
-        try {
+    public FeatureProjectionBuilder.Item expectedType(final FeatureProjectionBuilder addTo) {
+        final FeatureType valueType = addTo.source();
+        final PropertyType pt = (PropertyType) apply(valueType);
+        if (pt != null) {
+            return addTo.addSourceProperty(pt, true);
+        }
+        PropertyTypeBuilder builder;
+fetch:  try {
             PropertyType type = valueType.getProperty(property);        // May throw IllegalArgumentException.
             while (type instanceof Operation) {
                 final IdentifiedType result = ((Operation) type).getResult();
                 if (result != type && result instanceof PropertyType) {
                     type = (PropertyType) result;
                 } else if (result instanceof FeatureType) {
-                    return addTo.addAssociation((FeatureType) result).setName(property);
+                    builder = addTo.addAssociation((FeatureType) result);
+                    break fetch;
                 } else {
                     return null;
                 }
             }
-            return addTo.addProperty(type);
+            return addTo.addSourceProperty(type, true);
         } catch (PropertyNotFoundException ex) {
-            return addTo.addAttribute(Object.class).setName(property);
+            builder = addTo.addAttribute(Object.class);
         }
+        return addTo.addComputedProperty(builder.setName(property), false);
     }
 }
