@@ -17,10 +17,10 @@
 package org.geotoolkit.ogcapi.client.common;
 
 import java.net.http.HttpRequest;
-import org.geotoolkit.ogcapi.client.AbstractApi;
-import org.geotoolkit.ogcapi.client.OpenApiConfiguration;
-import org.geotoolkit.ogcapi.client.OpenApiException;
-import org.geotoolkit.ogcapi.client.OpenApiResponse;
+import org.geotoolkit.client.openapi.AbstractOpenApi;
+import org.geotoolkit.client.openapi.OpenApiConfiguration;
+import org.geotoolkit.client.service.ServiceException;
+import org.geotoolkit.client.service.ServiceResponse;
 import org.geotoolkit.ogcapi.model.common.ConfClasses;
 import org.geotoolkit.ogcapi.model.common.LandingPage;
 
@@ -28,7 +28,15 @@ import org.geotoolkit.ogcapi.model.common.LandingPage;
  *
  * @author Johann Sorel (Geomatys)
  */
-public final class CoreApi extends AbstractApi {
+public final class CoreApi extends AbstractOpenApi {
+
+    /**
+     * Key used in ConfClasses to identify a resource compliant with this Api.
+     */
+    public static final String CONFORMANCE_CORE = "http://www.opengis.net/spec/ogcapi-common-1/1.0/conf/core";
+    public static final String CONFORMANCE_LANDINGPAGE = "http://www.opengis.net/spec/ogcapi-common-1/1.0/conf/landing-page";
+    public static final String CONFORMANCE_HTML = "http://www.opengis.net/spec/ogcapi-common-1/1.0/conf/html";
+    public static final String CONFORMANCE_JSON = "http://www.opengis.net/spec/ogcapi-common-1/1.0/conf/json";
 
     public CoreApi(OpenApiConfiguration apiClient) {
         super(apiClient);
@@ -41,9 +49,9 @@ public final class CoreApi extends AbstractApi {
      * server shall provide as part of the response document. The default format
      * is JSON. (optional, default to json)
      * @return ApiResponse&lt;Void&gt;
-     * @throws OpenApiException if fails to make API call
+     * @throws ServiceException if fails to make API call
      */
-    public OpenApiResponse<Void> getApi(@jakarta.annotation.Nullable String f) throws OpenApiException {
+    public ServiceResponse<Void> getApi(@jakarta.annotation.Nullable String f) throws ServiceException {
         final HttpRequest.Builder request = HttpRequest.newBuilder();
         request.uri(toUri("/api", toPairs("f", f)));
         request.header("Accept", "application/json, text/html");
@@ -60,9 +68,9 @@ public final class CoreApi extends AbstractApi {
      * server shall provide as part of the response document. The default format
      * is JSON. (optional, default to json)
      * @return ApiResponse&lt;ConfClasses&gt;
-     * @throws OpenApiException if fails to make API call
+     * @throws ServiceException if fails to make API call
      */
-    public OpenApiResponse<ConfClasses> getConformance(@jakarta.annotation.Nullable String f) throws OpenApiException {
+    public ServiceResponse<ConfClasses> getConformance(@jakarta.annotation.Nullable String f) throws ServiceException {
         final HttpRequest.Builder request = HttpRequest.newBuilder();
         request.uri(toUri("/conformance", toPairs("f", f)));
         request.header("Accept", "application/json, text/html");
@@ -79,9 +87,9 @@ public final class CoreApi extends AbstractApi {
      * server shall provide as part of the response document. The default format
      * is JSON. (optional, default to json)
      * @return ApiResponse&lt;LandingPage&gt;
-     * @throws OpenApiException if fails to make API call
+     * @throws ServiceException if fails to make API call
      */
-    public OpenApiResponse<LandingPage> getLandingPage(@jakarta.annotation.Nullable String f) throws OpenApiException {
+    public ServiceResponse<LandingPage> getLandingPage(@jakarta.annotation.Nullable String f) throws ServiceException {
         final HttpRequest.Builder request = HttpRequest.newBuilder();
         request.uri(toUri("/", toPairs("f", f)));
         request.header("Accept", "application/json, text/html");

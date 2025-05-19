@@ -14,11 +14,8 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.ogcapi.client;
+package org.geotoolkit.client.service;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -27,108 +24,73 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.StringJoiner;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public abstract class AbstractApi {
+public abstract class AbstractService implements AutoCloseable {
 
+    protected final ServiceConfiguration config;
     protected final HttpClient httpClient;
-    protected final ObjectMapper objectMapper;
-    protected final String baseUri;
-    protected final Consumer<HttpRequest.Builder> requestInterceptor;
-    protected final Duration readTimeout;
-    protected final Consumer<HttpResponse<InputStream>> responseInterceptor;
-    protected final Consumer<HttpResponse<String>> asyncResponseInterceptor;
 
-    public AbstractApi(OpenApiConfiguration apiClient) {
-        httpClient = apiClient.getHttpClient();
-        objectMapper = apiClient.getObjectMapper();
-        baseUri = apiClient.getBaseUri();
-        requestInterceptor = apiClient.getRequestInterceptor();
-        readTimeout = apiClient.getReadTimeout();
-        responseInterceptor = apiClient.getResponseInterceptor();
-        asyncResponseInterceptor = apiClient.getAsyncResponseInterceptor();
+    public AbstractService(ServiceConfiguration apiClient) {
+        this.config = apiClient;
+        httpClient = apiClient.createHttpClient();
     }
 
+    /**
+     * @return parameters used by this service;
+     */
+    public ServiceConfiguration getConfiguration() {
+        return config;
+    }
 
-    protected static <T> OpenApiResponse<T> emptyResponse(HttpResponse<?> response) {
-        return new OpenApiResponse<>(
+    protected static <T> ServiceResponse<T> emptyResponse(HttpResponse<?> response) {
+        return new ServiceResponse<>(
                 response.statusCode(),
                 response.headers().map(),
                 null
         );
     }
 
-    protected HttpResponse<InputStream> send(HttpRequest.Builder requestBuilder) throws OpenApiException {
+    protected HttpResponse<InputStream> send(HttpRequest.Builder requestBuilder) throws ServiceException {
         final HttpRequest request = requestBuilder.build();
         try {
             final HttpResponse<InputStream> response = httpClient.send(
                     request,
                     HttpResponse.BodyHandlers.ofInputStream());
-            if (responseInterceptor != null) {
-                responseInterceptor.accept(response);
+            if (config.responseInterceptor != null) {
+                config.responseInterceptor.accept(response);
             }
             if (response.statusCode() / 100 != 2) {
-                throw getOpenApiException(request.uri().getPath(), response);
+                throw toServiceException(request.uri().getPath(), response);
             }
             return response;
         } catch (IOException e) {
-            throw new OpenApiException(e);
+            throw new ServiceException(e);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            throw new OpenApiException(e);
-        }
-    }
-
-    protected <T> OpenApiResponse<T> toSimpleResponse(HttpResponse<InputStream> response, Class<T> valueClass) throws OpenApiException {
-        return toSimpleResponse(response, valueClass == null ? null : objectMapper.constructType(valueClass));
-    }
-
-    protected <T> OpenApiResponse<T> toSimpleResponse(HttpResponse<InputStream> response, TypeReference<T> ref) throws OpenApiException {
-        return toSimpleResponse(response, ref == null ? null : objectMapper.constructType(ref));
-    }
-
-    private <T> OpenApiResponse<T> toSimpleResponse(HttpResponse<InputStream> response, JavaType ref) throws OpenApiException {
-        if (response.body() == null) {
-            return emptyResponse(response);
-        }
-
-        try (var in = response.body()){
-            final T responseBody;
-            if (ref == null) {
-                // Drain the InputStream
-                while (in.read() != -1) {
-                    // Ignore
-                }
-                responseBody = null;
-            } else {
-                responseBody = objectMapper.readValue(in, ref);
-            }
-            return new OpenApiResponse<>(response.statusCode(), response.headers().map(), responseBody);
-
-        } catch (IOException ex) {
-            throw new OpenApiException(ex);
+            throw new ServiceException(e);
         }
     }
 
     protected URI toUri(String localPath, List<Pair> queryParams) {
+        final String fullPath = localPath == null ? config.baseUri : config.baseUri + localPath;
+
         if (!queryParams.isEmpty()) {
             final StringJoiner queryJoiner = new StringJoiner("&");
             queryParams.forEach(p -> queryJoiner.add(p.getName() + '=' + p.getValue()));
-            return URI.create(baseUri + localPath + '?' + queryJoiner.toString());
+            return URI.create(fullPath + '?' + queryJoiner.toString());
         } else {
-            return URI.create(baseUri + localPath);
+            return URI.create(fullPath);
         }
     }
 
@@ -136,15 +98,15 @@ public abstract class AbstractApi {
      * Set request timeout and interceptor.
      */
     protected HttpRequest.Builder setConfig(HttpRequest.Builder requestBuilder) {
-        if (readTimeout != null) requestBuilder.timeout(readTimeout);
-        if (requestInterceptor != null) requestInterceptor.accept(requestBuilder);
+        if (config.readTimeout != null) requestBuilder.timeout(config.readTimeout);
+        if (config.requestInterceptor != null) config.requestInterceptor.accept(requestBuilder);
         return requestBuilder;
     }
 
-    protected OpenApiException getOpenApiException(String operationId, HttpResponse<InputStream> response) throws IOException {
+    protected ServiceException toServiceException(String operationId, HttpResponse<InputStream> response) throws IOException {
         String body = response.body() == null ? null : new String(response.body().readAllBytes());
         String message = formatExceptionMessage(operationId, response.statusCode(), body);
-        return new OpenApiException(response.statusCode(), message, response.headers(), body);
+        return new ServiceException(response.statusCode(), message, response.headers(), body);
     }
 
     private String formatExceptionMessage(String operationId, int statusCode, String body) {
@@ -152,6 +114,14 @@ public abstract class AbstractApi {
             body = "[no body]";
         }
         return operationId + " call failed with: " + statusCode + " - " + body;
+    }
+
+    @Override
+    public void close() throws Exception {
+        // HTTPClient becomes closeable in JDK 21
+        if (httpClient instanceof AutoCloseable) {
+            ((AutoCloseable)httpClient).close();
+        }
     }
 
     public static String valueToString(Object value) {
@@ -223,13 +193,23 @@ public abstract class AbstractApi {
                     .collect(Collectors.toList());
         }
 
-        String delimiter = switch (format) {
-            case "csv" -> urlEncode(",");
-            case "ssv" -> urlEncode(" ");
-            case "tsv" -> urlEncode("\t");
-            case "pipes" -> urlEncode("|");
-            default -> throw new IllegalArgumentException("Illegal collection format: " + collectionFormat);
-        };
+        String delimiter;
+        switch (format) {
+            case "csv":
+                delimiter = urlEncode(",");
+                break;
+            case "ssv":
+                delimiter = urlEncode(" ");
+                break;
+            case "tsv":
+                delimiter = urlEncode("\t");
+                break;
+            case "pipes":
+                delimiter = urlEncode("|");
+                break;
+            default:
+                throw new IllegalArgumentException("Illegal collection format: " + collectionFormat);
+        }
 
         StringJoiner joiner = new StringJoiner(delimiter);
         for (Object value : values) {
