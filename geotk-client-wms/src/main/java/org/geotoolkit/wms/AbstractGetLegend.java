@@ -17,8 +17,6 @@
 package org.geotoolkit.wms;
 
 import java.awt.Dimension;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -237,9 +235,9 @@ public abstract class AbstractGetLegend extends AbstractRequest implements GetLe
     /**
      * {@inheritDoc }
      */
-    @Override
-    public URL getURL() throws MalformedURLException {
 
+    @Override
+    protected void prepareParameters() {
         if (layer == null)
             throw new IllegalArgumentException("Layer is not defined");
 
@@ -306,8 +304,6 @@ public abstract class AbstractGetLegend extends AbstractRequest implements GetLe
         if (dims != null && !dims.isEmpty()) {
             requestParameters.putAll(dims);
         }
-
-        return super.getURL();
     }
 
 }

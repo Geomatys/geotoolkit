@@ -19,7 +19,6 @@ package org.geotoolkit.data.wfs;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.List;
@@ -89,7 +88,7 @@ public class AbstractDescribeFeatureType extends AbstractRequest implements Desc
      * {@inheritDoc }
      */
     @Override
-    public URL getURL() throws MalformedURLException {
+    protected void prepareParameters() {
         requestParameters.put("SERVICE",    "WFS");
         requestParameters.put("REQUEST",    "DescribeFeatureType");
         requestParameters.put("VERSION",    version.getCode());
@@ -117,8 +116,6 @@ public class AbstractDescribeFeatureType extends AbstractRequest implements Desc
         if (outputFormat != null) {
             requestParameters.put("OUTPUTFORMAT",outputFormat);
         }
-
-        return super.getURL();
     }
 
     @Override
