@@ -19,31 +19,34 @@ package org.geotoolkit.ogcapi.model.common;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
-import java.util.ArrayList;
-import java.util.List;
+import java.net.URI;
 import java.util.Objects;
 import org.geotoolkit.ogcapi.model.DataTransferObject;
 
 /**
- * LandingPage
+ * Concepts
  */
 @JsonPropertyOrder({
-    LandingPage.JSON_PROPERTY_TITLE,
-    LandingPage.JSON_PROPERTY_DESCRIPTION,
-    LandingPage.JSON_PROPERTY_ATTRIBUTION,
-    LandingPage.JSON_PROPERTY_LINKS
+    Concepts.JSON_PROPERTY_ID,
+    Concepts.JSON_PROPERTY_TITLE,
+    Concepts.JSON_PROPERTY_DESCRIPTION,
+    Concepts.JSON_PROPERTY_URL
 })
-@XmlRootElement(name = "LandingPage")
+@XmlRootElement(name = "Concepts")
 @XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "LandingPage")
-public final class LandingPage extends DataTransferObject {
+@JacksonXmlRootElement(localName = "Concepts")
+public final class Concepts extends DataTransferObject {
+
+    public static final String JSON_PROPERTY_ID = "id";
+    @XmlElement(name = "id")
+    @jakarta.annotation.Nonnull
+    private String id;
 
     public static final String JSON_PROPERTY_TITLE = "title";
     @XmlElement(name = "title")
@@ -55,26 +58,46 @@ public final class LandingPage extends DataTransferObject {
     @jakarta.annotation.Nullable
     private String description;
 
-    public static final String JSON_PROPERTY_ATTRIBUTION = "attribution";
-    @XmlElement(name = "attribution")
+    public static final String JSON_PROPERTY_URL = "url";
+    @XmlElement(name = "url")
     @jakarta.annotation.Nullable
-    private String attribution;
+    private URI url;
 
-    public static final String JSON_PROPERTY_LINKS = "links";
-    @XmlElement(name = "links")
-    @jakarta.annotation.Nonnull
-    private List<Link> links = new ArrayList<>();
-
-    public LandingPage() {
+    public Concepts() {
     }
 
-    public LandingPage title(@jakarta.annotation.Nullable String title) {
+    public Concepts id(@jakarta.annotation.Nonnull String id) {
+        this.id = id;
+        return this;
+    }
+
+    /**
+     * An identifier for the concept.
+     *
+     * @return id
+     */
+    @jakarta.annotation.Nonnull
+    @JsonProperty(JSON_PROPERTY_ID)
+    @JsonInclude(value = JsonInclude.Include.ALWAYS)
+    @JacksonXmlProperty(localName = "id")
+    public String getId() {
+        return id;
+    }
+
+    @JsonProperty(JSON_PROPERTY_ID)
+    @JsonInclude(value = JsonInclude.Include.ALWAYS)
+    @JacksonXmlProperty(localName = "id")
+    public void setId(@jakarta.annotation.Nonnull String id) {
+        this.id = id;
+    }
+
+    public Concepts title(@jakarta.annotation.Nullable String title) {
         this.title = title;
         return this;
     }
 
     /**
-     * Get title
+     * A human readable title for the concept.
      *
      * @return title
      */
@@ -93,13 +116,13 @@ public final class LandingPage extends DataTransferObject {
         this.title = title;
     }
 
-    public LandingPage description(@jakarta.annotation.Nullable String description) {
+    public Concepts description(@jakarta.annotation.Nullable String description) {
         this.description = description;
         return this;
     }
 
     /**
-     * Get description
+     * A human readable description for the concept.
      *
      * @return description
      */
@@ -118,71 +141,33 @@ public final class LandingPage extends DataTransferObject {
         this.description = description;
     }
 
-    public LandingPage attribution(@jakarta.annotation.Nullable String attribution) {
-        this.attribution = attribution;
+    public Concepts url(@jakarta.annotation.Nullable URI url) {
+        this.url = url;
         return this;
     }
 
     /**
-     * The &#x60;attribution&#x60; should be short and intended for presentation
-     * to a user, for example, in a corner of a map. Parts of the text can be
-     * links to other resources if additional information is needed. The string
-     * can include HTML markup.
+     * A URI providing further description of the concept.
      *
-     * @return attribution
+     * @return url
      */
     @jakarta.annotation.Nullable
-    @JsonProperty(JSON_PROPERTY_ATTRIBUTION)
+    @JsonProperty(JSON_PROPERTY_URL)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "attribution")
-    public String getAttribution() {
-        return attribution;
+    @JacksonXmlProperty(localName = "url")
+    public URI getUrl() {
+        return url;
     }
 
-    @JsonProperty(JSON_PROPERTY_ATTRIBUTION)
+    @JsonProperty(JSON_PROPERTY_URL)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "attribution")
-    public void setAttribution(@jakarta.annotation.Nullable String attribution) {
-        this.attribution = attribution;
-    }
-
-    public LandingPage links(@jakarta.annotation.Nonnull List<Link> links) {
-        this.links = links;
-        return this;
-    }
-
-    public LandingPage addLinksItem(Link linksItem) {
-        if (this.links == null) {
-            this.links = new ArrayList<>();
-        }
-        this.links.add(linksItem);
-        return this;
+    @JacksonXmlProperty(localName = "url")
+    public void setUrl(@jakarta.annotation.Nullable URI url) {
+        this.url = url;
     }
 
     /**
-     * Get links
-     *
-     * @return links
-     */
-    @jakarta.annotation.Nonnull
-    @JsonProperty(JSON_PROPERTY_LINKS)
-    @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "links")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public List<Link> getLinks() {
-        return links;
-    }
-
-    @JsonProperty(JSON_PROPERTY_LINKS)
-    @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "links")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setLinks(@jakarta.annotation.Nonnull List<Link> links) {
-        this.links = links;
-    }
-
-    /**
-     * Return true if this landingPage object is equal to o.
+     * Return true if this theme_concepts_inner object is equal to o.
      */
     @Override
     public boolean equals(Object o) {
@@ -192,16 +177,16 @@ public final class LandingPage extends DataTransferObject {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        LandingPage landingPage = (LandingPage) o;
-        return Objects.equals(this.title, landingPage.title)
-                && Objects.equals(this.description, landingPage.description)
-                && Objects.equals(this.attribution, landingPage.attribution)
-                && Objects.equals(this.links, landingPage.links);
+        Concepts themeConceptsInner = (Concepts) o;
+        return Objects.equals(this.id, themeConceptsInner.id)
+                && Objects.equals(this.title, themeConceptsInner.title)
+                && Objects.equals(this.description, themeConceptsInner.description)
+                && Objects.equals(this.url, themeConceptsInner.url);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(title, description, attribution, links);
+        return Objects.hash(id, title, description, url);
     }
 
 }
