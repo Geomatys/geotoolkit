@@ -22,7 +22,6 @@ import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.client.AbstractClientProvider;
-import org.geotoolkit.client.map.CachedTileMatrixSets;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
 import org.opengis.parameter.*;
@@ -85,16 +84,7 @@ public class TMSProvider extends AbstractClientProvider {
     @Override
     public TileMapClient open(ParameterValueGroup params) throws DataStoreException {
         ensureCanProcess(params);
-
-        final TileMapClient server = new TileMapClient(params);
-
-        try{
-            final ParameterValue val = params.parameter(NIO_QUERIES.getName().getCode());
-            boolean useNIO = Boolean.TRUE.equals(val.getValue());
-            server.setUserProperty(CachedTileMatrixSets.PROPERTY_NIO, useNIO);
-        }catch(ParameterNotFoundException ex){}
-
-        return server;
+        return new TileMapClient(params);
     }
 
 }

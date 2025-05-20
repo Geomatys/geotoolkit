@@ -16,13 +16,12 @@
  */
 package org.geotoolkit.wmts;
 
-import org.apache.sis.storage.base.Capability;
-import org.apache.sis.storage.base.StoreMetadata;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.storage.base.Capability;
+import org.apache.sis.storage.base.StoreMetadata;
 import org.geotoolkit.client.AbstractClientProvider;
-import org.geotoolkit.client.map.CachedTileMatrixSets;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
 import org.geotoolkit.wmts.xml.WMTSVersion;
@@ -81,14 +80,6 @@ public class WMTSProvider extends AbstractClientProvider {
     @Override
     public WebMapTileClient open(ParameterValueGroup params) throws DataStoreException {
         ensureCanProcess(params);
-        final WebMapTileClient server = new WebMapTileClient(params);
-
-        try{
-            final ParameterValue val = params.parameter(NIO_QUERIES.getName().getCode());
-            boolean useNIO = Boolean.TRUE.equals(val.getValue());
-            server.setUserProperty(CachedTileMatrixSets.PROPERTY_NIO, useNIO);
-        }catch(ParameterNotFoundException ex){}
-
-        return server;
+        return new WebMapTileClient(params);
     }
 }

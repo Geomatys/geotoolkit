@@ -54,6 +54,7 @@ public class GetFeatureInfo130 extends AbstractGetFeatureInfo {
 
     @Override
     protected void prepareParameters() {
+        super.prepareParameters();
         if (columnIndex == null) {
             throw new IllegalArgumentException("I is not defined");
         }
