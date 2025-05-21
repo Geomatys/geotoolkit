@@ -78,13 +78,9 @@
       </dependency>
 
       <dependency>
-          <groupId>io.netty</groupId>
-          <artifactId>netty</artifactId>
+          <groupId>org.apache.commons</groupId>
+          <artifactId>commons-compress</artifactId>
       </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-compress</artifactId>
-        </dependency>
       <dependency>
           <groupId>org.geotoolkit</groupId>
           <artifactId>geotk-coverage-geotiff</artifactId>

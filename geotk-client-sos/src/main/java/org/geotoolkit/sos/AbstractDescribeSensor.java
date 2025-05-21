@@ -19,7 +19,6 @@ package org.geotoolkit.sos;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import static org.geotoolkit.sos.AbstractSOSRequest.POOL;
@@ -82,11 +81,8 @@ public abstract class AbstractDescribeSensor extends AbstractSOSRequest implemen
         this.sensorId = sensorId;
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
-    public URL getURL() throws MalformedURLException {
+    protected void prepareParameters() {
         if (outputFormat == null) {
             throw new IllegalArgumentException("The parameter \"outputFormat\" is not defined");
         }
@@ -98,7 +94,6 @@ public abstract class AbstractDescribeSensor extends AbstractSOSRequest implemen
         requestParameters.put("VERSION", version);
         requestParameters.put("OUTPUTFORMAT", outputFormat);
         requestParameters.put("SENSORID", sensorId);
-        return super.getURL();
     }
 
     /**

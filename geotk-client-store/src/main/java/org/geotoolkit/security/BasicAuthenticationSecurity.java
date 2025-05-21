@@ -17,6 +17,7 @@
 package org.geotoolkit.security;
 
 import java.net.URLConnection;
+import java.net.http.HttpRequest;
 import java.util.Base64;
 import org.apache.sis.util.ArgumentChecks;
 
@@ -47,4 +48,11 @@ public class BasicAuthenticationSecurity extends DefaultClientSecurity{
         return cnx;
     }
 
+    @Override
+    public void secure(HttpRequest.Builder request) {
+        super.secure(request);
+        final String userPassword = user + ":" + password;
+        final String encoding = Base64.getEncoder().encodeToString(userPassword.getBytes());
+        request.setHeader ("Authorization", "Basic " + encoding);
+    }
 }

@@ -17,6 +17,7 @@
 package org.geotoolkit.security;
 
 import java.net.URLConnection;
+import java.net.http.HttpRequest;
 import org.apache.sis.util.ArgumentChecks;
 
 /**
@@ -41,6 +42,12 @@ public class FormSecurity extends DefaultClientSecurity {
         cnx = super.secure(cnx);
         cnx.setRequestProperty("Cookie", "JSESSIONID=" + sessionID);
         return cnx;
+    }
+
+    @Override
+    public void secure(HttpRequest.Builder request) {
+        super.secure(request);
+        request.setHeader("Cookie", "JSESSIONID=" + sessionID);
     }
 
     /**

@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.wms.v100;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.wms.AbstractGetFeatureInfo;
 import org.geotoolkit.wms.WebMapClient;
@@ -55,8 +53,10 @@ public class GetFeatureInfo100 extends AbstractGetFeatureInfo {
     /**
      * {@inheritDoc }
      */
+
     @Override
-    public URL getURL() throws MalformedURLException {
+    protected void prepareParameters() {
+        super.prepareParameters();
         if (columnIndex == null) {
             throw new IllegalArgumentException("X is not defined");
         }
@@ -65,7 +65,6 @@ public class GetFeatureInfo100 extends AbstractGetFeatureInfo {
         }
         requestParameters.put("X", String.valueOf(columnIndex));
         requestParameters.put("Y", String.valueOf(rawIndex));
-        return super.getURL();
     }
 
 }

@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.wcs;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import org.geotoolkit.client.AbstractRequest;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.util.StringUtilities;
@@ -50,15 +48,11 @@ public abstract class AbstractDescribeCoverage extends AbstractRequest implement
         this.coverage = coverage;
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
-    public URL getURL() throws MalformedURLException {
+    protected void prepareParameters() {
         requestParameters.put("SERVICE",  "WCS");
         requestParameters.put("REQUEST",  "DescribeCoverage");
         requestParameters.put("VERSION",  version);
         requestParameters.put("COVERAGE", StringUtilities.toCommaSeparatedValues(coverage));
-        return super.getURL();
     }
 }

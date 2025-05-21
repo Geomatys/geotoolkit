@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.http.HttpRequest;
 
 /**
  * A security manager doing nothing, can be used as a base class for other
@@ -55,4 +56,7 @@ public class DefaultClientSecurity implements ClientSecurity {
         return stream;
     }
 
+    @Override
+    public void secure(HttpRequest.Builder request) {
+    }
 }

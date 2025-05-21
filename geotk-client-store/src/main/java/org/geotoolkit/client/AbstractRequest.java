@@ -23,9 +23,11 @@ import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.net.http.HttpRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -272,6 +274,22 @@ public abstract class AbstractRequest implements Request {
         cnx = security.secure(cnx);
 
         return followLink(cnx);
+    }
+
+    @Override
+    public HttpRequest.Builder getRequestBuilder() throws MalformedURLException, URISyntaxException {
+        HttpRequest.Builder builder = HttpRequest.newBuilder();
+        builder.uri(getURL().toURI());
+
+        //Set all fields from the headerMap to the properties of this URLConnection.
+        for(final Entry<String,String> entry : headerMap.entrySet()){
+            builder.setHeader(entry.getKey(),entry.getValue());
+        }
+
+        //security
+        security.secure(builder);
+
+        return builder;
     }
 
     /**

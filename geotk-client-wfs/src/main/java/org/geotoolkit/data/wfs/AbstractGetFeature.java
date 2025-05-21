@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringWriter;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -164,8 +163,10 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
     /**
      * {@inheritDoc }
      */
+
+
     @Override
-    public URL getURL() throws MalformedURLException {
+    protected void prepareParameters() {
         requestParameters.put("SERVICE", "WFS");
         requestParameters.put("REQUEST", "GETFEATURE");
         requestParameters.put("VERSION", version.getCode());
@@ -202,16 +203,15 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
                 .map(this::toString)
                 .ifPresent(text -> requestParameters.put("FILTER", text));
 
-            final String pNames = preparePropertyNames(prefix, namespace)
-                    .collect(Collectors.joining(","));
-            if (pNames != null && !pNames.isEmpty()) {
-                requestParameters.put("PROPERTYNAME", pNames);
-            }
+        final String pNames = preparePropertyNames(prefix, namespace)
+                .collect(Collectors.joining(","));
+        if (pNames != null && !pNames.isEmpty()) {
+            requestParameters.put("PROPERTYNAME", pNames);
+        }
 
         if (outputFormat != null) {
             requestParameters.put("OUTPUTFORMAT",outputFormat);
         }
-        return super.getURL();
     }
 
     /**

@@ -17,8 +17,6 @@
 package org.geotoolkit.wcs;
 
 import java.awt.Dimension;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -178,7 +176,7 @@ public abstract class AbstractGetCoverage extends AbstractRequest implements Get
      * {@inheritDoc }
      */
     @Override
-    public URL getURL() throws MalformedURLException {
+    protected void prepareParameters() {
         if (coverage == null) {
             throw new IllegalArgumentException("Coverage is not defined");
         }
@@ -221,7 +219,6 @@ public abstract class AbstractGetCoverage extends AbstractRequest implements Get
                 LOGGER.log(Level.WARNING, null, ex);
             }
         }
-        return super.getURL();
     }
 
     private Map<String,String> toString(final Envelope envelope) {
