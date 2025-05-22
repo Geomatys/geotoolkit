@@ -19,7 +19,9 @@ package org.geotoolkit.client;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.http.HttpRequest;
 import java.util.Map;
 
 
@@ -54,6 +56,12 @@ public interface Request {
      * @throws IOException if an exception occurs while getting the output stream.
      */
     InputStream getResponseStream() throws IOException;
+
+    /**
+     * Returns a Java11 request builder.
+     * @return
+     */
+    HttpRequest.Builder getRequestBuilder() throws MalformedURLException, URISyntaxException;
 
     long getTimeout();
 

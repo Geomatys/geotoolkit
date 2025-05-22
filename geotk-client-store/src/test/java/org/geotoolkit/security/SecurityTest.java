@@ -19,10 +19,10 @@ package org.geotoolkit.security;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URLConnection;
+import java.net.http.HttpRequest;
 import java.util.concurrent.atomic.AtomicInteger;
-import org.junit.Test;
-
 import static org.junit.Assert.*;
+import org.junit.Test;
 
 /**
  * Basic authentication test.
@@ -44,6 +44,11 @@ public class SecurityTest {
             public URLConnection secure(URLConnection cnx) {
                 INC.incrementAndGet();
                 return super.secure(cnx);
+            }
+
+            @Override
+            public void secure(HttpRequest.Builder request) {
+                INC.incrementAndGet();
             }
 
         };

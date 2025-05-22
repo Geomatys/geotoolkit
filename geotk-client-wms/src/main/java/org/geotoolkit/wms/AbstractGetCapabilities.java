@@ -18,9 +18,6 @@ package org.geotoolkit.wms;
 
 import org.geotoolkit.client.AbstractRequest;
 import org.geotoolkit.security.ClientSecurity;
-
-import java.net.MalformedURLException;
-import java.net.URL;
 import org.geotoolkit.wms.xml.WMSVersion;
 
 
@@ -73,7 +70,7 @@ public abstract class AbstractGetCapabilities extends AbstractRequest implements
      * {@inheritDoc }
      */
     @Override
-    public URL getURL() throws MalformedURLException {
+    protected void prepareParameters() {
         requestParameters.put("SERVICE",    "WMS");
         requestParameters.put("REQUEST",    "GetCapabilities");
 
@@ -84,6 +81,5 @@ public abstract class AbstractGetCapabilities extends AbstractRequest implements
         if (updateSequence != null && !updateSequence.isEmpty()) {
             requestParameters.put("UPDATESEQUENCE", updateSequence);
         }
-        return super.getURL();
     }
 }

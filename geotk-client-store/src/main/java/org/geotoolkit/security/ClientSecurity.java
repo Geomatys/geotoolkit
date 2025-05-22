@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.http.HttpRequest;
 
 /**
  * This class offer a set of methods which should be called by client modules
@@ -48,6 +49,14 @@ public interface ClientSecurity {
      * @return modified URL connection
      */
     URLConnection secure(URLConnection cnx);
+
+    /**
+     * If an securisation process require addition parameters to be encoded
+     * in the header map, then the manager can add then here.
+     *
+     * @param request urlConnection
+     */
+    void secure(HttpRequest.Builder request);
 
     /**
      * If the securisation imply some encryption. The manager

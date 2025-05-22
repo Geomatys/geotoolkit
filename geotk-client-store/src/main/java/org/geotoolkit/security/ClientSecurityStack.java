@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.http.HttpRequest;
 
 /**
  * Wrap several ClientSecurity objects.
@@ -49,6 +50,13 @@ public final class ClientSecurityStack implements ClientSecurity{
             cnx = security.secure(cnx);
         }
         return cnx;
+    }
+
+    @Override
+    public void secure(HttpRequest.Builder request) {
+        for(ClientSecurity security : securities){
+            security.secure(request);
+        }
     }
 
     @Override

@@ -19,7 +19,6 @@ package org.geotoolkit.sos;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import static org.geotoolkit.sos.AbstractSOSRequest.POOL;
@@ -57,11 +56,10 @@ public abstract class AbstractGetCapabilities extends AbstractSOSRequest impleme
      * {@inheritDoc }
      */
     @Override
-    public URL getURL() throws MalformedURLException {
+    protected void prepareParameters() {
         requestParameters.put("SERVICE", "SOS");
         requestParameters.put("REQUEST", "GetCapabilities");
         requestParameters.put("VERSION", version);
-        return super.getURL();
     }
 
     /**

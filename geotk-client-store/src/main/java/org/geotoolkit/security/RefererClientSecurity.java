@@ -17,6 +17,7 @@
 package org.geotoolkit.security;
 
 import java.net.URLConnection;
+import java.net.http.HttpRequest;
 import org.apache.sis.util.ArgumentChecks;
 
 /**
@@ -41,4 +42,9 @@ public class RefererClientSecurity extends DefaultClientSecurity{
         return cnx;
     }
 
+    @Override
+    public void secure(HttpRequest.Builder request) {
+        super.secure(request);
+        request.setHeader("referer", referer);
+    }
 }

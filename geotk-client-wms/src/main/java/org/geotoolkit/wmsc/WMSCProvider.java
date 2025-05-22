@@ -17,23 +17,22 @@
 package org.geotoolkit.wmsc;
 
 import java.net.URL;
-import org.apache.sis.storage.base.Capability;
-import org.apache.sis.storage.base.StoreMetadata;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.storage.base.Capability;
+import org.apache.sis.storage.base.StoreMetadata;
 import org.geotoolkit.client.AbstractClientProvider;
-import org.geotoolkit.client.map.CachedTileMatrixSets;
 import org.geotoolkit.internal.ClassLoaderInternationalString;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
+import org.geotoolkit.storage.multires.TiledResource;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
-import org.geotoolkit.storage.multires.TiledResource;
 
 /**
  * WMS-C Server factory.
@@ -88,14 +87,6 @@ public class WMSCProvider extends AbstractClientProvider {
             cacheImage = Boolean.TRUE.equals(val.getValue());
         }catch(ParameterNotFoundException ex){}
 
-        final WebMapClientCached server = new WebMapClientCached(url,security,cacheImage);
-
-        try{
-            final ParameterValue val = params.parameter(NIO_QUERIES.getName().getCode());
-            boolean useNIO = Boolean.TRUE.equals(val.getValue());
-            server.setUserProperty(CachedTileMatrixSets.PROPERTY_NIO, useNIO);
-        }catch(ParameterNotFoundException ex){}
-
-        return server;
+        return new WebMapClientCached(url,security,cacheImage);
     }
 }

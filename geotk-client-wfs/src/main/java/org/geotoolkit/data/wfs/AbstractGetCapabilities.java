@@ -19,7 +19,6 @@ package org.geotoolkit.data.wfs;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Arrays;
@@ -75,7 +74,7 @@ public class AbstractGetCapabilities extends AbstractRequest implements GetCapab
      * {@inheritDoc }
      */
     @Override
-    public URL getURL() throws MalformedURLException {
+    protected void prepareParameters() {
         requestParameters.put("SERVICE",    "WFS");
         requestParameters.put("REQUEST",    "GetCapabilities");
         if (version != null) {
@@ -84,7 +83,6 @@ public class AbstractGetCapabilities extends AbstractRequest implements GetCapab
         if (updateSequence != null && !updateSequence.isEmpty()) {
             requestParameters.put("UPDATESEQUENCE", updateSequence);
         }
-        return super.getURL();
     }
 
     /**

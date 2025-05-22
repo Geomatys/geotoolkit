@@ -46,6 +46,7 @@ import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.feature.privy.AttributeConvention;
 import org.apache.sis.geometry.wrapper.Geometries;
+import org.apache.sis.geometry.wrapper.GeometryWrapper;
 import org.apache.sis.parameter.Parameters;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import org.apache.sis.util.ObjectConverters;
@@ -159,42 +160,15 @@ public final class FeatureExt extends Static {
      * @return Envelope, can be null if there is no default geometry
      */
     public static Envelope getEnvelope(Feature feature) {
-        GeneralEnvelope bounds = null;
-        for (final PropertyType pt : feature.getType().getProperties(true)) {
-            if (AttributeConvention.isGeometryAttribute(pt)) {
-                final Object val = feature.getPropertyValue(pt.getName().toString());
-                if (val instanceof Geometry) {
-                    final Geometry geom = (Geometry) val;
-                    final org.locationtech.jts.geom.Envelope env = geom.getEnvelopeInternal();
-                    if (env != null && !env.isNull()) {
-                        // extract geometry enveloppe
-                        CoordinateReferenceSystem crs = FeatureExt.getCRS(pt);
-                        if (crs == null) {
-                            try {
-                                crs = JTS.findCoordinateReferenceSystem(geom);
-                            } catch (FactoryException ex) {
-                                //do nothing, we have try
-                            }
-                        }
+        // envelope attribute is not reprojected
+        // if (feature.getValueOrFallback(AttributeConvention.ENVELOPE, null) instanceof Envelope env) return env;
 
-                        final GeneralEnvelope genv;
-                        if (crs != null) {
-                            genv = new GeneralEnvelope(crs);
-                        } else {
-                            genv = new GeneralEnvelope(2);
-                        }
-                        genv.setRange(0, env.getMinX(), env.getMaxX());
-                        genv.setRange(1, env.getMinY(), env.getMaxY());
-                        if (bounds == null) {
-                            bounds = genv;
-                        } else {
-                            bounds.add(genv);
-                        }
-                    }
-                }
-            }
-        }
-        return bounds;
+        Object val = getDefaultGeometryValueSafe(feature).orElse(null);
+        if (val == null || !Geometries.isKnownType(val.getClass())) return null;
+        Geometries<?> factory = Geometries.factory(val.getClass());
+        if (factory == null) return null;
+        GeometryWrapper geoW = factory.castOrWrap(val);
+        return geoW.getEnvelope();
     }
 
     /**

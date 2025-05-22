@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.wcs;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import org.geotoolkit.client.AbstractRequest;
 import org.geotoolkit.security.ClientSecurity;
 
@@ -73,13 +71,12 @@ public abstract class AbstractGetCapabilities extends AbstractRequest implements
      * {@inheritDoc }
      */
     @Override
-    public URL getURL() throws MalformedURLException {
+    protected void prepareParameters() {
         requestParameters.put("SERVICE", "WCS");
         requestParameters.put("REQUEST", "GetCapabilities");
         requestParameters.put("VERSION", version);
         if (updateSequence != null && !updateSequence.isEmpty()) {
             requestParameters.put("UPDATESEQUENCE", updateSequence);
         }
-        return super.getURL();
     }
 }
