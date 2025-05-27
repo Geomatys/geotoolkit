@@ -22,7 +22,7 @@
   <parent>
     <groupId>com.geomatys</groupId>
     <artifactId>geomatys-bom</artifactId>
-    <version>2024.5</version>
+    <version>2025.1</version>
   </parent>
 
   <groupId>org.geotoolkit</groupId>
