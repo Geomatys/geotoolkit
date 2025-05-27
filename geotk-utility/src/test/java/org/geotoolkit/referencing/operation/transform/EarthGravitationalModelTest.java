@@ -114,7 +114,7 @@ public final class EarthGravitationalModelTest extends TransformTestCase {
 
     @Test
     public void testFromWKT() throws ParseException, TransformException {
-        final WKTFormat parser = new WKTFormat(null, null);
+        final WKTFormat parser = new WKTFormat();
         final MathTransform mt = (MathTransform) parser.parseObject("Param_MT[\"Ellipsoid_To_Geoid\"]");
         DirectPosition pos = new GeneralDirectPosition(new double[] {45, 45, 1000});
         pos = mt.transform(pos, pos);

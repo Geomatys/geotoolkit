@@ -225,7 +225,7 @@ public class SpatialReferencingTable extends Table {
 
     private WKTFormat getWKTFormat() {
         if (wktFormat == null) {
-            wktFormat = new WKTFormat(null, null);
+            wktFormat = new WKTFormat();
             wktFormat.setIndentation(WKTFormat.SINGLE_LINE);
             wktFormat.setConvention(Convention.WKT1_COMMON_UNITS);
         }

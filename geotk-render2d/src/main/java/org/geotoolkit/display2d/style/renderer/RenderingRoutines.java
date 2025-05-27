@@ -31,13 +31,13 @@ import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.feature.Features;
-import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.feature.builder.PropertyTypeBuilder;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.feature.privy.AttributeConvention;
 import org.apache.sis.feature.privy.FeatureExpression;
+import org.apache.sis.feature.privy.FeatureProjectionBuilder;
 import org.apache.sis.measure.Quantities;
 import org.apache.sis.measure.Units;
 import org.apache.sis.map.MapLayer;
@@ -239,8 +239,9 @@ public final class RenderingRoutines {
                 .map((Expression t) -> {
             final Expression<? super Feature,?> expression = t;
             final FeatureExpression<?,?> fex = FeatureExpression.castOrCopy(expression);
-            final PropertyTypeBuilder resultType = fex.expectedType(schema, new FeatureTypeBuilder());
-            if (resultType != null) {
+            final FeatureProjectionBuilder.Item item = fex.expectedType(new FeatureProjectionBuilder(schema, null));
+            if (item != null) {
+                final PropertyTypeBuilder resultType = item.builder();
                 PropertyType pt = resultType.build();
                 if (pt instanceof AttributeType at) {
                     final Class valueClass = at.getValueClass();

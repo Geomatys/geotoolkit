@@ -107,7 +107,7 @@ public final class ColorUtilities extends Static {
      * @return An index color model for the specified array.
      */
     public static IndexColorModel getIndexColorModel(final int[] ARGB) {
-        return ColorModelFactory.createIndexColorModel(1, 0, ARGB, true, -1);
+        return ColorModelFactory.createIndexColorModel(null, 0, 1, 0, ARGB, true, -1);
     }
 
     /**

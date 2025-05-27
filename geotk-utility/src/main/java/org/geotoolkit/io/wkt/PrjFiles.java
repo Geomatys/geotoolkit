@@ -198,7 +198,7 @@ public final class PrjFiles extends Static {
      * @throws ContentFormatException if the given CRS is not formattable as a WKT.
      */
     private static String format(final CoordinateReferenceSystem crs) throws ContentFormatException {
-        final WKTFormat format = new WKTFormat(null, null);
+        final WKTFormat format = new WKTFormat();
         format.setConvention(Convention.WKT1);
         format.setIndentation(WKTFormat.SINGLE_LINE);
         final String wkt = format.format(crs);

@@ -138,7 +138,7 @@ public final class Output {
         file.addVariableAttribute(yvar, new Attribute("_CoordinateAxisType", "GeoY"));
         file.addVariableAttribute(tvar, new Attribute("_CoordinateAxisType", "Time"));
 
-        final WKTFormat f = new WKTFormat(null, null);
+        final WKTFormat f = new WKTFormat();
         f.setIndentation(WKTFormat.SINGLE_LINE);
         f.setConvention(Convention.WKT2);
 
