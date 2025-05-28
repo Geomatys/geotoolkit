@@ -41,6 +41,7 @@ import org.geotoolkit.observation.model.Observation;
 import org.geotoolkit.observation.model.Phenomenon;
 import org.geotoolkit.observation.model.Procedure;
 import org.geotoolkit.observation.model.SamplingFeature;
+import org.opengis.filter.ComparisonOperator;
 import org.opengis.filter.LogicalOperatorName;
 
 /**
@@ -111,13 +112,13 @@ public class StoreDelegatingObservationFilter implements ObservationFilterReader
     }
 
     @Override
-    public FilterAppend setResultFilter(BinaryComparisonOperator filter) throws DataStoreException {
+    public FilterAppend setResultFilter(ComparisonOperator filter) throws DataStoreException {
         if (filter != null) throw new UnsupportedOperationException("Result filtering is not supported yet.");
         return new FilterAppend();
     }
 
     @Override
-    public FilterAppend setPropertiesFilter(BinaryComparisonOperator filter) throws DataStoreException {
+    public FilterAppend setPropertiesFilter(ComparisonOperator filter) throws DataStoreException {
         if (filter != null) throw new UnsupportedOperationException("Properties filtering is not supported yet.");
         return new FilterAppend();
     }

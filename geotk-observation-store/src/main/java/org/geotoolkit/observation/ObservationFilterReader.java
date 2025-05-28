@@ -33,6 +33,7 @@ import org.geotoolkit.observation.model.Observation;
 import org.geotoolkit.observation.model.Phenomenon;
 import org.geotoolkit.observation.model.SamplingFeature;
 import org.geotoolkit.observation.model.Procedure;
+import org.opengis.filter.ComparisonOperator;
 import org.opengis.filter.LogicalOperatorName;
 
 /**
@@ -131,7 +132,7 @@ public interface ObservationFilterReader {
      *
      * @return informations about if the filter has been append or not
      */
-    FilterAppend setResultFilter(final BinaryComparisonOperator filter) throws DataStoreException;
+    FilterAppend setResultFilter(final ComparisonOperator filter) throws DataStoreException;
 
     /**
      * Add a filter on the entity properties.
@@ -140,7 +141,7 @@ public interface ObservationFilterReader {
      *
      * @return informations about if the filter has been append or not
      */
-    FilterAppend setPropertiesFilter(final BinaryComparisonOperator filter) throws DataStoreException;
+    FilterAppend setPropertiesFilter(final ComparisonOperator filter) throws DataStoreException;
 
     /**
      * Execute the current query and return a list of observation result.
