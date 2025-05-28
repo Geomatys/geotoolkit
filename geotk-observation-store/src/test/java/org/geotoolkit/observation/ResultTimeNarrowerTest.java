@@ -25,6 +25,7 @@ import org.apache.sis.temporal.TemporalObjects;
 import static org.geotoolkit.filter.FilterUtilities.FF;
 import org.geotoolkit.observation.model.ComplexResult;
 import org.geotoolkit.observation.model.Field;
+import org.geotoolkit.observation.model.FieldDataType;
 import org.geotoolkit.observation.model.FieldType;
 import static org.geotoolkit.observation.model.TextEncoderProperties.DEFAULT_ENCODING;
 import org.geotoolkit.observation.result.ResultTimeNarrower;
@@ -58,8 +59,8 @@ public class ResultTimeNarrowerTest {
                         "2007-05-01T21:59:00.0,6.55@@";
 
         List<Field> fields = new ArrayList<>();
-        fields.add(OMUtils.TIME_FIELD);
-        fields.add(new Field(2, FieldType.QUANTITY, "Temperature", "urn:ogc:temperature", "°C", null));
+        fields.add(OMUtils.TIME_MAIN_FIELD);
+        fields.add(new Field(2, FieldDataType.QUANTITY, "Temperature", "urn:ogc:temperature", "°C", null, FieldType.MEASURE));
         ComplexResult array = new ComplexResult(fields, DEFAULT_ENCODING, values, 15);
 
         List<Filter> eventTimes = new ArrayList<>();

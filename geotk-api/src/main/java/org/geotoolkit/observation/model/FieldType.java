@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2021, Geomatys
+ *    (C) 2025, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,47 +16,14 @@
  */
 package org.geotoolkit.observation.model;
 
-import java.util.Date;
-import java.util.Map;
-
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
 public enum FieldType {
-
-    QUANTITY("Quantity"),
-    TEXT("Text"),
-    BOOLEAN("Boolean"),
-    TIME("Time"),
-    JSON("Json");
-
-    public final String label;
-
-    private FieldType(String label) {
-        this.label = label;
-    }
-
-    public static FieldType fromLabel(String label) {
-        if (label == null) return null;
-        switch (label) {
-            case "Quantity": return QUANTITY;
-            case "Text": return TEXT;
-            case "Boolean": return BOOLEAN;
-            case "Time": return TIME;
-            case "Json": return JSON;
-            default: throw new IllegalArgumentException("Unexpected value for field type enum:" + label);
-        }
-    }
-
-    public Class<?> getJavaType() {
-        switch (this) {
-            case QUANTITY: return Double.class;
-            case TEXT: return String.class;
-            case BOOLEAN: return Boolean.class;
-            case TIME: return Date.class;
-            case JSON: return Map.class;
-            default: throw new IllegalArgumentException("Unexpected value for field type enum:" + this);
-        }
-    }
+    METADATA,
+    MAIN,
+    MEASURE,
+    QUALITY,
+    PARAMETER
 }

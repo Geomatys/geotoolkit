@@ -60,11 +60,12 @@ import org.geotoolkit.observation.model.Field;
 import org.geotoolkit.observation.result.ResultBuilder;
 import org.geotoolkit.observation.model.Phenomenon;
 import org.geotoolkit.observation.model.CompositePhenomenon;
+import org.geotoolkit.observation.model.FieldDataType;
+import static org.geotoolkit.observation.model.FieldDataType.BOOLEAN;
+import static org.geotoolkit.observation.model.FieldDataType.QUANTITY;
+import static org.geotoolkit.observation.model.FieldDataType.TEXT;
+import static org.geotoolkit.observation.model.FieldDataType.TIME;
 import org.geotoolkit.observation.model.FieldType;
-import static org.geotoolkit.observation.model.FieldType.BOOLEAN;
-import static org.geotoolkit.observation.model.FieldType.QUANTITY;
-import static org.geotoolkit.observation.model.FieldType.TEXT;
-import static org.geotoolkit.observation.model.FieldType.TIME;
 import org.geotoolkit.observation.model.MeasureResult;
 import org.geotoolkit.observation.model.Observation;
 import org.geotoolkit.observation.model.ObservationUtils;
@@ -102,10 +103,11 @@ public class OMUtils {
     public static final String RESPONSE_FORMAT_V100 = "text/xml; subtype=\"om/1.0.0\"";
     public static final String RESPONSE_FORMAT_V200 = "http://www.opengis.net/om/2.0";
 
-    public static final Field PRESSION_FIELD  = new Field(-1, FieldType.QUANTITY, "Zlevel", null, "http://mmisw.org/ont/cf/parameter/sea_water_pressure", "dbar");
-    public static final Field TIME_FIELD      = new Field(-1, FieldType.TIME,     "time",   null, "http://www.opengis.net/def/property/OGC/0/SamplingTime", null);
-    public static final Field LATITUDE_FIELD  = new Field(-1, FieldType.QUANTITY, "lat",    null, "http://mmisw.org/ont/cf/parameter/latitude", "deg");
-    public static final Field LONGITUDE_FIELD = new Field(-1, FieldType.QUANTITY, "lon",    null, "http://mmisw.org/ont/cf/parameter/longitude", "deg");
+    public static final Field PRESSION_MAIN_FIELD = new Field(-1, FieldDataType.QUANTITY, "Zlevel", null, "http://mmisw.org/ont/cf/parameter/sea_water_pressure",   "dbar", FieldType.MAIN);
+    public static final Field TIME_PROFILE_FIELD  = new Field(-1, FieldDataType.TIME,     "time",   null, "http://www.opengis.net/def/property/OGC/0/SamplingTime",   null, FieldType.METADATA);
+    public static final Field TIME_MAIN_FIELD     = new Field(-1, FieldDataType.TIME,     "time",   null, "http://www.opengis.net/def/property/OGC/0/SamplingTime",   null, FieldType.MAIN);
+    public static final Field LATITUDE_FIELD      = new Field(-1, FieldDataType.QUANTITY, "lat",    null, "http://mmisw.org/ont/cf/parameter/latitude",              "deg", FieldType.METADATA);
+    public static final Field LONGITUDE_FIELD     = new Field(-1, FieldDataType.QUANTITY, "lon",    null, "http://mmisw.org/ont/cf/parameter/longitude",             "deg", FieldType.METADATA);
 
     public static Phenomenon getPhenomenonModels(String name, final List<? extends Field> phenomenons, final String phenomenonIdBase, final Set<Phenomenon> existingPhens) {
         if (phenomenons.size() == 1) {
@@ -247,10 +249,10 @@ public class OMUtils {
 
             for (int i = 0; i < comp.getComponent().size(); i++) {
                 Phenomenon component = comp.getComponent().get(i);
-                results.add(new Field(i + 2, FieldType.QUANTITY, component.getId(), component.getName(), component.getDefinition(), null));
+                results.add(new Field(i + 2, FieldDataType.QUANTITY, component.getId(), component.getName(), component.getDefinition(), null, FieldType.MEASURE));
             }
         } else if (phen != null) {
-            results.add(new Field(2, FieldType.QUANTITY, phen.getId(), phen.getName(), phen.getDefinition(), null));
+            results.add(new Field(2, FieldDataType.QUANTITY, phen.getId(), phen.getName(), phen.getDefinition(), null, FieldType.MEASURE));
         }
         return results;
     }
@@ -332,7 +334,7 @@ public class OMUtils {
                                                       obs.getName().getCode() + idSuffix,
                                                       obs.getDescription(),
                                                       obs.getDefinition(),
-                                                      getOmTypeFromFieldType(f.type),
+                                                      getOmTypeFromFieldType(f.dataType),
                                                       obs.getProcedure(),
                                                       obs.getSamplingTime(),
                                                       obs.getFeatureOfInterest(),
@@ -392,7 +394,7 @@ public class OMUtils {
                                                           obs.getName().getCode() + idSuffix,
                                                           obs.getDescription(),
                                                           obs.getDefinition(),
-                                                          getOmTypeFromFieldType(f.type),
+                                                          getOmTypeFromFieldType(f.dataType),
                                                           obs.getProcedure(),
                                                           measureTime,
                                                           obs.getFeatureOfInterest(),
@@ -446,7 +448,7 @@ public class OMUtils {
         if (token.isEmpty()) {
             value = null;
         } else {
-            value = switch (f.type) {
+            value = switch (f.dataType) {
                 case BOOLEAN  -> Boolean.valueOf(token);
                 case QUANTITY -> Double.valueOf(token);
                 case TEXT     -> token;
@@ -491,7 +493,7 @@ public class OMUtils {
         }
     }
 
-    public static String getOmTypeFromFieldType(FieldType ft) {
+    public static String getOmTypeFromFieldType(FieldDataType ft) {
         return switch(ft) {
             case BOOLEAN  -> "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_TruthObservation";
             case TIME     -> "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_TemporalObservation";
@@ -609,7 +611,7 @@ public class OMUtils {
      * @return A Data quality element.
      */
     public static Element createQualityElement(Field field, Object value) {
-        return createQualityElement(field.name, field.uom, field.type, value);
+        return createQualityElement(field.name, field.uom, field.dataType, value);
     }
 
     /**
@@ -623,7 +625,7 @@ public class OMUtils {
      *
      * @return A Data quality element.
      */
-    public static Element createQualityElement(String name, String uom, FieldType ft, Object value) {
+    public static Element createQualityElement(String name, String uom, FieldDataType ft, Object value) {
         DefaultQuantitativeAttributeAccuracy element = new DefaultQuantitativeAttributeAccuracy();
         element.setNamesOfMeasure(Arrays.asList(new SimpleInternationalString(name)));
         if (value != null) {

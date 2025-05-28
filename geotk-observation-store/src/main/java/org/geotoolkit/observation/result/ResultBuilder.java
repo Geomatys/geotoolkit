@@ -25,7 +25,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import org.geotoolkit.observation.OMUtils;
-import org.geotoolkit.observation.model.FieldType;
+import org.geotoolkit.observation.model.FieldDataType;
 import static org.geotoolkit.observation.model.ResultMode.COUNT;
 import static org.geotoolkit.observation.model.ResultMode.CSV;
 import static org.geotoolkit.observation.model.ResultMode.DATA_ARRAY;
@@ -368,7 +368,7 @@ public class ResultBuilder {
                 boolean first = true;
                 for (Field pheno : fields) {
                     // hack for the current graph in examind you only work when the main field is named "time"
-                    if (csvHack && FieldType.TIME.equals(pheno.type) && first) {
+                    if (csvHack && FieldDataType.TIME.equals(pheno.dataType) && first) {
                         values.append("time").append(encoding.getTokenSeparator());
                     } else {
                         values.append(pheno.label).append(encoding.getTokenSeparator());
