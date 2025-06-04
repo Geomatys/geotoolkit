@@ -21,27 +21,27 @@ import java.util.function.Supplier;
 import java.util.stream.IntStream;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.PixelInCell;
+import org.apache.sis.geometries.math.Vector2D;
 import org.apache.sis.geometry.DirectPosition2D;
-import org.apache.sis.referencing.privy.AxisDirections;
-import org.apache.sis.referencing.privy.AffineTransform2D;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.privy.AffineTransform2D;
+import org.apache.sis.referencing.privy.AxisDirections;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
-import org.geotoolkit.geometry.math.Vector2d;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
-import static org.geotoolkit.processing.science.drift.v2.PredictorDescriptor.*;
 import org.geotoolkit.processing.science.drift.Output;
-import static org.geotoolkit.processing.science.drift.v2.Utilities.setTime;
 import org.geotoolkit.processing.science.drift.Weight;
 import org.geotoolkit.processing.science.drift.v2.PointBucket.PointReference;
+import static org.geotoolkit.processing.science.drift.v2.PredictorDescriptor.*;
+import static org.geotoolkit.processing.science.drift.v2.Utilities.setTime;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.SingleCRS;
-import org.apache.sis.coverage.grid.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
@@ -73,7 +73,7 @@ public class Predictor extends AbstractProcess {
      */
     private static final PrintStream OUT = null;
 
-    private static final Supplier<Vector2d> RANDOM_NOISE = () -> new Vector2d((float)(Math.random() - 0.5), (float)(Math.random() - 0.5));
+    private static final Supplier<Vector2D.Double> RANDOM_NOISE = () -> new Vector2D.Double((float)(Math.random() - 0.5), (float)(Math.random() - 0.5));
 
     public Predictor(ProcessDescriptor desc, ParameterValueGroup input) {
         super(desc, input);
@@ -286,7 +286,7 @@ public class Predictor extends AbstractProcess {
      * @throws ProcessException
      */
     private double[] advance(final PredictionContext ctx, MeteoDataset.Snapshot uv) throws ProcessException {
-        final Vector2d move = new Vector2d();
+        final Vector2D.Double move = new Vector2D.Double();
         final CoordinateReferenceSystem workCrs = ctx.grid.model.getCoordinateReferenceSystem();
 
         final SingleCRS workHorizontal = CRS.getHorizontalComponent(workCrs);
@@ -305,7 +305,7 @@ public class Predictor extends AbstractProcess {
         for (PointBucket.PointReference ref : refs) {
             ref.read(location);
 
-            final Optional<Vector2d> currentOpt = uv.current.evaluate(location);
+            final Optional<Vector2D.Double> currentOpt = uv.current.evaluate(location);
             if (!currentOpt.isPresent()) {
                 // No more data on current point. All we can do is evince it from processing, hoping that other points
                 // are still in the game.
@@ -313,9 +313,9 @@ public class Predictor extends AbstractProcess {
                 continue;
             }
 
-            final Vector2d current = currentOpt.get();
+            final Vector2D.Double current = currentOpt.get();
 
-            final Vector2d wind = uv.wind.evaluate(location)
+            final Vector2D.Double wind = uv.wind.evaluate(location)
                     .orElseGet(RANDOM_NOISE);// TODO : should we just ignore wind here ?
              /*
              * At this point (easting, northing) is the projected coordinates in metres and (xStart, yStart)

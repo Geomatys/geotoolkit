@@ -6,7 +6,7 @@ package org.geotoolkit.processing.science.drift.v2;
 import java.awt.geom.Point2D;
 import java.time.Instant;
 import java.util.Optional;
-import org.geotoolkit.geometry.math.Vector2d;
+import org.apache.sis.geometries.math.Vector2D;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -70,6 +70,6 @@ public interface UVSource {
     }
 
     public static interface Snapshot {
-        Optional<Vector2d> evaluate(final Point2D.Double location);
+        Optional<Vector2D.Double> evaluate(final Point2D.Double location);
     }
 }

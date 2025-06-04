@@ -23,12 +23,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.TreeMap;
+import org.apache.sis.geometries.math.Vector2D;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Static;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.style.j2d.PathWalker;
 import org.geotoolkit.geometry.jts.awt.JTSLineIterator;
-import org.geotoolkit.geometry.math.Vector2d;
 import org.geotoolkit.gml.xml.MultiGeometry;
 import org.geotoolkit.math.XMath;
 import org.locationtech.jts.geom.Coordinate;
@@ -54,12 +54,12 @@ public class LinearReferencing extends Static{
         public double length;
         public Coordinate[] segmentCoords;
         public LineString geometry;
-        public Vector2d forward;
-        public Vector2d right;
+        public Vector2D.Double forward;
+        public Vector2D.Double right;
 
         public Coordinate getPoint(double distanceAlongLinear, double distancePerpendicular){
-            final Vector2d tempForward = new Vector2d(forward.x, forward.y);
-            final Vector2d tempPerpendicular = new Vector2d(right.x, right.y);
+            final Vector2D.Double tempForward = new Vector2D.Double(forward.x, forward.y);
+            final Vector2D.Double tempPerpendicular = new Vector2D.Double(right.x, right.y);
             tempForward.scale(distanceAlongLinear);
             tempPerpendicular.scale(distancePerpendicular);
             return new Coordinate(
@@ -296,11 +296,11 @@ public class LinearReferencing extends Static{
             segment.endDistance = cumulativeDistance;
 
             //calculate direction vectors
-            segment.forward = new Vector2d(
+            segment.forward = new Vector2D.Double(
                     segment.segmentCoords[1].x-segment.segmentCoords[0].x,
                     segment.segmentCoords[1].y-segment.segmentCoords[0].y);
             segment.forward.normalize();
-            segment.right = new Vector2d(segment.forward.y,-segment.forward.x);
+            segment.right = new Vector2D.Double(segment.forward.y,-segment.forward.x);
 
             segments[i] = segment;
         }
