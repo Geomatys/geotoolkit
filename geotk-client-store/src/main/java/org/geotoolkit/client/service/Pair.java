@@ -14,8 +14,13 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.ogcapi.client;
+package org.geotoolkit.client.service;
 
+/**
+ * Key value pair.
+ *
+ * @author Johann Sorel (Geomatys)
+ */
 public final class Pair {
 
     private String name = "";

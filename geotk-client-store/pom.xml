@@ -81,6 +81,53 @@
           <groupId>org.apache.commons</groupId>
           <artifactId>commons-compress</artifactId>
       </dependency>
+
+      <dependency>
+          <groupId>com.fasterxml.jackson.core</groupId>
+          <artifactId>jackson-core</artifactId>
+      </dependency>
+      <dependency>
+          <groupId>com.fasterxml.jackson.core</groupId>
+          <artifactId>jackson-annotations</artifactId>
+      </dependency>
+      <dependency>
+          <groupId>com.fasterxml.jackson.core</groupId>
+          <artifactId>jackson-databind</artifactId>
+      </dependency>
+      <dependency>
+          <groupId>com.fasterxml.jackson.datatype</groupId>
+          <artifactId>jackson-datatype-jsr310</artifactId>
+      </dependency>
+      <dependency>
+          <groupId>com.fasterxml.jackson.dataformat</groupId>
+          <artifactId>jackson-dataformat-xml</artifactId>
+          <exclusions>
+              <!-- dependency enforcer detected an error here, importing both version 4.2 and 4.2.2 -->
+              <exclusion>
+                  <groupId>org.codehaus.woodstox</groupId>
+                  <artifactId>stax2-api</artifactId>
+              </exclusion>
+          </exclusions>
+      </dependency>
+      <dependency>
+          <groupId>org.codehaus.woodstox</groupId>
+          <artifactId>stax2-api</artifactId>
+          <version>4.2.2</version>
+      </dependency>
+      <dependency>
+          <groupId>org.openapitools</groupId>
+          <artifactId>jackson-databind-nullable</artifactId>
+          <version>0.2.6</version>
+      </dependency>
+      <dependency>
+          <groupId>jakarta.xml.bind</groupId>
+          <artifactId>jakarta.xml.bind-api</artifactId>
+      </dependency>
+      <dependency>
+          <groupId>jakarta.annotation</groupId>
+          <artifactId>jakarta.annotation-api</artifactId>
+      </dependency>
+
       <dependency>
           <groupId>org.geotoolkit</groupId>
           <artifactId>geotk-coverage-geotiff</artifactId>

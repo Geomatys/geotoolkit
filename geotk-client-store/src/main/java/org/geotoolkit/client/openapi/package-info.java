@@ -42,4 +42,4 @@
  *
  *
  */
-package org.geotoolkit.ogcapi.client;
+package org.geotoolkit.client.openapi;

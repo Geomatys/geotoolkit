@@ -22,13 +22,11 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
-import org.geotoolkit.ogcapi.client.AbstractApi;
-import static org.geotoolkit.ogcapi.client.AbstractApi.toPairs;
-import static org.geotoolkit.ogcapi.client.AbstractApi.urlEncode;
-import org.geotoolkit.ogcapi.client.OpenApiConfiguration;
-import org.geotoolkit.ogcapi.client.OpenApiException;
-import org.geotoolkit.ogcapi.client.OpenApiResponse;
-import org.geotoolkit.ogcapi.client.Pair;
+import org.geotoolkit.client.openapi.AbstractOpenApi;
+import org.geotoolkit.client.openapi.OpenApiConfiguration;
+import org.geotoolkit.client.service.Pair;
+import org.geotoolkit.client.service.ServiceException;
+import org.geotoolkit.client.service.ServiceResponse;
 import org.geotoolkit.ogcapi.model.dggs.Dggrs;
 import org.geotoolkit.ogcapi.model.dggs.DggrsData;
 import org.geotoolkit.ogcapi.model.dggs.DggrsListResponse;
@@ -36,7 +34,7 @@ import org.geotoolkit.ogcapi.model.dggs.DggrsZonesResponse;
 import org.geotoolkit.ogcapi.model.dggs.Enumeration;
 import org.geotoolkit.ogcapi.model.dggs.ZoneInfo;
 
-public final class DggsApi extends AbstractApi {
+public final class DggsApi extends AbstractOpenApi {
 
     public DggsApi(OpenApiConfiguration config) {
         super(config);
@@ -49,10 +47,10 @@ public final class DggsApi extends AbstractApi {
      * @param f The format of the response. If no value is provided, the accept
      * header is used to determine the format. Accepted values are
      * &#39;json&#39; or &#39;html&#39;. (optional)
-     * @return OpenApiResponse&lt;Enumeration&gt;
-     * @throws OpenApiException if fails to make API call
+     * @return ServiceResponse&lt;Enumeration&gt;
+     * @throws ServiceException if fails to make API call
      */
-    public OpenApiResponse<Enumeration> getAPICollections(@jakarta.annotation.Nullable String f) throws OpenApiException {
+    public ServiceResponse<Enumeration> getAPICollections(@jakarta.annotation.Nullable String f) throws ServiceException {
         final HttpRequest.Builder request = HttpRequest.newBuilder();
         request.uri(toUri("/api/all-collections", toPairs("f", f)));
         request.header("Accept", "application/json, text/html");
@@ -68,10 +66,10 @@ public final class DggsApi extends AbstractApi {
      * @param f The format of the response. If no value is provided, the accept
      * header is used to determine the format. Accepted values are
      * &#39;json&#39; or &#39;html&#39;. (optional)
-     * @return OpenApiResponse&lt;Enumeration&gt;
-     * @throws OpenApiException if fails to make API call
+     * @return ServiceResponse&lt;Enumeration&gt;
+     * @throws ServiceException if fails to make API call
      */
-    public OpenApiResponse<Enumeration> getAPIDGGRS(@jakarta.annotation.Nullable String f) throws OpenApiException {
+    public ServiceResponse<Enumeration> getAPIDGGRS(@jakarta.annotation.Nullable String f) throws ServiceException {
         final HttpRequest.Builder request = HttpRequest.newBuilder();
         request.uri(toUri("/api/dggs", toPairs("f", f)));
         request.header("Accept", "application/json, text/html");
@@ -86,15 +84,15 @@ public final class DggsApi extends AbstractApi {
      * @param collectionId Local identifier of a collection (required)
      * @param f The format of the response. If no value is provided, the accept header is used to determine the format.
      * Accepted values are &#39;json&#39; or &#39;html&#39;. (optional)
-     * @return OpenApiResponse&lt;DatasetGetDGGRSList200Response&gt;
-     * @throws OpenApiException if fails to make API call
+     * @return ServiceResponse&lt;DatasetGetDGGRSList200Response&gt;
+     * @throws ServiceException if fails to make API call
      */
-    public OpenApiResponse<DggrsListResponse> collectionGetDGGRSList(
+    public ServiceResponse<DggrsListResponse> collectionGetDGGRSList(
             @jakarta.annotation.Nonnull String collectionId,
             @jakarta.annotation.Nullable String f)
-            throws OpenApiException {
+            throws ServiceException {
         if (collectionId == null) {
-            throw new OpenApiException(400, "Missing the required parameter 'collectionId' when calling collectionGetDGGRSList");
+            throw new ServiceException(400, "Missing the required parameter 'collectionId' when calling collectionGetDGGRSList");
         }
 
         final HttpRequest.Builder request = HttpRequest.newBuilder();
@@ -113,20 +111,20 @@ public final class DggsApi extends AbstractApi {
      * @param collectionId Local identifier of a collection (required)
      * @param f The format of the response. If no value is provided, the accept header is used to determine the format.
      * Accepted values are &#39;json&#39; or &#39;html&#39;. (optional)
-     * @return OpenApiResponse&lt;Dggrs&gt;
-     * @throws OpenApiException if fails to make API call
+     * @return ServiceResponse&lt;Dggrs&gt;
+     * @throws ServiceException if fails to make API call
      */
-    public OpenApiResponse<Dggrs> collectionGetDGGRS(
+    public ServiceResponse<Dggrs> collectionGetDGGRS(
             @jakarta.annotation.Nonnull String dggrsId,
             @jakarta.annotation.Nonnull String collectionId,
             @jakarta.annotation.Nullable String f)
-            throws OpenApiException {
+            throws ServiceException {
 
         if (dggrsId == null) {
-            throw new OpenApiException(400, "Missing the required parameter 'dggrsId' when calling collectionGetDGGRS");
+            throw new ServiceException(400, "Missing the required parameter 'dggrsId' when calling collectionGetDGGRS");
         }
         if (collectionId == null) {
-            throw new OpenApiException(400, "Missing the required parameter 'collectionId' when calling collectionGetDGGRS");
+            throw new ServiceException(400, "Missing the required parameter 'collectionId' when calling collectionGetDGGRS");
         }
 
         final HttpRequest.Builder request = HttpRequest.newBuilder();
@@ -160,24 +158,24 @@ public final class DggsApi extends AbstractApi {
      * temporal property that intersects the value of &#x60;datetime&#x60; are selected. If a feature has multiple
      * temporal properties, it is the decision of the server whether only a single temporal property is used to
      * determine the extent or all relevant temporal properties. (optional)
-     * @return OpenApiResponse&lt;Void&gt;
-     * @throws OpenApiException if fails to make API call
+     * @return ServiceResponse&lt;Void&gt;
+     * @throws ServiceException if fails to make API call
      */
-    public OpenApiResponse<ZoneInfo> collectionGetDGGRSZoneInfo(
+    public ServiceResponse<ZoneInfo> collectionGetDGGRSZoneInfo(
             @jakarta.annotation.Nonnull String dggrsId,
             @jakarta.annotation.Nonnull String zoneId,
             @jakarta.annotation.Nonnull String collectionId,
             @jakarta.annotation.Nullable List<String> collections,
             @jakarta.annotation.Nullable String datetime)
-            throws OpenApiException {
+            throws ServiceException {
         if (dggrsId == null) {
-            throw new OpenApiException(400, "Missing the required parameter 'dggrsId' when calling collectionGetDGGRSZoneInfo");
+            throw new ServiceException(400, "Missing the required parameter 'dggrsId' when calling collectionGetDGGRSZoneInfo");
         }
         if (zoneId == null) {
-            throw new OpenApiException(400, "Missing the required parameter 'zoneId' when calling collectionGetDGGRSZoneInfo");
+            throw new ServiceException(400, "Missing the required parameter 'zoneId' when calling collectionGetDGGRSZoneInfo");
         }
         if (collectionId == null) {
-            throw new OpenApiException(400, "Missing the required parameter 'collectionId' when calling collectionGetDGGRSZoneInfo");
+            throw new ServiceException(400, "Missing the required parameter 'collectionId' when calling collectionGetDGGRSZoneInfo");
         }
 
         final List<Pair> queryParams = new ArrayList<>();
@@ -199,15 +197,15 @@ public final class DggsApi extends AbstractApi {
      * @param dggrsId Identifier for a supported Discrete Global Grid System (required)
      * @param f The format of the response. If no value is provided, the accept header is used to determine the format.
      * Accepted values are &#39;json&#39; or &#39;html&#39;. (optional)
-     * @return OpenApiResponse&lt;Dggrs&gt;
-     * @throws OpenApiException if fails to make API call
+     * @return ServiceResponse&lt;Dggrs&gt;
+     * @throws ServiceException if fails to make API call
      */
-    public OpenApiResponse<Dggrs> datasetGetDGGRS(
+    public ServiceResponse<Dggrs> datasetGetDGGRS(
             @jakarta.annotation.Nonnull String dggrsId,
             @jakarta.annotation.Nullable String f)
-            throws OpenApiException {
+            throws ServiceException {
         if (dggrsId == null) {
-            throw new OpenApiException(400, "Missing the required parameter 'dggrsId' when calling datasetGetDGGRS");
+            throw new ServiceException(400, "Missing the required parameter 'dggrsId' when calling datasetGetDGGRS");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
         request.uri(toUri("/dggs/" + urlEncode(dggrsId), toPairs("f", f)));
@@ -222,12 +220,12 @@ public final class DggsApi extends AbstractApi {
      *
      * @param f The format of the response. If no value is provided, the accept header is used to determine the format.
      * Accepted values are &#39;json&#39; or &#39;html&#39;. (optional)
-     * @return OpenApiResponse&lt;DatasetGetDGGRSList200Response&gt;
-     * @throws OpenApiException if fails to make API call
+     * @return ServiceResponse&lt;DatasetGetDGGRSList200Response&gt;
+     * @throws ServiceException if fails to make API call
      */
-    public OpenApiResponse<DggrsListResponse> datasetGetDGGRSList(
+    public ServiceResponse<DggrsListResponse> datasetGetDGGRSList(
             @jakarta.annotation.Nullable String f)
-            throws OpenApiException {
+            throws ServiceException {
         final HttpRequest.Builder request = HttpRequest.newBuilder();
         request.uri(toUri("/dggs", toPairs("f", f)));
         request.header("Accept", "application/json, text/html");
@@ -256,20 +254,20 @@ public final class DggsApi extends AbstractApi {
      * temporal property that intersects the value of &#x60;datetime&#x60; are selected. If a feature has multiple
      * temporal properties, it is the decision of the server whether only a single temporal property is used to
      * determine the extent or all relevant temporal properties. (optional)
-     * @return OpenApiResponse&lt;ZoneInfo&gt;
-     * @throws OpenApiException if fails to make API call
+     * @return ServiceResponse&lt;ZoneInfo&gt;
+     * @throws ServiceException if fails to make API call
      */
-    public OpenApiResponse<ZoneInfo> datasetGetDGGRSZoneInfo(
+    public ServiceResponse<ZoneInfo> datasetGetDGGRSZoneInfo(
             @jakarta.annotation.Nonnull String dggrsId,
             @jakarta.annotation.Nonnull String zoneId,
             @jakarta.annotation.Nullable List<String> collections,
             @jakarta.annotation.Nullable String datetime)
-            throws OpenApiException {
+            throws ServiceException {
         if (dggrsId == null) {
-            throw new OpenApiException(400, "Missing the required parameter 'dggrsId' when calling datasetGetDGGRSZoneInfo");
+            throw new ServiceException(400, "Missing the required parameter 'dggrsId' when calling datasetGetDGGRSZoneInfo");
         }
         if (zoneId == null) {
-            throw new OpenApiException(400, "Missing the required parameter 'zoneId' when calling datasetGetDGGRSZoneInfo");
+            throw new ServiceException(400, "Missing the required parameter 'zoneId' when calling datasetGetDGGRSZoneInfo");
         }
 
         final List<Pair> queryParams = new ArrayList<>();
@@ -371,10 +369,10 @@ public final class DggsApi extends AbstractApi {
      * @param valuesScale Specify the scale factor for a zone data output format such as PNG not supporting
      * floating-point, to be applied before adding an offset and resulting in the encoded integer values (e.g., 8-bit or
      * 16-bit unsigned for PNG). (optional)
-     * @return OpenApiResponse&lt;DggsJson&gt;
-     * @throws OpenApiException if fails to make API call
+     * @return ServiceResponse&lt;DggsJson&gt;
+     * @throws ServiceException if fails to make API call
      */
-    public OpenApiResponse<DggrsData> collectionGetDGGRSZoneData(
+    public ServiceResponse<DggrsData> collectionGetDGGRSZoneData(
             @jakarta.annotation.Nonnull String dggrsId,
             @jakarta.annotation.Nonnull String zoneId,
             @jakarta.annotation.Nonnull String collectionId,
@@ -390,16 +388,16 @@ public final class DggsApi extends AbstractApi {
             @jakarta.annotation.Nullable Object zoneDepth,
             @jakarta.annotation.Nullable Double valuesOffset,
             @jakarta.annotation.Nullable Double valuesScale)
-            throws OpenApiException {
+            throws ServiceException {
 
         if (dggrsId == null) {
-            throw new OpenApiException(400, "Missing the required parameter 'dggrsId' when calling collectionGetDGGRSZoneData");
+            throw new ServiceException(400, "Missing the required parameter 'dggrsId' when calling collectionGetDGGRSZoneData");
         }
         if (zoneId == null) {
-            throw new OpenApiException(400, "Missing the required parameter 'zoneId' when calling collectionGetDGGRSZoneData");
+            throw new ServiceException(400, "Missing the required parameter 'zoneId' when calling collectionGetDGGRSZoneData");
         }
         if (collectionId == null) {
-            throw new OpenApiException(400, "Missing the required parameter 'collectionId' when calling collectionGetDGGRSZoneData");
+            throw new ServiceException(400, "Missing the required parameter 'collectionId' when calling collectionGetDGGRSZoneData");
         }
 
         final List<Pair> queryParams = new ArrayList<>();
@@ -514,10 +512,10 @@ public final class DggsApi extends AbstractApi {
      * @param valuesScale Specify the scale factor for a zone data output format such as PNG not supporting
      * floating-point, to be applied before adding an offset and resulting in the encoded integer values (e.g., 8-bit or
      * 16-bit unsigned for PNG). (optional)
-     * @return OpenApiResponse&lt;DggsJson&gt;
-     * @throws OpenApiException if fails to make API call
+     * @return ServiceResponse&lt;DggsJson&gt;
+     * @throws ServiceException if fails to make API call
      */
-    public OpenApiResponse<DggrsData> datasetGetDGGRSZoneData(
+    public ServiceResponse<DggrsData> datasetGetDGGRSZoneData(
             @jakarta.annotation.Nonnull String dggrsId,
             @jakarta.annotation.Nonnull String zoneId,
             @jakarta.annotation.Nullable List<String> collections,
@@ -533,13 +531,13 @@ public final class DggsApi extends AbstractApi {
             @jakarta.annotation.Nullable Object zoneDepth,
             @jakarta.annotation.Nullable Double valuesOffset,
             @jakarta.annotation.Nullable Double valuesScale)
-            throws OpenApiException {
+            throws ServiceException {
 
         if (dggrsId == null) {
-            throw new OpenApiException(400, "Missing the required parameter 'dggrsId' when calling datasetGetDGGRSZoneData");
+            throw new ServiceException(400, "Missing the required parameter 'dggrsId' when calling datasetGetDGGRSZoneData");
         }
         if (zoneId == null) {
-            throw new OpenApiException(400, "Missing the required parameter 'zoneId' when calling datasetGetDGGRSZoneData");
+            throw new ServiceException(400, "Missing the required parameter 'zoneId' when calling datasetGetDGGRSZoneData");
         }
 
         final List<Pair> queryParams = new ArrayList<>();
@@ -662,10 +660,10 @@ public final class DggsApi extends AbstractApi {
      * @param f The format of the response. If no value is provided, the accept header is used to determine the format.
      * Accepted values are &#39;json&#39;, &#39;html&#39;, &#39;geojson&#39;, &#39;geotiff&#39; or &#39;uint64&#39;.
      * (optional)
-     * @return OpenApiResponse&lt;DatasetGetDGGRSZones200Response&gt;
-     * @throws OpenApiException if fails to make API call
+     * @return ServiceResponse&lt;DatasetGetDGGRSZones200Response&gt;
+     * @throws ServiceException if fails to make API call
      */
-    public OpenApiResponse<DggrsZonesResponse> collectionGetDGGRSZones(
+    public ServiceResponse<DggrsZonesResponse> collectionGetDGGRSZones(
             @jakarta.annotation.Nonnull String collectionId,
             @jakarta.annotation.Nonnull String dggrsId,
             @jakarta.annotation.Nullable List<String> collections,
@@ -684,13 +682,13 @@ public final class DggsApi extends AbstractApi {
             @jakarta.annotation.Nullable String filter,
             @jakarta.annotation.Nullable String filterLang,
             @jakarta.annotation.Nullable String f)
-            throws OpenApiException {
+            throws ServiceException {
 
         if (collectionId == null) {
-            throw new OpenApiException(400, "Missing the required parameter 'collectionId' when calling collectionGetDGGRSZones");
+            throw new ServiceException(400, "Missing the required parameter 'collectionId' when calling collectionGetDGGRSZones");
         }
         if (dggrsId == null) {
-            throw new OpenApiException(400, "Missing the required parameter 'dggrsId' when calling collectionGetDGGRSZones");
+            throw new ServiceException(400, "Missing the required parameter 'dggrsId' when calling collectionGetDGGRSZones");
         }
 
         final List<Pair> queryParams = new ArrayList<>();
@@ -820,10 +818,10 @@ public final class DggsApi extends AbstractApi {
      * @param f The format of the response. If no value is provided, the accept header is used to determine the format.
      * Accepted values are &#39;json&#39;, &#39;html&#39;, &#39;geojson&#39;, &#39;geotiff&#39; or &#39;uint64&#39;.
      * (optional)
-     * @return OpenApiResponse&lt;DatasetGetDGGRSZones200Response&gt;
-     * @throws OpenApiException if fails to make API call
+     * @return ServiceResponse&lt;DatasetGetDGGRSZones200Response&gt;
+     * @throws ServiceException if fails to make API call
      */
-    public OpenApiResponse<DggrsZonesResponse> datasetGetDGGRSZones(
+    public ServiceResponse<DggrsZonesResponse> datasetGetDGGRSZones(
             @jakarta.annotation.Nonnull String dggrsId,
             @jakarta.annotation.Nullable List<String> collections,
             @jakarta.annotation.Nullable List<BigDecimal> bbox,
@@ -842,10 +840,10 @@ public final class DggsApi extends AbstractApi {
             @jakarta.annotation.Nullable String filter,
             @jakarta.annotation.Nullable String filterLang,
             @jakarta.annotation.Nullable String f)
-            throws OpenApiException {
+            throws ServiceException {
 
         if (dggrsId == null) {
-            throw new OpenApiException(400, "Missing the required parameter 'dggrsId' when calling datasetGetDGGRSZones");
+            throw new ServiceException(400, "Missing the required parameter 'dggrsId' when calling datasetGetDGGRSZones");
         }
 
         final List<Pair> queryParams = new ArrayList<>();

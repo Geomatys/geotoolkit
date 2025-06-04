@@ -29,7 +29,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import org.geotoolkit.ogcapi.client.RFC3339JavaTimeModule;
+import org.geotoolkit.client.openapi.RFC3339JavaTimeModule;
 import org.openapitools.jackson.nullable.JsonNullableModule;
 
 public final class JSON {
