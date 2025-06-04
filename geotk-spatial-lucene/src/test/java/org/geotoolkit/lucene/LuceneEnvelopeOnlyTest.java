@@ -53,7 +53,6 @@ import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.index.tree.manager.NamedEnvelope;
 import org.geotoolkit.index.tree.manager.postgres.LucenePostgresSQLTreeEltMapper;
 import org.geotoolkit.index.tree.manager.postgres.PGDataSource;
-import org.geotoolkit.io.wkb.WKBUtils;
 import org.geotoolkit.lucene.DocumentIndexer.DocumentEnvelope;
 import org.geotoolkit.lucene.analysis.standard.ClassicAnalyzer;
 import org.geotoolkit.lucene.filter.LuceneOGCSpatialQuery;
