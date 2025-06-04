@@ -48,7 +48,7 @@ import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.index.LogicalFilterType;
 import org.geotoolkit.index.tree.manager.NamedEnvelope;
-import org.geotoolkit.io.wkb.WKBUtils;
+import org.geotoolkit.lucene.WKBUtils;
 import org.geotoolkit.lucene.DocumentIndexer.DocumentEnvelope;
 import org.geotoolkit.lucene.LuceneUtils;
 import org.geotoolkit.lucene.filter.LuceneOGCSpatialQuery;

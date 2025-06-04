@@ -49,7 +49,6 @@ import org.geotoolkit.index.tree.manager.NamedEnvelope;
 import org.geotoolkit.index.tree.manager.SQLRtreeManager;
 import org.geotoolkit.index.tree.manager.postgres.LucenePostgresSQLTreeEltMapper;
 import org.geotoolkit.index.tree.manager.postgres.PGDataSource;
-import org.geotoolkit.io.wkb.WKBUtils;
 import org.geotoolkit.lucene.DocumentIndexer.DocumentEnvelope;
 import static org.geotoolkit.lucene.LuceneSearcherTest.getresultsfromID;
 import org.geotoolkit.lucene.analysis.standard.ClassicAnalyzer;
