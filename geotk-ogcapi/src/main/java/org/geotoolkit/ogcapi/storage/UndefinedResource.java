@@ -14,16 +14,20 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.observation.model;
+package org.geotoolkit.ogcapi.storage;
+
+import org.apache.sis.storage.AbstractResource;
+import org.geotoolkit.client.openapi.OpenApiConfiguration;
 
 /**
+ * An OGCAPI resource of undefined type.
  *
- * @author Guilhem Legal (Geomatys)
+ * @author Johann Sorel (Geomatys)
  */
-public enum FieldType {
-    METADATA,
-    MAIN,
-    MEASURE,
-    QUALITY,
-    PARAMETER
+public final class UndefinedResource extends AbstractResource {
+
+    public UndefinedResource(OpenApiConfiguration config) {
+        super(null);
+    }
+
 }

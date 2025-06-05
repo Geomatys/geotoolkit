@@ -33,9 +33,9 @@ public class Field {
      */
     public final Integer index;
     /**
-     * The data type of the field. Can be : - Quantity - Text - Boolean - Time
+     * The data type of the field. Can be : Quantity, Text, Boolean, Time, ...
      */
-    public final FieldType type;
+    public final FieldDataType dataType;
     /**
      * Field name, used as an identifier for the field. The name often identify
      * a phenomenon with the same id.
@@ -58,6 +58,13 @@ public class Field {
     public final String uom;
 
     /**
+     * The type of the field. Can be : MAIN, MEASURE, QUALITY, PARAMETER
+     */
+    public final FieldType type;
+
+    protected Field parent;
+
+    /**
      * Associated quality fields.
      */
     public final List<Field> qualityFields;
@@ -71,10 +78,12 @@ public class Field {
     private Field() {
         this.index = null;
         this.type = null;
+        this.dataType = null;
         this.name = null;
         this.label = null;
         this.description = null;
         this.uom = null;
+        this.parent = null;
         this.qualityFields = new ArrayList<>();
         this.parameterFields = new ArrayList<>();
     }
@@ -83,37 +92,53 @@ public class Field {
      * Build a field.
      *
      * @param index The place of the field in a dataArray.
-     * @param type The data type of the field.
+     * @param dataType The data type of the field.
      * @param name Field name, used as an identifier for the field.
      * @param label Field label, used as an human description for the field.
      * @param description An URN describing the field.
      * @param uom Unit of measure of the associated data.
+     * @param type The type of the field.
      */
-    public Field(final Integer index, final FieldType type, final String name, final String label, final String description, final String uom) {
-        this(index, type, name, label, description, uom, new ArrayList<>(), new ArrayList<>());
+    public Field(final Integer index, final FieldDataType dataType, final String name, final String label, final String description, final String uom, final FieldType type) {
+        this(index, dataType, name, label, description, uom, type, new ArrayList<>(), new ArrayList<>());
     }
 
     /**
      * Build a field.
      *
      * @param index The place of the field in a dataArray.
-     * @param type The data type of the field.
+     * @param dataType The data type of the field.
      * @param name Field name, used as an identifier for the field.
      * @param label Field label, used as an human description for the field.
      * @param description An URN describing the field.
      * @param uom Unit of measure of the associated data.
+     * @param type The type of the field.
      * @param qualityFields Associated quality fields.
      * @param parameterFields Associated arameter fields.
      */
-    public Field(final Integer index, final FieldType type, final String name, final String label, final String description, final String uom, List<Field> qualityFields, List<Field> parameterFields) {
+    public Field(final Integer index, final FieldDataType dataType, final String name, final String label, final String description, final String uom, final FieldType type,
+            List<Field> qualityFields, List<Field> parameterFields) {
         this.index = index;
         this.description = description;
         this.name = name;
-        this.type = type;
+        this.dataType = dataType;
         this.uom = uom;
         this.label = label;
+        this.type = type;
         this.qualityFields = qualityFields;
+        //update parent
+        if (qualityFields != null) {
+            for (Field qf : qualityFields) {
+                qf.parent = this;
+            }
+        }
         this.parameterFields = parameterFields;
+        //update parent
+        if (parameterFields != null) {
+            for (Field pf : parameterFields) {
+                pf.parent = this;
+            }
+        }
     }
 
     /**
@@ -126,9 +151,10 @@ public class Field {
         this.index = that.index;
         this.description = that.description;
         this.name = that.name;
-        this.type = that.type;
+        this.dataType = that.dataType;
         this.uom = that.uom;
         this.label = that.label;
+        this.type = that.type;
         this.qualityFields = new ArrayList<>();
         for (Field qualField : that.qualityFields) {
             this.qualityFields.add(new Field(qualField));
@@ -150,9 +176,10 @@ public class Field {
         this.index = index;
         this.description = that.description;
         this.name = that.name;
-        this.type = that.type;
+        this.dataType = that.dataType;
         this.uom = that.uom;
         this.label = that.label;
+        this.type = that.type;
         this.qualityFields = new ArrayList<>();
         for (Field qualField : that.qualityFields) {
             this.qualityFields.add(new Field(qualField));
@@ -173,7 +200,7 @@ public class Field {
      * @throws SQLException
      */
     public String getSQLType(boolean isPostgres, boolean timescaledbMain) throws SQLException {
-        if (FieldType.QUANTITY.equals(type)) {
+        if (FieldDataType.QUANTITY.equals(dataType)) {
             if (timescaledbMain) {
                 return "integer";
             } else if (!isPostgres) {
@@ -181,25 +208,29 @@ public class Field {
             } else {
                 return "double precision";
             }
-        } else if (FieldType.TEXT.equals(type)) {
+        } else if (FieldDataType.TEXT.equals(dataType)) {
             return "character varying(1000)";
-        } else if (FieldType.BOOLEAN.equals(type)) {
+        } else if (FieldDataType.BOOLEAN.equals(dataType)) {
             if (isPostgres) {
                 return "boolean";
             } else {
                 return "integer";
             }
-        } else if (FieldType.TIME.equals(type)) {
+        } else if (FieldDataType.TIME.equals(dataType)) {
             return "timestamp";
         } else {
             throw new SQLException("Only Quantity, Text AND Time is supported for now");
         }
     }
 
+    public Field getParent() {
+        return parent;
+    }
+
     @Override
     public int hashCode() {
         int hash = 5;
-        hash = 89 * hash + java.util.Objects.hashCode(this.type);
+        hash = 89 * hash + java.util.Objects.hashCode(this.dataType);
         hash = 89 * hash + java.util.Objects.hashCode(this.name);
         hash = 89 * hash + java.util.Objects.hashCode(this.description);
         hash = 89 * hash + java.util.Objects.hashCode(this.uom);
@@ -214,7 +245,7 @@ public class Field {
         if (obj instanceof Field that) {
             return Objects.equals(this.description, that.description)
                 && Objects.equals(this.name, that.name)
-                && Objects.equals(this.type, that.type)
+                && Objects.equals(this.dataType, that.dataType)
                 && Objects.equals(this.uom, that.uom);
         }
         return false;
@@ -222,9 +253,10 @@ public class Field {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(name).append(": ").append(type).append('\n');
+        StringBuilder sb = new StringBuilder(name).append("(").append(dataType).append(") \n");
         sb.append("index:").append(index).append('\n');
         sb.append("description:").append(description).append('\n');
+        sb.append("type:").append(type).append('\n');
         if (uom != null) {
             sb.append("uom:").append(uom).append('\n');
         }

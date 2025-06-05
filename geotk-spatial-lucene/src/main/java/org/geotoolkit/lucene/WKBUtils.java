@@ -15,7 +15,7 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.io.wkb;
+package org.geotoolkit.lucene;
 
 import org.locationtech.jts.geom.Geometry;
 import org.geotoolkit.geometry.jts.SRIDGenerator;

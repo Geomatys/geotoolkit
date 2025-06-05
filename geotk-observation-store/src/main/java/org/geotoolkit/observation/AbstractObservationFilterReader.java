@@ -24,7 +24,6 @@ import static org.geotoolkit.ows.xml.OWSExceptionCode.INVALID_PARAMETER_VALUE;
 import static org.geotoolkit.observation.AbstractObservationStoreFactory.*;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
-import org.opengis.filter.BinaryComparisonOperator;
 import org.opengis.filter.BinarySpatialOperator;
 import org.opengis.filter.Literal;
 import org.opengis.filter.TemporalOperator;
@@ -38,6 +37,7 @@ import org.opengis.temporal.Period;
 import org.opengis.temporal.TemporalPrimitive;
 import static org.apache.sis.temporal.TemporalDate.toDate;
 import org.geotoolkit.temporal.object.TemporalUtilities;
+import org.opengis.filter.ComparisonOperator;
 
 /**
  *
@@ -89,8 +89,8 @@ public abstract class AbstractObservationFilterReader implements ObservationFilt
     protected Date startTime;
     protected Date endTime;
     protected Envelope boundingbox;
-    protected BinaryComparisonOperator resultFilter;
-    protected BinaryComparisonOperator propertiesFilter;
+    protected ComparisonOperator resultFilter;
+    protected ComparisonOperator propertiesFilter;
     protected String procedureType;
 
     protected static final GeometryFactory GF = new GeometryFactory();
@@ -263,13 +263,13 @@ public abstract class AbstractObservationFilterReader implements ObservationFilt
     }
 
     @Override
-    public FilterAppend setResultFilter(BinaryComparisonOperator filter) throws DataStoreException {
+    public FilterAppend setResultFilter(ComparisonOperator filter) throws DataStoreException {
         this.resultFilter = filter;
         return new FilterAppend(true);
     }
 
     @Override
-    public FilterAppend setPropertiesFilter(BinaryComparisonOperator filter) throws DataStoreException {
+    public FilterAppend setPropertiesFilter(ComparisonOperator filter) throws DataStoreException {
         this.propertiesFilter = filter;
         return new FilterAppend(true);
     }

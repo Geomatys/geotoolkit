@@ -18,20 +18,26 @@ package org.geotoolkit.ogcapi.client.common;
 
 import java.net.http.HttpRequest;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import org.geotoolkit.ogcapi.client.AbstractApi;
-import org.geotoolkit.ogcapi.client.OpenApiConfiguration;
-import org.geotoolkit.ogcapi.client.OpenApiException;
-import org.geotoolkit.ogcapi.client.OpenApiResponse;
-import org.geotoolkit.ogcapi.client.Pair;
+import org.geotoolkit.client.openapi.AbstractOpenApi;
+import org.geotoolkit.client.openapi.OpenApiConfiguration;
+import org.geotoolkit.client.service.Pair;
+import org.geotoolkit.client.service.ServiceException;
+import org.geotoolkit.client.service.ServiceResponse;
 import org.geotoolkit.ogcapi.model.common.CollectionDescription;
+import org.geotoolkit.ogcapi.model.common.Collections;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public final class CollectionsApi extends AbstractApi {
+public final class CollectionsApi extends AbstractOpenApi {
+
+    /**
+     * Key used in ConfClasses to identify a resource compliant with this Api.
+     */
+    public static final String CONFORMANCE = "http://www.opengis.net/spec/ogcapi-common-2/1.0/conf/collections";
+
 
     public CollectionsApi(OpenApiConfiguration config) {
         super(config);
@@ -43,14 +49,14 @@ public final class CollectionsApi extends AbstractApi {
      * @param collectionId Local identifier of a collection (required)
      * @param f The format of the response. If no value is provided, the accept header is used to determine the format.
      * Accepted values are &#39;json&#39; or &#39;html&#39;. (optional)
-     * @return OpenApiResponse&lt;CollectionDesc&gt;
-     * @throws OpenApiException if fails to make API call
+     * @return ServiceResponse&lt;CollectionDesc&gt;
+     * @throws ServiceException if fails to make API call
      */
-    public OpenApiResponse<CollectionDescription> getCollection(
+    public ServiceResponse<CollectionDescription> getCollection(
             @jakarta.annotation.Nonnull String collectionId,
-            @jakarta.annotation.Nullable String f) throws OpenApiException {
+            @jakarta.annotation.Nullable String f) throws ServiceException {
         if (collectionId == null) {
-            throw new OpenApiException(400, "Missing the required parameter 'collectionId' when calling getCollection");
+            throw new ServiceException(400, "Missing the required parameter 'collectionId' when calling getCollection");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
         request.uri(toUri("/collections/" + urlEncode(collectionId), toPairs("f", f)));
@@ -96,11 +102,11 @@ public final class CollectionsApi extends AbstractApi {
      * @return ApiResponse&lt;Collections&gt;
      * @throws ApiException if fails to make API call
      */
-    public OpenApiResponse<Collections> getCollections(
+    public ServiceResponse<Collections> getCollections(
             @jakarta.annotation.Nullable String datetime,
             @jakarta.annotation.Nullable List<Double> bbox,
             @jakarta.annotation.Nullable Integer limit,
-            @jakarta.annotation.Nullable String f) throws OpenApiException {
+            @jakarta.annotation.Nullable String f) throws ServiceException {
         final List<Pair> queryParams = new ArrayList<>();
         queryParams.addAll(toPairs("datetime", datetime));
         queryParams.addAll(toPairs("csv", "bbox", bbox));

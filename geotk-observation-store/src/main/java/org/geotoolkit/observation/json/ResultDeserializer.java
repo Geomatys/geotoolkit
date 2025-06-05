@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import static org.geotoolkit.observation.json.ObservationJsonUtils.*;
 import org.geotoolkit.observation.model.ComplexResult;
 import org.geotoolkit.observation.model.Field;
+import org.geotoolkit.observation.model.FieldDataType;
 import org.geotoolkit.observation.model.FieldType;
 import org.geotoolkit.observation.model.MeasureResult;
 import org.geotoolkit.observation.model.Result;
@@ -50,13 +51,14 @@ public class ResultDeserializer extends JsonDeserializer<Result> {
         if (rootNode.hasNonNull("field")) {
             JsonNode fieldNode = rootNode.get("field");
             int index          = getIntFieldValue(fieldNode, "index").orElseThrow(() -> new JsonMappingException(parser, "No index available"));
-            FieldType ft       = getFieldValue(fieldNode, "type").map(t -> FieldType.valueOf(t)).orElseThrow(() -> new JsonMappingException(parser, "No type available"));
+            FieldDataType ft   = getFieldValue(fieldNode, "dataType").map(t -> FieldDataType.valueOf(t)).orElseThrow(() -> new JsonMappingException(parser, "No type available"));
             String name        = getFieldValue(fieldNode, "name").orElseThrow(() -> new JsonMappingException(parser, "No name available"));
             String label       = getFieldValue(fieldNode, "label").orElse(null);
             String description = getFieldValue(fieldNode, "description").orElse(null);
             String uom         = getFieldValue(fieldNode, "uom").orElse(null);
             // TODO "qualityFields": []
-            Field f = new Field(index, ft, name, label, description, uom, new ArrayList<>(), new ArrayList<>());
+            // TODO "parameterFields": []
+            Field f = new Field(index, ft, name, label, description, uom, FieldType.MEASURE, new ArrayList<>(), new ArrayList<>());
             Object value = null;
             if (rootNode.hasNonNull("value")) {
                 switch (ft) {

@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.ogcapi.client;
+package org.geotoolkit.client.service;
 
 import java.util.List;
 import java.util.Map;
@@ -24,7 +24,7 @@ import java.util.Map;
  *
  * @param <T> The type of data that is deserialized from response body
  */
-public class OpenApiResponse<T> {
+public class ServiceResponse<T> {
     final private int statusCode;
     final private Map<String, List<String>> headers;
     final private T data;
@@ -33,7 +33,7 @@ public class OpenApiResponse<T> {
      * @param statusCode The status code of HTTP response
      * @param headers The headers of HTTP response
      */
-    public OpenApiResponse(int statusCode, Map<String, List<String>> headers) {
+    public ServiceResponse(int statusCode, Map<String, List<String>> headers) {
         this(statusCode, headers, null);
     }
 
@@ -42,7 +42,7 @@ public class OpenApiResponse<T> {
      * @param headers The headers of HTTP response
      * @param data The object deserialized from response bod
      */
-    public OpenApiResponse(int statusCode, Map<String, List<String>> headers, T data) {
+    public ServiceResponse(int statusCode, Map<String, List<String>> headers, T data) {
         this.statusCode = statusCode;
         this.headers = headers;
         this.data = data;

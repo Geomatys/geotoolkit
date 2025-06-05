@@ -39,6 +39,7 @@ import org.geotoolkit.observation.model.ComplexResult;
 import org.geotoolkit.observation.model.ObservationDataset;
 import org.geotoolkit.observation.model.ProcedureDataset;
 import org.geotoolkit.observation.model.Field;
+import org.geotoolkit.observation.model.FieldType;
 import org.geotoolkit.observation.model.GeoSpatialBound;
 import org.geotoolkit.observation.model.Observation;
 import org.geotoolkit.observation.model.Phenomenon;
@@ -164,12 +165,15 @@ public class NetCDFExtractor {
                         fillValue = attFill.getNumericValue();
                     }
 
+                    boolean isTimeseries = analyze.featureType == TIMESERIES || analyze.featureType == TRAJECTORY || analyze.featureType == GRID;
+
                     analyze.vars.put(name, variable);
                     if (name.equalsIgnoreCase("Time")) {
-                        Type dataType = Type.DATE;
-                        final NCField currentField = new NCField(name, name, dataType, dimension, dimensionLabel, fillValue, uom);
+                        Type dataType   = Type.DATE;
+                        FieldType fType = isTimeseries ? FieldType.MAIN : FieldType.MEASURE;
+                        final NCField currentField = new NCField(name, name, dataType, dimension, dimensionLabel, fillValue, uom, fType);
                         all.add(currentField);
-                        if (analyze.featureType == TIMESERIES || analyze.featureType == TRAJECTORY || analyze.featureType == GRID) {
+                        if (isTimeseries) {
                             analyze.mainField = currentField;
                         } else {
                             analyze.skippedFields.add(currentField);
@@ -178,20 +182,21 @@ public class NetCDFExtractor {
 
                     } else if (name.equalsIgnoreCase("Latitude") || name.equalsIgnoreCase("lat")) {
                         Type dataType = Type.DOUBLE;
-                        final NCField currentField = new NCField(name, name, dataType, dimension, dimensionLabel, fillValue, uom);
+                        final NCField currentField = new NCField(name, name, dataType, dimension, dimensionLabel, fillValue, uom, FieldType.METADATA);
                         analyze.skippedFields.add(currentField);
                         analyze.latField = currentField;
 
                     } else if (name.equalsIgnoreCase("Longitude") || name.equalsIgnoreCase("long") || name.equalsIgnoreCase("lon")) {
                         Type dataType = Type.DOUBLE;
-                        final NCField currentField = new NCField(name, name, dataType, dimension, dimensionLabel, fillValue, uom);
+                        final NCField currentField = new NCField(name, name, dataType, dimension, dimensionLabel, fillValue, uom, FieldType.METADATA);
                         analyze.skippedFields.add(currentField);
                         analyze.lonField = currentField;
 
 
                     } else if (name.equalsIgnoreCase("pression") || name.equalsIgnoreCase("pres") || name.equalsIgnoreCase("depth") || name.equalsIgnoreCase("zLevel") || name.equalsIgnoreCase("z")) {
                         Type dataType = Type.DOUBLE;
-                        final NCField currentField = new NCField(name, name, dataType, dimension, dimensionLabel, fillValue, uom);
+                        FieldType fType = (analyze.featureType == PROFILE) ? FieldType.MAIN : FieldType.MEASURE;
+                        final NCField currentField = new NCField(name, name, dataType, dimension, dimensionLabel, fillValue, uom, fType);
                         if (analyze.featureType == PROFILE) {
                             analyze.mainField = currentField;
                         } else if (dimension > 1 && (selectedBand == null || name.equals(selectedBand))) {
@@ -202,12 +207,12 @@ public class NetCDFExtractor {
 
                     } else if (name.equalsIgnoreCase("timeserie") || name.equalsIgnoreCase("trajectory") || name.equalsIgnoreCase("profile")) {
                         Type dataType = Type.STRING;
-                        final NCField currentField = new NCField(name, name, dataType, dimension, dimensionLabel, fillValue, uom);
+                        final NCField currentField = new NCField(name, name, dataType, dimension, dimensionLabel, fillValue, uom, FieldType.METADATA);
                         analyze.separatorField = currentField;
 
                     } else  {
                         Type dataType = getTypeFromDataType(variable.getDataType());
-                        final NCField currentField = new NCField(name, name, dataType, dimension, dimensionLabel, fillValue, uom);
+                        final NCField currentField = new NCField(name, name, dataType, dimension, dimensionLabel, fillValue, uom, FieldType.MEASURE);
                         if ((dataType == Type.DOUBLE || dataType == Type.INT) && dimension != 0 && (selectedBand == null || name.equals(selectedBand))) {
                             analyze.phenfields.add(currentField);
                         } else {
@@ -346,7 +351,7 @@ public class NetCDFExtractor {
             final Map<String, Array> phenArrays = analyze.getPhenomenonArrayMap();
 
             final List<Field> fields = new ArrayList<>(analyze.phenfields);
-            fields.add(0, OMUtils.TIME_FIELD);
+            fields.add(0, OMUtils.TIME_MAIN_FIELD);
             final Phenomenon phenomenon         = OMUtils.getPhenomenonModels(null, analyze.phenfields, "urn:ogc:phenomenon:", phenomenons);
             results.phenomenons.add(phenomenon);
 
@@ -387,7 +392,7 @@ public class NetCDFExtractor {
                         }
                         sb.newBlock();
                         gb.addDate(millis);
-                        sb.appendTime(millis, false, OMUtils.TIME_FIELD);
+                        sb.appendTime(millis, false, OMUtils.TIME_MAIN_FIELD);
 
                         for (NCField field : analyze.phenfields) {
                             final Array phenArray = phenArrays.get(field.name);
@@ -453,7 +458,7 @@ public class NetCDFExtractor {
                             }
                             sb.newBlock();
                             gb.addDate(millis);
-                            sb.appendTime(millis, false, OMUtils.TIME_FIELD);
+                            sb.appendTime(millis, false, OMUtils.TIME_MAIN_FIELD);
                             for (NCField field : analyze.phenfields) {
                                 final Array phenArray   = phenArrays.get(field.name);
                                 final boolean mainFirst = field.mainVariableFirst;
@@ -520,7 +525,7 @@ public class NetCDFExtractor {
             final boolean constantT = analyze.mainField.dimension == 1;
             final boolean timeFirst = analyze.mainField.mainVariableFirst;
             final List<Field> fields = new ArrayList<>(analyze.phenfields);
-            fields.add(0, OMUtils.TIME_FIELD);
+            fields.add(0, OMUtils.TIME_MAIN_FIELD);
 
             if (single) {
                 if (acceptedSensorID == null || acceptedSensorID.contains(procedureID)) {
@@ -631,7 +636,7 @@ public class NetCDFExtractor {
             final Map<String, Array> phenArrays = analyze.getPhenomenonArrayMap();
 
             final List<Field> fields = new ArrayList<>(analyze.phenfields);
-            fields.add(0, OMUtils.PRESSION_FIELD);
+            fields.add(0, OMUtils.PRESSION_MAIN_FIELD);
             final Phenomenon phenomenon         = OMUtils.getPhenomenonModels(null, analyze.phenfields, "urn:ogc:phenomenon:", phenomenons);
             results.phenomenons.add(phenomenon);
 
@@ -677,7 +682,7 @@ public class NetCDFExtractor {
                             continue;
                         }
                         sb.newBlock();
-                        sb.appendValue(zLevel, false, OMUtils.PRESSION_FIELD);
+                        sb.appendValue(zLevel, false, OMUtils.PRESSION_MAIN_FIELD);
 
                         for (NCField field : analyze.phenfields) {
                             final Array phenArray = phenArrays.get(field.name);
@@ -748,7 +753,7 @@ public class NetCDFExtractor {
                                 continue;
                             }
                             sb.newBlock();
-                            sb.appendValue(zLevel, false, OMUtils.PRESSION_FIELD);
+                            sb.appendValue(zLevel, false, OMUtils.PRESSION_MAIN_FIELD);
 
                             for (NCField field : analyze.phenfields) {
                                 final Array phenArray   = phenArrays.get(field.name);
@@ -814,7 +819,7 @@ public class NetCDFExtractor {
             }
 
             final List<Field> fields = new ArrayList<>(analyze.phenfields);
-            fields.add(0, OMUtils.PRESSION_FIELD);
+            fields.add(0, OMUtils.PRESSION_MAIN_FIELD);
 
             if (single) {
                 if (acceptedSensorID == null || acceptedSensorID.contains(procedureID)) {
@@ -913,7 +918,7 @@ public class NetCDFExtractor {
             final Map<String, Array> phenArrays = analyze.getPhenomenonArrayMap();
 
             final List<Field> fields = new ArrayList<>(analyze.phenfields);
-            fields.add(0, OMUtils.TIME_FIELD);
+            fields.add(0, OMUtils.TIME_MAIN_FIELD);
             fields.add(1, OMUtils.LATITUDE_FIELD);
             fields.add(2, OMUtils.LONGITUDE_FIELD);
             final Phenomenon phenomenon         = OMUtils.getPhenomenonModels(null, analyze.phenfields, "urn:ogc:phenomenon:", phenomenons);
@@ -944,7 +949,7 @@ public class NetCDFExtractor {
                         }
                         sb.newBlock();
                         gb.addDate(millis);
-                        sb.appendTime(millis, false, OMUtils.TIME_FIELD);
+                        sb.appendTime(millis, false, OMUtils.TIME_MAIN_FIELD);
 
                         final double latitude         = getDoubleValue(latArray, i, analyze.latField.fillValue);
                         sb.appendValue(latitude, false, OMUtils.LATITUDE_FIELD);
@@ -1019,7 +1024,7 @@ public class NetCDFExtractor {
                             }
                             sb.newBlock();
                             gb.addDate(millis);
-                            sb.appendTime(millis, false, OMUtils.TIME_FIELD);
+                            sb.appendTime(millis, false, OMUtils.TIME_MAIN_FIELD);
 
                             final double latitude  = getDoubleValue(true, latArray, i, j, analyze.latField.fillValue);
                             final double longitude = Longitude.normalize(getDoubleValue(true, lonArray, i, j, analyze.lonField.fillValue));
@@ -1106,7 +1111,7 @@ public class NetCDFExtractor {
             final boolean timeFirst = analyze.mainField.mainVariableFirst;
 
             final List<Field> fields = new ArrayList<>(analyze.phenfields);
-            fields.add(0, OMUtils.TIME_FIELD);
+            fields.add(0, OMUtils.TIME_MAIN_FIELD);
             fields.add(1, OMUtils.LATITUDE_FIELD);
             fields.add(2, OMUtils.LONGITUDE_FIELD);
 
@@ -1212,7 +1217,7 @@ public class NetCDFExtractor {
                 final Map<String, Array> phenArrays = analyze.getPhenomenonArrayMap();
 
                 final List<Field> fields = new ArrayList<>(analyze.phenfields);
-                fields.add(0, OMUtils.TIME_FIELD);
+                fields.add(0, OMUtils.TIME_MAIN_FIELD);
                 final Phenomenon phenomenon         = OMUtils.getPhenomenonModels(null, analyze.phenfields, "urn:ogc:phenomenon:", phenomenons);
                 results.phenomenons.add(phenomenon);
                 Map<String, Object> properties = new HashMap<>();
@@ -1249,7 +1254,7 @@ public class NetCDFExtractor {
                             }
                             sb.newBlock();
                             gb.addDate(millis);
-                            sb.appendTime(millis, false, OMUtils.TIME_FIELD);
+                            sb.appendTime(millis, false, OMUtils.TIME_MAIN_FIELD);
 
                             for (NCField field : analyze.phenfields) {
                                 final Array phenArray   = phenArrays.get(field.name);
@@ -1316,7 +1321,7 @@ public class NetCDFExtractor {
                 final Array timeArray   = analyze.file.readArrays(Arrays.asList(timeVar)).get(0);
 
                 final List<Field> fields = new ArrayList<>(analyze.phenfields);
-                fields.add(0, OMUtils.TIME_FIELD);
+                fields.add(0, OMUtils.TIME_MAIN_FIELD);
                 compo.fields.addAll(fields);
 
                 final int latSize = latVar.getDimension(0).getLength();

@@ -38,6 +38,7 @@ import org.geotoolkit.observation.OMUtils;
 import org.geotoolkit.observation.model.ComplexResult;
 import org.geotoolkit.observation.model.CompositePhenomenon;
 import org.geotoolkit.observation.model.Field;
+import org.geotoolkit.observation.model.FieldDataType;
 import org.geotoolkit.observation.model.FieldType;
 import org.geotoolkit.observation.model.MeasureResult;
 import org.geotoolkit.observation.model.Observation;
@@ -94,10 +95,10 @@ public class JsonBindingTest {
         phenProperties.put("names", Arrays.asList("p1", "phen1"));
         Phenomenon phen = new Phenomenon("phen-1", "urn:phen:1", "urn:phen:1", "phenomenon number 1", phenProperties);
 
-        Element quality = OMUtils.createQualityElement("qFlag", null, FieldType.TEXT, "ok");
+        Element quality = OMUtils.createQualityElement("qFlag", null, FieldDataType.TEXT, "ok");
         List<Element> qualities = Arrays.asList(quality);
 
-        Field field = new Field(1, FieldType.QUANTITY, "field_1", "field 1", "first field", "m");
+        Field field = new Field(1, FieldDataType.QUANTITY, "field_1", "field 1", "first field", "m", FieldType.MEASURE);
         Result mresult = new MeasureResult(field, 2.0);
         Map<String, Object> properties = new HashMap<>();
         properties.put("type", "timeseries");
@@ -158,12 +159,12 @@ public class JsonBindingTest {
 
         Phenomenon phen = new Phenomenon("phen-1", "urn:phen:1", "urn:phen:1", "phenomenon number 1", Collections.EMPTY_MAP);
 
-        Element quality = OMUtils.createQualityElement("qFlag", null, FieldType.QUANTITY, 2.3);
+        Element quality = OMUtils.createQualityElement("qFlag", null, FieldDataType.QUANTITY, 2.3);
         List<Element> qualities = Arrays.asList(quality);
 
-        Field field1 = new Field(1, FieldType.TIME,     "field_1", "field 1", "first field", null);
-        Field field2 = new Field(2, FieldType.BOOLEAN,  "field_2", "field 2", "second field", null);
-        Field field3 = new Field(3, FieldType.QUANTITY, "field_3", "field 3", "third field",  "m");
+        Field field1 = new Field(1, FieldDataType.TIME,     "field_1", "field 1", "first field" , null, FieldType.MEASURE);
+        Field field2 = new Field(2, FieldDataType.BOOLEAN,  "field_2", "field 2", "second field", null, FieldType.MEASURE);
+        Field field3 = new Field(3, FieldDataType.QUANTITY, "field_3", "field 3", "third field",   "m", FieldType.MEASURE);
 
         Result mresult = new ComplexResult(Arrays.asList(field1, field2, field3),
                                            TextEncoderProperties.DEFAULT_ENCODING,

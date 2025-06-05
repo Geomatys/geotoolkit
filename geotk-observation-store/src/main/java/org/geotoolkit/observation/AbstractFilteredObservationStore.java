@@ -58,6 +58,7 @@ import org.geotoolkit.observation.query.SamplingFeatureQuery;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.filter.BinaryComparisonOperator;
 import org.opengis.filter.BinarySpatialOperator;
+import org.opengis.filter.ComparisonOperator;
 import org.opengis.filter.ComparisonOperatorName;
 import org.opengis.filter.Filter;
 import org.opengis.filter.Literal;
@@ -433,14 +434,15 @@ public abstract class AbstractFilteredObservationStore extends AbstractObservati
             } else {
                 throw new DataStoreException("Unsuported property for filtering:" + pNameStr);
             }
-        } else if (filter instanceof BinaryComparisonOperator binC) {
-            final ValueReference name    = (ValueReference) binC.getOperand1();
+        } else if (filter instanceof ComparisonOperator binC) {
+            if (binC.getExpressions().size() != 2) throw new DataStoreException("Comparison filter must have 2 expression (property name and literal)");
+            final ValueReference name    = (ValueReference) binC.getExpressions().get(0);
             final String pNameStr      = name.getXPath();
 
             if (pNameStr.contains("properties/")) {
-                return localOmFilter.setPropertiesFilter((BinaryComparisonOperator) filter);
+                return localOmFilter.setPropertiesFilter(binC);
             } else if (pNameStr.startsWith("result")) {
-                return localOmFilter.setResultFilter((BinaryComparisonOperator) filter);
+                return localOmFilter.setResultFilter(binC);
             } else {
                 throw new DataStoreException("Unsuported property for filtering:" + pNameStr);
             }
