@@ -482,6 +482,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
                     .sliceByRatio(1, xAxis, xAxis+1)
                     .build();
             slice = slice.derive()
+                    .rounding(GridRoundingMode.ENCLOSING)
                     .subgrid(canvasEnv, resolution)
                     .build();
         } catch (DisjointExtentException ex) {
