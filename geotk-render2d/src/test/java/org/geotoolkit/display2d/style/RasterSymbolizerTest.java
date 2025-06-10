@@ -19,6 +19,7 @@ package org.geotoolkit.display2d.style;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
@@ -31,16 +32,23 @@ import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.DisjointExtentException;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverage2D;
+import org.apache.sis.coverage.grid.GridCoverageProcessor;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridOrientation;
 import org.apache.sis.geometry.Envelope2D;
+import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.ImmutableEnvelope;
+import org.apache.sis.image.PixelIterator;
+import org.apache.sis.referencing.operation.matrix.Matrices;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.referencing.privy.AffineTransform2D;
 import org.apache.sis.map.MapLayer;
 import org.apache.sis.map.MapLayers;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.canvas.control.NeverFailMonitor;
@@ -63,6 +71,8 @@ import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
+
+import static java.lang.Double.NaN;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -77,6 +87,7 @@ import org.opengis.filter.Expression;
 import org.opengis.filter.FilterFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.apache.sis.coverage.grid.PixelInCell;
+import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.ColorMap;
 import org.opengis.style.RasterSymbolizer;
 import org.opengis.style.Symbolizer;
@@ -516,5 +527,108 @@ public class RasterSymbolizerTest {
                 throw new AssertionError("Rendering should have been shorted silently, but failed instead", e);
             }
         }
+    }
+
+    /**
+     * Anti-regression test that ensures margins are properly applied on the following corner-case:
+     *
+     *   - Input resource does not provide full resolution information
+     *   - Input resource strictly enforces requested domain on read
+     *   - An edge of the requested rendering intersects a small part of an input pixel
+     *     (Therefore, this problem is easier to trigger on very low-resolution datasets)
+     *
+     * To trigger this behavior, the test creates a coverage with a partly undefined vertical component,
+     * and overrides in-memory coverage `read` mathod  to enforce strictly input domain.
+     *
+     * This happened with real NetCDF datasets.
+     */
+    @Test
+    public void testRenderOverlappingCellsWithMassiveUpscale() throws Exception {
+        // Prepare test data: an image with only two pixels on top of each other,
+        // a red pixel over a green pixel.
+        final BufferedImage image = new BufferedImage(1, 2, BufferedImage.TYPE_INT_ARGB);
+        final Graphics2D g = image.createGraphics();
+        g.setColor(Color.RED);
+        g.fillRect(0, 0, 1, 1);
+        g.setColor(Color.GREEN);
+        g.fillRect(0, 1, 1, 1);
+
+        // Setup data domain: latitude, longitude (red pixel west of greenwich, green pixel on the east).
+        // The important part is that time range is partly undefined, to force undefined resolution.
+        var dataEnv = new GeneralEnvelope(CommonCRS.WGS84.geographic3D());
+        dataEnv.setRange(0, -90, 90);
+        dataEnv.setRange(1, -180, 180);
+        dataEnv.setRange(2, 0, NaN);
+        final GridGeometry grid = new GridGeometry(
+                new GridExtent(null, new long[3], new long[]{0, 1, 0}, true),
+                dataEnv,
+                GridOrientation.DISPLAY
+        );
+
+        final GridCoverage2D coverage = new GridCoverage2D(grid, null, image);
+        final GridCoverageResource resource = new InMemoryGridCoverageResource(coverage) {
+            // Force resource to respect requested domain
+            @Override
+            public GridCoverage read(GridGeometry domain, int... range) throws DataStoreException {
+                assert range == null : "band selection not supported for this test";
+                if (domain == null) return coverage;
+                try {
+                    return new GridCoverageProcessor().resample(coverage, domain);
+                } catch (TransformException e) {
+                    throw new DataStoreException("Cannot resample source data", e);
+                }
+            }
+        };
+
+        final MapLayer layer = new MapLayer();
+        layer.setData(resource);
+        layer.setStyle(SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER));
+        layer.setVisible(true);
+        layer.setOpacity(1.0);
+
+        final MapLayers context = MapBuilder.createContext();
+        context.getComponents().add(layer);
+
+        // Request a rendering that intersects only a small part of the red pixel of input data
+        var canvasEnvelope = new GeneralEnvelope(CommonCRS.WGS84.geographic3D());
+        canvasEnvelope.setRange(0, -45, 45);
+        canvasEnvelope.setRange(1, -11.25, 180 - 11.25);
+        canvasEnvelope.setRange(2, -1, 1);
+        // Draw a square intersecting both pixels from source, upscaled.
+        final CanvasDef cdef = new CanvasDef(new GridGeometry(
+                new GridExtent(null, new long[3], new long[]{255, 255, 0}, true),
+                canvasEnvelope,
+                // Envelopes.transform(new Envelope2D(CommonCRS.defaultGeographic(), -11.25, -45, 180, 90), CRS.forCode("EPSG:3395")),
+                GridOrientation.DISPLAY
+        ));
+        final SceneDef sdef = new SceneDef(context);
+        final RenderedImage result = DefaultPortrayalService.portray(cdef, sdef);
+
+        // Ensure the small part intersecting the red pixel is drawn correctly
+        var b = new PixelIterator.Builder();
+        b.setRegionOfInterest(new Rectangle(0, 0, 256, 16));
+        var it = b.create(result);
+        var nbTestedPixels = 0;
+        var buffer = new int[4];
+        var expectedColor = new int[]{ 255, 0, 0, 255 };
+        while (it.next()) {
+            it.getPixel(buffer);
+            assertArrayEquals("Pixel "+it.getPosition()+" should be red", expectedColor, buffer);
+            nbTestedPixels++;
+        }
+        assertEquals("Number of tested pixels should match a rectangle of 256 * 16 pixels", 256 * 16, nbTestedPixels);
+
+        // Test the remaining pixels, they should be green
+        b = new PixelIterator.Builder();
+        b.setRegionOfInterest(new Rectangle(0, 16, 256, 240));
+        it = b.create(result);
+        nbTestedPixels = 0;
+        expectedColor = new int[]{ 0, 255, 0, 255 };
+        while (it.next()) {
+            it.getPixel(buffer);
+            assertArrayEquals("Pixel "+it.getPosition()+" should be green", expectedColor, buffer);
+            nbTestedPixels++;
+        }
+        assertEquals("Number of tested pixels should match a square of 256 * 240 pixels", 256 * 240, nbTestedPixels);
     }
 }
