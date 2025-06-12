@@ -39,6 +39,8 @@ import org.apache.sis.image.privy.ColorModelFactory;
 import org.apache.sis.util.ObjectConverters;
 import org.geotoolkit.filter.AbstractExpression;
 import static org.geotoolkit.filter.FilterUtilities.FF;
+
+import org.geotoolkit.image.RecolorRenderedImage;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import static org.geotoolkit.style.StyleConstants.*;
 import org.opengis.feature.Feature;
@@ -267,6 +269,9 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
 
     /**
      * Recolor image
+     *
+     * WARNING: DUPLICATED (with a few exceptions) IN {@link DefaultCategorize#evaluateImage(RenderedImage)}.
+     *          WHEN APPLYING A FIX HERE, PLEASE TRY TO REPORT IT IN THE DUPLICATE.
      * @return recolored image
      */
     private RenderedImage evaluateImage(final RenderedImage image) {
@@ -291,6 +296,7 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
          */
         final int[] ARGB;
         final ColorModel model;
+
         if (candidate instanceof IndexColorModel colors) {
             final int mapSize = colors.getMapSize();
             ARGB = new int[mapSize];
@@ -302,7 +308,7 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
         } else {
             final int type = image.getSampleModel().getDataType();
             final int nbbit = candidate.getPixelSize();
-            if (type == DataBuffer.TYPE_BYTE || type == DataBuffer.TYPE_USHORT) {
+            if ((type == DataBuffer.TYPE_BYTE || type == DataBuffer.TYPE_USHORT) && nbbit <= 16) {
                 final int mapSize = 1 << nbbit;
                 ARGB = new int[mapSize];
 
@@ -323,13 +329,7 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
             }
         }
 
-        /*
-         * Gives the color model to the image layout and creates a new image using the Null
-         * operation, which merely propagates its first source along the operation chain
-         * unmodified (except for the ColorModel given in the layout in this case).
-         */
-        final ImageLayout layout = new ImageLayout().setColorModel(model);
-        return new NullOpImage(image, layout, null, OpImage.OP_COMPUTE_BOUND);
+        return new RecolorRenderedImage(image, model);
     }
 
     /**

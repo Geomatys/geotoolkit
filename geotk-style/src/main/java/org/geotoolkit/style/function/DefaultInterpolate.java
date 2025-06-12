@@ -250,11 +250,17 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
 
     /**
      * Recolor image
+     *
+     * WARNING: DUPLICATED (with a few exceptions) IN {@link DefaultInterpolate#evaluateImage(RenderedImage)}.
+     *          WHEN APPLYING A FIX HERE, PLEASE TRY TO REPORT IT IN THE DUPLICATE.
+     *
      * @return recolored image
      */
-    private RenderedImage evaluateImage (final RenderedImage image) {
+    private RenderedImage evaluateImage(final RenderedImage image) {
         final int visibleBand = CoverageUtilities.getVisibleBand(image);
-        final ColorModel candidate = image.getColorModel();
+        ColorModel candidate = image.getColorModel();
+        if (candidate == null) candidate = ColorModelFactory.createGrayScale(image.getSampleModel().getDataType(), 1, visibleBand, 0, 1);
+
 
         //TODO : this should be used when the index color model can not handle signed values
         //
@@ -267,25 +273,18 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
         //}
 
 
-            /*
-             * Extracts the ARGB codes from the ColorModel and invokes the
-             * transformColormap(...) method.
-             */
+        /*
+         * Extracts the ARGB codes from the ColorModel and invokes the
+         * transformColormap(...) method.
+         */
         final int[] ARGB;
         final ColorModel model;
 
         // As index color model cannot manage negative or NaN values, we must use our own in this case.
         if (points.length == 0 || (points[0].getData().doubleValue() < 0 || !Double.isFinite(points[0].getData().doubleValue()) || candidate==null)) {
-            final int pixelSize;
-            if(candidate!=null){
-                pixelSize = candidate.getPixelSize();
-            }else{
-                pixelSize = 16;
-            }
+            final int pixelSize = candidate.getPixelSize();
             model = new CompatibleColorModel(pixelSize, this);
-
-        } else if (candidate instanceof IndexColorModel) {
-            final IndexColorModel colors = (IndexColorModel) candidate;
+        } else if (candidate instanceof IndexColorModel colors) {
             final int mapSize = colors.getMapSize();
             ARGB = new int[mapSize];
             colors.getRGBs(ARGB);
@@ -293,9 +292,8 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
             transformColormap(ARGB);
             model = ColorModelFactory.createIndexColorModel(null, 0, 1, visibleBand, ARGB, true, -1);
 
-        } else if (candidate instanceof ComponentColorModel) {
-            final ComponentColorModel colors = (ComponentColorModel) candidate;
-            final int nbbit = colors.getPixelSize();
+        } else {
+            final int nbbit = candidate.getPixelSize();
             final int type = image.getSampleModel().getDataType();
 
             if ((type == DataBuffer.TYPE_BYTE || type == DataBuffer.TYPE_USHORT) && nbbit <= 16) {
@@ -318,42 +316,7 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
                 //we can't handle a index color model when values exceed int max value
                 model = new CompatibleColorModel(nbbit, this);
             }
-
-        } else if (candidate instanceof DirectColorModel) {
-            final DirectColorModel colors = (DirectColorModel) candidate;
-            final int nbbit = colors.getPixelSize();
-            final int type = image.getSampleModel().getDataType();
-
-            if ((type == DataBuffer.TYPE_BYTE || type == DataBuffer.TYPE_USHORT) && nbbit <= 16)  {
-                final int mapSize = 1 << nbbit;
-                ARGB = new int[mapSize];
-
-                for (int j = 0; j < mapSize; j++) {
-                    int v = j * 255 / mapSize;
-                    int a = 255 << 24;
-                    int r = v << 16;
-                    int g = v << 8;
-                    int b = v << 0;
-                    ARGB[j] = a | r | g | b;
-                }
-
-                transformColormap(ARGB);
-                model = ColorModelFactory.createIndexColorModel(null, 0, 1, visibleBand, ARGB, true, -1);
-
-            } else {
-                //we can't handle a index color model when values exceed int max value
-                model = new CompatibleColorModel(nbbit, this);
-            }
-
-        } else {
-            model = new CompatibleColorModel(candidate.getPixelSize(), this);
         }
-
-            /*
-            * Gives the color model to the image layout and creates a new image using the Null
-            * operation, which merely propagates its first source along the operation chain
-            * unmodified (except for the ColorModel given in the layout in this case).
-            */
 
         return new RecolorRenderedImage(image, model);
     }
