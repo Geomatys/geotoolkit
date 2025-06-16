@@ -26,9 +26,14 @@ import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.IntStream;
+import java.util.stream.LongStream;
 import javax.imageio.ImageIO;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.BufferedGridCoverage;
 import org.apache.sis.coverage.grid.DisjointExtentException;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverage2D;
@@ -39,7 +44,9 @@ import org.apache.sis.coverage.grid.GridOrientation;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.image.DataType;
 import org.apache.sis.image.PixelIterator;
+import org.apache.sis.image.privy.RasterFactory;
 import org.apache.sis.referencing.privy.AffineTransform2D;
 import org.apache.sis.map.MapLayer;
 import org.apache.sis.map.MapLayers;
@@ -47,6 +54,7 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.util.iso.Names;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.canvas.control.NeverFailMonitor;
 import org.geotoolkit.display2d.GO2Hints;
@@ -758,6 +766,84 @@ public class RasterSymbolizerTest {
         g.dispose();
 
         assertImageEquals(expectedImg, result);
+    }
+
+    /**
+     * When a dataset has multiple dimensions, we want to ensure that the renderer will choose an arbitrary slice
+     * if user has not specified which one it wants.
+     */
+    @Test
+    public void testMultiDimensionalDefaultSlicing() throws Exception {
+        // Test a datastore that strictly return what is requested upon read
+        testMultiDimensionalDefaultSlicing(true);
+        // Test a datastore that returns more content on read.
+        // In this case, it will return multiple slices.
+        // It means this case test the ability of the renderer to bypass datastore filtering issues.
+        testMultiDimensionalDefaultSlicing(false);
+    }
+
+    private void testMultiDimensionalDefaultSlicing(boolean readStrict) throws Exception {
+
+        var dataEnv = new GeneralEnvelope(CRS.compound(
+                CommonCRS.defaultGeographic(),
+                CommonCRS.Vertical.ELLIPSOIDAL.crs(),
+                CommonCRS.Temporal.JAVA.crs()
+        ));
+        dataEnv.setRange(0, 10, 20);
+        dataEnv.setRange(1, 30, 40);
+        dataEnv.setRange(2, 0, 2);
+        dataEnv.setRange(3, 0, 2);
+        var dataGrid = new GridGeometry(
+                new GridExtent(null, new long[4], new long[] { 2, 2, 2, 2 }, false),
+                dataEnv,
+                GridOrientation.DISPLAY
+        );
+
+        var dataBuffer = ByteBuffer.wrap(new byte[] {
+                // v0 t0
+                0, 0,
+                2, 3,
+                // v1 t0
+                1, 0,
+                2, 3,
+                // v0 t1
+                0, 1,
+                2, 3,
+                // v1 t1
+                1, 1,
+                2, 3
+        });
+
+        var coverage = new BufferedGridCoverage(
+                dataGrid,
+                List.of(new SampleDimension.Builder().setName("test").build()),
+                RasterFactory.wrap(DataType.BYTE, dataBuffer)
+        );
+        var resource = readStrict ? new StrictInMemoryGridCoverageResource(coverage)
+                                  : new InMemoryGridCoverageResource(coverage);
+
+        final MapLayer layer = new MapLayer();
+        layer.setData(resource);
+        layer.setStyle(SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER));
+
+        final MapLayers context = MapBuilder.createContext();
+        context.getComponents().add(layer);
+
+        final
+        // Draw entire world with "conventional" boundaries (-180 to 180). Expects a piece of the coverage on each bound.
+        var cdef = new CanvasDef(new GridGeometry(
+                new GridExtent(2, 2),
+                new Envelope2D(CommonCRS.defaultGeographic(), 10, 30, 10, 10),
+                GridOrientation.DISPLAY
+        ));
+        var sdef = new SceneDef(context);
+        var result = DefaultPortrayalService.portray(cdef, sdef);
+        assertEquals(2, result.getWidth());
+        assertEquals(2, result.getHeight());
+        var raster = result.getData();
+        // Input image bottom row should contain exactly the same samples as repeated on data slices (see data buffer above)
+        assertEquals(2, raster.getSample(0, 1, 0));
+        assertEquals(3, raster.getSample(1, 1, 0));
     }
 
     private static void assertImageEquals(final RenderedImage expected, final RenderedImage actual) {
