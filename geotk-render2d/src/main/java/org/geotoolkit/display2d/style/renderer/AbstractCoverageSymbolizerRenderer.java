@@ -213,12 +213,20 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
             Envelope bbox = renderingContext.getCanvasObjectiveBounds2D();
             CoordinateReferenceSystem suggestCommonTarget = CRS.suggestCommonTarget(null, bbox.getCoordinateReferenceSystem(), CRS.getHorizontalComponent(refGG.getCoordinateReferenceSystem()));
             if (suggestCommonTarget != null) {
-                //Use GridGeometry.getEnvelope(crs) instead of Envelopes.transform(refGG.getEnvelope(), bboxcrs)
-                //This method makes additional clipping and use a more accurate transformation in relation to grid extent
-                Envelope refEnv = refGG.getEnvelope(suggestCommonTarget);
-                Envelope bboxTrs = Envelopes.transform(bbox, suggestCommonTarget);
-                if (!AbstractEnvelope.castOrCopy(bboxTrs).intersects(refEnv, true)) {
-                    throw new DisjointExtentException("Coverage resource envelope do not intersect canvas");
+                try {
+                    //Use GridGeometry.getEnvelope(crs) instead of Envelopes.transform(refGG.getEnvelope(), bboxcrs)
+                    //This method makes additional clipping and use a more accurate transformation in relation to grid extent
+                    Envelope refEnv = refGG.getEnvelope(suggestCommonTarget);
+                    Envelope bboxTrs = Envelopes.transform(bbox, suggestCommonTarget);
+                    if (!AbstractEnvelope.castOrCopy(bboxTrs).intersects(refEnv, true)) {
+                        throw new DisjointExtentException("Coverage resource envelope do not intersect canvas");
+                    }
+                } catch (TransformException e) {
+                    // TODO: maybe remove this catch clause if Apache SIS improves this case management. .
+                    // Ignore error. In some cases, Apache SIS fails to reproject envelopes to a common target.
+                    // In such case, we try to continue rendering, because maybe data is in region of interest,
+                    // but we cannot quickly check it now.
+                    LOGGER.log(Level.FINE, "Cannot check if dataset intersects rendering context", e);
                 }
             }
         }
@@ -451,18 +459,39 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
                                 .sliceByRatio(1.0, sourceDimensionsMatchingTargetDimensions)
                                 .build();
             }
-            return slice.derive()
-                           // Ensure that no edge is omitted on rendering
-                           .rounding(GridRoundingMode.ENCLOSING)
-                           // Apply margin on source grid, to ensure we've got enough extra-context to apply interpolations.
-                           // This is required because readers like NetCDF return strictly requested domain on read.
-                           .margin(sourceMargin)
-                           // Focus on drawing area
-                           .subgrid(areaOfInterest)
-                           // Workaround for multidimensional datasets: if region of interest does not pinpoint a single slice,
-                           // we arbitrary select highest 2D slice
-                           .sliceByRatio(1, sourceRenderDimensions)
-                           .build();
+
+            // HACK: Workaround waiting for a fix in SIS:
+            // The code in the try block should be enough.
+            // However, in some cases, Apache SIS fails to analyse GridGeometry given as argument to subgrid method.
+            // In such cases, replacing it with a subset of information (envelope and approximate resolution) works.
+            // Note that this workaround might cause an approximation in the output geometry.
+            try {
+                return slice.derive()
+                            // Ensure that no edge is omitted on rendering
+                            .rounding(GridRoundingMode.ENCLOSING)
+                            // Apply margin on source grid, to ensure we've got enough extra-context to apply interpolations.
+                            // This is required because readers like NetCDF return strictly requested domain on read.
+                            .margin(sourceMargin)
+                            // Focus on drawing area
+                            .subgrid(areaOfInterest)
+                            // Workaround for multidimensional datasets: if region of interest does not pinpoint a single slice,
+                            // we arbitrary select highest 2D slice
+                            .sliceByRatio(1, sourceRenderDimensions)
+                            .build();
+            } catch (IllegalGridGeometryException|IndexOutOfBoundsException ex) {
+                return slice.derive()
+                            // Ensure that no edge is omitted on rendering
+                            .rounding(GridRoundingMode.ENCLOSING)
+                            // Apply margin on source grid, to ensure we've got enough extra-context to apply interpolations.
+                            // This is required because readers like NetCDF return strictly requested domain on read.
+                            .margin(sourceMargin)
+                            // Focus on drawing area
+                            .subgrid(areaOfInterest.getEnvelope(), areaOfInterest.getResolution(true))
+                            // Workaround for multidimensional datasets: if region of interest does not pinpoint a single slice,
+                            // we arbitrary select highest 2D slice
+                            .sliceByRatio(1, sourceRenderDimensions)
+                            .build();
+            }
         } catch (DisjointExtentException ex) {
             throw new DisjointCoverageDomainException(ex.getMessage(), ex);
         } catch (IllegalGridGeometryException ex) {
