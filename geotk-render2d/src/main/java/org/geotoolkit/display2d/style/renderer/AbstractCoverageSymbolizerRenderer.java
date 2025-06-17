@@ -246,17 +246,20 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         }
 
 
-        //at this point, we want a single slice in 2D
-        //we remove all other dimension to simplify any following operation
+        // HACK: sometimes, source data store does NOT return us a single slice.
+        // At this point, we need a single slice in 2D to be able to do image rendering.
+        // For now, we try to force a single slice by either hacking coverage rendering (ReducedGridCoverage)
+        // or by forcing a full resample.
         CoordinateReferenceSystem coverageCrs = coverage.getCoordinateReferenceSystem();
         if (coverageCrs.getCoordinateSystem().getDimension() > 2) {
-            //TODO index is wrong, it ignores grid to crs transform
-            //to be fixed when moved to SIS
-            final int idx = CRSUtilities.firstHorizontalAxis(coverageCrs);
             try {
-                coverage = new ReducedGridCoverage(coverage, idx, idx+1);
-            } catch (BackingStoreException ex) {
-                coverage = new GridCoverageProcessor().resample(coverage, CRS.getHorizontalComponent(coverageCrs));
+                final var targetDimension = slice.getExtent().getSubspaceDimensions(2);
+                var tmpSlice = coverage.getGridGeometry().derive()
+                                       .subgrid(slice)
+                                       .build();
+                coverage = new ReducedGridCoverage(coverage, tmpSlice, targetDimension);
+            } catch (Exception ex) {
+                coverage = new GridCoverageProcessor().resample(coverage, slice);
             }
         }
 
