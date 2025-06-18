@@ -26,9 +26,14 @@ import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.IntStream;
+import java.util.stream.LongStream;
 import javax.imageio.ImageIO;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.BufferedGridCoverage;
 import org.apache.sis.coverage.grid.DisjointExtentException;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverage2D;
@@ -39,10 +44,9 @@ import org.apache.sis.coverage.grid.GridOrientation;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.geometry.ImmutableEnvelope;
+import org.apache.sis.image.DataType;
 import org.apache.sis.image.PixelIterator;
-import org.apache.sis.referencing.operation.matrix.Matrices;
-import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.apache.sis.image.privy.RasterFactory;
 import org.apache.sis.referencing.privy.AffineTransform2D;
 import org.apache.sis.map.MapLayer;
 import org.apache.sis.map.MapLayers;
@@ -50,6 +54,7 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.util.iso.Names;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.canvas.control.NeverFailMonitor;
 import org.geotoolkit.display2d.GO2Hints;
@@ -83,6 +88,7 @@ import org.junit.Test;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Polygon;
+import org.opengis.coverage.grid.SequenceType;
 import org.opengis.filter.Expression;
 import org.opengis.filter.FilterFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -566,19 +572,7 @@ public class RasterSymbolizerTest {
         );
 
         final GridCoverage2D coverage = new GridCoverage2D(grid, null, image);
-        final GridCoverageResource resource = new InMemoryGridCoverageResource(coverage) {
-            // Force resource to respect requested domain
-            @Override
-            public GridCoverage read(GridGeometry domain, int... range) throws DataStoreException {
-                assert range == null : "band selection not supported for this test";
-                if (domain == null) return coverage;
-                try {
-                    return new GridCoverageProcessor().resample(coverage, domain);
-                } catch (TransformException e) {
-                    throw new DataStoreException("Cannot resample source data", e);
-                }
-            }
-        };
+        final GridCoverageResource resource = new StrictInMemoryGridCoverageResource(coverage);
 
         final MapLayer layer = new MapLayer();
         layer.setData(resource);
@@ -630,5 +624,263 @@ public class RasterSymbolizerTest {
             nbTestedPixels++;
         }
         assertEquals("Number of tested pixels should match a square of 256 * 240 pixels", 256 * 240, nbTestedPixels);
+    }
+
+    @Test
+    public void RenderLocalWrapAround() throws Exception {
+        var sourceImg = new BufferedImage(2, 2, BufferedImage.TYPE_INT_ARGB);
+        var g = sourceImg.createGraphics();
+        g.setColor(Color.BLACK);
+        g.fillRect(0, 0, 1, 1);
+        g.setColor(Color.RED);
+        g.fillRect(1, 0, 1, 1);
+        g.setColor(Color.GREEN);
+        g.fillRect(1, 1, 1, 1);
+        g.setColor(Color.BLUE);
+        g.fillRect(0, 1, 1, 1);
+        g.dispose();
+
+        final GridGeometry grid = new GridGeometry(
+                new GridExtent(2, 2),
+                new Envelope2D(CommonCRS.defaultGeographic(), 170, -10, 20, 20),
+                GridOrientation.DISPLAY
+        );
+        assertEquals(
+                "Envelope have been normalized and do not cross anti-meridian as expected",
+                190d,
+                grid.getEnvelope().getMaximum(0),
+                1e-1
+        );
+        var resource = new StrictInMemoryGridCoverageResource(new GridCoverage2D(grid, null, sourceImg));
+
+        final MapLayer layer = new MapLayer();
+        layer.setData(resource);
+        layer.setStyle(SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER));
+
+        final MapLayers context = MapBuilder.createContext();
+        context.getComponents().add(layer);
+
+        // Draw entire world with "conventional" boundaries (-180 to 180). Expects a piece of the coverage on each bound.
+        var cdef = new CanvasDef(new GridGeometry(
+                new GridExtent(36, 18),
+                new Envelope2D(CommonCRS.defaultGeographic(), -180, -90, 360, 180),
+                // Envelopes.transform(new Envelope2D(CommonCRS.defaultGeographic(), -11.25, -45, 180, 90), CRS.forCode("EPSG:3395")),
+                GridOrientation.DISPLAY
+        ));
+        var sdef = new SceneDef(context);
+        var result = DefaultPortrayalService.portray(cdef, sdef);
+        var expectedImg = new BufferedImage(36, 18, BufferedImage.TYPE_INT_ARGB);
+        g = expectedImg.createGraphics();
+        g.setColor(Color.BLACK);
+        g.fillRect(35, 8, 1, 1);
+        g.setColor(Color.RED);
+        g.fillRect(0, 8, 1, 1);
+        g.setColor(Color.GREEN);
+        g.fillRect(0, 9, 1, 1);
+        g.setColor(Color.BLUE);
+        g.fillRect(35, 9, 1, 1);
+        g.dispose();
+
+        assertImageEquals(expectedImg, result);
+
+        // Draw world in a 0 to 360 context
+        cdef = new CanvasDef(new GridGeometry(
+                new GridExtent(36, 18),
+                new Envelope2D(CommonCRS.defaultGeographic(), 0, -90, 360, 180),
+                GridOrientation.DISPLAY
+        ));
+        result = DefaultPortrayalService.portray(cdef, sdef);
+        expectedImg = new BufferedImage(36, 18, BufferedImage.TYPE_INT_ARGB);
+        g = expectedImg.createGraphics();
+        g.setColor(Color.BLACK);
+        g.fillRect(17, 8, 1, 1);
+        g.setColor(Color.RED);
+        g.fillRect(18, 8, 1, 1);
+        g.setColor(Color.GREEN);
+        g.fillRect(18, 9, 1, 1);
+        g.setColor(Color.BLUE);
+        g.fillRect(17, 9, 1, 1);
+        g.dispose();
+
+        assertImageEquals(expectedImg, result);
+
+        // Partially draw upscaled image
+        cdef = new CanvasDef(new GridGeometry(
+                new GridExtent(32, 32),
+                new Envelope2D(CommonCRS.defaultGeographic(), 179, -3, 4, 4),
+                GridOrientation.DISPLAY
+        ));
+        result = DefaultPortrayalService.portray(cdef, sdef);
+        expectedImg = new BufferedImage(32, 32, BufferedImage.TYPE_INT_ARGB);
+        g = expectedImg.createGraphics();
+        g.setColor(Color.BLACK);
+        g.fillRect(0, 0, 8, 8);
+        g.setColor(Color.RED);
+        g.fillRect(8, 0, 24, 8);
+        g.setColor(Color.GREEN);
+        g.fillRect(8, 8, 24, 24);
+        g.setColor(Color.BLUE);
+        g.fillRect(0, 8, 8, 24);
+        g.dispose();
+
+        assertImageEquals(expectedImg, result);
+
+        // Imply a simple reprojection: axis inversion
+        cdef = new CanvasDef(new GridGeometry(
+                new GridExtent(2, 2),
+                grid.getEnvelope(CommonCRS.WGS84.geographic()),
+                GridOrientation.DISPLAY
+        ));
+        result = DefaultPortrayalService.portray(cdef, sdef);
+        expectedImg = new BufferedImage(2, 2, BufferedImage.TYPE_INT_ARGB);
+        g = expectedImg.createGraphics();
+        g.setColor(Color.BLACK);
+        g.fillRect(0, 0, 1, 1);
+        g.setColor(Color.RED);
+        g.fillRect(0, 1, 1, 1);
+        g.setColor(Color.GREEN);
+        g.fillRect(1, 1, 1, 1);
+        g.setColor(Color.BLUE);
+        g.fillRect(1, 0, 1, 1);
+        g.dispose();
+
+        assertImageEquals(expectedImg, result);
+
+        // Imply a more complex reprojection:
+        cdef = new CanvasDef(new GridGeometry(
+                new GridExtent(2, 2),
+                grid.getEnvelope(CRS.forCode("EPSG:3857")),
+                GridOrientation.DISPLAY
+        ));
+        result = DefaultPortrayalService.portray(cdef, sdef);
+        expectedImg = new BufferedImage(2, 2, BufferedImage.TYPE_INT_ARGB);
+        g = expectedImg.createGraphics();
+        g.setColor(Color.BLACK);
+        g.fillRect(0, 0, 1, 1);
+        g.setColor(Color.RED);
+        g.fillRect(1, 0, 1, 1);
+        g.setColor(Color.GREEN);
+        g.fillRect(1, 1, 1, 1);
+        g.setColor(Color.BLUE);
+        g.fillRect(0, 1, 1, 1);
+        g.dispose();
+
+        assertImageEquals(expectedImg, result);
+    }
+
+    /**
+     * When a dataset has multiple dimensions, we want to ensure that the renderer will choose an arbitrary slice
+     * if user has not specified which one it wants.
+     */
+    @Test
+    public void testMultiDimensionalDefaultSlicing() throws Exception {
+        // Test a datastore that strictly return what is requested upon read
+        testMultiDimensionalDefaultSlicing(true);
+        // Test a datastore that returns more content on read.
+        // In this case, it will return multiple slices.
+        // It means this case test the ability of the renderer to bypass datastore filtering issues.
+        testMultiDimensionalDefaultSlicing(false);
+    }
+
+    private void testMultiDimensionalDefaultSlicing(boolean readStrict) throws Exception {
+
+        var dataEnv = new GeneralEnvelope(CRS.compound(
+                CommonCRS.defaultGeographic(),
+                CommonCRS.Vertical.ELLIPSOIDAL.crs(),
+                CommonCRS.Temporal.JAVA.crs()
+        ));
+        dataEnv.setRange(0, 10, 20);
+        dataEnv.setRange(1, 30, 40);
+        dataEnv.setRange(2, 0, 2);
+        dataEnv.setRange(3, 0, 2);
+        var dataGrid = new GridGeometry(
+                new GridExtent(null, new long[4], new long[] { 2, 2, 2, 2 }, false),
+                dataEnv,
+                GridOrientation.DISPLAY
+        );
+
+        var dataBuffer = ByteBuffer.wrap(new byte[] {
+                // v0 t0
+                0, 0,
+                2, 3,
+                // v1 t0
+                1, 0,
+                2, 3,
+                // v0 t1
+                0, 1,
+                2, 3,
+                // v1 t1
+                1, 1,
+                2, 3
+        });
+
+        var coverage = new BufferedGridCoverage(
+                dataGrid,
+                List.of(new SampleDimension.Builder().setName("test").build()),
+                RasterFactory.wrap(DataType.BYTE, dataBuffer)
+        );
+        var resource = readStrict ? new StrictInMemoryGridCoverageResource(coverage)
+                                  : new InMemoryGridCoverageResource(coverage);
+
+        final MapLayer layer = new MapLayer();
+        layer.setData(resource);
+        layer.setStyle(SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER));
+
+        final MapLayers context = MapBuilder.createContext();
+        context.getComponents().add(layer);
+
+        final
+        // Draw entire world with "conventional" boundaries (-180 to 180). Expects a piece of the coverage on each bound.
+        var cdef = new CanvasDef(new GridGeometry(
+                new GridExtent(2, 2),
+                new Envelope2D(CommonCRS.defaultGeographic(), 10, 30, 10, 10),
+                GridOrientation.DISPLAY
+        ));
+        var sdef = new SceneDef(context);
+        var result = DefaultPortrayalService.portray(cdef, sdef);
+        assertEquals(2, result.getWidth());
+        assertEquals(2, result.getHeight());
+        var raster = result.getData();
+        // Input image bottom row should contain exactly the same samples as repeated on data slices (see data buffer above)
+        assertEquals(2, raster.getSample(0, 1, 0));
+        assertEquals(3, raster.getSample(1, 1, 0));
+    }
+
+    private static void assertImageEquals(final RenderedImage expected, final RenderedImage actual) {
+        var pixBuilder = new PixelIterator.Builder();
+        pixBuilder.setIteratorOrder(SequenceType.LINEAR);
+        var expectedPix = pixBuilder.create(expected);
+        var actualPix = pixBuilder.create(actual);
+        assertEquals("Number of bands differ !", expectedPix.getNumBands(), actualPix.getNumBands());
+        assertEquals("Image domains (origin and dimension) differ !", expectedPix.getDomain(), actualPix.getDomain());
+        var expectedBuf = new int[expectedPix.getNumBands()];
+        var actualBuf = new int[actualPix.getNumBands()];
+        while (expectedPix.next()) {
+            assertTrue(actualPix.next());
+            assertArrayEquals("Colors are not equal on pixel "+expectedPix.getPosition(), expectedPix.getPixel(expectedBuf), actualPix.getPixel(actualBuf));
+        }
+    }
+
+    /**
+     * Force requested domain on {@link #read(GridGeometry, int...)}.
+     * It is necessary to mimic behavior of some datastores, that crop input data to match user region of interest.
+     */
+    private static class StrictInMemoryGridCoverageResource extends InMemoryGridCoverageResource {
+
+        public StrictInMemoryGridCoverageResource(final GridCoverage source) {
+            super(source);
+        }
+
+        @Override
+        public GridCoverage read(GridGeometry domain, int... range) throws DataStoreException {
+            assert range == null : "band selection not supported for this test";
+            var coverage = super.read(domain, range);
+            if (domain == null) return coverage;
+            try {
+                return new GridCoverageProcessor().resample(coverage, domain);
+            } catch (TransformException e) {
+                throw new DataStoreException("Cannot resample source data", e);
+            }
+        }
     }
 }
