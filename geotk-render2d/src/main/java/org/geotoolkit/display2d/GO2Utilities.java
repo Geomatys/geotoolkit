@@ -1457,50 +1457,61 @@ public final class GO2Utilities {
             assert palMin >= bmin;
             assert palMax <= bmax;
 
+            /* Define a grayscale color map for simple rendering.
+             * Note that to improve rendering, if standard deviation is available,
+             * we do not only make linear interpolation between min and max.
+             * Instead, we define a very little interval between real extremum and the one define by standard deviation,
+             * and then define a linear color interpolation inside std-dev interval.
+             */
+            List<Color> colors = new ArrayList<>(List.of(PaletteFactory.getDefault().getColors("grayscale")));
+            final double interpolationStep = (palMax - palMin) / (colors.size() - 1);
+            final boolean applyStdMin = palMin > bmin;
+            final boolean applyStdMax = palMax < bmax;
+            final double intervalBetweenExtremums = 0.05;
+
+            if (applyStdMin) {
+                final var sdtMinColor = DefaultInterpolate.interpolate(colors.get(0), colors.get(colors.size() - 1), intervalBetweenExtremums);
+                colors.add(1, sdtMinColor);
+            }
+            if (applyStdMax) {
+                final var sdtMaxColor = DefaultInterpolate.interpolate(colors.get(0), colors.get(colors.size() - 1), 1 - intervalBetweenExtremums);
+                colors.add(colors.size() - 1, sdtMaxColor);
+            }
+
             final List<InterpolationPoint> values = new ArrayList<>();
-            final double[] nodatas = band0.getNoData();
-            if (nodatas != null)
-                for (double nodata : nodatas) {
-                    values.add(STYLE_FACTORY.interpolationPoint(nodata, STYLE_FACTORY.literal(new Color(0, 0, 0, 0))));
+            // Register absolute minimum
+            values.add(STYLE_FACTORY.interpolationPoint(bmin, STYLE_FACTORY.literal(colors.get(0))));
+            // Register intermediate colors
+            for (int c = 1; c <= colors.size() - 2; c++) {
+                values.add(STYLE_FACTORY.interpolationPoint(palMin + (interpolationStep * (c - 1)), STYLE_FACTORY.literal(colors.get(c))));
+            }
+            // Register absolute maximum
+            values.add(STYLE_FACTORY.interpolationPoint(bmax, STYLE_FACTORY.literal(colors.get(colors.size() - 1))));
+
+            final double[] noDataValues = band0.getNoData();
+            if (noDataValues != null && noDataValues.length > 0) {
+                int nbIgnored = 0;
+                for (double nodata : noDataValues) {
+                    if (Double.isFinite(nodata) && nodata > bmin && nodata < bmax) {
+                        nbIgnored++;
+                    } else {
+                        values.add(STYLE_FACTORY.interpolationPoint(nodata, STYLE_FACTORY.literal(new Color(0, 0, 0, 0))));
+                    }
                 }
+
+                if (nbIgnored > 0) {
+                    LOGGER.log(Level.FINE, "{} no-data values ignored whil creating style based on image statistics, because they're contained inside valid data range", nbIgnored);
+                }
+            }
 
             values.add(STYLE_FACTORY.interpolationPoint(Float.NaN, STYLE_FACTORY.literal(new Color(0, 0, 0, 0))));
 
-            //-- Color palette
-//                Color[] colorsPal = PaletteFactory.getDefault().getColors("rainbow-t");
-            Color[] colorsPal = PaletteFactory.getDefault().getColors("grayscale");
-            assert colorsPal.length >= 2;
-            if (colorsPal.length < 4) {
-                final double percent_5 = (colorsPal.length == 3) ? 0.1 : 0.05;
-                final Color[] colorsPalTemp = colorsPal;
-                colorsPal = Arrays.copyOf(colorsPal, colorsPal.length + 2);
-                System.arraycopy(colorsPalTemp, 2, colorsPal, 2, colorsPalTemp.length - 2);
-                colorsPal[colorsPal.length - 1] = colorsPalTemp[colorsPalTemp.length - 1];
-                colorsPal[1] = DefaultInterpolate.interpolate(colorsPalTemp[0], colorsPalTemp[1], percent_5);
-                colorsPal[colorsPal.length - 2] = DefaultInterpolate.interpolate(colorsPalTemp[colorsPalTemp.length - 2], colorsPalTemp[colorsPalTemp.length - 1], 1 - percent_5);
-
-            }
-
-            //-- if difference between band minimum statistic and palette minimum,
-            //-- define values between them as transparency
-            values.add(STYLE_FACTORY.interpolationPoint(bmin, STYLE_FACTORY.literal(colorsPal[0])));
-
-            assert colorsPal.length >= 4;
-
-            final double step = (palMax - palMin) / (colorsPal.length - 3);//-- min and max transparency
-            double currentVal = palMin;
-            for (int c = 1; c <= colorsPal.length - 2; c++) {
-                values.add(STYLE_FACTORY.interpolationPoint(currentVal, STYLE_FACTORY.literal(colorsPal[c])));
-                currentVal += step;
-            }
-            assert StrictMath.abs(currentVal - step - palMax) < 1E-9;
-            values.add(STYLE_FACTORY.interpolationPoint(bmax, STYLE_FACTORY.literal(colorsPal[colorsPal.length - 1])));
+            assert values.size() >= 3;
 
             final Expression function = STYLE_FACTORY.interpolateFunction(DEFAULT_CATEGORIZE_LOOKUP, values, Method.COLOR, Mode.LINEAR, DEFAULT_FALLBACK);
             final ColorMap colorMap = STYLE_FACTORY.colorMap(function);
             final RasterSymbolizer symbol = STYLE_FACTORY.rasterSymbolizer(band0.getName(), null, null, null, colorMap, null, null, null);
             return Optional.of(STYLE_FACTORY.style(symbol));
-
         } else {
             LOGGER.log(Level.FINE, "RGBStyle : fallBack way is choosen."
                     + "RGB interpretation of the three first coverage image bands.");
