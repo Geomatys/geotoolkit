@@ -29,8 +29,6 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.IntStream;
-import java.util.stream.LongStream;
 import javax.imageio.ImageIO;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.BufferedGridCoverage;
@@ -42,7 +40,6 @@ import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridOrientation;
 import org.apache.sis.geometry.Envelope2D;
-import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.DataType;
 import org.apache.sis.image.PixelIterator;
@@ -54,7 +51,6 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
-import org.apache.sis.util.iso.Names;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.canvas.control.NeverFailMonitor;
 import org.geotoolkit.display2d.GO2Hints;
@@ -372,6 +368,7 @@ public class RasterSymbolizerTest {
         );
         final GridCoverage baseData = new GridCoverage2D(geom, null, image);
 
+        // Make a first test using default raster style
         MapLayer layer = MapBuilder.createLayer(new InMemoryGridCoverageResource(baseData));
         final MapLayers ctx = MapBuilder.createContext();
         ctx.getComponents().add(layer);
@@ -381,15 +378,20 @@ public class RasterSymbolizerTest {
                         RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR))
         );
 
-        // As display is oriented upper-left, output should be flipped on y axis. Also, the renderer will stretch values
-        // along 256 colors, so we have to adapt comparison.
-        final int[] pixels = rendering.getData().getPixels(0, 0, 2, 2, (int[]) null);
-        final int[] expected = {
-                255, 255, 255, 255,  242, 242, 242, 255,
-                  0,   0,   0, 255,   12,  12,  12, 255
+        // As display is oriented upper-left, output should be flipped on y axis.
+        // IMPORTANT: The renderer will stretch values along 256 colors, so we have to adapt comparison.
+        // As we use default style, 0 to 4 should be scaled approximately as : 0 -> 0, 1 -> 85, 2 -> 170, 3 -> 255.
+        // IF TESTED VALUES DIFFERS TOO MUCH, THERE IS A PROBLEM WITH THE DEFAULT STYLE EVALUATION.
+        // PLEASE DO NOT HIDE THE PROBLEM BY CHANGING DEFAULT VALUES OR INCREASING DELTA.
+        final float[] pixels = rendering.getData().getPixels(0, 0, 2, 2, (float[]) null);
+        final float[] expected = {
+                255, 255, 255, 255,  170, 170, 170, 255,
+                  0,   0,   0, 255,   85, 85, 85, 255
         };
-        assertArrayEquals(expected, pixels);
+        assertArrayEquals(expected, pixels, 10f);
 
+        // Same test but overriding style with a custom color palette, to ensure the behavior remains consistent
+        // whatever applied style
         final ColorMap colorMap = SF.colorMap(SF.interpolateFunction(null,
                 Arrays.asList(
                         SF.interpolationPoint(1, FF.literal(Color.RED)),
