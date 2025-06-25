@@ -1495,7 +1495,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
     {
         final Level warningLevel = this.warningLevel;
         if (!Level.OFF.equals(warningLevel)) {
-            final LogRecord record = resource.getLogRecord(warningLevel, key, value);
+            final LogRecord record = resource.createLogRecord(warningLevel, key, value);
             record.setSourceClassName(classe.getName());
             record.setSourceMethodName(method);
             warningOccurred(record);

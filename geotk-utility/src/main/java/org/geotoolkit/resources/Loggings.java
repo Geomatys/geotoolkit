@@ -318,7 +318,7 @@ public class Loggings extends IndexedResourceBundle {
     public static LogRecord format(final Level level,
                                    final short key) throws MissingResourceException
     {
-        return getResources(null).getLogRecord(level, key);
+        return getResources(null).createLogRecord(level, key);
     }
 
     /**
@@ -335,7 +335,7 @@ public class Loggings extends IndexedResourceBundle {
                                    final short  key,
                                    final Object arg0) throws MissingResourceException
     {
-        return getResources(null).getLogRecord(level, key, arg0);
+        return getResources(null).createLogRecord(level, key, arg0);
     }
 
     /**
@@ -354,7 +354,7 @@ public class Loggings extends IndexedResourceBundle {
                                    final Object arg0,
                                    final Object arg1) throws MissingResourceException
     {
-        return getResources(null).getLogRecord(level, key, arg0, arg1);
+        return getResources(null).createLogRecord(level, key, arg0, arg1);
     }
 
     /**
@@ -375,7 +375,7 @@ public class Loggings extends IndexedResourceBundle {
                                    final Object arg1,
                                    final Object arg2) throws MissingResourceException
     {
-        return getResources(null).getLogRecord(level, key, arg0, arg1, arg2);
+        return getResources(null).createLogRecord(level, key, arg0, arg1, arg2);
     }
 
     /**
@@ -398,7 +398,7 @@ public class Loggings extends IndexedResourceBundle {
                                    final Object arg2,
                                    final Object arg3) throws MissingResourceException
     {
-        return getResources(null).getLogRecord(level, key, arg0, arg1, arg2, arg3);
+        return getResources(null).createLogRecord(level, key, arg0, arg1, arg2, arg3);
     }
 
     /**

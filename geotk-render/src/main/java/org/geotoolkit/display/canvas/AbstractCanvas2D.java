@@ -699,7 +699,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
         final Logger logger = getLogger();
         if (logger.isLoggable(Level.FINER)) {
             // FINER is the default level for entering, returning, or throwing an exception.
-            final LogRecord record = Loggings.getResources(Locale.getDefault()).getLogRecord(Level.FINER,
+            final LogRecord record = Loggings.getResources(Locale.getDefault()).createLogRecord(Level.FINER,
                     Loggings.Keys.InitializingTransformation_2,
                     toString(sourceCRS), toString(targetCRS));
             record.setSourceClassName (sourceClassName.getName());

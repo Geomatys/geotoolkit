@@ -133,7 +133,7 @@ public final class Warnings extends Static {
             level = Level.WARNING;
         }
         final LogRecord record = Errors.getResources(plugin != null ? plugin.getLocale() : null)
-                .getLogRecord(level, key, arguments);
+                .createLogRecord(level, key, arguments);
         if (plugin != null) {
             record.setSourceClassName(caller.getCanonicalName());
             record.setSourceMethodName(method);

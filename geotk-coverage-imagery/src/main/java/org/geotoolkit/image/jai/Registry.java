@@ -85,7 +85,7 @@ public final class Registry extends Static {
              * is likely to fails (since it tries to load operations declared in META-INF/services,
              * and some of them depend on JAI operations).
              */
-            record = Loggings.getResources(null).getLogRecord(Level.WARNING,
+            record = Loggings.getResources(null).createLogRecord(Level.WARNING,
                     Loggings.Keys.CantRegisterJaiOperation_1, op);
             record.setThrown(exception);
         }
