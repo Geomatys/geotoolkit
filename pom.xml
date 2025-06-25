@@ -22,7 +22,7 @@
   <parent>
     <groupId>com.geomatys</groupId>
     <artifactId>geomatys-bom</artifactId>
-    <version>2025.1</version>
+    <version>2025.2</version>
   </parent>
 
   <groupId>org.geotoolkit</groupId>
@@ -196,7 +196,6 @@
     <groovy.version>5.0.0-alpha-11</groovy.version>
     <postgis.version>2.3.0</postgis.version>
     <quartz.version>2.3.1</quartz.version>
-    <woodstox.version>6.0.0</woodstox.version>
     <!-- ErrorProne 2.25.0 has a knwon bug on JDK-17 : https://giters.com/google/error-prone/issues/2926 -->
     <error-prone.version>2.25.0</error-prone.version>
     <!-- @{argLine} necessary for jacoco generation, we must declare
@@ -318,11 +317,6 @@
       </dependency>
 
       <!-- XML -->
-      <dependency>
-        <groupId>com.fasterxml.woodstox</groupId>
-        <artifactId>woodstox-core</artifactId>
-        <version>${woodstox.version}</version>
-      </dependency>
       <dependency>
         <groupId>jaxen</groupId>
         <artifactId>jaxen-limited</artifactId> <!-- Jaxen limited for xpath support -->

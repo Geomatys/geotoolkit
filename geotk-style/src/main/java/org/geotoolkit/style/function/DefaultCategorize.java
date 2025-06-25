@@ -39,6 +39,8 @@ import org.apache.sis.image.privy.ColorModelFactory;
 import org.apache.sis.util.ObjectConverters;
 import org.geotoolkit.filter.AbstractExpression;
 import static org.geotoolkit.filter.FilterUtilities.FF;
+
+import org.geotoolkit.image.RecolorRenderedImage;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import static org.geotoolkit.style.StyleConstants.*;
 import org.opengis.feature.Feature;
@@ -267,11 +269,15 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
 
     /**
      * Recolor image
+     *
+     * WARNING: DUPLICATED (with a few exceptions) IN {@link DefaultCategorize#evaluateImage(RenderedImage)}.
+     *          WHEN APPLYING A FIX HERE, PLEASE TRY TO REPORT IT IN THE DUPLICATE.
      * @return recolored image
      */
     private RenderedImage evaluateImage(final RenderedImage image) {
         final int visibleBand = CoverageUtilities.getVisibleBand(image);
-        final ColorModel candidate = image.getColorModel();
+        ColorModel candidate = image.getColorModel();
+        if (candidate == null) candidate = ColorModelFactory.createGrayScale(image.getSampleModel().getDataType(), 1, visibleBand, 0, 1);
 
         //TODO : this should be used when the index color model can not handle signed values
         //
@@ -290,8 +296,8 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
          */
         final int[] ARGB;
         final ColorModel model;
-        if (candidate instanceof IndexColorModel) {
-            final IndexColorModel colors = (IndexColorModel) candidate;
+
+        if (candidate instanceof IndexColorModel colors) {
             final int mapSize = colors.getMapSize();
             ARGB = new int[mapSize];
             colors.getRGBs(ARGB);
@@ -299,12 +305,10 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
             transformColormap(ARGB);
             model = ColorModelFactory.createIndexColorModel(null, 0, 1, visibleBand, ARGB, true, -1);
 
-        } else if (candidate instanceof ComponentColorModel) {
-            final ComponentColorModel colors = (ComponentColorModel) candidate;
-            final int nbbit = colors.getPixelSize();
+        } else {
             final int type = image.getSampleModel().getDataType();
-
-            if (type == DataBuffer.TYPE_BYTE || type == DataBuffer.TYPE_USHORT) {
+            final int nbbit = candidate.getPixelSize();
+            if ((type == DataBuffer.TYPE_BYTE || type == DataBuffer.TYPE_USHORT) && nbbit <= 16) {
                 final int mapSize = 1 << nbbit;
                 ARGB = new int[mapSize];
 
@@ -321,47 +325,11 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
                 model = ColorModelFactory.createIndexColorModel(null, 0, 1, visibleBand, ARGB, true, -1);
 
             } else {
-                //we can't handle a index color model when values exceed int max value
                 model = new CompatibleColorModel(nbbit, this);
             }
-
-        } else if (candidate instanceof DirectColorModel) {
-            final DirectColorModel colors = (DirectColorModel) candidate;
-            final int nbbit = colors.getPixelSize();
-            final int type = image.getSampleModel().getDataType();
-
-            if (type == DataBuffer.TYPE_BYTE || type == DataBuffer.TYPE_USHORT) {
-                final int mapSize = 1 << nbbit;
-                ARGB = new int[mapSize];
-
-                for (int j=0; j<mapSize;j++) {
-                    int v = j*255/mapSize;
-                    int a = 255 << 24;
-                    int r = v << 16;
-                    int g = v <<  8;
-                    int b = v <<  0;
-                    ARGB[j] = a|r|g|b;
-                }
-
-                transformColormap(ARGB);
-                model = ColorModelFactory.createIndexColorModel(null, 0, 1, visibleBand, ARGB, true, -1);
-
-            } else {
-                //we can't handle a index color model when values exceed int max value
-                model = new CompatibleColorModel(nbbit, this);
-            }
-
-        } else {
-            model = new CompatibleColorModel(candidate.getPixelSize(), this);
         }
 
-        /*
-         * Gives the color model to the image layout and creates a new image using the Null
-         * operation, which merely propagates its first source along the operation chain
-         * unmodified (except for the ColorModel given in the layout in this case).
-         */
-        final ImageLayout layout = new ImageLayout().setColorModel(model);
-        return new NullOpImage(image, layout, null, OpImage.OP_COMPUTE_BOUND);
+        return new RecolorRenderedImage(image, model);
     }
 
     /**

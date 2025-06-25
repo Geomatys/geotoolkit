@@ -19,31 +19,36 @@ package org.geotoolkit.coverage;
 import java.awt.image.RenderedImage;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.opengis.coverage.CannotEvaluateException;
 
 /**
- *
  * @author Johann Sorel (Geomatys)
  */
 public class ReducedGridCoverage extends GridCoverage {
 
     private final GridCoverage parent;
     private final int[] dimensions;
+    private final GridExtent baseExtent;
 
     public ReducedGridCoverage(GridCoverage parent, int ... dimensions) {
-        super(parent.getGridGeometry().selectDimensions(dimensions), parent.getSampleDimensions());
+        this(parent, parent.getGridGeometry(), dimensions);
+    }
+
+    public ReducedGridCoverage(GridCoverage parent, GridGeometry base, int... dimensions) {
+        super(base.selectDimensions(dimensions), parent.getSampleDimensions());
         this.parent = parent;
         this.dimensions = dimensions;
+        this.baseExtent = base.getExtent();
     }
 
     @Override
     public RenderedImage render(GridExtent sliceExtent) throws CannotEvaluateException {
         GridExtent ext;
-        GridExtent extent = parent.getGridGeometry().getExtent();
         if (sliceExtent == null) {
-            ext = extent;
+            ext = this.baseExtent;
         } else {
-            final long[] low = new long[extent.getDimension()];
+            final long[] low = new long[this.baseExtent.getDimension()];
             final long[] high = new long[low.length];
             int k = 0;
             for (int i=0;i<low.length;i++) {
@@ -52,8 +57,8 @@ public class ReducedGridCoverage extends GridCoverage {
                     high[i] = sliceExtent.getHigh(k);
                     k++;
                 } else {
-                    low[i] = extent.getLow(i);
-                    high[i] = extent.getHigh(i);
+                    low[i] = this.baseExtent.getLow(i);
+                    high[i] = this.baseExtent.getHigh(i);
                 }
             }
             ext = new GridExtent(null, low, high, true);

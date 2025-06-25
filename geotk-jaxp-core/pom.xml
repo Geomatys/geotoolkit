@@ -66,9 +66,13 @@
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
+        <!-- Get Woodstox through jackson XML, because:
+              1. Jackson XML version is handled by Geomatys BOM.
+              2. Woodstox version then get solved transitively by the BOM.
+        -->
         <dependency>
-            <groupId>com.fasterxml.woodstox</groupId>
-            <artifactId>woodstox-core</artifactId>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-xml</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

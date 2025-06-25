@@ -21,19 +21,15 @@ import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
-import java.util.AbstractMap;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.coverage.grid.DisjointExtentException;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverage2D;
 import org.apache.sis.coverage.grid.GridCoverageProcessor;
-import org.apache.sis.coverage.grid.GridDerivation;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridRoundingMode;
@@ -46,11 +42,11 @@ import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.map.MapLayer;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.referencing.operation.matrix.MatrixSIS;
 import org.apache.sis.referencing.operation.projection.ProjectionException;
 import org.apache.sis.referencing.operation.transform.InterpolatedTransform;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.referencing.operation.transform.PassThroughTransform;
+import org.apache.sis.referencing.operation.transform.TransformSeparator;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.util.ArgumentChecks;
@@ -71,13 +67,9 @@ import org.geotoolkit.processing.coverage.resample.ResampleDescriptor;
 import org.geotoolkit.processing.coverage.resample.ResampleProcess;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.crs.ProjectedCRS;
-import org.opengis.referencing.crs.SingleCRS;
 import org.apache.sis.coverage.grid.PixelInCell;
 import org.apache.sis.util.collection.BackingStoreException;
-import org.opengis.referencing.operation.CoordinateOperation;
 import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.Symbolizer;
@@ -221,18 +213,26 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
             Envelope bbox = renderingContext.getCanvasObjectiveBounds2D();
             CoordinateReferenceSystem suggestCommonTarget = CRS.suggestCommonTarget(null, bbox.getCoordinateReferenceSystem(), CRS.getHorizontalComponent(refGG.getCoordinateReferenceSystem()));
             if (suggestCommonTarget != null) {
-                //Use GridGeometry.getEnvelope(crs) instead of Envelopes.transform(refGG.getEnvelope(), bboxcrs)
-                //This method makes additional clipping and use a more accurate transformation in relation to grid extent
-                Envelope refEnv = refGG.getEnvelope(suggestCommonTarget);
-                Envelope bboxTrs = Envelopes.transform(bbox, suggestCommonTarget);
-                if (!AbstractEnvelope.castOrCopy(bboxTrs).intersects(refEnv, true)) {
-                    throw new DisjointExtentException("Coverage resource envelope do not intersect canvas");
+                try {
+                    //Use GridGeometry.getEnvelope(crs) instead of Envelopes.transform(refGG.getEnvelope(), bboxcrs)
+                    //This method makes additional clipping and use a more accurate transformation in relation to grid extent
+                    Envelope refEnv = refGG.getEnvelope(suggestCommonTarget);
+                    Envelope bboxTrs = Envelopes.transform(bbox, suggestCommonTarget);
+                    if (!AbstractEnvelope.castOrCopy(bboxTrs).intersects(refEnv, true)) {
+                        throw new DisjointExtentException("Coverage resource envelope do not intersect canvas");
+                    }
+                } catch (TransformException e) {
+                    // TODO: maybe remove this catch clause if Apache SIS improves this case management. .
+                    // Ignore error. In some cases, Apache SIS fails to reproject envelopes to a common target.
+                    // In such case, we try to continue rendering, because maybe data is in region of interest,
+                    // but we cannot quickly check it now.
+                    LOGGER.log(Level.FINE, "Cannot check if dataset intersects rendering context", e);
                 }
             }
         }
 
-        final GridGeometry baseGG = trySubGrid(refGG, canvasGrid);
-        final GridGeometry slice = extractSlice(baseGG, canvasGrid, computeMargin2D(interpolation), true);
+        final var margin = computeMargin(interpolation);
+        final GridGeometry slice = extractSlice(refGG, canvasGrid, margin);
 
         if (sourceBands != null && sourceBands.length < 1) sourceBands = null;
         GridCoverage coverage = ref.read(slice, sourceBands);
@@ -246,17 +246,20 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         }
 
 
-        //at this point, we want a single slice in 2D
-        //we remove all other dimension to simplify any following operation
+        // HACK: sometimes, source data store does NOT return us a single slice.
+        // At this point, we need a single slice in 2D to be able to do image rendering.
+        // For now, we try to force a single slice by either hacking coverage rendering (ReducedGridCoverage)
+        // or by forcing a full resample.
         CoordinateReferenceSystem coverageCrs = coverage.getCoordinateReferenceSystem();
         if (coverageCrs.getCoordinateSystem().getDimension() > 2) {
-            //TODO index is wrong, it ignores grid to crs transform
-            //to be fixed when moved to SIS
-            final int idx = CRSUtilities.firstHorizontalAxis(coverageCrs);
             try {
-                coverage = new ReducedGridCoverage(coverage, idx, idx+1);
-            } catch (BackingStoreException ex) {
-                coverage = new GridCoverageProcessor().resample(coverage, CRS.getHorizontalComponent(coverageCrs));
+                final var targetDimension = slice.getExtent().getSubspaceDimensions(2);
+                var tmpSlice = coverage.getGridGeometry().derive()
+                                       .subgrid(slice)
+                                       .build();
+                coverage = new ReducedGridCoverage(coverage, tmpSlice, targetDimension);
+            } catch (Exception ex) {
+                coverage = new GridCoverageProcessor().resample(coverage, slice);
             }
         }
 
@@ -298,7 +301,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
             final MathTransform gridToCRS = coverage.getGridGeometry().getGridToCRS(PixelInCell.CELL_CENTER);
             if (isNonLinear(gridToCRS)) {
 
-                final GridGeometry slice2 = extractSlice(refGG, canvasGrid, computeMargin2D(interpolation), false);
+                final GridGeometry slice2 = extractSlice(refGG, canvasGrid, margin);
 
                 coverage = ref.read(slice2, sourceBands);
 
@@ -318,18 +321,8 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         }
     }
 
-    private static int[] computeMargin2D(InterpolationCase interpolationCase) {
-        if (interpolationCase == null || InterpolationCase.NEIGHBOR.equals(interpolationCase))
-            return new int[2];
-        int margin;
-        switch (interpolationCase) {
-            case LANCZOS: margin = 4; break;
-            case BILINEAR: margin = 1; break;
-            case NEIGHBOR: margin = 0; break;
-            default: margin = 2;
-        }
-
-        return new int[]{margin, margin};
+    private static int computeMargin(InterpolationCase interpolationCase) {
+        return Math.abs(interpolationCase.margin);
     }
 
     private boolean isNonLinear(MathTransform trs) {
@@ -410,225 +403,103 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         return new GridCoverage2D(canvasGrid, coverage.getSampleDimensions(), result);
     }
 
-    private static GridGeometry extractSlice(GridGeometry fullArea, GridGeometry areaOfInterest, final int[] margin, boolean applyResolution)
+    private static GridGeometry extractSlice(GridGeometry fullArea, GridGeometry areaOfInterest, final int margin)
             throws DataStoreException, TransformException, FactoryException {
-
-        double[] resolution = areaOfInterest.getResolution(true);
-        if (fullArea.isDefined(GridGeometry.RESOLUTION)) {
-            CoordinateReferenceSystem crsarea = areaOfInterest.getCoordinateReferenceSystem();
-            CoordinateReferenceSystem crsdata = fullArea.getCoordinateReferenceSystem();
-            if (CRS.isHorizontalCRS(crsarea) && CRS.isHorizontalCRS(crsdata)) {
-                //we are dealing with simple 2D rendering, preserve the canvas grid geometry.
-                if (margin != null && Arrays.stream(margin).anyMatch(value -> value != 0)) {
-                    try {
-                        //try to adjust margin
-                        //TODO : we should use a GridCoverageResource.subset with a margin value but this isn't implemented yet
-                        Envelope env = fullArea.getEnvelope();
-                        double[] est = CoverageUtilities.estimateResolution(env, fullArea.getResolution(true), areaOfInterest.getCoordinateReferenceSystem());
-                        margin[0] = (int) Math.ceil(margin[0] * (est[0] / resolution[0]));
-                        margin[1] = (int) Math.ceil(margin[1] * (est[1] / resolution[1]));
-                        areaOfInterest = areaOfInterest.derive().margin(margin).build();
-                        // Force rebuilding envelope. Not sure it is really needed however.
-                        areaOfInterest = new GridGeometry(
-                                areaOfInterest.getExtent(),
-                                PixelInCell.CELL_CENTER,
-                                areaOfInterest.getGridToCRS(PixelInCell.CELL_CENTER),
-                                areaOfInterest.getCoordinateReferenceSystem());
-                        return areaOfInterest;
-                    } catch (Exception e) {
-                        LOGGER.log(Level.WARNING, "Cannot compute adapted margin. Artifacts may appear on tile borders");
-                        LOGGER.log(Level.FINE, "Details about margin computation failure", e);
-                    }
-                }
-            }
-        } else {
-            //we have no way to apply margin
-            //must wait for GridCoverageResource.subset with a margin
-        }
 
         // HACK : This method cannot manage incomplete grid geometries, so we have to skip
         if (!fullArea.isDefined(GridGeometry.ENVELOPE | GridGeometry.GRID_TO_CRS | GridGeometry.EXTENT)) {
             return areaOfInterest;
         }
 
-        // on displayed area
-        Envelope canvasEnv = areaOfInterest.getEnvelope();
-        if (!applyResolution) resolution = null;
-        /////// HACK FOR 0/360 /////////////////////////////////////////////
-        try {
-            Map.Entry<Envelope, double[]> entry = solveWrapAround(fullArea, canvasEnv, resolution);
-            if (entry != null) {
-                canvasEnv = entry.getKey();
-                resolution = applyResolution ? entry.getValue() : null;
-            }
-        } catch (ProjectionException ex) {
-            //mays happen when displaying an area partialy outside
-            //computation area of coverage crs
-            LOGGER.log(Level.INFO, ex.getMessage(), ex);
+        final int[] sourceDimensionsMatchingTargetDimensions;
+        final int[] sourceRenderDimensions;
+        final int[] targetRenderDimensions;
+        if (areaOfInterest.getDimension() == 2) {
+            targetRenderDimensions = new int[] { 0, 1 };
+        } else {
+            targetRenderDimensions = areaOfInterest.getExtent().getSubspaceDimensions(2);
         }
-        /////// HACK FOR 0/360 /////////////////////////////////////////////
-        GridGeometry slice = fullArea;
-        try {
-            GridDerivation derivation = fullArea.derive()
-                    .rounding(GridRoundingMode.ENCLOSING);
-            if (margin != null && margin.length > 0) {
-                derivation = derivation.margin(margin);
+        final var sourceDimension = fullArea.getDimension();
+        if (sourceDimension == 2) {
+            sourceDimensionsMatchingTargetDimensions = sourceRenderDimensions = new int[] { 0, 1 };
+        } else {
+            MathTransform sourceToTarget;
+            try {
+                sourceToTarget = fullArea.createTransformTo(areaOfInterest, PixelInCell.CELL_CENTER);
+            } catch (TransformException e) {
+                final var sourceCRS = fullArea.getCoordinateReferenceSystem();
+                final var targetCRS = areaOfInterest.getCoordinateReferenceSystem();
+                var sourceCrsToTargetCrs = Objects.requireNonNull(
+                        CRS.findOperation(sourceCRS, targetCRS, null).getMathTransform(),
+                        "MathTransform from data CRS to objective CRS should not be null"
+                );
+                sourceToTarget = MathTransforms.concatenate(
+                        fullArea.getGridToCRS(PixelInCell.CELL_CENTER),
+                        sourceCrsToTargetCrs,
+                        areaOfInterest.getGridToCRS(PixelInCell.CELL_CENTER).inverse()
+                );
             }
-            //TODO index is wrong, it ignores grid to crs transform
-            //to be fixed when moved to SIS
-            final int xAxis = CRSUtilities.firstHorizontalAxis(fullArea.getCoordinateReferenceSystem());
-            //slice and subgrid must be called separately
-            slice = derivation
-                    .sliceByRatio(1, xAxis, xAxis+1)
-                    .build();
-            slice = slice.derive()
-                    .subgrid(canvasEnv, resolution)
-                    .build();
+            var dimensionMatching = new TransformSeparator(sourceToTarget);
+            // first, check what dimensions in source dataset are selected/filtered by area of interest
+            dimensionMatching.separate();
+            sourceDimensionsMatchingTargetDimensions = dimensionMatching.getSourceDimensions();
+            // Then, identify source dimensions that will strictly used for rendering
+            dimensionMatching.clear();
+            dimensionMatching.addTargetDimensions(targetRenderDimensions);
+            dimensionMatching.separate();
+            sourceRenderDimensions = dimensionMatching.getSourceDimensions();
+        }
+
+        int[] sourceMargin = new int[sourceDimension];
+        for (int sourceIdx : sourceRenderDimensions) sourceMargin[sourceIdx] = margin;
+
+        try {
+            GridGeometry slice = fullArea;
+            // Arbitrarily select highest values for dimensions not filtered by canvas.
+            // This is required so we can display a 2D rendering
+            if (sourceDimensionsMatchingTargetDimensions.length < sourceDimension) {
+                slice = fullArea.derive()
+                                .sliceByRatio(1.0, sourceDimensionsMatchingTargetDimensions)
+                                .build();
+            }
+
+            // HACK: Workaround waiting for a fix in SIS:
+            // The code in the try block should be enough.
+            // However, in some cases, Apache SIS fails to analyse GridGeometry given as argument to subgrid method.
+            // In such cases, replacing it with a subset of information (envelope and approximate resolution) works.
+            // Note that this workaround might cause an approximation in the output geometry.
+            try {
+                return slice.derive()
+                            // Ensure that no edge is omitted on rendering
+                            .rounding(GridRoundingMode.ENCLOSING)
+                            // Apply margin on source grid, to ensure we've got enough extra-context to apply interpolations.
+                            // This is required because readers like NetCDF return strictly requested domain on read.
+                            .margin(sourceMargin)
+                            // Focus on drawing area
+                            .subgrid(areaOfInterest)
+                            // Workaround for multidimensional datasets: if region of interest does not pinpoint a single slice,
+                            // we arbitrary select highest 2D slice
+                            .sliceByRatio(1, sourceRenderDimensions)
+                            .build();
+            } catch (IllegalGridGeometryException|IndexOutOfBoundsException ex) {
+                return slice.derive()
+                            // Ensure that no edge is omitted on rendering
+                            .rounding(GridRoundingMode.ENCLOSING)
+                            // Apply margin on source grid, to ensure we've got enough extra-context to apply interpolations.
+                            // This is required because readers like NetCDF return strictly requested domain on read.
+                            .margin(sourceMargin)
+                            // Focus on drawing area
+                            .subgrid(areaOfInterest.getEnvelope(), areaOfInterest.getResolution(true))
+                            // Workaround for multidimensional datasets: if region of interest does not pinpoint a single slice,
+                            // we arbitrary select highest 2D slice
+                            .sliceByRatio(1, sourceRenderDimensions)
+                            .build();
+            }
         } catch (DisjointExtentException ex) {
             throw new DisjointCoverageDomainException(ex.getMessage(), ex);
         } catch (IllegalGridGeometryException ex) {
             throw new DisjointCoverageDomainException(ex.getMessage(), ex);
         }
-
-//        // latest data slice
-//        final GridExtent extent = slice.getExtent();
-//        final MathTransform gridToCrs = slice.getGridToCRS(PixelInCell.CELL_CENTER);
-//        final long[] low = new long[extent.getDimension()];
-//        final long[] high = new long[extent.getDimension()];
-//        low[0] = extent.getLow(0);
-//        low[1] = extent.getLow(1);
-//        high[0] = extent.getHigh(0);
-//        high[1] = extent.getHigh(1);
-//        for (int i=2,n=low.length;i<n;i++) {
-//            low[i] = extent.getHigh(i);
-//            high[i] = extent.getHigh(i);
-//        }
-//        //add 3 cell padding for interpolations
-//        for (int i=0;i<2;i++) {
-//            low[i] = extent.getLow(i) - 3;
-//            high[i] = extent.getHigh(i) + 3;
-//        }
-//        final GridExtent sliceExt = new GridExtent(null, low, high, true);
-//        slice = new GridGeometry(sliceExt, PixelInCell.CELL_CENTER, gridToCrs, slice.getCoordinateReferenceSystem());
-
-        return slice;
-    }
-
-    /**
-     * Pragmatic approach trying to solve intersection of areas with
-     * different meridian origin such as -180/+180 to +0/+360.
-     *
-     * @param resolution, may be changed by this method.
-     * @return update area of interest envelope, CRS may have changed and new resolution
-     *         or null if unchanged.
-     */
-    private static Map.Entry<Envelope, double[]> solveWrapAround(final GridGeometry grid, Envelope areaOfInterest, double[] resolution) throws TransformException, FactoryException {
-
-        // unchanged
-        if (areaOfInterest == null) return null;
-
-        final CoordinateReferenceSystem gridCrs = grid.getCoordinateReferenceSystem();
-        final CoordinateReferenceSystem areaCrs = areaOfInterest.getCoordinateReferenceSystem();
-
-        // unchanged
-        if (Utilities.equalsIgnoreMetadata(gridCrs, areaCrs)) return null;
-
-        // find area horizontal crs and it's index.
-        List<SingleCRS> areaCrsComponents = CRS.getSingleComponents(areaCrs);
-        int areaHorizontalIndex = 0;
-        int areaHorizontalOffset = 0;
-        SingleCRS areaHorizontalCrs = null;
-        for (int n=areaCrsComponents.size(); areaHorizontalIndex < n; areaHorizontalIndex++) {
-            SingleCRS areaCmpCrs = areaCrsComponents.get(areaHorizontalIndex);
-            if (CRS.isHorizontalCRS(areaCmpCrs)) {
-                areaHorizontalCrs = areaCmpCrs;
-                break;
-            }
-            areaHorizontalOffset += areaCmpCrs.getCoordinateSystem().getDimension();
-        }
-
-        // if no horizontal part found, return area unchanged
-        if (areaHorizontalCrs == null) return null;
-
-        // find counterpart in grid crs
-        final List<SingleCRS> gridCrsComponents = CRS.getSingleComponents(gridCrs);
-        int offsetGrid = 0;
-        SingleCRS gridHorizontalCrs = null;
-        for (SingleCRS gridCmpCrs : gridCrsComponents) {
-            if (CRS.isHorizontalCRS(gridCmpCrs)) {
-                gridHorizontalCrs = gridCmpCrs;
-                break;
-            }
-            offsetGrid += gridCmpCrs.getCoordinateSystem().getDimension();
-        }
-
-        // no horizontal counter part found, return area unchanged
-        if (gridHorizontalCrs == null) return null;
-        // unchanged
-        if (Utilities.equalsIgnoreMetadata(areaHorizontalCrs, gridHorizontalCrs)) return null;
-
-
-        // Extract Horizontal envelopes
-        final Envelope gridEnvelope = grid.getEnvelope();
-        GeneralEnvelope areaEnv = new GeneralEnvelope(areaHorizontalCrs);
-        areaEnv.setRange(0, areaOfInterest.getMinimum(areaHorizontalOffset), areaOfInterest.getMaximum(areaHorizontalOffset));
-        areaEnv.setRange(1, areaOfInterest.getMinimum(areaHorizontalOffset+1), areaOfInterest.getMaximum(areaHorizontalOffset+1));
-        GeneralEnvelope gridEnv = new GeneralEnvelope(gridHorizontalCrs);
-        gridEnv.setRange(0, gridEnvelope.getMinimum(offsetGrid), gridEnvelope.getMaximum(offsetGrid));
-        gridEnv.setRange(1, gridEnvelope.getMinimum(offsetGrid+1), gridEnvelope.getMaximum(offsetGrid+1));
-
-        // Convert envelopes to geographic
-        GeneralEnvelope areaHorizontalEnv = areaEnv;
-        SingleCRS areaGeographicCrs = areaHorizontalCrs;
-        if (areaHorizontalCrs instanceof ProjectedCRS) {
-            areaGeographicCrs = ((ProjectedCRS) areaHorizontalCrs).getBaseCRS();
-            areaEnv = GeneralEnvelope.castOrCopy(Envelopes.transform(areaEnv, areaGeographicCrs));
-        }
-        SingleCRS gridGeographicCrs = gridHorizontalCrs;
-        if (gridHorizontalCrs instanceof ProjectedCRS) {
-            gridGeographicCrs = ((ProjectedCRS) gridHorizontalCrs).getBaseCRS();
-            gridEnv = GeneralEnvelope.castOrCopy(Envelopes.transform(gridEnv, gridGeographicCrs));
-        }
-
-        // intersections are correctly handle in geographic CRS where WrapAround axis are defined.
-        CoordinateOperation operation = CRS.findOperation(areaGeographicCrs, gridGeographicCrs, null);
-        gridEnv.intersect(Envelopes.transform(operation, areaEnv));
-
-        // Create new compound CRS for area of interest
-        areaCrsComponents = new ArrayList(areaCrsComponents); //make list modifiable
-        areaCrsComponents.set(areaHorizontalIndex, gridGeographicCrs);
-        final CoordinateReferenceSystem newAreaCrs = CRS.compound(areaCrsComponents.toArray(new CoordinateReferenceSystem[0]));
-
-        // Rebuild area of interest in new CRS
-        final GeneralEnvelope env = new GeneralEnvelope(newAreaCrs);
-        for (int k=0,kn=env.getDimension(); k<kn; k++) {
-            env.setRange(k, areaOfInterest.getMinimum(k), areaOfInterest.getMaximum(k));
-        }
-        env.setRange(areaHorizontalOffset, gridEnv.getMinimum(0), gridEnv.getMaximum(0));
-        env.setRange(areaHorizontalOffset+1, gridEnv.getMinimum(1), gridEnv.getMaximum(1));
-
-        if (env.isEmpty()) {
-            //the solvewrap arround method is not 100% reliable with special projection
-            //in some cases envelopes becomes empty
-            return null;
-        }
-
-        //compute new resolution
-        if (resolution != null && resolution.length != 0) {
-            operation = CRS.findOperation(areaHorizontalCrs, gridGeographicCrs, null);
-
-            double[] horizontalResolution = new double[]{
-                resolution[areaHorizontalOffset],
-                resolution[areaHorizontalOffset+1]};
-            final Matrix m = operation.getMathTransform().derivative(areaHorizontalEnv.getMedian());
-            horizontalResolution = MatrixSIS.castOrCopy(m).multiply(horizontalResolution);
-
-            resolution = resolution.clone(); //do not modify user parameter
-            resolution[areaHorizontalOffset] = Math.abs(horizontalResolution[0]);
-            resolution[areaHorizontalOffset+1] = Math.abs(horizontalResolution[1]);
-        }
-
-        return new AbstractMap.SimpleImmutableEntry<>(env, resolution);
     }
 
     /**
@@ -677,42 +548,5 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         }
 
         return view;
-    }
-
-    /**
-     * Try to subset dataset geometry to the area of interest. It allow to short any unnecessary operation
-     * as soon as possible in case there's no intersection between the two.
-     * For now, the subgrid method have some limitations, so this "optimisation" is not applied on following cases:
-     * <ul>
-     *     <li>When the grid geometry to derive is incomplete.</li>
-     *     <li>When region of interest dimension does not match base one.</li>
-     *     <li>When both geometry CRS are incompatible.</li>
-     * </ul>
-     *
-     * The above limitations are expected to be solved in future versions of Apache SIS. For now, we simply catch and
-     * log any exception that is potentially mitigated in rendering code. The only fail-first case is when we detect
-     * that both geometries do not intersect.
-     *
-     * @param toDerive The original geometry (of the dataset) to subgrid upon rendering area.
-     * @param roi Region Of Interest: The area we want to focus on for the rendering.
-     * @return If no error has been raised, The result of {@link GridDerivation#subgrid(GridGeometry) geometry subgrid}.
-     * Otherwise, the input {@param toDerive} is returned.
-     * @throws DisjointExtentException If given geometries do not intersect.
-     */
-    private static GridGeometry trySubGrid(final GridGeometry toDerive, final GridGeometry roi) throws DisjointExtentException {
-        try {
-            return toDerive.derive()
-                    .rounding(GridRoundingMode.ENCLOSING)
-                    .subgrid(roi)
-                    .build();
-        } catch (DisjointExtentException e) {
-            throw e; // Expected: If queried area does not intersect dataset, we let this propagate to short rendering
-        } catch (Exception e) {
-            LOGGER.log(Level.FINE, e, () -> String.format(
-                    "Subgrid has failed and will be ignored.%nBase:%n%s%nRegion of interest:%n%s",
-                    toDerive, roi));
-        }
-
-        return toDerive;
     }
 }
