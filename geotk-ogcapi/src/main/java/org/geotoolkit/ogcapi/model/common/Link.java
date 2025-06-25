@@ -77,6 +77,15 @@ public final class Link extends DataTransferObject {
     public Link() {
     }
 
+    public Link(String href, String rel, String type, String hreflang, String title, Integer length) {
+        this.href = href;
+        this.rel = rel;
+        this.type = type;
+        this.hreflang = hreflang;
+        this.title = title;
+        this.length = length;
+    }
+
     public Link href(@jakarta.annotation.Nonnull String href) {
         this.href = href;
         return this;

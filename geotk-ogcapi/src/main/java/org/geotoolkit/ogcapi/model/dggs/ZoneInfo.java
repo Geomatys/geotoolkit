@@ -84,7 +84,7 @@ public final class ZoneInfo extends DataTransferObject {
     public static final String JSON_PROPERTY_CRS = "crs";
     @XmlElement(name = "crs")
     @jakarta.annotation.Nullable
-    private URI crs = URI.create("[OGC:CRS84]");
+    private URI crs;
 
     public static final String JSON_PROPERTY_CENTROID = "centroid";
     @XmlElement(name = "centroid")
