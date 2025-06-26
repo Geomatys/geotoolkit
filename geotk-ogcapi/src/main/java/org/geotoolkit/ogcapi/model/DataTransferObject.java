@@ -16,14 +16,36 @@
  */
 package org.geotoolkit.ogcapi.model;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
 public abstract class DataTransferObject {
+
+    /**
+     * Catch all unknown fields
+     */
+    private final Map<String, Object> unknownFields = new HashMap<>();
+
+    /**
+     * All unknown fields
+     */
+    @JsonAnyGetter
+    public Map<String, Object> otherFields() {
+        return unknownFields;
+    }
+
+    @JsonAnySetter
+    public void setOtherField(String name, Object value) {
+        unknownFields.put(name, value);
+    }
 
     @Override
     public final String toString() {
