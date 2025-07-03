@@ -39,7 +39,6 @@ import org.opengis.util.FactoryException;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.referencing.ImmutableIdentifier;
 import org.apache.sis.referencing.privy.ReferencingFactoryContainer;
-import org.apache.sis.referencing.privy.ReferencingUtilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;
@@ -52,6 +51,7 @@ import org.apache.sis.util.iso.DefaultNameSpace;
 import org.geotoolkit.lang.Builder;
 
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.datum.DatumOrEnsemble;
 import org.apache.sis.referencing.operation.DefaultConversion;
 import org.apache.sis.util.logging.Logging;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
@@ -364,7 +364,7 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
                 // example because all parameters have their default value.
                 accessor.warning(null, getClass(), "getConversionFromBase", e);
             }
-            builder.setSourceAxes(baseCRS.getCoordinateSystem(), ReferencingUtilities.getEllipsoid(baseCRS));
+            builder.setSourceAxes(baseCRS.getCoordinateSystem(), DatumOrEnsemble.getEllipsoid(baseCRS).orElse(null));
             builder.setTargetAxes(derivedCS, null);
             final MathTransform tr = builder.create();
             return new DefaultConversion(properties, builder.getMethod().orElseThrow(), tr, parameters);
@@ -408,8 +408,9 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
             final MetadataNodeAccessor opAccessor = createNodeWriter(accessor, "Conversion", null);
             setName(conversion, opAccessor);
             setName(conversion.getMethod(), false, opAccessor, "method");
-            addParameter(new MetadataNodeAccessor[] {opAccessor, null}, conversion.getParameterValues(),
-                    ReferencingUtilities.getEllipsoid(crs));
+            addParameter(new MetadataNodeAccessor[] {opAccessor, null},
+                    conversion.getParameterValues(),
+                    DatumOrEnsemble.getEllipsoid(crs).orElse(null));
         }
         setUserObject(accessor, crs);
     }

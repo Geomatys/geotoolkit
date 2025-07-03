@@ -32,9 +32,9 @@ import javax.measure.Unit;
 import javax.measure.UnitConverter;
 import org.apache.sis.map.ExceptionPresentation;
 import org.apache.sis.map.Presentation;
-import org.apache.sis.referencing.privy.ReferencingUtilities;
 import org.apache.sis.measure.Units;
 import org.apache.sis.map.MapLayer;
+import org.apache.sis.referencing.datum.DatumOrEnsemble;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.presentation.TextPresentation2;
@@ -44,7 +44,6 @@ import org.geotoolkit.display2d.style.j2d.GeodeticPathWalker;
 import org.geotoolkit.display2d.style.renderer.AbstractSymbolizerRenderer;
 import org.geotoolkit.display2d.style.renderer.LineSymbolizerRenderer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
-import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.awt.JTSGeometryJ2D;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.Feature;
@@ -120,7 +119,7 @@ public class GraduationSymbolizerRenderer extends AbstractSymbolizerRenderer<Cac
             final String unitStr = (unitExp==null) ? null : unitExp.apply(feature).toString();
             final Unit unit = (unitStr==null) ? Units.METRE : Units.valueOf(unitStr);
             //adjust unit to ellipsoid unit, for path walker
-            final Ellipsoid ellipsoid = ReferencingUtilities.getEllipsoid(displayCrs);
+            final Ellipsoid ellipsoid = DatumOrEnsemble.getEllipsoid(displayCrs).orElseThrow();
             final UnitConverter converter = unit.getConverterTo(ellipsoid.getAxisUnit());
             info.stepGeo = (float)converter.convert(info.stepReal);
 
