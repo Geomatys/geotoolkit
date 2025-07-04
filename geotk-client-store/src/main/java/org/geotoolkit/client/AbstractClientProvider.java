@@ -76,6 +76,7 @@ public abstract class AbstractClientProvider extends DataStoreProvider {
     public static final ParameterDescriptor<URL> URL = new ParameterBuilder()
             .addName("url")
             .addName(Bundle.formatInternational(Bundle.Keys.url))
+            .addName(LOCATION)
             .setRemarks(Bundle.formatInternational(Bundle.Keys.urlRemarks))
             .setRequired(true)
             .create(URL.class, null);
