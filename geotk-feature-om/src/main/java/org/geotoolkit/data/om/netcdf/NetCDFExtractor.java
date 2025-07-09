@@ -82,6 +82,7 @@ public class NetCDFExtractor {
             Set<Phenomenon> phenomenons) throws NetCDFParsingException {
         if (analyze.featureType == null) throw new NetCDFParsingException("Field analyse feature type must not be null");
         return switch (analyze.featureType) {
+            case SIMPLE     -> throw new UnsupportedOperationException("not supported yet");
             case TIMESERIES -> parseDataBlockTS(analyze,   procedureID, acceptedProcedureIDs, responseFormat, phenomenons);
             case PROFILE    -> parseDataBlockXY(analyze,   procedureID, acceptedProcedureIDs, responseFormat, phenomenons);
             case TRAJECTORY -> parseDataBlockTraj(analyze, procedureID, acceptedProcedureIDs, responseFormat, phenomenons);
@@ -92,6 +93,7 @@ public class NetCDFExtractor {
     public static List<ProcedureDataset> getProcedures(final NCFieldAnalyze analyze, final String procedureID, final List<String> acceptedProcedureIDs) throws NetCDFParsingException {
         if (analyze.featureType == null) throw new NetCDFParsingException("Field analyse feature type must not be null");
         return switch (analyze.featureType) {
+            case SIMPLE     -> throw new UnsupportedOperationException("not supported yet");
             case TIMESERIES -> getProcedureTS(analyze, procedureID, acceptedProcedureIDs);
             case PROFILE    -> getProcedureXY(analyze, procedureID, acceptedProcedureIDs);
             case TRAJECTORY -> getProcedureTraj(analyze, procedureID, acceptedProcedureIDs);
