@@ -26,6 +26,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStores;
 import org.apache.sis.storage.geotiff.GeoTiffStore;
 import org.apache.sis.util.UnconvertibleObjectException;
+import org.apache.sis.util.logging.Logging;
 import static org.geotoolkit.wps.converters.WPSObjectConverter.ENCODING;
 import static org.geotoolkit.wps.converters.WPSObjectConverter.MIME;
 import org.geotoolkit.wps.io.WPSMimeType;
@@ -80,15 +81,21 @@ public class CoverageToComplexConverter extends AbstractComplexOutputConverter<G
 
         try {
             final Path temp = Files.createTempFile("t", ".tiff");
-            try (GeoTiffStore store = (GeoTiffStore) DataStores.openWritable(temp, "GeoTIFF")) {
-                store.append(source, null);
+            try {
+                try (GeoTiffStore store = (GeoTiffStore) DataStores.openWritable(temp, "GeoTIFF")) {
+                    store.append(source, null);
+                }
+                byte[] bytesOut = Files.readAllBytes(temp);
+                return new Data(new Format((String)((tmpEncoding instanceof String)? tmpEncoding : null), mime, null, null), Base64.getEncoder().encodeToString(bytesOut));
+            } catch (DataStoreException ex) {
+                throw new UnconvertibleObjectException(ex.getMessage(), ex);
+            } finally {
+                try {
+                    Files.deleteIfExists(temp);
+                } catch (IOException e) {
+                    Logging.unexpectedException(LOGGER, CoverageToComplexConverter.class, "convert", e);
+                }
             }
-            byte[] bytesOut = Files.readAllBytes(temp);
-            Files.delete(temp);
-            return new Data(new Format((String)((tmpEncoding instanceof String)? tmpEncoding : null), mime, null, null), Base64.getEncoder().encodeToString(bytesOut));
-
-        } catch (DataStoreException ex) {
-            throw new UnconvertibleObjectException(ex.getMessage(), ex);
         } catch (IOException ex) {
             throw new UnconvertibleObjectException(ex.getMessage(), ex);
         }
