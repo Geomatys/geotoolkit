@@ -16,14 +16,17 @@
  */
 package org.geotoolkit.wps.converters.outputs.complex;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Base64;
 import java.util.Map;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.DataStores;
+import org.apache.sis.storage.geotiff.GeoTiffStore;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.coverage.io.CoverageIO;
+import org.apache.sis.util.logging.Logging;
 import static org.geotoolkit.wps.converters.WPSObjectConverter.ENCODING;
 import static org.geotoolkit.wps.converters.WPSObjectConverter.MIME;
 import org.geotoolkit.wps.io.WPSMimeType;
@@ -76,14 +79,23 @@ public class CoverageToComplexConverter extends AbstractComplexOutputConverter<G
         }
         final Object tmpEncoding = params.get(ENCODING);
 
-        try (final ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-            CoverageIO.write(source, "GEOTIFF", baos);
-            baos.flush();
-            byte[] bytesOut = baos.toByteArray();
-            return new Data(new Format((String)((tmpEncoding instanceof String)? tmpEncoding : null), mime, null, null), Base64.getEncoder().encodeToString(bytesOut));
-
-        } catch (DataStoreException ex) {
-            throw new UnconvertibleObjectException(ex.getMessage(), ex);
+        try {
+            final Path temp = Files.createTempFile("t", ".tiff");
+            try {
+                try (GeoTiffStore store = (GeoTiffStore) DataStores.openWritable(temp, "GeoTIFF")) {
+                    store.append(source, null);
+                }
+                byte[] bytesOut = Files.readAllBytes(temp);
+                return new Data(new Format((String)((tmpEncoding instanceof String)? tmpEncoding : null), mime, null, null), Base64.getEncoder().encodeToString(bytesOut));
+            } catch (DataStoreException ex) {
+                throw new UnconvertibleObjectException(ex.getMessage(), ex);
+            } finally {
+                try {
+                    Files.deleteIfExists(temp);
+                } catch (IOException e) {
+                    Logging.unexpectedException(LOGGER, CoverageToComplexConverter.class, "convert", e);
+                }
+            }
         } catch (IOException ex) {
             throw new UnconvertibleObjectException(ex.getMessage(), ex);
         }
