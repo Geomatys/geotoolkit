@@ -17,13 +17,16 @@
 package org.geotoolkit.wps.converters.inputs.complex;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.Utilities;
-import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.wps.converters.AbstractWPSConverterTest;
 import org.geotoolkit.wps.converters.ConvertersTestUtils;
 import org.geotoolkit.wps.converters.WPSConverterRegistry;
@@ -41,23 +44,22 @@ import static org.junit.Assert.*;
  * @author Quentin Boileau (Geomatys)
  */
 public class ComplexToCoverageConverterTest extends AbstractWPSConverterTest {
+
     @Test
-    @org.junit.Ignore("Fails randomly because of GeoTIFF reader not found.")
-    public void testConversion() throws UnconvertibleObjectException, IOException, InterruptedException  {
+    public void testConversion() throws UnconvertibleObjectException, IOException, InterruptedException, URISyntaxException  {
 
         final WPSObjectConverter<Data, GridCoverage> converter = WPSConverterRegistry.getInstance().getConverter(Data.class, GridCoverage.class);
 
-        final InputStream expectedStream = ComplexToRenderedImageConvereterTest.class.getResourceAsStream("/expected/coverage_base64");
+        final Path expectedStream = Paths.get(ComplexToRenderedImageConvereterTest.class.getResource("/expected/coverage_base64").toURI());
         assertNotNull(expectedStream);
-        final String encodedCoverage = IOUtilities.toString(expectedStream);
+        final String encodedCoverage = new String(Files.readAllBytes(expectedStream), StandardCharsets.US_ASCII);
 
-        final Map<String, Object> param = new HashMap<String, Object>();
+        final Map<String, Object> param = new HashMap<>();
         param.put(WPSObjectConverter.MIME, "image/x-geotiff");
         param.put(WPSObjectConverter.ENCODING, "base64");
 
         final Format format = new Format("base64", "image/x-geotiff", null, null);
         final Data complex = new Data(format, encodedCoverage);
-        complex.getContent().add(encodedCoverage);
 
         final GridCoverage convertedCoverage = converter.convert(complex, param);
         assertNotNull(convertedCoverage);

@@ -104,11 +104,6 @@
             <artifactId>geotk-client-wps</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-coverage-geotiff</artifactId>
-            <version>${project.version}</version>
-        </dependency>
 
         <dependency>
             <groupId>org.geotoolkit</groupId>

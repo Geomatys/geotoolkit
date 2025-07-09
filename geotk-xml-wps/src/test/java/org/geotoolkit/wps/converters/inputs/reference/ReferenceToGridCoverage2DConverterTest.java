@@ -41,8 +41,8 @@ import static org.junit.Assert.*;
  * @author Quentin Boileau (Geomatys)
  */
 public class ReferenceToGridCoverage2DConverterTest extends AbstractWPSConverterTest {
+
     @Test
-    @org.junit.Ignore("Fails randomly because of GeoTIFF reader not found.")
     public void testConversion() throws UnconvertibleObjectException, IOException  {
         final WPSObjectConverter<Reference, GridCoverage> converter = WPSConverterRegistry.getInstance().getConverter(Reference.class, GridCoverage.class);
 
@@ -74,7 +74,6 @@ public class ReferenceToGridCoverage2DConverterTest extends AbstractWPSConverter
     }
 
     @Test
-    @org.junit.Ignore("Fails randomly because of GeoTIFF reader not found.")
     public void testConversionBase64() throws UnconvertibleObjectException, IOException  {
         final WPSObjectConverter<Reference, GridCoverage> converter = WPSConverterRegistry.getInstance().getConverter(Reference.class, GridCoverage.class);
 
