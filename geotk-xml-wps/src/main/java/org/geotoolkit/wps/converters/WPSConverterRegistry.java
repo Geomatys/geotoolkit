@@ -17,7 +17,6 @@
 package org.geotoolkit.wps.converters;
 
 import java.util.*;
-import java.util.logging.Logger;
 import javax.measure.Unit;
 
 import org.geotoolkit.feature.util.converter.StringToDateConverter;
@@ -46,7 +45,6 @@ import org.geotoolkit.wps.xml.v200.Reference;
  */
 public class WPSConverterRegistry {
 
-    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.wps.converters");
     private final List<WPSObjectConverter> converters;
     private static WPSConverterRegistry INSTANCE;
 
@@ -81,7 +79,6 @@ public class WPSConverterRegistry {
         register(ReferenceToPathConverter                   .getInstance());
         register(ReferenceToGeometryConverter               .getInstance());
         register(ReferenceToGridCoverage2DConverter         .getInstance());
-        register(ReferenceToGridCoverageReaderConverter     .getInstance());
         register(ReferenceToGridCoverageResourceConverter   .getInstance());
         register(ReferenceToRenderedImageConverter          .getInstance());
         register(ReferenceToStringConverter                 .getInstance());

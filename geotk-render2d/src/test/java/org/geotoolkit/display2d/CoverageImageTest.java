@@ -22,24 +22,17 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
-import java.io.File;
-import java.io.IOException;
-import javax.imageio.ImageIO;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.map.MapLayer;
 import org.apache.sis.map.MapLayers;
-import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.io.CoverageIO;
-import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.lang.Setup;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.referencing.crs.PredefinedCRS;
 import org.geotoolkit.style.DefaultStyleFactory;
@@ -191,36 +184,4 @@ public class CoverageImageTest {
         testImageLayer(img, cl);
     }
 
-    /**
-     * Test between output image from renderer and source image within {@link GridCoverageReader}.
-     *
-     * @throws PortrayalException
-     * @throws DataStoreException
-     * @throws IOException
-     */
-    @Test
-    @org.junit.Ignore("We will remove the class tested by this method.")
-    public void coverageReaderTest() throws PortrayalException, DataStoreException, IOException {
-
-        ImageIO.scanForPlugins();
-        Setup.initialize(null);
-
-        final File input = new File("src/test/resources/org/geotoolkit/display2d/clouds.jpg");
-        final ImageCoverageReader reader = CoverageIO.createSimpleReader(input);
-
-        final BufferedImage img = ImageIO.read(input);
-        final GridCoverage gridcov = reader.read(null);
-
-        proportionalityCoefficient = 2;
-
-        final MapLayer cl = MapBuilder.createCoverageLayer(input);
-
-        //Envelope result
-        resEnv = gridcov.getGridGeometry().getEnvelope();
-
-        srcWidth  = img.getWidth();
-        srcHeight = img.getHeight();
-
-        testImageLayer(img, cl);
-    }
 }

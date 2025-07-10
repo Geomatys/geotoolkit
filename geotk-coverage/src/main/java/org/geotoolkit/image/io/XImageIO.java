@@ -21,6 +21,7 @@ import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -40,14 +41,15 @@ import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ImageReaderWriterSpi;
 import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.spi.ServiceRegistry;
+import javax.imageio.stream.FileImageInputStream;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.collection.FrequencySortedSet;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.factory.Factories;
+import org.geotoolkit.internal.image.io.CheckedImageInputStream;
 import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.nio.IOUtilities;
@@ -341,7 +343,7 @@ public final class XImageIO extends Static {
          */
         if (usingImageInputStream != null) {
             try {
-                final ImageInputStream stream = CoverageIO.createImageInputStream(input);
+                final ImageInputStream stream = createImageInputStream(input);
                 it = usingImageInputStream.iterator();
                 while (it.hasNext()) {
                     final ImageReaderSpi spi = it.next();
@@ -385,6 +387,72 @@ public final class XImageIO extends Static {
             }
         }
         throw new UnsupportedImageFormatException(errorMessage(false, mode, name, hasFound));
+    }
+
+    /**
+     * Wraps input {@link ImageInputStream} in a {@link CheckedImageInputStream} if assertions are enabled.
+     *
+     * @param  input The input ImageInputStream to wrap
+     * @return The image input stream wrapped
+     */
+    private static ImageInputStream wrapImageInputStream(final ImageInputStream input) {
+        ImageInputStream wrapped = input;
+        assert CheckedImageInputStream.isValid(wrapped = // Intentional side effect.
+                CheckedImageInputStream.wrap(wrapped));
+        return wrapped;
+    }
+
+    /**
+     * Try to create an {@link ImageInputStream} from an object. This input object is usually an instance of
+     * {@link Path}, {@link File}, {@link String}, {@link URL} or {@link java.io.InputStream}.
+     *
+     * If assertions are enabled returned {@link ImageInputStream} is wrapped in a {@link CheckedImageInputStream}.
+     *
+     * @param input object usually an instance of {@link Path}, {@link File}, {@link String}, {@link URL}
+     *              or {@link java.io.InputStream}.
+     * @return ImageInputStream of input object.
+     * @throws IOException if an error occurred while creating the input stream.
+     */
+    public static ImageInputStream createImageInputStream(Object input) throws IOException {
+
+        //most of the cases
+        ImageInputStream iis = ImageIO.createImageInputStream(input);
+        if (iis != null) {
+            return wrapImageInputStream(iis);
+        }
+
+        /*
+         * We tried the input directly in case the user provided some SPI for String
+         * objects. If we have not been able to create a stream from a plain string,
+         * create a URL or a File object from the string and try again.
+         */
+        if (input instanceof CharSequence) {
+            final String path = input.toString();
+            final Object url;
+            if (path.indexOf("://") >= 1) {
+                url = new URL(path);
+            } else {
+                url = new File(path);
+            }
+            iis = ImageIO.createImageInputStream(url);
+            if (iis != null) {
+                return wrapImageInputStream(iis);
+            }
+        }
+
+        /*
+         * In theory ImageIO.createImageInputStream(Object) should have accepted a File input,
+         * so the following check is useless. However if ImageIO.createImageInputStream(Object)
+         * failed, it just returns null; we have no idea why it failed. One possible cause is
+         * "Too many open files", in which case throwing a FileNotFoundException is misleading.
+         * So we try here to create a FileImageInputStream directly, which is likely to fail as
+         * well but this time with a more accurate error message.
+         */
+        if (input instanceof File) {
+            return wrapImageInputStream(new FileImageInputStream((File) input));
+        }
+
+        throw new IOException("Can't create ImageInputStream from input "+input.toString());
     }
 
     /**
@@ -1061,7 +1129,7 @@ public final class XImageIO extends Static {
         //use default image stream if necessary
         if (in == null) {
             //may throw IOException
-            in = CoverageIO.createImageInputStream(input);
+            in = createImageInputStream(input);
         }
 
         return in;

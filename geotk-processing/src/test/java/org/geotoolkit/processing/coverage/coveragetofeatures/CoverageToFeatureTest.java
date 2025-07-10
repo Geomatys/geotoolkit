@@ -35,10 +35,6 @@ import org.apache.sis.storage.AbstractGridCoverageResource;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
-import org.geotoolkit.image.io.metadata.ReferencingBuilder;
-import org.geotoolkit.image.io.metadata.SpatialMetadata;
-import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
-import org.geotoolkit.internal.image.io.GridDomainAccessor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
@@ -55,11 +51,11 @@ import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
-import org.opengis.metadata.spatial.CellGeometry;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.apache.sis.coverage.grid.PixelInCell;
+import org.apache.sis.storage.base.MemoryGridResource;
 import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
 
@@ -148,7 +144,7 @@ public class CoverageToFeatureTest extends AbstractProcessTest {
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setDomain(new GridGeometry(null , PixelInCell.CELL_CENTER, gridToCRS, crs2d));
         gcb.setValues(image);
-        return new SimpleCoverageReader(gcb.build(), pixPos);
+        return new MemoryGridResource(null, gcb.build(), null);
     }
 
     private FeatureType buildFeatureType() throws NoSuchAuthorityCodeException, FactoryException {
@@ -238,44 +234,4 @@ public class CoverageToFeatureTest extends AbstractProcessTest {
         return featureList;
     }
 
-    private static class SimpleCoverageReader extends AbstractGridCoverageResource {
-
-        private final GridCoverage coverage;
-        private final PixelInCell pixPos;
-
-        public SimpleCoverageReader(final GridCoverage coverage, PixelInCell pixPos) {
-            super(null, false);
-            this.coverage = coverage;
-            this.pixPos = pixPos;
-        }
-
-        @Override
-        public Optional<GenericName> getIdentifier() throws DataStoreException {
-            return Optional.empty();
-        }
-
-        @Override
-        public GridGeometry getGridGeometry() throws DataStoreException, CancellationException {
-            return coverage.getGridGeometry();
-        }
-
-        @Override
-        public List<SampleDimension> getSampleDimensions() throws DataStoreException, CancellationException {
-            return coverage.getSampleDimensions();
-        }
-
-        public SpatialMetadata getCoverageMetadata() throws DataStoreException {
-            SpatialMetadata meta = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(SpatialMetadataFormat.GEOTK_FORMAT_NAME));
-            GridDomainAccessor grid = new GridDomainAccessor(meta);
-            grid.setGridGeometry(coverage.getGridGeometry(), pixPos, CellGeometry.POINT, -1);
-            ReferencingBuilder ref = new ReferencingBuilder(meta);
-            ref.setCoordinateReferenceSystem(coverage.getCoordinateReferenceSystem());
-            return meta;
-        }
-
-        @Override
-        public GridCoverage read(GridGeometry domain, int... range) throws DataStoreException {
-            return coverage;
-        }
-    }
 }

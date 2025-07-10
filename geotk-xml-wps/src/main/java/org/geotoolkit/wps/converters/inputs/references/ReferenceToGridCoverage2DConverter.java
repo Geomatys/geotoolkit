@@ -16,27 +16,16 @@
  */
 package org.geotoolkit.wps.converters.inputs.references;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
-import java.util.Collection;
 import java.util.Map;
-import java.util.logging.Level;
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.stream.ImageInputStream;
 import org.apache.sis.coverage.grid.GridCoverage;
-import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.DataStores;
-import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.coverage.io.CoverageIO;
-import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.wps.converters.inputs.complex.ComplexToCoverageConverter;
+import static org.geotoolkit.wps.converters.inputs.complex.ComplexToCoverageConverter.readAnyCoverage;
 import org.geotoolkit.wps.io.WPSEncoding;
 import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.v200.Reference;
@@ -80,7 +69,7 @@ public final class ReferenceToGridCoverage2DConverter extends AbstractReferenceI
             if(params != null && params.get(ENCODING) != null) {
                 encoding = (String) params.get(ENCODING);
             }
-            ImageInputStream imageStream = null;
+            byte[] imageData = null;
             try {
                 //decode form base64 stream
                 if (encoding != null && encoding.equals(WPSEncoding.BASE64.getValue())) {
@@ -91,9 +80,7 @@ public final class ReferenceToGridCoverage2DConverter extends AbstractReferenceI
                             return ComplexToCoverageConverter.readGeotiff(byteData);
                         }
 
-                        try (InputStream is = new ByteArrayInputStream(byteData)) {
-                            imageStream = ImageIO.createImageInputStream(is);
-                        }
+                        imageData = stream.readAllBytes();
                     }
 
                 } else {
@@ -101,17 +88,11 @@ public final class ReferenceToGridCoverage2DConverter extends AbstractReferenceI
                         return ComplexToCoverageConverter.readGeotiff(stream.readAllBytes());
                     }
 
-                    imageStream = ImageIO.createImageInputStream(stream);
+                    imageData = stream.readAllBytes();
                 }
 
-                if (imageStream != null) {
-                    final ImageReader reader;
-                    if (source.getMimeType() != null) {
-                        reader = XImageIO.getReaderByMIMEType(source.getMimeType(), imageStream, null, null);
-                    } else {
-                        reader = XImageIO.getReader(imageStream, null, Boolean.FALSE);
-                    }
-                    return CoverageIO.read(reader);
+                if (imageData != null) {
+                    return readAnyCoverage(imageData);
                 } else {
                     throw new UnconvertibleObjectException("Error during image stream acquisition.");
                 }
@@ -120,14 +101,6 @@ public final class ReferenceToGridCoverage2DConverter extends AbstractReferenceI
                 throw new UnconvertibleObjectException("ReferenceType coverage invalid input : IO", ex);
             } catch (DataStoreException ex) {
                 throw new UnconvertibleObjectException("ReferenceType coverage invalid input : Can't read coverage", ex);
-            } finally {
-                if (imageStream != null) {
-                    try {
-                        imageStream.close();
-                    } catch (IOException ex) {
-                        LOGGER.log(Level.WARNING, "Error during release the image stream.", ex);
-                    }
-                }
             }
         } catch (IOException ex) {
             throw new UnconvertibleObjectException("Error during image stream acquisition.");
