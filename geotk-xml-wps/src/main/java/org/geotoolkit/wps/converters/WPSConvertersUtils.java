@@ -41,6 +41,7 @@ import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.feature.builder.PropertyTypeBuilder;
@@ -53,11 +54,11 @@ import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.storage.geotiff.GeoTiffStore;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.coverage.io.CoverageIO;
-import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.feature.FeatureTypeExt;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeWriter;
 import org.geotoolkit.internal.geojson.GeoJSONParser;
@@ -321,32 +322,25 @@ public class WPSConvertersUtils {
             Integer crsCode = null;
             if (object instanceof GridCoverage) {
                 final GridCoverage coverage = (GridCoverage) object;
-                CoverageIO.write(coverage, "GEOTIFF", coverageFile);
+                try (GeoTiffStore store = (GeoTiffStore) org.apache.sis.storage.DataStores.openWritable(coverageFile, "GeoTIFF")) {
+                    store.append(coverage, null);
+                }
                 env = Envelopes.transform(coverage.getGridGeometry().getEnvelope(), outCRS);
                 crsCode = IdentifiedObjects.lookupEPSG(coverage.getCoordinateReferenceSystem());
 
             } else if (object instanceof File || object instanceof Path) {
                 final Path objPath = (object instanceof File) ? ((File) object).toPath() : (Path) object;
-                final ImageCoverageReader reader = CoverageIO.createSimpleReader(objPath);
-                env = Envelopes.transform(reader.getGridGeometry().getEnvelope(), outCRS);
-                crsCode = IdentifiedObjects.lookupEPSG(reader.getGridGeometry().getCoordinateReferenceSystem());
-                IOUtilities.copy(objPath, coverageFile, StandardCopyOption.REPLACE_EXISTING);
-
-            } else if (object instanceof ImageCoverageReader) {
-                final ImageCoverageReader reader = (ImageCoverageReader) object;
-                env = Envelopes.transform(reader.getGridGeometry().getEnvelope(), outCRS);
-                crsCode = IdentifiedObjects.lookupEPSG(reader.getGridGeometry().getCoordinateReferenceSystem());
-                Object in = reader.getInput();
-                if(in == null) {
-                    throw new IOException("Input coverage is invalid.");
-                } else if( in instanceof File || in instanceof Path) {
-                    final Path inPath = (in instanceof File) ? ((File) in).toPath() : (Path) in;
-                    IOUtilities.copy(inPath, coverageFile, StandardCopyOption.REPLACE_EXISTING);
-                } else if(in instanceof InputStream) {
-                    IOUtilities.writeStream((InputStream) in, coverageFile);
-                } else {
-                    throw new IOException("Input coverage is invalid.");
+                try (DataStore store = org.apache.sis.storage.DataStores.open(objPath)) {
+                    Collection<GridCoverageResource> candidates = DataStores.flatten(store, true, GridCoverageResource.class);
+                    if (candidates.isEmpty()) {
+                        throw new UnconvertibleObjectException("The geographic envelope of the layer can't be retrieved");
+                    }
+                    final GridCoverageResource gcr = candidates.iterator().next();
+                    final GridGeometry gridGeometry = gcr.getGridGeometry();
+                    env = gridGeometry.getEnvelope(outCRS);
+                    crsCode = IdentifiedObjects.lookupEPSG(gridGeometry.getCoordinateReferenceSystem());
                 }
+                IOUtilities.copy(objPath, coverageFile, StandardCopyOption.REPLACE_EXISTING);
             }
 
             if(crsCode == null) {

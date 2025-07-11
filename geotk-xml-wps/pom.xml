@@ -74,6 +74,10 @@
   -->
     <dependencies>
         <dependency>
+            <groupId>org.apache.sis.storage</groupId>
+            <artifactId>sis-geotiff</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-xml-kml</artifactId>
             <version>${project.version}</version>

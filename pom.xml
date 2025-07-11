@@ -943,7 +943,6 @@
     <module>geotk-geometry</module>
     <module>geotk-jtswrapper</module>
     <module>geotk-feature</module>
-    <module>geotk-image</module>
     <module>geotk-coverage</module>
 
     <module>geotk-index</module>

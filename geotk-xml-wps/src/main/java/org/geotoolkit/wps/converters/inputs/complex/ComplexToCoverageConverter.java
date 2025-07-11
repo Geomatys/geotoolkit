@@ -16,21 +16,19 @@
  */
 package org.geotoolkit.wps.converters.inputs.complex;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.nio.ByteBuffer;
 import java.util.Base64;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.stream.ImageInputStream;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.DataStores;
+import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.coverage.io.CoverageIO;
-import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.wps.io.WPSEncoding;
+import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.v200.Data;
 
 /**
@@ -69,17 +67,10 @@ public class ComplexToCoverageConverter extends AbstractComplexInputConverter<Gr
                 final String encodedImage = (String) data.get(0);
                 final byte[] byteData = Base64.getDecoder().decode(encodedImage);
                 if (byteData != null && byteData.length > 0) {
-                    final InputStream is = new ByteArrayInputStream(byteData);
-                    if (is != null) {
-                        final ImageInputStream inStream = ImageIO.createImageInputStream(is);
-                        final ImageReader reader;
-                        if (source.getMimeType() != null) {
-                            reader = XImageIO.getReaderByMIMEType(source.getMimeType(), inStream, Boolean.FALSE, Boolean.FALSE);
-                        } else {
-                            reader = XImageIO.getReader(inStream, null, Boolean.FALSE);
-                        }
-                        return CoverageIO.read(reader);
+                    if (WPSMimeType.IMG_GEOTIFF.val().equals(source.getMimeType()) || WPSMimeType.IMG_GEOTIFF_BIS.val().equals(source.getMimeType())) {
+                        return readGeotiff(byteData);
                     }
+                    return readAnyCoverage(byteData);
                 }
                 throw new UnconvertibleObjectException("Error during base64 decoding.");
             } else {
@@ -87,8 +78,40 @@ public class ComplexToCoverageConverter extends AbstractComplexInputConverter<Gr
             }
         } catch (DataStoreException ex) {
             throw new UnconvertibleObjectException(ex.getMessage(), ex);
-        } catch (IOException ex) {
-            throw new UnconvertibleObjectException(ex.getMessage(), ex);
         }
+    }
+
+    public static GridCoverage readGeotiff(byte[] data) throws DataStoreException {
+        try (DataStore store = DataStores.open(ByteBuffer.wrap(data), "GeoTIFF")) {
+            final Collection<GridCoverageResource> resources = org.geotoolkit.storage.DataStores.flatten(store, true, GridCoverageResource.class);
+            final GridCoverageResource gcr = resources.iterator().next();
+            return gcr.read(null);
+        }
+    }
+
+    public static GridCoverage readAnyCoverage(byte[] data) throws DataStoreException {
+        try (DataStore store = DataStores.open(ByteBuffer.wrap(data))) {
+            final Collection<GridCoverageResource> resources = org.geotoolkit.storage.DataStores.flatten(store, true, GridCoverageResource.class);
+            final GridCoverageResource gcr = resources.iterator().next();
+            return gcr.read(null);
+        }
+    }
+
+    /**
+     * @todo the resource store is still open but since the data is in memory it should be okay.
+     */
+    public static GridCoverageResource readGeotiffResource(byte[] data) throws DataStoreException {
+        final DataStore store = DataStores.open(ByteBuffer.wrap(data), "GeoTIFF");
+        final Collection<GridCoverageResource> resources = org.geotoolkit.storage.DataStores.flatten(store, true, GridCoverageResource.class);
+        return resources.iterator().next();
+    }
+
+    /**
+     * @todo the resource store is still open but since the data is in memory it should be okay.
+     */
+    public static GridCoverageResource readAnyCoverageResource(byte[] data) throws DataStoreException {
+        final DataStore store = DataStores.open(ByteBuffer.wrap(data));
+        final Collection<GridCoverageResource> resources = org.geotoolkit.storage.DataStores.flatten(store, true, GridCoverageResource.class);
+        return resources.iterator().next();
     }
 }

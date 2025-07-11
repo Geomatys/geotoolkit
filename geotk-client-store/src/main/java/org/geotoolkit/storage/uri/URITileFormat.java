@@ -56,7 +56,7 @@ public final class URITileFormat extends TileFormat {
             throw new IllegalStateException(ex.getMessage(), ex);
         }
         try {
-            TIFF = new URITileFormat("image/x-geotiff");
+            TIFF = new URITileFormat("image/tiff");
         } catch (DataStoreException ex) {
             throw new IllegalStateException(ex.getMessage(), ex);
         }

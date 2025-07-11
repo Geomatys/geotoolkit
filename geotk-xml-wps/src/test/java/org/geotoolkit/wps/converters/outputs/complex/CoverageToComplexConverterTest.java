@@ -17,6 +17,7 @@
 package org.geotoolkit.wps.converters.outputs.complex;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,9 +39,7 @@ import org.junit.Test;
  */
 public class CoverageToComplexConverterTest extends AbstractWPSConverterTest {
 
-
     @Test
-    @org.junit.Ignore("Fails randomly because of GeoTIFF reader not found.")
     public void testConversion() throws UnconvertibleObjectException, IOException  {
 
         final WPSObjectConverter<GridCoverage, Data> converter = WPSConverterRegistry.getInstance().getConverter(GridCoverage.class, Data.class);
@@ -56,7 +55,7 @@ public class CoverageToComplexConverterTest extends AbstractWPSConverterTest {
 
         final InputStream expectedStream = RenderedImageToComplexConverterTest.class.getResourceAsStream("/expected/coverage_base64");
         assertNotNull(expectedStream);
-        String expectedString = IOUtilities.toString(expectedStream);
+        String expectedString = new String(expectedStream.readAllBytes(),StandardCharsets.US_ASCII);
         expectedString = expectedString.trim();
 
         assertEquals(expectedString, encodedCvg);
