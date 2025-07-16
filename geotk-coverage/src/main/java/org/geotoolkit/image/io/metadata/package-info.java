@@ -17,106 +17,7 @@
  */
 
 /**
- * Spatial (usually geographic) informations encoded in images as metadata.
- * <p>
- * This package defines a {@linkplain org.geotoolkit.image.io.metadata.SpatialMetadataFormat spatial
- * metadata format} which is aimed image format neutral. The metadata format defines a structure for
- * a XML-like tree of nodes with elements and attributes inferred from GeoAPI interfaces and methods.
- * For example, the GeoAPI {@link org.opengis.metadata.content.ImageDescription} interface contains a
- * {@link org.opengis.metadata.content.ImageDescription#getCloudCoverPercentage() getCloudCoverPercentage()}
- * method which return a value of type {@link java.lang.Double}. They are reflected in the spatial
- * metadata format as an {@code "ImageDescription"} node with a {@code "cloudCoverPercentage"}
- * attribute of type {@link javax.imageio.metadata.IIOMetadataFormat#DATATYPE_DOUBLE}.
- * <p>
- * The metadata values are can be stored in a standard
- * {@link javax.imageio.metadata.IIOMetadata} object. However this package defines a convenience
- * subclass, {@link org.geotoolkit.image.io.metadata.SpatialMetadata}, which can instantiate
- * implementations of the ISO 19115-2 standard. This allow fetching attribute values in the
- * XML tree with simple method calls like:
- *
- * {@preformat java
- *     ImageDescription desc = metadata.getInstanceForType(ImageDescription.class);
- *     Double cloudCover = desc.getCloudCoverPercentage()
- * }
- *
- * <a name="accessor-types">{@section Attributes accessor}</a>
- * This package uses {@link org.geotoolkit.image.io.metadata.MetadataNodeAccessor} for reading and
- * writing attribute values. That accessor provides parsing and formatting convenience methods
- * for the following attribute types. Note that this restriction applies to attributes only;
- * {@linkplain javax.imageio.metadata.IIOMetadataNode#getUserObject() user object} attached
- * to elements can be of any type.
- * <p>
- * <table border="1" cellspacing="0">
- *   <tr bgcolor="lightblue">
- *     <th nowrap>&nbsp;Java type&nbsp;</th>
- *     <th nowrap>&nbsp;{@code IIOMetadataFormat} type&nbsp;</th>
- *     <th nowrap>&nbsp;{@code IIOMetadataFormat} value&nbsp;</th>
- *   </tr>
- *   <tr>
- *     <td>&nbsp;{@link java.lang.String}&nbsp;</td>
- *     <td>&nbsp;{@link javax.imageio.metadata.IIOMetadataFormat#DATATYPE_STRING DATATYPE_STRING}</td>
- *     <td>&nbsp;{@link javax.imageio.metadata.IIOMetadataFormat#VALUE_ARBITRARY VALUE_ARBITRARY}</td>
- *   </tr><tr>
- *     <td>&nbsp;{@link java.lang.Boolean}&nbsp;</td>
- *     <td>&nbsp;{@link javax.imageio.metadata.IIOMetadataFormat#DATATYPE_BOOLEAN DATATYPE_BOOLEAN}</td>
- *     <td>&nbsp;{@link javax.imageio.metadata.IIOMetadataFormat#VALUE_ENUMERATION VALUE_ENUMERATION}</td>
- *   </tr><tr>
- *     <td>&nbsp;{@link java.lang.Integer}&nbsp;</td>
- *     <td>&nbsp;{@link javax.imageio.metadata.IIOMetadataFormat#DATATYPE_INTEGER DATATYPE_INTEGER}</td>
- *     <td>&nbsp;{@link javax.imageio.metadata.IIOMetadataFormat#VALUE_ARBITRARY VALUE_ARBITRARY}</td>
- *   </tr><tr>
- *     <td>&nbsp;{@link java.lang.Float}&nbsp;</td>
- *     <td>&nbsp;{@link javax.imageio.metadata.IIOMetadataFormat#DATATYPE_FLOAT DATATYPE_FLOAT}</td>
- *     <td>&nbsp;{@link javax.imageio.metadata.IIOMetadataFormat#VALUE_ARBITRARY VALUE_ARBITRARY}</td>
- *   </tr><tr>
- *     <td>&nbsp;{@link java.lang.Double}&nbsp;</td>
- *     <td>&nbsp;{@link javax.imageio.metadata.IIOMetadataFormat#DATATYPE_DOUBLE DATATYPE_DOUBLE}</td>
- *     <td>&nbsp;{@link javax.imageio.metadata.IIOMetadataFormat#VALUE_ARBITRARY VALUE_ARBITRARY}</td>
- *   </tr><tr>
- *     <td>&nbsp;{@code String[]}&nbsp;</td>
- *     <td>&nbsp;{@link javax.imageio.metadata.IIOMetadataFormat#DATATYPE_STRING DATATYPE_STRING}</td>
- *     <td>&nbsp;{@link javax.imageio.metadata.IIOMetadataFormat#VALUE_LIST VALUE_LIST}</td>
- *   </tr><tr>
- *     <td>&nbsp;{@code int[]}&nbsp;</td>
- *     <td>&nbsp;{@link javax.imageio.metadata.IIOMetadataFormat#DATATYPE_INTEGER DATATYPE_INTEGER}</td>
- *     <td>&nbsp;{@link javax.imageio.metadata.IIOMetadataFormat#VALUE_LIST VALUE_LIST}</td>
- *   </tr><tr>
- *     <td>&nbsp;{@code float[]}&nbsp;</td>
- *     <td>&nbsp;{@link javax.imageio.metadata.IIOMetadataFormat#DATATYPE_FLOAT DATATYPE_FLOAT}</td>
- *     <td>&nbsp;{@link javax.imageio.metadata.IIOMetadataFormat#VALUE_LIST VALUE_LIST}</td>
- *   </tr><tr>
- *     <td>&nbsp;{@code double[]}&nbsp;</td>
- *     <td>&nbsp;{@link javax.imageio.metadata.IIOMetadataFormat#DATATYPE_DOUBLE DATATYPE_DOUBLE}</td>
- *     <td>&nbsp;{@link javax.imageio.metadata.IIOMetadataFormat#VALUE_LIST VALUE_LIST}</td>
- *   </tr><tr>
- *     <td>&nbsp;{@link org.apache.sis.measure.NumberRange}&nbsp;</td>
- *     <td>&nbsp;{@link javax.imageio.metadata.IIOMetadataFormat#DATATYPE_STRING DATATYPE_STRING}</td>
- *     <td>&nbsp;{@link javax.imageio.metadata.IIOMetadataFormat#VALUE_ARBITRARY VALUE_ARBITRARY}</td>
- *   </tr><tr>
- *     <td>&nbsp;{@link java.util.Date}&nbsp;</td>
- *     <td>&nbsp;{@link javax.imageio.metadata.IIOMetadataFormat#DATATYPE_STRING DATATYPE_STRING}</td>
- *     <td>&nbsp;{@link javax.imageio.metadata.IIOMetadataFormat#VALUE_ARBITRARY VALUE_ARBITRARY}</td>
- *   </tr><tr>
- *     <td>&nbsp;{@link org.opengis.util.CodeList}&nbsp;</td>
- *     <td>&nbsp;{@link javax.imageio.metadata.IIOMetadataFormat#DATATYPE_STRING DATATYPE_STRING}</td>
- *     <td>&nbsp;{@link javax.imageio.metadata.IIOMetadataFormat#VALUE_ENUMERATION VALUE_ENUMERATION}</td>
- *   </tr><tr>
- *     <td>&nbsp;{@link org.opengis.metadata.citation.Citation}&nbsp;</td>
- *     <td>&nbsp;{@link javax.imageio.metadata.IIOMetadataFormat#DATATYPE_STRING DATATYPE_STRING}</td>
- *     <td>&nbsp;{@link javax.imageio.metadata.IIOMetadataFormat#VALUE_ARBITRARY VALUE_ARBITRARY}</td>
- *   </tr>
- * </table>
- *
- * {@section String formatting in attributes}
- * The following formatting rules apply:
- * <p>
- * <ul>
- *   <li>Numbers are formatted as in the {@linkplain java.util.Locale#US US locale}, i.e. as
- *       {@link java.lang.Integer#toString(int)} or {@link java.lang.Double#toString(double)}.</li>
- *   <li>Dates are formatted with the {@code "yyyy-MM-dd HH:mm:ss"}
- *       {@linkplain java.text.SimpleDateFormat pattern} in UTC
- *       {@linkplain java.util.TimeZone timezone}.</li>
- * </ul>
+ * Legacy framework for spatial information encoded in images as metadata.
  *
  * {@section Relationship with ISO/OGC standards}
  * The <a href="SpatialMetadataFormat.html#default-formats">default metadata formats</a>
@@ -130,9 +31,7 @@
  * </ul>
  * <p>
  * The ISO 19129 standard defines the metadata that are expected to exist in every coverage format.
- * The table below gives the relationship between ISO 19129 constructs and Java or GeoAPI. Not
- * all ISO constructs are implemented; see {@link org.geotoolkit.image.io.metadata.SpatialMetadataFormat}
- * for the list of constructs available in Geotk.
+ * The table below gives the relationship between ISO 19129 constructs and Java or GeoAPI.
  * <p>
  * <table border="1" cellspacing="0">
  *   <tr bgcolor="lightblue">
@@ -209,9 +108,5 @@
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @version 3.20
- *
- * @since 2.4
- * @module
  */
 package org.geotoolkit.image.io.metadata;

@@ -40,14 +40,6 @@ import org.geotoolkit.image.palette.PaletteFactory;
  * static variable. This is ugly, but there is no API in the current {@link PaletteFactory}
  * class for building a palette from a sample dimension.
  *
- * {@note The raison why <code>PaletteFactory</code> has no API for sample dimensions is that
- *        <code>PaletteFactory</code> is all about creating palettes from files of RGB codes,
- *        and intentionally avoid the coverage API since its package is about image I/O. On
- *        the contrary, this <code>SampleDimensionPalette</code> does not read any file, so
- *        it is a bit a departure compared to the usual factory. In addition, creating the
- *        required <code>SampleDimension</code> objects require a bit of non-trivial code
- *        (provided in <code>ImageCoverageReader</code>) which is out of scope of Image I/O.}
- *
  * @author Martin Desruisseaux (Geomatys)
  */
 final class SampleDimensionPalette extends Palette {

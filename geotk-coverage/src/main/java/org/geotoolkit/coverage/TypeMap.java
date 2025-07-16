@@ -49,7 +49,7 @@ import org.geotoolkit.math.NumberSet;
  * @since 2.1
  * @module
  */
-public final class TypeMap extends Static {
+final class TypeMap extends Static {
     /**
      * The mapping of {@link SampleDimensionType} to {@link DataBuffer} types.
      * Must be sorted in increasing number of bits.

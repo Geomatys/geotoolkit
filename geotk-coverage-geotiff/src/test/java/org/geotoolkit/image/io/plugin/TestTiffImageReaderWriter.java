@@ -33,6 +33,7 @@ import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Random;
 import javax.imageio.IIOParam;
+import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
@@ -43,7 +44,6 @@ import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
-import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.image.internal.ImageUtils;
 import org.geotoolkit.image.internal.PhotometricInterpretation;
 import org.geotoolkit.image.internal.PlanarConfiguration;
@@ -516,7 +516,7 @@ public strictfp abstract class TestTiffImageReaderWriter {
                 } else if (type.equals(OutputStream.class)) {
                     out = Files.newOutputStream(fileTest, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
                 } else if (type.equals(ImageOutputStream.class)) {
-                    out = CoverageIO.createImageOutputStream(fileTest);
+                    out = ImageIO.createImageOutputStream(fileTest.toFile());
                 } else if (type.equals(FileOutputStream.class)) {
                     out = new FileImageOutputStream(fileTest.toFile());
                 }
@@ -558,7 +558,7 @@ public strictfp abstract class TestTiffImageReaderWriter {
                 } else if (type.equals(InputStream.class)) {
                     in = Files.newInputStream(fileTest);
                 } else if (type.equals(ImageInputStream.class)) {
-                    in = CoverageIO.createImageInputStream(fileTest);
+                    in = ImageIO.createImageInputStream(fileTest.toFile());
                 }
 
                 reader.setInput(fileTest); //-- to initialize reader

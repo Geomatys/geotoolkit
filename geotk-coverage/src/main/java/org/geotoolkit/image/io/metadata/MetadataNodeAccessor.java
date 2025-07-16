@@ -17,9 +17,14 @@
  */
 package org.geotoolkit.image.io.metadata;
 
+import jakarta.xml.bind.DatatypeConverter;
 import java.lang.reflect.Array;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.Locale;
 import java.util.NoSuchElementException;
+import java.util.TimeZone;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.metadata.IIOMetadataFormat;
@@ -73,10 +78,6 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
  *        └───Extent
  *            └───GeographicElement
  * }
- *
- * <blockquote><font size="-1"><b>Note:</b> the value of {@code <root>} depends on the metadata
- * format, but is typically
- * {@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat#FORMAT_NAME}</font></blockquote>
  *
  * After a {@code MetadataNodeAccessor} instance has been created, the {@code getAttributeAs<Type>(String)}
  * methods can be invoked for fetching any attribute values, taking care of conversions to
@@ -482,7 +483,7 @@ public class MetadataNodeAccessor extends MetadataNodeParser {
         if (value != null) {
             final Class<?> type = value.getClass();
             if (Date.class.isAssignableFrom(type)) {
-                asText = JDK8.printDateTime((Date) value);
+                asText = printDateTime((Date) value);
             } else if (isFormattable(type)) {
                 asText = value.toString();
             } else if (isFormattable(type.getComponentType())) {
@@ -496,6 +497,26 @@ public class MetadataNodeAccessor extends MetadataNodeParser {
                     Errors.Keys.IllegalClass_2, Classes.getClass(element), IIOMetadataNode.class));
         }
         element.setNodeValue(asText);
+    }
+
+    /**
+     * Formats a date value in a string, assuming UTC timezone and US locale.
+     * This method should be used only for occasional formatting.
+     *
+     * @param  date The date to format.
+     * @return The formatted date.
+     *
+     * @see DatatypeConverter#printDateTime(Calendar)
+     */
+    private static String printDateTime(final Date date) {
+        Calendar calendar = CALENDAR.getAndSet(null);
+        if (calendar == null) {
+            calendar = new GregorianCalendar(TimeZone.getTimeZone("UTC"), Locale.US);
+        }
+        calendar.setTime(date);
+        final String text = DatatypeConverter.printDateTime(calendar);
+        CALENDAR.set(calendar); // Recycle for future usage.
+        return text;
     }
 
     /**

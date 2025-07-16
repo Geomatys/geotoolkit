@@ -101,7 +101,7 @@ import org.opengis.util.InternationalString;
  * @author Martin Desruisseaux (Geomatys)
  * @author Johann Sorel (Geomatys)
  */
-public class ImageCoverageWriter extends GridCoverageStore {
+public class ImageCoverageWriter extends ImageCoverageStore {
     private static final int X_DIMENSION = 0, Y_DIMENSION = 1;
 
     /**
@@ -317,7 +317,7 @@ public class ImageCoverageWriter extends GridCoverageStore {
                 copyLevel(newWriter);
                 setLocale(newWriter, locale);
                 if (LOGGER.isLoggable(getFineLevel())) {
-                    ImageCoverageStore.logCodecCreation(this, ImageCoverageWriter.class,
+                    logCodecCreation(this, ImageCoverageWriter.class,
                             newWriter, newWriter.getOriginatingProvider());
                 }
             }
@@ -837,7 +837,7 @@ public class ImageCoverageWriter extends GridCoverageStore {
                 if (param != null) {
                     crs = param.getCoordinateReferenceSystem();
                 }
-                ImageCoverageStore.logOperation(level, locale, ImageCoverageWriter.class, true,
+                logOperation(level, locale, ImageCoverageWriter.class, true,
                         output, 0, coverage, size, crs, destToExtractedGrid, time);
             }
         }

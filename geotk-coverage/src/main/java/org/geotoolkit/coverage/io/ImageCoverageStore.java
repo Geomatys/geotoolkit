@@ -30,7 +30,6 @@ import org.apache.sis.util.Classes;
 import static org.geotoolkit.coverage.io.GridCoverageStore.LOGGER;
 import static org.geotoolkit.internal.InternalUtilities.adjustForRoundingError;
 import org.geotoolkit.internal.image.io.Formats;
-import org.geotoolkit.lang.Static;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;
@@ -41,19 +40,15 @@ import org.opengis.util.InternationalString;
 
 
 /**
- * Static utilities methods for use by {@link ImageCoverageReader} and {@link ImageCoverageStore}.
- * Current implementation contains mostly method related to logging. They are isolated in this
- * class in order to reduce the amount of code de load when there is no logging. To make that
- * effective, it is caller responsibility to check if logging are enabled before to invoke any
- * method in this class.
+ * Base class of reader and writer.
  */
-final class ImageCoverageStore extends Static {
+class ImageCoverageStore extends GridCoverageStore {
     private static final int X_DIMENSION = 0, Y_DIMENSION = 1;
 
     /**
-     * Do not allow instantiation of this class.
+     * Creates a new instance.
      */
-    private ImageCoverageStore() {
+    ImageCoverageStore() {
     }
 
     /**
