@@ -32,7 +32,6 @@ import jakarta.xml.bind.annotation.XmlEnum;
 import jakarta.xml.bind.annotation.XmlEnumValue;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
-import java.math.BigDecimal;
 import java.net.URI;
 import java.util.LinkedHashSet;
 import java.util.Objects;
@@ -146,22 +145,22 @@ public final class SchemaProperty extends DataTransferObject {
     public static final String JSON_PROPERTY_MAXIMUM = "maximum";
     @XmlElement(name = "maximum")
     @jakarta.annotation.Nullable
-    private BigDecimal maximum;
+    private Double maximum;
 
     public static final String JSON_PROPERTY_EXCLUSIVE_MAXIMUM = "exclusiveMaximum";
     @XmlElement(name = "exclusiveMaximum")
     @jakarta.annotation.Nullable
-    private BigDecimal exclusiveMaximum;
+    private Double exclusiveMaximum;
 
     public static final String JSON_PROPERTY_MINIMUM = "minimum";
     @XmlElement(name = "minimum")
     @jakarta.annotation.Nullable
-    private BigDecimal minimum;
+    private Double minimum;
 
     public static final String JSON_PROPERTY_EXCLUSIVE_MINIMUM = "exclusiveMinimum";
     @XmlElement(name = "exclusiveMinimum")
     @jakarta.annotation.Nullable
-    private BigDecimal exclusiveMinimum;
+    private Double exclusiveMinimum;
 
     public static final String JSON_PROPERTY_PATTERN = "pattern";
     @XmlElement(name = "pattern")
@@ -357,7 +356,7 @@ public final class SchemaProperty extends DataTransferObject {
         this.contentMediaType = contentMediaType;
     }
 
-    public SchemaProperty maximum(@jakarta.annotation.Nullable BigDecimal maximum) {
+    public SchemaProperty maximum(@jakarta.annotation.Nullable Double maximum) {
         this.maximum = maximum;
         return this;
     }
@@ -371,18 +370,18 @@ public final class SchemaProperty extends DataTransferObject {
     @JsonProperty(JSON_PROPERTY_MAXIMUM)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
     @JacksonXmlProperty(localName = "maximum")
-    public BigDecimal getMaximum() {
+    public Double getMaximum() {
         return maximum;
     }
 
     @JsonProperty(JSON_PROPERTY_MAXIMUM)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
     @JacksonXmlProperty(localName = "maximum")
-    public void setMaximum(@jakarta.annotation.Nullable BigDecimal maximum) {
+    public void setMaximum(@jakarta.annotation.Nullable Double maximum) {
         this.maximum = maximum;
     }
 
-    public SchemaProperty exclusiveMaximum(@jakarta.annotation.Nullable BigDecimal exclusiveMaximum) {
+    public SchemaProperty exclusiveMaximum(@jakarta.annotation.Nullable Double exclusiveMaximum) {
         this.exclusiveMaximum = exclusiveMaximum;
         return this;
     }
@@ -396,18 +395,18 @@ public final class SchemaProperty extends DataTransferObject {
     @JsonProperty(JSON_PROPERTY_EXCLUSIVE_MAXIMUM)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
     @JacksonXmlProperty(localName = "exclusiveMaximum")
-    public BigDecimal getExclusiveMaximum() {
+    public Double getExclusiveMaximum() {
         return exclusiveMaximum;
     }
 
     @JsonProperty(JSON_PROPERTY_EXCLUSIVE_MAXIMUM)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
     @JacksonXmlProperty(localName = "exclusiveMaximum")
-    public void setExclusiveMaximum(@jakarta.annotation.Nullable BigDecimal exclusiveMaximum) {
+    public void setExclusiveMaximum(@jakarta.annotation.Nullable Double exclusiveMaximum) {
         this.exclusiveMaximum = exclusiveMaximum;
     }
 
-    public SchemaProperty minimum(@jakarta.annotation.Nullable BigDecimal minimum) {
+    public SchemaProperty minimum(@jakarta.annotation.Nullable Double minimum) {
         this.minimum = minimum;
         return this;
     }
@@ -421,18 +420,18 @@ public final class SchemaProperty extends DataTransferObject {
     @JsonProperty(JSON_PROPERTY_MINIMUM)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
     @JacksonXmlProperty(localName = "minimum")
-    public BigDecimal getMinimum() {
+    public Double getMinimum() {
         return minimum;
     }
 
     @JsonProperty(JSON_PROPERTY_MINIMUM)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
     @JacksonXmlProperty(localName = "minimum")
-    public void setMinimum(@jakarta.annotation.Nullable BigDecimal minimum) {
+    public void setMinimum(@jakarta.annotation.Nullable Double minimum) {
         this.minimum = minimum;
     }
 
-    public SchemaProperty exclusiveMinimum(@jakarta.annotation.Nullable BigDecimal exclusiveMinimum) {
+    public SchemaProperty exclusiveMinimum(@jakarta.annotation.Nullable Double exclusiveMinimum) {
         this.exclusiveMinimum = exclusiveMinimum;
         return this;
     }
@@ -446,14 +445,14 @@ public final class SchemaProperty extends DataTransferObject {
     @JsonProperty(JSON_PROPERTY_EXCLUSIVE_MINIMUM)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
     @JacksonXmlProperty(localName = "exclusiveMinimum")
-    public BigDecimal getExclusiveMinimum() {
+    public Double getExclusiveMinimum() {
         return exclusiveMinimum;
     }
 
     @JsonProperty(JSON_PROPERTY_EXCLUSIVE_MINIMUM)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
     @JacksonXmlProperty(localName = "exclusiveMinimum")
-    public void setExclusiveMinimum(@jakarta.annotation.Nullable BigDecimal exclusiveMinimum) {
+    public void setExclusiveMinimum(@jakarta.annotation.Nullable Double exclusiveMinimum) {
         this.exclusiveMinimum = exclusiveMinimum;
     }
 

@@ -26,7 +26,6 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
-import java.math.BigDecimal;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -89,27 +88,27 @@ public final class ZoneInfo extends DataTransferObject {
     public static final String JSON_PROPERTY_CENTROID = "centroid";
     @XmlElement(name = "centroid")
     @jakarta.annotation.Nullable
-    private List<BigDecimal> centroid = new ArrayList<>();
+    private List<Double> centroid = new ArrayList<>();
 
     public static final String JSON_PROPERTY_BBOX = "bbox";
     @XmlElement(name = "bbox")
     @jakarta.annotation.Nullable
-    private List<BigDecimal> bbox = new ArrayList<>();
+    private List<Double> bbox = new ArrayList<>();
 
     public static final String JSON_PROPERTY_AREA_METERS_SQUARE = "areaMetersSquare";
     @XmlElement(name = "areaMetersSquare")
     @jakarta.annotation.Nullable
-    private BigDecimal areaMetersSquare;
+    private Double areaMetersSquare;
 
     public static final String JSON_PROPERTY_VOLUME_METERS_CUBE = "volumeMetersCube";
     @XmlElement(name = "volumeMetersCube")
     @jakarta.annotation.Nullable
-    private BigDecimal volumeMetersCube;
+    private Double volumeMetersCube;
 
     public static final String JSON_PROPERTY_TEMPORAL_DURATION_SECONDS = "temporalDurationSeconds";
     @XmlElement(name = "temporalDurationSeconds")
     @jakarta.annotation.Nullable
-    private BigDecimal temporalDurationSeconds;
+    private Double temporalDurationSeconds;
 
     public static final String JSON_PROPERTY_GEOMETRY = "geometry";
     @XmlElement(name = "geometry")
@@ -265,12 +264,12 @@ public final class ZoneInfo extends DataTransferObject {
         this.crs = crs;
     }
 
-    public ZoneInfo centroid(@jakarta.annotation.Nullable List<BigDecimal> centroid) {
+    public ZoneInfo centroid(@jakarta.annotation.Nullable List<Double> centroid) {
         this.centroid = centroid;
         return this;
     }
 
-    public ZoneInfo addCentroidItem(BigDecimal centroidItem) {
+    public ZoneInfo addCentroidItem(Double centroidItem) {
         if (this.centroid == null) {
             this.centroid = new ArrayList<>();
         }
@@ -288,7 +287,7 @@ public final class ZoneInfo extends DataTransferObject {
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
     @JacksonXmlProperty(localName = "centroid")
     @JacksonXmlElementWrapper(useWrapping = false)
-    public List<BigDecimal> getCentroid() {
+    public List<Double> getCentroid() {
         return centroid;
     }
 
@@ -296,16 +295,16 @@ public final class ZoneInfo extends DataTransferObject {
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
     @JacksonXmlProperty(localName = "centroid")
     @JacksonXmlElementWrapper(useWrapping = false)
-    public void setCentroid(@jakarta.annotation.Nullable List<BigDecimal> centroid) {
+    public void setCentroid(@jakarta.annotation.Nullable List<Double> centroid) {
         this.centroid = centroid;
     }
 
-    public ZoneInfo bbox(@jakarta.annotation.Nullable List<BigDecimal> bbox) {
+    public ZoneInfo bbox(@jakarta.annotation.Nullable List<Double> bbox) {
         this.bbox = bbox;
         return this;
     }
 
-    public ZoneInfo addBboxItem(BigDecimal bboxItem) {
+    public ZoneInfo addBboxItem(Double bboxItem) {
         if (this.bbox == null) {
             this.bbox = new ArrayList<>();
         }
@@ -323,7 +322,7 @@ public final class ZoneInfo extends DataTransferObject {
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
     @JacksonXmlProperty(localName = "bbox")
     @JacksonXmlElementWrapper(useWrapping = false)
-    public List<BigDecimal> getBbox() {
+    public List<Double> getBbox() {
         return bbox;
     }
 
@@ -331,11 +330,11 @@ public final class ZoneInfo extends DataTransferObject {
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
     @JacksonXmlProperty(localName = "bbox")
     @JacksonXmlElementWrapper(useWrapping = false)
-    public void setBbox(@jakarta.annotation.Nullable List<BigDecimal> bbox) {
+    public void setBbox(@jakarta.annotation.Nullable List<Double> bbox) {
         this.bbox = bbox;
     }
 
-    public ZoneInfo areaMetersSquare(@jakarta.annotation.Nullable BigDecimal areaMetersSquare) {
+    public ZoneInfo areaMetersSquare(@jakarta.annotation.Nullable Double areaMetersSquare) {
         this.areaMetersSquare = areaMetersSquare;
         return this;
     }
@@ -349,18 +348,18 @@ public final class ZoneInfo extends DataTransferObject {
     @JsonProperty(JSON_PROPERTY_AREA_METERS_SQUARE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
     @JacksonXmlProperty(localName = "areaMetersSquare")
-    public BigDecimal getAreaMetersSquare() {
+    public Double getAreaMetersSquare() {
         return areaMetersSquare;
     }
 
     @JsonProperty(JSON_PROPERTY_AREA_METERS_SQUARE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
     @JacksonXmlProperty(localName = "areaMetersSquare")
-    public void setAreaMetersSquare(@jakarta.annotation.Nullable BigDecimal areaMetersSquare) {
+    public void setAreaMetersSquare(@jakarta.annotation.Nullable Double areaMetersSquare) {
         this.areaMetersSquare = areaMetersSquare;
     }
 
-    public ZoneInfo volumeMetersCube(@jakarta.annotation.Nullable BigDecimal volumeMetersCube) {
+    public ZoneInfo volumeMetersCube(@jakarta.annotation.Nullable Double volumeMetersCube) {
         this.volumeMetersCube = volumeMetersCube;
         return this;
     }
@@ -374,18 +373,18 @@ public final class ZoneInfo extends DataTransferObject {
     @JsonProperty(JSON_PROPERTY_VOLUME_METERS_CUBE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
     @JacksonXmlProperty(localName = "volumeMetersCube")
-    public BigDecimal getVolumeMetersCube() {
+    public Double getVolumeMetersCube() {
         return volumeMetersCube;
     }
 
     @JsonProperty(JSON_PROPERTY_VOLUME_METERS_CUBE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
     @JacksonXmlProperty(localName = "volumeMetersCube")
-    public void setVolumeMetersCube(@jakarta.annotation.Nullable BigDecimal volumeMetersCube) {
+    public void setVolumeMetersCube(@jakarta.annotation.Nullable Double volumeMetersCube) {
         this.volumeMetersCube = volumeMetersCube;
     }
 
-    public ZoneInfo temporalDurationSeconds(@jakarta.annotation.Nullable BigDecimal temporalDurationSeconds) {
+    public ZoneInfo temporalDurationSeconds(@jakarta.annotation.Nullable Double temporalDurationSeconds) {
         this.temporalDurationSeconds = temporalDurationSeconds;
         return this;
     }
@@ -399,14 +398,14 @@ public final class ZoneInfo extends DataTransferObject {
     @JsonProperty(JSON_PROPERTY_TEMPORAL_DURATION_SECONDS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
     @JacksonXmlProperty(localName = "temporalDurationSeconds")
-    public BigDecimal getTemporalDurationSeconds() {
+    public Double getTemporalDurationSeconds() {
         return temporalDurationSeconds;
     }
 
     @JsonProperty(JSON_PROPERTY_TEMPORAL_DURATION_SECONDS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
     @JacksonXmlProperty(localName = "temporalDurationSeconds")
-    public void setTemporalDurationSeconds(@jakarta.annotation.Nullable BigDecimal temporalDurationSeconds) {
+    public void setTemporalDurationSeconds(@jakarta.annotation.Nullable Double temporalDurationSeconds) {
         this.temporalDurationSeconds = temporalDurationSeconds;
     }
 
