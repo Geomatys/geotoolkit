@@ -41,5 +41,11 @@
             <version>${sis.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>cds.healpix</groupId>
+            <artifactId>cds-healpix</artifactId>
+            <version>0.30</version>
+        </dependency>
+
     </dependencies>
 </project>
