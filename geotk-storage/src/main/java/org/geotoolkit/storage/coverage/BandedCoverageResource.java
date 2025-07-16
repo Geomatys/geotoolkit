@@ -153,12 +153,13 @@ public interface BandedCoverageResource extends DataSet {
 
         try {
             final BandedCoverage coverage = resource.read(domain, range);
-            if (coverage.getSampleDimensions().size() != 1) {
-                throw new CannotEvaluateException("Only single band sampling supported in current implementation.");
-            }
 
             if (coverage instanceof BandedCoverageExt bce) {
                 return bce.sample(domain, domain);
+            }
+
+            if (coverage.getSampleDimensions().size() != 1) {
+                throw new CannotEvaluateException("Only single band sampling supported in current implementation.");
             }
 
             final GridExtent extent = domain.getExtent();
