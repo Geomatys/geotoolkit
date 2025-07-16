@@ -25,7 +25,6 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
-import java.math.BigDecimal;
 import java.util.Objects;
 import org.geotoolkit.ogcapi.model.DataTransferObject;
 
@@ -46,27 +45,27 @@ public final class ZoneInfoStatisticsValue extends DataTransferObject {
     public static final String JSON_PROPERTY_MINIMUM = "minimum";
     @XmlElement(name = "minimum")
     @jakarta.annotation.Nullable
-    private BigDecimal minimum;
+    private Double minimum;
 
     public static final String JSON_PROPERTY_MAXIMUM = "maximum";
     @XmlElement(name = "maximum")
     @jakarta.annotation.Nullable
-    private BigDecimal maximum;
+    private Double maximum;
 
     public static final String JSON_PROPERTY_AVERAGE = "average";
     @XmlElement(name = "average")
     @jakarta.annotation.Nullable
-    private BigDecimal average;
+    private Double average;
 
     public static final String JSON_PROPERTY_STD_DEV = "stdDev";
     @XmlElement(name = "stdDev")
     @jakarta.annotation.Nullable
-    private BigDecimal stdDev;
+    private Double stdDev;
 
     public ZoneInfoStatisticsValue() {
     }
 
-    public ZoneInfoStatisticsValue minimum(@jakarta.annotation.Nullable BigDecimal minimum) {
+    public ZoneInfoStatisticsValue minimum(@jakarta.annotation.Nullable Double minimum) {
         this.minimum = minimum;
         return this;
     }
@@ -80,18 +79,18 @@ public final class ZoneInfoStatisticsValue extends DataTransferObject {
     @JsonProperty(JSON_PROPERTY_MINIMUM)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
     @JacksonXmlProperty(localName = "minimum")
-    public BigDecimal getMinimum() {
+    public Double getMinimum() {
         return minimum;
     }
 
     @JsonProperty(JSON_PROPERTY_MINIMUM)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
     @JacksonXmlProperty(localName = "minimum")
-    public void setMinimum(@jakarta.annotation.Nullable BigDecimal minimum) {
+    public void setMinimum(@jakarta.annotation.Nullable Double minimum) {
         this.minimum = minimum;
     }
 
-    public ZoneInfoStatisticsValue maximum(@jakarta.annotation.Nullable BigDecimal maximum) {
+    public ZoneInfoStatisticsValue maximum(@jakarta.annotation.Nullable Double maximum) {
         this.maximum = maximum;
         return this;
     }
@@ -105,18 +104,18 @@ public final class ZoneInfoStatisticsValue extends DataTransferObject {
     @JsonProperty(JSON_PROPERTY_MAXIMUM)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
     @JacksonXmlProperty(localName = "maximum")
-    public BigDecimal getMaximum() {
+    public Double getMaximum() {
         return maximum;
     }
 
     @JsonProperty(JSON_PROPERTY_MAXIMUM)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
     @JacksonXmlProperty(localName = "maximum")
-    public void setMaximum(@jakarta.annotation.Nullable BigDecimal maximum) {
+    public void setMaximum(@jakarta.annotation.Nullable Double maximum) {
         this.maximum = maximum;
     }
 
-    public ZoneInfoStatisticsValue average(@jakarta.annotation.Nullable BigDecimal average) {
+    public ZoneInfoStatisticsValue average(@jakarta.annotation.Nullable Double average) {
         this.average = average;
         return this;
     }
@@ -130,18 +129,18 @@ public final class ZoneInfoStatisticsValue extends DataTransferObject {
     @JsonProperty(JSON_PROPERTY_AVERAGE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
     @JacksonXmlProperty(localName = "average")
-    public BigDecimal getAverage() {
+    public Double getAverage() {
         return average;
     }
 
     @JsonProperty(JSON_PROPERTY_AVERAGE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
     @JacksonXmlProperty(localName = "average")
-    public void setAverage(@jakarta.annotation.Nullable BigDecimal average) {
+    public void setAverage(@jakarta.annotation.Nullable Double average) {
         this.average = average;
     }
 
-    public ZoneInfoStatisticsValue stdDev(@jakarta.annotation.Nullable BigDecimal stdDev) {
+    public ZoneInfoStatisticsValue stdDev(@jakarta.annotation.Nullable Double stdDev) {
         this.stdDev = stdDev;
         return this;
     }
@@ -155,14 +154,14 @@ public final class ZoneInfoStatisticsValue extends DataTransferObject {
     @JsonProperty(JSON_PROPERTY_STD_DEV)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
     @JacksonXmlProperty(localName = "stdDev")
-    public BigDecimal getStdDev() {
+    public Double getStdDev() {
         return stdDev;
     }
 
     @JsonProperty(JSON_PROPERTY_STD_DEV)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
     @JacksonXmlProperty(localName = "stdDev")
-    public void setStdDev(@jakarta.annotation.Nullable BigDecimal stdDev) {
+    public void setStdDev(@jakarta.annotation.Nullable Double stdDev) {
         this.stdDev = stdDev;
     }
 

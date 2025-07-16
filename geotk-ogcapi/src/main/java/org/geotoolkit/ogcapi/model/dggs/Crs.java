@@ -68,7 +68,11 @@ public final class Crs extends DataTransferObject {
             if (value.plain != null && !value.plain.isBlank()) {
                 jgen.writeString(value.plain);
             } else {
-                jgen.writeObject(value);
+                final Map map = new HashMap();
+                if (value.uri != null) map.put("uri", value.uri);
+                if (value.wkt != null) map.put("wkt", value.wkt);
+                if (value.referenceSystem != null) map.put("referenceSystem", value.referenceSystem);
+                jgen.writeObject(map);
             }
         }
     }
