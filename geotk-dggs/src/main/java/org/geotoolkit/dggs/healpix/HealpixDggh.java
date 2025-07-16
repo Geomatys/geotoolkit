@@ -25,15 +25,15 @@ import org.geotoolkit.referencing.dggs.internal.shared.AbstractDiscreteGlobalGri
  *
  * @author Johann Sorel (Geomatys)
  */
-final class NHealpixDggh extends AbstractDiscreteGlobalGridHierarchy<NHealpixDggrs> {
+final class HealpixDggh extends AbstractDiscreteGlobalGridHierarchy<HealpixDggrs> {
 
     private final DiscreteGlobalGrid[] grids;
 
-    NHealpixDggh(NHealpixDggrs dggrs) {
+    HealpixDggh(HealpixDggrs dggrs) {
         super(dggrs);
         grids = new DiscreteGlobalGrid[Healpix.DEPTH_MAX];
         for (int i = 0; i < grids.length; i++) {
-            grids[i] = new NHealpixDgg(this, i);
+            grids[i] = new HealpixDgg(this, i);
         }
     }
 
@@ -58,7 +58,7 @@ final class NHealpixDggh extends AbstractDiscreteGlobalGridHierarchy<NHealpixDgg
             return cs.toString();
         } else if (zoneId instanceof Long l) {
             return idAsText(l);
-        } else if (zoneId instanceof NHealpixZone z) {
+        } else if (zoneId instanceof HealpixZone z) {
             return z.getTextIdentifier().toString();
         } else {
             throw new IllegalArgumentException("Identifer not supported");
@@ -71,7 +71,7 @@ final class NHealpixDggh extends AbstractDiscreteGlobalGridHierarchy<NHealpixDgg
             return idAsLong(cs);
         } else if (zoneId instanceof Long l) {
             return l;
-        } else if (zoneId instanceof NHealpixZone z) {
+        } else if (zoneId instanceof HealpixZone z) {
             return z.getLongIdentifier();
         } else {
             throw new IllegalArgumentException("Identifer not supported");
@@ -80,8 +80,8 @@ final class NHealpixDggh extends AbstractDiscreteGlobalGridHierarchy<NHealpixDgg
 
     @Override
     public Zone getZone(Object identifier) throws IllegalArgumentException {
-        if (identifier instanceof NHealpixZone z) return z;
-        return new NHealpixZone(dggrs, toLongIdentifier(identifier));
+        if (identifier instanceof HealpixZone z) return z;
+        return new HealpixZone(dggrs, toLongIdentifier(identifier));
     }
 
     static final String idAsText(final long hash) {

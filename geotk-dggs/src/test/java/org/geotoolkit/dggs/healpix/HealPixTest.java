@@ -33,7 +33,7 @@ import org.opengis.referencing.operation.TransformException;
 public class HealPixTest extends AbstractDggrsTest {
 
     public HealPixTest() {
-        super(new NHealpixDggrs());
+        super(new HealpixDggrs());
     }
 
     /**
@@ -42,7 +42,7 @@ public class HealPixTest extends AbstractDggrsTest {
     @Test
     public void testAntimeridian() throws TransformException {
 
-        final NHealpixDggrs dggrs = new NHealpixDggrs();
+        final HealpixDggrs dggrs = new HealpixDggrs();
         final Zone zone = dggrs.createCoder().decode("11");
 
         final GeographicExtent extent = zone.getGeographicExtent();

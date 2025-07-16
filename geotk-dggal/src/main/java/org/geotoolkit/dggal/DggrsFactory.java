@@ -30,7 +30,8 @@ import org.opengis.util.NoSuchIdentifierException;
  */
 public final class DggrsFactory implements DiscreteGlobalGridReferenceSystemFactory{
 
-    private static final List<String> DGGHS = List.of(DGGALDggrs.HEALPIX_IDENTIFIER,
+    private static final List<String> DGGHS = List.of(
+            //DGGALDggrs.HEALPIX_IDENTIFIER, //conflicts with CDS Healpix
             DGGALDggrs.ISEA3H_IDENTIFIER,
             DGGALDggrs.ISEA4R_IDENTIFIER,
             DGGALDggrs.ISEA7H_IDENTIFIER,
@@ -64,7 +65,7 @@ public final class DggrsFactory implements DiscreteGlobalGridReferenceSystemFact
     @Override
     public DiscreteGlobalGridReferenceSystem createDggrs(String dgghId, String zonalRefId, GeographicCRS base) throws FactoryException {
         switch (dgghId) {
-            case DGGALDggrs.HEALPIX_IDENTIFIER : return DGGALDggrs.HEALPIX_INSTANCE;
+            //case DGGALDggrs.HEALPIX_IDENTIFIER : return DGGALDggrs.HEALPIX_INSTANCE; //conflicts with CDS Healpix
             case DGGALDggrs.ISEA3H_IDENTIFIER : return DGGALDggrs.ISEA3H_INSTANCE;
             case DGGALDggrs.ISEA4R_IDENTIFIER : return DGGALDggrs.ISEA4R_INSTANCE;
             case DGGALDggrs.ISEA7H_IDENTIFIER : return DGGALDggrs.ISEA7H_INSTANCE;

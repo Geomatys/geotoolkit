@@ -46,7 +46,7 @@ import org.opengis.referencing.crs.GeographicCRS;
  *
  * @author Johann Sorel (Geomatys)
  */
-final class NHealpixZone extends AbstractZone<NHealpixDggrs> {
+public final class HealpixZone extends AbstractZone<HealpixDggrs> {
 
     private static final SampleSystem CRS84 = SampleSystem.of(CommonCRS.WGS84.normalizedGeographic());
 
@@ -54,14 +54,14 @@ final class NHealpixZone extends AbstractZone<NHealpixDggrs> {
     private final int level;
     private final long npixel;
 
-    public NHealpixZone(NHealpixDggrs dggrs, long hash) {
+    public HealpixZone(HealpixDggrs dggrs, long hash) {
         super(dggrs);
         this.hash = hash;
         this.level = FitsSerialization.getOrder(hash)-1;
         this.npixel = FitsSerialization.getPixel(hash);
     }
 
-    public NHealpixZone(NHealpixDggrs dggrs, int level, long npixel) {
+    public HealpixZone(HealpixDggrs dggrs, int level, long npixel) {
         super(dggrs);
         this.hash = FitsSerialization.getHash(level+1, npixel);
         this.level = level;
@@ -88,7 +88,7 @@ final class NHealpixZone extends AbstractZone<NHealpixDggrs> {
 
     @Override
     public CharSequence getTextIdentifier() {
-        return NHealpixDggh.idAsText(hash);
+        return HealpixDggh.idAsText(hash);
     }
 
     @Override
@@ -113,8 +113,7 @@ final class NHealpixZone extends AbstractZone<NHealpixDggrs> {
     @Override
     public Collection<? extends Zone> getParents() {
         if (level == 0) return Collections.EMPTY_SET;
-        return List.of(
-                new NHealpixZone(dggrs, level-1, npixel /4)
+        return List.of(new HealpixZone(dggrs, level-1, npixel /4)
         );
     }
 
@@ -124,11 +123,10 @@ final class NHealpixZone extends AbstractZone<NHealpixDggrs> {
         if (level+1 >= maxLevel) return Collections.EMPTY_LIST;
         final int clevel = level +1;
         final long base = npixel*4;
-        return List.of(
-                new NHealpixZone(dggrs, clevel, base),
-                new NHealpixZone(dggrs, clevel, base+1),
-                new NHealpixZone(dggrs, clevel, base+2),
-                new NHealpixZone(dggrs, clevel, base+3)
+        return List.of(new HealpixZone(dggrs, clevel, base),
+                new HealpixZone(dggrs, clevel, base+1),
+                new HealpixZone(dggrs, clevel, base+2),
+                new HealpixZone(dggrs, clevel, base+3)
         );
     }
 
@@ -137,9 +135,9 @@ final class NHealpixZone extends AbstractZone<NHealpixDggrs> {
         final NeighbourSelector selector = Healpix.getNested(level).newNeighbourSelector();
         final NeighbourList neighbours = selector.neighbours(npixel);
         final FlatHashIterator iterator = neighbours.iterator();
-        final List<NHealpixZone> zones = new ArrayList<>(neighbours.size());
+        final List<HealpixZone> zones = new ArrayList<>(neighbours.size());
         while (iterator.hasNext()) {
-            zones.add(new NHealpixZone(dggrs, level, iterator.next()));
+            zones.add(new HealpixZone(dggrs, level, iterator.next()));
         }
         return zones;
     }

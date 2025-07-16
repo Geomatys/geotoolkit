@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- =======================================================================
+   Maven Project Configuration File
+
+   The Geotoolkit Project
+       http://www.geotoolkit.org/
+
+======================================================================= -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.geotoolkit</groupId>
+        <artifactId>geotoolkit</artifactId>
+        <version>5.0-SNAPSHOT</version>
+    </parent>
+
+
+    <!-- =========================================================== -->
+    <!--     Module Description                                      -->
+    <!-- =========================================================== -->
+    <artifactId>geotk-hips</artifactId>
+    <packaging>jar</packaging>
+    <name>DataStore HIPS</name>
+
+    <description>
+        HIPS https://www.ivoa.net/documents/HiPS/20170519/REC-HIPS-1.0-20170519.pdf
+    </description>
+
+    <licenses>
+        <license>
+            <name>Lesser General Public License (LGPL)</name>
+            <url>http://www.gnu.org/copyleft/lesser.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+
+    <!-- =========================================================== -->
+    <!--     Dependency Management                                   -->
+    <!-- =========================================================== -->
+    <dependencies>
+        <dependency>
+            <groupId>org.geotoolkit</groupId>
+            <artifactId>geotk-storage</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotoolkit</groupId>
+            <artifactId>geotk-client-store</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotoolkit</groupId>
+            <artifactId>geotk-dggs</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+
+</project>
