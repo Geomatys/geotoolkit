@@ -386,7 +386,7 @@ public class XMLCoverageResource extends AbstractGridCoverageResource
     /**
      * Modified backport copy from JDK8 AtomicInteger.updateAndGet
      */
-    private static final int updateAndGet(AtomicInteger ati) {
+    private static int updateAndGet(AtomicInteger ati) {
         int prev, next;
         do {
             prev = ati.get();

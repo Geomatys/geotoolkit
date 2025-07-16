@@ -464,9 +464,7 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
 
     /**
      * Computes the region to read in pixel coordinates. The main purpose of this method is to
-     * be invoked just before an image is read or written, but it could also be invoked by some
-     * informative methods like {@code ImageCoverageReader.getGridGeometry(GridCoverageReadParam)}
-     * if we decided to add such method.
+     * be invoked just before an image is read or written.
      *
      * @param gridGeometry  The grid geometry of the source coverage as a whole,
      *                      as provided by {@link GridCoverageReader#getGridGeometry(int)}.

@@ -54,7 +54,6 @@ import org.geotoolkit.lang.Builder;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.DefaultConversion;
 import org.apache.sis.util.logging.Logging;
-import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
 
 
 /**
@@ -62,8 +61,8 @@ import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMA
  * {@link MetadataNodeAccessor} for reading and writing the attribute values in the
  * {@link IIOMetadata} object given at construction time. By default, this class
  * uses an accessor for the {@code "RectifiedGridDomain/CoordinateReferenceSystem"}
- * node of the {@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat#GEOTK_FORMAT_NAME}
- * format. However a different accessor can be given to the constructor.
+ * node of the {@value SpatialMetadataFormat#GEOTK_FORMAT_NAME} format.
+ * However a different accessor can be given to the constructor.
  *
  * {@note This class exists because we do not use the reflection mechanism like what we do for
  *        ISO 19115-2 metadata. Dedicated code is needed because the mapping between Image I/O
@@ -160,7 +159,7 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
      *         contains a node for the element to fetch.
      */
     public ReferencingBuilder(final IIOMetadata metadata) throws NoSuchElementException {
-        this(new MetadataNodeAccessor(metadata, GEOTK_FORMAT_NAME, PATH, null));
+        this(new MetadataNodeAccessor(metadata, SpatialMetadataFormat.GEOTK_FORMAT_NAME, PATH, null));
     }
 
     /**

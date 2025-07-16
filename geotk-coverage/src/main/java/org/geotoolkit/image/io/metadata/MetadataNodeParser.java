@@ -17,9 +17,11 @@
  */
 package org.geotoolkit.image.io.metadata;
 
+import jakarta.xml.bind.DatatypeConverter;
 import java.lang.reflect.Array;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -28,6 +30,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import javax.imageio.ImageReader; // For javadoc
@@ -160,6 +163,13 @@ public class MetadataNodeParser implements WarningProducer {
      * item separator.
      */
     static final char NBSP = '\u00A0';
+
+    /**
+     * A shared Gregorian calendar to use for {@link #printDateTime(Date)}.
+     * We share a single instance instead than using {@link ThreadLocal} instances
+     * on the assumption that usages of this calendar will be relatively rare.
+     */
+    static final AtomicReference<Calendar> CALENDAR = new AtomicReference<>();
 
     /**
      * The Image I/O metadata for which this accessor is a wrapper. An instance
@@ -941,7 +951,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
             } else if (Number.class.isAssignableFrom(type)) {
                 value = Numbers.valueOf(value.toString(), type);
             } else if (Date.class.isAssignableFrom(type)) {
-                value = JDK8.parseDateTime(value.toString());
+                value = parseDateTime(value.toString());
             } else if (type.isArray()) {
                 final Class<?> component = Numbers.primitiveToWrapper(type.getComponentType());
                 if (component == Double.class) {
@@ -952,6 +962,20 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
             }
         }
         return type.cast(value);
+    }
+
+    /**
+     * Parses a date from a string in ISO 8601 format. More specifically, this method expects the
+     * format defined by <cite>XML Schema Part 2: Datatypes for {@code xsd:dateTime}</cite>.
+     *
+     * @param  date The date to parse.
+     * @return The parsed date.
+     * @throws IllegalArgumentException if the given date can not be parsed.
+     *
+     * @see DatatypeConverter#parseDateTime(String)
+     */
+    private static Date parseDateTime(final String date) throws IllegalArgumentException {
+        return DatatypeConverter.parseDateTime(date).getTime();
     }
 
     /**

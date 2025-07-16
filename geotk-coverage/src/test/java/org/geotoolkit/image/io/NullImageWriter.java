@@ -33,11 +33,8 @@ import org.geotoolkit.resources.Vocabulary;
  * This is sometime useful for testing purpose.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
- *
- * @since 2.5
  */
-public class NullImageWriter extends SpatialImageWriter {
+final class NullImageWriter extends SpatialImageWriter {
     /**
      * Constructs a {@code NullImageWriter}.
      *

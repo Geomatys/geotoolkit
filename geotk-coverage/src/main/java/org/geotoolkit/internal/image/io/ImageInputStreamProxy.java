@@ -37,7 +37,7 @@ import org.geotoolkit.lang.Decorator;
  * @module
  */
 @Decorator(ImageInputStream.class)
-public abstract class ImageInputStreamProxy implements ImageInputStream {
+abstract class ImageInputStreamProxy implements ImageInputStream {
     /**
      * The wrapped image input stream.
      */

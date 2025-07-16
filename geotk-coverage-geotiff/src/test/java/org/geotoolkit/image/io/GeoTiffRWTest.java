@@ -25,6 +25,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Objects;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
@@ -37,7 +38,6 @@ import org.apache.sis.referencing.cs.AxesConvention;
 import org.apache.sis.referencing.factory.GeodeticObjectFactory;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Utilities;
-import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.plugin.TiffImageReader;
@@ -840,7 +840,8 @@ final CoordinateReferenceSystem sourceCRS = CRS.fromWKT("PROJCS[\"NAD83 / Califo
             reader.dispose();
             final ImageReader imgReader = new TiffImageReader(new TiffImageReader.Spi());
             imgReader.setInput(file);
-            reader = (ImageCoverageReader) CoverageIO.createSimpleReader(imgReader);
+            reader = new ImageCoverageReader();
+            reader.setInput(Objects.requireNonNull(imgReader));
 
             //second test
             coverage = reader.read(null);
