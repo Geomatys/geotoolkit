@@ -236,7 +236,7 @@ final class ImageCoverageStore extends Static {
         /*
          * Put everything in a log record.
          */
-        final LogRecord record = Loggings.getResources(locale).getLogRecord(
+        final LogRecord record = Loggings.getResources(locale).createLogRecord(
                 level, Loggings.Keys.CoverageStore_8, new Object[] {
                         write ? 1 : 0, streamName, name.toString(locale), viewTypes,
                         size, crsName, transform, timeNanos / 1E+6

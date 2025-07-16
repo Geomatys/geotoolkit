@@ -1553,7 +1553,7 @@ public class GridCoverageStack extends org.geotoolkit.coverage.grid.GridCoverage
      */
     private void logLoading(final short key, final Object[] parameters) {
         final Locale locale = null;
-        final LogRecord record = Vocabulary.getResources(locale).getLogRecord(Level.INFO, key);
+        final LogRecord record = Vocabulary.getResources(locale).createLogRecord(Level.INFO, key);
         record.setSourceClassName(GridCoverageStack.class.getName());
         record.setSourceMethodName("evaluate");
         record.setParameters(parameters);
