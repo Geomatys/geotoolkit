@@ -23,6 +23,7 @@ package org.geotoolkit.observation.model;
  */
 public enum ObservationType {
 
+    SIMPLE,
     PROFILE,
     TIMESERIES,
     TRAJECTORY,

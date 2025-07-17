@@ -16,9 +16,4 @@
  *    Lesser General Public License for more details.
  */
 
-/**
- * {@linkplain org.geotoolkit.coverage.AbstractCoverage Coverage} implementation. An explanation
- * for this package is provided in the {@linkplain org.opengis.coverage OpenGIS&reg; javadoc}.
- * The remaining discussion on this page is specific to the Geotk implementation.
- */
 package org.geotoolkit.coverage;

@@ -27,6 +27,8 @@ import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.PixelInCell;
+import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataSet;
@@ -35,10 +37,8 @@ import org.apache.sis.storage.Query;
 import org.apache.sis.storage.UnsupportedQueryException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Utilities;
-import org.geotoolkit.geometry.math.Vector3d;
 import org.opengis.coverage.CannotEvaluateException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.apache.sis.coverage.grid.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
@@ -203,7 +203,7 @@ public interface BandedCoverageResource extends DataSet {
                     evaluator.setNullIfOutside(true);
                     tl.set(evaluator);
                 }
-                final Vector3d dp = new Vector3d();
+                final DirectPosition2D dp = new DirectPosition2D();
                 dp.x = xyResult[i*2];
                 dp.y = xyResult[i*2+1];
                 final double[] sample = evaluator.apply(dp);

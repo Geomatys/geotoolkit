@@ -17,15 +17,7 @@
  */
 
 /**
- * Provides {@link org.geotoolkit.coverage.io.GridCoverageReader} implementations for creating
- * {@code GridCoverage2D} instances from a datasource. The main
- * implementation is {@link org.geotoolkit.coverage.io.ImageCoverageReader}, which read the
- * sample values using an {@link javax.imageio.ImageReader} from the standard Java library.
- * <p>
- * Many different data formats exist. However most of this variety is not handled by this package.
- * The various data formats are rather handled by different subclasses of {@code ImageReader}.
- * All those different {@code ImageReader} implementations can be wrapped by the
- * same {@link org.geotoolkit.coverage.io.ImageCoverageReader} implementation.
+ * Legacy readers and writers of {@code GridCoverage2D} instances.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Johann Sorel (Geomatys)

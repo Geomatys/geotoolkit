@@ -18,8 +18,6 @@
 package org.geotoolkit.image.io;
 
 import java.awt.image.DataBuffer;
-import org.geotoolkit.image.io.metadata.SampleDomain;
-import org.geotoolkit.coverage.io.ImageCoverageReader;
 
 
 /**
@@ -30,8 +28,7 @@ import org.geotoolkit.coverage.io.ImageCoverageReader;
  * By default, the reading process performed by {@link SpatialImageReader} is strict and will store
  * the same values than the ones read from the stream. However more efficient storage can sometime
  * be achieved if some conversions are allowed, for example replacing fill values by 0 and applying
- * an offset for avoiding negative numbers. The {@link ImageCoverageReader} class in particular
- * allows some changes based on the additional knowledge inferred from image metadata.
+ * an offset for avoiding negative numbers.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.12
@@ -60,8 +57,7 @@ public enum SampleConversionType {
     SHIFT_SIGNED_INTEGERS,
 
     /**
-     * Indicates that {@link SpatialImageReader} is allowed to replace
-     * {@linkplain SampleDomain#getFillSampleValues() fill values} by {@link Float#NaN NaN}.
+     * Indicates that {@link SpatialImageReader} is allowed to replace fill values by {@link Float#NaN NaN}.
      * This replacement is possible only if the {@linkplain SpatialImageReader#getRawDataType(int)
      * raw data type} is {@link DataBuffer#TYPE_FLOAT} or {@link DataBuffer#TYPE_DOUBLE TYPE_DOUBLE}.
      *
@@ -73,8 +69,7 @@ public enum SampleConversionType {
 
     /**
      * Indicates that {@link SpatialImageReader} is allowed to store samples as floating point
-     * values instead than integer values. When provided, this enum ensures that
-     * {@linkplain SampleDomain#getFillSampleValues() fill values} can be replaced by
+     * values instead than integer values. When provided, this enum ensures that fill values can be replaced by
      * {@link Float#NaN NaN} if the {@link #REPLACE_FILL_VALUES} enum is also provided.
      *
      * @since 3.12

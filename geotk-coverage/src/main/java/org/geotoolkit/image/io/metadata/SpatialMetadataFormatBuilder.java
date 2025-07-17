@@ -78,12 +78,10 @@ import org.apache.sis.metadata.MetadataStandard;
 import org.apache.sis.metadata.UnmodifiableMetadataException;
 import org.geotoolkit.metadata.ValueRestriction;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.internal.image.io.GridDomainAccessor;
 
 import static javax.imageio.metadata.IIOMetadataFormat.*;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
-import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.toElementName;
-import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.NAME_POLICY;
-import static org.geotoolkit.internal.image.io.GridDomainAccessor.ARRAY_ATTRIBUTE_NAME;
 
 
 /**
@@ -413,14 +411,14 @@ public class SpatialMetadataFormatBuilder extends Builder<SpatialMetadataFormat>
                 final Class<?> componentType = type.getComponentType();
                 if (componentType != null) {
                     // The container for the repeated elements (CHILD_POLICY_REPEAT)
-                    containerName = elementName = toElementName(elementName);
+                    containerName = elementName = SpatialMetadataFormat.toElementName(elementName);
                     final String componentName = toComponentName(elementName, identifier, true);
                     metadata.addListWrapper(standard, parentName, elementName, componentName,
                             componentType, minOccurrence, maxOccurrence);
 
                     // The attribute of kind VALUE_LIST.
                     parentName  = componentName;
-                    elementName = ARRAY_ATTRIBUTE_NAME;
+                    elementName = GridDomainAccessor.ARRAY_ATTRIBUTE_NAME;
                     type        = componentType;
                 }
                 metadata.addAttribute(parentName, elementName, typeOf(type), minOccurrence, maxOccurrence, null);
@@ -445,7 +443,7 @@ public class SpatialMetadataFormatBuilder extends Builder<SpatialMetadataFormat>
          * structure is set to the UML identifier, which is typically the same name than
          * 'elementName' except that it is in singular form.
          */
-        elementName = toElementName(elementName);
+        elementName = SpatialMetadataFormat.toElementName(elementName);
         final String containerName = elementName;
         if (maxOccurrence != 1) {
             final Class<?> existingType = existings.get(elementName);
@@ -459,7 +457,7 @@ public class SpatialMetadataFormatBuilder extends Builder<SpatialMetadataFormat>
             metadata.addElement(standard, null, elementName, parentName, CHILD_POLICY_REPEAT, minOccurrence, maxOccurrence);
             existings.put(elementName, type);
             parentName  = elementName;
-            identifier  = toElementName(identifier);
+            identifier  = SpatialMetadataFormat.toElementName(identifier);
             elementName = toComponentName(elementName, identifier, false);
         }
         /*
@@ -479,11 +477,11 @@ public class SpatialMetadataFormatBuilder extends Builder<SpatialMetadataFormat>
         final Map<String,String> methods, identifiers;
         final Map<String, ExtendedElementInformation> restrictions;
         final Map<String,Class<?>> propertyTypes, elementTypes;
-        methods       = standard.asNameMap       (type, NAME_POLICY, KeyNamePolicy.  METHOD_NAME);
-        identifiers   = standard.asNameMap       (type, NAME_POLICY, KeyNamePolicy.  UML_IDENTIFIER);
-        propertyTypes = standard.asTypeMap       (type, NAME_POLICY, TypeValuePolicy.PROPERTY_TYPE);
-        elementTypes  = standard.asTypeMap       (type, NAME_POLICY, TypeValuePolicy.ELEMENT_TYPE);
-        restrictions  = standard.asInformationMap(type, NAME_POLICY);
+        methods       = standard.asNameMap       (type, SpatialMetadataFormat.NAME_POLICY, KeyNamePolicy.  METHOD_NAME);
+        identifiers   = standard.asNameMap       (type, SpatialMetadataFormat.NAME_POLICY, KeyNamePolicy.  UML_IDENTIFIER);
+        propertyTypes = standard.asTypeMap       (type, SpatialMetadataFormat.NAME_POLICY, TypeValuePolicy.PROPERTY_TYPE);
+        elementTypes  = standard.asTypeMap       (type, SpatialMetadataFormat.NAME_POLICY, TypeValuePolicy.ELEMENT_TYPE);
+        restrictions  = standard.asInformationMap(type, SpatialMetadataFormat.NAME_POLICY);
         final boolean isComplete = (incompletes != null) && !incompletes.contains(type);
         for (final Map.Entry<String,Class<?>> entry : elementTypes.entrySet()) {
             final Class<?> candidate = entry.getValue();

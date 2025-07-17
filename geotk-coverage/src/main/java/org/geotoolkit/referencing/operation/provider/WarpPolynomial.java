@@ -22,6 +22,7 @@ import javax.media.jai.WarpCubic;
 import javax.media.jai.WarpAffine;
 import javax.media.jai.WarpQuadratic;
 import javax.media.jai.WarpGeneralPolynomial;
+import org.apache.sis.metadata.simple.SimpleCitation;
 
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
@@ -37,8 +38,7 @@ import org.geotoolkit.referencing.operation.transform.WarpTransform2D;
 
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.parameter.Parameters;
-import org.geotoolkit.coverage.parameter.ImagingParameterDescriptors;
-import static org.geotoolkit.referencing.operation.provider.UniversalParameters.createDescriptorGroup;
+import org.opengis.metadata.citation.Citation;
 
 
 /**
@@ -75,6 +75,8 @@ public class WarpPolynomial extends MathTransformProvider {
      * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -7949539694656719923L;
+
+    private static final Citation GEOTK = new SimpleCitation("Geotk");
 
     /**
      * The operation parameter descriptor for the
@@ -139,7 +141,7 @@ public class WarpPolynomial extends MathTransformProvider {
      */
     public static final ParameterDescriptor<Float> POST_SCALE_Y;
     static {
-        final ParameterBuilder builder = new ParameterBuilder().setCodeSpace(ImagingParameterDescriptors.GEOTK, null);
+        final ParameterBuilder builder = new ParameterBuilder().setCodeSpace(GEOTK, null);
         final Float ONE = 1f;
         final Class<Float> type = Float.class;
         PRE_SCALE_X  = builder.addName("preScaleX") .create(type, ONE);
@@ -245,8 +247,8 @@ public class WarpPolynomial extends MathTransformProvider {
      *   </td></tr>
      * </table>
      */
-    public static final ParameterDescriptorGroup PARAMETERS = createDescriptorGroup(new NamedIdentifier[] {
-            new NamedIdentifier(ImagingParameterDescriptors.GEOTK, "WarpPolynomial")
+    public static final ParameterDescriptorGroup PARAMETERS = UniversalParameters.createDescriptorGroup(new NamedIdentifier[] {
+            new NamedIdentifier(GEOTK, "WarpPolynomial")
         }, null, new ParameterDescriptor<?>[] {
             DEGREE, X_COEFFS, Y_COEFFS, PRE_SCALE_X, PRE_SCALE_Y, POST_SCALE_X, POST_SCALE_Y
         }, 0);

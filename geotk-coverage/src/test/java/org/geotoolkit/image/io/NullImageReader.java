@@ -34,11 +34,8 @@ import static org.junit.Assert.*;
  * A null implementation of {@link SpatialImageReader} for testing purpose.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.06
- *
- * @since 2.5
  */
-public class NullImageReader extends SpatialImageReader {
+final class NullImageReader extends SpatialImageReader {
     /**
      * The data type to be returned by {@link #getRawDataType}.
      */

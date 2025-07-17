@@ -160,7 +160,7 @@ import org.w3c.dom.NodeList;
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Johann Sorel (Geomatys)
  */
-public class ImageCoverageReader extends GridCoverageStore {
+public class ImageCoverageReader extends ImageCoverageStore {
     private static final int X_DIMENSION = 0, Y_DIMENSION = 1;
 
     /**
@@ -472,7 +472,7 @@ public class ImageCoverageReader extends GridCoverageStore {
                     copyLevel(newReader);
                     setLocale(newReader, locale);
                     if (LOGGER.isLoggable(getFineLevel())) {
-                        ImageCoverageStore.logCodecCreation(this, ImageCoverageReader.class,
+                        logCodecCreation(this, ImageCoverageReader.class,
                                 newReader, newReader.getOriginatingProvider());
                     }
                 }
@@ -1552,7 +1552,7 @@ public class ImageCoverageReader extends GridCoverageStore {
             fullTime = System.nanoTime() - fullTime;
             final Level level = getLogLevel(fullTime);
             if (LOGGER.isLoggable(level)) {
-                ImageCoverageStore.logOperation(level, locale, ImageCoverageReader.class, false,
+                logOperation(level, locale, ImageCoverageReader.class, false,
                         input, index, coverage, null, null, destToExtractedGrid, fullTime);
             }
         }

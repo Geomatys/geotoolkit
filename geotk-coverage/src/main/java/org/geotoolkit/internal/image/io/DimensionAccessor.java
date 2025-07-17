@@ -66,9 +66,7 @@ public final class DimensionAccessor extends MetadataNodeAccessor {
     /**
      * Creates a new accessor for the given metadata.
      *
-     * @param metadata The Image I/O metadata. An instance of the
-     *        {@link org.geotoolkit.image.io.metadata.SpatialMetadata}
-     *        sub-class is recommended, but not mandatory.
+     * @param metadata The Image I/O metadata.
      */
     public DimensionAccessor(final IIOMetadata metadata) {
         super(metadata, GEOTK_FORMAT_NAME, "ImageDescription/Dimensions", "Dimension");

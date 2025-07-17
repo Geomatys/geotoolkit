@@ -25,17 +25,17 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverageBuilder;
+import org.apache.sis.coverage.grid.PixelInCell;
+import org.apache.sis.geometries.math.Maths;
+import org.apache.sis.geometries.math.Vector3D;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
-import org.geotoolkit.geometry.math.Geometries;
-import org.geotoolkit.geometry.math.Vector3f;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.apache.sis.coverage.grid.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
@@ -82,8 +82,8 @@ public class ShadedRelief extends AbstractProcess {
         elevation = elevation.forConvertedValues(true);
 
         //light informations
-        final Vector3f lightDirection = new Vector3f(1, 1, 1);
-        final Vector3f fragToEye = new Vector3f(0, 0, 1);
+        final Vector3D.Float lightDirection = new Vector3D.Float(1, 1, 1);
+        final Vector3D.Float fragToEye = new Vector3D.Float(0, 0, 1);
         lightDirection.normalize();
 
         final RenderedImage baseImage = coverage.render(null);
@@ -121,12 +121,12 @@ public class ShadedRelief extends AbstractProcess {
             final float[] fb = new float[3];
             final float[] fc = new float[3];
             final float[] fd = new float[3];
-            final Vector3f v1 = new Vector3f();
-            final Vector3f v2 = new Vector3f();
-            final Vector3f v3 = new Vector3f();
-            final Vector3f n1 = new Vector3f();
-            final Vector3f n2 = new Vector3f();
-            final Vector3f n = new Vector3f();
+            final Vector3D.Float v1 = new Vector3D.Float();
+            final Vector3D.Float v2 = new Vector3D.Float();
+            final Vector3D.Float v3 = new Vector3D.Float();
+            final Vector3D.Float n1 = new Vector3D.Float();
+            final Vector3D.Float n2 = new Vector3D.Float();
+            final Vector3D.Float n = new Vector3D.Float();
             for(int y=0;y<height;y++){
                 for(int x=0;x<width;x++){
                     //get 4 corner coordinates
@@ -148,13 +148,13 @@ public class ShadedRelief extends AbstractProcess {
                     v2.x = fb[0]; v2.y = fb[1]; v2.z = fb[2];
                     v3.x = fc[0]; v3.y = fc[1]; v3.z = fc[2];
 
-                    n1.set(Geometries.calculateNormal(v1, v3, v2));
+                    n1.set(Maths.calculateNormal(v1, v3, v2));
 
                     v1.x = fb[0]; v1.y = fb[1]; v1.z = fb[2];
                     v2.x = fc[0]; v2.y = fc[1]; v2.z = fc[2];
                     v3.x = fd[0]; v3.y = fd[1]; v3.z = fd[2];
 
-                    n2.set(Geometries.calculateNormal(v1, v2, v3));
+                    n2.set(Maths.calculateNormal(v1, v2, v3));
                     n.set(n1);
                     n.add(n2);
                     n.normalize();

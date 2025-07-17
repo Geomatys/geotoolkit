@@ -30,6 +30,7 @@ import java.util.Collection;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.IIOException;
@@ -413,7 +414,7 @@ public final class XImageIO extends Static {
      * @return ImageInputStream of input object.
      * @throws IOException if an error occurred while creating the input stream.
      */
-    public static ImageInputStream createImageInputStream(Object input) throws IOException {
+    private static ImageInputStream createImageInputStream(Object input) throws IOException {
 
         //most of the cases
         ImageInputStream iis = ImageIO.createImageInputStream(input);
@@ -652,7 +653,6 @@ public final class XImageIO extends Static {
      * @throws IOException If an error occurred while closing the stream.
      */
     public static void close(final ImageReader reader) throws IOException {
-        ensureNonNull("reader", reader);
         final Object input = reader.getInput();
         if (reader instanceof SpatialImageReader) {
             reader.setInput(null);
@@ -860,7 +860,6 @@ public final class XImageIO extends Static {
      * @throws IOException If an error occurred while closing the stream.
      */
     public static void close(final ImageWriter writer) throws IOException {
-        ensureNonNull("writer", writer);
         final Object output = writer.getOutput();
         writer.setOutput(null);
         IOUtilities.close(output);
@@ -970,8 +969,7 @@ public final class XImageIO extends Static {
      * @throws IllegalArgumentException If no provider is found for the given format.
      */
     public static ImageReaderSpi getReaderSpiByFormatName(final String format) {
-        ensureNonNull("format", format);
-        return Formats.getReaderByFormatName(format, null);
+        return Formats.getReaderByFormatName(Objects.requireNonNull(format), null);
     }
 
     /**
@@ -982,35 +980,7 @@ public final class XImageIO extends Static {
      * @throws IllegalArgumentException If no provider is found for the given format.
      */
     public static ImageWriterSpi getWriterSpiByFormatName(final String format) {
-        ensureNonNull("format", format);
-        return Formats.getWriterByFormatName(format, null);
-    }
-
-    /**
-     * Returns the preferred suffix declared in the given provider, with a leading dot.
-     * If the given provider is null, or if no preferred file suffix is found, then this
-     * method returns {@code null}.
-     *
-     * @param  provider The provider for which to get the first file suffix, or {@code null}.
-     * @return The first file suffix, or {@code null} if none.
-     *
-     * @since 3.20
-     */
-    public static String getFileSuffix(final ImageReaderWriterSpi provider) {
-        if (provider != null) {
-            final String[] suffixes = provider.getFileSuffixes();
-            if (suffixes != null) {
-                for (String suffix : suffixes) {
-                    if (suffix != null && !(suffix = suffix.trim()).isEmpty()) {
-                        if (suffix.charAt(0) != '.') {
-                            suffix = '.' + suffix;
-                        }
-                        return suffix;
-                    }
-                }
-            }
-        }
-        return null;
+        return Formats.getWriterByFormatName(Objects.requireNonNull(format), null);
     }
 
     /**
@@ -1103,16 +1073,14 @@ public final class XImageIO extends Static {
         return false;
     }
 
-
     /**
      * Convert given input to an input support by given spi.
      * In last case an ImageInputStream will be created.
      *
      * @param spi {@link ImageReaderSpi} reader spi
      * @param input candidate object
-     * @return Input object if directly supported by ImageReaderSpi or input object converted into
-     * an {@link org.geotoolkit.coverage.io.ImageCoverageReader}
-     * @throws IOException if {@link org.geotoolkit.coverage.io.ImageCoverageReader} fail
+     * @return the given input object if directly supported, or an input stream otherwise.
+     * @throws IOException if the input stream cannot be created.
      */
     public static Object toSupportedInput(ImageReaderSpi spi, Object input) throws IOException{
         final Class[] supportedTypes = spi.getInputTypes();
@@ -1133,32 +1101,6 @@ public final class XImageIO extends Static {
         }
 
         return in;
-    }
-
-    /**
-     * Returns the mime type matching the extension of an image file.
-     * For example, for a file "my_image.png" it will return "image/png", in most cases.
-     *
-     * @param extension The extension of an image file.
-     * @return The mime type for the extension specified.
-     *
-     * @throws IIOException if no image reader are able to handle the extension given.
-     */
-    public static String fileExtensionToMimeType(final String extension) throws IIOException {
-        final Iterator<ImageReaderSpi> readers = getImageReaderSpis();
-        while (readers.hasNext()) {
-            final ImageReaderSpi reader = readers.next();
-            final String[] suffixes = reader.getFileSuffixes();
-            for (String suffixe : suffixes) {
-                if (extension.equalsIgnoreCase(suffixe)) {
-                    final String[] mimeTypes = reader.getMIMETypes();
-                    if (mimeTypes != null && mimeTypes.length > 0) {
-                        return mimeTypes[0];
-                    }
-                }
-            }
-        }
-        throw new IIOException("No available image reader able to handle the extension specified: "+ extension);
     }
 
     /**
@@ -1185,32 +1127,6 @@ public final class XImageIO extends Static {
             }
         }
         throw new IIOException("No available image reader able to handle the format name specified: "+ formatName);
-    }
-
-    /**
-     * Returns the format name matching the mime type of an image file.
-     * For example, for a mime type "image/png" it will return "png", in most cases.
-     *
-     * @param mimeType The mime type of an image file.
-     * @return The format name for the mime type specified.
-     *
-     * @throws IIOException if no image reader are able to handle the mime type given.
-     */
-    public static String mimeTypeToFormatName(final String mimeType) throws IIOException {
-        final Iterator<ImageReaderSpi> readers = getImageReaderSpis();
-        while (readers.hasNext()) {
-            final ImageReaderSpi reader = readers.next();
-            final String[] mimes = reader.getMIMETypes();
-            for (String mime : mimes) {
-                if (mimeType.equalsIgnoreCase(mime)) {
-                    final String[] formats = reader.getFormatNames();
-                    if (formats != null && formats.length > 0) {
-                        return formats[0];
-                    }
-                }
-            }
-        }
-        throw new IIOException("No available image reader able to handle the mime type specified: "+ mimeType);
     }
 
     /**

@@ -159,9 +159,7 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
 
     /**
      * The preferred metadata format, which was given at construction time.
-     * The preferred metadata format is not necessarily the only one. In particular, the
-     * {@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat#ISO_FORMAT_NAME} format
-     * may also be accepted.
+     * The preferred metadata format is not necessarily the only one.
      *
      * @see SpatialMetadataFormat#getStreamInstance(String)
      * @see SpatialMetadataFormat#getImageInstance(String)
@@ -284,8 +282,7 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
     }
 
     /**
-     * Creates an initially empty metadata instance for the
-     * {@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat#GEOTK_FORMAT_NAME} format
+     * Creates an initially empty metadata instance for the {@value SpatialMetadataFormat#GEOTK_FORMAT_NAME} format
      * and the given reader. In addition to the Geotk
      * in <a href="SpatialMetadataFormat.html#default-formats">spatial metadata format</a>,
      * this constructor inherits other stream or image formats defined in the
@@ -295,8 +292,7 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
      *        or {@code false} for <em>image</em> metadata.
      * @param reader The source image reader, or {@code null} if none.
      * @param fallback The fallback for any format name different than
-     *        {@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat#GEOTK_FORMAT_NAME},
-     *        or {@code null} if none.
+     *        {@value SpatialMetadataFormat#GEOTK_FORMAT_NAME}, or {@code null} if none.
      *
      * @since 3.20
      */
@@ -334,8 +330,7 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
     }
 
     /**
-     * Creates an initially empty metadata instance for the
-     * {@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat#GEOTK_FORMAT_NAME} format
+     * Creates an initially empty metadata instance for the {@value SpatialMetadataFormat#GEOTK_FORMAT_NAME} format
      * and the given writer. In addition to the Geotk
      * in <a href="SpatialMetadataFormat.html#default-formats">spatial metadata format</a>,
      * this constructor inherits other stream or image formats defined in the
@@ -345,8 +340,7 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
      *        or {@code false} for <em>image</em> metadata.
      * @param writer The source image writer, or {@code null} if none.
      * @param fallback The fallback for any format name different than
-     *        {@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat#GEOTK_FORMAT_NAME},
-     *        or {@code null} if none.
+     *        {@value SpatialMetadataFormat#GEOTK_FORMAT_NAME}, or {@code null} if none.
      *
      * @since 3.20
      */
@@ -735,7 +729,7 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
      *   <li>If {@code formatName} is equals, ignoring case, to <code>{@linkplain #format}.getRootName()</code>
      *       where {@code format} is the argument given at construction time, then return that format.</li>
      *   <li>Otherwise if {@code formatName} is equals, ignoring case, to
-     *       {@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat#ISO_FORMAT_NAME},
+     *       {@value SpatialMetadataFormat#ISO_FORMAT_NAME},
      *       then return the ISO-19115 format.</li>
      *   <li>Otherwise if a fallback has been specified at construction time,
      *       then delegate to that fallback.</li>

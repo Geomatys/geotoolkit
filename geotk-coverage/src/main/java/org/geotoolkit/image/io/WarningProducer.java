@@ -39,19 +39,6 @@ import org.apache.sis.util.Localized;
  *   <li><p>Otherwise the record is logged using the {@link #LOGGER} declared in this interface.</p></li>
  * </ol>
  *
- * In many cases the {@code warningOccured} method delegates its work to an other
- * {@code WarningProducer} until an {@code ImageReader} or {@code ImageWriter} is
- * found. For example the chain of delegations can be as below:
- * <p>
- * <ol>
- *   <li>{@link org.geotoolkit.image.io.metadata.ReferencingBuilder}</li>
- *   <li>{@link org.geotoolkit.image.io.metadata.MetadataNodeParser#warningOccurred(LogRecord)}</li>
- *   <li>{@link org.geotoolkit.image.io.metadata.SpatialMetadata#warningOccurred(LogRecord)}</li>
- *   <li>{@link org.geotoolkit.image.io.SpatialImageReader#warningOccurred(LogRecord)}</li>
- *   <li>{@link javax.imageio.ImageReader#processWarningOccurred(String)}</li>
- *   <li>{@link javax.imageio.event.IIOReadWarningListener#warningOccurred(ImageReader, String)}</li>
- * </ol>
- *
  * {@section Localization}
  * Warnings are localized for a {@linkplain java.util.Locale locale} typically inferred from
  * the image reader or writer. The locale can be specified by a call to the {@code setLocale}
@@ -59,15 +46,6 @@ import org.apache.sis.util.Localized;
  * class.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.08
- *
- * @see SpatialImageReader#warningOccurred(LogRecord)
- * @see SpatialImageWriter#warningOccurred(LogRecord)
- * @see org.geotoolkit.image.io.metadata.SpatialMetadata#warningOccurred(LogRecord)
- * @see org.geotoolkit.image.io.metadata.MetadataNodeParser#warningOccurred(LogRecord)
- *
- * @since 3.08
- * @module
  */
 public interface WarningProducer extends Localized {
     /**
@@ -77,17 +55,7 @@ public interface WarningProducer extends Localized {
 
     /**
      * Invoked when a warning occurred. This method is typically invoked by the class implementing
-     * this {@code WarningProducer} interface. However it can also be invoked by other classes that
-     * forward their warnings, like below:
-     *
-     * <blockquote>
-     * {@link org.geotoolkit.image.io.metadata.ReferencingBuilder} &rarr;
-     * {@link org.geotoolkit.image.io.metadata.MetadataNodeParser} &rarr;
-     * {@link org.geotoolkit.image.io.metadata.SpatialMetadata} &rarr;
-     * ({@link SpatialImageReader} or {@link SpatialImageWriter})
-     * </blockquote>
-     *
-     * This method is public for allowing such forwarding.
+     * this {@code WarningProducer} interface.
      *
      * @param  record The warning that occurred.
      * @return {@code true} if the message has been sent to at least one warning listener,
