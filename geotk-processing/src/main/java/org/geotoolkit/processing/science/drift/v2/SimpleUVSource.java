@@ -19,18 +19,19 @@ import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridRoundingMode;
 import static org.apache.sis.coverage.grid.GridRoundingMode.ENCLOSING;
+import org.apache.sis.coverage.grid.PixelInCell;
+import org.apache.sis.geometries.math.Vector2D;
 import org.apache.sis.geometry.DirectPosition1D;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.referencing.privy.AxisDirections;
-import org.apache.sis.referencing.privy.AffineTransform2D;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.apache.sis.referencing.privy.AffineTransform2D;
+import org.apache.sis.referencing.privy.AxisDirections;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.collection.BackingStoreException;
-import org.geotoolkit.geometry.math.Vector2d;
 import static org.geotoolkit.processing.science.drift.v2.Utilities.*;
 import org.opengis.coverage.PointOutsideCoverageException;
 import org.opengis.geometry.DirectPosition;
@@ -39,7 +40,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.crs.TemporalCRS;
 import org.opengis.referencing.crs.VerticalCRS;
-import org.apache.sis.coverage.grid.PixelInCell;
 import org.opengis.referencing.operation.*;
 import org.opengis.util.FactoryException;
 
@@ -306,7 +306,7 @@ class SimpleUVSource implements UVSource {
         }
 
         @Override
-        public Optional<Vector2d> evaluate(Point2D.Double location) {
+        public Optional<Vector2D.Double> evaluate(Point2D.Double location) {
             final Point2D tmpLoc;
             try {
                 tmpLoc = pointConverter.transform(location, null);
@@ -330,7 +330,7 @@ class SimpleUVSource implements UVSource {
             }
 
             if (Double.isFinite(buffer[0]) && Double.isFinite(buffer[1]))
-                return Optional.of(new Vector2d(buffer));
+                return Optional.of(new Vector2D.Double(buffer));
             else
                 return Optional.empty();
         }
