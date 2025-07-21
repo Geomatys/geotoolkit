@@ -33,6 +33,7 @@ import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.storage.dggs.privy.ComputedZoneIndexList;
 import org.geotoolkit.storage.dggs.privy.DiscreteGlobalGridCoverageAsFeatureSet;
+import org.geotoolkit.storage.dggs.privy.FeatureSetAsDiscreteGlobalGridResource;
 import org.geotoolkit.storage.dggs.privy.MemoryDiscreteGlobalGridResource;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -123,6 +124,13 @@ public final class DiscreteGlobalGridSystems {
      */
     public static DiscreteGlobalGridResource viewAsDggrs(GridCoverageResource base, DiscreteGlobalGridReferenceSystem dggrs) throws DataStoreException, IncommensurableException {
         return new GridAsDiscreteGlobalGridResource(dggrs, base);
+    }
+    
+    /**
+     * View given FeatureSet as a DiscreteGlobalGridResource.
+     */
+    public static DiscreteGlobalGridResource viewAsDggrs(FeatureSet base, DiscreteGlobalGridReferenceSystem dggrs) throws DataStoreException, IncommensurableException {
+        return new FeatureSetAsDiscreteGlobalGridResource(dggrs, base);
     }
 
     /**
