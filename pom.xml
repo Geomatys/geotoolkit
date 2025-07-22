@@ -1021,6 +1021,7 @@
     <module>geotk-observation-store</module>
     <module>geotk-metadata-store</module>
     <module>geotk-hdf</module>
+    <module>geotk-dggs</module>
 
     <module>geotk-ogcapi</module>
     <module>geotk-client-store</module>

@@ -111,6 +111,12 @@
             <version>${project.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.geotoolkit</groupId>
+            <artifactId>geotk-dggs</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <!-- processing -->
         <dependency>
             <groupId>org.geotoolkit</groupId>

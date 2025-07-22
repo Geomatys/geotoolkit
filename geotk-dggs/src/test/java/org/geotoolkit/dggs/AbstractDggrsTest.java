@@ -1,0 +1,264 @@
+/*
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2025, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
+package org.geotoolkit.dggs;
+
+import java.awt.image.RenderedImage;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Stream;
+import javax.measure.IncommensurableException;
+import org.apache.sis.coverage.BandedCoverage;
+import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridOrientation;
+import org.apache.sis.geometries.LinearRing;
+import org.apache.sis.geometries.PointSequence;
+import org.apache.sis.geometries.Polygon;
+import org.apache.sis.geometries.math.Tuple;
+import org.apache.sis.geometries.math.Vector2D;
+import org.apache.sis.referencing.GeodeticCalculator;
+import org.apache.sis.geometries.math.TupleArrays;
+import org.apache.sis.geometries.math.Vectors;
+import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.storage.dggs.ArrayDiscreteGlobalGridCoverage;
+import org.geotoolkit.storage.dggs.DiscreteGlobalGridGeometry;
+import org.geotoolkit.storage.dggs.DiscreteGlobalGridReferenceSystem;
+import org.geotoolkit.storage.dggs.DiscreteGlobalGridSystems;
+import org.geotoolkit.storage.dggs.ZonalIdentifier;
+import org.geotoolkit.storage.dggs.Zone;
+import org.geotoolkit.storage.dggs.ZoneIterator;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.opengis.geometry.DirectPosition;
+import org.opengis.geometry.Envelope;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
+
+/**
+ *
+ * @author Johann Sorel (Geomatys)
+ */
+public abstract class AbstractDggrsTest {
+
+    private DiscreteGlobalGridReferenceSystem dggrs;
+
+    public AbstractDggrsTest(DiscreteGlobalGridReferenceSystem dggrs) {
+        this.dggrs = dggrs;
+    }
+
+    @Test
+    public void testRoots() {
+
+        //test there is at least one root zone
+        final List<ZonalIdentifier> rootZoneIds = dggrs.getRootZoneIds();
+        assertTrue(!rootZoneIds.isEmpty());
+
+    }
+
+    @Test
+    public void testChildrenParentRelations() throws TransformException {
+
+        final List<ZonalIdentifier> rootZoneIds = dggrs.getRootZoneIds();
+        final DiscreteGlobalGridReferenceSystem.Coder coder = dggrs.createCoder();
+
+        for (ZonalIdentifier zoneId : rootZoneIds) {
+            final Zone zone = coder.decode(zoneId);
+
+            testParentChildrenRelations(zone, 0, 4);
+            testParentChildrenAtDepth(zone, 3);
+        }
+
+    }
+
+    private void testParentChildrenRelations(Zone zone, int currentDepth, int testDepth) {
+
+        //check zone refinement level matched the current depth
+        assertEquals(currentDepth, zone.getLocationType().getRefinementLevel());
+
+        //check at depth of zero we have this zone
+        try (Stream<Zone> rd0 = zone.getChildrenAtRelativeDepth(0)) {
+            List<Zone> lst = rd0.toList();
+            assertEquals(1, lst.size());
+            assertEquals(zone, lst.get(0));
+        }
+
+        //check at depth of 1 we have the same zones as relative depth of 1
+        final Collection<? extends Zone> children1 = zone.getChildren();
+        try (Stream<Zone> children2 = zone.getChildrenAtRelativeDepth(1)) {
+            List<Zone> lst = children2.toList();
+            assertEquals(lst.size(), children1.size());
+            assertTrue(lst.containsAll(children1));
+        }
+
+        //check the children have this zone as parent
+        for (Zone z : children1) {
+            final Collection<? extends Zone> parents = z.getParents();
+            assertTrue(parents.contains(zone));
+        }
+
+        if (testDepth > 0) {
+            for (Zone z : children1) {
+                testParentChildrenRelations(z, currentDepth+1, testDepth-1);
+            }
+        }
+    }
+
+    private void testParentChildrenAtDepth(Zone zone, int testDepth) {
+
+        final List<Zone> children = zone.getChildrenAtRelativeDepth(testDepth).toList();
+
+        for (Zone z : children) {
+            List<? extends Zone> backToParent = z.getParents().stream()
+                    .flatMap((p) -> p.getParents().stream())
+                    .flatMap((pr) -> pr.getParents().stream()).toList();
+            assertTrue(backToParent.contains(zone), z +" does not have expected parent " + zone + " in list : " + Arrays.toString(backToParent.toArray()));
+        }
+    }
+
+    @Test
+    public void testCoder() throws TransformException, IncommensurableException {
+
+        final List<ZonalIdentifier> rootZoneIds = dggrs.getRootZoneIds();
+        final DiscreteGlobalGridReferenceSystem.Coder coder = dggrs.createCoder();
+
+        for (ZonalIdentifier zoneId : rootZoneIds) {
+            final Zone zone = coder.decode(zoneId);
+            final List<Zone> candidates = zone.getChildrenAtRelativeDepth(3).toList();
+
+            //check the coder can find the zone by location
+            for (Zone z : candidates) {
+                coder.setPrecisionLevel(z.getLocationType().getRefinementLevel());
+                String candidate = coder.encode(z.getPosition());
+                assertEquals(z.getGeographicIdentifier().toString(), candidate);
+                assertEquals(z, coder.decode(candidate));
+            }
+        }
+
+    }
+
+    @Test
+    public void testCoderSearchEnvelope() throws TransformException, IncommensurableException {
+
+        final List<ZonalIdentifier> rootZoneIds = dggrs.getRootZoneIds();
+        final DiscreteGlobalGridReferenceSystem.Coder coder = dggrs.createCoder();
+        coder.setPrecisionLevel(3);
+
+        for (ZonalIdentifier zoneId : rootZoneIds) {
+            final Zone zone = coder.decode(zoneId);
+
+            final List<Zone> candidates = coder.intersect(zone.getEnvelope()).toList();
+            final List<Zone> children3 = zone.getChildrenAtRelativeDepth(3).toList();
+            //must contain at least all direct children
+            assertTrue(candidates.containsAll(children3));
+
+        }
+
+    }
+
+    @Disabled //TODO does not pass for all A5 cells yet
+    @Test
+    public void testPickingInCellGeometry() throws TransformException, IncommensurableException {
+
+        final List<ZonalIdentifier> rootZoneIds = dggrs.getRootZoneIds();
+        final DiscreteGlobalGridReferenceSystem.Coder coder = dggrs.createCoder();
+
+        final GeodeticCalculator calculator = GeodeticCalculator.create(dggrs.getGridSystem().getCrs());
+
+        for (ZonalIdentifier zoneId : rootZoneIds) {
+            final Zone zone = coder.decode(zoneId);
+            final List<Zone> candidates = zone.getChildrenAtRelativeDepth(3).toList();
+
+            //check the coder can find the zone using points inside the cell polygon
+            for (Zone z : candidates) {
+                System.out.println(z.getGeographicIdentifier());
+                coder.setPrecisionLevel(z.getLocationType().getRefinementLevel());
+
+                final Polygon geometry = (Polygon) z.getGeometry();
+                final DirectPosition center = z.getPosition();
+                final LinearRing exterior = (LinearRing) geometry.getExteriorRing();
+                final PointSequence ps = exterior.getPoints();
+                for (int i = 0; i < ps.size(); i++) {
+                    final Tuple corner = ps.getPosition(i);
+
+                    calculator.setStartPoint(center);
+                    calculator.setEndPoint(Vectors.asDirectPostion(corner));
+                    double distance = calculator.getGeodesicDistance();
+                    calculator.setGeodesicDistance(distance * 0.99);
+                    final Vector2D.Double candidateInside = new Vector2D.Double(calculator.getEndPoint().getCoordinates());
+                    calculator.setGeodesicDistance(distance * 1.01);
+                    final Vector2D.Double candidateOutside = new Vector2D.Double(calculator.getEndPoint().getCoordinates());
+
+                    final String candidateInsideHash = coder.encode(Vectors.asDirectPostion(candidateInside));
+                    final String candidateOutsideHash = coder.encode(Vectors.asDirectPostion(candidateOutside));
+                    System.out.println(z.getGeometry().toString());
+                    System.out.println(candidateInside + " " +candidateOutside);
+                    System.out.println(candidateInsideHash + " " +candidateOutsideHash);
+                    assertEquals(z.getGeographicIdentifier().toString(), candidateInsideHash);
+                    assertNotEquals(z.getGeographicIdentifier().toString(), candidateOutsideHash);
+                }
+            }
+        }
+    }
+
+    @Test
+    public void testSampling() throws TransformException, FactoryException {
+
+        final List<ZonalIdentifier> rootZoneIds = dggrs.getRootZoneIds();
+        final DiscreteGlobalGridReferenceSystem.Coder coder = dggrs.createCoder();
+
+        for (ZonalIdentifier zoneId : rootZoneIds) {
+            final Zone zone = coder.decode(zoneId);
+            final List<Zone> candidates = zone.getChildrenAtRelativeDepth(2).limit(5).toList();
+
+            for (Zone z : candidates) {
+                final DirectPosition position = z.getPosition();
+                final ArrayDiscreteGlobalGridCoverage dggsCoverage = new ArrayDiscreteGlobalGridCoverage(
+                        new DiscreteGlobalGridGeometry(dggrs, List.of(z.getIdentifier())),
+                        List.of(TupleArrays.of(1, 123456)));
+
+                //test iterator
+                final ZoneIterator iterator = dggsCoverage.createIterator();
+                assertTrue(iterator.next());
+                assertEquals(123456.0, iterator.getSampleDouble(0), 0.0);
+                assertFalse(iterator.next());
+
+                //test evaluator at cell center
+                BandedCoverage.Evaluator evaluator = dggsCoverage.evaluator();
+                double[] values = evaluator.apply(position);
+                assertEquals(1, values.length);
+                assertEquals(123456.0, values[0], 0.0);
+
+                //test image sampling
+                final CoordinateReferenceSystem orthocrs = DiscreteGlobalGridSystems.createOrthographicCRS(CommonCRS.WGS84.normalizedGeographic(), position.getCoordinate(1), position.getCoordinate(0));
+
+                Envelope env = DiscreteGlobalGridSystems.getEnvelope(dggsCoverage, orthocrs).get();
+                final GridGeometry geom = new GridGeometry(new GridExtent(256, 256), env, GridOrientation.REFLECTION_Y);
+                final GridCoverage gridCoverage = dggsCoverage.sample(geom, geom);
+                final RenderedImage image = gridCoverage.render(geom.getExtent());
+                values = image.getData().getPixel(128, 128, (double[])null);
+                assertEquals(1, values.length);
+                assertEquals(123456.0, values[0], 0.0);
+
+            }
+        }
+    }
+
+}
