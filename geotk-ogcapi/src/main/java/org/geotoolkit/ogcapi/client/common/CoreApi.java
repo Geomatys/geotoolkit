@@ -30,14 +30,6 @@ import org.geotoolkit.ogcapi.model.common.LandingPage;
  */
 public final class CoreApi extends AbstractOpenApi {
 
-    /**
-     * Key used in ConfClasses to identify a resource compliant with this Api.
-     */
-    public static final String CONFORMANCE_CORE = "http://www.opengis.net/spec/ogcapi-common-1/1.0/conf/core";
-    public static final String CONFORMANCE_LANDINGPAGE = "http://www.opengis.net/spec/ogcapi-common-1/1.0/conf/landing-page";
-    public static final String CONFORMANCE_HTML = "http://www.opengis.net/spec/ogcapi-common-1/1.0/conf/html";
-    public static final String CONFORMANCE_JSON = "http://www.opengis.net/spec/ogcapi-common-1/1.0/conf/json";
-
     public CoreApi(OpenApiConfiguration apiClient) {
         super(apiClient);
     }

@@ -21,6 +21,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -89,18 +90,12 @@ public final class Crs extends DataTransferObject {
 
         @Override
         public Crs deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {
-            final JsonNode tree = jp.readValueAsTree();
-            try {
-                Crs crs = tree.traverse(jp.getCodec()).readValueAs(Crs.class);
-                return crs;
-            } catch (Exception e) {
-                // deserialization failed, continue
-                log.log(Level.FINER, "Input data does not match schema 'CrsOneOf'", e);
+            if (jp.getCurrentToken() == JsonToken.VALUE_STRING) {
+                return new Crs().plain(jp.getText());
             }
-
-            // deserialize String
-            String plain = tree.traverse(jp.getCodec()).readValueAs(String.class);
-            return new Crs().plain(plain);
+            final JsonNode tree = jp.getCodec().readTree(jp);
+            Crs crs = tree.traverse(jp.getCodec()).readValueAs(Crs.class);
+            return crs;
         }
 
         /**
