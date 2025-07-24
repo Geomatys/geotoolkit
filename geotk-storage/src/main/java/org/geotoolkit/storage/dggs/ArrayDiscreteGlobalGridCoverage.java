@@ -19,7 +19,6 @@ package org.geotoolkit.storage.dggs;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
 import java.awt.image.WritableRaster;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -39,9 +38,9 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.PixelInCell;
 import org.apache.sis.geometries.math.TupleArray;
 import org.apache.sis.geometries.math.TupleArrayCursor;
-import org.apache.sis.geometries.math.Vector3D;
 import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.measure.NumberRange;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
@@ -70,8 +69,6 @@ public final class ArrayDiscreteGlobalGridCoverage extends DiscreteGlobalGridCov
     private final List<ZonalIdentifier> zones;
     private final Map<ZonalIdentifier,Integer> index = new HashMap();
     private final List<TupleArray> samples;
-    private int minRefinement;
-    private int maxRefinement;
 
     public ArrayDiscreteGlobalGridCoverage(DiscreteGlobalGridGeometry gridGeometry, List<TupleArray> samples) {
         this.gridGeometry = gridGeometry;
@@ -95,19 +92,6 @@ public final class ArrayDiscreteGlobalGridCoverage extends DiscreteGlobalGridCov
             }
         }
 
-        //find min and max refinement levels in the cells
-        final DiscreteGlobalGridReferenceSystem.Coder coder = dggrs.createCoder();
-        minRefinement = dggrs.getGridSystem().getHierarchy().getGrids().size();
-        maxRefinement = 0;
-        try {
-            for (ZonalIdentifier zone : zones) {
-                final int level = coder.decode(zone).getLocationType().getRefinementLevel();
-                if (level < minRefinement) minRefinement = level;
-                if (level > maxRefinement) maxRefinement = level;
-            }
-        } catch (TransformException ex) {
-            throw new IllegalArgumentException(ex.getMessage(), ex);
-        }
     }
 
     @Override
@@ -387,6 +371,9 @@ public final class ArrayDiscreteGlobalGridCoverage extends DiscreteGlobalGridCov
         @Override
         public double[] apply(DirectPosition dp) throws CannotEvaluateException {
             try {
+                final NumberRange<Integer> refinementRange = getGeometry().getRefinementRange();
+                final int minRefinement = (int) refinementRange.getMinDouble();
+                final int maxRefinement = (int) refinementRange.getMaxDouble();
                 if (minRefinement == maxRefinement) {
                     double[] cell = apply(dp, minRefinement);
                     if (cell != null) return cell;
