@@ -17,7 +17,9 @@
 package org.geotoolkit.storage.dggs;
 
 import java.util.List;
+import org.apache.sis.measure.NumberRange;
 import org.apache.sis.util.ArgumentChecks;
+import org.opengis.referencing.operation.TransformException;
 
 /**
  * DGGRS coverage geometry.
@@ -28,6 +30,9 @@ public final class DiscreteGlobalGridGeometry {
 
     private final DiscreteGlobalGridReferenceSystem dggrs;
     private final List<ZonalIdentifier> zones;
+
+    //computed
+    private NumberRange<Integer> range;
 
     public DiscreteGlobalGridGeometry(DiscreteGlobalGridReferenceSystem dggrs, List<ZonalIdentifier> zones) {
         ArgumentChecks.ensureNonNull("dggrs", dggrs);
@@ -52,6 +57,30 @@ public final class DiscreteGlobalGridGeometry {
      */
     public List<ZonalIdentifier> getZones(){
         return zones;
+    }
+
+    /**
+     * @return refinement range of zone in the coverage geometry.
+     */
+    public synchronized NumberRange<Integer> getRefinementRange() {
+        if (range != null) return range;
+
+        //find min and max refinement levels in the cells
+        final DiscreteGlobalGridReferenceSystem.Coder coder = dggrs.createCoder();
+        int minRefinement = dggrs.getGridSystem().getHierarchy().getGrids().size();
+        int maxRefinement = 0;
+        try {
+            for (ZonalIdentifier zone : zones) {
+                final int level = coder.decode(zone).getLocationType().getRefinementLevel();
+                if (level < minRefinement) minRefinement = level;
+                if (level > maxRefinement) maxRefinement = level;
+            }
+        } catch (TransformException ex) {
+            throw new IllegalArgumentException(ex.getMessage(), ex);
+        }
+
+        range = NumberRange.create(minRefinement, true, maxRefinement, true);
+        return range;
     }
 
 
