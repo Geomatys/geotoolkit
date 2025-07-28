@@ -14,23 +14,18 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.ogcapi.model.dggs;
+package org.geotoolkit.ogcapi.model.jsonschema;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlEnum;
-import jakarta.xml.bind.annotation.XmlEnumValue;
 import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.XmlType;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -39,59 +34,23 @@ import java.util.Objects;
 import org.geotoolkit.ogcapi.model.DataTransferObject;
 
 /**
- * Attributes of the features or fields of a coverage range. Defined by a subset of the JSON Schema for the properties
- * of a feature
+ * JSONSchema made by hand.
  */
 @JsonPropertyOrder({
-    Schema.JSON_PROPERTY_TYPE,
-    Schema.JSON_PROPERTY_REQUIRED,
-    Schema.JSON_PROPERTY_PROPERTIES
+    JSONSchema.JSON_PROPERTY_TYPE,
+    JSONSchema.JSON_PROPERTY_REQUIRED,
+    JSONSchema.JSON_PROPERTY_PROPERTIES
 })
-@XmlRootElement(name = "DggsJsonSchema")
+@XmlRootElement(name = "JsonSchema")
 @XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "DggsJsonSchema")
-public final class Schema extends DataTransferObject {
+@JacksonXmlRootElement(localName = "JsonSchema")
+public final class JSONSchema extends DataTransferObject {
 
-    /**
-     * Gets or Sets type
-     */
-    @XmlType(name = "TypeEnum")
-    @XmlEnum(String.class)
-    public enum TypeEnum {
-        @XmlEnumValue("object")
-        OBJECT(String.valueOf("object"));
-
-        private String value;
-
-        TypeEnum(String value) {
-            this.value = value;
-        }
-
-        @JsonValue
-        public String getValue() {
-            return value;
-        }
-
-        @Override
-        public String toString() {
-            return String.valueOf(value);
-        }
-
-        @JsonCreator
-        public static TypeEnum fromValue(String value) {
-            for (TypeEnum b : TypeEnum.values()) {
-                if (b.value.equals(value)) {
-                    return b;
-                }
-            }
-            throw new IllegalArgumentException("Unexpected value '" + value + "'");
-        }
-    }
 
     public static final String JSON_PROPERTY_TYPE = "type";
     @XmlElement(name = "type")
     @jakarta.annotation.Nonnull
-    private TypeEnum type;
+    private JSONType type;
 
     public static final String JSON_PROPERTY_REQUIRED = "required";
     @XmlElement(name = "required")
@@ -101,12 +60,12 @@ public final class Schema extends DataTransferObject {
     public static final String JSON_PROPERTY_PROPERTIES = "properties";
     @XmlElement(name = "properties")
     @jakarta.annotation.Nonnull
-    private Map<String, SchemaProperty> properties = new HashMap<>();
+    private Map<String, JSONSchemaProperty> properties = new HashMap<>();
 
-    public Schema() {
+    public JSONSchema() {
     }
 
-    public Schema type(@jakarta.annotation.Nonnull TypeEnum type) {
+    public JSONSchema type(@jakarta.annotation.Nonnull JSONType type) {
         this.type = type;
         return this;
     }
@@ -120,23 +79,23 @@ public final class Schema extends DataTransferObject {
     @JsonProperty(JSON_PROPERTY_TYPE)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
     @JacksonXmlProperty(localName = "type")
-    public TypeEnum getType() {
+    public JSONType getType() {
         return type;
     }
 
     @JsonProperty(JSON_PROPERTY_TYPE)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
     @JacksonXmlProperty(localName = "type")
-    public void setType(@jakarta.annotation.Nonnull TypeEnum type) {
+    public void setType(@jakarta.annotation.Nonnull JSONType type) {
         this.type = type;
     }
 
-    public Schema required(@jakarta.annotation.Nullable List<String> required) {
+    public JSONSchema required(@jakarta.annotation.Nullable List<String> required) {
         this.required = required;
         return this;
     }
 
-    public Schema addRequiredItem(String requiredItem) {
+    public JSONSchema addRequiredItem(String requiredItem) {
         if (this.required == null) {
             this.required = new ArrayList<>();
         }
@@ -166,12 +125,12 @@ public final class Schema extends DataTransferObject {
         this.required = required;
     }
 
-    public Schema properties(@jakarta.annotation.Nonnull Map<String, SchemaProperty> properties) {
+    public JSONSchema properties(@jakarta.annotation.Nonnull Map<String, JSONSchemaProperty> properties) {
         this.properties = properties;
         return this;
     }
 
-    public Schema putPropertiesItem(String key, SchemaProperty propertiesItem) {
+    public JSONSchema putPropertiesItem(String key, JSONSchemaProperty propertiesItem) {
         if (this.properties == null) {
             this.properties = new HashMap<>();
         }
@@ -189,7 +148,7 @@ public final class Schema extends DataTransferObject {
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
     @JacksonXmlProperty(localName = "properties")
     @JacksonXmlElementWrapper(useWrapping = false)
-    public Map<String, SchemaProperty> getProperties() {
+    public Map<String, JSONSchemaProperty> getProperties() {
         return properties;
     }
 
@@ -197,7 +156,7 @@ public final class Schema extends DataTransferObject {
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
     @JacksonXmlProperty(localName = "properties")
     @JacksonXmlElementWrapper(useWrapping = false)
-    public void setProperties(@jakarta.annotation.Nonnull Map<String, SchemaProperty> properties) {
+    public void setProperties(@jakarta.annotation.Nonnull Map<String, JSONSchemaProperty> properties) {
         this.properties = properties;
     }
 
@@ -212,7 +171,7 @@ public final class Schema extends DataTransferObject {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Schema dggsJsonSchema = (Schema) o;
+        JSONSchema dggsJsonSchema = (JSONSchema) o;
         return Objects.equals(this.type, dggsJsonSchema.type)
                 && Objects.equals(this.required, dggsJsonSchema.required)
                 && Objects.equals(this.properties, dggsJsonSchema.properties);
