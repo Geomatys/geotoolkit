@@ -18,6 +18,7 @@ package org.geotoolkit.image;
 
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.image.BandedSampleModel;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.DataBuffer;
@@ -37,7 +38,6 @@ import java.util.Arrays;
 import java.util.function.LongFunction;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
-import javax.media.jai.RasterFactory;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.PlanarImage;
 import org.apache.sis.image.WritablePixelIterator;
@@ -192,14 +192,13 @@ public class BufferedImages extends Static {
                 }
             } else {
                 //create it ourself
-                final long size = (long) width * height * nbBand;
-                final int isize = Math.toIntExact(size);
+                final int size = Math.multiplyExact(Math.multiplyExact(width, height), nbBand);
                 final DataBuffer buffer;
                 switch (dataType) {
-                    case DataBuffer.TYPE_SHORT: buffer = new DataBufferShort(isize); break;
-                    case DataBuffer.TYPE_INT: buffer = new DataBufferInt(isize); break;
-                    case DataBuffer.TYPE_FLOAT: buffer = new DataBufferFloat(isize); break;
-                    case DataBuffer.TYPE_DOUBLE: buffer = new DataBufferDouble(isize); break;
+                    case DataBuffer.TYPE_SHORT: buffer = new DataBufferShort(size); break;
+                    case DataBuffer.TYPE_INT: buffer = new DataBufferInt(size); break;
+                    case DataBuffer.TYPE_FLOAT: buffer = new DataBufferFloat(size); break;
+                    case DataBuffer.TYPE_DOUBLE: buffer = new DataBufferDouble(size); break;
                     default: throw new IllegalArgumentException("Type not supported "+dataType);
                 }
                 final int[] bankIndices = new int[nbBand];
@@ -207,8 +206,8 @@ public class BufferedImages extends Static {
                 for(int i=1;i<nbBand;i++){
                     bandOffsets[i] = bandOffsets[i-1] + width*height;
                 }
-                //TODO create our own raster factory to avoid JAI
-                raster = RasterFactory.createBandedRaster(buffer, width, height, width, bankIndices, bandOffsets, upperLeft);
+                var sm = new BandedSampleModel(dataType, width, height, width, bankIndices, bandOffsets);
+                raster = Raster.createWritableRaster(sm, buffer, upperLeft);
                 if (fillValue != null) {
                     setAll(raster, fillValue);
                 }
