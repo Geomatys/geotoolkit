@@ -16,26 +16,21 @@
  */
 package org.geotoolkit.ogcapi.model.geojson;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
+
+import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlEnum;
-import jakarta.xml.bind.annotation.XmlEnumValue;
-import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.XmlType;
-import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.dataformat.xml.annotation.*;
+import jakarta.xml.bind.annotation.*;
+import java.math.BigDecimal;
 import org.geotoolkit.ogcapi.model.DataTransferObject;
+import org.geotoolkit.ogcapi.model.common.Link;
 
 
 /**
@@ -44,7 +39,10 @@ import org.geotoolkit.ogcapi.model.DataTransferObject;
 @JsonPropertyOrder({
     FeatureCollection.JSON_PROPERTY_TYPE,
     FeatureCollection.JSON_PROPERTY_FEATURES,
-    FeatureCollection.JSON_PROPERTY_BBOX
+    FeatureCollection.JSON_PROPERTY_LINKS,
+    FeatureCollection.JSON_PROPERTY_TIME_STAMP,
+    FeatureCollection.JSON_PROPERTY_NUMBER_MATCHED,
+    FeatureCollection.JSON_PROPERTY_NUMBER_RETURNED
 })
 @XmlRootElement(name = "FeatureCollection")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -101,6 +99,26 @@ public class FeatureCollection extends DataTransferObject {
     @XmlElement(name = "bbox")
     @jakarta.annotation.Nullable
     private List<BigDecimal> bbox = new ArrayList<>();
+
+    public static final String JSON_PROPERTY_LINKS = "links";
+    @XmlElement(name = "links")
+    @jakarta.annotation.Nullable
+    private List<Link> links = new ArrayList<>();
+
+    public static final String JSON_PROPERTY_TIME_STAMP = "timeStamp";
+    @XmlElement(name = "timeStamp")
+    @jakarta.annotation.Nullable
+    private OffsetDateTime timeStamp;
+
+    public static final String JSON_PROPERTY_NUMBER_MATCHED = "numberMatched";
+    @XmlElement(name = "numberMatched")
+    @jakarta.annotation.Nullable
+    private Integer numberMatched;
+
+    public static final String JSON_PROPERTY_NUMBER_RETURNED = "numberReturned";
+    @XmlElement(name = "numberReturned")
+    @jakarta.annotation.Nullable
+    private Integer numberReturned;
 
     public FeatureCollection() {
     }
@@ -200,6 +218,118 @@ public class FeatureCollection extends DataTransferObject {
         this.bbox = bbox;
     }
 
+    public FeatureCollection links(@jakarta.annotation.Nullable List<Link> links) {
+        this.links = links;
+        return this;
+    }
+
+    public FeatureCollection addLinksItem(Link linksItem) {
+        if (this.links == null) {
+            this.links = new ArrayList<>();
+        }
+        this.links.add(linksItem);
+        return this;
+    }
+
+    /**
+     * Get links
+     *
+     * @return links
+     */
+    @jakarta.annotation.Nullable
+    @JsonProperty(JSON_PROPERTY_LINKS)
+    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+    @JacksonXmlProperty(localName = "links")
+    @JacksonXmlElementWrapper(useWrapping = false)
+    public List<Link> getLinks() {
+        return links;
+    }
+
+    @JsonProperty(JSON_PROPERTY_LINKS)
+    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+    @JacksonXmlProperty(localName = "links")
+    @JacksonXmlElementWrapper(useWrapping = false)
+    public void setLinks(@jakarta.annotation.Nullable List<Link> links) {
+        this.links = links;
+    }
+
+    public FeatureCollection timeStamp(@jakarta.annotation.Nullable OffsetDateTime timeStamp) {
+        this.timeStamp = timeStamp;
+        return this;
+    }
+
+    /**
+     * This property indicates the time and date when the response was generated.
+     *
+     * @return timeStamp
+     */
+    @jakarta.annotation.Nullable
+    @JsonProperty(JSON_PROPERTY_TIME_STAMP)
+    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+    @JacksonXmlProperty(localName = "timeStamp")
+    public OffsetDateTime getTimeStamp() {
+        return timeStamp;
+    }
+
+    @JsonProperty(JSON_PROPERTY_TIME_STAMP)
+    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+    @JacksonXmlProperty(localName = "timeStamp")
+    public void setTimeStamp(@jakarta.annotation.Nullable OffsetDateTime timeStamp) {
+        this.timeStamp = timeStamp;
+    }
+
+    public FeatureCollection numberMatched(@jakarta.annotation.Nullable Integer numberMatched) {
+        this.numberMatched = numberMatched;
+        return this;
+    }
+
+    /**
+     * The number of features of the feature type that match the selection parameters like &#x60;bbox&#x60;. minimum: 0
+     *
+     * @return numberMatched
+     */
+    @jakarta.annotation.Nullable
+    @JsonProperty(JSON_PROPERTY_NUMBER_MATCHED)
+    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+    @JacksonXmlProperty(localName = "numberMatched")
+    public Integer getNumberMatched() {
+        return numberMatched;
+    }
+
+    @JsonProperty(JSON_PROPERTY_NUMBER_MATCHED)
+    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+    @JacksonXmlProperty(localName = "numberMatched")
+    public void setNumberMatched(@jakarta.annotation.Nullable Integer numberMatched) {
+        this.numberMatched = numberMatched;
+    }
+
+    public FeatureCollection numberReturned(@jakarta.annotation.Nullable Integer numberReturned) {
+        this.numberReturned = numberReturned;
+        return this;
+    }
+
+    /**
+     * The number of features in the feature collection. A server may omit this information in a response, if the
+     * information about the number of features is not known or difficult to compute. If the value is provided, the
+     * value shall be identical to the number of items in the \&quot;features\&quot; array. minimum: 0
+     *
+     * @return numberReturned
+     */
+    @jakarta.annotation.Nullable
+    @JsonProperty(JSON_PROPERTY_NUMBER_RETURNED)
+    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+    @JacksonXmlProperty(localName = "numberReturned")
+    public Integer getNumberReturned() {
+        return numberReturned;
+    }
+
+    @JsonProperty(JSON_PROPERTY_NUMBER_RETURNED)
+    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+    @JacksonXmlProperty(localName = "numberReturned")
+    public void setNumberReturned(@jakarta.annotation.Nullable Integer numberReturned) {
+        this.numberReturned = numberReturned;
+    }
+
     /**
      * Return true if this FeatureCollection object is equal to o.
      */
@@ -214,12 +344,16 @@ public class FeatureCollection extends DataTransferObject {
         FeatureCollection featureCollection = (FeatureCollection) o;
         return Objects.equals(this.type, featureCollection.type)
                 && Objects.equals(this.features, featureCollection.features)
-                && Objects.equals(this.bbox, featureCollection.bbox);
+                && Objects.equals(this.bbox, featureCollection.bbox)
+                && Objects.equals(this.links, featureCollection.links)
+                && Objects.equals(this.timeStamp, featureCollection.timeStamp)
+                && Objects.equals(this.numberMatched, featureCollection.numberMatched)
+                && Objects.equals(this.numberReturned, featureCollection.numberReturned);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type, features, bbox);
+        return Objects.hash(type, features, bbox, links, timeStamp, numberMatched, numberReturned);
     }
 
 }

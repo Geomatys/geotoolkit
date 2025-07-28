@@ -46,6 +46,47 @@ public final class Conformance {
      */
     public static final String COLLECTIONS = "http://www.opengis.net/spec/ogcapi-common-2/1.0/conf/collections";
 
+    //proposal
+
+    // /////////////////////////////////////////////////////////////////////////////////////////
+    // OGC-API - Features - Part 1 : Core
+    // https://docs.ogc.org/is/17-069r4/17-069r4.html
+    // /////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * @see https://docs.ogc.org/is/17-069r4/17-069r4.html#ats_core
+     */
+    public static final String FEATURE_CORE = "http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/core";
+    /**
+     * @see https://docs.ogc.org/is/17-069r4/17-069r4.html#ats_html
+     */
+    public static final String FEATURE_HTML = "http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/html";
+    /**
+     * @see https://docs.ogc.org/is/17-069r4/17-069r4.html#ats_geojson
+     */
+    public static final String FEATURE_GEOJSON = "http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/geojson";
+    /**
+     * @see https://docs.ogc.org/is/17-069r4/17-069r4.html#ats_gmlsf0
+     */
+    public static final String FEATURE_GML_LEVEL0 = "http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/gmlsf0";
+    /**
+     * @see https://docs.ogc.org/is/17-069r4/17-069r4.html#ats_gmlsf2
+     */
+    public static final String FEATURE_GML_LEVEL2 = "http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/gmlsf2";
+    /**
+     * @see https://docs.ogc.org/is/17-069r4/17-069r4.html#ats_oas30
+     */
+    public static final String FEATURE_OPENAPI3 = "http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/oas30";
+
+
+    // /////////////////////////////////////////////////////////////////////////////////////////
+    // OGC-API - Features - Part 2 : Coordinate Reference Systems by Reference
+    // https://docs.ogc.org/is/18-058r1/18-058r1.html
+    // /////////////////////////////////////////////////////////////////////////////////////////
+
+    public static final String FEATURE_CRS = "http://www.opengis.net/spec/ogcapi-features-2/1.0/conf/crs";
+
+
     // /////////////////////////////////////////////////////////////////////////////////////////
     // OGC-API - Features - Part 3 : Filtering
     // https://docs.ogc.org/is/19-079r2/19-079r2.html
@@ -163,5 +204,5 @@ public final class Conformance {
      */
     public static final String DGGS_ZONELIST_OPERATIONIDS = "https://www.opengis.net/spec/ogcapi-dggs-1/1.0/conf/operation-ids";
 
-    
+
 }

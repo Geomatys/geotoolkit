@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import org.geotoolkit.ogcapi.model.DataTransferObject;
+import org.geotoolkit.ogcapi.model.common.Link;
 
 /**
  * GeoJSONFeature
@@ -112,6 +113,11 @@ public class GeoJSONFeature extends DataTransferObject {
     @XmlElement(name = "bbox")
     @jakarta.annotation.Nullable
     private List<BigDecimal> bbox = new ArrayList<>();
+
+    public static final String JSON_PROPERTY_LINKS = "links";
+    @XmlElement(name = "links")
+    @jakarta.annotation.Nonnull
+    private List<Link> links = new ArrayList<>();
 
     public GeoJSONFeature() {
     }
@@ -251,6 +257,40 @@ public class GeoJSONFeature extends DataTransferObject {
         this.bbox = bbox;
     }
 
+    public GeoJSONFeature links(@jakarta.annotation.Nonnull List<Link> links) {
+        this.links = links;
+        return this;
+    }
+
+    public GeoJSONFeature addLinksItem(Link linksItem) {
+        if (this.links == null) {
+            this.links = new ArrayList<>();
+        }
+        this.links.add(linksItem);
+        return this;
+    }
+
+    /**
+     * Get links
+     *
+     * @return links
+     */
+    @jakarta.annotation.Nonnull
+    @JsonProperty(JSON_PROPERTY_LINKS)
+    @JsonInclude(value = JsonInclude.Include.ALWAYS)
+    @JacksonXmlProperty(localName = "links")
+    @JacksonXmlElementWrapper(useWrapping = false)
+    public List<Link> getLinks() {
+        return links;
+    }
+
+    @JsonProperty(JSON_PROPERTY_LINKS)
+    @JsonInclude(value = JsonInclude.Include.ALWAYS)
+    @JacksonXmlProperty(localName = "links")
+    @JacksonXmlElementWrapper(useWrapping = false)
+    public void setLinks(@jakarta.annotation.Nonnull List<Link> links) {
+        this.links = links;
+    }
     /**
      * Return true if this GeoJSON_Feature object is equal to o.
      */
@@ -267,12 +307,13 @@ public class GeoJSONFeature extends DataTransferObject {
                 && Objects.equals(this.id, geoJSONFeature.id)
                 && Objects.equals(this.properties, geoJSONFeature.properties)
                 && Objects.equals(this.geometry, geoJSONFeature.geometry)
-                && Objects.equals(this.bbox, geoJSONFeature.bbox);
+                && Objects.equals(this.bbox, geoJSONFeature.bbox)
+                && Objects.equals(this.links, geoJSONFeature.links);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type, id, properties, geometry, bbox);
+        return Objects.hash(type, id, properties, geometry, bbox, links);
     }
 
 }
