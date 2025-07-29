@@ -97,6 +97,80 @@ public final class Conformance {
     public static final String FEATURE_FILTERING_FILTER = "http://www.opengis.net/spec/ogcapi-features-3/1.0/conf/filter";
     public static final String FEATURE_FILTERING_FEATURES_FILTER = "http://www.opengis.net/spec/ogcapi-features-3/1.0/conf/features-filter";
 
+    // /////////////////////////////////////////////////////////////////////////////////////////
+    // OGC-API - Features - Part 5 : Schema
+    // https://docs.ogc.org/DRAFTS/23-058r1.html
+    // /////////////////////////////////////////////////////////////////////////////////////////
+
+    public static final String FEATURE_SCHEMAS = "http://www.opengis.net/spec/ogcapi-features-5/1.0/conf/schemas";
+
+    public static final String FEATURE_CORE_ROLES_FOR_FEATURES = "http://www.opengis.net/spec/ogcapi-features-5/1.0/conf/advanced-property-roles";
+
+    public static final String FEATURE_REFERENCES = "http://www.opengis.net/spec/ogcapi-features-5/1.0/conf/references";
+
+    public static final String FEATURE_RETURNABLES_AND_RECEIVABLES = "http://www.opengis.net/spec/ogcapi-features-5/1.0/conf/returnables-and-receivables";
+
+    public static final String FEATURE_QUERYABLES = "http://www.opengis.net/spec/ogcapi-features-5/1.0/conf/queryables";
+
+    public static final String FEATURE_SORTABLES = "http://www.opengis.net/spec/ogcapi-features-5/1.0/conf/sortables";
+
+    public static final String FEATURE_PROFILE_QUERY_PARAMETER = "http://www.opengis.net/spec/ogcapi-features-5/1.0/conf/profile-parameter";
+
+    public static final String FEATURE_PROFILES_FOR_REFERENCES = "http://www.opengis.net/spec/ogcapi-features-5/1.0/conf/profile-references";
+
+    public static final String FEATURE_PROFILES_FOR_CODELISTS = "http://www.opengis.net/spec/ogcapi-features-5/1.0/conf/profile-codelists";
+
+    public static final String FEATURE_PROFILES_FOR_VALUE_DOMAINS = "http://www.opengis.net/spec/ogcapi-features-5/1.0/conf/profile-domains";
+
+    // /////////////////////////////////////////////////////////////////////////////////////////
+    // OGC-API - Coverages
+    // https://docs.ogc.org/DRAFTS/19-087.html
+    // /////////////////////////////////////////////////////////////////////////////////////////
+
+    public static final String COVERAGE_CORE = "http://www.opengis.net/spec/ogcapi-coverages-1/1.0/conf/core";
+
+    public static final String COVERAGE_SPATIAL_SCALING = "http://www.opengis.net/spec/ogcapi-coverages-1/1.0/conf/scaling-spatial";
+
+    public static final String COVERAGE_TEMPORAL_SCALING = "http://www.opengis.net/spec/ogcapi-coverages-1/1.0/conf/scaling-temporal";
+
+    public static final String COVERAGE_GENERAL_SCALING = "http://www.opengis.net/spec/ogcapi-coverages-1/1.0/conf/scaling-general";
+
+    public static final String COVERAGE_SPATIAL_SUBSETTING = "http://www.opengis.net/spec/ogcapi-coverages-1/1.0/conf/subsetting-spatial";
+
+    public static final String COVERAGE_TEMPORAL_SUBSETTING = "http://www.opengis.net/spec/ogcapi-coverages-1/1.0/conf/subsetting-temporal";
+
+    public static final String COVERAGE_GENERAL_SUBSETTING = "http://www.opengis.net/spec/ogcapi-coverages-1/1.0/conf/subsetting-general";
+
+    public static final String COVERAGE_FIELD_SELECTION = "http://www.opengis.net/spec/ogcapi-coverages-1/1.0/conf/fieldselection";
+
+    public static final String COVERAGE_CRS = "http://www.opengis.net/spec/ogcapi-coverages-1/1.0/conf/crs";
+
+    public static final String COVERAGE_COVERAGE_TILES = "http://www.opengis.net/spec/ogcapi-coverages-1/1.0/conf/tiles";
+
+    public static final String COVERAGE_HTML = "http://www.opengis.net/spec/ogcapi-coverages-1/1.0/conf/html";
+
+    public static final String COVERAGE_GEOTIFF = "http://www.opengis.net/spec/ogcapi-coverages-1/1.0/conf/geotiff";
+
+    public static final String COVERAGE_NETCDF = "http://www.opengis.net/spec/ogcapi-coverages-1/1.0/conf/netcdf";
+
+    public static final String COVERAGE_CIS_JSON = "http://www.opengis.net/spec/ogcapi-coverages-1/1.0/conf/cisjson";
+
+    public static final String COVERAGE_COVERAGEJSON = "http://www.opengis.net/spec/ogcapi-coverages-1/1.0/conf/coveragejson";
+
+    public static final String COVERAGE_LAS = "http://www.opengis.net/spec/ogcapi-coverages-1/1.0/conf/las";
+
+    public static final String COVERAGE_LASZIP = "http://www.opengis.net/spec/ogcapi-coverages-1/1.0/conf/laszip";
+
+    public static final String COVERAGE_PNG = "http://www.opengis.net/spec/ogcapi-coverages-1/1.0/conf/png";
+
+    public static final String COVERAGE_JPEG_XL = "http://www.opengis.net/spec/ogcapi-coverages-1/1.0/conf/jpegxl";
+
+    public static final String COVERAGE_JPEG_2000 = "http://www.opengis.net/spec/ogcapi-coverages-1/1.0/conf/jpeg2000";
+
+    public static final String COVERAGE_ZARR = "http://www.opengis.net/spec/ogcapi-coverages-1/1.0/conf/zarr";
+
+    public static final String COVERAGE_OPENAPI_3 = "http://www.opengis.net/spec/ogcapi-coverages-1/1.0/conf/oas30";
+
 
     // /////////////////////////////////////////////////////////////////////////////////////////
     // OGC-API DGGRS

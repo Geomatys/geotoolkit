@@ -122,7 +122,7 @@ public final class DiscreteGlobalGridSystems {
     /**
      * View given grid coverage as a DiscreteGlobalGridResource.
      */
-    public static DiscreteGlobalGridResource viewAsDggrs(GridCoverageResource base, DiscreteGlobalGridReferenceSystem dggrs) throws DataStoreException, IncommensurableException {
+    public static DiscreteGlobalGridResource viewAsDggrs(GridCoverageResource base, DiscreteGlobalGridReferenceSystem dggrs) throws DataStoreException, IncommensurableException, TransformException {
         return new GridAsDiscreteGlobalGridResource(dggrs, base);
     }
 
