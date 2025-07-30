@@ -135,8 +135,8 @@ public class PredictorTest {
         input.getOrCreate(PredictorDescriptor.END_TIMESTAMP).setValue(expectedEndTime);
         input.getOrCreate(PredictorDescriptor.START_POINT)
                 .setValue(new DirectPosition2D(CommonCRS.defaultGeographic(), 0.1, 0.2));
-        input.getOrCreate(PredictorDescriptor.WIND_RESOURCE).setValue(new MemoryGridResource(null, MOCK_UV_DATA, null));
-        input.getOrCreate(PredictorDescriptor.CURRENT_RESOURCE).setValue(new MemoryGridResource(null, MOCK_UV_DATA, null));
+        input.getOrCreate(PredictorDescriptor.WIND_RESOURCE).setValue(new MemoryGridResource(null, null, MOCK_UV_DATA, null));
+        input.getOrCreate(PredictorDescriptor.CURRENT_RESOURCE).setValue(new MemoryGridResource(null, null, MOCK_UV_DATA, null));
 
         final Predictor predictor = new Predictor(DESCRIPTOR, input);
         predictor.addListener(new ProcessListenerAdapter() {

@@ -102,7 +102,7 @@ public class IsolineComparison {
                             CommonCRS.defaultGeographic()))
                     .build();
             final Parameters params = Parameters.castOrWrap(IsolineDescriptor.INSTANCE.getInputDescriptor().createValue());
-            params.getOrCreate(IsolineDescriptor.COVERAGE_REF).setValue(new MemoryGridResource(null, coverage, null));
+            params.getOrCreate(IsolineDescriptor.COVERAGE_REF).setValue(new MemoryGridResource(null, null, coverage, null));
             params.getOrCreate(IsolineDescriptor.INTERVALS).setValue(input.isolineLevels);
             params.getOrCreate(IsolineDescriptor.FEATURE_NAME).setValue("isolines");
             params.getOrCreate(IsolineDescriptor.METHOD).setValue(method);
