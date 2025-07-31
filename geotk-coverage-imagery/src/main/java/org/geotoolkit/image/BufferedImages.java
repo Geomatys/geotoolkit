@@ -206,6 +206,17 @@ public class BufferedImages extends Static {
                 for(int i=1;i<nbBand;i++){
                     bandOffsets[i] = bandOffsets[i-1] + width*height;
                 }
+                /*
+                 * The following line creates a `BandedSampleModel` with only one bank shared by all bands.
+                 * This is unusual, as the standard pattern of `BandedSampleModel` convenience constructors
+                 * is to create one bank per band. It is possible to have many banks wrapping the same array
+                 * at different offsets. The use of a single bank, as done below, is more typically done with
+                 * `PixelInterleavedSampleModel`.
+                 *
+                 * However, despite being unusual, Java2D seems to accept this configuration. The following
+                 * code uses that configuration because this is what the initial version of this method was
+                 * doing. But it should not be used as a source of inspiration for new codes.
+                 */
                 var sm = new BandedSampleModel(dataType, width, height, width, bankIndices, bandOffsets);
                 raster = Raster.createWritableRaster(sm, buffer, upperLeft);
                 if (fillValue != null) {
@@ -217,8 +228,8 @@ public class BufferedImages extends Static {
     }
 
     /**
-     * Convert a primitive array to a DataBuffer.<br>
-     * This DataBuffer can then be used to create a WritableRaster.<br>
+     * Convert a primitive array to a DataBuffer.
+     * This DataBuffer can then be used to create a WritableRaster.
      * The array is directly used by the buffer, they are not copied.
      *
      * @param data primitive array object with 1 or 2 dimensions.
@@ -312,7 +323,7 @@ public class BufferedImages extends Static {
     }
 
     /**
-     * Compare the pixles of given image to reference pixel and return true
+     * Compare the pixels of given image to reference pixel and return true
      * if all pixels share those same samples.
      *
      * @param img image to test
@@ -356,8 +367,6 @@ public class BufferedImages extends Static {
     /**
      * Tests if all pixels in the image are identical and images have the same geometry.
      *
-     * @param image1
-     * @param image2
      * @return true if pixels are identical
      */
     public static boolean isPixelsIdenticals(RenderedImage image1, RenderedImage image2) {
@@ -384,8 +393,6 @@ public class BufferedImages extends Static {
 
     /**
      * Create a stream of point in the rectangle.
-     * @param rectangle
-     * @return
      */
     public static Stream<Point> pointStream(Rectangle rectangle) {
         return LongStream.range(0, rectangle.width * rectangle.height).mapToObj((long value) -> {
@@ -402,12 +409,11 @@ public class BufferedImages extends Static {
      * This behavior allows to overlaps tile border in case the algorithm requires it.
      * </p>
      *
-     * @param image
      * @param top top tile margin
      * @param right right tile margin
      * @param bottom bottom tile margin
      * @param left  left tile margin
-     * @return Stram of Rectangle for each tile in the image.
+     * @return Stream of Rectangle for each tile in the image.
      */
     public static Stream<Rectangle> tileStream(RenderedImage image, int top, int right, int bottom, int left) {
         final int tileWidth = image.getTileWidth();
