@@ -28,8 +28,8 @@ import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.StorageConnector;
 import org.geotoolkit.client.openapi.OpenApiConfiguration;
 import org.geotoolkit.client.service.ServiceException;
-import org.geotoolkit.ogcapi.client.common.CollectionsApi;
 import org.geotoolkit.ogcapi.client.common.CoreApi;
+import org.geotoolkit.ogcapi.model.Conformance;
 import org.geotoolkit.ogcapi.model.common.ConfClasses;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
@@ -75,7 +75,7 @@ public final class Store extends DataStore implements Aggregate {
         if (root == null) {
             try (CoreApi core = new CoreApi(configuration)) {
                 final ConfClasses conformance = core.getConformance("application/json").getData();
-                if (conformance.getConformsTo().contains(CollectionsApi.CONFORMANCE)) {
+                if (conformance.getConformsTo().contains(Conformance.COLLECTIONS)) {
                     root = new CollectionResource(configuration);
                 } else {
                     root = new UndefinedResource(configuration);

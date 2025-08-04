@@ -85,6 +85,33 @@ public class GeoJSONFeatureGeometry extends AbstractOpenApiSchema {
             boolean typeCoercion = ctxt.isEnabled(MapperFeature.ALLOW_COERCION_OF_SCALARS);
             int match = 0;
             JsonToken token = tree.traverse(jp.getCodec()).nextToken();
+
+            // deserialize GeometrycollectionGeoJSON
+            try {
+                boolean attemptParsing = true;
+                // ensure that we respect type coercion as set on the client ObjectMapper
+                if (GeoJSONGeometrycollection.class.equals(Integer.class) || GeoJSONGeometrycollection.class.equals(Long.class) || GeoJSONGeometrycollection.class.equals(Float.class) || GeoJSONGeometrycollection.class.equals(Double.class) || GeoJSONGeometrycollection.class.equals(Boolean.class) || GeoJSONGeometrycollection.class.equals(String.class)) {
+                    attemptParsing = typeCoercion;
+                    if (!attemptParsing) {
+                        attemptParsing |= ((GeoJSONGeometrycollection.class.equals(Integer.class) || GeoJSONGeometrycollection.class.equals(Long.class)) && token == JsonToken.VALUE_NUMBER_INT);
+                        attemptParsing |= ((GeoJSONGeometrycollection.class.equals(Float.class) || GeoJSONGeometrycollection.class.equals(Double.class)) && token == JsonToken.VALUE_NUMBER_FLOAT);
+                        attemptParsing |= (GeoJSONGeometrycollection.class.equals(Boolean.class) && (token == JsonToken.VALUE_FALSE || token == JsonToken.VALUE_TRUE));
+                        attemptParsing |= (GeoJSONGeometrycollection.class.equals(String.class) && token == JsonToken.VALUE_STRING);
+                    }
+                }
+                if (attemptParsing) {
+                    deserialized = tree.traverse(jp.getCodec()).readValueAs(GeoJSONGeometrycollection.class);
+                    // TODO: there is no validation against JSON schema constraints
+                    // (min, max, enum, pattern...), this does not perform a strict JSON
+                    // validation, which means the 'match' count may be higher than it should be.
+                    match++;
+                    log.log(Level.FINER, "Input data matches schema 'GeometrycollectionGeoJSON'");
+                }
+            } catch (Exception e) {
+                // deserialization failed, continue
+                log.log(Level.FINER, "Input data does not match schema 'GeometrycollectionGeoJSON'", e);
+            }
+
             // deserialize GeoJSONLineString
             try {
                 boolean attemptParsing = true;

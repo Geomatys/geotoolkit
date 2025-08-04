@@ -33,11 +33,6 @@ import org.geotoolkit.ogcapi.model.common.Collections;
  */
 public final class CollectionsApi extends AbstractOpenApi {
 
-    /**
-     * Key used in ConfClasses to identify a resource compliant with this Api.
-     */
-    public static final String CONFORMANCE = "http://www.opengis.net/spec/ogcapi-common-2/1.0/conf/collections";
-
 
     public CollectionsApi(OpenApiConfiguration config) {
         super(config);
