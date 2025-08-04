@@ -47,15 +47,6 @@ public final class LinkRelations {
      */
     public static final String SERVICE_DOC = "service-doc";
 
-    /**
-     * The target IRI points to a resource representing the dataset (e.g., the root of an OGC Web API).
-     */
-    public static final String OGC_DATASET = "https://www.opengis.net/def/rel/ogc/1.0/dataset";
-    /**
-     * The target IRI points to a resource representing a collection of geospatial data.
-     */
-    public static final String OGC_GEODATA = "https://www.opengis.net/def/rel/ogc/1.0/geodata";
-
     // /////////////////////////////////////////////////////////////////////////////////////////
     // OGC-API CORE
     // /////////////////////////////////////////////////////////////////////////////////////////
@@ -66,13 +57,80 @@ public final class LinkRelations {
     public static final String OGC_CORE_CONFORMANCE = "https://www.opengis.net/def/rel/ogc/1.0/conformance";
 
     // /////////////////////////////////////////////////////////////////////////////////////////
-    // OGC-API Geospatial data
+    // OGC-API OGC API - Features Part 1:
+    // Core or OGC API - Common Part 2: Geospatial data
     // /////////////////////////////////////////////////////////////////////////////////////////
 
     /**
      * Refers to the list of collections available for a dataset.
      */
     public static final String OGC_DATA = "https://www.opengis.net/def/rel/ogc/1.0/data";
+    /**
+     * The target IRI points to a resource representing general metadata for the collection of geospatial data
+     * (e.g., ISO-19115 — not the domain/application metadata as defined in CIS).
+     */
+    public static final String OGC_DATA_META = "https://www.opengis.net/def/rel/ogc/1.0/data-meta";
+    /**
+     * The target IRI points to a resource that describes the TileMatrixSet according to the 2D-TMS standard.
+     */
+    public static final String OGC_TILING_SCHEME = "http://www.opengis.net/def/rel/ogc/1.0/tiling-scheme";
+    /**
+     * The target IRI points to a resource representing the dataset (e.g., the root of an OGC Web API).
+     */
+    public static final String OGC_DATASET = "https://www.opengis.net/def/rel/ogc/1.0/dataset";
+    /**
+     * The target IRI points to a resource representing a collection of geospatial data.
+     */
+    public static final String OGC_GEODATA = "https://www.opengis.net/def/rel/ogc/1.0/geodata";
+
+    // /////////////////////////////////////////////////////////////////////////////////////////
+    // OGC-API - Features - Part 3 : Filtering
+    // https://docs.ogc.org/is/19-079r2/19-079r2.html
+    // /////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * @see https://docs.ogc.org/is/19-079r2/19-079r2.html#queryables
+     */
+    public static final String OGC_FEATURE_QUERYABLES = "http://www.opengis.net/def/rel/ogc/1.0/queryables";
+
+    // /////////////////////////////////////////////////////////////////////////////////////////
+    // OGC-API - Features - Part 5 : Schema
+    // https://docs.ogc.org/DRAFTS/23-058r1.html
+    // /////////////////////////////////////////////////////////////////////////////////////////
+
+    public static final String OGC_FEATURE_SCHEMA = "http://www.opengis.net/def/rel/ogc/1.0/schema";
+
+    // http://www.opengis.net/def/rel/ogc/1.0/queryables already in part 3
+
+    public static final String OGC_FEATURE_SORTABLES = "http://www.opengis.net/def/rel/ogc/1.0/sortables";
+
+    // /////////////////////////////////////////////////////////////////////////////////////////
+    // OGC-API - Coverage
+    // /////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * The target IRI points to a resource representing the coverage, including self-description aspects supported by
+     * the encoding (such as the domain set, range type, range set and metadata for the Coverage Implementation Schema).
+     */
+    public static final String OGC_COVERAGE = "http://www.opengis.net/def/rel/ogc/1.0/coverage";
+    /**
+     * The target IRI points to a list of scenes of which the coverage collection is comprised, as defined by the
+     * "Scenes" requirements class.
+     */
+    public static final String OGC_COVERAGE_SCENE = "http://www.opengis.net/def/rel/ogc/1.0/coverage-scenes";
+
+    // /////////////////////////////////////////////////////////////////////////////////////////
+    // OGC-API - Tiles
+    // /////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * http://www.opengis.net/def/rel/ogc/1.0/tilesets-coverage
+     */
+    public static final String OGC_TILES_COVERAGE = "http://www.opengis.net/def/rel/ogc/1.0/tilesets-coverage";
+    /**
+     * http://www.opengis.net/def/rel/ogc/1.0/tiling-schemes
+     */
+    public static final String OGC_TILES_SCHEME = "http://www.opengis.net/def/rel/ogc/1.0/tiling-schemes";
 
     // /////////////////////////////////////////////////////////////////////////////////////////
     // OGC-API DGGRS

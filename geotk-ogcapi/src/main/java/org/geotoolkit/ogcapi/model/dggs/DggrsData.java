@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import org.geotoolkit.ogcapi.model.DataTransferObject;
+import org.geotoolkit.ogcapi.model.jsonschema.JSONSchema;
 
 /**
  * DggsJson
@@ -68,7 +69,7 @@ public final class DggrsData extends DataTransferObject {
     public static final String JSON_PROPERTY_SCHEMA = "schema";
     @XmlElement(name = "schema")
     @jakarta.annotation.Nullable
-    private Schema schema;
+    private JSONSchema schema;
 
     public static final String JSON_PROPERTY_DIMENSIONS = "dimensions";
     @XmlElement(name = "dimensions")
@@ -168,7 +169,7 @@ public final class DggrsData extends DataTransferObject {
         this.depths = depths;
     }
 
-    public DggrsData schema(@jakarta.annotation.Nullable Schema schema) {
+    public DggrsData schema(@jakarta.annotation.Nullable JSONSchema schema) {
         this.schema = schema;
         return this;
     }
@@ -182,14 +183,14 @@ public final class DggrsData extends DataTransferObject {
     @JsonProperty(JSON_PROPERTY_SCHEMA)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
     @JacksonXmlProperty(localName = "schema")
-    public Schema getSchema() {
+    public JSONSchema getSchema() {
         return schema;
     }
 
     @JsonProperty(JSON_PROPERTY_SCHEMA)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
     @JacksonXmlProperty(localName = "schema")
-    public void setSchema(@jakarta.annotation.Nullable Schema schema) {
+    public void setSchema(@jakarta.annotation.Nullable JSONSchema schema) {
         this.schema = schema;
     }
 

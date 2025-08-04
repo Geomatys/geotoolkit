@@ -36,6 +36,7 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.measure.Quantities;
 import org.apache.sis.measure.Units;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.GeodeticCalculator;
 import org.apache.sis.storage.AbstractResource;
 import org.apache.sis.storage.DataStoreException;
@@ -52,6 +53,7 @@ import org.geotoolkit.storage.dggs.ZonalIdentifier;
 import org.geotoolkit.storage.dggs.Zone;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
+import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.GenericName;
 
@@ -67,7 +69,7 @@ public final class GridAsDiscreteGlobalGridResource extends AbstractResource imp
     private final int maxLevel;
 
     public GridAsDiscreteGlobalGridResource(DiscreteGlobalGridReferenceSystem dggrs, GridCoverageResource resource)
-            throws DataStoreException, IncommensurableException {
+            throws DataStoreException, IncommensurableException, TransformException {
         super(null);
         this.dggrs = dggrs;
         this.source = resource;
@@ -165,14 +167,15 @@ public final class GridAsDiscreteGlobalGridResource extends AbstractResource imp
     /**
      * compute average resolution of a grid geometry
      */
-    public static Quantity<?> computeAverageResolution(GridGeometry domain) {
+    public static Quantity<?> computeAverageResolution(GridGeometry domain) throws TransformException {
         final double[] resolution = domain.getResolution(true);
-        final Envelope envelope = domain.getEnvelope();
+        final SingleCRS horizontalCrs = CRS.getHorizontalComponent(domain.getCoordinateReferenceSystem());
+        final Envelope envelope = domain.getEnvelope(horizontalCrs);
         final DirectPosition start = GeneralEnvelope.castOrCopy(envelope).getMedian();
         final DirectPosition end = new DirectPosition2D(start.getCoordinateReferenceSystem());
         end.setCoordinate(0, start.getCoordinate(0) + resolution[0]);
         end.setCoordinate(1, start.getCoordinate(1));
-        final GeodeticCalculator calculator = GeodeticCalculator.create(envelope.getCoordinateReferenceSystem());
+        final GeodeticCalculator calculator = GeodeticCalculator.create(horizontalCrs);
         calculator.setStartPoint(start);
         calculator.setEndPoint(end);
         final double distance = calculator.getGeodesicDistance();

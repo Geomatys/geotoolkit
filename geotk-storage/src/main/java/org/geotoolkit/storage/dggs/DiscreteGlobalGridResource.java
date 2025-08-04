@@ -61,7 +61,12 @@ public interface DiscreteGlobalGridResource extends BandedCoverageResource {
     @Override
     public default DiscreteGlobalGridCoverage read(GridGeometry domain, int... range) throws DataStoreException {
 
-        final Quantity<?> coverageResolution = GridAsDiscreteGlobalGridResource.computeAverageResolution(domain);
+        final Quantity<?> coverageResolution;
+        try {
+            coverageResolution = GridAsDiscreteGlobalGridResource.computeAverageResolution(domain);
+        } catch (TransformException ex) {
+            throw new DataStoreException(ex);
+        }
 
         //extract zones in the wanted area
         final DiscreteGlobalGridReferenceSystem dggrs = getGridReferenceSystem();
