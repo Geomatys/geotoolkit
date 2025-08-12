@@ -35,7 +35,7 @@ public class DggsTest {
 
         final DggrsZonesResponse response = new DggrsZonesResponse();
         final String json = new ObjectMapper().writeValueAsString(response);
-        Assertions.assertEquals("{\"zones\":[],\"links\":[]}", json);
+        Assertions.assertEquals("{\"zones\":[]}", json);
 
     }
 

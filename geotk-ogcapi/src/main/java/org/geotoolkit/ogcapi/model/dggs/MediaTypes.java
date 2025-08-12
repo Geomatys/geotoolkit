@@ -32,10 +32,10 @@ public final class MediaTypes {
     public static final String DATA_JSON_FG                     = "application/geo+json";
     public static final String DATA_UBJSON_FG                   = "application/geo+ubjson";
     public static final String DATA_GEOJSON                     = "application/geo+json";
-    public static final String DATA_GEOTIFF                     = "image/tiff; application=geotiff";
+    public static final String DATA_GEOTIFF                     = "image/tiff;application=geotiff";
     public static final String DATA_NETCDF                      = "application/netcdf ";
     public static final String DATA_ZARR                        = "application/zarr+zip";
-    public static final String DATA_COVERAGEJSON                = "application/prs.coverage+json ";
+    public static final String DATA_COVERAGEJSON                = "application/prs.coverage+json";
     public static final String DATA_PNG                         = "image/png";
     public static final String DATA_JPEGXL                      = "image/jxl";
 
@@ -60,6 +60,6 @@ public final class MediaTypes {
     public static final String ZONELIST_HTML                    = "text/html";
     public static final String ZONELIST_UINT64                  = "application/x-binary";
     public static final String ZONELIST_GEOJSON                 = "application/geo+json";
-    public static final String ZONELIST_GEOTIFF                 = "image/tiff; application=geotiff";
+    public static final String ZONELIST_GEOTIFF                 = "image/tiff;application=geotiff";
 
 }

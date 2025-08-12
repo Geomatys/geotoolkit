@@ -281,7 +281,8 @@ public class Dggrs extends DataTransferObject {
     }
 
     /**
-     * Get defaultDepth
+     * Get defaultDepth.
+     * The defaultDepth property indicates the Implementation’s default depth for when the zone-depth query parameter is omitted.
      *
      * @return defaultDepth
      */
