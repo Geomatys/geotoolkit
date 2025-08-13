@@ -37,14 +37,14 @@ final class UBJsonParser {
 
     private static final JsonNodeFactory NF = JsonNodeFactory.instance;
 
-    public ObjectNode parse(InputStream stream) throws IllegalArgumentException, DataStoreException, IOException {
+    public JsonNode parse(InputStream stream) throws IllegalArgumentException, DataStoreException, IOException {
         final ChannelDataInput di = new StorageConnector(stream).getStorageAs(ChannelDataInput.class);
         final byte marker = di.readByte();
-        if (marker == UBJson.OBJECT_START) {
-            return parseObject(di);
-        } else {
-            throw new IOException("Object start marker not found");
-        }
+        return switch (marker) {
+            case UBJson.OBJECT_START -> parseObject(di);
+            case UBJson.ARRAY_START -> parseArray(di);
+            default -> parseValue(marker, di);
+        };
     }
 
     private static ObjectNode parseObject(ChannelDataInput in) throws IOException {
@@ -58,13 +58,47 @@ final class UBJsonParser {
         return node;
     }
 
-    private static ArrayNode parseArray(ChannelDataInput in) throws IOException {
-        final ArrayNode node = NF.arrayNode();
-        byte marker;
-        while ( (marker = in.readByte()) != UBJson.ARRAY_END) {
-            node.add(parseValue(marker, in));
+    private static JsonNode parseArray(ChannelDataInput in) throws IOException {
+        byte marker = in.readByte();
+        // check for optimized cases
+        // https://ubjson.org/type-reference/container-types/#optimized-format
+        if (marker == UBJson.OPTIMIZED_TYPE) {
+            marker = in.readByte();
+            final byte type = marker;
+            marker = in.readByte();
+            if (marker != UBJson.OPTIMIZED_SIZE) throw new IOException("Optimized size marker not found");
+            marker = in.readByte();
+            final int size = parseValue(marker, in).asInt();
+            if (type == UBJson.UINT8 || type == UBJson.INT8) {
+                //use a compact form
+                return NF.binaryNode(in.readBytes(size));
+            } else {
+                final ArrayNode node = NF.arrayNode(size);
+                for (int i = 0; i < size; i++) {
+                    node.add(parseValue(type, in));
+                }
+                return node;
+            }
+
+        } else if (marker == UBJson.OPTIMIZED_SIZE) {
+            //array of fixed size but undefined type
+            marker = in.readByte();
+            final int size = parseValue(marker, in).asInt();
+            final ArrayNode node = NF.arrayNode(size);
+            for (int i = 0; i < size; i++) {
+                marker = in.readByte();
+                node.add(parseValue(marker, in));
+            }
+            return node;
+        } else {
+            //normal array or undefined size and type
+            final ArrayNode node = NF.arrayNode();
+            do {
+                node.add(parseValue(marker, in));
+                marker = in.readByte();
+            } while (marker != UBJson.ARRAY_END);
+            return node;
         }
-        return node;
     }
 
     private static JsonNode parseValue(byte marker, ChannelDataInput in) throws IOException {

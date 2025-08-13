@@ -33,10 +33,6 @@
             <groupId>org.apache.sis.storage</groupId>
             <artifactId>sis-storage</artifactId>
         </dependency>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-        </dependency>
     </dependencies>
 
 </project>

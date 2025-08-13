@@ -239,27 +239,29 @@ final class UBJsonGenerator extends GeneratorBase {
     public void writeString(String text) throws IOException {
         if (text == null) {
             writeNull();
-            return;
+        } else {
+            final byte[] utf8Buffer = text.getBytes(StandardCharsets.UTF_8);
+            writeUTF8String(utf8Buffer, 0, utf8Buffer.length);
         }
-        _verifyValueWrite("write String value");
-        _out.writeByte(UBJson.STRING);
-        _writeStringNoMarker(text);
     }
 
     @Override
     public void writeString(char[] text, int offset, int len) throws IOException {
-        _verifyValueWrite("write String value");
         writeString(new String(text, offset, len));
     }
 
     @Override
     public void writeRawUTF8String(byte[] text, int offset, int len) throws IOException {
-        writeString(new String(text, offset, len, StandardCharsets.UTF_8));
+        _verifyValueWrite("write String value");
+        _out.writeByte(UBJson.STRING);
+        _writeInt(len, false);
+        _out.write(text, offset, len);
+
     }
 
     @Override
     public void writeUTF8String(byte[] text, int offset, int len) throws IOException {
-        writeString(new String(text, offset, len, StandardCharsets.UTF_8));
+        writeRawUTF8String(text, offset, len);
     }
 
     /*
@@ -297,15 +299,15 @@ final class UBJsonGenerator extends GeneratorBase {
             throws IOException {
         if (data == null) {
             writeNull();
-            return;
+        } else {
+            //create a compact ubjson byte array
+            _out.writeByte(UBJson.ARRAY_START);
+            _out.writeByte(UBJson.OPTIMIZED_TYPE);
+            _out.writeByte(UBJson.UINT8);
+            _out.writeByte(UBJson.OPTIMIZED_SIZE);
+            _writeInt(len, false);
+            _out.write(data, offset, len);
         }
-        _verifyValueWrite("write Binary value");
-        // ok, better just Base64 encode as a String...
-        if (offset > 0 || (offset + len) != data.length) {
-            data = Arrays.copyOfRange(data, offset, offset + len);
-        }
-        String encoded = b64variant.encode(data);
-        writeString(encoded);
     }
 
     /*

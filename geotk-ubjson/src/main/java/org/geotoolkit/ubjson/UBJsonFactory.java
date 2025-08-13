@@ -26,17 +26,15 @@ import com.fasterxml.jackson.core.format.InputAccessor;
 import com.fasterxml.jackson.core.format.MatchStrength;
 import com.fasterxml.jackson.core.io.IOContext;
 import com.fasterxml.jackson.core.json.PackageVersion;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TreeTraversingParser;
 import java.io.ByteArrayInputStream;
-import java.io.CharArrayReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
-import java.nio.charset.StandardCharsets;
-import org.apache.commons.io.output.WriterOutputStream;
 import org.apache.sis.storage.DataStoreException;
 
 /**
@@ -119,7 +117,7 @@ public final class UBJsonFactory extends JsonFactory {
 
     @Override
     public boolean canHandleBinaryNatively() {
-        return false;
+        return true;
     }
 
     @Override
@@ -143,20 +141,7 @@ public final class UBJsonFactory extends JsonFactory {
 
     @Override
     public JsonParser _createParser(Reader r, IOContext ctxt) throws IOException {
-        final boolean autoClose = ctxt.isResourceManaged() || isEnabled(JsonParser.Feature.AUTO_CLOSE_SOURCE);
-        try {
-            final char[] arr = new char[8 * 1024];
-            final StringBuilder buffer = new StringBuilder();
-            int numCharsRead;
-            while ((numCharsRead = r.read(arr, 0, arr.length)) != -1) {
-                buffer.append(arr, 0, numCharsRead);
-            }
-            if (autoClose) r.close();
-            byte[] bytes = buffer.toString().getBytes(StandardCharsets.UTF_8);
-            return _createParser(bytes, 0, bytes.length, ctxt);
-        } finally {
-            ctxt.close();
-        }
+        throw new UnsupportedOperationException("Can not create UBJson binary parser from text input");
     }
 
     @Override
@@ -166,7 +151,7 @@ public final class UBJsonFactory extends JsonFactory {
 
     @Override
     protected JsonParser _createParser(char[] data, int offset, int len, IOContext ctxt, boolean recyclable) throws IOException {
-        return _createParser(new CharArrayReader(data, offset, len), ctxt);
+        throw new UnsupportedOperationException("Can not create UBJson binary parser from text input");
     }
 
     // *********************************************************************
@@ -175,11 +160,7 @@ public final class UBJsonFactory extends JsonFactory {
 
     @Override
     protected JsonGenerator _createGenerator(Writer out, IOContext ctxt) throws IOException {
-        try {
-            return new UBJsonGenerator(ctxt, _generatorFeatures, _objectCodec, new WriterOutputStream(out));
-        } catch (IllegalArgumentException | DataStoreException ex) {
-            throw new IOException(ex);
-        }
+        throw new UnsupportedOperationException("Can not create UBJson binary generator for text output");
     }
 
     @Override
@@ -195,7 +176,7 @@ public final class UBJsonFactory extends JsonFactory {
     // Low-level methods for reading/writing UBJSON
     // *********************************************************************
 
-    private ObjectNode parse(IOContext ctxt, InputStream in) throws IOException {
+    private JsonNode parse(IOContext ctxt, InputStream in) throws IOException {
         final UBJsonParser parser = new UBJsonParser();
         try {
             return parser.parse(in);
