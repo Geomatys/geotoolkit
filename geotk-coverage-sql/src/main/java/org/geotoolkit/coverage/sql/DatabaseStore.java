@@ -310,14 +310,14 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
                             "Metadata.sql",
                             "Referencing.sql"
                         };
-                        try (ScriptRunner runner = new ScriptRunner(cnx, 100)) {
+                        try (ScriptRunner runner = new ScriptRunner(cnx, null, 100)) {
                             for (final String source : scripts) {
                                 runner.run(source, MetadataSource.class.getResourceAsStream(source));
                             }
                         }
                     }
                     if (!schemaExists(metadata, "rasters")) {
-                        try (ScriptRunner runner = new ScriptRunner(cnx, 100)) {
+                        try (ScriptRunner runner = new ScriptRunner(cnx, null, 100)) {
                             runner.run("Create.sql", DatabaseStore.class.getResourceAsStream("Create.sql"));
                         }
                     }
