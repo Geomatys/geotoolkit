@@ -14,29 +14,27 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.ogcapi.model.dggs;
+package org.geotoolkit.ubjson;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import com.fasterxml.jackson.core.TSFBuilder;
 
 /**
+ * Jackson factory builder implementation for UBJSON.
  *
  * @author Johann Sorel (Geomatys)
  */
-public class DggsTest {
+public final class UBJsonFactoryBuilder extends TSFBuilder<UBJsonFactory, UBJsonFactoryBuilder> {
 
-    /**
-     * Check null fields are not written.
-     */
-    @Test
-    public void testNullValueAreNotWritten() throws JsonProcessingException {
-
-        final DggrsZonesResponse response = new DggrsZonesResponse();
-        final String json = new ObjectMapper().writeValueAsString(response);
-        Assertions.assertEquals("{\"zones\":[]}", json);
-
+    public UBJsonFactoryBuilder() {
+        super();
     }
 
+    public UBJsonFactoryBuilder(UBJsonFactory base) {
+        super(base);
+    }
+
+    @Override
+    public UBJsonFactory build() {
+        return new UBJsonFactory(this);
+    }
 }

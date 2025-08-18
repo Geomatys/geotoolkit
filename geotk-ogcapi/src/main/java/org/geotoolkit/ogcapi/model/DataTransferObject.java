@@ -29,7 +29,7 @@ import java.util.Map;
  *
  * @author Johann Sorel (Geomatys)
  */
-@JsonInclude(Include.NON_NULL)
+@JsonInclude(Include.NON_EMPTY)
 public abstract class DataTransferObject {
 
     /**
