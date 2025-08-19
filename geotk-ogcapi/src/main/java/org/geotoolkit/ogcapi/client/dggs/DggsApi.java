@@ -36,6 +36,60 @@ import org.geotoolkit.ogcapi.model.dggs.ZoneInfo;
 
 public final class DggsApi extends AbstractOpenApi {
 
+    /**
+     * Subset name for latitude geographic CRS.
+     */
+    public static final String SUBSET_LAT = "Lat";
+    /**
+     * Subset name for longitude geographic CRS.
+     */
+    public static final String SUBSET_LON = "Lon";
+    /**
+     * Subset name for east projected CRS, which are to be interpreted as the related data axis in the CRS definition.
+     */
+    public static final String SUBSET_E = "E";
+    /**
+     * Subset name for north projected CRS, which are to be interpreted as the related data axis in the CRS definition.
+     */
+    public static final String SUBSET_N = "N";
+    /**
+     * Subset name for elevation above the ellipsoid in EPSG:4979 or CRS84h
+     */
+    public static final String SUBSET_H = "h";
+    /**
+     * Subset name for elevation in projected CRS, which are to be interpreted as the vertical axis in the CRS definition.
+     */
+    public static final String SUBSET_Z = "z";
+    /**
+     * Subset name for time for a temporal dataset.
+     */
+    public static final String SUBSET_TIME = "time";
+    /**
+     * For vector output formats, retrieve the zone centroid as geometry.
+     */
+    public static final String GEOMETRY_ZONE_CENTROID = "zone-centroid";
+    /**
+     * For vector output formats, retrieve the zone region as geometry.
+     */
+    public static final String GEOMETRY_ZONE_REGION = "zone-region";
+    /**
+     * For vector output formats, retrieve original geometries.
+     */
+    public static final String GEOMETRY_ZONE_VECTORIZED = "vectorized";
+    /**
+     * For vector output formats, do not return the geometry.
+     */
+    public static final String GEOMETRY_ZONE_NONE = "none";
+
+    public static final String PROFILE_rfc7946 = "rfc7946";
+    public static final String PROFILE_JSONFG = "jsonfg";
+    public static final String PROFILE_JSONFG_PLUS = "jsonfg-plus";
+    public static final String PROFILE_JSONFG_DGGS = "jsonfg-dggs";
+    public static final String PROFILE_JSONFG_DGGS_PLUS = "jsonfg-dggs-plus";
+    public static final String PROFILE_JSONFG_DGGS_ZONEIDS = "jsonfg-dggs-zoneids";
+    public static final String PROFILE_JSONFG_DGGS_ZONEIDS_PLUS = "jsonfg-dggs-zoneids-plus";
+
+
     public DggsApi(OpenApiConfiguration config) {
         super(config);
     }

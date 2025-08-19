@@ -16,140 +16,108 @@
  */
 package org.geotoolkit.ogcapi.model.geojson;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonFormat.Feature;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlEnum;
-import jakarta.xml.bind.annotation.XmlEnumValue;
 import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.XmlType;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
-import org.geotoolkit.ogcapi.model.DataTransferObject;
 import org.geotoolkit.ogcapi.model.common.Link;
 
 /**
  * GeoJSONFeature
  */
 @JsonPropertyOrder({
-    GeoJSONFeature.JSON_PROPERTY_TYPE,
-    GeoJSONFeature.JSON_PROPERTY_ID,
-    GeoJSONFeature.JSON_PROPERTY_PROPERTIES,
-    GeoJSONFeature.JSON_PROPERTY_GEOMETRY,
-    GeoJSONFeature.JSON_PROPERTY_BBOX
+    GeoJSONFeature.PROPERTY_TYPE,
+    GeoJSONFeature.PROPERTY_ID,
+    GeoJSONFeature.PROPERTY_CONFORMS_TO,
+    GeoJSONFeature.PROPERTY_FEATURE_TYPE,
+    GeoJSONFeature.PROPERTY_FEATURE_SCHEMA,
+    GeoJSONFeature.PROPERTY_LINKS,
+    GeoJSONFeature.PROPERTY_BBOX,
+    GeoJSONFeature.PROPERTY_TIME,
+    GeoJSONFeature.PROPERTY_COORD_REF_SYS,
+    GeoJSONFeature.PROPERTY_GEOMETRY,
+    GeoJSONFeature.PROPERTY_PLACE,
+    GeoJSONFeature.PROPERTY_PROPERTIES
 })
 @XmlRootElement(name = "GeoJSONFeature")
 @XmlAccessorType(XmlAccessType.FIELD)
 @JacksonXmlRootElement(localName = "GeoJSONFeature")
-public class GeoJSONFeature extends DataTransferObject {
+public class GeoJSONFeature extends GeoJSONObject {
 
-    /**
-     * Gets or Sets type
-     */
-    @XmlType(name = "TypeEnum")
-    @XmlEnum(String.class)
-    public enum TypeEnum {
-        @XmlEnumValue("Feature")
-        FEATURE(String.valueOf("Feature"));
+    //geojson
+    public static final String PROPERTY_ID = "id";
+    public static final String PROPERTY_GEOMETRY = "geometry";
+    public static final String PROPERTY_PROPERTIES = "properties";
+    //added in OGC-API features
+    public static final String PROPERTY_LINKS = "links";
+    //added in JSON-FG
+    public static final String PROPERTY_CONFORMS_TO = "conformsTo";
+    public static final String PROPERTY_FEATURE_TYPE = "featureType";
+    public static final String PROPERTY_FEATURE_SCHEMA = "featureSchema";
+    public static final String PROPERTY_TIME = "time";
+    public static final String PROPERTY_COORD_REF_SYS = "coordRefSys";
+    public static final String PROPERTY_PLACE = "place";
 
-        private String value;
 
-        TypeEnum(String value) {
-            this.value = value;
-        }
+    @XmlElement(name = PROPERTY_PROPERTIES)
+    @jakarta.annotation.Nullable
+    private Map<String, Object> properties;
 
-        @JsonValue
-        public String getValue() {
-            return value;
-        }
-
-        @Override
-        public String toString() {
-            return String.valueOf(value);
-        }
-
-        @JsonCreator
-        public static TypeEnum fromValue(String value) {
-            for (TypeEnum b : TypeEnum.values()) {
-                if (b.value.equals(value)) {
-                    return b;
-                }
-            }
-            throw new IllegalArgumentException("Unexpected value '" + value + "'");
-        }
-    }
-
-    public static final String JSON_PROPERTY_TYPE = "type";
-    @XmlElement(name = "type")
+    @XmlElement(name = PROPERTY_GEOMETRY)
     @jakarta.annotation.Nonnull
-    private TypeEnum type;
+    private GeoJSONGeometry geometry;
 
-    public static final String JSON_PROPERTY_ID = "id";
-    @XmlElement(name = "id")
+    @XmlElement(name = PROPERTY_ID)
     @jakarta.annotation.Nullable
     private Object id;
 
-    public static final String JSON_PROPERTY_PROPERTIES = "properties";
-    @XmlElement(name = "properties")
-    @jakarta.annotation.Nullable
-    private Object properties;
-
-    public static final String JSON_PROPERTY_GEOMETRY = "geometry";
-    @XmlElement(name = "geometry")
-    @jakarta.annotation.Nonnull
-    private GeoJSONFeatureGeometry geometry;
-
-    public static final String JSON_PROPERTY_BBOX = "bbox";
-    @XmlElement(name = "bbox")
-    @jakarta.annotation.Nullable
-    private List<BigDecimal> bbox = new ArrayList<>();
-
-    public static final String JSON_PROPERTY_LINKS = "links";
-    @XmlElement(name = "links")
+    @XmlElement(name = PROPERTY_LINKS)
     @jakarta.annotation.Nonnull
     private List<Link> links = new ArrayList<>();
+
+    @XmlElement(name = PROPERTY_CONFORMS_TO)
+    @jakarta.annotation.Nullable
+    private List<String> conformsTo = new ArrayList<>();
+
+    @XmlElement(name = PROPERTY_FEATURE_TYPE)
+    @jakarta.annotation.Nullable
+    private List<String> featureType = new ArrayList<>();
+
+    @XmlElement(name = PROPERTY_FEATURE_SCHEMA)
+    @jakarta.annotation.Nullable
+    private String featureSchema;
+
+    @XmlElement(name = PROPERTY_TIME)
+    @jakarta.annotation.Nullable
+    private JSONFGTime time;
+
+    @XmlElement(name = PROPERTY_COORD_REF_SYS)
+    @jakarta.annotation.Nullable
+    private JSONFGCoordRefSys coordRefSys;
+
+    @XmlElement(name = PROPERTY_PLACE)
+    @jakarta.annotation.Nullable
+    private GeoJSONGeometry place;
+
 
     public GeoJSONFeature() {
     }
 
-    public GeoJSONFeature type(@jakarta.annotation.Nonnull TypeEnum type) {
-        this.type = type;
-        return this;
-    }
-
-    /**
-     * Get type
-     *
-     * @return type
-     */
-    @jakarta.annotation.Nonnull
-    @JsonProperty(JSON_PROPERTY_TYPE)
-    @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "type")
-    public TypeEnum getType() {
-        return type;
-    }
-
-    @JsonProperty(JSON_PROPERTY_TYPE)
-    @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "type")
-    public void setType(@jakarta.annotation.Nonnull TypeEnum type) {
-        this.type = type;
-    }
-
-    public GeoJSONFeature id(@jakarta.annotation.Nullable Object id) {
-        this.id = id;
-        return this;
+    @Override
+    public String getType() {
+        return TYPE_FEATURE;
     }
 
     /**
@@ -158,23 +126,18 @@ public class GeoJSONFeature extends DataTransferObject {
      * @return id
      */
     @jakarta.annotation.Nullable
-    @JsonProperty(JSON_PROPERTY_ID)
+    @JsonProperty(PROPERTY_ID)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "id")
+    @JacksonXmlProperty(localName = PROPERTY_ID)
     public Object getId() {
         return id;
     }
 
-    @JsonProperty(JSON_PROPERTY_ID)
+    @JsonProperty(PROPERTY_ID)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "id")
+    @JacksonXmlProperty(localName = PROPERTY_ID)
     public void setId(@jakarta.annotation.Nullable Object id) {
         this.id = id;
-    }
-
-    public GeoJSONFeature properties(@jakarta.annotation.Nullable Object properties) {
-        this.properties = properties;
-        return this;
     }
 
     /**
@@ -183,23 +146,18 @@ public class GeoJSONFeature extends DataTransferObject {
      * @return properties
      */
     @jakarta.annotation.Nullable
-    @JsonProperty(JSON_PROPERTY_PROPERTIES)
+    @JsonProperty(PROPERTY_PROPERTIES)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "properties")
-    public Object getProperties() {
+    @JacksonXmlProperty(localName = PROPERTY_PROPERTIES)
+    public Map<String, Object> getProperties() {
         return properties;
     }
 
-    @JsonProperty(JSON_PROPERTY_PROPERTIES)
+    @JsonProperty(PROPERTY_PROPERTIES)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "properties")
-    public void setProperties(@jakarta.annotation.Nullable Object properties) {
+    @JacksonXmlProperty(localName = PROPERTY_PROPERTIES)
+    public void setProperties(@jakarta.annotation.Nullable Map<String, Object> properties) {
         this.properties = properties;
-    }
-
-    public GeoJSONFeature geometry(@jakarta.annotation.Nonnull GeoJSONFeatureGeometry geometry) {
-        this.geometry = geometry;
-        return this;
     }
 
     /**
@@ -207,67 +165,18 @@ public class GeoJSONFeature extends DataTransferObject {
      *
      * @return geometry
      */
-    @jakarta.annotation.Nonnull
-    @JsonProperty(JSON_PROPERTY_GEOMETRY)
+    @JsonProperty(PROPERTY_GEOMETRY)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "geometry")
-    public GeoJSONFeatureGeometry getGeometry() {
+    @JacksonXmlProperty(localName = PROPERTY_GEOMETRY)
+    public GeoJSONGeometry getGeometry() {
         return geometry;
     }
 
-    @JsonProperty(JSON_PROPERTY_GEOMETRY)
+    @JsonProperty(PROPERTY_GEOMETRY)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "geometry")
-    public void setGeometry(@jakarta.annotation.Nonnull GeoJSONFeatureGeometry geometry) {
+    @JacksonXmlProperty(localName = PROPERTY_GEOMETRY)
+    public void setGeometry(@jakarta.annotation.Nonnull GeoJSONGeometry geometry) {
         this.geometry = geometry;
-    }
-
-    public GeoJSONFeature bbox(@jakarta.annotation.Nullable List<BigDecimal> bbox) {
-        this.bbox = bbox;
-        return this;
-    }
-
-    public GeoJSONFeature addBboxItem(BigDecimal bboxItem) {
-        if (this.bbox == null) {
-            this.bbox = new ArrayList<>();
-        }
-        this.bbox.add(bboxItem);
-        return this;
-    }
-
-    /**
-     * Get bbox
-     *
-     * @return bbox
-     */
-    @jakarta.annotation.Nullable
-    @JsonProperty(JSON_PROPERTY_BBOX)
-    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "bbox")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public List<BigDecimal> getBbox() {
-        return bbox;
-    }
-
-    @JsonProperty(JSON_PROPERTY_BBOX)
-    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "bbox")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setBbox(@jakarta.annotation.Nullable List<BigDecimal> bbox) {
-        this.bbox = bbox;
-    }
-
-    public GeoJSONFeature links(@jakarta.annotation.Nonnull List<Link> links) {
-        this.links = links;
-        return this;
-    }
-
-    public GeoJSONFeature addLinksItem(Link linksItem) {
-        if (this.links == null) {
-            this.links = new ArrayList<>();
-        }
-        this.links.add(linksItem);
-        return this;
     }
 
     /**
@@ -276,21 +185,143 @@ public class GeoJSONFeature extends DataTransferObject {
      * @return links
      */
     @jakarta.annotation.Nonnull
-    @JsonProperty(JSON_PROPERTY_LINKS)
-    @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "links")
+    @JsonProperty(PROPERTY_LINKS)
+    @JsonInclude(value = JsonInclude.Include.NON_EMPTY)
+    @JacksonXmlProperty(localName = PROPERTY_LINKS)
     @JacksonXmlElementWrapper(useWrapping = false)
     public List<Link> getLinks() {
         return links;
     }
 
-    @JsonProperty(JSON_PROPERTY_LINKS)
-    @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "links")
+    @JsonProperty(PROPERTY_LINKS)
+    @JsonInclude(value = JsonInclude.Include.NON_EMPTY)
+    @JacksonXmlProperty(localName = PROPERTY_LINKS)
     @JacksonXmlElementWrapper(useWrapping = false)
     public void setLinks(@jakarta.annotation.Nonnull List<Link> links) {
         this.links = links;
     }
+
+    /**
+     * This JSON Schema is part of JSON-FG version 0.2.2
+     * @return conformsTo
+     */
+    @jakarta.annotation.Nullable
+    @JsonProperty(PROPERTY_CONFORMS_TO)
+    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+    @JacksonXmlProperty(localName = PROPERTY_CONFORMS_TO)
+    @JacksonXmlElementWrapper(useWrapping = false)
+    public List<String> getConformsTo() {
+        return conformsTo;
+    }
+
+    @JsonProperty(PROPERTY_CONFORMS_TO)
+    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+    @JacksonXmlProperty(localName = PROPERTY_CONFORMS_TO)
+    @JacksonXmlElementWrapper(useWrapping = false)
+    public void setConformsTo(@jakarta.annotation.Nullable List<String> conformsTo) {
+        this.conformsTo = conformsTo;
+    }
+
+    /**
+     * Get featureType
+     * @return featureType
+     */
+    @jakarta.annotation.Nullable
+    @JsonProperty(PROPERTY_FEATURE_TYPE)
+    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+    @JacksonXmlProperty(localName = PROPERTY_FEATURE_TYPE)
+    @JsonFormat( with = {JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY, JsonFormat.Feature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED})
+    public List<String> getFeatureType() {
+        return featureType;
+    }
+
+    @JsonProperty(PROPERTY_FEATURE_TYPE)
+    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+    @JacksonXmlProperty(localName = PROPERTY_FEATURE_TYPE)
+    @JsonFormat( with = {JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY, JsonFormat.Feature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED})
+    public void setFeatureType(@jakarta.annotation.Nullable List<String> featureType) {
+        this.featureType = featureType;
+    }
+
+    /**
+     * Get featureSchema
+     * @return featureSchema
+     */
+    @jakarta.annotation.Nullable
+    @JsonProperty(PROPERTY_FEATURE_SCHEMA)
+    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+    @JacksonXmlProperty(localName = PROPERTY_FEATURE_SCHEMA)
+    public String getFeatureSchema() {
+        return featureSchema;
+    }
+
+
+    @JsonProperty(PROPERTY_FEATURE_SCHEMA)
+    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+    @JacksonXmlProperty(localName = PROPERTY_FEATURE_SCHEMA)
+    public void setFeatureSchema(@jakarta.annotation.Nullable String featureSchema) {
+        this.featureSchema = featureSchema;
+    }
+
+    /**
+     * Get time
+     * @return time
+     */
+    @jakarta.annotation.Nullable
+    @JsonProperty(PROPERTY_TIME)
+    @JsonInclude(value = JsonInclude.Include.NON_EMPTY)
+    @JacksonXmlProperty(localName = PROPERTY_TIME)
+    public JSONFGTime getTime() {
+        return time;
+    }
+
+
+    @JsonProperty(PROPERTY_TIME)
+    @JsonInclude(value = JsonInclude.Include.NON_EMPTY)
+    @JacksonXmlProperty(localName = PROPERTY_TIME)
+    public void setTime(@jakarta.annotation.Nullable JSONFGTime time) {
+        this.time = time;
+    }
+
+    /**
+     * Get coordRefSys
+     * @return coordRefSys
+     */
+    @jakarta.annotation.Nullable
+    @JsonProperty(PROPERTY_COORD_REF_SYS)
+    @JsonInclude(value = JsonInclude.Include.NON_EMPTY)
+    @JacksonXmlProperty(localName = PROPERTY_COORD_REF_SYS)
+    public JSONFGCoordRefSys getCoordRefSys() {
+        return coordRefSys;
+    }
+
+
+    @JsonProperty(PROPERTY_COORD_REF_SYS)
+    @JsonInclude(value = JsonInclude.Include.NON_EMPTY)
+    @JacksonXmlProperty(localName = PROPERTY_COORD_REF_SYS)
+    public void setCoordRefSys(@jakarta.annotation.Nullable JSONFGCoordRefSys coordRefSys) {
+        this.coordRefSys = coordRefSys;
+    }
+
+    /**
+     * Get place
+     * @return place
+     */
+    @jakarta.annotation.Nullable
+    @JsonProperty(PROPERTY_PLACE)
+    @JsonInclude(value = JsonInclude.Include.NON_EMPTY)
+    @JacksonXmlProperty(localName = PROPERTY_PLACE)
+    public GeoJSONGeometry getPlace() {
+        return place;
+    }
+
+    @JsonProperty(PROPERTY_PLACE)
+    @JsonInclude(value = JsonInclude.Include.NON_EMPTY)
+    @JacksonXmlProperty(localName = PROPERTY_PLACE)
+    public void setPlace(@jakarta.annotation.Nullable GeoJSONGeometry place) {
+        this.place = place;
+    }
+
     /**
      * Return true if this GeoJSON_Feature object is equal to o.
      */
@@ -302,18 +333,23 @@ public class GeoJSONFeature extends DataTransferObject {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        GeoJSONFeature geoJSONFeature = (GeoJSONFeature) o;
-        return Objects.equals(this.type, geoJSONFeature.type)
-                && Objects.equals(this.id, geoJSONFeature.id)
-                && Objects.equals(this.properties, geoJSONFeature.properties)
-                && Objects.equals(this.geometry, geoJSONFeature.geometry)
-                && Objects.equals(this.bbox, geoJSONFeature.bbox)
-                && Objects.equals(this.links, geoJSONFeature.links);
+        GeoJSONFeature other = (GeoJSONFeature) o;
+        return super.equals(o)
+                && Objects.equals(this.id, other.id)
+                && Objects.equals(this.properties, other.properties)
+                && Objects.equals(this.geometry, other.geometry)
+                && Objects.equals(this.links, other.links)
+                && Objects.equals(this.conformsTo, other.conformsTo)
+                && Objects.equals(this.featureType, other.featureType)
+                && Objects.equals(this.featureSchema, other.featureSchema)
+                && Objects.equals(this.time, other.time)
+                && Objects.equals(this.place, other.place)
+                && Objects.equals(this.coordRefSys, other.coordRefSys);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type, id, properties, geometry, bbox, links);
+        return super.hashCode() + Objects.hash(id, properties, geometry, links, conformsTo, featureType, featureSchema, time, place, coordRefSys);
     }
 
 }

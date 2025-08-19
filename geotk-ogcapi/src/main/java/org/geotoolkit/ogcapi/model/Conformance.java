@@ -36,6 +36,7 @@ public final class Conformance {
     public static final String CORE_LANDINGPAGE = "http://www.opengis.net/spec/ogcapi-common-1/1.0/conf/landing-page";
     public static final String CORE_HTML = "http://www.opengis.net/spec/ogcapi-common-1/1.0/conf/html";
     public static final String CORE_JSON = "http://www.opengis.net/spec/ogcapi-common-1/1.0/conf/json";
+    public static final String CORE_OAS = "http://www.opengis.net/spec/ogcapi-common-1/1.0/conf/oas30";
 
     // /////////////////////////////////////////////////////////////////////////////////////////
     // OGC API - Common - Part 2: Collections
