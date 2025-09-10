@@ -27,7 +27,7 @@ import org.locationtech.jts.geom.Geometry;
 import java.util.logging.Level;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.filter.privy.FunctionNames;
-import org.apache.sis.util.Utilities;
+import org.apache.sis.referencing.CRS;
 import org.opengis.filter.Filter;
 import org.opengis.filter.SpatialOperator;
 import org.opengis.filter.SpatialOperatorName;
@@ -100,7 +100,7 @@ public class ExtractBoundsFilterVisitor extends NullFilterVisitor<Envelope> {
                     ((Literal<Object,?>) filter.getExpressions().get(1)).getValue();
             final CoordinateReferenceSystem sourceCRS = bb.getCoordinateReferenceSystem();
             final CoordinateReferenceSystem targetCRS = bbox.getCoordinateReferenceSystem();
-            if (sourceCRS != null && targetCRS != null && !Utilities.equalsIgnoreMetadata(targetCRS, sourceCRS)) {
+            if (sourceCRS != null && targetCRS != null && !CRS.equivalent(targetCRS, sourceCRS)) {
                 try {
                     // reproject bbox
                     bb = Envelopes.transform(bb, targetCRS);

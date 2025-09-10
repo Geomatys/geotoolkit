@@ -60,7 +60,6 @@ import org.apache.sis.referencing.operation.matrix.Matrices;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Localized;
-import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.PerformanceLevel;
 
 import org.geotoolkit.display.shape.XRectangle2D;
@@ -519,7 +518,7 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
         Envelope envelopeInDataCRS = envelope;
         MathTransform requestToDataCRS = null;
         final CoordinateReferenceSystem dataCRS = gridGeom2d.getCoordinateReferenceSystem();
-        if (requestCRS != null && dataCRS != null && !Utilities.equalsIgnoreMetadata(requestCRS, dataCRS)) {
+        if (requestCRS != null && dataCRS != null && !org.apache.sis.referencing.CRS.equivalent(requestCRS, dataCRS)) {
             final CoordinateOperation op = createOperation(requestCRS, dataCRS);
             requestToDataCRS = op.getMathTransform();
             if (requestToDataCRS.isIdentity()) {
@@ -663,7 +662,7 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
             CoordinateReferenceSystem crs = CRSUtilities.getCRS2D(requestCRS); // X_DIMENSION, Y_DIMENSION
             if (crs == null) {
                 crs = dataCRS; // 'dataCRS' is already 2D.
-            } else if (dataCRS != null && !Utilities.equalsIgnoreMetadata(dataCRS, crs)) {
+            } else if (dataCRS != null && !org.apache.sis.referencing.CRS.equivalent(dataCRS, crs)) {
                 final CoordinateOperation op = createOperation(dataCRS, crs);
                 geodeticBounds = Shapes2D.transform(op, geodeticBounds, geodeticBounds);
                 ensureNonEmpty(geodeticBounds);

@@ -289,7 +289,7 @@ public final class CRS_WithEpsgTest {
         CoordinateReferenceSystem compound = CRS.forCode("EPSG:4327");
         CoordinateReferenceSystem horizontal = CRS.getHorizontalComponent(compound);
         // the horizonal version is basically 4326, but it won't compare positively with 4326,
-        // not even using Utilities.equalsIgnoreMetadata(), so we check the axis directly.
+        // not even using CRS.equivalent(...), so we check the axis directly.
         CoordinateSystem cs = horizontal.getCoordinateSystem();
         assertEquals(2, cs.getDimension());
         assertEquals(AxisDirection.NORTH, cs.getAxis(0).getDirection());

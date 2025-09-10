@@ -41,7 +41,6 @@ import org.apache.sis.referencing.operation.matrix.MatrixSIS;
 import org.apache.sis.referencing.operation.matrix.NoninvertibleMatrixException;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
-import org.apache.sis.util.Utilities;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.referencing.OutOfDomainOfValidityException;
@@ -425,7 +424,7 @@ public final class CoverageUtilities extends Static {
         //crs must be identical
         final CoordinateReferenceSystem crs1 = grid1.getCoordinateReferenceSystem();
         final CoordinateReferenceSystem crs2 = grid2.getCoordinateReferenceSystem();
-        if (!Utilities.equalsIgnoreMetadata(crs1, crs2)) {
+        if (!CRS.equivalent(crs1, crs2)) {
             return Optional.empty();
         }
 

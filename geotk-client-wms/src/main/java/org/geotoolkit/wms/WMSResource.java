@@ -55,7 +55,6 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import static org.apache.sis.util.ArgumentChecks.*;
-import org.apache.sis.util.Utilities;
 import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.client.Request;
 import org.geotoolkit.internal.referencing.CRSUtilities;
@@ -487,7 +486,7 @@ public class WMSResource extends AbstractGridCoverageResource implements StoreRe
         final CoordinateReferenceSystem candidateCRS = env.getDimension() > 2? crs : crs2d;
         if (env.getCoordinateReferenceSystem() == null) {
             env.setCoordinateReferenceSystem(candidateCRS);
-        } else if (!Utilities.equalsIgnoreMetadata(env.getCoordinateReferenceSystem(), candidateCRS)) {
+        } else if (!CRS.equivalent(env.getCoordinateReferenceSystem(), candidateCRS)) {
             try {
                 env = GeneralEnvelope.castOrCopy(Envelopes.transform(env, candidateCRS));
             } catch (TransformException ex) {
@@ -623,7 +622,7 @@ public class WMSResource extends AbstractGridCoverageResource implements StoreRe
                 crs2D = CommonCRS.WGS84.geographic();
             }
 
-            if (longitudeFirst && (Utilities.equalsIgnoreMetadata(crs2D, CommonCRS.WGS84.normalizedGeographic()))) {
+            if (longitudeFirst && (CRS.equivalent(crs2D, CommonCRS.WGS84.normalizedGeographic()))) {
                 //in case we are asking for a WMS in 1.1.0 and CRS:84
                 //we must change the crs to 4326 but with CRS:84 coordinate
                 final GeneralEnvelope trsEnv = new GeneralEnvelope(ReferencingUtilities.transform2DCRS(env, CommonCRS.WGS84.normalizedGeographic()));
@@ -647,7 +646,7 @@ public class WMSResource extends AbstractGridCoverageResource implements StoreRe
 
         }else{
 
-            if (longitudeFirst && (Utilities.equalsIgnoreMetadata(crs2D, CommonCRS.WGS84.normalizedGeographic()))) {
+            if (longitudeFirst && (CRS.equivalent(crs2D, CommonCRS.WGS84.normalizedGeographic()))) {
                 //in case we are asking for a WMS in 1.1.0 and CRS:84
                 //we must change the crs to 4326 but with CRS:84 coordinate
                 final GeneralEnvelope trsEnv = new GeneralEnvelope(env);
@@ -716,7 +715,7 @@ public class WMSResource extends AbstractGridCoverageResource implements StoreRe
         //we loose the vertical and temporale crs in the process, must be fixed
         //check CRS84 politic---------------------------------------------------
         if (crs84Politic != CRS84Politic.STRICT) {
-            if (Utilities.equalsIgnoreMetadata(crs2D, CommonCRS.WGS84.normalizedGeographic())) {
+            if (CRS.equivalent(crs2D, CommonCRS.WGS84.normalizedGeographic())) {
 
                 switch (crs84Politic) {
                     case CONVERT_TO_EPSG4326:
@@ -730,7 +729,7 @@ public class WMSResource extends AbstractGridCoverageResource implements StoreRe
 
         //check EPSG4326 politic------------------------------------------------
         if (epsg4326Politic != EPSG4326Politic.STRICT) {
-            if (Utilities.equalsIgnoreMetadata(crs2D, CommonCRS.WGS84.geographic())) {
+            if (CRS.equivalent(crs2D, CommonCRS.WGS84.geographic())) {
                 switch (epsg4326Politic) {
                     case CONVERT_TO_CRS84:
                         env = Envelopes.transform(env, crs2D);

@@ -65,7 +65,6 @@ import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.referencing.operation.transform.TransformSeparator;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Classes;
-import org.apache.sis.util.Utilities;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.internal.referencing.CRSUtilities;
@@ -244,7 +243,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
 
     public final void setObjectiveCRS(final CoordinateReferenceSystem crs) throws TransformException, FactoryException {
         ArgumentChecks.ensureNonNull("Objective CRS", crs);
-        if (Utilities.equalsIgnoreMetadata(gridGeometry.getCoordinateReferenceSystem(), crs)) {
+        if (CRS.equivalent(gridGeometry.getCoordinateReferenceSystem(), crs)) {
             return;
         }
 
@@ -670,7 +669,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
          * 'graphicCRS' to 'objectiveCRS' transform.
          */
         final CoordinateReferenceSystem objectiveCRS = getObjectiveCRS();
-        final boolean cachedTransform = Utilities.equalsIgnoreMetadata(targetCRS, objectiveCRS);
+        final boolean cachedTransform = CRS.equivalent(targetCRS, objectiveCRS);
         if (cachedTransform) {
             tr = transforms.get(sourceCRS);
             if (tr != null) {
@@ -687,7 +686,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
          */
         if (targetCRS instanceof DerivedCRS) {
             final var derivedCRS = (DerivedCRS) targetCRS;
-            if (Utilities.equalsIgnoreMetadata(sourceCRS, derivedCRS.getBaseCRS())) {
+            if (CRS.equivalent(sourceCRS, derivedCRS.getBaseCRS())) {
                 return derivedCRS.getConversionFromBase().getMathTransform();
             }
         }
@@ -941,7 +940,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
 
         //check that the provided envelope is in the canvas crs
         final CoordinateReferenceSystem canvasCRS2D = getObjectiveCRS2D();
-        if (!Utilities.equalsIgnoreMetadata(canvasCRS2D,envCRS2D)) {
+        if (!CRS.equivalent(canvasCRS2D,envCRS2D)) {
             env2D = Envelopes.transform(env2D, canvasCRS2D);
         }
 

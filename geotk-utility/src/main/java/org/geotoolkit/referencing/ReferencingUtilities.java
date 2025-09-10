@@ -206,7 +206,7 @@ public final class ReferencingUtilities {
 
         final int targetMinOrdi = CRSUtilities.firstHorizontalAxis(targetCrs);
 
-        if (Utilities.equalsIgnoreMetadata(srcCRS, targetCrs)) {
+        if (CRS.equivalent(srcCRS, targetCrs)) {
             assert targetMinOrdi + oldResolution.length <= newResolution.length : "First horizontal index from target CRS + old resolution array length " +
                     "should be lesser than new resolution array length.";
             System.arraycopy(oldResolution, 0, newResolution, targetMinOrdi, oldResolution.length);

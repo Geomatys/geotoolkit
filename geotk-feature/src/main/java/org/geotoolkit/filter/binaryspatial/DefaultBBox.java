@@ -23,7 +23,6 @@ import org.apache.sis.feature.privy.AttributeConvention;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.IdentifiedObjects;
-import org.apache.sis.util.Utilities;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.filter.DefaultPropertyName;
 import org.geotoolkit.geometry.jts.JTS;
@@ -161,7 +160,7 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<ValueReference, L
         //if we don't know the crs, we will assume it's the objective crs already
         if(candidateCrs != null){
             //reproject in objective crs if needed
-            if (!Utilities.equalsIgnoreMetadata(this.crs,candidateCrs)) {
+            if (!CRS.equivalent(this.crs,candidateCrs)) {
                 try {
                     candidate = org.apache.sis.geometry.wrapper.jts.JTS.transform(candidate, CRS.findOperation(candidateCrs, this.crs, null).getMathTransform());
                 } catch (MismatchedDimensionException | TransformException | FactoryException ex) {

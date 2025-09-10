@@ -246,7 +246,7 @@ public final class GO2Utilities {
             final CoordinateReferenceSystem candidate2D = CRS.getHorizontalComponent(coverageCRS);
             if (candidate2D == null)
                 throw new PortrayalException("Cannot find horizontal component of input data CRS.");
-            if(!Utilities.equalsIgnoreMetadata(candidate2D, objectiveCrs) ){
+            if(!CRS.equivalent(candidate2D, objectiveCrs) ){
                 sameCRS = false;
                 // We do not force geophysics only because we use a neighbor interpolation.
                 coverage = GO2Utilities.resample(coverage, objectiveCrs, InterpolationCase.NEIGHBOR);

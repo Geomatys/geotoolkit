@@ -26,7 +26,6 @@ import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.PixelTranslation;
 import org.apache.sis.referencing.privy.GeodeticObjectBuilder;
 import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.util.Utilities;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.referencing.operation.matrix.Matrices;
 import org.apache.sis.referencing.operation.transform.DefaultMathTransformFactory;
@@ -35,6 +34,7 @@ import org.junit.Test;
 import org.opengis.metadata.spatial.DimensionNameType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.apache.sis.coverage.grid.PixelInCell;
+import org.apache.sis.referencing.CRS;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.Matrix;
@@ -62,7 +62,7 @@ public class GridCoverageStackTest {
                                                                                 .createCompoundCRS(horizontal, vertical);
 
         final GridCoverageStack stack = createCube3D(100, 100, crs);
-        assertTrue(Utilities.equalsIgnoreMetadata(crs, stack.getCoordinateReferenceSystem()));
+        assertTrue(CRS.equivalent(crs, stack.getCoordinateReferenceSystem()));
 
         final GridGeometry gridGeom = stack.getGridGeometry();
         assertNotNull(gridGeom);
@@ -113,7 +113,7 @@ public class GridCoverageStackTest {
                                                                                 .createCompoundCRS(crs3d,temporal);
 
         final GridCoverageStack stack = createCube4D(100, 100, crs4d);
-        assertTrue(Utilities.equalsIgnoreMetadata(crs4d, stack.getCoordinateReferenceSystem()));
+        assertTrue(CRS.equivalent(crs4d, stack.getCoordinateReferenceSystem()));
 
         final GridGeometry gridGeom = stack.getGridGeometry();
         assertNotNull(gridGeom);

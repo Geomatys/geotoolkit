@@ -33,7 +33,6 @@ import org.apache.sis.storage.GridCoverageResource;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.apache.sis.util.Utilities;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.AbstractJTSGeometry;
 import org.geotoolkit.geometry.jts.JTS;
 import org.locationtech.jts.geom.Geometry;
@@ -153,7 +152,7 @@ public abstract class AbstractBinarySpatialOperator<E extends Expression,F exten
             //one or bother geometries doesn't have a defined SRID, we assume that both
             //are in the same CRS
             return new Geometry[]{leftGeom, rightGeom};
-        } else if (Utilities.equalsIgnoreMetadata(leftCRS, rightCRS)) {
+        } else if (CRS.equivalent(leftCRS, rightCRS)) {
             //both are in the same CRS, nothing to reproject
             return new Geometry[]{leftGeom, rightGeom};
         }
@@ -181,7 +180,7 @@ public abstract class AbstractBinarySpatialOperator<E extends Expression,F exten
             //bother geometries doesn't have a defined SRID, we assume that both
             //are in the same CRS
             return new Object[]{leftGeom, rightGeom, null};
-        } else if (leftCRS == null || rightCRS == null || Utilities.equalsIgnoreMetadata(leftCRS, rightCRS)) {
+        } else if (leftCRS == null || rightCRS == null || CRS.equivalent(leftCRS, rightCRS)) {
             //both are in the same CRS
 
             final CoordinateReferenceSystem geomCRS = (leftCRS == null) ? rightCRS : leftCRS;

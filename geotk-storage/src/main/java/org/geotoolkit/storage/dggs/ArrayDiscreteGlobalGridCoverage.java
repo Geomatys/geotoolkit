@@ -44,7 +44,6 @@ import org.apache.sis.measure.NumberRange;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.Utilities;
 import org.geotoolkit.image.BufferedImages;
 import org.opengis.coverage.CannotEvaluateException;
 import org.opengis.coverage.PointOutsideCoverageException;
@@ -193,7 +192,7 @@ public final class ArrayDiscreteGlobalGridCoverage extends DiscreteGlobalGridCov
             final double[] xyTin;
             final CoordinateReferenceSystem crs2d = CRS.getHorizontalComponent(getCoordinateReferenceSystem());
             final CoordinateReferenceSystem gridCrs2d = CRS.getHorizontalComponent(tileArea.getCoordinateReferenceSystem());
-            if (!Utilities.equalsIgnoreMetadata(gridCrs2d, crs2d)) {
+            if (!CRS.equivalent(gridCrs2d, crs2d)) {
                 MathTransform trs = CRS.findOperation(gridCrs2d, crs2d, null).getMathTransform();
                 trs = MathTransforms.concatenate(gridToCRS, trs);
                 xyTin = xyGrid;

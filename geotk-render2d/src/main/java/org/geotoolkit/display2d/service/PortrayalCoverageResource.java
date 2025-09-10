@@ -30,13 +30,13 @@ import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.referencing.privy.AffineTransform2D;
 import org.apache.sis.storage.AbstractGridCoverageResource;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.Utilities;
 import org.apache.sis.util.iso.DefaultNameFactory;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.apache.sis.coverage.grid.PixelInCell;
+import org.apache.sis.referencing.CRS;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.GenericName;
 import org.opengis.util.NameFactory;
@@ -104,7 +104,7 @@ final class PortrayalCoverageResource extends AbstractGridCoverageResource {
             crs = paramEnv.getCoordinateReferenceSystem();
         } else if (crs != null && paramEnv != null) {
             //check the envelope crs matches given crs
-            if (!Utilities.equalsIgnoreMetadata(paramEnv.getCoordinateReferenceSystem(),crs)) {
+            if (!CRS.equivalent(paramEnv.getCoordinateReferenceSystem(),crs)) {
                 throw new DataStoreException("Invalid parameters : envelope crs do not match given crs.");
             }
         } else if (paramEnv != null) {

@@ -28,6 +28,7 @@ import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.privy.GeodeticObjectBuilder;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStore;
@@ -210,7 +211,7 @@ public abstract class PyramidalModelStoreNDTest <T extends WritableTiledResource
         //we expect a 3D coverage, with all slices
         final GridCoverage coverage = ref.read(null);
         final Envelope env = coverage.getGridGeometry().getEnvelope();
-        assertTrue(Utilities.equalsIgnoreMetadata(crs, env.getCoordinateReferenceSystem()));
+        assertTrue(CRS.equivalent(crs, env.getCoordinateReferenceSystem()));
         assertEquals(CORNER_LONG,  env.getMinimum(0), DELTA);//-- -180
         assertEquals(  75,         env.getMinimum(1), DELTA);
         assertEquals(CORNER_V[0],  env.getMinimum(2), DELTA);//-- 15

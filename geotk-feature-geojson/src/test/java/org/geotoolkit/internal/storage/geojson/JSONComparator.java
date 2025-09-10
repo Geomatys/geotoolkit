@@ -19,6 +19,7 @@ package org.geotoolkit.internal.storage.geojson;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ContainerNode;
 import com.fasterxml.jackson.databind.node.NumericNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 import java.util.Comparator;
 import org.apache.sis.util.Utilities;
 import org.junit.Assert;
@@ -38,6 +39,17 @@ public class JSONComparator implements Comparator<JsonNode> {
             Double d2 = ((NumericNode) o2).asDouble();
             Assert.assertEquals(d1, d2, 0.0001);
             return 0;
+        }
+        if ((o1 instanceof TextNode) && (o2 instanceof TextNode)){
+            String d1 = ((TextNode) o1).asText();
+            String d2 = ((TextNode) o2).asText();
+            if (d1.startsWith("urn:ogc:def:") && d2.startsWith("urn:ogc:def:")) {
+                // Compare only the EPSG code for avoiding differences in the database version.
+                d1 = d1.substring(d1.lastIndexOf(':'));
+                d2 = d2.substring(d2.lastIndexOf(':'));
+                Assert.assertEquals(d1, d2);
+                return 0;
+            }
         }
         // TODO
         if (o1.isContainerNode() && o2 != null && o2.isContainerNode()) {

@@ -54,7 +54,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Numbers;
 import org.apache.sis.util.Static;
-import org.apache.sis.util.Utilities;
 import org.geotoolkit.internal.geojson.binding.GeoJSONObject;
 import static org.geotoolkit.storage.geojson.GeoJSONConstants.*;
 import org.opengis.feature.AttributeType;
@@ -179,7 +178,7 @@ public final class GeoJSONUtils extends Static {
 
         String urn = null;
         try {
-            if (Utilities.equalsIgnoreMetadata(crs, DEFAULT_CRS) ||
+            if (org.apache.sis.referencing.CRS.equivalent(crs, DEFAULT_CRS) ||
                 org.apache.sis.referencing.CRS.findOperation(crs, DEFAULT_CRS, null).getMathTransform().isIdentity()) {
                 crs = DEFAULT_CRS;
             }

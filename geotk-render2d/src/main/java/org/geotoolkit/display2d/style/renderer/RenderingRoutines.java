@@ -46,7 +46,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureQuery;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.Query;
-import org.apache.sis.util.Utilities;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display2d.GO2Hints;
@@ -489,7 +488,7 @@ public final class RenderingRoutines {
 
         //layer crs may be null if it define an abstract collection
         //or if the crs is defined only on the feature geometry
-        if(layerCRS != null && !Utilities.equalsIgnoreMetadata(layerCRS,bboxCRS)){
+        if(layerCRS != null && !CRS.equivalent(layerCRS,bboxCRS)){
             //BBox and layer bounds have different CRS. reproject bbox bounds
             Envelope env;
 

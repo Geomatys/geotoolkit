@@ -36,7 +36,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Query;
 import org.apache.sis.storage.UnsupportedQueryException;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.Utilities;
 import org.opengis.coverage.CannotEvaluateException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
@@ -186,7 +185,7 @@ public interface BandedCoverageResource extends DataSet {
             final double[] xyResult;
             final CoordinateReferenceSystem crs2d = CRS.getHorizontalComponent(resource.getEnvelope().get().getCoordinateReferenceSystem());
             final CoordinateReferenceSystem gridCrs2d = CRS.getHorizontalComponent(domain.getCoordinateReferenceSystem());
-            if (!Utilities.equalsIgnoreMetadata(gridCrs2d, crs2d)) {
+            if (!CRS.equivalent(gridCrs2d, crs2d)) {
                 MathTransform trs = CRS.findOperation(gridCrs2d, crs2d, null).getMathTransform();
                 trs = MathTransforms.concatenate(gridToCRS, trs);
                 xyResult = xyGrid;

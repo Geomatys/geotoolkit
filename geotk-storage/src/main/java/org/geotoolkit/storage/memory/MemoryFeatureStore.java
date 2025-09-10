@@ -30,13 +30,13 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
 import org.apache.sis.feature.privy.AttributeConvention;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.IllegalNameException;
 import org.apache.sis.storage.Query;
 import org.apache.sis.storage.UnsupportedQueryException;
 import static org.apache.sis.util.ArgumentChecks.*;
-import org.apache.sis.util.Utilities;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.filter.FilterUtilities;
@@ -353,7 +353,7 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
                         try {
                             CoordinateReferenceSystem geomCrs = JTS.findCoordinateReferenceSystem((Geometry) value);
                             if(geomCrs!=null){
-                                if(!Utilities.equalsIgnoreMetadata(geomCrs, crs)){
+                                if(!CRS.equivalent(geomCrs, crs)){
                                     throw new DataStoreException("Geometry "+pt.getName().tip()+" CRS do not match FeatureType CRS");
                                 }
                             }else{
@@ -402,7 +402,7 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
                 try {
                     geomCrs = JTS.findCoordinateReferenceSystem((Geometry) value);
                     if(geomCrs!=null){
-                        if(!Utilities.equalsIgnoreMetadata(geomCrs, crs)){
+                        if(!CRS.equivalent(geomCrs, crs)){
                             throw new DataStoreException("Geometry "+property.getName().tip()+" CRS do not match FeatureType CRS");
                         }
                     }else{

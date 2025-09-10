@@ -61,7 +61,6 @@ import org.apache.sis.storage.tiling.WritableTileMatrix;
 import org.apache.sis.storage.tiling.WritableTileMatrixSet;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Static;
-import org.apache.sis.util.Utilities;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.internal.referencing.CRSUtilities;
@@ -285,7 +284,7 @@ public final class TileMatrices extends Static {
             //we don't have enough informations to compute the tile indices
             return Optional.empty();
         }
-        if (!Utilities.equalsIgnoreMetadata(tilingScheme.getCoordinateReferenceSystem(), tileGrid.getCoordinateReferenceSystem())) {
+        if (!CRS.equivalent(tilingScheme.getCoordinateReferenceSystem(), tileGrid.getCoordinateReferenceSystem())) {
             //tile candidate has different CRS
             return Optional.empty();
         }

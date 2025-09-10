@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.util.Numbers;
-import org.geotoolkit.geometry.jts.JTS;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.ObjectConverters;
 import org.opengis.feature.AttributeType;
@@ -34,7 +33,6 @@ import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.apache.sis.feature.privy.AttributeConvention;
-import org.apache.sis.util.Utilities;
 
 
 /**
@@ -152,7 +150,7 @@ public class DefaultFeatureMapper implements FeatureMapper {
 
                 final CoordinateReferenceSystem sourceCRS = FeatureExt.getCRS(sourceGeomDesc);
                 final CoordinateReferenceSystem targetCRS = FeatureExt.getCRS(targetGeomDesc);
-                if(!Utilities.equalsIgnoreMetadata(sourceCRS,targetCRS)){
+                if(!CRS.equivalent(sourceCRS,targetCRS)){
                     //crs are different, reproject source geometry
                     try {
                         candidateGeom = org.apache.sis.geometry.wrapper.jts.JTS.transform(candidateGeom, CRS.findOperation(sourceCRS, targetCRS, null).getMathTransform());

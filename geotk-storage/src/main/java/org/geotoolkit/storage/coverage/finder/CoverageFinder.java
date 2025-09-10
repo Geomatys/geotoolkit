@@ -206,11 +206,11 @@ public abstract class CoverageFinder {
             final CoordinateReferenceSystem pyCrs = CRS.getHorizontalComponent(pyramid.getCoordinateReferenceSystem());
             final MathTransform trs = CRS.findOperation(pyCrs, crs2D, null).getMathTransform();
             if (trs.isIdentity()
-                    || Utilities.equalsIgnoreMetadata(crs2D, pyCrs)
+                    || CRS.equivalent(crs2D, pyCrs)
                     || Utilities.equalsApproximately(crs2D, pyCrs)) {
                 return pyramid;
-            } else if (Utilities.equalsIgnoreMetadata(CommonCRS.WGS84.normalizedGeographic(), pyCrs) ||
-                       Utilities.equalsIgnoreMetadata(CommonCRS.WGS84.geographic(), pyCrs) ){
+            } else if (CRS.equivalent(CommonCRS.WGS84.normalizedGeographic(), pyCrs) ||
+                       CRS.equivalent(CommonCRS.WGS84.geographic(), pyCrs) ){
                 latlonPyramid = pyramid;
             }
         }

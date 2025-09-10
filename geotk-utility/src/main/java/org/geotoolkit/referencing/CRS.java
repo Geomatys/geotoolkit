@@ -30,12 +30,10 @@ import org.opengis.util.FactoryException;
 
 import org.geotoolkit.lang.Static;
 import org.apache.sis.util.Version;
-import org.apache.sis.util.Utilities;
 import org.geotoolkit.factory.FactoryRegistryException;
 import org.apache.sis.geometry.Envelopes;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.metadata.privy.NameMeaning;
-import org.apache.sis.referencing.internal.VerticalDatumTypes;
 import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.apache.sis.referencing.operation.DefaultCoordinateOperationFactory;
 
@@ -121,7 +119,7 @@ public final class CRS extends Static {
     /**
      * Returns the first compound CRS which contains only the given components, in any order.
      * First, this method gets the {@link SingleCRS} components of the given compound CRS. If
-     * all those components are {@linkplain #equalsIgnoreMetadata equal, ignoring metadata}
+     * all those components are equal, ignoring metadata
      * and order, to the {@code SingleCRS} components given to this method, then the given
      * {@code CompoundCRS} is returned. Otherwise if the given {@code CompoundCRS} contains
      * nested {@code CompoundCRS}, then those nested CRS are inspected recursively by the same
@@ -169,7 +167,7 @@ public final class CRS extends Static {
             final SingleCRS[] toSearch = components.clone();
 compare:    for (final SingleCRS component : actualComponents) {
                 for (int i=firstValid; i<toSearch.length; i++) {
-                    if (Utilities.equalsIgnoreMetadata(component, toSearch[i])) {
+                    if (org.apache.sis.referencing.CRS.equivalent(component, toSearch[i])) {
                         /*
                          * Found a match: remove it from the search list. Note that we copy the
                          * remaining components to the end of the array (which is unusual) rather

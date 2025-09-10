@@ -22,10 +22,10 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.cql.CQL;
 import org.apache.sis.cql.CQLException;
 import org.apache.sis.parameter.Parameters;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.WritableGridCoverageResource;
-import org.apache.sis.util.Utilities;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
@@ -116,10 +116,7 @@ public class MathCalcProcess extends AbstractProcess {
             if (result == null) {
                 result = crs;
             } else {
-                final int nbr = result.getCoordinateSystem().getDimension();
-                final int nbc = crs.getCoordinateSystem().getDimension();
-
-                if (nbr==nbc && Utilities.equalsIgnoreMetadata(nbr, nbc)) {
+                if (CRS.equivalent(result, crs)) {
                     //same number of dimensions and equal, OK
                 }else{
                     throw new IllegalArgumentException("CRS have different number of dimensions");

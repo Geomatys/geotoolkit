@@ -8,7 +8,6 @@ import org.apache.sis.metadata.iso.citation.Citations;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.IdentifiedObjects;
-import org.apache.sis.util.Utilities;
 import org.apache.sis.util.collection.Cache;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
@@ -47,7 +46,7 @@ public class CoordinateReferenceSystemAdapter  extends XmlAdapter<String, Coordi
                 if (srsName == null && !CoordinateReferenceSystemAdapter.cachedIdentifier.containsKey(crs)) {
 
                     CoordinateReferenceSystem candidate;
-                    if (Utilities.equalsIgnoreMetadata(crs, DEFAULT_CRS) ||
+                    if (CRS.equivalent(crs, DEFAULT_CRS) ||
                         org.apache.sis.referencing.CRS.findOperation(crs, DEFAULT_CRS, null).getMathTransform().isIdentity()) {
                         candidate = DEFAULT_CRS;
                     } else {

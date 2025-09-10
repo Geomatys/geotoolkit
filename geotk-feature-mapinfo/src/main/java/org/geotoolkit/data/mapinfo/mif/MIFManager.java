@@ -43,7 +43,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.sis.util.ArgumentChecks;
 
-import org.apache.sis.util.Utilities;
 import static java.nio.file.StandardOpenOption.*;
 import java.util.stream.Collectors;
 import org.apache.sis.feature.builder.AttributeRole;
@@ -52,6 +51,7 @@ import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.feature.builder.PropertyTypeBuilder;
 import org.apache.sis.feature.privy.AttributeConvention;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.IllegalNameException;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
@@ -315,12 +315,12 @@ public class MIFManager {
              * We check if mif conversion will modify the defined CRS. If it is the case, we store the modified CRS.
              * This CRS will serve us as file writing, as we will have to reproject our features to fit the final system.
              */
-            if (!Utilities.equalsIgnoreMetadata(mifCRS, CommonCRS.WGS84.normalizedGeographic())) {
+            if (!CRS.equivalent(mifCRS, CommonCRS.WGS84.normalizedGeographic())) {
                 try {
                     final String mifCRSDefinition = ProjectionUtils.crsToMIFSyntax(mifCRS);
                     if (mifCRSDefinition != null && !mifCRSDefinition.isEmpty()) {
                         writtenCRS = ProjectionUtils.buildCRSFromMIF(mifCRSDefinition);
-                        if (Utilities.equalsIgnoreMetadata(mifCRS, writtenCRS)) {
+                        if (CRS.equivalent(mifCRS, writtenCRS)) {
                             writtenCRS = null;
                         }
                     }

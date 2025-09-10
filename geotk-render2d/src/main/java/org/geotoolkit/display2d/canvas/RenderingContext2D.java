@@ -24,8 +24,6 @@ import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -34,16 +32,12 @@ import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.concurrent.Callable;
-import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.measure.Unit;
 import javax.measure.quantity.Length;
-import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelope2D;
-import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.privy.AffineTransform2D;
 import org.apache.sis.referencing.operation.provider.Affine;
@@ -51,11 +45,8 @@ import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.crs.DefaultDerivedCRS;
 import org.apache.sis.referencing.operation.DefaultConversion;
-import org.apache.sis.referencing.operation.builder.LinearTransformBuilder;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
-import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
-import org.apache.sis.util.Utilities;
 import org.geotoolkit.display.canvas.CanvasUtilities;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
@@ -87,9 +78,6 @@ import org.opengis.util.FactoryException;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import static org.geotoolkit.display.canvas.AbstractCanvas2D.toRectangle;
-import org.opengis.coordinate.MismatchedDimensionException;
-import org.opengis.referencing.operation.MathTransform2D;
-import org.opengis.referencing.operation.Matrix;
 
 
 /**
@@ -950,13 +938,13 @@ public class RenderingContext2D implements RenderingContext{
      * @return double[] of 2 dimensions
      */
     public double[] getResolution(final CoordinateReferenceSystem crs) {
-        if (Utilities.equalsIgnoreMetadata(objectiveCRS, crs)) {
+        if (CRS.equivalent(objectiveCRS, crs)) {
             return getResolution();
         } else {
             final double[] newRes = new double[2];
 
             assert resolution.length == 2 : "RenderingContext2D : Resolution array should have length equals to 2. Founded length : "+resolution.length;
-            assert Utilities.equalsIgnoreMetadata(canvasObjectiveBBox2D.getCoordinateReferenceSystem(), objectiveCRS2D) : "RenderingContext2D : canvasObjectiveBBox2D should own same CRS than objectiveCRS2D";
+            assert CRS.equivalent(canvasObjectiveBBox2D.getCoordinateReferenceSystem(), objectiveCRS2D) : "RenderingContext2D : canvasObjectiveBBox2D should own same CRS than objectiveCRS2D";
 
             try {
                 final CoordinateReferenceSystem target2DCRS = CRSUtilities.getCRS2D(crs);

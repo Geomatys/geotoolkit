@@ -29,6 +29,7 @@ import java.util.stream.Stream;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.tiling.Tile;
 import org.apache.sis.storage.tiling.TileMatrix;
@@ -36,7 +37,6 @@ import org.apache.sis.storage.tiling.TileMatrixSet;
 import org.apache.sis.storage.tiling.TileStatus;
 import static org.apache.sis.storage.tiling.TileStatus.OUTSIDE_EXTENT;
 import org.apache.sis.util.ComparisonMode;
-import org.apache.sis.util.Utilities;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.storage.multires.ScaleSortedMap;
 import org.geotoolkit.storage.multires.TileInError;
@@ -74,7 +74,7 @@ public final class VirtualTileMatrixSet implements TileMatrixSet {
                     crs = env.getCoordinateReferenceSystem();
                     all = new GeneralEnvelope(env);
                 } else {
-                    if (!Utilities.equalsIgnoreMetadata(crs, env.getCoordinateReferenceSystem())) {
+                    if (!CRS.equivalent(crs, env.getCoordinateReferenceSystem())) {
                         throw new IllegalArgumentException("Tile matrix sets have different coordinate reference systems.");
                     }
                     all.add(env);

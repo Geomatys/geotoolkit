@@ -41,7 +41,6 @@ import org.apache.sis.referencing.GeodeticCalculator;
 import org.apache.sis.referencing.operation.projection.ProjectionException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Classes;
-import org.apache.sis.util.Utilities;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.geometry.jts.awt.JTSGeometryJ2D;
 import org.geotoolkit.resources.Errors;
@@ -273,7 +272,7 @@ public final class JTS {
      */
     public static Envelope toGeographic(final Envelope envelope, final CoordinateReferenceSystem crs)
             throws TransformException {
-        if (Utilities.equalsIgnoreMetadata(crs, CommonCRS.WGS84.normalizedGeographic())) {
+        if (CRS.equivalent(crs, CommonCRS.WGS84.normalizedGeographic())) {
             return envelope;
         }
         final MathTransform transform;

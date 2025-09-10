@@ -23,7 +23,6 @@ import org.apache.sis.geometries.math.Vector2D;
 import org.apache.sis.measure.Quantities;
 import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CRS;
-import org.apache.sis.util.Utilities;
 import org.geotoolkit.dggs.a5.internal.Serialization;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridReferenceSystem;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridSystems;
@@ -110,7 +109,7 @@ final class A5Coder extends DiscreteGlobalGridReferenceSystem.Coder{
     @Override
     public long encodeNumeric(DirectPosition dp) throws TransformException {
         final CoordinateReferenceSystem dpcrs = dp.getCoordinateReferenceSystem();
-        if (dpcrs != null && !Utilities.equalsIgnoreMetadata(baseCrs, dpcrs)) {
+        if (dpcrs != null && !CRS.equivalent(baseCrs, dpcrs)) {
             MathTransform trs;
             try {
                 trs = CRS.findOperation(dpcrs, baseCrs, null).getMathTransform();

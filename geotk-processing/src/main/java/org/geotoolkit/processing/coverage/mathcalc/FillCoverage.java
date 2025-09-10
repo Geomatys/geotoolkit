@@ -41,7 +41,6 @@ import org.apache.sis.storage.WritableGridCoverageResource;
 import org.apache.sis.storage.tiling.WritableTileMatrix;
 import org.apache.sis.storage.tiling.WritableTileMatrixSet;
 import org.apache.sis.storage.tiling.WritableTiledResource;
-import org.apache.sis.util.Utilities;
 import org.geotoolkit.geometry.HyperCubeIterator;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.storage.coverage.*;
@@ -49,6 +48,7 @@ import org.geotoolkit.storage.multires.TileMatrices;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.apache.sis.coverage.grid.PixelInCell;
+import org.apache.sis.referencing.CRS;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.TransformException;
@@ -97,7 +97,7 @@ public class FillCoverage {
         }
         //adjust the writing hyper-cube if an envelope is provided
         if (env != null) {
-            if (!Utilities.equalsIgnoreMetadata(env.getCoordinateReferenceSystem(),gg.getCoordinateReferenceSystem())) {
+            if (!CRS.equivalent(env.getCoordinateReferenceSystem(),gg.getCoordinateReferenceSystem())) {
                 throw new DataStoreException("Envelope is not in data CRS.");
             }
             try {

@@ -26,6 +26,7 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.filter.DefaultFilterFactory;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.feature.privy.AttributeConvention;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureQuery;
 import org.apache.sis.storage.FeatureSet;
@@ -33,7 +34,6 @@ import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.tiling.Tile;
 import org.apache.sis.storage.tiling.WritableTileMatrix;
 import org.apache.sis.storage.tiling.WritableTileMatrixSet;
-import org.apache.sis.util.Utilities;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.coordinatesequence.GridAlignedFilter;
@@ -130,7 +130,7 @@ public class FeatureSetTileGenerator extends AbstractTileGenerator {
 
         final CoordinateReferenceSystem baseCrs = FeatureExt.getCRS(source.getType());
         final FeatureQuery query;
-        if (!Utilities.equalsIgnoreMetadata(baseCrs, tileCrs)) {
+        if (!CRS.equivalent(baseCrs, tileCrs)) {
             query = Query.reproject(source.getType(), tileCrs);
             query.setSelection(filter);
         } else {
