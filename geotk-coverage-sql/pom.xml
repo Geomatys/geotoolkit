@@ -105,9 +105,9 @@
   </dependencies>
   <repositories>
     <repository>
-      <id>UCAR</id>
-      <name>UCAR repository</name>
-      <url>https://artifacts.unidata.ucar.edu/repository/unidata-releases</url>
+      <id>unidata-all</id>
+      <name>Unidata All</name>
+      <url>https://artifacts.unidata.ucar.edu/repository/unidata-all</url>
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
