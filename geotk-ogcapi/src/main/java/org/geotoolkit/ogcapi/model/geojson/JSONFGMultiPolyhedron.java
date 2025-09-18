@@ -16,44 +16,39 @@
  */
 package org.geotoolkit.ogcapi.model.geojson;
 
+import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.dataformat.xml.annotation.*;
+import jakarta.xml.bind.annotation.*;
 
 /**
- * GeoJSONMultiLineString
+ * JSONFGMultiPolyhedron
  */
 @JsonPropertyOrder({
-    GeoJSONMultiLineString.PROPERTY_TYPE,
-    GeoJSONMultiLineString.PROPERTY_BBOX,
-    GeoJSONMultiLineString.PROPERTY_COORDINATES
+    JSONFGMultiPolyhedron.PROPERTY_TYPE,
+    JSONFGMultiPolyhedron.PROPERTY_BBOX,
+    JSONFGMultiPolyhedron.PROPERTY_COORDINATES
 })
-@XmlRootElement(name = "GeoJSONMultiLineString")
+@XmlRootElement(name = "JSONFGMultiPolyhedron")
 @XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "GeoJSONMultiLineString")
-public class GeoJSONMultiLineString extends GeoJSONGeometry {
+@JacksonXmlRootElement(localName = "JSONFGMultiPolyhedron")
+public class JSONFGMultiPolyhedron extends GeoJSONGeometry {
 
     public static final String PROPERTY_COORDINATES = "coordinates";
     @XmlElement(name = PROPERTY_COORDINATES)
     @jakarta.annotation.Nonnull
-    private List<List<List<Double>>> coordinates = new ArrayList<>();
+    private List<List<List<List<List<List<Double>>>>>> coordinates = new ArrayList<>();
 
-    public GeoJSONMultiLineString() {
+    public JSONFGMultiPolyhedron() {
     }
 
     @Override
     public String getType() {
-        return TYPE_MULTILINESTRING;
+        return TYPE_MULTIPOLYHEDRON;
     }
 
     /**
@@ -66,7 +61,7 @@ public class GeoJSONMultiLineString extends GeoJSONGeometry {
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
     @JacksonXmlProperty(localName = PROPERTY_COORDINATES)
     @JacksonXmlElementWrapper(useWrapping = false)
-    public List<List<List<Double>>> getCoordinates() {
+    public List<List<List<List<List<List<Double>>>>>> getCoordinates() {
         return coordinates;
     }
 
@@ -74,12 +69,12 @@ public class GeoJSONMultiLineString extends GeoJSONGeometry {
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
     @JacksonXmlProperty(localName = PROPERTY_COORDINATES)
     @JacksonXmlElementWrapper(useWrapping = false)
-    public void setCoordinates(@jakarta.annotation.Nonnull List<List<List<Double>>> coordinates) {
+    public void setCoordinates(@jakarta.annotation.Nonnull List<List<List<List<List<List<Double>>>>>> coordinates) {
         this.coordinates = coordinates;
     }
 
     /**
-     * Return true if this GeoJSON_MultiLineString object is equal to o.
+     * Return true if this JSON_FG_MultiPolyhedron object is equal to o.
      */
     @Override
     public boolean equals(Object o) {
@@ -89,9 +84,9 @@ public class GeoJSONMultiLineString extends GeoJSONGeometry {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        GeoJSONMultiLineString geoJSONMultiLineString = (GeoJSONMultiLineString) o;
+        JSONFGMultiPolyhedron jsONFGMultiPolyhedron = (JSONFGMultiPolyhedron) o;
         return super.equals(o)
-                && Objects.equals(this.coordinates, geoJSONMultiLineString.coordinates);
+                && Objects.equals(this.coordinates, jsONFGMultiPolyhedron.coordinates);
     }
 
     @Override

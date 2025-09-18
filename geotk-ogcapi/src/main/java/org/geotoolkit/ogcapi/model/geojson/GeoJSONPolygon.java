@@ -16,130 +16,44 @@
  */
 package org.geotoolkit.ogcapi.model.geojson;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlEnum;
-import jakarta.xml.bind.annotation.XmlEnumValue;
 import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.XmlType;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import org.geotoolkit.ogcapi.model.DataTransferObject;
 
 /**
  * GeoJSONPolygon
  */
 @JsonPropertyOrder({
-    GeoJSONPolygon.JSON_PROPERTY_TYPE,
-    GeoJSONPolygon.JSON_PROPERTY_COORDINATES,
-    GeoJSONPolygon.JSON_PROPERTY_BBOX
+    GeoJSONPolygon.PROPERTY_TYPE,
+    GeoJSONPolygon.PROPERTY_BBOX,
+    GeoJSONPolygon.PROPERTY_COORDINATES
 })
 @XmlRootElement(name = "GeoJSONPolygon")
 @XmlAccessorType(XmlAccessType.FIELD)
 @JacksonXmlRootElement(localName = "GeoJSONPolygon")
-public class GeoJSONPolygon extends DataTransferObject {
+public class GeoJSONPolygon extends GeoJSONGeometry {
 
-    /**
-     * Gets or Sets type
-     */
-    @XmlType(name = "TypeEnum")
-    @XmlEnum(String.class)
-    public enum TypeEnum {
-        @XmlEnumValue("Polygon")
-        POLYGON(String.valueOf("Polygon"));
-
-        private String value;
-
-        TypeEnum(String value) {
-            this.value = value;
-        }
-
-        @JsonValue
-        public String getValue() {
-            return value;
-        }
-
-        @Override
-        public String toString() {
-            return String.valueOf(value);
-        }
-
-        @JsonCreator
-        public static TypeEnum fromValue(String value) {
-            for (TypeEnum b : TypeEnum.values()) {
-                if (b.value.equals(value)) {
-                    return b;
-                }
-            }
-            throw new IllegalArgumentException("Unexpected value '" + value + "'");
-        }
-    }
-
-    public static final String JSON_PROPERTY_TYPE = "type";
-    @XmlElement(name = "type")
+    public static final String PROPERTY_COORDINATES = "coordinates";
+    @XmlElement(name = PROPERTY_COORDINATES)
     @jakarta.annotation.Nonnull
-    private TypeEnum type;
-
-    public static final String JSON_PROPERTY_COORDINATES = "coordinates";
-    @XmlElement(name = "coordinates")
-    @jakarta.annotation.Nonnull
-    private List<List<List<BigDecimal>>> coordinates = new ArrayList<>();
-
-    public static final String JSON_PROPERTY_BBOX = "bbox";
-    @XmlElement(name = "bbox")
-    @jakarta.annotation.Nullable
-    private List<BigDecimal> bbox = new ArrayList<>();
+    private List<List<List<Double>>> coordinates = new ArrayList<>();
 
     public GeoJSONPolygon() {
     }
 
-    public GeoJSONPolygon type(@jakarta.annotation.Nonnull TypeEnum type) {
-        this.type = type;
-        return this;
-    }
-
-    /**
-     * Get type
-     *
-     * @return type
-     */
-    @jakarta.annotation.Nonnull
-    @JsonProperty(JSON_PROPERTY_TYPE)
-    @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "type")
-    public TypeEnum getType() {
-        return type;
-    }
-
-    @JsonProperty(JSON_PROPERTY_TYPE)
-    @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "type")
-    public void setType(@jakarta.annotation.Nonnull TypeEnum type) {
-        this.type = type;
-    }
-
-    public GeoJSONPolygon coordinates(@jakarta.annotation.Nonnull List<List<List<BigDecimal>>> coordinates) {
-        this.coordinates = coordinates;
-        return this;
-    }
-
-    public GeoJSONPolygon addCoordinatesItem(List<List<BigDecimal>> coordinatesItem) {
-        if (this.coordinates == null) {
-            this.coordinates = new ArrayList<>();
-        }
-        this.coordinates.add(coordinatesItem);
-        return this;
+    @Override
+    public String getType() {
+        return TYPE_POLYGON;
     }
 
     /**
@@ -148,55 +62,20 @@ public class GeoJSONPolygon extends DataTransferObject {
      * @return coordinates
      */
     @jakarta.annotation.Nonnull
-    @JsonProperty(JSON_PROPERTY_COORDINATES)
+    @JsonProperty(PROPERTY_COORDINATES)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "coordinates")
+    @JacksonXmlProperty(localName = PROPERTY_COORDINATES)
     @JacksonXmlElementWrapper(useWrapping = false)
-    public List<List<List<BigDecimal>>> getCoordinates() {
+    public List<List<List<Double>>> getCoordinates() {
         return coordinates;
     }
 
-    @JsonProperty(JSON_PROPERTY_COORDINATES)
+    @JsonProperty(PROPERTY_COORDINATES)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "coordinates")
+    @JacksonXmlProperty(localName = PROPERTY_COORDINATES)
     @JacksonXmlElementWrapper(useWrapping = false)
-    public void setCoordinates(@jakarta.annotation.Nonnull List<List<List<BigDecimal>>> coordinates) {
+    public void setCoordinates(@jakarta.annotation.Nonnull List<List<List<Double>>> coordinates) {
         this.coordinates = coordinates;
-    }
-
-    public GeoJSONPolygon bbox(@jakarta.annotation.Nullable List<BigDecimal> bbox) {
-        this.bbox = bbox;
-        return this;
-    }
-
-    public GeoJSONPolygon addBboxItem(BigDecimal bboxItem) {
-        if (this.bbox == null) {
-            this.bbox = new ArrayList<>();
-        }
-        this.bbox.add(bboxItem);
-        return this;
-    }
-
-    /**
-     * Get bbox
-     *
-     * @return bbox
-     */
-    @jakarta.annotation.Nullable
-    @JsonProperty(JSON_PROPERTY_BBOX)
-    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "bbox")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public List<BigDecimal> getBbox() {
-        return bbox;
-    }
-
-    @JsonProperty(JSON_PROPERTY_BBOX)
-    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "bbox")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setBbox(@jakarta.annotation.Nullable List<BigDecimal> bbox) {
-        this.bbox = bbox;
     }
 
     /**
@@ -211,14 +90,13 @@ public class GeoJSONPolygon extends DataTransferObject {
             return false;
         }
         GeoJSONPolygon geoJSONPolygon = (GeoJSONPolygon) o;
-        return Objects.equals(this.type, geoJSONPolygon.type)
-                && Objects.equals(this.coordinates, geoJSONPolygon.coordinates)
-                && Objects.equals(this.bbox, geoJSONPolygon.bbox);
+        return super.equals(o)
+                && Objects.equals(this.coordinates, geoJSONPolygon.coordinates);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type, coordinates, bbox);
+        return super.hashCode() + Objects.hash(coordinates);
     }
 
 }
