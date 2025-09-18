@@ -18,23 +18,29 @@ package org.geotoolkit.dggs.h3;
 
 import java.util.List;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.storage.dggs.CellConstraints;
-import org.geotoolkit.storage.dggs.DiscreteGlobalGridHierarchy;
-import org.geotoolkit.storage.dggs.DiscreteGlobalGridSystem;
-import org.geotoolkit.storage.dggs.PolyhedronOrientation;
-import org.geotoolkit.storage.dggs.RefinementStrategy;
+import org.geotoolkit.referencing.dggs.CellConstraints;
+import org.geotoolkit.referencing.dggs.DiscreteGlobalGridHierarchy;
+import org.geotoolkit.referencing.dggs.DiscreteGlobalGridSystem;
+import org.geotoolkit.referencing.dggs.PolyhedronOrientation;
+import org.geotoolkit.referencing.dggs.RefinementStrategy;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.geotoolkit.storage.dggs.PolyhedronParameters;
+import org.geotoolkit.referencing.dggs.PolyhedronParameters;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public final class H3Dggs implements DiscreteGlobalGridSystem {
+final class H3Dggs implements DiscreteGlobalGridSystem {
+
+    private final H3Dggh dggh;
+
+    public H3Dggs(H3Dggrs dggrs) {
+        this.dggh = new H3Dggh(dggrs);
+    }
 
     @Override
     public DiscreteGlobalGridHierarchy getHierarchy() {
-        return new H3Dggh();
+        return dggh;
     }
 
     @Override

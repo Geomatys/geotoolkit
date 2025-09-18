@@ -18,13 +18,13 @@ package org.geotoolkit.dggs.a5;
 
 import java.util.List;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.storage.dggs.CellConstraints;
-import org.geotoolkit.storage.dggs.DiscreteGlobalGridHierarchy;
-import org.geotoolkit.storage.dggs.DiscreteGlobalGridSystem;
-import org.geotoolkit.storage.dggs.PolyhedronOrientation;
-import org.geotoolkit.storage.dggs.RefinementStrategy;
+import org.geotoolkit.referencing.dggs.CellConstraints;
+import org.geotoolkit.referencing.dggs.DiscreteGlobalGridHierarchy;
+import org.geotoolkit.referencing.dggs.DiscreteGlobalGridSystem;
+import org.geotoolkit.referencing.dggs.PolyhedronOrientation;
+import org.geotoolkit.referencing.dggs.RefinementStrategy;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.geotoolkit.storage.dggs.PolyhedronParameters;
+import org.geotoolkit.referencing.dggs.PolyhedronParameters;
 
 /**
  *
@@ -32,9 +32,15 @@ import org.geotoolkit.storage.dggs.PolyhedronParameters;
  */
 final class A5Dggs implements DiscreteGlobalGridSystem {
 
+    private final A5Dggh dggh;
+
+    public A5Dggs(A5Dggrs dggrs) {
+        this.dggh = new A5Dggh(dggrs);
+    }
+
     @Override
     public DiscreteGlobalGridHierarchy getHierarchy() {
-        return new A5Dggh();
+        return dggh;
     }
 
     @Override

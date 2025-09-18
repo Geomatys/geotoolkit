@@ -1,0 +1,47 @@
+
+Building DGGAL for Java binding :
+
+git clone https://github.com/ecere/dggal.git
+cd dggal
+./fetchAndBuild.sh
+cd dgbuild/dggal/bindings/c_fn/
+mv Makefile Makefile.single
+mv Makefile.allinone Makefile
+rm -rf obj
+cd ../../../..
+./fetchAndBuild.sh
+
+Prendre le .so au chemin /dggal/dgbuild/dggal/bindings/c_fn/obj/dggal.allinone.linux/libdggal_c_fn.so.0.0.5
+et le renommer libdggal_c_fn.so
+
+
+===============================================================
+== Compile on Docker for linux ================================
+===============================================================
+
+mkdir mount
+docker run -it --rm -v ./mount:/test-container:Z ubuntu:22.04
+
+apt-get update
+apt-get install git-all make gcc zlib1g-dev
+
+apt-get install git-all
+apt-get install make
+apt-get install gcc
+apt-get install zlib1g-dev
+
+
+git clone https://github.com/ecere/dggal.git
+cd dggal
+./fetchAndBuild.sh
+cd dgbuild/dggal/bindings/c_fn/
+mv Makefile Makefile.single
+mv Makefile.allinone Makefile
+rm -rf obj
+cd ../../../..
+./fetchAndBuild.sh
+
+cp /dggal/dgbuild/dggal/bindings/c_fn/obj/dggal.allinone.linux/libdggal_c_fn.so.0.0.5 /test-container/libdggal_c_fn.so.0.0.5
+get : ./mount/libdggal_c_fn.so.0.0.5
+rename it : libdggal_c_fn.so
+replace the file in the maven module, in the resource folder

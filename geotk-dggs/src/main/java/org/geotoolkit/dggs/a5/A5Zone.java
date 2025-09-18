@@ -16,33 +16,26 @@
  */
 package org.geotoolkit.dggs.a5;
 
+import com.google.common.geometry.S2LatLng;
+import com.google.common.geometry.S2Loop;
+import com.google.common.geometry.S2Point;
+import com.google.common.geometry.S2Polygon;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import org.apache.sis.geometries.Geometry;
-import org.apache.sis.geometries.GeometryFactory;
-import org.apache.sis.geometries.LinearRing;
-import org.apache.sis.geometries.PointSequence;
-import org.apache.sis.geometries.math.DataType;
 import org.apache.sis.geometries.math.SampleSystem;
-import org.apache.sis.geometries.math.TupleArray;
-import org.apache.sis.geometries.math.TupleArrays;
 import org.apache.sis.geometries.math.Vector2D;
 import org.apache.sis.geometry.DirectPosition2D;
-import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
-import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.util.SimpleInternationalString;
+import org.geotoolkit.dggs.a5.internal.Cell;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridSystems;
-import org.geotoolkit.storage.dggs.RefinementLevel;
-import org.geotoolkit.storage.dggs.ZonalIdentifier;
-import org.geotoolkit.storage.dggs.Zone;
+import org.geotoolkit.referencing.dggs.RefinementLevel;
+import org.geotoolkit.referencing.dggs.Zone;
 import org.opengis.geometry.DirectPosition;
-import org.opengis.geometry.Envelope;
 import org.opengis.metadata.citation.Party;
-import org.opengis.metadata.extent.GeographicExtent;
+import org.opengis.metadata.extent.BoundingPolygon;
 import org.opengis.metadata.extent.TemporalExtent;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.util.InternationalString;
@@ -64,18 +57,18 @@ final class A5Zone implements Zone {
     }
 
     @Override
-    public ZonalIdentifier getIdentifier() {
-        return new ZonalIdentifier.Long(hash);
-    }
-
-    @Override
-    public long getIndexedIdentifier() {
+    public Object getIdentifier() {
         return hash;
     }
 
     @Override
-    public InternationalString getGeographicIdentifier() {
-        return new SimpleInternationalString("" + Long.toUnsignedString(hash));
+    public CharSequence getTextIdentifier() {
+        return A5Dggh.idAsText(hash);
+    }
+
+    @Override
+    public long getLongIdentifier() {
+        return hash;
     }
 
     @Override
@@ -157,27 +150,17 @@ final class A5Zone implements Zone {
     }
 
     @Override
-    public Geometry getGeometry() {
+    public BoundingPolygon getGeographicExtent() {
         if (hash == 0) return null; //root sphere
-        final Vector2D.Double[] boundary = A5.cellToBoundary(hash);
+        //final Vector2D.Double[] boundary = A5.cellToBoundary(hash); //default version produces a lot of vertices
+        final Vector2D.Double[] boundary = Cell.cellToBoundary(hash, new Cell.CellToBoundaryOptions(false, 1));
+
         if (boundary == null) return null;
-        final List<Vector2D.Double> contour = List.of(boundary);
-        final TupleArray positions = TupleArrays.of(contour, CRS84, DataType.DOUBLE);
-        final PointSequence points = GeometryFactory.createSequence(positions);
-        final LinearRing exterior = GeometryFactory.createLinearRing(points);
-        return GeometryFactory.createPolygon(exterior, Collections.EMPTY_LIST);
-    }
-
-    @Override
-    public GeographicExtent getGeographicExtent() {
-        final Envelope env = getEnvelope();
-        return new DefaultGeographicBoundingBox(env.getMinimum(0), env.getMaximum(0), env.getMinimum(1), env.getMaximum(1));
-    }
-
-    @Override
-    public Envelope getEnvelope() {
-        if (hash == 0) return CRS.getDomainOfValidity(CommonCRS.WGS84.normalizedGeographic());  //root sphere
-        return getGeometry().getEnvelope();
+        final List<S2Point> contour = new ArrayList<>(boundary.length);
+        for (int i = 0, n = boundary.length; i < n ; i++) {
+            contour.add(S2LatLng.fromDegrees(boundary[i].y, boundary[i].x).toPoint());
+        }
+        return DiscreteGlobalGridSystems.toGeographicExtent(new S2Polygon(new S2Loop(contour)));
     }
 
     @Override
