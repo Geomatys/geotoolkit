@@ -54,10 +54,13 @@ public final class DggrsDataValue extends DataTransferObject {
     @jakarta.annotation.Nullable
     private DggrsDataValueShape shape;
 
+    /**
+     * Specification says it should be a Double, we extent that to support other types.
+     */
     public static final String JSON_PROPERTY_DATA = "data";
     @XmlElement(name = "data")
     @jakarta.annotation.Nonnull
-    private List<Double> data = new ArrayList<>();
+    private List<Object> data = new ArrayList<>();
 
     public DggrsDataValue() {
     }
@@ -112,12 +115,12 @@ public final class DggrsDataValue extends DataTransferObject {
         this.shape = shape;
     }
 
-    public DggrsDataValue data(@jakarta.annotation.Nonnull List<Double> data) {
+    public DggrsDataValue data(@jakarta.annotation.Nonnull List<Object> data) {
         this.data = data;
         return this;
     }
 
-    public DggrsDataValue addDataItem(Double dataItem) {
+    public DggrsDataValue addDataItem(Object dataItem) {
         if (this.data == null) {
             this.data = new ArrayList<>();
         }
@@ -135,7 +138,7 @@ public final class DggrsDataValue extends DataTransferObject {
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
     @JacksonXmlProperty(localName = "data")
     @JacksonXmlElementWrapper(useWrapping = false)
-    public List<Double> getData() {
+    public List<Object> getData() {
         return data;
     }
 
@@ -143,7 +146,7 @@ public final class DggrsDataValue extends DataTransferObject {
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
     @JacksonXmlProperty(localName = "data")
     @JacksonXmlElementWrapper(useWrapping = false)
-    public void setData(@jakarta.annotation.Nonnull List<Double> data) {
+    public void setData(@jakarta.annotation.Nonnull List<Object> data) {
         this.data = data;
     }
 
