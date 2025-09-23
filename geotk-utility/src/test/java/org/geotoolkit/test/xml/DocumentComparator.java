@@ -44,8 +44,8 @@ import org.w3c.dom.Text;
 import org.xml.sax.SAXException;
 import org.apache.sis.xml.Namespaces;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.privy.Strings;
-import org.apache.sis.xml.privy.LegacyNamespaces;
+import org.apache.sis.util.internal.shared.Strings;
+import org.apache.sis.xml.internal.shared.LegacyNamespaces;
 
 import static java.lang.StrictMath.*;
 import static org.junit.Assert.*;

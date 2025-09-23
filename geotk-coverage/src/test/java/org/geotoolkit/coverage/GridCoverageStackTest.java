@@ -24,7 +24,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.PixelTranslation;
-import org.apache.sis.referencing.privy.GeodeticObjectBuilder;
+import org.apache.sis.referencing.internal.shared.GeodeticObjectBuilder;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.referencing.operation.matrix.Matrices;

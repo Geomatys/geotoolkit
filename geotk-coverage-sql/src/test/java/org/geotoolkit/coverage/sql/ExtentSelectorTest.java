@@ -18,7 +18,7 @@ package org.geotoolkit.coverage.sql;
 
 import java.util.Date;
 import java.time.Duration;
-import org.apache.sis.referencing.privy.ExtentSelector;
+import org.apache.sis.referencing.internal.shared.ExtentSelector;
 import org.opengis.metadata.extent.Extent;
 import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.apache.sis.metadata.iso.extent.DefaultTemporalExtent;

@@ -21,7 +21,7 @@ import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.Serializable;
-import org.apache.sis.referencing.privy.IntervalRectangle;
+import org.apache.sis.referencing.internal.shared.IntervalRectangle;
 
 
 

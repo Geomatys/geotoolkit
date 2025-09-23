@@ -21,7 +21,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
 import java.util.Arrays;
 import java.util.logging.Level;
-import org.apache.sis.referencing.privy.AffineTransform2D;
+import org.apache.sis.referencing.internal.shared.AffineTransform2D;
 import static org.geotoolkit.geometry.jts.awt.AbstractJTSGeometryJ2D.LOGGER;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;

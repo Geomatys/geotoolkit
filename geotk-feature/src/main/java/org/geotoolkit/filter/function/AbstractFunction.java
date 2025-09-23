@@ -19,7 +19,7 @@ package org.geotoolkit.filter.function;
 
 import java.util.List;
 import org.geotoolkit.filter.AbstractExpression;
-import org.apache.sis.util.privy.UnmodifiableArrayList;
+import org.apache.sis.util.internal.shared.UnmodifiableArrayList;
 import org.opengis.filter.Expression;
 import org.opengis.filter.Literal;
 import static org.apache.sis.util.ArgumentChecks.*;

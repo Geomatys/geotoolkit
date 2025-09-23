@@ -29,7 +29,7 @@ import org.opengis.feature.PropertyType;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.geotoolkit.feature.FeatureExt;
-import org.apache.sis.feature.privy.AttributeConvention;
+import org.apache.sis.feature.internal.shared.AttributeConvention;
 
 /**
  * Compute the convex hull from a FeatureCollection. An optional parameter

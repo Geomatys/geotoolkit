@@ -17,7 +17,7 @@
 
 package org.geotoolkit.data.osm.client.v060;
 
-import org.apache.sis.feature.privy.AttributeConvention;
+import org.apache.sis.feature.internal.shared.AttributeConvention;
 import org.geotoolkit.data.osm.client.AbstractChangeElement;
 import org.geotoolkit.data.osm.client.OpenStreetMapClient;
 import org.geotoolkit.data.osm.model.OSMModelConstants;

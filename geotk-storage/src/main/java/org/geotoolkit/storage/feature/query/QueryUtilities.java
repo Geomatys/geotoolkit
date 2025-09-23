@@ -25,7 +25,7 @@ import javax.measure.Quantity;
 import javax.measure.quantity.Length;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.geometry.ImmutableEnvelope;
-import org.apache.sis.util.privy.UnmodifiableArrayList;
+import org.apache.sis.util.internal.shared.UnmodifiableArrayList;
 import org.apache.sis.storage.FeatureQuery;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.filter.FilterUtilities;

@@ -25,7 +25,7 @@ import java.awt.Dimension;
 import javax.media.jai.ImageLayout;
 
 import org.geotoolkit.lang.Static;
-import org.apache.sis.image.privy.FillValues;
+import org.apache.sis.image.internal.shared.FillValues;
 
 
 

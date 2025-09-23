@@ -24,7 +24,7 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlElementRef;
 import jakarta.xml.bind.annotation.XmlType;
-import org.apache.sis.filter.privy.FunctionNames;
+import org.apache.sis.filter.internal.shared.FunctionNames;
 import org.opengis.filter.ComparisonOperatorName;
 
 

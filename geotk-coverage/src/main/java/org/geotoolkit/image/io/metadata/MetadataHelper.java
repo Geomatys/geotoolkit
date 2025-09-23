@@ -46,7 +46,7 @@ import org.geotoolkit.resources.Vocabulary;
 import org.apache.sis.util.Localized;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.measure.MeasurementRange;
-import org.apache.sis.util.privy.UnmodifiableArrayList;
+import org.apache.sis.util.internal.shared.UnmodifiableArrayList;
 import org.geotoolkit.internal.InternalUtilities;
 import org.apache.sis.coverage.Category;
 import org.geotoolkit.image.io.ImageMetadataException;

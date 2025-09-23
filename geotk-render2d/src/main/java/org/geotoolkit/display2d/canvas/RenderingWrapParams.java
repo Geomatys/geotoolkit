@@ -17,7 +17,7 @@
 
 package org.geotoolkit.display2d.canvas;
 
-import org.apache.sis.referencing.privy.AffineTransform2D;
+import org.apache.sis.referencing.internal.shared.AffineTransform2D;
 import org.opengis.geometry.DirectPosition;
 
 /**

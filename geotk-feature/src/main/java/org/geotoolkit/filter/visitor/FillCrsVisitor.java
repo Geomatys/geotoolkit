@@ -20,7 +20,7 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.locationtech.jts.geom.Geometry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.sis.filter.privy.FunctionNames;
+import org.apache.sis.filter.internal.shared.FunctionNames;
 import org.geotoolkit.geometry.jts.JTS;
 import org.opengis.filter.Literal;
 import org.opengis.geometry.Envelope;

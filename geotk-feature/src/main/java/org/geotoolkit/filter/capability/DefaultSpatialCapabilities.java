@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import static org.apache.sis.util.ArgumentChecks.*;
-import org.apache.sis.util.privy.UnmodifiableArrayList;
+import org.apache.sis.util.internal.shared.UnmodifiableArrayList;
 import org.apache.sis.util.iso.Names;
 import org.opengis.filter.SpatialOperatorName;
 import org.opengis.filter.capability.GeometryOperand;

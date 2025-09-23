@@ -38,7 +38,7 @@ import org.opengis.util.FactoryException;
 
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.referencing.ImmutableIdentifier;
-import org.apache.sis.referencing.privy.ReferencingFactoryContainer;
+import org.apache.sis.referencing.internal.shared.ReferencingFactoryContainer;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;

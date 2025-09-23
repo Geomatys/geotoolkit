@@ -25,7 +25,7 @@ import java.awt.image.WritableRaster;
 import java.util.Hashtable;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
-import org.apache.sis.image.privy.ColorModelFactory;
+import org.apache.sis.image.internal.shared.ColorModelFactory;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.image.internal.ImageUtils;
 import org.geotoolkit.image.internal.PhotometricInterpretation;

@@ -32,7 +32,7 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.collection.Cache;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;
-import org.apache.sis.referencing.privy.ReferencingFactoryContainer;
+import org.apache.sis.referencing.internal.shared.ReferencingFactoryContainer;
 import org.apache.sis.util.iso.DefaultNameFactory;
 
 

@@ -36,7 +36,7 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.feature.privy.AttributeConvention;
+import org.apache.sis.feature.internal.shared.AttributeConvention;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.ShapeTestData;

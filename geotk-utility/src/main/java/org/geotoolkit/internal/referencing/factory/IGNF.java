@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.TreeMap;
 import java.util.Collections;
 import java.util.Optional;
-import org.apache.sis.referencing.privy.ReferencingFactoryContainer;
+import org.apache.sis.referencing.internal.shared.ReferencingFactoryContainer;
 
 import org.opengis.util.FactoryException;
 import org.opengis.util.InternationalString;

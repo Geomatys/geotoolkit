@@ -37,8 +37,8 @@ import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridExtent;
-import org.apache.sis.referencing.privy.AxisDirections;
-import org.apache.sis.referencing.privy.ExtentSelector;
+import org.apache.sis.referencing.internal.shared.AxisDirections;
+import org.apache.sis.referencing.internal.shared.ExtentSelector;
 import org.apache.sis.storage.*;
 
 // JMDA branch-specific

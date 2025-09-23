@@ -22,7 +22,7 @@ import org.geotoolkit.process.ProcessException;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
 
-import org.apache.sis.metadata.privy.Merger;
+import org.apache.sis.metadata.internal.shared.Merger;
 import org.apache.sis.metadata.ModifiableMetadata;
 
 import static org.geotoolkit.processing.metadata.merge.MergeDescriptor.FIRST_IN;

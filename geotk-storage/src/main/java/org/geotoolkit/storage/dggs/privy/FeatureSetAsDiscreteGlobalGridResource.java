@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.storage.dggs.privy;
+package org.geotoolkit.storage.dggs.internal.shared;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,7 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
 import org.apache.sis.coverage.SampleDimension;
-import org.apache.sis.feature.privy.AttributeConvention;
+import org.apache.sis.feature.internal.shared.AttributeConvention;
 import org.apache.sis.filter.DefaultFilterFactory;
 import org.apache.sis.geometries.LinearRing;
 import org.apache.sis.geometries.PointSequence;

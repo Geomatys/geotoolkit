@@ -26,7 +26,7 @@ import javax.measure.quantity.Angle;
 import javax.measure.quantity.Length;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.xml.bind.gml.Measure;
-import org.apache.sis.referencing.privy.AxisDirections;
+import org.apache.sis.referencing.internal.shared.AxisDirections;
 import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.GeodeticCalculator;

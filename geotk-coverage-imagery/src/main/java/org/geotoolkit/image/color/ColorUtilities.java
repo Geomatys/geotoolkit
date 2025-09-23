@@ -21,7 +21,7 @@ import java.awt.Color;
 import java.awt.color.ColorSpace;
 import java.awt.image.IndexColorModel;
 import java.awt.image.DataBuffer;
-import org.apache.sis.image.privy.ColorModelFactory;
+import org.apache.sis.image.internal.shared.ColorModelFactory;
 
 import org.geotoolkit.lang.Static;
 

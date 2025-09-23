@@ -38,7 +38,7 @@ import org.opengis.referencing.crs.VerticalCRS;
 import org.opengis.util.FactoryException;
 
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.referencing.privy.GeodeticObjectBuilder;
+import org.apache.sis.referencing.internal.shared.GeodeticObjectBuilder;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.apache.sis.referencing.CommonCRS;

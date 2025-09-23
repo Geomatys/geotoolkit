@@ -23,7 +23,7 @@ import org.junit.Test;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
-import org.apache.sis.util.privy.UnmodifiableArrayList;
+import org.apache.sis.util.internal.shared.UnmodifiableArrayList;
 import org.apache.sis.parameter.Parameters;
 import org.geotoolkit.filter.FilterUtilities;
 import org.opengis.filter.FilterFactory;

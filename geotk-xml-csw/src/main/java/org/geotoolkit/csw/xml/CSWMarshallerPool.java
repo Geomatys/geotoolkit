@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 import jakarta.xml.bind.Binder;
 import jakarta.xml.bind.JAXBException;
-import org.apache.sis.xml.privy.LegacyNamespaces;
+import org.apache.sis.xml.internal.shared.LegacyNamespaces;
 import org.geotoolkit.xml.AnchoredMarshallerPool;
 import org.apache.sis.xml.MarshallerPool;
 import org.apache.sis.xml.XML;

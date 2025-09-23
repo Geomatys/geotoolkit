@@ -5,7 +5,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.TemporalCRS;
 import org.opengis.referencing.crs.VerticalCRS;
 
-import org.apache.sis.referencing.privy.GeodeticObjectBuilder;
+import org.apache.sis.referencing.internal.shared.GeodeticObjectBuilder;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 

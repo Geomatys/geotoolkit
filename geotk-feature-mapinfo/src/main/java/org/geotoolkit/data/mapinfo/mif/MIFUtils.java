@@ -34,7 +34,7 @@ import java.util.Set;
 import org.apache.sis.feature.Features;
 import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.geometry.Envelope2D;
-import org.apache.sis.feature.privy.AttributeConvention;
+import org.apache.sis.feature.internal.shared.AttributeConvention;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.filter.FilterUtilities;
 import org.opengis.feature.Feature;

@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.storage.dggs;
 
-import org.geotoolkit.storage.dggs.privy.GridAsDiscreteGlobalGridResource;
+import org.geotoolkit.storage.dggs.internal.shared.GridAsDiscreteGlobalGridResource;
 import java.util.List;
 import java.util.stream.Stream;
 import javax.measure.IncommensurableException;

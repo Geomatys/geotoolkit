@@ -32,7 +32,7 @@ import java.util.Arrays;
 import javax.measure.IncommensurableException;
 import javax.measure.UnitConverter;
 import javax.measure.Unit;
-import org.apache.sis.referencing.privy.Formulas;
+import org.apache.sis.referencing.internal.shared.Formulas;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.ext.BackgroundTemplate;
 import org.geotoolkit.display2d.ext.BackgroundUtilities;

@@ -25,7 +25,7 @@ import java.util.stream.Stream;
 import org.apache.sis.feature.AbstractOperation;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.feature.privy.AttributeConvention;
+import org.apache.sis.feature.internal.shared.AttributeConvention;
 import org.geotoolkit.storage.feature.FeatureCollection;
 import org.geotoolkit.processing.AbstractProcess;
 import org.opengis.feature.AttributeType;

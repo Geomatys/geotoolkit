@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.filter.visitor;
 
-import org.apache.sis.filter.privy.FunctionNames;
+import org.apache.sis.filter.internal.shared.FunctionNames;
 import org.opengis.filter.Expression;
 
 /**

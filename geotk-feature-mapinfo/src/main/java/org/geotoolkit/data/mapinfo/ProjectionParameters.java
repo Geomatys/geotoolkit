@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.data.mapinfo;
 
-import org.apache.sis.util.privy.Constants;
+import org.apache.sis.util.internal.shared.Constants;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.util.FactoryException;
 

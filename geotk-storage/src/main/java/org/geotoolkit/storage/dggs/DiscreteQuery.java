@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.storage.dggs;
 
-import org.apache.sis.feature.privy.AttributeConvention;
+import org.apache.sis.feature.internal.shared.AttributeConvention;
 import org.apache.sis.filter.DefaultFilterFactory;
 import org.apache.sis.storage.Query;
 import org.opengis.feature.Feature;

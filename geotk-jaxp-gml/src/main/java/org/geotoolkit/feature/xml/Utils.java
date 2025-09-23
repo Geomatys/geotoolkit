@@ -55,7 +55,7 @@ import java.time.LocalDateTime;
 import javax.xml.namespace.QName;
 import javax.xml.stream.events.XMLEvent;
 import org.apache.sis.feature.Features;
-import org.apache.sis.feature.privy.AttributeConvention;
+import org.apache.sis.feature.internal.shared.AttributeConvention;
 import org.apache.sis.util.Numbers;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.nio.IOUtilities;

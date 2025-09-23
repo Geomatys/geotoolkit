@@ -20,7 +20,7 @@ package org.geotoolkit.display2d.canvas;
 import java.awt.Dimension;
 import java.util.Date;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.referencing.privy.GeodeticObjectBuilder;
+import org.apache.sis.referencing.internal.shared.GeodeticObjectBuilder;
 import org.apache.sis.map.MapLayers;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.display.PortrayalException;

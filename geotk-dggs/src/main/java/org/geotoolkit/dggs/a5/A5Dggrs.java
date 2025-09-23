@@ -29,7 +29,7 @@ import org.apache.sis.metadata.iso.identification.DefaultBrowseGraphic;
 import org.apache.sis.referencing.ImmutableIdentifier;
 import org.apache.sis.referencing.gazetteer.ModifiableLocationType;
 import org.apache.sis.util.SimpleInternationalString;
-import org.apache.sis.util.privy.Constants;
+import org.apache.sis.util.internal.shared.Constants;
 import org.apache.sis.util.resources.Vocabulary;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridReferenceSystem;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridSystem;

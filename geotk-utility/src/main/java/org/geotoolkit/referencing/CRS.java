@@ -33,7 +33,7 @@ import org.apache.sis.util.Version;
 import org.geotoolkit.factory.FactoryRegistryException;
 import org.apache.sis.geometry.Envelopes;
 import org.geotoolkit.resources.Errors;
-import org.apache.sis.metadata.privy.NameMeaning;
+import org.apache.sis.metadata.internal.shared.NameMeaning;
 import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.apache.sis.referencing.operation.DefaultCoordinateOperationFactory;
 
@@ -344,7 +344,7 @@ compare:    for (final SingleCRS component : actualComponents) {
      */
     private static boolean isGeodetic3D(final Datum geodetic, final Datum vertical) {
         return (geodetic instanceof GeodeticDatum) && (vertical instanceof VerticalDatum) &&
-                org.apache.sis.referencing.privy.ReferencingUtilities.isEllipsoidalHeight((VerticalDatum) vertical);
+                org.apache.sis.referencing.internal.shared.ReferencingUtilities.isEllipsoidalHeight((VerticalDatum) vertical);
     }
 
 
