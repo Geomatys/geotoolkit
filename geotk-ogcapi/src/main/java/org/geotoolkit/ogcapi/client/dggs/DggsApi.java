@@ -88,7 +88,12 @@ public final class DggsApi extends AbstractOpenApi {
     public static final String PROFILE_JSONFG_DGGS_PLUS = "jsonfg-dggs-plus";
     public static final String PROFILE_JSONFG_DGGS_ZONEIDS = "jsonfg-dggs-zoneids";
     public static final String PROFILE_JSONFG_DGGS_ZONEIDS_PLUS = "jsonfg-dggs-zoneids-plus";
-
+    public static final String PROFILE_ZARR2 = "zarr2";
+    public static final String PROFILE_ZARR2_DGGS = "zarr2-dggs";
+    public static final String PROFILE_ZARR2_DGGS_ZONEIDS = "zarr2-dggs-zoneids";
+    public static final String PROFILE_ZARR3 = "zarr3";
+    public static final String PROFILE_ZARR3_DGGS = "zarr3-dggs";
+    public static final String PROFILE_ZARR3_DGGS_ZONEIDS = "zarr3-dggs-zoneids";
 
     public DggsApi(OpenApiConfiguration config) {
         super(config);
