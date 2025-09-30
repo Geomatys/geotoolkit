@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.storage.dggs.internal.shared;
+package org.geotoolkit.storage.dggs.privy;
 
 import java.util.ArrayList;
 import java.util.List;

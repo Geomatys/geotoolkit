@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.storage.dggs;
 
-import org.geotoolkit.storage.dggs.internal.shared.GridAsDiscreteGlobalGridResource;
+import org.geotoolkit.storage.dggs.privy.GridAsDiscreteGlobalGridResource;
 import java.util.List;
 import java.util.Optional;
 import javax.measure.IncommensurableException;
@@ -31,10 +31,10 @@ import org.apache.sis.referencing.internal.shared.GeodeticObjectBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.GridCoverageResource;
-import org.geotoolkit.storage.dggs.internal.shared.ComputedZoneIndexList;
-import org.geotoolkit.storage.dggs.internal.shared.DiscreteGlobalGridCoverageAsFeatureSet;
-import org.geotoolkit.storage.dggs.internal.shared.FeatureSetAsDiscreteGlobalGridResource;
-import org.geotoolkit.storage.dggs.internal.shared.MemoryDiscreteGlobalGridResource;
+import org.geotoolkit.storage.dggs.privy.ComputedZoneIndexList;
+import org.geotoolkit.storage.dggs.privy.DiscreteGlobalGridCoverageAsFeatureSet;
+import org.geotoolkit.storage.dggs.privy.FeatureSetAsDiscreteGlobalGridResource;
+import org.geotoolkit.storage.dggs.privy.MemoryDiscreteGlobalGridResource;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeographicCRS;
