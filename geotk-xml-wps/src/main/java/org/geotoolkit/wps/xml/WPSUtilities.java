@@ -1,6 +1,5 @@
 package org.geotoolkit.wps.xml;
 
-import org.apache.sis.util.Static;
 import org.geotoolkit.wps.xml.v200.Execute;
 import org.geotoolkit.wps.xml.v200.JobControlOptions;
 import org.geotoolkit.wps.xml.v200.ProcessOffering;
@@ -9,7 +8,7 @@ import org.geotoolkit.wps.xml.v200.ProcessOffering;
  *
  * @author Alexis Manin (Geomatys)
  */
-public class WPSUtilities extends Static {
+public class WPSUtilities {
 
     public static final String CDATA_START_TAG = "<![CDATA[";
     public static final String CDATA_END_TAG = "]]>";

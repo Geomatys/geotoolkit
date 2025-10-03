@@ -56,6 +56,7 @@ import org.apache.sis.storage.tiling.TileStatus;
 import org.apache.sis.storage.tiling.WritableTileMatrix;
 import org.apache.sis.storage.tiling.WritableTileMatrixSet;
 import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.process.ProcessEvent;
@@ -397,7 +398,9 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
 
     private Tile generateTile(TileMatrixSet pyramid, TileMatrix matrix, long[] tileCoord, GridCoverageResource resource) throws DataStoreException {
         final int[] tileSize = ((org.geotoolkit.storage.multires.TileMatrix)matrix).getTileSize();
-        final GridGeometry gridGeomNd = matrix.getTilingScheme().derive().subgrid(new GridExtent(null, tileCoord, tileCoord, true)).build().upsample(tileSize);
+        final GridGeometry gridGeomNd = matrix.getTilingScheme().derive()
+                .subgrid(new GridExtent(null, tileCoord, tileCoord, true))
+                .build().upsample(ArraysExt.copyAsLongs(tileSize));
 
         GridCoverage coverage;
         try {

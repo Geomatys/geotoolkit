@@ -37,7 +37,6 @@ import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.lang.Static;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
@@ -69,7 +68,7 @@ import org.opengis.util.FactoryException;
  *
  * @author Quentin Boileau
  */
-public final class VectorProcessUtils extends Static {
+public final class VectorProcessUtils {
 
     private VectorProcessUtils() {
     }

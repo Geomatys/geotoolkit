@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.processing.isoline.Isolines;
-import org.apache.sis.util.Static;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
@@ -36,7 +35,7 @@ import org.locationtech.jts.operation.linemerge.LineMerger;
  * @deprecated Superseded with Apache SIS {@link Isolines} processing.
  */
 @Deprecated(forRemoval = true, since = "22.04.22")
-public final class MarchingSquares extends Static {
+public final class MarchingSquares {
 
     private static final GeometryFactory GF = org.geotoolkit.geometry.jts.JTS.getFactory();
 

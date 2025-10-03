@@ -29,6 +29,7 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.apache.sis.storage.tiling.TileMatrix;
 import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.ArraysExt;
 import org.opengis.coverage.CannotEvaluateException;
 
 /**
@@ -70,7 +71,7 @@ final class TileMatrixCoverage extends GridCoverage {
     private static GridGeometry buildGridGeometry(GridExtent extent, TileMatrix matrix, int[] tileSize) {
         final GridGeometry tilingScheme = matrix.getTilingScheme();
         return tilingScheme.derive().rounding(GridRoundingMode.ENCLOSING).subgrid(extent).build()
-                .upsample(tileSize);
+                .upsample(ArraysExt.copyAsLongs(tileSize));
     }
 
     @Override
@@ -92,13 +93,13 @@ final class TileMatrixCoverage extends GridCoverage {
         final int[] xyAxes = readExtent.getSubspaceDimensions(2);
 
         //convert the requested extent to tile range.
-        final GridGeometry tilingScheme = gridGeometry.derive().subgrid(null, tileSize).build();
+        final GridGeometry tilingScheme = gridGeometry.derive().subgrid(null, ArraysExt.copyAsLongs(tileSize)).build();
         final GridExtent absoluteTileExtent = tilingScheme.derive()
                 .clipping(GridClippingMode.STRICT)
                 .rounding(GridRoundingMode.ENCLOSING)
                 .subgrid(userGeometry).getIntersection();
         //final GridExtent absoluteTileExtent = readExtent.subsample(tileSize);
-        final GridExtent absolutedReadExtent = absoluteTileExtent.upsample(tileSize);
+        final GridExtent absolutedReadExtent = absoluteTileExtent.upsample(ArraysExt.copyAsLongs(tileSize));
 
         //compute image model and image
         final Object[] structure = resource.getImageModel(readExtent, range);

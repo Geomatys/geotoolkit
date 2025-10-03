@@ -52,7 +52,7 @@ import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.measure.Quantities;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.referencing.CRS;
-import org.apache.sis.referencing.crs.DefaultImageCRS;
+import org.apache.sis.referencing.legacy.DefaultImageCRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;

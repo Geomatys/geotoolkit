@@ -25,7 +25,6 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import org.geotoolkit.lang.Static;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.io.ContentFormatException;
@@ -36,12 +35,8 @@ import org.geotoolkit.io.ContentFormatException;
  * Those additional files have the {@code ".tfw"} or {@code ".prj"} suffixes.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.11
- *
- * @since 3.00
- * @module
  */
-public final class SupportFiles extends Static {
+public final class SupportFiles {
     /**
      * The encoding of TFW files.
      */

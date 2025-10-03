@@ -48,6 +48,7 @@ import org.apache.sis.storage.tiling.TileMatrix;
 import org.apache.sis.storage.tiling.TileStatus;
 import org.apache.sis.storage.tiling.WritableTileMatrix;
 import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.image.BufferedImages;
@@ -81,7 +82,7 @@ public class TileMatrixCoverageResource extends AbstractGridCoverageResource {
         this.tileSize = tileSize.clone();
         this.sampleDimensions = UnmodifiableArrayList.wrap(sampleDimensions.toArray(SampleDimension[]::new));
         this.tilingScheme = matrix.getTilingScheme();
-        this.coverageGrid = tilingScheme.upsample(tileSize);
+        this.coverageGrid = tilingScheme.upsample(ArraysExt.copyAsLongs(tileSize));
     }
 
     TileMatrix getMatrix() {
@@ -240,7 +241,7 @@ public class TileMatrixCoverageResource extends AbstractGridCoverageResource {
 
                 //current tile grid geometry
                 final GridExtent tileExt = new GridExtent(null, new long[]{idx,idy}, new long[]{idx,idy}, true);
-                final GridGeometry tileGridGeom = matrix.getTilingScheme().derive().subgrid(tileExt).build().upsample(tileSize);
+                final GridGeometry tileGridGeom = matrix.getTilingScheme().derive().subgrid(tileExt).build().upsample(ArraysExt.copyAsLongs(tileSize));
 
                 //read only the area we need from the updating coverage
                 final GridExtent intersection = updateCoverage.getGridGeometry().derive().rounding(GridRoundingMode.ENCLOSING).subgrid(tileGridGeom).getIntersection();

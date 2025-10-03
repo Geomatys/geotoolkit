@@ -47,7 +47,6 @@ import org.apache.sis.storage.tiling.TiledResource;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.lang.Static;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.DataStores.ResourceWalker.VisitOption;
 import org.geotoolkit.storage.multires.ProgressiveResource;
@@ -73,7 +72,7 @@ import org.opengis.util.GenericName;
  * @author Martin Desruisseaux (Geomatys)
  * @author Johann Sorel (Geomatys)
  */
-public final class DataStores extends Static {
+public final class DataStores {
     /**
      * Do not allow instantiation of this class.
      */

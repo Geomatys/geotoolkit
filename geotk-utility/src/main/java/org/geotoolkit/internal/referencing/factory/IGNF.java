@@ -188,7 +188,7 @@ public final class IGNF extends GeodeticAuthorityFactory implements CRSAuthority
         properties.put(ProjectedCRS.NAME_KEY, identifiers[0]);
         properties.put(ProjectedCRS.IDENTIFIERS_KEY, identifiers);
         final ProjectedCRS crs = factories.getCRSFactory().createProjectedCRS(properties,
-                new DefaultGeographicCRS(IdentifiedObjects.getProperties(datum), datum, CommonCRS.defaultGeographic().getCoordinateSystem()),
+                new DefaultGeographicCRS(IdentifiedObjects.getProperties(datum), datum, null, CommonCRS.defaultGeographic().getCoordinateSystem()),
                 new DefiningConversion("Miller", param), PredefinedCS.PROJECTED);
         crsMap.put(key, crs);
         return crs;

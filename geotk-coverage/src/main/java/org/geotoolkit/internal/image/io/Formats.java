@@ -30,7 +30,6 @@ import javax.imageio.spi.ImageInputStreamSpi;
 import javax.imageio.spi.ImageReaderWriterSpi;
 import javax.imageio.stream.ImageInputStream;
 import org.geotoolkit.factory.Factories;
-import org.geotoolkit.lang.Static;
 import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
@@ -39,7 +38,7 @@ import org.geotoolkit.resources.Vocabulary;
 /**
  * Utility methods about image formats.
  */
-public final class Formats extends Static {
+public final class Formats {
     /**
      * Do not allow instantiation of this class.
      */

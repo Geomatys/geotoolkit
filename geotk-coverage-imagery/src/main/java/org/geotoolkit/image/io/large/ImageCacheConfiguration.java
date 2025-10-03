@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.image.io.large;
 
-import org.apache.sis.util.Static;
 
 import java.util.Arrays;
 import java.util.IllegalFormatException;
@@ -27,7 +26,7 @@ import java.util.logging.Logger;
  *
  * @author Quentin Boileau (Geomatys)
  */
-public final class ImageCacheConfiguration extends Static {
+public final class ImageCacheConfiguration {
 
     private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.image.io.large");
 

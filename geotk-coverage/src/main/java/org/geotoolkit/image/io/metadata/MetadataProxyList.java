@@ -19,12 +19,10 @@ package org.geotoolkit.image.io.metadata;
 
 import java.util.Arrays;
 import java.util.AbstractList;
+import java.util.Objects;
 import java.util.RandomAccess;
 import java.util.logging.Level;
 
-import org.apache.sis.util.collection.CheckedContainer;
-
-import static org.apache.sis.util.ArgumentChecks.ensureValidIndex;
 import static org.geotoolkit.internal.image.io.GridDomainAccessor.ARRAY_ATTRIBUTE_NAME;
 
 
@@ -40,10 +38,6 @@ import static org.geotoolkit.internal.image.io.GridDomainAccessor.ARRAY_ATTRIBUT
  * @param <T> The type of elements in this list.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.06
- *
- * @since 3.06
- * @module
  */
 final class MetadataProxyList<T> extends AbstractList<T> implements
         org.apache.sis.util.collection.CheckedContainer<T>, RandomAccess
@@ -105,7 +99,7 @@ final class MetadataProxyList<T> extends AbstractList<T> implements
      */
     @Override
     public T get(final int index) {
-        ensureValidIndex(size(), index);
+        Objects.checkIndex(index, size());
         T[] elements = this.elements;
         if (elements == null) {
             @SuppressWarnings("unchecked")

@@ -304,7 +304,7 @@ final class GeoTiffCRSReader {
                     // unit.
                     // //
                     gcs = new DefaultGeographicCRS(name(IdentifiedObjects.getName(gcs, new DefaultCitation("EPSG"))),
-                            (GeodeticDatum) gcs.getDatum(),
+                            (GeodeticDatum) gcs.getDatum(), null,
                             PredefinedCS.usingUnit(CommonCRS.defaultGeographic().getCoordinateSystem(), angularUnit));
                 }
             } catch (FactoryException ex) {
@@ -1007,7 +1007,8 @@ final class GeoTiffCRSReader {
                     final GeodeticDatum datum = geodeticCrs.getDatum();
                     final HashMap<String, Object> properties = new HashMap<String, Object>();
                     properties.put(GeographicCRS.NAME_KEY, decCRS.getName());
-                    gcs = new DefaultGeographicCRS(properties, datum, org.apache.sis.referencing.CommonCRS.defaultGeographic().getCoordinateSystem());
+                    gcs = new DefaultGeographicCRS(properties, datum, null,
+                            org.apache.sis.referencing.CommonCRS.defaultGeographic().getCoordinateSystem());
                 }
 
                 if (angularUnit != null
@@ -1017,7 +1018,7 @@ final class GeoTiffCRSReader {
                     // unit.
                     // //
                     gcs = new DefaultGeographicCRS(name(IdentifiedObjects.getName(gcs, new DefaultCitation("EPSG"))),
-                            (GeodeticDatum) gcs.getDatum(),
+                            (GeodeticDatum) gcs.getDatum(), null,
                             PredefinedCS.usingUnit(CommonCRS.defaultGeographic().getCoordinateSystem(), angularUnit));
                 }
             } catch (FactoryException fe) {
@@ -1140,7 +1141,7 @@ final class GeoTiffCRSReader {
 
             // is it WGS84?
             if (datumName.trim().equalsIgnoreCase("WGS84")) {
-                return CommonCRS.WGS84.datum();
+                return CommonCRS.WGS84.datum(true);
             }
 
             // ELLIPSOID

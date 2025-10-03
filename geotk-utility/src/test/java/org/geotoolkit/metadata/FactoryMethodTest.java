@@ -76,7 +76,7 @@ public final class FactoryMethodTest {
         final Object crs = fm.create(properties);
         assertTrue(crs instanceof VerticalCRS);
         assertEquals(new DefaultVerticalCRS(singletonMap(NAME_KEY, "Geoidal height"),
-                CommonCRS.Vertical.MEAN_SEA_LEVEL.datum(),
+                CommonCRS.Vertical.MEAN_SEA_LEVEL.datum(), null,
                 CommonCRS.Vertical.MEAN_SEA_LEVEL.crs().getCoordinateSystem()),
                 crs);
     }

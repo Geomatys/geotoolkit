@@ -165,7 +165,7 @@ public final class DatasetAsFeatureSet extends AbstractFeatureSet implements Sto
 
         //read by blocks of 1000
         final int blockSize = 1000;
-        final int[] sub = new int[dimensionSizes.length];
+        final long[] sub = new long[dimensionSizes.length];
         Arrays.fill(sub, blockSize);
         final GridExtent points = area.subsample(sub);
 

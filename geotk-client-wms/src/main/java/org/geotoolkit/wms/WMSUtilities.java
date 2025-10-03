@@ -256,7 +256,7 @@ public final class WMSUtilities {
                     final CoordinateSystemAxis csAxis = new DefaultCoordinateSystemAxis(
                             Collections.singletonMap("name", dimName), dimName.substring(0, 1), AxisDirection.UNSPECIFIED, unit);
                     final AbstractCS dimCs = new AbstractCS(Collections.singletonMap("name", dimName), csAxis);
-                    dimCRS = new DefaultEngineeringCRS(Collections.singletonMap("name", dimName), dimDatum, dimCs);
+                    dimCRS = new DefaultEngineeringCRS(Collections.singletonMap("name", dimName), dimDatum, null, dimCs);
                 }
 
                 double minVal = Double.MIN_VALUE;

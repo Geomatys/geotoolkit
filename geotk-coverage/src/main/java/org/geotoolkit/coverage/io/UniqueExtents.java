@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.coverage.io;
 
-import java.util.Set;
 import java.util.List;
 import java.util.Collection;
 
@@ -37,10 +36,6 @@ import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
  * The Metadata copier need to access the empty constructor via reflection.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.18
- *
- * @since 3.18
- * @module
  */
 public final class UniqueExtents extends DefaultExtent {
     /**
@@ -59,17 +54,6 @@ public final class UniqueExtents extends DefaultExtent {
      */
     public UniqueExtents(final Extent copy) {
         super(copy);
-    }
-
-    /**
-     * Requires the collections to be instances of {@link Set} rather than list.
-     * By doing so, we avoid duplicated values. Note however that it is a violation
-     * of the principle that {@code Set} should contain only immutable objects.
-     */
-    @Override
-    @SuppressWarnings({"unchecked","rawtypes"})
-    protected <E> Class<? extends Collection<E>> collectionType(final Class<E> elementType) {
-        return (Class) Set.class;
     }
 
     /**

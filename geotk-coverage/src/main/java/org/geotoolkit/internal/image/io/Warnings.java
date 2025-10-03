@@ -20,7 +20,6 @@ package org.geotoolkit.internal.image.io;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
-import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.Localized;
 import org.apache.sis.util.Classes;
@@ -34,12 +33,8 @@ import org.geotoolkit.image.io.WarningProducer;
  * Utilities methods for emitting warnings.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.20
- *
- * @since 3.08
- * @module
  */
-public final class Warnings extends Static {
+public final class Warnings {
     /**
      * Do not allow instantiation of this class.
      */

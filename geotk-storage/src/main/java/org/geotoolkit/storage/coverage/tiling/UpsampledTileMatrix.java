@@ -35,6 +35,7 @@ import org.apache.sis.coverage.grid.GridCoverageProcessor;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridRoundingMode;
+import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.internal.shared.AbstractIterator;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.tiling.Tile;
@@ -214,7 +215,7 @@ public class UpsampledTileMatrix implements TileMatrix {
         }
 
         final GridExtent extent = new GridExtent(null, indices, indices, true);
-        final GridGeometry tileGeom = base.getTilingScheme().derive().subgrid(extent).build().upsample(tileSize);
+        final GridGeometry tileGeom = base.getTilingScheme().derive().subgrid(extent).build().upsample(ArraysExt.copyAsLongs(tileSize));
         GridCoverage coverage = acr.read(tileGeom);
         try {
             //ensure exact tile match

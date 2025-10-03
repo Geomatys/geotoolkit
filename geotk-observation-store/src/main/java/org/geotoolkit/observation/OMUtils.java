@@ -38,10 +38,9 @@ import org.apache.sis.geometry.AbstractEnvelope;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.wrapper.Geometries;
 import org.apache.sis.geometry.wrapper.GeometryWrapper;
-import org.apache.sis.metadata.internal.shared.RecordSchemaSIS;
-import static org.apache.sis.metadata.internal.shared.RecordSchemaSIS.INSTANCE;
 import org.apache.sis.measure.Units;
 import org.apache.sis.metadata.ModifiableMetadata;
+import org.apache.sis.metadata.internal.Resources;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
@@ -54,6 +53,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.temporal.TemporalObjects;
 import org.apache.sis.util.SimpleInternationalString;
 import org.apache.sis.util.iso.DefaultRecord;
+import org.apache.sis.util.iso.DefaultRecordSchema;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.observation.model.ComplexResult;
 import org.geotoolkit.observation.model.Field;
@@ -626,17 +626,18 @@ public class OMUtils {
      * @return A Data quality element.
      */
     public static Element createQualityElement(String name, String uom, FieldDataType ft, Object value) {
-        DefaultQuantitativeAttributeAccuracy element = new DefaultQuantitativeAttributeAccuracy();
-        element.setNamesOfMeasure(Arrays.asList(new SimpleInternationalString(name)));
+        var element = new DefaultQuantitativeAttributeAccuracy();
+        element.setNamesOfMeasure(List.of(new SimpleInternationalString(name)));
         if (value != null) {
-            DefaultQuantitativeResult res      = new DefaultQuantitativeResult();
+            var res = new DefaultQuantitativeResult();
+            var rn = Resources.formatInternational(Resources.Keys.MultilineRecord);
 
             RecordType rt = switch (ft) {
-                case TEXT      -> INSTANCE.createRecordType(RecordSchemaSIS.MULTILINE.toInternationalString(), Collections.singletonMap("CharacterString", String.class));
-                case BOOLEAN   -> INSTANCE.createRecordType(RecordSchemaSIS.MULTILINE.toInternationalString(), Collections.singletonMap("Boolean", Boolean.class));
-                case QUANTITY -> INSTANCE.createRecordType(RecordSchemaSIS.MULTILINE.toInternationalString(), Collections.singletonMap("Real", Double.class));
-                case TIME     -> INSTANCE.createRecordType(RecordSchemaSIS.MULTILINE.toInternationalString(), Collections.singletonMap("Date", Date.class));
-                case JSON     -> INSTANCE.createRecordType(RecordSchemaSIS.MULTILINE.toInternationalString(), Collections.singletonMap("Object", Map.class));
+                case TEXT      -> SCHEMA.createRecordType(rn, Map.of("CharacterString", String.class));
+                case BOOLEAN   -> SCHEMA.createRecordType(rn, Map.of("Boolean", Boolean.class));
+                case QUANTITY -> SCHEMA.createRecordType(rn, Map.of("Real", Double.class));
+                case TIME     -> SCHEMA.createRecordType(rn, Map.of("Date", Date.class));
+                case JSON     -> SCHEMA.createRecordType(rn, Map.of("Object", Map.class));
             };
 
             DefaultRecord r = new DefaultRecord(rt);
@@ -650,6 +651,8 @@ public class OMUtils {
         }
         return element;
     }
+
+    private static DefaultRecordSchema SCHEMA = new DefaultRecordSchema("Geotk");
 
     /**
      * Extract the envelope from a bbox spatial filter.

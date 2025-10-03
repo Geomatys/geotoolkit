@@ -42,7 +42,6 @@ import org.apache.sis.referencing.operation.matrix.NoninvertibleMatrixException;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.lang.Static;
 import org.geotoolkit.referencing.OutOfDomainOfValidityException;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
@@ -64,9 +63,8 @@ import org.opengis.util.FactoryException;
  *
  * @author Martin Desruisseaux (IRD)
  * @author Simone Giannecchini (Geosolutions)
- * @module
  */
-public final class CoverageUtilities extends Static {
+public final class CoverageUtilities {
     /**
      * Do not allows instantiation of this class.
      */

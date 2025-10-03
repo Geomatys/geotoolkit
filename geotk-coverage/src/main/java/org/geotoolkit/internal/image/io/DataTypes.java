@@ -26,7 +26,6 @@ import org.opengis.referencing.cs.*;
 import org.opengis.referencing.datum.*;
 import org.opengis.referencing.IdentifiedObject;
 
-import org.geotoolkit.lang.Static;
 import org.apache.sis.util.internal.shared.UnmodifiableArrayList;
 
 
@@ -34,12 +33,8 @@ import org.apache.sis.util.internal.shared.UnmodifiableArrayList;
  * Utilities methods related to data types.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.08
- *
- * @since 3.07
- * @module
  */
-public final class DataTypes extends Static {
+public final class DataTypes {
     /**
      * Enumeration of valid coordinate reference system types.
      */

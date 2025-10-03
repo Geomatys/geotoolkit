@@ -18,7 +18,6 @@
 package org.geotoolkit.image;
 
 import java.awt.image.*;
-import org.geotoolkit.lang.Static;
 
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.Classes;
@@ -28,12 +27,8 @@ import org.apache.sis.util.Classes;
  * A set of static methods working on {@link SampleModel}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.07
- *
- * @since 3.07
- * @module
  */
-public final class SampleModels extends Static {
+public final class SampleModels {
     /**
      * Do not allow instantiation of this class.
      */

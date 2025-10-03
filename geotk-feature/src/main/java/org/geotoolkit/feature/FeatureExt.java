@@ -43,14 +43,12 @@ import org.apache.sis.feature.DefaultAttributeType;
 import org.apache.sis.feature.DefaultFeatureType;
 import org.apache.sis.feature.Features;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.feature.internal.shared.AttributeConvention;
 import org.apache.sis.geometry.wrapper.Geometries;
 import org.apache.sis.geometry.wrapper.GeometryWrapper;
 import org.apache.sis.parameter.Parameters;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import org.apache.sis.util.ObjectConverters;
-import org.apache.sis.util.Static;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.apache.sis.util.iso.DefaultNameFactory;
 import org.apache.sis.util.iso.DefaultNameSpace;
@@ -86,7 +84,7 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public final class FeatureExt extends Static {
+public final class FeatureExt {
 
     public static final Logger LOGGER = Logger.getLogger("org.geotoolkit.feature");
 

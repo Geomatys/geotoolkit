@@ -25,7 +25,6 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 import org.apache.sis.geometries.math.Vector2D;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.Static;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.style.j2d.PathWalker;
 import org.geotoolkit.geometry.jts.awt.JTSLineIterator;
@@ -45,7 +44,7 @@ import org.locationtech.jts.operation.distance.DistanceOp;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class LinearReferencing extends Static{
+public class LinearReferencing{
 
     public static final class SegmentInfo{
         public int startCoordIndex;

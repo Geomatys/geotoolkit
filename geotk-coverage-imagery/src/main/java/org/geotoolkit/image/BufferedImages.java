@@ -45,7 +45,6 @@ import org.apache.sis.image.internal.shared.ColorModelFactory;
 import org.apache.sis.image.internal.shared.ObservableImage;
 import org.apache.sis.image.internal.shared.FillValues;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.Static;
 import org.geotoolkit.image.internal.ImageUtilities;
 import org.geotoolkit.util.TriFunction;
 
@@ -53,7 +52,7 @@ import org.geotoolkit.util.TriFunction;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class BufferedImages extends Static {
+public class BufferedImages {
 
     /**
      * Create a new image, trying to preserve raster, sample model and color model

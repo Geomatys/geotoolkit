@@ -60,7 +60,7 @@ import org.apache.sis.storage.tiling.TileMatrixSet;
 import org.apache.sis.storage.tiling.WritableTileMatrix;
 import org.apache.sis.storage.tiling.WritableTileMatrixSet;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.Static;
+import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.internal.referencing.CRSUtilities;
@@ -83,7 +83,7 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public final class TileMatrices extends Static {
+public final class TileMatrices {
 
     public static Comparator<TileMatrix> SCALE_COMPARATOR = new Comparator<TileMatrix>() {
         @Override
@@ -219,9 +219,8 @@ public final class TileMatrices extends Static {
 
             //create a first tiling scheme
             final GridGeometry forceLowerToZero = forceLowerToZero(first);
-            final int[] subsampling = LongStream.of(forceLowerToZero.getExtent().getHigh().getCoordinateValues())
-                    .mapToInt(Math::toIntExact)
-                    .map((int operand) -> operand+1) //high values are inclusive
+            final long[] subsampling = LongStream.of(forceLowerToZero.getExtent().getHigh().getCoordinateValues())
+                    .map(Math::incrementExact) //high values are inclusive
                     .toArray();
             tilingScheme = forceLowerToZero.derive().subgrid(null, subsampling).build();
             //hack remove crs
@@ -361,7 +360,7 @@ public final class TileMatrices extends Static {
                 final CoordinateSystemAxis axis = new DefaultCoordinateSystemAxis(Collections.singletonMap("name", name + i + "Axis"),
                         name, AxisDirection.UNSPECIFIED, Units.UNITY);
                 final CoordinateSystem cs = new DefaultLinearCS(Collections.singletonMap("name", name + i + "CS"), axis);
-                DefaultEngineeringCRS crs = new DefaultEngineeringCRS(Collections.singletonMap("name", name), datum, cs);
+                DefaultEngineeringCRS crs = new DefaultEngineeringCRS(Collections.singletonMap("name", name), datum, null, cs);
                 crss.add(crs);
             }
             return CRS.compound(crss.toArray(new CoordinateReferenceSystem[crss.size()]));
@@ -883,7 +882,7 @@ public final class TileMatrices extends Static {
      */
     public static GridGeometry getAbsoluteTileGridGeometry(TileMatrix tileMatrix, GridExtent extent, int[] tileSize) {
         final GridGeometry schemeGridGeometry = tileMatrix.getTilingScheme().derive().clipping(GridClippingMode.NONE).subgrid(extent).build();
-        return schemeGridGeometry.upsample(tileSize);
+        return schemeGridGeometry.upsample(ArraysExt.copyAsLongs(tileSize));
     }
 
     /**
@@ -920,7 +919,7 @@ public final class TileMatrices extends Static {
      */
     public static GridGeometry getAbsoluteTileGridGeometry2D(TileMatrix tileMatrix, GridExtent extent, int[] tileSize) {
         final GridGeometry schemeGridGeometry = tileMatrix.getTilingScheme().derive().clipping(GridClippingMode.NONE).subgrid(extent).build();
-        GridGeometry tileGridGeometry = schemeGridGeometry.upsample(tileSize);
+        GridGeometry tileGridGeometry = schemeGridGeometry.upsample(ArraysExt.copyAsLongs(tileSize));
         final CoordinateReferenceSystem crs = tileGridGeometry.getCoordinateReferenceSystem();
         if (crs.getCoordinateSystem().getDimension() > 2) {
             final int idx = CRSUtilities.firstHorizontalAxis(tileGridGeometry.getCoordinateReferenceSystem());

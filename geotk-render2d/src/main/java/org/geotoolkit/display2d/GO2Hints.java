@@ -21,7 +21,6 @@ import java.awt.image.ColorModel;
 import org.geotoolkit.display.HintKey;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.image.interpolation.InterpolationCase;
-import org.geotoolkit.lang.Static;
 
 /**
  * Set of hints used by the Go2 Renderer
@@ -29,7 +28,7 @@ import org.geotoolkit.lang.Static;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public final class GO2Hints extends Static {
+public final class GO2Hints {
 
     private GO2Hints(){}
 

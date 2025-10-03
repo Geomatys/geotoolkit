@@ -53,7 +53,6 @@ import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Numbers;
-import org.apache.sis.util.Static;
 import org.geotoolkit.internal.geojson.binding.GeoJSONObject;
 import static org.geotoolkit.storage.geojson.GeoJSONConstants.*;
 import org.opengis.feature.AttributeType;
@@ -69,11 +68,8 @@ import org.opengis.util.FactoryException;
 /**
  * @author Quentin Boileau (Geomatys)
  * @author Johann Sorel (Geomatys)
- * @version 2.0
- * @since   2.0
- * @module
  */
-public final class GeoJSONUtils extends Static {
+public final class GeoJSONUtils {
 
     /**
      * Fallback CRS

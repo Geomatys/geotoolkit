@@ -129,7 +129,7 @@ public final class DatumIdentifier {
                 throw new DataStoreException("We're unable to find an ellipsoid for source datum.");
             }
             BursaWolfParameters bwParams = null;
-            final GeodeticDatum targetDatum = CommonCRS.WGS84.datum();
+            final GeodeticDatum targetDatum = CommonCRS.WGS84.datum(true);
             for (BursaWolfParameters param : ((DefaultGeodeticDatum) source).getBursaWolfParameters()) {
                 if (Utilities.deepEquals(targetDatum, param.getTargetDatum(), ComparisonMode.IGNORE_METADATA)) {
                     bwParams = param;
@@ -221,7 +221,7 @@ public final class DatumIdentifier {
      * @throws FactoryException If we've got a problem while ellipsoid building.
      */
     public static GeodeticDatum buildCustomDatum(String name, double[] parameters) throws DataStoreException, FactoryException {
-        BursaWolfParameters bwParams = new BursaWolfParameters(CommonCRS.WGS84.datum(), null);
+        BursaWolfParameters bwParams = new BursaWolfParameters(CommonCRS.WGS84.datum(true), null);
         if(parameters.length < 1) {
             throw new DataStoreException("There's not enough parameters to build a valid datum. An ellipsoid code is required.");
         }

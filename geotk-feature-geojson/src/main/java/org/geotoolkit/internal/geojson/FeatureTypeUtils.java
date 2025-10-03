@@ -37,7 +37,6 @@ import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.Static;
 import org.apache.sis.util.iso.Names;
 import org.apache.sis.util.SimpleInternationalString;
 import org.apache.sis.util.iso.DefaultNameFactory;
@@ -65,11 +64,8 @@ import org.opengis.util.InternationalString;
  *
  * @author Quentin Boileau (Geomatys)
  * @author Johann Sorel (Geomatys)
- * @version 2.0
- * @since   2.0
- * @module
  */
-public final class FeatureTypeUtils extends Static {
+public final class FeatureTypeUtils {
 
     private static final String TITLE = "title";
     private static final String TYPE = "type";

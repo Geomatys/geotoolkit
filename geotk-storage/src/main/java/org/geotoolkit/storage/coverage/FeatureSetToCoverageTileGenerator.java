@@ -62,6 +62,7 @@ import org.opengis.feature.PropertyType;
 import org.opengis.filter.FilterFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.apache.sis.coverage.grid.PixelInCell;
+import org.apache.sis.util.ArraysExt;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
@@ -356,7 +357,9 @@ public final class FeatureSetToCoverageTileGenerator extends AbstractTileGenerat
     @Override
     public Tile generateTile(WritableTileMatrixSet wtms, WritableTileMatrix matrix, long[] tileCoord) throws DataStoreException {
         final int[] tileSize = ((org.geotoolkit.storage.multires.TileMatrix)matrix).getTileSize();
-        final GridGeometry gridGeomNd = matrix.getTilingScheme().derive().subgrid(new GridExtent(null, tileCoord, tileCoord, true)).build().upsample(tileSize);
+        final GridGeometry gridGeomNd = matrix.getTilingScheme().derive()
+                .subgrid(new GridExtent(null, tileCoord, tileCoord, true))
+                .build().upsample(ArraysExt.copyAsLongs(tileSize));
         final GridCoverage coverage = generate(gridGeomNd);
         return new CoverageResourceTile(tileCoord, coverage);
     }

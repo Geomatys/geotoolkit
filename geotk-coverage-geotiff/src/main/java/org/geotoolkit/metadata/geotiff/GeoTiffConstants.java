@@ -20,8 +20,6 @@ import java.lang.reflect.Field;
 
 /**
  * @author Johann Sorel (Geomatys)
- * @module
- * @Static
  */
 public final class GeoTiffConstants {
 

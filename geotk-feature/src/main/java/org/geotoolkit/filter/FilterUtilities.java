@@ -23,7 +23,6 @@ import org.apache.sis.filter.DefaultFilterFactory;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import org.geotoolkit.filter.visitor.IsStaticExpressionVisitor;
 import org.geotoolkit.filter.visitor.PrepareFilterVisitor;
-import org.geotoolkit.lang.Static;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.Expression;
 import org.opengis.filter.Filter;
@@ -39,7 +38,7 @@ import org.opengis.filter.ValueReference;
  *
  * @author Johann Sorel (Geomatys)
  */
-public final class FilterUtilities extends Static {
+public final class FilterUtilities {
     /**
      * Default filter factory for features.
      *

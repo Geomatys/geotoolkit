@@ -111,7 +111,7 @@ final class CategoryTable extends Table {
                 final NumberRange<?> range = NumberRange.create(lower, true, upper, true);
                 if (isQuantifiable) {
                     // Quantitative category.
-                    TransferFunctionType type = org.apache.sis.util.iso.Types.forCodeName(TransferFunctionType.class, function, false);
+                    TransferFunctionType type = org.apache.sis.util.iso.Types.forCodeName(TransferFunctionType.class, function, null);
                     if (type == null) type = TransferFunctionType.LINEAR;
                     final TransferFunction trf = new TransferFunction();
                     trf.setScale(scale);

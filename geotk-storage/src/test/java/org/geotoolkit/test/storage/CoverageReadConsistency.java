@@ -133,7 +133,7 @@ public class CoverageReadConsistency {
                 subsampling[d] += random.nextInt(StrictMath.max(rs / 16, 1));
             }
         }
-        return gg.derive().subgrid(new GridExtent(null, low, high, true), subsampling).build();
+        return gg.derive().subgrid(new GridExtent(null, low, high, true), ArraysExt.copyAsLongs(subsampling)).build();
     }
 
     private int[] randomRange(final int numBands) {

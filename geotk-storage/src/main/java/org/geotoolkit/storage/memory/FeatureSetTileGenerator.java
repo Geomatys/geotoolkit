@@ -34,6 +34,7 @@ import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.tiling.Tile;
 import org.apache.sis.storage.tiling.WritableTileMatrix;
 import org.apache.sis.storage.tiling.WritableTileMatrixSet;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.coordinatesequence.GridAlignedFilter;
@@ -114,7 +115,9 @@ public class FeatureSetTileGenerator extends AbstractTileGenerator {
     public Tile generateTile(WritableTileMatrixSet tileMatrixSet, WritableTileMatrix tileMatrix, long[] tileCoord) throws DataStoreException {
 
         final int[] tileSize = TileMatrices.getTileSize(tileMatrix);
-        final GridGeometry tileGrid = tileMatrix.getTilingScheme().derive().subgrid(new GridExtent(null, tileCoord, tileCoord, true)).build().upsample(tileSize);
+        final GridGeometry tileGrid = tileMatrix.getTilingScheme().derive()
+                .subgrid(new GridExtent(null, tileCoord, tileCoord, true))
+                .build().upsample(ArraysExt.copyAsLongs(tileSize));
         final Envelope tileEnv = tileGrid.getEnvelope();
         final CoordinateReferenceSystem tileCrs = tileEnv.getCoordinateReferenceSystem();
         final Filter filter;

@@ -244,7 +244,7 @@ public final class Query extends FeatureQuery {
         if (columns == null) return null;
         final String[] names = new String[columns.length];
         for (int i=0;i<names.length;i++) {
-            names[i] = ((ValueReference)columns[i].expression).getXPath();
+            names[i] = ((ValueReference)columns[i].expression()).getXPath();
         }
         return names;
     }

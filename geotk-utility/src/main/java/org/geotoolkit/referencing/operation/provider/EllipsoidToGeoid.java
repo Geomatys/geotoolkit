@@ -160,9 +160,9 @@ public class EllipsoidToGeoid extends MathTransformProvider {
         final GeodeticDatum datum;
         final String name = Parameters.castOrWrap(values).getValue(DATUM);
         if ("WGS84".equalsIgnoreCase(name)) {
-            datum = CommonCRS.WGS84.datum();
+            datum = CommonCRS.WGS84.datum(true);
         } else if ("WGS72".equalsIgnoreCase(name)) {
-            datum = CommonCRS.WGS72.datum();
+            datum = CommonCRS.WGS72.datum(true);
         } else {
             throw new IllegalArgumentException(Errors.format(Errors.Keys.UnsupportedDatum_1, name));
         }

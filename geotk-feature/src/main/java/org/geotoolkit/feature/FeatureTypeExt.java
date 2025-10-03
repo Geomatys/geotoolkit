@@ -27,7 +27,6 @@ import java.util.Set;
 import org.apache.sis.feature.AbstractOperation;
 import org.apache.sis.feature.DefaultAssociationRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.util.Static;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.FeatureAssociationRole;
 import org.opengis.feature.FeatureType;
@@ -45,7 +44,7 @@ import org.apache.sis.feature.internal.shared.AttributeConvention;
  *
  * @author Johann Sorel (Geomatys)
  */
-public final class FeatureTypeExt extends Static {
+public final class FeatureTypeExt {
     public static FeatureType createSubType(final FeatureType featureType,
             final String ... properties) throws MismatchedFeatureException{
         if (properties == null || isAllProperties(featureType, properties)) {

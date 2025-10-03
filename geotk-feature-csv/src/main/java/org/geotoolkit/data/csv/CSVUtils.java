@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
-import org.apache.sis.util.Static;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.apache.sis.feature.internal.shared.AttributeConvention;
@@ -29,7 +28,7 @@ import org.apache.sis.feature.internal.shared.AttributeConvention;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class CSVUtils extends Static {
+public class CSVUtils {
 
     public static final String COMMENT_STRING = "#";
 

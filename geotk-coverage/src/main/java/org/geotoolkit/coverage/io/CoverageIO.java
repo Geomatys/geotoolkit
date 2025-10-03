@@ -35,7 +35,6 @@ import org.apache.sis.storage.StorageConnector;
 import org.apache.sis.storage.UnsupportedStorageException;
 import org.apache.sis.storage.WritableAggregate;
 import static org.apache.sis.util.ArgumentChecks.*;
-import org.geotoolkit.lang.Static;
 
 
 /**
@@ -50,7 +49,7 @@ import org.geotoolkit.lang.Static;
  * @author Johann Sorel (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
  */
-public final class CoverageIO extends Static {
+public final class CoverageIO {
     /**
      * Do not allow instantiation of this class.
      */
