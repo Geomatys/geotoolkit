@@ -45,9 +45,9 @@ import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.referencing.rs.ReferenceSystems;
-import org.geotoolkit.storage.rs.AddressIterator;
-import org.geotoolkit.storage.rs.ReferencedGridCoverage;
-import org.geotoolkit.storage.rs.ReferencedGridGeometry;
+import org.geotoolkit.storage.rs.CodeIterator;
+import org.geotoolkit.storage.rs.CodedCoverage;
+import org.geotoolkit.storage.rs.CodedGeometry;
 import org.opengis.coverage.CannotEvaluateException;
 import org.opengis.coverage.PointOutsideCoverageException;
 import org.opengis.feature.Feature;
@@ -67,10 +67,10 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public abstract class AbstractReferencedGridCoverage extends ReferencedGridCoverage{
+public abstract class AbstractCodedCoverage extends CodedCoverage{
 
     protected final GenericName name;
-    protected final ReferencedGridGeometry gridGeometry;
+    protected final CodedGeometry gridGeometry;
     protected final GridExtent extent;
     protected final int dimension;
     //todo allow other kind of base reference system in the futur
@@ -100,7 +100,7 @@ public abstract class AbstractReferencedGridCoverage extends ReferencedGridCover
     protected final List<SampleDimension> sampleDimensions;
     protected final String[] mapping;
 
-    public AbstractReferencedGridCoverage(final GenericName name, ReferencedGridGeometry gridGeometry, FeatureType sampleType) throws FactoryException {
+    public AbstractCodedCoverage(final GenericName name, CodedGeometry gridGeometry, FeatureType sampleType) throws FactoryException {
         this.name = name;
         this.gridGeometry = gridGeometry;
         this.extent = gridGeometry.getExtent();
@@ -164,7 +164,7 @@ public abstract class AbstractReferencedGridCoverage extends ReferencedGridCover
     }
 
     @Override
-    public ReferencedGridGeometry getGeometry() {
+    public CodedGeometry getGeometry() {
         return gridGeometry;
     }
 
@@ -282,7 +282,7 @@ public abstract class AbstractReferencedGridCoverage extends ReferencedGridCover
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final AbstractReferencedGridCoverage other = (AbstractReferencedGridCoverage) obj;
+        final AbstractCodedCoverage other = (AbstractCodedCoverage) obj;
         if (!Objects.equals(this.name, other.name)) {
             return false;
         }
@@ -297,7 +297,7 @@ public abstract class AbstractReferencedGridCoverage extends ReferencedGridCover
         private final DiscreteGlobalGridReferenceSystem.Coder coder;
         private boolean nullIfOutside = false;
         private boolean wraparoundEnabled = false;
-        private final AddressIterator iterator;
+        private final CodeIterator iterator;
 
         //cache last transforms
         private CoordinateReferenceSystem lastPosCrs;
@@ -311,7 +311,7 @@ public abstract class AbstractReferencedGridCoverage extends ReferencedGridCover
 
         @Override
         public BandedCoverage getCoverage() {
-            return AbstractReferencedGridCoverage.this;
+            return AbstractCodedCoverage.this;
         }
 
         @Override

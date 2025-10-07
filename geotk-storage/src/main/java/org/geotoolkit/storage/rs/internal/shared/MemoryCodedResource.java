@@ -20,9 +20,9 @@ import java.util.List;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.storage.AbstractResource;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.storage.rs.ReferencedGridCoverage;
-import org.geotoolkit.storage.rs.ReferencedGridGeometry;
-import org.geotoolkit.storage.rs.ReferencedGridResource;
+import org.geotoolkit.storage.rs.CodedCoverage;
+import org.geotoolkit.storage.rs.CodedGeometry;
+import org.geotoolkit.storage.rs.CodedResource;
 import org.opengis.feature.FeatureType;
 
 /**
@@ -30,11 +30,11 @@ import org.opengis.feature.FeatureType;
  *
  * @author Johann Sorel (Geomatys)
  */
-public final class MemoryReferencedGridResource extends AbstractResource implements ReferencedGridResource {
+public final class MemoryCodedResource extends AbstractResource implements CodedResource {
 
-    private final ReferencedGridCoverage coverage;
+    private final CodedCoverage coverage;
 
-    public MemoryReferencedGridResource(ReferencedGridCoverage coverage) {
+    public MemoryCodedResource(CodedCoverage coverage) {
         super(null);
         this.coverage = coverage;
     }
@@ -50,12 +50,12 @@ public final class MemoryReferencedGridResource extends AbstractResource impleme
     }
 
     @Override
-    public ReferencedGridGeometry getGridGeometry() {
+    public CodedGeometry getGridGeometry() {
         return coverage.getGeometry();
     }
 
     @Override
-    public ReferencedGridCoverage read(ReferencedGridGeometry geometry, int... range) throws DataStoreException {
+    public CodedCoverage read(CodedGeometry geometry, int... range) throws DataStoreException {
         return coverage;
     }
 

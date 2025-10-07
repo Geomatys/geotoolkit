@@ -24,7 +24,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridCoverage;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridGeometry;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridResource;
-import org.geotoolkit.storage.rs.ReferencedGridGeometry;
+import org.geotoolkit.storage.rs.CodedGeometry;
 import org.opengis.feature.FeatureType;
 
 /**
@@ -72,7 +72,7 @@ public final class MemoryDiscreteGlobalGridResource extends AbstractResource imp
     }
 
     @Override
-    public DiscreteGlobalGridCoverage read(ReferencedGridGeometry geometry, int... range) throws DataStoreException {
+    public DiscreteGlobalGridCoverage read(CodedGeometry geometry, int... range) throws DataStoreException {
         return coverage;
     }
 

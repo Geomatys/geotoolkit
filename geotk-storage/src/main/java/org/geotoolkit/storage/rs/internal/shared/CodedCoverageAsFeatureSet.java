@@ -39,11 +39,10 @@ import org.apache.sis.util.privy.AbstractIterator;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridSystems;
 import org.geotoolkit.referencing.dggs.Zone;
-import org.geotoolkit.storage.rs.ReferencedGridCoverage;
-import org.geotoolkit.storage.rs.ReferencedGridGeometry;
-import org.geotoolkit.storage.rs.ReferencedGridTransform;
+import org.geotoolkit.storage.rs.CodedCoverage;
+import org.geotoolkit.storage.rs.CodedGeometry;
 import org.geotoolkit.referencing.rs.ReferenceSystems;
-import org.geotoolkit.storage.rs.AddressIterator;
+import org.geotoolkit.storage.rs.CodeIterator;
 import org.locationtech.jts.geom.CoordinateXY;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Point;
@@ -55,13 +54,14 @@ import org.opengis.feature.PropertyType;
 import org.opengis.referencing.ReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.GenericName;
+import org.geotoolkit.storage.rs.CodeTransform;
 
 /**
  * View a DGGS Coverage as a FeatureSet.
  *
  * @author Johann Sorel (Geomatys)
  */
-public final class ReferencedGridCoverageAsFeatureSet extends AbstractFeatureSet {
+public final class CodedCoverageAsFeatureSet extends AbstractFeatureSet {
 
     /**
      * For vector output formats, retrieve the zone centroid as geometry.
@@ -77,9 +77,9 @@ public final class ReferencedGridCoverageAsFeatureSet extends AbstractFeatureSet
     public static final String GEOMETRY_ZONE_NONE = "none";
 
     private final String geometryType;
-    private final ReferencedGridCoverage coverage;
-    private final ReferencedGridGeometry coverageGeometry;
-    private final ReferencedGridTransform gridToRs;
+    private final CodedCoverage coverage;
+    private final CodedGeometry coverageGeometry;
+    private final CodeTransform gridToRs;
     private final ReferenceSystem[] singleRS;
     private DiscreteGlobalGridReferenceSystem horizontal;
     private final FeatureType type;
@@ -96,7 +96,7 @@ public final class ReferencedGridCoverageAsFeatureSet extends AbstractFeatureSet
      * @param idAsLong
      * @param geometryType one of GEOMETRY_X constants
      */
-    public ReferencedGridCoverageAsFeatureSet(ReferencedGridCoverage coverage, boolean idAsLong, String geometryType) {
+    public CodedCoverageAsFeatureSet(CodedCoverage coverage, boolean idAsLong, String geometryType) {
         super(null);
         this.coverage = coverage;
         this.idAsLong = idAsLong;
@@ -159,10 +159,10 @@ public final class ReferencedGridCoverageAsFeatureSet extends AbstractFeatureSet
 
     @Override
     public Stream<Feature> features(boolean parallel) throws DataStoreException {
-        final AddressIterator iterator = coverage.createIterator();
+        final CodeIterator iterator = coverage.createIterator();
         final DiscreteGlobalGridReferenceSystem.Coder coder = horizontal.createCoder();
 
-        final Iterator<AddressIterator> ite = new AbstractIterator() {
+        final Iterator<CodeIterator> ite = new AbstractIterator() {
             @Override
             public boolean hasNext() {
                 if (next != null) return true;
@@ -173,18 +173,18 @@ public final class ReferencedGridCoverageAsFeatureSet extends AbstractFeatureSet
             }
         };
 
-        final Stream<AddressIterator> stream = StreamSupport.stream(Spliterators.spliteratorUnknownSize(ite, Spliterator.ORDERED), false);
-        return stream.map((AddressIterator t) -> new CellAsFeature(t, coder));
+        final Stream<CodeIterator> stream = StreamSupport.stream(Spliterators.spliteratorUnknownSize(ite, Spliterator.ORDERED), false);
+        return stream.map((CodeIterator t) -> new CellAsFeature(t, coder));
     }
 
     private class CellAsFeature extends AbstractFeature {
 
-        private final AddressIterator iterator;
+        private final CodeIterator iterator;
         private final DiscreteGlobalGridReferenceSystem.Coder coder;
         private Object[] ordinates;
         private Feature cell;
 
-        public CellAsFeature(AddressIterator iterator, DiscreteGlobalGridReferenceSystem.Coder coder) {
+        public CellAsFeature(CodeIterator iterator, DiscreteGlobalGridReferenceSystem.Coder coder) {
             super(type);
             this.iterator = iterator;
             this.coder = coder;
@@ -193,7 +193,7 @@ public final class ReferencedGridCoverageAsFeatureSet extends AbstractFeatureSet
         private synchronized Object[] getOrdinate() throws TransformException {
             if (ordinates == null) {
                 int[] pos = iterator.getPosition();
-                ordinates = gridToRs.toAddress(pos).getOrdinates();
+                ordinates = gridToRs.toCode(pos).getOrdinates();
             }
             return ordinates;
         }

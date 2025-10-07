@@ -23,9 +23,9 @@ import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.referencing.rs.ReferenceSystems;
 import org.geotoolkit.storage.multires.TileMatrices;
-import org.geotoolkit.storage.rs.AddressIterator;
-import org.geotoolkit.storage.rs.ReferencedGridGeometry;
-import org.geotoolkit.storage.rs.WritableAddressIterator;
+import org.geotoolkit.storage.rs.CodeIterator;
+import org.geotoolkit.storage.rs.CodedGeometry;
+import org.geotoolkit.storage.rs.WritableCodeIterator;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.util.FactoryException;
@@ -35,11 +35,11 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public final class FeatureReferencedGridCoverage extends AbstractReferencedGridCoverage{
+public final class FeatureCodedCoverage extends AbstractCodedCoverage{
 
     private final List<Feature> features;
 
-    public FeatureReferencedGridCoverage(GenericName name, ReferencedGridGeometry gridGeometry, FeatureType type) throws FactoryException {
+    public FeatureCodedCoverage(GenericName name, CodedGeometry gridGeometry, FeatureType type) throws FactoryException {
         super(name, gridGeometry, type);
         this.features = new ArrayList<>();
         final GridExtent extent = gridGeometry.slice(ReferenceSystems.getHorizontalComponent(gridGeometry.getReferenceSystem()).get()).get().getExtent();
@@ -47,22 +47,22 @@ public final class FeatureReferencedGridCoverage extends AbstractReferencedGridC
             features.add(type.newInstance());
         }
     }
-    public FeatureReferencedGridCoverage(GenericName name, ReferencedGridGeometry gridGeometry, List<Feature> features) throws FactoryException {
+    public FeatureCodedCoverage(GenericName name, CodedGeometry gridGeometry, List<Feature> features) throws FactoryException {
         super(name, gridGeometry, features.get(0).getType());
         this.features = features;
     }
 
     @Override
-    public AddressIterator createIterator() {
+    public CodeIterator createIterator() {
         return createWritableIterator();
     }
 
     @Override
-    public WritableAddressIterator createWritableIterator() {
+    public WritableCodeIterator createWritableIterator() {
         return new Iterator();
     }
 
-    private class Iterator implements WritableAddressIterator {
+    private class Iterator implements WritableCodeIterator {
 
         private long linearPosition = -1;
         private final long nbCell;

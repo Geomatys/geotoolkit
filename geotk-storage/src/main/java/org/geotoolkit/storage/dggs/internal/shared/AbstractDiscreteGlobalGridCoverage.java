@@ -54,8 +54,8 @@ import org.geotoolkit.storage.dggs.DiscreteGlobalGridGeometry;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
 import org.geotoolkit.referencing.dggs.Zone;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridSystems;
-import org.geotoolkit.storage.rs.internal.shared.BandedAddressIterator;
-import org.geotoolkit.storage.rs.internal.shared.WritableBandedAddressIterator;
+import org.geotoolkit.storage.rs.internal.shared.BandedCodeIterator;
+import org.geotoolkit.storage.rs.internal.shared.WritableBandedCodeIterator;
 import org.locationtech.jts.geom.Polygon;
 import org.opengis.coverage.CannotEvaluateException;
 import org.opengis.coverage.PointOutsideCoverageException;
@@ -110,10 +110,10 @@ public abstract class AbstractDiscreteGlobalGridCoverage extends DiscreteGlobalG
     }
 
     @Override
-    public abstract BandedAddressIterator createIterator();
+    public abstract BandedCodeIterator createIterator();
 
     @Override
-    public abstract WritableBandedAddressIterator createWritableIterator();
+    public abstract WritableBandedCodeIterator createWritableIterator();
 
     @Override
     public GridCoverage sample(GridGeometry fullArea, GridGeometry tileArea) throws CannotEvaluateException {
@@ -149,7 +149,7 @@ public abstract class AbstractDiscreteGlobalGridCoverage extends DiscreteGlobalG
             final WritableRaster raster = image.getRaster();
 
             final DiscreteGlobalGridReferenceSystem.Coder coder = dggrs.createCoder();
-            final BandedAddressIterator zoneIterator = createIterator();
+            final BandedCodeIterator zoneIterator = createIterator();
             double[] cell = null;
             while (zoneIterator.next()) {
                 final int[] position = zoneIterator.getPosition();
@@ -271,7 +271,7 @@ public abstract class AbstractDiscreteGlobalGridCoverage extends DiscreteGlobalG
         private final DiscreteGlobalGridReferenceSystem.Coder coder;
         private boolean nullIfOutside = false;
         private boolean wraparoundEnabled = false;
-        private final BandedAddressIterator iterator;
+        private final BandedCodeIterator iterator;
 
         public Eval() {
             coder = dggrs.createCoder();

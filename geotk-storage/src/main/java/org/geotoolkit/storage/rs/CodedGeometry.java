@@ -30,7 +30,7 @@ import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridGeometry;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
-import org.geotoolkit.storage.rs.internal.shared.ReferencedGridTransforms;
+import org.geotoolkit.storage.rs.internal.shared.CodeTransforms;
 import org.geotoolkit.util.StringUtilities;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.extent.GeographicBoundingBox;
@@ -41,11 +41,11 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
 /**
- * Referenced system grid geometry.
+ * Coded grid geometry.
  *
  * @author Johann Sorel (Geomatys)
  */
-public class ReferencedGridGeometry {
+public class CodedGeometry {
 
     /**
      * A bitmask to specify the validity of the Reference System property.
@@ -82,16 +82,16 @@ public class ReferencedGridGeometry {
     private final ReferenceSystem rs;
     private final GeographicBoundingBox bbox;
     private final GridExtent extent;
-    private final ReferencedGridTransform gridToRS;
+    private final CodeTransform gridToRS;
 
-    public ReferencedGridGeometry(GridGeometry grid) {
+    public CodedGeometry(GridGeometry grid) {
         this(grid.isDefined(GridGeometry.CRS) ? grid.getCoordinateReferenceSystem() : null,
              grid.isDefined(GridGeometry.EXTENT) ? grid.getExtent() : null,
-             grid.isDefined(GridGeometry.GRID_TO_CRS) ? ReferencedGridTransforms.toTransform(grid) : null,
+             grid.isDefined(GridGeometry.GRID_TO_CRS) ? CodeTransforms.toTransform(grid) : null,
              null);
     }
 
-    public ReferencedGridGeometry(ReferenceSystem rs, GridExtent extent, ReferencedGridTransform gridToRS, GeographicBoundingBox bbox) {
+    public CodedGeometry(ReferenceSystem rs, GridExtent extent, CodeTransform gridToRS, GeographicBoundingBox bbox) {
         this.rs = rs;
         this.extent = extent;
         this.gridToRS = gridToRS;
@@ -119,7 +119,7 @@ public class ReferencedGridGeometry {
         return extent;
     }
 
-    public ReferencedGridTransform getGridToRS() {
+    public CodeTransform getGridToRS() {
         return gridToRS;
     }
 
@@ -145,7 +145,7 @@ public class ReferencedGridGeometry {
 
         final List<ReferenceSystem> singles = ReferenceSystems.getSingleComponents(rs, true);
         if (singles.size() == 1) {
-            if (gridToRS instanceof ReferencedGridTransforms.Grid g) {
+            if (gridToRS instanceof CodeTransforms.Grid g) {
                 return g.getGrid().getResolution(allowEstimates);
             } else {
                 final double[] res = new double[gridToRS.getDimension()];
@@ -171,7 +171,7 @@ public class ReferencedGridGeometry {
 
         final List<ReferenceSystem> singles = ReferenceSystems.getSingleComponents(rs, true);
         if (singles.size() == 1) {
-            if (gridToRS instanceof ReferencedGridTransforms.Grid g) {
+            if (gridToRS instanceof CodeTransforms.Grid g) {
                 return g.getGrid().getResolution(allowEstimates);
             } else {
                 final double[] res = new double[gridToRS.getDimension()];
@@ -192,7 +192,7 @@ public class ReferencedGridGeometry {
     public Envelope getEnvelope() {
         final List<ReferenceSystem> singles = ReferenceSystems.getSingleComponents(rs, true);
         if (singles.size() == 1) {
-            if (gridToRS instanceof ReferencedGridTransforms.Grid rgg) {
+            if (gridToRS instanceof CodeTransforms.Grid rgg) {
                 return rgg.getGrid().getEnvelope();
             } else {
                 throw new UnsupportedOperationException("todo");
@@ -214,7 +214,7 @@ public class ReferencedGridGeometry {
     public Envelope getEnvelope(CoordinateReferenceSystem crs) throws TransformException {
         final List<ReferenceSystem> singles = ReferenceSystems.getSingleComponents(rs, true);
         if (singles.size() == 1) {
-            if (gridToRS instanceof ReferencedGridTransforms.Grid rgg) {
+            if (gridToRS instanceof CodeTransforms.Grid rgg) {
                 return rgg.getGrid().getEnvelope(crs);
             } else {
                 throw new UnsupportedOperationException("todo");
@@ -223,7 +223,7 @@ public class ReferencedGridGeometry {
             try {
                 Envelope env = null;
                 for (ReferenceSystem rs : singles) {
-                    ReferencedGridGeometry sbs = slice(rs).get();
+                    CodedGeometry sbs = slice(rs).get();
                     try {
                         Envelope se = sbs.getEnvelope(crs);
                         env = (env == null) ? se : Envelopes.compound(env, se);
@@ -280,7 +280,7 @@ public class ReferencedGridGeometry {
             && ((bitmask & GEOGRAPHIC_EXTENT) == 0 || (null != getGeographicExtent()));
     }
 
-    public Optional<ReferencedGridGeometry> slice(ReferenceSystem rs) {
+    public Optional<CodedGeometry> slice(ReferenceSystem rs) {
         if (this.rs.equals(rs)) {
             return Optional.of(this);
         }
@@ -298,7 +298,7 @@ public class ReferencedGridGeometry {
                         }
                         ext = extent.selectDimensions(select);
                     }
-                    ReferencedGridTransform subtrs = null;
+                    CodeTransform subtrs = null;
                     if (gridToRS != null) {
                         subtrs = gridToRS.split(offset, crsDim);
                     }
@@ -314,12 +314,12 @@ public class ReferencedGridGeometry {
                         }
                         ext = extent.selectDimensions(select);
                     }
-                    ReferencedGridTransform subtrs = null;
+                    CodeTransform subtrs = null;
                     if (gridToRS != null) {
                         subtrs = gridToRS.split(offset, crsDim);
                     }
 
-                    return Optional.of(new ReferencedGridGeometry(rs, ext, subtrs, null));
+                    return Optional.of(new CodedGeometry(rs, ext, subtrs, null));
                 } else {
                     throw new UnsupportedOperationException("Unexpected reference system " + rs.getClass().getName());
                 }
@@ -331,7 +331,7 @@ public class ReferencedGridGeometry {
     }
 
     public Optional<GridGeometry> isRegularGrid() {
-        if (gridToRS instanceof ReferencedGridTransforms.Grid g) {
+        if (gridToRS instanceof CodeTransforms.Grid g) {
             return Optional.of(g.getGrid());
         }
         return Optional.empty();
@@ -367,7 +367,7 @@ public class ReferencedGridGeometry {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final ReferencedGridGeometry other = (ReferencedGridGeometry) obj;
+        final CodedGeometry other = (CodedGeometry) obj;
         if (!Objects.equals(this.rs, other.rs)) {
             return false;
         }
@@ -380,28 +380,28 @@ public class ReferencedGridGeometry {
         return Objects.equals(this.gridToRS, other.gridToRS);
     }
 
-    public static ReferencedGridGeometry compound(ReferencedGridGeometry ... grids) {
+    public static CodedGeometry compound(CodedGeometry ... grids) {
         if (grids.length == 0) return null;
         if (grids.length == 1) return grids[0];
 
 
         long[] low = grids[0].getExtent().getLow().getCoordinateValues();
         long[] high = grids[0].getExtent().getHigh().getCoordinateValues();
-        ReferencedGridTransform gridToRS = grids[0].getGridToRS();
+        CodeTransform gridToRS = grids[0].getGridToRS();
         ReferenceSystem rs = grids[0].getReferenceSystem();
 
         for (int i = 1; i < grids.length; i++) {
-            final ReferencedGridGeometry rgg = grids[i];
+            final CodedGeometry rgg = grids[i];
             final GridExtent subExtent = rgg.getExtent();
-            final ReferencedGridTransform subGridToRS = rgg.getGridToRS();
+            final CodeTransform subGridToRS = rgg.getGridToRS();
             final ReferenceSystem subrs = rgg.getReferenceSystem();
             low = ArraysExt.concatenate(low, subExtent.getLow().getCoordinateValues());
             high = ArraysExt.concatenate(high, subExtent.getHigh().getCoordinateValues());
-            gridToRS = ReferencedGridTransforms.compound(gridToRS, subGridToRS);
+            gridToRS = CodeTransforms.compound(gridToRS, subGridToRS);
             rs = ReferenceSystems.createCompound(rs, subrs);
         }
 
         final GridExtent extent = new GridExtent(null, low, high, true);
-        return new ReferencedGridGeometry(rs, extent, gridToRS, null);
+        return new CodedGeometry(rs, extent, gridToRS, null);
     }
 }

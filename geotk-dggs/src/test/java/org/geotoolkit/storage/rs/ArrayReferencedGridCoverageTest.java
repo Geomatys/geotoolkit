@@ -36,8 +36,8 @@ import org.apache.sis.util.iso.Names;
 import org.geotoolkit.dggs.healpix.NHealpixDggrs;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
 import org.geotoolkit.referencing.dggs.Zone;
-import org.geotoolkit.storage.rs.internal.shared.BandedAddressIterator;
-import org.geotoolkit.storage.rs.internal.shared.ReferencedGridTransforms;
+import org.geotoolkit.storage.rs.internal.shared.BandedCodeIterator;
+import org.geotoolkit.storage.rs.internal.shared.CodeTransforms;
 import org.junit.Assert;
 import org.junit.Test;
 import org.opengis.referencing.ReferenceSystem;
@@ -53,9 +53,9 @@ public class ArrayReferencedGridCoverageTest {
 
         final DiscreteGlobalGridReferenceSystem dggrs = new NHealpixDggrs();
         final GridCoverageResource source = create4D();
-        final ReferencedGridResource resource = ReferencedGrids.viewAsDggrs(Names.createLocalName(null, null, "coverage4d"), source, dggrs);
+        final CodedResource resource = CodedCoverages.viewAsDggrs(Names.createLocalName(null, null, "coverage4d"), source, dggrs);
 
-        final ReferencedGridGeometry query;
+        final CodedGeometry query;
         { //prepare the query
             final List<Object> rootZoneIds = dggrs.getGridSystem().getHierarchy().getGrids().get(0).getZones().map(Zone::getIdentifier).toList();
 
@@ -70,24 +70,24 @@ public class ArrayReferencedGridCoverageTest {
 
             final ReferenceSystem rs = ReferenceSystems.createCompound(dggrs, verticalEnv.getCoordinateReferenceSystem(), temporalEnv.getCoordinateReferenceSystem());
             final GridExtent extent = new GridExtent(null, new long[]{0,0,0}, new long[]{rootZoneIds.size(), 3, 3}, false);
-            final ReferencedGridTransform gridToRS = ReferencedGridTransforms.compound(
-                    ReferencedGridTransforms.toTransform(dggrs, rootZoneIds),
-                    ReferencedGridTransforms.toTransform(vertivalGrid),
-                    ReferencedGridTransforms.toTransform(temporalGrid)
+            final CodeTransform gridToRS = CodeTransforms.compound(
+                    CodeTransforms.toTransform(dggrs, rootZoneIds),
+                    CodeTransforms.toTransform(vertivalGrid),
+                    CodeTransforms.toTransform(temporalGrid)
                 );
 
-            query = new ReferencedGridGeometry(rs, extent, gridToRS, null);
+            query = new CodedGeometry(rs, extent, gridToRS, null);
         }
 
 
-        final ReferencedGridCoverage coverage = resource.read(query);
-        final ReferencedGridTransform gridToRS = coverage.getGeometry().getGridToRS();
-        final BandedAddressIterator iterator = (BandedAddressIterator) coverage.createIterator();
+        final CodedCoverage coverage = resource.read(query);
+        final CodeTransform gridToRS = coverage.getGeometry().getGridToRS();
+        final BandedCodeIterator iterator = (BandedCodeIterator) coverage.createIterator();
 
         while (iterator.next()) {
             final int[] gridPosition = iterator.getPosition();
-            Address address = gridToRS.toAddress(gridPosition);
-            Assert.assertNotNull(address);
+            Code code = gridToRS.toCode(gridPosition);
+            Assert.assertNotNull(code);
             double[] cell = iterator.getCell((double[])null);
             double v = cell[0];
 

@@ -24,37 +24,37 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.PixelInCell;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.TransformSeparator;
-import org.geotoolkit.storage.rs.Address;
+import org.geotoolkit.storage.rs.Code;
 import org.geotoolkit.referencing.rs.ReferenceSystems;
-import org.geotoolkit.storage.rs.ReferencedGridTransform;
 import org.opengis.referencing.ReferenceSystem;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+import org.geotoolkit.storage.rs.CodeTransform;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public final class ReferencedGridTransforms {
+public final class CodeTransforms {
 
-    private ReferencedGridTransforms(){}
+    private CodeTransforms(){}
 
-    public static ReferencedGridTransform toTransform(GridGeometry gg) {
+    public static CodeTransform toTransform(GridGeometry gg) {
         return new Grid(gg);
     }
 
-    public static ReferencedGridTransform toTransform(ReferenceSystem rs) {
+    public static CodeTransform toTransform(ReferenceSystem rs) {
         return new Undefined(rs);
     }
 
-    public static ReferencedGridTransform toTransform(ReferenceSystem rs, List<?> zids) {
+    public static CodeTransform toTransform(ReferenceSystem rs, List<?> zids) {
         return new Listed(rs, zids);
     }
 
-    public static ReferencedGridTransform compound(ReferencedGridTransform ... trss) {
+    public static CodeTransform compound(CodeTransform ... trss) {
         if (trss == null || trss.length == 0) return null;
         if (trss.length == 1) return trss[0];
         SubTransform rgt = new Compound((SubTransform)trss[0], (SubTransform)trss[1]);
@@ -94,17 +94,17 @@ public final class ReferencedGridTransforms {
         return base.selectDimensions(sourceDimensions);
     }
 
-    private static abstract class SubTransform implements ReferencedGridTransform {
+    private static abstract class SubTransform implements CodeTransform {
 
         @Override
-        public Address toAddress(int[] gridPosition) throws TransformException {
+        public Code toCode(int[] gridPosition) throws TransformException {
             final Object[] ordinates = new Object[getDimension()];
             toAddress(gridPosition, ordinates, 0);
-            return new DefaultAddress(getRS(), ordinates);
+            return new DefaultCode(getRS(), ordinates);
         }
 
         @Override
-        public int[] toGrid(Address location) throws TransformException {
+        public int[] toGrid(Code location) throws TransformException {
             final int[] gridPosition = new int[getDimension()];
             toGrid(location.getOrdinates(), gridPosition, 0);
             return gridPosition;
@@ -144,7 +144,7 @@ public final class ReferencedGridTransforms {
         }
 
         @Override
-        public ReferencedGridTransform split(int offset, int size) {
+        public CodeTransform split(int offset, int size) {
             if (offset == 0 && size == getDimension()) return this;
             throw new IllegalArgumentException("Can not split transform at offset " + offset +" with size " + size);
         }
@@ -221,7 +221,7 @@ public final class ReferencedGridTransforms {
         }
 
         @Override
-        public ReferencedGridTransform split(int offset, int size) {
+        public CodeTransform split(int offset, int size) {
             if (offset == 0 && size == dimension) return this;
 
             final int[] selection = new int[size];
@@ -310,12 +310,12 @@ public final class ReferencedGridTransforms {
         }
 
         @Override
-        public Address toAddress(int[] gridPosition) throws TransformException {
-            return new DefaultAddress(rs, new Object[]{zids.get(gridPosition[0])});
+        public Code toCode(int[] gridPosition) throws TransformException {
+            return new DefaultCode(rs, new Object[]{zids.get(gridPosition[0])});
         }
 
         @Override
-        public int[] toGrid(Address location) throws TransformException {
+        public int[] toGrid(Code location) throws TransformException {
             return new int[]{zids.indexOf(location.getOrdinate(0))};
         }
 
@@ -330,7 +330,7 @@ public final class ReferencedGridTransforms {
         }
 
         @Override
-        public ReferencedGridTransform split(int offset, int size) {
+        public CodeTransform split(int offset, int size) {
             if (offset == 0 && size == 1) return this;
             throw new IllegalArgumentException("Can not split transform at offset " + offset +" with size " + size);
         }
@@ -402,7 +402,7 @@ public final class ReferencedGridTransforms {
         }
 
         @Override
-        public ReferencedGridTransform split(int offset, int size) {
+        public CodeTransform split(int offset, int size) {
             if (offset == 0 && size == dimension) {
                 return this;
             } else if (offset < dimension1) {

@@ -25,9 +25,9 @@ import org.apache.sis.geometries.math.TupleArray;
 import org.apache.sis.geometries.math.TupleArrayCursor;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridGeometry;
-import org.geotoolkit.storage.rs.internal.shared.BandedAddressIterator;
-import org.geotoolkit.storage.rs.internal.shared.ReferencedGridCoverageAsFeatureSet;
-import org.geotoolkit.storage.rs.internal.shared.WritableBandedAddressIterator;
+import org.geotoolkit.storage.rs.internal.shared.BandedCodeIterator;
+import org.geotoolkit.storage.rs.internal.shared.CodedCoverageAsFeatureSet;
+import org.geotoolkit.storage.rs.internal.shared.WritableBandedCodeIterator;
 import org.opengis.feature.FeatureType;
 import org.opengis.util.GenericName;
 
@@ -66,12 +66,12 @@ public final class ArrayDiscreteGlobalGridCoverage extends AbstractDiscreteGloba
     }
 
     @Override
-    public BandedAddressIterator createIterator() {
+    public BandedCodeIterator createIterator() {
         return createWritableIterator();
     }
 
     @Override
-    public WritableBandedAddressIterator createWritableIterator() {
+    public WritableBandedCodeIterator createWritableIterator() {
         return new Iterator(getSampleType(), mapping);
     }
 
@@ -90,7 +90,7 @@ public final class ArrayDiscreteGlobalGridCoverage extends AbstractDiscreteGloba
 
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(name);
-        final AttributeTypeBuilder<?>[] created = ReferencedGridCoverageAsFeatureSet.toFeatureType(ftb, getSampleDimensions());
+        final AttributeTypeBuilder<?>[] created = CodedCoverageAsFeatureSet.toFeatureType(ftb, getSampleDimensions());
         mapping = new String[created.length];
         for (int i = 0; i < created.length; i++) {
             mapping[i] = created[i].getName().toString();
@@ -98,7 +98,7 @@ public final class ArrayDiscreteGlobalGridCoverage extends AbstractDiscreteGloba
         return ftb.build();
     }
 
-    private final class Iterator extends WritableBandedAddressIterator {
+    private final class Iterator extends WritableBandedCodeIterator {
 
         private int position = -1;
 

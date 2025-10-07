@@ -19,7 +19,6 @@ package org.geotoolkit.storage.dggs;
 import org.geotoolkit.referencing.dggs.Zone;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
 import java.util.List;
-import java.util.Objects;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometries.Geometry;
 import org.apache.sis.geometries.operation.GeometryOperations;
@@ -27,22 +26,22 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.storage.rs.ReferencedGridGeometry;
-import org.geotoolkit.storage.rs.ReferencedGridTransform;
-import org.geotoolkit.storage.rs.internal.shared.ReferencedGridTransforms;
+import org.geotoolkit.storage.rs.CodedGeometry;
+import org.geotoolkit.storage.rs.internal.shared.CodeTransforms;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+import org.geotoolkit.storage.rs.CodeTransform;
 
 /**
  * DGGRS coverage geometry.
  *
  * @author Johann Sorel (Geomatys)
  */
-public final class DiscreteGlobalGridGeometry extends ReferencedGridGeometry {
+public final class DiscreteGlobalGridGeometry extends CodedGeometry {
 
     //computed
     private NumberRange<Integer> range;
@@ -52,10 +51,10 @@ public final class DiscreteGlobalGridGeometry extends ReferencedGridGeometry {
     public DiscreteGlobalGridGeometry(DiscreteGlobalGridReferenceSystem dggrs, List<Object> zoneIds, GeographicBoundingBox bbox) {
         this(dggrs,
             (zoneIds == null) ? null : new GridExtent(null, 0, zoneIds.size(), false),
-            (zoneIds == null) ? null : ReferencedGridTransforms.toTransform(dggrs, zoneIds), bbox);
+            (zoneIds == null) ? null : CodeTransforms.toTransform(dggrs, zoneIds), bbox);
     }
 
-    public DiscreteGlobalGridGeometry(DiscreteGlobalGridReferenceSystem dggrs, GridExtent extent, ReferencedGridTransform trs, GeographicBoundingBox bbox) {
+    public DiscreteGlobalGridGeometry(DiscreteGlobalGridReferenceSystem dggrs, GridExtent extent, CodeTransform trs, GeographicBoundingBox bbox) {
         super(dggrs, extent, trs, bbox);
         this.bbox = bbox;
         bboxComputed = bbox != null;
@@ -191,7 +190,7 @@ public final class DiscreteGlobalGridGeometry extends ReferencedGridGeometry {
      * @return List of zone identifiers, never null
      */
     public List<Object> getZoneIds(){
-        final ReferencedGridTransforms.Listed trs = (ReferencedGridTransforms.Listed) getGridToRS();
+        final CodeTransforms.Listed trs = (CodeTransforms.Listed) getGridToRS();
         return (List<Object>) trs.getList();
     }
 

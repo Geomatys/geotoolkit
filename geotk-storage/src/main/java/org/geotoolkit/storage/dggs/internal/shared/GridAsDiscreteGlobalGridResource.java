@@ -38,8 +38,8 @@ import org.geotoolkit.storage.dggs.DiscreteGlobalGridCoverageProcessor;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridGeometry;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridResource;
-import org.geotoolkit.storage.rs.ReferencedGridGeometry;
-import org.geotoolkit.storage.rs.internal.shared.ReferencedGridCoverageAsFeatureSet;
+import org.geotoolkit.storage.rs.CodedGeometry;
+import org.geotoolkit.storage.rs.internal.shared.CodedCoverageAsFeatureSet;
 import org.opengis.feature.FeatureType;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
@@ -92,7 +92,7 @@ public final class GridAsDiscreteGlobalGridResource extends AbstractResource imp
     public FeatureType getSampleType() throws DataStoreException {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(source.getIdentifier().get());
-        ReferencedGridCoverageAsFeatureSet.toFeatureType(ftb, getSampleDimensions());
+        CodedCoverageAsFeatureSet.toFeatureType(ftb, getSampleDimensions());
         return ftb.build();
     }
 
@@ -117,7 +117,7 @@ public final class GridAsDiscreteGlobalGridResource extends AbstractResource imp
     }
 
     @Override
-    public DiscreteGlobalGridCoverage read(ReferencedGridGeometry grid, int... range) throws DataStoreException {
+    public DiscreteGlobalGridCoverage read(CodedGeometry grid, int... range) throws DataStoreException {
         final DiscreteGlobalGridGeometry geometry = DiscreteGlobalGridResource.toDiscreteGlobalGridGeometry(grid);
         final DiscreteGlobalGridCoverageProcessor processor = new DiscreteGlobalGridCoverageProcessor();
         try {

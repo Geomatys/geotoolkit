@@ -24,7 +24,7 @@ import org.apache.sis.geometries.math.TupleArray;
 import org.apache.sis.geometries.math.TupleArrayCursor;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.multires.TileMatrices;
-import org.geotoolkit.storage.rs.ReferencedGridGeometry;
+import org.geotoolkit.storage.rs.CodedGeometry;
 import org.opengis.feature.FeatureType;
 import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
@@ -34,11 +34,11 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public final class ArrayReferencedGridCoverage extends AbstractReferencedGridCoverage{
+public final class ArrayCodedCoverage extends AbstractCodedCoverage{
 
     private final List<TupleArray> samples;
 
-    public ArrayReferencedGridCoverage(final GenericName name, ReferencedGridGeometry gridGeometry, List<TupleArray> samples) throws FactoryException {
+    public ArrayCodedCoverage(final GenericName name, CodedGeometry gridGeometry, List<TupleArray> samples) throws FactoryException {
         super(name, gridGeometry, createType(name, samples));
 
         this.samples = samples;
@@ -51,14 +51,13 @@ public final class ArrayReferencedGridCoverage extends AbstractReferencedGridCov
                 throw new IllegalArgumentException("Samples tuple arrays must have a dimension of 1");
             }
         }
-
     }
 
     private static FeatureType createType(GenericName name, List<TupleArray> sampleDimensions) {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(name);
         for (TupleArray ta : sampleDimensions) {
-            ReferencedGridCoverageAsFeatureSet.toFeatureType(ftb, ta.getSampleSystem().getSampleDimensions());
+            CodedCoverageAsFeatureSet.toFeatureType(ftb, ta.getSampleSystem().getSampleDimensions());
         }
         return ftb.build();
     }
@@ -68,12 +67,12 @@ public final class ArrayReferencedGridCoverage extends AbstractReferencedGridCov
     }
 
     @Override
-    public BandedAddressIterator createIterator() {
+    public BandedCodeIterator createIterator() {
         return createWritableIterator();
     }
 
     @Override
-    public WritableBandedAddressIterator createWritableIterator() {
+    public WritableBandedCodeIterator createWritableIterator() {
         return new Iterator(getSampleType(), mapping);
     }
 
@@ -95,11 +94,11 @@ public final class ArrayReferencedGridCoverage extends AbstractReferencedGridCov
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final ArrayReferencedGridCoverage other = (ArrayReferencedGridCoverage) obj;
+        final ArrayCodedCoverage other = (ArrayCodedCoverage) obj;
         return super.equals(obj) && Objects.equals(this.samples, other.samples);
     }
 
-    private final class Iterator extends WritableBandedAddressIterator {
+    private final class Iterator extends WritableBandedCodeIterator {
 
         private long linearPosition = -1;
         private final long nbCell;

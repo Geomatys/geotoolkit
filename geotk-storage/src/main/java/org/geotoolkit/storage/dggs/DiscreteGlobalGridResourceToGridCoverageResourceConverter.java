@@ -16,9 +16,9 @@ import java.util.Optional;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
 
 import static org.geotoolkit.storage.coverage.BandedCoverageResource.sample;
-import org.geotoolkit.storage.rs.Address;
-import org.geotoolkit.storage.rs.AddressIterator;
-import org.geotoolkit.storage.rs.ReferencedGridTransform;
+import org.geotoolkit.storage.rs.Code;
+import org.geotoolkit.storage.rs.CodeIterator;
+import org.geotoolkit.storage.rs.CodeTransform;
 
 public class DiscreteGlobalGridResourceToGridCoverageResourceConverter {
 
@@ -38,7 +38,7 @@ public class DiscreteGlobalGridResourceToGridCoverageResourceConverter {
         // Extract highest available resolution or grid arrangement
         int level = resource.getAvailableDepths().getMaxValue();
         final DiscreteGlobalGridGeometry gridGeometry = resource.getGridGeometry();
-        final ReferencedGridTransform gridToRS = gridGeometry.getGridToRS();
+        final CodeTransform gridToRS = gridGeometry.getGridToRS();
         final DiscreteGlobalGridReferenceSystem dggrs = gridGeometry.getReferenceSystem();
         final DiscreteGlobalGridReferenceSystem.Coder coder = dggrs.createCoder();
 
@@ -46,14 +46,14 @@ public class DiscreteGlobalGridResourceToGridCoverageResourceConverter {
 
         try {
             coder.setPrecisionLevel(level);
-            AddressIterator it = dggsCoverage.createIterator();
+            CodeIterator it = dggsCoverage.createIterator();
 
             List<Object> ids = new ArrayList<>();
             it.rewind();
             while (it.next()) {
                 int[] position = it.getPosition();
-                final Address address = gridToRS.toAddress(position);
-                ids.add(address.getOrdinate(0));
+                final Code code = gridToRS.toCode(position);
+                ids.add(code.getOrdinate(0));
             }
             int numZones = ids.size();
 

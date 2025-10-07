@@ -39,9 +39,9 @@ import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.NoSuchDataException;
 import org.apache.sis.storage.RasterLoadingStrategy;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
-import org.geotoolkit.storage.rs.Address;
-import org.geotoolkit.storage.rs.ReferencedGridTransform;
-import org.geotoolkit.storage.rs.internal.shared.WritableBandedAddressIterator;
+import org.geotoolkit.storage.rs.Code;
+import org.geotoolkit.storage.rs.CodeTransform;
+import org.geotoolkit.storage.rs.internal.shared.WritableBandedCodeIterator;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.spatial.DimensionNameType;
@@ -97,10 +97,10 @@ public final class DiscreteGlobalGridCoverageProcessor {
         }
 
         final ArrayDiscreteGlobalGridCoverage target = new ArrayDiscreteGlobalGridCoverage(source.getIdentifier().get(), gridGeometry, samples);
-        final ReferencedGridTransform gridToRS = gridGeometry.getGridToRS();
+        final CodeTransform gridToRS = gridGeometry.getGridToRS();
         final DiscreteGlobalGridReferenceSystem dggrs = gridGeometry.getReferenceSystem();
         final DiscreteGlobalGridReferenceSystem.Coder coder = dggrs.createCoder();
-        try (final WritableBandedAddressIterator iterator = target.createWritableIterator()) {
+        try (final WritableBandedCodeIterator iterator = target.createWritableIterator()) {
 
             final Envelope env = target.getEnvelope().get();
             final double[] resolution = target.getResolution(true);
@@ -129,8 +129,8 @@ public final class DiscreteGlobalGridCoverageProcessor {
 
                 while (iterator.next()) {
                     final int[] position = iterator.getPosition();
-                    final Address address = gridToRS.toAddress(position);
-                    final Object zid = address.getOrdinate(0);
+                    final Code code = gridToRS.toCode(position);
+                    final Object zid = code.getOrdinate(0);
                     final Zone zone = coder.decode(zid);
                     final DirectPosition dp = zone.getPosition();
                     double[] values = evaluator.apply(dp);
@@ -183,11 +183,11 @@ public final class DiscreteGlobalGridCoverageProcessor {
         }
 
         final ArrayDiscreteGlobalGridCoverage target = new ArrayDiscreteGlobalGridCoverage(source.getIdentifier().get(), gridGeometry, samples);
-        final ReferencedGridTransform gridToRS = gridGeometry.getGridToRS();
+        final CodeTransform gridToRS = gridGeometry.getGridToRS();
         final DiscreteGlobalGridReferenceSystem dggrs = gridGeometry.getReferenceSystem();
         final DiscreteGlobalGridReferenceSystem.Coder coder = dggrs.createCoder();
 
-        try (final WritableBandedAddressIterator iterator = target.createWritableIterator()) {
+        try (final WritableBandedCodeIterator iterator = target.createWritableIterator()) {
 
             CoordinateReferenceSystem crs = source.getGridGeometry().getCoordinateReferenceSystem();
             CoordinateSystem cs = crs.getCoordinateSystem();
@@ -223,8 +223,8 @@ public final class DiscreteGlobalGridCoverageProcessor {
 
                 while(iterator.next()) {
                     final int[] position = iterator.getPosition();
-                    final Address address = gridToRS.toAddress(position);
-                    final Object zid = address.getOrdinate(0);
+                    final Code code = gridToRS.toCode(position);
+                    final Object zid = code.getOrdinate(0);
                     final Zone zone = coder.decode(zid);
                     final long cellId = zone.getLongIdentifier();
 

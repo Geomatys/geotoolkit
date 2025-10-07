@@ -19,7 +19,7 @@ package org.geotoolkit.storage.rs.internal.shared;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.sis.feature.AbstractFeature;
-import org.geotoolkit.storage.rs.AddressIterator;
+import org.geotoolkit.storage.rs.CodeIterator;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyNotFoundException;
@@ -28,12 +28,12 @@ import org.opengis.feature.PropertyNotFoundException;
  *
  * @author Johann Sorel (Geomatys)
  */
-public abstract class BandedAddressIterator extends AbstractFeature implements AddressIterator {
+public abstract class BandedCodeIterator extends AbstractFeature implements CodeIterator {
 
     protected final FeatureType type;
     protected final Map<String,Integer> index = new HashMap<>();
 
-    public BandedAddressIterator(FeatureType type, String[] mapping) {
+    public BandedCodeIterator(FeatureType type, String[] mapping) {
         super(type);
         this.type = type;
         for (int i = 0; i<mapping.length; i++) {

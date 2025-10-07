@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
-import org.geotoolkit.storage.rs.Address;
+import org.geotoolkit.storage.rs.Code;
 import org.geotoolkit.referencing.rs.ReferenceSystems;
 import org.geotoolkit.util.StringUtilities;
 import org.opengis.referencing.ReferenceSystem;
@@ -32,12 +32,12 @@ import org.opengis.referencing.crs.TemporalCRS;
  *
  * @author Johann Sorel (Geomatys)
  */
-public final class DefaultAddress implements Address {
+public final class DefaultCode implements Code {
 
     private final ReferenceSystem rs;
     private final Object[] ordinates;
 
-    public DefaultAddress(ReferenceSystem rs, Object ... ordinates) {
+    public DefaultCode(ReferenceSystem rs, Object ... ordinates) {
         this.rs = rs;
         this.ordinates = ordinates;
     }

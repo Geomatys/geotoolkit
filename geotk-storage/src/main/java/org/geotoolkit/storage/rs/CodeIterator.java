@@ -16,27 +16,46 @@
  */
 package org.geotoolkit.storage.rs;
 
-import org.apache.sis.storage.DataStoreException;
+import org.opengis.feature.Feature;
 
 /**
- * Writable RS coverage location iterator.
+ * Referenced coverage location iterator.
  *
  * @author Johann Sorel (Geomatys)
  */
-public interface WritableAddressIterator extends AddressIterator, AutoCloseable {
+public interface CodeIterator {
 
     /**
-     * @return always true
+     * Returns true of the iterator is writable.
+     * @return may be true
      */
-    @Override
     default boolean isWritable() {
-        return true;
+        return false;
     }
 
     /**
-     * Release any resource attached to the writer.
+     * @return current location identifier
      */
-    @Override
-    public void close() throws DataStoreException;
+    int[] getPosition();
 
+    /**
+     * Move iterator to given zone
+     *
+     * @param zid searched location identifier
+     */
+    void moveTo(int[] zid);
+
+    /**
+     * Move to next location.
+     *
+     * @return true if there is a next location
+     */
+    boolean next();
+
+    Feature getSample();
+
+    /**
+     * Move iterator back to the starting position.
+     */
+    void rewind();
 }

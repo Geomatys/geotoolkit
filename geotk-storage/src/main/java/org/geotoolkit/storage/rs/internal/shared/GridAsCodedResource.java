@@ -46,12 +46,11 @@ import org.apache.sis.storage.RasterLoadingStrategy;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
 import org.geotoolkit.storage.multires.TileMatrices;
-import org.geotoolkit.storage.rs.Address;
-import org.geotoolkit.storage.rs.ReferencedGridCoverage;
-import org.geotoolkit.storage.rs.ReferencedGridGeometry;
-import org.geotoolkit.storage.rs.ReferencedGridResource;
-import org.geotoolkit.storage.rs.ReferencedGridTransform;
+import org.geotoolkit.storage.rs.Code;
 import org.geotoolkit.referencing.rs.ReferenceSystems;
+import org.geotoolkit.storage.rs.CodedCoverage;
+import org.geotoolkit.storage.rs.CodedGeometry;
+import org.geotoolkit.storage.rs.CodedResource;
 import org.opengis.feature.FeatureType;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
@@ -61,19 +60,20 @@ import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
+import org.geotoolkit.storage.rs.CodeTransform;
 
 /**
  * View a grid coverage resource as a dggrs coverage resource.
  *
  * @author Johann Sorel (Geomatys)
  */
-public final class GridAsReferencedGridResource extends AbstractResource implements ReferencedGridResource {
+public final class GridAsCodedResource extends AbstractResource implements CodedResource {
 
-    private final ReferencedGridGeometry gridGeometry;
+    private final CodedGeometry gridGeometry;
     private final GridCoverageResource source;
     private final GenericName name;
 
-    public GridAsReferencedGridResource(GenericName name, DiscreteGlobalGridReferenceSystem dggrs, GridCoverageResource resource)
+    public GridAsCodedResource(GenericName name, DiscreteGlobalGridReferenceSystem dggrs, GridCoverageResource resource)
             throws DataStoreException, IncommensurableException, TransformException, FactoryException {
         super(null);
         ArgumentChecks.ensureNonNull("name", name);
@@ -84,19 +84,19 @@ public final class GridAsReferencedGridResource extends AbstractResource impleme
         //create matching reference grid geometry replacing the horizontal crs
         final GridGeometry sourceGridGeometry = resource.getGridGeometry();
         final List<SingleCRS> singles = (List) ReferenceSystems.getSingleComponents(sourceGridGeometry.getCoordinateReferenceSystem(), true);
-        final List<ReferencedGridGeometry> parts = new ArrayList<>();
+        final List<CodedGeometry> parts = new ArrayList<>();
 
         for (int i = 0, n = singles.size(); i < n ; i++) {
             final SingleCRS s = singles.get(i);
             if (CRS.isHorizontalCRS(s)) {
-                ReferencedGridGeometry rrg = new ReferencedGridGeometry(dggrs, new GridExtent(null, 0, 0, true), ReferencedGridTransforms.toTransform(dggrs), null);
+                CodedGeometry rrg = new CodedGeometry(dggrs, new GridExtent(null, 0, 0, true), CodeTransforms.toTransform(dggrs), null);
                 parts.add(rrg);
             } else {
-                final GridGeometry crsSlice = ReferencedGridTransforms.slice(sourceGridGeometry, s);
-                parts.add(new ReferencedGridGeometry(crsSlice));
+                final GridGeometry crsSlice = CodeTransforms.slice(sourceGridGeometry, s);
+                parts.add(new CodedGeometry(crsSlice));
             }
         }
-        gridGeometry = ReferencedGridGeometry.compound(parts.toArray(ReferencedGridGeometry[]::new));
+        gridGeometry = CodedGeometry.compound(parts.toArray(CodedGeometry[]::new));
 
         Quantity<?> res = GridAsDiscreteGlobalGridResource.computeAverageResolution(resource.getGridGeometry());
         DiscreteGlobalGridReferenceSystem.Coder coder = dggrs.createCoder();
@@ -117,7 +117,7 @@ public final class GridAsReferencedGridResource extends AbstractResource impleme
     public FeatureType getSampleType() throws DataStoreException {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(source.getIdentifier().get());
-        ReferencedGridCoverageAsFeatureSet.toFeatureType(ftb, getSampleDimensions());
+        CodedCoverageAsFeatureSet.toFeatureType(ftb, getSampleDimensions());
         return ftb.build();
     }
 
@@ -127,12 +127,12 @@ public final class GridAsReferencedGridResource extends AbstractResource impleme
     }
 
     @Override
-    public ReferencedGridGeometry getGridGeometry() {
+    public CodedGeometry getGridGeometry() {
         return gridGeometry;
     }
 
     @Override
-    public ReferencedGridCoverage read(ReferencedGridGeometry userQuery, int... range) throws DataStoreException {
+    public CodedCoverage read(CodedGeometry userQuery, int... range) throws DataStoreException {
 
         List<SampleDimension> sampleDimensions = source.getSampleDimensions();
         if (range != null && range.length != 0) {
@@ -167,7 +167,7 @@ public final class GridAsReferencedGridResource extends AbstractResource impleme
             }
         }
         //convert it back to a referenced grid geometry query
-        final ReferencedGridGeometry resultGeometry;
+        final CodedGeometry resultGeometry;
         try {
             resultGeometry = expend(userQuery, coverageQuery);
         } catch (FactoryException ex) {
@@ -175,7 +175,7 @@ public final class GridAsReferencedGridResource extends AbstractResource impleme
         }
 
         final GridExtent extent = resultGeometry.getExtent();
-        final ReferencedGridTransform transform = resultGeometry.getGridToRS();
+        final CodeTransform transform = resultGeometry.getGridToRS();
         final int nbSamples = Math.toIntExact(TileMatrices.countCells(extent)) * sampleDimensions.size();
 
         final List<TupleArray> samples = new ArrayList<>();
@@ -188,14 +188,14 @@ public final class GridAsReferencedGridResource extends AbstractResource impleme
             nans[i] = Double.NaN;
         }
 
-        final ArrayReferencedGridCoverage target;
+        final ArrayCodedCoverage target;
         try {
-            target = new ArrayReferencedGridCoverage(getIdentifier().get(), resultGeometry, samples);
+            target = new ArrayCodedCoverage(getIdentifier().get(), resultGeometry, samples);
         } catch (FactoryException ex) {
             throw new DataStoreException(ex.getMessage(), ex);
         }
 
-        try (final WritableBandedAddressIterator iterator = target.createWritableIterator()) {
+        try (final WritableBandedCodeIterator iterator = target.createWritableIterator()) {
             try {
                 source.setLoadingStrategy(RasterLoadingStrategy.AT_GET_TILE_TIME);
                 final GridCoverage coverage = source.read(coverageQuery, range).forConvertedValues(true);
@@ -205,7 +205,7 @@ public final class GridAsReferencedGridResource extends AbstractResource impleme
 
                 while (iterator.next()) {
                     final int[] gridPosition = iterator.getPosition();
-                    final Address location = transform.toAddress(gridPosition);
+                    final Code location = transform.toCode(gridPosition);
                     DirectPosition dp = location.toDirectPosition();
                     //todo convert to grid coverage coordinate
                     double[] values = evaluator.apply(dp);
@@ -224,13 +224,13 @@ public final class GridAsReferencedGridResource extends AbstractResource impleme
         return target;
     }
 
-    private static GridGeometry toGridGeometry(ReferencedGridGeometry geometry) throws FactoryException {
+    private static GridGeometry toGridGeometry(CodedGeometry geometry) throws FactoryException {
 
         final List<ReferenceSystem> all = ReferenceSystems.getSingleComponents(geometry.getReferenceSystem(), true);
 
         GridGeometry gg = null;
         for (int k = 0, n = all.size(); k < n; k++) {
-            final ReferencedGridGeometry rgg = geometry.slice(all.get(k)).get();
+            final CodedGeometry rgg = geometry.slice(all.get(k)).get();
             GridGeometry slice = rgg.isRegularGrid().orElse(null);
             if (slice == null) {
                 final Envelope env = rgg.getEnvelope();
@@ -254,12 +254,12 @@ public final class GridAsReferencedGridResource extends AbstractResource impleme
      * Create a new ReferencedGridGeometry containing the base ReferencedGridGeometry
      * and adding any dimension missing from the second GridGeometry.
      */
-    private static ReferencedGridGeometry expend(ReferencedGridGeometry base, GridGeometry toAppend) throws FactoryException {
+    private static CodedGeometry expend(CodedGeometry base, GridGeometry toAppend) throws FactoryException {
 
         final Set<ReferenceSystem> all = new LinkedHashSet();
         all.addAll(ReferenceSystems.getSingleComponents(toAppend.getCoordinateReferenceSystem(), true));
 
-        final List<ReferencedGridGeometry> parts = new ArrayList<>();
+        final List<CodedGeometry> parts = new ArrayList<>();
         for (ReferenceSystem rs : all) {
             if (rs instanceof CoordinateReferenceSystem crs) {
                 if (CRS.isHorizontalCRS(crs)) {
@@ -271,10 +271,10 @@ public final class GridAsReferencedGridResource extends AbstractResource impleme
                         }
                     }
                 } else {
-                    Optional<ReferencedGridGeometry> slice = base.slice(rs);
+                    Optional<CodedGeometry> slice = base.slice(rs);
                     if (!slice.isPresent()) {
                         //copy it from the missing geometry
-                        parts.add(new ReferencedGridGeometry(ReferencedGridTransforms.slice(toAppend, crs)));
+                        parts.add(new CodedGeometry(CodeTransforms.slice(toAppend, crs)));
                     } else {
                         parts.add(slice.get());
                     }
@@ -282,14 +282,14 @@ public final class GridAsReferencedGridResource extends AbstractResource impleme
             }
         }
 
-        return ReferencedGridGeometry.compound(parts.toArray(ReferencedGridGeometry[]::new));
+        return CodedGeometry.compound(parts.toArray(CodedGeometry[]::new));
     }
 
     private static GridGeometry smartIntersect(GridGeometry base, GridGeometry query) throws FactoryException {
 
         final List<ReferenceSystem> queryCrs = ReferenceSystems.getSingleComponents(query.getCoordinateReferenceSystem(), true);
-        final ReferencedGridGeometry basergg = new ReferencedGridGeometry(base);
-        final ReferencedGridGeometry queryrgg = new ReferencedGridGeometry(query);
+        final CodedGeometry basergg = new CodedGeometry(base);
+        final CodedGeometry queryrgg = new CodedGeometry(query);
 
         GridGeometry result = null;
 

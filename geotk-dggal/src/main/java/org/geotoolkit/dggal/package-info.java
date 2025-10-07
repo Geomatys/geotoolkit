@@ -45,7 +45,7 @@
  * DGGAL_DGGRS_isZoneAncestorOf              Zone.isAncestorOf(other, maxRelDepth)
  * DGGAL_DGGRS_isZoneDescendantOf            Zone.isDescendantOf(other, maxRelDepth)
  *
- * 
+ *
  * The following methods have no equivalent in the API for the given reasons.
  *
  * Operation is handle by SIS in a different API or should not be in a DGGRS API.

@@ -16,16 +16,16 @@
  */
 package org.geotoolkit.storage.rs.internal.shared;
 
-import org.geotoolkit.storage.rs.WritableAddressIterator;
+import org.geotoolkit.storage.rs.WritableCodeIterator;
 import org.opengis.feature.FeatureType;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public abstract class WritableBandedAddressIterator extends BandedAddressIterator implements WritableAddressIterator {
+public abstract class WritableBandedCodeIterator extends BandedCodeIterator implements WritableCodeIterator {
 
-    public WritableBandedAddressIterator(FeatureType type, String[] mapping) {
+    public WritableBandedCodeIterator(FeatureType type, String[] mapping) {
         super(type, mapping);
     }
 

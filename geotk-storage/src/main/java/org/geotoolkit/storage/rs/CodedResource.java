@@ -27,7 +27,7 @@ import org.opengis.feature.FeatureType;
  *
  * @author Johann Sorel (Geomatys)
  */
-public interface ReferencedGridResource extends BandedCoverageResource {
+public interface CodedResource extends BandedCoverageResource {
 
     /**
      * Returns the description of the samples stored.
@@ -40,7 +40,7 @@ public interface ReferencedGridResource extends BandedCoverageResource {
      * Get default resource geometry.
      * @return resource geometry
      */
-    ReferencedGridGeometry getGridGeometry();
+    CodedGeometry getGridGeometry();
 
     /**
      * List alternative geometry available.
@@ -48,7 +48,7 @@ public interface ReferencedGridResource extends BandedCoverageResource {
      *
      * @return list of alternative geometry available.
      */
-    default List<ReferencedGridGeometry> getAlternateGridGeometry() {
+    default List<CodedGeometry> getAlternateGridGeometry() {
         return List.of(getGridGeometry());
     }
 
@@ -56,7 +56,7 @@ public interface ReferencedGridResource extends BandedCoverageResource {
      * {@inheritDoc }
      */
     @Override
-    public default ReferencedGridCoverage read(GridGeometry domain, int... range) throws DataStoreException {
+    public default CodedCoverage read(GridGeometry domain, int... range) throws DataStoreException {
         throw new UnsupportedOperationException("todo");
 //        final Quantity<?> coverageResolution;
 //        try {
@@ -91,5 +91,5 @@ public interface ReferencedGridResource extends BandedCoverageResource {
      * @return DiscreteGlobalGridCoverage, never null
      * @throws DataStoreException
      */
-    public ReferencedGridCoverage read(ReferencedGridGeometry geometry, int ... range) throws DataStoreException;
+    public CodedCoverage read(CodedGeometry geometry, int ... range) throws DataStoreException;
 }

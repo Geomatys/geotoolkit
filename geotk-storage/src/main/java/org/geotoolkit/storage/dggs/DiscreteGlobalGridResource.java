@@ -27,8 +27,8 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGrid;
-import org.geotoolkit.storage.rs.ReferencedGridGeometry;
-import org.geotoolkit.storage.rs.ReferencedGridResource;
+import org.geotoolkit.storage.rs.CodedGeometry;
+import org.geotoolkit.storage.rs.CodedResource;
 import org.opengis.referencing.operation.TransformException;
 
 /**
@@ -36,7 +36,7 @@ import org.opengis.referencing.operation.TransformException;
  *
  * @author Johann Sorel (Geomatys)
  */
-public interface DiscreteGlobalGridResource extends ReferencedGridResource {
+public interface DiscreteGlobalGridResource extends CodedResource {
 
     /**
      * @return DiscreteGlobalGridGeometry, never null
@@ -100,9 +100,9 @@ public interface DiscreteGlobalGridResource extends ReferencedGridResource {
      * @throws DataStoreException
      */
     @Override
-    public DiscreteGlobalGridCoverage read(ReferencedGridGeometry geometry, int ... range) throws DataStoreException;
+    public DiscreteGlobalGridCoverage read(CodedGeometry geometry, int ... range) throws DataStoreException;
 
-    public static DiscreteGlobalGridGeometry toDiscreteGlobalGridGeometry(ReferencedGridGeometry geom) {
+    public static DiscreteGlobalGridGeometry toDiscreteGlobalGridGeometry(CodedGeometry geom) {
         if (geom instanceof DiscreteGlobalGridGeometry dgg) return dgg;
         else throw new UnsupportedOperationException("Not available yet");
     }

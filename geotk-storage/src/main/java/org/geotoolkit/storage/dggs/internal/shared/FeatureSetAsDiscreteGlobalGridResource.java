@@ -41,9 +41,9 @@ import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridResource;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridSystems;
 import org.geotoolkit.referencing.dggs.Zone;
-import org.geotoolkit.storage.rs.ReferencedGridGeometry;
-import org.geotoolkit.storage.rs.ReferencedGridResource;
-import org.geotoolkit.storage.rs.internal.shared.FeatureReferencedGridCoverage;
+import org.geotoolkit.storage.rs.CodedGeometry;
+import org.geotoolkit.storage.rs.CodedResource;
+import org.geotoolkit.storage.rs.internal.shared.FeatureCodedCoverage;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.index.quadtree.Quadtree;
@@ -63,7 +63,7 @@ import org.opengis.util.FactoryException;
  *
  * @author Johann Sorel (Geomatys)
  */
-public final class FeatureSetAsDiscreteGlobalGridResource extends AbstractResource implements ReferencedGridResource {
+public final class FeatureSetAsDiscreteGlobalGridResource extends AbstractResource implements CodedResource {
 
     private final DiscreteGlobalGridReferenceSystem dggrs;
     private final DiscreteGlobalGridGeometry gridGeometry;
@@ -131,7 +131,7 @@ public final class FeatureSetAsDiscreteGlobalGridResource extends AbstractResour
     }
 
     @Override
-    public FeatureReferencedGridCoverage read(ReferencedGridGeometry grid, int... range) throws DataStoreException {
+    public FeatureCodedCoverage read(CodedGeometry grid, int... range) throws DataStoreException {
         init();
 
         final DiscreteGlobalGridGeometry geometry = DiscreteGlobalGridResource.toDiscreteGlobalGridGeometry(grid);
@@ -143,9 +143,9 @@ public final class FeatureSetAsDiscreteGlobalGridResource extends AbstractResour
             samples.add(sampleType.newInstance());
         }
 
-        final FeatureReferencedGridCoverage coverage;
+        final FeatureCodedCoverage coverage;
         try {
-            coverage = new FeatureReferencedGridCoverage(featureSet.getIdentifier().get(), geometry, samples);
+            coverage = new FeatureCodedCoverage(featureSet.getIdentifier().get(), geometry, samples);
         } catch (FactoryException ex) {
             throw new DataStoreException(ex.getMessage(), ex);
         }

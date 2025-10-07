@@ -43,7 +43,7 @@ import org.geotoolkit.storage.dggs.DiscreteGlobalGridGeometry;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridSystems;
 import org.geotoolkit.referencing.dggs.Zone;
-import org.geotoolkit.storage.rs.internal.shared.BandedAddressIterator;
+import org.geotoolkit.storage.rs.internal.shared.BandedCodeIterator;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Disabled;
@@ -231,7 +231,7 @@ public abstract class AbstractDggrsTest {
                         List.of(TupleArrays.of(1, 123456)));
 
                 //test iterator
-                final BandedAddressIterator iterator = dggsCoverage.createIterator();
+                final BandedCodeIterator iterator = dggsCoverage.createIterator();
                 assertTrue(iterator.next());
                 assertEquals(123456.0, iterator.getSampleDouble(0), 0.0);
                 assertFalse(iterator.next());

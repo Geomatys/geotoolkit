@@ -24,7 +24,7 @@ import org.opengis.feature.FeatureType;
  *
  * @author Johann Sorel (Geomatys)
  */
-public abstract class ReferencedGridCoverage extends BandedCoverageExt {
+public abstract class CodedCoverage extends BandedCoverageExt {
 
     /**
      * Returns the description of the samples stored.
@@ -38,7 +38,7 @@ public abstract class ReferencedGridCoverage extends BandedCoverageExt {
      *
      * @return geometry of the coverage
      */
-    public abstract ReferencedGridGeometry getGeometry();
+    public abstract CodedGeometry getGeometry();
 
     /**
      * Create an iterator over the coverage locations.
@@ -46,7 +46,7 @@ public abstract class ReferencedGridCoverage extends BandedCoverageExt {
      *
      * @return iterator, not null
      */
-    public abstract AddressIterator createIterator();
+    public abstract CodeIterator createIterator();
 
     /**
      * Create a writable iterator over the coverage locations.
@@ -54,5 +54,5 @@ public abstract class ReferencedGridCoverage extends BandedCoverageExt {
      *
      * @return writable iterator, not null
      */
-    public abstract WritableAddressIterator createWritableIterator();
+    public abstract WritableCodeIterator createWritableIterator();
 }

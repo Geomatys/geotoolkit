@@ -29,9 +29,9 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridGeometry;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
 import org.geotoolkit.referencing.dggs.Zone;
-import org.geotoolkit.storage.rs.internal.shared.BandedAddressIterator;
-import org.geotoolkit.storage.rs.internal.shared.ReferencedGridCoverageAsFeatureSet;
-import org.geotoolkit.storage.rs.internal.shared.WritableBandedAddressIterator;
+import org.geotoolkit.storage.rs.internal.shared.BandedCodeIterator;
+import org.geotoolkit.storage.rs.internal.shared.CodedCoverageAsFeatureSet;
+import org.geotoolkit.storage.rs.internal.shared.WritableBandedCodeIterator;
 import org.opengis.feature.FeatureType;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.GenericName;
@@ -77,12 +77,12 @@ public final class RasterDiscreteGlobalGridCoverage extends AbstractDiscreteGlob
     }
 
     @Override
-    public BandedAddressIterator createIterator() {
+    public BandedCodeIterator createIterator() {
         return new Iterator(getSampleType(), mapping, false);
     }
 
     @Override
-    public WritableBandedAddressIterator createWritableIterator() {
+    public WritableBandedCodeIterator createWritableIterator() {
         return new Iterator(getSampleType(), mapping, true);
     }
 
@@ -97,7 +97,7 @@ public final class RasterDiscreteGlobalGridCoverage extends AbstractDiscreteGlob
 
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(name);
-        final AttributeTypeBuilder<?>[] created = ReferencedGridCoverageAsFeatureSet.toFeatureType(ftb, getSampleDimensions());
+        final AttributeTypeBuilder<?>[] created = CodedCoverageAsFeatureSet.toFeatureType(ftb, getSampleDimensions());
         mapping = new String[created.length];
         for (int i = 0; i < created.length; i++) {
             mapping[i] = created[i].getName().toString();
@@ -105,7 +105,7 @@ public final class RasterDiscreteGlobalGridCoverage extends AbstractDiscreteGlob
         return ftb.build();
     }
 
-    private final class Iterator extends WritableBandedAddressIterator {
+    private final class Iterator extends WritableBandedCodeIterator {
 
         private int position = -1;
 

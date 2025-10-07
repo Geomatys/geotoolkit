@@ -16,22 +16,27 @@
  */
 package org.geotoolkit.storage.rs;
 
-import org.opengis.referencing.ReferenceSystem;
-import org.opengis.referencing.operation.TransformException;
+import org.apache.sis.storage.DataStoreException;
 
 /**
+ * Writable RS coverage location iterator.
  *
  * @author Johann Sorel (Geomatys)
  */
-public interface ReferencedGridTransform {
+public interface WritableCodeIterator extends CodeIterator, AutoCloseable {
 
-    ReferenceSystem getRS();
+    /**
+     * @return always true
+     */
+    @Override
+    default boolean isWritable() {
+        return true;
+    }
 
-    int getDimension();
+    /**
+     * Release any resource attached to the writer.
+     */
+    @Override
+    public void close() throws DataStoreException;
 
-    Address toAddress(int[] gridPosition) throws TransformException;
-
-    int[] toGrid(Address location) throws TransformException;
-
-    ReferencedGridTransform split(int offset, int size);
 }

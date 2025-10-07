@@ -33,7 +33,7 @@ import org.opengis.util.FactoryException;
  *
  * @author Johann Sorel (Geomatys)
  */
-public interface Address {
+public interface Code {
 
     /**
      * The reference system (RS) in which the location tuple is given.

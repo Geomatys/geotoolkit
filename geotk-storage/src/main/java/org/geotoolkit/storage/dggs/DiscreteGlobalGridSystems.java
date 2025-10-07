@@ -55,8 +55,8 @@ import org.apache.sis.util.Utilities;
 import org.geotoolkit.storage.dggs.internal.shared.ComputedZoneIndexList;
 import org.geotoolkit.storage.dggs.internal.shared.FeatureSetAsDiscreteGlobalGridResource;
 import org.geotoolkit.storage.dggs.internal.shared.MemoryDiscreteGlobalGridResource;
-import org.geotoolkit.storage.rs.ReferencedGridResource;
-import org.geotoolkit.storage.rs.internal.shared.ReferencedGridCoverageAsFeatureSet;
+import org.geotoolkit.storage.rs.CodedResource;
+import org.geotoolkit.storage.rs.internal.shared.CodedCoverageAsFeatureSet;
 import org.geotoolkit.storage.rs.internal.shared.s2.Factory;
 import org.locationtech.jts.geom.CoordinateSequence;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -137,7 +137,7 @@ public final class DiscreteGlobalGridSystems {
     /**
      * View given FeatureSet as a DiscreteGlobalGridResource.
      */
-    public static ReferencedGridResource viewAsDggrs(FeatureSet base, DiscreteGlobalGridReferenceSystem dggrs) throws DataStoreException, IncommensurableException {
+    public static CodedResource viewAsDggrs(FeatureSet base, DiscreteGlobalGridReferenceSystem dggrs) throws DataStoreException, IncommensurableException {
         return new FeatureSetAsDiscreteGlobalGridResource(dggrs, base);
     }
 
@@ -152,7 +152,7 @@ public final class DiscreteGlobalGridSystems {
      * View given DiscreteGlobalGridCoverage as a FeatureSet.
      */
     public static FeatureSet viewAsFeatureSet(DiscreteGlobalGridCoverage coverage, boolean idAsLong, String geometryType) {
-        return new ReferencedGridCoverageAsFeatureSet(coverage, idAsLong, geometryType);
+        return new CodedCoverageAsFeatureSet(coverage, idAsLong, geometryType);
     }
 
     /**

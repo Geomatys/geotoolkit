@@ -16,16 +16,16 @@
  */
 package org.geotoolkit.storage.dggs;
 
-import org.geotoolkit.storage.rs.AddressIterator;
-import org.geotoolkit.storage.rs.ReferencedGridCoverage;
-import org.geotoolkit.storage.rs.WritableAddressIterator;
+import org.geotoolkit.storage.rs.CodeIterator;
+import org.geotoolkit.storage.rs.CodedCoverage;
+import org.geotoolkit.storage.rs.WritableCodeIterator;
 
 /**
  * A coverage which is structured by a collection of Zone defined by a DiscreteGlobalGridReferenceSystem.
  *
  * @author Johann Sorel (Geomatys)
  */
-public abstract class DiscreteGlobalGridCoverage extends ReferencedGridCoverage {
+public abstract class DiscreteGlobalGridCoverage extends CodedCoverage {
 
     /**
      * Returns the coverage geometry.
@@ -42,7 +42,7 @@ public abstract class DiscreteGlobalGridCoverage extends ReferencedGridCoverage 
      * @return iterator, not null
      */
     @Override
-    public abstract AddressIterator createIterator();
+    public abstract CodeIterator createIterator();
 
     /**
      * Create a writable iterator over the coverage zones.
@@ -51,5 +51,5 @@ public abstract class DiscreteGlobalGridCoverage extends ReferencedGridCoverage 
      * @return writable iterator, not null
      */
     @Override
-    public abstract WritableAddressIterator createWritableIterator();
+    public abstract WritableCodeIterator createWritableIterator();
 }
