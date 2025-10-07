@@ -18,9 +18,9 @@ package org.geotoolkit.dggal;
 
 import java.util.List;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.referencing.dggs.CellConstraints;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridHierarchy;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridSystem;
+import org.geotoolkit.referencing.dggs.GridConstraints;
 import org.geotoolkit.referencing.dggs.PolyhedronOrientation;
 import org.geotoolkit.referencing.dggs.RefinementStrategy;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -90,8 +90,8 @@ final class DGGALDggs implements DiscreteGlobalGridSystem {
     }
 
     @Override
-    public CellConstraints getCellConstraints() {
-        return new CellConstraints(false, true, false, false, true);
+    public List<GridConstraints> getGridConstraints() {
+        return List.of();
     }
 
 }

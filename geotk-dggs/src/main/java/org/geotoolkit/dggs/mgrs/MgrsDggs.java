@@ -18,9 +18,9 @@ package org.geotoolkit.dggs.mgrs;
 
 import java.util.List;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.referencing.dggs.CellConstraints;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridHierarchy;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridSystem;
+import org.geotoolkit.referencing.dggs.GridConstraints;
 import org.geotoolkit.referencing.dggs.PolyhedronOrientation;
 import org.geotoolkit.referencing.dggs.PolyhedronParameters;
 import org.geotoolkit.referencing.dggs.RefinementStrategy;
@@ -84,7 +84,7 @@ final class MgrsDggs implements DiscreteGlobalGridSystem {
     }
 
     @Override
-    public CellConstraints getCellConstraints() {
-        return new CellConstraints(false, false, false, false, false);
+    public List<GridConstraints> getGridConstraints() {
+        return List.of();
     }
 }

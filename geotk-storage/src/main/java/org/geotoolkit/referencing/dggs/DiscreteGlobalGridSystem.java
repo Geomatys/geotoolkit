@@ -54,9 +54,11 @@ public interface DiscreteGlobalGridSystem {
     List<RefinementStrategy> getRefinementStrategy();
 
     /**
-     * @return geometric properties of each cell in the DGGS
+     * List of characteristics that constraint the grid cells in this DGGS in decreasing order of priority.
+     *
+     * @return list, never null.
      */
-    CellConstraints getCellConstraints();
+    List<GridConstraints> getGridConstraints();
 
     /**
      * @return number of spatial dimensions
