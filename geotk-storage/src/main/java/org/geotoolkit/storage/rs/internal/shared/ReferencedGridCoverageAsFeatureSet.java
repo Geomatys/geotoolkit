@@ -34,6 +34,7 @@ import org.apache.sis.feature.privy.AttributeConvention;
 import org.apache.sis.storage.AbstractFeatureSet;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.collection.BackingStoreException;
+import org.apache.sis.util.iso.Names;
 import org.apache.sis.util.privy.AbstractIterator;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridSystems;
@@ -272,7 +273,7 @@ public final class ReferencedGridCoverageAsFeatureSet extends AbstractFeatureSet
     public static AttributeTypeBuilder<?>[] toFeatureType(FeatureTypeBuilder ftb, List<SampleDimension> sampleDimensions) {
         final AttributeTypeBuilder[] samples = new AttributeTypeBuilder[sampleDimensions.size()];
         for (int i = 0; i < samples.length; i++) {
-            final GenericName name = sampleDimensions.get(i).getName();
+            final GenericName name = Names.createLocalName(null, null, "Band " + i + " " + sampleDimensions.get(i).getName().tip().toString());
             samples[i] = ftb.addAttribute(Double.class).setName(name);
         }
         return samples;

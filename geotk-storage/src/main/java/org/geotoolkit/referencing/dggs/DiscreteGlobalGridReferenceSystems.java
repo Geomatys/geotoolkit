@@ -31,11 +31,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.stream.Stream;
 import javax.imageio.ImageIO;
 import org.apache.sis.image.ImageProcessor;
@@ -57,7 +57,10 @@ import org.opengis.util.NoSuchIdentifierException;
  */
 public final class DiscreteGlobalGridReferenceSystems {
 
-    private static final Map<String, DiscreteGlobalGridReferenceSystemFactory> DGGRS = new LinkedHashMap<>();
+    /**
+     * Store and keep DGGRS list in a consistant order.
+     */
+    private static final Map<String, DiscreteGlobalGridReferenceSystemFactory> DGGRS = new TreeMap<>();
 
     static {
         final Iterator<DiscreteGlobalGridReferenceSystemFactory> ite = ServiceLoader.load(DiscreteGlobalGridReferenceSystemFactory.class).iterator();

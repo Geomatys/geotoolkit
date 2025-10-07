@@ -130,4 +130,12 @@ final class NHealpixDgg extends AbstractDiscreteGlobalGrid {
         }
     }
 
+    @Override
+    public Stream<Zone> getZones(Zone parent) throws TransformException {
+        final int parentDepth = parent.getLocationType().getRefinementLevel();
+        if (parent.getLocationType().getRefinementLevel() > level) {
+            throw new IllegalArgumentException("Parent zone is at a lower level then this grid");
+        }
+        return parent.getChildrenAtRelativeDepth(level-parentDepth);
+    }
 }

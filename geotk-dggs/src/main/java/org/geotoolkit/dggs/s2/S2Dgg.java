@@ -105,6 +105,14 @@ final class S2Dgg extends AbstractDiscreteGlobalGrid {
                 }
             }).mapToLong(S2CellId::id).mapToObj((id) -> new S2Zone((S2Dggrs) hierarchy.dggrs, id));
         }
+    }
 
+    @Override
+    public Stream<Zone> getZones(Zone parent) throws TransformException {
+        final int parentDepth = parent.getLocationType().getRefinementLevel();
+        if (parent.getLocationType().getRefinementLevel() > level) {
+            throw new IllegalArgumentException("Parent zone is at a lower level then this grid");
+        }
+        return parent.getChildrenAtRelativeDepth(level-parentDepth);
     }
 }

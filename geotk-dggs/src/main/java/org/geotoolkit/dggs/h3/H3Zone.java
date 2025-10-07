@@ -50,6 +50,14 @@ final class H3Zone implements Zone {
     private final H3Dggrs dggrs;
     private final long hash;
 
+    //cached values, H3 is slow compared to other DGGRS, caching improves things
+    //we do not synchronize those values since they produce the same result on each computation
+    //synchronize would only slow this class down, and we want it fast, worse case sceanary values will be computed a few times
+    private Double areaMeterSquare;
+    private RefinementLevel level;
+    private BoundingPolygon bounding;
+    private DirectPosition position;
+
     public H3Zone(H3Dggrs dggrs, long hash) {
         this.dggrs = dggrs;
         this.hash = hash;
@@ -82,7 +90,9 @@ final class H3Zone implements Zone {
 
     @Override
     public Double getAreaMetersSquare() {
-        return H3Dggrs.H3.getHexagonAreaAvg(H3Dggrs.H3.getResolution(hash), AreaUnit.m2);
+        if (areaMeterSquare != null) return areaMeterSquare;
+        areaMeterSquare = H3Dggrs.H3.getHexagonAreaAvg(H3Dggrs.H3.getResolution(hash), AreaUnit.m2);
+        return areaMeterSquare;
     }
 
     @Override
@@ -97,8 +107,9 @@ final class H3Zone implements Zone {
 
     @Override
     public RefinementLevel getLocationType() {
-        final int level = H3Dggrs.H3.getResolution(hash);
-        return new RefinementLevel(dggrs, level);
+        if (level != null) return level;
+        level = new RefinementLevel(dggrs, H3Dggrs.H3.getResolution(hash));
+        return level;
     }
 
     @Override
@@ -305,19 +316,23 @@ final class H3Zone implements Zone {
 
     @Override
     public BoundingPolygon getGeographicExtent() {
+        if (bounding != null) return bounding;
         final List<LatLng> boundary = H3Dggrs.H3.cellToBoundary(hash);
         if (boundary == null) return null;
         final List<S2Point> contour = new ArrayList<>(boundary.size());
         for (LatLng ll : boundary) {
             contour.add(S2LatLng.fromDegrees(ll.lat, ll.lng).toPoint());
         }
-        return DiscreteGlobalGridSystems.toGeographicExtent(new S2Polygon(new S2Loop(contour)));
+        bounding = DiscreteGlobalGridSystems.toGeographicExtent(new S2Polygon(new S2Loop(contour)));
+        return bounding;
     }
 
     @Override
     public DirectPosition getPosition() {
+        if (position != null) return position;
         final LatLng latLng = H3Dggrs.H3.cellToLatLng(hash);
-        return new DirectPosition2D(CRS84.getCoordinateReferenceSystem(), latLng.lng, latLng.lat);
+        position = new DirectPosition2D(CRS84.getCoordinateReferenceSystem(), latLng.lng, latLng.lat);
+        return position;
     }
 
     @Override

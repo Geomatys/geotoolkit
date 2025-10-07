@@ -85,9 +85,9 @@ public class ReferencedGridGeometry {
     private final ReferencedGridTransform gridToRS;
 
     public ReferencedGridGeometry(GridGeometry grid) {
-        this(grid.getCoordinateReferenceSystem(),
-             grid.getExtent(),
-             ReferencedGridTransforms.toTransform(grid),
+        this(grid.isDefined(GridGeometry.CRS) ? grid.getCoordinateReferenceSystem() : null,
+             grid.isDefined(GridGeometry.EXTENT) ? grid.getExtent() : null,
+             grid.isDefined(GridGeometry.GRID_TO_CRS) ? ReferencedGridTransforms.toTransform(grid) : null,
              null);
     }
 
@@ -97,7 +97,7 @@ public class ReferencedGridGeometry {
         this.gridToRS = gridToRS;
         this.bbox = bbox;
 
-        final int nbDim = ReferenceSystems.getDimension(rs);
+        final int nbDim = (rs != null) ? ReferenceSystems.getDimension(rs) : ((extent != null) ? extent.getDimension() : 0);
         if (extent != null && extent.getDimension() != nbDim) {
             throw new IllegalArgumentException("Extent does not have the same number of dimension as the reference system, expected " + nbDim);
         }

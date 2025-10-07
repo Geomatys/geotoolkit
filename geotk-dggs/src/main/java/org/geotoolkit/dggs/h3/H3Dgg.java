@@ -17,6 +17,7 @@
 package org.geotoolkit.dggs.h3;
 
 import com.google.common.geometry.S2Polygon;
+import java.util.List;
 import java.util.stream.Stream;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.Utilities;
@@ -38,8 +39,22 @@ import org.opengis.util.FactoryException;
  */
 final class H3Dgg extends AbstractDiscreteGlobalGrid {
 
+    private final List<Zone> roots;
+
     public H3Dgg(H3Dggh dggh, int level) {
         super(dggh, level);
+
+        if (level == 0) {
+            roots = H3Dggrs.H3.getRes0Cells().stream().map((Long t) -> {
+                try {
+                    return dggh.getZone(t);
+                } catch (TransformException ex) {
+                    throw new BackingStoreException(ex);
+                }
+            }).toList();
+        } else {
+            roots = null;
+        }
     }
 
     @Override
@@ -114,13 +129,7 @@ final class H3Dgg extends AbstractDiscreteGlobalGrid {
 //        return children.stream().map((Long t) -> new H3Zone(dggrs, t));
 
         if (extent == null && level == 0) {
-            return H3Dggrs.H3.getRes0Cells().stream().map((Long t) -> {
-                try {
-                    return hierarchy.getZone(t);
-                } catch (TransformException ex) {
-                    throw new BackingStoreException(ex);
-                }
-            });
+            return roots.stream();
         }
 
         //search from root

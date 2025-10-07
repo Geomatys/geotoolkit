@@ -32,14 +32,12 @@ import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridOrientation;
 import org.apache.sis.coverage.grid.GridRoundingMode;
-import org.apache.sis.coverage.grid.PixelInCell;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometries.math.DataType;
 import org.apache.sis.geometries.math.SampleSystem;
 import org.apache.sis.geometries.math.TupleArray;
 import org.apache.sis.geometries.math.TupleArrays;
 import org.apache.sis.referencing.CRS;
-import org.apache.sis.referencing.operation.transform.TransformSeparator;
 import org.apache.sis.storage.AbstractResource;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
@@ -60,7 +58,6 @@ import org.opengis.geometry.Envelope;
 import org.opengis.referencing.ReferenceSystem;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.SingleCRS;
-import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
@@ -95,7 +92,7 @@ public final class GridAsReferencedGridResource extends AbstractResource impleme
                 ReferencedGridGeometry rrg = new ReferencedGridGeometry(dggrs, new GridExtent(null, 0, 0, true), ReferencedGridTransforms.toTransform(dggrs), null);
                 parts.add(rrg);
             } else {
-                final GridGeometry crsSlice = slice(sourceGridGeometry, s);
+                final GridGeometry crsSlice = ReferencedGridTransforms.slice(sourceGridGeometry, s);
                 parts.add(new ReferencedGridGeometry(crsSlice));
             }
         }
@@ -227,29 +224,6 @@ public final class GridAsReferencedGridResource extends AbstractResource impleme
         return target;
     }
 
-    private static GridGeometry slice(GridGeometry base, CoordinateReferenceSystem crs) throws FactoryException {
-        final List<SingleCRS> singles = (List) ReferenceSystems.getSingleComponents(base.getCoordinateReferenceSystem(), true);
-        int idx = 0;
-        for (SingleCRS s : singles) {
-            if (s == crs) {
-                break;
-            }
-            idx += s.getCoordinateSystem().getDimension();
-        }
-
-        final MathTransform gridToCRS = base.getGridToCRS(PixelInCell.CELL_CENTER);
-        final TransformSeparator ts = new TransformSeparator(gridToCRS);
-        ts.addTargetDimensions(idx);
-        final MathTransform trs = ts.separate();
-        final int[] sourceDimensions = ts.getSourceDimensions();
-
-        if (sourceDimensions.length == 1) {
-            return base.selectDimensions(sourceDimensions);
-        } else {
-            throw new UnsupportedOperationException();
-        }
-    }
-
     private static GridGeometry toGridGeometry(ReferencedGridGeometry geometry) throws FactoryException {
 
         final List<ReferenceSystem> all = ReferenceSystems.getSingleComponents(geometry.getReferenceSystem(), true);
@@ -300,7 +274,7 @@ public final class GridAsReferencedGridResource extends AbstractResource impleme
                     Optional<ReferencedGridGeometry> slice = base.slice(rs);
                     if (!slice.isPresent()) {
                         //copy it from the missing geometry
-                        parts.add(new ReferencedGridGeometry(slice(toAppend, crs)));
+                        parts.add(new ReferencedGridGeometry(ReferencedGridTransforms.slice(toAppend, crs)));
                     } else {
                         parts.add(slice.get());
                     }

@@ -29,6 +29,7 @@ import org.geotoolkit.referencing.rs.ReferenceSystems;
 import org.geotoolkit.storage.rs.ReferencedGridTransform;
 import org.opengis.referencing.ReferenceSystem;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
@@ -61,6 +62,36 @@ public final class ReferencedGridTransforms {
             rgt = new Compound(rgt, (SubTransform) trss[2]);
         }
         return rgt;
+    }
+
+    /**
+     * Try to extract a crs part from grid geometry.
+     *
+     * @param base
+     * @param crs
+     * @return
+     * @throws FactoryException
+     */
+    public static GridGeometry slice(GridGeometry base, CoordinateReferenceSystem crs) throws FactoryException {
+        final List<SingleCRS> singles = (List) ReferenceSystems.getSingleComponents(base.getCoordinateReferenceSystem(), true);
+        int idx = 0;
+        for (SingleCRS s : singles) {
+            if (s == crs) {
+                break;
+            }
+            idx += s.getCoordinateSystem().getDimension();
+        }
+        if (idx == base.getDimension()) {
+            throw new FactoryException("Slice crs not found");
+        }
+
+        final MathTransform gridToCRS = base.getGridToCRS(PixelInCell.CELL_CENTER);
+        final TransformSeparator ts = new TransformSeparator(gridToCRS);
+        ts.addTargetDimensionRange(idx, idx+crs.getCoordinateSystem().getDimension());
+        final MathTransform trs = ts.separate();
+        final int[] sourceDimensions = ts.getSourceDimensions();
+
+        return base.selectDimensions(sourceDimensions);
     }
 
     private static abstract class SubTransform implements ReferencedGridTransform {
@@ -159,7 +190,7 @@ public final class ReferencedGridTransforms {
 
         @Override
         public ReferenceSystem getRS() {
-            return grid.getCoordinateReferenceSystem();
+            return grid.isDefined(GridGeometry.CRS) ? grid.getCoordinateReferenceSystem() : null;
         }
 
         @Override

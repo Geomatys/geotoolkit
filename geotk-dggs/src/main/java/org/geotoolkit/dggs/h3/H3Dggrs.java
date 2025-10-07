@@ -51,14 +51,6 @@ import org.opengis.util.InternationalString;
  */
 public final class H3Dggrs extends DiscreteGlobalGridReferenceSystem {
 
-    /**
-     * Identifier for this reference system.
-     */
-    public static final String IDENTIFIER = "H3";
-    public static final H3Dggrs INSTANCE = new H3Dggrs();
-
-    private static final ZonalReferenceSystem ZRS = new DefaultZonalReferenceSystem("default", "", true);
-
     static final H3Core H3;
 
     static {
@@ -68,6 +60,15 @@ public final class H3Dggrs extends DiscreteGlobalGridReferenceSystem {
             throw new RuntimeException(ex);
         }
     }
+    
+    /**
+     * Identifier for this reference system.
+     */
+    public static final String IDENTIFIER = "H3";
+    public static final H3Dggrs INSTANCE = new H3Dggrs();
+
+    private static final ZonalReferenceSystem ZRS = new DefaultZonalReferenceSystem("default", "", true);
+
 
     private final H3Dggs dggs;
 
