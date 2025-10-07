@@ -32,7 +32,7 @@ import org.geotoolkit.referencing.dggs.PolyhedronParameters;
  */
 final class H3Dggs implements DiscreteGlobalGridSystem {
 
-    private final H3Dggh dggh;
+    final H3Dggh dggh;
 
     public H3Dggs(H3Dggrs dggrs) {
         this.dggh = new H3Dggh(dggrs);

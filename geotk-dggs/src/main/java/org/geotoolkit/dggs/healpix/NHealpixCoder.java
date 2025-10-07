@@ -55,7 +55,7 @@ final class NHealpixCoder extends DiscreteGlobalGridReferenceSystem.Coder{
 
     public NHealpixCoder(NHealpixDggrs dggrs) {
         this.dggrs = dggrs;
-        this.baseCrs = this.dggrs.getGridSystem().getCrs();
+        this.baseCrs = this.dggrs.dggs.getCrs();
     }
 
     @Override

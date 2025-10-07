@@ -22,34 +22,29 @@ import com.google.common.geometry.S2Point;
 import com.google.common.geometry.S2Polygon;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import org.apache.sis.geometries.math.SampleSystem;
 import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridSystems;
 import org.geotoolkit.referencing.dggs.RefinementLevel;
 import org.geotoolkit.referencing.dggs.Zone;
+import org.geotoolkit.referencing.dggs.internal.shared.AbstractZone;
 import org.opengis.geometry.DirectPosition;
-import org.opengis.metadata.citation.Party;
 import org.opengis.metadata.extent.BoundingPolygon;
-import org.opengis.metadata.extent.TemporalExtent;
-import org.opengis.util.InternationalString;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-final class DGGALZone implements Zone {
+final class DGGALZone extends AbstractZone<DGGALDggrs> {
 
     private static final SampleSystem CRS84 = SampleSystem.of(CommonCRS.WGS84.normalizedGeographic());
 
-    private final DGGALDggrs dggrs;
     private final long hash;
 
     public DGGALZone(DGGALDggrs dggrs, long hash) {
-        this.dggrs = dggrs;
+        super(dggrs);
         this.hash = hash;
     }
 
@@ -66,15 +61,10 @@ final class DGGALZone implements Zone {
     @Override
     public CharSequence getTextIdentifier() {
         try {
-            return dggrs.dggrs.getZoneTextID(hash);
+            return dggrs.dggal.getZoneTextID(hash);
         } catch (Throwable ex) {
             throw new RuntimeException(ex);
         }
-    }
-
-    @Override
-    public Collection<? extends InternationalString> getAlternativeGeographicIdentifiers() {
-        return Collections.EMPTY_LIST;
     }
 
     @Override
@@ -85,27 +75,17 @@ final class DGGALZone implements Zone {
     @Override
     public Double getAreaMetersSquare() {
         try {
-            return dggrs.dggrs.getZoneArea(hash);
+            return dggrs.dggal.getZoneArea(hash);
         } catch (Throwable ex) {
             throw new RuntimeException(ex);
         }
     }
 
     @Override
-    public Double volumeMetersCube() {
-        return null;
-    }
-
-    @Override
-    public Double temporalDurationSeconds() {
-        return null;
-    }
-
-    @Override
     public RefinementLevel getLocationType() {
         final int level;
         try {
-            level = dggrs.dggrs.getZoneLevel(hash);
+            level = dggrs.dggal.getZoneLevel(hash);
         } catch (Throwable ex) {
             throw new RuntimeException(ex);
         }
@@ -113,10 +93,55 @@ final class DGGALZone implements Zone {
     }
 
     @Override
+    public boolean isNeighbor(Object zone) {
+        try {
+            return dggrs.dggal.areZonesNeighbors(hash, dggrs.dggs.dggh.toLongIdentifier(zone)) != 0;
+        } catch (Throwable ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    @Override
+    public boolean isSibling(Object zone) {
+        try {
+            return dggrs.dggal.areZonesSiblings(hash, dggrs.dggs.dggh.toLongIdentifier(zone)) != 0;
+        } catch (Throwable ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    @Override
+    public boolean isAncestorOf(Object zone, int maxRelativeDepth) {
+        try {
+            return dggrs.dggal.isZoneAncestorOf(hash, dggrs.dggs.dggh.toLongIdentifier(zone), maxRelativeDepth) != 0;
+        } catch (Throwable ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    @Override
+    public boolean isDescendantOf(Object zone, int maxRelativeDepth) {
+        try {
+            return dggrs.dggal.isZoneDescendantOf(hash, dggrs.dggs.dggh.toLongIdentifier(zone), maxRelativeDepth) != 0;
+        } catch (Throwable ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    @Override
+    public boolean overlaps(Object zone) {
+        try {
+            return dggrs.dggal.doZonesOverlap(hash, dggrs.dggs.dggh.toLongIdentifier(zone)) != 0;
+        } catch (Throwable ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    @Override
     public Collection<? extends Zone> getParents() {
         long[] candidates;
         try {
-            candidates = dggrs.dggrs.getZoneParents(hash);
+            candidates = dggrs.dggal.getZoneParents(hash);
         } catch (Throwable ex) {
             throw new RuntimeException(ex);
         }
@@ -132,7 +157,7 @@ final class DGGALZone implements Zone {
     public Collection<? extends Zone> getChildren() {
         long[] candidates;
         try {
-            candidates = dggrs.dggrs.getZoneChildren(hash);
+            candidates = dggrs.dggal.getZoneChildren(hash);
         } catch (Throwable ex) {
             throw new RuntimeException(ex);
         }
@@ -148,7 +173,7 @@ final class DGGALZone implements Zone {
     public Collection<? extends Zone> getNeighbors() {
         long[] candidates;
         try {
-            candidates = dggrs.dggrs.getZoneNeighbors(hash);
+            candidates = dggrs.dggal.getZoneNeighbors(hash);
         } catch (Throwable ex) {
             throw new RuntimeException(ex);
         }
@@ -161,15 +186,10 @@ final class DGGALZone implements Zone {
     }
 
     @Override
-    public TemporalExtent getTemporalExtent() {
-        return null;
-    }
-
-    @Override
     public BoundingPolygon getGeographicExtent() {
         double[] boundary;
         try {
-            boundary = dggrs.dggrs.getZoneWGS84Vertices(hash);
+            boundary = dggrs.dggal.getZoneWGS84Vertices(hash);
         } catch (Throwable ex) {
             throw new RuntimeException(ex);
         }
@@ -191,48 +211,12 @@ final class DGGALZone implements Zone {
     public DirectPosition getPosition() {
         double[] centroid;
         try {
-            centroid = dggrs.dggrs.getZoneWGS84Centroid(hash);
+            centroid = dggrs.dggal.getZoneWGS84Centroid(hash);
         } catch (Throwable ex) {
             throw new RuntimeException(ex);
         }
         return new DirectPosition2D(CRS84.getCoordinateReferenceSystem(),
                 Math.toDegrees(centroid[1]),
                 Math.toDegrees(centroid[0]));
-    }
-
-    @Override
-    public Party getAdministrator() {
-        return dggrs.getOverallOwner();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final DGGALZone other = (DGGALZone) obj;
-        if (!Objects.equals(this.hash, other.hash)) {
-            return false;
-        }
-        return Objects.equals(this.dggrs, other.dggrs);
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 5;
-        hash = 53 * hash + Objects.hashCode(this.dggrs);
-        hash = 53 * hash + Objects.hashCode(this.hash);
-        return hash;
-    }
-
-    @Override
-    public String toString() {
-        return getClass().getSimpleName() + ":" + getGeographicIdentifier();
     }
 }

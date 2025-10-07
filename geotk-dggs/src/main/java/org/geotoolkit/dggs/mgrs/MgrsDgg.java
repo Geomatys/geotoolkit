@@ -37,7 +37,7 @@ import org.opengis.referencing.operation.TransformException;
  *
  * @author Johann Sorel (Geomatys)
  */
-final class MgrsDgg extends AbstractDiscreteGlobalGrid {
+final class MgrsDgg extends AbstractDiscreteGlobalGrid<MgrsDggh> {
 
     private final List<Zone> roots;
     private final MilitaryGridReferenceSystem.Coder coder;
@@ -53,7 +53,7 @@ final class MgrsDgg extends AbstractDiscreteGlobalGrid {
                 Iterator<String> codes = coder.encode(env);
                 roots = new ArrayList<>();
                 while (codes.hasNext()) {
-                    roots.add(new MgrsZone((MgrsDggrs) dggh.dggrs, codes.next()));
+                    roots.add(new MgrsZone(dggh.dggrs, codes.next()));
                 }
             } catch (TransformException ex) {
                 throw new RuntimeException(ex);
@@ -78,7 +78,7 @@ final class MgrsDgg extends AbstractDiscreteGlobalGrid {
     @Override
     public Zone getZone(DirectPosition dp) throws TransformException {
         final String zid = coder.encode(dp);
-        return new MgrsZone((MgrsDggrs) hierarchy.dggrs, zid);
+        return new MgrsZone(hierarchy.dggrs, zid);
     }
 
     @Override

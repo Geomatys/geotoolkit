@@ -19,13 +19,12 @@ package org.geotoolkit.dggs.mgrs;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGrid;
 import org.geotoolkit.referencing.dggs.Zone;
 import org.geotoolkit.referencing.dggs.internal.shared.AbstractDiscreteGlobalGridHierarchy;
-import org.opengis.referencing.operation.TransformException;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-final class MgrsDggh extends AbstractDiscreteGlobalGridHierarchy {
+final class MgrsDggh extends AbstractDiscreteGlobalGridHierarchy<MgrsDggrs> {
 
     private final DiscreteGlobalGrid[] grids;
 
@@ -56,6 +55,8 @@ final class MgrsDggh extends AbstractDiscreteGlobalGridHierarchy {
     public String toTextIdentifier(Object zoneId) throws IllegalArgumentException {
         if (zoneId instanceof CharSequence cs) {
             return cs.toString();
+        } else if (zoneId instanceof MgrsZone z) {
+            return z.getTextIdentifier().toString();
         } else {
             throw new IllegalArgumentException("Identifer not supported");
         }
@@ -67,8 +68,9 @@ final class MgrsDggh extends AbstractDiscreteGlobalGridHierarchy {
     }
 
     @Override
-    public Zone getZone(Object identifier) throws TransformException {
-        return new MgrsZone((MgrsDggrs) dggrs, toTextIdentifier(identifier));
+    public Zone getZone(Object identifier) throws IllegalArgumentException {
+        if (identifier instanceof MgrsZone z) return z;
+        return new MgrsZone(dggrs, toTextIdentifier(identifier));
     }
 
 }

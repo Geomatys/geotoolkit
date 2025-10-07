@@ -20,13 +20,12 @@ import org.geotoolkit.dggs.a5.internal.Serialization;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGrid;
 import org.geotoolkit.referencing.dggs.Zone;
 import org.geotoolkit.referencing.dggs.internal.shared.AbstractDiscreteGlobalGridHierarchy;
-import org.opengis.referencing.operation.TransformException;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-final class A5Dggh extends AbstractDiscreteGlobalGridHierarchy {
+final class A5Dggh extends AbstractDiscreteGlobalGridHierarchy<A5Dggrs> {
 
     private final DiscreteGlobalGrid[] grids;
 
@@ -54,8 +53,9 @@ final class A5Dggh extends AbstractDiscreteGlobalGridHierarchy {
     }
 
     @Override
-    public Zone getZone(Object identifier) throws TransformException {
-        return new A5Zone((A5Dggrs) dggrs, toLongIdentifier(identifier));
+    public Zone getZone(Object identifier) throws IllegalArgumentException {
+        if (identifier instanceof A5Zone z) return z;
+        return new A5Zone(dggrs, toLongIdentifier(identifier));
     }
 
     @Override
@@ -64,6 +64,8 @@ final class A5Dggh extends AbstractDiscreteGlobalGridHierarchy {
             return cs.toString();
         } else if (zoneId instanceof Long l) {
             return idAsText(l);
+        } else if (zoneId instanceof A5Zone z) {
+            return z.getTextIdentifier().toString();
         } else {
             throw new IllegalArgumentException("Identifer not supported");
         }
@@ -75,6 +77,8 @@ final class A5Dggh extends AbstractDiscreteGlobalGridHierarchy {
             return idAsLong(cs);
         } else if (zoneId instanceof Long l) {
             return l;
+        } else if (zoneId instanceof A5Zone z) {
+            return z.getLongIdentifier();
         } else {
             throw new IllegalArgumentException("Identifer not supported");
         }

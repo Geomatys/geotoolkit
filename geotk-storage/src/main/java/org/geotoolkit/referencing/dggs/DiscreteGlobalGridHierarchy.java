@@ -23,7 +23,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import org.opengis.referencing.operation.TransformException;
 
 /**
  * Series of discrete global grids organized in a hierarchy of successive levels of zone refinement,
@@ -63,9 +62,9 @@ public interface DiscreteGlobalGridHierarchy {
      *
      * @param identifier at least String and Long must be supported
      * @return Zone
-     * @throws TransformException if identifier do not exist in this DGGRS
+     * @throws IllegalArgumentException if identifier do not exist in this DGGRS
      */
-    Zone getZone(Object identifier) throws TransformException;
+    Zone getZone(Object identifier) throws IllegalArgumentException;
 
     /**
      * Ordered list of grids by refinement level.

@@ -39,7 +39,7 @@ import org.opengis.util.FactoryException;
  *
  * @author Johann Sorel (Geomatys)
  */
-final class DGGALDgg extends AbstractDiscreteGlobalGrid {
+final class DGGALDgg extends AbstractDiscreteGlobalGrid<DGGALDggh> {
 
     private final List<Zone> roots;
 
@@ -48,10 +48,10 @@ final class DGGALDgg extends AbstractDiscreteGlobalGrid {
 
         if (level == 0) {
             try {
-                final long[] roots = ((DGGALDggrs)dggh.dggrs).dggrs.listZones(0, null);
+                final long[] roots = dggh.dggrs.dggal.listZones(0, null);
                 this.roots = new ArrayList<>(roots.length);
                 for (int i = 0; i < roots.length; i++) {
-                    this.roots.add(new DGGALZone(((DGGALDggrs)dggh.dggrs), roots[i]));
+                    this.roots.add(new DGGALZone(dggh.dggrs, roots[i]));
                 }
             } catch (Throwable ex) {
                 throw new RuntimeException(ex);
@@ -63,7 +63,7 @@ final class DGGALDgg extends AbstractDiscreteGlobalGrid {
 
     @Override
     public Zone getZone(DirectPosition dp) throws TransformException {
-        final CoordinateReferenceSystem baseCrs = hierarchy.dggrs.getGridSystem().getCrs();
+        final CoordinateReferenceSystem baseCrs = hierarchy.dggrs.dggs.getCrs();
         final CoordinateReferenceSystem dpcrs = dp.getCoordinateReferenceSystem();
         if (dpcrs != null && !Utilities.equalsIgnoreMetadata(baseCrs, dpcrs)) {
             MathTransform trs;
@@ -76,7 +76,7 @@ final class DGGALDgg extends AbstractDiscreteGlobalGrid {
         }
 
         try {
-            final long zid = ((DGGALDggrs)hierarchy.dggrs).dggrs.getZoneFromWGS84Centroid(level, new double[]{
+            final long zid = hierarchy.dggrs.dggal.getZoneFromWGS84Centroid(level, new double[]{
                 Math.toRadians(dp.getCoordinate(1)),
                 Math.toRadians(dp.getCoordinate(0))});
             return hierarchy.getZone(zid);
@@ -95,9 +95,9 @@ final class DGGALDgg extends AbstractDiscreteGlobalGrid {
         if (!(parent instanceof DGGALZone d)) throw new IllegalArgumentException("Zone in not from DGGAL");
 
         try {
-            final DggalDggrs dggal = ((DGGALDggrs) hierarchy.dggrs).dggrs;
+            final DggalDggrs dggal = hierarchy.dggrs.dggal;
             final long[] subzones = dggal.getSubZones(parent.getLongIdentifier(), level - d.getLocationType().getRefinementLevel());
-            return LongStream.of(subzones).mapToObj((long value) -> new DGGALZone((DGGALDggrs) hierarchy.dggrs, value));
+            return LongStream.of(subzones).mapToObj((long value) -> new DGGALZone(hierarchy.dggrs, value));
         } catch (Throwable ex) {
             throw new TransformException(ex);
         }

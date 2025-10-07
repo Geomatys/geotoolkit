@@ -20,12 +20,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import org.apache.sis.referencing.gazetteer.MilitaryGridReferenceSystem;
 import org.geotoolkit.referencing.dggs.RefinementLevel;
 import org.geotoolkit.referencing.dggs.Zone;
+import org.geotoolkit.referencing.dggs.internal.shared.AbstractZone;
 import org.opengis.geometry.DirectPosition;
-import org.opengis.metadata.citation.Party;
 import org.opengis.metadata.extent.BoundingPolygon;
 import org.opengis.metadata.extent.TemporalExtent;
 import org.opengis.referencing.gazetteer.Location;
@@ -36,19 +35,22 @@ import org.opengis.util.InternationalString;
  *
  * @author Johann Sorel (Geomatys)
  */
-final class MgrsZone implements Zone {
+final class MgrsZone extends AbstractZone<MgrsDggrs> {
 
-    private final MgrsDggrs dggrs;
     private final Location location;
 
-    public MgrsZone(MgrsDggrs dggrs, String hash) throws TransformException {
-        this.dggrs = dggrs;
+    public MgrsZone(MgrsDggrs dggrs, String hash) throws IllegalArgumentException {
+        super(dggrs);
         final MilitaryGridReferenceSystem.Coder coder = MgrsDggrs.MGRS.createCoder();
-        location = coder.decode(hash);
+        try {
+            location = coder.decode(hash);
+        } catch (TransformException ex) {
+            throw new IllegalArgumentException(ex);
+        }
     }
 
     public MgrsZone(MgrsDggrs dggrs, Location location) {
-        this.dggrs = dggrs;
+        super(dggrs);
         this.location = location;
     }
 
@@ -73,11 +75,6 @@ final class MgrsZone implements Zone {
     }
 
     @Override
-    public Collection<? extends InternationalString> getAlternativeGeographicIdentifiers() {
-        return Collections.EMPTY_LIST;
-    }
-
-    @Override
     public String getShapeType() {
         return "rectangle";
     }
@@ -85,16 +82,6 @@ final class MgrsZone implements Zone {
     @Override
     public Double getAreaMetersSquare() {
         return 0.0;
-    }
-
-    @Override
-    public Double volumeMetersCube() {
-        return null;
-    }
-
-    @Override
-    public Double temporalDurationSeconds() {
-        return null;
     }
 
     @Override
@@ -154,39 +141,4 @@ final class MgrsZone implements Zone {
         return location.getPosition();
     }
 
-    @Override
-    public Party getAdministrator() {
-        return dggrs.getOverallOwner();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final MgrsZone other = (MgrsZone) obj;
-        if (!Objects.equals(this.location, other.location)) {
-            return false;
-        }
-        return Objects.equals(this.dggrs, other.dggrs);
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 5;
-        hash = 53 * hash + Objects.hashCode(this.dggrs);
-        hash = 53 * hash + Objects.hashCode(this.location);
-        return hash;
-    }
-
-    @Override
-    public String toString() {
-        return getClass().getSimpleName() + ":" + getGeographicIdentifier();
-    }
 }

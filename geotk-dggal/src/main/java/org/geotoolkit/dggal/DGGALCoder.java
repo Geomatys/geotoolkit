@@ -54,7 +54,7 @@ final class DGGALCoder extends DiscreteGlobalGridReferenceSystem.Coder{
     public Quantity<?> getPrecision(DirectPosition dp) {
         double area;
         try {
-            area = dggrs.dggrs.getRefZoneArea(level);
+            area = dggrs.dggal.getRefZoneArea(level);
         } catch (Throwable ex) {
             throw new RuntimeException(ex);
         }
@@ -66,7 +66,7 @@ final class DGGALCoder extends DiscreteGlobalGridReferenceSystem.Coder{
         final double v = qnt.getValue().doubleValue();
         int level;
         try {
-            level = dggrs.dggrs.getLevelFromRefZoneArea(v*v);
+            level = dggrs.dggal.getLevelFromRefZoneArea(v*v);
         } catch (Throwable ex) {
             throw new RuntimeException(ex);
         }
@@ -102,7 +102,7 @@ final class DGGALCoder extends DiscreteGlobalGridReferenceSystem.Coder{
         }
 
         try {
-            return dggrs.dggrs.getZoneFromWGS84Centroid(level, new double[]{
+            return dggrs.dggal.getZoneFromWGS84Centroid(level, new double[]{
                 Math.toRadians(dp.getCoordinate(1)),
                 Math.toRadians(dp.getCoordinate(0))});
         } catch (Throwable ex) {
@@ -112,7 +112,7 @@ final class DGGALCoder extends DiscreteGlobalGridReferenceSystem.Coder{
 
     final String idAsText(final long hash) {
         try {
-            return dggrs.dggrs.getZoneTextID(hash);
+            return dggrs.dggal.getZoneTextID(hash);
         } catch (Throwable ex) {
             throw new RuntimeException(ex);
         }
@@ -120,7 +120,7 @@ final class DGGALCoder extends DiscreteGlobalGridReferenceSystem.Coder{
 
     final long idAsLong(final CharSequence cs) {
         try {
-            return dggrs.dggrs.getZoneFromTextID(cs.toString());
+            return dggrs.dggal.getZoneFromTextID(cs.toString());
         } catch (Throwable ex) {
             throw new RuntimeException(ex);
         }

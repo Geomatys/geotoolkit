@@ -30,7 +30,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import org.apache.sis.geometries.math.SampleSystem;
 import org.apache.sis.geometries.math.Vector2D;
 import org.apache.sis.geometries.math.Vectors;
@@ -38,35 +37,32 @@ import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridSystems;
 import org.geotoolkit.referencing.dggs.RefinementLevel;
 import org.geotoolkit.referencing.dggs.Zone;
+import org.geotoolkit.referencing.dggs.internal.shared.AbstractZone;
 import org.opengis.geometry.DirectPosition;
-import org.opengis.metadata.citation.Party;
 import org.opengis.metadata.extent.BoundingPolygon;
-import org.opengis.metadata.extent.TemporalExtent;
 import org.opengis.referencing.crs.GeographicCRS;
-import org.opengis.util.InternationalString;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-final class NHealpixZone implements Zone {
+final class NHealpixZone extends AbstractZone<NHealpixDggrs> {
 
     private static final SampleSystem CRS84 = SampleSystem.of(CommonCRS.WGS84.normalizedGeographic());
 
-    private final NHealpixDggrs dggrs;
     private final long hash;
     private final int level;
     private final long npixel;
 
     public NHealpixZone(NHealpixDggrs dggrs, long hash) {
-        this.dggrs = dggrs;
+        super(dggrs);
         this.hash = hash;
         this.level = FitsSerialization.getOrder(hash)-1;
         this.npixel = FitsSerialization.getPixel(hash);
     }
 
     public NHealpixZone(NHealpixDggrs dggrs, int level, long npixel) {
-        this.dggrs = dggrs;
+        super(dggrs);
         this.hash = FitsSerialization.getHash(level+1, npixel);
         this.level = level;
         this.npixel = npixel;
@@ -96,11 +92,6 @@ final class NHealpixZone implements Zone {
     }
 
     @Override
-    public Collection<? extends InternationalString> getAlternativeGeographicIdentifiers() {
-        return Collections.EMPTY_LIST;
-    }
-
-    @Override
     public String getShapeType() {
         return "square";
     }
@@ -112,16 +103,6 @@ final class NHealpixZone implements Zone {
             case 0 : return surfaceArea / 12; // root cells
             default : return (surfaceArea / 12) / Math.pow(4, level-1);
         }
-    }
-
-    @Override
-    public Double volumeMetersCube() {
-        return null;
-    }
-
-    @Override
-    public Double temporalDurationSeconds() {
-        return null;
     }
 
     @Override
@@ -164,11 +145,6 @@ final class NHealpixZone implements Zone {
     }
 
     @Override
-    public TemporalExtent getTemporalExtent() {
-        return null;
-    }
-
-    @Override
     public BoundingPolygon getGeographicExtent() {
         final VerticesAndPathComputer nested = Healpix.getNested(level).newVerticesAndPathComputer();
         final Vector2D.Double north = toLonLat(nested.vertex(npixel, CompassPoint.Cardinal.N));
@@ -189,42 +165,6 @@ final class NHealpixZone implements Zone {
         final VerticesAndPathComputer nested = Healpix.getNested(level).newVerticesAndPathComputer();
         final double[] center = nested.center(npixel);
         return Vectors.asDirectPostion(toLonLat(center));
-    }
-
-    @Override
-    public Party getAdministrator() {
-        return dggrs.getOverallOwner();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final NHealpixZone other = (NHealpixZone) obj;
-        if (!Objects.equals(this.hash, other.hash)) {
-            return false;
-        }
-        return Objects.equals(this.dggrs, other.dggrs);
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 5;
-        hash = 53 * hash + Objects.hashCode(this.dggrs);
-        hash = 53 * hash + Objects.hashCode(this.hash);
-        return hash;
-    }
-
-    @Override
-    public String toString() {
-        return getClass().getSimpleName() + ":" + getGeographicIdentifier();
     }
 
     /**

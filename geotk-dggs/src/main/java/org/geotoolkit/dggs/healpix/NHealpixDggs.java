@@ -32,7 +32,7 @@ import org.geotoolkit.referencing.dggs.PolyhedronParameters;
  */
 final class NHealpixDggs implements DiscreteGlobalGridSystem {
 
-    private final NHealpixDggh dggh;
+    final NHealpixDggh dggh;
 
     public NHealpixDggs(NHealpixDggrs dggrs) {
         this.dggh = new NHealpixDggh(dggrs);

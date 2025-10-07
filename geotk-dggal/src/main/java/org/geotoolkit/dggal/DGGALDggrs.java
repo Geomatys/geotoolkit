@@ -51,7 +51,7 @@ import org.opengis.util.InternationalString;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class DGGALDggrs extends DiscreteGlobalGridReferenceSystem {
+public final class DGGALDggrs extends DiscreteGlobalGridReferenceSystem {
 
     public static final String HEALPIX_IDENTIFIER = "HEALPix";
     public static final String ISEA3H_IDENTIFIER = "ISEA3H";
@@ -93,25 +93,25 @@ public class DGGALDggrs extends DiscreteGlobalGridReferenceSystem {
 
     private static final ZonalReferenceSystem ZRS = new DefaultZonalReferenceSystem("default", "", true);
 
-    static DGGAL dggal;
-    static MemorySegment mod;
+    private static DGGAL binding;
+    private static MemorySegment mod;
 
     static synchronized DggalDggrs load(String name) {
         try {
-            if (dggal == null) {
-                dggal = DGGAL.global();
-                mod = dggal.init();
+            if (binding == null) {
+                binding = DGGAL.global();
+                mod = binding.init();
             }
-            return dggal.newDggrs(mod, name);
+            return binding.newDggrs(mod, name);
         } catch (Throwable ex) {
             throw new RuntimeException(ex);
         }
     }
 
-    final DggalDggrs dggrs;
+    final DggalDggrs dggal;
     private final String identifier;
     private final String description;
-    private final DGGALDggs dggs;
+    final DGGALDggs dggs;
 
 
     public DGGALDggrs(DggalDggrs dggrs,
@@ -119,7 +119,7 @@ public class DGGALDggrs extends DiscreteGlobalGridReferenceSystem {
             String description) {
         super(properties(identifier, identifier, null), types(identifier));
         ArgumentChecks.ensureNonNull("dggrs", dggrs);
-        this.dggrs = dggrs;
+        this.dggal = dggrs;
         this.identifier = identifier;
         this.description = description;
         try {

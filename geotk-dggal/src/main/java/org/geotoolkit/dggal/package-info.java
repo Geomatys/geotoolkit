@@ -31,28 +31,27 @@
  * DGGAL_DGGRS_getZoneNeighbors              Zone.getNeighbors()
  * DGGAL_DGGRS_getZoneWGS84Extent            Zone.getEnvelope()
  * DGGAL_DGGRS_listZones                     DiscreteGlobalGrid.getZones(envelope)
- * DGGAL_DGGRS_getZoneRefinedWGS84Vertices   -
  * DGGAL_DGGRS_getSubZones                   DiscreteGlobalGrid.getZones(parent)
  * DGGAL_DGGRS_getZoneFromWGS84Centroid      DiscreteGlobalGrid.getZone(position)
- * DGGAL_DGGRS_getFirstSubZone               -
  * DGGAL_DGGRS_getSubZoneAtIndex             DiscreteGlobalGrid.getZones(parent).skip(index)
- * DGGAL_DGGRS_getSubZoneIndex               -
  * DGGAL_DGGRS_getSubZoneCRSCentroids        DiscreteGlobalGrid.getZones(parent) + Zone.getPosition() + any transform
  * DGGAL_DGGRS_getSubZoneWGS84Centroids      DiscreteGlobalGrid.getZones(parent) + Zone.getPosition() + any transform
- * DGGAL_DGGRS_getZoneRefinedCRSVertices     -
  * DGGAL_DGGRS_getZoneCRSCentroid            Zone.getPosition() + any transform
  * DGGAL_DGGRS_getZoneCRSExtent              Zone.getEnvelope() + any transform
  * DGGAL_DGGRS_compactZones                  DiscreteGlobalGridHierarchy.compact(zones)
- * DGGAL_DGGRS_areZonesNeighbors             -
- * DGGAL_DGGRS_areZonesSiblings              -
- * DGGAL_DGGRS_doZonesOverlap                -
- * DGGAL_DGGRS_doesZoneContain               -
- * DGGAL_DGGRS_isZoneAncestorOf              -
- * DGGAL_DGGRS_isZoneContainedIn             -
- * DGGAL_DGGRS_isZoneDescendantOf            -
- * DGGAL_DGGRS_isZoneImmediateChildOf        -
- * DGGAL_DGGRS_isZoneImmediateParentOf       -
- * DGGAL_DGGRS_zoneHasSubZone                -
+ * DGGAL_DGGRS_areZonesNeighbors             Zone.isNeighbor(other)
+ * DGGAL_DGGRS_areZonesSiblings              Zone.isSibling(other)
+ * DGGAL_DGGRS_doZonesOverlap                Zone.overlaps(other)
+ * DGGAL_DGGRS_isZoneAncestorOf              Zone.isAncestorOf(other, maxRelDepth)
+ * DGGAL_DGGRS_isZoneDescendantOf            Zone.isDescendantOf(other, maxRelDepth)
+ *
+ * 
+ * The following methods have no equivalent in the API for the given reasons.
+ *
+ * Operation is handle by SIS in a different API or should not be in a DGGRS API.
+ *
+ * DGGAL_DGGRS_getZoneRefinedWGS84Vertices   -
+ * DGGAL_DGGRS_getZoneRefinedCRSVertices     -
  * DGGAL_DGGRS_getLevelFromMetersPerSubZone  -
  * DGGAL_DGGRS_getLevelFromPixelsAndExtent   -
  * DGGAL_DGGRS_getLevelFromRefZoneArea       -
@@ -61,8 +60,20 @@
  * DGGAL_DGGRS_getRefZoneArea                -
  * DGGAL_DGGRS_getScaleDenominatorFromLevel  -
  *
- * The following methods are needed for C-like programing to allocate array sizes
- * They are not available in the Java API.
+ * Redondant methods.
+ *
+ * DGGAL_DGGRS_isZoneImmediateChildOf        Zone.isDescendantOf(other, 1)
+ * DGGAL_DGGRS_isZoneImmediateParentOf       Zone.isAncestorOf(other, 1)
+ * DGGAL_DGGRS_getFirstSubZone               Zone.getChildren().limit(1)
+ * DGGAL_DGGRS_getSubZoneIndex               Zone.getChildren().filter(Objects::equals)
+ *
+ * Behavior is very specific, we fail to see the benefit of those methods.
+ *
+ * DGGAL_DGGRS_doesZoneContain               -
+ * DGGAL_DGGRS_isZoneContainedIn             -
+ * DGGAL_DGGRS_zoneHasSubZone                -
+ *
+ * Methods are needed for C-like programing to allocate array sizes, which is irrevelant in java.
  *
  * DGGAL_DGGRS_countZones                    -
  * DGGAL_DGGRS_countZoneEdges                -
@@ -71,7 +82,7 @@
  * DGGAL_DGGRS_getMaxNeighbors               -
  * DGGAL_DGGRS_getMaxParents                 -
  *
- * The folliwing methods are tighly linked to how DGGAL represent DGGRS internaly.
+ * Methods tighly linked to how DGGAL represent DGGRS internaly, they do not belong in a general API.
  *
  * DGGAL_DGGRS_getZoneCentroidParent         -
  * DGGAL_DGGRS_getZoneCentroidChild          -

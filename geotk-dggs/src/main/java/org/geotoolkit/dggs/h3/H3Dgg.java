@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.stream.Stream;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.Utilities;
-import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.referencing.dggs.Zone;
 import org.geotoolkit.referencing.dggs.internal.shared.AbstractDiscreteGlobalGrid;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridSystems;
@@ -37,7 +36,7 @@ import org.opengis.util.FactoryException;
  *
  * @author Johann Sorel (Geomatys)
  */
-final class H3Dgg extends AbstractDiscreteGlobalGrid {
+final class H3Dgg extends AbstractDiscreteGlobalGrid<H3Dggh> {
 
     private final List<Zone> roots;
 
@@ -46,11 +45,7 @@ final class H3Dgg extends AbstractDiscreteGlobalGrid {
 
         if (level == 0) {
             roots = H3Dggrs.H3.getRes0Cells().stream().map((Long t) -> {
-                try {
                     return dggh.getZone(t);
-                } catch (TransformException ex) {
-                    throw new BackingStoreException(ex);
-                }
             }).toList();
         } else {
             roots = null;
@@ -59,7 +54,7 @@ final class H3Dgg extends AbstractDiscreteGlobalGrid {
 
     @Override
     public Zone getZone(DirectPosition dp) throws TransformException {
-        final CoordinateReferenceSystem baseCrs = hierarchy.dggrs.getGridSystem().getCrs();
+        final CoordinateReferenceSystem baseCrs = hierarchy.dggrs.dggs.getCrs();
         final CoordinateReferenceSystem dpcrs = dp.getCoordinateReferenceSystem();
         if (dpcrs != null && !Utilities.equalsIgnoreMetadata(baseCrs, dpcrs)) {
             MathTransform trs;
@@ -72,7 +67,7 @@ final class H3Dgg extends AbstractDiscreteGlobalGrid {
         }
 
         final long hash = H3Dggrs.H3.latLngToCell(dp.getCoordinate(1), dp.getCoordinate(0), level);
-        return new H3Zone((H3Dggrs) hierarchy.dggrs, hash);
+        return new H3Zone(hierarchy.dggrs, hash);
     }
 
     @Override

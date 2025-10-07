@@ -27,11 +27,11 @@ import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
  *
  * @author Johann Sorel (Geomatys)
  */
-public abstract class AbstractDiscreteGlobalGridHierarchy extends AbstractList<DiscreteGlobalGrid> implements DiscreteGlobalGridHierarchy {
+public abstract class AbstractDiscreteGlobalGridHierarchy<T extends DiscreteGlobalGridReferenceSystem> extends AbstractList<DiscreteGlobalGrid> implements DiscreteGlobalGridHierarchy {
 
-    public final DiscreteGlobalGridReferenceSystem dggrs;
+    public final T dggrs;
 
-    protected AbstractDiscreteGlobalGridHierarchy(DiscreteGlobalGridReferenceSystem dggrs) {
+    protected AbstractDiscreteGlobalGridHierarchy(T dggrs) {
         ArgumentChecks.ensureNonNull("dggrs", dggrs);
         this.dggrs = dggrs;
     }

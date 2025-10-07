@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import org.apache.sis.geometries.math.SampleSystem;
 import org.apache.sis.geometries.math.Vector2D;
 import org.apache.sis.geometry.DirectPosition2D;
@@ -33,26 +32,23 @@ import org.geotoolkit.dggs.a5.internal.Cell;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridSystems;
 import org.geotoolkit.referencing.dggs.RefinementLevel;
 import org.geotoolkit.referencing.dggs.Zone;
+import org.geotoolkit.referencing.dggs.internal.shared.AbstractZone;
 import org.opengis.geometry.DirectPosition;
-import org.opengis.metadata.citation.Party;
 import org.opengis.metadata.extent.BoundingPolygon;
-import org.opengis.metadata.extent.TemporalExtent;
 import org.opengis.referencing.crs.GeographicCRS;
-import org.opengis.util.InternationalString;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-final class A5Zone implements Zone {
+final class A5Zone extends AbstractZone<A5Dggrs> {
 
     private static final SampleSystem CRS84 = SampleSystem.of(CommonCRS.WGS84.normalizedGeographic());
 
-    private final A5Dggrs dggrs;
     private final long hash;
 
     public A5Zone(A5Dggrs dggrs, long hash) {
-        this.dggrs = dggrs;
+        super(dggrs);
         this.hash = hash;
     }
 
@@ -69,11 +65,6 @@ final class A5Zone implements Zone {
     @Override
     public long getLongIdentifier() {
         return hash;
-    }
-
-    @Override
-    public Collection<? extends InternationalString> getAlternativeGeographicIdentifiers() {
-        return Collections.EMPTY_LIST;
     }
 
     @Override
@@ -98,16 +89,6 @@ final class A5Zone implements Zone {
             case 3 : return surfaceArea / 240; // the pentagons
             default : return (surfaceArea / 240) / Math.pow(4, level-3);
         }
-    }
-
-    @Override
-    public Double volumeMetersCube() {
-        return null;
-    }
-
-    @Override
-    public Double temporalDurationSeconds() {
-        return null;
     }
 
     @Override
@@ -145,11 +126,6 @@ final class A5Zone implements Zone {
     }
 
     @Override
-    public TemporalExtent getTemporalExtent() {
-        return null;
-    }
-
-    @Override
     public BoundingPolygon getGeographicExtent() {
         if (hash == 0) return null; //root sphere
         //final Vector2D.Double[] boundary = A5.cellToBoundary(hash); //default version produces a lot of vertices
@@ -169,39 +145,4 @@ final class A5Zone implements Zone {
         return new DirectPosition2D(CRS84.getCoordinateReferenceSystem(), lonlat.x, lonlat.y);
     }
 
-    @Override
-    public Party getAdministrator() {
-        return dggrs.getOverallOwner();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final A5Zone other = (A5Zone) obj;
-        if (!Objects.equals(this.hash, other.hash)) {
-            return false;
-        }
-        return Objects.equals(this.dggrs, other.dggrs);
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 5;
-        hash = 53 * hash + Objects.hashCode(this.dggrs);
-        hash = 53 * hash + Objects.hashCode(this.hash);
-        return hash;
-    }
-
-    @Override
-    public String toString() {
-        return getClass().getSimpleName() + ":" + getGeographicIdentifier();
-    }
 }

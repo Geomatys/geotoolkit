@@ -19,13 +19,12 @@ package org.geotoolkit.dggs.h3;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGrid;
 import org.geotoolkit.referencing.dggs.Zone;
 import org.geotoolkit.referencing.dggs.internal.shared.AbstractDiscreteGlobalGridHierarchy;
-import org.opengis.referencing.operation.TransformException;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-final class H3Dggh extends AbstractDiscreteGlobalGridHierarchy {
+final class H3Dggh extends AbstractDiscreteGlobalGridHierarchy<H3Dggrs> {
 
     private final DiscreteGlobalGrid[] grids;
 
@@ -59,6 +58,8 @@ final class H3Dggh extends AbstractDiscreteGlobalGridHierarchy {
             return cs.toString();
         } else if (zoneId instanceof Long l) {
             return idAsText(l);
+        } else if (zoneId instanceof H3Zone z) {
+            return z.getTextIdentifier().toString();
         } else {
             throw new IllegalArgumentException("Identifer not supported");
         }
@@ -70,14 +71,17 @@ final class H3Dggh extends AbstractDiscreteGlobalGridHierarchy {
             return idAsLong(cs);
         } else if (zoneId instanceof Long l) {
             return l;
+        } else if (zoneId instanceof H3Zone z) {
+            return z.getLongIdentifier();
         } else {
             throw new IllegalArgumentException("Identifer not supported");
         }
     }
 
     @Override
-    public Zone getZone(Object identifier) throws TransformException {
-        return new H3Zone((H3Dggrs) dggrs, toLongIdentifier(identifier));
+    public Zone getZone(Object identifier) throws IllegalArgumentException {
+        if (identifier instanceof H3Zone z) return z;
+        return new H3Zone(dggrs, toLongIdentifier(identifier));
     }
 
     static final String idAsText(final long hash) {

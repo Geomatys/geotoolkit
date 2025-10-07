@@ -25,32 +25,28 @@ import com.google.common.geometry.S2Polygon;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import org.apache.sis.geometries.math.SampleSystem;
 import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridSystems;
 import org.geotoolkit.referencing.dggs.RefinementLevel;
 import org.geotoolkit.referencing.dggs.Zone;
+import org.geotoolkit.referencing.dggs.internal.shared.AbstractZone;
 import org.opengis.geometry.DirectPosition;
-import org.opengis.metadata.citation.Party;
 import org.opengis.metadata.extent.BoundingPolygon;
-import org.opengis.metadata.extent.TemporalExtent;
-import org.opengis.util.InternationalString;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-final class S2Zone implements Zone {
+final class S2Zone extends AbstractZone<S2Dggrs> {
 
     private static final SampleSystem CRS84 = SampleSystem.of(CommonCRS.WGS84.normalizedGeographic());
 
-    private final S2Dggrs dggrs;
     private final long hash;
 
     public S2Zone(S2Dggrs dggrs, long hash) {
-        this.dggrs = dggrs;
+        super(dggrs);
         this.hash = hash;
     }
 
@@ -70,11 +66,6 @@ final class S2Zone implements Zone {
     }
 
     @Override
-    public Collection<? extends InternationalString> getAlternativeGeographicIdentifiers() {
-        return Collections.EMPTY_LIST;
-    }
-
-    @Override
     public String getShapeType() {
         return "square";
     }
@@ -82,16 +73,6 @@ final class S2Zone implements Zone {
     @Override
     public Double getAreaMetersSquare() {
         return new S2Cell(new S2CellId(hash)).exactArea();
-    }
-
-    @Override
-    public Double volumeMetersCube() {
-        return null;
-    }
-
-    @Override
-    public Double temporalDurationSeconds() {
-        return null;
     }
 
     @Override
@@ -133,11 +114,6 @@ final class S2Zone implements Zone {
     }
 
     @Override
-    public TemporalExtent getTemporalExtent() {
-        return null;
-    }
-
-    @Override
     public BoundingPolygon getGeographicExtent() {
         final S2CellId cellId = new S2CellId(hash);
         final S2Cell cell = new S2Cell(cellId);
@@ -156,39 +132,4 @@ final class S2Zone implements Zone {
         return new DirectPosition2D(CRS84.getCoordinateReferenceSystem(), latLng.lngDegrees(), latLng.latDegrees());
     }
 
-    @Override
-    public Party getAdministrator() {
-        return dggrs.getOverallOwner();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final S2Zone other = (S2Zone) obj;
-        if (!Objects.equals(this.hash, other.hash)) {
-            return false;
-        }
-        return Objects.equals(this.dggrs, other.dggrs);
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 5;
-        hash = 53 * hash + Objects.hashCode(this.dggrs);
-        hash = 53 * hash + Objects.hashCode(this.hash);
-        return hash;
-    }
-
-    @Override
-    public String toString() {
-        return getClass().getSimpleName() + ":" + getGeographicIdentifier();
-    }
 }

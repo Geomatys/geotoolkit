@@ -33,7 +33,7 @@ import org.geotoolkit.referencing.dggs.PolyhedronParameters;
 final class DGGALDggs implements DiscreteGlobalGridSystem {
 
     private final DGGALDggrs dggrs;
-    private final DGGALDggh dggh;
+    final DGGALDggh dggh;
 
     public DGGALDggs(DGGALDggrs dggrs) throws Throwable {
         this.dggrs = dggrs;
@@ -58,7 +58,7 @@ final class DGGALDggs implements DiscreteGlobalGridSystem {
     @Override
     public int getRefinementRatio() {
         try {
-            return dggrs.dggrs.getRefinementRatio();
+            return dggrs.dggal.getRefinementRatio();
         } catch (Throwable ex) {
             throw new RuntimeException(ex);
         }

@@ -60,7 +60,7 @@ public final class A5Dggrs extends DiscreteGlobalGridReferenceSystem {
 
     private static final ZonalReferenceSystem ZRS = new DefaultZonalReferenceSystem("default", "", true);
 
-    private final A5Dggs dggs;
+    final A5Dggs dggs;
 
     public A5Dggrs() {
         super(properties(IDENTIFIER, IDENTIFIER, null), types());

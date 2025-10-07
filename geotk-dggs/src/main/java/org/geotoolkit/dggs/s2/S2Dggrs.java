@@ -55,7 +55,7 @@ public final class S2Dggrs extends DiscreteGlobalGridReferenceSystem {
 
     private static final ZonalReferenceSystem ZRS = new DefaultZonalReferenceSystem("default", "", true);
 
-    private final S2Dggs dggs;
+    final S2Dggs dggs;
 
     public S2Dggrs() {
         super(properties(IDENTIFIER, IDENTIFIER, null), types());
@@ -104,9 +104,6 @@ public final class S2Dggrs extends DiscreteGlobalGridReferenceSystem {
 
     @Override
     public Coder createCoder() {
-        S2Cell c = S2Cell.fromFace(0);
-        S2CellId cid = c.id();
-        c.getVertex(0); //0-3
         return new S2Coder(this);
     }
 

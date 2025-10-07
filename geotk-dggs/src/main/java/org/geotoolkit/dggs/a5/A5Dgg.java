@@ -35,7 +35,7 @@ import org.opengis.util.FactoryException;
  *
  * @author Johann Sorel (Geomatys)
  */
-final class A5Dgg extends AbstractDiscreteGlobalGrid {
+final class A5Dgg extends AbstractDiscreteGlobalGrid<A5Dggh> {
 
     public A5Dgg(A5Dggh dggh, int level) {
         super(dggh, level);
@@ -43,7 +43,7 @@ final class A5Dgg extends AbstractDiscreteGlobalGrid {
 
     @Override
     public Zone getZone(DirectPosition dp) throws TransformException {
-        final CoordinateReferenceSystem baseCrs = hierarchy.dggrs.getGridSystem().getCrs();
+        final CoordinateReferenceSystem baseCrs = hierarchy.dggrs.dggs.getCrs();
         final CoordinateReferenceSystem dpcrs = dp.getCoordinateReferenceSystem();
         if (dpcrs != null && !Utilities.equalsIgnoreMetadata(baseCrs, dpcrs)) {
             MathTransform trs;
@@ -56,7 +56,7 @@ final class A5Dgg extends AbstractDiscreteGlobalGrid {
         }
 
         final long hash = A5.lonLatToCell(new Vector2D.Double(dp.getCoordinate(0), dp.getCoordinate(1)), level);
-        return new A5Zone((A5Dggrs) hierarchy.dggrs, hash);
+        return new A5Zone(hierarchy.dggrs, hash);
     }
 
     @Override

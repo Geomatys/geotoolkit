@@ -26,28 +26,23 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import org.apache.sis.geometries.math.SampleSystem;
 import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridSystems;
 import org.geotoolkit.referencing.dggs.RefinementLevel;
-import org.geotoolkit.referencing.dggs.Zone;
+import org.geotoolkit.referencing.dggs.internal.shared.AbstractZone;
 import org.opengis.geometry.DirectPosition;
-import org.opengis.metadata.citation.Party;
 import org.opengis.metadata.extent.BoundingPolygon;
-import org.opengis.metadata.extent.TemporalExtent;
-import org.opengis.util.InternationalString;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-final class H3Zone implements Zone {
+final class H3Zone extends AbstractZone<H3Dggrs> {
 
     private static final SampleSystem CRS84 = SampleSystem.of(CommonCRS.WGS84.normalizedGeographic());
 
-    private final H3Dggrs dggrs;
     private final long hash;
 
     //cached values, H3 is slow compared to other DGGRS, caching improves things
@@ -59,7 +54,7 @@ final class H3Zone implements Zone {
     private DirectPosition position;
 
     public H3Zone(H3Dggrs dggrs, long hash) {
-        this.dggrs = dggrs;
+        super(dggrs);
         this.hash = hash;
     }
 
@@ -79,11 +74,6 @@ final class H3Zone implements Zone {
     }
 
     @Override
-    public Collection<? extends InternationalString> getAlternativeGeographicIdentifiers() {
-        return Collections.EMPTY_LIST;
-    }
-
-    @Override
     public String getShapeType() {
         return "hexagon";
     }
@@ -93,16 +83,6 @@ final class H3Zone implements Zone {
         if (areaMeterSquare != null) return areaMeterSquare;
         areaMeterSquare = H3Dggrs.H3.getHexagonAreaAvg(H3Dggrs.H3.getResolution(hash), AreaUnit.m2);
         return areaMeterSquare;
-    }
-
-    @Override
-    public Double volumeMetersCube() {
-        return null;
-    }
-
-    @Override
-    public Double temporalDurationSeconds() {
-        return null;
     }
 
     @Override
@@ -310,11 +290,6 @@ final class H3Zone implements Zone {
     }
 
     @Override
-    public TemporalExtent getTemporalExtent() {
-        return null;
-    }
-
-    @Override
     public BoundingPolygon getGeographicExtent() {
         if (bounding != null) return bounding;
         final List<LatLng> boundary = H3Dggrs.H3.cellToBoundary(hash);
@@ -335,39 +310,4 @@ final class H3Zone implements Zone {
         return position;
     }
 
-    @Override
-    public Party getAdministrator() {
-        return dggrs.getOverallOwner();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final H3Zone other = (H3Zone) obj;
-        if (!Objects.equals(this.hash, other.hash)) {
-            return false;
-        }
-        return Objects.equals(this.dggrs, other.dggrs);
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 5;
-        hash = 53 * hash + Objects.hashCode(this.dggrs);
-        hash = 53 * hash + Objects.hashCode(this.hash);
-        return hash;
-    }
-
-    @Override
-    public String toString() {
-        return getClass().getSimpleName() + ":" + getGeographicIdentifier();
-    }
 }

@@ -121,6 +121,52 @@ public interface Zone extends Location, Comparable<Zone> {
     Collection<? extends Zone> getNeighbors();
 
     /**
+     * Test if given zone is a neighbor.
+     * They must be on the same level and share an edge.
+     *
+     * @param zone not null
+     * @return true if zones are neighbors
+     */
+    boolean isNeighbor(Object zone);
+
+    /**
+     * Test if given zone is a sibling.
+     * They must be on the same level and share a parent.
+     *
+     * @param zone not null
+     * @return true if zones are siblings
+     */
+    boolean isSibling(Object zone);
+
+    /**
+     * Test if this zone is a ancestor of given zone.
+     *
+     * @param zone not null
+     * @param maxRelativeDepth maximum relative depth to search
+     * @return true if this zone is an ancestor of given zone
+     */
+    boolean isAncestorOf(Object zone, int maxRelativeDepth);
+
+    /**
+     * Test if this zone is a descendant of given zone.
+     *
+     * @param zone not null
+     * @param maxRelativeDepth maximum relative depth to search
+     * @return true if this zone is an descendant of given zone
+     */
+    boolean isDescendantOf(Object zone, int maxRelativeDepth);
+
+    /**
+     * Test if given zone overlaps.
+     * They must be of different level and one must be a child of the other.
+     *
+     * @param zone not null
+     * @return true if zones are siblings
+     */
+    boolean overlaps(Object zone);
+
+
+    /**
      * @param depth children zones to return, a depth of 0 returns this zone.
      * @return children zones
      */

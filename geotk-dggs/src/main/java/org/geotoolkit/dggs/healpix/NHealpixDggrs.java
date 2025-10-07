@@ -57,7 +57,7 @@ public final class NHealpixDggrs extends DiscreteGlobalGridReferenceSystem {
 
     private static final ZonalReferenceSystem ZRS = new DefaultZonalReferenceSystem("default", "", true);
 
-    private final NHealpixDggs dggs;
+    final NHealpixDggs dggs;
 
     public NHealpixDggrs() {
         super(properties(IDENTIFIER, IDENTIFIER, null), types());

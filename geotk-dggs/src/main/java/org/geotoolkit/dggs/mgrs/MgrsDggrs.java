@@ -53,7 +53,7 @@ public final class MgrsDggrs extends DiscreteGlobalGridReferenceSystem {
     static final MilitaryGridReferenceSystem MGRS = new MilitaryGridReferenceSystem();
     private static final ZonalReferenceSystem ZRS = new DefaultZonalReferenceSystem("default", "", true);
 
-    private final MgrsDggs dggs;
+    final MgrsDggs dggs;
 
     public MgrsDggrs() {
         super(properties(MGRS.getName().toString(), MGRS.getName().toString(), null), types(MGRS));

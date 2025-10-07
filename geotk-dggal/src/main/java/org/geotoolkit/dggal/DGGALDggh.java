@@ -19,19 +19,18 @@ package org.geotoolkit.dggal;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGrid;
 import org.geotoolkit.referencing.dggs.Zone;
 import org.geotoolkit.referencing.dggs.internal.shared.AbstractDiscreteGlobalGridHierarchy;
-import org.opengis.referencing.operation.TransformException;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-final class DGGALDggh extends AbstractDiscreteGlobalGridHierarchy {
+final class DGGALDggh extends AbstractDiscreteGlobalGridHierarchy<DGGALDggrs> {
 
     private final DiscreteGlobalGrid[] grids;
 
     DGGALDggh(DGGALDggrs dggrs) throws Throwable {
         super(dggrs);
-        grids = new DiscreteGlobalGrid[((DGGALDggrs) dggrs).dggrs.getMaxDGGRSZoneLevel()];
+        grids = new DiscreteGlobalGrid[dggrs.dggal.getMaxDGGRSZoneLevel()];
         for (int i = 0; i < grids.length; i++) {
             grids[i] = new DGGALDgg(this, i);
         }
@@ -53,8 +52,9 @@ final class DGGALDggh extends AbstractDiscreteGlobalGridHierarchy {
     }
 
     @Override
-    public Zone getZone(Object identifier) throws TransformException {
-        return new DGGALZone((DGGALDggrs) dggrs, toLongIdentifier(identifier));
+    public Zone getZone(Object identifier) throws IllegalArgumentException {
+        if (identifier instanceof DGGALZone z) return z;
+        return new DGGALZone(dggrs, toLongIdentifier(identifier));
     }
 
     @Override
@@ -63,6 +63,8 @@ final class DGGALDggh extends AbstractDiscreteGlobalGridHierarchy {
             return cs.toString();
         } else if (zoneId instanceof Long l) {
             return idAsText(l);
+        } else if (zoneId instanceof DGGALZone z) {
+            return z.getTextIdentifier().toString();
         } else {
             throw new IllegalArgumentException("Identifer not supported");
         }
@@ -74,6 +76,8 @@ final class DGGALDggh extends AbstractDiscreteGlobalGridHierarchy {
             return idAsLong(cs);
         } else if (zoneId instanceof Long l) {
             return l;
+        } else if (zoneId instanceof DGGALZone z) {
+            return z.getLongIdentifier();
         } else {
             throw new IllegalArgumentException("Identifer not supported");
         }
@@ -81,7 +85,7 @@ final class DGGALDggh extends AbstractDiscreteGlobalGridHierarchy {
 
     final String idAsText(final long hash) {
         try {
-            return ((DGGALDggrs) dggrs).dggrs.getZoneTextID(hash);
+            return dggrs.dggal.getZoneTextID(hash);
         } catch (Throwable ex) {
             throw new RuntimeException(ex);
         }
@@ -89,7 +93,7 @@ final class DGGALDggh extends AbstractDiscreteGlobalGridHierarchy {
 
     final long idAsLong(final CharSequence cs) {
         try {
-            return ((DGGALDggrs) dggrs).dggrs.getZoneFromTextID(cs.toString());
+            return dggrs.dggal.getZoneFromTextID(cs.toString());
         } catch (Throwable ex) {
             throw new RuntimeException(ex);
         }

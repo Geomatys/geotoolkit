@@ -41,7 +41,7 @@ import org.opengis.util.FactoryException;
  *
  * @author Johann Sorel (Geomatys)
  */
-final class S2Dgg extends AbstractDiscreteGlobalGrid {
+final class S2Dgg extends AbstractDiscreteGlobalGrid<S2Dggh> {
 
     private final List<Zone> roots;
 
@@ -50,12 +50,12 @@ final class S2Dgg extends AbstractDiscreteGlobalGrid {
 
         if (level == 0) {
             roots = List.of(
-                new S2Zone((S2Dggrs) hierarchy.dggrs, S2CellId.fromFace(0).id()),
-                new S2Zone((S2Dggrs) hierarchy.dggrs, S2CellId.fromFace(1).id()),
-                new S2Zone((S2Dggrs) hierarchy.dggrs, S2CellId.fromFace(2).id()),
-                new S2Zone((S2Dggrs) hierarchy.dggrs, S2CellId.fromFace(3).id()),
-                new S2Zone((S2Dggrs) hierarchy.dggrs, S2CellId.fromFace(4).id()),
-                new S2Zone((S2Dggrs) hierarchy.dggrs, S2CellId.fromFace(5).id()));
+                new S2Zone(hierarchy.dggrs, S2CellId.fromFace(0).id()),
+                new S2Zone(hierarchy.dggrs, S2CellId.fromFace(1).id()),
+                new S2Zone(hierarchy.dggrs, S2CellId.fromFace(2).id()),
+                new S2Zone(hierarchy.dggrs, S2CellId.fromFace(3).id()),
+                new S2Zone(hierarchy.dggrs, S2CellId.fromFace(4).id()),
+                new S2Zone(hierarchy.dggrs, S2CellId.fromFace(5).id()));
         } else {
             roots = null;
         }
@@ -63,7 +63,7 @@ final class S2Dgg extends AbstractDiscreteGlobalGrid {
 
     @Override
     public Zone getZone(DirectPosition dp) throws TransformException {
-        final CoordinateReferenceSystem baseCrs = hierarchy.dggrs.getGridSystem().getCrs();
+        final CoordinateReferenceSystem baseCrs = hierarchy.dggrs.dggs.getCrs();
         final CoordinateReferenceSystem dpcrs = dp.getCoordinateReferenceSystem();
         if (dpcrs != null && !Utilities.equalsIgnoreMetadata(baseCrs, dpcrs)) {
             MathTransform trs;
@@ -76,7 +76,7 @@ final class S2Dgg extends AbstractDiscreteGlobalGrid {
         }
         S2CellId cid = S2CellId.fromLatLng(S2LatLng.fromDegrees(dp.getCoordinate(1), dp.getCoordinate(0)));
         final long zid = cid.parent(level).id();
-        return new S2Zone((S2Dggrs) hierarchy.dggrs, zid);
+        return new S2Zone(hierarchy.dggrs, zid);
     }
 
     @Override
@@ -103,7 +103,7 @@ final class S2Dgg extends AbstractDiscreteGlobalGrid {
                     if (t.level() == level) return Stream.of(t);
                     return StreamSupport.stream(t.childrenAtLevel(level).spliterator(), false);
                 }
-            }).mapToLong(S2CellId::id).mapToObj((id) -> new S2Zone((S2Dggrs) hierarchy.dggrs, id));
+            }).mapToLong(S2CellId::id).mapToObj((id) -> new S2Zone(hierarchy.dggrs, id));
         }
     }
 

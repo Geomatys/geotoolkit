@@ -22,12 +22,12 @@ import org.geotoolkit.referencing.dggs.DiscreteGlobalGrid;
  *
  * @author Johann Sorel (Geomatys)
  */
-public abstract class AbstractDiscreteGlobalGrid implements DiscreteGlobalGrid {
+public abstract class AbstractDiscreteGlobalGrid<T extends AbstractDiscreteGlobalGridHierarchy> implements DiscreteGlobalGrid {
 
-    protected final AbstractDiscreteGlobalGridHierarchy hierarchy;
+    protected final T hierarchy;
     protected final int level;
 
-    public AbstractDiscreteGlobalGrid(AbstractDiscreteGlobalGridHierarchy hierarchy, int level) {
+    public AbstractDiscreteGlobalGrid(T hierarchy, int level) {
         this.hierarchy = hierarchy;
         this.level = level;
     }

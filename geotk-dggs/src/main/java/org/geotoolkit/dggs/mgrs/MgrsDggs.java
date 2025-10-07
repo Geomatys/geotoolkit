@@ -32,7 +32,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 final class MgrsDggs implements DiscreteGlobalGridSystem {
 
-    private final MgrsDggh dggh;
+    final MgrsDggh dggh;
 
     public MgrsDggs(MgrsDggrs dggrs) {
         this.dggh = new MgrsDggh(dggrs);

@@ -60,7 +60,7 @@ public final class H3Dggrs extends DiscreteGlobalGridReferenceSystem {
             throw new RuntimeException(ex);
         }
     }
-    
+
     /**
      * Identifier for this reference system.
      */
@@ -70,7 +70,7 @@ public final class H3Dggrs extends DiscreteGlobalGridReferenceSystem {
     private static final ZonalReferenceSystem ZRS = new DefaultZonalReferenceSystem("default", "", true);
 
 
-    private final H3Dggs dggs;
+    final H3Dggs dggs;
 
     public H3Dggrs() {
         super(properties(IDENTIFIER, IDENTIFIER, null), types());

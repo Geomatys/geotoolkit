@@ -20,6 +20,7 @@ import cds.healpix.HashComputer;
 import cds.healpix.Healpix;
 import cds.healpix.HealpixNested;
 import com.google.common.geometry.S2Polygon;
+import java.util.List;
 import java.util.stream.Stream;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.Utilities;
@@ -38,8 +39,9 @@ import org.opengis.util.FactoryException;
  *
  * @author Johann Sorel (Geomatys)
  */
-final class NHealpixDgg extends AbstractDiscreteGlobalGrid {
+final class NHealpixDgg extends AbstractDiscreteGlobalGrid<NHealpixDggh> {
 
+    private final List<Zone> roots;
     private final HealpixNested healpixNested;
     private final HashComputer hashComputer;
 
@@ -47,11 +49,29 @@ final class NHealpixDgg extends AbstractDiscreteGlobalGrid {
         super(dggh, level);
         healpixNested = Healpix.getNested(level);
         hashComputer = healpixNested.newHashComputer();
+
+        if (level == 0) {
+            roots = List.of(
+                new NHealpixZone(hierarchy.dggrs, FitsSerialization.getHash(1, 0)),
+                new NHealpixZone(hierarchy.dggrs, FitsSerialization.getHash(1, 1)),
+                new NHealpixZone(hierarchy.dggrs, FitsSerialization.getHash(1, 2)),
+                new NHealpixZone(hierarchy.dggrs, FitsSerialization.getHash(1, 3)),
+                new NHealpixZone(hierarchy.dggrs, FitsSerialization.getHash(1, 4)),
+                new NHealpixZone(hierarchy.dggrs, FitsSerialization.getHash(1, 5)),
+                new NHealpixZone(hierarchy.dggrs, FitsSerialization.getHash(1, 6)),
+                new NHealpixZone(hierarchy.dggrs, FitsSerialization.getHash(1, 7)),
+                new NHealpixZone(hierarchy.dggrs, FitsSerialization.getHash(1, 8)),
+                new NHealpixZone(hierarchy.dggrs, FitsSerialization.getHash(1, 9)),
+                new NHealpixZone(hierarchy.dggrs, FitsSerialization.getHash(1, 10)),
+                new NHealpixZone(hierarchy.dggrs, FitsSerialization.getHash(1, 11)));
+        } else {
+            roots = null;
+        }
     }
 
     @Override
     public Zone getZone(DirectPosition dp) throws TransformException {
-        final CoordinateReferenceSystem baseCrs = hierarchy.dggrs.getGridSystem().getCrs();
+        final CoordinateReferenceSystem baseCrs = hierarchy.dggrs.dggs.getCrs();
         final CoordinateReferenceSystem dpcrs = dp.getCoordinateReferenceSystem();
         if (dpcrs != null && !Utilities.equalsIgnoreMetadata(baseCrs, dpcrs)) {
             MathTransform trs;
@@ -69,7 +89,7 @@ final class NHealpixDgg extends AbstractDiscreteGlobalGrid {
 
         final long hash = hashComputer.hash(lon, lat);
         final long zid = FitsSerialization.getHash(level+1, hash);
-        return new NHealpixZone((NHealpixDggrs) hierarchy.dggrs, zid);
+        return new NHealpixZone(hierarchy.dggrs, zid);
     }
 
     @Override
@@ -107,20 +127,7 @@ final class NHealpixDgg extends AbstractDiscreteGlobalGrid {
     @Override
     public Stream<Zone> getZones(GeographicExtent extent) throws TransformException {
         if (extent == null && level == 0) {
-            return Stream.of(
-                new NHealpixZone((NHealpixDggrs) hierarchy.dggrs, FitsSerialization.getHash(1, 0)),
-                new NHealpixZone((NHealpixDggrs) hierarchy.dggrs, FitsSerialization.getHash(1, 1)),
-                new NHealpixZone((NHealpixDggrs) hierarchy.dggrs, FitsSerialization.getHash(1, 2)),
-                new NHealpixZone((NHealpixDggrs) hierarchy.dggrs, FitsSerialization.getHash(1, 3)),
-                new NHealpixZone((NHealpixDggrs) hierarchy.dggrs, FitsSerialization.getHash(1, 4)),
-                new NHealpixZone((NHealpixDggrs) hierarchy.dggrs, FitsSerialization.getHash(1, 5)),
-                new NHealpixZone((NHealpixDggrs) hierarchy.dggrs, FitsSerialization.getHash(1, 6)),
-                new NHealpixZone((NHealpixDggrs) hierarchy.dggrs, FitsSerialization.getHash(1, 7)),
-                new NHealpixZone((NHealpixDggrs) hierarchy.dggrs, FitsSerialization.getHash(1, 8)),
-                new NHealpixZone((NHealpixDggrs) hierarchy.dggrs, FitsSerialization.getHash(1, 9)),
-                new NHealpixZone((NHealpixDggrs) hierarchy.dggrs, FitsSerialization.getHash(1, 10)),
-                new NHealpixZone((NHealpixDggrs) hierarchy.dggrs, FitsSerialization.getHash(1, 11))
-            );
+            return roots.stream();
         }
 
         //search from root
