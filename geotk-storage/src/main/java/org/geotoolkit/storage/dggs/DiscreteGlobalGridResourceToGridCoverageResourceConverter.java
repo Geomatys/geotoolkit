@@ -16,7 +16,7 @@ import java.util.Optional;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
 
 import static org.geotoolkit.storage.coverage.BandedCoverageResource.sample;
-import org.geotoolkit.storage.rs.Code;
+import org.geotoolkit.referencing.rs.Code;
 import org.geotoolkit.storage.rs.CodeIterator;
 import org.geotoolkit.storage.rs.CodeTransform;
 

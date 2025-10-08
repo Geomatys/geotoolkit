@@ -42,7 +42,6 @@ import org.apache.sis.coverage.grid.PixelInCell;
 import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.geometry.wrapper.jts.JTS;
 import org.apache.sis.image.PixelIterator;
-import org.apache.sis.measure.NumberRange;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
@@ -276,6 +275,12 @@ public abstract class AbstractDiscreteGlobalGridCoverage extends DiscreteGlobalG
         public Eval() {
             coder = dggrs.createCoder();
             iterator = createIterator();
+            try {
+                coder.setPrecisionLevel(AbstractDiscreteGlobalGridCoverage.this.getGeometry().getRefinementLevel());
+            } catch (IncommensurableException ex) {
+                //should not happen since the geometry has been created
+                throw new RuntimeException(ex);
+            }
         }
 
         @Override
@@ -306,19 +311,17 @@ public abstract class AbstractDiscreteGlobalGridCoverage extends DiscreteGlobalG
         @Override
         public double[] apply(DirectPosition dp) throws CannotEvaluateException {
             try {
-                final NumberRange<Integer> refinementRange = getGeometry().getRefinementRange();
-                final int minRefinement = refinementRange.getMinValue();
-                final int maxRefinement = refinementRange.getMaxValue();
-                if (minRefinement == maxRefinement) {
-                    double[] cell = apply(dp, minRefinement);
-                    if (cell != null) return cell;
-                } else {
-                    for (int i = minRefinement; i <= maxRefinement; i++) {
-                        double[] cell = apply(dp, i);
-                        if (cell != null) return cell;
+                try {
+                    final Object zoneId = coder.encodeIdentifier(dp);
+                    final Integer idx = index.get(zoneId);
+                    if (idx != null) {
+                        iterator.moveTo(new int[]{idx});
+                        return iterator.getCell((double[])null);
                     }
+                } catch (IllegalArgumentException ex) {
+                    //coordinate outside dggrs supported area
                 }
-            } catch (TransformException | IncommensurableException ex) {
+            } catch (TransformException ex) {
                 throw new CannotEvaluateException(ex.getMessage(), ex);
             }
 
@@ -327,23 +330,6 @@ public abstract class AbstractDiscreteGlobalGridCoverage extends DiscreteGlobalG
             } else {
                 throw new PointOutsideCoverageException();
             }
-        }
-
-        private double[] apply(DirectPosition dp, int level) throws CannotEvaluateException, IncommensurableException, TransformException {
-            coder.setPrecisionLevel(level);
-            final Object zoneId;
-            try {
-                zoneId = coder.encodeIdentifier(dp);
-            } catch (IllegalArgumentException ex) {
-                //coordinate outside dggrs supported area
-                return null;
-            }
-            final Integer idx = index.get(zoneId);
-            if (idx != null) {
-                iterator.moveTo(new int[]{idx});
-                return iterator.getCell((double[])null);
-            }
-            return null;
         }
 
     }

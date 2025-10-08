@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.storage.rs.internal.shared;
 
+import org.geotoolkit.referencing.rs.internal.shared.DefaultCode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -24,7 +25,7 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.PixelInCell;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.TransformSeparator;
-import org.geotoolkit.storage.rs.Code;
+import org.geotoolkit.referencing.rs.Code;
 import org.geotoolkit.referencing.rs.ReferenceSystems;
 import org.opengis.referencing.ReferenceSystem;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;

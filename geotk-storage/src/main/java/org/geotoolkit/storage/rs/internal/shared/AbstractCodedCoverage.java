@@ -307,6 +307,12 @@ public abstract class AbstractCodedCoverage extends CodedCoverage{
             coder = horizontalRs.createCoder();
             iterator = createIterator();
             lastPosTransform = new MathTransform[singleRS.size()];
+            try {
+                coder.setPrecisionLevel(AbstractCodedCoverage.this.horizontalGrid.getRefinementLevel());
+            } catch (IncommensurableException ex) {
+                //should not happen since the geometry has been created
+                throw new RuntimeException(ex);
+            }
         }
 
         @Override
@@ -337,19 +343,9 @@ public abstract class AbstractCodedCoverage extends CodedCoverage{
         @Override
         public double[] apply(DirectPosition dp) throws CannotEvaluateException {
             try {
-                final NumberRange<Integer> refinementRange = horizontalGrid.getRefinementRange();
-                final int minRefinement = (int) refinementRange.getMinDouble();
-                final int maxRefinement = (int) refinementRange.getMaxDouble();
-                if (minRefinement == maxRefinement) {
-                    double[] cell = apply(dp, minRefinement);
-                    if (cell != null) return cell;
-                } else {
-                    for (int i = minRefinement; i <= maxRefinement; i++) {
-                        double[] cell = apply(dp, i);
-                        if (cell != null) return cell;
-                    }
-                }
-            } catch (TransformException | IncommensurableException ex) {
+                double[] cell = apply2(dp);
+                if (cell != null) return cell;
+            } catch (TransformException ex) {
                 throw new CannotEvaluateException(ex.getMessage(), ex);
             }
 
@@ -360,11 +356,10 @@ public abstract class AbstractCodedCoverage extends CodedCoverage{
             }
         }
 
-        private double[] apply(DirectPosition dp, int level) throws CannotEvaluateException, IncommensurableException, TransformException {
+        private double[] apply2(DirectPosition dp) throws CannotEvaluateException, TransformException {
             updateSourceTransform(dp.getCoordinateReferenceSystem());
             final double[] coordinates = dp.getCoordinates();
 
-            coder.setPrecisionLevel(level);
             final Object zoneId;
             try {
                 zoneId = coder.encodeIdentifier(dp);

@@ -23,7 +23,6 @@ import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometries.Geometry;
 import org.apache.sis.geometries.operation.GeometryOperations;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.measure.NumberRange;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.storage.rs.CodedGeometry;
@@ -44,10 +43,15 @@ import org.geotoolkit.storage.rs.CodeTransform;
 public final class DiscreteGlobalGridGeometry extends CodedGeometry {
 
     //computed
-    private NumberRange<Integer> range;
+    private Integer depth;
     private boolean bboxComputed = false;
     private GeographicBoundingBox bbox;
 
+    /**
+     * @param dggrs not null
+     * @param zoneIds all ids are expected to be at the same depth level
+     * @param bbox can be null
+     */
     public DiscreteGlobalGridGeometry(DiscreteGlobalGridReferenceSystem dggrs, List<Object> zoneIds, GeographicBoundingBox bbox) {
         this(dggrs,
             (zoneIds == null) ? null : new GridExtent(null, 0, zoneIds.size(), false),
@@ -195,29 +199,28 @@ public final class DiscreteGlobalGridGeometry extends CodedGeometry {
     }
 
     /**
-     * @return refinement range of zone in the coverage geometry.
+     * @return refinement level of zones in the coverage geometry.
      */
-    public synchronized NumberRange<Integer> getRefinementRange() {
-        if (range != null) return range;
+    public synchronized int getRefinementLevel() {
+        if (depth != null) return depth;
 
-        //find min and max refinement levels in the cells
+        //find refinement level in the cells
+        //check all zone are at same depth
         final DiscreteGlobalGridReferenceSystem dggrs = getReferenceSystem();
         final List<Object> zones = getZoneIds();
         final DiscreteGlobalGridReferenceSystem.Coder coder = dggrs.createCoder();
-        int minRefinement = dggrs.getGridSystem().getHierarchy().getGrids().size();
-        int maxRefinement = 0;
+        Integer d = null;
         try {
             for (Object zone : zones) {
                 final int level = coder.decode(zone).getLocationType().getRefinementLevel();
-                if (level < minRefinement) minRefinement = level;
-                if (level > maxRefinement) maxRefinement = level;
+                if (d == null) d = level;
+                else if (d != level) throw new IllegalArgumentException("Geometry is composed of zones of different depth. Geometry is incorrect");
             }
         } catch (TransformException ex) {
             throw new IllegalArgumentException(ex.getMessage(), ex);
         }
-
-        range = NumberRange.create(minRefinement, true, maxRefinement, true);
-        return range;
+        depth = d;
+        return depth;
     }
 
     @Override

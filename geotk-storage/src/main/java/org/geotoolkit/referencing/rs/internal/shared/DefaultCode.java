@@ -14,14 +14,14 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.storage.rs.internal.shared;
+package org.geotoolkit.referencing.rs.internal.shared;
 
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
-import org.geotoolkit.storage.rs.Code;
+import org.geotoolkit.referencing.rs.Code;
 import org.geotoolkit.referencing.rs.ReferenceSystems;
 import org.geotoolkit.util.StringUtilities;
 import org.opengis.referencing.ReferenceSystem;

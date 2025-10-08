@@ -39,7 +39,7 @@ import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.NoSuchDataException;
 import org.apache.sis.storage.RasterLoadingStrategy;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
-import org.geotoolkit.storage.rs.Code;
+import org.geotoolkit.referencing.rs.Code;
 import org.geotoolkit.storage.rs.CodeTransform;
 import org.geotoolkit.storage.rs.internal.shared.WritableBandedCodeIterator;
 import org.opengis.geometry.DirectPosition;

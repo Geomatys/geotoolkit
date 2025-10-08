@@ -46,7 +46,7 @@ import org.apache.sis.storage.RasterLoadingStrategy;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
 import org.geotoolkit.storage.multires.TileMatrices;
-import org.geotoolkit.storage.rs.Code;
+import org.geotoolkit.referencing.rs.Code;
 import org.geotoolkit.referencing.rs.ReferenceSystems;
 import org.geotoolkit.storage.rs.CodedCoverage;
 import org.geotoolkit.storage.rs.CodedGeometry;

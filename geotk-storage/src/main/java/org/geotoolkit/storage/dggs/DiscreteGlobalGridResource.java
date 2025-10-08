@@ -41,6 +41,7 @@ public interface DiscreteGlobalGridResource extends CodedResource {
     /**
      * @return DiscreteGlobalGridGeometry, never null
      */
+    @Override
     DiscreteGlobalGridGeometry getGridGeometry();
 
     /**

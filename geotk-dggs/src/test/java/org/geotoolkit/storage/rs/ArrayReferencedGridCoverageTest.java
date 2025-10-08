@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.storage.rs;
 
+import org.geotoolkit.referencing.rs.Code;
 import org.geotoolkit.referencing.rs.ReferenceSystems;
 import java.nio.ByteBuffer;
 import java.time.Instant;

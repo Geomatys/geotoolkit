@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.storage.rs;
 
+import org.geotoolkit.referencing.rs.Code;
 import org.opengis.referencing.ReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 
