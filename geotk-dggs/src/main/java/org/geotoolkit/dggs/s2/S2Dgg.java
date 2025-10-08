@@ -115,4 +115,18 @@ final class S2Dgg extends AbstractDiscreteGlobalGrid<S2Dggh> {
         }
         return parent.getChildrenAtRelativeDepth(level-parentDepth);
     }
+
+    @Override
+    protected long getZoneLongIdentifier(double[] source, int soffset) {
+        S2CellId cid = S2CellId.fromLatLng(S2LatLng.fromDegrees(source[soffset+1], source[soffset]));
+        return cid.parent(level).id();
+    }
+
+    @Override
+    protected void getZonePosition(long zoneId, double[] target, int toffset) {
+        final S2CellId cellId = new S2CellId(zoneId);
+        final S2LatLng latLng = cellId.toLatLng();
+        target[toffset] = latLng.lngDegrees();
+        target[toffset+1] = latLng.latDegrees();
+    }
 }

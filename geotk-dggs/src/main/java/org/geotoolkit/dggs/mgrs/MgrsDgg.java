@@ -94,4 +94,14 @@ final class MgrsDgg extends AbstractDiscreteGlobalGrid<MgrsDggh> {
         }
     }
 
+    @Override
+    protected long getZoneLongIdentifier(double[] source, int soffset) {
+        throw new UnsupportedOperationException("Not supported.");
+    }
+
+    @Override
+    protected void getZonePosition(long zoneId, double[] target, int toffset) {
+        throw new UnsupportedOperationException("Not supported.");
+    }
+
 }

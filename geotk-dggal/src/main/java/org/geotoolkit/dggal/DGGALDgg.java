@@ -116,4 +116,27 @@ final class DGGALDgg extends AbstractDiscreteGlobalGrid<DGGALDggh> {
         }
     }
 
+    @Override
+    protected long getZoneLongIdentifier(double[] source, int soffset) {
+        try {
+            return hierarchy.dggrs.dggal.getZoneFromWGS84Centroid(level, new double[]{
+                Math.toRadians(source[soffset+1]),
+                Math.toRadians(source[soffset])});
+        } catch (Throwable ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    @Override
+    protected void getZonePosition(long zoneId, double[] target, int toffset) {
+        double[] centroid;
+        try {
+            centroid = hierarchy.dggrs.dggal.getZoneWGS84Centroid(zoneId);
+        } catch (Throwable ex) {
+            throw new RuntimeException(ex);
+        }
+        target[0] = Math.toDegrees(centroid[1]);
+        target[1] = Math.toDegrees(centroid[0]);
+    }
+
 }

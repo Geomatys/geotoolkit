@@ -72,4 +72,16 @@ final class A5Dgg extends AbstractDiscreteGlobalGrid<A5Dggh> {
         }
     }
 
+    @Override
+    protected long getZoneLongIdentifier(double[] source, int soffset) {
+        return A5.lonLatToCell(new Vector2D.Double(source[soffset], source[soffset+1]), level);
+    }
+
+    @Override
+    protected void getZonePosition(long zoneId, double[] target, int toffset) {
+        final Vector2D.Double lonlat = A5.cellToLonLat(zoneId);
+        target[toffset] = lonlat.x;
+        target[toffset+1] = lonlat.y;
+    }
+
 }

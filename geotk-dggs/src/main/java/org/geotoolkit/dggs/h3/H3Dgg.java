@@ -17,6 +17,7 @@
 package org.geotoolkit.dggs.h3;
 
 import com.google.common.geometry.S2Polygon;
+import com.uber.h3core.util.LatLng;
 import java.util.List;
 import java.util.stream.Stream;
 import org.apache.sis.referencing.CRS;
@@ -132,6 +133,18 @@ final class H3Dgg extends AbstractDiscreteGlobalGrid<H3Dggh> {
         try (Stream<Zone> zones = hierarchy.getGrids().get(0).getZones()) {
             return DiscreteGlobalGridSystems.spatialSearch(zones.toList(), level, geometry);
         }
+    }
+
+    @Override
+    protected long getZoneLongIdentifier(double[] source, int soffset) {
+        return H3Dggrs.H3.latLngToCell(source[soffset+1], source[soffset], level);
+    }
+
+    @Override
+    protected void getZonePosition(long zoneId, double[] target, int toffset) {
+        final LatLng latLng = H3Dggrs.H3.cellToLatLng(zoneId);
+        target[toffset] = latLng.lng;
+        target[toffset+1] = latLng.lat;
     }
 
 }

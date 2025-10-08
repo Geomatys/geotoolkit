@@ -24,6 +24,7 @@ import org.geotoolkit.storage.dggs.DiscreteGlobalGridSystems;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.extent.GeographicExtent;
+import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 
 /**
@@ -43,6 +44,30 @@ public interface DiscreteGlobalGrid {
      * @see https://docs.ogc.org/DRAFTS/21-038r1.html#term-refinement-level
      */
     int getRefinementLevel();
+
+    /**
+     * Create a math transform from long type identifiers to CRS.
+     *
+     * The returned MathTransform expect long identifiers as double values.
+     * Use Double.doubleToRawLongBits(double) to read an identifier
+     * and Double.longBitsToDouble(long) to write an identifier.
+     *
+     * @return MathTransform, never null
+     * @throws UnsupportedOperationException if long type identifiers are not supported
+     */
+    MathTransform createTransformToCrs() throws UnsupportedOperationException;
+
+    /**
+     * Create a math transform from CRS to long type identifiers.
+     *
+     * The returned MathTransform encode long identifiers as double values.
+     * Use Double.doubleToRawLongBits(double) to read an identifier
+     * and Double.longBitsToDouble(long) to write an identifier.
+     *
+     * @return MathTransform, never null
+     * @throws UnsupportedOperationException if long type identifiers are not supported
+     */
+    MathTransform createTransformToIdentifiers() throws UnsupportedOperationException;
 
     /**
      * Get all zones in at this grid level.

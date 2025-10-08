@@ -145,4 +145,21 @@ final class NHealpixDgg extends AbstractDiscreteGlobalGrid<NHealpixDggh> {
         }
         return parent.getChildrenAtRelativeDepth(level-parentDepth);
     }
+
+    @Override
+    protected long getZoneLongIdentifier(double[] source, int soffset) {
+        double lon = Math.toRadians(source[soffset]);
+        double lat = Math.toRadians(source[soffset+1]);
+        if (lon < 0) lon += Math.PI + Math.PI;
+        final long hash = hashComputer.hash(lon, lat);
+        return FitsSerialization.getHash(level+1, hash);
+    }
+
+    @Override
+    protected void getZonePosition(long zoneId, double[] target, int toffset) {
+        Zone zone = hierarchy.getZone(zoneId);
+        DirectPosition dp = zone.getPosition();
+        target[toffset] = dp.getCoordinate(0);
+        target[toffset+1] = dp.getCoordinate(1);
+    }
 }

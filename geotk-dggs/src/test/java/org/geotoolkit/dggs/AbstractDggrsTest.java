@@ -81,13 +81,11 @@ public abstract class AbstractDggrsTest {
         Assumptions.assumeTrue(!(dggrs instanceof H3Dggrs));
 
         final List<Zone> rootZoneIds = dggrs.getGridSystem().getHierarchy().getGrids().get(0).getZones().toList();
-        final DiscreteGlobalGridReferenceSystem.Coder coder = dggrs.createCoder();
 
         for (Zone zone : rootZoneIds) {
             testParentChildrenRelations(zone, 0, 4);
             testParentChildrenAtDepth(zone, 3);
         }
-
     }
 
     private void testParentChildrenRelations(Zone zone, int currentDepth, int testDepth) {
