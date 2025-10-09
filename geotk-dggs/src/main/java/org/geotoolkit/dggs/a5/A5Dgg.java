@@ -16,23 +16,72 @@
  */
 package org.geotoolkit.dggs.a5;
 
-import org.geotoolkit.storage.dggs.DiscreteGlobalGrid;
+import com.google.common.geometry.S2Polygon;
+import java.util.stream.Stream;
+import org.apache.sis.geometries.math.Vector2D;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.util.Utilities;
+import org.geotoolkit.referencing.dggs.Zone;
+import org.geotoolkit.referencing.dggs.internal.shared.AbstractDiscreteGlobalGrid;
+import org.geotoolkit.storage.dggs.DiscreteGlobalGridSystems;
+import org.opengis.geometry.DirectPosition;
+import org.opengis.metadata.extent.GeographicExtent;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-final class A5Dgg implements DiscreteGlobalGrid {
+final class A5Dgg extends AbstractDiscreteGlobalGrid<A5Dggh> {
 
-    private final int level;
-
-    public A5Dgg(int level) {
-        this.level = level;
+    public A5Dgg(A5Dggh dggh, int level) {
+        super(dggh, level);
     }
 
     @Override
-    public int getRefinementLevel() {
-        return level;
+    public Zone getZone(DirectPosition dp) throws TransformException {
+        final CoordinateReferenceSystem baseCrs = hierarchy.dggrs.dggs.getCrs();
+        final CoordinateReferenceSystem dpcrs = dp.getCoordinateReferenceSystem();
+        if (dpcrs != null && !Utilities.equalsIgnoreMetadata(baseCrs, dpcrs)) {
+            MathTransform trs;
+            try {
+                trs = CRS.findOperation(dpcrs, baseCrs, null).getMathTransform();
+                dp = trs.transform(dp, null);
+            } catch (FactoryException ex) {
+                throw new TransformException(ex.getMessage(), ex);
+            }
+        }
+
+        final long hash = A5.lonLatToCell(new Vector2D.Double(dp.getCoordinate(0), dp.getCoordinate(1)), level);
+        return new A5Zone(hierarchy.dggrs, hash);
+    }
+
+    @Override
+    public Stream<Zone> getZones(GeographicExtent extent) throws TransformException {
+        if (extent == null && level == 0) {
+            return Stream.of(hierarchy.getZone(0l));
+        }
+
+        //search from root
+        final S2Polygon geometry = DiscreteGlobalGridSystems.toS2Polygon(extent);
+        try (Stream<Zone> zones = hierarchy.getGrids().get(0).getZones()) {
+            return DiscreteGlobalGridSystems.spatialSearch(zones.toList(), level, geometry);
+        }
+    }
+
+    @Override
+    protected long getZoneLongIdentifier(double[] source, int soffset) {
+        return A5.lonLatToCell(new Vector2D.Double(source[soffset], source[soffset+1]), level);
+    }
+
+    @Override
+    protected void getZonePosition(long zoneId, double[] target, int toffset) {
+        final Vector2D.Double lonlat = A5.cellToLonLat(zoneId);
+        target[toffset] = lonlat.x;
+        target[toffset+1] = lonlat.y;
     }
 
 }
