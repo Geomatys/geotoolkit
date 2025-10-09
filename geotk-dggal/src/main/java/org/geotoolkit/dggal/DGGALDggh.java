@@ -87,7 +87,7 @@ final class DGGALDggh extends AbstractDiscreteGlobalGridHierarchy<DGGALDggrs> {
         try {
             return dggrs.dggal.getZoneTextID(hash);
         } catch (Throwable ex) {
-            throw new RuntimeException(ex);
+            throw new DGGALBindingException(ex);
         }
     }
 
@@ -95,7 +95,7 @@ final class DGGALDggh extends AbstractDiscreteGlobalGridHierarchy<DGGALDggrs> {
         try {
             return dggrs.dggal.getZoneFromTextID(cs.toString());
         } catch (Throwable ex) {
-            throw new RuntimeException(ex);
+            throw new DGGALBindingException(ex);
         }
     }
 }

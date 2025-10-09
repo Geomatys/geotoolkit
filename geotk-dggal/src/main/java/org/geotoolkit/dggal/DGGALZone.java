@@ -63,7 +63,7 @@ final class DGGALZone extends AbstractZone<DGGALDggrs> {
         try {
             return dggrs.dggal.getZoneTextID(hash);
         } catch (Throwable ex) {
-            throw new RuntimeException(ex);
+            throw new DGGALBindingException(ex);
         }
     }
 
@@ -77,7 +77,7 @@ final class DGGALZone extends AbstractZone<DGGALDggrs> {
         try {
             return dggrs.dggal.getZoneArea(hash);
         } catch (Throwable ex) {
-            throw new RuntimeException(ex);
+            throw new DGGALBindingException(ex);
         }
     }
 
@@ -87,7 +87,7 @@ final class DGGALZone extends AbstractZone<DGGALDggrs> {
         try {
             level = dggrs.dggal.getZoneLevel(hash);
         } catch (Throwable ex) {
-            throw new RuntimeException(ex);
+            throw new DGGALBindingException(ex);
         }
         return new RefinementLevel(dggrs, level);
     }
@@ -97,7 +97,7 @@ final class DGGALZone extends AbstractZone<DGGALDggrs> {
         try {
             return dggrs.dggal.areZonesNeighbors(hash, dggrs.dggs.dggh.toLongIdentifier(zone)) != 0;
         } catch (Throwable ex) {
-            throw new RuntimeException(ex);
+            throw new DGGALBindingException(ex);
         }
     }
 
@@ -106,7 +106,7 @@ final class DGGALZone extends AbstractZone<DGGALDggrs> {
         try {
             return dggrs.dggal.areZonesSiblings(hash, dggrs.dggs.dggh.toLongIdentifier(zone)) != 0;
         } catch (Throwable ex) {
-            throw new RuntimeException(ex);
+            throw new DGGALBindingException(ex);
         }
     }
 
@@ -115,7 +115,7 @@ final class DGGALZone extends AbstractZone<DGGALDggrs> {
         try {
             return dggrs.dggal.isZoneAncestorOf(hash, dggrs.dggs.dggh.toLongIdentifier(zone), maxRelativeDepth) != 0;
         } catch (Throwable ex) {
-            throw new RuntimeException(ex);
+            throw new DGGALBindingException(ex);
         }
     }
 
@@ -124,7 +124,7 @@ final class DGGALZone extends AbstractZone<DGGALDggrs> {
         try {
             return dggrs.dggal.isZoneDescendantOf(hash, dggrs.dggs.dggh.toLongIdentifier(zone), maxRelativeDepth) != 0;
         } catch (Throwable ex) {
-            throw new RuntimeException(ex);
+            throw new DGGALBindingException(ex);
         }
     }
 
@@ -133,7 +133,7 @@ final class DGGALZone extends AbstractZone<DGGALDggrs> {
         try {
             return dggrs.dggal.doZonesOverlap(hash, dggrs.dggs.dggh.toLongIdentifier(zone)) != 0;
         } catch (Throwable ex) {
-            throw new RuntimeException(ex);
+            throw new DGGALBindingException(ex);
         }
     }
 
@@ -143,7 +143,7 @@ final class DGGALZone extends AbstractZone<DGGALDggrs> {
         try {
             candidates = dggrs.dggal.getZoneParents(hash);
         } catch (Throwable ex) {
-            throw new RuntimeException(ex);
+            throw new DGGALBindingException(ex);
         }
 
         final List<Zone> zones = new ArrayList<>(candidates.length);
@@ -159,7 +159,7 @@ final class DGGALZone extends AbstractZone<DGGALDggrs> {
         try {
             candidates = dggrs.dggal.getZoneChildren(hash);
         } catch (Throwable ex) {
-            throw new RuntimeException(ex);
+            throw new DGGALBindingException(ex);
         }
 
         final List<Zone> zones = new ArrayList<>(candidates.length);
@@ -175,7 +175,7 @@ final class DGGALZone extends AbstractZone<DGGALDggrs> {
         try {
             candidates = dggrs.dggal.getZoneNeighbors(hash);
         } catch (Throwable ex) {
-            throw new RuntimeException(ex);
+            throw new DGGALBindingException(ex);
         }
 
         final List<Zone> zones = new ArrayList<>(candidates.length);
@@ -191,7 +191,7 @@ final class DGGALZone extends AbstractZone<DGGALDggrs> {
         try {
             boundary = dggrs.dggal.getZoneWGS84Vertices(hash);
         } catch (Throwable ex) {
-            throw new RuntimeException(ex);
+            throw new DGGALBindingException(ex);
         }
 
         if (boundary == null) return null;
@@ -213,7 +213,7 @@ final class DGGALZone extends AbstractZone<DGGALDggrs> {
         try {
             centroid = dggrs.dggal.getZoneWGS84Centroid(hash);
         } catch (Throwable ex) {
-            throw new RuntimeException(ex);
+            throw new DGGALBindingException(ex);
         }
         return new DirectPosition2D(CRS84.getCoordinateReferenceSystem(),
                 Math.toDegrees(centroid[1]),

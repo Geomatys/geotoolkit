@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.dggs.h3;
 
+import org.geotoolkit.dggs.h3.internal.shared.H3Index;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGrid;
 import org.geotoolkit.referencing.dggs.Zone;
 import org.geotoolkit.referencing.dggs.internal.shared.AbstractDiscreteGlobalGridHierarchy;
@@ -57,7 +58,7 @@ final class H3Dggh extends AbstractDiscreteGlobalGridHierarchy<H3Dggrs> {
         if (zoneId instanceof CharSequence cs) {
             return cs.toString();
         } else if (zoneId instanceof Long l) {
-            return idAsText(l);
+            return H3Index.h3ToString(l);
         } else if (zoneId instanceof H3Zone z) {
             return z.getTextIdentifier().toString();
         } else {
@@ -68,7 +69,7 @@ final class H3Dggh extends AbstractDiscreteGlobalGridHierarchy<H3Dggrs> {
     @Override
     public long toLongIdentifier(Object zoneId) throws IllegalArgumentException {
         if (zoneId instanceof CharSequence cs) {
-            return idAsLong(cs);
+            return H3Index.stringToH3(cs);
         } else if (zoneId instanceof Long l) {
             return l;
         } else if (zoneId instanceof H3Zone z) {
@@ -84,11 +85,4 @@ final class H3Dggh extends AbstractDiscreteGlobalGridHierarchy<H3Dggrs> {
         return new H3Zone(dggrs, toLongIdentifier(identifier));
     }
 
-    static final String idAsText(final long hash) {
-        return H3Dggrs.H3.h3ToString(hash);
-    }
-
-    static final long idAsLong(final CharSequence cs) {
-        return H3Dggrs.H3.stringToH3(cs.toString());
-    }
 }

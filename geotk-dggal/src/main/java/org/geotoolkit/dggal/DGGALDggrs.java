@@ -104,7 +104,7 @@ public final class DGGALDggrs extends DiscreteGlobalGridReferenceSystem {
             }
             return binding.newDggrs(mod, name);
         } catch (Throwable ex) {
-            throw new RuntimeException(ex);
+            throw new DGGALBindingException(ex);
         }
     }
 
@@ -125,7 +125,7 @@ public final class DGGALDggrs extends DiscreteGlobalGridReferenceSystem {
         try {
             this.dggs = new DGGALDggs(this);
         } catch (Throwable ex) {
-            throw new RuntimeException(ex);
+            throw new DGGALBindingException(ex);
         }
     }
 

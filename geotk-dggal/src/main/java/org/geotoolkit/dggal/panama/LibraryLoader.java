@@ -26,6 +26,7 @@ import java.lang.foreign.SymbolLookup;
 import java.lang.reflect.InvocationTargetException;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.system.Shutdown;
+import org.geotoolkit.dggal.DGGALBindingException;
 
 /**
  * A helper class for loading a native library.
@@ -84,7 +85,7 @@ public final class LibraryLoader<T extends NativeFunctions> {
             status   = LibraryStatus.LOADED;
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException ex) {
             arena.close();
-            throw new RuntimeException(ex);
+            throw new DGGALBindingException(ex);
         } catch (Throwable e) {
             arena.close();
             throw e;

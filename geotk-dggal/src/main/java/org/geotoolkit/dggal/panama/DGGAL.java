@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.dggal.panama;
 
-import com.examind.jnl.NLInstance;
 import java.lang.foreign.AddressLayout;
 import java.lang.foreign.Arena;
 import static java.lang.foreign.FunctionDescriptor.of;
@@ -45,34 +44,15 @@ import org.geotoolkit.nio.IOUtilities;
  */
 public class DGGAL extends NativeFunctions {
 
-    private static NLInstance ecrt_c;
     /**
      * Load JNI bindings.
      */
     static {
         try {
-//            System.load("/home/jsorel/dev/dggal/dgbuild/dggal/bindings/c_fn/obj/dggal.allinone.linux/test/libdggal_c_fn.so");
-//            System.load("/home/jsorel/dev/geotoolkit/geotk-dggal/test/libecrt_c.so");
-//            System.load("/home/jsorel/dev/geotoolkit/geotk-dggal/test/libdggal.so");
-//            System.load("/home/jsorel/dev/geotoolkit/geotk-dggal/test/libdggal_c.so");
-//            System.load("/home/jsorel/dev/geotoolkit/geotk-dggal/test/libdggal_c_fn.so");
-
-//            final NLLoader loader = NativeLibraryHelper.defaultLoader("lib");
-//            final ClassLoader classLoader = DGGAL.class.getClassLoader();
-//            //NLInstance ecrt = loader.load("ecrt", classLoader);
-//            NLInstance ecrt_c = loader.load("ecrtc", classLoader);
-//            NLInstance dggal = loader.load("dggal", classLoader);
-//            NLInstance dggal_c = loader.load("dggal_c", classLoader);
-//            NLInstance dggal_c_fn = loader.load("dggal_c_fn", classLoader);
-//              ecrt_c = loader.load("dggal_c_fn", classLoader);
-
             Path dir = Files.createTempDirectory("dggal");
             Path temp = dir.resolve("libdggal_c_fn.so");
             IOUtilities.copyResource("lib/linux/x64/libdggal_c_fn.so", DGGAL.class.getClassLoader(), dir, false);
             System.load(temp.toFile().getAbsolutePath());
-
-//              System.load("/home/jsorel/dev/dggal/dgbuild/dggal/bindings/c_fn/obj/dggal.allinone.linux/test/libdggal_c_fn.so");
-//            System.loadLibrary("dggal_c_fn");
         } catch (Exception | UnsatisfiedLinkError ex) {
             Logger.getLogger("org.geotoolkit.dggal").log(Level.SEVERE, "Failed to load dggal native library.\n"+ex.getMessage(), ex);
             throw new IllegalStateException("Failed to load dggal native library");

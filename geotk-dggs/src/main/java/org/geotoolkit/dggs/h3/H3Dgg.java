@@ -112,7 +112,7 @@ final class H3Dgg extends AbstractDiscreteGlobalGrid<H3Dggh> {
 //        final List<H3Zone> candidates = new ArrayList<>(children.size());
 //        for (int i = 0, n = children.size(); i < n; i++) {
 //            final long zid = children.get(i);
-//            int zlevel = H3Dggrs.H3.getResolution(zid);
+//            int zlevel = H3Index.getResolution(zid);
 //            if (zlevel == level) {
 //                candidates.add(new H3Zone(dggrs, zid));
 //            } else if (zlevel < zid) {

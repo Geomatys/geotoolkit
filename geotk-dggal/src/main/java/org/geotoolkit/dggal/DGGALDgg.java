@@ -54,7 +54,7 @@ final class DGGALDgg extends AbstractDiscreteGlobalGrid<DGGALDggh> {
                     this.roots.add(new DGGALZone(dggh.dggrs, roots[i]));
                 }
             } catch (Throwable ex) {
-                throw new RuntimeException(ex);
+                throw new DGGALBindingException(ex);
             }
         } else {
             roots = null;
@@ -81,7 +81,7 @@ final class DGGALDgg extends AbstractDiscreteGlobalGrid<DGGALDggh> {
                 Math.toRadians(dp.getCoordinate(0))});
             return hierarchy.getZone(zid);
         } catch (Throwable ex) {
-            throw new RuntimeException(ex);
+            throw new DGGALBindingException(ex);
         }
     }
 
@@ -123,7 +123,7 @@ final class DGGALDgg extends AbstractDiscreteGlobalGrid<DGGALDggh> {
                 Math.toRadians(source[soffset+1]),
                 Math.toRadians(source[soffset])});
         } catch (Throwable ex) {
-            throw new RuntimeException(ex);
+            throw new DGGALBindingException(ex);
         }
     }
 
@@ -133,7 +133,7 @@ final class DGGALDgg extends AbstractDiscreteGlobalGrid<DGGALDggh> {
         try {
             centroid = hierarchy.dggrs.dggal.getZoneWGS84Centroid(zoneId);
         } catch (Throwable ex) {
-            throw new RuntimeException(ex);
+            throw new DGGALBindingException(ex);
         }
         target[0] = Math.toDegrees(centroid[1]);
         target[1] = Math.toDegrees(centroid[0]);

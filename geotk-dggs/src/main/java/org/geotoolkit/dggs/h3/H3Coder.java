@@ -23,6 +23,7 @@ import org.apache.sis.measure.Quantities;
 import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.Utilities;
+import org.geotoolkit.dggs.h3.internal.shared.H3Index;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -109,7 +110,7 @@ final class H3Coder extends DiscreteGlobalGridReferenceSystem.Coder{
 
     @Override
     public String encode(DirectPosition dp) throws TransformException {
-        return H3Dggrs.H3.h3ToString(encodeIdentifier(dp));
+        return H3Index.h3ToString(encodeIdentifier(dp));
     }
 
     @Override

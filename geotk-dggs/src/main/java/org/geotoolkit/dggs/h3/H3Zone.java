@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.dggs.h3;
 
+import org.geotoolkit.dggs.h3.internal.shared.H3Index;
 import com.google.common.geometry.S2LatLng;
 import com.google.common.geometry.S2Loop;
 import com.google.common.geometry.S2Point;
@@ -26,9 +27,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.LongStream;
 import org.apache.sis.geometries.math.SampleSystem;
 import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.dggs.h3.internal.shared.Constants;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridSystems;
 import org.geotoolkit.referencing.dggs.RefinementLevel;
 import org.geotoolkit.referencing.dggs.internal.shared.AbstractZone;
@@ -65,7 +68,7 @@ final class H3Zone extends AbstractZone<H3Dggrs> {
 
     @Override
     public CharSequence getTextIdentifier() {
-        return H3Dggh.idAsText(hash);
+        return H3Index.h3ToString(hash);
     }
 
     @Override
@@ -81,23 +84,23 @@ final class H3Zone extends AbstractZone<H3Dggrs> {
     @Override
     public Double getAreaMetersSquare() {
         if (areaMeterSquare != null) return areaMeterSquare;
-        areaMeterSquare = H3Dggrs.H3.getHexagonAreaAvg(H3Dggrs.H3.getResolution(hash), AreaUnit.m2);
+        areaMeterSquare = H3Dggrs.H3.getHexagonAreaAvg(H3Index.getResolution(hash), AreaUnit.m2);
         return areaMeterSquare;
     }
 
     @Override
     public RefinementLevel getLocationType() {
         if (level != null) return level;
-        level = new RefinementLevel(dggrs, H3Dggrs.H3.getResolution(hash));
+        level = new RefinementLevel(dggrs, H3Index.getResolution(hash));
         return level;
     }
 
     @Override
     public Collection<H3Zone> getParents() {
-        final int level = H3Dggrs.H3.getResolution(hash);
+        final int level = H3Index.getResolution(hash);
         if (level == 0) return Collections.EMPTY_LIST;
 
-        final long directParentId = H3Dggrs.H3.cellToParent(hash, level-1);
+        final long directParentId = H3Index.cellToParent(hash, level-1);
         final H3Zone directParent = new H3Zone(dggrs, directParentId);
 
         final long positioninDirectParent = H3Dggrs.H3.cellToChildPos(hash, level-1);
@@ -121,21 +124,21 @@ final class H3Zone extends AbstractZone<H3Dggrs> {
      * Returns the H3 hierarchival parent, one or null.
      */
     public H3Zone getHierarchicalParent() {
-        final int level = H3Dggrs.H3.getResolution(hash);
+        final int level = H3Index.getResolution(hash);
         if (level == 0) return null;
-        final long parent = H3Dggrs.H3.cellToParent(hash, level-1);
+        final long parent = H3Index.cellToParent(hash, level-1);
         return new H3Zone(dggrs, parent);
     }
 
     @Override
     public Collection<H3Zone> getChildren() {
-        final int level = H3Dggrs.H3.getResolution(hash);
+        final int level = H3Index.getResolution(hash);
         final int maxLevel = dggrs.getGridSystem().getHierarchy().getGrids().size();
         if (level+1 >= maxLevel) return Collections.EMPTY_LIST;
 
         //we want all children covering this zone
         //the order of children is constant see https://h3geo.org/docs/library/index/cell
-        final List<Long> children = H3Dggrs.H3.cellToChildren(hash, level+1);
+        final List<Long> children = H3Index.cellToChildren(hash, level+1).mapToObj(Long::valueOf).toList();
 
         if (children.size() == 7) {
             //hexagon cell
@@ -221,23 +224,23 @@ final class H3Zone extends AbstractZone<H3Dggrs> {
     }
 
     private boolean isAdjacentChild(long candidate) {
-        final int level = H3Dggrs.H3.getResolution(hash);
+        final int level = H3Index.getResolution(hash);
 
-        final List<Long> children = H3Dggrs.H3.cellToChildren(hash, level+1);
+        final long[] children = H3Index.cellToChildren(hash, level+1).toArray();
 
-        if (children.size() == 7) {
+        if (children.length == 7) {
             //hexagon cell
 
             //we want the cells of the neighbors which are missing to fill the area
-            if (H3Dggrs.H3.gridDisk(children.get(1), 1).contains(candidate)){
-                return H3Dggrs.H3.gridDisk(children.get(5), 1).contains(candidate)
-                    || H3Dggrs.H3.gridDisk(children.get(3), 1).contains(candidate);
-            } else if (H3Dggrs.H3.gridDisk(children.get(2), 1).contains(candidate)) {
-                return H3Dggrs.H3.gridDisk(children.get(3), 1).contains(candidate)
-                    || H3Dggrs.H3.gridDisk(children.get(6), 1).contains(candidate);
-            } else if (H3Dggrs.H3.gridDisk(children.get(4), 1).contains(candidate)) {
-                return H3Dggrs.H3.gridDisk(children.get(6), 1).contains(candidate)
-                    || H3Dggrs.H3.gridDisk(children.get(5), 1).contains(candidate);
+            if (H3Dggrs.H3.gridDisk(children[1], 1).contains(candidate)){
+                return H3Dggrs.H3.gridDisk(children[5], 1).contains(candidate)
+                    || H3Dggrs.H3.gridDisk(children[3], 1).contains(candidate);
+            } else if (H3Dggrs.H3.gridDisk(children[2], 1).contains(candidate)) {
+                return H3Dggrs.H3.gridDisk(children[3], 1).contains(candidate)
+                    || H3Dggrs.H3.gridDisk(children[6], 1).contains(candidate);
+            } else if (H3Dggrs.H3.gridDisk(children[4], 1).contains(candidate)) {
+                return H3Dggrs.H3.gridDisk(children[6], 1).contains(candidate)
+                    || H3Dggrs.H3.gridDisk(children[5], 1).contains(candidate);
             } else {
                 return false;
             }
@@ -247,15 +250,15 @@ final class H3Zone extends AbstractZone<H3Dggrs> {
             //in this mode the index 3 has been removed, so 1 and 2 or near each other
 
             //we want the cells of the neighbors which are missing to fill the area
-            if (H3Dggrs.H3.gridDisk(children.get(1), 1).contains(candidate)){
-                return H3Dggrs.H3.gridDisk(children.get(5), 1).contains(candidate)
-                    || H3Dggrs.H3.gridDisk(children.get(2), 1).contains(candidate);
-            } else if (H3Dggrs.H3.gridDisk(children.get(2), 1).contains(candidate)) {
-                return H3Dggrs.H3.gridDisk(children.get(4), 1).contains(candidate);
+            if (H3Dggrs.H3.gridDisk(children[1], 1).contains(candidate)){
+                return H3Dggrs.H3.gridDisk(children[5], 1).contains(candidate)
+                    || H3Dggrs.H3.gridDisk(children[2], 1).contains(candidate);
+            } else if (H3Dggrs.H3.gridDisk(children[2], 1).contains(candidate)) {
+                return H3Dggrs.H3.gridDisk(children[4], 1).contains(candidate);
 
-            } else if (H3Dggrs.H3.gridDisk(children.get(3), 1).contains(candidate)) {
-                return H3Dggrs.H3.gridDisk(children.get(4), 1).contains(candidate)
-                    || H3Dggrs.H3.gridDisk(children.get(5), 1).contains(candidate);
+            } else if (H3Dggrs.H3.gridDisk(children[3], 1).contains(candidate)) {
+                return H3Dggrs.H3.gridDisk(children[4], 1).contains(candidate)
+                    || H3Dggrs.H3.gridDisk(children[5], 1).contains(candidate);
             } else {
                 return false;
             }
@@ -267,13 +270,12 @@ final class H3Zone extends AbstractZone<H3Dggrs> {
      * Note : they do not fully cover the parent cell.
      */
     public List<H3Zone> getHierarchicalChildren() {
-        final int level = H3Dggrs.H3.getResolution(hash);
-        final int maxLevel = dggrs.getGridSystem().getHierarchy().getGrids().size();
-        if (level+1 >= maxLevel) return Collections.EMPTY_LIST;
+        final int level = H3Index.getResolution(hash);
+        if (level+1 >= Constants.MAX_H3_RES) return Collections.EMPTY_LIST;
 
-        final List<Long> children = H3Dggrs.H3.cellToChildren(hash, level+1);
-        final List<H3Zone> zones = new ArrayList<>(children.size());
-        for (Long l : children) {
+        final long[] children = H3Index.cellToChildren(hash, level+1).toArray();
+        final List<H3Zone> zones = new ArrayList<>(children.length);
+        for (long l : children) {
             zones.add(new H3Zone(dggrs, l));
         }
         return zones;

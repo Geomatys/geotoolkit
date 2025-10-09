@@ -56,7 +56,7 @@ final class DGGALCoder extends DiscreteGlobalGridReferenceSystem.Coder{
         try {
             area = dggrs.dggal.getRefZoneArea(level);
         } catch (Throwable ex) {
-            throw new RuntimeException(ex);
+            throw new DGGALBindingException(ex);
         }
         return Quantities.create(Math.sqrt(area), Units.METRE);
     }
@@ -68,7 +68,7 @@ final class DGGALCoder extends DiscreteGlobalGridReferenceSystem.Coder{
         try {
             level = dggrs.dggal.getLevelFromRefZoneArea(v*v);
         } catch (Throwable ex) {
-            throw new RuntimeException(ex);
+            throw new DGGALBindingException(ex);
         }
         setPrecisionLevel(level);
     }
@@ -106,7 +106,7 @@ final class DGGALCoder extends DiscreteGlobalGridReferenceSystem.Coder{
                 Math.toRadians(dp.getCoordinate(1)),
                 Math.toRadians(dp.getCoordinate(0))});
         } catch (Throwable ex) {
-            throw new RuntimeException(ex);
+            throw new DGGALBindingException(ex);
         }
     }
 
@@ -114,7 +114,7 @@ final class DGGALCoder extends DiscreteGlobalGridReferenceSystem.Coder{
         try {
             return dggrs.dggal.getZoneTextID(hash);
         } catch (Throwable ex) {
-            throw new RuntimeException(ex);
+            throw new DGGALBindingException(ex);
         }
     }
 
@@ -122,7 +122,7 @@ final class DGGALCoder extends DiscreteGlobalGridReferenceSystem.Coder{
         try {
             return dggrs.dggal.getZoneFromTextID(cs.toString());
         } catch (Throwable ex) {
-            throw new RuntimeException(ex);
+            throw new DGGALBindingException(ex);
         }
     }
 }

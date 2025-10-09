@@ -60,7 +60,7 @@ final class DGGALDggs implements DiscreteGlobalGridSystem {
         try {
             return dggrs.dggal.getRefinementRatio();
         } catch (Throwable ex) {
-            throw new RuntimeException(ex);
+            throw new DGGALBindingException(ex);
         }
     }
 
