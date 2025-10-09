@@ -16,30 +16,73 @@
  */
 package org.geotoolkit.dggs.h3;
 
-import java.util.AbstractList;
-import java.util.List;
-import org.geotoolkit.storage.dggs.DiscreteGlobalGrid;
-import org.geotoolkit.storage.dggs.DiscreteGlobalGridHierarchy;
+import org.geotoolkit.dggs.h3.internal.shared.H3Index;
+import org.geotoolkit.referencing.dggs.DiscreteGlobalGrid;
+import org.geotoolkit.referencing.dggs.Zone;
+import org.geotoolkit.referencing.dggs.internal.shared.AbstractDiscreteGlobalGridHierarchy;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public final class H3Dggh extends AbstractList<DiscreteGlobalGrid> implements DiscreteGlobalGridHierarchy {
+final class H3Dggh extends AbstractDiscreteGlobalGridHierarchy<H3Dggrs> {
 
-    @Override
-    public List<DiscreteGlobalGrid> getGrids() {
-        return this;
+    private final DiscreteGlobalGrid[] grids;
+
+    H3Dggh(H3Dggrs dggrs) {
+        super(dggrs);
+
+        grids = new DiscreteGlobalGrid[15];
+        for (int i = 0; i < grids.length; i++) {
+            grids[i] = new H3Dgg(this, i);
+        }
     }
 
     @Override
     public DiscreteGlobalGrid get(int level) {
-        return new H3Dgg(level);
+        return grids[level];
     }
 
     @Override
     public int size() {
-        return 15;
+        return grids.length;
+    }
+
+    @Override
+    public boolean supportLongIdentifiers() {
+        return true;
+    }
+
+    @Override
+    public String toTextIdentifier(Object zoneId) throws IllegalArgumentException {
+        if (zoneId instanceof CharSequence cs) {
+            return cs.toString();
+        } else if (zoneId instanceof Long l) {
+            return H3Index.h3ToString(l);
+        } else if (zoneId instanceof H3Zone z) {
+            return z.getTextIdentifier().toString();
+        } else {
+            throw new IllegalArgumentException("Identifer not supported");
+        }
+    }
+
+    @Override
+    public long toLongIdentifier(Object zoneId) throws IllegalArgumentException {
+        if (zoneId instanceof CharSequence cs) {
+            return H3Index.stringToH3(cs);
+        } else if (zoneId instanceof Long l) {
+            return l;
+        } else if (zoneId instanceof H3Zone z) {
+            return z.getLongIdentifier();
+        } else {
+            throw new IllegalArgumentException("Identifer not supported");
+        }
+    }
+
+    @Override
+    public Zone getZone(Object identifier) throws IllegalArgumentException {
+        if (identifier instanceof H3Zone z) return z;
+        return new H3Zone(dggrs, toLongIdentifier(identifier));
     }
 
 }

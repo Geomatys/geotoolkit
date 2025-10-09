@@ -16,11 +16,15 @@
  */
 package org.geotoolkit.dggs.healpix;
 
-import java.util.List;
+import org.apache.sis.geometries.Polygon;
 import org.geotoolkit.dggs.AbstractDggrsTest;
-import org.geotoolkit.storage.dggs.DiscreteGlobalGridReferenceSystem;
-import org.geotoolkit.storage.dggs.ZonalIdentifier;
-import org.geotoolkit.storage.dggs.Zone;
+import org.geotoolkit.referencing.dggs.Zone;
+import org.geotoolkit.storage.dggs.DiscreteGlobalGridSystems;
+import static org.junit.Assert.assertEquals;
+import org.junit.jupiter.api.Test;
+import org.opengis.geometry.Envelope;
+import org.opengis.metadata.extent.GeographicExtent;
+import org.opengis.referencing.operation.TransformException;
 
 /**
  *
@@ -32,31 +36,25 @@ public class HealPixTest extends AbstractDggrsTest {
         super(new NHealpixDggrs());
     }
 
-    public static void main(String[] args) throws Exception {
+    /**
+     * Check the antimeridian zone has a proper envelope
+     */
+    @Test
+    public void testAntimeridian() throws TransformException {
 
         final NHealpixDggrs dggrs = new NHealpixDggrs();
-        final List<ZonalIdentifier> rootZoneIds = dggrs.getRootZoneIds();
-        final DiscreteGlobalGridReferenceSystem.Coder coder = dggrs.createCoder();
+        final Zone zone = dggrs.createCoder().decode("11");
 
-        for (ZonalIdentifier zoneId : rootZoneIds) {
-            final Zone zone = coder.decode(zoneId);
-            final List<Zone> candidates = zone.getChildrenAtRelativeDepth(0).toList();
+        final GeographicExtent extent = zone.getGeographicExtent();
+        final Polygon polygon = DiscreteGlobalGridSystems.toSISPolygon(extent);
+        assertEquals("POLYGON ((135.0 0.0, 180.0 41.810314895778596, 135.0 90.0, 90.0 41.810314895778596, 135.0 0.0))", polygon.asText());
 
-            //check the coder can find the zone by location
-            for (Zone z : candidates) {
-                coder.setPrecisionLevel(z.getLocationType().getRefinementLevel());
-                String candidate = coder.encode(z.getPosition());
-                System.out.println(((NHealpixZone)z).getNpixel() +"  " + z.getGeographicIdentifier() +" " + z.getPosition());
-                Zone cdt = coder.decode(candidate);
-                System.out.println(((NHealpixZone)cdt).getNpixel() +"  " + cdt.getGeographicIdentifier());
-
-                System.out.println(" ");
-
-            }
-
-        }
+        final Envelope envelope = zone.getEnvelope();
+        assertEquals(90, envelope.getMinimum(0), 0.0);
+        assertEquals(180, envelope.getMaximum(0), 0.0);
+        assertEquals(0, envelope.getMinimum(1), 0.0);
+        assertEquals(90, envelope.getMaximum(1), 0.0);
 
     }
-
 
 }

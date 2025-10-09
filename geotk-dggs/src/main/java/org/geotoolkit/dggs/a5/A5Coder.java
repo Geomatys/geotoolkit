@@ -24,9 +24,8 @@ import org.apache.sis.measure.Quantities;
 import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CRS;
 import org.geotoolkit.dggs.a5.internal.Serialization;
-import org.geotoolkit.storage.dggs.DiscreteGlobalGridReferenceSystem;
+import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridSystems;
-import org.geotoolkit.storage.dggs.Zone;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeographicCRS;
@@ -107,7 +106,12 @@ final class A5Coder extends DiscreteGlobalGridReferenceSystem.Coder{
     }
 
     @Override
-    public long encodeNumeric(DirectPosition dp) throws TransformException {
+    public String encode(DirectPosition dp) throws TransformException {
+        return A5Dggh.idAsText(encodeIdentifier(dp));
+    }
+
+    @Override
+    public Long encodeIdentifier(DirectPosition dp) throws TransformException {
         final CoordinateReferenceSystem dpcrs = dp.getCoordinateReferenceSystem();
         if (dpcrs != null && !CRS.equivalent(baseCrs, dpcrs)) {
             MathTransform trs;
@@ -118,23 +122,7 @@ final class A5Coder extends DiscreteGlobalGridReferenceSystem.Coder{
                 throw new TransformException(ex.getMessage(), ex);
             }
         }
-
         return A5.lonLatToCell(new Vector2D.Double(dp.getCoordinate(0), dp.getCoordinate(1)), level);
-    }
-
-    @Override
-    public String idToText(long hash) {
-        return Long.toUnsignedString(hash);
-    }
-
-    @Override
-    public long idToNumeric(CharSequence cs) {
-        return Long.parseUnsignedLong(cs.toString());
-    }
-
-    @Override
-    public Zone decode(long hash) throws TransformException {
-        return new A5Zone(dggrs,hash);
     }
 
 }

@@ -2,14 +2,14 @@
 package org.geotoolkit.pending.demo.dggs;
 
 import java.util.Collection;
-import org.apache.sis.geometries.Geometry;
 import org.apache.sis.geometry.DirectPosition2D;
 import org.geotoolkit.dggs.a5.A5Dggrs;
-import org.geotoolkit.storage.dggs.DiscreteGlobalGridReferenceSystem;
-import org.geotoolkit.storage.dggs.DiscreteGlobalGridReferenceSystem.Coder;
-import org.geotoolkit.storage.dggs.Zone;
+import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
+import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem.Coder;
+import org.geotoolkit.referencing.dggs.Zone;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
+import org.opengis.metadata.extent.GeographicExtent;
 
 public class DggrsDemo {
 
@@ -33,7 +33,7 @@ public class DggrsDemo {
         final Collection<? extends Zone> neighbors  = zone.getNeighbors();
         final Collection<? extends Zone> parents    = zone.getParents();
         final Envelope envelope                     = zone.getEnvelope();
-        final Geometry geometry                     = zone.getGeometry();
+        final GeographicExtent geometry             = zone.getGeographicExtent();
         final Double areaMetersSquare               = zone.getAreaMetersSquare();
     }
 

@@ -16,17 +16,15 @@
  */
 package org.geotoolkit.dggs.h3;
 
-import java.util.stream.Stream;
 import javax.measure.IncommensurableException;
 import javax.measure.Quantity;
 import javax.measure.Unit;
 import org.apache.sis.measure.Quantities;
 import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CRS;
-import org.geotoolkit.storage.dggs.DiscreteGlobalGridReferenceSystem;
-import org.geotoolkit.storage.dggs.Zone;
+import org.geotoolkit.dggs.h3.internal.shared.H3Index;
+import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
 import org.opengis.geometry.DirectPosition;
-import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.datum.Ellipsoid;
@@ -38,7 +36,7 @@ import org.opengis.util.FactoryException;
  *
  * @author Johann Sorel (Geomatys)
  */
-public final class H3Coder extends DiscreteGlobalGridReferenceSystem.Coder{
+final class H3Coder extends DiscreteGlobalGridReferenceSystem.Coder{
 
     private final H3Dggrs dggrs;
     private final CoordinateReferenceSystem baseCrs;
@@ -70,7 +68,7 @@ public final class H3Coder extends DiscreteGlobalGridReferenceSystem.Coder{
         final double surfaceArea = 4.0 * Math.PI * r * r;
 
         final double[] array = new double[15];
-        array[0] = Math.sqrt(surfaceArea / dggrs.getRootZoneIds().size()); //many root cells
+        array[0] = Math.sqrt(surfaceArea / H3Dggrs.H3.getRes0Cells().size()); //many root cells
         for (int i = 1; i < array.length; i++) {
             array[i] = array[i-1] / Math.sqrt(7);
         }
@@ -110,17 +108,12 @@ public final class H3Coder extends DiscreteGlobalGridReferenceSystem.Coder{
     }
 
     @Override
-    public String idToText(long hash) {
-        return Long.toUnsignedString(hash);
+    public String encode(DirectPosition dp) throws TransformException {
+        return H3Index.h3ToString(encodeIdentifier(dp));
     }
 
     @Override
-    public long idToNumeric(CharSequence cs) {
-        return Long.parseUnsignedLong(cs.toString());
-    }
-
-    @Override
-    public long encodeNumeric(DirectPosition dp) throws TransformException {
+    public Long encodeIdentifier(DirectPosition dp) throws TransformException {
         final CoordinateReferenceSystem dpcrs = dp.getCoordinateReferenceSystem();
         if (dpcrs != null && !CRS.equivalent(baseCrs, dpcrs)) {
             MathTransform trs;
@@ -131,34 +124,7 @@ public final class H3Coder extends DiscreteGlobalGridReferenceSystem.Coder{
                 throw new TransformException(ex.getMessage(), ex);
             }
         }
-
         return H3Dggrs.H3.latLngToCell(dp.getCoordinate(1), dp.getCoordinate(0), level);
     }
 
-    @Override
-    public Zone decode(long hash) throws TransformException {
-        return new H3Zone(dggrs,hash);
-    }
-
-    @Override
-    public Stream<Zone> intersect(Envelope env) throws TransformException {
-        return super.intersect(env);
-        //Bugged
-        /*
-        env = Envelopes.transform(env, baseCrs);
-        final double minX = env.getMinimum(0);
-        final double minY = env.getMinimum(1);
-        final double maxX = env.getMaximum(0);
-        final double maxY = env.getMaximum(1);
-
-        final List<Long> candidate = H3Dggrs.H3.polygonToCells(List.of(
-                new LatLng(minY, minX),
-                new LatLng(minY, maxX),
-                new LatLng(maxY, maxX),
-                new LatLng(maxY, minX),
-                new LatLng(minY, minX)),
-                Collections.EMPTY_LIST, level);
-        return candidate.stream().map((h) -> new H3Zone(dggrs, h));
-        */
-    }
 }
