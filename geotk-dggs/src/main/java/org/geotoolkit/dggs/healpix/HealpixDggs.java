@@ -30,12 +30,12 @@ import org.geotoolkit.referencing.dggs.PolyhedronParameters;
  *
  * @author Johann Sorel (Geomatys)
  */
-final class NHealpixDggs implements DiscreteGlobalGridSystem {
+final class HealpixDggs implements DiscreteGlobalGridSystem {
 
-    final NHealpixDggh dggh;
+    final HealpixDggh dggh;
 
-    public NHealpixDggs(NHealpixDggrs dggrs) {
-        this.dggh = new NHealpixDggh(dggrs);
+    public HealpixDggs(HealpixDggrs dggrs) {
+        this.dggh = new HealpixDggh(dggrs);
     }
 
     @Override

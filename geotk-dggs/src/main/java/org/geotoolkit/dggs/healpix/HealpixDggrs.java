@@ -47,21 +47,21 @@ import org.opengis.util.InternationalString;
  *
  * @author Johann Sorel (Geomatys)
  */
-public final class NHealpixDggrs extends DiscreteGlobalGridReferenceSystem {
+public final class HealpixDggrs extends DiscreteGlobalGridReferenceSystem {
 
     /**
      * Identifier for this reference system.
      */
-    public static final String IDENTIFIER = "nHealpix";
-    public static final NHealpixDggrs INSTANCE = new NHealpixDggrs();
+    public static final String IDENTIFIER = "Healpix";
+    public static final HealpixDggrs INSTANCE = new HealpixDggrs();
 
     private static final ZonalReferenceSystem ZRS = new DefaultZonalReferenceSystem("default", "", true);
 
-    final NHealpixDggs dggs;
+    final HealpixDggs dggs;
 
-    public NHealpixDggrs() {
+    public HealpixDggrs() {
         super(properties(IDENTIFIER, IDENTIFIER, null), types());
-        this.dggs = new NHealpixDggs(this);
+        this.dggs = new HealpixDggs(this);
     }
 
     @Override
@@ -108,7 +108,7 @@ public final class NHealpixDggrs extends DiscreteGlobalGridReferenceSystem {
 
     @Override
     public Coder createCoder() {
-        return new NHealpixCoder(this);
+        return new HealpixCoder(this);
     }
 
     private static LocationType[] types() {
