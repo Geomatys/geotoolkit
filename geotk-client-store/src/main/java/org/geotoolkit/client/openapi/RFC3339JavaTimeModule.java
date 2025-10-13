@@ -18,6 +18,7 @@ package org.geotoolkit.client.openapi;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
@@ -31,14 +32,18 @@ import java.text.DecimalFormat;
 import java.text.FieldPosition;
 import java.text.ParsePosition;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.time.temporal.Temporal;
 import java.time.temporal.TemporalAccessor;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import org.geotoolkit.temporal.object.ISODateParser;
 
 public final class RFC3339JavaTimeModule extends SimpleModule {
 
@@ -149,7 +154,22 @@ public final class RFC3339JavaTimeModule extends SimpleModule {
 
         @Override
         protected T _fromString(JsonParser p, DeserializationContext ctxt, String string0) throws IOException {
-            return super._fromString(p, ctxt, string0.replace( ' ', 'T' ));
+            try {
+                return super._fromString(p, ctxt, string0.replace( ' ', 'T' ));
+            } catch (NumberFormatException | DateTimeParseException | InvalidFormatException e) {
+                //fallback on a tolerant parser
+                final ISODateParser ip = new ISODateParser();
+                final Calendar calendar = ip.getCalendar(string0);
+                final Instant i = calendar.toInstant();
+                if (this == INSTANT) {
+                    return (T) i;
+                } else if (this == OFFSET_DATE_TIME) {
+                    return (T) i.atOffset(ZoneOffset.UTC);
+                } else if (this == ZONED_DATE_TIME) {
+                    return (T) i.atZone(ZoneId.systemDefault());
+                }
+                throw e;
+            }
         }
     }
 
