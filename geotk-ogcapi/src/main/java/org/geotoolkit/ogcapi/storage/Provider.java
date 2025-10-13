@@ -20,36 +20,42 @@ import java.net.URI;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
+import org.geotoolkit.client.AbstractClientProvider;
 import org.geotoolkit.client.openapi.OpenApiConfiguration;
 import org.geotoolkit.client.service.ServiceException;
 import org.geotoolkit.client.service.ServiceResponse;
 import org.geotoolkit.ogcapi.client.common.CoreApi;
 import org.geotoolkit.ogcapi.model.common.ConfClasses;
-import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public final class Provider extends DataStoreProvider {
+public final class Provider extends AbstractClientProvider {
 
     public static final String NAME = "ogcapi";
+    private static Provider INSTANCE;
+
+    public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR = new ParameterBuilder()
+            .addName(NAME).createGroup(URL);
 
     /**
-     * Server URI, Mandatory.
+     * Get singleton instance of OGCAPI provider.
+     *
+     * <p>
+     * Note : this method is named after Java 9 service loader provider method.
+     * {@link https://docs.oracle.com/javase/9/docs/api/java/util/ServiceLoader.html}
+     * </p>
+     *
+     * @return singleton instance of OGCAPI Provider
      */
-    public static final ParameterDescriptor<URI> URI = new ParameterBuilder()
-            .addName(LOCATION)
-            .setRequired(true)
-            .create(URI.class, null);
-
-    public static final ParameterDescriptorGroup PARAMETERS = new ParameterBuilder()
-            .addName(NAME)
-            .createGroup(URI);
+    public static synchronized Provider provider() {
+        if (INSTANCE == null) INSTANCE = new Provider();
+        return INSTANCE;
+    }
 
     @Override
     public String getShortName() {
@@ -58,7 +64,7 @@ public final class Provider extends DataStoreProvider {
 
     @Override
     public ParameterDescriptorGroup getOpenParameters() {
-        return PARAMETERS;
+        return PARAMETERS_DESCRIPTOR;
     }
 
     @Override

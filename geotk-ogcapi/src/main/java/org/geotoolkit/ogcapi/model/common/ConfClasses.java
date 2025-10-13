@@ -87,6 +87,21 @@ public final class ConfClasses extends DataTransferObject {
     }
 
     /**
+     * Returns true if the given conformance class is in the list.
+     *
+     * This method checks for minor errors, if conformance URI may start with http or https.
+     */
+    public boolean isConformTo(String conformance) {
+        if (conformsTo.contains(conformance)) return true;
+
+        if (conformance.startsWith("https")) {
+            return conformsTo.contains(conformance.replaceFirst("https", "http"));
+        } else {
+            return conformsTo.contains(conformance.replaceFirst("http", "https"));
+        }
+    }
+
+    /**
      * Return true if this confClasses object is equal to o.
      */
     @Override

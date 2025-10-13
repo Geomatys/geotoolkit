@@ -40,7 +40,7 @@ public interface CodedResource extends BandedCoverageResource {
      * Get default resource geometry.
      * @return resource geometry
      */
-    CodedGeometry getGridGeometry();
+    CodedGeometry getGridGeometry() throws DataStoreException;
 
     /**
      * List alternative geometry available.
@@ -48,7 +48,7 @@ public interface CodedResource extends BandedCoverageResource {
      *
      * @return list of alternative geometry available.
      */
-    default List<CodedGeometry> getAlternateGridGeometry() {
+    default List<CodedGeometry> getAlternateGridGeometry() throws DataStoreException{
         return List.of(getGridGeometry());
     }
 

@@ -42,10 +42,21 @@ import org.geotoolkit.storage.rs.CodeTransform;
  */
 public final class DiscreteGlobalGridGeometry extends CodedGeometry {
 
+    private Object baseZoneId;
+    private Integer relativeDepth;
+
     //computed
     private Integer depth;
     private boolean bboxComputed = false;
     private GeographicBoundingBox bbox;
+
+    public static DiscreteGlobalGridGeometry forSubZone(DiscreteGlobalGridReferenceSystem dggrs, Object baseZoneId, Integer relativeDepth) throws TransformException {
+        final Zone zone = dggrs.getGridSystem().getHierarchy().getZone(baseZoneId);
+        final int searchedLevel = zone.getLocationType().getRefinementLevel() + relativeDepth;
+
+        final List<Object> zoneIds = dggrs.getGridSystem().getHierarchy().getGrids().get(searchedLevel).getZones(zone).map(Zone::getIdentifier).toList();
+        return new DiscreteGlobalGridGeometry(dggrs, baseZoneId, relativeDepth, zoneIds, null);
+    }
 
     /**
      * @param dggrs not null
@@ -53,9 +64,15 @@ public final class DiscreteGlobalGridGeometry extends CodedGeometry {
      * @param bbox can be null
      */
     public DiscreteGlobalGridGeometry(DiscreteGlobalGridReferenceSystem dggrs, List<Object> zoneIds, GeographicBoundingBox bbox) {
+        this(dggrs, null, null, zoneIds, bbox);
+    }
+
+    private DiscreteGlobalGridGeometry(DiscreteGlobalGridReferenceSystem dggrs, Object baseZoneId, Integer relativeDepth, List<Object> zoneIds, GeographicBoundingBox bbox) {
         this(dggrs,
             (zoneIds == null) ? null : new GridExtent(null, 0, zoneIds.size(), false),
             (zoneIds == null) ? null : CodeTransforms.toTransform(dggrs, zoneIds), bbox);
+        this.baseZoneId = baseZoneId;
+        this.relativeDepth = relativeDepth;
     }
 
     public DiscreteGlobalGridGeometry(DiscreteGlobalGridReferenceSystem dggrs, GridExtent extent, CodeTransform trs, GeographicBoundingBox bbox) {
@@ -72,6 +89,20 @@ public final class DiscreteGlobalGridGeometry extends CodedGeometry {
     @Override
     public DiscreteGlobalGridReferenceSystem getReferenceSystem() {
         return (DiscreteGlobalGridReferenceSystem) super.getReferenceSystem();
+    }
+
+    /**
+     * @return can be null
+     */
+    public Object getBaseZoneId() {
+        return baseZoneId;
+    }
+
+    /**
+     * @return can be null
+     */
+    public Integer getRelativeDepth() {
+        return relativeDepth;
     }
 
     @Override

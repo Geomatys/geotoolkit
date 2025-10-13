@@ -32,8 +32,8 @@ import org.opengis.util.GenericName;
  */
 public class CollectionItemResource extends AbstractResource {
 
-    private final CollectionResource parent;
-    private final CollectionDescription description;
+    protected final CollectionResource parent;
+    protected final CollectionDescription description;
 
     public CollectionItemResource(CollectionResource parent, CollectionDescription description) {
         super(parent);

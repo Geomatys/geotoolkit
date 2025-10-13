@@ -85,7 +85,7 @@ public abstract class AbstractService implements AutoCloseable {
     protected URI toUri(String localPath, List<Pair> queryParams) {
         final String fullPath = localPath == null ? config.baseUri : config.baseUri + localPath;
 
-        if (!queryParams.isEmpty()) {
+        if (queryParams != null && !queryParams.isEmpty()) {
             final StringJoiner queryJoiner = new StringJoiner("&");
             queryParams.forEach(p -> queryJoiner.add(p.getName() + '=' + p.getValue()));
             return URI.create(fullPath + '?' + queryJoiner.toString());

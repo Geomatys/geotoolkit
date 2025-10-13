@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.ogcapi.storage;
 
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
@@ -56,8 +57,12 @@ public final class Store extends DataStore implements Aggregate {
 
     @Override
     public Optional<ParameterValueGroup> getOpenParameters() {
-        final ParameterValueGroup parameters = Provider.PARAMETERS.createValue();
-        parameters.parameter(Provider.LOCATION).setValue(uri);
+        final ParameterValueGroup parameters = Provider.PARAMETERS_DESCRIPTOR.createValue();
+        try {
+            parameters.parameter(Provider.URL.getName().getCode()).setValue(uri.toURL());
+        } catch (MalformedURLException ex) {
+            throw new IllegalArgumentException(ex);
+        }
         return Optional.of(parameters);
     }
 
@@ -75,7 +80,7 @@ public final class Store extends DataStore implements Aggregate {
         if (root == null) {
             try (CoreApi core = new CoreApi(configuration)) {
                 final ConfClasses conformance = core.getConformance("application/json").getData();
-                if (conformance.getConformsTo().contains(Conformance.COLLECTIONS)) {
+                if (conformance.isConformTo(Conformance.COLLECTIONS_v0) || conformance.isConformTo(Conformance.COLLECTIONS_v1)) {
                     root = new CollectionResource(configuration);
                 } else {
                     root = new UndefinedResource(configuration);
