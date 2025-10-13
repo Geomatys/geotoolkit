@@ -17,7 +17,6 @@
 package org.geotoolkit.dggs.h3;
 
 import org.geotoolkit.dggs.h3.internal.shared.H3Index;
-import org.geotoolkit.referencing.dggs.DiscreteGlobalGrid;
 import org.geotoolkit.referencing.dggs.Zone;
 import org.geotoolkit.referencing.dggs.internal.shared.AbstractDiscreteGlobalGridHierarchy;
 
@@ -27,19 +26,19 @@ import org.geotoolkit.referencing.dggs.internal.shared.AbstractDiscreteGlobalGri
  */
 final class H3Dggh extends AbstractDiscreteGlobalGridHierarchy<H3Dggrs> {
 
-    private final DiscreteGlobalGrid[] grids;
+    private final H3Dgg[] grids;
 
     H3Dggh(H3Dggrs dggrs) {
         super(dggrs);
 
-        grids = new DiscreteGlobalGrid[15];
+        grids = new H3Dgg[15];
         for (int i = 0; i < grids.length; i++) {
             grids[i] = new H3Dgg(this, i);
         }
     }
 
     @Override
-    public DiscreteGlobalGrid get(int level) {
+    public H3Dgg get(int level) {
         return grids[level];
     }
 
