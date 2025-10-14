@@ -1024,6 +1024,7 @@
     <module>geotk-dggs</module>
     <module>geotk-ubjson</module>
     <module>geotk-dggal</module>
+    <module>geotk-hips</module>
 
     <module>geotk-ogcapi</module>
     <module>geotk-client-store</module>

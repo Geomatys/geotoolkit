@@ -34,7 +34,7 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.base.MemoryGridResource;
 import org.apache.sis.util.iso.Names;
-import org.geotoolkit.dggs.healpix.NHealpixDggrs;
+import org.geotoolkit.dggs.healpix.HealpixDggrs;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
 import org.geotoolkit.referencing.dggs.Zone;
 import org.geotoolkit.storage.rs.internal.shared.BandedCodeIterator;
@@ -52,7 +52,7 @@ public class ArrayReferencedGridCoverageTest {
     @Test
     public void readTest() throws Exception {
 
-        final DiscreteGlobalGridReferenceSystem dggrs = new NHealpixDggrs();
+        final DiscreteGlobalGridReferenceSystem dggrs = new HealpixDggrs();
         final GridCoverageResource source = create4D();
         final CodedResource resource = CodedCoverages.viewAsDggrs(Names.createLocalName(null, null, "coverage4d"), source, dggrs);
 

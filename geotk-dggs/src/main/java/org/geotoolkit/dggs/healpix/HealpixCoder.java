@@ -38,9 +38,9 @@ import org.opengis.util.FactoryException;
  *
  * @author Johann Sorel (Geomatys)
  */
-final class NHealpixCoder extends DiscreteGlobalGridReferenceSystem.Coder{
+final class HealpixCoder extends DiscreteGlobalGridReferenceSystem.Coder{
 
-    private final NHealpixDggrs dggrs;
+    private final HealpixDggrs dggrs;
     private final CoordinateReferenceSystem baseCrs;
     private int level = 0;
 
@@ -52,13 +52,13 @@ final class NHealpixCoder extends DiscreteGlobalGridReferenceSystem.Coder{
      */
     private double[] precisionsPerLevel;
 
-    public NHealpixCoder(NHealpixDggrs dggrs) {
+    public HealpixCoder(HealpixDggrs dggrs) {
         this.dggrs = dggrs;
         this.baseCrs = this.dggrs.dggs.getCrs();
     }
 
     @Override
-    public NHealpixDggrs getReferenceSystem() {
+    public HealpixDggrs getReferenceSystem() {
         return dggrs;
     }
 
@@ -117,7 +117,7 @@ final class NHealpixCoder extends DiscreteGlobalGridReferenceSystem.Coder{
 
     @Override
     public String encode(DirectPosition dp) throws TransformException {
-        return NHealpixDggh.idAsText(encodeIdentifier(dp));
+        return HealpixDggh.idAsText(encodeIdentifier(dp));
     }
 
     @Override

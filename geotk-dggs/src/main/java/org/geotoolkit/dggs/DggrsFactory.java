@@ -20,7 +20,7 @@ import java.util.Collection;
 import java.util.List;
 import org.geotoolkit.dggs.a5.A5Dggrs;
 import org.geotoolkit.dggs.h3.H3Dggrs;
-import org.geotoolkit.dggs.healpix.NHealpixDggrs;
+import org.geotoolkit.dggs.healpix.HealpixDggrs;
 import org.geotoolkit.dggs.s2.S2Dggrs;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystemFactory;
@@ -37,7 +37,7 @@ public final class DggrsFactory implements DiscreteGlobalGridReferenceSystemFact
     private static final List<String> DGGHS = List.of(
             S2Dggrs.IDENTIFIER,
             H3Dggrs.IDENTIFIER,
-            NHealpixDggrs.IDENTIFIER,
+            HealpixDggrs.IDENTIFIER,
             A5Dggrs.IDENTIFIER
         );
 
@@ -56,7 +56,7 @@ public final class DggrsFactory implements DiscreteGlobalGridReferenceSystemFact
         switch (dgghId) {
             case A5Dggrs.IDENTIFIER : return A5Dggrs.INSTANCE;
             case H3Dggrs.IDENTIFIER : return H3Dggrs.INSTANCE;
-            case NHealpixDggrs.IDENTIFIER : return NHealpixDggrs.INSTANCE;
+            case HealpixDggrs.IDENTIFIER : return HealpixDggrs.INSTANCE;
             case S2Dggrs.IDENTIFIER : return S2Dggrs.INSTANCE;
             default : throw new NoSuchIdentifierException("Unknown identifier " + dgghId, dgghId);
         }

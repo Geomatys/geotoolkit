@@ -27,8 +27,10 @@ import org.geotoolkit.client.openapi.OpenApiConfiguration;
 import org.geotoolkit.client.service.ServiceException;
 import org.geotoolkit.client.service.ServiceResponse;
 import org.geotoolkit.ogcapi.client.common.CollectionsApi;
+import org.geotoolkit.ogcapi.model.LinkRelations;
 import org.geotoolkit.ogcapi.model.common.CollectionDescription;
 import org.geotoolkit.ogcapi.model.common.Collections;
+import org.geotoolkit.ogcapi.model.common.Link;
 
 /**
  *
@@ -36,7 +38,7 @@ import org.geotoolkit.ogcapi.model.common.Collections;
  */
 public final class CollectionResource extends AbstractResource implements Aggregate, AutoCloseable {
 
-    private final CollectionsApi api;
+    final CollectionsApi api;
     private List<Resource> components;
 
     CollectionResource(OpenApiConfiguration config){
@@ -54,8 +56,22 @@ public final class CollectionResource extends AbstractResource implements Aggreg
                 final Collections collection = response.getData();
                 final List<CollectionDescription> collections = collection.getCollections();
 
+                loop:
                 for (CollectionDescription cd : collections) {
-                    components.add(new CollectionItemResource(this, cd));
+                    final ServiceResponse<CollectionDescription> fres = api.getCollection(cd.getId(), "json");
+                    final CollectionDescription fullDescription = fres.getData();
+
+                    final List<Link> links = fullDescription.getLinks();
+                    for (Link link : links) {
+                        if (LinkRelations.OGC_DGGRS_LIST.equals(link.getRel()) || LinkRelations.OGC_DGGRS_LIST.equals(link.getRel().replace("http", "https"))) {
+                            //dggrs data
+                            components.add(new DggrsResource(this, fullDescription));
+                            continue loop;
+                        }
+                    }
+
+                    //undefined resource
+                    components.add(new CollectionItemResource(this, fullDescription));
                 }
 
             } catch (ServiceException ex) {

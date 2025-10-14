@@ -21,6 +21,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.LinearGradientPaint;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.ByteArrayOutputStream;
@@ -133,6 +134,7 @@ public final class DiscreteGlobalGridReferenceSystems {
         g.fillRect(0, 0, image.getWidth(), image.getHeight());
         g.setColor(Color.WHITE);
         g.setStroke(new BasicStroke(1));
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
         try (Stream<Zone> zones = dggs.getHierarchy().getGrids().get(1).getZones()) {
             final Iterator<Zone> iterator = zones.iterator();

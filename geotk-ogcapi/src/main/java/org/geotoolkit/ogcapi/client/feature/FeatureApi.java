@@ -31,6 +31,46 @@ public final class FeatureApi extends AbstractOpenApi {
     }
 
     /**
+     * Get the data schema.
+     *
+     * Features API Part 5.
+     *
+     * @return JSONSchema
+     * @throws ServiceException if fails to make API call
+     */
+    public ServiceResponse<JSONSchema> collectinGetJsonSchema(
+            @jakarta.annotation.Nonnull String collectionId,
+            @jakarta.annotation.Nullable String f)
+            throws ServiceException {
+        if (collectionId == null) {
+            throw new ServiceException(400, "Missing the required parameter 'collectionId' when calling collectionGetDGGRSList");
+        }
+        final HttpRequest.Builder request = HttpRequest.newBuilder();
+        request.uri(toUri("/collections/" + urlEncode(collectionId) + "/schema", toPairs("f", f)));
+        request.header("Accept", "application/json");
+        request.method("GET", HttpRequest.BodyPublishers.noBody());
+        setConfig(request);
+        return toSimpleResponse(send(request), JSONSchema.class);
+    }
+
+    /**
+     * Get the data schema.
+     *
+     * Features API Part 5.
+     *
+     * @return JSONSchema
+     * @throws ServiceException if fails to make API call
+     */
+    public ServiceResponse<JSONSchema> getJsonSchema() throws ServiceException {
+        final HttpRequest.Builder request = HttpRequest.newBuilder();
+        request.uri(toUri("/schema", null));
+        request.header("Accept", "application/json");
+        request.method("GET", HttpRequest.BodyPublishers.noBody());
+        setConfig(request);
+        return toSimpleResponse(send(request), JSONSchema.class);
+    }
+
+    /**
      * Get the list of supported functions This operation returns the list of custom functions supported in CQL2
      * expressions.
      *

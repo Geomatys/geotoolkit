@@ -39,31 +39,31 @@ import org.opengis.util.FactoryException;
  *
  * @author Johann Sorel (Geomatys)
  */
-final class NHealpixDgg extends AbstractDiscreteGlobalGrid<NHealpixDggh> {
+final class HealpixDgg extends AbstractDiscreteGlobalGrid<HealpixDggh> {
 
     private final List<Zone> roots;
     private final HealpixNested healpixNested;
     private final HashComputer hashComputer;
 
-    public NHealpixDgg(NHealpixDggh dggh, int level) {
+    public HealpixDgg(HealpixDggh dggh, int level) {
         super(dggh, level);
         healpixNested = Healpix.getNested(level);
         hashComputer = healpixNested.newHashComputer();
 
         if (level == 0) {
             roots = List.of(
-                new NHealpixZone(hierarchy.dggrs, FitsSerialization.getHash(1, 0)),
-                new NHealpixZone(hierarchy.dggrs, FitsSerialization.getHash(1, 1)),
-                new NHealpixZone(hierarchy.dggrs, FitsSerialization.getHash(1, 2)),
-                new NHealpixZone(hierarchy.dggrs, FitsSerialization.getHash(1, 3)),
-                new NHealpixZone(hierarchy.dggrs, FitsSerialization.getHash(1, 4)),
-                new NHealpixZone(hierarchy.dggrs, FitsSerialization.getHash(1, 5)),
-                new NHealpixZone(hierarchy.dggrs, FitsSerialization.getHash(1, 6)),
-                new NHealpixZone(hierarchy.dggrs, FitsSerialization.getHash(1, 7)),
-                new NHealpixZone(hierarchy.dggrs, FitsSerialization.getHash(1, 8)),
-                new NHealpixZone(hierarchy.dggrs, FitsSerialization.getHash(1, 9)),
-                new NHealpixZone(hierarchy.dggrs, FitsSerialization.getHash(1, 10)),
-                new NHealpixZone(hierarchy.dggrs, FitsSerialization.getHash(1, 11)));
+                new HealpixZone(hierarchy.dggrs, FitsSerialization.getHash(1, 0)),
+                new HealpixZone(hierarchy.dggrs, FitsSerialization.getHash(1, 1)),
+                new HealpixZone(hierarchy.dggrs, FitsSerialization.getHash(1, 2)),
+                new HealpixZone(hierarchy.dggrs, FitsSerialization.getHash(1, 3)),
+                new HealpixZone(hierarchy.dggrs, FitsSerialization.getHash(1, 4)),
+                new HealpixZone(hierarchy.dggrs, FitsSerialization.getHash(1, 5)),
+                new HealpixZone(hierarchy.dggrs, FitsSerialization.getHash(1, 6)),
+                new HealpixZone(hierarchy.dggrs, FitsSerialization.getHash(1, 7)),
+                new HealpixZone(hierarchy.dggrs, FitsSerialization.getHash(1, 8)),
+                new HealpixZone(hierarchy.dggrs, FitsSerialization.getHash(1, 9)),
+                new HealpixZone(hierarchy.dggrs, FitsSerialization.getHash(1, 10)),
+                new HealpixZone(hierarchy.dggrs, FitsSerialization.getHash(1, 11)));
         } else {
             roots = null;
         }
@@ -89,7 +89,7 @@ final class NHealpixDgg extends AbstractDiscreteGlobalGrid<NHealpixDggh> {
 
         final long hash = hashComputer.hash(lon, lat);
         final long zid = FitsSerialization.getHash(level+1, hash);
-        return new NHealpixZone(hierarchy.dggrs, zid);
+        return new HealpixZone(hierarchy.dggrs, zid);
     }
 
     @Override

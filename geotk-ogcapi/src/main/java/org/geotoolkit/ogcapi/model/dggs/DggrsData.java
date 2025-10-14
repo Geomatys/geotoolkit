@@ -26,7 +26,6 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -54,7 +53,7 @@ public final class DggrsData extends DataTransferObject {
     public static final String JSON_PROPERTY_DGGRS = "dggrs";
     @XmlElement(name = "dggrs")
     @jakarta.annotation.Nonnull
-    private URI dggrs;
+    private String dggrs;
 
     public static final String JSON_PROPERTY_ZONE_ID = "zoneId";
     @XmlElement(name = "zoneId")
@@ -84,7 +83,7 @@ public final class DggrsData extends DataTransferObject {
     public DggrsData() {
     }
 
-    public DggrsData dggrs(@jakarta.annotation.Nonnull URI dggrs) {
+    public DggrsData dggrs(@jakarta.annotation.Nonnull String dggrs) {
         this.dggrs = dggrs;
         return this;
     }
@@ -98,14 +97,14 @@ public final class DggrsData extends DataTransferObject {
     @JsonProperty(JSON_PROPERTY_DGGRS)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
     @JacksonXmlProperty(localName = "dggrs")
-    public URI getDggrs() {
+    public String getDggrs() {
         return dggrs;
     }
 
     @JsonProperty(JSON_PROPERTY_DGGRS)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
     @JacksonXmlProperty(localName = "dggrs")
-    public void setDggrs(@jakarta.annotation.Nonnull URI dggrs) {
+    public void setDggrs(@jakarta.annotation.Nonnull String dggrs) {
         this.dggrs = dggrs;
     }
 

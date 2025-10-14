@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.ogcapi.storage;
+package org.geotoolkit.hips;
 
 import java.net.URI;
 import org.apache.sis.parameter.ParameterBuilder;
@@ -23,37 +23,35 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
 import org.geotoolkit.client.AbstractClientProvider;
-import org.geotoolkit.client.openapi.OpenApiConfiguration;
-import org.geotoolkit.client.service.ServiceException;
-import org.geotoolkit.client.service.ServiceResponse;
-import org.geotoolkit.ogcapi.client.common.CoreApi;
-import org.geotoolkit.ogcapi.model.common.ConfClasses;
 import org.opengis.parameter.ParameterDescriptorGroup;
 
 /**
  *
+ * Specification :
+ * https://www.ivoa.net/documents/HiPS/20170519/REC-HIPS-1.0-20170519.pdf
+ *
  * @author Johann Sorel (Geomatys)
  */
-public final class Provider extends AbstractClientProvider {
+public final class HIPSProvider extends AbstractClientProvider {
 
-    public static final String NAME = "ogcapi";
-    private static Provider INSTANCE;
+    public static final String NAME = "hips";
+    private static HIPSProvider INSTANCE;
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR = new ParameterBuilder()
             .addName(NAME).createGroup(URL);
 
     /**
-     * Get singleton instance of OGCAPI provider.
+     * Get singleton instance of HIPS provider.
      *
      * <p>
      * Note : this method is named after Java 9 service loader provider method.
      * {@link https://docs.oracle.com/javase/9/docs/api/java/util/ServiceLoader.html}
      * </p>
      *
-     * @return singleton instance of OGCAPI Provider
+     * @return singleton instance of HIPSProvider
      */
-    public static synchronized Provider provider() {
-        if (INSTANCE == null) INSTANCE = new Provider();
+    public static synchronized HIPSProvider provider() {
+        if (INSTANCE == null) INSTANCE = new HIPSProvider();
         return INSTANCE;
     }
 
@@ -70,27 +68,13 @@ public final class Provider extends AbstractClientProvider {
     @Override
     public ProbeResult probeContent(StorageConnector connector) throws DataStoreException {
         final URI uri = connector.getStorageAs(URI.class);
-
-        final OpenApiConfiguration config = OpenApiConfiguration.builder()
-                .updateBaseUri(uri.toString())
-                .build();
-        try (CoreApi core = new CoreApi(config)) {
-            ServiceResponse<ConfClasses> conformance = core.getConformance("application/json");
-            if (conformance.getStatusCode() == 200 && conformance.getData() != null) {
-                return ProbeResult.SUPPORTED;
-            } else {
-                return ProbeResult.UNSUPPORTED_STORAGE;
-            }
-        } catch (ServiceException ex) {
-            return ProbeResult.UNSUPPORTED_STORAGE;
-        } catch (Exception ex) {
-            return ProbeResult.UNSUPPORTED_STORAGE;
-        }
+        if (uri != null) return ProbeResult.SUPPORTED;
+        return ProbeResult.UNSUPPORTED_STORAGE;
     }
 
     @Override
     public DataStore open(StorageConnector connector) throws DataStoreException {
-        return new Store(this, connector);
+        return new HIPSStore(this, connector);
     }
 
 }

@@ -14,24 +14,23 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.ogcapi.storage;
+package org.geotoolkit.hips;
 
-import java.net.MalformedURLException;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import org.apache.sis.metadata.iso.DefaultMetadata;
+import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.StorageConnector;
-import org.geotoolkit.client.openapi.OpenApiConfiguration;
+import org.geotoolkit.client.service.ServiceConfiguration;
 import org.geotoolkit.client.service.ServiceException;
-import org.geotoolkit.ogcapi.client.common.CoreApi;
-import org.geotoolkit.ogcapi.model.Conformance;
-import org.geotoolkit.ogcapi.model.common.ConfClasses;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -39,30 +38,33 @@ import org.opengis.parameter.ParameterValueGroup;
  *
  * @author Johann Sorel (Geomatys)
  */
-public final class Store extends DataStore implements Aggregate {
+public final class HIPSStore extends DataStore implements Aggregate {
 
-    private final OpenApiConfiguration configuration;
     private final URI uri;
-    private Resource root;
+    final HIPSService service;
 
-    Store(Provider provider, StorageConnector connector) throws DataStoreException {
+    //cache
+    private HIPSList list;
+    private List<HIPSCoverageResource> resources;
+
+
+    public HIPSStore(HIPSProvider provider, StorageConnector connector) throws DataStoreException {
         super(provider, connector);
         uri = connector.getStorageAs(URI.class);
         connector.closeAllExcept(null);
 
-        configuration = OpenApiConfiguration.builder()
-            .updateBaseUri(uri.toString())
-            .build();
+        String baseUri = uri.toString();
+        if (baseUri.endsWith("/")) baseUri = baseUri.substring(0, baseUri.length()-1);
+        final ServiceConfiguration conf = ServiceConfiguration.builder()
+                .updateBaseUri(baseUri)
+                .build();
+        service = new HIPSService(conf);
     }
 
     @Override
     public Optional<ParameterValueGroup> getOpenParameters() {
-        final ParameterValueGroup parameters = Provider.PARAMETERS_DESCRIPTOR.createValue();
-        try {
-            parameters.parameter(Provider.URL.getName().getCode()).setValue(uri.toURL());
-        } catch (MalformedURLException ex) {
-            throw new IllegalArgumentException(ex);
-        }
+        final Parameters parameters = Parameters.castOrWrap(HIPSProvider.PARAMETERS_DESCRIPTOR.createValue());
+        parameters.parameter(HIPSProvider.LOCATION).setValue(uri);
         return Optional.of(parameters);
     }
 
@@ -71,32 +73,28 @@ public final class Store extends DataStore implements Aggregate {
         return new DefaultMetadata();
     }
 
-    /**
-     * @return root resource
-     * @throws DataStoreException
-     */
+
     @Override
     public synchronized Collection<? extends Resource> components() throws DataStoreException {
-        if (root == null) {
-            try (CoreApi core = new CoreApi(configuration)) {
-                final ConfClasses conformance = core.getConformance("application/json").getData();
-                if (conformance.isConformTo(Conformance.COLLECTIONS_v0) || conformance.isConformTo(Conformance.COLLECTIONS_v1)) {
-                    root = new CollectionResource(configuration);
-                } else {
-                    root = new UndefinedResource(configuration);
+
+        if (resources == null) {
+            resources = new ArrayList<>();
+            try {
+                final HIPSList hipsList = service.getHipsList().getData();
+                for (HIPSProperties properties : hipsList) {
+                    final HIPSCoverageResource resource = new HIPSCoverageResource(this, properties);
+                    resources.add(resource);
                 }
+
             } catch (ServiceException ex) {
-                throw new DataStoreException(ex);
-            } catch (Exception ex) {
                 throw new DataStoreException(ex);
             }
         }
 
-        return Collections.singleton(root);
+        return Collections.unmodifiableList(resources);
     }
 
     @Override
     public void close() throws DataStoreException {
     }
-
 }

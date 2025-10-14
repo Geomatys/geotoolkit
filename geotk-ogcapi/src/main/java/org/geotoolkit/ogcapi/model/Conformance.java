@@ -45,7 +45,8 @@ public final class Conformance {
     /**
      * Key used in ConfClasses to identify a resource compliant with this Api.
      */
-    public static final String COLLECTIONS = "http://www.opengis.net/spec/ogcapi-common-2/1.0/conf/collections";
+    public static final String COLLECTIONS_v0 = "http://www.opengis.net/spec/ogcapi-common-2/0.0/conf/collections";
+    public static final String COLLECTIONS_v1 = "http://www.opengis.net/spec/ogcapi-common-2/1.0/conf/collections";
 
     //proposal
 
