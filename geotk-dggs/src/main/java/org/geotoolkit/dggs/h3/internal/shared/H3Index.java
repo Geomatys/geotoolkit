@@ -269,7 +269,7 @@ public final class H3Index {
     * @param childRes  The child resolution you're interested in
     */
     public static long cellToChildrenSize(long index, int childRes) {
-        if (childRes >= Constants.MAX_H3_RES) return 0;
+        if (childRes > Constants.MAX_H3_RES) return 0;
         final int n = childRes - getResolution(index);
 
         if (isPentagon(index)) {

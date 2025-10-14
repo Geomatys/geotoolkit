@@ -27,13 +27,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.LongStream;
+import java.util.stream.Stream;
 import org.apache.sis.geometries.math.SampleSystem;
 import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.dggs.h3.internal.shared.Constants;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridSystems;
 import org.geotoolkit.referencing.dggs.RefinementLevel;
+import org.geotoolkit.referencing.dggs.Zone;
 import org.geotoolkit.referencing.dggs.internal.shared.AbstractZone;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.metadata.extent.BoundingPolygon;
@@ -310,6 +311,11 @@ final class H3Zone extends AbstractZone<H3Dggrs> {
         final LatLng latLng = H3Dggrs.H3.cellToLatLng(hash);
         position = new DirectPosition2D(CRS84.getCoordinateReferenceSystem(), latLng.lng, latLng.lat);
         return position;
+    }
+
+    @Override
+    public Stream<Zone> getChildrenAtRelativeDepth(int depth) {
+        return dggrs.dggs.dggh.get(getLocationType().getRefinementLevel()+depth).getZones(this);
     }
 
 }

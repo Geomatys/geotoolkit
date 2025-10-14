@@ -37,6 +37,34 @@ public final class Iterators {
      * through, or if the input to `iterInitParent` was invalid.
      */
     public static LongStream iterInitParent(long h, int childRes) {
+        final int parentRes = H3Index.getResolution(h);
+
+        if (childRes == parentRes+1) {
+            //direct children, provide and optimized case
+            long idx = H3Index.setResolution(h, childRes);
+            if (H3Index.isPentagon(h)) {
+                return LongStream.of(
+                    H3Index.setIndexDigit(idx, childRes, 0),
+                    //H3Index.setIndexDigit(idx, childRes, 1), //skipped in the pentagon case
+                    H3Index.setIndexDigit(idx, childRes, 2),
+                    H3Index.setIndexDigit(idx, childRes, 3),
+                    H3Index.setIndexDigit(idx, childRes, 4),
+                    H3Index.setIndexDigit(idx, childRes, 5),
+                    H3Index.setIndexDigit(idx, childRes, 6)
+                );
+            } else {
+                return LongStream.of(
+                    H3Index.setIndexDigit(idx, childRes, 0),
+                    H3Index.setIndexDigit(idx, childRes, 1),
+                    H3Index.setIndexDigit(idx, childRes, 2),
+                    H3Index.setIndexDigit(idx, childRes, 3),
+                    H3Index.setIndexDigit(idx, childRes, 4),
+                    H3Index.setIndexDigit(idx, childRes, 5),
+                    H3Index.setIndexDigit(idx, childRes, 6)
+                );
+            }
+        }
+
         final IterCellsChildren iter = new IterCellsChildren();
         iter._parentRes = H3Index.getResolution(h);
 
