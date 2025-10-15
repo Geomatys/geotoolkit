@@ -16,24 +16,47 @@
  */
 package org.geotoolkit.referencing.rs;
 
-import org.geotoolkit.referencing.rs.ReferenceSystems;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import org.apache.sis.geometry.GeneralDirectPosition;
+import org.apache.sis.referencing.crs.DefaultTemporalCRS;
+import org.apache.sis.referencing.gazetteer.ReferencingByIdentifiers;
 import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
 import org.geotoolkit.referencing.dggs.Zone;
+import org.geotoolkit.util.StringUtilities;
+import org.opengis.coordinate.MismatchedDimensionException;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.ReferenceSystem;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.crs.TemporalCRS;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
 /**
  * Holds the ordinates for geometry/area/zone/point within some reference system.
  *
++ * synonym : ISO-19170 : 8.2.4.3.  Cell address
+ *
  * @author Johann Sorel (Geomatys)
  */
-public interface Code {
+public final class Code {
+
+    private final ReferenceSystem rs;
+    private final Object[] ordinates;
+
+    public Code(ReferenceSystem rs) {
+        this.rs = rs;
+        this.ordinates = new Object[ReferenceSystems.getDimension(rs)];
+    }
+
+    public Code(ReferenceSystem rs, Object ... ordinates) {
+        this.rs = rs;
+        this.ordinates = ordinates;
+    }
 
     /**
      * The reference system (RS) in which the location tuple is given.
@@ -42,14 +65,10 @@ public interface Code {
      * In this case, the reference system is implicitly assumed to take on the value
      * of the containing object's <abbr>RS</abbr>.
      *
-     * <h4>Default implementation</h4>
-     * The default implementation returns {@code null}. Implementations should override
-     * this method if the <abbr>RS</abbr> is known or can be taken from the containing object.
-     *
      * @return the reference system (RS), or {@code null}.
      */
-    default ReferenceSystem getReferenceSystem() {
-        return null;
+    public ReferenceSystem getReferenceSystem() {
+        return rs;
     }
 
     /**
@@ -58,27 +77,20 @@ public interface Code {
      *
      * @return the dimensionality of this location.
      */
-    int getDimension();
+    public int getDimension() {
+        return ordinates.length;
+    }
 
     /**
      * A <b>copy</b> of the ordinates stored as an array of object values.
      * Changes to the returned array will not affect this {@code Location}.
      * The array length shall be equal to the {@linkplain #getDimension() dimension}.
      *
-     * <h4>Default implementation</h4>
-     * The default implementation invokes {@link #getOrdinate(int)} for all indices
-     * from 0 inclusive to {@link #getDimension()} exclusive, and stores the values
-     * in a newly created array.
-     *
      * @return a copy of the ordinates. Changes in the returned array will not be reflected back
      *         in this {@code Location} object.
      */
-    default Object[] getOrdinates() {
-        final Object[] ordinates = new Object[getDimension()];
-        for (int i=0; i<ordinates.length; i++) {
-            ordinates[i] = getOrdinate(i);
-        }
-        return ordinates;
+    public Object[] getOrdinates() {
+        return ordinates.clone();
     }
 
     /**
@@ -89,9 +101,34 @@ public interface Code {
      * @throws IndexOutOfBoundsException if the given index is negative or is equal or greater
      *         than the {@linkplain #getDimension() number of dimensions}.
      */
-    Object getOrdinate(int dimension);
+    public Object getOrdinate(int dimension) {
+        return ordinates[dimension];
+    }
 
-    default DirectPosition toDirectPosition() throws TransformException, FactoryException {
+    /**
+     * Set the ordinate at the specified dimension.
+     *
+     * @param dimension  the dimension in the range 0 to {@linkplain #getDimension dimension}−1.
+     * @param value ordinate value
+     * @throws IndexOutOfBoundsException if the given index is negative or is equal or greater
+     *         than the {@linkplain #getDimension() number of dimensions}.
+     */
+    public void setOrdinate(int dimension, Object value) {
+        this.ordinates[dimension] = value;
+    }
+
+    /**
+     * Set all ordinates.
+     *
+     * @param values ordinate values
+     * @throws MismatchedDimensionException if dimension do not match
+     */
+    public void setOrdinates(Object... values) throws MismatchedDimensionException {
+        if (values.length != ordinates.length) throw new MismatchedDimensionException();
+        System.arraycopy(values, 0, ordinates, 0, values.length);
+    }
+
+    public DirectPosition toDirectPosition() throws TransformException, FactoryException {
         final ReferenceSystem rs = getReferenceSystem();
         double[] position = new double[0];
         final List<ReferenceSystem> singleComponents = ReferenceSystems.getSingleComponents(rs, true);
@@ -110,4 +147,54 @@ public interface Code {
         dp.setCoordinateReferenceSystem(ReferenceSystems.getLeaningCRS(rs));
         return dp;
     }
+
+    @Override
+    public String toString() {
+        final List<String> parts = new ArrayList<>();
+
+        final ReferenceSystem rs = getReferenceSystem();
+        final List<ReferenceSystem> singleComponents = ReferenceSystems.getSingleComponents(rs, true);
+        for (int i = 0; i < singleComponents.size(); i++) {
+            final ReferenceSystem srs = singleComponents.get(i);
+            if (srs instanceof TemporalCRS tcrs) {
+                Instant instant = DefaultTemporalCRS.castOrCopy(tcrs).toInstant(((Number)ordinates[i]).doubleValue());
+                parts.add(instant + " " + tcrs.getName().toString());
+            } else if (srs instanceof CoordinateReferenceSystem crs) {
+                parts.add(ordinates[i] + " " + crs.getName().toString());
+            } else if (srs instanceof ReferencingByIdentifiers rbi) {
+                parts.add(ordinates[i] + " " + rbi.getName().toString());
+            } else {
+                throw new UnsupportedOperationException("todo");
+            }
+        }
+
+        return StringUtilities.toStringTree("Location", parts);
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 61 * hash + Objects.hashCode(this.rs);
+        hash = 61 * hash + Arrays.deepHashCode(this.ordinates);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Code other = (Code) obj;
+        if (!Objects.equals(this.rs, other.rs)) {
+            return false;
+        }
+        return Arrays.deepEquals(this.ordinates, other.ordinates);
+    }
+
 }

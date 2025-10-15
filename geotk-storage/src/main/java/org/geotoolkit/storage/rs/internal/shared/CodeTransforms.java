@@ -16,9 +16,10 @@
  */
 package org.geotoolkit.storage.rs.internal.shared;
 
-import org.geotoolkit.referencing.rs.internal.shared.DefaultCode;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
@@ -101,7 +102,7 @@ public final class CodeTransforms {
         public Code toCode(int[] gridPosition) throws TransformException {
             final Object[] ordinates = new Object[getDimension()];
             toAddress(gridPosition, ordinates, 0);
-            return new DefaultCode(getRS(), ordinates);
+            return new Code(getRS(), ordinates);
         }
 
         @Override
@@ -290,10 +291,14 @@ public final class CodeTransforms {
 
         private final ReferenceSystem rs;
         private final List<?> zids;
+        private final Map<Object,Integer> index = new HashMap<>();
 
         public Listed(ReferenceSystem rs, List<?> zids) {
             this.rs = rs;
             this.zids = zids;
+            for (int i = 0, n = zids.size(); i < n; i++) {
+                index.put(zids.get(i), i);
+            }
         }
 
         public List<?> getList() {
@@ -312,12 +317,14 @@ public final class CodeTransforms {
 
         @Override
         public Code toCode(int[] gridPosition) throws TransformException {
-            return new DefaultCode(rs, new Object[]{zids.get(gridPosition[0])});
+            return new Code(rs, new Object[]{zids.get(gridPosition[0])});
         }
 
         @Override
         public int[] toGrid(Code location) throws TransformException {
-            return new int[]{zids.indexOf(location.getOrdinate(0))};
+            final Integer i = index.get(location.getOrdinate(0));
+            if (i == null) throw new TransformException("Location code outside this grid : " + location.getOrdinate(0));
+            return new int[]{i};
         }
 
         @Override
@@ -327,7 +334,9 @@ public final class CodeTransforms {
 
         @Override
         public void toGrid(Object[] location, int[] gridPosition, int offset) throws TransformException {
-            gridPosition[offset] = zids.indexOf(location[offset]);
+            final Integer i = index.get(location[offset]);
+            if (i == null) throw new TransformException("Location code outside this grid : " + location[offset]);
+            gridPosition[offset] = i;
         }
 
         @Override

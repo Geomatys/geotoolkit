@@ -20,7 +20,7 @@ import java.util.Collection;
 import java.util.List;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystemFactory;
-import org.opengis.referencing.crs.GeographicCRS;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 import org.opengis.util.NoSuchIdentifierException;
 
@@ -63,7 +63,7 @@ public final class DggrsFactory implements DiscreteGlobalGridReferenceSystemFact
     }
 
     @Override
-    public DiscreteGlobalGridReferenceSystem createDggrs(String dgghId, String zonalRefId, GeographicCRS base) throws FactoryException {
+    public DiscreteGlobalGridReferenceSystem createDggrs(String dgghId, String zonalRefId, CoordinateReferenceSystem base) throws FactoryException {
         switch (dgghId) {
             //case DGGALDggrs.HEALPIX_IDENTIFIER : return DGGALDggrs.HEALPIX_INSTANCE; //conflicts with CDS Healpix
             case DGGALDggrs.ISEA3H_IDENTIFIER : return DGGALDggrs.ISEA3H_INSTANCE;

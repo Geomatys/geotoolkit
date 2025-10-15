@@ -138,7 +138,9 @@ final class H3Dgg extends AbstractDiscreteGlobalGrid<H3Dggh> {
 
     @Override
     public Stream<Zone> getZones(Zone parent) {
-        return H3Ext.getGeometricSubZones(parent.getLongIdentifier(), level).mapToObj((long t) -> new H3Zone(hierarchy.dggrs, t));
+        final int pz = parent.getLocationType().getRefinementLevel();
+        if (pz >= level) return Stream.empty();
+        return H3Ext.getGeometricSubZones(parent.getLongIdentifier(), level-pz).mapToObj((long t) -> new H3Zone(hierarchy.dggrs, t));
     }
 
     @Override

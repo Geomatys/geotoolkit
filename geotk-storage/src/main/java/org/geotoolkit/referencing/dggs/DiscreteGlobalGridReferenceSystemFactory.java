@@ -17,7 +17,7 @@
 package org.geotoolkit.referencing.dggs;
 
 import java.util.Collection;
-import org.opengis.referencing.crs.GeographicCRS;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 
 /**
@@ -48,9 +48,9 @@ public interface DiscreteGlobalGridReferenceSystemFactory {
      *
      * @param dgghId not null
      * @param zonalRefId can be null, in which case the default one from listZonalRefId will be used
-     * @param base the base CRS attached, null for default
+     * @param base the base CRS attached, null for default (should be GeographicCRS for earth or InertialCRS for star fixed)
      * @throws FactoryException if creation failed
      */
-    DiscreteGlobalGridReferenceSystem createDggrs(String dgghId, String zonalRefId, GeographicCRS base) throws FactoryException;
+    DiscreteGlobalGridReferenceSystem createDggrs(String dgghId, String zonalRefId, CoordinateReferenceSystem base) throws FactoryException;
 
 }
