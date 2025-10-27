@@ -24,7 +24,7 @@ import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridOrientation;
 import org.apache.sis.image.PixelIterator;
-import org.apache.sis.storage.base.MemoryGridResource;
+import org.apache.sis.storage.MemoryGridCoverageResource;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
@@ -53,7 +53,7 @@ public final class ConvertedCoverageResourceTest {
         final BufferedImage data = new BufferedImage(360, 180, BufferedImage.TYPE_BYTE_GRAY);
         final GridGeometry grid = new GridGeometry(new GridExtent(360,180), CRS.getDomainOfValidity(CommonCRS.WGS84.normalizedGeographic()), GridOrientation.HOMOTHETY);
         final GridCoverage2D coverage = new GridCoverage2D(grid, null, data);
-        final GridCoverageResource source = new MemoryGridResource(null, null, coverage, null);
+        final GridCoverageResource source = new MemoryGridCoverageResource(null, coverage, null);
 
         //converted coverage
         final MathTransform1D converter = (MathTransform1D) MathTransforms.linear(2, 10);

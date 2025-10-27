@@ -20,7 +20,7 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.wrapper.jts.Factory;
 import org.apache.sis.geometry.wrapper.jts.JTS;
 import org.apache.sis.image.processing.isoline.Isolines;
-import org.apache.sis.storage.base.MemoryGridResource;
+import org.apache.sis.storage.MemoryGridCoverageResource;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
@@ -102,7 +102,7 @@ public class IsolineComparison {
                             CommonCRS.defaultGeographic()))
                     .build();
             final Parameters params = Parameters.castOrWrap(IsolineDescriptor.INSTANCE.getInputDescriptor().createValue());
-            params.getOrCreate(IsolineDescriptor.COVERAGE_REF).setValue(new MemoryGridResource(null, null, coverage, null));
+            params.getOrCreate(IsolineDescriptor.COVERAGE_REF).setValue(new MemoryGridCoverageResource(null, coverage, null));
             params.getOrCreate(IsolineDescriptor.INTERVALS).setValue(input.isolineLevels);
             params.getOrCreate(IsolineDescriptor.FEATURE_NAME).setValue("isolines");
             params.getOrCreate(IsolineDescriptor.METHOD).setValue(method);

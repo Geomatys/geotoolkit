@@ -49,7 +49,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.apache.sis.coverage.grid.PixelInCell;
-import org.apache.sis.storage.base.MemoryGridResource;
+import org.apache.sis.storage.MemoryGridCoverageResource;
 import org.opengis.util.FactoryException;
 
 
@@ -137,7 +137,7 @@ public class CoverageToFeatureTest extends AbstractProcessTest {
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setDomain(new GridGeometry(null , PixelInCell.CELL_CENTER, gridToCRS, crs2d));
         gcb.setValues(image);
-        return new MemoryGridResource(null, null, gcb.build(), null);
+        return new MemoryGridCoverageResource(null, gcb.build(), null);
     }
 
     private FeatureType buildFeatureType() throws NoSuchAuthorityCodeException, FactoryException {

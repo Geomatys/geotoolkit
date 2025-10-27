@@ -26,7 +26,7 @@ import org.apache.sis.feature.internal.shared.AttributeConvention;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
-import org.apache.sis.storage.base.MemoryFeatureSet;
+import org.apache.sis.storage.MemoryFeatureSet;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.locationtech.jts.geom.CoordinateXY;

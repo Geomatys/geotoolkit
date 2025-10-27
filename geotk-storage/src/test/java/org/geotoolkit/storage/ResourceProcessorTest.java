@@ -30,7 +30,7 @@ import org.apache.sis.coverage.grid.GridOrientation;
 import org.apache.sis.image.ImageProcessor;
 import org.apache.sis.image.Interpolation;
 import org.apache.sis.referencing.internal.shared.AffineTransform2D;
-import org.apache.sis.storage.base.MemoryGridResource;
+import org.apache.sis.storage.MemoryGridCoverageResource;
 import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.iso.Names;
@@ -104,7 +104,7 @@ public final class ResourceProcessorTest {
                 .addQuantitative("1-based row-major order pixel number", 1, 5, 1, 0, Units.UNITY)
                 .build();
         DataBuffer values = new DataBufferInt(new int[] {1, 2, 3, 4}, 4);
-        return new MemoryGridResource(null, null, new BufferedGridCoverage(domain, Collections.singletonList(band), values), null);
+        return new MemoryGridCoverageResource(null, new BufferedGridCoverage(domain, Collections.singletonList(band), values), null);
     }
 
     private static ResourceProcessor nearestInterpol() {

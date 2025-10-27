@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 import net.sf.jasperreports.engine.JasperReport;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.Envelopes;
-import org.apache.sis.storage.base.MemoryFeatureSet;
+import org.apache.sis.storage.MemoryFeatureSet;
 import org.apache.sis.map.MapLayer;
 import org.apache.sis.map.MapLayers;
 import org.apache.sis.referencing.CRS;

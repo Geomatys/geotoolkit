@@ -21,7 +21,7 @@ import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.referencing.internal.shared.AffineTransform2D;
-import org.apache.sis.storage.base.MemoryGridResource;
+import org.apache.sis.storage.MemoryGridCoverageResource;
 import org.apache.sis.measure.Units;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CRS;
@@ -135,8 +135,8 @@ public class PredictorTest {
         input.getOrCreate(PredictorDescriptor.END_TIMESTAMP).setValue(expectedEndTime);
         input.getOrCreate(PredictorDescriptor.START_POINT)
                 .setValue(new DirectPosition2D(CommonCRS.defaultGeographic(), 0.1, 0.2));
-        input.getOrCreate(PredictorDescriptor.WIND_RESOURCE).setValue(new MemoryGridResource(null, null, MOCK_UV_DATA, null));
-        input.getOrCreate(PredictorDescriptor.CURRENT_RESOURCE).setValue(new MemoryGridResource(null, null, MOCK_UV_DATA, null));
+        input.getOrCreate(PredictorDescriptor.WIND_RESOURCE).setValue(new MemoryGridCoverageResource(null, MOCK_UV_DATA, null));
+        input.getOrCreate(PredictorDescriptor.CURRENT_RESOURCE).setValue(new MemoryGridCoverageResource(null, MOCK_UV_DATA, null));
 
         final Predictor predictor = new Predictor(DESCRIPTOR, input);
         predictor.addListener(new ProcessListenerAdapter() {

@@ -21,6 +21,7 @@ import org.geotoolkit.referencing.rs.ReferenceSystems;
 import java.nio.ByteBuffer;
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.BufferedGridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
@@ -32,7 +33,7 @@ import org.apache.sis.image.internal.shared.RasterFactory;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.GridCoverageResource;
-import org.apache.sis.storage.base.MemoryGridResource;
+import org.apache.sis.storage.MemoryGridCoverageResource;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.dggs.healpix.HealpixDggrs;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
@@ -42,6 +43,7 @@ import org.geotoolkit.storage.rs.internal.shared.CodeTransforms;
 import org.junit.Assert;
 import org.junit.Test;
 import org.opengis.referencing.ReferenceSystem;
+import org.opengis.util.GenericName;
 
 /**
  *
@@ -172,7 +174,11 @@ public class ArrayReferencedGridCoverageTest {
                 (List)List.of(new SampleDimension.Builder().setName("test").build()),
                 RasterFactory.wrap(DataType.BYTE, dataBuffer)
         );
-        return new MemoryGridResource(null, Names.createLocalName(null, null, "test"), coverage, null);
+        return new MemoryGridCoverageResource(null, coverage, null) {
+            @Override
+            public Optional<GenericName> getIdentifier() {
+                return Optional.of(Names.createLocalName(null, null, "test"));
+            }
+        };
     }
-
 }

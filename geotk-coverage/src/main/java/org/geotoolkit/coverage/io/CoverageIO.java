@@ -22,7 +22,7 @@ import java.net.URL;
 import java.nio.file.StandardOpenOption;
 import java.util.Collections;
 import org.apache.sis.coverage.grid.GridCoverage;
-import org.apache.sis.storage.base.MemoryGridResource;
+import org.apache.sis.storage.MemoryGridCoverageResource;
 import org.apache.sis.storage.image.WorldFileStoreProvider;
 import org.apache.sis.setup.OptionKey;
 import org.apache.sis.storage.Aggregate;
@@ -109,7 +109,7 @@ public final class CoverageIO {
             });
             try (DataStore ds = new WorldFileStoreProvider().open(c)) {
                 WritableAggregate wr = (WritableAggregate) ds;
-                wr.add(new MemoryGridResource(null, null, coverage, null));
+                wr.add(new MemoryGridCoverageResource(null, coverage, null));
             }
             return;
         }
