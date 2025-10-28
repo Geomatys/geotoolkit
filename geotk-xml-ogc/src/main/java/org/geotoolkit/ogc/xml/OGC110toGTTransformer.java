@@ -408,12 +408,13 @@ public class OGC110toGTTransformer {
     }
 
     public ValueReference visitPropertyName(final PropertyNameType pnt){
-        if (pnt != null) {
+        if (pnt != null && !pnt.getContent().isEmpty()) {
             return visitPropertyName(pnt.getContent());
         }
         return null;
     }
     public ValueReference visitPropertyName(final String pnt){
+        if (pnt == null || pnt.isEmpty()) return null;
         String brutPname = pnt;
         if (brutPname.indexOf(':') == -1) {
             return filterFactory.property(brutPname);

@@ -22,18 +22,8 @@
     <OverlapBehavior><EARLIEST_ON_TOP/></OverlapBehavior>
     
     <ColorMap>
-        <ColorMapEntry>
-            <color>#454545</color>
-            <opacity>1</opacity>
-            <quantity>100</quantity>
-            <label>under100</label>
-        </ColorMapEntry>
-        <ColorMapEntry>
-            <color>#555555</color>
-            <opacity>1</opacity>
-            <quantity>200</quantity>
-            <label>under200</label>
-        </ColorMapEntry>
+        <ColorMapEntry label="under100" opacity="1" quantity="100" color="#454545"/>
+        <ColorMapEntry label="under200" opacity="1" quantity="200" color="#555555"/>
     </ColorMap>
     
     <ContrastEnhancement>

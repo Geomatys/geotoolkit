@@ -20,6 +20,7 @@ import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
 import jakarta.xml.bind.Unmarshaller;
+import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -43,9 +44,13 @@ import org.geotoolkit.style.MutableStyleFactory;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.geotoolkit.filter.FilterUtilities;
+import org.geotoolkit.sld.xml.v100.ColorMapEntry;
 import org.geotoolkit.style.DefaultStyleFactory;
+import org.geotoolkit.style.function.Interpolate;
+import org.geotoolkit.style.function.InterpolationPoint;
 import org.opengis.filter.Expression;
 import org.opengis.filter.FilterFactory;
+import org.opengis.filter.Literal;
 import org.opengis.filter.ValueReference;
 import org.opengis.style.ContrastMethod;
 import org.opengis.style.LineSymbolizer;
@@ -96,6 +101,7 @@ public class SEforSLD100Test {
     private static File FILE_SE_SYMBOL_TEXT = null;
     private static File FILE_SE_SYMBOL_RASTER = null;
     private static File FILE_SE_STYLE = null;
+    private static File FILE_SE_STYLE_2 = null;
     private static File FILE_SE_FTS = null;
     private static File FILE_SE_RULE = null;
 
@@ -105,6 +111,7 @@ public class SEforSLD100Test {
     private static File TEST_FILE_SE_SYMBOL_TEXT = null;
     private static File TEST_FILE_SE_SYMBOL_RASTER = null;
     private static File TEST_FILE_SE_STYLE = null;
+    private static File TEST_FILE_SE_STYLE_2 = null;
     private static File TEST_FILE_SE_FTS = null;
     private static File TEST_FILE_SE_RULE = null;
 
@@ -112,12 +119,9 @@ public class SEforSLD100Test {
 
         POOL = JAXBSLDUtilities.getMarshallerPoolSLD100();
 
-
         TRANSFORMER_GT = new SE100toGTTransformer(FILTER_FACTORY, STYLE_FACTORY);
-        assertNotNull(TRANSFORMER_GT);
 
         TRANSFORMER_OGC = new GTtoSE100Transformer();
-        assertNotNull(TRANSFORMER_OGC);
 
         try {
             FILE_SE_SYMBOL_POINT = new File( SEforSLD100Test.class.getResource("/org/geotoolkit/sample/SE_symbol_point_v100.xml").toURI() );
@@ -126,6 +130,7 @@ public class SEforSLD100Test {
             FILE_SE_SYMBOL_TEXT = new File( SEforSLD100Test.class.getResource("/org/geotoolkit/sample/SE_symbol_text_v100.xml").toURI() );
             FILE_SE_SYMBOL_RASTER = new File( SEforSLD100Test.class.getResource("/org/geotoolkit/sample/SE_symbol_raster_v100.xml").toURI() );
             FILE_SE_STYLE = new File( SEforSLD100Test.class.getResource("/org/geotoolkit/sample/SLD_userstyle_v100.xml").toURI() );
+            FILE_SE_STYLE_2 = new File( SEforSLD100Test.class.getResource("/org/geotoolkit/sample/SLD_userstyle_2_v100.xml").toURI() );
             FILE_SE_FTS = new File( SEforSLD100Test.class.getResource("/org/geotoolkit/sample/SE_fts_v100.xml").toURI() );
             FILE_SE_RULE = new File( SEforSLD100Test.class.getResource("/org/geotoolkit/sample/SE_rule_v100.xml").toURI() );
 
@@ -139,6 +144,7 @@ public class SEforSLD100Test {
         assertNotNull(FILE_SE_STYLE);
         assertNotNull(FILE_SE_FTS);
         assertNotNull(FILE_SE_RULE);
+        assertNotNull(FILE_SE_STYLE_2);
 
         try{
             TEST_FILE_SE_SYMBOL_POINT = File.createTempFile("test_se_symbol_point_v100", ".xml");
@@ -147,6 +153,7 @@ public class SEforSLD100Test {
             TEST_FILE_SE_SYMBOL_TEXT = File.createTempFile("test_se_symbol_text_v100", ".xml");
             TEST_FILE_SE_SYMBOL_RASTER = File.createTempFile("test_se_symbol_raster_v100", ".xml");
             TEST_FILE_SE_STYLE = File.createTempFile("test_se_style_v100", ".xml");
+            TEST_FILE_SE_STYLE_2 = File.createTempFile("test_se_style_2_v100", ".xml");
             TEST_FILE_SE_FTS = File.createTempFile("test_se_fts_v100", ".xml");
             TEST_FILE_SE_RULE = File.createTempFile("test_se_rule_v100", ".xml");
         }catch(IOException ex){
@@ -161,6 +168,7 @@ public class SEforSLD100Test {
             TEST_FILE_SE_SYMBOL_TEXT.deleteOnExit();
             TEST_FILE_SE_SYMBOL_RASTER.deleteOnExit();
             TEST_FILE_SE_STYLE.deleteOnExit();
+            TEST_FILE_SE_STYLE_2.deleteOnExit();
             TEST_FILE_SE_FTS.deleteOnExit();
             TEST_FILE_SE_RULE.deleteOnExit();
         }
@@ -204,6 +212,93 @@ public class SEforSLD100Test {
         assertEquals(pvt.getFeatureTypeStyle().size(), 3);
 
         MARSHALLER.marshal(pvt, TEST_FILE_SE_STYLE);
+
+        POOL.recycle(MARSHALLER);
+        POOL.recycle(UNMARSHALLER);
+    }
+    
+    @Test
+    public void testStyle2() throws JAXBException{
+
+        final Unmarshaller UNMARSHALLER = POOL.acquireUnmarshaller();
+        final Marshaller MARSHALLER     = POOL.acquireMarshaller();
+
+        //Read test
+        Object obj = UNMARSHALLER.unmarshal(FILE_SE_STYLE_2);
+        assertNotNull(obj);
+
+        UserStyle jax = (UserStyle) obj;
+        MutableStyle style = TRANSFORMER_GT.visitUserStyle(jax);
+        assertNotNull(style);
+
+        assertEquals(style.getName(), valueName);
+        assertNull(style.getDescription().getTitle());
+        assertNull(style.getDescription().getAbstract());
+        assertEquals(style.isDefault(), false);
+
+        assertEquals(style.featureTypeStyles().size(), 1);
+        MutableFeatureTypeStyle fStyle = style.featureTypeStyles().get(0);
+        
+        assertEquals(fStyle.rules().size(), 1);
+        MutableRule rule = fStyle.rules().get(0);
+        
+        assertEquals(rule.symbolizers().size(), 1);
+        assertTrue(rule.symbolizers().get(0) instanceof RasterSymbolizer);
+        
+        RasterSymbolizer rsymb = (RasterSymbolizer) rule.symbolizers().get(0);
+        
+        assertNotNull(rsymb.getChannelSelection());
+        assertNotNull(rsymb.getChannelSelection().getGrayChannel());
+        assertEquals(rsymb.getChannelSelection().getGrayChannel().getChannelName(), "1");
+        
+        assertNotNull(rsymb.getColorMap());
+        
+        assertTrue(rsymb.getColorMap().getFunction() instanceof Interpolate);
+        
+        Interpolate inte = (Interpolate) rsymb.getColorMap().getFunction();
+        assertEquals(inte.getInterpolationPoints().size(), 5);
+        
+        //Write test
+        UserStyle pvt = TRANSFORMER_OGC.visit(style, null);
+        assertNotNull(pvt);
+
+        assertEquals(pvt.getName(), valueName);
+        assertNull(pvt.getTitle());
+        assertNull(pvt.getAbstract());
+        assertEquals(pvt.isIsDefault(), Boolean.FALSE);
+
+        assertEquals(pvt.getFeatureTypeStyle().size(), 1);
+        
+        FeatureTypeStyle fts = pvt.getFeatureTypeStyle().get(0);
+        
+        assertEquals(fts.getRule().size(), 1);
+        Rule r = fts.getRule().get(0);
+        
+        assertEquals(r.getSymbolizer().size(), 1);
+        assertTrue(r.getSymbolizer().get(0).getValue() instanceof org.geotoolkit.sld.xml.v100.RasterSymbolizer);
+        
+        org.geotoolkit.sld.xml.v100.RasterSymbolizer rs = (org.geotoolkit.sld.xml.v100.RasterSymbolizer) r.getSymbolizer().get(0).getValue();
+        
+        assertNotNull(rs.getChannelSelection());
+        assertNotNull(rs.getChannelSelection().getGrayChannel());
+        assertEquals(rs.getChannelSelection().getGrayChannel().getSourceChannelName(), "1");
+        
+        assertNotNull(rs.getColorMap());
+        
+        assertEquals(rs.getColorMap().getColorMapEntry().size(), 5);
+        
+        // opacity = 0 handled as transprent color
+        ColorMapEntry cm1 = rs.getColorMap().getColorMapEntry().get(0);
+        assertEquals(cm1.getLabel(),   "0.017");
+        assertEquals(cm1.getQuantity(), 0.017000000000000001, 0);
+        assertEquals(cm1.getColor(),   "#00ffffff");
+        
+        ColorMapEntry cm2 = rs.getColorMap().getColorMapEntry().get(1);
+        assertEquals(cm2.getLabel(),   "0.265241785440594");
+        assertEquals(cm2.getQuantity(), 0.26524178544059401, 0);
+        assertEquals(cm2.getColor(),   "#3a528b");
+        
+        MARSHALLER.marshal(pvt, TEST_FILE_SE_STYLE_2);
 
         POOL.recycle(MARSHALLER);
         POOL.recycle(UNMARSHALLER);
@@ -526,7 +621,16 @@ public class SEforSLD100Test {
         assertEquals(rasterSymbol.getChannelSelection().getRGBChannels()[2].getChannelName(), "band_3");
 
         assertNotNull(rasterSymbol.getColorMap());
-//        assertNotNull( rasterSymbol.getColorMap().getFunction() );
+        assertTrue(rasterSymbol.getColorMap().getFunction() instanceof Interpolate);
+        
+        Interpolate inte = (Interpolate) rasterSymbol.getColorMap().getFunction();
+        assertEquals(inte.getInterpolationPoints().size(), 2);
+        
+        InterpolationPoint pt1 = inte.getInterpolationPoints().get(0);
+        assertEquals(pt1.getData(), 100.0);
+        assertTrue(pt1.getValue() instanceof Literal);
+        Literal pt1Value = (Literal) pt1.getValue();
+        assertTrue(pt1Value.getValue() instanceof Color);
 
         assertNotNull(rasterSymbol.getContrastEnhancement());
         assertEquals(rasterSymbol.getContrastEnhancement().getMethod(), ContrastMethod.NORMALIZE);
@@ -559,17 +663,22 @@ public class SEforSLD100Test {
         assertEquals(rs.getChannelSelection().getBlueChannel().getSourceChannelName(), "band_3");
 
         assertNotNull(rs.getColorMap());
-        //TODO test colormap content
+        assertEquals(rs.getColorMap().getColorMapEntry().size(), 2);
+        
+        ColorMapEntry cm1 = rs.getColorMap().getColorMapEntry().get(0);
+        assertEquals(cm1.getLabel(),   "100.0");
+        assertEquals(cm1.getQuantity(), 100.0, 0);
+        assertEquals(cm1.getColor(),   "#454545");
 
         assertNotNull(rs.getContrastEnhancement());
         assertNotNull(rs.getContrastEnhancement().getNormalize());
         assertNull(rs.getContrastEnhancement().getHistogram());
-        assertEquals(rs.getContrastEnhancement().getGammaValue().doubleValue(), 3d, DELTA);
+        assertEquals(rs.getContrastEnhancement().getGammaValue(), 3d, DELTA);
 
         assertNotNull(rs.getImageOutline());
 
         assertNotNull(rs.getOpacity());
-        assertEquals(rs.getContrastEnhancement().getGammaValue().doubleValue(), 3d, DELTA);
+        assertEquals(rs.getContrastEnhancement().getGammaValue(), 3d, DELTA);
 
         assertNotNull(rs.getOverlapBehavior());
         assertNotNull(rs.getOverlapBehavior().getEARLIESTONTOP());
@@ -578,8 +687,8 @@ public class SEforSLD100Test {
         assertNull(rs.getOverlapBehavior().getRANDOM());
 
         assertNotNull(rs.getShadedRelief());
-        assertEquals(rs.getShadedRelief().isBrightnessOnly().booleanValue(), true);
-        assertEquals(rs.getShadedRelief().getReliefFactor().doubleValue(), 5d, DELTA);
+        assertEquals(rs.getShadedRelief().isBrightnessOnly(), true);
+        assertEquals(rs.getShadedRelief().getReliefFactor(), 5d, DELTA);
 
         MARSHALLER.marshal(pvt, TEST_FILE_SE_SYMBOL_RASTER);
 
