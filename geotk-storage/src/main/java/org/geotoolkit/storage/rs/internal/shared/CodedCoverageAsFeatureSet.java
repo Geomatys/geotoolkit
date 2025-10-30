@@ -206,6 +206,7 @@ public final class CodedCoverageAsFeatureSet extends AbstractFeatureSet {
         }
 
         @Override
+        @Deprecated
         public Object getValueOrFallback(String propName, Object missingPropertyFallback) {
             final Integer idx = index.get(propName);
             if (idx == null) return missingPropertyFallback;
@@ -239,8 +240,10 @@ public final class CodedCoverageAsFeatureSet extends AbstractFeatureSet {
                 } catch (TransformException ex) {
                     throw new BackingStoreException(ex);
                 }
-            } else {
-                return getCell().getValueOrFallback(propName, missingPropertyFallback);
+            } else try {
+                return getCell().getPropertyValue(propName);
+            } catch (PropertyNotFoundException e) {
+                return missingPropertyFallback;
             }
         }
 

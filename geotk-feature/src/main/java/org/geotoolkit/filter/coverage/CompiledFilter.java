@@ -24,7 +24,7 @@ import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverageProcessor;
 import org.apache.sis.filter.Optimization;
 import org.apache.sis.geometry.wrapper.jts.JTS;
-import org.apache.sis.filter.internal.shared.Visitor;
+import org.apache.sis.filter.visitor.Visitor;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.coverage.GeometryValuePair;
 import org.opengis.filter.Expression;

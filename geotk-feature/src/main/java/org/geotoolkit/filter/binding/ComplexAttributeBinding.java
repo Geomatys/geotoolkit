@@ -22,6 +22,7 @@ import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
 import static org.geotoolkit.filter.binding.AttributeBinding.stripPrefix;
+import org.opengis.feature.PropertyNotFoundException;
 
 /**
  *
@@ -42,6 +43,8 @@ public class ComplexAttributeBinding extends AbstractBinding<Feature>{
                (PROPERTY_PATTERN.matcher(xpath).matches() || ID_PATTERN.matcher(xpath).matches());
     }
 
+    // TODO: this method is full of unsafe casts, but we cann't use `target.cast(Object)`
+    // because this method is often invoked with a null `target` argument.
     @Override
     public <T> T get(Feature candidate, String xpath, Class<T> target) throws IllegalArgumentException {
         if(candidate==null) return null;
@@ -57,7 +60,11 @@ public class ComplexAttributeBinding extends AbstractBinding<Feature>{
         if (!xpath.isEmpty() && xpath.charAt(0) == '{') {
             xpath = NamesExt.valueOf(xpath).toString();
         }
-        return (T) candidate.getValueOrFallback(xpath, null);
+        try {
+            return (T) candidate.getPropertyValue(xpath);   // TODO: unsafe cast
+        } catch (PropertyNotFoundException e) {
+            return null;
+        }
     }
 
     @Override

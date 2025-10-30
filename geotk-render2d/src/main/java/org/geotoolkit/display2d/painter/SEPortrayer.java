@@ -40,7 +40,7 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.feature.Features;
 import org.apache.sis.feature.internal.shared.AttributeConvention;
 import org.apache.sis.filter.DefaultFilterFactory;
-import org.apache.sis.filter.internal.shared.XPath;
+import org.apache.sis.filter.base.XPath;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.map.ExceptionPresentation;

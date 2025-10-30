@@ -29,7 +29,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.storage.feature.FeatureStoreUtilities;
-import org.geotoolkit.storage.feature.FeatureStreams;
 import org.locationtech.jts.geom.CoordinateSequence;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
@@ -43,6 +42,7 @@ import org.locationtech.jts.geom.Polygon;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -143,7 +143,12 @@ public final class GeoJSONMapper {
             gf.setFeatureType(getTypeNames(type));
         }
 
-        Object id = feature.getValueOrFallback(AttributeConvention.IDENTIFIER, null);
+        Object id;
+        try {
+            id = feature.getPropertyValue(AttributeConvention.IDENTIFIER);
+        } catch (PropertyNotFoundException e) {
+            id = null;
+        }
         if (includeFeatureId && id != null) {
             gf.setId(id);
         }
@@ -151,7 +156,12 @@ public final class GeoJSONMapper {
             gf.setCoordRefSys(getCoordRefSys(type));
         }
 
-        Object geom = feature.getValueOrFallback(AttributeConvention.GEOMETRY, null);
+        Object geom;
+        try {
+            geom = feature.getPropertyValue(AttributeConvention.GEOMETRY);
+        } catch (PropertyNotFoundException e) {
+            geom = null;
+        }
         if (geom instanceof Geometry g) {
             GeoJSONGeometry json = transform(g);
             gf.setGeometry(json);

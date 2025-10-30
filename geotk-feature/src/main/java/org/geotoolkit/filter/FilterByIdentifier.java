@@ -21,20 +21,27 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.filter.internal.Node;
+import org.apache.sis.filter.base.Node;
 import org.apache.sis.feature.internal.shared.AttributeConvention;
 import org.opengis.feature.Feature;
+import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.filter.Expression;
 import org.opengis.filter.ResourceId;
 
 
 /**
- * Filter features using a set of predefined identifiers and discarding features
- * whose identifier is not in the set.
+ * An alternative to the filter implementation of Apache SIS which checks also for instances of {@link Map}.
  *
  * @author  Johann Sorel (Geomatys)
  * @author  Martin Desruisseaux (Geomatys)
+ *
+ * @deprecated This implementation is inefficient. Contrarily to Apache SIS, it does not resolves link in advance
+ * (this is important for allowing {@code SQLStore} to put the column name in the <abbr>SQL</abbr> {@code WHERE},
+ * clause, which can make the difference between using or not the database index), and does not check in advance
+ * whether the identifier exists (which can cause a costly {@code PropertyNotFoundException} ever times that the
+ * filter is evaluated).
  */
+@Deprecated
 final class FilterByIdentifier extends Node implements ResourceId<Object> {
     /**
      * The identifier of features to retain.
@@ -86,9 +93,11 @@ final class FilterByIdentifier extends Node implements ResourceId<Object> {
      */
     @Override
     public boolean test(Object object) {
-        final Object id;
-        if (object instanceof Feature) {
-            id = ((Feature) object).getValueOrFallback(AttributeConvention.IDENTIFIER, null);
+        Object id;
+        if (object instanceof Feature) try {
+            id = ((Feature) object).getPropertyValue(AttributeConvention.IDENTIFIER);
+        } catch (PropertyNotFoundException e) {
+            id = null;
         } else if (object instanceof Map) {
             id = ((Map) object).get(AttributeConvention.IDENTIFIER);
         } else {

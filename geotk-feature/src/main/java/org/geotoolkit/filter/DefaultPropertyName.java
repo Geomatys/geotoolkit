@@ -69,8 +69,10 @@ public class DefaultPropertyName extends AbstractExpression implements ValueRefe
      */
     @Override
     public Object apply(final Object candidate) {
-        if (isSimple && candidate instanceof Feature) {
-            return ((Feature) candidate).getValueOrFallback(property, null);
+        if (isSimple && candidate instanceof Feature) try {
+            return ((Feature) candidate).getPropertyValue(property);
+        } catch (PropertyNotFoundException e) {
+            return null;
         }
 
         final Class cs;

@@ -47,6 +47,11 @@ public abstract class AbstractExpression implements Expression<Object,Object>, S
         return Object.class;        // Actually undetermined.
     }
 
+    // For subclasses that implement FeatureExpression.
+    public Class<?> getResultClass() {
+        return Object.class;
+    }
+
     /**
      * Use the converters utility class to convert the default result object
      * to the wished class.

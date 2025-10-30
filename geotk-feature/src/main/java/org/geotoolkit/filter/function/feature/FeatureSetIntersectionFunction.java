@@ -42,6 +42,7 @@ import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.geom.TopologyException;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.filter.Expression;
 import org.opengis.filter.FilterFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -80,7 +81,12 @@ public class FeatureSetIntersectionFunction extends AbstractFunction {
                     final Iterator<Feature> iterator = stream.iterator();
                     while (iterator.hasNext()) {
                         final Feature feature = iterator.next();
-                        Object igeom = feature.getValueOrFallback(AttributeConvention.GEOMETRY, null);
+                        Object igeom;
+                        try {
+                            igeom = feature.getPropertyValue(AttributeConvention.GEOMETRY);
+                        } catch (PropertyNotFoundException e) {
+                            igeom = null;
+                        }
                         if (igeom != null) {
                             igeom = org.apache.sis.geometry.wrapper.jts.JTS.transform((Geometry) igeom, geomCrs);
                             try {

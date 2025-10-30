@@ -53,6 +53,8 @@ public interface Binding<C> {
      * @param target , expected returned class, null for original type.
      * @return value, may be null
      * @throws IllegalArgumentException, if class or path is not supported.
+     *
+     * @todo {@code target} should not be allowed to be null, because it forces implementations to do unsafe casts.
      */
     <T> T get(C candidate, String xpath, Class<T> target) throws IllegalArgumentException;
 

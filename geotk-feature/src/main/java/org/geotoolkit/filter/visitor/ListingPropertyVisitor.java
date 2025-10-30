@@ -19,8 +19,8 @@ package org.geotoolkit.filter.visitor;
 
 import java.util.Collection;
 import org.apache.sis.feature.internal.shared.AttributeConvention;
-import org.apache.sis.filter.internal.shared.FunctionNames;
-import org.apache.sis.filter.internal.shared.Visitor;
+import org.apache.sis.filter.visitor.FunctionNames;
+import org.apache.sis.filter.visitor.Visitor;
 import org.opengis.filter.BetweenComparisonOperator;
 import org.opengis.filter.Filter;
 import org.opengis.filter.Expression;

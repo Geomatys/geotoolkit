@@ -67,8 +67,15 @@ public class FilterFactory2 extends DefaultFilterFactory<Object,Object,Object> {
     /**
      * Filter by resource identifier. Contrarily to the implementation provided in Apache SIS,
      * this implementation accepts {@link java.util.Map} in addition of {@link org.opengis.feature.Feature} instances.
+     *
+     * @deprecated This implementation is inefficient. Contrarily to Apache SIS, it does not resolve links in advance
+     * (this is important for allowing {@code SQLStore} to put the column name in the <abbr>SQL</abbr> {@code WHERE},
+     * clause, which can make the difference between using or not the database index), and does not check in advance
+     * whether the identifier exists (which can cause a costly {@code PropertyNotFoundException} ever times that the
+     * filter is evaluated).
      */
     @Override
+    @Deprecated
     public ResourceId<Object> resourceId(final String identifier, final Version version,
                                          final Instant startTime, final Instant endTime)
     {

@@ -35,7 +35,7 @@ import java.util.stream.Stream;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
 import javax.xml.namespace.QName;
-import org.apache.sis.filter.internal.shared.FunctionNames;
+import org.apache.sis.filter.visitor.FunctionNames;
 
 import org.geotoolkit.client.AbstractRequest;
 import org.geotoolkit.util.NamesExt;
