@@ -32,7 +32,6 @@ import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.Operation;
-import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
 
 
@@ -74,11 +73,8 @@ class CSVReader implements Iterator<Feature>, AutoCloseable {
         this.atts = atts.toArray(new AttributeType[0]);
 
         // Check if there's identifiers to report.
-        try {
-            featureType.getProperty(AttributeConvention.IDENTIFIER);
+        if (featureType.hasProperty(AttributeConvention.IDENTIFIER)) {
             withId = true;
-        } catch (PropertyNotFoundException e) {
-            //do nothing
         }
     }
 

@@ -26,7 +26,6 @@ import org.apache.sis.util.Deprecable;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.Operation;
-import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
 
 /**
@@ -68,12 +67,10 @@ public class ViewMapper extends FeatureSetMapper {
         ftb.setDeprecated(base instanceof Deprecable && ((Deprecable)base).isDeprecated());
 
         for (String pname : propertyNames) {
-            PropertyType property;
-            try {
-                property = base.getProperty(pname);
-            } catch (PropertyNotFoundException ex) {
+            if (!base.hasProperty(pname)) {
                 continue;
             }
+            PropertyType property = base.getProperty(pname);
 
             //try to preserve basic operations
             preserve:
@@ -89,12 +86,10 @@ public class ViewMapper extends FeatureSetMapper {
                         boolean used = false;
                         final PropertyType usedProperty = base.getProperty(dep);
                         for (String sname : propertyNames) {
-                            final PropertyType sproperty;
-                            try {
-                                sproperty = base.getProperty(sname);
-                            } catch (PropertyNotFoundException ex) {
+                            if (!base.hasProperty(sname)) {
                                 continue;
                             }
+                            final PropertyType sproperty = base.getProperty(sname);
                             if (sproperty.equals(usedProperty)) {
                                 used = true;
                                 break;

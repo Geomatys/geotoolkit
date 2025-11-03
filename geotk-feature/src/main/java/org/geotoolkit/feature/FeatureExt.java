@@ -473,6 +473,8 @@ public final class FeatureExt {
         try {
             geometry = getDefaultGeometry(type);
         } catch (PropertyNotFoundException e) {
+            // We rely on exception instead of `FeatureType.hasProperty(String)`
+            // because `getDefaultGeometry(type)` tests many alternatives.
         }
         return Optional.ofNullable(geometry);
     }
@@ -505,7 +507,6 @@ public final class FeatureExt {
                 throw e2;
             }
         }
-
         return geometry;
     }
 

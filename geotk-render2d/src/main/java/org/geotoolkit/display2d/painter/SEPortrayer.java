@@ -391,9 +391,7 @@ public final class SEPortrayer {
          */
         if (requiredProperties != null) {
             for (String pn : requiredProperties) {
-                try {
-                    schema.getProperty(pn);
-                } catch (PropertyNotFoundException e) {
+                if (!schema.hasProperty(pn)) {
                     return query;
                 }
             }
@@ -504,12 +502,9 @@ public final class SEPortrayer {
                         .map(SEPortrayer::stripXpath)
                         .forEach(copy::add);
             }
-            try {
-                // Always include the identifier if it exist.
-                schema.getProperty(AttributeConvention.IDENTIFIER);
+            // Always include the identifier if it exist.
+            if (schema.hasProperty(AttributeConvention.IDENTIFIER)) {
                 copy.add(AttributeConvention.IDENTIFIER);
-            } catch (PropertyNotFoundException ex) {
-                // No id, ignore it.
             }
             final List<FeatureQuery.NamedExpression> columns = new ArrayList<>();
             for (String propName : copy) {

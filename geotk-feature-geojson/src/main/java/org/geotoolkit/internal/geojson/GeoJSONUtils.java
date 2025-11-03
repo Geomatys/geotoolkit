@@ -149,16 +149,12 @@ public final class GeoJSONUtils {
      * Returns true if property is a component of the feature type primary key.
      */
     public static boolean isPartOfPrimaryKey(FeatureType type, String propertyName) {
-        PropertyType property;
-        try {
-            property = type.getProperty(AttributeConvention.IDENTIFIER);
-        } catch (PropertyNotFoundException ex) {
-            //no identifier property
-            return false;
-        }
-        if (property instanceof AbstractOperation) {
-            final Set<String> dependencies = ((AbstractOperation) property).getDependencies();
-            return dependencies.contains(propertyName);
+        if (type.hasProperty(AttributeConvention.IDENTIFIER)) {
+            PropertyType property = type.getProperty(AttributeConvention.IDENTIFIER);
+            if (property instanceof AbstractOperation) {
+                final Set<String> dependencies = ((AbstractOperation) property).getDependencies();
+                return dependencies.contains(propertyName);
+            }
         }
         return false;
     }
@@ -374,12 +370,7 @@ public final class GeoJSONUtils {
      * @return True if an sis:identifier property is available. False otherwise.
      */
     public static boolean hasIdentifier(final FeatureType toSearchIn) {
-        try {
-            toSearchIn.getProperty(AttributeConvention.IDENTIFIER);
-            return true;
-        } catch (PropertyNotFoundException ex) {
-            return false;
-        }
+        return toSearchIn.hasProperty(AttributeConvention.IDENTIFIER);
     }
 
     /**

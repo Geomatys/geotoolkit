@@ -52,7 +52,6 @@ import org.geotoolkit.internal.jaxb.ObjectFactory;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
-import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.Geometry;
@@ -230,17 +229,14 @@ public class ElementFeatureWriter {
         if (!fragment) {
             rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:gml", "http://www.opengis.net/gml");
         }
-        Object idValue;
-        try {
-            idValue = feature.getPropertyValue(AttributeConvention.IDENTIFIER);
-        } catch (PropertyNotFoundException e) {
-            idValue = null;
-        }
-        if (idValue != null) {
-            final Attr idAttr = document.createAttributeNS(GML, "id");
-            idAttr.setValue(idValue.toString());
-            idAttr.setPrefix("gml");
-            rootElement.setAttributeNodeNS(idAttr);
+        if (feature.getType().hasProperty(AttributeConvention.IDENTIFIER)) {    // TODO: should be determined in advance.
+            Object idValue = feature.getPropertyValue(AttributeConvention.IDENTIFIER);
+            if (idValue != null) {
+                final Attr idAttr = document.createAttributeNS(GML, "id");
+                idAttr.setValue(idValue.toString());
+                idAttr.setPrefix("gml");
+                rootElement.setAttributeNodeNS(idAttr);
+            }
         }
 
         if (rootDocument == null) {

@@ -429,19 +429,17 @@ public final class Utils {
      *         String if the object is nill with a reason
      */
     public static Object isNill(Feature feature) {
-        try {
+        final FeatureType type = feature.getType();
+        if (type.hasProperty("@nil")) {     // TODO: should be determined in advance.
             if (Boolean.TRUE.equals(feature.getPropertyValue("@nil"))) {
-                try {
+                if (type.hasProperty("@nilReason")) {   // TODO: should be determined in advance.
                     Object reason = feature.getPropertyValue("@nilReason");
                     if (reason != null) {
                        return Utils.getStringValue(reason);
                     }
-                } catch (PropertyNotFoundException ex) {
                 }
                 return true;
             }
-        } catch (PropertyNotFoundException ex) {
-            return null;
         }
         return null;
     }

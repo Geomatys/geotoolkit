@@ -146,20 +146,22 @@ public final class FeatureTypeExt {
         for (PropertyType pt1 : type1.getProperties(true)) {
             visited.add(pt1.getName());
             if (AttributeConvention.contains(pt1.getName())) continue;
-            try {
-                final PropertyType pt2 = type2.getProperty(pt1.getName().toString());
+            final String name = pt1.getName().toString();
+            if (type2.hasProperty(name)) {
+                final PropertyType pt2 = type2.getProperty(name);
                 if (!equalsIgnoreConvention(pt1, pt2)) return false;
-            } catch (PropertyNotFoundException ex) {
+            } else {
                 return false;
             }
         }
 
         for (PropertyType pt2 : type2.getProperties(true)) {
             if (AttributeConvention.contains(pt2.getName()) || visited.contains(pt2.getName())) continue;
-            try {
-                final PropertyType pt1 = type1.getProperty(pt2.getName().toString());
+            final String name = pt2.getName().toString();
+            if (type1.hasProperty(name)) {
+                final PropertyType pt1 = type1.getProperty(name);
                 if (!equalsIgnoreConvention(pt1, pt2)) return false;
-            } catch (PropertyNotFoundException ex) {
+            } else {
                 return false;
             }
         }
