@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<sld:UserStyle xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:se="http://www.opengis.net/se" xmlns:sld="http://www.opengis.net/sld" xmlns:ogc="http://www.opengis.net/ogc">
+    <se:Name>name</se:Name>
+    <se:Description/>
+    <sld:IsDefault>false</sld:IsDefault>
+    <se:CoverageStyle>
+        <se:Description/>
+        <se:Rule>
+            <se:Description/>
+            <se:MinScaleDenominator>0.0</se:MinScaleDenominator>
+            <se:MaxScaleDenominator>1.7976931348623157E308</se:MaxScaleDenominator>
+            <se:RasterSymbolizer uom="http://www.opengeospatial.org/se/units/pixel">
+                <se:Name></se:Name>
+                <se:Description>
+                    <se:Title></se:Title>
+                    <se:Abstract></se:Abstract>
+                </se:Description>
+                <se:Opacity>
+                    <ogc:Literal>1</ogc:Literal>
+                </se:Opacity>
+                <se:ChannelSelection>
+                    <se:GrayChannel>
+                        <se:SourceChannelName>1</se:SourceChannelName>
+                        <se:ContrastEnhancement>
+                            <se:GammaValue>1.0</se:GammaValue>
+                        </se:ContrastEnhancement>
+                    </se:GrayChannel>
+                </se:ChannelSelection>
+                <se:OverlapBehavior>LATEST_ON_TOP</se:OverlapBehavior>
+                <se:ColorMap/>
+                <se:ContrastEnhancement>
+                    <se:GammaValue>1.0</se:GammaValue>
+                </se:ContrastEnhancement>
+                <se:ShadedRelief>
+                    <se:BrightnessOnly>false</se:BrightnessOnly>
+                    <se:ReliefFactor>0.0</se:ReliefFactor>
+                </se:ShadedRelief>
+            </se:RasterSymbolizer>
+        </se:Rule>
+    </se:CoverageStyle>
+</sld:UserStyle>

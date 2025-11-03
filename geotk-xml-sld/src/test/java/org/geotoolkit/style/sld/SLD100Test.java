@@ -71,6 +71,8 @@ public class SLD100Test {
     //FILES -------------------------------------
     private static File FILE_SLD = null;
     private static File TEST_FILE_SLD = null;
+    private static File FILE_SLD_2 = null;
+    private static File TEST_FILE_SLD_2 = null;
 
 
 
@@ -78,15 +80,12 @@ public class SLD100Test {
 
         POOL = JAXBSLDUtilities.getMarshallerPoolSLD100();
 
-
-        TRANSFORMER_GT = new SLD100toGTTransformer(FILTER_FACTORY, STYLE_FACTORY, SLD_FACTORY);
-        assertNotNull(TRANSFORMER_GT);
-
+        TRANSFORMER_GT  = new SLD100toGTTransformer(FILTER_FACTORY, STYLE_FACTORY, SLD_FACTORY);
         TRANSFORMER_SLD = new GTtoSLD100Transformer();
-        assertNotNull(TRANSFORMER_SLD);
 
         try {
             FILE_SLD = new File( SLD100Test.class.getResource("/org/geotoolkit/sample/SLD_v100.xml").toURI()  );
+            FILE_SLD_2 = new File( SLD100Test.class.getResource("/org/geotoolkit/sample/SLD_2_v100.xml").toURI()  );
 
         } catch (URISyntaxException ex) { ex.printStackTrace(); }
 
@@ -94,6 +93,7 @@ public class SLD100Test {
 
         try{
             TEST_FILE_SLD = File.createTempFile("test_sld_v100",".xml");
+            TEST_FILE_SLD_2 = File.createTempFile("test_sld_v100_2",".xml");
         }catch(IOException ex){
             ex.printStackTrace();
         }
@@ -101,12 +101,9 @@ public class SLD100Test {
         //switch to false to avoid temp files to be deleted
         if(true){
             TEST_FILE_SLD.deleteOnExit();
+            TEST_FILE_SLD_2.deleteOnExit();
         }
-
     }
-
-
-
 
 
     ////////////////////////////////////////////////////////////////////////////
@@ -261,6 +258,67 @@ public class SLD100Test {
 
         assertEquals(ulx.getUserStyle().size(), 1);
 
+
+        MARSHALLER.marshal(pvt, TEST_FILE_SLD);
+
+        POOL.recycle(MARSHALLER);
+        POOL.recycle(UNMARSHALLER);
+    }
+    
+    @Test
+    public void testSLD2() throws JAXBException{
+
+        final Unmarshaller UNMARSHALLER = POOL.acquireUnmarshaller();
+        final Marshaller MARSHALLER     = POOL.acquireMarshaller();
+
+        //Read test-------------------------------------------------------------
+        //----------------------------------------------------------------------
+        Object obj =  UNMARSHALLER.unmarshal(FILE_SLD_2);
+        assertNotNull(obj);
+
+        StyledLayerDescriptor jax = (StyledLayerDescriptor) obj;
+        MutableStyledLayerDescriptor sld = TRANSFORMER_GT.visit(jax);
+        assertNotNull(sld);
+
+        //Details
+        assertNull(sld.getName());
+        assertNull(sld.getDescription().getTitle());
+        assertNull(sld.getDescription().getAbstract());
+
+        //libraries, SLD1.0 does not store thoses informations
+        assertEquals(sld.libraries().size(), 0);
+
+        //layers
+        assertEquals(sld.layers().size(), 1);
+
+
+        //User Layer------------------------------------------------------------
+        UserLayer ul = (UserLayer)sld.layers().get(0);
+        assertNull(ul.getName());
+        //no title, no description in SLD1.0
+
+        assertEquals(ul.styles().size(), 1);
+        //we dont test the user style, this is done in the SE test
+
+
+        //Write test------------------------------------------------------------
+        //----------------------------------------------------------------------
+        StyledLayerDescriptor pvt = TRANSFORMER_SLD.visit(sld, null);
+        assertNotNull(pvt);
+
+        assertNull(pvt.getName());
+        assertNull(pvt.getTitle());
+        assertNull(pvt.getAbstract());
+
+        //layers
+        assertEquals(pvt.getNamedLayerOrUserLayer().size(), 1);
+
+        //User Layer------------------------------------------------------------
+        org.geotoolkit.sld.xml.v100.UserLayer ulx = (org.geotoolkit.sld.xml.v100.UserLayer)pvt.getNamedLayerOrUserLayer().get(0);
+        assertNull(ulx.getName());
+        //no title, no description in SLD1.0
+
+        assertEquals(ulx.getUserStyle().size(), 1);
 
         MARSHALLER.marshal(pvt, TEST_FILE_SLD);
 

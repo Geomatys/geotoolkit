@@ -17,6 +17,7 @@
 package org.geotoolkit.sld.xml;
 
 import jakarta.xml.bind.JAXBElement;
+import java.awt.Color;
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -29,18 +30,25 @@ import java.util.logging.Logger;
 import javax.measure.Unit;
 import javax.swing.Icon;
 import org.apache.sis.measure.Units;
+import org.apache.sis.util.ObjectConverter;
+import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.SimpleInternationalString;
 import org.geotoolkit.ogc.xml.OGC100toGTTransformer;
+import org.geotoolkit.sld.xml.v100.ColorMapEntry;
 import org.geotoolkit.sld.xml.v100.CssParameter;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
+import org.geotoolkit.style.function.InterpolationPoint;
+import org.geotoolkit.style.function.Method;
+import org.geotoolkit.style.function.Mode;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.util.StringUtilities;
 import org.opengis.filter.Expression;
 import org.opengis.filter.FilterFactory;
+import org.opengis.filter.Literal;
 import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.style.AnchorPoint;
 import org.opengis.style.ChannelSelection;
@@ -630,16 +638,20 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
 
     private ColorMap visit(final org.geotoolkit.sld.xml.v100.ColorMap colorMap) {
         if(colorMap == null) return null;
-
-        final Expression function = null;
-//        if(colorMap.getCategorize() != null){
-//            function = visit(colorMap.getCategorize());
-//        }else if(colorMap.getInterpolate() != null){
-//            function = visit(colorMap.getInterpolate());
-//        }
-
-        colorMap.getColorMapEntry();
-
+        ObjectConverter<? super String, ? extends Color> converter = ObjectConverters.find(String.class, Color.class);
+        Literal lookup = filterFactory.literal("RASTER_DATA");
+        Literal fallback = filterFactory.literal(converter.apply("#FF0000"));
+        List<InterpolationPoint> points = new ArrayList<>();
+        for (ColorMapEntry entry : colorMap.getColorMapEntry()) {
+            if (entry.getColor() == null) continue;
+            String color = entry.getColor();
+            // handle opacity = 0 as transparent color
+            if (entry.getOpacity() != null && entry.getOpacity().equals(0.0)) {
+                color = "#00FFFFFF";
+            }
+            points.add(styleFactory.interpolationPoint(entry.getQuantity(), styleFactory.literal(converter.apply(color))));
+        }
+        final Expression function = styleFactory.interpolateFunction(lookup, points, Method.COLOR, Mode.LINEAR, fallback);
         return styleFactory.colorMap(function);
     }
 

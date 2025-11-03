@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<UserStyle xmlns="http://www.opengis.net/sld" 
+           xmlns:sld="http://www.opengis.net/sld" 
+           xmlns:xlink="http://www.w3.org/1999/xlink" 
+           xmlns:ogc="http://www.opengis.net/ogc" 
+           xmlns:gml="http://www.opengis.net/gml">
+    <Name>name</Name>
+    <FeatureTypeStyle>
+        <Rule>
+            <RasterSymbolizer>
+                <ChannelSelection>
+                    <GrayChannel>
+                        <SourceChannelName>1</SourceChannelName>
+                    </GrayChannel>
+                </ChannelSelection>
+                <ColorMap type="ramp">
+                    <ColorMapEntry label="0,0170" opacity="0" quantity="0.017000000000000001" color="#440154"/>
+                    <ColorMapEntry label="0,2652" quantity="0.26524178544059401" color="#3a528b"/>
+                    <ColorMapEntry label="0,5099" quantity="0.50988784339278903" color="#20908c"/>
+                    <ColorMapEntry label="0,7545" quantity="0.75453390134498499" color="#5dc962"/>
+                    <ColorMapEntry label="1,0000" quantity="1" color="#fde725"/>
+                </ColorMap>
+            </RasterSymbolizer>
+        </Rule>
+    </FeatureTypeStyle>
+</UserStyle>

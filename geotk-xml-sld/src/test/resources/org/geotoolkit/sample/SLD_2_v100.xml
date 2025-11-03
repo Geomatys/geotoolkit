@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<StyledLayerDescriptor xmlns="http://www.opengis.net/sld" xmlns:ogc="http://www.opengis.net/ogc" xmlns:sld="http://www.opengis.net/sld" version="1.0.0" xmlns:gml="http://www.opengis.net/gml">
+  <UserLayer>
+    <sld:LayerFeatureConstraints>
+      <sld:FeatureTypeConstraint/>
+    </sld:LayerFeatureConstraints>
+    <sld:UserStyle>
+      <sld:Name>User layer : name</sld:Name>
+      <sld:FeatureTypeStyle>
+        <sld:Rule>
+          <sld:RasterSymbolizer>
+            <sld:ChannelSelection>
+              <sld:GrayChannel>
+                <sld:SourceChannelName>1</sld:SourceChannelName>
+              </sld:GrayChannel>
+            </sld:ChannelSelection>
+            <sld:ColorMap type="ramp">
+              <sld:ColorMapEntry label="0,0170" opacity="0" quantity="0.017000000000000001" color="#440154"/>
+              <sld:ColorMapEntry label="0,2652" quantity="0.26524178544059401" color="#3a528b"/>
+              <sld:ColorMapEntry label="0,5099" quantity="0.50988784339278903" color="#20908c"/>
+              <sld:ColorMapEntry label="0,7545" quantity="0.75453390134498499" color="#5dc962"/>
+              <sld:ColorMapEntry label="1,0000" quantity="1" color="#fde725"/>
+            </sld:ColorMap>
+          </sld:RasterSymbolizer>
+        </sld:Rule>
+      </sld:FeatureTypeStyle>
+    </sld:UserStyle>
+  </UserLayer>
+</StyledLayerDescriptor>

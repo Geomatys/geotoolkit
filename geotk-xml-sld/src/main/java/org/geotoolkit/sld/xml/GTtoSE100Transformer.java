@@ -23,6 +23,7 @@ import java.util.logging.Logger;
 import javax.measure.quantity.Length;
 import javax.measure.Unit;
 import jakarta.xml.bind.JAXBElement;
+import java.awt.Color;
 import javax.xml.namespace.QName;
 import org.geotoolkit.ogc.xml.v100.PropertyNameType;
 import org.geotoolkit.sld.xml.v100.CssParameter;
@@ -70,7 +71,13 @@ import org.opengis.style.Symbolizer;
 import org.opengis.style.TextSymbolizer;
 import org.opengis.util.GenericName;
 import org.apache.sis.measure.Units;
+import org.apache.sis.util.ObjectConverter;
+import org.apache.sis.util.ObjectConverters;
 import org.geotoolkit.ogc.xml.FilterToOGC100Converter;
+import org.geotoolkit.sld.xml.v100.ColorMapEntry;
+import org.geotoolkit.style.function.Interpolate;
+import org.geotoolkit.style.function.InterpolationPoint;
+import org.opengis.filter.Literal;
 
 /**
  *
@@ -85,6 +92,8 @@ public class GTtoSE100Transformer extends FilterToOGC100Converter implements Sty
     private static final String GENERIC_POLYGON = "generic:polygon";
     private static final String GENERIC_TEXT = "generic:text";
     private static final String GENERIC_RASTER = "generic:raster";
+
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.sld.xml");
 
     private final org.geotoolkit.sld.xml.v100.ObjectFactory sld_factory_v100;
 
@@ -682,9 +691,28 @@ public class GTtoSE100Transformer extends FilterToOGC100Converter implements Sty
 
     @Override
     public org.geotoolkit.sld.xml.v100.ColorMap visit(final ColorMap colorMap, final Object data) {
-        //TODO Fix that when better undestanding raster functions.
         final org.geotoolkit.sld.xml.v100.ColorMap cmt = sld_factory_v100.createColorMap();
-        cmt.getColorMapEntry();
+
+        if (colorMap.getFunction() instanceof Interpolate inter) {
+            ObjectConverter<? super Color, ? extends String> converter = ObjectConverters.find(Color.class, String.class);
+            for (InterpolationPoint pt : inter.getInterpolationPoints()) {
+                ColorMapEntry mapEntry = sld_factory_v100.createColorMapEntry();
+                mapEntry.setLabel(pt.getData().toString());
+                mapEntry.setQuantity((Double) pt.getData());
+                Expression value = pt.getValue();
+                if (value instanceof Literal lit && lit.getValue() != null) {
+                    Object litValue = lit.getValue();
+                    if (litValue instanceof Color c) {
+                        litValue = converter.apply(c);
+                    }
+                    mapEntry.setColor(litValue.toString());
+                    cmt.getColorMapEntry().add(mapEntry);
+                }
+            }
+        } else {
+            //TODO handle other function ?
+            LOGGER.info("Unsupported colormap function: " + colorMap.getFunction());
+        }
 
         return cmt;
     }

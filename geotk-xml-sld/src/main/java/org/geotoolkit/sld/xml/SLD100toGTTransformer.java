@@ -129,7 +129,10 @@ public class SLD100toGTTransformer extends SE100toGTTransformer{
             final Collection<FeatureTypeConstraint> constraints = new ArrayList<FeatureTypeConstraint>();
 
             for(final org.geotoolkit.sld.xml.v100.FeatureTypeConstraint aftc : ftc.getFeatureTypeConstraint()){
-                final GenericName name = NamesExt.create(aftc.getFeatureTypeName());
+                GenericName name = null;
+                if (aftc.getFeatureTypeName() != null && !aftc.getFeatureTypeName().isEmpty()) {
+                    name = NamesExt.create(aftc.getFeatureTypeName());
+                }
                 final Filter filter = visitFilter(aftc.getFilter());
                 final List<Extent> extents = visitExtents(aftc.getExtent());
                 final FeatureTypeConstraint cons = sldFactory.createFeatureTypeConstraint(name, filter, extents);
