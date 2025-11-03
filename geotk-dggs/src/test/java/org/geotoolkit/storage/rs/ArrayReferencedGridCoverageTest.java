@@ -174,7 +174,7 @@ public class ArrayReferencedGridCoverageTest {
                 (List)List.of(new SampleDimension.Builder().setName("test").build()),
                 RasterFactory.wrap(DataType.BYTE, dataBuffer)
         );
-        return new MemoryGridCoverageResource(null, coverage, null) {
+        return new MemoryGridCoverageResource(null, null, coverage, null) {
             @Override
             public Optional<GenericName> getIdentifier() {
                 return Optional.of(Names.createLocalName(null, null, "test"));

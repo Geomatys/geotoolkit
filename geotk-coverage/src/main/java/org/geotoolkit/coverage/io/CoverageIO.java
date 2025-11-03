@@ -109,7 +109,7 @@ public final class CoverageIO {
             });
             try (DataStore ds = new WorldFileStoreProvider().open(c)) {
                 WritableAggregate wr = (WritableAggregate) ds;
-                wr.add(new MemoryGridCoverageResource(null, coverage, null));
+                wr.add(new MemoryGridCoverageResource(null, null, coverage, null));
             }
             return;
         }

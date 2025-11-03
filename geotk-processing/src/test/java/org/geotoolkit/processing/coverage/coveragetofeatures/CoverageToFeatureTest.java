@@ -137,7 +137,7 @@ public class CoverageToFeatureTest extends AbstractProcessTest {
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setDomain(new GridGeometry(null , PixelInCell.CELL_CENTER, gridToCRS, crs2d));
         gcb.setValues(image);
-        return new MemoryGridCoverageResource(null, gcb.build(), null);
+        return new MemoryGridCoverageResource(null, null, gcb.build(), null);
     }
 
     private FeatureType buildFeatureType() throws NoSuchAuthorityCodeException, FactoryException {
