@@ -1014,7 +1014,14 @@ public class GTtoSE110Transformer extends FilterToOGC110Converter implements Sty
 
     public InterpolateType visit(final Interpolate interpolate) {
         final InterpolateType type = se_factory.createInterpolateType();
-        type.setFallbackValue(interpolate.getFallbackValue().toString());
+        if (interpolate.getFallbackValue() != null) {
+            Object fbValue = interpolate.getFallbackValue().getValue();
+            if (fbValue instanceof Color c) {
+                type.setFallbackValue(colorToString(c));
+            } else {
+                type.setFallbackValue(String.valueOf(fbValue));
+            }
+        }
         type.setLookupValue(visitExpression(interpolate.getLookupValue()));
 
         if (interpolate.getMethod() == Method.COLOR) {

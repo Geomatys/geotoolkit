@@ -638,11 +638,10 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
 
     private ColorMap visit(final org.geotoolkit.sld.xml.v100.ColorMap colorMap) {
         if(colorMap == null) return null;
-
-        Literal lookup = filterFactory.literal("RASTER_DATA");
-        Literal fallback = filterFactory.literal("fes:Literal&#10;  └─fes:Literal&#10;      └─java.awt.Color[r=255,g=0,b=0]&#10;"); // as found in a examind export
-        List<InterpolationPoint> points = new ArrayList<>();
         ObjectConverter<? super String, ? extends Color> converter = ObjectConverters.find(String.class, Color.class);
+        Literal lookup = filterFactory.literal("RASTER_DATA");
+        Literal fallback = filterFactory.literal(converter.apply("#FF0000"));
+        List<InterpolationPoint> points = new ArrayList<>();
         for (ColorMapEntry entry : colorMap.getColorMapEntry()) {
             if (entry.getColor() == null) continue;
             String color = entry.getColor();
