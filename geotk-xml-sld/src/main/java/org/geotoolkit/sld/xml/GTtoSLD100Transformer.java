@@ -34,6 +34,7 @@ import org.geotoolkit.sld.SLDVisitor;
 import org.geotoolkit.sld.StyledLayerDescriptor;
 import org.geotoolkit.sld.UserLayer;
 import org.opengis.style.Style;
+import org.opengis.util.GenericName;
 
 /**
  *
@@ -156,7 +157,10 @@ public class GTtoSLD100Transformer extends GTtoSE100Transformer implements SLDVi
     public org.geotoolkit.sld.xml.v100.FeatureTypeConstraint visit(final FeatureTypeConstraint constraint, final Object data) {
         final org.geotoolkit.sld.xml.v100.FeatureTypeConstraint ftc = sld_factory.createFeatureTypeConstraint();
 
-        ftc.setFeatureTypeName( visitName((org.opengis.util.GenericName) constraint.getFeatureTypeName()).toString() );
+        GenericName ftName = constraint.getFeatureTypeName();
+        if (ftName != null) {
+            ftc.setFeatureTypeName(visitName(ftName).toString() );
+        }
         ftc.setFilter(apply(constraint.getFilter()));
 
         for(final Extent ext : constraint.getExtent()){

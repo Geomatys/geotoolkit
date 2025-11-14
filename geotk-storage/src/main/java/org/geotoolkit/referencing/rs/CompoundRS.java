@@ -20,10 +20,18 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Collections;
+import java.util.Objects;
+import org.apache.sis.metadata.iso.DefaultIdentifier;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.gazetteer.ReferencingByIdentifiers;
+import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
+import org.opengis.metadata.Identifier;
 import org.opengis.referencing.ReferenceSystem;
 import org.opengis.referencing.crs.CompoundCRS;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.SingleCRS;
+import org.opengis.util.FactoryException;
 
 
 /**
@@ -35,7 +43,58 @@ import org.opengis.referencing.crs.SingleCRS;
  *
  * @author Johann Sorel (Geomatys)
  */
-public interface CompoundRS extends ReferenceSystem {
+public final class CompoundRS implements ReferenceSystem {
+
+    private final Identifier name;
+    private final List<ReferenceSystem> rss;
+    private final CoordinateReferenceSystem leaningCrs;
+
+    public CompoundRS(Identifier name, List<ReferenceSystem> rss) {
+        if (rss.size() < 2) {
+            throw new IllegalArgumentException("Provide at least two systems to create a CompoundRS.");
+        }
+
+        if (name == null) {
+            final StringBuilder sb = new StringBuilder("CompundLS [");
+            for (int i = 0, n = rss.size(); i < n; i++) {
+                final ReferenceSystem cdt = rss.get(i);
+                if (i != 0) sb.append(',');
+                sb.append(cdt.getName().toString());
+            }
+            sb.append(']');
+            name = new DefaultIdentifier(sb.toString());
+        }
+        this.name = name;
+        this.rss = Collections.unmodifiableList(rss);
+
+        final List<CoordinateReferenceSystem> crss = new ArrayList<>(rss.size()+1);
+        for (int i = 0; i < rss.size(); i++) {
+            final ReferenceSystem srs = rss.get(i);
+            if (srs instanceof CoordinateReferenceSystem crs) {
+                crss.add(crs);
+            } else if (srs instanceof DiscreteGlobalGridReferenceSystem dggrs) {
+                crss.add(dggrs.getGridSystem().getCrs());
+            } else if (srs instanceof ReferencingByIdentifiers rbi) {
+                crss.add(CommonCRS.WGS84.normalizedGeographic());
+            } else {
+                throw new UnsupportedOperationException("todo");
+            }
+        }
+        try {
+            leaningCrs = CRS.compound(crss.toArray(CoordinateReferenceSystem[]::new));
+        } catch (FactoryException ex) {
+            throw new IllegalArgumentException(ex);
+        }
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public Identifier getName() {
+        return name;
+    }
+
     /**
      * Returns the ordered list of <abbr>RS</abbr> components.
      * The returned list may contain nested compound <abbr>RS</abbr>.
@@ -43,7 +102,9 @@ public interface CompoundRS extends ReferenceSystem {
      *
      * @return the ordered list of components of this compound <abbr>RS</abbr>.
      */
-    List<ReferenceSystem> getComponents();
+    public List<ReferenceSystem> getComponents() {
+        return rss;
+    }
 
     /**
      * Returns the ordered list of <abbr>CRS</abbr> components, none of which itself compound.
@@ -54,10 +115,15 @@ public interface CompoundRS extends ReferenceSystem {
      *
      * @since 3.1
      */
-    default List<ReferenceSystem> getSingleComponents() {
+    public List<ReferenceSystem> getSingleComponents() {
         var singles = new ArrayList<ReferenceSystem>(5);
         flatten(singles, new LinkedList<>());   // Linked list is cheap to construct and efficient with 0 or 1 element.
         return Collections.unmodifiableList(singles);
+    }
+
+
+    public synchronized CoordinateReferenceSystem getLeaningCrs() {
+        return leaningCrs;
     }
 
     /**
@@ -97,6 +163,45 @@ public interface CompoundRS extends ReferenceSystem {
                 throw new IllegalArgumentException("Unknown reference system type : " + rs.getName());
             }
         }
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("CompoundRS[ " + name.toString()+" ");
+        final List<ReferenceSystem> components = getComponents();
+        for (int i = 0, n = components.size(); i < n; i++) {
+            if (i > 0)sb.append(',');
+            final ReferenceSystem rs = components.get(i);
+            sb.append(rs.toString().replaceAll("\n", "    \n"));
+        }
+        sb.append(']');
+        return sb.toString();
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 23 * hash + Objects.hashCode(this.name);
+        hash = 23 * hash + Objects.hashCode(this.rss);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final CompoundRS other = (CompoundRS) obj;
+        if (!Objects.equals(this.name, other.name)) {
+            return false;
+        }
+        return Objects.equals(this.rss, other.rss);
     }
 
 }

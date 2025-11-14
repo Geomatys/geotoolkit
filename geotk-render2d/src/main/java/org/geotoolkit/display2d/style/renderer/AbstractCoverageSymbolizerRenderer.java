@@ -250,11 +250,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         CoordinateReferenceSystem coverageCrs = coverage.getCoordinateReferenceSystem();
         if (coverageCrs.getCoordinateSystem().getDimension() > 2) {
             try {
-                final var targetDimension = slice.getExtent().getSubspaceDimensions(2);
-                var tmpSlice = coverage.getGridGeometry().derive()
-                                       .subgrid(slice)
-                                       .build();
-                coverage = new ReducedGridCoverage(coverage, tmpSlice, targetDimension);
+                coverage = new GridCoverageProcessor().reduceDimensionality(coverage);
             } catch (Exception ex) {
                 coverage = new GridCoverageProcessor().resample(coverage, slice);
             }
@@ -305,7 +301,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
                 //at this point, we want a single slice in 2D
                 //we remove all other dimension to simplify any following operation
                 if (coverage.getCoordinateReferenceSystem().getCoordinateSystem().getDimension() > 2) {
-                    coverage = new ReducedGridCoverage(coverage, 0, 1);
+                    coverage = new GridCoverageProcessor().reduceDimensionality(coverage);
                 }
 
                 return forwardResample(coverage, resampleGrid);

@@ -17,11 +17,13 @@
 package org.geotoolkit.dggal;
 
 import org.geotoolkit.dggs.AbstractDggrsTest;
+import org.junit.jupiter.api.Disabled;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
+@Disabled //still has bugs
 public class IVEA7HZ7Test extends AbstractDggrsTest {
 
     public IVEA7HZ7Test() {

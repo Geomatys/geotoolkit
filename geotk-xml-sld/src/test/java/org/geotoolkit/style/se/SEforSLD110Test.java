@@ -44,7 +44,7 @@ import org.geotoolkit.style.function.Interpolate;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.geotoolkit.filter.FilterUtilities;
-import org.geotoolkit.se.xml.v110.ParameterValueType;
+import org.geotoolkit.sld.xml.SLD110toGTTransformer;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.opengis.filter.Expression;
 import org.opengis.filter.FilterFactory;
@@ -93,6 +93,7 @@ public class SEforSLD110Test {
     private static File FILE_SE_SYMBOL_TEXT;
     private static File FILE_SE_SYMBOL_RASTER;
     private static File FILE_SE_STYLE;
+    private static File FILE_SE_2_STYLE;
     private static File FILE_SE_FTS;
     private static File FILE_SE_RULE;
 
@@ -104,6 +105,7 @@ public class SEforSLD110Test {
     private static File TEST_FILE_SE_SYMBOL_TEXT;
     private static File TEST_FILE_SE_SYMBOL_RASTER;
     private static File TEST_FILE_SE_STYLE;
+    private static File TEST_FILE_SE_2_STYLE;
     private static File TEST_FILE_SE_FTS;
     private static File TEST_FILE_SE_RULE;
 
@@ -114,7 +116,7 @@ public class SEforSLD110Test {
 
         TRANSFORMER_GT = new SE110toGTTransformer(FILTER_FACTORY, STYLE_FACTORY);
         assertNotNull(TRANSFORMER_GT);
-
+        
         TRANSFORMER_OGC = new GTtoSE110Transformer();
         assertNotNull(TRANSFORMER_OGC);
 
@@ -125,6 +127,7 @@ public class SEforSLD110Test {
             FILE_SE_SYMBOL_TEXT = new File( SEforSLD110Test.class.getResource("/org/geotoolkit/sample/SE_symbol_text_v110.xml").toURI() );
             FILE_SE_SYMBOL_RASTER = new File( SEforSLD110Test.class.getResource("/org/geotoolkit/sample/SE_symbol_raster_v110.xml").toURI() );
             FILE_SE_STYLE = new File( SEforSLD110Test.class.getResource("/org/geotoolkit/sample/SLD_userstyle_v110.xml").toURI() );
+            FILE_SE_2_STYLE = new File( SEforSLD110Test.class.getResource("/org/geotoolkit/sample/SLD_userstyle_2_v110.xml").toURI() );
             FILE_SE_FTS = new File( SEforSLD110Test.class.getResource("/org/geotoolkit/sample/SE_fts_v110.xml").toURI() );
             FILE_SE_RULE = new File( SEforSLD110Test.class.getResource("/org/geotoolkit/sample/SE_rule_v110.xml").toURI() );
             FILE_SE_FILL_INTERPOLATION = new File( SEforSLD110Test.class.getResource("/org/geotoolkit/sample/SE_MarkWithInterpolation.xml").toURI() );
@@ -148,6 +151,7 @@ public class SEforSLD110Test {
             TEST_FILE_SE_SYMBOL_TEXT = File.createTempFile("test_se_symbol_text_v110", ".xml");
             TEST_FILE_SE_SYMBOL_RASTER = File.createTempFile("test_se_symbol_raster_v110", ".xml");
             TEST_FILE_SE_STYLE = File.createTempFile("test_se_style_v110", ".xml");
+            TEST_FILE_SE_2_STYLE = File.createTempFile("test_se_style_v110", ".xml");
             TEST_FILE_SE_FTS = File.createTempFile("test_se_fts_v110", ".xml");
             TEST_FILE_SE_RULE = File.createTempFile("test_se_rule_v110", ".xml");
         }catch(IOException ex){
@@ -164,6 +168,7 @@ public class SEforSLD110Test {
             TEST_FILE_SE_STYLE.deleteOnExit();
             TEST_FILE_SE_FTS.deleteOnExit();
             TEST_FILE_SE_RULE.deleteOnExit();
+            TEST_FILE_SE_2_STYLE.deleteOnExit();
         }
     }
 
@@ -209,7 +214,47 @@ public class SEforSLD110Test {
         POOL.recycle(MARSHALLER);
         POOL.recycle(UNMARSHALLER);
     }
+    
+    @Test
+    public void testStyle2() throws JAXBException, FactoryException{
 
+        final Unmarshaller UNMARSHALLER = POOL.acquireUnmarshaller();
+        final Marshaller MARSHALLER     = POOL.acquireMarshaller();
+
+        //Read test
+        Object obj = UNMARSHALLER.unmarshal(FILE_SE_2_STYLE);
+        assertNotNull(obj);
+
+        UserStyle jax = (UserStyle) obj;
+        MutableStyle style = TRANSFORMER_GT.visitUserStyle(jax);
+        assertNotNull(style);
+
+        assertEquals(style.getName(), valueName);
+        assertNotNull(style.getDescription());
+        assertNull(style.getDescription().getAbstract());
+        assertNull(style.getDescription().getTitle());
+        assertEquals(style.isDefault(), false);
+
+        assertEquals(style.featureTypeStyles().size(), 1);
+
+
+        //Write test
+        UserStyle pvt = TRANSFORMER_OGC.visit(style, null);
+        assertNotNull(pvt);
+
+        assertEquals(pvt.getName(), valueName);
+        assertNull(pvt.getDescription().getTitle());
+        assertNull(pvt.getDescription().getAbstract());
+        assertEquals(pvt.isIsDefault(), Boolean.FALSE);
+
+        assertEquals(pvt.getFeatureTypeStyleOrCoverageStyleOrOnlineResource().size(), 1);
+
+        MARSHALLER.marshal(pvt, TEST_FILE_SE_2_STYLE);
+
+        POOL.recycle(MARSHALLER);
+        POOL.recycle(UNMARSHALLER);
+    }
+    
     @Test
     public void testFTS() throws JAXBException, FactoryException{
 

@@ -42,6 +42,7 @@ import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.image.BufferedImages;
+import org.geotoolkit.referencing.rs.Code;
 import org.geotoolkit.referencing.rs.ReferenceSystems;
 import org.geotoolkit.storage.rs.CodeIterator;
 import org.geotoolkit.storage.rs.CodedCoverage;
@@ -257,7 +258,7 @@ public abstract class AbstractCodedCoverage extends CodedCoverage{
 
     @Override
     public Evaluator evaluator() {
-        return new Eval();
+        return new CoverageEvaluator();
     }
 
     @Override
@@ -290,7 +291,7 @@ public abstract class AbstractCodedCoverage extends CodedCoverage{
         return Objects.equals(this.sampleDimensions, other.sampleDimensions);
     }
 
-    private final class Eval implements Evaluator {
+    private final class CoverageEvaluator implements Evaluator {
 
         private final DiscreteGlobalGridReferenceSystem.Coder coder;
         private boolean nullIfOutside = false;
@@ -301,7 +302,7 @@ public abstract class AbstractCodedCoverage extends CodedCoverage{
         private CoordinateReferenceSystem lastPosCrs;
         private MathTransform[] lastPosTransform;
 
-        public Eval() {
+        public CoverageEvaluator() {
             coder = horizontalRs.createCoder();
             iterator = createIterator();
             lastPosTransform = new MathTransform[singleRS.size()];
@@ -389,7 +390,15 @@ public abstract class AbstractCodedCoverage extends CodedCoverage{
                 final double[] cell = new double[mapping.length];
                 for (int i = 0; i < cell.length; i++) {
                     Object value = sample.getPropertyValue(mapping[i]);
-                    cell[i] = value instanceof Number n ? n.doubleValue() : Double.NaN;
+                    if (value == null) {
+                        cell[i] = Double.NaN;
+                    } else if (value instanceof Number n) {
+                        cell[i] = n.doubleValue();
+                    } else {
+                        //we have a value, not null but can't convert it to a number
+                        //we use 0 to indicate there is something
+                        cell[i] = 0;
+                    }
                 }
                 return cell;
             }

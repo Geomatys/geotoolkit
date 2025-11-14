@@ -17,6 +17,7 @@
 package org.geotoolkit.referencing.rs;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import org.apache.sis.referencing.CRS;
@@ -24,11 +25,14 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.gazetteer.ReferencingByIdentifiers;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
+import org.geotoolkit.referencing.rs.internal.shared.CodeOperations;
+import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.referencing.ReferenceSystem;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.crs.TemporalCRS;
 import org.opengis.referencing.crs.VerticalCRS;
+import org.opengis.referencing.operation.CoordinateOperation;
 import org.opengis.util.FactoryException;
 
 /**
@@ -51,7 +55,7 @@ public final class ReferenceSystems {
                 lst.add(rs);
             }
         }
-        return new DefaultCompoundRS(null, lst);
+        return new CompoundRS(null, lst);
     }
 
     public static int getDimension(ReferenceSystem rs) {
@@ -142,7 +146,7 @@ public final class ReferenceSystems {
      */
     public static CoordinateReferenceSystem getLeaningCRS(ReferenceSystem rs) throws FactoryException {
         if (rs instanceof CoordinateReferenceSystem crs) return crs;
-        if (rs instanceof DefaultCompoundRS drs) return drs.getLeaningCrs();
+        if (rs instanceof CompoundRS drs) return drs.getLeaningCrs();
         if (rs instanceof DiscreteGlobalGridReferenceSystem dggrs) return dggrs.getGridSystem().getCrs();
 
         final List<ReferenceSystem> singleComponents = ReferenceSystems.getSingleComponents(rs, true);
@@ -153,10 +157,108 @@ public final class ReferenceSystems {
                 crss.add(crs);
             } else if (srs instanceof DiscreteGlobalGridReferenceSystem dggrs) {
                 crss.add(dggrs.getGridSystem().getCrs());
+            } else if (srs instanceof ReferencingByIdentifiers rbi) {
+                crss.add(CommonCRS.WGS84.normalizedGeographic());
             } else {
                 throw new UnsupportedOperationException("todo");
             }
         }
         return CRS.compound(crss.toArray(CoordinateReferenceSystem[]::new));
     }
+
+    /**
+     * Find operation from one Reference System to another.
+     *
+     * @param source
+     * @param target
+     * @return
+     */
+    public static CodeOperation findOperation(ReferenceSystem source, ReferenceSystem target, GeographicBoundingBox areaOfInterest) throws FactoryException {
+
+        //check of identity operation
+        if (Utilities.equalsIgnoreMetadata(source, target)) {
+            return CodeOperations.identity(source, target);
+        }
+
+        //check for crs to crs operation
+        if (source instanceof CoordinateReferenceSystem crs1 && target instanceof CoordinateReferenceSystem crs2) {
+            CoordinateOperation op = CRS.findOperation(crs1, crs2, areaOfInterest);
+            return CodeOperations.CrsToCrs(op);
+        }
+
+        //find system mapping from source to target by decomposing it
+        final List<ReferenceSystem> sources = getSingleComponents(source, false);
+        final List<ReferenceSystem> targets = getSingleComponents(target, false);
+
+        //check one to one mapping
+        if (sources.size() == 1 && targets.size() == 1) {
+            final CoordinateReferenceSystem sourceCrs = getLeaningCRS(source);
+            final CoordinateReferenceSystem targetCrs = getLeaningCRS(target);
+            try {
+                //see if we can map them going through a CRS
+                final List<CodeOperation> concat = new ArrayList<>();
+
+                if (source != sourceCrs) {
+                    if (source instanceof ReferencingByIdentifiers rbi) {
+                        concat.add(CodeOperations.RbiToCrs(rbi.createCoder()));
+                    } else {
+                        throw new FactoryException("No mapping found from " + source + " to " + sourceCrs);
+                    }
+                }
+                concat.add(findOperation(sourceCrs, targetCrs, areaOfInterest));
+                if (target != targetCrs) {
+                    if (target instanceof ReferencingByIdentifiers rbi) {
+                        concat.add(CodeOperations.CrsToRbi(rbi.createCoder()));
+                    } else {
+                        throw new FactoryException("No mapping found from " + target + " to " + targetCrs);
+                    }
+                }
+
+                return CodeOperations.concatenate(concat.toArray(CodeOperation[]::new));
+
+            } catch (FactoryException ex) {
+                //do nothing
+                throw new FactoryException("No mapping found from " + source + " to " + target);
+            }
+        }
+
+
+
+        final int[] srcMapping = new int[sources.size()];
+        Arrays.fill(srcMapping, -1);
+        final int[] tgtMapping = new int[targets.size()];
+
+        final List<CodeOperation> compound = new ArrayList<>();
+
+        boolean ordered = true;
+        targetLoop:
+        for (int i = 0; i < tgtMapping.length; i++) {
+            final ReferenceSystem cdt = targets.get(i);
+            for (int k = 0, n = sources.size(); k < n ; k++) {
+                final ReferenceSystem src = sources.get(k);
+                try {
+                    CodeOperation subop = findOperation(src, cdt, areaOfInterest);
+                    if (srcMapping[k] != -1) throw new FactoryException("Source system " + k + "has been mapped to more then one target system");
+                    compound.add(subop);
+                    tgtMapping[i] = k;
+                    srcMapping[k] = i;
+                    ordered &= (k == i);
+                    continue targetLoop;
+                } catch (FactoryException e) {
+                    //do nothing, continue
+                }
+            }
+            throw new FactoryException("No mapping found for axe : " + cdt);
+        }
+
+        CodeOperation operation = CodeOperations.compound(compound.toArray(CodeOperation[]::new));
+
+        if (!ordered || (srcMapping.length != tgtMapping.length)) {
+            CodeOperation reorder = CodeOperations.reorder(source, target, tgtMapping);
+            operation = CodeOperations.concatenate(reorder, operation);
+        }
+
+        return operation;
+    }
+
 }
