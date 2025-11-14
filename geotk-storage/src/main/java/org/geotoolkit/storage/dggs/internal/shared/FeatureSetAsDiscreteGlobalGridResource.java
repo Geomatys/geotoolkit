@@ -36,6 +36,7 @@ import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.feature.FeatureExt;
+import org.geotoolkit.referencing.dggs.DiscreteGlobalGridHierarchy;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridGeometry;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridResource;
@@ -165,7 +166,8 @@ public final class FeatureSetAsDiscreteGlobalGridResource extends AbstractResour
 
         //todo : this approach is very basic, just as a proof of concept
         final DiscreteGlobalGridGeometry gridGeometry = (DiscreteGlobalGridGeometry) coverage.getGeometry();
-        final DiscreteGlobalGridReferenceSystem.Coder coder = gridGeometry.getReferenceSystem().createCoder();
+        final DiscreteGlobalGridReferenceSystem dggrs = gridGeometry.getReferenceSystem();
+        final DiscreteGlobalGridHierarchy hierarchy = dggrs.getGridSystem().getHierarchy();
 
         //prepare all zones as geometries
         //todo create a quadtree
@@ -174,14 +176,7 @@ public final class FeatureSetAsDiscreteGlobalGridResource extends AbstractResour
         IntStream.range(0, nbZones).parallel().forEach(new IntConsumer() {
             @Override
             public void accept(int i) {
-                final Zone zone;
-                synchronized (coder) {
-                    try {
-                        zone = coder.decode(zoneIds.get(i));
-                    } catch (TransformException ex) {
-                        throw new BackingStoreException(ex);
-                    }
-                }
+                final Zone zone = hierarchy.getZone(zoneIds.get(i));
                 final Polygon zoneGeom = DiscreteGlobalGridSystems.toJTSPolygon(zone.getGeographicExtent());
                 final org.locationtech.jts.geom.Envelope zenv = zoneGeom.getEnvelopeInternal();
                 synchronized(tree) {

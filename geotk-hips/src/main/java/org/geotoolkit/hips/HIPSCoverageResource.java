@@ -48,7 +48,7 @@ import org.geotoolkit.dggs.healpix.HealpixZone;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
 import org.geotoolkit.referencing.dggs.Zone;
-import org.geotoolkit.referencing.rs.internal.shared.DefaultCode;
+import org.geotoolkit.referencing.rs.Code;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridCoverage;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridGeometry;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridResource;
@@ -285,7 +285,7 @@ public final class HIPSCoverageResource extends AbstractResource implements Disc
         final CodeTransform cellGridToRS = cellGeometry.getGridToRS();
         final BandedCodeIterator iterator = cell.createIterator();
         final Object[] ordinates = new Object[1];
-        final DefaultCode address = new DefaultCode(HEALPIX, ordinates);
+        final Code address = new Code(HEALPIX, ordinates);
         try {
             ordinates[0] = zone.getIdentifier();
             iterator.moveTo(cellGridToRS.toGrid(address));

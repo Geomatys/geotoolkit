@@ -24,7 +24,7 @@ import org.geotoolkit.dggs.healpix.HealpixDggrs;
 import org.geotoolkit.dggs.s2.S2Dggrs;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystemFactory;
-import org.opengis.referencing.crs.GeographicCRS;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 import org.opengis.util.NoSuchIdentifierException;
 
@@ -52,7 +52,7 @@ public final class DggrsFactory implements DiscreteGlobalGridReferenceSystemFact
     }
 
     @Override
-    public DiscreteGlobalGridReferenceSystem createDggrs(String dgghId, String zonalRefId, GeographicCRS base) throws FactoryException {
+    public DiscreteGlobalGridReferenceSystem createDggrs(String dgghId, String zonalRefId, CoordinateReferenceSystem base) throws FactoryException {
         switch (dgghId) {
             case A5Dggrs.IDENTIFIER : return A5Dggrs.INSTANCE;
             case H3Dggrs.IDENTIFIER : return H3Dggrs.INSTANCE;

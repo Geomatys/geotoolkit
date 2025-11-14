@@ -150,7 +150,21 @@ public abstract class AbstractDiscreteGlobalGridCoverage extends DiscreteGlobalG
             final DiscreteGlobalGridReferenceSystem.Coder coder = dggrs.createCoder();
             final BandedCodeIterator zoneIterator = createIterator();
             double[] cell = null;
+            final long nanLong = Double.doubleToRawLongBits(Double.NaN);
             while (zoneIterator.next()) {
+
+                //check if we have some data
+                cell = zoneIterator.getCell(cell);
+                boolean allNaN = true;
+                for (double d : cell) {
+                    if (Double.doubleToRawLongBits(d) != nanLong) {
+                        //need exact NaN test, multiple NaN may be used, we skip only this one
+                        allNaN = false;
+                    }
+                }
+                if (allNaN) continue;
+
+
                 final int[] position = zoneIterator.getPosition();
                 final Object zid = zones.get(position[0]);
                 final Zone zone = coder.decode(zid);
@@ -167,7 +181,6 @@ public abstract class AbstractDiscreteGlobalGridCoverage extends DiscreteGlobalG
                     while (rite.next()) {
                         if (rite.getSample(0) != 0) {
                             Point pt = rite.getPosition();
-                            cell = zoneIterator.getCell(cell);
                             raster.setPixel(pt.x, pt.y, cell);
                             maskRaster.setSample(pt.x, pt.y, 0, 0);
                         }
