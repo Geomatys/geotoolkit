@@ -17,7 +17,7 @@ import org.apache.sis.geometries.GeometryFactory;
 import org.apache.sis.geometries.Polygon;
 import org.apache.sis.geometries.math.DataType;
 import org.apache.sis.geometries.math.SampleSystem;
-import org.apache.sis.geometries.math.TupleArrays;
+import org.apache.sis.geometries.math.NDArrays;
 import org.apache.sis.geometries.math.Vector2D;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
@@ -79,7 +79,7 @@ public class CellTest {
                 final Vector2D.Double[] boundary = cellToBoundary(cellId, new Cell.CellToBoundaryOptions());
                 final SampleSystem ss = SampleSystem.of(CommonCRS.WGS84.normalizedGeographic());
                 final Polygon polygon = GeometryFactory.createPolygon(
-                        GeometryFactory.createLinearRing(GeometryFactory.createSequence(TupleArrays.of(List.of(boundary), ss, DataType.DOUBLE))), Collections.EMPTY_LIST);
+                        GeometryFactory.createLinearRing(GeometryFactory.createSequence(NDArrays.of(List.of(boundary), ss, DataType.DOUBLE))), Collections.EMPTY_LIST);
 
                 // Verify the original point is contained within the cell
                 final Utils.A5Cell cell = deserialize(cellId);

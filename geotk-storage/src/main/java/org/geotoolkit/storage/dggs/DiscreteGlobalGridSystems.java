@@ -35,8 +35,8 @@ import java.util.stream.Stream;
 import javax.measure.IncommensurableException;
 import org.apache.sis.geometries.LinearRing;
 import org.apache.sis.geometries.PointSequence;
-import org.apache.sis.geometries.math.TupleArray;
-import org.apache.sis.geometries.math.TupleArrays;
+import org.apache.sis.geometries.math.Array;
+import org.apache.sis.geometries.math.NDArrays;
 import org.apache.sis.geometries.internal.shared.ArraySequence;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -269,7 +269,7 @@ public final class DiscreteGlobalGridSystems {
     public static org.apache.sis.geometries.Polygon toSISPolygon(S2Polygon s2) {
         if (s2 == null) return null;
         final double[] coords = toArray(s2);
-        final TupleArray positions = TupleArrays.of(CommonCRS.WGS84.normalizedGeographic(), coords);
+        final Array positions = NDArrays.of(CommonCRS.WGS84.normalizedGeographic(), coords);
         final PointSequence sequence = new ArraySequence(positions);
         final LinearRing exterior = org.apache.sis.geometries.GeometryFactory.createLinearRing(sequence);
         return org.apache.sis.geometries.GeometryFactory.createPolygon(exterior, null);

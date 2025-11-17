@@ -24,8 +24,8 @@ import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometries.math.DataType;
 import org.apache.sis.geometries.math.SampleSystem;
-import org.apache.sis.geometries.math.TupleArray;
-import org.apache.sis.geometries.math.TupleArrays;
+import org.apache.sis.geometries.math.Array;
+import org.apache.sis.geometries.math.NDArrays;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.client.openapi.OpenApiConfiguration;
 import org.geotoolkit.client.service.ServiceException;
@@ -145,7 +145,7 @@ public class DggrsResource extends CollectionItemResource implements CodedResour
             final DggrsData data = response.getData();
             final List<DggrsDataValue> values = data.getValues().values().iterator().next();
 
-            final List<TupleArray> samples = new ArrayList<>();
+            final List<Array> samples = new ArrayList<>();
             for (int i = 0; i < values.size(); i++) {
                 final List<Object> datas = values.get(0).getData();
                 final double[] arr = new double[datas.size()];
@@ -166,7 +166,7 @@ public class DggrsResource extends CollectionItemResource implements CodedResour
                 }
 
                 final SampleSystem ss = new SampleSystem(DataType.DOUBLE, sampleDimensions.get(i));
-                final TupleArray array = TupleArrays.of(ss, arr);
+                final Array array = NDArrays.of(ss, arr);
                 samples.add(array);
             }
 

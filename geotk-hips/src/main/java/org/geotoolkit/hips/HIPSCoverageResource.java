@@ -31,8 +31,8 @@ import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometries.index.MortonIterator;
 import org.apache.sis.geometries.math.DataType;
 import org.apache.sis.geometries.math.SampleSystem;
-import org.apache.sis.geometries.math.TupleArray;
-import org.apache.sis.geometries.math.TupleArrays;
+import org.apache.sis.geometries.math.Array;
+import org.apache.sis.geometries.math.NDArrays;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.AbstractResource;
 import org.apache.sis.storage.DataStore;
@@ -208,11 +208,11 @@ public final class HIPSCoverageResource extends AbstractResource implements Disc
         }
 
         final List<Object> zones = geometry.getZoneIds();
-        final List<TupleArray> samples = new ArrayList<>();
+        final List<Array> samples = new ArrayList<>();
         final double[] nans = new double[sampleDimensions.size()];
         for (int i = 0; i < nans.length; i++) {
             final SampleSystem ss = new SampleSystem(DataType.DOUBLE, sampleDimensions.get(i));
-            samples.add(TupleArrays.of(ss, new double[zones.size()]));
+            samples.add(NDArrays.of(ss, new double[zones.size()]));
             nans[i] = Double.NaN;
         }
 

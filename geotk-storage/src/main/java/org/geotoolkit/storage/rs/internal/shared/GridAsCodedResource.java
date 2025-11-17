@@ -35,8 +35,8 @@ import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometries.math.DataType;
 import org.apache.sis.geometries.math.SampleSystem;
-import org.apache.sis.geometries.math.TupleArray;
-import org.apache.sis.geometries.math.TupleArrays;
+import org.apache.sis.geometries.math.Array;
+import org.apache.sis.geometries.math.NDArrays;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.AbstractResource;
 import org.apache.sis.storage.DataStoreException;
@@ -178,13 +178,13 @@ public final class GridAsCodedResource extends AbstractResource implements Coded
         final CodeTransform transform = resultGeometry.getGridToRS();
         final int nbSamples = Math.toIntExact(TileMatrices.countCells(extent)) * sampleDimensions.size();
 
-        final List<TupleArray> samples = new ArrayList<>();
+        final List<Array> samples = new ArrayList<>();
         final double[] nans = new double[sampleDimensions.size()];
         for (int i = 0; i < nans.length; i++) {
             final SampleSystem ss = new SampleSystem(DataType.DOUBLE, sampleDimensions.get(i));
             final double[] datas = new double[nbSamples];
             Arrays.fill(datas, Double.NaN);
-            samples.add(TupleArrays.of(ss, datas));
+            samples.add(NDArrays.of(ss, datas));
             nans[i] = Double.NaN;
         }
 

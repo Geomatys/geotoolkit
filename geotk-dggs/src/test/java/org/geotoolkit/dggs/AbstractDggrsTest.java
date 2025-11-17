@@ -33,7 +33,7 @@ import org.apache.sis.geometries.Polygon;
 import org.apache.sis.geometries.math.Tuple;
 import org.apache.sis.geometries.math.Vector2D;
 import org.apache.sis.referencing.GeodeticCalculator;
-import org.apache.sis.geometries.math.TupleArrays;
+import org.apache.sis.geometries.math.NDArrays;
 import org.apache.sis.geometries.math.Vectors;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.iso.Names;
@@ -226,7 +226,7 @@ public abstract class AbstractDggrsTest {
                 final DirectPosition position = z.getPosition();
                 final ArrayDiscreteGlobalGridCoverage dggsCoverage = new ArrayDiscreteGlobalGridCoverage(
                         Names.createLocalName(null, null, "test"), new DiscreteGlobalGridGeometry(dggrs, List.of(z.getIdentifier()), null),
-                        List.of(TupleArrays.of(1, 123456)));
+                        List.of(NDArrays.of(1, 123456)));
 
                 //test iterator
                 final BandedCodeIterator iterator = dggsCoverage.createIterator();
