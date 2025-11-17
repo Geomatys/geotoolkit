@@ -45,8 +45,6 @@ import org.apache.sis.referencing.operation.transform.MathTransforms;
 import static org.apache.sis.referencing.operation.transform.MathTransforms.concatenate;
 import org.geotoolkit.geometry.GeometricUtilities;
 import org.geotoolkit.geometry.GeometricUtilities.WrapResolution;
-import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.geometry.jts.awt.JTSGeometryJ2D;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
@@ -58,6 +56,7 @@ import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.apache.sis.coverage.grid.PixelInCell;
+import org.apache.sis.geometry.wrapper.jts.JTS;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
@@ -178,7 +177,7 @@ public class Compose extends AbstractProcess {
                 //set a clip to coverage envelope
                 Geometry clip = GeometricUtilities.toJTSGeometry(g2d.getEnvelope(), WrapResolution.NONE);
                 clip.setUserData(coverageCrs);
-                g.setClip(new JTSGeometryJ2D(clip,covCrstoOutCrs));
+                g.setClip(JTS.asShape(JTS.transform(clip, covCrstoOutCrs)));
 
                 //set the valid area
                 g.setColor(Color.WHITE);
@@ -187,14 +186,14 @@ public class Compose extends AbstractProcess {
                     g.fillRect(0, 0, outWidth, outHeight);
                     g.setTransform(outCrsToGrid);
                 } else {
-                    g.fill(new JTSGeometryJ2D(includeGeometries[i],covCrstoOutCrs));
+                    g.fill(JTS.asShape(JTS.transform(includeGeometries[i], covCrstoOutCrs)));
                 }
 
                 //remove exclusion geometry
                 if (excludeGeometries[i]!=null) {
-                    covCrstoOutCrs = CRS.findOperation(JTS.findCoordinateReferenceSystem(excludeGeometries[i]), outCrs, null).getMathTransform();
+                    covCrstoOutCrs = CRS.findOperation(JTS.getCoordinateReferenceSystem(excludeGeometries[i]), outCrs, null).getMathTransform();
                     g.setColor(Color.BLACK);
-                    g.fill(new JTSGeometryJ2D(excludeGeometries[i],covCrstoOutCrs));
+                    g.fill(JTS.asShape(JTS.transform(excludeGeometries[i], covCrstoOutCrs)));
                 }
                 g.dispose();
 

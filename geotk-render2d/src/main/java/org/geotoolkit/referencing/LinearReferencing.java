@@ -24,11 +24,11 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 import org.apache.sis.geometries.math.Vector2D;
+import org.apache.sis.geometry.wrapper.jts.JTS;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Static;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.style.j2d.PathWalker;
-import org.geotoolkit.geometry.jts.awt.JTSLineIterator;
 import org.geotoolkit.gml.xml.MultiGeometry;
 import org.geotoolkit.math.XMath;
 import org.locationtech.jts.geom.Coordinate;
@@ -369,7 +369,7 @@ public class LinearReferencing extends Static{
         distanceFin = XMath.clamp(distanceFin, 0, linearLength);
 
         //cut linear at given distances
-        final PathIterator ite = new JTSLineIterator(linear, null);
+        final PathIterator ite = JTS.asShape(linear).getPathIterator(null);
         final PathWalker walker = new PathWalker(ite);
         walker.walk((float)distanceDebut);
         float remain = (float) (distanceFin-distanceDebut);
