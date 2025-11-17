@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.stream.Stream;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.geometry.wrapper.jts.JTS;
 import org.apache.sis.map.ExceptionPresentation;
 import org.apache.sis.map.Presentation;
 import org.apache.sis.map.MapLayer;
@@ -50,7 +51,6 @@ import org.geotoolkit.display2d.presentation.TextPresentation2;
 import org.geotoolkit.display2d.style.renderer.AbstractCoverageSymbolizerRenderer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.geotoolkit.geometry.GeometricUtilities;
-import org.geotoolkit.geometry.jts.awt.JTSGeometryJ2D;
 import org.geotoolkit.storage.coverage.TileMatrixSetCoverageReader;
 import org.geotoolkit.storage.multires.TileMatrices;
 import org.locationtech.jts.geom.Geometry;
@@ -116,7 +116,7 @@ public final class TileDebugSymbolizerRenderer extends AbstractCoverageSymbolize
                         geom.setUserData(crs2d);
                         geom = org.apache.sis.geometry.wrapper.jts.JTS.transform(geom, renderingContext.getDisplayCRS());
 
-                        Shape shp = new JTSGeometryJ2D(geom);
+                        Shape shp = JTS.asShape(geom);
 
                         final ShapePresentation border = new ShapePresentation(layer, resource, null);
                         border.stroke = stroke;

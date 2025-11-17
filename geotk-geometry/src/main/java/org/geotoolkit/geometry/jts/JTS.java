@@ -43,7 +43,6 @@ import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.collection.BackingStoreException;
-import org.geotoolkit.geometry.jts.awt.JTSGeometryJ2D;
 import org.geotoolkit.resources.Errors;
 import org.locationtech.jts.algorithm.Orientation;
 import org.locationtech.jts.geom.Coordinate;
@@ -412,109 +411,6 @@ public final class JTS {
 
             case 0:
                 break;
-        }
-    }
-
-    /**
-     * Returns a suggested value for the {@code flatness} argument in
-     * {@link Shape#getPathIterator(AffineTransform,double)} for the specified shape.
-     *
-     * @param shape the shape for which to compute a flatness factor.
-     * @return the suggested flatness factor.
-     */
-    private static double getFlatness(final Shape shape) {
-        final Rectangle2D bounds = shape.getBounds2D();
-        final double dx = bounds.getWidth();
-        final double dy = bounds.getHeight();
-        return Math.max(0.025 * Math.min(dx, dy),
-                        0.001 * Math.max(dx, dy));
-    }
-
-    /**
-     * Converts an arbitrary Java2D shape into a JTS geometry. The created JTS
-     * geometry may be any of {@link LineString}, {@link LinearRing} or
-     * {@link MultiLineString}.
-     *
-     * @param shape The Java2D shape to create.
-     * @param factory The JTS factory to use for creating geometry.
-     * @return The JTS geometry.
-     */
-    public static Geometry shapeToGeometry(final Shape shape, final GeometryFactory factory) {
-        if (shape instanceof JTSGeometryJ2D) {
-            final JTSGeometryJ2D jtsgeom = (JTSGeometryJ2D) shape;
-            Geometry geometry = jtsgeom.getGeometry();
-            final MathTransform transform = jtsgeom.getTransform();
-            if (!transform.isIdentity()) {
-                try {
-                    geometry = org.apache.sis.geometry.wrapper.jts.JTS.transform(geometry, transform);
-                } catch (MismatchedDimensionException | TransformException ex) {
-                    throw new BackingStoreException(ex.getMessage(), ex);
-                }
-            }
-            return geometry;
-        }
-        ensureNonNull("shape", shape);
-        ensureNonNull("factory", factory);
-
-        final PathIterator iterator = shape.getPathIterator(null, getFlatness(shape));
-        final double[] buffer = new double[6];
-        final List<Coordinate> coords = new ArrayList<Coordinate>();
-        final List<LineString> lines = new ArrayList<LineString>();
-        while (!iterator.isDone()) {
-            switch (iterator.currentSegment(buffer)) {
-                /*
-                 * Close the polygon: the last point is equal to
-                 * the first point, and a LinearRing is created.
-                 */
-                case PathIterator.SEG_CLOSE: {
-                    if (!coords.isEmpty()) {
-                        coords.add(coords.get(0));
-                        while (coords.size() < 4) {
-                            coords.add(coords.get(0));
-                        }
-                        lines.add(factory.createLinearRing(
-                                (Coordinate[]) coords.toArray(new Coordinate[coords.size()])));
-                        coords.clear();
-                    }
-                    break;
-                }
-                /*
-                 * General case: A LineString is created from previous
-                 * points, and a new LineString begin for next points.
-                 */
-                case PathIterator.SEG_MOVETO: {
-                    if (!coords.isEmpty()) {
-                        lines.add(factory.createLineString(
-                                (Coordinate[]) coords.toArray(new Coordinate[coords.size()])));
-                        coords.clear();
-                    }
-
-                    // Fall through
-                }
-                case PathIterator.SEG_LINETO: {
-                    coords.add(new Coordinate(buffer[0], buffer[1]));
-
-                    break;
-                }
-                default:
-                    throw new IllegalPathStateException();
-            }
-            iterator.next();
-        }
-        /*
-         * End of loops: create the last LineString if any, then create the MultiLineString.
-         */
-        if (!coords.isEmpty()) {
-            lines.add(factory.createLineString(
-                    (Coordinate[]) coords.toArray(new Coordinate[coords.size()])));
-        }
-        switch (lines.size()) {
-            case 0:
-                return null;
-            case 1:
-                return (LineString) lines.get(0);
-            default:
-                return factory.createMultiLineString(GeometryFactory.toLineStringArray(lines));
         }
     }
 

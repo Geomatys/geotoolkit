@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.stream.Stream;
 import javax.measure.Unit;
 import javax.measure.UnitConverter;
+import org.apache.sis.geometry.wrapper.jts.JTS;
 import org.apache.sis.map.ExceptionPresentation;
 import org.apache.sis.map.Presentation;
 import org.apache.sis.measure.Units;
@@ -44,7 +45,6 @@ import org.geotoolkit.display2d.style.j2d.GeodeticPathWalker;
 import org.geotoolkit.display2d.style.renderer.AbstractSymbolizerRenderer;
 import org.geotoolkit.display2d.style.renderer.LineSymbolizerRenderer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
-import org.geotoolkit.geometry.jts.awt.JTSGeometryJ2D;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.Feature;
 import org.opengis.filter.Expression;
@@ -141,13 +141,13 @@ public class GraduationSymbolizerRenderer extends AbstractSymbolizerRenderer<Cac
             final Geometry displayGeom = org.apache.sis.geometry.wrapper.jts.JTS.transform(geom,projGeom.getDataToDisplay());
 
             if (!forwardCandidates.isEmpty()) {
-                final Shape dispShape = new JTSGeometryJ2D(displayGeom);
+                final Shape dispShape = JTS.asShape(displayGeom);
                 final GradInfo[] gradInfos = forwardCandidates.toArray(new GradInfo[forwardCandidates.size()]);
                 final GeodeticPathWalker walker = new GeodeticPathWalker(dispShape.getPathIterator(null), displayCrs);
                 portray(layer, walker, gradInfos, presentations);
             }
             if (!backwardCandidates.isEmpty()) {
-                final Shape dispShape = new JTSGeometryJ2D(displayGeom.reverse());
+                final Shape dispShape = JTS.asShape(displayGeom.reverse());
                 final GradInfo[] gradInfos = backwardCandidates.toArray(new GradInfo[backwardCandidates.size()]);
                 final GeodeticPathWalker walker = new GeodeticPathWalker(dispShape.getPathIterator(null), displayCrs);
                 portray(layer, walker, gradInfos, presentations);
