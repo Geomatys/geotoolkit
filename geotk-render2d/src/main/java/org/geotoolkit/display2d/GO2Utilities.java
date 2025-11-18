@@ -80,8 +80,6 @@ import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.filter.visitor.IsStaticExpressionVisitor;
 import org.geotoolkit.filter.visitor.ListingPropertyVisitor;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
-import org.geotoolkit.geometry.jts.awt.DecimateJTSGeometryJ2D;
-import org.geotoolkit.geometry.jts.awt.JTSGeometryJ2D;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.jai.FloodFill;
 import org.geotoolkit.image.palette.PaletteFactory;
@@ -129,6 +127,7 @@ import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.apache.sis.coverage.grid.PixelInCell;
+import org.apache.sis.geometry.wrapper.jts.JTS;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.*;
@@ -503,11 +502,13 @@ public final class GO2Utilities {
     ////////////////////////////////////////////////////////////////////////////
 
     public static Shape toJava2D(final Geometry geom){
-        return new JTSGeometryJ2D(geom);
+        return JTS.asShape(geom);
     }
 
     public static Shape toJava2D(final Geometry geom, final double[] resolution){
-        return new DecimateJTSGeometryJ2D(geom,resolution);
+        //todo : a quick benchmark show no considerable performance benefit with resolution parameter
+        //make more tests to see if we need to preserver this capability
+        return JTS.asShape(geom);
     }
 
     public static Shape toJava2D(final org.opengis.geometry.Geometry geom){

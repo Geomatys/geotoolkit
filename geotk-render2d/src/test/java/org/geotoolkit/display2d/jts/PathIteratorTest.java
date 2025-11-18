@@ -29,8 +29,7 @@ import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKTReader;
 import java.awt.geom.PathIterator;
-import org.geotoolkit.geometry.jts.awt.JTSGeometryJ2D;
-import org.geotoolkit.geometry.jts.awt.JTSMultiLineStringJ2D;
+import org.apache.sis.geometry.wrapper.jts.JTS;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -71,7 +70,7 @@ public class PathIteratorTest {
 
         final Point point1 = GF.createPoint(new Coordinate(10, 20));
 
-        final Shape shape = new JTSGeometryJ2D(point1);
+        final Shape shape = JTS.asShape(point1);
         final PathIterator ite = shape.getPathIterator(null);
 
         double[] buffer = new double[2];
@@ -96,7 +95,7 @@ public class PathIteratorTest {
             new Coordinate(5, 2)
         });
 
-        final Shape shape = new JTSGeometryJ2D(line2);
+        final Shape shape = JTS.asShape(line2);
         final PathIterator ite = shape.getPathIterator(null);
 
         double[] buffer = new double[2];
@@ -140,7 +139,7 @@ public class PathIteratorTest {
         });
 
         final MultiLineString ml = GF.createMultiLineString(new LineString[]{line1,line2});
-        final Shape shape = new JTSMultiLineStringJ2D(ml);
+        final Shape shape = JTS.asShape(ml);
         final PathIterator ite = shape.getPathIterator(null);
 
         double[] buffer = new double[2];
@@ -190,7 +189,7 @@ public class PathIteratorTest {
         final WKTReader reader = new WKTReader();
         final Geometry geom = reader.read("MULTILINESTRING ((-5 0, 5 0), (355 0, 365 0), (-365 0, -355 0))");
 
-        final JTSGeometryJ2D shape = new JTSGeometryJ2D(geom);
+        final Shape shape = JTS.asShape(geom);
 
         final PathIterator ite = shape.getPathIterator(null);
 
@@ -255,7 +254,7 @@ public class PathIteratorTest {
 
         final Polygon polygon = GF.createPolygon(ring, new LinearRing[0]);
 
-        final Shape shape = new JTSGeometryJ2D(polygon);
+        final Shape shape = JTS.asShape(polygon);
         final PathIterator ite = shape.getPathIterator(null);
 
         double[] buffer = new double[2];
@@ -311,7 +310,7 @@ public class PathIteratorTest {
         final Polygon polygon2 = GF.createPolygon(ring2, new LinearRing[0]);
         final MultiPolygon poly = GF.createMultiPolygon(new Polygon[]{polygon1,polygon2});
 
-        final Shape shape = new JTSGeometryJ2D(poly);
+        final Shape shape = JTS.asShape(poly);
         final PathIterator ite = shape.getPathIterator(null);
 
         double[] buffer = new double[2];

@@ -26,6 +26,7 @@ import java.awt.image.RenderedImage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
+import org.apache.sis.geometry.wrapper.jts.JTS;
 import org.apache.sis.map.ExceptionPresentation;
 import org.apache.sis.map.Presentation;
 import org.apache.sis.map.MapLayer;
@@ -43,7 +44,6 @@ import org.geotoolkit.display2d.style.CachedStrokeSimple;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.j2d.PathWalker;
 import org.geotoolkit.geometry.jts.LineStringTranslator;
-import org.geotoolkit.geometry.jts.awt.JTSGeometryJ2D;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.MultiLineString;
@@ -112,7 +112,7 @@ public class LineSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedLin
                 } else if(g instanceof MultiLineString) {
                     g = LineStringTranslator.translateLineString((MultiLineString)g, offset);
                 }
-                j2dShapes[i] = new JTSGeometryJ2D(g);
+                j2dShapes[i] = JTS.asShape(g);
                 //TODO : clip geometry
             }
         }
