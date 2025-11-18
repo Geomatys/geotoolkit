@@ -134,9 +134,6 @@ public class ResultBuilder {
      * @param field The current field.
      */
     public void appendNumber(Number value, boolean measureField, Field field) {
-        if (value != null && measureField) {
-            emptyLine = false;
-        }
         if (value instanceof Double d) {
             appendDouble(d, measureField, field);
         } else if (value instanceof Float f) {
@@ -208,7 +205,7 @@ public class ResultBuilder {
         switch (getMode()) {
             case DATA_ARRAY -> currentArrayLine.add(value);
             case CSV -> {
-                if (!value.isNaN()) {
+                if (value != null && !value.isNaN()) {
                     currentLine.append(Double.toString(value));
                 }
                 currentLine.append(encoding.getTokenSeparator());
@@ -323,6 +320,8 @@ public class ResultBuilder {
             appendTime(d, measureField, f);
         } else if (value instanceof Boolean b) {
             appendBoolean(b, measureField, f);
+        } else if (value instanceof Map m) {
+            appendMap(m, measureField, f);
         } else if (value == null) {
             appendString((String) null, measureField, f);
         } else {
