@@ -84,6 +84,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.temporal.TemporalPrimitive;
 import org.opengis.util.FactoryException;
+import org.opengis.util.InternationalString;
 import org.opengis.util.RecordType;
 
 /**
@@ -630,14 +631,13 @@ public class OMUtils {
         element.setNamesOfMeasure(List.of(new SimpleInternationalString(name)));
         if (value != null) {
             var res = new DefaultQuantitativeResult();
-            var rn = Resources.formatInternational(Resources.Keys.MultilineRecord);
 
-            RecordType rt = switch (ft) {
-                case TEXT      -> SCHEMA.createRecordType(rn, Map.of("CharacterString", String.class));
-                case BOOLEAN   -> SCHEMA.createRecordType(rn, Map.of("Boolean", Boolean.class));
-                case QUANTITY -> SCHEMA.createRecordType(rn, Map.of("Real", Double.class));
-                case TIME     -> SCHEMA.createRecordType(rn, Map.of("Date", Date.class));
-                case JSON     -> SCHEMA.createRecordType(rn, Map.of("Object", Map.class));
+            final RecordType rt = switch (ft) {
+                case TEXT      -> RT_TEXT;
+                case BOOLEAN   -> RT_BOOLEAN;
+                case QUANTITY -> RT_QUANTITY;
+                case TIME     -> RT_TIME;
+                case JSON     -> RT_JSON;
             };
 
             DefaultRecord r = new DefaultRecord(rt);
@@ -652,7 +652,21 @@ public class OMUtils {
         return element;
     }
 
-    private static DefaultRecordSchema SCHEMA = new DefaultRecordSchema("Geotk");
+    private static final InternationalString RN = Resources.formatInternational(Resources.Keys.MultilineRecord);
+    private static final DefaultRecordSchema SCHEMA_TEXT = new DefaultRecordSchema("Geotk");
+    private static final RecordType RT_TEXT = SCHEMA_TEXT.createRecordType(RN, Map.of("CharacterString", String.class));
+
+    private static final DefaultRecordSchema SCHEMA_BOOLEAN = new DefaultRecordSchema("Geotk");
+    private static final RecordType RT_BOOLEAN = SCHEMA_BOOLEAN.createRecordType(RN, Map.of("Boolean", Boolean.class));
+
+    private static final DefaultRecordSchema SCHEMA_QUANTITY = new DefaultRecordSchema("Geotk");
+    private static final RecordType RT_QUANTITY = SCHEMA_QUANTITY.createRecordType(RN, Map.of("Real", Double.class));
+
+    private static final DefaultRecordSchema SCHEMA_TIME = new DefaultRecordSchema("Geotk");
+    private static final RecordType RT_TIME = SCHEMA_TIME.createRecordType(RN, Map.of("Date", Date.class));
+
+    private static final DefaultRecordSchema SCHEMA_JSON = new DefaultRecordSchema("Geotk");
+    private static final RecordType RT_JSON = SCHEMA_JSON.createRecordType(RN, Map.of("Object", Map.class));
 
     /**
      * Extract the envelope from a bbox spatial filter.
