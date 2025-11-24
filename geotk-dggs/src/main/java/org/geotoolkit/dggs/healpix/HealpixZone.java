@@ -38,6 +38,7 @@ import org.geotoolkit.storage.dggs.DiscreteGlobalGridSystems;
 import org.geotoolkit.referencing.dggs.RefinementLevel;
 import org.geotoolkit.referencing.dggs.Zone;
 import org.geotoolkit.referencing.dggs.internal.shared.AbstractZone;
+import org.geotoolkit.storage.rs.internal.shared.s2.S2;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.metadata.extent.BoundingPolygon;
 import org.opengis.referencing.crs.GeographicCRS;
@@ -111,6 +112,23 @@ public final class HealpixZone extends AbstractZone<HealpixDggrs> {
     }
 
     @Override
+    public Zone getFirstParent() {
+        if (level == 0) return null;
+        return new HealpixZone(dggrs, level-1, npixel /4);
+    }
+
+    @Override
+    public Zone getFirstParent(int refinementLevel) {
+        if (level == 0) return null;
+        if (refinementLevel < 0 || refinementLevel >= level) throw new IllegalArgumentException("Invalid refinement level");
+        long n = npixel;
+        for (int i = refinementLevel; i < level; i++) {
+            n /= 4;
+        }
+        return new HealpixZone(dggrs, refinementLevel, n);
+    }
+
+    @Override
     public Collection<? extends Zone> getParents() {
         if (level == 0) return Collections.EMPTY_SET;
         return List.of(new HealpixZone(dggrs, level-1, npixel /4)
@@ -155,7 +173,7 @@ public final class HealpixZone extends AbstractZone<HealpixDggrs> {
                 S2LatLng.fromDegrees(north.y, north.x).toPoint(),
                 S2LatLng.fromDegrees(west.y, west.x).toPoint()
         );
-        return DiscreteGlobalGridSystems.toGeographicExtent(new S2Polygon(new S2Loop(contour)));
+        return S2.toGeographicExtent(new S2Polygon(new S2Loop(contour)));
     }
 
     @Override

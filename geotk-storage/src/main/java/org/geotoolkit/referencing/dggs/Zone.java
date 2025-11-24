@@ -64,8 +64,7 @@ public interface Zone extends Location, Comparable<Zone> {
         if (geometry == null) {
             return CRS.getDomainOfValidity(CommonCRS.WGS84.normalizedGeographic());
         }
-        GeneralEnvelope env = new GeneralEnvelope(geometry.getEnvelope());
-        return env;
+        return new GeneralEnvelope(geometry.getEnvelope());
     }
 
     /**
@@ -93,6 +92,20 @@ public interface Zone extends Location, Comparable<Zone> {
      */
     @Override
     RefinementLevel getLocationType();
+
+    /**
+     * Get maint parent zone of given zone.
+     * Most DGGRS zones have a single parent, but DGGRS which have children who do not exactly overlap the parent
+     * zone may then have several parents, int this case the first parent should be the one which has the most overlapping.
+     *
+     * @return main parent or null.
+     */
+    Zone getFirstParent();
+
+    /**
+     * @return the parent which most covers this zone at given level.
+     */
+    Zone getFirstParent(int refinementLevel);
 
     /**
      * Get parent zones of given zone.

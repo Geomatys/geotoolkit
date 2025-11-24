@@ -16,11 +16,35 @@
  */
 package org.geotoolkit.storage.rs;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
+import javax.measure.IncommensurableException;
+import javax.measure.Quantity;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.measure.Quantities;
+import org.apache.sis.measure.Units;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.referencing.dggs.DiscreteGlobalGrid;
+import org.geotoolkit.referencing.dggs.DiscreteGlobalGridHierarchy;
+import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
+import org.geotoolkit.referencing.dggs.Zone;
+import org.geotoolkit.referencing.rs.ReferenceSystems;
 import org.geotoolkit.storage.coverage.BandedCoverageResource;
+import org.geotoolkit.storage.dggs.DiscreteGlobalGridGeometry;
+import org.geotoolkit.storage.dggs.internal.shared.GridAsDiscreteGlobalGridResource;
+import org.geotoolkit.storage.rs.internal.shared.CodeTransforms;
 import org.opengis.feature.FeatureType;
+import org.opengis.referencing.ReferenceSystem;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.crs.SingleCRS;
+import org.opengis.referencing.crs.VerticalCRS;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
+import org.opengis.util.GenericName;
 
 /**
  * A Resource which offer acces to a coverage structured in located cells.
@@ -28,6 +52,11 @@ import org.opengis.feature.FeatureType;
  * @author Johann Sorel (Geomatys)
  */
 public interface CodedResource extends BandedCoverageResource {
+
+    @Override
+    default Optional<GenericName> getIdentifier() throws DataStoreException {
+        return Optional.of(getSampleType().getName());
+    }
 
     /**
      * Returns the description of the samples stored.
@@ -57,30 +86,97 @@ public interface CodedResource extends BandedCoverageResource {
      */
     @Override
     public default CodedCoverage read(GridGeometry domain, int... range) throws DataStoreException {
-        throw new UnsupportedOperationException("todo");
-//        final Quantity<?> coverageResolution;
-//        try {
-//            coverageResolution = GridAsDiscreteGlobalGridResource.computeAverageResolution(domain);
-//        } catch (TransformException ex) {
-//            throw new DataStoreException(ex);
-//        }
-//
-//        //extract zones in the wanted area
-//        final DiscreteGlobalGridReferenceSystem dggrs = getReferenceSystem();
-//        final DiscreteGlobalGridReferenceSystem.Coder coder = dggrs.createCoder();
-//        final Stream<Zone> zones;
-//        try {
-//            coder.setPrecision(coverageResolution, null);
-//            zones = coder.intersect(domain.getEnvelope(dggrs.getGridSystem().getCrs()));
-//        } catch (IncommensurableException | TransformException ex) {
-//            throw new DataStoreException(ex);
-//        }
-//
-//        //todo check intersection with additional dimensions
-//
-//        final List<ZonalIdentifier> zoneIds = zones.map(Zone::getIdentifier).toList();
-//        final DiscreteGlobalGridGeometry geometry = new DiscreteGlobalGridGeometry(dggrs, zoneIds);
-//        return read(geometry, range);
+        final CodedGeometry resourceGeometry = getGridGeometry();
+
+
+        //cut domain in single crs grid geometries
+        final CoordinateReferenceSystem queryCrs = domain.getCoordinateReferenceSystem();
+        final List<SingleCRS> queryCrss = CRS.getSingleComponents(queryCrs);
+        final List<CodedGeometry> domainSlices = new ArrayList<>();
+        for (SingleCRS scrs : queryCrss) {
+            GridGeometry slice;
+            try {
+                slice = CodeTransforms.slice(domain, scrs);
+            } catch (FactoryException ex) {
+                throw new DataStoreException(ex);
+            }
+            CodedGeometry d = new CodedGeometry(slice);
+            domainSlices.add(d);
+        }
+
+
+
+        //ensure we extract a single slice on axes where no range has been defined
+        final List<CodedGeometry> querySlices = new ArrayList<>();
+        final List<ReferenceSystem> singleComponents = ReferenceSystems.getSingleComponents(resourceGeometry.getReferenceSystem(), true);
+        loop:
+        for (ReferenceSystem rs : singleComponents) {
+            if (rs instanceof DiscreteGlobalGridReferenceSystem dggrs) {
+                try {
+                    final DiscreteGlobalGridGeometry dgggeom = toDiscreteGlobalGridGeometry(domain, dggrs);
+                    querySlices.add(dgggeom);
+                } catch (TransformException | IncommensurableException ex) {
+                    throw new DataStoreException(ex);
+                }
+            } else {
+                for (CodedGeometry slicegeom : domainSlices) {
+                    if (slicegeom.getReferenceSystem().equals(rs)) {
+                        continue loop;
+                    }
+                }
+                //not found
+                final Optional<CodedGeometry> slice = resourceGeometry.slice(rs);
+                if (!slice.isPresent()) continue;
+                final CodedGeometry slicegeom = slice.get();
+                final Optional<GridGeometry> regularGrid = slicegeom.isRegularGrid();
+                if (!regularGrid.isPresent()) continue;
+                double ratio = 1.0;
+                if (rs instanceof VerticalCRS) {
+                    ratio = 0.0; //prefer the lowest level
+                }
+                GridGeometry build = regularGrid.get().derive().sliceByRatio(ratio).build();
+                querySlices.add(new CodedGeometry(build));
+            }
+        }
+
+
+        //place RS in order : horiontal > vertical > others
+        querySlices.sort(new Comparator<CodedGeometry>() {
+            @Override
+            public int compare(CodedGeometry o1, CodedGeometry o2) {
+                final ReferenceSystem rs1 = o1.getReferenceSystem();
+                final ReferenceSystem rs2 = o2.getReferenceSystem();
+                if (rs1 instanceof DiscreteGlobalGridReferenceSystem) return -1;
+                if (rs2 instanceof DiscreteGlobalGridReferenceSystem) return +1;
+
+                final CoordinateReferenceSystem crs1 = (CoordinateReferenceSystem) rs1;
+                final CoordinateReferenceSystem crs2 = (CoordinateReferenceSystem) rs2;
+                if (CRS.isHorizontalCRS(crs1)) return -1;
+                if (CRS.isHorizontalCRS(crs2)) return +1;
+                if (crs1 instanceof VerticalCRS) return -1;
+                if (crs2 instanceof VerticalCRS) return +1;
+                return 0;
+            }
+        });
+        final CodedGeometry query = CodedGeometry.compound(querySlices.toArray(CodedGeometry[]::new));
+
+        return read(query, range);
+    }
+
+    private static DiscreteGlobalGridGeometry toDiscreteGlobalGridGeometry(GridGeometry domain, DiscreteGlobalGridReferenceSystem dggrs) throws TransformException, IncommensurableException {
+        Quantity<?> coverageResolution = GridAsDiscreteGlobalGridResource.computeAverageResolution(domain);
+
+        coverageResolution = Quantities.create(coverageResolution.getValue().doubleValue() * 10, Units.METRE);
+
+        //extract zones in the wanted area and resolution
+        final DiscreteGlobalGridHierarchy hierarchy = dggrs.getGridSystem().getHierarchy();
+        final DiscreteGlobalGrid grid = hierarchy.getGrid(coverageResolution);
+
+        final List<Object> zoneIds;
+        try (Stream<Zone> zones = grid.getZones(domain.getEnvelope(dggrs.getGridSystem().getCrs()))) {
+            zoneIds = zones.map(Zone::getIdentifier).toList();
+        }
+        return new DiscreteGlobalGridGeometry(dggrs, zoneIds, null);
     }
 
     /**

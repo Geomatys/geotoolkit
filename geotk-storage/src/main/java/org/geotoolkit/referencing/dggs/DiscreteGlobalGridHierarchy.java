@@ -23,6 +23,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import javax.measure.IncommensurableException;
+import javax.measure.Quantity;
 
 /**
  * Series of discrete global grids organized in a hierarchy of successive levels of zone refinement,
@@ -65,6 +67,13 @@ public interface DiscreteGlobalGridHierarchy {
      * @throws IllegalArgumentException if identifier do not exist in this DGGRS
      */
     Zone getZone(Object identifier) throws IllegalArgumentException;
+
+    /**
+     * Most accurate grid for given accuracy.
+     *
+     * @return DiscreteGlobalGrid, never null
+     */
+    DiscreteGlobalGrid getGrid(Quantity<?> accuracy) throws IncommensurableException;
 
     /**
      * Ordered list of grids by refinement level.

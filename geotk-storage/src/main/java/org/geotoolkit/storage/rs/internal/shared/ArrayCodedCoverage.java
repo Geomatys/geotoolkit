@@ -16,12 +16,16 @@
  */
 package org.geotoolkit.storage.rs.internal.shared;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometries.math.Array;
 import org.apache.sis.geometries.math.Cursor;
+import org.apache.sis.geometries.math.DataType;
+import org.apache.sis.geometries.math.NDArrays;
+import org.apache.sis.geometries.math.SampleSystem;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.multires.TileMatrices;
 import org.geotoolkit.storage.rs.CodedGeometry;
@@ -37,6 +41,22 @@ import org.opengis.util.GenericName;
 public final class ArrayCodedCoverage extends AbstractCodedCoverage{
 
     private final List<Array> samples;
+
+    public ArrayCodedCoverage(final GenericName name, CodedGeometry gridGeometry, FeatureType sampleType) throws FactoryException {
+        super(name, gridGeometry, sampleType);
+
+        final int nbCell = Math.toIntExact(TileMatrices.countCells(gridGeometry.getExtent()));
+
+        samples = new ArrayList<>();
+        final double[] nans = new double[sampleDimensions.size()];
+        for (int i = 0; i < nans.length; i++) {
+            final SampleSystem ss = new SampleSystem(DataType.DOUBLE, sampleDimensions.get(i));
+            final double[] datas = new double[nbCell];
+            Arrays.fill(datas, Double.NaN);
+            samples.add(NDArrays.of(ss, datas));
+            nans[i] = Double.NaN;
+        }
+    }
 
     public ArrayCodedCoverage(final GenericName name, CodedGeometry gridGeometry, List<Array> samples) throws FactoryException {
         super(name, gridGeometry, createType(name, samples));
@@ -107,7 +127,7 @@ public final class ArrayCodedCoverage extends AbstractCodedCoverage{
 
         public Iterator(FeatureType type, String[] mapping) {
             super(type, mapping);
-            nbCell = TileMatrices.countCells(gridGeometry.getExtent());
+            nbCell = TileMatrices.countCells(extent);
 
             cursors = new Cursor[samples.size()];
             for (int i = 0; i < cursors.length; i++) {

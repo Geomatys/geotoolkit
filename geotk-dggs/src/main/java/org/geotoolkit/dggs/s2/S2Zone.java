@@ -28,10 +28,10 @@ import java.util.List;
 import org.apache.sis.geometries.math.SampleSystem;
 import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.storage.dggs.DiscreteGlobalGridSystems;
 import org.geotoolkit.referencing.dggs.RefinementLevel;
 import org.geotoolkit.referencing.dggs.Zone;
 import org.geotoolkit.referencing.dggs.internal.shared.AbstractZone;
+import org.geotoolkit.storage.rs.internal.shared.s2.S2;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.metadata.extent.BoundingPolygon;
 
@@ -82,6 +82,20 @@ final class S2Zone extends AbstractZone<S2Dggrs> {
     }
 
     @Override
+    public Zone getFirstParent() {
+        final S2CellId cellId = new S2CellId(hash);
+        if (cellId.isFace()) return null;
+        return new S2Zone(dggrs, cellId.parent().id());
+    }
+
+    @Override
+    public Zone getFirstParent(int refinementLevel) {
+        final S2CellId cellId = new S2CellId(hash);
+        if (cellId.isFace()) return null;
+        return new S2Zone(dggrs, cellId.parent(refinementLevel).id());
+    }
+
+    @Override
     public Collection<? extends Zone> getParents() {
         final S2CellId cellId = new S2CellId(hash);
         if (cellId.isFace()) return Collections.EMPTY_LIST;
@@ -122,7 +136,7 @@ final class S2Zone extends AbstractZone<S2Dggrs> {
             cell.getVertex(1),
             cell.getVertex(2),
             cell.getVertex(3));
-        return DiscreteGlobalGridSystems.toGeographicExtent(new S2Polygon(new S2Loop(contour)));
+        return S2.toGeographicExtent(new S2Polygon(new S2Loop(contour)));
     }
 
     @Override

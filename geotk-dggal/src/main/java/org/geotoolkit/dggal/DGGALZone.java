@@ -26,10 +26,10 @@ import java.util.List;
 import org.apache.sis.geometries.math.SampleSystem;
 import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.storage.dggs.DiscreteGlobalGridSystems;
 import org.geotoolkit.referencing.dggs.RefinementLevel;
 import org.geotoolkit.referencing.dggs.Zone;
 import org.geotoolkit.referencing.dggs.internal.shared.AbstractZone;
+import org.geotoolkit.storage.rs.internal.shared.s2.S2;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.metadata.extent.BoundingPolygon;
 
@@ -138,6 +138,31 @@ final class DGGALZone extends AbstractZone<DGGALDggrs> {
     }
 
     @Override
+    public Zone getFirstParent() {
+        long candidate;
+        try {
+            candidate = dggrs.dggal.getZoneCentroidParent(hash);
+            if (candidate == -1) return null;
+        } catch (Throwable ex) {
+            throw new DGGALBindingException(ex);
+        }
+        return new DGGALZone(dggrs, candidate);
+    }
+
+    @Override
+    public Zone getFirstParent(int refinementLevel) {
+        long candidate;
+        try {
+            double[] centroid = dggrs.dggal.getZoneWGS84Centroid(hash);
+            candidate = dggrs.dggal.getZoneFromWGS84Centroid(refinementLevel, centroid);
+            if (candidate == -1) return null;
+        } catch (Throwable ex) {
+            throw new DGGALBindingException(ex);
+        }
+        return new DGGALZone(dggrs, candidate);
+    }
+
+    @Override
     public Collection<? extends Zone> getParents() {
         long[] candidates;
         try {
@@ -204,7 +229,7 @@ final class DGGALZone extends AbstractZone<DGGALDggrs> {
             //reverse the direction
             loop.invert();
         }
-        return DiscreteGlobalGridSystems.toGeographicExtent(new S2Polygon(loop));
+        return S2.toGeographicExtent(new S2Polygon(loop));
     }
 
     @Override

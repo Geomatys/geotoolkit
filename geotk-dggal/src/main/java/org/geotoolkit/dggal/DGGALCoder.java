@@ -17,9 +17,6 @@
 package org.geotoolkit.dggal;
 
 import javax.measure.IncommensurableException;
-import javax.measure.Quantity;
-import org.apache.sis.measure.Quantities;
-import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
@@ -48,29 +45,6 @@ final class DGGALCoder extends DiscreteGlobalGridReferenceSystem.Coder{
     @Override
     public DGGALDggrs getReferenceSystem() {
         return dggrs;
-    }
-
-    @Override
-    public Quantity<?> getPrecision(DirectPosition dp) {
-        double area;
-        try {
-            area = dggrs.dggal.getRefZoneArea(level);
-        } catch (Throwable ex) {
-            throw new DGGALBindingException(ex);
-        }
-        return Quantities.create(Math.sqrt(area), Units.METRE);
-    }
-
-    @Override
-    public void setPrecision(Quantity<?> qnt, DirectPosition dp) throws IncommensurableException {
-        final double v = qnt.getValue().doubleValue();
-        int level;
-        try {
-            level = dggrs.dggal.getLevelFromRefZoneArea(v*v);
-        } catch (Throwable ex) {
-            throw new DGGALBindingException(ex);
-        }
-        setPrecisionLevel(level);
     }
 
     @Override

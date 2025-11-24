@@ -31,6 +31,7 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -80,7 +81,7 @@ public final class DiscreteGlobalGridReferenceSystems {
     }
 
     public static Set<String> listDggrs() {
-        return DGGRS.keySet();
+        return Collections.unmodifiableSet(DGGRS.keySet());
     }
 
     /**
@@ -210,4 +211,11 @@ public final class DiscreteGlobalGridReferenceSystems {
         return new URI(sb.toString());
     }
 
+    /**
+     * Convert a zone surface in m² to an accuracy in meters.
+     * @return accuracy in meters
+     */
+    public static double surfaceToAccuracy(double surface) {
+        return Math.sqrt(surface);
+    }
 }

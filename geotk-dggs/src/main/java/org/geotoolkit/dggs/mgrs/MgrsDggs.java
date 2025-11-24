@@ -19,33 +19,28 @@ package org.geotoolkit.dggs.mgrs;
 import java.util.List;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridHierarchy;
-import org.geotoolkit.referencing.dggs.DiscreteGlobalGridSystem;
 import org.geotoolkit.referencing.dggs.GridConstraints;
 import org.geotoolkit.referencing.dggs.PolyhedronOrientation;
 import org.geotoolkit.referencing.dggs.PolyhedronParameters;
 import org.geotoolkit.referencing.dggs.RefinementStrategy;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.geotoolkit.referencing.dggs.internal.shared.AbstractDiscreteGlobalGridSystem;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-final class MgrsDggs implements DiscreteGlobalGridSystem {
+final class MgrsDggs extends AbstractDiscreteGlobalGridSystem {
 
     final MgrsDggh dggh;
 
     public MgrsDggs(MgrsDggrs dggrs) {
+        super(CommonCRS.WGS84.normalizedGeographic());
         this.dggh = new MgrsDggh(dggrs);
     }
 
     @Override
     public DiscreteGlobalGridHierarchy getHierarchy() {
         return dggh;
-    }
-
-    @Override
-    public CoordinateReferenceSystem getCrs() {
-        return CommonCRS.WGS84.normalizedGeographic();
     }
 
     @Override

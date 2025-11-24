@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.IntStream;
 import javax.measure.IncommensurableException;
+import javax.measure.Quantity;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverageBuilder;
@@ -42,6 +43,7 @@ import org.apache.sis.coverage.grid.PixelInCell;
 import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.geometry.wrapper.jts.JTS;
 import org.apache.sis.image.PixelIterator;
+import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
@@ -116,7 +118,24 @@ public abstract class AbstractDiscreteGlobalGridCoverage extends DiscreteGlobalG
 
     @Override
     public GridCoverage sample(GridGeometry fullArea, GridGeometry tileArea) throws CannotEvaluateException {
-        return sampleByMask(fullArea, tileArea);
+
+        try {
+            final Quantity samplingResolution = GridAsDiscreteGlobalGridResource.computeAverageResolution(tileArea);
+            final DiscreteGlobalGridReferenceSystem.Coder coder = dggrs.createCoder();
+            coder.setPrecisionLevel(coder.decode(zones.get(0)).getLocationType().getRefinementLevel());
+            final Quantity coverageResolution = coder.getPrecision(null);
+            final double coverageResM = coverageResolution.to(Units.METRE).getValue().doubleValue();
+            final double samplingResM = samplingResolution.to(Units.METRE).getValue().doubleValue();
+
+            //choose the most efficiant resampling strategy
+            if (coverageResM > (4 * samplingResM)) {
+                return sampleByMask(fullArea, tileArea);
+            } else {
+                return sampleByEvaluator(fullArea, tileArea);
+            }
+        } catch (TransformException | IncommensurableException ex) {
+            return sampleByMask(fullArea, tileArea);
+        }
     }
 
     private GridCoverage sampleByMask(GridGeometry fullArea, GridGeometry tileArea) throws CannotEvaluateException {

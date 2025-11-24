@@ -76,6 +76,13 @@ final class MgrsDgg extends AbstractDiscreteGlobalGrid<MgrsDggh> {
     }
 
     @Override
+    public long getZoneCount() {
+        //TODO wrong value : need SIS to give us this information
+        if(level == 0) return 12;
+        return 12l * (long)Math.pow(4, level);
+    }
+
+    @Override
     public Zone getZone(DirectPosition dp) throws TransformException {
         final String zid = coder.encode(dp);
         return new MgrsZone(hierarchy.dggrs, zid);

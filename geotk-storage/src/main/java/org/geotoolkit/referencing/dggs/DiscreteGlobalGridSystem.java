@@ -39,6 +39,11 @@ public interface DiscreteGlobalGridSystem {
     CoordinateReferenceSystem getCrs();
 
     /**
+     * @return surface of the celestial body.
+     */
+    double getCelestialBodySurface();
+
+    /**
      * @return name of the DGGS base polyhedron geometry
      */
     String getBasePolyhedron();

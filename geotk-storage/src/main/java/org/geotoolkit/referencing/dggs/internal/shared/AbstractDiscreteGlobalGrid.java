@@ -16,6 +16,9 @@
  */
 package org.geotoolkit.referencing.dggs.internal.shared;
 
+import javax.measure.Quantity;
+import org.apache.sis.measure.Quantities;
+import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.operation.transform.AbstractMathTransform;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGrid;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -41,6 +44,12 @@ public abstract class AbstractDiscreteGlobalGrid<T extends AbstractDiscreteGloba
     public AbstractDiscreteGlobalGrid(T hierarchy, int level) {
         this.hierarchy = hierarchy;
         this.level = level;
+    }
+
+    @Override
+    public Quantity<?> getPrecision() {
+        final double area = this.hierarchy.dggrs.getGridSystem().getCelestialBodySurface() / getZoneCount();
+        return Quantities.create(Math.sqrt(area), Units.METRE);
     }
 
     @Override

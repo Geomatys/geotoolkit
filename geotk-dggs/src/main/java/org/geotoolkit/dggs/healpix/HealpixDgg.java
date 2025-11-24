@@ -93,6 +93,12 @@ final class HealpixDgg extends AbstractDiscreteGlobalGrid<HealpixDggh> {
     }
 
     @Override
+    public long getZoneCount() {
+        if(level == 0) return 12;
+        return 12l * (long)Math.pow(4, level);
+    }
+
+    @Override
     public Stream<Zone> getZones(Envelope env) throws TransformException {
         return super.getZones(env);
 

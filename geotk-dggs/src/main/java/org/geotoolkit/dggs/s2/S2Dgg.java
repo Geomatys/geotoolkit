@@ -80,6 +80,12 @@ final class S2Dgg extends AbstractDiscreteGlobalGrid<S2Dggh> {
     }
 
     @Override
+    public long getZoneCount() {
+        if(level == 0) return 6;
+        return 6l * (long)Math.pow(4, level);
+    }
+
+    @Override
     public Stream<Zone> getZones(GeographicExtent extent) throws TransformException {
         if (extent == null && level == 0) {
             return roots.stream();

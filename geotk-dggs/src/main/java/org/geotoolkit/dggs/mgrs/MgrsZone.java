@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import org.apache.sis.referencing.gazetteer.MilitaryGridReferenceSystem;
+import org.geotoolkit.referencing.dggs.DiscreteGlobalGrid;
 import org.geotoolkit.referencing.dggs.RefinementLevel;
 import org.geotoolkit.referencing.dggs.Zone;
 import org.geotoolkit.referencing.dggs.internal.shared.AbstractZone;
@@ -99,6 +100,23 @@ final class MgrsZone extends AbstractZone<MgrsDggrs> {
             default : throw new IllegalArgumentException("Incorrect MGRS code : " + hash);
         }
         return new RefinementLevel(dggrs, level);
+    }
+
+    @Override
+    public Zone getFirstParent() {
+        final Collection<? extends Location> candidates = location.getParents();
+        if (candidates.isEmpty()) return null;
+        return new MgrsZone(dggrs, candidates.iterator().next());
+    }
+
+    @Override
+    public Zone getFirstParent(int refinementLevel) {
+        DiscreteGlobalGrid grid = dggrs.getGridSystem().getHierarchy().getGrids().get(refinementLevel);
+        try {
+            return grid.getZone(getPosition());
+        } catch (TransformException ex) {
+            throw new RuntimeException("Should not happen, problem in H3 library", ex);
+        }
     }
 
     @Override

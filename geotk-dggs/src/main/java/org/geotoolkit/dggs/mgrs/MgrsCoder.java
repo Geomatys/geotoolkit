@@ -17,7 +17,6 @@
 package org.geotoolkit.dggs.mgrs;
 
 import javax.measure.IncommensurableException;
-import javax.measure.Quantity;
 import org.apache.sis.referencing.gazetteer.MilitaryGridReferenceSystem;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
 import org.opengis.geometry.DirectPosition;
@@ -43,16 +42,6 @@ final class MgrsCoder extends DiscreteGlobalGridReferenceSystem.Coder{
     @Override
     public MgrsDggrs getReferenceSystem() {
         return dggrs;
-    }
-
-    @Override
-    public Quantity<?> getPrecision(DirectPosition dp) {
-        return coder.getPrecision(dp);
-    }
-
-    @Override
-    public void setPrecision(Quantity<?> qnt, DirectPosition dp) throws IncommensurableException {
-        coder.setPrecision(qnt, dp);
     }
 
     @Override

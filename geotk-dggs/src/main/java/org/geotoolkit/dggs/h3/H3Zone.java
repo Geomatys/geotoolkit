@@ -32,12 +32,15 @@ import org.apache.sis.geometries.math.SampleSystem;
 import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.dggs.h3.internal.shared.Constants;
+import org.geotoolkit.referencing.dggs.DiscreteGlobalGrid;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridSystems;
 import org.geotoolkit.referencing.dggs.RefinementLevel;
 import org.geotoolkit.referencing.dggs.Zone;
 import org.geotoolkit.referencing.dggs.internal.shared.AbstractZone;
+import org.geotoolkit.storage.rs.internal.shared.s2.S2;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.metadata.extent.BoundingPolygon;
+import org.opengis.referencing.operation.TransformException;
 
 /**
  *
@@ -94,6 +97,24 @@ final class H3Zone extends AbstractZone<H3Dggrs> {
         if (level != null) return level;
         level = new RefinementLevel(dggrs, H3Index.getResolution(hash));
         return level;
+    }
+
+    @Override
+    public Zone getFirstParent() {
+        final int level = H3Index.getResolution(hash);
+        if (level == 0) return null;
+        final long directParentId = H3Index.cellToParent(hash, level-1);
+        return new H3Zone(dggrs, directParentId);
+    }
+
+    @Override
+    public Zone getFirstParent(int refinementLevel) {
+        DiscreteGlobalGrid grid = dggrs.getGridSystem().getHierarchy().getGrids().get(refinementLevel);
+        try {
+            return grid.getZone(getPosition());
+        } catch (TransformException ex) {
+            throw new RuntimeException("Should not happen, problem in H3 library", ex);
+        }
     }
 
     @Override
@@ -301,7 +322,7 @@ final class H3Zone extends AbstractZone<H3Dggrs> {
         for (LatLng ll : boundary) {
             contour.add(S2LatLng.fromDegrees(ll.lat, ll.lng).toPoint());
         }
-        bounding = DiscreteGlobalGridSystems.toGeographicExtent(new S2Polygon(new S2Loop(contour)));
+        bounding = S2.toGeographicExtent(new S2Polygon(new S2Loop(contour)));
         return bounding;
     }
 

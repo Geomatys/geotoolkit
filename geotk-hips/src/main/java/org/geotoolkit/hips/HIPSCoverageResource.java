@@ -69,7 +69,7 @@ import org.opengis.util.GenericName;
  */
 public final class HIPSCoverageResource extends AbstractResource implements DiscreteGlobalGridResource, StoreResource {
 
-    private static RasterDiscreteGlobalGridCoverage NO_CELL = new RasterDiscreteGlobalGridCoverage(
+    private static final RasterDiscreteGlobalGridCoverage NO_CELL = new RasterDiscreteGlobalGridCoverage(
             Names.createLocalName(null, null, "nocell"),
             new DiscreteGlobalGridGeometry(HealpixDggrs.INSTANCE, List.of("0"), null),
             List.of(new SampleDimension.Builder().setName(0).build()), BufferedImages.createImage(1, 1, 1, DataBuffer.TYPE_DOUBLE), null, null);

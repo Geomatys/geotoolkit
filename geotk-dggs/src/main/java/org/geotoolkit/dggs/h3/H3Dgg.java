@@ -19,7 +19,6 @@ package org.geotoolkit.dggs.h3;
 import com.google.common.geometry.S2Polygon;
 import com.uber.h3core.util.LatLng;
 import java.util.List;
-import java.util.function.Function;
 import java.util.stream.Stream;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.Utilities;
@@ -70,6 +69,11 @@ final class H3Dgg extends AbstractDiscreteGlobalGrid<H3Dggh> {
 
         final long hash = H3Dggrs.H3.latLngToCell(dp.getCoordinate(1), dp.getCoordinate(0), level);
         return new H3Zone(hierarchy.dggrs, hash);
+    }
+
+    @Override
+    public long getZoneCount() {
+        return H3Dggrs.H3.getNumCells(level);
     }
 
     @Override

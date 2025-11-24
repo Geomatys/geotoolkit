@@ -79,8 +79,10 @@ public final class Store extends DataStore implements Aggregate {
     public synchronized Collection<? extends Resource> components() throws DataStoreException {
         if (root == null) {
             try (CoreApi core = new CoreApi(configuration)) {
-                final ConfClasses conformance = core.getConformance("application/json").getData();
-                if (conformance.isConformTo(Conformance.COLLECTIONS_v0) || conformance.isConformTo(Conformance.COLLECTIONS_v1)) {
+                final ConfClasses conformance = core.getConformance("json").getData();
+                if (conformance.isConformTo(Conformance.COLLECTIONS_v0)
+                   || conformance.isConformTo(Conformance.COLLECTIONS_v1)
+                   || conformance.isConformTo(Conformance.DGGS_COLLECTION)) {
                     root = new CollectionResource(configuration);
                 } else {
                     root = new UndefinedResource(configuration);
