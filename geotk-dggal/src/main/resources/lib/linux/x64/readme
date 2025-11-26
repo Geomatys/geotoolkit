@@ -41,7 +41,7 @@ rm -rf obj
 cd ../../../..
 ./fetchAndBuild.sh
 
-cp /dggal/dgbuild/dggal/bindings/c_fn/obj/dggal.allinone.linux/libdggal_c_fn.so.0.0.5 /test-container/libdggal_c_fn.so.0.0.5
-get : ./mount/libdggal_c_fn.so.0.0.5
+cp /dggal/dgbuild/dggal/bindings/c_fn/obj/dggal.allinone.linux/libdggal_c_fn.so.0.0.6 /test-container/libdggal_c_fn.so.0.0.6
+get : ./mount/libdggal_c_fn.so.0.0.6
 rename it : libdggal_c_fn.so
 replace the file in the maven module, in the resource folder
