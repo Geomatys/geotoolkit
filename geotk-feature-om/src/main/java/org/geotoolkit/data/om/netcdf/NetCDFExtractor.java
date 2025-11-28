@@ -42,6 +42,7 @@ import org.geotoolkit.observation.model.Field;
 import org.geotoolkit.observation.model.FieldType;
 import org.geotoolkit.observation.model.GeoSpatialBound;
 import org.geotoolkit.observation.model.Observation;
+import org.geotoolkit.observation.model.ObservationType;
 import org.geotoolkit.observation.model.Phenomenon;
 import org.geotoolkit.observation.model.Procedure;
 import org.geotoolkit.observation.model.ResultMode;
@@ -126,16 +127,7 @@ public class NetCDFExtractor {
 
             final Attribute ftAtt = file.findGlobalAttribute("featureType");
             if (ftAtt != null) {
-                final String value = ftAtt.getStringValue();
-                if ("timeSeries".equalsIgnoreCase(value)) {
-                    analyze.featureType = TIMESERIES;
-                } else if ("profile".equalsIgnoreCase(value)) {
-                    analyze.featureType = PROFILE;
-                } else if ("trajectory".equalsIgnoreCase(value)) {
-                    analyze.featureType = TRAJECTORY;
-                } else {
-                    analyze.featureType = GRID;
-                }
+                analyze.featureType = ObservationType.parse(ftAtt.getStringValue());
             } else {
                 analyze.featureType = GRID;
             }
@@ -362,7 +354,7 @@ public class NetCDFExtractor {
             if (single) {
                 if (acceptedSensorID == null || acceptedSensorID.contains(procedureID)) {
                     final Procedure proc = new Procedure(procedureID);
-                    final ProcedureDataset compo = new ProcedureDataset(proc.getId(), proc.getName(), proc.getDescription(), "Component", "timeseries", new ArrayList<>(), null);
+                    final ProcedureDataset compo = new ProcedureDataset(proc.getId(), proc.getName(), proc.getDescription(), "Component", TIMESERIES, new ArrayList<>(), null);
                     results.procedures.add(compo);
 
                     final ResultBuilder sb        = initResultBuilder(responseFormat);
@@ -422,7 +414,7 @@ public class NetCDFExtractor {
 
             } else {
                 final Procedure proc = new Procedure(procedureID);
-                final ProcedureDataset system = new ProcedureDataset(proc.getId(), proc.getName(), proc.getDescription(), "System", "timeseries", new ArrayList<>(), null);
+                final ProcedureDataset system = new ProcedureDataset(proc.getId(), proc.getName(), proc.getDescription(), "System", TIMESERIES, new ArrayList<>(), null);
                 results.procedures.add(system);
                 for (int j = 0; j < separators.size(); j++) {
 
@@ -432,7 +424,7 @@ public class NetCDFExtractor {
                     final GeoSpatialBound gb      = new GeoSpatialBound();
                     final String currentProcID    = procedureID + '-' + identifier;
                     final Procedure currentProc   =  new Procedure(currentProcID);
-                    final ProcedureDataset compo     = new ProcedureDataset(currentProc.getId(), currentProc.getName(), currentProc.getDescription(), "Component", "timeseries", new ArrayList<>(), null);
+                    final ProcedureDataset compo     = new ProcedureDataset(currentProc.getId(), currentProc.getName(), currentProc.getDescription(), "Component", TIMESERIES, new ArrayList<>(), null);
 
                     if (acceptedSensorID == null || acceptedSensorID.contains(currentProcID)) {
 
@@ -532,7 +524,7 @@ public class NetCDFExtractor {
             if (single) {
                 if (acceptedSensorID == null || acceptedSensorID.contains(procedureID)) {
                     final Procedure proc = new Procedure(procedureID);
-                    final ProcedureDataset compo = new ProcedureDataset(proc.getId(), proc.getName(), proc.getDescription(), "Component", "timeseries", fields, null);
+                    final ProcedureDataset compo = new ProcedureDataset(proc.getId(), proc.getName(), proc.getDescription(), "Component", TIMESERIES, fields, null);
                     results.add(compo);
 
                     final int count               = timeVar.getDimension(0).getLength();
@@ -559,7 +551,7 @@ public class NetCDFExtractor {
 
             } else {
                 final Procedure proc = new Procedure(procedureID);
-                final ProcedureDataset system = new ProcedureDataset(proc.getId(), proc.getName(), proc.getDescription(), "System", "timeseries", fields, null);
+                final ProcedureDataset system = new ProcedureDataset(proc.getId(), proc.getName(), proc.getDescription(), "System", TIMESERIES, fields, null);
                 results.add(system);
                 for (int j = 0; j < separators.size(); j++) {
 
@@ -568,7 +560,7 @@ public class NetCDFExtractor {
                     final GeoSpatialBound gb      = new GeoSpatialBound();
                     final String currentProcID    = procedureID + '-' + identifier;
                     final Procedure currentProc   = new Procedure(currentProcID);
-                    final ProcedureDataset compo     = new ProcedureDataset(currentProc.getId(), currentProc.getName(), currentProc.getDescription(), "Component", "timeseries", fields, null);
+                    final ProcedureDataset compo     = new ProcedureDataset(currentProc.getId(), currentProc.getName(), currentProc.getDescription(), "Component", TIMESERIES, fields, null);
 
                     if (acceptedSensorID == null || acceptedSensorID.contains(currentProcID)) {
 
@@ -647,7 +639,7 @@ public class NetCDFExtractor {
             if (single) {
                 if (acceptedSensorID == null || acceptedSensorID.contains(procedureID)) {
                     final Procedure proc = new Procedure(procedureID);
-                    final ProcedureDataset compo = new ProcedureDataset(proc.getId(), proc.getName(), proc.getDescription(), "profile", "Component", new ArrayList<>(), null);
+                    final ProcedureDataset compo = new ProcedureDataset(proc.getId(), proc.getName(), proc.getDescription(), "Component", PROFILE, new ArrayList<>(), null);
                     results.procedures.add(compo);
 
                     final ResultBuilder sb        = initResultBuilder(responseFormat);
@@ -712,7 +704,7 @@ public class NetCDFExtractor {
 
             } else {
                 final Procedure proc = new Procedure(procedureID);
-                final ProcedureDataset system = new ProcedureDataset(proc.getId(), proc.getName(), proc.getDescription(), "profile", "System", new ArrayList<>(), null);
+                final ProcedureDataset system = new ProcedureDataset(proc.getId(), proc.getName(), proc.getDescription(), "System", PROFILE, new ArrayList<>(), null);
                 results.procedures.add(system);
 
                 for (int profileIndex = 0; profileIndex < separators.size(); profileIndex++) {
@@ -722,7 +714,7 @@ public class NetCDFExtractor {
                     final GeoSpatialBound gb   = new GeoSpatialBound();
                     final String currentProcID = procedureID + '-' + identifier;
                     final Procedure currentProc   =  new Procedure(currentProcID);
-                    final ProcedureDataset compo  = new ProcedureDataset(currentProc.getId(), currentProc.getName(), currentProc.getDescription(), "profile", "Component", new ArrayList<>(), null);
+                    final ProcedureDataset compo  = new ProcedureDataset(currentProc.getId(), currentProc.getName(), currentProc.getDescription(), "Component", PROFILE, new ArrayList<>(), null);
 
                     if (acceptedSensorID == null || acceptedSensorID.contains(currentProcID)) {
                         //read geometry (assume point)
@@ -826,7 +818,7 @@ public class NetCDFExtractor {
             if (single) {
                 if (acceptedSensorID == null || acceptedSensorID.contains(procedureID)) {
                     final Procedure proc = new Procedure(procedureID);
-                    final ProcedureDataset compo = new ProcedureDataset(proc.getId(), proc.getName(), proc.getDescription(), "Component", "profile", fields, null);
+                    final ProcedureDataset compo = new ProcedureDataset(proc.getId(), proc.getName(), proc.getDescription(), "Component", PROFILE, fields, null);
                     results.add(compo);
 
                     final GeoSpatialBound gb      = new GeoSpatialBound();
@@ -850,7 +842,7 @@ public class NetCDFExtractor {
 
             } else {
                 final Procedure proc = new Procedure(procedureID);
-                final ProcedureDataset system = new ProcedureDataset(proc.getId(), proc.getName(), proc.getDescription(), "System", "profile", fields, null);
+                final ProcedureDataset system = new ProcedureDataset(proc.getId(), proc.getName(), proc.getDescription(), "System", PROFILE, fields, null);
                 results.add(system);
 
                 for (int profileIndex = 0; profileIndex < separators.size(); profileIndex++) {
@@ -859,7 +851,7 @@ public class NetCDFExtractor {
                     final GeoSpatialBound gb   = new GeoSpatialBound();
                     final String currentProcID = procedureID + '-' + identifier;
                     final Procedure currentProc   =  new Procedure(currentProcID);
-                    final ProcedureDataset compo  = new ProcedureDataset(currentProc.getId(), currentProc.getName(), currentProc.getDescription(), "Component", "profile", fields, null);
+                    final ProcedureDataset compo  = new ProcedureDataset(currentProc.getId(), currentProc.getName(), currentProc.getDescription(), "Component", PROFILE, fields, null);
 
                     if (acceptedSensorID == null || acceptedSensorID.contains(currentProcID)) {
                         if (analyze.hasSpatial()) {
@@ -930,7 +922,7 @@ public class NetCDFExtractor {
             if (single) {
                 if (acceptedSensorID == null || acceptedSensorID.contains(procedureID)) {
                     final Procedure proc = new Procedure(procedureID);
-                    final ProcedureDataset compo = new ProcedureDataset(proc.getId(), proc.getName(), proc.getDescription(), "trajectory", "Component", new ArrayList<>(), null);
+                    final ProcedureDataset compo = new ProcedureDataset(proc.getId(), proc.getName(), proc.getDescription(), "Component", TRAJECTORY, new ArrayList<>(), null);
                     results.procedures.add(compo);
 
                     final ResultBuilder sb        = initResultBuilder(responseFormat);
@@ -1000,7 +992,7 @@ public class NetCDFExtractor {
 
             } else {
                 final Procedure proc = new Procedure(procedureID);
-                final ProcedureDataset system = new ProcedureDataset(proc.getId(), proc.getName(), proc.getDescription(), "trajectory", "System", new ArrayList<>(), null);
+                final ProcedureDataset system = new ProcedureDataset(proc.getId(), proc.getName(), proc.getDescription(), "System", TRAJECTORY, new ArrayList<>(), null);
                 results.procedures.add(system);
 
                 for (int j = 0; j < separators.size(); j++) {
@@ -1011,7 +1003,7 @@ public class NetCDFExtractor {
                     final GeoSpatialBound gb      = new GeoSpatialBound();
                     final String currentProcID    = procedureID + '-' + identifier;
                     final Procedure currentProc   = new Procedure(currentProcID);
-                    final ProcedureDataset compo     = new ProcedureDataset(currentProc.getId(), currentProc.getName(), currentProc.getDescription(), "trajectory", "Component", new ArrayList<>(), null);
+                    final ProcedureDataset compo     = new ProcedureDataset(currentProc.getId(), currentProc.getName(), currentProc.getDescription(), "Component", TRAJECTORY, new ArrayList<>(), null);
 
                     if (acceptedSensorID == null || acceptedSensorID.contains(currentProcID)) {
                         final List<Coordinate> positions = new ArrayList<>();
@@ -1120,7 +1112,7 @@ public class NetCDFExtractor {
             if (single) {
                 if (acceptedSensorID == null || acceptedSensorID.contains(procedureID)) {
                     final Procedure proc = new Procedure(procedureID);
-                    final ProcedureDataset compo = new ProcedureDataset(proc.getId(), proc.getName(), proc.getDescription(), "Component", "trajectory", fields, null);
+                    final ProcedureDataset compo = new ProcedureDataset(proc.getId(), proc.getName(), proc.getDescription(), "Component", TRAJECTORY, fields, null);
                     results.add(compo);
 
                     final int count               = timeVar.getDimension(0).getLength();
@@ -1147,7 +1139,7 @@ public class NetCDFExtractor {
 
             } else {
                 final Procedure proc = new Procedure(procedureID);
-                final ProcedureDataset system = new ProcedureDataset(proc.getId(), proc.getName(), proc.getDescription(), "System", "trajectory", fields, null);
+                final ProcedureDataset system = new ProcedureDataset(proc.getId(), proc.getName(), proc.getDescription(), "System", TRAJECTORY, fields, null);
                 results.add(system);
 
                 for (int j = 0; j < separators.size(); j++) {
@@ -1157,7 +1149,7 @@ public class NetCDFExtractor {
                     final GeoSpatialBound gb      = new GeoSpatialBound();
                     final String currentProcID    = procedureID + '-' + identifier;
                     final Procedure currentProc   = new Procedure(currentProcID);
-                    final ProcedureDataset compo     = new ProcedureDataset(currentProc.getId(), currentProc.getName(), currentProc.getDescription(), "Component", "trajectory", fields, null);
+                    final ProcedureDataset compo     = new ProcedureDataset(currentProc.getId(), currentProc.getName(), currentProc.getDescription(), "Component", TRAJECTORY, fields, null);
 
                     if (acceptedSensorID == null || acceptedSensorID.contains(currentProcID)) {
 
@@ -1195,7 +1187,7 @@ public class NetCDFExtractor {
         final ObservationDataset results = new ObservationDataset();
         if (acceptedSensorID == null || acceptedSensorID.contains(procedureID)) {
             final Procedure proc = new Procedure(procedureID);
-            final ProcedureDataset compo = new ProcedureDataset(proc.getId(), proc.getName(), proc.getDescription(), "grid", "Component", new ArrayList<>(), null);
+            final ProcedureDataset compo = new ProcedureDataset(proc.getId(), proc.getName(), proc.getDescription(), "Component", GRID, new ArrayList<>(), null);
             results.procedures.add(compo);
 
             if (analyze.mainField == null) {
@@ -1298,7 +1290,7 @@ public class NetCDFExtractor {
         final List<ProcedureDataset> results = new ArrayList<>();
         if (acceptedSensorID == null || acceptedSensorID.contains(procedureID)) {
             final Procedure proc = new Procedure(procedureID);
-            final ProcedureDataset compo = new ProcedureDataset(proc.getId(), proc.getName(), proc.getDescription(), "grid", "Component", new ArrayList<>(), null);
+            final ProcedureDataset compo = new ProcedureDataset(proc.getId(), proc.getName(), proc.getDescription(), "Component", GRID, new ArrayList<>(), null);
             results.add(compo);
 
             if (analyze.mainField == null) {

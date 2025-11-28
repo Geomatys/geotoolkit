@@ -36,7 +36,7 @@ public class ProcedureDataset extends Procedure {
     /**
      * The observation type of the process (timeseries, trajectory, profile...)
      */
-    public final String omType;
+    public final ObservationType omType;
 
     public final List<ProcedureDataset> children = new ArrayList<>();
 
@@ -50,14 +50,14 @@ public class ProcedureDataset extends Procedure {
         this.omType = null;
     }
 
-    public ProcedureDataset(final String id, final String name, final String description, final String type, final String omType, final Collection<Field> fields , Map<String, Object> properties) {
+    public ProcedureDataset(final String id, final String name, final String description, final String type, final ObservationType omType, final Collection<Field> fields , Map<String, Object> properties) {
         super(id, name, description, properties);
         this.type = type;
         this.omType = omType;
         this.fields.addAll(fields);
     }
 
-    public ProcedureDataset(final Procedure proc, final String type, final String omType, final Collection<Field> fields) {
+    public ProcedureDataset(final Procedure proc, final String type, final ObservationType omType, final Collection<Field> fields) {
         super(proc);
         this.type = type;
         this.omType = omType;

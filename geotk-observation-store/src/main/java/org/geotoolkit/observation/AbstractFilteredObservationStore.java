@@ -38,6 +38,7 @@ import static org.geotoolkit.observation.model.OMEntity.OFFERING;
 import static org.geotoolkit.observation.model.OMEntity.PROCEDURE;
 import org.geotoolkit.observation.model.Observation;
 import org.geotoolkit.observation.model.ObservationDataset;
+import org.geotoolkit.observation.model.ObservationType;
 import org.geotoolkit.observation.model.Offering;
 import org.geotoolkit.observation.model.Phenomenon;
 import org.geotoolkit.observation.model.Procedure;
@@ -133,8 +134,8 @@ public abstract class AbstractFilteredObservationStore extends AbstractObservati
 
         for (Observation obs : observations) {
             final Procedure proc =  obs.getProcedure();
-            String type         = obs.getProperties().getOrDefault("type", "timeseries").toString();
-            String sensorType   = obs.getProperties().getOrDefault("sensorType", "Component").toString();
+            ObservationType type = ObservationType.parse(obs.getProperties().getOrDefault("type", "timeseries").toString());
+            String sensorType    = obs.getProperties().getOrDefault("sensorType", "Component").toString();
 
             if (sensorIDs.isEmpty() || sensorIDs.contains(proc.getId())) {
                 final Phenomenon phen = obs.getObservedProperty();
@@ -205,7 +206,7 @@ public abstract class AbstractFilteredObservationStore extends AbstractObservati
         for (org.opengis.observation.Process p : procFilter.getProcesses()) {
 
             final Procedure proc  =  (Procedure) p;
-            final String omType = (String) proc.getProperties().getOrDefault("type", "timeseries");
+            final ObservationType omType = ObservationType.parse(proc.getProperties().getOrDefault("type", "timeseries").toString());
             final ProcedureDataset procedure = new ProcedureDataset(proc.getId(), proc.getName(), proc.getDescription(), "Component", omType, new ArrayList<>(), null);
 
             Observation template = (Observation) getReader().getTemplateForProcedure(proc.getId());

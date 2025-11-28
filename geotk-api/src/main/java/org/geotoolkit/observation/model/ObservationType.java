@@ -27,5 +27,18 @@ public enum ObservationType {
     PROFILE,
     TIMESERIES,
     TRAJECTORY,
-    GRID
+    GRID;
+
+    public static ObservationType parse(String s) {
+        if (s == null || s.isEmpty()) return null;
+        return switch (s.toLowerCase()) {
+            case "timeseries", "timeserie" -> TIMESERIES;
+            case "simple" -> SIMPLE;
+            case "profile" -> PROFILE;
+            case "trajectory", "trajectories" -> TRAJECTORY;
+            case "grid" -> GRID;
+            default -> throw new IllegalArgumentException("Unexpected observation type value: " + s);
+        };
+    }
+
 }
