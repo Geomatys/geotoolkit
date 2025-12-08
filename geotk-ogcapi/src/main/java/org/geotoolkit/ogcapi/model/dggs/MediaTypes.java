@@ -32,6 +32,7 @@ public final class MediaTypes {
     public static final String DATA_JSON_FG                     = "application/geo+json";
     public static final String DATA_UBJSON_FG                   = "application/geo+ubjson";
     public static final String DATA_GEOJSON                     = "application/geo+json";
+    public static final String DATA_CBOR                        = "application/cbor"; //no official
     public static final String DATA_GEOTIFF                     = "image/tiff;application=geotiff";
     public static final String DATA_NETCDF                      = "application/netcdf ";
     public static final String DATA_ZARR                        = "application/zarr+zip";

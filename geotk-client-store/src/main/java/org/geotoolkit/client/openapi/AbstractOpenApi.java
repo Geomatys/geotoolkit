@@ -22,6 +22,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.http.HttpResponse;
+import java.util.zip.GZIPInputStream;
+import org.apache.commons.compress.utils.CountingInputStream;
 import org.geotoolkit.client.service.AbstractService;
 import org.geotoolkit.client.service.ServiceException;
 import org.geotoolkit.client.service.ServiceResponse;
@@ -45,19 +47,31 @@ public abstract class AbstractOpenApi extends AbstractService {
     }
 
     protected <T> ServiceResponse<T> toSimpleResponse(HttpResponse<InputStream> response, Class<T> valueClass) throws ServiceException {
-        return toSimpleResponse(response, valueClass == null ? null : objectMapper.constructType(valueClass));
+        return toSimpleResponse(response, valueClass, objectMapper);
+    }
+
+    protected <T> ServiceResponse<T> toSimpleResponse(HttpResponse<InputStream> response, Class<T> valueClass, ObjectMapper objectMapper) throws ServiceException {
+        if (objectMapper == null) objectMapper = this.objectMapper;
+        return toSimpleResponse(response, objectMapper, valueClass == null ? null : objectMapper.constructType(valueClass));
     }
 
     protected <T> ServiceResponse<T> toSimpleResponse(HttpResponse<InputStream> response, TypeReference<T> ref) throws ServiceException {
-        return toSimpleResponse(response, ref == null ? null : objectMapper.constructType(ref));
+        return toSimpleResponse(response, objectMapper, ref == null ? null : objectMapper.constructType(ref));
     }
 
-    private <T> ServiceResponse<T> toSimpleResponse(HttpResponse<InputStream> response, JavaType ref) throws ServiceException {
+    private <T> ServiceResponse<T> toSimpleResponse(HttpResponse<InputStream> response, ObjectMapper objectMapper, JavaType ref) throws ServiceException {
         if (response.body() == null) {
             return emptyResponse(response);
         }
 
+        final String contentEncoding = getContentEncoding(response);
+
         try (var in = response.body()){
+            CountingInputStream count = new CountingInputStream(in);
+            InputStream di = count;
+            if ("gzip".equals(contentEncoding)) {
+                di = new GZIPInputStream(di);
+            }
             final T responseBody;
             if (ref == null) {
                 // Drain the InputStream
@@ -66,13 +80,17 @@ public abstract class AbstractOpenApi extends AbstractService {
                 }
                 responseBody = null;
             } else {
-                responseBody = objectMapper.readValue(in, ref);
+                responseBody = objectMapper.readValue(di, ref);
             }
-            return new ServiceResponse<>(response.statusCode(), response.headers().map(), responseBody);
+            return new ServiceResponse<>(response.statusCode(), response.headers().map(), responseBody, count.getBytesRead());
 
         } catch (IOException ex) {
             throw new ServiceException(ex);
         }
+    }
+
+    public static String getContentEncoding(HttpResponse<?> httpResponse) {
+        return httpResponse.headers().firstValue("Content-Encoding").orElse("");
     }
 
 }

@@ -16,8 +16,10 @@
  */
 package org.geotoolkit.ogcapi.client.dggs;
 
+import com.fasterxml.jackson.dataformat.cbor.databind.CBORMapper;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.net.URI;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
@@ -33,6 +35,7 @@ import org.geotoolkit.ogcapi.model.dggs.DggrsListResponse;
 import org.geotoolkit.ogcapi.model.dggs.DggrsZonesResponse;
 import org.geotoolkit.ogcapi.model.dggs.Enumeration;
 import org.geotoolkit.ogcapi.model.dggs.ZoneInfo;
+import org.geotoolkit.ubjson.UBJsonMapper;
 
 public final class DggsApi extends AbstractOpenApi {
 
@@ -446,7 +449,8 @@ public final class DggsApi extends AbstractOpenApi {
             @jakarta.annotation.Nullable String datetime,
             @jakarta.annotation.Nullable Object zoneDepth,
             @jakarta.annotation.Nullable Double valuesOffset,
-            @jakarta.annotation.Nullable Double valuesScale)
+            @jakarta.annotation.Nullable Double valuesScale,
+            boolean withGzip)
             throws ServiceException {
 
         if (dggrsId == null) {
@@ -473,13 +477,24 @@ public final class DggsApi extends AbstractOpenApi {
         queryParams.addAll(toPairs("values-offset", valuesOffset));
         queryParams.addAll(toPairs("values-scale", valuesScale));
 
+        final URI uri = toUri("/collections/" + urlEncode(collectionId) + "/dggs/" + urlEncode(dggrsId) + "/zones/" + urlEncode(zoneId) + "/data", queryParams);
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/collections/" + urlEncode(collectionId) + "/dggs/" + urlEncode(dggrsId) + "/zones/" + urlEncode(zoneId) + "/data", queryParams));
-        request.header("Accept", "application/json, image/png, image/tiff; application=geotiff, application/geo+json, text/html");
+        request.uri(uri);
+        request.header("Accept", "application/json, image/png, image/tiff; application=geotiff, application/geo+json, application/cbor, text/html");
+        if (withGzip) request.setHeader("Accept-Encoding", "gzip");
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
 
-        return toSimpleResponse(send(request), DggrsData.class);
+        if ("json".equals(f)) {
+            return toSimpleResponse(send(request), DggrsData.class);
+        } else if ("ubjson".equals(f)) {
+            return toSimpleResponse(send(request), DggrsData.class, new UBJsonMapper());
+        } else if ("cbor".equals(f)) {
+            return toSimpleResponse(send(request), DggrsData.class, new CBORMapper());
+        } else {
+            return toSimpleResponse(send(request), DggrsData.class);
+        }
+
     }
 
     /**

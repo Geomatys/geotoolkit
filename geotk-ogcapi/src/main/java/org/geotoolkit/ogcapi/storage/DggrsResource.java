@@ -60,7 +60,6 @@ import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystems;
 import org.geotoolkit.referencing.dggs.Zone;
 import org.geotoolkit.referencing.rs.Code;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridGeometry;
-import org.geotoolkit.storage.dggs.DiscreteGlobalGridResource;
 import org.geotoolkit.storage.dggs.internal.shared.ArrayDiscreteGlobalGridCoverage;
 import org.geotoolkit.storage.rs.CodeTransform;
 import org.geotoolkit.storage.rs.CodedCoverage;
@@ -89,6 +88,8 @@ public final class DggrsResource extends CollectionItemResource implements Aggre
     private final FeatureApi featureApi;
     private final DggsApi dggrsApi;
     private List<ForDGGRS> components;
+    private String preferredFormat = "json";
+    private boolean queryGzip = true;
 
     //cache
     private List<SampleDimension> sampleDimensions;
@@ -104,6 +105,14 @@ public final class DggrsResource extends CollectionItemResource implements Aggre
         featureApi = new FeatureApi(config);
         dggrsApi = new DggsApi(config);
 
+    }
+
+    public void setPreferredFormat(String preferredFormat) {
+        this.preferredFormat = preferredFormat;
+    }
+
+    public void setQueryGzip(boolean queryGzip) {
+        this.queryGzip = queryGzip;
     }
 
     public void setDisableCache(boolean disableCache) {
@@ -201,11 +210,11 @@ public final class DggrsResource extends CollectionItemResource implements Aggre
             throw new IllegalArgumentException("Base zone and/or relative depth is null");
         }
 
-        LOGGER.log(Level.INFO, "Downloading {0} {1} sublevel {2}", new Object[]{dggrs.getName(), baseZoneId.toString(), relativeDepth});
-
         final String dggrsName = dggrs.getName().getCode();
         baseZoneId = dggrs.getGridSystem().getHierarchy().toTextIdentifier(baseZoneId);
-        final ServiceResponse<DggrsData> response = dggrsApi.collectionGetDGGRSZoneData(dggrsName, baseZoneId.toString(), description.getId(), "json", null, null, null, null, null, null, null, null, relativeDepth, null, null);
+        final ServiceResponse<DggrsData> response = dggrsApi.collectionGetDGGRSZoneData(dggrsName, baseZoneId.toString(), description.getId(),
+                preferredFormat, null, null, null, null, null, null, null, null, relativeDepth, null, null, queryGzip);
+
         final DggrsData data = response.getData();
         final List<DggrsDataValue> values = data.getValues().values().iterator().next();
 

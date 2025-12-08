@@ -28,6 +28,7 @@ public class ServiceResponse<T> {
     final private int statusCode;
     final private Map<String, List<String>> headers;
     final private T data;
+    final long responseSize;
 
     /**
      * @param statusCode The status code of HTTP response
@@ -43,9 +44,20 @@ public class ServiceResponse<T> {
      * @param data The object deserialized from response bod
      */
     public ServiceResponse(int statusCode, Map<String, List<String>> headers, T data) {
+        this(statusCode, headers, data, -1);
+    }
+
+    /**
+     * @param statusCode The status code of HTTP response
+     * @param headers The headers of HTTP response
+     * @param data The object deserialized from response bod
+     * @param responseSize response size in bytes
+     */
+    public ServiceResponse(int statusCode, Map<String, List<String>> headers, T data, long responseSize) {
         this.statusCode = statusCode;
         this.headers = headers;
         this.data = data;
+        this.responseSize = responseSize;
     }
 
     public int getStatusCode() {
@@ -58,5 +70,9 @@ public class ServiceResponse<T> {
 
     public T getData() {
         return data;
+    }
+
+    public long getResponseSize() {
+        return responseSize;
     }
 }
