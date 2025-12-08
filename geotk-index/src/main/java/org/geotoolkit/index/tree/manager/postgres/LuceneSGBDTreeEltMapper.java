@@ -17,7 +17,9 @@
 package org.geotoolkit.index.tree.manager.postgres;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
@@ -26,6 +28,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Level;
 import javax.sql.DataSource;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
@@ -55,6 +58,29 @@ public abstract class LuceneSGBDTreeEltMapper extends LuceneSQLTreeEltMapper imp
             this.schemaName = getSchemaName(absolutePath);
         } catch (NoSuchAlgorithmException | UnsupportedEncodingException ex) {
             throw new IllegalStateException("could not get schema name from directory name");
+        }
+    }
+
+    protected static void createSchema(Connection connection, String absolutePath, String sqlScriptResourceLocation) throws SQLException, IOException {
+        try {
+            final String schemaName = getSchemaName(Objects.requireNonNull(absolutePath, "Schema name absolute path"));
+
+            String sqlQuery;
+            try (final InputStream stream = getResourceAsStream(Objects.requireNonNull(sqlScriptResourceLocation, "SQL script resource location"))) {
+                if (stream == null) {
+                    throw new IllegalArgumentException("SQL script resource location is invalid. No resource found for location " + sqlScriptResourceLocation);
+                }
+                sqlQuery = new String (stream.readAllBytes(), StandardCharsets.UTF_8);
+            }
+            sqlQuery = sqlQuery.replaceAll("µSCHEMANAMEµ", schemaName);
+            sqlQuery = sqlQuery.replaceAll("µPATHµ", absolutePath);
+
+            final ScriptRunner scriptRunner = new ScriptRunner(connection);
+            scriptRunner.run(sqlQuery);
+            scriptRunner.close(false);
+
+        } catch (NoSuchAlgorithmException | UnsupportedEncodingException ex) {
+            throw new IllegalStateException("Unexpected error occurred while trying to create treemap database schema.", ex);
         }
     }
 
