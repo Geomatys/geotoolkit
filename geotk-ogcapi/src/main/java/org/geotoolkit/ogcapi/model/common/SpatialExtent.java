@@ -50,12 +50,12 @@ public final class SpatialExtent {
     public static final String JSON_PROPERTY_BBOX = "bbox";
     @XmlElement(name = "bbox")
     @jakarta.annotation.Nullable
-    private List<List<Double>> bbox = new ArrayList<>();
+    private double[][] bbox;
 
     public static final String JSON_PROPERTY_STORAGE_CRS_BBOX = "storageCrsBbox";
     @XmlElement(name = "storageCrsBbox")
     @jakarta.annotation.Nullable
-    private List<List<Double>> storageCrsBbox = new ArrayList<>();
+    private double[][] storageCrsBbox;
 
     /**
      * Coordinate reference system of the coordinates of the &#x60;bbox&#x60;
@@ -77,16 +77,8 @@ public final class SpatialExtent {
     public SpatialExtent() {
     }
 
-    public SpatialExtent bbox(@jakarta.annotation.Nullable List<List<Double>> bbox) {
+    public SpatialExtent bbox(@jakarta.annotation.Nullable double[][] bbox) {
         this.bbox = bbox;
-        return this;
-    }
-
-    public SpatialExtent addBboxItem(List<Double> bboxItem) {
-        if (this.bbox == null) {
-            this.bbox = new ArrayList<>();
-        }
-        this.bbox.add(bboxItem);
         return this;
     }
 
@@ -105,7 +97,7 @@ public final class SpatialExtent {
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
     @JacksonXmlProperty(localName = "bbox")
     @JacksonXmlElementWrapper(useWrapping = false)
-    public List<List<Double>> getBbox() {
+    public double[][] getBbox() {
         return bbox;
     }
 
@@ -113,20 +105,12 @@ public final class SpatialExtent {
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
     @JacksonXmlProperty(localName = "bbox")
     @JacksonXmlElementWrapper(useWrapping = false)
-    public void setBbox(@jakarta.annotation.Nullable List<List<Double>> bbox) {
+    public void setBbox(@jakarta.annotation.Nullable double[][] bbox) {
         this.bbox = bbox;
     }
 
-    public SpatialExtent storageCrsBbox(@jakarta.annotation.Nullable List<List<Double>> storageCrsBbox) {
+    public SpatialExtent storageCrsBbox(@jakarta.annotation.Nullable double[][] storageCrsBbox) {
         this.storageCrsBbox = storageCrsBbox;
-        return this;
-    }
-
-    public SpatialExtent addStorageCrsBboxItem(List<Double> storageCrsBboxItem) {
-        if (this.storageCrsBbox == null) {
-            this.storageCrsBbox = new ArrayList<>();
-        }
-        this.storageCrsBbox.add(storageCrsBboxItem);
         return this;
     }
 
@@ -145,7 +129,7 @@ public final class SpatialExtent {
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
     @JacksonXmlProperty(localName = "storageCrsBbox")
     @JacksonXmlElementWrapper(useWrapping = false)
-    public List<List<Double>> getStorageCrsBbox() {
+    public double[][]getStorageCrsBbox() {
         return storageCrsBbox;
     }
 
@@ -153,7 +137,7 @@ public final class SpatialExtent {
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
     @JacksonXmlProperty(localName = "storageCrsBbox")
     @JacksonXmlElementWrapper(useWrapping = false)
-    public void setStorageCrsBbox(@jakarta.annotation.Nullable List<List<Double>> storageCrsBbox) {
+    public void setStorageCrsBbox(@jakarta.annotation.Nullable double[][] storageCrsBbox) {
         this.storageCrsBbox = storageCrsBbox;
     }
 
