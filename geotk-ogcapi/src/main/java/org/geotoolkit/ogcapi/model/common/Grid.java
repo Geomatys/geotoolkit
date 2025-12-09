@@ -76,7 +76,7 @@ public final class Grid extends DataTransferObject {
     public static final String JSON_PROPERTY_BOUNDS_COORDINATES = "boundsCoordinates";
     @XmlElement(name = "boundsCoordinates")
     @jakarta.annotation.Nullable
-    private List<List<Object>> boundsCoordinates = new ArrayList<>();
+    private Object[][] boundsCoordinates;
 
     public Grid() {
     }
@@ -229,16 +229,8 @@ public final class Grid extends DataTransferObject {
         this.coordinates = coordinates;
     }
 
-    public Grid boundsCoordinates(@jakarta.annotation.Nullable List<List<Object>> boundsCoordinates) {
+    public Grid boundsCoordinates(@jakarta.annotation.Nullable Object[][] boundsCoordinates) {
         this.boundsCoordinates = boundsCoordinates;
-        return this;
-    }
-
-    public Grid addBoundsCoordinatesItem(List<Object> boundsCoordinatesItem) {
-        if (this.boundsCoordinates == null) {
-            this.boundsCoordinates = new ArrayList<>();
-        }
-        this.boundsCoordinates.add(boundsCoordinatesItem);
         return this;
     }
 
@@ -253,7 +245,7 @@ public final class Grid extends DataTransferObject {
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
     @JacksonXmlProperty(localName = "boundsCoordinates")
     @JacksonXmlElementWrapper(useWrapping = false)
-    public List<List<Object>> getBoundsCoordinates() {
+    public Object[][] getBoundsCoordinates() {
         return boundsCoordinates;
     }
 
@@ -261,7 +253,7 @@ public final class Grid extends DataTransferObject {
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
     @JacksonXmlProperty(localName = "boundsCoordinates")
     @JacksonXmlElementWrapper(useWrapping = false)
-    public void setBoundsCoordinates(@jakarta.annotation.Nullable List<List<Object>> boundsCoordinates) {
+    public void setBoundsCoordinates(@jakarta.annotation.Nullable Object[][] boundsCoordinates) {
         this.boundsCoordinates = boundsCoordinates;
     }
 

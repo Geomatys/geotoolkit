@@ -41,6 +41,7 @@ import org.geotoolkit.ogcapi.model.DataTransferObject;
 @JsonPropertyOrder({
     CollectionDescription.JSON_PROPERTY_ID,
     CollectionDescription.JSON_PROPERTY_TITLE,
+    CollectionDescription.JSON_PROPERTY_NAME,
     CollectionDescription.JSON_PROPERTY_DESCRIPTION,
     CollectionDescription.JSON_PROPERTY_ATTRIBUTION,
     CollectionDescription.JSON_PROPERTY_ACCESS_CONSTRAINTS,
@@ -71,7 +72,7 @@ import org.geotoolkit.ogcapi.model.DataTransferObject;
 @XmlRootElement(name = "CollectionDesc")
 @XmlAccessorType(XmlAccessType.FIELD)
 @JacksonXmlRootElement(localName = "CollectionDesc")
-public final class CollectionDescription extends DataTransferObject {
+public class CollectionDescription extends DataTransferObject implements CommonResponse {
 
     public static final String JSON_PROPERTY_ID = "id";
     @XmlElement(name = "id")
@@ -82,6 +83,11 @@ public final class CollectionDescription extends DataTransferObject {
     @XmlElement(name = "title")
     @jakarta.annotation.Nullable
     private String title;
+
+    public static final String JSON_PROPERTY_NAME = "name";
+    @XmlElement(name = "name")
+    @jakarta.annotation.Nullable
+    private String name;
 
     public static final String JSON_PROPERTY_DESCRIPTION = "description";
     @XmlElement(name = "description")
@@ -158,6 +164,7 @@ public final class CollectionDescription extends DataTransferObject {
     @jakarta.annotation.Nullable
     private String storageCrs = "http://www.opengis.net/def/crs/OGC/1.3/CRS84";
 
+
     public static final String JSON_PROPERTY_EPOCH = "epoch";
     @XmlElement(name = "epoch")
     @jakarta.annotation.Nullable
@@ -224,6 +231,28 @@ public final class CollectionDescription extends DataTransferObject {
         return this;
     }
 
+    public CollectionDescription(String id, List<Link> links, String title, String description, String name, Extent extent, List<String> crs, String storageCrs) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.name = name;
+        this.extent = extent;
+        this.crs = crs;
+        this.storageCrs = storageCrs;
+        this.links = links;
+    }
+
+    public CollectionDescription(CollectionDescription sourceCollection) {
+        this.id = sourceCollection.getId();
+        this.title = sourceCollection.getTitle();
+        this.description = sourceCollection.getDescription();
+        this.name = sourceCollection.getName();
+        this.extent = sourceCollection.getExtent();
+        this.crs = sourceCollection.getCrs();
+        this.storageCrs = sourceCollection.getStorageCrs();
+        this.links = sourceCollection.getLinks();
+    }
+
     /**
      * identifier of the collection used, for example, in URIs
      *
@@ -272,6 +301,26 @@ public final class CollectionDescription extends DataTransferObject {
     public CollectionDescription description(@jakarta.annotation.Nullable String description) {
         this.description = description;
         return this;
+    }
+
+    /**
+     * name of the collection
+     *
+     * @return name
+     */
+    @jakarta.annotation.Nullable
+    @JsonProperty(JSON_PROPERTY_NAME)
+    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+    @JacksonXmlProperty(localName = "name")
+    public String getName() {
+        return name;
+    }
+
+    @JsonProperty(JSON_PROPERTY_NAME)
+    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+    @JacksonXmlProperty(localName = "name")
+    public void setName(@jakarta.annotation.Nullable String name) {
+        this.name = name;
     }
 
     /**

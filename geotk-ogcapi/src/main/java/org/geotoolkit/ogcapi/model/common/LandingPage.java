@@ -43,7 +43,7 @@ import org.geotoolkit.ogcapi.model.DataTransferObject;
 @XmlRootElement(name = "LandingPage")
 @XmlAccessorType(XmlAccessType.FIELD)
 @JacksonXmlRootElement(localName = "LandingPage")
-public final class LandingPage extends DataTransferObject {
+public final class LandingPage extends DataTransferObject implements CommonResponse {
 
     public static final String JSON_PROPERTY_TITLE = "title";
     @XmlElement(name = "title")
