@@ -265,6 +265,7 @@ public abstract class AbstractRequest implements Request {
     public InputStream getResponseStream() throws IOException{
         URLConnection cnx = getURL().openConnection();
 
+        cnx.setRequestProperty("User-Agent", "Geotoolkit/2025");
         //Set all fields from the headerMap to the properties of this URLConnection.
         for(final Entry<String,String> entry : headerMap.entrySet()){
             cnx.setRequestProperty(entry.getKey(),entry.getValue());

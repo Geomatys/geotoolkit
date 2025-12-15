@@ -17,11 +17,8 @@
 package org.geotoolkit.storage.feature;
 
 import java.util.Collection;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-import java.util.Spliterators;
+import java.util.function.Function;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 import javax.measure.Quantity;
 import javax.measure.Unit;
 import javax.measure.quantity.Length;
@@ -133,11 +130,24 @@ public class TileMatrixSetFeatureReader {
             area = tileMatrix.getTilingScheme().getExtent();
         }
 
-        final TileIterator iterator = new TileIterator(tileMatrix, area);
+        final Stream<Tile> stream = tileMatrix.getTiles(area, true);
+        final Stream<Feature> fs = stream.flatMap(new Function<Tile, Stream<Feature>>() {
+            @Override
+            public Stream<Feature> apply(Tile tile) {
+                try {
+                    final Resource resource = tile.getResource();
+                    if (resource instanceof FeatureSet fs) {
+                        return fs.features(true);
+                    }
+                } catch (DataStoreException ex) {
+                    throw new BackingStoreException(ex.getMessage(), ex);
+                }
+                return Stream.empty();
+            }
+        });
 
         if (query == null) {
-            return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, 0), false)
-                    .onClose(iterator::close);
+            return fs;
         } else {
             //create a fake subset
             final FeatureSet subfs = new AbstractFeatureSet(null, false) {
@@ -147,11 +157,9 @@ public class TileMatrixSetFeatureReader {
                 }
                 @Override
                 public Stream<Feature> features(boolean parallel) throws DataStoreException {
-                    final Stream<Feature> stream = StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, 0), false);
-                    return stream.onClose(iterator::close);
+                    return fs;
                 }
             };
-
             return subfs.subset(query).features(bln);
         }
     }
@@ -164,85 +172,4 @@ public class TileMatrixSetFeatureReader {
         return Quantities.create(newRes[0], Units.METRE).to(unit);
     }
 
-    private static class TileIterator implements Iterator<Feature> {
-
-        private final TileMatrix mosaic;
-        private final Stream<Tile> stream;
-        private final Iterator<Tile> streamIte;
-        private Stream<Feature> subStream;
-        private Iterator<Feature> subIte;
-        private Feature next;
-
-
-        public TileIterator(TileMatrix tileMatrix, GridExtent extent) throws DataStoreException {
-            this.mosaic = tileMatrix;
-            stream = tileMatrix.getTiles(extent, false);
-            streamIte = stream.iterator();
-        }
-
-        @Override
-        public boolean hasNext() throws BackingStoreException {
-            findNext();
-            return next != null;
-        }
-
-        @Override
-        public Feature next() throws BackingStoreException {
-            findNext();
-            if (next == null) {
-                throw new NoSuchElementException();
-            }
-            Feature c = next;
-            next = null;
-            return c;
-        }
-
-        private void findNext() throws BackingStoreException {
-            if (next != null) return;
-
-            if (subStream != null) {
-                if (subIte.hasNext()) {
-                    next = subIte.next();
-                    return;
-                } else {
-                    subStream.close();
-                    subIte = null;
-                    subStream = null;
-                }
-            }
-
-            try {
-                while (streamIte.hasNext()) {
-                    final Tile tile = streamIte.next();
-                    Resource resource = tile.getResource();
-                    if (resource instanceof FeatureSet) {
-                        subStream = ((FeatureSet) resource).features(false);
-                        subIte = subStream.iterator();
-                    }
-
-                    if (subStream != null) {
-                        if (subIte.hasNext()) {
-                            next = subIte.next();
-                            return;
-                        } else {
-                            subStream.close();
-                            subIte = null;
-                            subStream = null;
-                        }
-                    }
-                }
-            } catch (DataStoreException ex) {
-                throw new BackingStoreException(ex.getMessage(), ex);
-            }
-        }
-
-        public void close() {
-            stream.close();
-            if (subStream != null) {
-                subStream.close();
-                subIte = null;
-                subStream = null;
-            }
-        }
-    }
 }

@@ -19,6 +19,7 @@ package org.geotoolkit.storage.coverage;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.image.RenderedImage;
+import java.awt.image.SampleModel;
 import java.io.IOException;
 import java.util.AbstractMap;
 import java.util.ArrayList;
@@ -307,7 +308,13 @@ public class TileMatrixSetCoverageReader <T extends TiledResource & org.apache.s
                 new long[]{tileMinCol, tileMinRow}, wantedCRS.getCoordinateSystem().getDimension(),
                 PixelInCell.CELL_CENTER);
         final GridGeometry gridgeo = new GridGeometry(ge, PixelInCell.CELL_CENTER, gtc, wantedCRS);
-        return new GridCoverage2D(gridgeo, sampleDimensions, image);
+
+        if (sampleDimensions == null || sampleDimensions.isEmpty()) {
+            return new GridCoverage2D(gridgeo, null,  image);
+        } else {
+            return new GridCoverage2D(gridgeo, sampleDimensions, image);
+        }
+
     }
 
     private GridCoverage readCube(List<TileMatrix> mosaics, Envelope wantedEnv, int... range) throws DataStoreException {
