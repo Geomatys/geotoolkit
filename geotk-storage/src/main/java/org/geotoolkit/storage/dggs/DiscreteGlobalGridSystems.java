@@ -304,7 +304,8 @@ public final class DiscreteGlobalGridSystems {
         final Object zid = zone.getIdentifier();
         if (visited.contains(zid)) return Stream.empty();
 
-        final S2Polygon zgeom = DiscreteGlobalGridSystems.toS2Polygon(zone.getGeographicExtent());
+        //TODO comute subdivision
+        final S2Polygon zgeom = DiscreteGlobalGridSystems.toS2Polygon(zone.getGeographicExtent(10));
         if (zgeom == null || geometry == null || geometry.intersects(zgeom)) {
             if (zone.getLocationType().getRefinementLevel() == level) {
                 if (visited.add(zid)) {

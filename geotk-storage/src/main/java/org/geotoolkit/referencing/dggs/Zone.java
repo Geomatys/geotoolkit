@@ -25,6 +25,7 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.SimpleInternationalString;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridSystems;
 import org.opengis.geometry.Envelope;
+import org.opengis.metadata.extent.GeographicExtent;
 import org.opengis.referencing.gazetteer.Location;
 import org.opengis.util.InternationalString;
 
@@ -49,6 +50,16 @@ public interface Zone extends Location, Comparable<Zone> {
      * Spatiotemporal reference in the form of a compact 64bit integer that uniquely identifies a zone.
      */
     long getLongIdentifier();
+
+    /**
+     * Get a more accurate geometry of the zone by subdividing the cell edges.
+     *
+     * @param subdivision subdivide cell edges, must be 1 or more
+     * @return
+     */
+    default GeographicExtent getGeographicExtent(int subdivision) {
+        return getGeographicExtent();
+    }
 
     /**
      * Spatiotemporal reference in the form of a label or code that uniquely identifies a zone.

@@ -133,7 +133,7 @@ public final class DiscreteGlobalGridGeometry extends CodedGeometry {
         MathTransform trs = null;
         if (!Utilities.equalsIgnoreMetadata(baseCrs, crs)) {
             try {
-                trs = CRS.findOperation(CommonCRS.WGS84.normalizedGeographic(), crs, null).getMathTransform();
+                trs = CRS.findOperation(baseCrs, crs, null).getMathTransform();
             } catch (FactoryException ex) {
                 throw new TransformException(ex);
             }

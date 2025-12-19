@@ -186,15 +186,18 @@ public final class S2 {
         final CoordinateSequence cs = ring.getCoordinateSequence();
         for (int i = 0, n = cs.size()-1; i < n ;i++) {
             final S2LatLng ll = S2LatLng.fromDegrees(cs.getY(i), cs.getX(i));
+            if (!ll.isValid()) {
+                throw new IllegalArgumentException();
+            }
             vertices.add(ll.toPoint());
         }
         final S2Loop loop = new S2Loop(vertices);
         if (isHole) {
-            if (!loop.isHole()) {
+            if (loop.isNormalized()) {
                 loop.invert();
             }
         } else {
-            if (loop.isHole()) {
+            if (!loop.isNormalized()) {
                 loop.invert();
             }
         }
