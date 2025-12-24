@@ -56,7 +56,7 @@ import org.opengis.style.Style;
 import org.opengis.style.Symbolizer;
 import org.opengis.style.TextSymbolizer;
 
-import static org.apache.sis.util.internal.shared.CollectionsExt.nonNull;
+import static org.apache.sis.util.collection.Containers.nonNull;
 
 
 /**

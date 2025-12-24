@@ -27,7 +27,7 @@ import org.apache.sis.coverage.grid.DisjointExtentException;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridRoundingMode;
-import org.apache.sis.util.internal.shared.UnmodifiableArrayList;
+import org.apache.sis.util.collection.Containers;
 import org.apache.sis.storage.AbstractGridCoverageResource;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.NoSuchDataException;
@@ -64,7 +64,7 @@ public final class TileMatrixSetCoverageResource extends AbstractGridCoverageRes
         this.identifier = identifier;
         this.sets.addAll(tms);
         this.tileSize = tileSize;
-        this.sampleDimensions = UnmodifiableArrayList.wrap(sampleDimensions.toArray(SampleDimension[]::new));
+        this.sampleDimensions = Containers.copyToImmutableList(sampleDimensions, SampleDimension.class);
     }
 
     /**

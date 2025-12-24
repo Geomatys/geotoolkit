@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.ServiceLoader;
-import org.apache.sis.util.internal.shared.UnmodifiableArrayList;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.xml.ReferenceProxy;
@@ -45,7 +44,7 @@ public abstract class ComplexAdaptor<T> implements DataAdaptor<T> {
         for(final ComplexAdaptor.Spi r : serviceLodaer){
             spis.add(r);
         }
-        SERVICES = UnmodifiableArrayList.wrap(spis.toArray(new ComplexAdaptor.Spi[spis.size()]));
+        SERVICES = List.copyOf(spis);
     }
 
     /**

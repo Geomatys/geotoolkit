@@ -46,7 +46,6 @@ import net.sf.jasperreports.export.SimpleExporterInput;
 import net.sf.jasperreports.export.SimpleOdtReportConfiguration;
 import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.util.internal.shared.UnmodifiableArrayList;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.ObjectConverters;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
@@ -75,7 +74,7 @@ public final class JasperReportService extends Static {
         for(final JRFieldRenderer r : service){
             renderers.add(r);
         }
-        RENDERERS = UnmodifiableArrayList.wrap(renderers.toArray(new JRFieldRenderer[renderers.size()]));
+        RENDERERS = List.copyOf(renderers);
     }
 
     private JasperReportService(){}

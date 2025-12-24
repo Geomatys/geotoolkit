@@ -22,7 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 import org.apache.sis.feature.internal.shared.FeatureExpression;
 import org.apache.sis.feature.internal.shared.FeatureProjectionBuilder;
-import org.apache.sis.util.internal.shared.CollectionsExt;
+import org.apache.sis.util.collection.Containers;
 import org.geotoolkit.filter.function.AbstractFunction;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;
@@ -77,7 +77,7 @@ public class ListFunction extends AbstractFunction implements FeatureExpression<
             if (expression instanceof FeatureExpression<?,?>) {
                 item = ((FeatureExpression<?,?>) expression).expectedType(addTo);
             } else {
-                final PropertyType pt = CollectionsExt.singletonOrNull(valueType.getProperties(true));
+                final PropertyType pt = Containers.peekIfSingleton(valueType.getProperties(true));
                 if (pt == null) return null;
                 item = addTo.addSourceProperty(pt, false);
             }

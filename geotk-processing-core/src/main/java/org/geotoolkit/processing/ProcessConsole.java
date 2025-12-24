@@ -72,7 +72,7 @@ import org.opengis.util.NoSuchIdentifierException;
 public final class ProcessConsole {
 
     private static final boolean X364_SUPPORTED = X364.isAnsiSupported();
-    private static final List LIST_CONVERTERS = Containers.unmodifiableList(StringToFeatureSetConverter.getInstance(),
+    private static final List LIST_CONVERTERS = Containers.viewAsUnmodifiableList(StringToFeatureSetConverter.getInstance(),
                 StringToGeometryConverter.getInstance(),
                 StringToAffineTransformConverter.getInstance(),
                 StringToSortByConverter.getInstance(),

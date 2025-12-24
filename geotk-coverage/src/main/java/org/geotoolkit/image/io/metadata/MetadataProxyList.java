@@ -86,6 +86,11 @@ final class MetadataProxyList<T> extends AbstractList<T> implements
         return parent.interfaceType;
     }
 
+    @Override
+    public Mutability getMutability() {
+        return Mutability.UNMODIFIABLE;
+    }
+
     /**
      * Returns the size of this list.
      */

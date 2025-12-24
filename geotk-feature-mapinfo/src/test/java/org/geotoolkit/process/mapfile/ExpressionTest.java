@@ -18,12 +18,12 @@ package org.geotoolkit.process.mapfile;
 
 import org.opengis.filter.Filter;
 import java.io.IOException;
+import java.util.List;
 import org.geotoolkit.process.ProcessException;
 import org.junit.Test;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
-import org.apache.sis.util.internal.shared.UnmodifiableArrayList;
 import org.apache.sis.parameter.Parameters;
 import org.geotoolkit.filter.FilterUtilities;
 import org.opengis.filter.FilterFactory;
@@ -110,7 +110,7 @@ public class ExpressionTest {
         final Filter f1 = FF.equal(reference,FF.literal("joe"));
         final Filter f2 = FF.equal(reference,FF.literal("marcel"));
         final Filter f3 = FF.equal(reference,FF.literal("emile"));
-        final Filter combine = FF.or(UnmodifiableArrayList.wrap(new Filter[] {f1,f2,f3}));
+        final Filter combine = FF.or(List.of(f1,f2,f3));
 
         assertEquals(combine, result);
     }

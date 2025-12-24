@@ -23,15 +23,14 @@ import java.awt.RenderingHints;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Base64;
 import java.util.Collection;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotoolkit.renderer.style.ExternalGraphicFactory;
-import org.apache.sis.util.internal.shared.UnmodifiableArrayList;
 
 /**
  * Factory capable to read SVG files.
@@ -41,7 +40,7 @@ import org.apache.sis.util.internal.shared.UnmodifiableArrayList;
  */
 public class SVGGraphicFactory implements ExternalGraphicFactory {
 
-    private static final Collection<String> MIME_TYPES = UnmodifiableArrayList.wrap(new String[]{"svg","image/svg"});
+    private static final Collection<String> MIME_TYPES = List.of("svg", "image/svg");
 
     /**
      * {@inheritDoc }

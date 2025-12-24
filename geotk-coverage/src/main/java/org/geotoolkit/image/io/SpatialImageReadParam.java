@@ -32,7 +32,7 @@ import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.resources.IndexedResourceBundle;
 import org.geotoolkit.image.io.metadata.SampleDomain;
 import org.geotoolkit.internal.image.io.Warnings;
-import org.apache.sis.util.internal.shared.UnmodifiableArrayList;
+import org.apache.sis.util.collection.Containers;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.image.palette.PaletteFactory;
 
@@ -282,8 +282,8 @@ public class SpatialImageReadParam extends ImageReadParam implements WarningProd
      * @since 3.12
      */
     public void setSampleDomains(List<SampleDomain> domains) {
-        if (domains != null && !(domains instanceof UnmodifiableArrayList<?>)) {
-            domains = UnmodifiableArrayList.wrap(domains.toArray(new SampleDomain[domains.size()]));
+        if (domains != null) {
+            domains = Containers.viewAsUnmodifiableList(domains.toArray(new SampleDomain[domains.size()]));
         }
         sampleDomains = domains;
     }

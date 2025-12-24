@@ -26,7 +26,7 @@ import org.opengis.referencing.cs.*;
 import org.opengis.referencing.datum.*;
 import org.opengis.referencing.IdentifiedObject;
 
-import org.apache.sis.util.internal.shared.UnmodifiableArrayList;
+import org.apache.sis.util.collection.Containers;
 
 
 /**
@@ -38,9 +38,7 @@ public final class DataTypes {
     /**
      * Enumeration of valid coordinate reference system types.
      */
-    public static final List<String> CRS_TYPES = UnmodifiableArrayList.wrap(
-        new String[] {"geographic", "projected"}
-    );
+    public static final List<String> CRS_TYPES = Containers.viewAsUnmodifiableList("geographic", "projected");
 
     /**
      * The interfaces associated to the {@link #CRS_TYPES} enumeration.
@@ -54,9 +52,7 @@ public final class DataTypes {
     /**
      * Enumeration of valid coordinate system types.
      */
-    public static final List<String> CS_TYPES = UnmodifiableArrayList.wrap(
-        new String[] {"ellipsoidal", "cartesian"}
-    );
+    public static final List<String> CS_TYPES = Containers.viewAsUnmodifiableList("ellipsoidal", "cartesian");
 
     /**
      * The interfaces associated to the {@link #CS_TYPES} enumeration.
@@ -70,9 +66,8 @@ public final class DataTypes {
     /**
      * Enumeration of valid datum types.
      */
-    public static final List<String> DATUM_TYPES = UnmodifiableArrayList.wrap(
-        new String[] {"geodetic", "vertical", "temporal", "image", "engineering"}
-    );
+    public static final List<String> DATUM_TYPES = Containers.viewAsUnmodifiableList(
+            "geodetic", "vertical", "temporal", "image", "engineering");
 
     /**
      * The interfaces associated to the {@link #DATUM_TYPES} enumeration.

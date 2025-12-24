@@ -21,7 +21,6 @@ import org.apache.sis.storage.base.MetadataBuilder;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.internal.shared.UnmodifiableArrayList;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.geotoolkit.storage.AbstractResource;
 
@@ -48,7 +47,7 @@ final class ProductAggregate extends AbstractResource implements Aggregate {
             final ProductEntry product = products.get(i);
             resources[i] = store.createResource(product);
         }
-        return UnmodifiableArrayList.wrap(resources);
+        return List.of(resources);
     }
 
     @Override

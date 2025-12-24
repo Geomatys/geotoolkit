@@ -20,7 +20,6 @@ import java.util.List;
 import org.geotoolkit.ows.xml.RequestBase;
 
 import org.apache.sis.util.Version;
-import org.apache.sis.util.internal.shared.UnmodifiableArrayList;
 
 
 /**
@@ -34,7 +33,7 @@ public final class DescribeLayer implements RequestBase {
     /**
      * List of layers to request.
      */
-    private final UnmodifiableArrayList<String> layers;
+    private final List<String> layers;
 
     private Version version;
 
@@ -45,7 +44,7 @@ public final class DescribeLayer implements RequestBase {
      */
     public DescribeLayer(final List<String> layers, final Version version) {
         this.version = version;
-        this.layers = UnmodifiableArrayList.wrap(layers.toArray(new String[layers.size()]));
+        this.layers = List.copyOf(layers);
     }
 
     /**

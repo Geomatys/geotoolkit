@@ -67,7 +67,6 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.map.ExceptionPresentation;
 import org.apache.sis.map.Presentation;
 import org.apache.sis.map.coverage.RenderingWorkaround;
-import org.apache.sis.util.internal.shared.UnmodifiableArrayList;
 import org.apache.sis.map.MapLayer;
 import org.apache.sis.map.MapLayers;
 import org.apache.sis.map.service.GraphicsPortrayer;
@@ -1081,9 +1080,7 @@ public final class DefaultPortrayalService implements PortrayalService{
     //mime types which writer does not support indexed color model
     //even if the canEncode method says "true"
     private static final List<String> INDEXED_CM_UNSUPPORTED =
-            UnmodifiableArrayList.wrap(new String[] {
-                "image/bmp",
-                "image/x-portable-pixmap"});
+            List.of("image/bmp", "image/x-portable-pixmap");
 
     /**
      * Check that the given color model is supported by the mime type.

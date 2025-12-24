@@ -25,7 +25,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.sis.util.internal.shared.UnmodifiableArrayList;
 import org.apache.sis.io.TableAppender;
 import org.opengis.feature.Feature;
 import org.opengis.geometry.Envelope;
@@ -75,7 +74,7 @@ public class ChangeSet {
         if(tags == null || tags.isEmpty()){
             this.tags = Collections.EMPTY_LIST;
         }else{
-            this.tags = UnmodifiableArrayList.wrap(tags.toArray(new Feature[tags.size()]));
+            this.tags = List.copyOf(tags);
         }
     }
 

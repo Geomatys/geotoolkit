@@ -16,11 +16,9 @@
  */
 package org.geotoolkit.style;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import org.apache.sis.util.internal.shared.UnmodifiableArrayList;
 
 import org.opengis.filter.Expression;
 import org.opengis.style.AnchorPoint;
@@ -66,10 +64,9 @@ public class DefaultGraphic implements Graphic{
             final Expression rotation, final AnchorPoint anchor, final Displacement disp){
 
         if(symbols == null || symbols.isEmpty()){
-            this.symbols = Collections.singletonList((GraphicalSymbol)DEFAULT_GRAPHICAL_SYMBOL);
+            this.symbols = List.of(DEFAULT_GRAPHICAL_SYMBOL);
         }else{
-            final GraphicalSymbol[] rep = symbols.toArray(new GraphicalSymbol[symbols.size()]);
-            this.symbols = UnmodifiableArrayList.wrap(rep);
+            this.symbols = List.copyOf(symbols);
         }
 
         this.opacity  = (opacity  == null) ? DEFAULT_GRAPHIC_OPACITY : opacity;

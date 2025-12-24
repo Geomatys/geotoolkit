@@ -46,7 +46,7 @@ import org.geotoolkit.resources.Vocabulary;
 import org.apache.sis.util.Localized;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.measure.MeasurementRange;
-import org.apache.sis.util.internal.shared.UnmodifiableArrayList;
+import org.apache.sis.util.collection.Containers;
 import org.geotoolkit.internal.InternalUtilities;
 import org.apache.sis.coverage.Category;
 import org.geotoolkit.image.io.ImageMetadataException;
@@ -676,7 +676,7 @@ public class MetadataHelper implements Localized {
             for (int i=0; i<bands.length; i++) {
                 bands[i] = bands[i].forConvertedValues(allGeophysics);
             }
-            return UnmodifiableArrayList.wrap(bands);
+            return Containers.viewAsUnmodifiableList(bands);
         }
         return null;
     }

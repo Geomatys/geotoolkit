@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.sis.util.Version;
-import org.apache.sis.util.internal.shared.UnmodifiableArrayList;
 
 import org.opengis.geometry.Envelope;
 import org.geotoolkit.sld.StyledLayerDescriptor;
@@ -53,7 +52,7 @@ public final class GetFeatureInfo extends GetMap implements org.geotoolkit.ows.x
     /**
      * Layers to request.
      */
-    private final UnmodifiableArrayList<String> queryLayers;
+    private final List<String> queryLayers;
 
     /**
      * Format of the returned information.
@@ -71,7 +70,7 @@ public final class GetFeatureInfo extends GetMap implements org.geotoolkit.ows.x
         super(getMap);
         this.x = x;
         this.y = y;
-        this.queryLayers = UnmodifiableArrayList.wrap(queryLayers.toArray(String[]::new));
+        this.queryLayers = List.copyOf(queryLayers);
         this.infoFormat  = infoFormat;
         this.featureCount = featureCount;
     }
@@ -88,7 +87,7 @@ public final class GetFeatureInfo extends GetMap implements org.geotoolkit.ows.x
                 background, transparent, 0,exceptions, parameters);
         this.x = x;
         this.y = y;
-        this.queryLayers = UnmodifiableArrayList.wrap(queryLayers.toArray(String[]::new));
+        this.queryLayers = List.copyOf(queryLayers);
         this.infoFormat  = infoFormat;
         this.featureCount = featureCount;
     }

@@ -28,7 +28,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.net.URI;
 import java.util.Collection;
-import org.apache.sis.util.internal.shared.UnmodifiableArrayList;
+import java.util.List;
 import org.geotoolkit.renderer.style.ExternalGraphicFactory;
 
 /**
@@ -39,7 +39,7 @@ import org.geotoolkit.renderer.style.ExternalGraphicFactory;
  */
 public class SVGGraphicFactory implements ExternalGraphicFactory {
 
-    private static final Collection<String> MIME_TYPES = UnmodifiableArrayList.wrap(new String[]{"svg","image/svg"});
+    private static final Collection<String> MIME_TYPES = List.of("svg", "image/svg");
 
     /**
      * {@inheritDoc }

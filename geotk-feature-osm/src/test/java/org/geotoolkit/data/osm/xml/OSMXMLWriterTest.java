@@ -30,7 +30,6 @@ import org.geotoolkit.data.osm.model.ChangeSet;
 import org.geotoolkit.data.osm.model.MemberType;
 import org.geotoolkit.data.osm.model.Transaction;
 import org.geotoolkit.data.osm.model.TransactionType;
-import org.apache.sis.util.internal.shared.UnmodifiableArrayList;
 import org.geotoolkit.data.osm.model.OSMModelConstants;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -151,11 +150,11 @@ public class OSMXMLWriterTest {
 
 //        created.add( new Node(45.3, 12.1, -1, 465, 789, null, new Date().getTime(), Collections.singletonMap("tagKey", "tagValue")) );
 //        created.add( new Node(45.3, 12.1, -2, 465, 789, null, new Date().getTime(), Collections.singletonMap("tagKey2", "tagValue3")) );
-//        created.add(new Way(UnmodifiableArrayList.wrap(new Long[]{-1l,-2l}),
+//        created.add(new Way(List.of(-1l, -2l),
 //                -1, 461, 786, null, new Date().getTime(), Collections.singletonMap("tagKey4", "tagValue5")) );
-//        created.add(new Way(UnmodifiableArrayList.wrap(new Long[]{456l,329l}),
+//        created.add(new Way(List.of(456l, 329l),
 //                -1, 467, 783, null, new Date().getTime(), Collections.singletonMap("tagKey6", "tagValue7")) );
-//        created.add(new Relation(UnmodifiableArrayList.wrap( new Member[]{new Member(48, MemberType.NODE, "border")}),
+//        created.add(new Relation(List.of(new Member(48, MemberType.NODE, "border")),
 //                12, 89, 222, User.NONE, new Date().getTime(), Collections.singletonMap("tagKey8", "tagValue9")));
 
         final Transaction trans1 = new Transaction(TransactionType.CREATE, created, "1.0.1", "GeotoolKit1.org");

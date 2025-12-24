@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import static org.apache.sis.util.ArgumentChecks.*;
-import org.apache.sis.util.internal.shared.UnmodifiableArrayList;
+import org.apache.sis.util.collection.Containers;
 import org.apache.sis.util.iso.Names;
 import org.opengis.filter.SpatialOperatorName;
 import org.opengis.filter.capability.GeometryOperand;
@@ -49,7 +49,7 @@ public class DefaultSpatialCapabilities implements SpatialCapabilities {
             throw new IllegalArgumentException("Operands must not be empty");
         }
 
-        this.operands = UnmodifiableArrayList.wrap(operands);
+        this.operands = Containers.viewAsUnmodifiableList(operands);
         this.operators = operators;
     }
 

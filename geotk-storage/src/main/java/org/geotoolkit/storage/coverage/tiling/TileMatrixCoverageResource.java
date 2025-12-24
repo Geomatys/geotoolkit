@@ -37,7 +37,7 @@ import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.apache.sis.coverage.grid.IllegalGridGeometryException;
 import org.apache.sis.image.ImageCombiner;
 import org.apache.sis.image.Interpolation;
-import org.apache.sis.util.internal.shared.UnmodifiableArrayList;
+import org.apache.sis.util.collection.Containers;
 import org.apache.sis.storage.AbstractGridCoverageResource;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
@@ -80,7 +80,7 @@ public class TileMatrixCoverageResource extends AbstractGridCoverageResource {
         ArgumentChecks.ensureNonNull("sampleDimensions", sampleDimensions);
         this.matrix = matrix;
         this.tileSize = tileSize.clone();
-        this.sampleDimensions = UnmodifiableArrayList.wrap(sampleDimensions.toArray(SampleDimension[]::new));
+        this.sampleDimensions = Containers.copyToImmutableList(sampleDimensions, SampleDimension.class);
         this.tilingScheme = matrix.getTilingScheme();
         this.coverageGrid = tilingScheme.upsample(ArraysExt.copyAsLongs(tileSize));
     }

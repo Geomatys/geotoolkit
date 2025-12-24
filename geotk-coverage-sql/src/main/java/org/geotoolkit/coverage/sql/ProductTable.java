@@ -31,7 +31,6 @@ import java.util.Map;
 import org.opengis.referencing.operation.TransformException;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.util.internal.shared.UnmodifiableArrayList;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreReferencingException;
 import org.apache.sis.util.ArgumentChecks;
@@ -143,7 +142,7 @@ final class ProductTable extends CachedTable<String,ProductEntry> {
                 }
             }
         }
-        return UnmodifiableArrayList.wrap(products.toArray(new ProductEntry[products.size()]));
+        return List.copyOf(products);
     }
 
     /**
@@ -174,7 +173,7 @@ final class ProductTable extends CachedTable<String,ProductEntry> {
         for (int i=0; i<array.length; i++) {
             array[i].finish();
         }
-        return UnmodifiableArrayList.wrap(array);
+        return List.of(array);
     }
 
     /**

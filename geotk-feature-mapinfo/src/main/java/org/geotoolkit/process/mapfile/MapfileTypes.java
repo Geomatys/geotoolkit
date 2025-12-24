@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import org.geotoolkit.util.NamesExt;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.util.internal.shared.UnmodifiableArrayList;
 
 import org.opengis.feature.FeatureType;
 import org.opengis.util.GenericName;
@@ -748,9 +747,9 @@ public final class MapfileTypes {
         return name;
     }
 
-    private static final List<FeatureType> ALL_TYPES = UnmodifiableArrayList.wrap(new FeatureType[] {
+    private static final List<FeatureType> ALL_TYPES = List.of(
             CLASS,CLUSTER,FEATURE,GRID,JOIN,LABEL,LAYER,LEGEND,MAP,
-            OUTPUTFORMAT,QUERYMAP,REFERENCE,SCALEBAR,STYLE,SYMBOL,WEB});
+            OUTPUTFORMAT,QUERYMAP,REFERENCE,SCALEBAR,STYLE,SYMBOL,WEB);
 
     public static FeatureType getType(final GenericName name){
         for(FeatureType ft : ALL_TYPES){

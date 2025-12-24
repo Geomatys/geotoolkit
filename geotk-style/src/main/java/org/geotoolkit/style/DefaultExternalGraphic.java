@@ -18,10 +18,11 @@ package org.geotoolkit.style;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 import javax.swing.Icon;
+import org.apache.sis.util.collection.Containers;
 
-import org.apache.sis.util.internal.shared.UnmodifiableArrayList;
 
 import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.style.ColorReplacement;
@@ -61,10 +62,9 @@ public class DefaultExternalGraphic implements ExternalGraphic{
         this.format = format;
 
         if(replaces != null && !replaces.isEmpty()) {
-            final ColorReplacement[] rep = replaces.toArray(new ColorReplacement[replaces.size()]);
-            this.replaces = UnmodifiableArrayList.wrap(rep);
+            this.replaces = List.copyOf(replaces);
         }else{
-            this.replaces = Collections.emptyList();
+            this.replaces = List.of();
         }
 
     }
@@ -87,7 +87,7 @@ public class DefaultExternalGraphic implements ExternalGraphic{
 
         if(replaces != null && !replaces.isEmpty()) {
             final ColorReplacement[] rep = replaces.toArray(new ColorReplacement[replaces.size()]);
-            this.replaces = UnmodifiableArrayList.wrap(rep);
+            this.replaces = Containers.viewAsUnmodifiableList(rep);
         }else{
             this.replaces = Collections.emptyList();
         }

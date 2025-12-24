@@ -21,10 +21,8 @@ import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.storage.base.MetadataBuilder;
-import org.apache.sis.util.internal.shared.CollectionsExt;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.DataStoreReferencingException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.resources.Errors;
@@ -37,7 +35,6 @@ import org.opengis.util.NameSpace;
 import java.sql.SQLException;
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -201,7 +198,7 @@ final class ProductEntry extends Entry {
      * shall be created in the same thread.
      */
     final void finish() {
-        components = (components != null) ? CollectionsExt.unmodifiableOrCopy(components) : Collections.emptyList();
+        components = (components != null) ? List.copyOf(components) : List.of();
     }
 
     /**

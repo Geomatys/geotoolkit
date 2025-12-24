@@ -27,7 +27,6 @@ import java.util.Map;
 import org.apache.sis.geometry.ImmutableEnvelope;
 import org.geotoolkit.ows.xml.RequestBase;
 import org.apache.sis.util.Version;
-import org.apache.sis.util.internal.shared.UnmodifiableArrayList;
 
 import org.opengis.geometry.Envelope;
 import org.geotoolkit.sld.StyledLayerDescriptor;
@@ -155,8 +154,8 @@ public class GetMap implements RequestBase {
         this.parameters = parameters;
         this.envelope = new ImmutableEnvelope(envelope);
         this.format = format;
-        this.layers = UnmodifiableArrayList.wrap(layers.toArray(String[]::new));
-        this.styles = UnmodifiableArrayList.wrap(styles.toArray(String[]::new));
+        this.layers = List.copyOf(layers);
+        this.styles = List.copyOf(styles);
         this.sld = sld;
         this.elevation = elevation;
         this.time = date;
