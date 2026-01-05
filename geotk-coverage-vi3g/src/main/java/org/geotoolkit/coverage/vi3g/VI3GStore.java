@@ -45,7 +45,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.StorageConnector;
-import org.apache.sis.util.Numbers;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.coverage.GeoreferencedGridCoverageResource;
@@ -55,6 +54,7 @@ import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.apache.sis.coverage.grid.PixelInCell;
+import org.apache.sis.math.NumberType;
 import org.apache.sis.util.ArraysExt;
 import org.opengis.util.GenericName;
 
@@ -256,7 +256,7 @@ public class VI3GStore extends DataStore implements GridCoverageResource {
                     null, Files.newByteChannel(fileInput), ByteBuffer.allocateDirect(8192), false)) {
                 imageStream.setByteOrder(ByteOrder.BIG_ENDIAN);
 
-                final HyperRectangleReader reader = new HyperRectangleReader(Numbers.SHORT, imageStream);
+                final var reader = new HyperRectangleReader(NumberType.SHORT, imageStream);
                 allData = (short[]) reader.read(new Region(
                         new long[]{extent.getSize(0),extent.getSize(1)},
                         new long[]{areaLower[0], areaLower[1]},
