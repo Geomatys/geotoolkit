@@ -12,9 +12,9 @@ build:
   extends: .update-cache
   stage: build
   script:
-    - mvn clean install -s $MAVEN_SETTINGS
-    - mvn jacoco:report-aggregate
-    - mvn javadoc:jar
+    - mvn clean install -B -ntp -s $MAVEN_SETTINGS
+    - mvn -B -ntp jacoco:report-aggregate
+    - mvn -B -ntp javadoc:jar
   artifacts:
     paths:
       - "target/"
