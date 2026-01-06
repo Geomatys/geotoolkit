@@ -255,9 +255,8 @@ public class HtmlBuilder {
                 try (final ResultSet primaryKeys = source.getPrimaryKeys(catalogName, schemaName, tableName)) {
                     if (primaryKeys.next()) {
                         final String keyName  = primaryKeys.getString(6);
-                        if (keyName != null && !keyName.isEmpty())  {
-                            appendChild(doc, body, "h3", keyName);
-                        }
+                        var keyTitle = keyName != null && !keyName.isEmpty() ? "Unnamed key" : keyName;
+                        appendChild(doc, body, "h3", keyTitle);
                         appendChild(doc, body, "h4", BUNDLE.getString(cols));
                         list = appendChild(doc, body, "ul");
                         appendChild(doc, list, "li", primaryKeys.getString(4));
@@ -525,14 +524,14 @@ public class HtmlBuilder {
 
 
         // Once our tree is built, we can print it
-        Element h4, link, list;
+        Element h3, link, list;
         String pkTableName;
         for (final TreeTable.Node tableNode : ttable.getRoot().getChildren()) {
             tablePath = tableNode.getValue(pkTable);
-            h4 = appendChild(doc, body, "h4");
-            h4.appendChild(doc.createTextNode(BUNDLE.getString(importedFrom) + " "));
+            h3 = appendChild(doc, body, "h3");
+            h3.appendChild(doc.createTextNode(BUNDLE.getString(importedFrom) + " "));
             pkTableName = tablePath.getFileName().toString();
-            link = appendChild(doc, h4, "a", pkTableName);
+            link = appendChild(doc, h3, "a", pkTableName);
             link.setAttribute("href", toRootFolder.resolve(Paths.get(tablePath.toString().concat(".html"))).toString());
 
             list = appendChild(doc, body, "ul");
