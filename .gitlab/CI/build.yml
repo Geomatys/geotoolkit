@@ -18,7 +18,10 @@ build:
   artifacts:
     paths:
       - "target/"
-      - "*/target/"
+      - "*/target/*.jar"
+      - "*/target/*.xml"
+      - "*/target/site"
+      - "*/target/surefire-reports"
     # We want to get test reports even on failure, to quickly find problems
     when: always
     reports:
