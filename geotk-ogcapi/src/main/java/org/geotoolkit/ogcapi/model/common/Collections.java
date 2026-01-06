@@ -43,7 +43,7 @@ import org.geotoolkit.ogcapi.model.DataTransferObject;
 @XmlRootElement(name = "Collections")
 @XmlAccessorType(XmlAccessType.FIELD)
 @JacksonXmlRootElement(localName = "Collections")
-public final class Collections extends DataTransferObject {
+public final class Collections extends DataTransferObject implements CommonResponse {
 
     public static final String JSON_PROPERTY_LINKS = "links";
     @XmlElement(name = "links")

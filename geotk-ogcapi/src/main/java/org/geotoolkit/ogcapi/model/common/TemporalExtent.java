@@ -28,6 +28,7 @@ import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import org.geotoolkit.ogcapi.model.DataTransferObject;
@@ -50,7 +51,7 @@ public final class TemporalExtent extends DataTransferObject {
     public static final String JSON_PROPERTY_INTERVAL = "interval";
     @XmlElement(name = "interval")
     @jakarta.annotation.Nullable
-    private List<List<OffsetDateTime>> interval = new ArrayList<>();
+    private OffsetDateTime[][] interval;
 
     /**
      * Coordinate reference system of the coordinates in the temporal extent
@@ -72,16 +73,8 @@ public final class TemporalExtent extends DataTransferObject {
     public TemporalExtent() {
     }
 
-    public TemporalExtent interval(@jakarta.annotation.Nullable List<List<OffsetDateTime>> interval) {
+    public TemporalExtent interval(@jakarta.annotation.Nullable OffsetDateTime[][] interval) {
         this.interval = interval;
-        return this;
-    }
-
-    public TemporalExtent addIntervalItem(List<OffsetDateTime> intervalItem) {
-        if (this.interval == null) {
-            this.interval = new ArrayList<>();
-        }
-        this.interval.add(intervalItem);
         return this;
     }
 
@@ -101,7 +94,7 @@ public final class TemporalExtent extends DataTransferObject {
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
     @JacksonXmlProperty(localName = "interval")
     @JacksonXmlElementWrapper(useWrapping = false)
-    public List<List<OffsetDateTime>> getInterval() {
+    public OffsetDateTime[][] getInterval() {
         return interval;
     }
 
@@ -109,7 +102,7 @@ public final class TemporalExtent extends DataTransferObject {
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
     @JacksonXmlProperty(localName = "interval")
     @JacksonXmlElementWrapper(useWrapping = false)
-    public void setInterval(@jakarta.annotation.Nullable List<List<OffsetDateTime>> interval) {
+    public void setInterval(@jakarta.annotation.Nullable OffsetDateTime[][] interval) {
         this.interval = interval;
     }
 

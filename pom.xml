@@ -22,7 +22,7 @@
   <parent>
     <groupId>com.geomatys</groupId>
     <artifactId>geomatys-bom</artifactId>
-    <version>2025.2</version>
+    <version>2025.4</version>
   </parent>
 
   <groupId>org.geotoolkit</groupId>
@@ -836,8 +836,6 @@
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
-        <!-- TODO: remove version definition after Geotk/BOM upgrade. It will be inherited from parent. -->
-        <version>0.8.12</version>
         <executions>
           <execution>
             <goals>
@@ -1025,6 +1023,8 @@
     <module>geotk-ubjson</module>
     <module>geotk-dggal</module>
     <module>geotk-hips</module>
+    <module>geotk-openeo</module>
+    <module>geotk-stac</module>
 
     <module>geotk-ogcapi</module>
     <module>geotk-client-store</module>
