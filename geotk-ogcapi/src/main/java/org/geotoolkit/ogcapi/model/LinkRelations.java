@@ -32,6 +32,7 @@ public final class LinkRelations {
 
     /**
      * Refers to a substitute for this context.
+     * Refers to a representation of the current resource which is encoded using another media type (the media type is specified in the type link attribute).
      */
     public static final String ALTERNATE = "alternate";
     /**
@@ -46,6 +47,55 @@ public final class LinkRelations {
      * Identifies service documentation for the context that is primarily intended for human consumption.
      */
     public static final String SERVICE_DOC = "service-doc";
+    /**
+     * Identifies general metadata for the context that is primarily intended for consumption by machines.
+     */
+    public static final String SERVICE_META = "service-meta";
+    /**
+     * The target IRI points to a resource which represents the collection resource for the context IRI.
+     */
+    public static final String COLLECTION = "collection";
+    /**
+     * Refers to a resource providing information about the link’s context.
+     * Links to external resources which further describe the subject resource.
+     */
+    public static final String DESCRIBEDBY = "describedby";
+    /**
+     * The target IRI points to a resource that is a member of the collection represented by the context IRI.
+     */
+    public static final String ITEM = "item";
+    /**
+     * Refers to a license associated with this context.
+     */
+    public static final String LICENSE = "license";
+    /**
+     * Indicates that the link target is preferred over the link context for the purpose of permanent citation.
+     */
+    public static final String CITE_AS = "cite-as";
+    /**
+     * Refers to a resource that is the subject of the link’s context.
+     */
+    public static final String ABOUT = "about";
+    /**
+     * Refers to the context’s author.
+     */
+    public static final String AUTHOR = "author";
+    /**
+     * Refers to a list of patent disclosures made with respect to material for which ‘disclosure’ relation is specified.
+     */
+    public static final String DISCLOSURE = "disclosure";
+    /**
+     * Refers to a copyright statement that applies to the link’s context.
+     */
+    public static final String COPYRIGHT = "copyright";
+    /**
+     * Refers to a resource that is within a context that is sponsored (such as advertising or another compensation agreement).
+     */
+    public static final String SPONSORED = "sponsored";
+    /**
+     * Refers to the terms of service associated with the link’s context.
+     */
+    public static final String TERMS_OF_SERVICE = "terms-of-service";
 
     // /////////////////////////////////////////////////////////////////////////////////////////
     // OGC-API CORE
@@ -82,6 +132,10 @@ public final class LinkRelations {
      * The target IRI points to a resource representing a collection of geospatial data.
      */
     public static final String OGC_GEODATA = "https://www.opengis.net/def/rel/ogc/1.0/geodata";
+    /**
+     * Refers to a resource that is comprised of members of the collection represented by the link’s context.
+     */
+    public static final String OGC_ITEMS = "https://www.opengis.net/def/rel/ogc/1.0/items";
 
     // /////////////////////////////////////////////////////////////////////////////////////////
     // OGC-API - Features - Part 3 : Filtering
