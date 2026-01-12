@@ -490,10 +490,17 @@ public class Process extends DataTransferObject {
                         }
                         if (processId.equalsIgnoreCase("load_collection") &&
                                 (inputDescriptor.getName().getCode().equalsIgnoreCase("serviceId")) ||
-                                (inputDescriptor.getName().getCode().equalsIgnoreCase("external_stac_url"))
+                                (inputDescriptor.getName().getCode().equalsIgnoreCase("external_stac_url")) ||
+                                (inputDescriptor.getName().getCode().equalsIgnoreCase("external_stac_custom_process"))
                         ) {
                             //Special case for load_collection where the "serviceId" parameter is not mandatory in openEO, but is in examind
                             //Special case for load_collection where the "external_stac_url" parameter is not mandatory in openEO, but is in examind
+                            //Special case for load_collection where the "external_stac_custom_process" parameter is not mandatory in openEO, but is in examind
+                            continue;
+                        } else if (processId.equalsIgnoreCase("load_stac") &&
+                                (inputDescriptor.getName().getCode().equalsIgnoreCase("external_stac_custom_process"))
+                        ) {
+                            //Special case for load_stac where the "external_stac_custom_process" parameter is not mandatory in openEO, but is in examind
                             continue;
                         }
 
