@@ -19,7 +19,9 @@ package org.geotoolkit.referencing.dggs;
 import com.google.common.geometry.S2Polygon;
 import java.util.stream.Stream;
 import javax.measure.Quantity;
+import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.storage.rs.internal.shared.s2.S2;
 import org.opengis.geometry.DirectPosition;
@@ -106,6 +108,13 @@ public interface DiscreteGlobalGrid {
     default Stream<Zone> getZones(Envelope env) throws TransformException {
         if (env == null) return getZones((GeographicExtent) null);
         env = Envelopes.transform(env, CommonCRS.WGS84.normalizedGeographic());
+
+        if (env.getSpan(0) == 0 && env.getSpan(1) == 0) {
+            //envelope degenerates to a point
+            final DirectPosition dp = new DirectPosition2D(env.getCoordinateReferenceSystem(), env.getMinimum(0), env.getMinimum(1));
+            return Stream.of(getZone(dp));
+        }
+
         S2Polygon polygon = S2.toS2Polygon(env);
         return getZones(S2.toGeographicExtent(polygon));
     }
