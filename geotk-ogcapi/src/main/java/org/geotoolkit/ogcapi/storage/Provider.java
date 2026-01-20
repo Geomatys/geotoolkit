@@ -28,6 +28,7 @@ import org.geotoolkit.client.service.ServiceException;
 import org.geotoolkit.client.service.ServiceResponse;
 import org.geotoolkit.ogcapi.client.common.CoreApi;
 import org.geotoolkit.ogcapi.model.common.ConfClasses;
+import org.geotoolkit.ogcapi.request.common.GetConformance;
 import org.opengis.parameter.ParameterDescriptorGroup;
 
 /**
@@ -75,7 +76,7 @@ public final class Provider extends AbstractClientProvider {
                 .updateBaseUri(uri.toString())
                 .build();
         try (CoreApi core = new CoreApi(config)) {
-            ServiceResponse<ConfClasses> conformance = core.getConformance("application/json");
+            ServiceResponse<ConfClasses> conformance = core.getConformance(new GetConformance().format("application/json"));
             if (conformance.getStatusCode() == 200 && conformance.getData() != null) {
                 return ProbeResult.SUPPORTED;
             } else {

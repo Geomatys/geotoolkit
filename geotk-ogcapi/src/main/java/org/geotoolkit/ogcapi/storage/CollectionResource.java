@@ -31,6 +31,8 @@ import org.geotoolkit.ogcapi.model.LinkRelations;
 import org.geotoolkit.ogcapi.model.common.CollectionDescription;
 import org.geotoolkit.ogcapi.model.common.Collections;
 import org.geotoolkit.ogcapi.model.common.Link;
+import org.geotoolkit.ogcapi.request.common.GetCollection;
+import org.geotoolkit.ogcapi.request.common.GetCollectionList;
 
 /**
  *
@@ -52,13 +54,15 @@ public final class CollectionResource extends AbstractResource implements Aggreg
             components = new ArrayList<>();
 
             try {
-                final ServiceResponse<Collections> response = api.getCollections(null, null, Integer.MAX_VALUE, "json");
+                final ServiceResponse<Collections> response = api.getCollections(
+                        new GetCollectionList().limit(Integer.MAX_VALUE).format("json"));
                 final Collections collection = response.getData();
                 final List<CollectionDescription> collections = collection.getCollections();
 
                 loop:
                 for (CollectionDescription cd : collections) {
-                    final ServiceResponse<CollectionDescription> fres = api.getCollection(cd.getId(), "json");
+                    final ServiceResponse<CollectionDescription> fres = api.getCollection(
+                            new GetCollection().collectionId(cd.getId()).format("json"));
                     final CollectionDescription fullDescription = fres.getData();
 
                     final List<Link> links = fullDescription.getLinks();

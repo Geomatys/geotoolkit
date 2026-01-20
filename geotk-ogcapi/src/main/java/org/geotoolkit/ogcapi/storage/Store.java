@@ -32,6 +32,7 @@ import org.geotoolkit.client.service.ServiceException;
 import org.geotoolkit.ogcapi.client.common.CoreApi;
 import org.geotoolkit.ogcapi.model.Conformance;
 import org.geotoolkit.ogcapi.model.common.ConfClasses;
+import org.geotoolkit.ogcapi.request.common.GetConformance;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -79,7 +80,7 @@ public final class Store extends DataStore implements Aggregate {
     public synchronized Collection<? extends Resource> components() throws DataStoreException {
         if (root == null) {
             try (CoreApi core = new CoreApi(configuration)) {
-                final ConfClasses conformance = core.getConformance("json").getData();
+                final ConfClasses conformance = core.getConformance(new GetConformance().format("json")).getData();
                 if (conformance.isConformTo(Conformance.COLLECTIONS_v0)
                    || conformance.isConformTo(Conformance.COLLECTIONS_v1)
                    || conformance.isConformTo(Conformance.DGGS_COLLECTION)) {

@@ -23,6 +23,9 @@ import org.geotoolkit.client.service.ServiceException;
 import org.geotoolkit.client.service.ServiceResponse;
 import org.geotoolkit.ogcapi.model.common.ConfClasses;
 import org.geotoolkit.ogcapi.model.common.LandingPage;
+import org.geotoolkit.ogcapi.request.common.GetApi;
+import org.geotoolkit.ogcapi.request.common.GetConformance;
+import org.geotoolkit.ogcapi.request.common.GetLandingPage;
 
 /**
  *
@@ -37,15 +40,13 @@ public final class CoreApi extends AbstractOpenApi {
     /**
      * This document This document
      *
-     * @param f The optional f parameter indicates the output format that the
-     * server shall provide as part of the response document. The default format
-     * is JSON. (optional, default to json)
+     * @param parameters request parameters
      * @return ApiResponse&lt;Void&gt;
      * @throws ServiceException if fails to make API call
      */
-    public ServiceResponse<Void> getApi(@jakarta.annotation.Nullable String f) throws ServiceException {
+    public ServiceResponse<Void> getApi(GetApi parameters) throws ServiceException {
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/api", toPairs("f", f)));
+        request.uri(toUri("/api", toPairs("f", parameters.getFormat())));
         request.header("Accept", "application/json, text/html");
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -56,15 +57,13 @@ public final class CoreApi extends AbstractOpenApi {
      * API conformance definition A list of all conformance classes specified in
      * a standard that the server conforms to.
      *
-     * @param f The optional f parameter indicates the output format that the
-     * server shall provide as part of the response document. The default format
-     * is JSON. (optional, default to json)
+     * @param parameters request parameters
      * @return ApiResponse&lt;ConfClasses&gt;
      * @throws ServiceException if fails to make API call
      */
-    public ServiceResponse<ConfClasses> getConformance(@jakarta.annotation.Nullable String f) throws ServiceException {
+    public ServiceResponse<ConfClasses> getConformance(GetConformance parameters) throws ServiceException {
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/conformance", toPairs("f", f)));
+        request.uri(toUri("/conformance", toPairs("f", parameters.getFormat())));
         request.header("Accept", "application/json, text/html");
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -75,15 +74,13 @@ public final class CoreApi extends AbstractOpenApi {
      * Landing page The landing page provides links to the API definition and
      * the conformance statements for this API.
      *
-     * @param f The optional f parameter indicates the output format that the
-     * server shall provide as part of the response document. The default format
-     * is JSON. (optional, default to json)
+     * @param parameters request parameters
      * @return ApiResponse&lt;LandingPage&gt;
      * @throws ServiceException if fails to make API call
      */
-    public ServiceResponse<LandingPage> getLandingPage(@jakarta.annotation.Nullable String f) throws ServiceException {
+    public ServiceResponse<LandingPage> getLandingPage(GetLandingPage parameters) throws ServiceException {
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/", toPairs("f", f)));
+        request.uri(toUri("/", toPairs("f", parameters.getFormat())));
         request.header("Accept", "application/json, text/html");
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);

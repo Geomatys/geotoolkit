@@ -24,7 +24,6 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 import org.apache.sis.coverage.SampleDimension;
@@ -54,6 +53,9 @@ import org.geotoolkit.ogcapi.model.dggs.DggrsItem;
 import org.geotoolkit.ogcapi.model.dggs.DggrsListResponse;
 import org.geotoolkit.ogcapi.model.jsonschema.JSONSchema;
 import org.geotoolkit.ogcapi.model.jsonschema.JSONSchemaProperty;
+import org.geotoolkit.ogcapi.request.dggs.GetDggrs;
+import org.geotoolkit.ogcapi.request.dggs.GetDggrsList;
+import org.geotoolkit.ogcapi.request.dggs.GetZoneData;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridHierarchy;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystems;
@@ -138,10 +140,12 @@ public final class DggrsResource extends CollectionItemResource implements Aggre
                 allKnownDggrs.add(0, "S2");
             }
 
-            final DggrsListResponse lst = dggrsApi.collectionGetDGGRSList(description.getId(), "json").getData();
+            final DggrsListResponse lst = dggrsApi.collectionGetDGGRSList(
+                    new GetDggrsList().collectionId(description.getId()).format("json")).getData();
 
             for (DggrsItem item : lst.getDggrs()) {
-                Dggrs dggrs = dggrsApi.collectionGetDGGRS(item.getId(), description.getId(), "json").getData();
+                Dggrs dggrs = dggrsApi.collectionGetDGGRS(
+                        new GetDggrs().collectionId(description.getId()).dggrsId(item.getId()).format("json")).getData();
                 if (allKnownDggrs.contains(dggrs.getId())) {
                     components.add(new ForDGGRS(dggrs));
                 }
@@ -212,8 +216,14 @@ public final class DggrsResource extends CollectionItemResource implements Aggre
 
         final String dggrsName = dggrs.getName().getCode();
         baseZoneId = dggrs.getGridSystem().getHierarchy().toTextIdentifier(baseZoneId);
-        final ServiceResponse<DggrsData> response = dggrsApi.collectionGetDGGRSZoneData(dggrsName, baseZoneId.toString(), description.getId(),
-                preferredFormat, null, null, null, null, null, null, null, null, relativeDepth, null, null, queryGzip);
+        final ServiceResponse<DggrsData> response = dggrsApi.collectionGetDGGRSZoneData(
+                new GetZoneData()
+                        .dggrsId(dggrsName)
+                        .zoneId(baseZoneId.toString())
+                        .collectionId(description.getId())
+                        .format(preferredFormat)
+                        .zoneDepth(String.valueOf(relativeDepth))
+                        .gzip(queryGzip));
 
         final DggrsData data = response.getData();
         final List<DggrsDataValue> values = data.getValues().values().iterator().next();
