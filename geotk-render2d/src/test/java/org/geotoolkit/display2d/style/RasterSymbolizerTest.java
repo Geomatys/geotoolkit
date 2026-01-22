@@ -777,14 +777,16 @@ public class RasterSymbolizerTest {
     @Test
     public void testMultiDimensionalDefaultSlicing() throws Exception {
         // Test a datastore that strictly return what is requested upon read
-        testMultiDimensionalDefaultSlicing(true);
+        testMultiDimensionalDefaultSlicing(true, false);
         // Test a datastore that returns more content on read.
         // In this case, it will return multiple slices.
         // It means this case test the ability of the renderer to bypass datastore filtering issues.
-        testMultiDimensionalDefaultSlicing(false);
+        testMultiDimensionalDefaultSlicing(false, false);
+        testMultiDimensionalDefaultSlicing(true, true);
+        testMultiDimensionalDefaultSlicing(false, true);
     }
 
-    private void testMultiDimensionalDefaultSlicing(boolean readStrict) throws Exception {
+    private void testMultiDimensionalDefaultSlicing(boolean readStrict, boolean multiDimensionalTarget) throws Exception {
 
         var dataEnv = new GeneralEnvelope(CRS.compound(
                 CommonCRS.defaultGeographic(),
@@ -831,13 +833,28 @@ public class RasterSymbolizerTest {
         final MapLayers context = MapBuilder.createContext();
         context.getComponents().add(layer);
 
-        final
+        final GridGeometry targetGeom;
+        if (multiDimensionalTarget) {
+            final var targetEnv = new GeneralEnvelope(CRS.compound(
+                    CommonCRS.defaultGeographic(),
+                    CommonCRS.Temporal.JAVA.crs()
+            ));
+            targetEnv.setEnvelope(10, 30, 0, 20, 40, 1);
+            targetGeom = new GridGeometry(
+                    new GridExtent(null, new long[3], new long[] { 2, 2, 1 }, false),
+                    targetEnv,
+                    GridOrientation.DISPLAY
+            );
+        } else {
+            targetGeom = new GridGeometry(
+                    new GridExtent(2, 2),
+                    new Envelope2D(CommonCRS.defaultGeographic(), 10, 30, 10, 10),
+                    GridOrientation.DISPLAY
+            );
+        }
+
         // Draw entire world with "conventional" boundaries (-180 to 180). Expects a piece of the coverage on each bound.
-        var cdef = new CanvasDef(new GridGeometry(
-                new GridExtent(2, 2),
-                new Envelope2D(CommonCRS.defaultGeographic(), 10, 30, 10, 10),
-                GridOrientation.DISPLAY
-        ));
+        var cdef = new CanvasDef(targetGeom);
         var sdef = new SceneDef(context);
         var result = DefaultPortrayalService.portray(cdef, sdef);
         assertEquals(2, result.getWidth());
