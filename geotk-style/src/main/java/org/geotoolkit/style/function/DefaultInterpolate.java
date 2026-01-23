@@ -187,7 +187,7 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
             if (method == Method.COLOR) {
                 c = Color.class;
             } else {
-                c = String.class;
+                c = Number.class;
             }
         }
 
