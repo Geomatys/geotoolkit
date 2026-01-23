@@ -40,7 +40,7 @@ public final class GetCollectionMetadata extends RequestParameters {
     public void setCollectionId(String collectionId) {
         this.collectionId = collectionId;
     }
-    
+
     /**
      * @param collectionId the collectionId to set
      */

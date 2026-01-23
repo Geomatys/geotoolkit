@@ -20,12 +20,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
+import java.util.function.IntConsumer;
 import java.util.logging.Logger;
-import java.util.stream.Stream;
+import java.util.stream.IntStream;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometries.math.DataType;
@@ -226,10 +226,13 @@ public final class DggrsResource extends CollectionItemResource implements Aggre
                         .gzip(queryGzip));
 
         final DggrsData data = response.getData();
-        final List<DggrsDataValue> values = data.getValues().values().iterator().next();
+        final Map<String, List<DggrsDataValue>> byBands = data.getValues();
 
         final List<Array> samples = new ArrayList<>();
-        for (int i = 0; i < values.size(); i++) {
+        for (Entry<String, List<DggrsDataValue>> entry : byBands.entrySet()) {
+            final String key = entry.getKey();
+
+            final List<DggrsDataValue> values = entry.getValue();
             final List<Object> datas = values.get(0).getData();
             final double[] arr = new double[datas.size()];
             for (int k = 0; k <datas.size(); k++) {
@@ -248,7 +251,15 @@ public final class DggrsResource extends CollectionItemResource implements Aggre
                 }
             }
 
-            final SampleSystem ss = new SampleSystem(DataType.DOUBLE, sampleDimensions.get(i));
+            SampleDimension dim = null;
+            for (SampleDimension sd : sampleDimensions) {
+                if (sd.getName().tip().toString().equals(key)) {
+                    dim = sd;
+                    break;
+                }
+            }
+
+            final SampleSystem ss = new SampleSystem(DataType.DOUBLE, dim);
             final Array array = NDArrays.of(ss, arr);
             samples.add(array);
         }
@@ -339,27 +350,19 @@ public final class DggrsResource extends CollectionItemResource implements Aggre
             final DiscreteGlobalGridGeometry dggrsGeom = new DiscreteGlobalGridGeometry(dggrs, zones, null);
             final ArrayDiscreteGlobalGridCoverage target = new ArrayDiscreteGlobalGridCoverage(getIdentifier().orElse(Names.createLocalName(null, null, "dggrs")), dggrsGeom, samples);
 
-            final BandedCodeIterator ite = target.createIterator();
             final WritableBandedCodeIterator wite = target.createWritableIterator();
-
-            final Stream<int[]> stream = Stream.generate(new Supplier<int[]>() {
+            IntStream.range(0, zones.size()).parallel().forEach(new IntConsumer() {
                 @Override
-                public synchronized int[] get() {
-                    ite.next();
-                    return ite.getPosition();
-                }
-            });
-            stream.limit(zones.size()).parallel().forEach(new Consumer<int[]>() {
-                @Override
-                public void accept(int[] gridPosition) {
+                public void accept(int idx) {
                     try {
-                        final Zone zone = dggh.getZone(zones.get(gridPosition[0]));
+                        Object zid = zones.get(idx);
+                        final Zone zone = dggh.getZone(zid);
                         double[] values = getZoneValue(dggrs, zone);
                         if (values == null) {
                             values = nans;
                         }
                         synchronized (wite) {
-                            wite.moveTo(gridPosition);
+                            wite.moveTo(new int[]{idx});
                             wite.setCell(values);
                         }
                     } catch (ServiceException | DataStoreException e) {
@@ -368,21 +371,6 @@ public final class DggrsResource extends CollectionItemResource implements Aggre
                 }
             });
             wite.close();
-
-
-//            try (final WritableBandedCodeIterator iterator = target.createWritableIterator()) {
-//                while (iterator.next()) {
-//                    final int[] gridPosition = iterator.getPosition();
-//                    final Zone zone = dggh.getZone(zones.get(gridPosition[0]));
-//                    double[] values = getZoneValue(dggrs, zone);
-//                    if (values == null) {
-//                        values = nans;
-//                    }
-//                    iterator.setCell(values);
-//                }
-//            } catch (ServiceException ex) {
-//                throw new DataStoreException(ex);
-//            }
 
             return target;
         }

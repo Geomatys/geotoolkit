@@ -43,7 +43,7 @@ public final class GetApi extends RequestParameters {
     }
 
     /**
-     * @see #getFormat() 
+     * @see #getFormat()
      */
     public GetApi format(String format) {
         setFormat(format);
