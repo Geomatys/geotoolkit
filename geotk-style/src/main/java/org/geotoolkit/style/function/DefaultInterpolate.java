@@ -87,8 +87,9 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
         lookup = expressions[0];
         final List<InterpolationPoint> points = new ArrayList<InterpolationPoint>();
         for(int i=1;i<expressions.length-2;i+=2){
+            Object val = expressions[i].apply(null);
             final InterpolationPoint ip = new DefaultInterpolationPoint(
-                    (Number) expressions[i].apply(null), expressions[i+1]);
+                    ObjectConverters.convert(val, Double.class), expressions[i+1]);
             points.add(ip);
         }
         this.points = points.toArray(new InterpolationPoint[points.size()]);
@@ -169,7 +170,7 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
     }
 
     @Override
-    public Object evaluate(final Object object, final Class c) {
+    public Object evaluate(final Object object, Class c) {
         if (object instanceof RenderedImage && RenderedImage.class.isAssignableFrom(c))
             return evaluateImage((RenderedImage) object);
 
@@ -180,6 +181,14 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
             value = (Number)object;
         }else{
             return ObjectConverters.convert(fallback.apply(object), c);
+        }
+
+        if (Object.class.equals(c)) {
+            if (method == Method.COLOR) {
+                c = Color.class;
+            } else {
+                c = String.class;
+            }
         }
 
         final double dval = value.doubleValue();
@@ -236,8 +245,8 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
             final Object o2 = ObjectConverters.convert(after.getValue().apply(object), c);
             if(o1 instanceof Color && o2 instanceof Color){
                 //datas are not numbers, looks like we deal with colors
-                final Color c1 = (Color) before.getValue().apply(object);
-                final Color c2 = (Color) after.getValue().apply(object);
+                final Color c1 = (Color) o1;
+                final Color c2 = (Color) o2;
                 final Color in = interpolate(c1, c2, pourcent);
                 return ObjectConverters.convert( in , c);
             }else{

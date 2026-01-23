@@ -18,7 +18,6 @@ package org.geotoolkit.display2d.style.renderer;
 
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -47,6 +46,9 @@ import org.geotoolkit.display2d.primitive.UndefinedCRSException;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.geotoolkit.storage.rs.CodedCoverage;
+import org.geotoolkit.storage.rs.CodedResource;
+import org.geotoolkit.storage.rs.internal.shared.CodedCoverageAsFeatureSet;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyNotFoundException;
@@ -122,6 +124,20 @@ public abstract class AbstractSymbolizerRenderer<C extends CachedSymbolizer<? ex
      */
     @Override
     public Stream<Presentation> presentations(MapLayer layer, Resource resource) {
+
+        if (resource instanceof CodedResource) {
+            try {
+                CodedResource cr = (CodedResource) resource;
+                final CodedCoverage coverage = cr.read(renderingContext.getGridGeometry2D());
+                resource = new CodedCoverageAsFeatureSet(coverage, false, CodedCoverageAsFeatureSet.GEOMETRY_ZONE_REGION);
+            } catch (DataStoreException ex) {
+                ExceptionPresentation ep = new ExceptionPresentation(ex);
+                ep.setLayer(layer);
+                ep.setResource(resource);
+                return Stream.of(ep);
+            }
+        }
+
         if (resource instanceof FeatureSet) {
             /*
             Optimise case using envelopes filter and limited propery names.

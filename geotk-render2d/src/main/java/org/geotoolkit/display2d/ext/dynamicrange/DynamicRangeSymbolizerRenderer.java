@@ -28,6 +28,7 @@ import java.util.stream.Stream;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverageBuilder;
+import org.apache.sis.map.ExceptionPresentation;
 import org.apache.sis.map.Presentation;
 import org.apache.sis.metadata.iso.content.DefaultCoverageDescription;
 import org.apache.sis.map.MapLayer;
@@ -44,7 +45,9 @@ import org.geotoolkit.display2d.style.renderer.AbstractCoverageSymbolizerRendere
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.geotoolkit.math.Histogram;
 import org.geotoolkit.processing.image.dynamicrange.DynamicRangeStretchProcess;
+import org.geotoolkit.storage.coverage.BandedCoverageResource;
 import org.geotoolkit.storage.coverage.DefaultSampleDimensionExt;
+import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
 import org.opengis.filter.Expression;
 import org.opengis.filter.Literal;
 import org.opengis.metadata.Metadata;
@@ -65,6 +68,20 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
 
     @Override
     public Stream<Presentation> presentations(MapLayer layer, Resource resource) {
+
+        if (resource instanceof BandedCoverageResource) {
+            BandedCoverageResource bcr = (BandedCoverageResource) resource;
+            try {
+                GridCoverage coverage = BandedCoverageResource.sample(bcr, renderingContext.getGridGeometry2D());
+                resource = new InMemoryGridCoverageResource(resource.getIdentifier().orElse(null), coverage);
+            } catch (DataStoreException ex) {
+                ExceptionPresentation ep = new ExceptionPresentation(ex);
+                ep.setLayer(layer);
+                ep.setResource(resource);
+                return Stream.of(ep);
+            }
+        }
+
         if (resource instanceof GridCoverageResource) {
             try {
                 final GridCoverageResource covref = (GridCoverageResource) resource;
