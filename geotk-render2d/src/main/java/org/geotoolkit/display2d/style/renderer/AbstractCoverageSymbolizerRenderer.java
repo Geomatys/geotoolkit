@@ -396,6 +396,24 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         return new GridCoverage2D(canvasGrid, coverage.getSampleDimensions(), result);
     }
 
+    /**
+     * A fallback method to acquire a transform from a source grid to a target grid.
+     * This code must only be used when {@link GridGeometry#createTransformTo(GridGeometry, PixelInCell)} fails.
+     */
+    private static MathTransform createConversionFallback(final GridGeometry source, final GridGeometry target, PixelInCell anchor) throws FactoryException, NoninvertibleTransformException {
+        final var sourceCRS = source.getCoordinateReferenceSystem();
+        final var targetCRS = target.getCoordinateReferenceSystem();
+        var sourceCrsToTargetCrs = Objects.requireNonNull(
+                CRS.findOperation(sourceCRS, targetCRS, null).getMathTransform(),
+                "MathTransform from data CRS to objective CRS should not be null"
+        );
+        return MathTransforms.concatenate(
+                source.getGridToCRS(anchor),
+                sourceCrsToTargetCrs,
+                target.getGridToCRS(anchor).inverse()
+        );
+    }
+
     private static GridGeometry extractSlice(GridGeometry fullArea, GridGeometry areaOfInterest, final int margin)
             throws DataStoreException, TransformException, FactoryException {
 
@@ -420,17 +438,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
             try {
                 sourceToTarget = fullArea.createTransformTo(areaOfInterest, PixelInCell.CELL_CENTER);
             } catch (TransformException e) {
-                final var sourceCRS = fullArea.getCoordinateReferenceSystem();
-                final var targetCRS = areaOfInterest.getCoordinateReferenceSystem();
-                var sourceCrsToTargetCrs = Objects.requireNonNull(
-                        CRS.findOperation(sourceCRS, targetCRS, null).getMathTransform(),
-                        "MathTransform from data CRS to objective CRS should not be null"
-                );
-                sourceToTarget = MathTransforms.concatenate(
-                        fullArea.getGridToCRS(PixelInCell.CELL_CENTER),
-                        sourceCrsToTargetCrs,
-                        areaOfInterest.getGridToCRS(PixelInCell.CELL_CENTER).inverse()
-                );
+                sourceToTarget = createConversionFallback(fullArea, areaOfInterest, PixelInCell.CELL_CENTER);
             }
             var dimensionMatching = new TransformSeparator(sourceToTarget);
             // first, check what dimensions in source dataset are selected/filtered by area of interest
@@ -440,7 +448,27 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
             dimensionMatching.clear();
             dimensionMatching.addTargetDimensions(targetRenderDimensions);
             dimensionMatching.separate();
-            sourceRenderDimensions = dimensionMatching.getSourceDimensions();
+            var separatedSourceDims = dimensionMatching.getSourceDimensions();
+
+            // HACK: temporary workaround while waiting a fix in Apache SIS.
+            // Context: If the analyzed transform contains wrap-around operations, sometimes, the separation fails.
+            // THe bug has been observed on 2026-01-22.
+            // TODO: If using a newer version of SIS, this code block should be re-evaluated and removed if possible.
+            {
+                if (separatedSourceDims.length > targetRenderDimensions.length) {
+                    dimensionMatching = new TransformSeparator(createConversionFallback(fullArea, areaOfInterest, PixelInCell.CELL_CENTER));
+                    dimensionMatching.addTargetDimensions(targetRenderDimensions);
+                    dimensionMatching.separate();
+                    separatedSourceDims = dimensionMatching.getSourceDimensions();
+
+                    if (separatedSourceDims.length > targetRenderDimensions.length) {
+                        LOGGER.warning("Cannot determinate coordinate axes involved in rendering for source dataset. It may produce errors or unpredictable results.");
+                    }
+                }
+            }
+            // END HACK
+
+            sourceRenderDimensions = separatedSourceDims;
         }
 
         int[] sourceMargin = new int[sourceDimension];
