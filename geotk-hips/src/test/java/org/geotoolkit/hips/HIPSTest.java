@@ -52,7 +52,7 @@ public class HIPSTest {
                     final Zone baseZone = coder.decode(roots.get(0));
                     Stream<Zone> children = baseZone.getChildrenAtRelativeDepth(3);
                     List<Object> zones = children.map(Zone::getIdentifier).toList();
-                    DiscreteGlobalGridCoverage coverage = dgr.read(new DiscreteGlobalGridGeometry(dggrs, zones, null));
+                    DiscreteGlobalGridCoverage coverage = dgr.read(DiscreteGlobalGridGeometry.unstructured(dggrs, zones, null));
 
                     CodeIterator ite = coverage.createIterator();
                     while (ite.next()) {

@@ -176,7 +176,7 @@ public interface CodedResource extends BandedCoverageResource {
         try (Stream<Zone> zones = grid.getZones(domain.getEnvelope(dggrs.getGridSystem().getCrs()))) {
             zoneIds = zones.map(Zone::getIdentifier).toList();
         }
-        return new DiscreteGlobalGridGeometry(dggrs, zoneIds, null);
+        return DiscreteGlobalGridGeometry.unstructured(dggrs, zoneIds, null);
     }
 
     /**

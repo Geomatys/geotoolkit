@@ -84,7 +84,7 @@ public final class DggrsResource extends CollectionItemResource implements Aggre
 
     private static final ArrayDiscreteGlobalGridCoverage NO_CELL = new ArrayDiscreteGlobalGridCoverage(
             Names.createLocalName(null, null, "nocell"),
-            new DiscreteGlobalGridGeometry(S2Dggrs.INSTANCE, List.of("0"), null),
+            DiscreteGlobalGridGeometry.unstructured(S2Dggrs.INSTANCE, List.of("0"), null),
             List.of());
 
     private final FeatureApi featureApi;
@@ -264,7 +264,7 @@ public final class DggrsResource extends CollectionItemResource implements Aggre
             samples.add(array);
         }
 
-        final DiscreteGlobalGridGeometry g = DiscreteGlobalGridGeometry.forSubZone(dggrs, baseZoneId, relativeDepth);
+        final DiscreteGlobalGridGeometry g = DiscreteGlobalGridGeometry.subZone(dggrs, baseZoneId, relativeDepth);
         return new ArrayDiscreteGlobalGridCoverage(Names.createLocalName(null, null, description.getId()), g, samples);
     }
 
@@ -281,7 +281,7 @@ public final class DggrsResource extends CollectionItemResource implements Aggre
             super(DggrsResource.this);
             this.dggrsDesc = dggrsDesc;
             this.dggrs = DiscreteGlobalGridReferenceSystems.forCode(dggrsDesc.getId());
-            this.geometry = new DiscreteGlobalGridGeometry(dggrs, null, null, null);
+            this.geometry = DiscreteGlobalGridGeometry.unstructured(dggrs, null, null, null);
             this.maxRefinementLevel = dggrsDesc.getMaxRefinementLevel();
             this.maxRelativeDepth = dggrsDesc.getMaxRelativeDepth();
 
@@ -325,7 +325,7 @@ public final class DggrsResource extends CollectionItemResource implements Aggre
 
             final DiscreteGlobalGridGeometry dggrsGeometry = (DiscreteGlobalGridGeometry) queryGeometry;
             final DiscreteGlobalGridReferenceSystem dggrs = dggrsGeometry.getReferenceSystem();
-            Object baseZoneId = dggrsGeometry.getBaseZoneId();
+            Object[] baseZoneId = dggrsGeometry.getBaseZoneIds();
             Integer relativeDepth = dggrsGeometry.getRelativeDepth();
 
             if (baseZoneId != null && relativeDepth != null && relativeDepth <= maxRelativeDepth) {
@@ -347,7 +347,7 @@ public final class DggrsResource extends CollectionItemResource implements Aggre
             }
 
             final DiscreteGlobalGridHierarchy dggh = dggrs.getGridSystem().getHierarchy();
-            final DiscreteGlobalGridGeometry dggrsGeom = new DiscreteGlobalGridGeometry(dggrs, zones, null);
+            final DiscreteGlobalGridGeometry dggrsGeom = DiscreteGlobalGridGeometry.unstructured(dggrs, zones, null);
             final ArrayDiscreteGlobalGridCoverage target = new ArrayDiscreteGlobalGridCoverage(getIdentifier().orElse(Names.createLocalName(null, null, "dggrs")), dggrsGeom, samples);
 
             final WritableBandedCodeIterator wite = target.createWritableIterator();

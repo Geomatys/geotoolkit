@@ -65,7 +65,7 @@ public final class GridAsDiscreteGlobalGridResource extends AbstractResource imp
             throw new IllegalArgumentException("Only 2D coverage resources are supported. Use GridAsReferencedGridResource for N dimensions.");
         }
         this.source = resource;
-        this.gridGeometry = new DiscreteGlobalGridGeometry(dggrs, null, null);
+        this.gridGeometry = DiscreteGlobalGridGeometry.unstructured(dggrs, null, null);
 
         Quantity<?> res = computeAverageResolution(resource.getGridGeometry());
         DiscreteGlobalGridReferenceSystem.Coder coder = dggrs.createCoder();

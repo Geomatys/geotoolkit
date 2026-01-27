@@ -88,7 +88,7 @@ public interface DiscreteGlobalGridResource extends CodedResource {
         //todo check intersection with additional dimensions
 
         final List<Object> zoneIds = zones.map(Zone::getIdentifier).toList();
-        final DiscreteGlobalGridGeometry geometry = new DiscreteGlobalGridGeometry(dggrs, zoneIds, null);
+        final DiscreteGlobalGridGeometry geometry = DiscreteGlobalGridGeometry.unstructured(dggrs, zoneIds, null);
         return read(geometry, range);
     }
 
