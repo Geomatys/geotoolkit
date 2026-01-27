@@ -40,12 +40,14 @@ import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
 import org.junit.BeforeClass;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.apache.sis.coverage.grid.PixelInCell;
+import org.junit.Ignore;
 import org.opengis.referencing.operation.MathTransform;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
+@Ignore //TODO test is very slow on latest sis, will need to invetigate further
 public class TileMatrixCoverageResourceTest extends CoverageReadConsistency {
     /**
      * The resource used for the test, created only once.

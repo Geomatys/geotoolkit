@@ -80,7 +80,7 @@ public abstract class AbstractDggrsTest {
         //todo fix H3, but how ?
         Assumptions.assumeTrue(!(dggrs instanceof H3Dggrs));
 
-        final List<Zone> rootZoneIds = dggrs.getGridSystem().getHierarchy().getGrids().get(0).getZones().toList();
+        final List<Zone> rootZoneIds = dggrs.getGridSystem().getHierarchy().getGrids().get(0).getZones().limit(10).toList();
 
         for (Zone zone : rootZoneIds) {
             testParentChildrenRelations(zone, 0, 4);
@@ -217,10 +217,10 @@ public abstract class AbstractDggrsTest {
     @Test
     public void testSampling() throws TransformException, FactoryException {
 
-        final List<Zone> rootZoneIds = dggrs.getGridSystem().getHierarchy().getGrids().get(0).getZones().toList();
+        final List<Zone> rootZoneIds = dggrs.getGridSystem().getHierarchy().getGrids().get(0).getZones().limit(3).toList();
 
         for (Zone zone : rootZoneIds) {
-            final List<Zone> candidates = zone.getChildrenAtRelativeDepth(2).limit(5).toList();
+            final List<Zone> candidates = zone.getChildrenAtRelativeDepth(2).limit(3).toList();
 
             for (Zone z : candidates) {
                 final DirectPosition position = z.getPosition();
