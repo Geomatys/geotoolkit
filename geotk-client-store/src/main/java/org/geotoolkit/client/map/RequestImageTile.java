@@ -44,13 +44,23 @@ public class RequestImageTile extends DefaultImageTile {
 
         if(spi == null){
             //try to find reader
-            final InputStream in = ((Request)input).getResponseStream();
-            final StorageConnector cnx = new StorageConnector(in);
+            final Request request = (Request)input;
 
+            //try to find a reader using a suffix
+            ImageReader reader = XImageIO.getReaderBySuffix(request.getURL(), Boolean.TRUE, Boolean.TRUE);
+            InputStream in = null;
             try {
+                in = request.getResponseStream();
+                byte[] readAllBytes = in.readAllBytes();
+                final StorageConnector cnx = new StorageConnector(readAllBytes);
                 final ImageInputStream imin = cnx.getStorageAs(ImageInputStream.class);
-                final ImageReader reader = XImageIO.getReader(imin, Boolean.TRUE, Boolean.TRUE);
-                return reader;
+                if (reader != null) {
+                    reader.setInput(imin, true);
+                    return reader;
+                } else {
+                    reader = XImageIO.getReader(imin, Boolean.TRUE, Boolean.TRUE);
+                    return reader;
+                }
             } catch (DataStoreException ex) {
                 try {
                     in.close();

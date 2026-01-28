@@ -21,7 +21,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
+import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.dggal.panama.DggalDggrs;
 import org.geotoolkit.referencing.dggs.Zone;
@@ -86,8 +88,29 @@ final class DGGALDgg extends AbstractDiscreteGlobalGrid<DGGALDggh> {
     }
 
     @Override
+    public long getZoneCount() {
+        try {
+            return hierarchy.dggrs.dggal.countZones(level);
+        } catch (Throwable ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    @Override
     public Stream<Zone> getZones(Envelope env) throws TransformException {
-        return super.getZones(env);
+        if (env == null) return getZones((GeographicExtent) null);
+        env = Envelopes.transform(env, CommonCRS.WGS84.normalizedGeographic());
+        try {
+            long[] zids = hierarchy.dggrs.dggal.listZones(level, new double[]{
+                Math.toRadians(env.getMinimum(1)),
+                Math.toRadians(env.getMinimum(0)),
+                Math.toRadians(env.getMaximum(1)),
+                Math.toRadians(env.getMaximum(0))
+            });
+            return LongStream.of(zids).mapToObj((long value) -> new DGGALZone(hierarchy.dggrs, value));
+        } catch (Throwable ex) {
+            throw new TransformException(ex);
+        }
     }
 
     @Override

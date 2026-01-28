@@ -276,7 +276,7 @@ public final class CodedCoverageAsFeatureSet extends AbstractFeatureSet {
     public static AttributeTypeBuilder<?>[] toFeatureType(FeatureTypeBuilder ftb, List<SampleDimension> sampleDimensions) {
         final AttributeTypeBuilder[] samples = new AttributeTypeBuilder[sampleDimensions.size()];
         for (int i = 0; i < samples.length; i++) {
-            final GenericName name = Names.createLocalName(null, null, "Band " + i + " " + sampleDimensions.get(i).getName().tip().toString());
+            final GenericName name = Names.createLocalName(null, null, sampleDimensions.get(i).getName().tip().toString());
             samples[i] = ftb.addAttribute(Double.class).setName(name);
         }
         return samples;

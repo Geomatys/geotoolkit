@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2018, Geomatys
+ *    (C) 2025, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,26 +14,34 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.storage;
+package org.geotoolkit.ogcapi.request.feature;
 
-import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.Resource;
+import org.geotoolkit.ogcapi.request.RequestParameters;
 
 /**
- * This interface identify resources which support a transactional procedure.
- * Example : Databases, WFS
  *
  * @author Johann Sorel (Geomatys)
  */
-public interface TransactionalResource extends Resource {
+public final class GetFunctions extends RequestParameters {
+
+    private String format;
+
+    public String getFormat() {
+        return format;
+    }
 
     /**
-     * Start a new transaction on this resource.
-     * The returned resource should have the same capabilities of this
-     * resource.
-     *
-     * @return new TransactionResource
+     * @param format the format to set
      */
-    ResourceTransaction newTransaction() throws DataStoreException;
+    public void setFormat(String format) {
+        this.format = format;
+    }
 
+    /**
+     * @see #getFormat()
+     */
+    public GetFunctions format(String format) {
+        setFormat(format);
+        return this;
+    }
 }

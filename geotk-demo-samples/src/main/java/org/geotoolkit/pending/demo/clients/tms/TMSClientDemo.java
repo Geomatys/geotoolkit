@@ -34,7 +34,7 @@ public class TMSClientDemo {
         final MapLayers context = MapBuilder.createContext(CommonCRS.WGS84.normalizedGeographic());
 
         final Parameters params = Parameters.castOrWrap(TMSProvider.PARAMETERS.createValue());
-        params.getOrCreate(TMSProvider.URL).setValue(new URL("http://tile.openstreetmap.org"));
+        params.getOrCreate(TMSProvider.URL).setValue(new URL("https://tile.openstreetmap.org"));
         params.getOrCreate(TMSProvider.IMAGE_CACHE).setValue(true);
         params.getOrCreate(TMSProvider.NIO_QUERIES).setValue(true);
         params.getOrCreate(TMSProvider.MAX_ZOOM_LEVEL).setValue(18);

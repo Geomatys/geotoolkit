@@ -176,13 +176,13 @@ public final class GridAsCodedResource extends AbstractResource implements Coded
 
         final GridExtent extent = resultGeometry.getExtent();
         final CodeTransform transform = resultGeometry.getGridToRS();
-        final int nbSamples = Math.toIntExact(TileMatrices.countCells(extent)) * sampleDimensions.size();
+        final int nbZone = Math.toIntExact(TileMatrices.countCells(extent));
 
         final List<Array> samples = new ArrayList<>();
         final double[] nans = new double[sampleDimensions.size()];
         for (int i = 0; i < nans.length; i++) {
             final SampleSystem ss = new SampleSystem(DataType.DOUBLE, sampleDimensions.get(i));
-            final double[] datas = new double[nbSamples];
+            final double[] datas = new double[nbZone];
             Arrays.fill(datas, Double.NaN);
             samples.add(NDArrays.of(ss, datas));
             nans[i] = Double.NaN;
@@ -307,7 +307,6 @@ public final class GridAsCodedResource extends AbstractResource implements Coded
                     //not found
                 }
             }
-
             result = result == null ? slice : new GridGeometry(result, slice);
         }
 

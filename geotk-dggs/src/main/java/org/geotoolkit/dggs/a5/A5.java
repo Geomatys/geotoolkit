@@ -63,4 +63,13 @@ final class A5 {
         return Serialization.getResolution(index);
     }
 
+    public static long countZones(int level) {
+        if (level == 0) return 1;
+        else if (level == 1) return 12;
+        else if (level == 2) return 60;
+        else if (level == 3) return 240;
+
+        return 240l * (long) Math.pow(4, level - 3);
+    }
+
 }

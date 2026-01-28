@@ -22,6 +22,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 import javax.measure.IncommensurableException;
+import javax.measure.Quantity;
 import org.apache.sis.referencing.gazetteer.ReferencingByIdentifiers;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.metadata.citation.Party;
@@ -117,6 +118,18 @@ public abstract class DiscreteGlobalGridReferenceSystem extends ReferencingByIde
          * @throws IncommensurableException
          */
         public abstract void setPrecisionLevel(int level) throws IncommensurableException;
+
+        @Override
+        public final void setPrecision(Quantity<?> qnt, DirectPosition dp) throws IncommensurableException {
+            final DiscreteGlobalGridHierarchy hierarchy = getReferenceSystem().getGridSystem().getHierarchy();
+            setPrecisionLevel(hierarchy.getGrid(qnt).getRefinementLevel());
+        }
+
+        @Override
+        public final Quantity<?> getPrecision(DirectPosition dp) {
+            return getReferenceSystem().getGridSystem().getHierarchy()
+                    .getGrids().get(getPrecisionLevel()).getPrecision();
+        }
 
         /**
          * {@inheritDoc }

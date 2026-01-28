@@ -18,9 +18,12 @@ package org.geotoolkit.referencing.dggs;
 
 import com.google.common.geometry.S2Polygon;
 import java.util.stream.Stream;
+import javax.measure.Quantity;
+import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.storage.dggs.DiscreteGlobalGridSystems;
+import org.geotoolkit.storage.rs.internal.shared.s2.S2;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.extent.GeographicExtent;
@@ -44,6 +47,11 @@ public interface DiscreteGlobalGrid {
      * @see https://docs.ogc.org/DRAFTS/21-038r1.html#term-refinement-level
      */
     int getRefinementLevel();
+
+    /**
+     * @return approximative zone precision
+     */
+    Quantity<?> getPrecision();
 
     /**
      * Create a math transform from long type identifiers to CRS.
@@ -70,6 +78,12 @@ public interface DiscreteGlobalGrid {
     MathTransform createTransformToIdentifiers() throws UnsupportedOperationException;
 
     /**
+     * Get the number of zones at the hierarchy level.
+     * @return number of zones
+     */
+    long getZoneCount();
+
+    /**
      * Get all zones in at this grid level.
      *
      * @return stream of matching zones
@@ -94,8 +108,15 @@ public interface DiscreteGlobalGrid {
     default Stream<Zone> getZones(Envelope env) throws TransformException {
         if (env == null) return getZones((GeographicExtent) null);
         env = Envelopes.transform(env, CommonCRS.WGS84.normalizedGeographic());
-        S2Polygon polygon = DiscreteGlobalGridSystems.toS2Polygon(env);
-        return getZones(DiscreteGlobalGridSystems.toGeographicExtent(polygon));
+
+        if (env.getSpan(0) == 0 && env.getSpan(1) == 0) {
+            //envelope degenerates to a point
+            final DirectPosition dp = new DirectPosition2D(env.getCoordinateReferenceSystem(), env.getMinimum(0), env.getMinimum(1));
+            return Stream.of(getZone(dp));
+        }
+
+        S2Polygon polygon = S2.toS2Polygon(env);
+        return getZones(S2.toGeographicExtent(polygon));
     }
 
     /**

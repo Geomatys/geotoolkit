@@ -27,13 +27,16 @@ import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.StorageConnector;
+import org.apache.sis.util.iso.Names;
 import org.geotoolkit.client.openapi.OpenApiConfiguration;
 import org.geotoolkit.client.service.ServiceException;
 import org.geotoolkit.ogcapi.client.common.CoreApi;
 import org.geotoolkit.ogcapi.model.Conformance;
 import org.geotoolkit.ogcapi.model.common.ConfClasses;
+import org.geotoolkit.ogcapi.request.common.GetConformance;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.util.GenericName;
 
 /**
  *
@@ -44,6 +47,7 @@ public final class Store extends DataStore implements Aggregate {
     private final OpenApiConfiguration configuration;
     private final URI uri;
     private Resource root;
+    private final String id;
 
     Store(Provider provider, StorageConnector connector) throws DataStoreException {
         super(provider, connector);
@@ -53,6 +57,20 @@ public final class Store extends DataStore implements Aggregate {
         configuration = OpenApiConfiguration.builder()
             .updateBaseUri(uri.toString())
             .build();
+
+        String str = configuration.getBaseUri();
+        id = str.replace("http://", "").replace("https://", "");
+
+    }
+
+    @Override
+    public String getDisplayName() {
+        return id;
+    }
+
+    @Override
+    public Optional<GenericName> getIdentifier() throws DataStoreException {
+        return Optional.of(Names.createLocalName(null, null, id));
     }
 
     @Override
@@ -79,8 +97,10 @@ public final class Store extends DataStore implements Aggregate {
     public synchronized Collection<? extends Resource> components() throws DataStoreException {
         if (root == null) {
             try (CoreApi core = new CoreApi(configuration)) {
-                final ConfClasses conformance = core.getConformance("application/json").getData();
-                if (conformance.isConformTo(Conformance.COLLECTIONS_v0) || conformance.isConformTo(Conformance.COLLECTIONS_v1)) {
+                final ConfClasses conformance = core.getConformance(new GetConformance().format("json")).getData();
+                if (conformance.isConformTo(Conformance.COLLECTIONS_v0)
+                   || conformance.isConformTo(Conformance.COLLECTIONS_v1)
+                   || conformance.isConformTo(Conformance.DGGS_COLLECTION)) {
                     root = new CollectionResource(configuration);
                 } else {
                     root = new UndefinedResource(configuration);

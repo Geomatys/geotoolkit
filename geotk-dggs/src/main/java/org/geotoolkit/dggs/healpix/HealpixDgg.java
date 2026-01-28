@@ -19,7 +19,10 @@ package org.geotoolkit.dggs.healpix;
 import cds.healpix.HashComputer;
 import cds.healpix.Healpix;
 import cds.healpix.HealpixNested;
+import cds.healpix.HealpixNestedBMOC;
 import com.google.common.geometry.S2Polygon;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
 import org.apache.sis.referencing.CRS;
@@ -93,35 +96,39 @@ final class HealpixDgg extends AbstractDiscreteGlobalGrid<HealpixDggh> {
     }
 
     @Override
+    public long getZoneCount() {
+        if(level == 0) return 12;
+        return 12l * (long)Math.pow(4, level);
+    }
+
+    @Override
     public Stream<Zone> getZones(Envelope env) throws TransformException {
         return super.getZones(env);
 
-        //Bugged, raises assertion errors
-        /*
-        final double minX = env.getMinimum(0);
-        final double minY = env.getMinimum(1);
-        final double maxX = env.getMaximum(0);
-        final double maxY = env.getMaximum(1);
-
-        //api does not say, but when looking at the code, first point should not be duplicated at the end of the list
-        final HealpixNestedBMOC candidate = polygonComputer.overlappingCenters(new double[][]{
-                {minX, minY},
-                {minX, maxY},
-                {maxX, maxY},
-                {maxX, minY}});
-        final List<Zone> zones = new ArrayList<>();
-        final Iterator<HealpixNestedBMOC.CurrentValueAccessor> iterator = candidate.iterator();
-        while (iterator.hasNext()) {
-            final HealpixNestedBMOC.CurrentValueAccessor acc = iterator.next();
-            final NHealpixZone z = new NHealpixZone(dggrs, acc.getDepth(), acc.getHash());
-            if (z.getOrder() != level) {
-                zones.addAll(z.getChildrenAtRelativeDepth(level-z.getOrder()).toList());
-            } else {
-                zones.add(z);
-            }
-        }
-        return zones.stream();
-        */
+//        //Bugged, raises assertion errors
+//        final double minX = env.getMinimum(0);
+//        final double minY = env.getMinimum(1);
+//        final double maxX = env.getMaximum(0);
+//        final double maxY = env.getMaximum(1);
+//
+//        //api does not say, but when looking at the code, first point should not be duplicated at the end of the list
+//        final HealpixNestedBMOC candidate = healpixNested.newPolygonComputer().overlappingCenters(new double[][]{
+//                {minX, minY},
+//                {minX, maxY},
+//                {maxX, maxY},
+//                {maxX, minY}});
+//        final List<Zone> zones = new ArrayList<>();
+//        final Iterator<HealpixNestedBMOC.CurrentValueAccessor> iterator = candidate.iterator();
+//        while (iterator.hasNext()) {
+//            final HealpixNestedBMOC.CurrentValueAccessor acc = iterator.next();
+//            final HealpixZone z = new HealpixZone(hierarchy.dggrs, acc.getDepth(), acc.getHash());
+//            if (z.getOrder() != level) {
+//                zones.addAll(z.getChildrenAtRelativeDepth(level-z.getOrder()).toList());
+//            } else {
+//                zones.add(z);
+//            }
+//        }
+//        return zones.stream();
     }
 
     @Override

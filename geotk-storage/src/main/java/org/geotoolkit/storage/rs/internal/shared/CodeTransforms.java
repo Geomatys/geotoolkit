@@ -25,6 +25,7 @@ import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.PixelInCell;
 import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.referencing.operation.transform.TransformSeparator;
 import org.geotoolkit.referencing.rs.Code;
 import org.geotoolkit.referencing.rs.ReferenceSystems;
@@ -35,6 +36,8 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.geotoolkit.storage.rs.CodeTransform;
+import org.opengis.referencing.crs.TemporalCRS;
+import org.opengis.referencing.operation.Matrix;
 
 /**
  *
@@ -179,11 +182,22 @@ public final class CodeTransforms {
         private final MathTransform gridToCRS;
         private MathTransform crsToGrid;
         private final int dimension;
+        private Double singleOrigin;
 
         public Grid(GridGeometry grid) {
             this.grid = grid;
             this.gridToCRS = grid.getGridToCRS(PixelInCell.CELL_CENTER);
             this.dimension = grid.getDimension();
+
+            //check if we are dealing with a single slice with a NaN scale
+            if (dimension == 1 && grid.getExtent().getSize(0) == 1) {
+                final Matrix matrix = MathTransforms.getMatrix(grid.getGridToCRS(PixelInCell.CELL_CORNER));
+                if (matrix != null && Double.isNaN(matrix.getElement(0, 0))) {
+                    final int lastColumn = matrix.getNumCol() - 1;
+                    singleOrigin = matrix.getElement(0, lastColumn);
+                }
+            }
+
         }
 
         public GridGeometry getGrid() {
@@ -202,6 +216,10 @@ public final class CodeTransforms {
 
         @Override
         public void toAddress(int[] gridPosition, Object[] location, int offset) throws TransformException {
+            if (singleOrigin != null && gridPosition[offset] == 0) {
+                location[offset] = singleOrigin;
+                return;
+            }
             final double[] gp = new double[dimension];
             for (int i = 0; i < dimension; i++) gp[i] = gridPosition[offset+i];
             gridToCRS.transform(gp, 0, gp, 0, 1);
@@ -210,6 +228,10 @@ public final class CodeTransforms {
 
         @Override
         public void toGrid(Object[] location, int[] gridPosition, int offset) throws TransformException {
+            if (singleOrigin != null) {
+                gridPosition[offset] = 0;
+                return;
+            }
             if (crsToGrid == null) {
                 //no synchronisation here, in worse case it will be computed a few times
                 // but the result will always be the same

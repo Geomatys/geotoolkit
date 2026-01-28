@@ -29,13 +29,16 @@ import org.apache.sis.geometries.math.Vector2D;
 import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.dggs.a5.internal.Cell;
+import org.geotoolkit.referencing.dggs.DiscreteGlobalGrid;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridSystems;
 import org.geotoolkit.referencing.dggs.RefinementLevel;
 import org.geotoolkit.referencing.dggs.Zone;
 import org.geotoolkit.referencing.dggs.internal.shared.AbstractZone;
+import org.geotoolkit.storage.rs.internal.shared.s2.S2;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.metadata.extent.BoundingPolygon;
 import org.opengis.referencing.crs.GeographicCRS;
+import org.opengis.referencing.operation.TransformException;
 
 /**
  *
@@ -98,6 +101,24 @@ final class A5Zone extends AbstractZone<A5Dggrs> {
     }
 
     @Override
+    public Zone getFirstParent() {
+        final int level = A5.getResolution(hash);
+        if (level == 0) return null;
+        final long parent = A5.cellToParent(hash, level-1);
+        return new A5Zone(dggrs, parent);
+    }
+
+    @Override
+    public Zone getFirstParent(int refinementLevel) {
+        DiscreteGlobalGrid grid = dggrs.getGridSystem().getHierarchy().getGrids().get(refinementLevel);
+        try {
+            return grid.getZone(getPosition());
+        } catch (TransformException ex) {
+            throw new RuntimeException("Should not happen, problem in A5 library", ex);
+        }
+    }
+
+    @Override
     public Collection<? extends Zone> getParents() {
         final int level = A5.getResolution(hash);
         if (level != 0) {
@@ -136,7 +157,7 @@ final class A5Zone extends AbstractZone<A5Dggrs> {
         for (int i = 0, n = boundary.length; i < n ; i++) {
             contour.add(S2LatLng.fromDegrees(boundary[i].y, boundary[i].x).toPoint());
         }
-        return DiscreteGlobalGridSystems.toGeographicExtent(new S2Polygon(new S2Loop(contour)));
+        return S2.toGeographicExtent(new S2Polygon(new S2Loop(contour)));
     }
 
     @Override

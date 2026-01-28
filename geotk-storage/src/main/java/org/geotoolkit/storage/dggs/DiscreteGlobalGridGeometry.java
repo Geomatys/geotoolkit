@@ -25,6 +25,8 @@ import org.apache.sis.geometries.operation.GeometryOperations;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.util.Utilities;
+import org.geotoolkit.referencing.dggs.DiscreteGlobalGridHierarchy;
 import org.geotoolkit.storage.rs.CodedGeometry;
 import org.geotoolkit.storage.rs.internal.shared.CodeTransforms;
 import org.opengis.geometry.Envelope;
@@ -107,21 +109,17 @@ public final class DiscreteGlobalGridGeometry extends CodedGeometry {
 
     @Override
     public Envelope getEnvelope() {
-        final DiscreteGlobalGridReferenceSystem.Coder coder = getReferenceSystem().createCoder();
+        final DiscreteGlobalGridHierarchy hierarchy = getReferenceSystem().getGridSystem().getHierarchy();
         GeneralEnvelope all = null;
         for (Object zid : getZoneIds()) {
-            try {
-                final Zone zone = coder.decode(zid);
-                final Envelope env = zone.getEnvelope();
-                if (env != null) {
-                    if (all == null) {
-                        all = new GeneralEnvelope(env);
-                    } else {
-                        all.add(env);
-                    }
+            final Zone zone = hierarchy.getZone(zid);
+            final Envelope env = zone.getEnvelope();
+            if (env != null) {
+                if (all == null) {
+                    all = new GeneralEnvelope(env);
+                } else {
+                    all.add(env);
                 }
-            } catch (TransformException ex) {
-                return null;
             }
         }
         return all;
@@ -131,30 +129,31 @@ public final class DiscreteGlobalGridGeometry extends CodedGeometry {
     public Envelope getEnvelope(CoordinateReferenceSystem crs) throws TransformException {
         if (crs == null) return getEnvelope();
 
-        MathTransform trs;
-        try {
-            trs = CRS.findOperation(CommonCRS.WGS84.normalizedGeographic(), crs, null).getMathTransform();
-        } catch (FactoryException ex) {
-            throw new TransformException(ex);
+        final CoordinateReferenceSystem baseCrs = getReferenceSystem().getGridSystem().getCrs();
+        MathTransform trs = null;
+        if (!Utilities.equalsIgnoreMetadata(baseCrs, crs)) {
+            try {
+                trs = CRS.findOperation(baseCrs, crs, null).getMathTransform();
+            } catch (FactoryException ex) {
+                throw new TransformException(ex);
+            }
+        } else {
+            return getEnvelope();
         }
 
-        final DiscreteGlobalGridReferenceSystem.Coder coder = getReferenceSystem().createCoder();
+        final DiscreteGlobalGridHierarchy hierarchy = getReferenceSystem().getGridSystem().getHierarchy();
         GeneralEnvelope all = null;
         for (Object zid : getZoneIds()) {
-            try {
-                final Zone zo = coder.decode(zid);
-                final Geometry geometry = DiscreteGlobalGridSystems.toSISPolygon(zo.getGeographicExtent());
-                final Geometry trsGeom = GeometryOperations.SpatialEdition.transform(geometry, crs, trs);
-                final Envelope env = trsGeom.getEnvelope();
-                if (env != null) {
-                    if (all == null) {
-                        all = new GeneralEnvelope(env);
-                    } else {
-                        all.add(env);
-                    }
+            final Zone zo = hierarchy.getZone(zid);
+            final Geometry geometry = DiscreteGlobalGridSystems.toSISPolygon(zo.getGeographicExtent());
+            final Geometry trsGeom = GeometryOperations.SpatialEdition.transform(geometry, crs, trs);
+            final Envelope env = trsGeom.getEnvelope();
+            if (env != null) {
+                if (all == null) {
+                    all = new GeneralEnvelope(env);
+                } else {
+                    all.add(env);
                 }
-            } catch (TransformException ex) {
-                return null;
             }
         }
         return all;

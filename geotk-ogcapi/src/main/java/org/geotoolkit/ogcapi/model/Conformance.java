@@ -224,6 +224,10 @@ public final class Conformance {
      */
     public static final String DGGS_DATA_UBJSON = "https://www.opengis.net/spec/ogcapi-dggs-1/1.0/conf/data-ubjson";
     /**
+     * Not official, but efficiant.
+     */
+    public static final String DGGS_DATA_CBOR = "https://www.opengis.net/spec/ogcapi-dggs-1/1.0/conf/data-cbor";
+    /**
      * @see https://docs.ogc.org/DRAFTS/21-038r1.html#rc_data-dggs-jsonfg
      */
     public static final String DGGS_DATA_JSONFG = "https://www.opengis.net/spec/ogcapi-dggs-1/1.0/conf/data-dggs-jsonfg";

@@ -60,6 +60,11 @@ final class A5Dgg extends AbstractDiscreteGlobalGrid<A5Dggh> {
     }
 
     @Override
+    public long getZoneCount() {
+        return A5.countZones(level);
+    }
+
+    @Override
     public Stream<Zone> getZones(GeographicExtent extent) throws TransformException {
         if (extent == null && level == 0) {
             return Stream.of(hierarchy.getZone(0l));

@@ -25,6 +25,7 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.SimpleInternationalString;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridSystems;
 import org.opengis.geometry.Envelope;
+import org.opengis.metadata.extent.GeographicExtent;
 import org.opengis.referencing.gazetteer.Location;
 import org.opengis.util.InternationalString;
 
@@ -51,6 +52,16 @@ public interface Zone extends Location, Comparable<Zone> {
     long getLongIdentifier();
 
     /**
+     * Get a more accurate geometry of the zone by subdividing the cell edges.
+     *
+     * @param subdivision subdivide cell edges, must be 1 or more
+     * @return
+     */
+    default GeographicExtent getGeographicExtent(int subdivision) {
+        return getGeographicExtent();
+    }
+
+    /**
      * Spatiotemporal reference in the form of a label or code that uniquely identifies a zone.
      */
     @Override
@@ -64,8 +75,7 @@ public interface Zone extends Location, Comparable<Zone> {
         if (geometry == null) {
             return CRS.getDomainOfValidity(CommonCRS.WGS84.normalizedGeographic());
         }
-        GeneralEnvelope env = new GeneralEnvelope(geometry.getEnvelope());
-        return env;
+        return new GeneralEnvelope(geometry.getEnvelope());
     }
 
     /**
@@ -93,6 +103,20 @@ public interface Zone extends Location, Comparable<Zone> {
      */
     @Override
     RefinementLevel getLocationType();
+
+    /**
+     * Get maint parent zone of given zone.
+     * Most DGGRS zones have a single parent, but DGGRS which have children who do not exactly overlap the parent
+     * zone may then have several parents, int this case the first parent should be the one which has the most overlapping.
+     *
+     * @return main parent or null.
+     */
+    Zone getFirstParent();
+
+    /**
+     * @return the parent which most covers this zone at given level.
+     */
+    Zone getFirstParent(int refinementLevel);
 
     /**
      * Get parent zones of given zone.

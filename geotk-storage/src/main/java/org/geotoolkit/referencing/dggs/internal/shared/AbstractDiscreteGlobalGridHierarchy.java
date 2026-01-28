@@ -18,6 +18,8 @@ package org.geotoolkit.referencing.dggs.internal.shared;
 
 import java.util.AbstractList;
 import java.util.List;
+import javax.measure.IncommensurableException;
+import javax.measure.Quantity;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGrid;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridHierarchy;
@@ -34,6 +36,17 @@ public abstract class AbstractDiscreteGlobalGridHierarchy<T extends DiscreteGlob
     protected AbstractDiscreteGlobalGridHierarchy(T dggrs) {
         ArgumentChecks.ensureNonNull("dggrs", dggrs);
         this.dggrs = dggrs;
+    }
+
+    @Override
+    public DiscreteGlobalGrid getGrid(Quantity<?> accuracy) throws IncommensurableException {
+        final double cdt = accuracy.toSystemUnit().getValue().doubleValue();
+        for (DiscreteGlobalGrid grid : this) {
+            double acc = grid.getPrecision().toSystemUnit().getValue().doubleValue();
+            if (acc <= cdt) return grid;
+        }
+        //return the most accurate we have
+        return get(size()-1);
     }
 
     @Override

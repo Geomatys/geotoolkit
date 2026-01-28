@@ -66,7 +66,7 @@ public class CoordinateSequenceWrapTransformer implements CoordinateSequenceTran
     @Override
     public CoordinateSequence transform(CoordinateSequence sequence, int minpoints) throws TransformException {
         final int size = sequence.size();
-        final Coordinate[] tcs = new Coordinate[size];
+        final CoordinateSequence tcs = sequence.copy();
 
         boolean directionChecked = false;
         Coordinate previous = null;
@@ -74,18 +74,18 @@ public class CoordinateSequenceWrapTransformer implements CoordinateSequenceTran
         for(int i= 0; i<size; i++){
             current = sequence.getCoordinate(i);
 
-            if(previous != null){
+            if (previous != null) {
                 final double distance = Math.abs( wrapOnX ? current.x-previous.x : current.y-previous.y);
 
                 //we test distance < worldspan[0], to avoid the case of lines which make a full world wrap
-                if(wrapOnX && distance>=wrapdistance[0] && distance < worldspan[0] ){
+                if (wrapOnX && distance>=wrapdistance[0] && distance < worldspan[0]) {
 
                     //assume it crosses the antimeridian
                     wrap = !wrap;
 
                     //this is the first warp we found, check in which direction we fix it
                     //the objective is to regroup the points so the wrap distance must be smaller then the base distance
-                    if(!directionChecked){
+                    if (!directionChecked) {
                         directionChecked = true;
                         final double test = Math.abs((current.x+translation[0])-previous.x);
                         if(test>distance){
@@ -95,13 +95,13 @@ public class CoordinateSequenceWrapTransformer implements CoordinateSequenceTran
                         }
                     }
 
-                }else if(!wrapOnX && distance>=wrapdistance[1] && distance < worldspan[1]){
+                } else if(!wrapOnX && distance>=wrapdistance[1] && distance < worldspan[1]) {
                     wrap = !wrap;
 
-                    if(!directionChecked){
+                    if (!directionChecked) {
                         directionChecked = true;
                         final double test = Math.abs((current.y+translation[1])-previous.y);
-                        if(test>distance){
+                        if (test > distance) {
                             //inverse the translation values
                             translation[0] = -translation[0];
                             translation[1] = -translation[1];
@@ -111,12 +111,10 @@ public class CoordinateSequenceWrapTransformer implements CoordinateSequenceTran
             }
 
             previous = current;
-            if(wrap){
-                tcs[i] = new Coordinate(current.x+translation[0], current.y+translation[1], current.z);
-            }else{
-                tcs[i] = current;
+            if (wrap) {
+                tcs.setOrdinate(i, 0, current.x+translation[0]);
+                tcs.setOrdinate(i, 1, current.y+translation[1]);
             }
-
         }
 
         return csf.create(tcs);

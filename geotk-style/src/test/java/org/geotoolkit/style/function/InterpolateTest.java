@@ -112,7 +112,7 @@ public class InterpolateTest {
         values.add(new DefaultInterpolationPoint(10d,ff.literal(100d)));
         values.add(new DefaultInterpolationPoint(20d,ff.literal(50d)));
 
-        interpolate = new DefaultInterpolate(Lookup, values, Method.COLOR, Mode.CUBIC, null);
+        interpolate = new DefaultInterpolate(Lookup, values, Method.NUMERIC, Mode.CUBIC, null);
 
         Double d = (Double) interpolate.apply(f1);
         assertEquals(d.doubleValue(), 0d, 0d);

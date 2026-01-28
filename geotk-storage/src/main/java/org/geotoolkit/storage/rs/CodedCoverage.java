@@ -58,6 +58,7 @@ public abstract class CodedCoverage extends BandedCoverageExt {
      * No assumption should be made on the iteration order.
      *
      * @return writable iterator, not null
+     * @throws UnsupportedOperationException if coverage do not support writing
      */
     public abstract WritableCodeIterator createWritableIterator();
 
