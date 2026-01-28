@@ -285,7 +285,7 @@ public final class Conformance {
     // https://docs.ogc.org/is/20-004r1/20-004r1.html
     // /////////////////////////////////////////////////////////////////////////////////////////
 
-    public static final String RECORD_CRAWLABLE_CATALOG	= "http://www.opengis.net/spec/ogcapi-records-1/1.0/conf/crawlable-catalog";
+    public static final String RECORD_CRAWLABLE_CATALOG = "http://www.opengis.net/spec/ogcapi-records-1/1.0/conf/crawlable-catalog";
 
     public static final String RECORD_SEARCHABLE_CATALOG = "http://www.opengis.net/spec/ogcapi-records-1/1.0/conf/searchable-catalog";
 
@@ -298,7 +298,7 @@ public final class Conformance {
     public static final String RECORD_LOCAL_RESOURCES_CATALOG_QUERY_PARAMETERS = "http://www.opengis.net/spec/ogcapi-records-1/1.0/conf/local-resources-catalog-query-parameters";
 
     public static final String RECORD_LOCAL_RESOURCES_CATALOG_FILTERING = "http://www.opengis.net/spec/ogcapi-records-1/1.0/conf/local-resources-catalog-filtering";
-    
+
     public static final String RECORD_LOCAL_RESOURCES_CATALOG_SORTING = "http://www.opengis.net/spec/ogcapi-records-1/1.0/conf/local-resources-catalog-sorting";
 
 }

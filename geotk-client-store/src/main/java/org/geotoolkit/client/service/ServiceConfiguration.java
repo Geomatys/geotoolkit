@@ -214,6 +214,7 @@ public class ServiceConfiguration {
             if (userInfo != null) {
                 userInfo = userInfo.replace("@", "");
                 int idx = userInfo.indexOf(':');
+                if (idx < 1) throw new IllegalArgumentException("Unsupported user information format. 'username:password' expected.");
                 final String user = userInfo.substring(0, idx);
                 final String password = userInfo.substring(idx+1);
                 builder.authenticator(new Authenticator() {
