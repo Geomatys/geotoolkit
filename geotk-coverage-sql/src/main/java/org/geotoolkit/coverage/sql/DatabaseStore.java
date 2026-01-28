@@ -17,9 +17,8 @@
 package org.geotoolkit.coverage.sql;
 
 import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.metadata.sql.privy.ScriptRunner;
-import org.apache.sis.util.privy.Constants;
-import org.apache.sis.util.privy.UnmodifiableArrayList;
+import org.apache.sis.metadata.sql.internal.shared.ScriptRunner;
+import org.apache.sis.util.internal.shared.Constants;
 import org.apache.sis.measure.MeasurementRange;
 import org.apache.sis.measure.Units;
 import org.apache.sis.metadata.sql.MetadataSource;
@@ -310,14 +309,14 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
                             "Metadata.sql",
                             "Referencing.sql"
                         };
-                        try (ScriptRunner runner = new ScriptRunner(cnx, 100)) {
+                        try (ScriptRunner runner = new ScriptRunner(cnx, null, 100)) {
                             for (final String source : scripts) {
                                 runner.run(source, MetadataSource.class.getResourceAsStream(source));
                             }
                         }
                     }
                     if (!schemaExists(metadata, "rasters")) {
-                        try (ScriptRunner runner = new ScriptRunner(cnx, 100)) {
+                        try (ScriptRunner runner = new ScriptRunner(cnx, null, 100)) {
                             runner.run("Create.sql", DatabaseStore.class.getResourceAsStream("Create.sql"));
                         }
                     }
@@ -431,7 +430,7 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
             resources[i] = createResource(products.get(i));
         }
 
-        components = UnmodifiableArrayList.wrap(resources);
+        components = List.of(resources);
     }
 
     /**

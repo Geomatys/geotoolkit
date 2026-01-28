@@ -30,7 +30,6 @@ import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.NoSuchDataException;
 import org.apache.sis.storage.Resource;
-import org.apache.sis.util.Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.style.renderer.AbstractCoverageSymbolizerRenderer;
@@ -73,7 +72,7 @@ public class PatternRenderer extends AbstractCoverageSymbolizerRenderer<CachedPa
             return Stream.of(ep);
         }
 
-        if (!Utilities.equalsIgnoreMetadata(CRS.getHorizontalComponent(dataCoverage.getCoordinateReferenceSystem()), renderingContext.getObjectiveCRS())) {
+        if (!CRS.equivalent(CRS.getHorizontalComponent(dataCoverage.getCoordinateReferenceSystem()), renderingContext.getObjectiveCRS())) {
             //coverage is not in objective crs, resample it
             try {
                 //we resample the native view of the coverage only, the style will be applied later.

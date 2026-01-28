@@ -25,9 +25,9 @@ import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.net.URI;
 import java.util.Collection;
+import java.util.List;
 import javax.imageio.ImageIO;
 
-import org.apache.sis.util.privy.UnmodifiableArrayList;
 
 /**
  * External graphic factory accepting an Expression that can be evaluated to a
@@ -45,7 +45,7 @@ public class ImageGraphicFactory implements ExternalGraphicFactory {
     private ImageLoader imageLoader = new ImageLoader();
 
     /** Holds the of graphic formats supported by the current jdk */
-    private static Collection<String> supportedGraphicFormats = UnmodifiableArrayList.wrap(ImageIO.getReaderMIMETypes());
+    private static Collection<String> supportedGraphicFormats = List.of(ImageIO.getReaderMIMETypes());
 
     @Override
     public BufferedImage getImage(final URI location, final String format, final Float size, final RenderingHints hints) throws Exception {

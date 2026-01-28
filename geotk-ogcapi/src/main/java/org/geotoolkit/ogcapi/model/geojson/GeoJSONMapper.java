@@ -23,13 +23,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
-import org.apache.sis.feature.privy.AttributeConvention;
+import org.apache.sis.feature.internal.shared.AttributeConvention;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.storage.feature.FeatureStoreUtilities;
-import org.geotoolkit.storage.feature.FeatureStreams;
 import org.locationtech.jts.geom.CoordinateSequence;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
@@ -143,28 +142,32 @@ public final class GeoJSONMapper {
             gf.setFeatureType(getTypeNames(type));
         }
 
-        Object id = feature.getValueOrFallback(AttributeConvention.IDENTIFIER, null);
-        if (includeFeatureId && id != null) {
-            gf.setId(id);
+        if (includeFeatureId && feature.getType().hasProperty(AttributeConvention.IDENTIFIER)) {    // TODO: should be determined in advance.
+            Object id = feature.getPropertyValue(AttributeConvention.IDENTIFIER);
+            if (id != null) {
+                gf.setId(id);
+            }
         }
         if (includeCoordRefSysOnFeature) {
             gf.setCoordRefSys(getCoordRefSys(type));
         }
 
-        Object geom = feature.getValueOrFallback(AttributeConvention.GEOMETRY, null);
-        if (geom instanceof Geometry g) {
-            GeoJSONGeometry json = transform(g);
-            gf.setGeometry(json);
+        if (feature.getType().hasProperty(AttributeConvention.GEOMETRY)) {  // TODO: should be determined in advance.
+            Object geom = feature.getPropertyValue(AttributeConvention.GEOMETRY);
+            if (geom instanceof Geometry g) {
+                GeoJSONGeometry json = transform(g);
+                gf.setGeometry(json);
 
-            if (bboxOnFeature) {
-                Envelope env = g.getEnvelopeInternal();
-                if (env != null && !env.isNull()) {
-                    final List<Double> bbox = new ArrayList<>();
-                    bbox.add(env.getMinX());
-                    bbox.add(env.getMinY());
-                    bbox.add(env.getMaxX());
-                    bbox.add(env.getMaxY());
-                    gf.setBbox(bbox);
+                if (bboxOnFeature) {
+                    Envelope env = g.getEnvelopeInternal();
+                    if (env != null && !env.isNull()) {
+                        final List<Double> bbox = new ArrayList<>();
+                        bbox.add(env.getMinX());
+                        bbox.add(env.getMinY());
+                        bbox.add(env.getMaxX());
+                        bbox.add(env.getMaxY());
+                        gf.setBbox(bbox);
+                    }
                 }
             }
         }

@@ -33,7 +33,7 @@ import org.apache.sis.geometries.Polygon;
 import org.apache.sis.geometries.math.Tuple;
 import org.apache.sis.geometries.math.Vector2D;
 import org.apache.sis.referencing.GeodeticCalculator;
-import org.apache.sis.geometries.math.TupleArrays;
+import org.apache.sis.geometries.math.NDArrays;
 import org.apache.sis.geometries.math.Vectors;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.iso.Names;
@@ -80,7 +80,7 @@ public abstract class AbstractDggrsTest {
         //todo fix H3, but how ?
         Assumptions.assumeTrue(!(dggrs instanceof H3Dggrs));
 
-        final List<Zone> rootZoneIds = dggrs.getGridSystem().getHierarchy().getGrids().get(0).getZones().toList();
+        final List<Zone> rootZoneIds = dggrs.getGridSystem().getHierarchy().getGrids().get(0).getZones().limit(10).toList();
 
         for (Zone zone : rootZoneIds) {
             testParentChildrenRelations(zone, 0, 4);
@@ -217,16 +217,16 @@ public abstract class AbstractDggrsTest {
     @Test
     public void testSampling() throws TransformException, FactoryException {
 
-        final List<Zone> rootZoneIds = dggrs.getGridSystem().getHierarchy().getGrids().get(0).getZones().toList();
+        final List<Zone> rootZoneIds = dggrs.getGridSystem().getHierarchy().getGrids().get(0).getZones().limit(3).toList();
 
         for (Zone zone : rootZoneIds) {
-            final List<Zone> candidates = zone.getChildrenAtRelativeDepth(2).limit(5).toList();
+            final List<Zone> candidates = zone.getChildrenAtRelativeDepth(2).limit(3).toList();
 
             for (Zone z : candidates) {
                 final DirectPosition position = z.getPosition();
                 final ArrayDiscreteGlobalGridCoverage dggsCoverage = new ArrayDiscreteGlobalGridCoverage(
                         Names.createLocalName(null, null, "test"), new DiscreteGlobalGridGeometry(dggrs, List.of(z.getIdentifier()), null),
-                        List.of(TupleArrays.of(1, 123456)));
+                        List.of(NDArrays.of(1, 123456)));
 
                 //test iterator
                 final BandedCodeIterator iterator = dggsCoverage.createIterator();

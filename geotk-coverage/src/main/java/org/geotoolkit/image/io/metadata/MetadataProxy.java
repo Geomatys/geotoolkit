@@ -40,7 +40,7 @@ import org.opengis.coverage.grid.GridEnvelope;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.iso.Types;
-import org.apache.sis.util.privy.UnmodifiableArrayList;
+import org.apache.sis.util.collection.Containers;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.resources.Errors;
@@ -458,10 +458,10 @@ final class MetadataProxy<T> implements InvocationHandler {
              */
             Class<?> componentType = Classes.boundOfParameterizedProperty(method);
             if (componentType.isAssignableFrom(String.class)) {
-                return UnmodifiableArrayList.wrap(accessor.getAttributeAsStrings(name, false));
+                return Containers.viewAsUnmodifiableList(accessor.getAttributeAsStrings(name, false));
             }
             if (componentType.isAssignableFrom(InternationalString.class)) {
-                return UnmodifiableArrayList.wrap(Types.toInternationalStrings(
+                return Containers.viewAsUnmodifiableList(Types.toInternationalStrings(
                         accessor.getAttributeAsStrings(name, false)));
             }
             if (componentType.isAssignableFrom(Citation.class)) {

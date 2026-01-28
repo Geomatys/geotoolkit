@@ -33,7 +33,7 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridOrientation;
 import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.referencing.privy.GeodeticObjectBuilder;
+import org.apache.sis.referencing.internal.shared.GeodeticObjectBuilder;
 import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
@@ -256,7 +256,7 @@ public final class WMSUtilities {
                     final CoordinateSystemAxis csAxis = new DefaultCoordinateSystemAxis(
                             Collections.singletonMap("name", dimName), dimName.substring(0, 1), AxisDirection.UNSPECIFIED, unit);
                     final AbstractCS dimCs = new AbstractCS(Collections.singletonMap("name", dimName), csAxis);
-                    dimCRS = new DefaultEngineeringCRS(Collections.singletonMap("name", dimName), dimDatum, dimCs);
+                    dimCRS = new DefaultEngineeringCRS(Collections.singletonMap("name", dimName), dimDatum, null, dimCs);
                 }
 
                 double minVal = Double.MIN_VALUE;

@@ -21,8 +21,8 @@ import java.util.List;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.geometries.math.TupleArray;
-import org.apache.sis.geometries.math.TupleArrayCursor;
+import org.apache.sis.geometries.math.Array;
+import org.apache.sis.geometries.math.Cursor;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridGeometry;
 import org.geotoolkit.storage.rs.internal.shared.BandedCodeIterator;
@@ -39,19 +39,19 @@ import org.opengis.util.GenericName;
 public final class ArrayDiscreteGlobalGridCoverage extends AbstractDiscreteGlobalGridCoverage{
 
     private final GenericName name;
-    private final List<TupleArray> samples;
+    private final List<Array> samples;
 
     //cached
     private FeatureType type;
     private String[] mapping;
 
-    public ArrayDiscreteGlobalGridCoverage(GenericName name, DiscreteGlobalGridGeometry gridGeometry, List<TupleArray> samples) {
+    public ArrayDiscreteGlobalGridCoverage(GenericName name, DiscreteGlobalGridGeometry gridGeometry, List<Array> samples) {
         super(gridGeometry);
         this.name = name;
         this.samples = samples;
 
         final int nbCell = zones.size();
-        for (TupleArray ta : samples) {
+        for (Array ta : samples) {
             if (ta.getLength() != nbCell) {
                 throw new IllegalArgumentException("Number of samples do not match number of cells");
             }
@@ -61,7 +61,7 @@ public final class ArrayDiscreteGlobalGridCoverage extends AbstractDiscreteGloba
         }
     }
 
-    public List<TupleArray> getSamples() {
+    public List<Array> getSamples() {
         return samples;
     }
 
@@ -78,7 +78,7 @@ public final class ArrayDiscreteGlobalGridCoverage extends AbstractDiscreteGloba
     @Override
     public List<SampleDimension> getSampleDimensions() {
         final List<SampleDimension> lst = new ArrayList<>();
-        for (TupleArray ta : samples) {
+        for (Array ta : samples) {
             lst.addAll(ta.getSampleSystem().getSampleDimensions());
         }
         return lst;
@@ -102,11 +102,11 @@ public final class ArrayDiscreteGlobalGridCoverage extends AbstractDiscreteGloba
 
         private int position = -1;
 
-        private final TupleArrayCursor[] cursors;
+        private final Cursor[] cursors;
 
         public Iterator(FeatureType type, String[] mapping) {
             super(type, mapping);
-            cursors = new TupleArrayCursor[samples.size()];
+            cursors = new Cursor[samples.size()];
             for (int i = 0; i < cursors.length; i++) {
                 cursors[i] = samples.get(i).cursor();
             }

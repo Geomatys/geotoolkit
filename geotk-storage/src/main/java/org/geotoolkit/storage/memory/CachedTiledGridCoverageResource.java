@@ -39,7 +39,7 @@ import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.util.privy.UnmodifiableArrayList;
+import org.apache.sis.util.collection.Containers;
 import org.apache.sis.storage.AbstractGridCoverageResource;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
@@ -192,7 +192,7 @@ public class CachedTiledGridCoverageResource <T extends TiledResource & org.apac
                 //some pyramids have been deleted from parent
                 cacheMap.keySet().retainAll(keys);
             }
-            pyramids = UnmodifiableArrayList.wrap(cacheMap.values().toArray(new WritableTileMatrixSet[0]));
+            pyramids = Containers.copyToImmutableList(cacheMap.values(), WritableTileMatrixSet.class);
         }
 
         return pyramids;

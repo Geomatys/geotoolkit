@@ -20,8 +20,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.geometries.math.TupleArray;
-import org.apache.sis.geometries.math.TupleArrayCursor;
+import org.apache.sis.geometries.math.Array;
+import org.apache.sis.geometries.math.Cursor;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.multires.TileMatrices;
 import org.geotoolkit.storage.rs.CodedGeometry;
@@ -36,14 +36,14 @@ import org.opengis.util.GenericName;
  */
 public final class ArrayCodedCoverage extends AbstractCodedCoverage{
 
-    private final List<TupleArray> samples;
+    private final List<Array> samples;
 
-    public ArrayCodedCoverage(final GenericName name, CodedGeometry gridGeometry, List<TupleArray> samples) throws FactoryException {
+    public ArrayCodedCoverage(final GenericName name, CodedGeometry gridGeometry, List<Array> samples) throws FactoryException {
         super(name, gridGeometry, createType(name, samples));
 
         this.samples = samples;
         final long nbCell = TileMatrices.countCells(extent);
-        for (TupleArray ta : samples) {
+        for (Array ta : samples) {
             if (ta.getLength() != nbCell) {
                 throw new IllegalArgumentException("Number of samples do not match number of cells");
             }
@@ -53,16 +53,16 @@ public final class ArrayCodedCoverage extends AbstractCodedCoverage{
         }
     }
 
-    private static FeatureType createType(GenericName name, List<TupleArray> sampleDimensions) {
+    private static FeatureType createType(GenericName name, List<Array> sampleDimensions) {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(name);
-        for (TupleArray ta : sampleDimensions) {
+        for (Array ta : sampleDimensions) {
             CodedCoverageAsFeatureSet.toFeatureType(ftb, ta.getSampleSystem().getSampleDimensions());
         }
         return ftb.build();
     }
 
-    public List<TupleArray> getSamples() {
+    public List<Array> getSamples() {
         return samples;
     }
 
@@ -103,13 +103,13 @@ public final class ArrayCodedCoverage extends AbstractCodedCoverage{
         private long linearPosition = -1;
         private final long nbCell;
 
-        private final TupleArrayCursor[] cursors;
+        private final Cursor[] cursors;
 
         public Iterator(FeatureType type, String[] mapping) {
             super(type, mapping);
             nbCell = TileMatrices.countCells(gridGeometry.getExtent());
 
-            cursors = new TupleArrayCursor[samples.size()];
+            cursors = new Cursor[samples.size()];
             for (int i = 0; i < cursors.length; i++) {
                 cursors[i] = samples.get(i).cursor();
             }

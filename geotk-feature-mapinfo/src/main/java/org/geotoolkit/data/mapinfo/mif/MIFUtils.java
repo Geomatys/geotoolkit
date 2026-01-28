@@ -34,13 +34,12 @@ import java.util.Set;
 import org.apache.sis.feature.Features;
 import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.geometry.Envelope2D;
-import org.apache.sis.feature.privy.AttributeConvention;
+import org.apache.sis.feature.internal.shared.AttributeConvention;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.filter.FilterUtilities;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.IdentifiedType;
-import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
 import org.opengis.filter.FilterFactory;
 
@@ -368,9 +367,9 @@ public final class MIFUtils {
      * property is not defined.
      */
     public static Object getPropertySafe(final Feature container, final String propertyName) {
-        try {
+        if (container.getType().hasProperty(propertyName)) {    // TODO: should be determined in advance.
             return container.getPropertyValue(propertyName);
-        } catch (PropertyNotFoundException e) {
+        } else {
             return null;
         }
     }

@@ -21,9 +21,8 @@ import java.awt.Color;
 import java.awt.color.ColorSpace;
 import java.awt.image.IndexColorModel;
 import java.awt.image.DataBuffer;
-import org.apache.sis.image.privy.ColorModelFactory;
+import org.apache.sis.image.internal.shared.ColorModelFactory;
 
-import org.geotoolkit.lang.Static;
 
 
 /**
@@ -37,11 +36,8 @@ import org.geotoolkit.lang.Static;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Simone Giannecchini (Geosolutions)
- *
- * @since 1.2
- * @module
  */
-public final class ColorUtilities extends Static {
+public final class ColorUtilities {
     /**
      * An index color model having only two colors, black and white.
      */

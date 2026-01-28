@@ -20,7 +20,7 @@ package org.geotoolkit.filter;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.feature.privy.AttributeConvention;
+import org.apache.sis.feature.internal.shared.AttributeConvention;
 import org.junit.Test;
 
 import org.opengis.filter.Filter;

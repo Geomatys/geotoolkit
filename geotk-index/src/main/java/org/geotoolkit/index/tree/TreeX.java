@@ -19,12 +19,12 @@ package org.geotoolkit.index.tree;
 import java.io.IOException;
 import java.util.Arrays;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.filter.SpatialFilterType;
 import static org.geotoolkit.filter.SpatialFilterType.*;
 import static org.geotoolkit.internal.tree.TreeUtilities.*;
 import org.opengis.geometry.Envelope;
-import org.apache.sis.util.Utilities;
 
 /**
  * Logics operate.
@@ -51,7 +51,7 @@ public final class TreeX {
         ArgumentChecks.ensureNonNull("TreeX search : tree", tree);
         ArgumentChecks.ensureNonNull("TreeX search : Envelope", regionSearch);
         ArgumentChecks.ensureNonNull("TreeX search : SpatialFilterType", logicFilter);
-        if (!Utilities.equalsIgnoreMetadata(regionSearch.getCoordinateReferenceSystem(), tree.getCrs()))
+        if (!CRS.equivalent(regionSearch.getCoordinateReferenceSystem(), tree.getCrs()))
             throw new IllegalArgumentException("TreeX search : the 2 CRS within tree and region search should be equals.");
         final TreeElementMapper tEM = tree.getTreeElementMapper();
         TreeIdentifierIterator iterSearch = tree.search(regionSearch);

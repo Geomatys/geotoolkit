@@ -25,7 +25,7 @@ import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Map;
 import javax.xml.stream.XMLStreamException;
-import org.apache.sis.storage.base.MemoryFeatureSet;
+import org.apache.sis.storage.MemoryFeatureSet;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.UnconvertibleObjectException;

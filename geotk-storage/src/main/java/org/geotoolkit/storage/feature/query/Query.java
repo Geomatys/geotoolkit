@@ -23,7 +23,7 @@ import java.util.List;
 import javax.measure.Quantity;
 import javax.measure.quantity.Length;
 import org.apache.sis.feature.Features;
-import org.apache.sis.filter.privy.XPath;
+import org.apache.sis.filter.base.XPath;
 import org.apache.sis.storage.FeatureQuery;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import org.geotoolkit.factory.Hints;
@@ -244,7 +244,7 @@ public final class Query extends FeatureQuery {
         if (columns == null) return null;
         final String[] names = new String[columns.length];
         for (int i=0;i<names.length;i++) {
-            names[i] = ((ValueReference)columns[i].expression).getXPath();
+            names[i] = ((ValueReference)columns[i].expression()).getXPath();
         }
         return names;
     }

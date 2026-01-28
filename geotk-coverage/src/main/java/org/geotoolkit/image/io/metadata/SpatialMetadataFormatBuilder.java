@@ -97,10 +97,6 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
  * standards.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.20
- *
- * @since 3.20 (derived from 3.05)
- * @module
  */
 public class SpatialMetadataFormatBuilder extends Builder<SpatialMetadataFormat> {
     /**
@@ -642,11 +638,14 @@ public class SpatialMetadataFormatBuilder extends Builder<SpatialMetadataFormat>
      * @param  codeType The type of code list.
      * @return The list of UML identifiers or programmatic names for the given
      *         code list, or an empty array if none.
-     *
-     * @since 3.03
      */
     private static String[] identifiers(final Class<? extends ControlledVocabulary> codeType) {
-        final ControlledVocabulary[] codes = Types.getCodeValues(codeType);
+        final ControlledVocabulary[] codes;
+        if (CodeList.class.isAssignableFrom(codeType)) {
+            codes = (ControlledVocabulary[]) CodeList.values((Class) codeType);
+        } else {
+            codes = (ControlledVocabulary[]) codeType.getEnumConstants();
+        }
         final String[] ids = new String[codes.length];
         for (int i=0; i<codes.length; i++) {
             ids[i] = Types.getCodeName(codes[i]);

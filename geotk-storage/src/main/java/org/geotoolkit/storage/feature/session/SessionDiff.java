@@ -25,7 +25,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.geotoolkit.storage.feature.FeatureStore;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.privy.UnmodifiableArrayList;
+import org.apache.sis.util.collection.Containers;
 
 /**
  * Contain a list of all modification, ensure concurrency when accesing
@@ -70,7 +70,7 @@ public class SessionDiff{
         try{
             List<Delta> cp = readCopy;
             if(cp == null){
-                cp = UnmodifiableArrayList.wrap(deltas.toArray(new Delta[deltas.size()]));
+                cp = Containers.copyToImmutableList(deltas, Delta.class);
                 readCopy = cp;
             }
             return cp;

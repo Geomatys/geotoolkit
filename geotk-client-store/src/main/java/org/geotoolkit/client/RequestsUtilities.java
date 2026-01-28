@@ -38,14 +38,13 @@ import org.opengis.referencing.crs.VerticalCRS;
 import org.opengis.util.FactoryException;
 
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.referencing.privy.GeodeticObjectBuilder;
+import org.apache.sis.referencing.internal.shared.GeodeticObjectBuilder;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.apache.sis.referencing.CommonCRS;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.temporal.object.TemporalUtilities;
-import org.apache.sis.util.Utilities;
 
 /**
  * Utilities methods that provide conversion functionnalities between real objects and queries
@@ -120,7 +119,7 @@ public final class RequestsUtilities {
      * @param envelope The envelope to return the CRS code.
      */
     public static String toCrsCode(final Envelope envelope) {
-        if (Utilities.equalsIgnoreMetadata(envelope.getCoordinateReferenceSystem(), CommonCRS.WGS84.normalizedGeographic())) {
+        if (CRS.equivalent(envelope.getCoordinateReferenceSystem(), CommonCRS.WGS84.normalizedGeographic())) {
             return "EPSG:4326";
         }
         final Set<Identifier> identifiers = envelope.getCoordinateReferenceSystem().getIdentifiers();

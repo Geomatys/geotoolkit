@@ -49,7 +49,7 @@ import org.apache.sis.referencing.operation.provider.Mercator2SP;
 import org.apache.sis.referencing.operation.provider.PolarStereographicA;
 import org.apache.sis.referencing.operation.provider.PolarStereographicB;
 import org.apache.sis.referencing.operation.provider.TransverseMercator;
-import org.apache.sis.referencing.privy.ReferencingUtilities;
+import org.apache.sis.referencing.internal.shared.ReferencingUtilities;
 
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.apache.sis.metadata.iso.citation.Citations;

@@ -27,7 +27,7 @@ import org.apache.sis.metadata.iso.extent.Extents;
 import org.apache.sis.referencing.ImmutableIdentifier;
 import org.apache.sis.referencing.gazetteer.ModifiableLocationType;
 import org.apache.sis.util.SimpleInternationalString;
-import org.apache.sis.util.privy.Constants;
+import org.apache.sis.util.internal.shared.Constants;
 import org.apache.sis.util.resources.Vocabulary;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridSystem;

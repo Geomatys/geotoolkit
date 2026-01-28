@@ -82,7 +82,7 @@ public final class ReferencingFactoryTest {
         assertNull(properties.put("name", "Geoidal height"));
         final VerticalCRS crs = factory.create(VerticalCRS.class, properties);
         assertEquals(new DefaultVerticalCRS(singletonMap(NAME_KEY, "Geoidal height"),
-                CommonCRS.Vertical.MEAN_SEA_LEVEL.datum(),
+                CommonCRS.Vertical.MEAN_SEA_LEVEL.datum(), null,
                 CommonCRS.Vertical.MEAN_SEA_LEVEL.crs().getCoordinateSystem()), crs);
     }
 }

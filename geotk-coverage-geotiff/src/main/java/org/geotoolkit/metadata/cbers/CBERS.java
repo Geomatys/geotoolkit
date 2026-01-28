@@ -186,7 +186,7 @@ public class CBERS {
                 tmp = DomUtilities.firstElement(tmp, "center");
                 if (tmp != null) {
                     Date centerDate = fp.parseToDate(tmp.getTextContent());
-                    DefaultCitationDate cDate = new DefaultCitationDate(centerDate, DateType.CREATION);
+                    DefaultCitationDate cDate = new DefaultCitationDate(centerDate.toInstant(), DateType.CREATION);
                     citation.getDates().add(cDate);
                 }
             }

@@ -17,19 +17,13 @@
 package org.geotoolkit.storage.geojson;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
-import org.apache.sis.util.Static;
 
 /**
  * @author Quentin Boileau (Geomatys)
  * @author Johann Sorel (Geomatys)
- * @version 2.0
- * @since   2.0
- * @module
  */
-public final class GeoJSONConstants extends Static {
+public final class GeoJSONConstants {
 
     public static final String FEATURE_COLLECTION = "FeatureCollection";
     public static final String FEATURE = "Feature";

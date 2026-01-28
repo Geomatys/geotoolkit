@@ -45,7 +45,6 @@ import org.apache.sis.storage.tiling.TileMatrix;
 import org.apache.sis.storage.tiling.TileMatrixSet;
 import org.apache.sis.storage.tiling.TileStatus;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.Utilities;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.ReferencingUtilities;
@@ -102,7 +101,7 @@ public class TileMatrixSetCoverageWriter <T extends TiledResource & org.apache.s
             throw new DataStoreException(ex);
         }
 
-        if (!Utilities.equalsIgnoreMetadata(crsCoverage2D, envelopeCrs)) {
+        if (!CRS.equivalent(crsCoverage2D, envelopeCrs)) {
             try {
                 requestedEnvelope = ReferencingUtilities.transform2DCRS(requestedEnvelope, crsCoverage2D);
             } catch (TransformException ex) {

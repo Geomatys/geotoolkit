@@ -25,8 +25,8 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.apache.sis.util.Utilities;
 import org.geotoolkit.wps.converters.AbstractWPSConverterTest;
 import org.geotoolkit.wps.converters.ConvertersTestUtils;
 import org.geotoolkit.wps.converters.WPSConverterRegistry;
@@ -69,7 +69,7 @@ public class ComplexToCoverageConverterTest extends AbstractWPSConverterTest {
         final Envelope convertedEnvelope = convertedCoverage.getGridGeometry().getEnvelope();
         final Envelope expectedEnvelope = expectedCoverage.getGridGeometry().getEnvelope();
 
-        assertTrue(Utilities.equalsIgnoreMetadata(expectedEnvelope.getCoordinateReferenceSystem(), convertedEnvelope.getCoordinateReferenceSystem()));
+        assertTrue(CRS.equivalent(expectedEnvelope.getCoordinateReferenceSystem(), convertedEnvelope.getCoordinateReferenceSystem()));
         assertTrue(expectedEnvelope.getMinimum(0) == convertedEnvelope.getMinimum(0));
         assertTrue(expectedEnvelope.getMinimum(1) == convertedEnvelope.getMinimum(1));
         assertTrue(expectedEnvelope.getMaximum(0) == convertedEnvelope.getMaximum(0));

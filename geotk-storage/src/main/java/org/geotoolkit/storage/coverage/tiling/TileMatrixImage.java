@@ -32,14 +32,15 @@ import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.image.ComputedImage;
 import org.apache.sis.image.Interpolation;
-import org.apache.sis.image.privy.FillValues;
-import org.apache.sis.image.privy.TilePlaceholder;
+import org.apache.sis.image.internal.shared.FillValues;
+import org.apache.sis.image.internal.shared.TilePlaceholder;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.tiling.Tile;
 import org.apache.sis.storage.tiling.TileMatrix;
 import org.apache.sis.storage.tiling.TileStatus;
+import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.storage.DataStores;
@@ -357,7 +358,7 @@ final class TileMatrixImage extends ComputedImage {
                 tilingScheme.getGridToCRS(PixelInCell.CELL_CENTER),
                 tilingScheme.getCoordinateReferenceSystem());
         //grid geometry of the tile in pixels
-        geom = geom.upsample(tileSize);
+        geom = geom.upsample(ArraysExt.copyAsLongs(tileSize));
         final GridExtent tileExtentNd = geom.getExtent();
         //N dimension intersection, this should be a 2d slice
         final GridExtent intersection = geom.derive().subgrid(readGeometry).getIntersection();

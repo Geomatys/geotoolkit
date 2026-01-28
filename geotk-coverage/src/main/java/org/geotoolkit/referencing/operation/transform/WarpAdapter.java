@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.referencing.operation.transform;
 
-import org.apache.sis.referencing.privy.AffineTransform2D;
+import org.apache.sis.referencing.internal.shared.AffineTransform2D;
 import java.awt.geom.Point2D;
 import java.awt.image.RasterFormatException;
 import javax.media.jai.Warp;

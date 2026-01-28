@@ -37,9 +37,9 @@ import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.geometry.wrapper.Geometries;
-import org.apache.sis.referencing.privy.Formulas;
-import org.apache.sis.referencing.privy.AffineTransform2D;
-import org.apache.sis.referencing.privy.IntervalRectangle;
+import org.apache.sis.referencing.internal.shared.Formulas;
+import org.apache.sis.referencing.internal.shared.AffineTransform2D;
+import org.apache.sis.referencing.internal.shared.IntervalRectangle;
 import org.apache.sis.measure.Latitude;
 import org.apache.sis.measure.Longitude;
 import org.apache.sis.referencing.CRS;
@@ -48,7 +48,6 @@ import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.referencing.operation.transform.TransformSeparator;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArraysExt;
-import org.apache.sis.util.Utilities;
 import static org.geotoolkit.coverage.sql.GridGeometryEntry.AFFINE_DIMENSION;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -261,7 +260,7 @@ final class GridGeometryTable extends CachedTable<Integer,GridGeometryEntry> {
             throws FactoryException, TransformException
     {
         final CoordinateReferenceSystem extentCRS = transaction.database.extentCRS;
-        if (!Utilities.equalsIgnoreMetadata(crs, extentCRS)) {
+        if (!CRS.equivalent(crs, extentCRS)) {
             final CoordinateOperation op = CRS.findOperation(crs, extentCRS, null);
             envelope = Envelopes.transform(op, envelope);
         }

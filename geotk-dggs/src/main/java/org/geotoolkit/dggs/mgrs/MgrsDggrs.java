@@ -28,7 +28,7 @@ import org.apache.sis.referencing.ImmutableIdentifier;
 import org.apache.sis.referencing.gazetteer.MilitaryGridReferenceSystem;
 import org.apache.sis.referencing.gazetteer.ModifiableLocationType;
 import org.apache.sis.referencing.gazetteer.ReferencingByIdentifiers;
-import org.apache.sis.util.privy.Constants;
+import org.apache.sis.util.internal.shared.Constants;
 import org.apache.sis.util.resources.Vocabulary;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem.Coder;

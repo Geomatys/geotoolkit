@@ -105,6 +105,11 @@ public class CheckedArrayList<E> extends ArrayList<E> implements CheckedContaine
         return type;
     }
 
+    @Override
+    public Mutability getMutability() {
+        return Mutability.MODIFIABLE;
+    }
+
     /**
      * Ensures that the given element can be added to this list.
      * The default implementation ensures that the object is {@code null} or assignable

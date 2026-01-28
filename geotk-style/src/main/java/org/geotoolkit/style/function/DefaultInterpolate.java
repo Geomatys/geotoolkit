@@ -23,9 +23,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import org.apache.sis.image.privy.ColorModelFactory;
-import org.apache.sis.util.privy.UnmodifiableArrayList;
+import org.apache.sis.image.internal.shared.ColorModelFactory;
 import org.apache.sis.util.ObjectConverters;
+import org.apache.sis.util.collection.Containers;
 import org.geotoolkit.filter.AbstractExpression;
 import static org.geotoolkit.filter.FilterUtilities.FF;
 import org.geotoolkit.image.RecolorRenderedImage;
@@ -394,7 +394,7 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
 
     @Override
     public List<InterpolationPoint> getInterpolationPoints() {
-        return UnmodifiableArrayList.wrap(points);
+        return Containers.viewAsUnmodifiableList(points);
     }
 
     @Override

@@ -31,7 +31,7 @@ import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.referencing.privy.AxisDirections;
+import org.apache.sis.referencing.internal.shared.AxisDirections;
 import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.apache.sis.metadata.iso.extent.Extents;
 import org.apache.sis.referencing.CRS;
@@ -206,7 +206,7 @@ public final class ReferencingUtilities {
 
         final int targetMinOrdi = CRSUtilities.firstHorizontalAxis(targetCrs);
 
-        if (Utilities.equalsIgnoreMetadata(srcCRS, targetCrs)) {
+        if (CRS.equivalent(srcCRS, targetCrs)) {
             assert targetMinOrdi + oldResolution.length <= newResolution.length : "First horizontal index from target CRS + old resolution array length " +
                     "should be lesser than new resolution array length.";
             System.arraycopy(oldResolution, 0, newResolution, targetMinOrdi, oldResolution.length);
@@ -887,7 +887,7 @@ public final class ReferencingUtilities {
                  */
                 int tmpOffset = 0;
                 for (CoordinateReferenceSystem tmpSubCRS : toFind) {
-                    final int srcOffset = org.apache.sis.referencing.privy.AxisDirections.indexOfColinear(
+                    final int srcOffset = org.apache.sis.referencing.internal.shared.AxisDirections.indexOfColinear(
                             inputCRS.getCoordinateSystem(), tmpSubCRS.getCoordinateSystem());
                     if(srcOffset>=0){
                         int tmpDimNumber = tmpSubCRS.getCoordinateSystem().getDimension();

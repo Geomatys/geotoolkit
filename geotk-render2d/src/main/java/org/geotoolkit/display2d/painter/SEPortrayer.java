@@ -38,9 +38,9 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.feature.Features;
-import org.apache.sis.feature.privy.AttributeConvention;
+import org.apache.sis.feature.internal.shared.AttributeConvention;
 import org.apache.sis.filter.DefaultFilterFactory;
-import org.apache.sis.filter.privy.XPath;
+import org.apache.sis.filter.base.XPath;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.map.ExceptionPresentation;
@@ -391,9 +391,7 @@ public final class SEPortrayer {
          */
         if (requiredProperties != null) {
             for (String pn : requiredProperties) {
-                try {
-                    schema.getProperty(pn);
-                } catch (PropertyNotFoundException e) {
+                if (!schema.hasProperty(pn)) {
                     return query;
                 }
             }
@@ -504,12 +502,9 @@ public final class SEPortrayer {
                         .map(SEPortrayer::stripXpath)
                         .forEach(copy::add);
             }
-            try {
-                // Always include the identifier if it exist.
-                schema.getProperty(AttributeConvention.IDENTIFIER);
+            // Always include the identifier if it exist.
+            if (schema.hasProperty(AttributeConvention.IDENTIFIER)) {
                 copy.add(AttributeConvention.IDENTIFIER);
-            } catch (PropertyNotFoundException ex) {
-                // No id, ignore it.
             }
             final List<FeatureQuery.NamedExpression> columns = new ArrayList<>();
             for (String propName : copy) {

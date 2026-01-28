@@ -48,7 +48,6 @@ import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.referencing.operation.transform.TransformSeparator;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.Classes;
-import static org.apache.sis.util.Utilities.equalsIgnoreMetadata;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.apache.sis.util.collection.FrequencySortedSet;
 import org.geotoolkit.image.palette.IIOListeners;
@@ -952,11 +951,11 @@ public class GridCoverageStack extends org.geotoolkit.coverage.grid.GridCoverage
              * one specified at construction time.
              */
             final CoordinateReferenceSystem sourceCRS = candidate.getCoordinateReferenceSystem();
-            if (sourceCRS != null && !equalsIgnoreMetadata(sourceCRS, crs)
-                                  && !equalsIgnoreMetadata(sourceCRS, reducedCRS))
+            if (sourceCRS != null && !org.apache.sis.referencing.CRS.equivalent(sourceCRS, crs)
+                                  && !org.apache.sis.referencing.CRS.equivalent(sourceCRS, reducedCRS))
             {
                 // A transformation is required. Reuse the previous operation if possible.
-                if (operation==null || !equalsIgnoreMetadata(sourceCRS, operation.getSourceCRS())) {
+                if (operation==null || !org.apache.sis.referencing.CRS.equivalent(sourceCRS, operation.getSourceCRS())) {
                     var factory = DefaultCoordinateOperationFactory.provider();
                     try {
                         try {
@@ -964,7 +963,7 @@ public class GridCoverageStack extends org.geotoolkit.coverage.grid.GridCoverage
                             operation = factory.createOperation(sourceCRS, crs, null);
                         } catch (OperationNotFoundException e) {
                             // Try a transformation to the target CRS without z dimension.
-                            assert !equalsIgnoreMetadata(reducedCRS, crs) : reducedCRS;
+                            assert !org.apache.sis.referencing.CRS.equivalent(reducedCRS, crs) : reducedCRS;
                             operation = factory.createOperation(sourceCRS, reducedCRS, null);
                         }
                     } catch (FactoryException e) {

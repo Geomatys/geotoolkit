@@ -26,10 +26,10 @@ import java.util.Locale;
 import org.apache.sis.coverage.grid.PixelInCell;
 import org.opengis.util.InternationalString;
 import org.apache.sis.measure.Units;
-import org.apache.sis.referencing.crs.DefaultImageCRS;
+import org.apache.sis.referencing.legacy.DefaultImageCRS;
 import org.apache.sis.referencing.crs.DefaultGeographicCRS;
 import org.apache.sis.referencing.crs.DefaultEngineeringCRS;
-import org.apache.sis.referencing.datum.DefaultImageDatum;
+import org.apache.sis.referencing.legacy.DefaultImageDatum;
 import org.apache.sis.referencing.datum.DefaultEngineeringDatum;
 import org.geotoolkit.referencing.cs.Axes;
 import org.geotoolkit.referencing.cs.PredefinedCS;
@@ -85,8 +85,8 @@ public final class PredefinedCRS {
     public static final DefaultEngineeringCRS CARTESIAN_3D;
     static {
         final DefaultEngineeringDatum datum = new DefaultEngineeringDatum(name(Vocabulary.Keys.Unknown));
-        CARTESIAN_2D = new DefaultEngineeringCRS(name(Vocabulary.Keys.Cartesian2d), datum, PredefinedCS.CARTESIAN_2D);
-        CARTESIAN_3D = new DefaultEngineeringCRS(name(Vocabulary.Keys.Cartesian3d), datum, PredefinedCS.CARTESIAN_3D);
+        CARTESIAN_2D = new DefaultEngineeringCRS(name(Vocabulary.Keys.Cartesian2d), datum, null, PredefinedCS.CARTESIAN_2D);
+        CARTESIAN_3D = new DefaultEngineeringCRS(name(Vocabulary.Keys.Cartesian3d), datum, null, PredefinedCS.CARTESIAN_3D);
     }
 
     /**

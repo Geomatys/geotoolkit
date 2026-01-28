@@ -23,7 +23,6 @@ import java.util.logging.LogRecord;
 import javax.media.jai.OperationRegistry;
 import javax.media.jai.registry.RIFRegistry;
 
-import org.geotoolkit.lang.Static;
 import org.geotoolkit.lang.Configuration;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.internal.image.jai.*;
@@ -36,7 +35,7 @@ import static org.geotoolkit.image.internal.Setup.PRODUCT_NAME;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  */
-public final class Registry extends Static {
+public final class Registry {
     /**
      * Do not allows instantiation of this class.
      */

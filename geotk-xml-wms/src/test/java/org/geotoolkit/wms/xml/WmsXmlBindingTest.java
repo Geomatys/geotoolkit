@@ -40,9 +40,9 @@ import jakarta.xml.bind.Marshaller;
 import jakarta.xml.bind.Unmarshaller;
 import java.time.Instant;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.util.privy.Constants;
-import org.apache.sis.util.privy.URLs;
-import org.apache.sis.xml.privy.LegacyNamespaces;
+import org.apache.sis.util.internal.shared.Constants;
+import org.apache.sis.util.internal.shared.URLs;
+import org.apache.sis.xml.internal.shared.LegacyNamespaces;
 import org.apache.sis.util.DefaultInternationalString;
 
 import org.geotoolkit.inspire.xml.vs.ExtendedCapabilitiesType;

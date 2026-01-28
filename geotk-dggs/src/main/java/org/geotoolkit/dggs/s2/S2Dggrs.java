@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.dggs.s2;
 
-import com.google.common.geometry.S2Cell;
-import com.google.common.geometry.S2CellId;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
@@ -29,7 +27,7 @@ import org.apache.sis.metadata.iso.extent.Extents;
 import org.apache.sis.referencing.ImmutableIdentifier;
 import org.apache.sis.referencing.gazetteer.ModifiableLocationType;
 import org.apache.sis.util.SimpleInternationalString;
-import org.apache.sis.util.privy.Constants;
+import org.apache.sis.util.internal.shared.Constants;
 import org.apache.sis.util.resources.Vocabulary;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridSystem;

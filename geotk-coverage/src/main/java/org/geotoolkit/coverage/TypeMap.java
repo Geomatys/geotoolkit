@@ -33,7 +33,6 @@ import org.apache.sis.util.AbstractInternationalString;
 import org.apache.sis.util.SimpleInternationalString;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.measure.Range;
-import org.geotoolkit.lang.Static;
 import org.geotoolkit.math.NumberSet;
 
 
@@ -44,12 +43,8 @@ import org.geotoolkit.math.NumberSet;
  * to {@link DataBuffer} types.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.10
- *
- * @since 2.1
- * @module
  */
-final class TypeMap extends Static {
+final class TypeMap {
     /**
      * The mapping of {@link SampleDimensionType} to {@link DataBuffer} types.
      * Must be sorted in increasing number of bits.

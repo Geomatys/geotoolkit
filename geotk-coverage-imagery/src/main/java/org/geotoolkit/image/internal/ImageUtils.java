@@ -30,8 +30,7 @@ import java.awt.image.Raster;
 import java.awt.image.SampleModel;
 import java.util.Arrays;
 import javax.imageio.ImageTypeSpecifier;
-import org.apache.sis.image.privy.ColorModelFactory;
-import org.geotoolkit.lang.Static;
+import org.apache.sis.image.internal.shared.ColorModelFactory;
 
 import static org.geotoolkit.image.internal.PlanarConfiguration.INTERLEAVED;
 
@@ -44,7 +43,7 @@ import static org.geotoolkit.image.internal.PlanarConfiguration.INTERLEAVED;
  * @see PlanarConfiguration
  * @see SampleType
  */
-public class ImageUtils extends Static {
+public class ImageUtils {
 
     //---------------- sammple format -------------------//
     /**

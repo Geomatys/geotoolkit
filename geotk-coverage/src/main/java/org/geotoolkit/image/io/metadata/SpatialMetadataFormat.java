@@ -247,12 +247,7 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 </tr></table></blockquote>
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.20
- *
  * @see SpatialMetadata
- *
- * @since 3.04 (derived from 2.4)
- * @module
  */
 public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
     /**
@@ -995,7 +990,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
         } else if (Ellipsoid.class.isAssignableFrom(type)) {
             object = CommonCRS.WGS84.ellipsoid();
         } else if (GeodeticDatum.class.isAssignableFrom(type)) {
-            object = CommonCRS.WGS84.datum();
+            object = CommonCRS.WGS84.datum(true);
         } else if (VerticalDatum.class.isAssignableFrom(type)) {
             object = CommonCRS.Vertical.MEAN_SEA_LEVEL.datum();
         } else if (EngineeringDatum.class.isAssignableFrom(type)) {

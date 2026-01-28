@@ -13,7 +13,7 @@ import java.util.Optional;
 
 import org.opengis.feature.Feature;
 
-import org.apache.sis.feature.privy.AttributeConvention;
+import org.apache.sis.feature.internal.shared.AttributeConvention;
 
 import net.sf.marineapi.nmea.sentence.Sentence;
 import org.junit.Assert;

@@ -32,7 +32,7 @@ import org.geotoolkit.process.ProcessFinder;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.feature.builder.AttributeRole;
-import org.apache.sis.feature.privy.AttributeConvention;
+import org.apache.sis.feature.internal.shared.AttributeConvention;
 import org.geotoolkit.processing.GeotkProcessingRegistry;
 
 import org.opengis.feature.Feature;

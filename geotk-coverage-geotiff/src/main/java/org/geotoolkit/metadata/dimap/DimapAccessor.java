@@ -76,7 +76,6 @@ import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.geometry.isoonjts.GeometryUtils;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSGeometryFactory;
-import org.geotoolkit.lang.Static;
 import static org.geotoolkit.metadata.dimap.DimapConstants.*;
 import org.geotoolkit.referencing.operation.transform.WarpTransform2D;
 import org.geotoolkit.temporal.object.ISODateParser;
@@ -119,7 +118,7 @@ import org.w3c.dom.NodeList;
  * @module
  */
 @SuppressWarnings("restriction")
-public final class DimapAccessor extends Static {
+public final class DimapAccessor {
 
     private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.metadata.dimap");
 
@@ -1135,7 +1134,7 @@ public final class DimapAccessor extends Static {
                     final DefaultCitation citation = new DefaultCitation();
                     final ISODateParser dateParser = new ISODateParser();
                     final Date date = dateParser.parseToDate(imagingDate + "T" + imagingTime);
-                    citation.setDates(Collections.singleton(new DefaultCitationDate(date, DateType.CREATION)));
+                    citation.setDates(Collections.singleton(new DefaultCitationDate(date.toInstant(), DateType.CREATION)));
                     citation.setTitle(new SimpleInternationalString(
                             missionName + " " + missionIndex + " " + sourceType + " " + findTypeProduct(missionIndex, sensorCode)));
 

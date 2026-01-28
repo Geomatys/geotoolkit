@@ -23,7 +23,7 @@ import java.util.Properties;
 import java.util.ServiceLoader;
 import javax.imageio.spi.IIORegistry;
 import javax.sql.DataSource;
-import org.apache.sis.metadata.sql.privy.Initializer;
+import org.apache.sis.metadata.sql.internal.shared.Initializer;
 import org.apache.sis.system.SystemListener;
 import org.apache.sis.util.logging.MonolineFormatter;
 import org.geotoolkit.internal.SetupService;

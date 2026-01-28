@@ -20,7 +20,7 @@ package org.geotoolkit.filter.capability;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import org.apache.sis.util.privy.UnmodifiableArrayList;
+import org.apache.sis.util.collection.Containers;
 import org.opengis.filter.capability.GeometryOperand;
 
 /**
@@ -44,7 +44,7 @@ public class SpatialOperator extends Operator {
         if (operands == null) {
             this.operands = Collections.emptyList();
         } else if (operands.length != 0) {
-            this.operands = UnmodifiableArrayList.wrap(operands.clone());
+            this.operands = Containers.viewAsUnmodifiableList(operands.clone());
         } else {
             throw new IllegalArgumentException("Operands list can not be empty");
         }

@@ -22,7 +22,7 @@ import javax.measure.Unit;
 import org.apache.sis.measure.Quantities;
 import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CRS;
-import org.apache.sis.util.Utilities;
+import org.apache.sis.referencing.datum.DatumOrEnsemble;
 import org.geotoolkit.dggs.h3.internal.shared.H3Index;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
 import org.opengis.geometry.DirectPosition;
@@ -62,7 +62,7 @@ final class H3Coder extends DiscreteGlobalGridReferenceSystem.Coder{
         if (precisionsPerLevel != null) return;
 
         final GeographicCRS gcrs = (GeographicCRS) baseCrs;
-        final Ellipsoid ellipsoid = gcrs.getDatum().getEllipsoid();
+        final Ellipsoid ellipsoid = DatumOrEnsemble.asDatum(gcrs).getEllipsoid();
         final double semiMajorAxis = ellipsoid.getSemiMajorAxis();
         final double semiMinorAxis = ellipsoid.getSemiMinorAxis();
         final double r = (semiMajorAxis + semiMinorAxis) / 2;
@@ -116,7 +116,7 @@ final class H3Coder extends DiscreteGlobalGridReferenceSystem.Coder{
     @Override
     public Long encodeIdentifier(DirectPosition dp) throws TransformException {
         final CoordinateReferenceSystem dpcrs = dp.getCoordinateReferenceSystem();
-        if (dpcrs != null && !Utilities.equalsIgnoreMetadata(baseCrs, dpcrs)) {
+        if (dpcrs != null && !CRS.equivalent(baseCrs, dpcrs)) {
             MathTransform trs;
             try {
                 trs = CRS.findOperation(dpcrs, baseCrs, null).getMathTransform();

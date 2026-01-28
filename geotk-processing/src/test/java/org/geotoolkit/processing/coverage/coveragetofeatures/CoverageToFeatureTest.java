@@ -21,19 +21,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.CancellationException;
-import org.apache.sis.coverage.SampleDimension;
-import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.feature.privy.AttributeConvention;
-import org.apache.sis.referencing.privy.AffineTransform2D;
-import org.apache.sis.storage.AbstractGridCoverageResource;
+import org.apache.sis.feature.internal.shared.AttributeConvention;
+import org.apache.sis.referencing.internal.shared.AffineTransform2D;
 import org.apache.sis.referencing.CRS;
-import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -55,9 +49,8 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.apache.sis.coverage.grid.PixelInCell;
-import org.apache.sis.storage.base.MemoryGridResource;
+import org.apache.sis.storage.MemoryGridCoverageResource;
 import org.opengis.util.FactoryException;
-import org.opengis.util.GenericName;
 
 
 /**
@@ -144,7 +137,7 @@ public class CoverageToFeatureTest extends AbstractProcessTest {
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setDomain(new GridGeometry(null , PixelInCell.CELL_CENTER, gridToCRS, crs2d));
         gcb.setValues(image);
-        return new MemoryGridResource(null, gcb.build(), null);
+        return new MemoryGridCoverageResource(null, null, gcb.build(), null);
     }
 
     private FeatureType buildFeatureType() throws NoSuchAuthorityCodeException, FactoryException {

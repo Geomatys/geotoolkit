@@ -49,8 +49,8 @@ import org.opengis.referencing.operation.MathTransform1D;
 import org.apache.sis.measure.Units;
 import org.apache.sis.util.iso.Types;
 import org.apache.sis.referencing.internal.VerticalDatumTypes;
-import org.apache.sis.referencing.privy.AxisDirections;
-import org.apache.sis.referencing.privy.ReferencingFactoryContainer;
+import org.apache.sis.referencing.internal.shared.AxisDirections;
+import org.apache.sis.referencing.internal.shared.ReferencingFactoryContainer;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.referencing.cs.DefaultTimeCS;
@@ -131,7 +131,7 @@ final class AdditionalAxisTable extends CachedTable<String,AdditionalAxisEntry> 
                 properties("Relative time"), "Δt", AxisDirection.FUTURE, cs.getAxis(0).getUnit());
         cs = new DefaultTimeCS(properties(cs.getName()), axis);
         final var datum = new DefaultTemporalDatum(properties(RELATIVE_TIME_DATUM), Instant.EPOCH);
-        RELATIVE_TIME = new DefaultTemporalCRS(properties(datum.getName()), datum, cs);
+        RELATIVE_TIME = new DefaultTemporalCRS(properties(datum.getName()), datum, null, cs);
     }
 
     /**
@@ -146,7 +146,7 @@ final class AdditionalAxisTable extends CachedTable<String,AdditionalAxisEntry> 
         axis = new DefaultCoordinateSystemAxis(properties(axis.getName()), axis.getAbbreviation(), AxisDirection.PAST, axis.getUnit());
         final DefaultParametricDatum datum = new DefaultParametricDatum(properties(RELATIVE_RUNTIME_DATUM));
         final Map<String,?> name = properties(datum.getName());
-        RELATIVE_RUNTIME = new DefaultParametricCRS(name, datum, new DefaultParametricCS(properties(cs.getName()), axis));
+        RELATIVE_RUNTIME = new DefaultParametricCRS(name, datum, null, new DefaultParametricCS(properties(cs.getName()), axis));
     }
 
     /**
@@ -217,7 +217,7 @@ final class AdditionalAxisTable extends CachedTable<String,AdditionalAxisEntry> 
         SingleCRS crs;
         Exception error;
         try {
-            crs = crs(datum, Types.forCodeName(AxisDirection.class, direction, false), Units.valueOf(units), transaction.database);
+            crs = crs(datum, Types.forCodeName(AxisDirection.class, direction, null), Units.valueOf(units), transaction.database);
             error = null;
         } catch (MeasurementParseException | FactoryException e) {
             crs = null;
@@ -246,7 +246,7 @@ final class AdditionalAxisTable extends CachedTable<String,AdditionalAxisEntry> 
          * create a new datum.
          */
         if (AxisDirections.isVertical(direction)) {
-            RealizationMethod type = VerticalDatumTypes.guess(name, null, null);
+            RealizationMethod type = VerticalDatumTypes.fromDatum(name, null, null);
             if (type == null) {
                 if (Units.isPressure(units)) {
                     type = RealizationMethod.valueOf("BAROMETRIC");

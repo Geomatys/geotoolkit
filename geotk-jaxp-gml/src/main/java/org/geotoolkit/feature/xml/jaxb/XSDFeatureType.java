@@ -87,6 +87,15 @@ public class XSDFeatureType implements FeatureType {
     }
 
     @Override
+    public boolean hasProperty(String name) {
+        try {
+            return getProperty(name) != null;
+        } catch (PropertyNotFoundException e) {
+            return false;
+        }
+    }
+
+    @Override
     public PropertyType getProperty(String name) throws PropertyNotFoundException {
         return builder.build().getProperty(name);
     }

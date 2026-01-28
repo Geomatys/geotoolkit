@@ -33,7 +33,6 @@ import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.util.Utilities;
 import org.geotoolkit.ShapeTestData;
 import org.geotoolkit.data.shapefile.shp.ShapefileHeader;
 import org.geotoolkit.feature.FeatureExt;
@@ -250,7 +249,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
 
         CoordinateReferenceSystem crs2 = FeatureExt.getCRS(ds.getFeatureType("test"));
         assertNotNull( crs2 );
-        assertTrue(Utilities.equalsIgnoreMetadata(crs, crs2));
+        assertTrue(CRS.equivalent(crs, crs2));
 
         file.deleteOnExit();
         file = new File("test.dbf");

@@ -28,9 +28,9 @@ import java.util.Iterator;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import org.opengis.util.GenericName;
-import org.apache.sis.util.privy.CollectionsExt;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Deprecable;
+import org.apache.sis.util.collection.Containers;
 
 import static org.junit.Assert.*;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -271,7 +271,7 @@ public class FeatureComparator {
         if (value instanceof Collection<?>) {
             return (Collection<?>) value;
         } else {
-            return CollectionsExt.singletonOrEmpty(value);
+            return Containers.singletonOrEmpty(value);
         }
     }
 }

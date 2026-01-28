@@ -28,7 +28,7 @@ import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.RasterLoadingStrategy;
-import org.apache.sis.util.privy.Numerics;
+import org.apache.sis.util.internal.shared.Numerics;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.util.ArraysExt;
 import org.junit.Test;
@@ -133,7 +133,7 @@ public class CoverageReadConsistency {
                 subsampling[d] += random.nextInt(StrictMath.max(rs / 16, 1));
             }
         }
-        return gg.derive().subgrid(new GridExtent(null, low, high, true), subsampling).build();
+        return gg.derive().subgrid(new GridExtent(null, low, high, true), ArraysExt.copyAsLongs(subsampling)).build();
     }
 
     private int[] randomRange(final int numBands) {

@@ -52,7 +52,6 @@ import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.factory.Factories;
 import org.geotoolkit.internal.image.io.CheckedImageInputStream;
 import org.geotoolkit.internal.image.io.Formats;
-import org.geotoolkit.lang.Static;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.collection.DeferringIterator;
@@ -123,12 +122,8 @@ import org.geotoolkit.util.collection.DeferringIterator;
  * the first argument. All other arguments are optional and can be {@code null}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.20
- *
- * @since 3.07
- * @module
  */
-public final class XImageIO extends Static {
+public final class XImageIO {
 
     private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.image");
 

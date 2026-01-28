@@ -19,7 +19,6 @@ package org.geotoolkit.coverage.sql;
 
 import org.apache.sis.coverage.Category;
 import org.apache.sis.coverage.SampleDimension;
-import org.apache.sis.util.privy.UnmodifiableArrayList;
 import org.apache.sis.measure.MeasurementRange;
 import org.apache.sis.storage.DataStoreException;
 
@@ -88,7 +87,7 @@ final class FormatTable extends CachedTable<String,FormatEntry> {
         final String  metadata    = results.getString (2);
         final boolean approximate = results.getBoolean(3);
         final SampleDimension[] categories = sampleDimensions.query(identifier);
-        return new FormatEntry(format, UnmodifiableArrayList.wrap(categories), metadata, approximate);
+        return new FormatEntry(format, List.of(categories), metadata, approximate);
     }
 
     /**

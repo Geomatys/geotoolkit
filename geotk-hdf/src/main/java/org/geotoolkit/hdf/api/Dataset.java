@@ -107,13 +107,13 @@ public final class Dataset extends AbstractResource implements Node {
             final EngineeringDatum datum = new DefaultEngineeringDatum(Collections.singletonMap("name", "Datum"));
             final CoordinateSystemAxis axis = new DefaultCoordinateSystemAxis(Collections.singletonMap("name", "Axis"), "unnamed", AxisDirection.NORTH, Units.UNITY);
             final CoordinateSystem cs = new DefaultLinearCS(Collections.singletonMap("name", "CS"), axis);
-            LATITUDE = new DefaultEngineeringCRS(Collections.singletonMap("name", "LATITUDE"), datum, cs);
+            LATITUDE = new DefaultEngineeringCRS(Collections.singletonMap("name", "LATITUDE"), datum, null, cs);
         }
         {
             final EngineeringDatum datum = new DefaultEngineeringDatum(Collections.singletonMap("name", "Datum"));
             final CoordinateSystemAxis axis = new DefaultCoordinateSystemAxis(Collections.singletonMap("name", "Axis"), "unnamed", AxisDirection.EAST, Units.UNITY);
             final CoordinateSystem cs = new DefaultLinearCS(Collections.singletonMap("name", "CS"), axis);
-            LONGITUDE = new DefaultEngineeringCRS(Collections.singletonMap("name", "LONGITUDE"), datum, cs);
+            LONGITUDE = new DefaultEngineeringCRS(Collections.singletonMap("name", "LONGITUDE"), datum, null, cs);
         }
     }
 
@@ -275,7 +275,7 @@ public final class Dataset extends AbstractResource implements Node {
                         final Map<String,?> cs   = singletonMap(NAME_KEY, new NamedIdentifier(null, Vocabulary.formatInternational(Vocabulary.Keys.Temporal)));
                         final Map<String,?> axis = singletonMap(NAME_KEY, new NamedIdentifier(null, Vocabulary.formatInternational(Vocabulary.Keys.Time)));
                         final DefaultTimeCS timeCs = new DefaultTimeCS(cs, new DefaultCoordinateSystemAxis(axis, "t", AxisDirection.FUTURE, unit));
-                        crs = new DefaultTemporalCRS(properties, datum, timeCs);
+                        crs = new DefaultTemporalCRS(properties, datum, null, timeCs);
 
                     } catch (MeasurementParseException | ParseException e) {
                         HDF5Provider.LOGGER.log(Level.WARNING, "Failed to parse unit {0}", unitStr);

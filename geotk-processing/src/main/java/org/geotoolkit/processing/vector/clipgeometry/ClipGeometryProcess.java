@@ -27,7 +27,7 @@ import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;
 import org.opengis.parameter.ParameterValueGroup;
 import org.geotoolkit.feature.FeatureExt;
-import org.apache.sis.feature.privy.AttributeConvention;
+import org.apache.sis.feature.internal.shared.AttributeConvention;
 
 import static org.geotoolkit.processing.vector.clipgeometry.ClipGeometryDescriptor.*;
 import org.opengis.feature.AttributeType;

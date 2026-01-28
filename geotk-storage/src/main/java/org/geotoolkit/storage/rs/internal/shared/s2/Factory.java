@@ -39,7 +39,7 @@ import org.apache.sis.geometry.wrapper.Geometries;
 import org.apache.sis.geometry.wrapper.GeometryType;
 import org.apache.sis.geometry.wrapper.GeometryWrapper;
 import org.apache.sis.setup.GeometryLibrary;
-import org.apache.sis.util.privy.CollectionsExt;
+import org.apache.sis.util.collection.Containers;
 
 /**
  * The factory of geometry objects backed by S2.
@@ -293,7 +293,7 @@ public final class Factory extends Geometries<S2Region> {
          */
         final Collection<?> data = (components instanceof Collection<?>)
                 ? (Collection<?>) components : Arrays.asList((Object[]) components);
-        S2Region geometry = (S2Region) CollectionsExt.singletonOrNull(data);
+        S2Region geometry = (S2Region) Containers.peekIfSingleton(data);
         if (geometry == null) {
             geometry = new S2RegionUnion((Collection)data);
         }

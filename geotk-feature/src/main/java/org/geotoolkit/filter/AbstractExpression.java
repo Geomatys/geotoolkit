@@ -44,7 +44,12 @@ public abstract class AbstractExpression implements Expression<Object,Object>, S
 
     @Override
     public Class<Object> getResourceClass() {
-        return null;        // Actually undetermined.
+        return Object.class;        // Actually undetermined.
+    }
+
+    // For subclasses that implement FeatureExpression.
+    public Class<?> getResultClass() {
+        return Object.class;
     }
 
     /**

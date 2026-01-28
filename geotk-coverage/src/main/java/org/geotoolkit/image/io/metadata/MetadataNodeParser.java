@@ -1152,7 +1152,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      */
     public <T extends CodeList<T>> T getAttributeAsCode(final String attribute, final Class<T> codeType) {
         final String value = getAttribute(attribute);
-        final T code = Types.forCodeName(codeType, value, false);
+        final T code = Types.forCodeName(codeType, value, null);
         if (code == null && value != null) {
             warning("getAttributeAsCode", Errors.Keys.IllegalParameterValue_2, attribute, value);
         }

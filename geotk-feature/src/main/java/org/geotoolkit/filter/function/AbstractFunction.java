@@ -19,11 +19,11 @@ package org.geotoolkit.filter.function;
 
 import java.util.List;
 import org.geotoolkit.filter.AbstractExpression;
-import org.apache.sis.util.privy.UnmodifiableArrayList;
 import org.opengis.filter.Expression;
 import org.opengis.filter.Literal;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.Classes;
+import org.apache.sis.util.collection.Containers;
 import org.geotoolkit.util.StringUtilities;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.util.ScopedName;
@@ -43,7 +43,7 @@ public abstract class AbstractFunction extends AbstractExpression {
     protected AbstractFunction(final String name, final Expression<Object,?>[] parameters, final Literal<Object,?> fallback) {
         ensureNonNull("name", name);
         this.name = name;
-        this.parameters = UnmodifiableArrayList.wrap(parameters);
+        this.parameters = Containers.viewAsUnmodifiableList(parameters);
         this.fallback = fallback;
         scoped = createName(name);
     }

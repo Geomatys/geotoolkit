@@ -48,7 +48,7 @@ import org.geotoolkit.swe.xml.v101.SimpleDataRecordType;
 import org.geotoolkit.swe.xml.v101.Text;
 import org.geotoolkit.swe.xml.v101.TextBlockType;
 import jakarta.xml.bind.JAXBContext;
-import org.apache.sis.xml.privy.LegacyNamespaces;
+import org.apache.sis.xml.internal.shared.LegacyNamespaces;
 import org.apache.sis.measure.Units;
 import org.apache.sis.metadata.iso.quality.DefaultQuantitativeAttributeAccuracy;
 import org.apache.sis.metadata.iso.quality.DefaultQuantitativeResult;
@@ -306,7 +306,7 @@ public class ObservationXMLBindingTest {
 
         TypeName tn = Names.createTypeName(null, null, "tname");
 
-        DefaultRecordSchema schema = new DefaultRecordSchema(null, null, "MySchema");
+        DefaultRecordSchema schema = new DefaultRecordSchema("MySchema");
         // The same instance can be reused for all records to create in that schema.
 
         Map<CharSequence,Class<?>> fieldss = new LinkedHashMap<>();

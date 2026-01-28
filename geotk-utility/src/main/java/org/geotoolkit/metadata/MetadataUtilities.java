@@ -7,7 +7,6 @@ import java.util.stream.Stream;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.citation.DefaultOnlineResource;
 import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
-import org.apache.sis.util.Static;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.Metadata;
 import org.opengis.metadata.citation.Citation;
@@ -19,7 +18,7 @@ import org.opengis.metadata.identification.Identification;
  *
  * @author Alexis Manin (Geomatys)
  */
-public class MetadataUtilities extends Static {
+public class MetadataUtilities {
 
     private MetadataUtilities() {}
 

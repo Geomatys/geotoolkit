@@ -57,8 +57,8 @@ import org.apache.sis.measure.Units;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
-import org.apache.sis.referencing.privy.AxisDirections;
-import org.apache.sis.referencing.privy.AffineTransform2D;
+import org.apache.sis.referencing.internal.shared.AxisDirections;
+import org.apache.sis.referencing.internal.shared.AffineTransform2D;
 import org.apache.sis.util.ArgumentChecks;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import org.apache.sis.util.ObjectConverters;
@@ -245,7 +245,7 @@ public final class GO2Utilities {
             final CoordinateReferenceSystem candidate2D = CRS.getHorizontalComponent(coverageCRS);
             if (candidate2D == null)
                 throw new PortrayalException("Cannot find horizontal component of input data CRS.");
-            if(!Utilities.equalsIgnoreMetadata(candidate2D, objectiveCrs) ){
+            if(!CRS.equivalent(candidate2D, objectiveCrs) ){
                 sameCRS = false;
                 // We do not force geophysics only because we use a neighbor interpolation.
                 coverage = GO2Utilities.resample(coverage, objectiveCrs, InterpolationCase.NEIGHBOR);

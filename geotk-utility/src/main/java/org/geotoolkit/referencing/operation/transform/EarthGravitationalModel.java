@@ -144,7 +144,7 @@ public class EarthGravitationalModel extends VerticalTransform {
             throws IllegalArgumentException, FactoryException
     {
         EarthGravitationalModel model;
-        final Integer key = hashCode(Utilities.equalsApproximately(CommonCRS.WGS84.datum(), datum), nmax);
+        final Integer key = hashCode(Utilities.equalsApproximately(CommonCRS.WGS84.datum(true), datum), nmax);
         synchronized (POOL) {
             model = POOL.get(key);
             if (model == null) {
@@ -161,7 +161,7 @@ public class EarthGravitationalModel extends VerticalTransform {
      * @throws FactoryException If an error occurred while loading the data.
      */
     protected EarthGravitationalModel() throws FactoryException {
-        this(CommonCRS.WGS84.datum(), DEFAULT_ORDER);
+        this(CommonCRS.WGS84.datum(true), DEFAULT_ORDER);
     }
 
     /**
@@ -201,7 +201,7 @@ public class EarthGravitationalModel extends VerticalTransform {
         ensureNonNull("datum", datum);
         ensureBetween("nmax", 2, 9999, nmax); // Arbitrary upper limit.
         this.nmax = nmax;
-        isWGS84 = Utilities.equalsApproximately(CommonCRS.WGS84.datum(), datum);
+        isWGS84 = Utilities.equalsApproximately(CommonCRS.WGS84.datum(true), datum);
         if (isWGS84) {
             /*
              * WGS84 model values.
@@ -221,7 +221,7 @@ public class EarthGravitationalModel extends VerticalTransform {
             rkm       = 3.986004418e+14;
             grava     = 9.7803267714;
             star      = 0.001931851386;
-        } else if (Utilities.equalsIgnoreMetadata(CommonCRS.WGS72.datum(), datum)) {
+        } else if (Utilities.equalsIgnoreMetadata(CommonCRS.WGS72.datum(true), datum)) {
             /*
              * WGS72 model values.
              */

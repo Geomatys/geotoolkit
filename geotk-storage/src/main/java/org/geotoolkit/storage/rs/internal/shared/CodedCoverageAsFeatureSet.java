@@ -30,12 +30,12 @@ import org.apache.sis.feature.AbstractFeature;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.feature.privy.AttributeConvention;
+import org.apache.sis.feature.internal.shared.AttributeConvention;
 import org.apache.sis.storage.AbstractFeatureSet;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.apache.sis.util.iso.Names;
-import org.apache.sis.util.privy.AbstractIterator;
+import org.apache.sis.util.internal.shared.AbstractIterator;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridSystems;
 import org.geotoolkit.referencing.dggs.Zone;
@@ -206,6 +206,7 @@ public final class CodedCoverageAsFeatureSet extends AbstractFeatureSet {
         }
 
         @Override
+        @Deprecated
         public Object getValueOrFallback(String propName, Object missingPropertyFallback) {
             final Integer idx = index.get(propName);
             if (idx == null) return missingPropertyFallback;
@@ -239,8 +240,10 @@ public final class CodedCoverageAsFeatureSet extends AbstractFeatureSet {
                 } catch (TransformException ex) {
                     throw new BackingStoreException(ex);
                 }
-            } else {
-                return getCell().getValueOrFallback(propName, missingPropertyFallback);
+            } else try {
+                return getCell().getPropertyValue(propName);
+            } catch (PropertyNotFoundException e) {
+                return missingPropertyFallback;
             }
         }
 

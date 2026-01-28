@@ -18,13 +18,12 @@ package org.geotoolkit.font;
 
 import java.awt.Color;
 import javax.swing.UIManager;
-import org.apache.sis.util.Static;
 
 /**
  * @author Quentin Boileau (Geomatys)
  * @author Johann Sorel (Geomatys)
  */
-public final class FontAwesomeIcons extends Static {
+public final class FontAwesomeIcons {
 
     public static final Color DEFAULT_COLOR = UIManager.getColor("Button.foreground");
     public static final Color DISABLE_COLOR = UIManager.getColor("Button.disabledText");

@@ -25,9 +25,9 @@ import javax.measure.Quantity;
 import javax.measure.quantity.Length;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.geometry.ImmutableEnvelope;
-import org.apache.sis.util.privy.UnmodifiableArrayList;
 import org.apache.sis.storage.FeatureQuery;
 import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.collection.Containers;
 import org.geotoolkit.filter.FilterUtilities;
 import org.opengis.feature.Feature;
 import org.opengis.filter.Filter;
@@ -251,7 +251,7 @@ public class QueryUtilities {
 
         final List atts = new LinkedList();
 
-        final List lst1 = UnmodifiableArrayList.wrap(atts1);
+        final List lst1 = Containers.viewAsUnmodifiableList(atts1);
         for (int i = 0; i < atts2.length; i++) {
             if (lst1.contains(atts2[i])) {
                 atts.add(atts2[i]);

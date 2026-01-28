@@ -18,8 +18,8 @@
 package org.geotoolkit.filter;
 
 import org.apache.sis.feature.builder.PropertyTypeBuilder;
-import org.apache.sis.feature.privy.FeatureExpression;
-import org.apache.sis.feature.privy.FeatureProjectionBuilder;
+import org.apache.sis.feature.internal.shared.FeatureExpression;
+import org.apache.sis.feature.internal.shared.FeatureProjectionBuilder;
 import org.apache.sis.referencing.CRS;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.logging.Logging;
@@ -69,8 +69,10 @@ public class DefaultPropertyName extends AbstractExpression implements ValueRefe
      */
     @Override
     public Object apply(final Object candidate) {
-        if (isSimple && candidate instanceof Feature) {
-            return ((Feature) candidate).getValueOrFallback(property, null);
+        if (isSimple && candidate instanceof Feature) try {
+            return ((Feature) candidate).getPropertyValue(property);
+        } catch (PropertyNotFoundException e) {
+            return null;
         }
 
         final Class cs;

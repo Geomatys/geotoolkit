@@ -18,6 +18,7 @@ package org.geotoolkit.index.tree;
 
 import java.io.IOException;
 import java.util.Arrays;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Classes;
 import org.opengis.geometry.Envelope;
@@ -26,7 +27,6 @@ import org.geotoolkit.internal.tree.TreeUtilities;
 import org.geotoolkit.internal.tree.CalculatorND;
 import org.geotoolkit.internal.tree.Calculator;
 import org.geotoolkit.internal.tree.TreeAccess;
-import org.apache.sis.util.Utilities;
 import static org.geotoolkit.internal.tree.TreeUtilities.*;
 
 /**
@@ -135,7 +135,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
         try {
             ArgumentChecks.ensureNonNull("insert : object", object);
             final Envelope env = treeEltMap.getEnvelope(object);
-            if (!Utilities.equalsIgnoreMetadata(crs, env.getCoordinateReferenceSystem()))
+            if (!CRS.equivalent(crs, env.getCoordinateReferenceSystem()))
                 throw new IllegalArgumentException("During insertion element should have same CoordinateReferenceSystem as Tree.");
             final double[] coordinates = TreeUtilities.getCoords(env);
             for (double d : coordinates)
@@ -441,7 +441,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
 
     public boolean remove(final int entry, Envelope entryEnvelope) throws StoreIndexException {
             ArgumentChecks.ensureNonNull("Envelope for the entry to remove", entryEnvelope);
-            if (!Utilities.equalsIgnoreMetadata(crs, entryEnvelope.getCoordinateReferenceSystem()))
+            if (!CRS.equivalent(crs, entryEnvelope.getCoordinateReferenceSystem()))
                 throw new IllegalArgumentException("During insertion element should have same CoordinateReferenceSystem as Tree.");
             final double[] coordinates = TreeUtilities.getCoords(entryEnvelope);
             for (double d : coordinates)

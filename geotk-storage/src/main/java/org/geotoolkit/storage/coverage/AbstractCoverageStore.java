@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.LinkedHashSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.coverage.grid.GridGeometry;
@@ -158,13 +159,7 @@ public abstract class AbstractCoverageStore extends DataStore implements AutoClo
         if (geometries == null || geometries.isEmpty())
             return;
 
-        // HACk : create temporary sets to automatically remove doublon extents.
-        final DefaultExtent extent = new DefaultExtent() {
-            @Override
-            protected <E> Class<? extends Collection<E>> collectionType(Class<E> elementType) {
-                return (Class) Set.class;
-            }
-        };
+        final DefaultExtent extent = new DefaultExtent();
 
         final Set<CoordinateReferenceSystem> crss = new HashSet<>();
         geometries.forEach((name, gg) -> {
@@ -183,6 +178,10 @@ public abstract class AbstractCoverageStore extends DataStore implements AutoClo
                 }
             }
         });
+        // Remove duplicated values.
+        extent.setGeographicElements(new LinkedHashSet<>(extent.getGeographicElements()));
+        extent.setVerticalElements(new LinkedHashSet<>(extent.getVerticalElements()));
+        extent.setTemporalElements(new LinkedHashSet<>(extent.getTemporalElements()));
 
         /* Hack : copy original extents, so allocated sets are transformed into
          * lists. It is necessary, so if someone modifies an inner extent, the set

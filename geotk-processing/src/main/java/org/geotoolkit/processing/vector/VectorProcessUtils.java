@@ -29,7 +29,7 @@ import org.apache.sis.feature.AbstractOperation;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.feature.builder.PropertyTypeBuilder;
-import org.apache.sis.feature.privy.AttributeConvention;
+import org.apache.sis.feature.internal.shared.AttributeConvention;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
@@ -37,7 +37,6 @@ import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.lang.Static;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
@@ -69,7 +68,7 @@ import org.opengis.util.FactoryException;
  *
  * @author Quentin Boileau
  */
-public final class VectorProcessUtils extends Static {
+public final class VectorProcessUtils {
 
     private VectorProcessUtils() {
     }

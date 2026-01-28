@@ -32,8 +32,8 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridOrientation;
 import org.apache.sis.geometries.math.DataType;
 import org.apache.sis.geometries.math.SampleSystem;
-import org.apache.sis.geometries.math.TupleArray;
-import org.apache.sis.geometries.math.TupleArrays;
+import org.apache.sis.geometries.math.Array;
+import org.apache.sis.geometries.math.NDArrays;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.NoSuchDataException;
@@ -86,13 +86,13 @@ public final class DiscreteGlobalGridCoverageProcessor {
             sampleDimensions = selected;
         }
 
-        final List<TupleArray> samples = new ArrayList<>();
+        final List<Array> samples = new ArrayList<>();
         final double[] nans = new double[sampleDimensions.size()];
         for (int i = 0; i < nans.length; i++) {
             final SampleSystem ss = new SampleSystem(DataType.DOUBLE, sampleDimensions.get(i));
             final double[] datas = new double[zones.size()];
             Arrays.fill(datas, Double.NaN);
-            samples.add(TupleArrays.of(ss, datas));
+            samples.add(NDArrays.of(ss, datas));
             nans[i] = Double.NaN;
         }
 
@@ -172,13 +172,13 @@ public final class DiscreteGlobalGridCoverageProcessor {
             sampleDimensions = selected;
         }
 
-        final List<TupleArray> samples = new ArrayList<>();
+        final List<Array> samples = new ArrayList<>();
         final double[] nans = new double[sampleDimensions.size()];
         for (int i = 0; i < nans.length; i++) {
             final SampleSystem ss = new SampleSystem(DataType.DOUBLE, sampleDimensions.get(i));
             final double[] datas = new double[zones.size()];
             Arrays.fill(datas, Double.NaN);
-            samples.add(TupleArrays.of(ss, datas));
+            samples.add(NDArrays.of(ss, datas));
             nans[i] = Double.NaN;
         }
 

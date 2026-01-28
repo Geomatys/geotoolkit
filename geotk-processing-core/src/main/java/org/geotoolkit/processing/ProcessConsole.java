@@ -37,8 +37,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.LogManager;
 import javax.measure.Unit;
-import org.apache.sis.util.privy.X364;
-import static org.apache.sis.util.privy.X364.*;
+import org.apache.sis.util.internal.shared.X364;
+import static org.apache.sis.util.internal.shared.X364.*;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.ObjectConverter;
 import org.apache.sis.util.ObjectConverters;
@@ -72,7 +72,7 @@ import org.opengis.util.NoSuchIdentifierException;
 public final class ProcessConsole {
 
     private static final boolean X364_SUPPORTED = X364.isAnsiSupported();
-    private static final List LIST_CONVERTERS = Containers.unmodifiableList(StringToFeatureSetConverter.getInstance(),
+    private static final List LIST_CONVERTERS = Containers.viewAsUnmodifiableList(StringToFeatureSetConverter.getInstance(),
                 StringToGeometryConverter.getInstance(),
                 StringToAffineTransformConverter.getInstance(),
                 StringToSortByConverter.getInstance(),

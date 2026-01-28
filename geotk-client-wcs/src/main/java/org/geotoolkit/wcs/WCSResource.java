@@ -32,13 +32,12 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridOrientation;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.referencing.privy.AffineTransform2D;
+import org.apache.sis.referencing.internal.shared.AffineTransform2D;
 import org.apache.sis.storage.AbstractGridCoverageResource;
 import org.apache.sis.storage.base.StoreResource;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.Utilities;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.wcs.xml.v100.CoverageOfferingBriefType;
@@ -104,7 +103,7 @@ public class WCSResource extends AbstractGridCoverageResource implements StoreRe
         final CoordinateReferenceSystem candidateCRS = env.getDimension() > 2? crs : crs2d;
         if (env.getCoordinateReferenceSystem() == null) {
             env.setCoordinateReferenceSystem(candidateCRS);
-        } else if (!Utilities.equalsIgnoreMetadata(env.getCoordinateReferenceSystem(), candidateCRS)) {
+        } else if (!CRS.equivalent(env.getCoordinateReferenceSystem(), candidateCRS)) {
             try {
                 env = GeneralEnvelope.castOrCopy(Envelopes.transform(env, candidateCRS));
             } catch (TransformException ex) {

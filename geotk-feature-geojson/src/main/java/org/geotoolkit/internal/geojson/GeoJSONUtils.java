@@ -43,7 +43,7 @@ import java.util.function.Predicate;
 import java.util.logging.Level;
 import org.apache.sis.feature.AbstractOperation;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.feature.privy.AttributeConvention;
+import org.apache.sis.feature.internal.shared.AttributeConvention;
 import org.apache.sis.io.stream.IOUtilities;
 import org.apache.sis.io.wkt.Convention;
 import org.apache.sis.io.wkt.WKTFormat;
@@ -53,8 +53,6 @@ import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Numbers;
-import org.apache.sis.util.Static;
-import org.apache.sis.util.Utilities;
 import org.geotoolkit.internal.geojson.binding.GeoJSONObject;
 import static org.geotoolkit.storage.geojson.GeoJSONConstants.*;
 import org.opengis.feature.AttributeType;
@@ -70,11 +68,8 @@ import org.opengis.util.FactoryException;
 /**
  * @author Quentin Boileau (Geomatys)
  * @author Johann Sorel (Geomatys)
- * @version 2.0
- * @since   2.0
- * @module
  */
-public final class GeoJSONUtils extends Static {
+public final class GeoJSONUtils {
 
     /**
      * Fallback CRS
@@ -154,16 +149,12 @@ public final class GeoJSONUtils extends Static {
      * Returns true if property is a component of the feature type primary key.
      */
     public static boolean isPartOfPrimaryKey(FeatureType type, String propertyName) {
-        PropertyType property;
-        try {
-            property = type.getProperty(AttributeConvention.IDENTIFIER);
-        } catch (PropertyNotFoundException ex) {
-            //no identifier property
-            return false;
-        }
-        if (property instanceof AbstractOperation) {
-            final Set<String> dependencies = ((AbstractOperation) property).getDependencies();
-            return dependencies.contains(propertyName);
+        if (type.hasProperty(AttributeConvention.IDENTIFIER)) {
+            PropertyType property = type.getProperty(AttributeConvention.IDENTIFIER);
+            if (property instanceof AbstractOperation) {
+                final Set<String> dependencies = ((AbstractOperation) property).getDependencies();
+                return dependencies.contains(propertyName);
+            }
         }
         return false;
     }
@@ -179,7 +170,7 @@ public final class GeoJSONUtils extends Static {
 
         String urn = null;
         try {
-            if (Utilities.equalsIgnoreMetadata(crs, DEFAULT_CRS) ||
+            if (org.apache.sis.referencing.CRS.equivalent(crs, DEFAULT_CRS) ||
                 org.apache.sis.referencing.CRS.findOperation(crs, DEFAULT_CRS, null).getMathTransform().isIdentity()) {
                 crs = DEFAULT_CRS;
             }
@@ -379,12 +370,7 @@ public final class GeoJSONUtils extends Static {
      * @return True if an sis:identifier property is available. False otherwise.
      */
     public static boolean hasIdentifier(final FeatureType toSearchIn) {
-        try {
-            toSearchIn.getProperty(AttributeConvention.IDENTIFIER);
-            return true;
-        } catch (PropertyNotFoundException ex) {
-            return false;
-        }
+        return toSearchIn.hasProperty(AttributeConvention.IDENTIFIER);
     }
 
     /**

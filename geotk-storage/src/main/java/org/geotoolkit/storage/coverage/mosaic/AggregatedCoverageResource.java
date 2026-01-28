@@ -52,7 +52,7 @@ import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.measure.Quantities;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.referencing.CRS;
-import org.apache.sis.referencing.crs.DefaultImageCRS;
+import org.apache.sis.referencing.legacy.DefaultImageCRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
@@ -63,7 +63,6 @@ import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
 import org.apache.sis.storage.event.StoreListeners;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.Utilities;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.apache.sis.util.collection.FrequencySortedSet;
 import org.apache.sis.util.resources.Vocabulary;
@@ -521,7 +520,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
             final Map.Entry<GridCoverageResource, GridGeometry> entry = components.entrySet().iterator().next();
             final GridCoverageResource resource = entry.getKey();
             final GridGeometry gridGeometry = entry.getValue();
-            if (outputCrs == null || Utilities.equalsIgnoreMetadata(outputCrs, gridGeometry.getCoordinateReferenceSystem())) {
+            if (outputCrs == null || CRS.equivalent(outputCrs, gridGeometry.getCoordinateReferenceSystem())) {
                 this.cachedGridGeometry = gridGeometry;
                 final JTSEnvelope2D key = new JTSEnvelope2D(gridGeometry.getEnvelope());
                 tree.insert(key, new IndexedResource(key, resource));
@@ -548,7 +547,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
 
         //if all coverage resources have the same grid geometry we can use it directly
         GridGeometry sharedGrid = components.entrySet().iterator().next().getValue();
-        if (!Utilities.equalsIgnoreMetadata(sharedGrid.getCoordinateReferenceSystem(), outputCrs)) {
+        if (!CRS.equivalent(sharedGrid.getCoordinateReferenceSystem(), outputCrs)) {
             sharedGrid = null;
         }
 

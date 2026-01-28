@@ -16,10 +16,8 @@
  */
 package org.geotoolkit.style;
 
-import java.util.Collections;
 import java.util.List;
 
-import org.apache.sis.util.privy.UnmodifiableArrayList;
 
 import org.opengis.filter.Expression;
 import org.opengis.style.Font;
@@ -59,10 +57,9 @@ public class DefaultFont implements Font{
         this.size   = (size   == null) ? DEFAULT_FONT_SIZE : size;
 
         if(family != null && !family.isEmpty()) {
-            final Expression[] rep = family.toArray(new Expression[family.size()]);
-            this.family = UnmodifiableArrayList.wrap(rep);
+            this.family = List.copyOf(family);
         }else{
-            this.family = Collections.emptyList();
+            this.family = List.of();
         }
     }
 

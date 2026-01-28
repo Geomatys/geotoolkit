@@ -37,7 +37,7 @@ import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.apache.sis.coverage.grid.IllegalGridGeometryException;
 import org.apache.sis.image.ImageCombiner;
 import org.apache.sis.image.Interpolation;
-import org.apache.sis.util.privy.UnmodifiableArrayList;
+import org.apache.sis.util.collection.Containers;
 import org.apache.sis.storage.AbstractGridCoverageResource;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
@@ -48,6 +48,7 @@ import org.apache.sis.storage.tiling.TileMatrix;
 import org.apache.sis.storage.tiling.TileStatus;
 import org.apache.sis.storage.tiling.WritableTileMatrix;
 import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.image.BufferedImages;
@@ -79,9 +80,9 @@ public class TileMatrixCoverageResource extends AbstractGridCoverageResource {
         ArgumentChecks.ensureNonNull("sampleDimensions", sampleDimensions);
         this.matrix = matrix;
         this.tileSize = tileSize.clone();
-        this.sampleDimensions = UnmodifiableArrayList.wrap(sampleDimensions.toArray(SampleDimension[]::new));
+        this.sampleDimensions = Containers.copyToImmutableList(sampleDimensions, SampleDimension.class);
         this.tilingScheme = matrix.getTilingScheme();
-        this.coverageGrid = tilingScheme.upsample(tileSize);
+        this.coverageGrid = tilingScheme.upsample(ArraysExt.copyAsLongs(tileSize));
     }
 
     TileMatrix getMatrix() {
@@ -240,7 +241,7 @@ public class TileMatrixCoverageResource extends AbstractGridCoverageResource {
 
                 //current tile grid geometry
                 final GridExtent tileExt = new GridExtent(null, new long[]{idx,idy}, new long[]{idx,idy}, true);
-                final GridGeometry tileGridGeom = matrix.getTilingScheme().derive().subgrid(tileExt).build().upsample(tileSize);
+                final GridGeometry tileGridGeom = matrix.getTilingScheme().derive().subgrid(tileExt).build().upsample(ArraysExt.copyAsLongs(tileSize));
 
                 //read only the area we need from the updating coverage
                 final GridExtent intersection = updateCoverage.getGridGeometry().derive().rounding(GridRoundingMode.ENCLOSING).subgrid(tileGridGeom).getIntersection();

@@ -33,7 +33,7 @@ import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.referencing.privy.AffineTransform2D;
+import org.apache.sis.referencing.internal.shared.AffineTransform2D;
 import org.apache.sis.io.stream.ChannelImageInputStream;
 import org.apache.sis.io.stream.HyperRectangleReader;
 import org.apache.sis.io.stream.Region;
@@ -45,7 +45,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.StorageConnector;
-import org.apache.sis.util.Numbers;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.DataStores;
@@ -55,6 +54,7 @@ import org.opengis.geometry.Envelope;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
 import org.apache.sis.coverage.grid.PixelInCell;
+import org.apache.sis.math.NumberType;
 import org.apache.sis.util.ArraysExt;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.util.GenericName;
@@ -197,7 +197,7 @@ public class HGTStore extends DataStore implements GridCoverageResource {
             try (final ChannelImageInputStream imageStream = new ChannelImageInputStream(
                     null, Files.newByteChannel(fileInput), ByteBuffer.allocateDirect(8192), false)) {
 
-                final HyperRectangleReader reader = new HyperRectangleReader(Numbers.SHORT, imageStream);
+                final HyperRectangleReader reader = new HyperRectangleReader(NumberType.SHORT, imageStream);
                 allData = (short[]) reader.read(new Region(
                         new long[]{extent.getSize(0),extent.getSize(1)},
                         new long[]{areaLower[0], areaLower[1]},

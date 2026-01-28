@@ -59,7 +59,7 @@ public final class EarthGravitationalModelTest extends TransformTestCase {
         final Compiler compiler = new Compiler();
         compiler.load("EGM180.nor");
         final EarthGravitationalModel model = new EarthGravitationalModel(
-                CommonCRS.WGS84.datum(), EarthGravitationalModel.DEFAULT_ORDER, false);
+                CommonCRS.WGS84.datum(true), EarthGravitationalModel.DEFAULT_ORDER, false);
         model.load("EGM180.bnor");
         assertTrue(Arrays.equals(compiler.cnmGeopCoef, model.cnmGeopCoef));
         assertTrue(Arrays.equals(compiler.snmGeopCoef, model.snmGeopCoef));
@@ -88,7 +88,7 @@ public final class EarthGravitationalModelTest extends TransformTestCase {
     @Test
     public void testHeightOffsetWGS72() throws FactoryException, TransformException {
         final EarthGravitationalModel gh =
-                new EarthGravitationalModel(CommonCRS.WGS72.datum(), EarthGravitationalModel.DEFAULT_ORDER);
+                new EarthGravitationalModel(CommonCRS.WGS72.datum(true), EarthGravitationalModel.DEFAULT_ORDER);
         assertEquals( 1.475, gh.heightOffset(45, 45,    0), 0.001);
         assertEquals(46.879, gh.heightOffset( 0, 45,    0), 0.001);
         assertEquals(23.324, gh.heightOffset( 3, 10,   10), 0.001);

@@ -20,7 +20,6 @@ import java.awt.image.RenderedImage;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.lang.Static;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.storage.coverage.ImageStatistics;
 
@@ -29,9 +28,8 @@ import org.geotoolkit.storage.coverage.ImageStatistics;
  * @author Remi Marechal (Geomatys)
  * @author Johann Sorel (Geomatys)
  * @author Quentin Boileau (Geomatys)
- * @module
  */
-public class StatisticOp extends Static {
+public class StatisticOp {
 
     public static final String MINIMUM = "min";
     public static final String MAXIMUM = "max";

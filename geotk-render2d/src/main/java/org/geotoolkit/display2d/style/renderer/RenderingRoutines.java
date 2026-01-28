@@ -35,9 +35,9 @@ import org.apache.sis.feature.builder.PropertyTypeBuilder;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.feature.privy.AttributeConvention;
-import org.apache.sis.feature.privy.FeatureExpression;
-import org.apache.sis.feature.privy.FeatureProjectionBuilder;
+import org.apache.sis.feature.internal.shared.AttributeConvention;
+import org.apache.sis.feature.internal.shared.FeatureExpression;
+import org.apache.sis.feature.internal.shared.FeatureProjectionBuilder;
 import org.apache.sis.measure.Quantities;
 import org.apache.sis.measure.Units;
 import org.apache.sis.map.MapLayer;
@@ -46,7 +46,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureQuery;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.Query;
-import org.apache.sis.util.Utilities;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display2d.GO2Hints;
@@ -489,7 +488,7 @@ public final class RenderingRoutines {
 
         //layer crs may be null if it define an abstract collection
         //or if the crs is defined only on the feature geometry
-        if(layerCRS != null && !Utilities.equalsIgnoreMetadata(layerCRS,bboxCRS)){
+        if(layerCRS != null && !CRS.equivalent(layerCRS,bboxCRS)){
             //BBox and layer bounds have different CRS. reproject bbox bounds
             Envelope env;
 

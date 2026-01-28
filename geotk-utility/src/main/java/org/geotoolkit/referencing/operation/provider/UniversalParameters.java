@@ -732,7 +732,13 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
                     }
                 } while ((forAlias = !forAlias) == true);
                 if (modified) {
-                    properties.put(NAME_KEY, aliases[0]); // In case the primary name was one of the excluded names.
+                    for (int j=0; j<aliases.length; j++) {
+                        if (aliases[j] instanceof Identifier id) {
+                            // In case the primary name was one of the excluded names.
+                            properties.put(NAME_KEY, id);
+                            break;
+                        }
+                    }
                     parameters[i] = new DefaultParameterDescriptor<>(properties, Double.class, null,
                             param.getDefaultValue(), param.getMinimumValue(), param.getMaximumValue(),
                             param.getUnit(), param.getMinimumOccurs() != 0);

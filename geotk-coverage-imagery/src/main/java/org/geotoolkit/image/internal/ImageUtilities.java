@@ -24,8 +24,7 @@ import java.awt.image.*;
 import java.awt.Dimension;
 import javax.media.jai.ImageLayout;
 
-import org.geotoolkit.lang.Static;
-import org.apache.sis.image.privy.FillValues;
+import org.apache.sis.image.internal.shared.FillValues;
 
 
 
@@ -40,11 +39,8 @@ import org.apache.sis.image.privy.FillValues;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Simone Giannecchini (Geosolutions)
- *
- * @since 1.2
- * @module
  */
-public final class ImageUtilities extends Static {
+public final class ImageUtilities {
     /**
      * Do not allow creation of instances of this class.
      */

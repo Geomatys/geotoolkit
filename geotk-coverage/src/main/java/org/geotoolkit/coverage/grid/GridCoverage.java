@@ -58,9 +58,9 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.referencing.privy.AxisDirections;
-import org.apache.sis.image.privy.ColorModelFactory;
-import org.apache.sis.util.privy.UnmodifiableArrayList;
+import org.apache.sis.referencing.internal.shared.AxisDirections;
+import org.apache.sis.image.internal.shared.ColorModelFactory;
+import org.apache.sis.util.collection.Containers;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.Localized;
@@ -187,7 +187,7 @@ abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCoverage im
             switch (sources.length) {
                 case 0:  this.sources = null; break;
                 case 1:  this.sources = Collections.singletonList(sources[0]); break;
-                default: this.sources = UnmodifiableArrayList.wrap(sources.clone()); break;
+                default: this.sources = Containers.viewAsUnmodifiableList(sources.clone()); break;
             }
         } else {
             this.sources = null;

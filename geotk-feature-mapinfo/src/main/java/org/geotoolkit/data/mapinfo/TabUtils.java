@@ -26,7 +26,6 @@ import org.apache.sis.referencing.operation.builder.LinearTransformBuilder;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.Static;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.apache.sis.coverage.grid.PixelInCell;
 import org.opengis.util.FactoryException;
@@ -39,7 +38,7 @@ import org.opengis.util.FactoryException;
  *
  * @author Johann Sorel (Geomatys)
  */
-public final class TabUtils extends Static {
+public final class TabUtils {
 
     private TabUtils(){}
 

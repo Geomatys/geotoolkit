@@ -30,9 +30,9 @@ import org.opengis.referencing.operation.*;
 import org.opengis.geometry.Envelope;
 
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.referencing.privy.ReferencingUtilities;
+import org.apache.sis.referencing.internal.shared.ReferencingUtilities;
 
-import org.apache.sis.referencing.privy.AxisDirections;
+import org.apache.sis.referencing.internal.shared.AxisDirections;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.lang.Workaround;
 import org.apache.sis.referencing.CRS;

@@ -36,7 +36,7 @@ import jakarta.xml.bind.Marshaller;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import org.apache.sis.feature.privy.AttributeConvention;
+import org.apache.sis.feature.internal.shared.AttributeConvention;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
@@ -229,12 +229,14 @@ public class ElementFeatureWriter {
         if (!fragment) {
             rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:gml", "http://www.opengis.net/gml");
         }
-        final Object idValue = feature.getValueOrFallback(AttributeConvention.IDENTIFIER, null);
-        if (idValue != null) {
-            final Attr idAttr = document.createAttributeNS(GML, "id");
-            idAttr.setValue(idValue.toString());
-            idAttr.setPrefix("gml");
-            rootElement.setAttributeNodeNS(idAttr);
+        if (feature.getType().hasProperty(AttributeConvention.IDENTIFIER)) {    // TODO: should be determined in advance.
+            Object idValue = feature.getPropertyValue(AttributeConvention.IDENTIFIER);
+            if (idValue != null) {
+                final Attr idAttr = document.createAttributeNS(GML, "id");
+                idAttr.setValue(idValue.toString());
+                idAttr.setPrefix("gml");
+                rootElement.setAttributeNodeNS(idAttr);
+            }
         }
 
         if (rootDocument == null) {

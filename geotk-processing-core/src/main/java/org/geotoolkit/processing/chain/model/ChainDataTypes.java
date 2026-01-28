@@ -21,7 +21,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import org.apache.sis.coverage.grid.GridCoverage;
-import org.apache.sis.util.privy.UnmodifiableArrayList;
 import org.opengis.filter.Filter;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.Metadata;
@@ -33,8 +32,8 @@ import org.opengis.metadata.Metadata;
  */
 public final class ChainDataTypes {
 
-    public static final List<Class> EDITABLE_TYPE = UnmodifiableArrayList.<Class>wrap(new Class[] {
-                (Class)String.class,
+    public static final List<Class> EDITABLE_TYPE = List.of(
+                String.class,
                 Boolean.class,
                 Integer.class,
                 Double.class,
@@ -44,11 +43,10 @@ public final class ChainDataTypes {
                 String[].class,
                 Map.class,
                 Metadata.class,
-                Filter.class
-    });
+                Filter.class);
 
-    public static final List<Class> VALID_TYPES = UnmodifiableArrayList.<Class>wrap(new Class[] {
-                (Class)String.class,
+    public static final List<Class> VALID_TYPES = List.of(
+                String.class,
                 Boolean.class,
                 Integer.class,
                 Double.class,
@@ -64,8 +62,7 @@ public final class ChainDataTypes {
                 RenderedImage.class,
                 Date.class,
                 Envelope.class,
-                Object.class
-    });
+                Object.class);
 
     private ChainDataTypes(){};
 

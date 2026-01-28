@@ -33,7 +33,7 @@ import org.opengis.referencing.operation.NoninvertibleTransformException;
 
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
-import org.apache.sis.referencing.privy.AffineTransform2D;
+import org.apache.sis.referencing.internal.shared.AffineTransform2D;
 import org.apache.sis.util.logging.Logging;
 
 

@@ -27,7 +27,6 @@ import java.util.Set;
 import org.apache.sis.feature.AbstractOperation;
 import org.apache.sis.feature.DefaultAssociationRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.util.Static;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.FeatureAssociationRole;
 import org.opengis.feature.FeatureType;
@@ -39,13 +38,13 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.GenericName;
-import org.apache.sis.feature.privy.AttributeConvention;
+import org.apache.sis.feature.internal.shared.AttributeConvention;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public final class FeatureTypeExt extends Static {
+public final class FeatureTypeExt {
     public static FeatureType createSubType(final FeatureType featureType,
             final String ... properties) throws MismatchedFeatureException{
         if (properties == null || isAllProperties(featureType, properties)) {
@@ -147,20 +146,22 @@ public final class FeatureTypeExt extends Static {
         for (PropertyType pt1 : type1.getProperties(true)) {
             visited.add(pt1.getName());
             if (AttributeConvention.contains(pt1.getName())) continue;
-            try {
-                final PropertyType pt2 = type2.getProperty(pt1.getName().toString());
+            final String name = pt1.getName().toString();
+            if (type2.hasProperty(name)) {
+                final PropertyType pt2 = type2.getProperty(name);
                 if (!equalsIgnoreConvention(pt1, pt2)) return false;
-            } catch (PropertyNotFoundException ex) {
+            } else {
                 return false;
             }
         }
 
         for (PropertyType pt2 : type2.getProperties(true)) {
             if (AttributeConvention.contains(pt2.getName()) || visited.contains(pt2.getName())) continue;
-            try {
-                final PropertyType pt1 = type1.getProperty(pt2.getName().toString());
+            final String name = pt2.getName().toString();
+            if (type1.hasProperty(name)) {
+                final PropertyType pt1 = type1.getProperty(name);
                 if (!equalsIgnoreConvention(pt1, pt2)) return false;
-            } catch (PropertyNotFoundException ex) {
+            } else {
                 return false;
             }
         }

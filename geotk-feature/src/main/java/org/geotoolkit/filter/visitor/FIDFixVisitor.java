@@ -17,7 +17,7 @@
 package org.geotoolkit.filter.visitor;
 
 import java.util.function.Function;
-import org.apache.sis.feature.privy.AttributeConvention;
+import org.apache.sis.feature.internal.shared.AttributeConvention;
 import org.opengis.filter.ComparisonOperator;
 import org.opengis.filter.ComparisonOperatorName;
 import org.opengis.filter.Expression;

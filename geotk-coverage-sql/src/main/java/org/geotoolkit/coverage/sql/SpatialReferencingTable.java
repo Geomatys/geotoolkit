@@ -21,7 +21,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.ParseException;
-import org.apache.sis.util.privy.Constants;
+import org.apache.sis.util.internal.shared.Constants;
 import org.apache.sis.io.wkt.Convention;
 import org.apache.sis.io.wkt.WKTFormat;
 import org.apache.sis.metadata.iso.citation.Citations;
@@ -35,7 +35,6 @@ import org.apache.sis.referencing.factory.IdentifiedObjectFinder;
 import org.apache.sis.referencing.operation.matrix.MatrixSIS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.util.ComparisonMode;
-import org.apache.sis.util.Utilities;
 import org.opengis.metadata.Identifier;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -191,7 +190,7 @@ public class SpatialReferencingTable extends Table {
             throws FactoryException, SQLException, ParseException
     {
         final CoordinateReferenceSystem actual = getCRS(srid);
-        if (!Utilities.equalsIgnoreMetadata(crs, actual)) {
+        if (!CRS.equivalent(crs, actual)) {
             Matrix adjust = MathTransforms.getMatrix(CRS.findOperation(crs, actual, null).getMathTransform());
             if (adjust == null) {
                 throw new FactoryException("Unexpected non-linear transform with SRID " + srid);

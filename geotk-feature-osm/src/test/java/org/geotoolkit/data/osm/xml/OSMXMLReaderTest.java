@@ -25,6 +25,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.stream.XMLStreamException;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.data.osm.model.Api;
 import org.geotoolkit.data.osm.model.MemberType;
 import org.geotoolkit.data.osm.model.Transaction;
@@ -36,7 +37,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opengis.geometry.Envelope;
-import org.apache.sis.util.Utilities;
 import static org.junit.Assert.*;
 import org.opengis.feature.Feature;
 
@@ -76,7 +76,7 @@ public class OSMXMLReaderTest {
         //check that the bound is correctly read
         Envelope env = reader.getEnvelope();
         assertNotNull(env);
-        assertTrue(Utilities.equalsIgnoreMetadata(env.getCoordinateReferenceSystem(), CommonCRS.WGS84.normalizedGeographic()));
+        assertTrue(CRS.equivalent(env.getCoordinateReferenceSystem(), CommonCRS.WGS84.normalizedGeographic()));
         assertEquals(-0.108157396316528d, env.getMinimum(0),DELTA);
         assertEquals(-0.107599496841431d, env.getMaximum(0),DELTA);
         assertEquals(51.5073601795557d, env.getMinimum(1),DELTA);
@@ -180,7 +180,7 @@ public class OSMXMLReaderTest {
         //check that the bound is correctly read
         Envelope env = reader.getEnvelope();
         assertNotNull(env);
-        assertTrue(Utilities.equalsIgnoreMetadata(env.getCoordinateReferenceSystem(), CommonCRS.WGS84.normalizedGeographic()));
+        assertTrue(CRS.equivalent(env.getCoordinateReferenceSystem(), CommonCRS.WGS84.normalizedGeographic()));
         assertEquals(-0.108157396316528d, env.getMinimum(0),DELTA);
         assertEquals(-0.107599496841431d, env.getMaximum(0),DELTA);
         assertEquals(51.5073601795557d, env.getMinimum(1),DELTA);

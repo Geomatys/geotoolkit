@@ -17,7 +17,6 @@ import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.apache.sis.geometry.Envelopes;
-import org.apache.sis.util.Utilities;
 import org.geotoolkit.filter.FilterUtilities;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.SpatialOperator;
@@ -60,7 +59,7 @@ public class CRSAdaptorVisitor extends DuplicatingFilterVisitor {
                         if (lo instanceof Geometry) {
                             Geometry geom = (Geometry)lo;
                             final CoordinateReferenceSystem sourceCRS = JTS.findCoordinateReferenceSystem(geom);
-                            if (Utilities.equalsIgnoreMetadata(sourceCRS, targetCrs)) break out;
+                            if (CRS.equivalent(sourceCRS, targetCrs)) break out;
                             final MathTransform trs = CRS.findOperation(sourceCRS, targetCrs, null).getMathTransform();
                             geom = org.apache.sis.geometry.wrapper.jts.JTS.transform(geom, trs);
                             l = ff.literal(geom);

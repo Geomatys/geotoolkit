@@ -33,7 +33,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Logger;
 import org.apache.sis.io.TableAppender;
-import static org.apache.sis.util.privy.CollectionsExt.unmodifiableOrCopy;
 import org.apache.sis.util.logging.Logging;
 import org.opengis.util.InternationalString;
 
@@ -813,7 +812,7 @@ public class Hints extends RenderingHints {
             super(String.class);
             final Set<String> options = new TreeSet<>(Arrays.asList(alternatives));
             this.wildcard = options.remove("*");
-            this.options  = unmodifiableOrCopy(options);
+            this.options  = Set.copyOf(options);
         }
 
         /**

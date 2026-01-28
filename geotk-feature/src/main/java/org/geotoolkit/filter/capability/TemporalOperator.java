@@ -19,7 +19,7 @@ package org.geotoolkit.filter.capability;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import org.apache.sis.util.privy.UnmodifiableArrayList;
+import org.apache.sis.util.collection.Containers;
 import org.opengis.util.CodeList;
 
 /**
@@ -45,7 +45,7 @@ public class TemporalOperator extends Operator {
             throw new IllegalArgumentException("Operands list can not be null or empty");
         }
         //use a threadsafe optimized immutable list
-        this.operands = UnmodifiableArrayList.wrap(operands.clone());
+        this.operands = Containers.viewAsUnmodifiableList(operands.clone());
     }
 
     public Collection<CodeList<?>> getTemporalOperands() {
