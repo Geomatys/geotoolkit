@@ -60,6 +60,7 @@ import org.geotoolkit.observation.feature.OMFeatureTypes;
 import org.geotoolkit.observation.model.ResponseMode;
 import org.geotoolkit.observation.model.SamplingFeature;
 import static org.geotoolkit.observation.model.ObservationTransformUtils.toModel;
+import org.geotoolkit.observation.model.ObservationType;
 import org.geotoolkit.observation.query.DatasetQuery;
 import org.geotoolkit.sos.xml.SOSMarshallerPool;
 import org.geotoolkit.storage.DataStores;
@@ -161,7 +162,7 @@ public class XmlObservationStore extends AbstractObservationStore implements Agg
         final List<String> sensorIDs = query.getSensorIds();
         for (org.geotoolkit.observation.model.Observation obs : observations) {
             final Procedure proc =  obs.getProcedure();
-            final ProcedureDataset procedure = new ProcedureDataset(proc.getId(), proc.getName(), proc.getDescription(), "Component", "timeseries", new ArrayList<>(), null);
+            final ProcedureDataset procedure = new ProcedureDataset(proc.getId(), proc.getName(), proc.getDescription(), "Component", ObservationType.TIMESERIES, new ArrayList<>(), null);
             if (sensorIDs.isEmpty() || sensorIDs.contains(procedure.getId())) {
                 if (!result.procedures.contains(procedure)) {
                     result.procedures.add(procedure);
