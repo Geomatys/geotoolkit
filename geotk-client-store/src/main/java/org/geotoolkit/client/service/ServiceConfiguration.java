@@ -17,6 +17,8 @@
 package org.geotoolkit.client.service;
 
 import java.io.InputStream;
+import java.net.Authenticator;
+import java.net.PasswordAuthentication;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpConnectTimeoutException;
@@ -206,6 +208,22 @@ public class ServiceConfiguration {
             host = uri.getHost();
             port = uri.getPort();
             basePath = uri.getRawPath();
+
+            //set the authenticator if we have a user/password defined
+            String userInfo = uri.getUserInfo();
+            if (userInfo != null) {
+                userInfo = userInfo.replace("@", "");
+                int idx = userInfo.indexOf(':');
+                if (idx < 1) throw new IllegalArgumentException("Unsupported user information format. 'username:password' expected.");
+                final String user = userInfo.substring(0, idx);
+                final String password = userInfo.substring(idx+1);
+                builder.authenticator(new Authenticator() {
+                    @Override
+                    protected PasswordAuthentication getPasswordAuthentication() {
+                        return new PasswordAuthentication(user, password.toCharArray());
+                    }
+                });
+            }
             return (T) this;
         }
 

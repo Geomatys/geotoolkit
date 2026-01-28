@@ -862,14 +862,6 @@
        ================================================================== -->
   <repositories>
     <repository>
-      <id>geotoolkit.org</id>
-      <name>Geotoolkit.org repository</name>
-      <url>https://maven.geotoolkit.org</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-    <repository>
       <id>geomatys</id>
       <name>Geomatys public repository</name>
       <url>https://nexus.geomatys.com/repository/maven-public</url>
@@ -877,24 +869,9 @@
         <enabled>false</enabled>
       </snapshots>
     </repository>
-    <!-- this repository is retrieved transitively with the wrong protocol,
-    as maven does not follow redirection we declare it here-->
-    <repository>
-      <id>jaspersoft</id>
-      <name>jaspersoft repository</name>
-      <url>https://jaspersoft.jfrog.io/jaspersoft/third-party-ce-artifacts</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
   </repositories>
 
   <pluginRepositories>
-    <pluginRepository>
-      <id>geotoolkit.org</id>
-      <name>Geotoolkit.org repository</name>
-      <url>https://maven.geotoolkit.org</url>
-    </pluginRepository>
     <pluginRepository>
       <id>geomatys</id>
       <name>Geomatys public repository</name>
