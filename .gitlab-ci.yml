@@ -28,7 +28,7 @@ stages:
   - release
   - publish
 
-image: images.geomatys.com/build/maven:3.9.12-25.0.1-tem
+image: images.geomatys.com/build/maven:3.9.12-25.0.2-tem
 
 # Force removing artifacts installed by local jobs, to avoid cache corruption with snapshots.
 after_script:
