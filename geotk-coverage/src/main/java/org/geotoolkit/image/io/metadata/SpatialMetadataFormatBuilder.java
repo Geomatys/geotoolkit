@@ -69,7 +69,7 @@ import org.opengis.util.GenericName;
 
 import org.geotoolkit.lang.Builder;
 import org.apache.sis.util.Classes;
-import org.apache.sis.util.Numbers;
+import org.apache.sis.math.NumberType;
 import org.apache.sis.util.iso.Types;
 import org.apache.sis.measure.Angle;
 import org.apache.sis.metadata.KeyNamePolicy;
@@ -612,9 +612,9 @@ public class SpatialMetadataFormatBuilder extends Builder<SpatialMetadataFormat>
      * @return The {@code DATATYPE_*} constant for the given class.
      */
     private static int typeOf(Class<?> type) {
-        type = Numbers.primitiveToWrapper(type);
+        type = NumberType.primitiveToWrapper(type);
         if (Number.class.isAssignableFrom(type)) {
-            if (Numbers.isInteger(type)) {
+            if (NumberType.isInteger(type)) {
                 return DATATYPE_INTEGER;
             }
             if (Float.class.isAssignableFrom(type)) {

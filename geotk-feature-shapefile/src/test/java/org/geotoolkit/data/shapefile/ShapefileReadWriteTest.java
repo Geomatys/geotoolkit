@@ -27,7 +27,7 @@ import java.util.Iterator;
 import java.util.stream.Collectors;
 import org.apache.sis.feature.internal.shared.AttributeConvention;
 import org.apache.sis.math.MathFunctions;
-import org.apache.sis.util.Numbers;
+import org.apache.sis.math.NumberType;
 import org.geotoolkit.storage.feature.FeatureCollection;
 import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.storage.feature.session.Session;
@@ -283,7 +283,7 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
             g2.normalize();
             return g1.equalsExact(g2);
 
-        } else if (Numbers.isFloat(o1.getClass()) || Numbers.isFloat(o2.getClass())) {
+        } else if (NumberType.isFractional(o1.getClass()) || NumberType.isFractional(o2.getClass())) {
             return MathFunctions.epsilonEqual(((Number) o1).doubleValue(), ((Number) o2).doubleValue(), 1e-7);
 
         } else {

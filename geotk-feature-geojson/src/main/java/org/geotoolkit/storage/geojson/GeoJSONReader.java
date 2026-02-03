@@ -30,7 +30,7 @@ import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.feature.internal.shared.AttributeConvention;
-import org.apache.sis.util.Numbers;
+import org.apache.sis.math.NumberType;
 import org.apache.sis.util.ObjectConverter;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
@@ -42,7 +42,6 @@ import org.geotoolkit.internal.geojson.binding.GeoJSONFeature;
 import org.geotoolkit.internal.geojson.binding.GeoJSONFeatureCollection;
 import org.geotoolkit.internal.geojson.binding.GeoJSONGeometry;
 import org.geotoolkit.internal.geojson.binding.GeoJSONObject;
-import static org.geotoolkit.storage.geojson.GeoJSONConstants.TYPE;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.Attribute;
 import org.opengis.feature.AttributeType;
@@ -380,8 +379,8 @@ class GeoJSONReader implements Iterator<Feature>, AutoCloseable {
      * @throws UnconvertibleObjectException
      */
     private Object convert(Object value, Class binding) throws UnconvertibleObjectException {
-        final Class<?> valueClass = Numbers.primitiveToWrapper(value.getClass());
-        binding = Numbers.primitiveToWrapper(binding);
+        final Class<?> valueClass = NumberType.primitiveToWrapper(value.getClass());
+        binding = NumberType.primitiveToWrapper(binding);
         AbstractMap.SimpleEntry<Class, Class> key = new AbstractMap.SimpleEntry<>(valueClass, binding);
         ObjectConverter converter = convertersCache.get(key);
 
