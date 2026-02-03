@@ -9,6 +9,7 @@ create-tag:
     - git remote add project "https://project_33_bot:${BOT_ACCESS_TOKEN}@${CI_DEPENDENCY_PROXY_SERVER}/${CI_PROJECT_PATH}"
     - git config --global user.email "admin@geomatys.com"
     - git config --global user.name "Gitlab Runner"
+    - git config --global --add safe.directory /builds/geotoolkit-group/geotoolkit
   script:
     # Create a temporary branch for the tag
     - git checkout -b "tmp/$TAG_VERSION"
