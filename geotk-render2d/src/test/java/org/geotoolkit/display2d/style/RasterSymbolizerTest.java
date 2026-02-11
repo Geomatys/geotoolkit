@@ -786,6 +786,46 @@ public class RasterSymbolizerTest {
         testMultiDimensionalDefaultSlicing(false, true);
     }
 
+    /**
+     * Anti-regression test.
+     * Context:
+     * When rendering grayscale datasets using 8bit component color model, we force color stretching in [0..255] interval.
+     * Issue:
+     * Somewhere in the recolor chain (in RecolorRenderedImage at the time of the finding), the byte values from source
+     * image where interpreted as signed values, meaning that any value > 127 was read as < 0, breaking the color map.
+     */
+    @Test
+    public void testByteGrayscaleImageIsProperlyStretched() throws Exception {
+        final BufferedImage image = new BufferedImage(2, 2, BufferedImage.TYPE_BYTE_GRAY);
+        image.getRaster().setSample(0, 0, 0, 0);
+        image.getRaster().setSample(1, 0, 0, 127);
+        image.getRaster().setSample(1, 1, 0, 200);
+        image.getRaster().setSample(0, 1, 0, 255);
+
+        final GridGeometry geom = new GridGeometry(
+                new GridExtent(2, 2),
+                PixelInCell.CELL_CENTER,
+                new AffineTransform2D(1, 0, 0,-1, 10, 10),
+                CommonCRS.defaultGeographic()
+        );
+        final GridCoverage baseData = new GridCoverage2D(geom, null, image);
+        final MapLayers ctx = MapBuilder.createContext();
+        ctx.getComponents().add(MapBuilder.createLayer(new InMemoryGridCoverageResource(baseData)));
+        RenderedImage rendering = DefaultPortrayalService.portray(
+                new CanvasDef(new Dimension(2, 2), geom.getEnvelope()),
+                new SceneDef(ctx, new Hints(GO2Hints.KEY_INTERPOLATION, InterpolationCase.NEIGHBOR,
+                        RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR))
+        );
+
+        final float[] pixels = rendering.getData().getPixels(0, 0, 2, 2, (float[]) null);
+        final float[] expected = {
+                // R    G    B    A   |   R    G    B    A
+                   0,   0,   0, 255,    127, 127, 127, 255,
+                 255, 255, 255, 255,    200, 200, 200, 255,
+        };
+        assertArrayEquals(expected, pixels, 1f);
+    }
+
     private void testMultiDimensionalDefaultSlicing(boolean readStrict, boolean multiDimensionalTarget) throws Exception {
 
         var dataEnv = new GeneralEnvelope(CRS.compound(

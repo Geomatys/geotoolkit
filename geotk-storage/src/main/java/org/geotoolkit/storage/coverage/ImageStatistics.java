@@ -233,7 +233,7 @@ public class ImageStatistics implements Serializable{
                     .append(", max=").append(max)
                     .append(", mean=").append(mean)
                     .append(", std=").append(std)
-                    .append(", dataType=").append(dataType.name())
+                    .append(", dataType=").append(dataType == null ? "null" : dataType.name())
                     .append(", histogram=")
                     .append(Arrays.toString(histogram))
                     .append(", noData=").append(Arrays.toString(noData))

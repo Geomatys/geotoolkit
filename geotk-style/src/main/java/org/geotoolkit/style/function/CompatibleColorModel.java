@@ -65,8 +65,8 @@ public class CompatibleColorModel extends ColorModel{
             value = ((int[]) inData)[0];
         } else if (inData instanceof double[]) {
             value = ((double[]) inData)[0];
-        } else if (inData instanceof byte[]) {
-            value = ((byte[]) inData)[0];
+        } else if (inData instanceof byte[] b) {
+            value = Byte.toUnsignedInt(b[0]);
         } else if (inData instanceof short[]) {
             value = ((short[]) inData)[0];
         } else if (inData instanceof long[]) {
