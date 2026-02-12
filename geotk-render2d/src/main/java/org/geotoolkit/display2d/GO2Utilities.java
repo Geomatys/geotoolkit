@@ -80,6 +80,7 @@ import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.filter.visitor.IsStaticExpressionVisitor;
 import org.geotoolkit.filter.visitor.ListingPropertyVisitor;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
+import org.geotoolkit.image.internal.SampleType;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.jai.FloodFill;
 import org.geotoolkit.image.palette.PaletteFactory;
@@ -1505,9 +1506,13 @@ public final class GO2Utilities {
                 }
             }
 
-            values.add(STYLE_FACTORY.interpolationPoint(Float.NaN, STYLE_FACTORY.literal(new Color(0, 0, 0, 0))));
+            if (Arrays.stream(bands).anyMatch(b -> b.getDataType() == null || b.getDataType() == SampleType.FLOAT)) {
+                values.add(STYLE_FACTORY.interpolationPoint(Float.NaN, STYLE_FACTORY.literal(new Color(0, 0, 0, 0))));
+            } else if (Arrays.stream(bands).anyMatch(b -> b.getDataType() == SampleType.DOUBLE)) {
+                values.add(STYLE_FACTORY.interpolationPoint(Double.NaN, STYLE_FACTORY.literal(new Color(0, 0, 0, 0))));
+            }
 
-            assert values.size() >= 3;
+            assert values.size() >= 2;
 
             final Expression function = STYLE_FACTORY.interpolateFunction(DEFAULT_CATEGORIZE_LOOKUP, values, Method.COLOR, Mode.LINEAR, DEFAULT_FALLBACK);
             final ColorMap colorMap = STYLE_FACTORY.colorMap(function);

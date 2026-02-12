@@ -431,6 +431,11 @@ public class RasterSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer
 
         //-- one band
         if (pixelSampleSize.length == 1) {
+            // NOTE: We restrict grayscale rendering to embedded palettes only.
+            // In case of direct or component color model, we cannot ensure the image data is ready for correct rendering.
+            // If it is an image containing categorical values (classification indices, binary mask, etc.),
+            // the image values might all be close to 0, and rendering them as is would produce a very dark result.
+            // In such case, we rather let default styling stretching colors.
             if (!(colorModel instanceof IndexColorModel)) return true;
             //-- ! IndexColorModel + Byte or UShort case
             return (!(sampleSize == 8 || (sampleSize == 16 && dataBufferType == DataBuffer.TYPE_USHORT)));
