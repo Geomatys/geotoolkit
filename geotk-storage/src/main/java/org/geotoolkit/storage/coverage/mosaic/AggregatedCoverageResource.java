@@ -42,6 +42,7 @@ import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridOrientation;
 import org.apache.sis.coverage.grid.GridRoundingMode;
+import org.apache.sis.coverage.grid.IllegalGridGeometryException;
 import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -85,6 +86,8 @@ import org.opengis.coordinate.MismatchedDimensionException;
 import org.opengis.metadata.Metadata;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.apache.sis.coverage.grid.PixelInCell;
+import org.opengis.referencing.cs.AxisDirection;
+import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.operation.CoordinateOperation;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
@@ -487,17 +490,15 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
         final Map<GridCoverageResource, GridGeometry> components = new HashMap<>();
         for (VirtualBand band : bands) {
             for (Source source : band.sources) {
+
+                if (components.containsKey(source.resource)) {
+                    //a same resource may appear multiple times on different bands.
+                    //no need to compute this several times.
+                    continue;
+                }
+
                 try {
-                    final GridGeometry gridGeometry = source.resource.getGridGeometry();
-                    if (!(gridGeometry.isDefined(GridGeometry.CRS) && gridGeometry.isDefined(GridGeometry.ENVELOPE))) {
-                        throw new DataStoreException("Resource has no defined CRS and Envelope.");
-                    }
-                    final CoordinateReferenceSystem crs = gridGeometry.getCoordinateReferenceSystem();
-                    if (crs instanceof DefaultImageCRS) {
-                        throw new DataStoreException("CRS " + crs.getClass() + " can not be used in aggregation, resource will be ignored.");
-                    } else if (crs != null && crs.getCoordinateSystem().getDimension() != 2) {
-                        throw new DataStoreException("CRS " + crs.getName()+ " can not be used in aggregation it is not 2D, resource will be ignored.");
-                    }
+                    final GridGeometry gridGeometry = getGridGeometry2D(source.resource);
                     components.put(source.resource, gridGeometry);
                 } catch (Exception ex) {
                     if (neverfail) {
@@ -831,6 +832,10 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
         final GridGeometry gridGeometry = getGridGeometry();
         if (domain == null) domain = gridGeometry;
 
+        //remove any 2D+dimension, this aggregator works in 2D only
+        domain = getGridGeometry2D(domain);
+
+
         // List the bands requested ////////////////////////////////////////////
         final List<SampleDimension> sampleDimensions;
         final List<VirtualBand> bands;
@@ -882,7 +887,15 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
             double[] transparent = null;
             for (Source source : sorted) {
                 try {
-                    final GridCoverage sourceCoverage = source.resource.read(source.resource.getGridGeometry().derive().margin(3,3).subgrid(canvas).build());
+                    GridGeometry readQuery = canvas;
+                    try {
+                        //try to reduce the read operation in resource grid geometry directly
+                        readQuery = source.resource.getGridGeometry().derive().margin(3,3).subgrid(canvas).build();
+                        readQuery = readQuery.derive().sliceByRatio(0.5, 0, 1).build(); //obtain a slice whatever other dimensions may be
+                    } catch (IllegalGridGeometryException ex) {
+                        //subgrid is very picky when dealing with intersection of grid of different dimensions
+                    }
+                    final GridCoverage sourceCoverage = source.resource.read(readQuery);
                     final RenderedImage sourceImage = sourceCoverage.render(null);
                     if (result == null) {
                         final int width = Math.toIntExact(canvas.getExtent().getSize(0));
@@ -1018,6 +1031,15 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
         } catch (TransformException ex) {
             throw new DataStoreException(ex.getMessage(), ex);
         }
+
+        if (envelope.getDimension() > 2) {
+            try {
+                envelope = Envelopes.transform(envelope, CRS.getHorizontalComponent(envelope.getCoordinateReferenceSystem()));
+            } catch (TransformException ex) {
+                throw new DataStoreException(ex.getMessage(), ex);
+            }
+        }
+
 
         final JTSEnvelope2D searchEnv = new JTSEnvelope2D(envelope);
         final Set<GridCoverageResource> treeResults = ((Stream<IndexedResource>) tree.query(searchEnv).stream())
@@ -1300,7 +1322,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
 
     private SourceToSort compute(final Source entry, final GridGeometry canvas) throws DataStoreException {
         try {
-            GridGeometry sourceGrid = entry.resource.getGridGeometry();
+            GridGeometry sourceGrid = getGridGeometry2D(entry.resource);
             double ratio = estimateRatio(sourceGrid, canvas);
             if (Double.isNaN(ratio)) {
                 sourceGrid = entry.resource.read(canvas).getGridGeometry();
@@ -1512,6 +1534,39 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
                 .mapToDouble(target::getSpan)
                 .reduce(1, (d1, d2) -> d1 * d2);
     }
+
+    private static GridGeometry getGridGeometry2D(GridCoverageResource resource) throws DataStoreException {
+        return getGridGeometry2D(resource.getGridGeometry());
+    }
+
+    private static GridGeometry getGridGeometry2D(GridGeometry gridGeometry) throws DataStoreException {
+        if (!(gridGeometry.isDefined(GridGeometry.CRS) && gridGeometry.isDefined(GridGeometry.ENVELOPE))) {
+            throw new DataStoreException("Resource has no defined CRS and Envelope.");
+        }
+        final CoordinateReferenceSystem crs = gridGeometry.getCoordinateReferenceSystem();
+        if (crs instanceof DefaultImageCRS) {
+            throw new DataStoreException("CRS " + crs.getClass() + " can not be used in aggregation, resource will be ignored.");
+        } else if (crs != null && crs.getCoordinateSystem().getDimension() != 2) {
+
+            //extract the 2d part
+            final Set<AxisDirection> excluded = new HashSet<>();
+            final CoordinateSystem cs = crs.getCoordinateSystem();
+            for (int i = 0, n = cs.getDimension(); i < n; i++) {
+                excluded.add(cs.getAxis(i).getDirection());
+            }
+
+            final CoordinateReferenceSystem crs2d = CRS.getHorizontalComponent(crs);
+            final CoordinateSystem cs2d = crs2d.getCoordinateSystem();
+            for (int i = 0, n = cs2d.getDimension(); i < n; i++) {
+                excluded.remove(cs2d.getAxis(i).getDirection());
+            }
+
+            gridGeometry = gridGeometry.derive().excludeAxes(excluded).build();
+        }
+
+        return gridGeometry;
+    }
+
 
     public static class VirtualBand {
         private SampleDimension userDefinedSampleDimension;
