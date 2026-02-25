@@ -38,10 +38,12 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.feature.internal.shared.AttributeConvention;
 import org.apache.sis.feature.internal.shared.FeatureExpression;
 import org.apache.sis.feature.internal.shared.FeatureProjectionBuilder;
+import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.measure.Quantities;
 import org.apache.sis.measure.Units;
 import org.apache.sis.map.MapLayer;
 import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.operation.CoordinateOperationContext;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureQuery;
 import org.apache.sis.storage.FeatureSet;
@@ -60,6 +62,7 @@ import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.feature.ViewMapper;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.filter.function.geometry.GeometryFunctionFactory;
+import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.storage.feature.FeatureIterator;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.geotoolkit.storage.feature.FeatureStoreUtilities;
@@ -493,7 +496,9 @@ public final class RenderingRoutines {
             Envelope env;
 
             try{
-                env = Envelopes.transform(bbox, layerCRS);
+                final GeneralEnvelope e = new GeneralEnvelope(layerCRS);
+                e.setToInfinite();
+                env = ReferencingUtilities.transposeEnvelope(GeneralEnvelope.castOrCopy(bbox), e);
                 if(GeneralEnvelope.castOrCopy(env).isEmpty()){
                     //possible NaN values or out of crs validity area
                     GeneralEnvelope benv = GeneralEnvelope.castOrCopy(bbox);
