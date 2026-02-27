@@ -64,6 +64,36 @@ public class Bundle extends IndexedResourceBundle {
         public static final short datastoreTitle = 4;
 
         /**
+         * Coordinate Reference System
+         */
+        public static final short paramCrsAlias = 11;
+
+        /**
+         * Fixed Coordinate Reference System
+         */
+        public static final short paramCrsRemarks = 12;
+
+        /**
+         * Latitude column
+         */
+        public static final short paramLatColumnAlias = 7;
+
+        /**
+         * Column containing latitude value
+         */
+        public static final short paramLatColumnRemarks = 8;
+
+        /**
+         * Longitude column
+         */
+        public static final short paramLonColumnAlias = 9;
+
+        /**
+         * Column containing longitude value
+         */
+        public static final short paramLonColumnRemarks = 10;
+
+        /**
          * Separator
          */
         public static final short paramSeparatorAlias = 5;
