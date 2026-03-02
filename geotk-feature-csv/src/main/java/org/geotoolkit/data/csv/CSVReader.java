@@ -25,7 +25,11 @@ import java.util.concurrent.locks.ReadWriteLock;
 import org.apache.sis.feature.internal.shared.AttributeConvention;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ObjectConverters;
+import org.geotoolkit.data.csv.CSVUtils.LatLonConfig;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
+import org.locationtech.jts.geom.CoordinateXY;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKTReader;
 import org.opengis.feature.AttributeType;
@@ -50,8 +54,10 @@ class CSVReader implements Iterator<Feature>, AutoCloseable {
     protected boolean withId;
     protected Feature current = null;
     protected int inc = 0;
+    protected final LatLonConfig latLonConfig;
+    private GeometryFactory geometryFactory = new GeometryFactory();
 
-    CSVReader(CSVStore store, final FeatureType featureType, final ReadWriteLock fileLock) throws DataStoreException {
+    CSVReader(CSVStore store, final FeatureType featureType, final ReadWriteLock fileLock, final LatLonConfig latLonConfig) throws DataStoreException {
         this.store = store;
         this.fileLock = fileLock;
         this.featureType = featureType;
@@ -76,6 +82,7 @@ class CSVReader implements Iterator<Feature>, AutoCloseable {
         if (featureType.hasProperty(AttributeConvention.IDENTIFIER)) {
             withId = true;
         }
+        this.latLonConfig = latLonConfig;
     }
 
     public FeatureType getFeatureType() {
@@ -105,6 +112,8 @@ class CSVReader implements Iterator<Feature>, AutoCloseable {
         }
         final String line = CSVUtils.getNextLine(scanner);
         if (line != null) {
+            Double lat = null;
+            Double lon = null;
             final List<String> fields = CSVUtils.toStringList(scanner, line, store.getSeparator());
             current = featureType.newInstance();
             if (withId) current.setPropertyValue(AttributeConvention.IDENTIFIER, inc++);
@@ -127,7 +136,24 @@ class CSVReader implements Iterator<Feature>, AutoCloseable {
                 } else {
                     value = ObjectConverters.convert(fields.get(i), att.getValueClass());
                 }
-                current.setPropertyValue(att.getName().toString(), value);
+                String attName = att.getName().toString();
+                current.setPropertyValue(attName, value);
+                if (latLonConfig != null) {
+                    if (latLonConfig.latColumn.equals(attName)) {
+                        lat = Double.valueOf(fields.get(i));
+                    } else if (latLonConfig.lonColumn.equals(attName)) {
+                        lon = Double.valueOf(fields.get(i));
+                    }
+                }
+            }
+            if (lat != null && lon != null) {
+                Point pt;
+                if (latLonConfig.isLongitudeFirst) {
+                    pt = geometryFactory.createPoint(new CoordinateXY(lon, lat));
+                } else {
+                    pt = geometryFactory.createPoint(new CoordinateXY(lat, lon));
+                }
+                current.setPropertyValue(latLonConfig.geoColumnName, pt);
             }
         }
     }

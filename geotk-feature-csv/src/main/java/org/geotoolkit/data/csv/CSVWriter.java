@@ -33,6 +33,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ObjectConverters;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import static org.geotoolkit.data.csv.CSVStore.UTF8_ENCODING;
+import org.geotoolkit.data.csv.CSVUtils.LatLonConfig;
 import org.geotoolkit.feature.FeatureExt;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.io.WKTWriter;
@@ -60,8 +61,8 @@ class CSVWriter extends CSVReader {
     private final ReadWriteLock tempLock = new ReentrantReadWriteLock();
     private boolean closed = false;
 
-    CSVWriter(CSVStore store, FeatureType featureType, ReadWriteLock lock) throws DataStoreException {
-        super(store, featureType, lock);
+    CSVWriter(CSVStore store, FeatureType featureType, ReadWriteLock lock, final LatLonConfig latLonConfig) throws DataStoreException {
+        super(store, featureType, lock, latLonConfig);
         tempLock.writeLock().lock();
         try {
             writeFile = store.createWriteFile();
