@@ -104,11 +104,7 @@ public class Pentagon {
          * Basis vectors used to layout primitive unit
          */
         BASIS = new Matrix2D(v.x, w.x, v.y, w.y); //warning : SIS matrix parameter order is row first, gl-matrix is column first
-        try {
-            BASIS_INVERSE = Matrix2D.castOrCopy(BASIS.inverse());
-        } catch (NoninvertibleMatrixException ex) {
-            throw new IllegalStateException();
-        }
+        BASIS_INVERSE = BASIS.copy().invert();
     }
 
 }

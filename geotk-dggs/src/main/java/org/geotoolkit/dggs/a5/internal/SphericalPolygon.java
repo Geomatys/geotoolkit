@@ -87,8 +87,8 @@ public class SphericalPolygon {
 
             // Quaternions
             final Quaternion identity = new Quaternion();
-            final Quaternion qOA = new Quaternion().fromUnitVectors(UP, A);
-            final Quaternion qAB = new Quaternion().fromUnitVectors(A, B);
+            final Quaternion qOA = new Quaternion().setFromUnitVectors(UP, A);
+            final Quaternion qAB = new Quaternion().setFromUnitVectors(A, B);
             final Quaternion qPartial = new Quaternion(identity).slerp(qAB, f);
             final Quaternion qCombined = new Quaternion(qPartial).multiply(qOA);
 

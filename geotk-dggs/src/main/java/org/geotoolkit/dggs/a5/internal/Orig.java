@@ -168,7 +168,7 @@ public class Orig {
 
         // Construct relative transform from old origin to new origin
         Quaternion interfaceQuat = new Quaternion();
-        interfaceQuat.fromUnitVectors(UP, localToAxis);
+        interfaceQuat.setFromUnitVectors(UP, localToAxis);
         interfaceQuat = fromOrigin.quat.copy().multiply(interfaceQuat);
 
         return new Object[]{offsetPoint, interfaceQuat};
