@@ -23,6 +23,11 @@ import java.util.Scanner;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.apache.sis.feature.internal.shared.AttributeConvention;
+import org.apache.sis.referencing.CRS;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.cs.AxisDirection;
+import org.opengis.referencing.cs.CoordinateSystem;
+import org.opengis.referencing.cs.CoordinateSystemAxis;
 
 /**
  *
@@ -124,5 +129,37 @@ public class CSVUtils {
         return strings;
     }
 
+    protected static class LatLonConfig {
+
+        public final String latColumn;
+        public final String lonColumn;
+        public final CoordinateReferenceSystem crs;
+        public final String geoColumnName = "geometry";
+        public final boolean isLongitudeFirst;
+
+        public LatLonConfig(String latColumn, String lonColumn, CoordinateReferenceSystem crs) {
+            this.latColumn = latColumn;
+            this.lonColumn = lonColumn;
+            this.crs = crs;
+            this.isLongitudeFirst = isLongitudeFirst(crs);
+        }
+    }
+
+    /**
+     * Check if a CRS has longitude first or not.
+     * @param crs
+     * @return
+     */
+    private static boolean isLongitudeFirst(CoordinateReferenceSystem crs) {
+
+        final CoordinateReferenceSystem hcrs = CRS.getHorizontalComponent(crs);
+        final CoordinateSystem cs = hcrs.getCoordinateSystem();
+        final CoordinateSystemAxis csa = cs.getAxis(0);
+        if (csa.getDirection().equals(AxisDirection.NORTH) || csa.getDirection().equals(AxisDirection.SOUTH)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
 
 }

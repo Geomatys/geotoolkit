@@ -53,6 +53,7 @@ import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStore;
@@ -60,6 +61,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.StorageConnector;
 import org.apache.sis.storage.WritableFeatureSet;
 import org.apache.sis.storage.event.StoreEvent;
+import org.geotoolkit.data.csv.CSVUtils.LatLonConfig;
 import org.geotoolkit.storage.event.FeatureStoreContentEvent;
 import org.geotoolkit.storage.event.FeatureStoreManagementEvent;
 import org.geotoolkit.feature.FeatureExt;
@@ -68,6 +70,7 @@ import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.util.NamesExt;
 import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.Point;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -78,6 +81,7 @@ import org.opengis.geometry.Envelope;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
 
@@ -112,20 +116,40 @@ public class CSVStore extends DataStore implements WritableFeatureSet {
 
     private FeatureType featureType;
 
+    private LatLonConfig latLonConfig;
 
-    public CSVStore(final Path f, final char separator) throws MalformedURLException, DataStoreException{
-        this(f,separator,null);
+    public CSVStore(final Path f, final char separator) throws MalformedURLException, DataStoreException {
+        this(f, separator, null, null, null, null);
+    }
+
+    public CSVStore(final Path f, final char separator, final String latColumn, final String lonColumn,
+            final String fixedCRS) throws MalformedURLException, DataStoreException {
+        this(f, separator, null, latColumn, lonColumn, fixedCRS);
     }
 
     /**
      * Constructor forcing feature type, if the CSV does not have any header.
      *
      */
-    public CSVStore(final Path f, final char separator, FeatureType ft) throws MalformedURLException, DataStoreException{
+    public CSVStore(final Path f, final char separator, FeatureType ft, final String latColumn, final String lonColumn,
+            final String fixedCRS) throws MalformedURLException, DataStoreException {
         this(toParameters(f, separator));
         if (ft != null) {
             this.featureType = ft;
             name = featureType.getName().tip().toString();
+        }
+        if (latColumn != null && lonColumn != null) {
+            CoordinateReferenceSystem crs;
+            if (fixedCRS != null && !fixedCRS.isEmpty()) {
+                try {
+                    crs = CRS.forCode(fixedCRS);
+                } catch (FactoryException ex) {
+                    throw new DataStoreException("Unable to find a CRS with code:" + fixedCRS, ex);
+                }
+            } else {
+                crs = CommonCRS.defaultGeographic();
+            }
+            latLonConfig = new LatLonConfig(latColumn, lonColumn, crs);
         }
     }
 
@@ -147,6 +171,24 @@ public class CSVStore extends DataStore implements WritableFeatureSet {
             dot = path.length();
         }
         this.name = path.substring(slash, dot);
+
+        final String latColumn = getAttributeNameFromColumn(parameters.getValue(CSVProvider.LAT_COLUMN));
+        final String lonColumn = getAttributeNameFromColumn(parameters.getValue(CSVProvider.LON_COLUMN));
+        final String fixedCRS = parameters.getValue(CSVProvider.CRS);
+        if (latColumn != null && lonColumn != null) {
+            CoordinateReferenceSystem crs;
+            if (fixedCRS != null && !fixedCRS.isEmpty()) {
+                try {
+                    crs = CRS.forCode(fixedCRS);
+                } catch (FactoryException ex) {
+                    throw new DataStoreException("Unable to find a CRS with code:" + fixedCRS, ex);
+                }
+            } else {
+                crs = CommonCRS.defaultGeographic();
+            }
+
+            latLonConfig = new LatLonConfig(latColumn, lonColumn, crs);
+        }
     }
 
     private static ParameterValueGroup toParameters(final Path f, final Character separator) throws MalformedURLException {
@@ -176,6 +218,16 @@ public class CSVStore extends DataStore implements WritableFeatureSet {
 
     Path createWriteFile() throws MalformedURLException{
         return (Path) IOUtilities.changeExtension(file, "wcsv");
+    }
+
+    private static String getAttributeNameFromColumn(String field) {
+        if (field == null) return null;
+        final int dep = field.indexOf('(');
+        final int fin = field.lastIndexOf(')');
+        if (dep > 0 && fin > dep + 1) {
+            return field.substring(0, dep);
+        }
+        return field;
     }
 
     private FeatureType readType() throws DataStoreException {
@@ -222,39 +274,38 @@ public class CSVStore extends DataStore implements WritableFeatureSet {
             if (dep > 0 && fin > dep + 1) {
                 fieldName = NamesExt.create(field.substring(0, dep));
                 //there is a defined type
-                final String name = field.substring(dep + 1, fin);
+                final String typeName = field.substring(dep + 1, fin);
                 /* Check if it's a java lang class (number, string, etc.). If it's a fail, maybe it's just
                  * because of the case, so we'll try to identify object manually.
                  */
                 try {
-                    type = Class.forName("java.lang." + name);
+                    type = Class.forName("java.lang." + typeName);
                 } catch (Exception e) {
-                    if ("integer".equalsIgnoreCase(name)) {
+                    if ("integer".equalsIgnoreCase(typeName)) {
                         type = Integer.class;
-                    } else if ("float".equalsIgnoreCase(name)) {
+                    } else if ("float".equalsIgnoreCase(typeName)) {
                         type = Float.class;
-                    } else if ("double".equalsIgnoreCase(name)) {
+                    } else if ("double".equalsIgnoreCase(typeName)) {
                         type = Double.class;
-                    } else if ("string".equalsIgnoreCase(name)) {
+                    } else if ("string".equalsIgnoreCase(typeName)) {
                         type = String.class;
-                    } else if ("date".equalsIgnoreCase(name)) {
+                    } else if ("date".equalsIgnoreCase(typeName)) {
                         type = Date.class;
-                    } else if ("boolean".equalsIgnoreCase(name)) {
+                    } else if ("boolean".equalsIgnoreCase(typeName)) {
                         type = Boolean.class;
                     } else {
-                        if(name.contains(":")){
+                        if(typeName.contains(":")){
                             try {
                                 //check if it's a geometry type
-                                atb.setCRS(CRS.forCode(name));
+                                atb.setCRS(CRS.forCode(typeName));
                                 type = Geometry.class;
                                 if (defaultGeometryFieldName == null) {
                                     //store first geometry as default
                                     defaultGeometryFieldName = fieldName;
                                 }
-                            } catch (NoSuchAuthorityCodeException ex) {
-                                LOGGER.log(Level.SEVERE, null, ex);
                             } catch (FactoryException ex) {
-                                LOGGER.log(Level.SEVERE, null, ex);
+                                LOGGER.log(Level.WARNING, "Unable to parse crs code", ex);
+                                type = String.class;
                             }
                         }else{
                             type = String.class;
@@ -271,6 +322,13 @@ public class CSVStore extends DataStore implements WritableFeatureSet {
             if (fieldName == defaultGeometryFieldName) {
                 atb.addRole(AttributeRole.DEFAULT_GEOMETRY);
             }
+        }
+
+        if (latLonConfig != null) {
+            AttributeTypeBuilder atb = ftb.addAttribute(Point.class);
+            atb.setName(latLonConfig.geoColumnName);
+            atb.addRole(AttributeRole.DEFAULT_GEOMETRY);
+            atb.setCRS(latLonConfig.crs);
         }
 
         return ftb.build();
@@ -310,7 +368,7 @@ public class CSVStore extends DataStore implements WritableFeatureSet {
 
     @Override
     public Stream<Feature> features(boolean parallel) throws DataStoreException {
-        final CSVReader reader = new CSVReader(this, getType(), fileLock);
+        final CSVReader reader = new CSVReader(this, getType(), fileLock, latLonConfig);
         final Stream<Feature> stream = StreamSupport.stream(Spliterators.spliteratorUnknownSize(reader, Spliterator.ORDERED), false);
         return stream.onClose(reader::close);
     }
@@ -414,7 +472,7 @@ public class CSVStore extends DataStore implements WritableFeatureSet {
     @Override
     public void add(Iterator<? extends Feature> features) throws DataStoreException {
 
-        try (final CSVWriter writer = new CSVWriter(this, featureType, fileLock)) {
+        try (final CSVWriter writer = new CSVWriter(this, featureType, fileLock, latLonConfig)) {
             //skip to end of records
             while (writer.hasNext()) writer.next();
 
@@ -435,7 +493,7 @@ public class CSVStore extends DataStore implements WritableFeatureSet {
 
     @Override
     public void removeIf(Predicate<? super Feature> filter) throws DataStoreException {
-        try (final CSVWriter writer = new CSVWriter(this, featureType, fileLock)) {
+        try (final CSVWriter writer = new CSVWriter(this, featureType, fileLock, latLonConfig)) {
             while (writer.hasNext()) {
                 Feature candidate = writer.next();
                 if (filter.test(candidate)) {
@@ -447,7 +505,7 @@ public class CSVStore extends DataStore implements WritableFeatureSet {
 
     @Override
     public void replaceIf(Predicate<? super Feature> filter, UnaryOperator<Feature> updater) throws DataStoreException {
-        try (final CSVWriter writer = new CSVWriter(this, featureType, fileLock)) {
+        try (final CSVWriter writer = new CSVWriter(this, featureType, fileLock, latLonConfig)) {
             while (writer.hasNext()) {
                 Feature candidate = writer.next();
                 if (filter.test(candidate)) {

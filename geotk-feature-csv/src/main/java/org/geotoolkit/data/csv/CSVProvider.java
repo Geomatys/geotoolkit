@@ -85,8 +85,38 @@ public class CSVProvider extends DataStoreProvider implements ProviderOnFileSyst
             .setRequired(false)
             .create(Character.class, ';');
 
-    public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
-            new ParameterBuilder().addName(NAME).createGroup(PATH, SEPARATOR);
+    /**
+     * Optional - latitude column
+     */
+    public static final ParameterDescriptor<String> LAT_COLUMN = new ParameterBuilder()
+            .addName("lat_column")
+            .addName(Bundle.formatInternational(Bundle.Keys.paramLatColumnAlias))
+            .setRemarks(Bundle.formatInternational(Bundle.Keys.paramLatColumnRemarks))
+            .setRequired(false)
+            .create(String.class, null);
+
+    /**
+     * Optional - latitude column
+     */
+    public static final ParameterDescriptor<String> LON_COLUMN = new ParameterBuilder()
+            .addName("lon_column")
+            .addName(Bundle.formatInternational(Bundle.Keys.paramLonColumnAlias))
+            .setRemarks(Bundle.formatInternational(Bundle.Keys.paramLonColumnRemarks))
+            .setRequired(false)
+            .create(String.class, null);
+
+    /**
+     * Optional - Coordinate reference system
+     */
+    public static final ParameterDescriptor<String> CRS = new ParameterBuilder()
+            .addName("crs")
+            .addName(Bundle.formatInternational(Bundle.Keys.paramCrsAlias))
+            .setRemarks(Bundle.formatInternational(Bundle.Keys.paramCrsRemarks))
+            .setRequired(false)
+            .create(String.class, null);
+
+    public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR
+            = new ParameterBuilder().addName(NAME).createGroup(PATH, SEPARATOR, LAT_COLUMN, LON_COLUMN, CRS);
 
     @Override
     public String getShortName() {
@@ -100,7 +130,7 @@ public class CSVProvider extends DataStoreProvider implements ProviderOnFileSyst
 
     @Override
     public Collection<String> getSuffix() {
-        return Arrays.asList("csv");
+        return Arrays.asList("csv", "txt");
     }
 
     @Override

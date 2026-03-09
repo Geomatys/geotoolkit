@@ -37,6 +37,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.Point;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -147,6 +148,39 @@ public class CSVStoreTest {
                     + "a family \"\"best\"\" friend\";36\n", str);
         } finally {
             Files.deleteIfExists(file);
+        }
+    }
+    
+    @Test
+    public void testReadLatLon() throws Exception {
+        try (final CSVStore store = new CSVStore(Paths.get("./src/test/resources/org/geotoolkit/csv/lat-lon.txt"), ';', "lat", "lon", "EPSG:4326")) {
+
+            try (Stream<Feature> stream = store.features(false)) {
+                Iterator<Feature> ite = stream.iterator();
+                Feature next = ite.next();
+                assertEquals("pt-1", next.getPropertyValue("name"));
+                Object geomValue = next.getPropertyValue("geometry");
+                assertTrue(geomValue instanceof Point);
+                Point pt = (Point) geomValue;
+                assertEquals(pt.getX(), 1.2, 0);
+                assertEquals(pt.getY(), 1.3, 0);
+                
+                next = ite.next();
+                assertEquals("pt-2", next.getPropertyValue("name"));
+                geomValue = next.getPropertyValue("geometry");
+                assertTrue(geomValue instanceof Point);
+                pt = (Point) geomValue;
+                assertEquals(pt.getX(), 4.5, 0);
+                assertEquals(pt.getY(), 2.9, 0);
+                
+                next = ite.next();
+                assertEquals("pt-3", next.getPropertyValue("name"));
+                geomValue = next.getPropertyValue("geometry");
+                assertTrue(geomValue instanceof Point);
+                pt = (Point) geomValue;
+                assertEquals(pt.getX(), 4.2, 0);
+                assertEquals(pt.getY(), 3.3, 0);
+            }
         }
     }
 }
