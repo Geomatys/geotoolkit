@@ -40,7 +40,7 @@ public class DefaultDownloadURIExtractor implements DownloadURIExtractor {
             Asset asset = entry.getValue();
             List<String> roles = asset.getRoles();
             boolean isData = false;
-            
+
             if (roles != null) {
                 for (String r : roles) {
                     if ("data".equals(r)) {
@@ -49,7 +49,7 @@ public class DefaultDownloadURIExtractor implements DownloadURIExtractor {
                     }
                 }
             }
-            
+
             if (isData) {
                 if (asset.getHref() != null) {
                     return URI.create(asset.getHref());
@@ -64,7 +64,7 @@ public class DefaultDownloadURIExtractor implements DownloadURIExtractor {
                 return URI.create(asset.getHref());
             }
         }
-        
+
         return null;
     }
 }

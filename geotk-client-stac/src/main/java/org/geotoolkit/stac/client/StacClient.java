@@ -138,7 +138,7 @@ public class StacClient {
                     allItems.add(MAPPER.treeToValue(itemNode, Item.class));
                 }
             }
-            
+
             JsonNode nextLink = findLink(data, "next");
             if (nextLink == null) break;
 
