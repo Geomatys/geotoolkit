@@ -204,7 +204,7 @@ public final class CompoundCodedResource extends AbstractResource implements Cod
         if (!dggrs1.equals(dggrs2)) {
             throw new IllegalArgumentException("Two code geometries use different DGGRS");
         }
-        return new DiscreteGlobalGridGeometry(dggrs1, null, null, null);
+        return DiscreteGlobalGridGeometry.unstructured(dggrs1, null, null);
     }
 
     private CodedGeometry mergeGrids(CodedGeometry cg1, CodedGeometry cg2) throws FactoryException, TransformException {
