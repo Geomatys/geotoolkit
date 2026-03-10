@@ -123,10 +123,25 @@ public class StacClientDownloadingDescriptor extends AbstractProcessDescriptor {
             .create(Path.class, null);
 
     /**
+     * Name for the EXTRACTOR_CLASS parameter.
+     */
+    public static final String EXTRACTOR_CLASS_NAME = "extractor_class";
+    private static final String EXTRACTOR_CLASS_REMARKS = "Fully qualified class name of a custom DownloadURIExtractor.";
+
+    /**
+     * EXTRACTOR_CLASS parameter descriptor.
+     */
+    public static final ParameterDescriptor<String> EXTRACTOR_CLASS = new ParameterBuilder()
+            .addName(EXTRACTOR_CLASS_NAME)
+            .setRemarks(EXTRACTOR_CLASS_REMARKS)
+            .setRequired(false)
+            .create(String.class, null);
+
+    /**
      * Input parameters group.
      */
     public static final ParameterDescriptorGroup INPUT_DESC = new ParameterBuilder().addName("InputParameters").setRequired(true)
-            .createGroup(STAC_URL, COLLECTION, SPATIAL_EXTENT, TEMPORAL_EXTENT, BANDS, OUTPUT_DIRECTORY);
+            .createGroup(STAC_URL, COLLECTION, SPATIAL_EXTENT, TEMPORAL_EXTENT, BANDS, OUTPUT_DIRECTORY, EXTRACTOR_CLASS);
 
     /**
      * Name for the OUTPUT parameter.

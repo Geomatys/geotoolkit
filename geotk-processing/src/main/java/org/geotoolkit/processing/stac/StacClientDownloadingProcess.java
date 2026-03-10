@@ -4,12 +4,14 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
+import org.geotoolkit.stac.client.DownloadURIExtractor;
 import org.geotoolkit.stac.client.StacClient;
 import org.geotoolkit.stac.dto.Item;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
 
 import java.net.URI;
+import java.net.http.HttpClient;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -18,6 +20,7 @@ import java.util.logging.Logger;
 
 import static org.geotoolkit.processing.stac.StacClientDownloadingDescriptor.BANDS;
 import static org.geotoolkit.processing.stac.StacClientDownloadingDescriptor.COLLECTION;
+import static org.geotoolkit.processing.stac.StacClientDownloadingDescriptor.EXTRACTOR_CLASS;
 import static org.geotoolkit.processing.stac.StacClientDownloadingDescriptor.OUTPUT;
 import static org.geotoolkit.processing.stac.StacClientDownloadingDescriptor.OUTPUT_DIRECTORY;
 import static org.geotoolkit.processing.stac.StacClientDownloadingDescriptor.SPATIAL_EXTENT;
@@ -61,6 +64,7 @@ public class StacClientDownloadingProcess extends AbstractProcess {
                     inputParameters.getValue(TEMPORAL_EXTENT);
             final String[] bands = inputParameters.getValue(BANDS);
             final Path outputDirectory = inputParameters.getValue(OUTPUT_DIRECTORY);
+            final String extractorClassName = inputParameters.getValue(EXTRACTOR_CLASS);
 
             if (stacUrl == null || collection == null || outputDirectory == null) {
                 throw new ProcessException(
@@ -92,7 +96,16 @@ public class StacClientDownloadingProcess extends AbstractProcess {
                 }
             }
 
-            final StacClient client = new StacClient();
+            final StacClient client;
+            if (extractorClassName != null && !extractorClassName.trim().isEmpty()) {
+                final Class<?> extractorClass = Class.forName(extractorClassName);
+                final DownloadURIExtractor extractor = (DownloadURIExtractor)
+                        extractorClass.getDeclaredConstructor().newInstance();
+                client = new StacClient(HttpClient.newHttpClient(), extractor);
+            } else {
+                client = new StacClient();
+            }
+
             final List<Item> items = client.searchItems(stacUrl, collection,
                     bbox, temporalExtent);
 

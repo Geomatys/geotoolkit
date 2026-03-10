@@ -15,6 +15,7 @@ import org.opengis.parameter.ParameterValueGroup;
 
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -22,6 +23,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.geotoolkit.stac.client.DownloadURIExtractor;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -138,6 +141,7 @@ public class StacClientDownloadingProcessTest {
         input.parameter(StacClientDownloadingDescriptor.STAC_URL_NAME).setValue(serverUrl + "/stac");
         input.parameter(StacClientDownloadingDescriptor.COLLECTION_NAME).setValue("test-collection");
         input.parameter(StacClientDownloadingDescriptor.OUTPUT_DIRECTORY_NAME).setValue(tempDir);
+        input.parameter(StacClientDownloadingDescriptor.EXTRACTOR_CLASS_NAME).setValue(MockExtractor.class.getName());
 
         final Process process = desc.createProcess(input);
         assertNotNull("Failed to create STAC process", process);
@@ -159,5 +163,19 @@ public class StacClientDownloadingProcessTest {
 
         // Remove the downloaded file after test
         Files.deleteIfExists(downloadedFile);
+    }
+
+    /**
+     * Mock extractor for testing dynamic class loading.
+     */
+    public static class MockExtractor implements DownloadURIExtractor {
+        @Override
+        public URI extract(final Item item) {
+            final Map<String, Asset> assets = item.getAssets();
+            if (assets != null && assets.containsKey("data")) {
+                return URI.create(assets.get("data").getHref());
+            }
+            return null;
+        }
     }
 }
