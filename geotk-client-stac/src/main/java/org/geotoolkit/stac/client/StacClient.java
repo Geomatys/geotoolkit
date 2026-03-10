@@ -21,6 +21,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.geotoolkit.stac.dto.Collection;
+import org.geotoolkit.stac.dto.Collections;
 import org.geotoolkit.stac.dto.Item;
 
 import java.io.IOException;
@@ -217,6 +219,79 @@ public class StacClient {
 
         LOGGER.info(String.format("Total items found (OGC API): %d", allItems.size()));
         return allItems;
+    }
+
+    /**
+     * Get the list of collections from the STAC endpoint.
+     *
+     * @param stacUrl the STAC API base URL
+     * @return the list of collections, or an empty list
+     * @throws Exception if an error occurs
+     */
+    public List<Collection> getCollections(String stacUrl) throws Exception {
+        String url = stacUrl.replaceAll("/+$", "") + "/collections";
+        JsonNode data = getJson(url);
+        Collections collectionsObj = MAPPER.treeToValue(data, Collections.class);
+        if (collectionsObj != null && collectionsObj.getCollections() != null) {
+            return collectionsObj.getCollections();
+        }
+        return new ArrayList<>();
+    }
+
+    /**
+     * Get the list of collection ids from the STAC endpoint.
+     *
+     * @param stacUrl the STAC API base URL
+     * @return the list of collection ids, or an empty list
+     * @throws Exception if an error occurs
+     */
+    public List<String> getCollectionIds(String stacUrl) throws Exception {
+        List<Collection> collections = getCollections(stacUrl);
+        List<String> ids = new ArrayList<>();
+        for (Collection coll : collections) {
+            if (coll.getId() != null) {
+                ids.add(coll.getId());
+            }
+        }
+        return ids;
+    }
+
+    /**
+     * Get a specific collection from the STAC endpoint.
+     *
+     * @param stacUrl the STAC API base URL
+     * @param collectionId the collection id to get
+     * @return the collection, or null if not found
+     * @throws Exception if an error occurs
+     */
+    public Collection getCollection(String stacUrl, String collectionId) throws Exception {
+        String url = stacUrl.replaceAll("/+$", "") + "/collections/" + collectionId;
+        try {
+            JsonNode data = getJson(url);
+            return MAPPER.treeToValue(data, Collection.class);
+        } catch (IOException e) {
+            if (e.getMessage() != null && e.getMessage().contains("HTTP 404")) {
+                return null;
+            }
+            throw e;
+        }
+    }
+
+    /**
+     * Check if a collection exists in the STAC endpoint.
+     *
+     * @param stacUrl the STAC API base URL
+     * @param collectionId the collection id to check
+     * @return true if the collection exists, false otherwise
+     */
+    public boolean collectionExists(String stacUrl, String collectionId) {
+        try {
+            Collection coll = getCollection(stacUrl, collectionId);
+            return coll != null && collectionId.equals(coll.getId());
+        } catch (Exception e) {
+            LOGGER.log(Level.INFO, "Could not find collection " + collectionId + ": " + e.getMessage(), e);
+            return false;
+        }
     }
 
     /**

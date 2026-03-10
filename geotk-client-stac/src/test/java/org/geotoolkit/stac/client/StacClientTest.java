@@ -92,6 +92,60 @@ public class StacClientTest {
     }
 
     @Test
+    public void testGetCollections() throws Exception {
+        org.geotoolkit.stac.dto.Collection c1 = new org.geotoolkit.stac.dto.Collection();
+        c1.setId("coll-1");
+        org.geotoolkit.stac.dto.Collection c2 = new org.geotoolkit.stac.dto.Collection();
+        c2.setId("coll-2");
+        
+        List<org.geotoolkit.stac.dto.Collection> collList = new ArrayList<>();
+        collList.add(c1);
+        collList.add(c2);
+        
+        org.geotoolkit.stac.dto.Collections collections = new org.geotoolkit.stac.dto.Collections();
+        collections.setCollections(collList);
+        
+        String jsonResponse = mapper.writeValueAsString(collections);
+        
+        HttpResponse<String> mockResponse = mock(HttpResponse.class);
+        when(mockResponse.statusCode()).thenReturn(200);
+        when(mockResponse.body()).thenReturn(jsonResponse);
+        
+        when(httpClient.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class)))
+                .thenReturn(mockResponse);
+                
+        List<org.geotoolkit.stac.dto.Collection> result = stacClient.getCollections("https://example.com/stac/");
+        assertEquals(2, result.size());
+        assertEquals("coll-1", result.get(0).getId());
+        
+        List<String> ids = stacClient.getCollectionIds("https://example.com/stac/");
+        assertEquals(2, ids.size());
+        assertTrue(ids.contains("coll-1"));
+        assertTrue(ids.contains("coll-2"));
+    }
+
+    @Test
+    public void testGetCollection() throws Exception {
+        org.geotoolkit.stac.dto.Collection c1 = new org.geotoolkit.stac.dto.Collection();
+        c1.setId("coll-1");
+        
+        String jsonResponse = mapper.writeValueAsString(c1);
+        
+        HttpResponse<String> mockResponse = mock(HttpResponse.class);
+        when(mockResponse.statusCode()).thenReturn(200);
+        when(mockResponse.body()).thenReturn(jsonResponse);
+        
+        when(httpClient.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class)))
+                .thenReturn(mockResponse);
+                
+        org.geotoolkit.stac.dto.Collection result = stacClient.getCollection("https://example.com/stac", "coll-1");
+        assertNotNull(result);
+        assertEquals("coll-1", result.getId());
+        
+        assertTrue(stacClient.collectionExists("https://example.com/stac", "coll-1"));
+    }
+
+    @Test
     public void testDownloadFile() throws Exception {
         HttpResponse<java.io.InputStream> mockResponse = mock(HttpResponse.class);
         when(mockResponse.statusCode()).thenReturn(200);
