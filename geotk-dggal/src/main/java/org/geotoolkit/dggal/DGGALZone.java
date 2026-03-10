@@ -244,4 +244,15 @@ final class DGGALZone extends AbstractZone<DGGALDggrs> {
                 Math.toDegrees(centroid[1]),
                 Math.toDegrees(centroid[0]));
     }
+
+    @Override
+    public long countChildrenAtRelativeDepth(int depth) {
+        try {
+            return dggrs.dggal.countSubZones(hash, depth);
+        } catch (Throwable ex) {
+            throw new DGGALBindingException(ex);
+        }
+    }
+
+
 }

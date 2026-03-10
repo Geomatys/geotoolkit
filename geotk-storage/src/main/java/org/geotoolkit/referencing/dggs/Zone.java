@@ -189,6 +189,13 @@ public interface Zone extends Location, Comparable<Zone> {
      */
     boolean overlaps(Object zone);
 
+    /**
+     * @param depth children zones to count.
+     * @return children zones count
+     */
+    default long countChildrenAtRelativeDepth(int depth) {
+        return getChildrenAtRelativeDepth(depth).count();
+    }
 
     /**
      * @param depth children zones to return, a depth of 0 returns this zone.

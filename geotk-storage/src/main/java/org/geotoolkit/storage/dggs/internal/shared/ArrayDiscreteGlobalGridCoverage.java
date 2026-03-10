@@ -36,7 +36,7 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public final class ArrayDiscreteGlobalGridCoverage extends AbstractDiscreteGlobalGridCoverage{
+public final class ArrayDiscreteGlobalGridCoverage extends IndexedDiscreteGlobalGridCoverage{
 
     private final GenericName name;
     private final List<Array> samples;

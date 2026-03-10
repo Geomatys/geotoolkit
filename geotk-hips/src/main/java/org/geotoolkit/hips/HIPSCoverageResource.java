@@ -21,7 +21,6 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -29,12 +28,7 @@ import javax.imageio.ImageIO;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometries.index.MortonIterator;
-import org.apache.sis.geometries.math.DataType;
-import org.apache.sis.geometries.math.SampleSystem;
-import org.apache.sis.geometries.math.Array;
-import org.apache.sis.geometries.math.NDArrays;
 import org.apache.sis.measure.NumberRange;
-import org.apache.sis.storage.AbstractResource;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.base.StoreResource;
@@ -46,32 +40,22 @@ import org.geotoolkit.client.service.ServiceResponse;
 import org.geotoolkit.dggs.healpix.HealpixDggrs;
 import org.geotoolkit.dggs.healpix.HealpixZone;
 import org.geotoolkit.image.BufferedImages;
-import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
-import org.geotoolkit.referencing.dggs.Zone;
-import org.geotoolkit.referencing.rs.Code;
-import org.geotoolkit.storage.dggs.DiscreteGlobalGridCoverage;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridGeometry;
-import org.geotoolkit.storage.dggs.DiscreteGlobalGridResource;
-import org.geotoolkit.storage.dggs.internal.shared.ArrayDiscreteGlobalGridCoverage;
 import org.geotoolkit.storage.dggs.internal.shared.RasterDiscreteGlobalGridCoverage;
-import org.geotoolkit.storage.rs.CodeTransform;
-import org.geotoolkit.storage.rs.CodedGeometry;
-import org.geotoolkit.storage.rs.internal.shared.BandedCodeIterator;
+import org.geotoolkit.storage.dggs.internal.shared.TiledDiscreteGlobalGridCoverageResource;
 import org.geotoolkit.storage.rs.internal.shared.CodedCoverageAsFeatureSet;
-import org.geotoolkit.storage.rs.internal.shared.WritableBandedCodeIterator;
 import org.opengis.feature.FeatureType;
-import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.GenericName;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public final class HIPSCoverageResource extends AbstractResource implements DiscreteGlobalGridResource, StoreResource {
+public final class HIPSCoverageResource extends TiledDiscreteGlobalGridCoverageResource implements StoreResource {
 
     private static final RasterDiscreteGlobalGridCoverage NO_CELL = new RasterDiscreteGlobalGridCoverage(
             Names.createLocalName(null, null, "nocell"),
-            new DiscreteGlobalGridGeometry(HealpixDggrs.INSTANCE, List.of("0"), null),
+            DiscreteGlobalGridGeometry.unstructured(HealpixDggrs.INSTANCE, List.of("0"), null),
             List.of(new SampleDimension.Builder().setName(0).build()), BufferedImages.createImage(1, 1, 1, DataBuffer.TYPE_DOUBLE), null, null);
 
     private static final SampleDimension RED = new SampleDimension.Builder().setName("Red").build();
@@ -105,7 +89,7 @@ public final class HIPSCoverageResource extends AbstractResource implements Disc
     private final Cache<String,RasterDiscreteGlobalGridCoverage> cache = new Cache<>(10, 2, true);
 
     public HIPSCoverageResource(HIPSStore store, HIPSProperties shortProperties) throws ServiceException {
-        super(store);
+        super();
         this.store = store;
         this.shortProperties = shortProperties;
 
@@ -157,7 +141,7 @@ public final class HIPSCoverageResource extends AbstractResource implements Disc
 
     @Override
     public DiscreteGlobalGridGeometry getGridGeometry() {
-        return new DiscreteGlobalGridGeometry(HEALPIX, null, null);
+        return DiscreteGlobalGridGeometry.unstructured(HEALPIX, null, null);
     }
 
     @Override
@@ -169,7 +153,7 @@ public final class HIPSCoverageResource extends AbstractResource implements Disc
     }
 
     @Override
-    public NumberRange<Integer> getAvailableDepths() {
+    public NumberRange<Integer> getTileAvailableDepths() {
         try {
             getLongProperties();
         } catch (ServiceException ex) {
@@ -179,120 +163,13 @@ public final class HIPSCoverageResource extends AbstractResource implements Disc
     }
 
     @Override
-    public int getDefaultDepth() {
-        try {
-            getLongProperties();
-        } catch (ServiceException ex) {
-            throw new RuntimeException(ex);
-        }
-        return maxOrder;
-    }
-
-    @Override
-    public int getMaxRelativeDepth() {
+    public int getTileRelativeDepth() {
         try {
             getLongProperties();
         } catch (ServiceException ex) {
             throw new RuntimeException(ex);
         }
         return tileSubOrder;
-    }
-
-    @Override
-    public DiscreteGlobalGridCoverage read(CodedGeometry grid, int... range) throws DataStoreException {
-        final DiscreteGlobalGridGeometry geometry = DiscreteGlobalGridResource.toDiscreteGlobalGridGeometry(grid);
-        try {
-            getLongProperties();
-        } catch (ServiceException ex) {
-            throw new RuntimeException(ex);
-        }
-
-        final List<Object> zones = geometry.getZoneIds();
-        final List<Array> samples = new ArrayList<>();
-        final double[] nans = new double[sampleDimensions.size()];
-        for (int i = 0; i < nans.length; i++) {
-            final SampleSystem ss = new SampleSystem(DataType.DOUBLE, sampleDimensions.get(i));
-            samples.add(NDArrays.of(ss, new double[zones.size()]));
-            nans[i] = Double.NaN;
-        }
-
-        final DiscreteGlobalGridGeometry dggrsGeom = new DiscreteGlobalGridGeometry(HEALPIX, zones, null);
-        final ArrayDiscreteGlobalGridCoverage target = new ArrayDiscreteGlobalGridCoverage(getIdentifier().orElse(Names.createLocalName(null, null, "hips")), dggrsGeom, samples);
-        try (final WritableBandedCodeIterator iterator = target.createWritableIterator()) {
-            while (iterator.next()) {
-                final int[] gridPosition = iterator.getPosition();
-                final HealpixZone zone = (HealpixZone) HEALPIX.getGridSystem().getHierarchy().getZone(zones.get(gridPosition[0]));
-                double[] values = getZoneValue(zone);
-                if (values == null) {
-                    values = nans;
-                }
-                iterator.setCell(values);
-            }
-        } catch (ServiceException ex) {
-            throw new DataStoreException(ex);
-        }
-
-        return target;
-    }
-
-    private double[] getZoneValue(HealpixZone zone) throws ServiceException, DataStoreException {
-
-        //find the parent tile to pick data from
-        HealpixZone hipsCell = zone;
-        int remaining = tileSubOrder;
-        while (remaining > 0 && hipsCell.getLocationType().getRefinementLevel() > 0) {
-            hipsCell = (HealpixZone) hipsCell.getParents().iterator().next();
-            remaining--;
-        }
-
-        //ensure we do not go under the available range
-        while (hipsCell.getOrder() > maxOrder) {
-            //has only one parent
-            hipsCell = (HealpixZone) hipsCell.getParents().iterator().next();
-        }
-
-        final int hipsCellPixelLevel = hipsCell.getLocationType().getRefinementLevel() + tileSubOrder;
-        final int zoneLevel = zone.getLocationType().getRefinementLevel();
-        final RasterDiscreteGlobalGridCoverage cell;
-        final HealpixZone toDl = hipsCell;
-        try {
-            cell = cache.getOrCreate(toDl.getGeographicIdentifier().toString(), () -> downloadCell(toDl));
-        } catch (Exception ex) {
-            throw new DataStoreException(ex);
-        }
-
-        if (cell == NO_CELL) {
-            //if null at this point, the cell does not exist
-            return null;
-        }
-
-        if (hipsCellPixelLevel > zoneLevel) {
-            //coverage is at a lower level, use a more accurate cell for picking
-            for (int i = 0, n = hipsCellPixelLevel-zoneLevel; i < n; i++) {
-                //pick first child at each level
-                zone = (HealpixZone) zone.getChildren().iterator().next();
-            }
-
-        } else if (hipsCellPixelLevel < zoneLevel) {
-            //coverage is at a higher level, use a less accurate cell for picking
-            for (int i = 0, n = zoneLevel - hipsCellPixelLevel; i < n; i++) {
-                //pick parent, only one in healpix
-                zone = (HealpixZone) zone.getParents().iterator().next();
-            }
-        }
-
-        final DiscreteGlobalGridGeometry cellGeometry = cell.getGeometry();
-        final CodeTransform cellGridToRS = cellGeometry.getGridToRS();
-        final BandedCodeIterator iterator = cell.createIterator();
-        final Object[] ordinates = new Object[1];
-        final Code address = new Code(HEALPIX, ordinates);
-        try {
-            ordinates[0] = zone.getIdentifier();
-            iterator.moveTo(cellGridToRS.toGrid(address));
-            return iterator.getCell((double[]) null);
-        } catch (IllegalArgumentException | TransformException e) {
-            return null;
-        }
     }
 
     public RasterDiscreteGlobalGridCoverage downloadCell(HealpixZone zone) throws DataStoreException, ServiceException {
@@ -312,16 +189,10 @@ public final class HIPSCoverageResource extends AbstractResource implements Disc
             throw ex;
         }
 
-        final List<Object> zones = zone.getChildrenAtRelativeDepth(tileSubOrder).map(Zone::getIdentifier).toList();
+        final DiscreteGlobalGridGeometry gridGeom = DiscreteGlobalGridGeometry.subZone(HEALPIX, zone.getIdentifier(), tileSubOrder);
 
         //map coordinates to cell index using a morton curve
-        final DiscreteGlobalGridReferenceSystem.Coder coder = HEALPIX.createCoder();
-        final long start;
-        try {
-            start = coder.decode(zones.get(0)).getLongIdentifier();
-        } catch (TransformException ex) {
-            throw new DataStoreException(ex);
-        }
+        long start = zone.getFirstChildAtRelativeDepth(tileSubOrder).getLongIdentifier();
         final Point[] offset = new Point[tileWidth*tileWidth];
         for (int x = 0; x < tileWidth; x++) {
             for (int y = 0; y < tileWidth; y++) {
@@ -352,7 +223,6 @@ public final class HIPSCoverageResource extends AbstractResource implements Disc
         try {
             if (PNG.equals(bestFormat) || JPEG.equals(bestFormat) || WEBP.equals(bestFormat)) {
                 final BufferedImage image = ImageIO.read(new ByteArrayInputStream(data));
-                final DiscreteGlobalGridGeometry gridGeom = new DiscreteGlobalGridGeometry(HEALPIX, zones, null);
                 return new RasterDiscreteGlobalGridCoverage(
                         getIdentifier().orElse(Names.createLocalName(null, null, "hips")),
                         gridGeom, sampleDimensions, image, zoneToGrid, gridToZone);
@@ -379,5 +249,14 @@ public final class HIPSCoverageResource extends AbstractResource implements Disc
         return store;
     }
 
-
+    @Override
+    public RasterDiscreteGlobalGridCoverage getZoneTile(Object identifierOrZone) throws DataStoreException {
+        System.out.println("GetZoneTile " + identifierOrZone);
+        HealpixZone zone = (HealpixZone) HEALPIX.getGridSystem().getHierarchy().getZone(identifierOrZone);
+        try {
+            return cache.getOrCreate(zone.getGeographicIdentifier().toString(), () -> downloadCell(zone));
+        } catch (Exception ex) {
+            throw new DataStoreException(ex.getMessage(), ex);
+        }
+    }
 }

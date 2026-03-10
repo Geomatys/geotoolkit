@@ -34,13 +34,19 @@ import org.apache.sis.geometries.math.DataType;
 import org.apache.sis.geometries.math.SampleSystem;
 import org.apache.sis.geometries.math.Array;
 import org.apache.sis.geometries.math.NDArrays;
+import org.apache.sis.math.Statistics;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.NoSuchDataException;
 import org.apache.sis.storage.RasterLoadingStrategy;
+import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.iso.Names;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
 import org.geotoolkit.referencing.rs.Code;
+import org.geotoolkit.referencing.rs.CodeOperation;
+import org.geotoolkit.referencing.rs.ReferenceSystems;
 import org.geotoolkit.storage.rs.CodeTransform;
+import org.geotoolkit.storage.rs.CodedCoverage;
 import org.geotoolkit.storage.rs.internal.shared.WritableBandedCodeIterator;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
@@ -50,6 +56,7 @@ import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
 
 /**
  * Provide operations related to DiscreteGlobalGridReferenceSystem.
@@ -58,9 +65,103 @@ import org.opengis.referencing.operation.TransformException;
  */
 public final class DiscreteGlobalGridCoverageProcessor {
 
+    /**
+     * QuantizationValue has no effect if QuantizationSelection is CENTER_PIXEL.
+     */
+    public static enum QuantizationValue {
+        /**
+         * Pick the minimal value from pixels intersecting the dggrs zone.
+         */
+        MINIMUM,
+        /**
+         * Pick the maximal value from pixels intersecting the dggrs zone.
+         */
+        MAXIMUM,
+        /**
+         * Pick the mean value from pixels intersecting the dggrs zone.
+         */
+        MEAN,
+        /**
+         * Pick the root mean square value from pixels intersecting the dggrs zone.
+         */
+        ROOT_MEAN_SQUARE,
+        /**
+         * Pick the value range from pixels intersecting the dggrs zone.
+         */
+        SPAN,
+        /**
+         * Pick the sum value from pixels intersecting the dggrs zone.
+         */
+        SUM,
+        /**
+         * Pick the standard deviation value from pixels intersecting the dggrs zone.
+         */
+        STANDARD_DEVIATION
+    };
+
+    public static enum QuantizationSelection {
+        /**
+         * Use a single pixel at zone center position.
+         */
+        CENTER_PIXEL,
+        /**
+         * Use all pixels intersecting zone polygon.
+         * All pixels have the same weight.
+         */
+        PIXELS_WEIGHT_FIXED,
+        /**
+         *
+         * Use all pixels intersecting zone polygon.
+         * Pixels have a weight which vary based on the intersection area.
+         * The sum of all weights will be one.
+         * If pixels do not cover the full zone, weights will be adjusted to be one.
+         */
+        PIXELS_WEIGHT_BY_AREA
+    };
+
     private static final String[] CELLS_RESOURCES_NAMES = {"cell", "cells", "dggs_id", "cells_id", "cell_id", "dggs_cell", "dggs_cells"};
 
+    private QuantizationValue[] quantizationValues = new QuantizationValue[]{QuantizationValue.MEAN};
+    private QuantizationSelection quantizationSelection = QuantizationSelection.CENTER_PIXEL;
+
     public DiscreteGlobalGridCoverageProcessor() {
+    }
+
+    /**
+     * Set quantization selection method.
+     * Default is CENTER_PIXEL
+     *
+     * @param quantizationSelection not null
+     */
+    public void setQuantizationSelection(QuantizationSelection quantizationSelection) {
+        ArgumentChecks.ensureNonNull("selection", quantizationSelection);
+        this.quantizationSelection = quantizationSelection;
+    }
+
+    /**
+     * @return QuantizationSelection never null
+     * @see #setQuantizationSelection(org.geotoolkit.storage.dggs.DiscreteGlobalGridCoverageProcessor.QuantizationSelection)
+     */
+    public QuantizationSelection getQuantizationSelection() {
+        return quantizationSelection;
+    }
+
+    /**
+     *
+     * @param quantizationValues
+     */
+    public void setQuantizationValues(QuantizationValue ... quantizationValues) {
+        ArgumentChecks.ensureNonNull("values", quantizationValues);
+        ArgumentChecks.ensureStrictlyPositive("values", quantizationValues.length);
+        this.quantizationValues = quantizationValues;
+    }
+
+    /**
+     * @return quantization values, never null or empty
+     * @see #setQuantizationValues(org.geotoolkit.storage.dggs.DiscreteGlobalGridCoverageProcessor.QuantizationValue...)
+     */
+    public QuantizationValue[] getQuantizationValues() {
+        return quantizationValues.clone();
     }
 
     /**
@@ -248,6 +349,53 @@ public final class DiscreteGlobalGridCoverageProcessor {
             }
         } catch (TransformException ex) {
             throw new DataStoreException(ex);
+        }
+
+        return target;
+    }
+
+    /**
+     * Resample a DGGRS coverage to a different grid.
+     *
+     * @param coverage source coverage
+     * @param gridGeometry target geometry
+     * @param range bands to select
+     * @return resamples coverage
+     * @throws FactoryException
+     * @throws DataStoreException
+     * @throws TransformException
+     */
+    public DiscreteGlobalGridCoverage resample(DiscreteGlobalGridCoverage coverage, DiscreteGlobalGridGeometry gridGeometry, int ... range) throws FactoryException, DataStoreException, TransformException {
+
+        final DiscreteGlobalGridReferenceSystem dggrs = gridGeometry.getReferenceSystem();
+        final List<SampleDimension> sampleDimensions = coverage.getSampleDimensions();
+
+        final List<Object> zones = gridGeometry.getZoneIds();
+        final List<Array> samples = new ArrayList<>();
+        final double[] nans = new double[sampleDimensions.size()];
+        for (int i = 0; i < nans.length; i++) {
+            final SampleSystem ss = new SampleSystem(DataType.DOUBLE, sampleDimensions.get(i));
+            samples.add(NDArrays.of(ss, new double[zones.size()]));
+            nans[i] = Double.NaN;
+        }
+
+        final CodeOperation op = ReferenceSystems.findOperation(dggrs, coverage.getCoordinateReferenceSystem(), null);
+        final CodeTransform toCode = gridGeometry.getGridToRS();
+        final CodedCoverage.CodeEvaluator eva = coverage.codeEvaluator();
+
+        final ArrayDiscreteGlobalGridCoverage target = new ArrayDiscreteGlobalGridCoverage(Names.createLocalName(null, null, "Resampled"), gridGeometry, samples);
+        Code tcode = null;
+        try (final WritableBandedCodeIterator iterator = target.createWritableIterator()) {
+            while (iterator.next()) {
+                final int[] gridPosition = iterator.getPosition();
+                final Code code = toCode.toCode(gridPosition);
+                tcode = op.transform(code, tcode);
+                double[] values = eva.apply(tcode);
+                if (values == null) {
+                    values = nans;
+                }
+                iterator.setCell(values);
+            }
         }
 
         return target;

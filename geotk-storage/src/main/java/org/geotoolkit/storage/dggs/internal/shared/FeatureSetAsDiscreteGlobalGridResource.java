@@ -34,7 +34,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureQuery;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.Utilities;
-import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridHierarchy;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridGeometry;
@@ -78,7 +77,7 @@ public final class FeatureSetAsDiscreteGlobalGridResource extends AbstractResour
     public FeatureSetAsDiscreteGlobalGridResource(DiscreteGlobalGridReferenceSystem dggrs, FeatureSet featureSet) {
         super(null);
         this.dggrs = dggrs;
-        this.gridGeometry = new DiscreteGlobalGridGeometry(dggrs, null, null);
+        this.gridGeometry = DiscreteGlobalGridGeometry.unstructured(dggrs, null, null);
         this.featureSet = featureSet;
     }
 

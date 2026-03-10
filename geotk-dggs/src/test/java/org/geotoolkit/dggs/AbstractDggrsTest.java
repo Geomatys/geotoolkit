@@ -225,7 +225,7 @@ public abstract class AbstractDggrsTest {
             for (Zone z : candidates) {
                 final DirectPosition position = z.getPosition();
                 final ArrayDiscreteGlobalGridCoverage dggsCoverage = new ArrayDiscreteGlobalGridCoverage(
-                        Names.createLocalName(null, null, "test"), new DiscreteGlobalGridGeometry(dggrs, List.of(z.getIdentifier()), null),
+                        Names.createLocalName(null, null, "test"), DiscreteGlobalGridGeometry.unstructured(dggrs, List.of(z.getIdentifier()), null),
                         List.of(NDArrays.of(1, 123456)));
 
                 //test iterator

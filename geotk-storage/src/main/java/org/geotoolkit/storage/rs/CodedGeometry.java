@@ -33,7 +33,7 @@ import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
 import org.geotoolkit.storage.rs.internal.shared.CodeTransforms;
 import org.geotoolkit.util.StringUtilities;
 import org.opengis.geometry.Envelope;
-import org.opengis.metadata.extent.GeographicBoundingBox;
+import org.opengis.metadata.extent.GeographicExtent;
 import org.opengis.referencing.ReferenceSystem;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.OperationNotFoundException;
@@ -80,7 +80,7 @@ public class CodedGeometry {
 
 
     private final ReferenceSystem rs;
-    private final GeographicBoundingBox bbox;
+    private final GeographicExtent geoExtent;
     private final GridExtent extent;
     private final CodeTransform gridToRS;
 
@@ -91,11 +91,11 @@ public class CodedGeometry {
              null);
     }
 
-    public CodedGeometry(ReferenceSystem rs, GridExtent extent, CodeTransform gridToRS, GeographicBoundingBox bbox) {
+    public CodedGeometry(ReferenceSystem rs, GridExtent extent, CodeTransform gridToRS, GeographicExtent geoExtent) {
         this.rs = rs;
         this.extent = extent;
         this.gridToRS = gridToRS;
-        this.bbox = bbox;
+        this.geoExtent = geoExtent;
 
         final int nbDim = (rs != null) ? ReferenceSystems.getDimension(rs) : ((extent != null) ? extent.getDimension() : 0);
         if (extent != null && extent.getDimension() != nbDim) {
@@ -250,8 +250,8 @@ public class CodedGeometry {
      *
      * @return the geographic bounding box in "real world" coordinates.
      */
-    public GeographicBoundingBox getGeographicExtent() {
-        return bbox;
+    public GeographicExtent getGeographicExtent() {
+        return geoExtent;
     }
 
     /**
@@ -302,7 +302,7 @@ public class CodedGeometry {
                     if (gridToRS != null) {
                         subtrs = gridToRS.split(offset, crsDim);
                     }
-                    return Optional.of(new DiscreteGlobalGridGeometry(dggrs, ext, subtrs, bbox));
+                    return Optional.of(DiscreteGlobalGridGeometry.unstructured(dggrs, ext, subtrs, geoExtent));
 
                 } else if (rs instanceof CoordinateReferenceSystem crs) {
                     final int crsDim = ReferenceSystems.getDimension(crs);
@@ -350,7 +350,7 @@ public class CodedGeometry {
     public int hashCode() {
         int hash = 7;
         hash = 23 * hash + Objects.hashCode(this.rs);
-        hash = 23 * hash + Objects.hashCode(this.bbox);
+        hash = 23 * hash + Objects.hashCode(this.geoExtent);
         hash = 23 * hash + Objects.hashCode(this.extent);
         hash = 23 * hash + Objects.hashCode(this.gridToRS);
         return hash;
@@ -371,7 +371,7 @@ public class CodedGeometry {
         if (!Objects.equals(this.rs, other.rs)) {
             return false;
         }
-        if (!Objects.equals(this.bbox, other.bbox)) {
+        if (!Objects.equals(this.geoExtent, other.geoExtent)) {
             return false;
         }
         if (!Objects.equals(this.extent, other.extent)) {

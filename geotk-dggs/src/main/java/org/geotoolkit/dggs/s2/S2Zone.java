@@ -146,4 +146,9 @@ final class S2Zone extends AbstractZone<S2Dggrs> {
         return new DirectPosition2D(CRS84.getCoordinateReferenceSystem(), latLng.lngDegrees(), latLng.latDegrees());
     }
 
+    @Override
+    public long countChildrenAtRelativeDepth(int depth) {
+        return (long)Math.pow(4, depth);
+    }
+
 }

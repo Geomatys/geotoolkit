@@ -30,6 +30,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.LongFunction;
+import java.util.stream.LongStream;
+import java.util.stream.Stream;
 import org.apache.sis.geometries.math.SampleSystem;
 import org.apache.sis.geometries.math.Vector2D;
 import org.apache.sis.geometries.math.Vectors;
@@ -213,6 +216,36 @@ public final class HealpixZone extends AbstractZone<HealpixDggrs> {
         final VerticesAndPathComputer nested = Healpix.getNested(level).newVerticesAndPathComputer();
         final double[] center = nested.center(npixel);
         return Vectors.asDirectPostion(toLonLat(center));
+    }
+
+    @Override
+    public long countChildrenAtRelativeDepth(int depth) {
+        return (long)Math.pow(4, depth);
+    }
+
+    @Override
+    public Stream<Zone> getChildrenAtRelativeDepth(int depth) {
+        final int maxLevel = dggrs.getGridSystem().getHierarchy().getGrids().size();
+        if (level+depth >= maxLevel) throw new IllegalArgumentException("Over maximum depth");
+
+        final int clevel = level + depth;
+        final long count = (long)Math.pow(4, depth);
+        final long base = npixel * count;
+
+        return LongStream.range(base, base+count).mapToObj(new LongFunction<HealpixZone>() {
+            @Override
+            public HealpixZone apply(long value) {
+                return new HealpixZone(dggrs, clevel, value);
+            }
+        });
+    }
+
+    public Zone getFirstChildAtRelativeDepth(int depth) {
+        final int maxLevel = dggrs.getGridSystem().getHierarchy().getGrids().size();
+        if (level+depth >= maxLevel) throw new IllegalArgumentException("Over maximum depth");
+        final int clevel = level + depth;
+        final long base = npixel * (long) Math.pow(4, depth);
+        return new HealpixZone(dggrs, clevel, base);
     }
 
     /**
