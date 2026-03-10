@@ -244,6 +244,7 @@ public class StacClient {
         String filename = extractFilename(url);
         Path destPath = outputDir.resolve(filename);
 
+        // Check if file already exists to avoid re-downloading
         if (Files.exists(destPath)) return destPath;
 
         HttpRequest request = HttpRequest.newBuilder()
@@ -331,13 +332,19 @@ public class StacClient {
     /**
      * Helper method to extract a filename from a URL. If the URL path is empty or does not contain a valid filename, returns a default name.
      * @param url the URL to extract the filename from
-     * @return the extracted filename, or "downloaded_asset.nc" if no valid filename can be determined
+     * @return the extracted filename, or a generated name if no valid filename can be determined
      */
     private static String extractFilename(String url) {
+        // The default name is based on the URL hash to ensure uniqueness if no filename can be extracted.
+        // And it allows to use cache based on URL if the same URL is encountered again.
         String path = URI.create(url).getPath();
-        if (path == null || path.isEmpty()) return "downloaded_asset.nc";
+        if (path == null || path.isEmpty() || path.equals("/")) {
+            return "download_" + Integer.toHexString(url.hashCode());
+        }
         String name = path.substring(path.lastIndexOf('/') + 1);
-        if (name.isEmpty() || !name.contains(".")) return "downloaded_asset.nc";
+        if (name.isEmpty()) {
+            return "download_" + Integer.toHexString(url.hashCode());
+        }
         return name;
     }
 }
