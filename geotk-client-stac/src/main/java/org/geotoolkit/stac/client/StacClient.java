@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.geotoolkit.stac.dto.Item;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -60,29 +61,29 @@ public class StacClient {
     private final HttpClient httpClient;
 
     /**
-     * Download URL extractor to determine how to get the actual data URL from a STAC item. This allows for flexible logic
+     * Download URI extractor to determine how to get the actual data URI from a STAC item. This allows for flexible logic
      */
-    private final DownloadUrlExtractor downloadUrlExtractor;
+    private final DownloadURIExtractor downloadURIExtractor;
 
     /**
-     * Creates a StacClient with the default HTTP client and default download URL extractor.
+     * Creates a StacClient with the default HTTP client and default download URI extractor.
      */
     public StacClient() {
         this(HttpClient.newBuilder()
                 .connectTimeout(Duration.ofSeconds(30))
                 .followRedirects(HttpClient.Redirect.NORMAL)
-                .build(), new DefaultDownloadUrlExtractor());
+                .build(), new DefaultDownloadURIExtractor());
     }
 
     /**
-     * Creates a StacClient with a specific HTTP client and specific download URL extractor.
+     * Creates a StacClient with a specific HTTP client and specific download URI extractor.
      *
      * @param httpClient the HTTP client to use
-     * @param extractor the logic to extract download URLs from items
+     * @param extractor the logic to extract download URIs from items
      */
-    public StacClient(HttpClient httpClient, DownloadUrlExtractor extractor) {
+    public StacClient(HttpClient httpClient, DownloadURIExtractor extractor) {
         this.httpClient = httpClient;
-        this.downloadUrlExtractor = extractor;
+        this.downloadURIExtractor = extractor;
     }
 
     /**
@@ -92,10 +93,10 @@ public class StacClient {
      * @param collection the collection ID
      * @param bbox the bounding box [minLon, minLat, maxLon, maxLat]
      * @param temporalExtent the temporal extent string (e.g., "start/end")
-     * @return a list of STAC item nodes
+     * @return a list of STAC items
      * @throws Exception if an error occurs during search
      */
-    public List<JsonNode> searchItems(String stacUrl, String collection,
+    public List<Item> searchItems(String stacUrl, String collection,
                                       double[] bbox, String temporalExtent) throws Exception {
         String searchUrl = stacUrl.replaceAll("/+$", "") + "/search";
 
@@ -111,7 +112,7 @@ public class StacClient {
         }
         payload.put("limit", 100);
 
-        List<JsonNode> allItems = new ArrayList<>();
+        List<Item> allItems = new ArrayList<>();
         int page = 1;
 
         LOGGER.info(String.format("Searching STAC API: %s\n  Collection: %s\n  Datetime: %s", searchUrl, collection, temporalExtent));
@@ -133,8 +134,8 @@ public class StacClient {
 
             JsonNode features = data.get("features");
             if (features != null && features.isArray()) {
-                for (JsonNode item : features) {
-                    allItems.add(item);
+                for (JsonNode itemNode : features) {
+                    allItems.add(MAPPER.treeToValue(itemNode, Item.class));
                 }
             }
             
@@ -151,7 +152,7 @@ public class StacClient {
                     data = getJson(nextHref);
                     features = data.get("features");
                     if (features != null && features.isArray()) {
-                        for (JsonNode item : features) allItems.add(item);
+                        for (JsonNode itemNode : features) allItems.add(MAPPER.treeToValue(itemNode, Item.class));
                     }
                     if (findLink(data, "next") == null) break;
                     continue;
@@ -175,10 +176,10 @@ public class StacClient {
      * @param collection the collection ID to search within
      * @param bbox the bounding box to filter items (minLon, minLat, maxLon, maxLat)
      * @param temporalExtent the temporal extent string (e.g., "start/end") to filter items
-     * @return a list of STAC item nodes matching the search criteria
+     * @return a list of STAC items matching the search criteria
      * @throws Exception if an error occurs during the search process
      */
-    private List<JsonNode> searchViaOgcApi(String stacUrl, String collection,
+    private List<Item> searchViaOgcApi(String stacUrl, String collection,
                                            double[] bbox, String temporalExtent) throws Exception {
         StringBuilder itemsUrlBuilder = new StringBuilder();
         itemsUrlBuilder.append(stacUrl.replaceAll("/+$", ""))
@@ -196,7 +197,7 @@ public class StacClient {
         }
 
         String itemsUrl = itemsUrlBuilder.toString();
-        List<JsonNode> allItems = new ArrayList<>();
+        List<Item> allItems = new ArrayList<>();
         int page = 1;
 
         while (itemsUrl != null) {
@@ -205,7 +206,7 @@ public class StacClient {
 
             JsonNode features = data.get("features");
             if (features != null && features.isArray()) {
-                for (JsonNode item : features) allItems.add(item);
+                for (JsonNode itemNode : features) allItems.add(MAPPER.treeToValue(itemNode, Item.class));
             }
 
             JsonNode nextLink = findLink(data, "next");
@@ -219,14 +220,14 @@ public class StacClient {
     }
 
     /**
-     * Extract the download URL from a STAC item using the registered extractor.
+     * Extract the download URI from a STAC item using the registered extractor.
      *
      * @param item the STAC item
-     * @return the download URL, or null if none found
+     * @return the download URI, or null if none found
      */
-    public String getDownloadUrl(JsonNode item) {
-        if (downloadUrlExtractor != null) {
-            return downloadUrlExtractor.extract(item);
+    public URI getDownloadURI(Item item) {
+        if (downloadURIExtractor != null) {
+            return downloadURIExtractor.extract(item);
         }
         return null;
     }
@@ -235,20 +236,22 @@ public class StacClient {
      * Download a file to outputDir.
      * Uses a temp file and moves atomically upon success.
      *
-     * @param url the file URL
+     * @param uri the file URI
      * @param outputDir the destination directory
      * @return the path to the downloaded file
      * @throws Exception if an error occurs
      */
-    public Path downloadFile(String url, Path outputDir) throws Exception {
-        String filename = extractFilename(url);
+    public Path downloadFile(URI uri, Path outputDir) throws Exception {
+        // TODO : Manage S3 or other cloud storage URIs if needed (e.g., using AWS SDK or similar)
+
+        String filename = extractFilename(uri);
         Path destPath = outputDir.resolve(filename);
 
         // Check if file already exists to avoid re-downloading
         if (Files.exists(destPath)) return destPath;
 
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(url))
+                .uri(uri)
                 .timeout(Duration.ofMinutes(5))
                 .GET().build();
 
@@ -256,7 +259,7 @@ public class StacClient {
                 HttpResponse.BodyHandlers.ofInputStream());
 
         if (response.statusCode() >= 400) {
-            throw new IOException("HTTP " + response.statusCode() + " downloading " + url);
+            throw new IOException("HTTP " + response.statusCode() + " downloading " + uri);
         }
 
         Path tmpPath = outputDir.resolve(filename + ".tmp");
@@ -330,20 +333,20 @@ public class StacClient {
     }
 
     /**
-     * Helper method to extract a filename from a URL. If the URL path is empty or does not contain a valid filename, returns a default name.
-     * @param url the URL to extract the filename from
+     * Helper method to extract a filename from a URI. If the URI path is empty or does not contain a valid filename, returns a default name.
+     * @param uri the URI to extract the filename from
      * @return the extracted filename, or a generated name if no valid filename can be determined
      */
-    private static String extractFilename(String url) {
-        // The default name is based on the URL hash to ensure uniqueness if no filename can be extracted.
-        // And it allows to use cache based on URL if the same URL is encountered again.
-        String path = URI.create(url).getPath();
+    private static String extractFilename(URI uri) {
+        // The default name is based on the URI hash to ensure uniqueness if no filename can be extracted.
+        // And it allows to use cache based on URI if the same URI is encountered again.
+        String path = uri.getPath();
         if (path == null || path.isEmpty() || path.equals("/")) {
-            return "download_" + Integer.toHexString(url.hashCode());
+            return "download_" + Integer.toHexString(uri.hashCode());
         }
         String name = path.substring(path.lastIndexOf('/') + 1);
         if (name.isEmpty()) {
-            return "download_" + Integer.toHexString(url.hashCode());
+            return "download_" + Integer.toHexString(uri.hashCode());
         }
         return name;
     }

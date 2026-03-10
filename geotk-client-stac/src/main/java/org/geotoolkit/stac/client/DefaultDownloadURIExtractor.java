@@ -17,9 +17,11 @@
 
 package org.geotoolkit.stac.client;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import java.util.Iterator;
+import org.geotoolkit.stac.dto.Asset;
+import org.geotoolkit.stac.dto.Item;
+import java.net.URI;
 import java.util.Map;
+import java.util.List;
 
 /**
  * Default implementation of DownloadUrlExtractor that looks for an asset with the "data" role,
@@ -27,23 +29,21 @@ import java.util.Map;
  *
  * @author Quentin Bialota (Geomatys)
  */
-public class DefaultDownloadUrlExtractor implements DownloadUrlExtractor {
+public class DefaultDownloadURIExtractor implements DownloadURIExtractor {
 
     @Override
-    public String extract(JsonNode item) {
-        JsonNode assets = item.get("assets");
-        if (assets == null) return null;
+    public URI extract(Item item) {
+        Map<String, Asset> assets = item.getAssets();
+        if (assets == null || assets.isEmpty()) return null;
 
-        Iterator<Map.Entry<String, JsonNode>> fields = assets.fields();
-        while (fields.hasNext()) {
-            Map.Entry<String, JsonNode> entry = fields.next();
-            JsonNode meta = entry.getValue();
-            JsonNode roles = meta.get("roles");
+        for (Map.Entry<String, Asset> entry : assets.entrySet()) {
+            Asset asset = entry.getValue();
+            List<String> roles = asset.getRoles();
             boolean isData = false;
             
-            if (roles != null && roles.isArray()) {
-                for (JsonNode r : roles) {
-                    if ("data".equals(r.asText())) {
+            if (roles != null) {
+                for (String r : roles) {
+                    if ("data".equals(r)) {
                         isData = true;
                         break;
                     }
@@ -51,18 +51,17 @@ public class DefaultDownloadUrlExtractor implements DownloadUrlExtractor {
             }
             
             if (isData) {
-                if (meta.has("href")) {
-                    return meta.get("href").asText();
+                if (asset.getHref() != null) {
+                    return URI.create(asset.getHref());
                 }
             }
         }
 
         // Fallback: any asset with href
-        fields = assets.fields();
-        while (fields.hasNext()) {
-            JsonNode meta = fields.next().getValue();
-            if (meta.has("href")) {
-                return meta.get("href").asText();
+        for (Map.Entry<String, Asset> entry : assets.entrySet()) {
+            Asset asset = entry.getValue();
+            if (asset.getHref() != null) {
+                return URI.create(asset.getHref());
             }
         }
         

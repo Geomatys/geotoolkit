@@ -17,21 +17,23 @@
 
 package org.geotoolkit.stac.client;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import org.geotoolkit.stac.dto.Item;
+
+import java.net.URI;
 
 /**
- * Interface for extracting download URLs from a STAC Item.
+ * Interface for extracting download URIs from a STAC Item.
  * Implementations can provide specific logic, e.g., prioritizing alternate links.
  *
  * @author Quentin Bialota (Geomatys)
  */
-public interface DownloadUrlExtractor {
+public interface DownloadURIExtractor {
 
     /**
-     * Extracts a download URL from the given STAC item JSON node.
+     * Extracts a download URI from the given STAC item.
      *
-     * @param item the STAC item node
-     * @return the download URL, or null if none could be found
+     * @param item the STAC item
+     * @return the download URI, or null if none could be found
      */
-    String extract(JsonNode item);
+    URI extract(Item item);
 }
