@@ -1,44 +1,41 @@
 package org.geotoolkit.processing.stac;
 
-import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
-import org.geotoolkit.stac.client.DownloadURIExtractor;
 import org.geotoolkit.stac.client.StacClient;
 import org.geotoolkit.stac.dto.Item;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
 
 import java.net.URI;
-import java.net.http.HttpClient;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import static org.geotoolkit.processing.stac.StacClientDownloadingDescriptor.BANDS;
-import static org.geotoolkit.processing.stac.StacClientDownloadingDescriptor.COLLECTION;
-import static org.geotoolkit.processing.stac.StacClientDownloadingDescriptor.EXTRACTOR_CLASS;
-import static org.geotoolkit.processing.stac.StacClientDownloadingDescriptor.OUTPUT;
-import static org.geotoolkit.processing.stac.StacClientDownloadingDescriptor.OUTPUT_DIRECTORY;
-import static org.geotoolkit.processing.stac.StacClientDownloadingDescriptor.SPATIAL_EXTENT;
-import static org.geotoolkit.processing.stac.StacClientDownloadingDescriptor.STAC_URL;
-import static org.geotoolkit.processing.stac.StacClientDownloadingDescriptor.TEMPORAL_EXTENT;
+import static org.geotoolkit.processing.stac.StacClientItemsDownloadingDescriptor.BANDS;
+import static org.geotoolkit.processing.stac.StacClientItemsDownloadingDescriptor.COLLECTION;
+import static org.geotoolkit.processing.stac.StacClientItemsDownloadingDescriptor.EXTRACTOR_CLASS;
+import static org.geotoolkit.processing.stac.StacClientItemsDownloadingDescriptor.OUTPUT;
+import static org.geotoolkit.processing.stac.StacClientItemsDownloadingDescriptor.OUTPUT_DIRECTORY;
+import static org.geotoolkit.processing.stac.StacClientItemsDownloadingDescriptor.SPATIAL_EXTENT;
+import static org.geotoolkit.processing.stac.StacClientItemsDownloadingDescriptor.STAC_URL;
+import static org.geotoolkit.processing.stac.StacClientItemsDownloadingDescriptor.TEMPORAL_EXTENT;
 
 /**
  * Execution class for the STAC Client Downloading Process.
  *
  * @author Quentin BIALOTA (Geomatys)
  */
-public class StacClientDownloadingProcess extends AbstractProcess {
+public class StacClientItemsDownloadingProcess extends AbstractProcess {
 
     /**
      * Private logger.
      */
     private static final Logger LOGGER = Logger.getLogger(
-            StacClientDownloadingProcess.class.getName());
+            StacClientItemsDownloadingProcess.class.getName());
 
     /**
      * Default constructor.
@@ -46,8 +43,8 @@ public class StacClientDownloadingProcess extends AbstractProcess {
      * @param desc process descriptor
      * @param parameter input parameters
      */
-    public StacClientDownloadingProcess(final ProcessDescriptor desc,
-                                        final ParameterValueGroup parameter) {
+    public StacClientItemsDownloadingProcess(final ProcessDescriptor desc,
+                                             final ParameterValueGroup parameter) {
         super(desc, parameter);
     }
 
@@ -77,34 +74,13 @@ public class StacClientDownloadingProcess extends AbstractProcess {
             }
 
             // Convert extent
-            double[] bbox = null;
-            if (spatialExtent != null) {
-                GeneralEnvelope env = new GeneralEnvelope(spatialExtent);
-                bbox = new double[]{
-                        env.getMinimum(0), env.getMinimum(1),
-                        env.getMaximum(0), env.getMaximum(1)
-                };
-            }
+            double[] bbox = StacClientProcessingUtils.getBbox(spatialExtent);
 
-            String temporalExtent = null;
-            if (temporalExtentArray != null && temporalExtentArray.length > 0) {
-                if (temporalExtentArray.length == 1) {
-                    temporalExtent = temporalExtentArray[0];
-                } else if (temporalExtentArray.length >= 2) {
-                    temporalExtent = temporalExtentArray[0] + "/"
-                            + temporalExtentArray[1];
-                }
-            }
+            // Convert temporal extent
+            String temporalExtent = StacClientProcessingUtils.getTemporalExtent(temporalExtentArray);
 
-            final StacClient client;
-            if (extractorClassName != null && !extractorClassName.trim().isEmpty()) {
-                final Class<?> extractorClass = Class.forName(extractorClassName);
-                final DownloadURIExtractor extractor = (DownloadURIExtractor)
-                        extractorClass.getDeclaredConstructor().newInstance();
-                client = new StacClient(HttpClient.newHttpClient(), extractor);
-            } else {
-                client = new StacClient();
-            }
+            // Create STAC client
+            final StacClient client = StacClientProcessingUtils.getStacClient(extractorClassName);
 
             final List<Item> items = client.searchItems(stacUrl, collection,
                     bbox, temporalExtent);

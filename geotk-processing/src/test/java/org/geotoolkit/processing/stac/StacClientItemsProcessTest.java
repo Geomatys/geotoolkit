@@ -2,6 +2,7 @@ package org.geotoolkit.processing.stac;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpServer;
+import org.apache.http.client.utils.URIUtils;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
@@ -31,11 +32,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Tests for {@link StacClientDownloadingProcess}.
+ * Tests for {@link StacClientItemsDownloadingProcess}.
  *
  * @author Quentin BIALOTA (Geomatys)
  */
-public class StacClientDownloadingProcessTest {
+public class StacClientItemsProcessTest {
 
     /**
      * ObjectMapper for JSON serialization/deserialization.
@@ -131,17 +132,21 @@ public class StacClientDownloadingProcessTest {
         }
     }
 
+    /**
+     * Test for the downloading process, which retrieves items from a STAC API and downloads associated assets.
+     * @throws Exception
+     */
     @Test
     public void testDownloadProcess() throws Exception {
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(
-                "geotoolkit", "stac.downloading");
+                "geotoolkit", "stac.items.downloading");
         assertNotNull("STAC downloading descriptor not found", desc);
 
         final ParameterValueGroup input = desc.getInputDescriptor().createValue();
-        input.parameter(StacClientDownloadingDescriptor.STAC_URL_NAME).setValue(serverUrl + "/stac");
-        input.parameter(StacClientDownloadingDescriptor.COLLECTION_NAME).setValue("test-collection");
-        input.parameter(StacClientDownloadingDescriptor.OUTPUT_DIRECTORY_NAME).setValue(tempDir);
-        input.parameter(StacClientDownloadingDescriptor.EXTRACTOR_CLASS_NAME).setValue(MockExtractor.class.getName());
+        input.parameter(StacClientItemsDownloadingDescriptor.STAC_URL_NAME).setValue(serverUrl + "/stac");
+        input.parameter(StacClientItemsDownloadingDescriptor.COLLECTION_NAME).setValue("test-collection");
+        input.parameter(StacClientItemsDownloadingDescriptor.OUTPUT_DIRECTORY_NAME).setValue(tempDir);
+        input.parameter(StacClientItemsDownloadingDescriptor.EXTRACTOR_CLASS_NAME).setValue(MockExtractor.class.getName());
 
         final Process process = desc.createProcess(input);
         assertNotNull("Failed to create STAC process", process);
@@ -151,7 +156,7 @@ public class StacClientDownloadingProcessTest {
 
         @SuppressWarnings("unchecked")
         List<Path> downloadedFiles = (List<Path>) result.parameter(
-                StacClientDownloadingDescriptor.OUTPUT_NAME).getValue();
+                StacClientItemsDownloadingDescriptor.OUTPUT_NAME).getValue();
         
         assertNotNull(downloadedFiles);
         assertEquals(1, downloadedFiles.size());
@@ -163,6 +168,39 @@ public class StacClientDownloadingProcessTest {
 
         // Remove the downloaded file after test
         Files.deleteIfExists(downloadedFile);
+    }
+
+    /**
+     * Test for the getURIs process, which retrieves download URIs for items matching specified criteria.
+     * @throws Exception
+     */
+    @Test
+    public void testGetURIs() throws Exception {
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(
+                "geotoolkit", "stac.items.getURIs");
+        assertNotNull("STAC getURIs descriptor not found", desc);
+
+        final ParameterValueGroup input = desc.getInputDescriptor().createValue();
+        input.parameter(StacClientItemsGetURIsDescriptor.STAC_URL_NAME).setValue(serverUrl + "/stac");
+        input.parameter(StacClientItemsGetURIsDescriptor.COLLECTION_NAME).setValue("test-collection");
+        input.parameter(StacClientItemsGetURIsDescriptor.EXTRACTOR_CLASS_NAME).setValue(MockExtractor.class.getName());
+
+        final Process process = desc.createProcess(input);
+        assertNotNull("Failed to create STAC process", process);
+
+        final ParameterValueGroup result = process.call();
+        assertNotNull("STAC process execution result is null", result);
+
+        @SuppressWarnings("unchecked")
+        List<URI> assetsURIs = (List<URI>) result.parameter(
+                StacClientItemsGetURIsDescriptor.OUTPUT_NAME).getValue();
+
+        assertNotNull(assetsURIs);
+        assertEquals(1, assetsURIs.size());
+
+        URI assetURI = assetsURIs.get(0);
+        String actual = assetURI.toString();
+        assertTrue(actual.matches("http://localhost:\\d+/data\\.nc"));
     }
 
     /**
