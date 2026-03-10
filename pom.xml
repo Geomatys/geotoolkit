@@ -1015,6 +1015,7 @@
     <module>geotk-client-ncwms</module>
     <module>geotk-client-wmts</module>
     <module>geotk-client-wps</module>
+    <module>geotk-client-stac</module>
 
     <module>benchmark</module>
 
