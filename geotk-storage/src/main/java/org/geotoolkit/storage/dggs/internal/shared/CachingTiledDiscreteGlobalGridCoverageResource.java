@@ -25,7 +25,6 @@ import org.geotoolkit.storage.dggs.DiscreteGlobalGridCoverage;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridCoverageProcessor;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridGeometry;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridResource;
-import org.opengis.feature.FeatureType;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
@@ -53,12 +52,6 @@ public class CachingTiledDiscreteGlobalGridCoverageResource extends TiledDiscret
     @Override
     public int getTileRelativeDepth() {
         return caching.getTileRelativeDepth();
-    }
-
-
-    @Override
-    public FeatureType getSampleType() throws DataStoreException {
-        return caching.getSampleType();
     }
 
     @Override

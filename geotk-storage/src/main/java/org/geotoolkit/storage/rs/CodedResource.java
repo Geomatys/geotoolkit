@@ -37,14 +37,12 @@ import org.geotoolkit.storage.coverage.BandedCoverageResource;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridGeometry;
 import org.geotoolkit.storage.dggs.internal.shared.GridAsDiscreteGlobalGridResource;
 import org.geotoolkit.storage.rs.internal.shared.CodeTransforms;
-import org.opengis.feature.FeatureType;
 import org.opengis.referencing.ReferenceSystem;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.crs.VerticalCRS;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
-import org.opengis.util.GenericName;
 
 /**
  * A Resource which offer acces to a coverage structured in located cells.
@@ -52,18 +50,6 @@ import org.opengis.util.GenericName;
  * @author Johann Sorel (Geomatys)
  */
 public interface CodedResource extends BandedCoverageResource {
-
-    @Override
-    default Optional<GenericName> getIdentifier() throws DataStoreException {
-        return Optional.of(getSampleType().getName());
-    }
-
-    /**
-     * Returns the description of the samples stored.
-     *
-     * @return Feature type
-     */
-    FeatureType getSampleType() throws DataStoreException;
 
     /**
      * Get default resource geometry.

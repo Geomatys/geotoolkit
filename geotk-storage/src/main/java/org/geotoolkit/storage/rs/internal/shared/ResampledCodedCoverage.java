@@ -26,10 +26,6 @@ import org.geotoolkit.storage.rs.CodeTransform;
 import org.geotoolkit.storage.rs.CodedCoverage;
 import org.geotoolkit.storage.rs.CodedGeometry;
 import org.geotoolkit.storage.rs.WritableCodeIterator;
-import org.opengis.feature.AttributeType;
-import org.opengis.feature.Feature;
-import org.opengis.feature.FeatureType;
-import org.opengis.feature.PropertyType;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
@@ -46,32 +42,20 @@ public final class ResampledCodedCoverage extends AbstractCodedCoverage {
     private final CodeTransform targetGridTrs;
     private final CodeOperation operation;
 
-    private final Feature noData;
 
     public ResampledCodedCoverage(GenericName name, CodedCoverage base, CodedGeometry target) throws FactoryException {
-        super(name, target, base.getSampleType());
+        super(name, target, base.getSampleDimensions());
         this.base = base;
 
         final CodedGeometry baseGeometry = base.getGeometry();
         sourceGridTrs = baseGeometry.getGridToRS();
         targetGridTrs = target.getGridToRS();
         operation = ReferenceSystems.findOperation(target.getReferenceSystem(), baseGeometry.getReferenceSystem(), null);
-
-        noData = type.newInstance();
-        for (PropertyType pt : type.getProperties(true)) {
-            if (pt instanceof AttributeType at) {
-                if (Double.class.isAssignableFrom(at.getValueClass())) {
-                    noData.setPropertyValue(at.getName().toString(), Double.NaN);
-                } else if (Float.class.isAssignableFrom(at.getValueClass())) {
-                    noData.setPropertyValue(at.getName().toString(), Float.NaN);
-                }
-            }
-        }
     }
 
     @Override
     public CodeIterator createIterator() {
-        return new BandedIterator(type, mapping);
+        return new BandedIterator();
     }
 
     @Override
@@ -79,7 +63,7 @@ public final class ResampledCodedCoverage extends AbstractCodedCoverage {
         throw new UnsupportedOperationException("Not supported.");
     }
 
-    private class BandedIterator extends BandedCodeIterator {
+    private class BandedIterator implements CodeIterator {
 
         private long linearPosition = -1;
         private final CodeIterator sourceIterator;
@@ -89,11 +73,15 @@ public final class ResampledCodedCoverage extends AbstractCodedCoverage {
         private boolean sourceMoved = false;
         private boolean sourceExist = false;
 
-        BandedIterator(FeatureType type, String[] mapping) {
-            super(type, mapping);
+        BandedIterator() {
             sourceIterator = base.createIterator();
             nbCell = TileMatrices.countCells(extent);
-            sourceBanded = sourceIterator instanceof BandedCodeIterator;
+            sourceBanded = sourceIterator instanceof CodeIterator;
+        }
+
+        @Override
+        public int getNumBands() {
+            return base.getSampleDimensions().size();
         }
 
         private long toLinearPosition(int[] pos) {
@@ -153,16 +141,6 @@ public final class ResampledCodedCoverage extends AbstractCodedCoverage {
         }
 
         @Override
-        public Feature getSample() {
-            moveSource();
-            if (sourceExist) {
-                return sourceIterator.getSample();
-            } else {
-                return noData;
-            }
-        }
-
-        @Override
         public void rewind() {
             linearPosition = -1;
             sourceMoved = false;
@@ -172,22 +150,11 @@ public final class ResampledCodedCoverage extends AbstractCodedCoverage {
         public double getSampleDouble(int band) {
             moveSource();
             if (sourceExist) {
-                if (sourceBanded) {
-                    return ((BandedCodeIterator)sourceIterator).getSampleDouble(band);
-                } else {
-                    Object obj = getSample().getPropertyValue(mapping[band]);
-                    if (obj instanceof Number n) {
-                        return n.doubleValue();
-                    }
-                }
+                return sourceIterator.getSampleDouble(band);
             }
             return Double.NaN;
         }
 
-        @Override
-        public void setPropertyValue(String name, Object value) throws IllegalArgumentException {
-            throw new UnsupportedOperationException("Not supported.");
-        }
     }
 
 }

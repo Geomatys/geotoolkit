@@ -21,18 +21,14 @@ import java.awt.image.RenderedImage;
 import java.util.List;
 import java.util.function.Function;
 import org.apache.sis.coverage.SampleDimension;
-import org.apache.sis.feature.builder.AttributeTypeBuilder;
-import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridGeometry;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
 import org.geotoolkit.referencing.dggs.Zone;
-import org.geotoolkit.storage.rs.internal.shared.BandedCodeIterator;
-import org.geotoolkit.storage.rs.internal.shared.CodedCoverageAsFeatureSet;
-import org.geotoolkit.storage.rs.internal.shared.WritableBandedCodeIterator;
-import org.opengis.feature.FeatureType;
+import org.geotoolkit.storage.rs.CodeIterator;
+import org.geotoolkit.storage.rs.WritableCodeIterator;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.GenericName;
 
@@ -51,10 +47,6 @@ public final class RasterDiscreteGlobalGridCoverage extends IndexedDiscreteGloba
      * @todo not used yet, but will be.
      */
     private final Function<Point,Object> gridToZone;
-
-    //cached
-    private FeatureType type;
-    private String[] mapping;
 
     public RasterDiscreteGlobalGridCoverage(
             GenericName name,
@@ -77,13 +69,13 @@ public final class RasterDiscreteGlobalGridCoverage extends IndexedDiscreteGloba
     }
 
     @Override
-    public BandedCodeIterator createIterator() {
-        return new Iterator(getSampleType(), mapping, false);
+    public CodeIterator createIterator() {
+        return new Iterator(false);
     }
 
     @Override
-    public WritableBandedCodeIterator createWritableIterator() {
-        return new Iterator(getSampleType(), mapping, true);
+    public WritableCodeIterator createWritableIterator() {
+        return new Iterator(true);
     }
 
     @Override
@@ -91,29 +83,14 @@ public final class RasterDiscreteGlobalGridCoverage extends IndexedDiscreteGloba
         return sampleDimensions;
     }
 
-    @Override
-    public synchronized FeatureType getSampleType() {
-        if (type != null) return type;
-
-        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-        ftb.setName(name);
-        final AttributeTypeBuilder<?>[] created = CodedCoverageAsFeatureSet.toFeatureType(ftb, getSampleDimensions());
-        mapping = new String[created.length];
-        for (int i = 0; i < created.length; i++) {
-            mapping[i] = created[i].getName().toString();
-        }
-        return ftb.build();
-    }
-
-    private final class Iterator extends WritableBandedCodeIterator {
+    private final class Iterator implements WritableCodeIterator {
 
         private int position = -1;
 
         private final PixelIterator cursor;
         private final DiscreteGlobalGridReferenceSystem.Coder coder;
 
-        public Iterator(FeatureType type, String[] mapping, boolean writable) {
-            super(type, mapping);
+        public Iterator(boolean writable) {
             coder = dggrs.createCoder();
             if (writable) {
                 cursor = WritablePixelIterator.create(samples);

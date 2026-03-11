@@ -42,7 +42,6 @@ import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.image.BufferedImages;
-import org.geotoolkit.referencing.rs.Code;
 import org.geotoolkit.referencing.rs.ReferenceSystems;
 import org.geotoolkit.storage.rs.CodeIterator;
 import org.geotoolkit.storage.rs.CodedCoverage;
@@ -50,8 +49,6 @@ import org.geotoolkit.storage.rs.CodedGeometry;
 import org.opengis.coverage.CannotEvaluateException;
 import org.opengis.coverage.PointOutsideCoverageException;
 import org.opengis.feature.Feature;
-import org.opengis.feature.FeatureType;
-import org.opengis.feature.PropertyType;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.ReferenceSystem;
@@ -95,11 +92,9 @@ public abstract class AbstractCodedCoverage extends CodedCoverage{
     protected final long[] dimOffsets;
 
     //samples
-    protected final FeatureType type;
     protected final List<SampleDimension> sampleDimensions;
-    protected final String[] mapping;
 
-    public AbstractCodedCoverage(final GenericName name, CodedGeometry gridGeometry, FeatureType sampleType) throws FactoryException {
+    public AbstractCodedCoverage(final GenericName name, CodedGeometry gridGeometry, List<SampleDimension> sampleDimensions) throws FactoryException {
         this.name = name;
         this.gridGeometry = gridGeometry;
         this.extent = gridGeometry.getExtent();
@@ -109,6 +104,7 @@ public abstract class AbstractCodedCoverage extends CodedCoverage{
         this.horizontalGrid = (DiscreteGlobalGridGeometry) gridGeometry.slice(horizontalRs).get();
         this.singleRS = ReferenceSystems.getSingleComponents(rs, true);
         this.horizontalRsIndex = singleRS.indexOf(horizontalRs);
+        this.sampleDimensions = sampleDimensions;
 
         //compute equivalent CRS
         final List<CoordinateReferenceSystem> ccrs = new ArrayList<>();
@@ -140,26 +136,11 @@ public abstract class AbstractCodedCoverage extends CodedCoverage{
         for (int i = 0, n = zones.size(); i < n; i++) {
             index.put(zones.get(i), i);
         }
-
-        type = sampleType;
-        sampleDimensions = new ArrayList<>();
-        for (PropertyType pt : type.getProperties(true)) {
-            final String sdname = pt.getName().toString();
-            final SampleDimension sd = new SampleDimension.Builder().setName(sdname).build();
-            sampleDimensions.add(sd);
-        }
-
-        mapping = sampleDimensions.stream().map(SampleDimension::getName).map(Objects::toString).toArray(String[]::new);
     }
 
     @Override
     public List<SampleDimension> getSampleDimensions() {
         return Collections.unmodifiableList(sampleDimensions);
-    }
-
-    @Override
-    public FeatureType getSampleType() {
-        return type;
     }
 
     @Override
@@ -386,20 +367,7 @@ public abstract class AbstractCodedCoverage extends CodedCoverage{
 
                 //get cell value
                 iterator.moveTo(gridPosition);
-                final Feature sample = iterator.getSample();
-                final double[] cell = new double[mapping.length];
-                for (int i = 0; i < cell.length; i++) {
-                    Object value = sample.getPropertyValue(mapping[i]);
-                    if (value == null) {
-                        cell[i] = Double.NaN;
-                    } else if (value instanceof Number n) {
-                        cell[i] = n.doubleValue();
-                    } else {
-                        //we have a value, not null but can't convert it to a number
-                        //we use 0 to indicate there is something
-                        cell[i] = 0;
-                    }
-                }
+                final double[] cell = iterator.getCell((double[])null);
                 return cell;
             }
             return null;

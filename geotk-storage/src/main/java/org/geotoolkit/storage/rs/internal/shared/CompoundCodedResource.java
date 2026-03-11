@@ -30,7 +30,6 @@ import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.PixelInCell;
-import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.AbstractResource;
@@ -41,9 +40,7 @@ import org.geotoolkit.storage.dggs.DiscreteGlobalGridGeometry;
 import org.geotoolkit.storage.rs.CodedCoverage;
 import org.geotoolkit.storage.rs.CodedGeometry;
 import org.geotoolkit.storage.rs.CodedResource;
-import org.opengis.feature.AttributeType;
 import org.opengis.feature.FeatureType;
-import org.opengis.feature.PropertyType;
 import org.opengis.referencing.ReferenceSystem;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.VerticalCRS;
@@ -58,18 +55,17 @@ import org.opengis.util.GenericName;
  */
 public final class CompoundCodedResource extends AbstractResource implements CodedResource {
 
+    private final GenericName name;
     private final List<CodedResource> resources;
-    private final FeatureType sampleType;
     private List<SampleDimension> sampleDimensions;
     private final CodedGeometry geometry;
 
 
     public CompoundCodedResource(GenericName name, List<CodedResource> resources) throws DataStoreException {
         super(null);
+        this.name = name;
         this.resources = resources;
 
-        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-        ftb.setName(name);
         sampleDimensions = new ArrayList<>();
 
         //create the sum of all dimensions in the grid geometry
@@ -79,34 +75,25 @@ public final class CompoundCodedResource extends AbstractResource implements Cod
         for (CodedResource cr : resources) {
             final String crName = cr.getIdentifier().get().tip().toString();
             final CodedGeometry gridGeom = cr.getGridGeometry();
-            final FeatureType sampleType = cr.getSampleType();
 
             if (!gridGeom.getReferenceSystem().equals(rs)) {
                 rs = null;
             }
 
-            for (PropertyType pt : sampleType.getProperties(true)) {
-                final AttributeType at = (AttributeType) pt;
-                final String attName = pt.getName().toString();
+            for (SampleDimension sd : cr.getSampleDimensions()) {
+                final String attName = sd.getName().toString();
                 final String finalName = crName+":"+attName;
                 sampleDimensions.add(new SampleDimension.Builder().setName(finalName).build());
-                ftb.addAttribute(at.getValueClass()).setName(finalName);
             }
         }
 
         geometry = new CodedGeometry(rs, null, null, null);
-        sampleType = ftb.build();
         sampleDimensions = Collections.unmodifiableList(sampleDimensions);
     }
 
     @Override
     public Optional<GenericName> getIdentifier() throws DataStoreException {
-        return Optional.of(getSampleType().getName());
-    }
-
-    @Override
-    public FeatureType getSampleType() throws DataStoreException {
-        return sampleType;
+        return Optional.of(name);
     }
 
     @Override
@@ -131,7 +118,7 @@ public final class CompoundCodedResource extends AbstractResource implements Cod
                 }
                 resampled[i] = coverage;
             }
-            return new CompoundCodedCoverage(sampleType.getName(), resampled, sampleType);
+            return new CompoundCodedCoverage(name, resampled, sampleDimensions);
         } catch (FactoryException ex) {
             throw new DataStoreException(ex.getMessage(), ex);
         }

@@ -26,7 +26,6 @@ import java.util.Optional;
 import java.util.function.Function;
 import javax.imageio.ImageIO;
 import org.apache.sis.coverage.SampleDimension;
-import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometries.index.MortonIterator;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.DataStore;
@@ -43,8 +42,6 @@ import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridGeometry;
 import org.geotoolkit.storage.dggs.internal.shared.RasterDiscreteGlobalGridCoverage;
 import org.geotoolkit.storage.dggs.internal.shared.TiledDiscreteGlobalGridCoverageResource;
-import org.geotoolkit.storage.rs.internal.shared.CodedCoverageAsFeatureSet;
-import org.opengis.feature.FeatureType;
 import org.opengis.util.GenericName;
 
 /**
@@ -142,14 +139,6 @@ public final class HIPSCoverageResource extends TiledDiscreteGlobalGridCoverageR
     @Override
     public DiscreteGlobalGridGeometry getGridGeometry() {
         return DiscreteGlobalGridGeometry.unstructured(HEALPIX, null, null);
-    }
-
-    @Override
-    public FeatureType getSampleType() throws DataStoreException {
-        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-        ftb.setName(getIdentifier().get());
-        CodedCoverageAsFeatureSet.toFeatureType(ftb, getSampleDimensions());
-        return ftb.build();
     }
 
     @Override

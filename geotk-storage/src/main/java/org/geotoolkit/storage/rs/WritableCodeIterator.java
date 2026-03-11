@@ -34,6 +34,55 @@ public interface WritableCodeIterator extends CodeIterator, AutoCloseable {
     }
 
     /**
+     * @param band coverage band index
+     * @param value cell band new value
+     */
+    default void setSample(int band, int value) {
+        setSample(band, (double)value);
+    }
+
+    /**
+     * @param band coverage band index
+     * @param value cell band new value
+     */
+    default void setSample(int band, float value) {
+        setSample(band, (double)value);
+    }
+
+    /**
+     * @param band coverage band index
+     * @param value cell band new value
+     */
+    void setSample(int band, double value);
+
+    /**
+     * @param values cell bands new values
+     */
+    default void setCell(int[] values) {
+        final double[] cell = new double[values.length];
+        for (int i = 0; i < cell.length; i++) cell[i] = values[i];
+        setCell(cell);
+    }
+
+    /**
+     * @param values cell bands new values
+     */
+    default void setCell(float[] values) {
+        final double[] cell = new double[values.length];
+        for (int i = 0; i < cell.length; i++) cell[i] = values[i];
+        setCell(cell);
+    }
+
+    /**
+     * @param values cell bands new values
+     */
+    default void setCell(double[] values) {
+        for (int i = 0; i < values.length; i++) {
+            setSample(i, values[i]);
+        }
+    }
+
+    /**
      * Release any resource attached to the writer.
      */
     @Override

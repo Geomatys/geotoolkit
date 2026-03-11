@@ -53,9 +53,7 @@ public final class FeatureSetAsDiscreteGlobalGridResource extends AbstractResour
     private final NumberRange<Integer> availableDepths;
 
     //caches
-    private List<String> attributeNames;
     private List<SampleDimension> sampleDimensions;
-    private FeatureType sampleType;
 
     public FeatureSetAsDiscreteGlobalGridResource(DiscreteGlobalGridReferenceSystem dggrs, FeatureSet featureSet, DiscreteGlobalGridCoverageProcessor processor) {
         super(null);
@@ -76,12 +74,6 @@ public final class FeatureSetAsDiscreteGlobalGridResource extends AbstractResour
     public List<SampleDimension> getSampleDimensions() throws DataStoreException {
         init();
         return Collections.unmodifiableList(sampleDimensions);
-    }
-
-    @Override
-    public FeatureType getSampleType() throws DataStoreException {
-        init();
-        return sampleType;
     }
 
     @Override
@@ -111,25 +103,18 @@ public final class FeatureSetAsDiscreteGlobalGridResource extends AbstractResour
 
         //create a sample type with only attribute types
         sampleDimensions = new ArrayList<>();
-        attributeNames = new ArrayList<>();
-        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-        ftb.setName(type.getName());
         for (PropertyType pt : type.getProperties(true)) {
             if (AttributeConvention.contains(pt.getName())) continue;
             if (!(pt instanceof AttributeType at)) continue;
             final Class valueClass = at.getValueClass();
             if (Geometry.class.isAssignableFrom(valueClass)) continue;
-            ftb.addAttribute(at);
 
             //build matching sample dimensions
-            attributeNames.add(pt.getName().toString());
-
             final SampleDimension.Builder sdb = new SampleDimension.Builder();
             sdb.setName(at.getName());
             final SampleDimension sd = sdb.build();
             sampleDimensions.add(sd);
         }
-        sampleType = ftb.build();
     }
 
     @Override

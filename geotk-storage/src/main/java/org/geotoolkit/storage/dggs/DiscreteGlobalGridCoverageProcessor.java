@@ -42,7 +42,6 @@ import org.apache.sis.geometries.math.Array;
 import org.apache.sis.geometries.math.NDArrays;
 import org.apache.sis.geometries.math.Vector1D;
 import org.apache.sis.geometry.wrapper.jts.JTS;
-import org.apache.sis.math.Statistics;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureQuery;
@@ -61,8 +60,7 @@ import org.geotoolkit.referencing.rs.CodeOperation;
 import org.geotoolkit.referencing.rs.ReferenceSystems;
 import org.geotoolkit.storage.rs.CodeTransform;
 import org.geotoolkit.storage.rs.CodedCoverage;
-import org.geotoolkit.storage.rs.internal.shared.FeatureCodedCoverage;
-import org.geotoolkit.storage.rs.internal.shared.WritableBandedCodeIterator;
+import org.geotoolkit.storage.rs.WritableCodeIterator;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.index.quadtree.Quadtree;
@@ -223,7 +221,7 @@ public final class DiscreteGlobalGridCoverageProcessor {
         final CodeTransform gridToRS = gridGeometry.getGridToRS();
         final DiscreteGlobalGridReferenceSystem dggrs = gridGeometry.getReferenceSystem();
         final DiscreteGlobalGridReferenceSystem.Coder coder = dggrs.createCoder();
-        try (final WritableBandedCodeIterator iterator = target.createWritableIterator()) {
+        try (final WritableCodeIterator iterator = target.createWritableIterator()) {
 
             final Envelope env = target.getEnvelope().get();
             final double[] resolution = target.getResolution(true);
@@ -482,7 +480,7 @@ public final class DiscreteGlobalGridCoverageProcessor {
         final DiscreteGlobalGridReferenceSystem dggrs = gridGeometry.getReferenceSystem();
         final DiscreteGlobalGridReferenceSystem.Coder coder = dggrs.createCoder();
 
-        try (final WritableBandedCodeIterator iterator = target.createWritableIterator()) {
+        try (final WritableCodeIterator iterator = target.createWritableIterator()) {
 
             CoordinateReferenceSystem crs = source.getGridGeometry().getCoordinateReferenceSystem();
             CoordinateSystem cs = crs.getCoordinateSystem();
@@ -579,7 +577,7 @@ public final class DiscreteGlobalGridCoverageProcessor {
 
         final ArrayDiscreteGlobalGridCoverage target = new ArrayDiscreteGlobalGridCoverage(Names.createLocalName(null, null, "Resampled"), gridGeometry, samples);
         Code tcode = null;
-        try (final WritableBandedCodeIterator iterator = target.createWritableIterator()) {
+        try (final WritableCodeIterator iterator = target.createWritableIterator()) {
             while (iterator.next()) {
                 final int[] gridPosition = iterator.getPosition();
                 final Code code = toCode.toCode(gridPosition);

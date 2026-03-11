@@ -38,7 +38,6 @@ import org.apache.sis.util.iso.Names;
 import org.geotoolkit.dggs.healpix.HealpixDggrs;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
 import org.geotoolkit.referencing.dggs.Zone;
-import org.geotoolkit.storage.rs.internal.shared.BandedCodeIterator;
 import org.geotoolkit.storage.rs.internal.shared.CodeTransforms;
 import org.junit.Assert;
 import org.junit.Test;
@@ -85,7 +84,7 @@ public class ArrayReferencedGridCoverageTest {
 
         final CodedCoverage coverage = resource.read(query);
         final CodeTransform gridToRS = coverage.getGeometry().getGridToRS();
-        final BandedCodeIterator iterator = (BandedCodeIterator) coverage.createIterator();
+        final CodeIterator iterator = coverage.createIterator();
 
         while (iterator.next()) {
             final int[] gridPosition = iterator.getPosition();

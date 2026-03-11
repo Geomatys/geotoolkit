@@ -63,12 +63,12 @@ import org.geotoolkit.referencing.dggs.Zone;
 import org.geotoolkit.referencing.rs.Code;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridGeometry;
 import org.geotoolkit.storage.dggs.internal.shared.ArrayDiscreteGlobalGridCoverage;
+import org.geotoolkit.storage.rs.CodeIterator;
 import org.geotoolkit.storage.rs.CodeTransform;
 import org.geotoolkit.storage.rs.CodedCoverage;
 import org.geotoolkit.storage.rs.CodedGeometry;
 import org.geotoolkit.storage.rs.CodedResource;
-import org.geotoolkit.storage.rs.internal.shared.BandedCodeIterator;
-import org.geotoolkit.storage.rs.internal.shared.WritableBandedCodeIterator;
+import org.geotoolkit.storage.rs.WritableCodeIterator;
 import org.opengis.feature.FeatureType;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
@@ -95,7 +95,6 @@ public final class DggrsResource extends CollectionItemResource implements Aggre
 
     //cache
     private List<SampleDimension> sampleDimensions;
-    private FeatureType type;
     private List<CodedGeometry> geometries;
     //tile cache
     private boolean disableCache = false;
@@ -158,32 +157,23 @@ public final class DggrsResource extends CollectionItemResource implements Aggre
         return components;
     }
 
-    private synchronized FeatureType getSampleType() throws DataStoreException {
-        if (type != null) return type;
+    private synchronized List<SampleDimension> getSampleDimensions() throws DataStoreException {
+
+        if (sampleDimensions != null) return sampleDimensions;
 
         try {
             ServiceResponse<JSONSchema> jsonSchema = featureApi.collectinGetJsonSchema(description.getId(), null);
             final JSONSchema schema = jsonSchema.getData();
 
             sampleDimensions = new ArrayList<>();
-
-            final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-            ftb.setName(description.getId());
             for (Entry<String,JSONSchemaProperty> entry : schema.getProperties().entrySet()) {
-                ftb.addAttribute(String.class).setName(entry.getKey());
                 sampleDimensions.add(new SampleDimension.Builder().setName(entry.getKey()).build());
             }
-            type = ftb.build();
 
         } catch (ServiceException ex) {
             throw new DataStoreException(ex);
         }
 
-        return type;
-    }
-
-    private List<SampleDimension> getSampleDimensions() throws DataStoreException {
-        getSampleType();
         return sampleDimensions;
     }
 
@@ -305,11 +295,6 @@ public final class DggrsResource extends CollectionItemResource implements Aggre
         }
 
         @Override
-        public FeatureType getSampleType() throws DataStoreException {
-            return DggrsResource.this.getSampleType();
-        }
-
-        @Override
         public List<SampleDimension> getSampleDimensions() throws DataStoreException {
             return DggrsResource.this.getSampleDimensions();
         }
@@ -321,7 +306,7 @@ public final class DggrsResource extends CollectionItemResource implements Aggre
 
         @Override
         public CodedCoverage read(CodedGeometry queryGeometry, int... range) throws DataStoreException {
-            getSampleType();
+            getSampleDimensions();
 
             final DiscreteGlobalGridGeometry dggrsGeometry = (DiscreteGlobalGridGeometry) queryGeometry;
             final DiscreteGlobalGridReferenceSystem dggrs = dggrsGeometry.getReferenceSystem();
@@ -350,7 +335,7 @@ public final class DggrsResource extends CollectionItemResource implements Aggre
             final DiscreteGlobalGridGeometry dggrsGeom = DiscreteGlobalGridGeometry.unstructured(dggrs, zones, null);
             final ArrayDiscreteGlobalGridCoverage target = new ArrayDiscreteGlobalGridCoverage(getIdentifier().orElse(Names.createLocalName(null, null, "dggrs")), dggrsGeom, samples);
 
-            final WritableBandedCodeIterator wite = target.createWritableIterator();
+            final WritableCodeIterator wite = target.createWritableIterator();
             IntStream.range(0, zones.size()).parallel().forEach(new IntConsumer() {
                 @Override
                 public void accept(int idx) {
@@ -408,7 +393,7 @@ public final class DggrsResource extends CollectionItemResource implements Aggre
         private double[] getZoneValue(ArrayDiscreteGlobalGridCoverage tile, Zone zone) {
             final DiscreteGlobalGridGeometry cellGeometry = tile.getGeometry();
             final CodeTransform cellGridToRS = cellGeometry.getGridToRS();
-            final BandedCodeIterator iterator = tile.createIterator();
+            final CodeIterator iterator = tile.createIterator();
             final Object[] ordinates = new Object[1];
             final Code address = new Code(dggrs, ordinates);
             try {

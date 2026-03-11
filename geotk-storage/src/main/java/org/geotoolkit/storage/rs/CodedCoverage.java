@@ -20,7 +20,6 @@ import java.util.function.Function;
 import org.geotoolkit.referencing.rs.Code;
 import org.geotoolkit.storage.coverage.BandedCoverageExt;
 import org.opengis.coverage.CannotEvaluateException;
-import org.opengis.feature.FeatureType;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
@@ -30,13 +29,6 @@ import org.opengis.util.FactoryException;
  * @author Johann Sorel (Geomatys)
  */
 public abstract class CodedCoverage extends BandedCoverageExt {
-
-    /**
-     * Returns the description of the samples stored.
-     *
-     * @return Feature type
-     */
-    public abstract FeatureType getSampleType();
 
     /**
      * Returns the coverage geometry.
