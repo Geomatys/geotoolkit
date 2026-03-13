@@ -21,7 +21,7 @@
     <!-- =========================================================== -->
     <artifactId>geotk-client-stac</artifactId>
     <packaging>jar</packaging>
-    <name>DataStore STAC Client</name>
+    <name>STAC Client</name>
     <description>A STAC client implementation.</description>
     <licenses>
         <license>
