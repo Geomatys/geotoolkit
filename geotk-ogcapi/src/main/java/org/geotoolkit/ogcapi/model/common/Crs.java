@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.ogcapi.model.dggs;
+package org.geotoolkit.ogcapi.model.common;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -45,6 +45,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotoolkit.ogcapi.model.DataTransferObject;
 
+/**
+ * Used and reused in multiple ogcapi.
+ * located often in common-geodata folder
+ *
+ */
 @XmlRootElement(name = "Crs")
 @XmlAccessorType(XmlAccessType.FIELD)
 @JacksonXmlRootElement(localName = "Crs")

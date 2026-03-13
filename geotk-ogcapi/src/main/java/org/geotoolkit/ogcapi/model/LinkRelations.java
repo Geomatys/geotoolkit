@@ -178,13 +178,33 @@ public final class LinkRelations {
     // /////////////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * http://www.opengis.net/def/rel/ogc/1.0/tilesets-coverage
+     * The target IRI points to a resource that describes the TileMatrixSet according to the 2D-TMS standard.
      */
-    public static final String OGC_TILES_COVERAGE = "http://www.opengis.net/def/rel/ogc/1.0/tilesets-coverage";
+    public static final String OGC_TILES_SCHEME = "http://www.opengis.net/def/rel/ogc/1.0/tiling-scheme";
     /**
-     * http://www.opengis.net/def/rel/ogc/1.0/tiling-schemes
+     * The target IRI points to a resource representing the dataset (e.g., the root of an OGC Web API).
      */
-    public static final String OGC_TILES_SCHEME = "http://www.opengis.net/def/rel/ogc/1.0/tiling-schemes";
+    public static final String OGC_TILES_DATASET = "http://www.opengis.net/def/rel/ogc/1.0/dataset";
+    /**
+     * The target IRI points to a resource representing a collection of geospatial data.
+     */
+    public static final String OGC_TILES_GEODATA = "http://www.opengis.net/def/rel/ogc/1.0/geodata";
+    /**
+     * The target IRI points to a resource that describes how to provide tile sets of the context resource in vector format.
+     */
+    public static final String OGC_TILES_TILESETS_VECTOR = "http://www.opengis.net/def/rel/ogc/1.0/tilesets-vector";
+    /**
+     * The target IRI points to a resource that describes how to provide tile sets of the context resource in map format.
+     */
+    public static final String OGC_TILES_TILESETS_MAP = "http://www.opengis.net/def/rel/ogc/1.0/tilesets-map";
+    /**
+     * The target IRI points to a resource that describes how to provide tile sets of the context resource in coverage format.
+     */
+    public static final String OGC_TILES_TILESETS_COVERAGE = "http://www.opengis.net/def/rel/ogc/1.0/tilesets-coverage";
+    /**
+     * The target IRI points to a resource that lists one or more TileMatrixSets according to the 2D-TMS standard.
+     */
+    public static final String OGC_TILES_SCHEMES = "http://www.opengis.net/def/rel/ogc/1.0/tiling-schemes";
 
     // /////////////////////////////////////////////////////////////////////////////////////////
     // OGC-API DGGRS

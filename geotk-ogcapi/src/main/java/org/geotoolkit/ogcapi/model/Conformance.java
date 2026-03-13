@@ -305,4 +305,39 @@ public final class Conformance {
 
     public static final String RECORD_LOCAL_RESOURCES_CATALOG_SORTING = "http://www.opengis.net/spec/ogcapi-records-1/1.0/conf/local-resources-catalog-sorting";
 
+    // /////////////////////////////////////////////////////////////////////////////////////////
+    // OGC-API Tiles - Part 1
+    // https://docs.ogc.org/is/20-057/20-057.html
+    // /////////////////////////////////////////////////////////////////////////////////////////
+
+    public static final String TILES_CORE = "http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/core";
+
+    public static final String TILES_TILESET = "http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/tileset";
+
+    public static final String TILES_TILESETS_LIST = "http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/tilesets-list";
+
+    public static final String TILES_DATASET_TILESETS = "http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/dataset-tilesets";
+
+    public static final String TILES_GEODATA_TILESETS = "http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/geodata-tilesets";
+
+    public static final String TILES_COLLECTIONS_SELECTION = "http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/collections-selection";
+
+    public static final String TILES_DATETIME = "http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/datetime";
+
+    public static final String TILES_OAS30 = "http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/oas30";
+
+    public static final String TILES_XML = "http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/xml";
+
+    public static final String TILES_PNG = "http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/PNG";
+
+    public static final String TILES_JPEG = "http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/JPEG";
+
+    public static final String TILES_TIFF = "http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/TIFF";
+
+    public static final String TILES_NETCDF = "http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/netcdf";
+
+    public static final String TILES_GEOJSON = "http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/geojson";
+
+    public static final String TILES_MVT = "http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/mvt";
+
 }

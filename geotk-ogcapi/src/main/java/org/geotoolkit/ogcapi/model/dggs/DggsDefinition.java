@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.ogcapi.model.dggs;
 
+import org.geotoolkit.ogcapi.model.common.Crs;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
