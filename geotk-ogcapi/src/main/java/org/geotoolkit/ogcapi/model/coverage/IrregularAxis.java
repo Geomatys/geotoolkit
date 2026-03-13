@@ -48,6 +48,10 @@ public class IrregularAxis extends Axis{
     @XmlElement(name = "coordinate")
     private List<Object> coordinate;
 
+    public IrregularAxis() {
+        super("IrregularAxis", null, null, null);
+    }
+
     public IrregularAxis(String axisLabel, Object lowerBound, Object upperBound, String uomLabel, List<Object> coordinate) {
         super("IrregularAxis", axisLabel, lowerBound, upperBound);
         this.coordinate = coordinate;

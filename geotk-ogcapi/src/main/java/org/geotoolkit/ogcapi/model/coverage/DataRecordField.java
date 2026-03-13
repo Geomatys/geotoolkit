@@ -59,12 +59,13 @@ public class DataRecordField extends DataTransferObject {
     @jakarta.annotation.Nullable
     private EncodingInfo encodingInfo;
 
+    public DataRecordField() {}
+
     public DataRecordField(String name, String description, EncodingInfo encodingInfo) {
         this.name = name;
         this.description = description;
         this.encodingInfo = encodingInfo;
     }
-
 
     @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_TYPE)

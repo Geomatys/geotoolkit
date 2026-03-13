@@ -61,6 +61,8 @@ public abstract class Axis extends DataTransferObject {
     @jakarta.annotation.Nonnull
     private Object upperBound;
 
+    public Axis() {}
+
     public Axis(String type, String axisLabel, Object lowerBound, Object upperBound) {
         this.type = type;
         this.axisLabel = axisLabel;

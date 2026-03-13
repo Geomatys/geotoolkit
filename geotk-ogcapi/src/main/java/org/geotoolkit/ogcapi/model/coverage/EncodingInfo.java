@@ -46,6 +46,8 @@ public class EncodingInfo extends DataTransferObject {
     @XmlElement(name = "dataType")
     private String dataType;
 
+    public EncodingInfo() {}
+
     public EncodingInfo(String dataType) {
         this.dataType = dataType;
     }
