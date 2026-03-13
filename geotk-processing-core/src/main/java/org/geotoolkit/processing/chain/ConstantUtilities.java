@@ -192,11 +192,33 @@ public final class ConstantUtilities {
             }
             return (T) candidates;
 
-        }else if(Map.class.isAssignableFrom(clazz)){
-            final List<String> parts = split(value);
-            final Map map = new HashMap();
-            for(int i=0; i<parts.size(); i+=2) {
-                map.put(parts.get(i), parts.get(i+1));
+        } else if (Map.class.isAssignableFrom(clazz)) {
+            List<String> parts = split(value);
+            Map map;
+
+            // 1. Instantiate the specific class (LinkedHashMap, HashMap, etc.)
+            try {
+                map = (Map) clazz.getDeclaredConstructor().newInstance();
+            } catch (Exception e) {
+                // Fallback to HashMap if instantiation fails
+                map = new HashMap();
+            }
+
+            for (int i = 0; i < parts.size(); i += 2) {
+                String key = parts.get(i);
+                String valStr = parts.get(i + 1);
+
+                // 2. Decide if the value is a simple String or a nested Map (or Object)
+                // based on the presence of ":" and if it starts with a digit
+                Object decodedValue;
+                if (valStr.contains(":") && Character.isDigit(valStr.charAt(0))) {
+                    // Recurse as a Map (or Object)
+                    decodedValue = stringToValue(valStr, Map.class);
+                } else {
+                    decodedValue = valStr;
+                }
+
+                map.put(key, decodedValue);
             }
             return (T) map;
 
