@@ -69,4 +69,11 @@ public class ObjectFactory {
     public CollectionDescription createCollection() {
         return new CollectionDescription();
     }
+
+    /**
+     * Create an instance of {@link Schema}
+     *
+     * @return
+     */
+    public Schema createSchema() {return new Schema();}
 }
