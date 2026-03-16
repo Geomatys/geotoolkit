@@ -112,11 +112,10 @@ public class ProcessDescriptionDeserializer extends JsonDeserializer<ProcessDesc
                         );
                     } else {
                         // Force a jump to the catch block to use the Object fallback
-                        throw new IOException("Node contains extra fields, treat as generic Object");
+                        LOGGER.info("Node contains extra fields, treat as generic Object");
                     }
-
                 } catch (IOException e) {
-                    LOGGER.warning("The argument is not a bounding box, trying to read it as a generic value");
+                    LOGGER.warning("Error while reading bounding box argument, trying to read it as a generic value");
                 }
 
                 try {
