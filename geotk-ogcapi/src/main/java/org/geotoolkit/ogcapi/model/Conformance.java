@@ -51,6 +51,25 @@ public final class Conformance {
     //proposal
 
     // /////////////////////////////////////////////////////////////////////////////////////////
+    // OGC-API - Common - Part 3 : Schema
+    // https://docs.ogc.org/DRAFTS/23-058r1.html
+    // /////////////////////////////////////////////////////////////////////////////////////////
+
+    // Common Part 3 : Schema corresponds to Feature Part 5
+    // Feature Part 5 is currently being transferred to Common Part 3
+
+    public static final String SCHEMA_SCHEMAS = "http://www.opengis.net/spec/ogcapi-common-3/1.0/conf/schemas";
+    public static final String SCHEMA_CORE_ROLES_FOR_FEATURES = "http://www.opengis.net/spec/ogcapi-common-3/1.0/conf/advanced-property-roles";
+    public static final String SCHEMA_REFERENCES = "http://www.opengis.net/spec/ogcapi-common-3/1.0/conf/references";
+    public static final String SCHEMA_RETURNABLES_AND_RECEIVABLES = "http://www.opengis.net/spec/ogcapi-common-3/1.0/conf/returnables-and-receivables";
+    public static final String SCHEMA_QUERYABLES = "http://www.opengis.net/spec/ogcapi-common-3/1.0/conf/queryables";
+    public static final String SCHEMA_SORTABLES = "http://www.opengis.net/spec/ogcapi-common-3/1.0/conf/sortables";
+    public static final String SCHEMA_PROFILE_QUERY_PARAMETER = "http://www.opengis.net/spec/ogcapi-common-3/1.0/conf/profile-parameter";
+    public static final String SCHEMA_PROFILES_FOR_REFERENCES = "http://www.opengis.net/spec/ogcapi-common-3/1.0/conf/profile-references";
+    public static final String SCHEMA_PROFILES_FOR_CODELISTS = "http://www.opengis.net/spec/ogcapi-common-3/1.0/conf/profile-codelists";
+    public static final String SCHEMA_PROFILES_FOR_VALUE_DOMAINS = "http://www.opengis.net/spec/ogcapi-common-3/1.0/conf/profile-domains";
+
+    // /////////////////////////////////////////////////////////////////////////////////////////
     // OGC-API - Features - Part 1 : Core
     // https://docs.ogc.org/is/17-069r4/17-069r4.html
     // /////////////////////////////////////////////////////////////////////////////////////////

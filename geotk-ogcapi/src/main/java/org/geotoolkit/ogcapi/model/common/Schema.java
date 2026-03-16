@@ -28,49 +28,55 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import org.geotoolkit.ogcapi.model.DataTransferObject;
+import org.geotoolkit.ogcapi.model.jsonschema.JSONSchema;
+import org.geotoolkit.ogcapi.model.jsonschema.JSONSchemaProperty;
 
 /**
- * Schema
+ * Schema that extends JsonSchema
+ * Spec : https://docs.ogc.org/DRAFTS/23-058r1.html
  *
  * @author Quentin BIALOTA (Geomatys)
  */
 @JsonPropertyOrder({
         Schema.JSON_PROPERTY_SCHEMA,
-        Schema.JSON_PROPERTY_TYPE,
-        Schema.JSON_PROPERTY_TITLE,
-        Schema.JSON_PROPERTY_PROPERTIES
+        Schema.JSON_PROPERTY_ID,
+        Schema.JSON_PROPERTY_TITLE
 })
 @XmlRootElement(name = "Schema")
 @XmlAccessorType(XmlAccessType.FIELD)
 @JacksonXmlRootElement(localName = "Schema")
-public final class Schema extends DataTransferObject implements CommonResponse {
+public final class Schema extends JSONSchema implements CommonResponse {
 
     public static final String JSON_PROPERTY_SCHEMA = "$schema";
     @XmlElement(name = "schema")
     @jakarta.annotation.Nullable
     private String schemaUrl = "https://json-schema.org/draft/2020-12/schema";
 
-    public static final String JSON_PROPERTY_TYPE = "type";
-    @XmlElement(name = "type")
+    public static final String JSON_PROPERTY_ID = "$id";
+    @XmlElement(name = "id")
     @jakarta.annotation.Nullable
-    private String type = "object";
+    private String id;
 
     public static final String JSON_PROPERTY_TITLE = "title";
     @XmlElement(name = "title")
     @jakarta.annotation.Nullable
     private String title;
 
-    public static final String JSON_PROPERTY_PROPERTIES = "properties";
-    @XmlElement(name = "properties")
-    @jakarta.annotation.Nullable
-    private Map<String, PropertyBand> properties;
-
     public Schema() {
+        super();
     }
 
-    public Schema(String title, Map<String, PropertyBand> properties) {
+    public Schema(String title, Map<String, JSONSchemaProperty> properties) {
+        super();
         this.title = title;
-        this.properties = properties;
+        this.setProperties(properties);
+    }
+
+    public Schema(String title, String id,  Map<String, JSONSchemaProperty> properties) {
+        super();
+        this.title = title;
+        this.id = id;
+        this.setProperties(properties);
     }
 
     public Schema schemaUrl(@jakarta.annotation.Nullable String schemaUrl) {
@@ -98,29 +104,29 @@ public final class Schema extends DataTransferObject implements CommonResponse {
         this.schemaUrl = schemaUrl;
     }
 
-    public Schema type(@jakarta.annotation.Nullable String type) {
-        this.type = type;
+    public Schema id(@jakarta.annotation.Nullable String id) {
+        this.id = id;
         return this;
     }
 
     /**
-     * Get type
+     * Get id
      *
-     * @return type
+     * @return id
      */
     @jakarta.annotation.Nullable
-    @JsonProperty(JSON_PROPERTY_TYPE)
+    @JsonProperty(JSON_PROPERTY_ID)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "type")
-    public String getType() {
-        return type;
+    @JacksonXmlProperty(localName = "$id")
+    public String getId() {
+        return id;
     }
 
-    @JsonProperty(JSON_PROPERTY_TYPE)
+    @JsonProperty(JSON_PROPERTY_ID)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "type")
-    public void setType(@jakarta.annotation.Nullable String type) {
-        this.type = type;
+    @JacksonXmlProperty(localName = "$id")
+    public void setId(@jakarta.annotation.Nullable String id) {
+        this.id = id;
     }
 
     public Schema title(@jakarta.annotation.Nullable String title) {
@@ -148,49 +154,23 @@ public final class Schema extends DataTransferObject implements CommonResponse {
         this.title = title;
     }
 
-    public Schema properties(@jakarta.annotation.Nullable Map<String, PropertyBand> properties) {
-        this.properties = properties;
-        return this;
-    }
-
-    /**
-     * Get properties
-     *
-     * @return properties
-     */
-    @jakarta.annotation.Nullable
-    @JsonProperty(JSON_PROPERTY_PROPERTIES)
-    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "properties")
-    public Map<String, PropertyBand> getProperties() {
-        return properties;
-    }
-
-    @JsonProperty(JSON_PROPERTY_PROPERTIES)
-    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "properties")
-    public void setProperties(@jakarta.annotation.Nullable Map<String, PropertyBand> properties) {
-        this.properties = properties;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (o == null || getClass() != o.getClass() || !super.equals(o)) {
             return false;
         }
         Schema schema = (Schema) o;
         return Objects.equals(this.schemaUrl, schema.schemaUrl)
-                && Objects.equals(this.type, schema.type)
-                && Objects.equals(this.title, schema.title)
-                && Objects.equals(this.properties, schema.properties);
+                && Objects.equals(this.id, schema.id)
+                && Objects.equals(this.title, schema.title);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(schemaUrl, type, title, properties);
+        return Objects.hash(super.hashCode(), schemaUrl, id, title);
     }
 
 }
