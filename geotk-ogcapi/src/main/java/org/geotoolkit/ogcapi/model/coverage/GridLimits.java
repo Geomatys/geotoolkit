@@ -60,6 +60,8 @@ public class GridLimits extends DataTransferObject {
     @XmlElement(name = "axis")
     private List<IndexAxis> axis;
 
+    public GridLimits() {}
+
     public GridLimits(List<IndexAxis> axis) {
         this.axis = axis;
         this.axisLabels = GeneralGrid.getAxisLabels(axis.stream()
