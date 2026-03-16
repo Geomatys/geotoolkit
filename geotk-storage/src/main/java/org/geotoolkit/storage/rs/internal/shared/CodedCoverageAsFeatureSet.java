@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.stream.Stream;
@@ -46,11 +45,9 @@ import org.geotoolkit.storage.rs.CodeIterator;
 import org.locationtech.jts.geom.CoordinateXY;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Point;
-import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyNotFoundException;
-import org.opengis.feature.PropertyType;
 import org.opengis.referencing.ReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.GenericName;
@@ -175,6 +172,13 @@ public final class CodedCoverageAsFeatureSet extends AbstractFeatureSet {
 
         final Stream<CodeIterator> stream = StreamSupport.stream(Spliterators.spliteratorUnknownSize(ite, Spliterator.ORDERED), false);
         return stream.map((CodeIterator t) -> new CellAsFeature(t, coder));
+    }
+
+    /**
+     * View code iterator samples as a Feature.
+     */
+    public Feature viewAsFeature(CodeIterator iterator) {
+        return new CellAsFeature(iterator, horizontal.createCoder());
     }
 
     private class CellAsFeature extends AbstractFeature {
