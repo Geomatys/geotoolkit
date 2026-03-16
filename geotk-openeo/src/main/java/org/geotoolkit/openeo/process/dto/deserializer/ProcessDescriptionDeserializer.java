@@ -33,8 +33,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 public class ProcessDescriptionDeserializer extends JsonDeserializer<ProcessDescription> {
+
+    protected static final Logger LOGGER = Logger.getLogger("org.geotoolkit.openeo.process.dto.deserializer");
 
     @Override
     public ProcessDescription deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JsonMappingException {
@@ -101,8 +104,19 @@ public class ProcessDescriptionDeserializer extends JsonDeserializer<ProcessDesc
 
             } else {
                 try { //Bounding Box Object
-                    return new ProcessDescriptionArgument(jsonParser.getCodec().readValue(valueNode.traverse(jsonParser.getCodec()), BoundingBox.class), ProcessDescriptionArgument.ArgumentType.VALUE);
-                } catch (IOException e) {}
+                    if (isStrictlyBoundingBox(valueNode)) {
+                        LOGGER.info("The argument is a bounding box");
+                        return new ProcessDescriptionArgument(
+                                jsonParser.getCodec().readValue(valueNode.traverse(jsonParser.getCodec()), BoundingBox.class),
+                                ProcessDescriptionArgument.ArgumentType.VALUE
+                        );
+                    } else {
+                        // Force a jump to the catch block to use the Object fallback
+                        LOGGER.info("Node contains extra fields, treat as generic Object");
+                    }
+                } catch (IOException e) {
+                    LOGGER.warning("Error while reading bounding box argument, trying to read it as a generic value");
+                }
 
                 try {
                     return new ProcessDescriptionArgument(jsonParser.getCodec().readValue(valueNode.traverse(jsonParser.getCodec()), Object.class), ProcessDescriptionArgument.ArgumentType.VALUE);
@@ -128,5 +142,28 @@ public class ProcessDescriptionDeserializer extends JsonDeserializer<ProcessDesc
                 throw new JsonMappingException(jsonParser, "Impossible to read the value of the argument");
             }
         }
+    }
+
+    /**
+     * Helper method to check if the JSON contains ONLY BoundingBox keys.
+     */
+    private boolean isStrictlyBoundingBox(JsonNode node) {
+        if (!node.isObject()) return false;
+
+        // Define the "allowed" keys for a BoundingBox
+        java.util.Set<String> allowedKeys = java.util.Set.of(
+                "west", "south", "east", "north", "base", "height", "crs"
+        );
+
+        java.util.Iterator<String> fieldNames = node.fieldNames();
+        while (fieldNames.hasNext()) {
+            String fieldName = fieldNames.next();
+            if (!allowedKeys.contains(fieldName)) {
+                return false;
+            }
+        }
+
+        // Also ensure it has the mandatory keys (optional, but safer)
+        return node.has("west") && node.has("south") && node.has("east") && node.has("north");
     }
 }
