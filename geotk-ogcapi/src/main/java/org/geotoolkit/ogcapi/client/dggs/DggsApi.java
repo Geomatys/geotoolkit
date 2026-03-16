@@ -18,7 +18,6 @@ package org.geotoolkit.ogcapi.client.dggs;
 
 import com.fasterxml.jackson.dataformat.cbor.databind.CBORMapper;
 import java.io.InputStream;
-import java.math.BigDecimal;
 import java.net.URI;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;

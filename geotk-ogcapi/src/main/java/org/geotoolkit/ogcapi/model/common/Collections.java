@@ -29,6 +29,7 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
+import java.time.OffsetDateTime;
 import org.geotoolkit.ogcapi.model.DataTransferObject;
 
 /**
@@ -36,6 +37,7 @@ import org.geotoolkit.ogcapi.model.DataTransferObject;
  */
 @JsonPropertyOrder({
     Collections.JSON_PROPERTY_LINKS,
+    Collections.JSON_PROPERTY_TIME_STAMP,
     Collections.JSON_PROPERTY_NUMBER_MATCHED,
     Collections.JSON_PROPERTY_NUMBER_RETURNED,
     Collections.JSON_PROPERTY_COLLECTIONS
@@ -49,6 +51,12 @@ public final class Collections extends DataTransferObject implements CommonRespo
     @XmlElement(name = "links")
     @jakarta.annotation.Nonnull
     private List<Link> links = new ArrayList<>();
+
+    //Note: this attribute is present in OGCAPI Tiles
+    public static final String JSON_PROPERTY_TIME_STAMP = "timeStamp";
+    @XmlElement(name = "timeStamp")
+    @jakarta.annotation.Nullable
+    private OffsetDateTime timeStamp;
 
     public static final String JSON_PROPERTY_NUMBER_MATCHED = "numberMatched";
     @XmlElement(name = "numberMatched")
@@ -101,6 +109,31 @@ public final class Collections extends DataTransferObject implements CommonRespo
     @JacksonXmlElementWrapper(useWrapping = false)
     public void setLinks(@jakarta.annotation.Nonnull List<Link> links) {
         this.links = links;
+    }
+
+    public Collections timeStamp(@jakarta.annotation.Nullable OffsetDateTime timeStamp) {
+        this.timeStamp = timeStamp;
+        return this;
+    }
+
+    /**
+     * Get timeStamp
+     * @return timeStamp
+     */
+    @jakarta.annotation.Nullable
+    @JsonProperty(JSON_PROPERTY_TIME_STAMP)
+    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+    @JacksonXmlProperty(localName = "timeStamp")
+    public OffsetDateTime getTimeStamp() {
+        return timeStamp;
+    }
+
+
+    @JsonProperty(JSON_PROPERTY_TIME_STAMP)
+    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+    @JacksonXmlProperty(localName = "timeStamp")
+    public void setTimeStamp(@jakarta.annotation.Nullable OffsetDateTime timeStamp) {
+        this.timeStamp = timeStamp;
     }
 
     public Collections numberMatched(@jakarta.annotation.Nullable Integer numberMatched) {
@@ -205,6 +238,7 @@ public final class Collections extends DataTransferObject implements CommonRespo
         }
         Collections collections = (Collections) o;
         return Objects.equals(this.links, collections.links)
+                && Objects.equals(this.timeStamp, collections.timeStamp)
                 && Objects.equals(this.numberMatched, collections.numberMatched)
                 && Objects.equals(this.numberReturned, collections.numberReturned)
                 && Objects.equals(this.collections, collections.collections);
@@ -212,7 +246,7 @@ public final class Collections extends DataTransferObject implements CommonRespo
 
     @Override
     public int hashCode() {
-        return Objects.hash(links, numberMatched, numberReturned, collections);
+        return Objects.hash(links, timeStamp, numberMatched, numberReturned, collections);
     }
 
 }

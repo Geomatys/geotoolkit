@@ -35,6 +35,8 @@ import org.geotoolkit.ogcapi.model.DataTransferObject;
     Link.JSON_PROPERTY_HREF,
     Link.JSON_PROPERTY_REL,
     Link.JSON_PROPERTY_TYPE,
+    Link.JSON_PROPERTY_TEMPLATED,
+    Link.JSON_PROPERTY_VAR_BASE,
     Link.JSON_PROPERTY_HREFLANG,
     Link.JSON_PROPERTY_TITLE,
     Link.JSON_PROPERTY_LENGTH
@@ -58,6 +60,18 @@ public final class Link extends DataTransferObject {
     @XmlElement(name = "type")
     @jakarta.annotation.Nullable
     private String type;
+
+    //Note: this attribute is present in OGCAPI Tiles
+    public static final String JSON_PROPERTY_TEMPLATED = "templated";
+    @XmlElement(name = "templated")
+    @jakarta.annotation.Nullable
+    private Boolean templated;
+
+    //Note: this attribute is present in OGCAPI Tiles
+    public static final String JSON_PROPERTY_VAR_BASE = "varBase";
+    @XmlElement(name = "varBase")
+    @jakarta.annotation.Nullable
+    private String varBase;
 
     public static final String JSON_PROPERTY_HREFLANG = "hreflang";
     @XmlElement(name = "hreflang")
@@ -161,6 +175,55 @@ public final class Link extends DataTransferObject {
         this.type = type;
     }
 
+    public Link templated(@jakarta.annotation.Nullable Boolean templated) {
+        this.templated = templated;
+        return this;
+    }
+
+    /**
+     * This flag set to true if the link is a URL template.
+     * @return templated
+     */
+    @jakarta.annotation.Nullable
+    @JsonProperty(JSON_PROPERTY_TEMPLATED)
+    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+    @JacksonXmlProperty(localName = "templated")
+    public Boolean getTemplated() {
+        return templated;
+    }
+
+
+    @JsonProperty(JSON_PROPERTY_TEMPLATED)
+    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+    @JacksonXmlProperty(localName = "templated")
+    public void setTemplated(@jakarta.annotation.Nullable Boolean templated) {
+        this.templated = templated;
+    }
+
+    public Link varBase(@jakarta.annotation.Nullable String varBase) {
+        this.varBase = varBase;
+        return this;
+    }
+
+    /**
+     * A base path to retrieve semantic information about the variables used in URL template.
+     * @return varBase
+     */
+    @jakarta.annotation.Nullable
+    @JsonProperty(JSON_PROPERTY_VAR_BASE)
+    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+    @JacksonXmlProperty(localName = "varBase")
+    public String getVarBase() {
+        return varBase;
+    }
+
+    @JsonProperty(JSON_PROPERTY_VAR_BASE)
+    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+    @JacksonXmlProperty(localName = "varBase")
+    public void setVarBase(@jakarta.annotation.Nullable String varBase) {
+        this.varBase = varBase;
+    }
+
     public Link hreflang(@jakarta.annotation.Nullable String hreflang) {
         this.hreflang = hreflang;
         return this;
@@ -251,6 +314,8 @@ public final class Link extends DataTransferObject {
         return Objects.equals(this.href, link.href)
                 && Objects.equals(this.rel, link.rel)
                 && Objects.equals(this.type, link.type)
+                && Objects.equals(this.templated, link.templated)
+                && Objects.equals(this.varBase, link.varBase)
                 && Objects.equals(this.hreflang, link.hreflang)
                 && Objects.equals(this.title, link.title)
                 && Objects.equals(this.length, link.length);
@@ -258,7 +323,7 @@ public final class Link extends DataTransferObject {
 
     @Override
     public int hashCode() {
-        return Objects.hash(href, rel, type, hreflang, title, length);
+        return Objects.hash(href, rel, type, templated, varBase, hreflang, title, length);
     }
 
 }
