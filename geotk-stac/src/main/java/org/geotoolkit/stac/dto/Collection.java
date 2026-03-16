@@ -37,6 +37,15 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
+ * Represents a STAC Collection.
+ * <p>
+ * Conceptually, this is a "Dataset Definition". A Collection describes a broad category or family of data
+ * (e.g., AVHRR_SST_METOP_B_OSISAF_L2P_v1_0 or Sentinel-2-L2A).
+ * <p>
+ * It contains high-level metadata about the dataset, such as its summary, standard license,
+ * overall spatial bounding box covering the whole globe, providers (who made it), and what variables/dimensions it supports.
+ * It does not contain individual items; it acts as the catalog entry describing what the data is.
+ *
  * @author Quentin BIALOTA (Geomatys)
  * Based on : <a href="https://api.openeo.org/#tag/Capabilities">OpenEO Doc</a>
  */

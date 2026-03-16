@@ -51,6 +51,25 @@ public final class Conformance {
     //proposal
 
     // /////////////////////////////////////////////////////////////////////////////////////////
+    // OGC-API - Common - Part 3 : Schema
+    // https://docs.ogc.org/DRAFTS/23-058r1.html
+    // /////////////////////////////////////////////////////////////////////////////////////////
+
+    // Common Part 3 : Schema corresponds to Feature Part 5
+    // Feature Part 5 is currently being transferred to Common Part 3
+
+    public static final String SCHEMA_SCHEMAS = "http://www.opengis.net/spec/ogcapi-common-3/1.0/conf/schemas";
+    public static final String SCHEMA_CORE_ROLES_FOR_FEATURES = "http://www.opengis.net/spec/ogcapi-common-3/1.0/conf/advanced-property-roles";
+    public static final String SCHEMA_REFERENCES = "http://www.opengis.net/spec/ogcapi-common-3/1.0/conf/references";
+    public static final String SCHEMA_RETURNABLES_AND_RECEIVABLES = "http://www.opengis.net/spec/ogcapi-common-3/1.0/conf/returnables-and-receivables";
+    public static final String SCHEMA_QUERYABLES = "http://www.opengis.net/spec/ogcapi-common-3/1.0/conf/queryables";
+    public static final String SCHEMA_SORTABLES = "http://www.opengis.net/spec/ogcapi-common-3/1.0/conf/sortables";
+    public static final String SCHEMA_PROFILE_QUERY_PARAMETER = "http://www.opengis.net/spec/ogcapi-common-3/1.0/conf/profile-parameter";
+    public static final String SCHEMA_PROFILES_FOR_REFERENCES = "http://www.opengis.net/spec/ogcapi-common-3/1.0/conf/profile-references";
+    public static final String SCHEMA_PROFILES_FOR_CODELISTS = "http://www.opengis.net/spec/ogcapi-common-3/1.0/conf/profile-codelists";
+    public static final String SCHEMA_PROFILES_FOR_VALUE_DOMAINS = "http://www.opengis.net/spec/ogcapi-common-3/1.0/conf/profile-domains";
+
+    // /////////////////////////////////////////////////////////////////////////////////////////
     // OGC-API - Features - Part 1 : Core
     // https://docs.ogc.org/is/17-069r4/17-069r4.html
     // /////////////////////////////////////////////////////////////////////////////////////////
@@ -304,5 +323,40 @@ public final class Conformance {
     public static final String RECORD_LOCAL_RESOURCES_CATALOG_FILTERING = "http://www.opengis.net/spec/ogcapi-records-1/1.0/conf/local-resources-catalog-filtering";
 
     public static final String RECORD_LOCAL_RESOURCES_CATALOG_SORTING = "http://www.opengis.net/spec/ogcapi-records-1/1.0/conf/local-resources-catalog-sorting";
+
+    // /////////////////////////////////////////////////////////////////////////////////////////
+    // OGC-API Tiles - Part 1
+    // https://docs.ogc.org/is/20-057/20-057.html
+    // /////////////////////////////////////////////////////////////////////////////////////////
+
+    public static final String TILES_CORE = "http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/core";
+
+    public static final String TILES_TILESET = "http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/tileset";
+
+    public static final String TILES_TILESETS_LIST = "http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/tilesets-list";
+
+    public static final String TILES_DATASET_TILESETS = "http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/dataset-tilesets";
+
+    public static final String TILES_GEODATA_TILESETS = "http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/geodata-tilesets";
+
+    public static final String TILES_COLLECTIONS_SELECTION = "http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/collections-selection";
+
+    public static final String TILES_DATETIME = "http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/datetime";
+
+    public static final String TILES_OAS30 = "http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/oas30";
+
+    public static final String TILES_XML = "http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/xml";
+
+    public static final String TILES_PNG = "http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/PNG";
+
+    public static final String TILES_JPEG = "http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/JPEG";
+
+    public static final String TILES_TIFF = "http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/TIFF";
+
+    public static final String TILES_NETCDF = "http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/netcdf";
+
+    public static final String TILES_GEOJSON = "http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/geojson";
+
+    public static final String TILES_MVT = "http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/mvt";
 
 }

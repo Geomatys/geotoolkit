@@ -46,6 +46,10 @@ public class RegularAxis extends Axis{
     @XmlElement(name = "resolution")
     private double resolution;
 
+    public RegularAxis() {
+        super("RegularAxis", null, null, null);
+    }
+
     public RegularAxis(String axisLabel, Object lowerBound, Object upperBound, String uomLabel, double resolution) {
         super("RegularAxis", axisLabel, lowerBound, upperBound);
         this.resolution = resolution;

@@ -44,7 +44,7 @@ import org.geotoolkit.ogcapi.model.DataTransferObject;
 @XmlRootElement(name = "JsonSchema")
 @XmlAccessorType(XmlAccessType.FIELD)
 @JacksonXmlRootElement(localName = "JsonSchema")
-public final class JSONSchema extends DataTransferObject {
+public class JSONSchema extends DataTransferObject {
 
 
     public static final String JSON_PROPERTY_TYPE = "type";
@@ -171,10 +171,10 @@ public final class JSONSchema extends DataTransferObject {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        JSONSchema dggsJsonSchema = (JSONSchema) o;
-        return Objects.equals(this.type, dggsJsonSchema.type)
-                && Objects.equals(this.required, dggsJsonSchema.required)
-                && Objects.equals(this.properties, dggsJsonSchema.properties);
+        JSONSchema jsonSchema = (JSONSchema) o;
+        return Objects.equals(this.type, jsonSchema.type)
+                && Objects.equals(this.required, jsonSchema.required)
+                && Objects.equals(this.properties, jsonSchema.properties);
     }
 
     @Override

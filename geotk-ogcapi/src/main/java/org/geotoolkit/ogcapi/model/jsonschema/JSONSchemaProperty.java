@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+import jakarta.annotation.Nullable;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
@@ -52,7 +53,9 @@ import org.geotoolkit.ogcapi.model.DataTransferObject;
     JSONSchemaProperty.JSON_PROPERTY_MIN_ITEMS,
     JSONSchemaProperty.JSON_PROPERTY_X_OGC_DEFINITION,
     JSONSchemaProperty.JSON_PROPERTY_X_OGC_UNIT,
-    JSONSchemaProperty.JSON_PROPERTY_X_OGC_UNIT_LANG
+    JSONSchemaProperty.JSON_PROPERTY_X_OGC_UNIT_LANG,
+    JSONSchemaProperty.JSON_PROPERTY_X_OGC_STATISTICS,
+    JSONSchemaProperty.JSON_PROPERTY_X_OGC_PROPERTY_SEQ
 })
 @XmlRootElement(name = "JsonSchemaPropertiesValue")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -138,6 +141,15 @@ public class JSONSchemaProperty extends DataTransferObject {
     @XmlElement(name = "x-ogc-unitLang")
     @jakarta.annotation.Nullable
     private String xOgcUnitLang;
+
+    public static final String JSON_PROPERTY_X_OGC_STATISTICS = "x-ogc-statistics";
+    @XmlElement(name = "x-ogc-statistics")
+    @jakarta.annotation.Nullable
+    private RangeStatistics xOgcStatistics;
+
+    public static final String JSON_PROPERTY_X_OGC_PROPERTY_SEQ = "x-ogc-propertySeq";
+    @XmlElement(name = "x-ogc-propertySeq")
+    private int xOgcPropertySeq;
 
     public JSONSchemaProperty() {
     }
@@ -553,8 +565,55 @@ public class JSONSchemaProperty extends DataTransferObject {
         this.xOgcUnitLang = xOgcUnitLang;
     }
 
+    public JSONSchemaProperty xOgcStatistics(@jakarta.annotation.Nullable RangeStatistics xOgcStatistics) {
+        this.xOgcStatistics = xOgcStatistics;
+        return this;
+    }
+
     /**
-     * Return true if this dggs_json_schema_properties_value object is equal to o.
+     * Get statistics
+     *
+     * @return statistics
+     */
+    @jakarta.annotation.Nullable
+    @JsonProperty(JSON_PROPERTY_X_OGC_STATISTICS)
+    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+    @JacksonXmlProperty(localName = "x-ogc-statistics")
+    public RangeStatistics getxOgcStatistics() {
+        return xOgcStatistics;
+    }
+
+    @JsonProperty(JSON_PROPERTY_X_OGC_STATISTICS)
+    @JacksonXmlProperty(localName = "x-ogc-statistics")
+    public void setxOgcStatistics(@jakarta.annotation.Nullable RangeStatistics xOgcStatistics) {
+        this.xOgcStatistics = xOgcStatistics;
+    }
+
+    public JSONSchemaProperty xOgcPropertySeq(int xOgcPropertySeq) {
+        this.xOgcPropertySeq = xOgcPropertySeq;
+        return this;
+    }
+
+    /**
+     * Get statistics
+     *
+     * @return statistics
+     */
+    @JsonProperty(JSON_PROPERTY_X_OGC_PROPERTY_SEQ)
+    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+    @JacksonXmlProperty(localName = "x-ogc-propertySeq")
+    public int getxOgcPropertySeq() {
+        return xOgcPropertySeq;
+    }
+
+    @JsonProperty(JSON_PROPERTY_X_OGC_PROPERTY_SEQ)
+    @JacksonXmlProperty(localName = "x-ogc-statistics")
+    public void setxOgcPropertySeq(int xOgcPropertySeq) {
+        this.xOgcPropertySeq = xOgcPropertySeq;
+    }
+
+    /**
+     * Return true if this json_schema_properties_value object is equal to o.
      */
     @Override
     public boolean equals(Object o) {
@@ -564,23 +623,25 @@ public class JSONSchemaProperty extends DataTransferObject {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        JSONSchemaProperty dggsJsonSchemaPropertiesValue = (JSONSchemaProperty) o;
-        return Objects.equals(this.title, dggsJsonSchemaPropertiesValue.title)
-                && Objects.equals(this.description, dggsJsonSchemaPropertiesValue.description)
-                && Objects.equals(this.type, dggsJsonSchemaPropertiesValue.type)
-                && Objects.equals(this._enum, dggsJsonSchemaPropertiesValue._enum)
-                && Objects.equals(this.format, dggsJsonSchemaPropertiesValue.format)
-                && Objects.equals(this.contentMediaType, dggsJsonSchemaPropertiesValue.contentMediaType)
-                && Objects.equals(this.maximum, dggsJsonSchemaPropertiesValue.maximum)
-                && Objects.equals(this.exclusiveMaximum, dggsJsonSchemaPropertiesValue.exclusiveMaximum)
-                && Objects.equals(this.minimum, dggsJsonSchemaPropertiesValue.minimum)
-                && Objects.equals(this.exclusiveMinimum, dggsJsonSchemaPropertiesValue.exclusiveMinimum)
-                && Objects.equals(this.pattern, dggsJsonSchemaPropertiesValue.pattern)
-                && Objects.equals(this.maxItems, dggsJsonSchemaPropertiesValue.maxItems)
-                && Objects.equals(this.minItems, dggsJsonSchemaPropertiesValue.minItems)
-                && Objects.equals(this.xOgcDefinition, dggsJsonSchemaPropertiesValue.xOgcDefinition)
-                && Objects.equals(this.xOgcUnit, dggsJsonSchemaPropertiesValue.xOgcUnit)
-                && Objects.equals(this.xOgcUnitLang, dggsJsonSchemaPropertiesValue.xOgcUnitLang);
+        JSONSchemaProperty jsonSchemaPropertiesValue = (JSONSchemaProperty) o;
+        return xOgcPropertySeq == jsonSchemaPropertiesValue.xOgcPropertySeq
+                && Objects.equals(this.title, jsonSchemaPropertiesValue.title)
+                && Objects.equals(this.description, jsonSchemaPropertiesValue.description)
+                && Objects.equals(this.type, jsonSchemaPropertiesValue.type)
+                && Objects.equals(this._enum, jsonSchemaPropertiesValue._enum)
+                && Objects.equals(this.format, jsonSchemaPropertiesValue.format)
+                && Objects.equals(this.contentMediaType, jsonSchemaPropertiesValue.contentMediaType)
+                && Objects.equals(this.maximum, jsonSchemaPropertiesValue.maximum)
+                && Objects.equals(this.exclusiveMaximum, jsonSchemaPropertiesValue.exclusiveMaximum)
+                && Objects.equals(this.minimum, jsonSchemaPropertiesValue.minimum)
+                && Objects.equals(this.exclusiveMinimum, jsonSchemaPropertiesValue.exclusiveMinimum)
+                && Objects.equals(this.pattern, jsonSchemaPropertiesValue.pattern)
+                && Objects.equals(this.maxItems, jsonSchemaPropertiesValue.maxItems)
+                && Objects.equals(this.minItems, jsonSchemaPropertiesValue.minItems)
+                && Objects.equals(this.xOgcDefinition, jsonSchemaPropertiesValue.xOgcDefinition)
+                && Objects.equals(this.xOgcUnit, jsonSchemaPropertiesValue.xOgcUnit)
+                && Objects.equals(this.xOgcUnitLang, jsonSchemaPropertiesValue.xOgcUnitLang)
+                && Objects.equals(this.xOgcStatistics, jsonSchemaPropertiesValue.xOgcStatistics);
     }
 
     @Override

@@ -65,6 +65,8 @@ public class GeneralGrid extends DataTransferObject {
     @XmlElement(name = "gridLimits")
     private GridLimits gridLimits;
 
+    public GeneralGrid() {}
+
     public GeneralGrid(String srsName, List<Axis> axis, GridLimits gridLimits) {
         this.srsName = srsName;
         this.axis = axis;
