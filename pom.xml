@@ -172,13 +172,13 @@
 
     <!-- associated projects dependencies -->
     <geoapi.version>4.0-M28</geoapi.version>
-    <sis.version>2.0-SNAPSHOT</sis.version>
+    <sis.version>2.0-M0129</sis.version>
     <!--
     SIS build helper version froozen to official release.
     It ensures we can import it after SIS will migrate to Gradle build system.
     -->
     <sis.build.helper.version>1.3</sis.build.helper.version>
-    <sis.non-free.version>2.0-M0128</sis.non-free.version>
+    <sis.non-free.version>2.0-M0129</sis.non-free.version>
 
     <!-- third party dependencies versions -->
     <esri.geometry>2.2.4</esri.geometry>
