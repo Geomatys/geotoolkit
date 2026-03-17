@@ -560,6 +560,7 @@ public final class DiscreteGlobalGridCoverageProcessor {
     public DiscreteGlobalGridCoverage resample(DiscreteGlobalGridCoverage coverage, DiscreteGlobalGridGeometry gridGeometry, int ... range) throws FactoryException, DataStoreException, TransformException {
 
         final DiscreteGlobalGridReferenceSystem dggrs = gridGeometry.getReferenceSystem();
+        final DiscreteGlobalGridHierarchy dggh = dggrs.getGridSystem().getHierarchy();
         final List<SampleDimension> sampleDimensions = coverage.getSampleDimensions();
 
         final List<Object> zones = gridGeometry.getZoneIds();
@@ -571,7 +572,7 @@ public final class DiscreteGlobalGridCoverageProcessor {
             nans[i] = Double.NaN;
         }
 
-        final CodeOperation op = ReferenceSystems.findOperation(dggrs, coverage.getCoordinateReferenceSystem(), null);
+        final CodeOperation op = ReferenceSystems.findOperation(dggrs, coverage.getGeometry().getReferenceSystem(), null);
         final CodeTransform toCode = gridGeometry.getGridToRS();
         final CodedCoverage.CodeEvaluator eva = coverage.codeEvaluator();
 
@@ -581,6 +582,9 @@ public final class DiscreteGlobalGridCoverageProcessor {
             while (iterator.next()) {
                 final int[] gridPosition = iterator.getPosition();
                 final Code code = toCode.toCode(gridPosition);
+                if (!(code.getOrdinate(0) instanceof CharSequence)) {
+                    code.setOrdinate(0, dggh.toTextIdentifier(code.getOrdinate(0)));
+                }
                 tcode = op.transform(code, tcode);
                 double[] values = eva.apply(tcode);
                 if (values == null) {

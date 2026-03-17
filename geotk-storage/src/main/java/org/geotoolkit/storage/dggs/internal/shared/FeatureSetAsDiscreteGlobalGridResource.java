@@ -19,13 +19,18 @@ package org.geotoolkit.storage.dggs.internal.shared;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.feature.internal.shared.AttributeConvention;
+import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.measure.NumberRange;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.AbstractResource;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.storage.NoSuchDataException;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridGeometry;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridResource;
@@ -36,7 +41,11 @@ import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;
+import org.opengis.geometry.Envelope;
+import org.opengis.metadata.Metadata;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.GenericName;
 
 /**
  *
@@ -64,6 +73,21 @@ public final class FeatureSetAsDiscreteGlobalGridResource extends AbstractResour
         this.defaultDepth = 3;
         this.maxRelativeDepth = 10;
         this.availableDepths = NumberRange.create(0, true, dggrs.getGridSystem().getHierarchy().getGrids().size()-1, true);
+    }
+
+    @Override
+    public Optional<GenericName> getIdentifier() throws DataStoreException {
+        return featureSet.getIdentifier();
+    }
+
+    @Override
+    public Optional<Envelope> getEnvelope() throws DataStoreException {
+        return featureSet.getEnvelope();
+    }
+
+    @Override
+    protected Metadata createMetadata() throws DataStoreException {
+        return featureSet.getMetadata();
     }
 
     public FeatureSet getOrigin() {
@@ -121,6 +145,24 @@ public final class FeatureSetAsDiscreteGlobalGridResource extends AbstractResour
     public DiscreteGlobalGridCoverage read(CodedGeometry grid, int... range) throws DataStoreException {
         init();
         final DiscreteGlobalGridGeometry geometry = DiscreteGlobalGridResource.toDiscreteGlobalGridGeometry(grid);
+
+        final Optional<Envelope> envelope = featureSet.getEnvelope();
+        if (!envelope.isEmpty()) {
+            Envelope e = envelope.get();
+            final CoordinateReferenceSystem crs2d = CRS.getHorizontalComponent(e.getCoordinateReferenceSystem());
+            try {
+                e = Envelopes.transform(e, crs2d);
+                Envelope gridEnv = geometry.getEnvelope(crs2d);
+
+                if (!GeneralEnvelope.castOrCopy(gridEnv).intersects(e)) {
+                    //no data
+                    throw new NoSuchDataException();
+                }
+            } catch (TransformException ex) {
+                throw new DataStoreException(ex.getMessage(), ex);
+            }
+        }
+
         try {
             return processor.resample(featureSet, geometry, sampleDimensions);
         } catch (TransformException ex) {

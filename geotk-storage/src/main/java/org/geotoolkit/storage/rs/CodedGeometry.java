@@ -381,27 +381,6 @@ public class CodedGeometry {
     }
 
     public static CodedGeometry compound(CodedGeometry ... grids) {
-        if (grids.length == 0) return null;
-        if (grids.length == 1) return grids[0];
-
-
-        long[] low = grids[0].getExtent().getLow().getCoordinateValues();
-        long[] high = grids[0].getExtent().getHigh().getCoordinateValues();
-        CodeTransform gridToRS = grids[0].getGridToRS();
-        ReferenceSystem rs = grids[0].getReferenceSystem();
-
-        for (int i = 1; i < grids.length; i++) {
-            final CodedGeometry rgg = grids[i];
-            final GridExtent subExtent = rgg.getExtent();
-            final CodeTransform subGridToRS = rgg.getGridToRS();
-            final ReferenceSystem subrs = rgg.getReferenceSystem();
-            low = ArraysExt.concatenate(low, subExtent.getLow().getCoordinateValues());
-            high = ArraysExt.concatenate(high, subExtent.getHigh().getCoordinateValues());
-            gridToRS = CodeTransforms.compound(gridToRS, subGridToRS);
-            rs = ReferenceSystems.createCompound(rs, subrs);
-        }
-
-        final GridExtent extent = new GridExtent(null, low, high, true);
-        return new CodedGeometry(rs, extent, gridToRS, null);
+        return CompoundCodedGeometry.compound(grids);
     }
 }
