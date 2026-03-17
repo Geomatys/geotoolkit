@@ -44,7 +44,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.IllegalNameException;
 import org.apache.sis.storage.WritableFeatureSet;
-import org.apache.sis.util.Numbers;
+import org.apache.sis.math.NumberType;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.xml.MarshallerPool;
 import org.apache.sis.xml.Namespaces;
@@ -1099,7 +1099,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
         if (type.getValueClass() == byte[].class && content != null) {
             value = Base64.getDecoder().decode(content);
         } else {
-            value = ObjectConverters.convert(value, Numbers.primitiveToWrapper(type.getValueClass()));
+            value = ObjectConverters.convert(value, NumberType.primitiveToWrapper(type.getValueClass()));
         }
         return value;
     }

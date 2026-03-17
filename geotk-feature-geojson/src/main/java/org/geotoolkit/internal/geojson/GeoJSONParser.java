@@ -30,7 +30,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.io.stream.IOUtilities;
-import org.apache.sis.util.Numbers;
+import org.apache.sis.math.NumberType;
 import org.geotoolkit.internal.geojson.binding.GeoJSONCRS;
 import org.geotoolkit.internal.geojson.binding.GeoJSONFeature;
 import org.geotoolkit.internal.geojson.binding.GeoJSONFeatureCollection;
@@ -375,7 +375,7 @@ public final class GeoJSONParser {
         final Class<?> valueType = valueTypes.stream()
                 .reduce(GeoJSONParser::findCommonType)
                 .orElseThrow(() -> new JsonParseException(p, "Cannot properly resolve array type"));
-        if (!nullFound && Numbers.isFloat(valueType)) {
+        if (!nullFound && NumberType.isFractional(valueType)) {
             return list.stream().mapToDouble(value -> ((Number)value).doubleValue()).toArray();
         } else if (!nullFound && Integer.class.isAssignableFrom(valueType)) {
             return list.stream().mapToInt(value -> ((Number)value).intValue()).toArray();
@@ -397,10 +397,10 @@ public final class GeoJSONParser {
         if (c1.isAssignableFrom(c2)) return c1;
         else if (c2.isAssignableFrom(c1)) return c2;
         if (Number.class.isAssignableFrom(c1) && Number.class.isAssignableFrom(c2)) {
-            if (Numbers.isFloat(c1) || Numbers.isFloat(c2)) return Double.class;
+            if (NumberType.isFractional(c1) || NumberType.isFractional(c2)) return Double.class;
 
-            c1 = Numbers.primitiveToWrapper(c1);
-            c2 = Numbers.primitiveToWrapper(c2);
+            c1 = NumberType.primitiveToWrapper(c1);
+            c2 = NumberType.primitiveToWrapper(c2);
             if (Long.class.isAssignableFrom(c1) || Long.class.isAssignableFrom(c2)) return Long.class;
 
             assert Integer.class.equals(c1)|| Integer.class.equals(c2);

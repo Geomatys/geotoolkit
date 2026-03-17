@@ -39,6 +39,7 @@ import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.metadata.IIOMetadataFormat;
 import javax.measure.Quantity;
 import javax.measure.Unit;
+import org.apache.sis.math.NumberType;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -953,7 +954,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
             } else if (Date.class.isAssignableFrom(type)) {
                 value = parseDateTime(value.toString());
             } else if (type.isArray()) {
-                final Class<?> component = Numbers.primitiveToWrapper(type.getComponentType());
+                final Class<?> component = NumberType.primitiveToWrapper(type.getComponentType());
                 if (component == Double.class) {
                     value = parseSequence(value.toString(), Double.TYPE, false, null);
                 } else if (component == Integer.class) {
@@ -1464,7 +1465,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
         } else {
             values = new ArrayList<>();
         }
-        final Class<?> wrapperType = Numbers.primitiveToWrapper(type);
+        final Class<?> wrapperType = NumberType.primitiveToWrapper(type);
         final StringTokenizer tokens = new StringTokenizer(sequence);
         while (tokens.hasMoreTokens()) {
             final String token = tokens.nextToken().replace(NBSP, ' ').trim();

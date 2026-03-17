@@ -206,10 +206,11 @@ public final class CodedCoverageAsFeatureSet extends AbstractFeatureSet {
         }
 
         @Override
-        @Deprecated
-        public Object getValueOrFallback(String propName, Object missingPropertyFallback) {
+        public Object getPropertyValue(String propName) {
             final Integer idx = index.get(propName);
-            if (idx == null) return missingPropertyFallback;
+            if (idx == null) {
+                throw new PropertyNotFoundException(propName);
+            }
             if (idx < 0) {
                 try {
                     Object obj = getOrdinate()[Math.abs(idx+1)];
@@ -232,7 +233,7 @@ public final class CodedCoverageAsFeatureSet extends AbstractFeatureSet {
                                 obj = pt.getFactory().createPoint(new CoordinateXY(pt.getX(), pt.getY()));
                                 break;
                             case GEOMETRY_ZONE_NONE :
-                                return missingPropertyFallback;
+                                throw new PropertyNotFoundException(propName);
                         }
 
                     }
@@ -240,10 +241,8 @@ public final class CodedCoverageAsFeatureSet extends AbstractFeatureSet {
                 } catch (TransformException ex) {
                     throw new BackingStoreException(ex);
                 }
-            } else try {
+            } else {
                 return getCell().getPropertyValue(propName);
-            } catch (PropertyNotFoundException e) {
-                return missingPropertyFallback;
             }
         }
 
@@ -257,13 +256,6 @@ public final class CodedCoverageAsFeatureSet extends AbstractFeatureSet {
                 getCell().setPropertyValue(propName, o);
             }
         }
-
-        @Override
-        public Object getPropertyValue(String propName) throws PropertyNotFoundException {
-            if (index.get(propName) == null) throw new PropertyNotFoundException();
-            return getValueOrFallback(propName, null);
-        }
-
     }
 
     /**

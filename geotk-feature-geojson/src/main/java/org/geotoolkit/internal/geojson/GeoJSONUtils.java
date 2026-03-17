@@ -52,7 +52,7 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.Numbers;
+import org.apache.sis.math.NumberType;
 import org.geotoolkit.internal.geojson.binding.GeoJSONObject;
 import static org.geotoolkit.storage.geojson.GeoJSONConstants.*;
 import org.opengis.feature.AttributeType;
@@ -410,11 +410,11 @@ public final class GeoJSONUtils {
         final Class identifierType = GeoJSONUtils.getIdentifierType(target)
                 .orElseThrow(() -> new IllegalArgumentException("Cannot determine the value type for identifier property. Should either be a string or a number."));
         final Function converter;
-        if (Numbers.isFloat(identifierType)) {
+        if (NumberType.isFractional(identifierType)) {
             converter = input -> Double.parseDouble(input.toString());
         } else if (Long.class.isAssignableFrom(identifierType)) {
             converter = input -> Long.parseLong(input.toString());
-        } else if (Numbers.isInteger(identifierType)) {
+        } else if (NumberType.isInteger(identifierType)) {
             converter = input -> Integer.parseInt(input.toString());
         } else if (String.class.isAssignableFrom(identifierType)) {
             converter = Object::toString;

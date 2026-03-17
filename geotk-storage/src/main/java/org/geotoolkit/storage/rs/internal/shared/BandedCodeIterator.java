@@ -117,17 +117,11 @@ public abstract class BandedCodeIterator extends AbstractFeature implements Code
     }
 
     @Override
-    public Object getValueOrFallback(String propName, Object missingPropertyFallback) {
+    public Object getPropertyValue(String propName) {
         final Integer idx = index.get(propName);
-        if (idx == null) return missingPropertyFallback;
+        if (idx == null) {
+            throw new PropertyNotFoundException(propName);
+        }
         return getSampleDouble(idx);
     }
-
-    @Override
-    public Object getPropertyValue(String propName) throws PropertyNotFoundException {
-        final Integer idx = index.get(propName);
-        if (idx == null) throw new PropertyNotFoundException();
-        return getSampleDouble(idx);
-    }
-
 }

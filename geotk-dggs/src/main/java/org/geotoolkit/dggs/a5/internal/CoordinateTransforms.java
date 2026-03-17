@@ -151,6 +151,6 @@ public final class CoordinateTransforms {
      */
     public static Quaternion quatFromSpherical(Vector2D.Double axis) {
         final Vector3D.Double cartesian = toCartesian(axis);
-        return new Quaternion().fromUnitVectors(new Vector3D.Double(0, 0, 1), cartesian);
+        return new Quaternion().setFromUnitVectors(new Vector3D.Double(0, 0, 1), cartesian);
     }
 }

@@ -56,7 +56,7 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.events.XMLEvent;
 import org.apache.sis.feature.Features;
 import org.apache.sis.feature.internal.shared.AttributeConvention;
-import org.apache.sis.util.Numbers;
+import org.apache.sis.math.NumberType;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.util.NamesExt;
@@ -456,7 +456,7 @@ public final class Utils {
             if (result == null) {
                 throw new IllegalArgumentException("unexpected type:" + name);
             }
-            return Numbers.primitiveToWrapper(result);
+            return NumberType.primitiveToWrapper(result);
         }
         return null;
     }

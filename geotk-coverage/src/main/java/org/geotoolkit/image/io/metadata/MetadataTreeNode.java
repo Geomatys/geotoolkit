@@ -28,7 +28,7 @@ import org.w3c.dom.Node;
 import org.apache.sis.util.CharSequences;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.util.Classes;
-import org.apache.sis.util.Numbers;
+import org.apache.sis.math.NumberType;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.logging.Logging;
@@ -336,7 +336,7 @@ public final class MetadataTreeNode extends NamedTreeNode implements TreeTableNo
                 }
             }
             if (isArray) {
-                type = Classes.changeArrayDimension(Numbers.wrapperToPrimitive(type), 1);
+                type = Classes.changeArrayDimension(NumberType.wrapperToPrimitive(type), 1);
             }
             valueType = type;
         }

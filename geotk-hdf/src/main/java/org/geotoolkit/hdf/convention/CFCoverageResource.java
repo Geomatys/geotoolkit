@@ -46,7 +46,7 @@ import org.apache.sis.storage.AbstractGridCoverageResource;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArraysExt;
-import org.apache.sis.util.Numbers;
+import org.apache.sis.math.NumberType;
 import org.geotoolkit.hdf.HDF5Store;
 import org.geotoolkit.hdf.api.Dataset;
 import org.geotoolkit.hdf.api.Group;
@@ -271,7 +271,7 @@ public final class CFCoverageResource extends AbstractGridCoverageResource imple
 
         final DataBuffer db;
 
-        final Class<?> componentType = Numbers.primitiveToWrapper(getComponentType(array));
+        final Class<?> componentType = NumberType.primitiveToWrapper(getComponentType(array));
         if (Double.class.equals(componentType)) {
             db = new DataBufferDouble(size);
         } else if (Float.class.equals(componentType)) {

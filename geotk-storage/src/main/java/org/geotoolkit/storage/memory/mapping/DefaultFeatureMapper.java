@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.geotoolkit.feature.FeatureExt;
-import org.apache.sis.util.Numbers;
+import org.apache.sis.math.NumberType;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.ObjectConverters;
 import org.opengis.feature.AttributeType;
@@ -174,7 +174,7 @@ public class DefaultFeatureMapper implements FeatureMapper {
 
         //normal attributs type, string, numbers, dates ...
         try{
-            return ObjectConverters.convert(value, Numbers.primitiveToWrapper(target.getValueClass()));
+            return ObjectConverters.convert(value, NumberType.primitiveToWrapper(target.getValueClass()));
         }catch(Exception ex){
             ex.printStackTrace();
             //could not convert between types

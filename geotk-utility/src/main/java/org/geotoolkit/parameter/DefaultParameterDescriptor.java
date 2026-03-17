@@ -29,7 +29,7 @@ import org.opengis.parameter.ParameterValue;
 import org.apache.sis.measure.Range;
 import org.apache.sis.measure.MeasurementRange;
 import org.apache.sis.referencing.AbstractIdentifiedObject;
-import org.apache.sis.util.Numbers;
+import org.apache.sis.math.NumberType;
 
 
 /**
@@ -87,7 +87,7 @@ public class DefaultParameterDescriptor<T> extends org.apache.sis.parameter.Defa
     {
         super(properties, required ? 1 : 0, 1, valueClass,
                 (unit != null) ? new MeasurementRange((Class) (valueClass.isArray() ?
-                        Numbers.primitiveToWrapper(valueClass.getComponentType()) : valueClass), (Number) minimum, true, (Number) maximum, true, unit) :
+                        NumberType.primitiveToWrapper(valueClass.getComponentType()) : valueClass), (Number) minimum, true, (Number) maximum, true, unit) :
                 (minimum != null || maximum != null) ? new Range(valueClass, minimum, true, maximum, true) : null,
                 validValues, defaultValue);
     }

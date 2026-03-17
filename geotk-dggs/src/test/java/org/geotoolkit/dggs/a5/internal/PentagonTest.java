@@ -114,23 +114,23 @@ public class PentagonTest {
             -1.1135163644116066
         };
 
-        assertEquals(BASIS.m00, expectedBasis[0], TOLERANCE);
-        assertEquals(BASIS.m10, expectedBasis[1], TOLERANCE);
-        assertEquals(BASIS.m01, expectedBasis[2], TOLERANCE);
-        assertEquals(BASIS.m11, expectedBasis[3], TOLERANCE);
+        assertEquals(BASIS.get(0, 0), expectedBasis[0], TOLERANCE);
+        assertEquals(BASIS.get(1, 0), expectedBasis[1], TOLERANCE);
+        assertEquals(BASIS.get(0, 1), expectedBasis[2], TOLERANCE);
+        assertEquals(BASIS.get(1, 1), expectedBasis[3], TOLERANCE);
 
-        assertEquals(BASIS_INVERSE.m00, expectedInverse[0], TOLERANCE);
-        assertEquals(BASIS_INVERSE.m10, expectedInverse[1], TOLERANCE);
-        assertEquals(BASIS_INVERSE.m01, expectedInverse[2], TOLERANCE);
-        assertEquals(BASIS_INVERSE.m11, expectedInverse[3], TOLERANCE);
+        assertEquals(BASIS_INVERSE.get(0, 0), expectedInverse[0], TOLERANCE);
+        assertEquals(BASIS_INVERSE.get(1, 0), expectedInverse[1], TOLERANCE);
+        assertEquals(BASIS_INVERSE.get(0, 1), expectedInverse[2], TOLERANCE);
+        assertEquals(BASIS_INVERSE.get(1, 1), expectedInverse[3], TOLERANCE);
 
 
         // Verify BASIS * BASIS_INVERSE = Identity
-        Matrix2D result = Matrix2D.castOrCopy(BASIS.clone().multiply(BASIS_INVERSE));
-        assertEquals(result.m00, 1.0, TOLERANCE);
-        assertEquals(result.m01, 0.0, TOLERANCE);
-        assertEquals(result.m10, 0.0, TOLERANCE);
-        assertEquals(result.m11, 1.0, TOLERANCE);
+        Matrix2D result = (Matrix2D)BASIS.copy().multiply(BASIS_INVERSE);
+        assertEquals(result.get(0, 0), 1.0, TOLERANCE);
+        assertEquals(result.get(0, 1), 0.0, TOLERANCE);
+        assertEquals(result.get(1, 0), 0.0, TOLERANCE);
+        assertEquals(result.get(1, 1), 1.0, TOLERANCE);
 
     }
 

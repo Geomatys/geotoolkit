@@ -39,7 +39,7 @@ import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.iso.Types;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.util.Classes;
-import org.apache.sis.util.Numbers;
+import org.apache.sis.math.NumberType;
 import org.apache.sis.util.UnsupportedImplementationException;
 import org.apache.sis.metadata.iso.citation.Citations;
 
@@ -425,7 +425,7 @@ public class MetadataNodeAccessor extends MetadataNodeParser {
      */
     private static boolean isFormattable(final Class<?> type) {
         return (type != null) && (CharSequence.class.isAssignableFrom(type) ||
-               Number.class.isAssignableFrom(Numbers.primitiveToWrapper(type)));
+               Number.class.isAssignableFrom(NumberType.primitiveToWrapper(type)));
     }
 
     /**

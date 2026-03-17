@@ -23,7 +23,7 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.io.Serializable;
 import java.lang.reflect.Method;
-import org.apache.sis.util.Numbers;
+import org.apache.sis.math.NumberType;
 import org.apache.sis.util.ObjectConverters;
 
 /**
@@ -90,7 +90,7 @@ public final class BeanBinding extends AbstractBinding<Object> implements Serial
                         return;
 
                     Class<?> propertyType = d.getPropertyType();
-                    propertyType = Numbers.primitiveToWrapper(propertyType);
+                    propertyType = NumberType.primitiveToWrapper(propertyType);
                     if (value == null || propertyType.isInstance(value)) {
                         writeMethod.invoke(candidate, value);
                     } else {
