@@ -42,6 +42,7 @@ import org.apache.sis.geometries.math.Array;
 import org.apache.sis.geometries.math.NDArrays;
 import org.apache.sis.geometries.math.Vector1D;
 import org.apache.sis.geometry.wrapper.jts.JTS;
+import org.apache.sis.math.Statistics;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureQuery;
@@ -287,6 +288,7 @@ public final class DiscreteGlobalGridCoverageProcessor {
 
         final List<Array> samples = new ArrayList<>();
         final double[] nans = new double[sampleDimensions.size()];
+        final Statistics[][] stats = new Statistics[sampleDimensions.size()][zones.size()];
         for (int i = 0; i < nans.length; i++) {
             final SampleSystem ss = new SampleSystem(DataType.DOUBLE, sampleDimensions.get(i));
             final double[] datas = new double[zones.size()];
@@ -302,54 +304,6 @@ public final class DiscreteGlobalGridCoverageProcessor {
 
 
         final ArrayDiscreteGlobalGridCoverage target = new ArrayDiscreteGlobalGridCoverage(featureSet.getIdentifier().get(), gridGeometry, samples);
-//        final CodeTransform gridToRS = gridGeometry.getGridToRS();
-//        final DiscreteGlobalGridReferenceSystem dggrs = gridGeometry.getReferenceSystem();
-//        final DiscreteGlobalGridReferenceSystem.Coder coder = dggrs.createCoder();
-//        try (final WritableBandedCodeIterator iterator = target.createWritableIterator()) {
-//
-//            final Envelope env = target.getEnvelope().get();
-//            final double[] resolution = target.getResolution(true);
-//
-//            final GridExtent extent = new GridExtent(
-//                    (long) Math.ceil((env.getSpan(0) / resolution[0])*2),
-//                    (long) Math.ceil((env.getSpan(1) / resolution[0])*2));
-//            final GridGeometry grid = new GridGeometry(extent, env, GridOrientation.REFLECTION_Y);
-//            try {
-//                final FeatureQuery query = new FeatureQuery();
-//                query.setSelection(gridGeometry.getEnvelope());
-//
-//
-//                try (Stream<Feature> features = source.subset(query).features(false)) {
-//                    final Iterator<Feature> ite = features.iterator();
-//                    while (ite.hasNext()) {
-//                        final Feature feature = ite.next();
-//                        final Geometry geom = (Geometry) feature.getPropertyValue(AttributeConvention.GEOMETRY);
-//                        geom.get
-//                    }
-//                }
-//
-//                final GridCoverage.Evaluator evaluator = coverage.evaluator();
-//                evaluator.setNullIfOutside(true);
-//
-//                while (iterator.next()) {
-//                    final int[] position = iterator.getPosition();
-//                    final Code code = gridToRS.toCode(position);
-//                    final Object zid = code.getOrdinate(0);
-//                    final Zone zone = coder.decode(zid);
-//                    final DirectPosition dp = zone.getPosition();
-//                    double[] values = evaluator.apply(dp);
-//                    if (values == null) {
-//                        values = nans;
-//                    }
-//                    iterator.setCell(values);
-//                }
-//            } catch (NoSuchDataException ex) {
-//                // do nothing
-//            }
-//        } catch (TransformException ex) {
-//            throw new DataStoreException(ex);
-//        }
-
         final Envelope env = target.getEnvelope().get();
 
         //read only the features needed
@@ -425,12 +379,20 @@ public final class DiscreteGlobalGridCoverageProcessor {
                             Object value = feature.getPropertyValue(propertyNames[i]);
                             if (value instanceof Number n) {
                                 buffer.x = n.doubleValue();
-                                samples.get(i).set(zoneIndex, buffer);
+                                if (!Double.isNaN(buffer.x)) {
+                                    if (stats[i][zoneIndex] == null) {
+                                        stats[i][zoneIndex] = new Statistics("");
+                                    }
+                                    stats[i][zoneIndex].accept(buffer.x);
+                                }
+                                //fast method without stats
+                                //samples.get(i).set(zoneIndex, buffer);
                             }
                         }
 
+                        //TODO we should make a 'fast mode case'
                         //remove this zone from futur searchs
-                        tree.remove((org.locationtech.jts.geom.Envelope) entry[0], entry[1]);
+                        //tree.remove((org.locationtech.jts.geom.Envelope) entry[0], entry[1]);
                         //continue zoneLoop; // a feature may intersect multiple zones
                     }
                 }
@@ -438,6 +400,19 @@ public final class DiscreteGlobalGridCoverageProcessor {
         } catch (TransformException ex) {
             throw new DataStoreException(ex.getMessage(), ex);
         }
+
+        //copy stats to buffers
+        for(int i = 0; i < stats.length; i++) {
+            final Array arr = samples.get(i);
+            for(int k = 0; k < stats[0].length; k++) {
+                if (stats[i][k] != null) {
+                    buffer.x = stats[i][k].mean();
+                    arr.set(k, buffer);
+                }
+            }
+
+        }
+
 
         return target;
     }
