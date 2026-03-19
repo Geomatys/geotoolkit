@@ -26,8 +26,12 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.stream.Stream;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStores;
+import org.apache.sis.storage.FeatureQuery;
+import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.StorageConnector;
 import org.geotoolkit.nio.IOUtilities;
 import org.junit.After;
@@ -101,6 +105,25 @@ public class CSVStoreTest {
         long number = ds.features(false).count();
         assertEquals(3l, number);
 
+    }
+    
+    @Test
+    public void testCsvFile() throws Exception{
+
+        try (final CSVStore store = new CSVStore(Paths.get("./src/test/resources/org/geotoolkit/csv/test.csv"), ';')) {
+            FeatureQuery query = new FeatureQuery();
+            GeneralEnvelope env = new GeneralEnvelope(CRS.forCode("CRS:84"));
+            env.setEnvelope(2.0, 49.0, 2.5, 49.1);
+            query.setSelection(env);
+            FeatureSet fs = store.subset(query);
+            try (Stream<Feature> stream = fs.features(false)) {
+                Iterator<Feature> ite = stream.iterator();
+                Feature next = ite.next();
+                assertEquals("1", next.getPropertyValue("id"));
+                next = ite.next();
+                assertEquals("2", next.getPropertyValue("id"));
+            }
+        }
     }
 
     @Test
