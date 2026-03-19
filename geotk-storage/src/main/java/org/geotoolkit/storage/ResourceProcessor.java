@@ -46,6 +46,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.apache.sis.coverage.grid.PixelInCell;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;
+import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.ArgumentChecks;
 import org.opengis.referencing.operation.CoordinateOperation;
 import org.opengis.referencing.operation.MathTransform1D;
@@ -236,6 +237,19 @@ public class ResourceProcessor implements Cloneable {
         } else throw new IncompleteGridGeometryException("Cannot reproject a grid coverage resource whose geometry defines neither an envelope nor a conversion for grid to CRS");
 
         return new ResampledGridCoverageResource(source, reprojected, targetName, processor);
+    }
+
+    /**
+     * Apply a mask on given resource.
+     *
+     * @param source the resource on which to apply a mask.
+     * @param maskingset FeatureSet with masking features.
+     * @param maskInside {@code true} for masking pixels inside the shape, or {@code false} for masking outside.
+     * @return a resource with mask applied.
+     * @see GridCoverageProcessor#mask(org.apache.sis.coverage.grid.GridCoverage, org.apache.sis.coverage.RegionOfInterest, boolean)
+     */
+    public GridCoverageResource mask(final GridCoverageResource source, FeatureSet maskingset, boolean maskInside) {
+        return new MaskGridCoverageResource(source, maskingset, maskInside);
     }
 
     private static Optional<GeographicBoundingBox> searchGeographicExtent(GridCoverageResource source) throws DataStoreException {
