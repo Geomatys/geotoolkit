@@ -30,6 +30,7 @@ import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.locationtech.jts.geom.CoordinateXY;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.impl.PackedCoordinateSequenceFactory;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKTReader;
 import org.opengis.feature.AttributeType;
@@ -48,7 +49,7 @@ class CSVReader implements Iterator<Feature>, AutoCloseable {
     protected final CSVStore store;
     protected final ReadWriteLock fileLock;
     protected final FeatureType featureType;
-    protected final WKTReader reader = new WKTReader();
+    protected final WKTReader reader = new WKTReader(new GeometryFactory(PackedCoordinateSequenceFactory.DOUBLE_FACTORY));
     protected final Scanner scanner;
     protected final AttributeType[] atts;
     protected boolean withId;
@@ -83,6 +84,7 @@ class CSVReader implements Iterator<Feature>, AutoCloseable {
             withId = true;
         }
         this.latLonConfig = latLonConfig;
+        reader.setIsOldJtsCoordinateSyntaxAllowed(false);
     }
 
     public FeatureType getFeatureType() {
