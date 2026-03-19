@@ -16,9 +16,7 @@
  */
 package org.geotoolkit.storage.dggs.internal.shared;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -121,7 +119,7 @@ public class CachingTiledDiscreteGlobalGridCoverageResource extends TiledDiscret
             }
 
         } finally {
-            unlock(zid); 
+            unlock(zid);
         }
 
         return coverage;
