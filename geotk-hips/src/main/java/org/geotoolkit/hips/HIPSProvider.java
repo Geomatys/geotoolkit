@@ -35,6 +35,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 public final class HIPSProvider extends AbstractClientProvider {
 
     public static final String NAME = "hips";
+    private static final String MIME_TYPE = "ivoa/hips";
     private static HIPSProvider INSTANCE;
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR = new ParameterBuilder()
@@ -68,7 +69,14 @@ public final class HIPSProvider extends AbstractClientProvider {
     @Override
     public ProbeResult probeContent(StorageConnector connector) throws DataStoreException {
         final URI uri = connector.getStorageAs(URI.class);
-        if (uri != null) return ProbeResult.SUPPORTED;
+        if (uri != null) {
+            //there is no header we can use to detect quickly if it is a hipslist file
+            //from the aggregated list provided here https://aladin.cds.unistra.fr/hips/list
+            //we can say they all contain 'hips' in the URI at some place.
+            if (uri.toString().toLowerCase().contains("hips")) {
+                return new ProbeResult(true, MIME_TYPE, null);
+            }
+        }
         return ProbeResult.UNSUPPORTED_STORAGE;
     }
 
