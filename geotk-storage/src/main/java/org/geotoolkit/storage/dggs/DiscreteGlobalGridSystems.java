@@ -132,8 +132,8 @@ public final class DiscreteGlobalGridSystems {
     /**
      * View given FeatureSet as a DiscreteGlobalGridResource.
      */
-    public static CodedResource viewAsDggrs(FeatureSet base, DiscreteGlobalGridReferenceSystem dggrs) throws DataStoreException, IncommensurableException {
-        return new FeatureSetAsDiscreteGlobalGridResource(dggrs, base);
+    public static CodedResource viewAsDggrs(FeatureSet base, DiscreteGlobalGridReferenceSystem dggrs, DiscreteGlobalGridCoverageProcessor processor) throws DataStoreException, IncommensurableException {
+        return new FeatureSetAsDiscreteGlobalGridResource(dggrs, base, processor);
     }
 
     /**

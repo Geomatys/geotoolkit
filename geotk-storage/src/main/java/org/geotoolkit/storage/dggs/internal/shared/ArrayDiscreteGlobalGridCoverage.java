@@ -19,15 +19,12 @@ package org.geotoolkit.storage.dggs.internal.shared;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.sis.coverage.SampleDimension;
-import org.apache.sis.feature.builder.AttributeTypeBuilder;
-import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometries.math.Array;
 import org.apache.sis.geometries.math.Cursor;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridGeometry;
-import org.geotoolkit.storage.rs.internal.shared.BandedCodeIterator;
-import org.geotoolkit.storage.rs.internal.shared.CodedCoverageAsFeatureSet;
-import org.geotoolkit.storage.rs.internal.shared.WritableBandedCodeIterator;
+import org.geotoolkit.storage.rs.CodeIterator;
+import org.geotoolkit.storage.rs.WritableCodeIterator;
 import org.opengis.feature.FeatureType;
 import org.opengis.util.GenericName;
 
@@ -40,10 +37,6 @@ public final class ArrayDiscreteGlobalGridCoverage extends IndexedDiscreteGlobal
 
     private final GenericName name;
     private final List<Array> samples;
-
-    //cached
-    private FeatureType type;
-    private String[] mapping;
 
     public ArrayDiscreteGlobalGridCoverage(GenericName name, DiscreteGlobalGridGeometry gridGeometry, List<Array> samples) {
         super(gridGeometry);
@@ -66,13 +59,13 @@ public final class ArrayDiscreteGlobalGridCoverage extends IndexedDiscreteGlobal
     }
 
     @Override
-    public BandedCodeIterator createIterator() {
+    public CodeIterator createIterator() {
         return createWritableIterator();
     }
 
     @Override
-    public WritableBandedCodeIterator createWritableIterator() {
-        return new Iterator(getSampleType(), mapping);
+    public WritableCodeIterator createWritableIterator() {
+        return new Iterator();
     }
 
     @Override
@@ -84,28 +77,13 @@ public final class ArrayDiscreteGlobalGridCoverage extends IndexedDiscreteGlobal
         return lst;
     }
 
-    @Override
-    public synchronized FeatureType getSampleType() {
-        if (type != null) return type;
-
-        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-        ftb.setName(name);
-        final AttributeTypeBuilder<?>[] created = CodedCoverageAsFeatureSet.toFeatureType(ftb, getSampleDimensions());
-        mapping = new String[created.length];
-        for (int i = 0; i < created.length; i++) {
-            mapping[i] = created[i].getName().toString();
-        }
-        return ftb.build();
-    }
-
-    private final class Iterator extends WritableBandedCodeIterator {
+    private final class Iterator implements WritableCodeIterator {
 
         private int position = -1;
 
         private final Cursor[] cursors;
 
-        public Iterator(FeatureType type, String[] mapping) {
-            super(type, mapping);
+        public Iterator() {
             cursors = new Cursor[samples.size()];
             for (int i = 0; i < cursors.length; i++) {
                 cursors[i] = samples.get(i).cursor();

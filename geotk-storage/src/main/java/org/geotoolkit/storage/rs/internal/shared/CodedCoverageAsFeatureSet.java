@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.stream.Stream;
@@ -46,15 +45,14 @@ import org.geotoolkit.storage.rs.CodeIterator;
 import org.locationtech.jts.geom.CoordinateXY;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Point;
-import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyNotFoundException;
-import org.opengis.feature.PropertyType;
 import org.opengis.referencing.ReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.GenericName;
 import org.geotoolkit.storage.rs.CodeTransform;
+import org.geotoolkit.storage.rs.WritableCodeIterator;
 
 /**
  * View a DGGS Coverage as a FeatureSet.
@@ -141,12 +139,11 @@ public final class CodedCoverageAsFeatureSet extends AbstractFeatureSet {
         }
 
         //fill the index
-        final FeatureType sampleType = coverage.getSampleType();
-        sampleNames = sampleType.getProperties(true).stream().map(PropertyType::getName).map(Objects::toString).toArray(String[]::new);
+        final AttributeTypeBuilder<?>[] atts = toFeatureType(ftb, coverage.getSampleDimensions());
+        sampleNames = new String[atts.length];
         for (int i = 0; i < sampleNames.length; i++) {
+            sampleNames[i] = atts[i].getName().toString();
             index.put(sampleNames[i], i);
-
-            ftb.addAttribute((AttributeType) sampleType.getProperty(sampleNames[i]));
         }
 
         type = ftb.build();
@@ -177,12 +174,19 @@ public final class CodedCoverageAsFeatureSet extends AbstractFeatureSet {
         return stream.map((CodeIterator t) -> new CellAsFeature(t, coder));
     }
 
+    /**
+     * View code iterator samples as a Feature.
+     */
+    public Feature viewAsFeature(CodeIterator iterator) {
+        return new CellAsFeature(iterator, horizontal.createCoder());
+    }
+
     private class CellAsFeature extends AbstractFeature {
 
         private final CodeIterator iterator;
         private final DiscreteGlobalGridReferenceSystem.Coder coder;
         private Object[] ordinates;
-        private Feature cell;
+        private double[] cell;
 
         public CellAsFeature(CodeIterator iterator, DiscreteGlobalGridReferenceSystem.Coder coder) {
             super(type);
@@ -198,9 +202,9 @@ public final class CodedCoverageAsFeatureSet extends AbstractFeatureSet {
             return ordinates;
         }
 
-        private synchronized Feature getCell() {
+        private synchronized double[] getCell() {
             if (cell == null) {
-                cell = iterator.getSample();
+                cell = iterator.getCell(new double[iterator.getNumBands()]);
             }
             return cell;
         }
@@ -242,7 +246,7 @@ public final class CodedCoverageAsFeatureSet extends AbstractFeatureSet {
                     throw new BackingStoreException(ex);
                 }
             } else {
-                return getCell().getPropertyValue(propName);
+                return getCell()[idx];
             }
         }
 
@@ -253,7 +257,8 @@ public final class CodedCoverageAsFeatureSet extends AbstractFeatureSet {
             if (idx < 0) {
                 throw new IllegalArgumentException("Property " + propName + "can not be edited");
             } else {
-                getCell().setPropertyValue(propName, o);
+                getCell();
+                ((WritableCodeIterator)iterator).setSample(idx, ((Number)o).doubleValue());
             }
         }
     }

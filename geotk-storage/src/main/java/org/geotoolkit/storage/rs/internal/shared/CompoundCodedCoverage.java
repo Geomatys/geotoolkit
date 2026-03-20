@@ -21,7 +21,6 @@ import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.storage.rs.CodeIterator;
 import org.geotoolkit.storage.rs.CodedCoverage;
 import org.geotoolkit.storage.rs.WritableCodeIterator;
-import org.opengis.feature.FeatureType;
 import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
 
@@ -35,10 +34,10 @@ public final class CompoundCodedCoverage extends AbstractCodedCoverage{
     private final int[] bandToCoverage;
     private final int[] bandToCoverageBand;
 
-    public CompoundCodedCoverage(GenericName name, CodedCoverage[] coverages, FeatureType sampleType) throws FactoryException {
-        super(name, coverages[0].getGeometry(), sampleType);
+    public CompoundCodedCoverage(GenericName name, CodedCoverage[] coverages, List<SampleDimension> sampleDimensions) throws FactoryException {
+        super(name, coverages[0].getGeometry(), sampleDimensions == null ? List.of(coverages).stream().map(CodedCoverage::getSampleDimensions).flatMap(List::stream).toList() : sampleDimensions);
         this.coverages = coverages;
-        this.bandToCoverage = new int[sampleType.getProperties(true).size()];
+        this.bandToCoverage = new int[this.sampleDimensions.size()];
         this.bandToCoverageBand = new int[bandToCoverage.length];
 
         int idx = 0;
@@ -56,7 +55,7 @@ public final class CompoundCodedCoverage extends AbstractCodedCoverage{
 
     @Override
     public CodeIterator createIterator() {
-        return new BandedIterator(type, mapping);
+        return new BandedIterator();
     }
 
     @Override
@@ -64,28 +63,26 @@ public final class CompoundCodedCoverage extends AbstractCodedCoverage{
         throw new UnsupportedOperationException("Not supported.");
     }
 
-    private final class BandedIterator extends BandedCodeIterator {
+    private final class BandedIterator implements CodeIterator {
 
-        private final BandedCodeIterator[] iterators;
+        private final CodeIterator[] iterators;
 
-        BandedIterator(FeatureType type, String[] mapping) {
-            super(type, mapping);
-
-            iterators = new BandedCodeIterator[coverages.length];
+        BandedIterator() {
+            iterators = new CodeIterator[coverages.length];
             for (int i = 0; i < iterators.length; i++) {
-                iterators[i] = (BandedCodeIterator) coverages[i].createIterator();
+                iterators[i] = coverages[i].createIterator();
             }
         }
 
         @Override
-        public double getSampleDouble(int band) {
-            final BandedCodeIterator ci = iterators[bandToCoverage[band]];
-            return ci.getSampleDouble(bandToCoverageBand[band]);
+        public int getNumBands() {
+            return bandToCoverage.length;
         }
 
         @Override
-        public void setPropertyValue(String name, Object value) throws IllegalArgumentException {
-            throw new UnsupportedOperationException("Not supported.");
+        public double getSampleDouble(int band) {
+            final CodeIterator ci = iterators[bandToCoverage[band]];
+            return ci.getSampleDouble(bandToCoverageBand[band]);
         }
 
         @Override

@@ -32,7 +32,6 @@ import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridOrientation;
 import org.apache.sis.coverage.grid.GridRoundingMode;
-import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometries.math.DataType;
 import org.apache.sis.geometries.math.SampleSystem;
 import org.apache.sis.geometries.math.Array;
@@ -51,7 +50,6 @@ import org.geotoolkit.referencing.rs.ReferenceSystems;
 import org.geotoolkit.storage.rs.CodedCoverage;
 import org.geotoolkit.storage.rs.CodedGeometry;
 import org.geotoolkit.storage.rs.CodedResource;
-import org.opengis.feature.FeatureType;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.ReferenceSystem;
@@ -61,6 +59,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
 import org.geotoolkit.storage.rs.CodeTransform;
+import org.geotoolkit.storage.rs.WritableCodeIterator;
 
 /**
  * View a grid coverage resource as a dggrs coverage resource.
@@ -111,14 +110,6 @@ public final class GridAsCodedResource extends AbstractResource implements Coded
     @Override
     public List<SampleDimension> getSampleDimensions() throws DataStoreException {
         return source.getSampleDimensions();
-    }
-
-    @Override
-    public FeatureType getSampleType() throws DataStoreException {
-        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-        ftb.setName(source.getIdentifier().get());
-        CodedCoverageAsFeatureSet.toFeatureType(ftb, getSampleDimensions());
-        return ftb.build();
     }
 
     @Override
@@ -195,7 +186,7 @@ public final class GridAsCodedResource extends AbstractResource implements Coded
             throw new DataStoreException(ex.getMessage(), ex);
         }
 
-        try (final WritableBandedCodeIterator iterator = target.createWritableIterator()) {
+        try (final WritableCodeIterator iterator = target.createWritableIterator()) {
             try {
                 source.setLoadingStrategy(RasterLoadingStrategy.AT_GET_TILE_TIME);
                 final GridCoverage coverage = source.read(coverageQuery, range).forConvertedValues(true);

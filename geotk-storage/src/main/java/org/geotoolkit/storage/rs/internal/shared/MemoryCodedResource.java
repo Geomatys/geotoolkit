@@ -17,13 +17,14 @@
 package org.geotoolkit.storage.rs.internal.shared;
 
 import java.util.List;
+import java.util.Optional;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.storage.AbstractResource;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.rs.CodedCoverage;
 import org.geotoolkit.storage.rs.CodedGeometry;
 import org.geotoolkit.storage.rs.CodedResource;
-import org.opengis.feature.FeatureType;
+import org.opengis.util.GenericName;
 
 /**
  * Decorate a referenced coverage as a referenced resource.
@@ -32,21 +33,23 @@ import org.opengis.feature.FeatureType;
  */
 public final class MemoryCodedResource extends AbstractResource implements CodedResource {
 
+    private final GenericName name;
     private final CodedCoverage coverage;
 
-    public MemoryCodedResource(CodedCoverage coverage) {
+    public MemoryCodedResource(GenericName name, CodedCoverage coverage) {
         super(null);
+        this.name = name;
         this.coverage = coverage;
+    }
+
+    @Override
+    public Optional<GenericName> getIdentifier() throws DataStoreException {
+        return Optional.ofNullable(name);
     }
 
     @Override
     public List<SampleDimension> getSampleDimensions() throws DataStoreException {
         return coverage.getSampleDimensions();
-    }
-
-    @Override
-    public FeatureType getSampleType() {
-        return coverage.getSampleType();
     }
 
     @Override

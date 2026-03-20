@@ -25,7 +25,6 @@ import org.geotoolkit.storage.dggs.DiscreteGlobalGridCoverage;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridGeometry;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridResource;
 import org.geotoolkit.storage.rs.CodedGeometry;
-import org.opengis.feature.FeatureType;
 
 /**
  * Decorate a DGGS coverage as a DGGS resource.
@@ -44,11 +43,6 @@ public final class MemoryDiscreteGlobalGridResource extends AbstractResource imp
     @Override
     public List<SampleDimension> getSampleDimensions() throws DataStoreException {
         return coverage.getSampleDimensions();
-    }
-
-    @Override
-    public FeatureType getSampleType() throws DataStoreException {
-        return coverage.getSampleType();
     }
 
     @Override

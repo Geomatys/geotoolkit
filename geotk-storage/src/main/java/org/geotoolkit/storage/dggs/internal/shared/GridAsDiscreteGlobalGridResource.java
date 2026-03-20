@@ -22,7 +22,6 @@ import javax.measure.IncommensurableException;
 import javax.measure.Quantity;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.measure.NumberRange;
@@ -39,8 +38,6 @@ import org.geotoolkit.storage.dggs.DiscreteGlobalGridGeometry;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridResource;
 import org.geotoolkit.storage.rs.CodedGeometry;
-import org.geotoolkit.storage.rs.internal.shared.CodedCoverageAsFeatureSet;
-import org.opengis.feature.FeatureType;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.SingleCRS;
@@ -86,14 +83,6 @@ public final class GridAsDiscreteGlobalGridResource extends AbstractResource imp
     @Override
     public Optional<Envelope> getEnvelope() throws DataStoreException {
         return source.getEnvelope();
-    }
-
-    @Override
-    public FeatureType getSampleType() throws DataStoreException {
-        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-        ftb.setName(source.getIdentifier().get());
-        CodedCoverageAsFeatureSet.toFeatureType(ftb, getSampleDimensions());
-        return ftb.build();
     }
 
     @Override

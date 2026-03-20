@@ -36,7 +36,6 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.geotoolkit.storage.rs.CodeTransform;
-import org.opengis.referencing.crs.TemporalCRS;
 import org.opengis.referencing.operation.Matrix;
 
 /**
@@ -99,42 +98,22 @@ public final class CodeTransforms {
         return base.selectDimensions(sourceDimensions);
     }
 
-    private static abstract class SubTransform implements CodeTransform {
-
-        @Override
-        public Code toCode(int[] gridPosition) throws TransformException {
-            final Object[] ordinates = new Object[getDimension()];
-            toAddress(gridPosition, ordinates, 0);
-            return new Code(getRS(), ordinates);
-        }
-
-        @Override
-        public int[] toGrid(Code location) throws TransformException {
-            final int[] gridPosition = new int[getDimension()];
-            toGrid(location.getOrdinates(), gridPosition, 0);
-            return gridPosition;
-        }
-
-        abstract void toAddress(int[] gridPosition, Object[] location, int offset) throws TransformException;
-
-        abstract void toGrid(Object[] location, int[] gridPosition, int offset) throws TransformException;
-    }
 
     private static class Undefined extends SubTransform {
 
-        private final ReferenceSystem rs;
+        final ReferenceSystem rs;
 
         public Undefined(ReferenceSystem rs) {
             this.rs = rs;
         }
 
         @Override
-        void toAddress(int[] gridPosition, Object[] location, int offset) throws TransformException {
+        public void toAddress(int[] gridPosition, Object[] location, int offset) throws TransformException {
             throw new TransformException("Not supported.");
         }
 
         @Override
-        void toGrid(Object[] location, int[] gridPosition, int offset) throws TransformException {
+        public void toGrid(Object[] location, int[] gridPosition, int offset) throws TransformException {
             throw new TransformException("Not supported.");
         }
 
@@ -178,10 +157,10 @@ public final class CodeTransforms {
     }
     public static class Grid extends SubTransform {
 
-        private final GridGeometry grid;
-        private final MathTransform gridToCRS;
-        private MathTransform crsToGrid;
-        private final int dimension;
+        final GridGeometry grid;
+        final MathTransform gridToCRS;
+        MathTransform crsToGrid;
+        final int dimension;
         private Double singleOrigin;
 
         public Grid(GridGeometry grid) {
@@ -311,8 +290,8 @@ public final class CodeTransforms {
 
     public static class Listed extends SubTransform {
 
-        private final ReferenceSystem rs;
-        private final List<?> zids;
+        final ReferenceSystem rs;
+        final List<?> zids;
         private final Map<Object,Integer> index = new HashMap<>();
 
         public Listed(ReferenceSystem rs, List<?> zids) {
@@ -397,11 +376,11 @@ public final class CodeTransforms {
 
     private static class Compound extends SubTransform {
 
-        private final SubTransform trs1;
-        private final SubTransform trs2;
+        final SubTransform trs1;
+        final SubTransform trs2;
         private final int dimension1;
         private final int dimension;
-        private final ReferenceSystem rs;
+        final ReferenceSystem rs;
 
         private Compound(SubTransform trs1, SubTransform trs2) {
             this.trs1 = trs1;
