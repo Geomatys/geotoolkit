@@ -17,8 +17,6 @@
 package org.geotoolkit.stac.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import org.geotoolkit.stac.dto.Asset;
 import org.geotoolkit.stac.dto.Item;
@@ -31,8 +29,10 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.URI;
+import java.net.http.HttpClient;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -49,13 +49,18 @@ import static org.junit.Assert.assertTrue;
 public class StacClientTest {
 
     private StacClient stacClient;
+    private HttpClient httpClient;
     private ObjectMapper mapper = new ObjectMapper();
     private HttpServer server;
     private String serverUrl;
 
     @Before
     public void setup() throws IOException {
-        stacClient = new StacClient();
+        httpClient = HttpClient.newBuilder()
+                .connectTimeout(Duration.ofSeconds(10))
+                .followRedirects(HttpClient.Redirect.NORMAL)
+                .build();
+        stacClient = new StacClient(httpClient, new DefaultDownloadURIExtractor(httpClient));
         
         server = HttpServer.create(new InetSocketAddress(0), 0);
         
@@ -160,18 +165,19 @@ public class StacClientTest {
     public void testGetDownloadUrl() {
         Item item = new Item();
         item.setId("test-item-download");
-        
+
+        String localHref = serverUrl + "/data.nc";
         Asset dataAsset = new Asset();
-        dataAsset.setHref("https://example.com/data.nc");
+        dataAsset.setHref(localHref);
         dataAsset.setRoles(Collections.singletonList("data"));
-        
+
         Map<String, Asset> assets = new HashMap<>();
         assets.put("data", dataAsset);
         item.setAssets(assets);
-        
+
         URI downloadUrl = stacClient.getDownloadURI(item);
         assertNotNull(downloadUrl);
-        assertEquals("https://example.com/data.nc", downloadUrl.toString());
+        assertEquals(localHref, downloadUrl.toString());
     }
 
     @Test

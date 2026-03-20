@@ -69,12 +69,15 @@ public class StacClient {
 
     /**
      * Creates a StacClient with the default HTTP client and default download URI extractor.
+     * The HTTP client is shared with the extractor so that both use the same connection pool.
      */
     public StacClient() {
-        this(HttpClient.newBuilder()
+        HttpClient client = HttpClient.newBuilder()
                 .connectTimeout(Duration.ofSeconds(30))
                 .followRedirects(HttpClient.Redirect.NORMAL)
-                .build(), new DefaultDownloadURIExtractor());
+                .build();
+        this.httpClient = client;
+        this.downloadURIExtractor = new DefaultDownloadURIExtractor(client);
     }
 
     /**
