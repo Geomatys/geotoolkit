@@ -626,7 +626,7 @@ public abstract class DiscreteGlobalGridGeometry extends CodedGeometry {
             if (idx == offsets.length) {
                 throw new TransformException("Position is outside grid : " + gp);
             }
-            location[offset] = tiles[idx].toCode(new int[]{gp - (int)offsets[idx]});
+            tiles[idx].toAddress(new int[]{gp - (int)offsets[idx]}, location, offset);
         }
 
         @Override

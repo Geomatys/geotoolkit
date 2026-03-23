@@ -23,8 +23,10 @@ import java.awt.image.RenderedImage;
 import org.geotoolkit.storage.dggs.internal.shared.ArrayDiscreteGlobalGridCoverage;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.function.IntConsumer;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -34,6 +36,7 @@ import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridOrientation;
+import org.apache.sis.feature.Features;
 import org.apache.sis.feature.internal.shared.AttributeConvention;
 import org.apache.sis.filter.DefaultFilterFactory;
 import org.apache.sis.geometries.math.DataType;
@@ -41,6 +44,7 @@ import org.apache.sis.geometries.math.SampleSystem;
 import org.apache.sis.geometries.math.Array;
 import org.apache.sis.geometries.math.NDArrays;
 import org.apache.sis.geometries.math.Vector1D;
+import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.wrapper.jts.JTS;
 import org.apache.sis.math.Statistics;
 import org.apache.sis.referencing.CRS;
@@ -54,6 +58,8 @@ import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.feature.FeatureExt;
+import org.geotoolkit.feature.FeatureTypeExt;
+import org.geotoolkit.referencing.dggs.DiscreteGlobalGrid;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridHierarchy;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
 import org.geotoolkit.referencing.rs.Code;
@@ -61,15 +67,21 @@ import org.geotoolkit.referencing.rs.CodeOperation;
 import org.geotoolkit.referencing.rs.ReferenceSystems;
 import org.geotoolkit.storage.rs.CodeTransform;
 import org.geotoolkit.storage.rs.CodedCoverage;
+import org.geotoolkit.storage.rs.CodedGeometry;
 import org.geotoolkit.storage.rs.WritableCodeIterator;
+import org.geotoolkit.storage.rs.internal.shared.AddDimCodedCoverage;
+import org.geotoolkit.storage.rs.internal.shared.ArrayCodedCoverage;
 import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.index.quadtree.Quadtree;
 import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 import org.opengis.filter.FilterFactory;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.spatial.DimensionNameType;
+import org.opengis.referencing.ReferenceSystem;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;
@@ -197,7 +209,7 @@ public final class DiscreteGlobalGridCoverageProcessor {
      * @throws DataStoreException if extracting datas for the source failed or dggs coverage failed at writing
      * @throws TransformException if a dggrs zone computation failed
      */
-    public DiscreteGlobalGridCoverage resample(GridCoverageResource source, DiscreteGlobalGridGeometry gridGeometry, int ... range) throws DataStoreException, TransformException {
+    public CodedCoverage resample(GridCoverageResource source, DiscreteGlobalGridGeometry gridGeometry, int ... range) throws DataStoreException, TransformException {
         final List<Object> zones = gridGeometry.getZoneIds();
         List<SampleDimension> sampleDimensions = source.getSampleDimensions();
         if (range != null && range.length != 0) {
@@ -283,7 +295,7 @@ public final class DiscreteGlobalGridCoverageProcessor {
      * @throws DataStoreException if extracting datas for the source failed or dggs coverage failed at writing
      * @throws TransformException if a dggrs zone computation failed
      */
-    public DiscreteGlobalGridCoverage resample(FeatureSet featureSet, DiscreteGlobalGridGeometry gridGeometry, List<SampleDimension> sampleDimensions) throws DataStoreException, TransformException {
+    public CodedCoverage resample(FeatureSet featureSet, DiscreteGlobalGridGeometry gridGeometry, List<SampleDimension> sampleDimensions) throws DataStoreException, TransformException {
         final List<Object> zones = gridGeometry.getZoneIds();
 
         final List<Array> samples = new ArrayList<>();
@@ -318,25 +330,13 @@ public final class DiscreteGlobalGridCoverageProcessor {
         query.setProjection(projections.toArray(FeatureQuery.NamedExpression[]::new));
         final FeatureSet subset = featureSet.subset(query);
 
-        //todo : this approach is very basic, just as a proof of concept
-        final DiscreteGlobalGridReferenceSystem dggrs = gridGeometry.getReferenceSystem();
-        final DiscreteGlobalGridHierarchy hierarchy = dggrs.getGridSystem().getHierarchy();
+        FeatureType type = subset.getType();
+        final Class geomClass = Features.getValueClass(type.getProperty(AttributeConvention.GEOMETRY));
 
-        //prepare all zones as geometries
-        //todo create a quadtree
-        final Quadtree tree = new Quadtree();
-        final int nbZones = zones.size();
-        IntStream.range(0, nbZones).parallel().forEach(new IntConsumer() {
-            @Override
-            public void accept(int i) {
-                final Zone zone = hierarchy.getZone(zones.get(i));
-                final Polygon zoneGeom = DiscreteGlobalGridSystems.toJTSPolygon(zone.getGeographicExtent());
-                final org.locationtech.jts.geom.Envelope zenv = zoneGeom.getEnvelopeInternal();
-                synchronized(tree) {
-                    tree.insert(zenv, new Object[]{zenv, zoneGeom, i});
-                }
-            }
-        });
+
+        final DiscreteGlobalGridReferenceSystem dggrs = gridGeometry.getReferenceSystem();
+        final DiscreteGlobalGridHierarchy dggh = dggrs.getGridSystem().getHierarchy();
+        final DiscreteGlobalGrid grid = dggh.getGrids().get(gridGeometry.getRefinementLevel());
 
         MathTransform trs;
         try { //todo remove when SIS bug is fixed
@@ -356,52 +356,113 @@ public final class DiscreteGlobalGridCoverageProcessor {
             throw new DataStoreException(ex.getMessage(), ex);
         }
 
-        final Vector1D.Double buffer = new Vector1D.Double();
-        try (Stream<Feature> stream = subset.features(false)) {
-            final Iterator<Feature> fite = stream.iterator();
-            zoneLoop:
-            while (fite.hasNext()) {
-                final Feature feature = fite.next();
-                org.locationtech.jts.geom.Geometry geom = (org.locationtech.jts.geom.Geometry) feature.getPropertyValue(AttributeConvention.GEOMETRY);
-                org.locationtech.jts.geom.Envelope geomEnv = geom.getEnvelopeInternal();
+        if (geomClass == Point.class) {
+            //use a more efficient approach
 
-                if (true && trs != null) { //waiting for fix in SIS
-                    geom = JTS.transform(geom, trs);
-                    geomEnv = geom.getEnvelopeInternal();
-                }
+            final Map<Long,Integer> index = new HashMap();
+            for (int i = 0, n = zones.size(); i < n; i++) {
+                index.put((Long) zones.get(i), i);
+            }
 
-                final List<Object[]> candidates = tree.query(geomEnv);
-                for (Object[] entry : candidates) {
-                    if (((Geometry)entry[1]).intersects(geom)) {
-                        final int zoneIndex = (Integer) entry[2];
+            final double[] coord = new double[2];
+            final DirectPosition dp = new GeneralDirectPosition(coord);
+            try (Stream<Feature> stream = subset.features(false)) {
+                final Iterator<Feature> fite = stream.iterator();
+                zoneLoop:
+                while (fite.hasNext()) {
+                    final Feature feature = fite.next();
+                    org.locationtech.jts.geom.Point pt = (org.locationtech.jts.geom.Point) feature.getPropertyValue(AttributeConvention.GEOMETRY);
+                    coord[0] = pt.getX();
+                    coord[1] = pt.getY();
+                    if(trs != null) trs.transform(coord, 0, coord, 0, 1);
+                    Zone z = grid.getZone(dp);
 
+                    Integer zoneIndex = index.get(z.getLongIdentifier());
+                    if (zoneIndex != null) {
                         for (int i = 0; i < propertyNames.length; i++) {
                             Object value = feature.getPropertyValue(propertyNames[i]);
                             if (value instanceof Number n) {
-                                buffer.x = n.doubleValue();
-                                if (!Double.isNaN(buffer.x)) {
+                                double v = n.doubleValue();
+                                if (!Double.isNaN(v)) {
                                     if (stats[i][zoneIndex] == null) {
                                         stats[i][zoneIndex] = new Statistics("");
                                     }
-                                    stats[i][zoneIndex].accept(buffer.x);
+                                    stats[i][zoneIndex].accept(v);
                                 }
-                                //fast method without stats
-                                //samples.get(i).set(zoneIndex, buffer);
                             }
                         }
-
-                        //TODO we should make a 'fast mode case'
-                        //remove this zone from futur searchs
-                        //tree.remove((org.locationtech.jts.geom.Envelope) entry[0], entry[1]);
-                        //continue zoneLoop; // a feature may intersect multiple zones
                     }
                 }
             }
-        } catch (TransformException ex) {
-            throw new DataStoreException(ex.getMessage(), ex);
+
+        } else {
+            //todo : this approach is very basic, just as a proof of concept
+
+            //prepare all zones as geometries
+            //todo create a quadtree
+            final Quadtree tree = new Quadtree();
+            final int nbZones = zones.size();
+            IntStream.range(0, nbZones).parallel().forEach(new IntConsumer() {
+                @Override
+                public void accept(int i) {
+                    final Zone zone = dggh.getZone(zones.get(i));
+                    final Polygon zoneGeom = DiscreteGlobalGridSystems.toJTSPolygon(zone.getGeographicExtent());
+                    final org.locationtech.jts.geom.Envelope zenv = zoneGeom.getEnvelopeInternal();
+                    synchronized(tree) {
+                        tree.insert(zenv, new Object[]{zenv, zoneGeom, i});
+                    }
+                }
+            });
+
+            final Vector1D.Double buffer = new Vector1D.Double();
+            try (Stream<Feature> stream = subset.features(false)) {
+                final Iterator<Feature> fite = stream.iterator();
+                zoneLoop:
+                while (fite.hasNext()) {
+                    final Feature feature = fite.next();
+                    org.locationtech.jts.geom.Geometry geom = (org.locationtech.jts.geom.Geometry) feature.getPropertyValue(AttributeConvention.GEOMETRY);
+                    org.locationtech.jts.geom.Envelope geomEnv = geom.getEnvelopeInternal();
+
+                    if (true && trs != null) { //waiting for fix in SIS
+                        geom = JTS.transform(geom, trs);
+                        geomEnv = geom.getEnvelopeInternal();
+                    }
+
+                    final List<Object[]> candidates = tree.query(geomEnv);
+                    for (Object[] entry : candidates) {
+                        if (((Geometry)entry[1]).intersects(geom)) {
+                            final int zoneIndex = (Integer) entry[2];
+
+                            for (int i = 0; i < propertyNames.length; i++) {
+                                Object value = feature.getPropertyValue(propertyNames[i]);
+                                if (value instanceof Number n) {
+                                    buffer.x = n.doubleValue();
+                                    if (!Double.isNaN(buffer.x)) {
+                                        if (stats[i][zoneIndex] == null) {
+                                            stats[i][zoneIndex] = new Statistics("");
+                                        }
+                                        stats[i][zoneIndex].accept(buffer.x);
+                                    }
+                                    //fast method without stats
+                                    //samples.get(i).set(zoneIndex, buffer);
+                                }
+                            }
+
+                            //TODO we should make a 'fast mode case'
+                            //remove this zone from futur searchs
+                            //tree.remove((org.locationtech.jts.geom.Envelope) entry[0], entry[1]);
+                            //continue zoneLoop; // a feature may intersect multiple zones
+                        }
+                    }
+                }
+            } catch (TransformException ex) {
+                throw new DataStoreException(ex.getMessage(), ex);
+            }
+
         }
 
         //copy stats to buffers
+        final Vector1D.Double buffer = new Vector1D.Double();
         for(int i = 0; i < stats.length; i++) {
             final Array arr = samples.get(i);
             for(int k = 0; k < stats[0].length; k++) {
@@ -428,7 +489,7 @@ public final class DiscreteGlobalGridCoverageProcessor {
      * @return
      * @throws DataStoreException
      */
-    public DiscreteGlobalGridCoverage resampleZonalCoverage(GridCoverageResource source, DiscreteGlobalGridGeometry gridGeometry, int... range) throws DataStoreException, TransformException {
+    public CodedCoverage resampleZonalCoverage(GridCoverageResource source, DiscreteGlobalGridGeometry gridGeometry, int... range) throws DataStoreException, TransformException {
         final List<Object> zones = gridGeometry.getZoneIds();
 
         List<SampleDimension> sampleDimensions = source.getSampleDimensions();
@@ -532,40 +593,62 @@ public final class DiscreteGlobalGridCoverageProcessor {
      * @throws DataStoreException
      * @throws TransformException
      */
-    public DiscreteGlobalGridCoverage resample(DiscreteGlobalGridCoverage coverage, DiscreteGlobalGridGeometry gridGeometry, int ... range) throws FactoryException, DataStoreException, TransformException {
+    public CodedCoverage resample(CodedCoverage coverage, CodedGeometry query, int ... range) throws FactoryException, DataStoreException, TransformException {
 
-        final DiscreteGlobalGridReferenceSystem dggrs = gridGeometry.getReferenceSystem();
-        final DiscreteGlobalGridHierarchy dggh = dggrs.getGridSystem().getHierarchy();
-        final List<SampleDimension> sampleDimensions = coverage.getSampleDimensions();
+        if (query instanceof DiscreteGlobalGridGeometry) {
+            final DiscreteGlobalGridGeometry dggGrid = (DiscreteGlobalGridGeometry) query;
+            if (coverage instanceof AddDimCodedCoverage ad) {
+                //remove any extra slice information
+                coverage = ad.getSource();
+            }
 
-        final List<Object> zones = gridGeometry.getZoneIds();
-        final List<Array> samples = new ArrayList<>();
-        final double[] nans = new double[sampleDimensions.size()];
-        for (int i = 0; i < nans.length; i++) {
-            final SampleSystem ss = new SampleSystem(DataType.DOUBLE, sampleDimensions.get(i));
-            samples.add(NDArrays.of(ss, new double[zones.size()]));
-            nans[i] = Double.NaN;
+            final DiscreteGlobalGridReferenceSystem dggrs = dggGrid.getReferenceSystem();
+            final DiscreteGlobalGridHierarchy dggh = dggrs.getGridSystem().getHierarchy();
+            final List<SampleDimension> sampleDimensions = coverage.getSampleDimensions();
+
+            final CodeOperation op = ReferenceSystems.findOperation(dggrs, coverage.getGeometry().getReferenceSystem(), null);
+            final CodeTransform toCode = dggGrid.getGridToRS();
+            final CodedCoverage.CodeEvaluator eva = coverage.codeEvaluator();
+
+            final ArrayDiscreteGlobalGridCoverage target = new ArrayDiscreteGlobalGridCoverage(Names.createLocalName(null, null, "Resampled"), dggGrid, sampleDimensions.toArray(SampleDimension[]::new));
+            Code tcode = null;
+            try (final WritableCodeIterator iterator = target.createWritableIterator()) {
+                while (iterator.next()) {
+                    final int[] gridPosition = iterator.getPosition();
+                    final Code code = toCode.toCode(gridPosition);
+                    if (!(code.getOrdinate(0) instanceof CharSequence)) {
+                        code.setOrdinate(0, dggh.toTextIdentifier(code.getOrdinate(0)));
+                    }
+                    tcode = op.transform(code, tcode);
+                    double[] values = eva.apply(tcode);
+                    if (values != null) {
+                        iterator.setCell(values);
+                    }
+                }
+            }
+
+            return target;
         }
 
+        //general case
+        final ReferenceSystem dggrs = query.getReferenceSystem();
+        final List<SampleDimension> sampleDimensions = coverage.getSampleDimensions();
+        final CodedCoverage target = new ArrayCodedCoverage(Names.createLocalName(null, null, "Resampled"), query, sampleDimensions.toArray(SampleDimension[]::new));
+
         final CodeOperation op = ReferenceSystems.findOperation(dggrs, coverage.getGeometry().getReferenceSystem(), null);
-        final CodeTransform toCode = gridGeometry.getGridToRS();
+        final CodeTransform toCode = query.getGridToRS();
         final CodedCoverage.CodeEvaluator eva = coverage.codeEvaluator();
 
-        final ArrayDiscreteGlobalGridCoverage target = new ArrayDiscreteGlobalGridCoverage(Names.createLocalName(null, null, "Resampled"), gridGeometry, samples);
         Code tcode = null;
         try (final WritableCodeIterator iterator = target.createWritableIterator()) {
             while (iterator.next()) {
                 final int[] gridPosition = iterator.getPosition();
                 final Code code = toCode.toCode(gridPosition);
-                if (!(code.getOrdinate(0) instanceof CharSequence)) {
-                    code.setOrdinate(0, dggh.toTextIdentifier(code.getOrdinate(0)));
-                }
                 tcode = op.transform(code, tcode);
                 double[] values = eva.apply(tcode);
-                if (values == null) {
-                    values = nans;
+                if (values != null) {
+                    iterator.setCell(values);
                 }
-                iterator.setCell(values);
             }
         }
 

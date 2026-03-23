@@ -35,6 +35,7 @@ import org.apache.sis.map.MapLayer;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.storage.NoSuchDataException;
 import org.apache.sis.storage.Query;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.collection.BackingStoreException;
@@ -130,6 +131,8 @@ public abstract class AbstractSymbolizerRenderer<C extends CachedSymbolizer<? ex
                 CodedResource cr = (CodedResource) resource;
                 final CodedCoverage coverage = cr.read(renderingContext.getGridGeometry2D());
                 resource = new CodedCoverageAsFeatureSet(coverage, false, CodedCoverageAsFeatureSet.GEOMETRY_ZONE_REGION);
+            } catch (NoSuchDataException ex) {
+                return Stream.empty();
             } catch (DataStoreException ex) {
                 ExceptionPresentation ep = new ExceptionPresentation(ex);
                 ep.setLayer(layer);

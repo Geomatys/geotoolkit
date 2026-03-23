@@ -25,9 +25,9 @@ import org.apache.sis.storage.AbstractResource;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridHierarchy;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
-import org.geotoolkit.storage.dggs.DiscreteGlobalGridCoverage;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridGeometry;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridResource;
+import org.geotoolkit.storage.rs.CodedCoverage;
 import org.geotoolkit.storage.rs.CodedGeometry;
 import org.opengis.referencing.operation.TransformException;
 
@@ -64,7 +64,7 @@ public abstract class TiledDiscreteGlobalGridCoverageResource extends AbstractRe
     public abstract int getTileRelativeDepth();
 
     @Override
-    public DiscreteGlobalGridCoverage read(CodedGeometry query, int... range) throws DataStoreException {
+    public CodedCoverage read(CodedGeometry query, int... range) throws DataStoreException {
         final DiscreteGlobalGridGeometry localGridGeometry = getGridGeometry();
         final DiscreteGlobalGridReferenceSystem localDggrs = localGridGeometry.getReferenceSystem();
         final NumberRange<Integer> availableDepths = getAvailableDepths();
@@ -95,14 +95,14 @@ public abstract class TiledDiscreteGlobalGridCoverageResource extends AbstractRe
             parentZoneIds = pzoneIds.toArray();
         }
 
-        final List<DiscreteGlobalGridCoverage> tiles = new ArrayList<>();
+        final List<CodedCoverage> tiles = new ArrayList<>();
         for (Object pid : parentZoneIds) {
-            DiscreteGlobalGridCoverage coverage = getZoneTile(pid);
+            CodedCoverage coverage = getZoneTile(pid);
             if (coverage != null) tiles.add(coverage);
         }
 
         try {
-            return new TiledDiscreteGlobalGridCoverage(tiles.toArray(DiscreteGlobalGridCoverage[]::new));
+            return new TiledDiscreteGlobalGridCoverage(tiles.toArray(CodedCoverage[]::new));
         } catch (TransformException ex) {
             throw new DataStoreException(ex);
         }
@@ -115,6 +115,6 @@ public abstract class TiledDiscreteGlobalGridCoverageResource extends AbstractRe
      * @return tile or null if the tile do not exist
      * @throws DataStoreException
      */
-    public abstract DiscreteGlobalGridCoverage getZoneTile(Object identifierOrZone) throws DataStoreException;
+    public abstract CodedCoverage getZoneTile(Object identifierOrZone) throws DataStoreException;
 
 }

@@ -17,15 +17,18 @@
 package org.geotoolkit.storage.dggs.internal.shared;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.geometries.math.Array;
 import org.apache.sis.geometries.math.Cursor;
+import org.apache.sis.geometries.math.DataType;
+import org.apache.sis.geometries.math.NDArrays;
+import org.apache.sis.geometries.math.SampleSystem;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridGeometry;
 import org.geotoolkit.storage.rs.CodeIterator;
 import org.geotoolkit.storage.rs.WritableCodeIterator;
-import org.opengis.feature.FeatureType;
 import org.opengis.util.GenericName;
 
 /**
@@ -52,6 +55,21 @@ public final class ArrayDiscreteGlobalGridCoverage extends IndexedDiscreteGlobal
                 throw new IllegalArgumentException("Samples tuple arrays must have a dimension of 1");
             }
         }
+    }
+
+    public ArrayDiscreteGlobalGridCoverage(GenericName name, DiscreteGlobalGridGeometry gridGeometry, SampleDimension ... sampleDimensions) {
+        super(gridGeometry);
+        this.name = name;
+
+        final int nbZones = Math.toIntExact(gridGeometry.getExtent().getSize(0));
+        final List<Array> samples = new ArrayList<>();
+        for (int i = 0; i < sampleDimensions.length; i++) {
+            final SampleSystem ss = new SampleSystem(DataType.DOUBLE, sampleDimensions[i]);
+            double[] arr = new double[nbZones];
+            Arrays.fill(arr, Double.NaN);
+            samples.add(NDArrays.of(ss, arr));
+        }
+        this.samples = samples;
     }
 
     public List<Array> getSamples() {

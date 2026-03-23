@@ -66,7 +66,7 @@ final class DGGALDggh extends AbstractDiscreteGlobalGridHierarchy<DGGALDggrs> {
         } else if (zoneId instanceof DGGALZone z) {
             return z.getTextIdentifier().toString();
         } else {
-            throw new IllegalArgumentException("Identifer not supported");
+            throw new IllegalArgumentException("Identifer not supported " + zoneId);
         }
     }
 
@@ -79,7 +79,7 @@ final class DGGALDggh extends AbstractDiscreteGlobalGridHierarchy<DGGALDggrs> {
         } else if (zoneId instanceof DGGALZone z) {
             return z.getLongIdentifier();
         } else {
-            throw new IllegalArgumentException("Identifer not supported");
+            throw new IllegalArgumentException("Identifer not supported " + zoneId);
         }
     }
 

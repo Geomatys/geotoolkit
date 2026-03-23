@@ -23,10 +23,10 @@ import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.StorageConnector;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
 import org.geotoolkit.referencing.dggs.Zone;
-import org.geotoolkit.storage.dggs.DiscreteGlobalGridCoverage;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridGeometry;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridResource;
 import org.geotoolkit.storage.rs.CodeIterator;
+import org.geotoolkit.storage.rs.CodedCoverage;
 
 /**
  *
@@ -52,7 +52,7 @@ public class HIPSTest {
                     final Zone baseZone = coder.decode(roots.get(0));
                     Stream<Zone> children = baseZone.getChildrenAtRelativeDepth(3);
                     List<Object> zones = children.map(Zone::getIdentifier).toList();
-                    DiscreteGlobalGridCoverage coverage = dgr.read(DiscreteGlobalGridGeometry.unstructured(dggrs, zones, null));
+                    CodedCoverage coverage = dgr.read(DiscreteGlobalGridGeometry.unstructured(dggrs, zones, null));
 
                     CodeIterator ite = coverage.createIterator();
                     while (ite.next()) {

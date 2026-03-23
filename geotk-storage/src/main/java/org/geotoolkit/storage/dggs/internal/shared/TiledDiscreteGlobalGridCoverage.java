@@ -22,9 +22,9 @@ import org.apache.sis.coverage.BandedCoverage;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
-import org.geotoolkit.storage.dggs.DiscreteGlobalGridCoverage;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridGeometry;
 import org.geotoolkit.storage.rs.CodeIterator;
+import org.geotoolkit.storage.rs.CodedCoverage;
 import org.geotoolkit.storage.rs.WritableCodeIterator;
 import org.opengis.coverage.CannotEvaluateException;
 import org.opengis.coverage.PointOutsideCoverageException;
@@ -37,9 +37,9 @@ import org.opengis.referencing.operation.TransformException;
  */
 public final class TiledDiscreteGlobalGridCoverage extends AbstractDiscreteGlobalGridCoverage {
 
-    private final DiscreteGlobalGridCoverage[] tiles;
+    private final CodedCoverage[] tiles;
 
-    public TiledDiscreteGlobalGridCoverage(DiscreteGlobalGridCoverage[] tiles) throws TransformException {
+    public TiledDiscreteGlobalGridCoverage(CodedCoverage[] tiles) throws TransformException {
         super(aggregateGeometries(tiles));
         this.tiles = tiles;
     }
@@ -64,13 +64,13 @@ public final class TiledDiscreteGlobalGridCoverage extends AbstractDiscreteGloba
         return new TiledEvaluator();
     }
 
-    private static DiscreteGlobalGridGeometry aggregateGeometries(DiscreteGlobalGridCoverage[] tiles) throws TransformException {
+    private static DiscreteGlobalGridGeometry aggregateGeometries(CodedCoverage[] tiles) throws TransformException {
         DiscreteGlobalGridReferenceSystem dggrs = null;
         final Object[] parentZoneIds = new Object[tiles.length];
         Integer relativeDepth = null;
         Integer baseDepth = null;
         for (int i = 0; i < tiles.length; i++) {
-            final DiscreteGlobalGridGeometry geometry = tiles[i].getGeometry();
+            final DiscreteGlobalGridGeometry geometry = (DiscreteGlobalGridGeometry) tiles[i].getGeometry();
             Object[] baseZoneIds = geometry.getBaseZoneIds();
             if (baseZoneIds == null || baseZoneIds.length != 1) {
                 throw new IllegalArgumentException("Tile must have a single parent zone identifier");
@@ -115,7 +115,7 @@ public final class TiledDiscreteGlobalGridCoverage extends AbstractDiscreteGloba
             for (int i = 0; i < iterators.length; i++) {
                 iterators[i] = tiles[i].createIterator();
                 offsets[i] = count;
-                count += tiles[i].getGeometry().getZoneIds().size();
+                count += ((DiscreteGlobalGridGeometry)tiles[i].getGeometry()).getZoneIds().size();
             }
             this.size = count;
         }
@@ -189,7 +189,7 @@ public final class TiledDiscreteGlobalGridCoverage extends AbstractDiscreteGloba
             for (int i = 0; i < iterators.length; i++) {
                 iterators[i] = tiles[i].createWritableIterator();
                 offsets[i] = count;
-                count += tiles[i].getGeometry().getZoneIds().size();
+                count += ((DiscreteGlobalGridGeometry)tiles[i].getGeometry()).getZoneIds().size();
             }
             this.size = count;
         }

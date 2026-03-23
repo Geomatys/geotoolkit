@@ -17,7 +17,7 @@
 package org.geotoolkit.storage.dggs.internal.shared;
 
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.storage.dggs.DiscreteGlobalGridCoverage;
+import org.geotoolkit.storage.rs.CodedCoverage;
 
 /**
  *
@@ -32,5 +32,5 @@ public abstract class WritableTiledDiscreteGlobalGridCoverageResource extends Ti
      * @param data tile data, null to erase tile.
      * @throws DataStoreException
      */
-    public abstract void setZoneTile(Object identifierOrZone, DiscreteGlobalGridCoverage data) throws DataStoreException;
+    public abstract void setZoneTile(Object identifierOrZone, CodedCoverage data) throws DataStoreException;
 }
