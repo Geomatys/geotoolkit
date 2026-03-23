@@ -45,6 +45,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.geotoolkit.storage.rs.CodeTransform;
+import org.geotoolkit.storage.rs.internal.shared.SubTransform;
 import org.opengis.metadata.extent.GeographicExtent;
 import org.opengis.referencing.ReferenceSystem;
 
@@ -449,7 +450,7 @@ public abstract class DiscreteGlobalGridGeometry extends CodedGeometry {
         }
     }
 
-    private static class SubZoneTransform implements CodeTransform {
+    private static class SubZoneTransform extends SubTransform {
 
         private final DiscreteGlobalGridReferenceSystem dggrs;
         private final Object baseZoneId;
@@ -525,9 +526,23 @@ public abstract class DiscreteGlobalGridGeometry extends CodedGeometry {
             throw new IllegalArgumentException("Can not split transform at offset " + offset +" with size " + size);
         }
 
+        @Override
+        public void toAddress(int[] gridPosition, Object[] location, int offset) throws TransformException {
+            init();
+            location[offset] = zids[gridPosition[offset]];
+        }
+
+        @Override
+        public void toGrid(Object[] location, int[] gridPosition, int offset) throws TransformException {
+            init();
+            final Integer i = index.get(location[offset]);
+            if (i == null) throw new TransformException("Location code outside this grid : " + location[offset]);
+            gridPosition[offset] = i;
+        }
+
     }
 
-    private static class SubZoneTransforms extends AbstractList<Object> implements CodeTransform {
+    private static class SubZoneTransforms extends SubTransform {
 
         private final DiscreteGlobalGridReferenceSystem dggrs;
         private final SubZoneTransform[] tiles;
@@ -536,6 +551,31 @@ public abstract class DiscreteGlobalGridGeometry extends CodedGeometry {
         private final int relativeDepth;
         private final GridExtent extent;
         private final long count;
+
+        private final AbstractList<Object> zids = new AbstractList<Object>() {
+            @Override
+            public Object get(int index) {
+                int idx = Arrays.binarySearch(offsets, index);
+                if (idx < 0) {
+                    idx = -(idx +1);
+                    // use the previous iterator
+                    idx--;
+                }
+                if (idx == offsets.length) {
+                    throw new IllegalArgumentException("Position is outside grid : " + index);
+                }
+                try {
+                    return tiles[idx].getZids()[index - (int)offsets[idx]];
+                } catch (TransformException ex) {
+                    throw new RuntimeException(ex.getMessage(), ex);
+                }
+            }
+
+            @Override
+            public int size() {
+                return (int) count;
+            }
+        };
 
         public SubZoneTransforms(SubZoneTransform[] tiles) {
             this.dggrs = tiles[0].dggrs;
@@ -564,8 +604,18 @@ public abstract class DiscreteGlobalGridGeometry extends CodedGeometry {
         }
 
         @Override
-        public Code toCode(int[] gridPosition) throws TransformException {
-            final int gp = gridPosition[0];
+        public CodeTransform split(int offset, int size) {
+            if (offset == 0 && size == 1) return this;
+            throw new IllegalArgumentException("Can not split transform at offset " + offset +" with size " + size);
+        }
+
+        public List<Object> getZids() {
+            return zids;
+        }
+
+        @Override
+        public void toAddress(int[] gridPosition, Object[] location, int offset) throws TransformException {
+            final int gp = gridPosition[offset];
 
             int idx = Arrays.binarySearch(offsets, gp);
             if (idx < 0) {
@@ -574,52 +624,22 @@ public abstract class DiscreteGlobalGridGeometry extends CodedGeometry {
                 idx--;
             }
             if (idx == offsets.length) {
-                throw new IllegalArgumentException("Position is outside grid : " + gp);
+                throw new TransformException("Position is outside grid : " + gp);
             }
-            return tiles[idx].toCode(new int[]{gp - (int)offsets[idx]});
+            location[offset] = tiles[idx].toCode(new int[]{gp - (int)offsets[idx]});
         }
 
         @Override
-        public int[] toGrid(Code location) throws TransformException {
-            final Object zid = location.getOrdinate(0);
+        public void toGrid(Object[] location, int[] gridPosition, int offset) throws TransformException {
+            final Object zid = location[offset];
             for (SubZoneTransform trs : tiles) {
                 Integer g = trs.toGridInternal(zid);
-                if (g != null) return new int[]{g};
+                if (g != null) {
+                    gridPosition[offset] = g;
+                    return;
+                }
             }
             throw new TransformException("Location code outside this grid : " + zid);
-        }
-
-        @Override
-        public CodeTransform split(int offset, int size) {
-            if (offset == 0 && size == 1) return this;
-            throw new IllegalArgumentException("Can not split transform at offset " + offset +" with size " + size);
-        }
-
-        @Override
-        public Object get(int index) {
-            int idx = Arrays.binarySearch(offsets, index);
-            if (idx < 0) {
-                idx = -(idx +1);
-                // use the previous iterator
-                idx--;
-            }
-            if (idx == offsets.length) {
-                throw new IllegalArgumentException("Position is outside grid : " + index);
-            }
-            try {
-                return tiles[idx].getZids()[index - (int)offsets[idx]];
-            } catch (TransformException ex) {
-                throw new RuntimeException(ex.getMessage(), ex);
-            }
-        }
-
-        @Override
-        public int size() {
-            return (int) count;
-        }
-
-        public List<Object> getZids() {
-            return this;
         }
 
     }

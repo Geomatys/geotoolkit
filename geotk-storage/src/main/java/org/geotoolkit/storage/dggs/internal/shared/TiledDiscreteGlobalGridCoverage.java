@@ -20,18 +20,14 @@ import java.util.Arrays;
 import java.util.List;
 import org.apache.sis.coverage.BandedCoverage;
 import org.apache.sis.coverage.SampleDimension;
-import org.apache.sis.feature.builder.AttributeTypeBuilder;
-import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridCoverage;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridGeometry;
-import org.geotoolkit.storage.rs.internal.shared.BandedCodeIterator;
-import org.geotoolkit.storage.rs.internal.shared.CodedCoverageAsFeatureSet;
-import org.geotoolkit.storage.rs.internal.shared.WritableBandedCodeIterator;
+import org.geotoolkit.storage.rs.CodeIterator;
+import org.geotoolkit.storage.rs.WritableCodeIterator;
 import org.opengis.coverage.CannotEvaluateException;
 import org.opengis.coverage.PointOutsideCoverageException;
-import org.opengis.feature.FeatureType;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.operation.TransformException;
 
@@ -43,35 +39,19 @@ public final class TiledDiscreteGlobalGridCoverage extends AbstractDiscreteGloba
 
     private final DiscreteGlobalGridCoverage[] tiles;
 
-    private final FeatureType sampleType;
-    private final String[] mapping;
-
     public TiledDiscreteGlobalGridCoverage(DiscreteGlobalGridCoverage[] tiles) throws TransformException {
         super(aggregateGeometries(tiles));
         this.tiles = tiles;
-
-        sampleType = tiles[0].getSampleType();
-        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-        final AttributeTypeBuilder<?>[] created = CodedCoverageAsFeatureSet.toFeatureType(ftb, tiles[0].getSampleDimensions());
-        mapping = new String[created.length];
-        for (int i = 0; i < created.length; i++) {
-            mapping[i] = created[i].getName().toString();
-        }
     }
 
     @Override
-    public BandedCodeIterator createIterator() {
+    public CodeIterator createIterator() {
         return new TiledIterator();
     }
 
     @Override
-    public WritableBandedCodeIterator createWritableIterator() {
+    public WritableCodeIterator createWritableIterator() {
         return new WritableTiledIterator();
-    }
-
-    @Override
-    public FeatureType getSampleType() {
-        return sampleType;
     }
 
     @Override
@@ -119,22 +99,21 @@ public final class TiledDiscreteGlobalGridCoverage extends AbstractDiscreteGloba
         return DiscreteGlobalGridGeometry.subZones(dggrs, parentZoneIds, relativeDepth);
     }
 
-    private final class TiledIterator extends BandedCodeIterator {
+    private final class TiledIterator implements CodeIterator {
 
-        private final BandedCodeIterator[] iterators;
+        private final CodeIterator[] iterators;
         private final int[] offsets;
         private int size;
 
-        private BandedCodeIterator iterator;
+        private CodeIterator iterator;
         private int position = -1;
 
         private TiledIterator() {
-            super(sampleType, mapping);
-            this.iterators = new BandedCodeIterator[tiles.length];
+            this.iterators = new CodeIterator[tiles.length];
             this.offsets = new int[tiles.length];
             int count = 0;
             for (int i = 0; i < iterators.length; i++) {
-                iterators[i] = (BandedCodeIterator) tiles[i].createIterator();
+                iterators[i] = tiles[i].createIterator();
                 offsets[i] = count;
                 count += tiles[i].getGeometry().getZoneIds().size();
             }
@@ -157,15 +136,14 @@ public final class TiledDiscreteGlobalGridCoverage extends AbstractDiscreteGloba
         }
 
         @Override
-        public double getSampleDouble(int band) {
-            updateIterator();
-            return iterator.getSampleDouble(band);
+        public int getNumBands() {
+            return getSampleDimensions().size();
         }
 
         @Override
-        public void setPropertyValue(String name, Object value) throws IllegalArgumentException {
+        public double getSampleDouble(int band) {
             updateIterator();
-            iterator.setPropertyValue(name, value);
+            return iterator.getSampleDouble(band);
         }
 
         @Override
@@ -195,22 +173,21 @@ public final class TiledDiscreteGlobalGridCoverage extends AbstractDiscreteGloba
 
     }
 
-    private final class WritableTiledIterator extends WritableBandedCodeIterator {
+    private final class WritableTiledIterator implements WritableCodeIterator {
 
-        private final WritableBandedCodeIterator[] iterators;
+        private final WritableCodeIterator[] iterators;
         private final int[] offsets;
         private int size;
 
-        private WritableBandedCodeIterator iterator;
+        private WritableCodeIterator iterator;
         private int position = -1;
 
         private WritableTiledIterator() {
-            super(sampleType, mapping);
-            this.iterators = new WritableBandedCodeIterator[tiles.length];
+            this.iterators = new WritableCodeIterator[tiles.length];
             this.offsets = new int[tiles.length];
             int count = 0;
             for (int i = 0; i < iterators.length; i++) {
-                iterators[i] = (WritableBandedCodeIterator) tiles[i].createWritableIterator();
+                iterators[i] = tiles[i].createWritableIterator();
                 offsets[i] = count;
                 count += tiles[i].getGeometry().getZoneIds().size();
             }
@@ -233,15 +210,14 @@ public final class TiledDiscreteGlobalGridCoverage extends AbstractDiscreteGloba
         }
 
         @Override
-        public double getSampleDouble(int band) {
-            updateIterator();
-            return iterator.getSampleDouble(band);
+        public int getNumBands() {
+            return getSampleDimensions().size();
         }
 
         @Override
-        public void setPropertyValue(String name, Object value) throws IllegalArgumentException {
+        public double getSampleDouble(int band) {
             updateIterator();
-            iterator.setPropertyValue(name, value);
+            return iterator.getSampleDouble(band);
         }
 
         @Override
@@ -277,7 +253,7 @@ public final class TiledDiscreteGlobalGridCoverage extends AbstractDiscreteGloba
 
         @Override
         public void close() throws DataStoreException {
-            for (WritableBandedCodeIterator i : iterators) {
+            for (WritableCodeIterator i : iterators) {
                 i.close();
             }
         }

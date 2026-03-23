@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.geometries.math.Array;
 import org.apache.sis.geometries.math.Cursor;
 import org.apache.sis.geometries.math.DataType;
@@ -28,7 +28,9 @@ import org.apache.sis.geometries.math.NDArrays;
 import org.apache.sis.geometries.math.SampleSystem;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.multires.TileMatrices;
+import org.geotoolkit.storage.rs.CodeIterator;
 import org.geotoolkit.storage.rs.CodedGeometry;
+import org.geotoolkit.storage.rs.WritableCodeIterator;
 import org.opengis.feature.FeatureType;
 import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
@@ -42,15 +44,15 @@ public final class ArrayCodedCoverage extends AbstractCodedCoverage{
 
     private final List<Array> samples;
 
-    public ArrayCodedCoverage(final GenericName name, CodedGeometry gridGeometry, FeatureType sampleType) throws FactoryException {
-        super(name, gridGeometry, sampleType);
+    public ArrayCodedCoverage(final GenericName name, CodedGeometry gridGeometry, SampleDimension ... sampleDimensions) throws FactoryException {
+        super(name, gridGeometry, List.of(sampleDimensions));
 
         final int nbCell = Math.toIntExact(TileMatrices.countCells(gridGeometry.getExtent()));
 
         samples = new ArrayList<>();
-        final double[] nans = new double[sampleDimensions.size()];
+        final double[] nans = new double[sampleDimensions.length];
         for (int i = 0; i < nans.length; i++) {
-            final SampleSystem ss = new SampleSystem(DataType.DOUBLE, sampleDimensions.get(i));
+            final SampleSystem ss = new SampleSystem(DataType.DOUBLE, sampleDimensions[i]);
             final double[] datas = new double[nbCell];
             Arrays.fill(datas, Double.NaN);
             samples.add(NDArrays.of(ss, datas));
@@ -59,7 +61,7 @@ public final class ArrayCodedCoverage extends AbstractCodedCoverage{
     }
 
     public ArrayCodedCoverage(final GenericName name, CodedGeometry gridGeometry, List<Array> samples) throws FactoryException {
-        super(name, gridGeometry, createType(name, samples));
+        super(name, gridGeometry, toSds(samples));
 
         this.samples = samples;
         final long nbCell = TileMatrices.countCells(extent);
@@ -73,13 +75,12 @@ public final class ArrayCodedCoverage extends AbstractCodedCoverage{
         }
     }
 
-    private static FeatureType createType(GenericName name, List<Array> sampleDimensions) {
-        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-        ftb.setName(name);
+    private static List<SampleDimension> toSds(List<Array> sampleDimensions) {
+        final List<SampleDimension> dims = new ArrayList<>();
         for (Array ta : sampleDimensions) {
-            CodedCoverageAsFeatureSet.toFeatureType(ftb, ta.getSampleSystem().getSampleDimensions());
+            dims.add(ta.getSampleSystem().getSampleDimensions().get(0));
         }
-        return ftb.build();
+        return dims;
     }
 
     public List<Array> getSamples() {
@@ -87,13 +88,13 @@ public final class ArrayCodedCoverage extends AbstractCodedCoverage{
     }
 
     @Override
-    public BandedCodeIterator createIterator() {
+    public CodeIterator createIterator() {
         return createWritableIterator();
     }
 
     @Override
-    public WritableBandedCodeIterator createWritableIterator() {
-        return new Iterator(getSampleType(), mapping);
+    public WritableCodeIterator createWritableIterator() {
+        return new Iterator();
     }
 
     @Override
@@ -118,15 +119,14 @@ public final class ArrayCodedCoverage extends AbstractCodedCoverage{
         return super.equals(obj) && Objects.equals(this.samples, other.samples);
     }
 
-    private final class Iterator extends WritableBandedCodeIterator {
+    private final class Iterator implements WritableCodeIterator {
 
         private long linearPosition = -1;
         private final long nbCell;
 
         private final Cursor[] cursors;
 
-        public Iterator(FeatureType type, String[] mapping) {
-            super(type, mapping);
+        public Iterator() {
             nbCell = TileMatrices.countCells(extent);
 
             cursors = new Cursor[samples.size()];

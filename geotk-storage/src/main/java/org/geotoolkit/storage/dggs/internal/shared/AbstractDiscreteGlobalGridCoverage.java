@@ -38,8 +38,6 @@ import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridCoverage;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridGeometry;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
-import org.geotoolkit.storage.rs.internal.shared.BandedCodeIterator;
-import org.geotoolkit.storage.rs.internal.shared.WritableBandedCodeIterator;
 import org.opengis.coverage.CannotEvaluateException;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -80,12 +78,6 @@ public abstract class AbstractDiscreteGlobalGridCoverage extends DiscreteGlobalG
     public double[] getResolution(boolean allowEstimate) throws DataStoreException {
         return gridGeometry.getResolution(allowEstimate);
     }
-
-    @Override
-    public abstract BandedCodeIterator createIterator();
-
-    @Override
-    public abstract WritableBandedCodeIterator createWritableIterator();
 
     @Override
     public GridCoverage sample(GridGeometry fullArea, GridGeometry tileArea) throws CannotEvaluateException {

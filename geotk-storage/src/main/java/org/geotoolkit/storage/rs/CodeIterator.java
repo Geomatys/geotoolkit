@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.storage.rs;
 
-import org.opengis.feature.Feature;
-
 /**
  * Referenced coverage location iterator.
  *
@@ -52,7 +50,73 @@ public interface CodeIterator {
      */
     boolean next();
 
-    Feature getSample();
+    /**
+     * @return number of bands in the coverage iterator
+     */
+    int getNumBands();
+
+    /**
+     * Get a cell sample.
+     *
+     * @param band index
+     * @return band value
+     */
+    default int getSample(int band) {
+        return (int) getSampleDouble(band);
+    }
+
+    /**
+     * Get a cell sample.
+     *
+     * @param band index
+     * @return band value
+     */
+    default float getSampleFloat(int band) {
+        return (float) getSampleDouble(band);
+    }
+
+    /**
+     * Get a cell sample.
+     *
+     * @param band index
+     * @return band value
+     */
+    public abstract double getSampleDouble(int band);
+
+    /**
+     * Get cell values..
+     *
+     * @return all band values
+     */
+    default int[] getCell(int[] dest) {
+        final double[] cell = getCell((double[])null);
+        if (dest == null) dest = new int[cell.length];
+        for (int i = 0; i < cell.length; i++) dest[i] = (int) cell[i];
+        return dest;
+    }
+
+    /**
+     * Get cell values..
+     *
+     * @return all band values
+     */
+    default float[] getCell(float[] dest) {
+        final double[] cell = getCell((double[]) null);
+        if (dest == null) dest = new float[cell.length];
+        for (int i = 0; i < cell.length; i++) dest[i] = (int) cell[i];
+        return dest;
+    }
+
+    /**
+     * Get cell values.
+     *
+     * @return all band values
+     */
+    default double[] getCell(double[] dest) {
+        if (dest == null) dest = new double[getNumBands()];
+        for (int i = 0; i < dest.length; i++) dest[i] = getSampleDouble(i);
+        return dest;
+    }
 
     /**
      * Move iterator back to the starting position.

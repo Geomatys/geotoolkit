@@ -49,8 +49,7 @@ import org.geotoolkit.storage.dggs.DiscreteGlobalGridGeometry;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
 import org.geotoolkit.referencing.dggs.Zone;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridSystems;
-import org.geotoolkit.storage.rs.internal.shared.BandedCodeIterator;
-import org.geotoolkit.storage.rs.internal.shared.WritableBandedCodeIterator;
+import org.geotoolkit.storage.rs.CodeIterator;
 import org.locationtech.jts.geom.Polygon;
 import org.opengis.coverage.CannotEvaluateException;
 import org.opengis.coverage.PointOutsideCoverageException;
@@ -78,12 +77,6 @@ public abstract class IndexedDiscreteGlobalGridCoverage extends AbstractDiscrete
             index.put(zones.get(i), i);
         }
     }
-
-    @Override
-    public abstract BandedCodeIterator createIterator();
-
-    @Override
-    public abstract WritableBandedCodeIterator createWritableIterator();
 
     @Override
     public GridCoverage sample(GridGeometry fullArea, GridGeometry tileArea) throws CannotEvaluateException {
@@ -136,7 +129,7 @@ public abstract class IndexedDiscreteGlobalGridCoverage extends AbstractDiscrete
             final WritableRaster raster = image.getRaster();
 
             final DiscreteGlobalGridReferenceSystem.Coder coder = dggrs.createCoder();
-            final BandedCodeIterator zoneIterator = createIterator();
+            final CodeIterator zoneIterator = createIterator();
             double[] cell = null;
             final long nanLong = Double.doubleToRawLongBits(Double.NaN);
             while (zoneIterator.next()) {
@@ -198,7 +191,7 @@ public abstract class IndexedDiscreteGlobalGridCoverage extends AbstractDiscrete
         private final DiscreteGlobalGridReferenceSystem.Coder coder;
         private boolean nullIfOutside = false;
         private boolean wraparoundEnabled = false;
-        private final BandedCodeIterator iterator;
+        private final CodeIterator iterator;
 
         public Eval() {
             coder = dggrs.createCoder();
