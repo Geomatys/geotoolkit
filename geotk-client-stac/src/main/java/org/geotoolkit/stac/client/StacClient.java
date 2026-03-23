@@ -103,6 +103,26 @@ public class StacClient {
      */
     public List<Item> searchItems(String stacUrl, String collection,
                                       double[] bbox, String temporalExtent) throws Exception {
+
+        // If the URL actually points to a Collection, adjust the collection ID and STAC root URL
+        if (isCollection(stacUrl)) {
+            JsonNode collNode = getJson(stacUrl);
+            collection = collNode.path("id").asText(collection);
+
+            JsonNode rootLink = findLink(collNode, "root");
+            if (rootLink != null && rootLink.hasNonNull("href")) {
+                stacUrl = rootLink.get("href").asText();
+            } else {
+                // Heuristic fallback if no explicit root link is present
+                int idx = stacUrl.lastIndexOf("/collections/");
+                if (idx != -1) {
+                    stacUrl = stacUrl.substring(0, idx);
+                } else if (stacUrl.endsWith("/collections")) {
+                    stacUrl = stacUrl.substring(0, stacUrl.length() - "/collections".length());
+                }
+            }
+        }
+
         String searchUrl = stacUrl.replaceAll("/+$", "") + "/search";
 
         ObjectNode payload = MAPPER.createObjectNode();
@@ -295,6 +315,80 @@ public class StacClient {
             LOGGER.log(Level.INFO, "Could not find collection " + collectionId + ": " + e.getMessage(), e);
             return false;
         }
+    }
+
+    /**
+     * Identifies the type of resource exposed at the given STAC URL.
+     *
+     * <p>The detection is based on the JSON {@code "type"} field of the response:
+     * <ul>
+     *   <li>{@code "Feature"} → {@link StacResourceType#ITEM}</li>
+     *   <li>{@code "Collection"} → {@link StacResourceType#COLLECTION}</li>
+     *   <li>anything else (or missing) → {@link StacResourceType#UNKNOWN}</li>
+     * </ul>
+     *
+     * @param url the STAC resource URL to inspect
+     * @return the detected resource type
+     * @throws Exception if the HTTP request fails or the response cannot be parsed
+     */
+    public StacResourceType detectStacType(String url) throws Exception {
+        JsonNode data = getJson(url);
+        String type = data.path("type").asText(null);
+        if ("Feature".equals(type)) return StacResourceType.ITEM;
+        if ("Collection".equals(type)) return StacResourceType.COLLECTION;
+        return StacResourceType.UNKNOWN;
+    }
+
+    /**
+     * Returns {@code true} if the given URL points to a STAC Item (GeoJSON Feature).
+     * Returns {@code false} if the URL is not an Item or if the HTTP request fails.
+     *
+     * @param url the URL to check
+     * @return {@code true} if the resource is a STAC Item
+     */
+    public boolean isItem(String url) {
+        try {
+            return detectStacType(url) == StacResourceType.ITEM;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /**
+     * Returns {@code true} if the given URL points to a STAC Collection.
+     * Returns {@code false} if the URL is not a Collection or if the HTTP request fails.
+     *
+     * @param url the URL to check
+     * @return {@code true} if the resource is a STAC Collection
+     */
+    public boolean isCollection(String url) {
+        try {
+            return detectStacType(url) == StacResourceType.COLLECTION;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /**
+     * Loads and returns the STAC Item at the given URL.
+     *
+     * <p>The URL is first checked with {@link #detectStacType(String)}. If the resource
+     * is not a STAC Item, {@code null} is returned and a warning is logged instead of
+     * throwing an exception, so callers do not need to handle the type-mismatch case
+     * separately.
+     *
+     * @param url the URL of the STAC Item to load
+     * @return the parsed {@link Item}, or {@code null} if the URL does not point to an Item
+     * @throws Exception if the HTTP request fails or the JSON cannot be parsed
+     */
+    public Item loadItem(String url) throws Exception {
+        JsonNode data = getJson(url);
+        String type = data.path("type").asText(null);
+        if (!"Feature".equals(type)) {
+            LOGGER.warning("URL does not point to a STAC Item (type=" + type + "): " + url);
+            return null;
+        }
+        return MAPPER.treeToValue(data, Item.class);
     }
 
     /**

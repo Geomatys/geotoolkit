@@ -75,7 +75,7 @@ public class StacClientItemsDownloadingDescriptor extends AbstractProcessDescrip
     public static final ParameterDescriptor<String> COLLECTION = new ParameterBuilder()
             .addName(COLLECTION_NAME)
             .setRemarks(COLLECTION_REMARKS)
-            .setRequired(true)
+            .setRequired(false)
             .create(String.class, null);
 
     /**

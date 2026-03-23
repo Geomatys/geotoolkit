@@ -17,6 +17,8 @@
 package org.geotoolkit.stac.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.sun.net.httpserver.HttpServer;
 import org.geotoolkit.stac.dto.Asset;
 import org.geotoolkit.stac.dto.Item;
@@ -40,7 +42,9 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -113,13 +117,19 @@ public class StacClientTest {
             }
         });
         
-        // Specific collection endpoint
+        // Specific collection endpoint (expanded for the new Collection-URL detection)
         server.createContext("/stac/collections/coll-1", exchange -> {
             try {
-                org.geotoolkit.stac.dto.Collection c1 = new org.geotoolkit.stac.dto.Collection();
-                c1.setId("coll-1");
+                ObjectNode collObj = mapper.createObjectNode();
+                collObj.put("id", "coll-1");
+                collObj.put("type", "Collection");
+                ArrayNode links = collObj.putArray("links");
+                ObjectNode rootLink = mapper.createObjectNode();
+                rootLink.put("rel", "root");
+                rootLink.put("href", serverUrl + "/stac");
+                links.add(rootLink);
                 
-                String jsonResponse = mapper.writeValueAsString(c1);
+                String jsonResponse = mapper.writeValueAsString(collObj);
                 byte[] bytes = jsonResponse.getBytes();
                 exchange.sendResponseHeaders(200, bytes.length);
                 try (OutputStream os = exchange.getResponseBody()) {
@@ -138,6 +148,29 @@ public class StacClientTest {
             try (OutputStream os = exchange.getResponseBody()) {
                 os.write(bytes);
             }
+        });
+
+        // STAC Item endpoint (type=Feature)
+        server.createContext("/stac/item-1", exchange -> {
+            try {
+                Item item = new Item();
+                item.setId("item-1");
+                item.setCollection("coll-1");
+                String json = mapper.writeValueAsString(item);
+                byte[] bytes = json.getBytes();
+                exchange.sendResponseHeaders(200, bytes.length);
+                try (OutputStream os = exchange.getResponseBody()) { os.write(bytes); }
+            } catch (Exception e) {
+                exchange.sendResponseHeaders(500, 0);
+                exchange.getResponseBody().close();
+            }
+        });
+
+        // Unknown STAC type endpoint (API root – no "type" field)
+        server.createContext("/stac/catalog", exchange -> {
+            byte[] bytes = "{\"links\":[]}".getBytes();
+            exchange.sendResponseHeaders(200, bytes.length);
+            try (OutputStream os = exchange.getResponseBody()) { os.write(bytes); }
         });
 
         server.start();
@@ -213,5 +246,62 @@ public class StacClientTest {
         assertEquals("fake netcdf data", Files.readString(downloaded));
         Files.delete(downloaded);
         Files.delete(tempDir);
+    }
+
+    @Test
+    public void testDetectStacTypeItem() throws Exception {
+        StacResourceType type = stacClient.detectStacType(serverUrl + "/stac/item-1");
+        assertEquals(StacResourceType.ITEM, type);
+    }
+
+    @Test
+    public void testDetectStacTypeCollection() throws Exception {
+        StacResourceType type = stacClient.detectStacType(serverUrl + "/stac/collections/coll-1");
+        assertEquals(StacResourceType.COLLECTION, type);
+    }
+
+    @Test
+    public void testDetectStacTypeUnknown() throws Exception {
+        StacResourceType type = stacClient.detectStacType(serverUrl + "/stac/catalog");
+        assertEquals(StacResourceType.UNKNOWN, type);
+    }
+
+    @Test
+    public void testIsItem() throws Exception {
+        assertTrue(stacClient.isItem(serverUrl + "/stac/item-1"));
+        assertFalse(stacClient.isItem(serverUrl + "/stac/collections/coll-1"));
+    }
+
+    @Test
+    public void testIsCollection() throws Exception {
+        assertTrue(stacClient.isCollection(serverUrl + "/stac/collections/coll-1"));
+        assertFalse(stacClient.isCollection(serverUrl + "/stac/item-1"));
+    }
+
+    @Test
+    public void testLoadItem() throws Exception {
+        Item item = stacClient.loadItem(serverUrl + "/stac/item-1");
+        assertNotNull(item);
+        assertEquals("item-1", item.getId());
+        assertEquals("coll-1", item.getCollection());
+    }
+
+    @Test
+    public void testLoadItemFromCollectionUrlReturnsNull() throws Exception {
+        // Passing a Collection URL to loadItem() should return null (type mismatch)
+        Item item = stacClient.loadItem(serverUrl + "/stac/collections/coll-1");
+        assertNull(item);
+    }
+
+    @Test
+    public void testSearchItemsWithCollectionUrl() throws Exception {
+        // The stacUrl points directly to a Collection endpoint.
+        // It should detect the type, extract the "coll-1" id, find the root link "/stac", 
+        // and issue the search on "/stac/search" with the correct collection.
+        List<Item> result = stacClient.searchItems(serverUrl + "/stac/collections/coll-1", null, null, null);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals("test-item-1", result.get(0).getId());
     }
 }
