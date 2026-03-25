@@ -17,7 +17,6 @@
 
 package org.geotoolkit.stac.client;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -93,6 +92,28 @@ public class StacClient {
     }
 
     /**
+     * Formats the temporal extent string to strictly comply with STAC API / RFC 3339 requirements:
+     * <ul>
+     *   <li>"start/end" remains "start/end"</li>
+     *   <li>"start/null" becomes "start/.."</li>
+     *   <li>"null/end" becomes "../end"</li>
+     *   <li>"null/null" or "null" returns null</li>
+     * </ul>
+     */
+    String formatTemporalExtent(String temporalExtent) {
+        if (temporalExtent == null || temporalExtent.isBlank()) return null;
+        if (temporalExtent.equals("null/null") || temporalExtent.equals("null")) return null;
+
+        if (temporalExtent.endsWith("/null")) {
+            return temporalExtent.substring(0, temporalExtent.length() - 4) + "..";
+        }
+        if (temporalExtent.startsWith("null/")) {
+            return ".." + temporalExtent.substring(4);
+        }
+        return temporalExtent;
+    }
+
+    /**
      * Search for STAC items matching the given criteria.
      *
      * @param stacUrl the STAC API base URL
@@ -105,6 +126,8 @@ public class StacClient {
      */
     public List<Item> searchItems(String stacUrl, String collection,
                                       double[] bbox, String temporalExtent) throws IOException, InterruptedException {
+
+        temporalExtent = formatTemporalExtent(temporalExtent);
 
         // If the URL actually points to a Collection, adjust the collection ID and STAC root URL
         if (isCollection(stacUrl)) {

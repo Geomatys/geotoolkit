@@ -304,4 +304,28 @@ public class StacClientTest {
         assertEquals(1, result.size());
         assertEquals("test-item-1", result.get(0).getId());
     }
+
+    @Test
+    public void testFormatTemporalExtent() {
+        // Standard start/end should remain unchanged
+        assertEquals("2020-01-01T00:00:00Z/2020-01-02T00:00:00Z", 
+                stacClient.formatTemporalExtent("2020-01-01T00:00:00Z/2020-01-02T00:00:00Z"));
+                
+        // start/null should become start/..
+        assertEquals("2020-01-01T00:00:00Z/..", 
+                stacClient.formatTemporalExtent("2020-01-01T00:00:00Z/null"));
+                
+        // null/end should become ../end
+        assertEquals("../2020-01-02T00:00:00Z", 
+                stacClient.formatTemporalExtent("null/2020-01-02T00:00:00Z"));
+                
+        // null/null should be null
+        assertNull(stacClient.formatTemporalExtent("null/null"));
+        assertNull(stacClient.formatTemporalExtent("null"));
+        
+        // Blank or null input should return null
+        assertNull(stacClient.formatTemporalExtent(null));
+        assertNull(stacClient.formatTemporalExtent(""));
+        assertNull(stacClient.formatTemporalExtent("   "));
+    }
 }

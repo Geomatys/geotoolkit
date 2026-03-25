@@ -51,15 +51,27 @@ class StacClientProcessingUtils {
      * two or more elements, or the single element if the array has only one element. Returns null if the input array is null or empty.
      */
     static String getTemporalExtent(String[] temporalExtentArray) {
-        if (temporalExtentArray != null && temporalExtentArray.length > 0) {
-            if (temporalExtentArray.length == 1) {
-                return temporalExtentArray[0];
-            } else if (temporalExtentArray.length >= 2) {
-                return temporalExtentArray[0] + "/"
-                        + temporalExtentArray[1];
-            }
+        if (temporalExtentArray == null || temporalExtentArray.length == 0) {
+            return null;
         }
-        return null;
+
+        if (temporalExtentArray.length == 1) {
+            if (temporalExtentArray[0] == null) return null;
+            return temporalExtentArray[0] + '/' + temporalExtentArray[0];
+        }
+
+        String start = temporalExtentArray[0];
+        String end = temporalExtentArray[1];
+
+        if (start == null && end == null) {
+            return null;
+        } else if (start == null) {
+            return "null/" + end;
+        } else if (end == null) {
+            return start + "/null";
+        } else {
+            return start + "/" + end;
+        }
     }
 
     /**
