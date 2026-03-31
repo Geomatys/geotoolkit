@@ -16,6 +16,9 @@
  */
 package org.geotoolkit.client.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -31,6 +34,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
+import java.util.zip.GZIPInputStream;
+import org.apache.commons.compress.utils.CountingInputStream;
 
 /**
  *
@@ -217,5 +222,47 @@ public abstract class AbstractService implements AutoCloseable {
         }
 
         return Collections.singletonList(new Pair(urlEncode(name), joiner.toString()));
+    }
+
+    protected <T> ServiceResponse<T> parseJsonResponse(HttpResponse<InputStream> response, Class<T> valueClass, ObjectMapper objectMapper) throws ServiceException {
+        return parseJsonResponse(response, objectMapper, valueClass == null ? null : objectMapper.constructType(valueClass));
+    }
+
+    protected <T> ServiceResponse<T> parseJsonResponse(HttpResponse<InputStream> response, TypeReference<T> ref, ObjectMapper objectMapper) throws ServiceException {
+        return parseJsonResponse(response, objectMapper, ref == null ? null : objectMapper.constructType(ref));
+    }
+
+    protected <T> ServiceResponse<T> parseJsonResponse(HttpResponse<InputStream> response, ObjectMapper objectMapper, JavaType ref) throws ServiceException {
+        if (response.body() == null) {
+            return emptyResponse(response);
+        }
+
+        final String contentEncoding = getContentEncoding(response);
+
+        try (var in = response.body()){
+            CountingInputStream count = new CountingInputStream(in);
+            InputStream di = count;
+            if ("gzip".equals(contentEncoding)) {
+                di = new GZIPInputStream(di);
+            }
+            final T responseBody;
+            if (ref == null) {
+                // Drain the InputStream
+                while (in.read() != -1) {
+                    // Ignore
+                }
+                responseBody = null;
+            } else {
+                responseBody = objectMapper.readValue(di, ref);
+            }
+            return new ServiceResponse<>(response.statusCode(), response.headers().map(), responseBody, count.getBytesRead());
+
+        } catch (IOException ex) {
+            throw new ServiceException(ex);
+        }
+    }
+
+    public static String getContentEncoding(HttpResponse<?> httpResponse) {
+        return httpResponse.headers().firstValue("Content-Encoding").orElse("");
     }
 }
