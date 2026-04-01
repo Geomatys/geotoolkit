@@ -57,6 +57,7 @@ import org.opengis.filter.Filter;
 import org.opengis.filter.SortBy;
 import org.opengis.geometry.Envelope;
 import org.geotoolkit.sld.StyledLayerDescriptor;
+import org.geotoolkit.wps.adaptor.LiteralAdaptor;
 
 /**
  *
@@ -77,7 +78,7 @@ public final class WPSIO {
      */
     public static final String SCHEMA_KEY = "schema";
 
-    private static final List<FormatSupport> FORMATSUPPORTS = Collections.synchronizedList(new ArrayList<FormatSupport>());
+    private static final List<FormatSupport> FORMATSUPPORTS = Collections.synchronizedList(new ArrayList<>());
     static {
         FORMATSUPPORTS.add(new FormatSupport(StyledLayerDescriptor.class, IOType.BOTH, WPSMimeType.APP_SLD.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_SLD_1_1_0.getValue(), true));
 
@@ -310,7 +311,6 @@ public final class WPSIO {
                         if (loop == testClass.length) {
                             break;
                         }
-                        continue;
                     }
                 }
                 if (converter != null) {
@@ -488,10 +488,7 @@ public final class WPSIO {
      * @return true if supported, false otherwise.
      */
     public static boolean isSupportedBBoxInputClass(final Class clazz) {
-        if (clazz.isAssignableFrom(Envelope.class)) {
-            return true;
-        }
-        return false;
+        return clazz.isAssignableFrom(Envelope.class);
     }
 
     /**
@@ -531,10 +528,7 @@ public final class WPSIO {
      * @return true if supported, false otherwise.
      */
     public static boolean isSupportedBBoxOutputClass(final Class clazz) {
-        if (clazz.isAssignableFrom(Envelope.class)) {
-            return true;
-        }
-        return false;
+        return clazz.isAssignableFrom(Envelope.class);
     }
 
     /**
@@ -651,7 +645,7 @@ public final class WPSIO {
         }
 
         if (converter == null) {
-            List<WPSObjectConverter> candidates = null;
+            List<WPSObjectConverter> candidates;
             if (ioType.equals(IOType.INPUT)) {
 
                 //get candidates
@@ -712,34 +706,12 @@ public final class WPSIO {
             final String schema, final DomainMetadataType literalDataType) {
 
         ArgumentChecks.ensureNonNull("dataType", dataType);
-        Class clazz = null;
-
         if (dataType.equals(FormChoice.LITERAL) && literalDataType != null) {
-            String value = literalDataType.getValue();
-            clazz = String.class;
-            if (value != null && !value.isEmpty()) {
-                try {
-                    clazz = Class.forName(value);
-                } catch (ClassNotFoundException ex) {
-                    value = value.toLowerCase();
-                    if (value.contains("double")) {
-                        clazz = Double.class;
-                    } else if (value.contains("boolean")) {
-                        clazz = Boolean.class;
-                    } else if (value.contains("float")) {
-                        clazz = Float.class;
-                    } else if (value.contains("integer")) {
-                        clazz = Integer.class;
-                    } else if (value.contains("long")) {
-                        clazz = Long.class;
-                    }
-                }
-            }
-            return clazz;
-
+            return LiteralAdaptor.getValueClass(literalDataType);
         } else if (dataType.equals(FormChoice.BBOX)) {
-            clazz = Envelope.class;
+            return Envelope.class;
         } else {
+            Class clazz  = null;
             int nbSearch = 3;
             int match;
             for (final FormatSupport formatSupport : FORMATSUPPORTS) {
@@ -764,8 +736,8 @@ public final class WPSIO {
                     break;
                 }
             }
+            return clazz;
         }
-        return clazz;
     }
 
     /**
@@ -818,10 +790,7 @@ public final class WPSIO {
             if (this.clazz != other.clazz && (this.clazz == null || (!this.clazz.equals(other.clazz) && !other.clazz.isAssignableFrom(this.clazz)))) {
                 return false;
             }
-            if (this.from != other.from) {
-                return false;
-            }
-            return true;
+            return this.from != other.from;
         }
 
         @Override
