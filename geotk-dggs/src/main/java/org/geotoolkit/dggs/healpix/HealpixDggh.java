@@ -61,7 +61,7 @@ final class HealpixDggh extends AbstractDiscreteGlobalGridHierarchy<HealpixDggrs
         } else if (zoneId instanceof HealpixZone z) {
             return z.getTextIdentifier().toString();
         } else {
-            throw new IllegalArgumentException("Identifer not supported");
+            throw new IllegalArgumentException("Identifer not supported " + zoneId);
         }
     }
 
@@ -74,7 +74,7 @@ final class HealpixDggh extends AbstractDiscreteGlobalGridHierarchy<HealpixDggrs
         } else if (zoneId instanceof HealpixZone z) {
             return z.getLongIdentifier();
         } else {
-            throw new IllegalArgumentException("Identifer not supported");
+            throw new IllegalArgumentException("Identifer not supported " + zoneId);
         }
     }
 

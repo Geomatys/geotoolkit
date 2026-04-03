@@ -67,7 +67,7 @@ final class A5Dggh extends AbstractDiscreteGlobalGridHierarchy<A5Dggrs> {
         } else if (zoneId instanceof A5Zone z) {
             return z.getTextIdentifier().toString();
         } else {
-            throw new IllegalArgumentException("Identifer not supported");
+            throw new IllegalArgumentException("Identifer not supported " + zoneId);
         }
     }
 
@@ -80,7 +80,7 @@ final class A5Dggh extends AbstractDiscreteGlobalGridHierarchy<A5Dggrs> {
         } else if (zoneId instanceof A5Zone z) {
             return z.getLongIdentifier();
         } else {
-            throw new IllegalArgumentException("Identifer not supported");
+            throw new IllegalArgumentException("Identifer not supported " + zoneId);
         }
     }
 

@@ -61,7 +61,7 @@ final class S2Dggh extends AbstractDiscreteGlobalGridHierarchy<S2Dggrs> {
         } else if (zoneId instanceof S2Zone z) {
             return z.getTextIdentifier().toString();
         } else {
-            throw new IllegalArgumentException("Identifer not supported");
+            throw new IllegalArgumentException("Identifer not supported " + zoneId);
         }
     }
 
@@ -74,7 +74,7 @@ final class S2Dggh extends AbstractDiscreteGlobalGridHierarchy<S2Dggrs> {
         } else if (zoneId instanceof S2Zone z) {
             return z.getLongIdentifier();
         } else {
-            throw new IllegalArgumentException("Identifer not supported");
+            throw new IllegalArgumentException("Identifer not supported " + zoneId);
         }
     }
 
