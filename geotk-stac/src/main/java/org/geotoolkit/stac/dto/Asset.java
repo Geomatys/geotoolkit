@@ -25,7 +25,8 @@ import java.util.Objects;
         Asset.JSON_PROPERTY_TITLE,
         Asset.JSON_PROPERTY_DESCRIPTION,
         Asset.JSON_PROPERTY_TYPE,
-        Asset.JSON_PROPERTY_ROLES
+        Asset.JSON_PROPERTY_ROLES,
+        Asset.JSON_PROPERTY_ALTERNATE
 })
 public class Asset {
 
@@ -34,6 +35,7 @@ public class Asset {
     public static final String JSON_PROPERTY_DESCRIPTION = "description";
     public static final String JSON_PROPERTY_TYPE = "type";
     public static final String JSON_PROPERTY_ROLES = "roles";
+    public static final String JSON_PROPERTY_ALTERNATE = "alternate";
 
     @JsonProperty(JSON_PROPERTY_HREF)
     private String href;
@@ -53,6 +55,15 @@ public class Asset {
     @JsonProperty(JSON_PROPERTY_ROLES)
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<String> roles;
+
+    /**
+     * Alternate access links for this asset (STAC alternate-assets extension).
+     * Keys are provider names (e.g. "s3", "https") and values are Assets describing
+     * the alternate access method, each with at minimum an {@code href}.
+     */
+    @JsonProperty(JSON_PROPERTY_ALTERNATE)
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private Map<String, Asset> alternate = new HashMap<>();
 
     private Map<String, Object> additionalProperties = new HashMap<>();
 
@@ -102,6 +113,14 @@ public class Asset {
         this.roles = roles;
     }
 
+    public Map<String, Asset> getAlternate() {
+        return alternate;
+    }
+
+    public void setAlternate(Map<String, Asset> alternate) {
+        this.alternate = alternate != null ? alternate : new HashMap<>();
+    }
+
     @JsonAnyGetter
     public Map<String, Object> getAdditionalProperties() {
         return additionalProperties;
@@ -117,11 +136,14 @@ public class Asset {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Asset asset = (Asset) o;
-        return Objects.equals(href, asset.href) && Objects.equals(title, asset.title) && Objects.equals(description, asset.description) && Objects.equals(type, asset.type) && Objects.equals(roles, asset.roles) && Objects.equals(additionalProperties, asset.additionalProperties);
+        return Objects.equals(href, asset.href) && Objects.equals(title, asset.title)
+                && Objects.equals(description, asset.description) && Objects.equals(type, asset.type)
+                && Objects.equals(roles, asset.roles) && Objects.equals(alternate, asset.alternate)
+                && Objects.equals(additionalProperties, asset.additionalProperties);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(href, title, description, type, roles, additionalProperties);
+        return Objects.hash(href, title, description, type, roles, alternate, additionalProperties);
     }
 }

@@ -69,12 +69,15 @@ public class StacClient {
 
     /**
      * Creates a StacClient with the default HTTP client and default download URI extractor.
+     * The HTTP client is shared with the extractor so that both use the same connection pool.
      */
     public StacClient() {
-        this(HttpClient.newBuilder()
+        HttpClient client = HttpClient.newBuilder()
                 .connectTimeout(Duration.ofSeconds(30))
                 .followRedirects(HttpClient.Redirect.NORMAL)
-                .build(), new DefaultDownloadURIExtractor());
+                .build();
+        this.httpClient = client;
+        this.downloadURIExtractor = new DefaultDownloadURIExtractor(client);
     }
 
     /**
@@ -89,6 +92,28 @@ public class StacClient {
     }
 
     /**
+     * Formats the temporal extent string to strictly comply with STAC API / RFC 3339 requirements:
+     * <ul>
+     *   <li>"start/end" remains "start/end"</li>
+     *   <li>"start/null" becomes "start/.."</li>
+     *   <li>"null/end" becomes "../end"</li>
+     *   <li>"null/null" or "null" returns null</li>
+     * </ul>
+     */
+    String formatTemporalExtent(String temporalExtent) {
+        if (temporalExtent == null || temporalExtent.isBlank()) return null;
+        if (temporalExtent.equals("null/null") || temporalExtent.equals("null")) return null;
+
+        if (temporalExtent.endsWith("/null")) {
+            return temporalExtent.substring(0, temporalExtent.length() - 4) + "..";
+        }
+        if (temporalExtent.startsWith("null/")) {
+            return ".." + temporalExtent.substring(4);
+        }
+        return temporalExtent;
+    }
+
+    /**
      * Search for STAC items matching the given criteria.
      *
      * @param stacUrl the STAC API base URL
@@ -96,10 +121,33 @@ public class StacClient {
      * @param bbox the bounding box [minLon, minLat, maxLon, maxLat]
      * @param temporalExtent the temporal extent string (e.g., "start/end")
      * @return a list of STAC items
-     * @throws Exception if an error occurs during search
+     * @throws IOException if an error occurs during the request or response parsing
+     * @throws InterruptedException if an interruption occurs during http request
      */
     public List<Item> searchItems(String stacUrl, String collection,
-                                      double[] bbox, String temporalExtent) throws Exception {
+                                      double[] bbox, String temporalExtent) throws IOException, InterruptedException {
+
+        temporalExtent = formatTemporalExtent(temporalExtent);
+
+        // If the URL actually points to a Collection, adjust the collection ID and STAC root URL
+        if (isCollection(stacUrl)) {
+            JsonNode collNode = getJson(stacUrl);
+            collection = collNode.path("id").asText(collection);
+
+            JsonNode rootLink = findLink(collNode, "root");
+            if (rootLink != null && rootLink.hasNonNull("href")) {
+                stacUrl = rootLink.get("href").asText();
+            } else {
+                // Heuristic fallback if no explicit root link is present
+                int idx = stacUrl.lastIndexOf("/collections/");
+                if (idx != -1) {
+                    stacUrl = stacUrl.substring(0, idx);
+                } else if (stacUrl.endsWith("/collections")) {
+                    stacUrl = stacUrl.substring(0, stacUrl.length() - "/collections".length());
+                }
+            }
+        }
+
         String searchUrl = stacUrl.replaceAll("/+$", "") + "/search";
 
         ObjectNode payload = MAPPER.createObjectNode();
@@ -179,10 +227,11 @@ public class StacClient {
      * @param bbox the bounding box to filter items (minLon, minLat, maxLon, maxLat)
      * @param temporalExtent the temporal extent string (e.g., "start/end") to filter items
      * @return a list of STAC items matching the search criteria
-     * @throws Exception if an error occurs during the search process
+     * @throws IOException if an error occurs during the request or response parsing (search request)
+     * @throws InterruptedException if an interruption occurs during http request
      */
     private List<Item> searchViaOgcApi(String stacUrl, String collection,
-                                           double[] bbox, String temporalExtent) throws Exception {
+                                           double[] bbox, String temporalExtent) throws IOException, InterruptedException {
         StringBuilder itemsUrlBuilder = new StringBuilder();
         itemsUrlBuilder.append(stacUrl.replaceAll("/+$", ""))
                 .append("/collections/")
@@ -226,9 +275,10 @@ public class StacClient {
      *
      * @param stacUrl the STAC API base URL
      * @return the list of collections, or an empty list
-     * @throws Exception if an error occurs
+     * @throws IOException if an error occurs during the request or response parsing
+     * @throws InterruptedException if an interruption occurs during http request
      */
-    public List<Collection> getCollections(String stacUrl) throws Exception {
+    public List<Collection> getCollections(String stacUrl) throws IOException, InterruptedException {
         String url = stacUrl.replaceAll("/+$", "") + "/collections";
         JsonNode data = getJson(url);
         Collections collectionsObj = MAPPER.treeToValue(data, Collections.class);
@@ -243,9 +293,10 @@ public class StacClient {
      *
      * @param stacUrl the STAC API base URL
      * @return the list of collection ids, or an empty list
-     * @throws Exception if an error occurs
+     * @throws IOException if an error occurs during the request or response parsing
+     * @throws InterruptedException if an interruption occurs during http request
      */
-    public List<String> getCollectionIds(String stacUrl) throws Exception {
+    public List<String> getCollectionIds(String stacUrl) throws IOException, InterruptedException {
         List<Collection> collections = getCollections(stacUrl);
         List<String> ids = new ArrayList<>();
         for (Collection coll : collections) {
@@ -262,14 +313,15 @@ public class StacClient {
      * @param stacUrl the STAC API base URL
      * @param collectionId the collection id to get
      * @return the collection, or null if not found
-     * @throws Exception if an error occurs
+     * @throws IOException if an error occurs during the request or response parsing
+     * @throws InterruptedException if an interruption occurs during http request
      */
-    public Collection getCollection(String stacUrl, String collectionId) throws Exception {
+    public Collection getCollection(String stacUrl, String collectionId) throws IOException, InterruptedException {
         String url = stacUrl.replaceAll("/+$", "") + "/collections/" + collectionId;
         try {
             JsonNode data = getJson(url);
             return MAPPER.treeToValue(data, Collection.class);
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             if (e.getMessage() != null && e.getMessage().contains("HTTP 404")) {
                 return null;
             }
@@ -295,6 +347,82 @@ public class StacClient {
     }
 
     /**
+     * Identifies the type of resource exposed at the given STAC URL.
+     *
+     * <p>The detection is based on the JSON {@code "type"} field of the response:
+     * <ul>
+     *   <li>{@code "Feature"} → {@link StacResourceType#ITEM}</li>
+     *   <li>{@code "Collection"} → {@link StacResourceType#COLLECTION}</li>
+     *   <li>anything else (or missing) → {@link StacResourceType#UNKNOWN}</li>
+     * </ul>
+     *
+     * @param url the STAC resource URL to inspect
+     * @return the detected resource type
+     * @throws IOException if an error occurs during the request or response parsing
+     * @throws InterruptedException if an interruption occurs during http request
+     */
+    public StacResourceType detectStacType(String url) throws IOException, InterruptedException {
+        JsonNode data = getJson(url);
+        String type = data.path("type").asText(null);
+        if ("Feature".equals(type)) return StacResourceType.ITEM;
+        if ("Collection".equals(type)) return StacResourceType.COLLECTION;
+        return StacResourceType.UNKNOWN;
+    }
+
+    /**
+     * Returns {@code true} if the given URL points to a STAC Item (GeoJSON Feature).
+     * Returns {@code false} if the URL is not an Item or if the HTTP request fails.
+     *
+     * @param url the URL to check
+     * @return {@code true} if the resource is a STAC Item
+     */
+    public boolean isItem(String url) {
+        try {
+            return detectStacType(url) == StacResourceType.ITEM;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /**
+     * Returns {@code true} if the given URL points to a STAC Collection.
+     * Returns {@code false} if the URL is not a Collection or if the HTTP request fails.
+     *
+     * @param url the URL to check
+     * @return {@code true} if the resource is a STAC Collection
+     */
+    public boolean isCollection(String url) {
+        try {
+            return detectStacType(url) == StacResourceType.COLLECTION;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /**
+     * Loads and returns the STAC Item at the given URL.
+     *
+     * <p>The URL is first checked with {@link #detectStacType(String)}. If the resource
+     * is not a STAC Item, {@code null} is returned and a warning is logged instead of
+     * throwing an exception, so callers do not need to handle the type-mismatch case
+     * separately.
+     *
+     * @param url the URL of the STAC Item to load
+     * @return the parsed {@link Item}, or {@code null} if the URL does not point to an Item
+     * @throws IOException if an error occurs during the request or response parsing
+     * @throws InterruptedException if an interruption occurs during http request
+     */
+    public Item loadItem(String url) throws IOException, InterruptedException {
+        JsonNode data = getJson(url);
+        String type = data.path("type").asText(null);
+        if (!"Feature".equals(type)) {
+            LOGGER.warning("URL does not point to a STAC Item (type=" + type + "): " + url);
+            return null;
+        }
+        return MAPPER.treeToValue(data, Item.class);
+    }
+
+    /**
      * Extract the download URI from a STAC item using the registered extractor.
      *
      * @param item the STAC item
@@ -314,9 +442,10 @@ public class StacClient {
      * @param uri the file URI
      * @param outputDir the destination directory
      * @return the path to the downloaded file
-     * @throws Exception if an error occurs
+     * @throws IOException if an error occurs during the request or response parsing
+     * @throws InterruptedException if an interruption occurs during http request
      */
-    public Path downloadFile(URI uri, Path outputDir) throws Exception {
+    public Path downloadFile(URI uri, Path outputDir) throws IOException, InterruptedException {
         // TODO : Manage S3 or other cloud storage URIs if needed (e.g., using AWS SDK or similar)
 
         String filename = extractFilename(uri);
@@ -356,9 +485,10 @@ public class StacClient {
      * @param url the URL to POST to
      * @param body the JSON body to send
      * @return the parsed JSON response
-     * @throws Exception if an error occurs during the request or response parsing
+     * @throws IOException if an error occurs during the request or response parsing
+     * @throws InterruptedException if an interruption occurs during http request
      */
-    private JsonNode postJson(String url, ObjectNode body) throws Exception {
+    private JsonNode postJson(String url, ObjectNode body) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
                 .timeout(Duration.ofSeconds(60))
@@ -377,9 +507,10 @@ public class StacClient {
      * Helper method to perform a GET request and parse the response as JSON.
      * @param url the URL to GET
      * @return the parsed JSON response
-     * @throws Exception if an error occurs during the request or response parsing
+     * @throws IOException if an error occurs during the request or response parsing
+     * @throws InterruptedException if an interruption occurs during http request
      */
-    private JsonNode getJson(String url) throws Exception {
+    private JsonNode getJson(String url) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
                 .timeout(Duration.ofSeconds(60))
