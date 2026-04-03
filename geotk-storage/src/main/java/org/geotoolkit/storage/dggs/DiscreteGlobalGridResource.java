@@ -20,6 +20,7 @@ import org.geotoolkit.referencing.dggs.Zone;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
 import org.geotoolkit.storage.dggs.internal.shared.GridAsDiscreteGlobalGridResource;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 import javax.measure.IncommensurableException;
 import javax.measure.Quantity;
@@ -27,8 +28,11 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGrid;
+import org.geotoolkit.referencing.rs.ReferenceSystems;
+import org.geotoolkit.storage.rs.CodedCoverage;
 import org.geotoolkit.storage.rs.CodedGeometry;
 import org.geotoolkit.storage.rs.CodedResource;
+import org.opengis.referencing.ReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 
 /**
@@ -64,7 +68,7 @@ public interface DiscreteGlobalGridResource extends CodedResource {
      * {@inheritDoc }
      */
     @Override
-    public default DiscreteGlobalGridCoverage read(GridGeometry domain, int... range) throws DataStoreException {
+    public default CodedCoverage read(GridGeometry domain, int... range) throws DataStoreException {
 
         final Quantity<?> coverageResolution;
         try {
@@ -101,11 +105,24 @@ public interface DiscreteGlobalGridResource extends CodedResource {
      * @throws DataStoreException
      */
     @Override
-    public DiscreteGlobalGridCoverage read(CodedGeometry geometry, int ... range) throws DataStoreException;
+    public CodedCoverage read(CodedGeometry geometry, int ... range) throws DataStoreException;
 
     public static DiscreteGlobalGridGeometry toDiscreteGlobalGridGeometry(CodedGeometry geom) {
-        if (geom instanceof DiscreteGlobalGridGeometry dgg) return dgg;
-        else throw new UnsupportedOperationException("Not available yet");
+        if (geom instanceof DiscreteGlobalGridGeometry dgg) {
+            return dgg;
+        }
+
+        final ReferenceSystem rs = geom.getReferenceSystem();
+        for (ReferenceSystem r : ReferenceSystems.getSingleComponents(rs, false)) {
+            if (r instanceof DiscreteGlobalGridReferenceSystem dggrs) {
+                Optional<CodedGeometry> opt = geom.slice(r);
+                if (opt.isPresent()) {
+                    return (DiscreteGlobalGridGeometry) opt.get();
+                }
+            }
+        }
+
+        throw new UnsupportedOperationException("Not available yet");
     }
 
 }

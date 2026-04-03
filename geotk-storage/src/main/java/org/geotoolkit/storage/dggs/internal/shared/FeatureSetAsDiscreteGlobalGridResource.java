@@ -33,8 +33,8 @@ import org.apache.sis.storage.NoSuchDataException;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridGeometry;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridResource;
-import org.geotoolkit.storage.dggs.DiscreteGlobalGridCoverage;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridCoverageProcessor;
+import org.geotoolkit.storage.rs.CodedCoverage;
 import org.geotoolkit.storage.rs.CodedGeometry;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.AttributeType;
@@ -141,7 +141,7 @@ public final class FeatureSetAsDiscreteGlobalGridResource extends AbstractResour
     }
 
     @Override
-    public DiscreteGlobalGridCoverage read(CodedGeometry grid, int... range) throws DataStoreException {
+    public CodedCoverage read(CodedGeometry grid, int... range) throws DataStoreException {
         init();
         final DiscreteGlobalGridGeometry geometry = DiscreteGlobalGridResource.toDiscreteGlobalGridGeometry(grid);
 

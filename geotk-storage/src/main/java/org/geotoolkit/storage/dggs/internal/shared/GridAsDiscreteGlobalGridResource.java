@@ -32,11 +32,11 @@ import org.apache.sis.referencing.GeodeticCalculator;
 import org.apache.sis.storage.AbstractResource;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
-import org.geotoolkit.storage.dggs.DiscreteGlobalGridCoverage;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridCoverageProcessor;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridGeometry;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridResource;
+import org.geotoolkit.storage.rs.CodedCoverage;
 import org.geotoolkit.storage.rs.CodedGeometry;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
@@ -106,7 +106,7 @@ public final class GridAsDiscreteGlobalGridResource extends AbstractResource imp
     }
 
     @Override
-    public DiscreteGlobalGridCoverage read(CodedGeometry grid, int... range) throws DataStoreException {
+    public CodedCoverage read(CodedGeometry grid, int... range) throws DataStoreException {
         final DiscreteGlobalGridGeometry geometry = DiscreteGlobalGridResource.toDiscreteGlobalGridGeometry(grid);
         final DiscreteGlobalGridCoverageProcessor processor = new DiscreteGlobalGridCoverageProcessor();
         try {
