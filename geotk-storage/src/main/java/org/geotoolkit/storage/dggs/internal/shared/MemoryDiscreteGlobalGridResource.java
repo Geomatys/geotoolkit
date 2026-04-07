@@ -21,9 +21,9 @@ import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.AbstractResource;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.storage.dggs.DiscreteGlobalGridCoverage;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridGeometry;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridResource;
+import org.geotoolkit.storage.rs.CodedCoverage;
 import org.geotoolkit.storage.rs.CodedGeometry;
 
 /**
@@ -33,9 +33,9 @@ import org.geotoolkit.storage.rs.CodedGeometry;
  */
 public final class MemoryDiscreteGlobalGridResource extends AbstractResource implements DiscreteGlobalGridResource{
 
-    private final DiscreteGlobalGridCoverage coverage;
+    private final CodedCoverage coverage;
 
-    public MemoryDiscreteGlobalGridResource(DiscreteGlobalGridCoverage coverage) {
+    public MemoryDiscreteGlobalGridResource(CodedCoverage coverage) {
         super(null);
         this.coverage = coverage;
     }
@@ -47,7 +47,7 @@ public final class MemoryDiscreteGlobalGridResource extends AbstractResource imp
 
     @Override
     public DiscreteGlobalGridGeometry getGridGeometry() {
-        return coverage.getGeometry();
+        return (DiscreteGlobalGridGeometry) coverage.getGeometry();
     }
 
     @Override
@@ -66,7 +66,7 @@ public final class MemoryDiscreteGlobalGridResource extends AbstractResource imp
     }
 
     @Override
-    public DiscreteGlobalGridCoverage read(CodedGeometry geometry, int... range) throws DataStoreException {
+    public CodedCoverage read(CodedGeometry geometry, int... range) throws DataStoreException {
         return coverage;
     }
 

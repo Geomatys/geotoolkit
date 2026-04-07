@@ -29,7 +29,6 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.InternationalString;
 
 import java.net.URI;
-import java.nio.file.Path;
 import java.util.List;
 
 /**
@@ -77,7 +76,7 @@ public class StacClientItemsGetURIsDescriptor extends AbstractProcessDescriptor 
     public static final ParameterDescriptor<String> COLLECTION = new ParameterBuilder()
             .addName(COLLECTION_NAME)
             .setRemarks(COLLECTION_REMARKS)
-            .setRequired(true)
+            .setRequired(false)
             .create(String.class, null);
 
     /**

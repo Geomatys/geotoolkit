@@ -51,6 +51,7 @@ import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.storage.dggs.internal.shared.ComputedZoneIndexList;
 import org.geotoolkit.storage.dggs.internal.shared.FeatureSetAsDiscreteGlobalGridResource;
 import org.geotoolkit.storage.dggs.internal.shared.MemoryDiscreteGlobalGridResource;
+import org.geotoolkit.storage.rs.CodedCoverage;
 import org.geotoolkit.storage.rs.CodedResource;
 import org.geotoolkit.storage.rs.internal.shared.CodedCoverageAsFeatureSet;
 import org.geotoolkit.storage.rs.internal.shared.s2.Factory;
@@ -139,14 +140,14 @@ public final class DiscreteGlobalGridSystems {
     /**
      * View given DiscreteGlobalGridCoverage as a DiscreteGlobalGridResource.
      */
-    public static DiscreteGlobalGridResource viewAsResource(DiscreteGlobalGridCoverage coverage) {
+    public static DiscreteGlobalGridResource viewAsResource(CodedCoverage coverage) {
         return new MemoryDiscreteGlobalGridResource(coverage);
     }
 
     /**
      * View given DiscreteGlobalGridCoverage as a FeatureSet.
      */
-    public static FeatureSet viewAsFeatureSet(DiscreteGlobalGridCoverage coverage, boolean idAsLong, String geometryType) {
+    public static FeatureSet viewAsFeatureSet(CodedCoverage coverage, boolean idAsLong, String geometryType) {
         return new CodedCoverageAsFeatureSet(coverage, idAsLong, geometryType);
     }
 

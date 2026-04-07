@@ -76,6 +76,7 @@ import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.storage.NoSuchDataException;
 import org.apache.sis.storage.Query;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.ArgumentChecks;
@@ -111,6 +112,9 @@ import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.coverage.bandselect.BandSelectProcess;
 import org.geotoolkit.storage.coverage.BandedCoverageResource;
 import org.geotoolkit.storage.feature.FeatureStoreUtilities;
+import org.geotoolkit.storage.rs.CodedCoverage;
+import org.geotoolkit.storage.rs.CodedResource;
+import org.geotoolkit.storage.rs.internal.shared.CodedCoverageAsFeatureSet;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyNotFoundException;
@@ -691,6 +695,21 @@ public final class DefaultPortrayalService implements PortrayalService{
 
         FeatureType type = null;
         Expression defaultGeomPropertyName = null;
+
+        if (resource instanceof CodedResource cr) {
+            try {
+                final CodedCoverage coverage = cr.read(renderContext.getGridGeometry2D());
+                resource = new CodedCoverageAsFeatureSet(coverage, false, CodedCoverageAsFeatureSet.GEOMETRY_ZONE_REGION);
+            } catch (NoSuchDataException ex) {
+                return Stream.empty();
+            } catch (DataStoreException ex) {
+                ExceptionPresentation ep = new ExceptionPresentation(ex);
+                ep.setLayer(layer);
+                ep.setResource(resource);
+                return Stream.of(ep);
+            }
+        }
+
         if (resource instanceof FeatureSet) {
             try {
                 type = ((FeatureSet) resource).getType();

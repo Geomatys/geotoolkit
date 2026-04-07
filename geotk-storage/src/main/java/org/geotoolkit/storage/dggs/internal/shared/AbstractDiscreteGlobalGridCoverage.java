@@ -35,9 +35,9 @@ import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.image.BufferedImages;
-import org.geotoolkit.storage.dggs.DiscreteGlobalGridCoverage;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridGeometry;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
+import org.geotoolkit.storage.rs.CodedCoverage;
 import org.opengis.coverage.CannotEvaluateException;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -49,7 +49,7 @@ import org.opengis.util.FactoryException;
  *
  * @author Johann Sorel (Geomatys)
  */
-public abstract class AbstractDiscreteGlobalGridCoverage extends DiscreteGlobalGridCoverage{
+public abstract class AbstractDiscreteGlobalGridCoverage extends CodedCoverage{
 
     protected final DiscreteGlobalGridGeometry gridGeometry;
     protected final DiscreteGlobalGridReferenceSystem dggrs;

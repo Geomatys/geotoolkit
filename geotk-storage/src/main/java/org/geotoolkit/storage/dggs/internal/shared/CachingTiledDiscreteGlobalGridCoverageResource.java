@@ -26,10 +26,10 @@ import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.referencing.dggs.Zone;
-import org.geotoolkit.storage.dggs.DiscreteGlobalGridCoverage;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridCoverageProcessor;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridGeometry;
 import org.geotoolkit.storage.dggs.DiscreteGlobalGridResource;
+import org.geotoolkit.storage.rs.CodedCoverage;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.Metadata;
 import org.opengis.referencing.operation.TransformException;
@@ -88,7 +88,7 @@ public class CachingTiledDiscreteGlobalGridCoverageResource extends TiledDiscret
     }
 
     @Override
-    public DiscreteGlobalGridCoverage getZoneTile(Object identifierOrZone) throws DataStoreException {
+    public CodedCoverage getZoneTile(Object identifierOrZone) throws DataStoreException {
 
         final String zid;
         if (identifierOrZone instanceof Zone z) {
@@ -99,7 +99,7 @@ public class CachingTiledDiscreteGlobalGridCoverageResource extends TiledDiscret
             zid = (String) identifierOrZone;
         }
 
-        DiscreteGlobalGridCoverage coverage;
+        CodedCoverage coverage;
         try {
             lock(zid);
 

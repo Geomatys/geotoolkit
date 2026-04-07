@@ -16,15 +16,9 @@
  */
 package org.geotoolkit.storage.dggs;
 
-import java.util.AbstractList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
 import org.geotoolkit.referencing.dggs.Zone;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Stream;
 import javax.measure.IncommensurableException;
 import javax.measure.Quantity;
 import org.apache.sis.coverage.grid.GridExtent;
@@ -36,7 +30,6 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGrid;
 import org.geotoolkit.referencing.dggs.DiscreteGlobalGridHierarchy;
-import org.geotoolkit.referencing.rs.Code;
 import org.geotoolkit.storage.rs.CodedGeometry;
 import org.geotoolkit.storage.rs.internal.shared.CodeTransforms;
 import org.opengis.geometry.Envelope;
@@ -45,16 +38,14 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.geotoolkit.storage.rs.CodeTransform;
-import org.geotoolkit.storage.rs.internal.shared.SubTransform;
 import org.opengis.metadata.extent.GeographicExtent;
-import org.opengis.referencing.ReferenceSystem;
 
 /**
  * DGGRS coverage geometry.
  *
  * @author Johann Sorel (Geomatys)
  */
-public abstract class DiscreteGlobalGridGeometry extends CodedGeometry {
+public class DiscreteGlobalGridGeometry extends CodedGeometry {
 
     //computed
     private Integer depth;
@@ -62,25 +53,27 @@ public abstract class DiscreteGlobalGridGeometry extends CodedGeometry {
     private GeographicExtent geoExtent;
 
     public static DiscreteGlobalGridGeometry unstructured(DiscreteGlobalGridReferenceSystem dggrs, List<Object> zoneIds, GeographicExtent bbox) {
-        return new Unstructured(dggrs, zoneIds, bbox);
+        if (zoneIds != null) {
+            final DiscreteGlobalGridTransform.Unstructured trs = DiscreteGlobalGridTransform.unstructured(dggrs, zoneIds.toArray());
+            return new DiscreteGlobalGridGeometry(dggrs, trs.getExtent(), trs, bbox);
+
+        } else {
+            return new DiscreteGlobalGridGeometry(dggrs, null, null, bbox);
+        }
     }
 
     public static DiscreteGlobalGridGeometry unstructured(DiscreteGlobalGridReferenceSystem dggrs, GridExtent extent, CodeTransform trs, GeographicExtent bbox) {
-        return new Unstructured(dggrs, extent, trs, bbox);
+        return new DiscreteGlobalGridGeometry(dggrs, extent, trs, bbox);
     }
 
     public static DiscreteGlobalGridGeometry subZone(DiscreteGlobalGridReferenceSystem dggrs, Object baseZoneId, Integer relativeDepth) {
-        final SubZoneTransform trs = new SubZoneTransform(dggrs, baseZoneId, relativeDepth);
-        return new SubZone(trs, null);
+        final DiscreteGlobalGridTransform.SubZoneTransform trs = DiscreteGlobalGridTransform.subZone(dggrs, baseZoneId, relativeDepth);
+        return new DiscreteGlobalGridGeometry(dggrs, trs.getExtent(), trs, null);
     }
 
     public static DiscreteGlobalGridGeometry subZones(DiscreteGlobalGridReferenceSystem dggrs, Object[] baseZoneIds, Integer relativeDepth) {
-        final SubZoneTransform[] subZones = new SubZoneTransform[baseZoneIds.length];
-        for (int i = 0; i < subZones.length; i++) {
-            subZones[i] = new SubZoneTransform(dggrs, baseZoneIds[i], relativeDepth);
-        }
-        final SubZoneTransforms trs = new SubZoneTransforms(subZones);
-        return new SubZones(trs, null);
+        DiscreteGlobalGridTransform.SubZoneTransforms trs = DiscreteGlobalGridTransform.subZones(dggrs, baseZoneIds, relativeDepth);
+        return new DiscreteGlobalGridGeometry(dggrs, trs.getExtent(), trs, null);
     }
 
     /**
@@ -93,12 +86,6 @@ public abstract class DiscreteGlobalGridGeometry extends CodedGeometry {
              new GridExtent(null, 0, zoneIds.size(), false),
              CodeTransforms.toTransform(dggrs, zoneIds),
              bbox);
-    }
-
-    private DiscreteGlobalGridGeometry(DiscreteGlobalGridReferenceSystem dggrs, Object[] baseZoneIds, Integer relativeDepth, List<Object> zoneIds, GeographicExtent bbox) {
-        this(dggrs,
-            (zoneIds == null) ? null : new GridExtent(null, 0, zoneIds.size(), false),
-            (zoneIds == null) ? null : CodeTransforms.toTransform(dggrs, zoneIds), bbox);
     }
 
     protected DiscreteGlobalGridGeometry(DiscreteGlobalGridReferenceSystem dggrs, GridExtent extent, CodeTransform trs, GeographicExtent geoExtent) {
@@ -120,14 +107,22 @@ public abstract class DiscreteGlobalGridGeometry extends CodedGeometry {
     /**
      * @return can be null
      */
-    public Object[] getBaseZoneIds() {
+    public final Object[] getBaseZoneIds() {
+        final CodeTransform gridToRS = getGridToRS();
+        if (gridToRS instanceof DiscreteGlobalGridTransform t) {
+            return t.getBaseZoneIds();
+        }
         return null;
     }
 
     /**
      * @return can be null
      */
-    public Integer getRelativeDepth() {
+    public final Integer getRelativeDepth() {
+        final CodeTransform gridToRS = getGridToRS();
+        if (gridToRS instanceof DiscreteGlobalGridTransform t) {
+            return t.getRelativeDepth();
+        }
         return null;
     }
 
@@ -245,9 +240,21 @@ public abstract class DiscreteGlobalGridGeometry extends CodedGeometry {
     /**
      * List of zones selected in the geometry.
      *
-     * @return List of zone identifiers, never null
+     * @return List of zone identifiers
      */
-    public abstract List<Object> getZoneIds();
+    public final List<Object> getZoneIds() {
+        final CodeTransform gridToRS = getGridToRS();
+        if (gridToRS instanceof DiscreteGlobalGridTransform t) {
+            try {
+                return t.getZoneIds();
+            } catch (TransformException ex) {
+                throw new RuntimeException(ex.getMessage(), ex);
+            }
+        } else if (gridToRS instanceof CodeTransforms.Listed t) {
+            return (List<Object>) t.getList();
+        }
+        return null;
+    }
 
     /**
      * @return refinement level of zones in the coverage geometry.
@@ -365,282 +372,4 @@ public abstract class DiscreteGlobalGridGeometry extends CodedGeometry {
         return 61 * super.hashCode();
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        return super.equals(obj);
-    }
-
-    private static final class Unstructured extends DiscreteGlobalGridGeometry {
-
-        public Unstructured(DiscreteGlobalGridReferenceSystem dggrs, List<Object> zoneIds, GeographicExtent bbox) {
-            super(dggrs,
-                (zoneIds != null) ? new GridExtent(null, 0, zoneIds.size(), false) : null,
-                (zoneIds != null) ? CodeTransforms.toTransform(dggrs, zoneIds) : null,
-                bbox);
-        }
-
-        public Unstructured(DiscreteGlobalGridReferenceSystem dggrs, GridExtent extent, CodeTransform trs, GeographicExtent bbox) {
-            super(dggrs,
-                extent,
-                trs,
-                bbox);
-        }
-
-        @Override
-        public List<Object> getZoneIds() {
-            final CodeTransforms.Listed trs = (CodeTransforms.Listed) getGridToRS();
-            return (List<Object>) trs.getList();
-        }
-
-    }
-
-    private static final class SubZone extends DiscreteGlobalGridGeometry {
-
-        public SubZone(SubZoneTransform trs, GeographicExtent bbox) {
-            super(trs.dggrs, trs.extent, trs, null);
-        }
-
-        /**
-         * @return can be null
-         */
-        public Object[] getBaseZoneIds() {
-            return new Object[]{((SubZoneTransform)getGridToRS()).baseZoneId};
-        }
-
-        /**
-         * @return can be null
-         */
-        public Integer getRelativeDepth() {
-            return ((SubZoneTransform)getGridToRS()).relativeDepth;
-        }
-
-        @Override
-        public List<Object> getZoneIds() {
-            try {
-                return List.of(((SubZoneTransform)getGridToRS()).getZids());
-            } catch (TransformException ex) {
-                throw new RuntimeException(ex.getMessage(), ex);
-            }
-        }
-    }
-
-    private static final class SubZones extends DiscreteGlobalGridGeometry {
-
-        public SubZones(SubZoneTransforms trs, GeographicExtent bbox) {
-            super(trs.dggrs, trs.extent, trs, null);
-        }
-
-        /**
-         * @return can be null
-         */
-        public Object[] getBaseZoneIds() {
-            return ((SubZoneTransforms)getGridToRS()).tileZoneIds;
-        }
-
-        /**
-         * @return can be null
-         */
-        public Integer getRelativeDepth() {
-            return ((SubZoneTransforms)getGridToRS()).relativeDepth;
-        }
-
-        @Override
-        public List<Object> getZoneIds() {
-            return ((SubZoneTransforms)getGridToRS()).getZids();
-        }
-    }
-
-    private static class SubZoneTransform extends SubTransform {
-
-        private final DiscreteGlobalGridReferenceSystem dggrs;
-        private final Object baseZoneId;
-        private final Integer relativeDepth;
-        private final GridExtent extent;
-        //computed when needed
-        private Object[] zids;
-        private Map<Object,Integer> index = new HashMap<>();
-
-        private SubZoneTransform(DiscreteGlobalGridReferenceSystem dggrs, Object baseZoneId, Integer relativeDepth) {
-            this.dggrs = dggrs;
-            this.baseZoneId = baseZoneId;
-            this.relativeDepth = relativeDepth;
-            this.extent = new GridExtent(null, 0, dggrs.getGridSystem().getHierarchy().getZone(baseZoneId).countChildrenAtRelativeDepth(relativeDepth), false);
-        }
-
-        @Override
-        public ReferenceSystem getRS() {
-            return dggrs;
-        }
-
-        @Override
-        public int getDimension() {
-            return 1;
-        }
-
-        public Object[] getZids() throws TransformException {
-            init();
-            return zids;
-        }
-
-        private synchronized void init() throws TransformException {
-            if (zids != null) return;
-
-            final DiscreteGlobalGridHierarchy dggh = dggrs.getGridSystem().getHierarchy();
-            zids = new Object[(int) extent.getSize(0)];
-            final Zone zone = dggh.getZone(baseZoneId);
-            final int searchedLevel = zone.getLocationType().getRefinementLevel() + relativeDepth;
-            int idx = 0;
-            try (Stream<Object> s = dggh.getGrids().get(searchedLevel).getZones(zone).map(Zone::getIdentifier)) {
-                Iterator<Object> iterator = s.iterator();
-                while (iterator.hasNext()) {
-                    Object zid = iterator.next();
-                    zids[idx] = zid;
-                    index.put(zid, idx);
-                    idx++;
-                }
-            }
-        }
-
-        @Override
-        public Code toCode(int[] gridPosition) throws TransformException {
-            init();
-            return new Code(dggrs, new Object[]{zids[gridPosition[0]]});
-        }
-
-        @Override
-        public int[] toGrid(Code location) throws TransformException {
-            init();
-            final Integer i = index.get(location.getOrdinate(0));
-            if (i == null) throw new TransformException("Location code outside this grid : " + location.getOrdinate(0));
-            return new int[]{i};
-        }
-
-        private Integer toGridInternal(Object zid) throws TransformException {
-            init();
-            return index.get(zid);
-        }
-
-        @Override
-        public CodeTransform split(int offset, int size) {
-            if (offset == 0 && size == 1) return this;
-            throw new IllegalArgumentException("Can not split transform at offset " + offset +" with size " + size);
-        }
-
-        @Override
-        public void toAddress(int[] gridPosition, Object[] location, int offset) throws TransformException {
-            init();
-            location[offset] = zids[gridPosition[offset]];
-        }
-
-        @Override
-        public void toGrid(Object[] location, int[] gridPosition, int offset) throws TransformException {
-            init();
-            final Integer i = index.get(location[offset]);
-            if (i == null) throw new TransformException("Location code outside this grid : " + location[offset]);
-            gridPosition[offset] = i;
-        }
-
-    }
-
-    private static class SubZoneTransforms extends SubTransform {
-
-        private final DiscreteGlobalGridReferenceSystem dggrs;
-        private final SubZoneTransform[] tiles;
-        private final long[] offsets;
-        private final Object[] tileZoneIds;
-        private final int relativeDepth;
-        private final GridExtent extent;
-        private final long count;
-
-        private final AbstractList<Object> zids = new AbstractList<Object>() {
-            @Override
-            public Object get(int index) {
-                int idx = Arrays.binarySearch(offsets, index);
-                if (idx < 0) {
-                    idx = -(idx +1);
-                    // use the previous iterator
-                    idx--;
-                }
-                if (idx == offsets.length) {
-                    throw new IllegalArgumentException("Position is outside grid : " + index);
-                }
-                try {
-                    return tiles[idx].getZids()[index - (int)offsets[idx]];
-                } catch (TransformException ex) {
-                    throw new RuntimeException(ex.getMessage(), ex);
-                }
-            }
-
-            @Override
-            public int size() {
-                return (int) count;
-            }
-        };
-
-        public SubZoneTransforms(SubZoneTransform[] tiles) {
-            this.dggrs = tiles[0].dggrs;
-            this.tiles = tiles;
-            this.offsets = new long[tiles.length];
-            this.tileZoneIds = new Object[tiles.length];
-            this.relativeDepth = tiles[0].relativeDepth;
-            long count = 0;
-            for (int i = 0; i < tiles.length; i++) {
-                offsets[i] = count;
-                count += tiles[i].extent.getSize(0);
-                tileZoneIds[i] = tiles[i].baseZoneId;
-            }
-            this.extent = new GridExtent(null, 0, count, false);
-            this.count = count;
-        }
-
-        @Override
-        public ReferenceSystem getRS() {
-            return tiles[0].dggrs;
-        }
-
-        @Override
-        public int getDimension() {
-            return 1;
-        }
-
-        @Override
-        public CodeTransform split(int offset, int size) {
-            if (offset == 0 && size == 1) return this;
-            throw new IllegalArgumentException("Can not split transform at offset " + offset +" with size " + size);
-        }
-
-        public List<Object> getZids() {
-            return zids;
-        }
-
-        @Override
-        public void toAddress(int[] gridPosition, Object[] location, int offset) throws TransformException {
-            final int gp = gridPosition[offset];
-
-            int idx = Arrays.binarySearch(offsets, gp);
-            if (idx < 0) {
-                idx = -(idx +1);
-                // use the previous iterator
-                idx--;
-            }
-            if (idx == offsets.length) {
-                throw new TransformException("Position is outside grid : " + gp);
-            }
-            location[offset] = tiles[idx].toCode(new int[]{gp - (int)offsets[idx]});
-        }
-
-        @Override
-        public void toGrid(Object[] location, int[] gridPosition, int offset) throws TransformException {
-            final Object zid = location[offset];
-            for (SubZoneTransform trs : tiles) {
-                Integer g = trs.toGridInternal(zid);
-                if (g != null) {
-                    gridPosition[offset] = g;
-                    return;
-                }
-            }
-            throw new TransformException("Location code outside this grid : " + zid);
-        }
-
-    }
 }

@@ -14,23 +14,28 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.storage.dggs.internal.shared;
-
-import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.storage.rs.CodedCoverage;
+package org.geotoolkit.stac.client;
 
 /**
+ * Identifies the type of resource returned by a STAC API endpoint URL.
  *
- * @author Johann Sorel (Geomatys)
+ * @author Quentin Bialota (Geomatys)
  */
-public abstract class WritableTiledDiscreteGlobalGridCoverageResource extends TiledDiscreteGlobalGridCoverageResource {
+public enum StacResourceType {
 
     /**
-     * Set tile values.
-     *
-     * @param identifierOrZone must be a valid tile zone identifieri n tile level range
-     * @param data tile data, null to erase tile.
-     * @throws DataStoreException
+     * The URL points to a STAC Item (GeoJSON Feature with {@code "type": "Feature"}).
      */
-    public abstract void setZoneTile(Object identifierOrZone, CodedCoverage data) throws DataStoreException;
+    ITEM,
+
+    /**
+     * The URL points to a STAC Collection ({@code "type": "Collection"}).
+     */
+    COLLECTION,
+
+    /**
+     * The URL returned a valid JSON response but its {@code "type"} field did not match
+     * any recognized STAC resource type (e.g. a Catalog, ItemCollection, or API root).
+     */
+    UNKNOWN
 }
