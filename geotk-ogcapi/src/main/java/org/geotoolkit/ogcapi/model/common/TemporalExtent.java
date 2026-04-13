@@ -28,11 +28,9 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 import org.geotoolkit.ogcapi.model.DataTransferObject;
+import org.geotoolkit.ogcapi.model.common.serializer.TemporalExtentIntervalSerializer;
 
 /**
  * The temporal extent of the features in the collection.
