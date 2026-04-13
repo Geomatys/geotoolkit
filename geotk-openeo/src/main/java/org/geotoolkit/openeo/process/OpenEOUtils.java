@@ -104,7 +104,7 @@ public class OpenEOUtils {
             properties.put("south", Map.of("description", "South (lower left corner)", "type", "number"));
             properties.put("west", Map.of("description", "West (lower left corner)", "type", "number"));
             properties.put("east", Map.of("description", "East (upper right corner)", "type", "number"));
-            properties.put("crs", Map.of("description", "The coordinate reference system in which the coordinates are given.", "type", "any", "default", "EPSG:4326"));
+            properties.put("crs", Map.of("description", "The coordinate reference system in which the coordinates are given.", "type", "string", "default", "EPSG:4326"));
 
             dataTypeSchemas.add(new DataTypeSchema(title, description, properties, null, required, List.of(DataTypeSchema.Type.fromValue(type, isArray)), subtype));
 
@@ -123,7 +123,7 @@ public class OpenEOUtils {
             items.put("anyOf", List.of(
                     Map.of("format", "date-time", "subtype", "date-time", "type", "string"),
                     Map.of("format", "date", "subtype", "date", "type", "string"),
-                    Map.of("type", "NULL")
+                    Map.of("type", "null")
                     )
             );
 
