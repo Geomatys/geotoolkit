@@ -119,7 +119,7 @@ final class MaskGridCoverageResource extends DerivedGridCoverageResource {
                         poi[hAxe] += resolution[hAxe];
                         end.setCoordinates(poi);
                         calc.setStartPoint(start);
-                        calc.setStartPoint(end);
+                        calc.setEndPoint(end);
                         final double distance = calc.getGeodesicDistance();
                         linearResolution = Quantities.create(distance, calc.getDistanceUnit());
                     } catch (TransformException ex) {
