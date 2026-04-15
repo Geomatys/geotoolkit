@@ -31,7 +31,7 @@ import org.apache.sis.storage.base.MetadataBuilder;
 
 abstract class DerivedGridCoverageResource extends AbstractGridCoverageResource {
 
-    private final GenericName name;
+    protected final GenericName name;
     protected final GridCoverageResource source;
 
     protected DerivedGridCoverageResource(final GenericName name, final GridCoverageResource source) {
@@ -68,11 +68,17 @@ abstract class DerivedGridCoverageResource extends AbstractGridCoverageResource 
         return source.getSampleDimensions();
     }
 
+    /**
+     * Returns an indication about when the "physical" loading of raster data will happen.
+     */
     @Override
     public RasterLoadingStrategy getLoadingStrategy() throws DataStoreException {
         return source.getLoadingStrategy();
     }
 
+    /**
+     * Sets the preferred strategy about when to do the "physical" loading of raster data.
+     */
     @Override
     public boolean setLoadingStrategy(RasterLoadingStrategy strategy) throws DataStoreException {
         return source.setLoadingStrategy(strategy);

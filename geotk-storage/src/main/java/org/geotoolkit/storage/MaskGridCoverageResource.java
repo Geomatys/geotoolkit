@@ -59,8 +59,8 @@ final class MaskGridCoverageResource extends DerivedGridCoverageResource {
     private final boolean maskInside;
     private final String maskGeometryPropertyName;
 
-    MaskGridCoverageResource(GridCoverageResource base, FeatureSet mask, boolean maskInside) {
-        super(null, base);
+    MaskGridCoverageResource(GridCoverageResource base, GenericName name, FeatureSet mask, boolean maskInside) {
+        super(name, base);
         this.mask = mask;
         this.maskInside = maskInside;
         try {
@@ -69,11 +69,6 @@ final class MaskGridCoverageResource extends DerivedGridCoverageResource {
         } catch (DataStoreException | PropertyNotFoundException | IllegalStateException e) {
             throw new IllegalArgumentException("Cannot determine geometry property to use as mask", e);
         }
-    }
-
-    @Override
-    public Optional<GenericName> getIdentifier() throws DataStoreException {
-        return source.getIdentifier();
     }
 
     @Override
