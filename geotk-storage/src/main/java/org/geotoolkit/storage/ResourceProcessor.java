@@ -74,6 +74,7 @@ import org.opengis.referencing.operation.MathTransform;
 public class ResourceProcessor implements Cloneable {
 
     private final GridCoverageProcessor processor;
+    private GenericName identifier;
 
     /**
      * Creates a new processor with default configuration.
@@ -92,6 +93,15 @@ public class ResourceProcessor implements Cloneable {
     @Override
     public ResourceProcessor clone() {
         return new ResourceProcessor(processor.clone());
+    }
+
+    /**
+     * Set the created resource identifier.
+     *
+     * @param identifier created resource identifier, or null
+     */
+    public void setIdentifier(GenericName identifier) {
+        this.identifier = identifier;
     }
 
     /**
@@ -139,7 +149,7 @@ public class ResourceProcessor implements Cloneable {
         ArgumentChecks.ensureNonNull("source",   source);
         ArgumentChecks.ensureNonNull("dimToAdd", dimToAdd);
         try {
-            return DimensionAddedCoverageResource.create(processor, source, dimToAdd);
+            return DimensionAddedCoverageResource.create(processor, source, dimToAdd, identifier);
         } catch (IllegalGridGeometryException e) {
             throw e;
         } catch (IllegalArgumentException e) {
@@ -205,8 +215,8 @@ public class ResourceProcessor implements Cloneable {
      * @param targetName An optional name for returned resource. If null, output {@link org.apache.sis.storage.Resource#getIdentifier() resource identifier} will not be present.
      * @return A resource decorating provided one. It triggers a {@link GridCoverageProcessor#resample(GridCoverage, GridGeometry) resampling operation} upon reads. Never null.
      */
-    public GridCoverageResource resample(final GridCoverageResource source, final GridGeometry target, GenericName targetName) {
-        return new ResampledGridCoverageResource(source, target, targetName, processor);
+    public GridCoverageResource resample(final GridCoverageResource source, final GridGeometry target) {
+        return new ResampledGridCoverageResource(source, target, identifier, processor);
     }
 
     /**
@@ -221,7 +231,7 @@ public class ResourceProcessor implements Cloneable {
      * @throws TransformException If an error occurs while transforming input resource geometry to the target CRS.
      * @throws IncompleteGridGeometryException If input resource geometry does not provide enough information to build a resampling pipeline (i.e. No CRS or no envelope).
      */
-    public GridCoverageResource resample(final GridCoverageResource source, final CoordinateReferenceSystem target, GenericName targetName)
+    public GridCoverageResource resample(final GridCoverageResource source, final CoordinateReferenceSystem target)
             throws DataStoreException, FactoryException, TransformException
     {
         ensureNonNull("Source", source);
@@ -239,7 +249,7 @@ public class ResourceProcessor implements Cloneable {
             reprojected = new GridGeometry(null, null, sourceGeom.getEnvelope(target), GridRoundingMode.ENCLOSING);
         } else throw new IncompleteGridGeometryException("Cannot reproject a grid coverage resource whose geometry defines neither an envelope nor a conversion for grid to CRS");
 
-        return new ResampledGridCoverageResource(source, reprojected, targetName, processor);
+        return new ResampledGridCoverageResource(source, reprojected, identifier, processor);
     }
 
     /**
@@ -252,7 +262,7 @@ public class ResourceProcessor implements Cloneable {
      * @see GridCoverageProcessor#mask(org.apache.sis.coverage.grid.GridCoverage, org.apache.sis.coverage.RegionOfInterest, boolean)
      */
     public GridCoverageResource mask(final GridCoverageResource source, FeatureSet maskingset, boolean maskInside) {
-        return new MaskGridCoverageResource(source, maskingset, maskInside);
+        return new MaskGridCoverageResource(source, identifier, maskingset, maskInside);
     }
 
     /**
@@ -295,7 +305,7 @@ public class ResourceProcessor implements Cloneable {
     public GridCoverageResource aggregateRanges(GridCoverageResource[] sources, CoordinateReferenceSystem crs, int[][] bandsPerSource)
             throws DataStoreException, TransformException {
 
-        final List<AggregatedCoverageResource.VirtualBand> bands = new ArrayList();
+        final var bands = new ArrayList<AggregatedCoverageResource.VirtualBand>();
 
         for (int i = 0; i < sources.length; i++) {
             final List<SampleDimension> sampleDimensions = sources[i].getSampleDimensions();
@@ -317,7 +327,9 @@ public class ResourceProcessor implements Cloneable {
             }
         }
 
-        return new AggregatedCoverageResource(bands, AggregatedCoverageResource.Mode.ORDER, crs);
+        final var agg = new AggregatedCoverageResource(bands, AggregatedCoverageResource.Mode.ORDER, crs);
+        agg.setIdentifier(identifier);
+        return agg;
     }
 
     /**
@@ -345,8 +357,12 @@ public class ResourceProcessor implements Cloneable {
      */
     public GridCoverageResource aggregateDomain2D(GridCoverageResource[] sources, CoordinateReferenceSystem crs, boolean byScale)
             throws DataStoreException, TransformException {
-        return AggregatedCoverageResource.create(crs,
+        GridCoverageResource res = AggregatedCoverageResource.create(crs,
                 byScale ? AggregatedCoverageResource.Mode.SCALE : AggregatedCoverageResource.Mode.ORDER, sources);
+        if (res instanceof AggregatedCoverageResource agg) {
+            agg.setIdentifier(identifier);
+        }
+        return res;
     }
 
     private static Optional<GeographicBoundingBox> searchGeographicExtent(GridCoverageResource source) throws DataStoreException {

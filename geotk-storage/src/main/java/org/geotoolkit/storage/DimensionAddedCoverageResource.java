@@ -18,10 +18,8 @@ package org.geotoolkit.storage;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import org.opengis.util.GenericName;
 import org.opengis.util.FactoryException;
-import org.opengis.metadata.Metadata;
 import org.opengis.referencing.operation.TransformException;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridExtent;
@@ -32,7 +30,6 @@ import org.apache.sis.coverage.grid.IllegalGridGeometryException;
 import org.apache.sis.coverage.grid.PixelInCell;
 import org.apache.sis.storage.Query;
 import org.apache.sis.storage.GridCoverageResource;
-import org.apache.sis.storage.RasterLoadingStrategy;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreReferencingException;
 import org.apache.sis.storage.base.StoreUtilities;
@@ -49,16 +46,11 @@ import org.apache.sis.util.ArraysExt;
 /**
  * TODO : this is a copy of org.apache.sis.storage.aggregate.DimensionAppender
  */
-final class DimensionAddedCoverageResource implements GridCoverageResource {
+final class DimensionAddedCoverageResource extends DerivedGridCoverageResource {
     /**
      * The grid coverage processor to use for creating grid coverages with extra dimensions.
      */
     private final GridCoverageProcessor processor;
-
-    /**
-     * The source grid coverage resource for which to append extra dimensions.
-     */
-    private final GridCoverageResource source;
 
     /**
      * The dimensions added to the source grid coverage.
@@ -82,11 +74,12 @@ final class DimensionAddedCoverageResource implements GridCoverageResource {
      * @param  processor  the grid coverage processor to use for creating grid coverages with extra dimensions.
      * @param  source     the source grid coverage for which to append extra dimensions.
      * @param  dimToAdd   the dimensions to add to the source grid coverage.
+     * @param  name the resource identifier, null to inherit from source
      */
-    private DimensionAddedCoverageResource(final GridCoverageProcessor processor, final GridCoverageResource source, final GridGeometry dimToAdd) {
-        this.processor = processor;
-        this.source    = source;
-        this.dimToAdd  = dimToAdd;
+    private DimensionAddedCoverageResource(final GridCoverageProcessor processor, final GridCoverageResource source, final GridGeometry dimToAdd, GenericName name) {
+        super(name, source);
+        this.processor  = processor;
+        this.dimToAdd   = dimToAdd;
     }
 
     /**
@@ -96,9 +89,10 @@ final class DimensionAddedCoverageResource implements GridCoverageResource {
      * @param  processor  the grid coverage processor to use for creating grid coverages with extra dimensions.
      * @param  source     the source grid coverage for which to append extra dimensions.
      * @param  dimToAdd   the dimensions to add to the source grid coverage.
+     * @param  identifier the resource identifier, null to inherit from source
      * @throws IllegalGridGeometryException if a dimension has more than one grid cell.
      */
-    static GridCoverageResource create(final GridCoverageProcessor processor, GridCoverageResource source, GridGeometry dimToAdd) {
+    static GridCoverageResource create(final GridCoverageProcessor processor, GridCoverageResource source, GridGeometry dimToAdd, GenericName identifier) {
         ArgumentChecks.ensureNonNull("source", source);
         final GridExtent extent = dimToAdd.getExtent();
         int i = extent.getDimension();
@@ -120,23 +114,7 @@ final class DimensionAddedCoverageResource implements GridCoverageResource {
         } catch (FactoryException e) {
             throw new IllegalGridGeometryException(e.getMessage(), e);
         }
-        return new DimensionAddedCoverageResource(processor, source, dimToAdd);
-    }
-
-    /**
-     * Returns the identifier of the original resource.
-     */
-    @Override
-    public Optional<GenericName> getIdentifier() throws DataStoreException {
-        return source.getIdentifier();
-    }
-
-    /**
-     * Returns the metadata of the original resource.
-     */
-    @Override
-    public Metadata getMetadata() throws DataStoreException {
-        return source.getMetadata();
+        return new DimensionAddedCoverageResource(processor, source, dimToAdd, identifier);
     }
 
     /**
@@ -174,7 +152,7 @@ final class DimensionAddedCoverageResource implements GridCoverageResource {
     public GridCoverageResource subset(final Query query) throws DataStoreException {
         final GridCoverageResource subset = source.subset(query);
         if (subset == source) return this;
-        return new DimensionAddedCoverageResource(processor, subset, dimToAdd);
+        return new DimensionAddedCoverageResource(processor, subset, dimToAdd, name);
     }
 
     /**
@@ -183,22 +161,6 @@ final class DimensionAddedCoverageResource implements GridCoverageResource {
     @Override
     public GridCoverage read(GridGeometry domain, int... ranges) throws DataStoreException {
         return processor.appendDimensions(source.read(domain, ranges), dimToAdd);
-    }
-
-    /**
-     * Returns an indication about when the "physical" loading of raster data will happen.
-     */
-    @Override
-    public RasterLoadingStrategy getLoadingStrategy() throws DataStoreException {
-        return source.getLoadingStrategy();
-    }
-
-    /**
-     * Sets the preferred strategy about when to do the "physical" loading of raster data.
-     */
-    @Override
-    public boolean setLoadingStrategy(RasterLoadingStrategy strategy) throws DataStoreException {
-        return source.setLoadingStrategy(strategy);
     }
 
     /**
