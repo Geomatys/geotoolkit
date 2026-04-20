@@ -1,5 +1,6 @@
 package org.geotoolkit.wps.xml.v200;
 
+import java.util.List;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.geotoolkit.wps.json.JobOptionsDeserializer;
@@ -18,24 +19,33 @@ import org.opengis.util.CodeList;
 @JsonSerialize(using = JobOptionsSerializer.class)
 public class JobControlOptions extends CodeList<JobControlOptions> {
 
-    public static final JobControlOptions SYNC_EXECUTE = valueOf("sync-execute");
-    public static final JobControlOptions ASYNC_EXECUTE = valueOf("async-execute");
-    public static final JobControlOptions DISMISS = valueOf("dismiss");
+    public static final JobControlOptions SYNC_EXECUTE;
+    public static final JobControlOptions ASYNC_EXECUTE;
+    public static final JobControlOptions DISMISS;
+
+    /**
+     * All code list values created in the currently running <abbr>JVM</abbr>.
+     */
+    private static final List<JobControlOptions> VALUES = initialValues(
+        // Inline assignments for getting compiler error if a field is missing or duplicated.
+        SYNC_EXECUTE  = new JobControlOptions("sync-execute"),
+        ASYNC_EXECUTE = new JobControlOptions("async-execute"),
+        DISMISS       = new JobControlOptions("dismiss"));
 
     private JobControlOptions(String value) {
         super(value);
     }
 
     public static JobControlOptions[] values() {
-        return CodeList.values(JobControlOptions.class);
+        return VALUES.toArray(JobControlOptions[]::new);
     }
 
     @Override
     public JobControlOptions[] family() {
-        return values(JobControlOptions.class);
+        return values();
     }
 
     public static JobControlOptions valueOf(String code) {
-        return valueOf(JobControlOptions.class, code, JobControlOptions::new).get();
+        return valueOf(VALUES, code, JobControlOptions::new);
     }
 }

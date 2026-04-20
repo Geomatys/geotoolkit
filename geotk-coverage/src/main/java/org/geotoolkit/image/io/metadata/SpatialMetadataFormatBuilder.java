@@ -82,6 +82,7 @@ import org.geotoolkit.internal.image.io.GridDomainAccessor;
 
 import static javax.imageio.metadata.IIOMetadataFormat.*;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
+import org.apache.sis.util.internal.shared.CodeLists;
 
 
 /**
@@ -642,7 +643,7 @@ public class SpatialMetadataFormatBuilder extends Builder<SpatialMetadataFormat>
     private static String[] identifiers(final Class<? extends ControlledVocabulary> codeType) {
         final ControlledVocabulary[] codes;
         if (CodeList.class.isAssignableFrom(codeType)) {
-            codes = (ControlledVocabulary[]) CodeList.values((Class) codeType);
+            codes = (ControlledVocabulary[]) CodeLists.values((Class) codeType);
         } else {
             codes = (ControlledVocabulary[]) codeType.getEnumConstants();
         }

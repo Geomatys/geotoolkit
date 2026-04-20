@@ -62,14 +62,25 @@ public class TileFormat {
 
     public static class Compression extends CodeList<Compression> {
 
-        public static final Compression UNDEFINED = valueOf("UNDEFINED");
-        public static final Compression NONE = valueOf("NONE");
-        public static final Compression ZIP = valueOf("ZIP");
-        public static final Compression GZ = valueOf("GZ");
+        public static final Compression UNDEFINED;
+        public static final Compression NONE;
+        public static final Compression ZIP;
+        public static final Compression GZ;
         /**
          * Provide less compression then GZ but greater input and output performances.
          */
-        public static final Compression LZ4 = valueOf("LZ4");
+        public static final Compression LZ4;
+
+    /**
+     * All code list values created in the currently running <abbr>JVM</abbr>.
+     */
+    private static final List<Compression> VALUES = initialValues(
+        // Inline assignments for getting compiler error if a field is missing or duplicated.
+        UNDEFINED = new Compression("UNDEFINED"),
+        NONE      = new Compression("NONE"),
+        ZIP       = new Compression("ZIP"),
+        GZ        = new Compression("GZ"),
+        LZ4       = new Compression("LZ4"));
 
 
         private Compression(final String name) {
@@ -78,11 +89,11 @@ public class TileFormat {
 
         @Override
         public Compression[] family() {
-            return values(Compression.class);
+        return VALUES.toArray(Compression[]::new);
         }
 
         public static Compression valueOf(String code) {
-            return valueOf(Compression.class, code, Compression::new).get();
+        return valueOf(VALUES, code, Compression::new);
         }
     }
 }

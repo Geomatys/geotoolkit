@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.referencing.dggs;
 
+import java.util.List;
 import org.opengis.util.CodeList;
 
 /**
@@ -33,22 +34,32 @@ public final class SubZoneOrder extends CodeList<SubZoneOrder> {
     /**
      * Grid scan line ordering.
      */
-    public static final SubZoneOrder SCANLINE = valueOf("SCANLINE");
+    public static final SubZoneOrder SCANLINE;
 
     /**
      * Spiral from center cell.
      */
-    public static final SubZoneOrder SPIRAL_FROM_CENTER = valueOf("SPIRAL_FROM_CENTER");
+    public static final SubZoneOrder SPIRAL_FROM_CENTER;
 
     /**
      * Morton curve iteration.
      */
-    public static final SubZoneOrder MORTON_CURVE = valueOf("MORTON_CURVE");
+    public static final SubZoneOrder MORTON_CURVE;
 
     /**
      * Hilbert curve iteration.
      */
-    public static final SubZoneOrder HILBERT_CURVE = valueOf("HILBERT_CURVE");
+    public static final SubZoneOrder HILBERT_CURVE;
+
+    /**
+     * All code list values created in the currently running <abbr>JVM</abbr>.
+     */
+    private static final List<SubZoneOrder> VALUES = initialValues(
+        // Inline assignments for getting compiler error if a field is missing or duplicated.
+        SCANLINE           = new SubZoneOrder("SCANLINE"),
+        SPIRAL_FROM_CENTER = new SubZoneOrder("SPIRAL_FROM_CENTER"),
+        MORTON_CURVE       = new SubZoneOrder("MORTON_CURVE"),
+        HILBERT_CURVE      = new SubZoneOrder("HILBERT_CURVE"));
 
     private final String description;
 
@@ -77,7 +88,7 @@ public final class SubZoneOrder extends CodeList<SubZoneOrder> {
      */
     @Override
     public SubZoneOrder[] family() {
-        return values(SubZoneOrder.class);
+        return VALUES.toArray(SubZoneOrder[]::new);
     }
 
     /**
@@ -87,7 +98,7 @@ public final class SubZoneOrder extends CodeList<SubZoneOrder> {
      * @return a code matching the given name.
      */
     public static SubZoneOrder valueOf(String code) {
-        return valueOf(SubZoneOrder.class, code, SubZoneOrder::new).get();
+        return valueOf(VALUES, code, SubZoneOrder::new);
     }
 
     /**
@@ -98,6 +109,6 @@ public final class SubZoneOrder extends CodeList<SubZoneOrder> {
      * @return a code matching the given name.
      */
     public static SubZoneOrder valueOf(String code, String description) {
-        return valueOf(SubZoneOrder.class, code, (c) -> new SubZoneOrder(c, description)).get();
+        return valueOf(VALUES, code, (c) -> new SubZoneOrder(c, description));
     }
 }
