@@ -19,7 +19,10 @@ package org.geotoolkit.openeo.process.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import org.geotoolkit.openeo.process.dto.serializer.DataTypeSchemaTypeSerializer;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
@@ -71,6 +74,7 @@ public class DataTypeSchema extends DataTransferObject {
             this.value = value;
         }
 
+        @JsonValue
         public String getValue() {
             return value;
         }
@@ -188,6 +192,7 @@ public class DataTypeSchema extends DataTransferObject {
     @XmlElement(name = "item")
     @JacksonXmlElementWrapper(localName = "type", useWrapping = false)
     @JacksonXmlProperty(localName = "item")
+    @JsonSerialize(using = DataTypeSchemaTypeSerializer.class)
     @JsonDeserialize(using = DataTypeSchemaTypeDeserializer.class)
     @jakarta.annotation.Nonnull
     private List<Type> type = new ArrayList<>();

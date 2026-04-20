@@ -19,6 +19,7 @@ package org.geotoolkit.ogcapi.model.common;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
@@ -27,11 +28,9 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 import org.geotoolkit.ogcapi.model.DataTransferObject;
+import org.geotoolkit.ogcapi.model.common.serializer.TemporalExtentIntervalSerializer;
 
 /**
  * The temporal extent of the features in the collection.
@@ -50,6 +49,7 @@ public final class TemporalExtent extends DataTransferObject {
 
     public static final String JSON_PROPERTY_INTERVAL = "interval";
     @XmlElement(name = "interval")
+    @JsonSerialize(using = TemporalExtentIntervalSerializer.class)
     @jakarta.annotation.Nullable
     private OffsetDateTime[][] interval;
 

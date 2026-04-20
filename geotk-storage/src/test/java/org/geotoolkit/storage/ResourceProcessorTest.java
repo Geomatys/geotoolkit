@@ -57,7 +57,9 @@ public final class ResourceProcessorTest {
     @Test
     public void resampleByCrs() throws DataStoreException, FactoryException, TransformException {
         final LocalName name = Names.createLocalName(null, null, "resample-by-crs");
-        final GridCoverageResource resampled = nearestInterpol().resample(grid1234(), CommonCRS.WGS84.geographic(), name);
+        final ResourceProcessor proc = nearestInterpol();
+        proc.setIdentifier(name);
+        final GridCoverageResource resampled = proc.resample(grid1234(), CommonCRS.WGS84.geographic());
         GenericName queriedName = resampled.getIdentifier().orElseThrow(() -> new AssertionError("No name defined, but one was provided"));
         assertEquals("resampled resource name", name, queriedName);
         final GridCoverage read = resampled.read(null);
@@ -78,7 +80,7 @@ public final class ResourceProcessorTest {
         final GridCoverageResource source = grid1234();
         final GridGeometry sourceGG = source.getGridGeometry();
         final GridGeometry upsampledGeom = new GridGeometry(new GridExtent(4, 4), sourceGG.getEnvelope(), GridOrientation.HOMOTHETY);
-        final GridCoverageResource resampled = nearestInterpol().resample(source, upsampledGeom, null);
+        final GridCoverageResource resampled = nearestInterpol().resample(source, upsampledGeom);
         resampled.getIdentifier().ifPresent(name -> fail("Name should be null, but a value was returned: "+name));
         final RenderedImage rendered = resampled.read(null).render(null);
         assertEquals("Resample dimensions: width", 4, rendered.getWidth());
