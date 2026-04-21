@@ -1,5 +1,6 @@
 package org.geotoolkit.wps.xml.v200;
 
+import java.util.List;
 import org.opengis.util.CodeList;
 
 /**
@@ -13,16 +14,29 @@ import org.opengis.util.CodeList;
  */
 public class Status extends CodeList<Status> {
 
-    public static final Status ACCEPTED = valueOf("Accepted");
-    public static final Status RUNNING = valueOf("Running");
-    public static final Status FAILED = valueOf("Failed");
-    public static final Status SUCCEEDED = valueOf("Succeeded");
-    public static final Status DISMISS = valueOf("Dismissed");
+    public static final Status ACCEPTED;
+    public static final Status RUNNING;
+    public static final Status FAILED;
+    public static final Status SUCCEEDED;
+    public static final Status DISMISS;
     // Added this new values  TODO review if really needed
     @Deprecated
-    public static final Status STARTED = valueOf("Started");
+    public static final Status STARTED;
     @Deprecated
-    public static final Status PAUSED = valueOf("Paused");
+    public static final Status PAUSED;
+
+    /**
+     * All code list values created in the currently running <abbr>JVM</abbr>.
+     */
+    private static final List<Status> VALUES = initialValues(
+        // Inline assignments for getting compiler error if a field is missing or duplicated.
+        ACCEPTED  = new Status("Accepted"),
+        RUNNING   = new Status("Running"),
+        FAILED    = new Status("Failed"),
+        SUCCEEDED = new Status("Succeeded"),
+        DISMISS   = new Status("Dismissed"),
+        STARTED   = new Status("Started"),
+        PAUSED    = new Status("Paused"));
 
 
     private Status(String value) {
@@ -31,10 +45,10 @@ public class Status extends CodeList<Status> {
 
     @Override
     public Status[] family() {
-        return values(Status.class);
+        return VALUES.toArray(Status[]::new);
     }
 
     public static Status valueOf(String code) {
-        return valueOf(Status.class, code, Status::new).get();
+        return valueOf(VALUES, code, Status::new);
     }
 }

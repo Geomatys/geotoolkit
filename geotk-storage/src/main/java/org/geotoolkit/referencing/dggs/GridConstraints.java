@@ -16,9 +16,8 @@
  */
 package org.geotoolkit.referencing.dggs;
 
+import java.util.List;
 import org.opengis.util.CodeList;
-import static org.opengis.util.CodeList.valueOf;
-import static org.opengis.util.CodeList.values;
 
 /**
  * Set of descriptive information on the dggrs cell properties.
@@ -36,30 +35,41 @@ public final class GridConstraints extends CodeList<GridConstraints> {
     /**
      * Cell edges are parallel to the base CRS’s coordinate system axes.
      */
-    public static final GridConstraints cellAxisAligned = valueOf("cellAxisAligned");
+    public static final GridConstraints cellAxisAligned;
 
     /**
      * Variation in shape between all the cells in each DiscreteGlobalGrid is minimized.
      */
-    public static final GridConstraints cellConformal = valueOf("cellConformal");
+    public static final GridConstraints cellConformal;
 
     /**
      * Variation in bearing from one cell’s representative position to the next neighboring cell’s representative
      * positions in each DiscreteGlobalGrid is minimized.
      */
-    public static final GridConstraints cellEquiAngular = valueOf("cellEquiAngular");
+    public static final GridConstraints cellEquiAngular;
 
     /**
      * ariation in distance from a cell’s representative position to all of it’s neighboring cell’s representative
      * positions in each DiscreteGlobalGrid is minimized.
      */
-    public static final GridConstraints cellEquiDistant = valueOf("cellEquiDistant");
+    public static final GridConstraints cellEquiDistant;
 
     /**
      * Each parent cell of dimension greater than 2 has a child cell for which the cell⇐zone.representativePosition
      * lies on each of the parent’s faces (two-Dimensional topological boundary element)
      */
-    public static final GridConstraints cellEquiSized = valueOf("cellEquiSized");
+    public static final GridConstraints cellEquiSized;
+
+    /**
+     * All code list values created in the currently running <abbr>JVM</abbr>.
+     */
+    private static final List<GridConstraints> VALUES = initialValues(
+        // Inline assignments for getting compiler error if a field is missing or duplicated.
+        cellAxisAligned = new GridConstraints("cellAxisAligned"),
+        cellConformal   = new GridConstraints("cellConformal"),
+        cellEquiAngular = new GridConstraints("cellEquiAngular"),
+        cellEquiDistant = new GridConstraints("cellEquiDistant"),
+        cellEquiSized   = new GridConstraints("cellEquiSized"));
 
     private final String description;
 
@@ -88,7 +98,7 @@ public final class GridConstraints extends CodeList<GridConstraints> {
      */
     @Override
     public GridConstraints[] family() {
-        return values(GridConstraints.class);
+        return VALUES.toArray(GridConstraints[]::new);
     }
 
     /**
@@ -98,7 +108,7 @@ public final class GridConstraints extends CodeList<GridConstraints> {
      * @return a code matching the given name.
      */
     public static GridConstraints valueOf(String code) {
-        return valueOf(GridConstraints.class, code, GridConstraints::new).get();
+        return valueOf(VALUES, code, GridConstraints::new);
     }
 
     /**
@@ -109,7 +119,6 @@ public final class GridConstraints extends CodeList<GridConstraints> {
      * @return a code matching the given name.
      */
     public static GridConstraints valueOf(String code, String description) {
-        return valueOf(GridConstraints.class, code, (c) -> new GridConstraints(c, description)).get();
+        return valueOf(VALUES, code, (c) -> new GridConstraints(c, description));
     }
-
 }

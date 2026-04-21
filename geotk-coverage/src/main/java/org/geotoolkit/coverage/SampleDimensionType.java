@@ -1,5 +1,6 @@
 package org.geotoolkit.coverage;
 
+import java.util.List;
 import java.awt.image.DataBuffer;
 
 import org.opengis.util.CodeList;
@@ -28,19 +29,19 @@ public final class SampleDimensionType extends CodeList<SampleDimensionType> {
      * Unsigned 1 bit integers.
      */
     @UML(identifier="CV_1BIT", obligation=CONDITIONAL, specification=OGC_01004)
-    public static final SampleDimensionType UNSIGNED_1BIT = valueOf("UNSIGNED_1BIT");
+    public static final SampleDimensionType UNSIGNED_1BIT;
 
     /**
      * Unsigned 2 bits integers.
      */
     @UML(identifier="CV_2BIT", obligation=CONDITIONAL, specification=OGC_01004)
-    public static final SampleDimensionType UNSIGNED_2BITS = valueOf("UNSIGNED_2BITS");
+    public static final SampleDimensionType UNSIGNED_2BITS;
 
     /**
      * Unsigned 4 bits integers.
      */
     @UML(identifier="CV_4BIT", obligation=CONDITIONAL, specification=OGC_01004)
-    public static final SampleDimensionType UNSIGNED_4BITS = valueOf("UNSIGNED_4BITS");
+    public static final SampleDimensionType UNSIGNED_4BITS;
 
     /**
      * Unsigned 8 bits integers.
@@ -49,7 +50,7 @@ public final class SampleDimensionType extends CodeList<SampleDimensionType> {
      * @see DataBuffer#TYPE_BYTE
      */
     @UML(identifier="CV_8BIT_U", obligation=CONDITIONAL, specification=OGC_01004)
-    public static final SampleDimensionType UNSIGNED_8BITS = valueOf("UNSIGNED_8BITS");
+    public static final SampleDimensionType UNSIGNED_8BITS;
 
     /**
      * Signed 8 bits integers.
@@ -57,7 +58,7 @@ public final class SampleDimensionType extends CodeList<SampleDimensionType> {
      * @see #UNSIGNED_8BITS
      */
     @UML(identifier="CV_8BIT_S", obligation=CONDITIONAL, specification=OGC_01004)
-    public static final SampleDimensionType SIGNED_8BITS = valueOf("SIGNED_8BITS");
+    public static final SampleDimensionType SIGNED_8BITS;
 
     /**
      * Unsigned 16 bits integers.
@@ -66,7 +67,7 @@ public final class SampleDimensionType extends CodeList<SampleDimensionType> {
      * @see DataBuffer#TYPE_USHORT
      */
     @UML(identifier="CV_16BIT_U", obligation=CONDITIONAL, specification=OGC_01004)
-    public static final SampleDimensionType UNSIGNED_16BITS = valueOf("UNSIGNED_16BITS");
+    public static final SampleDimensionType UNSIGNED_16BITS;
 
     /**
      * Signed 16 bits integers.
@@ -75,7 +76,7 @@ public final class SampleDimensionType extends CodeList<SampleDimensionType> {
      * @see DataBuffer#TYPE_SHORT
      */
     @UML(identifier="CV_16BIT_S", obligation=CONDITIONAL, specification=OGC_01004)
-    public static final SampleDimensionType SIGNED_16BITS = valueOf("SIGNED_16BITS");
+    public static final SampleDimensionType SIGNED_16BITS;
 
     /**
      * Unsigned 32 bits integers.
@@ -83,7 +84,7 @@ public final class SampleDimensionType extends CodeList<SampleDimensionType> {
      * @see #SIGNED_32BITS
      */
     @UML(identifier="CV_32BIT_U", obligation=CONDITIONAL, specification=OGC_01004)
-    public static final SampleDimensionType UNSIGNED_32BITS = valueOf("UNSIGNED_32BITS");
+    public static final SampleDimensionType UNSIGNED_32BITS;
 
     /**
      * Signed 32 bits integers.
@@ -92,7 +93,7 @@ public final class SampleDimensionType extends CodeList<SampleDimensionType> {
      * @see DataBuffer#TYPE_INT
      */
     @UML(identifier="CV_32BIT_S", obligation=CONDITIONAL, specification=OGC_01004)
-    public static final SampleDimensionType SIGNED_32BITS = valueOf("SIGNED_32BITS");
+    public static final SampleDimensionType SIGNED_32BITS;
 
     /**
      * Simple precision floating point numbers.
@@ -101,7 +102,7 @@ public final class SampleDimensionType extends CodeList<SampleDimensionType> {
      * @see DataBuffer#TYPE_FLOAT
      */
     @UML(identifier="CV_32BIT_REAL", obligation=CONDITIONAL, specification=OGC_01004)
-    public static final SampleDimensionType REAL_32BITS = valueOf("REAL_32BITS");
+    public static final SampleDimensionType REAL_32BITS;
 
     /**
      * Double precision floating point numbers.
@@ -110,7 +111,24 @@ public final class SampleDimensionType extends CodeList<SampleDimensionType> {
      * @see DataBuffer#TYPE_DOUBLE
      */
     @UML(identifier="CV_64BIT_REAL", obligation=CONDITIONAL, specification=OGC_01004)
-    public static final SampleDimensionType REAL_64BITS = valueOf("REAL_64BITS");
+    public static final SampleDimensionType REAL_64BITS;
+
+    /**
+     * All code list values created in the currently running <abbr>JVM</abbr>.
+     */
+    private static final List<SampleDimensionType> VALUES = initialValues(
+        // Inline assignments for getting compiler error if a field is missing or duplicated.
+        UNSIGNED_1BIT   = new SampleDimensionType("UNSIGNED_1BIT"),
+        UNSIGNED_2BITS  = new SampleDimensionType("UNSIGNED_2BITS"),
+        UNSIGNED_4BITS  = new SampleDimensionType("UNSIGNED_4BITS"),
+        UNSIGNED_8BITS  = new SampleDimensionType("UNSIGNED_8BITS"),
+        SIGNED_8BITS    = new SampleDimensionType("SIGNED_8BITS"),
+        UNSIGNED_16BITS = new SampleDimensionType("UNSIGNED_16BITS"),
+        SIGNED_16BITS   = new SampleDimensionType("SIGNED_16BITS"),
+        UNSIGNED_32BITS = new SampleDimensionType("UNSIGNED_32BITS"),
+        SIGNED_32BITS   = new SampleDimensionType("SIGNED_32BITS"),
+        REAL_32BITS     = new SampleDimensionType("REAL_32BITS"),
+        REAL_64BITS     = new SampleDimensionType("REAL_64BITS"));
 
     /**
      * Constructs an element of the given name.
@@ -128,7 +146,7 @@ public final class SampleDimensionType extends CodeList<SampleDimensionType> {
      */
     @Override
     public SampleDimensionType[] family() {
-        return values(SampleDimensionType.class);
+        return VALUES.toArray(SampleDimensionType[]::new);
     }
      /**
 +     * Returns the sample dimension type that matches the given string, or returns a new one if none match it.
@@ -137,6 +155,6 @@ public final class SampleDimensionType extends CodeList<SampleDimensionType> {
       * @return a code matching the given name.
       */
      public static SampleDimensionType valueOf(String code) {
-        return valueOf(SampleDimensionType.class, code, SampleDimensionType::new).get();
+        return valueOf(VALUES, code, SampleDimensionType::new);
      }
 }

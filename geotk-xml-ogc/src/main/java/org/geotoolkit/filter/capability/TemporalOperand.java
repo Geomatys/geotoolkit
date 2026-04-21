@@ -17,7 +17,6 @@
 package org.geotoolkit.filter.capability;
 
 import java.util.List;
-import java.util.ArrayList;
 import org.opengis.util.CodeList;
 
 
@@ -54,6 +53,7 @@ public final class TemporalOperand extends CodeList<TemporalOperand> {
      */
     private static final long serialVersionUID = 8576126878446037604L;
 
+    private static final List<TemporalOperand> VALUES = initialValues();
 
     /**
      * Creates an operand in the {@code "http://www.opengis.net/fes/2.0"} namespace.
@@ -71,7 +71,7 @@ public final class TemporalOperand extends CodeList<TemporalOperand> {
      */
     @Override
     public TemporalOperand[] family() {
-        return values(TemporalOperand.class);
+        return VALUES.toArray(TemporalOperand[]::new);
     }
 
     /**
@@ -85,6 +85,6 @@ public final class TemporalOperand extends CodeList<TemporalOperand> {
      * @return a code matching the given name.
      */
     public static TemporalOperand valueOf(final String code) {
-        return valueOf(TemporalOperand.class, code, TemporalOperand::new).get();
+        return valueOf(VALUES, code, TemporalOperand::new);
     }
 }

@@ -3557,7 +3557,7 @@ public class TiffImageWriter extends SpatialImageWriter {
             currentBO = ByteOrder.nativeOrder();
             final ByteBuffer buff = ByteBuffer.allocateDirect(8196);
             buff.order(currentBO);
-            channel = new ChannelDataOutput("TiffWriter", wBC, buff);
+            channel = new ChannelDataOutput("TiffWriter", wBC, false, buff);
 
             if (currentBO.equals(ByteOrder.BIG_ENDIAN)) {//MM
                 channel.writeByte((byte) 'M');

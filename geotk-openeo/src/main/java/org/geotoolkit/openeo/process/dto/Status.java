@@ -16,26 +16,43 @@
  */
 package org.geotoolkit.openeo.process.dto;
 
+import java.util.List;
 import org.opengis.util.CodeList;
 
 public class Status extends CodeList<Status> {
-    public static final Status CREATED = valueOf("created");
-    public static final Status QUEUED = valueOf("queued");
-    public static final Status RUNNING = valueOf("running");
-    public static final Status CANCELED = valueOf("canceled");
-    public static final Status FINISHED = valueOf("finished");
-    public static final Status ERROR = valueOf("error");
+    public static final Status CREATED;
+    public static final Status QUEUED;
+    public static final Status RUNNING;
+    public static final Status CANCELED;
+    public static final Status FINISHED;
+    public static final Status ERROR;
+
+    /**
+     * All code list values created in the currently running <abbr>JVM</abbr>.
+     */
+    private static final List<Status> VALUES = initialValues(
+        // Inline assignments for getting compiler error if a field is missing or duplicated.
+        CREATED  = new Status("created"),
+        QUEUED   = new Status("queued"),
+        RUNNING  = new Status("running"),
+        CANCELED = new Status("canceled"),
+        FINISHED = new Status("finished"),
+        ERROR    = new Status("error"));
 
     private Status(String value) {
         super(value);
     }
 
+    public static Status[] values() {
+        return VALUES.toArray(Status[]::new);
+    }
+
     public Status[] family() {
-        return (Status[])values(Status.class);
+        return values();
     }
 
     public static Status valueOf(String code) {
-        return (Status)valueOf(Status.class, code, Status::new).get();
+        return valueOf(VALUES, code, Status::new);
     }
 
     public static Status wpsStatusEquivalentTo(org.geotoolkit.wps.xml.v200.Status wpsStatus) {

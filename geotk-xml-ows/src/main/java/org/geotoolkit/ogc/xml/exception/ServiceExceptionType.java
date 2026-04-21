@@ -130,7 +130,7 @@ public final class ServiceExceptionType implements ExceptionType {
      * Returns the exception code, or {@code null} if none.
      */
     public CodeList getCode() {
-        return CodeList.valueOf(OWSExceptionCode.class, code, null).orElse(null);
+        return OWSExceptionCode.valueIfExists(code);
     }
 
     /**

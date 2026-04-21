@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.referencing.dggs;
 
+import java.util.List;
 import org.opengis.util.CodeList;
 
 /**
@@ -35,37 +36,49 @@ public final class RefinementStrategy extends CodeList<RefinementStrategy> {
      * parent⇐zone.representativePosition() = child⇐zone.representativePosition() for one child.
      * Each parent cell shares a cell←zone.representativePosition with one of its child cells.
      */
-    public static final RefinementStrategy centredChildCell = valueOf("centredChildCell");
+    public static final RefinementStrategy centredChildCell;
 
     /**
      * parent.boundary = parent.child().boundary.
      * The boundary of the set of child cells for a parent is identical to the parent’s boundary.
      */
-    public static final RefinementStrategy nestedChildCell = valueOf("nestedChildCell");
+    public static final RefinementStrategy nestedChildCell;
 
     /**
      * Each parent cell has a child⇐zone.representativePosition coincident with each of the parent’s nodes
      * (zero-Dimensional topological boundary element).
      */
-    public static final RefinementStrategy nodeCentredChildCell = valueOf("nodeCentredChildCell");
+    public static final RefinementStrategy nodeCentredChildCell;
 
     /**
      * Each parent cell of dimension greater than 1 has a child cell for which the cell⇐zone.representativePosition
      * lies on each of the parent’s edges (one-Dimensional topological boundary element)
      */
-    public static final RefinementStrategy edgeCentredChildCell = valueOf("edgeCentredChildCell");
+    public static final RefinementStrategy edgeCentredChildCell;
 
     /**
      * Each parent cell of dimension greater than 2 has a child cell for which the cell⇐zone.representativePosition
      * lies on each of the parent’s faces (two-Dimensional topological boundary element)
      */
-    public static final RefinementStrategy faceCentredChildCell = valueOf("faceCentredChildCell");
+    public static final RefinementStrategy faceCentredChildCell;
 
     /**
      * Each parent cell of dimension greater than 3 has a child cell for which the cell⇐zone.representativePosition
      * lies on each of the parent’s solids (three-Dimensional topological boundary element)
      */
-    public static final RefinementStrategy solidCentredChildCell = valueOf("solidCentredChildCell");
+    public static final RefinementStrategy solidCentredChildCell;
+
+    /**
+     * All code list values created in the currently running <abbr>JVM</abbr>.
+     */
+    private static final List<RefinementStrategy> VALUES = initialValues(
+        // Inline assignments for getting compiler error if a field is missing or duplicated.
+        centredChildCell      = new RefinementStrategy("centredChildCell"),
+        nestedChildCell       = new RefinementStrategy("nestedChildCell"),
+        nodeCentredChildCell  = new RefinementStrategy("nodeCentredChildCell"),
+        edgeCentredChildCell  = new RefinementStrategy("edgeCentredChildCell"),
+        faceCentredChildCell  = new RefinementStrategy("faceCentredChildCell"),
+        solidCentredChildCell = new RefinementStrategy("solidCentredChildCell"));
 
     private final String description;
 
@@ -94,7 +107,7 @@ public final class RefinementStrategy extends CodeList<RefinementStrategy> {
      */
     @Override
     public RefinementStrategy[] family() {
-        return values(RefinementStrategy.class);
+        return VALUES.toArray(RefinementStrategy[]::new);
     }
 
     /**
@@ -104,7 +117,7 @@ public final class RefinementStrategy extends CodeList<RefinementStrategy> {
      * @return a code matching the given name.
      */
     public static RefinementStrategy valueOf(String code) {
-        return valueOf(RefinementStrategy.class, code, RefinementStrategy::new).get();
+        return valueOf(VALUES, code, RefinementStrategy::new);
     }
 
     /**
@@ -115,6 +128,6 @@ public final class RefinementStrategy extends CodeList<RefinementStrategy> {
      * @return a code matching the given name.
      */
     public static RefinementStrategy valueOf(String code, String description) {
-        return valueOf(RefinementStrategy.class, code, (c) -> new RefinementStrategy(c, description)).get();
+        return valueOf(VALUES, code, (c) -> new RefinementStrategy(c, description));
     }
 }
