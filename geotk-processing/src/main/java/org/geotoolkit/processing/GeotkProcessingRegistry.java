@@ -72,6 +72,7 @@ public class GeotkProcessingRegistry extends AbstractProcessingRegistry {
                 org.geotoolkit.processing.coverage.math.sum.CoverageSumWithValueDescriptor.INSTANCE,
                 org.geotoolkit.processing.coverage.math.substract.CoverageSubstractDescriptor.INSTANCE,
                 org.geotoolkit.processing.coverage.math.substract.CoverageSubstractWithValueDescriptor.INSTANCE,
+                org.geotoolkit.processing.coverage.regridding.CoverageSwathRegridderDescriptor.INSTANCE,
                 //script
                 org.geotoolkit.processing.script.ScriptProcess.Descriptor.INSTANCE,
                 //image
@@ -162,6 +163,8 @@ public class GeotkProcessingRegistry extends AbstractProcessingRegistry {
                 //stac
                 org.geotoolkit.processing.stac.StacClientItemsDownloadingDescriptor.INSTANCE,
                 org.geotoolkit.processing.stac.StacClientItemsGetURIsDescriptor.INSTANCE,
+                //regridding
+                org.geotoolkit.processing.regridding.SwathRegridderDescriptor.INSTANCE,
                 //query like processes
                 org.geotoolkit.processing.vector.QueryProcess.Offset.DESCRIPTOR,
                 org.geotoolkit.processing.vector.QueryProcess.SortBy.DESCRIPTOR,
