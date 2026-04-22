@@ -33,6 +33,7 @@ import org.apache.sis.coverage.Category;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.measure.Units;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStoreException;
@@ -53,10 +54,8 @@ import org.geotoolkit.storage.multires.ProgressiveResource;
 import org.geotoolkit.storage.multires.TileFormat;
 import org.geotoolkit.util.StringUtilities;
 import org.opengis.feature.FeatureType;
-import org.opengis.parameter.InvalidParameterValueException;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
-import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.GenericName;
 
@@ -73,6 +72,18 @@ import org.opengis.util.GenericName;
  * @author Johann Sorel (Geomatys)
  */
 public final class DataStores {
+
+    /**
+     * Identifier, Optional.
+     * Subclasses should redeclared this parameter with a different default value.
+     */
+    public static final ParameterDescriptor<String> IDENTIFIER = new ParameterBuilder()
+            .addName("identifier")
+            .addName(Bundle.formatInternational(Bundle.Keys.paramIdentifierAlias))
+            .setRemarks(Bundle.formatInternational(Bundle.Keys.paramIdentifierRemarks))
+            .setRequired(true)
+            .create(String.class, null);
+
     /**
      * Do not allow instantiation of this class.
      */
@@ -258,27 +269,6 @@ public final class DataStores {
             }
         }
         return results;
-    }
-
-    /**
-     * Returns a factory having an {@linkplain DataStoreFactory#getIdentification() identification}
-     * equals (ignoring case) to the given string. If more than one factory is found, then this
-     * method selects an arbitrary one. If no factory is found, then this method returns
-     * {@code null}.
-     *
-     * @param  identifier The identifier of the factory to find.
-     * @return A factory for the given identifier, or {@code null} if none.
-     */
-    @Deprecated
-    public static synchronized DataStoreFactory getFactoryById(final String identifier) {
-        for (final DataStoreFactory factory : getProviders(DataStoreFactory.class)) {
-            for (String name : IdentifiedObjects.getNames(factory.getOpenParameters(),null)) {
-                if (name.equals(identifier)) {
-                    return factory;
-                }
-            }
-        }
-        return null;
     }
 
     /**
@@ -512,24 +502,7 @@ public final class DataStores {
         Exception error = null;
         final List<DataStoreProvider> newProviders = new ArrayList();
         for (DataStoreProvider provider : org.apache.sis.storage.DataStores.providers()) {
-
-            if (provider instanceof DataStoreFactory) {
-                final DataStoreFactory factory = (DataStoreFactory) provider;
-                try {
-                    if ((parameters != null) ? factory.canProcess(parameters) : canProcess(factory,asMap)) {
-                        return ((parameters != null) ? factory.open(parameters) : open(factory,asMap));
-                    }
-                } catch (Exception e) {
-                    // If an error occurs with a factory, we skip it and try another factory.
-                    if (error != null) {
-                        error.addSuppressed(e);
-                    } else {
-                        error = e;
-                    }
-                }
-            } else {
-                newProviders.add(provider);
-            }
+            newProviders.add(provider);
         }
 
         for (DataStoreProvider provider : newProviders) {
@@ -562,62 +535,16 @@ public final class DataStores {
     }
 
     /**
-     * Test to see if this factory is suitable for processing the data pointed
-     * to by the params map.
-     *
-     * <p>
-     * If this data source requires a number of parameters then this method
-     * should check that they are all present and that they are all valid. If
-     * the data source is a file reading data source then the extensions or
-     * mime types of any files specified should be checked. For example, a
-     * Shapefile data source should check that the url param ends with shp,
-     * such tests should be case insensitive.
-     * </p>
-     *
-     * @param params The full set of information needed to construct a live
-     *        data source.
-     *
-     * @return boolean true if and only if this factory can process the resource
-     *         indicated by the param set and all the required params are
-     *         present.
-     */
-    private static boolean canProcess(DataStoreFactory factory, Map<String, ? extends Serializable> params) {
-        params = forceIdentifier(factory, params);
-
-        //ensure it's the valid identifier
-        final Object id = params.get(DataStoreFactory.IDENTIFIER.getName().getCode());
-        try{
-            final String expectedId = ((ParameterDescriptor<String>)factory.getOpenParameters()
-                .descriptor(DataStoreFactory.IDENTIFIER.getName().getCode())).getDefaultValue();
-            if (!expectedId.equals(id)) {
-                return false;
-            }
-        } catch(ParameterNotFoundException ex) {
-            //this feature store factory does not declare a identifier id
-        }
-
-        final ParameterValueGroup prm = Parameters.toParameter(params, factory.getOpenParameters());
-        if (prm == null) {
-            return false;
-        }
-        try {
-            return factory.canProcess(prm);
-        } catch (InvalidParameterValueException ex) {
-            return false;
-        }
-    }
-
-    /**
      * Set the identifier parameter in the map if not present.
      */
     static final Map<String,Serializable> forceIdentifier(DataStoreProvider factory, Map params){
 
-        if (!params.containsKey(DataStoreFactory.IDENTIFIER.getName().getCode())) {
+        if (!params.containsKey(IDENTIFIER.getName().getCode())) {
             //identifier is not specified, force it
             final ParameterDescriptorGroup desc = factory.getOpenParameters();
             params = new HashMap<String, Serializable>(params);
-            final Object value = ((ParameterDescriptor)desc.descriptor(DataStoreFactory.IDENTIFIER.getName().getCode())).getDefaultValue();
-            params.put(DataStoreFactory.IDENTIFIER.getName().getCode(), (Serializable)value);
+            final Object value = ((ParameterDescriptor)desc.descriptor(IDENTIFIER.getName().getCode())).getDefaultValue();
+            params.put(IDENTIFIER.getName().getCode(), (Serializable)value);
         }
         return params;
     }
