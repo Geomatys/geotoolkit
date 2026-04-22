@@ -30,7 +30,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.SortedMap;
 import java.util.stream.LongStream;
-import java.util.stream.Stream;
 import org.apache.sis.coverage.grid.DisjointExtentException;
 import org.apache.sis.coverage.grid.GridClippingMode;
 import org.apache.sis.coverage.grid.GridExtent;
@@ -999,34 +998,6 @@ public final class TileMatrices {
             }
         }
         return false;
-    }
-
-    /**
-     * Create a stream of point in the GridExtent.
-     *
-     * TODO : make a more efficient implementation.
-     */
-    public static Stream<long[]> pointStream(GridExtent extent) {
-        final int dimension = extent.getDimension();
-        final long[] low = extent.getLow().getCoordinateValues();
-        final long[] high = extent.getHigh().getCoordinateValues();
-
-        Stream<long[]> stream = LongStream.range(low[0], high[0]+1)
-                .mapToObj((long value) -> {
-                    final long[] array = new long[dimension];
-                    array[0] = value;
-                    return array;
-        });
-        for (int i = 1; i <dimension; i++) {
-            final int idx = i;
-            stream = stream.flatMap((long[] t) -> LongStream.range(low[idx], high[idx]+1)
-                    .mapToObj((long value) -> {
-                        final long[] array = t.clone();
-                        array[idx] = value;
-                        return array;
-                    }));
-        }
-        return stream;
     }
 
 }

@@ -54,7 +54,6 @@ import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.storage.coverage.DefaultImageTile;
 import org.geotoolkit.storage.coverage.mosaic.AggregatedCoverageResource;
-import org.geotoolkit.storage.multires.TileMatrices;
 import org.opengis.coverage.CannotEvaluateException;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
@@ -213,7 +212,7 @@ public class TileMatrixCoverageResource extends AbstractGridCoverageResource {
                     .getIntersection();
 
 
-            try (Stream<long[]> pointStream = TileMatrices.pointStream(intersection)) {
+            try (Stream<long[]> pointStream = intersection.latticePointStream(true)) {
                 pointStream.forEach(new Consumer<long[]>(){
                     @Override
                     public void accept(long[] t) {

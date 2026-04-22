@@ -33,7 +33,6 @@ import org.apache.sis.storage.tiling.WritableTileMatrix;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.storage.multires.TileInError;
-import org.geotoolkit.storage.multires.TileMatrices;
 import org.opengis.util.GenericName;
 
 /**
@@ -92,7 +91,7 @@ public final class MemoryTileMatrix implements WritableTileMatrix {
     @Override
     public Stream<Tile> getTiles(GridExtent indicesRanges, boolean parallel) throws DataStoreException {
         if (indicesRanges == null) indicesRanges = getTilingScheme().getExtent();
-        final Stream<long[]> stream = TileMatrices.pointStream(indicesRanges);
+        final Stream<long[]> stream = indicesRanges.latticePointStream(parallel);
         return stream.map((long[] t) -> {
             try {
                 return getTile(t).orElse(null);
@@ -126,7 +125,7 @@ public final class MemoryTileMatrix implements WritableTileMatrix {
             return nb;
         } else {
             long nb = 0;
-            try (Stream<long[]> stream = TileMatrices.pointStream(indicesRanges)) {
+            try (Stream<long[]> stream = indicesRanges.latticePointStream(false)) {
                 Iterator<long[]> iterator = stream.iterator();
                 while (iterator.hasNext()) {
                     Tile previous = tiles.remove(new LongKey(iterator.next()));

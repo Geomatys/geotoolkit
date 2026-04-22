@@ -306,7 +306,7 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
                 final long nbTile = TileMatrices.countCells(rect);
                 final long eventstep = Math.min(1000, Math.max(1, nbTile/100l));
 
-                Stream<Tile> stream = TileMatrices.pointStream(rect).parallel()
+                Stream<Tile> stream = rect.latticePointStream(true)
                         .map(new Function<long[],Tile>() {
                             @Override
                             public Tile apply(long[] indices) {

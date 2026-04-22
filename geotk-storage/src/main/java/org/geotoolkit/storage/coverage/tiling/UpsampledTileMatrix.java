@@ -46,7 +46,6 @@ import org.geotoolkit.storage.coverage.CoverageResourceTile;
 import org.geotoolkit.storage.coverage.mosaic.AggregatedCoverageResource;
 import org.geotoolkit.storage.coverage.mosaic.BitSetND;
 import org.geotoolkit.storage.multires.TileInError;
-import org.geotoolkit.storage.multires.TileMatrices;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.GenericName;
 
@@ -180,7 +179,7 @@ public class UpsampledTileMatrix implements TileMatrix {
         for (int i = parents.size() - 1; i > -1; i--) {
             final TileMatrix parent = tileMatrices.get(parents.get(i));
             final GridExtent parentTiles = parentTiles(parent, indices);
-            try (Stream<long[]> stream = TileMatrices.pointStream(parentTiles)) {
+            try (Stream<long[]> stream = parentTiles.latticePointStream(false)) {
                 final Iterator<long[]> iterator = stream.iterator();
                 while (iterator.hasNext()) {
                     final TileStatus status = parent.getTileStatus(iterator.next());

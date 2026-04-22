@@ -106,7 +106,7 @@ public final class TileDebugSymbolizerRenderer extends AbstractCoverageSymbolize
                     continue;
                 }
 
-                try (Stream<long[]> indices = TileMatrices.pointStream(extent)) {
+                try (Stream<long[]> indices = extent.latticePointStream(false)) {
                     final Iterator<long[]> iterator = indices.iterator();
                     while (iterator.hasNext()) {
                         long[] indice = iterator.next();

@@ -40,7 +40,6 @@ import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.storage.multires.ScaleSortedMap;
 import org.geotoolkit.storage.multires.TileInError;
-import org.geotoolkit.storage.multires.TileMatrices;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.GenericName;
@@ -196,8 +195,7 @@ public final class VirtualTileMatrixSet implements TileMatrixSet {
         @Override
         public Stream<Tile> getTiles(GridExtent ge, boolean parallel) throws DataStoreException {
             if (ge == null) ge = getTilingScheme().getExtent();
-            Stream<long[]> stream = TileMatrices.pointStream(ge);
-            if (parallel) stream = stream.parallel();
+            final Stream<long[]> stream = ge.latticePointStream(parallel);
             return stream.map(new Function<long[], Tile>() {
                 @Override
                 public Tile apply(long[] t) {

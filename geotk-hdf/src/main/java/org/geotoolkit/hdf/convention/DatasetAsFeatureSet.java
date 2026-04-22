@@ -46,7 +46,6 @@ import org.geotoolkit.hdf.datatype.Compound;
 import org.geotoolkit.hdf.datatype.Compound.Member;
 import org.geotoolkit.hdf.datatype.DataType;
 import org.geotoolkit.hdf.message.DataspaceMessage;
-import org.geotoolkit.storage.multires.TileMatrices;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -156,7 +155,7 @@ public final class DatasetAsFeatureSet extends AbstractFeatureSet implements Sto
     }
 
     @Override
-    public Stream<Feature> features(boolean bln) throws DataStoreException {
+    public Stream<Feature> features(boolean parallel) throws DataStoreException {
         if (isEmpty) return Stream.empty();
 
         //limited to 1D dataset
@@ -169,7 +168,7 @@ public final class DatasetAsFeatureSet extends AbstractFeatureSet implements Sto
         Arrays.fill(sub, blockSize);
         final GridExtent points = area.subsample(sub);
 
-        Stream<GridExtent> streamExtent = TileMatrices.pointStream(points).map(new Function<long[],GridExtent>() {
+        Stream<GridExtent> streamExtent = points.latticePointStream(parallel).map(new Function<long[],GridExtent>() {
             @Override
             public GridExtent apply(long[] value) {
                 final long[] low = new long[dimensionSizes.length];
@@ -202,7 +201,7 @@ public final class DatasetAsFeatureSet extends AbstractFeatureSet implements Sto
         final long[] low = extent.getLow().getCoordinateValues();
         final List<Feature> features = new ArrayList<>();
 
-        final Iterator<long[]> iterator = TileMatrices.pointStream(extent).iterator();
+        final Iterator<long[]> iterator = extent.latticePointStream(false).iterator();
         while (iterator.hasNext()) {
             final long[] location = iterator.next();
             Object rawRecord = Array.get(rawData, Math.toIntExact(location[0] - low[0]));

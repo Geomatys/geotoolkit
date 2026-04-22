@@ -102,7 +102,7 @@ public class WMSCTileMatrix implements TileMatrix {
     @Override
     public Stream<Tile> getTiles(GridExtent indicesRanges, boolean parallel) throws DataStoreException {
         if (indicesRanges == null) indicesRanges = getTilingScheme().getExtent();
-        final java.util.List<long[]> points = TileMatrices.pointStream(indicesRanges).collect(Collectors.toList());
+        final java.util.List<long[]> points = indicesRanges.latticePointStream(parallel).collect(Collectors.toList());
         return pyramid.getPyramidSet().getTiles(pyramid, this, points, null);
     }
 
