@@ -26,7 +26,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.multires.AbstractTileMatrix;
 import org.apache.sis.storage.tiling.Tile;
 import org.apache.sis.storage.tiling.TileMatrixSet;
-import org.geotoolkit.storage.multires.TileMatrices;
 import org.opengis.geometry.DirectPosition;
 
 /**
@@ -59,7 +58,7 @@ public class TMSTileMatrix extends AbstractTileMatrix {
     @Override
     public Stream<Tile> getTiles(GridExtent indicesRanges, boolean parallel) throws DataStoreException {
         if (indicesRanges == null) indicesRanges = getTilingScheme().getExtent();
-        final List<long[]> points = TileMatrices.pointStream(indicesRanges).collect(Collectors.toList());
+        final List<long[]> points = indicesRanges.latticePointStream(parallel).collect(Collectors.toList());
         return set.getTiles(getTileMatrixSet(), this, points, null);
     }
 

@@ -63,7 +63,6 @@ import org.geotoolkit.storage.coverage.BandedCoverageResource;
 import org.geotoolkit.storage.coverage.WritableBandedCoverageResource;
 import org.geotoolkit.storage.multires.AbstractTileMatrix;
 import org.geotoolkit.storage.multires.ImageTileMatrix;
-import org.geotoolkit.storage.multires.TileMatrices;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.util.GenericName;
 
@@ -141,7 +140,7 @@ public class URITileMatrix extends AbstractTileMatrix implements WritableTileMat
         if (indicesRanges == null) indicesRanges = getTilingScheme().getExtent();
 
         long nb = 0;
-        try (Stream<long[]> stream = TileMatrices.pointStream(indicesRanges)) {
+        try (Stream<long[]> stream = indicesRanges.latticePointStream(false)) {
             final Iterator<long[]> iterator = stream.iterator();
             while (iterator.hasNext()) {
                 final long[] indices = iterator.next();

@@ -84,8 +84,7 @@ public interface TileMatrix extends org.apache.sis.storage.tiling.TileMatrix {
     @Override
     default Stream<Tile> getTiles(GridExtent indicesRanges, boolean parallel) throws DataStoreException {
         if (indicesRanges == null) indicesRanges = getTilingScheme().getExtent();
-        Stream<long[]> stream = TileMatrices.pointStream(indicesRanges);
-        if (parallel) stream = stream.parallel();
+        Stream<long[]> stream = indicesRanges.latticePointStream(parallel);
         return stream.map((long[] t) -> {
             try {
                 return getTile(t).orElse(null);
