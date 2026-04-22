@@ -39,7 +39,6 @@ import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.nio.PathFilterVisitor;
 import org.geotoolkit.nio.PosixPathMatcher;
 import org.geotoolkit.parameter.Parameters;
-import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
@@ -162,7 +161,7 @@ public class ShapefileFolderProvider extends DataStoreProvider {
 
         final List<GeneralParameterDescriptor> params = new ArrayList<>(sd.descriptors());
         for(int i=0;i<params.size();i++){
-            if(params.get(i).getName().getCode().equals(DataStoreFactory.IDENTIFIER.getName().getCode())){
+            if(params.get(i).getName().getCode().equals(DataStores.IDENTIFIER.getName().getCode())){
                 params.remove(i);
                 break;
             }
