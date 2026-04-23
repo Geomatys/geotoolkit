@@ -130,7 +130,16 @@ public class DiscreteGlobalGridGeometry extends CodedGeometry {
     public Envelope getEnvelope() {
         final DiscreteGlobalGridHierarchy hierarchy = getReferenceSystem().getGridSystem().getHierarchy();
         GeneralEnvelope all = null;
-        for (Object zid : getZoneIds()) {
+
+        Object[] bases = getBaseZoneIds();
+        final List<Object> candidates;
+        if (bases == null || bases.length == 0) {
+            candidates = getZoneIds();
+        } else {
+            candidates = List.of(bases);
+        }
+
+        for (Object zid : candidates) {
             final Zone zone = hierarchy.getZone(zid);
             final Envelope env = zone.getEnvelope();
             if (env != null) {
@@ -161,8 +170,17 @@ public class DiscreteGlobalGridGeometry extends CodedGeometry {
         }
 
         final DiscreteGlobalGridHierarchy hierarchy = getReferenceSystem().getGridSystem().getHierarchy();
+
+        Object[] bases = getBaseZoneIds();
+        final List<Object> candidates;
+        if (bases == null || bases.length == 0) {
+            candidates = getZoneIds();
+        } else {
+            candidates = List.of(bases);
+        }
+
         GeneralEnvelope all = null;
-        for (Object zid : getZoneIds()) {
+        for (Object zid : candidates) {
             final Zone zo = hierarchy.getZone(zid);
             final Geometry geometry = DiscreteGlobalGridSystems.toSISPolygon(zo.getGeographicExtent());
             final Geometry trsGeom = GeometryOperations.SpatialEdition.transform(geometry, crs, trs);
@@ -215,11 +233,18 @@ public class DiscreteGlobalGridGeometry extends CodedGeometry {
     public synchronized GeographicExtent getGeographicExtent() {
         if (bboxComputed) return geoExtent;
         bboxComputed = true;
-        final List<Object> zones = getZoneIds();
         final DiscreteGlobalGridReferenceSystem.Coder coder = getReferenceSystem().createCoder();
 
+        Object[] bases = getBaseZoneIds();
+        final List<Object> candidates;
+        if (bases == null || bases.length == 0) {
+            candidates = getZoneIds();
+        } else {
+            candidates = List.of(bases);
+        }
+
         GeneralEnvelope all = null;
-        for (Object zone : zones) {
+        for (Object zone : candidates) {
             try {
                 final Zone zo = coder.decode(zone);
                 final Envelope env = zo.getEnvelope();
