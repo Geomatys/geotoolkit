@@ -19,8 +19,6 @@ package org.geotoolkit.hdf;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Path;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.logging.Logger;
 import org.apache.sis.storage.base.Capability;
 import org.apache.sis.storage.base.StoreMetadata;
@@ -31,7 +29,6 @@ import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.StorageConnector;
-import org.geotoolkit.storage.ProviderOnFileSystem;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 
@@ -46,7 +43,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
                fileSuffixes = {"h5"},
                capabilities = Capability.READ,
                resourceTypes = Resource.class)
-public class HDF5Provider extends DataStoreProvider implements ProviderOnFileSystem  {
+public class HDF5Provider extends DataStoreProvider  {
 
     /**
      * HDF-5 format logger.
@@ -115,11 +112,6 @@ public class HDF5Provider extends DataStoreProvider implements ProviderOnFileSys
         } catch (IllegalArgumentException | IOException ex) {
             throw new DataStoreException(ex.getMessage(), ex);
         }
-    }
-
-    @Override
-    public Collection<String> getSuffix() {
-        return Collections.singletonList("h5");
     }
 
 }

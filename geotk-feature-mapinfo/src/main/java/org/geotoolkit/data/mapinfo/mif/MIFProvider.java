@@ -17,8 +17,6 @@
 package org.geotoolkit.data.mapinfo.mif;
 
 import java.net.URI;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.logging.Logger;
 import org.apache.sis.storage.base.Capability;
 import org.apache.sis.storage.base.StoreMetadata;
@@ -29,10 +27,8 @@ import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
-import org.geotoolkit.storage.ProviderOnFileSystem;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
-import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.MultiLineString;
@@ -51,6 +47,7 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 @StoreMetadata(
         formatName = MIFProvider.NAME,
+        fileSuffixes = "mif",
         capabilities = {Capability.READ},
         resourceTypes = {FeatureSet.class})
 @StoreMetadataExt(
@@ -62,7 +59,7 @@ import org.opengis.parameter.ParameterValueGroup;
                         MultiPoint.class,
                         MultiLineString.class,
                         MultiPolygon.class})
-public class MIFProvider extends DataStoreProvider implements ProviderOnFileSystem {
+public class MIFProvider extends DataStoreProvider {
 
     public final static Logger LOGGER = Logger.getLogger("org.geotoolkit.data.mapinfo.mif");
 
@@ -87,23 +84,17 @@ public class MIFProvider extends DataStoreProvider implements ProviderOnFileSyst
         return NAME;
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Collection<String> getSuffix() {
-        return Arrays.asList("mif");
-    }
-
     @Override
     public ParameterDescriptorGroup getOpenParameters() {
         return PARAMETERS_DESCRIPTOR;
     }
 
-
     @Override
     public ProbeResult probeContent(StorageConnector connector) throws DataStoreException {
-        return FeatureStoreUtilities.probe(this, connector, MIME_TYPE);
+        if  (ProbeResult.SUPPORTED.equals(connector.pathEndsWith(".mif", true))) {
+            return new ProbeResult(true, MIME_TYPE, null);
+        }
+        return ProbeResult.UNSUPPORTED_STORAGE;
     }
 
     @Override

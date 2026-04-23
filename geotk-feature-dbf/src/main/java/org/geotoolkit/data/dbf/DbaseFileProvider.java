@@ -20,9 +20,6 @@ package org.geotoolkit.data.dbf;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import org.apache.sis.storage.base.Capability;
 import org.apache.sis.storage.base.StoreMetadata;
 import org.apache.sis.parameter.ParameterBuilder;
@@ -32,10 +29,8 @@ import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
-import org.geotoolkit.storage.ProviderOnFileSystem;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
-import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -49,14 +44,17 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 @StoreMetadata(
         formatName = DbaseFileProvider.NAME,
+        fileSuffixes = "dbf",
         capabilities = {Capability.READ, Capability.WRITE, Capability.CREATE},
         resourceTypes = {FeatureSet.class})
 @StoreMetadataExt(resourceTypes = ResourceType.VECTOR)
-public class DbaseFileProvider extends DataStoreProvider implements ProviderOnFileSystem {
+public class DbaseFileProvider extends DataStoreProvider {
 
     /** factory identification **/
     public static final String NAME = "dbf";
     public static final String MIME_TYPE = "application/dbase";
+
+    private static final byte[] SIGNATURE = new byte[]{0x03};
 
     public static final ParameterDescriptor<URI> PATH = new ParameterBuilder()
             .addName(LOCATION)
@@ -91,7 +89,10 @@ public class DbaseFileProvider extends DataStoreProvider implements ProviderOnFi
 
     @Override
     public ProbeResult probeContent(StorageConnector connector) throws DataStoreException {
-        return FeatureStoreUtilities.probe(this, connector, MIME_TYPE, true);
+        if  (ProbeResult.SUPPORTED.equals(connector.contentStartsWith(SIGNATURE))) {
+            return new ProbeResult(true, MIME_TYPE, null);
+        }
+        return ProbeResult.UNSUPPORTED_STORAGE;
     }
 
     /**
@@ -100,19 +101,6 @@ public class DbaseFileProvider extends DataStoreProvider implements ProviderOnFi
     @Override
     public DbaseFileStore open(final ParameterValueGroup params) throws DataStoreException {
         return new DbaseFileStore(params);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Collection<String> getSuffix() {
-        return Arrays.asList("dbf");
-    }
-
-    @Override
-    public Collection<byte[]> getSignature() {
-        return Collections.singleton(new byte[]{0x03});
     }
 
     @Override

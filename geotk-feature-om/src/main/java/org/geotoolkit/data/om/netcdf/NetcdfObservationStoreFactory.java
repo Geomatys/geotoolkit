@@ -18,9 +18,6 @@ package org.geotoolkit.data.om.netcdf;
 
 import java.net.URI;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import org.apache.sis.storage.base.Capability;
 import org.apache.sis.storage.base.StoreMetadata;
 import org.apache.sis.parameter.ParameterBuilder;
@@ -31,10 +28,8 @@ import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
 import org.geotoolkit.observation.AbstractObservationStoreFactory;
 import org.geotoolkit.observation.Bundle;
-import org.geotoolkit.storage.ProviderOnFileSystem;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
-import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -50,7 +45,7 @@ import org.opengis.parameter.ParameterValueGroup;
         capabilities = {Capability.READ},
         resourceTypes = {})
 @StoreMetadataExt(resourceTypes = ResourceType.SENSOR)
-public class NetcdfObservationStoreFactory extends AbstractObservationStoreFactory implements ProviderOnFileSystem {
+public class NetcdfObservationStoreFactory extends AbstractObservationStoreFactory {
 
     /** factory identification **/
     public static final String NAME = "observationFile";
@@ -58,6 +53,8 @@ public class NetcdfObservationStoreFactory extends AbstractObservationStoreFacto
     public static final String MIME_TYPE = "application/x-netcdf";
 
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
+
+    private static final byte[] SIGNATURE = new byte[]{'C', 'D', 'F'};
 
     /**
      * url to the file.
@@ -90,18 +87,11 @@ public class NetcdfObservationStoreFactory extends AbstractObservationStoreFacto
     }
 
     @Override
-    public Collection<String> getSuffix() {
-        return Arrays.asList("nc", "cdf");
-    }
-
-    @Override
-    public Collection<byte[]> getSignature() {
-        return Collections.singletonList(new byte[]{'C', 'D', 'F'});
-    }
-
-    @Override
     public ProbeResult probeContent(StorageConnector connector) throws DataStoreException {
-        return FeatureStoreUtilities.probe(this, connector, MIME_TYPE);
+        if (ProbeResult.SUPPORTED.equals(connector.contentStartsWith(SIGNATURE))) {
+            return new ProbeResult(true, MIME_TYPE, null);
+        }
+        return ProbeResult.UNSUPPORTED_STORAGE;
     }
 
     @Override

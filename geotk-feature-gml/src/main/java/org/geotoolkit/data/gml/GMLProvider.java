@@ -19,8 +19,6 @@ package org.geotoolkit.data.gml;
 
 import java.net.MalformedURLException;
 import java.net.URI;
-import java.util.Arrays;
-import java.util.Collection;
 import org.apache.sis.storage.base.Capability;
 import org.apache.sis.storage.base.StoreMetadata;
 import org.apache.sis.parameter.ParameterBuilder;
@@ -31,10 +29,8 @@ import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
-import org.geotoolkit.storage.ProviderOnFileSystem;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
-import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.MultiLineString;
@@ -53,6 +49,7 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 @StoreMetadata(
         formatName = GMLProvider.NAME,
+        fileSuffixes = {"gml","xml"},
         capabilities = {Capability.READ,Capability.WRITE,Capability.CREATE},
         resourceTypes = FeatureSet.class)
 @StoreMetadataExt(
@@ -64,7 +61,7 @@ import org.opengis.parameter.ParameterValueGroup;
                         MultiPoint.class,
                         MultiLineString.class,
                         MultiPolygon.class})
-public class GMLProvider extends DataStoreProvider implements ProviderOnFileSystem {
+public class GMLProvider extends DataStoreProvider {
 
     /** factory identification **/
     public static final String NAME = "gml";
@@ -137,7 +134,10 @@ public class GMLProvider extends DataStoreProvider implements ProviderOnFileSyst
 
     @Override
     public ProbeResult probeContent(StorageConnector connector) throws DataStoreException {
-        return FeatureStoreUtilities.probe(this, connector, MIME_TYPE);
+        if  (ProbeResult.SUPPORTED.equals(connector.pathEndsWith(".gml", true))) {
+            return new ProbeResult(true, MIME_TYPE, null);
+        }
+        return ProbeResult.UNSUPPORTED_STORAGE;
     }
 
     @Override
@@ -158,11 +158,6 @@ public class GMLProvider extends DataStoreProvider implements ProviderOnFileSyst
         } catch (MalformedURLException ex) {
             throw new DataStoreException(ex.getMessage(), ex);
         }
-    }
-
-    @Override
-    public Collection<String> getSuffix() {
-        return Arrays.asList("gml");
     }
 
 }

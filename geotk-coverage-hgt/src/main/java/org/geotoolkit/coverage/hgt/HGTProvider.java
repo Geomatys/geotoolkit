@@ -17,8 +17,6 @@
 package org.geotoolkit.coverage.hgt;
 
 import java.net.URI;
-import java.util.Collection;
-import java.util.Collections;
 import org.apache.sis.storage.base.Capability;
 import org.apache.sis.storage.base.StoreMetadata;
 import org.apache.sis.parameter.ParameterBuilder;
@@ -27,10 +25,8 @@ import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
-import org.geotoolkit.storage.ProviderOnFileSystem;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
-import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 
@@ -41,10 +37,11 @@ import org.opengis.parameter.ParameterDescriptorGroup;
  */
 @StoreMetadata(
         formatName = HGTProvider.NAME,
+        fileSuffixes = "hgt",
         capabilities = {Capability.READ},
         resourceTypes = {GridCoverageResource.class})
 @StoreMetadataExt(resourceTypes = ResourceType.GRID)
-public class HGTProvider extends DataStoreProvider implements ProviderOnFileSystem {
+public class HGTProvider extends DataStoreProvider {
 
     /** factory identification **/
     public static final String NAME = "hgt";
@@ -77,20 +74,15 @@ public class HGTProvider extends DataStoreProvider implements ProviderOnFileSyst
 
     @Override
     public ProbeResult probeContent(StorageConnector connector) throws DataStoreException {
-        return FeatureStoreUtilities.probe(this, connector, MIME_TYPE);
+        if (ProbeResult.SUPPORTED.equals(connector.pathEndsWith(".hgt", true))) {
+            return new ProbeResult(true, MIME_TYPE, null);
+        }
+        return ProbeResult.UNSUPPORTED_STORAGE;
     }
 
     @Override
     public HGTStore open(StorageConnector sc) throws DataStoreException {
         return new HGTStore(sc);
-    }
-
-    /**
-     * @return collection with the HGT extension.
-     */
-    @Override
-    public Collection<String> getSuffix() {
-        return Collections.singleton("hgt");
     }
 
 }

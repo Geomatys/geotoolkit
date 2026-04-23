@@ -42,11 +42,9 @@ import org.geotoolkit.data.shapefile.lock.ShpFiles;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.ProviderOnFileSystem;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
 import org.geotoolkit.storage.feature.FeatureStore;
-import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.locationtech.jts.geom.MultiLineString;
 import org.locationtech.jts.geom.MultiPoint;
 import org.locationtech.jts.geom.MultiPolygon;
@@ -78,6 +76,7 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 @StoreMetadata(
         formatName = ShapefileProvider.NAME,
+        fileSuffixes = "shp",
         capabilities = {Capability.READ, Capability.WRITE, Capability.CREATE},
         resourceTypes = {FeatureSet.class})
 @StoreMetadataExt(
@@ -86,7 +85,7 @@ import org.opengis.parameter.ParameterValueGroup;
                         MultiPoint.class,
                         MultiLineString.class,
                         MultiPolygon.class})
-public class ShapefileProvider extends DataStoreProvider implements ProviderOnFileSystem {
+public class ShapefileProvider extends DataStoreProvider {
 
     /** factory identification **/
     public static final String NAME = "shapefile";
@@ -173,17 +172,8 @@ public class ShapefileProvider extends DataStoreProvider implements ProviderOnFi
         return Bundle.formatInternational(Bundle.Keys.datastoreDescription);
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
     public Collection<String> getSuffix() {
         return Arrays.asList("shp");
-    }
-
-    @Override
-    public Collection<byte[]> getSignature() {
-        return Collections.singleton(new byte[]{0x00,0x00,0x27,0x0A});
     }
 
     public boolean canProcess(final ParameterValueGroup params) {
@@ -232,16 +222,16 @@ public class ShapefileProvider extends DataStoreProvider implements ProviderOnFi
 
     @Override
     public ProbeResult probeContent(StorageConnector connector) throws DataStoreException {
-        ProbeResult result = FeatureStoreUtilities.probe(this, connector, MIME_TYPE);
-        if (result.isSupported()) {
+        if (ProbeResult.SUPPORTED.equals(connector.contentStartsWith(new byte[]{0x00,0x00,0x27,0x0A}))) {
             //SHP and SHX files have the same signature, we only want to match on the SHP file.
             final Path path = connector.getStorageAs(Path.class);
             final String ext = IOUtilities.extension(path);
             if (!"shp".equalsIgnoreCase(ext)) {
                 return ProbeResult.UNSUPPORTED_STORAGE;
             }
+            return new ProbeResult(true, MIME_TYPE, null);
         }
-        return result;
+        return ProbeResult.UNSUPPORTED_STORAGE;
     }
 
     /**

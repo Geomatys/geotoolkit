@@ -17,9 +17,6 @@
 package org.geotoolkit.data.nmea;
 
 import java.net.URI;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import org.apache.sis.storage.base.Capability;
 import org.apache.sis.storage.base.StoreMetadata;
 import org.apache.sis.parameter.ParameterBuilder;
@@ -30,10 +27,8 @@ import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
-import org.geotoolkit.storage.ProviderOnFileSystem;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
-import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.locationtech.jts.geom.Point;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -47,12 +42,13 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 @StoreMetadata(
         formatName = NMEAProvider.NAME,
+        fileSuffixes = {"txt","log"},
         capabilities = {Capability.READ},
         resourceTypes = {FeatureSet.class})
 @StoreMetadataExt(
         resourceTypes = ResourceType.VECTOR,
         geometryTypes ={ Point.class })
-public class NMEAProvider extends DataStoreProvider implements ProviderOnFileSystem {
+public class NMEAProvider extends DataStoreProvider {
 
     public static final String NAME = "NMEA";
     public static final String MIME_TYPE = "application/x-nmea";
@@ -76,18 +72,14 @@ public class NMEAProvider extends DataStoreProvider implements ProviderOnFileSys
     }
 
     @Override
-    public Collection<String> getSuffix() {
-        return Arrays.asList("txt", "log");
-    }
-
-    @Override
-    public Collection<byte[]> getSignature() {
-        return Collections.singleton(new byte[]{'$'});
-    }
-
-    @Override
     public ProbeResult probeContent(StorageConnector connector) throws DataStoreException {
-        return FeatureStoreUtilities.probe(this, connector, MIME_TYPE);
+        if  (ProbeResult.SUPPORTED.equals(connector.pathEndsWith(".txt", true))
+          || ProbeResult.SUPPORTED.equals(connector.pathEndsWith(".log", true))
+          || ProbeResult.SUPPORTED.equals(connector.contentStartsWith(new byte[]{'$'}))
+                ) {
+            return new ProbeResult(true, MIME_TYPE, null);
+        }
+        return ProbeResult.UNSUPPORTED_STORAGE;
     }
 
     @Override

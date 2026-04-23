@@ -18,8 +18,6 @@
 package org.geotoolkit.data.csv;
 
 import java.net.URI;
-import java.util.Arrays;
-import java.util.Collection;
 import org.apache.sis.storage.base.Capability;
 import org.apache.sis.storage.base.StoreMetadata;
 import org.apache.sis.parameter.ParameterBuilder;
@@ -31,10 +29,8 @@ import static org.apache.sis.storage.DataStoreProvider.LOCATION;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
-import org.geotoolkit.storage.ProviderOnFileSystem;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
-import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.MultiLineString;
@@ -54,6 +50,7 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 @StoreMetadata(
         formatName = CSVProvider.NAME,
+        fileSuffixes = {"csv","txt"},
         capabilities = {Capability.READ, Capability.WRITE, Capability.CREATE},
         resourceTypes = {FeatureSet.class})
 @StoreMetadataExt(
@@ -65,7 +62,7 @@ import org.opengis.parameter.ParameterValueGroup;
                         MultiPoint.class,
                         MultiLineString.class,
                         MultiPolygon.class})
-public class CSVProvider extends DataStoreProvider implements ProviderOnFileSystem {
+public class CSVProvider extends DataStoreProvider {
 
     public static final String NAME = "geotk_csv";
     public static final String MIME_TYPE = "text/csv";
@@ -129,13 +126,13 @@ public class CSVProvider extends DataStoreProvider implements ProviderOnFileSyst
     }
 
     @Override
-    public Collection<String> getSuffix() {
-        return Arrays.asList("csv", "txt");
-    }
-
-    @Override
     public ProbeResult probeContent(StorageConnector connector) throws DataStoreException {
-        return FeatureStoreUtilities.probe(this, connector, MIME_TYPE);
+        if  (ProbeResult.SUPPORTED.equals(connector.pathEndsWith(".csv", true))
+           ||ProbeResult.SUPPORTED.equals(connector.pathEndsWith(".txt", true))
+                ) {
+            return new ProbeResult(true, MIME_TYPE, null);
+        }
+        return ProbeResult.UNSUPPORTED_STORAGE;
     }
 
     @Override
