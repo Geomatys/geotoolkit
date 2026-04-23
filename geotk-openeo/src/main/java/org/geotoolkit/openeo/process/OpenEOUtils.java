@@ -164,6 +164,13 @@ public class OpenEOUtils {
             };
         }
 
+        if (Objects.equals(descriptor.getIdentifier().getCode(), "coverage.save_result") &&
+                clazz == String.class && descriptorName.equalsIgnoreCase("format")) {
+            return new DataTypeSchema[]{
+                    new DataTypeSchema(List.of(DataTypeSchema.Type.STRING), "output-format")
+            };
+        }
+
         return new DataTypeSchema[]{new DataTypeSchema(type == null ? List.of() : List.of(DataTypeSchema.Type.fromValue(type, isArray)), null)};
     }
 }
