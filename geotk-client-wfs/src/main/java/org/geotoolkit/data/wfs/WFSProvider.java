@@ -29,16 +29,7 @@ import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
 import org.geotoolkit.client.AbstractClientProvider;
 import static org.geotoolkit.client.AbstractClientProvider.createVersionDescriptor;
-import org.geotoolkit.storage.ResourceType;
-import org.geotoolkit.storage.StoreMetadataExt;
 import org.geotoolkit.wfs.xml.WFSVersion;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.LineString;
-import org.locationtech.jts.geom.MultiLineString;
-import org.locationtech.jts.geom.MultiPoint;
-import org.locationtech.jts.geom.MultiPolygon;
-import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.geom.Polygon;
 import org.opengis.parameter.*;
 
 /**
@@ -51,15 +42,6 @@ import org.opengis.parameter.*;
         formatName = WFSProvider.NAME,
         capabilities = {Capability.READ,Capability.WRITE},
         resourceTypes = {FeatureSet.class})
-@StoreMetadataExt(
-        resourceTypes = ResourceType.VECTOR,
-        geometryTypes ={Geometry.class,
-                        Point.class,
-                        LineString.class,
-                        Polygon.class,
-                        MultiPoint.class,
-                        MultiLineString.class,
-                        MultiPolygon.class})
 public class WFSProvider extends DataStoreProvider {
 
     /** factory identification **/

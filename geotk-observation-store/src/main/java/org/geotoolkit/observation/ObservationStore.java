@@ -23,6 +23,7 @@ import java.util.Optional;
 import java.util.Set;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
+import org.apache.sis.storage.Resource;
 import org.geotoolkit.observation.model.ObservationDataset;
 import org.geotoolkit.observation.model.Offering;
 import org.geotoolkit.observation.model.ProcedureDataset;
@@ -50,7 +51,7 @@ import org.opengis.temporal.TemporalPrimitive;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public interface ObservationStore {
+public interface ObservationStore extends Resource{
 
     /**
      * Get the parameters used to initialize this source from it's factory.
@@ -76,6 +77,7 @@ public interface ObservationStore {
      * @throws DataStoreException if an error occurred while reading the metadata.
      *
      */
+    @Override
     Metadata getMetadata() throws DataStoreException;
 
     /**

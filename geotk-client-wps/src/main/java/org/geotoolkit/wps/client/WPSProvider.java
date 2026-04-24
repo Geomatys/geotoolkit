@@ -19,10 +19,9 @@ package org.geotoolkit.wps.client;
 import org.apache.sis.storage.base.Capability;
 import org.apache.sis.storage.base.StoreMetadata;
 import org.apache.sis.parameter.ParameterBuilder;
+import org.apache.sis.storage.DataSet;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.client.AbstractClientProvider;
-import org.geotoolkit.storage.ResourceType;
-import org.geotoolkit.storage.StoreMetadataExt;
 import org.opengis.parameter.*;
 
 /**
@@ -34,8 +33,7 @@ import org.opengis.parameter.*;
 @StoreMetadata(
         formatName = WPSProvider.NAME,
         capabilities = {Capability.READ},
-        resourceTypes = {})
-@StoreMetadataExt(resourceTypes = ResourceType.OTHER)
+        resourceTypes = {DataSet.class})
 public class WPSProvider extends AbstractClientProvider{
 
     /** factory identification **/

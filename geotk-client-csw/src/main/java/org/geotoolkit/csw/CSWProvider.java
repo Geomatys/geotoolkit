@@ -25,9 +25,8 @@ import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.client.AbstractClientProvider;
 import org.geotoolkit.csw.xml.CSWVersion;
+import org.geotoolkit.metadata.MetadataStore;
 import org.geotoolkit.security.ClientSecurity;
-import org.geotoolkit.storage.ResourceType;
-import org.geotoolkit.storage.StoreMetadataExt;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterNotFoundException;
@@ -43,8 +42,7 @@ import org.opengis.parameter.ParameterValueGroup;
 @StoreMetadata(
         formatName = CSWProvider.NAME,
         capabilities = {Capability.READ},
-        resourceTypes = {})
-@StoreMetadataExt(resourceTypes = ResourceType.METADATA)
+        resourceTypes = {MetadataStore.class})
 public class CSWProvider extends AbstractClientProvider {
 
     /** factory identification **/

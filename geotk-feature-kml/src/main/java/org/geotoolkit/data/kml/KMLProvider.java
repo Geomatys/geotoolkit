@@ -28,15 +28,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
-import org.geotoolkit.storage.ResourceType;
-import org.geotoolkit.storage.StoreMetadataExt;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.LineString;
-import org.locationtech.jts.geom.MultiLineString;
-import org.locationtech.jts.geom.MultiPoint;
-import org.locationtech.jts.geom.MultiPolygon;
-import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.geom.Polygon;
 
 /**
  *
@@ -47,15 +38,6 @@ import org.locationtech.jts.geom.Polygon;
         fileSuffixes = {"kml","kmz"},
         capabilities = {Capability.READ},
         resourceTypes = {FeatureSet.class})
-@StoreMetadataExt(
-        resourceTypes = ResourceType.VECTOR,
-        geometryTypes ={Geometry.class,
-                        Point.class,
-                        LineString.class,
-                        Polygon.class,
-                        MultiPoint.class,
-                        MultiLineString.class,
-                        MultiPolygon.class})
 public final class KMLProvider extends AbstractProvider {
 
     public static final String NAME = "kml";

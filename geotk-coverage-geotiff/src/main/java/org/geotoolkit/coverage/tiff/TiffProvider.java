@@ -26,8 +26,6 @@ import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
-import org.geotoolkit.storage.ResourceType;
-import org.geotoolkit.storage.StoreMetadataExt;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 
@@ -41,7 +39,6 @@ import org.opengis.parameter.ParameterDescriptorGroup;
         fileSuffixes = {"tiff","tif","geotif","geotiff"},
         capabilities = {Capability.READ, Capability.WRITE, Capability.CREATE},
         resourceTypes = {GridCoverageResource.class})
-@StoreMetadataExt(resourceTypes = ResourceType.GRID)
 public class TiffProvider extends DataStoreProvider {
 
     public static final String NAME = "geotk-geotiff";

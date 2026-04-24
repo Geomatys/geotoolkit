@@ -22,8 +22,6 @@ import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.client.AbstractClientProvider;
 import org.geotoolkit.sos.xml.SOSVersion;
-import org.geotoolkit.storage.ResourceType;
-import org.geotoolkit.storage.StoreMetadataExt;
 import org.opengis.parameter.*;
 
 /**
@@ -36,7 +34,6 @@ import org.opengis.parameter.*;
         formatName = SOSProvider.NAME,
         capabilities = {Capability.READ, Capability.WRITE},
         resourceTypes = {})
-@StoreMetadataExt(resourceTypes = ResourceType.SENSOR)
 public class SOSProvider extends AbstractClientProvider{
 
     /** factory identification **/

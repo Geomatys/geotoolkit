@@ -28,8 +28,6 @@ import org.apache.sis.storage.StorageConnector;
 import org.apache.sis.util.Version;
 import org.geotoolkit.client.AbstractClientProvider;
 import org.geotoolkit.client.CapabilitiesException;
-import org.geotoolkit.storage.ResourceType;
-import org.geotoolkit.storage.StoreMetadataExt;
 import org.geotoolkit.wms.xml.AbstractWMSCapabilities;
 import org.geotoolkit.wms.xml.WMSVersion;
 import org.opengis.parameter.ParameterDescriptor;
@@ -46,7 +44,6 @@ import org.opengis.parameter.ParameterValueGroup;
         formatName = WMSProvider.NAME,
         capabilities = {Capability.READ},
         resourceTypes = {GridCoverageResource.class})
-@StoreMetadataExt(resourceTypes = ResourceType.COVERAGE)
 public class WMSProvider extends AbstractClientProvider {
 
     public static final String NAME = "wms";

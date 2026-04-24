@@ -30,8 +30,6 @@ import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
 import org.apache.sis.util.Version;
-import org.geotoolkit.storage.ResourceType;
-import org.geotoolkit.storage.StoreMetadataExt;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -47,7 +45,6 @@ import org.geotoolkit.storage.multires.TiledResource;
         formatName = XMLCoverageStoreFactory.NAME,
         capabilities = {Capability.READ, Capability.WRITE, Capability.CREATE},
         resourceTypes = {GridCoverageResource.class, TiledResource.class})
-@StoreMetadataExt(resourceTypes = ResourceType.PYRAMID)
 public class XMLCoverageStoreFactory extends DataStoreProvider {
 
     /** factory identification **/

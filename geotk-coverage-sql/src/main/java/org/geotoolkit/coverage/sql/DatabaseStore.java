@@ -28,8 +28,6 @@ import org.apache.sis.referencing.factory.sql.EPSGFactory;
 import org.apache.sis.storage.*;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.ResourceType;
-import org.geotoolkit.storage.StoreMetadataExt;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.Metadata;
 import org.opengis.metadata.quality.ConformanceResult;
@@ -82,7 +80,6 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
         formatName = Provider.NAME,
         capabilities = {Capability.READ, Capability.WRITE, Capability.CREATE},
         resourceTypes = {GridCoverageResource.class})
-    @StoreMetadataExt(resourceTypes = ResourceType.GRID)
     public static final class Provider extends DataStoreProvider {
         /**
          * Factory identification.

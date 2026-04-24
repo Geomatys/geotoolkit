@@ -46,7 +46,6 @@ import org.apache.sis.storage.WritableFeatureSet;
 import org.apache.sis.storage.tiling.TileMatrixSet;
 import org.apache.sis.storage.tiling.TiledResource;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.DataStores.ResourceWalker.VisitOption;
@@ -227,48 +226,6 @@ public final class DataStores {
             t.getIdentifier().ifPresent((name) -> names.add(name));
         }
         return names;
-    }
-
-    /**
-     * Extract the {@link ResourceType} supported by the {@link DataStoreProvider}.
-     *
-     * @return supported resource types, never null, can be empty
-     */
-    public static ResourceType[] getResourceTypes(DataStoreProvider provider) {
-        final StoreMetadataExt meta = provider.getClass().getAnnotation(StoreMetadataExt.class);
-        if (meta == null) return new ResourceType[0];
-        return meta.resourceTypes();
-    }
-
-    /**
-     * Returns the set of all providers, optionally filtered by class and resource types.
-     *
-     * @param  <T>  The type of provider to be returned.
-     * @param  clazz The type of factories to be returned, or {@code null} for all kind of factories.
-     * @param types types of resources that must be supported by the provider, none for all
-     * @return The set of factories for the given conditions.
-     *
-     * @deprecated the implementation of this method is unsafe.
-     */
-    @Deprecated
-    public static <T> Set<T> getProviders(final Class<T> clazz, ResourceType ... types) {
-        final Set<T> results = new HashSet<>();
-        loop:
-        for (DataStoreProvider p : org.apache.sis.storage.DataStores.providers()) {
-            if (clazz != null && !clazz.isInstance(p)) continue;
-            if (types != null && types.length > 0) {
-                final ResourceType[] supportedTypes = getResourceTypes(p);
-                for (ResourceType type : types) {
-                    if (ArraysExt.contains(supportedTypes, type)) {
-                        results.add((T) p);
-                        continue loop;
-                    }
-                }
-            } else {
-                results.add((T) p);
-            }
-        }
-        return results;
     }
 
     /**

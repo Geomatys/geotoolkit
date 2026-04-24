@@ -21,7 +21,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.logging.Level;
 import javax.xml.namespace.QName;
 import org.apache.sis.storage.DataStore;
 import org.geotoolkit.csw.xml.DomainValues;
