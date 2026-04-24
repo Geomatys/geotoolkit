@@ -58,7 +58,7 @@ public class ResultDeserializer extends JsonDeserializer<Result> {
             String uom         = getFieldValue(fieldNode, "uom").orElse(null);
             // TODO "qualityFields": []
             // TODO "parameterFields": []
-            Field f = new Field(index, ft, name, label, description, uom, FieldType.MEASURE, new ArrayList<>(), new ArrayList<>());
+            Field f = new Field(index, ft, name, label, description, uom, FieldType.MEASURE);
             Object value = null;
             if (rootNode.hasNonNull("value")) {
                 switch (ft) {

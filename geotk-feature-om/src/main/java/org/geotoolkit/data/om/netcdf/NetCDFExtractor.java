@@ -220,7 +220,7 @@ public class NetCDFExtractor {
             if (analyze.mainField == null) {
                 for (NCField field : all) {
                     // try to find a time field
-                    if ((analyze.featureType == TIMESERIES || analyze.featureType == TRAJECTORY || analyze.featureType == GRID) && field.name.toLowerCase().contains("time")) {
+                    if ((analyze.featureType == TIMESERIES || analyze.featureType == TRAJECTORY || analyze.featureType == GRID) && field.getName().toLowerCase().contains("time")) {
                         analyze.mainField = field;
                         analyze.phenfields.remove(field);
                         break;
@@ -250,7 +250,7 @@ public class NetCDFExtractor {
                 if (analyze.featureType != TRAJECTORY && analyze.separatorField == null) {
                     for (NCField phenField : analyze.phenfields) {
                         if (phenField.dimension > 1) {
-                            final String separatorDim = phenField.dimensionLabel.replace(analyze.mainField.name, "").trim();
+                            final String separatorDim = phenField.dimensionLabel.replace(analyze.mainField.getName(), "").trim();
                             final Dimension dim = file.findDimension(separatorDim);
                             if (dim != null) {
                                 analyze.dimensionSeparator = separatorDim;
@@ -335,8 +335,8 @@ public class NetCDFExtractor {
                 lonArray        = analyze.getArrayFromField(analyze.lonField);
             }
 
-            final Variable timeVar  = analyze.vars.get(analyze.mainField.name);
-            final String timeUnits  = analyze.mainField.uom;
+            final Variable timeVar  = analyze.vars.get(analyze.mainField.getName());
+            final String timeUnits  = analyze.mainField.getUom();
             final Array timeArray   = analyze.file.readArrays(Arrays.asList(timeVar)).get(0);
             final boolean constantT = analyze.mainField.dimension == 1;
             final boolean timeFirst = analyze.mainField.mainVariableFirst;
@@ -389,7 +389,7 @@ public class NetCDFExtractor {
                         sb.appendTime(millis, false, OMUtils.TIME_MAIN_FIELD);
 
                         for (NCField field : analyze.phenfields) {
-                            final Array phenArray = phenArrays.get(field.name);
+                            final Array phenArray = phenArrays.get(field.getName());
                             final Double value    = getDoubleValue(phenArray, i, field.fillValue);
                             sb.appendValue(value, true, field);
                         }
@@ -454,7 +454,7 @@ public class NetCDFExtractor {
                             gb.addDate(millis);
                             sb.appendTime(millis, false, OMUtils.TIME_MAIN_FIELD);
                             for (NCField field : analyze.phenfields) {
-                                final Array phenArray   = phenArrays.get(field.name);
+                                final Array phenArray   = phenArrays.get(field.getName());
                                 final boolean mainFirst = field.mainVariableFirst;
                                 final Double value      = getDoubleValue(mainFirst, phenArray, i, j, field.fillValue);
                                 sb.appendValue(value, true, field);
@@ -513,8 +513,8 @@ public class NetCDFExtractor {
                 lonArray        = analyze.getArrayFromField(analyze.lonField);
             }
 
-            final Variable timeVar  = analyze.vars.get(analyze.mainField.name);
-            final String timeUnits  = analyze.mainField.uom;
+            final Variable timeVar  = analyze.vars.get(analyze.mainField.getName());
+            final String timeUnits  = analyze.mainField.getUom();
             final Array timeArray   = analyze.file.readArrays(Arrays.asList(timeVar)).get(0);
             final boolean constantT = analyze.mainField.dimension == 1;
             final boolean timeFirst = analyze.mainField.mainVariableFirst;
@@ -618,11 +618,11 @@ public class NetCDFExtractor {
             Array timeArray  = null;
             String timeUnits = null;
             if (analyze.hasTime()) {
-                timeUnits        = analyze.timeField.uom;
+                timeUnits        = analyze.timeField.getUom();
                 timeArray        = analyze.getArrayFromField(analyze.timeField);
             }
 
-            final Variable zVar     = analyze.vars.get(analyze.mainField.name);
+            final Variable zVar     = analyze.vars.get(analyze.mainField.getName());
             final Array zArray      = analyze.file.readArrays(Arrays.asList(zVar)).get(0);
             final boolean constantZ = analyze.mainField.dimension == 1;
             final boolean Zfirst    = analyze.mainField.mainVariableFirst;
@@ -679,7 +679,7 @@ public class NetCDFExtractor {
                         sb.appendValue(zLevel, false, OMUtils.PRESSION_MAIN_FIELD);
 
                         for (NCField field : analyze.phenfields) {
-                            final Array phenArray = phenArrays.get(field.name);
+                            final Array phenArray = phenArrays.get(field.getName());
                             final double value    = getDoubleValue(phenArray, zIndex, field.fillValue);
                             sb.appendValue(value, true, field);
                         }
@@ -750,7 +750,7 @@ public class NetCDFExtractor {
                             sb.appendValue(zLevel, false, OMUtils.PRESSION_MAIN_FIELD);
 
                             for (NCField field : analyze.phenfields) {
-                                final Array phenArray   = phenArrays.get(field.name);
+                                final Array phenArray   = phenArrays.get(field.getName());
                                 final boolean mainFirst = field.mainVariableFirst;
                                 final double value      = getDoubleValue(mainFirst, phenArray, zIndex, profileIndex, field.fillValue);
                                 sb.appendValue(value, true, field);
@@ -808,7 +808,7 @@ public class NetCDFExtractor {
             Array timeArray  = null;
             String timeUnits = null;
             if (analyze.hasTime()) {
-                timeUnits        = analyze.timeField.uom;
+                timeUnits        = analyze.timeField.getUom();
                 timeArray        = analyze.getArrayFromField(analyze.timeField);
             }
 
@@ -902,8 +902,8 @@ public class NetCDFExtractor {
                 lonArray        = analyze.getArrayFromField(analyze.lonField);
             }
 
-            final Variable timeVar  = analyze.vars.get(analyze.mainField.name);
-            final String timeUnits  = analyze.mainField.uom;
+            final Variable timeVar  = analyze.vars.get(analyze.mainField.getName());
+            final String timeUnits  = analyze.mainField.getUom();
             final Array timeArray   = analyze.file.readArrays(Arrays.asList(timeVar)).get(0);
             final boolean constantT = analyze.mainField.dimension == 1;
             final boolean timeFirst = analyze.mainField.mainVariableFirst;
@@ -959,7 +959,7 @@ public class NetCDFExtractor {
                         }
 
                         for (NCField field : analyze.phenfields) {
-                            final Array phenArray = phenArrays.get(field.name);
+                            final Array phenArray = phenArrays.get(field.getName());
                             final Double value    = getDoubleValue(phenArray, i, field.fillValue);
                             sb.appendValue(value, true, field);
                         }
@@ -1034,7 +1034,7 @@ public class NetCDFExtractor {
                             }
 
                             for (NCField field : analyze.phenfields) {
-                                final Array phenArray   = phenArrays.get(field.name);
+                                final Array phenArray   = phenArrays.get(field.getName());
                                 final boolean mainFirst = field.mainVariableFirst;
                                 final Double value      = getDoubleValue(mainFirst, phenArray, i, j, field.fillValue);
                                 sb.appendValue(value, true, field);
@@ -1098,8 +1098,8 @@ public class NetCDFExtractor {
                 lonArray        = analyze.getArrayFromField(analyze.lonField);
             }
 
-            final Variable timeVar  = analyze.vars.get(analyze.mainField.name);
-            final String timeUnits  = analyze.mainField.uom;
+            final Variable timeVar  = analyze.vars.get(analyze.mainField.getName());
+            final String timeUnits  = analyze.mainField.getUom();
             final Array timeArray   = analyze.file.readArrays(Arrays.asList(timeVar)).get(0);
             final boolean constantT = analyze.mainField.dimension == 1;
             final boolean timeFirst = analyze.mainField.mainVariableFirst;
@@ -1198,13 +1198,13 @@ public class NetCDFExtractor {
 
             try {
 
-                final Variable latVar = analyze.vars.get(analyze.latField.name);
-                final Variable lonVar = analyze.vars.get(analyze.lonField.name);
+                final Variable latVar = analyze.vars.get(analyze.latField.getName());
+                final Variable lonVar = analyze.vars.get(analyze.lonField.getName());
                 final Array latArray  = analyze.file.readArrays(Arrays.asList(latVar)).get(0);
                 final Array lonArray  = analyze.file.readArrays(Arrays.asList(lonVar)).get(0);
 
-                final Variable timeVar  = analyze.vars.get(analyze.mainField.name);
-                final String timeUnits  = analyze.mainField.uom;
+                final Variable timeVar  = analyze.vars.get(analyze.mainField.getName());
+                final String timeUnits  = analyze.mainField.getUom();
                 final Array timeArray   = analyze.file.readArrays(Arrays.asList(timeVar)).get(0);
 
 
@@ -1251,7 +1251,7 @@ public class NetCDFExtractor {
                             sb.appendTime(millis, false, OMUtils.TIME_MAIN_FIELD);
 
                             for (NCField field : analyze.phenfields) {
-                                final Array phenArray   = phenArrays.get(field.name);
+                                final Array phenArray   = phenArrays.get(field.getName());
                                 final Double value      = getDoubleValue(phenArray, i, latIndex, lonIndex, field.fillValue);
                                 sb.appendValue(value, true, field);
                             }
@@ -1305,13 +1305,13 @@ public class NetCDFExtractor {
                     return results;
                 }
 
-                final Variable latVar = analyze.vars.get(analyze.latField.name);
-                final Variable lonVar = analyze.vars.get(analyze.lonField.name);
+                final Variable latVar = analyze.vars.get(analyze.latField.getName());
+                final Variable lonVar = analyze.vars.get(analyze.lonField.getName());
                 final Array latArray  = analyze.file.readArrays(Arrays.asList(latVar)).get(0);
                 final Array lonArray  = analyze.file.readArrays(Arrays.asList(lonVar)).get(0);
 
-                final Variable timeVar  = analyze.vars.get(analyze.mainField.name);
-                final String timeUnits  = analyze.mainField.uom;
+                final Variable timeVar  = analyze.vars.get(analyze.mainField.getName());
+                final String timeUnits  = analyze.mainField.getUom();
                 final Array timeArray   = analyze.file.readArrays(Arrays.asList(timeVar)).get(0);
 
                 final List<Field> fields = new ArrayList<>(analyze.phenfields);
@@ -1358,7 +1358,7 @@ public class NetCDFExtractor {
     private static List<String> parseSeparatorValues(final NCFieldAnalyze analyze) throws IOException {
         final List<String> separators = new ArrayList<>();
         if (analyze.separatorField != null) {
-            final Variable separatorVar = analyze.vars.get(analyze.separatorField.name);
+            final Variable separatorVar = analyze.vars.get(analyze.separatorField.getName());
             final Array array = analyze.getArrayFromField(analyze.separatorField);
             if (array instanceof ArrayChar.D2 separatorArray) {
                 final int separatorsSize = separatorVar.getDimension(0).getLength();

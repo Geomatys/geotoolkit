@@ -18,7 +18,9 @@ package org.geotoolkit.observation.model;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -31,48 +33,50 @@ public class Field {
     /**
      * the place of the field in a dataArray.
      */
-    public final Integer index;
+    protected Integer index;
     /**
      * The data type of the field. Can be : Quantity, Text, Boolean, Time, ...
      */
-    public final FieldDataType dataType;
+    protected FieldDataType dataType;
     /**
      * Field name, used as an identifier for the field. The name often identify
      * a phenomenon with the same id.
      */
-    public final String name;
+    protected String name;
 
     /**
      * Field label, used as an human description for the field.
      */
-    public final String label;
+    protected String label;
 
     /**
      * An URN describing the field.
      */
-    public final String description;
+    protected String description;
     /**
      * Unit of measure of the associated data. Filled only for certain field
      * type like 'Quantity' or 'Time'.
      */
-    public final String uom;
+    protected String uom;
 
     /**
      * The type of the field. Can be : MAIN, MEASURE, QUALITY, PARAMETER
      */
-    public final FieldType type;
+    protected FieldType type;
 
     protected Field parent;
 
     /**
      * Associated quality fields.
      */
-    public final List<Field> qualityFields;
+    protected final List<Field> qualityFields;
 
     /**
      * Associated parameter fields.
      */
-    public final List<Field> parameterFields;
+    protected final List<Field> parameterFields;
+
+    protected final Map<String, Object> properties;
 
     // for JSON
     private Field() {
@@ -86,6 +90,7 @@ public class Field {
         this.parent = null;
         this.qualityFields = new ArrayList<>();
         this.parameterFields = new ArrayList<>();
+        this.properties = new HashMap<>();
     }
 
     /**
@@ -100,7 +105,7 @@ public class Field {
      * @param type The type of the field.
      */
     public Field(final Integer index, final FieldDataType dataType, final String name, final String label, final String description, final String uom, final FieldType type) {
-        this(index, dataType, name, label, description, uom, type, new ArrayList<>(), new ArrayList<>());
+        this(index, dataType, name, label, description, uom, type, new ArrayList<>(), new ArrayList<>(), new HashMap<>());
     }
 
     /**
@@ -114,10 +119,11 @@ public class Field {
      * @param uom Unit of measure of the associated data.
      * @param type The type of the field.
      * @param qualityFields Associated quality fields.
-     * @param parameterFields Associated arameter fields.
+     * @param parameterFields Associated parameter fields.
+     * @param properties Associated properties.
      */
     public Field(final Integer index, final FieldDataType dataType, final String name, final String label, final String description, final String uom, final FieldType type,
-            List<Field> qualityFields, List<Field> parameterFields) {
+            List<Field> qualityFields, List<Field> parameterFields, Map<String, Object> properties) {
         this.index = index;
         this.description = description;
         this.name = name;
@@ -126,6 +132,7 @@ public class Field {
         this.label = label;
         this.type = type;
         this.qualityFields = qualityFields;
+        this.properties = properties;
         //update parent
         if (qualityFields != null) {
             for (Field qf : qualityFields) {
@@ -155,6 +162,7 @@ public class Field {
         this.uom = that.uom;
         this.label = that.label;
         this.type = that.type;
+        this.properties = that.properties;
         this.qualityFields = new ArrayList<>();
         for (Field qualField : that.qualityFields) {
             this.qualityFields.add(new Field(qualField));
@@ -180,6 +188,7 @@ public class Field {
         this.uom = that.uom;
         this.label = that.label;
         this.type = that.type;
+        this.properties = that.properties;
         this.qualityFields = new ArrayList<>();
         for (Field qualField : that.qualityFields) {
             this.qualityFields.add(new Field(qualField));
@@ -188,6 +197,46 @@ public class Field {
         for (Field parField : that.parameterFields) {
             this.parameterFields.add(new Field(parField));
         }
+    }
+
+    public Integer getIndex() {
+        return index;
+    }
+
+    public FieldDataType getDataType() {
+        return dataType;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getUom() {
+        return uom;
+    }
+
+    public FieldType getType() {
+        return type;
+    }
+
+    public List<Field> getQualityFields() {
+        return qualityFields;
+    }
+
+    public List<Field> getParameterFields() {
+        return parameterFields;
+    }
+
+    public Map<String, Object> getProperties() {
+        return properties;
     }
 
     /**
@@ -200,26 +249,32 @@ public class Field {
      * @throws SQLException
      */
     public String getSQLType(boolean isPostgres, boolean timescaledbMain) throws SQLException {
-        if (FieldDataType.QUANTITY.equals(dataType)) {
-            if (timescaledbMain) {
-                return "integer";
-            } else if (!isPostgres) {
-                return "double";
-            } else {
-                return "double precision";
+        if (null == dataType) return null;
+
+        switch (dataType) {
+            case QUANTITY -> {
+                if (timescaledbMain) {
+                    return "integer";
+                } else if (!isPostgres) {
+                    return "double";
+                } else {
+                    return "double precision";
+                }
             }
-        } else if (FieldDataType.TEXT.equals(dataType)) {
-            return "character varying(1000)";
-        } else if (FieldDataType.BOOLEAN.equals(dataType)) {
-            if (isPostgres) {
-                return "boolean";
-            } else {
-                return "integer";
+            case TEXT -> {
+                return "character varying(1000)";
             }
-        } else if (FieldDataType.TIME.equals(dataType)) {
-            return "timestamp";
-        } else {
-            throw new SQLException("Only Quantity, Text AND Time is supported for now");
+            case BOOLEAN -> {
+                if (isPostgres) {
+                    return "boolean";
+                } else {
+                    return "integer";
+                }
+            }
+            case TIME -> {
+                return "timestamp";
+            }
+            default -> throw new SQLException("Only Quantity, Text AND Time is supported for now");
         }
     }
 

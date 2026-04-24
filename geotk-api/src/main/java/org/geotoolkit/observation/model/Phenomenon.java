@@ -39,6 +39,11 @@ public class Phenomenon extends AbstractOMEntity implements org.opengis.observat
         this.definition = definition;
     }
 
+    public Phenomenon(Field field) {
+        super(field.name, field.label, field.description, field.properties);
+        this.definition = field.name;
+    }
+
     public String getDefinition() {
         return definition;
     }

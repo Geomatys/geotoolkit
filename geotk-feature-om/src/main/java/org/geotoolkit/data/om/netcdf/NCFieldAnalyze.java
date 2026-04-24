@@ -52,7 +52,7 @@ public class NCFieldAnalyze {
         public String getYLabel() {
             final StringBuilder result = new StringBuilder();
             for (NCField field : phenfields) {
-                result.append(field.name).append(",");
+                result.append(field.getName()).append(",");
             }
             if (result.length() != 0) {
                 result.deleteCharAt(result.length() - 1);
@@ -62,7 +62,7 @@ public class NCFieldAnalyze {
 
         public String getXLabel() {
             if (mainField != null) {
-                return mainField.label;
+                return mainField.getLabel();
             }
             return null;
         }
@@ -94,7 +94,7 @@ public class NCFieldAnalyze {
         }
 
         public Array getArrayFromField(final NCField field) throws IOException {
-            final Variable var = vars.get(field.name);
+            final Variable var = vars.get(field.getName());
             return file.readArrays(Arrays.asList(var)).get(0);
         }
 
@@ -102,7 +102,7 @@ public class NCFieldAnalyze {
             final Map<String, Array> phenArrays = new HashMap<>();
             for (NCField field : phenfields) {
                 final Array phenArray  = getArrayFromField(field);
-                phenArrays.put(field.name, phenArray);
+                phenArrays.put(field.getName(), phenArray);
             }
             return phenArrays;
         }

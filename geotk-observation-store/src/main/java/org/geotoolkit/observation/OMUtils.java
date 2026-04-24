@@ -115,19 +115,19 @@ public class OMUtils {
             Field single = phenomenons.get(0);
             // look for an existing phenomenon
             for (Phenomenon exisiting : existingPhens) {
-                if (!(exisiting instanceof CompositePhenomenon) && exisiting.getId().equals(single.name)) {
+                if (!(exisiting instanceof CompositePhenomenon) && Objects.equals(exisiting.getId(), single.getName())) {
                     return exisiting;
                 }
             }
             // build a new single phenomenon
-            return new Phenomenon(single.name, single.label, single.name, single.description, null);
+            return new Phenomenon(single);
         } else {
             final List<Phenomenon> types = new ArrayList<>();
             for (Field phen : phenomenons) {
                 // try to use existing components because if not, previous properties will be lost by overwritting
                 boolean found = false;
                 for (Phenomenon exisiting : existingPhens) {
-                    if (!(exisiting instanceof CompositePhenomenon) && exisiting.getId().equals(phen.name)) {
+                    if (!(exisiting instanceof CompositePhenomenon) && Objects.equals(exisiting.getId(), phen.getName())) {
                         types.add(exisiting);
                         found = true;
                         break;
@@ -135,7 +135,7 @@ public class OMUtils {
                 }
                 // build a new phenomenon
                 if (!found)  {
-                    types.add(new Phenomenon(phen.name, phen.label, phen.name, phen.description, null));
+                    types.add(new Phenomenon(phen));
                 }
             }
 
@@ -324,10 +324,10 @@ public class OMUtils {
 
             for (Field f : cr.getFields()) {
 
-                final String idSuffix = "-" + f.index;
+                final String idSuffix = "-" + f.getIndex();
 
                 // no measure for main time field + exclude observation by field
-                if ((timeseries && f.index == 1) || (!fieldFilters.isEmpty() && !fieldFilters.contains(f.index))) {
+                if ((timeseries && f.getIndex() == 1) || (!fieldFilters.isEmpty() && !fieldFilters.contains(f.getIndex()))) {
                     continue;
                 }
                 MeasureResult result = new MeasureResult(f, null);
@@ -335,7 +335,7 @@ public class OMUtils {
                                                       obs.getName().getCode() + idSuffix,
                                                       obs.getDescription(),
                                                       obs.getDefinition(),
-                                                      getOmTypeFromFieldType(f.dataType),
+                                                      getOmTypeFromFieldType(f.getDataType()),
                                                       obs.getProcedure(),
                                                       obs.getSamplingTime(),
                                                       obs.getFeatureOfInterest(),
@@ -367,10 +367,10 @@ public class OMUtils {
                 for (Field f : cr.getFields()) {
                     String token = lines[j];
                     j++;
-                    final String idSuffix = "-" + f.index + '-' + mid;
+                    final String idSuffix = "-" + f.getIndex() + '-' + mid;
                     final Object value    = readField(f, token);
                     if (timeseries)  {
-                        if (f.index == 1) {
+                        if (f.getIndex() == 1) {
                             measureTime = buildTime("time" + idSuffix, (Date) value, null);
                             continue;
                         }
@@ -378,7 +378,7 @@ public class OMUtils {
                         measureTime = obs.getSamplingTime();
                     }
                     List<Element> quality = new ArrayList<>();
-                    for (Field qf : f.qualityFields) {
+                    for (Field qf : f.getQualityFields()) {
                         token = lines[j];
                         j++;
                         final Object qvalue = readField(qf, token);
@@ -386,7 +386,7 @@ public class OMUtils {
                     }
 
                     // exclude observation by field or measure id
-                    if ((!fieldFilters.isEmpty() && !fieldFilters.contains(f.index)) || (!measureIdFilters.isEmpty() && !measureIdFilters.contains(mid))) {
+                    if ((!fieldFilters.isEmpty() && !fieldFilters.contains(f.getIndex())) || (!measureIdFilters.isEmpty() && !measureIdFilters.contains(mid))) {
                         continue;
                     }
 
@@ -395,7 +395,7 @@ public class OMUtils {
                                                           obs.getName().getCode() + idSuffix,
                                                           obs.getDescription(),
                                                           obs.getDefinition(),
-                                                          getOmTypeFromFieldType(f.dataType),
+                                                          getOmTypeFromFieldType(f.getDataType()),
                                                           obs.getProcedure(),
                                                           measureTime,
                                                           obs.getFeatureOfInterest(),
@@ -432,7 +432,7 @@ public class OMUtils {
                 j++;
                 final Object value = readField(f, token);
                 line.add(value);
-                for (Field qf : f.qualityFields) {
+                for (Field qf : f.getQualityFields()) {
                     token = lines[j];
                     j++;
                     final Object qvalue = readField(qf, token);
@@ -449,7 +449,7 @@ public class OMUtils {
         if (token.isEmpty()) {
             value = null;
         } else {
-            value = switch (f.dataType) {
+            value = switch (f.getDataType()) {
                 case BOOLEAN  -> Boolean.valueOf(token);
                 case QUANTITY -> Double.valueOf(token);
                 case TEXT     -> token;
@@ -464,7 +464,7 @@ public class OMUtils {
         try {
             return new ObjectMapper().readValue(value, Map.class);
         } catch (JsonProcessingException ex) {
-            LOGGER.log(Level.WARNING, "Error while reading json field: " + ex.getMessage());
+            LOGGER.log(Level.WARNING, "Error while reading json field: {0}", ex.getMessage());
         }
         return Map.of();
     }
@@ -473,7 +473,7 @@ public class OMUtils {
         try {
             return new ObjectMapper().writeValueAsString(value);
         } catch (JsonProcessingException ex) {
-            LOGGER.log(Level.WARNING, "Error while writing json field: " + ex.getMessage());
+            LOGGER.log(Level.WARNING, "Error while writing json field: {0}", ex.getMessage());
         }
         return null;
     }
@@ -612,7 +612,7 @@ public class OMUtils {
      * @return A Data quality element.
      */
     public static Element createQualityElement(Field field, Object value) {
-        return createQualityElement(field.name, field.uom, field.dataType, value);
+        return createQualityElement(field.getName(), field.getUom(), field.getDataType(), value);
     }
 
     /**

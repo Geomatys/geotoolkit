@@ -367,10 +367,10 @@ public class ResultBuilder {
                 boolean first = true;
                 for (Field pheno : fields) {
                     // hack for the current graph in examind you only work when the main field is named "time"
-                    if (csvHack && FieldDataType.TIME.equals(pheno.dataType) && first) {
+                    if (csvHack && FieldDataType.TIME.equals(pheno.getDataType()) && first) {
                         values.append("time").append(encoding.getTokenSeparator());
                     } else {
-                        values.append(pheno.label).append(encoding.getTokenSeparator());
+                        values.append(pheno.getLabel()).append(encoding.getTokenSeparator());
                     }
                     first = false;
                 }
