@@ -27,9 +27,6 @@ import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
-import org.geotoolkit.storage.ResourceType;
-import org.geotoolkit.storage.StoreMetadataExt;
-import org.locationtech.jts.geom.Point;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -45,9 +42,6 @@ import org.opengis.parameter.ParameterValueGroup;
         fileSuffixes = {"txt","log"},
         capabilities = {Capability.READ},
         resourceTypes = {FeatureSet.class})
-@StoreMetadataExt(
-        resourceTypes = ResourceType.VECTOR,
-        geometryTypes ={ Point.class })
 public class NMEAProvider extends DataStoreProvider {
 
     public static final String NAME = "NMEA";

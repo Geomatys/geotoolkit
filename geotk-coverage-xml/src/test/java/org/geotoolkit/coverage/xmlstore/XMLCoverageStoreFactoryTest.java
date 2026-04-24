@@ -16,9 +16,9 @@
  */
 package org.geotoolkit.coverage.xmlstore;
 
-import java.util.Set;
+import java.util.Collection;
 import org.apache.sis.storage.DataStoreProvider;
-import org.geotoolkit.storage.DataStores;
+import org.apache.sis.storage.DataStores;
 import static org.junit.Assert.fail;
 import org.junit.Test;
 
@@ -36,9 +36,9 @@ public class XMLCoverageStoreFactoryTest {
     @Test
     public void testFactory() {
 
-        final Set<DataStoreProvider> set = DataStores.getProviders(null);
+        final Collection<DataStoreProvider> set = DataStores.providers();
         boolean found = false;
-        for(DataStoreProvider fact : set){
+        for (DataStoreProvider fact : set){
             if(fact instanceof XMLCoverageStoreFactory){
                 found = true;
             }

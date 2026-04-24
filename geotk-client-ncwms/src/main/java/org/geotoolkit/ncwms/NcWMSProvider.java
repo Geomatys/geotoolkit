@@ -22,8 +22,6 @@ import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.client.AbstractClientProvider;
-import org.geotoolkit.storage.ResourceType;
-import org.geotoolkit.storage.StoreMetadataExt;
 import org.geotoolkit.wms.xml.WMSVersion;
 import org.opengis.parameter.*;
 
@@ -37,7 +35,6 @@ import org.opengis.parameter.*;
         formatName = NcWMSProvider.NAME,
         capabilities = {Capability.READ},
         resourceTypes = {GridCoverageResource.class})
-@StoreMetadataExt(resourceTypes = ResourceType.GRID)
 public class NcWMSProvider extends AbstractClientProvider {
 
     /** factory identification **/

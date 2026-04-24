@@ -9,10 +9,9 @@ import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
+import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
-import org.geotoolkit.storage.ResourceType;
-import org.geotoolkit.storage.StoreMetadataExt;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -20,8 +19,7 @@ import org.opengis.parameter.ParameterValueGroup;
 @StoreMetadata(
         formatName = FishProvider.NAME,
         capabilities = {Capability.READ},
-        resourceTypes = {})
-@StoreMetadataExt(resourceTypes = ResourceType.VECTOR)
+        resourceTypes = {FeatureSet.class})
 public class FishProvider extends DataStoreProvider {
 
     /** factory identification **/

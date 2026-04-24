@@ -21,9 +21,8 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.base.Capability;
 import org.apache.sis.storage.base.StoreMetadata;
+import org.apache.sis.storage.tiling.TiledResource;
 import org.geotoolkit.client.AbstractClientProvider;
-import org.geotoolkit.storage.ResourceType;
-import org.geotoolkit.storage.StoreMetadataExt;
 import org.geotoolkit.wmts.xml.WMTSVersion;
 import org.opengis.parameter.*;
 
@@ -36,8 +35,7 @@ import org.opengis.parameter.*;
 @StoreMetadata(
         formatName = WMTSProvider.NAME,
         capabilities = {Capability.READ},
-        resourceTypes = {GridCoverageResource.class})
-@StoreMetadataExt(resourceTypes = ResourceType.PYRAMID)
+        resourceTypes = {GridCoverageResource.class, TiledResource.class})
 public class WMTSProvider extends AbstractClientProvider {
 
     public static final String NAME = "wmts";

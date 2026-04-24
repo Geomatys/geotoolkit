@@ -40,12 +40,6 @@ import org.geotoolkit.nio.PathFilterVisitor;
 import org.geotoolkit.nio.PosixPathMatcher;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.ResourceType;
-import org.geotoolkit.storage.StoreMetadataExt;
-import org.locationtech.jts.geom.MultiLineString;
-import org.locationtech.jts.geom.MultiPoint;
-import org.locationtech.jts.geom.MultiPolygon;
-import org.locationtech.jts.geom.Point;
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
@@ -63,12 +57,6 @@ import org.opengis.parameter.ParameterValueGroup;
         formatName = "shapefile-folder",
         capabilities = {Capability.READ, Capability.WRITE, Capability.CREATE},
         resourceTypes = {FeatureSet.class})
-@StoreMetadataExt(
-        resourceTypes = ResourceType.VECTOR,
-        geometryTypes ={Point.class,
-                        MultiPoint.class,
-                        MultiLineString.class,
-                        MultiPolygon.class})
 public class ShapefileFolderProvider extends DataStoreProvider {
 
     protected static final Logger LOGGER = Logger.getLogger("org.geotoolkit.data");

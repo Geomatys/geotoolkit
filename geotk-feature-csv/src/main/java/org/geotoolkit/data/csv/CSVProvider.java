@@ -29,15 +29,6 @@ import static org.apache.sis.storage.DataStoreProvider.LOCATION;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
-import org.geotoolkit.storage.ResourceType;
-import org.geotoolkit.storage.StoreMetadataExt;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.LineString;
-import org.locationtech.jts.geom.MultiLineString;
-import org.locationtech.jts.geom.MultiPoint;
-import org.locationtech.jts.geom.MultiPolygon;
-import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.geom.Polygon;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -53,15 +44,6 @@ import org.opengis.parameter.ParameterValueGroup;
         fileSuffixes = {"csv","txt"},
         capabilities = {Capability.READ, Capability.WRITE, Capability.CREATE},
         resourceTypes = {FeatureSet.class})
-@StoreMetadataExt(
-        resourceTypes = ResourceType.VECTOR,
-        geometryTypes ={Geometry.class,
-                        Point.class,
-                        LineString.class,
-                        Polygon.class,
-                        MultiPoint.class,
-                        MultiLineString.class,
-                        MultiPolygon.class})
 public class CSVProvider extends DataStoreProvider {
 
     public static final String NAME = "geotk_csv";

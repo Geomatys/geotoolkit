@@ -20,9 +20,8 @@ import org.apache.sis.storage.base.Capability;
 import org.apache.sis.storage.base.StoreMetadata;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.client.AbstractClientProvider;
-import org.geotoolkit.storage.ResourceType;
-import org.geotoolkit.storage.StoreMetadataExt;
 import org.geotoolkit.wcs.xml.WCSVersion;
 import org.opengis.parameter.*;
 
@@ -35,8 +34,7 @@ import org.opengis.parameter.*;
 @StoreMetadata(
         formatName = WCSProvider.NAME,
         capabilities = {Capability.READ},
-        resourceTypes = {})
-@StoreMetadataExt(resourceTypes = ResourceType.COVERAGE)
+        resourceTypes = {GridCoverageResource.class})
 public class WCSProvider extends AbstractClientProvider{
 
     /** factory identification **/

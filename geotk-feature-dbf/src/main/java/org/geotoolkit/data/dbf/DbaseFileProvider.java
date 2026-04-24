@@ -29,8 +29,6 @@ import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
-import org.geotoolkit.storage.ResourceType;
-import org.geotoolkit.storage.StoreMetadataExt;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -47,7 +45,6 @@ import org.opengis.parameter.ParameterValueGroup;
         fileSuffixes = "dbf",
         capabilities = {Capability.READ, Capability.WRITE, Capability.CREATE},
         resourceTypes = {FeatureSet.class})
-@StoreMetadataExt(resourceTypes = ResourceType.VECTOR)
 public class DbaseFileProvider extends DataStoreProvider {
 
     /** factory identification **/

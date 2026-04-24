@@ -26,8 +26,6 @@ import org.apache.sis.storage.base.StoreMetadata;
 import org.geotoolkit.client.AbstractClientProvider;
 import org.geotoolkit.internal.ClassLoaderInternationalString;
 import org.geotoolkit.security.ClientSecurity;
-import org.geotoolkit.storage.ResourceType;
-import org.geotoolkit.storage.StoreMetadataExt;
 import org.geotoolkit.storage.multires.TiledResource;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterNotFoundException;
@@ -44,7 +42,6 @@ import org.opengis.parameter.ParameterValueGroup;
         formatName = WMSCProvider.NAME,
         capabilities = {Capability.READ},
         resourceTypes = {GridCoverageResource.class, TiledResource.class})
-@StoreMetadataExt(resourceTypes = ResourceType.COVERAGE)
 public class WMSCProvider extends AbstractClientProvider {
 
     /** factory identification **/

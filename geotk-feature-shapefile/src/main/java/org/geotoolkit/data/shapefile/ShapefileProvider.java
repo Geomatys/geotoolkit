@@ -42,13 +42,7 @@ import org.geotoolkit.data.shapefile.lock.ShpFiles;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.ResourceType;
-import org.geotoolkit.storage.StoreMetadataExt;
 import org.geotoolkit.storage.feature.FeatureStore;
-import org.locationtech.jts.geom.MultiLineString;
-import org.locationtech.jts.geom.MultiPoint;
-import org.locationtech.jts.geom.MultiPolygon;
-import org.locationtech.jts.geom.Point;
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
@@ -79,12 +73,6 @@ import org.opengis.parameter.ParameterValueGroup;
         fileSuffixes = "shp",
         capabilities = {Capability.READ, Capability.WRITE, Capability.CREATE},
         resourceTypes = {FeatureSet.class})
-@StoreMetadataExt(
-        resourceTypes = ResourceType.VECTOR,
-        geometryTypes ={Point.class,
-                        MultiPoint.class,
-                        MultiLineString.class,
-                        MultiPolygon.class})
 public class ShapefileProvider extends DataStoreProvider {
 
     /** factory identification **/

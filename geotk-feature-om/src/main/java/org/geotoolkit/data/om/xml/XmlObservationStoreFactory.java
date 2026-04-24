@@ -29,8 +29,7 @@ import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
 import org.geotoolkit.observation.AbstractObservationStoreFactory;
 import org.geotoolkit.observation.Bundle;
-import org.geotoolkit.storage.ResourceType;
-import org.geotoolkit.storage.StoreMetadataExt;
+import org.geotoolkit.observation.ObservationStore;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -42,8 +41,7 @@ import org.opengis.parameter.ParameterValueGroup;
 @StoreMetadata(
         formatName = XmlObservationStoreFactory.NAME,
         capabilities = {Capability.READ, Capability.WRITE, Capability.CREATE},
-        resourceTypes = {})
-@StoreMetadataExt(resourceTypes = ResourceType.SENSOR)
+        resourceTypes = {ObservationStore.class})
 public class XmlObservationStoreFactory extends AbstractObservationStoreFactory {
 
     /** factory identification **/
