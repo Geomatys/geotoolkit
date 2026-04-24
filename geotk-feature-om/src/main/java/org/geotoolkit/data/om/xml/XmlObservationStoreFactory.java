@@ -19,9 +19,6 @@ package org.geotoolkit.data.om.xml;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import org.apache.sis.storage.base.Capability;
 import org.apache.sis.storage.base.StoreMetadata;
 import org.apache.sis.parameter.ParameterBuilder;
@@ -32,10 +29,8 @@ import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
 import org.geotoolkit.observation.AbstractObservationStoreFactory;
 import org.geotoolkit.observation.Bundle;
-import org.geotoolkit.storage.ProviderOnFileSystem;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
-import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -49,7 +44,7 @@ import org.opengis.parameter.ParameterValueGroup;
         capabilities = {Capability.READ, Capability.WRITE, Capability.CREATE},
         resourceTypes = {})
 @StoreMetadataExt(resourceTypes = ResourceType.SENSOR)
-public class XmlObservationStoreFactory extends AbstractObservationStoreFactory implements ProviderOnFileSystem {
+public class XmlObservationStoreFactory extends AbstractObservationStoreFactory {
 
     /** factory identification **/
     public static final String NAME = "observationXmlFile";
@@ -93,18 +88,11 @@ public class XmlObservationStoreFactory extends AbstractObservationStoreFactory 
     }
 
     @Override
-    public Collection<String> getSuffix() {
-        return Arrays.asList("xml");
-    }
-
-    @Override
-    public Collection<byte[]> getSignature() {
-        return Collections.emptyList();
-    }
-
-    @Override
     public ProbeResult probeContent(StorageConnector connector) throws DataStoreException {
-        return FeatureStoreUtilities.probe(this, connector, MIME_TYPE);
+        if (ProbeResult.SUPPORTED.equals(connector.pathEndsWith(".xml", true))) {
+            return new ProbeResult(true, MIME_TYPE, null);
+        }
+        return ProbeResult.UNSUPPORTED_STORAGE;
     }
 
     @Override

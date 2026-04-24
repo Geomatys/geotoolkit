@@ -18,8 +18,6 @@ package org.geotoolkit.coverage.tiff;
 
 import java.net.URI;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.Collection;
 import org.apache.sis.storage.base.Capability;
 import org.apache.sis.storage.base.StoreMetadata;
 import org.apache.sis.parameter.ParameterBuilder;
@@ -28,10 +26,8 @@ import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
-import org.geotoolkit.storage.ProviderOnFileSystem;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
-import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 
@@ -42,13 +38,21 @@ import org.opengis.parameter.ParameterDescriptorGroup;
  */
 @StoreMetadata(
         formatName = TiffProvider.NAME,
+        fileSuffixes = {"tiff","tif","geotif","geotiff"},
         capabilities = {Capability.READ, Capability.WRITE, Capability.CREATE},
         resourceTypes = {GridCoverageResource.class})
 @StoreMetadataExt(resourceTypes = ResourceType.GRID)
-public class TiffProvider extends DataStoreProvider implements ProviderOnFileSystem {
+public class TiffProvider extends DataStoreProvider {
 
     public static final String NAME = "geotk-geotiff";
     public static final String MIME_TYPE = "image/tiff;subtype=geotiff";
+
+    // big endian signatures
+    private static final byte[] SIGNATURE_BE_1 = new byte[]{'M', 0x00, 0x2B, 0x00, 0x08, 0x00, 0x00};
+    private static final byte[] SIGNATURE_BE_2 = new byte[]{'M', 0x00, 0x2A};
+    // little endian signatures
+    private static final byte[] SIGNATURE_LE_1 = new byte[]{'I', 0x2B, 0x00, 0x08, 0x00, 0x00, 0x00};
+    private static final byte[] SIGNATURE_LE_2 = new byte[]{'I', 0x2A, 0x00};
 
     /**
      * Mandatory - the file uri
@@ -77,7 +81,13 @@ public class TiffProvider extends DataStoreProvider implements ProviderOnFileSys
 
     @Override
     public ProbeResult probeContent(StorageConnector connector) throws DataStoreException {
-        return FeatureStoreUtilities.probe(this, connector, MIME_TYPE);
+        if  (ProbeResult.SUPPORTED.equals(connector.contentStartsWith(SIGNATURE_BE_1))
+          || ProbeResult.SUPPORTED.equals(connector.contentStartsWith(SIGNATURE_BE_2))
+          || ProbeResult.SUPPORTED.equals(connector.contentStartsWith(SIGNATURE_LE_1))
+          || ProbeResult.SUPPORTED.equals(connector.contentStartsWith(SIGNATURE_LE_2))) {
+            return new ProbeResult(true, MIME_TYPE, null);
+        }
+        return ProbeResult.UNSUPPORTED_STORAGE;
     }
 
     @Override
@@ -85,26 +95,4 @@ public class TiffProvider extends DataStoreProvider implements ProviderOnFileSys
         return new TiffStore(sc.commit(Path.class, NAME));
     }
 
-    /**
-     * @return collection with tiff and geotiff extensions.
-     */
-    @Override
-    public Collection<String> getSuffix() {
-        return Arrays.asList("tiff", "tif", "geotiff", "geotif");
-    }
-
-    /**
-     * @return signature of the tiff file
-     */
-    @Override
-    public Collection<byte[]> getSignature() {
-        return Arrays.asList(
-                // big endian signatures
-                new byte[]{'M', 0x00, 0x2B, 0x00, 0x08, 0x00, 0x00},
-                new byte[]{'M', 0x00, 0x2A},
-                // little endian signatures
-                new byte[]{'I', 0x2B, 0x00, 0x08, 0x00, 0x00, 0x00},
-                new byte[]{'I', 0x2A, 0x00}
-        );
-    }
 }

@@ -18,11 +18,8 @@
 package org.geotoolkit.data.kml;
 
 import java.net.URI;
-import java.nio.file.Path;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import org.apache.sis.storage.base.Capability;
 import org.apache.sis.storage.base.StoreMetadata;
 import org.apache.sis.storage.xml.AbstractProvider;
@@ -31,11 +28,8 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
-import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.storage.ProviderOnFileSystem;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
-import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.MultiLineString;
@@ -50,6 +44,7 @@ import org.locationtech.jts.geom.Polygon;
  */
 @StoreMetadata(
         formatName = KMLProvider.NAME,
+        fileSuffixes = {"kml","kmz"},
         capabilities = {Capability.READ},
         resourceTypes = {FeatureSet.class})
 @StoreMetadataExt(
@@ -61,7 +56,7 @@ import org.locationtech.jts.geom.Polygon;
                         MultiPoint.class,
                         MultiLineString.class,
                         MultiPolygon.class})
-public final class KMLProvider extends AbstractProvider implements ProviderOnFileSystem {
+public final class KMLProvider extends AbstractProvider {
 
     public static final String NAME = "kml";
     public static final String MIME_TYPE_KML = "application/vnd.google-earth.kml+xml";
@@ -90,18 +85,11 @@ public final class KMLProvider extends AbstractProvider implements ProviderOnFil
 
     @Override
     public ProbeResult probeContent(StorageConnector connector) throws DataStoreException {
-        final ProbeResult result = FeatureStoreUtilities.probe(this, connector, MIME_TYPE);
-        if (result.isSupported()) {
-            //SHP and SHX files have the same signature, we only want to match on the SHP file.
-            final Path path = connector.getStorageAs(Path.class);
-            final String ext = IOUtilities.extension(path);
-            if ("kml".equalsIgnoreCase(ext)) {
-                return new ProbeResult(true, MIME_TYPE_KML, null);
-            } else if ("kmz".equalsIgnoreCase(ext)) {
-                return new ProbeResult(true, MIME_TYPE_KMZ, null);
-            }
+        if  (ProbeResult.SUPPORTED.equals(connector.pathEndsWith(".kml", true))
+          || ProbeResult.SUPPORTED.equals(connector.pathEndsWith(".kmz", true))) {
+            return new ProbeResult(true, MIME_TYPE, null);
         }
-        return result;
+        return ProbeResult.UNSUPPORTED_STORAGE;
     }
 
     @Override
@@ -111,11 +99,6 @@ public final class KMLProvider extends AbstractProvider implements ProviderOnFil
             throw new DataStoreException("Unsupported parameters.");
         }
         return new KMLStore(uri);
-    }
-
-    @Override
-    public Collection<String> getSuffix() {
-        return List.of("kml", "kmz");
     }
 
 }

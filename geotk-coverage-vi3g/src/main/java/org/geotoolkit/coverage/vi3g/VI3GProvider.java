@@ -17,8 +17,6 @@
 package org.geotoolkit.coverage.vi3g;
 
 import java.net.URI;
-import java.util.Arrays;
-import java.util.Collection;
 import org.apache.sis.storage.base.Capability;
 import org.apache.sis.storage.base.StoreMetadata;
 import org.apache.sis.parameter.ParameterBuilder;
@@ -27,10 +25,8 @@ import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
-import org.geotoolkit.storage.ProviderOnFileSystem;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
-import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 
@@ -42,10 +38,11 @@ import org.opengis.parameter.ParameterDescriptorGroup;
  */
 @StoreMetadata(
         formatName = VI3GProvider.NAME,
+        fileSuffixes = {"vi3g",".n07-vi3g"},
         capabilities = {Capability.READ},
         resourceTypes = {GridCoverageResource.class})
 @StoreMetadataExt(resourceTypes = ResourceType.GRID)
-public class VI3GProvider extends DataStoreProvider implements ProviderOnFileSystem {
+public class VI3GProvider extends DataStoreProvider {
 
     /** factory identification **/
     public static final String NAME = "vi3g";
@@ -78,20 +75,16 @@ public class VI3GProvider extends DataStoreProvider implements ProviderOnFileSys
 
     @Override
     public ProbeResult probeContent(StorageConnector connector) throws DataStoreException {
-        return FeatureStoreUtilities.probe(this, connector, MIME_TYPE);
+        if  (ProbeResult.SUPPORTED.equals(connector.pathEndsWith(".vi3g", true))
+          || ProbeResult.SUPPORTED.equals(connector.pathEndsWith(".n07-VI3g", true))) {
+            return new ProbeResult(true, MIME_TYPE, null);
+        }
+        return ProbeResult.UNSUPPORTED_STORAGE;
     }
 
     @Override
     public VI3GStore open(StorageConnector sc) throws DataStoreException {
         return new VI3GStore(sc);
-    }
-
-    /**
-     * @return collection with the VI3G extensions.
-     */
-    @Override
-    public Collection<String> getSuffix() {
-        return Arrays.asList("vi3g", "VI3G", "n07-VI3g");
     }
 
 }
