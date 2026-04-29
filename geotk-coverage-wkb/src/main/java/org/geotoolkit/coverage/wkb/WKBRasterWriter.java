@@ -34,12 +34,15 @@ import java.io.DataOutput;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.ByteOrder;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.referencing.IdentifiedObjects;
-import org.geotoolkit.io.LEDataOutputStream;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.apache.sis.coverage.grid.PixelInCell;
+import org.apache.sis.io.stream.ChannelDataOutput;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.StorageConnector;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.util.FactoryException;
 
@@ -194,11 +197,19 @@ public class WKBRasterWriter {
             stream = new BufferedOutputStream(stream);
         }
 
-        final DataOutput ds;
+        final ChannelDataOutput ds;
+        try {
+            ds = new StorageConnector(stream).getStorageAs(ChannelDataOutput.class);
+        } catch (IllegalArgumentException | DataStoreException ex) {
+            throw new IOException(ex.getMessage(), ex);
+        }
+
         if (littleEndian) {
-            ds = new LEDataOutputStream(stream);
+            //little endian
+            ds.buffer.order(ByteOrder.LITTLE_ENDIAN);
         } else {
-            ds = new DataOutputStream(stream);
+            //big endian
+            ds.buffer.order(ByteOrder.BIG_ENDIAN);
         }
 
         final SampleModel sm = image.getSampleModel();
@@ -322,6 +333,7 @@ public class WKBRasterWriter {
             }
 
         }
+        ds.flush();
         stream.flush();
     }
 
