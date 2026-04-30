@@ -26,6 +26,7 @@ import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.processing.vector.VectorDescriptor;
+import org.geotoolkit.util.NamesExt;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;
@@ -79,7 +80,7 @@ public class IntersectProcess extends AbstractProcess {
         final List<Filter<Object>> filterList = new ArrayList<>();
         for (final PropertyType property : ft.getProperties(true)) {
             if (AttributeConvention.isGeometryAttribute(property)) {
-                final Filter filter = FF.intersects(FF.property(property.getName().toString()), FF.literal(interGeom));
+                final Filter filter = FF.intersects(FF.property(NamesExt.toXpathForm(property.getName())), FF.literal(interGeom));
                 filterList.add(filter);
             }
         }
