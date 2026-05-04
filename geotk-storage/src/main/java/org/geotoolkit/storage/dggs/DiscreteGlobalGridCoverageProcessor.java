@@ -71,6 +71,7 @@ import org.geotoolkit.storage.rs.CodedGeometry;
 import org.geotoolkit.storage.rs.WritableCodeIterator;
 import org.geotoolkit.storage.rs.internal.shared.AddDimCodedCoverage;
 import org.geotoolkit.storage.rs.internal.shared.ArrayCodedCoverage;
+import org.geotoolkit.util.NamesExt;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
@@ -324,7 +325,7 @@ public final class DiscreteGlobalGridCoverageProcessor {
         // todo FIX SIS !!!!!!
         projections.add(new FeatureQuery.NamedExpression(ff.property(AttributeConvention.GEOMETRY), AttributeConvention.GEOMETRY));
         //projections.add(new FeatureQuery.NamedExpression(ff.function("ST_Transform", ff.property(AttributeConvention.GEOMETRY), ff.literal(dggrs.getGridSystem().getCrs())), AttributeConvention.GEOMETRY_PROPERTY));
-        sampleDimensions.forEach((n) -> projections.add(new FeatureQuery.NamedExpression(ff.property(n.getName().toString()), n.getName().toString())));
+        sampleDimensions.forEach((n) -> projections.add(new FeatureQuery.NamedExpression(ff.property(NamesExt.toXpathForm(n.getName())), n.getName().toString())));
         final FeatureQuery query = new FeatureQuery();
         query.setSelection(env);
         query.setProjection(projections.toArray(FeatureQuery.NamedExpression[]::new));
