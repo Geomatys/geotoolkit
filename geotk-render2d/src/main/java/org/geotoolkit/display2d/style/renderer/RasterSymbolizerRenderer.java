@@ -38,6 +38,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import javax.media.jai.JAI;
 import javax.media.jai.LookupTableJAI;
@@ -123,6 +126,7 @@ import org.opengis.style.ContrastMethod;
 import org.opengis.style.RasterSymbolizer;
 import org.opengis.style.SelectedChannelType;
 import org.opengis.util.FactoryException;
+import org.opengis.util.InternationalString;
 import org.opengis.util.LocalName;
 
 /**
@@ -133,6 +137,7 @@ import org.opengis.util.LocalName;
  * @author Marechal remi   (Geomatys)
  */
 public class RasterSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<CachedRasterSymbolizer>{
+    protected static final Logger LOGGER = Logger.getLogger("org.geotoolkit.display2d.style.renderer");
 
     /**
      * Style factory object use to generate in some case to interpret raster with no associated style.
@@ -141,6 +146,7 @@ public class RasterSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer
      */
     public static final MutableStyleFactory SF = GO2Utilities.STYLE_FACTORY;
     public static final LocalName ALPHA_SAMPLE_DIM = Names.createLocalName("GO2", ":", "alpha");
+    private static final String EXTENSION_INTERPOLATION = "#extension:interpolation";
 
 
     public RasterSymbolizerRenderer(final SymbolizerRendererService service, final CachedRasterSymbolizer symbol, final RenderingContext2D context){
@@ -570,8 +576,21 @@ public class RasterSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer
             try {
                 final RasterSymbolizer sourceSymbol = symbol.getSource();
                 final int[] channelSelection = channelSelection(sourceSymbol, ref);
-
-                final GridCoverage dataCoverage = getObjectiveCoverage(ref, renderingContext.getGridGeometry(), false, channelSelection);
+                final InternationalString desc = sourceSymbol.getDescription().getTitle();
+                InterpolationCase interpolation = null;
+                if (desc != null) {
+                    Pattern pattern = Pattern.compile(EXTENSION_INTERPOLATION + "=([^,'\\s]+)");
+                    Matcher matcher = pattern.matcher(desc.toString());
+                    if (matcher.find()) {
+                        String value = matcher.group(1);
+                        try {
+                            interpolation = InterpolationCase.valueOf(value.toUpperCase());
+                        } catch (IllegalArgumentException e) {
+                            LOGGER.log(Level.WARNING, "Illegal interpolation name : \"" + value + "\"");
+                        }
+                    }
+                }
+                final GridCoverage dataCoverage = getObjectiveCoverage(ref, renderingContext.getGridGeometry(), false, channelSelection, interpolation);
                 if (dataCoverage == null) {
                     return Stream.empty();
                 }

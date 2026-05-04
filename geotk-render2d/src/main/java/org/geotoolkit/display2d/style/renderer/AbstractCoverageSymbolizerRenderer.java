@@ -197,11 +197,35 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
      * @see ProjectedCoverage#getCoverage(org.geotoolkit.coverage.io.GridCoverageReadParam)
      */
     protected GridCoverage getObjectiveCoverage(final GridCoverageResource ref,
-            GridGeometry canvasGrid, final boolean isElevation, int[] sourceBands)
+                                                GridGeometry canvasGrid, final boolean isElevation, int[] sourceBands)
+            throws DataStoreException, TransformException, FactoryException, ProcessException {
+        return this.getObjectiveCoverage(ref, canvasGrid, isElevation, sourceBands, null);
+    }
+    /**
+     * Returns expected {@linkplain GridCoverage elevation coverage} or {@linkplain GridCoverage coverage}
+     * from given {@link ProjectedCoverage}.
+     *
+     * TODO: add a margin or interpolation parameter. To properly interpolate border on output canvas, we need extra
+     *  lines/columns on source image. Their number depends on applied interpolation (bilinear, bicubic, etc.).
+     *
+     * @param ref coverage resource
+     * @param canvasGrid Rendering canvas grid geometry
+     * @param isElevation {@code true} if we want elevation coverage, else ({@code false}) for features coverage.
+     * @param sourceBands coverage source bands to features
+     * @param interpolationCase interpolation to be used. Can be null. Default interpolation : Bilinear
+     * @return expected {@linkplain GridCoverage elevation coverage} or {@linkplain GridCoverage coverage}
+     * @throws org.geotoolkit.coverage.io.CoverageStoreException if problem during coverage reading.
+     * @throws org.opengis.referencing.operation.TransformException if problem during {@link Envelope} transformation.
+     * @throws org.opengis.util.FactoryException if problem during {@link Envelope} study.
+     * @throws org.geotoolkit.process.ProcessException if problem during resampling processing.
+     * @see ProjectedCoverage#getElevationCoverage(org.geotoolkit.coverage.io.GridCoverageReadParam)
+     * @see ProjectedCoverage#getCoverage(org.geotoolkit.coverage.io.GridCoverageReadParam)
+     */
+    protected GridCoverage getObjectiveCoverage(final GridCoverageResource ref,
+            GridGeometry canvasGrid, final boolean isElevation, int[] sourceBands, final InterpolationCase interpolationCase)
             throws DataStoreException, TransformException, FactoryException, ProcessException {
         ArgumentChecks.ensureNonNull("projectedCoverage", ref);
-
-        final InterpolationCase interpolation = InterpolationCase.BILINEAR;
+        final InterpolationCase interpolation = interpolationCase == null ? InterpolationCase.BILINEAR : interpolationCase;
 
         final GridGeometry refGG = ref.getGridGeometry();
 
