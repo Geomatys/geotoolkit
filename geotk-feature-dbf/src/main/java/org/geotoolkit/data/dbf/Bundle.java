@@ -23,7 +23,7 @@ import java.util.MissingResourceException;
 import org.opengis.util.InternationalString;
 import org.apache.sis.util.ResourceInternationalString;
 import org.apache.sis.util.resources.IndexedResourceBundle;
-import org.apache.sis.util.resources.KeyConstants;
+import org.geotoolkit.resources.KeyConstants;
 
 
 /**
