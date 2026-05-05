@@ -20,7 +20,7 @@ import java.io.InputStream;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import org.apache.sis.util.resources.IndexedResourceBundle;
-import org.apache.sis.util.resources.KeyConstants;
+import org.geotoolkit.resources.KeyConstants;
 
 
 /**
