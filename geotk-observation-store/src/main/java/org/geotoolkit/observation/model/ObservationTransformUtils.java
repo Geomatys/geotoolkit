@@ -551,7 +551,7 @@ public class ObservationTransformUtils {
         } else {
             throw new IllegalArgumentException("Only Quantity, Text Boolean AND Time are supported for now");
         }
-        return new Field(index, ft, id, component.getLabel(), component.getDefinition(), uom, type, qualityFields, new ArrayList<>());
+        return new Field(index, ft, id, component.getLabel(), component.getDefinition(), uom, type, qualityFields, new ArrayList<>(), new HashMap<>());
     }
 
     public static TemporalPrimitive toModel(final TemporalPrimitive gmlTime) {

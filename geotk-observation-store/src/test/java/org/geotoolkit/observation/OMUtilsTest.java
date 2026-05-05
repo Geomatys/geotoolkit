@@ -47,7 +47,7 @@ public class OMUtilsTest {
         Field TEMP = new Field(3, FieldDataType.QUANTITY, "TEMP", "Temperature", "urn:ogc:def:phenomenon:GEOM:TEMP", "°c", FieldType.MEASURE);
 
         List<Field> phenomenons = Arrays.asList(PRES, PSAL, TEMP);
-        var components = phenomenons.stream().map( phen -> new Phenomenon(phen.name, phen.label, phen.name, phen.description, null)).toList();
+        var components = phenomenons.stream().map( phen -> new Phenomenon(phen)).toList();
 
         String phenomenonIdBase = "urn:ogc:phenomenon:";
         final String compositeId = "composite" + UUID.randomUUID().toString();
