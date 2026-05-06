@@ -365,6 +365,19 @@ public class ResourceProcessor implements Cloneable {
         return res;
     }
 
+    /**
+     * Concatenate different {@link FeatureSet feature sets} of same or different types.
+     *
+     * <em>Important</em>: All concatenated sets must at least inherit a common data type.
+     *
+     * @param sources feature set resources to concatenate.
+     * @return concatenated feature set, implements {@link FeatureCatalogue}, not writable.
+
+     */
+    public FeatureSet concatenate(FeatureSet ... sources) throws DataStoreException {
+        return new ConcatenatedFeatureSet(identifier, sources);
+    }
+
     private static Optional<GeographicBoundingBox> searchGeographicExtent(GridCoverageResource source) throws DataStoreException {
         final Optional<GeographicBoundingBox> bbox = source.getMetadata().getIdentificationInfo().stream()
                 .flatMap(it -> it.getExtents().stream())
