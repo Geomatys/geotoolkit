@@ -74,6 +74,7 @@ import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
 
 import static java.lang.Double.NaN;
+import org.apache.sis.coverage.grid.ImageRenderer;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -861,8 +862,13 @@ public class RasterSymbolizerTest {
         var coverage = new BufferedGridCoverage(
                 dataGrid,
                 List.of(new SampleDimension.Builder().setName("test").build()),
-                RasterFactory.wrap(DataType.BYTE, dataBuffer)
-        );
+                RasterFactory.wrap(DataType.BYTE, dataBuffer))
+        {
+            // Any color other than gray for forcing an IndexColorModel.
+            @Override protected void configure(final ImageRenderer renderer) {
+                renderer.setCategoryColors((category) -> new Color[] {Color.BLUE, Color.RED});
+            }
+        };
         var resource = readStrict ? new StrictInMemoryGridCoverageResource(coverage)
                                   : new InMemoryGridCoverageResource(coverage);
 
