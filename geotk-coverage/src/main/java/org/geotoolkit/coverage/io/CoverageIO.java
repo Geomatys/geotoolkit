@@ -24,7 +24,7 @@ import java.util.Collections;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.storage.MemoryGridCoverageResource;
 import org.apache.sis.storage.image.WorldFileStoreProvider;
-import org.apache.sis.setup.OptionKey;
+import org.apache.sis.storage.OptionKey;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
