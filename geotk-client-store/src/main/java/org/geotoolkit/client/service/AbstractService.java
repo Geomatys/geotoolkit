@@ -26,6 +26,7 @@ import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
@@ -253,7 +254,9 @@ public abstract class AbstractService implements AutoCloseable {
                 }
                 responseBody = null;
             } else {
-                responseBody = objectMapper.readValue(di, ref);
+                byte[] blob = di.readAllBytes();
+                final String str = new String(blob, StandardCharsets.UTF_8);
+                responseBody = objectMapper.readValue(str, ref);
             }
             return new ServiceResponse<>(response.statusCode(), response.headers().map(), responseBody, count.getBytesRead());
 
