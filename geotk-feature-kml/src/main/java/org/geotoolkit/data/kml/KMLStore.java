@@ -54,7 +54,6 @@ import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.internal.shared.AffineTransform2D;
 import org.apache.sis.metadata.iso.DefaultMetadata;
-import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.AbstractFeatureSet;
@@ -210,7 +209,7 @@ public final class KMLStore extends DataStore implements Aggregate {
 
     public KMLStore(ParameterValueGroup params){
         this.params = params;
-        this.path = Parameters.castOrWrap(params).getValue(KMLProvider.LOCATION_PARAM);
+        this.path = (URI) params.parameter(KMLProvider.LOCATION).getValue();
         this.components = List.of(
                 new KmlFeatureSet(PLACEMARK_TYPE, PlacemarkType.class),
                 new KmlFeatureSet(GROUNDOVERLAY_TYPE, GroundOverlayType.class));
@@ -218,8 +217,8 @@ public final class KMLStore extends DataStore implements Aggregate {
     }
 
     private static ParameterValueGroup toParameters(final URI f) {
-        final Parameters params = Parameters.castOrWrap(KMLProvider.provider().getOpenParameters().createValue());
-        params.getOrCreate(KMLProvider.LOCATION_PARAM).setValue(f);
+        final ParameterValueGroup params = KMLProvider.provider().getOpenParameters().createValue();
+        params.parameter(KMLProvider.LOCATION).setValue(f);
         return params;
     }
 

@@ -31,7 +31,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.sis.feature.internal.shared.AttributeConvention;
-import org.apache.sis.storage.base.MetadataBuilder;
+import org.apache.sis.storage.metadata.MetadataBuilder;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStore;
