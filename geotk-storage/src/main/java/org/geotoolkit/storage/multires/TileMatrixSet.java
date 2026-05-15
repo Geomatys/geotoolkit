@@ -23,7 +23,7 @@ import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.distribution.DefaultFormat;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.base.MetadataBuilder;
+import org.apache.sis.storage.metadata.MetadataBuilder;
 import org.apache.sis.storage.tiling.TileMatrix;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.iso.Types;

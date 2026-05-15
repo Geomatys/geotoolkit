@@ -26,7 +26,7 @@ import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.AbstractGridCoverageResource;
 import org.apache.sis.storage.RasterLoadingStrategy;
 import org.apache.sis.coverage.SampleDimension;
-import org.apache.sis.storage.base.MetadataBuilder;
+import org.apache.sis.storage.metadata.MetadataBuilder;
 
 
 abstract class DerivedGridCoverageResource extends AbstractGridCoverageResource {

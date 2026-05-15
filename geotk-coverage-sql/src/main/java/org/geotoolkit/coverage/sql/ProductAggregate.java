@@ -17,7 +17,7 @@
 package org.geotoolkit.coverage.sql;
 
 import java.util.List;
-import org.apache.sis.storage.base.MetadataBuilder;
+import org.apache.sis.storage.metadata.MetadataBuilder;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStoreException;
