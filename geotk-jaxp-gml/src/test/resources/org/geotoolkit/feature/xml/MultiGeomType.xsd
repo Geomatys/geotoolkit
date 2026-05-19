@@ -17,6 +17,8 @@
                     <xs:element name="attDecimal"          maxOccurs="1" minOccurs="0" nillable="true" type="xs:decimal"/>
                     <xs:element name="attDate"             maxOccurs="unbounded" minOccurs="1" nillable="true" type="xs:date"/>
                     <xs:element name="attDateTime"         maxOccurs="unbounded" minOccurs="1" nillable="true" type="xs:dateTime"/>
+                    <xs:element name="attLocDate"          maxOccurs="1" minOccurs="1" nillable="true" type="xs:date"    />
+                    <xs:element name="attInstant"          maxOccurs="1" minOccurs="1" nillable="true" type="xs:dateTime"   />
                     <xs:element name="attBoolean"          maxOccurs="unbounded" minOccurs="1" nillable="true" type="xs:boolean"/>
                     <xs:element name="geomPoint"           maxOccurs="unbounded" minOccurs="0" nillable="true" type="gml:PointPropertyType"/>
                     <xs:element name="geomMultiPoint"      maxOccurs="unbounded" minOccurs="0" nillable="true" type="gml:MultiPointPropertyType"/>

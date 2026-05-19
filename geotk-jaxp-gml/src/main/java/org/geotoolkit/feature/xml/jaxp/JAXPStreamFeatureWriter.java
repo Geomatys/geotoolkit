@@ -42,6 +42,7 @@ import jakarta.xml.bind.Marshaller;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import org.apache.cxf.staxutils.StaxUtils;
+import org.apache.sis.feature.Features;
 import org.apache.sis.feature.internal.shared.AttributeConvention;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.storage.DataStoreException;
@@ -556,7 +557,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
 
     private void writeProperty(Feature parent, PropertyType typeA, Object valueA, String id) throws XMLStreamException {
         final GenericName nameA = typeA.getName();
-        if (AttributeConvention.contains(nameA) || isAttributeProperty(nameA)) return;
+        if (isExcudedProperty(typeA)) return;
 
         final String nameProperty = nameA.tip().toString();
         String namespaceProperty = getNamespace(nameA);
@@ -806,6 +807,17 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                 if (!descIsType) writer.writeEndElement();
             }
         }
+    }
+
+    private boolean isExcudedProperty(PropertyType typeA) {
+        final GenericName nameA = typeA.getName();
+        if (isAttributeProperty(nameA)) return true;
+
+        // special case for feature where the geometry is not a link to an attribute, but an operation
+        boolean isLink = Features.getLinkTarget(typeA).isPresent();
+        if (AttributeConvention.GEOMETRY_PROPERTY.equals(nameA) && !isLink) return false;
+
+        return AttributeConvention.contains(nameA);
     }
 
     /**

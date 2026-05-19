@@ -9,6 +9,8 @@
     <ns0:attDecimal>456789</ns0:attDecimal>
     <ns0:attDate>2005-08-21Z</ns0:attDate>
     <ns0:attDateTime>2005-08-21T15:43:12.052Z</ns0:attDateTime>
+    <ns0:attLocDate>2005-08-21Z</ns0:attLocDate>
+    <ns0:attInstant>2005-08-21T15:43:12.052Z</ns0:attInstant>
     <ns0:attBoolean>true</ns0:attBoolean>
     <ns0:geomPoint>
         <gml:Point xmlns:wfs="http://www.opengis.net/wfs" srsName="urn:ogc:def:crs:epsg:EPSG_VERSION:4326">

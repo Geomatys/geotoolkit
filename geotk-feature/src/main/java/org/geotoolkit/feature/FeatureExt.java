@@ -47,6 +47,8 @@ import org.apache.sis.feature.internal.shared.AttributeConvention;
 import org.apache.sis.geometry.wrapper.Geometries;
 import org.apache.sis.geometry.wrapper.GeometryWrapper;
 import org.apache.sis.parameter.Parameters;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.collection.BackingStoreException;
@@ -296,25 +298,32 @@ public final class FeatureExt {
             }
 
 
-            if(pt instanceof AttributeType){
+            if (pt instanceof AttributeType attType){
                 Object val = feature.getPropertyValue(name);
-                if(val!=null){
-                    if(deep) val = deepCopy(val);
-                    copy.setPropertyValue(name, ObjectConverters.convert(val,((AttributeType) pt).getValueClass()));
-                }
-            }else if(pt instanceof FeatureAssociationRole){
-                Object val = feature.getPropertyValue(name);
-                if(val instanceof Collection){
-                    final Collection col = (Collection) val;
+                if (val instanceof Collection col) {
                     final Collection cpCol = new ArrayList(col.size());
-                    for(Iterator ite=col.iterator();ite.hasNext();){
+                    for (Iterator ite = col.iterator(); ite.hasNext();){
+                        Object v =  ite.next();
+                        if(deep) v = deepCopy(v);
+                        cpCol.add( ObjectConverters.convert(v, attType.getValueClass()));
+                    }
+                    copy.setPropertyValue(name, cpCol);
+                } else if (val != null) {
+                    if (deep) val = deepCopy(val);
+                    copy.setPropertyValue(name, ObjectConverters.convert(val, attType.getValueClass()));
+                }
+            } else if (pt instanceof FeatureAssociationRole){
+                Object val = feature.getPropertyValue(name);
+                if (val instanceof Collection col) {
+                    final Collection cpCol = new ArrayList(col.size());
+                    for (Iterator ite = col.iterator(); ite.hasNext();){
                         Feature f = (Feature)ite.next();
                         if(deep) f = deepCopy(f);
                         cpCol.add(f);
                     }
                     copy.setPropertyValue(name, cpCol);
-                }else if(val!=null){
-                    if(deep) val = deepCopy(val);
+                } else if (val != null){
+                    if (deep) val = deepCopy(val);
                     copy.setPropertyValue(name, val);
                 }
             }
@@ -1000,5 +1009,20 @@ public final class FeatureExt {
                 return geometry;
             };
         }
+    }
+
+    /**
+     * Try to return a non abstract feature type for input dataset.
+     * </br>
+     * Limitations: this method returns arbitrarily the type of the first
+     * feature if the {@link FeatureSet#getType() dataset type} is
+     * {@link FeatureType#isAbstract() abstract}.
+     */
+    public static Optional<FeatureType> getEffectiveFeatureType(FeatureSet fs) throws DataStoreException {
+        final FeatureType datasetType = fs.getType();
+        if (!datasetType.isAbstract()) {
+            return Optional.of(datasetType);
+        }
+        return fs.features(false).findFirst().map(Feature::getType);
     }
 }
