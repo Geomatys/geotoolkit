@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+This specific document uses an old namespace.
+ The aim here is to validate that our reader does not fail because of the obsolete namespace
+ -->
+<kml xmlns="http://earth.google.com/kml/2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <Document>
+        <name>Old KML sample from 2012</name>
+        <atom:author>
+            <atom:name>Geomatys</atom:name>
+        </atom:author>
+        <Style id="globeIcon">
+            <IconStyle>
+                <Icon>
+                    <href>http://maps.google.com/mapfiles/kml/pal3/icon19.png</href>
+                </Icon>
+            </IconStyle>
+            <LineStyle>
+                <width>2</width>
+            </LineStyle>
+        </Style>
+        <Folder>
+            <name>data points</name>
+            <Placemark id="2012 Jan 16 13:30:16.40 UTC">
+                <name>FIRST TEST POINT</name>
+                <thumbnail>http://maps.google.com/mapfiles/kml/pal3/icon19.png</thumbnail>
+                <Point>
+                    <coordinates>-56.072,-60.975,0</coordinates>
+                </Point>
+            </Placemark>
+            <Placemark id="2012 Jan 19 06:48:48.75 UTC">
+                <name>SECOND TEST POINT</name>
+                <Point>
+                    <coordinates>165.778,-46.686,0</coordinates>
+                </Point>
+                <styleUrl>#globeIcon</styleUrl>
+            </Placemark>
+        </Folder>
+    </Document>
+</kml>
