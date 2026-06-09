@@ -16,15 +16,21 @@
  */
 package org.geotoolkit.data.kml;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Iterator;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import static org.junit.Assert.*;
+
+import org.apache.sis.storage.IllegalNameException;
 import org.junit.Test;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Point;
@@ -119,6 +125,42 @@ public class KMLStoreTest {
 
                 assertFalse(ite.hasNext());
             }
+        }
+    }
+
+    @Test
+    public void testOldNamespace() throws Exception {
+        try (final KMLStore store = new KMLStore(resource("/org/geotoolkit/data/kml/old-ns.kml"))) {
+            var dataset = getDataset(store, "Placemark");
+
+            assertEquals(KMLStore.PLACEMARK_TYPE, dataset.getType());
+
+            try (var datastream = dataset.features(false)) {
+                assertEquals(2, datastream.count());
+            }
+        }
+    }
+
+    private URI resource(final String classpathLocation) throws URISyntaxException {
+        final var resourceUrl = KMLStoreTest.class.getResource(classpathLocation);
+        assertNotNull("No resource found in classpath at location: "+classpathLocation, resourceUrl);
+        return resourceUrl.toURI();
+    }
+
+    private FeatureSet getDataset(final KMLStore store, String datasetName) throws DataStoreException {
+        try {
+            var dataset = store.findResource(datasetName);
+            if (dataset instanceof FeatureSet fs) return fs;
+            else throw new AssertionError("Dataset "+datasetName+" exists but is not a Feature set. Resource: "+dataset);
+        } catch (IllegalNameException e) {
+            var names = store.components().stream().map(r -> {
+                try {
+                    return r.getIdentifier().map(it -> it.toString()).orElse("null");
+                } catch (DataStoreException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }).collect(Collectors.joining(", "));
+            throw new AssertionError("No resource "+datasetName+" found in datastore. Available names: "+names, e);
         }
     }
 }

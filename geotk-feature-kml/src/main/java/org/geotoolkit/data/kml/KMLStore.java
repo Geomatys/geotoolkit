@@ -349,31 +349,41 @@ public final class KMLStore extends DataStore implements Aggregate {
      * Get the original KML object.
      */
     public KmlType readKml(Object input) throws DataStoreException {
-        final KmlType kml;
-        final MarshallerPool pool = KMLMarshallerPoolV230.getINSTANCE();
-        try {
-            final StorageConnector cnx = new StorageConnector(input);
-            try (final InputStream stream = cnx.commit(InputStream.class, "kml")) {
-                //fix old google namespace
-                final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-                factory.setNamespaceAware(true);
-                final DocumentBuilder builder = factory.newDocumentBuilder();
-                final Document doc = builder.parse(stream);
-                renameNamespaceRecursive(doc, doc.getDocumentElement(), "http://earth.google.com/kml/2.2", "http://www.opengis.net/kml/2.2");
-
-                //unmarshall file
-                final Unmarshaller unmarshaller = pool.acquireUnmarshaller();
-                Object cdt = unmarshaller.unmarshal(doc);
-                if (cdt instanceof JAXBElement) cdt = ((JAXBElement)cdt).getValue();
-                kml = (KmlType) cdt;
-                pool.recycle(unmarshaller);
+        try (final InputStream stream = new StorageConnector(input).commit(InputStream.class, "kml")) {
+            //fix old google namespace
+            final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            factory.setNamespaceAware(true);
+            final DocumentBuilder builder = factory.newDocumentBuilder();
+            final Document doc = builder.parse(stream);
+            var docRoot = doc.getDocumentElement();
+            final var originalNamespace = docRoot.getNamespaceURI();
+            switch (originalNamespace) {
+                case "http://www.opengis.net/kml/2.2":
+                    // Good namespace. Nothing to do.
+                    break;
+                case "http://earth.google.com/kml/2.2",
+                     "http://earth.google.com/kml/2.0":
+                    renameNamespaceRecursive(doc, docRoot, originalNamespace, "http://www.opengis.net/kml/2.2");
+                    break;
+                // TODO: add more specific workarounds if required.
+                default: throw new UnsupportedOperationException("KML namespace "+ originalNamespace +" is not supported");
             }
+
+            //unmarshall file
+            final MarshallerPool pool = KMLMarshallerPoolV230.getINSTANCE();
+            final Unmarshaller unmarshaller = pool.acquireUnmarshaller();
+            Object cdt = unmarshaller.unmarshal(doc);
+            pool.recycle(unmarshaller);
+
+            if (cdt instanceof JAXBElement) cdt = ((JAXBElement)cdt).getValue();
+            if (cdt instanceof KmlType kt) return kt;
+
+            throw new DataStoreException("Unsupported node type: "+(cdt == null ? "null" : cdt.getClass()));
         } catch (FileNotFoundException ex) {
             throw new DataStoreException(ex.getMessage(), ex);
         } catch (JAXBException | ParserConfigurationException | SAXException | IOException ex) {
             throw new DataStoreException(ex.getMessage(), ex);
         }
-        return kml;
     }
 
     private static void renameNamespaceRecursive(Document doc, Node node, String oldNamespace, String newNamespace) {
