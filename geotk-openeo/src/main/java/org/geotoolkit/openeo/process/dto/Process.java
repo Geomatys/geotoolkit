@@ -30,7 +30,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 import org.apache.sis.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.atom.xml.Link;
-import org.geotoolkit.ogcapi.model.DataTransferObject;
+import org.geotoolkit.ogcapi.dto.DataTransferObject;
 import org.geotoolkit.openeo.dto.CheckMessage;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.geotoolkit.process.ProcessDescriptor;

@@ -17,25 +17,24 @@
 package org.geotoolkit.ogcapi.client.dggs;
 
 import com.fasterxml.jackson.dataformat.cbor.databind.CBORMapper;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Supplier;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.geotoolkit.client.openapi.AbstractOpenApi;
 import org.geotoolkit.client.openapi.OpenApiConfiguration;
 import org.geotoolkit.client.service.Pair;
 import org.geotoolkit.client.service.ServiceException;
-import org.geotoolkit.client.service.ServiceResponse;
-import org.geotoolkit.ogcapi.model.dggs.Dggrs;
-import org.geotoolkit.ogcapi.model.dggs.DggrsData;
-import org.geotoolkit.ogcapi.model.dggs.DggrsListResponse;
-import org.geotoolkit.ogcapi.model.dggs.DggrsZonesResponse;
-import org.geotoolkit.ogcapi.model.dggs.Enumeration;
-import org.geotoolkit.ogcapi.model.dggs.ZoneInfo;
+import org.geotoolkit.client.service.ServiceRequest;
+import org.geotoolkit.ogcapi.dto.dggs.Dggrs;
+import org.geotoolkit.ogcapi.dto.dggs.DggrsData;
+import org.geotoolkit.ogcapi.dto.dggs.DggrsListResponse;
+import org.geotoolkit.ogcapi.dto.dggs.DggrsZonesResponse;
+import org.geotoolkit.ogcapi.dto.dggs.Enumeration;
+import org.geotoolkit.ogcapi.dto.dggs.ZoneInfo;
 import org.geotoolkit.ogcapi.request.dggs.GetDggrs;
 import org.geotoolkit.ogcapi.request.dggs.GetDggrsList;
 import org.geotoolkit.ogcapi.request.dggs.GetZoneData;
@@ -117,16 +116,15 @@ public final class DggsApi extends AbstractOpenApi {
      * @param f The format of the response. If no value is provided, the accept
      * header is used to determine the format. Accepted values are
      * &#39;json&#39; or &#39;html&#39;. (optional)
-     * @return ServiceResponse&lt;Enumeration&gt;
-     * @throws ServiceException if fails to make API call
+     * @return ServiceRequest&lt;Enumeration&gt;
      */
-    public ServiceResponse<Enumeration> getAPICollections(@jakarta.annotation.Nullable String f) throws ServiceException {
+    public ServiceRequest<Supplier<Enumeration>> getAPICollections(@jakarta.annotation.Nullable String f) {
         final HttpRequest.Builder request = HttpRequest.newBuilder();
         request.uri(toUri("/api/all-collections", toPairs("f", f)));
         request.header("Accept", "application/json, text/html");
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
-        return toSimpleResponse(send(request), Enumeration.class);
+        return requestAsJson(request, Enumeration.class);
     }
 
     /**
@@ -136,29 +134,27 @@ public final class DggsApi extends AbstractOpenApi {
      * @param f The format of the response. If no value is provided, the accept
      * header is used to determine the format. Accepted values are
      * &#39;json&#39; or &#39;html&#39;. (optional)
-     * @return ServiceResponse&lt;Enumeration&gt;
-     * @throws ServiceException if fails to make API call
+     * @return ServiceRequest&lt;Enumeration&gt;
      */
-    public ServiceResponse<Enumeration> getAPIDGGRS(@jakarta.annotation.Nullable String f) throws ServiceException {
+    public ServiceRequest<Supplier<Enumeration>> getAPIDGGRS(@jakarta.annotation.Nullable String f) {
         final HttpRequest.Builder request = HttpRequest.newBuilder();
         request.uri(toUri("/api/dggs", toPairs("f", f)));
         request.header("Accept", "application/json, text/html");
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
-        return toSimpleResponse(send(request), Enumeration.class);
+        return requestAsJson(request, Enumeration.class);
     }
 
     /**
      * Retrieve the list of available DGGRS for the specified collection
      *
      * @param parameters request parameters
-     * @return ServiceResponse&lt;DatasetGetDGGRSList200Response&gt;
-     * @throws ServiceException if fails to make API call
+     * @return ServiceRequest&lt;DatasetGetDGGRSList200Response&gt;
+     * @throws IllegalArgumentException if fails to make API call
      */
-    public ServiceResponse<DggrsListResponse> collectionGetDGGRSList(GetDggrsList parameters)
-            throws ServiceException {
+    public ServiceRequest<Supplier<DggrsListResponse>> collectionGetDGGRSList(GetDggrsList parameters) throws IllegalArgumentException {
         if (parameters.getCollectionId() == null) {
-            throw new ServiceException(400, "Missing the required parameter 'collectionId' when calling collectionGetDGGRSList");
+            throw new IllegalArgumentException("Missing the required parameter 'collectionId' when calling collectionGetDGGRSList");
         }
 
         final HttpRequest.Builder request = HttpRequest.newBuilder();
@@ -166,7 +162,7 @@ public final class DggsApi extends AbstractOpenApi {
         request.header("Accept", "application/json, text/html");
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
-        return toSimpleResponse(send(request), DggrsListResponse.class);
+        return requestAsJson(request, DggrsListResponse.class);
     }
 
     /**
@@ -174,17 +170,16 @@ public final class DggsApi extends AbstractOpenApi {
      * collection
      *
      * @param parameters request parameters
-     * @return ServiceResponse&lt;Dggrs&gt;
-     * @throws ServiceException if fails to make API call
+     * @return ServiceRequest&lt;Dggrs&gt;
+     * @throws IllegalArgumentException if fails to make API call
      */
-    public ServiceResponse<Dggrs> collectionGetDGGRS(GetDggrs parameters)
-            throws ServiceException {
+    public ServiceRequest<Supplier<Dggrs>> collectionGetDGGRS(GetDggrs parameters) throws ServiceException {
 
         if (parameters.getDggrsId() == null) {
-            throw new ServiceException(400, "Missing the required parameter 'dggrsId' when calling collectionGetDGGRS");
+            throw new IllegalArgumentException("Missing the required parameter 'dggrsId' when calling collectionGetDGGRS");
         }
         if (parameters.getCollectionId() == null) {
-            throw new ServiceException(400, "Missing the required parameter 'collectionId' when calling collectionGetDGGRS");
+            throw new IllegalArgumentException("Missing the required parameter 'collectionId' when calling collectionGetDGGRS");
         }
 
         final HttpRequest.Builder request = HttpRequest.newBuilder();
@@ -193,7 +188,7 @@ public final class DggsApi extends AbstractOpenApi {
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
 
-        return toSimpleResponse(send(request), Dggrs.class);
+        return requestAsJson(request, Dggrs.class);
     }
 
     /**
@@ -201,19 +196,18 @@ public final class DggsApi extends AbstractOpenApi {
      * collection.
      *
      * @param parameters request parameters
-     * @return ServiceResponse&lt;Void&gt;
-     * @throws ServiceException if fails to make API call
+     * @return ServiceRequest&lt;Void&gt;
+     * @throws IllegalArgumentException if fails to make API call
      */
-    public ServiceResponse<ZoneInfo> collectionGetDGGRSZoneInfo(GetZone parameters)
-            throws ServiceException {
+    public ServiceRequest<Supplier<ZoneInfo>> collectionGetDGGRSZoneInfo(GetZone parameters) throws IllegalArgumentException {
         if (parameters.getDggrsId() == null) {
-            throw new ServiceException(400, "Missing the required parameter 'dggrsId' when calling collectionGetDGGRSZoneInfo");
+            throw new IllegalArgumentException("Missing the required parameter 'dggrsId' when calling collectionGetDGGRSZoneInfo");
         }
         if (parameters.getZoneId() == null) {
-            throw new ServiceException(400, "Missing the required parameter 'zoneId' when calling collectionGetDGGRSZoneInfo");
+            throw new IllegalArgumentException("Missing the required parameter 'zoneId' when calling collectionGetDGGRSZoneInfo");
         }
         if (parameters.getCollectionId() == null) {
-            throw new ServiceException(400, "Missing the required parameter 'collectionId' when calling collectionGetDGGRSZoneInfo");
+            throw new IllegalArgumentException("Missing the required parameter 'collectionId' when calling collectionGetDGGRSZoneInfo");
         }
 
         final List<Pair> queryParams = new ArrayList<>();
@@ -226,57 +220,56 @@ public final class DggsApi extends AbstractOpenApi {
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
 
-        return toSimpleResponse(send(request), ZoneInfo.class);
+        return requestAsJson(request, ZoneInfo.class);
     }
 
     /**
      * Retrieve the description of the specified Discrete Global Grid Reference System
      *
      * @param parameters request parameters
-     * @return ServiceResponse&lt;Dggrs&gt;
-     * @throws ServiceException if fails to make API call
+     * @return ServiceRequest&lt;Dggrs&gt;
+     * @throws IllegalArgumentException if fails to make API call
      */
-    public ServiceResponse<Dggrs> datasetGetDGGRS(GetDggrs parameters) throws ServiceException {
+    public ServiceRequest<Supplier<Dggrs>> datasetGetDGGRS(GetDggrs parameters) throws IllegalArgumentException {
         if (parameters.getDggrsId()== null) {
-            throw new ServiceException(400, "Missing the required parameter 'dggrsId' when calling datasetGetDGGRS");
+            throw new IllegalArgumentException("Missing the required parameter 'dggrsId' when calling datasetGetDGGRS");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
         request.uri(toUri("/dggs/" + urlEncode(parameters.getDggrsId()), toPairs("f", parameters.getFormat())));
         request.header("Accept", "application/json, text/html");
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
-        return toSimpleResponse(send(request), Dggrs.class);
+        return requestAsJson(request, Dggrs.class);
     }
 
     /**
      * Retrieve the list of available DGGRSs
      *
      * @param parameters request parameters
-     * @return ServiceResponse&lt;DatasetGetDGGRSList200Response&gt;
-     * @throws ServiceException if fails to make API call
+     * @return ServiceRequest&lt;DatasetGetDGGRSList200Response&gt;
      */
-    public ServiceResponse<DggrsListResponse> datasetGetDGGRSList(GetDggrsList parameters) throws ServiceException {
+    public ServiceRequest<Supplier<DggrsListResponse>> datasetGetDGGRSList(GetDggrsList parameters) {
         final HttpRequest.Builder request = HttpRequest.newBuilder();
         request.uri(toUri("/dggs", toPairs("f", parameters.getFormat())));
         request.header("Accept", "application/json, text/html");
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
-        return toSimpleResponse(send(request), DggrsListResponse.class);
+        return requestAsJson(request, DggrsListResponse.class);
     }
 
     /**
      * Retrieve information about a DGGRS Zone, such as geometry and data availability.
      *
      * @param parameters request parameters
-     * @return ServiceResponse&lt;ZoneInfo&gt;
-     * @throws ServiceException if fails to make API call
+     * @return ServiceRequest&lt;ZoneInfo&gt;
+     * @throws IllegalArgumentException if fails to make API call
      */
-    public ServiceResponse<ZoneInfo> datasetGetDGGRSZoneInfo(GetZone parameters) throws ServiceException {
+    public ServiceRequest<Supplier<ZoneInfo>> datasetGetDGGRSZoneInfo(GetZone parameters) throws IllegalArgumentException {
         if (parameters.getDggrsId() == null) {
-            throw new ServiceException(400, "Missing the required parameter 'dggrsId' when calling datasetGetDGGRSZoneInfo");
+            throw new IllegalArgumentException("Missing the required parameter 'dggrsId' when calling datasetGetDGGRSZoneInfo");
         }
         if (parameters.getZoneId() == null) {
-            throw new ServiceException(400, "Missing the required parameter 'zoneId' when calling datasetGetDGGRSZoneInfo");
+            throw new IllegalArgumentException("Missing the required parameter 'zoneId' when calling datasetGetDGGRSZoneInfo");
         }
 
         final List<Pair> queryParams = new ArrayList<>();
@@ -289,7 +282,7 @@ public final class DggsApi extends AbstractOpenApi {
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
 
-        return toSimpleResponse(send(request), ZoneInfo.class);
+        return requestAsJson(request, ZoneInfo.class);
     }
 
     /**
@@ -297,19 +290,19 @@ public final class DggsApi extends AbstractOpenApi {
      * data packets such as DGGS-(UB)JSON for raster data, or DGGS-(UB)JSON-FG for vector data can be used.
      *
      * @param parameters request parameters
-     * @return ServiceResponse&lt;DggsJson&gt;
-     * @throws ServiceException if fails to make API call
+     * @return ServiceRequest&lt;DggsJson&gt;
+     * @throws IllegalArgumentException if fails to make API call
      */
-    public ServiceResponse<DggrsData> collectionGetDGGRSZoneData(GetZoneData parameters) throws ServiceException {
+    public ServiceRequest<Supplier<DggrsData>> collectionGetDGGRSZoneData(GetZoneData parameters) throws IllegalArgumentException {
 
         if (parameters.getDggrsId() == null) {
-            throw new ServiceException(400, "Missing the required parameter 'dggrsId' when calling collectionGetDGGRSZoneData");
+            throw new IllegalArgumentException("Missing the required parameter 'dggrsId' when calling collectionGetDGGRSZoneData");
         }
         if (parameters.getZoneId() == null) {
-            throw new ServiceException(400, "Missing the required parameter 'zoneId' when calling collectionGetDGGRSZoneData");
+            throw new IllegalArgumentException("Missing the required parameter 'zoneId' when calling collectionGetDGGRSZoneData");
         }
         if (parameters.getCollectionId() == null) {
-            throw new ServiceException(400, "Missing the required parameter 'collectionId' when calling collectionGetDGGRSZoneData");
+            throw new IllegalArgumentException("Missing the required parameter 'collectionId' when calling collectionGetDGGRSZoneData");
         }
 
         final List<Pair> queryParams = new ArrayList<>();
@@ -336,13 +329,13 @@ public final class DggsApi extends AbstractOpenApi {
 
         final String f = parameters.getFormat();
         if ("json".equals(f)) {
-            return toSimpleResponse(send(request), DggrsData.class);
+            return requestAsJson(request, DggrsData.class);
         } else if ("ubjson".equals(f)) {
-            return toSimpleResponse(send(request), DggrsData.class, new UBJsonMapper());
+            return requestAsJson(request, new UBJsonMapper(), DggrsData.class);
         } else if ("cbor".equals(f)) {
-            return toSimpleResponse(send(request), DggrsData.class, new CBORMapper());
+            return requestAsJson(request, new CBORMapper(), DggrsData.class);
         } else {
-            return toSimpleResponse(send(request), DggrsData.class);
+            return requestAsJson(request, DggrsData.class);
         }
 
     }
@@ -352,16 +345,16 @@ public final class DggsApi extends AbstractOpenApi {
      * DGGS-(UB)JSON for raster data, or DGGS-(UB)JSON-FG for vector data can be used.
      *
      * @param parameters request parameters
-     * @return ServiceResponse&lt;DggsJson&gt;
-     * @throws ServiceException if fails to make API call
+     * @return ServiceRequest&lt;DggsJson&gt;
+     * @throws IllegalArgumentException if fails to make API call
      */
-    public ServiceResponse<DggrsData> datasetGetDGGRSZoneData(GetZoneData parameters) throws ServiceException {
+    public ServiceRequest<Supplier<DggrsData>> datasetGetDGGRSZoneData(GetZoneData parameters) throws IllegalArgumentException {
 
         if (parameters.getDggrsId() == null) {
-            throw new ServiceException(400, "Missing the required parameter 'dggrsId' when calling datasetGetDGGRSZoneData");
+            throw new IllegalArgumentException("Missing the required parameter 'dggrsId' when calling datasetGetDGGRSZoneData");
         }
         if (parameters.getZoneId() == null) {
-            throw new ServiceException(400, "Missing the required parameter 'zoneId' when calling datasetGetDGGRSZoneData");
+            throw new IllegalArgumentException("Missing the required parameter 'zoneId' when calling datasetGetDGGRSZoneData");
         }
 
         final List<Pair> queryParams = new ArrayList<>();
@@ -385,23 +378,23 @@ public final class DggsApi extends AbstractOpenApi {
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
 
-        return toSimpleResponse(send(request), DggrsData.class);
+        return requestAsJson(request, DggrsData.class);
     }
 
     /**
      * Retrieve the list of zones with data for a specific collection, or for a particular query
      *
      * @param parameters request parameters
-     * @return ServiceResponse&lt;DatasetGetDGGRSZones200Response&gt;
-     * @throws ServiceException if fails to make API call
+     * @return ServiceRequest&lt;DatasetGetDGGRSZones200Response&gt;
+     * @throws IllegalArgumentException if fails to make API call
      */
-    public ServiceResponse<DggrsZonesResponse> collectionGetDGGRSZones(GetZoneList parameters) throws ServiceException {
+    public ServiceRequest<Supplier<DggrsZonesResponse>> collectionGetDGGRSZones(GetZoneList parameters) throws IllegalArgumentException {
 
         if (parameters.getCollectionId().get(0) == null) {
-            throw new ServiceException(400, "Missing the required parameter 'collectionId' when calling collectionGetDGGRSZones");
+            throw new IllegalArgumentException("Missing the required parameter 'collectionId' when calling collectionGetDGGRSZones");
         }
         if (parameters.getDggrsId() == null) {
-            throw new ServiceException(400, "Missing the required parameter 'dggrsId' when calling collectionGetDGGRSZones");
+            throw new IllegalArgumentException("Missing the required parameter 'dggrsId' when calling collectionGetDGGRSZones");
         }
 
         final List<Pair> queryParams = new ArrayList<>();
@@ -428,20 +421,20 @@ public final class DggsApi extends AbstractOpenApi {
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
 
-        return toSimpleResponse(send(request), DggrsZonesResponse.class);
+        return requestAsJson(request, DggrsZonesResponse.class);
     }
 
     /**
      * Retrieve the list of zones with data for this dataset, or for a particular query
      *
      * @param parameters request parameters
-     * @return ServiceResponse&lt;DatasetGetDGGRSZones200Response&gt;
-     * @throws ServiceException if fails to make API call
+     * @return ServiceRequest&lt;DatasetGetDGGRSZones200Response&gt;
+     * @throws IllegalArgumentException if fails to make API call
      */
-    public ServiceResponse<DggrsZonesResponse> datasetGetDGGRSZones(GetZoneList parameters) throws ServiceException {
+    public ServiceRequest<Supplier<DggrsZonesResponse>> datasetGetDGGRSZones(GetZoneList parameters) throws IllegalArgumentException {
 
         if (parameters.getDggrsId() == null) {
-            throw new ServiceException(400, "Missing the required parameter 'dggrsId' when calling datasetGetDGGRSZones");
+            throw new IllegalArgumentException("Missing the required parameter 'dggrsId' when calling datasetGetDGGRSZones");
         }
 
         final List<Pair> queryParams = new ArrayList<>();
@@ -469,8 +462,7 @@ public final class DggsApi extends AbstractOpenApi {
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
 
-        final HttpResponse<InputStream> response = send(request);
-        return toSimpleResponse(response, DggrsZonesResponse.class);
+        return requestAsJson(request, DggrsZonesResponse.class);
     }
 
     private static List toList(Envelope env) {

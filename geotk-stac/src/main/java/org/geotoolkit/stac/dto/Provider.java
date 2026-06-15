@@ -25,7 +25,7 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
-import org.geotoolkit.ogcapi.model.DataTransferObject;
+import org.geotoolkit.ogcapi.dto.DataTransferObject;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -159,14 +159,4 @@ public class Provider extends DataTransferObject {
         return Objects.hash(name, url, roles, description);
     }
 
-    /**
-     * Convert the given object to string with each line indented by 4 spaces
-     * (except the first line).
-     */
-    private String toIndentedString(Object o) {
-        if (o == null) {
-            return "null";
-        }
-        return o.toString().replace("\n", "\n    ");
-    }
 }

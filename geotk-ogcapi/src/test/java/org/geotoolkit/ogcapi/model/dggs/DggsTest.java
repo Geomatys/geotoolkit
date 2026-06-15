@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.ogcapi.model.dggs;
 
+import org.geotoolkit.ogcapi.dto.dggs.DggrsZonesResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Assertions;

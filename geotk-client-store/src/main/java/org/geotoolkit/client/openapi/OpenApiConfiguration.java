@@ -53,11 +53,10 @@ public final class OpenApiConfiguration extends ServiceConfiguration {
     protected OpenApiConfiguration(HttpClient.Builder builder, String scheme,
             String host, int port, String basePath,
             Consumer<HttpRequest.Builder> interceptor,
-            Consumer<HttpResponse<InputStream>> responseInterceptor,
-            Consumer<HttpResponse<String>> asyncResponseInterceptor,
+            Consumer<HttpResponse<?>> responseInterceptor,
             Duration readTimeout, Duration connectTimeout, ObjectMapper mapper) {
         super(builder, scheme, host, port, basePath, interceptor,
-                responseInterceptor, asyncResponseInterceptor, readTimeout, connectTimeout);
+                responseInterceptor, readTimeout, connectTimeout);
         this.mapper = mapper;
     }
 
@@ -128,7 +127,7 @@ public final class OpenApiConfiguration extends ServiceConfiguration {
         @Override
         public OpenApiConfiguration build() {
             return new OpenApiConfiguration(builder, scheme, host, port, basePath,
-                    interceptor, responseInterceptor, asyncResponseInterceptor, readTimeout, connectTimeout, mapper);
+                    interceptor, responseInterceptor, readTimeout, connectTimeout, mapper);
         }
 
     }

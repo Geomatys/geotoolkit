@@ -17,6 +17,8 @@
 package org.geotoolkit.ogcapi.storage;
 
 import java.net.URI;
+import java.net.http.HttpResponse;
+import java.util.function.Supplier;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
@@ -25,9 +27,8 @@ import org.apache.sis.storage.StorageConnector;
 import org.geotoolkit.client.AbstractClientProvider;
 import org.geotoolkit.client.openapi.OpenApiConfiguration;
 import org.geotoolkit.client.service.ServiceException;
-import org.geotoolkit.client.service.ServiceResponse;
 import org.geotoolkit.ogcapi.client.common.CoreApi;
-import org.geotoolkit.ogcapi.model.common.ConfClasses;
+import org.geotoolkit.ogcapi.dto.common.ConfClasses;
 import org.geotoolkit.ogcapi.request.common.GetConformance;
 import org.opengis.parameter.ParameterDescriptorGroup;
 
@@ -76,8 +77,8 @@ public final class Provider extends AbstractClientProvider {
                 .updateBaseUri(uri.toString())
                 .build();
         try (CoreApi core = new CoreApi(config)) {
-            ServiceResponse<ConfClasses> conformance = core.getConformance(new GetConformance().format("application/json"));
-            if (conformance.getStatusCode() == 200 && conformance.getData() != null) {
+            HttpResponse<Supplier<ConfClasses>> conformance = core.getConformance(new GetConformance().format("application/json")).send();
+            if (conformance.statusCode() == 200 && conformance.body().get() != null) {
                 return ProbeResult.SUPPORTED;
             } else {
                 return ProbeResult.UNSUPPORTED_STORAGE;

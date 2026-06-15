@@ -16,6 +16,10 @@
  */
 package org.geotoolkit.ogcapi.model.geojson;
 
+import org.geotoolkit.ogcapi.dto.geojson.GeoJSONFeatureCollection;
+import org.geotoolkit.ogcapi.dto.geojson.GeoJSON;
+import org.geotoolkit.ogcapi.dto.geojson.GeoJSONMapper;
+import org.geotoolkit.ogcapi.dto.geojson.GeoJSONFeature;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;

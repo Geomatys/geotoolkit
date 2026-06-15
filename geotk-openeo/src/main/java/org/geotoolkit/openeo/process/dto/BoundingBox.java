@@ -25,7 +25,7 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
-import org.geotoolkit.ogcapi.model.DataTransferObject;
+import org.geotoolkit.ogcapi.dto.DataTransferObject;
 
 /**
  * @author Quentin BIALOTA (Geomatys)

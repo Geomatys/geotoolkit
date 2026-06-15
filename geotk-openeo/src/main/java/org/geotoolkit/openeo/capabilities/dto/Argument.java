@@ -27,7 +27,7 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
-import org.geotoolkit.ogcapi.model.DataTransferObject;
+import org.geotoolkit.ogcapi.dto.DataTransferObject;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

@@ -47,8 +47,7 @@ public class ServiceConfiguration {
     final int port;
     final String basePath;
     final Consumer<HttpRequest.Builder> requestInterceptor;
-    final Consumer<HttpResponse<InputStream>> responseInterceptor;
-    final Consumer<HttpResponse<String>> asyncResponseInterceptor;
+    final Consumer<HttpResponse<?>> responseInterceptor;
     final Duration readTimeout;
     final Duration connectTimeout;
     final String baseUri;
@@ -56,8 +55,7 @@ public class ServiceConfiguration {
     protected ServiceConfiguration(HttpClient.Builder builder, String scheme,
             String host, int port, String basePath,
             Consumer<HttpRequest.Builder> interceptor,
-            Consumer<HttpResponse<InputStream>> responseInterceptor,
-            Consumer<HttpResponse<String>> asyncResponseInterceptor,
+            Consumer<HttpResponse<?>> responseInterceptor,
             Duration readTimeout, Duration connectTimeout) {
         this.builder = builder;
         this.scheme = scheme;
@@ -66,7 +64,6 @@ public class ServiceConfiguration {
         this.basePath = basePath;
         this.requestInterceptor = interceptor;
         this.responseInterceptor = responseInterceptor;
-        this.asyncResponseInterceptor = asyncResponseInterceptor;
         this.readTimeout = readTimeout;
         this.connectTimeout = connectTimeout;
         final String uriPath = (basePath == null || basePath.isBlank())
@@ -128,18 +125,8 @@ public class ServiceConfiguration {
      *
      * @return The custom interceptor that was set, or null if there isn't any.
      */
-    public Consumer<HttpResponse<InputStream>> getResponseInterceptor() {
+    public Consumer<HttpResponse<?>> getResponseInterceptor() {
         return responseInterceptor;
-    }
-
-    /**
-     * Get the custom async response interceptor. Use this interceptor when
-     * asyncNative is set to 'true'.
-     *
-     * @return The custom interceptor that was set, or null if there isn't any.
-     */
-    public Consumer<HttpResponse<String>> getAsyncResponseInterceptor() {
-        return asyncResponseInterceptor;
     }
 
     /**
@@ -184,8 +171,7 @@ public class ServiceConfiguration {
         protected int port;
         protected String basePath;
         protected Consumer<HttpRequest.Builder> interceptor;
-        protected Consumer<HttpResponse<InputStream>> responseInterceptor;
-        protected Consumer<HttpResponse<String>> asyncResponseInterceptor;
+        protected Consumer<HttpResponse<?>> responseInterceptor;
         protected Duration readTimeout;
         protected Duration connectTimeout;
 
@@ -199,7 +185,6 @@ public class ServiceConfiguration {
             readTimeout = null;
             connectTimeout = null;
             responseInterceptor = null;
-            asyncResponseInterceptor = null;
         }
 
         public final T updateBaseUri(String baseUri) {
@@ -346,11 +331,11 @@ public class ServiceConfiguration {
          * This is useful for logging, monitoring or extraction of header
          * variables</p>
          *
-         * @param interceptor A function invoked before creating each request. A
+         * @param interceptor A function invoked after each request response. A
          * value of null resets the interceptor to a no-op.
          * @return This object.
          */
-        public T setResponseInterceptor(Consumer<HttpResponse<InputStream>> interceptor) {
+        public T setResponseInterceptor(Consumer<HttpResponse<?>> interceptor) {
             this.responseInterceptor = interceptor;
             return (T) this;
         }
@@ -360,35 +345,8 @@ public class ServiceConfiguration {
          *
          * @return The custom interceptor that was set, or null if there isn't any.
          */
-        public Consumer<HttpResponse<InputStream>> getResponseInterceptor() {
+        public Consumer<HttpResponse<?>> getResponseInterceptor() {
             return responseInterceptor;
-        }
-
-        /**
-         * Set a custom async response interceptor. Use this interceptor when
-         * asyncNative is set to 'true'.
-         *
-         * <p>
-         * This is useful for logging, monitoring or extraction of header
-         * variables</p>
-         *
-         * @param interceptor A function invoked before creating each request. A
-         * value of null resets the interceptor to a no-op.
-         * @return This object.
-         */
-        public T setAsyncResponseInterceptor(Consumer<HttpResponse<String>> interceptor) {
-            this.asyncResponseInterceptor = interceptor;
-            return (T) this;
-        }
-
-        /**
-         * Get the custom async response interceptor. Use this interceptor when
-         * asyncNative is set to 'true'.
-         *
-         * @return The custom interceptor that was set, or null if there isn't any.
-         */
-        public Consumer<HttpResponse<String>> getAsyncResponseInterceptor() {
-            return asyncResponseInterceptor;
         }
 
         /**
@@ -452,7 +410,7 @@ public class ServiceConfiguration {
 
         public ServiceConfiguration build() {
             return new ServiceConfiguration(builder, scheme, host, port, basePath,
-                    interceptor, responseInterceptor, asyncResponseInterceptor, readTimeout, connectTimeout);
+                    interceptor, responseInterceptor, readTimeout, connectTimeout);
         }
     }
 
