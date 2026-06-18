@@ -52,8 +52,7 @@ import org.opengis.util.GenericName;
  */
 public final class FeatureSetAsDiscreteGlobalGridResource extends AbstractResource implements DiscreteGlobalGridResource {
 
-    private final DiscreteGlobalGridReferenceSystem dggrs;
-    private final DiscreteGlobalGridGeometry gridGeometry;
+    private final List<CodedGeometry> gridGeometries = new ArrayList<>();
     private final DiscreteGlobalGridCoverageProcessor processor;
     private final FeatureSet featureSet;
     private final int defaultDepth;
@@ -64,14 +63,19 @@ public final class FeatureSetAsDiscreteGlobalGridResource extends AbstractResour
     private List<SampleDimension> sampleDimensions;
 
     public FeatureSetAsDiscreteGlobalGridResource(DiscreteGlobalGridReferenceSystem dggrs, FeatureSet featureSet, DiscreteGlobalGridCoverageProcessor processor) {
+        this(featureSet, processor, dggrs);
+    }
+
+    public FeatureSetAsDiscreteGlobalGridResource(FeatureSet featureSet, DiscreteGlobalGridCoverageProcessor processor, DiscreteGlobalGridReferenceSystem ... dggrs) {
         super(null);
-        this.dggrs = dggrs;
         this.processor = processor;
-        this.gridGeometry = DiscreteGlobalGridGeometry.unstructured(dggrs, null, null);
         this.featureSet = featureSet;
         this.defaultDepth = 3;
         this.maxRelativeDepth = 10;
-        this.availableDepths = NumberRange.create(0, true, dggrs.getGridSystem().getHierarchy().getGrids().size()-1, true);
+        for (DiscreteGlobalGridReferenceSystem dggs : dggrs) {
+            gridGeometries.add(DiscreteGlobalGridGeometry.unstructured(dggs, null, null));
+        }
+        this.availableDepths = NumberRange.create(0, true, dggrs[0].getGridSystem().getHierarchy().getGrids().size()-1, true);
     }
 
     @Override
@@ -101,7 +105,12 @@ public final class FeatureSetAsDiscreteGlobalGridResource extends AbstractResour
 
     @Override
     public DiscreteGlobalGridGeometry getGridGeometry() {
-        return gridGeometry;
+        return (DiscreteGlobalGridGeometry) gridGeometries.get(0);
+    }
+
+    @Override
+    public List<CodedGeometry> getAlternateGridGeometry() throws DataStoreException {
+        return Collections.unmodifiableList(gridGeometries);
     }
 
     @Override
