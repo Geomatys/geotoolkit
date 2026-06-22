@@ -17,10 +17,15 @@
 package org.geotoolkit.ogcapi.storage;
 
 import java.util.Optional;
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.AbstractResource;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.ogcapi.model.common.CollectionDescription;
+import org.geotoolkit.ogcapi.model.common.Extent;
+import org.geotoolkit.ogcapi.model.common.SpatialExtent;
+import org.opengis.geometry.Envelope;
 import org.opengis.util.GenericName;
 
 /**
@@ -44,6 +49,24 @@ public class CollectionItemResource extends AbstractResource {
     @Override
     public Optional<GenericName> getIdentifier() throws DataStoreException {
         return Optional.of(Names.createLocalName(null, null, description.getId()));
+    }
+
+    @Override
+    public Optional<Envelope> getEnvelope() throws DataStoreException {
+        final Extent extent = description.getExtent();
+        if (extent == null) return super.getEnvelope();
+        final SpatialExtent spatial = extent.getSpatial();
+        if (spatial == null) return super.getEnvelope();
+        double[][] bbox = spatial.getBbox();
+        if (bbox == null) return super.getEnvelope();
+        final double minX = bbox[0][0];
+        final double minY = bbox[0][1];
+        final double maxX = bbox[0][2];
+        final double maxY = bbox[0][3];
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
+        env.setRange(0, minX, maxX);
+        env.setRange(1, minY, maxY);
+        return Optional.of(env);
     }
 
 }
