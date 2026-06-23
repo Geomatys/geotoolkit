@@ -19,6 +19,7 @@ package org.geotoolkit.ogcapi.storage;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -70,6 +71,7 @@ import org.geotoolkit.storage.rs.CodedGeometry;
 import org.geotoolkit.storage.rs.CodedResource;
 import org.geotoolkit.storage.rs.WritableCodeIterator;
 import org.opengis.feature.FeatureType;
+import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
@@ -254,6 +256,16 @@ public final class DggrsResource extends CollectionItemResource implements Aggre
             samples.add(array);
         }
 
+        //sort samples in the same order as the sample dimensions
+        samples.sort(new Comparator<Array>() {
+            @Override
+            public int compare(Array o1, Array o2) {
+                SampleDimension s1 = o1.getSampleSystem().getSampleDimensions().get(0);
+                SampleDimension s2 = o2.getSampleSystem().getSampleDimensions().get(0);
+                return Integer.compare(sampleDimensions.indexOf(s1), sampleDimensions.indexOf(s2));
+            }
+        });
+
         final DiscreteGlobalGridGeometry g = DiscreteGlobalGridGeometry.subZone(dggrs, baseZoneId, relativeDepth);
         return new ArrayDiscreteGlobalGridCoverage(Names.createLocalName(null, null, description.getId()), g, samples);
     }
@@ -302,6 +314,11 @@ public final class DggrsResource extends CollectionItemResource implements Aggre
         @Override
         public CodedGeometry getGridGeometry() throws DataStoreException {
             return geometry;
+        }
+
+        @Override
+        public Optional<Envelope> getEnvelope() throws DataStoreException {
+            return DggrsResource.this.getEnvelope();
         }
 
         @Override

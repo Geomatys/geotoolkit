@@ -21,6 +21,7 @@ import com.google.common.geometry.S2Loop;
 import com.google.common.geometry.S2Point;
 import com.google.common.geometry.S2Polygon;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import org.apache.sis.geometries.math.SampleSystem;
@@ -155,7 +156,12 @@ final class DGGALZone extends AbstractZone<DGGALDggrs> {
         try {
             double[] centroid = dggrs.dggal.getZoneWGS84Centroid(hash);
             candidate = dggrs.dggal.getZoneFromWGS84Centroid(refinementLevel, centroid);
-            if (candidate == -1) return null;
+            if (candidate == -1) {
+                //TODO : this is a bug in DGGAL, we should raise the following error, but it causes a lot of errors later on, wait until the stack tolerance improves
+                //final String msg = "Could not find parent for zone " + getTextIdentifier() + " at level " + refinementLevel + " position " + Arrays.toString(centroid);
+                //throw new DGGALBindingException(new IllegalStateException(msg));
+                return null;
+            }
         } catch (Throwable ex) {
             throw new DGGALBindingException(ex);
         }

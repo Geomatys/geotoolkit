@@ -23,10 +23,13 @@ import java.awt.image.RenderedImage;
 import org.geotoolkit.storage.dggs.internal.shared.ArrayDiscreteGlobalGridCoverage;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.IntConsumer;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -76,8 +79,10 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.index.quadtree.Quadtree;
+import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyType;
 import org.opengis.filter.FilterFactory;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
@@ -297,22 +302,36 @@ public final class DiscreteGlobalGridCoverageProcessor {
      * @throws TransformException if a dggrs zone computation failed
      */
     public CodedCoverage resample(FeatureSet featureSet, DiscreteGlobalGridGeometry gridGeometry, List<SampleDimension> sampleDimensions) throws DataStoreException, TransformException {
+        final FeatureType baseType = featureSet.getType();
         final List<Object> zones = gridGeometry.getZoneIds();
 
         final List<Array> samples = new ArrayList<>();
         final double[] nans = new double[sampleDimensions.size()];
+        final String[] propertyNames = new String[nans.length];
         final Statistics[][] stats = new Statistics[sampleDimensions.size()][zones.size()];
+        //counters for categorized values
+        final Map<Object,AtomicLong>[][] counters = new Map[sampleDimensions.size()][zones.size()];
         for (int i = 0; i < nans.length; i++) {
-            final SampleSystem ss = new SampleSystem(DataType.DOUBLE, sampleDimensions.get(i));
+            final SampleDimension sd = sampleDimensions.get(i);
+            final SampleSystem ss = new SampleSystem(DataType.DOUBLE, sd);
             final double[] datas = new double[zones.size()];
             Arrays.fill(datas, Double.NaN);
             samples.add(NDArrays.of(ss, datas));
             nans[i] = Double.NaN;
-        }
 
-        final String[] propertyNames = new String[sampleDimensions.size()];
-        for (int i = 0; i < propertyNames.length; i++) {
-            propertyNames[i] = sampleDimensions.get(i).getName().tip().toString();
+            propertyNames[i] = sd.getName().tip().toString();
+
+            //check if value is categorized
+            final PropertyType prop = baseType.getProperty(propertyNames[i]);
+            if (prop instanceof AttributeType at) {
+                final Object characteristic = at.characteristics().get(AttributeConvention.VALID_VALUES_CHARACTERISTIC.toString());
+                if (characteristic instanceof AttributeType cat) {
+                    final Object defaultValue = cat.getDefaultValue();
+                    if (defaultValue instanceof Collection) {
+                        counters[i][0] = new HashMap<>();
+                    }
+                }
+            }
         }
 
 
@@ -391,6 +410,15 @@ public final class DiscreteGlobalGridCoverageProcessor {
                                     stats[i][zoneIndex].accept(v);
                                 }
                             }
+                            if (counters[i][0] != null) {
+                                if (counters[i][zoneIndex] == null) counters[i][zoneIndex] = new HashMap<>();
+                                AtomicLong cnt = counters[i][zoneIndex].get(value);
+                                if (cnt == null) {
+                                    cnt = new AtomicLong();
+                                    counters[i][zoneIndex].put(value, cnt);
+                                }
+                                cnt.incrementAndGet();
+                            }
                         }
                     }
                 }
@@ -447,6 +475,15 @@ public final class DiscreteGlobalGridCoverageProcessor {
                                     //fast method without stats
                                     //samples.get(i).set(zoneIndex, buffer);
                                 }
+                                if (counters[i][0] != null) {
+                                    if (counters[i][zoneIndex] == null) counters[i][zoneIndex] = new HashMap<>();
+                                    AtomicLong cnt = counters[i][zoneIndex].get(value);
+                                    if (cnt == null) {
+                                        cnt = new AtomicLong();
+                                        counters[i][zoneIndex].put(value, cnt);
+                                    }
+                                    cnt.incrementAndGet();
+                                }
                             }
 
                             //TODO we should make a 'fast mode case'
@@ -471,10 +508,21 @@ public final class DiscreteGlobalGridCoverageProcessor {
                     buffer.x = stats[i][k].mean();
                     arr.set(k, buffer);
                 }
+                //replace stat value by a counted value if it is one
+                if (counters[i][k] != null) {
+                    Entry<Object,AtomicLong> mostNumerous = null;
+                    for (Entry<Object,AtomicLong> entry : counters[i][k].entrySet()) {
+                        if (mostNumerous == null || mostNumerous.getValue().get() > entry.getValue().get()) {
+                            mostNumerous = entry;
+                        }
+                    }
+                    if (mostNumerous != null && mostNumerous.getKey() instanceof Number n) {
+                        buffer.x = n.doubleValue();
+                        arr.set(k, buffer);
+                    }
+                }
             }
-
         }
-
 
         return target;
     }

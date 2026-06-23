@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.storage.rs.internal.shared;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import org.apache.sis.coverage.SampleDimension;
@@ -40,12 +42,17 @@ public final class AddDimCodedResource extends AbstractResource implements Coded
     private final CodedResource source;
     private final GridGeometry slice;
     private final CodedGeometry compound;
+    private final List<CodedGeometry> alternates = new ArrayList<>();
 
     public AddDimCodedResource(CodedResource source, GridGeometry slice) throws DataStoreException {
         super(null);
         this.source = source;
         this.slice = slice;
         compound = CodedGeometry.compound(source.getGridGeometry(), new CodedGeometry(slice));
+
+        for (CodedGeometry g : source.getAlternateGridGeometry()) {
+            alternates.add(CodedGeometry.compound(g, new CodedGeometry(slice)));
+        }
     }
 
     public CodedResource getSource() {
@@ -80,6 +87,11 @@ public final class AddDimCodedResource extends AbstractResource implements Coded
     @Override
     public CodedGeometry getGridGeometry() throws DataStoreException {
         return compound;
+    }
+
+    @Override
+    public List<CodedGeometry> getAlternateGridGeometry() throws DataStoreException {
+        return Collections.unmodifiableList(alternates);
     }
 
     @Override
