@@ -30,11 +30,13 @@ import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import org.apache.sis.feature.Features;
 import org.apache.sis.feature.internal.shared.AttributeConvention;
 import org.apache.sis.xml.MarshallerPool;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.feature.xml.GMLConvention;
 import org.geotoolkit.feature.xml.Utils;
+import static org.geotoolkit.feature.xml.Utils.isAttributeProperty;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.xml.AbstractConfigurable;
 import org.geotoolkit.xsd.xml.v2001.Attribute;
@@ -148,7 +150,7 @@ public class JAXBFeatureTypeWriter extends AbstractConfigurable {
      */
     public Schema getSchemaFromFeatureType(List<FeatureType> featureTypes) {
         final Schema schema = new Schema(FormChoice.QUALIFIED, null);
-        if (featureTypes != null && featureTypes.size() > 0) {
+        if (featureTypes != null && !featureTypes.isEmpty()) {
             // we get the first namespace
             String typeNamespace = null;
             int i = 0;
@@ -182,14 +184,27 @@ public class JAXBFeatureTypeWriter extends AbstractConfigurable {
             } else {
                 schema.addImport(GML_IMPORT_311);
             }
-            fillSchemaWithFeatureType(featureType, schema, true, new HashSet<String>());
+            fillSchemaWithFeatureType(featureType, schema, true, new HashSet<>());
             return schema;
         }
         return null;
     }
 
     public Schema getExternalSchemaFromFeatureType(String namespace, List<FeatureType> featureTypes) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (featureTypes != null && !featureTypes.isEmpty()) {
+            final Schema schema = new Schema(FormChoice.QUALIFIED, namespace);
+            if ("3.2.1".equals(gmlVersion)) {
+                schema.addImport(GML_IMPORT_321);
+            } else {
+                schema.addImport(GML_IMPORT_311);
+            }
+            final Set<String> alreadyWritten = new HashSet<>();
+            for (FeatureType ftype : featureTypes) {
+                fillSchemaWithFeatureType(ftype, schema, false, alreadyWritten);
+            }
+            return schema;
+        }
+        return null;
     }
 
     private void fillSchemaWithFeatureType(final FeatureType featureType, final Schema schema, boolean addTopElement, Set<String> alreadyWritten) {
@@ -222,7 +237,7 @@ public class JAXBFeatureTypeWriter extends AbstractConfigurable {
         final ExplicitGroup sequence  = new ExplicitGroup();
         final List<Attribute> attributes = new ArrayList<>();
         for (final PropertyType pdesc : featureType.getProperties(false)) {
-            if (AttributeConvention.contains(pdesc.getName())) {
+            if (isExcludedProperty(pdesc)) {
                 //skip convention properties
                 continue;
             }
@@ -235,6 +250,17 @@ public class JAXBFeatureTypeWriter extends AbstractConfigurable {
             tlcType.getAttributeOrAttributeGroup().addAll(attributes);
             schema.addComplexType(1, tlcType);
         }
+    }
+
+    private boolean isExcludedProperty(PropertyType typeA) {
+        final GenericName nameA = typeA.getName();
+        if (isAttributeProperty(nameA)) return true;
+
+        // special case for feature where the geometry is not a link to an attribute, but an operation
+        boolean isLink = Features.getLinkTarget(typeA).isPresent();
+        if (AttributeConvention.GEOMETRY_PROPERTY.equals(nameA) && !isLink) return false;
+
+        return AttributeConvention.contains(nameA);
     }
 
     private void writeComplexType(final FeatureType ctype, final Schema schema, Set<String> alreadyWritten) {
@@ -273,10 +299,11 @@ public class JAXBFeatureTypeWriter extends AbstractConfigurable {
 
         final boolean decorated = GMLConvention.isDecoratedProperty(pType);
 
-        if (pType instanceof AttributeType) {
-            final AttributeType attType = (AttributeType) pType;
+        if (pType instanceof AttributeType attType) {
             final String name        = attType.getName().tip().toString();
             final QName type         = Utils.getQNameFromType(attType, gmlVersion);
+            if (type == null ) return;
+
             final int minOccurs      = attType.getMinimumOccurs();
             final int maxOccurs      = attType.getMaximumOccurs();
             final boolean nillable   = FeatureExt.getCharacteristicValue(attType, GMLConvention.NILLABLE_PROPERTY.toString(), minOccurs==0);

@@ -50,8 +50,10 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import javax.xml.namespace.QName;
 import javax.xml.stream.events.XMLEvent;
 import org.apache.sis.feature.Features;
@@ -119,6 +121,7 @@ public final class Utils {
 
     private static final DateFormat timestampFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
     private static final DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd'Z'");
+    private static final DateTimeFormatter localDateformatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'Z'");
 
     private static final String GML_311_NAMESPACE = "http://www.opengis.net/gml";
     private static final String GML_321_NAMESPACE = "http://www.opengis.net/gml/3.2";
@@ -520,6 +523,7 @@ public final class Utils {
          NAME_BINDING.put(LocalDate[].class,     new QName("http://www.w3.org/2001/XMLSchema", "date"));
          NAME_BINDING.put(java.sql.Date.class,   new QName("http://www.w3.org/2001/XMLSchema", "date"));
          NAME_BINDING.put(java.sql.Date[].class, new QName("http://www.w3.org/2001/XMLSchema", "date"));
+         NAME_BINDING.put(Instant.class,       new QName("http://www.w3.org/2001/XMLSchema", "dateTime"));
          NAME_BINDING.put(Timestamp.class,       new QName("http://www.w3.org/2001/XMLSchema", "dateTime"));
          NAME_BINDING.put(Timestamp[].class,     new QName("http://www.w3.org/2001/XMLSchema", "dateTime"));
          NAME_BINDING.put(Boolean.class,         new QName("http://www.w3.org/2001/XMLSchema", "boolean"));
@@ -566,11 +570,11 @@ public final class Utils {
      *
      * @param type a primitive type Class.
      * @param gmlVersion GML version (default to 3.1.1) if not specified.
-     * @return A QName describing the class.
+     * @return A QName describing the class, or <code>null</code> if no correct mapping exists
      */
     public static QName getQNameFromType(final PropertyType type, final String gmlVersion) {
-        if (type instanceof AttributeType) {
-            final Class binding = ((AttributeType)type).getValueClass();
+        if (type instanceof AttributeType attType) {
+            final Class binding = attType.getValueClass();
             final QName result;
             if (Geometry.class.isAssignableFrom(binding)) {
                 if ("3.2.1".equals(gmlVersion)) {
@@ -599,7 +603,7 @@ public final class Utils {
                 result = NAME_BINDING.get(binding);
             }
             if (result == null) {
-                throw new IllegalArgumentException("unexpected type:" + binding);
+                LOGGER.log(Level.WARNING, "Unable to find a QName for type: {0}", binding);
             }
             return result;
         }
@@ -659,19 +663,25 @@ public final class Utils {
      * @return A String representation of the Object.
      */
     public static String getStringValue(final Object obj) {
-        if (obj instanceof String) {
-            return (String) obj;
-        } else if (obj instanceof Timestamp) {
-            return timestampFormatter.format(new Date(((Timestamp)obj).getTime()));
+        if (obj instanceof String s) {
+            return s;
+        } else if (obj instanceof Timestamp ts) {
+            return timestampFormatter.format(new Date(ts.getTime()));
         } else if (obj instanceof java.sql.Date) {
             // sql date does not have
             return  obj.toString() + 'Z';
-        } else if (obj instanceof java.util.Date) {
-            return dateFormatter.format((java.util.Date) obj);
+        } else if (obj instanceof java.util.Date d) {
+            return dateFormatter.format(d);
+        } else if (obj instanceof LocalDate lc) {
+            return lc.format(localDateformatter);
+        } else if (obj instanceof Instant i) {
+            return i.toString();
         } else if (obj instanceof Number || obj instanceof Boolean || obj instanceof URI) {
             return obj.toString();
-        } else if (obj instanceof byte[]) {
-            return Base64.getEncoder().encodeToString((byte[])obj);
+        } else if (obj instanceof byte[] b) {
+            return Base64.getEncoder().encodeToString(b);
+        } else if (obj instanceof Feature) {
+            return null; // not handled here but after so we don' log an error
         } else if (obj != null) {
             LOGGER.log(Level.WARNING, "Unhandled type :" + obj.getClass(),new IllegalArgumentException());
         }

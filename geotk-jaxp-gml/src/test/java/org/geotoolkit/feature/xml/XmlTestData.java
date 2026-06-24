@@ -18,6 +18,9 @@ package org.geotoolkit.feature.xml;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -115,6 +118,8 @@ public class XmlTestData {
         ftb.addAttribute(BigDecimal.class)        .setName(CUSTOM_NAMESPACE,"attDecimal")       .setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
         ftb.addAttribute(Date.class)              .setName(CUSTOM_NAMESPACE,"attDate")          .setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
         ftb.addAttribute(Timestamp.class)         .setName(CUSTOM_NAMESPACE,"attDateTime")      .setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        ftb.addAttribute(LocalDate.class)         .setName(CUSTOM_NAMESPACE,"attLocDate")       .setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        ftb.addAttribute(Instant.class)           .setName(CUSTOM_NAMESPACE,"attInstant")       .setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
         ftb.addAttribute(Boolean.class)           .setName(CUSTOM_NAMESPACE,"attBoolean")       .setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
         ftb.addAttribute(Point.class)             .setName(CUSTOM_NAMESPACE,"geomPoint")        .setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
         ftb.addAttribute(MultiPoint.class)        .setName(CUSTOM_NAMESPACE,"geomMultiPoint")   .setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
@@ -142,6 +147,8 @@ public class XmlTestData {
         ftb.addAttribute(BigDecimal.class)        .setName(GML_311_NAMESPACE,"attDecimal")       .setMinimumOccurs(0).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
         ftb.addAttribute(Date.class)              .setName(GML_311_NAMESPACE,"attDate")          .setMinimumOccurs(1).setMaximumOccurs(Integer.MAX_VALUE).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
         ftb.addAttribute(Timestamp.class)         .setName(GML_311_NAMESPACE,"attDateTime")      .setMinimumOccurs(1).setMaximumOccurs(Integer.MAX_VALUE).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        ftb.addAttribute(LocalDate.class)         .setName(GML_311_NAMESPACE,"attLocDate")       .setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        ftb.addAttribute(Instant.class)           .setName(GML_311_NAMESPACE,"attInstant")      .setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
         ftb.addAttribute(Boolean.class)           .setName(GML_311_NAMESPACE,"attBoolean")       .setMinimumOccurs(1).setMaximumOccurs(Integer.MAX_VALUE).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
         ftb.addAttribute(Point.class)             .setName(GML_311_NAMESPACE,"geomPoint")        .setMinimumOccurs(0).setMaximumOccurs(Integer.MAX_VALUE).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
         ftb.addAttribute(MultiPoint.class)        .setName(GML_311_NAMESPACE,"geomMultiPoint")   .setMinimumOccurs(0).setMaximumOccurs(Integer.MAX_VALUE).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
@@ -323,6 +330,8 @@ public class XmlTestData {
         simpleFeatureFull.setPropertyValue("attDecimal", new BigDecimal(456789));
         simpleFeatureFull.setPropertyValue("attDate", calendar1.getTime());
         simpleFeatureFull.setPropertyValue("attDateTime", new Timestamp(calendar2.getTimeInMillis()));
+        simpleFeatureFull.setPropertyValue("attLocDate", LocalDate.of(2005, 8, 21));
+        simpleFeatureFull.setPropertyValue("attInstant", Instant.ofEpochMilli(calendar2.getTimeInMillis()));
         simpleFeatureFull.setPropertyValue("attBoolean", Boolean.TRUE);
         simpleFeatureFull.setPropertyValue("geomPoint", pt);
         simpleFeatureFull.setPropertyValue("geomMultiPoint", mpt);
