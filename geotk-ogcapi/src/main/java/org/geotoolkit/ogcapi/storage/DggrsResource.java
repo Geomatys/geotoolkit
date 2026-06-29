@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.ogcapi.storage;
 
+import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -25,10 +26,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.function.IntConsumer;
+import java.util.function.Supplier;
 import java.util.logging.Logger;
 import java.util.stream.IntStream;
 import org.apache.sis.coverage.SampleDimension;
-import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometries.math.DataType;
 import org.apache.sis.geometries.math.SampleSystem;
 import org.apache.sis.geometries.math.Array;
@@ -42,18 +43,17 @@ import org.apache.sis.util.collection.Cache;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.client.openapi.OpenApiConfiguration;
 import org.geotoolkit.client.service.ServiceException;
-import org.geotoolkit.client.service.ServiceResponse;
 import org.geotoolkit.dggs.s2.S2Dggrs;
 import org.geotoolkit.ogcapi.client.dggs.DggsApi;
 import org.geotoolkit.ogcapi.client.feature.FeatureApi;
-import org.geotoolkit.ogcapi.model.common.CollectionDescription;
-import org.geotoolkit.ogcapi.model.dggs.Dggrs;
-import org.geotoolkit.ogcapi.model.dggs.DggrsData;
-import org.geotoolkit.ogcapi.model.dggs.DggrsDataValue;
-import org.geotoolkit.ogcapi.model.dggs.DggrsItem;
-import org.geotoolkit.ogcapi.model.dggs.DggrsListResponse;
-import org.geotoolkit.ogcapi.model.jsonschema.JSONSchema;
-import org.geotoolkit.ogcapi.model.jsonschema.JSONSchemaProperty;
+import org.geotoolkit.ogcapi.dto.common.CollectionDescription;
+import org.geotoolkit.ogcapi.dto.dggs.Dggrs;
+import org.geotoolkit.ogcapi.dto.dggs.DggrsData;
+import org.geotoolkit.ogcapi.dto.dggs.DggrsDataValue;
+import org.geotoolkit.ogcapi.dto.dggs.DggrsItem;
+import org.geotoolkit.ogcapi.dto.dggs.DggrsListResponse;
+import org.geotoolkit.ogcapi.dto.jsonschema.JSONSchema;
+import org.geotoolkit.ogcapi.dto.jsonschema.JSONSchemaProperty;
 import org.geotoolkit.ogcapi.request.dggs.GetDggrs;
 import org.geotoolkit.ogcapi.request.dggs.GetDggrsList;
 import org.geotoolkit.ogcapi.request.dggs.GetZoneData;
@@ -142,11 +142,11 @@ public final class DggrsResource extends CollectionItemResource implements Aggre
             }
 
             final DggrsListResponse lst = dggrsApi.collectionGetDGGRSList(
-                    new GetDggrsList().collectionId(description.getId()).format("json")).getData();
+                    new GetDggrsList().collectionId(description.getId()).format("json")).send().body().get();
 
             for (DggrsItem item : lst.getDggrs()) {
                 Dggrs dggrs = dggrsApi.collectionGetDGGRS(
-                        new GetDggrs().collectionId(description.getId()).dggrsId(item.getId()).format("json")).getData();
+                        new GetDggrs().collectionId(description.getId()).dggrsId(item.getId()).format("json")).send().body().get();
                 if (allKnownDggrs.contains(dggrs.getId())) {
                     components.add(new ForDGGRS(dggrs));
                 }
@@ -164,8 +164,8 @@ public final class DggrsResource extends CollectionItemResource implements Aggre
         if (sampleDimensions != null) return sampleDimensions;
 
         try {
-            ServiceResponse<JSONSchema> jsonSchema = featureApi.collectinGetJsonSchema(description.getId(), null);
-            final JSONSchema schema = jsonSchema.getData();
+            HttpResponse<Supplier<JSONSchema>> jsonSchema = featureApi.collectinGetJsonSchema(description.getId(), null).send();
+            final JSONSchema schema = jsonSchema.body().get();
 
             sampleDimensions = new ArrayList<>();
             for (Entry<String,JSONSchemaProperty> entry : schema.getProperties().entrySet()) {
@@ -208,16 +208,16 @@ public final class DggrsResource extends CollectionItemResource implements Aggre
 
         final String dggrsName = dggrs.getName().getCode();
         baseZoneId = dggrs.getGridSystem().getHierarchy().toTextIdentifier(baseZoneId);
-        final ServiceResponse<DggrsData> response = dggrsApi.collectionGetDGGRSZoneData(
+        final HttpResponse<Supplier<DggrsData>> response = dggrsApi.collectionGetDGGRSZoneData(
                 new GetZoneData()
                         .dggrsId(dggrsName)
                         .zoneId(baseZoneId.toString())
                         .collectionId(description.getId())
                         .format(preferredFormat)
                         .zoneDepth(String.valueOf(relativeDepth))
-                        .gzip(queryGzip));
+                        .gzip(queryGzip)).send();
 
-        final DggrsData data = response.getData();
+        final DggrsData data = response.body().get();
         final Map<String, List<DggrsDataValue>> byBands = data.getValues();
 
         final List<Array> samples = new ArrayList<>();

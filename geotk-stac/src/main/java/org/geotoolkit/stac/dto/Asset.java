@@ -1,7 +1,21 @@
+/*
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2026, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
 package org.geotoolkit.stac.dto;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -10,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import org.geotoolkit.ogcapi.dto.DataTransferObject;
 
 /**
  * Represents a STAC Asset.
@@ -28,7 +43,7 @@ import java.util.Objects;
         Asset.JSON_PROPERTY_ROLES,
         Asset.JSON_PROPERTY_ALTERNATE
 })
-public class Asset {
+public class Asset extends DataTransferObject {
 
     public static final String JSON_PROPERTY_HREF = "href";
     public static final String JSON_PROPERTY_TITLE = "title";
@@ -64,8 +79,6 @@ public class Asset {
     @JsonProperty(JSON_PROPERTY_ALTERNATE)
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private Map<String, Asset> alternate = new HashMap<>();
-
-    private Map<String, Object> additionalProperties = new HashMap<>();
 
     public Asset() {}
 
@@ -121,16 +134,6 @@ public class Asset {
         this.alternate = alternate != null ? alternate : new HashMap<>();
     }
 
-    @JsonAnyGetter
-    public Map<String, Object> getAdditionalProperties() {
-        return additionalProperties;
-    }
-
-    @JsonAnySetter
-    public void setAdditionalProperty(String name, Object value) {
-        this.additionalProperties.put(name, value);
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -139,11 +142,11 @@ public class Asset {
         return Objects.equals(href, asset.href) && Objects.equals(title, asset.title)
                 && Objects.equals(description, asset.description) && Objects.equals(type, asset.type)
                 && Objects.equals(roles, asset.roles) && Objects.equals(alternate, asset.alternate)
-                && Objects.equals(additionalProperties, asset.additionalProperties);
+                && Objects.equals(otherFields(), asset.otherFields());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(href, title, description, type, roles, alternate, additionalProperties);
+        return Objects.hash(href, title, description, type, roles, alternate, otherFields());
     }
 }

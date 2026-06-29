@@ -26,7 +26,6 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -196,14 +195,4 @@ public class DimensionOther extends Dimension {
         return Objects.hash(extent, values, step, unit, referenceSystem, super.hashCode());
     }
 
-    /**
-     * Convert the given object to string with each line indented by 4 spaces
-     * (except the first line).
-     */
-    private String toIndentedString(Object o) {
-        if (o == null) {
-            return "null";
-        }
-        return o.toString().replace("\n", "\n    ");
-    }
 }

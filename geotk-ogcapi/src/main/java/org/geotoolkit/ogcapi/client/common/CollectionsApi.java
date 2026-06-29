@@ -20,13 +20,13 @@ import java.net.http.HttpRequest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Supplier;
 import org.geotoolkit.client.openapi.AbstractOpenApi;
 import org.geotoolkit.client.openapi.OpenApiConfiguration;
 import org.geotoolkit.client.service.Pair;
-import org.geotoolkit.client.service.ServiceException;
-import org.geotoolkit.client.service.ServiceResponse;
-import org.geotoolkit.ogcapi.model.common.CollectionDescription;
-import org.geotoolkit.ogcapi.model.common.Collections;
+import org.geotoolkit.client.service.ServiceRequest;
+import org.geotoolkit.ogcapi.dto.common.CollectionDescription;
+import org.geotoolkit.ogcapi.dto.common.Collections;
 import org.geotoolkit.ogcapi.request.common.GetCollection;
 import org.geotoolkit.ogcapi.request.common.GetCollectionList;
 import org.opengis.geometry.Envelope;
@@ -46,19 +46,19 @@ public final class CollectionsApi extends AbstractOpenApi {
      * Retrieve the description of a collection available from this service.
      *
      * @param parameters request parameters
-     * @return ServiceResponse&lt;CollectionDesc&gt;
-     * @throws ServiceException if fails to make API call
+     * @return ServiceRequest&lt;CollectionDesc&gt;
+     * @throws IllegalArgumentException if fails to make API call
      */
-    public ServiceResponse<CollectionDescription> getCollection(GetCollection parameters) throws ServiceException {
+    public ServiceRequest<Supplier<CollectionDescription>> getCollection(GetCollection parameters) throws IllegalArgumentException {
         if (parameters.getCollectionId() == null) {
-            throw new ServiceException(400, "Missing the required parameter 'collectionId' when calling getCollection");
+            throw new IllegalArgumentException("Missing the required parameter 'collectionId' when calling getCollection");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
         request.uri(toUri("/collections/" + urlEncode(parameters.getCollectionId()), toPairs("f", parameters.getFormat())));
         request.header("Accept", "application/json, text/html");
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
-        return toSimpleResponse(send(request), CollectionDescription.class);
+        return requestAsJson(request, CollectionDescription.class);
     }
 
     /**
@@ -66,9 +66,9 @@ public final class CollectionsApi extends AbstractOpenApi {
      *
      * @param parameters request parameters
      * @return ApiResponse&lt;Collections&gt;
-     * @throws ApiException if fails to make API call
+     * @throws IllegalArgumentException if fails to make API call
      */
-    public ServiceResponse<Collections> getCollections(GetCollectionList parameters) throws ServiceException {
+    public ServiceRequest<Supplier<Collections>> getCollections(GetCollectionList parameters) throws IllegalArgumentException {
         final List<Pair> queryParams = new ArrayList<>();
         queryParams.addAll(toPairs("datetime", parameters.getDatetime()));
         queryParams.addAll(toPairs("csv", "bbox", toList(parameters.getBbox())));
@@ -79,7 +79,7 @@ public final class CollectionsApi extends AbstractOpenApi {
         request.header("Accept", "application/json, text/html");
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
-        return toSimpleResponse(send(request), Collections.class);
+        return requestAsJson(request, Collections.class);
     }
 
     private static List toList(Envelope env) {

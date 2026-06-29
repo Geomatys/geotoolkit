@@ -26,7 +26,7 @@ import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.nio.charset.StandardCharsets;
+import java.net.http.HttpResponse.BodyHandler;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
@@ -34,9 +34,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.StringJoiner;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.BiConsumer;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import java.util.zip.GZIPInputStream;
-import org.apache.commons.compress.utils.CountingInputStream;
 
 /**
  *
@@ -57,14 +58,6 @@ public abstract class AbstractService implements AutoCloseable {
      */
     public ServiceConfiguration getConfiguration() {
         return config;
-    }
-
-    protected static <T> ServiceResponse<T> emptyResponse(HttpResponse<?> response) {
-        return new ServiceResponse<>(
-                response.statusCode(),
-                response.headers().map(),
-                null
-        );
     }
 
     protected HttpResponse<InputStream> send(HttpRequest.Builder requestBuilder) throws ServiceException {
@@ -88,6 +81,56 @@ public abstract class AbstractService implements AutoCloseable {
         }
     }
 
+    protected CompletableFuture<HttpResponse<InputStream>> sendAsync(HttpRequest.Builder requestBuilder) throws ServiceException {
+        final HttpRequest request = requestBuilder.build();
+        final CompletableFuture<HttpResponse<InputStream>> response = httpClient.sendAsync(
+                request,
+                HttpResponse.BodyHandlers.ofInputStream());
+        if (config.responseInterceptor != null) {
+            response.whenComplete(new BiConsumer<HttpResponse<InputStream>, Throwable>() {
+                @Override
+                public void accept(HttpResponse<InputStream> t, Throwable u) {
+                    config.responseInterceptor.accept(t);
+                }
+            });
+        }
+        return response;
+    }
+
+    protected <T> HttpResponse<T> send(HttpRequest request, BodyHandler<T> bodyHandler) throws ServiceException {
+        try {
+            final HttpResponse<T> response = httpClient.send(request,bodyHandler);
+            if (config.responseInterceptor != null) {
+                config.responseInterceptor.accept(response);
+            }
+            if (response.statusCode() / 100 != 2) {
+                throw toServiceException(request.uri().getPath(), response);
+            }
+            return response;
+        } catch (IOException e) {
+            throw new ServiceException(e);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new ServiceException(e);
+        }
+    }
+
+    protected <T> CompletableFuture<HttpResponse<T>> sendAsync(HttpRequest request, BodyHandler<T> bodyHandler) {
+        final CompletableFuture<HttpResponse<T>> response = httpClient.sendAsync(
+                request,
+                bodyHandler);
+        if (config.responseInterceptor != null) {
+            response.whenComplete((HttpResponse<T> t, Throwable u) -> {
+                config.responseInterceptor.accept(t);
+            });
+        }
+        return response;
+    }
+
+    protected <T> ServiceRequest<T> request(HttpRequest.Builder request, BodyHandler<T> bodyHandler) {
+        return new ServiceRequest<>(this, request, bodyHandler);
+    }
+
     protected URI toUri(String localPath, List<Pair> queryParams) {
         final String fullPath = localPath == null ? config.baseUri : config.baseUri + localPath;
 
@@ -109,8 +152,8 @@ public abstract class AbstractService implements AutoCloseable {
         return requestBuilder;
     }
 
-    protected ServiceException toServiceException(String operationId, HttpResponse<InputStream> response) throws IOException {
-        String body = response.body() == null ? null : new String(response.body().readAllBytes());
+    protected ServiceException toServiceException(String operationId, HttpResponse<?> response) throws IOException {
+        String body = response.body() == null ? null : response.body().getClass().getName();
         String message = formatExceptionMessage(operationId, response.statusCode(), body);
         return new ServiceException(response.statusCode(), message, response.headers(), body);
     }
@@ -225,44 +268,16 @@ public abstract class AbstractService implements AutoCloseable {
         return Collections.singletonList(new Pair(urlEncode(name), joiner.toString()));
     }
 
-    protected <T> ServiceResponse<T> parseJsonResponse(HttpResponse<InputStream> response, Class<T> valueClass, ObjectMapper objectMapper) throws ServiceException {
-        return parseJsonResponse(response, objectMapper, valueClass == null ? null : objectMapper.constructType(valueClass));
+    protected <T> ServiceRequest<Supplier<T>> requestAsJson(HttpRequest.Builder request, ObjectMapper objectMapper, Class<T> valueClass) {
+        return new ServiceRequest<>(this, request, new JacksonBodyHandler<>(objectMapper, valueClass));
     }
 
-    protected <T> ServiceResponse<T> parseJsonResponse(HttpResponse<InputStream> response, TypeReference<T> ref, ObjectMapper objectMapper) throws ServiceException {
-        return parseJsonResponse(response, objectMapper, ref == null ? null : objectMapper.constructType(ref));
+    protected <T> ServiceRequest<Supplier<T>> requestAsJson(HttpRequest.Builder request, ObjectMapper objectMapper, TypeReference<T> valueClass) {
+        return new ServiceRequest<>(this, request, new JacksonBodyHandler<>(objectMapper, valueClass));
     }
 
-    protected <T> ServiceResponse<T> parseJsonResponse(HttpResponse<InputStream> response, ObjectMapper objectMapper, JavaType ref) throws ServiceException {
-        if (response.body() == null) {
-            return emptyResponse(response);
-        }
-
-        final String contentEncoding = getContentEncoding(response);
-
-        try (var in = response.body()){
-            CountingInputStream count = new CountingInputStream(in);
-            InputStream di = count;
-            if ("gzip".equals(contentEncoding)) {
-                di = new GZIPInputStream(di);
-            }
-            final T responseBody;
-            if (ref == null) {
-                // Drain the InputStream
-                while (in.read() != -1) {
-                    // Ignore
-                }
-                responseBody = null;
-            } else {
-                byte[] blob = di.readAllBytes();
-                final String str = new String(blob, StandardCharsets.UTF_8);
-                responseBody = objectMapper.readValue(str, ref);
-            }
-            return new ServiceResponse<>(response.statusCode(), response.headers().map(), responseBody, count.getBytesRead());
-
-        } catch (IOException ex) {
-            throw new ServiceException(ex);
-        }
+    protected <T> ServiceRequest<Supplier<T>> requestAsJson(HttpRequest.Builder request, ObjectMapper objectMapper, JavaType valueClass) {
+        return new ServiceRequest<>(this, request, new JacksonBodyHandler<>(objectMapper, valueClass));
     }
 
     public static String getContentEncoding(HttpResponse<?> httpResponse) {

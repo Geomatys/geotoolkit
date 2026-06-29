@@ -29,7 +29,7 @@ import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlElementWrapper;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import org.geotoolkit.atom.xml.Link;
-import org.geotoolkit.ogcapi.model.DataTransferObject;
+import org.geotoolkit.ogcapi.dto.DataTransferObject;
 import org.geotoolkit.openeo.process.dto.serializer.JobSerializer;
 
 import javax.xml.datatype.XMLGregorianCalendar;

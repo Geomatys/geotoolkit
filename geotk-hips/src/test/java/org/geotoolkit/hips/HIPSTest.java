@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.hips;
 
+import org.geotoolkit.hips.storage.HIPSStore;
+import org.geotoolkit.hips.storage.HIPSProvider;
 import java.net.URI;
 import java.util.List;
 import java.util.stream.Stream;

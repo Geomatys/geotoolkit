@@ -17,12 +17,12 @@
 package org.geotoolkit.ogcapi.client.feature;
 
 import java.net.http.HttpRequest;
+import java.util.function.Supplier;
 import org.geotoolkit.client.openapi.AbstractOpenApi;
 import org.geotoolkit.client.openapi.OpenApiConfiguration;
-import org.geotoolkit.client.service.ServiceException;
-import org.geotoolkit.client.service.ServiceResponse;
-import org.geotoolkit.ogcapi.model.feature.Functions;
-import org.geotoolkit.ogcapi.model.jsonschema.JSONSchema;
+import org.geotoolkit.client.service.ServiceRequest;
+import org.geotoolkit.ogcapi.dto.feature.Functions;
+import org.geotoolkit.ogcapi.dto.jsonschema.JSONSchema;
 
 public final class FeatureApi extends AbstractOpenApi {
 
@@ -36,21 +36,21 @@ public final class FeatureApi extends AbstractOpenApi {
      * Features API Part 5.
      *
      * @return JSONSchema
-     * @throws ServiceException if fails to make API call
+     * @throws IllegalArgumentException if fails to make API call
      */
-    public ServiceResponse<JSONSchema> collectinGetJsonSchema(
+    public ServiceRequest<Supplier<JSONSchema>> collectinGetJsonSchema(
             @jakarta.annotation.Nonnull String collectionId,
             @jakarta.annotation.Nullable String f)
-            throws ServiceException {
+            throws IllegalArgumentException {
         if (collectionId == null) {
-            throw new ServiceException(400, "Missing the required parameter 'collectionId' when calling collectionGetDGGRSList");
+            throw new IllegalArgumentException("Missing the required parameter 'collectionId' when calling collectionGetDGGRSList");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
         request.uri(toUri("/collections/" + urlEncode(collectionId) + "/schema", toPairs("f", f)));
         request.header("Accept", "application/json");
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
-        return toSimpleResponse(send(request), JSONSchema.class);
+        return requestAsJson(request, JSONSchema.class);
     }
 
     /**
@@ -59,15 +59,14 @@ public final class FeatureApi extends AbstractOpenApi {
      * Features API Part 5.
      *
      * @return JSONSchema
-     * @throws ServiceException if fails to make API call
      */
-    public ServiceResponse<JSONSchema> getJsonSchema() throws ServiceException {
+    public ServiceRequest<Supplier<JSONSchema>> getJsonSchema() {
         final HttpRequest.Builder request = HttpRequest.newBuilder();
         request.uri(toUri("/schema", null));
         request.header("Accept", "application/json");
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
-        return toSimpleResponse(send(request), JSONSchema.class);
+        return requestAsJson(request, JSONSchema.class);
     }
 
     /**
@@ -77,15 +76,14 @@ public final class FeatureApi extends AbstractOpenApi {
      * Features API Part 3.
      *
      * @return Functions
-     * @throws ServiceException if fails to make API call
      */
-    public ServiceResponse<Functions> getFunctions() throws ServiceException {
+    public ServiceRequest<Supplier<Functions>> getFunctions() {
         final HttpRequest.Builder request = HttpRequest.newBuilder();
         request.uri(toUri("/functions", null));
         request.header("Accept", "application/json");
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
-        return toSimpleResponse(send(request), Functions.class);
+        return requestAsJson(request, Functions.class);
     }
 
     /**
@@ -97,11 +95,11 @@ public final class FeatureApi extends AbstractOpenApi {
      *
      * @param collectionId local identifier of a collection (required)
      * @return JSONSchema
-     * @throws ServiceException if fails to make API call
+     * @throws IllegalArgumentException if fails to make API call
      */
-    public ServiceResponse<JSONSchema> getQueryables(@jakarta.annotation.Nonnull String collectionId) throws ServiceException {
+    public ServiceRequest<Supplier<JSONSchema>> getQueryables(@jakarta.annotation.Nonnull String collectionId) throws IllegalArgumentException {
         if (collectionId == null) {
-            throw new ServiceException(400, "Missing the required parameter 'collectionId' when calling getQueryables");
+            throw new IllegalArgumentException("Missing the required parameter 'collectionId' when calling getQueryables");
         }
 
         final HttpRequest.Builder request = HttpRequest.newBuilder();
@@ -109,7 +107,7 @@ public final class FeatureApi extends AbstractOpenApi {
         request.header("Accept", "application/schema+json");
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
-        return toSimpleResponse(send(request), JSONSchema.class);
+        return requestAsJson(request, JSONSchema.class);
     }
 
 }

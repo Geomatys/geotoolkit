@@ -17,19 +17,21 @@
 package org.geotoolkit.ogcapi.client.tiles;
 
 import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 import org.geotoolkit.client.openapi.AbstractOpenApi;
 import org.geotoolkit.client.openapi.OpenApiConfiguration;
 import static org.geotoolkit.client.service.AbstractService.toPairs;
 import static org.geotoolkit.client.service.AbstractService.urlEncode;
 import org.geotoolkit.client.service.Pair;
 import org.geotoolkit.client.service.ServiceException;
-import org.geotoolkit.client.service.ServiceResponse;
-import org.geotoolkit.ogcapi.model.tiles.GetTileMatrixSetsListResponse;
-import org.geotoolkit.ogcapi.model.tiles.GetTileSetsListResponse;
-import org.geotoolkit.ogcapi.model.tiles.TileMatrixSet;
-import org.geotoolkit.ogcapi.model.tiles.TileSet;
+import org.geotoolkit.client.service.ServiceRequest;
+import org.geotoolkit.ogcapi.dto.tiles.GetTileMatrixSetsListResponse;
+import org.geotoolkit.ogcapi.dto.tiles.GetTileSetsListResponse;
+import org.geotoolkit.ogcapi.dto.tiles.TileMatrixSet;
+import org.geotoolkit.ogcapi.dto.tiles.TileSet;
 import org.geotoolkit.ogcapi.request.tiles.GetTile;
 import org.geotoolkit.ogcapi.request.tiles.GetTileMatrixSet;
 import org.geotoolkit.ogcapi.request.tiles.GetTileSet;
@@ -50,25 +52,25 @@ public final class TilesApi extends AbstractOpenApi {
      * Retrieve a tile
      *
      * @param parameters request parameters
-     * @return ServiceResponse&lt;byte[]&gt;
-     * @throws ServiceException if fails to make API call
+     * @return ServiceRequest&lt;byte[]&gt;
+     * @throws IllegalArgumentException if fails to make API call
      */
-    public ServiceResponse<byte[]> getTile(GetTile parameters) throws ServiceException {
+    public ServiceRequest<byte[]> getTile(GetTile parameters) throws IllegalArgumentException {
         // verify the required parameter 'tileMatrix' is set
         if (parameters.getTileMatrixId() == null) {
-            throw new ServiceException(400, "Missing the required parameter 'tileMatrix' when calling collectionCoverageGetTile");
+            throw new IllegalArgumentException("Missing the required parameter 'tileMatrix' when calling collectionCoverageGetTile");
         }
         // verify the required parameter 'tileRow' is set
         if (parameters.getTileRow() == null) {
-            throw new ServiceException(400, "Missing the required parameter 'tileRow' when calling collectionCoverageGetTile");
+            throw new IllegalArgumentException("Missing the required parameter 'tileRow' when calling collectionCoverageGetTile");
         }
         // verify the required parameter 'tileCol' is set
         if (parameters.getTileCol() == null) {
-            throw new ServiceException(400, "Missing the required parameter 'tileCol' when calling collectionCoverageGetTile");
+            throw new IllegalArgumentException("Missing the required parameter 'tileCol' when calling collectionCoverageGetTile");
         }
         // verify the required parameter 'tileMatrixSetId' is set
         if (parameters.getTileMatrixSetId() == null) {
-            throw new ServiceException(400, "Missing the required parameter 'tileMatrixSetId' when calling collectionCoverageGetTile");
+            throw new IllegalArgumentException("Missing the required parameter 'tileMatrixSetId' when calling collectionCoverageGetTile");
         }
 
         final List<Pair> queryParams = new ArrayList<>();
@@ -95,20 +97,20 @@ public final class TilesApi extends AbstractOpenApi {
         request.header("Accept", "*/*");
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
-        return toSimpleResponse(send(request), byte[].class);
+        return request(request, HttpResponse.BodyHandlers.ofByteArray());
     }
 
     /**
      * Retrieve the tileset metadata for the specified tiling scheme (tile matrix set)
      *
      * @param parameters request parameters
-     * @return ServiceResponse&lt;TileSet&gt;
-     * @throws ServiceException if fails to make API call
+     * @return ServiceRequest&lt;TileSet&gt;
+     * @throws IllegalArgumentException if fails to make API call
      */
-    public ServiceResponse<TileSet> getTileSet(GetTileSet parameters) throws ServiceException {
+    public ServiceRequest<Supplier<TileSet>> getTileSet(GetTileSet parameters) throws IllegalArgumentException {
         // verify the required parameter 'tileMatrixSetId' is set
         if (parameters.getTileMatrixSetId() == null) {
-            throw new ServiceException(400, "Missing the required parameter 'tileMatrixSetId' when calling collectionCoverageGetTileSet");
+            throw new IllegalArgumentException("Missing the required parameter 'tileMatrixSetId' when calling collectionCoverageGetTileSet");
         }
 
         final List<Pair> queryParams = new ArrayList<>();
@@ -126,17 +128,16 @@ public final class TilesApi extends AbstractOpenApi {
         request.header("Accept", "application/json");
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
-        return toSimpleResponse(send(request), TileSet.class);
+        return requestAsJson(request, TileSet.class);
     }
 
     /**
      * Retrieve the list of available tilesets.
      *
      * @param parameters request parameters
-     * @return ServiceResponse&lt;GetTileSetsListResponse&gt;
-     * @throws ServiceException if fails to make API call
+     * @return ServiceRequest&lt;GetTileSetsListResponse&gt;
      */
-    public ServiceResponse<GetTileSetsListResponse> getTileSetsList(GetTileSetsList parameters) throws ServiceException {
+    public ServiceRequest<Supplier<GetTileSetsListResponse>> getTileSetsList(GetTileSetsList parameters) {
 
         final List<Pair> queryParams = new ArrayList<>();
         queryParams.addAll(toPairs("f", parameters.getFormat()));
@@ -152,21 +153,21 @@ public final class TilesApi extends AbstractOpenApi {
         request.header("Accept", "application/json");
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
-        return toSimpleResponse(send(request), GetTileSetsListResponse.class);
+        return requestAsJson(request, GetTileSetsListResponse.class);
     }
 
     /**
      * Retrieve the definition of the specified tiling scheme (tile matrix set)
      *
      * @param parameters request parameters
-     * @return ServiceResponse&lt;TileMatrixSet&gt;
-     * @throws ServiceException if fails to make API call
+     * @return ServiceRequest&lt;TileMatrixSet&gt;
+     * @throws IllegalArgumentException if fails to make API call
      */
-    public ServiceResponse<TileMatrixSet> getTileMatrixSet(GetTileMatrixSet parameters) throws ServiceException {
+    public ServiceRequest<Supplier<TileMatrixSet>> getTileMatrixSet(GetTileMatrixSet parameters) throws IllegalArgumentException {
 
         // verify the required parameter 'tileMatrixSetId' is set
         if (parameters.getTileMatrixSetId() == null) {
-            throw new ServiceException(400, "Missing the required parameter 'tileMatrixSetId' when calling getTileMatrixSet");
+            throw new IllegalArgumentException("Missing the required parameter 'tileMatrixSetId' when calling getTileMatrixSet");
         }
 
         final HttpRequest.Builder request = HttpRequest.newBuilder();
@@ -174,7 +175,7 @@ public final class TilesApi extends AbstractOpenApi {
         request.header("Accept", "application/json");
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
-        return toSimpleResponse(send(request), TileMatrixSet.class);
+        return requestAsJson(request, TileMatrixSet.class);
     }
 
     /**
@@ -182,17 +183,16 @@ public final class TilesApi extends AbstractOpenApi {
      *
      * @param f The format of the response. If no value is provided, the accept header is used to determine the format.
      * Accepted values are &#39;json&#39; or &#39;html&#39;. (optional)
-     * @return ServiceResponse&lt;GetTileMatrixSetsList200Response&gt;
-     * @throws ServiceException if fails to make API call
+     * @return ServiceRequest&lt;GetTileMatrixSetsList200Response&gt;
      */
-    public ServiceResponse<GetTileMatrixSetsListResponse> getTileMatrixSetsList(@jakarta.annotation.Nullable String f) throws ServiceException {
+    public ServiceRequest<Supplier<GetTileMatrixSetsListResponse>> getTileMatrixSetsList(@jakarta.annotation.Nullable String f) {
 
         final HttpRequest.Builder request = HttpRequest.newBuilder();
         request.uri(toUri("/tileMatrixSets", toPairs("f", f)));
         request.header("Accept", "application/json");
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
-        return toSimpleResponse(send(request), GetTileMatrixSetsListResponse.class);
+        return requestAsJson(request, GetTileMatrixSetsListResponse.class);
     }
 
 }

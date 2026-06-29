@@ -16,10 +16,12 @@
  */
 package org.geotoolkit.ogcapi.storage;
 
+import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
 import org.apache.sis.storage.AbstractResource;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStoreException;
@@ -27,12 +29,11 @@ import org.apache.sis.storage.Resource;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.client.openapi.OpenApiConfiguration;
 import org.geotoolkit.client.service.ServiceException;
-import org.geotoolkit.client.service.ServiceResponse;
 import org.geotoolkit.ogcapi.client.common.CollectionsApi;
-import org.geotoolkit.ogcapi.model.LinkRelations;
-import org.geotoolkit.ogcapi.model.common.CollectionDescription;
-import org.geotoolkit.ogcapi.model.common.Collections;
-import org.geotoolkit.ogcapi.model.common.Link;
+import org.geotoolkit.ogcapi.dto.LinkRelations;
+import org.geotoolkit.ogcapi.dto.common.CollectionDescription;
+import org.geotoolkit.ogcapi.dto.common.Collections;
+import org.geotoolkit.ogcapi.dto.common.Link;
 import org.geotoolkit.ogcapi.request.common.GetCollection;
 import org.geotoolkit.ogcapi.request.common.GetCollectionList;
 import org.opengis.util.GenericName;
@@ -62,16 +63,16 @@ public final class CollectionResource extends AbstractResource implements Aggreg
             components = new ArrayList<>();
 
             try {
-                final ServiceResponse<Collections> response = api.getCollections(
-                        new GetCollectionList().limit(Integer.MAX_VALUE).format("json"));
-                final Collections collection = response.getData();
+                final HttpResponse<Supplier<Collections>> response = api.getCollections(
+                        new GetCollectionList().limit(Integer.MAX_VALUE).format("json")).send();
+                final Collections collection = response.body().get();
                 final List<CollectionDescription> collections = collection.getCollections();
 
                 loop:
                 for (CollectionDescription cd : collections) {
-                    final ServiceResponse<CollectionDescription> fres = api.getCollection(
-                            new GetCollection().collectionId(cd.getId()).format("json"));
-                    final CollectionDescription fullDescription = fres.getData();
+                    final HttpResponse<Supplier<CollectionDescription>> fres = api.getCollection(
+                            new GetCollection().collectionId(cd.getId()).format("json")).send();
+                    final CollectionDescription fullDescription = fres.body().get();
 
                     final List<Link> links = fullDescription.getLinks();
                     for (Link link : links) {

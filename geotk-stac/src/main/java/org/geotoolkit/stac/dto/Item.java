@@ -1,16 +1,33 @@
+/*
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2026, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
 package org.geotoolkit.stac.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.JsonNode;
-import org.geotoolkit.ogcapi.model.common.Link;
+import org.geotoolkit.ogcapi.dto.common.Link;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import org.geotoolkit.ogcapi.dto.DataTransferObject;
 
 /**
  * Represents a STAC Item.
@@ -33,7 +50,7 @@ import java.util.Objects;
         Item.JSON_PROPERTY_ASSETS,
         Item.JSON_PROPERTY_COLLECTION
 })
-public class Item {
+public class Item extends DataTransferObject {
 
     public static final String JSON_PROPERTY_STAC_VERSION = "stac_version";
     public static final String JSON_PROPERTY_STAC_EXTENSIONS = "stac_extensions";

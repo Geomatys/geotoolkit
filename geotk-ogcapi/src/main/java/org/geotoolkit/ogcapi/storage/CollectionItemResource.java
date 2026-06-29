@@ -22,9 +22,9 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.AbstractResource;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.iso.Names;
-import org.geotoolkit.ogcapi.model.common.CollectionDescription;
-import org.geotoolkit.ogcapi.model.common.Extent;
-import org.geotoolkit.ogcapi.model.common.SpatialExtent;
+import org.geotoolkit.ogcapi.dto.common.CollectionDescription;
+import org.geotoolkit.ogcapi.dto.common.Extent;
+import org.geotoolkit.ogcapi.dto.common.SpatialExtent;
 import org.opengis.geometry.Envelope;
 import org.opengis.util.GenericName;
 
