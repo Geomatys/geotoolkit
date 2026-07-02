@@ -17,6 +17,7 @@
 package org.geotoolkit.storage.memory;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
@@ -35,9 +36,12 @@ import org.apache.sis.storage.tiling.Tile;
 import org.apache.sis.storage.tiling.WritableTileMatrix;
 import org.apache.sis.storage.tiling.WritableTileMatrixSet;
 import org.apache.sis.util.ArraysExt;
+import org.apache.sis.util.iso.Names;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.coordinatesequence.GridAlignedFilter;
+import org.geotoolkit.storage.DataStores;
+import org.geotoolkit.storage.DefaultAggregate;
 import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.storage.multires.AbstractTileGenerator;
@@ -51,6 +55,7 @@ import org.opengis.filter.FilterFactory;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.GenericName;
 
 /**
  * Generate tiles with a FeatureSet resource.
@@ -67,13 +72,23 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class FeatureSetTileGenerator extends AbstractTileGenerator {
 
+    private static final GenericName DEFAULT_NAME = Names.createLocalName(null, null, "tile");
     private static final FilterFactory FF = DefaultFilterFactory.forFeatures();
-    private final FeatureSet source;
-    private final CoordinateReferenceSystem sourceCrs;
+    private final Resource source;
+    private final Collection<FeatureSet> sets;
 
-    public FeatureSetTileGenerator(FeatureSet source) throws DataStoreException {
+    /**
+     *
+     * @param source if it is a FeatureSet the generated tiles will be FeatureSet
+     *        if it is an aggregate, tile will also be an aggregate
+     * @throws DataStoreException
+     */
+    public FeatureSetTileGenerator(Resource source) throws DataStoreException {
         this.source = source;
-        sourceCrs = FeatureExt.getCRS(source.getType());
+        sets = DataStores.flatten(source, true, FeatureSet.class);
+        if (sets.isEmpty()) {
+            throw new DataStoreException("At least one Featureset in the source must be provided");
+        }
     }
 
     @Override
@@ -120,16 +135,30 @@ public class FeatureSetTileGenerator extends AbstractTileGenerator {
                 .build().upsample(ArraysExt.copyAsLongs(tileSize));
         final Envelope tileEnv = tileGrid.getEnvelope();
         final CoordinateReferenceSystem tileCrs = tileEnv.getCoordinateReferenceSystem();
+        final Function<Geometry, Geometry> simplifier = buildSimplifier(tileGrid);
+        final Polygon tileBound = JTS.toGeometry(tileEnv);
+
+        if (sets.size() == 1) {
+            final FeatureSet resource = buildTile(sets.iterator().next(), tileGrid, tileEnv, simplifier, tileBound);
+            return new InMemoryDeferredTile(tileCoord, resource);
+        } else {
+            final DefaultAggregate aggregate = new DefaultAggregate(source.getIdentifier().orElse(DEFAULT_NAME));
+            for (FeatureSet source : sets) {
+                aggregate.addResource(buildTile(source, tileGrid, tileEnv, simplifier, tileBound));
+            }
+            return new InMemoryDeferredTile(tileCoord, aggregate);
+        }
+    }
+
+    private FeatureSet buildTile(FeatureSet source, GridGeometry tileGrid, Envelope tileEnv, Function<Geometry, Geometry> simplifier, Polygon tileBound) throws DataStoreException {
+        final CoordinateReferenceSystem tileCrs = tileEnv.getCoordinateReferenceSystem();
+
         final Filter filter;
         try {
-            filter = buildFilter(tileEnv);
+            filter = buildFilter(source, tileEnv);
         } catch (TransformException ex) {
             throw new DataStoreException(ex.getMessage(), ex);
         }
-
-        final Function<Geometry, Geometry> simplifier = buildSimplifier(tileGrid);
-
-        final Polygon tileBound = JTS.toGeometry(tileEnv);
 
         final CoordinateReferenceSystem baseCrs = FeatureExt.getCRS(source.getType());
         final FeatureQuery query;
@@ -173,12 +202,12 @@ public class FeatureSetTileGenerator extends AbstractTileGenerator {
             }
         }
 
-        FeatureSet fs = new InMemoryFeatureSet(subset.getType(), features);
-        fs = postSimplify(tileGrid, fs);
-        return new InMemoryDeferredTile(tileCoord, fs);
+        final FeatureSet fs = new InMemoryFeatureSet(subset.getType(), features);
+        return postSimplify(tileGrid, fs);
     }
 
-    private Filter buildFilter(Envelope env) throws DataStoreException, TransformException {
+    private Filter buildFilter(FeatureSet fs, Envelope env) throws DataStoreException, TransformException {
+        CoordinateReferenceSystem sourceCrs = FeatureExt.getCRS(fs.getType());
         if (sourceCrs != null) {
             //convert envelope to data crs, more efficient
             env = Envelopes.transform(env, sourceCrs);
