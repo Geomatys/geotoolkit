@@ -32,6 +32,7 @@ public interface FeatureCatalogue extends Resource {
 
     /**
      * Get list of types defined in the catalogue.
+     * This list include the type returned by getType method and it should be placed first in the set.
      *
      * @return Set of FeatureType names.
      * @throws DataStoreException if an error occurred while fetching names list.
