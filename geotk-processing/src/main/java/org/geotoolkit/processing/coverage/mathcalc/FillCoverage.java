@@ -193,7 +193,7 @@ public class FillCoverage {
 
         for(WritableTileMatrixSet matrixset : outRef.getTileMatrixSets()){
             for(WritableTileMatrix matrix : matrixset.getTileMatrices().values()){
-                final int[] tileSize = TileMatrices.getTileSize(matrix);
+                final int[] tileSize = TileMatrices.getOrEstimateTileGridSize(matrix);
                 final double[] upperLeftGeo = TileMatrices.getUpperLeftCorner(matrix).getCoordinates();
 
                 final Dimension gridSize = TileMatrices.getGridSize(matrix);

@@ -278,7 +278,7 @@ public class GeneralProgressiveResource extends AbstractResource implements Prog
 
         @Override
         public int[] getTileSize() {
-            return TileMatrices.getTileSize(base);
+            return TileMatrices.getOrEstimateTileGridSize(base);
         }
 
         @Override

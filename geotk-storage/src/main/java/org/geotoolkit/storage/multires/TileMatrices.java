@@ -153,6 +153,32 @@ public final class TileMatrices {
     }
 
     /**
+     * If the TileMatrix is a Geotoolkit matrix, use the provided tile size.
+     * Otherwise compute a estimated tile size based on the resolution.
+     *
+     * @param tileMatrix
+     * @return real or estimated tile size
+     */
+    public static int[] getOrEstimateTileGridSize(TileMatrix tileMatrix) {
+        if (tileMatrix instanceof org.geotoolkit.storage.multires.TileMatrix) {
+            return ((org.geotoolkit.storage.multires.TileMatrix)tileMatrix).getTileSize();
+        }
+        final double[] resolution = tileMatrix.getResolution();
+        final GridGeometry tilingScheme = tileMatrix.getTilingScheme();
+        final GridExtent extent = tilingScheme.getExtent();
+        long[] corner = extent.getLow().getCoordinateValues();
+        final Envelope envelope = tilingScheme.derive().subgrid(new GridExtent(null, corner, corner, true)).build().getEnvelope();
+
+        final int[] tileSize = new int[resolution.length];
+        for (int i = 0; i < resolution.length; i++) {
+            double size = envelope.getSpan(i) / resolution[i];
+            if (size < 1) size = 1;
+            tileSize[i] = (int)Math.round(size);
+        }
+        return tileSize;
+    }
+
+    /**
      * Create TileMatrix GridGeometry from corner, size and scale informations.
      * This method expect the grid size to match dimensions 0,1 of the corner CRS.
      * The upper left corner may have more then two dimensions, extract dimension will generate a 1 unit slice
@@ -585,7 +611,7 @@ public final class TileMatrices {
      */
     public static AffineTransform2D getTileGridToCRS2D(TileMatrix tileMatrix, long[] location, PixelInCell orientation){
 
-        final int[] tileSize = ((org.geotoolkit.storage.multires.TileMatrix)tileMatrix).getTileSize();
+        final int[] tileSize = getOrEstimateTileGridSize(tileMatrix);
         final DirectPosition upperleft = getUpperLeftCorner(tileMatrix);
         final double scale = tileMatrix.getResolution()[0];
 
@@ -855,7 +881,7 @@ public final class TileMatrices {
      * @return
      */
     public static GridGeometry getAbsoluteTileGridGeometry(TileMatrix tileMatrix, long[] location) {
-        final int[] tileSize = TileMatrices.getTileSize(tileMatrix);
+        final int[] tileSize = TileMatrices.getOrEstimateTileGridSize(tileMatrix);
         return getAbsoluteTileGridGeometry2D(tileMatrix, location, tileSize);
     }
 
@@ -892,7 +918,7 @@ public final class TileMatrices {
      * @return
      */
     public static GridGeometry getAbsoluteTileGridGeometry2D(TileMatrix tileMatrix, long[] location) {
-        final int[] tileSize = TileMatrices.getTileSize(tileMatrix);
+        final int[] tileSize = TileMatrices.getOrEstimateTileGridSize(tileMatrix);
         return getAbsoluteTileGridGeometry2D(tileMatrix, location, tileSize);
     }
 

@@ -304,7 +304,7 @@ public class MapContextTileGenerator extends AbstractTileGenerator {
                     Stream<Tile> stream = LongStream.range(rect.y, rect.y+rect.height).parallel().boxed().flatMap((Long y) -> {
                         try {
                             final ProgressiveImage img = new ProgressiveImage(canvasDef, sceneDef,
-                                    tileMatrix.getTilingScheme(), TileMatrices.getTileSize(tileMatrix), 0);
+                                    tileMatrix.getTilingScheme(), TileMatrices.getOrEstimateTileGridSize(tileMatrix), 0);
                             return img.generate(rect.x, rect.x+rect.width, y.intValue(), skipEmptyTiles);
                         } catch (Exception ex) {
                             LOGGER.log(Level.INFO, "Failed to generate a tile {0}", ex.getMessage());

@@ -129,12 +129,11 @@ public class FeatureSetTileGenerator extends AbstractTileGenerator {
     @Override
     public Tile generateTile(WritableTileMatrixSet tileMatrixSet, WritableTileMatrix tileMatrix, long[] tileCoord) throws DataStoreException {
 
-        final int[] tileSize = TileMatrices.getTileSize(tileMatrix);
+        final int[] tileSize = TileMatrices.getOrEstimateTileGridSize(tileMatrix);
         final GridGeometry tileGrid = tileMatrix.getTilingScheme().derive()
                 .subgrid(new GridExtent(null, tileCoord, tileCoord, true))
                 .build().upsample(ArraysExt.copyAsLongs(tileSize));
         final Envelope tileEnv = tileGrid.getEnvelope();
-        final CoordinateReferenceSystem tileCrs = tileEnv.getCoordinateReferenceSystem();
         final Function<Geometry, Geometry> simplifier = buildSimplifier(tileGrid);
         final Polygon tileBound = JTS.toGeometry(tileEnv);
 

@@ -94,7 +94,7 @@ public final class StrictlyCoverageFinder extends CoverageFinder {
                 result = candidate;
             }
             //check if it will not requiere too much tiles
-            final int[] tileSize = TileMatrices.getTileSize(candidate);
+            final int[] tileSize = TileMatrices.getOrEstimateTileGridSize(candidate);
             double nbtileX = env.getSpan(0) / (tileSize[0]*scale);
             double nbtileY = env.getSpan(1) / (tileSize[1]*scale);
 
