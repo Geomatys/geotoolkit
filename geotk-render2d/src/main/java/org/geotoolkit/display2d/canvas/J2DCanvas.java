@@ -118,29 +118,31 @@ public abstract class J2DCanvas extends AbstractCanvas2D{
          * drawn. Some graphics may spend one or two threads for pre-computing data.
          */
         Stream<Presentation> presentations = Stream.empty();
-        for (final Graphic graphic : graphics) {
-            if (monitor.stopRequested()) {
-                return dataPainted;
-            }
-
-            if (graphic instanceof MapLayerJ2D) {
-                try {
-                    presentations = Stream.concat(presentations, ((MapLayerJ2D) graphic) .paintLayer(context2D));
-                } catch (PortrayalException ex) {
-                    monitor.exceptionOccured(ex, Level.INFO);
-                } catch (DataStoreException ex) {
-                    monitor.exceptionOccured(ex, Level.INFO);
-                }
-            } else if (graphic instanceof GraphicJ2D) {
-                dataPainted |= ((GraphicJ2D) graphic).paint(context2D);
-            }
-        }
-
-        final J2DPainter painter = new J2DPainter();
         try {
-            dataPainted |= painter.paint(context2D, presentations, true);
-        } catch (PortrayalException ex) {
-            monitor.exceptionOccured(ex, Level.INFO);
+            for (final Graphic graphic : graphics) {
+                if (monitor.stopRequested()) {
+                    return dataPainted;
+                }
+
+                if (graphic instanceof MapLayerJ2D) {
+                    try {
+                        presentations = Stream.concat(presentations, ((MapLayerJ2D) graphic) .paintLayer(context2D));
+                    } catch (PortrayalException ex) {
+                        monitor.exceptionOccured(ex, Level.INFO);
+                    } catch (DataStoreException ex) {
+                        monitor.exceptionOccured(ex, Level.INFO);
+                    }
+                } else if (graphic instanceof GraphicJ2D) {
+                    dataPainted |= ((GraphicJ2D) graphic).paint(context2D);
+                }
+            }
+
+            final J2DPainter painter = new J2DPainter();
+            try {
+                dataPainted |= painter.paint(context2D, presentations, true);
+            } catch (PortrayalException ex) {
+                monitor.exceptionOccured(ex, Level.INFO);
+            }
         } finally {
             presentations.close();
         }
