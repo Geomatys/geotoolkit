@@ -151,7 +151,7 @@ public class TileMatrixSetCoverageReader <T extends TiledResource & org.apache.s
 
         //-- size of internal pixel data recovered
         final Dimension gridSize = TileMatrices.getGridSize(matrix);
-        final int[] tileSize = TileMatrices.getTileSize(matrix);
+        final int[] tileSize = TileMatrices.getOrEstimateTileGridSize(matrix);
         final GridExtent dataSize = new GridExtent(
                     ((long) gridSize.width) * tileSize[0],
                     ((long) gridSize.height) * tileSize[1]);
@@ -238,7 +238,7 @@ public class TileMatrixSetCoverageReader <T extends TiledResource & org.apache.s
             sampleDimensions = subSamples;
         }
 
-        final int[] tileSize = TileMatrices.getTileSize(matrix);
+        final int[] tileSize = TileMatrices.getOrEstimateTileGridSize(matrix);
 
         final GridExtent area = TileMatrices.getTilesInEnvelope(matrix, wantedEnv);
         final Rectangle tilesInEnvelope = new Rectangle(

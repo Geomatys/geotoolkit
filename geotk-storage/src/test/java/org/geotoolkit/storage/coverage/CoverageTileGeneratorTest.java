@@ -232,7 +232,7 @@ public class CoverageTileGeneratorTest {
                 for (int x = 0; x < gridSize.width; x++) {
                     final Tile tile = tileMatrix.getTile(x, y).orElse(null);
                     final long[] tileCoord = new long[]{x, y};
-                    final GridGeometry tileGridGeom = TileMatrices.getTileGridGeometry2D(tileMatrix, tileCoord, TileMatrices.getTileSize(tileMatrix));
+                    final GridGeometry tileGridGeom = TileMatrices.getTileGridGeometry2D(tileMatrix, tileCoord, TileMatrices.getOrEstimateTileGridSize(tileMatrix));
                     final Envelope tileEnv = tileGridGeom.getEnvelope();
                     if (generateEnvelope == null || generateEnvelope.intersects(tileEnv)) {
                         GridCoverageResource gcr = (GridCoverageResource) tile.getResource();

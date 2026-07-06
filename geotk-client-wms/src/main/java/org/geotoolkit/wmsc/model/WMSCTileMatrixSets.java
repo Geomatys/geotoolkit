@@ -93,7 +93,7 @@ public class WMSCTileMatrixSets extends CachedTileMatrixSets {
 
     @Override
     public Request getTileRequest(TileMatrixSet matrixset, TileMatrix matrix, long[] indices, Map hints) throws DataStoreException {
-        final int[] tileSize = TileMatrices.getTileSize(matrix);
+        final int[] tileSize = TileMatrices.getOrEstimateTileGridSize(matrix);
         final GetMapRequest request = getServer().createGetMap();
         request.setLayers(layer);
         request.setEnvelope(TileMatrices.computeTileEnvelope(matrix, indices));

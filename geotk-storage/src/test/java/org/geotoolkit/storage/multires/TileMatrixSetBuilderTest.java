@@ -77,9 +77,9 @@ public class TileMatrixSetBuilderTest {
         assertEquals(upperleft, TileMatrices.getUpperLeftCorner(m2));
         assertEquals(upperleft, TileMatrices.getUpperLeftCorner(m3));
 
-        assertArrayEquals(new int[]{256, 256}, TileMatrices.getTileSize(m1));
-        assertArrayEquals(new int[]{256, 256}, TileMatrices.getTileSize(m2));
-        assertArrayEquals(new int[]{256, 256}, TileMatrices.getTileSize(m3));;
+        assertArrayEquals(new int[]{256, 256}, TileMatrices.getOrEstimateTileGridSize(m1));
+        assertArrayEquals(new int[]{256, 256}, TileMatrices.getOrEstimateTileGridSize(m2));
+        assertArrayEquals(new int[]{256, 256}, TileMatrices.getOrEstimateTileGridSize(m3));;
 
         assertTrue(new GridExtent(4, 2).equals(m1.getTilingScheme().getExtent(), ComparisonMode.IGNORE_METADATA));
         assertTrue(new GridExtent(2, 1).equals(m2.getTilingScheme().getExtent(), ComparisonMode.IGNORE_METADATA));
@@ -113,7 +113,7 @@ public class TileMatrixSetBuilderTest {
 
         assertEquals(upperleft, TileMatrices.getUpperLeftCorner(m1));
 
-        assertArrayEquals(new int[]{256, 256}, TileMatrices.getTileSize(m1));
+        assertArrayEquals(new int[]{256, 256}, TileMatrices.getOrEstimateTileGridSize(m1));
 
         assertEquals("0", m1.getIdentifier().toString());
 
@@ -150,8 +150,8 @@ public class TileMatrixSetBuilderTest {
         assertEquals(upperleft, TileMatrices.getUpperLeftCorner(m1));
         assertEquals(upperleft, TileMatrices.getUpperLeftCorner(m2));
 
-        assertArrayEquals(new int[]{256, 256}, TileMatrices.getTileSize(m1));
-        assertArrayEquals(new int[]{256, 256}, TileMatrices.getTileSize(m2));
+        assertArrayEquals(new int[]{256, 256}, TileMatrices.getOrEstimateTileGridSize(m1));
+        assertArrayEquals(new int[]{256, 256}, TileMatrices.getOrEstimateTileGridSize(m2));
 
         assertEquals("1", m1.getIdentifier().toString());
         assertEquals("0", m2.getIdentifier().toString());
@@ -187,7 +187,7 @@ public class TileMatrixSetBuilderTest {
             final DirectPosition2D upperleft = new DirectPosition2D(crs, -180, 90.0);
             assertEquals(upperleft, TileMatrices.getUpperLeftCorner(m1));
 
-            assertArrayEquals(new int[]{256, 256}, TileMatrices.getTileSize(m1));
+            assertArrayEquals(new int[]{256, 256}, TileMatrices.getOrEstimateTileGridSize(m1));
 
             assertEquals("0", m1.getIdentifier().toString());
 
@@ -216,8 +216,8 @@ public class TileMatrixSetBuilderTest {
             assertEquals(upperleft, TileMatrices.getUpperLeftCorner(m1));
             assertEquals(upperleft, TileMatrices.getUpperLeftCorner(m2));
 
-            assertArrayEquals(new int[]{128, 128}, TileMatrices.getTileSize(m1));
-            assertArrayEquals(new int[]{128, 128}, TileMatrices.getTileSize(m2));
+            assertArrayEquals(new int[]{128, 128}, TileMatrices.getOrEstimateTileGridSize(m1));
+            assertArrayEquals(new int[]{128, 128}, TileMatrices.getOrEstimateTileGridSize(m2));
 
             assertEquals("1", m1.getIdentifier().toString());
             assertEquals("0", m2.getIdentifier().toString());
@@ -261,9 +261,9 @@ public class TileMatrixSetBuilderTest {
         assertEquals(upperleft, TileMatrices.getUpperLeftCorner(m2));
         assertEquals(upperleft, TileMatrices.getUpperLeftCorner(m3));
 
-        assertArrayEquals(new int[]{256, 256}, TileMatrices.getTileSize(m1));
-        assertArrayEquals(new int[]{256, 256}, TileMatrices.getTileSize(m2));
-        assertArrayEquals(new int[]{256, 256}, TileMatrices.getTileSize(m3));
+        assertArrayEquals(new int[]{256, 256}, TileMatrices.getOrEstimateTileGridSize(m1));
+        assertArrayEquals(new int[]{256, 256}, TileMatrices.getOrEstimateTileGridSize(m2));
+        assertArrayEquals(new int[]{256, 256}, TileMatrices.getOrEstimateTileGridSize(m3));
 
         assertEquals("2", m1.getIdentifier().toString());
         assertEquals("1", m2.getIdentifier().toString());
@@ -305,7 +305,7 @@ public class TileMatrixSetBuilderTest {
         final TileMatrix m1 = TileMatrices.getTileMatrices(tms,scales[0]).iterator().next();
 
         assertEquals(upperleft, TileMatrices.getUpperLeftCorner(m1));
-        assertArrayEquals(new int[]{30, 30}, TileMatrices.getTileSize(m1));
+        assertArrayEquals(new int[]{30, 30}, TileMatrices.getOrEstimateTileGridSize(m1));
         assertTrue(new GridExtent(null, new long[3], new long[]{1,1,1},false).equals(m1.getTilingScheme().getExtent(), ComparisonMode.IGNORE_METADATA));
     }
 
