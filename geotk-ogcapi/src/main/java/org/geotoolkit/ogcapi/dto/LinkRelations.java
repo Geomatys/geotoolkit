@@ -96,6 +96,18 @@ public final class LinkRelations {
      * Refers to the terms of service associated with the link’s context.
      */
     public static final String TERMS_OF_SERVICE = "terms-of-service";
+    /**
+     * Refers to a resource that provides a preview of the link’s context.
+     *
+     * OGCAPI-Maps : In the context of this specification, it used to link to a low-resolution preview of the map.
+     */
+    public static final String PREVIEW = "preview";
+    /**
+     * Refers to a stylesheet.
+     *
+     * OGCAPI-Maps : In the context of this specification, it refers to a cartographic stylesheet, as provided by OGC API — Styles.
+     */
+    public static final String STYLESHEET = "stylesheet";
 
     // /////////////////////////////////////////////////////////////////////////////////////////
     // OGC-API CORE
@@ -253,5 +265,28 @@ public final class LinkRelations {
      * The target IRI points to the information resource of a zone which is a neighbor of the link’s context zone.
      */
     public static final String OGC_DGGRS_ZONE_NEIGHBOR = "https://www.opengis.net/def/rel/ogc/1.0/dggrs-zone-neighbor";
+
+    // /////////////////////////////////////////////////////////////////////////////////////////
+    // OGC-API - Maps
+    // /////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Refers to a resource that is map representation of another geospatial resource (e.g., a collection).
+     */
+    public static final String OGC_MAPS_MAP = "https://www.opengis.net/def/rel/ogc/1.0/map";
+    /**
+     * Refers to a legend for the map.
+     */
+    public static final String OGC_MAPS_LEGEND = "https://www.opengis.net/def/rel/ogc/1.0/legend";
+
+    // /////////////////////////////////////////////////////////////////////////////////////////
+    // OGC-API - Styles
+    // /////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * The target IRI points to a resource that describes how to provide styles of the context resource
+     * that internally can contain links to maps.
+     */
+    public static final String OGC_STYLES_STYLE = "https://www.opengis.net/def/rel/ogc/1.0/styles";
 
 }

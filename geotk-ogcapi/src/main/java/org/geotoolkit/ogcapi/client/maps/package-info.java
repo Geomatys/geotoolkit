@@ -17,7 +17,7 @@
 
 
 /**
- * Placeholder for OGC-API Maps bindings.
- * @see https://ogcapi.ogc.org/maps/
+ * OGC-API Maps bindings.
+ * @see https://docs.ogc.org/is/20-058/20-058.html
  */
 package org.geotoolkit.ogcapi.client.maps;
