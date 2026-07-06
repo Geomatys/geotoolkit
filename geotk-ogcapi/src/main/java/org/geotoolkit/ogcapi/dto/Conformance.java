@@ -359,4 +359,102 @@ public final class Conformance {
 
     public static final String TILES_MVT = "http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/mvt";
 
+    // /////////////////////////////////////////////////////////////////////////////////////////
+    // OGC-API Maps - Part 1
+    // https://docs.ogc.org/is/20-058/20-058.html
+    // /////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * @see https://docs.ogc.org/is/20-058/20-058.html#rc_core
+     */
+    public static final String MAPS_CORE = "https://www.opengis.net/spec/ogcapi-maps-1/1.0/conf/core";
+    /**
+     * @see https://docs.ogc.org/is/20-058/20-058.html#rc_tilesets
+     */
+    public static final String MAPS_MAP_TILESETS = "https://www.opengis.net/spec/ogcapi-maps-1/1.0/conf/tilesets";
+    /**
+     * @see https://docs.ogc.org/is/20-058/20-058.html#rc_background
+     */
+    public static final String MAPS_BACKGROUND = "https://www.opengis.net/spec/ogcapi-maps-1/1.0/conf/background";
+    /**
+     * @see https://docs.ogc.org/is/20-058/20-058.html#rc_collections-selection
+     */
+    public static final String MAPS_COLLECTION_SELECTION = "https://www.opengis.net/spec/ogcapi-maps-1/1.0/conf/collections-selection";
+    /**
+     * @see https://docs.ogc.org/is/20-058/20-058.html#rc_scaling
+     */
+    public static final String MAPS_SCALING = "https://www.opengis.net/spec/ogcapi-maps-1/1.0/conf/scaling";
+    /**
+     * @see https://docs.ogc.org/is/20-058/20-058.html#rc_display-resolution
+     */
+    public static final String MAPS_DISPLAY_RESOLUTION = "https://www.opengis.net/spec/ogcapi-maps-1/1.0/conf/display-resolution";
+    /**
+     * @see https://docs.ogc.org/is/20-058/20-058.html#rc_spatial-subsetting
+     */
+    public static final String MAPS_SPATIAL_SUBSETTING = "https://www.opengis.net/spec/ogcapi-maps-1/1.0/conf/spatial-subsetting";
+    /**
+     * @see https://docs.ogc.org/is/20-058/20-058.html#rc_datetime
+     */
+    public static final String MAPS_DATE_AND_TIME = "https://www.opengis.net/spec/ogcapi-maps-1/1.0/conf/datetime";
+    /**
+     * @see https://docs.ogc.org/is/20-058/20-058.html#rc_general-subsetting
+     */
+    public static final String MAPS_GENERAL_SUBSETTING = "https://www.opengis.net/spec/ogcapi-maps-1/1.0/conf/general-subsetting";
+    /**
+     * @see https://docs.ogc.org/is/20-058/20-058.html#rc_crs
+     */
+    public static final String MAPS_COORDINATE_REFERENCE_SYSTEM = "https://www.opengis.net/spec/ogcapi-maps-1/1.0/conf/crs";
+    /**
+     * @see https://docs.ogc.org/is/20-058/20-058.html#rc_orientation
+     */
+    public static final String MAPS_ORIENTATION = "https://www.opengis.net/spec/ogcapi-maps-1/1.0/conf/orientation";
+    /**
+     * @see https://docs.ogc.org/is/20-058/20-058.html#rc_projection
+     */
+    public static final String MAPS_CUSTOM_PROJECTION_CRS = "https://www.opengis.net/spec/ogcapi-maps-1/1.0/conf/projection";
+    /**
+     * @see https://docs.ogc.org/is/20-058/20-058.html#rc_collection-map
+     */
+    public static final String MAPS_COLLECTION_MAP = "https://www.opengis.net/spec/ogcapi-maps-1/1.0/conf/collection-map";
+    /**
+     * @see https://docs.ogc.org/is/20-058/20-058.html#rc_dataset-map
+     */
+    public static final String MAPS_DATASET_MAP = "https://www.opengis.net/spec/ogcapi-maps-1/1.0/conf/dataset-map";
+    /**
+     * @see https://docs.ogc.org/is/20-058/20-058.html#rc_styled-map
+     */
+    public static final String MAPS_STYLED_MAP = "https://www.opengis.net/spec/ogcapi-maps-1/1.0/conf/styled-map";
+    /**
+     * @see https://docs.ogc.org/is/20-058/20-058.html#rc_png
+     */
+    public static final String MAPS_PNG = "https://www.opengis.net/spec/ogcapi-maps-1/1.0/conf/png";
+    /**
+     * @see https://docs.ogc.org/is/20-058/20-058.html#rc_jpeg
+     */
+    public static final String MAPS_JPEG = "https://www.opengis.net/spec/ogcapi-maps-1/1.0/conf/jpeg";
+    /**
+     * @see https://docs.ogc.org/is/20-058/20-058.html#rc_jpegxl
+     */
+    public static final String MAPS_JPEG_XL = "https://www.opengis.net/spec/ogcapi-maps-1/1.0/conf/jpegxl";
+    /**
+     * @see https://docs.ogc.org/is/20-058/20-058.html#rc_tiff
+     */
+    public static final String MAPS_TIFF = "https://www.opengis.net/spec/ogcapi-maps-1/1.0/conf/tiff";
+    /**
+     * @see https://docs.ogc.org/is/20-058/20-058.html#rc_svg
+     */
+    public static final String MAPS_SVG = "https://www.opengis.net/spec/ogcapi-maps-1/1.0/conf/svg";
+    /**
+     * @see https://docs.ogc.org/is/20-058/20-058.html#rc_html
+     */
+    public static final String MAPS_HTML = "https://www.opengis.net/spec/ogcapi-maps-1/1.0/conf/html";
+    /**
+     * @see https://docs.ogc.org/is/20-058/20-058.html#rc_api_operations
+     */
+    public static final String MAPS_API_OPERATIONS = "https://www.opengis.net/spec/ogcapi-maps-1/1.0/conf/api-operations";
+    /**
+     * @see https://docs.ogc.org/is/20-058/20-058.html#rc_cors
+     */
+    public static final String MAPS_CORS = "https://www.opengis.net/spec/ogcapi-maps-1/1.0/conf/cors";
+
 }
