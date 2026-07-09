@@ -27,7 +27,7 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlElementWrapper;
 import jakarta.xml.bind.annotation.XmlRootElement;
-import org.geotoolkit.atom.xml.Link;
+import org.geotoolkit.ogcapi.dto.common.Link;
 import org.geotoolkit.ogcapi.dto.DataTransferObject;
 
 import java.util.ArrayList;
