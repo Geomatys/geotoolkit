@@ -17,7 +17,7 @@
 package org.geotoolkit.openeo.process;
 
 import org.apache.sis.coverage.grid.GridCoverage;
-import org.geotoolkit.openeo.process.dto.DataTypeSchema;
+import org.geotoolkit.openeo.dto.process.DataTypeSchema;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.opengis.geometry.Envelope;
 
