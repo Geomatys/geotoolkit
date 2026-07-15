@@ -17,7 +17,7 @@
 
 
 /**
- * Placeholder for OGC-API Styles bindings.
- * @see https://ogcapi.ogc.org/styles/
+ * OGC-API Styles bindings.
+ * @see https://docs.ogc.org/DRAFTS/20-009.html
  */
 package org.geotoolkit.ogcapi.client.styles;

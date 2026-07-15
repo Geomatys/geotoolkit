@@ -457,4 +457,20 @@ public final class Conformance {
      */
     public static final String MAPS_CORS = "https://www.opengis.net/spec/ogcapi-maps-1/1.0/conf/cors";
 
+    // /////////////////////////////////////////////////////////////////////////////////////////
+    // OGC-API Styles - Part 1 (draft)
+    // https://docs.ogc.org/DRAFTS/20-009.html
+    // /////////////////////////////////////////////////////////////////////////////////////////
+
+    public static final String STYLES_CORE = "http://www.opengis.net/spec/ogcapi-styles-1/1.0/conf/core";
+    /**
+     * @see https://docs.ogc.org/DRAFTS/20-009.html#rc_manage-styles
+     */
+    public static final String STYLES_MANAGE_STYLES = "http://www.opengis.net/spec/ogcapi-styles-1/1.0/conf/manage-styles";
+    public static final String STYLES_STYLE_VALIDATION = "http://www.opengis.net/spec/ogcapi-styles-1/1.0/conf/style-validation";
+    public static final String STYLES_RESOURCES = "http://www.opengis.net/spec/ogcapi-styles-1/1.0/conf/resources";
+    public static final String STYLES_MANAGE_RESOURCES = "http://www.opengis.net/spec/ogcapi-styles-1/1.0/conf/manage-resources";
+    public static final String STYLES_MAPBOX_STYLES = "http://www.opengis.net/spec/ogcapi-styles-1/1.0/conf/mapbox-styles";
+    public static final String STYLES_SLD10 = "http://www.opengis.net/spec/ogcapi-styles-1/1.0/conf/sld-10";
+    public static final String STYLES_SLD11 = "http://www.opengis.net/spec/ogcapi-styles-1/1.0/conf/sld-11";
 }
