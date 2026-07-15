@@ -65,6 +65,10 @@ public final class LinkRelations {
      */
     public static final String ITEM = "item";
     /**
+     * Refers to the first resource in a collection of resources.
+     */
+    public static final String START = "start";
+    /**
      * Refers to a license associated with this context.
      */
     public static final String LICENSE = "license";
@@ -80,6 +84,10 @@ public final class LinkRelations {
      * Refers to the context’s author.
      */
     public static final String AUTHOR = "author";
+    /**
+     * Identifies a related resource that is potentially large and might require special handling.
+     */
+    public static final String ENCLOSURE = "enclosure";
     /**
      * Refers to a list of patent disclosures made with respect to material for which ‘disclosure’ relation is specified.
      */
