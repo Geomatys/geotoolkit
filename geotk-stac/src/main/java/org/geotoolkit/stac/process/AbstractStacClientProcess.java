@@ -14,14 +14,15 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.processing.stac;
+package org.geotoolkit.stac.process;
 
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
-import org.geotoolkit.stac.client.StacClient;
+import org.geotoolkit.stac.client.StacApi;
 import org.geotoolkit.stac.client.StacResourceType;
 import org.geotoolkit.stac.dto.Item;
+import org.geotoolkit.stac.request.SearchItems;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -62,7 +63,7 @@ public abstract class AbstractStacClientProcess<T> extends AbstractProcess {
             validateParameters();
 
             // Create STAC client
-            final StacClient client = StacClientProcessingUtils.getStacClient(extractorClassName);
+            StacApi client = StacApiProcessingUtils.buildStacApi(stacUrl, extractorClassName);
             final List<T> results = new ArrayList<>();
 
             StacResourceType type;
@@ -80,11 +81,24 @@ public abstract class AbstractStacClientProcess<T> extends AbstractProcess {
                     throw new ProcessException("Missing mandatory parameter for Collection: collection", this);
                 }
 
-                // Convert extents
-                double[] bbox = StacClientProcessingUtils.getBbox(spatialExtent);
-                String temporalExtent = StacClientProcessingUtils.getTemporalExtent(temporalExtentArray);
+                String effectiveCollection = collection;
+                if (type == StacResourceType.COLLECTION) {
+                    // StacApi's base URI is fixed at construction and /search only exists at the
+                    // service root, so a Collection URL must be rewritten to its root first.
+                    final StacApiProcessingUtils.CollectionRoot root =
+                            StacApiProcessingUtils.resolveCollectionRoot(stacUrl, effectiveCollection);
+                    effectiveCollection = root.collectionId();
+                    client = StacApiProcessingUtils.buildStacApi(root.rootUrl(), extractorClassName);
+                }
 
-                final List<Item> items = client.searchItems(stacUrl, collection, bbox, temporalExtent);
+                // Convert extents
+                double[] bbox = StacApiProcessingUtils.getBbox(spatialExtent);
+                String temporalExtent = StacApiProcessingUtils.getTemporalExtent(temporalExtentArray);
+
+                final List<Item> items = client.searchItems(new SearchItems()
+                        .collections(List.of(effectiveCollection))
+                        .bbox(bbox)
+                        .datetime(temporalExtent));
                 LOGGER.info("Found " + items.size() + " items.");
 
                 for (final Item item : items) {
@@ -126,7 +140,7 @@ public abstract class AbstractStacClientProcess<T> extends AbstractProcess {
      * @param results the accumulating list of results
      * @throws Exception if an error occurs
      */
-    protected abstract void processItem(StacClient client, Item item, List<T> results) throws Exception;
+    protected abstract void processItem(StacApi client, Item item, List<T> results) throws Exception;
 
     /**
      * Stores the accumulated results in the process output parameter.
