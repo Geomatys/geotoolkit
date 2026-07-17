@@ -14,11 +14,11 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.processing.stac;
+package org.geotoolkit.stac.process;
 
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
-import org.geotoolkit.stac.client.StacClient;
+import org.geotoolkit.stac.client.StacApi;
 import org.geotoolkit.stac.dto.Item;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -26,7 +26,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.logging.Logger;
 
-import static org.geotoolkit.processing.stac.StacClientItemsGetURIsDescriptor.OUTPUT;
+import static org.geotoolkit.stac.process.StacClientItemsGetURIsDescriptor.OUTPUT;
 
 /**
  * Execution class for the STAC Client Process, which retrieves download URIs for items matching specified criteria.
@@ -58,7 +58,7 @@ public class StacClientItemsGetURIsProcess extends AbstractStacClientProcess<URI
     }
 
     @Override
-    protected void processItem(StacClient client, Item item, List<URI> results) {
+    protected void processItem(StacApi client, Item item, List<URI> results) {
         final URI downloadURI = client.getDownloadURI(item);
         if (downloadURI != null) {
             LOGGER.fine("Adding " + downloadURI);

@@ -23,50 +23,48 @@ import java.util.List;
 import java.util.function.Supplier;
 import org.geotoolkit.client.openapi.AbstractOpenApi;
 import org.geotoolkit.client.openapi.OpenApiConfiguration;
-import org.geotoolkit.client.service.Pair;
 import org.geotoolkit.client.service.ServiceRequest;
-import org.geotoolkit.ogcapi.dto.common.Collections;
 import org.geotoolkit.ogcapi.dto.common.Schema;
 import org.geotoolkit.ogcapi.request.common.GetCollection;
 import org.geotoolkit.ogcapi.request.common.GetCollectionList;
 import org.geotoolkit.ogcapi.request.common.GetCollectionQueryables;
-import org.geotoolkit.openeo.dto.collection.Collection;
+import org.geotoolkit.stac.client.StacApi;
+import org.geotoolkit.stac.dto.Collection;
+import org.geotoolkit.stac.dto.Collections;
 import org.opengis.geometry.Envelope;
 
 /**
  * OpenEO Collections API client (STAC-based).
  * Covers: listing and describing EO data collections.
  *
- * <p>TODO: delegate to StacClient when available instead of making direct HTTP calls.</p>
+ * <p>Delegates {@link #getCollections(GetCollectionList)} and {@link #getCollection(GetCollection)}
+ * to {@link StacApi}, since OpenEO's collection metadata format is STAC.</p>
  *
  * @author Quentin BIALOTA (Geomatys)
  * Based on : <a href="https://api.openeo.org/#tag/EO-Data-Discovery">OpenEO Doc</a>
  */
 public final class CollectionsApi extends AbstractOpenApi {
 
+    private final StacApi stac;
+
     public CollectionsApi(OpenApiConfiguration config) {
         super(config);
+        this.stac = new StacApi(config);
     }
 
     /**
-     * List available collections. Returns the OGC API - Common collection summaries;
-     * use {@link #getCollection(GetCollection)} for the full STAC {@link Collection} record.
+     * List available collections. Returns the full STAC {@link Collections} page;
+     * use {@link #getCollection(GetCollection)} for a single {@link Collection}.
      *
      * @param parameters request parameters
      * @return ServiceRequest&lt;Supplier&lt;Collections&gt;&gt;
      * @throws IllegalArgumentException if fails to make API call
      */
     public ServiceRequest<Supplier<Collections>> getCollections(GetCollectionList parameters) throws IllegalArgumentException {
-        final List<Pair> queryParams = new ArrayList<>();
-        queryParams.addAll(toPairs("limit", parameters.getLimit()));
-        queryParams.addAll(toPairs("csv", "bbox", toList(parameters.getBbox())));
-        queryParams.addAll(toPairs("datetime", parameters.getDatetime()));
-        final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/collections", queryParams));
-        request.header("Accept", "application/json");
-        request.method("GET", HttpRequest.BodyPublishers.noBody());
-        setConfig(request);
-        return requestAsJson(request, Collections.class);
+        return stac.getCollections(new org.geotoolkit.stac.request.GetCollections()
+                .limit(parameters.getLimit())
+                .bbox(toList(parameters.getBbox()))
+                .datetime(parameters.getDatetime()));
     }
 
     /**
@@ -80,12 +78,8 @@ public final class CollectionsApi extends AbstractOpenApi {
         if (parameters.getCollectionId() == null) {
             throw new IllegalArgumentException("Missing the required parameter 'collectionId' when calling getCollection");
         }
-        final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/collections/" + urlEncode(parameters.getCollectionId()), List.of()));
-        request.header("Accept", "application/json");
-        request.method("GET", HttpRequest.BodyPublishers.noBody());
-        setConfig(request);
-        return requestAsJson(request, Collection.class);
+        return stac.getCollection(new org.geotoolkit.stac.request.GetCollection()
+                .collectionId(parameters.getCollectionId()));
     }
 
     /**

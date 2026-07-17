@@ -14,39 +14,39 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.processing.stac;
+package org.geotoolkit.stac.process;
 
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.util.SimpleInternationalString;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
-import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.InternationalString;
-import java.nio.file.Path;
+
+import java.net.URI;
 import java.util.List;
 
 /**
- * Descriptor for the STAC Client Downloading process.
+ * Descriptor for the STAC Client Items process, which retrieves download URIs for items matching specified criteria.
  *
  * @author Quentin BIALOTA (Geomatys)
  */
-public class StacClientItemsDownloadingDescriptor extends AbstractProcessDescriptor {
+public class StacClientItemsGetURIsDescriptor extends AbstractProcessDescriptor {
 
     /**
      * Name of the descriptor.
      */
-    public static final String NAME = "stac.items.downloading";
+    public static final String NAME = "stac.items.getURIs";
 
     /**
      * Abstract describing the process.
      */
     public static final InternationalString ABSTRACT =
-            new SimpleInternationalString("Download STAC tiles from an endpoint.");
+            new SimpleInternationalString("Get STAC tiles from an endpoint.");
 
     /**
      * Name for the STAC_URL parameter.
@@ -124,21 +124,6 @@ public class StacClientItemsDownloadingDescriptor extends AbstractProcessDescrip
             .create(String[].class, null);
 
     /**
-     * Name for the OUTPUT_DIRECTORY parameter.
-     */
-    public static final String OUTPUT_DIRECTORY_NAME = "output_directory";
-    private static final String OUTPUT_DIRECTORY_REMARKS = "The output directory where items will be downloaded.";
-
-    /**
-     * OUTPUT_DIRECTORY parameter descriptor.
-     */
-    public static final ParameterDescriptor<Path> OUTPUT_DIRECTORY = new ParameterBuilder()
-            .addName(OUTPUT_DIRECTORY_NAME)
-            .setRemarks(OUTPUT_DIRECTORY_REMARKS)
-            .setRequired(true)
-            .create(Path.class, null);
-
-    /**
      * Name for the EXTRACTOR_CLASS parameter.
      */
     public static final String EXTRACTOR_CLASS_NAME = "extractor_class";
@@ -157,23 +142,23 @@ public class StacClientItemsDownloadingDescriptor extends AbstractProcessDescrip
      * Input parameters group.
      */
     public static final ParameterDescriptorGroup INPUT_DESC = new ParameterBuilder().addName("InputParameters").setRequired(true)
-            .createGroup(STAC_URL, COLLECTION, SPATIAL_EXTENT, TEMPORAL_EXTENT, BANDS, OUTPUT_DIRECTORY, EXTRACTOR_CLASS);
+            .createGroup(STAC_URL, COLLECTION, SPATIAL_EXTENT, TEMPORAL_EXTENT, BANDS, EXTRACTOR_CLASS);
 
     /**
      * Name for the OUTPUT parameter.
      */
     public static final String OUTPUT_NAME = "result";
-    private static final String OUTPUT_REMARKS = "List of paths to downloaded items.";
+    private static final String OUTPUT_REMARKS = "List of URIs.";
 
     /**
      * OUTPUT parameter descriptor.
      */
     @SuppressWarnings("unchecked")
-    public static final ParameterDescriptor<List<Path>> OUTPUT = new ParameterBuilder()
+    public static final ParameterDescriptor<List<URI>> OUTPUT = new ParameterBuilder()
             .addName(OUTPUT_NAME)
             .setRemarks(OUTPUT_REMARKS)
             .setRequired(true)
-            .create((Class<List<Path>>) (Class<?>) List.class, null);
+            .create((Class<List<URI>>) (Class<?>) List.class, null);
 
     /**
      * Output parameters group.
@@ -184,20 +169,20 @@ public class StacClientItemsDownloadingDescriptor extends AbstractProcessDescrip
     /**
      * Public constructor used by the ServiceRegistry to find and instantiate all ProcessDescriptor.
      */
-    public StacClientItemsDownloadingDescriptor() {
-        super(NAME, GeotkProcessingRegistry.IDENTIFICATION, ABSTRACT, INPUT_DESC, OUTPUT_DESC);
+    public StacClientItemsGetURIsDescriptor() {
+        super(NAME, StacProcessingRegistry.IDENTIFICATION, ABSTRACT, INPUT_DESC, OUTPUT_DESC);
     }
 
     /**
      * Process singleton instance.
      */
-    public static final ProcessDescriptor INSTANCE = new StacClientItemsDownloadingDescriptor();
+    public static final ProcessDescriptor INSTANCE = new StacClientItemsGetURIsDescriptor();
 
     /**
      * {@inheritDoc}
      */
     @Override
     public Process createProcess(final ParameterValueGroup input) {
-        return new StacClientItemsDownloadingProcess(this, input);
+        return new StacClientItemsGetURIsProcess(this, input);
     }
 }

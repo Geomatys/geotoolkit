@@ -14,11 +14,10 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.processing.stac;
+package org.geotoolkit.stac.process;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpServer;
-import org.apache.http.client.utils.URIUtils;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
@@ -116,6 +115,24 @@ public class StacClientItemsProcessTest {
             }
         });
 
+        // Collection endpoint, used to exercise the Collection-URL-to-root resolution
+        server.createContext("/stac/collections/test-collection", exchange -> {
+            try {
+                int port = server.getAddress().getPort();
+                String localUrl = "http://localhost:" + port;
+                String json = "{\"type\":\"Collection\",\"id\":\"test-collection\","
+                        + "\"links\":[{\"rel\":\"root\",\"href\":\"" + localUrl + "/stac\"}]}";
+                byte[] bytes = json.getBytes();
+                exchange.sendResponseHeaders(200, bytes.length);
+                try (OutputStream os = exchange.getResponseBody()) {
+                    os.write(bytes);
+                }
+            } catch (Exception e) {
+                exchange.sendResponseHeaders(500, 0);
+                exchange.getResponseBody().close();
+            }
+        });
+
         // Download data endpoint
         server.createContext("/data.nc", exchange -> {
             byte[] bytes = "fake netcdf data".getBytes();
@@ -154,8 +171,7 @@ public class StacClientItemsProcessTest {
      */
     @Test
     public void testDownloadProcess() throws Exception {
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(
-                "geotoolkit", "stac.items.downloading");
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("stac", "stac.items.downloading");
         assertNotNull("STAC downloading descriptor not found", desc);
 
         final ParameterValueGroup input = desc.getInputDescriptor().createValue();
@@ -192,13 +208,45 @@ public class StacClientItemsProcessTest {
      */
     @Test
     public void testGetURIs() throws Exception {
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(
-                "geotoolkit", "stac.items.getURIs");
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("stac", "stac.items.getURIs");
         assertNotNull("STAC getURIs descriptor not found", desc);
 
         final ParameterValueGroup input = desc.getInputDescriptor().createValue();
         input.parameter(StacClientItemsGetURIsDescriptor.STAC_URL_NAME).setValue(serverUrl + "/stac");
         input.parameter(StacClientItemsGetURIsDescriptor.COLLECTION_NAME).setValue("test-collection");
+        input.parameter(StacClientItemsGetURIsDescriptor.EXTRACTOR_CLASS_NAME).setValue(MockExtractor.class.getName());
+
+        final Process process = desc.createProcess(input);
+        assertNotNull("Failed to create STAC process", process);
+
+        final ParameterValueGroup result = process.call();
+        assertNotNull("STAC process execution result is null", result);
+
+        @SuppressWarnings("unchecked")
+        List<URI> assetsURIs = (List<URI>) result.parameter(
+                StacClientItemsGetURIsDescriptor.OUTPUT_NAME).getValue();
+
+        assertNotNull(assetsURIs);
+        assertEquals(1, assetsURIs.size());
+
+        URI assetURI = assetsURIs.get(0);
+        String actual = assetURI.toString();
+        assertTrue(actual.matches("http://localhost:\\d+/data\\.nc"));
+    }
+
+    /**
+     * Test for the getURIs process when stac_url points to a Collection resource instead of the
+     * service root: the process must resolve the STAC service root from the Collection's "root"
+     * link before searching, since StacApi's base URI is fixed at construction.
+     * @throws Exception
+     */
+    @Test
+    public void testGetURIsFromCollectionUrl() throws Exception {
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("stac", "stac.items.getURIs");
+        assertNotNull("STAC getURIs descriptor not found", desc);
+
+        final ParameterValueGroup input = desc.getInputDescriptor().createValue();
+        input.parameter(StacClientItemsGetURIsDescriptor.STAC_URL_NAME).setValue(serverUrl + "/stac/collections/test-collection");
         input.parameter(StacClientItemsGetURIsDescriptor.EXTRACTOR_CLASS_NAME).setValue(MockExtractor.class.getName());
 
         final Process process = desc.createProcess(input);

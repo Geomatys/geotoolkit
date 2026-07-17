@@ -160,9 +160,6 @@ public class GeotkProcessingRegistry extends AbstractProcessingRegistry {
                 org.geotoolkit.processing.vector.merge.MergeDescriptor.INSTANCE,
                 org.geotoolkit.processing.vector.union.UnionDescriptor.INSTANCE,
                 org.geotoolkit.processing.vector.retype.RetypeDescriptor.INSTANCE,
-                //stac
-                org.geotoolkit.processing.stac.StacClientItemsDownloadingDescriptor.INSTANCE,
-                org.geotoolkit.processing.stac.StacClientItemsGetURIsDescriptor.INSTANCE,
                 //regridding
                 org.geotoolkit.processing.regridding.SwathRegridderDescriptor.INSTANCE,
                 //query like processes

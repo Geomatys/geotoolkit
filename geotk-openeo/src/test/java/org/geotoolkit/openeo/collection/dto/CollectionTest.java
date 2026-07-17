@@ -18,15 +18,14 @@ package org.geotoolkit.openeo.collection.dto;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.geotoolkit.client.openapi.OpenApiConfiguration;
-import org.geotoolkit.openeo.dto.collection.Collection;
+import org.geotoolkit.stac.dto.Collection;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
- * Verifies that {@link Collection}, now extending the OGC API - Common
- * {@code CollectionDescription}, still deserializes a real OpenEO/STAC collection document
- * into both its inherited fields (id, title, extent, ...) and its STAC-specific fields
- * (stac_version, summaries, assets).
+ * Verifies that {@link Collection} (the {@code geotk-stac} DTO OpenEO's Collections API now
+ * delegates to) deserializes a real OpenEO/STAC collection document into both its inherited
+ * fields (id, title, extent, ...) and its STAC-specific fields (stac_version, summaries, assets).
  *
  * @author Quentin BIALOTA (Geomatys)
  */
@@ -70,5 +69,6 @@ public class CollectionTest {
         Assertions.assertEquals("1.0.0", collection.getStacVersion());
         Assertions.assertEquals(java.util.List.of("B01", "B02"), collection.getSummaries().get("eo:bands"));
         Assertions.assertNotNull(collection.getAssets());
+        Assertions.assertEquals("https://example.org/thumb.png", collection.getAssets().get("thumbnail").getHref());
     }
 }

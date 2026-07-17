@@ -58,7 +58,8 @@ import java.util.Set;
         Collection.JSON_PROPERTY_DEPRECATED,
         Collection.JSON_PROPERTY_LICENSE,
         Collection.JSON_PROPERTY_SUMMARIES,
-        Collection.JSON_PROPERTY_PROVIDERS
+        Collection.JSON_PROPERTY_PROVIDERS,
+        Collection.JSON_PROPERTY_ASSETS
 })
 @XmlRootElement(name = "Collection")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -74,6 +75,7 @@ public class Collection extends CollectionDescription {
     public static final String JSON_PROPERTY_LICENSE = "license";
     public static final String JSON_PROPERTY_SUMMARIES = "summaries";
     public static final String JSON_PROPERTY_PROVIDERS = "providers";
+    public static final String JSON_PROPERTY_ASSETS = "assets";
 
     public Collection() {}
 
@@ -130,6 +132,9 @@ public class Collection extends CollectionDescription {
 
     @XmlElement(name = "providers")
     private List<Provider> providers = null;
+
+    @XmlElement(name = "assets")
+    private Map<String, Asset> assets;
 
     @JsonProperty(JSON_PROPERTY_STAC_VERSION)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
@@ -239,16 +244,30 @@ public class Collection extends CollectionDescription {
         this.providers = providers;
     }
 
+    @JsonProperty(JSON_PROPERTY_ASSETS)
+    @JsonInclude(value = JsonInclude.Include.NON_NULL)
+    @JacksonXmlProperty(localName = "assets")
+    public Map<String, Asset> getAssets() {
+        return assets;
+    }
+
+    @JsonProperty(JSON_PROPERTY_ASSETS)
+    @JsonInclude(value = JsonInclude.Include.NON_NULL)
+    @JacksonXmlProperty(localName = "assets")
+    public void setAssets(Map<String, Asset> assets) {
+        this.assets = assets;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Collection that = (Collection) o;
-        return Objects.equals(stacVersion, that.stacVersion) && Objects.equals(stacExtensions, that.stacExtensions) && Objects.equals(type, that.type) && Objects.equals(keywords, that.keywords) && Objects.equals(deprecated, that.deprecated) && Objects.equals(license, that.license) && Objects.equals(providers, that.providers);
+        return Objects.equals(stacVersion, that.stacVersion) && Objects.equals(stacExtensions, that.stacExtensions) && Objects.equals(type, that.type) && Objects.equals(keywords, that.keywords) && Objects.equals(deprecated, that.deprecated) && Objects.equals(license, that.license) && Objects.equals(providers, that.providers) && Objects.equals(assets, that.assets);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(stacVersion, stacExtensions, type, keywords, deprecated, license, providers);
+        return Objects.hash(stacVersion, stacExtensions, type, keywords, deprecated, license, providers, assets);
     }
 }
