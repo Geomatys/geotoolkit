@@ -16,7 +16,10 @@
  */
 package org.geotoolkit.storage.multires;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
@@ -112,5 +115,125 @@ public interface TileMatrix extends org.apache.sis.storage.tiling.TileMatrix {
      */
     @Deprecated
     public Tile anyTile() throws DataStoreException;
+
+    /**
+     * Query the matrix for information on where data can be found.
+     *
+     * @param region searched region, null for the complete tiling scheme.
+     * @param accuracy determine the computation effort to do to get the wanted information
+     *       - AVAILABLE : if the store has some kind of tile range availability list (like WMTS, OGCAPI-Tiles), it will be returned otherwise optional may be empty
+     *       - BEST_EFFORT : if an availability list is present, return it, otherwise try to compute a tile range using a fast approach, returned optional is never empty
+     *       - EXACT : get exact tile by tile status, may require expensive search operation, returned optional is never empty
+     * @throws DataStoreException  if fetching the tile status failed.
+     */
+    default Optional<TileMatrixStatus> getTileStatus(GridExtent region, Accuracy accuracy) throws DataStoreException {
+        switch (accuracy) {
+            case BEST_EFFORT :
+                return Optional.of(new BestEffortStatus(this, region, List.of(findBestEffort(region))));
+            case EXACT :
+                return Optional.of(new ExactStatus(this, region, List.of(findBestEffort(region))));
+            case AVAILABLE:
+            default:
+                return Optional.empty();
+        }
+    }
+
+    /**
+     * Expected effort level of the tile status search.
+     */
+    public static enum Accuracy {
+        AVAILABLE,
+        BEST_EFFORT,
+        EXACT
+    }
+
+    /**
+     * Find the bounding extent of all tiles.
+     * @param ext searched area
+     * @return bounding extent or null if no data.
+     * @throws DataStoreException
+     */
+    private GridExtent findBestEffort(GridExtent ext) throws DataStoreException {
+
+        //loop on each dimension, finding the smallest and highest value
+        Long limit;
+        for (int d = 0, n = ext.getDimension(); d < n; d++) {
+            //lower search
+            limit = findLimit(ext, d, true);
+            if (limit == null) return null;
+            ext = ext.withRange(d, limit, ext.getHigh(d));
+            //upper search
+            limit = findLimit(ext, d, false);
+            if (limit == null) return null;
+            ext = ext.withRange(d, ext.getLow(d), limit);
+        }
+
+        return ext;
+    }
+
+    /**
+     * For for the minimum or maximum tile index on a given dimension
+     *
+     * @param ext searched extent
+     * @param dimension searched dimension limie
+     * @param increasing true for lower limit, false for upper limit
+     * @return limit value, inclusive, null if not found
+     */
+    private Long findLimit(GridExtent ext, int dimension, boolean increasing) {
+        final long[] low = ext.getLow().getCoordinateValues();
+        final long[] high = ext.getHigh().getCoordinateValues();
+
+        if (increasing) {
+            for (long f = low[dimension]; f <= high[dimension]; f++) {
+                final GridExtent slice = ext.withRange(dimension, f, f);
+
+                final boolean found;
+                try (Stream<long[]> stream = slice.latticePointStream(true)) {
+                    found = stream.anyMatch((long[] t) -> {
+                        try {
+                            switch (getTileStatus(t)) {
+                                case EXISTS :
+                                case IN_ERROR :
+                                case UNKNOWN :
+                                    return true;
+                            }
+                        } catch (DataStoreException ex) {
+                            //consider it a tile in error
+                            return true;
+                        }
+                        return false;
+                    });
+                }
+                if (found) return f;
+            }
+
+        } else {
+            for (long f = high[dimension]; f >= low[dimension]; f--) {
+                final GridExtent slice = ext.withRange(dimension, f, f);
+
+                final boolean found;
+                try (Stream<long[]> stream = slice.latticePointStream(true)) {
+                    found = stream.anyMatch((long[] t) -> {
+                        try {
+                            switch (getTileStatus(t)) {
+                                case EXISTS :
+                                case IN_ERROR :
+                                case UNKNOWN :
+                                    return true;
+                            }
+                        } catch (DataStoreException ex) {
+                            //consider it a tile in error
+                            return true;
+                        }
+                        return false;
+                    });
+                }
+                if (found) return f;
+            }
+        }
+
+        //not found
+        return null;
+    }
 
 }

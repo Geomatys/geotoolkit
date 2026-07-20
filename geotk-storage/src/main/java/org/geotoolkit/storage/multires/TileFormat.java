@@ -16,16 +16,13 @@
  */
 package org.geotoolkit.storage.multires;
 
-import java.util.ArrayList;
 import java.util.List;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.iso.Types;
 import org.opengis.util.CodeList;
 
 /**
  * Describes the encoding of tiles in the resource.
- *
- * Warning : This description is a fallback until a better approach has been found.
+ * This is used to description the content of {@link Tile#getContentPath() }.
  *
  * @author Johann Sorel (Geomatys)
  */
@@ -48,14 +45,24 @@ public class TileFormat {
         this.compression = compression;
     }
 
+    /**
+     * @return tile encoding mime-type.
+     *         may be null if the storage use varying formats (like png/jpeg/webp) for tiles.
+     */
     public String getMimeType() {
         return mimeType;
     }
 
+    /**
+     * @return optional datastore provider identifier.
+     */
     public String getProviderId() {
         return providerId;
     }
 
+    /**
+     * @return the compression used to further compress the tile content.
+     */
     public Compression getCompression() {
         return compression;
     }
@@ -65,11 +72,10 @@ public class TileFormat {
         public static final Compression UNDEFINED;
         public static final Compression NONE;
         public static final Compression ZIP;
-        public static final Compression GZ;
-        /**
-         * Provide less compression then GZ but greater input and output performances.
-         */
+        public static final Compression GZIP;
         public static final Compression LZ4;
+        public static final Compression BROTLI;
+        public static final Compression ZSTD;
 
     /**
      * All code list values created in the currently running <abbr>JVM</abbr>.
@@ -79,9 +85,10 @@ public class TileFormat {
         UNDEFINED = new Compression("UNDEFINED"),
         NONE      = new Compression("NONE"),
         ZIP       = new Compression("ZIP"),
-        GZ        = new Compression("GZ"),
-        LZ4       = new Compression("LZ4"));
-
+        GZIP      = new Compression("GZIP"),
+        LZ4       = new Compression("LZ4"),
+        BROTLI    = new Compression("BROTLI"),
+        ZSTD      = new Compression("ZSTD"));
 
         private Compression(final String name) {
             super(name);
