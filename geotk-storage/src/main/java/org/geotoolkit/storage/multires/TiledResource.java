@@ -46,7 +46,9 @@ public interface TiledResource extends org.apache.sis.storage.tiling.TiledResour
      * Get a description of the inner storage of tiles.
      *
      * @return Tile format description, never null but may not contain any useful information.
+     * @deprecated method has been moved to TileMatrixSet
      */
+    @Deprecated
     default TileFormat getTileFormat() {
         return TileFormat.UNDEFINED;
     }

@@ -117,4 +117,15 @@ public interface TileMatrixSet extends org.apache.sis.storage.tiling.TileMatrixS
 
         return format;
     }
+
+    /**
+     * When tile content can be accessed throught {@link Tile#getContentPath() } and if
+     * the tile content format is uniform then this method returns a description of the
+     * used format and compression in this {@link TileMatrixSet}.
+     *
+     * @return tile content format or empty if unknown or varying.
+     */
+    default Optional<TileFormat> getTileContentFormat() {
+        return Optional.empty();
+    }
 }
