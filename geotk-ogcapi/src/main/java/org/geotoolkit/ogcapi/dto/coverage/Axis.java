@@ -19,6 +19,9 @@ package org.geotoolkit.ogcapi.dto.coverage;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -39,6 +42,15 @@ import org.geotoolkit.ogcapi.dto.DataTransferObject;
 @XmlRootElement(name = "Axis")
 @XmlAccessorType(XmlAccessType.FIELD)
 @JacksonXmlRootElement(localName = "Axis")
+@JsonTypeInfo(
+  use = JsonTypeInfo.Id.NAME,
+  include = JsonTypeInfo.As.EXISTING_PROPERTY,
+  property = "type")
+@JsonSubTypes({
+  @Type(value = RegularAxis.class, name = "RegularAxis"),
+  @Type(value = IndexAxis.class, name = "IndexAxis"),
+  @Type(value = IrregularAxis.class, name = "IrregularAxis")
+})
 public abstract class Axis extends DataTransferObject {
 
     public static final String JSON_PROPERTY_TYPE = "type";

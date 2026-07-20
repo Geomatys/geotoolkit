@@ -41,6 +41,7 @@ import org.opengis.util.GenericName;
 /**
  *
  * @author Johann Sorel (Geomatys)
+ * @author Quentin Bialota (Geomatys)
  */
 public final class CollectionResource extends AbstractResource implements Aggregate, AutoCloseable {
 
@@ -79,6 +80,11 @@ public final class CollectionResource extends AbstractResource implements Aggreg
                         if (LinkRelations.OGC_DGGRS_LIST.equals(link.getRel()) || LinkRelations.OGC_DGGRS_LIST.equals(link.getRel().replace("http", "https"))) {
                             //dggrs data
                             components.add(new DggrsResource(this, fullDescription));
+                            continue loop;
+                        }
+                        if (LinkRelations.OGC_COVERAGE.equals(link.getRel()) || LinkRelations.OGC_COVERAGE.equals(link.getRel().replace("http", "https"))) {
+                            //coverage data
+                            components.add(new CoverageResource(this, fullDescription));
                             continue loop;
                         }
                     }
