@@ -17,7 +17,8 @@
 
 
 /**
- * Placeholder for OGC-API Processes bindings.
- * @see https://ogcapi.ogc.org/processes/
+ * Client bindings for OGC API - Processes - Part 1: Core.
+ *
+ * @see <a href="https://docs.ogc.org/is/18-062r2/18-062r2.html">OGC API - Processes - Part 1: Core</a>
  */
 package org.geotoolkit.ogcapi.client.processes;

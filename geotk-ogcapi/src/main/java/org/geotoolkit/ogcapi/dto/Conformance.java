@@ -473,4 +473,30 @@ public final class Conformance {
     public static final String STYLES_MAPBOX_STYLES = "http://www.opengis.net/spec/ogcapi-styles-1/1.0/conf/mapbox-styles";
     public static final String STYLES_SLD10 = "http://www.opengis.net/spec/ogcapi-styles-1/1.0/conf/sld-10";
     public static final String STYLES_SLD11 = "http://www.opengis.net/spec/ogcapi-styles-1/1.0/conf/sld-11";
+
+    // /////////////////////////////////////////////////////////////////////////////////////////
+    // OGC-API Processes - Part 1: Core
+    // https://docs.ogc.org/is/18-062r2/18-062r2.html
+    // /////////////////////////////////////////////////////////////////////////////////////////
+
+    public static final String PROCESSES_CORE = "http://www.opengis.net/spec/ogcapi-processes-1/1.0/conf/core";
+    /**
+     * @see https://docs.ogc.org/is/18-062r2/18-062r2.html#req_core_process-description
+     */
+    public static final String PROCESSES_OGC_PROCESS_DESCRIPTION = "http://www.opengis.net/spec/ogcapi-processes-1/1.0/conf/ogc-process-description";
+    public static final String PROCESSES_JSON = "http://www.opengis.net/spec/ogcapi-processes-1/1.0/conf/json";
+    public static final String PROCESSES_HTML = "http://www.opengis.net/spec/ogcapi-processes-1/1.0/conf/html";
+    public static final String PROCESSES_OAS30 = "http://www.opengis.net/spec/ogcapi-processes-1/1.0/conf/oas30";
+    /**
+     * @see https://docs.ogc.org/is/18-062r2/18-062r2.html#req_job-list
+     */
+    public static final String PROCESSES_JOB_LIST = "http://www.opengis.net/spec/ogcapi-processes-1/1.0/conf/job-list";
+    /**
+     * @see https://docs.ogc.org/is/18-062r2/18-062r2.html#req_callback
+     */
+    public static final String PROCESSES_CALLBACK = "http://www.opengis.net/spec/ogcapi-processes-1/1.0/conf/callback";
+    /**
+     * @see https://docs.ogc.org/is/18-062r2/18-062r2.html#req_dismiss
+     */
+    public static final String PROCESSES_DISMISS = "http://www.opengis.net/spec/ogcapi-processes-1/1.0/conf/dismiss";
 }
