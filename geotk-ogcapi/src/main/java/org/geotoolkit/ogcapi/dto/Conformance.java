@@ -500,7 +500,6 @@ public final class Conformance {
      */
     public static final String PROCESSES_DISMISS = "http://www.opengis.net/spec/ogcapi-processes-1/1.0/conf/dismiss";
 
-
     // /////////////////////////////////////////////////////////////////////////////////////////
     // OGC API - Environmental Data Retrieval - Part 1 : Core
     // https://docs.ogc.org/is/19-086r6/19-086r6.html
@@ -542,4 +541,54 @@ public final class Conformance {
      * @see https://docs.ogc.org/is/19-086r6/19-086r6.html#rc_oas30
      */
     public static final String EDR_OAS30 = "http://www.opengis.net/spec/ogcapi-edr-1/1.1/conf/oas30";
+
+    // /////////////////////////////////////////////////////////////////////////////////////////
+    // OGC-API - Joins - Part 1: Core (draft)
+    // https://docs.ogc.org/DRAFTS/22-026.html
+    // /////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * @see https://docs.ogc.org/DRAFTS/22-026.html#rc_core
+     */
+    public static final String JOINS_CORE = "http://www.opengis.net/spec/ogcapi-joins-1/1.0/conf/core";
+    /**
+     * @see https://docs.ogc.org/DRAFTS/22-026.html#rc_data_joining
+     */
+    public static final String JOINS_DATA_JOINING = "http://www.opengis.net/spec/ogcapi-joins-1/1.0/conf/data-joining";
+    /**
+     * @see https://docs.ogc.org/DRAFTS/22-026.html#rc_join_source_delete
+     */
+    public static final String JOINS_JOIN_SOURCE_DELETE = "http://www.opengis.net/spec/ogcapi-joins-1/1.0/conf/join-source-delete";
+    /**
+     * @see https://docs.ogc.org/DRAFTS/22-026.html#rc_file_joining
+     */
+    public static final String JOINS_FILE_JOINING = "http://www.opengis.net/spec/ogcapi-joins-1/1.0/conf/file-joining";
+    /**
+     * @see https://docs.ogc.org/DRAFTS/22-026.html#rc_file_uploading_with_query
+     */
+    public static final String JOINS_INPUT_FILE_UPLOAD = "http://www.opengis.net/spec/ogcapi-joins-1/1.0/conf/input-file-upload";
+    /**
+     * @see https://docs.ogc.org/DRAFTS/22-026.html#rc_file_referencing_with_url
+     */
+    public static final String JOINS_INPUT_HTTP_REF = "http://www.opengis.net/spec/ogcapi-joins-1/1.0/conf/input-http-ref";
+    /**
+     * @see https://docs.ogc.org/DRAFTS/22-026.html#rc_input_csv
+     */
+    public static final String JOINS_INPUT_CSV = "http://www.opengis.net/spec/ogcapi-joins-1/1.0/conf/input-csv";
+    /**
+     * @see https://docs.ogc.org/DRAFTS/22-026.html#rc_input_geojson
+     */
+    public static final String JOINS_INPUT_GEOJSON = "http://www.opengis.net/spec/ogcapi-joins-1/1.0/conf/input-geojson";
+    /**
+     * @see https://docs.ogc.org/DRAFTS/22-026.html#rc_html
+     */
+    public static final String JOINS_HTML = "http://www.opengis.net/spec/ogcapi-joins-1/1.0/conf/html";
+    /**
+     * @see https://docs.ogc.org/DRAFTS/22-026.html#rc_json
+     */
+    public static final String JOINS_JSON = "http://www.opengis.net/spec/ogcapi-joins-1/1.0/conf/json";
+    /**
+     * @see https://docs.ogc.org/DRAFTS/22-026.html#rc_geojson
+     */
+    public static final String JOINS_GEOJSON = "http://www.opengis.net/spec/ogcapi-joins-1/1.0/conf/geojson";
 }

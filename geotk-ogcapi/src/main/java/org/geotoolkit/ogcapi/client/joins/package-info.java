@@ -17,7 +17,7 @@
 
 
 /**
- * Placeholder for OGC-API Joins bindings.
- * @see https://ogcapi.ogc.org/joins/
+ * OGC API - Joins - Part 1: Core bindings.
+ * @see https://docs.ogc.org/DRAFTS/22-026.html
  */
 package org.geotoolkit.ogcapi.client.joins;
