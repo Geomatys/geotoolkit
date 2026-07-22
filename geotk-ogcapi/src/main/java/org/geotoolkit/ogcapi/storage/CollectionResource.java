@@ -87,6 +87,11 @@ public final class CollectionResource extends AbstractResource implements Aggreg
                             components.add(new CoverageResource(this, fullDescription));
                             continue loop;
                         }
+                        if (LinkRelations.OGC_ITEMS.equals(link.getRel()) || LinkRelations.OGC_ITEMS.equals(link.getRel().replace("http", "https"))) {
+                            //feature data
+                            components.add(new FeatureResource(this, fullDescription));
+                            continue loop;
+                        }
                     }
 
                     //undefined resource

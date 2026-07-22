@@ -38,18 +38,18 @@ public final class SchemaApi extends AbstractOpenApi {
     }
 
     /**
-     * Retrieve the schema of a description available from this service.
+     * Retrieve the schema of a collection, or the dataset-level schema when
+     * {@code parameters.getCollectionId()} is {@code null}.
      *
      * @param parameters request parameters
      * @return ServiceRequest&lt;Schema&gt;
-     * @throws IllegalArgumentException if fails to make API call
      */
-    public ServiceRequest<Supplier<Schema>> getCollectionSchema(GetCollectionSchema parameters) throws IllegalArgumentException {
-        if (parameters.getCollectionId() == null) {
-            throw new IllegalArgumentException("Missing the required parameter 'collectionId' when calling getCollectionSchema");
-        }
+    public ServiceRequest<Supplier<Schema>> getSchema(GetCollectionSchema parameters) {
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/collections/" + urlEncode(parameters.getCollectionId()) + "/schema", toPairs("f", parameters.getFormat())));
+        final String path = parameters.getCollectionId() == null
+                ? "/schema"
+                : "/collections/" + urlEncode(parameters.getCollectionId()) + "/schema";
+        request.uri(toUri(path, toPairs("f", parameters.getFormat())));
         request.header("Accept", "application/json");
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -68,7 +68,7 @@ public final class SchemaApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'collectionId' when calling getCollectionQueryables");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/collections/" + urlEncode(parameters.getCollectionId()) + "queryables", toPairs("f", parameters.getFormat())));
+        request.uri(toUri("/collections/" + urlEncode(parameters.getCollectionId()) + "/queryables", toPairs("f", parameters.getFormat())));
         request.header("Accept", "application/json");
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -87,7 +87,7 @@ public final class SchemaApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'collectionId' when calling getCollectionSortables");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/collections/" + urlEncode(parameters.getCollectionId()) + "sortables", toPairs("f", parameters.getFormat())));
+        request.uri(toUri("/collections/" + urlEncode(parameters.getCollectionId()) + "/sortables", toPairs("f", parameters.getFormat())));
         request.header("Accept", "application/json");
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);

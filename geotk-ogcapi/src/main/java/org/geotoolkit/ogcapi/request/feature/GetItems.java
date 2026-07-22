@@ -14,20 +14,16 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.ogcapi.request.edr;
+package org.geotoolkit.ogcapi.request.feature;
 
 import org.opengis.geometry.Envelope;
 import org.geotoolkit.ogcapi.request.RequestParameters;
 
 /**
- * The {@code items} EDR listing query ({@code /collections/{collectionId}/items}).
+ * The {@code items} query ({@code /collections/{collectionId}/items}).
  *
- * <p>Unlike the other EDR queries, {@code items} is only defined at collection scope: the
- * specification does not expose an instance-scoped variant.</p>
- *
- * <p>This query type is inherited from OGC API - Features Part 1 (the {@code /items}
- * resource), not defined by EDR itself. Should a Features Part 1 client be added to this module,
- * this class should be promoted/mutualized with its equivalent instead of kept EDR-local.</p>
+ * <p>OGC API - Features Part 1: Core. Also reused as-is by OGC API - EDR's {@code Locations}
+ * query, which is defined in terms of this same resource.</p>
  *
  * @author Quentin Bialota (Geomatys)
  */
@@ -37,6 +33,10 @@ public final class GetItems extends RequestParameters {
     private Envelope bbox;
     private String datetime;
     private Integer limit;
+    private Integer offset;
+    private String crs;
+    private String filter;
+    private String filterLang;
     private String f;
 
     /**
@@ -66,7 +66,9 @@ public final class GetItems extends RequestParameters {
     }
 
     /**
-     * Only items that have a geometry that intersects the bounding box are selected. (optional)
+     * Only items that have a geometry that intersects the bounding box are selected. The
+     * bounding box CRS (query parameter {@code bbox-crs}) is derived from this envelope's own
+     * coordinate reference system. (optional)
      *
      * @return the bbox
      */
@@ -141,6 +143,116 @@ public final class GetItems extends RequestParameters {
      */
     public GetItems limit(Integer limit) {
         setLimit(limit);
+        return this;
+    }
+
+    /**
+     * The optional offset parameter indicates the offset within the result set from which the
+     * server shall begin presenting results in the response document. The first element has an
+     * offset of 0. (optional)
+     *
+     * @return the offset
+     */
+    public Integer getOffset() {
+        return offset;
+    }
+
+    /**
+     * @param offset the offset to set
+     * @see #getOffset()
+     */
+    public void setOffset(Integer offset) {
+        this.offset = offset;
+    }
+
+    /**
+     * @param offset the offset to set
+     * @see #getOffset()
+     */
+    public GetItems offset(Integer offset) {
+        setOffset(offset);
+        return this;
+    }
+
+    /**
+     * OGC API - Features - Part 2: CRS by Reference. The coordinate reference system of the
+     * response geometries, as a URI. If not given, the default CRS (CRS84) is used. (optional)
+     *
+     * @return the crs
+     */
+    public String getCrs() {
+        return crs;
+    }
+
+    /**
+     * @param crs the crs to set
+     * @see #getCrs()
+     */
+    public void setCrs(String crs) {
+        this.crs = crs;
+    }
+
+    /**
+     * @param crs the crs to set
+     * @see #getCrs()
+     */
+    public GetItems crs(String crs) {
+        setCrs(crs);
+        return this;
+    }
+
+    /**
+     * OGC API - Features - Part 3: Filtering. An expression in a query language (e.g. CQL2) for
+     * which an entire feature will be returned if the filter predicate is matched. Sent as-is to
+     * the server, not parsed client-side. (optional)
+     *
+     * @return the filter
+     */
+    public String getFilter() {
+        return filter;
+    }
+
+    /**
+     * @param filter the filter to set
+     * @see #getFilter()
+     */
+    public void setFilter(String filter) {
+        this.filter = filter;
+    }
+
+    /**
+     * @param filter the filter to set
+     * @see #getFilter()
+     */
+    public GetItems filter(String filter) {
+        setFilter(filter);
+        return this;
+    }
+
+    /**
+     * OGC API - Features - Part 3: Filtering. The query language of the {@code filter}
+     * parameter (e.g. {@code cql2-text}). (optional)
+     *
+     * @return the filterLang
+     */
+    public String getFilterLang() {
+        return filterLang;
+    }
+
+    /**
+     * @param filterLang the filterLang to set
+     * @see #getFilterLang()
+     */
+    public void setFilterLang(String filterLang) {
+        this.filterLang = filterLang;
+    }
+
+    /**
+     * @param filterLang the filterLang to set
+     * @see #getFilterLang()
+     */
+    public GetItems filterLang(String filterLang) {
+        setFilterLang(filterLang);
         return this;
     }
 

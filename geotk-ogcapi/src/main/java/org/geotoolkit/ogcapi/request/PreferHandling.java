@@ -14,22 +14,22 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.ogcapi.request.styles;
+package org.geotoolkit.ogcapi.request;
 
 /**
- * The {@code Prefer} header preferences defined by RFC 7240 section 4.4 for style validation on
- * create/replace operations.
+ * The {@code Prefer} header preferences defined by RFC 7240 section 4.4 for validation on
+ * create/replace/update operations.
  *
  * @author Johann Sorel (Geomatys)
  */
 public enum PreferHandling {
     /**
-     * The server validates the submitted stylesheet for conformance with the style encoding, returning
+     * The server validates the submitted document for conformance with its encoding, returning
      * a {@code 400} response if an error is identified.
      */
     STRICT("handling=strict"),
     /**
-     * The server does not validate the submitted stylesheet for conformance with the style encoding.
+     * The server does not validate the submitted document for conformance with its encoding.
      */
     LENIENT("handling=lenient");
 

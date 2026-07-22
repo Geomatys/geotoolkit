@@ -45,14 +45,15 @@ import org.geotoolkit.client.openapi.OpenApiConfiguration;
 import org.geotoolkit.client.service.ServiceException;
 import org.geotoolkit.dggs.s2.S2Dggrs;
 import org.geotoolkit.ogcapi.client.dggs.DggsApi;
-import org.geotoolkit.ogcapi.client.feature.FeatureApi;
+import org.geotoolkit.ogcapi.client.common.SchemaApi;
+import org.geotoolkit.ogcapi.request.common.GetCollectionSchema;
 import org.geotoolkit.ogcapi.dto.common.CollectionDescription;
 import org.geotoolkit.ogcapi.dto.dggs.Dggrs;
 import org.geotoolkit.ogcapi.dto.dggs.DggrsData;
 import org.geotoolkit.ogcapi.dto.dggs.DggrsDataValue;
 import org.geotoolkit.ogcapi.dto.dggs.DggrsItem;
 import org.geotoolkit.ogcapi.dto.dggs.DggrsListResponse;
-import org.geotoolkit.ogcapi.dto.jsonschema.JSONSchema;
+import org.geotoolkit.ogcapi.dto.common.Schema;
 import org.geotoolkit.ogcapi.dto.jsonschema.JSONSchemaProperty;
 import org.geotoolkit.ogcapi.request.dggs.GetDggrs;
 import org.geotoolkit.ogcapi.request.dggs.GetDggrsList;
@@ -89,7 +90,7 @@ public final class DggrsResource extends CollectionItemResource implements Aggre
             DiscreteGlobalGridGeometry.unstructured(S2Dggrs.INSTANCE, List.of("0"), null),
             List.of());
 
-    private final FeatureApi featureApi;
+    private final SchemaApi schemaApi;
     private final DggsApi dggrsApi;
     private List<ForDGGRS> components;
     private String preferredFormat = "json";
@@ -105,7 +106,7 @@ public final class DggrsResource extends CollectionItemResource implements Aggre
     public DggrsResource(CollectionResource parent, CollectionDescription description) {
         super(parent, description);
         final OpenApiConfiguration config = parent.api.getConfiguration();
-        featureApi = new FeatureApi(config);
+        schemaApi = new SchemaApi(config);
         dggrsApi = new DggsApi(config);
 
     }
@@ -164,8 +165,9 @@ public final class DggrsResource extends CollectionItemResource implements Aggre
         if (sampleDimensions != null) return sampleDimensions;
 
         try {
-            HttpResponse<Supplier<JSONSchema>> jsonSchema = featureApi.collectinGetJsonSchema(description.getId(), null).send();
-            final JSONSchema schema = jsonSchema.body().get();
+            HttpResponse<Supplier<Schema>> jsonSchema = schemaApi.getSchema(
+                    new GetCollectionSchema().collectionId(description.getId())).send();
+            final Schema schema = jsonSchema.body().get();
 
             sampleDimensions = new ArrayList<>();
             for (Entry<String,JSONSchemaProperty> entry : schema.getProperties().entrySet()) {

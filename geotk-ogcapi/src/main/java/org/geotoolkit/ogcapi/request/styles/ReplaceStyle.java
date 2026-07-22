@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.ogcapi.request.styles;
 
+import org.geotoolkit.ogcapi.request.PreferHandling;
 import org.geotoolkit.ogcapi.request.RequestParameters;
 
 /**
