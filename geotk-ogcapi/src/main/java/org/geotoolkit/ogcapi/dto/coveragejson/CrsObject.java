@@ -1,0 +1,116 @@
+/*
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2026, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
+package org.geotoolkit.ogcapi.dto.coveragejson;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import java.util.Objects;
+import org.geotoolkit.ogcapi.dto.DataTransferObject;
+
+/**
+ * A CRS supported by a data query, identified by its URI and, optionally, its WKT definition.
+ *
+ * @author Quentin Bialota (Geomatys)
+ */
+@JsonPropertyOrder({
+    CrsObject.JSON_PROPERTY_CRS,
+    CrsObject.JSON_PROPERTY_WKT
+})
+@XmlRootElement(name = "CrsObject")
+@XmlAccessorType(XmlAccessType.FIELD)
+@JacksonXmlRootElement(localName = "CrsObject")
+public final class CrsObject extends DataTransferObject {
+
+    public static final String JSON_PROPERTY_CRS = "crs";
+    @XmlElement(name = "crs")
+    @jakarta.annotation.Nullable
+    private String crs;
+
+    public static final String JSON_PROPERTY_WKT = "wkt";
+    @XmlElement(name = "wkt")
+    @jakarta.annotation.Nullable
+    private String wkt;
+
+    public CrsObject() {
+    }
+
+    public CrsObject crs(@jakarta.annotation.Nullable String crs) {
+        this.crs = crs;
+        return this;
+    }
+
+    @jakarta.annotation.Nullable
+    @JsonProperty(JSON_PROPERTY_CRS)
+    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+    @JacksonXmlProperty(localName = "crs")
+    public String getCrs() {
+        return crs;
+    }
+
+    @JsonProperty(JSON_PROPERTY_CRS)
+    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+    @JacksonXmlProperty(localName = "crs")
+    public void setCrs(@jakarta.annotation.Nullable String crs) {
+        this.crs = crs;
+    }
+
+    public CrsObject wkt(@jakarta.annotation.Nullable String wkt) {
+        this.wkt = wkt;
+        return this;
+    }
+
+    @jakarta.annotation.Nullable
+    @JsonProperty(JSON_PROPERTY_WKT)
+    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+    @JacksonXmlProperty(localName = "wkt")
+    public String getWkt() {
+        return wkt;
+    }
+
+    @JsonProperty(JSON_PROPERTY_WKT)
+    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+    @JacksonXmlProperty(localName = "wkt")
+    public void setWkt(@jakarta.annotation.Nullable String wkt) {
+        this.wkt = wkt;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        CrsObject other = (CrsObject) o;
+        return Objects.equals(this.crs, other.crs)
+                && Objects.equals(this.wkt, other.wkt);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(crs, wkt);
+    }
+
+}

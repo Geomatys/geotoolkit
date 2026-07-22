@@ -48,7 +48,8 @@ import org.opengis.util.FactoryException;
  */
 @JsonPropertyOrder({
     Extent.JSON_PROPERTY_SPATIAL,
-    Extent.JSON_PROPERTY_TEMPORAL
+    Extent.JSON_PROPERTY_TEMPORAL,
+    Extent.JSON_PROPERTY_VERTICAL
 })
 @XmlRootElement(name = "Extent")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -64,6 +65,11 @@ public final class Extent extends DataTransferObject {
     @XmlElement(name = "temporal")
     @jakarta.annotation.Nullable
     private TemporalExtent temporal;
+
+    public static final String JSON_PROPERTY_VERTICAL = "vertical";
+    @XmlElement(name = "vertical")
+    @jakarta.annotation.Nullable
+    private VerticalExtent vertical;
 
     public static final String JSON_PROPERTY_CRS = "crs";
     @XmlElement(name = "crs")
@@ -126,6 +132,31 @@ public final class Extent extends DataTransferObject {
     @JacksonXmlProperty(localName = "temporal")
     public void setTemporal(@jakarta.annotation.Nullable TemporalExtent temporal) {
         this.temporal = temporal;
+    }
+
+    public Extent vertical(@jakarta.annotation.Nullable VerticalExtent vertical) {
+        this.vertical = vertical;
+        return this;
+    }
+
+    /**
+     * Get vertical
+     *
+     * @return vertical
+     */
+    @jakarta.annotation.Nullable
+    @JsonProperty(JSON_PROPERTY_VERTICAL)
+    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+    @JacksonXmlProperty(localName = "vertical")
+    public VerticalExtent getVertical() {
+        return vertical;
+    }
+
+    @JsonProperty(JSON_PROPERTY_VERTICAL)
+    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+    @JacksonXmlProperty(localName = "vertical")
+    public void setVertical(@jakarta.annotation.Nullable VerticalExtent vertical) {
+        this.vertical = vertical;
     }
 
     @JsonProperty(JSON_PROPERTY_CRS)
@@ -258,12 +289,13 @@ public final class Extent extends DataTransferObject {
         }
         Extent extent = (Extent) o;
         return Objects.equals(this.spatial, extent.spatial)
-                && Objects.equals(this.temporal, extent.temporal);
+                && Objects.equals(this.temporal, extent.temporal)
+                && Objects.equals(this.vertical, extent.vertical);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(spatial, temporal);
+        return Objects.hash(spatial, temporal, vertical);
     }
 
 }

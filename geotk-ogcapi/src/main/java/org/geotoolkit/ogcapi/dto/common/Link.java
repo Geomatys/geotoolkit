@@ -44,7 +44,7 @@ import org.geotoolkit.ogcapi.dto.DataTransferObject;
 @XmlRootElement(name = "Link")
 @XmlAccessorType(XmlAccessType.FIELD)
 @JacksonXmlRootElement(localName = "Link")
-public final class Link extends DataTransferObject {
+public class Link extends DataTransferObject {
 
     public static final String JSON_PROPERTY_HREF = "href";
     @XmlElement(name = "href")
