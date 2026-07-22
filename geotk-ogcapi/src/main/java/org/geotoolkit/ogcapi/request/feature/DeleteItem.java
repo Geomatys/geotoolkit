@@ -14,30 +14,24 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.ogcapi.request.edr;
+package org.geotoolkit.ogcapi.request.feature;
 
 import org.geotoolkit.ogcapi.request.RequestParameters;
 
 /**
- * The {@code items/{itemId}} EDR query ({@code /collections/{collectionId}/items/{itemId}}).
+ * To delete an existing feature.
  *
- * <p>Unlike the other EDR queries, {@code items} is only defined at collection scope: the
- * specification does not expose an instance-scoped variant.</p>
- *
- * <p>This query type is inherited from OGC API - Features Part 1 (the {@code /items/{itemId}}
- * resource), not defined by EDR itself. Should a Features Part 1 client be added to this module,
- * this class should be promoted/mutualized with its equivalent instead of kept EDR-local.</p>
+ * <p>OGC API - Features Part 4: Create, Replace, Update and Delete.</p>
  *
  * @author Quentin Bialota (Geomatys)
  */
-public final class GetItem extends RequestParameters {
+public final class DeleteItem extends RequestParameters {
 
     private String collectionId;
     private String itemId;
-    private String f;
 
     /**
-     * Local identifier of the collection.
+     * Local identifier of the collection. (required)
      *
      * @return the collectionId
      */
@@ -57,13 +51,13 @@ public final class GetItem extends RequestParameters {
      * @param collectionId the collectionId to set
      * @see #getCollectionId()
      */
-    public GetItem collectionId(String collectionId) {
+    public DeleteItem collectionId(String collectionId) {
         setCollectionId(collectionId);
         return this;
     }
 
     /**
-     * Local identifier of the item.
+     * Local identifier of the feature to delete. (required)
      *
      * @return the itemId
      */
@@ -83,35 +77,8 @@ public final class GetItem extends RequestParameters {
      * @param itemId the itemId to set
      * @see #getItemId()
      */
-    public GetItem itemId(String itemId) {
+    public DeleteItem itemId(String itemId) {
         setItemId(itemId);
-        return this;
-    }
-
-    /**
-     * The output format of the response. If not given, the content type is negotiated from the
-     * {@code Accept} header. (optional)
-     *
-     * @return the f
-     */
-    public String getF() {
-        return f;
-    }
-
-    /**
-     * @param f the f to set
-     * @see #getF()
-     */
-    public void setF(String f) {
-        this.f = f;
-    }
-
-    /**
-     * @param f the f to set
-     * @see #getF()
-     */
-    public GetItem f(String f) {
-        setF(f);
         return this;
     }
 

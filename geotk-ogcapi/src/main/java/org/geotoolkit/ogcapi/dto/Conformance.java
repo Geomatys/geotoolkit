@@ -119,6 +119,14 @@ public final class Conformance {
     public static final String FEATURE_FILTERING_FEATURES_FILTER = "http://www.opengis.net/spec/ogcapi-features-3/1.0/conf/features-filter";
 
     // /////////////////////////////////////////////////////////////////////////////////////////
+    // OGC-API - Features - Part 4 : Create, Replace, Update and Delete
+    // https://docs.ogc.org/DRAFTS/20-002r1.html
+    // /////////////////////////////////////////////////////////////////////////////////////////
+
+    public static final String FEATURE_CREATE_REPLACE_DELETE = "http://www.opengis.net/spec/ogcapi-features-4/1.0/conf/create-replace-delete";
+    public static final String FEATURE_UPDATE = "http://www.opengis.net/spec/ogcapi-features-4/1.0/conf/update";
+
+    // /////////////////////////////////////////////////////////////////////////////////////////
     // OGC-API - Features - Part 5 : Schema
     // https://docs.ogc.org/DRAFTS/23-058r1.html
     // /////////////////////////////////////////////////////////////////////////////////////////
