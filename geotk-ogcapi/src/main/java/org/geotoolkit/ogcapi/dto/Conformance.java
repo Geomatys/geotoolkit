@@ -499,4 +499,47 @@ public final class Conformance {
      * @see https://docs.ogc.org/is/18-062r2/18-062r2.html#req_dismiss
      */
     public static final String PROCESSES_DISMISS = "http://www.opengis.net/spec/ogcapi-processes-1/1.0/conf/dismiss";
+
+
+    // /////////////////////////////////////////////////////////////////////////////////////////
+    // OGC API - Environmental Data Retrieval - Part 1 : Core
+    // https://docs.ogc.org/is/19-086r6/19-086r6.html
+    // /////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * @see https://docs.ogc.org/is/19-086r6/19-086r6.html#rc_core
+     */
+    public static final String EDR_CORE = "http://www.opengis.net/spec/ogcapi-edr-1/1.1/conf/core";
+    /**
+     * @see https://docs.ogc.org/is/19-086r6/19-086r6.html#rc_collections
+     */
+    public static final String EDR_COLLECTIONS = "http://www.opengis.net/spec/ogcapi-edr-1/1.1/conf/collections";
+    /**
+     * @see https://docs.ogc.org/is/19-086r6/19-086r6.html#rc_queries
+     */
+    public static final String EDR_QUERIES = "http://www.opengis.net/spec/ogcapi-edr-1/1.1/conf/queries";
+    /**
+     * @see https://docs.ogc.org/is/19-086r6/19-086r6.html#rc_json
+     */
+    public static final String EDR_JSON = "http://www.opengis.net/spec/ogcapi-edr-1/1.1/conf/json";
+    /**
+     * @see https://docs.ogc.org/is/19-086r6/19-086r6.html#rc_geojson
+     */
+    public static final String EDR_GEOJSON = "http://www.opengis.net/spec/ogcapi-edr-1/1.1/conf/geojson";
+    /**
+     * @see https://docs.ogc.org/is/19-086r6/19-086r6.html#rc_edr_geojson
+     */
+    public static final String EDR_EDR_GEOJSON = "http://www.opengis.net/spec/ogcapi-edr-1/1.1/conf/edr-geojson";
+    /**
+     * @see https://docs.ogc.org/is/19-086r6/19-086r6.html#rc_covjson
+     */
+    public static final String EDR_COVERAGEJSON = "http://www.opengis.net/spec/ogcapi-edr-1/1.1/conf/covjson";
+    /**
+     * @see https://docs.ogc.org/is/19-086r6/19-086r6.html#rc_html
+     */
+    public static final String EDR_HTML = "http://www.opengis.net/spec/ogcapi-edr-1/1.1/conf/html";
+    /**
+     * @see https://docs.ogc.org/is/19-086r6/19-086r6.html#rc_oas30
+     */
+    public static final String EDR_OAS30 = "http://www.opengis.net/spec/ogcapi-edr-1/1.1/conf/oas30";
 }

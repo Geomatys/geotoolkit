@@ -17,7 +17,7 @@
 
 
 /**
- * Placeholder for OGC-API Environmental Data Retrieval bindings.
- * @see https://ogcapi.ogc.org/edr/
+ * OGC API - Environmental Data Retrieval (EDR) Standard 1.1/1.2, Part 1: Core, bindings.
+ * @see https://docs.ogc.org/is/19-086r6/19-086r6.html
  */
 package org.geotoolkit.ogcapi.client.edr;
