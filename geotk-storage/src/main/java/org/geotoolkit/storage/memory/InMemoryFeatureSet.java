@@ -383,7 +383,13 @@ public class InMemoryFeatureSet extends AbstractFeatureSet implements WritableFe
                 .orElse(null);
 
         if (fEnv == null) return null;
-        if (fEnv.getCoordinateReferenceSystem() == null) fEnv.setCoordinateReferenceSystem(defaultGeometryCrs);
+        int dim = CRS.getDimensionOrZero(defaultGeometryCrs);
+        if (dim > 0 && dim < fEnv.getDimension()) {
+            fEnv = fEnv.subEnvelope(0, dim);
+        }
+        if (fEnv.getCoordinateReferenceSystem() == null) {
+            fEnv.setCoordinateReferenceSystem(defaultGeometryCrs);
+        }
         try {
             fEnv = GeneralEnvelope.castOrCopy(Envelopes.transform(fEnv, INDEX_CRS));
         } catch (TransformException ex) {
