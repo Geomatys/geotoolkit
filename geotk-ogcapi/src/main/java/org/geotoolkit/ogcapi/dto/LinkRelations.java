@@ -297,4 +297,24 @@ public final class LinkRelations {
      */
     public static final String OGC_STYLES_STYLE = "https://www.opengis.net/def/rel/ogc/1.0/styles";
 
+    // /////////////////////////////////////////////////////////////////////////////////////////
+    // OGC-API - Joins - Part 1: Core (draft)
+    // /////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Refers to a resource that is comprised of metadata of the key fields of the collection
+     * represented by the link's context.
+     */
+    public static final String OGC_JOINS_KEYS = "keys";
+    /**
+     * Refers to a resource that is comprised of the metadata of the created join sources of the
+     * specific collection that is available on the server.
+     */
+    public static final String OGC_JOINS_JOIN_SOURCES = "join-sources";
+    /**
+     * Refers to a resource that is comprised of the metadata of the specific join source of the
+     * specific collection that is available on the server.
+     */
+    public static final String OGC_JOINS_JOIN_SOURCE = "join-source";
+
 }
