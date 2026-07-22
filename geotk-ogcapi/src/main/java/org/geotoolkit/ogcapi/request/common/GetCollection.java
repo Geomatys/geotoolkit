@@ -22,7 +22,7 @@ import org.geotoolkit.ogcapi.request.RequestParameters;
  *
  * @author Johann Sorel (Geomatys)
  */
-public final class GetCollection extends RequestParameters {
+public class GetCollection extends RequestParameters {
 
     private String collectionId;
     private String format;

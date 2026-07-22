@@ -591,4 +591,48 @@ public final class Conformance {
      * @see https://docs.ogc.org/DRAFTS/22-026.html#rc_geojson
      */
     public static final String JOINS_GEOJSON = "http://www.opengis.net/spec/ogcapi-joins-1/1.0/conf/geojson";
+
+    // /////////////////////////////////////////////////////////////////////////////////////////
+    // OGC-API - 3D GeoVolumes (draft)
+    // https://docs.ogc.org/DRAFTS/22-029.html
+    // /////////////////////////////////////////////////////////////////////////////////////////
+
+    public static final String GEOVOLUMES_CORE = "http://www.opengis.net/spec/ogcapi-geovolumes-1/1.0/conf/core";
+
+    public static final String GEOVOLUMES_OAS30 = "http://www.opengis.net/spec/ogcapi-geovolumes-1/1.0/conf/oas30";
+
+    public static final String GEOVOLUMES_HTML = "http://www.opengis.net/spec/ogcapi-geovolumes-1/1.0/conf/html";
+
+    public static final String GEOVOLUMES_JSON = "http://www.opengis.net/spec/ogcapi-geovolumes-1/1.0/conf/json";
+
+    /**
+     * @see https://docs.ogc.org/DRAFTS/22-029.html#clause_requirements_class_spatial_query_extension
+     */
+    public static final String GEOVOLUMES_SPATIAL_QUERY = "http://www.opengis.net/spec/ogcapi-geovolumes-1/1.0/conf/spatialquery";
+
+    /**
+     * Not spelled out explicitly in the draft's example conformance responses; derived from the
+     * requirements class label (.../req/2dtms-tiles) following the core/spatialquery convention above.
+     *
+     * @see https://docs.ogc.org/DRAFTS/22-029.html#clause_requirements_class_2dtms_tiles
+     */
+    public static final String GEOVOLUMES_2DTMS_TILES = "http://www.opengis.net/spec/ogcapi-geovolumes-1/1.0/conf/2dtms-tiles";
+
+    /**
+     * Not spelled out explicitly in the draft's example conformance responses; derived from the
+     * requirements class label (.../req/point-tiles) following the core/spatialquery convention above.
+     *
+     * @see https://docs.ogc.org/DRAFTS/22-029.html#clause_requirements_class_tiles_referencing_models
+     */
+    public static final String GEOVOLUMES_POINT_TILES = "http://www.opengis.net/spec/ogcapi-geovolumes-1/1.0/conf/point-tiles";
+
+    /**
+     * Not spelled out explicitly in the draft's example conformance responses; derived from the
+     * requirements class label (.../req/batched-3d-models-tiles) following the core/spatialquery
+     * convention above.
+     *
+     * @see https://docs.ogc.org/DRAFTS/22-029.html#clause_requirements_class_batched_3d_models_tiles
+     */
+    public static final String GEOVOLUMES_BATCHED_3DTILES = "http://www.opengis.net/spec/ogcapi-geovolumes-1/1.0/conf/batched-3dtiles";
+
 }

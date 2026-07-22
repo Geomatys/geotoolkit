@@ -17,7 +17,7 @@
 
 
 /**
- * Placeholder for OGC-API Geo volumes bindings.
- * @see https://ogcapi.ogc.org/geovolumes/
+ * OGC-API 3D GeoVolumes bindings.
+ * @see https://docs.ogc.org/DRAFTS/22-029.html
  */
 package org.geotoolkit.ogcapi.client.geovolumes;

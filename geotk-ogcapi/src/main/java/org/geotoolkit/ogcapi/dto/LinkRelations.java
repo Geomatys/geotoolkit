@@ -317,4 +317,40 @@ public final class LinkRelations {
      */
     public static final String OGC_JOINS_JOIN_SOURCE = "join-source";
 
+    // /////////////////////////////////////////////////////////////////////////////////////////
+    // OGC-API - 3D GeoVolumes
+    // /////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Link from a 3D-Container with 2D content to a 3D-Container with 2.5D content (surface, point
+     * cloud) to which the 2D content should be texture-mapped.
+     */
+    public static final String GEOVOLUMES_AFFINEMAP = "affinemap";
+    /**
+     * The distribution representing the most original version of the dataset, e.g. a CityGML model.
+     */
+    public static final String GEOVOLUMES_ORIGINAL = "original";
+    /**
+     * Link to the enclosing 3D-Container.
+     */
+    public static final String GEOVOLUMES_PARENT = "parent";
+    /**
+     * Link to the top-level 3D-Container.
+     */
+    public static final String GEOVOLUMES_ROOT = "root";
+    /**
+     * Link to the definition of any implicit tile scheme which sets the 3D-Container organization,
+     * extent and/or addressing.
+     */
+    public static final String GEOVOLUMES_SCHEME = "scheme";
+    /**
+     * Indicates that the link's context is a distribution.
+     */
+    public static final String GEOVOLUMES_DISTRIBUTION = "distribution";
+    /**
+     * The target IRI points to a resource representing the collection resource for the context
+     * (distinct from the singular {@link #COLLECTION} relation used elsewhere in OGC APIs).
+     */
+    public static final String GEOVOLUMES_COLLECTIONS = "collections";
+
 }
