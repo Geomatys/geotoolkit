@@ -17,7 +17,7 @@
 
 
 /**
- * Placeholder for OGC-API Moving features bindings.
+ * OGC API - Moving Features (Part 1: Core) client bindings.
  * @see https://ogcapi.ogc.org/movingfeatures/
  */
 package org.geotoolkit.ogcapi.client.movingfeatures;
