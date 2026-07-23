@@ -332,6 +332,37 @@ public final class Conformance {
 
     public static final String RECORD_LOCAL_RESOURCES_CATALOG_SORTING = "http://www.opengis.net/spec/ogcapi-records-1/1.0/conf/local-resources-catalog-sorting";
 
+    // Common component requirements classes, shared by the catalog deployment types above.
+    public static final String RECORD_CORE = "http://www.opengis.net/spec/ogcapi-records-1/1.0/conf/record-core";
+    public static final String RECORD_COLLECTION = "http://www.opengis.net/spec/ogcapi-records-1/1.0/conf/record-collection";
+    public static final String RECORD_CORE_QUERY_PARAMETERS = "http://www.opengis.net/spec/ogcapi-records-1/1.0/conf/record-core-query-parameters";
+    public static final String RECORD_PROFILE_QUERY_PARAMETER = "http://www.opengis.net/spec/ogcapi-records-1/1.0/conf/query-param-profile";
+    public static final String RECORD_API = "http://www.opengis.net/spec/ogcapi-records-1/1.0/conf/record-api";
+    public static final String RECORD_SORTING = "http://www.opengis.net/spec/ogcapi-records-1/1.0/conf/sorting";
+    public static final String RECORD_FILTERING = "http://www.opengis.net/spec/ogcapi-records-1/1.0/conf/filtering";
+    public static final String RECORD_JSON = "http://www.opengis.net/spec/ogcapi-records-1/1.0/conf/json";
+    public static final String RECORD_HTML = "http://www.opengis.net/spec/ogcapi-records-1/1.0/conf/html";
+    public static final String RECORD_OAS30 = "http://www.opengis.net/spec/ogcapi-records-1/1.0/conf/oas30";
+    public static final String RECORD_AUTODISCOVERY = "http://www.opengis.net/spec/ogcapi-records-1/1.0/conf/autodiscovery";
+
+    // /////////////////////////////////////////////////////////////////////////////////////////
+    // OGC-API Records - Part 2: Facets (draft)
+    // https://docs.ogc.org/DRAFTS/25-013.html
+    // /////////////////////////////////////////////////////////////////////////////////////////
+
+    public static final String RECORDS_FACETS_SIMPLE = "http://www.opengis.net/spec/ogcapi-records-2/1.0/conf/simple";
+
+    public static final String RECORDS_FACETS_ADVANCED = "http://www.opengis.net/spec/ogcapi-records-2/1.0/conf/advanced";
+
+    // /////////////////////////////////////////////////////////////////////////////////////////
+    // OGC-API Records - Part 3: Create, Replace, Update, Delete, Harvest (draft)
+    // https://docs.ogc.org/DRAFTS/25-015.html
+    // /////////////////////////////////////////////////////////////////////////////////////////
+
+    public static final String RECORDS_CRUD_RECORDS = "http://www.opengis.net/spec/ogcapi-records-3/1.0/conf/records";
+
+    public static final String RECORDS_CRUD_HARVEST = "http://www.opengis.net/spec/ogcapi-records-3/1.0/conf/harvest";
+
     // /////////////////////////////////////////////////////////////////////////////////////////
     // OGC-API Tiles - Part 1
     // https://docs.ogc.org/is/20-057/20-057.html

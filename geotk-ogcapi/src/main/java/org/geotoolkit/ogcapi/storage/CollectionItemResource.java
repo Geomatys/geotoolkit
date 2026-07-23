@@ -21,6 +21,7 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.AbstractResource;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.Resource;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.ogcapi.dto.common.CollectionDescription;
 import org.geotoolkit.ogcapi.dto.common.Extent;
@@ -37,10 +38,10 @@ import org.opengis.util.GenericName;
  */
 public class CollectionItemResource extends AbstractResource {
 
-    protected final CollectionResource parent;
+    protected final Resource parent;
     protected final CollectionDescription description;
 
-    public CollectionItemResource(CollectionResource parent, CollectionDescription description) {
+    public CollectionItemResource(Resource parent, CollectionDescription description) {
         super(parent);
         this.parent = parent;
         this.description = description;
