@@ -81,6 +81,7 @@ import org.apache.sis.storage.Query;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Classes;
+import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.coverage.io.GridCoverageWriteParam;
 import org.geotoolkit.coverage.io.ImageCoverageWriter;
 import org.geotoolkit.display.PortrayalException;
@@ -895,7 +896,12 @@ public final class DefaultPortrayalService implements PortrayalService{
                             return stream;
                         }
                     });
-                    stream = Stream.concat(stream, s);
+                    try {
+                        stream = Stream.concat(stream, s);
+                    } catch (Exception ex) {
+                        s.close();
+                        throw new PortrayalException(ex);
+                    }
                 } catch (PortrayalException | DataStoreException ex) {
                     ExceptionPresentation ep = new ExceptionPresentation(ex);
                     ep.setLayer(layer);
