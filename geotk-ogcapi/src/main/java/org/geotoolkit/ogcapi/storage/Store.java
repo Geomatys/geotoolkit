@@ -18,8 +18,10 @@ package org.geotoolkit.ogcapi.storage;
 
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.storage.Aggregate;
@@ -46,7 +48,7 @@ public final class Store extends DataStore implements Aggregate {
 
     private final OpenApiConfiguration configuration;
     private final URI uri;
-    private Resource root;
+    private List<Resource> roots;
     private final String id;
 
     Store(Provider provider, StorageConnector connector) throws DataStoreException {
@@ -95,15 +97,20 @@ public final class Store extends DataStore implements Aggregate {
      */
     @Override
     public synchronized Collection<? extends Resource> components() throws DataStoreException {
-        if (root == null) {
+        if (roots == null) {
+            roots = new ArrayList<>();
             try (CoreApi core = new CoreApi(configuration)) {
                 final ConfClasses conformance = core.getConformance(new GetConformance().format("json")).send().body().get();
                 if (conformance.isConformTo(Conformance.COLLECTIONS_v0)
                    || conformance.isConformTo(Conformance.COLLECTIONS_v1)
                    || conformance.isConformTo(Conformance.DGGS_COLLECTION)) {
-                    root = new CollectionResource(configuration);
-                } else {
-                    root = new UndefinedResource(configuration);
+                    roots.add(new CollectionResource(configuration));
+                }
+                if (conformance.isConformTo(Conformance.ROUTES_CORE)) {
+                    roots.add(new RoutesResource(configuration));
+                }
+                if (roots.isEmpty()) {
+                    roots.add(new UndefinedResource(configuration));
                 }
             } catch (ServiceException ex) {
                 throw new DataStoreException(ex);
@@ -112,7 +119,7 @@ public final class Store extends DataStore implements Aggregate {
             }
         }
 
-        return Collections.singleton(root);
+        return Collections.unmodifiableList(roots);
     }
 
     @Override
