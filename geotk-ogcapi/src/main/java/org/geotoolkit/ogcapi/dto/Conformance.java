@@ -688,4 +688,15 @@ public final class Conformance {
      */
     public static final String ROUTES_MANAGE_ROUTES = "http://www.opengis.net/spec/ogcapi-routes-1/1.0/conf/manage-routes";
 
+    // /////////////////////////////////////////////////////////////////////////////////////////
+    // OGC API - Moving Features, Part 1: Core
+    // https://docs.ogc.org/is/22-003r3/22-003r3.html
+    // /////////////////////////////////////////////////////////////////////////////////////////
+
+    public static final String MOVINGFEATURES_COMMON = "http://www.opengis.net/spec/ogcapi-movingfeatures-1/1.0/conf/common";
+
+    public static final String MOVINGFEATURES_MF_COLLECTION = "http://www.opengis.net/spec/ogcapi-movingfeatures-1/1.0/conf/mf-collection";
+
+    public static final String MOVINGFEATURES_MOVINGFEATURES = "http://www.opengis.net/spec/ogcapi-movingfeatures-1/1.0/conf/movingfeatures";
+
 }
