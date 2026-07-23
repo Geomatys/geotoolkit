@@ -75,6 +75,12 @@ public final class CollectionResource extends AbstractResource implements Aggreg
                             new GetCollection().collectionId(cd.getId()).format("json")).send();
                     final CollectionDescription fullDescription = fres.body().get();
 
+                    if ("record".equals(fullDescription.getItemType())) {
+                        //catalog record data
+                        components.add(new RecordResource(this, fullDescription));
+                        continue loop;
+                    }
+
                     final List<Link> links = fullDescription.getLinks();
                     for (Link link : links) {
                         if (LinkRelations.OGC_DGGRS_LIST.equals(link.getRel()) || LinkRelations.OGC_DGGRS_LIST.equals(link.getRel().replace("http", "https"))) {

@@ -98,20 +98,24 @@ public final class Store extends DataStore implements Aggregate {
     @Override
     public synchronized Collection<? extends Resource> components() throws DataStoreException {
         if (roots == null) {
-            roots = new ArrayList<>();
             try (CoreApi core = new CoreApi(configuration)) {
                 final ConfClasses conformance = core.getConformance(new GetConformance().format("json")).send().body().get();
+                final List<Resource> newRoots = new ArrayList<>();
                 if (conformance.isConformTo(Conformance.COLLECTIONS_v0)
                    || conformance.isConformTo(Conformance.COLLECTIONS_v1)
-                   || conformance.isConformTo(Conformance.DGGS_COLLECTION)) {
-                    roots.add(new CollectionResource(configuration));
+                   || conformance.isConformTo(Conformance.DGGS_COLLECTION)
+                   || conformance.isConformTo(Conformance.RECORD_CRAWLABLE_CATALOG)
+                   || conformance.isConformTo(Conformance.RECORD_SEARCHABLE_CATALOG)
+                   || conformance.isConformTo(Conformance.RECORD_LOCAL_RESOURCES_CATALOG)) {
+                    newRoots.add(new CollectionResource(configuration));
                 }
                 if (conformance.isConformTo(Conformance.ROUTES_CORE)) {
-                    roots.add(new RoutesResource(configuration));
+                    newRoots.add(new RoutesResource(configuration));
                 }
-                if (roots.isEmpty()) {
-                    roots.add(new UndefinedResource(configuration));
+                if (newRoots.isEmpty()) {
+                    newRoots.add(new UndefinedResource(configuration));
                 }
+                roots = newRoots;
             } catch (ServiceException ex) {
                 throw new DataStoreException(ex);
             } catch (Exception ex) {
