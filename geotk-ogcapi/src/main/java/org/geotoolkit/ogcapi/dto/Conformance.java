@@ -643,4 +643,18 @@ public final class Conformance {
      */
     public static final String GEOVOLUMES_BATCHED_3DTILES = "http://www.opengis.net/spec/ogcapi-geovolumes-1/1.0/conf/batched-3dtiles";
 
+    // /////////////////////////////////////////////////////////////////////////////////////////
+    // OGC-API - Routes - Part 1: Core (draft)
+    // https://docs.ogc.org/DRAFTS/21-000.html
+    // /////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * @see https://docs.ogc.org/DRAFTS/21-000.html#rc_core
+     */
+    public static final String ROUTES_CORE = "http://www.opengis.net/spec/ogcapi-routes-1/1.0/conf/core";
+    /**
+     * @see https://docs.ogc.org/DRAFTS/21-000.html#rc_manage-routes
+     */
+    public static final String ROUTES_MANAGE_ROUTES = "http://www.opengis.net/spec/ogcapi-routes-1/1.0/conf/manage-routes";
+
 }

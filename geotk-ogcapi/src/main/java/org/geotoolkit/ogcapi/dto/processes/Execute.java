@@ -46,7 +46,7 @@ import org.geotoolkit.ogcapi.dto.DataTransferObject;
 @XmlRootElement(name = "Execute")
 @XmlAccessorType(XmlAccessType.FIELD)
 @JacksonXmlRootElement(localName = "Execute")
-public final class Execute extends DataTransferObject {
+public class Execute extends DataTransferObject {
 
     public static final String JSON_PROPERTY_INPUTS = "inputs";
     @XmlElement(name = "inputs")

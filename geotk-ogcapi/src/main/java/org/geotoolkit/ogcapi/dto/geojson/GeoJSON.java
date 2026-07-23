@@ -84,18 +84,26 @@ public final class GeoJSON {
 
     public static Geometry fromGeoJSON(GeoJSONGeometry geom) throws DataStoreException {
         if (geom instanceof GeoJSONPoint json) {
-            final List<Double> coordinates = json.getCoordinates();
-            final int size = coordinates.size();
-            final Coordinate coord;
-            switch (size) {
-                case 2 : coord = new CoordinateXY(coordinates.get(0), coordinates.get(1)); break;
-                case 3 : coord = new Coordinate(coordinates.get(0), coordinates.get(1), coordinates.get(2)); break;
-                case 4 : coord = new CoordinateXYZM(coordinates.get(0), coordinates.get(1), coordinates.get(2), coordinates.get(3)); break;
-                default : throw new DataStoreException("Geometry " + size + "not supported");
+            return GF.createPoint(toCoordinate(json.getCoordinates()));
+        } else if (geom instanceof GeoJSONLineString json) {
+            final List<List<Double>> coordinates = json.getCoordinates();
+            final Coordinate[] coords = new Coordinate[coordinates.size()];
+            for (int i = 0; i < coords.length; i++) {
+                coords[i] = toCoordinate(coordinates.get(i));
             }
-            return GF.createPoint(coord);
+            return GF.createLineString(coords);
         } else {
             throw new DataStoreException("Geometry not supported " + geom);
+        }
+    }
+
+    private static Coordinate toCoordinate(List<Double> coordinates) throws DataStoreException {
+        final int size = coordinates.size();
+        switch (size) {
+            case 2 : return new CoordinateXY(coordinates.get(0), coordinates.get(1));
+            case 3 : return new Coordinate(coordinates.get(0), coordinates.get(1), coordinates.get(2));
+            case 4 : return new CoordinateXYZM(coordinates.get(0), coordinates.get(1), coordinates.get(2), coordinates.get(3));
+            default : throw new DataStoreException("Geometry " + size + "not supported");
         }
     }
 
