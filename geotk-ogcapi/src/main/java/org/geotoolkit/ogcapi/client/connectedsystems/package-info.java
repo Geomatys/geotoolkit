@@ -17,7 +17,8 @@
 
 
 /**
- * Placeholder for OGC-API Styles bindings.
- * @see https://ogcapi.ogc.org/connectedsystems/
+ * OGC API - Connected Systems, Part 1 (Feature Resources) and Part 2 (Dynamic Data), bindings.
+ * @see https://docs.ogc.org/is/23-001/23-001.html
+ * @see https://docs.ogc.org/is/23-002/23-002.html
  */
 package org.geotoolkit.ogcapi.client.connectedsystems;
