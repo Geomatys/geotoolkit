@@ -17,7 +17,15 @@
 
 
 /**
- * Placeholder for OGC-API Sensor things bindings.
- * @see https://ogcapi.ogc.org/sensorthings/
+ * OGC SensorThings API bindings: Part 1 (Sensing), Part 2 (Tasking Core), and the STAplus
+ * extension, via a single generic entity-set-driven CRUD client ({@link
+ * org.geotoolkit.ogcapi.client.sensorthings.SensorThingsApi}).
+ *
+ * <p>Out of scope: the MQTT pub/sub extension, the {@code $ref} association endpoints, and the
+ * {@code $resultFormat=dataArray} compact Observation-array encoding.</p>
+ *
+ * @see https://docs.ogc.org/is/18-088/18-088.html
+ * @see https://docs.ogc.org/is/17-079r1/17-079r1.html
+ * @see https://docs.ogc.org/is/22-022r1/22-022r1.html
  */
 package org.geotoolkit.ogcapi.client.sensorthings;
