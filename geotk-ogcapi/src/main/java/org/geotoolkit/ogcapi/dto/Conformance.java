@@ -699,4 +699,132 @@ public final class Conformance {
 
     public static final String MOVINGFEATURES_MOVINGFEATURES = "http://www.opengis.net/spec/ogcapi-movingfeatures-1/1.0/conf/movingfeatures";
 
+    // /////////////////////////////////////////////////////////////////////////////////////////
+    // OGC SensorThings API - Part 1: Sensing
+    // https://docs.ogc.org/is/18-088/18-088.html
+    // /////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * @see https://docs.ogc.org/is/18-088/18-088.html#_conformance_class_datamodel
+     */
+    public static final String SENSORTHINGS_SENSING_DATAMODEL = "http://www.opengis.net/spec/iot_sensing/1.1/conf/datamodel";
+    /**
+     * @see https://docs.ogc.org/is/18-088/18-088.html#_conformance_class_sensorthings_api_resource_path
+     */
+    public static final String SENSORTHINGS_SENSING_RESOURCE_PATH = "http://www.opengis.net/spec/iot_sensing/1.1/conf/resource-path";
+    /**
+     * @see https://docs.ogc.org/is/18-088/18-088.html#_requirements_for_creating_updating_and_deleting_entities
+     */
+    public static final String SENSORTHINGS_SENSING_CREATE_UPDATE_DELETE = "http://www.opengis.net/spec/iot_sensing/1.1/conf/create-update-delete";
+    /**
+     * @see https://docs.ogc.org/is/18-088/18-088.html#_conformance_class_batch_request
+     */
+    public static final String SENSORTHINGS_SENSING_BATCH_REQUEST = "http://www.opengis.net/spec/iot_sensing/1.1/conf/batch-request";
+    /**
+     * @see https://docs.ogc.org/is/18-088/18-088.html#_conformance_class_sensorthings_api_sensing_mqtt_extension
+     */
+    public static final String SENSORTHINGS_SENSING_MQTT = "http://www.opengis.net/spec/iot_sensing/1.1/conf/mqtt";
+    /**
+     * MultiDatastream extension.
+     *
+     * @see https://docs.ogc.org/is/18-088/18-088.html#_conformance_class_multi_datastream_extension
+     */
+    public static final String SENSORTHINGS_SENSING_MULTI_DATASTREAM = "http://www.opengis.net/spec/iot_sensing/1.1/conf/multi-datastream";
+
+    // /////////////////////////////////////////////////////////////////////////////////////////
+    // OGC SensorThings API - Part 2: Tasking Core
+    // https://docs.ogc.org/is/17-079r1/17-079r1.html
+    // /////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * @see https://docs.ogc.org/is/17-079r1/17-079r1.html#_conformance_class_taskingcapability
+     */
+    public static final String SENSORTHINGS_TASKING_TASKINGCAPABILITY = "http://www.opengis.net/spec/iot_tasking/1.0/conf/taskingcapability";
+    /**
+     * @see https://docs.ogc.org/is/17-079r1/17-079r1.html#_conformance_class_task
+     */
+    public static final String SENSORTHINGS_TASKING_TASK = "http://www.opengis.net/spec/iot_tasking/1.0/conf/task";
+    /**
+     * @see https://docs.ogc.org/is/17-079r1/17-079r1.html#_conformance_class_actuator
+     */
+    public static final String SENSORTHINGS_TASKING_ACTUATOR = "http://www.opengis.net/spec/iot_tasking/1.0/conf/actuator";
+    /**
+     * @see https://docs.ogc.org/is/17-079r1/17-079r1.html#_conformance_class_creating_tasks_via_deep_insert
+     */
+    public static final String SENSORTHINGS_TASKING_CREATE_TASKS = "http://www.opengis.net/spec/iot_tasking/1.0/conf/create-tasks";
+    /**
+     * @see https://docs.ogc.org/is/17-079r1/17-079r1.html#_conformance_class_receive_updates_via_mqtt
+     */
+    public static final String SENSORTHINGS_TASKING_MQTT_RECEIVE_UPDATES = "http://www.opengis.net/spec/iot_tasking/1.0/conf/receive-updates-via-mqtt";
+    /**
+     * @see https://docs.ogc.org/is/17-079r1/17-079r1.html#_conformance_class_create_tasks_via_mqtt
+     */
+    public static final String SENSORTHINGS_TASKING_MQTT_CREATE_TASKS = "http://www.opengis.net/spec/iot_tasking/1.0/conf/create-tasks-via-mqtt";
+
+    // /////////////////////////////////////////////////////////////////////////////////////////
+    // OGC SensorThings API - STAplus extension
+    // https://docs.ogc.org/is/22-022r1/22-022r1.html
+    // /////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * @see https://docs.ogc.org/is/22-022r1/22-022r1.html#_conformance_class_core
+     */
+    public static final String STAPLUS_CORE = "http://www.opengis.net/spec/staplus/1.0/conf/core";
+    /**
+     * @see https://docs.ogc.org/is/22-022r1/22-022r1.html#_conformance_class_party
+     */
+    public static final String STAPLUS_PARTY = "http://www.opengis.net/spec/staplus/1.0/conf/party";
+    /**
+     * @see https://docs.ogc.org/is/22-022r1/22-022r1.html#_conformance_class_license
+     */
+    public static final String STAPLUS_LICENSE = "http://www.opengis.net/spec/staplus/1.0/conf/license";
+    /**
+     * @see https://docs.ogc.org/is/22-022r1/22-022r1.html#_conformance_class_group
+     */
+    public static final String STAPLUS_GROUP = "http://www.opengis.net/spec/staplus/1.0/conf/group";
+    /**
+     * @see https://docs.ogc.org/is/22-022r1/22-022r1.html#_conformance_class_relation
+     */
+    public static final String STAPLUS_RELATION = "http://www.opengis.net/spec/staplus/1.0/conf/relation";
+    /**
+     * @see https://docs.ogc.org/is/22-022r1/22-022r1.html#_conformance_class_campaign
+     */
+    public static final String STAPLUS_CAMPAIGN = "http://www.opengis.net/spec/staplus/1.0/conf/campaign";
+    /**
+     * @see https://docs.ogc.org/is/22-022r1/22-022r1.html#_conformance_class_create
+     */
+    public static final String STAPLUS_CREATE = "http://www.opengis.net/spec/staplus/1.0/conf/create";
+    /**
+     * @see https://docs.ogc.org/is/22-022r1/22-022r1.html#_conformance_class_update
+     */
+    public static final String STAPLUS_UPDATE = "http://www.opengis.net/spec/staplus/1.0/conf/update";
+    /**
+     * @see https://docs.ogc.org/is/22-022r1/22-022r1.html#_conformance_class_delete
+     */
+    public static final String STAPLUS_DELETE = "http://www.opengis.net/spec/staplus/1.0/conf/delete";
+    /**
+     * @see https://docs.ogc.org/is/22-022r1/22-022r1.html#_conformance_class_geometry_feature_geojson
+     */
+    public static final String STAPLUS_GEOMETRY_FG = "http://www.opengis.net/spec/staplus/1.0/conf/geometry-fg";
+    /**
+     * @see https://docs.ogc.org/is/22-022r1/22-022r1.html#_conformance_class_geometry_wkt
+     */
+    public static final String STAPLUS_GEOMETRY_WKT = "http://www.opengis.net/spec/staplus/1.0/conf/geometry-wkt";
+    /**
+     * @see https://docs.ogc.org/is/22-022r1/22-022r1.html#_conformance_class_default_crs
+     */
+    public static final String STAPLUS_DEFAULT_CRS = "http://www.opengis.net/spec/staplus/1.0/conf/default-crs";
+    /**
+     * @see https://docs.ogc.org/is/22-022r1/22-022r1.html#_conformance_class_authentication
+     */
+    public static final String STAPLUS_AUTHENTICATION = "http://www.opengis.net/spec/staplus/1.0/conf/authentication";
+    /**
+     * @see https://docs.ogc.org/is/22-022r1/22-022r1.html#_conformance_class_business_logic
+     */
+    public static final String STAPLUS_BUSINESS_LOGIC = "http://www.opengis.net/spec/staplus/1.0/conf/business-logic";
+    /**
+     * @see https://docs.ogc.org/is/22-022r1/22-022r1.html#_conformance_class_mqtt_subscribe
+     */
+    public static final String STAPLUS_MQTT_SUBSCRIBE = "http://www.opengis.net/spec/staplus/1.0/conf/mqtt-subscribe";
+
 }
