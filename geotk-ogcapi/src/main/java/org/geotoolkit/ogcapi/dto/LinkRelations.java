@@ -353,4 +353,12 @@ public final class LinkRelations {
      */
     public static final String GEOVOLUMES_COLLECTIONS = "collections";
 
+    // /////////////////////////////////////////////////////////////////////////////////////////
+    // OGC API - Connected Systems (Parts 1 and 2)
+    // /////////////////////////////////////////////////////////////////////////////////////////
+
+    // Connected Systems resources only use generic IANA/OGC-common relation types already
+    // declared above (self, alternate, collection, item, describedby): no Connected Systems
+    // specific relation type URI was found in the standard text or in the reference examples.
+
 }

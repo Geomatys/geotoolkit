@@ -827,4 +827,41 @@ public final class Conformance {
      */
     public static final String STAPLUS_MQTT_SUBSCRIBE = "http://www.opengis.net/spec/staplus/1.0/conf/mqtt-subscribe";
 
+    // /////////////////////////////////////////////////////////////////////////////////////////
+    // OGC API - Connected Systems - Part 1: Feature Resources
+    // https://docs.ogc.org/is/23-001/23-001.html
+    // /////////////////////////////////////////////////////////////////////////////////////////
+
+    public static final String CONNECTEDSYSTEMS1_API_COMMON = "http://www.opengis.net/spec/ogcapi-connectedsystems-1/1.0/conf/api-common";
+    public static final String CONNECTEDSYSTEMS1_SYSTEM = "http://www.opengis.net/spec/ogcapi-connectedsystems-1/1.0/conf/system";
+    public static final String CONNECTEDSYSTEMS1_SUBSYSTEM = "http://www.opengis.net/spec/ogcapi-connectedsystems-1/1.0/conf/subsystem";
+    public static final String CONNECTEDSYSTEMS1_DEPLOYMENT = "http://www.opengis.net/spec/ogcapi-connectedsystems-1/1.0/conf/deployment";
+    public static final String CONNECTEDSYSTEMS1_SUBDEPLOYMENT = "http://www.opengis.net/spec/ogcapi-connectedsystems-1/1.0/conf/subdeployment";
+    public static final String CONNECTEDSYSTEMS1_PROCEDURE = "http://www.opengis.net/spec/ogcapi-connectedsystems-1/1.0/conf/procedure";
+    public static final String CONNECTEDSYSTEMS1_SAMPLING_FEATURE = "http://www.opengis.net/spec/ogcapi-connectedsystems-1/1.0/conf/sf";
+    public static final String CONNECTEDSYSTEMS1_PROPERTY = "http://www.opengis.net/spec/ogcapi-connectedsystems-1/1.0/conf/property";
+    public static final String CONNECTEDSYSTEMS1_ADVANCED_FILTERING = "http://www.opengis.net/spec/ogcapi-connectedsystems-1/1.0/conf/advanced-filtering";
+    public static final String CONNECTEDSYSTEMS1_CREATE_REPLACE_DELETE = "http://www.opengis.net/spec/ogcapi-connectedsystems-1/1.0/conf/create-replace-delete";
+    public static final String CONNECTEDSYSTEMS1_UPDATE = "http://www.opengis.net/spec/ogcapi-connectedsystems-1/1.0/conf/update";
+    public static final String CONNECTEDSYSTEMS1_GEOJSON = "http://www.opengis.net/spec/ogcapi-connectedsystems-1/1.0/conf/geojson";
+    public static final String CONNECTEDSYSTEMS1_SENSORML = "http://www.opengis.net/spec/ogcapi-connectedsystems-1/1.0/conf/sensorml";
+
+    // /////////////////////////////////////////////////////////////////////////////////////////
+    // OGC API - Connected Systems - Part 2: Dynamic Data
+    // https://docs.ogc.org/is/23-002/23-002.html
+    // /////////////////////////////////////////////////////////////////////////////////////////
+
+    public static final String CONNECTEDSYSTEMS2_API_COMMON = "http://www.opengis.net/spec/ogcapi-connectedsystems-2/1.0/conf/api-common";
+    public static final String CONNECTEDSYSTEMS2_DATASTREAM = "http://www.opengis.net/spec/ogcapi-connectedsystems-2/1.0/conf/datastream";
+    public static final String CONNECTEDSYSTEMS2_CONTROLSTREAM = "http://www.opengis.net/spec/ogcapi-connectedsystems-2/1.0/conf/controlstream";
+    public static final String CONNECTEDSYSTEMS2_FEASIBILITY = "http://www.opengis.net/spec/ogcapi-connectedsystems-2/1.0/conf/feasibility";
+    public static final String CONNECTEDSYSTEMS2_SYSTEM_EVENT = "http://www.opengis.net/spec/ogcapi-connectedsystems-2/1.0/conf/system-event";
+    public static final String CONNECTEDSYSTEMS2_ADVANCED_FILTERING = "http://www.opengis.net/spec/ogcapi-connectedsystems-2/1.0/conf/advanced-filtering";
+    public static final String CONNECTEDSYSTEMS2_CREATE_REPLACE_DELETE = "http://www.opengis.net/spec/ogcapi-connectedsystems-2/1.0/conf/create-replace-delete";
+    public static final String CONNECTEDSYSTEMS2_UPDATE = "http://www.opengis.net/spec/ogcapi-connectedsystems-2/1.0/conf/update";
+    public static final String CONNECTEDSYSTEMS2_JSON = "http://www.opengis.net/spec/ogcapi-connectedsystems-2/1.0/conf/json";
+    public static final String CONNECTEDSYSTEMS2_SWECOMMON_JSON = "http://www.opengis.net/spec/ogcapi-connectedsystems-2/1.0/conf/swecommon-json";
+    public static final String CONNECTEDSYSTEMS2_SWECOMMON_TEXT = "http://www.opengis.net/spec/ogcapi-connectedsystems-2/1.0/conf/swecommon-text";
+    public static final String CONNECTEDSYSTEMS2_SWECOMMON_BINARY = "http://www.opengis.net/spec/ogcapi-connectedsystems-2/1.0/conf/swecommon-binary";
+
 }
