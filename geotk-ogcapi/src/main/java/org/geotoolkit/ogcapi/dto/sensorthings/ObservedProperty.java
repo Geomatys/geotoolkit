@@ -19,12 +19,6 @@ package org.geotoolkit.ogcapi.dto.sensorthings;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -45,35 +39,24 @@ import java.util.Objects;
     ObservedProperty.JSON_PROPERTY_DESCRIPTION,
     ObservedProperty.JSON_PROPERTY_PROPERTIES
 })
-@XmlRootElement(name = "ObservedProperty")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "ObservedProperty")
 public final class ObservedProperty extends SensorThingsEntity {
 
     public static final String JSON_PROPERTY_NAME = "name";
-    @XmlElement(name = "name")
-    @jakarta.annotation.Nonnull
     private String name;
 
     public static final String JSON_PROPERTY_DEFINITION = "definition";
-    @XmlElement(name = "definition")
-    @jakarta.annotation.Nonnull
     private String definition;
 
     public static final String JSON_PROPERTY_DESCRIPTION = "description";
-    @XmlElement(name = "description")
-    @jakarta.annotation.Nonnull
     private String description;
 
     public static final String JSON_PROPERTY_PROPERTIES = "properties";
-    @XmlElement(name = "properties")
-    @jakarta.annotation.Nullable
     private Map<String, Object> properties = new HashMap<>();
 
     public ObservedProperty() {
     }
 
-    public ObservedProperty name(@jakarta.annotation.Nonnull String name) {
+    public ObservedProperty name(String name) {
         this.name = name;
         return this;
     }
@@ -83,22 +66,19 @@ public final class ObservedProperty extends SensorThingsEntity {
      *
      * @return the name
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_NAME)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "name")
     public String getName() {
         return name;
     }
 
     @JsonProperty(JSON_PROPERTY_NAME)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "name")
-    public void setName(@jakarta.annotation.Nonnull String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
-    public ObservedProperty definition(@jakarta.annotation.Nonnull String definition) {
+    public ObservedProperty definition(String definition) {
         this.definition = definition;
         return this;
     }
@@ -108,22 +88,19 @@ public final class ObservedProperty extends SensorThingsEntity {
      *
      * @return the definition
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_DEFINITION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "definition")
     public String getDefinition() {
         return definition;
     }
 
     @JsonProperty(JSON_PROPERTY_DEFINITION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "definition")
-    public void setDefinition(@jakarta.annotation.Nonnull String definition) {
+    public void setDefinition(String definition) {
         this.definition = definition;
     }
 
-    public ObservedProperty description(@jakarta.annotation.Nonnull String description) {
+    public ObservedProperty description(String description) {
         this.description = description;
         return this;
     }
@@ -133,22 +110,19 @@ public final class ObservedProperty extends SensorThingsEntity {
      *
      * @return the description
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_DESCRIPTION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "description")
     public String getDescription() {
         return description;
     }
 
     @JsonProperty(JSON_PROPERTY_DESCRIPTION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "description")
-    public void setDescription(@jakarta.annotation.Nonnull String description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 
-    public ObservedProperty properties(@jakarta.annotation.Nullable Map<String, Object> properties) {
+    public ObservedProperty properties(Map<String, Object> properties) {
         this.properties = properties;
         return this;
     }
@@ -166,18 +140,15 @@ public final class ObservedProperty extends SensorThingsEntity {
      *
      * @return the properties
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_PROPERTIES)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "properties")
     public Map<String, Object> getProperties() {
         return properties;
     }
 
     @JsonProperty(JSON_PROPERTY_PROPERTIES)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "properties")
-    public void setProperties(@jakarta.annotation.Nullable Map<String, Object> properties) {
+    public void setProperties(Map<String, Object> properties) {
         this.properties = properties;
     }
 

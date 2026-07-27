@@ -18,9 +18,6 @@ package org.geotoolkit.ogcapi.dto.common;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-import jakarta.xml.bind.annotation.XmlEnum;
-import jakarta.xml.bind.annotation.XmlEnumValue;
-import jakarta.xml.bind.annotation.XmlType;
 
 /**
  * The direction for text in this language. The default, &#x60;ltr&#x60;
@@ -30,16 +27,10 @@ import jakarta.xml.bind.annotation.XmlType;
  * &#x60;rtl&#x60; (right-to-left), &#x60;ttb&#x60; (top-to-bottom), and
  * &#x60;btt&#x60; (bottom-to-top).
  */
-@XmlType(name = "DirEnum")
-@XmlEnum(value = String.class)
 public enum LanguageDirection {
-    @XmlEnumValue(value = "ltr")
     LTR(String.valueOf("ltr")),
-    @XmlEnumValue(value = "rtl")
     RTL(String.valueOf("rtl")),
-    @XmlEnumValue(value = "ttb")
     TTB(String.valueOf("ttb")),
-    @XmlEnumValue(value = "btt")
     BTT(String.valueOf("btt"));
     private String value;
 

@@ -18,21 +18,14 @@ package org.geotoolkit.ogcapi.dto.processes;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-import jakarta.xml.bind.annotation.XmlEnum;
-import jakarta.xml.bind.annotation.XmlEnumValue;
-import jakarta.xml.bind.annotation.XmlType;
 
 /**
  * Requested shape of the execution response, as set in
  * {@link Execute#getResponse()}: a raw value/binary body ({@code raw}), or a
  * {@code document} wrapping the named outputs.
  */
-@XmlType(name = "ResponseTypeEnum")
-@XmlEnum(value = String.class)
 public enum ResponseType {
-    @XmlEnumValue("raw")
     RAW("raw"),
-    @XmlEnumValue("document")
     DOCUMENT("document");
 
     private final String value;

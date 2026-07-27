@@ -19,13 +19,6 @@ package org.geotoolkit.ogcapi.dto.joins;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -43,25 +36,18 @@ import org.geotoolkit.ogcapi.dto.common.Link;
     CollectionKeys.JSON_PROPERTY_KEYS,
     CollectionKeys.JSON_PROPERTY_LINKS
 })
-@XmlRootElement(name = "CollectionKeys")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "CollectionKeys")
 public final class CollectionKeys extends DataTransferObject {
 
     public static final String JSON_PROPERTY_KEYS = "keys";
-    @XmlElement(name = "keys")
-    @jakarta.annotation.Nonnull
     private List<CollectionKey> keys = new ArrayList<>();
 
     public static final String JSON_PROPERTY_LINKS = "links";
-    @XmlElement(name = "links")
-    @jakarta.annotation.Nonnull
     private List<Link> links = new ArrayList<>();
 
     public CollectionKeys() {
     }
 
-    public CollectionKeys keys(@jakarta.annotation.Nonnull List<CollectionKey> keys) {
+    public CollectionKeys keys(List<CollectionKey> keys) {
         this.keys = keys;
         return this;
     }
@@ -79,24 +65,19 @@ public final class CollectionKeys extends DataTransferObject {
      * {@code true}.
      * @return keys
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_KEYS)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "keys")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<CollectionKey> getKeys() {
         return keys;
     }
 
     @JsonProperty(JSON_PROPERTY_KEYS)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "keys")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setKeys(@jakarta.annotation.Nonnull List<CollectionKey> keys) {
+    public void setKeys(List<CollectionKey> keys) {
         this.keys = keys;
     }
 
-    public CollectionKeys links(@jakarta.annotation.Nonnull List<Link> links) {
+    public CollectionKeys links(List<Link> links) {
         this.links = links;
         return this;
     }
@@ -114,20 +95,15 @@ public final class CollectionKeys extends DataTransferObject {
      * an {@code alternate} link for every other media type supported by the service.
      * @return links
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_LINKS)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "links")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<Link> getLinks() {
         return links;
     }
 
     @JsonProperty(JSON_PROPERTY_LINKS)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "links")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setLinks(@jakarta.annotation.Nonnull List<Link> links) {
+    public void setLinks(List<Link> links) {
         this.links = links;
     }
 

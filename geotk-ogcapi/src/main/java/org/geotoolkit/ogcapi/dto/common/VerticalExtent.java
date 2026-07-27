@@ -19,13 +19,6 @@ package org.geotoolkit.ogcapi.dto.common;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.util.Objects;
 import org.geotoolkit.ogcapi.dto.DataTransferObject;
 
@@ -40,25 +33,18 @@ import org.geotoolkit.ogcapi.dto.DataTransferObject;
     VerticalExtent.JSON_PROPERTY_INTERVAL,
     VerticalExtent.JSON_PROPERTY_VRS
 })
-@XmlRootElement(name = "VerticalExtent")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "VerticalExtent")
 public final class VerticalExtent extends DataTransferObject {
 
     public static final String JSON_PROPERTY_INTERVAL = "interval";
-    @XmlElement(name = "interval")
-    @jakarta.annotation.Nullable
     private String[][] interval;
 
     public static final String JSON_PROPERTY_VRS = "vrs";
-    @XmlElement(name = "vrs")
-    @jakarta.annotation.Nullable
     private String vrs;
 
     public VerticalExtent() {
     }
 
-    public VerticalExtent interval(@jakarta.annotation.Nullable String[][] interval) {
+    public VerticalExtent interval(String[][] interval) {
         this.interval = interval;
         return this;
     }
@@ -68,24 +54,19 @@ public final class VerticalExtent extends DataTransferObject {
      *
      * @return interval
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_INTERVAL)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "interval")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public String[][] getInterval() {
         return interval;
     }
 
     @JsonProperty(JSON_PROPERTY_INTERVAL)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "interval")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setInterval(@jakarta.annotation.Nullable String[][] interval) {
+    public void setInterval(String[][] interval) {
         this.interval = interval;
     }
 
-    public VerticalExtent vrs(@jakarta.annotation.Nullable String vrs) {
+    public VerticalExtent vrs(String vrs) {
         this.vrs = vrs;
         return this;
     }
@@ -96,18 +77,15 @@ public final class VerticalExtent extends DataTransferObject {
      *
      * @return vrs
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_VRS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "vrs")
     public String getVrs() {
         return vrs;
     }
 
     @JsonProperty(JSON_PROPERTY_VRS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "vrs")
-    public void setVrs(@jakarta.annotation.Nullable String vrs) {
+    public void setVrs(String vrs) {
         this.vrs = vrs;
     }
 

@@ -22,8 +22,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.*;
-import jakarta.xml.bind.annotation.*;
 
 /**
  * JSONFGMultiPolyhedron
@@ -33,14 +31,9 @@ import jakarta.xml.bind.annotation.*;
     JSONFGMultiPolyhedron.PROPERTY_BBOX,
     JSONFGMultiPolyhedron.PROPERTY_COORDINATES
 })
-@XmlRootElement(name = "JSONFGMultiPolyhedron")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "JSONFGMultiPolyhedron")
 public class JSONFGMultiPolyhedron extends GeoJSONGeometry {
 
     public static final String PROPERTY_COORDINATES = "coordinates";
-    @XmlElement(name = PROPERTY_COORDINATES)
-    @jakarta.annotation.Nonnull
     private List<List<List<List<List<List<Double>>>>>> coordinates = new ArrayList<>();
 
     public JSONFGMultiPolyhedron() {
@@ -56,20 +49,15 @@ public class JSONFGMultiPolyhedron extends GeoJSONGeometry {
      *
      * @return coordinates
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(PROPERTY_COORDINATES)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = PROPERTY_COORDINATES)
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<List<List<List<List<List<Double>>>>>> getCoordinates() {
         return coordinates;
     }
 
     @JsonProperty(PROPERTY_COORDINATES)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = PROPERTY_COORDINATES)
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setCoordinates(@jakarta.annotation.Nonnull List<List<List<List<List<List<Double>>>>>> coordinates) {
+    public void setCoordinates(List<List<List<List<List<List<Double>>>>>> coordinates) {
         this.coordinates = coordinates;
     }
 

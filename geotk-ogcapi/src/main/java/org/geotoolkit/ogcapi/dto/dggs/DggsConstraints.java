@@ -19,12 +19,6 @@ package org.geotoolkit.ogcapi.dto.dggs;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.util.Objects;
 import org.geotoolkit.ogcapi.dto.DataTransferObject;
 
@@ -38,40 +32,27 @@ import org.geotoolkit.ogcapi.dto.DataTransferObject;
     DggsConstraints.JSON_PROPERTY_CELL_EQUI_DISTANT,
     DggsConstraints.JSON_PROPERTY_CELL_EQUAL_SIZED
 })
-@XmlRootElement(name = "DggrsDefinitionDgghDefinitionConstraints")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "DggrsDefinitionDgghDefinitionConstraints")
 public final class DggsConstraints extends DataTransferObject {
 
     public static final String JSON_PROPERTY_CELL_AXIS_ALIGNED = "cellAxisAligned";
-    @XmlElement(name = "cellAxisAligned")
-    @jakarta.annotation.Nullable
     private Boolean cellAxisAligned = false;
 
     public static final String JSON_PROPERTY_CELL_CONFORMAL = "cellConformal";
-    @XmlElement(name = "cellConformal")
-    @jakarta.annotation.Nullable
     private Boolean cellConformal = false;
 
     public static final String JSON_PROPERTY_CELL_EQUI_ANGULAR = "cellEquiAngular";
-    @XmlElement(name = "cellEquiAngular")
-    @jakarta.annotation.Nullable
     private Boolean cellEquiAngular = false;
 
     public static final String JSON_PROPERTY_CELL_EQUI_DISTANT = "cellEquiDistant";
-    @XmlElement(name = "cellEquiDistant")
-    @jakarta.annotation.Nullable
     private Boolean cellEquiDistant = false;
 
     public static final String JSON_PROPERTY_CELL_EQUAL_SIZED = "cellEqualSized";
-    @XmlElement(name = "cellEqualSized")
-    @jakarta.annotation.Nullable
     private Boolean cellEqualSized = false;
 
     public DggsConstraints() {
     }
 
-    public DggsConstraints cellAxisAligned(@jakarta.annotation.Nullable Boolean cellAxisAligned) {
+    public DggsConstraints cellAxisAligned(Boolean cellAxisAligned) {
         this.cellAxisAligned = cellAxisAligned;
         return this;
     }
@@ -81,22 +62,19 @@ public final class DggsConstraints extends DataTransferObject {
      *
      * @return cellAxisAligned
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_CELL_AXIS_ALIGNED)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "cellAxisAligned")
     public Boolean getCellAxisAligned() {
         return cellAxisAligned;
     }
 
     @JsonProperty(JSON_PROPERTY_CELL_AXIS_ALIGNED)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "cellAxisAligned")
-    public void setCellAxisAligned(@jakarta.annotation.Nullable Boolean cellAxisAligned) {
+    public void setCellAxisAligned(Boolean cellAxisAligned) {
         this.cellAxisAligned = cellAxisAligned;
     }
 
-    public DggsConstraints cellConformal(@jakarta.annotation.Nullable Boolean cellConformal) {
+    public DggsConstraints cellConformal(Boolean cellConformal) {
         this.cellConformal = cellConformal;
         return this;
     }
@@ -106,22 +84,19 @@ public final class DggsConstraints extends DataTransferObject {
      *
      * @return cellConformal
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_CELL_CONFORMAL)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "cellConformal")
     public Boolean getCellConformal() {
         return cellConformal;
     }
 
     @JsonProperty(JSON_PROPERTY_CELL_CONFORMAL)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "cellConformal")
-    public void setCellConformal(@jakarta.annotation.Nullable Boolean cellConformal) {
+    public void setCellConformal(Boolean cellConformal) {
         this.cellConformal = cellConformal;
     }
 
-    public DggsConstraints cellEquiAngular(@jakarta.annotation.Nullable Boolean cellEquiAngular) {
+    public DggsConstraints cellEquiAngular(Boolean cellEquiAngular) {
         this.cellEquiAngular = cellEquiAngular;
         return this;
     }
@@ -131,22 +106,19 @@ public final class DggsConstraints extends DataTransferObject {
      *
      * @return cellEquiAngular
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_CELL_EQUI_ANGULAR)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "cellEquiAngular")
     public Boolean getCellEquiAngular() {
         return cellEquiAngular;
     }
 
     @JsonProperty(JSON_PROPERTY_CELL_EQUI_ANGULAR)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "cellEquiAngular")
-    public void setCellEquiAngular(@jakarta.annotation.Nullable Boolean cellEquiAngular) {
+    public void setCellEquiAngular(Boolean cellEquiAngular) {
         this.cellEquiAngular = cellEquiAngular;
     }
 
-    public DggsConstraints cellEquiDistant(@jakarta.annotation.Nullable Boolean cellEquiDistant) {
+    public DggsConstraints cellEquiDistant(Boolean cellEquiDistant) {
         this.cellEquiDistant = cellEquiDistant;
         return this;
     }
@@ -156,22 +128,19 @@ public final class DggsConstraints extends DataTransferObject {
      *
      * @return cellEquiDistant
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_CELL_EQUI_DISTANT)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "cellEquiDistant")
     public Boolean getCellEquiDistant() {
         return cellEquiDistant;
     }
 
     @JsonProperty(JSON_PROPERTY_CELL_EQUI_DISTANT)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "cellEquiDistant")
-    public void setCellEquiDistant(@jakarta.annotation.Nullable Boolean cellEquiDistant) {
+    public void setCellEquiDistant(Boolean cellEquiDistant) {
         this.cellEquiDistant = cellEquiDistant;
     }
 
-    public DggsConstraints cellEqualSized(@jakarta.annotation.Nullable Boolean cellEqualSized) {
+    public DggsConstraints cellEqualSized(Boolean cellEqualSized) {
         this.cellEqualSized = cellEqualSized;
         return this;
     }
@@ -182,18 +151,15 @@ public final class DggsConstraints extends DataTransferObject {
      *
      * @return cellEqualSized
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_CELL_EQUAL_SIZED)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "cellEqualSized")
     public Boolean getCellEqualSized() {
         return cellEqualSized;
     }
 
     @JsonProperty(JSON_PROPERTY_CELL_EQUAL_SIZED)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "cellEqualSized")
-    public void setCellEqualSized(@jakarta.annotation.Nullable Boolean cellEqualSized) {
+    public void setCellEqualSized(Boolean cellEqualSized) {
         this.cellEqualSized = cellEqualSized;
     }
 

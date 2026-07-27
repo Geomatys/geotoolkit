@@ -19,12 +19,6 @@ package org.geotoolkit.ogcapi.dto.dggs;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.net.URI;
 import java.util.Objects;
 import org.geotoolkit.ogcapi.dto.DataTransferObject;
@@ -40,45 +34,30 @@ import org.geotoolkit.ogcapi.dto.DataTransferObject;
     DggrsDefinition.JSON_PROPERTY_ZIRS,
     DggrsDefinition.JSON_PROPERTY_SUB_ZONE_ORDER
 })
-@XmlRootElement(name = "DggrsDefinition")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "DggrsDefinition")
 public final class DggrsDefinition extends DataTransferObject {
 
     public static final String JSON_PROPERTY_TITLE = "title";
-    @XmlElement(name = "title")
-    @jakarta.annotation.Nullable
     private String title;
 
     public static final String JSON_PROPERTY_DESCRIPTION = "description";
-    @XmlElement(name = "description")
-    @jakarta.annotation.Nullable
     private String description;
 
     public static final String JSON_PROPERTY_URI = "uri";
-    @XmlElement(name = "uri")
-    @jakarta.annotation.Nullable
     private URI uri;
 
     public static final String JSON_PROPERTY_DGGH = "dggh";
-    @XmlElement(name = "dggh")
-    @jakarta.annotation.Nonnull
     private Dggs dggh;
 
     public static final String JSON_PROPERTY_ZIRS = "zirs";
-    @XmlElement(name = "zirs")
-    @jakarta.annotation.Nonnull
     private Zirs zirs;
 
     public static final String JSON_PROPERTY_SUB_ZONE_ORDER = "subZoneOrder";
-    @XmlElement(name = "subZoneOrder")
-    @jakarta.annotation.Nonnull
     private SubZoneOrder subZoneOrder;
 
     public DggrsDefinition() {
     }
 
-    public DggrsDefinition title(@jakarta.annotation.Nullable String title) {
+    public DggrsDefinition title(String title) {
         this.title = title;
         return this;
     }
@@ -88,22 +67,19 @@ public final class DggrsDefinition extends DataTransferObject {
      *
      * @return title
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_TITLE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "title")
     public String getTitle() {
         return title;
     }
 
     @JsonProperty(JSON_PROPERTY_TITLE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "title")
-    public void setTitle(@jakarta.annotation.Nullable String title) {
+    public void setTitle(String title) {
         this.title = title;
     }
 
-    public DggrsDefinition description(@jakarta.annotation.Nullable String description) {
+    public DggrsDefinition description(String description) {
         this.description = description;
         return this;
     }
@@ -113,22 +89,19 @@ public final class DggrsDefinition extends DataTransferObject {
      *
      * @return description
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_DESCRIPTION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "description")
     public String getDescription() {
         return description;
     }
 
     @JsonProperty(JSON_PROPERTY_DESCRIPTION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "description")
-    public void setDescription(@jakarta.annotation.Nullable String description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 
-    public DggrsDefinition uri(@jakarta.annotation.Nullable URI uri) {
+    public DggrsDefinition uri(URI uri) {
         this.uri = uri;
         return this;
     }
@@ -138,22 +111,19 @@ public final class DggrsDefinition extends DataTransferObject {
      *
      * @return uri
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_URI)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "uri")
     public URI getUri() {
         return uri;
     }
 
     @JsonProperty(JSON_PROPERTY_URI)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "uri")
-    public void setUri(@jakarta.annotation.Nullable URI uri) {
+    public void setUri(URI uri) {
         this.uri = uri;
     }
 
-    public DggrsDefinition dggh(@jakarta.annotation.Nonnull Dggs dggh) {
+    public DggrsDefinition dggh(Dggs dggh) {
         this.dggh = dggh;
         return this;
     }
@@ -163,22 +133,19 @@ public final class DggrsDefinition extends DataTransferObject {
      *
      * @return dggh
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_DGGH)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "dggh")
     public Dggs getDggh() {
         return dggh;
     }
 
     @JsonProperty(JSON_PROPERTY_DGGH)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "dggh")
-    public void setDggh(@jakarta.annotation.Nonnull Dggs dggh) {
+    public void setDggh(Dggs dggh) {
         this.dggh = dggh;
     }
 
-    public DggrsDefinition zirs(@jakarta.annotation.Nonnull Zirs zirs) {
+    public DggrsDefinition zirs(Zirs zirs) {
         this.zirs = zirs;
         return this;
     }
@@ -188,22 +155,19 @@ public final class DggrsDefinition extends DataTransferObject {
      *
      * @return zirs
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_ZIRS)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "zirs")
     public Zirs getZirs() {
         return zirs;
     }
 
     @JsonProperty(JSON_PROPERTY_ZIRS)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "zirs")
-    public void setZirs(@jakarta.annotation.Nonnull Zirs zirs) {
+    public void setZirs(Zirs zirs) {
         this.zirs = zirs;
     }
 
-    public DggrsDefinition subZoneOrder(@jakarta.annotation.Nonnull SubZoneOrder subZoneOrder) {
+    public DggrsDefinition subZoneOrder(SubZoneOrder subZoneOrder) {
         this.subZoneOrder = subZoneOrder;
         return this;
     }
@@ -213,18 +177,15 @@ public final class DggrsDefinition extends DataTransferObject {
      *
      * @return subZoneOrder
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_SUB_ZONE_ORDER)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "subZoneOrder")
     public SubZoneOrder getSubZoneOrder() {
         return subZoneOrder;
     }
 
     @JsonProperty(JSON_PROPERTY_SUB_ZONE_ORDER)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "subZoneOrder")
-    public void setSubZoneOrder(@jakarta.annotation.Nonnull SubZoneOrder subZoneOrder) {
+    public void setSubZoneOrder(SubZoneOrder subZoneOrder) {
         this.subZoneOrder = subZoneOrder;
     }
 

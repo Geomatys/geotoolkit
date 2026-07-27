@@ -20,8 +20,6 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.*;
-import jakarta.xml.bind.annotation.*;
 import org.geotoolkit.ogcapi.dto.DataTransferObject;
 
 /**
@@ -31,25 +29,18 @@ import org.geotoolkit.ogcapi.dto.DataTransferObject;
     Exception.JSON_PROPERTY_CODE,
     Exception.JSON_PROPERTY_DESCRIPTION
 })
-@XmlRootElement(name = "Exception")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "Exception")
 public class Exception extends DataTransferObject {
 
     public static final String JSON_PROPERTY_CODE = "code";
-    @XmlElement(name = "code")
-    @jakarta.annotation.Nonnull
     private String code;
 
     public static final String JSON_PROPERTY_DESCRIPTION = "description";
-    @XmlElement(name = "description")
-    @jakarta.annotation.Nullable
     private String description;
 
     public Exception() {
     }
 
-    public Exception code(@jakarta.annotation.Nonnull String code) {
+    public Exception code(String code) {
         this.code = code;
         return this;
     }
@@ -59,22 +50,19 @@ public class Exception extends DataTransferObject {
      *
      * @return code
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_CODE)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "code")
     public String getCode() {
         return code;
     }
 
     @JsonProperty(JSON_PROPERTY_CODE)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "code")
-    public void setCode(@jakarta.annotation.Nonnull String code) {
+    public void setCode(String code) {
         this.code = code;
     }
 
-    public Exception description(@jakarta.annotation.Nullable String description) {
+    public Exception description(String description) {
         this.description = description;
         return this;
     }
@@ -84,18 +72,15 @@ public class Exception extends DataTransferObject {
      *
      * @return description
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_DESCRIPTION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "description")
     public String getDescription() {
         return description;
     }
 
     @JsonProperty(JSON_PROPERTY_DESCRIPTION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "description")
-    public void setDescription(@jakarta.annotation.Nullable String description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 

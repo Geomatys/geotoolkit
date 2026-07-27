@@ -18,27 +18,16 @@ package org.geotoolkit.ogcapi.dto.feature;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-import jakarta.xml.bind.annotation.XmlEnum;
-import jakarta.xml.bind.annotation.XmlEnumValue;
-import jakarta.xml.bind.annotation.XmlType;
 
 /**
  * Gets or Sets type
  */
-@XmlType(name = "TypeEnum")
-@XmlEnum(value = String.class)
 public enum ValueType {
-    @XmlEnumValue(value = "string")
     STRING(String.valueOf("string")),
-    @XmlEnumValue(value = "number")
     NUMBER(String.valueOf("number")),
-    @XmlEnumValue(value = "integer")
     INTEGER(String.valueOf("integer")),
-    @XmlEnumValue(value = "datetime")
     DATETIME(String.valueOf("datetime")),
-    @XmlEnumValue(value = "geometry")
     GEOMETRY(String.valueOf("geometry")),
-    @XmlEnumValue(value = "boolean")
     BOOLEAN(String.valueOf("boolean"));
     private String value;
 

@@ -19,12 +19,6 @@ package org.geotoolkit.ogcapi.dto.sensorthings;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -50,60 +44,39 @@ import java.util.Objects;
     ObservationGroup.JSON_PROPERTY_DATA_QUALITY,
     ObservationGroup.JSON_PROPERTY_PROPERTIES
 })
-@XmlRootElement(name = "ObservationGroup")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "ObservationGroup")
 public final class ObservationGroup extends SensorThingsEntity {
 
     public static final String JSON_PROPERTY_NAME = "name";
-    @XmlElement(name = "name")
-    @jakarta.annotation.Nonnull
     private String name;
 
     public static final String JSON_PROPERTY_DESCRIPTION = "description";
-    @XmlElement(name = "description")
-    @jakarta.annotation.Nonnull
     private String description;
 
     public static final String JSON_PROPERTY_CREATION_TIME = "creationTime";
-    @XmlElement(name = "creationTime")
-    @jakarta.annotation.Nonnull
     private String creationTime;
 
     public static final String JSON_PROPERTY_PURPOSE = "purpose";
-    @XmlElement(name = "purpose")
-    @jakarta.annotation.Nullable
     private String purpose;
 
     public static final String JSON_PROPERTY_END_TIME = "endTime";
-    @XmlElement(name = "endTime")
-    @jakarta.annotation.Nullable
     private String endTime;
 
     public static final String JSON_PROPERTY_TERMS_OF_USE = "termsOfUse";
-    @XmlElement(name = "termsOfUse")
-    @jakarta.annotation.Nullable
     private String termsOfUse;
 
     public static final String JSON_PROPERTY_PRIVACY_POLICY = "privacyPolicy";
-    @XmlElement(name = "privacyPolicy")
-    @jakarta.annotation.Nullable
     private String privacyPolicy;
 
     public static final String JSON_PROPERTY_DATA_QUALITY = "dataQuality";
-    @XmlElement(name = "dataQuality")
-    @jakarta.annotation.Nullable
     private Object dataQuality;
 
     public static final String JSON_PROPERTY_PROPERTIES = "properties";
-    @XmlElement(name = "properties")
-    @jakarta.annotation.Nullable
     private Map<String, Object> properties = new HashMap<>();
 
     public ObservationGroup() {
     }
 
-    public ObservationGroup name(@jakarta.annotation.Nonnull String name) {
+    public ObservationGroup name(String name) {
         this.name = name;
         return this;
     }
@@ -113,22 +86,19 @@ public final class ObservationGroup extends SensorThingsEntity {
      *
      * @return the name
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_NAME)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "name")
     public String getName() {
         return name;
     }
 
     @JsonProperty(JSON_PROPERTY_NAME)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "name")
-    public void setName(@jakarta.annotation.Nonnull String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
-    public ObservationGroup description(@jakarta.annotation.Nonnull String description) {
+    public ObservationGroup description(String description) {
         this.description = description;
         return this;
     }
@@ -138,22 +108,19 @@ public final class ObservationGroup extends SensorThingsEntity {
      *
      * @return the description
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_DESCRIPTION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "description")
     public String getDescription() {
         return description;
     }
 
     @JsonProperty(JSON_PROPERTY_DESCRIPTION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "description")
-    public void setDescription(@jakarta.annotation.Nonnull String description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 
-    public ObservationGroup creationTime(@jakarta.annotation.Nonnull String creationTime) {
+    public ObservationGroup creationTime(String creationTime) {
         this.creationTime = creationTime;
         return this;
     }
@@ -163,22 +130,19 @@ public final class ObservationGroup extends SensorThingsEntity {
      *
      * @return the creationTime
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_CREATION_TIME)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "creationTime")
     public String getCreationTime() {
         return creationTime;
     }
 
     @JsonProperty(JSON_PROPERTY_CREATION_TIME)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "creationTime")
-    public void setCreationTime(@jakarta.annotation.Nonnull String creationTime) {
+    public void setCreationTime(String creationTime) {
         this.creationTime = creationTime;
     }
 
-    public ObservationGroup purpose(@jakarta.annotation.Nullable String purpose) {
+    public ObservationGroup purpose(String purpose) {
         this.purpose = purpose;
         return this;
     }
@@ -188,22 +152,19 @@ public final class ObservationGroup extends SensorThingsEntity {
      *
      * @return the purpose
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_PURPOSE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "purpose")
     public String getPurpose() {
         return purpose;
     }
 
     @JsonProperty(JSON_PROPERTY_PURPOSE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "purpose")
-    public void setPurpose(@jakarta.annotation.Nullable String purpose) {
+    public void setPurpose(String purpose) {
         this.purpose = purpose;
     }
 
-    public ObservationGroup endTime(@jakarta.annotation.Nullable String endTime) {
+    public ObservationGroup endTime(String endTime) {
         this.endTime = endTime;
         return this;
     }
@@ -213,22 +174,19 @@ public final class ObservationGroup extends SensorThingsEntity {
      *
      * @return the endTime
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_END_TIME)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "endTime")
     public String getEndTime() {
         return endTime;
     }
 
     @JsonProperty(JSON_PROPERTY_END_TIME)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "endTime")
-    public void setEndTime(@jakarta.annotation.Nullable String endTime) {
+    public void setEndTime(String endTime) {
         this.endTime = endTime;
     }
 
-    public ObservationGroup termsOfUse(@jakarta.annotation.Nullable String termsOfUse) {
+    public ObservationGroup termsOfUse(String termsOfUse) {
         this.termsOfUse = termsOfUse;
         return this;
     }
@@ -238,22 +196,19 @@ public final class ObservationGroup extends SensorThingsEntity {
      *
      * @return the termsOfUse
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_TERMS_OF_USE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "termsOfUse")
     public String getTermsOfUse() {
         return termsOfUse;
     }
 
     @JsonProperty(JSON_PROPERTY_TERMS_OF_USE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "termsOfUse")
-    public void setTermsOfUse(@jakarta.annotation.Nullable String termsOfUse) {
+    public void setTermsOfUse(String termsOfUse) {
         this.termsOfUse = termsOfUse;
     }
 
-    public ObservationGroup privacyPolicy(@jakarta.annotation.Nullable String privacyPolicy) {
+    public ObservationGroup privacyPolicy(String privacyPolicy) {
         this.privacyPolicy = privacyPolicy;
         return this;
     }
@@ -263,22 +218,19 @@ public final class ObservationGroup extends SensorThingsEntity {
      *
      * @return the privacyPolicy
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_PRIVACY_POLICY)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "privacyPolicy")
     public String getPrivacyPolicy() {
         return privacyPolicy;
     }
 
     @JsonProperty(JSON_PROPERTY_PRIVACY_POLICY)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "privacyPolicy")
-    public void setPrivacyPolicy(@jakarta.annotation.Nullable String privacyPolicy) {
+    public void setPrivacyPolicy(String privacyPolicy) {
         this.privacyPolicy = privacyPolicy;
     }
 
-    public ObservationGroup dataQuality(@jakarta.annotation.Nullable Object dataQuality) {
+    public ObservationGroup dataQuality(Object dataQuality) {
         this.dataQuality = dataQuality;
         return this;
     }
@@ -288,22 +240,19 @@ public final class ObservationGroup extends SensorThingsEntity {
      *
      * @return the dataQuality
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_DATA_QUALITY)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "dataQuality")
     public Object getDataQuality() {
         return dataQuality;
     }
 
     @JsonProperty(JSON_PROPERTY_DATA_QUALITY)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "dataQuality")
-    public void setDataQuality(@jakarta.annotation.Nullable Object dataQuality) {
+    public void setDataQuality(Object dataQuality) {
         this.dataQuality = dataQuality;
     }
 
-    public ObservationGroup properties(@jakarta.annotation.Nullable Map<String, Object> properties) {
+    public ObservationGroup properties(Map<String, Object> properties) {
         this.properties = properties;
         return this;
     }
@@ -321,18 +270,15 @@ public final class ObservationGroup extends SensorThingsEntity {
      *
      * @return the properties
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_PROPERTIES)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "properties")
     public Map<String, Object> getProperties() {
         return properties;
     }
 
     @JsonProperty(JSON_PROPERTY_PROPERTIES)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "properties")
-    public void setProperties(@jakarta.annotation.Nullable Map<String, Object> properties) {
+    public void setProperties(Map<String, Object> properties) {
         this.properties = properties;
     }
 

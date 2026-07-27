@@ -18,22 +18,14 @@ package org.geotoolkit.ogcapi.dto.processes;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-import jakarta.xml.bind.annotation.XmlEnum;
-import jakarta.xml.bind.annotation.XmlEnumValue;
-import jakarta.xml.bind.annotation.XmlType;
 
 /**
  * Execution control options a process supports, as listed in
  * {@link ProcessSummary#getJobControlOptions()}.
  */
-@XmlType(name = "JobControlOptionsEnum")
-@XmlEnum(value = String.class)
 public enum JobControlOption {
-    @XmlEnumValue("sync-execute")
     SYNC_EXECUTE("sync-execute"),
-    @XmlEnumValue("async-execute")
     ASYNC_EXECUTE("async-execute"),
-    @XmlEnumValue("dismiss")
     DISMISS("dismiss");
 
     private final String value;

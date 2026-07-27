@@ -21,8 +21,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonValue;
-import com.fasterxml.jackson.dataformat.xml.annotation.*;
-import jakarta.xml.bind.annotation.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,51 +45,32 @@ import org.geotoolkit.ogcapi.dto.DataTransferObject;
     TileMatrix.JSON_PROPERTY_MATRIX_WIDTH,
     TileMatrix.JSON_PROPERTY_VARIABLE_MATRIX_WIDTHS
 })
-@XmlRootElement(name = "TileMatrix")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "TileMatrix")
 public final class TileMatrix extends DataTransferObject {
 
     public static final String JSON_PROPERTY_TITLE = "title";
-    @XmlElement(name = "title")
-    @jakarta.annotation.Nullable
     private String title;
 
     public static final String JSON_PROPERTY_DESCRIPTION = "description";
-    @XmlElement(name = "description")
-    @jakarta.annotation.Nullable
     private String description;
 
     public static final String JSON_PROPERTY_KEYWORDS = "keywords";
-    @XmlElement(name = "keywords")
-    @jakarta.annotation.Nullable
     private List<String> keywords = new ArrayList<>();
 
     public static final String JSON_PROPERTY_ID = "id";
-    @XmlElement(name = "id")
-    @jakarta.annotation.Nonnull
     private String id;
 
     public static final String JSON_PROPERTY_SCALE_DENOMINATOR = "scaleDenominator";
-    @XmlElement(name = "scaleDenominator")
-    @jakarta.annotation.Nonnull
     private BigDecimal scaleDenominator;
 
     public static final String JSON_PROPERTY_CELL_SIZE = "cellSize";
-    @XmlElement(name = "cellSize")
-    @jakarta.annotation.Nonnull
     private BigDecimal cellSize;
 
     /**
      * The corner of the tile matrix (_topLeft_ or _bottomLeft_) used as the origin for numbering tile rows and columns.
      * This corner is also a corner of the (0, 0) tile.
      */
-    @XmlType(name = "CornerOfOriginEnum")
-    @XmlEnum(String.class)
     public enum CornerOfOriginEnum {
-        @XmlEnumValue("topLeft")
         TOP_LEFT(String.valueOf("topLeft")),
-        @XmlEnumValue("bottomLeft")
         BOTTOM_LEFT(String.valueOf("bottomLeft"));
 
         private String value;
@@ -122,44 +101,30 @@ public final class TileMatrix extends DataTransferObject {
     }
 
     public static final String JSON_PROPERTY_CORNER_OF_ORIGIN = "cornerOfOrigin";
-    @XmlElement(name = "cornerOfOrigin")
-    @jakarta.annotation.Nullable
     private CornerOfOriginEnum cornerOfOrigin = CornerOfOriginEnum.TOP_LEFT;
 
     public static final String JSON_PROPERTY_POINT_OF_ORIGIN = "pointOfOrigin";
-    @XmlElement(name = "pointOfOrigin")
-    @jakarta.annotation.Nonnull
     private Object pointOfOrigin;
 
     public static final String JSON_PROPERTY_TILE_WIDTH = "tileWidth";
-    @XmlElement(name = "tileWidth")
-    @jakarta.annotation.Nonnull
     private BigDecimal tileWidth;
 
     public static final String JSON_PROPERTY_TILE_HEIGHT = "tileHeight";
-    @XmlElement(name = "tileHeight")
-    @jakarta.annotation.Nonnull
     private BigDecimal tileHeight;
 
     public static final String JSON_PROPERTY_MATRIX_HEIGHT = "matrixHeight";
-    @XmlElement(name = "matrixHeight")
-    @jakarta.annotation.Nonnull
     private BigDecimal matrixHeight;
 
     public static final String JSON_PROPERTY_MATRIX_WIDTH = "matrixWidth";
-    @XmlElement(name = "matrixWidth")
-    @jakarta.annotation.Nonnull
     private BigDecimal matrixWidth;
 
     public static final String JSON_PROPERTY_VARIABLE_MATRIX_WIDTHS = "variableMatrixWidths";
-    @XmlElement(name = "variableMatrixWidths")
-    @jakarta.annotation.Nullable
     private List<VariableMatrixWidth> variableMatrixWidths = new ArrayList<>();
 
     public TileMatrix() {
     }
 
-    public TileMatrix title(@jakarta.annotation.Nullable String title) {
+    public TileMatrix title(String title) {
         this.title = title;
         return this;
     }
@@ -169,22 +134,19 @@ public final class TileMatrix extends DataTransferObject {
      *
      * @return title
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_TITLE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "title")
     public String getTitle() {
         return title;
     }
 
     @JsonProperty(JSON_PROPERTY_TITLE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "title")
-    public void setTitle(@jakarta.annotation.Nullable String title) {
+    public void setTitle(String title) {
         this.title = title;
     }
 
-    public TileMatrix description(@jakarta.annotation.Nullable String description) {
+    public TileMatrix description(String description) {
         this.description = description;
         return this;
     }
@@ -194,22 +156,19 @@ public final class TileMatrix extends DataTransferObject {
      *
      * @return description
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_DESCRIPTION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "description")
     public String getDescription() {
         return description;
     }
 
     @JsonProperty(JSON_PROPERTY_DESCRIPTION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "description")
-    public void setDescription(@jakarta.annotation.Nullable String description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 
-    public TileMatrix keywords(@jakarta.annotation.Nullable List<String> keywords) {
+    public TileMatrix keywords(List<String> keywords) {
         this.keywords = keywords;
         return this;
     }
@@ -227,24 +186,19 @@ public final class TileMatrix extends DataTransferObject {
      *
      * @return keywords
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_KEYWORDS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "keywords")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<String> getKeywords() {
         return keywords;
     }
 
     @JsonProperty(JSON_PROPERTY_KEYWORDS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "keywords")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setKeywords(@jakarta.annotation.Nullable List<String> keywords) {
+    public void setKeywords(List<String> keywords) {
         this.keywords = keywords;
     }
 
-    public TileMatrix id(@jakarta.annotation.Nonnull String id) {
+    public TileMatrix id(String id) {
         this.id = id;
         return this;
     }
@@ -255,22 +209,19 @@ public final class TileMatrix extends DataTransferObject {
      *
      * @return id
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_ID)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "id")
     public String getId() {
         return id;
     }
 
     @JsonProperty(JSON_PROPERTY_ID)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "id")
-    public void setId(@jakarta.annotation.Nonnull String id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public TileMatrix scaleDenominator(@jakarta.annotation.Nonnull BigDecimal scaleDenominator) {
+    public TileMatrix scaleDenominator(BigDecimal scaleDenominator) {
         this.scaleDenominator = scaleDenominator;
         return this;
     }
@@ -280,22 +231,19 @@ public final class TileMatrix extends DataTransferObject {
      *
      * @return scaleDenominator
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_SCALE_DENOMINATOR)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "scaleDenominator")
     public BigDecimal getScaleDenominator() {
         return scaleDenominator;
     }
 
     @JsonProperty(JSON_PROPERTY_SCALE_DENOMINATOR)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "scaleDenominator")
-    public void setScaleDenominator(@jakarta.annotation.Nonnull BigDecimal scaleDenominator) {
+    public void setScaleDenominator(BigDecimal scaleDenominator) {
         this.scaleDenominator = scaleDenominator;
     }
 
-    public TileMatrix cellSize(@jakarta.annotation.Nonnull BigDecimal cellSize) {
+    public TileMatrix cellSize(BigDecimal cellSize) {
         this.cellSize = cellSize;
         return this;
     }
@@ -305,22 +253,19 @@ public final class TileMatrix extends DataTransferObject {
      *
      * @return cellSize
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_CELL_SIZE)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "cellSize")
     public BigDecimal getCellSize() {
         return cellSize;
     }
 
     @JsonProperty(JSON_PROPERTY_CELL_SIZE)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "cellSize")
-    public void setCellSize(@jakarta.annotation.Nonnull BigDecimal cellSize) {
+    public void setCellSize(BigDecimal cellSize) {
         this.cellSize = cellSize;
     }
 
-    public TileMatrix cornerOfOrigin(@jakarta.annotation.Nullable CornerOfOriginEnum cornerOfOrigin) {
+    public TileMatrix cornerOfOrigin(CornerOfOriginEnum cornerOfOrigin) {
         this.cornerOfOrigin = cornerOfOrigin;
         return this;
     }
@@ -331,22 +276,19 @@ public final class TileMatrix extends DataTransferObject {
      *
      * @return cornerOfOrigin
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_CORNER_OF_ORIGIN)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "cornerOfOrigin")
     public CornerOfOriginEnum getCornerOfOrigin() {
         return cornerOfOrigin;
     }
 
     @JsonProperty(JSON_PROPERTY_CORNER_OF_ORIGIN)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "cornerOfOrigin")
-    public void setCornerOfOrigin(@jakarta.annotation.Nullable CornerOfOriginEnum cornerOfOrigin) {
+    public void setCornerOfOrigin(CornerOfOriginEnum cornerOfOrigin) {
         this.cornerOfOrigin = cornerOfOrigin;
     }
 
-    public TileMatrix pointOfOrigin(@jakarta.annotation.Nonnull Object pointOfOrigin) {
+    public TileMatrix pointOfOrigin(Object pointOfOrigin) {
         this.pointOfOrigin = pointOfOrigin;
         return this;
     }
@@ -356,22 +298,19 @@ public final class TileMatrix extends DataTransferObject {
      *
      * @return pointOfOrigin
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_POINT_OF_ORIGIN)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "pointOfOrigin")
     public Object getPointOfOrigin() {
         return pointOfOrigin;
     }
 
     @JsonProperty(JSON_PROPERTY_POINT_OF_ORIGIN)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "pointOfOrigin")
-    public void setPointOfOrigin(@jakarta.annotation.Nonnull Object pointOfOrigin) {
+    public void setPointOfOrigin(Object pointOfOrigin) {
         this.pointOfOrigin = pointOfOrigin;
     }
 
-    public TileMatrix tileWidth(@jakarta.annotation.Nonnull BigDecimal tileWidth) {
+    public TileMatrix tileWidth(BigDecimal tileWidth) {
         this.tileWidth = tileWidth;
         return this;
     }
@@ -381,22 +320,19 @@ public final class TileMatrix extends DataTransferObject {
      *
      * @return tileWidth
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_TILE_WIDTH)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "tileWidth")
     public BigDecimal getTileWidth() {
         return tileWidth;
     }
 
     @JsonProperty(JSON_PROPERTY_TILE_WIDTH)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "tileWidth")
-    public void setTileWidth(@jakarta.annotation.Nonnull BigDecimal tileWidth) {
+    public void setTileWidth(BigDecimal tileWidth) {
         this.tileWidth = tileWidth;
     }
 
-    public TileMatrix tileHeight(@jakarta.annotation.Nonnull BigDecimal tileHeight) {
+    public TileMatrix tileHeight(BigDecimal tileHeight) {
         this.tileHeight = tileHeight;
         return this;
     }
@@ -406,22 +342,19 @@ public final class TileMatrix extends DataTransferObject {
      *
      * @return tileHeight
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_TILE_HEIGHT)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "tileHeight")
     public BigDecimal getTileHeight() {
         return tileHeight;
     }
 
     @JsonProperty(JSON_PROPERTY_TILE_HEIGHT)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "tileHeight")
-    public void setTileHeight(@jakarta.annotation.Nonnull BigDecimal tileHeight) {
+    public void setTileHeight(BigDecimal tileHeight) {
         this.tileHeight = tileHeight;
     }
 
-    public TileMatrix matrixHeight(@jakarta.annotation.Nonnull BigDecimal matrixHeight) {
+    public TileMatrix matrixHeight(BigDecimal matrixHeight) {
         this.matrixHeight = matrixHeight;
         return this;
     }
@@ -431,22 +364,19 @@ public final class TileMatrix extends DataTransferObject {
      *
      * @return matrixHeight
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_MATRIX_HEIGHT)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "matrixHeight")
     public BigDecimal getMatrixHeight() {
         return matrixHeight;
     }
 
     @JsonProperty(JSON_PROPERTY_MATRIX_HEIGHT)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "matrixHeight")
-    public void setMatrixHeight(@jakarta.annotation.Nonnull BigDecimal matrixHeight) {
+    public void setMatrixHeight(BigDecimal matrixHeight) {
         this.matrixHeight = matrixHeight;
     }
 
-    public TileMatrix matrixWidth(@jakarta.annotation.Nonnull BigDecimal matrixWidth) {
+    public TileMatrix matrixWidth(BigDecimal matrixWidth) {
         this.matrixWidth = matrixWidth;
         return this;
     }
@@ -456,22 +386,19 @@ public final class TileMatrix extends DataTransferObject {
      *
      * @return matrixWidth
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_MATRIX_WIDTH)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "matrixWidth")
     public BigDecimal getMatrixWidth() {
         return matrixWidth;
     }
 
     @JsonProperty(JSON_PROPERTY_MATRIX_WIDTH)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "matrixWidth")
-    public void setMatrixWidth(@jakarta.annotation.Nonnull BigDecimal matrixWidth) {
+    public void setMatrixWidth(BigDecimal matrixWidth) {
         this.matrixWidth = matrixWidth;
     }
 
-    public TileMatrix variableMatrixWidths(@jakarta.annotation.Nullable List<VariableMatrixWidth> variableMatrixWidths) {
+    public TileMatrix variableMatrixWidths(List<VariableMatrixWidth> variableMatrixWidths) {
         this.variableMatrixWidths = variableMatrixWidths;
         return this;
     }
@@ -489,20 +416,15 @@ public final class TileMatrix extends DataTransferObject {
      *
      * @return variableMatrixWidths
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_VARIABLE_MATRIX_WIDTHS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "variableMatrixWidths")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<VariableMatrixWidth> getVariableMatrixWidths() {
         return variableMatrixWidths;
     }
 
     @JsonProperty(JSON_PROPERTY_VARIABLE_MATRIX_WIDTHS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "variableMatrixWidths")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setVariableMatrixWidths(@jakarta.annotation.Nullable List<VariableMatrixWidth> variableMatrixWidths) {
+    public void setVariableMatrixWidths(List<VariableMatrixWidth> variableMatrixWidths) {
         this.variableMatrixWidths = variableMatrixWidths;
     }
 

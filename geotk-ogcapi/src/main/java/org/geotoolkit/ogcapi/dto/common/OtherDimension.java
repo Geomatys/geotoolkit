@@ -19,14 +19,10 @@ package org.geotoolkit.ogcapi.dto.common;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.*;
-import jakarta.xml.bind.annotation.*;
 import org.geotoolkit.ogcapi.dto.DataTransferObject;
 
 /**
@@ -43,55 +39,37 @@ import org.geotoolkit.ogcapi.dto.DataTransferObject;
     OtherDimension.JSON_PROPERTY_UNIT_LANG,
     OtherDimension.JSON_PROPERTY_VARIABLE_TYPE
 })
-@XmlRootElement(name = "OtherDimension")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "OtherDimension")
 public class OtherDimension extends DataTransferObject {
 
     public static final String JSON_PROPERTY_INTERVAL = "interval";
-    @XmlElement(name = "interval")
-    @jakarta.annotation.Nullable
     private List<List<Object>> interval = new ArrayList<>();
 
     public static final String JSON_PROPERTY_TRS = "trs";
-    @XmlElement(name = "trs")
-    @jakarta.annotation.Nullable
     private String trs;
 
     public static final String JSON_PROPERTY_VRS = "vrs";
-    @XmlElement(name = "vrs")
-    @jakarta.annotation.Nullable
     private String vrs;
 
     public static final String JSON_PROPERTY_GRID = "grid";
-    @XmlElement(name = "grid")
-    @jakarta.annotation.Nullable
     private Grid grid;
 
     public static final String JSON_PROPERTY_DEFINITION = "definition";
-    @XmlElement(name = "definition")
-    @jakarta.annotation.Nullable
     private URI definition;
 
     public static final String JSON_PROPERTY_UNIT = "unit";
-    @XmlElement(name = "unit")
-    @jakarta.annotation.Nullable
     private String unit;
 
     public static final String JSON_PROPERTY_UNIT_LANG = "unitLang";
-    @XmlElement(name = "unitLang")
-    @jakarta.annotation.Nullable
     private String unitLang = "UCUM";
 
 
     public static final String JSON_PROPERTY_VARIABLE_TYPE = "variableType";
-    @XmlElement(name = "variableType")
     private VariableType variableType;
 
     public OtherDimension() {
     }
 
-    public OtherDimension interval(@jakarta.annotation.Nullable List<List<Object>> interval) {
+    public OtherDimension interval(List<List<Object>> interval) {
         this.interval = interval;
         return this;
     }
@@ -115,21 +93,17 @@ public class OtherDimension extends DataTransferObject {
      */
     @JsonProperty(JSON_PROPERTY_INTERVAL)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "interval")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<List<Object>> getInterval() {
         return interval;
     }
 
     @JsonProperty(JSON_PROPERTY_INTERVAL)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "interval")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setInterval(@jakarta.annotation.Nullable List<List<Object>> interval) {
+    public void setInterval(List<List<Object>> interval) {
         this.interval = interval;
     }
 
-    public OtherDimension trs(@jakarta.annotation.Nullable String trs) {
+    public OtherDimension trs(String trs) {
         this.trs = trs;
         return this;
     }
@@ -141,19 +115,17 @@ public class OtherDimension extends DataTransferObject {
      */
     @JsonProperty(JSON_PROPERTY_TRS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "trs")
     public String getTrs() {
         return trs;
     }
 
     @JsonProperty(JSON_PROPERTY_TRS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "trs")
-    public void setTrs(@jakarta.annotation.Nullable String trs) {
+    public void setTrs(String trs) {
         this.trs = trs;
     }
 
-    public OtherDimension vrs(@jakarta.annotation.Nullable String vrs) {
+    public OtherDimension vrs(String vrs) {
         this.vrs = vrs;
         return this;
     }
@@ -165,19 +137,17 @@ public class OtherDimension extends DataTransferObject {
      */
     @JsonProperty(JSON_PROPERTY_VRS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "vrs")
     public String getVrs() {
         return vrs;
     }
 
     @JsonProperty(JSON_PROPERTY_VRS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "vrs")
-    public void setVrs(@jakarta.annotation.Nullable String vrs) {
+    public void setVrs(String vrs) {
         this.vrs = vrs;
     }
 
-    public OtherDimension grid(@jakarta.annotation.Nullable Grid grid) {
+    public OtherDimension grid(Grid grid) {
         this.grid = grid;
         return this;
     }
@@ -189,19 +159,17 @@ public class OtherDimension extends DataTransferObject {
      */
     @JsonProperty(JSON_PROPERTY_GRID)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "grid")
     public Grid getGrid() {
         return grid;
     }
 
     @JsonProperty(JSON_PROPERTY_GRID)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "grid")
-    public void setGrid(@jakarta.annotation.Nullable Grid grid) {
+    public void setGrid(Grid grid) {
         this.grid = grid;
     }
 
-    public OtherDimension definition(@jakarta.annotation.Nullable URI definition) {
+    public OtherDimension definition(URI definition) {
         this.definition = definition;
         return this;
     }
@@ -213,19 +181,17 @@ public class OtherDimension extends DataTransferObject {
      */
     @JsonProperty(JSON_PROPERTY_DEFINITION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "definition")
     public URI getDefinition() {
         return definition;
     }
 
     @JsonProperty(JSON_PROPERTY_DEFINITION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "definition")
-    public void setDefinition(@jakarta.annotation.Nullable URI definition) {
+    public void setDefinition(URI definition) {
         this.definition = definition;
     }
 
-    public OtherDimension unit(@jakarta.annotation.Nullable String unit) {
+    public OtherDimension unit(String unit) {
         this.unit = unit;
         return this;
     }
@@ -237,19 +203,17 @@ public class OtherDimension extends DataTransferObject {
      */
     @JsonProperty(JSON_PROPERTY_UNIT)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "unit")
     public String getUnit() {
         return unit;
     }
 
     @JsonProperty(JSON_PROPERTY_UNIT)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "unit")
-    public void setUnit(@jakarta.annotation.Nullable String unit) {
+    public void setUnit(String unit) {
         this.unit = unit;
     }
 
-    public OtherDimension unitLang(@jakarta.annotation.Nullable String unitLang) {
+    public OtherDimension unitLang(String unitLang) {
         this.unitLang = unitLang;
         return this;
     }
@@ -261,19 +225,17 @@ public class OtherDimension extends DataTransferObject {
      */
     @JsonProperty(JSON_PROPERTY_UNIT_LANG)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "unitLang")
     public String getUnitLang() {
         return unitLang;
     }
 
     @JsonProperty(JSON_PROPERTY_UNIT_LANG)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "unitLang")
-    public void setUnitLang(@jakarta.annotation.Nullable String unitLang) {
+    public void setUnitLang(String unitLang) {
         this.unitLang = unitLang;
     }
 
-    public OtherDimension variableType(@jakarta.annotation.Nullable VariableType variableType) {
+    public OtherDimension variableType(VariableType variableType) {
         this.variableType = variableType;
         return this;
     }
@@ -285,15 +247,13 @@ public class OtherDimension extends DataTransferObject {
      */
     @JsonProperty(JSON_PROPERTY_VARIABLE_TYPE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "variableType")
     public VariableType getVariableType() {
         return variableType;
     }
 
     @JsonProperty(JSON_PROPERTY_VARIABLE_TYPE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "variableType")
-    public void setVariableType(@jakarta.annotation.Nullable VariableType variableType) {
+    public void setVariableType(VariableType variableType) {
         this.variableType = variableType;
     }
 

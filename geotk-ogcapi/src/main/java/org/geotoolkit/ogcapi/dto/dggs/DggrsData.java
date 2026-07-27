@@ -19,13 +19,6 @@ package org.geotoolkit.ogcapi.dto.dggs;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -45,45 +38,30 @@ import org.geotoolkit.ogcapi.dto.jsonschema.JSONSchema;
     DggrsData.JSON_PROPERTY_DIMENSIONS,
     DggrsData.JSON_PROPERTY_VALUES
 })
-@XmlRootElement(name = "DggsJson")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "DggsJson")
 public final class DggrsData extends DataTransferObject {
 
     public static final String JSON_PROPERTY_DGGRS = "dggrs";
-    @XmlElement(name = "dggrs")
-    @jakarta.annotation.Nonnull
     private String dggrs;
 
     public static final String JSON_PROPERTY_ZONE_ID = "zoneId";
-    @XmlElement(name = "zoneId")
-    @jakarta.annotation.Nonnull
     private String zoneId;
 
     public static final String JSON_PROPERTY_DEPTHS = "depths";
-    @XmlElement(name = "depths")
-    @jakarta.annotation.Nonnull
     private List<Integer> depths = new ArrayList<>();
 
     public static final String JSON_PROPERTY_SCHEMA = "schema";
-    @XmlElement(name = "schema")
-    @jakarta.annotation.Nullable
     private JSONSchema schema;
 
     public static final String JSON_PROPERTY_DIMENSIONS = "dimensions";
-    @XmlElement(name = "dimensions")
-    @jakarta.annotation.Nullable
     private List<Dimension> dimensions = new ArrayList<>();
 
     public static final String JSON_PROPERTY_VALUES = "values";
-    @XmlElement(name = "values")
-    @jakarta.annotation.Nonnull
     private Map<String, List<DggrsDataValue>> values = new HashMap<>();
 
     public DggrsData() {
     }
 
-    public DggrsData dggrs(@jakarta.annotation.Nonnull String dggrs) {
+    public DggrsData dggrs(String dggrs) {
         this.dggrs = dggrs;
         return this;
     }
@@ -93,22 +71,19 @@ public final class DggrsData extends DataTransferObject {
      *
      * @return dggrs
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_DGGRS)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "dggrs")
     public String getDggrs() {
         return dggrs;
     }
 
     @JsonProperty(JSON_PROPERTY_DGGRS)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "dggrs")
-    public void setDggrs(@jakarta.annotation.Nonnull String dggrs) {
+    public void setDggrs(String dggrs) {
         this.dggrs = dggrs;
     }
 
-    public DggrsData zoneId(@jakarta.annotation.Nonnull String zoneId) {
+    public DggrsData zoneId(String zoneId) {
         this.zoneId = zoneId;
         return this;
     }
@@ -118,22 +93,19 @@ public final class DggrsData extends DataTransferObject {
      *
      * @return zoneId
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_ZONE_ID)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "zoneId")
     public String getZoneId() {
         return zoneId;
     }
 
     @JsonProperty(JSON_PROPERTY_ZONE_ID)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "zoneId")
-    public void setZoneId(@jakarta.annotation.Nonnull String zoneId) {
+    public void setZoneId(String zoneId) {
         this.zoneId = zoneId;
     }
 
-    public DggrsData depths(@jakarta.annotation.Nonnull List<Integer> depths) {
+    public DggrsData depths(List<Integer> depths) {
         this.depths = depths;
         return this;
     }
@@ -151,24 +123,19 @@ public final class DggrsData extends DataTransferObject {
      *
      * @return depths
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_DEPTHS)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "depths")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<Integer> getDepths() {
         return depths;
     }
 
     @JsonProperty(JSON_PROPERTY_DEPTHS)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "depths")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setDepths(@jakarta.annotation.Nonnull List<Integer> depths) {
+    public void setDepths(List<Integer> depths) {
         this.depths = depths;
     }
 
-    public DggrsData schema(@jakarta.annotation.Nullable JSONSchema schema) {
+    public DggrsData schema(JSONSchema schema) {
         this.schema = schema;
         return this;
     }
@@ -178,22 +145,19 @@ public final class DggrsData extends DataTransferObject {
      *
      * @return schema
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_SCHEMA)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "schema")
     public JSONSchema getSchema() {
         return schema;
     }
 
     @JsonProperty(JSON_PROPERTY_SCHEMA)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "schema")
-    public void setSchema(@jakarta.annotation.Nullable JSONSchema schema) {
+    public void setSchema(JSONSchema schema) {
         this.schema = schema;
     }
 
-    public DggrsData dimensions(@jakarta.annotation.Nullable List<Dimension> dimensions) {
+    public DggrsData dimensions(List<Dimension> dimensions) {
         this.dimensions = dimensions;
         return this;
     }
@@ -211,24 +175,19 @@ public final class DggrsData extends DataTransferObject {
      *
      * @return dimensions
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_DIMENSIONS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "dimensions")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<Dimension> getDimensions() {
         return dimensions;
     }
 
     @JsonProperty(JSON_PROPERTY_DIMENSIONS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "dimensions")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setDimensions(@jakarta.annotation.Nullable List<Dimension> dimensions) {
+    public void setDimensions(List<Dimension> dimensions) {
         this.dimensions = dimensions;
     }
 
-    public DggrsData values(@jakarta.annotation.Nonnull Map<String, List<DggrsDataValue>> values) {
+    public DggrsData values(Map<String, List<DggrsDataValue>> values) {
         this.values = values;
         return this;
     }
@@ -246,20 +205,15 @@ public final class DggrsData extends DataTransferObject {
      *
      * @return values
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_VALUES)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "values")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public Map<String, List<DggrsDataValue>> getValues() {
         return values;
     }
 
     @JsonProperty(JSON_PROPERTY_VALUES)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "values")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setValues(@jakarta.annotation.Nonnull Map<String, List<DggrsDataValue>> values) {
+    public void setValues(Map<String, List<DggrsDataValue>> values) {
         this.values = values;
     }
 

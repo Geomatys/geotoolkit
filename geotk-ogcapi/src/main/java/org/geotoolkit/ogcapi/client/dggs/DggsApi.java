@@ -118,7 +118,7 @@ public final class DggsApi extends AbstractOpenApi {
      * &#39;json&#39; or &#39;html&#39;. (optional)
      * @return ServiceRequest&lt;Enumeration&gt;
      */
-    public ServiceRequest<Supplier<Enumeration>> getAPICollections(@jakarta.annotation.Nullable String f) {
+    public ServiceRequest<Supplier<Enumeration>> getAPICollections(String f) {
         final HttpRequest.Builder request = HttpRequest.newBuilder();
         request.uri(toUri("/api/all-collections", toPairs("f", f)));
         request.header("Accept", "application/json, text/html");
@@ -136,7 +136,7 @@ public final class DggsApi extends AbstractOpenApi {
      * &#39;json&#39; or &#39;html&#39;. (optional)
      * @return ServiceRequest&lt;Enumeration&gt;
      */
-    public ServiceRequest<Supplier<Enumeration>> getAPIDGGRS(@jakarta.annotation.Nullable String f) {
+    public ServiceRequest<Supplier<Enumeration>> getAPIDGGRS(String f) {
         final HttpRequest.Builder request = HttpRequest.newBuilder();
         request.uri(toUri("/api/dggs", toPairs("f", f)));
         request.header("Accept", "application/json, text/html");

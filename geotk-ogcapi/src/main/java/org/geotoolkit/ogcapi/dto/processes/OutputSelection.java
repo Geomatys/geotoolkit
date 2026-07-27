@@ -19,12 +19,6 @@ package org.geotoolkit.ogcapi.dto.processes;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import org.geotoolkit.ogcapi.dto.DataTransferObject;
 
 /**
@@ -35,61 +29,48 @@ import org.geotoolkit.ogcapi.dto.DataTransferObject;
     OutputSelection.JSON_PROPERTY_FORMAT,
     OutputSelection.JSON_PROPERTY_TRANSMISSION_MODE
 })
-@XmlRootElement(name = "OutputSelection")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "OutputSelection")
 public final class OutputSelection extends DataTransferObject {
 
     public static final String JSON_PROPERTY_FORMAT = "format";
-    @XmlElement(name = "format")
-    @jakarta.annotation.Nullable
     private Format format;
 
     public static final String JSON_PROPERTY_TRANSMISSION_MODE = "transmissionMode";
-    @XmlElement(name = "transmissionMode")
-    @jakarta.annotation.Nullable
     private TransmissionMode transmissionMode;
 
     public OutputSelection() {
     }
 
-    public OutputSelection format(@jakarta.annotation.Nullable Format format) {
+    public OutputSelection format(Format format) {
         this.format = format;
         return this;
     }
 
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_FORMAT)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "format")
     public Format getFormat() {
         return format;
     }
 
     @JsonProperty(JSON_PROPERTY_FORMAT)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "format")
-    public void setFormat(@jakarta.annotation.Nullable Format format) {
+    public void setFormat(Format format) {
         this.format = format;
     }
 
-    public OutputSelection transmissionMode(@jakarta.annotation.Nullable TransmissionMode transmissionMode) {
+    public OutputSelection transmissionMode(TransmissionMode transmissionMode) {
         this.transmissionMode = transmissionMode;
         return this;
     }
 
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_TRANSMISSION_MODE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "transmissionMode")
     public TransmissionMode getTransmissionMode() {
         return transmissionMode;
     }
 
     @JsonProperty(JSON_PROPERTY_TRANSMISSION_MODE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "transmissionMode")
-    public void setTransmissionMode(@jakarta.annotation.Nullable TransmissionMode transmissionMode) {
+    public void setTransmissionMode(TransmissionMode transmissionMode) {
         this.transmissionMode = transmissionMode;
     }
 }

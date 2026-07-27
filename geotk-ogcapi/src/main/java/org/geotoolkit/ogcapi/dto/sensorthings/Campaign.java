@@ -19,12 +19,6 @@ package org.geotoolkit.ogcapi.dto.sensorthings;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.util.Objects;
 
 /**
@@ -48,60 +42,39 @@ import java.util.Objects;
     Campaign.JSON_PROPERTY_START_TIME,
     Campaign.JSON_PROPERTY_END_TIME
 })
-@XmlRootElement(name = "Campaign")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "Campaign")
 public final class Campaign extends SensorThingsEntity {
 
     public static final String JSON_PROPERTY_NAME = "name";
-    @XmlElement(name = "name")
-    @jakarta.annotation.Nonnull
     private String name;
 
     public static final String JSON_PROPERTY_DESCRIPTION = "description";
-    @XmlElement(name = "description")
-    @jakarta.annotation.Nonnull
     private String description;
 
     public static final String JSON_PROPERTY_TERMS_OF_USE = "termsOfUse";
-    @XmlElement(name = "termsOfUse")
-    @jakarta.annotation.Nonnull
     private String termsOfUse;
 
     public static final String JSON_PROPERTY_CREATION_TIME = "creationTime";
-    @XmlElement(name = "creationTime")
-    @jakarta.annotation.Nonnull
     private String creationTime;
 
     public static final String JSON_PROPERTY_CLASSIFICATION = "classification";
-    @XmlElement(name = "classification")
-    @jakarta.annotation.Nullable
     private String classification;
 
     public static final String JSON_PROPERTY_PRIVACY_POLICY = "privacyPolicy";
-    @XmlElement(name = "privacyPolicy")
-    @jakarta.annotation.Nullable
     private String privacyPolicy;
 
     public static final String JSON_PROPERTY_URL = "url";
-    @XmlElement(name = "url")
-    @jakarta.annotation.Nullable
     private String url;
 
     public static final String JSON_PROPERTY_START_TIME = "startTime";
-    @XmlElement(name = "startTime")
-    @jakarta.annotation.Nullable
     private String startTime;
 
     public static final String JSON_PROPERTY_END_TIME = "endTime";
-    @XmlElement(name = "endTime")
-    @jakarta.annotation.Nullable
     private String endTime;
 
     public Campaign() {
     }
 
-    public Campaign name(@jakarta.annotation.Nonnull String name) {
+    public Campaign name(String name) {
         this.name = name;
         return this;
     }
@@ -111,22 +84,19 @@ public final class Campaign extends SensorThingsEntity {
      *
      * @return the name
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_NAME)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "name")
     public String getName() {
         return name;
     }
 
     @JsonProperty(JSON_PROPERTY_NAME)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "name")
-    public void setName(@jakarta.annotation.Nonnull String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
-    public Campaign description(@jakarta.annotation.Nonnull String description) {
+    public Campaign description(String description) {
         this.description = description;
         return this;
     }
@@ -136,22 +106,19 @@ public final class Campaign extends SensorThingsEntity {
      *
      * @return the description
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_DESCRIPTION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "description")
     public String getDescription() {
         return description;
     }
 
     @JsonProperty(JSON_PROPERTY_DESCRIPTION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "description")
-    public void setDescription(@jakarta.annotation.Nonnull String description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 
-    public Campaign termsOfUse(@jakarta.annotation.Nonnull String termsOfUse) {
+    public Campaign termsOfUse(String termsOfUse) {
         this.termsOfUse = termsOfUse;
         return this;
     }
@@ -161,22 +128,19 @@ public final class Campaign extends SensorThingsEntity {
      *
      * @return the termsOfUse
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_TERMS_OF_USE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "termsOfUse")
     public String getTermsOfUse() {
         return termsOfUse;
     }
 
     @JsonProperty(JSON_PROPERTY_TERMS_OF_USE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "termsOfUse")
-    public void setTermsOfUse(@jakarta.annotation.Nonnull String termsOfUse) {
+    public void setTermsOfUse(String termsOfUse) {
         this.termsOfUse = termsOfUse;
     }
 
-    public Campaign creationTime(@jakarta.annotation.Nonnull String creationTime) {
+    public Campaign creationTime(String creationTime) {
         this.creationTime = creationTime;
         return this;
     }
@@ -186,22 +150,19 @@ public final class Campaign extends SensorThingsEntity {
      *
      * @return the creationTime
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_CREATION_TIME)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "creationTime")
     public String getCreationTime() {
         return creationTime;
     }
 
     @JsonProperty(JSON_PROPERTY_CREATION_TIME)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "creationTime")
-    public void setCreationTime(@jakarta.annotation.Nonnull String creationTime) {
+    public void setCreationTime(String creationTime) {
         this.creationTime = creationTime;
     }
 
-    public Campaign classification(@jakarta.annotation.Nullable String classification) {
+    public Campaign classification(String classification) {
         this.classification = classification;
         return this;
     }
@@ -211,22 +172,19 @@ public final class Campaign extends SensorThingsEntity {
      *
      * @return the classification
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_CLASSIFICATION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "classification")
     public String getClassification() {
         return classification;
     }
 
     @JsonProperty(JSON_PROPERTY_CLASSIFICATION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "classification")
-    public void setClassification(@jakarta.annotation.Nullable String classification) {
+    public void setClassification(String classification) {
         this.classification = classification;
     }
 
-    public Campaign privacyPolicy(@jakarta.annotation.Nullable String privacyPolicy) {
+    public Campaign privacyPolicy(String privacyPolicy) {
         this.privacyPolicy = privacyPolicy;
         return this;
     }
@@ -236,22 +194,19 @@ public final class Campaign extends SensorThingsEntity {
      *
      * @return the privacyPolicy
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_PRIVACY_POLICY)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "privacyPolicy")
     public String getPrivacyPolicy() {
         return privacyPolicy;
     }
 
     @JsonProperty(JSON_PROPERTY_PRIVACY_POLICY)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "privacyPolicy")
-    public void setPrivacyPolicy(@jakarta.annotation.Nullable String privacyPolicy) {
+    public void setPrivacyPolicy(String privacyPolicy) {
         this.privacyPolicy = privacyPolicy;
     }
 
-    public Campaign url(@jakarta.annotation.Nullable String url) {
+    public Campaign url(String url) {
         this.url = url;
         return this;
     }
@@ -261,22 +216,19 @@ public final class Campaign extends SensorThingsEntity {
      *
      * @return the url
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_URL)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "url")
     public String getUrl() {
         return url;
     }
 
     @JsonProperty(JSON_PROPERTY_URL)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "url")
-    public void setUrl(@jakarta.annotation.Nullable String url) {
+    public void setUrl(String url) {
         this.url = url;
     }
 
-    public Campaign startTime(@jakarta.annotation.Nullable String startTime) {
+    public Campaign startTime(String startTime) {
         this.startTime = startTime;
         return this;
     }
@@ -286,22 +238,19 @@ public final class Campaign extends SensorThingsEntity {
      *
      * @return the startTime
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_START_TIME)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "startTime")
     public String getStartTime() {
         return startTime;
     }
 
     @JsonProperty(JSON_PROPERTY_START_TIME)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "startTime")
-    public void setStartTime(@jakarta.annotation.Nullable String startTime) {
+    public void setStartTime(String startTime) {
         this.startTime = startTime;
     }
 
-    public Campaign endTime(@jakarta.annotation.Nullable String endTime) {
+    public Campaign endTime(String endTime) {
         this.endTime = endTime;
         return this;
     }
@@ -311,18 +260,15 @@ public final class Campaign extends SensorThingsEntity {
      *
      * @return the endTime
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_END_TIME)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "endTime")
     public String getEndTime() {
         return endTime;
     }
 
     @JsonProperty(JSON_PROPERTY_END_TIME)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "endTime")
-    public void setEndTime(@jakarta.annotation.Nullable String endTime) {
+    public void setEndTime(String endTime) {
         this.endTime = endTime;
     }
 

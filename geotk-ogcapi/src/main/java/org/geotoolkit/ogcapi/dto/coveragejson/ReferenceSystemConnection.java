@@ -19,13 +19,6 @@ package org.geotoolkit.ogcapi.dto.coveragejson;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.util.List;
 import java.util.Objects;
 import org.geotoolkit.ogcapi.dto.DataTransferObject;
@@ -40,25 +33,18 @@ import org.geotoolkit.ogcapi.dto.DataTransferObject;
     ReferenceSystemConnection.JSON_PROPERTY_COORDINATES,
     ReferenceSystemConnection.JSON_PROPERTY_SYSTEM
 })
-@XmlRootElement(name = "ReferenceSystemConnection")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "ReferenceSystemConnection")
 public final class ReferenceSystemConnection extends DataTransferObject {
 
     public static final String JSON_PROPERTY_COORDINATES = "coordinates";
-    @XmlElement(name = "coordinates")
-    @jakarta.annotation.Nullable
     private List<String> coordinates;
 
     public static final String JSON_PROPERTY_SYSTEM = "system";
-    @XmlElement(name = "system")
-    @jakarta.annotation.Nullable
     private ReferenceSystem system;
 
     public ReferenceSystemConnection() {
     }
 
-    public ReferenceSystemConnection coordinates(@jakarta.annotation.Nullable List<String> coordinates) {
+    public ReferenceSystemConnection coordinates(List<String> coordinates) {
         this.coordinates = coordinates;
         return this;
     }
@@ -76,40 +62,32 @@ public final class ReferenceSystemConnection extends DataTransferObject {
      *
      * @return coordinates
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_COORDINATES)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "coordinates")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<String> getCoordinates() {
         return coordinates;
     }
 
     @JsonProperty(JSON_PROPERTY_COORDINATES)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "coordinates")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setCoordinates(@jakarta.annotation.Nullable List<String> coordinates) {
+    public void setCoordinates(List<String> coordinates) {
         this.coordinates = coordinates;
     }
 
-    public ReferenceSystemConnection system(@jakarta.annotation.Nullable ReferenceSystem system) {
+    public ReferenceSystemConnection system(ReferenceSystem system) {
         this.system = system;
         return this;
     }
 
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_SYSTEM)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "system")
     public ReferenceSystem getSystem() {
         return system;
     }
 
     @JsonProperty(JSON_PROPERTY_SYSTEM)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "system")
-    public void setSystem(@jakarta.annotation.Nullable ReferenceSystem system) {
+    public void setSystem(ReferenceSystem system) {
         this.system = system;
     }
 

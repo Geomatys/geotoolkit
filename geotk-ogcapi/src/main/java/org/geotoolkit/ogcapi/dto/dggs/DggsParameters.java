@@ -19,12 +19,6 @@ package org.geotoolkit.ogcapi.dto.dggs;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.net.URI;
 import java.util.Objects;
 import org.geotoolkit.ogcapi.dto.DataTransferObject;
@@ -37,25 +31,18 @@ import org.geotoolkit.ogcapi.dto.DataTransferObject;
     DggsParameters.JSON_PROPERTY_ELLIPSOID,
     DggsParameters.JSON_PROPERTY_ORIENTATION
 })
-@XmlRootElement(name = "DggrsDefinitionDgghParameters")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "DggrsDefinitionDgghParameters")
 public final class DggsParameters extends DataTransferObject {
 
     public static final String JSON_PROPERTY_ELLIPSOID = "ellipsoid";
-    @XmlElement(name = "ellipsoid")
-    @jakarta.annotation.Nullable
     private URI ellipsoid;
 
     public static final String JSON_PROPERTY_ORIENTATION = "orientation";
-    @XmlElement(name = "orientation")
-    @jakarta.annotation.Nullable
     private DggsOrientation orientation;
 
     public DggsParameters() {
     }
 
-    public DggsParameters ellipsoid(@jakarta.annotation.Nullable URI ellipsoid) {
+    public DggsParameters ellipsoid(URI ellipsoid) {
         this.ellipsoid = ellipsoid;
         return this;
     }
@@ -65,22 +52,19 @@ public final class DggsParameters extends DataTransferObject {
      *
      * @return ellipsoid
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_ELLIPSOID)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "ellipsoid")
     public URI getEllipsoid() {
         return ellipsoid;
     }
 
     @JsonProperty(JSON_PROPERTY_ELLIPSOID)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "ellipsoid")
-    public void setEllipsoid(@jakarta.annotation.Nullable URI ellipsoid) {
+    public void setEllipsoid(URI ellipsoid) {
         this.ellipsoid = ellipsoid;
     }
 
-    public DggsParameters orientation(@jakarta.annotation.Nullable DggsOrientation orientation) {
+    public DggsParameters orientation(DggsOrientation orientation) {
         this.orientation = orientation;
         return this;
     }
@@ -90,18 +74,15 @@ public final class DggsParameters extends DataTransferObject {
      *
      * @return orientation
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_ORIENTATION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "orientation")
     public DggsOrientation getOrientation() {
         return orientation;
     }
 
     @JsonProperty(JSON_PROPERTY_ORIENTATION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "orientation")
-    public void setOrientation(@jakarta.annotation.Nullable DggsOrientation orientation) {
+    public void setOrientation(DggsOrientation orientation) {
         this.orientation = orientation;
     }
 

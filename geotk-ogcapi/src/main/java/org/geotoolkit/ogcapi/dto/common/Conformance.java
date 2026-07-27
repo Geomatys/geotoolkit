@@ -18,10 +18,6 @@ package org.geotoolkit.ogcapi.dto.common;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import org.geotoolkit.ogcapi.dto.DataTransferObject;
 
 import java.util.ArrayList;
@@ -31,15 +27,9 @@ import java.util.List;
  * @author Quentin BIALOTA
  * @author Guilhem LEGAL
  */
-@XmlRootElement(name = "ConformsTo")
-@XmlAccessorType(XmlAccessType.FIELD)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Conformance extends DataTransferObject implements CommonResponse {
 
-    @XmlElement(
-            name = "link",
-            namespace = "http://www.w3.org/2005/Atom"
-    )
     @JsonProperty("conformsTo")
     private List<Link> conformsTo;
 

@@ -20,13 +20,6 @@ import org.geotoolkit.ogcapi.dto.common.Crs;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,71 +43,46 @@ import org.geotoolkit.ogcapi.dto.common.Link;
     Dggrs.JSON_PROPERTY_LINKS,
     Dggrs.JSON_PROPERTY_LINK_TEMPLATES
 })
-@XmlRootElement(name = "Dggrs")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "Dggrs")
 public class Dggrs extends DataTransferObject {
 
     public static final String JSON_PROPERTY_ID = "id";
-    @XmlElement(name = "id")
-    @jakarta.annotation.Nonnull
     private String id;
 
     public static final String JSON_PROPERTY_TITLE = "title";
-    @XmlElement(name = "title")
-    @jakarta.annotation.Nonnull
     private String title;
 
     public static final String JSON_PROPERTY_DESCRIPTION = "description";
-    @XmlElement(name = "description")
-    @jakarta.annotation.Nonnull
     private String description;
 
     public static final String JSON_PROPERTY_KEYWORDS = "keywords";
-    @XmlElement(name = "keywords")
-    @jakarta.annotation.Nullable
     private List<String> keywords = new ArrayList<>();
 
     public static final String JSON_PROPERTY_URI = "uri";
-    @XmlElement(name = "uri")
-    @jakarta.annotation.Nullable
     private URI uri;
 
     public static final String JSON_PROPERTY_CRS = "crs";
-    @XmlElement(name = "crs")
-    @jakarta.annotation.Nullable
     private Crs crs;
 
     /**Integer or String **/
     public static final String JSON_PROPERTY_DEFAULT_DEPTH = "defaultDepth";
-    @XmlElement(name = "defaultDepth")
-    @jakarta.annotation.Nonnull
     private Object defaultDepth;
 
     public static final String JSON_PROPERTY_MAX_REFINEMENT_LEVEL = "maxRefinementLevel";
-    @XmlElement(name = "maxRefinementLevel")
-    @jakarta.annotation.Nullable
     private Integer maxRefinementLevel;
 
     public static final String JSON_PROPERTY_MAX_RELATIVE_DEPTH = "maxRelativeDepth";
-    @XmlElement(name = "maxRelativeDepth")
-    @jakarta.annotation.Nullable
     private Integer maxRelativeDepth;
 
     public static final String JSON_PROPERTY_LINKS = "links";
-    @XmlElement(name = "links")
-    @jakarta.annotation.Nonnull
     private List<Link> links = new ArrayList<>();
 
     public static final String JSON_PROPERTY_LINK_TEMPLATES = "linkTemplates";
-    @XmlElement(name = "linkTemplates")
-    @jakarta.annotation.Nullable
     private List<DggrsLinkTemplatesInner> linkTemplates = new ArrayList<>();
 
     public Dggrs() {
     }
 
-    public Dggrs id(@jakarta.annotation.Nonnull String id) {
+    public Dggrs id(String id) {
         this.id = id;
         return this;
     }
@@ -125,22 +93,19 @@ public class Dggrs extends DataTransferObject {
      *
      * @return id
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_ID)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "id")
     public String getId() {
         return id;
     }
 
     @JsonProperty(JSON_PROPERTY_ID)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "id")
-    public void setId(@jakarta.annotation.Nonnull String id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public Dggrs title(@jakarta.annotation.Nonnull String title) {
+    public Dggrs title(String title) {
         this.title = title;
         return this;
     }
@@ -150,22 +115,19 @@ public class Dggrs extends DataTransferObject {
      *
      * @return title
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_TITLE)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "title")
     public String getTitle() {
         return title;
     }
 
     @JsonProperty(JSON_PROPERTY_TITLE)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "title")
-    public void setTitle(@jakarta.annotation.Nonnull String title) {
+    public void setTitle(String title) {
         this.title = title;
     }
 
-    public Dggrs description(@jakarta.annotation.Nonnull String description) {
+    public Dggrs description(String description) {
         this.description = description;
         return this;
     }
@@ -175,22 +137,19 @@ public class Dggrs extends DataTransferObject {
      *
      * @return description
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_DESCRIPTION)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "description")
     public String getDescription() {
         return description;
     }
 
     @JsonProperty(JSON_PROPERTY_DESCRIPTION)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "description")
-    public void setDescription(@jakarta.annotation.Nonnull String description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 
-    public Dggrs keywords(@jakarta.annotation.Nullable List<String> keywords) {
+    public Dggrs keywords(List<String> keywords) {
         this.keywords = keywords;
         return this;
     }
@@ -209,24 +168,19 @@ public class Dggrs extends DataTransferObject {
      *
      * @return keywords
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_KEYWORDS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "keywords")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<String> getKeywords() {
         return keywords;
     }
 
     @JsonProperty(JSON_PROPERTY_KEYWORDS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "keywords")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setKeywords(@jakarta.annotation.Nullable List<String> keywords) {
+    public void setKeywords(List<String> keywords) {
         this.keywords = keywords;
     }
 
-    public Dggrs uri(@jakarta.annotation.Nullable URI uri) {
+    public Dggrs uri(URI uri) {
         this.uri = uri;
         return this;
     }
@@ -236,22 +190,19 @@ public class Dggrs extends DataTransferObject {
      *
      * @return uri
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_URI)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "uri")
     public URI getUri() {
         return uri;
     }
 
     @JsonProperty(JSON_PROPERTY_URI)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "uri")
-    public void setUri(@jakarta.annotation.Nullable URI uri) {
+    public void setUri(URI uri) {
         this.uri = uri;
     }
 
-    public Dggrs crs(@jakarta.annotation.Nullable Crs crs) {
+    public Dggrs crs(Crs crs) {
         this.crs = crs;
         return this;
     }
@@ -261,22 +212,19 @@ public class Dggrs extends DataTransferObject {
      *
      * @return crs
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_CRS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "crs")
     public Crs getCrs() {
         return crs;
     }
 
     @JsonProperty(JSON_PROPERTY_CRS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "crs")
-    public void setCrs(@jakarta.annotation.Nullable Crs crs) {
+    public void setCrs(Crs crs) {
         this.crs = crs;
     }
 
-    public Dggrs defaultDepth(@jakarta.annotation.Nonnull Object defaultDepth) {
+    public Dggrs defaultDepth(Object defaultDepth) {
         this.defaultDepth = defaultDepth;
         return this;
     }
@@ -287,22 +235,19 @@ public class Dggrs extends DataTransferObject {
      *
      * @return defaultDepth
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_DEFAULT_DEPTH)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "defaultDepth")
     public Object getDefaultDepth() {
         return defaultDepth;
     }
 
     @JsonProperty(JSON_PROPERTY_DEFAULT_DEPTH)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "defaultDepth")
-    public void setDefaultDepth(@jakarta.annotation.Nonnull Object defaultDepth) {
+    public void setDefaultDepth(Object defaultDepth) {
         this.defaultDepth = defaultDepth;
     }
 
-    public Dggrs maxRefinementLevel(@jakarta.annotation.Nullable Integer maxRefinementLevel) {
+    public Dggrs maxRefinementLevel(Integer maxRefinementLevel) {
         this.maxRefinementLevel = maxRefinementLevel;
         return this;
     }
@@ -314,22 +259,19 @@ public class Dggrs extends DataTransferObject {
      *
      * @return maxRefinementLevel
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_MAX_REFINEMENT_LEVEL)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "maxRefinementLevel")
     public Integer getMaxRefinementLevel() {
         return maxRefinementLevel;
     }
 
     @JsonProperty(JSON_PROPERTY_MAX_REFINEMENT_LEVEL)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "maxRefinementLevel")
-    public void setMaxRefinementLevel(@jakarta.annotation.Nullable Integer maxRefinementLevel) {
+    public void setMaxRefinementLevel(Integer maxRefinementLevel) {
         this.maxRefinementLevel = maxRefinementLevel;
     }
 
-    public Dggrs maxRelativeDepth(@jakarta.annotation.Nullable Integer maxRelativeDepth) {
+    public Dggrs maxRelativeDepth(Integer maxRelativeDepth) {
         this.maxRelativeDepth = maxRelativeDepth;
         return this;
     }
@@ -340,22 +282,19 @@ public class Dggrs extends DataTransferObject {
      *
      * @return maxRelativeDepth
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_MAX_RELATIVE_DEPTH)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "maxRelativeDepth")
     public Integer getMaxRelativeDepth() {
         return maxRelativeDepth;
     }
 
     @JsonProperty(JSON_PROPERTY_MAX_RELATIVE_DEPTH)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "maxRelativeDepth")
-    public void setMaxRelativeDepth(@jakarta.annotation.Nullable Integer maxRelativeDepth) {
+    public void setMaxRelativeDepth(Integer maxRelativeDepth) {
         this.maxRelativeDepth = maxRelativeDepth;
     }
 
-    public Dggrs links(@jakarta.annotation.Nonnull List<Link> links) {
+    public Dggrs links(List<Link> links) {
         this.links = links;
         return this;
     }
@@ -377,24 +316,19 @@ public class Dggrs extends DataTransferObject {
      *
      * @return links
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_LINKS)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "links")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<Link> getLinks() {
         return links;
     }
 
     @JsonProperty(JSON_PROPERTY_LINKS)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "links")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setLinks(@jakarta.annotation.Nonnull List<Link> links) {
+    public void setLinks(List<Link> links) {
         this.links = links;
     }
 
-    public Dggrs linkTemplates(@jakarta.annotation.Nullable List<DggrsLinkTemplatesInner> linkTemplates) {
+    public Dggrs linkTemplates(List<DggrsLinkTemplatesInner> linkTemplates) {
         this.linkTemplates = linkTemplates;
         return this;
     }
@@ -413,20 +347,15 @@ public class Dggrs extends DataTransferObject {
      *
      * @return linkTemplates
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_LINK_TEMPLATES)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "linkTemplates")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<DggrsLinkTemplatesInner> getLinkTemplates() {
         return linkTemplates;
     }
 
     @JsonProperty(JSON_PROPERTY_LINK_TEMPLATES)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "linkTemplates")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setLinkTemplates(@jakarta.annotation.Nullable List<DggrsLinkTemplatesInner> linkTemplates) {
+    public void setLinkTemplates(List<DggrsLinkTemplatesInner> linkTemplates) {
         this.linkTemplates = linkTemplates;
     }
 

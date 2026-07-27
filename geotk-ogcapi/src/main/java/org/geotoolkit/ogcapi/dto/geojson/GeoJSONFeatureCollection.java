@@ -25,8 +25,6 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.*;
-import jakarta.xml.bind.annotation.*;
 import org.geotoolkit.ogcapi.dto.common.Link;
 
 
@@ -46,9 +44,6 @@ import org.geotoolkit.ogcapi.dto.common.Link;
     GeoJSONFeatureCollection.PROPERTY_BBOX,
     GeoJSONFeatureCollection.PROPERTY_FEATURES,
 })
-@XmlRootElement(name = "FeatureCollection")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "FeatureCollection")
 public class GeoJSONFeatureCollection extends GeoJSONObject {
 
     //geojson
@@ -64,40 +59,22 @@ public class GeoJSONFeatureCollection extends GeoJSONObject {
     public static final String PROPERTY_FEATURE_SCHEMA = "featureSchema";
     public static final String PROPERTY_COORD_REF_SYS = "coordRefSys";
 
-    @XmlElement(name = PROPERTY_FEATURES)
-    @jakarta.annotation.Nonnull
     private List<GeoJSONFeature> features = new ArrayList<>();
 
-    @XmlElement(name = PROPERTY_LINKS)
-    @jakarta.annotation.Nullable
     private List<Link> links = new ArrayList<>();
 
-    @XmlElement(name = PROPERTY_TIME_STAMP)
-    @jakarta.annotation.Nullable
     private OffsetDateTime timeStamp;
 
-    @XmlElement(name = PROPERTY_NUMBER_MATCHED)
-    @jakarta.annotation.Nullable
     private Integer numberMatched;
 
-    @XmlElement(name = PROPERTY_NUMBER_RETURNED)
-    @jakarta.annotation.Nullable
     private Integer numberReturned;
 
-    @XmlElement(name = PROPERTY_FEATURE_TYPE)
-    @jakarta.annotation.Nullable
     private List<String> featureType;
 
-    @XmlElement(name = PROPERTY_GEOMETRY_DIMENSION)
-    @jakarta.annotation.Nullable
     private Integer geometryDimension;
 
-    @XmlElement(name = PROPERTY_FEATURE_SCHEMA)
-    @jakarta.annotation.Nullable
     private String featureSchema;
 
-    @XmlElement(name = PROPERTY_COORD_REF_SYS)
-    @jakarta.annotation.Nullable
     private JSONFGCoordRefSys coordRefSys;
 
     public GeoJSONFeatureCollection() {
@@ -113,20 +90,15 @@ public class GeoJSONFeatureCollection extends GeoJSONObject {
      *
      * @return features
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(PROPERTY_FEATURES)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "features")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<GeoJSONFeature> getFeatures() {
         return features;
     }
 
     @JsonProperty(PROPERTY_FEATURES)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "features")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setFeatures(@jakarta.annotation.Nonnull List<GeoJSONFeature> features) {
+    public void setFeatures(List<GeoJSONFeature> features) {
         this.features = features;
     }
 
@@ -135,20 +107,15 @@ public class GeoJSONFeatureCollection extends GeoJSONObject {
      *
      * @return links
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(PROPERTY_LINKS)
     @JsonInclude(value = JsonInclude.Include.NON_EMPTY)
-    @JacksonXmlProperty(localName = "links")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<Link> getLinks() {
         return links;
     }
 
     @JsonProperty(PROPERTY_LINKS)
     @JsonInclude(value = JsonInclude.Include.NON_EMPTY)
-    @JacksonXmlProperty(localName = "links")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setLinks(@jakarta.annotation.Nullable List<Link> links) {
+    public void setLinks(List<Link> links) {
         this.links = links;
     }
 
@@ -157,18 +124,15 @@ public class GeoJSONFeatureCollection extends GeoJSONObject {
      *
      * @return timeStamp
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(PROPERTY_TIME_STAMP)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "timeStamp")
     public OffsetDateTime getTimeStamp() {
         return timeStamp;
     }
 
     @JsonProperty(PROPERTY_TIME_STAMP)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "timeStamp")
-    public void setTimeStamp(@jakarta.annotation.Nullable OffsetDateTime timeStamp) {
+    public void setTimeStamp(OffsetDateTime timeStamp) {
         this.timeStamp = timeStamp;
     }
 
@@ -177,18 +141,15 @@ public class GeoJSONFeatureCollection extends GeoJSONObject {
      *
      * @return numberMatched
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(PROPERTY_NUMBER_MATCHED)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "numberMatched")
     public Integer getNumberMatched() {
         return numberMatched;
     }
 
     @JsonProperty(PROPERTY_NUMBER_MATCHED)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "numberMatched")
-    public void setNumberMatched(@jakarta.annotation.Nullable Integer numberMatched) {
+    public void setNumberMatched(Integer numberMatched) {
         this.numberMatched = numberMatched;
     }
 
@@ -199,18 +160,15 @@ public class GeoJSONFeatureCollection extends GeoJSONObject {
      *
      * @return numberReturned
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(PROPERTY_NUMBER_RETURNED)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "numberReturned")
     public Integer getNumberReturned() {
         return numberReturned;
     }
 
     @JsonProperty(PROPERTY_NUMBER_RETURNED)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "numberReturned")
-    public void setNumberReturned(@jakarta.annotation.Nullable Integer numberReturned) {
+    public void setNumberReturned(Integer numberReturned) {
         this.numberReturned = numberReturned;
     }
 
@@ -220,10 +178,8 @@ public class GeoJSONFeatureCollection extends GeoJSONObject {
      * maximum: 3
      * @return geometryDimension
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(PROPERTY_GEOMETRY_DIMENSION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = PROPERTY_GEOMETRY_DIMENSION)
     public Integer getGeometryDimension() {
         return geometryDimension;
     }
@@ -231,8 +187,7 @@ public class GeoJSONFeatureCollection extends GeoJSONObject {
 
     @JsonProperty(PROPERTY_GEOMETRY_DIMENSION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = PROPERTY_GEOMETRY_DIMENSION)
-    public void setGeometryDimension(@jakarta.annotation.Nullable Integer geometryDimension) {
+    public void setGeometryDimension(Integer geometryDimension) {
         this.geometryDimension = geometryDimension;
     }
 
@@ -240,10 +195,8 @@ public class GeoJSONFeatureCollection extends GeoJSONObject {
      * Get featureType
      * @return featureType
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(PROPERTY_FEATURE_TYPE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = PROPERTY_FEATURE_TYPE)
     @JsonFormat( with = {JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY, JsonFormat.Feature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED})
     public List<String> getFeatureType() {
         return featureType;
@@ -251,9 +204,8 @@ public class GeoJSONFeatureCollection extends GeoJSONObject {
 
     @JsonProperty(PROPERTY_FEATURE_TYPE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = PROPERTY_FEATURE_TYPE)
     @JsonFormat( with = {JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY, JsonFormat.Feature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED})
-    public void setFeatureType(@jakarta.annotation.Nullable List<String> featureType) {
+    public void setFeatureType(List<String> featureType) {
         this.featureType = featureType;
     }
 
@@ -261,18 +213,15 @@ public class GeoJSONFeatureCollection extends GeoJSONObject {
      * Get featureSchema
      * @return featureSchema
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(PROPERTY_FEATURE_SCHEMA)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = PROPERTY_FEATURE_SCHEMA)
     public String getFeatureSchema() {
         return featureSchema;
     }
 
     @JsonProperty(PROPERTY_FEATURE_SCHEMA)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = PROPERTY_FEATURE_SCHEMA)
-    public void setFeatureSchema(@jakarta.annotation.Nullable String featureSchema) {
+    public void setFeatureSchema(String featureSchema) {
         this.featureSchema = featureSchema;
     }
 
@@ -280,10 +229,8 @@ public class GeoJSONFeatureCollection extends GeoJSONObject {
      * Get coordRefSys
      * @return coordRefSys
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(PROPERTY_COORD_REF_SYS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = PROPERTY_COORD_REF_SYS)
     public JSONFGCoordRefSys getCoordRefSys() {
         return coordRefSys;
     }
@@ -291,8 +238,7 @@ public class GeoJSONFeatureCollection extends GeoJSONObject {
 
     @JsonProperty(PROPERTY_COORD_REF_SYS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = PROPERTY_COORD_REF_SYS)
-    public void setCoordRefSys(@jakarta.annotation.Nullable JSONFGCoordRefSys coordRefSys) {
+    public void setCoordRefSys(JSONFGCoordRefSys coordRefSys) {
         this.coordRefSys = coordRefSys;
     }
 

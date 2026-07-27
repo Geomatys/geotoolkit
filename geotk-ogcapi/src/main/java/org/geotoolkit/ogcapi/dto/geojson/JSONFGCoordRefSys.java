@@ -20,8 +20,6 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.*;
-import jakarta.xml.bind.annotation.*;
 import org.geotoolkit.ogcapi.dto.DataTransferObject;
 
 
@@ -32,9 +30,6 @@ import org.geotoolkit.ogcapi.dto.DataTransferObject;
     JSONFGCoordRefSys.PROPERTY_TYPE,
     JSONFGCoordRefSys.PROPERTY_HREF
 })
-@XmlRootElement(name = "CoordRefSys")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "CoordRefSys")
 public class JSONFGCoordRefSys extends DataTransferObject {
 
     public static final String TYPE_REFERENCE = "Reference";
@@ -42,12 +37,8 @@ public class JSONFGCoordRefSys extends DataTransferObject {
     public static final String PROPERTY_HREF = "href";
     public static final String PROPERTY_TYPE = GeoJSONObject.PROPERTY_TYPE;
 
-    @XmlElement(name = PROPERTY_TYPE)
-    @jakarta.annotation.Nullable
     private String type;
 
-    @XmlElement(name = PROPERTY_HREF)
-    @jakarta.annotation.Nullable
     private String href;
 
     public JSONFGCoordRefSys() {
@@ -58,18 +49,15 @@ public class JSONFGCoordRefSys extends DataTransferObject {
      *
      * @return type
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(PROPERTY_TYPE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = PROPERTY_TYPE)
     public String getType() {
         return type;
     }
 
     @JsonProperty(PROPERTY_TYPE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = PROPERTY_TYPE)
-    public void setType(@jakarta.annotation.Nullable String type) {
+    public void setType(String type) {
         this.type = type;
     }
 
@@ -78,18 +66,15 @@ public class JSONFGCoordRefSys extends DataTransferObject {
      *
      * @return href
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(PROPERTY_HREF)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = PROPERTY_HREF)
     public String getHref() {
         return href;
     }
 
     @JsonProperty(PROPERTY_HREF)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = PROPERTY_HREF)
-    public void setHref(@jakarta.annotation.Nullable String href) {
+    public void setHref(String href) {
         this.href = href;
     }
 

@@ -18,9 +18,6 @@ package org.geotoolkit.ogcapi.dto.common;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-import jakarta.xml.bind.annotation.XmlEnum;
-import jakarta.xml.bind.annotation.XmlEnumValue;
-import jakarta.xml.bind.annotation.XmlType;
 
 /**
  * Restrictions on the availability of the collection that the user needs to
@@ -31,18 +28,11 @@ import jakarta.xml.bind.annotation.XmlType;
  * hidden from all but a select group of people * topSecret: Of the highest
  * secrecy
  */
-@XmlType(name = "AccessConstraints")
-@XmlEnum(value = String.class)
 public enum AccessConstraintsCode {
-    @XmlEnumValue(value = "unclassified")
     UNCLASSIFIED(String.valueOf("unclassified")),
-    @XmlEnumValue(value = "restricted")
     RESTRICTED(String.valueOf("restricted")),
-    @XmlEnumValue(value = "confidential")
     CONFIDENTIAL(String.valueOf("confidential")),
-    @XmlEnumValue(value = "secret")
     SECRET(String.valueOf("secret")),
-    @XmlEnumValue(value = "topSecret")
     TOP_SECRET(String.valueOf("topSecret"));
     private String value;
 

@@ -19,12 +19,6 @@ package org.geotoolkit.ogcapi.dto.common;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.util.Objects;
 import org.geotoolkit.ogcapi.dto.DataTransferObject;
 
@@ -37,36 +31,25 @@ import org.geotoolkit.ogcapi.dto.DataTransferObject;
     Language.JSON_PROPERTY_ALTERNATE,
     Language.JSON_PROPERTY_DIR
 })
-@XmlRootElement(name = "Language")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "Language")
 public final class Language extends DataTransferObject {
 
     public static final String JSON_PROPERTY_CODE = "code";
-    @XmlElement(name = "code")
-    @jakarta.annotation.Nonnull
     private String code;
 
     public static final String JSON_PROPERTY_NAME = "name";
-    @XmlElement(name = "name")
-    @jakarta.annotation.Nullable
     private String name;
 
     public static final String JSON_PROPERTY_ALTERNATE = "alternate";
-    @XmlElement(name = "alternate")
-    @jakarta.annotation.Nullable
     private String alternate;
 
 
     public static final String JSON_PROPERTY_DIR = "dir";
-    @XmlElement(name = "dir")
-    @jakarta.annotation.Nullable
     private LanguageDirection dir = LanguageDirection.LTR;
 
     public Language() {
     }
 
-    public Language code(@jakarta.annotation.Nonnull String code) {
+    public Language code(String code) {
         this.code = code;
         return this;
     }
@@ -76,22 +59,19 @@ public final class Language extends DataTransferObject {
      *
      * @return code
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_CODE)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "code")
     public String getCode() {
         return code;
     }
 
     @JsonProperty(JSON_PROPERTY_CODE)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "code")
-    public void setCode(@jakarta.annotation.Nonnull String code) {
+    public void setCode(String code) {
         this.code = code;
     }
 
-    public Language name(@jakarta.annotation.Nullable String name) {
+    public Language name(String name) {
         this.name = name;
         return this;
     }
@@ -101,22 +81,19 @@ public final class Language extends DataTransferObject {
      *
      * @return name
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_NAME)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "name")
     public String getName() {
         return name;
     }
 
     @JsonProperty(JSON_PROPERTY_NAME)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "name")
-    public void setName(@jakarta.annotation.Nullable String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
-    public Language alternate(@jakarta.annotation.Nullable String alternate) {
+    public Language alternate(String alternate) {
         this.alternate = alternate;
         return this;
     }
@@ -127,22 +104,19 @@ public final class Language extends DataTransferObject {
      *
      * @return alternate
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_ALTERNATE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "alternate")
     public String getAlternate() {
         return alternate;
     }
 
     @JsonProperty(JSON_PROPERTY_ALTERNATE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "alternate")
-    public void setAlternate(@jakarta.annotation.Nullable String alternate) {
+    public void setAlternate(String alternate) {
         this.alternate = alternate;
     }
 
-    public Language dir(@jakarta.annotation.Nullable LanguageDirection dir) {
+    public Language dir(LanguageDirection dir) {
         this.dir = dir;
         return this;
     }
@@ -157,18 +131,15 @@ public final class Language extends DataTransferObject {
      *
      * @return dir
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_DIR)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "dir")
     public LanguageDirection getDir() {
         return dir;
     }
 
     @JsonProperty(JSON_PROPERTY_DIR)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "dir")
-    public void setDir(@jakarta.annotation.Nullable LanguageDirection dir) {
+    public void setDir(LanguageDirection dir) {
         this.dir = dir;
     }
 

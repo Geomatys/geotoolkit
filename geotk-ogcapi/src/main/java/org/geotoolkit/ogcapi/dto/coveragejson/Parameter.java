@@ -19,12 +19,6 @@ package org.geotoolkit.ogcapi.dto.coveragejson;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.util.Map;
 import java.util.Objects;
 import org.geotoolkit.ogcapi.dto.DataTransferObject;
@@ -46,50 +40,33 @@ import org.geotoolkit.ogcapi.dto.common.Extent;
     Parameter.JSON_PROPERTY_EXTENT,
     Parameter.JSON_PROPERTY_MEASUREMENT_TYPE
 })
-@XmlRootElement(name = "Parameter")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "Parameter")
 public final class Parameter extends DataTransferObject {
 
     public static final String JSON_PROPERTY_TYPE = "type";
-    @XmlElement(name = "type")
-    @jakarta.annotation.Nullable
     private String type;
 
     public static final String JSON_PROPERTY_DESCRIPTION = "description";
-    @XmlElement(name = "description")
-    @jakarta.annotation.Nullable
     private String description;
 
     public static final String JSON_PROPERTY_UNIT = "unit";
-    @XmlElement(name = "unit")
-    @jakarta.annotation.Nullable
     private Unit unit;
 
     public static final String JSON_PROPERTY_OBSERVED_PROPERTY = "observedProperty";
-    @XmlElement(name = "observedProperty")
-    @jakarta.annotation.Nullable
     private ObservedProperty observedProperty;
 
     public static final String JSON_PROPERTY_CATEGORY_ENCODING = "categoryEncoding";
-    @XmlElement(name = "categoryEncoding")
-    @jakarta.annotation.Nullable
     private Map<String, Integer> categoryEncoding;
 
     public static final String JSON_PROPERTY_EXTENT = "extent";
-    @XmlElement(name = "extent")
-    @jakarta.annotation.Nullable
     private Extent extent;
 
     public static final String JSON_PROPERTY_MEASUREMENT_TYPE = "measurementType";
-    @XmlElement(name = "measurementType")
-    @jakarta.annotation.Nullable
     private MeasurementType measurementType;
 
     public Parameter() {
     }
 
-    public Parameter type(@jakarta.annotation.Nullable String type) {
+    public Parameter type(String type) {
         this.type = type;
         return this;
     }
@@ -99,82 +76,70 @@ public final class Parameter extends DataTransferObject {
      *
      * @return type
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_TYPE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "type")
     public String getType() {
         return type;
     }
 
     @JsonProperty(JSON_PROPERTY_TYPE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "type")
-    public void setType(@jakarta.annotation.Nullable String type) {
+    public void setType(String type) {
         this.type = type;
     }
 
-    public Parameter description(@jakarta.annotation.Nullable String description) {
+    public Parameter description(String description) {
         this.description = description;
         return this;
     }
 
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_DESCRIPTION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "description")
     public String getDescription() {
         return description;
     }
 
     @JsonProperty(JSON_PROPERTY_DESCRIPTION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "description")
-    public void setDescription(@jakarta.annotation.Nullable String description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 
-    public Parameter unit(@jakarta.annotation.Nullable Unit unit) {
+    public Parameter unit(Unit unit) {
         this.unit = unit;
         return this;
     }
 
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_UNIT)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "unit")
     public Unit getUnit() {
         return unit;
     }
 
     @JsonProperty(JSON_PROPERTY_UNIT)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "unit")
-    public void setUnit(@jakarta.annotation.Nullable Unit unit) {
+    public void setUnit(Unit unit) {
         this.unit = unit;
     }
 
-    public Parameter observedProperty(@jakarta.annotation.Nullable ObservedProperty observedProperty) {
+    public Parameter observedProperty(ObservedProperty observedProperty) {
         this.observedProperty = observedProperty;
         return this;
     }
 
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_OBSERVED_PROPERTY)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "observedProperty")
     public ObservedProperty getObservedProperty() {
         return observedProperty;
     }
 
     @JsonProperty(JSON_PROPERTY_OBSERVED_PROPERTY)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "observedProperty")
-    public void setObservedProperty(@jakarta.annotation.Nullable ObservedProperty observedProperty) {
+    public void setObservedProperty(ObservedProperty observedProperty) {
         this.observedProperty = observedProperty;
     }
 
-    public Parameter categoryEncoding(@jakarta.annotation.Nullable Map<String, Integer> categoryEncoding) {
+    public Parameter categoryEncoding(Map<String, Integer> categoryEncoding) {
         this.categoryEncoding = categoryEncoding;
         return this;
     }
@@ -193,58 +158,49 @@ public final class Parameter extends DataTransferObject {
      *
      * @return categoryEncoding
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_CATEGORY_ENCODING)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "categoryEncoding")
     public Map<String, Integer> getCategoryEncoding() {
         return categoryEncoding;
     }
 
     @JsonProperty(JSON_PROPERTY_CATEGORY_ENCODING)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "categoryEncoding")
-    public void setCategoryEncoding(@jakarta.annotation.Nullable Map<String, Integer> categoryEncoding) {
+    public void setCategoryEncoding(Map<String, Integer> categoryEncoding) {
         this.categoryEncoding = categoryEncoding;
     }
 
-    public Parameter extent(@jakarta.annotation.Nullable Extent extent) {
+    public Parameter extent(Extent extent) {
         this.extent = extent;
         return this;
     }
 
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_EXTENT)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "extent")
     public Extent getExtent() {
         return extent;
     }
 
     @JsonProperty(JSON_PROPERTY_EXTENT)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "extent")
-    public void setExtent(@jakarta.annotation.Nullable Extent extent) {
+    public void setExtent(Extent extent) {
         this.extent = extent;
     }
 
-    public Parameter measurementType(@jakarta.annotation.Nullable MeasurementType measurementType) {
+    public Parameter measurementType(MeasurementType measurementType) {
         this.measurementType = measurementType;
         return this;
     }
 
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_MEASUREMENT_TYPE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "measurementType")
     public MeasurementType getMeasurementType() {
         return measurementType;
     }
 
     @JsonProperty(JSON_PROPERTY_MEASUREMENT_TYPE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "measurementType")
-    public void setMeasurementType(@jakarta.annotation.Nullable MeasurementType measurementType) {
+    public void setMeasurementType(MeasurementType measurementType) {
         this.measurementType = measurementType;
     }
 

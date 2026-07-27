@@ -19,8 +19,6 @@ package org.geotoolkit.ogcapi.dto.styles;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.*;
-import jakarta.xml.bind.annotation.*;
 import java.util.Objects;
 import org.geotoolkit.ogcapi.dto.DataTransferObject;
 
@@ -36,20 +34,15 @@ import org.geotoolkit.ogcapi.dto.DataTransferObject;
 @JsonPropertyOrder({
     SetDefaultStyle.JSON_PROPERTY_DEFAULT
 })
-@XmlRootElement(name = "DefaultStyleUpdate")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "DefaultStyleUpdate")
 public final class SetDefaultStyle extends DataTransferObject {
 
     public static final String JSON_PROPERTY_DEFAULT = "default";
-    @XmlElement(name = "default")
-    @jakarta.annotation.Nullable
     private String _default;
 
     public SetDefaultStyle() {
     }
 
-    public SetDefaultStyle _default(@jakarta.annotation.Nullable String _default) {
+    public SetDefaultStyle _default(String _default) {
         this._default = _default;
         return this;
     }
@@ -59,18 +52,15 @@ public final class SetDefaultStyle extends DataTransferObject {
      *
      * @return default
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_DEFAULT)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "default")
     public String getDefault() {
         return _default;
     }
 
     @JsonProperty(JSON_PROPERTY_DEFAULT)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "default")
-    public void setDefault(@jakarta.annotation.Nullable String _default) {
+    public void setDefault(String _default) {
         this._default = _default;
     }
 

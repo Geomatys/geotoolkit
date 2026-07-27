@@ -26,7 +26,6 @@ import org.geotoolkit.client.openapi.OpenApiConfiguration;
 import static org.geotoolkit.client.service.AbstractService.toPairs;
 import static org.geotoolkit.client.service.AbstractService.urlEncode;
 import org.geotoolkit.client.service.Pair;
-import org.geotoolkit.client.service.ServiceException;
 import org.geotoolkit.client.service.ServiceRequest;
 import org.geotoolkit.ogcapi.dto.tiles.GetTileMatrixSetsListResponse;
 import org.geotoolkit.ogcapi.dto.tiles.GetTileSetsListResponse;
@@ -185,7 +184,7 @@ public final class TilesApi extends AbstractOpenApi {
      * Accepted values are &#39;json&#39; or &#39;html&#39;. (optional)
      * @return ServiceRequest&lt;GetTileMatrixSetsList200Response&gt;
      */
-    public ServiceRequest<Supplier<GetTileMatrixSetsListResponse>> getTileMatrixSetsList(@jakarta.annotation.Nullable String f) {
+    public ServiceRequest<Supplier<GetTileMatrixSetsListResponse>> getTileMatrixSetsList(String f) {
 
         final HttpRequest.Builder request = HttpRequest.newBuilder();
         request.uri(toUri("/tileMatrixSets", toPairs("f", f)));

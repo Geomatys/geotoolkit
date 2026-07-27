@@ -19,8 +19,6 @@ package org.geotoolkit.ogcapi.dto.maps;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.*;
-import jakarta.xml.bind.annotation.*;
 import java.util.Objects;
 import org.geotoolkit.ogcapi.dto.DataTransferObject;
 
@@ -35,30 +33,21 @@ import org.geotoolkit.ogcapi.dto.DataTransferObject;
     ProjectionDatum.JSON_PROPERTY_DESCRIPTION,
     ProjectionDatum.JSON_PROPERTY_ELLIPSOID
 })
-@XmlRootElement(name = "ProjectionDatum")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "ProjectionDatum")
 public final class ProjectionDatum extends DataTransferObject {
 
     public static final String JSON_PROPERTY_TITLE = "title";
-    @XmlElement(name = "title")
-    @jakarta.annotation.Nullable
     private String title;
 
     public static final String JSON_PROPERTY_DESCRIPTION = "description";
-    @XmlElement(name = "description")
-    @jakarta.annotation.Nullable
     private String description;
 
     public static final String JSON_PROPERTY_ELLIPSOID = "ellipsoid";
-    @XmlElement(name = "ellipsoid")
-    @jakarta.annotation.Nonnull
     private String ellipsoid;
 
     public ProjectionDatum() {
     }
 
-    public ProjectionDatum title(@jakarta.annotation.Nullable String title) {
+    public ProjectionDatum title(String title) {
         this.title = title;
         return this;
     }
@@ -68,22 +57,19 @@ public final class ProjectionDatum extends DataTransferObject {
      *
      * @return title
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_TITLE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "title")
     public String getTitle() {
         return title;
     }
 
     @JsonProperty(JSON_PROPERTY_TITLE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "title")
-    public void setTitle(@jakarta.annotation.Nullable String title) {
+    public void setTitle(String title) {
         this.title = title;
     }
 
-    public ProjectionDatum description(@jakarta.annotation.Nullable String description) {
+    public ProjectionDatum description(String description) {
         this.description = description;
         return this;
     }
@@ -93,22 +79,19 @@ public final class ProjectionDatum extends DataTransferObject {
      *
      * @return description
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_DESCRIPTION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "description")
     public String getDescription() {
         return description;
     }
 
     @JsonProperty(JSON_PROPERTY_DESCRIPTION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "description")
-    public void setDescription(@jakarta.annotation.Nullable String description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 
-    public ProjectionDatum ellipsoid(@jakarta.annotation.Nonnull String ellipsoid) {
+    public ProjectionDatum ellipsoid(String ellipsoid) {
         this.ellipsoid = ellipsoid;
         return this;
     }
@@ -118,18 +101,15 @@ public final class ProjectionDatum extends DataTransferObject {
      *
      * @return ellipsoid
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_ELLIPSOID)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "ellipsoid")
     public String getEllipsoid() {
         return ellipsoid;
     }
 
     @JsonProperty(JSON_PROPERTY_ELLIPSOID)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "ellipsoid")
-    public void setEllipsoid(@jakarta.annotation.Nonnull String ellipsoid) {
+    public void setEllipsoid(String ellipsoid) {
         this.ellipsoid = ellipsoid;
     }
 

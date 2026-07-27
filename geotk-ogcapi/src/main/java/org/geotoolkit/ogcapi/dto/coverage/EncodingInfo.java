@@ -20,12 +20,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import org.geotoolkit.ogcapi.dto.DataTransferObject;
 
 import java.util.HashMap;
@@ -37,13 +31,9 @@ import java.util.Map;
 @JsonPropertyOrder({
         EncodingInfo.JSON_PROPERTY_DATA_TYPE
 })
-@XmlRootElement(name = "EncodingInfo")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "EncodingInfo")
 public class EncodingInfo extends DataTransferObject {
 
     public static final String JSON_PROPERTY_DATA_TYPE = "dataType";
-    @XmlElement(name = "dataType")
     private String dataType;
 
     public EncodingInfo() {}
@@ -52,17 +42,14 @@ public class EncodingInfo extends DataTransferObject {
         this.dataType = dataType;
     }
 
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_DATA_TYPE)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "dataType")
     public String getDataType() {
         return dataType;
     }
 
     @JsonProperty(JSON_PROPERTY_DATA_TYPE)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "dataType")
     public void setDataType(String dataType) {
         this.dataType = dataType;
     }

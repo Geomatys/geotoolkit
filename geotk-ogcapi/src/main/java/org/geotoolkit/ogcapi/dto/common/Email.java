@@ -19,12 +19,6 @@ package org.geotoolkit.ogcapi.dto.common;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -37,25 +31,18 @@ import org.geotoolkit.ogcapi.dto.DataTransferObject;
     Email.JSON_PROPERTY_VALUE,
     Email.JSON_PROPERTY_ROLES
 })
-@XmlRootElement(name = "CollectionDescContactsInnerEmailsInner")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "CollectionDescContactsInnerEmailsInner")
 public final class Email extends DataTransferObject {
 
     public static final String JSON_PROPERTY_VALUE = "value";
-    @XmlElement(name = "value")
-    @jakarta.annotation.Nonnull
     private String value;
 
     public static final String JSON_PROPERTY_ROLES = "roles";
-    @XmlElement(name = "roles")
-    @jakarta.annotation.Nullable
     private List<String> roles = new ArrayList<>();
 
     public Email() {
     }
 
-    public Email value(@jakarta.annotation.Nonnull String value) {
+    public Email value(String value) {
         this.value = value;
         return this;
     }
@@ -65,22 +52,19 @@ public final class Email extends DataTransferObject {
      *
      * @return value
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_VALUE)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "value")
     public String getValue() {
         return value;
     }
 
     @JsonProperty(JSON_PROPERTY_VALUE)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "value")
-    public void setValue(@jakarta.annotation.Nonnull String value) {
+    public void setValue(String value) {
         this.value = value;
     }
 
-    public Email roles(@jakarta.annotation.Nullable List<String> roles) {
+    public Email roles(List<String> roles) {
         this.roles = roles;
         return this;
     }
@@ -98,18 +82,15 @@ public final class Email extends DataTransferObject {
      *
      * @return roles
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_ROLES)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "roles")
     public List<String> getRoles() {
         return roles;
     }
 
     @JsonProperty(JSON_PROPERTY_ROLES)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "roles")
-    public void setRoles(@jakarta.annotation.Nullable List<String> roles) {
+    public void setRoles(List<String> roles) {
         this.roles = roles;
     }
 

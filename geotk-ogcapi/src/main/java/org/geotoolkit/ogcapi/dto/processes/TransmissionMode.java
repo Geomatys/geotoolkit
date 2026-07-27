@@ -18,9 +18,6 @@ package org.geotoolkit.ogcapi.dto.processes;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-import jakarta.xml.bind.annotation.XmlEnum;
-import jakarta.xml.bind.annotation.XmlEnumValue;
-import jakarta.xml.bind.annotation.XmlType;
 
 /**
  * How an output's value is transmitted: inline in the response body, or by
@@ -28,12 +25,8 @@ import jakarta.xml.bind.annotation.XmlType;
  * {@link ProcessSummary#getOutputTransmission()} and
  * {@link OutputSelection#getTransmissionMode()}.
  */
-@XmlType(name = "TransmissionModeEnum")
-@XmlEnum(value = String.class)
 public enum TransmissionMode {
-    @XmlEnumValue("value")
     VALUE("value"),
-    @XmlEnumValue("reference")
     REFERENCE("reference");
 
     private final String value;

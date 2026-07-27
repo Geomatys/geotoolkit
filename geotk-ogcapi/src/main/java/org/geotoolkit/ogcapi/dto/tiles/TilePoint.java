@@ -19,8 +19,6 @@ package org.geotoolkit.ogcapi.dto.tiles;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.*;
-import jakarta.xml.bind.annotation.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,40 +36,27 @@ import org.geotoolkit.ogcapi.dto.common.Crs;
     TilePoint.JSON_PROPERTY_SCALE_DENOMINATOR,
     TilePoint.JSON_PROPERTY_CELL_SIZE
 })
-@XmlRootElement(name = "TilePoint")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "TilePoint")
 public final class TilePoint extends DataTransferObject {
 
     public static final String JSON_PROPERTY_COORDINATES = "coordinates";
-    @XmlElement(name = "coordinates")
-    @jakarta.annotation.Nonnull
     private List<BigDecimal> coordinates = new ArrayList<>();
 
     public static final String JSON_PROPERTY_CRS = "crs";
-    @XmlElement(name = "crs")
-    @jakarta.annotation.Nullable
     private Crs crs;
 
     public static final String JSON_PROPERTY_TILE_MATRIX = "tileMatrix";
-    @XmlElement(name = "tileMatrix")
-    @jakarta.annotation.Nullable
     private String tileMatrix;
 
     public static final String JSON_PROPERTY_SCALE_DENOMINATOR = "scaleDenominator";
-    @XmlElement(name = "scaleDenominator")
-    @jakarta.annotation.Nullable
     private BigDecimal scaleDenominator;
 
     public static final String JSON_PROPERTY_CELL_SIZE = "cellSize";
-    @XmlElement(name = "cellSize")
-    @jakarta.annotation.Nullable
     private BigDecimal cellSize;
 
     public TilePoint() {
     }
 
-    public TilePoint coordinates(@jakarta.annotation.Nonnull List<BigDecimal> coordinates) {
+    public TilePoint coordinates(List<BigDecimal> coordinates) {
         this.coordinates = coordinates;
         return this;
     }
@@ -89,24 +74,19 @@ public final class TilePoint extends DataTransferObject {
      *
      * @return coordinates
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_COORDINATES)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "coordinates")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<BigDecimal> getCoordinates() {
         return coordinates;
     }
 
     @JsonProperty(JSON_PROPERTY_COORDINATES)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "coordinates")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setCoordinates(@jakarta.annotation.Nonnull List<BigDecimal> coordinates) {
+    public void setCoordinates(List<BigDecimal> coordinates) {
         this.coordinates = coordinates;
     }
 
-    public TilePoint crs(@jakarta.annotation.Nullable Crs crs) {
+    public TilePoint crs(Crs crs) {
         this.crs = crs;
         return this;
     }
@@ -116,22 +96,19 @@ public final class TilePoint extends DataTransferObject {
      *
      * @return crs
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_CRS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "crs")
     public Crs getCrs() {
         return crs;
     }
 
     @JsonProperty(JSON_PROPERTY_CRS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "crs")
-    public void setCrs(@jakarta.annotation.Nullable Crs crs) {
+    public void setCrs(Crs crs) {
         this.crs = crs;
     }
 
-    public TilePoint tileMatrix(@jakarta.annotation.Nullable String tileMatrix) {
+    public TilePoint tileMatrix(String tileMatrix) {
         this.tileMatrix = tileMatrix;
         return this;
     }
@@ -141,22 +118,19 @@ public final class TilePoint extends DataTransferObject {
      *
      * @return tileMatrix
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_TILE_MATRIX)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "tileMatrix")
     public String getTileMatrix() {
         return tileMatrix;
     }
 
     @JsonProperty(JSON_PROPERTY_TILE_MATRIX)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "tileMatrix")
-    public void setTileMatrix(@jakarta.annotation.Nullable String tileMatrix) {
+    public void setTileMatrix(String tileMatrix) {
         this.tileMatrix = tileMatrix;
     }
 
-    public TilePoint scaleDenominator(@jakarta.annotation.Nullable BigDecimal scaleDenominator) {
+    public TilePoint scaleDenominator(BigDecimal scaleDenominator) {
         this.scaleDenominator = scaleDenominator;
         return this;
     }
@@ -166,22 +140,19 @@ public final class TilePoint extends DataTransferObject {
      *
      * @return scaleDenominator
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_SCALE_DENOMINATOR)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "scaleDenominator")
     public BigDecimal getScaleDenominator() {
         return scaleDenominator;
     }
 
     @JsonProperty(JSON_PROPERTY_SCALE_DENOMINATOR)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "scaleDenominator")
-    public void setScaleDenominator(@jakarta.annotation.Nullable BigDecimal scaleDenominator) {
+    public void setScaleDenominator(BigDecimal scaleDenominator) {
         this.scaleDenominator = scaleDenominator;
     }
 
-    public TilePoint cellSize(@jakarta.annotation.Nullable BigDecimal cellSize) {
+    public TilePoint cellSize(BigDecimal cellSize) {
         this.cellSize = cellSize;
         return this;
     }
@@ -191,18 +162,15 @@ public final class TilePoint extends DataTransferObject {
      *
      * @return cellSize
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_CELL_SIZE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "cellSize")
     public BigDecimal getCellSize() {
         return cellSize;
     }
 
     @JsonProperty(JSON_PROPERTY_CELL_SIZE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "cellSize")
-    public void setCellSize(@jakarta.annotation.Nullable BigDecimal cellSize) {
+    public void setCellSize(BigDecimal cellSize) {
         this.cellSize = cellSize;
     }
 

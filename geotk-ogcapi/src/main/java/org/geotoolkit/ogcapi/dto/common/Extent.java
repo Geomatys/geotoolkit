@@ -19,12 +19,6 @@ package org.geotoolkit.ogcapi.dto.common;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,40 +45,27 @@ import org.opengis.util.FactoryException;
     Extent.JSON_PROPERTY_TEMPORAL,
     Extent.JSON_PROPERTY_VERTICAL
 })
-@XmlRootElement(name = "Extent")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "Extent")
 public final class Extent extends DataTransferObject {
 
     public static final String JSON_PROPERTY_SPATIAL = "spatial";
-    @XmlElement(name = "spatial")
-    @jakarta.annotation.Nullable
     private SpatialExtent spatial;
 
     public static final String JSON_PROPERTY_TEMPORAL = "temporal";
-    @XmlElement(name = "temporal")
-    @jakarta.annotation.Nullable
     private TemporalExtent temporal;
 
     public static final String JSON_PROPERTY_VERTICAL = "vertical";
-    @XmlElement(name = "vertical")
-    @jakarta.annotation.Nullable
     private VerticalExtent vertical;
 
     public static final String JSON_PROPERTY_CRS = "crs";
-    @XmlElement(name = "crs")
-    @jakarta.annotation.Nullable
     private String crs;
 
     public static final String JSON_PROPERTY_TRS = "trs";
-    @XmlElement(name = "trs")
-    @jakarta.annotation.Nullable
     private String trs;
 
     public Extent() {
     }
 
-    public Extent spatial(@jakarta.annotation.Nullable SpatialExtent spatial) {
+    public Extent spatial(SpatialExtent spatial) {
         this.spatial = spatial;
         return this;
     }
@@ -94,22 +75,19 @@ public final class Extent extends DataTransferObject {
      *
      * @return spatial
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_SPATIAL)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "spatial")
     public SpatialExtent getSpatial() {
         return spatial;
     }
 
     @JsonProperty(JSON_PROPERTY_SPATIAL)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "spatial")
-    public void setSpatial(@jakarta.annotation.Nullable SpatialExtent spatial) {
+    public void setSpatial(SpatialExtent spatial) {
         this.spatial = spatial;
     }
 
-    public Extent temporal(@jakarta.annotation.Nullable TemporalExtent temporal) {
+    public Extent temporal(TemporalExtent temporal) {
         this.temporal = temporal;
         return this;
     }
@@ -119,22 +97,19 @@ public final class Extent extends DataTransferObject {
      *
      * @return temporal
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_TEMPORAL)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "temporal")
     public TemporalExtent getTemporal() {
         return temporal;
     }
 
     @JsonProperty(JSON_PROPERTY_TEMPORAL)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "temporal")
-    public void setTemporal(@jakarta.annotation.Nullable TemporalExtent temporal) {
+    public void setTemporal(TemporalExtent temporal) {
         this.temporal = temporal;
     }
 
-    public Extent vertical(@jakarta.annotation.Nullable VerticalExtent vertical) {
+    public Extent vertical(VerticalExtent vertical) {
         this.vertical = vertical;
         return this;
     }
@@ -144,24 +119,20 @@ public final class Extent extends DataTransferObject {
      *
      * @return vertical
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_VERTICAL)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "vertical")
     public VerticalExtent getVertical() {
         return vertical;
     }
 
     @JsonProperty(JSON_PROPERTY_VERTICAL)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "vertical")
-    public void setVertical(@jakarta.annotation.Nullable VerticalExtent vertical) {
+    public void setVertical(VerticalExtent vertical) {
         this.vertical = vertical;
     }
 
     @JsonProperty(JSON_PROPERTY_CRS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "crs")
     public void setCrs(String crs) {
         this.crs = crs;
         if(this.spatial != null) {
@@ -173,7 +144,6 @@ public final class Extent extends DataTransferObject {
 
     @JsonProperty(JSON_PROPERTY_TRS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "trs")
     public void setTrs(String trs) {
         this.trs = trs;
         if(this.temporal != null) {

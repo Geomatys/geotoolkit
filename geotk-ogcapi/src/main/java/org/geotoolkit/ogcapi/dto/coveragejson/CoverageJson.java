@@ -19,13 +19,6 @@ package org.geotoolkit.ogcapi.dto.coveragejson;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -47,50 +40,33 @@ import org.geotoolkit.ogcapi.dto.DataTransferObject;
     CoverageJson.JSON_PROPERTY_RANGES,
     CoverageJson.JSON_PROPERTY_REFERENCING
 })
-@XmlRootElement(name = "CoverageJson")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "CoverageJson")
 public final class CoverageJson extends DataTransferObject {
 
     public static final String JSON_PROPERTY_TYPE = "type";
-    @XmlElement(name = "type")
-    @jakarta.annotation.Nullable
     private String type;
 
     public static final String JSON_PROPERTY_DOMAIN_TYPE = "domainType";
-    @XmlElement(name = "domainType")
-    @jakarta.annotation.Nullable
     private String domainType;
 
     public static final String JSON_PROPERTY_DOMAIN = "domain";
-    @XmlElement(name = "domain")
-    @jakarta.annotation.Nullable
     private Domain domain;
 
     public static final String JSON_PROPERTY_COVERAGES = "coverages";
-    @XmlElement(name = "coverages")
-    @jakarta.annotation.Nullable
     private List<CoverageJson> coverages;
 
     public static final String JSON_PROPERTY_PARAMETERS = "parameters";
-    @XmlElement(name = "parameters")
-    @jakarta.annotation.Nullable
     private Map<String, Parameter> parameters;
 
     public static final String JSON_PROPERTY_RANGES = "ranges";
-    @XmlElement(name = "ranges")
-    @jakarta.annotation.Nullable
     private Map<String, NdArray> ranges;
 
     public static final String JSON_PROPERTY_REFERENCING = "referencing";
-    @XmlElement(name = "referencing")
-    @jakarta.annotation.Nullable
     private List<ReferenceSystemConnection> referencing;
 
     public CoverageJson() {
     }
 
-    public CoverageJson type(@jakarta.annotation.Nullable String type) {
+    public CoverageJson type(String type) {
         this.type = type;
         return this;
     }
@@ -100,22 +76,19 @@ public final class CoverageJson extends DataTransferObject {
      *
      * @return type
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_TYPE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "type")
     public String getType() {
         return type;
     }
 
     @JsonProperty(JSON_PROPERTY_TYPE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "type")
-    public void setType(@jakarta.annotation.Nullable String type) {
+    public void setType(String type) {
         this.type = type;
     }
 
-    public CoverageJson domainType(@jakarta.annotation.Nullable String domainType) {
+    public CoverageJson domainType(String domainType) {
         this.domainType = domainType;
         return this;
     }
@@ -126,42 +99,36 @@ public final class CoverageJson extends DataTransferObject {
      *
      * @return domainType
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_DOMAIN_TYPE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "domainType")
     public String getDomainType() {
         return domainType;
     }
 
     @JsonProperty(JSON_PROPERTY_DOMAIN_TYPE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "domainType")
-    public void setDomainType(@jakarta.annotation.Nullable String domainType) {
+    public void setDomainType(String domainType) {
         this.domainType = domainType;
     }
 
-    public CoverageJson domain(@jakarta.annotation.Nullable Domain domain) {
+    public CoverageJson domain(Domain domain) {
         this.domain = domain;
         return this;
     }
 
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_DOMAIN)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "domain")
     public Domain getDomain() {
         return domain;
     }
 
     @JsonProperty(JSON_PROPERTY_DOMAIN)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "domain")
-    public void setDomain(@jakarta.annotation.Nullable Domain domain) {
+    public void setDomain(Domain domain) {
         this.domain = domain;
     }
 
-    public CoverageJson coverages(@jakarta.annotation.Nullable List<CoverageJson> coverages) {
+    public CoverageJson coverages(List<CoverageJson> coverages) {
         this.coverages = coverages;
         return this;
     }
@@ -179,24 +146,19 @@ public final class CoverageJson extends DataTransferObject {
      *
      * @return coverages
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_COVERAGES)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "coverages")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<CoverageJson> getCoverages() {
         return coverages;
     }
 
     @JsonProperty(JSON_PROPERTY_COVERAGES)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "coverages")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setCoverages(@jakarta.annotation.Nullable List<CoverageJson> coverages) {
+    public void setCoverages(List<CoverageJson> coverages) {
         this.coverages = coverages;
     }
 
-    public CoverageJson parameters(@jakarta.annotation.Nullable Map<String, Parameter> parameters) {
+    public CoverageJson parameters(Map<String, Parameter> parameters) {
         this.parameters = parameters;
         return this;
     }
@@ -209,22 +171,19 @@ public final class CoverageJson extends DataTransferObject {
         return this;
     }
 
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_PARAMETERS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "parameters")
     public Map<String, Parameter> getParameters() {
         return parameters;
     }
 
     @JsonProperty(JSON_PROPERTY_PARAMETERS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "parameters")
-    public void setParameters(@jakarta.annotation.Nullable Map<String, Parameter> parameters) {
+    public void setParameters(Map<String, Parameter> parameters) {
         this.parameters = parameters;
     }
 
-    public CoverageJson ranges(@jakarta.annotation.Nullable Map<String, NdArray> ranges) {
+    public CoverageJson ranges(Map<String, NdArray> ranges) {
         this.ranges = ranges;
         return this;
     }
@@ -237,22 +196,19 @@ public final class CoverageJson extends DataTransferObject {
         return this;
     }
 
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_RANGES)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "ranges")
     public Map<String, NdArray> getRanges() {
         return ranges;
     }
 
     @JsonProperty(JSON_PROPERTY_RANGES)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "ranges")
-    public void setRanges(@jakarta.annotation.Nullable Map<String, NdArray> ranges) {
+    public void setRanges(Map<String, NdArray> ranges) {
         this.ranges = ranges;
     }
 
-    public CoverageJson referencing(@jakarta.annotation.Nullable List<ReferenceSystemConnection> referencing) {
+    public CoverageJson referencing(List<ReferenceSystemConnection> referencing) {
         this.referencing = referencing;
         return this;
     }
@@ -265,20 +221,15 @@ public final class CoverageJson extends DataTransferObject {
         return this;
     }
 
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_REFERENCING)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "referencing")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<ReferenceSystemConnection> getReferencing() {
         return referencing;
     }
 
     @JsonProperty(JSON_PROPERTY_REFERENCING)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "referencing")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setReferencing(@jakarta.annotation.Nullable List<ReferenceSystemConnection> referencing) {
+    public void setReferencing(List<ReferenceSystemConnection> referencing) {
         this.referencing = referencing;
     }
 

@@ -22,8 +22,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.*;
-import jakarta.xml.bind.annotation.*;
 
 /**
  * GeometrycollectionGeoJSON
@@ -32,14 +30,9 @@ import jakarta.xml.bind.annotation.*;
     GeoJSONGeometryCollection.PROPERTY_TYPE,
     GeoJSONGeometryCollection.PROPERTY_GEOMETRIES
 })
-@XmlRootElement(name = "GeoJSONGeometryCollection")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "GeoJSONGeometryCollection")
 public class GeoJSONGeometryCollection extends GeoJSONGeometry {
 
     public static final String PROPERTY_GEOMETRIES = "geometries";
-    @XmlElement(name = PROPERTY_GEOMETRIES)
-    @jakarta.annotation.Nonnull
     private List<GeoJSONGeometry> geometries = new ArrayList<>();
 
     public GeoJSONGeometryCollection() {
@@ -55,20 +48,15 @@ public class GeoJSONGeometryCollection extends GeoJSONGeometry {
      *
      * @return geometries
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(PROPERTY_GEOMETRIES)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = PROPERTY_GEOMETRIES)
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<GeoJSONGeometry> getGeometries() {
         return geometries;
     }
 
     @JsonProperty(PROPERTY_GEOMETRIES)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = PROPERTY_GEOMETRIES)
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setGeometries(@jakarta.annotation.Nonnull List<GeoJSONGeometry> geometries) {
+    public void setGeometries(List<GeoJSONGeometry> geometries) {
         this.geometries = geometries;
     }
 

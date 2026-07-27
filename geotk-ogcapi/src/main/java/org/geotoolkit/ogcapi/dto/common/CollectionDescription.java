@@ -19,13 +19,6 @@ package org.geotoolkit.ogcapi.dto.common;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.time.OffsetDateTime;
@@ -69,164 +62,103 @@ import org.geotoolkit.ogcapi.dto.DataTransferObject;
     CollectionDescription.JSON_PROPERTY_UPDATED,
     CollectionDescription.JSON_PROPERTY_EXTENT
 })
-@XmlRootElement(name = "CollectionDesc")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "CollectionDesc")
 public class CollectionDescription extends DataTransferObject implements CommonResponse {
 
     public static final String JSON_PROPERTY_ID = "id";
-    @XmlElement(name = "id")
-    @jakarta.annotation.Nonnull
     private String id;
 
     public static final String JSON_PROPERTY_TITLE = "title";
-    @XmlElement(name = "title")
-    @jakarta.annotation.Nullable
     private String title;
 
     public static final String JSON_PROPERTY_NAME = "name";
-    @XmlElement(name = "name")
-    @jakarta.annotation.Nullable
     private String name;
 
     public static final String JSON_PROPERTY_DESCRIPTION = "description";
-    @XmlElement(name = "description")
-    @jakarta.annotation.Nullable
     private String description;
 
     public static final String JSON_PROPERTY_ATTRIBUTION = "attribution";
-    @XmlElement(name = "attribution")
-    @jakarta.annotation.Nullable
     private String attribution;
 
     public static final String JSON_PROPERTY_ACCESS_CONSTRAINTS = "accessConstraints";
-    @XmlElement(name = "accessConstraints")
-    @jakarta.annotation.Nullable
     private AccessConstraintsCode accessConstraints;
 
     public static final String JSON_PROPERTY_PUBLISHER = "publisher";
-    @XmlElement(name = "publisher")
-    @jakarta.annotation.Nullable
     private String publisher;
 
     public static final String JSON_PROPERTY_LICENSE = "license";
-    @XmlElement(name = "license")
-    @jakarta.annotation.Nullable
     private String license;
 
     public static final String JSON_PROPERTY_RIGHTS = "rights";
-    @XmlElement(name = "rights")
-    @jakarta.annotation.Nullable
     private String rights;
 
     public static final String JSON_PROPERTY_FORMATS = "formats";
-    @XmlElement(name = "formats")
-    @jakarta.annotation.Nullable
     private List<Format> formats = new ArrayList<>();
 
     public static final String JSON_PROPERTY_KEYWORDS = "keywords";
-    @XmlElement(name = "keywords")
-    @jakarta.annotation.Nullable
     private List<String> keywords = new ArrayList<>();
 
     public static final String JSON_PROPERTY_THEMES = "themes";
-    @XmlElement(name = "themes")
-    @jakarta.annotation.Nullable
     private List<Theme> themes = new ArrayList<>();
 
     public static final String JSON_PROPERTY_CONTACTS = "contacts";
-    @XmlElement(name = "contacts")
-    @jakarta.annotation.Nullable
     private List<Contact> contacts = new ArrayList<>();
 
     public static final String JSON_PROPERTY_RESOURCE_LANGUAGES = "resourceLanguages";
-    @XmlElement(name = "resourceLanguages")
-    @jakarta.annotation.Nullable
     private List<Language> resourceLanguages = new ArrayList<>();
 
     public static final String JSON_PROPERTY_LINKS = "links";
-    @XmlElement(name = "links")
-    @jakarta.annotation.Nonnull
     private List<Link> links = new ArrayList<>();
 
     public static final String JSON_PROPERTY_ITEM_TYPE = "itemType";
-    @XmlElement(name = "itemType")
-    @jakarta.annotation.Nullable
     private String itemType = "feature";
 
     public static final String JSON_PROPERTY_CRS = "crs";
-    @XmlElement(name = "crs")
-    @jakarta.annotation.Nullable
     private List<String> crs = new ArrayList<>(Arrays.asList("http://www.opengis.net/def/crs/OGC/1.3/CRS84"));
 
     public static final String JSON_PROPERTY_STORAGE_CRS = "storageCrs";
-    @XmlElement(name = "storageCrs")
-    @jakarta.annotation.Nullable
     private String storageCrs = "http://www.opengis.net/def/crs/OGC/1.3/CRS84";
 
 
     public static final String JSON_PROPERTY_EPOCH = "epoch";
-    @XmlElement(name = "epoch")
-    @jakarta.annotation.Nullable
     private BigDecimal epoch;
 
     /**
      * e.g. :  map, vector, coverage, point clouds, meshes...
      */
     public static final String JSON_PROPERTY_DATA_TYPE = "dataType";
-    @XmlElement(name = "dataType")
-    @jakarta.annotation.Nullable
     private String dataType;
 
     public static final String JSON_PROPERTY_GEO_DATA_CLASSES = "geoDataClasses";
-    @XmlElement(name = "geoDataClasses")
-    @jakarta.annotation.Nullable
     private List<URI> geoDataClasses = new ArrayList<>();
 
     public static final String JSON_PROPERTY_GEOMETRY_DIMENSION = "geometryDimension";
-    @XmlElement(name = "geometryDimension")
-    @jakarta.annotation.Nullable
     private Integer geometryDimension;
 
     public static final String JSON_PROPERTY_MIN_SCALE_DENOMINATOR = "minScaleDenominator";
-    @XmlElement(name = "minScaleDenominator")
-    @jakarta.annotation.Nullable
     private BigDecimal minScaleDenominator;
 
     public static final String JSON_PROPERTY_MAX_SCALE_DENOMINATOR = "maxScaleDenominator";
-    @XmlElement(name = "maxScaleDenominator")
-    @jakarta.annotation.Nullable
     private BigDecimal maxScaleDenominator;
 
     public static final String JSON_PROPERTY_MIN_CELL_SIZE = "minCellSize";
-    @XmlElement(name = "minCellSize")
-    @jakarta.annotation.Nullable
     private BigDecimal minCellSize;
 
     public static final String JSON_PROPERTY_MAX_CELL_SIZE = "maxCellSize";
-    @XmlElement(name = "maxCellSize")
-    @jakarta.annotation.Nullable
     private BigDecimal maxCellSize;
 
     public static final String JSON_PROPERTY_CREATED = "created";
-    @XmlElement(name = "created")
-    @jakarta.annotation.Nullable
     private OffsetDateTime created;
 
     public static final String JSON_PROPERTY_UPDATED = "updated";
-    @XmlElement(name = "updated")
-    @jakarta.annotation.Nullable
     private OffsetDateTime updated;
 
     public static final String JSON_PROPERTY_EXTENT = "extent";
-    @XmlElement(name = "extent")
-    @jakarta.annotation.Nullable
     private Extent extent;
 
     public CollectionDescription() {
     }
 
-    public CollectionDescription id(@jakarta.annotation.Nonnull String id) {
+    public CollectionDescription id(String id) {
         this.id = id;
         return this;
     }
@@ -258,22 +190,19 @@ public class CollectionDescription extends DataTransferObject implements CommonR
      *
      * @return id
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_ID)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "id")
     public String getId() {
         return id;
     }
 
     @JsonProperty(JSON_PROPERTY_ID)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "id")
-    public void setId(@jakarta.annotation.Nonnull String id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public CollectionDescription title(@jakarta.annotation.Nullable String title) {
+    public CollectionDescription title(String title) {
         this.title = title;
         return this;
     }
@@ -283,22 +212,19 @@ public class CollectionDescription extends DataTransferObject implements CommonR
      *
      * @return title
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_TITLE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "title")
     public String getTitle() {
         return title;
     }
 
     @JsonProperty(JSON_PROPERTY_TITLE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "title")
-    public void setTitle(@jakarta.annotation.Nullable String title) {
+    public void setTitle(String title) {
         this.title = title;
     }
 
-    public CollectionDescription description(@jakarta.annotation.Nullable String description) {
+    public CollectionDescription description(String description) {
         this.description = description;
         return this;
     }
@@ -308,18 +234,15 @@ public class CollectionDescription extends DataTransferObject implements CommonR
      *
      * @return name
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_NAME)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "name")
     public String getName() {
         return name;
     }
 
     @JsonProperty(JSON_PROPERTY_NAME)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "name")
-    public void setName(@jakarta.annotation.Nullable String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
@@ -328,22 +251,19 @@ public class CollectionDescription extends DataTransferObject implements CommonR
      *
      * @return description
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_DESCRIPTION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "description")
     public String getDescription() {
         return description;
     }
 
     @JsonProperty(JSON_PROPERTY_DESCRIPTION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "description")
-    public void setDescription(@jakarta.annotation.Nullable String description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 
-    public CollectionDescription attribution(@jakarta.annotation.Nullable String attribution) {
+    public CollectionDescription attribution(String attribution) {
         this.attribution = attribution;
         return this;
     }
@@ -353,22 +273,19 @@ public class CollectionDescription extends DataTransferObject implements CommonR
      *
      * @return attribution
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_ATTRIBUTION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "attribution")
     public String getAttribution() {
         return attribution;
     }
 
     @JsonProperty(JSON_PROPERTY_ATTRIBUTION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "attribution")
-    public void setAttribution(@jakarta.annotation.Nullable String attribution) {
+    public void setAttribution(String attribution) {
         this.attribution = attribution;
     }
 
-    public CollectionDescription accessConstraints(@jakarta.annotation.Nullable AccessConstraintsCode accessConstraints) {
+    public CollectionDescription accessConstraints(AccessConstraintsCode accessConstraints) {
         this.accessConstraints = accessConstraints;
         return this;
     }
@@ -384,22 +301,19 @@ public class CollectionDescription extends DataTransferObject implements CommonR
      *
      * @return accessConstraints
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_ACCESS_CONSTRAINTS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "accessConstraints")
     public AccessConstraintsCode getAccessConstraints() {
         return accessConstraints;
     }
 
     @JsonProperty(JSON_PROPERTY_ACCESS_CONSTRAINTS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "accessConstraints")
-    public void setAccessConstraints(@jakarta.annotation.Nullable AccessConstraintsCode accessConstraints) {
+    public void setAccessConstraints(AccessConstraintsCode accessConstraints) {
         this.accessConstraints = accessConstraints;
     }
 
-    public CollectionDescription publisher(@jakarta.annotation.Nullable String publisher) {
+    public CollectionDescription publisher(String publisher) {
         this.publisher = publisher;
         return this;
     }
@@ -409,22 +323,19 @@ public class CollectionDescription extends DataTransferObject implements CommonR
      *
      * @return publisher
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_PUBLISHER)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "publisher")
     public String getPublisher() {
         return publisher;
     }
 
     @JsonProperty(JSON_PROPERTY_PUBLISHER)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "publisher")
-    public void setPublisher(@jakarta.annotation.Nullable String publisher) {
+    public void setPublisher(String publisher) {
         this.publisher = publisher;
     }
 
-    public CollectionDescription license(@jakarta.annotation.Nullable String license) {
+    public CollectionDescription license(String license) {
         this.license = license;
         return this;
     }
@@ -435,22 +346,19 @@ public class CollectionDescription extends DataTransferObject implements CommonR
      *
      * @return license
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_LICENSE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "license")
     public String getLicense() {
         return license;
     }
 
     @JsonProperty(JSON_PROPERTY_LICENSE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "license")
-    public void setLicense(@jakarta.annotation.Nullable String license) {
+    public void setLicense(String license) {
         this.license = license;
     }
 
-    public CollectionDescription rights(@jakarta.annotation.Nullable String rights) {
+    public CollectionDescription rights(String rights) {
         this.rights = rights;
         return this;
     }
@@ -461,22 +369,19 @@ public class CollectionDescription extends DataTransferObject implements CommonR
      *
      * @return rights
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_RIGHTS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "rights")
     public String getRights() {
         return rights;
     }
 
     @JsonProperty(JSON_PROPERTY_RIGHTS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "rights")
-    public void setRights(@jakarta.annotation.Nullable String rights) {
+    public void setRights(String rights) {
         this.rights = rights;
     }
 
-    public CollectionDescription formats(@jakarta.annotation.Nullable List<Format> formats) {
+    public CollectionDescription formats(List<Format> formats) {
         this.formats = formats;
         return this;
     }
@@ -494,24 +399,19 @@ public class CollectionDescription extends DataTransferObject implements CommonR
      *
      * @return formats
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_FORMATS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "formats")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<Format> getFormats() {
         return formats;
     }
 
     @JsonProperty(JSON_PROPERTY_FORMATS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "formats")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setFormats(@jakarta.annotation.Nullable List<Format> formats) {
+    public void setFormats(List<Format> formats) {
         this.formats = formats;
     }
 
-    public CollectionDescription keywords(@jakarta.annotation.Nullable List<String> keywords) {
+    public CollectionDescription keywords(List<String> keywords) {
         this.keywords = keywords;
         return this;
     }
@@ -530,24 +430,19 @@ public class CollectionDescription extends DataTransferObject implements CommonR
      *
      * @return keywords
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_KEYWORDS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "keywords")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<String> getKeywords() {
         return keywords;
     }
 
     @JsonProperty(JSON_PROPERTY_KEYWORDS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "keywords")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setKeywords(@jakarta.annotation.Nullable List<String> keywords) {
+    public void setKeywords(List<String> keywords) {
         this.keywords = keywords;
     }
 
-    public CollectionDescription themes(@jakarta.annotation.Nullable List<Theme> themes) {
+    public CollectionDescription themes(List<Theme> themes) {
         this.themes = themes;
         return this;
     }
@@ -565,24 +460,19 @@ public class CollectionDescription extends DataTransferObject implements CommonR
      *
      * @return themes
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_THEMES)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "themes")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<Theme> getThemes() {
         return themes;
     }
 
     @JsonProperty(JSON_PROPERTY_THEMES)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "themes")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setThemes(@jakarta.annotation.Nullable List<Theme> themes) {
+    public void setThemes(List<Theme> themes) {
         this.themes = themes;
     }
 
-    public CollectionDescription contacts(@jakarta.annotation.Nullable List<Contact> contacts) {
+    public CollectionDescription contacts(List<Contact> contacts) {
         this.contacts = contacts;
         return this;
     }
@@ -601,24 +491,19 @@ public class CollectionDescription extends DataTransferObject implements CommonR
      *
      * @return contacts
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_CONTACTS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "contacts")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<Contact> getContacts() {
         return contacts;
     }
 
     @JsonProperty(JSON_PROPERTY_CONTACTS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "contacts")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setContacts(@jakarta.annotation.Nullable List<Contact> contacts) {
+    public void setContacts(List<Contact> contacts) {
         this.contacts = contacts;
     }
 
-    public CollectionDescription resourceLanguages(@jakarta.annotation.Nullable List<Language> resourceLanguages) {
+    public CollectionDescription resourceLanguages(List<Language> resourceLanguages) {
         this.resourceLanguages = resourceLanguages;
         return this;
     }
@@ -636,24 +521,19 @@ public class CollectionDescription extends DataTransferObject implements CommonR
      *
      * @return resourceLanguages
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_RESOURCE_LANGUAGES)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "resourceLanguages")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<Language> getResourceLanguages() {
         return resourceLanguages;
     }
 
     @JsonProperty(JSON_PROPERTY_RESOURCE_LANGUAGES)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "resourceLanguages")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setResourceLanguages(@jakarta.annotation.Nullable List<Language> resourceLanguages) {
+    public void setResourceLanguages(List<Language> resourceLanguages) {
         this.resourceLanguages = resourceLanguages;
     }
 
-    public CollectionDescription links(@jakarta.annotation.Nonnull List<Link> links) {
+    public CollectionDescription links(List<Link> links) {
         this.links = links;
         return this;
     }
@@ -671,24 +551,19 @@ public class CollectionDescription extends DataTransferObject implements CommonR
      *
      * @return links
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_LINKS)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "links")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<Link> getLinks() {
         return links;
     }
 
     @JsonProperty(JSON_PROPERTY_LINKS)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "links")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setLinks(@jakarta.annotation.Nonnull List<Link> links) {
+    public void setLinks(List<Link> links) {
         this.links = links;
     }
 
-    public CollectionDescription itemType(@jakarta.annotation.Nullable String itemType) {
+    public CollectionDescription itemType(String itemType) {
         this.itemType = itemType;
         return this;
     }
@@ -699,22 +574,19 @@ public class CollectionDescription extends DataTransferObject implements CommonR
      *
      * @return itemType
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_ITEM_TYPE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "itemType")
     public String getItemType() {
         return itemType;
     }
 
     @JsonProperty(JSON_PROPERTY_ITEM_TYPE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "itemType")
-    public void setItemType(@jakarta.annotation.Nullable String itemType) {
+    public void setItemType(String itemType) {
         this.itemType = itemType;
     }
 
-    public CollectionDescription crs(@jakarta.annotation.Nullable List<String> crs) {
+    public CollectionDescription crs(List<String> crs) {
         this.crs = crs;
         return this;
     }
@@ -733,24 +605,19 @@ public class CollectionDescription extends DataTransferObject implements CommonR
      *
      * @return crs
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_CRS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "crs")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<String> getCrs() {
         return crs;
     }
 
     @JsonProperty(JSON_PROPERTY_CRS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "crs")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setCrs(@jakarta.annotation.Nullable List<String> crs) {
+    public void setCrs(List<String> crs) {
         this.crs = crs;
     }
 
-    public CollectionDescription storageCrs(@jakarta.annotation.Nullable String storageCrs) {
+    public CollectionDescription storageCrs(String storageCrs) {
         this.storageCrs = storageCrs;
         return this;
     }
@@ -763,22 +630,19 @@ public class CollectionDescription extends DataTransferObject implements CommonR
      *
      * @return storageCrs
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_STORAGE_CRS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "storageCrs")
     public String getStorageCrs() {
         return storageCrs;
     }
 
     @JsonProperty(JSON_PROPERTY_STORAGE_CRS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "storageCrs")
-    public void setStorageCrs(@jakarta.annotation.Nullable String storageCrs) {
+    public void setStorageCrs(String storageCrs) {
         this.storageCrs = storageCrs;
     }
 
-    public CollectionDescription epoch(@jakarta.annotation.Nullable BigDecimal epoch) {
+    public CollectionDescription epoch(BigDecimal epoch) {
         this.epoch = epoch;
         return this;
     }
@@ -788,22 +652,19 @@ public class CollectionDescription extends DataTransferObject implements CommonR
      *
      * @return epoch
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_EPOCH)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "epoch")
     public BigDecimal getEpoch() {
         return epoch;
     }
 
     @JsonProperty(JSON_PROPERTY_EPOCH)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "epoch")
-    public void setEpoch(@jakarta.annotation.Nullable BigDecimal epoch) {
+    public void setEpoch(BigDecimal epoch) {
         this.epoch = epoch;
     }
 
-    public CollectionDescription dataType(@jakarta.annotation.Nullable String dataType) {
+    public CollectionDescription dataType(String dataType) {
         this.dataType = dataType;
         return this;
     }
@@ -814,22 +675,19 @@ public class CollectionDescription extends DataTransferObject implements CommonR
      *
      * @return dataType
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_DATA_TYPE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "dataType")
     public String getDataType() {
         return dataType;
     }
 
     @JsonProperty(JSON_PROPERTY_DATA_TYPE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "dataType")
-    public void setDataType(@jakarta.annotation.Nullable String dataType) {
+    public void setDataType(String dataType) {
         this.dataType = dataType;
     }
 
-    public CollectionDescription geoDataClasses(@jakarta.annotation.Nullable List<URI> geoDataClasses) {
+    public CollectionDescription geoDataClasses(List<URI> geoDataClasses) {
         this.geoDataClasses = geoDataClasses;
         return this;
     }
@@ -848,24 +706,19 @@ public class CollectionDescription extends DataTransferObject implements CommonR
      *
      * @return geoDataClasses
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_GEO_DATA_CLASSES)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "geoDataClasses")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<URI> getGeoDataClasses() {
         return geoDataClasses;
     }
 
     @JsonProperty(JSON_PROPERTY_GEO_DATA_CLASSES)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "geoDataClasses")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setGeoDataClasses(@jakarta.annotation.Nullable List<URI> geoDataClasses) {
+    public void setGeoDataClasses(List<URI> geoDataClasses) {
         this.geoDataClasses = geoDataClasses;
     }
 
-    public CollectionDescription geometryDimension(@jakarta.annotation.Nullable Integer geometryDimension) {
+    public CollectionDescription geometryDimension(Integer geometryDimension) {
         this.geometryDimension = geometryDimension;
         return this;
     }
@@ -877,22 +730,19 @@ public class CollectionDescription extends DataTransferObject implements CommonR
      *
      * @return geometryDimension
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_GEOMETRY_DIMENSION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "geometryDimension")
     public Integer getGeometryDimension() {
         return geometryDimension;
     }
 
     @JsonProperty(JSON_PROPERTY_GEOMETRY_DIMENSION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "geometryDimension")
-    public void setGeometryDimension(@jakarta.annotation.Nullable Integer geometryDimension) {
+    public void setGeometryDimension(Integer geometryDimension) {
         this.geometryDimension = geometryDimension;
     }
 
-    public CollectionDescription minScaleDenominator(@jakarta.annotation.Nullable BigDecimal minScaleDenominator) {
+    public CollectionDescription minScaleDenominator(BigDecimal minScaleDenominator) {
         this.minScaleDenominator = minScaleDenominator;
         return this;
     }
@@ -902,22 +752,19 @@ public class CollectionDescription extends DataTransferObject implements CommonR
      *
      * @return minScaleDenominator
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_MIN_SCALE_DENOMINATOR)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "minScaleDenominator")
     public BigDecimal getMinScaleDenominator() {
         return minScaleDenominator;
     }
 
     @JsonProperty(JSON_PROPERTY_MIN_SCALE_DENOMINATOR)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "minScaleDenominator")
-    public void setMinScaleDenominator(@jakarta.annotation.Nullable BigDecimal minScaleDenominator) {
+    public void setMinScaleDenominator(BigDecimal minScaleDenominator) {
         this.minScaleDenominator = minScaleDenominator;
     }
 
-    public CollectionDescription maxScaleDenominator(@jakarta.annotation.Nullable BigDecimal maxScaleDenominator) {
+    public CollectionDescription maxScaleDenominator(BigDecimal maxScaleDenominator) {
         this.maxScaleDenominator = maxScaleDenominator;
         return this;
     }
@@ -927,22 +774,19 @@ public class CollectionDescription extends DataTransferObject implements CommonR
      *
      * @return maxScaleDenominator
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_MAX_SCALE_DENOMINATOR)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "maxScaleDenominator")
     public BigDecimal getMaxScaleDenominator() {
         return maxScaleDenominator;
     }
 
     @JsonProperty(JSON_PROPERTY_MAX_SCALE_DENOMINATOR)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "maxScaleDenominator")
-    public void setMaxScaleDenominator(@jakarta.annotation.Nullable BigDecimal maxScaleDenominator) {
+    public void setMaxScaleDenominator(BigDecimal maxScaleDenominator) {
         this.maxScaleDenominator = maxScaleDenominator;
     }
 
-    public CollectionDescription minCellSize(@jakarta.annotation.Nullable BigDecimal minCellSize) {
+    public CollectionDescription minCellSize(BigDecimal minCellSize) {
         this.minCellSize = minCellSize;
         return this;
     }
@@ -952,22 +796,19 @@ public class CollectionDescription extends DataTransferObject implements CommonR
      *
      * @return minCellSize
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_MIN_CELL_SIZE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "minCellSize")
     public BigDecimal getMinCellSize() {
         return minCellSize;
     }
 
     @JsonProperty(JSON_PROPERTY_MIN_CELL_SIZE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "minCellSize")
-    public void setMinCellSize(@jakarta.annotation.Nullable BigDecimal minCellSize) {
+    public void setMinCellSize(BigDecimal minCellSize) {
         this.minCellSize = minCellSize;
     }
 
-    public CollectionDescription maxCellSize(@jakarta.annotation.Nullable BigDecimal maxCellSize) {
+    public CollectionDescription maxCellSize(BigDecimal maxCellSize) {
         this.maxCellSize = maxCellSize;
         return this;
     }
@@ -977,22 +818,19 @@ public class CollectionDescription extends DataTransferObject implements CommonR
      *
      * @return maxCellSize
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_MAX_CELL_SIZE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "maxCellSize")
     public BigDecimal getMaxCellSize() {
         return maxCellSize;
     }
 
     @JsonProperty(JSON_PROPERTY_MAX_CELL_SIZE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "maxCellSize")
-    public void setMaxCellSize(@jakarta.annotation.Nullable BigDecimal maxCellSize) {
+    public void setMaxCellSize(BigDecimal maxCellSize) {
         this.maxCellSize = maxCellSize;
     }
 
-    public CollectionDescription created(@jakarta.annotation.Nullable OffsetDateTime created) {
+    public CollectionDescription created(OffsetDateTime created) {
         this.created = created;
         return this;
     }
@@ -1002,22 +840,19 @@ public class CollectionDescription extends DataTransferObject implements CommonR
      *
      * @return created
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_CREATED)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "created")
     public OffsetDateTime getCreated() {
         return created;
     }
 
     @JsonProperty(JSON_PROPERTY_CREATED)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "created")
-    public void setCreated(@jakarta.annotation.Nullable OffsetDateTime created) {
+    public void setCreated(OffsetDateTime created) {
         this.created = created;
     }
 
-    public CollectionDescription updated(@jakarta.annotation.Nullable OffsetDateTime updated) {
+    public CollectionDescription updated(OffsetDateTime updated) {
         this.updated = updated;
         return this;
     }
@@ -1027,22 +862,19 @@ public class CollectionDescription extends DataTransferObject implements CommonR
      *
      * @return updated
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_UPDATED)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "updated")
     public OffsetDateTime getUpdated() {
         return updated;
     }
 
     @JsonProperty(JSON_PROPERTY_UPDATED)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "updated")
-    public void setUpdated(@jakarta.annotation.Nullable OffsetDateTime updated) {
+    public void setUpdated(OffsetDateTime updated) {
         this.updated = updated;
     }
 
-    public CollectionDescription extent(@jakarta.annotation.Nullable Extent extent) {
+    public CollectionDescription extent(Extent extent) {
         this.extent = extent;
         return this;
     }
@@ -1052,18 +884,15 @@ public class CollectionDescription extends DataTransferObject implements CommonR
      *
      * @return extent
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_EXTENT)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "extent")
     public Extent getExtent() {
         return extent;
     }
 
     @JsonProperty(JSON_PROPERTY_EXTENT)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "extent")
-    public void setExtent(@jakarta.annotation.Nullable Extent extent) {
+    public void setExtent(Extent extent) {
         this.extent = extent;
     }
 

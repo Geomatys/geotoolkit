@@ -19,12 +19,6 @@ package org.geotoolkit.ogcapi.dto.dggs;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.net.URI;
 import java.util.Objects;
 import org.geotoolkit.ogcapi.dto.jsonschema.JSONSchemaProperty;
@@ -50,30 +44,21 @@ import org.geotoolkit.ogcapi.dto.jsonschema.JSONSchemaProperty;
     SchemaProperty.JSON_PROPERTY_X_OGC_UNIT,
     SchemaProperty.JSON_PROPERTY_X_OGC_UNIT_LANG
 })
-@XmlRootElement(name = "DggsJsonSchemaPropertiesValue")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "DggsJsonSchemaPropertiesValue")
 public final class SchemaProperty extends JSONSchemaProperty {
 
     public static final String JSON_PROPERTY_X_OGC_DEFINITION = "x-ogc-definition";
-    @XmlElement(name = "x-ogc-definition")
-    @jakarta.annotation.Nullable
     private URI xOgcDefinition;
 
     public static final String JSON_PROPERTY_X_OGC_UNIT = "x-ogc-unit";
-    @XmlElement(name = "x-ogc-unit")
-    @jakarta.annotation.Nullable
     private String xOgcUnit;
 
     public static final String JSON_PROPERTY_X_OGC_UNIT_LANG = "x-ogc-unitLang";
-    @XmlElement(name = "x-ogc-unitLang")
-    @jakarta.annotation.Nullable
     private String xOgcUnitLang;
 
     public SchemaProperty() {
     }
 
-    public SchemaProperty xOgcDefinition(@jakarta.annotation.Nullable URI xOgcDefinition) {
+    public SchemaProperty xOgcDefinition(URI xOgcDefinition) {
         this.xOgcDefinition = xOgcDefinition;
         return this;
     }
@@ -83,22 +68,19 @@ public final class SchemaProperty extends JSONSchemaProperty {
      *
      * @return xOgcDefinition
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_X_OGC_DEFINITION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "x-ogc-definition")
     public URI getxOgcDefinition() {
         return xOgcDefinition;
     }
 
     @JsonProperty(JSON_PROPERTY_X_OGC_DEFINITION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "x-ogc-definition")
-    public void setxOgcDefinition(@jakarta.annotation.Nullable URI xOgcDefinition) {
+    public void setxOgcDefinition(URI xOgcDefinition) {
         this.xOgcDefinition = xOgcDefinition;
     }
 
-    public SchemaProperty xOgcUnit(@jakarta.annotation.Nullable String xOgcUnit) {
+    public SchemaProperty xOgcUnit(String xOgcUnit) {
         this.xOgcUnit = xOgcUnit;
         return this;
     }
@@ -108,22 +90,19 @@ public final class SchemaProperty extends JSONSchemaProperty {
      *
      * @return xOgcUnit
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_X_OGC_UNIT)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "x-ogc-unit")
     public String getxOgcUnit() {
         return xOgcUnit;
     }
 
     @JsonProperty(JSON_PROPERTY_X_OGC_UNIT)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "x-ogc-unit")
-    public void setxOgcUnit(@jakarta.annotation.Nullable String xOgcUnit) {
+    public void setxOgcUnit(String xOgcUnit) {
         this.xOgcUnit = xOgcUnit;
     }
 
-    public SchemaProperty xOgcUnitLang(@jakarta.annotation.Nullable String xOgcUnitLang) {
+    public SchemaProperty xOgcUnitLang(String xOgcUnitLang) {
         this.xOgcUnitLang = xOgcUnitLang;
         return this;
     }
@@ -133,18 +112,15 @@ public final class SchemaProperty extends JSONSchemaProperty {
      *
      * @return xOgcUnitLang
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_X_OGC_UNIT_LANG)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "x-ogc-unitLang")
     public String getxOgcUnitLang() {
         return xOgcUnitLang;
     }
 
     @JsonProperty(JSON_PROPERTY_X_OGC_UNIT_LANG)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "x-ogc-unitLang")
-    public void setxOgcUnitLang(@jakarta.annotation.Nullable String xOgcUnitLang) {
+    public void setxOgcUnitLang(String xOgcUnitLang) {
         this.xOgcUnitLang = xOgcUnitLang;
     }
 

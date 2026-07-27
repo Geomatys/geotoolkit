@@ -19,12 +19,6 @@ package org.geotoolkit.ogcapi.dto.joins;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.util.Objects;
 import org.geotoolkit.ogcapi.dto.DataTransferObject;
 
@@ -40,30 +34,21 @@ import org.geotoolkit.ogcapi.dto.DataTransferObject;
     CollectionKey.JSON_PROPERTY_IS_DEFAULT,
     CollectionKey.JSON_PROPERTY_LANGUAGE
 })
-@XmlRootElement(name = "CollectionKey")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "CollectionKey")
 public final class CollectionKey extends DataTransferObject {
 
     public static final String JSON_PROPERTY_ID = "id";
-    @XmlElement(name = "id")
-    @jakarta.annotation.Nonnull
     private String id;
 
     public static final String JSON_PROPERTY_IS_DEFAULT = "isDefault";
-    @XmlElement(name = "isDefault")
-    @jakarta.annotation.Nonnull
     private Boolean isDefault;
 
     public static final String JSON_PROPERTY_LANGUAGE = "language";
-    @XmlElement(name = "language")
-    @jakarta.annotation.Nullable
     private String language;
 
     public CollectionKey() {
     }
 
-    public CollectionKey id(@jakarta.annotation.Nonnull String id) {
+    public CollectionKey id(String id) {
         this.id = id;
         return this;
     }
@@ -72,22 +57,19 @@ public final class CollectionKey extends DataTransferObject {
      * Identifier of the key field.
      * @return id
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_ID)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "id")
     public String getId() {
         return id;
     }
 
     @JsonProperty(JSON_PROPERTY_ID)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "id")
-    public void setId(@jakarta.annotation.Nonnull String id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public CollectionKey isDefault(@jakarta.annotation.Nonnull Boolean isDefault) {
+    public CollectionKey isDefault(Boolean isDefault) {
         this.isDefault = isDefault;
         return this;
     }
@@ -98,22 +80,19 @@ public final class CollectionKey extends DataTransferObject {
      * {@code keys} array must have this property set to {@code true}.
      * @return isDefault
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_IS_DEFAULT)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "isDefault")
     public Boolean getIsDefault() {
         return isDefault;
     }
 
     @JsonProperty(JSON_PROPERTY_IS_DEFAULT)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "isDefault")
-    public void setIsDefault(@jakarta.annotation.Nonnull Boolean isDefault) {
+    public void setIsDefault(Boolean isDefault) {
         this.isDefault = isDefault;
     }
 
-    public CollectionKey language(@jakarta.annotation.Nullable String language) {
+    public CollectionKey language(String language) {
         this.language = language;
         return this;
     }
@@ -123,18 +102,15 @@ public final class CollectionKey extends DataTransferObject {
      * ISO 639-1 language code values.
      * @return language
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_LANGUAGE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "language")
     public String getLanguage() {
         return language;
     }
 
     @JsonProperty(JSON_PROPERTY_LANGUAGE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "language")
-    public void setLanguage(@jakarta.annotation.Nullable String language) {
+    public void setLanguage(String language) {
         this.language = language;
     }
 

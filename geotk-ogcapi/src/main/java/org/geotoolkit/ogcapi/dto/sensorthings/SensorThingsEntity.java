@@ -18,7 +18,6 @@ package org.geotoolkit.ogcapi.dto.sensorthings;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.xml.bind.annotation.XmlElement;
 import java.util.Objects;
 import org.geotoolkit.ogcapi.dto.DataTransferObject;
 
@@ -39,12 +38,8 @@ public abstract class SensorThingsEntity extends DataTransferObject {
     public static final String JSON_PROPERTY_ID = "@iot.id";
     public static final String JSON_PROPERTY_SELF_LINK = "@iot.selfLink";
 
-    @XmlElement(name = "id")
-    @jakarta.annotation.Nullable
     private Object id;
 
-    @XmlElement(name = "selfLink")
-    @jakarta.annotation.Nullable
     private String selfLink;
 
     /**
@@ -55,7 +50,7 @@ public abstract class SensorThingsEntity extends DataTransferObject {
      * without a target type, {@code T} resolves to {@code SensorThingsEntity}).
      */
     @SuppressWarnings("unchecked")
-    public <T extends SensorThingsEntity> T id(@jakarta.annotation.Nullable Object id) {
+    public <T extends SensorThingsEntity> T id(Object id) {
         this.id = id;
         return (T) this;
     }
@@ -67,7 +62,6 @@ public abstract class SensorThingsEntity extends DataTransferObject {
      *
      * @return the id
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_ID)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
     public Object getId() {
@@ -76,7 +70,7 @@ public abstract class SensorThingsEntity extends DataTransferObject {
 
     @JsonProperty(JSON_PROPERTY_ID)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    public void setId(@jakarta.annotation.Nullable Object id) {
+    public void setId(Object id) {
         this.id = id;
     }
 
@@ -86,7 +80,6 @@ public abstract class SensorThingsEntity extends DataTransferObject {
      *
      * @return the selfLink
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_SELF_LINK)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
     public String getSelfLink() {
@@ -95,7 +88,7 @@ public abstract class SensorThingsEntity extends DataTransferObject {
 
     @JsonProperty(JSON_PROPERTY_SELF_LINK)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    public void setSelfLink(@jakarta.annotation.Nullable String selfLink) {
+    public void setSelfLink(String selfLink) {
         this.selfLink = selfLink;
     }
 

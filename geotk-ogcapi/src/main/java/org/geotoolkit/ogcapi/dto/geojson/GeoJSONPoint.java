@@ -19,13 +19,6 @@ package org.geotoolkit.ogcapi.dto.geojson;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -38,24 +31,17 @@ import java.util.Objects;
     GeoJSONPoint.PROPERTY_BBOX,
     GeoJSONPoint.PROPERTY_COORDINATES
 })
-@XmlRootElement(name = "GeoJSONPoint")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "GeoJSONPoint")
 public class GeoJSONPoint extends GeoJSONGeometry {
 
     public static final String PROPERTY_COORDINATES = "coordinates";
 
-    @XmlElement(name = PROPERTY_COORDINATES)
-    @jakarta.annotation.Nonnull
     private List<Double> coordinates = new ArrayList<>();
 
     public GeoJSONPoint() {
     }
 
-    @jakarta.annotation.Nonnull
     @JsonProperty(PROPERTY_TYPE)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = PROPERTY_TYPE)
     @Override
     public String getType() {
         return TYPE_POINT;
@@ -66,20 +52,15 @@ public class GeoJSONPoint extends GeoJSONGeometry {
      *
      * @return coordinates
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(PROPERTY_COORDINATES)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = PROPERTY_COORDINATES)
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<Double> getCoordinates() {
         return coordinates;
     }
 
     @JsonProperty(PROPERTY_COORDINATES)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = PROPERTY_COORDINATES)
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setCoordinates(@jakarta.annotation.Nonnull List<Double> coordinates) {
+    public void setCoordinates(List<Double> coordinates) {
         this.coordinates = coordinates;
     }
 

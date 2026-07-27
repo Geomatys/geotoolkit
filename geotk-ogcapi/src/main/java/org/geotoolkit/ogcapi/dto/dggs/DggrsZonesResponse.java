@@ -19,13 +19,6 @@ package org.geotoolkit.ogcapi.dto.dggs;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -43,45 +36,30 @@ import org.geotoolkit.ogcapi.dto.common.Link;
     DggrsZonesResponse.JSON_PROPERTY_RETURNED_HYPER_VOLUME_METERS_CUBE_SECONDS,
     DggrsZonesResponse.JSON_PROPERTY_LINKS
 })
-@XmlRootElement(name = "DatasetGetDGGRSZones200Response")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "DatasetGetDGGRSZones200Response")
 public class DggrsZonesResponse extends DataTransferObject {
 
     public static final String JSON_PROPERTY_ZONES = "zones";
-    @XmlElement(name = "zones")
-    @jakarta.annotation.Nonnull
     private List<String> zones = new ArrayList<>();
 
     public static final String JSON_PROPERTY_RETURNED_AREA_METERS_SQUARE = "returnedAreaMetersSquare";
-    @XmlElement(name = "returnedAreaMetersSquare")
-    @jakarta.annotation.Nullable
     private Double returnedAreaMetersSquare;
 
     public static final String JSON_PROPERTY_RETURNED_VOLUME_METERS_CUBE = "returnedVolumeMetersCube";
-    @XmlElement(name = "returnedVolumeMetersCube")
-    @jakarta.annotation.Nullable
     private Double returnedVolumeMetersCube;
 
     public static final String JSON_PROPERTY_RETURNED_VOLUME_METERS_SQUARE_SECONDS = "returnedVolumeMetersSquareSeconds";
-    @XmlElement(name = "returnedVolumeMetersSquareSeconds")
-    @jakarta.annotation.Nullable
     private Double returnedVolumeMetersSquareSeconds;
 
     public static final String JSON_PROPERTY_RETURNED_HYPER_VOLUME_METERS_CUBE_SECONDS = "returnedHyperVolumeMetersCubeSeconds";
-    @XmlElement(name = "returnedHyperVolumeMetersCubeSeconds")
-    @jakarta.annotation.Nullable
     private Double returnedHyperVolumeMetersCubeSeconds;
 
     public static final String JSON_PROPERTY_LINKS = "links";
-    @XmlElement(name = "links")
-    @jakarta.annotation.Nullable
     private List<Link> links = new ArrayList<>();
 
     public DggrsZonesResponse() {
     }
 
-    public DggrsZonesResponse zones(@jakarta.annotation.Nonnull List<String> zones) {
+    public DggrsZonesResponse zones(List<String> zones) {
         this.zones = zones;
         return this;
     }
@@ -99,24 +77,19 @@ public class DggrsZonesResponse extends DataTransferObject {
      *
      * @return zones
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_ZONES)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "zones")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<String> getZones() {
         return zones;
     }
 
     @JsonProperty(JSON_PROPERTY_ZONES)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "zones")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setZones(@jakarta.annotation.Nonnull List<String> zones) {
+    public void setZones(List<String> zones) {
         this.zones = zones;
     }
 
-    public DggrsZonesResponse returnedAreaMetersSquare(@jakarta.annotation.Nullable Double returnedAreaMetersSquare) {
+    public DggrsZonesResponse returnedAreaMetersSquare(Double returnedAreaMetersSquare) {
         this.returnedAreaMetersSquare = returnedAreaMetersSquare;
         return this;
     }
@@ -126,22 +99,19 @@ public class DggrsZonesResponse extends DataTransferObject {
      *
      * @return returnedAreaMetersSquare
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_RETURNED_AREA_METERS_SQUARE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "returnedAreaMetersSquare")
     public Double getReturnedAreaMetersSquare() {
         return returnedAreaMetersSquare;
     }
 
     @JsonProperty(JSON_PROPERTY_RETURNED_AREA_METERS_SQUARE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "returnedAreaMetersSquare")
-    public void setReturnedAreaMetersSquare(@jakarta.annotation.Nullable Double returnedAreaMetersSquare) {
+    public void setReturnedAreaMetersSquare(Double returnedAreaMetersSquare) {
         this.returnedAreaMetersSquare = returnedAreaMetersSquare;
     }
 
-    public DggrsZonesResponse returnedVolumeMetersCube(@jakarta.annotation.Nullable Double returnedVolumeMetersCube) {
+    public DggrsZonesResponse returnedVolumeMetersCube(Double returnedVolumeMetersCube) {
         this.returnedVolumeMetersCube = returnedVolumeMetersCube;
         return this;
     }
@@ -151,22 +121,19 @@ public class DggrsZonesResponse extends DataTransferObject {
      *
      * @return returnedVolumeMetersCube
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_RETURNED_VOLUME_METERS_CUBE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "returnedVolumeMetersCube")
     public Double getReturnedVolumeMetersCube() {
         return returnedVolumeMetersCube;
     }
 
     @JsonProperty(JSON_PROPERTY_RETURNED_VOLUME_METERS_CUBE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "returnedVolumeMetersCube")
-    public void setReturnedVolumeMetersCube(@jakarta.annotation.Nullable Double returnedVolumeMetersCube) {
+    public void setReturnedVolumeMetersCube(Double returnedVolumeMetersCube) {
         this.returnedVolumeMetersCube = returnedVolumeMetersCube;
     }
 
-    public DggrsZonesResponse returnedVolumeMetersSquareSeconds(@jakarta.annotation.Nullable Double returnedVolumeMetersSquareSeconds) {
+    public DggrsZonesResponse returnedVolumeMetersSquareSeconds(Double returnedVolumeMetersSquareSeconds) {
         this.returnedVolumeMetersSquareSeconds = returnedVolumeMetersSquareSeconds;
         return this;
     }
@@ -176,22 +143,19 @@ public class DggrsZonesResponse extends DataTransferObject {
      *
      * @return returnedVolumeMetersSquareSeconds
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_RETURNED_VOLUME_METERS_SQUARE_SECONDS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "returnedVolumeMetersSquareSeconds")
     public Double getReturnedVolumeMetersSquareSeconds() {
         return returnedVolumeMetersSquareSeconds;
     }
 
     @JsonProperty(JSON_PROPERTY_RETURNED_VOLUME_METERS_SQUARE_SECONDS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "returnedVolumeMetersSquareSeconds")
-    public void setReturnedVolumeMetersSquareSeconds(@jakarta.annotation.Nullable Double returnedVolumeMetersSquareSeconds) {
+    public void setReturnedVolumeMetersSquareSeconds(Double returnedVolumeMetersSquareSeconds) {
         this.returnedVolumeMetersSquareSeconds = returnedVolumeMetersSquareSeconds;
     }
 
-    public DggrsZonesResponse returnedHyperVolumeMetersCubeSeconds(@jakarta.annotation.Nullable Double returnedHyperVolumeMetersCubeSeconds) {
+    public DggrsZonesResponse returnedHyperVolumeMetersCubeSeconds(Double returnedHyperVolumeMetersCubeSeconds) {
         this.returnedHyperVolumeMetersCubeSeconds = returnedHyperVolumeMetersCubeSeconds;
         return this;
     }
@@ -201,22 +165,19 @@ public class DggrsZonesResponse extends DataTransferObject {
      *
      * @return returnedHyperVolumeMetersCubeSeconds
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_RETURNED_HYPER_VOLUME_METERS_CUBE_SECONDS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "returnedHyperVolumeMetersCubeSeconds")
     public Double getReturnedHyperVolumeMetersCubeSeconds() {
         return returnedHyperVolumeMetersCubeSeconds;
     }
 
     @JsonProperty(JSON_PROPERTY_RETURNED_HYPER_VOLUME_METERS_CUBE_SECONDS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "returnedHyperVolumeMetersCubeSeconds")
-    public void setReturnedHyperVolumeMetersCubeSeconds(@jakarta.annotation.Nullable Double returnedHyperVolumeMetersCubeSeconds) {
+    public void setReturnedHyperVolumeMetersCubeSeconds(Double returnedHyperVolumeMetersCubeSeconds) {
         this.returnedHyperVolumeMetersCubeSeconds = returnedHyperVolumeMetersCubeSeconds;
     }
 
-    public DggrsZonesResponse links(@jakarta.annotation.Nullable List<Link> links) {
+    public DggrsZonesResponse links(List<Link> links) {
         this.links = links;
         return this;
     }
@@ -234,20 +195,15 @@ public class DggrsZonesResponse extends DataTransferObject {
      *
      * @return links
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_LINKS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "links")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<Link> getLinks() {
         return links;
     }
 
     @JsonProperty(JSON_PROPERTY_LINKS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "links")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setLinks(@jakarta.annotation.Nullable List<Link> links) {
+    public void setLinks(List<Link> links) {
         this.links = links;
     }
 

@@ -19,12 +19,6 @@ package org.geotoolkit.ogcapi.dto.dggs;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.util.Objects;
 import org.geotoolkit.ogcapi.dto.DataTransferObject;
 
@@ -40,50 +34,33 @@ import org.geotoolkit.ogcapi.dto.DataTransferObject;
     DggrsLinkTemplatesInner.JSON_PROPERTY_TITLE,
     DggrsLinkTemplatesInner.JSON_PROPERTY_LENGTH
 })
-@XmlRootElement(name = "DggrsLinkTemplatesInner")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "DggrsLinkTemplatesInner")
 public final class DggrsLinkTemplatesInner extends DataTransferObject {
 
     public static final String JSON_PROPERTY_URI_TEMPLATE = "uriTemplate";
-    @XmlElement(name = "uriTemplate")
-    @jakarta.annotation.Nonnull
     private String uriTemplate;
 
     public static final String JSON_PROPERTY_REL = "rel";
-    @XmlElement(name = "rel")
-    @jakarta.annotation.Nonnull
     private String rel;
 
     public static final String JSON_PROPERTY_TYPE = "type";
-    @XmlElement(name = "type")
-    @jakarta.annotation.Nullable
     private String type;
 
     public static final String JSON_PROPERTY_VAR_BASE = "varBase";
-    @XmlElement(name = "varBase")
-    @jakarta.annotation.Nullable
     private String varBase;
 
     public static final String JSON_PROPERTY_HREFLANG = "hreflang";
-    @XmlElement(name = "hreflang")
-    @jakarta.annotation.Nullable
     private String hreflang;
 
     public static final String JSON_PROPERTY_TITLE = "title";
-    @XmlElement(name = "title")
-    @jakarta.annotation.Nullable
     private String title;
 
     public static final String JSON_PROPERTY_LENGTH = "length";
-    @XmlElement(name = "length")
-    @jakarta.annotation.Nullable
     private Integer length;
 
     public DggrsLinkTemplatesInner() {
     }
 
-    public DggrsLinkTemplatesInner uriTemplate(@jakarta.annotation.Nonnull String uriTemplate) {
+    public DggrsLinkTemplatesInner uriTemplate(String uriTemplate) {
         this.uriTemplate = uriTemplate;
         return this;
     }
@@ -94,22 +71,19 @@ public final class DggrsLinkTemplatesInner extends DataTransferObject {
      *
      * @return uriTemplate
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_URI_TEMPLATE)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "uriTemplate")
     public String getUriTemplate() {
         return uriTemplate;
     }
 
     @JsonProperty(JSON_PROPERTY_URI_TEMPLATE)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "uriTemplate")
-    public void setUriTemplate(@jakarta.annotation.Nonnull String uriTemplate) {
+    public void setUriTemplate(String uriTemplate) {
         this.uriTemplate = uriTemplate;
     }
 
-    public DggrsLinkTemplatesInner rel(@jakarta.annotation.Nonnull String rel) {
+    public DggrsLinkTemplatesInner rel(String rel) {
         this.rel = rel;
         return this;
     }
@@ -119,22 +93,19 @@ public final class DggrsLinkTemplatesInner extends DataTransferObject {
      *
      * @return rel
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_REL)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "rel")
     public String getRel() {
         return rel;
     }
 
     @JsonProperty(JSON_PROPERTY_REL)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "rel")
-    public void setRel(@jakarta.annotation.Nonnull String rel) {
+    public void setRel(String rel) {
         this.rel = rel;
     }
 
-    public DggrsLinkTemplatesInner type(@jakarta.annotation.Nullable String type) {
+    public DggrsLinkTemplatesInner type(String type) {
         this.type = type;
         return this;
     }
@@ -144,22 +115,19 @@ public final class DggrsLinkTemplatesInner extends DataTransferObject {
      *
      * @return type
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_TYPE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "type")
     public String getType() {
         return type;
     }
 
     @JsonProperty(JSON_PROPERTY_TYPE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "type")
-    public void setType(@jakarta.annotation.Nullable String type) {
+    public void setType(String type) {
         this.type = type;
     }
 
-    public DggrsLinkTemplatesInner varBase(@jakarta.annotation.Nullable String varBase) {
+    public DggrsLinkTemplatesInner varBase(String varBase) {
         this.varBase = varBase;
         return this;
     }
@@ -169,22 +137,19 @@ public final class DggrsLinkTemplatesInner extends DataTransferObject {
      *
      * @return varBase
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_VAR_BASE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "varBase")
     public String getVarBase() {
         return varBase;
     }
 
     @JsonProperty(JSON_PROPERTY_VAR_BASE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "varBase")
-    public void setVarBase(@jakarta.annotation.Nullable String varBase) {
+    public void setVarBase(String varBase) {
         this.varBase = varBase;
     }
 
-    public DggrsLinkTemplatesInner hreflang(@jakarta.annotation.Nullable String hreflang) {
+    public DggrsLinkTemplatesInner hreflang(String hreflang) {
         this.hreflang = hreflang;
         return this;
     }
@@ -194,22 +159,19 @@ public final class DggrsLinkTemplatesInner extends DataTransferObject {
      *
      * @return hreflang
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_HREFLANG)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "hreflang")
     public String getHreflang() {
         return hreflang;
     }
 
     @JsonProperty(JSON_PROPERTY_HREFLANG)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "hreflang")
-    public void setHreflang(@jakarta.annotation.Nullable String hreflang) {
+    public void setHreflang(String hreflang) {
         this.hreflang = hreflang;
     }
 
-    public DggrsLinkTemplatesInner title(@jakarta.annotation.Nullable String title) {
+    public DggrsLinkTemplatesInner title(String title) {
         this.title = title;
         return this;
     }
@@ -219,22 +181,19 @@ public final class DggrsLinkTemplatesInner extends DataTransferObject {
      *
      * @return title
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_TITLE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "title")
     public String getTitle() {
         return title;
     }
 
     @JsonProperty(JSON_PROPERTY_TITLE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "title")
-    public void setTitle(@jakarta.annotation.Nullable String title) {
+    public void setTitle(String title) {
         this.title = title;
     }
 
-    public DggrsLinkTemplatesInner length(@jakarta.annotation.Nullable Integer length) {
+    public DggrsLinkTemplatesInner length(Integer length) {
         this.length = length;
         return this;
     }
@@ -244,18 +203,15 @@ public final class DggrsLinkTemplatesInner extends DataTransferObject {
      *
      * @return length
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_LENGTH)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "length")
     public Integer getLength() {
         return length;
     }
 
     @JsonProperty(JSON_PROPERTY_LENGTH)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "length")
-    public void setLength(@jakarta.annotation.Nullable Integer length) {
+    public void setLength(Integer length) {
         this.length = length;
     }
 

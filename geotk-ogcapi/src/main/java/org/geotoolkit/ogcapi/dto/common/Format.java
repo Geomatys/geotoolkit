@@ -20,12 +20,6 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import org.geotoolkit.ogcapi.dto.DataTransferObject;
 
 /**
@@ -35,25 +29,18 @@ import org.geotoolkit.ogcapi.dto.DataTransferObject;
     Format.JSON_PROPERTY_NAME,
     Format.JSON_PROPERTY_MEDIA_TYPE
 })
-@XmlRootElement(name = "Format")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "Format")
 public final class Format extends DataTransferObject {
 
     public static final String JSON_PROPERTY_NAME = "name";
-    @XmlElement(name = "name")
-    @jakarta.annotation.Nullable
     private String name;
 
     public static final String JSON_PROPERTY_MEDIA_TYPE = "mediaType";
-    @XmlElement(name = "mediaType")
-    @jakarta.annotation.Nullable
     private String mediaType;
 
     public Format() {
     }
 
-    public Format name(@jakarta.annotation.Nullable String name) {
+    public Format name(String name) {
         this.name = name;
         return this;
     }
@@ -63,22 +50,19 @@ public final class Format extends DataTransferObject {
      *
      * @return name
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_NAME)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "name")
     public String getName() {
         return name;
     }
 
     @JsonProperty(JSON_PROPERTY_NAME)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "name")
-    public void setName(@jakarta.annotation.Nullable String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
-    public Format mediaType(@jakarta.annotation.Nullable String mediaType) {
+    public Format mediaType(String mediaType) {
         this.mediaType = mediaType;
         return this;
     }
@@ -88,18 +72,15 @@ public final class Format extends DataTransferObject {
      *
      * @return mediaType
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_MEDIA_TYPE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "mediaType")
     public String getMediaType() {
         return mediaType;
     }
 
     @JsonProperty(JSON_PROPERTY_MEDIA_TYPE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "mediaType")
-    public void setMediaType(@jakarta.annotation.Nullable String mediaType) {
+    public void setMediaType(String mediaType) {
         this.mediaType = mediaType;
     }
 

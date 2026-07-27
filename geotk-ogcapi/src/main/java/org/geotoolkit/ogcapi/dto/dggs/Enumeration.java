@@ -21,16 +21,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonValue;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlEnum;
-import jakarta.xml.bind.annotation.XmlEnumValue;
-import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.XmlType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -43,18 +33,12 @@ import org.geotoolkit.ogcapi.dto.DataTransferObject;
     Enumeration.JSON_PROPERTY_TYPE,
     Enumeration.JSON_PROPERTY_ENUM
 })
-@XmlRootElement(name = "Enumeration")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "Enumeration")
 public final class Enumeration extends DataTransferObject {
 
     /**
      * Gets or Sets type
      */
-    @XmlType(name = "TypeEnum")
-    @XmlEnum(String.class)
     public enum TypeEnum {
-        @XmlEnumValue("enum")
         ENUM(String.valueOf("enum"));
 
         private String value;
@@ -85,19 +69,15 @@ public final class Enumeration extends DataTransferObject {
     }
 
     public static final String JSON_PROPERTY_TYPE = "type";
-    @XmlElement(name = "type")
-    @jakarta.annotation.Nonnull
     private TypeEnum type;
 
     public static final String JSON_PROPERTY_ENUM = "enum";
-    @XmlElement(name = "enum")
-    @jakarta.annotation.Nonnull
     private List<String> _enum = new ArrayList<>();
 
     public Enumeration() {
     }
 
-    public Enumeration type(@jakarta.annotation.Nonnull TypeEnum type) {
+    public Enumeration type(TypeEnum type) {
         this.type = type;
         return this;
     }
@@ -107,22 +87,19 @@ public final class Enumeration extends DataTransferObject {
      *
      * @return type
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_TYPE)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "type")
     public TypeEnum getType() {
         return type;
     }
 
     @JsonProperty(JSON_PROPERTY_TYPE)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "type")
-    public void setType(@jakarta.annotation.Nonnull TypeEnum type) {
+    public void setType(TypeEnum type) {
         this.type = type;
     }
 
-    public Enumeration _enum(@jakarta.annotation.Nonnull List<String> _enum) {
+    public Enumeration _enum(List<String> _enum) {
         this._enum = _enum;
         return this;
     }
@@ -140,20 +117,15 @@ public final class Enumeration extends DataTransferObject {
      *
      * @return _enum
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_ENUM)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "enum")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<String> getEnum() {
         return _enum;
     }
 
     @JsonProperty(JSON_PROPERTY_ENUM)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "enum")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setEnum(@jakarta.annotation.Nonnull List<String> _enum) {
+    public void setEnum(List<String> _enum) {
         this._enum = _enum;
     }
 

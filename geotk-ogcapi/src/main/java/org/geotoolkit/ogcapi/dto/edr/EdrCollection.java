@@ -19,13 +19,6 @@ package org.geotoolkit.ogcapi.dto.edr;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -44,50 +37,38 @@ import org.geotoolkit.ogcapi.dto.coveragejson.Parameter;
     EdrCollection.JSON_PROPERTY_PARAMETER_NAMES,
     EdrCollection.JSON_PROPERTY_OUTPUT_FORMATS
 })
-@XmlRootElement(name = "EdrCollection")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "EdrCollection")
 public final class EdrCollection extends CollectionDescription {
 
     public static final String JSON_PROPERTY_DATA_QUERIES = "data_queries";
-    @XmlElement(name = "data_queries")
-    @jakarta.annotation.Nullable
     private DataQueries dataQueries;
 
     public static final String JSON_PROPERTY_PARAMETER_NAMES = "parameter_names";
-    @XmlElement(name = "parameter_names")
-    @jakarta.annotation.Nullable
     private Map<String, Parameter> parameterNames;
 
     public static final String JSON_PROPERTY_OUTPUT_FORMATS = "output_formats";
-    @XmlElement(name = "output_formats")
-    @jakarta.annotation.Nullable
     private List<String> outputFormats;
 
     public EdrCollection() {
     }
 
-    public EdrCollection dataQueries(@jakarta.annotation.Nullable DataQueries dataQueries) {
+    public EdrCollection dataQueries(DataQueries dataQueries) {
         this.dataQueries = dataQueries;
         return this;
     }
 
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_DATA_QUERIES)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "data_queries")
     public DataQueries getDataQueries() {
         return dataQueries;
     }
 
     @JsonProperty(JSON_PROPERTY_DATA_QUERIES)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "data_queries")
-    public void setDataQueries(@jakarta.annotation.Nullable DataQueries dataQueries) {
+    public void setDataQueries(DataQueries dataQueries) {
         this.dataQueries = dataQueries;
     }
 
-    public EdrCollection parameterNames(@jakarta.annotation.Nullable Map<String, Parameter> parameterNames) {
+    public EdrCollection parameterNames(Map<String, Parameter> parameterNames) {
         this.parameterNames = parameterNames;
         return this;
     }
@@ -100,22 +81,19 @@ public final class EdrCollection extends CollectionDescription {
         return this;
     }
 
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_PARAMETER_NAMES)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "parameter_names")
     public Map<String, Parameter> getParameterNames() {
         return parameterNames;
     }
 
     @JsonProperty(JSON_PROPERTY_PARAMETER_NAMES)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "parameter_names")
-    public void setParameterNames(@jakarta.annotation.Nullable Map<String, Parameter> parameterNames) {
+    public void setParameterNames(Map<String, Parameter> parameterNames) {
         this.parameterNames = parameterNames;
     }
 
-    public EdrCollection outputFormats(@jakarta.annotation.Nullable List<String> outputFormats) {
+    public EdrCollection outputFormats(List<String> outputFormats) {
         this.outputFormats = outputFormats;
         return this;
     }
@@ -128,20 +106,15 @@ public final class EdrCollection extends CollectionDescription {
         return this;
     }
 
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_OUTPUT_FORMATS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "output_formats")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<String> getOutputFormats() {
         return outputFormats;
     }
 
     @JsonProperty(JSON_PROPERTY_OUTPUT_FORMATS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "output_formats")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setOutputFormats(@jakarta.annotation.Nullable List<String> outputFormats) {
+    public void setOutputFormats(List<String> outputFormats) {
         this.outputFormats = outputFormats;
     }
 

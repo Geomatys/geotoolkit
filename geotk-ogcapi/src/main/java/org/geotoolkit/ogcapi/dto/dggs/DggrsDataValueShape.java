@@ -19,13 +19,6 @@ package org.geotoolkit.ogcapi.dto.dggs;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -39,30 +32,21 @@ import org.geotoolkit.ogcapi.dto.DataTransferObject;
     DggrsDataValueShape.JSON_PROPERTY_SUB_ZONES,
     DggrsDataValueShape.JSON_PROPERTY_DIMENSIONS
 })
-@XmlRootElement(name = "DggsJsonValuesValueInnerShape")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "DggsJsonValuesValueInnerShape")
 public final class DggrsDataValueShape extends DataTransferObject {
 
     public static final String JSON_PROPERTY_COUNT = "count";
-    @XmlElement(name = "count")
-    @jakarta.annotation.Nonnull
     private Integer count;
 
     public static final String JSON_PROPERTY_SUB_ZONES = "subZones";
-    @XmlElement(name = "subZones")
-    @jakarta.annotation.Nonnull
     private Integer subZones;
 
     public static final String JSON_PROPERTY_DIMENSIONS = "dimensions";
-    @XmlElement(name = "dimensions")
-    @jakarta.annotation.Nullable
     private Map<String, Integer> dimensions = new HashMap<>();
 
     public DggrsDataValueShape() {
     }
 
-    public DggrsDataValueShape count(@jakarta.annotation.Nonnull Integer count) {
+    public DggrsDataValueShape count(Integer count) {
         this.count = count;
         return this;
     }
@@ -72,22 +56,19 @@ public final class DggrsDataValueShape extends DataTransferObject {
      *
      * @return count
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_COUNT)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "count")
     public Integer getCount() {
         return count;
     }
 
     @JsonProperty(JSON_PROPERTY_COUNT)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "count")
-    public void setCount(@jakarta.annotation.Nonnull Integer count) {
+    public void setCount(Integer count) {
         this.count = count;
     }
 
-    public DggrsDataValueShape subZones(@jakarta.annotation.Nonnull Integer subZones) {
+    public DggrsDataValueShape subZones(Integer subZones) {
         this.subZones = subZones;
         return this;
     }
@@ -97,22 +78,19 @@ public final class DggrsDataValueShape extends DataTransferObject {
      *
      * @return subZones
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_SUB_ZONES)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "subZones")
     public Integer getSubZones() {
         return subZones;
     }
 
     @JsonProperty(JSON_PROPERTY_SUB_ZONES)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "subZones")
-    public void setSubZones(@jakarta.annotation.Nonnull Integer subZones) {
+    public void setSubZones(Integer subZones) {
         this.subZones = subZones;
     }
 
-    public DggrsDataValueShape dimensions(@jakarta.annotation.Nullable Map<String, Integer> dimensions) {
+    public DggrsDataValueShape dimensions(Map<String, Integer> dimensions) {
         this.dimensions = dimensions;
         return this;
     }
@@ -130,20 +108,15 @@ public final class DggrsDataValueShape extends DataTransferObject {
      *
      * @return dimensions
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_DIMENSIONS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "dimensions")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public Map<String, Integer> getDimensions() {
         return dimensions;
     }
 
     @JsonProperty(JSON_PROPERTY_DIMENSIONS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "dimensions")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setDimensions(@jakarta.annotation.Nullable Map<String, Integer> dimensions) {
+    public void setDimensions(Map<String, Integer> dimensions) {
         this.dimensions = dimensions;
     }
 

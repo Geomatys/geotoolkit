@@ -22,8 +22,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.*;
-import jakarta.xml.bind.annotation.*;
 
 
 /**
@@ -34,31 +32,22 @@ import jakarta.xml.bind.annotation.*;
     Argument.JSON_PROPERTY_DESCRIPTION,
     Argument.JSON_PROPERTY_TYPE
 })
-@XmlRootElement(name = "FunctionsFunctionsInnerArgumentsInner")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "FunctionsFunctionsInnerArgumentsInner")
 public class Argument {
 
     public static final String JSON_PROPERTY_TITLE = "title";
-    @XmlElement(name = "title")
-    @jakarta.annotation.Nullable
     private String title;
 
     public static final String JSON_PROPERTY_DESCRIPTION = "description";
-    @XmlElement(name = "description")
-    @jakarta.annotation.Nullable
     private String description;
 
 
     public static final String JSON_PROPERTY_TYPE = "type";
-    @XmlElement(name = "type")
-    @jakarta.annotation.Nonnull
     private List<ValueType> type = new ArrayList<>();
 
     public Argument() {
     }
 
-    public Argument title(@jakarta.annotation.Nullable String title) {
+    public Argument title(String title) {
         this.title = title;
         return this;
     }
@@ -68,22 +57,19 @@ public class Argument {
      *
      * @return title
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_TITLE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "title")
     public String getTitle() {
         return title;
     }
 
     @JsonProperty(JSON_PROPERTY_TITLE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "title")
-    public void setTitle(@jakarta.annotation.Nullable String title) {
+    public void setTitle(String title) {
         this.title = title;
     }
 
-    public Argument description(@jakarta.annotation.Nullable String description) {
+    public Argument description(String description) {
         this.description = description;
         return this;
     }
@@ -93,22 +79,19 @@ public class Argument {
      *
      * @return description
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_DESCRIPTION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "description")
     public String getDescription() {
         return description;
     }
 
     @JsonProperty(JSON_PROPERTY_DESCRIPTION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "description")
-    public void setDescription(@jakarta.annotation.Nullable String description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 
-    public Argument type(@jakarta.annotation.Nonnull List<ValueType> type) {
+    public Argument type(List<ValueType> type) {
         this.type = type;
         return this;
     }
@@ -126,20 +109,15 @@ public class Argument {
      *
      * @return type
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_TYPE)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "type")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<ValueType> getType() {
         return type;
     }
 
     @JsonProperty(JSON_PROPERTY_TYPE)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "type")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setType(@jakarta.annotation.Nonnull List<ValueType> type) {
+    public void setType(List<ValueType> type) {
         this.type = type;
     }
 

@@ -17,10 +17,6 @@
 package org.geotoolkit.ogcapi.dto.coverage;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlRootElement;
 
 /**
  * @author Quentin BIALOTA
@@ -29,9 +25,6 @@ import jakarta.xml.bind.annotation.XmlRootElement;
         // Since IndexAxis only inherits properties, the order is managed by the parent's @JsonPropertyOrder.
         // We include this annotation for consistency in case future properties are added.
 })
-@XmlRootElement(name = "IndexAxis")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "IndexAxis")
 public class IndexAxis extends Axis {
 
     public IndexAxis() {

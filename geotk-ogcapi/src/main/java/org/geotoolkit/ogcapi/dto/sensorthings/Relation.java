@@ -19,12 +19,6 @@ package org.geotoolkit.ogcapi.dto.sensorthings;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.util.Objects;
 
 /**
@@ -44,35 +38,24 @@ import java.util.Objects;
     Relation.JSON_PROPERTY_SUBJECT,
     Relation.JSON_PROPERTY_OBJECT
 })
-@XmlRootElement(name = "Relation")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "Relation")
 public final class Relation extends SensorThingsEntity {
 
     public static final String JSON_PROPERTY_TYPE = "type";
-    @XmlElement(name = "type")
-    @jakarta.annotation.Nonnull
     private String type;
 
     public static final String JSON_PROPERTY_DESCRIPTION = "description";
-    @XmlElement(name = "description")
-    @jakarta.annotation.Nullable
     private String description;
 
     public static final String JSON_PROPERTY_SUBJECT = "Subject";
-    @XmlElement(name = "subject")
-    @jakarta.annotation.Nullable
     private Observation subject;
 
     public static final String JSON_PROPERTY_OBJECT = "Object";
-    @XmlElement(name = "object")
-    @jakarta.annotation.Nullable
     private Observation object;
 
     public Relation() {
     }
 
-    public Relation type(@jakarta.annotation.Nonnull String type) {
+    public Relation type(String type) {
         this.type = type;
         return this;
     }
@@ -83,22 +66,19 @@ public final class Relation extends SensorThingsEntity {
      *
      * @return the type
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_TYPE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "type")
     public String getType() {
         return type;
     }
 
     @JsonProperty(JSON_PROPERTY_TYPE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "type")
-    public void setType(@jakarta.annotation.Nonnull String type) {
+    public void setType(String type) {
         this.type = type;
     }
 
-    public Relation description(@jakarta.annotation.Nullable String description) {
+    public Relation description(String description) {
         this.description = description;
         return this;
     }
@@ -108,22 +88,19 @@ public final class Relation extends SensorThingsEntity {
      *
      * @return the description
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_DESCRIPTION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "description")
     public String getDescription() {
         return description;
     }
 
     @JsonProperty(JSON_PROPERTY_DESCRIPTION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "description")
-    public void setDescription(@jakarta.annotation.Nullable String description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 
-    public Relation subject(@jakarta.annotation.Nullable Observation subject) {
+    public Relation subject(Observation subject) {
         this.subject = subject;
         return this;
     }
@@ -134,22 +111,19 @@ public final class Relation extends SensorThingsEntity {
      *
      * @return the subject
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_SUBJECT)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "Subject")
     public Observation getSubject() {
         return subject;
     }
 
     @JsonProperty(JSON_PROPERTY_SUBJECT)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "Subject")
-    public void setSubject(@jakarta.annotation.Nullable Observation subject) {
+    public void setSubject(Observation subject) {
         this.subject = subject;
     }
 
-    public Relation object(@jakarta.annotation.Nullable Observation object) {
+    public Relation object(Observation object) {
         this.object = object;
         return this;
     }
@@ -160,18 +134,15 @@ public final class Relation extends SensorThingsEntity {
      *
      * @return the object
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_OBJECT)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "Object")
     public Observation getObject() {
         return object;
     }
 
     @JsonProperty(JSON_PROPERTY_OBJECT)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "Object")
-    public void setObject(@jakarta.annotation.Nullable Observation object) {
+    public void setObject(Observation object) {
         this.object = object;
     }
 

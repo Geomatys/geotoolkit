@@ -20,12 +20,6 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import org.geotoolkit.ogcapi.dto.DataTransferObject;
 
 /**
@@ -39,29 +33,18 @@ import org.geotoolkit.ogcapi.dto.DataTransferObject;
         RangeStatistics.JSON_PROPERTY_MEAN,
         RangeStatistics.JSON_PROPERTY_STD_DEV
 })
-@XmlRootElement(name = "RangeStatistics")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "RangeStatistics")
 public final class RangeStatistics extends DataTransferObject {
 
     public static final String JSON_PROPERTY_MIN = "min";
-    @XmlElement(name = "min")
-    @jakarta.annotation.Nullable
     private Double min;
 
     public static final String JSON_PROPERTY_MAX = "max";
-    @XmlElement(name = "max")
-    @jakarta.annotation.Nullable
     private Double max;
 
     public static final String JSON_PROPERTY_MEAN = "mean";
-    @XmlElement(name = "mean")
-    @jakarta.annotation.Nullable
     private Double mean;
 
     public static final String JSON_PROPERTY_STD_DEV = "stdDev";
-    @XmlElement(name = "stdDev")
-    @jakarta.annotation.Nullable
     private Double stdDev;
 
     public RangeStatistics() {
@@ -74,7 +57,7 @@ public final class RangeStatistics extends DataTransferObject {
         this.stdDev = stdDev;
     }
 
-    public RangeStatistics min(@jakarta.annotation.Nullable Double min) {
+    public RangeStatistics min(Double min) {
         this.min = min;
         return this;
     }
@@ -84,22 +67,19 @@ public final class RangeStatistics extends DataTransferObject {
      *
      * @return min
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_MIN)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "min")
     public Double getMin() {
         return min;
     }
 
     @JsonProperty(JSON_PROPERTY_MIN)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "min")
-    public void setMin(@jakarta.annotation.Nullable Double min) {
+    public void setMin(Double min) {
         this.min = min;
     }
 
-    public RangeStatistics max(@jakarta.annotation.Nullable Double max) {
+    public RangeStatistics max(Double max) {
         this.max = max;
         return this;
     }
@@ -109,22 +89,19 @@ public final class RangeStatistics extends DataTransferObject {
      *
      * @return max
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_MAX)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "max")
     public Double getMax() {
         return max;
     }
 
     @JsonProperty(JSON_PROPERTY_MAX)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "max")
-    public void setMax(@jakarta.annotation.Nullable Double max) {
+    public void setMax(Double max) {
         this.max = max;
     }
 
-    public RangeStatistics mean(@jakarta.annotation.Nullable Double mean) {
+    public RangeStatistics mean(Double mean) {
         this.mean = mean;
         return this;
     }
@@ -134,22 +111,19 @@ public final class RangeStatistics extends DataTransferObject {
      *
      * @return mean
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_MEAN)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "mean")
     public Double getMean() {
         return mean;
     }
 
     @JsonProperty(JSON_PROPERTY_MEAN)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "mean")
-    public void setMean(@jakarta.annotation.Nullable Double mean) {
+    public void setMean(Double mean) {
         this.mean = mean;
     }
 
-    public RangeStatistics stdDev(@jakarta.annotation.Nullable Double stdDev) {
+    public RangeStatistics stdDev(Double stdDev) {
         this.stdDev = stdDev;
         return this;
     }
@@ -159,18 +133,15 @@ public final class RangeStatistics extends DataTransferObject {
      *
      * @return stdDev
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_STD_DEV)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "stdDev")
     public Double getStdDev() {
         return stdDev;
     }
 
     @JsonProperty(JSON_PROPERTY_STD_DEV)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "stdDev")
-    public void setStdDev(@jakarta.annotation.Nullable Double stdDev) {
+    public void setStdDev(Double stdDev) {
         this.stdDev = stdDev;
     }
 

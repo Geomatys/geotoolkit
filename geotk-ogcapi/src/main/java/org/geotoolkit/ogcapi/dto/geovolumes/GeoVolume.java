@@ -19,8 +19,6 @@ package org.geotoolkit.ogcapi.dto.geovolumes;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.*;
-import jakarta.xml.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -56,14 +54,9 @@ import org.geotoolkit.ogcapi.dto.common.Link;
     GeoVolume.JSON_PROPERTY_CHILDREN,
     GeoVolume.JSON_PROPERTY_CONTENT
 })
-@XmlRootElement(name = "GeoVolume")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "GeoVolume")
 public final class GeoVolume extends CollectionDescription {
 
     public static final String JSON_PROPERTY_COLLECTION_TYPE = "collectionType";
-    @XmlElement(name = "collectionType")
-    @jakarta.annotation.Nullable
     private String collectionType = "3d-container";
 
     /**
@@ -72,24 +65,18 @@ public final class GeoVolume extends CollectionDescription {
      * the more complete Annex C description.
      */
     public static final String JSON_PROPERTY_CONTENT_EXTENT = "contentExtent";
-    @XmlElement(name = "contentExtent")
-    @jakarta.annotation.Nullable
     private BoundingVolume contentExtent;
 
     public static final String JSON_PROPERTY_CHILDREN = "children";
-    @XmlElement(name = "children")
-    @jakarta.annotation.Nullable
     private List<GeoVolume> children = new ArrayList<>();
 
     public static final String JSON_PROPERTY_CONTENT = "content";
-    @XmlElement(name = "content")
-    @jakarta.annotation.Nullable
     private List<Link> content = new ArrayList<>();
 
     public GeoVolume() {
     }
 
-    public GeoVolume collectionType(@jakarta.annotation.Nullable String collectionType) {
+    public GeoVolume collectionType(String collectionType) {
         this.collectionType = collectionType;
         return this;
     }
@@ -99,22 +86,19 @@ public final class GeoVolume extends CollectionDescription {
      *
      * @return collectionType
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_COLLECTION_TYPE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "collectionType")
     public String getCollectionType() {
         return collectionType;
     }
 
     @JsonProperty(JSON_PROPERTY_COLLECTION_TYPE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "collectionType")
-    public void setCollectionType(@jakarta.annotation.Nullable String collectionType) {
+    public void setCollectionType(String collectionType) {
         this.collectionType = collectionType;
     }
 
-    public GeoVolume contentExtent(@jakarta.annotation.Nullable BoundingVolume contentExtent) {
+    public GeoVolume contentExtent(BoundingVolume contentExtent) {
         this.contentExtent = contentExtent;
         return this;
     }
@@ -124,22 +108,19 @@ public final class GeoVolume extends CollectionDescription {
      *
      * @return contentExtent
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_CONTENT_EXTENT)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "contentExtent")
     public BoundingVolume getContentExtent() {
         return contentExtent;
     }
 
     @JsonProperty(JSON_PROPERTY_CONTENT_EXTENT)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "contentExtent")
-    public void setContentExtent(@jakarta.annotation.Nullable BoundingVolume contentExtent) {
+    public void setContentExtent(BoundingVolume contentExtent) {
         this.contentExtent = contentExtent;
     }
 
-    public GeoVolume children(@jakarta.annotation.Nullable List<GeoVolume> children) {
+    public GeoVolume children(List<GeoVolume> children) {
         this.children = children;
         return this;
     }
@@ -159,24 +140,19 @@ public final class GeoVolume extends CollectionDescription {
      *
      * @return children
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_CHILDREN)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "children")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<GeoVolume> getChildren() {
         return children;
     }
 
     @JsonProperty(JSON_PROPERTY_CHILDREN)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "children")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setChildren(@jakarta.annotation.Nullable List<GeoVolume> children) {
+    public void setChildren(List<GeoVolume> children) {
         this.children = children;
     }
 
-    public GeoVolume content(@jakarta.annotation.Nullable List<Link> content) {
+    public GeoVolume content(List<Link> content) {
         this.content = content;
         return this;
     }
@@ -200,20 +176,15 @@ public final class GeoVolume extends CollectionDescription {
      *
      * @return content
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_CONTENT)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "content")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<Link> getContent() {
         return content;
     }
 
     @JsonProperty(JSON_PROPERTY_CONTENT)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "content")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setContent(@jakarta.annotation.Nullable List<Link> content) {
+    public void setContent(List<Link> content) {
         this.content = content;
     }
 

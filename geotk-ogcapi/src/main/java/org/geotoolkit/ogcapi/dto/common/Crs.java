@@ -30,12 +30,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.io.IOException;
 import java.net.URI;
 import java.util.HashMap;
@@ -50,9 +44,6 @@ import org.geotoolkit.ogcapi.dto.DataTransferObject;
  * located often in common-geodata folder
  *
  */
-@XmlRootElement(name = "Crs")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "Crs")
 @JsonDeserialize(using = Crs.CrsDeserializer.class)
 @JsonSerialize(using = Crs.CrsSerializer.class)
 public final class Crs extends DataTransferObject {
@@ -115,30 +106,23 @@ public final class Crs extends DataTransferObject {
     // store a list of schema names defined in oneOf
     public static final Map<String, Class<?>> schemas = new HashMap<>();
 
-    @jakarta.annotation.Nullable
     private String plain;
 
     public static final String JSON_PROPERTY_URI = "uri";
-    @XmlElement(name = "uri")
-    @jakarta.annotation.Nullable
     private URI uri;
 
     public static final String JSON_PROPERTY_WKT = "wkt";
-    @XmlElement(name = "wkt")
-    @jakarta.annotation.Nullable
     private Object wkt;
 
     public static final String JSON_PROPERTY_REFERENCE_SYSTEM = "referenceSystem";
-    @XmlElement(name = "referenceSystem")
-    @jakarta.annotation.Nullable
     private Object referenceSystem;
 
-    public Crs plain(@jakarta.annotation.Nonnull String plain) {
+    public Crs plain(String plain) {
         this.plain = plain;
         return this;
     }
 
-    public Crs uri(@jakarta.annotation.Nonnull URI uri) {
+    public Crs uri(URI uri) {
         this.uri = uri;
         return this;
     }
@@ -148,22 +132,19 @@ public final class Crs extends DataTransferObject {
      *
      * @return uri
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_URI)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "uri")
     public URI getUri() {
         return uri;
     }
 
     @JsonProperty(JSON_PROPERTY_URI)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "uri")
-    public void setUri(@jakarta.annotation.Nonnull URI uri) {
+    public void setUri(URI uri) {
         this.uri = uri;
     }
 
-    public Crs wkt(@jakarta.annotation.Nonnull Object wkt) {
+    public Crs wkt(Object wkt) {
         this.wkt = wkt;
         return this;
     }
@@ -173,22 +154,19 @@ public final class Crs extends DataTransferObject {
      *
      * @return wkt
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_WKT)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "wkt")
     public Object getWkt() {
         return wkt;
     }
 
     @JsonProperty(JSON_PROPERTY_WKT)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "wkt")
-    public void setWkt(@jakarta.annotation.Nonnull Object wkt) {
+    public void setWkt(Object wkt) {
         this.wkt = wkt;
     }
 
-    public Crs referenceSystem(@jakarta.annotation.Nonnull Object referenceSystem) {
+    public Crs referenceSystem(Object referenceSystem) {
         this.referenceSystem = referenceSystem;
         return this;
     }
@@ -198,18 +176,15 @@ public final class Crs extends DataTransferObject {
      *
      * @return referenceSystem
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_REFERENCE_SYSTEM)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "referenceSystem")
     public Object getReferenceSystem() {
         return referenceSystem;
     }
 
     @JsonProperty(JSON_PROPERTY_REFERENCE_SYSTEM)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "referenceSystem")
-    public void setReferenceSystem(@jakarta.annotation.Nonnull Object referenceSystem) {
+    public void setReferenceSystem(Object referenceSystem) {
         this.referenceSystem = referenceSystem;
     }
 
