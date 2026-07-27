@@ -16,11 +16,8 @@
  */
 package org.geotoolkit.processing.script;
 
-import groovy.lang.Binding;
-import groovy.lang.GroovyShell;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.util.SimpleInternationalString;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -58,21 +55,7 @@ public final class ScriptProcess extends AbstractProcess {
         final String script = inputParameters.getMandatoryValue(Descriptor.SCRIPT);
         final String behavior = inputParameters.getMandatoryValue(Descriptor.BEHAVIOR);
 
-        if (Descriptor.LANGUAGE_GROOVY.equals(language)) {
-            final Binding binding = new Binding();
-            final GroovyShell shell = new GroovyShell(binding);
-            final Set<String> keys = variables.keySet();
-            for (String key : keys){
-                shell.setVariable(key, variables.get(key));
-            }
-            Object result = shell.evaluate(script);
-            if ("EXCEPTION".equals(behavior)) {
-                if (result != null && result instanceof Boolean && !((Boolean) result)) {
-                    throw new ProcessException("Groovy expression failed."+script, this, null);
-                }
-            }
-            outputParameters.getOrCreate(Descriptor.RESULT).setValue(result);
-        } else if (Descriptor.LANGUAGE_LUA.equals(language)) {
+        if (Descriptor.LANGUAGE_LUA.equals(language)) {
 
             final Globals bindings = JsePlatform.standardGlobals();
             for (Entry<String,Object> entry : variables.entrySet()) {
@@ -97,7 +80,6 @@ public final class ScriptProcess extends AbstractProcess {
 
        public static final String BEHAVIOR_EXCEPTION = "EXCEPTION";
        public static final String BEHAVIOR_RESULT = "RESULT";
-       public static final String LANGUAGE_GROOVY = "GROOVY";
        public static final String LANGUAGE_LUA = "LUA";
 
        /**
@@ -107,7 +89,7 @@ public final class ScriptProcess extends AbstractProcess {
                .addName("language")
                .setRemarks("language")
                .setRequired(true)
-               .createEnumerated(String.class, new String[]{LANGUAGE_GROOVY, LANGUAGE_LUA}, null);
+               .createEnumerated(String.class, new String[]{LANGUAGE_LUA}, null);
        public static final ParameterDescriptor<String> SCRIPT = new ParameterBuilder()
                .addName("expression")
                .setRemarks("Script")

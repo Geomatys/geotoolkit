@@ -193,7 +193,6 @@
     <lucene.version>8.4.0</lucene.version>
     <marineapi.version>0.11.0</marineapi.version>
     <nashorn.version>15.3</nashorn.version>
-    <groovy.version>5.0.0-alpha-11</groovy.version>
     <postgis.version>2.3.0</postgis.version>
     <quartz.version>2.3.1</quartz.version>
     <!-- ErrorProne 2.25.0 has a knwon bug on JDK-17 : https://giters.com/google/error-prone/issues/2926 -->

@@ -27,7 +27,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.NoSuchIdentifierException;
 
 /**
- * JUnit test of groovy condition process
+ * JUnit test of lua condition process
  * @author Christophe Mourette
  * @module
  */
@@ -38,27 +38,6 @@ public class ScriptTest extends AbstractProcessTest {
         super("script:evaluate");
     }
 
-    @Test
-    public void testGroovy() throws NoSuchIdentifierException, ProcessException{
-
-        // Inputs first
-        final HashMap<String,Object> variables = new HashMap<String, Object>();
-        final String  expression = "(i>2)";
-        variables.put("i",3) ;
-        // Process
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(FACTORY, "script:evaluate");
-
-        final ParameterValueGroup in = desc.getInputDescriptor().createValue();
-        in.parameter("language").setValue("GROOVY");
-        in.parameter("variables").setValue(variables);
-        in.parameter("expression").setValue(expression);
-        final org.geotoolkit.process.Process proc = desc.createProcess(in);
-
-        //result
-        final Boolean result = (Boolean) proc.call().parameter("result").getValue();
-
-        assertTrue(result);
-    }
 
     @Test
     public void testLua() throws NoSuchIdentifierException, ProcessException{

@@ -30,7 +30,6 @@ import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.filter.FilterUtilities;
-import org.geotoolkit.filter.function.groovy.GroovyFunctionFactory;
 import org.geotoolkit.filter.function.javascript.JavaScriptFunctionFactory;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -270,11 +269,8 @@ public class ChainProcess extends AbstractProcess {
         }else if("JAVASCRIPT".equalsIgnoreCase(syntax)){
             final Expression exp = ff.function(JavaScriptFunctionFactory.JAVASCRIPT, ff.literal(statement));
             filter = ff.equal(exp, ff.literal(true));
-        }else if("GROOVY".equalsIgnoreCase(syntax)){
-            final Expression exp = ff.function(GroovyFunctionFactory.GROOVY, ff.literal(statement));
-            filter = ff.equal(exp, ff.literal(true));
         }else{
-            throw new ProcessException("Unknwoned syntax : "+syntax+" supported sysntaxes are : CQL,Javascript,Groovy", this, null);
+            throw new ProcessException("Unknwoned syntax : "+syntax+" supported sysntaxes are : CQL,Javascript", this, null);
         }
         return filter.test(FeatureExt.toFeature(inputs));
     }
