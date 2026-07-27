@@ -23,14 +23,14 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Json property types.
  */
 public enum JSONType {
-    ARRAY(String.valueOf("array")),
-    BOOLEAN(String.valueOf("boolean")),
-    INTEGER(String.valueOf("integer")),
-    NULL(String.valueOf("null")),
-    NUMBER(String.valueOf("number")),
-    OBJECT(String.valueOf("object")),
-    STRING(String.valueOf("string"));
-    private String value;
+    ARRAY("array"),
+    BOOLEAN("boolean"),
+    INTEGER("integer"),
+    NULL("null"),
+    NUMBER("number"),
+    OBJECT("object"),
+    STRING("string");
+    private final String value;
 
     JSONType(String value) {
         this.value = value;
@@ -43,7 +43,7 @@ public enum JSONType {
 
     @Override
     public String toString() {
-        return String.valueOf(value);
+        return value;
     }
 
     @JsonCreator

@@ -29,12 +29,12 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * secrecy
  */
 public enum AccessConstraintsCode {
-    UNCLASSIFIED(String.valueOf("unclassified")),
-    RESTRICTED(String.valueOf("restricted")),
-    CONFIDENTIAL(String.valueOf("confidential")),
-    SECRET(String.valueOf("secret")),
-    TOP_SECRET(String.valueOf("topSecret"));
-    private String value;
+    UNCLASSIFIED("unclassified"),
+    RESTRICTED("restricted"),
+    CONFIDENTIAL("confidential"),
+    SECRET("secret"),
+    TOP_SECRET("topSecret");
+    private final String value;
 
     AccessConstraintsCode(String value) {
         this.value = value;
@@ -47,7 +47,7 @@ public enum AccessConstraintsCode {
 
     @Override
     public String toString() {
-        return String.valueOf(value);
+        return value;
     }
 
     @JsonCreator

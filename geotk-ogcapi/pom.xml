@@ -30,15 +30,6 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-coverage-geotiff</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.sis.storage</groupId>
-            <artifactId>sis-netcdf</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.locationtech.jts</groupId>
             <artifactId>jts-core</artifactId>
         </dependency>
@@ -58,10 +49,6 @@
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.dataformat</groupId>
-            <artifactId>jackson-dataformat-xml</artifactId>
         </dependency>
         <dependency>
             <groupId>org.openapitools</groupId>
