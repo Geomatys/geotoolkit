@@ -280,6 +280,21 @@ public class DefaultDownloadURIExtractorTest {
     }
 
     /**
+     * A non-HTTP href (e.g. {@code s3://}) cannot be probed with the built-in HttpClient,
+     * so it must be trusted and returned as-is rather than skipped.
+     */
+    @Test
+    public void testExtractNonHttpSchemeTrusted() {
+        DefaultDownloadURIExtractor extractor = new DefaultDownloadURIExtractor(httpClient);
+        Item item = buildItem("col-s3", dataAsset("s3://my-bucket/data/asset.tif"));
+
+        URI result = extractor.extract(item);
+
+        assertNotNull(result);
+        assertEquals("s3://my-bucket/data/asset.tif", result.toString());
+    }
+
+    /**
      * An empty asset map must return null without errors.
      */
     @Test

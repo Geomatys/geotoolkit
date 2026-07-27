@@ -387,6 +387,14 @@ public class StacApi extends AbstractOpenApi {
             LOGGER.fine("File already exists, skipping download: " + target);
             return target;
         }
+        if (!isHttpScheme(uri)) {
+            // Non-HTTP scheme (e.g. s3://): route through NIO instead of the HTTP client,
+            // which only accepts http/https. Caller is responsible for registering any
+            // FileSystemProvider (and credentials) needed to resolve this URI.
+            Files.copy(Path.of(uri), target, StandardCopyOption.REPLACE_EXISTING);
+            LOGGER.info("Downloaded: " + target);
+            return target;
+        }
         final HttpRequest request = HttpRequest.newBuilder()
                 .uri(uri)
                 .timeout(Duration.ofMinutes(5))
@@ -451,6 +459,11 @@ public class StacApi extends AbstractOpenApi {
         if (page != null && page.getFeatures() != null) {
             target.addAll(page.getFeatures());
         }
+    }
+
+    private static boolean isHttpScheme(URI uri) {
+        final String scheme = uri.getScheme();
+        return "http".equalsIgnoreCase(scheme) || "https".equalsIgnoreCase(scheme);
     }
 
     private String extractFilename(URI uri) {
