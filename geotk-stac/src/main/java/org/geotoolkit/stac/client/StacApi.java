@@ -202,6 +202,20 @@ public class StacApi extends AbstractOpenApi {
      * @throws InterruptedException if the thread is interrupted
      */
     public List<Item> searchItems(SearchItems params) throws IOException, InterruptedException {
+        return searchItems(params, null);
+    }
+
+    /**
+     * Search items with automatic pagination and fallback to OGC API /items endpoint,
+     * stopping early once {@code maxTotal} items have been collected.
+     *
+     * @param params   search parameters; must not be null
+     * @param maxTotal maximum total number of items to return, or null for no limit
+     * @return matching items across as many pages as needed to reach {@code maxTotal} (or all pages if null)
+     * @throws IOException          on network error or HTTP failure
+     * @throws InterruptedException if the thread is interrupted
+     */
+    public List<Item> searchItems(SearchItems params, Integer maxTotal) throws IOException, InterruptedException {
         if (params == null) throw new IllegalArgumentException("params must not be null");
 
         final int effectiveLimit = params.getLimit() != null ? params.getLimit() : 100;
@@ -217,7 +231,7 @@ public class StacApi extends AbstractOpenApi {
             ItemCollection page = searchItemsPage(effectiveParams).send().body().get();
             collectFeatures(page, allItems);
             String nextHref;
-            while ((nextHref = findNextHref(page)) != null) {
+            while (!capReached(allItems, maxTotal) && (nextHref = findNextHref(page)) != null) {
                 try {
                     page = objectMapper.treeToValue(rawGet(nextHref), ItemCollection.class);
                     collectFeatures(page, allItems);
@@ -241,7 +255,7 @@ public class StacApi extends AbstractOpenApi {
                         .send().body().get();
                 collectFeatures(page, allItems);
                 String nextHref;
-                while ((nextHref = findNextHref(page)) != null) {
+                while (!capReached(allItems, maxTotal) && (nextHref = findNextHref(page)) != null) {
                     try {
                         page = objectMapper.treeToValue(rawGet(nextHref), ItemCollection.class);
                         collectFeatures(page, allItems);
@@ -255,7 +269,11 @@ public class StacApi extends AbstractOpenApi {
             }
         }
         LOGGER.info("Total items found: " + allItems.size());
-        return allItems;
+        return capReached(allItems, maxTotal) ? allItems.subList(0, maxTotal) : allItems;
+    }
+
+    private static boolean capReached(List<Item> items, Integer maxTotal) {
+        return maxTotal != null && items.size() >= maxTotal;
     }
 
     /**
