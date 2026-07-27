@@ -67,14 +67,14 @@ public final class DggsDefinition extends DataTransferObject {
      * Gets or Sets refinementStrategy
      */
     public enum RefinementStrategyEnum {
-        CENTRED_CHILD_CELL(String.valueOf("centredChildCell")),
-        NESTED_CHILD_CELL(String.valueOf("nestedChildCell")),
-        NODE_CENTRED_CHILD_CELL(String.valueOf("nodeCentredChildCell")),
-        EDGE_CENTRED_CHILD_CELL(String.valueOf("edgeCentredChildCell")),
-        FACE_CENTRED_CHILD_CELL(String.valueOf("faceCentredChildCell")),
-        SOLID_CENTRED_CHILD_CELL(String.valueOf("solidCentredChildCell"));
+        CENTRED_CHILD_CELL("centredChildCell"),
+        NESTED_CHILD_CELL("nestedChildCell"),
+        NODE_CENTRED_CHILD_CELL("nodeCentredChildCell"),
+        EDGE_CENTRED_CHILD_CELL("edgeCentredChildCell"),
+        FACE_CENTRED_CHILD_CELL("faceCentredChildCell"),
+        SOLID_CENTRED_CHILD_CELL("solidCentredChildCell");
 
-        private String value;
+        private final String value;
 
         RefinementStrategyEnum(String value) {
             this.value = value;
@@ -87,7 +87,7 @@ public final class DggsDefinition extends DataTransferObject {
 
         @Override
         public String toString() {
-            return String.valueOf(value);
+            return value;
         }
 
         @JsonCreator

@@ -23,13 +23,13 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets type
  */
 public enum ValueType {
-    STRING(String.valueOf("string")),
-    NUMBER(String.valueOf("number")),
-    INTEGER(String.valueOf("integer")),
-    DATETIME(String.valueOf("datetime")),
-    GEOMETRY(String.valueOf("geometry")),
-    BOOLEAN(String.valueOf("boolean"));
-    private String value;
+    STRING("string"),
+    NUMBER("number"),
+    INTEGER("integer"),
+    DATETIME("datetime"),
+    GEOMETRY("geometry"),
+    BOOLEAN("boolean");
+    private final String value;
 
     ValueType(String value) {
         this.value = value;
@@ -42,7 +42,7 @@ public enum ValueType {
 
     @Override
     public String toString() {
-        return String.valueOf(value);
+        return value;
     }
 
     @JsonCreator

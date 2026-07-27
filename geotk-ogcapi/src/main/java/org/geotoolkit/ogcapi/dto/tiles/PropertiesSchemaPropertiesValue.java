@@ -64,13 +64,13 @@ public final class PropertiesSchemaPropertiesValue extends DataTransferObject {
      * Gets or Sets type
      */
     public enum TypeEnum {
-        ARRAY(String.valueOf("array")),
-        BOOLEAN(String.valueOf("boolean")),
-        INTEGER(String.valueOf("integer")),
-        NULL(String.valueOf("null")),
-        NUMBER(String.valueOf("number")),
-        OBJECT(String.valueOf("object")),
-        STRING(String.valueOf("string"));
+        ARRAY("array"),
+        BOOLEAN("boolean"),
+        INTEGER("integer"),
+        NULL("null"),
+        NUMBER("number"),
+        OBJECT("object"),
+        STRING("string");
 
         private final String value;
 
@@ -85,7 +85,7 @@ public final class PropertiesSchemaPropertiesValue extends DataTransferObject {
 
         @Override
         public String toString() {
-            return String.valueOf(value);
+            return value;
         }
 
         @JsonCreator

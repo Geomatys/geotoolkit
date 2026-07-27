@@ -70,10 +70,10 @@ public final class TileMatrix extends DataTransferObject {
      * This corner is also a corner of the (0, 0) tile.
      */
     public enum CornerOfOriginEnum {
-        TOP_LEFT(String.valueOf("topLeft")),
-        BOTTOM_LEFT(String.valueOf("bottomLeft"));
+        TOP_LEFT("topLeft"),
+        BOTTOM_LEFT("bottomLeft");
 
-        private String value;
+        private final String value;
 
         CornerOfOriginEnum(String value) {
             this.value = value;
@@ -86,7 +86,7 @@ public final class TileMatrix extends DataTransferObject {
 
         @Override
         public String toString() {
-            return String.valueOf(value);
+            return value;
         }
 
         @JsonCreator

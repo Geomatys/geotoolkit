@@ -28,11 +28,11 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * &#x60;btt&#x60; (bottom-to-top).
  */
 public enum LanguageDirection {
-    LTR(String.valueOf("ltr")),
-    RTL(String.valueOf("rtl")),
-    TTB(String.valueOf("ttb")),
-    BTT(String.valueOf("btt"));
-    private String value;
+    LTR("ltr"),
+    RTL("rtl"),
+    TTB("ttb"),
+    BTT("btt");
+    private final String value;
 
     LanguageDirection(String value) {
         this.value = value;
@@ -45,7 +45,7 @@ public enum LanguageDirection {
 
     @Override
     public String toString() {
-        return String.valueOf(value);
+        return value;
     }
 
     @JsonCreator

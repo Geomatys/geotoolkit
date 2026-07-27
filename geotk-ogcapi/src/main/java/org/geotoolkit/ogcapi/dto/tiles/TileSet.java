@@ -106,11 +106,11 @@ public final class TileSet extends DataTransferObject {
      * redistributing the Tile Set
      */
     public enum AccessConstraintsEnum {
-        UNCLASSIFIED(String.valueOf("unclassified")),
-        RESTRICTED(String.valueOf("restricted")),
-        CONFIDENTIAL(String.valueOf("confidential")),
-        SECRET(String.valueOf("secret")),
-        TOP_SECRET(String.valueOf("topSecret"));
+        UNCLASSIFIED("unclassified"),
+        RESTRICTED("restricted"),
+        CONFIDENTIAL("confidential"),
+        SECRET("secret"),
+        TOP_SECRET("topSecret");
 
         private String value;
 
@@ -125,7 +125,7 @@ public final class TileSet extends DataTransferObject {
 
         @Override
         public String toString() {
-            return String.valueOf(value);
+            return value;
         }
 
         @JsonCreator

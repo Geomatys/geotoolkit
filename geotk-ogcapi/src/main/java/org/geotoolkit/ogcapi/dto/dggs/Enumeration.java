@@ -39,9 +39,9 @@ public final class Enumeration extends DataTransferObject {
      * Gets or Sets type
      */
     public enum TypeEnum {
-        ENUM(String.valueOf("enum"));
+        ENUM("enum");
 
-        private String value;
+        private final String value;
 
         TypeEnum(String value) {
             this.value = value;

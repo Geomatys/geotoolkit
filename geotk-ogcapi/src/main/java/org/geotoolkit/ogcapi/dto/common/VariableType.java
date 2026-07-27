@@ -23,12 +23,12 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * The type of variable which may inform correct interpretation and interpolation methods
  */
 public enum VariableType {
-    CONTINUOUS(String.valueOf("continuous")),
-    NUMERICAL_ORDINAL(String.valueOf("numericalOrdinal")),
-    NUMERICAL_NOMINAL(String.valueOf("numericalNominal")),
-    CATEGORICAL_ORDINAL(String.valueOf("categoricalOrdinal")),
-    CATEGORICAL_NOMINAL(String.valueOf("categoricalNominal"));
-    private String value;
+    CONTINUOUS("continuous"),
+    NUMERICAL_ORDINAL("numericalOrdinal"),
+    NUMERICAL_NOMINAL("numericalNominal"),
+    CATEGORICAL_ORDINAL("categoricalOrdinal"),
+    CATEGORICAL_NOMINAL("categoricalNominal");
+    private final String value;
 
     VariableType(String value) {
         this.value = value;
@@ -41,7 +41,7 @@ public enum VariableType {
 
     @Override
     public String toString() {
-        return String.valueOf(value);
+        return value;
     }
 
     @JsonCreator
